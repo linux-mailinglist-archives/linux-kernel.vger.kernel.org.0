@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE0821673B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0F2016748C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:24:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733234AbgBUIOt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:14:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51392 "EHLO mail.kernel.org"
+        id S2388328AbgBUIWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:22:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732492AbgBUIOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:14:47 -0500
+        id S2388317AbgBUIWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:22:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A42AA24670;
-        Fri, 21 Feb 2020 08:14:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 246ED24672;
+        Fri, 21 Feb 2020 08:22:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272887;
-        bh=hDDi7NfkHyAkUUnTbKQGRytKtjAXcZBx1AojSyMOTjA=;
+        s=default; t=1582273351;
+        bh=3TZXsTWy+GWOyXb49qV/Qbo9WyB4oDNA5l7odcnIJfE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y+mUhSB+L/4xHwI2sLVHH79pkNKFV1ZHQzGNiwuhehikdGo5XlX00pCGsAvT49tbU
-         lVZ3dx1M1Du46YMYjGnk7ld+vlTvG32For/QgBfX/1ByQTBC/TXgrg89M3cpOK+MhN
-         zcLSSQFkfHdMH/OA78jo+qz/L/4DzhWNpXW+FIvE=
+        b=qVVl8XBXZ+rr7q61qBQYW3BYn/zVPxuKiRdh6Fl8ei5w+sQ6bMPDLF1ZhGC1uVagu
+         xF7TI7tRmi/NgA839KcR8RNG9/HRuks1ztU7XC3yklkU4oDOeQqAUGUH8jTboEm/TK
+         v8Dpc+gcZJpan6QdaeGOXraJ6b17aMdGK+mhAF9E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 312/344] char: hpet: Fix out-of-bounds read bug
-Date:   Fri, 21 Feb 2020 08:41:51 +0100
-Message-Id: <20200221072418.378382693@linuxfoundation.org>
+        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 139/191] x86/mm: Fix NX bit clearing issue in kernel_map_pages_in_pgd
+Date:   Fri, 21 Feb 2020 08:41:52 +0100
+Message-Id: <20200221072307.386508422@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,54 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Ard Biesheuvel <ardb@kernel.org>
 
-[ Upstream commit 98c49f1746ac44ccc164e914b9a44183fad09f51 ]
+[ Upstream commit 75fbef0a8b6b4bb19b9a91b5214f846c2dc5139e ]
 
-Currently, there is an out-of-bounds read on array hpetp->hp_dev
-in the following for loop:
+The following commit:
 
-870         for (i = 0; i < hdp->hd_nirqs; i++)
-871                 hpetp->hp_dev[i].hd_hdwirq = hdp->hd_irq[i];
+  15f003d20782 ("x86/mm/pat: Don't implicitly allow _PAGE_RW in kernel_map_pages_in_pgd()")
 
-This is due to the recent change from one-element array to
-flexible-array member in struct hpets:
+modified kernel_map_pages_in_pgd() to manage writable permissions
+of memory mappings in the EFI page table in a different way, but
+in the process, it removed the ability to clear NX attributes from
+read-only mappings, by clobbering the clear mask if _PAGE_RW is not
+being requested.
 
-104 struct hpets {
-	...
-113         struct hpet_dev hp_dev[];
-114 };
+Failure to remove the NX attribute from read-only mappings is
+unlikely to be a security issue, but it does prevent us from
+tightening the permissions in the EFI page tables going forward,
+so let's fix it now.
 
-This change affected the total size of the dynamic memory
-allocation, decreasing it by one time the size of struct hpet_dev.
-
-Fix this by adjusting the allocation size when calling
-struct_size().
-
-Fixes: 987f028b8637c ("char: hpet: Use flexible-array member")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Eric Biggers <ebiggers@kernel.org>
-Link: https://lore.kernel.org/r/20200129022613.GA24281@embeddedor.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 15f003d20782 ("x86/mm/pat: Don't implicitly allow _PAGE_RW in kernel_map_pages_in_pgd()
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20200113172245.27925-5-ardb@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/hpet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/mm/pageattr.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
-index 9ac6671bb5141..f69609b47fef8 100644
---- a/drivers/char/hpet.c
-+++ b/drivers/char/hpet.c
-@@ -855,7 +855,7 @@ int hpet_alloc(struct hpet_data *hdp)
- 		return 0;
- 	}
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index e2d4b25c7aa44..101f3ad0d6ad1 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -2126,19 +2126,13 @@ int kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
+ 		.pgd = pgd,
+ 		.numpages = numpages,
+ 		.mask_set = __pgprot(0),
+-		.mask_clr = __pgprot(0),
++		.mask_clr = __pgprot(~page_flags & (_PAGE_NX|_PAGE_RW)),
+ 		.flags = 0,
+ 	};
  
--	hpetp = kzalloc(struct_size(hpetp, hp_dev, hdp->hd_nirqs - 1),
-+	hpetp = kzalloc(struct_size(hpetp, hp_dev, hdp->hd_nirqs),
- 			GFP_KERNEL);
+ 	if (!(__supported_pte_mask & _PAGE_NX))
+ 		goto out;
  
- 	if (!hpetp)
+-	if (!(page_flags & _PAGE_NX))
+-		cpa.mask_clr = __pgprot(_PAGE_NX);
+-
+-	if (!(page_flags & _PAGE_RW))
+-		cpa.mask_clr = __pgprot(_PAGE_RW);
+-
+ 	if (!(page_flags & _PAGE_ENC))
+ 		cpa.mask_clr = pgprot_encrypted(cpa.mask_clr);
+ 
 -- 
 2.20.1
 
