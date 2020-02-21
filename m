@@ -2,179 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CD74167C6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:46:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CA20167C7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:47:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbgBULqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 06:46:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43818 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726989AbgBULqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 06:46:54 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6054B222C4;
-        Fri, 21 Feb 2020 11:46:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582285613;
-        bh=MmIVHTIib5XbmYmKegaqzUGhvG/1JpO2JkcKz1UU/iU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XZxYbPIGj/8mA6Nfr1J3xw+Zvf3fhEmi1joXpCEUhS5YqujDjjv+PYVcZ9gRRfdb1
-         1khysq58jXEigsFBPLX/Oin/BNF8m2o7gvoIx3t9mPJZwy2rgApci7LNJrFAzWB2jf
-         4zmhqz+egyzJhjVZ5LTI0qNac+kJ4mS4QIV/ySkQ=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1j56lf-0071gb-Ns; Fri, 21 Feb 2020 11:46:51 +0000
+        id S1727213AbgBULrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 06:47:16 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55234 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727686AbgBULrO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 06:47:14 -0500
+Received: by mail-wm1-f66.google.com with SMTP id n3so1436838wmk.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 03:47:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cxB7PUXTeUqygVh4eVSAkGxv4BrlTvTyre52qQTb2sk=;
+        b=l8D2eEQgmOITjwBuVm5VtuSNkygu1eW905ngMg9QqsVYUb/bc6DX12heuvwETKJWdJ
+         4Yznv+nripJTtuk89NxB5EF2XyEy7QrSHtrCsf9A4rDONqhKE+AgfTpv7BRTZsJyQLPl
+         QmNdYll/kSn7l93ypox+mWvynTb6er6z+wCG0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cxB7PUXTeUqygVh4eVSAkGxv4BrlTvTyre52qQTb2sk=;
+        b=l0XJVyerdB+WUd4pHu8XknjXzX2XGOaHjHfVerYEwec+Mr8QOBY4p5vB2PVRgFIjuc
+         AH0/V/X4iAW3ErLEl18+JRgwjCIuYV6Z2/hxLg7lMfga8EPtd8Fkrpm7Tx/2/7k8gLXC
+         sfVAA65bAGu2bbtaKsMGJcBWwRkviCKSCISQ15thkJOUBp4dLT0RChYF0WKCYHEd3XNT
+         3te+6ir+tAGPs++gNBPMVeBJ58z9rjVVHOchUQWtf5rnjLarSOxuDcN6BKXQVOmfQAAM
+         3lhGknl/L3cCJXC9qcJZptjnaC2pV7z2eDYWnrYSAroMavgGbJvGe6eYJzS+dohJTx8I
+         rGRA==
+X-Gm-Message-State: APjAAAWhhDi1NXesT3pLwo0Ik1aGP+lY4dq+y+Nk3hqizoI1JFRUVmCi
+        EcNqo25K0PlVOo92QyDK3r6MTIXnrhc=
+X-Google-Smtp-Source: APXvYqzi/myhHCRfm6m57QklRA0XyBoOWDLuktGXTj3oiVYDxwisfDnqgz8ZZMcjtH1LSQt61fygoA==
+X-Received: by 2002:a7b:cc6a:: with SMTP id n10mr3383352wmj.170.1582285632287;
+        Fri, 21 Feb 2020 03:47:12 -0800 (PST)
+Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
+        by smtp.gmail.com with ESMTPSA id z133sm3564118wmb.7.2020.02.21.03.47.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 03:47:11 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Fri, 21 Feb 2020 12:47:10 +0100
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH bpf-next v4 3/8] bpf: lsm: provide attachment points for
+ BPF LSM programs
+Message-ID: <20200221114710.GB56944@google.com>
+References: <20200220175250.10795-1-kpsingh@chromium.org>
+ <20200220175250.10795-4-kpsingh@chromium.org>
+ <20200221022537.wbmhdfkdbfvw2pww@ast-mbp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 21 Feb 2020 11:46:51 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com,
-        Stefan Asserhall <stefan.asserhall@xilinx.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/3] irqchip: xilinx: Use handle_domain_irq()
-In-Reply-To: <49c5a093d7ba1f20930c7433ed632e7c9bc7a2cb.1581496793.git.michal.simek@xilinx.com>
-References: <cover.1581496793.git.michal.simek@xilinx.com>
- <49c5a093d7ba1f20930c7433ed632e7c9bc7a2cb.1581496793.git.michal.simek@xilinx.com>
-Message-ID: <f028666cf1b1af428ad0564c4f93688b@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.10
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: michal.simek@xilinx.com, linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com, stefan.asserhall@xilinx.com, jason@lakedaemon.net, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221022537.wbmhdfkdbfvw2pww@ast-mbp>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-12 08:39, Michal Simek wrote:
-> Call generic domain specific irq handler which does the most of things
-> self. Also get rid of concurrent_irq counting which hasn't been 
-> exported
-> anywhere.
-> Based on this loop was also optimized by using do/while loop instead of
-> goto loop.
+On 20-Feb 18:25, Alexei Starovoitov wrote:
+> On Thu, Feb 20, 2020 at 06:52:45PM +0100, KP Singh wrote:
+> > From: KP Singh <kpsingh@google.com>
+> > 
+> > The BPF LSM programs are implemented as fexit trampolines to avoid the
+> > overhead of retpolines. These programs cannot be attached to security_*
+> > wrappers as there are quite a few security_* functions that do more than
+> > just calling the LSM callbacks.
+> > 
+> > This was discussed on the lists in:
+> > 
+> >   https://lore.kernel.org/bpf/20200123152440.28956-1-kpsingh@chromium.org/T/#m068becce588a0cdf01913f368a97aea4c62d8266
+> > 
+> > Adding a NOP callback after all the static LSM callbacks are called has
+> > the following benefits:
+> > 
+> > - The BPF programs run at the right stage of the security_* wrappers.
+> > - They run after all the static LSM hooks allowed the operation,
+> >   therefore cannot allow an action that was already denied.
+> > 
+> > There are some hooks which do not call call_int_hooks or
+> > call_void_hooks. It's not possible to call the bpf_lsm_* functions
+> > without checking if there is BPF LSM program attached to these hooks.
+> > This is added further in a subsequent patch. For now, these hooks are
+> > marked as NO_BPF (i.e. attachment of BPF programs is not possible).
 > 
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> Reviewed-by: Stefan Asserhall <stefan.asserhall@xilinx.com>
-> ---
-> 
->  arch/microblaze/Kconfig           |  1 +
->  arch/microblaze/kernel/irq.c      |  5 ----
->  drivers/irqchip/irq-xilinx-intc.c | 44 +++++++++++--------------------
->  3 files changed, 16 insertions(+), 34 deletions(-)
-> 
-> diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-> index 3a314aa2efa1..242f58ec086b 100644
-> --- a/arch/microblaze/Kconfig
-> +++ b/arch/microblaze/Kconfig
-> @@ -48,6 +48,7 @@ config MICROBLAZE
->  	select MMU_GATHER_NO_RANGE if MMU
->  	select SPARSE_IRQ
->  	select GENERIC_IRQ_MULTI_HANDLER
-> +	select HANDLE_DOMAIN_IRQ
-> 
->  # Endianness selection
->  choice
-> diff --git a/arch/microblaze/kernel/irq.c 
-> b/arch/microblaze/kernel/irq.c
-> index 1f8cb4c4f74f..0b37dde60a1e 100644
-> --- a/arch/microblaze/kernel/irq.c
-> +++ b/arch/microblaze/kernel/irq.c
-> @@ -22,13 +22,8 @@
-> 
->  void __irq_entry do_IRQ(struct pt_regs *regs)
->  {
-> -	struct pt_regs *old_regs = set_irq_regs(regs);
->  	trace_hardirqs_off();
-> -
-> -	irq_enter();
->  	handle_arch_irq(regs);
-> -	irq_exit();
-> -	set_irq_regs(old_regs);
->  	trace_hardirqs_on();
->  }
-> 
-> diff --git a/drivers/irqchip/irq-xilinx-intc.c
-> b/drivers/irqchip/irq-xilinx-intc.c
-> index ad9e678c24ac..fa468e618762 100644
-> --- a/drivers/irqchip/irq-xilinx-intc.c
-> +++ b/drivers/irqchip/irq-xilinx-intc.c
-> @@ -125,20 +125,6 @@ static unsigned int xintc_get_irq_local(struct
-> xintc_irq_chip *irqc)
->  	return irq;
->  }
-> 
-> -static unsigned int xintc_get_irq(void)
-> -{
-> -	u32 hwirq;
-> -	unsigned int irq = -1;
-> -
-> -	hwirq = xintc_read(primary_intc, IVR);
-> -	if (hwirq != -1U)
-> -		irq = irq_find_mapping(primary_intc->root_domain, hwirq);
-> -
-> -	pr_debug("irq-xilinx: hwirq=%d, irq=%d\n", hwirq, irq);
-> -
-> -	return irq;
-> -}
-> -
->  static int xintc_map(struct irq_domain *d, unsigned int irq,
-> irq_hw_number_t hw)
->  {
->  	struct xintc_irq_chip *irqc = d->host_data;
-> @@ -178,23 +164,23 @@ static void xil_intc_irq_handler(struct irq_desc 
-> *desc)
->  	chained_irq_exit(chip, desc);
->  }
-> 
-> -static u32 concurrent_irq;
-> -
->  static void xil_intc_handle_irq(struct pt_regs *regs)
->  {
-> -	unsigned int irq;
-> -
-> -	irq = xintc_get_irq();
-> -next_irq:
-> -	BUG_ON(!irq);
-> -	generic_handle_irq(irq);
-> -
-> -	irq = xintc_get_irq();
-> -	if (irq != -1U) {
-> -		pr_debug("next irq: %d\n", irq);
-> -		++concurrent_irq;
-> -		goto next_irq;
-> -	}
-> +	u32 hwirq;
-> +	struct xintc_irq_chip *irqc = primary_intc;
-> +
-> +	do {
-> +		hwirq = xintc_read(irqc, IVR);
-> +		if (hwirq != -1U) {
-> +			int ret;
-> +
-> +			ret = handle_domain_irq(irqc->root_domain, hwirq, regs);
-> +			WARN_ONCE(ret, "Unhandled HWIRQ %d\n", hwirq);
-> +			continue;
-> +		}
-> +
-> +		break;
-> +	} while (1);
+> the commit log doesn't match the code.
 
-OK, so this what I suggested already. Just squash the two patches
-in one, there is no point in keeping them separate.
+Fixed. Thanks!
 
-Thanks,
+> 
+> > +
+> > +/* For every LSM hook  that allows attachment of BPF programs, declare a NOP
+> > + * function where a BPF program can be attached as an fexit trampoline.
+> > + */
+> > +#define LSM_HOOK(RET, NAME, ...) LSM_HOOK_##RET(NAME, __VA_ARGS__)
+> > +#define LSM_HOOK_int(NAME, ...) noinline int bpf_lsm_##NAME(__VA_ARGS__)  \
+> 
+> Did you check generated asm?
+> I think I saw cases when gcc ignored 'noinline' when function is defined in the
+> same file and still performed inlining while keeping the function body.
+> To be safe I think __weak is necessary. That will guarantee noinline.
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+Sure, will change it to __weak.
+
+> 
+> And please reduce your cc next time. It's way too long.
+
+Will do.
+
+- KP
