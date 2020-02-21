@@ -2,63 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5FA916819B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEE011681A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:31:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbgBUP3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:29:24 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:43904 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbgBUP3Y (ORCPT
+        id S1728431AbgBUPbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:31:21 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41452 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728255AbgBUPbT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:29:24 -0500
-Received: by isilmar-4.linta.de (Postfix, from userid 1000)
-        id CA5E9200B44; Fri, 21 Feb 2020 15:29:22 +0000 (UTC)
-Date:   Fri, 21 Feb 2020 16:29:22 +0100
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Brian Gerst <brgerst@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 2/5] x86: Move 32-bit compat syscalls to common location
-Message-ID: <20200221152922.4okzakixvlz5mpoh@isilmar-4.linta.de>
-References: <20200221050934.719152-1-brgerst@gmail.com>
- <20200221050934.719152-3-brgerst@gmail.com>
- <20200221070704.GF3368@light.dominikbrodowski.net>
- <CAMzpN2hL=K9GVg91esHQwm+3LdG00X164k4qFn=HOwSev56DUg@mail.gmail.com>
+        Fri, 21 Feb 2020 10:31:19 -0500
+Received: by mail-lj1-f193.google.com with SMTP id h23so2600151ljc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:31:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=umwufImp+RAKAXYwNmIfHSar8yKzL+hitzXL/t+Eqo4=;
+        b=UFoVyIMokBF9uMtOCiNiPbsM2bcjPQ+rSe1suiXN9tHQ2gXelPi7omzcHdFjHomGFx
+         2wXd9ifKNWI/ND8syyRtKd+Wk3RJLsAB27RsLnX3/w+pm8nGyfC5R/uS7HtXafLgra6L
+         Cu5d684iOB4wqdn+8TY2FbwH0ovff16NXGl7eKvscbJaws92YsNk1QNB84h+ePLE2AHH
+         fqyzrUNEo/7gmZjxOjfkpXcU8z9w003F8xC5Kp5tWkzpGAzcCzgJTzbJbdLvYcoiljMH
+         1dsMko1/zy8EYMXbJ78z+RoYyexW5mlpD+2VhbAmc1QkxKXjuU0H40X94LRR9Oj99DpV
+         5+qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=umwufImp+RAKAXYwNmIfHSar8yKzL+hitzXL/t+Eqo4=;
+        b=SAIppuesddmAUg0SAHZkBH1YTkvpTYKZ+HiI3Avis2s5h5O0Vkj5FeozegYFpRy0sO
+         2s6De/ZZ8Tk6JeATc8cUcX1UXPsMzozGRJDh43JnRAnwPq8UHf1LpRvLFV26XRbFJi+C
+         cyFOw8KtDnSQRyObYNNvopMrGQh8XSYsu7oMXp3aMvh3HmRf/gBjCYmSxl1ZPHbbEyVm
+         YwlSa27dk2U+KWCqlYiJi0Bv6s4sNMXw8xfi5AkzS4XVkuG1XRehWvgp07TD7XpmqAyD
+         G3XCbuHk9DOQUcrSPKXsntEhHoxDQJrmcq4+VRvsKgl0qhhSaIffr4Ls0hvSId9bsB1V
+         Sf/Q==
+X-Gm-Message-State: APjAAAWacCIOTPJXaZ+GrutQS7oSIt8/un4tN7ZQFWdEwYiEU1M+cY5C
+        hMgW2fIZf5sWC+7xQVVMbA7hBvgr1RLixizKpvkaxw==
+X-Google-Smtp-Source: APXvYqy40L7BUxSoL4RPpdy6dgmoozwbqU5Au4UJypIZx6/XGeiyRlZMQAfFrJbPwb+oGeu+EOX8ahlhnv3TyHgZTaM=
+X-Received: by 2002:a2e:9013:: with SMTP id h19mr23128266ljg.223.1582299076864;
+ Fri, 21 Feb 2020 07:31:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMzpN2hL=K9GVg91esHQwm+3LdG00X164k4qFn=HOwSev56DUg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <bc20fdbcb826512cf76b7dfd0972740875931b19.1582212881.git.jpoimboe@redhat.com>
+In-Reply-To: <bc20fdbcb826512cf76b7dfd0972740875931b19.1582212881.git.jpoimboe@redhat.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 21 Feb 2020 16:31:05 +0100
+Message-ID: <CACRpkdbXLKpzOwc7pkdPEN8DAQk64P=5qTo3HfW5tvZnYL70UA@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: ingenic: Improve unreachable code generation
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 08:41:23AM -0500, Brian Gerst wrote:
-> On Fri, Feb 21, 2020 at 2:07 AM Dominik Brodowski
-> <linux@dominikbrodowski.net> wrote:
-> >
-> > On Fri, Feb 21, 2020 at 12:09:31AM -0500, Brian Gerst wrote:
-> > > --- a/arch/x86/kernel/Makefile
-> > > +++ b/arch/x86/kernel/Makefile
-> > > @@ -57,6 +57,8 @@ obj-y                       += setup.o x86_init.o i8259.o irqinit.o
-> > >  obj-$(CONFIG_JUMP_LABEL)     += jump_label.o
-> > >  obj-$(CONFIG_IRQ_WORK)  += irq_work.o
-> > >  obj-y                        += probe_roms.o
-> > > +obj-$(CONFIG_X86_32) += sys_ia32.o
-> > > +obj-$(CONFIG_IA32_EMULATION) += sys_ia32.o
-> >
-> > That doesn't look nicely...
-> 
-> Do you have a better suggestion?  That's similar to how tls.o is
-> already handled.
+On Thu, Feb 20, 2020 at 4:35 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 
-Besides modifying Kconfig? No, unfortunately not.
+> In the second loop of ingenic_pinconf_set(), it annotates the switch
+> default case as unreachable().  The annotation is technically correct,
+> because that same case would have resulted in an early function return
+> in the previous loop.
+>
+> However, the compiled code is suboptimal.  GCC seems to work extra hard
+> to ensure that the unreachable code path triggers undefined behavior.
+> The function would fall through to start executing whatever function
+> happens to be next in the compilation unit.
+>
+> This is problematic because:
+>
+>   a) it adds unnecessary 'ensure undefined behavior' logic, and
+>      corresponding i-cache footprint; and
+>
+>   b) it's less robust -- if a bug were to be introduced, falling through
+>      to the next function would be catastrophic.
+>
+> Yet another issue is that, while objtool normally understands
+> unreachable() annotations, there's one special case where it doesn't:
+> when the annotation occurs immediately after a 'ret' instruction.  That
+> happens to be the case here because unreachable() is immediately before
+> the return.
+>
+> Remove the unreachable() annotation and replace it with a comment.  This
+> simplifies the code generation and changes the unreachable error path to
+> just silently return instead of corrupting execution.
+>
+> This fixes the following objtool warning:
+>
+>   drivers/pinctrl/pinctrl-ingenic.o: warning: objtool: ingenic_pinconf_set() falls through to next function ingenic_pinconf_group_set()
+>
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-Thanks,
-	Dominik
+Patch applied.
+
+Yours,
+Linus Walleij
