@@ -2,200 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A57C166DC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:34:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DD60166DD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:37:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729705AbgBUDeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 22:34:10 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35640 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727944AbgBUDeK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 22:34:10 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01L3V4W6031095
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 22:34:09 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y8uef6c8b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 22:33:59 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Fri, 21 Feb 2020 03:28:20 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Feb 2020 03:28:12 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01L3SBA740239416
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Feb 2020 03:28:11 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6D7105204E;
-        Fri, 21 Feb 2020 03:28:11 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id C201652059;
-        Fri, 21 Feb 2020 03:28:10 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 18E42A03E8;
-        Fri, 21 Feb 2020 14:28:04 +1100 (AEDT)
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     alastair@d-silva.org
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Subject: [PATCH v3 25/27] powerpc/powernv/pmem: Expose the serial number in sysfs
-Date:   Fri, 21 Feb 2020 14:27:18 +1100
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200221032720.33893-1-alastair@au1.ibm.com>
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
+        id S1729686AbgBUDhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 22:37:00 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:59179 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729632AbgBUDhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 22:37:00 -0500
+Received: by ozlabs.org (Postfix, from userid 1007)
+        id 48Nxw96pvRz9sS3; Fri, 21 Feb 2020 14:36:57 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=gibson.dropbear.id.au; s=201602; t=1582256217;
+        bh=023zimJNppk3UBUgHQ61G7caK9h50x5C45Mcz1ME6eA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=e3zdRwhjeJUcGi8UjR/bkaGU7iqvokZ0xSIereTY15GrOforn7fnCxaUAuHbxiZM4
+         emwuWpBssUMeLJe/wGXWIiu66flWbyJ4cJ4MGXqogR27W3pz7uFchHhFUzLrqu3Y2+
+         PplWrOzzPS2DH7Rn+fVEvIcvBGYlpQZH/yJb1Ohw=
+Date:   Fri, 21 Feb 2020 14:29:07 +1100
+From:   David Gibson <david@gibson.dropbear.id.au>
+To:     Ram Pai <linuxram@us.ibm.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>, linux-s390@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Michael Mueller <mimu@linux.ibm.com>
+Subject: Re: [PATCH 2/2] virtio: let virtio use DMA API when guest RAM is
+ protected
+Message-ID: <20200221032907.GD2298@umbus.fritz.box>
+References: <20200220160606.53156-1-pasic@linux.ibm.com>
+ <20200220160606.53156-3-pasic@linux.ibm.com>
+ <20200220154904-mutt-send-email-mst@kernel.org>
+ <20200221011748.GE5713@oc0525413822.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20022103-0016-0000-0000-000002E8CEC5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022103-0017-0000-0000-0000334BED98
-Message-Id: <20200221032720.33893-26-alastair@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-20_19:2020-02-19,2020-02-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 mlxscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- impostorscore=0 phishscore=0 mlxlogscore=918 suspectscore=1 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002210021
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="RhUH2Ysw6aD5utA4"
+Content-Disposition: inline
+In-Reply-To: <20200221011748.GE5713@oc0525413822.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alastair D'Silva <alastair@d-silva.org>
 
-This information will be used by ndctl in userspace to help users identify
-the device.
+--RhUH2Ysw6aD5utA4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
----
- arch/powerpc/platforms/powernv/pmem/Makefile  |  2 +-
- arch/powerpc/platforms/powernv/pmem/ocxl.c    |  5 +++
- .../platforms/powernv/pmem/ocxl_internal.h    |  6 +++
- .../platforms/powernv/pmem/ocxl_sysfs.c       | 37 +++++++++++++++++++
- 4 files changed, 49 insertions(+), 1 deletion(-)
- create mode 100644 arch/powerpc/platforms/powernv/pmem/ocxl_sysfs.c
+On Thu, Feb 20, 2020 at 05:17:48PM -0800, Ram Pai wrote:
+> On Thu, Feb 20, 2020 at 03:55:14PM -0500, Michael S. Tsirkin wrote:
+> > On Thu, Feb 20, 2020 at 05:06:06PM +0100, Halil Pasic wrote:
+> > > Currently the advanced guest memory protection technologies (AMD SEV,
+> > > powerpc secure guest technology and s390 Protected VMs) abuse the
+> > > VIRTIO_F_IOMMU_PLATFORM flag to make virtio core use the DMA API, whi=
+ch
+> > > is in turn necessary, to make IO work with guest memory protection.
+> > >=20
+> > > But VIRTIO_F_IOMMU_PLATFORM a.k.a. VIRTIO_F_ACCESS_PLATFORM is really=
+ a
+> > > different beast: with virtio devices whose implementation runs on an =
+SMP
+> > > CPU we are still fine with doing all the usual optimizations, it is j=
+ust
+> > > that we need to make sure that the memory protection mechanism does n=
+ot
+> > > get in the way. The VIRTIO_F_ACCESS_PLATFORM mandates more work on the
+> > > side of the guest (and possibly he host side as well) than we actually
+> > > need.
+> > >=20
+> > > An additional benefit of teaching the guest to make the right decision
+> > > (and use DMA API) on it's own is: removing the need, to mandate speci=
+al
+> > > VM configuration for guests that may run with protection. This is
+> > > especially interesting for s390 as VIRTIO_F_IOMMU_PLATFORM pushes all
+> > > the virtio control structures into the first 2G of guest memory:
+> > > something we don't necessarily want to do per-default.
+> > >=20
+> > > Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+> > > Tested-by: Ram Pai <linuxram@us.ibm.com>
+> > > Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> >=20
+> > This might work for you but it's fragile, since without
+> > VIRTIO_F_ACCESS_PLATFORM hypervisor assumes it gets
+> > GPA's, not DMA addresses.
+> >=20
+> >=20
+> >=20
+> > IOW this looks like another iteration of:
+> >=20
+> > 	virtio: Support encrypted memory on powerpc secure guests
+> >=20
+> > which I was under the impression was abandoned as unnecessary.
+>=20
+> It has been abondoned on powerpc. We enabled VIRTIO_F_ACCESS_PLATFORM;
+> by default, flag on powerpc.
 
-diff --git a/arch/powerpc/platforms/powernv/pmem/Makefile b/arch/powerpc/platforms/powernv/pmem/Makefile
-index 4ceda25907d4..d02870806f30 100644
---- a/arch/powerpc/platforms/powernv/pmem/Makefile
-+++ b/arch/powerpc/platforms/powernv/pmem/Makefile
-@@ -4,4 +4,4 @@ ccflags-$(CONFIG_PPC_WERROR)	+= -Werror
- 
- obj-$(CONFIG_OCXL_PMEM) += ocxlpmem.o
- 
--ocxlpmem-y := ocxl.o ocxl_internal.o
-+ocxlpmem-y := ocxl.o ocxl_internal.o ocxl_sysfs.o
-diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl.c b/arch/powerpc/platforms/powernv/pmem/ocxl.c
-index 5cd1b6d78dd6..ec73713d05ad 100644
---- a/arch/powerpc/platforms/powernv/pmem/ocxl.c
-+++ b/arch/powerpc/platforms/powernv/pmem/ocxl.c
-@@ -1878,6 +1878,11 @@ static int probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto err;
- 	}
- 
-+	if (ocxlpmem_sysfs_add(ocxlpmem)) {
-+		dev_err(&pdev->dev, "Could not create sysfs entries\n");
-+		goto err;
-+	}
-+
- 	elapsed = 0;
- 	timeout = ocxlpmem->readiness_timeout + ocxlpmem->memory_available_timeout;
- 	while (!is_usable(ocxlpmem, false)) {
-diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
-index 0eb7a35d24ae..12304ceace61 100644
---- a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
-+++ b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
-@@ -246,3 +246,9 @@ int ns_response_handled(const struct ocxlpmem *ocxlpmem);
-  */
- void warn_status(const struct ocxlpmem *ocxlpmem, const char *message,
- 		 u8 status);
-+
-+/**
-+ * ocxlpmem_sysfs_add() - Create sysfs entries for an OpenCAPI persistent memory device
-+ * @ocxlpmem: the device metadata
-+ */
-+int ocxlpmem_sysfs_add(struct ocxlpmem *ocxlpmem);
-diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl_sysfs.c b/arch/powerpc/platforms/powernv/pmem/ocxl_sysfs.c
-new file mode 100644
-index 000000000000..7829e4bc887d
---- /dev/null
-+++ b/arch/powerpc/platforms/powernv/pmem/ocxl_sysfs.c
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright 2018 IBM Corp.
-+
-+#include <linux/sysfs.h>
-+#include <linux/capability.h>
-+#include <linux/limits.h>
-+#include <linux/firmware.h>
-+#include "ocxl_internal.h"
-+
-+static ssize_t serial_show(struct device *device, struct device_attribute *attr,
-+			   char *buf)
-+{
-+	struct ocxlpmem *ocxlpmem = container_of(device, struct ocxlpmem, dev);
-+	const struct ocxl_fn_config *fn_config = ocxl_function_config(ocxlpmem->ocxl_fn);
-+
-+	return scnprintf(buf, PAGE_SIZE, "%llu\n", fn_config->serial);
-+}
-+
-+static struct device_attribute attrs[] = {
-+	__ATTR_RO(serial),
-+};
-+
-+int ocxlpmem_sysfs_add(struct ocxlpmem *ocxlpmem)
-+{
-+	int i, rc;
-+
-+	for (i = 0; i < ARRAY_SIZE(attrs); i++) {
-+		rc = device_create_file(&ocxlpmem->dev, &attrs[i]);
-+		if (rc) {
-+			for (; --i >= 0;)
-+				device_remove_file(&ocxlpmem->dev, &attrs[i]);
-+
-+			return rc;
-+		}
-+	}
-+	return 0;
-+}
--- 
-2.24.1
+Uh... we haven't yet, though we're working on it.
 
+> We would like to enable secure guests on powerpc without this flag
+> aswell enabled, but past experience has educated us that its not a easy
+> path.  However if Halil makes some inroads in this path for s390, we
+> will like to support him.
+>=20
+>=20
+> RP
+>=20
+
+--=20
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
+
+--RhUH2Ysw6aD5utA4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl5PToIACgkQbDjKyiDZ
+s5L9mw//e6UlWdIjS0sVfS3LR0dfVU8WuWvcWGPlHsAvqf8ahlSYAPlyL8YHIHwe
+kntSk9WXkEn3jRCsD+nHK+dAu10C1hiGl18RH+S0yisKRnH+WabU1oesIh5cDwaV
+r+bZsU3HPaTwHS83yVNRYjoic3ZjV97karqDYGMHSnWWbVqCDZDnREwxG3VE1jm7
+7sdJak8rTIZ1AUezQwSKgfIy4lkCGVoaUC9ZKIvdWVIHywQvtXDn2ikbGENaY3E3
+MaU7NicXVogmy+beOzkOWNst0Xfm6N+oGHw2O/8zRpsmk95YAg84UGYEg4GfTEKE
+UGjNeeMDAL5lMYRbqdbzBve+wGmgnyThjGwt3PeivwATqEiL3j8AmOelUmQ9SY2y
+qPOTzprDVU+Vu0A+6NHBPuzvhFZr5dVpD4n5kF+TeH6lp+m4GC9YCIN6hT6NE+DG
+/yc/2QUJk14otNc/h7Nk+RqVm1+ZORWoDqiISB/M3U2t3kaai0hczJ6q2tDjl1pJ
+cDx9sX8mVAhyOT3LSxvfOrRDsUwyzuUjrqJCh9gnXv073cc8E6VnFb7g+Cj+NUYP
+tbh3wOC7KKoovvfI4x2YrPNpkDSAOE91h5gaM1sFtmsB0leF77mrbDAwncZHC5C8
+2EWMVf3S2sJLq9s1CulJ8Zc27iCG9F/71Bd88Nitf2HIvFqDSZs=
+=5mIy
+-----END PGP SIGNATURE-----
+
+--RhUH2Ysw6aD5utA4--
