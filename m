@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA59F1670CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 312CC1670CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbgBUHsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:48:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44130 "EHLO mail.kernel.org"
+        id S1728765AbgBUHsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:48:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728420AbgBUHsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:48:09 -0500
+        id S1728761AbgBUHsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:48:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76482207FD;
-        Fri, 21 Feb 2020 07:48:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F317A207FD;
+        Fri, 21 Feb 2020 07:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271288;
-        bh=X/Dq+PeQjECF1L6QQ6O2t+J7BdtB35HFF99zLyDSSpU=;
+        s=default; t=1582271291;
+        bh=0H9o+zn/rO8CvUSKr63eVb30rG8pTCghBnbta8SAEAk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bE5vg+lVaqQO/xHpII9FSib8gcdeUa9w4E931TSrqGu7SSTeleN2I+uHckMQWCnIn
-         s2MZoLMbNKB0j3bupr0tk/vO0YuEnh/V2MUBMzIHC1K8mgELxRPo4hAf/jrebCLLek
-         93m/CD2goUxqP34xWhiIRGnCpdCb7NmahO2FFE9M=
+        b=vuZsHb6+Up09y0aXiZYX9l7HZvBpABrQkDznySD1oPZY6iOnyogYk+MsTM6oamLQ/
+         i2+EJgoF8dsH6ppX7ls9GL7/ReeeJ8pzDAC08lHNvhWRDYVvGtqhFJOS9z7+mwK2ri
+         ZJFbOiuGpOQeU1sG6AvBJ+fh22RQGXiHkIS5t9rg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 108/399] drm/amdgpu: Ensure ret is always initialized when using SOC15_WAIT_ON_RREG
-Date:   Fri, 21 Feb 2020 08:37:13 +0100
-Message-Id: <20200221072412.929625036@linuxfoundation.org>
+Subject: [PATCH 5.5 109/399] drm/panel: simple: Add Logic PD Type 28 display support
+Date:   Fri, 21 Feb 2020 08:37:14 +0100
+Message-Id: <20200221072413.029907074@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -45,66 +44,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Adam Ford <aford173@gmail.com>
 
-[ Upstream commit a63141e31764f8daf3f29e8e2d450dcf9199d1c8 ]
+[ Upstream commit 0d35408afbeb603bc9972ae91e4dd2638bcffe52 ]
 
-Commit b0f3cd3191cd ("drm/amdgpu: remove unnecessary JPEG2.0 code from
-VCN2.0") introduced a new clang warning in the vcn_v2_0_stop function:
+Previously, there was an omap panel-dpi driver that would
+read generic timings from the device tree and set the display
+timing accordingly.  This driver was removed so the screen
+no longer functions.  This patch modifies the panel-simple
+file to setup the timings to the same values previously used.
 
-../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1082:2: warning: variable 'r'
-is used uninitialized whenever 'while' loop exits because its condition
-is false [-Wsometimes-uninitialized]
-        SOC15_WAIT_ON_RREG(VCN, 0, mmUVD_STATUS, UVD_STATUS__IDLE, 0x7, r);
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/gpu/drm/amd/amdgpu/../amdgpu/soc15_common.h:55:10: note:
-expanded from macro 'SOC15_WAIT_ON_RREG'
-                while ((tmp_ & (mask)) != (expected_value)) {   \
-                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1083:6: note: uninitialized use
-occurs here
-        if (r)
-            ^
-../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1082:2: note: remove the
-condition if it is always true
-        SOC15_WAIT_ON_RREG(VCN, 0, mmUVD_STATUS, UVD_STATUS__IDLE, 0x7, r);
-        ^
-../drivers/gpu/drm/amd/amdgpu/../amdgpu/soc15_common.h:55:10: note:
-expanded from macro 'SOC15_WAIT_ON_RREG'
-                while ((tmp_ & (mask)) != (expected_value)) {   \
-                       ^
-../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1072:7: note: initialize the
-variable 'r' to silence this warning
-        int r;
-             ^
-              = 0
-1 warning generated.
+Fixes: 8bf4b1621178 ("drm/omap: Remove panel-dpi driver")
 
-To prevent warnings like this from happening in the future, make the
-SOC15_WAIT_ON_RREG macro initialize its ret variable before the while
-loop that can time out. This macro's return value is always checked so
-it should set ret in both the success and fail path.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/776
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191016135147.7743-1-aford173@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/soc15_common.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/panel/panel-simple.c | 37 ++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/soc15_common.h b/drivers/gpu/drm/amd/amdgpu/soc15_common.h
-index 839f186e1182a..19e870c798967 100644
---- a/drivers/gpu/drm/amd/amdgpu/soc15_common.h
-+++ b/drivers/gpu/drm/amd/amdgpu/soc15_common.h
-@@ -52,6 +52,7 @@
- 		uint32_t old_ = 0;	\
- 		uint32_t tmp_ = RREG32(adev->reg_offset[ip##_HWIP][inst][reg##_BASE_IDX] + reg); \
- 		uint32_t loop = adev->usec_timeout;		\
-+		ret = 0;					\
- 		while ((tmp_ & (mask)) != (expected_value)) {	\
- 			if (old_ != tmp_) {			\
- 				loop = adev->usec_timeout;	\
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 5d487686d25c5..72f69709f3493 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -2061,6 +2061,40 @@ static const struct drm_display_mode mitsubishi_aa070mc01_mode = {
+ 	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
+ };
+ 
++static const struct drm_display_mode logicpd_type_28_mode = {
++	.clock = 9000,
++	.hdisplay = 480,
++	.hsync_start = 480 + 3,
++	.hsync_end = 480 + 3 + 42,
++	.htotal = 480 + 3 + 42 + 2,
++
++	.vdisplay = 272,
++	.vsync_start = 272 + 2,
++	.vsync_end = 272 + 2 + 11,
++	.vtotal = 272 + 2 + 11 + 3,
++	.vrefresh = 60,
++	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
++};
++
++static const struct panel_desc logicpd_type_28 = {
++	.modes = &logicpd_type_28_mode,
++	.num_modes = 1,
++	.bpc = 8,
++	.size = {
++		.width = 105,
++		.height = 67,
++	},
++	.delay = {
++		.prepare = 200,
++		.enable = 200,
++		.unprepare = 200,
++		.disable = 200,
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
++	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE |
++		     DRM_BUS_FLAG_SYNC_DRIVE_NEGEDGE,
++};
++
+ static const struct panel_desc mitsubishi_aa070mc01 = {
+ 	.modes = &mitsubishi_aa070mc01_mode,
+ 	.num_modes = 1,
+@@ -3287,6 +3321,9 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "lg,lp129qe",
+ 		.data = &lg_lp129qe,
++	}, {
++		.compatible = "logicpd,type28",
++		.data = &logicpd_type_28,
+ 	}, {
+ 		.compatible = "mitsubishi,aa070mc01-ca1",
+ 		.data = &mitsubishi_aa070mc01,
 -- 
 2.20.1
 
