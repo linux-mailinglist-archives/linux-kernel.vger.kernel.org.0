@@ -2,63 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BED3816815F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:21:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 620AC168173
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:24:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbgBUPVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:21:40 -0500
-Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:36332 "EHLO
-        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727851AbgBUPVk (ORCPT
+        id S1729207AbgBUPYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:24:04 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46352 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729187AbgBUPYC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:21:40 -0500
-Received: from [167.98.27.226] (helo=xylophone)
-        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
-        id 1j5A7P-0007ni-Fo; Fri, 21 Feb 2020 15:21:31 +0000
-Message-ID: <9f719752c33321fca7280a5cc59a886e1dd0dfda.camel@codethink.co.uk>
-Subject: Re: [PATCH 5.4 000/344] 5.4.22-stable review
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Date:   Fri, 21 Feb 2020 15:21:30 +0000
-In-Reply-To: <4e8cb265-4745-4249-45e4-86bd84f068ed@roeck-us.net>
-References: <20200221072349.335551332@linuxfoundation.org>
-         <4e8cb265-4745-4249-45e4-86bd84f068ed@roeck-us.net>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Fri, 21 Feb 2020 10:24:02 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y8so964846pll.13
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:24:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/D8p3umAJnu2Rmie5wIDoJw/XtMw5bg4kYLl7SwrZqU=;
+        b=pdGu78qAVOal10Sy3Z0B22mZC2QD6KvLq0XrW0D4SXBwjRLWx2x65aL9uy4xbnVU0w
+         2yaacYhHhoU0hioia4BuUt1RKp4bj/LgGQsjpefcv9ITHNwI/dIfBK/Is7cnePaxqrfv
+         iTNFn6u+XCJTNHLNFOoxyKHDMfsnEUaa/p5DXRlcPvngtraX1n7+rYdosLE7SdTrPQar
+         8nYpIoW18oDr/sCviGKKJczzHMJB/jkuyjjNloiOZMFZySqSN9HeNODLnBCFTtaA1IDT
+         74OIE0ljfjFznWa1YAFI1nX1Vz0bTjlDCzTwOLqVc8p25Uj4EbWbz5FLuyE0plRi0b/D
+         YeXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/D8p3umAJnu2Rmie5wIDoJw/XtMw5bg4kYLl7SwrZqU=;
+        b=dHTsndevOU4yC46Xrg7Cw4ECDHdNTyqd731tY6GpP0+U1DVwKsEx9jgq/ItkXDi5kO
+         +GMtraAgK4Nfc+AYvIWytYqJIXfx52VbEAxPceMyCxvGXcifq+Ingf//rHQHdLBfabjs
+         b2AnvppiO8BdVYC0jDPMUTgcHBYH5OXLmqKWFZYcwZJShrorBTDniR6S0+0rm9vLBj3r
+         A6AUtepciyjDsXOeyh15E9yivMJocLuoLlmKTgSY1GxbdJXSBNxJujyvTashp5z3H15u
+         X5N9YzpCWLL9WSu+3/zJIog4TSyNrqHihYPyy2JhMRVS/PrdcLCx8glxzG0ht4AedbQ9
+         K5HQ==
+X-Gm-Message-State: APjAAAVQpylLnKnsan0DkmirJMbNdiriBW51wy//w+U0wdAyUPPumW0K
+        RDzGpdA9ME9RcDRow9/p4PVPU09aVBM=
+X-Google-Smtp-Source: APXvYqzz2U0DluWCLZiEeBReOXghgMu20G6wGfpeQL0V8X5eQAZa1JPH7eSPTdL15MsjFBlcZ/gAJQ==
+X-Received: by 2002:a17:90a:d80b:: with SMTP id a11mr3747256pjv.142.1582298641501;
+        Fri, 21 Feb 2020 07:24:01 -0800 (PST)
+Received: from localhost.localdomain ([103.87.57.170])
+        by smtp.googlemail.com with ESMTPSA id w128sm1588394pgb.55.2020.02.21.07.23.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 07:24:01 -0800 (PST)
+From:   Amol Grover <frextrite@gmail.com>
+To:     Eric Dumazet <edumazet@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH] tcp: ipv4: Pass lockdep expression to RCU lists
+Date:   Fri, 21 Feb 2020 20:51:54 +0530
+Message-Id: <20200221152152.16685-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-02-21 at 06:28 -0800, Guenter Roeck wrote:
-[...]
-> Building powerpc:defconfig ... failed
-> Building powerpc:mpc83xx_defconfig ... failed
-> --------------
-> Error log:
-> drivers/rtc/rtc-ds1307.c:1570:21: error: variable 'regmap_config' has initializer but incomplete type
-> 
-> as well as various follow-up errors.
->
-> The second problem affects both v5.4.y and v5.5.y.
+md5sig->head maybe traversed using hlist_for_each_entry_rcu
+outside an RCU read-side critical section but under the protection
+of socket lock.
 
-This seems to be caused by commit 34719de919af (rtc-i2c-spi-avoid-
-inclusion-of-regmap-support-when-n.patch).  These branches will need
-commit 578c2b661e2b "rtc: Kconfig: select REGMAP_I2C when necessary" as
-well.
+Hence, add corresponding lockdep expression to silence false-positive
+warnings, and harden RCU lists.
 
-Ben.
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+ net/ipv4/tcp_ipv4.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+index 1c7326e04f9b..6519429f32cd 100644
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -1000,7 +1000,8 @@ struct tcp_md5sig_key *__tcp_md5_do_lookup(const struct sock *sk,
+ 	if (!md5sig)
+ 		return NULL;
+ 
+-	hlist_for_each_entry_rcu(key, &md5sig->head, node) {
++	hlist_for_each_entry_rcu(key, &md5sig->head, node,
++				 lockdep_sock_is_held(sk)) {
+ 		if (key->family != family)
+ 			continue;
+ 
+@@ -1043,7 +1044,8 @@ static struct tcp_md5sig_key *tcp_md5_do_lookup_exact(const struct sock *sk,
+ 	if (family == AF_INET6)
+ 		size = sizeof(struct in6_addr);
+ #endif
+-	hlist_for_each_entry_rcu(key, &md5sig->head, node) {
++	hlist_for_each_entry_rcu(key, &md5sig->head, node,
++				 lockdep_sock_is_held(sk)) {
+ 		if (key->family != family)
+ 			continue;
+ 		if (!memcmp(&key->addr, addr, size) &&
 -- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+2.24.1
 
