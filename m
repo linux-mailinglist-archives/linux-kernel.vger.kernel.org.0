@@ -2,133 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12277167E51
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:19:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F4AA167E5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:21:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728595AbgBUNTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 08:19:15 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:26272 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728429AbgBUNTP (ORCPT
+        id S1728643AbgBUNVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 08:21:30 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:50248 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727213AbgBUNVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 08:19:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582291154;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AdrOYqkSU4Wmaj+eD3HBzwtajuhTDrg8MaBJeipWbtU=;
-        b=WVfdunyS+iQgQqj/FiEr85d07ajgJPrNb1GAVZ0um/xH1K4RQDZA0lfgI5pbzPg4BtPkuE
-        AIzvacV/F+QpQkYkA+o2mJSPVG8TsnTND+07G0cCpXzg/EyxiMjUeTi7DfNbNfB1EdfrB7
-        btTZ6E1Akzxuxq2ouBL40J1nznEh+g4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-369-5ZGQXkJgP1CYCHUapl66dA-1; Fri, 21 Feb 2020 08:19:12 -0500
-X-MC-Unique: 5ZGQXkJgP1CYCHUapl66dA-1
-Received: by mail-wm1-f69.google.com with SMTP id w12so604958wmc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 05:19:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=AdrOYqkSU4Wmaj+eD3HBzwtajuhTDrg8MaBJeipWbtU=;
-        b=Dx1a/BxxseKrBuNn7QUzOQWYXBBIucUNPVz03DysF9p4yf1pkOKS4EBuZ+VtUrOcLD
-         rq54zIEAWk9p7ODdwRmhGk8vtTMvZUHXXaL/GF675gcMkXQQPMg0thkd30sOZ6UX6D8e
-         NRdr47+6fIFFECu5s9Ilcc9dCDgjLk0+93nlQj5FJwd6MVjQ79aNpm/So/rIFduTgVWZ
-         wuU0rlylMxqWiOepepjaUJfUNRsyrlpJAdMFBTflDe0M5pyYHv7X+qXHIi43soDKSUMq
-         7KXvixFj0W2pxq5XWjd/vCR0HVuvmaFtza+ea6GVDCttxWDZTFRSQ22HPOdg7JwQMXgc
-         dzzQ==
-X-Gm-Message-State: APjAAAVKtdHiglPmkQTPYi5C/Ah9/QH6dyC6J5y8qnvsMPKHzfMkGRtb
-        UIAsdlFbXBevPciDU/TFZ/a4gHvwtQzwy4zOlY38N9lrHaJnaj8Bp5Yl0EO6sEETIeQxKz1LIzO
-        xlqyfeXlxuo273vnqlaDmAq2u
-X-Received: by 2002:adf:b605:: with SMTP id f5mr46530396wre.383.1582291150139;
-        Fri, 21 Feb 2020 05:19:10 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwZgsSg1tJW0LXXQ30+pBrMKifzSKh5zC/Nh60dphjMDektmaCW99rVjZMhtN7yCmVhzpu/9g==
-X-Received: by 2002:adf:b605:: with SMTP id f5mr46530377wre.383.1582291149938;
-        Fri, 21 Feb 2020 05:19:09 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id s22sm3632247wmh.4.2020.02.21.05.19.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 05:19:09 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/10] KVM: VMX: Move vpid_sync_vcpu_addr() down a few lines
-In-Reply-To: <20200220204356.8837-3-sean.j.christopherson@intel.com>
-References: <20200220204356.8837-1-sean.j.christopherson@intel.com> <20200220204356.8837-3-sean.j.christopherson@intel.com>
-Date:   Fri, 21 Feb 2020 14:19:08 +0100
-Message-ID: <875zg0t6wj.fsf@vitty.brq.redhat.com>
+        Fri, 21 Feb 2020 08:21:30 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01LDKJBt130065;
+        Fri, 21 Feb 2020 07:20:19 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582291219;
+        bh=1oz4ttO8AEWwtQd/0Abg8qIyHP8s13hjB9qY+Pr19SM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=KSAeNn6Uc1TrPeECEzlqA9rbx4asW6aOnWdKG49BvYT+gM2fPw24dU9RTPwYDp3K5
+         f65YHvoODNH32HgY/8B/G21HrDMN8PT0OlXux9zW7IDmkEQm367zvd/S4cEvpt9wjr
+         1vBtwgl3m7PDZfS6IPQv9eRBrZKxRB8zlF5X0DaY=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01LDKJ8n100794
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 21 Feb 2020 07:20:19 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 21
+ Feb 2020 07:20:18 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 21 Feb 2020 07:20:18 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01LDKENm121770;
+        Fri, 21 Feb 2020 07:20:14 -0600
+Subject: Re: [PATCH] ASoC: ti: Allocate dais dynamically for TDM and audio
+ graph card
+To:     Tony Lindgren <tony@atomide.com>
+CC:     Sebastian Reichel <sre@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        "Arthur D ." <spinal.by@gmail.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Merlijn Wajer <merlijn@wizzup.org>, Pavel Machek <pavel@ucw.cz>
+References: <20200211171645.41990-1-tony@atomide.com>
+ <cd46c6ec-80e3-332f-4922-e58a3acbfc61@ti.com>
+ <20200212143543.GI64767@atomide.com>
+ <346dfd2b-23f8-87e0-6f45-27a5099b1066@ti.com>
+ <20200214170322.GZ64767@atomide.com>
+ <d9a43fcb-ed0f-5cd5-7e22-58924d571d17@ti.com>
+ <20200217231001.GC35972@atomide.com>
+ <5402eba8-4f84-0973-e11b-6ab2667ada85@ti.com>
+ <20200218211631.fxojsxzvttoidfed@earth.universe>
+ <a263a857-bb8a-0e37-6932-dd07df98ad63@ti.com>
+ <20200220201559.GX37466@atomide.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <9ea8239f-3b2d-8206-95ee-2789fbae83d4@ti.com>
+Date:   Fri, 21 Feb 2020 15:20:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20200220201559.GX37466@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+Hi Tony,
 
-> Move vpid_sync_vcpu_addr() below vpid_sync_context() so that it can be
-> refactored in a future patch to call vpid_sync_context() directly when
-> the "individual address" INVVPID variant isn't supported.
->
-> No functional change intended.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/vmx/ops.h | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/ops.h b/arch/x86/kvm/vmx/ops.h
-> index 45eaedee2ac0..a2b0689e65e3 100644
-> --- a/arch/x86/kvm/vmx/ops.h
-> +++ b/arch/x86/kvm/vmx/ops.h
-> @@ -253,19 +253,6 @@ static inline void __invept(unsigned long ext, u64 eptp, gpa_t gpa)
->  	vmx_asm2(invept, "r"(ext), "m"(operand), ext, eptp, gpa);
->  }
->  
-> -static inline bool vpid_sync_vcpu_addr(int vpid, gva_t addr)
-> -{
-> -	if (vpid == 0)
-> -		return true;
-> -
-> -	if (cpu_has_vmx_invvpid_individual_addr()) {
-> -		__invvpid(VMX_VPID_EXTENT_INDIVIDUAL_ADDR, vpid, addr);
-> -		return true;
-> -	}
-> -
-> -	return false;
-> -}
-> -
->  static inline void vpid_sync_vcpu_single(int vpid)
->  {
->  	if (vpid == 0)
-> @@ -289,6 +276,19 @@ static inline void vpid_sync_context(int vpid)
->  		vpid_sync_vcpu_global();
->  }
->  
-> +static inline bool vpid_sync_vcpu_addr(int vpid, gva_t addr)
-> +{
-> +	if (vpid == 0)
-> +		return true;
-> +
-> +	if (cpu_has_vmx_invvpid_individual_addr()) {
-> +		__invvpid(VMX_VPID_EXTENT_INDIVIDUAL_ADDR, vpid, addr);
-> +		return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  static inline void ept_sync_global(void)
->  {
->  	__invept(VMX_EPT_EXTENT_GLOBAL, 0, 0);
+On 20/02/2020 22.15, Tony Lindgren wrote:
+> * Peter Ujfalusi <peter.ujfalusi@ti.com> [200220 14:16]:
+>> On 18/02/2020 23.16, Sebastian Reichel wrote:
+>>> I suppose in the end its a question if generic card can provide TDM
+>>> support.
+>>
+>> Sure it can, but can it handle the switching between the paths based on
+>> use cases?
+>> There should be machine level DAPM widgets to kick codec2codec (MDM6600
+>> - CPAC_voice for example) and also to make sure that when you switch
+>> between them the system is not going to get misconfigured.
+>> Switching between CPAC and BT route during call?
+>> Not allowing VoIP while on call, etc.
+> 
+> Well I guess the key thing to check here is if it's enough to
+> keep track of things in the cpcap codec driver. If cpcap is always
+> involved, that should be sufficient.
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+The codec driver should keep track on what it can do, but should not
+start policing the outside world.
+The machine driver knows the connections and should tell the components
+on what to do.
 
--- 
-Vitaly
+> Regards,
+> 
+> Tony
+> 
 
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
