@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5073167454
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7650B167378
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:13:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388158AbgBUIUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:20:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59384 "EHLO mail.kernel.org"
+        id S1732890AbgBUIMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:12:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388149AbgBUIUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:20:21 -0500
+        id S1732511AbgBUIMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:12:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BD842469C;
-        Fri, 21 Feb 2020 08:20:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C450224650;
+        Fri, 21 Feb 2020 08:12:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273220;
-        bh=XNwq0QLlDTS4aJv4GOXW4EIpQJjK7bYt4UOINmSr7Fk=;
+        s=default; t=1582272756;
+        bh=A2+Ntopew8U1toXGN/zheXxszkk51MGjBpJ3lRwHw3w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LSQfuFT70ofyJHeffL2JFXGSGodrGEICXrdLx7iOI2ydFUMVyVta2usHLCTwo4IQb
-         AU+KyJbjBFh3eDakHr8kIt1qzBpmxQjNtss68LBGFbhKrfrVunRuWJakWB5PqR1bi2
-         Cr8Y6438ffO3snu+6wlC0WCteBy4wyqUZCXhXB6g=
+        b=sIKH2lB13lraNpfnGOSx4SX1j2mB18tLE8Q+U/2++QoOmoN+9ZFzg1dkF4Au+WwIv
+         fyRBIZtjAYuO9JI/XZS/JCUabKvT4PT/dHOFPeQp/bU0vqB//YmzFPzfvjS62nF/Uq
+         pcCUJACaT+0fxNeb8kFCa87d2/uXoHmbCGtO+yc0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 052/191] drm/amdgpu: Ensure ret is always initialized when using SOC15_WAIT_ON_RREG
+Subject: [PATCH 5.4 226/344] drm/nouveau/drm/ttm: Remove set but not used variable mem
 Date:   Fri, 21 Feb 2020 08:40:25 +0100
-Message-Id: <20200221072257.823846222@linuxfoundation.org>
+Message-Id: <20200221072409.771442515@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,66 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit a63141e31764f8daf3f29e8e2d450dcf9199d1c8 ]
+[ Upstream commit 2e4534a22794746b11a794b2229b8d58797eccce ]
 
-Commit b0f3cd3191cd ("drm/amdgpu: remove unnecessary JPEG2.0 code from
-VCN2.0") introduced a new clang warning in the vcn_v2_0_stop function:
+drivers/gpu/drm/nouveau/nouveau_ttm.c: In function nouveau_vram_manager_new:
+drivers/gpu/drm/nouveau/nouveau_ttm.c:66:22: warning: variable mem set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/nouveau/nouveau_ttm.c: In function nouveau_gart_manager_new:
+drivers/gpu/drm/nouveau/nouveau_ttm.c:106:22: warning: variable mem set but not used [-Wunused-but-set-variable]
 
-../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1082:2: warning: variable 'r'
-is used uninitialized whenever 'while' loop exits because its condition
-is false [-Wsometimes-uninitialized]
-        SOC15_WAIT_ON_RREG(VCN, 0, mmUVD_STATUS, UVD_STATUS__IDLE, 0x7, r);
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/gpu/drm/amd/amdgpu/../amdgpu/soc15_common.h:55:10: note:
-expanded from macro 'SOC15_WAIT_ON_RREG'
-                while ((tmp_ & (mask)) != (expected_value)) {   \
-                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1083:6: note: uninitialized use
-occurs here
-        if (r)
-            ^
-../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1082:2: note: remove the
-condition if it is always true
-        SOC15_WAIT_ON_RREG(VCN, 0, mmUVD_STATUS, UVD_STATUS__IDLE, 0x7, r);
-        ^
-../drivers/gpu/drm/amd/amdgpu/../amdgpu/soc15_common.h:55:10: note:
-expanded from macro 'SOC15_WAIT_ON_RREG'
-                while ((tmp_ & (mask)) != (expected_value)) {   \
-                       ^
-../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1072:7: note: initialize the
-variable 'r' to silence this warning
-        int r;
-             ^
-              = 0
-1 warning generated.
+They are not used any more, so remove it.
 
-To prevent warnings like this from happening in the future, make the
-SOC15_WAIT_ON_RREG macro initialize its ret variable before the while
-loop that can time out. This macro's return value is always checked so
-it should set ret in both the success and fail path.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/776
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/soc15_common.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/nouveau/nouveau_ttm.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/soc15_common.h b/drivers/gpu/drm/amd/amdgpu/soc15_common.h
-index 0942f492d2e19..9d444f7fdfcdd 100644
---- a/drivers/gpu/drm/amd/amdgpu/soc15_common.h
-+++ b/drivers/gpu/drm/amd/amdgpu/soc15_common.h
-@@ -51,6 +51,7 @@
- 	do {							\
- 		uint32_t tmp_ = RREG32(adev->reg_offset[ip##_HWIP][inst][reg##_BASE_IDX] + reg); \
- 		uint32_t loop = adev->usec_timeout;		\
-+		ret = 0;					\
- 		while ((tmp_ & (mask)) != (expected_value)) {	\
- 			udelay(2);				\
- 			tmp_ = RREG32(adev->reg_offset[ip##_HWIP][inst][reg##_BASE_IDX] + reg); \
+diff --git a/drivers/gpu/drm/nouveau/nouveau_ttm.c b/drivers/gpu/drm/nouveau/nouveau_ttm.c
+index f0daf958e03a2..621d28f094bc7 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_ttm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_ttm.c
+@@ -63,14 +63,12 @@ nouveau_vram_manager_new(struct ttm_mem_type_manager *man,
+ {
+ 	struct nouveau_bo *nvbo = nouveau_bo(bo);
+ 	struct nouveau_drm *drm = nouveau_bdev(bo->bdev);
+-	struct nouveau_mem *mem;
+ 	int ret;
+ 
+ 	if (drm->client.device.info.ram_size == 0)
+ 		return -ENOMEM;
+ 
+ 	ret = nouveau_mem_new(&drm->master, nvbo->kind, nvbo->comp, reg);
+-	mem = nouveau_mem(reg);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -103,11 +101,9 @@ nouveau_gart_manager_new(struct ttm_mem_type_manager *man,
+ {
+ 	struct nouveau_bo *nvbo = nouveau_bo(bo);
+ 	struct nouveau_drm *drm = nouveau_bdev(bo->bdev);
+-	struct nouveau_mem *mem;
+ 	int ret;
+ 
+ 	ret = nouveau_mem_new(&drm->master, nvbo->kind, nvbo->comp, reg);
+-	mem = nouveau_mem(reg);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.20.1
 
