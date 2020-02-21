@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C115016709D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:46:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF47216706F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:45:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbgBUHqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:46:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42162 "EHLO mail.kernel.org"
+        id S1728276AbgBUHpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:45:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728728AbgBUHqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:46:37 -0500
+        id S1728243AbgBUHpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:45:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 245F2208C4;
-        Fri, 21 Feb 2020 07:46:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 960BF24650;
+        Fri, 21 Feb 2020 07:45:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271196;
-        bh=N/eg8j7+/VQQpWPilvFEU0iKw1etYKG95foZ33uOEK4=;
+        s=default; t=1582271103;
+        bh=B57KRccJ758jF0xN74+wxNnwCOVOgwAYcSyGiizN5Pg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sWvp4PFna/T+NlL852+waHXlVkDcG16CEHhqSWe8N90fo+BbY+/wNzBkHA2Z87F+W
-         r1ttj+l53+BLGBDTziMhcSm27QYMcm+37EdzN/XkHgXcExhu4/yrgy46USfDFFbrQu
-         sWztvGgYACCuSVIXXmU9ItH0OpzqDNrsouxEjf4E=
+        b=EZNBm5aE+G6Jb2J5hvs6fK2jyZGH8DIK9zsz4U39pjNnUWpPq+ikVNzk8Q74FhjZM
+         mNLUEZ5Asgzg5C70I0tw5SFuN+q2yAYYegB/OT4hKZBcpiC5lZqtD+2dJAgjflFOnd
+         WxoNnKLWAjjjNobNgN6YoyVHKbmRP1tt+6Cw0XyA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 038/399] pxa168fb: Fix the function used to release some memory in an error handling path
-Date:   Fri, 21 Feb 2020 08:36:03 +0100
-Message-Id: <20200221072406.065092273@linuxfoundation.org>
+Subject: [PATCH 5.5 041/399] media: sun4i-csi: Deal with DRAM offset
+Date:   Fri, 21 Feb 2020 08:36:06 +0100
+Message-Id: <20200221072406.360036973@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -47,54 +46,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 3c911fe799d1c338d94b78e7182ad452c37af897 ]
+[ Upstream commit 249b286171fa9c358e8d5c825b48c4ebea97c498 ]
 
-In the probe function, some resources are allocated using 'dma_alloc_wc()',
-they should be released with 'dma_free_wc()', not 'dma_free_coherent()'.
+On Allwinner SoCs, some high memory bandwidth devices do DMA directly
+over the memory bus (called MBUS), instead of the system bus. These
+devices include the CSI camera sensor interface, video (codec) engine,
+display subsystem, etc.. The memory bus has a different addressing
+scheme without the DRAM starting offset.
 
-We already use 'dma_free_wc()' in the remove function, but not in the
-error handling path of the probe function.
+Deal with this using the "interconnects" property from the device tree,
+or if that is not available, set dev->dma_pfn_offset to PHYS_PFN_OFFSET.
 
-Also, remove a useless 'PAGE_ALIGN()'. 'info->fix.smem_len' is already
-PAGE_ALIGNed.
-
-Fixes: 638772c7553f ("fb: add support of LCD display controller on pxa168/910 (base layer)")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Lubomir Rintel <lkundrak@v3.sk>
-CC: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190831100024.3248-1-christophe.jaillet@wanadoo.fr
+Fixes: 577bbf23b758 ("media: sunxi: Add A10 CSI driver")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/pxa168fb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../platform/sunxi/sun4i-csi/sun4i_csi.c      | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/video/fbdev/pxa168fb.c b/drivers/video/fbdev/pxa168fb.c
-index 1410f476e135d..1fc50fc0694bc 100644
---- a/drivers/video/fbdev/pxa168fb.c
-+++ b/drivers/video/fbdev/pxa168fb.c
-@@ -766,8 +766,8 @@ failed_free_cmap:
- failed_free_clk:
- 	clk_disable_unprepare(fbi->clk);
- failed_free_fbmem:
--	dma_free_coherent(fbi->dev, info->fix.smem_len,
--			info->screen_base, fbi->fb_start_dma);
-+	dma_free_wc(fbi->dev, info->fix.smem_len,
-+		    info->screen_base, fbi->fb_start_dma);
- failed_free_info:
- 	kfree(info);
+diff --git a/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c b/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c
+index f36dc6258900e..b8b07c1de2a8e 100644
+--- a/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c
++++ b/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c
+@@ -11,6 +11,7 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+@@ -155,6 +156,27 @@ static int sun4i_csi_probe(struct platform_device *pdev)
+ 	subdev = &csi->subdev;
+ 	vdev = &csi->vdev;
  
-@@ -801,7 +801,7 @@ static int pxa168fb_remove(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 
--	dma_free_wc(fbi->dev, PAGE_ALIGN(info->fix.smem_len),
-+	dma_free_wc(fbi->dev, info->fix.smem_len,
- 		    info->screen_base, info->fix.smem_start);
- 
- 	clk_disable_unprepare(fbi->clk);
++	/*
++	 * On Allwinner SoCs, some high memory bandwidth devices do DMA
++	 * directly over the memory bus (called MBUS), instead of the
++	 * system bus. The memory bus has a different addressing scheme
++	 * without the DRAM starting offset.
++	 *
++	 * In some cases this can be described by an interconnect in
++	 * the device tree. In other cases where the hardware is not
++	 * fully understood and the interconnect is left out of the
++	 * device tree, fall back to a default offset.
++	 */
++	if (of_find_property(csi->dev->of_node, "interconnects", NULL)) {
++		ret = of_dma_configure(csi->dev, csi->dev->of_node, true);
++		if (ret)
++			return ret;
++	} else {
++#ifdef PHYS_PFN_OFFSET
++		csi->dev->dma_pfn_offset = PHYS_PFN_OFFSET;
++#endif
++	}
++
+ 	csi->mdev.dev = csi->dev;
+ 	strscpy(csi->mdev.model, "Allwinner Video Capture Device",
+ 		sizeof(csi->mdev.model));
 -- 
 2.20.1
 
