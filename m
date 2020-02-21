@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17E1F1675B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F7841676EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387423AbgBUIPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:15:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52530 "EHLO mail.kernel.org"
+        id S1728435AbgBUH7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:59:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732657AbgBUIPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:15:41 -0500
+        id S1730783AbgBUH7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:59:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8836624670;
-        Fri, 21 Feb 2020 08:15:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A5EE20801;
+        Fri, 21 Feb 2020 07:59:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272941;
-        bh=PNI4J4LnI5EeNudriscWBtbKyV+GK1O1DWXIYeyYIG4=;
+        s=default; t=1582271978;
+        bh=ghfHmbsHqcAaTT8fpcwffk7RwHomEhJQzeyQkH2KBl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AQDxkluAlHUrfNjCw0gN9Xn95K4eC0Xhx0SBXOMOKwoen6TbDd1tOM4H+Pt5eKWq0
-         KFw4iTJmonK1+kFC13r5PY2FYNeCu87FXtCyEIRSHbJMIMgr2dgyVNiVcuvAHWMzby
-         Yc1O4reUROukYZ/rybsIS6xyAPYELUnqR8cBnnTI=
+        b=XFjRiWVkKHkcp6aSHKqIlOTqnkl3KiWbNBo5khXK3NFXhWZDE++TGQeQ8mOAiI6R8
+         Xjx8s0K1i2HfA01DpCH+Ua3Br7jdWlNQz5ZyAu6vWfRwQyLZfDftrvkPHq9VZ3W+HU
+         JBHM0GOhkqgsenQ0uP6749kp0CTtS+lkmRQRPjU8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Best <sbest@redhat.com>,
-        Douglas Miller <dougmill@us.ibm.com>,
-        Oliver OHalloran <oohall@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 296/344] selftests/eeh: Bump EEH wait time to 60s
-Date:   Fri, 21 Feb 2020 08:41:35 +0100
-Message-Id: <20200221072416.768276335@linuxfoundation.org>
+Subject: [PATCH 5.5 371/399] lib/scatterlist.c: adjust indentation in __sg_alloc_table
+Date:   Fri, 21 Feb 2020 08:41:36 +0100
+Message-Id: <20200221072436.541669447@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,49 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver O'Halloran <oohall@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 414f50434aa2463202a5b35e844f4125dd1a7101 ]
+[ Upstream commit 4e456fee215677584cafa7f67298a76917e89c64 ]
 
-Some newer cards supported by aacraid can take up to 40s to recover
-after an EEH event. This causes spurious failures in the basic EEH
-self-test since the current maximim timeout is only 30s.
+Clang warns:
 
-Fix the immediate issue by bumping the timeout to a default of 60s,
-and allow the wait time to be specified via an environmental variable
-(EEH_MAX_WAIT).
+  ../lib/scatterlist.c:314:5: warning: misleading indentation; statement
+  is not part of the previous 'if' [-Wmisleading-indentation]
+                          return -ENOMEM;
+                          ^
+  ../lib/scatterlist.c:311:4: note: previous statement is here
+                          if (prv)
+                          ^
+  1 warning generated.
 
-Reported-by: Steve Best <sbest@redhat.com>
-Suggested-by: Douglas Miller <dougmill@us.ibm.com>
-Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20200122031125.25991-1-oohall@gmail.com
+This warning occurs because there is a space before the tab on this
+line.  Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
+
+Link: http://lkml.kernel.org/r/20191218033606.11942-1-natechancellor@gmail.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/830
+Fixes: edce6820a9fd ("scatterlist: prevent invalid free when alloc fails")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/powerpc/eeh/eeh-functions.sh | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ lib/scatterlist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/powerpc/eeh/eeh-functions.sh b/tools/testing/selftests/powerpc/eeh/eeh-functions.sh
-index 26112ab5cdf42..f52ed92b53e74 100755
---- a/tools/testing/selftests/powerpc/eeh/eeh-functions.sh
-+++ b/tools/testing/selftests/powerpc/eeh/eeh-functions.sh
-@@ -53,9 +53,13 @@ eeh_one_dev() {
- 	# is a no-op.
- 	echo $dev >/sys/kernel/debug/powerpc/eeh_dev_check
+diff --git a/lib/scatterlist.c b/lib/scatterlist.c
+index c2cf2c311b7db..5813072bc5895 100644
+--- a/lib/scatterlist.c
++++ b/lib/scatterlist.c
+@@ -311,7 +311,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
+ 			if (prv)
+ 				table->nents = ++table->orig_nents;
  
--	# Enforce a 30s timeout for recovery. Even the IPR, which is infamously
--	# slow to reset, should recover within 30s.
--	max_wait=30
-+	# Default to a 60s timeout when waiting for a device to recover. This
-+	# is an arbitrary default which can be overridden by setting the
-+	# EEH_MAX_WAIT environmental variable when required.
-+
-+	# The current record holder for longest recovery time is:
-+	#  "Adaptec Series 8 12G SAS/PCIe 3" at 39 seconds
-+	max_wait=${EEH_MAX_WAIT:=60}
+- 			return -ENOMEM;
++			return -ENOMEM;
+ 		}
  
- 	for i in `seq 0 ${max_wait}` ; do
- 		if pe_ok $dev ; then
+ 		sg_init_table(sg, alloc_size);
 -- 
 2.20.1
 
