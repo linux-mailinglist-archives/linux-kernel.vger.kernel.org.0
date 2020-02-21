@@ -2,93 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20CCE166E64
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 05:19:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 610C4166E74
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 05:22:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729630AbgBUETl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 23:19:41 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:43680 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729535AbgBUETl (ORCPT
+        id S1729612AbgBUEWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 23:22:36 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39076 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729280AbgBUEWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 23:19:41 -0500
-Received: by mail-qt1-f194.google.com with SMTP id g21so394707qtq.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 20:19:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=jR+bcPiDsug87G22T3m75d03tbxYdln+pR8aYjajd+4=;
-        b=DMUfLkmoWwY7Oen9tGr4KystEUnaEeq09VO0b6IloNA1i4L1y4z5QiBty8yLLiJl+z
-         yNUHWlktuMullZOs5k5Tq7xYy7cEs1b2JSdOmpwEzRShPGl2qOwdCkTwJzIBSO3Lwk0l
-         22p6zc3l/5yEZXnL6+yJ+Wdp6GRQ9rC3m615Re8S7WyyRvTa5TUxatNwR05kSZDgn4T0
-         iMcSnYCkkWgu16yoJJCkL6Pnw6XY/HMsXu4vJ2tuo2AIOiFoYWIdexFCOMQ6G92sqswf
-         /Hb4v9ObkoFPMM+J2Z9p3m7Rc4BzoeC+Ej8jxvzhHUTCXPxn0wG+7gLOfjQKSerueQyu
-         SiXQ==
+        Thu, 20 Feb 2020 23:22:36 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g6so312158plp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 20:22:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=jR+bcPiDsug87G22T3m75d03tbxYdln+pR8aYjajd+4=;
-        b=AGMEYD4yxCrIPIr2AGHGMUZFsddNsSvRVzD6QV6dNxoz1/6kR1jkmsf1hYgm8ksQnZ
-         kgJ953dWwFBUF015JTYoOI1C+fjvR2eHy2E+OcXP6/IMFrEMUN6KE5qOzRxVY8lITj/q
-         LXk5NOBpkL+u37bHgj5L7m/VFu2yDcNCTpdBuNZEMB+wMi3DrTw3NV6kj3Li252mtm37
-         86kmzGJf9mJ7UEa9zZrNYw2FUuCkmtcAL45Zgeef1fP+jqP8p0nc4OLP/EADYUR1ftc+
-         Z6V3rilNLS4NAaK4IHUxGYrvH7aEOhcLBmNFujerfAXPl4jBtY3X4q1eW0QOT0tV0lga
-         KmKg==
-X-Gm-Message-State: APjAAAXjImzsM+vs/nP0hdvVo4+SasFjOfISczQb28SQpKHKaLyApWz7
-        R1GlixntDAs046yz8bXtEel/kw==
-X-Google-Smtp-Source: APXvYqz86G10lqygxIpng+OwtWH5WIdgO6o9B7vkFsK2yXRRy/kbL6ba3fG6yH5n6nY1dlclIKG8EA==
-X-Received: by 2002:aed:2d67:: with SMTP id h94mr29295311qtd.74.1582258780516;
-        Thu, 20 Feb 2020 20:19:40 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id y91sm975458qtd.13.2020.02.20.20.19.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2020 20:19:39 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ju/zaBpvWAo0tPrtMvrLc+tZUkDMjmmyyQeZUswt94Q=;
+        b=rZxNS5XJBI0Pj02HTyzBQrCNXXMfYNSE6DqEQ8ba7WCOJEkITPxUcrjbshEP9McVK0
+         S8utzMZ7Es0kIJ+/34sZlWhol1vZ9F/pSQO7mUR9BC7YZFN6Imxgf1/QlC5nILnVKCcw
+         C/Pjv/vfs0wXIr2X3DwAYRNJv4HNGQ5zORj6YGw2FlX8r6opGOOQ63+fnOoBaqQLYcwk
+         V7/wYmkrq088CrHZJPgoczwRPaD6Wej3B1U8JGbqvPqiN58IzyMA2cKA0DSH0XDGIamH
+         MwKo5rTehMmLurdsZBO3r8VHFNJCQAtVycL96neJp6TvUnHkd2UUSnivFc79/t4ljYWB
+         xXpA==
+X-Gm-Message-State: APjAAAWNVJXn2OzjcJV7kydtTwliGjZmUJsZ8/doB0ivUVk84AoDo5hg
+        jIfiqnMEgfp2Dr7+r13bFI0=
+X-Google-Smtp-Source: APXvYqzNG1mdGIKbi/T9kQ5qmyRVwaYky9rxueeBZ5HuMfH5DWnDyqjC4hVrR9bCSq4M+kVynFzoaA==
+X-Received: by 2002:a17:90a:c20d:: with SMTP id e13mr701306pjt.95.1582258955584;
+        Thu, 20 Feb 2020 20:22:35 -0800 (PST)
+Received: from sultan-book.localdomain ([104.200.129.62])
+        by smtp.gmail.com with ESMTPSA id w18sm812318pge.4.2020.02.20.20.22.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 20:22:34 -0800 (PST)
+Date:   Thu, 20 Feb 2020 20:22:32 -0800
+From:   Sultan Alsawaf <sultan@kerneltoast.com>
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH] mm: Stop kswapd early when nothing's waiting for it to
+ free pages
+Message-ID: <20200221042232.GA2197@sultan-book.localdomain>
+References: <20200219182522.1960-1-sultan@kerneltoast.com>
+ <dcd1cb4c-89dc-856b-ea1b-8d4930fec3eb@intel.com>
+ <20200219194006.GA3075@sultan-book.localdomain>
+ <20200219200527.GF11847@dhcp22.suse.cz>
+ <20200219204220.GA3488@sultan-book.localdomain>
+ <20200219214513.GL3420@suse.de>
+ <20200219224231.GA5190@sultan-book.localdomain>
+ <20200220101945.GN3420@suse.de>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] fs: fix a data race in i_size_write/i_size_read
-Date:   Thu, 20 Feb 2020 23:19:39 -0500
-Message-Id: <7351A815-AA56-45FC-B15F-38F81F140253@lca.pw>
-References: <CANpmjNM=+y-OwKjtsjsEkwPjpHXpt7ywaE48JyiND6dKt=Vf1Q@mail.gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <CANpmjNM=+y-OwKjtsjsEkwPjpHXpt7ywaE48JyiND6dKt=Vf1Q@mail.gmail.com>
-To:     Marco Elver <elver@google.com>
-X-Mailer: iPhone Mail (17D50)
+Content-Disposition: inline
+In-Reply-To: <20200220101945.GN3420@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 20, 2020 at 10:19:45AM +0000, Mel Gorman wrote:
+> I'm not entirely convinced. The reason the high watermark exists is to have
+> kswapd work long enough to make progress without a process having to direct
+> reclaim. The most straight-forward example would be a streaming reader of
+> a large file. It'll keep pushing the zone towards the low watermark and
+> kswapd has to keep ahead of the reader. If we cut kswapd off too quickly,
+> the min watermark is hit and stalls occur. While kswapd could stop at the
+> min watermark, it leaves a very short window for kswapd to make enough
+> progress before the min watermark is hit.
+> 
+> At minimum, any change in this area would need to include the /proc/vmstats
+> on allocstat and pg*direct* to ensure that direct reclaim stalls are
+> not worse.
+> 
+> I'm not a fan of the patch in question because kswapd can be woken between
+> the low and min watermark without stalling but we really do expect kswapd
+> to make progress and continue to make progress to avoid future stalls. The
+> changelog had no information on the before/after impact of the patch and
+> this is an area where intuition can disagree with real behaviour.
+> 
+> -- 
+> Mel Gorman
+> SUSE Labs
 
+Okay, then let's test real behavior.
 
-> On Feb 19, 2020, at 4:21 AM, Marco Elver <elver@google.com> wrote:
-> 
-> Let's assume the WRITE_ONCE can be dropped.
-> 
-> The load is a different story. While load tearing may not be an issue,
-> it's more likely that other optimizations can break the code. For
-> example load fusing can break code that expects repeated loads in a
-> loop. E.g. I found these uses of i_size_read in loops:
-> 
-> git grep -E '(for|while) \(.*i_size_read'
-> fs/ocfs2/dir.c: while (ctx->pos < i_size_read(inode)) {
-> fs/ocfs2/dir.c:                 for (i = 0; i < i_size_read(inode) &&
-> i < offset; ) {
-> fs/ocfs2/dir.c: while (ctx->pos < i_size_read(inode)) {
-> fs/ocfs2/dir.c:         while (ctx->pos < i_size_read(inode)
-> fs/squashfs/dir.c:      while (length < i_size_read(inode)) {
-> fs/squashfs/namei.c:    while (length < i_size_read(dir)) {
-> 
-> Can i_size writes happen concurrently, and if so will these break if
-> the compiler decides to just do i_size_read's load once, and keep the
-> result in a register?
+I fired up my i5-8265U laptop with vanilla linux-next and passed mem=2G on the
+command line. After boot up, I opened up chromium and played a video on YouTube.
+Immediately after the video started, my laptop completely froze for a few
+seconds; then, a few seconds later, my cursor began to respond again, but moving
+it around was very laggy. The audio from the video playing was choppy during
+this time. About 15-20 seconds after I had started the YouTube video, my system
+finally stopped lagging.
 
-Al, is it more acceptable to add READ_ONCE() only then?
+Then I tried again with my patch applied (albeit a correct version that doesn't
+use the refcount API). Upon starting the same YouTube video in chromium, my
+laptop didn't freeze or stutter at all. The cursor was responsive and there was
+no stuttering, or choppy audio.
+
+I tested this multiple times with reproducible results each time.
+
+I will attach a functional v2 of the patch that I used.
+
+Sultan
