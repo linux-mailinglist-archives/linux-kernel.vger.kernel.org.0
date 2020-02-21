@@ -2,65 +2,310 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98F31166DC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:35:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B151166DE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:40:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729718AbgBUDfV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 20 Feb 2020 22:35:21 -0500
-Received: from szxga01-in.huawei.com ([45.249.212.187]:2967 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727944AbgBUDfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 22:35:21 -0500
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id 1C57FFA6500AAE6364F0;
-        Fri, 21 Feb 2020 11:35:16 +0800 (CST)
-Received: from dggeme752-chm.china.huawei.com (10.3.19.98) by
- DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 21 Feb 2020 11:35:15 +0800
-Received: from dggeme753-chm.china.huawei.com (10.3.19.99) by
- dggeme752-chm.china.huawei.com (10.3.19.98) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Fri, 21 Feb 2020 11:35:15 +0800
-Received: from dggeme753-chm.china.huawei.com ([10.7.64.70]) by
- dggeme753-chm.china.huawei.com ([10.7.64.70]) with mapi id 15.01.1713.004;
- Fri, 21 Feb 2020 11:35:14 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-CC:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jim Mattson <jmattson@google.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [PATCH RFC 2/2] KVM: nVMX: handle nested posted interrupts when
- apicv is disabled for L1
-Thread-Topic: [PATCH RFC 2/2] KVM: nVMX: handle nested posted interrupts when
- apicv is disabled for L1
-Thread-Index: AdXoZVlfSygJ+8ROSaqBNWx3makmIA==
-Date:   Fri, 21 Feb 2020 03:35:14 +0000
-Message-ID: <11a51b369e464e8e92c71cd87708e366@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.173.221.158]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+        id S1729743AbgBUDke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 22:40:34 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:61081 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727944AbgBUDke (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 22:40:34 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id 01L3cSHA001563;
+        Fri, 21 Feb 2020 12:38:28 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com 01L3cSHA001563
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582256309;
+        bh=9fN7Ow7rqVeONqx0lv47MnGX/K8QzO8kQz42Q/AlqEY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=sKSyyk3MdpVI9hgmbZBZCbe8knOjzRwkd1aM5Aq3/pCEL1TZ0qJl4sa8awPcFMNAY
+         OcFY4tgqfqmKSR5mXwGVw5nJvyAlC1Vbf2cs6bAKDLoPc0nM/ghXSxt8LKL31nHPXk
+         lpbmK06RWoeuNYWXUP5LAvJTaxODD9WgnydAlv8tilS8VhULiSHJMspbqGCat2unk9
+         Q3CI4xcLlv36JjuI2SDwvvx8KYzS5hMrCRCVxps2/bZ/tlEGtVgXGWnq3i9YwbwlBy
+         tIJRVz0+OlzL79B2fxIYNriSjWmo32SdG5jgo3eN+p0GCCqSvcCGI1qYVWF31Aw/Sy
+         Cu94nMTizwgYw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Piotr Sroka <piotrs@cadence.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Subject: [PATCH] dt-bindings: mmc: Convert Cadence SD/SDIO/eMMC controller to json-schema
+Date:   Fri, 21 Feb 2020 12:38:19 +0900
+Message-Id: <20200221033819.2966-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi:
-Vitaly Kuznetsov <vkuznets@redhat.com> write:
->Even when APICv is disabled for L1 it can (and, actually, is) still available for L2, this means we need to always call
->vmx_deliver_nested_posted_interrupt() when attempting an interrupt delivery.
->
->Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
->Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Convert the Cadence SD/SDIO/eMMC host controller IP (a.k.a. SD4HC)
+binding to DT schema format.
 
-Looks good for me. Thanks.
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+Socionext UniPhier ARM 64-bit SoCs are integrated with this IP.
+
+Cc: Piotr Sroka <piotrs@cadence.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+I wanted to kept some precious comments, which apply to multiple
+properties.
+
+I do not think 'description:' is a good fit for this.
+
+I was searching for a way to insert a comment line that does not
+affect the schema.
+
+The $comment did not work. I just use '#', which is YAML comment.
+If there is a better way, please let me know.
+
+
+ .../devicetree/bindings/mmc/cdns,sdhci.yaml   | 143 ++++++++++++++++++
+ .../devicetree/bindings/mmc/sdhci-cadence.txt |  80 ----------
+ 2 files changed, 143 insertions(+), 80 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mmc/sdhci-cadence.txt
+
+diff --git a/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml b/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
+new file mode 100644
+index 000000000000..caf765721eb2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
+@@ -0,0 +1,143 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mmc/cdns,sdhci.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Cadence SD/SDIO/eMMC Host Controller (SD4HC)
++
++maintainers:
++  - Masahiro Yamada <yamada.masahiro@socionext.com>
++  - Piotr Sroka <piotrs@cadence.com>
++
++allOf:
++  - $ref: mmc-controller.yaml
++
++properties:
++  compatible:
++    items:
++      - enum:
++         - socionext,uniphier-sd4hc
++      - const: cdns,sd4hc
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  # PHY DLL input delays:
++  # They are used to delay the data valid window, and align the window to
++  # sampling clock. The delay starts from 5ns (for delay parameter equal to 0)
++  # and it is increased by 2.5ns in each step.
++
++  cdns,phy-input-delay-sd-highspeed:
++    description: Value of the delay in the input path for SD high-speed timing
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - minimum: 0
++      - maximum: 0x1f
++
++  cdns,phy-input-delay-legacy:
++    description: Value of the delay in the input path for legacy timing
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - minimum: 0
++      - maximum: 0x1f
++
++  cdns,phy-input-delay-sd-uhs-sdr12:
++    description: Value of the delay in the input path for SD UHS SDR12 timing
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - minimum: 0
++      - maximum: 0x1f
++
++  cdns,phy-input-delay-sd-uhs-sdr25:
++    description: Value of the delay in the input path for SD UHS SDR25 timing
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - minimum: 0
++      - maximum: 0x1f
++
++  cdns,phy-input-delay-sd-uhs-sdr50:
++    description: Value of the delay in the input path for SD UHS SDR50 timing
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - minimum: 0
++      - maximum: 0x1f
++
++  cdns,phy-input-delay-sd-uhs-ddr50:
++    description: Value of the delay in the input path for SD UHS DDR50 timing
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - minimum: 0
++      - maximum: 0x1f
++
++  cdns,phy-input-delay-mmc-highspeed:
++    description: Value of the delay in the input path for MMC high-speed timing
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - minimum: 0
++      - maximum: 0x1f
++
++  cdns,phy-input-delay-mmc-ddr:
++    description: Value of the delay in the input path for eMMC high-speed DDR timing
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - minimum: 0
++      - maximum: 0x1f
++
++  # PHY DLL clock delays:
++  # Each delay property represents the fraction of the clock period.
++  # The approximate delay value will be
++  # (<delay property value>/128)*sdmclk_clock_period.
++
++  cdns,phy-dll-delay-sdclk:
++    description: |
++      Value of the delay introduced on the sdclk output for all modes except
++      HS200, HS400 and HS400_ES.
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - minimum: 0
++      - maximum: 0x7f
++
++  cdns,phy-dll-delay-sdclk-hsmmc:
++    description: |
++      Value of the delay introduced on the sdclk output for HS200, HS400 and
++      HS400_ES speed modes.
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - minimum: 0
++      - maximum: 0x7f
++
++  cdns,phy-dll-delay-strobe:
++    description: |
++      Value of the delay introduced on the dat_strobe input used in
++      HS400 / HS400_ES speed modes.
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - minimum: 0
++      - maximum: 0x7f
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++examples:
++  - |
++    emmc: sdhci@5a000000 {
++        compatible = "socionext,uniphier-sd4hc", "cdns,sd4hc";
++        reg = <0x5a000000 0x400>;
++        interrupts = <0 78 4>;
++        clocks = <&clk 4>;
++        bus-width = <8>;
++        mmc-ddr-1_8v;
++        mmc-hs200-1_8v;
++        mmc-hs400-1_8v;
++        cdns,phy-dll-delay-sdclk = <0>;
++    };
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-cadence.txt b/Documentation/devicetree/bindings/mmc/sdhci-cadence.txt
+deleted file mode 100644
+index fa423c277853..000000000000
+--- a/Documentation/devicetree/bindings/mmc/sdhci-cadence.txt
++++ /dev/null
+@@ -1,80 +0,0 @@
+-* Cadence SD/SDIO/eMMC Host Controller
+-
+-Required properties:
+-- compatible: should be one of the following:
+-    "cdns,sd4hc"               - default of the IP
+-    "socionext,uniphier-sd4hc" - for Socionext UniPhier SoCs
+-- reg: offset and length of the register set for the device.
+-- interrupts: a single interrupt specifier.
+-- clocks: phandle to the input clock.
+-
+-Optional properties:
+-For eMMC configuration, supported speed modes are not indicated by the SDHCI
+-Capabilities Register.  Instead, the following properties should be specified
+-if supported.  See mmc.txt for details.
+-- mmc-ddr-1_8v
+-- mmc-ddr-1_2v
+-- mmc-hs200-1_8v
+-- mmc-hs200-1_2v
+-- mmc-hs400-1_8v
+-- mmc-hs400-1_2v
+-
+-Some PHY delays can be configured by following properties.
+-PHY DLL input delays:
+-They are used to delay the data valid window, and align the window
+-to sampling clock. The delay starts from 5ns (for delay parameter equal to 0)
+-and it is increased by 2.5ns in each step.
+-- cdns,phy-input-delay-sd-highspeed:
+-  Value of the delay in the input path for SD high-speed timing
+-  Valid range = [0:0x1F].
+-- cdns,phy-input-delay-legacy:
+-  Value of the delay in the input path for legacy timing
+-  Valid range = [0:0x1F].
+-- cdns,phy-input-delay-sd-uhs-sdr12:
+-  Value of the delay in the input path for SD UHS SDR12 timing
+-  Valid range = [0:0x1F].
+-- cdns,phy-input-delay-sd-uhs-sdr25:
+-  Value of the delay in the input path for SD UHS SDR25 timing
+-  Valid range = [0:0x1F].
+-- cdns,phy-input-delay-sd-uhs-sdr50:
+-  Value of the delay in the input path for SD UHS SDR50 timing
+-  Valid range = [0:0x1F].
+-- cdns,phy-input-delay-sd-uhs-ddr50:
+-  Value of the delay in the input path for SD UHS DDR50 timing
+-  Valid range = [0:0x1F].
+-- cdns,phy-input-delay-mmc-highspeed:
+-  Value of the delay in the input path for MMC high-speed timing
+-  Valid range = [0:0x1F].
+-- cdns,phy-input-delay-mmc-ddr:
+-  Value of the delay in the input path for eMMC high-speed DDR timing
+-  Valid range = [0:0x1F].
+-
+-PHY DLL clock delays:
+-Each delay property represents the fraction of the clock period.
+-The approximate delay value will be
+-(<delay property value>/128)*sdmclk_clock_period.
+-- cdns,phy-dll-delay-sdclk:
+-  Value of the delay introduced on the sdclk output
+-  for all modes except HS200, HS400 and HS400_ES.
+-  Valid range = [0:0x7F].
+-- cdns,phy-dll-delay-sdclk-hsmmc:
+-  Value of the delay introduced on the sdclk output
+-  for HS200, HS400 and HS400_ES speed modes.
+-  Valid range = [0:0x7F].
+-- cdns,phy-dll-delay-strobe:
+-  Value of the delay introduced on the dat_strobe input
+-  used in HS400 / HS400_ES speed modes.
+-  Valid range = [0:0x7F].
+-
+-Example:
+-	emmc: sdhci@5a000000 {
+-		compatible = "socionext,uniphier-sd4hc", "cdns,sd4hc";
+-		reg = <0x5a000000 0x400>;
+-		interrupts = <0 78 4>;
+-		clocks = <&clk 4>;
+-		bus-width = <8>;
+-		mmc-ddr-1_8v;
+-		mmc-hs200-1_8v;
+-		mmc-hs400-1_8v;
+-		cdns,phy-dll-delay-sdclk = <0>;
+-	};
+-- 
+2.17.1
 
