@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 770201673F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3023167325
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:09:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387641AbgBUIRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:17:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54502 "EHLO mail.kernel.org"
+        id S1732399AbgBUIJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:09:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387632AbgBUIRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:17:12 -0500
+        id S1732386AbgBUIJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:09:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 719F024685;
-        Fri, 21 Feb 2020 08:17:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AF6220722;
+        Fri, 21 Feb 2020 08:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273030;
-        bh=RCWm9jwht9Nc7F9OY0mbKbTBmshnItw0e0ZkaWrUnmU=;
+        s=default; t=1582272577;
+        bh=MbEn1xsiecBHlEcfQ+/H06d3+Z5GOAlA6hjb+80w+C4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zvOTvni+WysSovwAUd0TY3rRviOfvVRvgIltC+aJhcakb5N29wjJDTVnCd/5HL5S/
-         yh/teW4ZOply4aWAdnCiQf3pCwMMEFctz88p0u34Nyluj17crwHfhd/xDMpz11hc36
-         dQBdB8hB6ah9NVcmuEPLAmjn99M+GCXyrdUAh0pU=
+        b=DufPxxIpHWgaK6MN1TxIMvbrm3qo0z/EnfCC+s2rJG1+ek0vnfcaBTlZ59Qcoq1xK
+         pxPDCtu4h0QBD0FZlRPXPI696wcyYNLpcYwvHKAuuYjUR1fj4iiXxonvykms146Ztg
+         v19dqtWl6kaDR1KMOY7IIxhjmn7xNma/TS9VAJpI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Oliver OHalloran <oohall@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 022/191] powerpc/powernv/iov: Ensure the pdn for VFs always contains a valid PE number
+Subject: [PATCH 5.4 196/344] staging: rtl8188: avoid excessive stack usage
 Date:   Fri, 21 Feb 2020 08:39:55 +0100
-Message-Id: <20200221072253.843857348@linuxfoundation.org>
+Message-Id: <20200221072406.868659383@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,164 +43,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver O'Halloran <oohall@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 3b5b9997b331e77ce967eba2c4bc80dc3134a7fe ]
+[ Upstream commit c497ae2077c055b85c1bf04f3d182a84bd8f365b ]
 
-On pseries there is a bug with adding hotplugged devices to an IOMMU
-group. For a number of dumb reasons fixing that bug first requires
-re-working how VFs are configured on PowerNV. For background, on
-PowerNV we use the pcibios_sriov_enable() hook to do two things:
+The rtl8188 copy of the os_dep support code causes a
+warning about a very significant stack usage in the translate_scan()
+function:
 
-  1. Create a pci_dn structure for each of the VFs, and
-  2. Configure the PHB's internal BARs so the MMIO range for each VF
-     maps to a unique PE.
+drivers/staging/rtl8188eu/os_dep/ioctl_linux.c: In function 'translate_scan':
+drivers/staging/rtl8188eu/os_dep/ioctl_linux.c:306:1: error: the frame size of 1560 bytes is larger than 1400 bytes [-Werror=frame-larger-than=]
 
-Roughly speaking a PE is the hardware counterpart to a Linux IOMMU
-group since all the devices in a PE share the same IOMMU table. A PE
-also defines the set of devices that should be isolated in response to
-a PCI error (i.e. bad DMA, UR/CA, AER events, etc). When isolated all
-MMIO and DMA traffic to and from devicein the PE is blocked by the
-root complex until the PE is recovered by the OS.
+Use the same trick as in the rtl8723bs copy of the same function, and
+allocate it dynamically.
 
-The requirement to block MMIO causes a giant headache because the P8
-PHB generally uses a fixed mapping between MMIO addresses and PEs. As
-a result we need to delay configuring the IOMMU groups for device
-until after MMIO resources are assigned. For physical devices (i.e.
-non-VFs) the PE assignment is done in pcibios_setup_bridge() which is
-called immediately after the MMIO resources for downstream
-devices (and the bridge's windows) are assigned. For VFs the setup is
-more complicated because:
-
-  a) pcibios_setup_bridge() is not called again when VFs are activated, and
-  b) The pci_dev for VFs are created by generic code which runs after
-     pcibios_sriov_enable() is called.
-
-The work around for this is a two step process:
-
-  1. A fixup in pcibios_add_device() is used to initialised the cached
-     pe_number in pci_dn, then
-  2. A bus notifier then adds the device to the IOMMU group for the PE
-     specified in pci_dn->pe_number.
-
-A side effect fixing the pseries bug mentioned in the first paragraph
-is moving the fixup out of pcibios_add_device() and into
-pcibios_bus_add_device(), which is called much later. This results in
-step 2. failing because pci_dn->pe_number won't be initialised when
-the bus notifier is run.
-
-We can fix this by removing the need for the fixup. The PE for a VF is
-known before the VF is even scanned so we can initialise
-pci_dn->pe_number pcibios_sriov_enable() instead. Unfortunately,
-moving the initialisation causes two problems:
-
-  1. We trip the WARN_ON() in the current fixup code, and
-  2. The EEH core clears pdn->pe_number when recovering a VF and
-     relies on the fixup to correctly re-set it.
-
-The only justification for either of these is a comment in
-eeh_rmv_device() suggesting that pdn->pe_number *must* be set to
-IODA_INVALID_PE in order for the VF to be scanned. However, this
-comment appears to have no basis in reality. Both bugs can be fixed by
-just deleting the code.
-
-Tested-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191028085424.12006-1-oohall@gmail.com
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20200104214832.558198-1-arnd@arndb.de
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/eeh_driver.c          |  6 ------
- arch/powerpc/platforms/powernv/pci-ioda.c | 19 +++++++++++++++----
- arch/powerpc/platforms/powernv/pci.c      |  4 ----
- 3 files changed, 15 insertions(+), 14 deletions(-)
+ drivers/staging/rtl8188eu/os_dep/ioctl_linux.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/kernel/eeh_driver.c b/arch/powerpc/kernel/eeh_driver.c
-index af1f3d5f9a0f7..377d23f58197a 100644
---- a/arch/powerpc/kernel/eeh_driver.c
-+++ b/arch/powerpc/kernel/eeh_driver.c
-@@ -554,12 +554,6 @@ static void *eeh_rmv_device(struct eeh_dev *edev, void *userdata)
+diff --git a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+index ec5835d1aa8ce..9f0418ee75284 100644
+--- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+@@ -229,18 +229,21 @@ static char *translate_scan(struct adapter *padapter,
  
- 		pci_iov_remove_virtfn(edev->physfn, pdn->vf_index);
- 		edev->pdev = NULL;
--
--		/*
--		 * We have to set the VF PE number to invalid one, which is
--		 * required to plug the VF successfully.
--		 */
--		pdn->pe_number = IODA_INVALID_PE;
- #endif
- 		if (rmv_data)
- 			list_add(&edev->rmv_list, &rmv_data->edev_list);
-diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-index ee63749a2d47e..28adfe4dd04c5 100644
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -1552,6 +1552,10 @@ static void pnv_ioda_setup_vf_PE(struct pci_dev *pdev, u16 num_vfs)
+ 	/* parsing WPA/WPA2 IE */
+ 	{
+-		u8 buf[MAX_WPA_IE_LEN];
++		u8 *buf;
+ 		u8 wpa_ie[255], rsn_ie[255];
+ 		u16 wpa_len = 0, rsn_len = 0;
+ 		u8 *p;
  
- 	/* Reserve PE for each VF */
- 	for (vf_index = 0; vf_index < num_vfs; vf_index++) {
-+		int vf_devfn = pci_iov_virtfn_devfn(pdev, vf_index);
-+		int vf_bus = pci_iov_virtfn_bus(pdev, vf_index);
-+		struct pci_dn *vf_pdn;
++		buf = kzalloc(MAX_WPA_IE_LEN, GFP_ATOMIC);
++		if (!buf)
++			return start;
 +
- 		if (pdn->m64_single_mode)
- 			pe_num = pdn->pe_num_map[vf_index];
- 		else
-@@ -1564,13 +1568,11 @@ static void pnv_ioda_setup_vf_PE(struct pci_dev *pdev, u16 num_vfs)
- 		pe->pbus = NULL;
- 		pe->parent_dev = pdev;
- 		pe->mve_number = -1;
--		pe->rid = (pci_iov_virtfn_bus(pdev, vf_index) << 8) |
--			   pci_iov_virtfn_devfn(pdev, vf_index);
-+		pe->rid = (vf_bus << 8) | vf_devfn;
+ 		rtw_get_sec_ie(pnetwork->network.ies, pnetwork->network.ie_length, rsn_ie, &rsn_len, wpa_ie, &wpa_len);
+ 		RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("rtw_wx_get_scan: ssid =%s\n", pnetwork->network.ssid.ssid));
+ 		RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("rtw_wx_get_scan: wpa_len =%d rsn_len =%d\n", wpa_len, rsn_len));
  
- 		pe_info(pe, "VF %04d:%02d:%02d.%d associated with PE#%x\n",
- 			hose->global_number, pdev->bus->number,
--			PCI_SLOT(pci_iov_virtfn_devfn(pdev, vf_index)),
--			PCI_FUNC(pci_iov_virtfn_devfn(pdev, vf_index)), pe_num);
-+			PCI_SLOT(vf_devfn), PCI_FUNC(vf_devfn), pe_num);
- 
- 		if (pnv_ioda_configure_pe(phb, pe)) {
- 			/* XXX What do we do here ? */
-@@ -1584,6 +1586,15 @@ static void pnv_ioda_setup_vf_PE(struct pci_dev *pdev, u16 num_vfs)
- 		list_add_tail(&pe->list, &phb->ioda.pe_list);
- 		mutex_unlock(&phb->ioda.pe_list_mutex);
- 
-+		/* associate this pe to it's pdn */
-+		list_for_each_entry(vf_pdn, &pdn->parent->child_list, list) {
-+			if (vf_pdn->busno == vf_bus &&
-+			    vf_pdn->devfn == vf_devfn) {
-+				vf_pdn->pe_number = pe_num;
-+				break;
-+			}
-+		}
-+
- 		pnv_pci_ioda2_setup_dma_pe(phb, pe);
+ 		if (wpa_len > 0) {
+ 			p = buf;
+-			memset(buf, 0, MAX_WPA_IE_LEN);
+ 			p += sprintf(p, "wpa_ie=");
+ 			for (i = 0; i < wpa_len; i++)
+ 				p += sprintf(p, "%02x", wpa_ie[i]);
+@@ -257,7 +260,6 @@ static char *translate_scan(struct adapter *padapter,
+ 		}
+ 		if (rsn_len > 0) {
+ 			p = buf;
+-			memset(buf, 0, MAX_WPA_IE_LEN);
+ 			p += sprintf(p, "rsn_ie=");
+ 			for (i = 0; i < rsn_len; i++)
+ 				p += sprintf(p, "%02x", rsn_ie[i]);
+@@ -271,6 +273,7 @@ static char *translate_scan(struct adapter *padapter,
+ 			iwe.u.data.length = rsn_len;
+ 			start = iwe_stream_add_point(info, start, stop, &iwe, rsn_ie);
+ 		}
++		kfree(buf);
  	}
- }
-diff --git a/arch/powerpc/platforms/powernv/pci.c b/arch/powerpc/platforms/powernv/pci.c
-index c846300b78368..aa95b8e0f66ad 100644
---- a/arch/powerpc/platforms/powernv/pci.c
-+++ b/arch/powerpc/platforms/powernv/pci.c
-@@ -822,16 +822,12 @@ void pnv_pci_dma_dev_setup(struct pci_dev *pdev)
- 	struct pnv_phb *phb = hose->private_data;
- #ifdef CONFIG_PCI_IOV
- 	struct pnv_ioda_pe *pe;
--	struct pci_dn *pdn;
  
- 	/* Fix the VF pdn PE number */
- 	if (pdev->is_virtfn) {
--		pdn = pci_get_pdn(pdev);
--		WARN_ON(pdn->pe_number != IODA_INVALID_PE);
- 		list_for_each_entry(pe, &phb->ioda.pe_list, list) {
- 			if (pe->rid == ((pdev->bus->number << 8) |
- 			    (pdev->devfn & 0xff))) {
--				pdn->pe_number = pe->pe_number;
- 				pe->pdev = pdev;
- 				break;
- 			}
+ 	{/* parsing WPS IE */
 -- 
 2.20.1
 
