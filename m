@@ -2,110 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BC2C167CC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:52:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F44E167CC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:53:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbgBULwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 06:52:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45962 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726909AbgBULwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 06:52:32 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5740E208C4;
-        Fri, 21 Feb 2020 11:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582285951;
-        bh=fD0A4i7ST85sMfr8X97BCWyBGGZcF1CFchsdK+XT4Ko=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vBksp1iFJRObYfBEPPhfNm7oh5LD50AgE+h7nbC7zrlruU2QrxEq0MTlYFcB3rbiO
-         ekOqkGl2LPLxsbHt2cOw1GimvpzlmjmZYgKalG6nk2uHoLjIVaSqsLpjG6NTI1ssWZ
-         eh5lFbu+ZlHbIXppox1O9gS1yMg7gvNk59T8zNfQ=
-Date:   Fri, 21 Feb 2020 12:52:29 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Vitor Soares <Vitor.Soares@synopsys.com>
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "wsa@the-dreams.de" <wsa@the-dreams.de>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>
-Subject: Re: [PATCH v3 3/5] i3c: master: add i3c_for_each_dev helper
-Message-ID: <20200221115229.GA116368@kroah.com>
-References: <cover.1582069402.git.vitor.soares@synopsys.com>
- <868e5b37fd817b65e6953ed7279f5063e5fc06c5.1582069402.git.vitor.soares@synopsys.com>
- <20200219073548.GA2728338@kroah.com>
- <CH2PR12MB4216D5141E562974634430B8AE120@CH2PR12MB4216.namprd12.prod.outlook.com>
+        id S1728208AbgBULxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 06:53:09 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:47810 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726909AbgBULxI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 06:53:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Y7RbabUMIDfHWd7Ngw4xz5H4W9/l5MseELv5WZtFTE0=; b=ahBR5381IZD9MUKbH2u1z1WLC
+        KL5VezEwjBFD4BdxEJuOcvM2Uzlr7WUVzm1Zon4Zi4oOSzk9IEOipABaycY28AmAn0b+MbkrNT1tt
+        30JKFO/P/E1DbXZlnDobJuqLzEJGYPhiwXmNqM1lpYtAvad6nJxHWTkgLxG3w1bYXakOie9v1OpYy
+        t1FhKZX0rVOKhRZnSRlC/5RydWxIi7iwGpikJpElXjEC8lTdoL9IfukeZ7x7Isz6IlffpC9nxhHrs
+        P1NcVdaN0Wfz1TPM1RJigTHfn9N5EsnwMXtKYqYiC7INe8OWJD+Va3SFaq5n2RfjPKM/+6as7+ECk
+        K7J4JFjlA==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:50816)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1j56rU-00011f-Lm; Fri, 21 Feb 2020 11:52:52 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1j56rQ-0003Tj-P3; Fri, 21 Feb 2020 11:52:48 +0000
+Date:   Fri, 21 Feb 2020 11:52:48 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     ansuelsmth@gmail.com
+Cc:     'Andy Gross' <agross@kernel.org>,
+        'Bjorn Andersson' <bjorn.andersson@linaro.org>,
+        "'David S. Miller'" <davem@davemloft.net>,
+        'Rob Herring' <robh+dt@kernel.org>,
+        'Mark Rutland' <mark.rutland@arm.com>,
+        'Andrew Lunn' <andrew@lunn.ch>,
+        'Florian Fainelli' <f.fainelli@gmail.com>,
+        'Heiner Kallweit' <hkallweit1@gmail.com>,
+        linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: R: [PATCH v3 1/2] net: mdio: add ipq8064 mdio driver
+Message-ID: <20200221115248.GH25745@shell.armlinux.org.uk>
+References: <20200220232624.7001-1-ansuelsmth@gmail.com>
+ <20200221004013.GF25745@shell.armlinux.org.uk>
+ <000601d5e850$c0161cc0$40425640$@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CH2PR12MB4216D5141E562974634430B8AE120@CH2PR12MB4216.namprd12.prod.outlook.com>
+In-Reply-To: <000601d5e850$c0161cc0$40425640$@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 11:47:22AM +0000, Vitor Soares wrote:
-> Hi Greg,
-> 
-> From: Greg KH <gregkh@linuxfoundation.org>
-> Date: Wed, Feb 19, 2020 at 07:35:48
-> 
-> > On Wed, Feb 19, 2020 at 01:20:41AM +0100, Vitor Soares wrote:
-> > > Introduce i3c_for_each_dev(), an i3c device iterator for use by i3cdev.
-> > > 
-> > > Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
-> > > ---
-> > >  drivers/i3c/internals.h |  1 +
-> > >  drivers/i3c/master.c    | 12 ++++++++++++
-> > >  2 files changed, 13 insertions(+)
-> > > 
-> > > diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
-> > > index bc062e8..a6deedf 100644
-> > > --- a/drivers/i3c/internals.h
-> > > +++ b/drivers/i3c/internals.h
-> > > @@ -24,4 +24,5 @@ int i3c_dev_enable_ibi_locked(struct i3c_dev_desc *dev);
-> > >  int i3c_dev_request_ibi_locked(struct i3c_dev_desc *dev,
-> > >  			       const struct i3c_ibi_setup *req);
-> > >  void i3c_dev_free_ibi_locked(struct i3c_dev_desc *dev);
-> > > +int i3c_for_each_dev(void *data, int (*fn)(struct device *, void *));
-> > >  #endif /* I3C_INTERNAL_H */
-> > > diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> > > index 21c4372..8e22da2 100644
-> > > --- a/drivers/i3c/master.c
-> > > +++ b/drivers/i3c/master.c
-> > > @@ -2640,6 +2640,18 @@ void i3c_dev_free_ibi_locked(struct i3c_dev_desc *dev)
-> > >  	dev->ibi = NULL;
-> > >  }
-> > >  
-> > > +int i3c_for_each_dev(void *data, int (*fn)(struct device *, void *))
+On Fri, Feb 21, 2020 at 01:49:17AM +0100, ansuelsmth@gmail.com wrote:
+> > On Fri, Feb 21, 2020 at 12:26:21AM +0100, Ansuel Smith wrote:
+> > > +static int
+> > > +ipq8064_mdio_probe(struct platform_device *pdev)
 > > > +{
-> > > +	int res;
+> > > +	struct device_node *np = pdev->dev.of_node;
+> > > +	struct ipq8064_mdio *priv;
+> > > +	struct mii_bus *bus;
+> > > +	int ret;
 > > > +
-> > > +	mutex_lock(&i3c_core_lock);
-> > > +	res = bus_for_each_dev(&i3c_bus_type, NULL, data, fn);
-> > > +	mutex_unlock(&i3c_core_lock);
+> > > +	bus = devm_mdiobus_alloc_size(&pdev->dev, sizeof(*priv));
+> > > +	if (!bus)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	bus->name = "ipq8064_mdio_bus";
+> > > +	bus->read = ipq8064_mdio_read;
+> > > +	bus->write = ipq8064_mdio_write;
+> > > +	snprintf(bus->id, MII_BUS_ID_SIZE, "%s-mii", dev_name(&pdev-
+> > >dev));
+> > > +	bus->parent = &pdev->dev;
+> > > +
+> > > +	priv = bus->priv;
+> > > +	priv->base = syscon_node_to_regmap(np);
+> > > +	if (IS_ERR_OR_NULL(priv->base)) {
+> > > +		priv->base = syscon_regmap_lookup_by_phandle(np,
+> > "master");
+> > > +		if (IS_ERR_OR_NULL(priv->base)) {
+> > > +			dev_err(&pdev->dev, "master phandle not
+> > found\n");
+> > > +			return -EINVAL;
+> > > +		}
+> > > +	}
 > > 
-> > Ick, why the lock?  Are you _sure_ you need that?  The core should
-> > handle any list locking issues here, right?
-> 
-> I want to make sure that no new devices (eg: Hot-Join capable device) are 
-> added during this iteration and after this call, each new device will 
-> release a bus notification.
-> 
+> > I'm curious why you've kept this as-is given my comments?
 > > 
-> > I don't see bus-specific-locks around other subsystem functions that do
-> > this (like usb_for_each_dev).
-> 
-> I based in I2C use case.
+> > If you don't agree with them, it would be helpful to reply to the
+> > review email giving the reasons why.
+>
+> I read your command and now I understand what you mean. Since they both
+> never return NULL the IS_ERR_OR_NULL is wrong and only IS_ERR should be
+> used. Correct me if I'm wrong.
+> About the error propagation, should I return the
+> syscon_regmap_lookup_by_phandle
+> error or I can keep the EINVAL error? 
 
-Check to see if this is really needed, for some reason I doubt it...
+Hi,
 
-thanks,
+You probably want something like:
 
-greg k-h
+	priv->base = syscon_node_to_regmap(np);
+	if (IS_ERR(priv->base) && priv->base != ERR_PTR(-EPROBE_DEFER))
+		priv->base = syscon_regmap_lookup_by_phandle(np, "master");
+
+	if (priv->base == ERR_PTR(-EPROBE_DEFER)) {
+		return -EPROBE_DEFER;
+	} else if (IS_ERR(priv->base)) {
+		dev_err(&pdev->dev, "error getting syscon regmap, error=%pe\n",
+			priv->base);
+		return PTR_ERR(priv->base);
+	}
+
+Please ensure that you test the above, including the case where you
+should fall through to syscon_regmap_lookup_by_phandle().
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
