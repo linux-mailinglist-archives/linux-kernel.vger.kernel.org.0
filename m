@@ -2,102 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01A151679BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 10:48:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C29991679C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 10:49:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbgBUJsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 04:48:40 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41351 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbgBUJsk (ORCPT
+        id S1728330AbgBUJt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 04:49:27 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41396 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727150AbgBUJt0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 04:48:40 -0500
-Received: by mail-ot1-f65.google.com with SMTP id r27so1455639otc.8;
-        Fri, 21 Feb 2020 01:48:39 -0800 (PST)
+        Fri, 21 Feb 2020 04:49:26 -0500
+Received: by mail-ot1-f67.google.com with SMTP id r27so1457269otc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 01:49:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UjU3wpqCAQUp1JJhVa/3iKyUwSIH2w6WIpuUa9MXo7A=;
+        b=Y4v+gTQ0PrEwUHtM8C+xTUe3XAknh3mb35LEvuit63Pp7tC39/HbTuSnFYdEEkbkho
+         1TC6ePnd98uNgZtB8imGWhOeUygUGLzA9IfSDrYc7FQ3mzEqMK1Ut2pwHECDzufp7wci
+         KzPVIFYpB/tBw2dCm3Xh9eQFTYI3Xq94osvDJRZ5YP3MGOc9qyg6UR0/GSnPnuoeWcfr
+         UAQp/CvB2VKBmakSWvdl5z9eyBBK6rk2PN8vtvyT0v5ZJrUg/2cp00qXWLWBr2qmaZJQ
+         N2DLRre2ikylSJqbEkRUzYzPn2otLxupFcW611E4FovmbuLG3XtUAZfqSUnkE6WolMVY
+         //JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=uIi0c0G5Zb0Jw5ypN9sLASPQpOpXkoB2JbMIvsoRlKU=;
-        b=UclMjFAuAV1kAwedwAHcV8UzQWdlayQz+SAZsLLuOeez26hKTozvjWe/1jiwfipf67
-         WpsRg+wL4q4vyukT6lcHN6/B5Qe1isJODO1u6yiZuH6o81LlzB0fHXmL2gpAvyzlS/iR
-         QoLmBsvmGi7k/HOVD3SD+5lcBI88YVKF75W5wmMpK+TAFgrinaP0t50j6Q5Z9aQn1gkd
-         pOEEyzPBh5AuvqiFOV3C2gjp0pgYsIg2A7Nker5ICYUZ/4LYFnKr1BYRuk90V46P7dA3
-         vNb8z26M/uIbfRqsS/gvckwl0IYzaxMuBSoLx9j71z79iOplVOe6yhVcQMRz5rj5XdKO
-         oGwQ==
-X-Gm-Message-State: APjAAAV7UcncDfsQYtRGzXRfiSWQ4TpkLQLGIZSq5WQgL/IjctFDFcJz
-        550NfDeplfKfvXjk+Q/5eF77HHMipZRwlbTZz7I=
-X-Google-Smtp-Source: APXvYqzCfDGAqcLdudcohpMobUQi25VoP3sGfFSGSDz0m/c8bEwK2Ubq4fI8d2E03xtKyfavurE7PLjwAUBVVtlYtvQ=
-X-Received: by 2002:a9d:7984:: with SMTP id h4mr27799290otm.297.1582278518775;
- Fri, 21 Feb 2020 01:48:38 -0800 (PST)
+        bh=UjU3wpqCAQUp1JJhVa/3iKyUwSIH2w6WIpuUa9MXo7A=;
+        b=Y+/Vp0WySAc5AdC0PbmjQuMQV6XhnFPXJMQY+3Wl3q96JABrAyv5N8oDNiN4F2eGf0
+         ZIP6ONg5iNrwc7+WE3h0DFhzyGYYetk335VNcJm0GCYM9cjPkBaClp4occnNu8fB9Jqq
+         Rwv7QzSXIj/prS+8ShUKPUXHGQMpJc7ZVNSKfA5jmg9rbNposSO5Cm61jCOeVdJkUsrE
+         RXjPkqEo2ZCmIKGk/r3js9Sc8TPZv77//ezUG0rI9GuAlHC4vbpwjbYFdMknLYyA+Wnm
+         /BbzED+bjSnvzXkpR4oFpoYAdH+hp9JPdUo5QYHF9WGBoIIyXO91dYn704ZdX5IHMHIK
+         9EGA==
+X-Gm-Message-State: APjAAAVkTXCRYqEpZUKb2I8MoYcjDjciqCEg58BHe73eT4M6DtmB7oe7
+        hS/4b1Vg9vg89puDmUvKSmSbVdqMB0gdUJ20nsgePQxg
+X-Google-Smtp-Source: APXvYqzzihlA7LDlkcni2l26UodMtNxYn5TS7X3HGj79Ggz46iuBS/zFfn7Y8dbvRMAKw1EPb4ijbhYkLw/vQXdA4vM=
+X-Received: by 2002:a9d:6a85:: with SMTP id l5mr28747980otq.231.1582278565490;
+ Fri, 21 Feb 2020 01:49:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20200220172403.26062-1-wsa+renesas@sang-engineering.com>
- <20200220172403.26062-4-wsa+renesas@sang-engineering.com> <CAMuHMdWaPfc050dZiRr+gAFzsdjSo9Vo70ztWgrMGPJxLUqupw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWaPfc050dZiRr+gAFzsdjSo9Vo70ztWgrMGPJxLUqupw@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 21 Feb 2020 10:48:27 +0100
-Message-ID: <CAMuHMdXGvRRJUU7fOszPuKcvHA2ttpLTvQ5=9h3vVWPYFUbjaQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/7] i2c: allow DT nodes without 'compatible'
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-i3c@lists.infradead.org,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
+References: <20200221080510.197337-1-saravanak@google.com> <20200221080510.197337-2-saravanak@google.com>
+ <20200221092540.GA71325@kroah.com>
+In-Reply-To: <20200221092540.GA71325@kroah.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Fri, 21 Feb 2020 01:48:49 -0800
+Message-ID: <CAGETcx_yQZtU4O2KgMxVt-hSJCBtNsOpyWsSXc+OZcjjJ91M3g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] driver core: Call sync_state() even if supplier
+ has no consumers
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 10:45 AM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, Feb 20, 2020 at 6:26 PM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > Sometimes, we have unknown devices in a system and still want to block
-> > their address. For that, we allow DT nodes with only a 'reg' property.
-> > These devices will be bound to the "dummy" driver but with the name
-> > "reserved". That way, we can distinguish them and even hand them over to
-> > the "dummy" driver later when they are really requested using
-> > i2c_new_ancillary_device().
+On Fri, Feb 21, 2020 at 1:25 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Fri, Feb 21, 2020 at 12:05:08AM -0800, Saravana Kannan wrote:
+> > The initial patch that added sync_state() support didn't handle the case
+> > where a supplier has no consumers. This was because when a device is
+> > successfully bound with a driver, only its suppliers were checked to see
+> > if they are eligible to get a sync_state(). This is not sufficient for
+> > devices that have no consumers but still need to do device state clean
+> > up. So fix this.
 > >
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > Fixes: fc5a251d0fd7ca90 (driver core: Add sync_state driver/bus callback)
 >
-> Thanks for your patch!
+> Should be:
+> Fixes: fc5a251d0fd7 ("driver core: Add sync_state driver/bus callback")
+
+Sorry, late night sleepy patches are never good!
+Btw I thought the sha should be only 12 characters but then saw
+another instance where you used 16 chars. What's the right one?
+
 >
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-FTR, depending on the extra dummy removed.
-
-> but one question below.
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
 >
-> > --- a/Documentation/devicetree/bindings/i2c/i2c-ocores.txt
-> > +++ b/Documentation/devicetree/bindings/i2c/i2c-ocores.txt
-> > @@ -50,7 +50,6 @@ Examples:
-> >                 reg-io-width = <1>;     /* 8 bit read/write */
-> >
-> >                 dummy@60 {
-> > -                       compatible = "dummy";
-> >                         reg = <0x60>;
-> >                 };
-> >         };
->
-> There's a second instance to remove 18 lines below.
+> So this needs to go to 5.5 also, right?
 
-Gr{oetje,eeting}s,
+Did you mean 5.4? Yes.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-Saravana
