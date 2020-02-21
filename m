@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C96A167501
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81C421673B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388249AbgBUIVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:21:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33028 "EHLO mail.kernel.org"
+        id S1733219AbgBUIOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:14:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731212AbgBUIVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:21:41 -0500
+        id S1733213AbgBUIOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:14:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5368520578;
-        Fri, 21 Feb 2020 08:21:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B21420578;
+        Fri, 21 Feb 2020 08:14:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273300;
-        bh=hVrg8rRe/pnLXFS4sp1Q4wJtlR5vsf1nCybQKCaUqxU=;
+        s=default; t=1582272879;
+        bh=j5+g+RQG+8iUqfhHmGbPWGjRcRjG8CzYFVOGHpcaMTw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IkZlmuiIM6kz9JgnSp9Vur1g24/YA402G/UkVUtN3ZG3ldQwyEE8K0u1Hb6npjcUO
-         im+Xt6q4K9REbMeDio8Vpp/7dYtI4Ay32rdP3h9bGr4f+wisWkaEsQlgvwbf8dlYvc
-         vXCA+XeaJ22IEXZOTf/wtQbxOcWFjdM43fPvk8uI=
+        b=h4LTdY8KDmEN7pdqVQGNanROLSBVF2bKqsIE3hYhplN5lLboYWcWrtLuwSJLkmT4e
+         iO/fgUX40V0nsfFFMVMnshs3u5omS+8/vcs+G1+AMsxG8UeyyT8sdUnEWbe/fD7nMO
+         OLYl+49lgwLUt+wo/hcBzDU0ykTqB+gCrsEAIYGk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        stable@vger.kernel.org, Lorenz Bauer <lmb@cloudflare.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 118/191] visorbus: fix uninitialized variable access
+Subject: [PATCH 5.4 292/344] selftests: bpf: Reset global state between reuseport test runs
 Date:   Fri, 21 Feb 2020 08:41:31 +0100
-Message-Id: <20200221072305.058595998@linuxfoundation.org>
+Message-Id: <20200221072416.378047685@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +47,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Lorenz Bauer <lmb@cloudflare.com>
 
-[ Upstream commit caf82f727e69b647f09d57a1fc56e69d22a5f483 ]
+[ Upstream commit 51bad0f05616c43d6d34b0a19bcc9bdab8e8fb39 ]
 
-The setup_crash_devices_work_queue function only partially initializes
-the message it sends to chipset_init, leading to undefined behavior:
+Currently, there is a lot of false positives if a single reuseport test
+fails. This is because expected_results and the result map are not cleared.
 
-drivers/visorbus/visorchipset.c: In function 'setup_crash_devices_work_queue':
-drivers/visorbus/visorchipset.c:333:6: error: '((unsigned char*)&msg.hdr.flags)[0]' is used uninitialized in this function [-Werror=uninitialized]
-  if (inmsg->hdr.flags.response_expected)
+Zero both after individual test runs, which fixes the mentioned false
+positives.
 
-Set up the entire structure, zero-initializing the 'response_expected'
-flag.
-
-This was apparently found by the patch that added the -O3 build option
-in Kconfig.
-
-Fixes: 12e364b9f08a ("staging: visorchipset driver to provide registration and other services")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20200107202950.782951-1-arnd@arndb.de
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 91134d849a0e ("bpf: Test BPF_PROG_TYPE_SK_REUSEPORT")
+Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Reviewed-by: Jakub Sitnicki <jakub@cloudflare.com>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
+Link: https://lore.kernel.org/bpf/20200124112754.19664-5-lmb@cloudflare.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/visorbus/visorchipset.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ .../selftests/bpf/test_select_reuseport.c        | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/visorbus/visorchipset.c b/drivers/visorbus/visorchipset.c
-index ca752b8f495fa..cb1eb7e05f871 100644
---- a/drivers/visorbus/visorchipset.c
-+++ b/drivers/visorbus/visorchipset.c
-@@ -1210,14 +1210,17 @@ static void setup_crash_devices_work_queue(struct work_struct *work)
- {
- 	struct controlvm_message local_crash_bus_msg;
- 	struct controlvm_message local_crash_dev_msg;
--	struct controlvm_message msg;
-+	struct controlvm_message msg = {
-+		.hdr.id = CONTROLVM_CHIPSET_INIT,
-+		.cmd.init_chipset = {
-+			.bus_count = 23,
-+			.switch_count = 0,
-+		},
-+	};
- 	u32 local_crash_msg_offset;
- 	u16 local_crash_msg_count;
+diff --git a/tools/testing/selftests/bpf/test_select_reuseport.c b/tools/testing/selftests/bpf/test_select_reuseport.c
+index 7566c13eb51a7..079d0f5a29091 100644
+--- a/tools/testing/selftests/bpf/test_select_reuseport.c
++++ b/tools/testing/selftests/bpf/test_select_reuseport.c
+@@ -30,7 +30,7 @@
+ #define REUSEPORT_ARRAY_SIZE 32
  
- 	/* send init chipset msg */
--	msg.hdr.id = CONTROLVM_CHIPSET_INIT;
--	msg.cmd.init_chipset.bus_count = 23;
--	msg.cmd.init_chipset.switch_count = 0;
- 	chipset_init(&msg);
- 	/* get saved message count */
- 	if (visorchannel_read(chipset_dev->controlvm_channel,
+ static int result_map, tmp_index_ovr_map, linum_map, data_check_map;
+-static enum result expected_results[NR_RESULTS];
++static __u32 expected_results[NR_RESULTS];
+ static int sk_fds[REUSEPORT_ARRAY_SIZE];
+ static int reuseport_array, outer_map;
+ static int select_by_skb_data_prog;
+@@ -662,7 +662,19 @@ static void setup_per_test(int type, unsigned short family, bool inany)
+ 
+ static void cleanup_per_test(void)
+ {
+-	int i, err;
++	int i, err, zero = 0;
++
++	memset(expected_results, 0, sizeof(expected_results));
++
++	for (i = 0; i < NR_RESULTS; i++) {
++		err = bpf_map_update_elem(result_map, &i, &zero, BPF_ANY);
++		RET_IF(err, "reset elem in result_map",
++		       "i:%u err:%d errno:%d\n", i, err, errno);
++	}
++
++	err = bpf_map_update_elem(linum_map, &zero, &zero, BPF_ANY);
++	RET_IF(err, "reset line number in linum_map", "err:%d errno:%d\n",
++	       err, errno);
+ 
+ 	for (i = 0; i < REUSEPORT_ARRAY_SIZE; i++)
+ 		close(sk_fds[i]);
 -- 
 2.20.1
 
