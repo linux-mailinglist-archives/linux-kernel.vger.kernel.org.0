@@ -2,156 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AF30166CF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 03:39:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74BC6166CEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 03:33:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729562AbgBUCjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 21:39:06 -0500
-Received: from mail-eopbgr10045.outbound.protection.outlook.com ([40.107.1.45]:34546
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729321AbgBUCjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 21:39:06 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ljxrUqEqh9kIaQrVAwcOO2+UBdNO1TCVzL/NjYqeFcWCFjMG4VACn4I71KMAyKEuM1oi13rM96RgN/4ku4LDuta/5t+6KH1F0KDzXIPU9VdsDMrWZlpIwU8onkiH4y8FM7gM/Ed5+HgGGLNQfckEYr2eSvtldbZAT6iWoUAWYW88UvJzt6WzS50uSMQHdMk6sZqY+YucrlT6p28oMV8PbEmbx7KBLTrTEYyZ8ChfwwK7v5VhojTEV11Igz2JKw0sKi6E0/ZcbKim+4Z8Tvdd+vGIexL+BiBwM3AnpnYDk6kTZj1YwF9Ykw2yZ6AI6wbDUwu3S6qBgHZFT9fcXkwI1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2DoQ2c0wWcVtlw44EiO8dgJ20B75pVwEVOAPkPcH9fA=;
- b=kL/B9ktlTUWLSCX6ZRclBEjIUhmnvX/9YuD8L3zelJBB0X94CEJCpGN3lWWyOrdejbSNizKiZgfingDtHObauMzoi0yCNHfrs19DrvRoAxIlWdY4prqmDxrelE/8WLIVKrvY4ckH3zhjN2HPgchJopMZX9cjyDoGhjstZ3WaXNW7mZQFNR0vubjxueKfROxuSEWy2hQ3cDXIa0OA7GbiKdD7ks/FMsqmCq8GyM/Ic7YXAXtJDsKdAzPmNYQh8Fhx1X8Y9aqhhCKySNTtSUwjQ2TMySir3IL0zm9N0MfS6EAd/bUVwn4Dh8hbw4ktWizewyeR3klgsYd+AggMKf08Sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2DoQ2c0wWcVtlw44EiO8dgJ20B75pVwEVOAPkPcH9fA=;
- b=CEjvtLoh/EMHqWVbWUIQ70d0tAkunLoJBL2jkCZ9wwZvoENv43VVceVQolc+40ZTsp/q54PwQOulvZBlWdZsxcNEc8e2nW9Jd3U9s4UxidvfjaOmhVB7ql5OBKvnDoIg2PfESGvsQuvHQBnK24x9t6o8zs0U6mct1UG1+6XwEm0=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB5281.eurprd04.prod.outlook.com (52.134.89.96) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2729.25; Fri, 21 Feb 2020 02:38:28 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2729.033; Fri, 21 Feb 2020
- 02:38:28 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc:     festevam@gmail.com, kernel@pengutronix.de, linux-imx@nxp.com,
-        olof@lixom.net, aisheng.dong@nxp.com, leonard.crestez@nxp.com,
-        abel.vesa@nxp.com, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V5 2/2] soc: imx: increase build coverage for imx8m soc driver
-Date:   Fri, 21 Feb 2020 10:32:19 +0800
-Message-Id: <1582252339-15733-3-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582252339-15733-1-git-send-email-peng.fan@nxp.com>
-References: <1582252339-15733-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: HK2PR04CA0057.apcprd04.prod.outlook.com
- (2603:1096:202:14::25) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+        id S1729539AbgBUCdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 21:33:51 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:38474 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729268AbgBUCdu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 21:33:50 -0500
+Received: by mail-qt1-f195.google.com with SMTP id i23so283195qtr.5;
+        Thu, 20 Feb 2020 18:33:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=CJP5LjskY0xuyHpqzi/Sp0OFSxwmRBAuuNSOyFdMDrw=;
+        b=vLzlGE8Rc4j0z0misWUTgTTV4OEkdRDWO+AGyOAJoSj3Aekh80TjcLWegGnsawrj9I
+         WnBwGlSjWApxCrR0HhHd+fbPigpt3KUTJkL0slgPyy2kxwzGMpr/NXUa1/EmCEO4mmFe
+         Z0DWzqpmfGZrVLdRB61ZzDTMXwUQMVTHJIANmqMln0U99pk6Q37pEuDXdT32cMzPt00s
+         k33BiEfASBiEXNYwx/u99yksKE5OBc5amDD74M6yNAFr4SPm9VAIqCKB308h09WLq9G7
+         GEXYcDSTY8CwZd11se0J8SNV0CEDZbOFQ6TUkAMp1ri7lqVpObNTaw/CX9KrQ34aG1Ol
+         tFsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CJP5LjskY0xuyHpqzi/Sp0OFSxwmRBAuuNSOyFdMDrw=;
+        b=nNrLox/tN54UM6KhbYeJiBQBCfFNCFMponIQbOCf/xi/vU0tCW03lwdeTd4Zg+/H6P
+         Tg/U9pLK0M8guamqrDhvdWOf2RNuusFeNQ4IkjkgYjESTbeGuJY74YSND8idlaZPrFxh
+         3+52ehM2lVhYTzrcapvhpCNRISLG5FHAyF25+uRaGRC+6Ro219LY7F7H6x0850dHicIG
+         OV/IZH82D4nhN0wzom3D1AO9Mb91GI3HQ83WrlnSbqottVj9ffHbOZGZH75rDbOJHe2D
+         OKDDELAn1UeeoeGvX8AQaFHLr69NMrr24uXnbz1DdgdLH8V8ZpuAk3G/Ff4ONM+v5cc7
+         H7yw==
+X-Gm-Message-State: APjAAAUT664yx/bFARZ4mTrGmSQlHYTA2+eXUiLKGIqmsFQI6xGyLEdK
+        +Pfp9oPafGBhgpiBTxCOPhY=
+X-Google-Smtp-Source: APXvYqxIHEQ+62I6c+ag0k9JoRxOaDsRZzdEfqlnCP5h4FV+YOdpMGvAhHMNcxyWGGM8xrfVruWfrA==
+X-Received: by 2002:aed:2a87:: with SMTP id t7mr29337838qtd.384.1582252429515;
+        Thu, 20 Feb 2020 18:33:49 -0800 (PST)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id d185sm856433qkf.46.2020.02.20.18.33.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Feb 2020 18:33:48 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 5BE4021D25;
+        Thu, 20 Feb 2020 21:33:48 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 20 Feb 2020 21:33:48 -0500
+X-ME-Sender: <xms:ikFPXtagK57hemUqoQlkFvR8aR50EYdz22yZX_7m5XF_FxEN7-7z3w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkeefgdeglecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenog
+    fuohhrthgvugftvggtihhpvdculdegtddmnecujfgurhepfffhvffukfhfgggtuggjseht
+    tdertddttddvnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghngh
+    esghhmrghilhdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphep
+    hedvrdduheehrdduuddurdejudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
+    grihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:ikFPXnEUx8DUlerkl2WWSsKabLCwb-_JYU5cTdVquUfecPfxQEWLUw>
+    <xmx:ikFPXtdnhSmUpQdDUDatVLhkB8tIiRVmMlF-Noq2i38RWHsyNXDBIQ>
+    <xmx:ikFPXiDTcEmm7s_E1MjjprD8QgQF5ipsX5CHHgrK3sWQC_RFgtA8Fg>
+    <xmx:jEFPXgRwIIGl24hMjO5CE6WSMOeRJMzP8iCe0tf51uw8uwqwTPv2YzWi_xs>
+Received: from localhost (unknown [52.155.111.71])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 58B213060F09;
+        Thu, 20 Feb 2020 21:33:46 -0500 (EST)
+Date:   Fri, 21 Feb 2020 10:33:44 +0800
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     linux-pci@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v3 0/3] PCI: hv: Generify pci-hyperv.c
+Message-ID: <20200221023344.GJ69864@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+References: <20200210033953.99692-1-boqun.feng@gmail.com>
 MIME-Version: 1.0
-Received: from localhost.localdomain (119.31.174.66) by HK2PR04CA0057.apcprd04.prod.outlook.com (2603:1096:202:14::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2750.17 via Frontend Transport; Fri, 21 Feb 2020 02:38:24 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 2b1ced16-262c-4e7a-6bef-08d7b67721aa
-X-MS-TrafficTypeDiagnostic: AM0PR04MB5281:|AM0PR04MB5281:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB528130FD3A798CD91947CD5888120@AM0PR04MB5281.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
-X-Forefront-PRVS: 0320B28BE1
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(136003)(366004)(346002)(39860400002)(189003)(199004)(2616005)(9686003)(26005)(4326008)(956004)(478600001)(6506007)(36756003)(5660300002)(6486002)(6512007)(16526019)(8676002)(86362001)(8936002)(6666004)(52116002)(69590400006)(2906002)(186003)(66946007)(81166006)(66556008)(81156014)(316002)(66476007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5281;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: oyuM6WgTO29dWQRADM8WTrA54CT2USCYckef7YDa81NIPuOYK3Zz/fTuWJU0k6ffAEq4t6o5w/+v5Evu35XBX4a4QyWfczjIhtoVFKTN7mSY1CzGIf9OgtaLnUWzM9R2GAmhq6EzzETT2mDTpE/zV4n5CdYuKfmkTm/1HiZQ3TxW2koO50xXGOOy3sbDsUXSkNTjzkPA4rDMUO0I4e7tzNvvaKRjRS8PXDA6BKpwFk6rB4cc1SXFvYPpQdclfBTybXVViDhC1ImKPqBRPZrNwQrWrGGgUtviuZzxaZf19dvbX2gu+wW65999oVhsF+LzlFWl+kuQtpqDyIp0od8QNj663FvKj4yqSr06iPmOyB6XsYilU1F/PJCeR7yvN88hI8HmsZs7d18FFCQlrOS5X3nKMOdqRbQkendALYjFpU5AjQBEMsO5kKUyD7ze2WsJa/YHElBOUNwMIAfgZ7CpKMHpolUNDvzHfu64i8sTXr4URn4klE8ISYIgiQDRxFKIZMiOnT0Se5yPbX3b1kY3WLv24jaJboiM2aiABTe8iaEK4jf2DfWIdYtsd9fWxL0F
-X-MS-Exchange-AntiSpam-MessageData: GiRT9MspXr3FcS8Yt1SUUPk+c4zWT3z4v4NJ14oK/V4F9H3ucF9aiHUbBvfrJa7L1AqMILpYAUkAfWyeIKN8k+6HQWkGlO5MXVgb+aCujkzob0b+Bh5UfwdGDW3E573s98Od/xATgfUTrCYYP+S4/Q==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b1ced16-262c-4e7a-6bef-08d7b67721aa
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2020 02:38:28.0343
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yrvTh/VooBOhReNdE4PjSBflCqjB7XV+d5je1yMZa7O04R5o3c0QOIJazfvt/Ln7XZvZhG6MWGXypUoOQVf8cQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5281
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200210033953.99692-1-boqun.feng@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+Ping ;-)
 
-The soc-imx8.c driver is actually for i.MX8M family, so rename it
-to soc-imx8m.c.
+Any suggestion or plan on this patchset?
 
-Use CONFIG_SOC_IMX8M as build gate, not CONFIG_ARCH_MXC, to control
-whether build this driver, also make it possible for compile test.
+Thanks and Regards,
+Boqun
 
-Default set it to y for ARCH_MXC && ARM64
-
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
----
- drivers/soc/Makefile                        | 2 +-
- drivers/soc/imx/Kconfig                     | 9 +++++++++
- drivers/soc/imx/Makefile                    | 2 +-
- drivers/soc/imx/{soc-imx8.c => soc-imx8m.c} | 0
- 4 files changed, 11 insertions(+), 2 deletions(-)
- rename drivers/soc/imx/{soc-imx8.c => soc-imx8m.c} (100%)
-
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index 8b49d782a1ab..a39f17cea376 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -11,7 +11,7 @@ obj-$(CONFIG_ARCH_DOVE)		+= dove/
- obj-$(CONFIG_MACH_DOVE)		+= dove/
- obj-y				+= fsl/
- obj-$(CONFIG_ARCH_GEMINI)	+= gemini/
--obj-$(CONFIG_ARCH_MXC)		+= imx/
-+obj-y				+= imx/
- obj-$(CONFIG_ARCH_IXP4XX)	+= ixp4xx/
- obj-$(CONFIG_SOC_XWAY)		+= lantiq/
- obj-y				+= mediatek/
-diff --git a/drivers/soc/imx/Kconfig b/drivers/soc/imx/Kconfig
-index 0281ef9a1800..70019cefa617 100644
---- a/drivers/soc/imx/Kconfig
-+++ b/drivers/soc/imx/Kconfig
-@@ -17,4 +17,13 @@ config IMX_SCU_SOC
- 	  Controller Unit SoC info module, it will provide the SoC info
- 	  like SoC family, ID and revision etc.
- 
-+config SOC_IMX8M
-+	bool "i.MX8M SoC family support"
-+	depends on ARCH_MXC || COMPILE_TEST
-+	default ARCH_MXC && ARM64
-+	help
-+	  If you say yes here you get support for the NXP i.MX8M family
-+	  support, it will provide the SoC info like SoC family,
-+	  ID and revision etc.
-+
- endmenu
-diff --git a/drivers/soc/imx/Makefile b/drivers/soc/imx/Makefile
-index cf9ca42ff739..103e2c93c342 100644
---- a/drivers/soc/imx/Makefile
-+++ b/drivers/soc/imx/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-$(CONFIG_HAVE_IMX_GPC) += gpc.o
- obj-$(CONFIG_IMX_GPCV2_PM_DOMAINS) += gpcv2.o
--obj-$(CONFIG_ARCH_MXC) += soc-imx8.o
-+obj-$(CONFIG_SOC_IMX8M) += soc-imx8m.o
- obj-$(CONFIG_IMX_SCU_SOC) += soc-imx-scu.o
-diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8m.c
-similarity index 100%
-rename from drivers/soc/imx/soc-imx8.c
-rename to drivers/soc/imx/soc-imx8m.c
--- 
-2.16.4
-
+On Mon, Feb 10, 2020 at 11:39:50AM +0800, Boqun Feng wrote:
+> Hi,
+> 
+> This is the first part for virtual PCI support of Hyper-V guest on
+> ARM64. The whole patchset doesn't have any functional change, but only
+> refactors the pci-hyperv.c code to make it more arch-independent.
+> 
+> Previous version:
+> v1: https://lore.kernel.org/lkml/20200121015713.69691-1-boqun.feng@gmail.com/
+> v2: https://lore.kernel.org/linux-arm-kernel/20200203050313.69247-1-boqun.feng@gmail.com/
+> 
+> Changes since v2:
+> 
+> *	Rebased on 5.6-rc1
+> 
+> *	Reword commit logs as per Andrew's suggestion.
+> 
+> *	It makes more sense to have a generic interface to set the whole
+> 	msi_entry rather than only the "address" field. So change
+> 	hv_set_msi_address_from_desc() to hv_set_msi_entry_from_desc().
+> 	Additionally, make it an inline function as per the suggestion
+> 	of Andrew and Thomas.
+> 
+> *	Add the missing comment saying the partition_id of
+> 	hv_retarget_device_interrupt must be self.
+> 
+> *	Add the explanation for why "__packed" is needed for TLFS
+> 	structures.
+> 
+> I've done compile and boot test of this patchset, also done some tests
+> with a pass-through NVMe device.
+> 
+> Suggestions and comments are welcome!
+> 
+> Regards,
+> Boqun
+> 
+> Boqun Feng (3):
+>   PCI: hv: Move hypercall related definitions into tlfs header
+>   PCI: hv: Move retarget related structures into tlfs header
+>   PCI: hv: Introduce hv_msi_entry
+> 
+>  arch/x86/include/asm/hyperv-tlfs.h  | 41 +++++++++++++++++++++++++++
+>  arch/x86/include/asm/mshyperv.h     |  8 ++++++
+>  drivers/pci/controller/pci-hyperv.c | 43 ++---------------------------
+>  3 files changed, 52 insertions(+), 40 deletions(-)
+> 
+> -- 
+> 2.24.1
+> 
