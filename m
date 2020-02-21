@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F7841676EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E801E16756F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728435AbgBUH7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:59:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59766 "EHLO mail.kernel.org"
+        id S2388518AbgBUI1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:27:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730783AbgBUH7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:59:39 -0500
+        id S1730768AbgBUIWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:22:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A5EE20801;
-        Fri, 21 Feb 2020 07:59:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE8AE2465D;
+        Fri, 21 Feb 2020 08:22:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271978;
-        bh=ghfHmbsHqcAaTT8fpcwffk7RwHomEhJQzeyQkH2KBl8=;
+        s=default; t=1582273322;
+        bh=a19AocT5OwzaL6SK3b8YY7n+RaCFIPhwOtHuy0P9eXw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XFjRiWVkKHkcp6aSHKqIlOTqnkl3KiWbNBo5khXK3NFXhWZDE++TGQeQ8mOAiI6R8
-         Xjx8s0K1i2HfA01DpCH+Ua3Br7jdWlNQz5ZyAu6vWfRwQyLZfDftrvkPHq9VZ3W+HU
-         JBHM0GOhkqgsenQ0uP6749kp0CTtS+lkmRQRPjU8=
+        b=aeYf4CrKIW2lMv9pC7OPn107n4EVi5Z+MwoYQSLMlmNl6SzF4uNbmGMW/bEw7hubM
+         nF6+c3Itz84t4PxGoeGjG1z1oLK08X3QkfPqniVXny6GTYRQjBejCzFfrQcaLXVikH
+         lyZYvgg11fTmVwXfWqlomA3C/DP1nqFDIGF8pnlU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 371/399] lib/scatterlist.c: adjust indentation in __sg_alloc_table
-Date:   Fri, 21 Feb 2020 08:41:36 +0100
-Message-Id: <20200221072436.541669447@linuxfoundation.org>
+Subject: [PATCH 4.19 125/191] drm/nouveau: Fix copy-paste error in nouveau_fence_wait_uevent_handler
+Date:   Fri, 21 Feb 2020 08:41:38 +0100
+Message-Id: <20200221072305.802158760@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,49 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 4e456fee215677584cafa7f67298a76917e89c64 ]
+[ Upstream commit 1eb013473bff5f95b6fe1ca4dd7deda47257b9c2 ]
 
-Clang warns:
+Like other cases, it should use rcu protected 'chan' rather
+than 'fence->channel' in nouveau_fence_wait_uevent_handler.
 
-  ../lib/scatterlist.c:314:5: warning: misleading indentation; statement
-  is not part of the previous 'if' [-Wmisleading-indentation]
-                          return -ENOMEM;
-                          ^
-  ../lib/scatterlist.c:311:4: note: previous statement is here
-                          if (prv)
-                          ^
-  1 warning generated.
-
-This warning occurs because there is a space before the tab on this
-line.  Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
-
-Link: http://lkml.kernel.org/r/20191218033606.11942-1-natechancellor@gmail.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/830
-Fixes: edce6820a9fd ("scatterlist: prevent invalid free when alloc fails")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 0ec5f02f0e2c ("drm/nouveau: prevent stale fence->channel pointers, and protect with rcu")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/scatterlist.c | 2 +-
+ drivers/gpu/drm/nouveau/nouveau_fence.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-index c2cf2c311b7db..5813072bc5895 100644
---- a/lib/scatterlist.c
-+++ b/lib/scatterlist.c
-@@ -311,7 +311,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
- 			if (prv)
- 				table->nents = ++table->orig_nents;
+diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
+index 412d49bc6e560..ba3883aed4567 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_fence.c
++++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+@@ -157,7 +157,7 @@ nouveau_fence_wait_uevent_handler(struct nvif_notify *notify)
  
-- 			return -ENOMEM;
-+			return -ENOMEM;
- 		}
- 
- 		sg_init_table(sg, alloc_size);
+ 		fence = list_entry(fctx->pending.next, typeof(*fence), head);
+ 		chan = rcu_dereference_protected(fence->channel, lockdep_is_held(&fctx->lock));
+-		if (nouveau_fence_update(fence->channel, fctx))
++		if (nouveau_fence_update(chan, fctx))
+ 			ret = NVIF_NOTIFY_DROP;
+ 	}
+ 	spin_unlock_irqrestore(&fctx->lock, flags);
 -- 
 2.20.1
 
