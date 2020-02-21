@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B44E167755
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC10916764B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730278AbgBUH44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:56:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56296 "EHLO mail.kernel.org"
+        id S1732660AbgBUILR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:11:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730370AbgBUH4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:56:52 -0500
+        id S1732645AbgBUILP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:11:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6F7920578;
-        Fri, 21 Feb 2020 07:56:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7BE220578;
+        Fri, 21 Feb 2020 08:11:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271811;
-        bh=y2KdCYZvWSq0h8YAq2s31CMB/GuJJswO/YD0CnIzWXQ=;
+        s=default; t=1582272675;
+        bh=O0EmmN79xtYNYNAQcnXgYG80Tt6C1Uos6QaRz7lY4HE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bsWkmGaEt+MEpMarvMfD78CoD/qH2HLoI6okP9/WfiQa5+6d6ADK01z4+UZ+mmOP2
-         B15eXXxEz+bBjagcEbCxQlQQ+p0KfYCVm/oPOE/WZCZ1/tqROSHpz1fIJcb8YYfq/l
-         rCuHdExpI7hoYX5Tbxf58Fe6o40jCeQ+6MvIjI/A=
+        b=jg9NiZrfiuxTZsfrc1pS42RfqTLxeM+5SL8czAxVRWK9+cpbDQmJ4f/1wfUpPdchc
+         2Dx2Gm7ZUsVGZI8zRA4LJukfedxRhWjuVoyxor13RwWNRpMImN6g57kC0O2OHMe6uK
+         CRBDLOLNYSWCZjaOScEm1GBA2n2joeDF8lchJBy4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, yu kuai <yukuai3@huawei.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        stable@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 306/399] pwm: Remove set but not set variable pwm
-Date:   Fri, 21 Feb 2020 08:40:31 +0100
-Message-Id: <20200221072431.363511352@linuxfoundation.org>
+Subject: [PATCH 5.4 233/344] kbuild: remove *.tmp file when filechk fails
+Date:   Fri, 21 Feb 2020 08:40:32 +0100
+Message-Id: <20200221072410.467848941@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,46 +45,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yu kuai <yukuai3@huawei.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
 
-[ Upstream commit 9871abffc81048e20f02e15d6aa4558a44ad53ea ]
+[ Upstream commit 88fe89a47153facd8cb2d06d5c8727f7224c43c2 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Bartosz Golaszewski reports that when "make {menu,n,g,x}config" fails
+due to missing packages, a temporary file is left over, which is not
+ignored by git.
 
-	drivers/pwm/pwm-pca9685.c: In function ‘pca9685_pwm_gpio_free’:
-	drivers/pwm/pwm-pca9685.c:162:21: warning: variable ‘pwm’ set but not used [-Wunused-but-set-variable]
+For example, if GTK+ is not installed:
 
-It is never used, and so can be removed. In that case, hold and release
-the lock 'pca->lock' can be removed since nothing will be done between
-them.
+  $ make gconfig
+  *
+  * Unable to find the GTK+ installation. Please make sure that
+  * the GTK+ 2.0 development package is correctly installed.
+  * You need gtk+-2.0 gmodule-2.0 libglade-2.0
+  *
+  scripts/kconfig/Makefile:208: recipe for target 'scripts/kconfig/gconf-cfg' failed
+  make[1]: *** [scripts/kconfig/gconf-cfg] Error 1
+  Makefile:567: recipe for target 'gconfig' failed
+  make: *** [gconfig] Error 2
+  $ git status
+  HEAD detached at v5.4
+  Untracked files:
+    (use "git add <file>..." to include in what will be committed)
 
-Fixes: e926b12c611c ("pwm: Clear chip_data in pwm_put()")
-Signed-off-by: yu kuai <yukuai3@huawei.com>
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+          scripts/kconfig/gconf-cfg.tmp
+
+  nothing added to commit but untracked files present (use "git add" to track)
+
+This is because the check scripts are run with filechk, which misses
+to clean up the temporary file on failure.
+
+When the line
+
+  { $(filechk_$(1)); } > $@.tmp;
+
+... fails, it exits immediately due to the 'set -e'. Use trap to make
+sure to delete the temporary file on exit.
+
+For extra safety, I replaced $@.tmp with $(dot-target).tmp to make it
+a hidden file.
+
+Reported-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pwm/pwm-pca9685.c | 4 ----
- 1 file changed, 4 deletions(-)
+ scripts/Kbuild.include | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
-index 168684b02ebce..b07bdca3d510d 100644
---- a/drivers/pwm/pwm-pca9685.c
-+++ b/drivers/pwm/pwm-pca9685.c
-@@ -159,13 +159,9 @@ static void pca9685_pwm_gpio_set(struct gpio_chip *gpio, unsigned int offset,
- static void pca9685_pwm_gpio_free(struct gpio_chip *gpio, unsigned int offset)
- {
- 	struct pca9685 *pca = gpiochip_get_data(gpio);
--	struct pwm_device *pwm;
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index 10ba926ae2924..d1dd4a6b6adb6 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -55,14 +55,13 @@ kecho := $($(quiet)kecho)
+ # - stdin is piped in from the first prerequisite ($<) so one has
+ #   to specify a valid file as first prerequisite (often the kbuild file)
+ define filechk
+-	$(Q)set -e;				\
+-	mkdir -p $(dir $@);			\
+-	{ $(filechk_$(1)); } > $@.tmp;		\
+-	if [ -r $@ ] && cmp -s $@ $@.tmp; then	\
+-		rm -f $@.tmp;			\
+-	else					\
+-		$(kecho) '  UPD     $@';	\
+-		mv -f $@.tmp $@;		\
++	$(Q)set -e;						\
++	mkdir -p $(dir $@);					\
++	trap "rm -f $(dot-target).tmp" EXIT;			\
++	{ $(filechk_$(1)); } > $(dot-target).tmp;		\
++	if [ ! -r $@ ] || ! cmp -s $@ $(dot-target).tmp; then	\
++		$(kecho) '  UPD     $@';			\
++		mv -f $(dot-target).tmp $@;			\
+ 	fi
+ endef
  
- 	pca9685_pwm_gpio_set(gpio, offset, 0);
- 	pm_runtime_put(pca->chip.dev);
--	mutex_lock(&pca->lock);
--	pwm = &pca->chip.pwms[offset];
--	mutex_unlock(&pca->lock);
- }
- 
- static int pca9685_pwm_gpio_get_direction(struct gpio_chip *chip,
 -- 
 2.20.1
 
