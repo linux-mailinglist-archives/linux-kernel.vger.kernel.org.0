@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B05B916765B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6A8B167585
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387653AbgBUIcm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:32:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47602 "EHLO mail.kernel.org"
+        id S2388848AbgBUI2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:28:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732763AbgBUIL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:11:57 -0500
+        id S2388122AbgBUIUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:20:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E34E20722;
-        Fri, 21 Feb 2020 08:11:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 821162468F;
+        Fri, 21 Feb 2020 08:20:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272717;
-        bh=nX975cmkEA4sifV9b0KMKOPMIxYt2YzC5TeY+ulhTIM=;
+        s=default; t=1582273208;
+        bh=dVCBeU47LpUoBpEaYThXBUKJX+NcHZty3tt/uZlIUyw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aZbEqOs3NiGdBrYPgQZtqXdjzWiFfwE+WSKcpjLajMj2E+9Xo1RUWzhDbOFyLXO4r
-         ct0ATqZvpkiWXlwxN8PvueXmz10FY98WMrRUBCsVQzEqZx/jM41CAYqj9lqXi62juS
-         Y9MLyXUpClUWvFMRmMo2Px+geE5BTUIEtSO4BtKA=
+        b=UWo7w3AeXb29SGbNSdHy6rtWfJMuu/xwmfWBtDHe/Vp7VxH2lr9Sxe7Yqv335gk5j
+         e3BXdwKsBufV7alX9U3GDbz7VYYDlbs3Em5c0oz4ivT8L3t1s8V06VM2UKrOOZEfT6
+         vHW3EqDjlKqYd+EB9NwipELiLQ2I0JVgp8NTOQz0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Li RongQing <lirongqing@baidu.com>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Thomas Huth <thuth@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 221/344] bpf: Return -EBADRQC for invalid map type in __bpf_tx_xdp_map
-Date:   Fri, 21 Feb 2020 08:40:20 +0100
-Message-Id: <20200221072409.277055765@linuxfoundation.org>
+Subject: [PATCH 4.19 048/191] KVM: s390: ENOTSUPP -> EOPNOTSUPP fixups
+Date:   Fri, 21 Feb 2020 08:40:21 +0100
+Message-Id: <20200221072257.461312055@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li RongQing <lirongqing@baidu.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-[ Upstream commit 0a29275b6300f39f78a87f2038bbfe5bdbaeca47 ]
+[ Upstream commit c611990844c28c61ca4b35ff69d3a2ae95ccd486 ]
 
-A negative value should be returned if map->map_type is invalid
-although that is impossible now, but if we run into such situation
-in future, then xdpbuff could be leaked.
+There is no ENOTSUPP for userspace.
 
-Daniel Borkmann suggested:
-
--EBADRQC should be returned to stay consistent with generic XDP
-for the tracepoint output and not to be confused with -EOPNOTSUPP
-from other locations like dev_map_enqueue() when ndo_xdp_xmit is
-missing and such.
-
-Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Link: https://lore.kernel.org/bpf/1578618277-18085-1-git-send-email-lirongqing@baidu.com
+Reported-by: Julian Wiedmann <jwi@linux.ibm.com>
+Fixes: 519783935451 ("KVM: s390: introduce ais mode modify function")
+Fixes: 2c1a48f2e5ed ("KVM: S390: add new group for flic")
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Reviewed-by: Thomas Huth <thuth@redhat.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/filter.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/kvm/interrupt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 1a78d64096bbd..d59dbc88fef5d 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -3543,7 +3543,7 @@ static int __bpf_tx_xdp_map(struct net_device *dev_rx, void *fwd,
- 		return err;
- 	}
- 	default:
--		break;
-+		return -EBADRQC;
- 	}
- 	return 0;
- }
+diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+index 05ea466b9e403..3515f2b55eb9e 100644
+--- a/arch/s390/kvm/interrupt.c
++++ b/arch/s390/kvm/interrupt.c
+@@ -2109,7 +2109,7 @@ static int flic_ais_mode_get_all(struct kvm *kvm, struct kvm_device_attr *attr)
+ 		return -EINVAL;
+ 
+ 	if (!test_kvm_facility(kvm, 72))
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	mutex_lock(&fi->ais_lock);
+ 	ais.simm = fi->simm;
+@@ -2412,7 +2412,7 @@ static int modify_ais_mode(struct kvm *kvm, struct kvm_device_attr *attr)
+ 	int ret = 0;
+ 
+ 	if (!test_kvm_facility(kvm, 72))
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	if (copy_from_user(&req, (void __user *)attr->addr, sizeof(req)))
+ 		return -EFAULT;
+@@ -2492,7 +2492,7 @@ static int flic_ais_mode_set_all(struct kvm *kvm, struct kvm_device_attr *attr)
+ 	struct kvm_s390_ais_all ais;
+ 
+ 	if (!test_kvm_facility(kvm, 72))
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	if (copy_from_user(&ais, (void __user *)attr->addr, sizeof(ais)))
+ 		return -EFAULT;
 -- 
 2.20.1
 
