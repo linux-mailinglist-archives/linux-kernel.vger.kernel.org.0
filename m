@@ -2,188 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC543167D54
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 13:21:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6994E167D7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 13:28:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbgBUMVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 07:21:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726410AbgBUMVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 07:21:21 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C80CF206EF;
-        Fri, 21 Feb 2020 12:21:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582287679;
-        bh=SzoxK55YANU74un0mDIQMr1necinE4YKS3fCLL0An9w=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=m13QhdBWIn12Vi3xYU2a49RoFx7Rvr+z6V6DnAiXf1Lnl5XejsxtksYl2TfZ1ANW6
-         Yci5OPut3Sby3Gk0sBgACWsJ4nWz2ScHUj4YY3D+peI+6kXI24DMr5tM5QxwGFjSCS
-         xSuQLNZqgXIBv1956GNTe+/9EF3LYtpbzs0rz7K8=
-Date:   Fri, 21 Feb 2020 12:21:15 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>
-Subject: Re: [PATCH 1/5] iio: buffer-dmaengine: add dev-managed calls for
- buffer alloc/free
-Message-ID: <20200221122115.48d8ca90@archlinux>
-In-Reply-To: <20200220150317.1864-1-alexandru.ardelean@analog.com>
-References: <20200220150317.1864-1-alexandru.ardelean@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728086AbgBUM2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 07:28:32 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10667 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726410AbgBUM2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 07:28:31 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id DF8D1A7198EF02918178;
+        Fri, 21 Feb 2020 20:28:19 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 21 Feb 2020 20:28:11 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <evan.quan@amd.com>, <alexander.deucher@amd.com>,
+        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
+        <airlied@linux.ie>, <daniel@ffwll.ch>
+CC:     <kenneth.feng@amd.com>, <amd-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <chenzhou10@huawei.com>
+Subject: [PATCH -next] drm/amd/powerplay: Use bitwise instead of arithmetic operator for flags
+Date:   Fri, 21 Feb 2020 20:21:39 +0800
+Message-ID: <20200221122139.148664-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Feb 2020 17:03:13 +0200
-Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
+This silences the following coccinelle warning:
 
-> Currently, when using a 'iio_dmaengine_buffer_alloc()', an matching call =
-to
-> 'iio_dmaengine_buffer_free()' must be made.
->=20
-> With this change, this can be avoided by using
-> 'devm_iio_dmaengine_buffer_alloc()'. The buffer will get free'd via the
-> device's devres handling.
->=20
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> ---
->  .../buffer/industrialio-buffer-dmaengine.c    | 70 +++++++++++++++++++
->  include/linux/iio/buffer-dmaengine.h          |  5 ++
->  2 files changed, 75 insertions(+)
->=20
-> diff --git a/drivers/iio/buffer/industrialio-buffer-dmaengine.c b/drivers=
-/iio/buffer/industrialio-buffer-dmaengine.c
-> index b129693af0fd..eff89037e3f5 100644
-> --- a/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-> +++ b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-> @@ -229,6 +229,76 @@ void iio_dmaengine_buffer_free(struct iio_buffer *bu=
-ffer)
->  }
->  EXPORT_SYMBOL_GPL(iio_dmaengine_buffer_free);
-> =20
-> +static void __devm_iio_dmaengine_buffer_free(struct device *dev, void *r=
-es)
-> +{
-> +	iio_dmaengine_buffer_free(*(struct iio_buffer **)res);
-> +}
-> +
-> +/**
-> + * devm_iio_dmaengine_buffer_alloc() - Resource-managed iio_dmaengine_bu=
-ffer_alloc()
-> + * @dev: Parent device for the buffer
-> + * @channel: DMA channel name, typically "rx".
-> + *
-> + * This allocates a new IIO buffer which internally uses the DMAengine f=
-ramework
-> + * to perform its transfers. The parent device will be used to request t=
-he DMA
-> + * channel.
-> + *
-> + * Once done using the buffer iio_dmaengine_buffer_free() should be used=
- to
-> + * release it.
+"WARNING: sum of probable bitmasks, consider |"
 
-Umm.  It really shouldn't!
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> + */
-> +struct iio_buffer *devm_iio_dmaengine_buffer_alloc(struct device *dev,
-> +	const char *channel)
-> +{
-> +	struct iio_buffer **bufferp, *buffer;
-> +
-> +	bufferp =3D devres_alloc(__devm_iio_dmaengine_buffer_free,
-> +			       sizeof(*bufferp), GFP_KERNEL);
-> +	if (!bufferp)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	buffer =3D iio_dmaengine_buffer_alloc(dev, channel);
-> +	if (!IS_ERR(buffer)) {
-> +		*bufferp =3D buffer;
-> +		devres_add(dev, bufferp);
-
-=46rom a flow point of view I'd prefer.
-
-	if (IS_ERR(buffer) {
-		devres_free(buferp)
-		return buffer;
-	}
-
-	*bufferp =3D buffer;
-	devres_add(dev, bufferp);
-
-	return buffer;
-
-
-> +	} else {
-> +		devres_free(bufferp);
-> +	}
-> +
-> +	return buffer;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_iio_dmaengine_buffer_alloc);
-> +
-> +static int devm_iio_dmaengine_buffer_match(struct device *dev, void *res,
-> +	void *data)
-> +{
-> +	struct iio_buffer **r =3D res;
-> +
-> +	if (!r || !*r) {
-> +		WARN_ON(!r || !*r);
-> +		return 0;
-> +	}
-> +
-> +	return *r =3D=3D data;
-> +}
-> +
-> +/**
-> + * devm_iio_dmaengine_buffer_free - iio_dmaengine_buffer_free
-> + * @dev: Device this iio_buffer belongs to
-> + * @buffer: The iio_buffer associated with the device
-> + *
-> + * Free buffer allocated with devm_iio_dmaengine_buffer_alloc().
-> + */
-> +void devm_iio_dmaengine_buffer_free(struct device *dev,
-> +	struct iio_buffer *buffer)
-> +{
-> +	int rc;
-> +
-> +	rc =3D devres_release(dev, __devm_iio_dmaengine_buffer_free,
-> +			    devm_iio_dmaengine_buffer_match, buffer);
-> +	WARN_ON(rc);
-> +}
-> +EXPORT_SYMBOL_GPL(devm_iio_dmaengine_buffer_free);
-> +
->  MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
->  MODULE_DESCRIPTION("DMA buffer for the IIO framework");
->  MODULE_LICENSE("GPL");
-> diff --git a/include/linux/iio/buffer-dmaengine.h b/include/linux/iio/buf=
-fer-dmaengine.h
-> index b3a57444a886..8dcd973d76c1 100644
-> --- a/include/linux/iio/buffer-dmaengine.h
-> +++ b/include/linux/iio/buffer-dmaengine.h
-> @@ -14,4 +14,9 @@ struct iio_buffer *iio_dmaengine_buffer_alloc(struct de=
-vice *dev,
->  	const char *channel);
->  void iio_dmaengine_buffer_free(struct iio_buffer *buffer);
-> =20
-> +struct iio_buffer *devm_iio_dmaengine_buffer_alloc(struct device *dev,
-> +	const char *channel);
-> +void devm_iio_dmaengine_buffer_free(struct device *dev,
-> +	struct iio_buffer *buffer);
-Please align parameters with opening bracket where possible.
-
-Thanks,
-
-Jonathan
-
-> +
->  #endif
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
+index 92a65e3d..f29f95b 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
+@@ -3382,7 +3382,7 @@ static int vega10_populate_and_upload_sclk_mclk_dpm_levels(
+ 	}
+ 
+ 	if (data->need_update_dpm_table &
+-			(DPMTABLE_OD_UPDATE_SCLK + DPMTABLE_UPDATE_SCLK + DPMTABLE_UPDATE_SOCCLK)) {
++			(DPMTABLE_OD_UPDATE_SCLK | DPMTABLE_UPDATE_SCLK | DPMTABLE_UPDATE_SOCCLK)) {
+ 		result = vega10_populate_all_graphic_levels(hwmgr);
+ 		PP_ASSERT_WITH_CODE((0 == result),
+ 				"Failed to populate SCLK during PopulateNewDPMClocksStates Function!",
+@@ -3390,7 +3390,7 @@ static int vega10_populate_and_upload_sclk_mclk_dpm_levels(
+ 	}
+ 
+ 	if (data->need_update_dpm_table &
+-			(DPMTABLE_OD_UPDATE_MCLK + DPMTABLE_UPDATE_MCLK)) {
++			(DPMTABLE_OD_UPDATE_MCLK | DPMTABLE_UPDATE_MCLK)) {
+ 		result = vega10_populate_all_memory_levels(hwmgr);
+ 		PP_ASSERT_WITH_CODE((0 == result),
+ 				"Failed to populate MCLK during PopulateNewDPMClocksStates Function!",
+-- 
+2.7.4
 
