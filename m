@@ -2,62 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C25A168273
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:57:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59B05168275
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:58:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbgBUP5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:57:13 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:58128 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728643AbgBUP5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:57:12 -0500
-Received: from zn.tnic (p200300EC2F090A0078F81E233D8BB03D.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:a00:78f8:1e23:3d8b:b03d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7B9F91EC045C;
-        Fri, 21 Feb 2020 16:57:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582300631;
+        id S1729314AbgBUP57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:57:59 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:35260 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728364AbgBUP56 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 10:57:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582300677;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=PwabF4GOlu60fd6dS0Oyqq9zi1lSTotH33nDQFsA1aI=;
-        b=l44UxqreqVuG3/28DbVDIxlmN3cK9XZgPgu1+6gGUu30e9Q3y03u946G+vmKkTjCJyzksv
-        qFYmvX1xOIS/MqORAIXLlYDUh+JwM+npDli2HxSxPYiVLaHnD04s1Pf2+fC7VbqP4O8LFp
-        8y+kYaqVAhLmfNRTDbX1d1ec/GWqnq4=
-Date:   Fri, 21 Feb 2020 16:57:06 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, it+linux-x86@molgen.mpg.de
-Subject: Re: kernel BUG at arch/x86/kernel/apic/apic.c with Dell server with
- x2APIC enabled and unset X2APIC
-Message-ID: <20200221155706.GJ25747@zn.tnic>
-References: <d573ba1c-0dc4-3016-712a-cc23a8a33d42@molgen.mpg.de>
+         in-reply-to:in-reply-to:references:references;
+        bh=df9ScOEFwTTls6r9Zf0yGfvIdb7PXr3kzlNYfvbsYsg=;
+        b=hUthrwSCxBvQHcbh+UCII9HIaYQiMwAQmyCfIbUR1O8Tm4/v9Q3b+R9Ypa2Z4apQp8N1O+
+        JZzmpJj8Ad1fFgudMG4CbMNTqQlfrkf7s98aNbXQG+TY5qCxNq24OpKwDEEBhIYEzySYle
+        PyIduGPf+QD9qpDqBnmRwLD6SVT2wGk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-35-GZXIO8rIOh---kb7eT3cRg-1; Fri, 21 Feb 2020 10:57:55 -0500
+X-MC-Unique: GZXIO8rIOh---kb7eT3cRg-1
+Received: by mail-wm1-f70.google.com with SMTP id t17so787324wmi.7
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:57:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=df9ScOEFwTTls6r9Zf0yGfvIdb7PXr3kzlNYfvbsYsg=;
+        b=sBAXZGCeqsFA7XuroKi5/uDW2DWZKKqqs9tEWOtj4JcReVZPfPo2mB7THBYs3qcWG8
+         0ZLUhtnO7C8d6xpMeoAZQpYZ88tfG9i0x+y64Elu2OLjYO7HUHvPQjM6uGB+E/ka8Ydy
+         6T/tDvrA5Ob+iYU/QBYHWp4C5XlqU96j+H4XLG/v/MSnMoAGByMk7dRo0I3QlUBxvv4d
+         8LbGrWbVIYktsmlbMax+0kDA8VoOtYj9zhHamUQonMxiZPGgDm12qOa9Hq7icIxu+Nvc
+         jYkG9X1QuJ9V6EePy0fruNFoS+LNIjIPdGKeP4TjKvSW0/iPdLfQnuF7UarriB6dO1Yv
+         mlXg==
+X-Gm-Message-State: APjAAAVjQ8mKjJfEvClDkFfky27pORvYnIG5xhwY7V13PlS/kqWu8npz
+        k7bnrZ5GNJ96xMW9f+npMaACiLjHIROELn21oAV+gajmGRbHSRvZA0l8RbB0lUFD9bZqmBDfiMC
+        Xzpaf8/433+TZEwkLp6MRez2U
+X-Received: by 2002:adf:fa50:: with SMTP id y16mr47217038wrr.183.1582300674041;
+        Fri, 21 Feb 2020 07:57:54 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzDlkP5kKiX/apK/fdyvg4Z7dElRY33EXdeQ2VUj7qgatSBg7QtIiXPLhmh5NVFfYIkSZTSbQ==
+X-Received: by 2002:adf:fa50:: with SMTP id y16mr47217010wrr.183.1582300673719;
+        Fri, 21 Feb 2020 07:57:53 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id f8sm4240284wru.12.2020.02.21.07.57.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 07:57:53 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 26/61] KVM: x86: Introduce cpuid_entry_{get,has}() accessors
+In-Reply-To: <20200201185218.24473-27-sean.j.christopherson@intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-27-sean.j.christopherson@intel.com>
+Date:   Fri, 21 Feb 2020 16:57:52 +0100
+Message-ID: <875zg0q6f3.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d573ba1c-0dc4-3016-712a-cc23a8a33d42@molgen.mpg.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 03:37:23PM +0100, Paul Menzel wrote:
-> Dear Linux folks,
-> 
-> 
-> On the Dell PowerEdge T640/04WYPY, BIOS 2.4.8 11/27/2019, Linux 5.4.14 (and 4.19.57) with
-> unset `IRQ_REMAP` and `X86_X2APIC` crashes on start-up, when x2APIC is enabled in the
-> firmware.
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-Does it happen with latest 5.5-stable too? I see 5.5.5 is the last one...
+> Introduce accessors to retrieve feature bits from CPUID entries and use
+> the new accessors where applicable.  Using the accessors eliminates the
+> need to manually specify the register to be queried at no extra cost
+> (binary output is identical) and will allow adding runtime consistency
+> checks on the function and index in a future patch.
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/kvm/cpuid.c |  9 +++++----
+>  arch/x86/kvm/cpuid.h | 46 +++++++++++++++++++++++++++++++++++---------
+>  2 files changed, 42 insertions(+), 13 deletions(-)
+>
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index e3026fe638aa..3316963dad3d 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -68,7 +68,7 @@ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
+>  		best->edx |= F(APIC);
+>  
+>  	if (apic) {
+> -		if (best->ecx & F(TSC_DEADLINE_TIMER))
+> +		if (cpuid_entry_has(best, X86_FEATURE_TSC_DEADLINE_TIMER))
+>  			apic->lapic_timer.timer_mode_mask = 3 << 17;
+>  		else
+>  			apic->lapic_timer.timer_mode_mask = 1 << 17;
+> @@ -96,7 +96,8 @@ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
+>  	}
+>  
+>  	best = kvm_find_cpuid_entry(vcpu, 0xD, 1);
+> -	if (best && (best->eax & (F(XSAVES) | F(XSAVEC))))
+> +	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
+> +		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
+>  		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
+>  
+>  	/*
+> @@ -155,7 +156,7 @@ static void cpuid_fix_nx_cap(struct kvm_vcpu *vcpu)
+>  			break;
+>  		}
+>  	}
+> -	if (entry && (entry->edx & F(NX)) && !is_efer_nx()) {
+> +	if (entry && cpuid_entry_has(entry, X86_FEATURE_NX) && !is_efer_nx()) {
+>  		entry->edx &= ~F(NX);
+>  		printk(KERN_INFO "kvm: guest NX capability removed\n");
+>  	}
+> @@ -387,7 +388,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
+>  		entry->ebx |= F(TSC_ADJUST);
+>  
+>  		entry->ecx &= kvm_cpuid_7_0_ecx_x86_features;
+> -		f_la57 = entry->ecx & F(LA57);
+> +		f_la57 = cpuid_entry_get(entry, X86_FEATURE_LA57);
+>  		cpuid_mask(&entry->ecx, CPUID_7_ECX);
+>  		/* Set LA57 based on hardware capability. */
+>  		entry->ecx |= f_la57;
+> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+> index 72a79bdfed6b..64e96e4086e2 100644
+> --- a/arch/x86/kvm/cpuid.h
+> +++ b/arch/x86/kvm/cpuid.h
+> @@ -95,16 +95,10 @@ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+>  	return reverse_cpuid[x86_leaf];
+>  }
+>  
+> -static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsigned x86_feature)
+> +static __always_inline u32 *__cpuid_entry_get_reg(struct kvm_cpuid_entry2 *entry,
+> +						  const struct cpuid_reg *cpuid)
+>  {
+> -	struct kvm_cpuid_entry2 *entry;
+> -	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
+> -
+> -	entry = kvm_find_cpuid_entry(vcpu, cpuid.function, cpuid.index);
+> -	if (!entry)
+> -		return NULL;
+> -
+> -	switch (cpuid.reg) {
+> +	switch (cpuid->reg) {
+>  	case CPUID_EAX:
+>  		return &entry->eax;
+>  	case CPUID_EBX:
+> @@ -119,6 +113,40 @@ static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsi
+>  	}
+>  }
+>  
+> +static __always_inline u32 *cpuid_entry_get_reg(struct kvm_cpuid_entry2 *entry,
+> +						unsigned x86_feature)
+
+It is just me who dislikes bare 'unsigned'?
+
+> +{
+> +	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
+> +
+> +	return __cpuid_entry_get_reg(entry, &cpuid);
+> +}
+> +
+> +static __always_inline u32 cpuid_entry_get(struct kvm_cpuid_entry2 *entry,
+> +					   unsigned x86_feature)
+> +{
+> +	u32 *reg = cpuid_entry_get_reg(entry, x86_feature);
+> +
+> +	return *reg & __feature_bit(x86_feature);
+> +}
+> +
+> +static __always_inline bool cpuid_entry_has(struct kvm_cpuid_entry2 *entry,
+> +					    unsigned x86_feature)
+> +{
+> +	return cpuid_entry_get(entry, x86_feature);
+> +}
+> +
+> +static __always_inline int *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsigned x86_feature)
+> +{
+> +	struct kvm_cpuid_entry2 *entry;
+> +	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
+> +
+> +	entry = kvm_find_cpuid_entry(vcpu, cpuid.function, cpuid.index);
+> +	if (!entry)
+> +		return NULL;
+> +
+> +	return __cpuid_entry_get_reg(entry, &cpuid);
+> +}
+> +
+>  static __always_inline bool guest_cpuid_has(struct kvm_vcpu *vcpu, unsigned x86_feature)
+>  {
+>  	u32 *reg;
+
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
 -- 
-Regards/Gruss,
-    Boris.
+Vitaly
 
-https://people.kernel.org/tglx/notes-about-netiquette
