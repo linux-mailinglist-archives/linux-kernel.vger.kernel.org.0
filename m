@@ -2,102 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B371416888B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:03:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE2101688FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:09:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbgBUVDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 16:03:47 -0500
-Received: from mga09.intel.com ([134.134.136.24]:50249 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726683AbgBUVDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 16:03:47 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 13:03:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,469,1574150400"; 
-   d="scan'208";a="240442452"
-Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga006.jf.intel.com with ESMTP; 21 Feb 2020 13:03:46 -0800
-Subject: Re: [PATCH] docs: remove MPX from the x86 toc
-To:     Stephen Kitt <steve@sk2.org>, Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <20200221205733.26351-1-steve@sk2.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <cc401ede-c94e-3688-5295-fd4d4a1806a4@intel.com>
-Date:   Fri, 21 Feb 2020 13:03:46 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200221205733.26351-1-steve@sk2.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1729533AbgBUVJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 16:09:20 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:43305 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727362AbgBUVJU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 16:09:20 -0500
+Received: by mail-qk1-f194.google.com with SMTP id p7so3162057qkh.10
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 13:09:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ENPq/7GL2LdhwWd45tusEGIXiUDzJQV+38GbQQfDu9Y=;
+        b=VeesGLC8L7IzrzUN89qTRkqVXcW8jd53cLBfKygxcqlUrbJxcGc7bp+qUu5jCyDADH
+         EFzyxAyXvvYYmGIdXrocupJmYKEvrPvx8NDyBs2hFpLJmOBlvlBRikDqJjxCbgQJirlg
+         cnpRslIQxdm/MIQI51Ie35aGcmCU+FF6haH2N+J1IT0hqSkWeq0bJsT6zeiU2NWtk8gw
+         KniHr/MXtAVag3o4PU5+oWGTg5uEij0ZObOHno5LKAr5XeMyQcigiQ7kLrCewHgvYtU+
+         XeUbjFE/aV8iI2Tq3bFTinhkLWG4Rpg57qRpEOpaz9t/jboqevP8L581oOPP/DWH2ggA
+         hqRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ENPq/7GL2LdhwWd45tusEGIXiUDzJQV+38GbQQfDu9Y=;
+        b=HyNcYrdTfWtS2GnyH4iE1yai4I4JheqE4u13ucHriIhCjTU4KQU27oI3yLJrHN2GWX
+         9kYsKoYCGM41nGRzp6PksNkYgPNeWikdESZHpUcj3D9dZDsZbiGq0GhL18hbKBNb0BtI
+         nX2wqMy/B0e7hnHLSG+g17kmJpl6T/KGfCy6z8SNBwIpjwmo5eHWfXjm7bG8t+BFqAi5
+         l4oVumh0V773lO+pUWxDh7e3x5E19z87i8Rz0tXN3eYBdOorwAXdSrPUlRi7ltYgWJ3o
+         Vy1bemxUj8kf1kpe3G6RFjMyHzo8//3fF9erotLZB1RVsPguKns1JshTWua0M1Amt2Uy
+         Gmfg==
+X-Gm-Message-State: APjAAAXnIPqXrSQWLpCQmTprWELhwmSbT15qCwufQaSQXPakikOQm8Ae
+        ukIHovrReLoA0E8e0xBIgLv85g==
+X-Google-Smtp-Source: APXvYqzATGs4NTBVmPJHvs7Z3ZHgRZmLgy9kkqqhvC+t4Mg3ozlWXa7l0q0WQNcSuMmGZmO1EmypVg==
+X-Received: by 2002:a37:a84f:: with SMTP id r76mr35023486qke.115.1582319358843;
+        Fri, 21 Feb 2020 13:09:18 -0800 (PST)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id n191sm2120818qkn.6.2020.02.21.13.09.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Feb 2020 13:09:18 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     rjw@rjwysocki.net
+Cc:     elver@google.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] power/qos: fix a data race in pm_qos_*_value
+Date:   Fri, 21 Feb 2020 16:09:10 -0500
+Message-Id: <1582319350-23515-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/20 12:57 PM, Stephen Kitt wrote:
-> MPX was removed in commit 45fc24e89b7c ("x86/mpx: remove MPX from
-> arch/x86"), this removes the corresponding entry in the x86 toc.
-> 
-> This was suggested by a Sphinx warning.
+cpu_latency_constraints.target_value could be accessed concurrently as
+noticed by KCSAN,
 
-Pretty obvious miss on my part.  Thanks for finding and fixing it.
+ LTP: starting ppoll01
+ BUG: KCSAN: data-race in cpu_latency_qos_limit / pm_qos_update_target
 
-It might be nice to add:
+ write to 0xffffffff99081470 of 4 bytes by task 27532 on cpu 2:
+  pm_qos_update_target+0xa4/0x370
+  pm_qos_set_value at kernel/power/qos.c:78
+  cpu_latency_qos_apply+0x3b/0x50
+  cpu_latency_qos_remove_request+0xea/0x270
+  cpu_latency_qos_release+0x4b/0x70
+  __fput+0x187/0x3d0
+  ____fput+0x1e/0x30
+  task_work_run+0xbf/0x130
+  do_exit+0xa78/0xfd0
+  do_group_exit+0x8b/0x180
+  __x64_sys_exit_group+0x2e/0x30
+  do_syscall_64+0x91/0xb05
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Fixes: 45fc24e89b7cc ("x86/mpx: remove MPX from arch/x86")
+ read to 0xffffffff99081470 of 4 bytes by task 0 on cpu 41:
+  cpu_latency_qos_limit+0x1f/0x30
+  pm_qos_read_value at kernel/power/qos.c:55
+  cpuidle_governor_latency_req+0x4f/0x80
+  cpuidle_governor_latency_req at drivers/cpuidle/governor.c:114
+  menu_select+0x6b/0xc29
+  cpuidle_select+0x50/0x70
+  do_idle+0x214/0x280
+  cpu_startup_entry+0x1d/0x1f
+  start_secondary+0x1b2/0x230
+  secondary_startup_64+0xb6/0xc0
 
-In any case:
+ Reported by Kernel Concurrency Sanitizer on:
+ CPU: 41 PID: 0 Comm: swapper/41 Tainted: G L 5.6.0-rc2-next-20200221+ #7
+ Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40 07/10/2019
 
-Acked-by: Dave Hansen <dave.hansen@intel.com>
+The read is outside pm_qos_lock critical section which results in a data
+race. Fix it by adding a pair of READ|WRITE_ONCE().
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ kernel/power/qos.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/power/qos.c b/kernel/power/qos.c
+index 32927682bcc4..db0bed2cae26 100644
+--- a/kernel/power/qos.c
++++ b/kernel/power/qos.c
+@@ -52,7 +52,7 @@
+  */
+ s32 pm_qos_read_value(struct pm_qos_constraints *c)
+ {
+-	return c->target_value;
++	return READ_ONCE(c->target_value);
+ }
+ 
+ static int pm_qos_get_value(struct pm_qos_constraints *c)
+@@ -75,7 +75,7 @@ static int pm_qos_get_value(struct pm_qos_constraints *c)
+ 
+ static void pm_qos_set_value(struct pm_qos_constraints *c, s32 value)
+ {
+-	c->target_value = value;
++	WRITE_ONCE(c->target_value, value);
+ }
+ 
+ /**
+-- 
+1.8.3.1
+
