@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6748167749
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2E0D167742
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731338AbgBUIlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:41:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57334 "EHLO mail.kernel.org"
+        id S1730685AbgBUH5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:57:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730129AbgBUH5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730658AbgBUH5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Feb 2020 02:57:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDC3F24656;
-        Fri, 21 Feb 2020 07:57:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 711C32073A;
+        Fri, 21 Feb 2020 07:57:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271862;
-        bh=A3r53Ti4W7H0MZfUrZJ9EtnHYp8kTdo1d+21a3Ib3lc=;
+        s=default; t=1582271864;
+        bh=ZODufpkoPxhKGDUVFpS1KtfdoQy0axXfQ6zc5KDAAWg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GX8A7WtgLVlJ6Gd4OytZgr4qlD9D5WXzR+z1DEoFyCjxj0ZTEujaYrdso8aAstP3Q
-         FErGbPg9bJEbnpkHdHbpPvtdao55BnZx28/ZqNJrYzLFg90LpWMJyiE4FB4/VfnHT9
-         il7PhLIjjUWdXcOw81N28DAne/2d9PS/20gq0ZyU=
+        b=ZqEqtm7eD+UEdeKftyuOqnPn601j6CXnBoDJUi9A7MMqK5VilSPETHOFBHSsKRuUS
+         JodU791B2eyYe/h7dhz0T1nITT1bIUqbB8lbXVtj6qPP/AxpVqRs+tvOthxbA123FF
+         FGpWnab83bUrAELGEz0g0531cXUxkBSrWWu+H6LE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Saeed Mahameed <saeedm@mellanox.com>,
+        stable@vger.kernel.org, Oliver OHalloran <oohall@gmail.com>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 327/399] net/mlx5e: Fix printk format warning
-Date:   Fri, 21 Feb 2020 08:40:52 +0100
-Message-Id: <20200221072433.015460603@linuxfoundation.org>
+Subject: [PATCH 5.5 328/399] powerpc/sriov: Remove VF eeh_dev state when disabling SR-IOV
+Date:   Fri, 21 Feb 2020 08:40:53 +0100
+Message-Id: <20200221072433.087450245@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -44,36 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olof Johansson <olof@lixom.net>
+From: Oliver O'Halloran <oohall@gmail.com>
 
-[ Upstream commit ca9c74ae9be5e78541c2058db9a754947a7d4a9b ]
+[ Upstream commit 1fb4124ca9d456656a324f1ee29b7bf942f59ac8 ]
 
-Use "%zu" for size_t. Seen on ARM allmodconfig:
+When disabling virtual functions on an SR-IOV adapter we currently do not
+correctly remove the EEH state for the now-dead virtual functions. When
+removing the pci_dn that was created for the VF when SR-IOV was enabled
+we free the corresponding eeh_dev without removing it from the child device
+list of the eeh_pe that contained it. This can result in crashes due to the
+use-after-free.
 
-drivers/net/ethernet/mellanox/mlx5/core/wq.c: In function 'mlx5_wq_cyc_wqe_dump':
-include/linux/kern_levels.h:5:18: warning: format '%ld' expects argument of type 'long int', but argument 5 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-
-Fixes: 130c7b46c93d ("net/mlx5e: TX, Dump WQs wqe descriptors on CQE with error events")
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
+Reviewed-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Tested-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190821062655.19735-1-oohall@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/wq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/pci_dn.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/wq.c b/drivers/net/ethernet/mellanox/mlx5/core/wq.c
-index f2a0e72285bac..02f7e4a39578a 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/wq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/wq.c
-@@ -89,7 +89,7 @@ void mlx5_wq_cyc_wqe_dump(struct mlx5_wq_cyc *wq, u16 ix, u8 nstrides)
- 	len = nstrides << wq->fbc.log_stride;
- 	wqe = mlx5_wq_cyc_get_wqe(wq, ix);
+diff --git a/arch/powerpc/kernel/pci_dn.c b/arch/powerpc/kernel/pci_dn.c
+index 9524009ca1ae4..d876eda926094 100644
+--- a/arch/powerpc/kernel/pci_dn.c
++++ b/arch/powerpc/kernel/pci_dn.c
+@@ -244,9 +244,22 @@ void remove_dev_pci_data(struct pci_dev *pdev)
+ 				continue;
  
--	pr_info("WQE DUMP: WQ size %d WQ cur size %d, WQE index 0x%x, len: %ld\n",
-+	pr_info("WQE DUMP: WQ size %d WQ cur size %d, WQE index 0x%x, len: %zu\n",
- 		mlx5_wq_cyc_get_size(wq), wq->cur_sz, ix, len);
- 	print_hex_dump(KERN_WARNING, "", DUMP_PREFIX_OFFSET, 16, 1, wqe, len, false);
- }
+ #ifdef CONFIG_EEH
+-			/* Release EEH device for the VF */
++			/*
++			 * Release EEH state for this VF. The PCI core
++			 * has already torn down the pci_dev for this VF, but
++			 * we're responsible to removing the eeh_dev since it
++			 * has the same lifetime as the pci_dn that spawned it.
++			 */
+ 			edev = pdn_to_eeh_dev(pdn);
+ 			if (edev) {
++				/*
++				 * We allocate pci_dn's for the totalvfs count,
++				 * but only only the vfs that were activated
++				 * have a configured PE.
++				 */
++				if (edev->pe)
++					eeh_rmv_from_parent_pe(edev);
++
+ 				pdn->edev = NULL;
+ 				kfree(edev);
+ 			}
 -- 
 2.20.1
 
