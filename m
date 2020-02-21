@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A63616894C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:27:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C882F16894A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:26:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729151AbgBUVZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 16:25:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39076 "EHLO mail.kernel.org"
+        id S1729275AbgBUVZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 16:25:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728891AbgBUVZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 16:25:20 -0500
+        id S1728351AbgBUVZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 16:25:21 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53E512467B;
-        Fri, 21 Feb 2020 21:25:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4920924670;
+        Fri, 21 Feb 2020 21:25:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582320320;
-        bh=8xAYarg9uy/2NeW59dS8nkwZQkKdu+J/VHZxqaJ3p2w=;
+        s=default; t=1582320321;
+        bh=MHumjK1yVCfvgQomt98dZYGGfD2i4oMOy7Azh3SPGE0=;
         h=From:To:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=rYxtHr/TrebRDj/JKjV2lkzI0mXS/b75130u4TKjeAluUYnmY5AZOqT5nmPhgl0jR
-         mMKRJQJfRIvGa8ej+so58SE0NwoB787foVHSlXDjcnlw8oLtPWRhMm9BodcvSVbQs5
-         +jwW4um62TBIaDmaXo4sqqK2qDncfeSrpeWFf4A8=
+        b=L6LI9M2/U7k3Rw9vTL0DoWLZ/y9yWRSsjj+fxw/lMdOf56+Zx46Qn3Bw97pa9c5rr
+         jhjzuXJFQ316oQ4tmgLNydJ6LZDEHVo9CqjMiNKrSdr0dkGrcDd60E+7tZFnCFWzWz
+         oxMwaNN0C/7i4yqC+rQ0/uO4OEVqPa9Qr4CT+91U=
 From:   zanussi@kernel.org
 To:     LKML <linux-kernel@vger.kernel.org>,
         linux-rt-users <linux-rt-users@vger.kernel.org>,
@@ -34,20 +34,23 @@ To:     LKML <linux-kernel@vger.kernel.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Daniel Wagner <wagi@monom.org>,
         Tom Zanussi <zanussi@kernel.org>
-Subject: [PATCH RT 05/25] i2c: exynos5: Remove IRQF_ONESHOT
-Date:   Fri, 21 Feb 2020 15:24:33 -0600
-Message-Id: <7094729e455378bb4794f3a118c6ffbf8297b4e2.1582320278.git.zanussi@kernel.org>
+Subject: [PATCH RT 06/25] =?UTF-8?q?sched:=20migrate=5Fdis/enable:=20Use?= =?UTF-8?q?=20sleeping=5Flock=E2=80=A6()=20to=20annotate=20sleeping=20poin?= =?UTF-8?q?ts?=
+Date:   Fri, 21 Feb 2020 15:24:34 -0600
+Message-Id: <882928ccb55265cc9fd76858057faac2c132b280.1582320278.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1582320278.git.zanussi@kernel.org>
 References: <cover.1582320278.git.zanussi@kernel.org>
 In-Reply-To: <cover.1582320278.git.zanussi@kernel.org>
 References: <cover.1582320278.git.zanussi@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Scott Wood <swood@redhat.com>
 
 v4.14.170-rt75-rc1 stable review patch.
 If anyone has any objections, please let me know.
@@ -55,45 +58,54 @@ If anyone has any objections, please let me know.
 -----------
 
 
-[ Upstream commit 4b217df0ab3f7910c96e42091cc7d9f221d05f01 ]
+[ Upstream commit 4230dd3824c3e1785504e6f757ce79a4b55651fa ]
 
-The drivers sets IRQF_ONESHOT and passes only a primary handler. The IRQ
-is masked while the primary is handler is invoked independently of
-IRQF_ONESHOT.
-With IRQF_ONESHOT the core code will not force-thread the interrupt and
-this is probably not intended. I *assume* that the original author copied
-the IRQ registration from another driver which passed a primary and
-secondary handler and removed the secondary handler but keeping the
-ONESHOT flag.
+Without this, rcu_note_context_switch() will complain if an RCU read lock
+is held when migrate_enable() calls stop_one_cpu().  Likewise when
+migrate_disable() calls pin_current_cpu() which calls __read_rt_lock() --
+which bypasses the part of the mutex code that calls sleeping_lock_inc().
 
-Remove IRQF_ONESHOT.
-
-Reported-by: Benjamin Rouxel <benjamin.rouxel@uva.nl>
-Tested-by: Benjamin Rouxel <benjamin.rouxel@uva.nl>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Scott Wood <swood@redhat.com>
+[bigeasy: use sleeping_lock_…() ]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Tom Zanussi <zanussi@kernel.org>
----
- drivers/i2c/busses/i2c-exynos5.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 3855e0b11877..ec490eaac6f7 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -758,9 +758,7 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 	}
+ Conflicts:
+	kernel/sched/core.c
+---
+ kernel/cpu.c        | 2 ++
+ kernel/sched/core.c | 3 +++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 05b93cfa6fd9..9be794896d87 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -314,7 +314,9 @@ void pin_current_cpu(void)
+ 	preempt_lazy_enable();
+ 	preempt_enable();
  
- 	ret = devm_request_irq(&pdev->dev, i2c->irq, exynos5_i2c_irq,
--				IRQF_NO_SUSPEND | IRQF_ONESHOT,
--				dev_name(&pdev->dev), i2c);
--
-+			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), i2c);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "cannot request HS-I2C IRQ %d\n", i2c->irq);
- 		goto err_clk;
++	sleeping_lock_inc();
+ 	__read_rt_lock(cpuhp_pin);
++	sleeping_lock_dec();
+ 
+ 	preempt_disable();
+ 	preempt_lazy_disable();
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index fde47216af94..fcff75934bdc 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7045,7 +7045,10 @@ void migrate_enable(void)
+ 			unpin_current_cpu();
+ 			preempt_lazy_enable();
+ 			preempt_enable();
++
++			sleeping_lock_inc();
+ 			stop_one_cpu(task_cpu(p), migration_cpu_stop, &arg);
++			sleeping_lock_dec();
+ 			tlb_migrate_finish(p->mm);
+ 
+ 			return;
 -- 
 2.14.1
 
