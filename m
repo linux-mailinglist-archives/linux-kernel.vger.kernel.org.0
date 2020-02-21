@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08C5F1676F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DCD1167568
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730791AbgBUIAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:00:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32840 "EHLO mail.kernel.org"
+        id S2388429AbgBUI0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:26:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731083AbgBUIAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:00:38 -0500
+        id S1731468AbgBUIWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:22:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CDCA24656;
-        Fri, 21 Feb 2020 08:00:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B7F72469A;
+        Fri, 21 Feb 2020 08:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272038;
-        bh=JNauHAvaIQrf67Yp3oEq2kwzb5rdyPaYy0dgHVuKJ/M=;
+        s=default; t=1582273364;
+        bh=JJMmc5g1eGCmHENbQ2PMQGmXelm8gaob9rFnxvQpAFU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TmWOohD+/fq8AQk2mj3bIsM+rnb8EDWa68FWNMXb1ty1bl3N6uWxEJSoMpMnrSopi
-         2vy8CAtRq5QegvVT47TE3KXkPEbCCeonBWHhj+eRkzxm9guN/VfRczQMgTdJO23qNL
-         mhh+dCi05PXaAFPufjJXFg03zSWRi55pZ7Tejcz4=
+        b=mPyu6WXNVU5ndggZvBi4dbAl8tHgGWZx7lSF7a76qNPnRHSQmxBwvJNl9u1cnefp/
+         ptpAfnSvSMvJvIZcJj02+nQsPPYO/15ytjwvbk/ZO7oGcDqcpr+C6svdzP+sjl6zP8
+         KkZB9MQJBzo9B2hf+1/jR0k5Dv6c1pU2K6BMxfCI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
+        stable@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 391/399] kbuild: make multiple directory targets work
-Date:   Fri, 21 Feb 2020 08:41:56 +0100
-Message-Id: <20200221072437.967704372@linuxfoundation.org>
+Subject: [PATCH 4.19 144/191] btrfs: fix possible NULL-pointer dereference in integrity checks
+Date:   Fri, 21 Feb 2020 08:41:57 +0100
+Message-Id: <20200221072307.905099818@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <masahiroy@kernel.org>
+From: Johannes Thumshirn <jth@kernel.org>
 
-[ Upstream commit f566e1fbadb686e28f1c307e356114b2865ef588 ]
+[ Upstream commit 3dbd351df42109902fbcebf27104149226a4fcd9 ]
 
-Currently, the single-target build does not work when two
-or more sub-directories are given:
+A user reports a possible NULL-pointer dereference in
+btrfsic_process_superblock(). We are assigning state->fs_info to a local
+fs_info variable and afterwards checking for the presence of state.
 
-  $ make fs/ kernel/ lib/
-    CALL    scripts/checksyscalls.sh
-    CALL    scripts/atomic/check-atomics.sh
-    DESCEND  objtool
-  make[2]: Nothing to be done for 'kernel/'.
-  make[2]: Nothing to be done for 'fs/'.
-  make[2]: Nothing to be done for 'lib/'.
+While we would BUG_ON() a NULL state anyways, we can also just remove
+the local fs_info copy, as fs_info is only used once as the first
+argument for btrfs_num_copies(). There we can just pass in
+state->fs_info as well.
 
-Make it work properly.
-
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=205003
+Signed-off-by: Johannes Thumshirn <jth@kernel.org>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/check-integrity.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 1f7dc3a2e1dd1..142042ac62e21 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1691,7 +1691,7 @@ PHONY += descend $(build-dirs)
- descend: $(build-dirs)
- $(build-dirs): prepare
- 	$(Q)$(MAKE) $(build)=$@ \
--	single-build=$(if $(filter-out $@/, $(single-no-ko)),1) \
-+	single-build=$(if $(filter-out $@/, $(filter $@/%, $(single-no-ko))),1) \
- 	need-builtin=1 need-modorder=1
+diff --git a/fs/btrfs/check-integrity.c b/fs/btrfs/check-integrity.c
+index 833cf3c35b4df..3b77c8ab5357e 100644
+--- a/fs/btrfs/check-integrity.c
++++ b/fs/btrfs/check-integrity.c
+@@ -629,7 +629,6 @@ static struct btrfsic_dev_state *btrfsic_dev_state_hashtable_lookup(dev_t dev,
+ static int btrfsic_process_superblock(struct btrfsic_state *state,
+ 				      struct btrfs_fs_devices *fs_devices)
+ {
+-	struct btrfs_fs_info *fs_info = state->fs_info;
+ 	struct btrfs_super_block *selected_super;
+ 	struct list_head *dev_head = &fs_devices->devices;
+ 	struct btrfs_device *device;
+@@ -700,7 +699,7 @@ static int btrfsic_process_superblock(struct btrfsic_state *state,
+ 			break;
+ 		}
  
- clean-dirs := $(addprefix _clean_, $(clean-dirs))
+-		num_copies = btrfs_num_copies(fs_info, next_bytenr,
++		num_copies = btrfs_num_copies(state->fs_info, next_bytenr,
+ 					      state->metablock_size);
+ 		if (state->print_mask & BTRFSIC_PRINT_MASK_NUM_COPIES)
+ 			pr_info("num_copies(log_bytenr=%llu) = %d\n",
 -- 
 2.20.1
 
