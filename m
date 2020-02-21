@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F29167741
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6F3B16750A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731713AbgBUIky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:40:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58118 "EHLO mail.kernel.org"
+        id S2388275AbgBUIWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:22:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730454AbgBUH6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:58:20 -0500
+        id S2388038AbgBUIWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:22:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83D08206ED;
-        Fri, 21 Feb 2020 07:58:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBD5424673;
+        Fri, 21 Feb 2020 08:22:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271900;
-        bh=twJQEWCQ37vDII3xieELM8sc2WqfXhyOgkp6OAROLMA=;
+        s=default; t=1582273335;
+        bh=tUg751Affnoyn3FW3QZPYI49oz153hfQFyw6kq9w/7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aRoarab2fr8j6iRAM+B91nenDV4ktA7ArMWE3/8uxg1JZk1RDQ3fnD/mkEbiNq+S7
-         p7KjmsWWOBM0hh7oyp2TjJvhqcwq3eNR9dY+CRmCoHVW8a6g3cuj6ieSu7HMc0svOW
-         BupFw4DIh8RxDI/0VBUsuIc4KLN9KLFuQz+WW3jc=
+        b=vfG3vU2GIwfGshzYa6JUlYpF4b7KVSx5rhRVwg4unap1Q+nkxnKQJ9tgawE+Thu7G
+         LYyBkIhqTifISsWaUp26vp0qffscjXnJhYtt+miwipNn/ivs/16vMV+WD5y1XT+L8K
+         +M8wZ7POIyu8P+4myyjcvrnoJFHU+XlTC8IiaA0E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
-        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 340/399] jbd2: make sure ESHUTDOWN to be recorded in the journal superblock
-Date:   Fri, 21 Feb 2020 08:41:05 +0100
-Message-Id: <20200221072433.940512555@linuxfoundation.org>
+Subject: [PATCH 4.19 094/191] clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
+Date:   Fri, 21 Feb 2020 08:41:07 +0100
+Message-Id: <20200221072302.330809496@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhangyi (F) <yi.zhang@huawei.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-[ Upstream commit 0e98c084a21177ef136149c6a293b3d1eb33ff92 ]
+[ Upstream commit ec97faff743b398e21f74a54c81333f3390093aa ]
 
-Commit fb7c02445c49 ("ext4: pass -ESHUTDOWN code to jbd2 layer") want
-to allow jbd2 layer to distinguish shutdown journal abort from other
-error cases. So the ESHUTDOWN should be taken precedence over any other
-errno which has already been recoded after EXT4_FLAGS_SHUTDOWN is set,
-but it only update errno in the journal suoerblock now if the old errno
-is 0.
+The A64 PLL_CPU clock has the same instability if some factor changed
+without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
+H3.
 
-Fixes: fb7c02445c49 ("ext4: pass -ESHUTDOWN code to jbd2 layer")
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/20191204124614.45424-4-yi.zhang@huawei.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Add the mux and pll notifiers for A64 CPU clock to workaround the
+problem.
+
+Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jbd2/journal.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28 ++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 8479e84159675..0b4280fcad91d 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -2147,8 +2147,7 @@ static void __journal_abort_soft (journal_t *journal, int errno)
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index dec4a130390a3..9ac6c299e0744 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -901,11 +901,26 @@ static const struct sunxi_ccu_desc sun50i_a64_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
+ };
  
- 	if (journal->j_flags & JBD2_ABORT) {
- 		write_unlock(&journal->j_state_lock);
--		if (!old_errno && old_errno != -ESHUTDOWN &&
--		    errno == -ESHUTDOWN)
-+		if (old_errno != -ESHUTDOWN && errno == -ESHUTDOWN)
- 			jbd2_journal_update_sb_errno(journal);
- 		return;
- 	}
++static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
++	.common	= &pll_cpux_clk.common,
++	/* copy from pll_cpux_clk */
++	.enable	= BIT(31),
++	.lock	= BIT(28),
++};
++
++static struct ccu_mux_nb sun50i_a64_cpu_nb = {
++	.common		= &cpux_clk.common,
++	.cm		= &cpux_clk.mux,
++	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
++	.bypass_index	= 1, /* index of 24 MHz oscillator */
++};
++
+ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
++	int ret;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg = devm_ioremap_resource(&pdev->dev, res);
+@@ -919,7 +934,18 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ 
+ 	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
+ 
+-	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
++	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
++	if (ret)
++		return ret;
++
++	/* Gate then ungate PLL CPU after any rate changes */
++	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
++
++	/* Reparent CPU during PLL CPU rate changes */
++	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
++				  &sun50i_a64_cpu_nb);
++
++	return 0;
+ }
+ 
+ static const struct of_device_id sun50i_a64_ccu_ids[] = {
 -- 
 2.20.1
 
