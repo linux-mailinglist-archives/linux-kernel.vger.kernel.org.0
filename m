@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13759167161
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:54:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10EE316719C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:56:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730145AbgBUHxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:53:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51986 "EHLO mail.kernel.org"
+        id S1730375AbgBUHzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:55:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730125AbgBUHxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:53:37 -0500
+        id S1730369AbgBUHzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:55:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B34A224653;
-        Fri, 21 Feb 2020 07:53:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C65924676;
+        Fri, 21 Feb 2020 07:55:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271617;
-        bh=TR7zXGPKrRyVAFY0prVY1a+2it4hknv8ec1MtPqoews=;
+        s=default; t=1582271739;
+        bh=P1plHYGMYC1qyi04bgC3z1Yfbf1bTSu9ZEsG1MsEc/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jr6bVFqvv1/D+O6vbPltiQK1y4Cu6LX+jg6dxIHXzVMETXO7dV1lg6O6ltkiFqhwB
-         8DCz/RjalCvzhN/NFaYPskSGa6k2vQ+EYDXBM15iuafpdhlzxHuyE2texzc6TCc7DO
-         691l86hMUVurm/0FXQv5MoTx8OzONzQBEpVP2ius=
+        b=hWpzILTSL1RDGrKu1ep/wPMWrZr3ixd/f+XNYBqu4DuEi9owm2N2Toriyy0z7cVyp
+         lrvhVZVsY73A/E+Z4yEJJMr34QCZzwLoL/37y1+Lc5YfvGxqyFcUWn2jkhQWKoN2BE
+         wUs8J5exGbgXAhdP/ztg1Ik8VEtYdkWYPaAG5UW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Andy Gospodarek <gospo@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Changbin Du <changbin.du@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 232/399] bnxt: Detach page from page pool before sending up the stack
-Date:   Fri, 21 Feb 2020 08:39:17 +0100
-Message-Id: <20200221072425.313970278@linuxfoundation.org>
+Subject: [PATCH 5.5 233/399] x86/nmi: Remove irq_work from the long duration NMI handler
+Date:   Fri, 21 Feb 2020 08:39:18 +0100
+Message-Id: <20200221072425.386819154@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -45,36 +45,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Lemon <jonathan.lemon@gmail.com>
+From: Changbin Du <changbin.du@gmail.com>
 
-[ Upstream commit 3071c51783b39d6a676d02a9256c3b3f87804285 ]
+[ Upstream commit 248ed51048c40d36728e70914e38bffd7821da57 ]
 
-When running in XDP mode, pages come from the page pool, and should
-be freed back to the same pool or specifically detached.  Currently,
-when the driver re-initializes, the page pool destruction is delayed
-forever since it thinks there are oustanding pages.
+First, printk() is NMI-context safe now since the safe printk() has been
+implemented and it already has an irq_work to make NMI-context safe.
 
-Fixes: 322b87ca55f2 ("bnxt_en: add page_pool support")
-Signed-off-by: Jonathan Lemon <jonathan.lemon@gmail.com>
-Reviewed-by: Andy Gospodarek <gospo@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Second, this NMI irq_work actually does not work if a NMI handler causes
+panic by watchdog timeout. It has no chance to run in such case, while
+the safe printk() will flush its per-cpu buffers before panicking.
+
+While at it, repurpose the irq_work callback into a function which
+concentrates the NMI duration checking and makes the code easier to
+follow.
+
+ [ bp: Massage. ]
+
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20200111125427.15662-1-changbin.du@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/nmi.h |  1 -
+ arch/x86/kernel/nmi.c      | 20 +++++++++-----------
+ 2 files changed, 9 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 01b603c5e76ad..9d62200b6c335 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -944,6 +944,7 @@ static struct sk_buff *bnxt_rx_page_skb(struct bnxt *bp,
- 	dma_addr -= bp->rx_dma_offset;
- 	dma_unmap_page_attrs(&bp->pdev->dev, dma_addr, PAGE_SIZE, bp->rx_dir,
- 			     DMA_ATTR_WEAK_ORDERING);
-+	page_pool_release_page(rxr->page_pool, page);
+diff --git a/arch/x86/include/asm/nmi.h b/arch/x86/include/asm/nmi.h
+index 75ded1d13d98d..9d5d949e662e1 100644
+--- a/arch/x86/include/asm/nmi.h
++++ b/arch/x86/include/asm/nmi.h
+@@ -41,7 +41,6 @@ struct nmiaction {
+ 	struct list_head	list;
+ 	nmi_handler_t		handler;
+ 	u64			max_duration;
+-	struct irq_work		irq_work;
+ 	unsigned long		flags;
+ 	const char		*name;
+ };
+diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
+index e676a9916c498..54c21d6abd5ac 100644
+--- a/arch/x86/kernel/nmi.c
++++ b/arch/x86/kernel/nmi.c
+@@ -104,18 +104,22 @@ static int __init nmi_warning_debugfs(void)
+ }
+ fs_initcall(nmi_warning_debugfs);
  
- 	if (unlikely(!payload))
- 		payload = eth_get_headlen(bp->dev, data_ptr, len);
+-static void nmi_max_handler(struct irq_work *w)
++static void nmi_check_duration(struct nmiaction *action, u64 duration)
+ {
+-	struct nmiaction *a = container_of(w, struct nmiaction, irq_work);
++	u64 whole_msecs = READ_ONCE(action->max_duration);
+ 	int remainder_ns, decimal_msecs;
+-	u64 whole_msecs = READ_ONCE(a->max_duration);
++
++	if (duration < nmi_longest_ns || duration < action->max_duration)
++		return;
++
++	action->max_duration = duration;
+ 
+ 	remainder_ns = do_div(whole_msecs, (1000 * 1000));
+ 	decimal_msecs = remainder_ns / 1000;
+ 
+ 	printk_ratelimited(KERN_INFO
+ 		"INFO: NMI handler (%ps) took too long to run: %lld.%03d msecs\n",
+-		a->handler, whole_msecs, decimal_msecs);
++		action->handler, whole_msecs, decimal_msecs);
+ }
+ 
+ static int nmi_handle(unsigned int type, struct pt_regs *regs)
+@@ -142,11 +146,7 @@ static int nmi_handle(unsigned int type, struct pt_regs *regs)
+ 		delta = sched_clock() - delta;
+ 		trace_nmi_handler(a->handler, (int)delta, thishandled);
+ 
+-		if (delta < nmi_longest_ns || delta < a->max_duration)
+-			continue;
+-
+-		a->max_duration = delta;
+-		irq_work_queue(&a->irq_work);
++		nmi_check_duration(a, delta);
+ 	}
+ 
+ 	rcu_read_unlock();
+@@ -164,8 +164,6 @@ int __register_nmi_handler(unsigned int type, struct nmiaction *action)
+ 	if (!action->handler)
+ 		return -EINVAL;
+ 
+-	init_irq_work(&action->irq_work, nmi_max_handler);
+-
+ 	raw_spin_lock_irqsave(&desc->lock, flags);
+ 
+ 	/*
 -- 
 2.20.1
 
