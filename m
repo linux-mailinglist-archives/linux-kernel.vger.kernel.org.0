@@ -2,201 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59B05168275
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:58:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F59616827A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:59:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729314AbgBUP57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:57:59 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:35260 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728364AbgBUP56 (ORCPT
+        id S1729067AbgBUP7E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:59:04 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:49777 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728684AbgBUP7D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:57:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582300677;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=df9ScOEFwTTls6r9Zf0yGfvIdb7PXr3kzlNYfvbsYsg=;
-        b=hUthrwSCxBvQHcbh+UCII9HIaYQiMwAQmyCfIbUR1O8Tm4/v9Q3b+R9Ypa2Z4apQp8N1O+
-        JZzmpJj8Ad1fFgudMG4CbMNTqQlfrkf7s98aNbXQG+TY5qCxNq24OpKwDEEBhIYEzySYle
-        PyIduGPf+QD9qpDqBnmRwLD6SVT2wGk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-35-GZXIO8rIOh---kb7eT3cRg-1; Fri, 21 Feb 2020 10:57:55 -0500
-X-MC-Unique: GZXIO8rIOh---kb7eT3cRg-1
-Received: by mail-wm1-f70.google.com with SMTP id t17so787324wmi.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:57:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=df9ScOEFwTTls6r9Zf0yGfvIdb7PXr3kzlNYfvbsYsg=;
-        b=sBAXZGCeqsFA7XuroKi5/uDW2DWZKKqqs9tEWOtj4JcReVZPfPo2mB7THBYs3qcWG8
-         0ZLUhtnO7C8d6xpMeoAZQpYZ88tfG9i0x+y64Elu2OLjYO7HUHvPQjM6uGB+E/ka8Ydy
-         6T/tDvrA5Ob+iYU/QBYHWp4C5XlqU96j+H4XLG/v/MSnMoAGByMk7dRo0I3QlUBxvv4d
-         8LbGrWbVIYktsmlbMax+0kDA8VoOtYj9zhHamUQonMxiZPGgDm12qOa9Hq7icIxu+Nvc
-         jYkG9X1QuJ9V6EePy0fruNFoS+LNIjIPdGKeP4TjKvSW0/iPdLfQnuF7UarriB6dO1Yv
-         mlXg==
-X-Gm-Message-State: APjAAAVjQ8mKjJfEvClDkFfky27pORvYnIG5xhwY7V13PlS/kqWu8npz
-        k7bnrZ5GNJ96xMW9f+npMaACiLjHIROELn21oAV+gajmGRbHSRvZA0l8RbB0lUFD9bZqmBDfiMC
-        Xzpaf8/433+TZEwkLp6MRez2U
-X-Received: by 2002:adf:fa50:: with SMTP id y16mr47217038wrr.183.1582300674041;
-        Fri, 21 Feb 2020 07:57:54 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzDlkP5kKiX/apK/fdyvg4Z7dElRY33EXdeQ2VUj7qgatSBg7QtIiXPLhmh5NVFfYIkSZTSbQ==
-X-Received: by 2002:adf:fa50:: with SMTP id y16mr47217010wrr.183.1582300673719;
-        Fri, 21 Feb 2020 07:57:53 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id f8sm4240284wru.12.2020.02.21.07.57.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 07:57:53 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 26/61] KVM: x86: Introduce cpuid_entry_{get,has}() accessors
-In-Reply-To: <20200201185218.24473-27-sean.j.christopherson@intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-27-sean.j.christopherson@intel.com>
-Date:   Fri, 21 Feb 2020 16:57:52 +0100
-Message-ID: <875zg0q6f3.fsf@vitty.brq.redhat.com>
+        Fri, 21 Feb 2020 10:59:03 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01LFiJfe029798;
+        Fri, 21 Feb 2020 16:58:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=q7m0eWQuKU+1f/Hc3O6mTWcHzdCj7QRgHso723d9XGs=;
+ b=Euuq+vh1udcasMYA2o1zPDWwzgMu9mv5bfzyIn88vggmaGewnrpTUwhnCwwGrdPqIIZD
+ GCg5H/MYu1732s2elAaqiu+3IaIyWw0h2zEy5nobAL+hBqGBGiJ+PDShKlivPGG5pYWK
+ AHmu3XNHCAqS0pzBqtwTvfaR16Gh9PRd0dkB61cqAZAApNp0nILnnfiGu2h/0Xs6kS0F
+ meqmiH0PBe69DVjW7tE2XlKaRtIzMcO4fcdV7Li/1QJwhSOTPWsP/t0UeYWGBLemVgJf
+ x6+P1wDolnEzoMXxAdwglMUcUOItcZjhsU3nc3WP8zBxaF5/LZbOu82Fd1G+tFwefLDq RA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2y8ub1r41d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Feb 2020 16:58:44 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0275710002A;
+        Fri, 21 Feb 2020 16:58:44 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DF8EC2BC7CD;
+        Fri, 21 Feb 2020 16:58:43 +0100 (CET)
+Received: from lmecxl0912.lme.st.com (10.75.127.46) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 21 Feb
+ 2020 16:58:42 +0100
+Subject: Re: [PATCH v3 0/4] STM32 early console
+To:     Erwan Le Ray <erwan.leray@st.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Nathan Huckleberry <nhuck15@gmail.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Clement Peron <peron.clem@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>
+References: <20200203140425.26579-1-erwan.leray@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <609b5744-cc1e-8ada-fe14-6cc199c0a91d@st.com>
+Date:   Fri, 21 Feb 2020 16:58:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20200203140425.26579-1-erwan.leray@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-21_05:2020-02-21,2020-02-21 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+Hi
 
-> Introduce accessors to retrieve feature bits from CPUID entries and use
-> the new accessors where applicable.  Using the accessors eliminates the
-> need to manually specify the register to be queried at no extra cost
-> (binary output is identical) and will allow adding runtime consistency
-> checks on the function and index in a future patch.
->
-> No functional change intended.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/cpuid.c |  9 +++++----
->  arch/x86/kvm/cpuid.h | 46 +++++++++++++++++++++++++++++++++++---------
->  2 files changed, 42 insertions(+), 13 deletions(-)
->
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index e3026fe638aa..3316963dad3d 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -68,7 +68,7 @@ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
->  		best->edx |= F(APIC);
->  
->  	if (apic) {
-> -		if (best->ecx & F(TSC_DEADLINE_TIMER))
-> +		if (cpuid_entry_has(best, X86_FEATURE_TSC_DEADLINE_TIMER))
->  			apic->lapic_timer.timer_mode_mask = 3 << 17;
->  		else
->  			apic->lapic_timer.timer_mode_mask = 1 << 17;
-> @@ -96,7 +96,8 @@ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
->  	}
->  
->  	best = kvm_find_cpuid_entry(vcpu, 0xD, 1);
-> -	if (best && (best->eax & (F(XSAVES) | F(XSAVEC))))
-> +	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
-> +		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
->  		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
->  
->  	/*
-> @@ -155,7 +156,7 @@ static void cpuid_fix_nx_cap(struct kvm_vcpu *vcpu)
->  			break;
->  		}
->  	}
-> -	if (entry && (entry->edx & F(NX)) && !is_efer_nx()) {
-> +	if (entry && cpuid_entry_has(entry, X86_FEATURE_NX) && !is_efer_nx()) {
->  		entry->edx &= ~F(NX);
->  		printk(KERN_INFO "kvm: guest NX capability removed\n");
->  	}
-> @@ -387,7 +388,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
->  		entry->ebx |= F(TSC_ADJUST);
->  
->  		entry->ecx &= kvm_cpuid_7_0_ecx_x86_features;
-> -		f_la57 = entry->ecx & F(LA57);
-> +		f_la57 = cpuid_entry_get(entry, X86_FEATURE_LA57);
->  		cpuid_mask(&entry->ecx, CPUID_7_ECX);
->  		/* Set LA57 based on hardware capability. */
->  		entry->ecx |= f_la57;
-> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-> index 72a79bdfed6b..64e96e4086e2 100644
-> --- a/arch/x86/kvm/cpuid.h
-> +++ b/arch/x86/kvm/cpuid.h
-> @@ -95,16 +95,10 @@ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
->  	return reverse_cpuid[x86_leaf];
->  }
->  
-> -static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsigned x86_feature)
-> +static __always_inline u32 *__cpuid_entry_get_reg(struct kvm_cpuid_entry2 *entry,
-> +						  const struct cpuid_reg *cpuid)
->  {
-> -	struct kvm_cpuid_entry2 *entry;
-> -	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
-> -
-> -	entry = kvm_find_cpuid_entry(vcpu, cpuid.function, cpuid.index);
-> -	if (!entry)
-> -		return NULL;
-> -
-> -	switch (cpuid.reg) {
-> +	switch (cpuid->reg) {
->  	case CPUID_EAX:
->  		return &entry->eax;
->  	case CPUID_EBX:
-> @@ -119,6 +113,40 @@ static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsi
->  	}
->  }
->  
-> +static __always_inline u32 *cpuid_entry_get_reg(struct kvm_cpuid_entry2 *entry,
-> +						unsigned x86_feature)
+On 2/3/20 3:04 PM, Erwan Le Ray wrote:
+> Add UART instance configuration to STM32 F4 and F7 early console.
+> Add STM32 H7 and MP1 early console support.
+> 
+> Changes in v3:
+> - fix a missing condition for STM32MP1
+>    
+> Changes in v2:
+> - split "[PATCH] ARM: debug: stm32: add UART early console configuration"
+>    into separate patches as suggested by Clement into [1]
+> 
+> [1] https://lkml.org/lkml/2019/4/10/199
+> 
+> Erwan Le Ray (4):
+>    ARM: debug: stm32: add UART early console configuration for STM32F4
+>    ARM: debug: stm32: add UART early console configuration for STM32F7
+>    ARM: debug: stm32: add UART early console support for STM32H7
+>    ARM: debug: stm32: add UART early console support for STM32MP1
+> 
+>   arch/arm/Kconfig.debug         | 42 +++++++++++++++++++++++++++++-----
+>   arch/arm/include/debug/stm32.S |  9 ++++----
+>   2 files changed, 40 insertions(+), 11 deletions(-)
+> 
 
-It is just me who dislikes bare 'unsigned'?
+Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
 
-> +{
-> +	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
-> +
-> +	return __cpuid_entry_get_reg(entry, &cpuid);
-> +}
-> +
-> +static __always_inline u32 cpuid_entry_get(struct kvm_cpuid_entry2 *entry,
-> +					   unsigned x86_feature)
-> +{
-> +	u32 *reg = cpuid_entry_get_reg(entry, x86_feature);
-> +
-> +	return *reg & __feature_bit(x86_feature);
-> +}
-> +
-> +static __always_inline bool cpuid_entry_has(struct kvm_cpuid_entry2 *entry,
-> +					    unsigned x86_feature)
-> +{
-> +	return cpuid_entry_get(entry, x86_feature);
-> +}
-> +
-> +static __always_inline int *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsigned x86_feature)
-> +{
-> +	struct kvm_cpuid_entry2 *entry;
-> +	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
-> +
-> +	entry = kvm_find_cpuid_entry(vcpu, cpuid.function, cpuid.index);
-> +	if (!entry)
-> +		return NULL;
-> +
-> +	return __cpuid_entry_get_reg(entry, &cpuid);
-> +}
-> +
->  static __always_inline bool guest_cpuid_has(struct kvm_vcpu *vcpu, unsigned x86_feature)
->  {
->  	u32 *reg;
+Russel, Arnd, Olof, Linus
+Do I have to take this series in my next PR ? or you'll ?
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-
--- 
-Vitaly
-
+Thanks
+alex
