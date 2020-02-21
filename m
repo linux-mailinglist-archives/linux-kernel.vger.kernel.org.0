@@ -2,134 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90277167C1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:29:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 367A2167C23
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:30:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbgBUL3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 06:29:33 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45038 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbgBUL3d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 06:29:33 -0500
-Received: by mail-wr1-f66.google.com with SMTP id m16so1614811wrx.11
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 03:29:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=isovalent-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ISb1ahsdqyDpNndMm9k4MryKRAmuNFLa5XvM/5lEHrM=;
-        b=dpFq32bbS0i4OObcZqRN90dmE8bmajzsSxDy61W8dRwMlROs5qvrRFewu5bvvNGQwH
-         evC7XBjXob68qVSuMV/FMf4yN3XuF28WTjpUOFuriHFkV7abah/OQ4jbUb9sPFzDwGYB
-         yU7wKUd9dWBI7g+Mq4OI88Hj3IWl+IpYk2PP1N4JGVytif996cxOMj8SU4B7cTewf8aZ
-         AXYvPiHn3UbgKBkRwxBXF2pqjJfMpUxF0nTh5UwWjwZuE2gzSKEcWpawwR/7TcZ68FYs
-         a1FngtGWi1XoJwbhc1fz2QPf8MHto/MwLRz6drRhsvH+kkCAaYBglHURSEsCVdyJ1RSy
-         nH2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ISb1ahsdqyDpNndMm9k4MryKRAmuNFLa5XvM/5lEHrM=;
-        b=NL2HI+B5RjS3ymNvbW56z8Be0y19rfl8KzPm8okNitpRG9vqWbLOrn/WRkzKLEsn2Y
-         Xc7P6SfiU1OX7BMFUmgmLQbPwxT80am3dtmS3RAd1k9Te3UGxBrNxfWW8TU90+kNZcR8
-         G211Sqay6jTMAnsB5SoDdvccDhxwQ/iAH9fRKkjGyWtWa2p34qMRSzIZbTUjmtiHk0Xk
-         WPmNbtHUDffkX4jOyQB0jRSmm/FCjbkyziBEC7Qpb7uwEPs8LhN5XLDq0WwDvT1Namkt
-         QxR9/MyoLaqoZWXm0KuQQYpAphULGPv9gqkMC1QqZDbqu5vnXzWSyCfboUNO5M9QFRqx
-         RULA==
-X-Gm-Message-State: APjAAAW1QRZCrvUhm4VddQ0ZdDt28nMG7krfm0zJA2W8mwtu1NacEd+B
-        KHV+kO/XZydZDQAQaRtlDojXDQ==
-X-Google-Smtp-Source: APXvYqwo/wcsiFTfCaz7K7GiNYnP+aK8Ly6FiMLPGG1YRCamaaEnYkndZlGCFD7DwIS5uBFCL1v9wg==
-X-Received: by 2002:a05:6000:10c:: with SMTP id o12mr49019570wrx.106.1582284571520;
-        Fri, 21 Feb 2020 03:29:31 -0800 (PST)
-Received: from [192.168.1.23] ([91.143.66.155])
-        by smtp.gmail.com with ESMTPSA id b13sm3838699wrq.48.2020.02.21.03.29.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 03:29:31 -0800 (PST)
-Subject: Re: [PATCH bpf-next v2 4/5] bpftool: Update bash completion for
- "bpftool feature" command
-To:     Michal Rostecki <mrostecki@opensuse.org>, bpf@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-References: <20200221031702.25292-1-mrostecki@opensuse.org>
- <20200221031702.25292-5-mrostecki@opensuse.org>
-From:   Quentin Monnet <quentin@isovalent.com>
-Message-ID: <7e37246c-a154-1cd6-fbae-ed29497903e8@isovalent.com>
-Date:   Fri, 21 Feb 2020 11:29:30 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727787AbgBULaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 06:30:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53814 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727046AbgBULaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 06:30:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 05511AC66;
+        Fri, 21 Feb 2020 11:30:18 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id BF10DDA70E; Fri, 21 Feb 2020 12:30:00 +0100 (CET)
+Date:   Fri, 21 Feb 2020 12:30:00 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     David Sterba <dsterba@suse.cz>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Nikolay Borisov <nborisov@suse.com>
+Subject: Re: linux-next: build failure after merge of the btrfs tree
+Message-ID: <20200221113000.GC2902@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Nikolay Borisov <nborisov@suse.com>
+References: <20200220092344.2a738574@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20200221031702.25292-5-mrostecki@opensuse.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220092344.2a738574@canb.auug.org.au>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2020-02-21 04:16 UTC+0100 ~ Michal Rostecki <mrostecki@opensuse.org>
-> Update bash completion for "bpftool feature" command with the new
-> argument: "full".
+On Thu, Feb 20, 2020 at 09:23:44AM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Signed-off-by: Michal Rostecki <mrostecki@opensuse.org>
-> ---
->   tools/bpf/bpftool/bash-completion/bpftool | 27 ++++++++++++++++-------
->   1 file changed, 19 insertions(+), 8 deletions(-)
+> After merging the btrfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
-> diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
-> index 754d8395e451..f2bcc4bacee2 100644
-> --- a/tools/bpf/bpftool/bash-completion/bpftool
-> +++ b/tools/bpf/bpftool/bash-completion/bpftool
-> @@ -981,14 +981,25 @@ _bpftool()
->           feature)
->               case $command in
->                   probe)
-> -                    [[ $prev == "prefix" ]] && return 0
-> -                    if _bpftool_search_list 'macros'; then
-> -                        COMPREPLY+=( $( compgen -W 'prefix' -- "$cur" ) )
-> -                    else
-> -                        COMPREPLY+=( $( compgen -W 'macros' -- "$cur" ) )
-> -                    fi
-> -                    _bpftool_one_of_list 'kernel dev'
-> -                    return 0
-> +                    case $prev in
-> +                        $command)
-> +                            COMPREPLY+=( $( compgen -W 'kernel dev full macros' -- \
-> +                                "$cur" ) )
-> +                            return 0
-> +                            ;;
-> +                        prefix)
-> +                            return 0
-> +                            ;;
-> +                        macros)
-> +                            COMPREPLY+=( $( compgen -W 'prefix' -- "$cur" ) )
-> +                            return 0
-
-I have not tested, but I think because of the "return 0" this will 
-propose only "prefix" after "macros". But "kernel" or "dev" should also 
-be in the list.
-
-Maybe just add "_bpftool_once_attr 'full'" under the 
-"_bpftool_one_of_list 'kernel dev'" instead of changing to the "case 
-$prev in" structure?
-
-> +                            ;;
-> +                        *)
-> +                            _bpftool_one_of_list 'kernel dev'
-> +                            _bpftool_once_attr 'full macros'
-> +                            return 0
-> +                            ;;
-> +                    esac
->                       ;;
->                   *)
->                       [[ $prev == $object ]] && \
+> fs/btrfs/extent-tree.c: In function 'btrfs_alloc_logged_file_extent':
+> fs/btrfs/extent-tree.c:4425:20: error: passing argument 1 of 'btrfs_pin_extent' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>  4425 |   btrfs_pin_extent(fs_info, ins->objectid, ins->offset, 1);
+>       |                    ^~~~~~~
+>       |                    |
+>       |                    struct btrfs_fs_info *
+> fs/btrfs/extent-tree.c:2609:49: note: expected 'struct btrfs_trans_handle *' but argument is of type 'struct btrfs_fs_info *'
+>  2609 | int btrfs_pin_extent(struct btrfs_trans_handle *trans,
+>       |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
 > 
+> Caused by commit
+> 
+>   4e2c2f96e6a3 ("btrfs: Make btrfs_pin_extent take trans handle")
+> 
+> interacting with commit
+> 
+>   bd727173e443 ("btrfs: handle logged extent failure properly")
+> 
+> from the btrfs-fixes tree.
+> 
+> I have applied the following merge fix patch for today.
 
+Sorry, I'll fix the branch in the next for-next snapshot.
