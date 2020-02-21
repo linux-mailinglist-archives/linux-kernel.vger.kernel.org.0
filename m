@@ -2,77 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93547166EDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 06:15:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E767D166EB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 06:11:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727510AbgBUFP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 00:15:27 -0500
-Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17858 "EHLO
-        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726018AbgBUFP1 (ORCPT
+        id S1726214AbgBUFKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 00:10:34 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:43843 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbgBUFKd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 00:15:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1582262057;
-        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
-        h=From:To:Cc:Message-ID:Subject:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type;
-        bh=utHjWgS/9MgbWFbTCvxGYRCRLUfEMYG7F22NuP75MMk=;
-        b=FXZ5VPrpIDkc90msEBKP9ng5ic5PuYRKNeBvW7emxr9G3irqpYysIDFYPWFCrAU9
-        rsOVgSQUHPoS+YtKiXLbFbw9TBiVb+6wcBUkglvT3plFk1lJ1hZ04DMgYGT46OeIRoY
-        NK5evtCxdVS0CrFHfHm9hD+iOX8t5F0N4UjuP9oc=
-Received: from localhost.localdomain (39.155.141.144 [39.155.141.144]) by mx.zoho.com.cn
-        with SMTPS id 1582262055106303.98857959372856; Fri, 21 Feb 2020 13:14:15 +0800 (CST)
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-To:     linux-mips@vger.kernel.org
-Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Message-ID: <20200221050942.507775-11-jiaxun.yang@flygoat.com>
-Subject: [PATCH v4 10/10] MIPS: Loongson64: Move MIPS_CPU_IRQ_BASE
-Date:   Fri, 21 Feb 2020 13:09:25 +0800
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221050942.507775-1-jiaxun.yang@flygoat.com>
-References: <20200221050942.507775-1-jiaxun.yang@flygoat.com>
+        Fri, 21 Feb 2020 00:10:33 -0500
+Received: by mail-yb1-f194.google.com with SMTP id b141so574426ybg.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 21:10:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Qx1TzrvyogNiRSqJXStGPZvREBzcHURDJFmU6BgZWjc=;
+        b=KEVWFg314052tWozaaoNWzgxDGtQyUG7wPc9cMULhcvnHXywOY4cueaHFTxGmlsH5T
+         D5SmiZKF6kx10F20kCX55hIsMzvVEzbAq421MUKShN8ooaGcmXz59DV7UHVqcqggVWDC
+         1oIyxLOooSav+dBD0Esace/XpwNd16TkTXL+BluYL6oxdg6Ub+Uk99kG5CXxmM3Z3QHc
+         0eSpNX2cWC2JEh07k7PO5ZRCsMHloL/MRiwAsmZlyQ9H4Uw/wpfincNf13ahzd8sWAgk
+         RYDfU9YLhTmshBk4BSrvTq/Y+q2RjdyxivOGoE11athr20lWc1RQMuGSm9PnGMNabBY6
+         XB1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Qx1TzrvyogNiRSqJXStGPZvREBzcHURDJFmU6BgZWjc=;
+        b=n9h3SmcxPq5NLzm5mLcaxs3clxDEw7zBSrjVfrab+3EcFy8A3de1drm5PCBtfQIYb1
+         yWFypVrH4TmBzF51whS8mw2lzQAH6nWoiehLYRPK1Fos4TcpNBDHXIAeD89jBfbvoDp/
+         A796I0PXiQrbvAuTCw1UocpIlvZJ4V9hz7eS+qKG7X+h8gZ/PAGAnF82lUjvQb0Pp7bX
+         8A2HotsIRiHJ7sp2+rpviEzW3hrZrGH6Fs0w9SLinz3VuZXt35bdxxHygyeVjbSq45JI
+         VzpQbKnPa5un2KPYtPO1KXrZRkKo7F7ZUwWzSHRbdQYxqyGWsM5RZX64bI0kGNNFtOrC
+         wuRw==
+X-Gm-Message-State: APjAAAW43cmHZ7Qk+nuSU77+Dt85HtuTfJE8Dofxogx3jFTR3VZrGO/1
+        iq3f+QRIYZW2vmSlZtCKUz7k9qY=
+X-Google-Smtp-Source: APXvYqx0fIgfhpDqFFTxznqGCiuskeOmsCNweaY0t6etMlfGpvFta+bHSs7nGE/mCTiDE1333/gsgQ==
+X-Received: by 2002:a25:74d3:: with SMTP id p202mr29238862ybc.493.1582261832671;
+        Thu, 20 Feb 2020 21:10:32 -0800 (PST)
+Received: from localhost.localdomain (174-084-153-250.res.spectrum.com. [174.84.153.250])
+        by smtp.gmail.com with ESMTPSA id a12sm840904ywa.95.2020.02.20.21.10.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 21:10:32 -0800 (PST)
+From:   Brian Gerst <brgerst@gmail.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Brian Gerst <brgerst@gmail.com>
+Subject: [PATCH 0/5] Enable pt_regs based syscalls for x86-32 native
+Date:   Fri, 21 Feb 2020 00:09:29 -0500
+Message-Id: <20200221050934.719152-1-brgerst@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoCNMailClient: External
-Content-Type: text/plain; charset=utf8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To prevent CPU IRQ collide with PCH IRQ, we move down
-CPU IRQ BASE to 16.
+This patch series cleans up the x86 syscall wrapper code and converts
+the 32-bit native kernel over to pt_regs based syscalls.
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- arch/mips/include/asm/mach-loongson64/irq.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Brian Gerst (5):
+  x86: Refactor syscall_wrapper.h
+  x86: Move 32-bit compat syscalls to common location
+  x86-32: Enable syscall wrappers
+  x86-64: Use syscall wrappers for x32_rt_sigreturn
+  x86: Drop asmlinkage from syscalls
 
-diff --git a/arch/mips/include/asm/mach-loongson64/irq.h b/arch/mips/includ=
-e/asm/mach-loongson64/irq.h
-index 12208119aac0..1ce2e0bbe305 100644
---- a/arch/mips/include/asm/mach-loongson64/irq.h
-+++ b/arch/mips/include/asm/mach-loongson64/irq.h
-@@ -5,7 +5,7 @@
- #include <boot_param.h>
-=20
- /* cpu core interrupt numbers */
--#define MIPS_CPU_IRQ_BASE 56
-+#define MIPS_CPU_IRQ_BASE 16
-=20
- #include_next <irq.h>
- #endif /* __ASM_MACH_LOONGSON64_IRQ_H_ */
---=20
-2.25.0
+ arch/x86/Kconfig                       |   2 +-
+ arch/x86/entry/common.c                |  20 +-
+ arch/x86/entry/syscall_32.c            |  13 +-
+ arch/x86/entry/syscall_64.c            |   9 +-
+ arch/x86/entry/syscalls/syscall_32.tbl | 818 ++++++++++++-------------
+ arch/x86/entry/syscalls/syscall_64.tbl |   2 +-
+ arch/x86/entry/syscalls/syscalltbl.sh  |  33 +-
+ arch/x86/ia32/Makefile                 |   2 +-
+ arch/x86/include/asm/sighandling.h     |   5 -
+ arch/x86/include/asm/syscall.h         |   8 +-
+ arch/x86/include/asm/syscall_wrapper.h | 372 +++++------
+ arch/x86/include/asm/syscalls.h        |  29 -
+ arch/x86/kernel/Makefile               |   2 +
+ arch/x86/kernel/signal.c               |   2 +-
+ arch/x86/{ia32 => kernel}/sys_ia32.c   | 130 ++--
+ arch/x86/um/sys_call_table_32.c        |  10 +
+ 16 files changed, 722 insertions(+), 735 deletions(-)
+ rename arch/x86/{ia32 => kernel}/sys_ia32.c (83%)
 
+-- 
+2.24.1
 
