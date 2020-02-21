@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A7191673AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:17:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40CEB1674B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:24:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733202AbgBUIOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:14:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51012 "EHLO mail.kernel.org"
+        id S2388574AbgBUIX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:23:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732511AbgBUIOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:14:32 -0500
+        id S1731875AbgBUIXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:23:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFFEB24672;
-        Fri, 21 Feb 2020 08:14:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCD832469D;
+        Fri, 21 Feb 2020 08:23:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272871;
-        bh=6ba7hysJU/gD58jDN/JTv4StRHF+OsBhjNKhN1d0aKc=;
+        s=default; t=1582273434;
+        bh=ogLNk7QVjPEp6Su45UoudEmNy30CNjFMGL2lt+TN/T8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RmwXHB2SK/qwuV2vSUaraPefdDbKIaPX3ySu8FPxgH+aBwKKzvH7Ky/ckcdID5r05
-         tU5D1YdGRI0Dzuv14kOVAOyjz/YudmDcoEB3+fO1Lp2Y8fvMGMYeWFxEL/L67t0cZ+
-         1OkTdE7tPHTWT7ifdsHAdVj7+cqFioNZ6h2ChJRk=
+        b=qM6Gxk+lv8keYIF94XmlTdYPNqqcIJvNnGSKzr8o2L1oq+w6WmepFS6bUVlKbEHUy
+         6+xkyGmU6xkldufjYnmJ8ZH0jWGDDR8sDzSXRLbgpO7DV3zhoEfeU7iW/qMkznW4sc
+         H8gJYo0IofPsghVqSFxJcW19f9TaAUmi4o25/wxI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
+        stable@vger.kernel.org, Nick Black <nlb@google.com>,
+        Salman Qazi <sqazi@google.com>, Junho Ryu <jayr@google.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Lee Duncan <lduncan@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 307/344] ceph: check availability of mds cluster on mount after wait timeout
+Subject: [PATCH 4.19 133/191] scsi: iscsi: Dont destroy session if there are outstanding connections
 Date:   Fri, 21 Feb 2020 08:41:46 +0100
-Message-Id: <20200221072417.848021492@linuxfoundation.org>
+Message-Id: <20200221072306.769677337@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +48,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+From: Nick Black <nlb@google.com>
 
-[ Upstream commit 97820058fb2831a4b203981fa2566ceaaa396103 ]
+[ Upstream commit 54155ed4199c7aa3fd20866648024ab63c96d579 ]
 
-If all the MDS daemons are down for some reason, then the first mount
-attempt will fail with EIO after the mount request times out.  A mount
-attempt will also fail with EIO if all of the MDS's are laggy.
+A faulty userspace that calls destroy_session() before destroying the
+connections can trigger the failure.  This patch prevents the issue by
+refusing to destroy the session if there are outstanding connections.
 
-This patch changes the code to return -EHOSTUNREACH in these situations
-and adds a pr_info error message to help the admin determine the cause.
+------------[ cut here ]------------
+kernel BUG at mm/slub.c:306!
+invalid opcode: 0000 [#1] SMP PTI
+CPU: 1 PID: 1224 Comm: iscsid Not tainted 5.4.0-rc2.iscsi+ #7
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+RIP: 0010:__slab_free+0x181/0x350
+[...]
+[ 1209.686056] RSP: 0018:ffffa93d4074fae0 EFLAGS: 00010246
+[ 1209.686694] RAX: ffff934efa5ad800 RBX: 000000008010000a RCX: ffff934efa5ad800
+[ 1209.687651] RDX: ffff934efa5ad800 RSI: ffffeb4041e96b00 RDI: ffff934efd402c40
+[ 1209.688582] RBP: ffffa93d4074fb80 R08: 0000000000000001 R09: ffffffffbb5dfa26
+[ 1209.689425] R10: ffff934efa5ad800 R11: 0000000000000001 R12: ffffeb4041e96b00
+[ 1209.690285] R13: ffff934efa5ad800 R14: ffff934efd402c40 R15: 0000000000000000
+[ 1209.691213] FS:  00007f7945dfb540(0000) GS:ffff934efda80000(0000) knlGS:0000000000000000
+[ 1209.692316] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1209.693013] CR2: 000055877fd3da80 CR3: 0000000077384000 CR4: 00000000000006e0
+[ 1209.693897] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 1209.694773] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 1209.695631] Call Trace:
+[ 1209.695957]  ? __wake_up_common_lock+0x8a/0xc0
+[ 1209.696712]  iscsi_pool_free+0x26/0x40
+[ 1209.697263]  iscsi_session_teardown+0x2f/0xf0
+[ 1209.698117]  iscsi_sw_tcp_session_destroy+0x45/0x60
+[ 1209.698831]  iscsi_if_rx+0xd88/0x14e0
+[ 1209.699370]  netlink_unicast+0x16f/0x200
+[ 1209.699932]  netlink_sendmsg+0x21a/0x3e0
+[ 1209.700446]  sock_sendmsg+0x4f/0x60
+[ 1209.700902]  ___sys_sendmsg+0x2ae/0x320
+[ 1209.701451]  ? cp_new_stat+0x150/0x180
+[ 1209.701922]  __sys_sendmsg+0x59/0xa0
+[ 1209.702357]  do_syscall_64+0x52/0x160
+[ 1209.702812]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 1209.703419] RIP: 0033:0x7f7946433914
+[...]
+[ 1209.706084] RSP: 002b:00007fffb99f2378 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+[ 1209.706994] RAX: ffffffffffffffda RBX: 000055bc869eac20 RCX: 00007f7946433914
+[ 1209.708082] RDX: 0000000000000000 RSI: 00007fffb99f2390 RDI: 0000000000000005
+[ 1209.709120] RBP: 00007fffb99f2390 R08: 000055bc84fe9320 R09: 00007fffb99f1f07
+[ 1209.710110] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000038
+[ 1209.711085] R13: 000055bc8502306e R14: 0000000000000000 R15: 0000000000000000
+ Modules linked in:
+ ---[ end trace a2d933ede7f730d8 ]---
 
-URL: https://tracker.ceph.com/issues/4386
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Link: https://lore.kernel.org/r/20191226203148.2172200-1-krisman@collabora.com
+Signed-off-by: Nick Black <nlb@google.com>
+Co-developed-by: Salman Qazi <sqazi@google.com>
+Signed-off-by: Salman Qazi <sqazi@google.com>
+Co-developed-by: Junho Ryu <jayr@google.com>
+Signed-off-by: Junho Ryu <jayr@google.com>
+Co-developed-by: Khazhismel Kumykov <khazhy@google.com>
+Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+Co-developed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/mds_client.c | 3 +--
- fs/ceph/super.c      | 5 +++++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/scsi/iscsi_tcp.c            |  4 ++++
+ drivers/scsi/scsi_transport_iscsi.c | 26 +++++++++++++++++++++++---
+ 2 files changed, 27 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index ee02a742fff57..8c1f04c3a684c 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2552,8 +2552,7 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 		if (!(mdsc->fsc->mount_options->flags &
- 		      CEPH_MOUNT_OPT_MOUNTWAIT) &&
- 		    !ceph_mdsmap_is_cluster_available(mdsc->mdsmap)) {
--			err = -ENOENT;
--			pr_info("probably no mds server is up\n");
-+			err = -EHOSTUNREACH;
- 			goto finish;
- 		}
- 	}
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index b47f43fc2d688..62fc7d46032e8 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1137,6 +1137,11 @@ static struct dentry *ceph_mount(struct file_system_type *fs_type,
- 	return res;
- 
- out_splat:
-+	if (!ceph_mdsmap_is_cluster_available(fsc->mdsc->mdsmap)) {
-+		pr_info("No mds server is up or the cluster is laggy\n");
-+		err = -EHOSTUNREACH;
-+	}
+diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+index 55181d28291e7..7212e3a13fe6b 100644
+--- a/drivers/scsi/iscsi_tcp.c
++++ b/drivers/scsi/iscsi_tcp.c
+@@ -892,6 +892,10 @@ free_host:
+ static void iscsi_sw_tcp_session_destroy(struct iscsi_cls_session *cls_session)
+ {
+ 	struct Scsi_Host *shost = iscsi_session_to_shost(cls_session);
++	struct iscsi_session *session = cls_session->dd_data;
 +
- 	ceph_mdsc_close_sessions(fsc->mdsc);
- 	deactivate_locked_super(sb);
- 	goto out_final;
++	if (WARN_ON_ONCE(session->leadconn))
++		return;
+ 
+ 	iscsi_tcp_r2tpool_free(cls_session->dd_data);
+ 	iscsi_session_teardown(cls_session);
+diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
+index 4c4781e5974f0..c0fb9e7890807 100644
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -2945,6 +2945,24 @@ iscsi_set_path(struct iscsi_transport *transport, struct iscsi_uevent *ev)
+ 	return err;
+ }
+ 
++static int iscsi_session_has_conns(int sid)
++{
++	struct iscsi_cls_conn *conn;
++	unsigned long flags;
++	int found = 0;
++
++	spin_lock_irqsave(&connlock, flags);
++	list_for_each_entry(conn, &connlist, conn_list) {
++		if (iscsi_conn_get_sid(conn) == sid) {
++			found = 1;
++			break;
++		}
++	}
++	spin_unlock_irqrestore(&connlock, flags);
++
++	return found;
++}
++
+ static int
+ iscsi_set_iface_params(struct iscsi_transport *transport,
+ 		       struct iscsi_uevent *ev, uint32_t len)
+@@ -3522,10 +3540,12 @@ iscsi_if_recv_msg(struct sk_buff *skb, struct nlmsghdr *nlh, uint32_t *group)
+ 		break;
+ 	case ISCSI_UEVENT_DESTROY_SESSION:
+ 		session = iscsi_session_lookup(ev->u.d_session.sid);
+-		if (session)
+-			transport->destroy_session(session);
+-		else
++		if (!session)
+ 			err = -EINVAL;
++		else if (iscsi_session_has_conns(ev->u.d_session.sid))
++			err = -EBUSY;
++		else
++			transport->destroy_session(session);
+ 		break;
+ 	case ISCSI_UEVENT_UNBIND_SESSION:
+ 		session = iscsi_session_lookup(ev->u.d_session.sid);
 -- 
 2.20.1
 
