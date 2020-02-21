@@ -2,98 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B12C01689E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 23:22:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A34A1689C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 23:01:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbgBUWV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 17:21:56 -0500
-Received: from 13.mo5.mail-out.ovh.net ([87.98.182.191]:55923 "EHLO
-        13.mo5.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbgBUWV4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 17:21:56 -0500
-X-Greylist: delayed 1497 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Feb 2020 17:21:56 EST
-Received: from player691.ha.ovh.net (unknown [10.108.57.140])
-        by mo5.mail-out.ovh.net (Postfix) with ESMTP id 874EA26A280
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 22:56:57 +0100 (CET)
-Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
-        (Authenticated sender: steve@sk2.org)
-        by player691.ha.ovh.net (Postfix) with ESMTPSA id 15BC4FBA4A9C;
-        Fri, 21 Feb 2020 21:56:49 +0000 (UTC)
-Date:   Fri, 21 Feb 2020 22:56:42 +0100
-From:   Stephen Kitt <steve@sk2.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: remove MPX from the x86 toc
-Message-ID: <20200221225642.006495c9@heffalump.sk2.org>
-In-Reply-To: <cc401ede-c94e-3688-5295-fd4d4a1806a4@intel.com>
-References: <20200221205733.26351-1-steve@sk2.org>
-        <cc401ede-c94e-3688-5295-fd4d4a1806a4@intel.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729051AbgBUWBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 17:01:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728723AbgBUWBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 17:01:41 -0500
+Received: from localhost (lfbn-ncy-1-985-231.w90-101.abo.wanadoo.fr [90.101.63.231])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0B6F206DB;
+        Fri, 21 Feb 2020 22:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582322500;
+        bh=Ht0E3O9Qs6E2ovk0jMpytA79AV8156aqu9AkN7EDT2M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Rd1jqmQ27OeAFQd9EAdBchzNOWMbQqEq3zfOM3fMEJlCiXtNLJf8CsJhEwWoANLaQ
+         3BWNoFUx8NGw0mb2ka2KUOqk8oWCktt2mE2iKL7LvgvfZfN61N2BT1ZlTkqpE9x8ml
+         mEsTQwvkipNKLc4llAa1cuC9qUjNb63z+02kbJKA=
+Date:   Fri, 21 Feb 2020 23:01:37 +0100
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, mingo@kernel.org,
+        joel@joelfernandes.org, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, tglx@linutronix.de, paulmck@kernel.org,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, luto@kernel.org, tony.luck@intel.com,
+        dan.carpenter@oracle.com, mhiramat@kernel.org
+Subject: Re: [PATCH v4 01/27] lockdep: Teach lockdep about "USED" <- "IN-NMI"
+ inversions
+Message-ID: <20200221220136.GA28251@lenoir>
+References: <20200221133416.777099322@infradead.org>
+ <20200221134215.090538203@infradead.org>
+ <20200221100855.2f9bec3a@gandalf.local.home>
+ <20200221202511.GB14897@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/ihKFjSlpszGJc1baMk1NeBZ"; protocol="application/pgp-signature"
-X-Ovh-Tracer-Id: 5920263185231203636
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrkeeggdduheehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfgjfhfogggtsehgtderreertdejnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhlrgihvghrieeluddrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehsthgvvhgvsehskhdvrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221202511.GB14897@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ihKFjSlpszGJc1baMk1NeBZ
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 21, 2020 at 09:25:11PM +0100, Peter Zijlstra wrote:
+> On Fri, Feb 21, 2020 at 10:08:55AM -0500, Steven Rostedt wrote:
+> > On Fri, 21 Feb 2020 14:34:17 +0100
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> > 
+> > > --- a/kernel/locking/lockdep.c
+> > > +++ b/kernel/locking/lockdep.c
+> > > @@ -379,13 +379,13 @@ void lockdep_init_task(struct task_struc
+> > >  
+> > >  void lockdep_off(void)
+> > >  {
+> > > -	current->lockdep_recursion++;
+> > > +	current->lockdep_recursion += BIT(16);
+> > >  }
+> > >  EXPORT_SYMBOL(lockdep_off);
+> > >  
+> > >  void lockdep_on(void)
+> > >  {
+> > > -	current->lockdep_recursion--;
+> > > +	current->lockdep_recursion -= BIT(16);
+> > >  }
+> > >  EXPORT_SYMBOL(lockdep_on);
+> > >  
+> > 
+> > > +
+> > > +static bool lockdep_nmi(void)
+> > > +{
+> > > +	if (current->lockdep_recursion & 0xFFFF)
+> > 
+> > Nitpick, but the association with bit 16 and this mask really should be
+> > defined as a macro somewhere and not have hard coded numbers.
+> 
+> Right, I suppose I can do something like:
+> 
+> #define LOCKDEP_RECURSION_BITS	16
+> #define LOCKDEP_OFF (1U << LOCKDEP_RECURSION_BITS)
+> #define LOCKDEP_RECURSION_MASK (LOCKDEP_OFF - 1)
 
-On Fri, 21 Feb 2020 13:03:46 -0800, Dave Hansen <dave.hansen@intel.com> wro=
-te:
-> On 2/21/20 12:57 PM, Stephen Kitt wrote:
-> > MPX was removed in commit 45fc24e89b7c ("x86/mpx: remove MPX from
-> > arch/x86"), this removes the corresponding entry in the x86 toc.
-> >=20
-> > This was suggested by a Sphinx warning. =20
->=20
-> Pretty obvious miss on my part.  Thanks for finding and fixing it.
->=20
-> It might be nice to add:
->=20
-> Fixes: 45fc24e89b7cc ("x86/mpx: remove MPX from arch/x86")
+With that I'd say
 
-Ah yes, it would be. What=E2=80=99s the etiquette here? Should I respin, or=
- can
-whoever merges this (Jon?) add this to the commit message?
-
-> In any case:
->=20
-> Acked-by: Dave Hansen <dave.hansen@intel.com>
-
-Thanks!
-
-Stephen
-
---Sig_/ihKFjSlpszGJc1baMk1NeBZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl5QUhoACgkQgNMC9Yht
-g5x5mQ//a6qVDMQffPy2kF6FlGU9g/Vd/M0mU7P7XaZ1xl/COpAFzFcP1ZjK6HWl
-oWA/HVAEHimBAxVI4T5+DiExj0H90sGu9bD8VoHVuZZHQSfHubHS1Ynw/4+HGkUl
-3Mchb5DT1LoQqq7Hy49lbNbNeaWmC1VW3Z3LNq6rmdGsex78xJ0SWkd3eknj92n5
-AQ7BKpSqt7dmN6+sEmhQ46fZ41JoXV1fZ8NRIHGoPKHmU9AUA6CCSzSA2JO/Hu4e
-k1Ua6vACPMvs/fByE1ug6uBiWeWD+4CfwuX1AoJSedgipWc8v3najtjUt+u3rYDh
-tALuPbQ1SFach6PLFB8mVHb8wjTwVTgnwE+T7utFu5OssKgwKMUOAgh0+zMPr0xV
-mI740ofTm3pjV21pZHEygAuHK7wSCwWTwlh2rz9Lxu9HLBCmZD5tw2Tvj9ShsE4c
-3fGRowjdL43d1X1zhBBJ8hI6E/JVpissSkfoD275ffbqtIyZ7Iw/+8/jSeLFyGBj
-SWEIHji+7S68k1l0CAoNdQYppWS+TP1XZpWMU65mp1XEIhD1+5F/Nj1V0kwFN2sP
-ETE2EIoI33le9mANu5JzY7lGs/SguILmky3nyw84Td2ekNvVMssEDV68LWlQwY/a
-U2yi49NSGURrLR/Vo2EV9eUGSyLY3goQgrjpfFM8pqPrmem1gLI=
-=VQbm
------END PGP SIGNATURE-----
-
---Sig_/ihKFjSlpszGJc1baMk1NeBZ--
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
