@@ -2,111 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACDF3168335
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:24:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08A89168340
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:27:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726198AbgBUQYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 11:24:31 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44167 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbgBUQYb (ORCPT
+        id S1726794AbgBUQ07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 11:26:59 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:34884 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbgBUQ06 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 11:24:31 -0500
-Received: by mail-ot1-f65.google.com with SMTP id h9so2463697otj.11
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 08:24:30 -0800 (PST)
+        Fri, 21 Feb 2020 11:26:58 -0500
+Received: by mail-pj1-f65.google.com with SMTP id q39so973512pjc.0;
+        Fri, 21 Feb 2020 08:26:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2necOtKPRGOvCKSmF/mkYAKx6vUj3EgsCgdFv1SUhI0=;
-        b=cBEVhpXst0AzntwHO7MAAC8tPgH/lHhw3JRg1tiTU84YvfHSiop6h5HEb7dD7ijKuo
-         Tkw/ZNf20go4KH7TnldYOoZEAs0/HjhdC6mtapS6+Q3y/I7Q+YrEMV84Zr3jKw37sWpE
-         U9Jl8f/7cOVM1MQYH54S4Vp6WSWKpzS2B9dUJOJpX4zoeMiFs4UP17D4CccHDAg8ZFR1
-         vCZ/8RYSCxh9NQiUxEt36OEadxPUC7ds7oA0vIxw+TkYSm380z9btYwB+23YYwbo8b8g
-         7XRdvaaGovLDozll686+2N7fCxFPusnOHgUUDjTiUfiXQ3pTNjxbkIR85nNqgJmQT6GQ
-         8i+g==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=yAiMcPC8Fsdh3sF/o6bSGnkKQ3Dm47KWIMRyu7ofJ5A=;
+        b=V49ASkJ+RyKiTpOQYTvgubqkotfVDwDU7UL+/N/g32CniyMwH3T4QowQc449sGC7+1
+         VQ3V4Oo2ThQ/6dfjndNgZvhFQScyYw32BkolMuZiziwg6BwTU16kt0rG5+taJ12oHxDY
+         8t19kXJuIKEhuzjkx3djfELiYCAYfoBwKC0CQ7qQ+yOtaBuxk+E4iD5K5oTvv2wbCLaL
+         shq37+h+AG/s4gJxHOd+gWbL8cLDGkZXoJtBiJxuVQE5S9L0+aP5+adnA/+3E35LEcI1
+         smTgNhnSWMFCIQ0WRXi4xYVMRov+K3osVzVWe7M05zE1N1IEZz/MLPTM6ikkp3yOGZFn
+         LE2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2necOtKPRGOvCKSmF/mkYAKx6vUj3EgsCgdFv1SUhI0=;
-        b=SpZ6nnb8XIDwVq3qdra1rbGoIN3YFKAB9odgVmxnofusRRu4XBRl14ubyOtSkVjQi6
-         qz2CTEdrksd4/02k2PW1Cq8ewSP3jF7XAhdTF/qliDU5wrjikyEQDr0H5B7kg6O0ZuCN
-         SImmrbvByWH3ofxFw4r+mQPqTprDpW5TJ/cocVkPAvEVbxnJMSE31doseOMUS1e4HF2s
-         AdwQVob+9X6+8MZs42udgORLwNnv8D2ey6LhU+Un01qpJlKIzdhTpQ6O0KL5TY48PFSz
-         Se7ZNw+1izhQdRNQOSpYqQOqfxJn5Kg4tJO7VVIqnbuzFi5N9WHPw8ocKUSRPakCkgXE
-         DATg==
-X-Gm-Message-State: APjAAAVW0l9UhCc33QGJB6nJkU/NkbfTZa7URZ64wXkhbWk/OMA0WQdW
-        C03tDyUjrjcQO3iA+YKdgHWbaY2To0/Cp7nG6HMO7XMx
-X-Google-Smtp-Source: APXvYqxaf5u3WFzaIFaCrcTuxeBbhT11NwRGTSO9X8QeSchk7dKOD/6D3Clq0uqWRzW41IL9WLcTtDJa9yoQ436XJig=
-X-Received: by 2002:a9d:64d8:: with SMTP id n24mr27053866otl.71.1582302269868;
- Fri, 21 Feb 2020 08:24:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20200221032720.33893-1-alastair@au1.ibm.com> <CAPcyv4j2hut1YDrotC=QkcM+S0SZwpd9_4hD2aChn+cKD+62oA@mail.gmail.com>
-In-Reply-To: <CAPcyv4j2hut1YDrotC=QkcM+S0SZwpd9_4hD2aChn+cKD+62oA@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 21 Feb 2020 08:24:18 -0800
-Message-ID: <CAPcyv4hzZt0oqWN8y_K70h3C1S1jNw6jfNF3jPujCFmLW+MSvw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/27] Add support for OpenCAPI Persistent Memory devices
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>
-Cc:     alastair@d-silva.org,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yAiMcPC8Fsdh3sF/o6bSGnkKQ3Dm47KWIMRyu7ofJ5A=;
+        b=fZepcdFCM2UZ55S6QvfxXEeVkEls+iKaxeLW66fCDnx83/6Y8yXLqlbMIco0p99GBg
+         fbNMfTzP+0Y/fWMgTwBtnLsitqkYfK2UULeoA6FK3YL+X1e9D/bjaxtWb7/82MgYBwib
+         4lRm8b4sYU+8tz9pwuFAckoS7iXYyv6ODFVHBwSlXXjsiXjSkUm21zgRzL8/mA7b8F8R
+         0/j4/3rbYmYKAHidMdJIdZbyNi4JCQm9mb3CdqUfEfD9PJvY88lda8ZCN8XYoheuFFK/
+         iZd4rPZ0eZkBusjN3P8OwkblNG5qqusq5EjksS4+Y2zXwgdFY/W5sTN+sUgDee0VjVMP
+         sBSA==
+X-Gm-Message-State: APjAAAXNaqiFtHwVuTJCOLV1A6W2JVvsecSboorMiBlAt77nsxf13N5q
+        CE8/2uvya2TrBcJeMBEaaQ==
+X-Google-Smtp-Source: APXvYqy6cPZ/Deoo2WCfAKDgesbS0VH8ghs5Q6eG52JEhqfDqVaOB3BBP8C8Don0YjxornSvQzSDIQ==
+X-Received: by 2002:a17:90a:9b88:: with SMTP id g8mr4025235pjp.72.1582302417855;
+        Fri, 21 Feb 2020 08:26:57 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([112.79.48.60])
+        by smtp.gmail.com with ESMTPSA id r8sm3031402pjo.22.2020.02.21.08.26.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 08:26:56 -0800 (PST)
+From:   madhuparnabhowmik10@gmail.com
+To:     steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        joel@joelfernandes.org, frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Subject: [PATCH] ipv6: xfrm6_tunnel.c: Use built-in RCU list checking
+Date:   Fri, 21 Feb 2020 21:54:47 +0530
+Message-Id: <20200221162447.23998-1-madhuparnabhowmik10@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 8:21 AM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Thu, Feb 20, 2020 at 7:28 PM Alastair D'Silva <alastair@au1.ibm.com> wrote:
-> >
-> > From: Alastair D'Silva <alastair@d-silva.org>
-> >
-> > This series adds support for OpenCAPI Persistent Memory devices, exposing
-> > them as nvdimms so that we can make use of the existing infrastructure.
->
-> A single sentence to introduce:
->
-> 24 files changed, 3029 insertions(+), 97 deletions(-)
->
-> ...is inadequate. What are OpenCAPI Persistent Memory devices? How do
-> they compare, in terms relevant to libnvdimm, to other persistent
-> memory devices? What challenges do they pose to the existing enabling?
-> What is the overall approach taken with this 27 patch break down? What
-> are the changes since v2, v1? If you incorporated someone's review
-> feedback note it in the cover letter changelog, if you didn't
+From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
-Assumptions and tradeoffs the implementation considered are also
-critical for reviewing the approach.
+hlist_for_each_entry_rcu() has built-in RCU and lock checking.
+
+Pass cond argument to list_for_each_entry_rcu() to silence
+false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
+by default.
+
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+---
+ net/ipv6/xfrm6_tunnel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
+index e11bdb0aaa15..25b7ebda2fab 100644
+--- a/net/ipv6/xfrm6_tunnel.c
++++ b/net/ipv6/xfrm6_tunnel.c
+@@ -78,7 +78,7 @@ static struct xfrm6_tunnel_spi *__xfrm6_tunnel_spi_lookup(struct net *net, const
+ 
+ 	hlist_for_each_entry_rcu(x6spi,
+ 			     &xfrm6_tn->spi_byaddr[xfrm6_tunnel_spi_hash_byaddr(saddr)],
+-			     list_byaddr) {
++			     list_byaddr, lockdep_is_held(&xfrm6_tunnel_spi_lock)) {
+ 		if (xfrm6_addr_equal(&x6spi->addr, saddr))
+ 			return x6spi;
+ 	}
+-- 
+2.17.1
+
