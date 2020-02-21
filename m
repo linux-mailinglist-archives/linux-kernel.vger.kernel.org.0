@@ -2,111 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55C9A167B0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 11:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 371E2167B1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 11:47:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbgBUKpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 05:45:03 -0500
-Received: from foss.arm.com ([217.140.110.172]:36426 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727077AbgBUKpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 05:45:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B45C31B;
-        Fri, 21 Feb 2020 02:45:02 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 63E163F68F;
-        Fri, 21 Feb 2020 02:45:00 -0800 (PST)
-Date:   Fri, 21 Feb 2020 10:44:54 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Boqun Feng <boqun.feng@gmail.com>
-Cc:     linux-pci@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michael Kelley <mikelley@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andrew Murray <andrew.murray@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v3 0/3] PCI: hv: Generify pci-hyperv.c
-Message-ID: <20200221104454.GA8595@e121166-lin.cambridge.arm.com>
-References: <20200210033953.99692-1-boqun.feng@gmail.com>
- <20200221023344.GJ69864@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221023344.GJ69864@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1728097AbgBUKr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 05:47:27 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33664 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727827AbgBUKr0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 05:47:26 -0500
+Received: by mail-ed1-f67.google.com with SMTP id r21so1809018edq.0;
+        Fri, 21 Feb 2020 02:47:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=JU7gxEFwqK+Oxre///Ayp0+fP1f8xI82V+ZomELLvp4=;
+        b=R2ZUvr3ZuLAjFgvdrwOgxABTV1rb54T8Yot4G6CZhY33nraY/yTW8WHI8KSWs4LuhZ
+         MJG1OoU2i7KsKlydCYMqvmQMP60uFvKbgt9yOlPGdHqQ8Ybx9L0r3yLtP+0aPJH/zZ55
+         +ybM0KR/6kxsvD8HjL02eLeotMe1NdDyVlpGi02Hi3yVDLB+AyoT4iMLw2HH4Egtic9F
+         ObS5a/tP7Iiau+EyL5ukYMjYxkMQvWOJheMcHAl1dLj5f5iP9E5vz0mZJ2D6I6NH9W/l
+         ln3xH+q5H4ZxJPfPkmbBgUUY40SnPIk5fDsGyeAhYA3HqOBC/rCv5vMledURFHpv4aNj
+         Ru5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=JU7gxEFwqK+Oxre///Ayp0+fP1f8xI82V+ZomELLvp4=;
+        b=bv+FIYbT8VczK/Xtl4PvcNQbuLoO7cF8mA1ceGtl0v4llpyToTmhxTUE/STTgOR9CW
+         NC4m7EVNoicehgdTAw4qqCGU5q5w+/7PodkYXfxmXeaLlknUCAFX6qnHi/SJ6pe9FrJg
+         RRPf3wULaImzZRWPFScZxyePtN9GpVJsPA/HpYHP3oqtm1R3KdzHE2n9lqqCqUxH11rP
+         oPBSMP8CTBOglniX0e8wNvbVA7XhKp+iifkZRu4/wjP5OnXhfo30uByQ0mMOmI1C9mMd
+         LVZ1dytjuDZ9SZvHnZWM3tf+i7eGeVh5wksIvdwd8YugynoX7EEp7h8dCRLqjRoUGUfL
+         AXfw==
+X-Gm-Message-State: APjAAAWYa2vSJK9csjzqzXuG4MmlCf80NOMzHcZqebbtaQnYEO5cYdlF
+        UWXFP2IZ5Y2+9WiMjmEo5H1UXu8v
+X-Google-Smtp-Source: APXvYqxFpO/dJx50hzO5j6R0vnqEpN2UskYHsdUTUvY8vTeSxERiuoJAxTUjAKW6VvKZDkKTFqxcCw==
+X-Received: by 2002:a17:906:ccdd:: with SMTP id ot29mr33226021ejb.204.1582282044212;
+        Fri, 21 Feb 2020 02:47:24 -0800 (PST)
+Received: from jwang-Latitude-5491.pb.local ([2001:1438:4010:2558:d8ec:cf8e:d7de:fb22])
+        by smtp.gmail.com with ESMTPSA id 2sm270594edv.87.2020.02.21.02.47.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 02:47:23 -0800 (PST)
+From:   Jack Wang <jinpuwang@gmail.com>
+To:     linux-block@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc:     axboe@kernel.dk, hch@infradead.org, sagi@grimberg.me,
+        bvanassche@acm.org, leon@kernel.org, dledford@redhat.com,
+        jgg@ziepe.ca, danil.kipnis@cloud.ionos.com,
+        jinpu.wang@cloud.ionos.com, rpenyaev@suse.de,
+        pankaj.gupta@cloud.ionos.com,
+        Roman Pen <roman.penyaev@profitbricks.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v9 01/25] sysfs: export sysfs_remove_file_self()
+Date:   Fri, 21 Feb 2020 11:46:57 +0100
+Message-Id: <20200221104721.350-2-jinpuwang@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200221104721.350-1-jinpuwang@gmail.com>
+References: <20200221104721.350-1-jinpuwang@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 10:33:44AM +0800, Boqun Feng wrote:
-> Ping ;-)
-> 
-> Any suggestion or plan on this patchset?
+From: Jack Wang <jinpu.wang@cloud.ionos.com>
 
-Hi,
+Function is going to be used in transport over RDMA module
+in subsequent patches, so export it to GPL modules.
 
-I shall have a look shortly, thanks.
+Signed-off-by: Roman Pen <roman.penyaev@profitbricks.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+[jwang: extend the commit message]
+Signed-off-by: Jack Wang <jinpu.wang@cloud.ionos.com>
+---
+ fs/sysfs/file.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Lorenzo
+diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+index 130fc6fbcc03..1ff4672d7746 100644
+--- a/fs/sysfs/file.c
++++ b/fs/sysfs/file.c
+@@ -492,6 +492,7 @@ bool sysfs_remove_file_self(struct kobject *kobj, const struct attribute *attr)
+ 	kernfs_put(kn);
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(sysfs_remove_file_self);
+ 
+ void sysfs_remove_files(struct kobject *kobj, const struct attribute * const *ptr)
+ {
+-- 
+2.17.1
 
-> Thanks and Regards,
-> Boqun
-> 
-> On Mon, Feb 10, 2020 at 11:39:50AM +0800, Boqun Feng wrote:
-> > Hi,
-> > 
-> > This is the first part for virtual PCI support of Hyper-V guest on
-> > ARM64. The whole patchset doesn't have any functional change, but only
-> > refactors the pci-hyperv.c code to make it more arch-independent.
-> > 
-> > Previous version:
-> > v1: https://lore.kernel.org/lkml/20200121015713.69691-1-boqun.feng@gmail.com/
-> > v2: https://lore.kernel.org/linux-arm-kernel/20200203050313.69247-1-boqun.feng@gmail.com/
-> > 
-> > Changes since v2:
-> > 
-> > *	Rebased on 5.6-rc1
-> > 
-> > *	Reword commit logs as per Andrew's suggestion.
-> > 
-> > *	It makes more sense to have a generic interface to set the whole
-> > 	msi_entry rather than only the "address" field. So change
-> > 	hv_set_msi_address_from_desc() to hv_set_msi_entry_from_desc().
-> > 	Additionally, make it an inline function as per the suggestion
-> > 	of Andrew and Thomas.
-> > 
-> > *	Add the missing comment saying the partition_id of
-> > 	hv_retarget_device_interrupt must be self.
-> > 
-> > *	Add the explanation for why "__packed" is needed for TLFS
-> > 	structures.
-> > 
-> > I've done compile and boot test of this patchset, also done some tests
-> > with a pass-through NVMe device.
-> > 
-> > Suggestions and comments are welcome!
-> > 
-> > Regards,
-> > Boqun
-> > 
-> > Boqun Feng (3):
-> >   PCI: hv: Move hypercall related definitions into tlfs header
-> >   PCI: hv: Move retarget related structures into tlfs header
-> >   PCI: hv: Introduce hv_msi_entry
-> > 
-> >  arch/x86/include/asm/hyperv-tlfs.h  | 41 +++++++++++++++++++++++++++
-> >  arch/x86/include/asm/mshyperv.h     |  8 ++++++
-> >  drivers/pci/controller/pci-hyperv.c | 43 ++---------------------------
-> >  3 files changed, 52 insertions(+), 40 deletions(-)
-> > 
-> > -- 
-> > 2.24.1
-> > 
