@@ -2,67 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7152167E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:22:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2A75167E5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:21:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbgBUNWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 08:22:13 -0500
-Received: from smtprelay0081.hostedemail.com ([216.40.44.81]:41198 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727053AbgBUNWM (ORCPT
+        id S1728591AbgBUNVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 08:21:04 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36970 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727699AbgBUNVE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 08:22:12 -0500
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave01.hostedemail.com (Postfix) with ESMTP id B0CA21802ED70;
-        Fri, 21 Feb 2020 13:22:11 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id B5B61182CED34;
-        Fri, 21 Feb 2020 13:22:10 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1534:1539:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3866:4321:5007:6114:6642:8957:10004:10400:10848:11026:11473:11658:11914:12296:12297:12438:12555:12760:13069:13311:13357:13439:14181:14659:14721:21080:21627:21990:30054:30070:30075,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: badge02_300193163bd5e
-X-Filterd-Recvd-Size: 1390
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 21 Feb 2020 13:22:09 +0000 (UTC)
-Message-ID: <862518f826b35cd010a2e46f64f6f4cfa0d44582.camel@perches.com>
-Subject: [trivial PATCH] cifs: Use #define in cifs_dbg
-From:   Joe Perches <joe@perches.com>
-To:     Steve French <sfrench@samba.org>
-Cc:     linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Fri, 21 Feb 2020 05:20:45 -0800
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Fri, 21 Feb 2020 08:21:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582291263;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=K4ms2CgVns2BaGnINjY8fAnvcQ0WnyDlOpXKLBLyMwo=;
+        b=JSRizBa+LIXeP5hmVH2CE3VUhNBCclNWwE0Pfj5Iy9gnoExuPF8OXkvikYsTVvNODzcOMJ
+        k2JOM0aKf43v+3S2Q5RKes4ER2PWuj2I5TLngNwhLxTEClEc11F5Nklk/a1dJ2u2EDcTYz
+        AhMAX10Oo6HVKC1U6gydOh1/3tvGnR8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-29-wrBPfRNlOUmJH_P1DeT36w-1; Fri, 21 Feb 2020 08:20:57 -0500
+X-MC-Unique: wrBPfRNlOUmJH_P1DeT36w-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D4AF7107ACC5;
+        Fri, 21 Feb 2020 13:20:54 +0000 (UTC)
+Received: from krava (unknown [10.43.17.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1FE0427180;
+        Fri, 21 Feb 2020 13:20:50 +0000 (UTC)
+Date:   Fri, 21 Feb 2020 14:20:48 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Feng Tang <feng.tang@intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        andi.kleen@intel.com, ying.huang@intel.com
+Subject: Re: [LKP] Re: [perf/x86] 81ec3f3c4c: will-it-scale.per_process_ops
+ -5.5% regression
+Message-ID: <20200221132048.GE652992@krava>
+References: <20200205123216.GO12867@shao2-debian>
+ <20200205125804.GM14879@hirez.programming.kicks-ass.net>
+ <20200221080325.GA67807@shbuild999.sh.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221080325.GA67807@shbuild999.sh.intel.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All other uses of cifs_dbg use defines so change this one.
+On Fri, Feb 21, 2020 at 04:03:25PM +0800, Feng Tang wrote:
+> 
+> On Wed, Feb 05, 2020 at 01:58:04PM +0100, Peter Zijlstra wrote:
+> > On Wed, Feb 05, 2020 at 08:32:16PM +0800, kernel test robot wrote:
+> > > Greeting,
+> > > 
+> > > FYI, we noticed a -5.5% regression of will-it-scale.per_process_ops due to commit:
+> > > 
+> > > 
+> > > commit: 81ec3f3c4c4d78f2d3b6689c9816bfbdf7417dbb ("perf/x86: Add check_period PMU callback")
+> > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> > > 
+> > 
+> > I'm fairly sure this bisect/result is bogus.
+> 
+> 
+> Hi Peter,
+> 
+> Some updates:
+> 
+> We checked more on this. We run 14 times test for it, and the
+> results are consistent about the 5.5% degradation, and we
+> run the same test on several other platforms, whose test results
+> are also consistent, though there are no such -5.5% seen.
+> 
+> We are also curious that the commit seems to be completely not
+> relative to this scalability test of signal, which starts a task
+> for each online CPU, and keeps calling raise(), and calculating
+> the run numbers.
+> 
+> One experiment we did is checking which part of the commit
+> really affects the test, and it turned out to be the change of
+> "struct pmu". Effectively, applying this patch upon 5.0-rc6 
+> which triggers the same regression.
+> 
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 1d5c551..e1a0517 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -447,6 +447,11 @@ struct pmu {
+>  	 * Filter events for PMU-specific reasons.
+>  	 */
+>  	int (*filter_match)		(struct perf_event *event); /* optional */
+> +
+> +	/*
+> +	 * Check period value for PERF_EVENT_IOC_PERIOD ioctl.
+> +	 */
+> +	int (*check_period)		(struct perf_event *event, u64 value); /* optional */
+>  };
+> 
+> So likely, this commit changes the layout of the kernel text
+> and data, which may trigger some cacheline level change. From
+> the system map of the 2 kernels, a big trunk of symbol's address
+> changes which follow the global "pmu",
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- fs/cifs/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+nice, I wonder we could see that in perf c2c output ;-)
+I'll try to run and check
 
-diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-index b5e663..cd95e0 100644
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -653,8 +653,8 @@ cifs_all_info_to_fattr(struct cifs_fattr *fattr, FILE_ALL_INFO *info,
- 		 */
- 		if ((fattr->cf_nlink < 1) && !tcon->unix_ext &&
- 		    !info->DeletePending) {
--			cifs_dbg(1, "bogus file nlink value %u\n",
--				fattr->cf_nlink);
-+			cifs_dbg(VFS, "bogus file nlink value %u\n",
-+				 fattr->cf_nlink);
- 			fattr->cf_flags |= CIFS_FATTR_UNKNOWN_NLINK;
- 		}
- 	}
+thanks,
+jirka
 
+> 
+> 5.0-rc6-systemap:
+> 
+> ffffffff8221d000 d pmu
+> ffffffff8221d100 d pmc_reserve_mutex
+> ffffffff8221d120 d amd_f15_PMC53
+> ffffffff8221d160 d amd_f15_PMC50
+> 
+> 5.0-rc6+pmu-change-systemap:
+> 
+> ffffffff8221d000 d pmu
+> ffffffff8221d120 d pmc_reserve_mutex
+> ffffffff8221d140 d amd_f15_PMC53
+> ffffffff8221d180 d amd_f15_PMC50
+> 
+> But we can hardly identify which exact symbol is responsible
+> for the change, as too many symbols are offseted. 
+> 
+> btw, we've seen similar case that an irrelevant commit changes
+> the benchmark, like a hugetlb patch improves pagefault test on
+> a platform that never uses hugetlb https://lkml.org/lkml/2020/1/14/150  
+> 
+> Thanks,
+> Feng
+> 
+> > _______________________________________________
+> > LKP mailing list -- lkp@lists.01.org
+> > To unsubscribe send an email to lkp-leave@lists.01.org
+> 
 
