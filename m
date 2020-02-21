@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D50BD167190
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:55:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AD49167191
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:55:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730289AbgBUHzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:55:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54072 "EHLO mail.kernel.org"
+        id S1730298AbgBUHzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:55:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730194AbgBUHzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:55:14 -0500
+        id S1729878AbgBUHzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:55:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03FCD24650;
-        Fri, 21 Feb 2020 07:55:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A77A20578;
+        Fri, 21 Feb 2020 07:55:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271713;
-        bh=BnLV/XiU1Mx19jyOQNilqFRCAMb07AFrLVYS7MrpU00=;
+        s=default; t=1582271715;
+        bh=C/86LdAUnf6DSfPmYMylVq8bsdHu+MbWX9X+ufmRigQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rCqwhj7whrtJGnna7NtrLonvujja9ySqD60nci9WWHtaYglANB3W60QUloeUkyguF
-         vgZJeeVxo7eOyB8NysUw8CtpDRZKI+2gjFsLA9R3Np0CdOURu7eK/ZxheD0e0nWEIl
-         p5sgKx5NJFPCjccojiGjw9pSGbcHS9/tgVMu9OQA=
+        b=00xRnNKncLky/Nqlkjw6yaSnJ02PHQnBplICRhUi8c1iQSl/fLxgck+1DcE0p6C+c
+         juJ26ZNcp2H4M7krO/MdkMkLO/8n6OizyIyJxi/NfYqxEocCb8tsO2zfvYTkX005s7
+         YfIM+fUPXwkyW/GCatB4Gv9/u7A9SuutHvcXSczo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 269/399] f2fs: set I_LINKABLE early to avoid wrong access by vfs
-Date:   Fri, 21 Feb 2020 08:39:54 +0100
-Message-Id: <20200221072428.396725664@linuxfoundation.org>
+Subject: [PATCH 5.5 270/399] f2fs: free sysfs kobject
+Date:   Fri, 21 Feb 2020 08:39:55 +0100
+Message-Id: <20200221072428.469369263@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -45,130 +46,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 5b1dbb082f196278f82b6a15a13848efacb9ff11 ]
+[ Upstream commit 820d366736c949ffe698d3b3fe1266a91da1766d ]
 
-This patch moves setting I_LINKABLE early in rename2(whiteout) to avoid the
-below warning.
+Detected kmemleak.
 
-[ 3189.163385] WARNING: CPU: 3 PID: 59523 at fs/inode.c:358 inc_nlink+0x32/0x40
-[ 3189.246979] Call Trace:
-[ 3189.248707]  f2fs_init_inode_metadata+0x2d6/0x440 [f2fs]
-[ 3189.251399]  f2fs_add_inline_entry+0x162/0x8c0 [f2fs]
-[ 3189.254010]  f2fs_add_dentry+0x69/0xe0 [f2fs]
-[ 3189.256353]  f2fs_do_add_link+0xc5/0x100 [f2fs]
-[ 3189.258774]  f2fs_rename2+0xabf/0x1010 [f2fs]
-[ 3189.261079]  vfs_rename+0x3f8/0xaa0
-[ 3189.263056]  ? tomoyo_path_rename+0x44/0x60
-[ 3189.265283]  ? do_renameat2+0x49b/0x550
-[ 3189.267324]  do_renameat2+0x49b/0x550
-[ 3189.269316]  __x64_sys_renameat2+0x20/0x30
-[ 3189.271441]  do_syscall_64+0x5a/0x230
-[ 3189.273410]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[ 3189.275848] RIP: 0033:0x7f270b4d9a49
-
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/namei.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ fs/f2fs/sysfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index a1c507b0b4ac4..5d9584281935f 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -797,6 +797,7 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
- 
- 	if (whiteout) {
- 		f2fs_i_links_write(inode, false);
-+		inode->i_state |= I_LINKABLE;
- 		*whiteout = inode;
- 	} else {
- 		d_tmpfile(dentry, inode);
-@@ -867,6 +868,12 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			F2FS_I(old_dentry->d_inode)->i_projid)))
- 		return -EXDEV;
- 
-+	if (flags & RENAME_WHITEOUT) {
-+		err = f2fs_create_whiteout(old_dir, &whiteout);
-+		if (err)
-+			return err;
-+	}
-+
- 	err = dquot_initialize(old_dir);
- 	if (err)
- 		goto out;
-@@ -898,17 +905,11 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		}
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 70945ceb9c0ca..5963316f391a5 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -786,4 +786,5 @@ void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
+ 		remove_proc_entry(sbi->sb->s_id, f2fs_proc_root);
  	}
- 
--	if (flags & RENAME_WHITEOUT) {
--		err = f2fs_create_whiteout(old_dir, &whiteout);
--		if (err)
--			goto out_dir;
--	}
--
- 	if (new_inode) {
- 
- 		err = -ENOTEMPTY;
- 		if (old_dir_entry && !f2fs_empty_dir(new_inode))
--			goto out_whiteout;
-+			goto out_dir;
- 
- 		err = -ENOENT;
- 		new_entry = f2fs_find_entry(new_dir, &new_dentry->d_name,
-@@ -916,7 +917,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		if (!new_entry) {
- 			if (IS_ERR(new_page))
- 				err = PTR_ERR(new_page);
--			goto out_whiteout;
-+			goto out_dir;
- 		}
- 
- 		f2fs_balance_fs(sbi, true);
-@@ -948,7 +949,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		err = f2fs_add_link(new_dentry, old_inode);
- 		if (err) {
- 			f2fs_unlock_op(sbi);
--			goto out_whiteout;
-+			goto out_dir;
- 		}
- 
- 		if (old_dir_entry)
-@@ -972,7 +973,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 				if (IS_ERR(old_page))
- 					err = PTR_ERR(old_page);
- 				f2fs_unlock_op(sbi);
--				goto out_whiteout;
-+				goto out_dir;
- 			}
- 		}
- 	}
-@@ -991,7 +992,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	f2fs_delete_entry(old_entry, old_page, old_dir, NULL);
- 
- 	if (whiteout) {
--		whiteout->i_state |= I_LINKABLE;
- 		set_inode_flag(whiteout, FI_INC_LINK);
- 		err = f2fs_add_link(old_dentry, whiteout);
- 		if (err)
-@@ -1027,15 +1027,14 @@ put_out_dir:
- 	f2fs_unlock_op(sbi);
- 	if (new_page)
- 		f2fs_put_page(new_page, 0);
--out_whiteout:
--	if (whiteout)
--		iput(whiteout);
- out_dir:
- 	if (old_dir_entry)
- 		f2fs_put_page(old_dir_page, 0);
- out_old:
- 	f2fs_put_page(old_page, 0);
- out:
-+	if (whiteout)
-+		iput(whiteout);
- 	return err;
+ 	kobject_del(&sbi->s_kobj);
++	kobject_put(&sbi->s_kobj);
  }
- 
 -- 
 2.20.1
 
