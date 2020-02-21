@@ -2,93 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 461CC168217
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:44:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B13BE168223
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:45:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbgBUPoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:44:15 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33270 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729181AbgBUPoO (ORCPT
+        id S1729242AbgBUPpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:45:10 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44025 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728901AbgBUPpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:44:14 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m10so5454510wmc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:44:13 -0800 (PST)
+        Fri, 21 Feb 2020 10:45:09 -0500
+Received: by mail-ot1-f67.google.com with SMTP id p8so2342509oth.10
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:45:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2hlS8uh302ck8d7C7CZX+ehT/azcPcgkvr5+mGQ69YQ=;
-        b=a5RX33mAffMVrIDgMTaztmSD+eWGJlZaEKzfTDHcULYB45n9pX1a0hDlHVLSjVHi92
-         BcnwA1WjQbsvMjRZZzg4lIOlJ6HJEtNbk4WGnIm7tZwTUOVgjaKk8EQibqLXzfBCqo/c
-         0I6id7eHku1rJ7heOghiXletnT0STJwoD7225/TjDKZhiUe/zfag5sAJ1N27HjL37VXJ
-         Aoise+ais0A3HJZ3uJsHnV6BXq7FcL3ru+KDeIq2Do+xrbDfI0/X+I8P8dNRhdOMaX8z
-         99/sR1guvCs2DtPptnkbZ/5jyF+sjSr+X0/VjiORi4xOYUK4IEJY8AVcHBpZyuRD6dHw
-         1JnA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xJ76dbWV6Hrpq8Mu8XFunPpoSbtEI2f1hLA0MqTSFAE=;
+        b=JzNdVxLni+3SIL2B/dHNs+BXwlg8fEdeJYKxG8y/us3rYjNRsugH7zyLEd9y+Q0dvH
+         tNEshKmvFe7pxySNVCK8VhNUQe/Cx9XyIGyCkUmv4+/QN+gQ58q9dcDeQwZhrfFplCqk
+         r+1Tdz66GI0I7nksiWq0efA8qc01QUEnEA7O5B6RN+ttv9R+QUoXbDBSHhQaVgrfeesd
+         oqTpwgM56jgYBo7KxyXJtkFs9ehZsX3BI0efQDxJeZingRxFpl4oUmbJBXh4MI5et4AR
+         qfkVDpZoQCNwmfjnR3QfL86jD3RhcBEgIVSQfq96BwotoB+dEPi0UfgOpsBjGtwqH9g4
+         ewHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2hlS8uh302ck8d7C7CZX+ehT/azcPcgkvr5+mGQ69YQ=;
-        b=KpVNV17N2yTiwzZhB98JMmDd/moEBIez9SnwWLvQuX1l/7ATna2QrIPfElWxofvSAW
-         VrY4q+CoKEvcc1Zt7lDQPm/lmeWYsDG6yQvHbw8NUUyaG8zpTYugtmnaNdRVU69S1SGp
-         +U2rsM8D41muKEnWDB1fJCpQRUPmmUTMWtFmZi3tng3iwtqGJN0njbJNQ7KEa4PUX6D0
-         ebwb8T8vJp+paskgajQPu/Bq/y8QwRoPyKMunEZgUQaNmqVMkvkIe7rTwbjF4I5zIcC3
-         GbkCCUyWKHm3NJyw+2+NVS4bhECyiECrzBezTBNrNyOTjff7BIJTsTwbST6BrUWTPt+a
-         dwYw==
-X-Gm-Message-State: APjAAAWmUIdeKzGrj8gaINwJu5x4dmy5X9IYeXtB13kwY68GWMt+RPVm
-        DgQMIrm22EFX8A20LEIqR0evuw==
-X-Google-Smtp-Source: APXvYqw3MpYXm74zDyUvYS1IEClp/DjjD7sjq6g9gEA1iHcMzwd87lVu7ETDNrlzQjko/voWzgE8Ew==
-X-Received: by 2002:a05:600c:290e:: with SMTP id i14mr4539761wmd.139.1582299852664;
-        Fri, 21 Feb 2020 07:44:12 -0800 (PST)
-Received: from linaro.org ([2a01:e34:ed2f:f020:903b:a048:f296:e3ae])
-        by smtp.gmail.com with ESMTPSA id s15sm4362854wrp.4.2020.02.21.07.44.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Feb 2020 07:44:11 -0800 (PST)
-Date:   Fri, 21 Feb 2020 16:44:09 +0100
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Jasper Korten <jja2000@gmail.com>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 12/17] cpuidle: Refactor and move out NVIDIA Tegra20
- driver into drivers/cpuidle
-Message-ID: <20200221154409.GP10516@linaro.org>
-References: <20200212235134.12638-1-digetx@gmail.com>
- <20200212235134.12638-13-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xJ76dbWV6Hrpq8Mu8XFunPpoSbtEI2f1hLA0MqTSFAE=;
+        b=Bg0ElD5BjDazIUay0ZRP7U7o5r1BKmnlIb7mlVNTA9PJX9Ph90ZBfc9yKX7OZng9/v
+         257YDyBJWURb8zNeiLifD9HBTy98s0SbABMR3qYawOGIbTVdR6radTNi6KhKgdX3d+3S
+         csVDuxLQDIKUpM73/X9IDr8tExv6z3kpjfoGW4a/iZBWbTI/uGtW08cqoeW2nbK62BUU
+         ZFLT4eWi0dKu3E2T3lLkj3hrjQW9D8iA/M7DzIltjW//hECXJy9zKHLBNOn5mHjVviVa
+         B02txnAvcDGbNpWOtN3/FdPnQ3BvtaWeSno7vJW6r33w7ifExQEs4I8I6pIeUl4uehmK
+         epjg==
+X-Gm-Message-State: APjAAAWCuHqG7PFnxv1FdchQjxmGeMAYu09vpTwHvmV5Z/nE57lawb4w
+        l5ePQyU/B/UPC25WDcNZgj9fp7L38I+klg5wvCzr3w==
+X-Google-Smtp-Source: APXvYqz2te/dx3ohJwq4+vB3zeo3H6S/EgzaXYjYFXFzW3w2cr3qRHngMP32q64gLaLs4czHjOVSArdnDURQ/VZz1WA=
+X-Received: by 2002:a05:6830:1219:: with SMTP id r25mr4451562otp.180.1582299908280;
+ Fri, 21 Feb 2020 07:45:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212235134.12638-13-digetx@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
+ <158204561120.3299825.5242636508455859327.stgit@warthog.procyon.org.uk>
+ <CAG48ez2B2J_3-+EjR20ukRu3noPnAccZsOTaea0jtKK4=+bkhQ@mail.gmail.com> <1897788.1582295034@warthog.procyon.org.uk>
+In-Reply-To: <1897788.1582295034@warthog.procyon.org.uk>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 21 Feb 2020 16:44:42 +0100
+Message-ID: <CAG48ez2nFks+yN1Kp4TZisso+rjvv_4UW0FTo8iFUd4Qyq1qDw@mail.gmail.com>
+Subject: Re: [PATCH 15/19] vfs: Add superblock notifications [ver #16]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 02:51:29AM +0300, Dmitry Osipenko wrote:
-> The driver's code is refactored in a way that will make it easy to
-> support Tegra30/114/124 SoCs by this unified driver later on. The
-> current functionality is equal to the old Tegra20 driver, only the
-> code's structure changed a tad. This is also a proper platform driver
-> now.
-> 
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/mach-tegra/Makefile          |   3 -
->  arch/arm/mach-tegra/cpuidle-tegra20.c | 216 --------------------
->  arch/arm/mach-tegra/cpuidle.c         |  14 +-
->  arch/arm/mach-tegra/cpuidle.h         |   4 -
->  drivers/cpuidle/Kconfig.arm           |   8 +
->  drivers/cpuidle/Makefile              |   1 +
->  drivers/cpuidle/cpuidle-tegra.c       | 277 ++++++++++++++++++++++++++
+On Fri, Feb 21, 2020 at 3:24 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Jann Horn <jannh@google.com> wrote:
+>
+> > > +               if (!s->s_watchers) {
+> >
+> > READ_ONCE() ?
+>
+> I'm not sure it matters.  It can only be set once, and the next time we read
+> it we're inside the lock.  And at this point, I don't actually dereference it,
+> and if it's non-NULL, it's not going to change.
 
-Is it possible to use -M option here to make the review easier?
+I'd really like these READ_ONCE() things to be *anywhere* the value
+can concurrently change, for two reasons:
 
+First, it tells the reader "keep in mind that this value may
+concurrently change in some way, don't just assume that it'll stay the
+same".
+
+But also, it tells the compiler that if it generates multiple loads
+here and assumes that they return the same value, *really* bad stuff
+may happen. GCC has some really fun behavior when compiling a switch()
+on a value that might change concurrently without using READ_ONCE():
+It sometimes generates multiple loads, where the first load is used to
+test whether the value is in a specific range and then the second load
+is used for actually indexing into a table of jump destinations. If
+the value is concurrently mutated from an in-bounds value to an
+out-of-bounds value, this code will load a jump destination from
+random out-of-bounds memory.
+
+An example:
+
+$ cat gcc-jump.c
+int blah(int *x, int y) {
+  switch (*x) {
+    case 0: return y+1;
+    case 1: return y*2;
+    case 2: return y-3;
+    case 3: return y^1;
+    case 4: return y+6;
+    case 5: return y-5;
+    case 6: return y|1;
+    case 7: return y&4;
+    case 8: return y|5;
+    case 9: return y-3;
+    case 10: return y&8;
+    case 11: return y|9;
+    default: return y;
+  }
+}
+$ gcc-9 -O2 -c -o gcc-jump.o gcc-jump.c
+$ objdump -dr gcc-jump.o
+[...]
+0000000000000000 <blah>:
+   0: 83 3f 0b              cmpl   $0xb,(%rdi)
+   3: 0f 87 00 00 00 00    ja     9 <blah+0x9>
+5: R_X86_64_PC32 .text.unlikely-0x4
+   9: 8b 07                mov    (%rdi),%eax
+   b: 48 8d 15 00 00 00 00 lea    0x0(%rip),%rdx        # 12 <blah+0x12>
+e: R_X86_64_PC32 .rodata-0x4
+  12: 48 63 04 82          movslq (%rdx,%rax,4),%rax
+  16: 48 01 d0              add    %rdx,%rax
+  19: ff e0                jmpq   *%rax
+[...]
+
+
+Or if you want to see a full example that actually crashes:
+
+$ cat gcc-jump-crash.c
+#include <pthread.h>
+
+int mutating_number;
+
+__attribute__((noinline)) int blah(int *x, int y) {
+  switch (*x) {
+    case 0: return y+1;
+    case 1: return y*2;
+    case 2: return y-3;
+    case 3: return y^1;
+    case 4: return y+6;
+    case 5: return y-5;
+    case 6: return y|1;
+    case 7: return y&4;
+    case 8: return y|5;
+    case 9: return y-3;
+    case 10: return y&8;
+    case 11: return y|9;
+    default: return y;
+  }
+}
+
+int blah_num;
+void *thread_fn(void *dummy) {
+  while (1) {
+    blah_num = blah(&mutating_number, blah_num);
+  }
+}
+
+int main(void) {
+  pthread_t thread;
+  pthread_create(&thread, NULL, thread_fn, NULL);
+  while (1) {
+    *(volatile int *)&mutating_number = 1;
+    *(volatile int *)&mutating_number = 100000000;
+  }
+}
+$ gcc-9 -O2 -pthread -o gcc-jump-crash gcc-jump-crash.c -ggdb -Wall
+$ gdb ./gcc-jump-crash
+[...]
+(gdb) run
+[...]
+Thread 2 "gcc-jump-crash" received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 0x7ffff7db6700 (LWP 33237)]
+0x00005555555551a2 in blah (x=0x555555558034 <mutating_number>, y=0)
+at gcc-jump-crash.c:6
+6   switch (*x) {
+(gdb) x/10i blah
+   0x555555555190 <blah>: cmp    DWORD PTR [rdi],0xb
+   0x555555555193 <blah+3>: ja     0x555555555050 <blah+4294966976>
+   0x555555555199 <blah+9>: mov    eax,DWORD PTR [rdi]
+   0x55555555519b <blah+11>: lea    rdx,[rip+0xe62]        # 0x555555556004
+=> 0x5555555551a2 <blah+18>: movsxd rax,DWORD PTR [rdx+rax*4]
+   0x5555555551a6 <blah+22>: add    rax,rdx
+   0x5555555551a9 <blah+25>: jmp    rax
+   0x5555555551ab <blah+27>: nop    DWORD PTR [rax+rax*1+0x0]
+   0x5555555551b0 <blah+32>: lea    eax,[rsi-0x3]
+   0x5555555551b3 <blah+35>: ret
+(gdb)
+
+
+Here's a presentation from Felix Wilhelm, a security researcher who
+managed to find a case in the Xen hypervisor where a switch() on a
+value in shared memory was exploitable to compromise the hypervisor
+from inside a guest (see slides 35 and following):
+<https://www.blackhat.com/docs/us-16/materials/us-16-Wilhelm-Xenpwn-Breaking-Paravirtualized-Devices.pdf>
+
+I realize that a compiler is extremely unlikely to make such an
+optimization decision for a simple "if (!a->b)" branch; but still, I
+would prefer to have READ_ONCE() everywhere where it is semantically
+required, not just everywhere where you can think of a concrete
+compiler optimization that will break stuff.
+
+> > > +                       ret = add_watch_to_object(watch, s->s_watchers);
+> > > +                       if (ret == 0) {
+> > > +                               spin_lock(&sb_lock);
+> > > +                               s->s_count++;
+> > > +                               spin_unlock(&sb_lock);
+> >
+> > Where is the corresponding decrement of s->s_count? I'm guessing that
+> > it should be in the ->release_watch() handler, except that there isn't
+> > one...
+>
+> Um.  Good question.  I think this should do the job:
+>
+>         static void sb_release_watch(struct watch *watch)
+>         {
+>                 put_super(watch->private);
+>         }
+>
+> And this then has to be set later:
+>
+>         init_watch_list(wlist, sb_release_watch);
+
+(And as in the other case, the s->s_count increment will probably have
+to be moved above the add_watch_to_object(), unless you hold the
+sb_lock around it?)
