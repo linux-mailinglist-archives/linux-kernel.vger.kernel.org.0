@@ -2,85 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F17A1684B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:19:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 656A01684BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:19:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbgBURTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 12:19:15 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40519 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725957AbgBURTP (ORCPT
+        id S1728426AbgBURTb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 12:19:31 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37454 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728356AbgBURTa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:19:15 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b185so1557292pfb.7;
-        Fri, 21 Feb 2020 09:19:15 -0800 (PST)
+        Fri, 21 Feb 2020 12:19:30 -0500
+Received: by mail-ot1-f68.google.com with SMTP id b3so2675078otp.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 09:19:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yx5cvOCD+sFEjUGtVe6ZzZuJSF9/cKxMq4KSKO5fnIc=;
-        b=RHnwH3vkrMasjLmsq/dFiAdjxc6psmxNHJk3QKr6tv8FnI94mqT9vQQ+pbRgeI7PuY
-         r2kB2Vemr72V+pxeykUsAPf3F8QoVv/hNhWQ5wRiUWru9z16vqYArknEKotJfqJb3H9b
-         22K1gUh5i1ntFJ2hChsfPdOZhnLOFZbP8I9uM41Vmv1TgSHcCSiEFgZ2O8fyJ50LxtOz
-         w1NU3eDRKGRz3+x77yV9mAvK033yRVuLXMz+5LW5MySs8tzjnHzZ3Uonad4lyEfDYaCj
-         wI/opOoq1bv4ZJSzzyvVzMf73q2FTi5RlJ/LSpxsf4kdhealESL1NEO3ElAZJJzxNid/
-         LMLQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aFj7tYI0k/f8j7tYUdpdud7KpLh5j6ouKtsSoqEvszI=;
+        b=YzgEvcaOL7wY8aO+jLfgHbjlVU2xxOJSB3+tw4wl4fh5uOdZSBNHo/iltx0MWip/dx
+         EmTuDub5yPlgPH3bHf5Zz0dcdgGkjIUEsy71Jt8pUh7yhvxFxNSCOXr/6sOdr2B80kxv
+         8Rp2Bs9lxT2sACVW1LTq3mJ1eHtNvRY4dxHL9l6QS2XrYWRcypud1ZZG3AQHWS8FfBNu
+         SESXEQZR7Sf5hOVEpl2Y7jZZIzX77sTXqn/o5jSTY6+C3NsxB5EKu5h//4gqTaj3aest
+         bhQC3td7VGOiHJJHqbjo3DXgSmmWovjvU9eaomChJmjbNFaN6EImUpYyfFyRsZJx0O8a
+         6QoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yx5cvOCD+sFEjUGtVe6ZzZuJSF9/cKxMq4KSKO5fnIc=;
-        b=bM1C86zEzmzBMdssVVdTQNVCNW+RSM1K5TC0Zrp0VVq1TImTqUNdjRGuWsNlRyjCC+
-         7fiVq1tHvAQBMH/Tqg5AaqMub19UYSz2bm4Ym0GF/6KjbXF2EEA8NEyYKaVz8w9HI51k
-         P9qwDngmhs6oa0fLSJZzR9wCQarp5fQNSplGjgGBdNARRryeELq5ZCWQCtZ3GvsrKrM+
-         /q2MFFABPjFzPe+takxs8MwhSxhFKFzUJ8rDBUiDFp9OBxA1aJtJJBU4hosrqciFp9Ho
-         E/6dS5DnLpbKTSnM2W8CJaUs+HSo3UZwsZVnjLOABniIndH8Ezj/GpCCarUlimAz6Gaq
-         BrOA==
-X-Gm-Message-State: APjAAAWKQcfL5aHeFNT9bOPgwt1bneWbVk+VlOSo0cGR38XJXfG6oVbM
-        bTnGyKw5iqyEuWRnZ237cSk=
-X-Google-Smtp-Source: APXvYqxFSjsosSs8k94a9qesHL+3OUA3U+e/rBGoGglmXK80/N939pWZP6PhhL7SlGzEoJIbXdqUug==
-X-Received: by 2002:a63:2541:: with SMTP id l62mr10409153pgl.98.1582305554920;
-        Fri, 21 Feb 2020 09:19:14 -0800 (PST)
-Received: from localhost (c-73-241-114-122.hsd1.ca.comcast.net. [73.241.114.122])
-        by smtp.gmail.com with ESMTPSA id w18sm3087417pge.4.2020.02.21.09.19.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 09:19:14 -0800 (PST)
-Date:   Fri, 21 Feb 2020 09:19:12 -0800
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     min.li.xe@renesas.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/2] ptp: Add a ptp clock driver for IDT
- 82P33 SMU.
-Message-ID: <20200221171912.GA5673@localhost>
-References: <1582234109-6296-1-git-send-email-min.li.xe@renesas.com>
- <20200221115128.GA1692@localhost>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aFj7tYI0k/f8j7tYUdpdud7KpLh5j6ouKtsSoqEvszI=;
+        b=Qc6KkPGwxbBRcudhbBKZJYwV5Ll8bLpDjKZ3/sN+8XVqmUtlwu0/69a6lGtMV+NhwD
+         hsHwu3GQiXfwtaRCGTMr3eMPmVk42OqMujsO6ITQB+E2EHlAuwCXh/I3JirLxzWGbsg5
+         frPL+HII0v+TlsO5vQ9uui0EdZseprR7EIwmGAZmLkLYJfHOiYqI7sbu+rWa3gxFbuj4
+         hRxd/GAWr5Bpfhzph9pT1wWx3IQoJOszvnhqhr2kadp3J2xlxYPh7Na0KHC64OpGvNkP
+         NqMT98Mx+DSRDaovMa7keBtJH4SA8cH0K97wceyG4qUWaiBM4V8XKANi85VYx3JZ9kgz
+         ZNBA==
+X-Gm-Message-State: APjAAAWPPuYg9uOErLGm1DKV6EPYZ33drtRmgs1NPaofKwANnLCoJM2T
+        bo+sGG04cnya8knjlDT8PN3TCxQGu3nQyW0aKTB3fwef
+X-Google-Smtp-Source: APXvYqxSTtKq6jL9E+diPzBIZDb2QUskTpf2GmcCBEObkgjrpqHE6Zct2GYZmNiSd+PjgI9aUQvm9vp2GioZkW3oYlo=
+X-Received: by 2002:a9d:12af:: with SMTP id g44mr16732511otg.332.1582305568936;
+ Fri, 21 Feb 2020 09:19:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221115128.GA1692@localhost>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200220050440.45878-1-john.stultz@linaro.org>
+ <20200220050440.45878-4-john.stultz@linaro.org> <CACRpkdYVQs0dDT8dn2GzQQXrbXATRi8iqHB41EQBMEwMiEFgzA@mail.gmail.com>
+In-Reply-To: <CACRpkdYVQs0dDT8dn2GzQQXrbXATRi8iqHB41EQBMEwMiEFgzA@mail.gmail.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Fri, 21 Feb 2020 09:19:17 -0800
+Message-ID: <CALAqxLVQ1MqEC6Sdm0DcWHQpuWnOMt5NxNrj_v+byeEa1cfang@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] pinctrl: Remove use of driver_deferred_probe_check_state_continue()
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Todd Kjos <tkjos@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 03:51:28AM -0800, Richard Cochran wrote:
-> > +	channel->ptp_clock = ptp_clock_register(&channel->caps, NULL);
-> > +
-> > +	if (IS_ERR(channel->ptp_clock)) {
-> > +		err = PTR_ERR(channel->ptp_clock);
-> > +		channel->ptp_clock = NULL;
-> > +		return err;
-> > +	}
-> 
-> The function, ptp_clock_register(), can also return NULL.  Please
-> handle that case as well.
-> 
-> > +
-> > +	if (!channel->ptp_clock)
-> > +		return -ENOTSUPP;
+On Fri, Feb 21, 2020 at 7:22 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Feb 20, 2020 at 6:05 AM John Stultz <john.stultz@linaro.org> wrote:
+>
+> > With the earlier sanity fixes to
+> > driver_deferred_probe_check_state() it should be usable for the
+> > pinctrl logic here.
+> >
+> > So tweak the logic to use driver_deferred_probe_check_state()
+> > instead of driver_deferred_probe_check_state_continue()
+> >
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > Cc: Kevin Hilman <khilman@kernel.org>
+> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > Cc: Pavel Machek <pavel@ucw.cz>
+> > Cc: Len Brown <len.brown@intel.com>
+> > Cc: Todd Kjos <tkjos@google.com>
+> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Cc: Liam Girdwood <lgirdwood@gmail.com>
+> > Cc: Mark Brown <broonie@kernel.org>
+> > Cc: Thierry Reding <treding@nvidia.com>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: linux-pm@vger.kernel.org
+> > Signed-off-by: John Stultz <john.stultz@linaro.org>
+> > Change-Id: If72682e0a7641b33edf56f188fc067c68bbc571e
+>
+> I sure trust that you know what you're doing here.
 
-Duh!  Never mind that last comment!
+Classic mistake. :)
 
-Thanks,
-Richard
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> I assume you will merge this through device core?
+
+I guess? I'm going to resend it again as I think its a reasonable
+cleanup, but the urgent need for it from me may be solved by
+of_devlink Saravana's patch instead.
+
+thanks
+-john
