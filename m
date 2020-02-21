@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C5BB167371
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:13:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A29816744D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732632AbgBUIMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:12:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48090 "EHLO mail.kernel.org"
+        id S2388128AbgBUIUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:20:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732812AbgBUIMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:12:21 -0500
+        id S2388107AbgBUIUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:20:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8385720722;
-        Fri, 21 Feb 2020 08:12:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8249E2468F;
+        Fri, 21 Feb 2020 08:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272741;
-        bh=7AOqokVREmq51fFdwM3EZKsgEKghH5r7iEePC9Yg5p8=;
+        s=default; t=1582273203;
+        bh=7kdgymCTe3z+kDx0t23a5tS8Fgh/KOpwizHQDgLdcc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b3vgw5R0Fn/6Vspra8kjiyhvb52uCiKg1F13ZBrDIen5LtR+edxgHrRJegUNqSa1s
-         18oNeNx0MV5BrGisQm5at5AxuBM/VwN+UKKP0KChm+SqDt1WxWknCwyBNy6kchcDPe
-         jwBN2ZWrrUrfrVe4StFC1xvgb+LbL8jgb+Y6FveM=
+        b=JEX66qfDJpkJ/oCtsQQCwR++SEsgohg08qXssdz4TeWvKUzZfNeqOFb8LDBJbq3XD
+         4FJb84WWKcZr6EgOZlbbli3LtuImM/2RE5MfRd9m+nK9kNI1053ZHMRvi5aDzL1xlv
+         OfoIl1eJi4DW88zXY7zaFryf1Pm2BEA1zsDpm8Eg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 256/344] ASoC: SOF: Intel: hda: Fix SKL dai count
+Subject: [PATCH 4.19 082/191] scsi: aic7xxx: Adjust indentation in ahc_find_syncrate
 Date:   Fri, 21 Feb 2020 08:40:55 +0100
-Message-Id: <20200221072412.819540646@linuxfoundation.org>
+Message-Id: <20200221072301.047802665@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,37 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cezary Rojewski <cezary.rojewski@intel.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit a6947c9d86bcfd61b758b5693eba58defe7fd2ae ]
+[ Upstream commit 4dbc96ad65c45cdd4e895ed7ae4c151b780790c5 ]
 
-With fourth pin added for iDisp for skl_dai, update SOF_SKL_DAI_NUM to
-account for the change. Without this, dais from the bottom of the list
-are skipped. In current state that's the case for 'Alt Analog CPU DAI'.
+Clang warns:
 
-Fixes: ac42b142cd76 ("ASoC: SOF: Intel: hda: Add iDisp4 DAI")
-Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://lore.kernel.org/r/20200113114054.9716-1-cezary.rojewski@intel.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+../drivers/scsi/aic7xxx/aic7xxx_core.c:2317:5: warning: misleading
+indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+                        if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
+                        ^
+../drivers/scsi/aic7xxx/aic7xxx_core.c:2310:4: note: previous statement
+is here
+                        if (syncrate == &ahc_syncrates[maxsync])
+                        ^
+1 warning generated.
+
+This warning occurs because there is a space amongst the tabs on this
+line. Remove it so that the indentation is consistent with the Linux kernel
+coding style and clang no longer warns.
+
+This has been a problem since the beginning of git history hence no fixes
+tag.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/817
+Link: https://lore.kernel.org/r/20191218014220.52746-1-natechancellor@gmail.com
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sof/intel/hda.h | 2 +-
+ drivers/scsi/aic7xxx/aic7xxx_core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sof/intel/hda.h b/sound/soc/sof/intel/hda.h
-index 23e430d3e0568..4be53ef2eab6e 100644
---- a/sound/soc/sof/intel/hda.h
-+++ b/sound/soc/sof/intel/hda.h
-@@ -336,7 +336,7 @@
- 
- /* Number of DAIs */
- #if IS_ENABLED(CONFIG_SND_SOC_SOF_HDA)
--#define SOF_SKL_NUM_DAIS		14
-+#define SOF_SKL_NUM_DAIS		15
- #else
- #define SOF_SKL_NUM_DAIS		8
- #endif
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
+index 915a34f141e4f..49e02e8745533 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_core.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
+@@ -2321,7 +2321,7 @@ ahc_find_syncrate(struct ahc_softc *ahc, u_int *period,
+ 			 * At some speeds, we only support
+ 			 * ST transfers.
+ 			 */
+-		 	if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
++			if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
+ 				*ppr_options &= ~MSG_EXT_PPR_DT_REQ;
+ 			break;
+ 		}
 -- 
 2.20.1
 
