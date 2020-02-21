@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 019DA1673F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C201167324
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:09:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387638AbgBUIRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:17:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54430 "EHLO mail.kernel.org"
+        id S1732387AbgBUIJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:09:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387630AbgBUIRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:17:08 -0500
+        id S1732067AbgBUIJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:09:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF3EE24670;
-        Fri, 21 Feb 2020 08:17:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 798572073A;
+        Fri, 21 Feb 2020 08:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273028;
-        bh=Vpm/cz36dyRSQNVKx2X+LFRPRQifTpcBfMITrEp7/fw=;
+        s=default; t=1582272574;
+        bh=fnx7SJY0GVFCyYRf53hfDuerPrwVmGYhI3JvugVoLLg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hy+4A5uHOuo8d4qkbXWqLl0pfcq9GTjyFuRpqF8DL9QfJEMXJ+QeAqVPnbOe3ONlB
-         VKLPjs6torDg6SVtR2/vWsXpvykG7pKyqqciqZ/CPEsF4FCpK5+/yDTcYvKO/Et249
-         k3KDl49tnzH5vIgXfW3BR2aI4SNgszIx804+B0NE=
+        b=J7m9demcSjcOXksjr+WfgNU/HXIXI74tV2gaxEoStxV2iPiPTH65RfbRPy6xjz30B
+         OrQFCz0gp062s5E8G9j8LS9SAStHdBy3AJMFHFIKASaVdnsYDAIu4MWwvq43+5RVKi
+         q+sUzrI/TMruNSgjp2Z6PNoXCs3SaJYBVc+IXNRg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenyou Yang <wenyou.yang@microchip.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        stable@vger.kernel.org, Yongqiang Niu <yongqiang.niu@mediatek.com>,
+        Hsin-Yi Wang <hsinyi@chromium.org>, CK Hu <ck.hu@mediatek.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 021/191] media: i2c: mt9v032: fix enum mbus codes and frame sizes
+Subject: [PATCH 5.4 195/344] drm/mediatek: Add gamma property according to hardware capability
 Date:   Fri, 21 Feb 2020 08:39:54 +0100
-Message-Id: <20200221072253.725612874@linuxfoundation.org>
+Message-Id: <20200221072406.779990170@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,61 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-[ Upstream commit 1451d5ae351d938a0ab1677498c893f17b9ee21d ]
+[ Upstream commit 4cebc1de506fa753301266a5a23bb21bca52ad3a ]
 
-This driver supports both the mt9v032 (color) and the mt9v022 (mono)
-sensors. Depending on which sensor is used, the format from the sensor is
-different. The format.code inside the dev struct holds this information.
-The enum mbus and enum frame sizes need to take into account both type of
-sensors, not just the color one. To solve this, use the format.code in
-these functions instead of the hardcoded bayer color format (which is only
-used for mt9v032).
+If there is no gamma function in the crtc
+display path, don't add gamma property
+for crtc
 
-[Sakari Ailus: rewrapped commit message]
-
-Suggested-by: Wenyou Yang <wenyou.yang@microchip.com>
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Fixes: 2f3f4dda747c ("drm/mediatek: Add gamma correction.")
+Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/mt9v032.c | 10 ++++++++--
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 10 ++++++++--
  1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/mt9v032.c b/drivers/media/i2c/mt9v032.c
-index f74730d24d8fe..04788692c9ff4 100644
---- a/drivers/media/i2c/mt9v032.c
-+++ b/drivers/media/i2c/mt9v032.c
-@@ -431,10 +431,12 @@ static int mt9v032_enum_mbus_code(struct v4l2_subdev *subdev,
- 				  struct v4l2_subdev_pad_config *cfg,
- 				  struct v4l2_subdev_mbus_code_enum *code)
- {
-+	struct mt9v032 *mt9v032 = to_mt9v032(subdev);
-+
- 	if (code->index > 0)
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 0b3d284d19569..e6c049f4f08bb 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -537,6 +537,7 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
+ 	int pipe = priv->num_pipes;
+ 	int ret;
+ 	int i;
++	uint gamma_lut_size = 0;
  
--	code->code = MEDIA_BUS_FMT_SGRBG10_1X10;
-+	code->code = mt9v032->format.code;
+ 	if (!path)
+ 		return 0;
+@@ -587,6 +588,9 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
+ 		}
+ 
+ 		mtk_crtc->ddp_comp[i] = comp;
++
++		if (comp->funcs && comp->funcs->gamma_set)
++			gamma_lut_size = MTK_LUT_SIZE;
+ 	}
+ 
+ 	mtk_crtc->layer_nr = mtk_ddp_comp_layer_nr(mtk_crtc->ddp_comp[0]);
+@@ -609,8 +613,10 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
+ 				NULL, pipe);
+ 	if (ret < 0)
+ 		return ret;
+-	drm_mode_crtc_set_gamma_size(&mtk_crtc->base, MTK_LUT_SIZE);
+-	drm_crtc_enable_color_mgmt(&mtk_crtc->base, 0, false, MTK_LUT_SIZE);
++
++	if (gamma_lut_size)
++		drm_mode_crtc_set_gamma_size(&mtk_crtc->base, gamma_lut_size);
++	drm_crtc_enable_color_mgmt(&mtk_crtc->base, 0, false, gamma_lut_size);
+ 	priv->num_pipes++;
+ 
  	return 0;
- }
- 
-@@ -442,7 +444,11 @@ static int mt9v032_enum_frame_size(struct v4l2_subdev *subdev,
- 				   struct v4l2_subdev_pad_config *cfg,
- 				   struct v4l2_subdev_frame_size_enum *fse)
- {
--	if (fse->index >= 3 || fse->code != MEDIA_BUS_FMT_SGRBG10_1X10)
-+	struct mt9v032 *mt9v032 = to_mt9v032(subdev);
-+
-+	if (fse->index >= 3)
-+		return -EINVAL;
-+	if (mt9v032->format.code != fse->code)
- 		return -EINVAL;
- 
- 	fse->min_width = MT9V032_WINDOW_WIDTH_DEF / (1 << fse->index);
 -- 
 2.20.1
 
