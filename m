@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D700316784D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:48:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96D23167851
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:48:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbgBUHtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:49:09 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42600 "EHLO
+        id S1729635AbgBUIrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:47:06 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39061 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729201AbgBUHtH (ORCPT
+        with ESMTP id S1728993AbgBUHtP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:49:07 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w21so550319pgl.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 23:49:07 -0800 (PST)
+        Fri, 21 Feb 2020 02:49:15 -0500
+Received: by mail-pg1-f194.google.com with SMTP id j15so560114pgm.6
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 23:49:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=InvFUNRiPxXOxYMHgJ0FZcGWdDLWenQO6uankp4X5co=;
-        b=cH/zAuRygLTMG5vrXLh0wRpvYslN0/4eyqLnEeEXbOuFqjKLYJZ4wXZDafrsK1t2nD
-         NJPOaztBE/WnSneu7MnJ/S+IOwRQyQQr8k4Ysq/Fe445TcDqi8e4KnNr61GGsd3Lmaeo
-         tD4eRVCtWw8s5Pwg4fJWwjXl2ERLdyccnuofZ7HliCVa73JDx1Se5x16ep5dxSj2g/AG
-         xKdwewHFN4V61X4jt/SiKOpjN7xyDxk6tMK9LJO31uwxfiR4ufK3S45/prJwzfdlMY8l
-         qdJWX8NRes7TGzzfZtTDFHAm6C5kTlrVofd9xCXLx+wlOXQK20RRzEkyBKSPixaFxxuH
-         FDWQ==
+        bh=9s/89tFhK8CsKwuJAyzex+lyypM4LteBbs7SvUHMAY4=;
+        b=FYeq5fRl/qH/XEUZDrffiETx7mSYEoysXSDKfoCD8vugyXXzbaSVd1+NbJutdsIDFJ
+         6TRvVT4c3trRe5JdG9v2FnfceZrgA1E+fgzWlQaKKLydgSE2Jxq0jRZxbc5pSswPrl0q
+         kqI5ccN7TYTfChx6xQXGx7dNPwzqD1X1fPFblfem1I5UAxtmYALsjsYpkwqXUVuazDvq
+         P2DEtqOVy7pNW4fVc3dBNTO+WxPswVMzQiHebeysHi2iHu8qiadOc6A1s8r4RANg3yF8
+         nuf2jqREWcFkLO9xpoFj5e3EN6g0huypZW3dq6HxbjEttngfOCGDyh/ChEfHAGXuGcvF
+         d5ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=InvFUNRiPxXOxYMHgJ0FZcGWdDLWenQO6uankp4X5co=;
-        b=UJgACDOGcRd96QyJV/OZnJ8lHSnlGIMS0EkWRr4fG+bZzxbJVla8y0X+yPmOj0LbSI
-         e+xXQm5KwikUb9nLTwDZSdIuosp0pGARYHTYY4rZIgAw5S0+GR5AL4bHxA6WFRoP+bvo
-         aS+tcqBvCfOOOGuxS9D5lYZC5pMurPPBM9PKd3kbikhBtLwfEWATm2WG771ZR6A+QLSf
-         IiMRcSDkYSqVI0EoKj55Z4WFHKNmBZ7QpXjUkTXow+YXneboeUCTchg3/j4QwkVPCkIk
-         H/06GAWtTUVM74CH9zHJ9oqT2oHS3RAUuMyHl6O0dtka5y/b42E03UXNmk5+UIuKRFXI
-         vMaQ==
-X-Gm-Message-State: APjAAAUCb/YpOoQ7qHS87Hivo/dF69Wot+CEIZlNg+RVuUuQQVWPYY0X
-        126xk0mgJgi/B8/9ZzDEdeM=
-X-Google-Smtp-Source: APXvYqzrktlCrULOant8+rekVokatvRDsgDVLBnEil8PQxbkujjyDkYWFqsKwTCWKS7ERFp5nwkHUQ==
-X-Received: by 2002:a63:42c2:: with SMTP id p185mr39122753pga.268.1582271346641;
-        Thu, 20 Feb 2020 23:49:06 -0800 (PST)
+        bh=9s/89tFhK8CsKwuJAyzex+lyypM4LteBbs7SvUHMAY4=;
+        b=ToEKs+gWv3kduRVbTuB/87+6wPejKfZDb6RlFPvA0mWVutagn+6FvR783S8251VG+r
+         wC5j5WtxR4rZhw9sFM+pcGcfAKJguyBWMf8//fkt33WdI3K59ThLkkx8Won1fcdHHt/s
+         qN1AVfrM0HCrFqpmwWuiBWP1HeLdxWYwzUe0zFaTNju7BFhT+s0ioY19voUaYHbK10dc
+         Jc1sdkh3YHZhWep+u1xcKeB1LFpJnTdx0PKDX5HXdLrfLshD3yOsA3AxQZBkEAL2esru
+         KodMbMM8l24HaxGL6DAHKiCJOD18DUvW8FROJkCkg7eRpCUbKH0jkCMD6pYjgNsipKqY
+         6ulg==
+X-Gm-Message-State: APjAAAUwb2y1KGS8GuwbOrdgjOEndF7FGCRbV/V3dR2RkcTeK7QCR2+r
+        wSr6UF8yRkDofWRPAW/ftS8=
+X-Google-Smtp-Source: APXvYqxKqdVRyRdtOGfIJxeRmGLjwNsFH6v00he3QSjaziEmGGmxu/92M0N39l7riAZg/3ddqVQ/GQ==
+X-Received: by 2002:a62:18c9:: with SMTP id 192mr35752390pfy.117.1582271354610;
+        Thu, 20 Feb 2020 23:49:14 -0800 (PST)
 Received: from nj08008nbu.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id d1sm1444653pgj.79.2020.02.20.23.49.03
+        by smtp.gmail.com with ESMTPSA id d1sm1444653pgj.79.2020.02.20.23.49.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Feb 2020 23:49:06 -0800 (PST)
+        Thu, 20 Feb 2020 23:49:14 -0800 (PST)
 From:   Kevin Tang <kevin3.tang@gmail.com>
 To:     airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
         mark.rutland@arm.com, kevin3.tang@gmail.com
 Cc:     orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH RFC v3 1/6] dt-bindings: display: add Unisoc's drm master bindings
-Date:   Fri, 21 Feb 2020 15:48:51 +0800
-Message-Id: <1582271336-3708-2-git-send-email-kevin3.tang@gmail.com>
+Subject: [PATCH RFC v3 3/6] dt-bindings: display: add Unisoc's dpu bindings
+Date:   Fri, 21 Feb 2020 15:48:53 +0800
+Message-Id: <1582271336-3708-4-git-send-email-kevin3.tang@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1582271336-3708-1-git-send-email-kevin3.tang@gmail.com>
 References: <1582271336-3708-1-git-send-email-kevin3.tang@gmail.com>
@@ -62,32 +62,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kevin Tang <kevin.tang@unisoc.com>
 
-The Unisoc DRM master device is a virtual device needed to list all
-DPU devices or other display interface nodes that comprise the
-graphics subsystem
+DPU (Display Processor Unit) is the Display Controller for the Unisoc SoCs
+which transfers the image data from a video memory buffer to an internal
+LCD interface.
 
 Cc: Orson Zhai <orsonzhai@gmail.com>
 Cc: Baolin Wang <baolin.wang@linaro.org>
 Cc: Chunyan Zhang <zhang.lyra@gmail.com>
 Signed-off-by: Kevin Tang <kevin.tang@unisoc.com>
 ---
- .../devicetree/bindings/display/sprd/drm.yaml      | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/sprd/drm.yaml
+ .../devicetree/bindings/display/sprd/dpu.yaml      | 85 ++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/sprd/dpu.yaml
 
-diff --git a/Documentation/devicetree/bindings/display/sprd/drm.yaml b/Documentation/devicetree/bindings/display/sprd/drm.yaml
+diff --git a/Documentation/devicetree/bindings/display/sprd/dpu.yaml b/Documentation/devicetree/bindings/display/sprd/dpu.yaml
 new file mode 100644
-index 0000000..1614ca6
+index 0000000..7695d94
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/display/sprd/drm.yaml
-@@ -0,0 +1,38 @@
++++ b/Documentation/devicetree/bindings/display/sprd/dpu.yaml
+@@ -0,0 +1,85 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/display/sprd/drm.yaml#
++$id: http://devicetree.org/schemas/display/sprd/dpu.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Unisoc DRM master device
++title: Unisoc SoC Display Processor Unit (DPU)
 +
 +maintainers:
 +  - David Airlie <airlied@linux.ie>
@@ -96,30 +96,76 @@ index 0000000..1614ca6
 +  - Mark Rutland <mark.rutland@arm.com>
 +
 +description: |
-+  The Unisoc DRM master device is a virtual device needed to list all
-+  DPU devices or other display interface nodes that comprise the
-+  graphics subsystem.
++  DPU (Display Processor Unit) is the Display Controller for the Unisoc SoCs
++  which transfers the image data from a video memory buffer to an internal
++  LCD interface.
 +
 +properties:
 +  compatible:
-+    const: sprd,display-subsystem
++    const: sprd,sharkl3-dpu
 +
-+  ports:
++  reg:
++    maxItems: 1
 +    description:
-+      Should contain a list of phandles pointing to display interface port
-+      of DPU devices.
++      Physical base address and length of the DPU registers set
++
++  interrupts:
++    maxItems: 1
++    description:
++      The interrupt signal from DPU
++
++  clocks:
++    minItems: 2
++
++  clock-names:
++    items:
++      - const: clk_src_128m
++      - const: clk_src_384m
++
++  power-domains:
++    description: A phandle to DPU power domain node.
++
++  iommus:
++    description: A phandle to DPU iommu node.
++
++  port:
++    type: object
++    description:
++      A port node with endpoint definitions as defined in
++      Documentation/devicetree/bindings/media/video-interfaces.txt.
++      That port should be the output endpoint, usually output to
++      the associated DSI.
 +
 +required:
 +  - compatible
-+  - ports
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - port
++
++additionalProperties: false
 +
 +examples:
 +  - |
-+    display-subsystem {
-+        compatible = "sprd,display-subsystem";
-+        ports = <&dpu_out>;
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/sprd,sc9860-clk.h>
++    dpu: dpu@0x63000000 {
++          compatible = "sprd,sharkl3-dpu";
++          reg = <0x0 0x63000000 0x0 0x1000>;
++          interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
++          clock-names = "clk_src_128m",
++      	        "clk_src_384m";
++
++          clocks = <&pll CLK_TWPLL_128M>,
++                <&pll CLK_TWPLL_384M>;
++
++          dpu_port: port {
++                  dpu_out: endpoint {
++                          remote-endpoint = <&dsi_in>;
++                  };
++          };
 +    };
-\ No newline at end of file
 -- 
 2.7.4
 
