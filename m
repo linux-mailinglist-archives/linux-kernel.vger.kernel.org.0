@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09AA1167710
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F8616785E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:48:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731335AbgBUICU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:02:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34612 "EHLO mail.kernel.org"
+        id S1729454AbgBUIry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:47:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731312AbgBUICK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:02:10 -0500
+        id S1728412AbgBUHrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:47:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E91772073A;
-        Fri, 21 Feb 2020 08:02:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 907D620801;
+        Fri, 21 Feb 2020 07:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272130;
-        bh=CqYiNBMlMWHKkp/lCav82O14317gOiqR2e73IbrS+zI=;
+        s=default; t=1582271275;
+        bh=6GnYNQpX3kRlCJgr37H2+nzeqECSZmwoGPWyPnE+dIw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hMvXp/MQ56wr9rMQ6/mn9FE8GqbCsdPEAZh8wAVGuD6DHaR/zoUTHSSCeIFSUwycT
-         vKG6FY+DAvAXh8dnTZh7YFCdd3XuKRGF6qjTwYTMTHRPdkkkK+s5bKfSkb1qGC8A0s
-         lNtlHPO7e38HUhJs2aFVmkFI7BCqNGlYFvhihc7A=
+        b=IlCrIQnawFLsRchAoN4YzZLmgBaqc9J3ZkQDv2IQQCQKiiKQNFW8m+u8lXRSZexnn
+         EhyMWOLrEp00PQ70IhezmL7RbYARUfJd1g6demMxrSJpQphGs4A9NZTSo+Z8eUVssp
+         q+SSaqsdhhZp9OzmsMGs4sfkqC5mNvvHZldC4KTk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Jakub Sitnicki <jakub@cloudflare.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 027/344] ALSA: ctl: allow TLV read operation for callback type of element in locked case
-Date:   Fri, 21 Feb 2020 08:37:06 +0100
-Message-Id: <20200221072351.630672854@linuxfoundation.org>
+Subject: [PATCH 5.5 103/399] bpf, sockhash: Synchronize_rcu before freeing map
+Date:   Fri, 21 Feb 2020 08:37:08 +0100
+Message-Id: <20200221072412.438200611@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,58 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Jakub Sitnicki <jakub@cloudflare.com>
 
-[ Upstream commit d61fe22c2ae42d9fd76c34ef4224064cca4b04b0 ]
+[ Upstream commit 0b2dc83906cf1e694e48003eae5df8fa63f76fd9 ]
 
-A design of ALSA control core allows applications to execute three
-operations for TLV feature; read, write and command. Furthermore, it
-allows driver developers to process the operations by two ways; allocated
-array or callback function. In the former, read operation is just allowed,
-thus developers uses the latter when device driver supports variety of
-models or the target model is expected to dynamically change information
-stored in TLV container.
+We need to have a synchronize_rcu before free'ing the sockhash because any
+outstanding psock references will have a pointer to the map and when they
+use it, this could trigger a use after free.
 
-The core also allows applications to lock any element so that the other
-applications can't perform write operation to the element for element
-value and TLV information. When the element is locked, write and command
-operation for TLV information are prohibited as well as element value.
-Any read operation should be allowed in the case.
+This is a sister fix for sockhash, following commit 2bb90e5cc90e ("bpf:
+sockmap, synchronize_rcu before free'ing map") which addressed sockmap,
+which comes from a manual audit.
 
-At present, when an element has callback function for TLV information,
-TLV read operation returns EPERM if the element is locked. On the
-other hand, the read operation is success when an element has allocated
-array for TLV information. In both cases, read operation is success for
-element value expectedly.
-
-This commit fixes the bug. This change can be backported to v4.14
-kernel or later.
-
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Reviewed-by: Jaroslav Kysela <perex@perex.cz>
-Link: https://lore.kernel.org/r/20191223093347.15279-1-o-takashi@sakamocchi.jp
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 604326b41a6fb ("bpf, sockmap: convert to generic sk_msg interface")
+Signed-off-by: Jakub Sitnicki <jakub@cloudflare.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
+Link: https://lore.kernel.org/bpf/20200206111652.694507-3-jakub@cloudflare.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/control.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/core/sock_map.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/core/control.c b/sound/core/control.c
-index 7a4d8690ce41f..08ca7666e84cf 100644
---- a/sound/core/control.c
-+++ b/sound/core/control.c
-@@ -1430,8 +1430,9 @@ static int call_tlv_handler(struct snd_ctl_file *file, int op_flag,
- 	if (kctl->tlv.c == NULL)
- 		return -ENXIO;
+diff --git a/net/core/sock_map.c b/net/core/sock_map.c
+index 085cef5857bbf..405397801bb07 100644
+--- a/net/core/sock_map.c
++++ b/net/core/sock_map.c
+@@ -881,6 +881,9 @@ static void sock_hash_free(struct bpf_map *map)
+ 	/* wait for psock readers accessing its map link */
+ 	synchronize_rcu();
  
--	/* When locked, this is unavailable. */
--	if (vd->owner != NULL && vd->owner != file)
-+	/* Write and command operations are not allowed for locked element. */
-+	if (op_flag != SNDRV_CTL_TLV_OP_READ &&
-+	    vd->owner != NULL && vd->owner != file)
- 		return -EPERM;
- 
- 	return kctl->tlv.c(kctl, op_flag, size, buf);
++	/* wait for psock readers accessing its map link */
++	synchronize_rcu();
++
+ 	bpf_map_area_free(htab->buckets);
+ 	kfree(htab);
+ }
 -- 
 2.20.1
 
