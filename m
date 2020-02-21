@@ -2,274 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4AFB167A8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 11:20:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10262167AAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 11:21:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbgBUKUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 05:20:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38940 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728980AbgBUKUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 05:20:32 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6801BB1F3;
-        Fri, 21 Feb 2020 10:20:26 +0000 (UTC)
-Subject: Re: [PATCH v8 0/6] arm/arm64: mediatek: Fix mmsys device probing
-To:     CK Hu <ck.hu@mediatek.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, p.zabel@pengutronix.de,
-        airlied@linux.ie, mturquette@baylibre.com, sboyd@kernel.org,
-        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        rdunlap@infradead.org, dri-devel@lists.freedesktop.org,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        linux-clk@vger.kernel.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        sean.wang@mediatek.com, frank-w@public-files.de,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
-        linux-arm-kernel@lists.infradead.org,
-        Richard Fontana <rfontana@redhat.com>,
-        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Fabien Parent <fparent@baylibre.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Owen Chen <owen.chen@mediatek.com>
-References: <20200220172147.919996-1-enric.balletbo@collabora.com>
- <1582259996.1846.7.camel@mtksdaap41>
-From:   Matthias Brugger <mbrugger@suse.com>
-Autocrypt: addr=mbrugger@suse.com; prefer-encrypt=mutual; keydata=
- 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
- HxUCQ9Y1Y/Ct
-Message-ID: <6c453dff-8de5-5de3-3ea7-34b691abea25@suse.com>
-Date:   Fri, 21 Feb 2020 11:20:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1728739AbgBUKVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 05:21:40 -0500
+Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:57846 "EHLO
+        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728278AbgBUKVk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 05:21:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1582280499;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=szw5kUCBwfMR4Umcye1UsaTnnWME1Rw3d5ErMmAgp5Q=;
+  b=VylwvEXapF9ZtvMecqCj6wXVvMQAf6e/RyQMTzTs/04GswkrWp0qfgyv
+   lBeIHT5VcnxHpfP11MgSKTslbKYdsaKPWiC3Igqt84YTbX/2QlFCuUjyN
+   5MZLEhelEqvGbI/iyA8VnuHppQaSOeAogr3NPbq2lJJQIQLJ+eDIpj0Hj
+   c=;
+Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
+  receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa3.hc3370-68.iphmx.com: domain of
+  roger.pau@citrix.com designates 162.221.158.21 as permitted
+  sender) identity=mailfrom; client-ip=162.221.158.21;
+  receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
+  ip4:168.245.78.127 ~all"
+Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: QEFBJckE/MYkvO2flXPlpJQt4Otkt0cu31Hi8oseCOIldyuYhI4sG/WgtjoU3dqM8aobRm4cza
+ BxgWJnLKK6ZDvkNxA2rHcJKaR9vO6P7KJs3kG9lY1MfghynCwXfmNppiLeicgubrKuiqo1Fp/3
+ pT0BMg+orHucSFRXhRTwIVHLS35iD+RLBJkiXqk4tRcaujIhh9XTXNUi/k+EbebNfX3kzbj8BJ
+ L/ofjVQpTcO38wip8DTDbTm9fbWxG9KrnTUIm30Odti4icb8IAzr0zDY/JpPQYsftQMCxbG/61
+ qk0=
+X-SBRS: 2.7
+X-MesageID: 12791624
+X-Ironport-Server: esa3.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.70,467,1574139600"; 
+   d="scan'208";a="12791624"
+Date:   Fri, 21 Feb 2020 11:21:30 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     "Durrant, Paul" <pdurrant@amazon.co.uk>
+CC:     "Agarwal, Anchal" <anchalag@amazon.com>,
+        "Valentin, Eduardo" <eduval@amazon.com>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>, "hpa@zytor.com" <hpa@zytor.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "sstabellini@kernel.org" <sstabellini@kernel.org>,
+        "fllinden@amaozn.com" <fllinden@amaozn.com>,
+        "Kamata, Munehisa" <kamatam@amazon.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "Singh, Balbir" <sblbir@amazon.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>
+Subject: Re: [Xen-devel] [RFC PATCH v3 06/12] xen-blkfront: add callbacks for
+ PM suspend and hibernation
+Message-ID: <20200221102130.GW4679@Air-de-Roger>
+References: <20200218091611.GN4679@Air-de-Roger>
+ <20200219180424.GA17584@dev-dsk-anchalag-2a-9c2d1d96.us-west-2.amazon.com>
+ <20200220083904.GI4679@Air-de-Roger>
+ <f986b845491b47cc8469d88e2e65e2a7@EX13D32EUC003.ant.amazon.com>
+ <20200220154507.GO4679@Air-de-Roger>
+ <c9662397256a4568a5cc7d70a84940e5@EX13D32EUC003.ant.amazon.com>
+ <20200220164839.GR4679@Air-de-Roger>
+ <e42fa35800f04b6f953e4af87f2c1a02@EX13D32EUC003.ant.amazon.com>
+ <20200221092219.GU4679@Air-de-Roger>
+ <5ddf980a3fba4fb39571184e688cefc5@EX13D32EUC003.ant.amazon.com>
 MIME-Version: 1.0
-In-Reply-To: <1582259996.1846.7.camel@mtksdaap41>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5ddf980a3fba4fb39571184e688cefc5@EX13D32EUC003.ant.amazon.com>
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL01.citrite.net (10.69.22.125)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Lee Jones.
-
-On 21/02/2020 05:39, CK Hu wrote:
-> Hi, Enric:
+On Fri, Feb 21, 2020 at 09:56:54AM +0000, Durrant, Paul wrote:
+> > -----Original Message-----
+> > From: Roger Pau Monné <roger.pau@citrix.com>
+> > Sent: 21 February 2020 09:22
+> > To: Durrant, Paul <pdurrant@amazon.co.uk>
+> > Cc: Agarwal, Anchal <anchalag@amazon.com>; Valentin, Eduardo
+> > <eduval@amazon.com>; len.brown@intel.com; peterz@infradead.org;
+> > benh@kernel.crashing.org; x86@kernel.org; linux-mm@kvack.org;
+> > pavel@ucw.cz; hpa@zytor.com; tglx@linutronix.de; sstabellini@kernel.org;
+> > fllinden@amaozn.com; Kamata, Munehisa <kamatam@amazon.com>;
+> > mingo@redhat.com; xen-devel@lists.xenproject.org; Singh, Balbir
+> > <sblbir@amazon.com>; axboe@kernel.dk; konrad.wilk@oracle.com;
+> > bp@alien8.de; boris.ostrovsky@oracle.com; jgross@suse.com;
+> > netdev@vger.kernel.org; linux-pm@vger.kernel.org; rjw@rjwysocki.net;
+> > linux-kernel@vger.kernel.org; vkuznets@redhat.com; davem@davemloft.net;
+> > Woodhouse, David <dwmw@amazon.co.uk>
+> > Subject: Re: [Xen-devel] [RFC PATCH v3 06/12] xen-blkfront: add callbacks
+> > for PM suspend and hibernation
+> > 
+> > On Thu, Feb 20, 2020 at 05:01:52PM +0000, Durrant, Paul wrote:
+> > > > > Hopefully what I said above illustrates why it may not be 100%
+> > common.
+> > > >
+> > > > Yes, that's fine. I don't expect it to be 100% common (as I guess
+> > > > that the hooks will have different prototypes), but I expect
+> > > > that routines can be shared, and that the approach taken can be the
+> > > > same.
+> > > >
+> > > > For example one necessary difference will be that xenbus initiated
+> > > > suspend won't close the PV connection, in case suspension fails. On PM
+> > > > suspend you seem to always close the connection beforehand, so you
+> > > > will always have to re-negotiate on resume even if suspension failed.
+> > > >
+> > > > What I'm mostly worried about is the different approach to ring
+> > > > draining. Ie: either xenbus is changed to freeze the queues and drain
+> > > > the shared rings, or PM uses the already existing logic of not
+> > > > flushing the rings an re-issuing in-flight requests on resume.
+> > > >
+> > >
+> > > Yes, that's needs consideration. I don’t think the same semantic can be
+> > suitable for both. E.g. in a xen-suspend we need to freeze with as little
+> > processing as possible to avoid dirtying RAM late in the migration cycle,
+> > and we know that in-flight data can wait. But in a transition to S4 we
+> > need to make sure that at least all the in-flight blkif requests get
+> > completed, since they probably contain bits of the guest's memory image
+> > and that's not going to get saved any other way.
+> > 
+> > Thanks, that makes sense and something along this lines should be
+> > added to the commit message IMO.
+> > 
+> > Wondering about S4, shouldn't we expect the queues to already be
+> > empty? As any subsystem that wanted to store something to disk should
+> > make sure requests have been successfully completed before
+> > suspending.
 > 
-> On Thu, 2020-02-20 at 18:21 +0100, Enric Balletbo i Serra wrote:
->> Dear all,
->>
->> Those patches are intended to solve an old standing issue on some
->> Mediatek devices (mt8173, mt2701 and mt2712) in a slightly different way
->> to the precedent series.
->>
->> Up to now both drivers, clock and drm are probed with the same device tree
->> compatible. But only the first driver get probed, which in effect breaks
->> graphics on those devices.
->>
->> The version eight of the series tries to solve the problem with a
->> different approach than the previous series but similar to how is solved
->> on other Mediatek devices.
->>
->> The MMSYS (Multimedia subsystem) in Mediatek SoCs has some registers to
->> control clock gates (which is used in the clk driver) and some registers
->> to set the routing and enable the differnet blocks of the display
->> and MDP (Media Data Path) subsystem. On this series the clk driver is
->> not a pure clock controller but a system controller that can provide
->> access to the shared registers between the different drivers that need
->> it (mediatek-drm and mediatek-mdp). And the biggest change is, that in
->> this version, clk driver is the entry point (parent) which will trigger
->> the probe of the corresponding mediatek-drm driver and pass its MMSYS
->> platform data for display configuration.
-> 
-> When mmsys is a system controller, I prefer to place mmsys in
-> drivers/soc/mediatek, and it share registers for clock, display, and mdp
-> driver. This means the probe function is placed in
-> drivers/soc/mediatek ,its display clock function, mdp clock function are
-> placed in drivers/clk, display routing are placed in drivers/gpu/drm,
-> and mdp routing are placed in dirvers/video.
-> 
+> What about writing the suspend image itself? Normal filesystem I/O
+> will have been flushed of course, but whatever vestigial kernel
+> actually writes out the hibernation file may well expect a final
+> D0->D3 on the storage device to cause a flush.
 
-Which sounds to me like a mfd device. Something we already tried and got a
-NACKed by Lee Jones:
-https://patchwork.kernel.org/patch/10367877/
+Hm, I have no idea really. I think whatever writes to the disk before
+suspend should actually make sure requests have completed, but what
+you suggest might also be a possibility.
 
-Maybe we understand the problem better now to give more arguments why it makes
-sense to create a mfd here?
+Can you figure out whether there are requests on the ring or in the
+queue before suspending?
 
-Regards,
-Matthias
+> Again, I don't know the specifics for Linux (and Windows actually
+> uses an incarnation of the crash kernel to do the job, which brings
+> with it a whole other set of complexity as far as PV drivers go).
 
-> Regards,
-> CK
-> 
->>
->> All this series was tested on the Acer R13 Chromebook only.
->>
->> For reference, here are the links to the old discussions:
->>
->> * v7: https://patchwork.kernel.org/project/linux-mediatek/list/?series=241217
->> * v6: https://patchwork.kernel.org/project/linux-mediatek/list/?series=213219
->> * v5: https://patchwork.kernel.org/project/linux-mediatek/list/?series=44063
->> * v4:
->>   * https://patchwork.kernel.org/patch/10530871/
->>   * https://patchwork.kernel.org/patch/10530883/
->>   * https://patchwork.kernel.org/patch/10530885/
->>   * https://patchwork.kernel.org/patch/10530911/
->>   * https://patchwork.kernel.org/patch/10530913/
->> * v3:
->>   * https://patchwork.kernel.org/patch/10367857/
->>   * https://patchwork.kernel.org/patch/10367861/
->>   * https://patchwork.kernel.org/patch/10367877/
->>   * https://patchwork.kernel.org/patch/10367875/
->>   * https://patchwork.kernel.org/patch/10367885/
->>   * https://patchwork.kernel.org/patch/10367883/
->>   * https://patchwork.kernel.org/patch/10367889/
->>   * https://patchwork.kernel.org/patch/10367907/
->>   * https://patchwork.kernel.org/patch/10367909/
->>   * https://patchwork.kernel.org/patch/10367905/
->> * v2: No relevant discussion, see v3
->> * v1:
->>   * https://patchwork.kernel.org/patch/10016497/
->>   * https://patchwork.kernel.org/patch/10016499/
->>   * https://patchwork.kernel.org/patch/10016505/
->>   * https://patchwork.kernel.org/patch/10016507/
->>
->> Best regards,
->>  Enric
->>
->> Changes in v8:
->> - Be a builtin_platform_driver like other mediatek mmsys drivers.
->> - New patches introduced in this series.
->>
->> Changes in v7:
->> - Add R-by from CK
->> - Add R-by from CK
->> - Fix check of return value of of_clk_get
->> - Fix identation
->> - Free clk_data->clks as well
->> - Get rid of private data structure
->>
->> Enric Balletbo i Serra (2):
->>   drm/mediatek: Move MMSYS configuration to include/linux/platform_data
->>   clk/drm: mediatek: Fix mediatek-drm device probing
->>
->> Matthias Brugger (4):
->>   drm/mediatek: Use regmap for register access
->>   drm/mediatek: Omit warning on probe defers
->>   media: mtk-mdp: Check return value of of_clk_get
->>   clk: mediatek: mt8173: Switch MMSYS to platform driver
->>
->>  drivers/clk/mediatek/Kconfig                  |   6 +
->>  drivers/clk/mediatek/Makefile                 |   1 +
->>  drivers/clk/mediatek/clk-mt2701-mm.c          |  30 +++
->>  drivers/clk/mediatek/clk-mt2712-mm.c          |  44 +++++
->>  drivers/clk/mediatek/clk-mt8173-mm.c          | 172 ++++++++++++++++++
->>  drivers/clk/mediatek/clk-mt8173.c             | 104 -----------
->>  drivers/gpu/drm/mediatek/mtk_disp_color.c     |   5 +-
->>  drivers/gpu/drm/mediatek/mtk_disp_ovl.c       |   5 +-
->>  drivers/gpu/drm/mediatek/mtk_disp_rdma.c      |   5 +-
->>  drivers/gpu/drm/mediatek/mtk_dpi.c            |  12 +-
->>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c       |   4 +-
->>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c        |  53 +++---
->>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h        |   4 +-
->>  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h   |  56 +-----
->>  drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 113 +-----------
->>  drivers/gpu/drm/mediatek/mtk_drm_drv.h        |  13 +-
->>  drivers/gpu/drm/mediatek/mtk_dsi.c            |   8 +-
->>  drivers/gpu/drm/mediatek/mtk_hdmi.c           |   4 +-
->>  drivers/media/platform/mtk-mdp/mtk_mdp_comp.c |   6 +
->>  include/linux/platform_data/mtk_mmsys.h       |  73 ++++++++
->>  20 files changed, 401 insertions(+), 317 deletions(-)
->>  create mode 100644 drivers/clk/mediatek/clk-mt8173-mm.c
->>  create mode 100644 include/linux/platform_data/mtk_mmsys.h
->>
-> 
+That seems extremely complex, I'm sure there's a reason for it :).
+
+Thanks, Roger.
