@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1F511673D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CE691673DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387461AbgBUIQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:16:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52806 "EHLO mail.kernel.org"
+        id S2387506AbgBUIQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:16:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733131AbgBUIPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:15:54 -0500
+        id S1733018AbgBUIQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:16:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4849C2467B;
-        Fri, 21 Feb 2020 08:15:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B35F42467B;
+        Fri, 21 Feb 2020 08:16:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272953;
-        bh=mZ3fx8mTTL31/4gxDSr6omrV4zrRgZozY8m6tMPa8Eg=;
+        s=default; t=1582272972;
+        bh=bsY2Ez2fjYKqL4INXHo6t0AnfkI2oIAHfv+cfuoZhC0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AfgtVfimCivTdV+/QQJVBdBsZqj/UHkjfXDAivHIk6Dr1pw/qoc6rgT2+9TKcXe9H
-         yh+W5uHn90u9jw9gatmbnQxQJORz2ZrlXivh+gxdUyyWU/87pKgO8kWy0J+dvF3nH/
-         PeJh+5Gi5+7djnM3Z3ntFIVlu1PnOh1aHW0KrDNw=
+        b=iMccs9dGdZWg+TXqxa6aKc/VJdpObIVD3/1MBLqq90BQJTVx9yxJunkVOmL5hqvUF
+         VXDn6jp5PrXvGqBrP+WpZcgJueS6EwpZnbrX35e2t6gvd3S6l9V8xvaiPfe2jK1xJX
+         s8+x5Acn6ognwdzAejDYiojAbKYjOxOWzSWWrJ10=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 330/344] asm-generic/tlb: add missing CONFIG symbol
-Date:   Fri, 21 Feb 2020 08:42:09 +0100
-Message-Id: <20200221072420.266274766@linuxfoundation.org>
+Subject: [PATCH 5.4 331/344] microblaze: Prevent the overflow of the start
+Date:   Fri, 21 Feb 2020 08:42:10 +0100
+Message-Id: <20200221072420.385857623@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -48,37 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-[ Upstream commit 27796d03c9c4b2b937ed4cc2b10f21559ad5a8c9 ]
+[ Upstream commit 061d2c1d593076424c910cb1b64ecdb5c9a6923f ]
 
-Without this the symbol will not actually end up in .config files.
+In case the start + cache size is more than the max int the
+start overflows.
+Prevent the same.
 
-Link: http://lkml.kernel.org/r/20200116064531.483522-6-aneesh.kumar@linux.ibm.com
-Fixes: a30e32bd79e9 ("asm-generic/tlb: Provide generic tlb_flush() based on flush_tlb_mm()")
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/microblaze/kernel/cpu/cache.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 43102756304c1..238dccfa76910 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -399,6 +399,9 @@ config HAVE_RCU_TABLE_FREE
- config HAVE_MMU_GATHER_PAGE_SIZE
- 	bool
- 
-+config MMU_GATHER_NO_RANGE
-+	bool
-+
- config HAVE_MMU_GATHER_NO_GATHER
- 	bool
+diff --git a/arch/microblaze/kernel/cpu/cache.c b/arch/microblaze/kernel/cpu/cache.c
+index 0bde47e4fa694..dcba53803fa5f 100644
+--- a/arch/microblaze/kernel/cpu/cache.c
++++ b/arch/microblaze/kernel/cpu/cache.c
+@@ -92,7 +92,8 @@ static inline void __disable_dcache_nomsr(void)
+ #define CACHE_LOOP_LIMITS(start, end, cache_line_length, cache_size)	\
+ do {									\
+ 	int align = ~(cache_line_length - 1);				\
+-	end = min(start + cache_size, end);				\
++	if (start <  UINT_MAX - cache_size)				\
++		end = min(start + cache_size, end);			\
+ 	start &= align;							\
+ } while (0)
  
 -- 
 2.20.1
