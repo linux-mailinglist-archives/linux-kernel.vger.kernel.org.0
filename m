@@ -2,232 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 697DB166EE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 06:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A70D166EF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 06:19:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbgBUFSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 00:18:23 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41482 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725800AbgBUFSW (ORCPT
+        id S1727198AbgBUFS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 00:18:59 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:61006 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725800AbgBUFS6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 00:18:22 -0500
-X-UUID: 9c8846734fe944a499c14f5e121242ac-20200221
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=6UV+C10r2CMR0l2KI7VTcwmaRRwTbWfU9UAXiUnQ4b8=;
-        b=Ybqa99C1yIEm5RRSF6o8lbTBlYhulpmPkog+fZxJJytL3esGzaBxNWMDhVxwlEZ+pbcPfVLp6hV3EYx8h9LLgPCZeIi6qL63760D/balCwUlqxYLsRNNkKHMToKh4EYBaanNAyUZs7/r07BHYx4N7KMBXNhaT2Y5V4O9pkiuGJk=;
-X-UUID: 9c8846734fe944a499c14f5e121242ac-20200221
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1756815433; Fri, 21 Feb 2020 13:18:16 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 21 Feb 2020 13:17:28 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 21 Feb 2020 13:17:56 +0800
-Message-ID: <1582262295.30425.8.camel@mtksdaap41>
-Subject: Re: [PATCH v8 6/6] clk/drm: mediatek: Fix mediatek-drm device
- probing
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <p.zabel@pengutronix.de>, <airlied@linux.ie>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <ulrich.hecht+renesas@gmail.com>,
-        <laurent.pinchart@ideasonboard.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        <rdunlap@infradead.org>, <dri-devel@lists.freedesktop.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        "Seiya Wang" <seiya.wang@mediatek.com>,
-        <linux-clk@vger.kernel.org>,
-        "Collabora Kernel ML" <kernel@collabora.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>, <wens@csie.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <sean.wang@mediatek.com>, <frank-w@public-files.de>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>, <hsinyi@chromium.org>,
-        Matthias Brugger <mbrugger@suse.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <matthias.bgg@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 21 Feb 2020 13:18:15 +0800
-In-Reply-To: <20200220172147.919996-7-enric.balletbo@collabora.com>
-References: <20200220172147.919996-1-enric.balletbo@collabora.com>
-         <20200220172147.919996-7-enric.balletbo@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Fri, 21 Feb 2020 00:18:58 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01L5EcVq078002;
+        Fri, 21 Feb 2020 00:18:51 -0500
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y9sbv3xmb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Feb 2020 00:18:51 -0500
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01L5BsIs024158;
+        Fri, 21 Feb 2020 05:18:49 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma04dal.us.ibm.com with ESMTP id 2y6897f3u9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Feb 2020 05:18:49 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01L5ImD559441660
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Feb 2020 05:18:48 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 041AFBE059;
+        Fri, 21 Feb 2020 05:18:48 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE7A0BE053;
+        Fri, 21 Feb 2020 05:18:47 +0000 (GMT)
+Received: from sofia.ibm.com (unknown [9.124.31.110])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Feb 2020 05:18:47 +0000 (GMT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 02BA02E334A; Fri, 21 Feb 2020 10:48:43 +0530 (IST)
+From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+To:     Nathan Lynch <nathanl@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: [PATCH v2 0/5] Track and expose idle PURR and SPURR ticks
+Date:   Fri, 21 Feb 2020 10:48:29 +0530
+Message-Id: <1582262314-8319-1-git-send-email-ego@linux.vnet.ibm.com>
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-20_19:2020-02-19,2020-02-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ mlxscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002210035
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEVucmljOg0KDQpPbiBUaHUsIDIwMjAtMDItMjAgYXQgMTg6MjEgKzAxMDAsIEVucmljIEJh
-bGxldGJvIGkgU2VycmEgd3JvdGU6DQo+IEluIHRoZSBhY3R1YWwgaW1wbGVtZW50YXRpb24gdGhl
-IHNhbWUgY29tcGF0aWJsZSBzdHJpbmcNCj4gIm1lZGlhdGVrLDxjaGlwPi1tbXN5cyIgaXMgdXNl
-ZCB0byBiaW5kIHRoZSBjbG9jayBkcml2ZXJzDQo+IChkcml2ZXJzL2Nsay9tZWRpYXRlaykgYXMg
-d2VsbCBhcyB0byB0aGUgZ3B1IGRyaXZlcg0KPiAoZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
-a19kcm1fZHJ2LmMpLiBUaGlzIGVuZHMgd2l0aCB0aGUgcHJvYmxlbQ0KPiB0aGF0IHRoZSBvbmx5
-IHByb2JlZCBkcml2ZXIgaXMgdGhlIGNsb2NrIGRyaXZlciBhbmQgdGhlcmUgaXMgbm8gZGlzcGxh
-eQ0KPiBhdCBhbGwuDQo+IA0KPiBJbiBhbnkgY2FzZSBoYXZpbmcgdGhlIHNhbWUgY29tcGF0aWJs
-ZSBzdHJpbmcgZm9yIHR3byBkcml2ZXJzIGlzIG5vdA0KPiBjb3JyZWN0IGFuZCBzaG91bGQgYmUg
-Zml4ZWQuIFRvIGZpeCB0aGlzLCBhbmQgbWFpbnRhaW4gYmFja3dhcmQNCj4gY29tcGF0aWJpbGl0
-eSwgd2UgY2FuIGNvbnNpZGVyIHRoYXQgdGhlIGNsay08Y2hpcD4tbW0gZHJpdmVyIGlzIHRoZQ0K
-PiB0b3AtbGV2ZWwgZW50cnkgcG9pbnQgZm9yIHRoZSBNTVNZUyBzdWJzeXN0ZW0sIHNvIGlzIG5v
-dCBhIHB1cmUgY2xvY2sNCj4gY29udHJvbGxlciBidXQgYSBzeXN0ZW0gY29udHJvbGxlciwgYW5k
-IHRoZSBkcm0gZHJpdmVyIGlzIGluc3RhbnRpYXRlZA0KPiBieSB0aGF0IE1NU1lTIGRyaXZlci4N
-Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IEVucmljIEJhbGxldGJvIGkgU2VycmEgPGVucmljLmJhbGxl
-dGJvQGNvbGxhYm9yYS5jb20+DQo+IC0tLQ0KPiANCj4gQ2hhbmdlcyBpbiB2ODoNCj4gLSBOZXcg
-cGF0Y2ggaW50cm9kdWNlZCBpbiB0aGlzIHNlcmllcy4NCj4gDQo+IENoYW5nZXMgaW4gdjc6IE5v
-bmUNCj4gDQo+ICBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQyNzAxLW1tLmMgICB8ICAzMCAr
-KysrKysrKw0KPiAgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10MjcxMi1tbS5jICAgfCAgNDQg
-KysrKysrKysrKysNCj4gIGRyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDgxNzMtbW0uYyAgIHwg
-IDM1ICsrKysrKysrKw0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmMg
-fCAxMDIgKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAgNCBmaWxlcyBjaGFuZ2VkLCAxMTUg
-aW5zZXJ0aW9ucygrKSwgOTYgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9jbGsvbWVkaWF0ZWsvY2xrLW10MjcwMS1tbS5jIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xr
-LW10MjcwMS1tbS5jDQo+IGluZGV4IDA1NGI1OTdkNGE3My4uYjEyODE2ODBkNWJmIDEwMDY0NA0K
-PiAtLS0gYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQyNzAxLW1tLmMNCj4gKysrIGIvZHJp
-dmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10MjcwMS1tbS5jDQo+IEBAIC01LDYgKzUsNyBAQA0KPiAg
-ICovDQoNCltzbmlwXQ0KDQo+ICANCj4gIA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvbWVk
-aWF0ZWsvY2xrLW10MjcxMi1tbS5jIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10MjcxMi1t
-bS5jDQo+IGluZGV4IDFjNTk0OGJlMzVmMy4uMGFlOTcxNzgzOTk3IDEwMDY0NA0KPiAtLS0gYS9k
-cml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQyNzEyLW1tLmMNCj4gKysrIGIvZHJpdmVycy9jbGsv
-bWVkaWF0ZWsvY2xrLW10MjcxMi1tbS5jDQo+IEBAIC01LDYgKzUsNyBAQA0KPiAgICovDQo+ICAN
-Cj4gICNpbmNsdWRlIDxsaW51eC9jbGstcHJvdmlkZXIuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9w
-bGF0Zm9ybV9kYXRhL210a19tbXN5cy5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2Rl
-dmljZS5oPg0KPiAgDQo+ICAjaW5jbHVkZSAiY2xrLW10ay5oIg0KPiBAQCAtMTI2LDkgKzEyNyw0
-NSBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG10a19nYXRlIG1tX2Nsa3NbXSA9IHsNCj4gIAlHQVRF
-X01NMihDTEtfTU1fRFNJM19ESUdJVEFMLCAibW1fZHNpM19kaWdpdGFsIiwgImRzaTFfbG50YyIs
-IDYpLA0KPiAgfTsNCj4gIA0KPiArc3RhdGljIGNvbnN0IGVudW0gbXRrX2RkcF9jb21wX2lkIG10
-MjcxMl9tdGtfZGRwX21haW5bXSA9IHsNCj4gKwlERFBfQ09NUE9ORU5UX09WTDAsDQo+ICsJRERQ
-X0NPTVBPTkVOVF9DT0xPUjAsDQo+ICsJRERQX0NPTVBPTkVOVF9BQUwwLA0KPiArCUREUF9DT01Q
-T05FTlRfT0QwLA0KPiArCUREUF9DT01QT05FTlRfUkRNQTAsDQo+ICsJRERQX0NPTVBPTkVOVF9E
-UEkwLA0KPiArCUREUF9DT01QT05FTlRfUFdNMCwNCj4gK307DQo+ICsNCj4gK3N0YXRpYyBjb25z
-dCBlbnVtIG10a19kZHBfY29tcF9pZCBtdDI3MTJfbXRrX2RkcF9leHRbXSA9IHsNCj4gKwlERFBf
-Q09NUE9ORU5UX09WTDEsDQo+ICsJRERQX0NPTVBPTkVOVF9DT0xPUjEsDQo+ICsJRERQX0NPTVBP
-TkVOVF9BQUwxLA0KPiArCUREUF9DT01QT05FTlRfT0QxLA0KPiArCUREUF9DT01QT05FTlRfUkRN
-QTEsDQo+ICsJRERQX0NPTVBPTkVOVF9EUEkxLA0KPiArCUREUF9DT01QT05FTlRfUFdNMSwNCj4g
-K307DQo+ICsNCj4gK3N0YXRpYyBjb25zdCBlbnVtIG10a19kZHBfY29tcF9pZCBtdDI3MTJfbXRr
-X2RkcF90aGlyZFtdID0gew0KPiArCUREUF9DT01QT05FTlRfUkRNQTIsDQo+ICsJRERQX0NPTVBP
-TkVOVF9EU0kzLA0KPiArCUREUF9DT01QT05FTlRfUFdNMiwNCj4gK307DQo+ICsNCj4gK3N0YXRp
-YyBzdHJ1Y3QgbXRrX21tc3lzX2RyaXZlcl9kYXRhIG10MjcxMl9tbXN5c19kcml2ZXJfZGF0YSA9
-IHsNCj4gKwkubWFpbl9wYXRoID0gbXQyNzEyX210a19kZHBfbWFpbiwNCj4gKwkubWFpbl9sZW4g
-PSBBUlJBWV9TSVpFKG10MjcxMl9tdGtfZGRwX21haW4pLA0KPiArCS5leHRfcGF0aCA9IG10Mjcx
-Ml9tdGtfZGRwX2V4dCwNCj4gKwkuZXh0X2xlbiA9IEFSUkFZX1NJWkUobXQyNzEyX210a19kZHBf
-ZXh0KSwNCj4gKwkudGhpcmRfcGF0aCA9IG10MjcxMl9tdGtfZGRwX3RoaXJkLA0KPiArCS50aGly
-ZF9sZW4gPSBBUlJBWV9TSVpFKG10MjcxMl9tdGtfZGRwX3RoaXJkKSwNCj4gK307DQo+ICsNCg0K
-W3NuaXBdDQoNCj4gIA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10
-ODE3My1tbS5jIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ODE3My1tbS5jDQo+IGluZGV4
-IDgzODg0ZmQ1YTc1MC4uOTEzNmM3ZjU0M2YxIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsay9t
-ZWRpYXRlay9jbGstbXQ4MTczLW1tLmMNCj4gKysrIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xr
-LW10ODE3My1tbS5jDQo+IEBAIC01LDYgKzUsNyBAQA0KPiAgICovDQo+ICANCj4gICNpbmNsdWRl
-IDxsaW51eC9jbGstcHJvdmlkZXIuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kYXRh
-L210a19tbXN5cy5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPg0KPiAg
-DQo+ICAjaW5jbHVkZSAiY2xrLW10ay5oIg0KPiBAQCAtOTksMTAgKzEwMCwzNyBAQCBzdGF0aWMg
-Y29uc3Qgc3RydWN0IG10a19nYXRlIG1tX2Nsa3NbXSA9IHsNCj4gIAlHQVRFX01NMShDTEtfTU1f
-SERNSV9IRENQMjRNLCAibW1faGRtaV9oZGNwMjRtIiwgImhkY3BfMjRtX3NlbCIsIDIwKSwNCj4g
-IH07DQo+ICANCj4gK3N0YXRpYyBjb25zdCBlbnVtIG10a19kZHBfY29tcF9pZCBtdDgxNzNfbXRr
-X2RkcF9tYWluW10gPSB7DQo+ICsJRERQX0NPTVBPTkVOVF9PVkwwLA0KPiArCUREUF9DT01QT05F
-TlRfQ09MT1IwLA0KPiArCUREUF9DT01QT05FTlRfQUFMMCwNCj4gKwlERFBfQ09NUE9ORU5UX09E
-MCwNCj4gKwlERFBfQ09NUE9ORU5UX1JETUEwLA0KPiArCUREUF9DT01QT05FTlRfVUZPRSwNCj4g
-KwlERFBfQ09NUE9ORU5UX0RTSTAsDQo+ICsJRERQX0NPTVBPTkVOVF9QV00wLA0KPiArfTsNCj4g
-Kw0KPiArc3RhdGljIGNvbnN0IGVudW0gbXRrX2RkcF9jb21wX2lkIG10ODE3M19tdGtfZGRwX2V4
-dFtdID0gew0KPiArCUREUF9DT01QT05FTlRfT1ZMMSwNCj4gKwlERFBfQ09NUE9ORU5UX0NPTE9S
-MSwNCj4gKwlERFBfQ09NUE9ORU5UX0dBTU1BLA0KPiArCUREUF9DT01QT05FTlRfUkRNQTEsDQo+
-ICsJRERQX0NPTVBPTkVOVF9EUEkwLA0KPiArfTsNCj4gKw0KPiArc3RhdGljIHN0cnVjdCBtdGtf
-bW1zeXNfZHJpdmVyX2RhdGEgbXQ4MTczX21tc3lzX2RyaXZlcl9kYXRhID0gew0KPiArCS5tYWlu
-X3BhdGggPSBtdDgxNzNfbXRrX2RkcF9tYWluLA0KPiArCS5tYWluX2xlbiA9IEFSUkFZX1NJWkUo
-bXQ4MTczX210a19kZHBfbWFpbiksDQo+ICsJLmV4dF9wYXRoID0gbXQ4MTczX210a19kZHBfZXh0
-LA0KPiArCS5leHRfbGVuID0gQVJSQVlfU0laRShtdDgxNzNfbXRrX2RkcF9leHQpLA0KPiArfTsN
-Cj4gKw0KPiAgc3RhdGljIGludCBjbGtfbXQ4MTczX21tX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9k
-ZXZpY2UgKnBkZXYpDQo+ICB7DQo+ICAJc3RydWN0IGRldmljZV9ub2RlICpub2RlID0gcGRldi0+
-ZGV2Lm9mX25vZGU7DQo+ICAJc3RydWN0IGNsa19vbmVjZWxsX2RhdGEgKmNsa19kYXRhOw0KPiAr
-CXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKmRybTsNCj4gIAlpbnQgcmV0Ow0KPiAgDQo+ICAJY2xr
-X2RhdGEgPSBtdGtfYWxsb2NfY2xrX2RhdGEoQ0xLX01NX05SX0NMSyk7DQo+IEBAIC0xMTgsNiAr
-MTQ2LDEzIEBAIHN0YXRpYyBpbnQgY2xrX210ODE3M19tbV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1f
-ZGV2aWNlICpwZGV2KQ0KPiAgCWlmIChyZXQpDQo+ICAJCXJldHVybiByZXQ7DQo+ICANCj4gKwlw
-bGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCAmbXQ4MTczX21tc3lzX2RyaXZlcl9kYXRhKTsNCj4g
-Kw0KPiArCWRybSA9IHBsYXRmb3JtX2RldmljZV9yZWdpc3Rlcl9kYXRhKCZwZGV2LT5kZXYsICJt
-ZWRpYXRlay1kcm0iLA0KPiArCQkJCQkgICAgUExBVEZPUk1fREVWSURfTk9ORSwgTlVMTCwgMCk7
-DQo+ICsJaWYgKElTX0VSUihkcm0pKQ0KPiArCQlyZXR1cm4gUFRSX0VSUihkcm0pOw0KPiArDQo+
-ICAJcmV0dXJuIDA7DQo+ICB9DQo+ICANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9t
-ZWRpYXRlay9tdGtfZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1f
-ZHJ2LmMNCj4gaW5kZXggYjY4ODM3ZWEwMmIzLi41YjYwZjZiN2Q3MTAgMTAwNjQ0DQo+IC0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2Rydi5jDQo+ICsrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2Rydi5jDQo+IEBAIC02MSw4OCArNjEsNiBAQCBzdGF0
-aWMgY29uc3Qgc3RydWN0IGRybV9tb2RlX2NvbmZpZ19mdW5jcyBtdGtfZHJtX21vZGVfY29uZmln
-X2Z1bmNzID0gew0KPiAgCS5hdG9taWNfY29tbWl0ID0gZHJtX2F0b21pY19oZWxwZXJfY29tbWl0
-LA0KPiAgfTsNCj4gIA0KPiAtc3RhdGljIGNvbnN0IGVudW0gbXRrX2RkcF9jb21wX2lkIG10Mjcw
-MV9tdGtfZGRwX21haW5bXSA9IHsNCj4gLQlERFBfQ09NUE9ORU5UX09WTDAsDQo+IC0JRERQX0NP
-TVBPTkVOVF9SRE1BMCwNCj4gLQlERFBfQ09NUE9ORU5UX0NPTE9SMCwNCj4gLQlERFBfQ09NUE9O
-RU5UX0JMUywNCj4gLQlERFBfQ09NUE9ORU5UX0RTSTAsDQo+IC19Ow0KPiAtDQo+IC1zdGF0aWMg
-Y29uc3QgZW51bSBtdGtfZGRwX2NvbXBfaWQgbXQyNzAxX210a19kZHBfZXh0W10gPSB7DQo+IC0J
-RERQX0NPTVBPTkVOVF9SRE1BMSwNCj4gLQlERFBfQ09NUE9ORU5UX0RQSTAsDQo+IC19Ow0KPiAt
-DQo+IC1zdGF0aWMgY29uc3QgZW51bSBtdGtfZGRwX2NvbXBfaWQgbXQyNzEyX210a19kZHBfbWFp
-bltdID0gew0KPiAtCUREUF9DT01QT05FTlRfT1ZMMCwNCj4gLQlERFBfQ09NUE9ORU5UX0NPTE9S
-MCwNCj4gLQlERFBfQ09NUE9ORU5UX0FBTDAsDQo+IC0JRERQX0NPTVBPTkVOVF9PRDAsDQo+IC0J
-RERQX0NPTVBPTkVOVF9SRE1BMCwNCj4gLQlERFBfQ09NUE9ORU5UX0RQSTAsDQo+IC0JRERQX0NP
-TVBPTkVOVF9QV00wLA0KPiAtfTsNCj4gLQ0KPiAtc3RhdGljIGNvbnN0IGVudW0gbXRrX2RkcF9j
-b21wX2lkIG10MjcxMl9tdGtfZGRwX2V4dFtdID0gew0KPiAtCUREUF9DT01QT05FTlRfT1ZMMSwN
-Cj4gLQlERFBfQ09NUE9ORU5UX0NPTE9SMSwNCj4gLQlERFBfQ09NUE9ORU5UX0FBTDEsDQo+IC0J
-RERQX0NPTVBPTkVOVF9PRDEsDQo+IC0JRERQX0NPTVBPTkVOVF9SRE1BMSwNCj4gLQlERFBfQ09N
-UE9ORU5UX0RQSTEsDQo+IC0JRERQX0NPTVBPTkVOVF9QV00xLA0KPiAtfTsNCj4gLQ0KPiAtc3Rh
-dGljIGNvbnN0IGVudW0gbXRrX2RkcF9jb21wX2lkIG10MjcxMl9tdGtfZGRwX3RoaXJkW10gPSB7
-DQo+IC0JRERQX0NPTVBPTkVOVF9SRE1BMiwNCj4gLQlERFBfQ09NUE9ORU5UX0RTSTMsDQo+IC0J
-RERQX0NPTVBPTkVOVF9QV00yLA0KPiAtfTsNCj4gLQ0KPiAtc3RhdGljIGNvbnN0IGVudW0gbXRr
-X2RkcF9jb21wX2lkIG10ODE3M19tdGtfZGRwX21haW5bXSA9IHsNCj4gLQlERFBfQ09NUE9ORU5U
-X09WTDAsDQo+IC0JRERQX0NPTVBPTkVOVF9DT0xPUjAsDQo+IC0JRERQX0NPTVBPTkVOVF9BQUww
-LA0KPiAtCUREUF9DT01QT05FTlRfT0QwLA0KPiAtCUREUF9DT01QT05FTlRfUkRNQTAsDQo+IC0J
-RERQX0NPTVBPTkVOVF9VRk9FLA0KPiAtCUREUF9DT01QT05FTlRfRFNJMCwNCj4gLQlERFBfQ09N
-UE9ORU5UX1BXTTAsDQo+IC19Ow0KPiAtDQo+IC1zdGF0aWMgY29uc3QgZW51bSBtdGtfZGRwX2Nv
-bXBfaWQgbXQ4MTczX210a19kZHBfZXh0W10gPSB7DQo+IC0JRERQX0NPTVBPTkVOVF9PVkwxLA0K
-PiAtCUREUF9DT01QT05FTlRfQ09MT1IxLA0KPiAtCUREUF9DT01QT05FTlRfR0FNTUEsDQo+IC0J
-RERQX0NPTVBPTkVOVF9SRE1BMSwNCj4gLQlERFBfQ09NUE9ORU5UX0RQSTAsDQo+IC19Ow0KDQpJ
-IHByZWZlciB0aGF0IGRpc3BsYXkgcm91dGluZyBpcyBwbGFjZWQgaW4gZHJtIGRyaXZlci4gSWYg
-eW91IHdhbnQgdG8NCm1vdmUgZGlzcGxheSByb3V0aW5nIGludG8gbW1zeXMgZHJpdmVyLCBJIHRo
-aW5rIHlvdSBzaG91bGQgbW92ZQ0KbXRrX2RkcF9hZGRfY29tcF90b19wYXRoKCkgYW5kIG10a19k
-ZHBfcmVtb3ZlX2NvbXBfZnJvbV9wYXRoKCkgaW50bw0KbW1zeXMgZHJpdmVyIGJlY2F1c2UgdGhh
-dCBpcyB0aGUgcmVnaXN0ZXIgY29uZmlndXJhdGlvbiBwYXJ0LiBUaGlzIGFycmF5DQpjb3VsZCBi
-ZSBjaGFuZ2VkIGJ5IGRpc3BsYXkgZHJpdmVyIGFjY29yZGluZyB0byBpdHMgYXBwbGljYXRpb24u
-IEZvcg0KZXhhbXBsZSwgdGhlIGFub3RoZXIgcm91dGluZyBjb3VsZCBiZToNCg0Kc3RhdGljIGNv
-bnN0IGVudW0gbXRrX2RkcF9jb21wX2lkIG10ODE3M19tdGtfZGRwX21haW5bXSA9IHsNCglERFBf
-Q09NUE9ORU5UX09WTDAsDQoJRERQX0NPTVBPTkVOVF9DT0xPUjAsDQoJRERQX0NPTVBPTkVOVF9B
-QUwwLA0KCUREUF9DT01QT05FTlRfT0QwLA0KCUREUF9DT01QT05FTlRfUkRNQTAsDQoJRERQX0NP
-TVBPTkVOVF9VRk9FLA0KCUREUF9DT01QT05FTlRfRFBJMCwNCn07DQoNCnN0YXRpYyBjb25zdCBl
-bnVtIG10a19kZHBfY29tcF9pZCBtdDgxNzNfbXRrX2RkcF9leHRbXSA9IHsNCglERFBfQ09NUE9O
-RU5UX09WTDEsDQoJRERQX0NPTVBPTkVOVF9DT0xPUjEsDQoJRERQX0NPTVBPTkVOVF9HQU1NQSwN
-CglERFBfQ09NUE9ORU5UX1JETUExLA0KCUREUF9DT01QT05FTlRfRFNJMCwNCglERFBfQ09NUE9O
-RU5UX1BXTTAsDQp9Ow0KDQpJIGV4Y2hhbmdlIHRoZSBkc2kgYW5kIGRwaSBjb21wb25lbnQgZm9y
-IHRoZSB0d28gZGlzcGxheSBvdXRwdXQuIFRoaXMNCmFycmF5IGlzIGhvdyBkaXNwbGF5IGRyaXZl
-ciB3YW50IHRvIHJvdXRlLCBzbyBJIHRoaW5rIHRoaXMgc2hvdWxkIGJlDQprZXB0IGluIGRpc3Bs
-YXkgZHJpdmVyLg0KDQpSZWdhcmRzLA0KQ0sNCg0KPiAtDQo+IC1zdGF0aWMgY29uc3Qgc3RydWN0
-IG10a19tbXN5c19kcml2ZXJfZGF0YSBtdDI3MDFfbW1zeXNfZHJpdmVyX2RhdGEgPSB7DQo+IC0J
-Lm1haW5fcGF0aCA9IG10MjcwMV9tdGtfZGRwX21haW4sDQo+IC0JLm1haW5fbGVuID0gQVJSQVlf
-U0laRShtdDI3MDFfbXRrX2RkcF9tYWluKSwNCj4gLQkuZXh0X3BhdGggPSBtdDI3MDFfbXRrX2Rk
-cF9leHQsDQo+IC0JLmV4dF9sZW4gPSBBUlJBWV9TSVpFKG10MjcwMV9tdGtfZGRwX2V4dCksDQo+
-IC0JLnNoYWRvd19yZWdpc3RlciA9IHRydWUsDQo+IC19Ow0KPiAtDQo+IC1zdGF0aWMgY29uc3Qg
-c3RydWN0IG10a19tbXN5c19kcml2ZXJfZGF0YSBtdDI3MTJfbW1zeXNfZHJpdmVyX2RhdGEgPSB7
-DQo+IC0JLm1haW5fcGF0aCA9IG10MjcxMl9tdGtfZGRwX21haW4sDQo+IC0JLm1haW5fbGVuID0g
-QVJSQVlfU0laRShtdDI3MTJfbXRrX2RkcF9tYWluKSwNCj4gLQkuZXh0X3BhdGggPSBtdDI3MTJf
-bXRrX2RkcF9leHQsDQo+IC0JLmV4dF9sZW4gPSBBUlJBWV9TSVpFKG10MjcxMl9tdGtfZGRwX2V4
-dCksDQo+IC0JLnRoaXJkX3BhdGggPSBtdDI3MTJfbXRrX2RkcF90aGlyZCwNCj4gLQkudGhpcmRf
-bGVuID0gQVJSQVlfU0laRShtdDI3MTJfbXRrX2RkcF90aGlyZCksDQo+IC19Ow0KPiAtDQo+IC1z
-dGF0aWMgY29uc3Qgc3RydWN0IG10a19tbXN5c19kcml2ZXJfZGF0YSBtdDgxNzNfbW1zeXNfZHJp
-dmVyX2RhdGEgPSB7DQo+IC0JLm1haW5fcGF0aCA9IG10ODE3M19tdGtfZGRwX21haW4sDQo+IC0J
-Lm1haW5fbGVuID0gQVJSQVlfU0laRShtdDgxNzNfbXRrX2RkcF9tYWluKSwNCj4gLQkuZXh0X3Bh
-dGggPSBtdDgxNzNfbXRrX2RkcF9leHQsDQo+IC0JLmV4dF9sZW4gPSBBUlJBWV9TSVpFKG10ODE3
-M19tdGtfZGRwX2V4dCksDQo+IC19Ow0KPiAtDQoNCg0K
+From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+
+Hi,
+
+This is the second version of the patches to track and expose idle
+PURR and SPURR ticks. These patches are required by tools such as
+lparstat to compute system utilization for capacity planning purposes.
+
+v1 can be found here: https://lore.kernel.org/patchwork/cover/1159341/
+
+The key changes from v1 are
+
+    - The sysfs reads of idle PURR and SPURR now send an
+      smp_call_function to the target CPU in order to read the most
+      recent value of idle PURR and SPURR. This is required if the
+      target CPU was idle for a long duration, in which case the
+      cycles corresponding to its latest idle duration would not be
+      updated in the variable tracking idle PURR/SPURR. Thus merely
+      reading the variable would not reflect the most accurate idle
+      PURR/SPURR ticks.
+    
+    - Ensured that even when idle PURR/SPURR values are read in an
+      interrupt context in-between idle_loop_prolog() and
+      idle_loop_epilog(), we return the value that includes the cycles
+      spent in the most recent idle period.
+
+    - The sysfs files for idle_purr and idle_spurr are created only
+      when the FW_FEATURE_LPAR is enabled (the earlier version was
+      checking for FW_FEATURE_SPLPAR)
+
+Motivation:
+===========
+On PSeries LPARs, the data centers planners desire a more accurate
+view of system utilization per resource such as CPU to plan the system
+capacity requirements better. Such accuracy can be obtained by reading
+PURR/SPURR registers for CPU resource utilization.
+
+Tools such as lparstat which are used to compute the utilization need
+to know [S]PURR ticks when the cpu was busy or idle. The [S]PURR
+counters are already exposed through sysfs.  We already account for
+PURR ticks when we go to idle so that we can update the VPA area. This
+patchset extends support to account for SPURR ticks when idle, and
+expose both via per-cpu sysfs files.
+
+These patches are required for enhancement to the lparstat utility
+that compute the CPU utilization based on PURR and SPURR which can be
+found here :
+https://groups.google.com/forum/#!topic/powerpc-utils-devel/fYRo69xO9r4
+
+With the patches, when lparstat is run on a LPAR running CPU-Hogs,
+=========================================================================
+$sudo ./src/lparstat -E 1 3
+System Configuration
+type=Dedicated mode=Capped smt=8 lcpu=2 mem=4834176 kB cpus=0 ent=2.00 
+---Actual---                 -Normalized-
+%busy  %idle   Frequency     %busy  %idle
+------ ------  ------------- ------ ------
+ 99.99   0.00  3.35GHz[111%] 110.99   0.00
+100.00   0.00  3.35GHz[111%] 111.00   0.00
+100.00   0.00  3.35GHz[111%] 111.00   0.00
+=========================================================================
+
+When lparstat is run on an LPAR that is idle,
+=========================================================================
+$ sudo ./src/lparstat -E 1 3
+System Configuration
+type=Dedicated mode=Capped smt=8 lcpu=2 mem=4834176 kB cpus=0 ent=2.00 
+---Actual---                 -Normalized-
+%busy  %idle   Frequency     %busy  %idle
+------ ------  ------------- ------ ------
+  0.09  99.91  2.11GHz[ 70%]   0.11  69.90
+  0.32  99.68  2.17GHz[ 72%]   0.25  71.75
+  0.56  99.44  2.18GHz[ 72%]   0.42  71.58
+=========================================================================
+
+Gautham R. Shenoy (5):
+  powerpc: Move idle_loop_prolog()/epilog() functions to header file
+  powerpc/idle: Add accessor function to always read latest idle PURR
+  powerpc/pseries: Account for SPURR ticks on idle CPUs
+  powerpc/sysfs: Show idle_purr and idle_spurr for every CPU
+  Documentation: Document sysfs interfaces purr, spurr, idle_purr,
+    idle_spurr
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu | 39 ++++++++++
+ arch/powerpc/include/asm/idle.h                    | 88 ++++++++++++++++++++++
+ arch/powerpc/kernel/sysfs.c                        | 54 ++++++++++++-
+ arch/powerpc/platforms/pseries/setup.c             |  8 +-
+ drivers/cpuidle/cpuidle-pseries.c                  | 39 ++--------
+ 5 files changed, 191 insertions(+), 37 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/idle.h
+
+-- 
+1.9.4
 
