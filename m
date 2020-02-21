@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 775C616769F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73F1B1677F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:46:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732599AbgBUIhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:37:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38924 "EHLO mail.kernel.org"
+        id S1729677AbgBUHvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:51:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731818AbgBUIFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:05:25 -0500
+        id S1728602AbgBUHvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:51:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF60C20801;
-        Fri, 21 Feb 2020 08:05:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D59620801;
+        Fri, 21 Feb 2020 07:51:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272325;
-        bh=j27L0uvNh+GXvHJve/VVwZnTA0Mp4pOfRumbA87sMpU=;
+        s=default; t=1582271461;
+        bh=6z/t0VhggveAqMfKd+GXVB1VM3eyWMPeYQwd11GIHLM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JX39ZVqhxZ9furNYtzEoSqL+z/A/3V6wCzZBHshQBoDQqU7glS6pXM/l1FYmGfm7F
-         s2Ueruyb5akKjYQ2RVUqXJ4i+YrGzb0bn2ql0wp8HqtpHvgw/oKsc7VBRCILNPNm3d
-         508W5CjGhL6KXlSVh50nPYAk5dmZwGFTOzQvwRtc=
+        b=MoF3SSDUamvraDZFIq8E2BdVO3EapRJLf3BSnW6NsYdcX0uROte3xZaRLHU7r1yTI
+         jFN3dSsk9PPEtRhQ/Mh57h/FVNABVMzbqH68ARHNxDmN5Uti0F4Lfq3CQu4kfjArRm
+         bCCshXT/c94CdHIDJ+9zgHRkkuzlQeRR6VhoZk3s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 099/344] arm64: dts: rockchip: Fix NanoPC-T4 cooling maps
-Date:   Fri, 21 Feb 2020 08:38:18 +0100
-Message-Id: <20200221072357.937889303@linuxfoundation.org>
+Subject: [PATCH 5.5 175/399] scsi: lpfc: Fix: Rework setting of fdmi symbolic node name registration
+Date:   Fri, 21 Feb 2020 08:38:20 +0100
+Message-Id: <20200221072419.672458726@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,64 +45,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit a793e19c15f25a126138ac4ae9facf9204754af3 ]
+[ Upstream commit df9166bfa7750bade5737ffc91fbd432e0354442 ]
 
-Although it appeared to follow logically from the bindings, apparently
-the thermal framework can't properly cope with a single cooling device
-being shared between multiple maps. The CPU zone is probably easier to
-overheat, so remove the references to the (optional) fan from the GPU
-cooling zone to avoid things getting confused. Hopefully GPU-intensive
-tasks will leak enough heat across to the CPU zone to still hit the
-fan trips before reaching critical GPU temperatures.
+This patch reworks the fdmi symbolic node name data for the following two
+issues:
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Link: https://lore.kernel.org/r/5bb39f3115df1a487d717d3ae87e523b03749379.1573908197.git.robin.murphy@arm.com
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+ - Correcting extraneous periods following the DV and HN fdmi data fields.
+
+ - Avoiding buffer overflow issues when formatting the data.
+
+The fix to the fist issue is to just remove the characters.
+
+The fix to the second issue has all data being staged in temporary storage
+before being moved to the real buffer.
+
+Link: https://lore.kernel.org/r/20191218235808.31922-3-jsmart2021@gmail.com
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../boot/dts/rockchip/rk3399-nanopc-t4.dts    | 27 -------------------
- 1 file changed, 27 deletions(-)
+ drivers/scsi/lpfc/lpfc_ct.c | 42 +++++++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts
-index 2a127985ab171..d3ed8e5e770f1 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts
-@@ -94,33 +94,6 @@
- 	};
- };
+diff --git a/drivers/scsi/lpfc/lpfc_ct.c b/drivers/scsi/lpfc/lpfc_ct.c
+index 99c9bb249758c..1b4dbb28fb419 100644
+--- a/drivers/scsi/lpfc/lpfc_ct.c
++++ b/drivers/scsi/lpfc/lpfc_ct.c
+@@ -1493,33 +1493,35 @@ int
+ lpfc_vport_symbolic_node_name(struct lpfc_vport *vport, char *symbol,
+ 	size_t size)
+ {
+-	char fwrev[FW_REV_STR_SIZE];
+-	int n;
++	char fwrev[FW_REV_STR_SIZE] = {0};
++	char tmp[MAXHOSTNAMELEN] = {0};
  
--&gpu_thermal {
--	trips {
--		gpu_warm: gpu_warm {
--			temperature = <55000>;
--			hysteresis = <2000>;
--			type = "active";
--		};
--
--		gpu_hot: gpu_hot {
--			temperature = <65000>;
--			hysteresis = <2000>;
--			type = "active";
--		};
--	};
--	cooling-maps {
--		map1 {
--			trip = <&gpu_warm>;
--			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
--		};
--
--		map2 {
--			trip = <&gpu_hot>;
--			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
--		};
--	};
--};
--
- &pinctrl {
- 	ir {
- 		ir_rx: ir-rx {
+-	lpfc_decode_firmware_rev(vport->phba, fwrev, 0);
++	memset(symbol, 0, size);
+ 
+-	n = scnprintf(symbol, size, "Emulex %s", vport->phba->ModelName);
+-	if (size < n)
+-		return n;
++	scnprintf(tmp, sizeof(tmp), "Emulex %s", vport->phba->ModelName);
++	if (strlcat(symbol, tmp, size) >= size)
++		goto buffer_done;
+ 
+-	n += scnprintf(symbol + n, size - n, " FV%s", fwrev);
+-	if (size < n)
+-		return n;
++	lpfc_decode_firmware_rev(vport->phba, fwrev, 0);
++	scnprintf(tmp, sizeof(tmp), " FV%s", fwrev);
++	if (strlcat(symbol, tmp, size) >= size)
++		goto buffer_done;
+ 
+-	n += scnprintf(symbol + n, size - n, " DV%s.",
+-		      lpfc_release_version);
+-	if (size < n)
+-		return n;
++	scnprintf(tmp, sizeof(tmp), " DV%s", lpfc_release_version);
++	if (strlcat(symbol, tmp, size) >= size)
++		goto buffer_done;
+ 
+-	n += scnprintf(symbol + n, size - n, " HN:%s.",
+-		      init_utsname()->nodename);
+-	if (size < n)
+-		return n;
++	scnprintf(tmp, sizeof(tmp), " HN:%s", init_utsname()->nodename);
++	if (strlcat(symbol, tmp, size) >= size)
++		goto buffer_done;
+ 
+ 	/* Note :- OS name is "Linux" */
+-	n += scnprintf(symbol + n, size - n, " OS:%s",
+-		      init_utsname()->sysname);
+-	return n;
++	scnprintf(tmp, sizeof(tmp), " OS:%s", init_utsname()->sysname);
++	strlcat(symbol, tmp, size);
++
++buffer_done:
++	return strnlen(symbol, size);
++
+ }
+ 
+ static uint32_t
 -- 
 2.20.1
 
