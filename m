@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D6301675DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:32:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5FB1675CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:32:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733057AbgBUINs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:13:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50046 "EHLO mail.kernel.org"
+        id S1733139AbgBUION (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:14:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733050AbgBUINq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:13:46 -0500
+        id S1732691AbgBUIOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:14:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B492124650;
-        Fri, 21 Feb 2020 08:13:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EEB420578;
+        Fri, 21 Feb 2020 08:14:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272826;
-        bh=rnx7Ggz4AoJzIVWIKtQRb/wV81Ljlb8nmprGeQWWiKM=;
+        s=default; t=1582272849;
+        bh=1cIvgbQumL/bZuCtORG9WNL/02NREKUgNOvzr9i7L+c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OSuibr2+XfYz/8Eh9H1I8E8Bly9NJlU9jFLWGhPP8jgY6n2gsKGHVGacQQhzxUE8u
-         R31Mm3b+dyFvlID1fSmr1iVs4SlKzV/S0PzR1o5bWzXT74RpM5AMsqP6fqq9QV1tN/
-         +MR5mennAGYxmVjvv2VU2/myH1++D4UI8mQ0x6R4=
+        b=SIq7kc75O7lPd6w8lV8b2Twv4lYcqLtfOsLa6LIC2X40YZX6+VBt8YqMh4d7uxym+
+         Ydtl1WAdmWz1sQ/9/qAGCjblZ60PZGyIeO3erHsNwylfwodKl4c4U+J5Xg4fgICpr9
+         6B7U9RTUTfMBvXG/Y9qX73fEOd52TKSUCzEA8lRE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 288/344] bcache: rework error unwinding in register_bcache
-Date:   Fri, 21 Feb 2020 08:41:27 +0100
-Message-Id: <20200221072415.983628889@linuxfoundation.org>
+Subject: [PATCH 5.4 291/344] alarmtimer: Make alarmtimer platform device child of RTC device
+Date:   Fri, 21 Feb 2020 08:41:30 +0100
+Message-Id: <20200221072416.273902481@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -44,160 +45,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit 50246693f81fe887f4db78bf7089051d7f1894cc ]
+[ Upstream commit c79108bd19a8490315847e0c95ac6526fcd8e770 ]
 
-Split the successful and error return path, and use one goto label for each
-resource to unwind.  This also fixes some small errors like leaking the
-module reference count in the reboot case (which seems entirely harmless)
-or printing the wrong warning messages for early failures.
+The alarmtimer_suspend() function will fail if an RTC device is on a bus
+such as SPI or i2c and that RTC device registers and probes after
+alarmtimer_init() registers and probes the 'alarmtimer' platform device.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This is because system wide suspend suspends devices in the reverse order
+of their probe. When alarmtimer_suspend() attempts to program the RTC for a
+wakeup it will try to program an RTC device on a bus that has already been
+suspended.
+
+Move the alarmtimer device registration to happen when the RTC which is
+used for wakeup is registered. Register the 'alarmtimer' platform device as
+a child of the RTC device too, so that it can be guaranteed that the RTC
+device won't be suspended when alarmtimer_suspend() is called.
+
+Reported-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Link: https://lore.kernel.org/r/20200124055849.154411-2-swboyd@chromium.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/super.c | 75 +++++++++++++++++++++++----------------
- 1 file changed, 45 insertions(+), 30 deletions(-)
+ kernel/time/alarmtimer.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index b86cf72033401..86f7e09d31516 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -2372,29 +2372,33 @@ static bool bch_is_open(struct block_device *bdev)
- static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 			       const char *buffer, size_t size)
+diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
+index 4b11f0309eee4..b97401f6bc232 100644
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -88,6 +88,7 @@ static int alarmtimer_rtc_add_device(struct device *dev,
+ 	unsigned long flags;
+ 	struct rtc_device *rtc = to_rtc_device(dev);
+ 	struct wakeup_source *__ws;
++	struct platform_device *pdev;
+ 	int ret = 0;
+ 
+ 	if (rtcdev)
+@@ -99,9 +100,11 @@ static int alarmtimer_rtc_add_device(struct device *dev,
+ 		return -1;
+ 
+ 	__ws = wakeup_source_register(dev, "alarmtimer");
++	pdev = platform_device_register_data(dev, "alarmtimer",
++					     PLATFORM_DEVID_AUTO, NULL, 0);
+ 
+ 	spin_lock_irqsave(&rtcdev_lock, flags);
+-	if (!rtcdev) {
++	if (__ws && !IS_ERR(pdev) && !rtcdev) {
+ 		if (!try_module_get(rtc->owner)) {
+ 			ret = -1;
+ 			goto unlock;
+@@ -112,10 +115,14 @@ static int alarmtimer_rtc_add_device(struct device *dev,
+ 		get_device(dev);
+ 		ws = __ws;
+ 		__ws = NULL;
++		pdev = NULL;
++	} else {
++		ret = -1;
+ 	}
+ unlock:
+ 	spin_unlock_irqrestore(&rtcdev_lock, flags);
+ 
++	platform_device_unregister(pdev);
+ 	wakeup_source_unregister(__ws);
+ 
+ 	return ret;
+@@ -876,8 +883,7 @@ static struct platform_driver alarmtimer_driver = {
+  */
+ static int __init alarmtimer_init(void)
  {
--	ssize_t ret = -EINVAL;
--	const char *err = "cannot allocate memory";
--	char *path = NULL;
--	struct cache_sb *sb = NULL;
-+	const char *err;
-+	char *path;
-+	struct cache_sb *sb;
- 	struct block_device *bdev = NULL;
--	struct page *sb_page = NULL;
-+	struct page *sb_page;
-+	ssize_t ret;
+-	struct platform_device *pdev;
+-	int error = 0;
++	int error;
+ 	int i;
  
-+	ret = -EBUSY;
- 	if (!try_module_get(THIS_MODULE))
--		return -EBUSY;
-+		goto out;
+ 	alarmtimer_rtc_timer_init();
+@@ -900,15 +906,7 @@ static int __init alarmtimer_init(void)
+ 	if (error)
+ 		goto out_if;
  
- 	/* For latest state of bcache_is_reboot */
- 	smp_mb();
- 	if (bcache_is_reboot)
--		return -EBUSY;
-+		goto out_module_put;
- 
-+	ret = -ENOMEM;
-+	err = "cannot allocate memory";
- 	path = kstrndup(buffer, size, GFP_KERNEL);
- 	if (!path)
--		goto err;
-+		goto out_module_put;
- 
- 	sb = kmalloc(sizeof(struct cache_sb), GFP_KERNEL);
- 	if (!sb)
--		goto err;
-+		goto out_free_path;
- 
-+	ret = -EINVAL;
- 	err = "failed to open device";
- 	bdev = blkdev_get_by_path(strim(path),
- 				  FMODE_READ|FMODE_WRITE|FMODE_EXCL,
-@@ -2411,57 +2415,68 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 			if (!IS_ERR(bdev))
- 				bdput(bdev);
- 			if (attr == &ksysfs_register_quiet)
--				goto quiet_out;
-+				goto done;
- 		}
--		goto err;
-+		goto out_free_sb;
- 	}
- 
- 	err = "failed to set blocksize";
- 	if (set_blocksize(bdev, 4096))
--		goto err_close;
-+		goto out_blkdev_put;
- 
- 	err = read_super(sb, bdev, &sb_page);
- 	if (err)
--		goto err_close;
-+		goto out_blkdev_put;
- 
- 	err = "failed to register device";
- 	if (SB_IS_BDEV(sb)) {
- 		struct cached_dev *dc = kzalloc(sizeof(*dc), GFP_KERNEL);
- 
- 		if (!dc)
--			goto err_close;
-+			goto out_put_sb_page;
- 
- 		mutex_lock(&bch_register_lock);
- 		ret = register_bdev(sb, sb_page, bdev, dc);
- 		mutex_unlock(&bch_register_lock);
- 		/* blkdev_put() will be called in cached_dev_free() */
--		if (ret < 0)
--			goto err;
-+		if (ret < 0) {
-+			bdev = NULL;
-+			goto out_put_sb_page;
-+		}
- 	} else {
- 		struct cache *ca = kzalloc(sizeof(*ca), GFP_KERNEL);
- 
- 		if (!ca)
--			goto err_close;
-+			goto out_put_sb_page;
- 
- 		/* blkdev_put() will be called in bch_cache_release() */
--		if (register_cache(sb, sb_page, bdev, ca) != 0)
--			goto err;
-+		if (register_cache(sb, sb_page, bdev, ca) != 0) {
-+			bdev = NULL;
-+			goto out_put_sb_page;
-+		}
- 	}
--quiet_out:
--	ret = size;
--out:
--	if (sb_page)
--		put_page(sb_page);
-+
-+	put_page(sb_page);
-+done:
- 	kfree(sb);
- 	kfree(path);
- 	module_put(THIS_MODULE);
--	return ret;
+-	pdev = platform_device_register_simple("alarmtimer", -1, NULL, 0);
+-	if (IS_ERR(pdev)) {
+-		error = PTR_ERR(pdev);
+-		goto out_drv;
+-	}
+ 	return 0;
 -
--err_close:
--	blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
--err:
-+	return size;
-+
-+out_put_sb_page:
-+	put_page(sb_page);
-+out_blkdev_put:
-+	if (bdev)
-+		blkdev_put(bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
-+out_free_sb:
-+	kfree(sb);
-+out_free_path:
-+	kfree(path);
-+out_module_put:
-+	module_put(THIS_MODULE);
-+out:
- 	pr_info("error %s: %s", path, err);
--	goto out;
-+	return ret;
- }
- 
- 
+-out_drv:
+-	platform_driver_unregister(&alarmtimer_driver);
+ out_if:
+ 	alarmtimer_rtc_interface_remove();
+ 	return error;
 -- 
 2.20.1
 
