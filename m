@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 800571677B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:44:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2658F16759A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731727AbgBUInE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:43:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52650 "EHLO mail.kernel.org"
+        id S2388541AbgBUI37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:29:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730005AbgBUHyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:54:10 -0500
+        id S1732786AbgBUIQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:16:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 322E220578;
-        Fri, 21 Feb 2020 07:54:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F4D424670;
+        Fri, 21 Feb 2020 08:16:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271649;
-        bh=+0812Eg5+LNOtMVydZcCyoOxN83vHjF8PnFw8dcCjhE=;
+        s=default; t=1582272997;
+        bh=xNiQ8u3f0bGj5vPAZU3XA6kdB7LnIAJHOYgY2fB7wbg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z7j86t5LnsKrVbdUsBm0HndEtH3Ko0hvJPqAMWHW/Qp/NOM4u1ZOABTph1bbFBDzt
-         GCc2LRwfmhvw8bybV5ckXtBBlRofi9qj5b/On1shNfifFnIcTFC4FkRCUtyfkl8PHp
-         F4CoiFBHd6P1w9NWzIIHVB/9KHsuz/dUtTSzs/JA=
+        b=hc93f2su8Oh3La95SjN5G9lZRCW0zNIdbAlrymU82TQScyV5QDxkFgxsMrc5Mq13K
+         mDMVDySoRq9FSGZOh+yrxt51XRzpuGgEILLAVDNQKW6JHTF6ZK56V/+mVuJ5gU55Sg
+         5XLfV+HtZxODsVZcuQbe0ZhxnY1cH+eIfUYZ20uI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 247/399] bus: fsl-mc: properly empty-initialize structure
-Date:   Fri, 21 Feb 2020 08:39:32 +0100
-Message-Id: <20200221072426.464236212@linuxfoundation.org>
+        stable@vger.kernel.org, Stepan Horacek <shoracek@redhat.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 001/191] core: Dont skip generic XDP program execution for cloned SKBs
+Date:   Fri, 21 Feb 2020 08:39:34 +0100
+Message-Id: <20200221072250.916265264@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,44 +47,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
+From: "Toke Høiland-Jørgensen" <toke@redhat.com>
 
-[ Upstream commit cff081ea9d0962defd733daf6778f62b1dac3daa ]
+[ Upstream commit ad1e03b2b3d4430baaa109b77bc308dc73050de3 ]
 
-Use the proper form of the empty initializer when working with
-structures that contain an array. Otherwise, older gcc versions (eg gcc
-4.9) will complain about this.
+The current generic XDP handler skips execution of XDP programs entirely if
+an SKB is marked as cloned. This leads to some surprising behaviour, as
+packets can end up being cloned in various ways, which will make an XDP
+program not see all the traffic on an interface.
 
-Fixes: 1ac210d128ef ("bus: fsl-mc: add the fsl_mc_get_endpoint function")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-Acked-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Link: https://lore.kernel.org/r/20191204142950.30206-1-ioana.ciornei@nxp.com
+This was discovered by a simple test case where an XDP program that always
+returns XDP_DROP is installed on a veth device. When combining this with
+the Scapy packet sniffer (which uses an AF_PACKET) socket on the sending
+side, SKBs reliably end up in the cloned state, causing them to be passed
+through to the receiving interface instead of being dropped. A minimal
+reproducer script for this is included below.
+
+This patch fixed the issue by simply triggering the existing linearisation
+code for cloned SKBs instead of skipping the XDP program execution. This
+behaviour is in line with the behaviour of the native XDP implementation
+for the veth driver, which will reallocate and copy the SKB data if the SKB
+is marked as shared.
+
+Reproducer Python script (requires BCC and Scapy):
+
+from scapy.all import TCP, IP, Ether, sendp, sniff, AsyncSniffer, Raw, UDP
+from bcc import BPF
+import time, sys, subprocess, shlex
+
+SKB_MODE = (1 << 1)
+DRV_MODE = (1 << 2)
+PYTHON=sys.executable
+
+def client():
+    time.sleep(2)
+    # Sniffing on the sender causes skb_cloned() to be set
+    s = AsyncSniffer()
+    s.start()
+
+    for p in range(10):
+        sendp(Ether(dst="aa:aa:aa:aa:aa:aa", src="cc:cc:cc:cc:cc:cc")/IP()/UDP()/Raw("Test"),
+              verbose=False)
+        time.sleep(0.1)
+
+    s.stop()
+    return 0
+
+def server(mode):
+    prog = BPF(text="int dummy_drop(struct xdp_md *ctx) {return XDP_DROP;}")
+    func = prog.load_func("dummy_drop", BPF.XDP)
+    prog.attach_xdp("a_to_b", func, mode)
+
+    time.sleep(1)
+
+    s = sniff(iface="a_to_b", count=10, timeout=15)
+    if len(s):
+        print(f"Got {len(s)} packets - should have gotten 0")
+        return 1
+    else:
+        print("Got no packets - as expected")
+        return 0
+
+if len(sys.argv) < 2:
+    print(f"Usage: {sys.argv[0]} <skb|drv>")
+    sys.exit(1)
+
+if sys.argv[1] == "client":
+    sys.exit(client())
+elif sys.argv[1] == "server":
+    mode = SKB_MODE if sys.argv[2] == 'skb' else DRV_MODE
+    sys.exit(server(mode))
+else:
+    try:
+        mode = sys.argv[1]
+        if mode not in ('skb', 'drv'):
+            print(f"Usage: {sys.argv[0]} <skb|drv>")
+            sys.exit(1)
+        print(f"Running in {mode} mode")
+
+        for cmd in [
+                'ip netns add netns_a',
+                'ip netns add netns_b',
+                'ip -n netns_a link add a_to_b type veth peer name b_to_a netns netns_b',
+                # Disable ipv6 to make sure there's no address autoconf traffic
+                'ip netns exec netns_a sysctl -qw net.ipv6.conf.a_to_b.disable_ipv6=1',
+                'ip netns exec netns_b sysctl -qw net.ipv6.conf.b_to_a.disable_ipv6=1',
+                'ip -n netns_a link set dev a_to_b address aa:aa:aa:aa:aa:aa',
+                'ip -n netns_b link set dev b_to_a address cc:cc:cc:cc:cc:cc',
+                'ip -n netns_a link set dev a_to_b up',
+                'ip -n netns_b link set dev b_to_a up']:
+            subprocess.check_call(shlex.split(cmd))
+
+        server = subprocess.Popen(shlex.split(f"ip netns exec netns_a {PYTHON} {sys.argv[0]} server {mode}"))
+        client = subprocess.Popen(shlex.split(f"ip netns exec netns_b {PYTHON} {sys.argv[0]} client"))
+
+        client.wait()
+        server.wait()
+        sys.exit(server.returncode)
+
+    finally:
+        subprocess.run(shlex.split("ip netns delete netns_a"))
+        subprocess.run(shlex.split("ip netns delete netns_b"))
+
+Fixes: d445516966dc ("net: xdp: support xdp generic on virtual devices")
+Reported-by: Stepan Horacek <shoracek@redhat.com>
+Suggested-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Toke HÃ¸iland-JÃ¸rgensen <toke@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bus/fsl-mc/fsl-mc-bus.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/core/dev.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
-index a07cc19becdba..c78d10ea641fb 100644
---- a/drivers/bus/fsl-mc/fsl-mc-bus.c
-+++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
-@@ -715,9 +715,9 @@ EXPORT_SYMBOL_GPL(fsl_mc_device_remove);
- struct fsl_mc_device *fsl_mc_get_endpoint(struct fsl_mc_device *mc_dev)
- {
- 	struct fsl_mc_device *mc_bus_dev, *endpoint;
--	struct fsl_mc_obj_desc endpoint_desc = { 0 };
--	struct dprc_endpoint endpoint1 = { 0 };
--	struct dprc_endpoint endpoint2 = { 0 };
-+	struct fsl_mc_obj_desc endpoint_desc = {{ 0 }};
-+	struct dprc_endpoint endpoint1 = {{ 0 }};
-+	struct dprc_endpoint endpoint2 = {{ 0 }};
- 	int state, err;
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -4306,14 +4306,14 @@ static u32 netif_receive_generic_xdp(str
+ 	/* Reinjected packets coming from act_mirred or similar should
+ 	 * not get XDP generic processing.
+ 	 */
+-	if (skb_cloned(skb) || skb_is_tc_redirected(skb))
++	if (skb_is_tc_redirected(skb))
+ 		return XDP_PASS;
  
- 	mc_bus_dev = to_fsl_mc_device(mc_dev->dev.parent);
--- 
-2.20.1
-
+ 	/* XDP packets must be linear and must have sufficient headroom
+ 	 * of XDP_PACKET_HEADROOM bytes. This is the guarantee that also
+ 	 * native XDP provides, thus we need to do it here as well.
+ 	 */
+-	if (skb_is_nonlinear(skb) ||
++	if (skb_cloned(skb) || skb_is_nonlinear(skb) ||
+ 	    skb_headroom(skb) < XDP_PACKET_HEADROOM) {
+ 		int hroom = XDP_PACKET_HEADROOM - skb_headroom(skb);
+ 		int troom = skb->tail + skb->data_len - skb->end;
 
 
