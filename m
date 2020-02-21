@@ -2,212 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5300E167743
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:42:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 379671676A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731177AbgBUIlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:41:12 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50435 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730683AbgBUH5x (ORCPT
+        id S1731799AbgBUIFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:05:20 -0500
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:39331 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730972AbgBUIFR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:57:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582271872;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qZ2vYX6aTEtYA+Rmtsl2PSnzUra/4wEX+6A+xs3OWnE=;
-        b=fICJukfYhcyMyFkOqBlQi6nnMvVXDkasO/fHBO4MvkX33xhY7jiPQbioiDX7/DQktAMZVy
-        L3sFBD3s/TTKuZ0NtGge89eKIL1o8fV1jQFNHw9YxruLPMQ/aQq6TnmWn5smQgWkbnxd9B
-        zU6S0yr0b6bUzkhn3IntLZjHwUlHZ/g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-347-s328FKtIP_GiYZgic4bVwg-1; Fri, 21 Feb 2020 02:57:50 -0500
-X-MC-Unique: s328FKtIP_GiYZgic4bVwg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 89523107ACC5;
-        Fri, 21 Feb 2020 07:57:47 +0000 (UTC)
-Received: from [10.72.13.208] (ovpn-13-208.pek2.redhat.com [10.72.13.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A094B8ECFD;
-        Fri, 21 Feb 2020 07:57:31 +0000 (UTC)
-Subject: Re: [PATCH V4 5/5] vdpasim: vDPA device simulator
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     "mst@redhat.com" <mst@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "tiwei.bie@intel.com" <tiwei.bie@intel.com>,
-        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
-        "cunming.liang@intel.com" <cunming.liang@intel.com>,
-        "zhihong.wang@intel.com" <zhihong.wang@intel.com>,
-        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
-        "xiao.w.wang@intel.com" <xiao.w.wang@intel.com>,
-        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
-        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
-        "eperezma@redhat.com" <eperezma@redhat.com>,
-        "lulu@redhat.com" <lulu@redhat.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "stefanha@redhat.com" <stefanha@redhat.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "aadam@redhat.com" <aadam@redhat.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Shahaf Shuler <shahafs@mellanox.com>,
-        "hanand@xilinx.com" <hanand@xilinx.com>,
-        "mhabets@solarflare.com" <mhabets@solarflare.com>
-References: <20200220061141.29390-1-jasowang@redhat.com>
- <20200220061141.29390-6-jasowang@redhat.com>
- <20200220151215.GU23930@mellanox.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <6c341a77-a297-b7c7-dea5-b3f7b920b1f3@redhat.com>
-Date:   Fri, 21 Feb 2020 15:57:29 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200220151215.GU23930@mellanox.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-Content-Transfer-Encoding: quoted-printable
+        Fri, 21 Feb 2020 03:05:17 -0500
+Received: by mail-pf1-f202.google.com with SMTP id x189so681448pfd.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 00:05:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=lJCRugs+SKiTF05UsjaUNwsXqM1ZzyFTGD9XzVlyBHc=;
+        b=WByMlRz52Nmp1IGPxjamKAUcsKUnasLYvyrNlurVGdfHRXaGk/JveOeWxA5Jhbv3rS
+         jDeeWiEJgLKoFNZs9qTtVYJpuHqCIkVCu4BXD6nE+2Ckf2Ypp8i9JeeLBM0ssgMMoaCe
+         Oh1Y+0Dcikz3pk8fvr8IrvCIWUTMurS+JvREmmM5GRWGGDwO4but6cidynBySscFZiDV
+         06jKu8xxsX5VyqeD6ld/d29/FMQdzbA9xQLUhuIy3wuNIkxP95mDP9RtCj49D/eNmo7q
+         ggBiRg3rIxiC56TXGZmmvN3X1PeDCN/2oxsz62/WU8TU80y2lqR18RL5jWRYA08iq1xI
+         4NPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=lJCRugs+SKiTF05UsjaUNwsXqM1ZzyFTGD9XzVlyBHc=;
+        b=EV1uu5Aj00wmzbmjEkVGQp7HNocXwj4wU3znrTeaTXKLw+gh03KZov76OTjkntqTKC
+         xJtnDt0oSmlI5fWiYTPlDvEvhRXB8bp+eHtkFS2hN4nHRktf5p2S30tOUDAlMts+2fMU
+         xSm4FlvJs6sHyK/IzOLOm+UuwHxWhg0gaBeJPxunIHauStVA9pNi7dvA7T14muGocayc
+         +1+4ZciFXTefKZgZLwnnNizJZdBN7W0zkRRtW+nLyivNsFAGB7RA8K4FYGb6xx7+mRH+
+         9/mw0565pmUOBt7ettYLT+ju/aBipXuIw2Fx6FJi9/HizcQXT4EbU1I4vf9PqXgd0v3T
+         XXIA==
+X-Gm-Message-State: APjAAAWdWQSsv88Q7H12JgODuVGZZF2SIyp8q4S0JQ0DQbRJVtgZm2bq
+        7qZMuWhPcUFYGwF+4hBUly4noIHK4tzcALs=
+X-Google-Smtp-Source: APXvYqzTX8nZSaJHdZ8aVWZ5tpFCDSVuM1KXpi4KXLgiwgBNfF8R/WQMHxysQ3Iogi+BVucL3jKbuXMVp8yEVAg=
+X-Received: by 2002:a65:68d8:: with SMTP id k24mr38403896pgt.208.1582272316676;
+ Fri, 21 Feb 2020 00:05:16 -0800 (PST)
+Date:   Fri, 21 Feb 2020 00:05:07 -0800
+Message-Id: <20200221080510.197337-1-saravanak@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+Subject: [PATCH v2 0/3] driver core: sync state fixups
+From:   Saravana Kannan <saravanak@google.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Patch 1/3 fixes a bug where sync_state() might not be called when it
+should be. Patches 2/3 and 3/3 are just minor fix ups that I'm grouping
+together. Not much to say here.
 
-On 2020/2/20 =E4=B8=8B=E5=8D=8811:12, Jason Gunthorpe wrote:
-> On Thu, Feb 20, 2020 at 02:11:41PM +0800, Jason Wang wrote:
->> +static void vdpasim_device_release(struct device *dev)
->> +{
->> +	struct vdpasim *vdpasim =3D dev_to_sim(dev);
->> +
->> +	cancel_work_sync(&vdpasim->work);
->> +	kfree(vdpasim->buffer);
->> +	vhost_iotlb_free(vdpasim->iommu);
->> +	kfree(vdpasim);
->> +}
->> +
->> +static struct vdpasim *vdpasim_create(void)
->> +{
->> +	struct virtio_net_config *config;
->> +	struct vhost_iotlb *iommu;
->> +	struct vdpasim *vdpasim;
->> +	struct device *dev;
->> +	void *buffer;
->> +	int ret =3D -ENOMEM;
->> +
->> +	iommu =3D vhost_iotlb_alloc(2048, 0);
->> +	if (!iommu)
->> +		goto err;
->> +
->> +	buffer =3D kmalloc(PAGE_SIZE, GFP_KERNEL);
->> +	if (!buffer)
->> +		goto err_buffer;
->> +
->> +	vdpasim =3D kzalloc(sizeof(*vdpasim), GFP_KERNEL);
->> +	if (!vdpasim)
->> +		goto err_alloc;
->> +
->> +	vdpasim->buffer =3D buffer;
->> +	vdpasim->iommu =3D iommu;
->> +
->> +	config =3D &vdpasim->config;
->> +	config->mtu =3D 1500;
->> +	config->status =3D VIRTIO_NET_S_LINK_UP;
->> +	eth_random_addr(config->mac);
->> +
->> +	INIT_WORK(&vdpasim->work, vdpasim_work);
->> +	spin_lock_init(&vdpasim->lock);
->> +
->> +	vringh_set_iotlb(&vdpasim->vqs[0].vring, vdpasim->iommu);
->> +	vringh_set_iotlb(&vdpasim->vqs[1].vring, vdpasim->iommu);
->> +
->> +	dev =3D &vdpasim->dev;
->> +	dev->release =3D vdpasim_device_release;
->> +	dev->coherent_dma_mask =3D DMA_BIT_MASK(64);
->> +	set_dma_ops(dev, &vdpasim_dma_ops);
->> +	dev_set_name(dev, "%s", VDPASIM_NAME);
->> +
->> +	ret =3D device_register(&vdpasim->dev);
->> +	if (ret)
->> +		goto err_init;
-> It is a bit weird to be creating this dummy parent, couldn't this be
-> done by just passing a NULL parent to vdpa_alloc_device, doing
-> set_dma_ops() on the vdpasim->vdpa->dev and setting dma_device to
-> vdpasim->vdpa->dev ?
+-Saravana
 
+v1->v2:
+- Fix compilation issue in 3/3 (forgot to commit --amend in v1)
 
-I think it works.
+Saravana Kannan (3):
+  driver core: Call sync_state() even if supplier has no consumers
+  driver core: Add dev_has_sync_state()
+  driver core: Skip unnecessary work when device doesn't have
+    sync_state()
 
+ drivers/base/core.c    | 27 ++++++++++++++++++++-------
+ include/linux/device.h | 11 +++++++++++
+ 2 files changed, 31 insertions(+), 7 deletions(-)
 
->> +	vdpasim->vdpa =3D vdpa_alloc_device(dev, dev, &vdpasim_net_config_op=
-s);
->> +	if (ret)
->> +		goto err_vdpa;
->> +	ret =3D vdpa_register_device(vdpasim->vdpa);
->> +	if (ret)
->> +		goto err_register;
->> +
->> +	return vdpasim;
->> +
->> +err_register:
->> +	put_device(&vdpasim->vdpa->dev);
->> +err_vdpa:
->> +	device_del(&vdpasim->dev);
->> +	goto err;
->> +err_init:
->> +	put_device(&vdpasim->dev);
->> +	goto err;
-> If you do the vdmasim alloc first, and immediately do
-> device_initialize() then all the failure paths can do put_device
-> instead of having this ugly goto unwind split. Just check for
-> vdpasim->iommu =3D=3D NULL during release.
-
-
-Yes, that looks simpler.
-
-
->
->> +static int __init vdpasim_dev_init(void)
->> +{
->> +	vdpasim_dev =3D vdpasim_create();
->> +
->> +	if (!IS_ERR(vdpasim_dev))
->> +		return 0;
->> +
->> +	return PTR_ERR(vdpasim_dev);
->> +}
->> +
->> +static int vdpasim_device_remove_cb(struct device *dev, void *data)
->> +{
->> +	struct vdpa_device *vdpa =3D dev_to_vdpa(dev);
->> +
->> +	vdpa_unregister_device(vdpa);
->> +
->> +	return 0;
->> +}
->> +
->> +static void __exit vdpasim_dev_exit(void)
->> +{
->> +	device_for_each_child(&vdpasim_dev->dev, NULL,
->> +			      vdpasim_device_remove_cb);
-> Why the loop? There is only one device, and it is in the global
-> varaible vdmasim_dev ?
-
-
-Not necessary but doesn't harm, will remove this.
-
-Thanks
-
-
->
-> Jason
->
+-- 
+2.25.0.265.gbab2e86ba0-goog
 
