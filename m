@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 168A1167233
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:01:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB781673C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731187AbgBUIBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:01:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33520 "EHLO mail.kernel.org"
+        id S1732913AbgBUIPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:15:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730863AbgBUIBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:01:15 -0500
+        id S1733038AbgBUIPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:15:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C6DE206ED;
-        Fri, 21 Feb 2020 08:01:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DBD32467B;
+        Fri, 21 Feb 2020 08:15:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272074;
-        bh=1Nd3uqmzSwlrm6Jrm/B7yAgszo+KDV79jFfoLkxUOLE=;
+        s=default; t=1582272923;
+        bh=8oWWFICifQz6wo/aYwrUzW2cWKlMoWhyaLIk7Z/s6FM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=whL5EsWrliUqkS911cWmrwrNrRfTyNzjlKrNQgDo3YgXd3JArjOPlkZnfv8xks1st
-         vxypPtIp04oR788/Q0mSlj8+AfM9XdSnJiarOLn/WDnEVKxn5J9OeRDGvTzI6LU1hU
-         E8UrWHwZTQlbCpYQ1IqpOPJq6/8S4dx50sXRV2Ko=
+        b=tj09y110/+TBoUFUN+M4nropZvyC2sme1UNJvh1TXh8pm2TxkLS2IA73afQOvzx6+
+         DxKsvtFbDmLWUe9yyu2P/+pZuSbkOfId8OSafIySmwypfxlirKGoSEwZQ9H062qkXB
+         FTogzzWXVz/pysnZMCDj1bZQ0To5W5tXAuO29I3A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 399/399] bcache: properly initialize path and err in register_bcache()
+        stable@vger.kernel.org, Zenghui Yu <yuzenghui@huawei.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 325/344] irqchip/gic-v3-its: Reference to its_invall_cmd descriptor when building INVALL
 Date:   Fri, 21 Feb 2020 08:42:04 +0100
-Message-Id: <20200221072438.575910308@linuxfoundation.org>
+Message-Id: <20200221072419.738798013@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Zenghui Yu <yuzenghui@huawei.com>
 
-[ Upstream commit 29cda393bcaad160c4bf3676ddd99855adafc72f ]
+[ Upstream commit 107945227ac5d4c37911c7841b27c64b489ce9a9 ]
 
-Patch "bcache: rework error unwinding in register_bcache" from
-Christoph Hellwig changes the local variables 'path' and 'err'
-in undefined initial state. If the code in register_bcache() jumps
-to label 'out:' or 'out_module_put:' by goto, these two variables
-might be reference with undefined value by the following line,
+It looks like an obvious mistake to use its_mapc_cmd descriptor when
+building the INVALL command block. It so far worked by luck because
+both its_mapc_cmd.col and its_invall_cmd.col sit at the same offset of
+the ITS command descriptor, but we should not rely on it.
 
-	out_module_put:
-	        module_put(THIS_MODULE);
-	out:
-	        pr_info("error %s: %s", path, err);
-	        return ret;
-
-Therefore this patch initializes these two local variables properly
-in register_bcache() to avoid such issue.
-
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: cc2d3216f53c ("irqchip: GICv3: ITS command queue")
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20191202071021.1251-1-yuzenghui@huawei.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/super.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-gic-v3-its.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 05cb94664efee..3b3724285d907 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -2376,18 +2376,20 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 			       const char *buffer, size_t size)
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 787e8eec9a7f1..11f3b50dcdcb8 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -571,7 +571,7 @@ static struct its_collection *its_build_invall_cmd(struct its_node *its,
+ 						   struct its_cmd_desc *desc)
  {
- 	const char *err;
--	char *path;
-+	char *path = NULL;
- 	struct cache_sb *sb;
- 	struct block_device *bdev = NULL;
- 	struct page *sb_page;
- 	ssize_t ret;
+ 	its_encode_cmd(cmd, GITS_CMD_INVALL);
+-	its_encode_collection(cmd, desc->its_mapc_cmd.col->col_id);
++	its_encode_collection(cmd, desc->its_invall_cmd.col->col_id);
  
- 	ret = -EBUSY;
-+	err = "failed to reference bcache module";
- 	if (!try_module_get(THIS_MODULE))
- 		goto out;
- 
- 	/* For latest state of bcache_is_reboot */
- 	smp_mb();
-+	err = "bcache is in reboot";
- 	if (bcache_is_reboot)
- 		goto out_module_put;
+ 	its_fixup_cmd(cmd);
  
 -- 
 2.20.1
