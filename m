@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCD1167568
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3873F167513
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388429AbgBUI0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:26:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34438 "EHLO mail.kernel.org"
+        id S2388389AbgBUIW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:22:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731468AbgBUIWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:22:45 -0500
+        id S2388376AbgBUIWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:22:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B7F72469A;
-        Fri, 21 Feb 2020 08:22:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DF342469D;
+        Fri, 21 Feb 2020 08:22:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273364;
-        bh=JJMmc5g1eGCmHENbQ2PMQGmXelm8gaob9rFnxvQpAFU=;
+        s=default; t=1582273372;
+        bh=LO9osZihFUTbpG6o//SCjgXWqG9dLGPwwMhlrka+frI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mPyu6WXNVU5ndggZvBi4dbAl8tHgGWZx7lSF7a76qNPnRHSQmxBwvJNl9u1cnefp/
-         ptpAfnSvSMvJvIZcJj02+nQsPPYO/15ytjwvbk/ZO7oGcDqcpr+C6svdzP+sjl6zP8
-         KkZB9MQJBzo9B2hf+1/jR0k5Dv6c1pU2K6BMxfCI=
+        b=THU0b81WdrI00j90vi0oBVOhfUVnrDo4UKbdOcoDCCJXDrKk6gNyTIC+A9hXskGlm
+         HqbYTEfT5E/MYdGsg/azPYN0XhOitumEdWYOH8QjAbU6rYLIFZpW9XOhk4hwL/aKul
+         afTUCkc8rMTPU5vbTGmagYKE8t9VNuRAGsg2zIRI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>,
+        stable@vger.kernel.org, philip@philip-seeger.de,
+        Josef Bacik <josef@toxicpanda.com>,
+        Anand Jain <anand.jain@oracle.com>,
         David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 144/191] btrfs: fix possible NULL-pointer dereference in integrity checks
-Date:   Fri, 21 Feb 2020 08:41:57 +0100
-Message-Id: <20200221072307.905099818@linuxfoundation.org>
+Subject: [PATCH 4.19 146/191] btrfs: device stats, log when stats are zeroed
+Date:   Fri, 21 Feb 2020 08:41:59 +0100
+Message-Id: <20200221072308.109191972@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
 References: <20200221072250.732482588@linuxfoundation.org>
@@ -44,49 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Thumshirn <jth@kernel.org>
+From: Anand Jain <anand.jain@oracle.com>
 
-[ Upstream commit 3dbd351df42109902fbcebf27104149226a4fcd9 ]
+[ Upstream commit a69976bc69308aa475d0ba3b8b3efd1d013c0460 ]
 
-A user reports a possible NULL-pointer dereference in
-btrfsic_process_superblock(). We are assigning state->fs_info to a local
-fs_info variable and afterwards checking for the presence of state.
+We had a report indicating that some read errors aren't reported by the
+device stats in the userland. It is important to have the errors
+reported in the device stat as user land scripts might depend on it to
+take the reasonable corrective actions. But to debug these issue we need
+to be really sure that request to reset the device stat did not come
+from the userland itself. So log an info message when device error reset
+happens.
 
-While we would BUG_ON() a NULL state anyways, we can also just remove
-the local fs_info copy, as fs_info is only used once as the first
-argument for btrfs_num_copies(). There we can just pass in
-state->fs_info as well.
+For example:
+ BTRFS info (device sdc): device stats zeroed by btrfs(9223)
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=205003
-Signed-off-by: Johannes Thumshirn <jth@kernel.org>
+Reported-by: philip@philip-seeger.de
+Link: https://www.spinics.net/lists/linux-btrfs/msg96528.html
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/check-integrity.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/btrfs/volumes.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/btrfs/check-integrity.c b/fs/btrfs/check-integrity.c
-index 833cf3c35b4df..3b77c8ab5357e 100644
---- a/fs/btrfs/check-integrity.c
-+++ b/fs/btrfs/check-integrity.c
-@@ -629,7 +629,6 @@ static struct btrfsic_dev_state *btrfsic_dev_state_hashtable_lookup(dev_t dev,
- static int btrfsic_process_superblock(struct btrfsic_state *state,
- 				      struct btrfs_fs_devices *fs_devices)
- {
--	struct btrfs_fs_info *fs_info = state->fs_info;
- 	struct btrfs_super_block *selected_super;
- 	struct list_head *dev_head = &fs_devices->devices;
- 	struct btrfs_device *device;
-@@ -700,7 +699,7 @@ static int btrfsic_process_superblock(struct btrfsic_state *state,
- 			break;
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 5bbcdcff68a9e..9c3b394b99fa2 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -7260,6 +7260,8 @@ int btrfs_get_dev_stats(struct btrfs_fs_info *fs_info,
+ 			else
+ 				btrfs_dev_stat_reset(dev, i);
  		}
- 
--		num_copies = btrfs_num_copies(fs_info, next_bytenr,
-+		num_copies = btrfs_num_copies(state->fs_info, next_bytenr,
- 					      state->metablock_size);
- 		if (state->print_mask & BTRFSIC_PRINT_MASK_NUM_COPIES)
- 			pr_info("num_copies(log_bytenr=%llu) = %d\n",
++		btrfs_info(fs_info, "device stats zeroed by %s (%d)",
++			   current->comm, task_pid_nr(current));
+ 	} else {
+ 		for (i = 0; i < BTRFS_DEV_STAT_VALUES_MAX; i++)
+ 			if (stats->nr_items > i)
 -- 
 2.20.1
 
