@@ -2,139 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B568166CBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 03:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9BAB166CC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 03:19:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbgBUCMa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 21:12:30 -0500
-Received: from conuserg-12.nifty.com ([210.131.2.79]:24230 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729259AbgBUCM3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 21:12:29 -0500
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id 01L2BcSM007985;
-        Fri, 21 Feb 2020 11:11:38 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com 01L2BcSM007985
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1582251099;
-        bh=S6KuamcJ1OBT86PX3D7Tj8TPgwjtQvO9qJMRN7CA9Sg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bP5C+o1tC+E9hv5J5syDpuFvhBqNpknB2WyJ2baKXHhcmVRh8GDmanjoZMpOBICj1
-         Ox9d+M4ZoGw/UDKDaXlwh3sco0vjv0qP4UES/N+BqBz2+2Svj1OtjVBGv8RFpbzxcC
-         0v8qtsDzHCf1LzijftYYXUqocPNu/b3PZ2LYJxyT9RExIh+Ud1cipy807XIIp9wqeE
-         aNDG8CEs34N7buyci33PMVFul+CE20sY5dSbraNjTikAuktwQ3gTEZ0IRq7UohLs/x
-         gUovN9s7BtNvCm7J1IBrdGxuT8VlB5YhJlN4Va1b4r0ocUAGlPAwJ5DOyEjjSNFUTK
-         IvhAM71WAHlow==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: [PATCH] dt-bindings: serial: Convert UniPhier UART to json-schema
-Date:   Fri, 21 Feb 2020 11:11:36 +0900
-Message-Id: <20200221021137.19443-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729548AbgBUCTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 21:19:20 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:34892 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728992AbgBUCTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 21:19:20 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7F5EB1A6558;
+        Fri, 21 Feb 2020 03:19:17 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 14D6E1A652F;
+        Fri, 21 Feb 2020 03:19:12 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 87476402A0;
+        Fri, 21 Feb 2020 10:19:05 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] ARM: dts: imx: make wdog node name generic
+Date:   Fri, 21 Feb 2020 10:13:20 +0800
+Message-Id: <1582251200-15562-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the UniPhier UART binding to DT schema format.
+Node name should be generic, use "watchdog" instead of "wdog" for
+wdog nodes.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
+ arch/arm/boot/dts/imx6qdl.dtsi | 4 ++--
+ arch/arm/boot/dts/imx6sl.dtsi  | 4 ++--
+ arch/arm/boot/dts/imx6sx.dtsi  | 6 +++---
+ arch/arm/boot/dts/imx6ul.dtsi  | 6 +++---
+ arch/arm/boot/dts/imx7s.dtsi   | 8 ++++----
+ 5 files changed, 14 insertions(+), 14 deletions(-)
 
- .../serial/socionext,uniphier-uart.yaml       | 46 +++++++++++++++++++
- .../bindings/serial/uniphier-uart.txt         | 22 ---------
- 2 files changed, 46 insertions(+), 22 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/serial/socionext,uniphier-uart.yaml
- delete mode 100644 Documentation/devicetree/bindings/serial/uniphier-uart.txt
-
-diff --git a/Documentation/devicetree/bindings/serial/socionext,uniphier-uart.yaml b/Documentation/devicetree/bindings/serial/socionext,uniphier-uart.yaml
-new file mode 100644
-index 000000000000..09a30300850c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/serial/socionext,uniphier-uart.yaml
-@@ -0,0 +1,46 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/serial/socionext,uniphier-uart.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: UniPhier UART controller
-+
-+maintainers:
-+  - Masahiro Yamada <yamada.masahiro@socionext.com>
-+
-+properties:
-+  compatible:
-+    const: socionext,uniphier-uart
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+
-+  auto-flow-control:
-+    description: enable automatic flow control support.
-+    $ref: /schemas/types.yaml#/definitions/flag
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+examples:
-+  - |
-+    aliases {
-+        serial0 = &serial0;
-+    };
-+
-+    serial0: serial@54006800 {
-+        compatible = "socionext,uniphier-uart";
-+        reg = <0x54006800 0x40>;
-+        interrupts = <0 33 4>;
-+        clocks = <&uart_clk>;
-+    };
-diff --git a/Documentation/devicetree/bindings/serial/uniphier-uart.txt b/Documentation/devicetree/bindings/serial/uniphier-uart.txt
-deleted file mode 100644
-index 7a1bf02bb869..000000000000
---- a/Documentation/devicetree/bindings/serial/uniphier-uart.txt
-+++ /dev/null
-@@ -1,22 +0,0 @@
--UniPhier UART controller
--
--Required properties:
--- compatible: should be "socionext,uniphier-uart".
--- reg: offset and length of the register set for the device.
--- interrupts: a single interrupt specifier.
--- clocks: phandle to the input clock.
--
--Optional properties:
---auto-flow-control: enable automatic flow control support.
--
--Example:
--	aliases {
--		serial0 = &serial0;
--	};
--
--	serial0: serial@54006800 {
--		compatible = "socionext,uniphier-uart";
--		reg = <0x54006800 0x40>;
--		interrupts = <0 33 4>;
--		clocks = <&uart_clk>;
--	};
+diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+index 97c0a85..886ab81 100644
+--- a/arch/arm/boot/dts/imx6qdl.dtsi
++++ b/arch/arm/boot/dts/imx6qdl.dtsi
+@@ -669,14 +669,14 @@
+ 				status = "disabled";
+ 			};
+ 
+-			wdog1: wdog@20bc000 {
++			wdog1: watchdog@20bc000 {
+ 				compatible = "fsl,imx6q-wdt", "fsl,imx21-wdt";
+ 				reg = <0x020bc000 0x4000>;
+ 				interrupts = <0 80 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clks IMX6QDL_CLK_IPG>;
+ 			};
+ 
+-			wdog2: wdog@20c0000 {
++			wdog2: watchdog@20c0000 {
+ 				compatible = "fsl,imx6q-wdt", "fsl,imx21-wdt";
+ 				reg = <0x020c0000 0x4000>;
+ 				interrupts = <0 81 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
+index ea889f7..db626b2 100644
+--- a/arch/arm/boot/dts/imx6sl.dtsi
++++ b/arch/arm/boot/dts/imx6sl.dtsi
+@@ -499,14 +499,14 @@
+ 				status = "disabled";
+ 			};
+ 
+-			wdog1: wdog@20bc000 {
++			wdog1: watchdog@20bc000 {
+ 				compatible = "fsl,imx6sl-wdt", "fsl,imx21-wdt";
+ 				reg = <0x020bc000 0x4000>;
+ 				interrupts = <0 80 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clks IMX6SL_CLK_IPG>;
+ 			};
+ 
+-			wdog2: wdog@20c0000 {
++			wdog2: watchdog@20c0000 {
+ 				compatible = "fsl,imx6sl-wdt", "fsl,imx21-wdt";
+ 				reg = <0x020c0000 0x4000>;
+ 				interrupts = <0 81 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
+index 1198117..6db9ca09 100644
+--- a/arch/arm/boot/dts/imx6sx.dtsi
++++ b/arch/arm/boot/dts/imx6sx.dtsi
+@@ -567,14 +567,14 @@
+ 				status = "disabled";
+ 			};
+ 
+-			wdog1: wdog@20bc000 {
++			wdog1: watchdog@20bc000 {
+ 				compatible = "fsl,imx6sx-wdt", "fsl,imx21-wdt";
+ 				reg = <0x020bc000 0x4000>;
+ 				interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clks IMX6SX_CLK_IPG>;
+ 			};
+ 
+-			wdog2: wdog@20c0000 {
++			wdog2: watchdog@20c0000 {
+ 				compatible = "fsl,imx6sx-wdt", "fsl,imx21-wdt";
+ 				reg = <0x020c0000 0x4000>;
+ 				interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1289,7 +1289,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			wdog3: wdog@2288000 {
++			wdog3: watchdog@2288000 {
+ 				compatible = "fsl,imx6sx-wdt", "fsl,imx21-wdt";
+ 				reg = <0x02288000 0x4000>;
+ 				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 30cce35..e1807e9 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -531,14 +531,14 @@
+ 				status = "disabled";
+ 			};
+ 
+-			wdog1: wdog@20bc000 {
++			wdog1: watchdog@20bc000 {
+ 				compatible = "fsl,imx6ul-wdt", "fsl,imx21-wdt";
+ 				reg = <0x020bc000 0x4000>;
+ 				interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clks IMX6UL_CLK_WDOG1>;
+ 			};
+ 
+-			wdog2: wdog@20c0000 {
++			wdog2: watchdog@20c0000 {
+ 				compatible = "fsl,imx6ul-wdt", "fsl,imx21-wdt";
+ 				reg = <0x020c0000 0x4000>;
+ 				interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1007,7 +1007,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			wdog3: wdog@21e4000 {
++			wdog3: watchdog@21e4000 {
+ 				compatible = "fsl,imx6ul-wdt", "fsl,imx21-wdt";
+ 				reg = <0x021e4000 0x4000>;
+ 				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index 1ac5045..196bbd6 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -406,14 +406,14 @@
+ 				gpio-ranges = <&iomuxc 0 139 16>;
+ 			};
+ 
+-			wdog1: wdog@30280000 {
++			wdog1: watchdog@30280000 {
+ 				compatible = "fsl,imx7d-wdt", "fsl,imx21-wdt";
+ 				reg = <0x30280000 0x10000>;
+ 				interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clks IMX7D_WDOG1_ROOT_CLK>;
+ 			};
+ 
+-			wdog2: wdog@30290000 {
++			wdog2: watchdog@30290000 {
+ 				compatible = "fsl,imx7d-wdt", "fsl,imx21-wdt";
+ 				reg = <0x30290000 0x10000>;
+ 				interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+@@ -421,7 +421,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			wdog3: wdog@302a0000 {
++			wdog3: watchdog@302a0000 {
+ 				compatible = "fsl,imx7d-wdt", "fsl,imx21-wdt";
+ 				reg = <0x302a0000 0x10000>;
+ 				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+@@ -429,7 +429,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			wdog4: wdog@302b0000 {
++			wdog4: watchdog@302b0000 {
+ 				compatible = "fsl,imx7d-wdt", "fsl,imx21-wdt";
+ 				reg = <0x302b0000 0x10000>;
+ 				interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-2.17.1
+2.7.4
 
