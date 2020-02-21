@@ -2,138 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDA1D167D1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 13:07:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67E2D167D46
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 13:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbgBUMH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 07:07:27 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:4650 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727053AbgBUMH0 (ORCPT
+        id S1727973AbgBUMTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 07:19:10 -0500
+Received: from mail-out.elkdata.ee ([185.7.252.64]:54224 "EHLO
+        mail-out.elkdata.ee" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726909AbgBUMTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 07:07:26 -0500
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01LC0PKc028503;
-        Fri, 21 Feb 2020 07:07:25 -0500
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2y8uduq0k7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Feb 2020 07:07:24 -0500
-Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 01LC7Nkk032415
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Fri, 21 Feb 2020 07:07:23 -0500
-Received: from SCSQCASHYB6.ad.analog.com (10.77.17.132) by
- SCSQMBX10.ad.analog.com (10.77.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Fri, 21 Feb 2020 04:07:21 -0800
-Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by
- SCSQCASHYB6.ad.analog.com (10.77.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Fri, 21 Feb 2020 04:06:32 -0800
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX10.ad.analog.com
- (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Fri, 21 Feb 2020 04:07:21 -0800
-Received: from tachici-Precision-5530.ad.analog.com ([10.48.65.175])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01LC7H1L018878;
-        Fri, 21 Feb 2020 07:07:18 -0500
-From:   Alexandru Tachici <alexandru.tachici@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>,
-        Alexandru Tachici <alexandru.tachici@analog.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v2] iio: industrialio-core: Fix debugfs read
-Date:   Fri, 21 Feb 2020 14:06:55 +0200
-Message-ID: <20200221120655.20252-1-alexandru.tachici@analog.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 21 Feb 2020 07:19:10 -0500
+X-Greylist: delayed 448 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Feb 2020 07:19:08 EST
+Received: from mail-relay2.elkdata.ee (unknown [185.7.252.69])
+        by mail-out.elkdata.ee (Postfix) with ESMTP id 79CAC372A95;
+        Fri, 21 Feb 2020 14:11:38 +0200 (EET)
+Received: from mail-relay2.elkdata.ee (unknown [185.7.252.69])
+        by mail-relay2.elkdata.ee (Postfix) with ESMTP id 74F028309AA;
+        Fri, 21 Feb 2020 14:11:38 +0200 (EET)
+X-Virus-Scanned: amavisd-new at elkdata.ee
+Received: from mail-relay2.elkdata.ee ([185.7.252.69])
+        by mail-relay2.elkdata.ee (mail-relay2.elkdata.ee [185.7.252.69]) (amavisd-new, port 10024)
+        with ESMTP id Dv7M9TrqqmTv; Fri, 21 Feb 2020 14:11:36 +0200 (EET)
+Received: from mail.elkdata.ee (unknown [185.7.252.68])
+        by mail-relay2.elkdata.ee (Postfix) with ESMTP id 23BB88309AC;
+        Fri, 21 Feb 2020 14:11:36 +0200 (EET)
+Received: from mail.meie.biz (21-182-190-90.sta.estpak.ee [90.190.182.21])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: leho@jaanalind.ee)
+        by mail.elkdata.ee (Postfix) with ESMTPSA id 1926560BF52;
+        Fri, 21 Feb 2020 14:11:36 +0200 (EET)
+Received: by mail.meie.biz (Postfix, from userid 500)
+        id 004D3B7C6A4; Fri, 21 Feb 2020 14:11:35 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kraav.com; s=mail;
+        t=1582287096; bh=233+khcaWZ9tc+fOJUrTd3ddqOMhHE2+qhQGuN3aNAQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=UW9yvUDehx6+hgJ8hn7C3g7CkIUDQXX+wFiPw4NZl4JxVDC5KEeKEgTpW5r9CdN1I
+         vvVxs1mWp/EcaAVhxI8t8FwvsSeyqBbP/r22IeZbsAZjmK0CKFUqDRPuPgyeBztocv
+         JU6PfccIGMZkX6xRZZI3xd//0RRqcyu8YHWO6qCY=
+Received: from papaya (papaya-vpn.meie.biz [192.168.48.157])
+        by mail.meie.biz (Postfix) with ESMTPSA id B1A03B7C69C;
+        Fri, 21 Feb 2020 14:11:35 +0200 (EET)
+Authentication-Results: mail.meie.biz; dmarc=fail (p=none dis=none) header.from=kraav.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kraav.com; s=mail;
+        t=1582287095; bh=233+khcaWZ9tc+fOJUrTd3ddqOMhHE2+qhQGuN3aNAQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=Y+/xdoNoetHFP/OmkiU8wXTTBx8klll0NqDNHDnTV5d3FdVOxam8VhhY15v7FQheB
+         0CGV7Fu0AQGWbpOw40gpUihxAO5OtQYfJR8EF01Rk44Irj2zcWO0hT/SCv/Ux5dCVg
+         4qs44UD+K8giTSQFOiu+XWEAuhNX7AK91Nf08ZiE=
+Received: (nullmailer pid 12685 invoked by uid 1000);
+        Fri, 21 Feb 2020 12:11:35 -0000
+Date:   Fri, 21 Feb 2020 14:11:35 +0200
+From:   Leho Kraav <leho@kraav.com>
+To:     "Jan Alexander Steffens (heftig)" <jan.steffens@gmail.com>
+Cc:     Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iwlwifi: pcie: restore support for Killer Qu C0 NICs
+Message-ID: <20200221121135.GA9056@papaya>
+References: <20191224051639.6904-1-jan.steffens@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-21_03:2020-02-19,2020-02-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 impostorscore=0 spamscore=0 suspectscore=0 mlxlogscore=841
- phishscore=0 mlxscore=0 priorityscore=1501 clxscore=1015 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002210093
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191224051639.6904-1-jan.steffens@gmail.com>
+X-Bogosity: Unsure, tests=bogofilter, spamicity=0.500000, version=1.2.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently iio_debugfs_read_reg calls debugfs_reg_access
-every time it is ran. Reading the same hardware register
-multiple times during the same reading of a debugfs file
-can cause unintended effects.
+On Tue, Dec 24, 2019 at 06:16:39AM +0100, Jan Alexander Steffens (heftig) wrote:
+> Commit 809805a820c6 ("iwlwifi: pcie: move some cfg mangling from
+> trans_pcie_alloc to probe") refactored the cfg mangling. Unfortunately,
+> in this process the lines which picked the right cfg for Killer Qu C0
+> NICs after C0 detection were lost. These lines were added by commit
+> b9500577d361 ("iwlwifi: pcie: handle switching killer Qu B0 NICs to
+> C0").
+> 
+> I suspect this is more of the "merge damage" which commit 7cded5658329
+> ("iwlwifi: pcie: fix merge damage on making QnJ exclusive") talks about.
+> 
+> Restore the missing lines so the driver loads the right firmware for
+> these NICs.
 
-For example for each: cat iio:device0/direct_reg_access
-the file_operations.read function will be called at least
-twice. First will return the full length of the string in
-bytes  and the second will return 0.
-
-This patch makes iio_debugfs_read_reg to call debugfs_reg_access
-only when the user's buffer position (*ppos) is 0. (meaning
-it is the beginning of a new reading of the debugfs file).
-
-Fixes: e553f182d55b ("staging: iio: core: Introduce debugfs support, add support for direct register access")
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
----
- drivers/iio/industrialio-core.c | 15 +++++++++++----
- include/linux/iio/iio.h         |  2 ++
- 2 files changed, 13 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index 65ff0d067018..c4d5104934fc 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -301,11 +301,14 @@ static ssize_t iio_debugfs_read_reg(struct file *file, char __user *userbuf,
- 			      size_t count, loff_t *ppos)
- {
- 	struct iio_dev *indio_dev = file->private_data;
--	char buf[20];
- 	unsigned val = 0;
--	ssize_t len;
- 	int ret;
- 
-+	if (*ppos > 0)
-+		return simple_read_from_buffer(userbuf, count, ppos,
-+					       indio_dev->read_buf,
-+					       indio_dev->read_buf_len);
-+
- 	ret = indio_dev->info->debugfs_reg_access(indio_dev,
- 						  indio_dev->cached_reg_addr,
- 						  0, &val);
-@@ -314,9 +317,13 @@ static ssize_t iio_debugfs_read_reg(struct file *file, char __user *userbuf,
- 		return ret;
- 	}
- 
--	len = snprintf(buf, sizeof(buf), "0x%X\n", val);
-+	indio_dev->read_buf_len = snprintf(indio_dev->read_buf,
-+					   sizeof(indio_dev->read_buf),
-+					   "0x%X\n", val);
- 
--	return simple_read_from_buffer(userbuf, count, ppos, buf, len);
-+	return simple_read_from_buffer(userbuf, count, ppos,
-+				       indio_dev->read_buf,
-+				       indio_dev->read_buf_len);
- }
- 
- static ssize_t iio_debugfs_write_reg(struct file *file,
-diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-index 862ce0019eba..eed58ed2f368 100644
---- a/include/linux/iio/iio.h
-+++ b/include/linux/iio/iio.h
-@@ -568,6 +568,8 @@ struct iio_dev {
- #if defined(CONFIG_DEBUG_FS)
- 	struct dentry			*debugfs_dentry;
- 	unsigned			cached_reg_addr;
-+	char				read_buf[20];
-+	unsigned int			read_buf_len;
- #endif
- };
- 
--- 
-2.20.1
-
+This seems real, as upgrading 5.5.0 -> 5.5.5 just broke my iwlwifi on XPS 7390.
+How come?
