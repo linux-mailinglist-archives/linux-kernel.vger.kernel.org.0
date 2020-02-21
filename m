@@ -2,42 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD84D167141
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:52:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C15167147
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:52:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729772AbgBUHwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:52:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50408 "EHLO mail.kernel.org"
+        id S1729606AbgBUHwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:52:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729756AbgBUHwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:52:31 -0500
+        id S1729949AbgBUHwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:52:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D8B224656;
-        Fri, 21 Feb 2020 07:52:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5130220801;
+        Fri, 21 Feb 2020 07:52:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271550;
-        bh=IMsQ7+myA2VFgMAOR1pcDR51QxoVGL6Z14/X9w+j5No=;
+        s=default; t=1582271561;
+        bh=bxhyd2uGL6csS55UfWR1JBrMopyybW97a+Q4pm8a5Do=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZV7MklTKhWanuDbWNforIkjcMGd+JnTw2+1z78WBE5+CCH2uHfHGDsMl4M7o4Fydn
-         qpO1bnQYrjRihYCPrnKqupTSGd2JYk9/kPv/dhFMNOz8rA8sEEikC50B4K7Fg8KUK9
-         jnoIsH2rg8a6gVptt8NyZinQNeAkSuKXm1vle7vg=
+        b=Eii1hgNbbscrI7kf1A9Yr8hqkQlTiXt2XLDKnat8R+vt8oAAza7AQii9427IzqlN0
+         NfNiNf2OJbpzYpIhkq0xUQcwezjDJD9oM9+YWKSap4tzdEhOuVI0dusf7G2iXvIGCb
+         DZ0raSNFDVm5xhMMYQT8lwwstXz6EpuzuB0BV0Jw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 210/399] x86/unwind/orc: Fix !CONFIG_MODULES build warning
-Date:   Fri, 21 Feb 2020 08:38:55 +0100
-Message-Id: <20200221072423.381718413@linuxfoundation.org>
+        stable@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 213/399] iommu/vt-d: Avoid sending invalid page response
+Date:   Fri, 21 Feb 2020 08:38:58 +0100
+Message-Id: <20200221072423.704224194@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -50,50 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shile Zhang <shile.zhang@linux.alibaba.com>
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 
-[ Upstream commit 22a7fa8848c5e881d87ef2f7f3c2ea77b286e6f9 ]
+[ Upstream commit 5f75585e19cc7018bf2016aa771632081ee2f313 ]
 
-To fix follwowing warning due to ORC sort moved to build time:
+Page responses should only be sent when last page in group (LPIG) or
+private data is present in the page request. This patch avoids sending
+invalid descriptors.
 
-  arch/x86/kernel/unwind_orc.c:210:12: warning: ‘orc_sort_cmp’ defined but not used [-Wunused-function]
-  arch/x86/kernel/unwind_orc.c:190:13: warning: ‘orc_sort_swap’ defined but not used [-Wunused-function]
-
-Signed-off-by: Shile Zhang <shile.zhang@linux.alibaba.com>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/c9c81536-2afc-c8aa-c5f8-c7618ecd4f54@linux.alibaba.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 5d308fc1ecf53 ("iommu/vt-d: Add 256-bit invalidation descriptor support")
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/unwind_orc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/iommu/intel-svm.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
-index 332ae6530fa88..7a9306bc5982f 100644
---- a/arch/x86/kernel/unwind_orc.c
-+++ b/arch/x86/kernel/unwind_orc.c
-@@ -187,6 +187,8 @@ static struct orc_entry *orc_find(unsigned long ip)
- 	return orc_ftrace_find(ip);
- }
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index ff7a3f9add325..518d0b2d12afd 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -654,11 +654,10 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+ 			if (req->priv_data_present)
+ 				memcpy(&resp.qw2, req->priv_data,
+ 				       sizeof(req->priv_data));
++			resp.qw2 = 0;
++			resp.qw3 = 0;
++			qi_submit_sync(&resp, iommu);
+ 		}
+-		resp.qw2 = 0;
+-		resp.qw3 = 0;
+-		qi_submit_sync(&resp, iommu);
+-
+ 		head = (head + sizeof(*req)) & PRQ_RING_MASK;
+ 	}
  
-+#ifdef CONFIG_MODULES
-+
- static void orc_sort_swap(void *_a, void *_b, int size)
- {
- 	struct orc_entry *orc_a, *orc_b;
-@@ -229,7 +231,6 @@ static int orc_sort_cmp(const void *_a, const void *_b)
- 	return orc_a->sp_reg == ORC_REG_UNDEFINED && !orc_a->end ? -1 : 1;
- }
- 
--#ifdef CONFIG_MODULES
- void unwind_module_init(struct module *mod, void *_orc_ip, size_t orc_ip_size,
- 			void *_orc, size_t orc_size)
- {
 -- 
 2.20.1
 
