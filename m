@@ -2,107 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B4F4168327
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:21:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 928B416832E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:22:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbgBUQVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 11:21:15 -0500
-Received: from foss.arm.com ([217.140.110.172]:42872 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727213AbgBUQVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 11:21:15 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6CF6130E;
-        Fri, 21 Feb 2020 08:21:14 -0800 (PST)
-Received: from eglon.cambridge.arm.com (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D4EE3F68F;
-        Fri, 21 Feb 2020 08:21:13 -0800 (PST)
-From:   James Morse <james.morse@arm.com>
-To:     x86@kernel.org, linux-kernel@vger.kernel.org
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
-        James Morse <james.morse@arm.com>
-Subject: [PATCH v3] x86/resctrl: Preserve CDP enable over cpuhp
-Date:   Fri, 21 Feb 2020 16:21:05 +0000
-Message-Id: <20200221162105.154163-1-james.morse@arm.com>
-X-Mailer: git-send-email 2.24.1
+        id S1729188AbgBUQWD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 11:22:03 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46410 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727213AbgBUQWC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 11:22:02 -0500
+Received: by mail-ot1-f66.google.com with SMTP id g64so2437368otb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 08:22:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UESijwJloetNY8FQMqP4NxBHBgGttqQPvE09CZ9ft1c=;
+        b=macUat4OhBw9DARYl7llLCgFZklb66CEJoh9cIMr3g6yESO7cALxWGslA+R7qYKrGs
+         fnmKfZrgf4oKCpJCyarWrJ4UiLB6zsowKF7ZaP0X5hmt/PWvNfkyVseLF0OX092PDlNh
+         jqCgungkXvg9muNuvc5UtdxiEdiRd0oLyrZ/CRtK1Bzzz9Flyiem04hAk0SnwwqncSRj
+         n0Fom0Ouu0dm1sw7gA89tp1HgNtirvu3zy3vksqHoGrMdeXGvWUKxjkOg4Wc2zD/XO1c
+         7fzVCJned9Xt5eFtyLaspUTh2m87sc7K+o9d2P0JWiSzZMGN6vItAdbq1RvCK9sWLksv
+         9zPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UESijwJloetNY8FQMqP4NxBHBgGttqQPvE09CZ9ft1c=;
+        b=LNXZa09RqwxuCvvcauenHjs6KxwZJYXPqxZ8SycIrmsinQjnKuUyAIVwyJWRY3Ym4k
+         4MOWtbfqjZwa12GwA1229jnlw6jBUOlxfE7dhyL4rD7FDzcHYqyl2vcS4wVBtXM4PgyW
+         2eWhX2HzvQMioyID8ErpbP3t1lnkeGgx6R5Azd98uzAMeuYMP9tE+qtthA1h2P+6V8m1
+         mPUB/Sj9j3CqSxJ+/YunD/0YTYDWMI1RWUWXH+z4P6wM5XNiE+1PmT0MnVJzunfYY51d
+         sCHlJoCU2wgdbpDQ8hyepDc7l0vi3UyOfZFHyCg4btHzxw1ny/6lyUd/qyyGvS4wbt2H
+         /R4A==
+X-Gm-Message-State: APjAAAXLnXNqSsSRsM3fHCx4Wk04/+huAb8kU3P39eygV0zsI018U0yj
+        f4SP+4Di5Tvp4wWg0/gzO9E7pLeoJdTZppeTaqoDuA==
+X-Google-Smtp-Source: APXvYqxUQtP3b4zLuYjsw3PWW1Xh6/3l8dvciMnwM+axT86fN3Vik9tAcpduTQUxrlW/YBnslPiYEUOP0aEHD0RypMw=
+X-Received: by 2002:a05:6830:134c:: with SMTP id r12mr6522827otq.126.1582302121655;
+ Fri, 21 Feb 2020 08:22:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200221032720.33893-1-alastair@au1.ibm.com>
+In-Reply-To: <20200221032720.33893-1-alastair@au1.ibm.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 21 Feb 2020 08:21:50 -0800
+Message-ID: <CAPcyv4j2hut1YDrotC=QkcM+S0SZwpd9_4hD2aChn+cKD+62oA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/27] Add support for OpenCAPI Persistent Memory devices
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>
+Cc:     alastair@d-silva.org,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Resctrl assumes that all CPUs are online when the filesystem is
-mounted, and that CPUs remember their CDP-enabled state over CPU
-hotplug.
+On Thu, Feb 20, 2020 at 7:28 PM Alastair D'Silva <alastair@au1.ibm.com> wrote:
+>
+> From: Alastair D'Silva <alastair@d-silva.org>
+>
+> This series adds support for OpenCAPI Persistent Memory devices, exposing
+> them as nvdimms so that we can make use of the existing infrastructure.
 
-This goes wrong when resctrl's CDP-enabled state changes while all
-the CPUs in a domain are offline.
+A single sentence to introduce:
 
-When a domain comes online, enable (or disable!) CDP to match resctrl's
-current setting.
+24 files changed, 3029 insertions(+), 97 deletions(-)
 
-Fixes: 5ff193fbde20 ("x86/intel_rdt: Add basic resctrl filesystem support")
-Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: James Morse <james.morse@arm.com>
----
- arch/x86/kernel/cpu/resctrl/core.c     |  2 ++
- arch/x86/kernel/cpu/resctrl/internal.h |  1 +
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 13 +++++++++++++
- 3 files changed, 16 insertions(+)
+...is inadequate. What are OpenCAPI Persistent Memory devices? How do
+they compare, in terms relevant to libnvdimm, to other persistent
+memory devices? What challenges do they pose to the existing enabling?
+What is the overall approach taken with this 27 patch break down? What
+are the changes since v2, v1? If you incorporated someone's review
+feedback note it in the cover letter changelog, if you didn't
+incorporate someone's feedback note that too with an explanation.
 
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 89049b343c7a..d8cc5223b7ce 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -578,6 +578,8 @@ static void domain_add_cpu(int cpu, struct rdt_resource *r)
- 	d->id = id;
- 	cpumask_set_cpu(cpu, &d->cpu_mask);
- 
-+	rdt_domain_reconfigure_cdp(r);
-+
- 	if (r->alloc_capable && domain_setup_ctrlval(r, d)) {
- 		kfree(d);
- 		return;
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 181c992f448c..3dd13f3a8b23 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -601,5 +601,6 @@ bool has_busy_rmid(struct rdt_resource *r, struct rdt_domain *d);
- void __check_limbo(struct rdt_domain *d, bool force_free);
- bool cbm_validate_intel(char *buf, u32 *data, struct rdt_resource *r);
- bool cbm_validate_amd(char *buf, u32 *data, struct rdt_resource *r);
-+void rdt_domain_reconfigure_cdp(struct rdt_resource *r);
- 
- #endif /* _ASM_X86_RESCTRL_INTERNAL_H */
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 064e9ef44cd6..1c78908ef395 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -1859,6 +1859,19 @@ static int set_cache_qos_cfg(int level, bool enable)
- 	return 0;
- }
- 
-+/* Restore the qos cfg state when a domain comes online */
-+void rdt_domain_reconfigure_cdp(struct rdt_resource *r)
-+{
-+	if (!r->alloc_capable)
-+		return;
-+
-+	if (r == &rdt_resources_all[RDT_RESOURCE_L2DATA])
-+		l2_qos_cfg_update(&r->alloc_enabled);
-+
-+	if (r == &rdt_resources_all[RDT_RESOURCE_L3DATA])
-+		l3_qos_cfg_update(&r->alloc_enabled);
-+}
-+
- /*
-  * Enable or disable the MBA software controller
-  * which helps user specify bandwidth in MBps.
--- 
-2.24.1
+In short, provide a bridge document for someone familiar with the
+upstream infrastructure, but not necessarily steeped in powernv /
+OpenCAPI platform details, to get started with this code.
 
+For now, no need to resend the whole series, just reply to this
+message with a fleshed out cover letter and then incorporate it going
+forward for v4+.
