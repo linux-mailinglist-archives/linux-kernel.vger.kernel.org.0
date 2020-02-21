@@ -2,47 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43196167261
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:03:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A136167264
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:03:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731398AbgBUIC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:02:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35512 "EHLO mail.kernel.org"
+        id S1731288AbgBUIDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:03:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729953AbgBUICz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:02:55 -0500
+        id S1731401AbgBUIDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:03:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DF662073A;
-        Fri, 21 Feb 2020 08:02:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECAEB24673;
+        Fri, 21 Feb 2020 08:02:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272174;
-        bh=rya72cDI956HviiwG0v5mNpwy6n2E3LyPKsA3FCHJ8Q=;
+        s=default; t=1582272180;
+        bh=UePCY4BqtIvlghuVOYlkGyqEl9Oi9N2cZL5RSM9Ehrc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZFWNbjbkN5EYZP7kBOPXiiJ//3joxvAlRSrAf9eeG9xceEZ/4dE/JOn2K6ZWkaV3j
-         cji4GAccFuhtn9C9NrEaFkdYEeV7uhRlycAiiapeFDQsZ1+pj087MCfSdPVHTGNk7V
-         CAtqnY0vjWrck84a6QKlp4NpQtBToehTKo7/VokI=
+        b=Nuxq5CECqC+47gBXcJ3Ynv/BsZO/tb+62AxJH1taoLHltJ/Cdvd2q8Rtz4AryrR7b
+         odXBPIPZVFws8MD5rdU4p51ktAbVHJ7wETsCRWzAvaTbxTp+gL1yi0knPOJ7UfrgyO
+         P9W9qmlfTmRKumBOZ7R8I5CkDMUGwkHdxUx9V9ls=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, x86-ml <x86@kernel.org>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 044/344] x86/fpu: Deactivate FPU state after failure during state load
-Date:   Fri, 21 Feb 2020 08:37:23 +0100
-Message-Id: <20200221072353.116738680@linuxfoundation.org>
+Subject: [PATCH 5.4 046/344] media: sti: bdisp: fix a possible sleep-in-atomic-context bug in bdisp_device_run()
+Date:   Fri, 21 Feb 2020 08:37:25 +0100
+Message-Id: <20200221072353.282095226@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -55,86 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit bbc55341b9c67645d1a5471506370caf7dd4a203 ]
+[ Upstream commit bb6d42061a05d71dd73f620582d9e09c8fbf7f5b ]
 
-In __fpu__restore_sig(), fpu_fpregs_owner_ctx needs to be reset if the
-FPU state was not fully restored. Otherwise the following may happen (on
-the same CPU):
+The driver may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-  Task A                     Task B               fpu_fpregs_owner_ctx
-  *active*                                        A.fpu
-  __fpu__restore_sig()
-                             ctx switch           load B.fpu
-                             *active*             B.fpu
-  fpregs_lock()
-  copy_user_to_fpregs_zeroing()
-    copy_kernel_to_xregs() *modify*
-    copy_user_to_xregs() *fails*
-  fpregs_unlock()
-                            ctx switch            skip loading B.fpu,
-                            *active*              B.fpu
+drivers/media/platform/sti/bdisp/bdisp-hw.c, 385:
+    msleep in bdisp_hw_reset
+drivers/media/platform/sti/bdisp/bdisp-v4l2.c, 341:
+    bdisp_hw_reset in bdisp_device_run
+drivers/media/platform/sti/bdisp/bdisp-v4l2.c, 317:
+    _raw_spin_lock_irqsave in bdisp_device_run
 
-In the success case, fpu_fpregs_owner_ctx is set to the current task.
+To fix this bug, msleep() is replaced with udelay().
 
-In the failure case, the FPU state might have been modified by loading
-the init state.
+This bug is found by a static analysis tool STCheck written by myself.
 
-In this case, fpu_fpregs_owner_ctx needs to be reset in order to ensure
-that the FPU state of the following task is loaded from saved state (and
-not skipped because it was the previous state).
-
-Reset fpu_fpregs_owner_ctx after a failure during restore occurred, to
-ensure that the FPU state for the next task is always loaded.
-
-The problem was debugged-by Yu-cheng Yu <yu-cheng.yu@intel.com>.
-
- [ bp: Massage commit message. ]
-
-Fixes: 5f409e20b7945 ("x86/fpu: Defer FPU state load until return to userspace")
-Reported-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191220195906.plk6kpmsrikvbcfn@linutronix.de
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/fpu/signal.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/platform/sti/bdisp/bdisp-hw.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 0071b794ed193..400a05e1c1c51 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -352,6 +352,7 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 			fpregs_unlock();
- 			return 0;
- 		}
-+		fpregs_deactivate(fpu);
- 		fpregs_unlock();
- 	}
+diff --git a/drivers/media/platform/sti/bdisp/bdisp-hw.c b/drivers/media/platform/sti/bdisp/bdisp-hw.c
+index 4372abbb5950f..a74e9fd652389 100644
+--- a/drivers/media/platform/sti/bdisp/bdisp-hw.c
++++ b/drivers/media/platform/sti/bdisp/bdisp-hw.c
+@@ -14,8 +14,8 @@
+ #define MAX_SRC_WIDTH           2048
  
-@@ -403,6 +404,8 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 	}
- 	if (!ret)
- 		fpregs_mark_activate();
-+	else
-+		fpregs_deactivate(fpu);
- 	fpregs_unlock();
+ /* Reset & boot poll config */
+-#define POLL_RST_MAX            50
+-#define POLL_RST_DELAY_MS       20
++#define POLL_RST_MAX            500
++#define POLL_RST_DELAY_MS       2
  
- err_out:
+ enum bdisp_target_plan {
+ 	BDISP_RGB,
+@@ -382,7 +382,7 @@ int bdisp_hw_reset(struct bdisp_dev *bdisp)
+ 	for (i = 0; i < POLL_RST_MAX; i++) {
+ 		if (readl(bdisp->regs + BLT_STA1) & BLT_STA1_IDLE)
+ 			break;
+-		msleep(POLL_RST_DELAY_MS);
++		udelay(POLL_RST_DELAY_MS * 1000);
+ 	}
+ 	if (i == POLL_RST_MAX)
+ 		dev_err(bdisp->dev, "Reset timeout\n");
 -- 
 2.20.1
 
