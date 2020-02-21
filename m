@@ -2,144 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A50B168359
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:29:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AB5016835E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:29:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbgBUQ3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 11:29:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726150AbgBUQ3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 11:29:33 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 159D620578;
-        Fri, 21 Feb 2020 16:29:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582302572;
-        bh=bIv/Gy0try/2Ck0ORPZ1Orj2uFYFNPfi1/q/uWGc46A=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=N2Du/4sVBYICOmQahOIcWd9WCDUm9IKZNq0F02nT12xlRyNQwSePXONEfPjiFUTKe
-         m1HT6tp4wnwNyvsqtCUYAFxZR09bI/iNpmBlHC3/tHt1IPTq+Ia0ZtEzqh8uK4b1AJ
-         7NdowZNOaVC3vJaNm031XQTWnVhM1gbJTNO9SY7s=
-Date:   Fri, 21 Feb 2020 16:29:29 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-Subject: Re: [PATCH v2] iio: amplifiers: ad8366: add support for HMC1119
- Attenuator
-Message-ID: <20200221162929.41870ce9@archlinux>
-In-Reply-To: <20200221161826.21291-1-alexandru.ardelean@analog.com>
-References: <20200220092821.11050-1-sergiu.cuciurean@analog.com>
-        <20200221161826.21291-1-alexandru.ardelean@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727503AbgBUQ35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 11:29:57 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40624 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbgBUQ34 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 11:29:56 -0500
+Received: by mail-wm1-f65.google.com with SMTP id t14so2555571wmi.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 08:29:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gsYHWWvvrbSnKE2h1s2uPePVi0iNmW0YqRRUZJzQR6k=;
+        b=Lxe0XZycAYu+kEjhPwBiI7HBI6p1HU3eLM31JOauc6DYAgp+0uQrcAAq1VweQ3Psju
+         O9LtNu3iJr92q2nJ70FXQIl5k9fGi9FrK3u9WbGTNniCNxn8z20YE32oDgBMVG4IFfME
+         UKQmBzJMuWOKH4VgpMMSr8owiU4yaZiDNKvBYqSVs2h6ZG5GckqSwKx44lnVkdS1iQSw
+         g2vkDBHJhKxrNTO3HFYRPu/13ObjNpou7SA/y/lNsONamYMCzVMxhsicxvcrqQNFhuu8
+         O1uTD5rI/DAZbIjdeuEZQJkUb5yNgDLJmo+ZzoyxFkEi4veky205yxh7vXNUfMi0vM1S
+         Jhmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gsYHWWvvrbSnKE2h1s2uPePVi0iNmW0YqRRUZJzQR6k=;
+        b=R6PrQIYE4EqXM89zjTAfwDuh5xpJXmse1fDOdzDS91O3xzfYXcow+r1RiWwrBo9KNQ
+         88ECz7WeZoCWpuhUvQkOVR96QUo2v+fKhmOc6H4fTkLzxCFSkBmJ6ZNRjKShkA80jvWr
+         ExebgRZVSp9BkWWxgavgeUWP/y5lHO52wV3Vs5j5oTQdcyrQ5Qdr4nvmDUcFixAJz+lu
+         WpZwVGpPSeEfiFl+4WDfJbTI1phQavvcF5Y0IrYxRqD6t9DqzJYF86CA15EcYA3+lp2y
+         dE6Ghe9LVXovtg33G/P0YTc9kemJFXui1hactxA3t5aQ+wySV+gE8KJtVYgD1mv6pGwt
+         MP+A==
+X-Gm-Message-State: APjAAAUb9UrgFQdSeODNlC3bfWZ39qGLBUilhQBWasILz5s5c6NeW5BC
+        tJot3Et+82Q8PWI5v6Ni6cUVOg==
+X-Google-Smtp-Source: APXvYqzUIIH/6h2MwdMx+WBw1B9W/Sdsz6REpLbvc95hgTFz2gWX+XjPsJ0sa3YEKmI9oVk1GQ8xoA==
+X-Received: by 2002:a7b:c1d0:: with SMTP id a16mr4658764wmj.175.1582302594591;
+        Fri, 21 Feb 2020 08:29:54 -0800 (PST)
+Received: from linaro.org ([2a01:e34:ed2f:f020:903b:a048:f296:e3ae])
+        by smtp.gmail.com with ESMTPSA id w13sm4669892wru.38.2020.02.21.08.29.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Feb 2020 08:29:54 -0800 (PST)
+Date:   Fri, 21 Feb 2020 17:29:51 +0100
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Jasper Korten <jja2000@gmail.com>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 13/17] cpuidle: tegra: Squash Tegra30 driver into the
+ common driver
+Message-ID: <20200221162951.GQ10516@linaro.org>
+References: <20200212235134.12638-1-digetx@gmail.com>
+ <20200212235134.12638-14-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200212235134.12638-14-digetx@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Feb 2020 18:18:26 +0200
-Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
-
-> From: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+On Thu, Feb 13, 2020 at 02:51:30AM +0300, Dmitry Osipenko wrote:
+> Tegra20 and Terga30 SoCs have common C1 and CC6 idling states and thus
+> share the same code paths, there is no point in having separate drivers
+> for a similar hardware. This patch merely moves functionality of the old
+> driver into the new, although the CC6 state is kept disabled for now since
+> old driver had a rudimentary support for this state (allowing to enter
+> into CC6 only when secondary CPUs are put offline), while new driver can
+> provide a full-featured support. The new feature will be enabled by
+> another patch.
 > 
-> This change adds support for the HMC1119 Silicon Digial Attenuator. The
-> HMC1119 is a broadband, highly accurate, 7-bit digital attenuator,
-> operating from 0.1 GHz to 6.0 GHz with 31.5 dB attenuation control range
-> in 0.25 dB steps.
-> 
-> Link: https://www.analog.com/media/en/technical-documentation/data-sheets/hmc1119.pdf
-> 
-> Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-
-Applied, thanks.
-
-Jonathan
-
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> Tested-by: Jasper Korten <jja2000@gmail.com>
+> Tested-by: David Heidelberg <david@ixit.cz>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/iio/amplifiers/ad8366.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/iio/amplifiers/ad8366.c b/drivers/iio/amplifiers/ad8366.c
-> index 95972ab60f42..62167b87caea 100644
-> --- a/drivers/iio/amplifiers/ad8366.c
-> +++ b/drivers/iio/amplifiers/ad8366.c
-> @@ -5,6 +5,7 @@
->   *   AD8366 Dual-Digital Variable Gain Amplifier (VGA)
->   *   ADA4961 BiCMOS RF Digital Gain Amplifier (DGA)
->   *   ADL5240 Digitally controlled variable gain amplifier (VGA)
-> + *   HMC1119 0.25 dB LSB, 7-Bit, Silicon Digital Attenuator
->   *
->   * Copyright 2012-2019 Analog Devices Inc.
->   */
-> @@ -27,6 +28,7 @@ enum ad8366_type {
->  	ID_AD8366,
->  	ID_ADA4961,
->  	ID_ADL5240,
-> +	ID_HMC1119,
->  };
->  
->  struct ad8366_info {
-> @@ -62,6 +64,10 @@ static struct ad8366_info ad8366_infos[] = {
->  		.gain_min = -11500,
->  		.gain_max = 20000,
->  	},
-> +	[ID_HMC1119] = {
-> +		.gain_min = -31750,
-> +		.gain_max = 0,
-> +	},
->  };
->  
->  static int ad8366_write(struct iio_dev *indio_dev,
-> @@ -84,6 +90,9 @@ static int ad8366_write(struct iio_dev *indio_dev,
->  	case ID_ADL5240:
->  		st->data[0] = (ch_a & 0x3F);
->  		break;
-> +	case ID_HMC1119:
-> +		st->data[0] = ch_a;
-> +		break;
->  	}
->  
->  	ret = spi_write(st->spi, st->data, indio_dev->num_channels);
-> @@ -118,6 +127,9 @@ static int ad8366_read_raw(struct iio_dev *indio_dev,
->  		case ID_ADL5240:
->  			gain = 20000 - 31500 + code * 500;
->  			break;
-> +		case ID_HMC1119:
-> +			gain = -1 * code * 250;
-> +			break;
->  		}
->  
->  		/* Values in dB */
-> @@ -164,6 +176,9 @@ static int ad8366_write_raw(struct iio_dev *indio_dev,
->  	case ID_ADL5240:
->  		code = ((gain - 500 - 20000) / 500) & 0x3F;
->  		break;
-> +	case ID_HMC1119:
-> +		code = (abs(gain) / 250) & 0x7F;
-> +		break;
->  	}
->  
->  	mutex_lock(&st->lock);
-> @@ -246,6 +261,7 @@ static int ad8366_probe(struct spi_device *spi)
->  		break;
->  	case ID_ADA4961:
->  	case ID_ADL5240:
-> +	case ID_HMC1119:
->  		st->reset_gpio = devm_gpiod_get(&spi->dev, "reset",
->  			GPIOD_OUT_HIGH);
->  		indio_dev->channels = ada4961_channels;
-> @@ -298,6 +314,7 @@ static const struct spi_device_id ad8366_id[] = {
->  	{"ad8366",  ID_AD8366},
->  	{"ada4961", ID_ADA4961},
->  	{"adl5240", ID_ADL5240},
-> +	{"hmc1119", ID_HMC1119},
->  	{}
->  };
->  MODULE_DEVICE_TABLE(spi, ad8366_id);
+>  arch/arm/mach-tegra/Makefile          |   3 -
+>  arch/arm/mach-tegra/cpuidle-tegra30.c | 123 --------------------------
+
+Add the -M option when resending please.
 
