@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F3F167387
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:13:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 975601674FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732971AbgBUINM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:13:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49192 "EHLO mail.kernel.org"
+        id S2388203AbgBUIU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:20:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732956AbgBUINK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:13:10 -0500
+        id S2387967AbgBUIUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:20:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2926620722;
-        Fri, 21 Feb 2020 08:13:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9618206ED;
+        Fri, 21 Feb 2020 08:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272789;
-        bh=ELlkIfK1/ej71TQAufGUncCZGSmrKBDD0FiRlst3Jtk=;
+        s=default; t=1582273254;
+        bh=XqHntQ68nAA1PkhJZLhzZ1cKTnOr9ceFKNXlAqKnqBA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eA7jzuuIUjxpvG6aMoNgTv2uNQUlqry+mpxa61+mhblzHEbR8dmC9oD3SynG4E7C+
-         d0yJFHFDey7jq7leHBXLn74MgABbnxQBVuTLhmBvw6GWvspeonIu5B0SgOHQA2Gdss
-         5W7b8RtvE7Ghi4HjpNPzAXg5HAFM8o9NNXRbSYmo=
+        b=gEOy13192lyh9+TbIRqma+c03kp9wrd5NHQ0IiHdgoIofYJ6JnQcAQDJ2YZn79WfN
+         CeoaJrW4MFCEI/FltOCZieiSHXbdd5hGlypXNuVTjw8AUcfSvMuc8p1752YjrZvG1b
+         SlImB8knrHMib2GvxaDBTmBhpx0Z7ANMjopipI0g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
+        stable@vger.kernel.org,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 276/344] s390: adjust -mpacked-stack support check for clang 10
-Date:   Fri, 21 Feb 2020 08:41:15 +0100
-Message-Id: <20200221072414.810177821@linuxfoundation.org>
+Subject: [PATCH 4.19 103/191] ARM: dts: stm32: Add power-supply for DSI panel on stm32f469-disco
+Date:   Fri, 21 Feb 2020 08:41:16 +0100
+Message-Id: <20200221072303.347219469@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Benjamin Gaignard <benjamin.gaignard@st.com>
 
-[ Upstream commit 253b3c4b2920e07ce9e2b18800b9b65245e2fafa ]
+[ Upstream commit 0ff15a86d0c5a3f004fee2e92d65b88e56a3bc58 ]
 
-clang 10 introduces -mpacked-stack compiler option implementation. At the
-same time currently it does not support a combination of -mpacked-stack
-and -mbackchain. This leads to the following build error:
+Add a fixed regulator and use it as power supply for DSI panel.
 
-clang: error: unsupported option '-mpacked-stack with -mbackchain' for
-target 's390x-ibm-linux'
+Fixes: 18c8866266 ("ARM: dts: stm32: Add display support on stm32f469-disco")
 
-If/when clang adds support for a combination of -mpacked-stack and
--mbackchain it would also require -msoft-float (like gcc does). According
-to Ulrich Weigand "stack slot assigned to the kernel backchain overlaps
-the stack slot assigned to the FPR varargs (both are required to be
-placed immediately after the saved r15 slot if present)."
-
-Extend -mpacked-stack compiler option support check to include all 3
-options -mpacked-stack -mbackchain -msoft-float which must present to
-support -mpacked-stack with -mbackchain.
-
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/stm32f469-disco.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/s390/Makefile b/arch/s390/Makefile
-index 478b645b20ddb..9ce1baeac2b25 100644
---- a/arch/s390/Makefile
-+++ b/arch/s390/Makefile
-@@ -69,7 +69,7 @@ cflags-y += -Wa,-I$(srctree)/arch/$(ARCH)/include
- #
- cflags-$(CONFIG_FRAME_POINTER) += -fno-optimize-sibling-calls
+diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
+index 3ee768cb86fc9..eea979ef5512f 100644
+--- a/arch/arm/boot/dts/stm32f469-disco.dts
++++ b/arch/arm/boot/dts/stm32f469-disco.dts
+@@ -75,6 +75,13 @@
+ 		regulator-max-microvolt = <3300000>;
+ 	};
  
--ifeq ($(call cc-option-yn,-mpacked-stack),y)
-+ifeq ($(call cc-option-yn,-mpacked-stack -mbackchain -msoft-float),y)
- cflags-$(CONFIG_PACK_STACK)  += -mpacked-stack -D__PACK_STACK
- aflags-$(CONFIG_PACK_STACK)  += -D__PACK_STACK
- endif
++	vdd_dsi: vdd-dsi {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd_dsi";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
+ 	soc {
+ 		dma-ranges = <0xc0000000 0x0 0x10000000>;
+ 	};
+@@ -154,6 +161,7 @@
+ 		compatible = "orisetech,otm8009a";
+ 		reg = <0>; /* dsi virtual channel (0..3) */
+ 		reset-gpios = <&gpioh 7 GPIO_ACTIVE_LOW>;
++		power-supply = <&vdd_dsi>;
+ 		status = "okay";
+ 
+ 		port {
 -- 
 2.20.1
 
