@@ -2,310 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B151166DE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:40:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4094B166DE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:40:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729743AbgBUDke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 22:40:34 -0500
-Received: from conuserg-09.nifty.com ([210.131.2.76]:61081 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727944AbgBUDke (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 22:40:34 -0500
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id 01L3cSHA001563;
-        Fri, 21 Feb 2020 12:38:28 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com 01L3cSHA001563
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1582256309;
-        bh=9fN7Ow7rqVeONqx0lv47MnGX/K8QzO8kQz42Q/AlqEY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=sKSyyk3MdpVI9hgmbZBZCbe8knOjzRwkd1aM5Aq3/pCEL1TZ0qJl4sa8awPcFMNAY
-         OcFY4tgqfqmKSR5mXwGVw5nJvyAlC1Vbf2cs6bAKDLoPc0nM/ghXSxt8LKL31nHPXk
-         lpbmK06RWoeuNYWXUP5LAvJTaxODD9WgnydAlv8tilS8VhULiSHJMspbqGCat2unk9
-         Q3CI4xcLlv36JjuI2SDwvvx8KYzS5hMrCRCVxps2/bZ/tlEGtVgXGWnq3i9YwbwlBy
-         tIJRVz0+OlzL79B2fxIYNriSjWmo32SdG5jgo3eN+p0GCCqSvcCGI1qYVWF31Aw/Sy
-         Cu94nMTizwgYw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Piotr Sroka <piotrs@cadence.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: [PATCH] dt-bindings: mmc: Convert Cadence SD/SDIO/eMMC controller to json-schema
-Date:   Fri, 21 Feb 2020 12:38:19 +0900
-Message-Id: <20200221033819.2966-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729712AbgBUDj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 22:39:57 -0500
+Received: from ozlabs.org ([203.11.71.1]:37037 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727944AbgBUDj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 22:39:57 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48NxzZ3h5qz9sRl;
+        Fri, 21 Feb 2020 14:39:54 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1582256394;
+        bh=vgKhJtAQu5/AyCyCN4a7gmdkvz8Ai7bAmdHGaTwWFqM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=X9uiU7y++0TcJLCfUqhzCGh/osRxNrTS0MzajMkjUep6fhj/c/BuPrSSsQ1OvzG/C
+         EEdVsQs8oDxg+pBGkmPb/Mox2e/gvd5veJuY5ytg5O5Lc8QZuBh4hdoRQuIjFzYrVt
+         /QNFsb0iio2Bjf5UMewhQPZWW+gm84K0OR1aZbjlmrETqPw0kgkYEDlt5I+eiL9b5x
+         EsV8ZmcqP5H++qc/jdeMgjj/zZJH0YSlffQjweEbuEHr33lYxGQvrfdvekh76hvx8h
+         NAFDI2Ay239BvszbWmcIysWIOrbQXhGfwjLILz/tWkyTiI+gvMJoN7kNLroMAKxYpM
+         lNEoEvxC+kCpA==
+Date:   Fri, 21 Feb 2020 14:39:53 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux USB Mailing List <linux-usb@vger.kernel.org>
+Subject: linux-next: build warning in Linus' tree
+Message-ID: <20200221143930.620f381e@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/6U3i/Oj=DwC==c+av/nyAib";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the Cadence SD/SDIO/eMMC host controller IP (a.k.a. SD4HC)
-binding to DT schema format.
+--Sig_/6U3i/Oj=DwC==c+av/nyAib
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Socionext UniPhier ARM 64-bit SoCs are integrated with this IP.
+Hi all,
 
-Cc: Piotr Sroka <piotrs@cadence.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+For some time I have been getting the following warning from the powerpc
+allyesconfig build:
 
-I wanted to kept some precious comments, which apply to multiple
-properties.
+drivers/usb/host/fhci-hcd.c: In function 'fhci_urb_enqueue':
+drivers/usb/host/fhci-hcd.c:398:8: warning: this statement may fall through=
+ [-Wimplicit-fallthrough=3D]
+  398 |   size =3D 2;
+      |   ~~~~~^~~
+drivers/usb/host/fhci-hcd.c:399:2: note: here
+  399 |  case PIPE_BULK:
+      |  ^~~~
 
-I do not think 'description:' is a good fit for this.
+Introduced by commit
 
-I was searching for a way to insert a comment line that does not
-affect the schema.
+  236dd4d18f29 ("USB: Driver for Freescale QUICC Engine USB Host Controller=
+")
 
-The $comment did not work. I just use '#', which is YAML comment.
-If there is a better way, please let me know.
+from 2009, but exposed only recently.
 
+--=20
+Cheers,
+Stephen Rothwell
 
- .../devicetree/bindings/mmc/cdns,sdhci.yaml   | 143 ++++++++++++++++++
- .../devicetree/bindings/mmc/sdhci-cadence.txt |  80 ----------
- 2 files changed, 143 insertions(+), 80 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
- delete mode 100644 Documentation/devicetree/bindings/mmc/sdhci-cadence.txt
+--Sig_/6U3i/Oj=DwC==c+av/nyAib
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff --git a/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml b/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
-new file mode 100644
-index 000000000000..caf765721eb2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml
-@@ -0,0 +1,143 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/cdns,sdhci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cadence SD/SDIO/eMMC Host Controller (SD4HC)
-+
-+maintainers:
-+  - Masahiro Yamada <yamada.masahiro@socionext.com>
-+  - Piotr Sroka <piotrs@cadence.com>
-+
-+allOf:
-+  - $ref: mmc-controller.yaml
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+         - socionext,uniphier-sd4hc
-+      - const: cdns,sd4hc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  # PHY DLL input delays:
-+  # They are used to delay the data valid window, and align the window to
-+  # sampling clock. The delay starts from 5ns (for delay parameter equal to 0)
-+  # and it is increased by 2.5ns in each step.
-+
-+  cdns,phy-input-delay-sd-highspeed:
-+    description: Value of the delay in the input path for SD high-speed timing
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - minimum: 0
-+      - maximum: 0x1f
-+
-+  cdns,phy-input-delay-legacy:
-+    description: Value of the delay in the input path for legacy timing
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - minimum: 0
-+      - maximum: 0x1f
-+
-+  cdns,phy-input-delay-sd-uhs-sdr12:
-+    description: Value of the delay in the input path for SD UHS SDR12 timing
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - minimum: 0
-+      - maximum: 0x1f
-+
-+  cdns,phy-input-delay-sd-uhs-sdr25:
-+    description: Value of the delay in the input path for SD UHS SDR25 timing
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - minimum: 0
-+      - maximum: 0x1f
-+
-+  cdns,phy-input-delay-sd-uhs-sdr50:
-+    description: Value of the delay in the input path for SD UHS SDR50 timing
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - minimum: 0
-+      - maximum: 0x1f
-+
-+  cdns,phy-input-delay-sd-uhs-ddr50:
-+    description: Value of the delay in the input path for SD UHS DDR50 timing
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - minimum: 0
-+      - maximum: 0x1f
-+
-+  cdns,phy-input-delay-mmc-highspeed:
-+    description: Value of the delay in the input path for MMC high-speed timing
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - minimum: 0
-+      - maximum: 0x1f
-+
-+  cdns,phy-input-delay-mmc-ddr:
-+    description: Value of the delay in the input path for eMMC high-speed DDR timing
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - minimum: 0
-+      - maximum: 0x1f
-+
-+  # PHY DLL clock delays:
-+  # Each delay property represents the fraction of the clock period.
-+  # The approximate delay value will be
-+  # (<delay property value>/128)*sdmclk_clock_period.
-+
-+  cdns,phy-dll-delay-sdclk:
-+    description: |
-+      Value of the delay introduced on the sdclk output for all modes except
-+      HS200, HS400 and HS400_ES.
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - minimum: 0
-+      - maximum: 0x7f
-+
-+  cdns,phy-dll-delay-sdclk-hsmmc:
-+    description: |
-+      Value of the delay introduced on the sdclk output for HS200, HS400 and
-+      HS400_ES speed modes.
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - minimum: 0
-+      - maximum: 0x7f
-+
-+  cdns,phy-dll-delay-strobe:
-+    description: |
-+      Value of the delay introduced on the dat_strobe input used in
-+      HS400 / HS400_ES speed modes.
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - minimum: 0
-+      - maximum: 0x7f
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+examples:
-+  - |
-+    emmc: sdhci@5a000000 {
-+        compatible = "socionext,uniphier-sd4hc", "cdns,sd4hc";
-+        reg = <0x5a000000 0x400>;
-+        interrupts = <0 78 4>;
-+        clocks = <&clk 4>;
-+        bus-width = <8>;
-+        mmc-ddr-1_8v;
-+        mmc-hs200-1_8v;
-+        mmc-hs400-1_8v;
-+        cdns,phy-dll-delay-sdclk = <0>;
-+    };
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-cadence.txt b/Documentation/devicetree/bindings/mmc/sdhci-cadence.txt
-deleted file mode 100644
-index fa423c277853..000000000000
---- a/Documentation/devicetree/bindings/mmc/sdhci-cadence.txt
-+++ /dev/null
-@@ -1,80 +0,0 @@
--* Cadence SD/SDIO/eMMC Host Controller
--
--Required properties:
--- compatible: should be one of the following:
--    "cdns,sd4hc"               - default of the IP
--    "socionext,uniphier-sd4hc" - for Socionext UniPhier SoCs
--- reg: offset and length of the register set for the device.
--- interrupts: a single interrupt specifier.
--- clocks: phandle to the input clock.
--
--Optional properties:
--For eMMC configuration, supported speed modes are not indicated by the SDHCI
--Capabilities Register.  Instead, the following properties should be specified
--if supported.  See mmc.txt for details.
--- mmc-ddr-1_8v
--- mmc-ddr-1_2v
--- mmc-hs200-1_8v
--- mmc-hs200-1_2v
--- mmc-hs400-1_8v
--- mmc-hs400-1_2v
--
--Some PHY delays can be configured by following properties.
--PHY DLL input delays:
--They are used to delay the data valid window, and align the window
--to sampling clock. The delay starts from 5ns (for delay parameter equal to 0)
--and it is increased by 2.5ns in each step.
--- cdns,phy-input-delay-sd-highspeed:
--  Value of the delay in the input path for SD high-speed timing
--  Valid range = [0:0x1F].
--- cdns,phy-input-delay-legacy:
--  Value of the delay in the input path for legacy timing
--  Valid range = [0:0x1F].
--- cdns,phy-input-delay-sd-uhs-sdr12:
--  Value of the delay in the input path for SD UHS SDR12 timing
--  Valid range = [0:0x1F].
--- cdns,phy-input-delay-sd-uhs-sdr25:
--  Value of the delay in the input path for SD UHS SDR25 timing
--  Valid range = [0:0x1F].
--- cdns,phy-input-delay-sd-uhs-sdr50:
--  Value of the delay in the input path for SD UHS SDR50 timing
--  Valid range = [0:0x1F].
--- cdns,phy-input-delay-sd-uhs-ddr50:
--  Value of the delay in the input path for SD UHS DDR50 timing
--  Valid range = [0:0x1F].
--- cdns,phy-input-delay-mmc-highspeed:
--  Value of the delay in the input path for MMC high-speed timing
--  Valid range = [0:0x1F].
--- cdns,phy-input-delay-mmc-ddr:
--  Value of the delay in the input path for eMMC high-speed DDR timing
--  Valid range = [0:0x1F].
--
--PHY DLL clock delays:
--Each delay property represents the fraction of the clock period.
--The approximate delay value will be
--(<delay property value>/128)*sdmclk_clock_period.
--- cdns,phy-dll-delay-sdclk:
--  Value of the delay introduced on the sdclk output
--  for all modes except HS200, HS400 and HS400_ES.
--  Valid range = [0:0x7F].
--- cdns,phy-dll-delay-sdclk-hsmmc:
--  Value of the delay introduced on the sdclk output
--  for HS200, HS400 and HS400_ES speed modes.
--  Valid range = [0:0x7F].
--- cdns,phy-dll-delay-strobe:
--  Value of the delay introduced on the dat_strobe input
--  used in HS400 / HS400_ES speed modes.
--  Valid range = [0:0x7F].
--
--Example:
--	emmc: sdhci@5a000000 {
--		compatible = "socionext,uniphier-sd4hc", "cdns,sd4hc";
--		reg = <0x5a000000 0x400>;
--		interrupts = <0 78 4>;
--		clocks = <&clk 4>;
--		bus-width = <8>;
--		mmc-ddr-1_8v;
--		mmc-hs200-1_8v;
--		mmc-hs400-1_8v;
--		cdns,phy-dll-delay-sdclk = <0>;
--	};
--- 
-2.17.1
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5PUQkACgkQAVBC80lX
+0Gxowgf9FzZUw1VbMTWlX/J4qyh0YdBz4qvX/OeSMeExqJbWKcr9LeJNteVkTj8C
+fdqdWIKByke2UdnpULqOpbfTocHBc6A6HMbcnzehCyWfLcChWGPG8J1qaCKuX9GN
+0tPKn73XIh3EbfPoUAEObQTC0pwshxovkNOHmnDl9INDR8wKwFp09/x7vORCPiMa
+7ecLm5MwhggdvPqGw/CR+KrFUooJcjIIka1et6n2yEhAJLMDL660+oziK/VC/MUy
+R/BSCMIV0cPxMMP/NeBzWQqinhW/Lxcmd2yzAiq1a99pDRAWyVH3RN+EozcaSl13
+e0pPGVLts22Jo42l1w+rQ9c8kPQrZQ==
+=dvQq
+-----END PGP SIGNATURE-----
+
+--Sig_/6U3i/Oj=DwC==c+av/nyAib--
