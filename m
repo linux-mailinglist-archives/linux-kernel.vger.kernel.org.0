@@ -2,104 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D1F916876C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:26:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E921168771
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:33:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729780AbgBUT0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 14:26:50 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39893 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729454AbgBUT0t (ORCPT
+        id S1727709AbgBUTc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 14:32:57 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41676 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbgBUTc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 14:26:49 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n30so1486215lfh.6
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 11:26:48 -0800 (PST)
+        Fri, 21 Feb 2020 14:32:57 -0500
+Received: by mail-lj1-f196.google.com with SMTP id h23so3366156ljc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 11:32:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=dySq1l3asr1HRFdBoND5+/A1oxOW8lUHSK+OCHfNPcA=;
-        b=equBr8Zes6R6b4rIEzwkzyJRJj85yEFZ26p5vYyReOS3ME6RWlBTWy9VGIlLMUnpUO
-         z1IhW/3DdktZWYIDolZ9Gt29wooAukLmK6Msln/B0PjQp9OpY1QqxN7yYIfsYKTngNLH
-         +AupZ4Eiah1/lhSBwy16fcgaZwAeblakPYzQ8=
+         :cc;
+        bh=U68GDVY1KdzbrGrjoZTqOzYk2yQbO7PvSyDl1XnOe7M=;
+        b=QdRWKTV8/0rGRlPB9hVxGyAJMrNhgHy8ONjGP9VHRWspnZm/PK9TuKMCKKxnfycqBS
+         cLW67Fnaxdk/sVszEjMNzilHnrYN2TR3xTMielOouX327gps8wlgAmUeF1hixpdaBuZg
+         Khc0xJrvsl05EHVwLH3oZQSjoldKEDdDGf58s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=dySq1l3asr1HRFdBoND5+/A1oxOW8lUHSK+OCHfNPcA=;
-        b=P0yp27ZSd8H9nEt0I+0uvGYAyaJVU/HHE+5SyCRFpawRMcrlsoUh38n9eCBPEOQ5yg
-         SmX7ZxkdtEUT94+ZjKAfZUeREZ3doailZoBAWqxBTfIFvIcn3QAqmCX1l26gYXd+f5Oe
-         /n0JQ2d05hnrfBgpw/L9oNcIWLYThPKS3ntYozSFzKilrSkKd1daOU8RL8jxp37acTWK
-         8XtUodp7v1uVIVSHgOHuCVOYygX4X1e99PKrs62Tw8ewUTVkKFHFqlytHQMHkJmxtXEX
-         XYGZy/tvIzjR8tYOhOIoZj/UU8S98Ky8DYBo8wmtYgJPpELYZ6X7sKj4rAvdVQ4AiY2f
-         DBlg==
-X-Gm-Message-State: APjAAAX1kMJ3Afr3zZNLLN4H1e0dcIDUW7hx+T64GMgq0a4RjwqhkEt/
-        2BpWlk1KTC1LJAaGzPeqIdEfLuEuJg0=
-X-Google-Smtp-Source: APXvYqyzJARvfyOb4ta0TZ72VnlvBg2+HtAdyj+FtDwmSltkvRM7DUajDnbYj8EzQJCvefyiEqPfyw==
-X-Received: by 2002:a05:6512:1106:: with SMTP id l6mr5611340lfg.147.1582313206981;
-        Fri, 21 Feb 2020 11:26:46 -0800 (PST)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id d24sm2095404lja.82.2020.02.21.11.26.45
+         :message-id:subject:to:cc;
+        bh=U68GDVY1KdzbrGrjoZTqOzYk2yQbO7PvSyDl1XnOe7M=;
+        b=o5jJZ7pQnwrFCfWRH68vdnFBzsaVq3QVSi+7IcITbT6ipvDEOemo/VlA3eTuh+9yPC
+         cNDgQHfweoGi6Qrv1C4x5YIbFNXUGoWXlch/BObPPug+2mYrQoRbEf6pQqKqMtdRYaPf
+         gv6zCnB+BDtvcB5pGt7S8seAODZjZx3HVjWHVbTRsEJPocVCkTsn8bTGV5qHXscZGpTI
+         +OQhvFw9/JX6vWncy+UUd5X7gpCofm+Oo0hx1q+DEu3H18QD6CFtUSvHG2/IY/yR64JT
+         zGVUtYsZQTGc5sWy3MnuooqmnQuuLvUP3oIXUIL8+Jt6vxkTzy0hVe5E8sa3TMBvpMRo
+         /N+w==
+X-Gm-Message-State: APjAAAUA4P1NvSiWaKtyX4Sy62QP0G41vAJpXYW7oTHdkcK/yWn5S7sU
+        DLV1++DO+WBekk+Qv2VAwFkCuJWbOQE=
+X-Google-Smtp-Source: APXvYqzC9rgztJHU94LR4357ApKdnclRiTWjhLPcSQwIT02AMZYtnqEHZIVXVeISr2w7OLqj9wPR+g==
+X-Received: by 2002:a2e:8916:: with SMTP id d22mr3571362lji.19.1582313574714;
+        Fri, 21 Feb 2020 11:32:54 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id o69sm2139338lff.14.2020.02.21.11.32.53
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 11:26:46 -0800 (PST)
-Received: by mail-lf1-f41.google.com with SMTP id z5so2262899lfd.12
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 11:26:45 -0800 (PST)
-X-Received: by 2002:a05:6512:687:: with SMTP id t7mr21192197lfe.30.1582313205540;
- Fri, 21 Feb 2020 11:26:45 -0800 (PST)
+        Fri, 21 Feb 2020 11:32:53 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id s23so2288829lfs.10
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 11:32:53 -0800 (PST)
+X-Received: by 2002:a19:f514:: with SMTP id j20mr20690967lfb.31.1582313572704;
+ Fri, 21 Feb 2020 11:32:52 -0800 (PST)
 MIME-Version: 1.0
-References: <CAHk-=wi4uO+Djqr4Jc1TnCofwxUTuXHtgkgwnVX86q06UGV6DA@mail.gmail.com>
- <6A09F721-0AD9-4B86-AB3E-563A1CF5ABDE@amacapital.net>
-In-Reply-To: <6A09F721-0AD9-4B86-AB3E-563A1CF5ABDE@amacapital.net>
+References: <20200220155353.8676-1-peterx@redhat.com>
+In-Reply-To: <20200220155353.8676-1-peterx@redhat.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 21 Feb 2020 11:26:29 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whDHsbK3HTOpTF=ue_o04onRwTEaK_ZoJp_fjbqq4+=Jw@mail.gmail.com>
-Message-ID: <CAHk-=whDHsbK3HTOpTF=ue_o04onRwTEaK_ZoJp_fjbqq4+=Jw@mail.gmail.com>
-Subject: Re: [PATCH] mm/tlb: Fix use_mm() vs TLB invalidate
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+Date:   Fri, 21 Feb 2020 11:32:36 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjboPc5diXRfhgMQbDOxfJAW=8XyVmAVhAjx3Ha3W+u0Q@mail.gmail.com>
+Message-ID: <CAHk-=wjboPc5diXRfhgMQbDOxfJAW=8XyVmAVhAjx3Ha3W+u0Q@mail.gmail.com>
+Subject: Re: [PATCH RESEND v6 00/16] mm: Page fault enhancements
+To:     Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux-MM <linux-mm@kvack.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Will Deacon <will@kernel.org>
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Martin Cracauer <cracauer@cons.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Bobby Powers <bobbypowers@gmail.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Mel Gorman <mgorman@suse.de>, Hugh Dickins <hughd@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 11:22 AM Andy Lutomirski <luto@amacapital.net> wrot=
-e:
+On Thu, Feb 20, 2020 at 7:54 AM Peter Xu <peterx@redhat.com> wrote:
 >
-> In this particular case, if we actually flub this, we are very likely to =
-cause data corruption =E2=80=94 we=E2=80=99re about to do user access with =
-the wrong mm.
+> This is v6 of the series.  It is majorly a rebase to 5.6-rc2, nothing
+> else to be expected (plus some tests after the rebase).  Instead of
+> rewrite the cover letter I decided to use what we have for v5.
 
-So?
+I continue to think this is the right thing to do, and the series
+looks good to me.
 
-IF this ever triggers, it has presumably been around for decades.
+I'd love for it to get more testing, but realistically I suspect that
+being in linux-next will be the right thing.
 
-Nobody noticed.
+I've been assuming this will go through Andrew. He's not explicitly
+cc'd, though (although maybe he does read all of linux-mm and has seen
+this several times as a result).
 
-Adding a WARN_ON_ONCE() means that somebody will now notice. Good.
-
-Adding a BUG_ON() will now possibly mean that the machine is dead, and
-is not sending the bug-report to anybody.
-
-It's not going to hit, of course. But if you are 100% sure of that,
-then it shouldn't exist at all.
-
-And if you're not 100% sure of it, then it's going to be in some very
-unusual circumstances (possibly some odd driver subsystem that does
-something completely wrong - wouldn't be the first time), and the last
-thing you want to do is lose the information about it.
-
-So BUG_ON() is basically ALWAYS 100% the wrong thing to do. The
-argument that "there could be memory corruption" is complete and utter
-garbage. See above why.
-
-Stop it. Seriously.
-
-                Linus
+               Linus
