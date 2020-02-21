@@ -2,65 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6EF3167D9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 13:41:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CABE167DB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 13:47:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbgBUMlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 07:41:31 -0500
-Received: from s3.sipsolutions.net ([144.76.43.62]:59042 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727039AbgBUMlb (ORCPT
+        id S1728198AbgBUMru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 07:47:50 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:46378 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727720AbgBUMru (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 07:41:31 -0500
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.93)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1j57cU-00FGMO-BX; Fri, 21 Feb 2020 13:41:26 +0100
-Message-ID: <1cbc48003d249d3ce14941adbb32089b57573cd0.camel@sipsolutions.net>
-Subject: Re: [PATCH 09/10] cfg80211: align documentation style of
- ieee80211_iface_combination
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller <Jerome.Pouiller@silabs.com>
-Cc:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Date:   Fri, 21 Feb 2020 13:41:24 +0100
-In-Reply-To: <10411162.7U3r8zC6Ku@pc-42>
-References: <20200221115604.594035-1-Jerome.Pouiller@silabs.com>
-         <20200221115604.594035-9-Jerome.Pouiller@silabs.com>
-         <bc10669e0572d69d22ee7ca67a19c7d03bacd6ed.camel@sipsolutions.net>
-         <10411162.7U3r8zC6Ku@pc-42>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+        Fri, 21 Feb 2020 07:47:50 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01LCkwH7121888;
+        Fri, 21 Feb 2020 06:46:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582289218;
+        bh=ODcuxk3N+DCNRIpo6D8j5nN3bPu5GAFQ11AiWBsj4b0=;
+        h=From:To:CC:Subject:Date;
+        b=cJVvpNNj+XBAvpK/+GwRFzz13sExnUSkuQCbpPMWFG6ptP1fMaHkInBJwWg2abXEN
+         fGLSGHOOnWYck5mFglt/ODuAR+P5gxeKGG0vq2+9yy1hYvyjn7ytxeSrq0R7gu3inD
+         WCrnd7EuvMe1ufbJoQBTew9JdMbXqGkUJzYLByms=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01LCkwYc036861;
+        Fri, 21 Feb 2020 06:46:58 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 21
+ Feb 2020 06:46:58 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 21 Feb 2020 06:46:58 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01LCkwdo084034;
+        Fri, 21 Feb 2020 06:46:58 -0600
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH for-next v3] ASoC: tas2562: Add support for digital volume control
+Date:   Fri, 21 Feb 2020 06:41:51 -0600
+Message-ID: <20200221124151.8774-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-02-21 at 12:38 +0000, Jérôme Pouiller wrote:
-> 
-> > > -      * = 0
-> > > -      *   all beacon intervals for different interface must be same.
-> > > -      * > 0
-> > > -      *   any beacon interval for the interface part of this combination AND
-> > > -      *   GCD of all beacon intervals from beaconing interfaces of this
-> > > -      *   combination must be greater or equal to this value.
-> > 
-> > This generates the nicer output, not with bullets but as a definition
-> > list or something.
-> Indeed.
-> 
-> Unfortunately, I hasn't been able to use the same syntax in struct
-> description: if sphinx find a blank line, it considers that the rest of
-> the input is the long description of the struct.
+Add support for digital volume control.  There is no dedicated register
+for volume control but instead there are 4.  The values of the registers
+are determined with exponential floating point math.
+So a table was created with register values for 2dB step increments
+from -110dB to 0dB.
 
-So let's just leave it as is. I don't consider using the same style
-(inline or header) everywhere to be even nearly as important as the
-output :)
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
 
-johannes
+v3 - Removed volume init in codec_probe.
+
+ sound/soc/codecs/tas2562.c | 78 ++++++++++++++++++++++++++++++++++++++
+ sound/soc/codecs/tas2562.h |  6 ++-
+ 2 files changed, 82 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/tas2562.c b/sound/soc/codecs/tas2562.c
+index b2682c2360b6..d5e04030a0c1 100644
+--- a/sound/soc/codecs/tas2562.c
++++ b/sound/soc/codecs/tas2562.c
+@@ -26,6 +26,24 @@
+ #define TAS2562_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE |\
+ 			 SNDRV_PCM_FORMAT_S32_LE)
+ 
++/* DVC equation involves floating point math
++ * round(10^(volume in dB/20)*2^30)
++ * so create a lookup table for 2dB step
++ */
++static const unsigned int float_vol_db_lookup[] = {
++0x00000d43, 0x000010b2, 0x00001505, 0x00001a67, 0x00002151,
++0x000029f1, 0x000034cd, 0x00004279, 0x000053af, 0x0000695b,
++0x0000695b, 0x0000a6fa, 0x0000d236, 0x000108a4, 0x00014d2a,
++0x0001a36e, 0x00021008, 0x000298c0, 0x000344df, 0x00041d8f,
++0x00052e5a, 0x000685c8, 0x00083621, 0x000a566d, 0x000d03a7,
++0x0010624d, 0x0014a050, 0x0019f786, 0x0020b0bc, 0x0029279d,
++0x0033cf8d, 0x004139d3, 0x00521d50, 0x00676044, 0x0082248a,
++0x00a3d70a, 0x00ce4328, 0x0103ab3d, 0x0146e75d, 0x019b8c27,
++0x02061b89, 0x028c423f, 0x03352529, 0x0409c2b0, 0x05156d68,
++0x080e9f96, 0x0a24b062, 0x0cc509ab, 0x10137987, 0x143d1362,
++0x197a967f, 0x2013739e, 0x28619ae9, 0x32d64617, 0x40000000
++};
++
+ struct tas2562_data {
+ 	struct snd_soc_component *component;
+ 	struct gpio_desc *sdz_gpio;
+@@ -34,6 +52,7 @@ struct tas2562_data {
+ 	struct i2c_client *client;
+ 	int v_sense_slot;
+ 	int i_sense_slot;
++	int volume_lvl;
+ };
+ 
+ static int tas2562_set_bias_level(struct snd_soc_component *component,
+@@ -414,6 +433,50 @@ static int tas2562_dac_event(struct snd_soc_dapm_widget *w,
+ 	return 0;
+ }
+ 
++static int tas2562_volume_control_get(struct snd_kcontrol *kcontrol,
++				      struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
++	struct tas2562_data *tas2562 = snd_soc_component_get_drvdata(component);
++
++	ucontrol->value.integer.value[0] = tas2562->volume_lvl;
++	return 0;
++}
++
++static int tas2562_volume_control_put(struct snd_kcontrol *kcontrol,
++				      struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
++	struct tas2562_data *tas2562 = snd_soc_component_get_drvdata(component);
++	int ret;
++	u32 reg_val;
++
++	reg_val = float_vol_db_lookup[ucontrol->value.integer.value[0]/2];
++	ret = snd_soc_component_write(component, TAS2562_DVC_CFG4,
++				      (reg_val & 0xff));
++	if (ret)
++		return ret;
++	ret = snd_soc_component_write(component, TAS2562_DVC_CFG3,
++				      ((reg_val >> 8) & 0xff));
++	if (ret)
++		return ret;
++	ret = snd_soc_component_write(component, TAS2562_DVC_CFG2,
++				      ((reg_val >> 16) & 0xff));
++	if (ret)
++		return ret;
++	ret = snd_soc_component_write(component, TAS2562_DVC_CFG1,
++				      ((reg_val >> 24) & 0xff));
++	if (ret)
++		return ret;
++
++	tas2562->volume_lvl = ucontrol->value.integer.value[0];
++
++	return ret;
++}
++
++/* Digital Volume Control. From 0 dB to -110 dB in 1 dB steps */
++static const DECLARE_TLV_DB_SCALE(dvc_tlv, -11000, 100, 0);
++
+ static DECLARE_TLV_DB_SCALE(tas2562_dac_tlv, 850, 50, 0);
+ 
+ static const struct snd_kcontrol_new isense_switch =
+@@ -427,6 +490,17 @@ static const struct snd_kcontrol_new vsense_switch =
+ static const struct snd_kcontrol_new tas2562_snd_controls[] = {
+ 	SOC_SINGLE_TLV("Amp Gain Volume", TAS2562_PB_CFG1, 0, 0x1c, 0,
+ 		       tas2562_dac_tlv),
++	{
++		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
++		.name = "Digital Volume Control",
++		.index = 0,
++		.tlv.p = dvc_tlv,
++		.access = SNDRV_CTL_ELEM_ACCESS_TLV_READ | SNDRV_CTL_ELEM_ACCESS_READWRITE,
++		.info = snd_soc_info_volsw,
++		.get = tas2562_volume_control_get,
++		.put = tas2562_volume_control_put,
++		.private_value = SOC_SINGLE_VALUE(TAS2562_DVC_CFG1, 0, 110, 0, 0) ,
++	},
+ };
+ 
+ static const struct snd_soc_dapm_widget tas2562_dapm_widgets[] = {
+@@ -517,6 +591,10 @@ static const struct reg_default tas2562_reg_defaults[] = {
+ 	{ TAS2562_PB_CFG1, 0x20 },
+ 	{ TAS2562_TDM_CFG0, 0x09 },
+ 	{ TAS2562_TDM_CFG1, 0x02 },
++	{ TAS2562_DVC_CFG1, 0x40 },
++	{ TAS2562_DVC_CFG2, 0x40 },
++	{ TAS2562_DVC_CFG3, 0x00 },
++	{ TAS2562_DVC_CFG4, 0x00 },
+ };
+ 
+ static const struct regmap_config tas2562_regmap_config = {
+diff --git a/sound/soc/codecs/tas2562.h b/sound/soc/codecs/tas2562.h
+index 6f55ebcf19ea..28e75fc431d0 100644
+--- a/sound/soc/codecs/tas2562.h
++++ b/sound/soc/codecs/tas2562.h
+@@ -35,8 +35,10 @@
+ #define TAS2562_REV_ID		TAS2562_REG(0, 0x7d)
+ 
+ /* Page 2 */
+-#define TAS2562_DVC_CFG1	TAS2562_REG(2, 0x01)
+-#define TAS2562_DVC_CFG2	TAS2562_REG(2, 0x02)
++#define TAS2562_DVC_CFG1	TAS2562_REG(2, 0x0c)
++#define TAS2562_DVC_CFG2	TAS2562_REG(2, 0x0d)
++#define TAS2562_DVC_CFG3	TAS2562_REG(2, 0x0e)
++#define TAS2562_DVC_CFG4	TAS2562_REG(2, 0x0f)
+ 
+ #define TAS2562_RESET	BIT(0)
+ 
+-- 
+2.25.0
 
