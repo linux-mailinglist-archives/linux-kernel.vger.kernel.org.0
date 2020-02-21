@@ -2,148 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DD60166DD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:37:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73AD3166DBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:31:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729686AbgBUDhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 22:37:00 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:59179 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729632AbgBUDhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 22:37:00 -0500
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 48Nxw96pvRz9sS3; Fri, 21 Feb 2020 14:36:57 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1582256217;
-        bh=023zimJNppk3UBUgHQ61G7caK9h50x5C45Mcz1ME6eA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e3zdRwhjeJUcGi8UjR/bkaGU7iqvokZ0xSIereTY15GrOforn7fnCxaUAuHbxiZM4
-         emwuWpBssUMeLJe/wGXWIiu66flWbyJ4cJ4MGXqogR27W3pz7uFchHhFUzLrqu3Y2+
-         PplWrOzzPS2DH7Rn+fVEvIcvBGYlpQZH/yJb1Ohw=
-Date:   Fri, 21 Feb 2020 14:29:07 +1100
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Ram Pai <linuxram@us.ibm.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>, linux-s390@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        Michael Mueller <mimu@linux.ibm.com>
-Subject: Re: [PATCH 2/2] virtio: let virtio use DMA API when guest RAM is
- protected
-Message-ID: <20200221032907.GD2298@umbus.fritz.box>
-References: <20200220160606.53156-1-pasic@linux.ibm.com>
- <20200220160606.53156-3-pasic@linux.ibm.com>
- <20200220154904-mutt-send-email-mst@kernel.org>
- <20200221011748.GE5713@oc0525413822.ibm.com>
+        id S1729689AbgBUDaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 22:30:21 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45130 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729280AbgBUDaV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 22:30:21 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4z16-00G8es-2v; Fri, 21 Feb 2020 03:30:16 +0000
+Date:   Fri, 21 Feb 2020 03:30:16 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC] regset ->get() API
+Message-ID: <20200221033016.GV23230@ZenIV.linux.org.uk>
+References: <20200217183340.GI23230@ZenIV.linux.org.uk>
+ <CAHk-=wivKU1eP8ir4q5xEwOV0hsomFz7DMtiAot__X2zU-yGog@mail.gmail.com>
+ <20200220224707.GQ23230@ZenIV.linux.org.uk>
+ <CAHk-=wiKs7Q2DbP6kk8JQksb0nhUvAs2wO5cNdWirNEc3CM-YQ@mail.gmail.com>
+ <20200220232929.GU23230@ZenIV.linux.org.uk>
+ <CAHk-=whdat=wfwKh5rF3MuCbTxhcFwaGqmdsCXXv=H=kDERTOw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RhUH2Ysw6aD5utA4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200221011748.GE5713@oc0525413822.ibm.com>
+In-Reply-To: <CAHk-=whdat=wfwKh5rF3MuCbTxhcFwaGqmdsCXXv=H=kDERTOw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 20, 2020 at 03:31:56PM -0800, Linus Torvalds wrote:
+> On Thu, Feb 20, 2020 at 3:29 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > We do know that caller does not want more than the value it has passed in
+> > 'size' argument, though.
+> 
+> Ok, fair enough. That's probably a good way to handle the "allocate in
+> the caller".
+> 
+> So then I have no issues with that approach.
 
---RhUH2Ysw6aD5utA4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Turns out that "nobody uses those for userland destinations after that" is not
+quite right - we have this:
+int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+{
+        struct task_struct *tsk = current;
+        int ia32_fxstate = (buf != buf_fx);
+        int ret;
 
-On Thu, Feb 20, 2020 at 05:17:48PM -0800, Ram Pai wrote:
-> On Thu, Feb 20, 2020 at 03:55:14PM -0500, Michael S. Tsirkin wrote:
-> > On Thu, Feb 20, 2020 at 05:06:06PM +0100, Halil Pasic wrote:
-> > > Currently the advanced guest memory protection technologies (AMD SEV,
-> > > powerpc secure guest technology and s390 Protected VMs) abuse the
-> > > VIRTIO_F_IOMMU_PLATFORM flag to make virtio core use the DMA API, whi=
-ch
-> > > is in turn necessary, to make IO work with guest memory protection.
-> > >=20
-> > > But VIRTIO_F_IOMMU_PLATFORM a.k.a. VIRTIO_F_ACCESS_PLATFORM is really=
- a
-> > > different beast: with virtio devices whose implementation runs on an =
-SMP
-> > > CPU we are still fine with doing all the usual optimizations, it is j=
-ust
-> > > that we need to make sure that the memory protection mechanism does n=
-ot
-> > > get in the way. The VIRTIO_F_ACCESS_PLATFORM mandates more work on the
-> > > side of the guest (and possibly he host side as well) than we actually
-> > > need.
-> > >=20
-> > > An additional benefit of teaching the guest to make the right decision
-> > > (and use DMA API) on it's own is: removing the need, to mandate speci=
-al
-> > > VM configuration for guests that may run with protection. This is
-> > > especially interesting for s390 as VIRTIO_F_IOMMU_PLATFORM pushes all
-> > > the virtio control structures into the first 2G of guest memory:
-> > > something we don't necessarily want to do per-default.
-> > >=20
-> > > Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-> > > Tested-by: Ram Pai <linuxram@us.ibm.com>
-> > > Tested-by: Michael Mueller <mimu@linux.ibm.com>
-> >=20
-> > This might work for you but it's fragile, since without
-> > VIRTIO_F_ACCESS_PLATFORM hypervisor assumes it gets
-> > GPA's, not DMA addresses.
-> >=20
-> >=20
-> >=20
-> > IOW this looks like another iteration of:
-> >=20
-> > 	virtio: Support encrypted memory on powerpc secure guests
-> >=20
-> > which I was under the impression was abandoned as unnecessary.
->=20
-> It has been abondoned on powerpc. We enabled VIRTIO_F_ACCESS_PLATFORM;
-> by default, flag on powerpc.
+        ia32_fxstate &= (IS_ENABLED(CONFIG_X86_32) ||
+                         IS_ENABLED(CONFIG_IA32_EMULATION));
 
-Uh... we haven't yet, though we're working on it.
+        if (!access_ok(buf, size))
+                return -EACCES;
 
-> We would like to enable secure guests on powerpc without this flag
-> aswell enabled, but past experience has educated us that its not a easy
-> path.  However if Halil makes some inroads in this path for s390, we
-> will like to support him.
->=20
->=20
-> RP
->=20
+        if (!static_cpu_has(X86_FEATURE_FPU))
+                return fpregs_soft_get(current, NULL, 0,
+                        sizeof(struct user_i387_ia32_struct), NULL,
+                        (struct _fpstate_32 __user *) buf) ? -1 : 1;
 
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
+... with fpregs_soft_get() behing the shared helper that does, in turn,
+call user_regset_copyout().  OTOH, _that_ sure as hell is "fill local
+variable, then copy_to_user()" case.
 
---RhUH2Ysw6aD5utA4
-Content-Type: application/pgp-signature; name="signature.asc"
+Sigh...  Wish we had a quick way to do something along the lines of
+"find all callchains leading to <function> that would not come via
+-><method>" - doing that manually stank to high heaven ;-/  And in
+cases like that nothing along the lines of "simulate a build" is
+practical - call chains are all over arch/*, and config-sensitive
+as well (32bit vs. 64bit is only beginning of that fun).  Thankfully,
+none of those involved token-pasting...
 
------BEGIN PGP SIGNATURE-----
+Anyway, one observation that came out of that is that we might
+be better off with signature change done first; less boilerplate
+that way, contrary to what I expected.
 
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl5PToIACgkQbDjKyiDZ
-s5L9mw//e6UlWdIjS0sVfS3LR0dfVU8WuWvcWGPlHsAvqf8ahlSYAPlyL8YHIHwe
-kntSk9WXkEn3jRCsD+nHK+dAu10C1hiGl18RH+S0yisKRnH+WabU1oesIh5cDwaV
-r+bZsU3HPaTwHS83yVNRYjoic3ZjV97karqDYGMHSnWWbVqCDZDnREwxG3VE1jm7
-7sdJak8rTIZ1AUezQwSKgfIy4lkCGVoaUC9ZKIvdWVIHywQvtXDn2ikbGENaY3E3
-MaU7NicXVogmy+beOzkOWNst0Xfm6N+oGHw2O/8zRpsmk95YAg84UGYEg4GfTEKE
-UGjNeeMDAL5lMYRbqdbzBve+wGmgnyThjGwt3PeivwATqEiL3j8AmOelUmQ9SY2y
-qPOTzprDVU+Vu0A+6NHBPuzvhFZr5dVpD4n5kF+TeH6lp+m4GC9YCIN6hT6NE+DG
-/yc/2QUJk14otNc/h7Nk+RqVm1+ZORWoDqiISB/M3U2t3kaai0hczJ6q2tDjl1pJ
-cDx9sX8mVAhyOT3LSxvfOrRDsUwyzuUjrqJCh9gnXv073cc8E6VnFb7g+Cj+NUYP
-tbh3wOC7KKoovvfI4x2YrPNpkDSAOE91h5gaM1sFtmsB0leF77mrbDAwncZHC5C8
-2EWMVf3S2sJLq9s1CulJ8Zc27iCG9F/71Bd88Nitf2HIvFqDSZs=
-=5mIy
------END PGP SIGNATURE-----
+Alternatively, we could introduce a new method, with one-by-one
+conversion to it.  Hmm...
+	int (*get2)(struct task_struct *target,
+		    const struct user_regset *regset,
+		    struct membuf to);
+returning -E... on error and amount left unfilled on success, perhaps?
+That seems to generate decent code and is pretty easy on the instances,
+especially if membuf_write() et.al. are made to return to->left...
+Things like
 
---RhUH2Ysw6aD5utA4--
+static int evr_get(struct task_struct *target, const struct user_regset *regset,
+                   struct membuf to)
+{
+        flush_spe_to_thread(target);
+
+        membuf_write(&to, &target->thread.evr, sizeof(target->thread.evr));
+
+        BUILD_BUG_ON(offsetof(struct thread_struct, acc) + sizeof(u64) !=
+                     offsetof(struct thread_struct, spefscr));
+
+        return membuf_write(&to, &target->thread.acc, sizeof(u64));
+}
+
+in place of current
+
+static int evr_get(struct task_struct *target, const struct user_regset *regset,
+                   unsigned int pos, unsigned int count,
+                   void *kbuf, void __user *ubuf)
+{
+        int ret;
+
+        flush_spe_to_thread(target);
+
+        ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
+                                  &target->thread.evr,
+                                  0, sizeof(target->thread.evr));
+
+        BUILD_BUG_ON(offsetof(struct thread_struct, acc) + sizeof(u64) !=
+                     offsetof(struct thread_struct, spefscr));
+
+        if (!ret)
+                ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
+                                          &target->thread.acc,
+                                          sizeof(target->thread.evr), -1);
+
+        return ret;
+}
+
+and
+
+static int vr_get(struct task_struct *target, const struct user_regset *regset,
+                  struct membuf to)
+{
+	union {
+		elf_vrreg_t reg;
+		u32 word;
+	} vrsave;
+
+        flush_altivec_to_thread(target);
+
+        BUILD_BUG_ON(offsetof(struct thread_vr_state, vscr) !=
+                     offsetof(struct thread_vr_state, vr[32]));
+
+        membuf_write(&to, &target->thread.vr_state, 33 * sizeof(vector128));
+	/*
+	 * Copy out only the low-order word of vrsave.
+	 */
+	memset(&vrsave, 0, sizeof(vrsave));
+	vrsave.word = target->thread.vrsave;
+
+	return membuf_write(&to, &vrsave, sizeof(vrsave);
+}
+
+instead of
+
+static int vr_get(struct task_struct *target, const struct user_regset *regset,
+                  unsigned int pos, unsigned int count,
+                  void *kbuf, void __user *ubuf)
+{
+        int ret;
+
+        flush_altivec_to_thread(target);
+
+        BUILD_BUG_ON(offsetof(struct thread_vr_state, vscr) !=
+                     offsetof(struct thread_vr_state, vr[32]));
+
+        ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
+                                  &target->thread.vr_state, 0,
+                                  33 * sizeof(vector128));
+        if (!ret) {
+                /*
+                 * Copy out only the low-order word of vrsave.
+                 */
+                int start, end;
+                union {
+                        elf_vrreg_t reg;
+                        u32 word;
+                } vrsave;
+                memset(&vrsave, 0, sizeof(vrsave));
+
+                vrsave.word = target->thread.vrsave;
+
+                start = 33 * sizeof(vector128);
+                end = start + sizeof(vrsave);
+                ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf, &vrsave,
+                                          start, end);
+        }
+
+        return ret;
+}
