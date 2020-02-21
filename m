@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90B74167812
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:46:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 499A71677F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:46:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732324AbgBUIqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:46:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47416 "EHLO mail.kernel.org"
+        id S1729633AbgBUHux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:50:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727312AbgBUHub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:50:31 -0500
+        id S1729602AbgBUHuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:50:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86F78208C4;
-        Fri, 21 Feb 2020 07:50:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBA5724656;
+        Fri, 21 Feb 2020 07:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271431;
-        bh=wDgTXAYqrHF69lKyEGtAFpaIPFToVjWsBRScPMs0/Kg=;
+        s=default; t=1582271446;
+        bh=fQQVjtG7RZ+eg+2c4fc2wZIBf8CzAv3R5TM2kKEdhPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A+XaFLRkLOgKHaqI3okcsajCnuIjGNlihJ98ZUjCYA0PxRgbfowVDGqHrfj+9K/Wc
-         6OOnDdRkZvH6+P2Sf99tPBpJDOS12zgbyK7drN0MD23CIDzXLMEJB+3QBxwkixNYoe
-         0m5qnKEboi91s0fFtMnRFlqHQ9mPJRai21crhwQA=
+        b=ch9EGBE3VH18TIUwvWwzJwb2unSAKDpB5VNNogczhiKssq4eFwLSVX3YMaRQ2ygWu
+         6vvjd4A5gOOhaQlKEIeEUinwFqdqoKiR5CuK+iih7KqutHO8iug1LfYXBdpioBHVez
+         15qza5048C+j85gwC0btGHhvQfiFOAYoBYMtRCto=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Elia Geretto <elia.f.geretto@gmail.com>,
-        Bob Moore <robert.moore@intel.com>,
-        Erik Kaneda <erik.kaneda@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 164/399] ACPICA: Disassembler: create buffer fields in ACPI_PARSE_LOAD_PASS1
-Date:   Fri, 21 Feb 2020 08:38:09 +0100
-Message-Id: <20200221072418.537695074@linuxfoundation.org>
+        stable@vger.kernel.org, Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 170/399] drm/mediatek: handle events when enabling/disabling crtc
+Date:   Fri, 21 Feb 2020 08:38:15 +0100
+Message-Id: <20200221072419.180515597@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -46,84 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Erik Kaneda <erik.kaneda@intel.com>
+From: Bibby Hsieh <bibby.hsieh@mediatek.com>
 
-[ Upstream commit 5ddbd77181dfca61b16d2e2222382ea65637f1b9 ]
+[ Upstream commit 411f5c1eacfebb1f6e40b653d29447cdfe7282aa ]
 
-ACPICA commit 29cc8dbc5463a93625bed87d7550a8bed8913bf4
+The driver currently handles vblank events only when updating planes on
+an already enabled CRTC. The atomic update API however allows requesting
+an event when enabling or disabling a CRTC. This currently leads to
+event objects being leaked in the kernel and to events not being sent
+out. Fix it.
 
-create_buffer_field is a deferred op that is typically processed in
-load pass 2. However, disassembly of control method contents walk the
-parse tree with ACPI_PARSE_LOAD_PASS1 and AML_CREATE operators are
-processed in a later walk. This is a problem when there is a control
-method that has the same name as the AML_CREATE object. In this case,
-any use of the name segment will be detected as a method call rather
-than a reference to a buffer field. If this is detected as a method
-call, it can result in a mal-formed parse tree if the control methods
-have parameters.
-
-This change in processing AML_CREATE ops earlier solves this issue by
-inserting the named object in the ACPI namespace so that references
-to this name would be detected as a name string rather than a method
-call.
-
-Link: https://github.com/acpica/acpica/commit/29cc8dbc
-Reported-by: Elia Geretto <elia.f.geretto@gmail.com>
-Tested-by: Elia Geretto <elia.f.geretto@gmail.com>
-Signed-off-by: Bob Moore <robert.moore@intel.com>
-Signed-off-by: Erik Kaneda <erik.kaneda@intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpica/dsfield.c |  2 +-
- drivers/acpi/acpica/dswload.c | 21 +++++++++++++++++++++
- 2 files changed, 22 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/acpi/acpica/dsfield.c b/drivers/acpi/acpica/dsfield.c
-index faa38a22263ad..ae713d746c8b8 100644
---- a/drivers/acpi/acpica/dsfield.c
-+++ b/drivers/acpi/acpica/dsfield.c
-@@ -243,7 +243,7 @@ cleanup:
-  * FUNCTION:    acpi_ds_get_field_names
-  *
-  * PARAMETERS:  info            - create_field info structure
-- *  `           walk_state      - Current method state
-+ *              walk_state      - Current method state
-  *              arg             - First parser arg for the field name list
-  *
-  * RETURN:      Status
-diff --git a/drivers/acpi/acpica/dswload.c b/drivers/acpi/acpica/dswload.c
-index c88fd31208a5b..4bcf15bf03ded 100644
---- a/drivers/acpi/acpica/dswload.c
-+++ b/drivers/acpi/acpica/dswload.c
-@@ -410,6 +410,27 @@ acpi_status acpi_ds_load1_end_op(struct acpi_walk_state *walk_state)
- 	ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH, "Op=%p State=%p\n", op,
- 			  walk_state));
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 3305a94fc9305..4132cd114a037 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -328,6 +328,7 @@ err_pm_runtime_put:
+ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ {
+ 	struct drm_device *drm = mtk_crtc->base.dev;
++	struct drm_crtc *crtc = &mtk_crtc->base;
+ 	int i;
  
-+	/*
-+	 * Disassembler: handle create field operators here.
-+	 *
-+	 * create_buffer_field is a deferred op that is typically processed in load
-+	 * pass 2. However, disassembly of control method contents walk the parse
-+	 * tree with ACPI_PARSE_LOAD_PASS1 and AML_CREATE operators are processed
-+	 * in a later walk. This is a problem when there is a control method that
-+	 * has the same name as the AML_CREATE object. In this case, any use of the
-+	 * name segment will be detected as a method call rather than a reference
-+	 * to a buffer field.
-+	 *
-+	 * This earlier creation during disassembly solves this issue by inserting
-+	 * the named object in the ACPI namespace so that references to this name
-+	 * would be a name string rather than a method call.
-+	 */
-+	if ((walk_state->parse_flags & ACPI_PARSE_DISASSEMBLE) &&
-+	    (walk_state->op_info->flags & AML_CREATE)) {
-+		status = acpi_ds_create_buffer_field(op, walk_state);
-+		return_ACPI_STATUS(status);
-+	}
+ 	DRM_DEBUG_DRIVER("%s\n", __func__);
+@@ -353,6 +354,13 @@ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ 	mtk_disp_mutex_unprepare(mtk_crtc->mutex);
+ 
+ 	pm_runtime_put(drm->dev);
 +
- 	/* We are only interested in opcodes that have an associated name */
++	if (crtc->state->event && !crtc->state->active) {
++		spin_lock_irq(&crtc->dev->event_lock);
++		drm_crtc_send_vblank_event(crtc, crtc->state->event);
++		crtc->state->event = NULL;
++		spin_unlock_irq(&crtc->dev->event_lock);
++	}
+ }
  
- 	if (!(walk_state->op_info->flags & (AML_NAMED | AML_FIELD))) {
+ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
 -- 
 2.20.1
 
