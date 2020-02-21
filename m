@@ -2,225 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B7B01687E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D10F51687F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:55:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728480AbgBUTx1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 14:53:27 -0500
-Received: from muru.com ([72.249.23.125]:56940 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728019AbgBUTxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 14:53:25 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 5DCD8807E;
-        Fri, 21 Feb 2020 19:54:07 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-omap@vger.kernel.org
-Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Adam Ford <aford173@gmail.com>,
-        =?UTF-8?q?Andr=C3=A9=20Hentschel?= <nerv@dawncrow.de>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH 7/7] bus: ti-sysc: Handle module unlock quirk needed for some RTC
-Date:   Fri, 21 Feb 2020 11:52:56 -0800
-Message-Id: <20200221195256.54016-8-tony@atomide.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221195256.54016-1-tony@atomide.com>
-References: <20200221195256.54016-1-tony@atomide.com>
+        id S1726823AbgBUTzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 14:55:55 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44294 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbgBUTzz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 14:55:55 -0500
+Received: by mail-wr1-f68.google.com with SMTP id m16so3336520wrx.11
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 11:55:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/RkItNieDgV0spCBrAvgEKW6jVdvnCXvHYuZAXnr8OA=;
+        b=x5u940o4PeMZz2zVQ/GgLDPvzLJ6lEY39zGpB6qUtCALbWWKmQaVV3Y3/YnyXXOW4q
+         wz98PZAHt6fk9wghSdnefuCgGUaxGVKrVYqf2hxKyBzO77vsiPIlqBDmrDh7XNgoFFok
+         W8k1IeN+CgHIlCXZMyBtbWARspburRc0CAe3AtIO78A3BNELLFeh/r22R9UZja2npkHR
+         KLCC0KryrADvmUm8J5b7HXXWJpeWRK+jMDJn7C1cE+TxpqUfpevGO5EKtWObGYp+97Si
+         daBjhDePFtR5sLz4BDDshyr+KTaS+pqcYssnMGixj3kj/VhFvMLeFfKHBvbLqcCSlsbW
+         UOkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/RkItNieDgV0spCBrAvgEKW6jVdvnCXvHYuZAXnr8OA=;
+        b=NM2hrTMBdqc6FepDqp9mz+afKuY9pdjfmhPM/haynCenD153PD/tB33CJ57SOyETk2
+         tGmQaEsnikTX8AUaT758TI0oWmawnsffrRHzGLw30ACnJ1gSyoBEIpmeIIz6lHMgx6fH
+         iQskUeuMR6e2FJfacUKDVzx8iqGorwep35Jfvlaqj7M0vn1uvo5b8Bjzc9EHk2a0TxW3
+         7lBtBzb1GscQFFX/5secV6rHPTJlCj6WNCgK3t5oyQp5f0248g9P9xR4qIB3G6CSYqpo
+         1QBaXq4xCe5njMdDsxhRforJQUhbzpYE+D0I9asGXFGyHWF+JlH4xsPPRw8tx75Qe7Lt
+         80nQ==
+X-Gm-Message-State: APjAAAWf/eCuLGfKb5Z4R1suCqVbiTrXLGzMhkPpWkULL4YFX/11R+Br
+        nr8Uer1lwmUv6ByWOmePaHbhjg==
+X-Google-Smtp-Source: APXvYqzuKtU50Hh3qFOFhMh2kC8UV6DBRqImeOmDnHM6EvrvnQ2IZngIOzQKoWMqRuLAwslEHRLoXA==
+X-Received: by 2002:a5d:4acb:: with SMTP id y11mr21913792wrs.111.1582314952493;
+        Fri, 21 Feb 2020 11:55:52 -0800 (PST)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id y12sm5130730wmj.6.2020.02.21.11.55.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 11:55:51 -0800 (PST)
+Date:   Fri, 21 Feb 2020 20:55:49 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     catalin.marinas@arm.com, davem@davemloft.net,
+        herbert@gondor.apana.org.au, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] crypto: arm64: CE: implement export/import
+Message-ID: <20200221195549.GA29499@Red>
+References: <1582128037-18644-1-git-send-email-clabbe@baylibre.com>
+ <20200219181654.GB2312@sol.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200219181654.GB2312@sol.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RTC modules on am3 and am4 need quirk handling to unlock and lock
-them for reset so let's add the quirk handling based on what we already
-have for legacy platform data. In later patches we will simply drop the
-RTC related platform data and the old quirk handling.
+On Wed, Feb 19, 2020 at 10:16:54AM -0800, Eric Biggers wrote:
+> On Wed, Feb 19, 2020 at 04:00:37PM +0000, Corentin Labbe wrote:
+> > When an ahash algorithm fallback to another ahash and that fallback is
+> > shaXXX-CE, doing export/import lead to error like this:
+> > alg: ahash: sha1-sun8i-ce export() overran state buffer on test vector 0, cfg=\"import/export\"
+> > 
+> > This is due to the descsize of shaxxx-ce larger than struct shaxxx_state off by an u32.
+> > For fixing this, let's implement export/import which rip the finalize
+> > variant instead of using generic export/import.
+> > 
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >  arch/arm64/crypto/sha1-ce-glue.c | 20 ++++++++++++++++++++
+> >  arch/arm64/crypto/sha2-ce-glue.c | 23 +++++++++++++++++++++++
+> >  2 files changed, 43 insertions(+)
+> > 
+> > diff --git a/arch/arm64/crypto/sha1-ce-glue.c b/arch/arm64/crypto/sha1-ce-glue.c
+> > index 63c875d3314b..dc44d48415cd 100644
+> > --- a/arch/arm64/crypto/sha1-ce-glue.c
+> > +++ b/arch/arm64/crypto/sha1-ce-glue.c
+> > @@ -91,12 +91,32 @@ static int sha1_ce_final(struct shash_desc *desc, u8 *out)
+> >  	return sha1_base_finish(desc, out);
+> >  }
+> >  
+> > +static int sha1_ce_export(struct shash_desc *desc, void *out)
+> > +{
+> > +	struct sha1_ce_state *sctx = shash_desc_ctx(desc);
+> > +
+> > +	memcpy(out, sctx, sizeof(struct sha1_state));
+> > +	return 0;
+> > +}
+> > +
+> > +static int sha1_ce_import(struct shash_desc *desc, const void *in)
+> > +{
+> > +	struct sha1_ce_state *sctx = shash_desc_ctx(desc);
+> > +
+> > +	memcpy(sctx, in, sizeof(struct sha1_state));
+> > +	sctx->finalize = 0;
+> > +	return 0;
+> > +}
+> 
+> Can you use '&sctx->sst' instead of 'sctx' so that we aren't relying on the
+> 'struct sha1_state' being located at the beginning of the struct?
+> 
+> Likewise for SHA-2.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/bus/ti-sysc.c                 | 74 ++++++++++++++++++++++++---
- include/linux/platform_data/ti-sysc.h |  1 +
- 2 files changed, 69 insertions(+), 6 deletions(-)
+Yes, I will do that, it is better.
+thanks
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -110,6 +110,8 @@ static const char * const clock_names[SYSC_MAX_CLOCKS] = {
-  * @reset_done_quirk: module specific reset done quirk
-  * @module_enable_quirk: module specific enable quirk
-  * @module_disable_quirk: module specific disable quirk
-+ * @module_unlock_quirk: module specific sysconfig unlock quirk
-+ * @module_lock_quirk: module specific sysconfig lock quirk
-  */
- struct sysc {
- 	struct device *dev;
-@@ -137,6 +139,8 @@ struct sysc {
- 	void (*reset_done_quirk)(struct sysc *sysc);
- 	void (*module_enable_quirk)(struct sysc *sysc);
- 	void (*module_disable_quirk)(struct sysc *sysc);
-+	void (*module_unlock_quirk)(struct sysc *sysc);
-+	void (*module_lock_quirk)(struct sysc *sysc);
- };
- 
- static void sysc_parse_dts_quirks(struct sysc *ddata, struct device_node *np,
-@@ -896,6 +900,22 @@ static void sysc_show_registers(struct sysc *ddata)
- 		buf);
- }
- 
-+/**
-+ * sysc_write_sysconfig - handle sysconfig quirks for register write
-+ * @ddata: device driver data
-+ * @value: register value
-+ */
-+static void sysc_write_sysconfig(struct sysc *ddata, u32 value)
-+{
-+	if (ddata->module_unlock_quirk)
-+		ddata->module_unlock_quirk(ddata);
-+
-+	sysc_write(ddata, ddata->offsets[SYSC_SYSCONFIG], value);
-+
-+	if (ddata->module_lock_quirk)
-+		ddata->module_lock_quirk(ddata);
-+}
-+
- #define SYSC_IDLE_MASK	(SYSC_NR_IDLEMODES - 1)
- #define SYSC_CLOCACT_ICK	2
- 
-@@ -942,7 +962,7 @@ static int sysc_enable_module(struct device *dev)
- 
- 	reg &= ~(SYSC_IDLE_MASK << regbits->sidle_shift);
- 	reg |= best_mode << regbits->sidle_shift;
--	sysc_write(ddata, ddata->offsets[SYSC_SYSCONFIG], reg);
-+	sysc_write_sysconfig(ddata, reg);
- 
- set_midle:
- 	/* Set MIDLE mode */
-@@ -961,14 +981,14 @@ static int sysc_enable_module(struct device *dev)
- 
- 	reg &= ~(SYSC_IDLE_MASK << regbits->midle_shift);
- 	reg |= best_mode << regbits->midle_shift;
--	sysc_write(ddata, ddata->offsets[SYSC_SYSCONFIG], reg);
-+	sysc_write_sysconfig(ddata, reg);
- 
- set_autoidle:
- 	/* Autoidle bit must enabled separately if available */
- 	if (regbits->autoidle_shift >= 0 &&
- 	    ddata->cfg.sysc_val & BIT(regbits->autoidle_shift)) {
- 		reg |= 1 << regbits->autoidle_shift;
--		sysc_write(ddata, ddata->offsets[SYSC_SYSCONFIG], reg);
-+		sysc_write_sysconfig(ddata, reg);
- 	}
- 
- 	if (ddata->module_enable_quirk)
-@@ -1026,7 +1046,7 @@ static int sysc_disable_module(struct device *dev)
- 
- 	reg &= ~(SYSC_IDLE_MASK << regbits->midle_shift);
- 	reg |= best_mode << regbits->midle_shift;
--	sysc_write(ddata, ddata->offsets[SYSC_SYSCONFIG], reg);
-+	sysc_write_sysconfig(ddata, reg);
- 
- set_sidle:
- 	/* Set SIDLE mode */
-@@ -1049,7 +1069,7 @@ static int sysc_disable_module(struct device *dev)
- 	if (regbits->autoidle_shift >= 0 &&
- 	    ddata->cfg.sysc_val & BIT(regbits->autoidle_shift))
- 		reg |= 1 << regbits->autoidle_shift;
--	sysc_write(ddata, ddata->offsets[SYSC_SYSCONFIG], reg);
-+	sysc_write_sysconfig(ddata, reg);
- 
- 	return 0;
- }
-@@ -1301,6 +1321,8 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
- 	SYSC_QUIRK("gpu", 0x50000000, 0x14, -ENODEV, -ENODEV, 0x00010201, 0xffffffff, 0),
- 	SYSC_QUIRK("gpu", 0x50000000, 0xfe00, 0xfe10, -ENODEV, 0x40000000 , 0xffffffff,
- 		   SYSC_MODULE_QUIRK_SGX),
-+	SYSC_QUIRK("rtc", 0, 0x74, 0x78, -ENODEV, 0x4eb01908, 0xffff00f0,
-+		   SYSC_MODULE_QUIRK_RTC_UNLOCK),
- 	SYSC_QUIRK("usb_otg_hs", 0, 0x400, 0x404, 0x408, 0x00000050,
- 		   0xffffffff, SYSC_QUIRK_SWSUP_SIDLE | SYSC_QUIRK_SWSUP_MSTANDBY),
- 	SYSC_QUIRK("usb_otg_hs", 0, 0, 0x10, -ENODEV, 0x4ea2080d, 0xffffffff,
-@@ -1356,7 +1378,6 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
- 	SYSC_QUIRK("slimbus", 0, 0, 0x10, -ENODEV, 0x40002903, 0xffffffff, 0),
- 	SYSC_QUIRK("spinlock", 0, 0, 0x10, -ENODEV, 0x50020000, 0xffffffff, 0),
- 	SYSC_QUIRK("rng", 0, 0x1fe0, 0x1fe4, -ENODEV, 0x00000020, 0xffffffff, 0),
--	SYSC_QUIRK("rtc", 0, 0x74, 0x78, -ENODEV, 0x4eb01908, 0xffff00f0, 0),
- 	SYSC_QUIRK("timer32k", 0, 0, 0x4, -ENODEV, 0x00000060, 0xffffffff, 0),
- 	SYSC_QUIRK("usbhstll", 0, 0, 0x10, 0x14, 0x00000004, 0xffffffff, 0),
- 	SYSC_QUIRK("usbhstll", 0, 0, 0x10, 0x14, 0x00000008, 0xffffffff, 0),
-@@ -1478,6 +1499,40 @@ static void sysc_post_reset_quirk_i2c(struct sysc *ddata)
- 	sysc_clk_quirk_i2c(ddata, true);
- }
- 
-+/* RTC on am3 and 4 needs to be unlocked and locked for sysconfig */
-+static void sysc_quirk_rtc(struct sysc *ddata, bool lock)
-+{
-+	u32 val, kick0_val = 0, kick1_val = 0;
-+	unsigned long flags;
-+	int error;
-+
-+	if (!lock) {
-+		kick0_val = 0x83e70b13;
-+		kick1_val = 0x95a4f1e0;
-+	}
-+
-+	local_irq_save(flags);
-+	/* RTC_STATUS BUSY bit may stay active for 1/32768 seconds (~30 usec) */
-+	error = readl_poll_timeout(ddata->module_va + 0x44, val,
-+				   !(val & BIT(0)), 100, 50);
-+	if (error)
-+		dev_warn(ddata->dev, "rtc busy timeout\n");
-+	/* Now we have ~15 microseconds to read/write various registers */
-+	sysc_write(ddata, 0x6c, kick0_val);
-+	sysc_write(ddata, 0x70, kick1_val);
-+	local_irq_restore(flags);
-+}
-+
-+static void sysc_module_unlock_quirk_rtc(struct sysc *ddata)
-+{
-+	sysc_quirk_rtc(ddata, false);
-+}
-+
-+static void sysc_module_lock_quirk_rtc(struct sysc *ddata)
-+{
-+	sysc_quirk_rtc(ddata, true);
-+}
-+
- /* 36xx SGX needs a quirk for to bypass OCP IPG interrupt logic */
- static void sysc_module_enable_quirk_sgx(struct sysc *ddata)
- {
-@@ -1532,6 +1587,13 @@ static void sysc_init_module_quirks(struct sysc *ddata)
- 	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_AESS)
- 		ddata->module_enable_quirk = sysc_module_enable_quirk_aess;
- 
-+	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_RTC_UNLOCK) {
-+		ddata->module_unlock_quirk = sysc_module_unlock_quirk_rtc;
-+		ddata->module_lock_quirk = sysc_module_lock_quirk_rtc;
-+
-+		return;
-+	}
-+
- 	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_SGX)
- 		ddata->module_enable_quirk = sysc_module_enable_quirk_sgx;
- 
-diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
---- a/include/linux/platform_data/ti-sysc.h
-+++ b/include/linux/platform_data/ti-sysc.h
-@@ -49,6 +49,7 @@ struct sysc_regbits {
- 	s8 emufree_shift;
- };
- 
-+#define SYSC_MODULE_QUIRK_RTC_UNLOCK	BIT(22)
- #define SYSC_QUIRK_CLKDM_NOAUTO		BIT(21)
- #define SYSC_QUIRK_FORCE_MSTANDBY	BIT(20)
- #define SYSC_MODULE_QUIRK_AESS		BIT(19)
--- 
-2.25.1
+Regards
