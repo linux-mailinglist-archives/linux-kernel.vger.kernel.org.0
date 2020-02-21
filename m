@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF040167498
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:24:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DDF7167231
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:01:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388396AbgBUIW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:22:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34712 "EHLO mail.kernel.org"
+        id S1731158AbgBUIBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:01:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730697AbgBUIW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:22:56 -0500
+        id S1730878AbgBUIBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:01:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1A762467D;
-        Fri, 21 Feb 2020 08:22:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A761F24656;
+        Fri, 21 Feb 2020 08:01:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273375;
-        bh=3KRChEGwMrFyCZkXflHL2hF+PqaYvlhAhPObu7WcK68=;
+        s=default; t=1582272064;
+        bh=yDTaCK/ytGY8aZ97lgRFlGc4UE+I2EUoD7z51dMYExw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2K05UsswHBv/KKUzwDXGcnEar+z3NP0QXebb7dMMLbG8x3AX5rzLUdnXrhsSq9wki
-         1CXc+IwaLxEBuE9CWDaNryB0iq2Rj5l3OLP6XbyC2+80jDLNBShJnTKkcnP1mKrj65
-         76MYFW3+cacrovAJbz0ELQknzJL/K9xniu9WBKTg=
+        b=iqT2zU51Taa08QidjZokPc6Y04y/eoZlaJlEWgx39sqmYzvFZG3tFy+VnvvthLnQt
+         knE9LFZRUozjMQ7x73acIazLBPeRsAMofCgNmPHpvLcs+kas3gk6FUDYybMLbcQ6Db
+         9vvWQV7+7c1HxtkV8iY7pJ0AxJ/2R7H7ACreTUqE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miroslav Benes <mbenes@suse.cz>,
-        Jessica Yu <jeyu@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 147/191] module: avoid setting info->name early in case we can fall back to info->mod->name
+        stable@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 395/399] mlxsw: core: Add validation of hardware device types for MGPIR register
 Date:   Fri, 21 Feb 2020 08:42:00 +0100
-Message-Id: <20200221072308.211661443@linuxfoundation.org>
+Message-Id: <20200221072438.273759534@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +46,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jessica Yu <jeyu@kernel.org>
+From: Vadim Pasternak <vadimp@mellanox.com>
 
-[ Upstream commit 708e0ada1916be765b7faa58854062f2bc620bbf ]
+[ Upstream commit 36844c855b896f90bab51ccecf72940eb7e3cfe1 ]
 
-In setup_load_info(), info->name (which contains the name of the module,
-mostly used for early logging purposes before the module gets set up)
-gets unconditionally assigned if .modinfo is missing despite the fact
-that there is an if (!info->name) check near the end of the function.
-Avoid assigning a placeholder string to info->name if .modinfo doesn't
-exist, so that we can fall back to info->mod->name later on.
+When reading the number of gearboxes from the hardware, the driver does
+not validate the returned 'device type' field. The driver can therefore
+wrongly assume that the queried devices are gearboxes.
 
-Fixes: 5fdc7db6448a ("module: setup load info before module_sig_check()")
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
+On Spectrum-3 systems that support different types of devices, this can
+prevent the driver from loading, as it will try to query the
+temperature sensors from devices which it assumes are gearboxes and in
+fact are not.
+
+For example:
+[  218.129230] mlxsw_minimal 2-0048: Reg cmd access status failed (status=7(bad parameter))
+[  218.138282] mlxsw_minimal 2-0048: Reg cmd access failed (reg_id=900a(mtmp),type=write)
+[  218.147131] mlxsw_minimal 2-0048: Failed to setup temp sensor number 256
+[  218.534480] mlxsw_minimal 2-0048: Fail to register core bus
+[  218.540714] mlxsw_minimal: probe of 2-0048 failed with error -5
+
+Fix this by validating the 'device type' field.
+
+Fixes: 2e265a8b6c094 ("mlxsw: core: Extend hwmon interface with inter-connect temperature attributes")
+Fixes: f14f4e621b1b4 ("mlxsw: core: Extend thermal core with per inter-connect device thermal zones")
+Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/module.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c   | 6 ++++--
+ drivers/net/ethernet/mellanox/mlxsw/core_thermal.c | 8 ++++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 70a75a7216abb..20fc0efc679c0 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2980,9 +2980,7 @@ static int setup_load_info(struct load_info *info, int flags)
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c b/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
+index 9bf8da5f6dafc..3fe878d7c94cb 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
+@@ -573,6 +573,7 @@ static int mlxsw_hwmon_module_init(struct mlxsw_hwmon *mlxsw_hwmon)
  
- 	/* Try to find a name early so we can log errors with a module name */
- 	info->index.info = find_sec(info, ".modinfo");
--	if (!info->index.info)
--		info->name = "(missing .modinfo section)";
--	else
-+	if (info->index.info)
- 		info->name = get_modinfo(info, "name");
+ static int mlxsw_hwmon_gearbox_init(struct mlxsw_hwmon *mlxsw_hwmon)
+ {
++	enum mlxsw_reg_mgpir_device_type device_type;
+ 	int index, max_index, sensor_index;
+ 	char mgpir_pl[MLXSW_REG_MGPIR_LEN];
+ 	char mtmp_pl[MLXSW_REG_MTMP_LEN];
+@@ -584,8 +585,9 @@ static int mlxsw_hwmon_gearbox_init(struct mlxsw_hwmon *mlxsw_hwmon)
+ 	if (err)
+ 		return err;
  
- 	/* Find internal symbols and strings. */
-@@ -2997,14 +2995,15 @@ static int setup_load_info(struct load_info *info, int flags)
- 	}
+-	mlxsw_reg_mgpir_unpack(mgpir_pl, &gbox_num, NULL, NULL, NULL);
+-	if (!gbox_num)
++	mlxsw_reg_mgpir_unpack(mgpir_pl, &gbox_num, &device_type, NULL, NULL);
++	if (device_type != MLXSW_REG_MGPIR_DEVICE_TYPE_GEARBOX_DIE ||
++	    !gbox_num)
+ 		return 0;
  
- 	if (info->index.sym == 0) {
--		pr_warn("%s: module has no symbols (stripped?)\n", info->name);
-+		pr_warn("%s: module has no symbols (stripped?)\n",
-+			info->name ?: "(missing .modinfo section or name field)");
- 		return -ENOEXEC;
- 	}
+ 	index = mlxsw_hwmon->module_sensor_max;
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c b/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+index c721b171bd8de..ce0a6837daa32 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+@@ -895,8 +895,10 @@ static int
+ mlxsw_thermal_gearboxes_init(struct device *dev, struct mlxsw_core *core,
+ 			     struct mlxsw_thermal *thermal)
+ {
++	enum mlxsw_reg_mgpir_device_type device_type;
+ 	struct mlxsw_thermal_module *gearbox_tz;
+ 	char mgpir_pl[MLXSW_REG_MGPIR_LEN];
++	u8 gbox_num;
+ 	int i;
+ 	int err;
  
- 	info->index.mod = find_sec(info, ".gnu.linkonce.this_module");
- 	if (!info->index.mod) {
- 		pr_warn("%s: No module found in object\n",
--			info->name ?: "(missing .modinfo name field)");
-+			info->name ?: "(missing .modinfo section or name field)");
- 		return -ENOEXEC;
- 	}
- 	/* This is temporary: point mod into copy of data. */
+@@ -908,11 +910,13 @@ mlxsw_thermal_gearboxes_init(struct device *dev, struct mlxsw_core *core,
+ 	if (err)
+ 		return err;
+ 
+-	mlxsw_reg_mgpir_unpack(mgpir_pl, &thermal->tz_gearbox_num, NULL, NULL,
++	mlxsw_reg_mgpir_unpack(mgpir_pl, &gbox_num, &device_type, NULL,
+ 			       NULL);
+-	if (!thermal->tz_gearbox_num)
++	if (device_type != MLXSW_REG_MGPIR_DEVICE_TYPE_GEARBOX_DIE ||
++	    !gbox_num)
+ 		return 0;
+ 
++	thermal->tz_gearbox_num = gbox_num;
+ 	thermal->tz_gearbox_arr = kcalloc(thermal->tz_gearbox_num,
+ 					  sizeof(*thermal->tz_gearbox_arr),
+ 					  GFP_KERNEL);
 -- 
 2.20.1
 
