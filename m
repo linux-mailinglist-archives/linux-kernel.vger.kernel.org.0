@@ -2,178 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 026191675EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:32:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9162016765D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388857AbgBUIcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:32:09 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51123 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730362AbgBUIcG (ORCPT
+        id S2387950AbgBUIct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:32:49 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37037 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387804AbgBUIcp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:32:06 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a5so746925wmb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 00:32:05 -0800 (PST)
+        Fri, 21 Feb 2020 03:32:45 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a6so738805wme.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 00:32:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:autocrypt:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=t52EPdRIB15y1/B2qrwHBZa7K5FjrA8brlr8dw9g2nU=;
-        b=OrsJyfsdDDnlmYDyk0BxXeWSaSNES/gmKTto0Cp02BODzXcWsLYu7ISQ/3sEdEUTBn
-         cAJub7EUT3SFnUyxQ2ClTryvJBvCDBng2DU0CxWeIVu0hP4Vu82s2hwz72RIrU+mcIPw
-         Zftd4sbq+i2HN3b7MHZA4tOMzNha/o8MhTM+oHnMTBOgky7752x1SwBXv/oYTYN6og+F
-         ILOOZYTozw0f0NNR/EzgQjqZFEQAnoJqxlnI/+uzRSkiIN0XxbNjJtp5H3/U2k4tiz8i
-         VSM2d4Cc/PUI26+kFmmEjLhEZttLjQoslRQXo6ij517dxcmc/4ECHFM+4HLOHdjWpjrQ
-         g3og==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=MFBkOBl3vMPcTP2LxPfANNNiV1IdpbUuNOmkpwgugEg=;
+        b=lq+K9+sq+I82qYKV7mW5DELtZGxd44h5cJVhMkvjZh+iTvaFzCZEz9yw2flaGZzz3K
+         V746KiDhrKvJxywLale/5eDfpiHLKjqqIwMHo5mZwPnde0GVNrnOtfwvfYb9mXxW7avX
+         KksvTvbCAfxI5vEJE3VgsSUvbye3xi//TnPwkBrFv7fs010aYl9XZ6rsJGT1SbPyWzJE
+         vBuSew4qUVaD0xrysr+nPLWyUzF+vtUCzNGgDxEuvsZ79dSLBTsDN+rcpFCBR4nGI9Jx
+         d2Tvk2DP+Pmfc6rOHHK2iZQ7r06fQA6jR4qODUZhrRrz5nKqUdMxLrmfkYyIdPONRmqr
+         Gsmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=t52EPdRIB15y1/B2qrwHBZa7K5FjrA8brlr8dw9g2nU=;
-        b=Rx9Bgq/4AaMKdS4JvZUz4gqinvI7BwYJEr40RcK8TtJYQ2f4JTvCKyuQe3ODoGc7CA
-         5SPGC/LrZX7gawhyce/cH6+geGmP4i20V2gWoQKyASFjTKllxhMHpu3EavTNQZk5ft0c
-         Hy6ayJfLauSaqUStjv799G1O8rh4p/8JUsQeL1hvfikO4GG1xoKTj3FcsaLFuSAcg5ix
-         O8bLaEhM3u96hFFMxkXOthA0oDGj2Wuu3hfcf/Brkv6Q1btSoZth7qkuBM/Xq0RjcCo2
-         js7mWSFlR78xE5Y/eQJ5aPCKXIszZyZZ7uzfxPHEUd4B7lJwRlY2xZ4ufcicCAGXU9gf
-         l1cg==
-X-Gm-Message-State: APjAAAUIHTEou3Yau3qrETMt8187ZoKYC0IOLO5NlYvZWDhgDfj4I4Cy
-        0eSGD/Mc3cylxgGDyOLkjB9wrg==
-X-Google-Smtp-Source: APXvYqxVWGxjYz+VSenfxhJNt777SCZSjeyp7sgaV36tUBw9XiBQ/S+qOlODPG+s/A/svw/oQskqfA==
-X-Received: by 2002:a7b:c450:: with SMTP id l16mr2345474wmi.31.1582273924270;
-        Fri, 21 Feb 2020 00:32:04 -0800 (PST)
-Received: from ?IPv6:2a01:e35:2ec0:82b0:4ca8:b25b:98e4:858? ([2a01:e35:2ec0:82b0:4ca8:b25b:98e4:858])
-        by smtp.gmail.com with ESMTPSA id 18sm2869196wmf.1.2020.02.21.00.32.02
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to;
+        bh=MFBkOBl3vMPcTP2LxPfANNNiV1IdpbUuNOmkpwgugEg=;
+        b=k4cDd3/eKqHoHSnVjQCH/QmjvYw0xw7ONSkVFs6Era/oT/JMVUQeWcQniVJS4FL3Z1
+         WNwnpNtU4AAUk1NnKfY/6M/QP58f/MhmXfM0U+Xc0lJKZ+wEiXNcpH7bp+N+zEM7VpPR
+         N0xl98OmhUJ1Her9avFWemX54VwK0JE5BLplPW+UJdCCJJoeMRsuwIjSJsx2xMMo0Wqi
+         VXvTJxqkTsQ8DuYuqUqCYZRpYTlqSfjLT3ObJQyVeRozzt+9aOdF4YnE89bhqT7k7iH+
+         W4dO6cb6pwKadIwqSXDRBMyXh/mkNEjpIN0dN+R4lvH4qb/IUpZi12RI+iTDJnlvkhd3
+         XvZQ==
+X-Gm-Message-State: APjAAAWwdBKwXZJh6gvqsX76sOJpgiQQM82ZvFvPWdU198SPkrv7aNOX
+        Mj3HGWfd51SrqY21TWqfJAwnbPyua9M=
+X-Google-Smtp-Source: APXvYqwdsTK/MbgxLKcjdvmMqTtyGiM4cnI3k3+XS7mf5Nv/XXQtOnt4JfSnbOCyEadACZuV7YfBvw==
+X-Received: by 2002:a1c:2b44:: with SMTP id r65mr2263549wmr.72.1582273963138;
+        Fri, 21 Feb 2020 00:32:43 -0800 (PST)
+Received: from ?IPv6:2a01:e34:ed2f:f020:2dfb:b5ce:9043:4adb? ([2a01:e34:ed2f:f020:2dfb:b5ce:9043:4adb])
+        by smtp.googlemail.com with ESMTPSA id a62sm2853052wmh.33.2020.02.21.00.32.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 00:32:03 -0800 (PST)
-Subject: Re: [PATCH 1/6] drm/bridge: anx6345: Fix getting anx6345 regulators
-To:     Vasily Khoruzhick <anarsoul@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Icenowy Zheng <icenowy@aosc.io>, Torsten Duwe <duwe@suse.de>,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Mark Brown <broonie@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Samuel Holland <samuel@sholland.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20200220083508.792071-1-anarsoul@gmail.com>
- <20200220083508.792071-2-anarsoul@gmail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- BSwxi7g3Mu7u5kUByanqHyA=
-Organization: Baylibre
-Message-ID: <fc4ed2c4-ae5f-cd67-1c8a-c17e1cb63423@baylibre.com>
-Date:   Fri, 21 Feb 2020 09:32:01 +0100
+        Fri, 21 Feb 2020 00:32:42 -0800 (PST)
+Subject: Re: linux-next: please clean up the clockevents tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200221113714.7293f125@canb.auug.org.au>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <501d1b8c-ae24-bdfd-e56f-7f5e907a2083@linaro.org>
+Date:   Fri, 21 Feb 2020 09:32:40 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200220083508.792071-2-anarsoul@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200221113714.7293f125@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="wSSbaXgSqW4PXUUnEStSrR77zzH24rit8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/02/2020 09:35, Vasily Khoruzhick wrote:
-> From: Samuel Holland <samuel@sholland.org>
-> 
-> We don't need to pass '-supply' suffix to devm_get_regulator()
-> 
-> Fixes: 6aa192698089 ("drm/bridge: Add Analogix anx6345 support")
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/analogix-anx6345.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-> index 56f55c53abfd..0d8d083b0207 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-> @@ -712,14 +712,14 @@ static int anx6345_i2c_probe(struct i2c_client *client,
->  		DRM_DEBUG("No panel found\n");
->  
->  	/* 1.2V digital core power regulator  */
-> -	anx6345->dvdd12 = devm_regulator_get(dev, "dvdd12-supply");
-> +	anx6345->dvdd12 = devm_regulator_get(dev, "dvdd12");
->  	if (IS_ERR(anx6345->dvdd12)) {
->  		DRM_ERROR("dvdd12-supply not found\n");
->  		return PTR_ERR(anx6345->dvdd12);
->  	}
->  
->  	/* 2.5V digital core power regulator  */
-> -	anx6345->dvdd25 = devm_regulator_get(dev, "dvdd25-supply");
-> +	anx6345->dvdd25 = devm_regulator_get(dev, "dvdd25");
->  	if (IS_ERR(anx6345->dvdd25)) {
->  		DRM_ERROR("dvdd25-supply not found\n");
->  		return PTR_ERR(anx6345->dvdd25);
-> 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--wSSbaXgSqW4PXUUnEStSrR77zzH24rit8
+Content-Type: multipart/mixed; boundary="c2gGM3Lgf5aCP5z4G4XSt2A8z0baaFgxK"
 
-This is a duplicate of "drm/bridge: analogix-anx6345: Avoid duplicate -supply suffix" (20200218155440.BEFB968C65@verein.lst.de)
+--c2gGM3Lgf5aCP5z4G4XSt2A8z0baaFgxK
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-But this one has fixes and review from laurent, so I'll push this one when the serie is ready
+On 21/02/2020 01:37, Stephen Rothwell wrote:
+> Hi Daniel,
+>=20
+> All the commits in the clockevents tree
+> (git://git.linaro.org/people/daniel.lezcano/linux.git#timers/drivers/ne=
+xt)
+> seem to have been applied to other trees as different commits. Please
+> clean it up as it is starting to cause unnecessary conflicts.
 
-Neil
+Done
+
+
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
+RM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
+
+
+--c2gGM3Lgf5aCP5z4G4XSt2A8z0baaFgxK--
+
+--wSSbaXgSqW4PXUUnEStSrR77zzH24rit8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQRuKdf4M92Gi9vqihve5qtOL396pgUCXk+VqQAKCRDe5qtOL396
+prnpAQDNQo6Rj148yOA/foN6557qqsyVLJ2BPk0ZeEuXNXSGOQEAo2ZINVMAQ7WB
+CIvTq3B57lSeF0PqYckAFDXIttptoAk=
+=NkPM
+-----END PGP SIGNATURE-----
+
+--wSSbaXgSqW4PXUUnEStSrR77zzH24rit8--
