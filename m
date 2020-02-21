@@ -2,79 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 763F5167100
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFF8A167033
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:37:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729543AbgBUHuU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:50:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47044 "EHLO mail.kernel.org"
+        id S1727150AbgBUHha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:37:30 -0500
+Received: from mx.socionext.com ([202.248.49.38]:50777 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729509AbgBUHuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:50:13 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AFE6222C4;
-        Fri, 21 Feb 2020 07:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271413;
-        bh=zLAaDFzj2bwYv+0kiJhndvoOAmSRnnLJlpove3CrpdE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D+9kronc2u26Tx7VyWpe3Pbw3eh4GG37Rz7Bq0HJeddEXFdzyuVBltt+cwpeaxlq9
-         t5MlVA9NqdfDVzEs4oht/zo5BWO63fyp+bBiRFko4pUNSq8W+TqjQzNRB5kX3d+GDl
-         Tv12Z/T/shsnvGtTDYrwTCoWliKF9VXATHsAEoCc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        Mao Wenan <maowenan@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 118/399] NFC: port100: Convert cpu_to_le16(le16_to_cpu(E1) + E2) to use le16_add_cpu().
-Date:   Fri, 21 Feb 2020 08:37:23 +0100
-Message-Id: <20200221072413.952969689@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1726100AbgBUHha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:37:30 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 21 Feb 2020 16:37:28 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 20ED3603AB;
+        Fri, 21 Feb 2020 16:37:29 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 21 Feb 2020 16:37:29 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 9E7961A01BB;
+        Fri, 21 Feb 2020 16:37:28 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH v4 0/2] dmaengine: Add UniPhier XDMAC driver
+Date:   Fri, 21 Feb 2020 16:37:24 +0900
+Message-Id: <1582270646-29161-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
+Add support for UniPhier external DMA controller (XDMAC), that is
+implemented in Pro4, Pro5, PXs2, LD11, LD20 and PXs3 SoCs.
 
-[ Upstream commit 718eae277e62a26e5862eb72a830b5e0fe37b04a ]
+Changes since v3:
+- dt-bindings: Fix typo
 
-Convert cpu_to_le16(le16_to_cpu(frame->datalen) + len) to
-use le16_add_cpu(), which is more concise and does the same thing.
+Changes since v2:
+- dt-bindings: Fix SPDX and some properties
+- Fix iteration count calculation for memcpy
+- Replace zero-length array with flexible-array member in struct
+  uniphier_xdmac_device.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/nfc/port100.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v1:
+- dt-bindings: Rewrite with DT schema.
+- Change return type of uniphier_xdmac_chan_init() to void,
+  and remove error return in probe.
 
-diff --git a/drivers/nfc/port100.c b/drivers/nfc/port100.c
-index 604dba4f18afd..8e4d355dc3aec 100644
---- a/drivers/nfc/port100.c
-+++ b/drivers/nfc/port100.c
-@@ -565,7 +565,7 @@ static void port100_tx_update_payload_len(void *_frame, int len)
- {
- 	struct port100_frame *frame = _frame;
- 
--	frame->datalen = cpu_to_le16(le16_to_cpu(frame->datalen) + len);
-+	le16_add_cpu(&frame->datalen, len);
- }
- 
- static bool port100_rx_frame_is_valid(void *_frame)
+Kunihiko Hayashi (2):
+  dt-bindings: dmaengine: Add UniPhier external DMA controller bindings
+  dmaengine: uniphier-xdmac: Add UniPhier external DMA controller driver
+
+ .../bindings/dma/socionext,uniphier-xdmac.yaml     |  63 +++
+ drivers/dma/Kconfig                                |  11 +
+ drivers/dma/Makefile                               |   1 +
+ drivers/dma/uniphier-xdmac.c                       | 611 +++++++++++++++++++++
+ 4 files changed, 686 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
+ create mode 100644 drivers/dma/uniphier-xdmac.c
+
 -- 
-2.20.1
-
-
+2.7.4
 
