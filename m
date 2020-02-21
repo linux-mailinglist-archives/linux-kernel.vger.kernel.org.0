@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE521670EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEBEA1670EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbgBUHtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:49:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45946 "EHLO mail.kernel.org"
+        id S1729390AbgBUHtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:49:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729312AbgBUHt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:49:26 -0500
+        id S1729359AbgBUHth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:49:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71528222C4;
-        Fri, 21 Feb 2020 07:49:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97298207FD;
+        Fri, 21 Feb 2020 07:49:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271365;
-        bh=8uG1pKmllG6vODb9BHuyO83kQ55D5RpViPviNkzTLOs=;
+        s=default; t=1582271376;
+        bh=hBhHgVs21RfUtJ9MHJuULdGWNwNaJs1/5JtqnA9mtJE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jRggCb4JlBR5bZ+U6V6q6EcztkCXqR5suHjwNqZ7KVYzp14/243Y9QYoUCAbzae0v
-         vPywCf9r8zYxkpR4BoTCxUiG3urs1Lo8RukZz5qIFd+oyOpzGEQoEHWPIl+3+5kXY5
-         fDlbMTDAHCgMSDKg7FWxnoyzXlDv8prTIKMJ2zcs=
+        b=gPuelTugs7HtS+Oh/YYcz0V96mf3cW4eF/yIDkJSuwXYdHn5rpy6516VXgx+tdi7h
+         Pw/mBcC2dgm0t7XIvUYl71YoysymbJ4NVs/Xu4svFOvfCtZ5ClIGz2ANQUXj5d0lPX
+         Ci0lL0m8gjBkRXqheMmf8epR/nK7x90E1wRqjMr0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        John Hurley <john.hurley@netronome.com>,
+        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 138/399] Revert "nfp: abm: fix memory leak in nfp_abm_u32_knode_replace"
-Date:   Fri, 21 Feb 2020 08:37:43 +0100
-Message-Id: <20200221072415.890374003@linuxfoundation.org>
+Subject: [PATCH 5.5 141/399] media: v4l2-device.h: Explicitly compare grp{id,mask} to zero in v4l2_device macros
+Date:   Fri, 21 Feb 2020 08:37:46 +0100
+Message-Id: <20200221072416.179424460@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -45,72 +47,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 1d1997db870f4058676439ef7014390ba9e24eb2 ]
+[ Upstream commit afb34781620274236bd9fc9246e22f6963ef5262 ]
 
-This reverts commit 78beef629fd9 ("nfp: abm: fix memory leak in
-nfp_abm_u32_knode_replace").
+When building with Clang + -Wtautological-constant-compare, several of
+the ivtv and cx18 drivers warn along the lines of:
 
-The quoted commit does not fix anything and resulted in a bogus
-CVE-2019-19076.
+ drivers/media/pci/cx18/cx18-driver.c:1005:21: warning: converting the
+ result of '<<' to a boolean always evaluates to true
+ [-Wtautological-constant-compare]
+                         cx18_call_hw(cx, CX18_HW_GPIO_RESET_CTRL,
+                                         ^
+ drivers/media/pci/cx18/cx18-cards.h:18:37: note: expanded from macro
+ 'CX18_HW_GPIO_RESET_CTRL'
+ #define CX18_HW_GPIO_RESET_CTRL         (1 << 6)
+                                           ^
+ 1 warning generated.
 
-If match is NULL then it is known there is no matching entry in
-list, hence, calling nfp_abm_u32_knode_delete() is pointless.
+This warning happens because the shift operation is implicitly converted
+to a boolean in v4l2_device_mask_call_all before being negated. This can
+be solved by just comparing the mask result to 0 explicitly so that
+there is no boolean conversion. The ultimate goal is to enable
+-Wtautological-compare globally because there are several subwarnings
+that would be helpful to have.
 
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: John Hurley <john.hurley@netronome.com>
+For visual consistency and avoidance of these warnings in the future,
+all of the implicitly boolean conversions in the v4l2_device macros
+are converted to explicit ones as well.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/752
+
+Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/netronome/nfp/abm/cls.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ include/media/v4l2-device.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/netronome/nfp/abm/cls.c b/drivers/net/ethernet/netronome/nfp/abm/cls.c
-index 9f8a1f69c0c4c..23ebddfb95325 100644
---- a/drivers/net/ethernet/netronome/nfp/abm/cls.c
-+++ b/drivers/net/ethernet/netronome/nfp/abm/cls.c
-@@ -176,10 +176,8 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
- 	u8 mask, val;
- 	int err;
+diff --git a/include/media/v4l2-device.h b/include/media/v4l2-device.h
+index 5f36e0d2ede67..95353ae476a18 100644
+--- a/include/media/v4l2-device.h
++++ b/include/media/v4l2-device.h
+@@ -371,7 +371,7 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
+ 		struct v4l2_subdev *__sd;				\
+ 									\
+ 		__v4l2_device_call_subdevs_p(v4l2_dev, __sd,		\
+-			!(grpid) || __sd->grp_id == (grpid), o, f ,	\
++			(grpid) == 0 || __sd->grp_id == (grpid), o, f ,	\
+ 			##args);					\
+ 	} while (0)
  
--	if (!nfp_abm_u32_check_knode(alink->abm, knode, proto, extack)) {
--		err = -EOPNOTSUPP;
-+	if (!nfp_abm_u32_check_knode(alink->abm, knode, proto, extack))
- 		goto err_delete;
--	}
+@@ -403,7 +403,7 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
+ ({									\
+ 	struct v4l2_subdev *__sd;					\
+ 	__v4l2_device_call_subdevs_until_err_p(v4l2_dev, __sd,		\
+-			!(grpid) || __sd->grp_id == (grpid), o, f ,	\
++			(grpid) == 0 || __sd->grp_id == (grpid), o, f ,	\
+ 			##args);					\
+ })
  
- 	tos_off = proto == htons(ETH_P_IP) ? 16 : 20;
+@@ -431,8 +431,8 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
+ 		struct v4l2_subdev *__sd;				\
+ 									\
+ 		__v4l2_device_call_subdevs_p(v4l2_dev, __sd,		\
+-			!(grpmsk) || (__sd->grp_id & (grpmsk)), o, f ,	\
+-			##args);					\
++			(grpmsk) == 0 || (__sd->grp_id & (grpmsk)), o,	\
++			f , ##args);					\
+ 	} while (0)
  
-@@ -200,18 +198,14 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
- 		if ((iter->val & cmask) == (val & cmask) &&
- 		    iter->band != knode->res->classid) {
- 			NL_SET_ERR_MSG_MOD(extack, "conflict with already offloaded filter");
--			err = -EOPNOTSUPP;
- 			goto err_delete;
- 		}
- 	}
+ /**
+@@ -462,8 +462,8 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
+ ({									\
+ 	struct v4l2_subdev *__sd;					\
+ 	__v4l2_device_call_subdevs_until_err_p(v4l2_dev, __sd,		\
+-			!(grpmsk) || (__sd->grp_id & (grpmsk)), o, f ,	\
+-			##args);					\
++			(grpmsk) == 0 || (__sd->grp_id & (grpmsk)), o,	\
++			f , ##args);					\
+ })
  
- 	if (!match) {
- 		match = kzalloc(sizeof(*match), GFP_KERNEL);
--		if (!match) {
--			err = -ENOMEM;
--			goto err_delete;
--		}
--
-+		if (!match)
-+			return -ENOMEM;
- 		list_add(&match->list, &alink->dscp_map);
- 	}
- 	match->handle = knode->handle;
-@@ -227,7 +221,7 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
  
- err_delete:
- 	nfp_abm_u32_knode_delete(alink, knode);
--	return err;
-+	return -EOPNOTSUPP;
- }
- 
- static int nfp_abm_setup_tc_block_cb(enum tc_setup_type type,
 -- 
 2.20.1
 
