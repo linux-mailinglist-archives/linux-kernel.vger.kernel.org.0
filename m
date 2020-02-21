@@ -2,128 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC0DE168847
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 21:22:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C42BF168851
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 21:25:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbgBUUWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 15:22:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52070 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726483AbgBUUWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 15:22:51 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        id S1727912AbgBUUZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 15:25:38 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40262 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbgBUUZi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 15:25:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=2Hcbu7VsxhWQs9BO+Aja19os7FBfjIizSEAD/jxIKN0=; b=XymCjwuobjJepMla2WyDSnMt82
+        wHklJoYIVwXJDYArgHkEAeiwB4P66pWfl36CylzFP2URQWLAV4B/ZdP4OAyWOpmXyOgQGsuPS6rmZ
+        K6G7OPKgX9plbs8TCyW12z+dDj+avbXAQVwfJyKsFpqZxPmkTTnIHyJT8C4OgCWKmueBA9s6+Dfqr
+        SC5giFO0TnAgTN7bA6cxnefE5kYnIbYOLEw5JMAnnMtYsa+nPr4L3tpt7RnuSEaOPlLj3g+7z5+Id
+        71lWOqBNaPM23qR3Ot1KJpr7ggBkoRZmbxgCm5lmu7bktPd/pb9s4ZqjttRh4wlrIPuNdGUnI02oz
+        qKa7tWUA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j5ErK-0003Ys-C8; Fri, 21 Feb 2020 20:25:14 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1F782072C;
-        Fri, 21 Feb 2020 20:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582316570;
-        bh=ahbD4YYmAwROEeD/RD10Vgtd8N1y/+y/7hupmWDmF9k=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=aCBYH5VQ5ofGntUQg6o0sP2cmkdfffm2felA2nX+dv7QarqZwd0nqh1BaMFk/VdBv
-         zMx+oWhOk/STDuxu/3p6P7bBvmWmrlYynhZOlNm/LmnQlhgo5WD05exsHQMcFhOKLm
-         Uxga8ZPphz+IDakQ+OV2FrajJRjRptZQKuxBWfs4=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id B65C635226DB; Fri, 21 Feb 2020 12:22:50 -0800 (PST)
-Date:   Fri, 21 Feb 2020 12:22:50 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Suraj Jitindar Singh <surajjs@amazon.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC] ext4: fix potential race between online resizing and
- write operations
-Message-ID: <20200221202250.GK2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200215233817.GA670792@mit.edu>
- <20200216121246.GG2935@paulmck-ThinkPad-P72>
- <20200217160827.GA5685@pc636>
- <20200217193314.GA12604@mit.edu>
- <20200218170857.GA28774@pc636>
- <20200220045233.GC476845@mit.edu>
- <20200221003035.GC2935@paulmck-ThinkPad-P72>
- <20200221131455.GA4904@pc636>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9DEBC300478;
+        Fri, 21 Feb 2020 21:23:18 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6B1F7209DB0F7; Fri, 21 Feb 2020 21:25:11 +0100 (CET)
+Date:   Fri, 21 Feb 2020 21:25:11 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, joel@joelfernandes.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        luto@kernel.org, tony.luck@intel.com, frederic@kernel.org,
+        dan.carpenter@oracle.com, mhiramat@kernel.org
+Subject: Re: [PATCH v4 01/27] lockdep: Teach lockdep about "USED" <- "IN-NMI"
+ inversions
+Message-ID: <20200221202511.GB14897@hirez.programming.kicks-ass.net>
+References: <20200221133416.777099322@infradead.org>
+ <20200221134215.090538203@infradead.org>
+ <20200221100855.2f9bec3a@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200221131455.GA4904@pc636>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200221100855.2f9bec3a@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 02:14:55PM +0100, Uladzislau Rezki wrote:
-> On Thu, Feb 20, 2020 at 04:30:35PM -0800, Paul E. McKenney wrote:
-> > On Wed, Feb 19, 2020 at 11:52:33PM -0500, Theodore Y. Ts'o wrote:
-> > > On Tue, Feb 18, 2020 at 06:08:57PM +0100, Uladzislau Rezki wrote:
-> > > > now it becomes possible to use it like: 
-> > > > 	...
-> > > > 	void *p = kvmalloc(PAGE_SIZE);
-> > > > 	kvfree_rcu(p);
-> > > > 	...
-> > > > also have a look at the example in the mm/list_lru.c diff.
-> > > 
-> > > I certainly like the interface, thanks!  I'm going to be pushing
-> > > patches to fix this using ext4_kvfree_array_rcu() since there are a
-> > > number of bugs in ext4's online resizing which appear to be hitting
-> > > multiple cloud providers (with reports from both AWS and GCP) and I
-> > > want something which can be easily backported to stable kernels.
-> > > 
-> > > But once kvfree_rcu() hits mainline, I'll switch ext4 to use it, since
-> > > your kvfree_rcu() is definitely more efficient than my expedient
-> > > jury-rig.
-> > > 
-> > > I don't feel entirely competent to review the implementation, but I do
-> > > have one question.  It looks like the rcutiny implementation of
-> > > kfree_call_rcu() isn't going to do the right thing with kvfree_rcu(p).
-> > > Am I missing something?
-> > 
-> > Good catch!  I believe that rcu_reclaim_tiny() would need to do
-> > kvfree() instead of its current kfree().
-> > 
-> > Vlad, anything I am missing here?
-> >
-> Yes something like that. There are some open questions about
-> realization, when it comes to tiny RCU. Since we are talking
-> about "headless" kvfree_rcu() interface, i mean we can not link
-> freed "objects" between each other, instead we should place a
-> pointer directly into array that will be drained later on.
+On Fri, Feb 21, 2020 at 10:08:55AM -0500, Steven Rostedt wrote:
+> On Fri, 21 Feb 2020 14:34:17 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> It would be much more easier to achieve that if we were talking
-> about the interface like: kvfree_rcu(p, rcu), but that is not our
-> case :)
+> > --- a/kernel/locking/lockdep.c
+> > +++ b/kernel/locking/lockdep.c
+> > @@ -379,13 +379,13 @@ void lockdep_init_task(struct task_struc
+> >  
+> >  void lockdep_off(void)
+> >  {
+> > -	current->lockdep_recursion++;
+> > +	current->lockdep_recursion += BIT(16);
+> >  }
+> >  EXPORT_SYMBOL(lockdep_off);
+> >  
+> >  void lockdep_on(void)
+> >  {
+> > -	current->lockdep_recursion--;
+> > +	current->lockdep_recursion -= BIT(16);
+> >  }
+> >  EXPORT_SYMBOL(lockdep_on);
+> >  
 > 
-> So, for CONFIG_TINY_RCU we should implement very similar what we
-> have done for CONFIG_TREE_RCU or just simply do like Ted has done
-> with his
+> > +
+> > +static bool lockdep_nmi(void)
+> > +{
+> > +	if (current->lockdep_recursion & 0xFFFF)
 > 
-> void ext4_kvfree_array_rcu(void *to_free)
-> 
-> i mean:
-> 
->    local_irq_save(flags);
->    struct foo *ptr = kzalloc(sizeof(*ptr), GFP_ATOMIC);
-> 
->    if (ptr) {
->            ptr->ptr = to_free;
->            call_rcu(&ptr->rcu, kvfree_callback);
->    }
->    local_irq_restore(flags);
+> Nitpick, but the association with bit 16 and this mask really should be
+> defined as a macro somewhere and not have hard coded numbers.
 
-We really do still need the emergency case, in this case for when
-kzalloc() returns NULL.  Which does indeed mean an rcu_head in the thing
-being freed.  Otherwise, you end up with an out-of-memory deadlock where
-you could free memory only if you had memor to allocate.
+Right, I suppose I can do something like:
 
-> Also there is one more open question what to do if GFP_ATOMIC
-> gets failed in case of having low memory condition. Probably
-> we can make use of "mempool interface" that allows to have
-> min_nr guaranteed pre-allocated pages. 
+#define LOCKDEP_RECURSION_BITS	16
+#define LOCKDEP_OFF (1U << LOCKDEP_RECURSION_BITS)
+#define LOCKDEP_RECURSION_MASK (LOCKDEP_OFF - 1)
 
-But we really do still need to handle the case where everything runs out,
-even the pre-allocated pages.
 
-							Thanx, Paul
