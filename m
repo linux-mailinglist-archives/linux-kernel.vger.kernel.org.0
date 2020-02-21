@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57990167430
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6830E167357
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:11:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387961AbgBUITK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:19:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57242 "EHLO mail.kernel.org"
+        id S1732701AbgBUILa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:11:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387502AbgBUITF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:19:05 -0500
+        id S1731756AbgBUILZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:11:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC32724695;
-        Fri, 21 Feb 2020 08:19:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A701C20578;
+        Fri, 21 Feb 2020 08:11:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273144;
-        bh=EmHy02QxIAceinsrla6/OOJZSbxSoVsrW2LFm6TIsi0=;
+        s=default; t=1582272685;
+        bh=z9lZsmTV7165P7cffCuoQ2Igv1tMoJpZxY/bd3jhAiI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CWO26ji+5QI4r2AObuCCclkE+un5j/shg4+CgyxO0drsxXA8xeH9AXnEgMxCxPQho
-         pQWjvW++fzjzQDYT411D9o2mNnbynsKRU0vBo3Q5SFH4qqjN5aUTnuj49aXV9wU9nW
-         A/LYIeukfbGCvO3EatrO274OGDlNK4DK7TA2EBIc=
+        b=aip4s1HDByiFbfFkihe+SUocGr9DSvJJ+io359DcnIsKC7Ekeiwz4iL3vtaTLWGT/
+         n+Fm5S3ro7UZ0v6oRyHH12VPemIDbSYhSSjhHq5/YDAzYNQG2239DoEeL84g8NhToh
+         P32S2QPUcZu9co8bOvN71DT6wOwpiY3tL+8blwVc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 063/191] ARM: dts: imx6: rdu2: Limit USBH1 to Full Speed
+Subject: [PATCH 5.4 237/344] f2fs: free sysfs kobject
 Date:   Fri, 21 Feb 2020 08:40:36 +0100
-Message-Id: <20200221072258.967997633@linuxfoundation.org>
+Message-Id: <20200221072410.848453998@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,41 +44,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 6bb1e09c4c375db29770444f689f35f5cbe696bc ]
+[ Upstream commit 820d366736c949ffe698d3b3fe1266a91da1766d ]
 
-Cabling used to connect devices to USBH1 on RDU2 does not meet USB
-spec cable quality and cable length requirements to operate at High
-Speed, so limit the port to Full Speed only.
+Detected kmemleak.
 
-Reported-by: Chris Healy <cphealy@gmail.com>
-Reviewed-by: Chris Healy <cphealy@gmail.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 1 +
+ fs/f2fs/sysfs.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-index 56d6e82b75337..bc5f2de02d433 100644
---- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-@@ -804,6 +804,7 @@
- &usbh1 {
- 	vbus-supply = <&reg_5p0v_main>;
- 	disable-over-current;
-+	maximum-speed = "full-speed";
- 	status = "okay";
- };
- 
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index b558b64a4c9ca..8544c0ab7b32b 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -782,4 +782,5 @@ void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
+ 		remove_proc_entry(sbi->sb->s_id, f2fs_proc_root);
+ 	}
+ 	kobject_del(&sbi->s_kobj);
++	kobject_put(&sbi->s_kobj);
+ }
 -- 
 2.20.1
 
