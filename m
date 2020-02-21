@@ -2,49 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5DCF167460
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2529F167385
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:13:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388192AbgBUIUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:20:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59838 "EHLO mail.kernel.org"
+        id S1732945AbgBUINE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:13:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388171AbgBUIUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:20:40 -0500
+        id S1732376AbgBUINC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:13:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60B3224697;
-        Fri, 21 Feb 2020 08:20:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D8AE20722;
+        Fri, 21 Feb 2020 08:13:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273239;
-        bh=+PkrT4iG1T7Rl6JWmdEM27E+WQtpZRSY2P7dpNAA9Wc=;
+        s=default; t=1582272782;
+        bh=FSZNZhAOFhYYMThmr+oCAnsLgXdPEgdWYjoPiw6Ulfs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vdErMCkWx6jd9nwhNWY4pG0Bkr4GJtSTye19seYd0BlJ44CHGDDvlCytzMR27onLz
-         oAKXjllKGLsjPqDDWZgk2LEKWEnKx1d5Q0V/ziWPbwWmJdWSMiBEODBtdVBQbRDvXd
-         59xk3t3wvPsnRp5d2SMLWaOFXgloZT0ZbcerDr4I=
+        b=RJzE7lbK4xApE3uQGMD5ZXgQI4wadO9Qzp7Ll7nAViM5fgwSmjEYDI/glVNUCX0Tz
+         NsTMEyVJnhnycD9Id/kCzvjE2TLlFtmjicc9illXFUS3RgeHawYAlgS+UXmkAGgo6b
+         XkKuoaqxH6uVvjXzhol9HvNmuQ2JKOAGxcP+iYuc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
-        Petr Mladek <pmladek@suse.com>, Jiri Olsa <jolsa@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 098/191] tools lib api fs: Fix gcc9 stringop-truncation compilation error
-Date:   Fri, 21 Feb 2020 08:41:11 +0100
-Message-Id: <20200221072302.916269809@linuxfoundation.org>
+Subject: [PATCH 5.4 273/344] kbuild: use -S instead of -E for precise cc-option test in Kconfig
+Date:   Fri, 21 Feb 2020 08:41:12 +0100
+Message-Id: <20200221072414.510202665@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,65 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Zhizhikin <andrey.z@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
 
-[ Upstream commit 6794200fa3c9c3e6759dae099145f23e4310f4f7 ]
+[ Upstream commit 3bed1b7b9d79ca40e41e3af130931a3225e951a3 ]
 
-GCC9 introduced string hardening mechanisms, which exhibits the error
-during fs api compilation:
+Currently, -E (stop after the preprocessing stage) is used to check
+whether the given compiler flag is supported.
 
-error: '__builtin_strncpy' specified bound 4096 equals destination size
-[-Werror=stringop-truncation]
+While it is faster than -S (or -c), it can be false-positive. You need
+to run the compilation proper to check the flag more precisely.
 
-This comes when the length of copy passed to strncpy is is equal to
-destination size, which could potentially lead to buffer overflow.
+For example, -E and -S disagree about the support of
+"--param asan-instrument-allocas=1".
 
-There is a need to mitigate this potential issue by limiting the size of
-destination by 1 and explicitly terminate the destination with NULL.
+$ gcc -Werror --param asan-instrument-allocas=1 -E -x c /dev/null -o /dev/null
+$ echo $?
+0
 
-Signed-off-by: Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrii Nakryiko <andriin@fb.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: Martin KaFai Lau <kafai@fb.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Yonghong Song <yhs@fb.com>
-Cc: bpf@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Link: http://lore.kernel.org/lkml/20191211080109.18765-1-andrey.zhizhikin@leica-geosystems.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+$ gcc -Werror --param asan-instrument-allocas=1 -S -x c /dev/null -o /dev/null
+cc1: error: invalid --param name ‘asan-instrument-allocas’; did you mean ‘asan-instrument-writes’?
+$ echo $?
+1
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/api/fs/fs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ scripts/Kconfig.include | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/lib/api/fs/fs.c b/tools/lib/api/fs/fs.c
-index 7aba8243a0e7c..bd021a0eeef8c 100644
---- a/tools/lib/api/fs/fs.c
-+++ b/tools/lib/api/fs/fs.c
-@@ -210,6 +210,7 @@ static bool fs__env_override(struct fs *fs)
- 	size_t name_len = strlen(fs->name);
- 	/* name + "_PATH" + '\0' */
- 	char upper_name[name_len + 5 + 1];
-+
- 	memcpy(upper_name, fs->name, name_len);
- 	mem_toupper(upper_name, name_len);
- 	strcpy(&upper_name[name_len], "_PATH");
-@@ -219,7 +220,8 @@ static bool fs__env_override(struct fs *fs)
- 		return false;
+diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+index d4adfbe426903..bfb44b265a948 100644
+--- a/scripts/Kconfig.include
++++ b/scripts/Kconfig.include
+@@ -25,7 +25,7 @@ failure = $(if-success,$(1),n,y)
  
- 	fs->found = true;
--	strncpy(fs->path, override_path, sizeof(fs->path));
-+	strncpy(fs->path, override_path, sizeof(fs->path) - 1);
-+	fs->path[sizeof(fs->path) - 1] = '\0';
- 	return true;
- }
+ # $(cc-option,<flag>)
+ # Return y if the compiler supports <flag>, n otherwise
+-cc-option = $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -E -x c /dev/null -o /dev/null)
++cc-option = $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -S -x c /dev/null -o /dev/null)
  
+ # $(ld-option,<flag>)
+ # Return y if the linker supports <flag>, n otherwise
 -- 
 2.20.1
 
