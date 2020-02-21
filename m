@@ -2,115 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27EDA167F55
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:54:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A7E8167F5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 14:56:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728611AbgBUNys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 08:54:48 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24469 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727836AbgBUNys (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 08:54:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582293287;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=LrJP8CFwR0eYb5yjnCrrgpHe2D62qRQVD0aKyEgzsF4=;
-        b=O3RtQARHj8v6S73x6CI4i61zEZcXgHuxYHRZz9Hjh9TQIlyILAohSmlUeoLjD0VoCZMOd9
-        4/mD6yeND0JzxIlbNk+JlTbwAkCU/77oyLToQYiCdz1rZyWYGXLwkpBsVc+lMOX5H76ru/
-        USRI3KHNO9vNmzeqBm/VrA6TsDtlQdI=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-15-xICDYfcfO7q3Fj1JpGNvvA-1; Fri, 21 Feb 2020 08:54:45 -0500
-X-MC-Unique: xICDYfcfO7q3Fj1JpGNvvA-1
-Received: by mail-wr1-f70.google.com with SMTP id a12so1038072wrn.19
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 05:54:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=LrJP8CFwR0eYb5yjnCrrgpHe2D62qRQVD0aKyEgzsF4=;
-        b=sfmZFLkSizd0RYPLVdm9Jd+2s9Wg39JR+IINin4TVoeA/Y2cFIBUwaPFLCFHPsplx5
-         AsZt93SZ3BQZ/btDBtaPi4z+L1ynYf4s2PZs7KILaFBlnz8i5i+csH07bKA9JZg7vzHz
-         7embN59vbidrCNqHk0LXEm/57+KS/5ln6IIzOsDj29md0VASJLVJwO4sfTRHzryUcNkf
-         n1xwxFdvWNOYHf0axxk0jyhPQJcipIfY0Ib20Ph+wKzU0gNkawxUvx7q/ac2AitibtZ7
-         Mc5GLvu2zInpfSrolQdOtuAunviEy/n0nggRn4N2TjlK6RwO2cxcN0hRvmnDVTTaOeKo
-         5ibA==
-X-Gm-Message-State: APjAAAXDeJeMn6q8fdGy6Qd1Jwk8aqp3tQrs/Cjw9vhplUDlL2bPa5Q9
-        nupYhRqFBiRYAM6pbENaIz1ajmmkQ1w9fC9FO6SLMvsrWX407TLYxY0W3dEfzJRZaCFKJWIAEiK
-        4mIiOAvZQ9IBFaCNfA8G7ZskV
-X-Received: by 2002:adf:e2c5:: with SMTP id d5mr48466795wrj.165.1582293283944;
-        Fri, 21 Feb 2020 05:54:43 -0800 (PST)
-X-Google-Smtp-Source: APXvYqypCQVdasfRnNXDTX4aGD7CTCMhAe0gR/KZ7ldH3C0p7fXCOZpqLU+JnrR0QV2HrEDGeiAu/Q==
-X-Received: by 2002:adf:e2c5:: with SMTP id d5mr48466777wrj.165.1582293283691;
-        Fri, 21 Feb 2020 05:54:43 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id i204sm3897111wma.44.2020.02.21.05.54.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 05:54:43 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/10] KVM: VMX: Clean up vmx_flush_tlb_gva()
-In-Reply-To: <20200220204356.8837-8-sean.j.christopherson@intel.com>
-References: <20200220204356.8837-1-sean.j.christopherson@intel.com> <20200220204356.8837-8-sean.j.christopherson@intel.com>
-Date:   Fri, 21 Feb 2020 14:54:42 +0100
-Message-ID: <87r1yorqot.fsf@vitty.brq.redhat.com>
+        id S1728643AbgBUN42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 08:56:28 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45490 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728477AbgBUN42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 08:56:28 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 672E2DF8E568B6A01DC6;
+        Fri, 21 Feb 2020 21:56:24 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Fri, 21 Feb 2020
+ 21:56:13 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+CC:     <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] crypto: md5: remove unused macros
+Date:   Fri, 21 Feb 2020 21:55:15 +0800
+Message-ID: <20200221135515.14948-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+crypto/md5.c:26:0: warning: macro "MD5_DIGEST_WORDS" is not used [-Wunused-macros]
+crypto/md5.c:27:0: warning: macro "MD5_MESSAGE_BYTES" is not used [-Wunused-macros]
 
-> Refactor vmx_flush_tlb_gva() to remove a superfluous local variable and
-> clean up its comment, which is oddly located below the code it is
-> commenting.
->
-> No functional change intended.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 5372a93e1727..906e9d9aa09e 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -2824,15 +2824,11 @@ static void exit_lmode(struct kvm_vcpu *vcpu)
->  
->  static void vmx_flush_tlb_gva(struct kvm_vcpu *vcpu, gva_t addr)
->  {
-> -	int vpid = to_vmx(vcpu)->vpid;
-> -
-> -	vpid_sync_vcpu_addr(vpid, addr);
-> -
->  	/*
-> -	 * If VPIDs are not supported or enabled, then the above is a no-op.
-> -	 * But we don't really need a TLB flush in that case anyway, because
-> -	 * each VM entry/exit includes an implicit flush when VPID is 0.
-> +	 * vpid_sync_vcpu_addr() is a nop if vmx->vpid==0, see the comment in
-> +	 * vmx_flush_tlb_guest() for an explanation of why this is ok.
+They are never used since commit 3c7eb3cc8360 ("md5: remove from
+lib and only live in crypto").
 
-"OK" :-)
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ crypto/md5.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
->  	 */
-> +	vpid_sync_vcpu_addr(to_vmx(vcpu)->vpid, addr);
->  }
->  
->  static void vmx_flush_tlb_guest(struct kvm_vcpu *vcpu)
-
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-
+diff --git a/crypto/md5.c b/crypto/md5.c
+index 22dc60b..72c0c46 100644
+--- a/crypto/md5.c
++++ b/crypto/md5.c
+@@ -23,9 +23,6 @@
+ #include <linux/types.h>
+ #include <asm/byteorder.h>
+ 
+-#define MD5_DIGEST_WORDS 4
+-#define MD5_MESSAGE_BYTES 64
+-
+ const u8 md5_zero_message_hash[MD5_DIGEST_SIZE] = {
+ 	0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04,
+ 	0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e,
 -- 
-Vitaly
+2.7.4
+
 
