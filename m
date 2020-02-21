@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E621316781C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:46:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B67EA16769B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:37:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732463AbgBUIqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:46:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46056 "EHLO mail.kernel.org"
+        id S1731863AbgBUIFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:05:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728761AbgBUHtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:49:31 -0500
+        id S1731626AbgBUIFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:05:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83F46208C4;
-        Fri, 21 Feb 2020 07:49:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EC8320801;
+        Fri, 21 Feb 2020 08:05:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271371;
-        bh=88HK1gOY1FHSYpLNTI+/uJaGR/7f7jW7TlUIoj3OmtE=;
+        s=default; t=1582272336;
+        bh=xhY7BV3Ql3HJ94mAkEn0dm358OpGYEaUApGgi1BxkN4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w7AJViBqB4Py6msE4FfJht0LZ1vUT9h1fURiuJelDg95e0noN40cyDrdtT61t904x
-         kx/tdCNxeFk8C7vpeDE4vF4099lf8i+5Yhuu0PrSS8lg0S6o5bqZo2Bg9/dV+Xk2cy
-         zETbL2JdXEzOrBpZsmzgAS9fR8Mlxa9eAjVvZ0AU=
+        b=Pw1Z9WHIndAUAZ4h0NchY9ZdMmZo3/MFP/qvQWs/9D9QzSpPG3w4WkL5xQlHd1Wvl
+         6zzcRvjOIJxnxN+81tp60YiuBJoLIGlv9KJqEhjRS0Sf34StrDtc/HdtZv1nodWkjY
+         XTNMwK7AivRZhYpsGMhVWbN73FcLb+yWXxu2c6Ow=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Willem de Bruijn <willemb@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 140/399] selftests/net: make so_txtime more robust to timer variance
-Date:   Fri, 21 Feb 2020 08:37:45 +0100
-Message-Id: <20200221072416.072603731@linuxfoundation.org>
+Subject: [PATCH 5.4 068/344] pwm: omap-dmtimer: Simplify error handling
+Date:   Fri, 21 Feb 2020 08:37:47 +0100
+Message-Id: <20200221072355.178250233@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,224 +46,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Willem de Bruijn <willemb@google.com>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-[ Upstream commit ea6a547669b37453f2b1a5d85188d75b3613dfaa ]
+[ Upstream commit c4cf7aa57eb83b108d2d9c6c37c143388fee2a4d ]
 
-The SO_TXTIME test depends on accurate timers. In some virtualized
-environments the test has been reported to be flaky. This is easily
-reproduced by disabling kvm acceleration in Qemu.
+Instead of doing error handling in the middle of ->probe(), move error
+handling and freeing the reference to timer to the end.
 
-Allow greater variance in a run and retry to further reduce flakiness.
+This fixes a resource leak as dm_timer wasn't freed when allocating
+*omap failed.
 
-Observed errors are one of two kinds: either the packet arrives too
-early or late at recv(), or it was dropped in the qdisc itself and the
-recv() call times out.
+Implementation note: The put: label was never reached without a goto and
+ret being unequal to 0, so the removed return statement is fine.
 
-In the latter case, the qdisc queues a notification to the error
-queue of the send socket. Also explicitly report this cause.
-
-Link: https://lore.kernel.org/netdev/CA+FuTSdYOnJCsGuj43xwV1jxvYsaoa_LzHQF9qMyhrkLrivxKw@mail.gmail.com
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Fixes: 6604c6556db9 ("pwm: Add PWM driver for OMAP using dual-mode timers")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/net/so_txtime.c  | 84 +++++++++++++++++++++++-
- tools/testing/selftests/net/so_txtime.sh |  9 ++-
- 2 files changed, 88 insertions(+), 5 deletions(-)
+ drivers/pwm/pwm-omap-dmtimer.c | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/tools/testing/selftests/net/so_txtime.c b/tools/testing/selftests/net/so_txtime.c
-index 34df4c8882afb..383bac05ac324 100644
---- a/tools/testing/selftests/net/so_txtime.c
-+++ b/tools/testing/selftests/net/so_txtime.c
-@@ -12,7 +12,11 @@
- #include <arpa/inet.h>
- #include <error.h>
- #include <errno.h>
-+#include <inttypes.h>
- #include <linux/net_tstamp.h>
-+#include <linux/errqueue.h>
-+#include <linux/ipv6.h>
-+#include <linux/tcp.h>
- #include <stdbool.h>
- #include <stdlib.h>
- #include <stdio.h>
-@@ -28,7 +32,7 @@ static int	cfg_clockid	= CLOCK_TAI;
- static bool	cfg_do_ipv4;
- static bool	cfg_do_ipv6;
- static uint16_t	cfg_port	= 8000;
--static int	cfg_variance_us	= 2000;
-+static int	cfg_variance_us	= 4000;
- 
- static uint64_t glob_tstart;
- 
-@@ -43,6 +47,9 @@ static struct timed_send cfg_in[MAX_NUM_PKT];
- static struct timed_send cfg_out[MAX_NUM_PKT];
- static int cfg_num_pkt;
- 
-+static int cfg_errq_level;
-+static int cfg_errq_type;
-+
- static uint64_t gettime_ns(void)
- {
- 	struct timespec ts;
-@@ -90,13 +97,15 @@ static void do_send_one(int fdt, struct timed_send *ts)
- 
- }
- 
--static void do_recv_one(int fdr, struct timed_send *ts)
-+static bool do_recv_one(int fdr, struct timed_send *ts)
- {
- 	int64_t tstop, texpect;
- 	char rbuf[2];
- 	int ret;
- 
- 	ret = recv(fdr, rbuf, sizeof(rbuf), 0);
-+	if (ret == -1 && errno == EAGAIN)
-+		return true;
- 	if (ret == -1)
- 		error(1, errno, "read");
- 	if (ret != 1)
-@@ -113,6 +122,8 @@ static void do_recv_one(int fdr, struct timed_send *ts)
- 
- 	if (labs(tstop - texpect) > cfg_variance_us)
- 		error(1, 0, "exceeds variance (%d us)", cfg_variance_us);
-+
-+	return false;
- }
- 
- static void do_recv_verify_empty(int fdr)
-@@ -125,12 +136,70 @@ static void do_recv_verify_empty(int fdr)
- 		error(1, 0, "recv: not empty as expected (%d, %d)", ret, errno);
- }
- 
-+static void do_recv_errqueue_timeout(int fdt)
-+{
-+	char control[CMSG_SPACE(sizeof(struct sock_extended_err)) +
-+		     CMSG_SPACE(sizeof(struct sockaddr_in6))] = {0};
-+	char data[sizeof(struct ipv6hdr) +
-+		  sizeof(struct tcphdr) + 1];
-+	struct sock_extended_err *err;
-+	struct msghdr msg = {0};
-+	struct iovec iov = {0};
-+	struct cmsghdr *cm;
-+	int64_t tstamp = 0;
-+	int ret;
-+
-+	iov.iov_base = data;
-+	iov.iov_len = sizeof(data);
-+
-+	msg.msg_iov = &iov;
-+	msg.msg_iovlen = 1;
-+
-+	msg.msg_control = control;
-+	msg.msg_controllen = sizeof(control);
-+
-+	while (1) {
-+		ret = recvmsg(fdt, &msg, MSG_ERRQUEUE);
-+		if (ret == -1 && errno == EAGAIN)
-+			break;
-+		if (ret == -1)
-+			error(1, errno, "errqueue");
-+		if (msg.msg_flags != MSG_ERRQUEUE)
-+			error(1, 0, "errqueue: flags 0x%x\n", msg.msg_flags);
-+
-+		cm = CMSG_FIRSTHDR(&msg);
-+		if (cm->cmsg_level != cfg_errq_level ||
-+		    cm->cmsg_type != cfg_errq_type)
-+			error(1, 0, "errqueue: type 0x%x.0x%x\n",
-+				    cm->cmsg_level, cm->cmsg_type);
-+
-+		err = (struct sock_extended_err *)CMSG_DATA(cm);
-+		if (err->ee_origin != SO_EE_ORIGIN_TXTIME)
-+			error(1, 0, "errqueue: origin 0x%x\n", err->ee_origin);
-+		if (err->ee_code != ECANCELED)
-+			error(1, 0, "errqueue: code 0x%x\n", err->ee_code);
-+
-+		tstamp = ((int64_t) err->ee_data) << 32 | err->ee_info;
-+		tstamp -= (int64_t) glob_tstart;
-+		tstamp /= 1000 * 1000;
-+		fprintf(stderr, "send: pkt %c at %" PRId64 "ms dropped\n",
-+				data[ret - 1], tstamp);
-+
-+		msg.msg_flags = 0;
-+		msg.msg_controllen = sizeof(control);
-+	}
-+
-+	error(1, 0, "recv: timeout");
-+}
-+
- static void setsockopt_txtime(int fd)
- {
- 	struct sock_txtime so_txtime_val = { .clockid = cfg_clockid };
- 	struct sock_txtime so_txtime_val_read = { 0 };
- 	socklen_t vallen = sizeof(so_txtime_val);
- 
-+	so_txtime_val.flags = SOF_TXTIME_REPORT_ERRORS;
-+
- 	if (setsockopt(fd, SOL_SOCKET, SO_TXTIME,
- 		       &so_txtime_val, sizeof(so_txtime_val)))
- 		error(1, errno, "setsockopt txtime");
-@@ -194,7 +263,8 @@ static void do_test(struct sockaddr *addr, socklen_t alen)
- 	for (i = 0; i < cfg_num_pkt; i++)
- 		do_send_one(fdt, &cfg_in[i]);
- 	for (i = 0; i < cfg_num_pkt; i++)
--		do_recv_one(fdr, &cfg_out[i]);
-+		if (do_recv_one(fdr, &cfg_out[i]))
-+			do_recv_errqueue_timeout(fdt);
- 
- 	do_recv_verify_empty(fdr);
- 
-@@ -280,6 +350,10 @@ int main(int argc, char **argv)
- 		addr6.sin6_family = AF_INET6;
- 		addr6.sin6_port = htons(cfg_port);
- 		addr6.sin6_addr = in6addr_loopback;
-+
-+		cfg_errq_level = SOL_IPV6;
-+		cfg_errq_type = IPV6_RECVERR;
-+
- 		do_test((void *)&addr6, sizeof(addr6));
+diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+index 00772fc534906..6cfeb0e1cc679 100644
+--- a/drivers/pwm/pwm-omap-dmtimer.c
++++ b/drivers/pwm/pwm-omap-dmtimer.c
+@@ -298,15 +298,10 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
+ 		goto put;
  	}
  
-@@ -289,6 +363,10 @@ int main(int argc, char **argv)
- 		addr4.sin_family = AF_INET;
- 		addr4.sin_port = htons(cfg_port);
- 		addr4.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-+
-+		cfg_errq_level = SOL_IP;
-+		cfg_errq_type = IP_RECVERR;
-+
- 		do_test((void *)&addr4, sizeof(addr4));
+-put:
+-	of_node_put(timer);
+-	if (ret < 0)
+-		return ret;
+-
+ 	omap = devm_kzalloc(&pdev->dev, sizeof(*omap), GFP_KERNEL);
+ 	if (!omap) {
+-		pdata->free(dm_timer);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto err_alloc_omap;
  	}
  
-diff --git a/tools/testing/selftests/net/so_txtime.sh b/tools/testing/selftests/net/so_txtime.sh
-index 5aa519328a5b5..3f7800eaecb1e 100755
---- a/tools/testing/selftests/net/so_txtime.sh
-+++ b/tools/testing/selftests/net/so_txtime.sh
-@@ -5,7 +5,12 @@
+ 	omap->pdata = pdata;
+@@ -339,13 +334,28 @@ put:
+ 	ret = pwmchip_add(&omap->chip);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to register PWM\n");
+-		omap->pdata->free(omap->dm_timer);
+-		return ret;
++		goto err_pwmchip_add;
+ 	}
  
- # Run in network namespace
- if [[ $# -eq 0 ]]; then
--	./in_netns.sh $0 __subprocess
-+	if ! ./in_netns.sh $0 __subprocess; then
-+		# test is time sensitive, can be flaky
-+		echo "test failed: retry once"
-+		./in_netns.sh $0 __subprocess
-+	fi
++	of_node_put(timer);
 +
- 	exit $?
- fi
+ 	platform_set_drvdata(pdev, omap);
  
-@@ -18,7 +23,7 @@ tc qdisc add dev lo root fq
- ./so_txtime -4 -6 -c mono a,10,b,20 a,10,b,20
- ./so_txtime -4 -6 -c mono a,20,b,10 b,20,a,20
+ 	return 0;
++
++err_pwmchip_add:
++
++	/*
++	 * *omap is allocated using devm_kzalloc,
++	 * so no free necessary here
++	 */
++err_alloc_omap:
++
++	pdata->free(dm_timer);
++put:
++	of_node_put(timer);
++
++	return ret;
+ }
  
--if tc qdisc replace dev lo root etf clockid CLOCK_TAI delta 200000; then
-+if tc qdisc replace dev lo root etf clockid CLOCK_TAI delta 400000; then
- 	! ./so_txtime -4 -6 -c tai a,-1 a,-1
- 	! ./so_txtime -4 -6 -c tai a,0 a,0
- 	./so_txtime -4 -6 -c tai a,10 a,10
+ static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
 -- 
 2.20.1
 
