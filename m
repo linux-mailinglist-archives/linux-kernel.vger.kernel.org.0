@@ -2,84 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5353D167FE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:16:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A55B7167FEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:17:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728425AbgBUOP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 09:15:59 -0500
-Received: from foss.arm.com ([217.140.110.172]:40260 "EHLO foss.arm.com"
+        id S1728723AbgBUORC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 09:17:02 -0500
+Received: from verein.lst.de ([213.95.11.211]:55676 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728081AbgBUOP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:15:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0766C1FB;
-        Fri, 21 Feb 2020 06:15:59 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 575C73F703;
-        Fri, 21 Feb 2020 06:15:58 -0800 (PST)
-Date:   Fri, 21 Feb 2020 14:15:53 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] PCI: endpoint: Fix clearing start entry in
- configfs
-Message-ID: <20200221141553.GA15440@e121166-lin.cambridge.arm.com>
-References: <1576844677-24933-1-git-send-email-hayashi.kunihiko@socionext.com>
+        id S1728326AbgBUORC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 09:17:02 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 36BC968BFE; Fri, 21 Feb 2020 15:16:57 +0100 (CET)
+Date:   Fri, 21 Feb 2020 15:16:56 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        openrisc@lists.librecores.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dma-mapping: support setting memory uncached in
+ place
+Message-ID: <20200221141656.GF6968@lst.de>
+References: <20200220170139.387354-1-hch@lst.de> <20200220170139.387354-2-hch@lst.de> <502fa745-ddad-f91b-52bc-52edecf8fdbc@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1576844677-24933-1-git-send-email-hayashi.kunihiko@socionext.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <502fa745-ddad-f91b-52bc-52edecf8fdbc@arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 09:24:37PM +0900, Kunihiko Hayashi wrote:
-> The value of 'start' entry is no change whenever writing 0 to configfs.
-> So the endpoint that stopped once can't restart.
-> 
-> The following command lines are an example restarting endpoint and
-> reprogramming configurations after receiving bus-reset.
-> 
->     echo 0 > controllers/66000000.pcie-ep/start
->     rm controllers/66000000.pcie-ep/func1
->     ln -s functions/pci_epf_test/func1 controllers/66000000.pcie-ep/
->     echo 1 > controllers/66000000.pcie-ep/start
-> 
-> However, the first 'echo' can't set 0 to 'start', so the last 'echo' can't
-> restart endpoint.
+On Thu, Feb 20, 2020 at 05:21:35PM +0000, Robin Murphy wrote:
+>> @@ -196,10 +192,15 @@ void *dma_direct_alloc_pages(struct device *dev, size_t size,
+>>     	memset(ret, 0, size);
+>>   -	if (IS_ENABLED(CONFIG_ARCH_HAS_UNCACHED_SEGMENT) &&
+>> -	    dma_alloc_need_uncached(dev, attrs)) {
+>> +	if (dma_alloc_need_uncached(dev, attrs)) {
+>>   		arch_dma_prep_coherent(page, size);
+>> -		ret = uncached_kernel_address(ret);
+>> +
+>> +		if (IS_ENABLED(CONFIG_ARCH_HAS_DMA_SET_UNCACHED)) {
+>> +			if (!arch_dma_set_uncached(ret, size))
+>> +				goto out_free_pages;
+>> +		} else if (IS_ENABLED(CONFIG_ARCH_HAS_UNCACHED_SEGMENT)) {
+>> +			ret = uncached_kernel_address(ret);
+>
+> Hmm, would we actually need to keep ARCH_HAS_UNCACHED_SEGMENT? If 
+> arch_dma_set_uncached() returned void*/ERR_PTR instead, then it could work 
+> for both cases (with arch_dma_clear_uncached() being a no-op for segments).
 
-I think your description is not correct - pci_epc_group->start is
-just used to check if an endpoint has been started or not (in
-pci_epc_epf_unlink() and that's a WARN_ON) but nonetheless this
-looks like a bug and ought to be fixed.
-
-I need Kishon's ACK to proceed.
-
-Thanks,
-Lorenzo
-
-> Fixes: d74679911610 ("PCI: endpoint: Introduce configfs entry for configuring EP functions")
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> ---
->  drivers/pci/endpoint/pci-ep-cfs.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
-> index d1288a0..4fead88 100644
-> --- a/drivers/pci/endpoint/pci-ep-cfs.c
-> +++ b/drivers/pci/endpoint/pci-ep-cfs.c
-> @@ -58,6 +58,7 @@ static ssize_t pci_epc_start_store(struct config_item *item, const char *page,
->  
->  	if (!start) {
->  		pci_epc_stop(epc);
-> +		epc_group->start = 0;
->  		return len;
->  	}
->  
-> -- 
-> 2.7.4
-> 
+Yes, I think so.  I was a little worried about what to do with
+cached_kernel_address() in that scheme, but it turns out with the recent
+round of dma-direct cleanup that is actually entirely unused now.
