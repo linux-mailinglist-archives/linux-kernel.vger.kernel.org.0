@@ -2,202 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEB70166FC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 07:47:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C95E166FB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 07:41:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbgBUGrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 01:47:21 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:41458 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727066AbgBUGrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 01:47:19 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B69FE1A6D88;
-        Fri, 21 Feb 2020 07:47:16 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8931A1A6D82;
-        Fri, 21 Feb 2020 07:47:08 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C85EB4043C;
-        Fri, 21 Feb 2020 14:46:10 +0800 (SGT)
-From:   sherry sun <sherry.sun@nxp.com>
-To:     bp@alien8.de, mchehab@kernel.org, tony.luck@intel.com,
-        james.morse@arm.com, rrichter@marvell.com, michal.simek@xilinx.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-edac@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com, frank.li@nxp.com
-Subject: [PATCH 3/3] EDAC: synopsys: Add edac driver support for i.MX8MP
-Date:   Fri, 21 Feb 2020 14:39:16 +0800
-Message-Id: <1582267156-20189-4-git-send-email-sherry.sun@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582267156-20189-1-git-send-email-sherry.sun@nxp.com>
-References: <1582267156-20189-1-git-send-email-sherry.sun@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727015AbgBUGlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 01:41:50 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:44021 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbgBUGlu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 01:41:50 -0500
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id 01L6fOtD002177;
+        Fri, 21 Feb 2020 15:41:25 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 01L6fOtD002177
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582267285;
+        bh=w9qQFtOkV425rrij+z9xWleLToj7ihi//PoOcVDN2Ls=;
+        h=From:Date:Subject:To:Cc:From;
+        b=EmYHYFjxJeWWjuE7FpRIcMpVpbQvYa1azVujiZpRCPSsyY35BcDmkIm6LuFWO7LcC
+         quQEOk/Xtic26YqcHn3Cq1abtW3zfwR/SVViwXi0dDjkOGrGdjh31hDSxgMbECUPJu
+         Y0hjbsmhVLbjvw3wXRR4jroZ/0wt4KcEJtO5T98t5qWueJKOnxZP0N/73Dp3La8Kni
+         CF1ajTgMlpDvjwbBXI9iQsGIgWMU3k74egfDmlG1gTirzv03lbmOxjWWn8xEiNQPrL
+         7wgEpfQKHtoYHGBWJZ64zvG2edbyRtEuMFua2NLVbAJsB4I4SpwMVTJWxSXPwDqF88
+         c5ZSz/hYUYN+g==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id p6so561576vsj.11;
+        Thu, 20 Feb 2020 22:41:25 -0800 (PST)
+X-Gm-Message-State: APjAAAXmOB3023VSu11MbMsXkEZ8wfmiV131CyhJMk9kxQSkir8locVM
+        BmejnN+4CwCFoIxzKFqwdYN1ZXt5JbDrqtUpLe0=
+X-Google-Smtp-Source: APXvYqxlurREctTusUbI4NfwEoWK1BdgrIss1QRpDZcokNud451FRNaB4WBxWTzCUckU19r/OoH75MaXPz0bIJE05q4=
+X-Received: by 2002:a67:fa4b:: with SMTP id j11mr19540806vsq.155.1582267284130;
+ Thu, 20 Feb 2020 22:41:24 -0800 (PST)
+MIME-Version: 1.0
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 21 Feb 2020 15:40:48 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASS5CCLi=7LNBHqHgdtaYgAFkcgTGYvmGds7y8cnWzBMw@mail.gmail.com>
+Message-ID: <CAK7LNASS5CCLi=7LNBHqHgdtaYgAFkcgTGYvmGds7y8cnWzBMw@mail.gmail.com>
+Subject: Some questions about DT-schema
+To:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        DTML <devicetree@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sherry Sun <sherry.sun@nxp.com>
+[Q1] Order of reset-names, clock-names, etc.
 
-Since i.MX8MP use synopsys ddr controller IP, so add edac support
-for i.MX8MP based on synopsys edac driver. i.MX8MP use LPDDR4 and
-support interrupts for corrected and uncorrected errors. The main
-difference between ZynqMP and i.MX8MP ddr controller is the interrupt
-registers. So add another interrupt handler function, enable/disable
-interrupt function to distinguish with ZynqMP.
+I have nodes that describe multiple reset lines:
 
-Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
----
- drivers/edac/synopsys_edac.c | 77 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 76 insertions(+), 1 deletion(-)
+It looks like this:
 
-diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
-index 2d263382d797..66c801502212 100644
---- a/drivers/edac/synopsys_edac.c
-+++ b/drivers/edac/synopsys_edac.c
-@@ -101,6 +101,7 @@
- /* DDR ECC Quirks */
- #define DDR_ECC_INTR_SUPPORT		BIT(0)
- #define DDR_ECC_DATA_POISON_SUPPORT	BIT(1)
-+#define DDR_ECC_IMX8MP			BIT(2)
- 
- /* ZynqMP Enhanced DDR memory controller registers that are relevant to ECC */
- /* ECC Configuration Registers */
-@@ -266,6 +267,11 @@
- 
- #define RANK_B0_BASE			6
- 
-+/* ECCCTL UE/CE Interrupt enable/disable for IMX8MP*/
-+#define DDR_CE_INTR_EN_MASK			0x100
-+#define DDR_UE_INTR_EN_MASK			0x200
-+#define ECC_INTR_MASK				0x10100
-+
- /**
-  * struct ecc_error_info - ECC error log information.
-  * @row:	Row number.
-@@ -524,6 +530,54 @@ static void handle_error(struct mem_ctl_info *mci, struct synps_ecc_status *p)
- 	memset(p, 0, sizeof(*p));
- }
- 
-+static void enable_intr_imx8mp(struct synps_edac_priv *priv)
-+{
-+	int regval;
-+
-+	regval = readl(priv->baseaddr + ECC_CLR_OFST);
-+	regval |= (DDR_CE_INTR_EN_MASK | DDR_UE_INTR_EN_MASK);
-+	writel(regval, priv->baseaddr + ECC_CLR_OFST);
-+}
-+
-+static void disable_intr_imx8mp(struct synps_edac_priv *priv)
-+{
-+	int regval;
-+
-+	regval = readl(priv->baseaddr + ECC_CLR_OFST);
-+	regval &= ~(DDR_CE_INTR_EN_MASK | DDR_UE_INTR_EN_MASK);
-+	writel(regval, priv->baseaddr + ECC_CLR_OFST);
-+}
-+
-+/* Interrupt Handler for ECC interrupts on imx8mp platform. */
-+static irqreturn_t intr_handler_imx8mp(int irq, void *dev_id)
-+{
-+	const struct synps_platform_data *p_data;
-+	struct mem_ctl_info *mci = dev_id;
-+	struct synps_edac_priv *priv;
-+	int status, regval;
-+
-+	priv = mci->pvt_info;
-+	p_data = priv->p_data;
-+
-+	regval = readl(priv->baseaddr + ECC_STAT_OFST);
-+	if (!(regval & ECC_INTR_MASK))
-+		return IRQ_NONE;
-+
-+	status = p_data->get_error_info(priv);
-+	if (status)
-+		return IRQ_NONE;
-+
-+	priv->ce_cnt += priv->stat.ce_cnt;
-+	priv->ue_cnt += priv->stat.ue_cnt;
-+	handle_error(mci, &priv->stat);
-+
-+	edac_dbg(3, "Total error count CE %d UE %d\n",
-+		 priv->ce_cnt, priv->ue_cnt);
-+	enable_intr_imx8mp(priv);
-+
-+	return IRQ_HANDLED;
-+}
-+
- /**
-  * intr_handler - Interrupt Handler for ECC interrupts.
-  * @irq:        IRQ number.
-@@ -541,6 +595,9 @@ static irqreturn_t intr_handler(int irq, void *dev_id)
- 	priv = mci->pvt_info;
- 	p_data = priv->p_data;
- 
-+	if (p_data->quirks & DDR_ECC_IMX8MP)
-+		return intr_handler_imx8mp(irq, dev_id);
-+
- 	regval = readl(priv->baseaddr + DDR_QOS_IRQ_STAT_OFST);
- 	regval &= (DDR_QOSCE_MASK | DDR_QOSUE_MASK);
- 	if (!(regval & ECC_CE_UE_INTR_MASK))
-@@ -817,7 +874,7 @@ static void mc_init(struct mem_ctl_info *mci, struct platform_device *pdev)
- 	platform_set_drvdata(pdev, mci);
- 
- 	/* Initialize controller capabilities and configuration */
--	mci->mtype_cap = MEM_FLAG_DDR3 | MEM_FLAG_DDR2;
-+	mci->mtype_cap = MEM_FLAG_LRDDR4 | MEM_FLAG_DDR3 | MEM_FLAG_DDR2;
- 	mci->edac_ctl_cap = EDAC_FLAG_NONE | EDAC_FLAG_SECDED;
- 	mci->scrub_cap = SCRUB_HW_SRC;
- 	mci->scrub_mode = SCRUB_NONE;
-@@ -842,6 +899,9 @@ static void mc_init(struct mem_ctl_info *mci, struct platform_device *pdev)
- static void enable_intr(struct synps_edac_priv *priv)
- {
- 	/* Enable UE/CE Interrupts */
-+	if (priv->p_data->quirks & DDR_ECC_IMX8MP)
-+		return enable_intr_imx8mp(priv);
-+
- 	writel(DDR_QOSUE_MASK | DDR_QOSCE_MASK,
- 			priv->baseaddr + DDR_QOS_IRQ_EN_OFST);
- }
-@@ -849,6 +909,9 @@ static void enable_intr(struct synps_edac_priv *priv)
- static void disable_intr(struct synps_edac_priv *priv)
- {
- 	/* Disable UE/CE Interrupts */
-+	if (priv->p_data->quirks & DDR_ECC_IMX8MP)
-+		return disable_intr_imx8mp(priv);
-+
- 	writel(DDR_QOSUE_MASK | DDR_QOSCE_MASK,
- 			priv->baseaddr + DDR_QOS_IRQ_DB_OFST);
- }
-@@ -898,6 +961,14 @@ static const struct synps_platform_data zynqmp_edac_def = {
- 			  ),
- };
- 
-+static const struct synps_platform_data imx8mp_edac_def = {
-+	.get_error_info	= zynqmp_get_error_info,
-+	.get_mtype	= zynqmp_get_mtype,
-+	.get_dtype	= zynqmp_get_dtype,
-+	.get_ecc_state	= zynqmp_get_ecc_state,
-+	.quirks         = (DDR_ECC_INTR_SUPPORT | DDR_ECC_IMX8MP),
-+};
-+
- static const struct of_device_id synps_edac_match[] = {
- 	{
- 		.compatible = "xlnx,zynq-ddrc-a05",
-@@ -907,6 +978,10 @@ static const struct of_device_id synps_edac_match[] = {
- 		.compatible = "xlnx,zynqmp-ddrc-2.40a",
- 		.data = (void *)&zynqmp_edac_def
- 	},
-+	{
-+		.compatible = "fsl,imx8mp-ddrc",
-+		.data = (void *)&imx8mp_edac_def
-+	},
- 	{
- 		/* end of table */
- 	}
+    reset-names = "host", "bridge";
+    resets = <&rst 0>, <&rst 1>;
+
+
+I looks into some existing schema files
+to figure out how to describe this.
+
+We typically do this.
+
+reset-names:
+  - items:
+    - const: host
+    - const: bridge
+
+
+Since 'items' checks each item against the corresponding index,
+it is order-sensitive.
+
+
+So, the following DT passes the schema.
+
+    reset-names = "host", "bridge";
+    resets = <&rst 0>, <&rst 1>;
+
+
+However, the following DT fails in the schema checking.
+
+    reset-names = "bridge", "host";
+    resets = <&rst 1>, <&rst 0>;
+
+The latter is as correct as the former,
+and should work equivalently.
+
+If we are always required to write the "host", "bridge", in this order,
+there is no point of 'reset-names'.
+So, this is a restriction we should not impose.
+
+
+So, if we want to accept both cases,
+we need to write like this:
+
+reset-names:
+  - oneOf:
+    - items:
+      - const: host
+      - const: bridge
+    - items:
+      - const: bridge
+      - const: host
+
+
+If we have 3 reset singles, we end up with listing 6 patterns.
+Is there a good way to describe this?
+
+Or, the policy is,
+there is only one way to do one thing ?
+
+
+[Q2] Tupling reg, range, etc.
+
+In the context of dt-schema,
+'reg' is essentially, array of array,
+and it is important to how you tuple values.
+
+    reg = <1 2>, <3 4>;
+
+    reg = <1>, <2>, <3>, <4>;
+
+    reg = <1 2 3 4>;
+
+All of the three are compiled into the equivalent DTB,
+but in the context of schema checking,
+the number of items is, 2, 4, 1, respectively.
+
+So, we need to care about tuple values correctly
+based on #address-cells and #size-cells.
+
+
+In some DT, I previously wrote ranges like this
+
+   ranges = <1 0x00000000 0x42000000 0x02000000,
+             5 0x00000000 0x46000000 0x01000000>;
+
+But, now probably more correct way is:
+
+   ranges = <1 0x00000000 0x42000000 0x02000000>,
+            <5 0x00000000 0x46000000 0x01000000>;
+
+
+This is a new restriction, and it also means
+we cannot perform schema checking against
+dis-assembled DT  (dtb->dts).
+
+Is this correct?
+
+
 -- 
-2.17.1
-
+Best Regards
+Masahiro Yamada
