@@ -2,193 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9BAB166CC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 03:19:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCCE8166CBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 03:15:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729548AbgBUCTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 21:19:20 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:34892 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728992AbgBUCTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Feb 2020 21:19:20 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7F5EB1A6558;
-        Fri, 21 Feb 2020 03:19:17 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 14D6E1A652F;
-        Fri, 21 Feb 2020 03:19:12 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 87476402A0;
-        Fri, 21 Feb 2020 10:19:05 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] ARM: dts: imx: make wdog node name generic
-Date:   Fri, 21 Feb 2020 10:13:20 +0800
-Message-Id: <1582251200-15562-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729371AbgBUCPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 21:15:01 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:52381 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729027AbgBUCPB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Feb 2020 21:15:01 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id 01L2EQ0T006571;
+        Fri, 21 Feb 2020 11:14:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com 01L2EQ0T006571
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582251267;
+        bh=nhUaYgDkD6DXIYyAxnxU4xube6qtkglOc80oVkt1PIk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=W79fBiY0/kNsekXh7d3jt4wdtM4zpP4ruH15pDBZlx3da9ZBKFCKS744d1KELnA/H
+         LIH8BHQUmHV4O3Le4aykxUkyocZBkjtgszlCfVNXhD1chNTl/LUCMBauekkIxIVClM
+         tI16W1g3xGNZnv8wSCoDDl2uYWQpeZVpVOMryFyS1VFDITkXoHX4iQ1nb+Lc++XQLu
+         2LixvbQbRKjd7AIiRdPqFCOZcCebIu+gzDyxRhlOdaZJ03kPkxSB/ZjwxUbbARb9SK
+         vUFXmcBvYAbA3K51PKg9plRznRd1KfgsnxgKusZBhkr7I09AH6+Zqwc3FczC5oZpbY
+         ehE17aOEaKxHg==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: bus: Convert UniPhier System Bus to json-schema
+Date:   Fri, 21 Feb 2020 11:14:24 +0900
+Message-Id: <20200221021424.20414-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Node name should be generic, use "watchdog" instead of "wdog" for
-wdog nodes.
+Convert the UniPhier System Bus controller binding to DT schema format.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- arch/arm/boot/dts/imx6qdl.dtsi | 4 ++--
- arch/arm/boot/dts/imx6sl.dtsi  | 4 ++--
- arch/arm/boot/dts/imx6sx.dtsi  | 6 +++---
- arch/arm/boot/dts/imx6ul.dtsi  | 6 +++---
- arch/arm/boot/dts/imx7s.dtsi   | 8 ++++----
- 5 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-index 97c0a85..886ab81 100644
---- a/arch/arm/boot/dts/imx6qdl.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl.dtsi
-@@ -669,14 +669,14 @@
- 				status = "disabled";
- 			};
- 
--			wdog1: wdog@20bc000 {
-+			wdog1: watchdog@20bc000 {
- 				compatible = "fsl,imx6q-wdt", "fsl,imx21-wdt";
- 				reg = <0x020bc000 0x4000>;
- 				interrupts = <0 80 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clks IMX6QDL_CLK_IPG>;
- 			};
- 
--			wdog2: wdog@20c0000 {
-+			wdog2: watchdog@20c0000 {
- 				compatible = "fsl,imx6q-wdt", "fsl,imx21-wdt";
- 				reg = <0x020c0000 0x4000>;
- 				interrupts = <0 81 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
-index ea889f7..db626b2 100644
---- a/arch/arm/boot/dts/imx6sl.dtsi
-+++ b/arch/arm/boot/dts/imx6sl.dtsi
-@@ -499,14 +499,14 @@
- 				status = "disabled";
- 			};
- 
--			wdog1: wdog@20bc000 {
-+			wdog1: watchdog@20bc000 {
- 				compatible = "fsl,imx6sl-wdt", "fsl,imx21-wdt";
- 				reg = <0x020bc000 0x4000>;
- 				interrupts = <0 80 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clks IMX6SL_CLK_IPG>;
- 			};
- 
--			wdog2: wdog@20c0000 {
-+			wdog2: watchdog@20c0000 {
- 				compatible = "fsl,imx6sl-wdt", "fsl,imx21-wdt";
- 				reg = <0x020c0000 0x4000>;
- 				interrupts = <0 81 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
-index 1198117..6db9ca09 100644
---- a/arch/arm/boot/dts/imx6sx.dtsi
-+++ b/arch/arm/boot/dts/imx6sx.dtsi
-@@ -567,14 +567,14 @@
- 				status = "disabled";
- 			};
- 
--			wdog1: wdog@20bc000 {
-+			wdog1: watchdog@20bc000 {
- 				compatible = "fsl,imx6sx-wdt", "fsl,imx21-wdt";
- 				reg = <0x020bc000 0x4000>;
- 				interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clks IMX6SX_CLK_IPG>;
- 			};
- 
--			wdog2: wdog@20c0000 {
-+			wdog2: watchdog@20c0000 {
- 				compatible = "fsl,imx6sx-wdt", "fsl,imx21-wdt";
- 				reg = <0x020c0000 0x4000>;
- 				interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1289,7 +1289,7 @@
- 				status = "disabled";
- 			};
- 
--			wdog3: wdog@2288000 {
-+			wdog3: watchdog@2288000 {
- 				compatible = "fsl,imx6sx-wdt", "fsl,imx21-wdt";
- 				reg = <0x02288000 0x4000>;
- 				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 30cce35..e1807e9 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -531,14 +531,14 @@
- 				status = "disabled";
- 			};
- 
--			wdog1: wdog@20bc000 {
-+			wdog1: watchdog@20bc000 {
- 				compatible = "fsl,imx6ul-wdt", "fsl,imx21-wdt";
- 				reg = <0x020bc000 0x4000>;
- 				interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clks IMX6UL_CLK_WDOG1>;
- 			};
- 
--			wdog2: wdog@20c0000 {
-+			wdog2: watchdog@20c0000 {
- 				compatible = "fsl,imx6ul-wdt", "fsl,imx21-wdt";
- 				reg = <0x020c0000 0x4000>;
- 				interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1007,7 +1007,7 @@
- 				status = "disabled";
- 			};
- 
--			wdog3: wdog@21e4000 {
-+			wdog3: watchdog@21e4000 {
- 				compatible = "fsl,imx6ul-wdt", "fsl,imx21-wdt";
- 				reg = <0x021e4000 0x4000>;
- 				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index 1ac5045..196bbd6 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -406,14 +406,14 @@
- 				gpio-ranges = <&iomuxc 0 139 16>;
- 			};
- 
--			wdog1: wdog@30280000 {
-+			wdog1: watchdog@30280000 {
- 				compatible = "fsl,imx7d-wdt", "fsl,imx21-wdt";
- 				reg = <0x30280000 0x10000>;
- 				interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clks IMX7D_WDOG1_ROOT_CLK>;
- 			};
- 
--			wdog2: wdog@30290000 {
-+			wdog2: watchdog@30290000 {
- 				compatible = "fsl,imx7d-wdt", "fsl,imx21-wdt";
- 				reg = <0x30290000 0x10000>;
- 				interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
-@@ -421,7 +421,7 @@
- 				status = "disabled";
- 			};
- 
--			wdog3: wdog@302a0000 {
-+			wdog3: watchdog@302a0000 {
- 				compatible = "fsl,imx7d-wdt", "fsl,imx21-wdt";
- 				reg = <0x302a0000 0x10000>;
- 				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-@@ -429,7 +429,7 @@
- 				status = "disabled";
- 			};
- 
--			wdog4: wdog@302b0000 {
-+			wdog4: watchdog@302b0000 {
- 				compatible = "fsl,imx7d-wdt", "fsl,imx21-wdt";
- 				reg = <0x302b0000 0x10000>;
- 				interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
+ .../bus/socionext,uniphier-system-bus.yaml    | 96 +++++++++++++++++++
+ .../bindings/bus/uniphier-system-bus.txt      | 66 -------------
+ 2 files changed, 96 insertions(+), 66 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml
+ delete mode 100644 Documentation/devicetree/bindings/bus/uniphier-system-bus.txt
+
+diff --git a/Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml b/Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml
+new file mode 100644
+index 000000000000..ada3b1266c08
+--- /dev/null
++++ b/Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml
+@@ -0,0 +1,96 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bus/socionext,uniphier-system-bus.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: UniPhier System Bus
++
++description: |
++  The UniPhier System Bus is an external bus that connects on-board devices to
++  the UniPhier SoC. It is a simple (semi-)parallel bus with address, data, and
++  some control signals. It supports up to 8 banks (chip selects).
++
++  Before any access to the bus, the bus controller must be configured; the bus
++  controller registers provide the control for the translation from the offset
++  within each bank to the CPU-viewed address. The needed setup includes the
++  base address, the size of each bank. Optionally, some timing parameters can
++  be optimized for faster bus access.
++
++maintainers:
++  - Masahiro Yamada <yamada.masahiro@socionext.com>
++
++properties:
++  compatible:
++    const: socionext,uniphier-system-bus
++
++  reg:
++    maxItems: 1
++
++  "#address-cells":
++    description: |
++      The first cell is the bank number (chip select).
++      The second cell is the address offset within the bank.
++    const: 2
++
++  "#size-cells":
++    const: 1
++
++  ranges:
++    description: |
++      Provide address translation from the System Bus to the parent bus.
++
++      Note:
++      The address region(s) that can be assigned for the System Bus is
++      implementation defined. Some SoCs can use 0x00000000-0x0fffffff and
++      0x40000000-0x4fffffff, while other SoCs only 0x40000000-0x4fffffff.
++      There might be additional limitations depending on SoCs and the boot mode.
++      The address translation is arbitrary as long as the banks are assigned in
++      the supported address space with the required alignment and they do not
++      overlap one another.
++
++      For example, it is possible to map:
++        bank 0 to 0x42000000-0x43ffffff, bank 5 to 0x46000000-0x46ffffff
++      It is also possible to map:
++        bank 0 to 0x48000000-0x49ffffff, bank 5 to 0x44000000-0x44ffffff
++      There is no reason to stick to a particular translation mapping, but the
++      "ranges" property should provide a "reasonable" default that is known to
++      work. The software should initialize the bus controller according to it.
++
++required:
++  - compatible
++  - reg
++  - "#address-cells"
++  - "#size-cells"
++  - ranges
++
++examples:
++  - |
++    // In this example,
++    // - the Ethernet device is connected at the offset 0x01f00000 of CS1 and
++    //   mapped to 0x43f00000 of the parent bus.
++    // - the UART device is connected at the offset 0x00200000 of CS5 and
++    //   mapped to 0x46200000 of the parent bus.
++
++    system-bus {
++        compatible = "socionext,uniphier-system-bus";
++        reg = <0x58c00000 0x400>;
++        #address-cells = <2>;
++        #size-cells = <1>;
++        ranges = <1 0x00000000 0x42000000 0x02000000>,
++                 <5 0x00000000 0x46000000 0x01000000>;
++
++        ethernet@1,01f00000 {
++            compatible = "smsc,lan9115";
++            reg = <1 0x01f00000 0x1000>;
++            interrupts = <0 48 4>
++            phy-mode = "mii";
++        };
++
++        uart@5,00200000 {
++            compatible = "ns16550a";
++            reg = <5 0x00200000 0x20>;
++            interrupts = <0 49 4>
++            clock-frequency = <12288000>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/bus/uniphier-system-bus.txt b/Documentation/devicetree/bindings/bus/uniphier-system-bus.txt
+deleted file mode 100644
+index 68ef80afff16..000000000000
+--- a/Documentation/devicetree/bindings/bus/uniphier-system-bus.txt
++++ /dev/null
+@@ -1,66 +0,0 @@
+-UniPhier System Bus
+-
+-The UniPhier System Bus is an external bus that connects on-board devices to
+-the UniPhier SoC.  It is a simple (semi-)parallel bus with address, data, and
+-some control signals.  It supports up to 8 banks (chip selects).
+-
+-Before any access to the bus, the bus controller must be configured; the bus
+-controller registers provide the control for the translation from the offset
+-within each bank to the CPU-viewed address.  The needed setup includes the base
+-address, the size of each bank.  Optionally, some timing parameters can be
+-optimized for faster bus access.
+-
+-Required properties:
+-- compatible: should be "socionext,uniphier-system-bus".
+-- reg: offset and length of the register set for the bus controller device.
+-- #address-cells: should be 2.  The first cell is the bank number (chip select).
+-  The second cell is the address offset within the bank.
+-- #size-cells: should be 1.
+-- ranges: should provide a proper address translation from the System Bus to
+-  the parent bus.
+-
+-Note:
+-The address region(s) that can be assigned for the System Bus is implementation
+-defined.  Some SoCs can use 0x00000000-0x0fffffff and 0x40000000-0x4fffffff,
+-while other SoCs can only use 0x40000000-0x4fffffff.  There might be additional
+-limitations depending on SoCs and the boot mode.  The address translation is
+-arbitrary as long as the banks are assigned in the supported address space with
+-the required alignment and they do not overlap one another.
+-For example, it is possible to map:
+-  bank 0 to 0x42000000-0x43ffffff, bank 5 to 0x46000000-0x46ffffff
+-It is also possible to map:
+-  bank 0 to 0x48000000-0x49ffffff, bank 5 to 0x44000000-0x44ffffff
+-There is no reason to stick to a particular translation mapping, but the
+-"ranges" property should provide a "reasonable" default that is known to work.
+-The software should initialize the bus controller according to it.
+-
+-Example:
+-
+-	system-bus {
+-		compatible = "socionext,uniphier-system-bus";
+-		reg = <0x58c00000 0x400>;
+-		#address-cells = <2>;
+-		#size-cells = <1>;
+-		ranges = <1 0x00000000 0x42000000 0x02000000
+-			  5 0x00000000 0x46000000 0x01000000>;
+-
+-		ethernet@1,01f00000 {
+-			compatible = "smsc,lan9115";
+-			reg = <1 0x01f00000 0x1000>;
+-			interrupts = <0 48 4>
+-			phy-mode = "mii";
+-		};
+-
+-		uart@5,00200000 {
+-			compatible = "ns16550a";
+-			reg = <5 0x00200000 0x20>;
+-			interrupts = <0 49 4>
+-			clock-frequency = <12288000>;
+-		};
+-	};
+-
+-In this example,
+- - the Ethernet device is connected at the offset 0x01f00000 of CS1 and
+-   mapped to 0x43f00000 of the parent bus.
+- - the UART device is connected at the offset 0x00200000 of CS5 and
+-   mapped to 0x46200000 of the parent bus.
 -- 
-2.7.4
+2.17.1
 
