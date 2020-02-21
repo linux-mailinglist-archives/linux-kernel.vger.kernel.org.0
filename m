@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C882F16894A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:26:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A478116894D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:27:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729275AbgBUVZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 16:25:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39094 "EHLO mail.kernel.org"
+        id S1729233AbgBUVZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 16:25:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728351AbgBUVZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 16:25:21 -0500
+        id S1728102AbgBUVZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 16:25:22 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4920924670;
-        Fri, 21 Feb 2020 21:25:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D68824673;
+        Fri, 21 Feb 2020 21:25:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1582320321;
-        bh=MHumjK1yVCfvgQomt98dZYGGfD2i4oMOy7Azh3SPGE0=;
+        bh=hcmw3OGbvLUBpQAYBdpNI4dUDGemZjsl5dBpB8oThtg=;
         h=From:To:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=L6LI9M2/U7k3Rw9vTL0DoWLZ/y9yWRSsjj+fxw/lMdOf56+Zx46Qn3Bw97pa9c5rr
-         jhjzuXJFQ316oQ4tmgLNydJ6LZDEHVo9CqjMiNKrSdr0dkGrcDd60E+7tZFnCFWzWz
-         oxMwaNN0C/7i4yqC+rQ0/uO4OEVqPa9Qr4CT+91U=
+        b=XKrE1DCdQE5E6zBJ9zUDjp/S2DuQPx4hc7PvXp7JfMBN3HN5/aJZrEHm+bZAMWsGj
+         HjT2Peaq2qzMnecnjaTML636YYB2xzcUFZGDtNIsfImx3K6heqEsj7cfO5NZwb3VSX
+         XX11dkdpGj0/TIBHXQag9IqZYZsLs4b/eze6IQjU=
 From:   zanussi@kernel.org
 To:     LKML <linux-kernel@vger.kernel.org>,
         linux-rt-users <linux-rt-users@vger.kernel.org>,
@@ -34,17 +34,14 @@ To:     LKML <linux-kernel@vger.kernel.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Daniel Wagner <wagi@monom.org>,
         Tom Zanussi <zanussi@kernel.org>
-Subject: [PATCH RT 06/25] =?UTF-8?q?sched:=20migrate=5Fdis/enable:=20Use?= =?UTF-8?q?=20sleeping=5Flock=E2=80=A6()=20to=20annotate=20sleeping=20poin?= =?UTF-8?q?ts?=
-Date:   Fri, 21 Feb 2020 15:24:34 -0600
-Message-Id: <882928ccb55265cc9fd76858057faac2c132b280.1582320278.git.zanussi@kernel.org>
+Subject: [PATCH RT 07/25] sched: __set_cpus_allowed_ptr: Check cpus_mask, not cpus_ptr
+Date:   Fri, 21 Feb 2020 15:24:35 -0600
+Message-Id: <e57428ee3dd20d55240c1bbb3e5b9f9d6441183c.1582320278.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1582320278.git.zanussi@kernel.org>
 References: <cover.1582320278.git.zanussi@kernel.org>
 In-Reply-To: <cover.1582320278.git.zanussi@kernel.org>
 References: <cover.1582320278.git.zanussi@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -58,54 +55,35 @@ If anyone has any objections, please let me know.
 -----------
 
 
-[ Upstream commit 4230dd3824c3e1785504e6f757ce79a4b55651fa ]
+[ Upstream commit e5606fb7b042db634ed62b4dd733d62e050e468f ]
 
-Without this, rcu_note_context_switch() will complain if an RCU read lock
-is held when migrate_enable() calls stop_one_cpu().  Likewise when
-migrate_disable() calls pin_current_cpu() which calls __read_rt_lock() --
-which bypasses the part of the mutex code that calls sleeping_lock_inc().
+This function is concerned with the long-term cpu mask, not the
+transitory mask the task might have while migrate disabled.  Before
+this patch, if a task was migrate disabled at the time
+__set_cpus_allowed_ptr() was called, and the new mask happened to be
+equal to the cpu that the task was running on, then the mask update
+would be lost.
 
 Signed-off-by: Scott Wood <swood@redhat.com>
-[bigeasy: use sleeping_lock_…() ]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Tom Zanussi <zanussi@kernel.org>
-
- Conflicts:
-	kernel/sched/core.c
 ---
- kernel/cpu.c        | 2 ++
- kernel/sched/core.c | 3 +++
- 2 files changed, 5 insertions(+)
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 05b93cfa6fd9..9be794896d87 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -314,7 +314,9 @@ void pin_current_cpu(void)
- 	preempt_lazy_enable();
- 	preempt_enable();
- 
-+	sleeping_lock_inc();
- 	__read_rt_lock(cpuhp_pin);
-+	sleeping_lock_dec();
- 
- 	preempt_disable();
- 	preempt_lazy_disable();
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index fde47216af94..fcff75934bdc 100644
+index fcff75934bdc..8d6badac9225 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -7045,7 +7045,10 @@ void migrate_enable(void)
- 			unpin_current_cpu();
- 			preempt_lazy_enable();
- 			preempt_enable();
-+
-+			sleeping_lock_inc();
- 			stop_one_cpu(task_cpu(p), migration_cpu_stop, &arg);
-+			sleeping_lock_dec();
- 			tlb_migrate_finish(p->mm);
+@@ -1192,7 +1192,7 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
+ 		goto out;
+ 	}
  
- 			return;
+-	if (cpumask_equal(p->cpus_ptr, new_mask))
++	if (cpumask_equal(&p->cpus_mask, new_mask))
+ 		goto out;
+ 
+ 	dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);
 -- 
 2.14.1
 
