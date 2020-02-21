@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5148167327
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:09:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D84B1673F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732415AbgBUIJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:09:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44644 "EHLO mail.kernel.org"
+        id S2387656AbgBUIRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:17:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732396AbgBUIJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:09:41 -0500
+        id S2387632AbgBUIRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:17:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8393320722;
-        Fri, 21 Feb 2020 08:09:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A30D124670;
+        Fri, 21 Feb 2020 08:17:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272580;
-        bh=svw8xPOemPN0qH7Qt/yMw0dgsEA8HxYiz8O0LRHebgc=;
+        s=default; t=1582273035;
+        bh=FTOGElWgnVJw8gJktUCYPCksvhO+Fz5drW+cZvE/jw0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zIrLGNjUo6VZ8JyB697OXxEuX7i2IlzFs/C64ZAT3gr8fz/pAMmk/dUuZehmyZXGI
-         MzAFFlJhg1OCs/agu9pFQK0ajcZKt7ERH4SPjPOz66v2cv4kkTrTTl7MtuycCnSb/8
-         ikH9zPzx6kr5lCP+jCyzunR5zLk/7rQRPMs10L70=
+        b=NbamVl0PR69AH7j273RKpn38Clcu2KXJDRw6T+/PwBuNKHg8KPPyUlBlptkhGP9ay
+         qKrLhy5ZxW5Idx2XJieLm68gfsut+VZM0XHMxFmYiYqaXuXvoQ0B8mXvfRw0WjxLWa
+         uDfuh5hsKKfr9oetNLXr0IwyUN8WBol7raZ0As0k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kaike Wan <kaike.wan@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 197/344] IB/hfi1: Add software counter for ctxt0 seq drop
-Date:   Fri, 21 Feb 2020 08:39:56 +0100
-Message-Id: <20200221072406.957473578@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 024/191] iommu/vt-d: Fix off-by-one in PASID allocation
+Date:   Fri, 21 Feb 2020 08:39:57 +0100
+Message-Id: <20200221072254.091418459@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,93 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Marciniszyn <mike.marciniszyn@intel.com>
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 
-[ Upstream commit 5ffd048698ea5139743acd45e8ab388a683642b8 ]
+[ Upstream commit 39d630e332144028f56abba83d94291978e72df1 ]
 
-All other code paths increment some form of drop counter.
+PASID allocator uses IDR which is exclusive for the end of the
+allocation range. There is no need to decrement pasid_max.
 
-This was missed in the original implementation.
-
-Fixes: 82c2611daaf0 ("staging/rdma/hfi1: Handle packets with invalid RHF on context 0")
-Link: https://lore.kernel.org/r/20200106134228.119356.96828.stgit@awfm-01.aw.intel.com
-Reviewed-by: Kaike Wan <kaike.wan@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: af39507305fb ("iommu/vt-d: Apply global PASID in SVA")
+Reported-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/chip.c   | 10 ++++++++++
- drivers/infiniband/hw/hfi1/chip.h   |  1 +
- drivers/infiniband/hw/hfi1/driver.c |  1 +
- drivers/infiniband/hw/hfi1/hfi.h    |  2 ++
- 4 files changed, 14 insertions(+)
+ drivers/iommu/intel-svm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/chip.c b/drivers/infiniband/hw/hfi1/chip.c
-index 9b1fb84a3d45b..d5961918fe157 100644
---- a/drivers/infiniband/hw/hfi1/chip.c
-+++ b/drivers/infiniband/hw/hfi1/chip.c
-@@ -1685,6 +1685,14 @@ static u64 access_sw_pio_drain(const struct cntr_entry *entry,
- 	return dd->verbs_dev.n_piodrain;
- }
- 
-+static u64 access_sw_ctx0_seq_drop(const struct cntr_entry *entry,
-+				   void *context, int vl, int mode, u64 data)
-+{
-+	struct hfi1_devdata *dd = context;
-+
-+	return dd->ctx0_seq_drop;
-+}
-+
- static u64 access_sw_vtx_wait(const struct cntr_entry *entry,
- 			      void *context, int vl, int mode, u64 data)
- {
-@@ -4249,6 +4257,8 @@ static struct cntr_entry dev_cntrs[DEV_CNTR_LAST] = {
- 			    access_sw_cpu_intr),
- [C_SW_CPU_RCV_LIM] = CNTR_ELEM("RcvLimit", 0, 0, CNTR_NORMAL,
- 			    access_sw_cpu_rcv_limit),
-+[C_SW_CTX0_SEQ_DROP] = CNTR_ELEM("SeqDrop0", 0, 0, CNTR_NORMAL,
-+			    access_sw_ctx0_seq_drop),
- [C_SW_VTX_WAIT] = CNTR_ELEM("vTxWait", 0, 0, CNTR_NORMAL,
- 			    access_sw_vtx_wait),
- [C_SW_PIO_WAIT] = CNTR_ELEM("PioWait", 0, 0, CNTR_NORMAL,
-diff --git a/drivers/infiniband/hw/hfi1/chip.h b/drivers/infiniband/hw/hfi1/chip.h
-index 4ca5ac8d7e9e4..bfccd4ae07a72 100644
---- a/drivers/infiniband/hw/hfi1/chip.h
-+++ b/drivers/infiniband/hw/hfi1/chip.h
-@@ -926,6 +926,7 @@ enum {
- 	C_DC_PG_STS_TX_MBE_CNT,
- 	C_SW_CPU_INTR,
- 	C_SW_CPU_RCV_LIM,
-+	C_SW_CTX0_SEQ_DROP,
- 	C_SW_VTX_WAIT,
- 	C_SW_PIO_WAIT,
- 	C_SW_PIO_DRAIN,
-diff --git a/drivers/infiniband/hw/hfi1/driver.c b/drivers/infiniband/hw/hfi1/driver.c
-index 01aa1f132f55e..941b465244abe 100644
---- a/drivers/infiniband/hw/hfi1/driver.c
-+++ b/drivers/infiniband/hw/hfi1/driver.c
-@@ -734,6 +734,7 @@ static noinline int skip_rcv_packet(struct hfi1_packet *packet, int thread)
- {
- 	int ret;
- 
-+	packet->rcd->dd->ctx0_seq_drop++;
- 	/* Set up for the next packet */
- 	packet->rhqoff += packet->rsize;
- 	if (packet->rhqoff >= packet->maxcnt)
-diff --git a/drivers/infiniband/hw/hfi1/hfi.h b/drivers/infiniband/hw/hfi1/hfi.h
-index 1af94650bd840..b79931cc74abe 100644
---- a/drivers/infiniband/hw/hfi1/hfi.h
-+++ b/drivers/infiniband/hw/hfi1/hfi.h
-@@ -1153,6 +1153,8 @@ struct hfi1_devdata {
- 
- 	char *boardname; /* human readable board info */
- 
-+	u64 ctx0_seq_drop;
-+
- 	/* reset value */
- 	u64 z_int_counter;
- 	u64 z_rcv_limit;
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index fd8730b2cd46e..5944d3b4dca37 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -377,7 +377,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 		/* Do not use PASID 0 in caching mode (virtualised IOMMU) */
+ 		ret = intel_pasid_alloc_id(svm,
+ 					   !!cap_caching_mode(iommu->cap),
+-					   pasid_max - 1, GFP_KERNEL);
++					   pasid_max, GFP_KERNEL);
+ 		if (ret < 0) {
+ 			kfree(svm);
+ 			kfree(sdev);
 -- 
 2.20.1
 
