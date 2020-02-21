@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2020C167271
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:03:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C002B167274
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:03:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731504AbgBUIDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:03:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36366 "EHLO mail.kernel.org"
+        id S1731519AbgBUIDn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:03:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731477AbgBUIDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:03:34 -0500
+        id S1731506AbgBUIDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:03:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA2502073A;
-        Fri, 21 Feb 2020 08:03:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A468B2073A;
+        Fri, 21 Feb 2020 08:03:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272214;
-        bh=dfBe6pGOa3MtzNF/br7Jv7bQkVvBqp+VpqCIZVOiRto=;
+        s=default; t=1582272219;
+        bh=IN9g0QVSJw1Ko04U/o5oXCUMcEqF0UvHQNwT1l5gu9M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bfq4QM5CeGLSHShqvlrlCBegAPG9legWcFThCIP5wtm2V3LK5aF06wK1Ayet5FCoX
-         afQwCH4kpqfDENP+YrpsGKWvXGM0UphXxnb8I0m8VFyHNuFVYyFhfLkiW900hPvBZD
-         JVqHSljBJPgoK8dx4CZqX4pbvK8kb9wT3Hj63oLI=
+        b=iL77YhhpKjS4LWfIMPGZw0zr4NsP5Db83amoGEjQCpmRTpC04wp03kwGDpj5Rkt4/
+         3iJ5f5ZMrSyvAuOrF2b7TJ5IKf1Z51OS/A/H6n0rSzKL3N+I2dvXKwSBtr15gcxcCK
+         S2GiydVUjDtYjHRy31CFBdFVkpo4sJSKttdK3ELk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 058/344] drm/nouveau/nouveau: fix incorrect sizeof on args.src an args.dst
-Date:   Fri, 21 Feb 2020 08:37:37 +0100
-Message-Id: <20200221072354.310599788@linuxfoundation.org>
+Subject: [PATCH 5.4 059/344] usb: gadget: udc: fix possible sleep-in-atomic-context bugs in gr_probe()
+Date:   Fri, 21 Feb 2020 08:37:38 +0100
+Message-Id: <20200221072354.393277008@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
 References: <20200221072349.335551332@linuxfoundation.org>
@@ -44,40 +44,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit f42e4b337b327b1336c978c4b5174990a25f68a0 ]
+[ Upstream commit 9c1ed62ae0690dfe5d5e31d8f70e70a95cb48e52 ]
 
-The sizeof is currently on args.src and args.dst and should be on
-*args.src and *args.dst. Fortunately these sizes just so happen
-to be the same size so it worked, however, this should be fixed
-and it also cleans up static analysis warnings
+The driver may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-Addresses-Coverity: ("sizeof not portable")
-Fixes: f268307ec7c7 ("nouveau: simplify nouveau_dmem_migrate_vma")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+drivers/usb/gadget/udc/core.c, 1175:
+	kzalloc(GFP_KERNEL) in usb_add_gadget_udc_release
+drivers/usb/gadget/udc/core.c, 1272:
+	usb_add_gadget_udc_release in usb_add_gadget_udc
+drivers/usb/gadget/udc/gr_udc.c, 2186:
+	usb_add_gadget_udc in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183:
+	spin_lock in gr_probe
+
+drivers/usb/gadget/udc/core.c, 1195:
+	mutex_lock in usb_add_gadget_udc_release
+drivers/usb/gadget/udc/core.c, 1272:
+	usb_add_gadget_udc_release in usb_add_gadget_udc
+drivers/usb/gadget/udc/gr_udc.c, 2186:
+	usb_add_gadget_udc in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183:
+	spin_lock in gr_probe
+
+drivers/usb/gadget/udc/gr_udc.c, 212:
+	debugfs_create_file in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2197:
+	gr_dfs_create in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183:
+    spin_lock in gr_probe
+
+drivers/usb/gadget/udc/gr_udc.c, 2114:
+	devm_request_threaded_irq in gr_request_irq
+drivers/usb/gadget/udc/gr_udc.c, 2202:
+	gr_request_irq in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183:
+    spin_lock in gr_probe
+
+kzalloc(GFP_KERNEL), mutex_lock(), debugfs_create_file() and
+devm_request_threaded_irq() can sleep at runtime.
+
+To fix these possible bugs, usb_add_gadget_udc(), gr_dfs_create() and
+gr_request_irq() are called without handling the spinlock.
+
+These bugs are found by a static analysis tool STCheck written by myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_dmem.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/udc/gr_udc.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-index fa14399415965..0ad5d87b5a8e5 100644
---- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-@@ -635,10 +635,10 @@ nouveau_dmem_migrate_vma(struct nouveau_drm *drm,
- 	unsigned long c, i;
- 	int ret = -ENOMEM;
+diff --git a/drivers/usb/gadget/udc/gr_udc.c b/drivers/usb/gadget/udc/gr_udc.c
+index 7a0e9a58c2d84..116d386472efe 100644
+--- a/drivers/usb/gadget/udc/gr_udc.c
++++ b/drivers/usb/gadget/udc/gr_udc.c
+@@ -2176,8 +2176,6 @@ static int gr_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
  
--	args.src = kcalloc(max, sizeof(args.src), GFP_KERNEL);
-+	args.src = kcalloc(max, sizeof(*args.src), GFP_KERNEL);
- 	if (!args.src)
+-	spin_lock(&dev->lock);
+-
+ 	/* Inside lock so that no gadget can use this udc until probe is done */
+ 	retval = usb_add_gadget_udc(dev->dev, &dev->gadget);
+ 	if (retval) {
+@@ -2186,15 +2184,21 @@ static int gr_probe(struct platform_device *pdev)
+ 	}
+ 	dev->added = 1;
+ 
++	spin_lock(&dev->lock);
++
+ 	retval = gr_udc_init(dev);
+-	if (retval)
++	if (retval) {
++		spin_unlock(&dev->lock);
  		goto out;
--	args.dst = kcalloc(max, sizeof(args.dst), GFP_KERNEL);
-+	args.dst = kcalloc(max, sizeof(*args.dst), GFP_KERNEL);
- 	if (!args.dst)
- 		goto out_free_src;
+-
+-	gr_dfs_create(dev);
++	}
+ 
+ 	/* Clear all interrupt enables that might be left on since last boot */
+ 	gr_disable_interrupts_and_pullup(dev);
+ 
++	spin_unlock(&dev->lock);
++
++	gr_dfs_create(dev);
++
+ 	retval = gr_request_irq(dev, dev->irq);
+ 	if (retval) {
+ 		dev_err(dev->dev, "Failed to request irq %d\n", dev->irq);
+@@ -2223,8 +2227,6 @@ static int gr_probe(struct platform_device *pdev)
+ 		dev_info(dev->dev, "regs: %p, irq %d\n", dev->regs, dev->irq);
+ 
+ out:
+-	spin_unlock(&dev->lock);
+-
+ 	if (retval)
+ 		gr_remove(pdev);
  
 -- 
 2.20.1
