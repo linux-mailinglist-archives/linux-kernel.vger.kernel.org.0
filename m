@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68396167402
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5CB8167333
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:10:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387712AbgBUIRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:17:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55192 "EHLO mail.kernel.org"
+        id S1732482AbgBUIKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:10:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387686AbgBUIRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:17:39 -0500
+        id S1732453AbgBUIKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:10:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E41CC24690;
-        Fri, 21 Feb 2020 08:17:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6672820801;
+        Fri, 21 Feb 2020 08:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273058;
-        bh=k+XzV/W9UPSf5JZG4LsaLccqrAu0LZ7Ag9WTLrAZBPE=;
+        s=default; t=1582272603;
+        bh=etUzyDHmfexgQRO1XOxPZqnTAoosJKCBo372Wqi6lBc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kcS6FeJBSlFALfKaRw+P8iXX2pzOHKGN/TFRstCzvAeYhZQEmaRf66mHCTXBZVMrZ
-         3vw5HRqW17ASQCjOTaZFkzrDRpqxA3hQn4no4g6FSGeZAAs0Z3uHAy9lnDDKN8VIqv
-         iNBhV6GmYJ6lzSEwCLj4oKzAPD9GQix4tse794fI=
+        b=QQ4sLTbmnZBjS0q5kGl/e4dabHPeSo/7UcX5xf71rtCTN7gz7g4c2Wp1Mm7mJIOxX
+         5vctcFujsuqyyyvgM+oDpNgSZbPRcYKe1/TQQvcYf5Bt5YM5Zfzi+zAP1GU2GAo6dj
+         IZ1sFjt+VVu2x51kzL+eI+pI5UaWsiYEClRbxIzA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jakub Kicinski <kuba@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 031/191] uio: fix a sleep-in-atomic-context bug in uio_dmem_genirq_irqcontrol()
+Subject: [PATCH 5.4 205/344] wan: ixp4xx_hss: fix compile-testing on 64-bit
 Date:   Fri, 21 Feb 2020 08:40:04 +0100
-Message-Id: <20200221072254.985632417@linuxfoundation.org>
+Message-Id: <20200221072407.731335482@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,54 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit b74351287d4bd90636c3f48bc188c2f53824c2d4 ]
+[ Upstream commit 504c28c853ec5c626900b914b5833daf0581a344 ]
 
-The driver may sleep while holding a spinlock.
-The function call path (from bottom to top) in Linux 4.19 is:
+Change the driver to use portable integer types to avoid
+warnings during compile testing:
 
-kernel/irq/manage.c, 523:
-	synchronize_irq in disable_irq
-drivers/uio/uio_dmem_genirq.c, 140:
-	disable_irq in uio_dmem_genirq_irqcontrol
-drivers/uio/uio_dmem_genirq.c, 134:
-	_raw_spin_lock_irqsave in uio_dmem_genirq_irqcontrol
+drivers/net/wan/ixp4xx_hss.c:863:21: error: cast to 'u32 *' (aka 'unsigned int *') from smaller integer type 'int' [-Werror,-Wint-to-pointer-cast]
+        memcpy_swab32(mem, (u32 *)((int)skb->data & ~3), bytes / 4);
+                           ^
+drivers/net/wan/ixp4xx_hss.c:979:12: error: incompatible pointer types passing 'u32 *' (aka 'unsigned int *') to parameter of type 'dma_addr_t *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
+                                              &port->desc_tab_phys)))
+                                              ^~~~~~~~~~~~~~~~~~~~
+include/linux/dmapool.h:27:20: note: passing argument to parameter 'handle' here
+                     dma_addr_t *handle);
+                                 ^
 
-synchronize_irq() can sleep at runtime.
-
-To fix this bug, disable_irq() is called without holding the spinlock.
-
-This bug is found by a static analysis tool STCheck written by myself.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Link: https://lore.kernel.org/r/20191218094405.6009-1-baijiaju1990@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/uio/uio_dmem_genirq.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/wan/ixp4xx_hss.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/uio/uio_dmem_genirq.c b/drivers/uio/uio_dmem_genirq.c
-index e1134a4d97f3f..a00b4aee6c799 100644
---- a/drivers/uio/uio_dmem_genirq.c
-+++ b/drivers/uio/uio_dmem_genirq.c
-@@ -135,11 +135,13 @@ static int uio_dmem_genirq_irqcontrol(struct uio_info *dev_info, s32 irq_on)
- 	if (irq_on) {
- 		if (test_and_clear_bit(0, &priv->flags))
- 			enable_irq(dev_info->irq);
-+		spin_unlock_irqrestore(&priv->lock, flags);
- 	} else {
--		if (!test_and_set_bit(0, &priv->flags))
-+		if (!test_and_set_bit(0, &priv->flags)) {
-+			spin_unlock_irqrestore(&priv->lock, flags);
- 			disable_irq(dev_info->irq);
-+		}
+diff --git a/drivers/net/wan/ixp4xx_hss.c b/drivers/net/wan/ixp4xx_hss.c
+index ea6ee6a608ce3..e7619cec978a8 100644
+--- a/drivers/net/wan/ixp4xx_hss.c
++++ b/drivers/net/wan/ixp4xx_hss.c
+@@ -258,7 +258,7 @@ struct port {
+ 	struct hss_plat_info *plat;
+ 	buffer_t *rx_buff_tab[RX_DESCS], *tx_buff_tab[TX_DESCS];
+ 	struct desc *desc_tab;	/* coherent */
+-	u32 desc_tab_phys;
++	dma_addr_t desc_tab_phys;
+ 	unsigned int id;
+ 	unsigned int clock_type, clock_rate, loopback;
+ 	unsigned int initialized, carrier;
+@@ -858,7 +858,7 @@ static int hss_hdlc_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		dev->stats.tx_dropped++;
+ 		return NETDEV_TX_OK;
  	}
--	spin_unlock_irqrestore(&priv->lock, flags);
+-	memcpy_swab32(mem, (u32 *)((int)skb->data & ~3), bytes / 4);
++	memcpy_swab32(mem, (u32 *)((uintptr_t)skb->data & ~3), bytes / 4);
+ 	dev_kfree_skb(skb);
+ #endif
  
- 	return 0;
- }
 -- 
 2.20.1
 
