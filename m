@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4344166D94
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:28:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DFC4166DB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 04:29:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729766AbgBUD20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Feb 2020 22:28:26 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31210 "EHLO
+        id S1729917AbgBUD31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Feb 2020 22:29:27 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:8446 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729585AbgBUD2V (ORCPT
+        by vger.kernel.org with ESMTP id S1729703AbgBUD2V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Feb 2020 22:28:21 -0500
 Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01L3KvqP088011
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 22:28:21 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y9ytr45dk-1
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01L3KkLI087222
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 22:28:20 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y9ytr45d8-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Thu, 20 Feb 2020 22:28:20 -0500
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
         Fri, 21 Feb 2020 03:28:17 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Fri, 21 Feb 2020 03:28:10 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01L3S9M755181326
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01L3S9Kg59768916
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Fri, 21 Feb 2020 03:28:09 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 666E411C050;
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 928ADAE045;
         Fri, 21 Feb 2020 03:28:09 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B4A3711C052;
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E7655AE051;
         Fri, 21 Feb 2020 03:28:08 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
         Fri, 21 Feb 2020 03:28:08 +0000 (GMT)
 Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
         (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id DADBDA03B6;
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id EEA46A03B7;
         Fri, 21 Feb 2020 14:28:02 +1100 (AEDT)
 From:   "Alastair D'Silva" <alastair@au1.ibm.com>
 To:     alastair@d-silva.org
@@ -78,22 +78,22 @@ Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
         Alexey Kardashevskiy <aik@ozlabs.ru>,
         linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Subject: [PATCH v3 06/27] ocxl: Tally up the LPC memory on a link & allow it to be mapped
-Date:   Fri, 21 Feb 2020 14:26:59 +1100
+Subject: [PATCH v3 07/27] ocxl: Add functions to map/unmap LPC memory
+Date:   Fri, 21 Feb 2020 14:27:00 +1100
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200221032720.33893-1-alastair@au1.ibm.com>
 References: <20200221032720.33893-1-alastair@au1.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 20022103-4275-0000-0000-000003A3FE62
+x-cbid: 20022103-0008-0000-0000-00000354F599
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022103-4276-0000-0000-000038B80C79
-Message-Id: <20200221032720.33893-7-alastair@au1.ibm.com>
+x-cbparentid: 20022103-0009-0000-0000-00004A76073A
+Message-Id: <20200221032720.33893-8-alastair@au1.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-20_19:2020-02-19,2020-02-20 signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=3 clxscore=1015 mlxlogscore=882 mlxscore=0 adultscore=0
+ suspectscore=1 clxscore=1015 mlxlogscore=799 mlxscore=0 adultscore=0
  lowpriorityscore=0 malwarescore=0 spamscore=0 impostorscore=0 phishscore=0
  bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2001150001 definitions=main-2002210020
@@ -104,155 +104,130 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alastair D'Silva <alastair@d-silva.org>
 
-Tally up the LPC memory on an OpenCAPI link & allow it to be mapped
+Add functions to map/unmap LPC memory
 
 Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 ---
- drivers/misc/ocxl/core.c          | 10 ++++++
- drivers/misc/ocxl/link.c          | 53 +++++++++++++++++++++++++++++++
- drivers/misc/ocxl/ocxl_internal.h | 33 +++++++++++++++++++
- 3 files changed, 96 insertions(+)
+ drivers/misc/ocxl/core.c          | 51 +++++++++++++++++++++++++++++++
+ drivers/misc/ocxl/ocxl_internal.h |  3 ++
+ include/misc/ocxl.h               | 21 +++++++++++++
+ 3 files changed, 75 insertions(+)
 
 diff --git a/drivers/misc/ocxl/core.c b/drivers/misc/ocxl/core.c
-index b7a09b21ab36..2531c6cf19a0 100644
+index 2531c6cf19a0..75ff14e3882a 100644
 --- a/drivers/misc/ocxl/core.c
 +++ b/drivers/misc/ocxl/core.c
-@@ -230,8 +230,18 @@ static int configure_afu(struct ocxl_afu *afu, u8 afu_idx, struct pci_dev *dev)
- 	if (rc)
- 		goto err_free_pasid;
- 
-+	if (afu->config.lpc_mem_size || afu->config.special_purpose_mem_size) {
-+		rc = ocxl_link_add_lpc_mem(afu->fn->link, afu->config.lpc_mem_offset,
-+					   afu->config.lpc_mem_size +
-+					   afu->config.special_purpose_mem_size);
-+		if (rc)
-+			goto err_free_mmio;
-+	}
-+
- 	return 0;
- 
-+err_free_mmio:
-+	unmap_mmio_areas(afu);
- err_free_pasid:
- 	reclaim_afu_pasid(afu);
- err_free_actag:
-diff --git a/drivers/misc/ocxl/link.c b/drivers/misc/ocxl/link.c
-index 58d111afd9f6..1e039cc5ebe5 100644
---- a/drivers/misc/ocxl/link.c
-+++ b/drivers/misc/ocxl/link.c
-@@ -84,6 +84,11 @@ struct ocxl_link {
- 	int dev;
- 	atomic_t irq_available;
- 	struct spa *spa;
-+	struct mutex lpc_mem_lock; /* protects lpc_mem & lpc_mem_sz */
-+	u64 lpc_mem_sz; /* Total amount of LPC memory presented on the link */
-+	u64 lpc_mem;
-+	int lpc_consumers;
-+
- 	void *platform_data;
- };
- static struct list_head links_list = LIST_HEAD_INIT(links_list);
-@@ -396,6 +401,8 @@ static int alloc_link(struct pci_dev *dev, int PE_mask, struct ocxl_link **out_l
- 	if (rc)
- 		goto err_spa;
- 
-+	mutex_init(&link->lpc_mem_lock);
-+
- 	/* platform specific hook */
- 	rc = pnv_ocxl_spa_setup(dev, link->spa->spa_mem, PE_mask,
- 				&link->platform_data);
-@@ -711,3 +718,49 @@ void ocxl_link_free_irq(void *link_handle, int hw_irq)
- 	atomic_inc(&link->irq_available);
+@@ -210,6 +210,56 @@ static void unmap_mmio_areas(struct ocxl_afu *afu)
+ 	release_fn_bar(afu->fn, afu->config.global_mmio_bar);
  }
- EXPORT_SYMBOL_GPL(ocxl_link_free_irq);
-+
-+int ocxl_link_add_lpc_mem(void *link_handle, u64 offset, u64 size)
+ 
++int ocxl_afu_map_lpc_mem(struct ocxl_afu *afu)
 +{
-+	struct ocxl_link *link = (struct ocxl_link *) link_handle;
++	struct pci_dev *dev = to_pci_dev(afu->fn->dev.parent);
 +
-+	// Check for overflow
-+	if (offset > (offset + size))
++	if ((afu->config.lpc_mem_size + afu->config.special_purpose_mem_size) == 0)
++		return 0;
++
++	afu->lpc_base_addr = ocxl_link_lpc_map(afu->fn->link, dev);
++	if (afu->lpc_base_addr == 0)
 +		return -EINVAL;
 +
-+	mutex_lock(&link->lpc_mem_lock);
-+	link->lpc_mem_sz = max(link->lpc_mem_sz, offset + size);
++	if (afu->config.lpc_mem_size > 0) {
++		afu->lpc_res.start = afu->lpc_base_addr + afu->config.lpc_mem_offset;
++		afu->lpc_res.end = afu->lpc_res.start + afu->config.lpc_mem_size - 1;
++	}
 +
-+	mutex_unlock(&link->lpc_mem_lock);
++	if (afu->config.special_purpose_mem_size > 0) {
++		afu->special_purpose_res.start = afu->lpc_base_addr +
++						 afu->config.special_purpose_mem_offset;
++		afu->special_purpose_res.end = afu->special_purpose_res.start +
++					       afu->config.special_purpose_mem_size - 1;
++	}
 +
 +	return 0;
 +}
++EXPORT_SYMBOL_GPL(ocxl_afu_map_lpc_mem);
 +
-+u64 ocxl_link_lpc_map(void *link_handle, struct pci_dev *pdev)
++struct resource *ocxl_afu_lpc_mem(struct ocxl_afu *afu)
 +{
-+	struct ocxl_link *link = (struct ocxl_link *) link_handle;
-+
-+	mutex_lock(&link->lpc_mem_lock);
-+
-+	if(!link->lpc_mem)
-+		link->lpc_mem = pnv_ocxl_platform_lpc_setup(pdev, link->lpc_mem_sz);
-+
-+	if(link->lpc_mem)
-+		link->lpc_consumers++;
-+	mutex_unlock(&link->lpc_mem_lock);
-+
-+	return link->lpc_mem;
++	return &afu->lpc_res;
 +}
++EXPORT_SYMBOL_GPL(ocxl_afu_lpc_mem);
 +
-+void ocxl_link_lpc_release(void *link_handle, struct pci_dev *pdev)
++static void unmap_lpc_mem(struct ocxl_afu *afu)
 +{
-+	struct ocxl_link *link = (struct ocxl_link *) link_handle;
++	struct pci_dev *dev = to_pci_dev(afu->fn->dev.parent);
 +
-+	mutex_lock(&link->lpc_mem_lock);
-+	WARN_ON(--link->lpc_consumers < 0);
-+	if (link->lpc_consumers == 0) {
-+		pnv_ocxl_platform_lpc_release(pdev);
-+		link->lpc_mem = 0;
++	if (afu->lpc_res.start || afu->special_purpose_res.start) {
++		void *link = afu->fn->link;
++
++		// only release the link when the the last consumer calls release
++		ocxl_link_lpc_release(link, dev);
++
++		afu->lpc_res.start = 0;
++		afu->lpc_res.end = 0;
++		afu->special_purpose_res.start = 0;
++		afu->special_purpose_res.end = 0;
 +	}
-+
-+	mutex_unlock(&link->lpc_mem_lock);
 +}
++
+ static int configure_afu(struct ocxl_afu *afu, u8 afu_idx, struct pci_dev *dev)
+ {
+ 	int rc;
+@@ -251,6 +301,7 @@ static int configure_afu(struct ocxl_afu *afu, u8 afu_idx, struct pci_dev *dev)
+ 
+ static void deconfigure_afu(struct ocxl_afu *afu)
+ {
++	unmap_lpc_mem(afu);
+ 	unmap_mmio_areas(afu);
+ 	reclaim_afu_pasid(afu);
+ 	reclaim_afu_actag(afu);
 diff --git a/drivers/misc/ocxl/ocxl_internal.h b/drivers/misc/ocxl/ocxl_internal.h
-index 198e4e4bc51d..d0c8c4838f42 100644
+index d0c8c4838f42..ce0cac1da416 100644
 --- a/drivers/misc/ocxl/ocxl_internal.h
 +++ b/drivers/misc/ocxl/ocxl_internal.h
-@@ -142,4 +142,37 @@ int ocxl_irq_offset_to_id(struct ocxl_context *ctx, u64 offset);
- u64 ocxl_irq_id_to_offset(struct ocxl_context *ctx, int irq_id);
- void ocxl_afu_irq_free_all(struct ocxl_context *ctx);
+@@ -52,6 +52,9 @@ struct ocxl_afu {
+ 	void __iomem *global_mmio_ptr;
+ 	u64 pp_mmio_start;
+ 	void *private;
++	u64 lpc_base_addr; /* Covers both LPC & special purpose memory */
++	struct resource lpc_res;
++	struct resource special_purpose_res;
+ };
+ 
+ enum ocxl_context_status {
+diff --git a/include/misc/ocxl.h b/include/misc/ocxl.h
+index 357ef1aadbc0..d8b0b4d46bfb 100644
+--- a/include/misc/ocxl.h
++++ b/include/misc/ocxl.h
+@@ -203,6 +203,27 @@ int ocxl_irq_set_handler(struct ocxl_context *ctx, int irq_id,
+ 
+ // AFU Metadata
  
 +/**
-+ * ocxl_link_add_lpc_mem() - Increment the amount of memory required by an OpenCAPI link
++ * ocxl_afu_map_lpc_mem() - Map the LPC system & special purpose memory for an AFU
++ * Do not call this during device discovery, as there may me multiple
++ * devices on a link, and the memory is mapped for the whole link, not
++ * just one device. It should only be called after all devices have
++ * registered their memory on the link.
 + *
-+ * @link_handle: The OpenCAPI link handle
-+ * @offset: The offset of the memory to add
-+ * @size: The amount of memory to increment by
++ * @afu: The AFU that has the LPC memory to map
 + *
-+ * Returns 0 on success, negative on overflow
++ * Returns 0 on success, negative on failure
 + */
-+int ocxl_link_add_lpc_mem(void *link_handle, u64 offset, u64 size);
++int ocxl_afu_map_lpc_mem(struct ocxl_afu *afu);
 +
 +/**
-+ * ocxl_link_lpc_map() - Map the LPC memory for an OpenCAPI device
-+ * Since LPC memory belongs to a link, the whole LPC memory available
-+ * on the link must be mapped in order to make it accessible to a device.
-+ * @link_handle: The OpenCAPI link handle
-+ * @pdev: A device that is on the link
++ * ocxl_afu_lpc_mem() - Get the physical address range of LPC memory for an AFU
++ * @afu: The AFU associated with the LPC memory
 + *
-+ * Returns the address of the mapped LPC memory, or 0 on error
++ * Returns a pointer to the resource struct for the physical address range
 + */
-+u64 ocxl_link_lpc_map(void *link_handle, struct pci_dev *pdev);
++struct resource *ocxl_afu_lpc_mem(struct ocxl_afu *afu);
 +
-+/**
-+ * ocxl_link_lpc_release() - Release the LPC memory device for an OpenCAPI device
-+ *
-+ * Offlines LPC memory on an OpenCAPI link for a device. If this is the
-+ * last device on the link to release the memory, unmap it from the link.
-+ *
-+ * @link_handle: The OpenCAPI link handle
-+ * @pdev: A device that is on the link
-+ */
-+void ocxl_link_lpc_release(void *link_handle, struct pci_dev *pdev);
-+
- #endif /* _OCXL_INTERNAL_H_ */
+ /**
+  * ocxl_afu_config() - Get a pointer to the config for an AFU
+  * @afu: a pointer to the AFU to get the config for
 -- 
 2.24.1
 
