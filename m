@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D71551670C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA59F1670CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:50:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbgBUHsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:48:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44110 "EHLO mail.kernel.org"
+        id S1728768AbgBUHsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:48:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729024AbgBUHsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:48:07 -0500
+        id S1728420AbgBUHsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:48:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01E1520801;
-        Fri, 21 Feb 2020 07:48:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76482207FD;
+        Fri, 21 Feb 2020 07:48:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271286;
-        bh=e4oL/fv1Mjg3Df8wDT7b9emOle+kZOEDSt6D7uVpoVc=;
+        s=default; t=1582271288;
+        bh=X/Dq+PeQjECF1L6QQ6O2t+J7BdtB35HFF99zLyDSSpU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ypU6voLphTnPyWWx+vpM/hiMimViI87SNW827PR12NXl2u3n0ahNPfGhYQ029MeQw
-         6jdlRKeMgozZfiQ/lHtctzaRIiK8XKd4YTe8amEMrrD0wzyBgrQ30bHBdDin5qzHLj
-         V0/5vs1Jyv0QUDgs5UuFkWeSoPfHDw9Y+4LXqCWs=
+        b=bE5vg+lVaqQO/xHpII9FSib8gcdeUa9w4E931TSrqGu7SSTeleN2I+uHckMQWCnIn
+         s2MZoLMbNKB0j3bupr0tk/vO0YuEnh/V2MUBMzIHC1K8mgELxRPo4hAf/jrebCLLek
+         93m/CD2goUxqP34xWhiIRGnCpdCb7NmahO2FFE9M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Gong <wgong@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 107/399] ath10k: correct the tlv len of ath10k_wmi_tlv_op_gen_config_pno_start
-Date:   Fri, 21 Feb 2020 08:37:12 +0100
-Message-Id: <20200221072412.818405796@linuxfoundation.org>
+Subject: [PATCH 5.5 108/399] drm/amdgpu: Ensure ret is always initialized when using SOC15_WAIT_ON_RREG
+Date:   Fri, 21 Feb 2020 08:37:13 +0100
+Message-Id: <20200221072412.929625036@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -44,51 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Gong <wgong@codeaurora.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit e01cc82c4d1ec3bddcbb7cd991cf5dc0131ed9a1 ]
+[ Upstream commit a63141e31764f8daf3f29e8e2d450dcf9199d1c8 ]
 
-the tlv len is set to the total len of the wmi cmd, it will trigger
-firmware crash, correct the tlv len.
+Commit b0f3cd3191cd ("drm/amdgpu: remove unnecessary JPEG2.0 code from
+VCN2.0") introduced a new clang warning in the vcn_v2_0_stop function:
 
-Tested with QCA6174 SDIO with firmware
-WLAN.RMH.4.4.1-00017-QCARMSWP-1 and QCA6174
-PCIE with firmware WLAN.RM.4.4.1-00110-QCARMSWPZ-1.
+../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1082:2: warning: variable 'r'
+is used uninitialized whenever 'while' loop exits because its condition
+is false [-Wsometimes-uninitialized]
+        SOC15_WAIT_ON_RREG(VCN, 0, mmUVD_STATUS, UVD_STATUS__IDLE, 0x7, r);
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/gpu/drm/amd/amdgpu/../amdgpu/soc15_common.h:55:10: note:
+expanded from macro 'SOC15_WAIT_ON_RREG'
+                while ((tmp_ & (mask)) != (expected_value)) {   \
+                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1083:6: note: uninitialized use
+occurs here
+        if (r)
+            ^
+../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1082:2: note: remove the
+condition if it is always true
+        SOC15_WAIT_ON_RREG(VCN, 0, mmUVD_STATUS, UVD_STATUS__IDLE, 0x7, r);
+        ^
+../drivers/gpu/drm/amd/amdgpu/../amdgpu/soc15_common.h:55:10: note:
+expanded from macro 'SOC15_WAIT_ON_RREG'
+                while ((tmp_ & (mask)) != (expected_value)) {   \
+                       ^
+../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1072:7: note: initialize the
+variable 'r' to silence this warning
+        int r;
+             ^
+              = 0
+1 warning generated.
 
-Fixes: ce834e280f2f875 ("ath10k: support NET_DETECT WoWLAN feature")
-Signed-off-by: Wen Gong <wgong@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+To prevent warnings like this from happening in the future, make the
+SOC15_WAIT_ON_RREG macro initialize its ret variable before the while
+loop that can time out. This macro's return value is always checked so
+it should set ret in both the success and fail path.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/776
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi-tlv.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/soc15_common.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi-tlv.c b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-index 69a1ec53df294..7b358484940ec 100644
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-@@ -3707,6 +3707,7 @@ ath10k_wmi_tlv_op_gen_config_pno_start(struct ath10k *ar,
- 	struct wmi_tlv *tlv;
- 	struct sk_buff *skb;
- 	__le32 *channel_list;
-+	u16 tlv_len;
- 	size_t len;
- 	void *ptr;
- 	u32 i;
-@@ -3764,10 +3765,12 @@ ath10k_wmi_tlv_op_gen_config_pno_start(struct ath10k *ar,
- 	/* nlo_configured_parameters(nlo_list) */
- 	cmd->no_of_ssids = __cpu_to_le32(min_t(u8, pno->uc_networks_count,
- 					       WMI_NLO_MAX_SSIDS));
-+	tlv_len = __le32_to_cpu(cmd->no_of_ssids) *
-+		sizeof(struct nlo_configured_parameters);
- 
- 	tlv = ptr;
- 	tlv->tag = __cpu_to_le16(WMI_TLV_TAG_ARRAY_STRUCT);
--	tlv->len = __cpu_to_le16(len);
-+	tlv->len = __cpu_to_le16(tlv_len);
- 
- 	ptr += sizeof(*tlv);
- 	nlo_list = ptr;
+diff --git a/drivers/gpu/drm/amd/amdgpu/soc15_common.h b/drivers/gpu/drm/amd/amdgpu/soc15_common.h
+index 839f186e1182a..19e870c798967 100644
+--- a/drivers/gpu/drm/amd/amdgpu/soc15_common.h
++++ b/drivers/gpu/drm/amd/amdgpu/soc15_common.h
+@@ -52,6 +52,7 @@
+ 		uint32_t old_ = 0;	\
+ 		uint32_t tmp_ = RREG32(adev->reg_offset[ip##_HWIP][inst][reg##_BASE_IDX] + reg); \
+ 		uint32_t loop = adev->usec_timeout;		\
++		ret = 0;					\
+ 		while ((tmp_ & (mask)) != (expected_value)) {	\
+ 			if (old_ != tmp_) {			\
+ 				loop = adev->usec_timeout;	\
 -- 
 2.20.1
 
