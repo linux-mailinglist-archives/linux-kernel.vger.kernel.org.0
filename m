@@ -2,202 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 798E61679DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 10:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 179AF1679F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 10:54:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728359AbgBUJw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 04:52:28 -0500
-Received: from foss.arm.com ([217.140.110.172]:35372 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726989AbgBUJw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 04:52:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F04D131B;
-        Fri, 21 Feb 2020 01:52:26 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0FC13F68F;
-        Fri, 21 Feb 2020 01:52:25 -0800 (PST)
-Date:   Fri, 21 Feb 2020 09:52:23 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Pankaj Bansal <pankaj.bansal@nxp.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Will Deacon <will@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 137/191] ACPI/IORT: Fix Number of IDs handling in
- iort_id_map()
-Message-ID: <20200221095223.GC29220@e121166-lin.cambridge.arm.com>
-References: <20200221072250.732482588@linuxfoundation.org>
- <20200221072307.150803032@linuxfoundation.org>
+        id S1728300AbgBUJya (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 04:54:30 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:47055 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbgBUJya (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 04:54:30 -0500
+Received: by mail-ot1-f67.google.com with SMTP id g64so1441453otb.13;
+        Fri, 21 Feb 2020 01:54:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6KWuWbwpy5eV1ugbAOKbTPCDhSjq5tBX3gsYSurm6FU=;
+        b=BHOVmoTR9eeC3nzMH+otKaox1Nsqffd4TPTvM59LzjCUZnf5MhN+F1U27K6CNOdZJW
+         a3PdOHHdyIDj/v+YPzj7Pl36hL/YaqWvIbhOb5JFw5vJZqLlxQAypr1n608CMU1Ou4QP
+         n7xupIXb4wCxi9t0O/tl8XotO0ZV8dfPGrc1oRjrjL7donyMaiFJYYCbdKnWtlFZVi66
+         vz8mjy5Ju4bBJtHRefQl/vGdU0DjA39PYeXDZ1Pm+1a4cBIam7qSl4Q6xpb85vZpBzLq
+         K8KCA+nacJfMpfCghzrVYqtetZvMBIutRVG13LgDMlbJw93hPVFBQ57IefCsi+VEWQJG
+         w6cw==
+X-Gm-Message-State: APjAAAXHAGtY9nt89wBBaG79rn9vI67xyUt8bgJeZagkx049k39o73Nq
+        eygf0CzKK4gckASVJ2WWY2cfcYAC6n1ypKoeMnU=
+X-Google-Smtp-Source: APXvYqyhskulP9XNKEDIW8WGFVwSFpIZubz6Szsv+4aJV+5XVybq6Gl2c8lJKMieOTMpUoN9JopRyDO5qSQyZQelS5w=
+X-Received: by 2002:a9d:dc1:: with SMTP id 59mr27510706ots.250.1582278869027;
+ Fri, 21 Feb 2020 01:54:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221072307.150803032@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200220172403.26062-1-wsa+renesas@sang-engineering.com> <20200220172403.26062-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20200220172403.26062-6-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 21 Feb 2020 10:54:18 +0100
+Message-ID: <CAMuHMdXy=B6ZjC=X12yeOjSfr5-Z6HNL4vp0vQciMsW31i-CPw@mail.gmail.com>
+Subject: Re: [RFC PATCH 5/7] i2c: of: error message unification
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-i3c@lists.infradead.org,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 08:41:50AM +0100, Greg Kroah-Hartman wrote:
-> From: Hanjun Guo <guohanjun@huawei.com>
-> 
-> [ Upstream commit 3c23b83a88d00383e1d498cfa515249aa2fe0238 ]
+Hi Wolfram,
 
-Please drop this patch from the stable queue, thanks.
+Thanks for your patch!
 
-Lorenzo
+On Thu, Feb 20, 2020 at 6:26 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> - don't prefix the device if %pOF is provided. That information is
+>   enough.
 
-> The IORT specification [0] (Section 3, table 4, page 9) defines the
-> 'Number of IDs' as 'The number of IDs in the range minus one'.
-> 
-> However, the IORT ID mapping function iort_id_map() treats the 'Number
-> of IDs' field as if it were the full IDs mapping count, with the
-> following check in place to detect out of boundary input IDs:
-> 
-> InputID >= Input base + Number of IDs
-> 
-> This check is flawed in that it considers the 'Number of IDs' field as
-> the full number of IDs mapping and disregards the 'minus one' from
-> the IDs count.
-> 
-> The correct check in iort_id_map() should be implemented as:
-> 
-> InputID > Input base + Number of IDs
-> 
-> this implements the specification correctly but unfortunately it breaks
-> existing firmwares that erroneously set the 'Number of IDs' as the full
-> IDs mapping count rather than IDs mapping count minus one.
-> 
-> e.g.
-> 
-> PCI hostbridge mapping entry 1:
-> Input base:  0x1000
-> ID Count:    0x100
-> Output base: 0x1000
-> Output reference: 0xC4  //ITS reference
-> 
-> PCI hostbridge mapping entry 2:
-> Input base:  0x1100
-> ID Count:    0x100
-> Output base: 0x2000
-> Output reference: 0xD4  //ITS reference
-> 
-> Two mapping entries which the second entry's Input base = the first
-> entry's Input base + ID count, so for InputID 0x1100 and with the
-> correct InputID check in place in iort_id_map() the kernel would map
-> the InputID to ITS 0xC4 not 0xD4 as it would be expected.
-> 
-> Therefore, to keep supporting existing flawed firmwares, introduce a
-> workaround that instructs the kernel to use the old InputID range check
-> logic in iort_id_map(), so that we can support both firmwares written
-> with the flawed 'Number of IDs' logic and the correct one as defined in
-> the specifications.
-> 
-> [0]: http://infocenter.arm.com/help/topic/com.arm.doc.den0049d/DEN0049D_IO_Remapping_Table.pdf
-> 
-> Reported-by: Pankaj Bansal <pankaj.bansal@nxp.com>
-> Link: https://lore.kernel.org/linux-acpi/20191215203303.29811-1-pankaj.bansal@nxp.com/
-> Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
-> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Pankaj Bansal <pankaj.bansal@nxp.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Signed-off-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/acpi/arm64/iort.c | 57 +++++++++++++++++++++++++++++++++++++--
->  1 file changed, 55 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-> index e11b5da6f828f..7d86468300b78 100644
-> --- a/drivers/acpi/arm64/iort.c
-> +++ b/drivers/acpi/arm64/iort.c
-> @@ -306,6 +306,59 @@ out:
->  	return status;
->  }
->  
-> +struct iort_workaround_oem_info {
-> +	char oem_id[ACPI_OEM_ID_SIZE + 1];
-> +	char oem_table_id[ACPI_OEM_TABLE_ID_SIZE + 1];
-> +	u32 oem_revision;
-> +};
-> +
-> +static bool apply_id_count_workaround;
-> +
-> +static struct iort_workaround_oem_info wa_info[] __initdata = {
-> +	{
-> +		.oem_id		= "HISI  ",
-> +		.oem_table_id	= "HIP07   ",
-> +		.oem_revision	= 0,
-> +	}, {
-> +		.oem_id		= "HISI  ",
-> +		.oem_table_id	= "HIP08   ",
-> +		.oem_revision	= 0,
-> +	}
-> +};
-> +
-> +static void __init
-> +iort_check_id_count_workaround(struct acpi_table_header *tbl)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(wa_info); i++) {
-> +		if (!memcmp(wa_info[i].oem_id, tbl->oem_id, ACPI_OEM_ID_SIZE) &&
-> +		    !memcmp(wa_info[i].oem_table_id, tbl->oem_table_id, ACPI_OEM_TABLE_ID_SIZE) &&
-> +		    wa_info[i].oem_revision == tbl->oem_revision) {
-> +			apply_id_count_workaround = true;
-> +			pr_warn(FW_BUG "ID count for ID mapping entry is wrong, applying workaround\n");
-> +			break;
-> +		}
-> +	}
-> +}
-> +
-> +static inline u32 iort_get_map_max(struct acpi_iort_id_mapping *map)
-> +{
-> +	u32 map_max = map->input_base + map->id_count;
-> +
-> +	/*
-> +	 * The IORT specification revision D (Section 3, table 4, page 9) says
-> +	 * Number of IDs = The number of IDs in the range minus one, but the
-> +	 * IORT code ignored the "minus one", and some firmware did that too,
-> +	 * so apply a workaround here to keep compatible with both the spec
-> +	 * compliant and non-spec compliant firmwares.
-> +	 */
-> +	if (apply_id_count_workaround)
-> +		map_max--;
-> +
-> +	return map_max;
-> +}
-> +
->  static int iort_id_map(struct acpi_iort_id_mapping *map, u8 type, u32 rid_in,
->  		       u32 *rid_out)
->  {
-> @@ -322,8 +375,7 @@ static int iort_id_map(struct acpi_iort_id_mapping *map, u8 type, u32 rid_in,
->  		return -ENXIO;
->  	}
->  
-> -	if (rid_in < map->input_base ||
-> -	    (rid_in >= map->input_base + map->id_count))
-> +	if (rid_in < map->input_base || rid_in > iort_get_map_max(map))
->  		return -ENXIO;
->  
->  	*rid_out = map->output_base + (rid_in - map->input_base);
-> @@ -1542,5 +1594,6 @@ void __init acpi_iort_init(void)
->  		return;
->  	}
->  
-> +	iort_check_id_count_workaround(iort_table);
->  	iort_init_platform_devices();
->  }
-> -- 
-> 2.20.1
-> 
-> 
-> 
+While that information is sufficient to identify the device, using a mix
+of dev_*() and pr_*("... %pOF...") makes it harder to grep for relevant
+information in the kernel log.  Hence I'm not convinced this is an
+improvement.
+
+> - move the prefix to pr_fmt
+> - change prefix from "of_i2c" to "i2c_of" because the code was moved
+>   out of the of-domain long ago
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Nevertheless:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
