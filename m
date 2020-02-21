@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A05FD16737D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:13:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DBCC167487
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:23:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbgBUIMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:12:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48628 "EHLO mail.kernel.org"
+        id S2388284AbgBUIWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:22:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732454AbgBUIMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:12:45 -0500
+        id S2388272AbgBUIWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:22:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F0B024673;
-        Fri, 21 Feb 2020 08:12:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 526F324672;
+        Fri, 21 Feb 2020 08:22:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272764;
-        bh=qJfzYyV9Y0WYbfKEDYmFsAxQ6hgFWI3pRXz7mg64m7s=;
+        s=default; t=1582273337;
+        bh=JyqHc7oHZofqx/5w0IE55UzicqWG+qZhwSUz1m9zPm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2sy834ocKFPTXyNaZYveig5Mf8UbrM92L/UNo4w8I71tZgZpBgzBOiMwD8Wjm4g+b
-         iZeF1WnnaUk8AP/6O6ypLJ1NRNlAKwFUUX0smq5vyOFmHkIyZHajTnciA2dhMHrIls
-         9Obf8WBUQNMT7G3u+HLl0r0LVBN8x/N5MQ6JpzCw=
+        b=MTFnTVVcIcIjEouavm90l82c6mYGk1OVYiSuS3TcAUVNOevx3GKHJYJFk58pqcE+O
+         8PfGCRXD8z0ak3vBRNOHQa0dNzSLVYwyipHNKe10qMdrM/mNkODpZyl1qsrMMOCHeU
+         VdWyrNAq/5cVzQPjcLkcBzuWXy0mZ1F5QkTaEgoE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 259/344] x86/mm: Fix NX bit clearing issue in kernel_map_pages_in_pgd
+        stable@vger.kernel.org,
+        Jaihind Yadav <jaihindyadav@codeaurora.org>,
+        Ravi Kumar Siddojigari <rsiddoji@codeaurora.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 085/191] selinux: ensure we cleanup the internal AVC counters on error in avc_update()
 Date:   Fri, 21 Feb 2020 08:40:58 +0100
-Message-Id: <20200221072413.126463845@linuxfoundation.org>
+Message-Id: <20200221072301.396268238@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,60 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Jaihind Yadav <jaihindyadav@codeaurora.org>
 
-[ Upstream commit 75fbef0a8b6b4bb19b9a91b5214f846c2dc5139e ]
+[ Upstream commit 030b995ad9ece9fa2d218af4429c1c78c2342096 ]
 
-The following commit:
+In AVC update we don't call avc_node_kill() when avc_xperms_populate()
+fails, resulting in the avc->avc_cache.active_nodes counter having a
+false value.  In last patch this changes was missed , so correcting it.
 
-  15f003d20782 ("x86/mm/pat: Don't implicitly allow _PAGE_RW in kernel_map_pages_in_pgd()")
-
-modified kernel_map_pages_in_pgd() to manage writable permissions
-of memory mappings in the EFI page table in a different way, but
-in the process, it removed the ability to clear NX attributes from
-read-only mappings, by clobbering the clear mask if _PAGE_RW is not
-being requested.
-
-Failure to remove the NX attribute from read-only mappings is
-unlikely to be a security issue, but it does prevent us from
-tightening the permissions in the EFI page tables going forward,
-so let's fix it now.
-
-Fixes: 15f003d20782 ("x86/mm/pat: Don't implicitly allow _PAGE_RW in kernel_map_pages_in_pgd()
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20200113172245.27925-5-ardb@kernel.org
+Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
+Signed-off-by: Jaihind Yadav <jaihindyadav@codeaurora.org>
+Signed-off-by: Ravi Kumar Siddojigari <rsiddoji@codeaurora.org>
+[PM: merge fuzz, minor description cleanup]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/pageattr.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ security/selinux/avc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 0d09cc5aad614..a19a71b4d1850 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -2215,7 +2215,7 @@ int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
- 		.pgd = pgd,
- 		.numpages = numpages,
- 		.mask_set = __pgprot(0),
--		.mask_clr = __pgprot(0),
-+		.mask_clr = __pgprot(~page_flags & (_PAGE_NX|_PAGE_RW)),
- 		.flags = 0,
- 	};
- 
-@@ -2224,12 +2224,6 @@ int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
- 	if (!(__supported_pte_mask & _PAGE_NX))
- 		goto out;
- 
--	if (!(page_flags & _PAGE_NX))
--		cpa.mask_clr = __pgprot(_PAGE_NX);
--
--	if (!(page_flags & _PAGE_RW))
--		cpa.mask_clr = __pgprot(_PAGE_RW);
--
- 	if (!(page_flags & _PAGE_ENC))
- 		cpa.mask_clr = pgprot_encrypted(cpa.mask_clr);
- 
+diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+index 83eef39c8a799..d52be7b9f08c8 100644
+--- a/security/selinux/avc.c
++++ b/security/selinux/avc.c
+@@ -896,7 +896,7 @@ static int avc_update_node(struct selinux_avc *avc,
+ 	if (orig->ae.xp_node) {
+ 		rc = avc_xperms_populate(node, orig->ae.xp_node);
+ 		if (rc) {
+-			kmem_cache_free(avc_node_cachep, node);
++			avc_node_kill(avc, node);
+ 			goto out_unlock;
+ 		}
+ 	}
 -- 
 2.20.1
 
