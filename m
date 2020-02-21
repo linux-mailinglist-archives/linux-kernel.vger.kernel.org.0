@@ -2,74 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 367A2167C23
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:30:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA91167C4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 12:38:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbgBULaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 06:30:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53814 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727046AbgBULaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 06:30:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 05511AC66;
-        Fri, 21 Feb 2020 11:30:18 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id BF10DDA70E; Fri, 21 Feb 2020 12:30:00 +0100 (CET)
-Date:   Fri, 21 Feb 2020 12:30:00 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     David Sterba <dsterba@suse.cz>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: Re: linux-next: build failure after merge of the btrfs tree
-Message-ID: <20200221113000.GC2902@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Nikolay Borisov <nborisov@suse.com>
-References: <20200220092344.2a738574@canb.auug.org.au>
+        id S1727720AbgBULiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 06:38:11 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:45637 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726410AbgBULiL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 06:38:11 -0500
+X-UUID: 930a4b4ddf6244fcb9076d480a603978-20200221
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=EXe7y+o2d7iRqWPavTvifj5buUeUDoNRZjUZQ38OTRs=;
+        b=NnLryxhD7hWPE9mnEDLPB+C6iqEmL1G+JR2DwT07Nw1nOSILg87GT0/B0GrXYFVumR4I65f9HxR45hlIJo8mVE1YvLeV6cN1ExpxJ7lUiBRh6RQznltIlwnCEroWVAvUNgToKHH+RdMh/hQt9/bhWiy7SUVZklEzzBLQj/RwaeI=;
+X-UUID: 930a4b4ddf6244fcb9076d480a603978-20200221
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1200173710; Fri, 21 Feb 2020 19:28:39 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33DR.mediatek.inc
+ (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 21 Feb
+ 2020 19:24:02 +0800
+Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
+ MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Fri, 21 Feb 2020 19:27:37 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+CC:     <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
+        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
+        <stonea168@163.com>, <huijuan.xie@mediatek.com>,
+        Jitao Shi <jitao.shi@mediatek.com>
+Subject: [PATCH v6 4/4] drm/mediatek: set dpi pin mode to gpio low to avoid leakage current
+Date:   Fri, 21 Feb 2020 19:28:28 +0800
+Message-ID: <20200221112828.55837-5-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20200221112828.55837-1-jitao.shi@mediatek.com>
+References: <20200221112828.55837-1-jitao.shi@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220092344.2a738574@canb.auug.org.au>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 9A8E6822595FF18CCA96293E9D8AAB0CAD367449040DC0B45EFD2AD7116372492000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 09:23:44AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the btrfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/btrfs/extent-tree.c: In function 'btrfs_alloc_logged_file_extent':
-> fs/btrfs/extent-tree.c:4425:20: error: passing argument 1 of 'btrfs_pin_extent' from incompatible pointer type [-Werror=incompatible-pointer-types]
->  4425 |   btrfs_pin_extent(fs_info, ins->objectid, ins->offset, 1);
->       |                    ^~~~~~~
->       |                    |
->       |                    struct btrfs_fs_info *
-> fs/btrfs/extent-tree.c:2609:49: note: expected 'struct btrfs_trans_handle *' but argument is of type 'struct btrfs_fs_info *'
->  2609 | int btrfs_pin_extent(struct btrfs_trans_handle *trans,
->       |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
-> 
-> Caused by commit
-> 
->   4e2c2f96e6a3 ("btrfs: Make btrfs_pin_extent take trans handle")
-> 
-> interacting with commit
-> 
->   bd727173e443 ("btrfs: handle logged extent failure properly")
-> 
-> from the btrfs-fixes tree.
-> 
-> I have applied the following merge fix patch for today.
+UHVsbCBkcGkgcGlucyBsb3cgd2hlbiBkcGkgaGFzIG5vdGhpbmcgdG8gZGlzcGxheS4gQW92aWQg
+bGVha2FnZQ0KY3VycmVudCBmcm9tIHNvbWUgZHBpIHBpbnMgKEhzeW5jIFZzeW5jIERFIC4uLiAp
+Lg0KDQpTb21lIGNoaXBzIGhhdmUgZHBpIHBpbnMsIGJ1dCB0aGVyZSBhcmUgc29tZSBjaGlwIGRv
+bid0IGhhdmUgcGlucy4NClNvIHRoaXMgZnVuY3Rpb24gaXMgY29udHJvbGxlZCBieSBkZXZpY2Ug
+dHJlZS4NCg0KU2lnbmVkLW9mZi1ieTogSml0YW8gU2hpIDxqaXRhby5zaGlAbWVkaWF0ZWsuY29t
+Pg0KLS0tDQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcGkuYyB8IDM3ICsrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCAzNyBpbnNlcnRpb25zKCsp
+DQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RwaS5jIGIvZHJp
+dmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcGkuYw0KaW5kZXggZTFhMzMyNTRkZmJlLi40MTcx
+MmU1YTcyMWEgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RwaS5j
+DQorKysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RwaS5jDQpAQCAtMTAsNyArMTAs
+OSBAQA0KICNpbmNsdWRlIDxsaW51eC9rZXJuZWwuaD4NCiAjaW5jbHVkZSA8bGludXgvb2YuaD4N
+CiAjaW5jbHVkZSA8bGludXgvb2ZfZGV2aWNlLmg+DQorI2luY2x1ZGUgPGxpbnV4L29mX2dwaW8u
+aD4NCiAjaW5jbHVkZSA8bGludXgvb2ZfZ3JhcGguaD4NCisjaW5jbHVkZSA8bGludXgvcGluY3Ry
+bC9jb25zdW1lci5oPg0KICNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCiAjaW5j
+bHVkZSA8bGludXgvdHlwZXMuaD4NCiANCkBAIC03NCw4ICs3NiwxMiBAQCBzdHJ1Y3QgbXRrX2Rw
+aSB7DQogCWVudW0gbXRrX2RwaV9vdXRfeWNfbWFwIHljX21hcDsNCiAJZW51bSBtdGtfZHBpX291
+dF9iaXRfbnVtIGJpdF9udW07DQogCWVudW0gbXRrX2RwaV9vdXRfY2hhbm5lbF9zd2FwIGNoYW5u
+ZWxfc3dhcDsNCisJc3RydWN0IHBpbmN0cmwgKnBpbmN0cmw7DQorCXN0cnVjdCBwaW5jdHJsX3N0
+YXRlICpwaW5zX2dwaW87DQorCXN0cnVjdCBwaW5jdHJsX3N0YXRlICpwaW5zX2RwaTsNCiAJaW50
+IHJlZmNvdW50Ow0KIAlib29sIGR1YWxfZWRnZTsNCisJYm9vbCBkcGlfcGluX2N0cmw7DQogfTsN
+CiANCiBzdGF0aWMgaW5saW5lIHN0cnVjdCBtdGtfZHBpICptdGtfZHBpX2Zyb21fZW5jb2Rlcihz
+dHJ1Y3QgZHJtX2VuY29kZXIgKmUpDQpAQCAtMzg3LDYgKzM5Myw5IEBAIHN0YXRpYyB2b2lkIG10
+a19kcGlfcG93ZXJfb2ZmKHN0cnVjdCBtdGtfZHBpICpkcGkpDQogCWlmICgtLWRwaS0+cmVmY291
+bnQgIT0gMCkNCiAJCXJldHVybjsNCiANCisJaWYgKGRwaS0+ZHBpX3Bpbl9jdHJsKQ0KKwkJcGlu
+Y3RybF9zZWxlY3Rfc3RhdGUoZHBpLT5waW5jdHJsLCBkcGktPnBpbnNfZ3Bpbyk7DQorDQogCW10
+a19kcGlfZGlzYWJsZShkcGkpOw0KIAljbGtfZGlzYWJsZV91bnByZXBhcmUoZHBpLT5waXhlbF9j
+bGspOw0KIAljbGtfZGlzYWJsZV91bnByZXBhcmUoZHBpLT5lbmdpbmVfY2xrKTsNCkBAIC00MTEs
+NiArNDIwLDkgQEAgc3RhdGljIGludCBtdGtfZHBpX3Bvd2VyX29uKHN0cnVjdCBtdGtfZHBpICpk
+cGkpDQogCQlnb3RvIGVycl9waXhlbDsNCiAJfQ0KIA0KKwlpZiAoZHBpLT5kcGlfcGluX2N0cmwp
+DQorCQlwaW5jdHJsX3NlbGVjdF9zdGF0ZShkcGktPnBpbmN0cmwsIGRwaS0+cGluc19kcGkpOw0K
+Kw0KIAltdGtfZHBpX2VuYWJsZShkcGkpOw0KIAlyZXR1cm4gMDsNCiANCkBAIC03MTYsNiArNzI4
+LDMxIEBAIHN0YXRpYyBpbnQgbXRrX2RwaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
+ZGV2KQ0KIAlkcGktPmRldiA9IGRldjsNCiAJZHBpLT5jb25mID0gKHN0cnVjdCBtdGtfZHBpX2Nv
+bmYgKilvZl9kZXZpY2VfZ2V0X21hdGNoX2RhdGEoZGV2KTsNCiAJZHBpLT5kdWFsX2VkZ2UgPSBv
+Zl9wcm9wZXJ0eV9yZWFkX2Jvb2woZGV2LT5vZl9ub2RlLCAiZHBpX2R1YWxfZWRnZSIpOw0KKwlk
+cGktPmRwaV9waW5fY3RybCA9IG9mX3Byb3BlcnR5X3JlYWRfYm9vbChkZXYtPm9mX25vZGUsDQor
+CQkJCQkJICAiZHBpX3Bpbl9tb2RlX3N3YXAiKTsNCisNCisJaWYgKGRwaS0+ZHBpX3Bpbl9jdHJs
+KSB7DQorCQlkcGktPnBpbmN0cmwgPSBkZXZtX3BpbmN0cmxfZ2V0KCZwZGV2LT5kZXYpOw0KKwkJ
+aWYgKElTX0VSUihkcGktPnBpbmN0cmwpKSB7DQorCQkJZGV2X2VycigmcGRldi0+ZGV2LCAiQ2Fu
+bm90IGZpbmQgcGluY3RybCFcbiIpOw0KKwkJCXJldHVybiBQVFJfRVJSKGRwaS0+cGluY3RybCk7
+DQorCQl9DQorDQorCQlkcGktPnBpbnNfZ3BpbyA9IHBpbmN0cmxfbG9va3VwX3N0YXRlKGRwaS0+
+cGluY3RybCwNCisJCQkJCQkgICAgICAiZ3Bpb21vZGUiKTsNCisJCWlmIChJU19FUlIoZHBpLT5w
+aW5zX2dwaW8pKSB7DQorCQkJZGV2X2VycigmcGRldi0+ZGV2LCAiQ2Fubm90IGZpbmQgcGluY3Ry
+bCBncGlvbW9kZSFcbiIpOw0KKwkJCXJldHVybiBQVFJfRVJSKGRwaS0+cGluc19ncGlvKTsNCisJ
+CX0NCisNCisJCXBpbmN0cmxfc2VsZWN0X3N0YXRlKGRwaS0+cGluY3RybCwgZHBpLT5waW5zX2dw
+aW8pOw0KKw0KKwkJZHBpLT5waW5zX2RwaSA9IHBpbmN0cmxfbG9va3VwX3N0YXRlKGRwaS0+cGlu
+Y3RybCwgImRwaW1vZGUiKTsNCisJCWlmIChJU19FUlIoZHBpLT5waW5zX2RwaSkpIHsNCisJCQlk
+ZXZfZXJyKCZwZGV2LT5kZXYsICJDYW5ub3QgZmluZCBwaW5jdHJsIGRwaW1vZGUhXG4iKTsNCisJ
+CQlyZXR1cm4gUFRSX0VSUihkcGktPnBpbnNfZHBpKTsNCisJCX0NCisJfQ0KIA0KIAltZW0gPSBw
+bGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwgSU9SRVNPVVJDRV9NRU0sIDApOw0KIAlkcGktPnJl
+Z3MgPSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoZGV2LCBtZW0pOw0KLS0gDQoyLjIxLjANCg==
 
-Sorry, I'll fix the branch in the next for-next snapshot.
