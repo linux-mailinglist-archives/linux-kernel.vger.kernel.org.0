@@ -2,180 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 639DB16820E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:43:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBB6F168212
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:43:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbgBUPnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:43:24 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35675 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728177AbgBUPnY (ORCPT
+        id S1729055AbgBUPnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:43:47 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:49219 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728235AbgBUPnq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:43:24 -0500
-Received: by mail-wr1-f65.google.com with SMTP id w12so2577466wrt.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:43:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=TdgQZoYzFfHTGZzoJ00i9pnvONpQW5SeDrs/ilsmT00=;
-        b=SeJRcOMNQfp1YCK33Vxody1eFQHvooFc3aOxbrhnjIylgD+1EasJ36ecMI30d4lvXJ
-         tFbOsgjuMMH1upUe7MG9/b93+Xu8uHTGEm1D5gsDmwkmRmkNAeOIoLKcwBxPuSV8aJ7h
-         Ms3hnu6dnqi1cSACFPr3bhE+qvz3NmVD92i9eVka12Hu/z3PvxTkEMltJ7o4GgJvHK80
-         vz86CRyz/atoOBtJG018gxPiZFjvniehVkLHbe0raVqjgbA2CvMllU6O80ZIkuV/FFAb
-         fMIDelRJeH3fHbnEbfV/vZGh1lJv9Efe8Sz6wVsmA8X8EZfJBj+PZ1r3pwj+zmidHdYO
-         a8Ew==
+        Fri, 21 Feb 2020 10:43:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582299825;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9hFApa4WnwgjLlt8qFRZkEDvrHl4A5ayxF4/D+craX4=;
+        b=HCAub9j4uDstyv9fCWG6n2gOo7gINFU1Jpe1efobxH992q9pcbYlpMMopE8lqdU+ua3aAG
+        z8bvKuM56wOP2FL2AZZK2zXXeM+06K2f4dQki0eNQvE8F+sgK8HOLQOwTsJuQeF2xOtu7e
+        oHOJogMWxfuCbbb+ZoSWzUO8jqNmBgk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-272-SzTDsVOsMiK86VMsFAasfQ-1; Fri, 21 Feb 2020 10:43:44 -0500
+X-MC-Unique: SzTDsVOsMiK86VMsFAasfQ-1
+Received: by mail-wm1-f71.google.com with SMTP id p2so734705wma.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:43:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=TdgQZoYzFfHTGZzoJ00i9pnvONpQW5SeDrs/ilsmT00=;
-        b=ucCwScvlzC6lwNCZwE1K0LZFlVguJIf8EVPdchhpuBcYBbSwPyP8kFrNc6Gfj3l0YG
-         fgYv5W7+1jXBgKWINeLxF6oD7cAZIjANMmYrCJCE6nHdScs4DIsEDX0odUy9u3Ac2Di3
-         sG6UCYUqo28hq571TmOPDIinAvaN3edft0YIbLgoJHlPLdFdB+9tV83PHceA8cGqna+J
-         0WUhSPCbjumZEMt9LCcoT99XsOI5VECdt/NLnMuVMx9sTDmBVTg7+4jO0aOL1Kdal3ls
-         G49W/EzKUE8dCEB64YhjqE0UhAHB/qz64zxU8qYjNEmPNbDEKUIHW7c0DvnBxeAv4IjP
-         a+Pg==
-X-Gm-Message-State: APjAAAUetQ1nypVFlPJHawyhqyWzMEXMAkh5TQs+Jvu8NHG91Lq8unAC
-        EDD9Qa7BOkrfNol/iPJkuBU4SA==
-X-Google-Smtp-Source: APXvYqwaokzBdL5Sy902QAplCeDWKw29jbJ4njjIRsN8Wt1MCzTD3diqBlzSjsr/TGqqT9voteJxTg==
-X-Received: by 2002:a5d:5452:: with SMTP id w18mr47054218wrv.333.1582299801751;
-        Fri, 21 Feb 2020 07:43:21 -0800 (PST)
-Received: from linaro.org ([2a01:e34:ed2f:f020:903b:a048:f296:e3ae])
-        by smtp.gmail.com with ESMTPSA id v15sm4646081wrf.7.2020.02.21.07.43.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Feb 2020 07:43:20 -0800 (PST)
-Date:   Fri, 21 Feb 2020 16:43:18 +0100
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Jasper Korten <jja2000@gmail.com>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 09/17] arm: tegra20: cpuidle: Handle case where
- secondary CPU hangs on entering LP2
-Message-ID: <20200221154318.GO10516@linaro.org>
-References: <20200212235134.12638-1-digetx@gmail.com>
- <20200212235134.12638-10-digetx@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=9hFApa4WnwgjLlt8qFRZkEDvrHl4A5ayxF4/D+craX4=;
+        b=OHmbFbhI6BDntxlbVTreWNi+erD8QugIkZ7MlyqG+TRg5S/H0v+d9Z6fyfvC2Yx/qN
+         f65FyaU2crGjlHmMvvVNUxbnzXUZsEfmXSKL0CbvJWzlrOZVnG4rg01jqP3Ba7ePrQ+p
+         Oc50JNXN9lPGz3CIla940OvIw+M1VKwb1Quvw4XgBZbPhy5/Clt2DikB/++wwpWAnXp0
+         gbxtFapuixk5H8aQYN9pO8qJVxUgzxGbxq4pzxur9Dmle+ViaA1SevE2/lgd7HcAr3E7
+         2bXt3CElV2FiQq0BOvSk6L0O6w8q3wZrULKEzzAYjTEQ1O0ujiKyxlFH4FIHb99M8WGe
+         x7Gw==
+X-Gm-Message-State: APjAAAXACv/owaB0to9DGHY74SFk5256QUOyJILIdLR9fa6Y7JBnwfe6
+        X14pPdFTU3Ro3td53kAofBNSx5qHK6kdMqtQQJ6A6ftm4YKnixlR82D1YNPtpI2T3/GxQAmu3EN
+        +fFM9JI6CmGPqz5CT1aDR/187
+X-Received: by 2002:a5d:6646:: with SMTP id f6mr52594216wrw.276.1582299822619;
+        Fri, 21 Feb 2020 07:43:42 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwgLS/yqhalljwOZqZcOADqCDtfZeqLFsApuyQ44lfuvXa1CFlCcvGehaEzyXxYthKCMSpZ0A==
+X-Received: by 2002:a5d:6646:: with SMTP id f6mr52594192wrw.276.1582299822418;
+        Fri, 21 Feb 2020 07:43:42 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id x132sm7789284wmg.0.2020.02.21.07.43.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 07:43:41 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 25/61] KVM: x86: Use u32 for holding CPUID register value in helpers
+In-Reply-To: <20200201185218.24473-26-sean.j.christopherson@intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-26-sean.j.christopherson@intel.com>
+Date:   Fri, 21 Feb 2020 16:43:41 +0100
+Message-ID: <878skwq72q.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200212235134.12638-10-digetx@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 02:51:26AM +0300, Dmitry Osipenko wrote:
-> It is possible that something may go wrong with the secondary CPU, in that
-> case it is much nicer to get a dump of the flow-controller state before
-> hanging machine.
-> 
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Tested-by: Peter Geis <pgwipeout@gmail.com>
-> Tested-by: Jasper Korten <jja2000@gmail.com>
-> Tested-by: David Heidelberg <david@ixit.cz>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
+
+> Change the intermediate CPUID output register values from "int" to "u32"
+> to match both hardware and the storage type in struct cpuid_reg.
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > ---
->  arch/arm/mach-tegra/cpuidle-tegra20.c | 47 +++++++++++++++++++++++++--
->  1 file changed, 45 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> index 9672c619f4bc..bcc158b72e67 100644
-> --- a/arch/arm/mach-tegra/cpuidle-tegra20.c
-> +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> @@ -83,14 +83,57 @@ static inline void tegra20_wake_cpu1_from_reset(void)
+>  arch/x86/kvm/cpuid.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+> index c1ac0995843d..72a79bdfed6b 100644
+> --- a/arch/x86/kvm/cpuid.h
+> +++ b/arch/x86/kvm/cpuid.h
+> @@ -95,7 +95,7 @@ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+>  	return reverse_cpuid[x86_leaf];
 >  }
->  #endif
 >  
-> +static void tegra20_report_cpus_state(void)
-> +{
-> +	unsigned long cpu, lcpu, csr;
-> +
-> +	for_each_cpu(lcpu, cpu_possible_mask) {
-> +		cpu = cpu_logical_map(lcpu);
-> +		csr = flowctrl_read_cpu_csr(cpu);
-> +
-> +		pr_err("cpu%lu: online=%d flowctrl_csr=0x%08lx\n",
-> +		       cpu, cpu_online(lcpu), csr);
-> +	}
-> +}
-> +
-> +static int tegra20_wait_for_secondary_cpu_parking(void)
-> +{
-> +	unsigned int retries = 3;
-> +
-> +	while (retries--) {
-> +		ktime_t timeout = ktime_add_ms(ktime_get(), 500);
-
-Oops I missed this one. Do not use ktime_get() in this code path, use jiffies.
-
-> +
-> +		/*
-> +		 * The primary CPU0 core shall wait for the secondaries
-> +		 * shutdown in order to power-off CPU's cluster safely.
-> +		 * The timeout value depends on the current CPU frequency,
-> +		 * it takes about 40-150us  in average and over 1000us in
-> +		 * a worst case scenario.
-> +		 */
-> +		do {
-> +			if (tegra_cpu_rail_off_ready())
-> +				return 0;
-> +
-> +		} while (ktime_before(ktime_get(), timeout));
-
-So this loop will aggresively call tegra_cpu_rail_off_ready() and retry 3
-times. The tegra_cpu_rail_off_ready() function can be called thoushand of times
-here but the function will hang 1.5s :/
-
-I suggest something like:
-
-	while (retries--i && !tegra_cpu_rail_off_ready()) 
-		udelay(100);
-
-So <retries> calls to tegra_cpu_rail_off_ready() and 100us x <retries> maximum
-impact.
-
-> +		pr_err("secondary CPU taking too long to park\n");
-> +
-> +		tegra20_report_cpus_state();
-> +	}
-> +
-> +	pr_err("timed out waiting secondaries to park\n");
-> +
-> +	return -ETIMEDOUT;
-> +}
-> +
->  static bool tegra20_cpu_cluster_power_down(struct cpuidle_device *dev,
->  					   struct cpuidle_driver *drv,
->  					   int index)
+> -static __always_inline int *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsigned x86_feature)
+> +static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsigned x86_feature)
 >  {
->  	bool ret;
+>  	struct kvm_cpuid_entry2 *entry;
+>  	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
+> @@ -121,7 +121,7 @@ static __always_inline int *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsi
 >  
-> -	while (!tegra_cpu_rail_off_ready())
-> -		cpu_relax();
-> +	if (tegra20_wait_for_secondary_cpu_parking())
-> +		return false;
+>  static __always_inline bool guest_cpuid_has(struct kvm_vcpu *vcpu, unsigned x86_feature)
+>  {
+> -	int *reg;
+> +	u32 *reg;
 >  
->  	ret = !tegra_pm_enter_lp2();
+>  	reg = guest_cpuid_get_register(vcpu, x86_feature);
+>  	if (!reg)
+> @@ -132,7 +132,7 @@ static __always_inline bool guest_cpuid_has(struct kvm_vcpu *vcpu, unsigned x86_
 >  
-> -- 
-> 2.24.0
-> 
+>  static __always_inline void guest_cpuid_clear(struct kvm_vcpu *vcpu, unsigned x86_feature)
+>  {
+> -	int *reg;
+> +	u32 *reg;
+>  
+>  	reg = guest_cpuid_get_register(vcpu, x86_feature);
+>  	if (reg)
+
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
 -- 
+Vitaly
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
