@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72D261674A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6D8A1674AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:24:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388488AbgBUIX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:23:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35428 "EHLO mail.kernel.org"
+        id S2388497AbgBUIXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:23:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388476AbgBUIXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:23:25 -0500
+        id S2388486AbgBUIX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:23:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F28C24697;
-        Fri, 21 Feb 2020 08:23:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95EA224697;
+        Fri, 21 Feb 2020 08:23:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273404;
-        bh=H+HW9LdC+gGzgBI2knQjxdHksSbqipHsIqlIEKwTmKU=;
+        s=default; t=1582273408;
+        bh=LiJe7Oagm1mNMXF6zMLtUS9MDYRytae+4NbXXsV9DaI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nW3vHUY849TmTd6zwWugXmE8o1ue8p0E7a+pGWPfWS27glGOZUwfL7vcB7Foo0qYd
-         h+7uzhc8jN02Fk8i/ksopShSw6pnp6AO06sj5Y+qJL3XwWQVzT1kDxuhpHx6C2HF6e
-         fCjy0vedCT5Tg+5lbk5bDTB3vKOol+hH5Rnjt4Q4=
+        b=Us42cI4wy5Ihk+NVP/r4zjhx6ZUr8gV3mjsSPVV3W0pf76uPQfuNokrAyP6OPhBJf
+         wAcusXh3mPvMFhVLCZjvwCtxbiKAPEfPSmVZ52Ap3kL2mSptz3j8NfXKm45r6EVuto
+         8M0uA8gGbJ68UsvRJv4bQvBuemE1Cnfl0dv0VhoM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Oliver OHalloran <oohall@gmail.com>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 157/191] drm/nouveau/mmu: fix comptag memory leak
-Date:   Fri, 21 Feb 2020 08:42:10 +0100
-Message-Id: <20200221072309.677035788@linuxfoundation.org>
+Subject: [PATCH 4.19 158/191] powerpc/sriov: Remove VF eeh_dev state when disabling SR-IOV
+Date:   Fri, 21 Feb 2020 08:42:11 +0100
+Message-Id: <20200221072309.787670966@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
 References: <20200221072250.732482588@linuxfoundation.org>
@@ -43,30 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: Oliver O'Halloran <oohall@gmail.com>
 
-[ Upstream commit 35e4909b6a2b4005ced3c4238da60d926b78fdea ]
+[ Upstream commit 1fb4124ca9d456656a324f1ee29b7bf942f59ac8 ]
 
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+When disabling virtual functions on an SR-IOV adapter we currently do not
+correctly remove the EEH state for the now-dead virtual functions. When
+removing the pci_dn that was created for the VF when SR-IOV was enabled
+we free the corresponding eeh_dev without removing it from the child device
+list of the eeh_pe that contained it. This can result in crashes due to the
+use-after-free.
+
+Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
+Reviewed-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Tested-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190821062655.19735-1-oohall@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/core/memory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/pci_dn.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/core/memory.c b/drivers/gpu/drm/nouveau/nvkm/core/memory.c
-index e85a08ecd9da5..4cc186262d344 100644
---- a/drivers/gpu/drm/nouveau/nvkm/core/memory.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/core/memory.c
-@@ -91,8 +91,8 @@ nvkm_memory_tags_get(struct nvkm_memory *memory, struct nvkm_device *device,
- 	}
+diff --git a/arch/powerpc/kernel/pci_dn.c b/arch/powerpc/kernel/pci_dn.c
+index ab147a1909c8b..7cecc3bd953b7 100644
+--- a/arch/powerpc/kernel/pci_dn.c
++++ b/arch/powerpc/kernel/pci_dn.c
+@@ -257,9 +257,22 @@ void remove_dev_pci_data(struct pci_dev *pdev)
+ 				continue;
  
- 	refcount_set(&tags->refcount, 1);
-+	*ptags = memory->tags = tags;
- 	mutex_unlock(&fb->subdev.mutex);
--	*ptags = tags;
- 	return 0;
- }
- 
+ #ifdef CONFIG_EEH
+-			/* Release EEH device for the VF */
++			/*
++			 * Release EEH state for this VF. The PCI core
++			 * has already torn down the pci_dev for this VF, but
++			 * we're responsible to removing the eeh_dev since it
++			 * has the same lifetime as the pci_dn that spawned it.
++			 */
+ 			edev = pdn_to_eeh_dev(pdn);
+ 			if (edev) {
++				/*
++				 * We allocate pci_dn's for the totalvfs count,
++				 * but only only the vfs that were activated
++				 * have a configured PE.
++				 */
++				if (edev->pe)
++					eeh_rmv_from_parent_pe(edev);
++
+ 				pdn->edev = NULL;
+ 				kfree(edev);
+ 			}
 -- 
 2.20.1
 
