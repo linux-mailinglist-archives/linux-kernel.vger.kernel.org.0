@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD6EC1676DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D01E9167577
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730221AbgBUH6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:58:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58722 "EHLO mail.kernel.org"
+        id S2388703AbgBUI17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:27:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730821AbgBUH6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:58:49 -0500
+        id S2388194AbgBUIUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:20:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D41022073A;
-        Fri, 21 Feb 2020 07:58:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D14F2073A;
+        Fri, 21 Feb 2020 08:20:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271928;
-        bh=WgQL7+GbhR6kljUvHY2XQ7tGW6A7NHb7v1vA6LNW3yg=;
+        s=default; t=1582273251;
+        bh=9Vc0v1JqK/71fX1NoPBzcfm+OjFk+m3ebPM3yxVZ/X0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EiriTJ37SQr9y239Kmx7OY/7ipVVHqFZSXC0+84VJ9gTB0F6i0fmDWc0Rf+yKpM7m
-         KjZV4AoMZSxFCWK6eltiXOtu/5OkcuB5SA+dl3pm9rWlSj1mZjd9cfPLFgEyaV8XeA
-         bTEnbbSvpJy6kYQOo48cyTl+6IurR4+7R89t1cLE=
+        b=DFubg4H2knGyEPdI+8UxIu2d9IMF6egigmCZ6VwU2iFTGj20BRfM69fi0TyqXhl4x
+         wsIFO0SG1r6OdVZIrfqqyRCnt66VNkAtsmyAg0+rfZHb+QbMoaOWrA4QrzD4tmxpji
+         9a4W+b6wLY1Vl5OyzIZwVOVkHJ/JeVwCncJAGOEs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Paulo Alcantara (SUSE)" <pc@cjr.nz>,
-        Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>,
-        Steve French <stfrench@microsoft.com>,
+        stable@vger.kernel.org, Leo Li <sunpeng.li@amd.com>,
+        Harry Wentland <Harry.Wentland@amd.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Dingchen Zhang <dingchen.zhang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 350/399] cifs: Fix mount options set in automount
+Subject: [PATCH 4.19 102/191] drm: remove the newline for CRC source name.
 Date:   Fri, 21 Feb 2020 08:41:15 +0100
-Message-Id: <20200221072435.111290869@linuxfoundation.org>
+Message-Id: <20200221072303.252904764@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,213 +47,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paulo Alcantara (SUSE) <pc@cjr.nz>
+From: Dingchen Zhang <dingchen.zhang@amd.com>
 
-[ Upstream commit 5739375ee4230980166807d347cc21c305532bbc ]
+[ Upstream commit 72a848f5c46bab4c921edc9cbffd1ab273b2be17 ]
 
-Starting from 4a367dc04435, we must set the mount options based on the
-DFS full path rather than the resolved target, that is, cifs_mount()
-will be responsible for resolving the DFS link (cached) as well as
-performing failover to any other targets in the referral.
+userspace may transfer a newline, and this terminating newline
+is replaced by a '\0' to avoid followup issues.
 
-Signed-off-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
-Reported-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-Fixes: 4a367dc04435 ("cifs: Add support for failover in cifs_mount()")
-Link: https://lore.kernel.org/linux-cifs/39643d7d-2abb-14d3-ced6-c394fab9a777@prodrive-technologies.com
-Tested-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+'len-1' is the index to replace the newline of CRC source name.
+
+v3: typo fix (Sam)
+
+v2: update patch subject, body and format. (Sam)
+
+Cc: Leo Li <sunpeng.li@amd.com>
+Cc: Harry Wentland <Harry.Wentland@amd.com>
+Cc: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Dingchen Zhang <dingchen.zhang@amd.com>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190610134751.14356-1-dingchen.zhang@amd.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/cifs_dfs_ref.c | 97 +++++++++++++++++++-----------------------
- 1 file changed, 43 insertions(+), 54 deletions(-)
+ drivers/gpu/drm/drm_debugfs_crc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/cifs/cifs_dfs_ref.c b/fs/cifs/cifs_dfs_ref.c
-index 41957b82d7960..606f26d862dc1 100644
---- a/fs/cifs/cifs_dfs_ref.c
-+++ b/fs/cifs/cifs_dfs_ref.c
-@@ -120,17 +120,17 @@ cifs_build_devname(char *nodename, const char *prepath)
+diff --git a/drivers/gpu/drm/drm_debugfs_crc.c b/drivers/gpu/drm/drm_debugfs_crc.c
+index c88e5ff41add6..a3c756710845e 100644
+--- a/drivers/gpu/drm/drm_debugfs_crc.c
++++ b/drivers/gpu/drm/drm_debugfs_crc.c
+@@ -101,8 +101,8 @@ static ssize_t crc_control_write(struct file *file, const char __user *ubuf,
+ 	if (IS_ERR(source))
+ 		return PTR_ERR(source);
  
+-	if (source[len] == '\n')
+-		source[len] = '\0';
++	if (source[len - 1] == '\n')
++		source[len - 1] = '\0';
  
- /**
-- * cifs_compose_mount_options	-	creates mount options for refferral
-+ * cifs_compose_mount_options	-	creates mount options for referral
-  * @sb_mountdata:	parent/root DFS mount options (template)
-  * @fullpath:		full path in UNC format
-- * @ref:		server's referral
-+ * @ref:		optional server's referral
-  * @devname:		optional pointer for saving device name
-  *
-  * creates mount options for submount based on template options sb_mountdata
-  * and replacing unc,ip,prefixpath options with ones we've got form ref_unc.
-  *
-  * Returns: pointer to new mount options or ERR_PTR.
-- * Caller is responcible for freeing retunrned value if it is not error.
-+ * Caller is responsible for freeing returned value if it is not error.
-  */
- char *cifs_compose_mount_options(const char *sb_mountdata,
- 				   const char *fullpath,
-@@ -150,18 +150,27 @@ char *cifs_compose_mount_options(const char *sb_mountdata,
- 	if (sb_mountdata == NULL)
- 		return ERR_PTR(-EINVAL);
+ 	spin_lock_irq(&crc->lock);
  
--	if (strlen(fullpath) - ref->path_consumed) {
--		prepath = fullpath + ref->path_consumed;
--		/* skip initial delimiter */
--		if (*prepath == '/' || *prepath == '\\')
--			prepath++;
--	}
-+	if (ref) {
-+		if (strlen(fullpath) - ref->path_consumed) {
-+			prepath = fullpath + ref->path_consumed;
-+			/* skip initial delimiter */
-+			if (*prepath == '/' || *prepath == '\\')
-+				prepath++;
-+		}
- 
--	name = cifs_build_devname(ref->node_name, prepath);
--	if (IS_ERR(name)) {
--		rc = PTR_ERR(name);
--		name = NULL;
--		goto compose_mount_options_err;
-+		name = cifs_build_devname(ref->node_name, prepath);
-+		if (IS_ERR(name)) {
-+			rc = PTR_ERR(name);
-+			name = NULL;
-+			goto compose_mount_options_err;
-+		}
-+	} else {
-+		name = cifs_build_devname((char *)fullpath, NULL);
-+		if (IS_ERR(name)) {
-+			rc = PTR_ERR(name);
-+			name = NULL;
-+			goto compose_mount_options_err;
-+		}
- 	}
- 
- 	rc = dns_resolve_server_name_to_ip(name, &srvIP);
-@@ -225,6 +234,8 @@ char *cifs_compose_mount_options(const char *sb_mountdata,
- 
- 	if (devname)
- 		*devname = name;
-+	else
-+		kfree(name);
- 
- 	/*cifs_dbg(FYI, "%s: parent mountdata: %s\n", __func__, sb_mountdata);*/
- 	/*cifs_dbg(FYI, "%s: submount mountdata: %s\n", __func__, mountdata );*/
-@@ -241,23 +252,23 @@ compose_mount_options_err:
- }
- 
- /**
-- * cifs_dfs_do_refmount - mounts specified path using provided refferal
-+ * cifs_dfs_do_mount - mounts specified path using DFS full path
-+ *
-+ * Always pass down @fullpath to smb3_do_mount() so we can use the root server
-+ * to perform failover in case we failed to connect to the first target in the
-+ * referral.
-+ *
-  * @cifs_sb:		parent/root superblock
-  * @fullpath:		full path in UNC format
-- * @ref:		server's referral
-  */
--static struct vfsmount *cifs_dfs_do_refmount(struct dentry *mntpt,
--		struct cifs_sb_info *cifs_sb,
--		const char *fullpath, const struct dfs_info3_param *ref)
-+static struct vfsmount *cifs_dfs_do_mount(struct dentry *mntpt,
-+					  struct cifs_sb_info *cifs_sb,
-+					  const char *fullpath)
- {
- 	struct vfsmount *mnt;
- 	char *mountdata;
- 	char *devname;
- 
--	/*
--	 * Always pass down the DFS full path to smb3_do_mount() so we
--	 * can use it later for failover.
--	 */
- 	devname = kstrndup(fullpath, strlen(fullpath), GFP_KERNEL);
- 	if (!devname)
- 		return ERR_PTR(-ENOMEM);
-@@ -266,7 +277,7 @@ static struct vfsmount *cifs_dfs_do_refmount(struct dentry *mntpt,
- 
- 	/* strip first '\' from fullpath */
- 	mountdata = cifs_compose_mount_options(cifs_sb->mountdata,
--					       fullpath + 1, ref, NULL);
-+					       fullpath + 1, NULL, NULL);
- 	if (IS_ERR(mountdata)) {
- 		kfree(devname);
- 		return (struct vfsmount *)mountdata;
-@@ -278,28 +289,16 @@ static struct vfsmount *cifs_dfs_do_refmount(struct dentry *mntpt,
- 	return mnt;
- }
- 
--static void dump_referral(const struct dfs_info3_param *ref)
--{
--	cifs_dbg(FYI, "DFS: ref path: %s\n", ref->path_name);
--	cifs_dbg(FYI, "DFS: node path: %s\n", ref->node_name);
--	cifs_dbg(FYI, "DFS: fl: %d, srv_type: %d\n",
--		 ref->flags, ref->server_type);
--	cifs_dbg(FYI, "DFS: ref_flags: %d, path_consumed: %d\n",
--		 ref->ref_flag, ref->path_consumed);
--}
--
- /*
-  * Create a vfsmount that we can automount
-  */
- static struct vfsmount *cifs_dfs_do_automount(struct dentry *mntpt)
- {
--	struct dfs_info3_param referral = {0};
- 	struct cifs_sb_info *cifs_sb;
- 	struct cifs_ses *ses;
- 	struct cifs_tcon *tcon;
- 	char *full_path, *root_path;
- 	unsigned int xid;
--	int len;
- 	int rc;
- 	struct vfsmount *mnt;
- 
-@@ -357,7 +356,7 @@ static struct vfsmount *cifs_dfs_do_automount(struct dentry *mntpt)
- 	if (!rc) {
- 		rc = dfs_cache_find(xid, ses, cifs_sb->local_nls,
- 				    cifs_remap(cifs_sb), full_path + 1,
--				    &referral, NULL);
-+				    NULL, NULL);
- 	}
- 
- 	free_xid(xid);
-@@ -366,26 +365,16 @@ static struct vfsmount *cifs_dfs_do_automount(struct dentry *mntpt)
- 		mnt = ERR_PTR(rc);
- 		goto free_root_path;
- 	}
--
--	dump_referral(&referral);
--
--	len = strlen(referral.node_name);
--	if (len < 2) {
--		cifs_dbg(VFS, "%s: Net Address path too short: %s\n",
--			 __func__, referral.node_name);
--		mnt = ERR_PTR(-EINVAL);
--		goto free_dfs_ref;
--	}
- 	/*
--	 * cifs_mount() will retry every available node server in case
--	 * of failures.
-+	 * OK - we were able to get and cache a referral for @full_path.
-+	 *
-+	 * Now, pass it down to cifs_mount() and it will retry every available
-+	 * node server in case of failures - no need to do it here.
- 	 */
--	mnt = cifs_dfs_do_refmount(mntpt, cifs_sb, full_path, &referral);
--	cifs_dbg(FYI, "%s: cifs_dfs_do_refmount:%s , mnt:%p\n", __func__,
--		 referral.node_name, mnt);
-+	mnt = cifs_dfs_do_mount(mntpt, cifs_sb, full_path);
-+	cifs_dbg(FYI, "%s: cifs_dfs_do_mount:%s , mnt:%p\n", __func__,
-+		 full_path + 1, mnt);
- 
--free_dfs_ref:
--	free_dfs_info_param(&referral);
- free_root_path:
- 	kfree(root_path);
- free_full_path:
 -- 
 2.20.1
 
