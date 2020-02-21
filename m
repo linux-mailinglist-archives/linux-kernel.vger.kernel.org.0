@@ -2,69 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3208168527
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:37:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEA6F16852C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 18:40:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbgBURhp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 12:37:45 -0500
-Received: from sonic301-3.consmr.mail.bf2.yahoo.com ([74.6.129.42]:44052 "EHLO
-        sonic301-3.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726393AbgBURhp (ORCPT
+        id S1726701AbgBURkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 12:40:41 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34931 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbgBURkk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:37:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1582306663; bh=wAc60N6vLjQHYjkwN/FPZ2a336n5fQmyKBZ7D/QmUmw=; h=Date:From:Reply-To:Subject:References:From:Subject; b=B7eNxmv/gOidirAnszimugU+NKCGcuNpR7kLg0eZvHBEdXIzrLLyaZZDdwKAzul1iQDiqoR5rYQPcsidPLwcWMYOo7SR963ML1IJWsTlQUvlcx7kgqkUXkuml7qEly9zJ5YE5oVYlb1EkqR3m6Dv1/ZphBiGLEXqBWaFq8jqLlHYpkk2yL1qRZZGGFbMHHvageDO8Xke8UDqQEhivOEl7tPLoe9/7l8Xk9zQ906xz7H60vly39YHSlzRxc/KwFwI7WZoafuOhdWXj/+JJljQNE+vbhhzTBvGRqJ/8a0s2eLO1F4FWGPiGVdmDdYBFiuWTh0Wy5IbAot9YVp1yNWlVQ==
-X-YMail-OSG: OcwHIR0VM1kpcdLQ_ekdkEkbo3ebJlzxBNlwD2bX6cgU05bXvDdhM60C7RRxMI_
- jftQ7Wsyk6bKXwje6BXYfCq7tldvtPpfVZ.CwtFz2BGcZY8pgiHxrp5RVpTslKCrU8Q4XS_raiyz
- w1Y8k6Y2AvAm6fqE9RPROL.SKGxbjcUz2Yi69VYUDAG0NSgiRzyoheaa1_Luj99Ks_xQsFkaoLcc
- FxMcELVLg7zhLDLo9tF5F9r_ZgWab08LPd5AEZVeQHAPMEo21MTYwyvH37Vfxh25TXj23VR80gez
- HTcqJMQFziRHrF7j12sWS4VhrgjYRBbjbYznLaQqT7CBfwyE0kMbr30lCsRnOQGuCEq6C7XPSHR4
- IS_SED8pVXMQV9YHk5M6lqth2bA55dD7zBOqHyaiA7RmIs2zMigUtyGcl_MnaBhhVglcxJiJmLVG
- hVtoiQMmZtgf8bbBNHl2xYMZ6rO0n6irjvqdE8y6_ZhEjGW27blzcaq9tmhDHY8egaSp0606ASuh
- xkW1.D7Z7Q4eXMcT0aSOTMa1Y7_6X7UNuZCB8ULLjid4SfVj9E9C3wW7ZaYO7ndu6bLfhhbLTSTv
- gw.IfzZ.9SMwsuxbxs3rRWvNmPuNl5_U51EIcrftnq6ceIhqMnfJvqEeO0ncYwWD9vvbXuY_3hUs
- UGpKgQJ9zcJ8bAoqKRgX2h83RG.3Pz2fKDzEHnqBMERWQ3HsXmo7Dg6VRC2hd.T8Oy3BiILhTnxM
- xORy_ImYFD7X3c9552399n.gBcr2LWDq4r.6New1W.JVGQhfOskOrXuxxB5zkHgmFK7YvDcveca7
- J9oHznGnfzReReq178Iht4lzgpRA2vOk9xKlWtnXDem3iuOlnTFHuNg2Ji3bdiKBGcgG5D4HPe0p
- _M6HEetruuVs08Tp2XNDjUYE4exzT2HSa2RDHQVotdU80NbA2o1z53MKifGA1noyotQXxr3sZ5Yp
- Fzrv7QNFF9Lrk0uJeA_OsTSx0faqESqaeeAiZsyptfllRstTqedJvoCFRVHy91V3R7HD36qQ.QsG
- 1V91xl3u6Tw3qO76Q.YlhHtAu3CjdCkCuuDhrE3s0GpaCq0x8oxaaqtTJQQS5P9HgAYj5QhEPQds
- 7Te55Sst5ZO8NOYMeOxB75mi..8zppvCtWh4HnpSwqnjmvQs1tmEsyb.0zx4vcj2JVxyLkCbplT1
- 7rQ4ISdC_AYpERLcY3E61zD.MxL2dTo7i2.lxzEGWKGt0zARgwlJfHuLfVQd26D6InHxg.DynzPS
- ExxRybeuPQHcU0Xuxj2EYBxQ7bT9oW.k.TSkBix5EF7qmXmc4XpobJ3ZrxFkMgyo84PTvzRVk2DW
- 1spzV
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Fri, 21 Feb 2020 17:37:43 +0000
-Date:   Fri, 21 Feb 2020 17:37:38 +0000 (UTC)
-From:   Mrs Elodie Antoine <mrselodieantoine@gmail.com>
-Reply-To: antoinm93@yahoo.com
-Message-ID: <960857917.4611270.1582306658055@mail.yahoo.com>
-Subject: Greeting from Mrs Elodie Antoine,
+        Fri, 21 Feb 2020 12:40:40 -0500
+Received: by mail-wr1-f65.google.com with SMTP id w12so2973903wrt.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 09:40:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=3V9d6h+w2Jn04j6QHprbTz1jBnUlayRXHk3bj59std0=;
+        b=S1zv+eyvfvNLGritTRUO4O07zMDmH2GjJWPuiXIdVvT9rwyOC+uM4H0gOWvu+ZG7KC
+         kOsSv3VIpoe9UPLxuvjnnDVkz4Dp8GU0MoTlYJlGUL5pWSc/rUBLrDMe/wAaNSM/BUnK
+         Me8EM5xUyclfKueqfEGGeTUUgxgPkUZCr3eV4M0Gwi6DWnsPArzYVUKSuosGhHaIdJqm
+         AFNgITQd7cNvZWvfkKidj38GQoZ5vIr+NFAT4ATDQWmJCWRnnxMv3Gxd8n8Al0+IZyQn
+         oYDKiFRoJ3dxZzYmq1ebb22sbS69QYJAycY+JRDTaLK1YrfdlNMlMSNTqt0QUwsT3P+R
+         12QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=3V9d6h+w2Jn04j6QHprbTz1jBnUlayRXHk3bj59std0=;
+        b=cfhsPgY2QN8o2cBiFW+DVoExSEJyHWv1bSrSm4PFlL4E7+5qHLDQYI82oWFp0k12OX
+         0wX7keXl5j9VVpCd8LPL1f7w/ux5eZl39T7WOhb4pT6v8rY8ToyWpV9Mx4iS9kCcFIp/
+         f0Iyo8IFhWvWOTZOrawGTRL7hKK0ChkJQ1HZGSoSx04miP4bCvD3iQ3x3DG0WBQet/TT
+         bep9d2NKGBFWwYd4PGVMjmo0pPNS4eJmtlnZohSMkW1JFgxkkVv9YvncDJA4qOuTfIZu
+         ySYaezlOAHg8biH/tZkJLpN9+Bmi4UBYF+gzIG/UHLtGXrKemJQnzILhK9oeKrTvPQ/T
+         YWvA==
+X-Gm-Message-State: APjAAAUZc23sDZ46Xd4qYFL3WHMh0GiVul/wYvNTjC345J1vktqx5DBi
+        S4AxTIolDUc4XewTzlNWzgrubQ==
+X-Google-Smtp-Source: APXvYqyMv9sqLAcg9X7RL2yIUHrWh1u/L1U9ff6yIGnRxUO9BHWyghYULmWGNzjMlwA/tOgJhZrSmA==
+X-Received: by 2002:adf:a19c:: with SMTP id u28mr49326009wru.221.1582306837974;
+        Fri, 21 Feb 2020 09:40:37 -0800 (PST)
+Received: from linaro.org ([2a01:e34:ed2f:f020:903b:a048:f296:e3ae])
+        by smtp.gmail.com with ESMTPSA id f207sm4980688wme.9.2020.02.21.09.40.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Feb 2020 09:40:37 -0800 (PST)
+Date:   Fri, 21 Feb 2020 18:40:33 +0100
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Jasper Korten <jja2000@gmail.com>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 05/17] ARM: tegra: Propagate error from
+ tegra_idle_lp2_last()
+Message-ID: <20200221174033.GV10516@linaro.org>
+References: <20200212235134.12638-1-digetx@gmail.com>
+ <20200212235134.12638-6-digetx@gmail.com>
+ <20200221151612.GJ10516@linaro.org>
+ <1a8c81ab-6f6a-8221-6a4e-c080ba595836@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <960857917.4611270.1582306658055.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15199 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:73.0) Gecko/20100101 Firefox/73.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1a8c81ab-6f6a-8221-6a4e-c080ba595836@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 21, 2020 at 08:21:41PM +0300, Dmitry Osipenko wrote:
+> 21.02.2020 18:16, Daniel Lezcano пишет:
+> > On Thu, Feb 13, 2020 at 02:51:22AM +0300, Dmitry Osipenko wrote:
+> >> Technically cpu_suspend() may fail and it's never good to lose information
+> >> about failure. For example things like cpuidle core could correctly sample
+> >> idling time in the case of failure.
+> >>
+> >> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> >> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> >> Tested-by: Jasper Korten <jja2000@gmail.com>
+> >> Tested-by: David Heidelberg <david@ixit.cz>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> > 
+> > [ ... ]
+> > 
+> >>  	cpu_cluster_pm_enter();
+> >>  	suspend_cpu_complex();
+> >>  
+> >> -	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
+> >> +	err = cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
+> >>  
+> >>  	/*
+> >>  	 * Resume L2 cache if it wasn't re-enabled early during resume,
+> >> @@ -208,6 +210,8 @@ void tegra_idle_lp2_last(void)
+> >>  
+> >>  	restore_cpu_complex();
+> > 
+> > If the cpu_suspend fails, does restore_cpu_complex() need to be called ?
+> 
+> Yes, because suspend_cpu_complex() didn't fail. I don't see any reason
+> why restore_cpu_complex() shouldn't be called, please clarify yours thought.
 
+If the suspend fails, the power down does not happen, thus the logic is not
+lost and then it not necessary to restore something which has not been lost.
 
-Greeting from Mrs Elodie Antoine,
+I don't know the hardware details, so that may be partially correct.
 
-Calvary Greetings in the name of the LORD Almighty and Our LORD JESUS CHRIST the giver of every good thing. Good day,i know this letter will definitely come to you as a huge surprise, but I implore you to take the time to go through it carefully as the decision you make will go off a long way to determine my future and continued existence. I am Mrs Elodie Antoine
-aging widow of 59 years old suffering from long time illness. I have some funds I inherited from my late husband,
+-- 
 
-The sum of (US$4.5 Million Dollars) and I needed a very honest and God fearing who can withdraw this money then use the funds for Charity works. I WISH TO GIVE THIS FUNDS TO YOU FOR CHARITY WORKS. I found your email address from the internet after honest prayers to the LORD to bring me a helper and i decided to contact you if you may be willing and interested to handle these trust funds in good faith before anything happens to me.
-I accept this decision because I do not have any child who will inherit this money after I die. I want your urgent reply to me so that I will give you the deposit receipt which the COMPANY issued to me as next of kin for immediate transfer of the money to your account in your country, to start the good work of God, I want you to use the 15/percent of the total amount to help yourself in doing the project.
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-
-I am desperately in keen need of assistance and I have summoned up courage to contact you for this task, you must not fail me and the millions of the poor people in our todays WORLD. This is no stolen money and there are no dangers involved,100% RISK FREE with full legal proof. Please if you would be able to use the funds for the Charity works kindly let me know immediately.I will appreciate your utmost confidentiality and trust in this matter to accomplish my heart desire, as I don't want anything that will jeopardize my last wish. I want you to take 15 percent of the total money for your personal use while 85% of the money will go to charity.I will appreciate your utmost confidentiality and trust in this matter to accomplish my heart desire, as I don't want anything that will jeopardize my last wish.
-
-
-kindly respond for further details.
-
-Thanks and God bless you,
-
-Mrs Elodie Antoine
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
