@@ -2,96 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 626DC168991
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3697916899B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 22:54:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbgBUVsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 16:48:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:52348 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728135AbgBUVsz (ORCPT
+        id S1728297AbgBUVxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 16:53:55 -0500
+Received: from shelob.surriel.com ([96.67.55.147]:44728 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbgBUVxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 16:48:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MjU0vaJ+i1WQ4UQpS8eKlaynh2uwVXzGNQNy57Q9C9k=; b=iCNdT0BZXgtTW3Fw9E7mV20LZ3
-        6bABfCOOFRCJ7uEiieuVoc7VQvPYz9c1AqPQS7RqHIO2SPtmECRCJ7fINKg3kWrEwzycOHzoI2EXq
-        gb8xBz4Q6YqdlmdYSYmNzPYMGLnkARpEro+4SyAMM0qv/bPjVCXcHHSSe2kepGwYnmLclyWoT72Ri
-        xVH+asjJnQ5gia6IN546JKq8u1xVU9xK4MZ7CcV53GDFQceXlwOtV+auqB/eJnS3NjFkIZuYn1p/U
-        bzlnG8k5S9m/fPbCpIe+WYxJl419e2ENRT98jQ6jjA5WKiplo70Ono1aN5F+tvL7N8eBzKyaRDymg
-        11ulvQcg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5GAH-0001lk-Uz; Fri, 21 Feb 2020 21:48:53 +0000
-Date:   Fri, 21 Feb 2020 13:48:53 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 01/24] mm: Move readahead prototypes from mm.h
-Message-ID: <20200221214853.GF24185@bombadil.infradead.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-2-willy@infradead.org>
- <e065679e-222f-7323-9782-0c4471bb9233@nvidia.com>
+        Fri, 21 Feb 2020 16:53:55 -0500
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1j5GF1-0002PL-M7; Fri, 21 Feb 2020 16:53:47 -0500
+From:   Rik van Riel <riel@surriel.com>
+To:     linux-kernel@vger.kernel.org, riel@fb.com
+Cc:     kernel-team@fb.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        mhocko@kernel.org, vbabka@suse.cz, mgorman@techsingularity.net,
+        rientjes@google.com, aarcange@redhat.com,
+        Rik van Riel <riel@surriel.com>
+Subject: [PATCH 0/2] fix THP migration for CMA allocations
+Date:   Fri, 21 Feb 2020 16:53:41 -0500
+Message-Id: <cover.1582321645.git.riel@surriel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e065679e-222f-7323-9782-0c4471bb9233@nvidia.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 06:43:31PM -0800, John Hubbard wrote:
-> Yes. But I think these files also need a similar change:
-> 
->     fs/btrfs/disk-io.c
+Transparent huge pages are allocated with __GFP_MOVABLE, and can end
+up in CMA memory blocks. Transparent huge pages also have most of the
+infrastructure in place to allow migration.
 
-That gets pagemap.h through ctree.h, so I think it's fine.  It's
-already using mapping_set_gfp_mask(), so it already depends on pagemap.h.
+However, a few pieces were missing, causing THP migration to fail when
+attempting to use CMA to allocate 1GB hugepages.
 
->     fs/nfs/super.c
+With these patches in place, THP migration from CMA blocks seems to
+work, both for anonymous THPs and for tmpfs/shmem THPs.
 
-That gets it through linux/nfs_fs.h.
+Rik van Riel (2):
+  mm,compaction,cma: add alloc_contig flag to compact_control
+  mm,thp,compaction,cma: allow THP migration for CMA allocations
 
-I was reluctant to not add it to blk-core.c because it doesn't seem
-necessarily intuitive that the block device core would include pagemap.h.
+ mm/compaction.c | 16 +++++++++-------
+ mm/internal.h   |  1 +
+ mm/page_alloc.c |  7 +++++--
+ 3 files changed, 15 insertions(+), 9 deletions(-)
 
-That said, blkdev.h does include pagemap.h, so maybe I don't need to
-include it here.
+-- 
+2.24.1
 
-> ...because they also use VM_READAHEAD_PAGES, and do not directly include
-> pagemap.h yet.
-
-> > +#define VM_READAHEAD_PAGES	(SZ_128K / PAGE_SIZE)
-> > +
-> > +void page_cache_sync_readahead(struct address_space *, struct file_ra_state *,
-> > +		struct file *, pgoff_t index, unsigned long req_count);
-> 
-> Yes, "struct address_space *mapping" is weird, but I don't know if it's
-> "misleading", given that it's actually one of the things you have to learn
-> right from the beginning, with linux-mm, right? Or is that about to change?
-> 
-> I'm not asking to restore this to "struct address_space *mapping", but I thought
-> it's worth mentioning out loud, especially if you or others are planning on
-> changing those names or something. Just curious.
-
-No plans (on my part) to change the name, although I have heard people
-grumbling that there's very little need for it to be a separate struct
-from inode, except for the benefit of coda, which is not exactly a
-filesystem with a lot of users ...
-
-Anyway, no plans to change it.  If there were something _special_ about
-it like a theoretical:
-
-void mapping_dedup(struct address_space *canonical,
-		struct address_space *victim);
-
-then that's useful information and shouldn't be deleted.  But I don't
-think the word 'mapping' there conveys anything useful (other than the
-convention is to call a 'struct address_space' a mapping, which you'll
-see soon enough once you look at any of the .c files).
