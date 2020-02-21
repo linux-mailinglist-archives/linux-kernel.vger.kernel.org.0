@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3C8616741E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 634C91674EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:30:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387591AbgBUISi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:18:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56586 "EHLO mail.kernel.org"
+        id S2387970AbgBUITN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:19:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732908AbgBUISf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:18:35 -0500
+        id S1731611AbgBUITI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:19:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7743D24692;
-        Fri, 21 Feb 2020 08:18:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C1532468E;
+        Fri, 21 Feb 2020 08:19:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273114;
-        bh=5Fhczh3d5ACBAPgBle5laQq97KcyH5Y4JkPUrNJoFDc=;
+        s=default; t=1582273147;
+        bh=LOx3G48+qeXW1DcwfmUwMyuzLK0jenhTWOn+vwiGn6s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SPbJwOJTph4bQDHiMmEOq1btOV44i9l3hN9jN3X3UtZqVRequ3UMnZAEnzpfzBxIk
-         vDbfabf/CvSEKt5Y78JSRMcYnlmj4vcU1GlRBR7uvqyGDTBk2skEqACPfYwuK6vKwH
-         ZuIyzO+tInAj1UKcCvwdtLuZ1lFAUCQ9WkYzE2MM=
+        b=D+3F8ApWldDi2kbNuLPCgXWgFOnrTA1aocxJYQM5E2KEXQOpcOMpkaL8lgf4IGikY
+         cd/D1Z5e4BORidljjxtLMQGlaQQlEl/YegT1FYefuJ4PolxWNhnbFp2RQK7JCvuw7v
+         Yl1YIz9wkBNeuj6Uk3ZCiqfZijLyhWE98U54HiZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rakesh Pillai <pillair@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Louis Li <Ching-shih.Li@amd.com>,
+        Wenjing Liu <Wenjing.Liu@amd.com>,
+        Hersen Wu <hersenxs.wu@amd.com>,
+        Eric Yang <Eric.Yang2@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 045/191] ath10k: Correct the DMA direction for management tx buffers
-Date:   Fri, 21 Feb 2020 08:40:18 +0100
-Message-Id: <20200221072257.210433413@linuxfoundation.org>
+Subject: [PATCH 4.19 046/191] drm/amd/display: Retrain dongles when SINK_COUNT becomes non-zero
+Date:   Fri, 21 Feb 2020 08:40:19 +0100
+Message-Id: <20200221072257.314097510@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
 References: <20200221072250.732482588@linuxfoundation.org>
@@ -44,55 +48,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rakesh Pillai <pillair@codeaurora.org>
+From: Harry Wentland <harry.wentland@amd.com>
 
-[ Upstream commit 6ba8b3b6bd772f575f7736c8fd893c6981fcce16 ]
+[ Upstream commit 3eb6d7aca53d81ce888624f09cd44dc0302161e8 ]
 
-The management packets, send to firmware via WMI, are
-mapped using the direction DMA_TO_DEVICE. Currently in
-case of wmi cleanup, these buffers are being unmapped
-using an incorrect DMA direction. This can cause unwanted
-behavior when the host driver is handling a restart
-of the wlan firmware.
+[WHY]
+Two years ago the patch referenced by the Fixes tag stopped running
+dp_verify_link_cap_with_retries during DP detection when the reason
+for the detection was a short-pulse interrupt. This effectively meant
+that we were no longer doing the verify_link_cap training on active
+dongles when their SINK_COUNT changed from 0 to 1.
 
-We might see a trace like below
+A year ago this was partly remedied with:
+commit 80adaebd2d41 ("drm/amd/display: Don't skip link training for empty dongle")
 
-[<ffffff8008098b18>] __dma_inv_area+0x28/0x58
-[<ffffff8001176734>] ath10k_wmi_mgmt_tx_clean_up_pending+0x60/0xb0 [ath10k_core]
-[<ffffff80088c7c50>] idr_for_each+0x78/0xe4
-[<ffffff80011766a4>] ath10k_wmi_detach+0x4c/0x7c [ath10k_core]
-[<ffffff8001163d7c>] ath10k_core_stop+0x58/0x68 [ath10k_core]
-[<ffffff800114fb74>] ath10k_halt+0xec/0x13c [ath10k_core]
-[<ffffff8001165110>] ath10k_core_restart+0x11c/0x1a8 [ath10k_core]
-[<ffffff80080c36bc>] process_one_work+0x16c/0x31c
+This made sure that we trained the dongle on initial hotplug (without
+connected downstream devices).
 
-Fix the incorrect DMA direction during the wmi
-management tx buffer cleanup.
+This is all fine and dandy if it weren't for the fact that there are
+some dongles on the market that don't like link training when SINK_COUNT
+is 0 These dongles will in fact indicate a SINK_COUNT of 0 immediately
+after hotplug, even when a downstream device is connected, and then
+trigger a shortpulse interrupt indicating a SINK_COUNT change to 1.
 
-Tested HW: WCN3990
-Tested FW: WLAN.HL.3.1-00784-QCAHLSWMTPLZ-1
+In order to play nicely we will need our policy to not link train an
+active DP dongle when SINK_COUNT is 0 but ensure we train it when the
+SINK_COUNT changes to 1.
 
-Fixes: dc405152bb6 ("ath10k: handle mgmt tx completion event")
-Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+[HOW]
+Call dp_verify_link_cap_with_retries on detection even when the detection
+is triggered from a short pulse interrupt.
+
+With this change we can also revert this commit which we'll do in a separate
+follow-up change:
+commit 80adaebd2d41 ("drm/amd/display: Don't skip link training for empty dongle")
+
+Fixes: 0301ccbaf67d ("drm/amd/display: DP Compliance 400.1.1 failure")
+Suggested-by: Louis Li <Ching-shih.Li@amd.com>
+Tested-by: Louis Li <Ching-shih.Li@amd.com>
+Cc: Wenjing Liu <Wenjing.Liu@amd.com>
+Cc: Hersen Wu <hersenxs.wu@amd.com>
+Cc: Eric Yang <Eric.Yang2@amd.com>
+Reviewed-by: Wenjing Liu <Wenjing.Liu@amd.com>
+Signed-off-by: Harry Wentland <harry.wentland@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/core/dc_link.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
-index 0f6ff7a78e49d..3372dfa0deccf 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -9193,7 +9193,7 @@ static int ath10k_wmi_mgmt_tx_clean_up_pending(int msdu_id, void *ptr,
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+index 2f42964fb9f45..3abc0294c05f5 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+@@ -780,8 +780,7 @@ bool dc_link_detect(struct dc_link *link, enum dc_detect_reason reason)
+ 			same_edid = is_same_edid(&prev_sink->dc_edid, &sink->dc_edid);
  
- 	msdu = pkt_addr->vaddr;
- 	dma_unmap_single(ar->dev, pkt_addr->paddr,
--			 msdu->len, DMA_FROM_DEVICE);
-+			 msdu->len, DMA_TO_DEVICE);
- 	ieee80211_free_txskb(ar->hw, msdu);
- 
- 	return 0;
+ 		if (link->connector_signal == SIGNAL_TYPE_DISPLAY_PORT &&
+-			sink_caps.transaction_type == DDC_TRANSACTION_TYPE_I2C_OVER_AUX &&
+-			reason != DETECT_REASON_HPDRX) {
++			sink_caps.transaction_type == DDC_TRANSACTION_TYPE_I2C_OVER_AUX) {
+ 			/*
+ 			 * TODO debug why Dell 2413 doesn't like
+ 			 *  two link trainings
 -- 
 2.20.1
 
