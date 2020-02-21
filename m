@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB7F216783D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:48:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 892721676BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:38:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729028AbgBUHsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:48:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44056 "EHLO mail.kernel.org"
+        id S1731555AbgBUID5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:03:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727903AbgBUHsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:48:04 -0500
+        id S1730280AbgBUID4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:03:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 734C9207FD;
-        Fri, 21 Feb 2020 07:48:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B68D24656;
+        Fri, 21 Feb 2020 08:03:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271283;
-        bh=5wSt0wIPpairgOjqX2Ote1SXc2lETYQtdfc1fuGY1FM=;
+        s=default; t=1582272235;
+        bh=GcUOOjd60xaF7XZi3XOX5Tnm4Z0NAaWg+JkTfzDyX/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GgWnqk/HdkO67T6hWPov9TAZEul4f5pzop8ACg2x1BtdCxJ24Al5NnCXtjp1Fc3ZN
-         0WYgTGsZNWxikdPBMuBcq/tNgsjA1ujRCrOn4iJbcpW6C05T+JiEuRML+hTwdCabJ1
-         LcqrbknFMl+f7sF6rrQXZ46XOYRtu7GJHCL2fmGw=
+        b=EP4o6RUcgRjqjzIL5S9EdlKKwWPAMVHAbgTsmWkrJ/8o5UcOAkVCtV7qvECwAt6By
+         wNOouKIsIxX6ynoWqcHiHyFdQw9ER6zmANopIKY3RPviDC4o//jVrB47tVb2rnLT1K
+         pM5mCeL1NTE1AstZiUXjwPVxuF1UEAxBXxQxGqho=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 106/399] drm/amdgpu/dm: Do not throw an error for a display with no audio
-Date:   Fri, 21 Feb 2020 08:37:11 +0100
-Message-Id: <20200221072412.729892969@linuxfoundation.org>
+Subject: [PATCH 5.4 034/344] media: ov5640: Fix check for PLL1 exceeding max allowed rate
+Date:   Fri, 21 Feb 2020 08:37:13 +0100
+Message-Id: <20200221072352.237731382@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Adam Ford <aford173@gmail.com>
 
-[ Upstream commit 852a91d627e9ce849d68df9d3f5336689003bdc7 ]
+[ Upstream commit 2e3df204f9af42a47823ee955c08950373417420 ]
 
-An old display with no audio may not have an EDID with a CEA block, or
-it may simply be too old to support audio. This is not a driver error,
-so don't flag it as such.
+The variable _rate is by ov5640_compute_sys_clk() which returns
+zero if the PLL exceeds 1GHz.  Unfortunately, the check to see
+if the max PLL1 output is checking 'rate' and not '_rate' and
+'rate' does not ever appear to be 0.
 
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=112140
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Harry Wentland <harry.wentland@amd.com>
-Cc: Jean Delvare <jdelvare@suse.de>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+This patch changes the check against the returned value of
+'_rate' to determine if the PLL1 output exceeds 1GHz.
+
+Fixes: aa2882481cad ("media: ov5640: Adjust the clock based on the expected rate")
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/i2c/ov5640.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-index 0b401dfbe98a9..34f483ac36ca4 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-@@ -97,8 +97,6 @@ enum dc_edid_status dm_helpers_parse_edid_caps(
- 			(struct edid *) edid->raw_edid);
+diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
+index 18dd2d717088b..a398ea81e422b 100644
+--- a/drivers/media/i2c/ov5640.c
++++ b/drivers/media/i2c/ov5640.c
+@@ -874,7 +874,7 @@ static unsigned long ov5640_calc_sys_clk(struct ov5640_dev *sensor,
+ 			 * We have reached the maximum allowed PLL1 output,
+ 			 * increase sysdiv.
+ 			 */
+-			if (!rate)
++			if (!_rate)
+ 				break;
  
- 	sad_count = drm_edid_to_sad((struct edid *) edid->raw_edid, &sads);
--	if (sad_count < 0)
--		DRM_ERROR("Couldn't read SADs: %d\n", sad_count);
- 	if (sad_count <= 0)
- 		return result;
- 
+ 			/*
 -- 
 2.20.1
 
