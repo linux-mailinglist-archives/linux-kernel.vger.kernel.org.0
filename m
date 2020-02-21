@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07656167733
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F17191675C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:32:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731590AbgBUIj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:39:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60470 "EHLO mail.kernel.org"
+        id S1732376AbgBUIOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:14:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730713AbgBUIAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:00:08 -0500
+        id S1732576AbgBUIOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:14:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 589A42073A;
-        Fri, 21 Feb 2020 08:00:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32C0F24680;
+        Fri, 21 Feb 2020 08:14:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272007;
-        bh=FE0Z1BJ3NywBOscUKuwrnwjE3YVONSdmK2+ECjDwfX8=;
+        s=default; t=1582272884;
+        bh=J82JkTofHDDCykmw5UKeVbFfNcfQzl+TMlBOTvHz5nY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A4KeaO3tYktjRh0yDbLywSyUbcFTR8N2podbZv9naSxtUcX5KJ3ZzYKt0GByY5WYE
-         Mt37DGYzJaMsuBHSxTHHFxzhk0LnQS+q0u3Vc05LdMFyGqD/w3MGeLl72wBFGVH/h4
-         aOINdQCiNUbZnk4ai11fMpletTfSWbkibMIEv+hU=
+        b=agFUpCrg9IH2GTc3j+FLeRPt3zPkwgY+DJJh9nmzXeGwE8rw4kLB9UprfYNo1FkQj
+         LxVLEpXoQ62Qutn1t1qHhCNC9VLotoJPQwqhO0mVUs3RbuLU/ERYgSM9ERkd5W/OIT
+         mZ0L5f/rZ2txuPnsLYayQe+JexTguns3k08xSNyY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 381/399] iwlwifi: mvm: Check the sta is not NULL in iwl_mvm_cfg_he_sta()
-Date:   Fri, 21 Feb 2020 08:41:46 +0100
-Message-Id: <20200221072437.235810823@linuxfoundation.org>
+Subject: [PATCH 5.4 311/344] drm/nouveau/disp/nv50-: prevent oops when no channel method map provided
+Date:   Fri, 21 Feb 2020 08:41:50 +0100
+Message-Id: <20200221072418.268843507@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,75 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+From: Ben Skeggs <bskeggs@redhat.com>
 
-[ Upstream commit 12d47f0ea5e0aa63f19ba618da55a7c67850ca10 ]
+[ Upstream commit 0e6176c6d286316e9431b4f695940cfac4ffe6c2 ]
 
-Fix a kernel panic by checking that the sta is not NULL.
-This could happen during a reconfig flow, as mac80211 moves the sta
-between all the states without really checking if the previous state was
-successfully set. So, if for some reason we failed to add back the
-station, subsequent calls to sta_state() callback will be done when the
-station is NULL. This would result in a following panic:
+The implementations for most channel types contains a map of methods to
+priv registers in order to provide debugging info when a disp exception
+has been raised.
 
-BUG: unable to handle kernel NULL pointer dereference at
-0000000000000040
-IP: iwl_mvm_cfg_he_sta+0xfc/0x690 [iwlmvm]
-[..]
-Call Trace:
- iwl_mvm_mac_sta_state+0x629/0x6f0 [iwlmvm]
- drv_sta_state+0xf4/0x950 [mac80211]
- ieee80211_reconfig+0xa12/0x2180 [mac80211]
- ieee80211_restart_work+0xbb/0xe0 [mac80211]
- process_one_work+0x1e2/0x610
- worker_thread+0x4d/0x3e0
-[..]
+This info is missing from the implementation of PIO channels as they're
+rather simplistic already, however, if an exception is raised by one of
+them, we'd end up triggering a NULL-pointer deref.  Not ideal...
 
-Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=206299
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-index efdf15f57f163..02df603b64000 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -5,10 +5,9 @@
-  *
-  * GPL LICENSE SUMMARY
-  *
-- * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
-  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
-- * Copyright(c) 2018 - 2019 Intel Corporation
-+ * Copyright(c) 2012 - 2014, 2018 - 2020 Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of version 2 of the GNU General Public License as
-@@ -28,10 +27,9 @@
-  *
-  * BSD LICENSE
-  *
-- * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
-  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
-- * Copyright(c) 2018 - 2019 Intel Corporation
-+ * Copyright(c) 2012 - 2014, 2018 - 2020 Intel Corporation
-  * All rights reserved.
-  *
-  * Redistribution and use in source and binary forms, with or without
-@@ -2037,7 +2035,7 @@ static void iwl_mvm_cfg_he_sta(struct iwl_mvm *mvm,
- 	rcu_read_lock();
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+index bcf32d92ee5a9..50e3539f33d22 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/channv50.c
+@@ -74,6 +74,8 @@ nv50_disp_chan_mthd(struct nv50_disp_chan *chan, int debug)
  
- 	sta = rcu_dereference(mvm->fw_id_to_mac_id[sta_ctxt_cmd.sta_id]);
--	if (IS_ERR(sta)) {
-+	if (IS_ERR_OR_NULL(sta)) {
- 		rcu_read_unlock();
- 		WARN(1, "Can't find STA to configure HE\n");
+ 	if (debug > subdev->debug)
  		return;
++	if (!mthd)
++		return;
+ 
+ 	for (i = 0; (list = mthd->data[i].mthd) != NULL; i++) {
+ 		u32 base = chan->head * mthd->addr;
 -- 
 2.20.1
 
