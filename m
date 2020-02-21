@@ -2,147 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C0CB167A3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 11:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F584167A41
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 11:12:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbgBUKLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 05:11:52 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54358 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbgBUKLw (ORCPT
+        id S1728659AbgBUKMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 05:12:18 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:5479 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728637AbgBUKMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 05:11:52 -0500
-Received: by mail-wm1-f68.google.com with SMTP id n3so1092399wmk.4;
-        Fri, 21 Feb 2020 02:11:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6zP/5ARV9Z0j3qqlT+U93tg/6H0b/blVsI4MpzZxVfM=;
-        b=XhDK3OmWvho/2t57L0FREFevEGrBUB9gLGKZwgOjHRsalaOmhoQok8y6iyFwxYB4dy
-         C3yrBh4mp3gf+Fb2GJu/TRBfgLCHTLpKj/mUPYpJNtqIJzAUNUzbRAHoEls10JH/71/L
-         HkqpD4dLa/bLRN1OR0w77ln5tTYTDWkdusJU2SYYOfJG3oZqOFKVauazRR9LtibMHW5n
-         7TGeCBxXwEd6mwHbrj2HjzF5cGyIjazNuNrgD7pZ7oCot91uCaIPbm1L3OMlV+PGE4BK
-         ftSIS9pmoaf9PnLDS2iedaOJSwb7bItarzgiZMgIKhR9suQ/3yTud0crxFF1oHL3iDc0
-         8OeQ==
-X-Gm-Message-State: APjAAAXBIx9fjX6jEIW/DVlNi1tIAMQFpg6uWAG8+ou3bVhGg+sqOX+X
-        Y7kmg/VGpE6eYO0+pYeFOSYnv8S5
-X-Google-Smtp-Source: APXvYqyGH7jwWXt/GPQ821RP3ryu7W+8ERCfEaKJ0x9dVQFNTZpaswY9yzL4ZQ/qO357BQ/1DcPGvg==
-X-Received: by 2002:a1c:bdc5:: with SMTP id n188mr2857996wmf.124.1582279909011;
-        Fri, 21 Feb 2020 02:11:49 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id 59sm3592478wre.29.2020.02.21.02.11.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 02:11:48 -0800 (PST)
-Date:   Fri, 21 Feb 2020 11:11:47 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH v2 3/3] mm: memcontrol: recursive memory.low protection
-Message-ID: <20200221101147.GO20509@dhcp22.suse.cz>
-References: <20200213154731.GE31689@dhcp22.suse.cz>
- <20200213155249.GI88887@mtj.thefacebook.com>
- <20200213163636.GH31689@dhcp22.suse.cz>
- <20200213165711.GJ88887@mtj.thefacebook.com>
- <20200214071537.GL31689@dhcp22.suse.cz>
- <20200214135728.GK88887@mtj.thefacebook.com>
- <20200214151318.GC31689@dhcp22.suse.cz>
- <20200214165311.GA253674@cmpxchg.org>
- <20200217084100.GE31531@dhcp22.suse.cz>
- <20200218195253.GA13406@cmpxchg.org>
+        Fri, 21 Feb 2020 05:12:18 -0500
+X-UUID: 8580c188ca1c4683b143bcc1bb34a3f7-20200221
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=BeBQELOP6/jjvwXwwsxHmMAHpAErb5cdnorUWLKW/vk=;
+        b=EvAkE69k9ORyuGLCOCSCtO3GLU8O/vr2jcg0An8MzKKbGHglS6cx+6Uz8Imz/lAyTPZN0qPgNRZzwSJWlAF+XzTkJWmf6SYu8r2o9dV1ftx2ikZzB41dtEMHyxpQDffPJndV3nzH3qTHo6iFVDr6/zOSvEqtQWDNhxjqnQetgQA=;
+X-UUID: 8580c188ca1c4683b143bcc1bb34a3f7-20200221
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <macpaul.lin@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 618939546; Fri, 21 Feb 2020 18:12:13 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 21 Feb 2020 18:11:30 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 21 Feb 2020 18:11:53 +0800
+From:   Macpaul Lin <macpaul.lin@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Sean Wang <Sean.Wang@mediatek.com>,
+        Macpaul Lin <macpaul.lin@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Evan Green <evgreen@chromium.org>,
+        Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <jroedel@suse.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <Ryder.Lee@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC:     Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>
+Subject: [PATCH v8 0/4] Add basic SoC support for mt6765
+Date:   Fri, 21 Feb 2020 18:12:05 +0800
+Message-ID: <1582279929-11535-1-git-send-email-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218195253.GA13406@cmpxchg.org>
+Content-Type: text/plain
+X-TM-SNTS-SMTP: DA3DDA379D4AE327C2F9F2B41F4294B902761E1F5B0BC745B996EC5B115CB3212000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Sorry I didn't get to this email thread sooner]
+VGhpcyBwYXRjaCBhZGRzIGJhc2ljIFNvQyBzdXBwb3J0IGZvciBNZWRpYXRlaydzIG5ldyA4LWNv
+cmUgU29DLA0KTVQ2NzY1LCB3aGljaCBpcyBtYWlubHkgZm9yIHNtYXJ0cGhvbmUgYXBwbGljYXRp
+b24uDQoNCkNoYW5nZXMgaW4gVjg6DQoxLiBPcmlnaW4gVjcgcGF0Y2hzZXQ6DQogICBodHRwczov
+L3BhdGNod29yay5rZXJuZWwub3JnL2NvdmVyLzExMzcwMTA1Lw0KICAgU3BsaXQgb3JpZ2luIFY3
+IHBhdGNoc2V0IGludG8gMiBwYXRjaHNldCwNCiAgIGtlZXAgcmVtYWluIHBhdGNoZXMgIzIsICM1
+LCAjNiwgYW5kICM3IGluIHRoZSBzYW1lIG9yZGVyIGFzIHRoaXMNCiAgIFY4IHBhdGNoc2V0Lg0K
+ICAgW3Y3LDIvN10gZHQtYmluZGluZ3M6IG1lZGlhdGVrOiBBZGQgc21pIGR0cyBiaW5kaW5nIGZv
+ciBNZWRpYXRlaw0KICAgICAgICAgICAgTVQ2NzY1IFNvQw0KICAgW3Y3LDUvN10gc29jOiBtZWRp
+YXRlazogYWRkIE1UNjc2NSBzY3BzeXMgYW5kIHN1YmRvbWFpbiBzdXBwb3J0DQogICBbdjcsNi83
+XSBhcm02NDogZHRzOiBtZWRpYXRlazogYWRkIG10Njc2NSBzdXBwb3J0DQogICBbdjcsNy83XSBh
+cm02NDogZGVmY29uZmlnOiBhZGQgQ09ORklHX0NPTU1PTl9DTEtfTVQ2NzY1X1hYWCBjbG9ja3MN
+Cg0KQ2hhbmdlcyBpbiBWNzoNCjEuIEFkYXB0IFY2J3MgcGF0Y2hzZXQgdG8gbGF0ZXN0IGtlcm5l
+bCB0cmVlIDUuNS1yYzEuDQogICBPcmlnaW4gVjYgcGF0Y2hzZXQ6DQogICBodHRwczovL3BhdGNo
+d29yay5rZXJuZWwub3JnL2NvdmVyLzExMDQxOTYzLw0KMi4gQ29ycmVjdCAyIGNsb2NrLWNvbnRy
+b2xsZXIgdHlwZSBpbiBkb2N1bWVudGF0aW9uOg0KICAgbWlwaTAgYW5kIHZlbmNfZ2Nvbi4NCiAg
+IFt2NyAxLzddIGR0LWJpbmRpbmdzOiBjbG9jazogbWVkaWF0ZWs6IGRvY3VtZW50IGNsayBiaW5k
+aW5ncw0KMy4gUmVtb3ZlIFY2J3MgcGF0Y2ggMDMgYmVjYXVzZSBpdCBoYXMgYmVlbiB0YWtlbiBp
+bnRvIDUuNS1uZXh0LXNvYw0KICAgW3Y2LCAwMy8wOF0gZHQtYmluZGluZ3M6IG1lZGlhdGVrOiBh
+ZGQgTVQ2NzY1IHBvd2VyIGR0LWJpbmRpbmdzDQozLiBVcGRhdGUgUmV2aWV3ZWQtYnk6IFJvYiBI
+ZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+IGZvcg0KICAgW3Y2LCAwNC8wOF0gY2xrOiBtZWRpYXRl
+azogYWRkIG10Njc2NSBjbG9jayBJRHMNCiAgIC0tPiBbdjcsIDAzLzA3XSBjbGs6IG1lZGlhdGVr
+OiBhZGQgbXQ2NzY1IGNsb2NrIElEcw0KNC4gVXBkYXRlIFNQRFggdGFnIGZvcg0KICAgW3Y2LCAw
+NS8wOF0gY2xrOiBtZWRpYXRlazogQWRkIE1UNjc2NSBjbG9jayBzdXBwb3J0DQogICAtLT4gW3Y3
+LCAwNC8wN10gY2xrOiBtZWRpYXRlazogQWRkIE1UNjc2NSBjbG9jayBzdXBwb3J0DQoNCkNoYW5n
+ZXMgaW4gVjY6DQoxLiBBZGFwdCBWNSdzIHBhdGNoc2V0IHRvIGxhdGVzdCBrZXJuZWwgdHJlZS4N
+CiAgIE9yaWdpbiBWNSBwYXRjaHNldC4NCiAgIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3BhdGNo
+d29yay9jb3Zlci85NjM2MTIvDQoyLiBEdWUgdG8gY2xrJ3MgY29tbW9uIGNvZGUgaGFzIGJlZW4g
+c3VibWl0IGJ5IG90aGVyIHBsYXRmb3JtLA0KICAgdGhpcyBwYXRjaCBzZXQgd2lsbCBoYXZlIGRl
+cGVuZGVuY2llcyB3aXRoIHRoZSBmb2xsb3dpbmcgcGF0Y2hzZXRzDQogICBhcyB0aGUgZm9sbG93
+aW5nIG9yZGVycy4NCiAgIDIuYS4gW3Y4LDAwLzIxXSBNVDgxODMgSU9NTVUgU1VQUE9SVA0KICAg
+ICAgICBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL2NvdmVyLzExMDIzNTg1Lw0KICAgMi5i
+LiBbdjExLDAvNl0gQWRkIGJhc2ljIG5vZGUgc3VwcG9ydCBmb3IgTWVkaWF0ZWsgTVQ4MTgzIFNv
+Qw0KICAgICAgICBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL2NvdmVyLzEwOTYyMzg1Lw0K
+ICAgMi5jLiBbdjYsMDAvMTRdIE1lZGlhdGVrIE1UODE4MyBzY3BzeXMgc3VwcG9ydA0KICAgICAg
+ICBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL2NvdmVyLzExMDA1NzUxLw0KMy4gQ29ycmVj
+dCBwb3dlciByZWxhdGVkIHBhdGNoZXMgaW50byBkdC1iaW5kaW5nIHBhdGNoZXMuDQo0LiBSZS1v
+cmRlciBWNSdzIDQvMTEsIDYvMTEsIGFuZCA3LzExIGR1ZSBjbGsgY29tbW9uIGNvZGUgY2hhbmdl
+DQogICBhbmQgbWFrZSBkZXBlbmRlbmNpZXMgaW4gb3JkZXIuDQo1LiBVcGRhdGUgc29tZSBjb21t
+aXQgbWVzc2FnZSBpbiBjbGsgcmVsYXRlZCBwYXRjaGVzLg0KDQpDaGFuZ2VzIGluIFY1Og0KMS4g
+YWRkIGNsayBzdXBwb3J0DQoNCkNoYW5nZXMgaW4gVjQ6DQoxLiBhZGQgZ2ljJ3Mgc2V0dGluZ3Mg
+aW4gcmVnIHByb3BlcnRpZXMNCjIuIHJlbW92ZSBzb21lIHBhdGNoZXMgYWJvdXQgZHQtYmluZGlu
+Z3Mgc2luY2UgR0tIIGFscmVhZHkgdG9vayB0aGVtDQoNCkNoYW5nZXMgaW4gVjM6DQoxLiBzcGxp
+dCBkdC1iaW5kaW5nIGRvY3VtZW50IHBhdGNocw0KMi4gZml4IG10Njc2NS5kdHNpIHdhcm5pbmdz
+IHdpdGggVz0xMg0KMy4gcmVtb3ZlIHVuY2Vzc2FyeSBQUEkgYWZmaW5pdHkgZm9yIHRpbWVyDQo0
+LiBhZGQgZ2ljYyBiYXNlIGZvciBnaWMgZHQgbm9kZQ0KDQpDaGFuZ2VzIGluIFYyOg0KMS4gZml4
+IGNsayBwcm9wZXJ0aWVzIGluIHVhcnQgZHRzIG5vZGUNCjIuIGZpeCB0eXBvIGluIHN1Ym1pdCB0
+aXRsZQ0KMy4gYWRkIHNpbXBsZS1idXMgaW4gbXQ2NzY1LmR0c2kNCjQuIHVzZSBjb3JyZWN0IFNQ
+RFggbGljZW5zZSBmb3JtYXQNCg0KTWFycyBDaGVuZyAoMyk6DQogIGR0LWJpbmRpbmdzOiBtZWRp
+YXRlazogQWRkIHNtaSBkdHMgYmluZGluZyBmb3IgTWVkaWF0ZWsgTVQ2NzY1IFNvQw0KICBzb2M6
+IG1lZGlhdGVrOiBhZGQgTVQ2NzY1IHNjcHN5cyBhbmQgc3ViZG9tYWluIHN1cHBvcnQNCiAgYXJt
+NjQ6IGR0czogbWVkaWF0ZWs6IGFkZCBtdDY3NjUgc3VwcG9ydA0KDQpPd2VuIENoZW4gKDEpOg0K
+ICBhcm02NDogZGVmY29uZmlnOiBhZGQgQ09ORklHX0NPTU1PTl9DTEtfTVQ2NzY1X1hYWCBjbG9j
+a3MNCg0KIC4uLi9tZW1vcnktY29udHJvbGxlcnMvbWVkaWF0ZWssc21pLWNvbW1vbi50eHQgICAg
+IHwgICAgMSArDQogYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9NYWtlZmlsZSAgICAgICAg
+ICAgICAgfCAgICAxICsNCiBhcmNoL2FybTY0L2Jvb3QvZHRzL21lZGlhdGVrL210Njc2NS1ldmIu
+ZHRzICAgICAgICB8ICAgMzMgKysrDQogYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9tdDY3
+NjUuZHRzaSAgICAgICAgICAgfCAgMjUzICsrKysrKysrKysrKysrKysrKysrDQogYXJjaC9hcm02
+NC9jb25maWdzL2RlZmNvbmZpZyAgICAgICAgICAgICAgICAgICAgICAgfCAgICA2ICsNCiBkcml2
+ZXJzL3NvYy9tZWRpYXRlay9tdGstc2Nwc3lzLmMgICAgICAgICAgICAgICAgICB8ICAxMzAgKysr
+KysrKysrKw0KIDYgZmlsZXMgY2hhbmdlZCwgNDI0IGluc2VydGlvbnMoKykNCiBjcmVhdGUgbW9k
+ZSAxMDA2NDQgYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9tdDY3NjUtZXZiLmR0cw0KIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2FybTY0L2Jvb3QvZHRzL21lZGlhdGVrL210Njc2NS5kdHNp
+DQoNCi0tIA0KMS43LjkuNQ0K
 
-On Tue 18-02-20 14:52:53, Johannes Weiner wrote:
-> On Mon, Feb 17, 2020 at 09:41:00AM +0100, Michal Hocko wrote:
-> > On Fri 14-02-20 11:53:11, Johannes Weiner wrote:
-> > [...]
-> > > The proper solution to implement the kind of resource hierarchy you
-> > > want to express in cgroup2 is to reflect it in the cgroup tree. Yes,
-> > > the_workload might have been started by user 100 in session c2, but in
-> > > terms of resources, it's prioritized over system.slice and user.slice,
-> > > and so that's the level where it needs to sit:
-> > > 
-> > >                                root
-> > >                        /        |                 \
-> > >                system.slice  user.slice       the_workload
-> > >                /    |           |
-> > >            cron  journal     user-100.slice
-> > >                                 |
-> > >                              session-c2.scope
-> > >                                 |
-> > >                              misc
-> > > 
-> > > Then you can configure not just memory.low, but also a proper io
-> > > weight and a cpu weight. And the tree correctly reflects where the
-> > > workload is in the pecking order of who gets access to resources.
-> > 
-> > I have already mentioned that this would be the only solution when the
-> > protection would work, right. But I am also saying that this a trivial
-> > example where you simply _can_ move your workload to the 1st level. What
-> > about those that need to reflect organization into the hierarchy. Please
-> > have a look at http://lkml.kernel.org/r/20200214075916.GM31689@dhcp22.suse.cz
-> > Are you saying they are just not supported? Are they supposed to use
-> > cgroup v1 for the organization and v2 for the resource control?
-> 
-> >From that email:
-> 
->     > Let me give you an example. Say you have a DB workload which is the
->     > primary thing running on your system and which you want to protect from
->     > an unrelated activity (backups, frontends, etc). Running it inside a
->     > cgroup with memory.low while other components in other cgroups without
->     > any protection achieves that. If those cgroups are top level then this
->     > is simple and straightforward configuration.
->     > 
->     > Things would get much more tricky if you want run the same workload
->     > deeper down the hierarchy - e.g. run it in a container. Now your
->     > "root" has to use an explicit low protection as well and all other
->     > potential cgroups that are in the same sub-hierarchy (read in the same
->     > container) need to opt-out from the protection because they are not
->     > meant to be protected.
-> 
-> You can't prioritize some parts of a cgroup higher than the outside of
-> the cgroup, and other parts lower than the outside. That's just not
-> something that can be sanely supported from the controller interface.
-
-I am sorry but I do not follow. We do allow to opt out from the reclaim
-protection with the current semantic and it seems to be reasonably sane.
-I also have hard time to grasp what you actually mean by the above.
-Let's say you have hiearchy where you split out low limit unevenly
-              root (5G of memory)
-             /    \
-   (low 3G) A      D (low 1,5G)
-           / \
- (low 1G) B   C (low 2G)
-
-B gets lower priority than C and D while C gets higher priority than
-D? Is there any problem with such a configuration from the semantic
-point of view?
-
-> However, that doesn't mean this usecase isn't supported. You *can*
-> always split cgroups for separate resource policies.
-
-What if the split up is not possible or impractical. Let's say you want
-to control how much CPU share does your container workload get comparing
-to other containers running on the system? Or let's say you want to
-treat the whole container as a single entity from the OOM perspective
-(this would be an example of the logical organization constrain) because
-you do not want to leave any part of that workload lingering behind if
-the global OOM kicks in. I am pretty sure there are many other reasons
-to run related workload that doesn't really share the memory protection
-demand under a shared cgroup hierarchy.
--- 
-Michal Hocko
-SUSE Labs
