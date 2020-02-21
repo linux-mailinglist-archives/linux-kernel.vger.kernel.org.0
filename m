@@ -2,40 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA72316740B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FE72167337
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:10:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387759AbgBUIR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:17:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55510 "EHLO mail.kernel.org"
+        id S1732508AbgBUIKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:10:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387739AbgBUIRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:17:51 -0500
+        id S1732115AbgBUIKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:10:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B66B524689;
-        Fri, 21 Feb 2020 08:17:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DADB32073A;
+        Fri, 21 Feb 2020 08:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273071;
-        bh=F672RVWkMDEt8vi7MVek29Hb5puoF4NyMi6GODJWWfs=;
+        s=default; t=1582272617;
+        bh=IMsQ7+myA2VFgMAOR1pcDR51QxoVGL6Z14/X9w+j5No=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t3KIBNccsHlAOlWes9lcwlfWPD9IWo6cgNtbldxJfIRxVL5wUo418xJBlU7EzfiE7
-         8Q4qgF078+dHvtNN45o+XqFKyPJkVnPMzzqTPyuUztBvkYQn7wnjKWVL4sT6I5G/GF
-         nmO7KnliYsDlDeBFaOVUtvVXitxDRoYJBulXqD88=
+        b=P3OuVIu8wkQBUW1RAMdhV4m+DfNk+1/yunrFGFQA3DRSkn0ZBMZM4Oq1FV4ZXjsBh
+         qLtsUQ2tc/ryO5O+y89wIJEuPgUJAPuqdTU2KTX8eFK/4G4wG0aP8tJuOjaXsRjwJm
+         Bv5QcO8Q0rInXpSfHaqln6bUW7E18ol9ilGwbGFo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 009/191] KVM: nVMX: Use correct root level for nested EPT shadow page tables
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 183/344] x86/unwind/orc: Fix !CONFIG_MODULES build warning
 Date:   Fri, 21 Feb 2020 08:39:42 +0100
-Message-Id: <20200221072252.173149129@linuxfoundation.org>
+Message-Id: <20200221072405.636628179@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +50,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Shile Zhang <shile.zhang@linux.alibaba.com>
 
-[ Upstream commit 148d735eb55d32848c3379e460ce365f2c1cbe4b ]
+[ Upstream commit 22a7fa8848c5e881d87ef2f7f3c2ea77b286e6f9 ]
 
-Hardcode the EPT page-walk level for L2 to be 4 levels, as KVM's MMU
-currently also hardcodes the page walk level for nested EPT to be 4
-levels.  The L2 guest is all but guaranteed to soft hang on its first
-instruction when L1 is using EPT, as KVM will construct 4-level page
-tables and then tell hardware to use 5-level page tables.
+To fix follwowing warning due to ORC sort moved to build time:
 
-Fixes: 855feb673640 ("KVM: MMU: Add 5 level EPT & Shadow page table support.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+  arch/x86/kernel/unwind_orc.c:210:12: warning: ‘orc_sort_cmp’ defined but not used [-Wunused-function]
+  arch/x86/kernel/unwind_orc.c:190:13: warning: ‘orc_sort_swap’ defined but not used [-Wunused-function]
+
+Signed-off-by: Shile Zhang <shile.zhang@linux.alibaba.com>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/c9c81536-2afc-c8aa-c5f8-c7618ecd4f54@linux.alibaba.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/unwind_orc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 2660c01eadaeb..aead984d89ad6 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -5302,6 +5302,9 @@ static void vmx_set_cr0(struct kvm_vcpu *vcpu, unsigned long cr0)
+diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
+index 332ae6530fa88..7a9306bc5982f 100644
+--- a/arch/x86/kernel/unwind_orc.c
++++ b/arch/x86/kernel/unwind_orc.c
+@@ -187,6 +187,8 @@ static struct orc_entry *orc_find(unsigned long ip)
+ 	return orc_ftrace_find(ip);
+ }
  
- static int get_ept_level(struct kvm_vcpu *vcpu)
++#ifdef CONFIG_MODULES
++
+ static void orc_sort_swap(void *_a, void *_b, int size)
  {
-+	/* Nested EPT currently only supports 4-level walks. */
-+	if (is_guest_mode(vcpu) && nested_cpu_has_ept(get_vmcs12(vcpu)))
-+		return 4;
- 	if (cpu_has_vmx_ept_5levels() && (cpuid_maxphyaddr(vcpu) > 48))
- 		return 5;
- 	return 4;
+ 	struct orc_entry *orc_a, *orc_b;
+@@ -229,7 +231,6 @@ static int orc_sort_cmp(const void *_a, const void *_b)
+ 	return orc_a->sp_reg == ORC_REG_UNDEFINED && !orc_a->end ? -1 : 1;
+ }
+ 
+-#ifdef CONFIG_MODULES
+ void unwind_module_init(struct module *mod, void *_orc_ip, size_t orc_ip_size,
+ 			void *_orc, size_t orc_size)
+ {
 -- 
 2.20.1
 
