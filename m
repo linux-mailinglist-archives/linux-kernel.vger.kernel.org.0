@@ -2,111 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C44731681C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:35:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A6A1681DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:36:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbgBUPfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:35:44 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:26487 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbgBUPfn (ORCPT
+        id S1728858AbgBUPgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:36:17 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33704 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728235AbgBUPgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:35:43 -0500
-Received: from [10.28.90.153] (10.28.90.153) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Fri, 21 Feb 2020
- 23:36:03 +0800
-Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Add arm,smc-wdt watchdog
- arm,smc-wdt compatible
-To:     Evan Benn <evanbenn@chromium.org>
-CC:     Julius Werner <jwerner@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-watchdog@vger.kernel.org>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Yonghui Yu <yonghui.yu@amlogic.com>
-References: <20200214062637.216209-1-evanbenn@chromium.org>
- <20200214172512.1.I02ebc5b8743b1a71e0e15f68ea77e506d4e6f840@changeid>
- <20200219223046.GA16537@bogus>
- <CAODwPW8JspiUtyU4CC95w9rbNRyUF-Aeb9TuPm1PzmP6u=y1EA@mail.gmail.com>
- <20200219232005.GA9737@roeck-us.net>
- <CAKz_xw2hvHL=a4s37dmuCTWDbxefQFR3rfcaNiWYJY4T+jqabA@mail.gmail.com>
-From:   Xingyu Chen <xingyu.chen@amlogic.com>
-Message-ID: <e42320b8-266f-0b0e-b20b-b72228510e81@amlogic.com>
-Date:   Fri, 21 Feb 2020 23:36:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Fri, 21 Feb 2020 10:36:16 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m10so5439340wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:36:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UNHEwFigMTNc7YIRkUZl+5v4Xtz4VgLarV7EC/Mxw3I=;
+        b=lzzPLOpa00IdY058idG1naAWzavEyCoj9ZAwXmLXwzaop7ZYtD6FCA7/Tf+u9wizE2
+         +QxpIzWLnPu+dVn5KZNt1nAGYXhZ4ztaqy8mL/My88k0srIG6rRqr0alTBwdFVXMNmuH
+         vEwKcvHsq8xwJTW5yyOZ+9QZ58aW+16RkHwKPgNUTU+oMh3S9hjGqkcB+mV1w6Cv3BZT
+         8vT8pg8d6Y2vduJCtbT3ZWNlw5adXT1EyCNVG9oXVLxSmlsgFSnrfR5KWSK92AtNmzEn
+         qIo4lSIdYXBLXURdlh6n41O0Q8QD8BPrtCNl/3BW0RmY9seoAerFYelvoS3oFAfpFOa+
+         Rk0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UNHEwFigMTNc7YIRkUZl+5v4Xtz4VgLarV7EC/Mxw3I=;
+        b=LRdLWDttdCqDhBH9jrLYQ6LEItppPBF29G0+4rSYLqBDSmQDWpcvCRF56hxMyXs/5n
+         WRxQWFcH5DAJI0gCXWOrCQM9vGIKilukvhZMxePcfOmOC9vRsmhP8vY0EqQIJnKuwwXv
+         ef90izSMjaYex480cxf9oP2PuuWFkbZ6s+1taujByunWs4Ls3IJ4N4leIVTs3Skgu+7q
+         Q1da6V7cCByTPRvxth9PomywDqr8mWZbRp/24sihca5n3JYg1XwLmrwVylSsHWBD7Mrx
+         L7I6cBrxCM8Gv4ZeZVhED4a63uZA1eHknPygRGoQLQY8ryCXFg6jZETrX8ELN/DFahP8
+         KNTA==
+X-Gm-Message-State: APjAAAUdLQpwyyLE9KCFwbN6sEnyoMce1zpbTw4KsTzhwPOH7RhVDwG8
+        BypT8sugZ5cFm16cn3IlGSYD7Q==
+X-Google-Smtp-Source: APXvYqyCqkZR3zDNG4VAxXvdw9Zekulra1RORCfv3lpKLj9dzld+yh6yJQE1+skfazo6TA4dUBZmJQ==
+X-Received: by 2002:a7b:c183:: with SMTP id y3mr4286552wmi.45.1582299374128;
+        Fri, 21 Feb 2020 07:36:14 -0800 (PST)
+Received: from localhost.localdomain (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.googlemail.com with ESMTPSA id z25sm4198782wmf.14.2020.02.21.07.36.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 07:36:13 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH v2 0/3] ASoC: meson: g12a: add internal audio DAC support
+Date:   Fri, 21 Feb 2020 16:36:04 +0100
+Message-Id: <20200221153607.1585499-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <CAKz_xw2hvHL=a4s37dmuCTWDbxefQFR3rfcaNiWYJY4T+jqabA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-Originating-IP: [10.28.90.153]
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Evan
+Like the gxl, the Amlogic g12a and sm1 SoC families have a t9015 internal
+audio DAC. On these more recent SoCs, any of the 3 TDM outputs can be
+routed to the internal DAC. This routing is done by a small glue device
+called 'toacodec'. This patchset adds support for it.
 
-Because the ATF does not define standard wdt index, each vendor defines 
-its own index.
-So I don't think that the current driver[0] can fully cover my usecases. 
-As discussed in your
-previous email, the meson wdt driver [1] can use the arm_smccc instead 
-of meson_sm_call.
+This was tested on the amlogic reference design g12a-u200.
 
-[0]: https://patchwork.kernel.org/patch/11395579/
-[1]: https://patchwork.kernel.org/patch/11331271/
+Changes since v1 [0]:
+ * Fixup patch 2 which was left in an intermediate state
+   after rebasing, missing part of the changes.
+   Thanks to Sergey Bolshakov for reporting it.
 
-Best Regards
+[0]: https://lore.kernel.org/r/20200221122242.1500093-1-jbrunet@baylibre.com
 
-On 2020/2/20 14:41, Evan Benn wrote:
-> Dear Xingyu,
->
-> Could this driver also cover your usecase? I am not familiar with
-> meson, but it seems like the meson calls could
-> be replaced with arm_smccc calls. Then this driver will cover both
-> chips. I am not sure if your firmware is upstream
-> somewhere, but this might be adapted;
-> https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/3405
->
-> Thanks
->
->
-> On Thu, Feb 20, 2020 at 10:20 AM Guenter Roeck <linux@roeck-us.net> wrote:
->> On Wed, Feb 19, 2020 at 03:04:54PM -0800, Julius Werner wrote:
->>>> You are not the first 'watchdog in firmware accessed via an SMC call'.
->>>> Is there some more detail about what implementation this is? Part of
->>>> TF-A? Defined by some spec (I can dream)?
->>> This is just some random implementation written by me because we
->>> needed one. I would like it to be the new generic implementation, but
->>> it sounds like people here prefer the naming to be MediaTek specific
->>> (at least for now). The other SMC watchdog we're aware of is
->>> imx_sc_wdt but unfortunately that seems to hardcode platform-specific
->> There is one more pending, for Meson SMC.
->>
->> https://patchwork.kernel.org/project/linux-watchdog/list/?series=227733
->>
->> Unfortunately it uses Meson firmware API functions, though it has pretty
->> much the same functionality since those ultimately end up calling
->> arm_smccc_smc().
->>
->> Guenter
->>
->>> details in the interface (at least in the pretimeout SMC) so we can't
->>> just expand that. With this driver I tried to directly wrap the kernel
->>> watchdog interface so it should be platform-agnostic and possible to
->>> expand this driver to other platforms later if desired. The SMC
->>> function ID would still always have to be platform-specific,
->>> unfortunately (but we could pass it in through the device tree), since
->>> the Arm SMC spec doesn't really leave any room for OS-generic SMCs
->>> like this.
-> .
+Jerome Brunet (3):
+  ASoC: meson: g12a: add toacodec dt-binding documentation
+  ASoC: meson: g12a: add internal DAC glue driver
+  ASoC: meson: axg-card: add toacodec support
+
+ .../bindings/sound/amlogic,g12a-toacodec.yaml |  51 ++++
+ .../dt-bindings/sound/meson-g12a-toacodec.h   |  10 +
+ sound/soc/meson/Kconfig                       |   9 +
+ sound/soc/meson/Makefile                      |   2 +
+ sound/soc/meson/axg-card.c                    |   3 +-
+ sound/soc/meson/g12a-toacodec.c               | 252 ++++++++++++++++++
+ 6 files changed, 326 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
+ create mode 100644 include/dt-bindings/sound/meson-g12a-toacodec.h
+ create mode 100644 sound/soc/meson/g12a-toacodec.c
+
+-- 
+2.24.1
+
