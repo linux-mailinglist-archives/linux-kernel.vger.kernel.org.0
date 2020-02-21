@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 664451673B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1D6C167490
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:24:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733257AbgBUIO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:14:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51552 "EHLO mail.kernel.org"
+        id S2388360AbgBUIWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:22:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733252AbgBUIOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:14:55 -0500
+        id S2388343AbgBUIWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:22:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24E482467B;
-        Fri, 21 Feb 2020 08:14:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CA782467D;
+        Fri, 21 Feb 2020 08:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272894;
-        bh=6BIz0sbbF8aSruqpnPbCttGMJV/o3U6qNcUvabsK/cU=;
+        s=default; t=1582273359;
+        bh=rjrhQW09Vso9tajVY7leCL9tNge/xnc21nLf2tfe578=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gc2pG0l+T8qgIc7LjSMwYpK8JSEHNXm1JEci0K9JWiLj2GM7WV+dXSEl8s2tg+wjD
-         WDevVAzt4i6bs3LqWRZvx1qyB5Oro0yPgw4I0jsP7yd7q8fG9LK5ksLJoUXZctqIgw
-         pCpV0Qq4zGRsrQnYio1xdtincbSBSRSjqwS84sa8=
+        b=qf6AY+0V9YVE/qIdl/dSTcOVOErmJoH9f/OFJx8EGVbqzktNEfBlJYAugt5jqMIwz
+         1JjOxL93eeCuGxW7bDGQird/fwqdmlMGgHebM9EtxTWQVFW9delfBjjCGWFq7D6J3B
+         tOh2RUFlTYPFE1M7JCBacTkKGtp0gguOxVv+JKa0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 315/344] radeon: insert 10ms sleep in dce5_crtc_load_lut
-Date:   Fri, 21 Feb 2020 08:41:54 +0100
-Message-Id: <20200221072418.692644324@linuxfoundation.org>
+Subject: [PATCH 4.19 142/191] ide: serverworks: potential overflow in svwks_set_pio_mode()
+Date:   Fri, 21 Feb 2020 08:41:55 +0100
+Message-Id: <20200221072307.706109376@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
-References: <20200221072349.335551332@linuxfoundation.org>
+In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
+References: <20200221072250.732482588@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit ec3d65082d7dabad6fa8f66a8ef166f2d522d6b2 ]
+[ Upstream commit ce1f31b4c0b9551dd51874dd5364654ed4ca13ae ]
 
-Per at least one tester this is enough magic to recover the regression
-introduced for some people (but not all) in
+The "drive->dn" variable is a u8 controlled by root.
 
-commit b8e2b0199cc377617dc238f5106352c06dcd3fa2
-Author: Peter Rosin <peda@axentia.se>
-Date:   Tue Jul 4 12:36:57 2017 +0200
-
-    drm/fb-helper: factor out pseudo-palette
-
-which for radeon had the side-effect of refactoring out a seemingly
-redudant writing of the color palette.
-
-10ms in a fairly slow modeset path feels like an acceptable form of
-duct-tape, so maybe worth a shot and see what sticks.
-
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: Michel Dänzer <michel.daenzer@amd.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/radeon/radeon_display.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/ide/serverworks.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
-index e81b01f8db90e..0826efd9b5f51 100644
---- a/drivers/gpu/drm/radeon/radeon_display.c
-+++ b/drivers/gpu/drm/radeon/radeon_display.c
-@@ -127,6 +127,8 @@ static void dce5_crtc_load_lut(struct drm_crtc *crtc)
+diff --git a/drivers/ide/serverworks.c b/drivers/ide/serverworks.c
+index a97affca18abe..0f57d45484d1d 100644
+--- a/drivers/ide/serverworks.c
++++ b/drivers/ide/serverworks.c
+@@ -114,6 +114,9 @@ static void svwks_set_pio_mode(ide_hwif_t *hwif, ide_drive_t *drive)
+ 	struct pci_dev *dev = to_pci_dev(hwif->dev);
+ 	const u8 pio = drive->pio_mode - XFER_PIO_0;
  
- 	DRM_DEBUG_KMS("%d\n", radeon_crtc->crtc_id);
- 
-+	msleep(10);
++	if (drive->dn >= ARRAY_SIZE(drive_pci))
++		return;
 +
- 	WREG32(NI_INPUT_CSC_CONTROL + radeon_crtc->crtc_offset,
- 	       (NI_INPUT_CSC_GRPH_MODE(NI_INPUT_CSC_BYPASS) |
- 		NI_INPUT_CSC_OVL_MODE(NI_INPUT_CSC_BYPASS)));
+ 	pci_write_config_byte(dev, drive_pci[drive->dn], pio_modes[pio]);
+ 
+ 	if (svwks_csb_check(dev)) {
+@@ -140,6 +143,9 @@ static void svwks_set_dma_mode(ide_hwif_t *hwif, ide_drive_t *drive)
+ 
+ 	u8 ultra_enable	 = 0, ultra_timing = 0, dma_timing = 0;
+ 
++	if (drive->dn >= ARRAY_SIZE(drive_pci2))
++		return;
++
+ 	pci_read_config_byte(dev, (0x56|hwif->channel), &ultra_timing);
+ 	pci_read_config_byte(dev, 0x54, &ultra_enable);
+ 
 -- 
 2.20.1
 
