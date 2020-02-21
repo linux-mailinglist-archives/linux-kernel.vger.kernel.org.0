@@ -2,137 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34C09166F9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 07:22:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B56F166FB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 07:38:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbgBUGWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 01:22:46 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51572 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726410AbgBUGWq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 01:22:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582266163;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6qXib0FabgbTKY5pRwiBWRR8XUkKsOvRz+kOZ5ar6RE=;
-        b=bf5c+Gxo/NV+RXfOvYxz0OyBrFLIQkbgG5ZnmwTiFySw62vlx6i6KADoXZnS97JqAl3XwJ
-        74ocWg48AGSuCdOCvIbmP+bMJE/+rbDSfRRYIUgesLRgAYh+ok+hG1UTTIrhNyopvkQr8U
-        XRxiovMHQyTBui9F5RIDJMspmPt/96o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-469-4HogxvKtMr2o0vgcZfl8sQ-1; Fri, 21 Feb 2020 01:22:40 -0500
-X-MC-Unique: 4HogxvKtMr2o0vgcZfl8sQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 15F968018A7;
-        Fri, 21 Feb 2020 06:22:37 +0000 (UTC)
-Received: from [10.72.13.208] (ovpn-13-208.pek2.redhat.com [10.72.13.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C4A528B57B;
-        Fri, 21 Feb 2020 06:22:27 +0000 (UTC)
-Subject: Re: [PATCH 0/2] virtio: decouple protected guest RAM form
- VIRTIO_F_IOMMU_PLATFORM
-To:     Halil Pasic <pasic@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     linux-s390@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        Michael Mueller <mimu@linux.ibm.com>
-References: <20200220160606.53156-1-pasic@linux.ibm.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <426e6972-0565-c931-e171-da0f58fbf856@redhat.com>
-Date:   Fri, 21 Feb 2020 14:22:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200220160606.53156-1-pasic@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-Content-Transfer-Encoding: quoted-printable
+        id S1727039AbgBUGiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 01:38:04 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:44852 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726315AbgBUGiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 01:38:04 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 064D0206BA3;
+        Fri, 21 Feb 2020 07:38:02 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ED5712022C5;
+        Fri, 21 Feb 2020 07:37:54 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5BB064032D;
+        Fri, 21 Feb 2020 14:37:42 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        leonard.crestez@nxp.com, peng.fan@nxp.com, yuehaibing@huawei.com,
+        ping.bai@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] clk: imx: pll14xx: Return error if pll type is invalid
+Date:   Fri, 21 Feb 2020 14:31:56 +0800
+Message-Id: <1582266716-19821-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When pll type is invalid, ONLY output error message is NOT enough,
+should return error immediately.
 
-On 2020/2/21 =E4=B8=8A=E5=8D=8812:06, Halil Pasic wrote:
-> Currently if one intends to run a memory protection enabled VM with
-> virtio devices and linux as the guest OS, one needs to specify the
-> VIRTIO_F_IOMMU_PLATFORM flag for each virtio device to make the guest
-> linux use the DMA API, which in turn handles the memory
-> encryption/protection stuff if the guest decides to turn itself into
-> a protected one. This however makes no sense due to multiple reasons:
-> * The device is not changed by the fact that the guest RAM is
-> protected. The so called IOMMU bypass quirk is not affected.
-> * This usage is not congruent with  standardised semantics of
-> VIRTIO_F_IOMMU_PLATFORM. Guest memory protected is an orthogonal reason
-> for using DMA API in virtio (orthogonal with respect to what is
-> expressed by VIRTIO_F_IOMMU_PLATFORM).
->
-> This series aims to decouple 'have to use DMA API because my (guest) RA=
-M
-> is protected' and 'have to use DMA API because the device told me
-> VIRTIO_F_IOMMU_PLATFORM'.
->
-> Please find more detailed explanations about the conceptual aspects in
-> the individual patches. There is however also a very practical problem
-> that is addressed by this series.
->
-> For vhost-net the feature VIRTIO_F_IOMMU_PLATFORM has the following sid=
-e
-> effect The vhost code assumes it the addresses on the virtio descriptor
-> ring are not guest physical addresses but iova's, and insists on doing =
-a
-> translation of these regardless of what transport is used (e.g. whether
-> we emulate a PCI or a CCW device). (For details see commit 6b1e6cc7855b
-> "vhost: new device IOTLB API".) On s390 this results in severe
-> performance degradation (c.a. factor 10).
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-pll14xx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-Do you see a consistent degradation on the performance, or it only=20
-happen when for during the beginning of the test?
-
-
-> BTW with ccw I/O there is
-> (architecturally) no IOMMU, so the whole address translation makes no
-> sense in the context of virtio-ccw.
-
-
-I suspect we can do optimization in qemu side.
-
-E.g send memtable entry via IOTLB API when vIOMMU is not enabled.
-
-If this makes sense, I can draft patch to see if there's any difference.
-
-Thanks
-
-
->
-> Halil Pasic (2):
->    mm: move force_dma_unencrypted() to mem_encrypt.h
->    virtio: let virtio use DMA API when guest RAM is protected
->
->   drivers/virtio/virtio_ring.c |  3 +++
->   include/linux/dma-direct.h   |  9 ---------
->   include/linux/mem_encrypt.h  | 10 ++++++++++
->   3 files changed, 13 insertions(+), 9 deletions(-)
->
->
-> base-commit: ca7e1fd1026c5af6a533b4b5447e1d2f153e28f2
+diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+index 37e311e..a83bbbe 100644
+--- a/drivers/clk/imx/clk-pll14xx.c
++++ b/drivers/clk/imx/clk-pll14xx.c
+@@ -410,6 +410,8 @@ struct clk_hw *imx_clk_hw_pll14xx(const char *name, const char *parent_name,
+ 	default:
+ 		pr_err("%s: Unknown pll type for pll clk %s\n",
+ 		       __func__, name);
++		kfree(pll);
++		return ERR_PTR(-EINVAL);
+ 	};
+ 
+ 	pll->base = base;
+-- 
+2.7.4
 
