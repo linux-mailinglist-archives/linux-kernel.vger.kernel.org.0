@@ -2,73 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4297B168177
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:24:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87AC9168160
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 16:21:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729221AbgBUPYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 10:24:31 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40335 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728910AbgBUPYb (ORCPT
+        id S1729081AbgBUPVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 10:21:50 -0500
+Received: from gateway23.websitewelcome.com ([192.185.50.108]:43558 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727161AbgBUPVt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:24:31 -0500
-Received: by mail-lj1-f194.google.com with SMTP id n18so2574636ljo.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 07:24:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q8F1pecknXeZPAGHPwSdHXa2S1HIMEUTEL9qK4pfGkI=;
-        b=rxD7B9dqoAiPCPgcPMy3dxnS+3dsZtb0ZYOiZpv7dDIPGvwW3EUh2Y3DvQo/1IuVPB
-         B8aCXt3Mbu5JD28DX63Op2V8OkUo8EMGp1u2VcbnQ7vL7goA2vrBUZYCagZosE8dywvW
-         Rq1sB1XaqIPDkeGnN0NYXhMQ2QHImd7ijNGmGMyHOQ9ms7ngm6Xn8Qs51/6xbb7mNWU8
-         jfVmfeRZO6Mi9nYlrM/p3bSU7gqnhDN9fncaCFUwbXNMTD4sxPCOu62OzH6LrtZgz2oc
-         m2DItFi4GJvVvf9V61Qc+jAKPUtgovjrhmeloggKXeeOvSgcj386SgdPSjWybppU2d59
-         Z2hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q8F1pecknXeZPAGHPwSdHXa2S1HIMEUTEL9qK4pfGkI=;
-        b=UjLOteUrx2Pjxs7gfIuf7RiiIRXI+Vc+ZJ/RfXhkuatCIgwenFtgzxxCpiz1t8pYvc
-         m1X4VNXasqtIOPh+G3fvzqKprcfKihspUnzoOwdqaTFinDf/O1jEtXYgIuSpFEYj6VJL
-         +q7B4Z29o8+EvJ35m6IXlRzZzSdiFVmgQaD1ln9IAiKvxC2AhP4iAwONBKtedUyrNM6a
-         kSxVxcQO1SzkneDV1rbq+aaPyG17TYRMrfpmBMHEJKAkyD45BZqBxGHXENV1KNyVnppW
-         9WmNaLiygigP9ITXer/kau2ylZ3PM5vIPxtDGW0etaFH1x8wcMzHLErDZAgSBEfpkbsT
-         yZzA==
-X-Gm-Message-State: APjAAAV2HHvgwWrA/97ZG/d4sj3vRJpdxs+WoFOaiL/lqU4pFY64CbJI
-        AeUtBEFfQdT7U3ONrmBlf3e0iTU1V0h+l8fH3KaZpg==
-X-Google-Smtp-Source: APXvYqziIUztxmcLeCs99putNp5eHfPKwvYYqzEsStcEDA0FthIqEITMkvuS+XoCG6v5robD0BZiVwXwVCyqWa3dCL4=
-X-Received: by 2002:a2e:b6ce:: with SMTP id m14mr20900215ljo.99.1582298668773;
- Fri, 21 Feb 2020 07:24:28 -0800 (PST)
+        Fri, 21 Feb 2020 10:21:49 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 383E9137BA
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 09:21:48 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 5A7gjQAxFRP4z5A7gjq16w; Fri, 21 Feb 2020 09:21:48 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=mbhHTsBgIffHJnD7OUNCvU+hJ6hifOkFE9ZfyrbhK7c=; b=HYvMQ3Yfb1whcHJDfjqzPEwLEy
+        KC+iRTimOeHW3Vps+7wMOwwyM/FxW1HAQ5rJj9T5BiZ4QoprE5t/oXk27d/bjFZM8KYohWQBX5O5V
+        n7CDhSN2phieFPdb4070Yuy0ylRzxuPKGR2mDpfkDQkf6LXoeb6Kbu75LG4W1FYYS3wLpZNb4gOMs
+        6F2aN0Vdmg5hwVNIXwNDlllfUGKu7lFFCkhSHO/9Tz1QhRUmAFWmpVVUFG7X0qI5YgauNFhc2/wbQ
+        qfUsNEzXak2oFbYFKC1hxhxTNDFE8+JGuSxKT0NJtsAn/jHV+icGo9z9ECkIyKPkKB3tOMbXZv/HE
+        wCf8LNfQ==;
+Received: from [200.68.141.13] (port=15204 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j5A7e-003dbj-4k; Fri, 21 Feb 2020 09:21:46 -0600
+Date:   Fri, 21 Feb 2020 09:24:30 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] efi/apple-properties: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200221152430.GA20788@embeddedor>
 MIME-Version: 1.0
-References: <20200219175940.744-1-ansuelsmth@gmail.com>
-In-Reply-To: <20200219175940.744-1-ansuelsmth@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 21 Feb 2020 16:24:17 +0100
-Message-ID: <CACRpkdZfHRuPwM8uFnzAYwCe3WeURPwX06arrZi+70aOwbcdGQ@mail.gmail.com>
-Subject: Re: [PATCH] ipq8064: pinctrl: Fixed missing RGMII pincontrol definitions
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Ram Chandra Jangir <rjangir@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.141.13
+X-Source-L: No
+X-Exim-ID: 1j5A7e-003dbj-4k
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.141.13]:15204
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 7:00 PM Ansuel Smith <ansuelsmth@gmail.com> wrote:
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-> Add missing gpio definition for mdio and rgmii2.
->
-> Signed-off-by: Ram Chandra Jangir <rjangir@codeaurora.org>
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-Patch applied with Bjorn's ACK!
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-Yours,
-Linus Walleij
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/firmware/efi/apple-properties.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/firmware/efi/apple-properties.c b/drivers/firmware/efi/apple-properties.c
+index 5ccf39986a14..084942846f4d 100644
+--- a/drivers/firmware/efi/apple-properties.c
++++ b/drivers/firmware/efi/apple-properties.c
+@@ -31,7 +31,7 @@ __setup("dump_apple_properties", dump_properties_enable);
+ struct dev_header {
+ 	u32 len;
+ 	u32 prop_count;
+-	struct efi_dev_path path[0];
++	struct efi_dev_path path[];
+ 	/*
+ 	 * followed by key/value pairs, each key and value preceded by u32 len,
+ 	 * len includes itself, value may be empty (in which case its len is 4)
+@@ -42,7 +42,7 @@ struct properties_header {
+ 	u32 len;
+ 	u32 version;
+ 	u32 dev_count;
+-	struct dev_header dev_header[0];
++	struct dev_header dev_header[];
+ };
+ 
+ static void __init unmarshal_key_value_pairs(struct dev_header *dev_header,
+-- 
+2.25.0
+
