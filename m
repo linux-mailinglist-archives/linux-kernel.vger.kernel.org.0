@@ -2,112 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 258A71682FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:14:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64F09168310
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 17:15:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbgBUQOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 11:14:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727352AbgBUQOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 11:14:32 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        id S1729562AbgBUQPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 11:15:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37366 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728477AbgBUQPM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 11:15:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=V0WqPcL6jrlYy8Mri95pqh4xedop9zZfTO34Rah7SYQ=; b=f9irWj4ufDQFWVbNGC73W/ZfOM
+        Nxxuktp95Uu1vTujHzYPLF59FPwbQywNuskqcMt8Pjkgyb7UDraJI9d00Mf5PXGahuOT+b6Yan4U/
+        Bcyg0DAlaiatLQvxxkZaHC2wvbR4hmRZWvBs237dWTy/+uHpECEP+YJLiUx4Xv+BDVk8EtpcjB4Dd
+        Q9kw6vLv74K8OpPZMR3QBMBIxCHKkZtDox90dvZVNU84p1/lDi+54jhUklpiM2ljt6/rKc1gfBSc8
+        Ibob/Oz+pjv4ya2DKnZaIcNkJSL4+T/mu8vHSd9iXrgXcfbrX7vnamkSPSSz7SySeo9Lx/y4FHBw5
+        s/CkTe8g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j5Awx-0005fX-FO; Fri, 21 Feb 2020 16:14:47 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D3002073A;
-        Fri, 21 Feb 2020 16:14:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582301671;
-        bh=03mmMubZATC978zRnpoRzUK0gpBr8Z2CKI6eBfkoRsU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=JTd/BjDIrsSWFurv3McozyobZoT1LcEUVmlVPSByEbVlF1z2YTEiQTZgAKkTNn753
-         uswo/xfAvCVaR6S3JdtTQo6tkDOqQSLiBlIjo17fkzGKMxFkwJaL5ENteMzg5N7Hir
-         nc7Rh7bIqG6ctKs7d+lS2RH+6ZR4tL3JpQx7NiTk=
-Date:   Fri, 21 Feb 2020 16:14:28 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 1/3] iio: imu: adis: add doc-string for 'adis' struct
-Message-ID: <20200221161428.188e1532@archlinux>
-In-Reply-To: <414d7e293b75e556ce857e0ce985a0f89fb24ffd.camel@analog.com>
-References: <20200221114943.2056-1-alexandru.ardelean@analog.com>
-        <20200221131146.2213e8e1@archlinux>
-        <414d7e293b75e556ce857e0ce985a0f89fb24ffd.camel@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 26D0A3070F9;
+        Fri, 21 Feb 2020 17:12:52 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 72FE02B26B89D; Fri, 21 Feb 2020 17:14:45 +0100 (CET)
+Date:   Fri, 21 Feb 2020 17:14:45 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        rostedt@goodmis.org
+Cc:     mingo@kernel.org, joel@joelfernandes.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        luto@kernel.org, tony.luck@intel.com, frederic@kernel.org,
+        dan.carpenter@oracle.com, mhiramat@kernel.org
+Subject: Re: [PATCH v4 03/27] x86/entry: Flip _TIF_SIGPENDING and
+ _TIF_NOTIFY_RESUME handling
+Message-ID: <20200221161445.GQ14879@hirez.programming.kicks-ass.net>
+References: <20200221133416.777099322@infradead.org>
+ <20200221134215.206604505@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221134215.206604505@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Feb 2020 15:59:35 +0000
-"Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
-
-> On Fri, 2020-02-21 at 13:11 +0000, Jonathan Cameron wrote:
-> > On Fri, 21 Feb 2020 13:49:41 +0200
-> > Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
-> >   
-> > > This change adds a doc-string for the 'adis' struct. It details the fields
-> > > and their roles.
-> > > 
-> > > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> > > ---
-> > >  include/linux/iio/imu/adis.h | 14 ++++++++++++++
-> > >  1 file changed, 14 insertions(+)
-> > > 
-> > > diff --git a/include/linux/iio/imu/adis.h b/include/linux/iio/imu/adis.h
-> > > index ac7cfd073804..0787a3aabd05 100644
-> > > --- a/include/linux/iio/imu/adis.h
-> > > +++ b/include/linux/iio/imu/adis.h
-> > > @@ -73,6 +73,20 @@ struct adis_data {
-> > >  	bool has_paging;
-> > >  };
-> > >  
-> > > +/**
-> > > + * struct adis - ADIS device instance data
-> > > + * @spi: Reference to SPI device which owns this ADIS IIO device
-> > > + * @trig: IIO trigger object data
-> > > + * @data: ADIS chip variant specific data
-> > > + * @burst: ADIS burst transfer information
-> > > + * @state_lock: Lock used by the device to protect state
-> > > + * @msg: SPI message object
-> > > + * @xfer: SPI transfer objects to be used for a @msg
-> > > + * @current_page: Some ADIS devices have registers, this selects current
-> > > page
-> > > + * @buffer: Data buffer for information read from the device
-> > > + * @tx: Cacheline aligned TX buffer for SPI transfers
-> > > + * @rx: Cacheline aligned RX buffer for SPI transfers  
-> > 
-> > This last one isn't true..   
+On Fri, Feb 21, 2020 at 02:34:19PM +0100, Peter Zijlstra wrote:
+> Make sure we run task_work before we hit any kind of userspace -- very
+> much including signals.
 > 
-> Oh right.
-> I noticed this at some point, then forgot about it.
-> [ The "joys" of multi-tasking; sorry about it :) ]
-> I guess I should also add a patch in this series making it cacheline-aligned.
-> I don't see a reason why not-to [unless I am misunderstanging something]
-No.  The code is fine.  The purpose of the cacheline stuff is to ensure
-no other data ends up in the same cacheline and might be changed in parallel
-with the spi dma taking place.   You only need to force it for the first
-element when you have 2 buffers like this.
-
-So you need to update the comment in this patch to say something less specific.
-Perhaps
-
-@tx: DMA safe TX buffer for SPI transfers
-@rx: DMA safe RX buffer for SPI transfers.
-
-Thanks,
-
-Jonathan
-
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  arch/x86/entry/common.c                   |    8 
+>  usr/src/linux-2.6/arch/x86/entry/common.c |  440 ------------------------------
+>  2 files changed, 4 insertions(+), 444 deletions(-)
 > 
-> 
-> >   
-> > > + */
-> > >  struct adis {
-> > >  	struct spi_device	*spi;
-> > >  	struct iio_trigger	*trig;  
+> --- a/arch/x86/entry/common.c
+> +++ b/arch/x86/entry/common.c
+> @@ -155,16 +155,16 @@ static void exit_to_usermode_loop(struct
+>  		if (cached_flags & _TIF_PATCH_PENDING)
+>  			klp_update_patch_state(current);
+>  
+> -		/* deal with pending signal delivery */
+> -		if (cached_flags & _TIF_SIGPENDING)
+> -			do_signal(regs);
+> -
+>  		if (cached_flags & _TIF_NOTIFY_RESUME) {
+>  			clear_thread_flag(TIF_NOTIFY_RESUME);
+>  			tracehook_notify_resume(regs);
+>  			rseq_handle_notify_resume(NULL, regs);
+>  		}
+>  
+> +		/* deal with pending signal delivery */
+> +		if (cached_flags & _TIF_SIGPENDING)
+> +			do_signal(regs);
+> +
+
+For giggles, I just found:
+
+	do_signal()
+	  get_signal()
+	    task_work_run()
 
