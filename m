@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5121B1674AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:24:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFA731673E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:18:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731751AbgBUIXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:23:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35862 "EHLO mail.kernel.org"
+        id S1732941AbgBUIQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:16:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388520AbgBUIXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:23:41 -0500
+        id S2387534AbgBUIQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:16:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A865524697;
-        Fri, 21 Feb 2020 08:23:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 575182467B;
+        Fri, 21 Feb 2020 08:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273421;
-        bh=IyLLtVHl5dqCwlj4ZeFJHDfJHrnChzzGasCQVGen4fs=;
+        s=default; t=1582272988;
+        bh=vCOwDC4HiMKfA9asIcQGpE8w0AH9BpB7uecmviq9Qsc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LjW3zNs8ZPeoqv2Zu/OStVEPaY3VPjW9WAUBmeDpX0IvPwGZFHWF5/sQQDdR4AfXu
-         UJwszIR0re5G9uyTrQ5HNzsB1cQwle1WaCjOLpEYFHdi0BSQ+ZnNFOsWkDb7knGiW0
-         6fW2LR6jlrN3VLaC3dtZaJg75qbqRXUnqWFI2zSY=
+        b=s4EzEuQEC5DlROF+zv2EZNm3ULCZtn91QiQzyBNeE3J1BXXweF9/UcpbuhhI33TEM
+         lcHi6NVPH51OiJoxapFoAxMFhEzyumjJHv29i1dMQdpjdsu/20jPjJleY5FPWhfndf
+         KR3aCP80S059cHQXL2P3QBXjxzi0P0Fk+W7jISFo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
-        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
+        stable@vger.kernel.org,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 163/191] jbd2: make sure ESHUTDOWN to be recorded in the journal superblock
+Subject: [PATCH 5.4 337/344] i40e: Relax i40e_xsk_wakeups return value when PF is busy
 Date:   Fri, 21 Feb 2020 08:42:16 +0100
-Message-Id: <20200221072310.345726702@linuxfoundation.org>
+Message-Id: <20200221072421.032567462@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhangyi (F) <yi.zhang@huawei.com>
+From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
 
-[ Upstream commit 0e98c084a21177ef136149c6a293b3d1eb33ff92 ]
+[ Upstream commit c77e9f09143822623dd71a0fdc84331129e97c3a ]
 
-Commit fb7c02445c49 ("ext4: pass -ESHUTDOWN code to jbd2 layer") want
-to allow jbd2 layer to distinguish shutdown journal abort from other
-error cases. So the ESHUTDOWN should be taken precedence over any other
-errno which has already been recoded after EXT4_FLAGS_SHUTDOWN is set,
-but it only update errno in the journal suoerblock now if the old errno
-is 0.
+Return -EAGAIN instead of -ENETDOWN to provide a slightly milder
+information to user space so that an application will know to retry the
+syscall when __I40E_CONFIG_BUSY bit is set on pf->state.
 
-Fixes: fb7c02445c49 ("ext4: pass -ESHUTDOWN code to jbd2 layer")
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/20191204124614.45424-4-yi.zhang@huawei.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fixes: b3873a5be757 ("net/i40e: Fix concurrency issues between config flow and XSK")
+Signed-off-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Björn Töpel <bjorn.topel@intel.com>
+Link: https://lore.kernel.org/bpf/20200205045834.56795-2-maciej.fijalkowski@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jbd2/journal.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_xsk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 1a96287f92647..a15a22d209090 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -2133,8 +2133,7 @@ static void __journal_abort_soft (journal_t *journal, int errno)
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
+index f73cd917c44f7..3156de786d955 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
+@@ -791,7 +791,7 @@ int i40e_xsk_wakeup(struct net_device *dev, u32 queue_id, u32 flags)
+ 	struct i40e_ring *ring;
  
- 	if (journal->j_flags & JBD2_ABORT) {
- 		write_unlock(&journal->j_state_lock);
--		if (!old_errno && old_errno != -ESHUTDOWN &&
--		    errno == -ESHUTDOWN)
-+		if (old_errno != -ESHUTDOWN && errno == -ESHUTDOWN)
- 			jbd2_journal_update_sb_errno(journal);
- 		return;
- 	}
+ 	if (test_bit(__I40E_CONFIG_BUSY, pf->state))
+-		return -ENETDOWN;
++		return -EAGAIN;
+ 
+ 	if (test_bit(__I40E_VSI_DOWN, vsi->state))
+ 		return -ENETDOWN;
 -- 
 2.20.1
 
