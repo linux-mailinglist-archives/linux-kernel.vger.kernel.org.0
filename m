@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D435167701
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:41:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6A791675BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:31:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731162AbgBUIBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:01:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33308 "EHLO mail.kernel.org"
+        id S1732997AbgBUIa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:30:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730649AbgBUIBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:01:02 -0500
+        id S1733282AbgBUIPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:15:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BBD324670;
-        Fri, 21 Feb 2020 08:01:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 824BA2467B;
+        Fri, 21 Feb 2020 08:15:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582272061;
-        bh=xMt+/WZJ7JX4l2wXXyGzZfDgtpkGtXEWwqSlZvxiJAE=;
+        s=default; t=1582272913;
+        bh=mXyGHYPh6/1oUrgz+oAwhP1+dXUpSXvKWEMnzTEpH5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FHGJma7MRfYf8T1TInTgV45LswH5mgutdTi1vI2590SLiUjCApOltJE+oyUMkhqp9
-         1l7Lhv1GCnRB+cQuSWguVHbf3iux9Jed16LyULe+MnqjBmVp1Iwbnxw7vwmUbR74LU
-         gsCsFrdInh8TC1kml7DJHkJsaSxPYgCFxg1ysxPQ=
+        b=qWfMwIM16qVSg3I8z/BcdusHIsxObAstEAI/nLPcvI9TGyoxU65PjxDwtawNIDipT
+         mL0fKSXFhZCvwhDdVrf71YL21uQHqW2TL7DO8pEQfwUcZB5h/QYJS9HwEOS1iJm4SR
+         NeWfs1EdPYouUFcUtn30bJ3RcFk9Ud9bcX+G8dIk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Yang <ice_yangxiao@163.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
+        stable@vger.kernel.org, Yunfeng Ye <yeyunfeng@huawei.com>,
+        zhengbin <zhengbin13@huawei.com>,
+        Hu Shiyuan <hushiyuan@huawei.com>,
+        Feilong Lin <linfeilong@huawei.com>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 394/399] fuse: dont overflow LLONG_MAX with end offset
-Date:   Fri, 21 Feb 2020 08:41:59 +0100
-Message-Id: <20200221072438.196078759@linuxfoundation.org>
+Subject: [PATCH 5.4 321/344] reiserfs: prevent NULL pointer dereference in reiserfs_insert_item()
+Date:   Fri, 21 Feb 2020 08:42:00 +0100
+Message-Id: <20200221072419.334207282@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
-References: <20200221072402.315346745@linuxfoundation.org>
+In-Reply-To: <20200221072349.335551332@linuxfoundation.org>
+References: <20200221072349.335551332@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +48,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
 
-[ Upstream commit 2f1398291bf35fe027914ae7a9610d8e601fbfde ]
+[ Upstream commit aacee5446a2a1aa35d0a49dab289552578657fb4 ]
 
-Handle the special case of fuse_readpages() wanting to read the last page
-of a hugest file possible and overflowing the end offset in the process.
+The variable inode may be NULL in reiserfs_insert_item(), but there is
+no check before accessing the member of inode.
 
-This is basically to unbreak xfstests:generic/525 and prevent filesystems
-from doing bad things with an overflowing offset.
+Fix this by adding NULL pointer check before calling reiserfs_debug().
 
-Reported-by: Xiao Yang <ice_yangxiao@163.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Link: http://lkml.kernel.org/r/79c5135d-ff25-1cc9-4e99-9f572b88cc00@huawei.com
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Cc: zhengbin <zhengbin13@huawei.com>
+Cc: Hu Shiyuan <hushiyuan@huawei.com>
+Cc: Feilong Lin <linfeilong@huawei.com>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/file.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/reiserfs/stree.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 695369f46f92d..3dd37a998ea93 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -803,6 +803,10 @@ static int fuse_do_readpage(struct file *file, struct page *page)
- 
- 	attr_ver = fuse_get_attr_version(fc);
- 
-+	/* Don't overflow end offset */
-+	if (pos + (desc.length - 1) == LLONG_MAX)
-+		desc.length--;
-+
- 	fuse_read_args_fill(&ia, file, pos, desc.length, FUSE_READ);
- 	res = fuse_simple_request(fc, &ia.ap.args);
- 	if (res < 0)
-@@ -888,6 +892,14 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
- 	ap->args.out_pages = true;
- 	ap->args.page_zeroing = true;
- 	ap->args.page_replace = true;
-+
-+	/* Don't overflow end offset */
-+	if (pos + (count - 1) == LLONG_MAX) {
-+		count--;
-+		ap->descs[ap->num_pages - 1].length--;
-+	}
-+	WARN_ON((loff_t) (pos + count) < 0);
-+
- 	fuse_read_args_fill(ia, file, pos, count, FUSE_READ);
- 	ia->read.attr_ver = fuse_get_attr_version(fc);
- 	if (fc->async_read) {
+diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
+index da9ebe33882b7..bb4973aefbb18 100644
+--- a/fs/reiserfs/stree.c
++++ b/fs/reiserfs/stree.c
+@@ -2246,7 +2246,8 @@ error_out:
+ 	/* also releases the path */
+ 	unfix_nodes(&s_ins_balance);
+ #ifdef REISERQUOTA_DEBUG
+-	reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
++	if (inode)
++		reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
+ 		       "reiserquota insert_item(): freeing %u id=%u type=%c",
+ 		       quota_bytes, inode->i_uid, head2type(ih));
+ #endif
 -- 
 2.20.1
 
