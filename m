@@ -2,110 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93AC4166FA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 07:30:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34C09166F9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 07:22:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbgBUG3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 01:29:45 -0500
-Received: from mga01.intel.com ([192.55.52.88]:34367 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726853AbgBUG3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 01:29:45 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 22:29:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,467,1574150400"; 
-   d="scan'208";a="315971204"
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
-  by orsmga001.jf.intel.com with ESMTP; 20 Feb 2020 22:29:42 -0800
-Date:   Fri, 21 Feb 2020 01:20:21 -0500
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "He, Shaopeng" <shaopeng.he@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>
-Subject: Re: [RFC PATCH v3 6/9] vfio/pci: export vfio_pci_setup_barmap
-Message-ID: <20200221062021.GD30338@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20200211095727.20426-1-yan.y.zhao@intel.com>
- <20200211101419.21067-1-yan.y.zhao@intel.com>
- <20200220140013.66a6b52c@w520.home>
+        id S1726884AbgBUGWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 01:22:46 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51572 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726410AbgBUGWq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 01:22:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582266163;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6qXib0FabgbTKY5pRwiBWRR8XUkKsOvRz+kOZ5ar6RE=;
+        b=bf5c+Gxo/NV+RXfOvYxz0OyBrFLIQkbgG5ZnmwTiFySw62vlx6i6KADoXZnS97JqAl3XwJ
+        74ocWg48AGSuCdOCvIbmP+bMJE/+rbDSfRRYIUgesLRgAYh+ok+hG1UTTIrhNyopvkQr8U
+        XRxiovMHQyTBui9F5RIDJMspmPt/96o=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-469-4HogxvKtMr2o0vgcZfl8sQ-1; Fri, 21 Feb 2020 01:22:40 -0500
+X-MC-Unique: 4HogxvKtMr2o0vgcZfl8sQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 15F968018A7;
+        Fri, 21 Feb 2020 06:22:37 +0000 (UTC)
+Received: from [10.72.13.208] (ovpn-13-208.pek2.redhat.com [10.72.13.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C4A528B57B;
+        Fri, 21 Feb 2020 06:22:27 +0000 (UTC)
+Subject: Re: [PATCH 0/2] virtio: decouple protected guest RAM form
+ VIRTIO_F_IOMMU_PLATFORM
+To:     Halil Pasic <pasic@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-s390@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Michael Mueller <mimu@linux.ibm.com>
+References: <20200220160606.53156-1-pasic@linux.ibm.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <426e6972-0565-c931-e171-da0f58fbf856@redhat.com>
+Date:   Fri, 21 Feb 2020 14:22:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220140013.66a6b52c@w520.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200220160606.53156-1-pasic@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 05:00:13AM +0800, Alex Williamson wrote:
-> On Tue, 11 Feb 2020 05:14:19 -0500
-> Yan Zhao <yan.y.zhao@intel.com> wrote:
-> 
-> > This allows vendor driver to read/write to bars directly which is useful
-> > in security checking condition.
-> > 
-> > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> > ---
-> >  drivers/vfio/pci/vfio_pci_rdwr.c | 26 +++++++++++++-------------
-> >  include/linux/vfio.h             |  2 ++
-> >  2 files changed, 15 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/drivers/vfio/pci/vfio_pci_rdwr.c b/drivers/vfio/pci/vfio_pci_rdwr.c
-> > index a0ef1de4f74a..3ba85fb2af5b 100644
-> > --- a/drivers/vfio/pci/vfio_pci_rdwr.c
-> > +++ b/drivers/vfio/pci/vfio_pci_rdwr.c
-> > @@ -129,7 +129,7 @@ static ssize_t do_io_rw(void __iomem *io, char __user *buf,
-> >  	return done;
-> >  }
-> >  
-> > -static int vfio_pci_setup_barmap(struct vfio_pci_device *vdev, int bar)
-> > +void __iomem *vfio_pci_setup_barmap(struct vfio_pci_device *vdev, int bar)
-> >  {
-> >  	struct pci_dev *pdev = vdev->pdev;
-> >  	struct vfio_pci_device_private *priv = VDEV_TO_PRIV(vdev);
-> > @@ -137,22 +137,23 @@ static int vfio_pci_setup_barmap(struct vfio_pci_device *vdev, int bar)
-> >  	void __iomem *io;
-> >  
-> >  	if (priv->barmap[bar])
-> > -		return 0;
-> > +		return priv->barmap[bar];
-> >  
-> >  	ret = pci_request_selected_regions(pdev, 1 << bar, "vfio");
-> >  	if (ret)
-> > -		return ret;
-> > +		return NULL;
-> >  
-> >  	io = pci_iomap(pdev, bar, 0);
-> >  	if (!io) {
-> >  		pci_release_selected_regions(pdev, 1 << bar);
-> > -		return -ENOMEM;
-> > +		return NULL;
-> >  	}
-> >  
-> >  	priv->barmap[bar] = io;
-> >  
-> > -	return 0;
-> > +	return io;
-> >  }
-> > +EXPORT_SYMBOL_GPL(vfio_pci_setup_barmap);
-> 
-> This should instead become a vfio_pci_get_barmap() function that tests
-> for an optionally calls vfio_pci_setup_barmap before returning the
-> pointer.  I'm now willing to lose the better error returns in the
-> original.  Thanks,
->
-Got it. will change it.
-Thanks!
 
-Yan
+On 2020/2/21 =E4=B8=8A=E5=8D=8812:06, Halil Pasic wrote:
+> Currently if one intends to run a memory protection enabled VM with
+> virtio devices and linux as the guest OS, one needs to specify the
+> VIRTIO_F_IOMMU_PLATFORM flag for each virtio device to make the guest
+> linux use the DMA API, which in turn handles the memory
+> encryption/protection stuff if the guest decides to turn itself into
+> a protected one. This however makes no sense due to multiple reasons:
+> * The device is not changed by the fact that the guest RAM is
+> protected. The so called IOMMU bypass quirk is not affected.
+> * This usage is not congruent with  standardised semantics of
+> VIRTIO_F_IOMMU_PLATFORM. Guest memory protected is an orthogonal reason
+> for using DMA API in virtio (orthogonal with respect to what is
+> expressed by VIRTIO_F_IOMMU_PLATFORM).
+>
+> This series aims to decouple 'have to use DMA API because my (guest) RA=
+M
+> is protected' and 'have to use DMA API because the device told me
+> VIRTIO_F_IOMMU_PLATFORM'.
+>
+> Please find more detailed explanations about the conceptual aspects in
+> the individual patches. There is however also a very practical problem
+> that is addressed by this series.
+>
+> For vhost-net the feature VIRTIO_F_IOMMU_PLATFORM has the following sid=
+e
+> effect The vhost code assumes it the addresses on the virtio descriptor
+> ring are not guest physical addresses but iova's, and insists on doing =
+a
+> translation of these regardless of what transport is used (e.g. whether
+> we emulate a PCI or a CCW device). (For details see commit 6b1e6cc7855b
+> "vhost: new device IOTLB API".) On s390 this results in severe
+> performance degradation (c.a. factor 10).
+
+
+Do you see a consistent degradation on the performance, or it only=20
+happen when for during the beginning of the test?
+
+
+> BTW with ccw I/O there is
+> (architecturally) no IOMMU, so the whole address translation makes no
+> sense in the context of virtio-ccw.
+
+
+I suspect we can do optimization in qemu side.
+
+E.g send memtable entry via IOTLB API when vIOMMU is not enabled.
+
+If this makes sense, I can draft patch to see if there's any difference.
+
+Thanks
+
+
+>
+> Halil Pasic (2):
+>    mm: move force_dma_unencrypted() to mem_encrypt.h
+>    virtio: let virtio use DMA API when guest RAM is protected
+>
+>   drivers/virtio/virtio_ring.c |  3 +++
+>   include/linux/dma-direct.h   |  9 ---------
+>   include/linux/mem_encrypt.h  | 10 ++++++++++
+>   3 files changed, 13 insertions(+), 9 deletions(-)
+>
+>
+> base-commit: ca7e1fd1026c5af6a533b4b5447e1d2f153e28f2
+
