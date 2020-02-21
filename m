@@ -2,127 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DB05168785
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:38:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF0E8168788
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 20:40:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbgBUTis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 14:38:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35392 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726160AbgBUTis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 14:38:48 -0500
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10D46208C4;
-        Fri, 21 Feb 2020 19:38:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582313927;
-        bh=EEkZlC+I38fRKP6ziqRCvYvuuIeevZ+KKVHywn56mIo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lSKHq40hs1M19YD7sOxUNFDFS+a1h50X64VxCq+PakYXlJeADg7DcA3iat/R3ND5r
-         NBztjxKxeObSrBRP4eJlhb0YrH7+D/OcTKGrGIy7dztPBMg6aZiG1IXmiSeXHFAeET
-         5OkECh3IMxLo2OqHs0+kHkRN6c2239scLdmpYumc=
-Received: by mail-qk1-f181.google.com with SMTP id t83so2939496qke.3;
-        Fri, 21 Feb 2020 11:38:47 -0800 (PST)
-X-Gm-Message-State: APjAAAUImARs3TZpXprIcHG9kaPw6o7AGPIUQAG1kg4y6YRLdBbw9jPK
-        JBnJhdIZRQulqyK8g6CQi4A+NMBopdT9L3tXzA==
-X-Google-Smtp-Source: APXvYqyxd8WdkXFWOCS8SNWYv4nZmrG8aLBX6mYw4szswF8/Esf6AsZA0GubHXwAODvuaiVsM3W6LKr6xJSmuO65sEY=
-X-Received: by 2002:a37:6457:: with SMTP id y84mr36111932qkb.254.1582313926194;
- Fri, 21 Feb 2020 11:38:46 -0800 (PST)
+        id S1726823AbgBUTkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 14:40:15 -0500
+Received: from mail-pf1-f180.google.com ([209.85.210.180]:36667 "EHLO
+        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbgBUTkO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 14:40:14 -0500
+Received: by mail-pf1-f180.google.com with SMTP id 185so1777292pfv.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 11:40:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=727EAsMQRz3BzcKFq+yjaGZ0smZaJ6wq5lYL4hCxQBw=;
+        b=eCmldwwmaGs6a9choQrTabZ5muMpoPYd8pgAxRa2sPm9ihylVfr8YYvavuA8os4vI5
+         lJ3Yvnf196RWlWv5F8A28esZrv737PYuvntY+Ld1Yk/K50DesbseV60ri7BfqTQ93LsS
+         y9j6cc4e3NrOsQ3mCtn3QVwYGVV07mts18kio=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=727EAsMQRz3BzcKFq+yjaGZ0smZaJ6wq5lYL4hCxQBw=;
+        b=Nv8gLAwwwxzDNwTa/W3xMb6TbL6IRv2drgu1TpCvTuCgWwc8E/4JUsiguCVOf+pdgF
+         /jmf38d1qcvAQ5Utzutk5zxIGWO37wNV2p2dYSRoSnpCGCaEulDKRdpBfAXtjTopmZW3
+         vVbbdrKzRU4zxcp/VX5+hvX6l0Hf8bjrD4qaL7uvyeNlGMRu8Y0MDtkiqdmSooff2x4E
+         3CUrkN+vwf8yCdFgRXE4BdwGE8hwrWKjwS/vtlEB0bl6O4HxgQTr8OZe0bCJHIo3XjW9
+         CNWVqRPx0GZg7EAvSGPNW6WUbDMC92nYOuX9DxGvPM/kkrCNdnqiKugYj9Ju6S6J+2Fv
+         R9HA==
+X-Gm-Message-State: APjAAAX7uEnxUCIDbBQjFTaPkuoqMWpWMPZUSRhGdARKXwsA/QiZXzGY
+        MbBpkfqOLG5T79yCPPPZBmxBMg==
+X-Google-Smtp-Source: APXvYqzbFTpLuLBYG3azYe9VcGVTO7fozeU4ULbuEPbtS0mD0Bzq7RD4RTc+o/ZXgvYmXYycUD12+w==
+X-Received: by 2002:aa7:8699:: with SMTP id d25mr38752067pfo.139.1582314014078;
+        Fri, 21 Feb 2020 11:40:14 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id q8sm3289342pgt.57.2020.02.21.11.40.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2020 11:40:13 -0800 (PST)
+Date:   Fri, 21 Feb 2020 11:40:12 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Odelu Kukatla <okukatla@codeaurora.org>
+Cc:     georgi.djakov@linaro.org, daidavid1@codeaurora.org,
+        bjorn.andersson@linaro.org, evgreen@google.com,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        ilina@codeaurora.org, seansw@qti.qualcomm.com, elder@linaro.org,
+        linux-pm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [V3, 3/3] dt-bindings: interconnect: Add Qualcomm SC7180 DT
+ bindings
+Message-ID: <20200221194012.GF24720@google.com>
+References: <1582277450-27382-1-git-send-email-okukatla@codeaurora.org>
+ <1582277450-27382-4-git-send-email-okukatla@codeaurora.org>
 MIME-Version: 1.0
-References: <20200221161418.20225-1-alexandre.torgue@st.com>
- <20200221161418.20225-2-alexandre.torgue@st.com> <592e41a4-6115-474e-b6ce-eeb82f858a78@gmail.com>
-In-Reply-To: <592e41a4-6115-474e-b6ce-eeb82f858a78@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 21 Feb 2020 13:38:34 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJuj1=ae+_-L7_R6+ZfcbNW99BDUDSvuYSsN1=gRcvQqQ@mail.gmail.com>
-Message-ID: <CAL_JsqJuj1=ae+_-L7_R6+ZfcbNW99BDUDSvuYSsN1=gRcvQqQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/4] scripts: Add script to generate dtb build information
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Simon Glass <sjg@chromium.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Devicetree Compiler <devicetree-compiler@vger.kernel.org>,
-        Ian Lepore <ian@freebsd.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1582277450-27382-4-git-send-email-okukatla@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 11:52 AM Frank Rowand <frowand.list@gmail.com> wrote:
->
-> On 2/21/20 10:14 AM, Alexandre Torgue wrote:
-> > This commit adds a new script to create a file (in dts file directory) with
-> > some information (date, Linux version, user). This file could then be used
-> > to populate "build-info" property in every dts file that would use this
-> > build information:
-> >
-> > Example:
-> >
-> > / {
-> >       ...
-> >       build-info = /incbin/("dtb-build.txt");
->
-> s/.txt/.dtsi/
->
-> and same wherever the file name is used.
->
->
-> >       ...
-> > };
-> >
-> > Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-> >
-> > diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> > index bae62549e3d2..a5af84ef4ffc 100644
-> > --- a/scripts/Makefile.lib
-> > +++ b/scripts/Makefile.lib
-> > @@ -246,6 +246,7 @@ quiet_cmd_gzip = GZIP    $@
-> >  # DTC
-> >  # ---------------------------------------------------------------------------
-> >  DTC ?= $(objtree)/scripts/dtc/dtc
-> > +DTB_GEN_INFO ?= $(objtree)/scripts/gen_dtb_build_info.sh
-> >
-> >  # Disable noisy checks by default
-> >  ifeq ($(findstring 1,$(KBUILD_EXTRA_WARN)),)
-> > @@ -286,6 +287,7 @@ $(obj)/%.dtb.S: $(obj)/%.dtb FORCE
-> >
-> >  quiet_cmd_dtc = DTC     $@
-> >  cmd_dtc = mkdir -p $(dir ${dtc-tmp}) ; \
-> > +     $(DTB_GEN_INFO) $(src) ; \
-> >       $(HOSTCC) -E $(dtc_cpp_flags) -x assembler-with-cpp -o $(dtc-tmp) $< ; \
-> >       $(DTC) -O $(2) -o $@ -b 0 \
-> >               $(addprefix -i,$(dir $<) $(DTC_INCLUDE)) $(DTC_FLAGS) \
-> > diff --git a/scripts/gen_dtb_build_info.sh b/scripts/gen_dtb_build_info.sh
-> > new file mode 100755
-> > index 000000000000..0cd8bd98e410
-> > --- /dev/null
-> > +++ b/scripts/gen_dtb_build_info.sh
-> > @@ -0,0 +1,10 @@
-> > +#!/bin/bash
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +set -o nounset
-> > +
-> > +DTB_DIR=$1
-> > +DTB_COMPILE_BY=$(whoami | sed 's/\\/\\\\/')
-> > +DTB_INFO="From Linux $KERNELRELEASE by $DTB_COMPILE_BY the $(date).\0"
->
-> I would remove the filler words "From", "by", "the", and the trailing
-> period ('.').
->
-> <bikeshed>
-> You might consider using a format more like the Linux
-> kernel version line, which puts parenthesis around the
-> compiled by info.
+Hi Odelu,
 
-IMO, we should use exactly the Linux kernel version line. Or exactly
-the u-boot version line when built in u-boot.
+> Subject: dt-bindings: interconnect: Add Qualcomm SC7180 DT bindings
 
-Rob
+This patch doesn't add a binding, but DT entries for SC7180.
+
+The subject of v2 was "arm64: dts: sc7180: Add interconnect provider
+DT nodes", please go back to that or something similar.
