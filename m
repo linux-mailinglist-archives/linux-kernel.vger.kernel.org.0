@@ -2,279 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F7B0167AFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 11:43:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 207EC167B0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 11:44:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbgBUKne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 05:43:34 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45131 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbgBUKne (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 05:43:34 -0500
-Received: by mail-wr1-f67.google.com with SMTP id g3so1433211wrs.12
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 02:43:31 -0800 (PST)
+        id S1728049AbgBUKox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 05:44:53 -0500
+Received: from mail-co1nam11on2066.outbound.protection.outlook.com ([40.107.220.66]:6255
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726325AbgBUKox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 05:44:53 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CN+BDGfLFMX9DVCCMIChGMkYdFBtxdJBOGIBf0JAcH95D3SX945cUL/j7tTVUDlYIMmj/SMN1tkBJIY9vPfxth2juoKOBtV+UUK5pVSEk0bXomfx17j7GU6H/fCpQv+ve1dhVRr84b5Y/CGUcGlLc3hz3vRlsxITNN6Z9lWXQbTweeS/htmhbnF90wSjWQBVZs7uFgs8MhE8bBxJAWTXYV5MyAtlPtoDdR8Xt2wYahKMhKMY3laD84GXNfT8tbkytI+c3MWm40sohI/Oe8TqpyDoDy547qC+cSO3Q8OVMzFeBmCyzJlqPaBMLsME/3752aVekt7ai47d1YQigJIpuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0yKMONHiuBf2VsFkqxQTxYQqMZfGxNuIOvHK8P9lq+Q=;
+ b=LcdyYEI23mOfjkni658aYNwRs9RCXY5NzobDudZayA37Ftrs5BNss6F+UbrNuOLXyRflUdAXTUWTUOycUYnMTUjT5ZsJofRYz9mWMCkKxTBp8hzzWyKB6qIbD/jHV3V2XTxM/GMk69dVz1Q3IdstV4YaVVjmZhmQnqfoxJGt62gc5J1V4VU4Pb4XV/VnVN9DVPClWGHcvCSQ/OiLng2i2iurejNpJhXKm32tnZj5sY5eidyIRu8OJV/upqzV2YNEVRQroZwSMvTsuH+yfiihSvT4HtiK5E3TP2GXEu8KOV8LvlYn37VHuf38lMnFfcFpNYGbrh4/aiXBbPlGfxXK7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=silabs.com; dmarc=pass action=none header.from=silabs.com;
+ dkim=pass header.d=silabs.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=y17j3JfMjOhBp3bg0o/t76XeKtZ2b+e9QhazcUZ/DV0=;
-        b=oztzjCZyuKPCwe5jorKjqpGVUCsUh45QaV8hnlC1/6Ol0GqAWOEkRXfELn2BdK0wG3
-         qgXRuaXEt6mFUfdXJtCiTsSSpE619tWAHLuApmFtmpBhmjuJrnyz/gGZj1ZOEmv6CGPe
-         xFo/kVwsxny1VsK32QrRl+22bNULIFDEKfOYo5p4ksYHHIbAJFNDhgzb7Qz1GNzXTvQx
-         gQdbh9tr7v+Xskj2ffaldUHzSpqW7HsJWb6Id/rvlmrYiWjSSX70gijwaG0xMLRmlBCn
-         roLxbhhURKF6XR4OYdfLf2WxIDb9HshFovZCkB0Fh8uPwYUeccqsfX5SkZA+KdP+E05U
-         D8Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=y17j3JfMjOhBp3bg0o/t76XeKtZ2b+e9QhazcUZ/DV0=;
-        b=XlVjNj7rgZQuTHsCxQWpQhBu6YdNgWzNVW2hoVsHlFhtsyAnMvJacfvaEf3+oNNXwW
-         LW0lNg5xFKlUCLpRo6DA1htdL5Q0JFfY3ZUF9MJg7XBQ4D7g/S/95Cf5JnA2rQY7qGfJ
-         yFecdSk/NuytcHPVMcQFlpymWWMv+EidzTHizdWvV+Hbto6T8f5asWGbmD50jaPxBGNm
-         Q6dGJtpIR4Jes64fjLKXcxR9789AhHT6bo9jYJgLJQmWJ2Wpt53Xxw15Sk1fd35dV6wD
-         DdiTPty3UPNQCT97Hd9elJCeEO1BQX+SH2zKUse8zfchOVaNj73QfQ1I7zI/RQ1ZZILy
-         LuyA==
-X-Gm-Message-State: APjAAAXzkBS4fF9wFgugUY9IrxpndOghVBL6yxODaj2LgXmS2fM7q470
-        ADM4g92evOHogEQL9at5ctj69Q==
-X-Google-Smtp-Source: APXvYqwQ6mtepZYIPlcj/NAAw+eWDJa/MMOiK0l4maoi5chkWidP9g3E3ZCQ0dYFbQuvk4hE+DhiSw==
-X-Received: by 2002:adf:dc8d:: with SMTP id r13mr49810404wrj.357.1582281811037;
-        Fri, 21 Feb 2020 02:43:31 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c15sm3403521wrt.1.2020.02.21.02.43.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 02:43:30 -0800 (PST)
-References: <20200220205711.77953-1-martin.blumenstingl@googlemail.com> <20200220205711.77953-4-martin.blumenstingl@googlemail.com>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Cc:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/3] ASoC: meson: aiu: add support for the Meson8 and Meson8b SoC families
-In-reply-to: <20200220205711.77953-4-martin.blumenstingl@googlemail.com>
-Date:   Fri, 21 Feb 2020 11:43:29 +0100
-Message-ID: <1jr1yo2pbi.fsf@starbuckisacylon.baylibre.com>
+ d=silabs.onmicrosoft.com; s=selector2-silabs-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0yKMONHiuBf2VsFkqxQTxYQqMZfGxNuIOvHK8P9lq+Q=;
+ b=MXIwQKRtzbFDXl3nPhXMM4Lcs0uWKdBZFCmsW4FnArMotOqSgb9u0lhpDP2w/KCfgiiccAlzy3ADYQ9mSSv6b5XQ37xEzDpyFzgGjEgCgo1bh3vCg/q47Uy4St79c/ThWFHf9FKJVn1sgatuXNgUotH7ux8szpKQJ350hvxz2VE=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jerome.Pouiller@silabs.com; 
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com (2603:10b6:208:13f::22)
+ by MN2PR11MB4270.namprd11.prod.outlook.com (2603:10b6:208:18c::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.25; Fri, 21 Feb
+ 2020 10:44:49 +0000
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::ade4:5702:1c8b:a2b3]) by MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::ade4:5702:1c8b:a2b3%7]) with mapi id 15.20.2729.033; Fri, 21 Feb 2020
+ 10:44:48 +0000
+From:   Jerome Pouiller <Jerome.Pouiller@silabs.com>
+To:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= 
+        <jerome.pouiller@silabs.com>
+Subject: [PATCH] mmc: core: Fix indentation
+Date:   Fri, 21 Feb 2020 11:43:41 +0100
+Message-Id: <20200221104341.583028-1-Jerome.Pouiller@silabs.com>
+X-Mailer: git-send-email 2.25.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+X-ClientProxiedBy: PR0P264CA0041.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:100:1::29) To MN2PR11MB4063.namprd11.prod.outlook.com
+ (2603:10b6:208:13f::22)
 MIME-Version: 1.0
-Content-Type: text/plain
+Received: from pc-42.silabs.com (37.71.187.125) by PR0P264CA0041.FRAP264.PROD.OUTLOOK.COM (2603:10a6:100:1::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18 via Frontend Transport; Fri, 21 Feb 2020 10:44:47 +0000
+X-Mailer: git-send-email 2.25.0
+X-Originating-IP: [37.71.187.125]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3a3ceceb-db80-4fb3-f400-08d7b6bb12b1
+X-MS-TrafficTypeDiagnostic: MN2PR11MB4270:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MN2PR11MB427049C92D28EA398C65698993120@MN2PR11MB4270.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1303;
+X-Forefront-PRVS: 0320B28BE1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(136003)(366004)(39860400002)(346002)(396003)(189003)(199004)(6666004)(52116002)(66476007)(478600001)(66556008)(316002)(4326008)(66946007)(2616005)(2906002)(7696005)(956004)(107886003)(4744005)(6916009)(5660300002)(16526019)(26005)(36756003)(1076003)(186003)(81156014)(86362001)(8676002)(81166006)(6486002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4270;H:MN2PR11MB4063.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: silabs.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: nXcT6t3R5zoXFzL3+zcvs2j8UQQJ0dqzqo9g1yKFWon7H2zH9n2UWyBw2bHnBCvASwuzLkhNAqeZeJaxKf8/fXklBnspdpbDOza+CxNoOLICYqZ3OpxElNiimUB8INNI6e6cz654sM0XjmBH7EhkO0SXa8LsdEGe6Xr92m+g5fk4BUyg/7yhLE67UgQyz68JiAgty6TmbOAQa8Vv7icfpH9rbXQU/Kdmew9kgc5hG8IiMUapnl54uazMMoau5EsCnibviehfSabEw33i3BQCeW5mGlFUhqwB/9m/r2nmo8xcvRsOGT4iQBxrx2TlCd6LSS8WJCG0XiSVs/opf1UZBiZ+Ubp+6fz1xXXI0h1MD2nDlVzLYYvpOde8qlNktHS9SvZw8QZLgtgAgTunw8xhovXhRfAH8GberkVcBUEsyKFp+U9iPWfQi4CJ2snKYk78
+X-MS-Exchange-AntiSpam-MessageData: d2/b6EoSrF/kLaPhqH19ZtUMgXG5dQPeJmRuc/P7/7SDcTrbXTGuPKgRPMH2U7ix31FmpYfr/IaKzTpZp+3jBUhdwChfMaoeHER99TphHoXcEAuEV6OMyFhnQZOt3/xrifJquSjdzqb8K2fwxho9mw==
+X-OriginatorOrg: silabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a3ceceb-db80-4fb3-f400-08d7b6bb12b1
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2020 10:44:48.9323
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 54dbd822-5231-4b20-944d-6f4abcd541fb
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HpHTaIlW64tTPvySDdrgJHIRU03Oc7y1NGOFdNyb5gVyXkby3V3iqy/X+HY8y+8kv1HUTqatySRkWfKUuFizXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4270
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On Thu 20 Feb 2020 at 21:57, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
-
-> The AIU audio controller on the Meson8 and Meson8b SoC families is
-> compatible with the one found in the later GXBB family. Add compatible
-> strings for these two older SoC families so the driver can be loaded for
-> them.
->
-> Instead of using the I2S divider from the AIU_CLK_CTRL_MORE register we
-> need to use the I2S divider from the AIU_CLK_CTRL register. This older
-> register is less flexible because it only supports four divider settings
-> (1, 2, 4, 8) compared to the AIU_CLK_CTRL_MORE register (which supports
-> dividers in the range 0..64).
->
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-
-> ---
->  sound/soc/meson/Kconfig           |  2 +-
->  sound/soc/meson/aiu-encoder-i2s.c | 92 +++++++++++++++++++++++--------
->  sound/soc/meson/aiu.c             |  9 +++
->  sound/soc/meson/aiu.h             |  1 +
->  4 files changed, 81 insertions(+), 23 deletions(-)
->
-> diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-> index 897a706dcda0..d27e9180b453 100644
-> --- a/sound/soc/meson/Kconfig
-> +++ b/sound/soc/meson/Kconfig
-> @@ -10,7 +10,7 @@ config SND_MESON_AIU
->  	imply SND_SOC_HDMI_CODEC if DRM_MESON_DW_HDMI
->  	help
->  	  Select Y or M to add support for the Audio output subsystem found
-> -	  in the Amlogic GX SoC family
-> +	  in the Amlogic Meson8, Meson8b and GX SoC families
->  
->  config SND_MESON_AXG_FIFO
->  	tristate
-> diff --git a/sound/soc/meson/aiu-encoder-i2s.c b/sound/soc/meson/aiu-encoder-i2s.c
-> index 4900e38e7e49..cc73b5d5c2b7 100644
-> --- a/sound/soc/meson/aiu-encoder-i2s.c
-> +++ b/sound/soc/meson/aiu-encoder-i2s.c
-> @@ -111,34 +111,40 @@ static int aiu_encoder_i2s_setup_desc(struct snd_soc_component *component,
->  	return 0;
->  }
->  
-> -static int aiu_encoder_i2s_set_clocks(struct snd_soc_component *component,
-> -				      struct snd_pcm_hw_params *params)
-> +static int aiu_encoder_i2s_set_legacy_div(struct snd_soc_component *component,
-> +					  struct snd_pcm_hw_params *params,
-> +					  unsigned int bs)
->  {
-> -	struct aiu *aiu = snd_soc_component_get_drvdata(component);
-> -	unsigned int srate = params_rate(params);
-> -	unsigned int fs, bs;
-> -
-> -	/* Get the oversampling factor */
-> -	fs = DIV_ROUND_CLOSEST(clk_get_rate(aiu->i2s.clks[MCLK].clk), srate);
-> +	switch (bs) {
-> +	case 1:
-> +	case 2:
-> +	case 4:
-> +	case 8:
-> +		/* These are the only valid legacy dividers */
-> +		break;
-
-I wonder how it will work with the 8ch mode and 16bits but we can deal
-with this later on.
-
->  
-> -	if (fs % 64)
-> +	default:
-> +		dev_err(component->dev, "Unsupported i2s divider: %u\n", bs);
->  		return -EINVAL;
-> +	};
->  
-> -	/* Send data MSB first */
-> -	snd_soc_component_update_bits(component, AIU_I2S_DAC_CFG,
-> -				      AIU_I2S_DAC_CFG_MSB_FIRST,
-> -				      AIU_I2S_DAC_CFG_MSB_FIRST);
-> +	snd_soc_component_update_bits(component, AIU_CLK_CTRL,
-> +				      AIU_CLK_CTRL_I2S_DIV,
-> +				      FIELD_PREP(AIU_CLK_CTRL_I2S_DIV,
-> +						 __ffs(bs)));
->  
-> -	/* Set bclk to lrlck ratio */
-> -	snd_soc_component_update_bits(component, AIU_CODEC_DAC_LRCLK_CTRL,
-> -				      AIU_CODEC_DAC_LRCLK_CTRL_DIV,
-> -				      FIELD_PREP(AIU_CODEC_DAC_LRCLK_CTRL_DIV,
-> -						 64 - 1));
-> +	snd_soc_component_update_bits(component, AIU_CLK_CTRL_MORE,
-> +				      AIU_CLK_CTRL_MORE_I2S_DIV,
-> +				      FIELD_PREP(AIU_CLK_CTRL_MORE_I2S_DIV,
-> +						 0));
->  
-> -	/* Use CLK_MORE for mclk to bclk divider */
-> -	snd_soc_component_update_bits(component, AIU_CLK_CTRL,
-> -				      AIU_CLK_CTRL_I2S_DIV, 0);
-> +	return 0;
-> +}
->  
-> +static int aiu_encoder_i2s_set_more_div(struct snd_soc_component *component,
-> +					struct snd_pcm_hw_params *params,
-> +					unsigned int bs)
-> +{
->  	/*
->  	 * NOTE: this HW is odd.
->  	 * In most configuration, the i2s divider is 'mclk / blck'.
-> @@ -146,7 +152,6 @@ static int aiu_encoder_i2s_set_clocks(struct snd_soc_component *component,
->  	 * increased by 50% to get the correct output rate.
->  	 * No idea why !
->  	 */
-> -	bs = fs / 64;
->  	if (params_width(params) == 16 && params_channels(params) == 8) {
->  		if (bs % 2) {
->  			dev_err(component->dev,
-> @@ -156,11 +161,54 @@ static int aiu_encoder_i2s_set_clocks(struct snd_soc_component *component,
->  		bs += bs / 2;
->  	}
->  
-> +	/* Use CLK_MORE for mclk to bclk divider */
-> +	snd_soc_component_update_bits(component, AIU_CLK_CTRL,
-> +				      AIU_CLK_CTRL_I2S_DIV,
-> +				      FIELD_PREP(AIU_CLK_CTRL_I2S_DIV, 0));
-> +
->  	snd_soc_component_update_bits(component, AIU_CLK_CTRL_MORE,
->  				      AIU_CLK_CTRL_MORE_I2S_DIV,
->  				      FIELD_PREP(AIU_CLK_CTRL_MORE_I2S_DIV,
->  						 bs - 1));
->  
-> +	return 0;
-> +}
-> +
-> +static int aiu_encoder_i2s_set_clocks(struct snd_soc_component *component,
-> +				      struct snd_pcm_hw_params *params)
-> +{
-> +	struct aiu *aiu = snd_soc_component_get_drvdata(component);
-> +	unsigned int srate = params_rate(params);
-> +	unsigned int fs, bs;
-> +	int ret;
-> +
-> +	/* Get the oversampling factor */
-> +	fs = DIV_ROUND_CLOSEST(clk_get_rate(aiu->i2s.clks[MCLK].clk), srate);
-> +
-> +	if (fs % 64)
-> +		return -EINVAL;
-> +
-> +	/* Send data MSB first */
-> +	snd_soc_component_update_bits(component, AIU_I2S_DAC_CFG,
-> +				      AIU_I2S_DAC_CFG_MSB_FIRST,
-> +				      AIU_I2S_DAC_CFG_MSB_FIRST);
-> +
-> +	/* Set bclk to lrlck ratio */
-> +	snd_soc_component_update_bits(component, AIU_CODEC_DAC_LRCLK_CTRL,
-> +				      AIU_CODEC_DAC_LRCLK_CTRL_DIV,
-> +				      FIELD_PREP(AIU_CODEC_DAC_LRCLK_CTRL_DIV,
-> +						 64 - 1));
-> +
-> +	bs = fs / 64;
-> +
-> +	if (aiu->platform->has_clk_ctrl_more_i2s_div)
-> +		ret = aiu_encoder_i2s_set_more_div(component, params, bs);
-> +	else
-> +		ret = aiu_encoder_i2s_set_legacy_div(component, params, bs);
-> +
-> +	if (ret)
-> +		return ret;
-> +
->  	/* Make sure amclk is used for HDMI i2s as well */
->  	snd_soc_component_update_bits(component, AIU_CLK_CTRL_MORE,
->  				      AIU_CLK_CTRL_MORE_HDMI_AMCLK,
-> diff --git a/sound/soc/meson/aiu.c b/sound/soc/meson/aiu.c
-> index 38209312a8c3..dc35ca79021c 100644
-> --- a/sound/soc/meson/aiu.c
-> +++ b/sound/soc/meson/aiu.c
-> @@ -351,15 +351,24 @@ static int aiu_remove(struct platform_device *pdev)
->  
->  static const struct aiu_platform_data aiu_gxbb_pdata = {
->  	.has_acodec = false,
-> +	.has_clk_ctrl_more_i2s_div = true,
->  };
->  
->  static const struct aiu_platform_data aiu_gxl_pdata = {
->  	.has_acodec = true,
-> +	.has_clk_ctrl_more_i2s_div = true,
-> +};
-> +
-> +static const struct aiu_platform_data aiu_meson8_pdata = {
-> +	.has_acodec = false,
-> +	.has_clk_ctrl_more_i2s_div = false,
->  };
->  
->  static const struct of_device_id aiu_of_match[] = {
->  	{ .compatible = "amlogic,aiu-gxbb", .data = &aiu_gxbb_pdata },
->  	{ .compatible = "amlogic,aiu-gxl", .data = &aiu_gxl_pdata },
-> +	{ .compatible = "amlogic,aiu-meson8", .data = &aiu_meson8_pdata },
-> +	{ .compatible = "amlogic,aiu-meson8b", .data = &aiu_meson8_pdata },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, aiu_of_match);
-> diff --git a/sound/soc/meson/aiu.h b/sound/soc/meson/aiu.h
-> index ab003638d5e5..87aa19ac4af3 100644
-> --- a/sound/soc/meson/aiu.h
-> +++ b/sound/soc/meson/aiu.h
-> @@ -29,6 +29,7 @@ struct aiu_interface {
->  
->  struct aiu_platform_data {
->  	bool has_acodec;
-> +	bool has_clk_ctrl_more_i2s_div;
->  };
->  
->  struct aiu {
-
+RnJvbTogSsOpcsO0bWUgUG91aWxsZXIgPGplcm9tZS5wb3VpbGxlckBzaWxhYnMuY29tPgoKc2Rp
+b19zaW5nbGVfaXJxX3NldCgpIHdhcyBpbmRlbnRlZCB3aXRoIGEgbWl4IG9mIHRhYnMgYW5kIHNw
+YWNlcy4KClNpZ25lZC1vZmYtYnk6IErDqXLDtG1lIFBvdWlsbGVyIDxqZXJvbWUucG91aWxsZXJA
+c2lsYWJzLmNvbT4KLS0tCiBkcml2ZXJzL21tYy9jb3JlL3NkaW9faXJxLmMgfCAxMiArKysrKyst
+LS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCgpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMvY29yZS9zZGlvX2lycS5jIGIvZHJpdmVycy9tbWMvY29y
+ZS9zZGlvX2lycS5jCmluZGV4IDkwMDg3MTA3M2JkNy4uZmFlMjVmYzY1Yjk1IDEwMDY0NAotLS0g
+YS9kcml2ZXJzL21tYy9jb3JlL3NkaW9faXJxLmMKKysrIGIvZHJpdmVycy9tbWMvY29yZS9zZGlv
+X2lycS5jCkBAIC0yNzgsMTIgKzI3OCwxMiBAQCBzdGF0aWMgdm9pZCBzZGlvX3NpbmdsZV9pcnFf
+c2V0KHN0cnVjdCBtbWNfY2FyZCAqY2FyZCkKIAlpZiAoKGNhcmQtPmhvc3QtPmNhcHMgJiBNTUNf
+Q0FQX1NESU9fSVJRKSAmJgogCSAgICBjYXJkLT5ob3N0LT5zZGlvX2lycXMgPT0gMSkKIAkJZm9y
+IChpID0gMDsgaSA8IGNhcmQtPnNkaW9fZnVuY3M7IGkrKykgewotCQkgICAgICAgZnVuYyA9IGNh
+cmQtPnNkaW9fZnVuY1tpXTsKLQkJICAgICAgIGlmIChmdW5jICYmIGZ1bmMtPmlycV9oYW5kbGVy
+KSB7Ci0JCQkgICAgICAgY2FyZC0+c2Rpb19zaW5nbGVfaXJxID0gZnVuYzsKLQkJCSAgICAgICBi
+cmVhazsKLQkJICAgICAgIH0KLQkgICAgICAgfQorCQkJZnVuYyA9IGNhcmQtPnNkaW9fZnVuY1tp
+XTsKKwkJCWlmIChmdW5jICYmIGZ1bmMtPmlycV9oYW5kbGVyKSB7CisJCQkJY2FyZC0+c2Rpb19z
+aW5nbGVfaXJxID0gZnVuYzsKKwkJCQlicmVhazsKKwkJCX0KKwkJfQogfQogCiAvKioKLS0gCjIu
+MjUuMAoK
