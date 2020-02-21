@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABC9916709A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:46:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36DEB16709E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 08:46:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728745AbgBUHqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 02:46:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42048 "EHLO mail.kernel.org"
+        id S1728297AbgBUHqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 02:46:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728728AbgBUHqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:46:32 -0500
+        id S1728739AbgBUHqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:46:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF4EB20801;
-        Fri, 21 Feb 2020 07:46:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 831A1222C4;
+        Fri, 21 Feb 2020 07:46:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582271191;
-        bh=GM6SWoSqzW6VjK+HK2Fz5Drs/r7qVg46S6Jp0irKb0g=;
+        s=default; t=1582271194;
+        bh=gqwbBlP1p3HZ52B2xdObmey5c3N+SJaIq90toCEc2bU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qIOU7N7Czu9F7W8szbb3D/BdwqhA62TW+v/i6gq0+D+AdSNQZimMgO/cM9/1+pa00
-         JSWA136TMAY9rI+wzVK2mYvK3cfxibM71dL26awyjOeBj+oDB1GYMqJU3PM0xeCLTY
-         2SYn2proVkYwC/vgDSa5Iqc2HoUUK+zIogK83QPA=
+        b=R4Ih67B6vD7JlwbqipV7KfScPRXa2Smyz2Inb0W7iXCcr8gxtAHfTxuUNv9/1uhHm
+         PmchLpTgkyhdp/00CM4ibQPHlnKFDpGAHnV8b8EpWHBeelogFDeLEc/aKeJ7Hv79mg
+         dusiPIwZ/ZLS16G+0JcDpP43goyyRoPlmUysE5Ng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        stable@vger.kernel.org, Rob Clark <robdclark@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 036/399] drm/mipi_dbi: Fix off-by-one bugs in mipi_dbi_blank()
-Date:   Fri, 21 Feb 2020 08:36:01 +0100
-Message-Id: <20200221072405.875785924@linuxfoundation.org>
+Subject: [PATCH 5.5 037/399] drm/msm/adreno: fix zap vs no-zap handling
+Date:   Fri, 21 Feb 2020 08:36:02 +0100
+Message-Id: <20200221072405.962554582@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
 References: <20200221072402.315346745@linuxfoundation.org>
@@ -45,46 +43,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Rob Clark <robdclark@chromium.org>
 
-[ Upstream commit 2ce18249af5a28031b3f909cfafccc88ea966c9d ]
+[ Upstream commit 15ab987c423df561e0949d77fb5043921ae59956 ]
 
-When configuring the frame memory window, the last column and row
-numbers are written to the column resp. page address registers.  These
-numbers are thus one less than the actual window width resp. height.
+We can have two cases, when it comes to "zap" fw.  Either the fw
+requires zap fw to take the GPU out of secure mode at boot, or it does
+not and we can write RBBM_SECVID_TRUST_CNTL directly.  Previously we
+decided based on whether zap fw load succeeded, but this is not a great
+plan because:
 
-While this is handled correctly in mipi_dbi_fb_dirty() since commit
-03ceb1c8dfd1e293 ("drm/tinydrm: Fix setting of the column/page end
-addresses."), it is not in mipi_dbi_blank().  The latter still forgets
-to subtract one when calculating the most significant bytes of the
-column and row numbers, thus programming wrong values when the display
-width or height is a multiple of 256.
+1) we could have zap fw in the filesystem on a device where it is not
+   required
+2) we could have the inverse case
 
-Fixes: 02dd95fe31693626 ("drm/tinydrm: Add MIPI DBI support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191230130604.31006-1-geert+renesas@glider.be
+Instead, shift to deciding based on whether we have a 'zap-shader' node
+in dt.  In practice, there is only one device (currently) with upstream
+dt that does not use zap (cheza), and it already has a /delete-node/ for
+the zap-shader node.
+
+Fixes: abccb9fe3267 ("drm/msm/a6xx: Add zap shader load")
+Signed-off-by: Rob Clark <robdclark@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_mipi_dbi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 11 +++++++++--
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 11 +++++++++--
+ 2 files changed, 18 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_mipi_dbi.c b/drivers/gpu/drm/drm_mipi_dbi.c
-index e34058c721bec..16bff1be4b8ac 100644
---- a/drivers/gpu/drm/drm_mipi_dbi.c
-+++ b/drivers/gpu/drm/drm_mipi_dbi.c
-@@ -367,9 +367,9 @@ static void mipi_dbi_blank(struct mipi_dbi_dev *dbidev)
- 	memset(dbidev->tx_buf, 0, len);
+diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+index b02e2042547f6..7d9e63e20dedd 100644
+--- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+@@ -753,11 +753,18 @@ static int a5xx_hw_init(struct msm_gpu *gpu)
+ 		gpu->funcs->flush(gpu, gpu->rb[0]);
+ 		if (!a5xx_idle(gpu, gpu->rb[0]))
+ 			return -EINVAL;
+-	} else {
+-		/* Print a warning so if we die, we know why */
++	} else if (ret == -ENODEV) {
++		/*
++		 * This device does not use zap shader (but print a warning
++		 * just in case someone got their dt wrong.. hopefully they
++		 * have a debug UART to realize the error of their ways...
++		 * if you mess this up you are about to crash horribly)
++		 */
+ 		dev_warn_once(gpu->dev->dev,
+ 			"Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
+ 		gpu_write(gpu, REG_A5XX_RBBM_SECVID_TRUST_CNTL, 0x0);
++	} else {
++		return ret;
+ 	}
  
- 	mipi_dbi_command(dbi, MIPI_DCS_SET_COLUMN_ADDRESS, 0, 0,
--			 (width >> 8) & 0xFF, (width - 1) & 0xFF);
-+			 ((width - 1) >> 8) & 0xFF, (width - 1) & 0xFF);
- 	mipi_dbi_command(dbi, MIPI_DCS_SET_PAGE_ADDRESS, 0, 0,
--			 (height >> 8) & 0xFF, (height - 1) & 0xFF);
-+			 ((height - 1) >> 8) & 0xFF, (height - 1) & 0xFF);
- 	mipi_dbi_command_buf(dbi, MIPI_DCS_WRITE_MEMORY_START,
- 			     (u8 *)dbidev->tx_buf, len);
+ 	/* Last step - yield the ringbuffer */
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index dc8ec2c94301b..686c34d706b0d 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -537,12 +537,19 @@ static int a6xx_hw_init(struct msm_gpu *gpu)
+ 		a6xx_flush(gpu, gpu->rb[0]);
+ 		if (!a6xx_idle(gpu, gpu->rb[0]))
+ 			return -EINVAL;
+-	} else {
+-		/* Print a warning so if we die, we know why */
++	} else if (ret == -ENODEV) {
++		/*
++		 * This device does not use zap shader (but print a warning
++		 * just in case someone got their dt wrong.. hopefully they
++		 * have a debug UART to realize the error of their ways...
++		 * if you mess this up you are about to crash horribly)
++		 */
+ 		dev_warn_once(gpu->dev->dev,
+ 			"Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
+ 		gpu_write(gpu, REG_A6XX_RBBM_SECVID_TRUST_CNTL, 0x0);
+ 		ret = 0;
++	} else {
++		return ret;
+ 	}
  
+ out:
 -- 
 2.20.1
 
