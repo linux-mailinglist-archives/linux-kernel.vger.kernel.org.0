@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C05A9167494
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:24:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D199167235
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 09:01:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388374AbgBUIWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 03:22:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34506 "EHLO mail.kernel.org"
+        id S1731195AbgBUIBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 03:01:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388363AbgBUIWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:22:47 -0500
+        id S1731024AbgBUIBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 03:01:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF57D2467D;
-        Fri, 21 Feb 2020 08:22:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8E592073A;
+        Fri, 21 Feb 2020 08:01:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582273367;
-        bh=Vo9ppF8tbSkSkbJ7l6Xs3X6/KUsvF3UdevzqhdqS7/Y=;
+        s=default; t=1582272077;
+        bh=0yf6ce4sDrBOesE1j8wafwtcfGWYWuH7tZjl7vWwWFs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BuGGUvqUjsJmg5ifnLQr28KIyhUF26Wh9e59OvEdWMyOETeHWqeNmqUjSB3pcXdCs
-         RswMfu8p0A6UR9dIRneRhEI6SUZonC1Tq0cfy3QUGnrkYgGqMkEsdmr3C5O0lWyVE+
-         5r1PzpJfn9ocz+X6Z84tX8DeaC3epDPvHpDJD0m4=
+        b=ImkZpzxJspaB5ieOOs0GoFlH9baWE2BjBVc/cvhcxP5QEvtkOyxqtvY7thKRNxd3w
+         9PPXtll6dhYxqtmy16hefQulu4+QOtC37eSzVb4snsgWSgm3FMH7h15J2dN5GsukMU
+         PJ0rDIVCuDWQloEhqH4/uknp9cYJshuuORO7uIRc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 145/191] btrfs: safely advance counter when looking up bio csums
+Subject: [PATCH 5.5 393/399] virtio_balloon: prevent pfn array overflow
 Date:   Fri, 21 Feb 2020 08:41:58 +0100
-Message-Id: <20200221072308.005607611@linuxfoundation.org>
+Message-Id: <20200221072438.118804855@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200221072250.732482588@linuxfoundation.org>
-References: <20200221072250.732482588@linuxfoundation.org>
+In-Reply-To: <20200221072402.315346745@linuxfoundation.org>
+References: <20200221072402.315346745@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Sterba <dsterba@suse.com>
+From: Michael S. Tsirkin <mst@redhat.com>
 
-[ Upstream commit 4babad10198fa73fe73239d02c2e99e3333f5f5c ]
+[ Upstream commit 6e9826e77249355c09db6ba41cd3f84e89f4b614 ]
 
-Dan's smatch tool reports
+Make sure, at build time, that pfn array is big enough to hold a single
+page.  It happens to be true since the PAGE_SHIFT value at the moment is
+20, which is 1M - exactly 256 4K balloon pages.
 
-  fs/btrfs/file-item.c:295 btrfs_lookup_bio_sums()
-  warn: should this be 'count == -1'
-
-which points to the while (count--) loop. With count == 0 the check
-itself could decrement it to -1. There's a WARN_ON a few lines below
-that has never been seen in practice though.
-
-It turns out that the value of page_bytes_left matches the count (by
-sectorsize multiples). The loop never reaches the state where count
-would go to -1, because page_bytes_left == 0 is found first and this
-breaks out.
-
-For clarity, use only plain check on count (and only for positive
-value), decrement safely inside the loop. Any other discrepancy after
-the whole bio list processing should be reported by the exising
-WARN_ON_ONCE as well.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/file-item.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/virtio/virtio_balloon.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/btrfs/file-item.c b/fs/btrfs/file-item.c
-index 4cf2817ab1202..f9e280d0b44f3 100644
---- a/fs/btrfs/file-item.c
-+++ b/fs/btrfs/file-item.c
-@@ -275,7 +275,8 @@ found:
- 		csum += count * csum_size;
- 		nblocks -= count;
- next:
--		while (count--) {
-+		while (count > 0) {
-+			count--;
- 			disk_bytenr += fs_info->sectorsize;
- 			offset += fs_info->sectorsize;
- 			page_bytes_left -= fs_info->sectorsize;
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index 7e5d84caeb940..7bfe365d93720 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -158,6 +158,8 @@ static void set_page_pfns(struct virtio_balloon *vb,
+ {
+ 	unsigned int i;
+ 
++	BUILD_BUG_ON(VIRTIO_BALLOON_PAGES_PER_PAGE > VIRTIO_BALLOON_ARRAY_PFNS_MAX);
++
+ 	/*
+ 	 * Set balloon pfns pointing at this page.
+ 	 * Note that the first pfn points at start of the page.
 -- 
 2.20.1
 
