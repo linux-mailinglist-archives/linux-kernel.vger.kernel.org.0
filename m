@@ -2,118 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33F38167F8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 633F0167F81
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Feb 2020 15:03:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728848AbgBUOEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 09:04:39 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:41500 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728228AbgBUOEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:04:39 -0500
-Received: from zn.tnic (p200300EC2F090A006DBA3D6338540E70.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:a00:6dba:3d63:3854:e70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 31BA61EC013F;
-        Fri, 21 Feb 2020 15:04:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582293877;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=x0fzHa7Cf9E295Bqa5BO51qM8xrIeqQzCJUTtrURefg=;
-        b=U3itHwo/rmDus63XbCBbMMJwZLEqu+6VwdVwRnlSFt3Rhwc09OuERGY+DWgi+B26APfo1a
-        9ZoZtGsyU9/AbK+lTXi0AwqYwOkjfxV3ebDvDDX8818WE4ppvJ9T1YGZlCdnmbuthbjTxS
-        rbTBllQAHPzoSIl0UoSLeZKU2XjL6LU=
-Date:   Fri, 21 Feb 2020 15:04:33 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 4/8] x86/fpu/xstate: Define new functions for clearing
- fpregs and xstates
-Message-ID: <20200221140433.GF25747@zn.tnic>
-References: <20200121201843.12047-1-yu-cheng.yu@intel.com>
- <20200121201843.12047-5-yu-cheng.yu@intel.com>
+        id S1728804AbgBUODa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 09:03:30 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10662 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727876AbgBUODa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 09:03:30 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7F25D60998780C0EA439;
+        Fri, 21 Feb 2020 22:03:22 +0800 (CST)
+Received: from huawei.com (10.175.105.18) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Fri, 21 Feb 2020
+ 22:03:13 +0800
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
+        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
+        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>
+CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+Subject: [PATCH v2] KVM: apic: avoid calculating pending eoi from an uninitialized val
+Date:   Fri, 21 Feb 2020 22:04:46 +0800
+Message-ID: <1582293886-23335-1-git-send-email-linmiaohe@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200121201843.12047-5-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.175.105.18]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 12:18:39PM -0800, Yu-cheng Yu wrote:
-> @@ -318,9 +313,29 @@ static inline void copy_init_fpstate_to_fpregs(void)
->   * Called by sys_execve(), by the signal handler code and by various
->   * error paths.
->   */
-> -void fpu__clear(struct fpu *fpu)
-> +void fpu__clear_user_states(struct fpu *fpu)
-> +{
-> +	WARN_ON_FPU(fpu != &current->thread.fpu);
-> +
-> +	if (static_cpu_has(X86_FEATURE_FPU)) {
-> +		fpregs_lock();
-> +		if (!fpregs_state_valid(fpu, smp_processor_id()) &&
-> +		    xfeatures_mask_supervisor())
-> +			copy_kernel_to_xregs(&fpu->state.xsave,
-> +					     xfeatures_mask_supervisor());
-> +		copy_init_fpstate_to_fpregs(xfeatures_mask_user());
-> +		fpregs_mark_activate();
-> +		fpregs_unlock();
-> +		return;
-> +	} else {
-> +		fpu__drop(fpu);
-> +		fpu__initialize(fpu);
-> +	}
-> +}
-> +
-> +void fpu__clear_all(struct fpu *fpu)
->  {
-> -	WARN_ON_FPU(fpu != &current->thread.fpu); /* Almost certainly an anomaly */
-> +	WARN_ON_FPU(fpu != &current->thread.fpu);
->  
->  	fpu__drop(fpu);
->  
-> @@ -328,8 +343,12 @@ void fpu__clear(struct fpu *fpu)
->  	 * Make sure fpstate is cleared and initialized.
->  	 */
->  	fpu__initialize(fpu);
-> -	if (static_cpu_has(X86_FEATURE_FPU))
-> -		copy_init_fpstate_to_fpregs();
-> +	if (static_cpu_has(X86_FEATURE_FPU)) {
-> +		fpregs_lock();
-> +		copy_init_fpstate_to_fpregs(xfeatures_mask_all);
-> +		fpregs_mark_activate();
-> +		fpregs_unlock();
-> +	}
->  }
+From: Miaohe Lin <linmiaohe@huawei.com>
 
-Why do you need two different functions which are pretty similar if you
-can do
+When pv_eoi_get_user() fails, 'val' may remain uninitialized and the return
+value of pv_eoi_get_pending() becomes random. Fix the issue by initializing
+the variable.
 
-fpu__clear(struct fpu *fpu, bool user_only)
-{
-	...
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+---
+v1->v2:
+Collect Vitaly' R-b.
+Use Vitaly' alternative wording.
+Explicitly handle the error, as suggested by Sean.
+---
+ arch/x86/kvm/lapic.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-and query that user_only variable in the fpu__clear() body to do the
-respective work dependent on the its setting?
-
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 4f14ec7525f6..b4aca77efc8e 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -627,9 +627,11 @@ static inline bool pv_eoi_enabled(struct kvm_vcpu *vcpu)
+ static bool pv_eoi_get_pending(struct kvm_vcpu *vcpu)
+ {
+ 	u8 val;
+-	if (pv_eoi_get_user(vcpu, &val) < 0)
++	if (pv_eoi_get_user(vcpu, &val) < 0) {
+ 		printk(KERN_WARNING "Can't read EOI MSR value: 0x%llx\n",
+ 			   (unsigned long long)vcpu->arch.pv_eoi.msr_val);
++		return false;
++	}
+ 	return val & 0x1;
+ }
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.19.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
