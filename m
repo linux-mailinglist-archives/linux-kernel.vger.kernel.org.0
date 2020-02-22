@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41211168E40
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 11:27:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BE9D168E46
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 11:27:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbgBVK1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 05:27:23 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38800 "EHLO
+        id S1727483AbgBVK13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 05:27:29 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38816 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726883AbgBVK1W (ORCPT
+        with ESMTP id S1727134AbgBVK1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Feb 2020 05:27:22 -0500
 Received: from localhost.localdomain (unknown [IPv6:2a01:e0a:2c:6930:b93f:9fae:b276:a89a])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id D05502912E5;
-        Sat, 22 Feb 2020 10:27:20 +0000 (GMT)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 11BC72912ED;
+        Sat, 22 Feb 2020 10:27:21 +0000 (GMT)
 From:   Boris Brezillon <boris.brezillon@collabora.com>
 To:     Boris Brezillon <bbrezillon@kernel.org>,
         =?UTF-8?q?Przemys=C5=82aw=20Gaj?= <pgaj@cadence.com>,
@@ -25,9 +25,9 @@ To:     Boris Brezillon <bbrezillon@kernel.org>,
         linux-i3c@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org,
         Boris Brezillon <boris.brezillon@collabora.com>
-Subject: [PATCH 2/3] i3c: Generate aliases for i3c modules
-Date:   Sat, 22 Feb 2020 11:27:10 +0100
-Message-Id: <20200222102711.1352006-3-boris.brezillon@collabora.com>
+Subject: [PATCH 3/3] i3c: Simplify i3c_device_match_id()
+Date:   Sat, 22 Feb 2020 11:27:11 +0100
+Message-Id: <20200222102711.1352006-4-boris.brezillon@collabora.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200222102711.1352006-1-boris.brezillon@collabora.com>
 References: <20200222102711.1352006-1-boris.brezillon@collabora.com>
@@ -38,70 +38,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This part was missing, thus preventing user space from loading modules
-automatically when MODALIAS uevents are received.
+Simply match against ->match_flags instead of trying to be smart and
+fix drivers inconsistent ID tables.
 
 Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
 ---
- scripts/mod/devicetable-offsets.c |  7 +++++++
- scripts/mod/file2alias.c          | 19 +++++++++++++++++++
- 2 files changed, 26 insertions(+)
+ drivers/i3c/device.c | 50 +++++++++++++++++++-------------------------
+ 1 file changed, 22 insertions(+), 28 deletions(-)
 
-diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
-index 054405b90ba4..d3c237b9b7c0 100644
---- a/scripts/mod/devicetable-offsets.c
-+++ b/scripts/mod/devicetable-offsets.c
-@@ -145,6 +145,13 @@ int main(void)
- 	DEVID(i2c_device_id);
- 	DEVID_FIELD(i2c_device_id, name);
+diff --git a/drivers/i3c/device.c b/drivers/i3c/device.c
+index 9e2e1406f85e..bb8e60dff988 100644
+--- a/drivers/i3c/device.c
++++ b/drivers/i3c/device.c
+@@ -213,40 +213,34 @@ i3c_device_match_id(struct i3c_device *i3cdev,
+ {
+ 	struct i3c_device_info devinfo;
+ 	const struct i3c_device_id *id;
++	u16 manuf, part, ext_info;
++	bool rndpid;
  
-+	DEVID(i3c_device_id);
-+	DEVID_FIELD(i3c_device_id, match_flags);
-+	DEVID_FIELD(i3c_device_id, dcr);
-+	DEVID_FIELD(i3c_device_id, manuf_id);
-+	DEVID_FIELD(i3c_device_id, part_id);
-+	DEVID_FIELD(i3c_device_id, extra_info);
-+
- 	DEVID(spi_device_id);
- 	DEVID_FIELD(spi_device_id, name);
+ 	i3c_device_get_info(i3cdev, &devinfo);
  
-diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-index c91eba751804..1754de3f119f 100644
---- a/scripts/mod/file2alias.c
-+++ b/scripts/mod/file2alias.c
-@@ -919,6 +919,24 @@ static int do_i2c_entry(const char *filename, void *symval,
- 	return 1;
- }
+-	/*
+-	 * The lower 32bits of the provisional ID is just filled with a random
+-	 * value, try to match using DCR info.
+-	 */
+-	if (!I3C_PID_RND_LOWER_32BITS(devinfo.pid)) {
+-		u16 manuf = I3C_PID_MANUF_ID(devinfo.pid);
+-		u16 part = I3C_PID_PART_ID(devinfo.pid);
+-		u16 ext_info = I3C_PID_EXTRA_INFO(devinfo.pid);
+-
+-		/* First try to match by manufacturer/part ID. */
+-		for (id = id_table; id->match_flags != 0; id++) {
+-			if ((id->match_flags & I3C_MATCH_MANUF_AND_PART) !=
+-			    I3C_MATCH_MANUF_AND_PART)
+-				continue;
+-
+-			if (manuf != id->manuf_id || part != id->part_id)
+-				continue;
+-
+-			if ((id->match_flags & I3C_MATCH_EXTRA_INFO) &&
+-			    ext_info != id->extra_info)
+-				continue;
+-
+-			return id;
+-		}
+-	}
++	manuf = I3C_PID_MANUF_ID(devinfo.pid);
++	part = I3C_PID_PART_ID(devinfo.pid);
++	ext_info = I3C_PID_EXTRA_INFO(devinfo.pid);
++	rndpid = I3C_PID_RND_LOWER_32BITS(devinfo.pid);
  
-+static int do_i3c_entry(const char *filename, void *symval,
-+			char *alias)
-+{
-+	DEF_FIELD(symval, i3c_device_id, match_flags);
-+	DEF_FIELD(symval, i3c_device_id, dcr);
-+	DEF_FIELD(symval, i3c_device_id, manuf_id);
-+	DEF_FIELD(symval, i3c_device_id, part_id);
-+	DEF_FIELD(symval, i3c_device_id, extra_info);
+-	/* Fallback to DCR match. */
+ 	for (id = id_table; id->match_flags != 0; id++) {
+ 		if ((id->match_flags & I3C_MATCH_DCR) &&
+-		    id->dcr == devinfo.dcr)
+-			return id;
++		    id->dcr != devinfo.dcr)
++			continue;
 +
-+	strcpy(alias, "i3c:");
-+	ADD(alias, "dcr", match_flags & I3C_MATCH_DCR, dcr);
-+	ADD(alias, "manuf", match_flags & I3C_MATCH_MANUF, dcr);
-+	ADD(alias, "part", match_flags & I3C_MATCH_PART, dcr);
-+	ADD(alias, "ext", match_flags & I3C_MATCH_EXTRA_INFO, dcr);
++		if ((id->match_flags & I3C_MATCH_MANUF) &&
++		    id->manuf_id != manuf)
++			continue;
 +
-+	return 1;
-+}
++		if ((id->match_flags & I3C_MATCH_PART) &&
++		    (rndpid || id->part_id != part))
++			continue;
 +
- /* Looks like: spi:S */
- static int do_spi_entry(const char *filename, void *symval,
- 			char *alias)
-@@ -1386,6 +1404,7 @@ static const struct devtable devtable[] = {
- 	{"vmbus", SIZE_hv_vmbus_device_id, do_vmbus_entry},
- 	{"rpmsg", SIZE_rpmsg_device_id, do_rpmsg_entry},
- 	{"i2c", SIZE_i2c_device_id, do_i2c_entry},
-+	{"i3c", SIZE_i3c_device_id, do_i3c_entry},
- 	{"spi", SIZE_spi_device_id, do_spi_entry},
- 	{"dmi", SIZE_dmi_system_id, do_dmi_entry},
- 	{"platform", SIZE_platform_device_id, do_platform_entry},
++		if ((id->match_flags & I3C_MATCH_EXTRA_INFO) &&
++		    (rndpid || id->extra_info != ext_info))
++			continue;
++
++		return id;
+ 	}
+ 
+ 	return NULL;
 -- 
 2.24.1
 
