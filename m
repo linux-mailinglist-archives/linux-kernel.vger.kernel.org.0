@@ -2,79 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6A20168DA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 09:40:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E3E4168DCD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 10:00:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbgBVIkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 03:40:17 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:42513 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbgBVIkR (ORCPT
+        id S1726895AbgBVJAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 04:00:15 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60472 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbgBVJAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 03:40:17 -0500
-Received: by mail-il1-f195.google.com with SMTP id x2so3666895ila.9
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 00:40:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=RFjST6WTWl2HErgo/MFlw9oz3Ck4pyxWRgkJWzlGF00=;
-        b=Qs0vMNbgboeKoJdgShSPNbUNvBC5jItjNyaMjFKVb9Beg0P40xL5Rg7aiUF9uxACsk
-         txXIXXMpp/5iuKsuwAoye+vSaWMyG6TXX77manRm3IjkgTQLfm0zQsMhFUJl/6MTgUgY
-         LZGh6hxSNCsUX9vPe8BLZzW0PEE6gmWSxKowuvgPMK9wqibqiCgDl4jdAzT7/qA8kGkq
-         nSZfgFV/LgC+ZWGLYxRWPkntGkjQokXxlJnHNQzjbTdpQ7KwG1gAH2j+t9j13G3HJFCB
-         GFTYg6BDHVex0y5T8x3yZhGczFA23GsKWnc+Zv/Qc4oC9U6nT/BXsO9kjT7bCB4S+TR8
-         ur+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=RFjST6WTWl2HErgo/MFlw9oz3Ck4pyxWRgkJWzlGF00=;
-        b=JFS2ZBgrqlivwmv4hisWUmI3QitJDahz0Mp0y1ltHtyAap0JTpQs9927dY8y5zjhEN
-         UXU+BNlM4aEQZp0PdOmaVswGd+drFM/fsGjW9bBRpbZXLQSZImufQHasGe8jtPJTdlq0
-         rBcvZoorSiA1tx7e5riCguGLSxuvhOiQLrtlcIGy6Eg7Lx7bOAccOlXkrx1eqBfUbWDf
-         uXwio84VRYI+CYesy5Eo3zRjFbMpvS/ctBlU6pVq27pN0S3FZrPMuvvVLgzbsKNLB/HW
-         xPhl6AuQo1t2w0yNgHUYlFbxihVDtD5MsEQj+SDmmLVISMtRrf4WUZwInSkH+9lsvy6y
-         vJfQ==
-X-Gm-Message-State: APjAAAUMIFhHJ9uH28B5LKtjAhlzekImgNiJnpgMKwt/XOJXH6I4clKJ
-        gds81bVKgOJ51PRtCPBkTLhTCOJrNaswNqwV7oc=
-X-Google-Smtp-Source: APXvYqyJWBS2QZZ4wuyLm87Dwp3QGAFtLc3l2GPfmsnm6ozP+x/RCQW6tI+cr8yg8kUKLT8jNPJOo13iplRdC6VlMBk=
-X-Received: by 2002:a92:de05:: with SMTP id x5mr42046065ilm.74.1582360816554;
- Sat, 22 Feb 2020 00:40:16 -0800 (PST)
+        Sat, 22 Feb 2020 04:00:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=aJs9pJeE+9fdOcI7/UPFRTUtMdT9B/Ve+SdsB+frIL4=; b=KL1M64rWlOXYXR2gLzTT+zPcN0
+        qJErSWCTDKVHoG+nIA5ElK7DfGtiprKGHPXGLpDV1LczB13UpHImVFWeT12mRrHWh8wRjA6ILl+Mf
+        OMyKSAYmpetgZS05z01j7+ITUHKu/IXpupcntKqCzHloZiUjg5AD0ppdgId0bQJVfUTAUdzk1XVl4
+        8220qixRowcrOJ8sB6hqCtY4Df8/O8rWh+0qp6OkNyalcumYrcL0vlRG3cgHnEoVUvQOSSn6Dqk2e
+        OayOI5TEddGtj9SVpciPhAtQ5x1JfEP4RbUYLKw9kt/b1NvuM/jZWd4XK82wzBIDhQg4fEQLwogXh
+        xZ1Etujg==;
+Received: from [80.156.29.194] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j5Qdz-0007Hm-5U; Sat, 22 Feb 2020 09:00:15 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92.3)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1j5Qdx-001N48-Fd; Sat, 22 Feb 2020 10:00:13 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] Some cross-reference fixes due to fixes renames
+Date:   Sat, 22 Feb 2020 10:00:00 +0100
+Message-Id: <cover.1582361737.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Received: by 2002:a02:548a:0:0:0:0:0 with HTTP; Sat, 22 Feb 2020 00:40:16
- -0800 (PST)
-Reply-To: dunawattara96@outlook.com
-From:   Mr Duna Wattara <drhajizo31@gmail.com>
-Date:   Sat, 22 Feb 2020 00:40:16 -0800
-Message-ID: <CACp2wHw9QgyHQWdzzvqdJ0HVKp8ft5WGZkhBNfkRtPxZ+kwM1g@mail.gmail.com>
-Subject: with due respect
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+There are some references that got broken due to renames
+(mostly .txt to .yaml and .rst, but also some files got moved
+to other directories).
 
-I know that this mail will come to you as a surprise as we have never
-met before, but need not to worry as I am contacting you independently
-of my investigation and no one is informed of this communication.
+The first patch actually contains a fix for
+documentation-file-ref-check, with currently reports several
+false positives.
 
-I need your urgent assistance in transferring the sum of $11.3million
-immediately to your private account.The money has been here in our
-Bank lying dormant for years now without anybody coming for the claim of it.
+Mauro Carvalho Chehab (7):
+  scripts: documentation-file-ref-check: improve :doc: handling
+  docs: dt: fix several broken references due to renames
+  docs: fix broken references to text files
+  docs: adm1177: fix a broken reference
+  docs: fix broken references for ReST files that moved around
+  docs: remove nompx kernel parameter and intel_mpx from index.rst
+  docs: gpu: i915.rst: fix warnings due to file renames
 
-I want to release the money to you as the relative to our deceased
-customer (the account owner) who died a long with his supposed NEXT OF
-KIN since 16th October 2005. The Banking laws here does not allow such
-money to stay more than 15 years, because the money will be recalled
-to the Bank treasury account as unclaimed fund.
+ Documentation/admin-guide/kernel-parameters.txt    | 14 +++++---------
+ Documentation/admin-guide/sysctl/kernel.rst        |  2 +-
+ Documentation/devicetree/bindings/arm/arm,scmi.txt |  2 +-
+ Documentation/devicetree/bindings/arm/arm,scpi.txt |  2 +-
+ .../devicetree/bindings/arm/bcm/brcm,bcm63138.txt  |  2 +-
+ .../bindings/arm/hisilicon/hi3519-sysctrl.txt      |  2 +-
+ .../bindings/arm/msm/qcom,idle-state.txt           |  2 +-
+ Documentation/devicetree/bindings/arm/omap/mpu.txt |  2 +-
+ Documentation/devicetree/bindings/arm/psci.yaml    |  2 +-
+ .../bindings/clock/qcom,gcc-apq8064.yaml           |  2 +-
+ .../devicetree/bindings/display/tilcdc/tilcdc.txt  |  2 +-
+ Documentation/devicetree/bindings/leds/common.yaml |  2 +-
+ .../devicetree/bindings/leds/register-bit-led.txt  |  2 +-
+ .../bindings/memory-controllers/ti/emif.txt        |  2 +-
+ .../devicetree/bindings/misc/fsl,qoriq-mc.txt      |  2 +-
+ .../bindings/pinctrl/aspeed,ast2400-pinctrl.yaml   |  2 +-
+ .../bindings/pinctrl/aspeed,ast2500-pinctrl.yaml   |  2 +-
+ .../bindings/pinctrl/aspeed,ast2600-pinctrl.yaml   |  2 +-
+ .../bindings/power/amlogic,meson-ee-pwrc.yaml      |  2 +-
+ .../devicetree/bindings/reset/st,stm32mp1-rcc.txt  |  2 +-
+ .../bindings/thermal/brcm,avs-ro-thermal.yaml      |  2 +-
+ Documentation/doc-guide/maintainer-profile.rst     |  2 +-
+ Documentation/filesystems/cifs/cifsroot.txt        |  2 +-
+ Documentation/gpu/i915.rst                         |  4 ++--
+ Documentation/hwmon/adm1177.rst                    |  3 +--
+ Documentation/memory-barriers.txt                  |  2 +-
+ Documentation/process/submit-checklist.rst         |  2 +-
+ .../it_IT/process/submit-checklist.rst             |  2 +-
+ .../translations/ko_KR/memory-barriers.txt         |  2 +-
+ .../translations/zh_CN/filesystems/sysfs.txt       |  2 +-
+ .../zh_CN/process/submit-checklist.rst             |  2 +-
+ Documentation/virt/kvm/arm/pvtime.rst              |  2 +-
+ Documentation/virt/kvm/devices/vcpu.rst            |  2 +-
+ Documentation/virt/kvm/hypercalls.rst              |  4 ++--
+ Documentation/virt/kvm/mmu.rst                     |  2 +-
+ Documentation/virt/kvm/review-checklist.rst        |  2 +-
+ Documentation/x86/index.rst                        |  1 -
+ MAINTAINERS                                        |  8 ++++----
+ arch/powerpc/include/uapi/asm/kvm_para.h           |  2 +-
+ arch/x86/kvm/mmu/mmu.c                             |  2 +-
+ .../crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c    |  2 +-
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c  |  2 +-
+ .../crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c    |  2 +-
+ drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c  |  2 +-
+ drivers/gpu/drm/Kconfig                            |  2 +-
+ drivers/gpu/drm/drm_ioctl.c                        |  2 +-
+ drivers/hwtracing/coresight/Kconfig                |  2 +-
+ drivers/media/v4l2-core/v4l2-fwnode.c              |  2 +-
+ fs/fat/Kconfig                                     |  8 ++++----
+ fs/fuse/Kconfig                                    |  2 +-
+ fs/fuse/dev.c                                      |  2 +-
+ fs/nfs/Kconfig                                     |  2 +-
+ fs/overlayfs/Kconfig                               |  6 +++---
+ include/linux/mm.h                                 |  4 ++--
+ include/uapi/linux/ethtool_netlink.h               |  2 +-
+ include/uapi/linux/kvm.h                           |  4 ++--
+ include/uapi/rdma/rdma_user_ioctl_cmds.h           |  2 +-
+ mm/gup.c                                           | 12 ++++++------
+ net/ipv4/Kconfig                                   |  6 +++---
+ net/ipv4/ipconfig.c                                |  2 +-
+ scripts/documentation-file-ref-check               | 11 +++++++++--
+ tools/include/uapi/linux/kvm.h                     |  4 ++--
+ virt/kvm/arm/vgic/vgic-mmio-v3.c                   |  2 +-
+ virt/kvm/arm/vgic/vgic.h                           |  4 ++--
+ 64 files changed, 96 insertions(+), 95 deletions(-)
 
-By indicating your interest I will send you the full details on how
-the business will be executed.
+-- 
+2.24.1
 
-Please respond urgently and delete if you are not interested.
-
-Best Regards,
-Mr. Duna Wattara.
