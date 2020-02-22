@@ -2,117 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BE9D168E46
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 11:27:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 007D1168E4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 11:40:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbgBVK13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 05:27:29 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38816 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727134AbgBVK1W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 05:27:22 -0500
-Received: from localhost.localdomain (unknown [IPv6:2a01:e0a:2c:6930:b93f:9fae:b276:a89a])
+        id S1727102AbgBVKkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 05:40:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726763AbgBVKkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 05:40:09 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 11BC72912ED;
-        Sat, 22 Feb 2020 10:27:21 +0000 (GMT)
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Boris Brezillon <bbrezillon@kernel.org>,
-        =?UTF-8?q?Przemys=C5=82aw=20Gaj?= <pgaj@cadence.com>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        linux-i3c@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@collabora.com>
-Subject: [PATCH 3/3] i3c: Simplify i3c_device_match_id()
-Date:   Sat, 22 Feb 2020 11:27:11 +0100
-Message-Id: <20200222102711.1352006-4-boris.brezillon@collabora.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200222102711.1352006-1-boris.brezillon@collabora.com>
-References: <20200222102711.1352006-1-boris.brezillon@collabora.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id D7B7D206E2;
+        Sat, 22 Feb 2020 10:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582368009;
+        bh=6Wmafw7bm+Sez1pspQxTJG8ckuulq3Dz0SOXvtDrc8A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hJ8vBz5YImwnzyR06r0PXFCCN11xWNCuBXVBewnggMEXfopP9vYh1WEsVMg+gPhTA
+         Pta7BW5qW7O0b8swPoD0AcoUJLoyU8UZTxeguzE+JF5jwVXQCY094k+ou6/5ZW+9d2
+         wWxV4aYnWdNzE/lGr7ZsYz7aTDrMVRFADKpQVn80=
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1j5SCc-007C3Z-NX; Sat, 22 Feb 2020 10:40:06 +0000
+Date:   Sat, 22 Feb 2020 10:40:05 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, linux@armlinux.org.uk, tglx@linutronix.de,
+        luto@kernel.org, m.szyprowski@samsung.com, Mark.Rutland@arm.com
+Subject: Re: [PATCH v2 0/3] Fix arm_arch_timer clockmode when vDSO disabled
+Message-ID: <20200222104005.6fc4019d@why>
+In-Reply-To: <20200221181849.40351-1-vincenzo.frascino@arm.com>
+References: <20200221181849.40351-1-vincenzo.frascino@arm.com>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: vincenzo.frascino@arm.com, linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, linux@armlinux.org.uk, tglx@linutronix.de, luto@kernel.org, m.szyprowski@samsung.com, Mark.Rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simply match against ->match_flags instead of trying to be smart and
-fix drivers inconsistent ID tables.
+On Fri, 21 Feb 2020 18:18:46 +0000
+Vincenzo Frascino <vincenzo.frascino@arm.com> wrote:
 
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
----
- drivers/i3c/device.c | 50 +++++++++++++++++++-------------------------
- 1 file changed, 22 insertions(+), 28 deletions(-)
+> The arm_arch_timer requires that VDSO_CLOCKMODE_ARCHTIMER to be
+> defined to compile correctly. On arm the vDSO can be disabled and when
+> this is the case the compilation ends prematurely with an error:
+>=20
+>  $ make ARCH=3Darm multi_v7_defconfig
+>  $ ./scripts/config -d VDSO
+>  $ make
+>=20
+>  drivers/clocksource/arm_arch_timer.c:73:44: error:
+>  =E2=80=98VDSO_CLOCKMODE_ARCHTIMER=E2=80=99 undeclared here (not in a fun=
+ction)
+>  static enum vdso_clock_mode vdso_default =3D VDSO_CLOCKMODE_ARCHTIMER;
+>                                             ^
+>  scripts/Makefile.build:267: recipe for target
+>  'drivers/clocksource/arm_arch_timer.o' failed
+>  make[2]: *** [drivers/clocksource/arm_arch_timer.o] Error 1
+>  make[2]: *** Waiting for unfinished jobs....
+>  scripts/Makefile.build:505: recipe for target 'drivers/clocksource' fail=
+ed
+>  make[1]: *** [drivers/clocksource] Error 2
+>  make[1]: *** Waiting for unfinished jobs....
+>  Makefile:1683: recipe for target 'drivers' failed
+>  make: *** [drivers] Error 2
+>=20
+> This patch series addresses the issue defining a default arch clockmode
+> for arm and arm64 and using it to initialize the arm_arch_timer.
 
-diff --git a/drivers/i3c/device.c b/drivers/i3c/device.c
-index 9e2e1406f85e..bb8e60dff988 100644
---- a/drivers/i3c/device.c
-+++ b/drivers/i3c/device.c
-@@ -213,40 +213,34 @@ i3c_device_match_id(struct i3c_device *i3cdev,
- {
- 	struct i3c_device_info devinfo;
- 	const struct i3c_device_id *id;
-+	u16 manuf, part, ext_info;
-+	bool rndpid;
- 
- 	i3c_device_get_info(i3cdev, &devinfo);
- 
--	/*
--	 * The lower 32bits of the provisional ID is just filled with a random
--	 * value, try to match using DCR info.
--	 */
--	if (!I3C_PID_RND_LOWER_32BITS(devinfo.pid)) {
--		u16 manuf = I3C_PID_MANUF_ID(devinfo.pid);
--		u16 part = I3C_PID_PART_ID(devinfo.pid);
--		u16 ext_info = I3C_PID_EXTRA_INFO(devinfo.pid);
--
--		/* First try to match by manufacturer/part ID. */
--		for (id = id_table; id->match_flags != 0; id++) {
--			if ((id->match_flags & I3C_MATCH_MANUF_AND_PART) !=
--			    I3C_MATCH_MANUF_AND_PART)
--				continue;
--
--			if (manuf != id->manuf_id || part != id->part_id)
--				continue;
--
--			if ((id->match_flags & I3C_MATCH_EXTRA_INFO) &&
--			    ext_info != id->extra_info)
--				continue;
--
--			return id;
--		}
--	}
-+	manuf = I3C_PID_MANUF_ID(devinfo.pid);
-+	part = I3C_PID_PART_ID(devinfo.pid);
-+	ext_info = I3C_PID_EXTRA_INFO(devinfo.pid);
-+	rndpid = I3C_PID_RND_LOWER_32BITS(devinfo.pid);
- 
--	/* Fallback to DCR match. */
- 	for (id = id_table; id->match_flags != 0; id++) {
- 		if ((id->match_flags & I3C_MATCH_DCR) &&
--		    id->dcr == devinfo.dcr)
--			return id;
-+		    id->dcr != devinfo.dcr)
-+			continue;
-+
-+		if ((id->match_flags & I3C_MATCH_MANUF) &&
-+		    id->manuf_id != manuf)
-+			continue;
-+
-+		if ((id->match_flags & I3C_MATCH_PART) &&
-+		    (rndpid || id->part_id != part))
-+			continue;
-+
-+		if ((id->match_flags & I3C_MATCH_EXTRA_INFO) &&
-+		    (rndpid || id->extra_info != ext_info))
-+			continue;
-+
-+		return id;
- 	}
- 
- 	return NULL;
--- 
-2.24.1
+arm only. arm64 is just fine.
 
+>=20
+> Changes:
+> --------
+> v2:
+>   - Addressed Marc Zyngier comments.
+>   - Rebased on 5.6-rc2.
+
+This doesn't apply to -rc2, and is rather against next.
+
+>=20
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Mark Rutland <Mark.Rutland@arm.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+>=20
+> Vincenzo Frascino (3):
+>   arm: clocksource: Add VDSO default clockmode
+>   arm64: clocksource: Add VDSO default clockmode
+>   clocksource: Fix arm_arch_timer clockmode when vDSO disabled
+
+Please squash the three patches into a single one. There is zero point
+in having 3 patches for something that small.
+
+	M.
+--=20
+Jazz is not dead. It just smells funny...
