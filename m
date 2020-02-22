@@ -2,91 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ED7B168D01
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 07:55:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D8DF168D03
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 07:56:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbgBVGz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 01:55:29 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37122 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727093AbgBVGz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 01:55:28 -0500
-Received: from zn.tnic (p200300EC2F1C5400284D3F3FD3B9EA68.dip0.t-ipconnect.de [IPv6:2003:ec:2f1c:5400:284d:3f3f:d3b9:ea68])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B54651EC05FD;
-        Sat, 22 Feb 2020 07:55:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582354526;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=6uugywjmabDqx6fKLmBOr1M10mUKtzr6ahR9wgIuTjE=;
-        b=Jsob8vt+NOx4VTXZP/fgxAGhnZYcbKUSNS6X7XxPTHs9e8fgC+dku9W4+vCPphDri2z/5h
-        6ybAyqoVOVU0NaWyKjjFvEpLpundLmCpb5z4uF9ljj4+j1EDo503/T9pYXzxtvXvTbEU4g
-        HHJtw03EAvK7/rtQzB5d000rqXN7ZBA=
-Date:   Sat, 22 Feb 2020 07:55:21 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Michael Matz <matz@suse.de>
-Subject: Re: [PATCH 2/2] x86/boot/compressed: Remove unnecessary sections
- from bzImage
-Message-ID: <20200222065521.GA11284@zn.tnic>
-References: <20200109150218.16544-1-nivedita@alum.mit.edu>
- <20200109150218.16544-2-nivedita@alum.mit.edu>
- <20200222050845.GA19912@ubuntu-m2-xlarge-x86>
+        id S1727244AbgBVG4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 01:56:14 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39344 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727080AbgBVG4N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 01:56:13 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 84so2460198pfy.6;
+        Fri, 21 Feb 2020 22:56:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=P1m+5CvuP9WCDPeB2rpqQfl3ZDcAcnZi8bxAc6P+hRk=;
+        b=dPURgE2Lm4GaZRYbjxHDP2B3otEz+xUJEcA5i3LVcJjawKYEdOuzaftuH86Hvn+z2u
+         p/HVStoCr46D2r7vAdKIPPtDTw4Ri6UvouwJXuUMdRnjZR1uRFWRzplttwg9dEQVxU19
+         1NG0zIrux8y1zMOTymtU3BKJ784cQOyQRz5msCWx/YsIFqY961KYxuzX3vGbVwouhQQz
+         ik8FgDZLGYnmcK/wYxvm6zW8PFY+Z5VTTRXJXHAH5fTCVu26af795nwaVHxInjqxlJoD
+         Ypo8gnLH4AqjLeMSFFSB4nCkVEYNbTnuLJM9gTLI/IxYz+6WNlc5FJztHC4QepS+LQ0x
+         j1Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=P1m+5CvuP9WCDPeB2rpqQfl3ZDcAcnZi8bxAc6P+hRk=;
+        b=pFFGm2OYdezz9RIN+NiokpC6oFQTjf9OFow8vQtWIj+gdssLPpLkI3TOqOZuwm4TQK
+         XsIW0URTXLn+HqYBJ7IPFPrRq6drpQI1HJxIt/Cc/6ntsclADWbbWgNkcVFtpl1hN6iB
+         qDTWnpIdPSqdyjaiZrJrnJjeU9oj8KBa8EEvh24iUNw+fVBEcqbkE0SXl1er8gGekshk
+         MZwFvNPHd749kbNvxAatidVyWnzuWDZ5Hd6z2i0eS9Ub10JtCQ9w3otpuRolZJ6+HeS1
+         7fmgLFGTFZ0JNn9VDvitX7SriNPIexrYmUL764IICEuUc8as5tquxf/5A9v5yZa7sGVU
+         drAg==
+X-Gm-Message-State: APjAAAUkumCcKlqbo6Zze+Bkro+jhTEBPHNY4NdYVv04XTDOXyizJsJq
+        8Oa+vO8heBsATRbUaHAOdw==
+X-Google-Smtp-Source: APXvYqwowHvFtBe6LpkACUng2s38E8ahG4DvKaIDLCfgUrVAiTcya7q3HI8cDbC0aT0bMh1HGsTSXA==
+X-Received: by 2002:aa7:9359:: with SMTP id 25mr41508430pfn.188.1582354573071;
+        Fri, 21 Feb 2020 22:56:13 -0800 (PST)
+Received: from madhuparna-HP-Notebook ([42.109.147.216])
+        by smtp.gmail.com with ESMTPSA id z127sm4456084pgb.64.2020.02.21.22.56.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Feb 2020 22:56:12 -0800 (PST)
+From:   Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+X-Google-Original-From: Madhuparna Bhowmik <change_this_user_name@gmail.com>
+Date:   Sat, 22 Feb 2020 12:25:36 +0530
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     madhuparnabhowmik10@gmail.com, jiri@mellanox.com,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
+        frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org
+Subject: Re: [PATCH] net: core: devlink.c: Hold devlink->lock from the
+ beginning of devlink_dpipe_table_register()
+Message-ID: <20200222065536.GA9143@madhuparna-HP-Notebook>
+References: <20200221180943.17415-1-madhuparnabhowmik10@gmail.com>
+ <20200222062640.GA2228@nanopsycho>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200222050845.GA19912@ubuntu-m2-xlarge-x86>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200222062640.GA2228@nanopsycho>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 10:08:45PM -0700, Nathan Chancellor wrote:
-> On Thu, Jan 09, 2020 at 10:02:18AM -0500, Arvind Sankar wrote:
-> > Discarding the sections that are unused in the compressed kernel saves
-> > about 10 KiB on 32-bit and 6 KiB on 64-bit, mostly from .eh_frame.
+On Sat, Feb 22, 2020 at 07:26:40AM +0100, Jiri Pirko wrote:
+> Fri, Feb 21, 2020 at 07:09:43PM CET, madhuparnabhowmik10@gmail.com wrote:
+> >From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+> >
+> >devlink_dpipe_table_find() should be called under either
+> >rcu_read_lock() or devlink->lock. devlink_dpipe_table_register()
+> >calls devlink_dpipe_table_find() without holding the lock
+> >and acquires it later. Therefore hold the devlink->lock
+> >from the beginning of devlink_dpipe_table_register().
+> >
+> >Suggested-by: Jiri Pirko <jiri@mellanox.com>
+> >Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+> >---
+> > net/core/devlink.c | 3 ++-
+> > 1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> >diff --git a/net/core/devlink.c b/net/core/devlink.c
+> >index 3e8c94155d93..d54e1f156b6f 100644
+> >--- a/net/core/devlink.c
+> >+++ b/net/core/devlink.c
+> >@@ -6840,6 +6840,8 @@ int devlink_dpipe_table_register(struct devlink *devlink,
+> > {
+> > 	struct devlink_dpipe_table *table;
 > > 
-> > Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-> > ---
-> >  arch/x86/boot/compressed/vmlinux.lds.S | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
-> > index 508cfa6828c5..12a20603d92e 100644
-> > --- a/arch/x86/boot/compressed/vmlinux.lds.S
-> > +++ b/arch/x86/boot/compressed/vmlinux.lds.S
-> > @@ -73,4 +73,9 @@ SECTIONS
-> >  #endif
-> >  	. = ALIGN(PAGE_SIZE);	/* keep ZO size page aligned */
-> >  	_end = .;
-> > +
-> > +	/* Discard all remaining sections */
-> > +	/DISCARD/ : {
-> > +		*(*)
-> > +	}
-> >  }
-> > -- 
-> > 2.24.1
-> > 
+> >+	mutex_lock(&devlink->lock);
+> >+
+> > 	if (devlink_dpipe_table_find(&devlink->dpipe_table_list, table_name))
+> > 		return -EEXIST;
 > 
-> This patch breaks linking with ld.lld:
+> You have to handle the error path.
+>
+Sure, I have sent the updated patch.
+
+Thank you,
+Madhuparna
 > 
-> $ make -j$(nproc) -s CC=clang LD=ld.lld O=out.x86_64 distclean defconfig bzImage
-> ld.lld: error: discarding .shstrtab section is not allowed
-
-Well, why is it not allowed? And why isn't the GNU linker complaining?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> > 
+> >@@ -6855,7 +6857,6 @@ int devlink_dpipe_table_register(struct devlink *devlink,
+> > 	table->priv = priv;
+> > 	table->counter_control_extern = counter_control_extern;
+> > 
+> >-	mutex_lock(&devlink->lock);
+> > 	list_add_tail_rcu(&table->list, &devlink->dpipe_table_list);
+> > 	mutex_unlock(&devlink->lock);
+> > 	return 0;
+> >-- 
+> >2.17.1
+> >
