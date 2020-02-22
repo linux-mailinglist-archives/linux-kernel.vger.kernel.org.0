@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D526168B3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:52:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AD44168B48
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:52:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbgBVAwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:52:25 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35590 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbgBVAwX (ORCPT
+        id S1727958AbgBVAws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:52:48 -0500
+Received: from mail-qk1-f173.google.com ([209.85.222.173]:35954 "EHLO
+        mail-qk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727775AbgBVAwY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:52:23 -0500
-Received: by mail-qk1-f194.google.com with SMTP id l13so927981qkk.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:52:21 -0800 (PST)
+        Fri, 21 Feb 2020 19:52:24 -0500
+Received: by mail-qk1-f173.google.com with SMTP id f3so679108qkh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:52:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5fmYqUo9ZnmA2UTXyVRTEs66bilKAJzOSAbx27Z0Zc0=;
-        b=RqX/K3bj40cRddLtL5dyYFr5stEdFUKGsM2slU8kuwMp4HrcI8h+Hv16ffEMovEDAA
-         RLbGBIC8j0ShtmkFJD7xQqnx+0pUItWAamx3UmuePX7F902zuHe+8DInp1Sj+UvQAoed
-         5wPnez6eIgzdhrs0HS7gmWLS4FW2LymFDU6ig+pMYPmwgOjmRUwkLQ3xFq/1Y0hkDaUs
-         bAZt5OwyOFsl/EpPWhtbZmuBJCVjk+p7B4dJvzV21MZ9To6pydv/Km17hKmslnRegbae
-         AlXICRou8usMeF/LfWtjj6K4SPL8mJXaGtX3UcQ5iw9AC5KikBc9QRG+YL/4rvKE5hwf
-         I5QA==
+        bh=DXF66T0+Pbnrsx76EBXYwbN00fGKYSGHdWCqkNe6hnA=;
+        b=yExeNO0ju10sVD8qMMAOU2xcEqvqVXac77F6HmYAnIUOYJ5cC0gfrlX5xkoJFYsxZt
+         8GQXC0xZHdxlVP6MWOKfv6bNBw/L6Spoy5GGLiO6t1SHG2Wx+cq0enWB/evJVzCof0WN
+         qFSpU0GyuNXgxCjJnC2Ye4dysK/fNHkh66t0sX18Z9GNcthkVTlfAvTcUNUoGVW04aPP
+         FOVvrCnBbpQg5R5XARcMnsson88/oy2aQHIKKwI0uhi11P7hvShUGYfmRm1HAkUId8YG
+         NlVCwz2AFLZoSdOPEZxxoq7M/z2Q15anLFI/WCDmrpYzGyHqOp2oJKiszagN7Krsj3Ud
+         OAmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5fmYqUo9ZnmA2UTXyVRTEs66bilKAJzOSAbx27Z0Zc0=;
-        b=PfN6Qp2ZwBQDzvsL9AFNTV7DadMsjRGG01qLKGyZ9ZaE08zYh6MjXerSTg8o0TeJmq
-         jQ5obJlNIWHx3heAC1AqxKBK5lZZIiAiLfP5LEVOpSfHs4/VSBRnbZBXOW7HPmf6tlt4
-         E73D4qh604pOG5kBTKNw27H/q9Hm+SwKlN4vonGvJPo/A2esbyScay1JAJC07xUgbwrN
-         2re3wZDCO2lzjGPbSR08//psYdL0NF15pUgOedPlOX083N4FZJMNqEogvVsJdM+VQveL
-         SS5AQoJ7iNrIqxkhX3vqP1Oe+PSbhmXtdu0EqDfTDU+bIlIoAlUynpbeX/lAhHJgAwCu
-         s4bg==
-X-Gm-Message-State: APjAAAVzUko3ns+nOtj+G0YfTo0pjXlvyXhopcB4+VZ0KIXLKaBdVH6C
-        3akPqJJDyRoOYFb54zFfG4yHDg==
-X-Google-Smtp-Source: APXvYqyvYzPAi0tPR1dXwzia0klEqYPp5rdsUjzo1+r5evQkFkVWx2iuNvOP6hExHeS6k4Uh+9PxQw==
-X-Received: by 2002:a37:a9d2:: with SMTP id s201mr36313729qke.171.1582332741077;
-        Fri, 21 Feb 2020 16:52:21 -0800 (PST)
+        bh=DXF66T0+Pbnrsx76EBXYwbN00fGKYSGHdWCqkNe6hnA=;
+        b=bTchEqCYQKn4tFYZOt0M8IdKPIXwxPx/nKe1X05G6stPhWNl9yT68PE3cgV1Y3x/2A
+         r+WbWY/iidJ8hcD//Xgl05IrOj3CmipVC4roHv14+i25Z0pxCEy5l4uvWmRA9JqgifNb
+         9lhVS1HDIPMcBmArnyz49829191tX6PMv4IitFelhDkotqoSrN0zL6M3+KlENE+2KVsN
+         FJSGue0GELuAXS+D1t5NWLMSBO2CciHpVqVmRfSxKj5Gs0ZcHpCzR9sSwKDvbGPwGqyd
+         PL+lSZnwtugUf9HsJHYIabiC+bLbyvaMvlGhXlNFDkVnJ36A+UBuDnN5zjwTTvqBGmXA
+         dX0w==
+X-Gm-Message-State: APjAAAWDXKKS1O1yBnD2mZ10t1n3CkaKnU9SEUreqIRIR4FxdFfTA59F
+        byXj67gS2WbcHsXfZcRfPY7FSw==
+X-Google-Smtp-Source: APXvYqxEHn2w5pQG3+6Oer2jJk3Bum2Rj88gX41Dow6eHy+sOsLM/5dW/xHpIoJeRCEPHKpt64DOkg==
+X-Received: by 2002:a37:a38e:: with SMTP id m136mr35203222qke.116.1582332742515;
+        Fri, 21 Feb 2020 16:52:22 -0800 (PST)
 Received: from pop-os.fios-router.home (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.googlemail.com with ESMTPSA id 12sm359559qkj.136.2020.02.21.16.52.19
+        by smtp.googlemail.com with ESMTPSA id 12sm359559qkj.136.2020.02.21.16.52.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 16:52:20 -0800 (PST)
+        Fri, 21 Feb 2020 16:52:21 -0800 (PST)
 From:   Thara Gopinath <thara.gopinath@linaro.org>
 To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
         vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
@@ -54,9 +54,9 @@ To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
         juri.lelli@redhat.com, corbet@lwn.net
 Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
         javi.merino@kernel.org, amit.kucheria@verdurent.com
-Subject: [Patch v10 4/9] arm64/topology: Populate arch_scale_thermal_pressure for arm64 platforms
-Date:   Fri, 21 Feb 2020 19:52:08 -0500
-Message-Id: <20200222005213.3873-5-thara.gopinath@linaro.org>
+Subject: [Patch v10 5/9] arm/topology: Populate arch_scale_thermal_pressure for arm platforms
+Date:   Fri, 21 Feb 2020 19:52:09 -0500
+Message-Id: <20200222005213.3873-6-thara.gopinath@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200222005213.3873-1-thara.gopinath@linaro.org>
 References: <20200222005213.3873-1-thara.gopinath@linaro.org>
@@ -72,23 +72,23 @@ enabling scheduler to retrieve instantaneous thermal pressure of a cpu.
 
 Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 ---
- arch/arm64/include/asm/topology.h | 3 +++
+ arch/arm/include/asm/topology.h | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/include/asm/topology.h b/arch/arm64/include/asm/topology.h
-index a4d945db95a2..cbd70d78ef15 100644
---- a/arch/arm64/include/asm/topology.h
-+++ b/arch/arm64/include/asm/topology.h
-@@ -25,6 +25,9 @@ int pcibus_to_node(struct pci_bus *bus);
+diff --git a/arch/arm/include/asm/topology.h b/arch/arm/include/asm/topology.h
+index 8a0fae94d45e..3a50a19c7c28 100644
+--- a/arch/arm/include/asm/topology.h
++++ b/arch/arm/include/asm/topology.h
+@@ -16,6 +16,9 @@
  /* Enable topology flag updates */
  #define arch_update_cpu_topology topology_update_cpu_topology
  
 +/* Replace task scheduler's default thermal pressure retrieve API */
 +#define arch_scale_thermal_pressure topology_get_thermal_pressure
 +
- #include <asm-generic/topology.h>
+ #else
  
- #endif /* _ASM_ARM_TOPOLOGY_H */
+ static inline void init_cpu_topology(void) { }
 -- 
 2.20.1
 
