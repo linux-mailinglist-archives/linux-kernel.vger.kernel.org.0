@@ -2,68 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36CFE1691D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 21:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D28CA1691D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 22:07:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbgBVUxz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 22 Feb 2020 15:53:55 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.65]:56621 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726828AbgBVUxy (ORCPT
+        id S1726891AbgBVVF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 16:05:58 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:47684 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbgBVVF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 15:53:54 -0500
-Received: from [100.112.199.4] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-1.bemta.az-b.eu-west-1.aws.symcld.net id 52/3C-41576-7D4915E5; Sat, 22 Feb 2020 20:53:43 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCJsWRWlGSWpSXmKPExsVi93Vmku61KYF
-  xBj87jSx+NqxntLj65B+zxcu1UhafFxlbHFwxmd3i1MMvLBbP3k9ntbjZOZ/J4vPZ+WwW33bf
-  Z7N4dvwzk8Wxb6dZLT4828NocXnXHDaLRUuPAZVs0rM4tkDM4kDDaRaLS3eeszoIe+w82cLic
-  e7wLxaPB/NbWTyuztrE5jFj/2dGj1+Tuxg9vh1cxewxbeY/Ro+3pw+xeDTcXcnqcePpOVaPay
-  2+Ho2fTzN6XOk6yu7xeZNcAH8Ua2ZeUn5FAmtGz+4LbAUMFSCqgZGhi5GLQ0hgK6PEg81LmLs
-  YOTmYBfQkbkydwgZi8woISpyc+YQFIq4tsWzha6AaDiBbTeJrVwlIWFjATuLdv3nsILaIgKrE
-  1z0zWUFsNgEZiZ9Hd4PFWYDiN9//BhsvJKAo8XbdRqjxfhI/X5xng4k3N60AsyWA7KXX2lggb
-  CuJbUva2SFsTYn175azg5wgIaAg8XmGMURYXuLjhRmMExgFZyF5YBaSB2YheWAWwgMLGFlWMV
-  okFWWmZ5TkJmbm6BoaGOgaGhrpGlqa6Roam+slVukm6aWW6panFpfoGuollhfrFVfmJuek6OW
-  llmxiBCaGlIIjnTsYf695r3eIUZKDSUmUV3diYJwQX1J+SmVGYnFGfFFpTmrxIUYTDg6Bzucf
-  VjMKXDj78BOjwJUPn5qYpFjy8vNSlSR4LScD9QgWpaanVqRl5gCTGkybBAePkggvG8hI3uKCx
-  NzizHSI1ClGS457T+YuYubYeHQekJy9ffEiZiGweVLivK9B5gmANGSU5sGNgyXeS4yyUsK8jA
-  wMDEI8BalFuZklqPKvGMU5GJWEeRsmAU3hycwrgdv6CuggJqCDlDkCQA4qSURISTUw+TI5z+b
-  5u7xIQUn/8Sbhz5GugXlSu1mZHk8qnRCefk5V/tXDvTf1eTh0FlrKqDwp+mBk8tFibYDz+ph2
-  OTHpa8fftnyu8o/r3brYIMfh6sXj+t31U25/O7rRsMNm/rypId/u3jg7a27o8uzrmpxz9nQIL
-  v/KfWmHX+kb7s4Jl66ck1UIKVeXWS7w++isqfnTfLccrHDVYOB2mjhDNGhmYypPTeAjxusWSb
-  rTlZu3X197tGP/1EyzT1J7a41vGtatezWfv2S6ps5B5cfCxzbvnVqg/KZR198p9fHhhd/irlw
-  My6i53li/uNx9wrXdmx/brjCbNfHj+pOV13SZdFcwV7xf6iK4JfrPhWMTGmKNY5RYijMSDbWY
-  i4oTAfCoIaE3BAAA
-X-Env-Sender: michael.larcher@rothof.de
-X-Msg-Ref: server-12.tower-288.messagelabs.com!1582404820!1797956!5
-X-Originating-IP: [62.245.153.98]
-X-SYMC-ESS-Client-Auth: outbound-route-from=fail
-X-StarScan-Received: 
-X-StarScan-Version: 9.44.25; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 28940 invoked from network); 22 Feb 2020 20:53:42 -0000
-Received: from host-62-245-153-98.customer.m-online.net (HELO Sport-Exchange.ROTHOF.local) (62.245.153.98)
-  by server-12.tower-288.messagelabs.com with ECDHE-RSA-AES256-SHA encrypted SMTP; 22 Feb 2020 20:53:42 -0000
-Received: from jmapnzin.host-stage-dns.com (188.165.89.95) by
- Sport-Exchange.ROTHOF.local (192.168.100.3) with Microsoft SMTP Server id
- 14.3.123.3; Sat, 22 Feb 2020 21:53:32 +0100
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Re: I have a business for you, if you are interested!
-To:     Recipients <michael@ROTHOF.local>
-From:   <michael@ROTHOF.local>
-Date:   Sun, 23 Feb 2020 04:53:34 +0800
-Reply-To: <lizawong@infohsbc.net>
-Message-ID: <2cd0ee45-30f1-4b5b-8307-84e9badb9f6f@SPORT-EXCHANGE.ROTHOF.local>
-X-Originating-IP: [188.165.89.95]
-X-TM-AS-Product-Ver: SMEX-11.7.0.1065-8.500.1020-25246.005
-X-TM-AS-Result: Yes-48.583700-5.000000-31
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
+        Sat, 22 Feb 2020 16:05:58 -0500
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1j5byG-0003Ah-0O; Sat, 22 Feb 2020 22:05:56 +0100
+Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 7844610408B;
+        Sat, 22 Feb 2020 22:05:55 +0100 (CET)
+Date:   Sat, 22 Feb 2020 21:00:04 -0000
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [GIT pull] x86 fixes for 5.6-rc3
+References: <158240520445.852.16454463053831663511.tglx@nanos.tec.linutronix.de>
+Message-ID: <158240520445.852.1076310115215713264.tglx@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
+
+please pull the latest x86/urgent branch from:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2020-02-22
+
+up to:  21b5ee59ef18: x86/cpu/amd: Enable the fixed Instructions Retired counter IRPERF
+
+Two fixes for x86:
+
+  - Remove the __force_oder definiton from the kaslr boot code as it is
+    already defined in the page table code which makes GCC 10 builds fail
+    because it changed the default to -fno-common.
+
+  - Address the AMD erratum 1054 concerning the IRPERF capability and
+    enable the Instructions Retired fixed counter on machines which are not
+    affected by the erratum.
+
+Thanks,
+
+	tglx
+
+------------------>
+H.J. Lu (1):
+      x86/boot/compressed: Don't declare __force_order in kaslr_64.c
+
+Kim Phillips (1):
+      x86/cpu/amd: Enable the fixed Instructions Retired counter IRPERF
+
+
+ arch/x86/boot/compressed/kaslr_64.c |  3 ---
+ arch/x86/include/asm/msr-index.h    |  2 ++
+ arch/x86/kernel/cpu/amd.c           | 14 ++++++++++++++
+ 3 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/kaslr_64.c b/arch/x86/boot/compressed/kaslr_64.c
+index 748456c365f4..9557c5a15b91 100644
+--- a/arch/x86/boot/compressed/kaslr_64.c
++++ b/arch/x86/boot/compressed/kaslr_64.c
+@@ -29,9 +29,6 @@
+ #define __PAGE_OFFSET __PAGE_OFFSET_BASE
+ #include "../../mm/ident_map.c"
+ 
+-/* Used by pgtable.h asm code to force instruction serialization. */
+-unsigned long __force_order;
+-
+ /* Used to track our page table allocation area. */
+ struct alloc_pgt_data {
+ 	unsigned char *pgt_buf;
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index ebe1685e92dd..d5e517d1c3dd 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -512,6 +512,8 @@
+ #define MSR_K7_HWCR			0xc0010015
+ #define MSR_K7_HWCR_SMMLOCK_BIT		0
+ #define MSR_K7_HWCR_SMMLOCK		BIT_ULL(MSR_K7_HWCR_SMMLOCK_BIT)
++#define MSR_K7_HWCR_IRPERF_EN_BIT	30
++#define MSR_K7_HWCR_IRPERF_EN		BIT_ULL(MSR_K7_HWCR_IRPERF_EN_BIT)
+ #define MSR_K7_FID_VID_CTL		0xc0010041
+ #define MSR_K7_FID_VID_STATUS		0xc0010042
+ 
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index ac83a0fef628..1f875fbe1384 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -28,6 +28,7 @@
+ 
+ static const int amd_erratum_383[];
+ static const int amd_erratum_400[];
++static const int amd_erratum_1054[];
+ static bool cpu_has_amd_erratum(struct cpuinfo_x86 *cpu, const int *erratum);
+ 
+ /*
+@@ -972,6 +973,15 @@ static void init_amd(struct cpuinfo_x86 *c)
+ 	/* AMD CPUs don't reset SS attributes on SYSRET, Xen does. */
+ 	if (!cpu_has(c, X86_FEATURE_XENPV))
+ 		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
++
++	/*
++	 * Turn on the Instructions Retired free counter on machines not
++	 * susceptible to erratum #1054 "Instructions Retired Performance
++	 * Counter May Be Inaccurate".
++	 */
++	if (cpu_has(c, X86_FEATURE_IRPERF) &&
++	    !cpu_has_amd_erratum(c, amd_erratum_1054))
++		msr_set_bit(MSR_K7_HWCR, MSR_K7_HWCR_IRPERF_EN_BIT);
+ }
+ 
+ #ifdef CONFIG_X86_32
+@@ -1099,6 +1109,10 @@ static const int amd_erratum_400[] =
+ static const int amd_erratum_383[] =
+ 	AMD_OSVW_ERRATUM(3, AMD_MODEL_RANGE(0x10, 0, 0, 0xff, 0xf));
+ 
++/* #1054: Instructions Retired Performance Counter May Be Inaccurate */
++static const int amd_erratum_1054[] =
++	AMD_OSVW_ERRATUM(0, AMD_MODEL_RANGE(0x17, 0, 0, 0x2f, 0xf));
++
+ 
+ static bool cpu_has_amd_erratum(struct cpuinfo_x86 *cpu, const int *erratum)
+ {
 
