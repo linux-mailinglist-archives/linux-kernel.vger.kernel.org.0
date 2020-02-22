@@ -2,108 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9338A168CE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 07:42:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97F20168CF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 07:45:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbgBVGmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 01:42:14 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:47031 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbgBVGmN (ORCPT
+        id S1727223AbgBVGpi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 01:45:38 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:58915 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbgBVGpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 01:42:13 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y30so2097869pga.13;
-        Fri, 21 Feb 2020 22:42:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9hYMlHxQU9EhnNg/RTgwCsCYqoi4kN3olIEeJ3OkvPk=;
-        b=EjxVA3Br6FjEjanPqEhDEoiXcouvU+bGrOv3uTHp9VrVsy3AXGgMpJunV/dlGd1qUm
-         h3uIb/c+THfk4d8i8eRh2Gmc6RKBk0FeWU0DeLHdnsCMJijfu9dXn3U/Gbw9qIpykRGt
-         gagL4hr4DlgdCOOYPod1UshTeKzN51JTcTv3f74iLTF3ML8aBN5tFTu6vgRzkeuugQ8+
-         v7r1tvbe5PFXIYjKy1auosHppC+l4qMmg+TqQGywTUnIQ9D24onvbs6RVVN+8cyCqdJZ
-         7gcoN0kyc3bs6KMHZ694GcP6l1jBOCqrZomZdNBuvqhCS9wlN++JrQOVIs3Jl97i9n2/
-         1y2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9hYMlHxQU9EhnNg/RTgwCsCYqoi4kN3olIEeJ3OkvPk=;
-        b=I3Dtv0C2qiI+W9qIqynuQp6GzUt0mwf7Gt+HCKHVglc4ez/fz+Zetm3SCN4pL3bA20
-         h0MxQ9AMI10s7xI1GqU3RNay4N1q1WewJVMX98+GMyWOkg8IDzvB0d72sNvlIzTM57QA
-         ZJW0AUyQZSqQRD8nSg2lcKr8i0IlLWittsf55AfHLoRHvtc6NKWlXip2t3Awahv+f79C
-         18aka8oM0ID4HkN8H2KZKveAFnpukZdtpY64KBxS1vxxuhGH14bYX5OTMQFKvTEfuE/p
-         5sBRGNMw/n7q6gKq7qJkIqvJk9ll3Y8lz8muWNmgw/3XPlvZS+3fUGq5NXxmStmXlKT2
-         Zpiw==
-X-Gm-Message-State: APjAAAVJGbSldYCZvu05LzIezEYx8Fl6JjlmwIwggQvP3wptveGpPPcN
-        u9jgU3Tm+6CFhtkFjMXAW19HAk40pJo=
-X-Google-Smtp-Source: APXvYqwdWk7osSGXdnZrrkUWAfAmanU6pj0j8QeL8rczy5YSTPsqUDFk5CjIMGs1shp3kNuLzO94Qg==
-X-Received: by 2002:a65:645a:: with SMTP id s26mr40682184pgv.135.1582353733058;
-        Fri, 21 Feb 2020 22:42:13 -0800 (PST)
-Received: from localhost.localdomain ([103.87.57.201])
-        by smtp.googlemail.com with ESMTPSA id k5sm4455071pju.29.2020.02.21.22.42.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 22:42:12 -0800 (PST)
-From:   Amol Grover <frextrite@gmail.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Amol Grover <frextrite@gmail.com>
-Subject: [PATCH 2/2] ipmr: Add lockdep expression to ipmr_for_each_table macro
-Date:   Sat, 22 Feb 2020 12:08:36 +0530
-Message-Id: <20200222063835.14328-2-frextrite@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200222063835.14328-1-frextrite@gmail.com>
-References: <20200222063835.14328-1-frextrite@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sat, 22 Feb 2020 01:45:33 -0500
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id 01M6ik5P005982;
+        Sat, 22 Feb 2020 15:44:46 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com 01M6ik5P005982
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582353887;
+        bh=pw80puZqFh3HIHozKVPIxQUqE9lmyrEYJKdro2WSFao=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HfTPlUp6gRIDOM5AHjHcEoJbHhsA6IQ8dnxS7J5KrSP/Ez3Vwzsj/ZT8dooUjJI3p
+         qbk1DKyeDhD6acKXMrPMkudpMKXIWHJ5CPQq8whHCcr352EEqebWpibBPgEsukJ3lx
+         iSfNvle3Vz+9+Y4P2q7O03gcKCV9OluLy4YZedWnwsxKCAECgPd3VuuhHkQz3m/3Yk
+         WCkSxasMFRqdTRjdppN9Zoib6+rt7sWRtvj/odAsW0kyOdppfhxOB6H9VCMTzaenTa
+         fcpmAA64MfEIRPcfCuzWkXbXKs9K5DieDc9B00+6NXZO7M7X0IIUy+9n1jiAW1EXjP
+         2b2Xv7oXiZeVw==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, masahiroy@kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 1/4] ARM: dts: uniphier: change SD/eMMC node names to follow json-schema
+Date:   Sat, 22 Feb 2020 15:44:42 +0900
+Message-Id: <20200222064445.14903-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ipmr_for_each_table() uses list_for_each_entry_rcu() for
-traversing outside of an RCU read-side critical section but
-under the protection of pernet_ops_rwsem. Hence add the
-corresponding lockdep expression to silence the following
-false-positive warning at boot:
+Follow the standard nodename pattern "^mmc(@.*)?$" defined in
+Documentation/devicetree/bindings/mmc/mmc-controller.yaml
 
-[    0.645292] =============================
-[    0.645294] WARNING: suspicious RCU usage
-[    0.645296] 5.5.4-stable #17 Not tainted
-[    0.645297] -----------------------------
-[    0.645299] net/ipv4/ipmr.c:136 RCU-list traversed in non-reader section!!
-
-Signed-off-by: Amol Grover <frextrite@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- net/ipv4/ipmr.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
-index 99c864eb6e34..950ffe9943da 100644
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -109,9 +109,10 @@ static void mroute_clean_tables(struct mr_table *mrt, int flags);
- static void ipmr_expire_process(struct timer_list *t);
+ arch/arm/boot/dts/uniphier-ld4.dtsi  | 4 ++--
+ arch/arm/boot/dts/uniphier-pro4.dtsi | 6 +++---
+ arch/arm/boot/dts/uniphier-pro5.dtsi | 4 ++--
+ arch/arm/boot/dts/uniphier-pxs2.dtsi | 4 ++--
+ arch/arm/boot/dts/uniphier-sld8.dtsi | 4 ++--
+ 5 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/boot/dts/uniphier-ld4.dtsi b/arch/arm/boot/dts/uniphier-ld4.dtsi
+index 64ec46c72a4c..f3a20dc0b22b 100644
+--- a/arch/arm/boot/dts/uniphier-ld4.dtsi
++++ b/arch/arm/boot/dts/uniphier-ld4.dtsi
+@@ -245,7 +245,7 @@
+ 			#dma-cells = <1>;
+ 		};
  
- #ifdef CONFIG_IP_MROUTE_MULTIPLE_TABLES
--#define ipmr_for_each_table(mrt, net) \
--	list_for_each_entry_rcu(mrt, &net->ipv4.mr_tables, list, \
--				lockdep_rtnl_is_held())
-+#define ipmr_for_each_table(mrt, net)					\
-+	list_for_each_entry_rcu(mrt, &net->ipv4.mr_tables, list,	\
-+				lockdep_rtnl_is_held() ||		\
-+				lockdep_is_held(&pernet_ops_rwsem))
+-		sd: sdhc@5a400000 {
++		sd: mmc@5a400000 {
+ 			compatible = "socionext,uniphier-sd-v2.91";
+ 			status = "disabled";
+ 			reg = <0x5a400000 0x200>;
+@@ -265,7 +265,7 @@
+ 			sd-uhs-sdr50;
+ 		};
  
- static struct mr_table *ipmr_mr_table_iter(struct net *net,
- 					   struct mr_table *mrt)
+-		emmc: sdhc@5a500000 {
++		emmc: mmc@5a500000 {
+ 			compatible = "socionext,uniphier-sd-v2.91";
+ 			status = "disabled";
+ 			reg = <0x5a500000 0x200>;
+diff --git a/arch/arm/boot/dts/uniphier-pro4.dtsi b/arch/arm/boot/dts/uniphier-pro4.dtsi
+index 2ec04d7972ef..e96b5796f0f8 100644
+--- a/arch/arm/boot/dts/uniphier-pro4.dtsi
++++ b/arch/arm/boot/dts/uniphier-pro4.dtsi
+@@ -279,7 +279,7 @@
+ 			#dma-cells = <1>;
+ 		};
+ 
+-		sd: sdhc@5a400000 {
++		sd: mmc@5a400000 {
+ 			compatible = "socionext,uniphier-sd-v2.91";
+ 			status = "disabled";
+ 			reg = <0x5a400000 0x200>;
+@@ -299,7 +299,7 @@
+ 			sd-uhs-sdr50;
+ 		};
+ 
+-		emmc: sdhc@5a500000 {
++		emmc: mmc@5a500000 {
+ 			compatible = "socionext,uniphier-sd-v2.91";
+ 			status = "disabled";
+ 			reg = <0x5a500000 0x200>;
+@@ -317,7 +317,7 @@
+ 			non-removable;
+ 		};
+ 
+-		sd1: sdhc@5a600000 {
++		sd1: mmc@5a600000 {
+ 			compatible = "socionext,uniphier-sd-v2.91";
+ 			status = "disabled";
+ 			reg = <0x5a600000 0x200>;
+diff --git a/arch/arm/boot/dts/uniphier-pro5.dtsi b/arch/arm/boot/dts/uniphier-pro5.dtsi
+index ea3961f920a0..f794a0676760 100644
+--- a/arch/arm/boot/dts/uniphier-pro5.dtsi
++++ b/arch/arm/boot/dts/uniphier-pro5.dtsi
+@@ -469,7 +469,7 @@
+ 			resets = <&sys_rst 2>, <&sys_rst 2>;
+ 		};
+ 
+-		emmc: sdhc@68400000 {
++		emmc: mmc@68400000 {
+ 			compatible = "socionext,uniphier-sd-v3.1";
+ 			status = "disabled";
+ 			reg = <0x68400000 0x800>;
+@@ -485,7 +485,7 @@
+ 			non-removable;
+ 		};
+ 
+-		sd: sdhc@68800000 {
++		sd: mmc@68800000 {
+ 			compatible = "socionext,uniphier-sd-v3.1";
+ 			status = "disabled";
+ 			reg = <0x68800000 0x800>;
+diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+index 13b0d4a7741f..04d6bef3a00f 100644
+--- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
++++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+@@ -446,7 +446,7 @@
+ 			};
+ 		};
+ 
+-		emmc: sdhc@5a000000 {
++		emmc: mmc@5a000000 {
+ 			compatible = "socionext,uniphier-sd-v3.1.1";
+ 			status = "disabled";
+ 			reg = <0x5a000000 0x800>;
+@@ -462,7 +462,7 @@
+ 			non-removable;
+ 		};
+ 
+-		sd: sdhc@5a400000 {
++		sd: mmc@5a400000 {
+ 			compatible = "socionext,uniphier-sd-v3.1.1";
+ 			status = "disabled";
+ 			reg = <0x5a400000 0x800>;
+diff --git a/arch/arm/boot/dts/uniphier-sld8.dtsi b/arch/arm/boot/dts/uniphier-sld8.dtsi
+index 4fc6676f5486..beb1eac85436 100644
+--- a/arch/arm/boot/dts/uniphier-sld8.dtsi
++++ b/arch/arm/boot/dts/uniphier-sld8.dtsi
+@@ -249,7 +249,7 @@
+ 			#dma-cells = <1>;
+ 		};
+ 
+-		sd: sdhc@5a400000 {
++		sd: mmc@5a400000 {
+ 			compatible = "socionext,uniphier-sd-v2.91";
+ 			status = "disabled";
+ 			reg = <0x5a400000 0x200>;
+@@ -269,7 +269,7 @@
+ 			sd-uhs-sdr50;
+ 		};
+ 
+-		emmc: sdhc@5a500000 {
++		emmc: mmc@5a500000 {
+ 			compatible = "socionext,uniphier-sd-v2.91";
+ 			status = "disabled";
+ 			reg = <0x5a500000 0x200>;
 -- 
-2.24.1
+2.17.1
 
