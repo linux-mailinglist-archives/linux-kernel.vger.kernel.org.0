@@ -2,129 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13D03168AF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:28:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50453168AF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:29:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbgBVA2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:28:32 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40052 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbgBVA2b (ORCPT
+        id S1727103AbgBVA3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:29:32 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:35538 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbgBVA3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:28:31 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n18so4018597ljo.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:28:29 -0800 (PST)
+        Fri, 21 Feb 2020 19:29:31 -0500
+Received: by mail-pj1-f66.google.com with SMTP id q39so1514006pjc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:29:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3ADTmfft80RI7c2WY4TOkzrerMdgpKiB03T3sJQNmxs=;
-        b=Er3whwMCAVF/DBsN73siP1gSa3KXpBJQrxPXuPeG4XI0lo1atKo+Tw0mY0Z64SRm+J
-         3OqT65FrvtCeT7bNRITTFOJ0yVZ1sWYihv7d7RV7fwUbDppiazC7Z7k8XrJLrVOv1o1M
-         zp0XUxufCWdPgO1EOJNc5/YuOR8aVjGEOpV6E=
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/3+ekiIDMOGmiDjrYAnNc8G9eXFhd69LzzwYliKSeDk=;
+        b=UaeuT1T2xzPoXNPxlPuN7qgHSNKYaqFXhKAUALtPwg8DJgTO/AVDcCGa0WQzLMZBj6
+         ozTjHup3RowLqIjE0+/c9LeYRCxnA7HCkhT1nIb2BKK2fLUIVha0L9Wv2wsBpOxD3R2w
+         QCDUb5IRlqbWRjl9Ud3gWtpP/Q71ObowauXB0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3ADTmfft80RI7c2WY4TOkzrerMdgpKiB03T3sJQNmxs=;
-        b=XXZMtP1PPXhXKmzO7gobI/1qnjtadlnCsjKuSS3KxokXN6pE/R3Y3lbh8mJdyPEb5e
-         r+8zX03xkQhBw738jbOHjDMguUu9EflJVqjesYTFByjBKEcEfMP1YQhoiYfC1jwXNJtC
-         P9ixHQFoYsuWZN0NrgVx8hfBz93Ji9RWw5BIoXjL4HSeDqK7IwHIifRJLP8xl4s/oHCn
-         hfN+fIQXKPHcWn07QvBe7j54Dm/sI+aRYunOq4o+nGcp/UfWZ4yH4lhnZk2dc7eZsm/Q
-         enaZYIVQbb+RvS01dk++jDTUS/vgKGjs8JvV3+pTpbsO2XDfoytOg+DgD8rbwSmuTlEi
-         tB1A==
-X-Gm-Message-State: APjAAAWYTOcuvgalyDkIGudS1h3upCMfWBBFsHDi85vnlC4MPIebnGZt
-        isGaP7xjHu7kLvecg+0vFL8obg==
-X-Google-Smtp-Source: APXvYqwKYJ7W1iIgFdvVZmv0oo87jXC/8pPf5wbrmjfa5AKW+rpyFHJfX9vkjxDWuaRz/+vixJI3rA==
-X-Received: by 2002:a2e:730e:: with SMTP id o14mr23885198ljc.51.1582331308263;
-        Fri, 21 Feb 2020 16:28:28 -0800 (PST)
-Received: from [192.168.1.149] (ip-5-186-115-35.cgn.fibianet.dk. [5.186.115.35])
-        by smtp.gmail.com with ESMTPSA id y7sm2401215ljy.92.2020.02.21.16.28.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 16:28:27 -0800 (PST)
-Subject: Re: [PATCH v1] lib/vsprintf: update comment about simple_strto<foo>()
- functions
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/3+ekiIDMOGmiDjrYAnNc8G9eXFhd69LzzwYliKSeDk=;
+        b=VHLT1kuCPXhhiEr43Eafwg+FIkfIo3KPdBJqAbeABcdRS4yp/BgYBGcnHH88zSwXha
+         00dqN8Baf69q7wFRfuH2hozYEY8kJaludS92a6oIz8WHsFWKvbkx5pFfHTmyKFVDLLli
+         /lk6laFpHd+7mfmKM/uO0AoTeWQ2bn/Gi10Yp+xS9OCSsMw8q6R1ZNTYqxT0wTIVn7CF
+         4WeylEwXp3oxtwvkcdHiq5SYjl4Cl2TrrzSxL/qtwPe3PrxtqRVvKvRPAEE2JNe5pLbq
+         +bCT9Cpn8FIXsTNI7Z7J/S6Vk5zqu94ChrMkba+5qPMEzzt78c/XXgo7tn7muLw2zaI5
+         +ZIQ==
+X-Gm-Message-State: APjAAAWJ3UIX7ObGOJBG6a5U8U5mXhi+hen4IfPR6wpsiZiEtjFLD1cM
+        sUKtL7xO98vWKjSzQw652b/Jqw==
+X-Google-Smtp-Source: APXvYqyP2Eu7DZ39Tl0jFQ4lvdUnRpiBhcQzdZ7LrEf/OVF8NHlMo9EFXeE53kJ5qfdNni+OtJyw/w==
+X-Received: by 2002:a17:90a:8c0f:: with SMTP id a15mr6299848pjo.86.1582331371026;
+        Fri, 21 Feb 2020 16:29:31 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id z5sm4213775pfq.3.2020.02.21.16.29.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 16:29:30 -0800 (PST)
+Date:   Fri, 21 Feb 2020 16:29:29 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-References: <20200221085723.42469-1-andriy.shevchenko@linux.intel.com>
- <20200221145141.pchim24oht7nxfir@pengutronix.de>
- <CAHp75VfR+X6Mw8ywKNW5mTomzmuHSM8ecQUhxtM=LUkWaSe9CA@mail.gmail.com>
- <20200221163334.w7pocmbbw4ymimlc@pengutronix.de>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <d6c3b369-9777-9986-f41f-3f3a4f85d64c@rasmusvillemoes.dk>
-Date:   Sat, 22 Feb 2020 01:28:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] mm/tlb: Fix use_mm() vs TLB invalidate
+Message-ID: <202002211627.33D858AA@keescook>
+References: <CAHk-=wi4uO+Djqr4Jc1TnCofwxUTuXHtgkgwnVX86q06UGV6DA@mail.gmail.com>
+ <6A09F721-0AD9-4B86-AB3E-563A1CF5ABDE@amacapital.net>
+ <202002211506.2151CA26@keescook>
+ <CAHk-=wjL-4=YfvQb_pLhK5oH1QL2j-JCt-Z+S-r86-H__Vow0w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200221163334.w7pocmbbw4ymimlc@pengutronix.de>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjL-4=YfvQb_pLhK5oH1QL2j-JCt-Z+S-r86-H__Vow0w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/2020 17.33, Uwe Kleine-König wrote:
-> On Fri, Feb 21, 2020 at 05:27:49PM +0200, Andy Shevchenko wrote:
->> On Fri, Feb 21, 2020 at 4:54 PM Uwe Kleine-König
->> <u.kleine-koenig@pengutronix.de> wrote:
->>> On Fri, Feb 21, 2020 at 10:57:23AM +0200, Andy Shevchenko wrote:
->>>> The commit 885e68e8b7b1 ("kernel.h: update comment about simple_strto<foo>()
->>>> functions") updated a comment regard to simple_strto<foo>() functions, but
->>>> missed similar change in the vsprintf.c module.
->>>>
->>>> Update comments in vsprintf.c as well for simple_strto<foo>() functions.
->>
->> ...
->>
->>>> - * This function is obsolete. Please use kstrtoull instead.
->>>> + * This function has caveats. Please use kstrtoull instead.
->>
->>> I wonder if we instead want to create a set of functions that is
->>> versatile enough to cover kstrtoull and simple_strtoull. i.e. fix the
->>> rounding problems (that are the caveats, right?) and as calling
->>> convention use an errorvalued int return + an output-parameter of the
->>> corresponding type.
->>
->> It wouldn't be possible to apply same rules to both. They both are
->> part of existing ABI.
+On Fri, Feb 21, 2020 at 03:57:21PM -0800, Linus Torvalds wrote:
+> On Fri, Feb 21, 2020 at 3:10 PM Kees Cook <keescook@chromium.org> wrote:
+> > Why not just fail after the WARN -- I wrote the patch for the (very few)
+> > callers to handle the errors, clean up, and carry on.
 > 
-> The idea is to creat a sane set of functions, then convert all users to
-> the sane one and only then strip the strange functions away. (Userspace)
-> ABI isn't affected, is it?
+> Can it actually fail? Or is this all just "let's add new error
+> conditions that make the code harder to read because they make no
+> actual sense"?
 
-There are lots of in-tree users of all these interfaces, converting them
-all is never going to happen. And yes, there are also kstrtox_user
-variants which are definitely part of ABI (more or less the whole reason
-kstrox accepts a single trailing newline but is otherwise rather strict
-is so it can parse stuff that is echo'd to a sysfs/procfs/... file).
+I was just trying to see if there was a reasonable "do not continue and
+do stuff we just tested for". If this should just be WARN_ON_ONCE() and
+continue anyway, so be it. My general guideline is to avoid continuing a
+known-bad path.
 
-But, one can at least try to unify the underlying integer parsing, and
-provide knobs for users (meaning other parts of the kernel) to decide
-how lax or strict to be in a given situation. Based on an idea from
-Alexey Dobriyan of creating a single type-generic parser, I did that a
-couple of years ago. It rebased pretty cleanly, so if anyone wants to
-take a look:
-
-https://github.com/Villemoes/linux/tree/parse-integer
-
-There's certainly more to do, but just doing all kstrtox() in terms of
-parse_integer() seems to reduce vmlinux size. Next steps would be the
-simple_strtox family, which more or less just need PARSE_INTEGER_WRAP
-AFAICT.
-
-And stuff like strtoul_lenient in kernel/sysctl.c is an example of a
-caller that wants to specify the laxness of the parsing (no overflow
-allowed, so simple_* doesn't cut it, but we're parsing a string where we
-might want to continue after the current number, so kstrtox is too
-strict in terms of what trailers are allowed).
-
-Rasmus
+-- 
+Kees Cook
