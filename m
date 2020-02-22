@@ -2,99 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13E27169107
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 18:53:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A5E9169114
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 18:55:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbgBVRxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 12:53:36 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:36780 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbgBVRxg (ORCPT
+        id S1726895AbgBVRzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 12:55:25 -0500
+Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17952 "EHLO
+        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726310AbgBVRzZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 12:53:36 -0500
-Received: by mail-qk1-f193.google.com with SMTP id f3so2085650qkh.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 09:53:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OoXYjbkbmqVWu6iVaF4lgXs2+HYn6dbDpIOR72en5t4=;
-        b=ed0YXDplB0bwxABjT+TUErhXVi1NE/M1r2lVNrpGUgsuu+LJeWWriMA+lRC0nNCwLs
-         9nsABqNm2TkPIQ8izDuI/weiUgNZiN+0DfrfaBp2rDQ5mzFsvRtvuUGdt8AEAfScWHDB
-         kKCAnES7FEp+XLA1gyDFz2lw91Qevgch5VIJBOGvpV4DzteMgcIpXC4kSvutuvFTaFdq
-         1TEpbuPv+ab/WFHT7hHM54QLtTeCPw0A8YH7YKlJiYQV+jCa1R0s2WjrVpT9derkJRiQ
-         kMZBlWGzoubDqe/hdI8jrAoR5J813Cr7NcYmWZFpxhnPfXyWV97zTXj5cWFxQE1O6ku/
-         N7BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OoXYjbkbmqVWu6iVaF4lgXs2+HYn6dbDpIOR72en5t4=;
-        b=cHvRboRE4Tu2f7RHgThxKzqsJ0BmATIUnIxIhV+TZ7GTcQpTL5l2sxTnIrTHIJ0v//
-         C9/mv30xi8a0yCM0MqMt8nLz3ZLEU5mAM7u1zpQ2dK8TPJIvANsl2568/HLmYtjxHrRd
-         t+d6xQywVx4nofMaJbb9fPdsAIVvoVtyP89DPFYoHy39h6Vk1qWNMR0GN6O8l0zDE5jJ
-         HTMKInwsVKCql9VdmTNisdqKoAitLZphWivf+LOKfYwK4I46/m8fBbgrpVMYpp98lIKe
-         8dElEvL/pgAUGMLxfD0kksn46AKqaRMPj9IWKZZrFUtrt7UmfpVoP/moJWckbqEQyhez
-         LTOw==
-X-Gm-Message-State: APjAAAV+HbouMvuVuX36t9E+XWhvZpOWKYk84FpcrFOgBN26hoBWvl4r
-        QBOmOkBVc4v2RAHHaEn+zTQ=
-X-Google-Smtp-Source: APXvYqy1E/CwCTyKPZCppJ3szTceBegx4Qc1X1PO9knXvtXATafI+We1uhfPT/gRqIIQytMgboV+ng==
-X-Received: by 2002:a37:6197:: with SMTP id v145mr39509968qkb.443.1582394014922;
-        Sat, 22 Feb 2020 09:53:34 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id j17sm3258912qke.69.2020.02.22.09.53.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2020 09:53:34 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Sat, 22 Feb 2020 12:53:32 -0500
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Fangrui Song <maskray@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Michael Matz <matz@suse.de>
-Subject: Re: [PATCH 2/2] x86/boot/compressed: Remove unnecessary sections
- from bzImage
-Message-ID: <20200222175332.GA3610600@rani.riverdale.lan>
-References: <20200109150218.16544-1-nivedita@alum.mit.edu>
- <20200109150218.16544-2-nivedita@alum.mit.edu>
- <20200222050845.GA19912@ubuntu-m2-xlarge-x86>
- <20200222065521.GA11284@zn.tnic>
- <20200222070218.GA27571@ubuntu-m2-xlarge-x86>
- <20200222072144.asqaxlv364s6ezbv@google.com>
- <20200222074242.GA17358@ubuntu-m2-xlarge-x86>
- <20200222153747.GA3234293@rani.riverdale.lan>
- <20200222164419.GB3326744@rani.riverdale.lan>
- <20200222172948.GC11284@zn.tnic>
+        Sat, 22 Feb 2020 12:55:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1582394088;
+        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
+        h=Date:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:To:CC:From:Message-ID;
+        bh=YFad9zuR8StHw8egh96QPLS0XGUOUsUoNOQH4WGQF8Q=;
+        b=HCxX1orIKgWPevpzyibr7jFT19ZptsX5dAzW649+vSBptMTLSi9aUtOYlrJhnVte
+        zU+/eQUWw0NpCo4dqd351RzlsGcX7wLjOBoTOMFe9Mcd2eLoyJ4o08qUsbp6zPigNMZ
+        AbPYKiZwonntsQlmbPUKk1J3UkGlwRCbJDwEnB8k=
+Received: from Galaxy-Note9.202.net.flygoat.com (183.156.46.156 [183.156.46.156]) by mx.zoho.com.cn
+        with SMTPS id 1582394085608759.8716354985457; Sun, 23 Feb 2020 01:54:45 +0800 (CST)
+Date:   Sun, 23 Feb 2020 01:54:43 +0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <1582387719.3.1@crapouillou.net>
+References: <20200219191730.1277800-1-paulburton@kernel.org> <20200219191730.1277800-3-paulburton@kernel.org> <1582387719.3.1@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200222172948.GC11284@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] MAINTAINERS: Set MIPS status to Odd Fixes
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Paul Burton <paulburton@kernel.org>
+CC:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+Message-ID: <5CF20000-7E47-49B3-8B35-E13753AABBBD@flygoat.com>
+X-ZohoCNMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 06:29:48PM +0100, Borislav Petkov wrote:
-> On Sat, Feb 22, 2020 at 11:44:20AM -0500, Arvind Sankar wrote:
-> > Boris, should I send the fix as a diff to the current patch in tip, or
-> > as a fresh one that can replace it?
-> 
-> The offending commit is the top commit on tip:x86/boot so I'll merge
-> your new one with it and thus "convert" the former one into the new one
-> discarding .eh_frame only.
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
 
-Thanks.
+
+=E4=BA=8E 2020=E5=B9=B42=E6=9C=8823=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=881=
+2:08:39, Paul Cercueil <paul@crapouillou=2Enet> =E5=86=99=E5=88=B0:
+>Hi,
+>
+>So I think Thomas is the best candidate to be maintainer, since he has=20
+>both experience and free time ;)
+
+So do I!
+
+>
+>I'm sort-of the maintainer for the Ingenic platform and drivers, if=20
+>Jiaxun wants to do the same for Loongson hardware, that would make=20
+>Thomas' job easier=2E Having three co-maintainers with equal rights would
+>
+>be a total mess=2E
+
+Sure=2E I'm still going to take care Loongson code=2E
+Probably we can help with reviewing MIPS common code too=2E
+
+Thanks
+
+>
+>-Paul
+>
+>
+>Le mer=2E, f=C3=A9vr=2E 19, 2020 at 11:17, Paul Burton <paulburton@kernel=
+=2Eorg>=20
+>a =C3=A9crit :
+>> My time with MIPS the company has reached its end, and so at best
+>I'll
+>> have little time spend on maintaining arch/mips/=2E Reflect that in
+>> MAINTAINERS by changing status to Odd Fixes=2E Hopefully this might
+>spur
+>> the involvement of someone with more time, but even if not it should
+>> help serve to avoid unrealistic expectations=2E
+>>=20
+>> Signed-off-by: Paul Burton <paulburton@kernel=2Eorg>
+>> ---
+>>  MAINTAINERS | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>=20
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index afa228ade18e=2E=2E67f05f6dbf77 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -11120,7 +11120,7 @@ W:	http://www=2Elinux-mips=2Eorg/
+>>  T:	git git://git=2Elinux-mips=2Eorg/pub/scm/ralf/linux=2Egit
+>>  T:	git git://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/mips/linux=2E=
+git
+>>  Q:	http://patchwork=2Elinux-mips=2Eorg/project/linux-mips/list/
+>> -S:	Supported
+>> +S:	Odd Fixes
+>>  F:	Documentation/devicetree/bindings/mips/
+>>  F:	Documentation/mips/
+>>  F:	arch/mips/
+
+--=20
+Jiaxun Yang
