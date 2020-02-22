@@ -2,139 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 564561691D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 22:01:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD27F1691E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 22:26:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbgBVVBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 16:01:06 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:52212 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbgBVVBF (ORCPT
+        id S1726891AbgBVV0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 16:26:52 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37352 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbgBVV0w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 16:01:05 -0500
-Received: by mail-pj1-f68.google.com with SMTP id fa20so2309051pjb.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 13:01:05 -0800 (PST)
+        Sat, 22 Feb 2020 16:26:52 -0500
+Received: by mail-pl1-f193.google.com with SMTP id c23so2372088plz.4;
+        Sat, 22 Feb 2020 13:26:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=laEHxH1L9Tdj6O2OTgMojiMOqUUb6PedrFi1g5j2gKw=;
-        b=Q1hFllBqSn4fR6AzHGxaLoq0TcAbiOW4B6TXVyl+M2UM3D4qQ4964Ctex/XFU1tGyK
-         p4sSTdV2w4cFfCI9XEQElJygM/3XzhR8EFSUSvKz7mNzOEMB+cHMbexGgCjICFh2b9M0
-         k0k5iaTF06fD26i1vgUA31A0EdTX8LJvk9iEUSgr2JYUlx9/wYBj3wVJCSkVC7YsPR6O
-         Q6hbctC7OjLYEM0wXL150Y4H6JU9goQrzKhXP5WTyHmgQhnCJ15UN4Mmi21hgr+P5kCL
-         8lpPKAdaUWw04SHJie6s4ltpdlFqGOi1vsnXmhNF/pRtr3ZV4ozshwJfy7NngXubhExM
-         MVNQ==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YIYXGSS8fcmSn+/UDOu18mOj75c8PxzQTNkib8e4EmA=;
+        b=aTvdhtDL2+Mbhb5VETddMZfDxbWJ6EZbCYCSx9D6sUrCe7Uenur7XB6+LX454vOb89
+         Md/Ww1N8czpeKjPMs2tk1lpbniKQA1BMw66AVtPvna49MpPRFZdOhiMevSUjYSfs37fP
+         FJq/iGw5MR+c1ba3+LwSvlxtKSZNyspFmCNzTwGe/i1vjUQB+wVI1co0OEn2di8G6wEZ
+         loPSUWHD+Dp+rq6j0b+oJE3zN5lGzoPRMQGA7KBocF/77+4Bomtm+z3ejC+u5MAeBvBE
+         XH4ixL8ZAkSCwxnJFu0Dy/57u04y3hcatyLH7Pid11LpQrwmtZ8ddGTVk4n6TT+fdUHc
+         hqeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=laEHxH1L9Tdj6O2OTgMojiMOqUUb6PedrFi1g5j2gKw=;
-        b=DAtDUZwzs7x1S/sZ8Fpe75csTuCeUjTABNCFf9OTtvdEFBoOMSXlDQuNvWsVHi+t9+
-         uiz3DZUy53ki6puXtzh7M+jCWN4ugIwrgHNEitcAklM5aYT4NNfb+fhp1Y6GnfMxIYhG
-         G+Xe0xawvSoqw2l6g6sQlnHrBiG6MkV3R9H392LhMs75RjTNy6I+mUdS52l7+UCf9Ig0
-         0A4f4Ua67B3aKaaR9Ic6+BG87ZB3W+cpu96xPr7AOn76BxweMm3oWGhDp8MGQN4uYOhD
-         CrLVke74fqnWBnsh+pwJAGh56j4rCS0gMsINh3AQIsgyzUnWJ+r1aUdOrpRQ75MSbOng
-         MTVA==
-X-Gm-Message-State: APjAAAXG+jo0hZeKCRLtoOxmjScIZugI5OSGqjq6eAQ7Eux8HZsgyrLw
-        AdztTzXQ1lwGVjMxcrMn/jWrYA==
-X-Google-Smtp-Source: APXvYqxoMTRXvtk+LvyaNv3ILd1j6HwkVq68c8JHrJjI4QZ8TdCjLQMCRi/WdV/nRpCfwkVL6khcLw==
-X-Received: by 2002:a17:902:5a0c:: with SMTP id q12mr43016059pli.301.1582405264875;
-        Sat, 22 Feb 2020 13:01:04 -0800 (PST)
-Received: from google.com ([2620:15c:2ce:0:9efe:9f1:9267:2b27])
-        by smtp.gmail.com with ESMTPSA id 72sm7400306pfw.7.2020.02.22.13.01.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2020 13:01:04 -0800 (PST)
-Date:   Sat, 22 Feb 2020 13:01:01 -0800
-From:   Fangrui Song <maskray@google.com>
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Michael Matz <matz@suse.de>
-Subject: Re: [PATCH] x86/boot/compressed: Fix compressed kernel linking with
- lld
-Message-ID: <20200222210101.diqw4zt6lz42ekgx@google.com>
-References: <20200222164419.GB3326744@rani.riverdale.lan>
- <20200222171859.3594058-1-nivedita@alum.mit.edu>
- <20200222181413.GA22627@ubuntu-m2-xlarge-x86>
- <20200222185806.ywnqhfqmy67akfsa@google.com>
- <20200222201715.GA3674682@rani.riverdale.lan>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YIYXGSS8fcmSn+/UDOu18mOj75c8PxzQTNkib8e4EmA=;
+        b=el+DJBaOzT9Bz2yVA+m2shV1t+SA1ysTin2libLjNayD9v2XNoyrUgtWCRNSu5JGB+
+         Q36YTEkL3HruqnJJBoLocQUjEMldIITARhNY0Kx+cSvOab7f2kc1nUYSSrKOHCkKGSLz
+         5kPrKdN8V55T3s9CJ9Ea0LLQBU9TI24XVaEVwww0Dpr+Ch0Luwk15my/pBgB+crGBGYR
+         /IZmbWxJHaxvRWc9qu0wHcHyec4bYRimvTBjRY0OqvQTFBWk5wf0eH2JIRP6B8dzf25l
+         UNx8hA8w53zaI4G/XAgRrCVjBLmaLzLVtIfaWtJ3M6q+HsX+e0Nfnwy49BaVDbLZkD7Y
+         W02Q==
+X-Gm-Message-State: APjAAAWcmvrGKnjU1tBk6r95caQ30e/rG4+nB0gZR9MspTOMsfvMjTfr
+        /RWY9WogyTX9hR0tgj7TDFWwhrrn
+X-Google-Smtp-Source: APXvYqxGHhG+YoimZM6KOAYrgFZeqwXLYxLIW+5+yyIxTusu61LzJRVvDSMP/nnIjlm0W5kplxOhJg==
+X-Received: by 2002:a17:902:343:: with SMTP id 61mr43399823pld.332.1582406811177;
+        Sat, 22 Feb 2020 13:26:51 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id r7sm7570933pfg.34.2020.02.22.13.26.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Feb 2020 13:26:50 -0800 (PST)
+Subject: Re: [regression] nct6775 does not load in 5.4 and 5.5, bisected to
+ b84398d6d7f90080
+To:     Martin Volf <martin.volf.42@gmail.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-hwmon@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAM1AHpQ4196tyD=HhBu-2donSsuogabkfP03v1YF26Q7_BgvgA@mail.gmail.com>
+ <1bdbac08-86f8-2a57-2b0d-8cd2beb2a1c0@roeck-us.net>
+ <CAM1AHpSKFk9ZosQf=k-Rm2=EFqco7y4Lpfb7m07r=j_uJd4T0A@mail.gmail.com>
+ <85356d1a-f90d-e94d-16eb-1071d4e94753@roeck-us.net>
+ <CAM1AHpSpEFshpUGxKdhLV3XuThQg_XVaPgOWzvrTv6YtzHyO+A@mail.gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <bec1f81c-09a8-ba48-c6c4-5d9b340f7c0b@roeck-us.net>
+Date:   Sat, 22 Feb 2020 13:26:48 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200222201715.GA3674682@rani.riverdale.lan>
+In-Reply-To: <CAM1AHpSpEFshpUGxKdhLV3XuThQg_XVaPgOWzvrTv6YtzHyO+A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-22, Arvind Sankar wrote:
->On Sat, Feb 22, 2020 at 10:58:06AM -0800, Fangrui Song wrote:
->> On 2020-02-22, Nathan Chancellor wrote:
->> >On Sat, Feb 22, 2020 at 12:18:59PM -0500, Arvind Sankar wrote:
->> >> Commit TBD ("x86/boot/compressed: Remove unnecessary sections from
->> >> bzImage") discarded unnecessary sections with *(*). While this works
->> >> fine with the bfd linker, lld tries to also discard essential sections
->> >> like .shstrtab, .symtab and .strtab, which results in the link failing
->> >> since .shstrtab is required by the ELF specification. .symtab and
->> >> .strtab are also necessary to generate the zoffset.h file for the
->> >> bzImage header.
->> >>
->> >> Since the only sizeable section that can be discarded is .eh_frame,
->> >> restrict the discard to only .eh_frame to be safe.
->> >>
->> >> Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
->> >> ---
->> >> Sending as a fix on top of tip/x86/boot.
->> >>
->> >>  arch/x86/boot/compressed/vmlinux.lds.S | 4 ++--
->> >>  1 file changed, 2 insertions(+), 2 deletions(-)
->> >>
->> >> diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
->> >> index 12a20603d92e..469dcf800a2c 100644
->> >> --- a/arch/x86/boot/compressed/vmlinux.lds.S
->> >> +++ b/arch/x86/boot/compressed/vmlinux.lds.S
->> >> @@ -74,8 +74,8 @@ SECTIONS
->> >>  	. = ALIGN(PAGE_SIZE);	/* keep ZO size page aligned */
->> >>  	_end = .;
->> >>
->> >> -	/* Discard all remaining sections */
->> >> +	/* Discard .eh_frame to save some space */
->> >>  	/DISCARD/ : {
->> >> -		*(*)
->> >> +		*(.eh_frame)
->> >>  	}
->> >>  }
->> >> --
->> >> 2.24.1
->> >>
->> >
->> >FWIW:
->> >
->> >Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+On 2/22/20 12:49 PM, Martin Volf wrote:
+> Hello,
+> 
+> On Sat, Feb 22, 2020 at 8:05 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>> On 2/22/20 9:55 AM, Martin Volf wrote:
+>>> On Sat, Feb 22, 2020 at 4:41 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>>>> On 2/22/20 3:13 AM, Martin Volf wrote:
+>>>>> hardware monitoring sensors NCT6796D on my Asus PRIME Z390M-PLUS
+>>>>> motherboard with Intel i7-9700 CPU don't work with 5.4 and newer linux
+>>>>> kernels, the driver nct6775 does not load.
+>>>>>
+>>>>> It is working OK in version 5.3. I have used almost all released stable
+>>>>> versions from 5.3.8 to 5.3.16; I didn't try older kernels.
+>>> ...
+>>>> My wild guess would be that the i801 driver is a bit aggressive with
+>>>> reserving memory spaces, but I don't immediately see what it does
+>>>> differently in that regard after the offending patch. Does it work
+>>>> if you unload the i2c_i801 driver first ?
+>>>
+>>> Yes, after unloading i2c_i801, the nct6775 works.
+> ...
+>>> This is diff of /proc/ioports in 5.3.18 with loaded nct6775 and in
+>>> 5.4.21 without:
+>>>
+>>> --- ioports-5.3.18
+>>> +++ ioports-5.4.21
+>>> @@ -2,6 +2,7 @@
+>>>      0000-001f : dma1
+>>>      0020-0021 : pic1
+>>>      002e-0031 : iTCO_wdt
+>>> +    002e-0031 : iTCO_wdt
+>>>      0040-0043 : timer0
+>>>      0050-0053 : timer1
+> ...
+>>> So 0x2e is the resource the two drivers are fighting for.
+> ...
+>> Yes, and it should not do that, since the range can be used to access
+>> different segments of the same chip from multiple drivers. This region
+>> should only be reserved temporarily, using request_muxed_region() when
+>> needed and release_region() after the access is complete. Either case,
+>> I don't immediately see why that region would be interesting for the
+>> iTCO watchdog driver.
 >>
->> I am puzzled. Doesn't -fno-asynchronous-unwind-tables suppress
->> .eh_frame in the object files? Why are there still .eh_frame?
->>
->> Though, there is prior art: arch/s390/boot/compressed/vmlinux.lds.S also discards .eh_frame
->
->The compressed kernel doesn't use the regular flags and it seems it
->doesn't have that option. Maybe we should add it in to avoid generating
->those in the first place.
->
->The .eh_frame discard in arch/x86/kernel/vmlinux.lds.S does seem
->superfluous though.
+>> Can you add some debugging into the i801 driver to see what memory regions
+>> it reserves, and how it gets to reserve 0x2e..0x31 ? That range really
+>> doesn't make any sense to me.
+> 
+> in the function i801_add_tco() in drivers/i2c/busses/i2c-i801.c
+> (line 1601 in 5.4.21), there is this code:
+> 
+>          /*
+>           * Power Management registers.
+>           */
+>          devfn = PCI_DEVFN(PCI_SLOT(pci_dev->devfn), 2);
+>          pci_bus_read_config_dword(pci_dev->bus, devfn, ACPIBASE, &base_addr);
+> 
+>          res = &tco_res[ICH_RES_IO_SMI];
+>          res->start = (base_addr & ~1) + ACPIBASE_SMI_OFF;
+>          res->end = res->start + 3;
+>          res->flags = IORESOURCE_IO;
+> 
+> base_addr is 0xffffffff after pci_bus_read_config_dword() call.
+> ACPIBASE_SMI_OFF is 0x030, therefore res->start is 0x2e.
+> Not that I understand even a bit of this...
+> 
 
-Yes, please do that. I recommend suppressting unneeded sections at
-compile time, instead of discarding them at link time.
+Outch. This means that the code is broken. ACPIBASE is not configured,
+or disabled, or the code reads from the wrong PCI configuration register.
+What I don't understand is why this works with v5.3 kernels; the code
+looks just as bad there for me. I must be missing something. Either case,
+the only thing you can really do at this point is to blacklist the
+iTCO_wdt driver.
 
-https://github.com/torvalds/linux/commit/83a092cf95f28696ddc36c8add0cf03ac034897f
-added -Wl,--orphan-handling=warn to arch/powerpc/Makefile .
-x86 can follow if that is appropriate.
+Other than that, we can only hope that someone who understands above
+code can provide a fix. Maybe Wolfram has an idea.
 
-I don't recommend -Wl,--orphan-handling=error, which can unnecessarily
-break the builds.
+
+Guenter
