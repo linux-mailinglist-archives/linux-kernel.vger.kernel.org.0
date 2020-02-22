@@ -2,128 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45AF81691D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 21:49:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36CFE1691D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 21:53:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbgBVUtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 15:49:22 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:45071 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbgBVUtV (ORCPT
+        id S1726965AbgBVUxz convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 22 Feb 2020 15:53:55 -0500
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.65]:56621 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726828AbgBVUxy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 15:49:21 -0500
-Received: by mail-io1-f65.google.com with SMTP id i11so6193712ioi.12;
-        Sat, 22 Feb 2020 12:49:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Tyttl7wAFzUY9uhKyioctY+cw2c/9OPGZ4FJT7jjtXU=;
-        b=dT5BMyzCTyJJp+nvhdoFwyoGOluAnmLzaeCodeI+VdJln29TcnaayygUaf+h0pkBl7
-         JZfFCRFxzH7ApVzgz1n/a2cIDwWSvkSVoLq+HhQt2+eSxm4xatSiGflSKVFGaXyXBGH8
-         XtIUyiHgAZXfAJnN3OPIAEhPD4sRNoS7/3Kg+75q7KjLSQMZUz2jUuXzd9P1bGNXmg6r
-         9k5YKA2OkKx2buLFUqyzwwSYrULTYuZ/N9VSxpb3Kt6Dbj1DHNSvHWI1PlprZUU5p1Uv
-         dLJftJv17Yoz0Vdl4PYo/wBIHn07rnGPtr+ZGA0Tl4pcYIpv8Luju0N7ulfYrcwIfHWa
-         8VHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Tyttl7wAFzUY9uhKyioctY+cw2c/9OPGZ4FJT7jjtXU=;
-        b=SQ2HovfrsfQnbnbS0+oJ6mvg2HPBjQYGqVJ+uDX9EJpmbRRW/3oeWHVcAftbzuEVsE
-         7AlNZJYyCjSggj0s+ROZUUJyxaHwWcE/xMxQRpLHQMRe2q1msVwgmWR6/B12wPJgT994
-         hLkR+6Xe1RipfaTl0vcx86wAfeccYjnDv5g/c3gzAVBSu3Amc2Wj6xuN2MeAFiWxnJr4
-         KYf6nv/31jJtoVXgmbJHKhzQqmW44EXCTkjENUHULqcr8KY3U0EhxLbE3Q7miLhsZ7l8
-         IJpDLv4h6N8vEcs0tqNYFY62hv/4oYPD6FEh36KW5xKi7fbltQbwutDtulZXxbQBbdAp
-         vftA==
-X-Gm-Message-State: APjAAAVBLqlitTjai47hGp9Y/uhmRhKSUooEkSuJptp3moVykNuMVeaF
-        tREa/f4v/Ul6p1m3nHFv1QeeF5g0bkyLez2LMPA=
-X-Google-Smtp-Source: APXvYqztJRhXR0FUdnfb7W66f5mv3tPvBbrNQtEroKmjuZm3mu0Roba9eamT1ueHuSiTmo7Rs+8qz2Zy+sEXVtq07Pg=
-X-Received: by 2002:a05:6638:1e6:: with SMTP id t6mr40033964jaq.118.1582404560631;
- Sat, 22 Feb 2020 12:49:20 -0800 (PST)
+        Sat, 22 Feb 2020 15:53:54 -0500
+Received: from [100.112.199.4] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-1.bemta.az-b.eu-west-1.aws.symcld.net id 52/3C-41576-7D4915E5; Sat, 22 Feb 2020 20:53:43 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCJsWRWlGSWpSXmKPExsVi93Vmku61KYF
+  xBj87jSx+NqxntLj65B+zxcu1UhafFxlbHFwxmd3i1MMvLBbP3k9ntbjZOZ/J4vPZ+WwW33bf
+  Z7N4dvwzk8Wxb6dZLT4828NocXnXHDaLRUuPAZVs0rM4tkDM4kDDaRaLS3eeszoIe+w82cLic
+  e7wLxaPB/NbWTyuztrE5jFj/2dGj1+Tuxg9vh1cxewxbeY/Ro+3pw+xeDTcXcnqcePpOVaPay
+  2+Ho2fTzN6XOk6yu7xeZNcAH8Ua2ZeUn5FAmtGz+4LbAUMFSCqgZGhi5GLQ0hgK6PEg81LmLs
+  YOTmYBfQkbkydwgZi8woISpyc+YQFIq4tsWzha6AaDiBbTeJrVwlIWFjATuLdv3nsILaIgKrE
+  1z0zWUFsNgEZiZ9Hd4PFWYDiN9//BhsvJKAo8XbdRqjxfhI/X5xng4k3N60AsyWA7KXX2lggb
+  CuJbUva2SFsTYn175azg5wgIaAg8XmGMURYXuLjhRmMExgFZyF5YBaSB2YheWAWwgMLGFlWMV
+  okFWWmZ5TkJmbm6BoaGOgaGhrpGlqa6Roam+slVukm6aWW6panFpfoGuollhfrFVfmJuek6OW
+  llmxiBCaGlIIjnTsYf695r3eIUZKDSUmUV3diYJwQX1J+SmVGYnFGfFFpTmrxIUYTDg6Bzucf
+  VjMKXDj78BOjwJUPn5qYpFjy8vNSlSR4LScD9QgWpaanVqRl5gCTGkybBAePkggvG8hI3uKCx
+  NzizHSI1ClGS457T+YuYubYeHQekJy9ffEiZiGweVLivK9B5gmANGSU5sGNgyXeS4yyUsK8jA
+  wMDEI8BalFuZklqPKvGMU5GJWEeRsmAU3hycwrgdv6CuggJqCDlDkCQA4qSURISTUw+TI5z+b
+  5u7xIQUn/8Sbhz5GugXlSu1mZHk8qnRCefk5V/tXDvTf1eTh0FlrKqDwp+mBk8tFibYDz+ph2
+  OTHpa8fftnyu8o/r3brYIMfh6sXj+t31U25/O7rRsMNm/rypId/u3jg7a27o8uzrmpxz9nQIL
+  v/KfWmHX+kb7s4Jl66ck1UIKVeXWS7w++isqfnTfLccrHDVYOB2mjhDNGhmYypPTeAjxusWSb
+  rTlZu3X197tGP/1EyzT1J7a41vGtatezWfv2S6ps5B5cfCxzbvnVqg/KZR198p9fHhhd/irlw
+  My6i53li/uNx9wrXdmx/brjCbNfHj+pOV13SZdFcwV7xf6iK4JfrPhWMTGmKNY5RYijMSDbWY
+  i4oTAfCoIaE3BAAA
+X-Env-Sender: michael.larcher@rothof.de
+X-Msg-Ref: server-12.tower-288.messagelabs.com!1582404820!1797956!5
+X-Originating-IP: [62.245.153.98]
+X-SYMC-ESS-Client-Auth: outbound-route-from=fail
+X-StarScan-Received: 
+X-StarScan-Version: 9.44.25; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 28940 invoked from network); 22 Feb 2020 20:53:42 -0000
+Received: from host-62-245-153-98.customer.m-online.net (HELO Sport-Exchange.ROTHOF.local) (62.245.153.98)
+  by server-12.tower-288.messagelabs.com with ECDHE-RSA-AES256-SHA encrypted SMTP; 22 Feb 2020 20:53:42 -0000
+Received: from jmapnzin.host-stage-dns.com (188.165.89.95) by
+ Sport-Exchange.ROTHOF.local (192.168.100.3) with Microsoft SMTP Server id
+ 14.3.123.3; Sat, 22 Feb 2020 21:53:32 +0100
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-References: <CAM1AHpQ4196tyD=HhBu-2donSsuogabkfP03v1YF26Q7_BgvgA@mail.gmail.com>
- <1bdbac08-86f8-2a57-2b0d-8cd2beb2a1c0@roeck-us.net> <CAM1AHpSKFk9ZosQf=k-Rm2=EFqco7y4Lpfb7m07r=j_uJd4T0A@mail.gmail.com>
- <85356d1a-f90d-e94d-16eb-1071d4e94753@roeck-us.net>
-In-Reply-To: <85356d1a-f90d-e94d-16eb-1071d4e94753@roeck-us.net>
-From:   Martin Volf <martin.volf.42@gmail.com>
-Date:   Sat, 22 Feb 2020 21:49:09 +0100
-Message-ID: <CAM1AHpSpEFshpUGxKdhLV3XuThQg_XVaPgOWzvrTv6YtzHyO+A@mail.gmail.com>
-Subject: Re: [regression] nct6775 does not load in 5.4 and 5.5, bisected to b84398d6d7f90080
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-hwmon@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Re: I have a business for you, if you are interested!
+To:     Recipients <michael@ROTHOF.local>
+From:   <michael@ROTHOF.local>
+Date:   Sun, 23 Feb 2020 04:53:34 +0800
+Reply-To: <lizawong@infohsbc.net>
+Message-ID: <2cd0ee45-30f1-4b5b-8307-84e9badb9f6f@SPORT-EXCHANGE.ROTHOF.local>
+X-Originating-IP: [188.165.89.95]
+X-TM-AS-Product-Ver: SMEX-11.7.0.1065-8.500.1020-25246.005
+X-TM-AS-Result: Yes-48.583700-5.000000-31
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On Sat, Feb 22, 2020 at 8:05 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> On 2/22/20 9:55 AM, Martin Volf wrote:
-> > On Sat, Feb 22, 2020 at 4:41 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> >> On 2/22/20 3:13 AM, Martin Volf wrote:
-> >>> hardware monitoring sensors NCT6796D on my Asus PRIME Z390M-PLUS
-> >>> motherboard with Intel i7-9700 CPU don't work with 5.4 and newer linux
-> >>> kernels, the driver nct6775 does not load.
-> >>>
-> >>> It is working OK in version 5.3. I have used almost all released stable
-> >>> versions from 5.3.8 to 5.3.16; I didn't try older kernels.
-> > ...
-> >> My wild guess would be that the i801 driver is a bit aggressive with
-> >> reserving memory spaces, but I don't immediately see what it does
-> >> differently in that regard after the offending patch. Does it work
-> >> if you unload the i2c_i801 driver first ?
-> >
-> > Yes, after unloading i2c_i801, the nct6775 works.
-...
-> > This is diff of /proc/ioports in 5.3.18 with loaded nct6775 and in
-> > 5.4.21 without:
-> >
-> > --- ioports-5.3.18
-> > +++ ioports-5.4.21
-> > @@ -2,6 +2,7 @@
-> >     0000-001f : dma1
-> >     0020-0021 : pic1
-> >     002e-0031 : iTCO_wdt
-> > +    002e-0031 : iTCO_wdt
-> >     0040-0043 : timer0
-> >     0050-0053 : timer1
-...
-> > So 0x2e is the resource the two drivers are fighting for.
-...
-> Yes, and it should not do that, since the range can be used to access
-> different segments of the same chip from multiple drivers. This region
-> should only be reserved temporarily, using request_muxed_region() when
-> needed and release_region() after the access is complete. Either case,
-> I don't immediately see why that region would be interesting for the
-> iTCO watchdog driver.
->
-> Can you add some debugging into the i801 driver to see what memory regions
-> it reserves, and how it gets to reserve 0x2e..0x31 ? That range really
-> doesn't make any sense to me.
-
-in the function i801_add_tco() in drivers/i2c/busses/i2c-i801.c
-(line 1601 in 5.4.21), there is this code:
-
-        /*
-         * Power Management registers.
-         */
-        devfn = PCI_DEVFN(PCI_SLOT(pci_dev->devfn), 2);
-        pci_bus_read_config_dword(pci_dev->bus, devfn, ACPIBASE, &base_addr);
-
-        res = &tco_res[ICH_RES_IO_SMI];
-        res->start = (base_addr & ~1) + ACPIBASE_SMI_OFF;
-        res->end = res->start + 3;
-        res->flags = IORESOURCE_IO;
-
-base_addr is 0xffffffff after pci_bus_read_config_dword() call.
-ACPIBASE_SMI_OFF is 0x030, therefore res->start is 0x2e.
-Not that I understand even a bit of this...
-
-Martin
