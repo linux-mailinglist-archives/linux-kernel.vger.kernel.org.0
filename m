@@ -2,114 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DE0F1691C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 21:41:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBE8C1691CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 21:42:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbgBVUlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 15:41:08 -0500
-Received: from smtprelay0164.hostedemail.com ([216.40.44.164]:51505 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726767AbgBVUlI (ORCPT
+        id S1726930AbgBVUmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 15:42:31 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37315 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbgBVUmb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 15:41:08 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 6D94A4995F1;
-        Sat, 22 Feb 2020 20:41:06 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:966:968:973:981:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2196:2199:2393:2559:2562:2693:2828:2897:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:4385:5007:6117:6119:7903:7904:8660:10004:10400:10848:11026:11232:11657:11658:11914:12297:12740:12760:12895:13148:13230:13439:14096:14097:14659:14721:21080:21451:21611:21627:21972:21990:30012:30051:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: bead20_98bab56d3062
-X-Filterd-Recvd-Size: 3025
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf17.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 22 Feb 2020 20:41:05 +0000 (UTC)
-Message-ID: <7c30fd26941948fa1aedd1e73bdc2ebb8efec477.camel@perches.com>
-Subject: Re: [PATCH v3] proc: faster open/read/close with "permanent" files
-From:   Joe Perches <joe@perches.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>, akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Sat, 22 Feb 2020 12:39:39 -0800
-In-Reply-To: <20200222201539.GA22576@avx2>
-References: <20200222201539.GA22576@avx2>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Sat, 22 Feb 2020 15:42:31 -0500
+Received: by mail-lf1-f65.google.com with SMTP id b15so4024666lfc.4
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 12:42:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8/dqp+6ZkvRRmpmaUZJPJGMl+JnMMGYivypZ+qu1IdQ=;
+        b=KfFZENIHa1kD6D/djqtV3blmirkAzxujGlBUFJP08Yxr+SBEzFzJLYLcEkkSqydT8X
+         WcrEABFsSj/iama8pmWwrD0OkIPADuTDhFwjkBQNCgz/X0EWGkD1A4XiSLivvtseRDn3
+         TYiTvAMUlNv9hyetNnMvhIBTGGb1OuWpsVfnhJ58Ho9wGJ0wB9TYgJ5UCENxnu42+3oN
+         6xdXDF7aUEKvAcq1gbBTewL0jcm8+bY6gCsU9i2lqP/47SV9kF6bH2y1LxAWkiCHpe0t
+         kV/STK4XxyKUpd3IzE0SYkQyeH3TH8R8H0taoZJWSQCs2wPxYJJrzMW7vncAb+rmRqgS
+         m6ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=8/dqp+6ZkvRRmpmaUZJPJGMl+JnMMGYivypZ+qu1IdQ=;
+        b=tdMC0vC30rKilS8VNeJvuJETb+7r2nWcWu37nt2+yjTxLyARu443KW0Fa+HnSSszdw
+         fNIlgLsqmT5Qm0VDrWpdXDEQfzhK7ijgvr3a45xcd2dZYJeY2K8+gc0DOr8Jqf2281U8
+         WMhWpzBQuoj8yhebB0S2iCEYaAUGaQQpnkvwrkGVwj63+jXayX29hrSHbxKb+xuDocoR
+         TyLVUePzpQybMKshKbbmje8ScB1j/sGfEjjG/wg/yxrkNSyIIwS9HiNARcVuzEBq1p34
+         JPFAlJKcQScgU3SUO45qGwOI/kDeL9k/S+FAMrKz2jiHBu/W3OiywCxvJhCTGC6fGXBy
+         RzkA==
+X-Gm-Message-State: APjAAAXiYHAP2xiipT4wuWO+Tq8tCyrlu0U+BA1F2ciMCOnIPjPnt4WL
+        SXCx79LE8RdbAH6AyRwBVbhC8Q==
+X-Google-Smtp-Source: APXvYqx/B38YxteGwSNzJbkis53V2cy++o3q6ZdclQVcDwud+2NQuhy0RoD9Gg/qpGXsI9f1WGPORw==
+X-Received: by 2002:a19:6b0e:: with SMTP id d14mr4043585lfa.46.1582404149341;
+        Sat, 22 Feb 2020 12:42:29 -0800 (PST)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:4621:26b8:f6bb:b31c:6567:7228])
+        by smtp.gmail.com with ESMTPSA id v16sm3543019lfp.92.2020.02.22.12.42.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Feb 2020 12:42:28 -0800 (PST)
+Subject: Re: [PATCH RFC 2/2] memory: add Renesas RPC-IF driver
+To:     "Behme Dirk (CM/ESO2)" <dirk.behme@de.bosch.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mason Yang <masonccyang@mxic.com.tw>,
+        linux-spi@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <cb7022c9-0059-4eb2-7910-aab42124fa1c@cogentembedded.com>
+ <4db876ed-1ccc-e3be-311d-30cd52f40259@cogentembedded.com>
+ <5760bcdb-e44b-6f18-7262-9526684e5780@de.bosch.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <5603f393-554d-e2a8-c2d8-6bafc20f4169@cogentembedded.com>
+Date:   Sat, 22 Feb 2020 23:42:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
+In-Reply-To: <5760bcdb-e44b-6f18-7262-9526684e5780@de.bosch.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2020-02-22 at 23:15 +0300, Alexey Dobriyan wrote:
-> Now that "struct proc_ops" exist we can start putting there stuff which
-> could not fly with VFS "struct file_operations"...
+On 02/10/2020 01:21 PM, Behme Dirk (CM/ESO2) wrote:
+
+>> Add the memory driver for Renesas RPC-IF which registers either SPI or
+>> HyperFLash device depending on the contents of the device tree subnode.
+>> It also provides the absract "back end" device APIs that can be used by
+>> the "front end" SPI/MTD drivers to talk to the real hardware.
+>>
+>> Based on the original patch by Mason Yang <masonccyang@mxic.com.tw>.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > 
-> Most of fs/proc/inode.c file is dedicated to make open/read/.../close reliable
-> in the event of disappearing /proc entries which usually happens if module is
-> getting removed. Files like /proc/cpuinfo which never disappear simply do not
-> need such protection.
 > 
-> Save 2 atomic ops, 1 allocation, 1 free per open/read/close sequence for such
-> "permanent" files.
+> FYI, please find below [1] the changes I did locally on this driver. It seems to read & write successfully on my custom M3 (R8A7796) device, now.
+
+   Not for me...
+   BTW, your patch had whitespace ruined, I had to apply it by hand, you'd better
+attach the patches, not paste. :-/
+
+> Best regards
 > 
-> Enable "permanent" flag for
+> Dirk
 > 
-> 	/proc/cpuinfo
-> 	/proc/kmsg
-> 	/proc/modules
-> 	/proc/slabinfo
-> 	/proc/stat
-> 	/proc/sysvipc/*
-> 	/proc/swaps
+> [1]
 > 
-> More will come once I figure out foolproof way to prevent out module
-> authors from marking their stuff "permanent" for performance reasons
-> when it is not.
+> From d72b805cc461ab1e9747c973e9be84e7abb8f828 Mon Sep 17 00:00:00 2001
+> From: Dirk Behme <dirk.behme@de.bosch.com>
+> Date: Tue, 4 Feb 2020 08:39:31 +0100
+> Subject: [PATCH] memory: renesas-rpc-if: Correct the STRTIM and some other
+>  clean up
 > 
-> This should help with scalability: benchmark is "read /proc/cpuinfo R times
-> by N threads scattered over the system".
+> This is required to make the driver work correctly in my M3 environment.
+> 
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> ---
+>  drivers/memory/renesas-rpc-if.c | 42 ++++++++++++++++++++-------------
+>  1 file changed, 25 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
+> index 04be92b64bfa..f4356b066384 100644
+> --- a/drivers/memory/renesas-rpc-if.c
+> +++ b/drivers/memory/renesas-rpc-if.c
+[...]
+> @@ -513,19 +525,15 @@ ssize_t rpcif_dirmap_read(struct rpcif *rpc, u64 offs, size_t len, void *buf)
+>      pm_runtime_get_sync(rpc->dev);
+> 
+>      regmap_update_bits(rpc->regmap, RPCIF_CMNCR, RPCIF_CMNCR_MD, 0);
+> -    regmap_write(rpc->regmap, RPCIF_DRCR,
+> -             RPCIF_DRCR_RBURST(32) | RPCIF_DRCR_RBE);
+> -    regmap_write(rpc->regmap, RPCIF_DRCMR, rpc->command);
+> -    regmap_write(rpc->regmap, RPCIF_DREAR,
+> -             RPCIF_DREAR_EAV(offs >> 25) | RPCIF_DREAR_EAC(1));
+> -    regmap_write(rpc->regmap, RPCIF_DROPR, rpc->option);
+> -    regmap_write(rpc->regmap, RPCIF_DRENR,
+> -             rpc->enable & ~RPCIF_SMENR_SPIDE(0xF));
+> -    regmap_write(rpc->regmap, RPCIF_DRDMCR, rpc->dummy);
+> -    regmap_write(rpc->regmap, RPCIF_DRDRENR, rpc->ddr);
 
-Is this an actual expected use-case?
-Is there some additional unnecessary memory consumption
-in the unscaled systems?
+   The driver somehow works only with this left in place (with 2 bytes eaten
+as before), otherwise all the flash reads all 0xff (via dirmap).
 
-And trivia:
+> +    ret = wait_msg_xfer_end(rpc);
+> +    if (ret) {
+> +        len = 0;
+> +        goto err_out;
+> +    }
+> 
+>      memcpy_fromio(buf, rpc->dirmap + from, len);
+> 
+> +err_out:
+>      pm_runtime_put(rpc->dev);
+> 
+>      return len;
 
->  static loff_t proc_reg_llseek(struct file *file, loff_t offset, int whence)
->  {
-[]
-> +	if (pde_is_permanent(pde)) {
-> +		return pde_lseek(pde, file, offset, whence);
-> +	} else if (use_pde(pde)) {
-> +		rv = pde_lseek(pde, file, offset, whence);
->  		unuse_pde(pde);
->  	}
->  	return rv;
->  }
-[]
->  static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
->  {
->  	struct proc_dir_entry *pde = PDE(file_inode(file));
->  	ssize_t rv = -EIO;
-> -	if (use_pde(pde)) {
-> -		typeof_member(struct proc_ops, proc_read) read;
->  
-> -		read = pde->proc_ops->proc_read;
-> -		if (read)
-> -			rv = read(file, buf, count, ppos);
-> +	if (pde_is_permanent(pde)) {
-> +		return pde_read(pde, file, buf, count, ppos);
-> +	} else if (use_pde(pde)) {
-> +		rv = pde_read(pde, file, buf, count, ppos);
->  		unuse_pde(pde);
-
-Perhaps all the function call duplication could be minimized
-by using code without direct returns like:
-
-	rv = pde_read(pde, file, buf, count, pos);
-	if (!pde_is_permanent(pde))
-		unuse_pde(pde);
-
-	return rv;
-
-
+MBR, Sergei
