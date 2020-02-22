@@ -2,117 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD0AE168ACB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:15:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3FF8168AC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:15:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbgBVAPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:15:22 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:38768 "EHLO inva021.nxp.com"
+        id S1726829AbgBVAPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:15:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbgBVAPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:15:19 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A2722201B49;
-        Sat, 22 Feb 2020 01:15:17 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8392F201AF4;
-        Sat, 22 Feb 2020 01:15:01 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 05562402E6;
-        Sat, 22 Feb 2020 08:14:47 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org, rui.zhang@intel.com,
-        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
-        aisheng.dong@nxp.com, linux@roeck-us.net,
-        srinivas.kandagatla@linaro.org, krzk@kernel.org,
-        fugang.duan@nxp.com, peng.fan@nxp.com, daniel.baluta@nxp.com,
-        bjorn.andersson@linaro.org, olof@lixom.net, dinguyen@kernel.org,
-        leonard.crestez@nxp.com, marcin.juszkiewicz@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V16 5/5] arm64: dts: imx: add i.MX8QXP thermal support
-Date:   Sat, 22 Feb 2020 08:08:52 +0800
-Message-Id: <1582330132-13461-5-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582330132-13461-1-git-send-email-Anson.Huang@nxp.com>
-References: <1582330132-13461-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726525AbgBVAPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 19:15:12 -0500
+Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-5.6-3 tag
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582330511;
+        bh=W3W8pYm8I7eHMCrdn3ZXX+yGKhlB96u/mT1KxqIfAv0=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=JIIpA3aScnOPW9wex9YeSv3xkK8mNA43T2pRU1hOt0f3jiXHwjoni/RUHtw+6ja88
+         I2F8Ep2WScZrYfaVPCTzeLQa6z/WOQNSp4Y0BHtU14QOD0l/EJU1PyyVTbVfCzs2bq
+         /eH8PxCWnK/zMaW8MQl+3nkuJMAJX/vdiQ8Hae/0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <87lfowdv54.fsf@mpe.ellerman.id.au>
+References: <87lfowdv54.fsf@mpe.ellerman.id.au>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <87lfowdv54.fsf@mpe.ellerman.id.au>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git
+ tags/powerpc-5.6-3
+X-PR-Tracked-Commit-Id: 9eb425b2e04e0e3006adffea5bf5f227a896f128
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2865936259e27629fac422bc80c9b55ca1f108a5
+Message-Id: <158233051185.15315.18250424563849105546.pr-tracker-bot@kernel.org>
+Date:   Sat, 22 Feb 2020 00:15:11 +0000
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        christophe.leroy@c-s.fr, gustavold@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        mikey@neuling.org, oohall@gmail.com, sbobroff@linux.ibm.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add i.MX8QXP CPU thermal zone support.
+The pull request you sent on Fri, 21 Feb 2020 22:42:15 +1100:
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-No change.
----
- arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 36 ++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-5.6-3
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-index fb5f752..0a14fe4 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-@@ -11,6 +11,7 @@
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/pinctrl/pads-imx8qxp.h>
-+#include <dt-bindings/thermal/thermal.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -189,6 +190,11 @@
- 			compatible = "fsl,imx8qxp-sc-wdt", "fsl,imx-sc-wdt";
- 			timeout-sec = <60>;
- 		};
-+
-+		tsens: thermal-sensor {
-+			compatible = "fsl,imx8qxp-sc-thermal", "fsl,imx-sc-thermal";
-+			#thermal-sensor-cells = <1>;
-+		};
- 	};
- 
- 	timer {
-@@ -586,4 +592,34 @@
- 			#clock-cells = <1>;
- 		};
- 	};
-+
-+	thermal_zones: thermal-zones {
-+		cpu-thermal0 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <2000>;
-+			thermal-sensors = <&tsens IMX_SC_R_SYSTEM>;
-+			trips {
-+				cpu_alert0: trip0 {
-+					temperature = <107000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				cpu_crit0: trip1 {
-+					temperature = <127000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device =
-+						<&A35_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A35_1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A35_2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A35_3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+	};
- };
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2865936259e27629fac422bc80c9b55ca1f108a5
+
+Thank you!
+
 -- 
-2.7.4
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
