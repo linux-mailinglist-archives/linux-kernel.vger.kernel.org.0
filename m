@@ -2,90 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4FC3169162
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 20:02:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F56D169171
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 20:05:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbgBVTCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 14:02:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbgBVTCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 14:02:52 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4A4F206EF;
-        Sat, 22 Feb 2020 19:02:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582398172;
-        bh=DpUM/OsF1FK0wRQ2NhZ1OXxzKYvkGiF6L8aCVgMDtOA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JrBLp1qVxkmorY9bHIuXnzxPpJ2ddR19kuinzPOhnrx4Sv2AUO2/0tWyPo6G9QsBo
-         o5A+L75o4/+JRQfRlXWnGZg8RwZ+Om2MH+L63l2bh4zP4Lm6fgaVyZ/fMvemTn/aTq
-         Cz6l5TryGnnh0fHEM6nZIA5Qi5nuUUeR35iSavuk=
-Date:   Sat, 22 Feb 2020 14:02:50 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Eric Biggers <ebiggers@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        linux-crypto@vger.kernel.org
-Subject: Re: [PATCH 4.19 061/191] padata: always acquire cpu_hotplug_lock
- before pinst->lock
-Message-ID: <20200222190250.GD26320@sasha-vm>
-References: <20200221072250.732482588@linuxfoundation.org>
- <20200221072258.745173144@linuxfoundation.org>
- <20200222000045.cl45vclfhvkjursm@ca-dmjordan1.us.oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200222000045.cl45vclfhvkjursm@ca-dmjordan1.us.oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727119AbgBVTFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 14:05:08 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:23007 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726817AbgBVTEz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 14:04:55 -0500
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id 01MJ4cZ3012807;
+        Sun, 23 Feb 2020 04:04:38 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com 01MJ4cZ3012807
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582398279;
+        bh=OAJy6pWrxR7lNpcqlMigyzZQUmooD1dwjoIE2utcEN8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fs8OZ1BpLTf9CvWG/+boO5Xwn0uv7awOShJbmu6/QPDxlfFug5xTxVenYrtEs15im
+         Z/iIfq+RtfKavg5Ng97XjyMDv3APCdbaTgcBKPJW3EF9pf2ZVAlBNdeOZ3brvI724a
+         q74/+opbx6TRgHCbtO5go/1E0JDtH56ZEPk/EcH4iQ7Lw/wtEy2RvX3Xj0x5dhH8zv
+         DZamwd2FHJhk6Ylc9rRWCfnSOCN6OsZYxKoboUagaT9+nJ/QZgBvk/wJ7ScKr9hkq7
+         XWv/ttvnN2MQG/Kh7Uo1xFFOKA2yqevSF87IAjfTSkAUvOb/pUo76gHb+4QOsbAgg1
+         0uN4HhOlYyo3g==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] kbuild: fix DT binding schema rule to detect command line changes
+Date:   Sun, 23 Feb 2020 04:04:31 +0900
+Message-Id: <20200222190435.11767-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 07:00:45PM -0500, Daniel Jordan wrote:
->On Fri, Feb 21, 2020 at 08:40:34AM +0100, Greg Kroah-Hartman wrote:
->> From: Daniel Jordan <daniel.m.jordan@oracle.com>
->>
->> [ Upstream commit 38228e8848cd7dd86ccb90406af32de0cad24be3 ]
->>
->> lockdep complains when padata's paths to update cpumasks via CPU hotplug
->> and sysfs are both taken:
->>
->>   # echo 0 > /sys/devices/system/cpu/cpu1/online
->>   # echo ff > /sys/kernel/pcrypt/pencrypt/parallel_cpumask
->>
->>   ======================================================
->>   WARNING: possible circular locking dependency detected
->>   5.4.0-rc8-padata-cpuhp-v3+ #1 Not tainted
->>   ------------------------------------------------------
->>   bash/205 is trying to acquire lock:
->>   ffffffff8286bcd0 (cpu_hotplug_lock.rw_sem){++++}, at: padata_set_cpumask+0x2b/0x120
->>
->>   but task is already holding lock:
->>   ffff8880001abfa0 (&pinst->lock){+.+.}, at: padata_set_cpumask+0x26/0x120
->>
->>   which lock already depends on the new lock.
->
->I think this patch should be dropped from all stable queues (4.4, 4.9, 4.14,
->4.19, 5.4, and 5.5).
->
->The main benefit is to un-break lockdep for testing with future padata changes,
->and an actual deadlock seems unlikely.
->
->These stable versions don't fix the ordering in padata_remove_cpu() either
->(nothing calls it though).
->
->I tried the other stable padata patch in this cycle ("padata: validate cpumask
->without removed CPU during offline"), it passed my tests and should stay in.
+This if_change_rule is not working; it cannot detect any command line
+changes.
 
-I've dropped it, thanks.
+The reason is because cmd-check in scripts/Kbuild.include compares
+$(cmd_$@) and $(cmd_$1), but cmd_dtc_dt_yaml does not exist here.
 
+For if_change_rule to work properly, the stem part of cmd_* and rule_*
+must match. Because this cmd_and_fixdep invokes cmd_dtc, this rule must
+be named rule_dtc.
+
+Fixes: 4f0e3a57d6eb ("kbuild: Add support for DT binding schema checks")
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/Makefile.lib | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index bae62549e3d2..64b938c10039 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -302,13 +302,13 @@ DT_TMP_SCHEMA := $(objtree)/$(DT_BINDING_DIR)/processed-schema.yaml
+ quiet_cmd_dtb_check =	CHECK   $@
+       cmd_dtb_check =	$(DT_CHECKER) -u $(srctree)/$(DT_BINDING_DIR) -p $(DT_TMP_SCHEMA) $@ ;
+ 
+-define rule_dtc_dt_yaml
++define rule_dtc
+ 	$(call cmd_and_fixdep,dtc,yaml)
+ 	$(call cmd,dtb_check)
+ endef
+ 
+ $(obj)/%.dt.yaml: $(src)/%.dts $(DTC) $(DT_TMP_SCHEMA) FORCE
+-	$(call if_changed_rule,dtc_dt_yaml)
++	$(call if_changed_rule,dtc)
+ 
+ dtc-tmp = $(subst $(comma),_,$(dot-target).dts.tmp)
+ 
 -- 
-Thanks,
-Sasha
+2.17.1
+
