@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00B0C16922F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 00:14:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B0FF169235
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 00:14:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbgBVXOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726983AbgBVXOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sat, 22 Feb 2020 18:14:34 -0500
-Received: from vps.xff.cz ([195.181.215.36]:33960 "EHLO vps.xff.cz"
+Received: from vps.xff.cz ([195.181.215.36]:33974 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726855AbgBVXOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726865AbgBVXOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Feb 2020 18:14:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1582413271; bh=O+L3Dgir8ylc0hRKhh+YvNvVJjhY/rU659XZD2GVYnY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fCtF4hhmMcBT3t3pgLRjHBXlVS22ppcJg2B6akTO8amSo0XYfOoIBYZvmUnQ9kXk2
-         Z13/B3H07CMJb+3mz8qmpzNj4dRSfc4AGdUmb3rTIfhf3MCpnlrLYtKYCrB7XdSC8j
-         QfzFykHW+lf7whEzPV56NJ5N/20/re4ljiLnX5+U=
+        t=1582413271; bh=ZfpciIj4N/ohC5xxET/7O8AAxYB9cySsBo6ydi0t5+E=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=mBIbednIO0f1b1OU46STOHFWNVaSoDFgW9GXvd/AxkhWoElcraX72ilVHdTdRtHbB
+         wS/hbfGVmYtFnU2ZvVuRqm1pmCotSeoX4JbTDB7OT3smhLf9ka5SZJNiQuZMjBJw4g
+         o2Tapz8AEKRv0T6titDi7YC14Z3/qawG3YLziTMM=
 From:   Ondrej Jirman <megous@megous.com>
 To:     linux-sunxi@googlegroups.com,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -28,9 +28,11 @@ Cc:     Ondrej Jirman <megous@megous.com>,
         Luca Weiss <luca@z3ntu.xyz>, Tomas Novotny <tomas@novotny.cz>,
         linux-input@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/4] Add support for vibrator motor for TBS A711 Tablet
-Date:   Sun, 23 Feb 2020 00:14:24 +0100
-Message-Id: <20200222231428.233621-1-megous@megous.com>
+Subject: [PATCH 1/4] dt-bindings: input: gpio-vibrator: Don't require enable-gpios
+Date:   Sun, 23 Feb 2020 00:14:25 +0100
+Message-Id: <20200222231428.233621-2-megous@megous.com>
+In-Reply-To: <20200222231428.233621-1-megous@megous.com>
+References: <20200222231428.233621-1-megous@megous.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -38,25 +40,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tablet has a vibrator. Expose it via input subsystem (EV_FF).
+It is possible to turn the motor on/off just by enabling/disabling
+the vcc-supply.
 
-Please take a look.
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+---
+ Documentation/devicetree/bindings/input/gpio-vibrator.yaml | 1 -
+ 1 file changed, 1 deletion(-)
 
-thank you and regards,
-  Ondrej Jirman
-
-Ondrej Jirman (4):
-  dt-bindings: input: gpio-vibrator: Don't require enable-gpios
-  input: gpio-vibra: Allow to use vcc-supply alone to control the
-    vibrator
-  ARM: dts: sun8i-a83t-tbs-a711: Add support for the vibrator motor
-  ARM: dts: sun8i-a83t-tbs-a711: Increase voltage on the vibrator
-
- .../devicetree/bindings/input/gpio-vibrator.yaml         | 1 -
- arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts                | 9 +++++++--
- drivers/input/misc/gpio-vibra.c                          | 3 ++-
- 3 files changed, 9 insertions(+), 4 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/input/gpio-vibrator.yaml b/Documentation/devicetree/bindings/input/gpio-vibrator.yaml
+index b98bf9363c8ff..f8f4093a0a454 100644
+--- a/Documentation/devicetree/bindings/input/gpio-vibrator.yaml
++++ b/Documentation/devicetree/bindings/input/gpio-vibrator.yaml
+@@ -24,7 +24,6 @@ properties:
+ 
+ required:
+   - compatible
+-  - enable-gpios
+ 
+ examples:
+   - |
 -- 
 2.25.1
 
