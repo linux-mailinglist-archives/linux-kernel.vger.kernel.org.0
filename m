@@ -2,77 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5838C168E1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 11:00:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5D99168E21
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 11:06:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbgBVKAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 05:00:01 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:54367 "EHLO frisell.zx2c4.com"
+        id S1727158AbgBVKFs convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 22 Feb 2020 05:05:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48310 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726726AbgBVKAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 05:00:00 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id fd300658
-        for <linux-kernel@vger.kernel.org>;
-        Sat, 22 Feb 2020 09:56:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :in-reply-to:references:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=ZHg3DU0tDACYDvwC5oieXse+7Sg=; b=H2ffTm
-        BO5FuwBEUNcrEICHxiuJUVnG5fuD8vhGCBP9rkHPDZSoL9K5Pj7Oq2g2d4uZ2gyw
-        VpoRg0xSGQZzqCUrzgWkQiocatlw1GydbT5dM4QsXaJ8pJLeNZJRWLXLHptsYnQk
-        cvvm/x9DrNuCKUWST1jyYTmZZ5ZW7M7Ir9B3Rm8Ln15fSaWn8fUN75sbotuHpKV9
-        cdo1bkDI7FTYWq6B/5Z/vD8XhlmoAPEDHW/FYzQUVPrVzfon8yFucq8nbprLC2Hk
-        7foKBkOBm14nziPQp04zrSnmrrGx432fA2ikaqG2p/lDMBFje/pzPFwcAumjFq16
-        LV0odL2FnuERxisg==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id f1f4c9d4 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Sat, 22 Feb 2020 09:56:52 +0000 (UTC)
-Received: by mail-oi1-f170.google.com with SMTP id q81so4280541oig.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 01:59:59 -0800 (PST)
-X-Gm-Message-State: APjAAAVfJ+HPZw0xdo+9ES79jBo4bzJtQFG0y0lfkTkNlUcvLoTWHkVi
-        xDc7Lhfvg/3/HJE8HyxD7Dsb3BOzxZ13kBGUrUc=
-X-Google-Smtp-Source: APXvYqzFCUvKwgudzoH5Kb5zw2CYpIawnHdU6gcz45TDucyJAtrT825uJtTaou9mXHmORM0QiPtnPocpFZmW9/qiJkA=
-X-Received: by 2002:aca:815:: with SMTP id 21mr5714644oii.52.1582365598426;
- Sat, 22 Feb 2020 01:59:58 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a4a:dd10:0:0:0:0:0 with HTTP; Sat, 22 Feb 2020 01:59:57
- -0800 (PST)
-In-Reply-To: <20200222004133.GC873427@mit.edu>
-References: <20200216161836.1976-1-Jason@zx2c4.com> <20200216182319.GA54139@kroah.com>
- <CA+8MBbKScktNPWPgMqexp9gSX+y2FVnXTDJyyEMVsdONPBpFrQ@mail.gmail.com>
- <CA+8MBbKyRhipHsxb0nvV11Bvv8ypQ_gq5JR8ihfuG6JfBTnxZw@mail.gmail.com>
- <CAHmME9q1rnD5z2bENYhqnM5-XCD+E68nm2RrGRWXt8ntpvfezg@mail.gmail.com> <20200222004133.GC873427@mit.edu>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Sat, 22 Feb 2020 10:59:57 +0100
-X-Gmail-Original-Message-ID: <CAHmME9pJPhqX8kDCTiRQdqGMLctEZTWTaG0vTDPL0v5A9-rX2A@mail.gmail.com>
-Message-ID: <CAHmME9pJPhqX8kDCTiRQdqGMLctEZTWTaG0vTDPL0v5A9-rX2A@mail.gmail.com>
-Subject: Re: [PATCH] random: always use batched entropy for get_random_u{32,64}
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Tony Luck <tony.luck@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726675AbgBVKFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 05:05:48 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 7357CADF8;
+        Sat, 22 Feb 2020 10:05:46 +0000 (UTC)
+Date:   Sat, 22 Feb 2020 11:05:45 +0100
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v4] leds: add SGI IP30 led support
+Message-Id: <20200222110545.fc96683543cb0dd538e5be82@suse.de>
+In-Reply-To: <49524a9a-910a-9f1a-bc10-d78080a16d46@gmail.com>
+References: <20200221111120.28799-1-tbogendoerfer@suse.de>
+        <49524a9a-910a-9f1a-bc10-d78080a16d46@gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ted,
+On Fri, 21 Feb 2020 21:31:04 +0100
+Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
 
-On 2/22/20, Theodore Y. Ts'o <tytso@mit.edu> wrote:
 
-> No, we can't; take a look at invalidate_batched_entropy(), where we
-> need invalidate all of per-cpu batched entropy from a single CPU after
-> we have initialized the the CRNG.
->
-> Since most of the time after CRNG initialization, the spinlock for
-> each CPU will be on that CPU's cacheline, the time to take and release
-> the spinlock is not going to be material.
+> > +	if (num == 0)
+> > +		data->cdev.name = "white:indicator";
+> > +	else
+> > +		data->cdev.name = "red:indicator";
+> 
+> Why indicator? Whereas it sounds quite generic it is used in the LED
+> subsystem specifically for naming indicator LEDs, that are often
+> found on flash LED controllers and are designed to indicate camera
+> sensor activity.
 
-Ah, you're right. I hadn't looked in detail before, hence mentioning
-"probably" and deferring to a new patch. Thanks for looking into it.
+ok, ic.
 
-Regarding this patch here, can you apply the v2 that I posted to your
-random.git tree?
+> If it is on the front panel of SGI Octane workstations then its
+> function is perhaps well known?
 
-Thanks,
-Jason
+the red LED is clearly a fault led. The white LED will be switch on
+after system diagnostic was successfull. Nothing from common.h really
+fits that, maybe status ?
+
+Thomas.
+
+-- 
+SUSE Software Solutions Germany GmbH
+HRB 36809 (AG Nürnberg)
+Geschäftsführer: Felix Imendörffer
