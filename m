@@ -2,63 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0415168E2B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 11:26:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB5D168E47
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 11:27:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbgBVK0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 05:26:01 -0500
-Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.101]:16511 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbgBVK0B (ORCPT
+        id S1727225AbgBVK1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 05:27:22 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38782 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbgBVK1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 05:26:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582367158;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=ex+tP/S3jJM/1n8mzovxtL99ooZIHpji+z8Ck9o3ixM=;
-        b=N4w343kENoioT8Zh9eiIb/W69ahujIM+joZhXM2rLO1Z3gIiPlXsSCqYjJBKabLnlw
-        h5GUKDQGQbpOtm8W83TEDMn8wgvVEReM3SMg1453tnRZTneVSh1NK2gxjxg05odniiot
-        ivthAYIAd7SX7qWBwmxZwzTibZMtVdjJQVfG922muChI/CDFhDFyR4MKNexi1ryBAO3X
-        OIpeL3KJMHlz9q4CWWujjE9Kx39GRXnhoWEz/E/ebwCsLldJRCNGEhGvjkKIp46cxKdh
-        Zhuq2b2FOWxIko91F4IL2OhmEMlzT5wNAkhKMgME4zbdKUKC9YZTU47N/O0K0RaPUnt9
-        Vr8Q==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0pAz7pC6Q5M"
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1MAPljMg
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Sat, 22 Feb 2020 11:25:47 +0100 (CET)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com
-Subject: [PATCH v5 6/6] MIPS: DTS: CI20: make DM9000 Ethernet controller use NVMEM to find the default MAC address
-Date:   Sat, 22 Feb 2020 11:25:41 +0100
-Message-Id: <aa411ab2b57443b405372cc54c95bffc326aff98.1582367141.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1582367141.git.hns@goldelico.com>
-References: <cover.1582367141.git.hns@goldelico.com>
+        Sat, 22 Feb 2020 05:27:22 -0500
+Received: from localhost.localdomain (unknown [IPv6:2a01:e0a:2c:6930:b93f:9fae:b276:a89a])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 650D82711FF;
+        Sat, 22 Feb 2020 10:27:20 +0000 (GMT)
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Boris Brezillon <bbrezillon@kernel.org>,
+        =?UTF-8?q?Przemys=C5=82aw=20Gaj?= <pgaj@cadence.com>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        linux-i3c@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@collabora.com>
+Subject: [PATCH 0/3] i3c: Address i3c_device_id related issues
+Date:   Sat, 22 Feb 2020 11:27:08 +0100
+Message-Id: <20200222102711.1352006-1-boris.brezillon@collabora.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,31 +36,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a unique MAC address programmed into the eFuses
-of the JZ4780 chip in the CI20 factory. By using this
-for initializing the DM9000 Ethernet controller, every
-CI20 board has an individual - but stable - MAC address
-and DHCP can assign stable IP addresses.
+Hello,
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- arch/mips/boot/dts/ingenic/ci20.dts | 3 +++
- 1 file changed, 3 insertions(+)
+When the I3C subsystem was introduced part of the modalias generation
+logic was missing (modalias generation based on i3c_device_id tables).
+This patch series addresses that limitation and simplifies our match
+function along the way.
 
-diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
-index 37b93166bf22..6dc1f9eeff00 100644
---- a/arch/mips/boot/dts/ingenic/ci20.dts
-+++ b/arch/mips/boot/dts/ingenic/ci20.dts
-@@ -355,6 +355,9 @@
- 
- 		interrupt-parent = <&gpe>;
- 		interrupts = <19 4>;
-+
-+		nvmem-cells = <&eth0_addr>;
-+		nvmem-cell-names = "mac-address";
- 	};
- };
- 
+Regards,
+
+Boris
+
+Boris Brezillon (3):
+  i3c: Fix MODALIAS uevents
+  i3c: Generate aliases for i3c modules
+  i3c: Simplify i3c_device_match_id()
+
+ drivers/i3c/device.c              | 50 ++++++++++++++-----------------
+ drivers/i3c/master.c              |  2 +-
+ scripts/mod/devicetable-offsets.c |  7 +++++
+ scripts/mod/file2alias.c          | 19 ++++++++++++
+ 4 files changed, 49 insertions(+), 29 deletions(-)
+
 -- 
-2.23.0
+2.24.1
 
