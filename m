@@ -2,59 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8D8168B07
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:34:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F25AD168B0E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:36:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbgBVAeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:34:05 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:57123 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726735AbgBVAeF (ORCPT
+        id S1727329AbgBVAgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:36:11 -0500
+Received: from smtprelay0146.hostedemail.com ([216.40.44.146]:60201 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726672AbgBVAgK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:34:05 -0500
-Received: from callcc.thunk.org (guestnat-104-133-8-109.corp.google.com [104.133.8.109] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 01M0XsLL016203
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Feb 2020 19:33:56 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 4BDFA4211EF; Fri, 21 Feb 2020 19:33:54 -0500 (EST)
-Date:   Fri, 21 Feb 2020 19:33:54 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     "Jitindar SIngh, Suraj" <surajjs@amazon.com>
-Cc:     "cai@lca.pw" <cai@lca.pw>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "paulmck@kernel.org" <paulmck@kernel.org>
-Subject: Re: null-ptr-deref due to "ext4: fix potential race between online
- resizing and write operations"
-Message-ID: <20200222003354.GB873427@mit.edu>
-References: <1582293736.7365.109.camel@lca.pw>
- <d6ca935e3c70f275ec669fae8984b11f383baa1f.camel@amazon.com>
+        Fri, 21 Feb 2020 19:36:10 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 7A25A1801870D;
+        Sat, 22 Feb 2020 00:36:09 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:69:355:379:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3874:4321:4605:5007:6119:7903:9040:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12296:12297:12555:12740:12760:12895:13439:14181:14659:14721:21080:21611:21627:21740:30012:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: bun08_6fc9d6b00412a
+X-Filterd-Recvd-Size: 3435
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 22 Feb 2020 00:36:08 +0000 (UTC)
+Message-ID: <4a2a109b5b7c5ce5e62bba4d39270abb855b2052.camel@perches.com>
+Subject: Re: [PATCH] staging: qlge: unify multi-line string
+From:   Joe Perches <joe@perches.com>
+To:     Kaaira Gupta <kgupta@es.iitr.ac.in>,
+        Manish Chopra <manishc@marvell.com>,
+        GR-Linux-NIC-Dev@marvell.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        netdev@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 21 Feb 2020 16:34:44 -0800
+In-Reply-To: <20200221185012.GA16841@kaaira-HP-Pavilion-Notebook>
+References: <20200221185012.GA16841@kaaira-HP-Pavilion-Notebook>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6ca935e3c70f275ec669fae8984b11f383baa1f.camel@amazon.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 07:58:01PM +0000, Jitindar SIngh, Suraj wrote:
-> On Fri, 2020-02-21 at 09:02 -0500, Qian Cai wrote:
-> > Reverted the linux-next commit c20bac9bf82c ("ext4: fix potential
-> > race between
-> > s_flex_groups online resizing and access") fixed the crash below
-> > (with line
-> > numbers),
-> 
-> Good catch, this is a bug where the dereference of the array
-> s_flex_groups needs to happen after the "if (flex_size > 1)" if
-> statement in fs/ext4/ialloc.c:373
+On Sat, 2020-02-22 at 00:20 +0530, Kaaira Gupta wrote:
+> Fix checkpatch.pl warning of 'quoted string split across lines' in
+> qlge_dbg.c by merging the strings in one line. Fixing this warning is
+> necessary to ease grep-ing the source for printk.
+[]
+> diff --git a/drivers/staging/qlge/qlge_dbg.c b/drivers/staging/qlge/qlge_dbg.c
+[]
+> @@ -1333,16 +1333,16 @@ void ql_mpi_core_to_log(struct work_struct *work)
+>  		     "Core is dumping to log file!\n");
+>  
+>  	for (i = 0; i < count; i += 8) {
+> -		pr_err("%.08x: %.08x %.08x %.08x %.08x %.08x "
+> -			"%.08x %.08x %.08x\n", i,
+> -			tmp[i + 0],
+> -			tmp[i + 1],
+> -			tmp[i + 2],
+> -			tmp[i + 3],
+> -			tmp[i + 4],
+> -			tmp[i + 5],
+> -			tmp[i + 6],
+> -			tmp[i + 7]);
+> +		pr_err("%.08x: %.08x %.08x %.08x %.08x %.08x %.08x %.08x %.08x\n",
+> +		       i,
+> +		       tmp[i + 0],
+> +		       tmp[i + 1],
+> +		       tmp[i + 2],
+> +		       tmp[i + 3],
+> +		       tmp[i + 4],
+> +		       tmp[i + 5],
+> +		       tmp[i + 6],
+> +		       tmp[i + 7]);
 
-Cai, thanks for noting the problem!  Suraj, I've fixed up the patch on
-the ext4.git tree.
+This should probably instead use
 
-						- Ted
+	print_hex_dump(KERN_DEBUG, "", DUMP_PREFIX_OFFSET, 32, 4,
+		       qdev->mpi_coredump, sizeof(*qdev->mpi_coredump), false);
+
+So that the debug and the dump are emitted at the
+same KERN_<LEVEL> and the code is simpler.
+
+>  		msleep(5);
+
+And the msleep seems unnecessary.
+
+>  	}
+>  }
+
+
+Perhaps:
+---
+ drivers/staging/qlge/qlge_dbg.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/staging/qlge/qlge_dbg.c b/drivers/staging/qlge/qlge_dbg.c
+index 8cf3961..a4cd91 100644
+--- a/drivers/staging/qlge/qlge_dbg.c
++++ b/drivers/staging/qlge/qlge_dbg.c
+@@ -1324,27 +1324,12 @@ void ql_mpi_core_to_log(struct work_struct *work)
+ {
+ 	struct ql_adapter *qdev =
+ 		container_of(work, struct ql_adapter, mpi_core_to_log.work);
+-	u32 *tmp, count;
+-	int i;
+ 
+-	count = sizeof(struct ql_mpi_coredump) / sizeof(u32);
+-	tmp = (u32 *)qdev->mpi_coredump;
+ 	netif_printk(qdev, drv, KERN_DEBUG, qdev->ndev,
+ 		     "Core is dumping to log file!\n");
+ 
+-	for (i = 0; i < count; i += 8) {
+-		pr_err("%.08x: %.08x %.08x %.08x %.08x %.08x "
+-			"%.08x %.08x %.08x\n", i,
+-			tmp[i + 0],
+-			tmp[i + 1],
+-			tmp[i + 2],
+-			tmp[i + 3],
+-			tmp[i + 4],
+-			tmp[i + 5],
+-			tmp[i + 6],
+-			tmp[i + 7]);
+-		msleep(5);
+-	}
++	print_hex_dump(KERN_DEBUG, "", DUMP_PREFIX_OFFSET, 32, 4,
++		       qdev->mpi_coredump, sizeof(*qdev->mpi_coredump), false);
+ }
+ 
+ #ifdef QL_REG_DUMP
+
