@@ -2,55 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3FF8168AC2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:15:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22D43168ACC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:15:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbgBVAPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:15:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726525AbgBVAPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:15:12 -0500
-Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-5.6-3 tag
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582330511;
-        bh=W3W8pYm8I7eHMCrdn3ZXX+yGKhlB96u/mT1KxqIfAv0=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=JIIpA3aScnOPW9wex9YeSv3xkK8mNA43T2pRU1hOt0f3jiXHwjoni/RUHtw+6ja88
-         I2F8Ep2WScZrYfaVPCTzeLQa6z/WOQNSp4Y0BHtU14QOD0l/EJU1PyyVTbVfCzs2bq
-         /eH8PxCWnK/zMaW8MQl+3nkuJMAJX/vdiQ8Hae/0=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <87lfowdv54.fsf@mpe.ellerman.id.au>
-References: <87lfowdv54.fsf@mpe.ellerman.id.au>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <87lfowdv54.fsf@mpe.ellerman.id.au>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git
- tags/powerpc-5.6-3
-X-PR-Tracked-Commit-Id: 9eb425b2e04e0e3006adffea5bf5f227a896f128
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2865936259e27629fac422bc80c9b55ca1f108a5
-Message-Id: <158233051185.15315.18250424563849105546.pr-tracker-bot@kernel.org>
-Date:   Sat, 22 Feb 2020 00:15:11 +0000
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        christophe.leroy@c-s.fr, gustavold@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mikey@neuling.org, oohall@gmail.com, sbobroff@linux.ibm.com
+        id S1727393AbgBVAP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:15:29 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:40488 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbgBVAP0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 19:15:26 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1j5IRu-0006DV-LS; Sat, 22 Feb 2020 00:15:14 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Christian Brauner <christian@brauner.io>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] clone3: fix an unsigned args.cgroup comparison to less than zero
+Date:   Sat, 22 Feb 2020 00:15:13 +0000
+Message-Id: <20200222001513.43099-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 21 Feb 2020 22:42:15 +1100:
+From: Colin Ian King <colin.king@canonical.com>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-5.6-3
+The less than zero comparison of args.cgroup is aways false because
+args.cgroup is a u64 and can never be less than zero.  I believe the
+correct check is to cast args.cgroup to a s64 first to ensure an
+invalid value is not copied to kargs->cgroup.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2865936259e27629fac422bc80c9b55ca1f108a5
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: ef2c41cf38a7 ("clone3: allow spawning processes into cgroups")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/fork.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 67a5d691ffa8..98513a122dd1 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2635,7 +2635,7 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+ 		     !valid_signal(args.exit_signal)))
+ 		return -EINVAL;
+ 
+-	if ((args.flags & CLONE_INTO_CGROUP) && args.cgroup < 0)
++	if ((args.flags & CLONE_INTO_CGROUP) && (s64)args.cgroup < 0)
+ 		return -EINVAL;
+ 
+ 	*kargs = (struct kernel_clone_args){
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.25.0
+
