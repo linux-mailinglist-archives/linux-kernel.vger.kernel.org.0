@@ -2,195 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26E70168AA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:02:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32636168AA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729810AbgBVACs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:02:48 -0500
-Received: from mga02.intel.com ([134.134.136.20]:43852 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729541AbgBVACo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:02:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 16:02:43 -0800
-X-IronPort-AV: E=Sophos;i="5.70,470,1574150400"; 
-   d="scan'208";a="383605950"
-Received: from jbrandeb-desk.jf.intel.com ([10.166.244.152])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 16:02:43 -0800
-From:   Jesse Brandeburg <jesse.brandeburg@intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
-Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk,
-        andriy.shevchenko@intel.com, dan.j.williams@intel.com,
-        peterz@infradead.org
-Subject: [PATCH v4 2/2] lib: make a test module with set/clear bit
-Date:   Fri, 21 Feb 2020 16:02:14 -0800
-Message-Id: <20200222000214.2169531-2-jesse.brandeburg@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200222000214.2169531-1-jesse.brandeburg@intel.com>
-References: <20200222000214.2169531-1-jesse.brandeburg@intel.com>
+        id S1729764AbgBVACn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:02:43 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:54390 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729541AbgBVACn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 19:02:43 -0500
+Received: by mail-pj1-f65.google.com with SMTP id dw13so1473169pjb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:02:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=mlYJKghLuJvyIb9vTdDK73ZdLUo5D/iUeEEKRshNNdU=;
+        b=F813bmehcWyoOKuLB18kNU/7ag9mgf6iNgkmwDBMt+nd7w/qt4bb4Y7NfrgdZTKpMr
+         vhmFYAxnKpi/Q83QSAVGa7QcTSDT7gK/MjCjhYPRmAJnlHwKkbLcmShXoDGHwMbyFVy8
+         Mkc+WoOMGkd3oB1FOM5O1Clm9mkoMRmedmpPg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=mlYJKghLuJvyIb9vTdDK73ZdLUo5D/iUeEEKRshNNdU=;
+        b=Vuc5K5ewrAv82jVGxuW05svPXggc41tuAJ7Cj85YgTlrMvpXa0qtDdV6sBYlg+8tPq
+         SCu9GFGzE6qgbU+ORnU8tvgR6tqYKzQ6DBoyRgNzdUh2sYKr9o8Be7JvV5xSyOkHLLIp
+         M7lQwCRifKbiWw75byNlareP7OD8yvQaCm8ToN6KkEZQ0XRH4rKGhBTm+KXkgw6bXF4C
+         jj6/V2Zg7QNg3cx/wTHEsJRBEOmCzFwAeXXHSVZlPpv9GUhPVLkfnmaccXTU/2xllF8e
+         x4oMOHKGB+lezrhr0gHF0sgmu6wXuXg15Fj2qXgHge0LiD0o4iWKDG9obtWHsaafr7N7
+         3WsQ==
+X-Gm-Message-State: APjAAAVFpmy1inF9cZjznn7Zcud6ufskN6qnfl/niA5kP07f6uOwv4oW
+        EIBPHlnD7vKwC4IRwV3siZjliA==
+X-Google-Smtp-Source: APXvYqxWXDVzmbnMKsqNsGng+5nphCWKQ4pTyJ3j6HWshT/R2zSiILwT7bURopmZ9Z+CNal2PtMHxA==
+X-Received: by 2002:a17:90a:ba91:: with SMTP id t17mr6127308pjr.74.1582329762627;
+        Fri, 21 Feb 2020 16:02:42 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id l11sm3574354pgt.59.2020.02.21.16.02.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 16:02:41 -0800 (PST)
+Date:   Fri, 21 Feb 2020 16:02:39 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [PATCH] docs: Fix empty parallelism argument
+Message-ID: <202002211601.322B596B@keescook>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Test some bit clears/sets to make sure assembly doesn't change, and
-that the set_bit and clear_bit functions work and don't cause sparse
-warnings.
+When there was no parallelism (no top-level -j arg and a pre-1.7
+sphinx-build), the argument passed would be empty ("") instead of just
+being missing, which would (understandably) badly confuse sphinx-build.
+Fix this by removing the quotes.
 
-Instruct Kbuild to build this file with extra warning level -Wextra,
-to catch new issues, and also doesn't hurt to build with C=1.
-
-This was used to test changes to arch/x86/include/asm/bitops.h.
-
-In particular, sparse (C=1) was very concerned when the last bit
-before a natural boundary, like 7, or 31, was being tested, as this
-causes sign extension (0xffffff7f) for instance when clearing bit 7.
-
-Recommended usage:
-make defconfig
-scripts/config -m CONFIG_TEST_BITOPS
-make modules_prepare
-make C=1 W=1 lib/test_bitops.ko
-objdump -S -d lib/test_bitops.ko
-insmod lib/test_bitops.ko
-rmmod lib/test_bitops.ko
-<check dmesg>, there should be no compiler/sparse warnings and no
-error messages in log.
-
-Signed-off-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+Reported-by: Rafael J. Wysocki <rafael@kernel.org>
+Fixes: 51e46c7a4007 ("docs, parallelism: Rearrange how jobserver reservations are made")
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
-v4: Slight change to bitops_fun last member, as suggested by Andy, added
-his reviewed-by too. Added module load/unload to usage. Added copyright.
-v3: Update the test to fail if bits aren't cleared, and make the
-test reproduce the original issue without patch 1/2, showing that
-the issue is fixed in patch 1/2. Thanks PeterZ!
-v2: Correct CC: list
----
- lib/Kconfig.debug                  | 13 +++++++
- lib/Makefile                       |  2 +
- lib/test_bitops.c                  | 60 ++++++++++++++++++++++++++++++
- tools/testing/selftests/lib/config |  1 +
- 4 files changed, 76 insertions(+)
- create mode 100644 lib/test_bitops.c
+ Documentation/sphinx/parallel-wrapper.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 69def4a9df00..61a5d00ea064 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1947,6 +1947,19 @@ config TEST_LKM
+diff --git a/Documentation/sphinx/parallel-wrapper.sh b/Documentation/sphinx/parallel-wrapper.sh
+index 7daf5133bdd3..e54c44ce117d 100644
+--- a/Documentation/sphinx/parallel-wrapper.sh
++++ b/Documentation/sphinx/parallel-wrapper.sh
+@@ -30,4 +30,4 @@ if [ -n "$parallel" ] ; then
+ 	parallel="-j$parallel"
+ fi
  
- 	  If unsure, say N.
- 
-+config TEST_BITOPS
-+	tristate "Test module for compilation of clear_bit/set_bit operations"
-+	depends on m
-+	help
-+	  This builds the "test_bitops" module that is much like the
-+	  TEST_LKM module except that it does a basic exercise of the
-+	  clear_bit and set_bit macros to make sure there are no compiler
-+	  warnings from C=1 sparse checker or -Wextra compilations. It has
-+	  no dependencies and doesn't run or load unless explicitly requested
-+	  by name.  for example: modprobe test_bitops.
-+
-+	  If unsure, say N.
-+
- config TEST_VMALLOC
- 	tristate "Test module for stress/performance analysis of vmalloc allocator"
- 	default n
-diff --git a/lib/Makefile b/lib/Makefile
-index 611872c06926..b18db565b355 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -89,6 +89,8 @@ obj-$(CONFIG_TEST_OBJAGG) += test_objagg.o
- obj-$(CONFIG_TEST_STACKINIT) += test_stackinit.o
- obj-$(CONFIG_TEST_BLACKHOLE_DEV) += test_blackhole_dev.o
- obj-$(CONFIG_TEST_MEMINIT) += test_meminit.o
-+obj-$(CONFIG_TEST_BITOPS) += test_bitops.o
-+CFLAGS_test_bitops.o += -Werror
- 
- obj-$(CONFIG_TEST_LIVEPATCH) += livepatch/
- 
-diff --git a/lib/test_bitops.c b/lib/test_bitops.c
-new file mode 100644
-index 000000000000..fd50b3ae4a14
---- /dev/null
-+++ b/lib/test_bitops.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2020 Intel Corporation
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/printk.h>
-+
-+/* a tiny module only meant to test set/clear_bit */
-+
-+/* use an enum because thats the most common BITMAP usage */
-+enum bitops_fun {
-+	BITOPS_4 = 4,
-+	BITOPS_7 = 7,
-+	BITOPS_11 = 11,
-+	BITOPS_31 = 31,
-+	BITOPS_88 = 88,
-+	BITOPS_LAST = 255,
-+	BITOPS_LENGTH = 256
-+};
-+
-+static DECLARE_BITMAP(g_bitmap, BITOPS_LENGTH);
-+
-+static int __init test_bitops_startup(void)
-+{
-+	pr_warn("Loaded test module\n");
-+	set_bit(BITOPS_4, g_bitmap);
-+	set_bit(BITOPS_7, g_bitmap);
-+	set_bit(BITOPS_11, g_bitmap);
-+	set_bit(BITOPS_31, g_bitmap);
-+	set_bit(BITOPS_88, g_bitmap);
-+	return 0;
-+}
-+
-+static void __exit test_bitops_unstartup(void)
-+{
-+	int bit_set;
-+
-+	clear_bit(BITOPS_4, g_bitmap);
-+	clear_bit(BITOPS_7, g_bitmap);
-+	clear_bit(BITOPS_11, g_bitmap);
-+	clear_bit(BITOPS_31, g_bitmap);
-+	clear_bit(BITOPS_88, g_bitmap);
-+
-+	bit_set = find_first_bit(g_bitmap, BITOPS_LAST);
-+	if (bit_set != BITOPS_LAST)
-+		pr_err("ERROR: FOUND SET BIT %d\n", bit_set);
-+
-+	pr_warn("Unloaded test module\n");
-+}
-+
-+module_init(test_bitops_startup);
-+module_exit(test_bitops_unstartup);
-+
-+MODULE_AUTHOR("Jesse Brandeburg <jesse.brandeburg@intel.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Bit testing module");
-diff --git a/tools/testing/selftests/lib/config b/tools/testing/selftests/lib/config
-index 14a77ea4a8da..b80ee3f6e265 100644
---- a/tools/testing/selftests/lib/config
-+++ b/tools/testing/selftests/lib/config
-@@ -2,3 +2,4 @@ CONFIG_TEST_PRINTF=m
- CONFIG_TEST_BITMAP=m
- CONFIG_PRIME_NUMBERS=m
- CONFIG_TEST_STRSCPY=m
-+CONFIG_TEST_BITOPS=m
+-exec "$sphinx" "$parallel" "$@"
++exec "$sphinx" $parallel "$@"
 -- 
-2.24.1
+2.20.1
 
+
+-- 
+Kees Cook
