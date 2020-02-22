@@ -2,65 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D46EC168B05
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:33:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD8D8168B07
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:34:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbgBVAdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:33:50 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:48818 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbgBVAdt (ORCPT
+        id S1727438AbgBVAeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:34:05 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:57123 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726735AbgBVAeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:33:49 -0500
-Received: from [10.131.86.135] (unknown [131.107.159.7])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D54A820B9C02;
-        Fri, 21 Feb 2020 16:33:48 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D54A820B9C02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1582331628;
-        bh=xnkJ8j7rW1UeoqnfcEgj4o2S9dzSeeSCkJXJe0LZ8yQ=;
-        h=To:From:Subject:Cc:Date:From;
-        b=bA+nrq1ShJaDqvp0a6Z9OJ0V+Du2QSphzBo48XQzbizr4wxYFFDr3s3XrIbUUMiHE
-         q6MFCOkbsHDAPEINVSYTtyyLEDLocJJ/cohFkAC5/vw4M6W5wYnCAHfjqRT9ChPK3p
-         a4fmVg/QA0LeYI73Q/g2lCO7RG7i0XUUXduTR62g=
-To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Jordan Hand <jorhand@linux.microsoft.com>
-Subject: net/kgdb: Taking another crack at implementing kgdboe
-Cc:     jason.wessel@windriver.com, daniel.thompson@linaro.org,
-        dianders@chromium.org
-Message-ID: <ccd03920-375a-2e65-cc28-d00f3297cb67@linux.microsoft.com>
-Date:   Fri, 21 Feb 2020 16:33:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 21 Feb 2020 19:34:05 -0500
+Received: from callcc.thunk.org (guestnat-104-133-8-109.corp.google.com [104.133.8.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 01M0XsLL016203
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Feb 2020 19:33:56 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 4BDFA4211EF; Fri, 21 Feb 2020 19:33:54 -0500 (EST)
+Date:   Fri, 21 Feb 2020 19:33:54 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Jitindar SIngh, Suraj" <surajjs@amazon.com>
+Cc:     "cai@lca.pw" <cai@lca.pw>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "paulmck@kernel.org" <paulmck@kernel.org>
+Subject: Re: null-ptr-deref due to "ext4: fix potential race between online
+ resizing and write operations"
+Message-ID: <20200222003354.GB873427@mit.edu>
+References: <1582293736.7365.109.camel@lca.pw>
+ <d6ca935e3c70f275ec669fae8984b11f383baa1f.camel@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d6ca935e3c70f275ec669fae8984b11f383baa1f.camel@amazon.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey folks,
+On Fri, Feb 21, 2020 at 07:58:01PM +0000, Jitindar SIngh, Suraj wrote:
+> On Fri, 2020-02-21 at 09:02 -0500, Qian Cai wrote:
+> > Reverted the linux-next commit c20bac9bf82c ("ext4: fix potential
+> > race between
+> > s_flex_groups online resizing and access") fixed the crash below
+> > (with line
+> > numbers),
+> 
+> Good catch, this is a bug where the dereference of the array
+> s_flex_groups needs to happen after the "if (flex_size > 1)" if
+> statement in fs/ext4/ialloc.c:373
 
-I have been scouring patches from around 2005-2008 related to kgdboe
-(kgdb over ethernet) and I am interested in taking a shot at getting it
-into the mainline kernel.
+Cai, thanks for noting the problem!  Suraj, I've fixed up the patch on
+the ext4.git tree.
 
-I found an implementation from Tom Rini in 2005[1] and an out of tree
-implementation[2].
-
-So I have a couple questions before I dive in:
-
-1. Is anyone actively working on this? From lkml archives it appears no
-but I thought I'd ask.
-2. Does anyone have an objection to this feature? From my reading it
-seems that the reason it was never merged was due to reliability issues
-but I just want to double check that people don't see some larger issue.
-
-I don't have 100% of my time to devote to this so it will likely take me
-a while but this is something I would like to see in the upstream kernel
-so I thought I'd give it a try.
-
-[1] https://lkml.org/lkml/2005/7/29/321
-[2] https://github.com/sysprogs/kgdboe
+						- Ted
