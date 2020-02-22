@@ -2,83 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A112168ABA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:08:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A401168AC1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:15:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729772AbgBVAIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:08:17 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46161 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729535AbgBVAIQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:08:16 -0500
-Received: by mail-lj1-f196.google.com with SMTP id x14so3953569ljd.13
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:08:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hTZLASrKaO6Lu2MZ2kRwzgF8PAll7uJUJBFH4TuSO0k=;
-        b=Q0+ypkclrbDMqnAbtdLiAw4UgHHFj80CuJmseTHZvfOXtb1BSs5LnmvcigQzHvmi26
-         vInYZNvVLDqswmmLqu35PaXa+dDNmIf4eDNiAAvnnqrHBt5DIRKxaDPgxZVSNIUE/NXH
-         2p2Tybx+pwJKeOkZfVcS2rzrLhwLY0Nb6vugM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hTZLASrKaO6Lu2MZ2kRwzgF8PAll7uJUJBFH4TuSO0k=;
-        b=GDvcVDscZOBp91gh///Ay3GCj2Vlwp+QCBkOkndeP9AlALnfz5280aFfMlkOZoT36w
-         tn3zufrgym1fZFWGnrTUS2xa3mhbE3/itbrKPtXpGXj2/Ntiz25eL9rcL1klhmJHEpLC
-         WShP+u0f1C75JXy1MNoCurpKoyBhs50kN4CviHAIk/CM+YGGIuovRVShqBhNU5ju3BOv
-         LBrL+Lff5voEzeW0ok9kM9fe4pdRh4DPVe2l60ud8NIE0wKUZ+xfA7XmKn3sueIgsTeV
-         tJsM1qfmBitP8vogUmukzO20W1G+lNsY72Cbu+Qut8xU3Rwm78ssjpGvz9zcGV5Ot4yk
-         30vQ==
-X-Gm-Message-State: APjAAAWWI+tyyaH2+rQQlHZ0TgoYL77mnCf5lJvcsP/3Zk5BtbEP3vRZ
-        kfvSbQOIHxXnI+zAwzbQf1By4Oruf2o=
-X-Google-Smtp-Source: APXvYqzLVHFqh2j5SSrN0OeMrBfcc16qkfFvigwRcrh5HJrJ7IrAPIKHnxUtkf1QExlog7gM1RKhcg==
-X-Received: by 2002:a05:651c:314:: with SMTP id a20mr23679807ljp.91.1582330093888;
-        Fri, 21 Feb 2020 16:08:13 -0800 (PST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id v7sm2372201lfd.51.2020.02.21.16.08.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 16:08:12 -0800 (PST)
-Received: by mail-lj1-f179.google.com with SMTP id q8so4001323ljb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:08:12 -0800 (PST)
-X-Received: by 2002:a2e:580c:: with SMTP id m12mr23646052ljb.150.1582330092251;
- Fri, 21 Feb 2020 16:08:12 -0800 (PST)
-MIME-Version: 1.0
-References: <20200221160126.GB19330@willie-the-truck>
-In-Reply-To: <20200221160126.GB19330@willie-the-truck>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 21 Feb 2020 16:07:56 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjyde11qnRQAMgibwcvNCd0bQX5chFgdu58tP0NPhnk_Q@mail.gmail.com>
-Message-ID: <CAHk-=wjyde11qnRQAMgibwcvNCd0bQX5chFgdu58tP0NPhnk_Q@mail.gmail.com>
-Subject: Re: [GIT PULL] arm64 fixes for -rc3
-To:     Will Deacon <will@kernel.org>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726791AbgBVAPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:15:12 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:38572 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726613AbgBVAPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 19:15:11 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7AA602084BB;
+        Sat, 22 Feb 2020 01:15:09 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6661F200E2F;
+        Sat, 22 Feb 2020 01:14:53 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DA4A5402B0;
+        Sat, 22 Feb 2020 08:14:39 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org, rui.zhang@intel.com,
+        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
+        aisheng.dong@nxp.com, linux@roeck-us.net,
+        srinivas.kandagatla@linaro.org, krzk@kernel.org,
+        fugang.duan@nxp.com, peng.fan@nxp.com, daniel.baluta@nxp.com,
+        bjorn.andersson@linaro.org, olof@lixom.net, dinguyen@kernel.org,
+        leonard.crestez@nxp.com, marcin.juszkiewicz@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V16 1/5] dt-bindings: fsl: scu: add thermal binding
+Date:   Sat, 22 Feb 2020 08:08:48 +0800
+Message-Id: <1582330132-13461-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 8:01 AM Will Deacon <will@kernel.org> wrote:
->
-> That said, this is core code and I know you'd prefer to limit the change
-> to brk(), so the patch is sitting on top of the branch in case you prefer
-> not to include it. If you decide to tweak it manually, please can you
-> update the docs at the same time?
+NXP i.MX8QXP is an ARMv8 SoC with a Cortex-M4 core inside as
+system controller, the system controller is in charge of system
+power, clock and thermal sensors etc. management, Linux kernel
+has to communicate with system controller via MU (message unit)
+IPC to get temperature from thermal sensors, this patch adds
+binding doc for i.MX system controller thermal driver.
 
-I've taken it as-is, since I don't think any of the solutions were wrong.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+No change.
+---
+ .../devicetree/bindings/arm/freescale/fsl,scu.txt        | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-The mremap() case looks odd, with the _old_ address untagged, but the
-new one not. I see the logic, but because it looks so odd I think it
-might be worth a comment.
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index e07735a8..7f42cc3 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@ -166,6 +166,17 @@ Required properties:
+               followed by "fsl,imx-sc-key";
+ - linux,keycodes: See Documentation/devicetree/bindings/input/keys.txt
+ 
++Thermal bindings based on SCU Message Protocol
++------------------------------------------------------------
++
++Required properties:
++- compatible:			Should be :
++				  "fsl,imx8qxp-sc-thermal"
++				followed by "fsl,imx-sc-thermal";
++
++- #thermal-sensor-cells:	See Documentation/devicetree/bindings/thermal/thermal.txt
++				for a description.
++
+ Example (imx8qxp):
+ -------------
+ aliases {
+@@ -238,6 +249,11 @@ firmware {
+ 			compatible = "fsl,imx8qxp-sc-wdt", "fsl,imx-sc-wdt";
+ 			timeout-sec = <60>;
+ 		};
++
++		tsens: thermal-sensor {
++			compatible = "fsl,imx8qxp-sc-thermal", "fsl,imx-sc-thermal";
++			#thermal-sensor-cells = <1>;
++		};
+ 	};
+ };
+ 
+-- 
+2.7.4
 
-Not a big deal, and more of a "if you get around to it later" note.
-
-            Linus
