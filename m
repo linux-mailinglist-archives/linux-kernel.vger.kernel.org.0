@@ -2,54 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97AA416919C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 20:45:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88D721691A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 20:52:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbgBVTpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 14:45:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbgBVTpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 14:45:18 -0500
-Subject: Re: [GIT PULL] io_uring fixes for 5.6-rc3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582400718;
-        bh=OJI01cW2DVtiGb0zc0cJkCyMaE/2xMkj4Li+jGtyv50=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=uuprSaRM6niLdZrLeYXcqY+XizVqJHJI1cq0zP/VE7a/At3/+ap1ofTXIJfZorgnN
-         +7KvLvkw3dO3iY5eCumIBcZu5QwYCCM0uk5U/vlDJzVSB6hJ//D4ckEbWpl1Vb4HCr
-         H+8YudhIlFsOtS/m3XTaLW6q8ULFAizgmChGKet4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <fdbadf53-2421-d0a7-8883-059c34608cd0@kernel.dk>
-References: <fdbadf53-2421-d0a7-8883-059c34608cd0@kernel.dk>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <fdbadf53-2421-d0a7-8883-059c34608cd0@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git
- tags/io_uring-5.6-2020-02-22
-X-PR-Tracked-Commit-Id: c7849be9cc2dd2754c48ddbaca27c2de6d80a95d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b88025ea47ec8aea47f0c283d182ab26bae2970d
-Message-Id: <158240071802.14316.5323907012742571238.pr-tracker-bot@kernel.org>
-Date:   Sat, 22 Feb 2020 19:45:18 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        id S1726875AbgBVTwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 14:52:38 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:57972 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726730AbgBVTwi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 14:52:38 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1j5apD-00062w-Q3; Sat, 22 Feb 2020 19:52:31 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Huazhong Tan <tanhuazhong@huawei.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: hns3: remove redundant initialization of pointer 'client'
+Date:   Sat, 22 Feb 2020 19:52:31 +0000
+Message-Id: <20200222195231.200089-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 22 Feb 2020 09:05:30 -0800:
+From: Colin Ian King <colin.king@canonical.com>
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.6-2020-02-22
+The pointer 'client' is being initialized with a value that is never
+read, it is being updated later on. The initialization is redundant
+and can be removed.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b88025ea47ec8aea47f0c283d182ab26bae2970d
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 51399dbed77a..a121af513704 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -9076,7 +9076,7 @@ static int hclge_init_nic_client_instance(struct hnae3_ae_dev *ae_dev,
+ static int hclge_init_roce_client_instance(struct hnae3_ae_dev *ae_dev,
+ 					   struct hclge_vport *vport)
+ {
+-	struct hnae3_client *client = vport->roce.client;
++	struct hnae3_client *client;
+ 	struct hclge_dev *hdev = ae_dev->priv;
+ 	int rst_cnt;
+ 	int ret;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.25.0
+
