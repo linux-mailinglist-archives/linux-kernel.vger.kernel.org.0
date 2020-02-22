@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF6F16919D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 20:45:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97AA416919C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 20:45:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgBVTpX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 14:45:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55788 "EHLO mail.kernel.org"
+        id S1727112AbgBVTpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 14:45:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727025AbgBVTpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 14:45:17 -0500
-Subject: Re: [GIT PULL] s390 updates for 5.6-rc3
+        id S1726550AbgBVTpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 14:45:18 -0500
+Subject: Re: [GIT PULL] io_uring fixes for 5.6-rc3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582400716;
-        bh=Em+sT1SMzyjmdINk0tNXrb0+vPJpCDDA2MklK1/1JyA=;
+        s=default; t=1582400718;
+        bh=OJI01cW2DVtiGb0zc0cJkCyMaE/2xMkj4Li+jGtyv50=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=JJE9JQAO/N3sC1j4SRywDKO+gqvA10xr7RtdmBcquLcpnHCfQ2dtbstZFJZ3/UWf4
-         W1fhNLlUogr6nd2upNssRRpKUrUy2crCJP4Ur5YMB4VMMEVLI84d9K+fisFAnelWjk
-         /K6gjBlPEENTxQCtDpV7vkIPy/MOBwOYyqt/xNjU=
+        b=uuprSaRM6niLdZrLeYXcqY+XizVqJHJI1cq0zP/VE7a/At3/+ap1ofTXIJfZorgnN
+         +7KvLvkw3dO3iY5eCumIBcZu5QwYCCM0uk5U/vlDJzVSB6hJ//D4ckEbWpl1Vb4HCr
+         H+8YudhIlFsOtS/m3XTaLW6q8ULFAizgmChGKet4=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <your-ad-here.call-01582376640-ext-7410@work.hours>
-References: <your-ad-here.call-01582376640-ext-7410@work.hours>
+In-Reply-To: <fdbadf53-2421-d0a7-8883-059c34608cd0@kernel.dk>
+References: <fdbadf53-2421-d0a7-8883-059c34608cd0@kernel.dk>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <your-ad-here.call-01582376640-ext-7410@work.hours>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.6-4
-X-PR-Tracked-Commit-Id: 2db01da8d25f0420c411e788a9e1ba39269ae37b
+X-PR-Tracked-Message-Id: <fdbadf53-2421-d0a7-8883-059c34608cd0@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git
+ tags/io_uring-5.6-2020-02-22
+X-PR-Tracked-Commit-Id: c7849be9cc2dd2754c48ddbaca27c2de6d80a95d
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 591dd4c10146e541b9f7a461cb6b638ab313718d
-Message-Id: <158240071680.14316.8252252024374039390.pr-tracker-bot@kernel.org>
-Date:   Sat, 22 Feb 2020 19:45:16 +0000
-To:     Vasily Gorbik <gor@linux.ibm.com>
+X-PR-Merge-Commit-Id: b88025ea47ec8aea47f0c283d182ab26bae2970d
+Message-Id: <158240071802.14316.5323907012742571238.pr-tracker-bot@kernel.org>
+Date:   Sat, 22 Feb 2020 19:45:18 +0000
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+        io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 22 Feb 2020 14:04:00 +0100:
+The pull request you sent on Sat, 22 Feb 2020 09:05:30 -0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.6-4
+> git://git.kernel.dk/linux-block.git tags/io_uring-5.6-2020-02-22
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/591dd4c10146e541b9f7a461cb6b638ab313718d
+https://git.kernel.org/torvalds/c/b88025ea47ec8aea47f0c283d182ab26bae2970d
 
 Thank you!
 
