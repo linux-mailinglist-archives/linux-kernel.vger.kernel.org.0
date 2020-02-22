@@ -2,131 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81DAA168AD2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:15:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37B01168AEC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:23:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbgBVAPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:15:35 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:19532 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbgBVAP3 (ORCPT
+        id S1726817AbgBVAXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:23:03 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:35277 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbgBVAXD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:15:29 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e50727e0001>; Fri, 21 Feb 2020 16:14:54 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 21 Feb 2020 16:15:28 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 21 Feb 2020 16:15:28 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 22 Feb
- 2020 00:15:28 +0000
-Subject: Re: [PATCH v7 01/24] mm: Move readahead prototypes from mm.h
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
-        <linux-xfs@vger.kernel.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-2-willy@infradead.org>
- <e065679e-222f-7323-9782-0c4471bb9233@nvidia.com>
- <20200221214853.GF24185@bombadil.infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <69fa8779-3433-9d35-a1f4-f115dc86c6d8@nvidia.com>
-Date:   Fri, 21 Feb 2020 16:15:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Fri, 21 Feb 2020 19:23:03 -0500
+Received: by mail-pj1-f67.google.com with SMTP id q39so1509523pjc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:23:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=bBY25iQUbzVgktSS3PZnQBwBrockb4rDmUnT5ayY4W0=;
+        b=KYe9SL5tP1bdn68kTqujiJm5up+hzdnsaARmh4bdlCpEz5CTWlJmMqbXF23qXS46t/
+         /xCG+rxjY57VF7MRAZLLWiXEmkIa+y1LEi2FbKI91U1iOyf8BgOJu+x/b9BrQsdL/cuW
+         KaSOFClYDKVbD40o3NLsYQ4NoQmPQVSOdoR78=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=bBY25iQUbzVgktSS3PZnQBwBrockb4rDmUnT5ayY4W0=;
+        b=k9RNKbIkX2z3WgjXEONqobfnfQ0mFcnKzo/SPjuhLWqqkCxHQhC8vLSfzE6wbL1xe/
+         kzEwNf7WnegOqMkDHzXzSeIqRNsOK6xKJ4vs9tjpkswTaEaUn8fKvVjxL4ui4B/GT2gg
+         9Ynfj8cB3kj5JKOeRJMpEMYfRV8G6fZ1IMBv/j6ztcIT58Uk9LuriMRhsSDeLfNA5570
+         Ii42IsDP1rAHBLyuCw1P/CWGw7HXVfnKjUjC0t5qf1mJy4vP9MZs58GKbLvXrqO7sT/d
+         Ule+UQb/QsiZCglw43mQMQlTkk2P8fdbg4o7Lu4aiIUjjZLo7AIjLTYvLezrO7O7feQv
+         kmVw==
+X-Gm-Message-State: APjAAAWvnJsX8iouT/0z4XyaebnJnDtH2yD5mjuPOSvPrqw23hBEcqSP
+        ag2NS1KJozlRoLMjLvaLfWmA0A==
+X-Google-Smtp-Source: APXvYqzNBqha2t5b+jrIcavlt5+4Ugc8asp+93Ys4viKGNMi+g6a97cf6h6+OAgEgFu8gPdr+EDcYA==
+X-Received: by 2002:a17:902:8b88:: with SMTP id ay8mr38040623plb.202.1582330981149;
+        Fri, 21 Feb 2020 16:23:01 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id n2sm3493639pgi.48.2020.02.21.16.23.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 16:23:00 -0800 (PST)
+Date:   Fri, 21 Feb 2020 16:22:59 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     KP Singh <kpsingh@chromium.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        James Morris <jmorris@namei.org>
+Subject: Re: [PATCH bpf-next v4 0/8] MAC and Audit policy using eBPF (KRSI)
+Message-ID: <202002211617.28EAC6826@keescook>
+References: <20200220175250.10795-1-kpsingh@chromium.org>
+ <85e89b0c-5f2c-a4b1-17d3-47cc3bdab38b@schaufler-ca.com>
+ <20200221194149.GA9207@chromium.org>
+ <8a2a2d59-ec4b-80d1-2710-c2ead588e638@schaufler-ca.com>
 MIME-Version: 1.0
-In-Reply-To: <20200221214853.GF24185@bombadil.infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582330494; bh=Xu1W/y2f9OTxnj+6T8DBBjck/f2ICJjqDeKYJhM73bw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=p2+0C6I2/yxvNQ1pZnv87YfPksTddG+e8cc03+sVRvODjU2CaK7MWQBiokHBWhwgb
-         ieVI22Ga85j5LMOJVhYhtaccRh8zhO2H+xRsWBU/P8jaMdk1KeAHP1UgdQZbuh/fxI
-         hzO1rCi0fPdivx/Gdy87keJKQLfBTMl82lrGPg+HtMx4bbn1scu0JW30tCh15BSQmD
-         mQSimv7RYwfVWTinVZWGntdq5fdSKt8II8eY04QJynTy8RS0zcVz5otr5kwPPCZ2pE
-         v1Ek68IoRy4J0my4VYUXkHH4q/cEli9/t/FTx/7/JWNBZEw7tWg2FKjPvsTsMCyd6G
-         n45AbsLmye9OQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a2a2d59-ec4b-80d1-2710-c2ead588e638@schaufler-ca.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/20 1:48 PM, Matthew Wilcox wrote:
-> On Thu, Feb 20, 2020 at 06:43:31PM -0800, John Hubbard wrote:
->> Yes. But I think these files also need a similar change:
->>
->>     fs/btrfs/disk-io.c
+On Fri, Feb 21, 2020 at 02:31:18PM -0800, Casey Schaufler wrote:
+> On 2/21/2020 11:41 AM, KP Singh wrote:
+> > On 21-Feb 11:19, Casey Schaufler wrote:
+> >> On 2/20/2020 9:52 AM, KP Singh wrote:
+> >>> From: KP Singh <kpsingh@google.com>
+> >>> # v3 -> v4
+> >>>
+> >>>   https://lkml.org/lkml/2020/1/23/515
+> >>>
+> >>> * Moved away from allocating a separate security_hook_heads and adding a
+> >>>   new special case for arch_prepare_bpf_trampoline to using BPF fexit
+> >>>   trampolines called from the right place in the LSM hook and toggled by
+> >>>   static keys based on the discussion in:
+> >>>
+> >>>     https://lore.kernel.org/bpf/CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com/
+> >>>
+> >>> * Since the code does not deal with security_hook_heads anymore, it goes
+> >>>   from "being a BPF LSM" to "BPF program attachment to LSM hooks".
+> >> I've finally been able to review the entire patch set.
+> >> I can't imagine how it can make sense to add this much
+> >> complexity to the LSM infrastructure in support of this
+> >> feature. There is macro magic going on that is going to
+> >> break, and soon. You are introducing dependencies on BPF
+> >> into the infrastructure, and that's unnecessary and most
+> >> likely harmful.
+> > We will be happy to document each of the macros in detail. Do note a
+> > few things here:
+> >
+> > * There is really nothing magical about them though,
 > 
-> That gets pagemap.h through ctree.h, so I think it's fine.  It's
-> already using mapping_set_gfp_mask(), so it already depends on pagemap.h.
 > 
->>     fs/nfs/super.c
+> +#define LSM_HOOK_void(NAME, ...) \
+> +	noinline void bpf_lsm_##NAME(__VA_ARGS__) {}
+> +
+> +#include <linux/lsm_hook_names.h>
+> +#undef LSM_HOOK
 > 
-> That gets it through linux/nfs_fs.h.
-> 
-> I was reluctant to not add it to blk-core.c because it doesn't seem
-> necessarily intuitive that the block device core would include pagemap.h.
-> 
-> That said, blkdev.h does include pagemap.h, so maybe I don't need to
-> include it here.
+> I haven't seen anything this ... novel ... in a very long time.
+> I see why you want to do this, but you're tying the two sets
+> of code together unnaturally. When (not if) the two sets diverge
+> you're going to be introducing another clever way to deal with
+> the special case.
 
-OK. Looks good (either through blkdev.h or as-is), so:
+I really like this approach: it actually _simplifies_ the LSM piece in
+that there is no need to keep the union and the hook lists in sync any
+more: they're defined once now. (There were already 2 lists, and this
+collapses the list into 1 place for all 3 users.) It's very visible in
+the diffstat too (~300 lines removed):
 
-    Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+ include/linux/lsm_hook_names.h | 353 +++++++++++++++++++
+ include/linux/lsm_hooks.h      | 622 +--------------------------------
+ 2 files changed, 359 insertions(+), 616 deletions(-)
 
+Also, there is no need to worry about divergence: the BPF will always
+track the exposed LSM. Backward compat is (AIUI) explicitly a
+non-feature.
 
-> 
->> ...because they also use VM_READAHEAD_PAGES, and do not directly include
->> pagemap.h yet.
-> 
->>> +#define VM_READAHEAD_PAGES	(SZ_128K / PAGE_SIZE)
->>> +
->>> +void page_cache_sync_readahead(struct address_space *, struct file_ra_state *,
->>> +		struct file *, pgoff_t index, unsigned long req_count);
->>
->> Yes, "struct address_space *mapping" is weird, but I don't know if it's
->> "misleading", given that it's actually one of the things you have to learn
->> right from the beginning, with linux-mm, right? Or is that about to change?
->>
->> I'm not asking to restore this to "struct address_space *mapping", but I thought
->> it's worth mentioning out loud, especially if you or others are planning on
->> changing those names or something. Just curious.
-> 
-> No plans (on my part) to change the name, although I have heard people
-> grumbling that there's very little need for it to be a separate struct
-> from inode, except for the benefit of coda, which is not exactly a
-> filesystem with a lot of users ...
-> 
-> Anyway, no plans to change it.  If there were something _special_ about
-> it like a theoretical:
-> 
-> void mapping_dedup(struct address_space *canonical,
-> 		struct address_space *victim);
-> 
-> then that's useful information and shouldn't be deleted.  But I don't
-> think the word 'mapping' there conveys anything useful (other than the
-> convention is to call a 'struct address_space' a mapping, which you'll
-> see soon enough once you look at any of the .c files).
-> 
+I don't see why anything here is "harmful"?
 
-OK, that's consistent and makes sense.
-
-
-thanks,
 -- 
-John Hubbard
-NVIDIA
+Kees Cook
