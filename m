@@ -2,81 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B3DB168B31
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:47:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6710F168B47
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:52:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbgBVArk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:47:40 -0500
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:28033 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727268AbgBVArj (ORCPT
+        id S1727503AbgBVAwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:52:18 -0500
+Received: from mail-qk1-f177.google.com ([209.85.222.177]:35952 "EHLO
+        mail-qk1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726842AbgBVAwS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:47:39 -0500
-Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 21 Feb 2020 16:47:39 -0800
-Received: from asutoshd-linux1.qualcomm.com ([10.46.160.39])
-  by ironmsg03-sd.qualcomm.com with ESMTP; 21 Feb 2020 16:47:38 -0800
-Received: by asutoshd-linux1.qualcomm.com (Postfix, from userid 92687)
-        id A5E3E216F4; Fri, 21 Feb 2020 16:47:38 -0800 (PST)
-From:   Asutosh Das <asutoshd@codeaurora.org>
-To:     subhashj@codeaurora.org, cang@codeaurora.org,
-        rnayak@codeaurora.org, vinholikatti@gmail.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org
-Cc:     Asutosh Das <asutoshd@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [<RFC PATCH v1> 2/2] ufs-qcom: scsi: configure write booster type
-Date:   Fri, 21 Feb 2020 16:47:21 -0800
-Message-Id: <a67a815764ba60aea2f8b2890f6c65c9ea87aafc.1582330473.git.asutoshd@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1582330473.git.asutoshd@codeaurora.org>
-References: <cover.1582330473.git.asutoshd@codeaurora.org>
-In-Reply-To: <cover.1582330473.git.asutoshd@codeaurora.org>
-References: <cover.1582330473.git.asutoshd@codeaurora.org>
+        Fri, 21 Feb 2020 19:52:18 -0500
+Received: by mail-qk1-f177.google.com with SMTP id f3so678941qkh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:52:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mvOb1cClUvQO1K2/1tVMQTxzpjyFAOX+Lm7YmdkbK+c=;
+        b=oBxvvEbtuSwQ138t/pJT85Dc+V01+PcGJfIip9VkZUkgQzXFUrdPHgLTlC1wmhNJA4
+         m/U0HzjB7nh3BKWjeaNwqYgZmn2VFbw7GokSC1Xm0KPCTETfS1q5SUmVRZhdZmIUpZ9g
+         xuIBVXF07Hr4ZzBHoT3psqV4INw5nq80rqI9GnURAfOkAgoT7+wimsdBWrnvg9KlQ/3D
+         3m0RTUTJJPs4WOxwp6KnFB0gU4fZtKUkuPI1neEtxJn71Trs22MRYyqV/dNS9IbdH0xX
+         jgyURyRVum9cjgZc03nLMxuMSGMMdHsbgj/GxXOvkMAoP2xpxEJ2nYPzjmW0RZOE24YB
+         Um0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mvOb1cClUvQO1K2/1tVMQTxzpjyFAOX+Lm7YmdkbK+c=;
+        b=defgMuOKfhYx5SfGZ1TiLOBVhV1Uh34EbpkNGAEGfGBg56qM7XnJyhl4nYPvonhCGK
+         U+oemrRGMBC1LZZcPr7HNXRndVGRb7Lz5a9lgkrLzHtvqsGMpa2ZOZ44QHxP6c5JMVCT
+         q+mpbCc66JiXq6yz11j9YtobW2goknjQSJeSru9DhWNlF4Q0J3Id5P7DBoXXiaWcZAI2
+         4QmhuI1A2G4+7KNXE6TGZe+I2AyRrFX4PiEXOpCh7hxf8C5103uIQbd5cANB/lQ9nsuP
+         sNpY8XpNtb7Przfhvhay1QS9yUi2HC7dFu66S9SGlga/Qg7urWOC+zQ+TidoEiXWbBnn
+         z6gw==
+X-Gm-Message-State: APjAAAXsrV+z0K3K5m0GkBBBRQ2PfE+VZ2SuG92XqpyqdChfk390JPqZ
+        KtEwbhgdg595q5mxJPxcPxEUEA==
+X-Google-Smtp-Source: APXvYqxE4R/ptetGhUE/GxsnNeFjAZkn6Jw7hukZ/gpkBqwk2tp3qVjG2EmBwxLYq7AB8gF6SZ51bA==
+X-Received: by 2002:a37:a496:: with SMTP id n144mr14498305qke.126.1582332735156;
+        Fri, 21 Feb 2020 16:52:15 -0800 (PST)
+Received: from pop-os.fios-router.home (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
+        by smtp.googlemail.com with ESMTPSA id 12sm359559qkj.136.2020.02.21.16.52.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 16:52:14 -0800 (PST)
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rui.zhang@intel.com, qperret@google.com, daniel.lezcano@linaro.org,
+        viresh.kumar@linaro.org, rostedt@goodmis.org, will@kernel.org,
+        catalin.marinas@arm.com, sudeep.holla@arm.com,
+        juri.lelli@redhat.com, corbet@lwn.net
+Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
+        javi.merino@kernel.org, amit.kucheria@verdurent.com
+Subject: [Patch v10 0/9] Introduce Thermal Pressure
+Date:   Fri, 21 Feb 2020 19:52:04 -0500
+Message-Id: <20200222005213.3873-1-thara.gopinath@linaro.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Configure the WriteBooster type to preserve user-space mode.
-This would ensure that no user-space capacity is reduced
-when write booster is enabled.
+Thermal governors can respond to an overheat event of a cpu by
+capping the cpu's maximum possible frequency. This in turn
+means that the maximum available compute capacity of the
+cpu is restricted. But today in the kernel, task scheduler is
+not notified of capping of maximum frequency of a cpu.
+In other words, scheduler is unaware of maximum capacity
+restrictions placed on a cpu due to thermal activity.
+This patch series attempts to address this issue.
+The benefits identified are better task placement among available
+cpus in event of overheating which in turn leads to better
+performance numbers.
 
-Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
----
- drivers/scsi/ufs/ufs-qcom.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+The reduction in the maximum possible capacity of a cpu due to a
+thermal event can be considered as thermal pressure. Instantaneous
+thermal pressure is hard to record and can sometime be erroneous
+as there can be mismatch between the actual capping of capacity
+and scheduler recording it. Thus solution is to have a weighted
+average per cpu value for thermal pressure over time.
+The weight reflects the amount of time the cpu has spent at a
+capped maximum frequency. Since thermal pressure is recorded as
+an average, it must be decayed periodically. Exisiting algorithm
+in the kernel scheduler pelt framework is re-used to calculate
+the weighted average. This patch series also defines a sysctl
+inerface to allow for a configurable decay period.
 
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index 8339050..313b4a2 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -1686,6 +1686,12 @@ static void ufs_qcom_device_reset(struct ufs_hba *hba)
- 	usleep_range(10, 15);
- }
- 
-+static u32 ufs_qcom_get_user_cap_mode(struct ufs_hba *hba)
-+{
-+	/* QCom prefers no user-space reduction mode */
-+	return UFS_WB_BUFF_PRESERVE_USER_SPACE;
-+}
-+
- /**
-  * struct ufs_hba_qcom_vops - UFS QCOM specific variant operations
-  *
-@@ -1707,6 +1713,7 @@ static const struct ufs_hba_variant_ops ufs_hba_qcom_vops = {
- 	.resume			= ufs_qcom_resume,
- 	.dbg_register_dump	= ufs_qcom_dump_dbg_regs,
- 	.device_reset		= ufs_qcom_device_reset,
-+	.get_user_cap_mode	= ufs_qcom_get_user_cap_mode,
- };
- 
- /**
+Regarding testing, basic build, boot and sanity testing have been
+performed on db845c platform with debian file system.
+Further, dhrystone and hackbench tests have been
+run with the thermal pressure algorithm. During testing, due to
+constraints of step wise governor in dealing with big little systems,
+trip point 0 temperature was made assymetric between cpus in little
+cluster and big cluster; the idea being that
+big core will heat up and cpu cooling device will throttle the
+frequency of the big cores faster, there by limiting the maximum available
+capacity and the scheduler will spread out tasks to little cores as well.
+
+Test Results
+
+Hackbench: 1 group , 30000 loops, 10 runs
+                                               Result         SD
+                                               (Secs)     (% of mean)
+ No Thermal Pressure                            14.03       2.69%
+ Thermal Pressure PELT Algo. Decay : 32 ms      13.29       0.56%
+ Thermal Pressure PELT Algo. Decay : 64 ms      12.57       1.56%
+ Thermal Pressure PELT Algo. Decay : 128 ms     12.71       1.04%
+ Thermal Pressure PELT Algo. Decay : 256 ms     12.29       1.42%
+ Thermal Pressure PELT Algo. Decay : 512 ms     12.42       1.15%
+
+Dhrystone Run Time  : 20 threads, 3000 MLOOPS
+                                                 Result      SD
+                                                 (Secs)    (% of mean)
+ No Thermal Pressure                              9.452      4.49%
+ Thermal Pressure PELT Algo. Decay : 32 ms        8.793      5.30%
+ Thermal Pressure PELT Algo. Decay : 64 ms        8.981      5.29%
+ Thermal Pressure PELT Algo. Decay : 128 ms       8.647      6.62%
+ Thermal Pressure PELT Algo. Decay : 256 ms       8.774      6.45%
+ Thermal Pressure PELT Algo. Decay : 512 ms       8.603      5.41%
+
+A Brief History
+
+The first version of this patch-series was posted with resuing
+PELT algorithm to decay thermal pressure signal. The discussions
+that followed were around whether intanteneous thermal pressure
+solution is better and whether a stand-alone algortihm to accumulate
+and decay thermal pressure is more appropriate than re-using the
+PELT framework.
+Tests on Hikey960 showed the stand-alone algorithm performing slightly
+better than resuing PELT algorithm and V2 was posted with the stand
+alone algorithm. Test results were shared as part of this series.
+Discussions were around re-using PELT algorithm and running
+further tests with more granular decay period.
+
+For some time after this development was impeded due to hardware
+unavailability, some other unforseen and possibly unfortunate events.
+For this version, h/w was switched from hikey960 to db845c.
+Also Instantaneous thermal pressure was never tested as part of this
+cycle as it is clear that weighted average is a better implementation.
+The non-PELT algorithm never gave any conclusive results to prove that it
+is better than reusing PELT algorithm, in this round of testing.
+Also reusing PELT algorithm means thermal pressure tracks the
+other utilization signals in the scheduler.
+
+v3->v4:
+        - "Patch 3/7:sched: Initialize per cpu thermal pressure structure"
+           is dropped as it is no longer needed following changes in other
+           other patches.
+        - rest of the change log mentioned in specific patches.
+
+v5->v6:
+	- "Added arch_ interface APIs to access and update thermal pressure.
+	   Moved declaration of per cpu thermal_pressure valriable and
+	   infrastructure to update the variable to topology files.
+
+v6->v7:
+	- Added CONFIG_HAVE_SCHED_THERMAL_PRESSURE to stub out
+	  update_thermal_load_avg in unsupported architectures as per
+	  review comments from Peter, Dietmar and Quentin.
+	- Renamed arch_scale_thermal_capacity to arch_cpu_thermal_pressure
+	  as per review comments from Peter, Dietmar and Ionela.
+	- Changed the input argument in arch_set_thermal_pressure from
+	  capped capacity to delta capacity(thermal pressure) as per
+	  Ionela's review comments. Hence the calculation for delta
+	  capacity(thermal pressure) is moved to cpufreq_cooling.c.
+	- Fixed a bunch of spelling typos.
+
+v7->v8:
+	- Fixed typo in defining update_thermal_load_avg which was
+	  causing build errors (reported by kbuild test report)
+
+v8->v9:
+	- Defined thermal_load_avg to read rq->avg_thermal.load_avg and
+	  avoid cacheline miss in unsupported cases as per Peter's
+          suggestion.
+	- Moved periodic triggering of thermal pressure averaging from CFS
+	  tick function to generic scheduler core tick function.
+	- Moved rq_clock_thermal from fair.c to sched.h to enable using
+	  the function from multiple files.
+	- Initialized the __shift to 0 in setup_sched_thermal_decay_shift
+	  as per Quentin's suggestion
+	- Added an extra patch enabling CONFIG_HAVE_SCHED_THERMAL_PRESSURE
+	  as per Dietmar's request.
+
+v9->v10:
+	- Renamed arch_cpu_thermal_pressure to arch_scale_thermal_pressure
+	  as per review comments from Dietmar.
+	- Split "[Patch v9 3/8] arm,arm64,drivers:Add infrastructure to
+	  store and update instantaneous thermal pressure" into 3 thus
+	  separating out arch/arm and arch/arm64 specific code into
+	  individual patches as suggested by Amit Kucheria.
+	- Added description for sched_thermal_decay_shift in
+	  kernel-parameters.txt following Randy's review comments.
+	- Fixed typos in comments as per Amit Kucheria's review comments.
+
+Thara Gopinath (9):
+  sched/pelt: Add support to track thermal pressure
+  sched/topology: Add hook to read per cpu thermal pressure.
+  drivers/base/arch_topology: Add infrastructure to store and update
+    instantaneous thermal pressure
+  arm64/topology: Populate arch_cpu_thermal_pressure for arm64 platforms
+  arm/topology: Populate arch_cpu_thermal_pressure for arm platforms
+  sched/fair: Enable periodic update of average thermal pressure
+  sched/fair: update cpu_capacity to reflect thermal pressure
+  thermal/cpu-cooling: Update thermal pressure in case of a maximum
+    frequency capping
+  sched/fair: Enable tuning of decay period
+
+ .../admin-guide/kernel-parameters.txt         | 16 ++++++++++
+ arch/arm/include/asm/topology.h               |  3 ++
+ arch/arm64/include/asm/topology.h             |  3 ++
+ drivers/base/arch_topology.c                  | 11 +++++++
+ drivers/thermal/cpufreq_cooling.c             | 19 ++++++++++--
+ include/linux/arch_topology.h                 | 10 ++++++
+ include/linux/sched/topology.h                |  8 +++++
+ include/trace/events/sched.h                  |  4 +++
+ init/Kconfig                                  |  4 +++
+ kernel/sched/core.c                           |  3 ++
+ kernel/sched/fair.c                           | 27 ++++++++++++++++
+ kernel/sched/pelt.c                           | 31 +++++++++++++++++++
+ kernel/sched/pelt.h                           | 31 +++++++++++++++++++
+ kernel/sched/sched.h                          | 21 +++++++++++++
+ 14 files changed, 189 insertions(+), 2 deletions(-)
+
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.20.1
 
