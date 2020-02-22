@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD44168B48
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2635D168B3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:52:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbgBVAws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:52:48 -0500
-Received: from mail-qk1-f173.google.com ([209.85.222.173]:35954 "EHLO
-        mail-qk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727775AbgBVAwY (ORCPT
+        id S1727860AbgBVAw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:52:27 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37910 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727780AbgBVAwY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Feb 2020 19:52:24 -0500
-Received: by mail-qk1-f173.google.com with SMTP id f3so679108qkh.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:52:23 -0800 (PST)
+Received: by mail-qt1-f195.google.com with SMTP id i23so2659634qtr.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:52:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DXF66T0+Pbnrsx76EBXYwbN00fGKYSGHdWCqkNe6hnA=;
-        b=yExeNO0ju10sVD8qMMAOU2xcEqvqVXac77F6HmYAnIUOYJ5cC0gfrlX5xkoJFYsxZt
-         8GQXC0xZHdxlVP6MWOKfv6bNBw/L6Spoy5GGLiO6t1SHG2Wx+cq0enWB/evJVzCof0WN
-         qFSpU0GyuNXgxCjJnC2Ye4dysK/fNHkh66t0sX18Z9GNcthkVTlfAvTcUNUoGVW04aPP
-         FOVvrCnBbpQg5R5XARcMnsson88/oy2aQHIKKwI0uhi11P7hvShUGYfmRm1HAkUId8YG
-         NlVCwz2AFLZoSdOPEZxxoq7M/z2Q15anLFI/WCDmrpYzGyHqOp2oJKiszagN7Krsj3Ud
-         OAmA==
+        bh=6AZebL7Sh8tHCoBLDF/73E6NQ4SpBPEYakN7cz0vLpc=;
+        b=L7vtnjOMFOugLgUpCh1nUW98fEphKU9qy/ARk8G6fPbTKl0XPMeQk6soHTWQ59puhn
+         YwqZPd2GhnStmcNyHO5V+0rwTFMy+4YHcDLZreMZ2mCXB2orpzRpmsQIayjhAAmGk3Bl
+         jUEsazRVB5WSWLXivjy2B1jo9veugZ2pQ8UCcEYhrTj2tjuUCXOMjJM+kmID58F0/hQ6
+         +pRj30UROuAbcNzkEW93KNK9uYJYUhz7ba9LzBzuGsvT9KkCsDVxQeMO3U1PN3Sibtdq
+         4Oxq7HGX43pNxY7MEw3HVc/5H67MrwqVI50vFyLLxhWQPUPxjBrdzT1lNgyXLacHtAHk
+         a9VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DXF66T0+Pbnrsx76EBXYwbN00fGKYSGHdWCqkNe6hnA=;
-        b=bTchEqCYQKn4tFYZOt0M8IdKPIXwxPx/nKe1X05G6stPhWNl9yT68PE3cgV1Y3x/2A
-         r+WbWY/iidJ8hcD//Xgl05IrOj3CmipVC4roHv14+i25Z0pxCEy5l4uvWmRA9JqgifNb
-         9lhVS1HDIPMcBmArnyz49829191tX6PMv4IitFelhDkotqoSrN0zL6M3+KlENE+2KVsN
-         FJSGue0GELuAXS+D1t5NWLMSBO2CciHpVqVmRfSxKj5Gs0ZcHpCzR9sSwKDvbGPwGqyd
-         PL+lSZnwtugUf9HsJHYIabiC+bLbyvaMvlGhXlNFDkVnJ36A+UBuDnN5zjwTTvqBGmXA
-         dX0w==
-X-Gm-Message-State: APjAAAWDXKKS1O1yBnD2mZ10t1n3CkaKnU9SEUreqIRIR4FxdFfTA59F
-        byXj67gS2WbcHsXfZcRfPY7FSw==
-X-Google-Smtp-Source: APXvYqxEHn2w5pQG3+6Oer2jJk3Bum2Rj88gX41Dow6eHy+sOsLM/5dW/xHpIoJeRCEPHKpt64DOkg==
-X-Received: by 2002:a37:a38e:: with SMTP id m136mr35203222qke.116.1582332742515;
-        Fri, 21 Feb 2020 16:52:22 -0800 (PST)
+        bh=6AZebL7Sh8tHCoBLDF/73E6NQ4SpBPEYakN7cz0vLpc=;
+        b=PJVJDSEhMQq2XkJFMFhreo3jDoXF8H49cN8z/bqVRnZkEh/ULhjjiTb4QaD05Psx3k
+         JvRLWac8hOAkH0Xb2Fu7/UYKoMMGs/YhRV6cjb8zhpfyy1DzCj/3m2TRKgsjR6se/KwE
+         DNHi+hGNXBOB+C9RZmVgmeDaW5E04/eycZE3/hDEfG7qSh9nzopxzcaXZ2ecOdhhQILO
+         ZHc55B+WsM9yueFrkFIpKxAo45B8f/jp586a/Finnc1MR5wLY3E7C3KXIvKrAiccW+3E
+         ZoNKaH/GN9ytCDsn3DlvJQ6y2mEU7/0TaOc7fBOU1E1b1rhcA1rMU4ptyCsLpvuuLJwR
+         U5oQ==
+X-Gm-Message-State: APjAAAXFlC55g0yM2bn6rVgWd8nS+k5N9Ji54dX2L6Tp4ZqPNUP+fvly
+        oPyqqxv3bkgJeZNg7zh8v9Aikg==
+X-Google-Smtp-Source: APXvYqzss8GyRdJA34Hn1YaCUOpGoLxo0T+NrKDzZJJdH0NOXdOESZiPIQpyg9p1JjZGlyLeL8LeOQ==
+X-Received: by 2002:ac8:3fc3:: with SMTP id v3mr25144710qtk.367.1582332743926;
+        Fri, 21 Feb 2020 16:52:23 -0800 (PST)
 Received: from pop-os.fios-router.home (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.googlemail.com with ESMTPSA id 12sm359559qkj.136.2020.02.21.16.52.21
+        by smtp.googlemail.com with ESMTPSA id 12sm359559qkj.136.2020.02.21.16.52.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 16:52:21 -0800 (PST)
+        Fri, 21 Feb 2020 16:52:23 -0800 (PST)
 From:   Thara Gopinath <thara.gopinath@linaro.org>
 To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
         vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
@@ -54,9 +54,9 @@ To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
         juri.lelli@redhat.com, corbet@lwn.net
 Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
         javi.merino@kernel.org, amit.kucheria@verdurent.com
-Subject: [Patch v10 5/9] arm/topology: Populate arch_scale_thermal_pressure for arm platforms
-Date:   Fri, 21 Feb 2020 19:52:09 -0500
-Message-Id: <20200222005213.3873-6-thara.gopinath@linaro.org>
+Subject: [Patch v10 6/9] sched/fair: Enable periodic update of average thermal pressure
+Date:   Fri, 21 Feb 2020 19:52:10 -0500
+Message-Id: <20200222005213.3873-7-thara.gopinath@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200222005213.3873-1-thara.gopinath@linaro.org>
 References: <20200222005213.3873-1-thara.gopinath@linaro.org>
@@ -67,28 +67,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hook up topology_get_thermal_pressure to arch_scale_thermal_pressure thus
-enabling scheduler to retrieve instantaneous thermal pressure of a cpu.
+Introduce support in scheduler periodic tick and other CFS bookkeeping
+apis to trigger the process of computing average thermal pressure for a
+cpu. Also consider avg_thermal.load_avg in others_have_blocked which
+allows for decay of pelt signals.
 
 Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 ---
- arch/arm/include/asm/topology.h | 3 +++
- 1 file changed, 3 insertions(+)
+v8->v9:
+	- Moved periodic triggering of thermal pressure averaging from CFS
+	  tick function to generic scheduler core tick function as per
+	  Peter's review comments.
 
-diff --git a/arch/arm/include/asm/topology.h b/arch/arm/include/asm/topology.h
-index 8a0fae94d45e..3a50a19c7c28 100644
---- a/arch/arm/include/asm/topology.h
-+++ b/arch/arm/include/asm/topology.h
-@@ -16,6 +16,9 @@
- /* Enable topology flag updates */
- #define arch_update_cpu_topology topology_update_cpu_topology
+ kernel/sched/core.c | 3 +++
+ kernel/sched/fair.c | 7 +++++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index e94819d573be..160b5e9e8945 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3588,6 +3588,7 @@ void scheduler_tick(void)
+ 	struct rq *rq = cpu_rq(cpu);
+ 	struct task_struct *curr = rq->curr;
+ 	struct rq_flags rf;
++	unsigned long thermal_pressure;
  
-+/* Replace task scheduler's default thermal pressure retrieve API */
-+#define arch_scale_thermal_pressure topology_get_thermal_pressure
+ 	arch_scale_freq_tick();
+ 	sched_clock_tick();
+@@ -3595,6 +3596,8 @@ void scheduler_tick(void)
+ 	rq_lock(rq, &rf);
+ 
+ 	update_rq_clock(rq);
++	thermal_pressure = arch_scale_thermal_pressure(cpu_of(rq));
++	update_thermal_load_avg(rq_clock_task(rq), rq, thermal_pressure);
+ 	curr->sched_class->task_tick(rq, curr, 0);
+ 	calc_global_load_tick(rq);
+ 	psi_task_tick(rq);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index f38ff5a335d3..00b21a5b71f0 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7536,6 +7536,9 @@ static inline bool others_have_blocked(struct rq *rq)
+ 	if (READ_ONCE(rq->avg_dl.util_avg))
+ 		return true;
+ 
++	if (thermal_load_avg(rq))
++		return true;
 +
- #else
+ #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+ 	if (READ_ONCE(rq->avg_irq.util_avg))
+ 		return true;
+@@ -7561,6 +7564,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
+ {
+ 	const struct sched_class *curr_class;
+ 	u64 now = rq_clock_pelt(rq);
++	unsigned long thermal_pressure;
+ 	bool decayed;
  
- static inline void init_cpu_topology(void) { }
+ 	/*
+@@ -7569,8 +7573,11 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
+ 	 */
+ 	curr_class = rq->curr->sched_class;
+ 
++	thermal_pressure = arch_scale_thermal_pressure(cpu_of(rq));
++
+ 	decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
+ 		  update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
++		  update_thermal_load_avg(rq_clock_task(rq), rq, thermal_pressure) |
+ 		  update_irq_load_avg(rq, 0);
+ 
+ 	if (others_have_blocked(rq))
 -- 
 2.20.1
 
