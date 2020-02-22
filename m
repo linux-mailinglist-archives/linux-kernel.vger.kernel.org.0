@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D28CA1691D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 22:07:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C27151691DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 22:07:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbgBVVF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 16:05:58 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:47684 "EHLO
+        id S1727069AbgBVVGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 16:06:02 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:47688 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbgBVVF6 (ORCPT
+        with ESMTP id S1726826AbgBVVGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 16:05:58 -0500
+        Sat, 22 Feb 2020 16:06:02 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j5byG-0003Ah-0O; Sat, 22 Feb 2020 22:05:56 +0100
+        id 1j5byF-0003Ae-Sw; Sat, 22 Feb 2020 22:05:56 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 7844610408B;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 444A7104089;
         Sat, 22 Feb 2020 22:05:55 +0100 (CET)
 Date:   Sat, 22 Feb 2020 21:00:04 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] x86 fixes for 5.6-rc3
+Subject: [GIT pull] ras fixes for 5.6-rc3
 References: <158240520445.852.16454463053831663511.tglx@nanos.tec.linutronix.de>
-Message-ID: <158240520445.852.1076310115215713264.tglx@nanos.tec.linutronix.de>
+Message-ID: <158240520445.852.9501937854549164336.tglx@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -40,103 +40,154 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest x86/urgent branch from:
+please pull the latest ras/urgent branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2020-02-22
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-urgent-2020-02-22
 
-up to:  21b5ee59ef18: x86/cpu/amd: Enable the fixed Instructions Retired counter IRPERF
+up to:  51dede9c05df: x86/mce/amd: Fix kobject lifetime
 
-Two fixes for x86:
+Two fixes for the AMD MCE driver:
 
-  - Remove the __force_oder definiton from the kaslr boot code as it is
-    already defined in the page table code which makes GCC 10 builds fail
-    because it changed the default to -fno-common.
+  - Populate the per CPU MCA bank descriptor pointer only after it has been
+    completely set up to prevent a use-after-free in case that one of the
+    subsequent initialization step fails
 
-  - Address the AMD erratum 1054 concerning the IRPERF capability and
-    enable the Instructions Retired fixed counter on machines which are not
-    affected by the erratum.
+  - Implement a proper release function for the sysfs entries of MCA
+    threshold controls instead of freeing the memory right in the CPU
+    teardown code, which leads to another use-after-free when the
+    associated sysfs file is opened and accessed.
+
 
 Thanks,
 
 	tglx
 
 ------------------>
-H.J. Lu (1):
-      x86/boot/compressed: Don't declare __force_order in kaslr_64.c
+Borislav Petkov (1):
+      x86/mce/amd: Publish the bank pointer only after setup has succeeded
 
-Kim Phillips (1):
-      x86/cpu/amd: Enable the fixed Instructions Retired counter IRPERF
+Thomas Gleixner (1):
+      x86/mce/amd: Fix kobject lifetime
 
 
- arch/x86/boot/compressed/kaslr_64.c |  3 ---
- arch/x86/include/asm/msr-index.h    |  2 ++
- arch/x86/kernel/cpu/amd.c           | 14 ++++++++++++++
- 3 files changed, 16 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/mce/amd.c | 50 +++++++++++++++++++++++--------------------
+ 1 file changed, 27 insertions(+), 23 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/kaslr_64.c b/arch/x86/boot/compressed/kaslr_64.c
-index 748456c365f4..9557c5a15b91 100644
---- a/arch/x86/boot/compressed/kaslr_64.c
-+++ b/arch/x86/boot/compressed/kaslr_64.c
-@@ -29,9 +29,6 @@
- #define __PAGE_OFFSET __PAGE_OFFSET_BASE
- #include "../../mm/ident_map.c"
+diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
+index b3a50d962851..52de616a8065 100644
+--- a/arch/x86/kernel/cpu/mce/amd.c
++++ b/arch/x86/kernel/cpu/mce/amd.c
+@@ -1163,9 +1163,12 @@ static const struct sysfs_ops threshold_ops = {
+ 	.store			= store,
+ };
  
--/* Used by pgtable.h asm code to force instruction serialization. */
--unsigned long __force_order;
--
- /* Used to track our page table allocation area. */
- struct alloc_pgt_data {
- 	unsigned char *pgt_buf;
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index ebe1685e92dd..d5e517d1c3dd 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -512,6 +512,8 @@
- #define MSR_K7_HWCR			0xc0010015
- #define MSR_K7_HWCR_SMMLOCK_BIT		0
- #define MSR_K7_HWCR_SMMLOCK		BIT_ULL(MSR_K7_HWCR_SMMLOCK_BIT)
-+#define MSR_K7_HWCR_IRPERF_EN_BIT	30
-+#define MSR_K7_HWCR_IRPERF_EN		BIT_ULL(MSR_K7_HWCR_IRPERF_EN_BIT)
- #define MSR_K7_FID_VID_CTL		0xc0010041
- #define MSR_K7_FID_VID_STATUS		0xc0010042
- 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index ac83a0fef628..1f875fbe1384 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -28,6 +28,7 @@
- 
- static const int amd_erratum_383[];
- static const int amd_erratum_400[];
-+static const int amd_erratum_1054[];
- static bool cpu_has_amd_erratum(struct cpuinfo_x86 *cpu, const int *erratum);
- 
- /*
-@@ -972,6 +973,15 @@ static void init_amd(struct cpuinfo_x86 *c)
- 	/* AMD CPUs don't reset SS attributes on SYSRET, Xen does. */
- 	if (!cpu_has(c, X86_FEATURE_XENPV))
- 		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
++static void threshold_block_release(struct kobject *kobj);
 +
-+	/*
-+	 * Turn on the Instructions Retired free counter on machines not
-+	 * susceptible to erratum #1054 "Instructions Retired Performance
-+	 * Counter May Be Inaccurate".
-+	 */
-+	if (cpu_has(c, X86_FEATURE_IRPERF) &&
-+	    !cpu_has_amd_erratum(c, amd_erratum_1054))
-+		msr_set_bit(MSR_K7_HWCR, MSR_K7_HWCR_IRPERF_EN_BIT);
+ static struct kobj_type threshold_ktype = {
+ 	.sysfs_ops		= &threshold_ops,
+ 	.default_attrs		= default_attrs,
++	.release		= threshold_block_release,
+ };
+ 
+ static const char *get_name(unsigned int bank, struct threshold_block *b)
+@@ -1198,8 +1201,9 @@ static const char *get_name(unsigned int bank, struct threshold_block *b)
+ 	return buf_mcatype;
  }
  
- #ifdef CONFIG_X86_32
-@@ -1099,6 +1109,10 @@ static const int amd_erratum_400[] =
- static const int amd_erratum_383[] =
- 	AMD_OSVW_ERRATUM(3, AMD_MODEL_RANGE(0x10, 0, 0, 0xff, 0xf));
- 
-+/* #1054: Instructions Retired Performance Counter May Be Inaccurate */
-+static const int amd_erratum_1054[] =
-+	AMD_OSVW_ERRATUM(0, AMD_MODEL_RANGE(0x17, 0, 0, 0x2f, 0xf));
-+
- 
- static bool cpu_has_amd_erratum(struct cpuinfo_x86 *cpu, const int *erratum)
+-static int allocate_threshold_blocks(unsigned int cpu, unsigned int bank,
+-				     unsigned int block, u32 address)
++static int allocate_threshold_blocks(unsigned int cpu, struct threshold_bank *tb,
++				     unsigned int bank, unsigned int block,
++				     u32 address)
  {
+ 	struct threshold_block *b = NULL;
+ 	u32 low, high;
+@@ -1243,16 +1247,12 @@ static int allocate_threshold_blocks(unsigned int cpu, unsigned int bank,
+ 
+ 	INIT_LIST_HEAD(&b->miscj);
+ 
+-	if (per_cpu(threshold_banks, cpu)[bank]->blocks) {
+-		list_add(&b->miscj,
+-			 &per_cpu(threshold_banks, cpu)[bank]->blocks->miscj);
+-	} else {
+-		per_cpu(threshold_banks, cpu)[bank]->blocks = b;
+-	}
++	if (tb->blocks)
++		list_add(&b->miscj, &tb->blocks->miscj);
++	else
++		tb->blocks = b;
+ 
+-	err = kobject_init_and_add(&b->kobj, &threshold_ktype,
+-				   per_cpu(threshold_banks, cpu)[bank]->kobj,
+-				   get_name(bank, b));
++	err = kobject_init_and_add(&b->kobj, &threshold_ktype, tb->kobj, get_name(bank, b));
+ 	if (err)
+ 		goto out_free;
+ recurse:
+@@ -1260,7 +1260,7 @@ static int allocate_threshold_blocks(unsigned int cpu, unsigned int bank,
+ 	if (!address)
+ 		return 0;
+ 
+-	err = allocate_threshold_blocks(cpu, bank, block, address);
++	err = allocate_threshold_blocks(cpu, tb, bank, block, address);
+ 	if (err)
+ 		goto out_free;
+ 
+@@ -1345,8 +1345,6 @@ static int threshold_create_bank(unsigned int cpu, unsigned int bank)
+ 		goto out_free;
+ 	}
+ 
+-	per_cpu(threshold_banks, cpu)[bank] = b;
+-
+ 	if (is_shared_bank(bank)) {
+ 		refcount_set(&b->cpus, 1);
+ 
+@@ -1357,9 +1355,13 @@ static int threshold_create_bank(unsigned int cpu, unsigned int bank)
+ 		}
+ 	}
+ 
+-	err = allocate_threshold_blocks(cpu, bank, 0, msr_ops.misc(bank));
+-	if (!err)
+-		goto out;
++	err = allocate_threshold_blocks(cpu, b, bank, 0, msr_ops.misc(bank));
++	if (err)
++		goto out_free;
++
++	per_cpu(threshold_banks, cpu)[bank] = b;
++
++	return 0;
+ 
+  out_free:
+ 	kfree(b);
+@@ -1368,8 +1370,12 @@ static int threshold_create_bank(unsigned int cpu, unsigned int bank)
+ 	return err;
+ }
+ 
+-static void deallocate_threshold_block(unsigned int cpu,
+-						 unsigned int bank)
++static void threshold_block_release(struct kobject *kobj)
++{
++	kfree(to_block(kobj));
++}
++
++static void deallocate_threshold_block(unsigned int cpu, unsigned int bank)
+ {
+ 	struct threshold_block *pos = NULL;
+ 	struct threshold_block *tmp = NULL;
+@@ -1379,13 +1385,11 @@ static void deallocate_threshold_block(unsigned int cpu,
+ 		return;
+ 
+ 	list_for_each_entry_safe(pos, tmp, &head->blocks->miscj, miscj) {
+-		kobject_put(&pos->kobj);
+ 		list_del(&pos->miscj);
+-		kfree(pos);
++		kobject_put(&pos->kobj);
+ 	}
+ 
+-	kfree(per_cpu(threshold_banks, cpu)[bank]->blocks);
+-	per_cpu(threshold_banks, cpu)[bank]->blocks = NULL;
++	kobject_put(&head->blocks->kobj);
+ }
+ 
+ static void __threshold_remove_blocks(struct threshold_bank *b)
 
