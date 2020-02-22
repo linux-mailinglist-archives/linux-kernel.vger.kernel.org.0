@@ -2,107 +2,258 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2465116923C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 00:16:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB22169243
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 00:21:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbgBVXQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 18:16:27 -0500
-Received: from smtprelay0050.hostedemail.com ([216.40.44.50]:55813 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726884AbgBVXQ1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 18:16:27 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 81D4D182251C0;
-        Sat, 22 Feb 2020 23:16:25 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:69:196:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3874:4321:4605:5007:6119:9040:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12296:12297:12740:12760:12895:13069:13161:13229:13311:13357:13439:14181:14659:14721:21080:21451:21611:21622:21740:30012:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: girls48_37ed54b61044f
-X-Filterd-Recvd-Size: 2924
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 22 Feb 2020 23:16:24 +0000 (UTC)
-Message-ID: <45de570ce9afcec576ed521ddad343e6ae46fd0f.camel@perches.com>
-Subject: Re: [PATCH v2] staging: qlge: emit debug and dump at same level
-From:   Joe Perches <joe@perches.com>
-To:     Kaaira Gupta <kgupta@es.iitr.ac.in>,
-        Manish Chopra <manishc@marvell.com>,
-        GR-Linux-NIC-Dev@marvell.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        netdev@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 22 Feb 2020 15:14:57 -0800
-In-Reply-To: <20200222215109.GA18727@kaaira-HP-Pavilion-Notebook>
-References: <20200222215109.GA18727@kaaira-HP-Pavilion-Notebook>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1727084AbgBVXU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 18:20:57 -0500
+Received: from mga14.intel.com ([192.55.52.115]:6451 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726865AbgBVXU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 18:20:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Feb 2020 15:20:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,473,1574150400"; 
+   d="scan'208";a="230772900"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 22 Feb 2020 15:20:54 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1j5e4s-00050b-4W; Sun, 23 Feb 2020 07:20:54 +0800
+Date:   Sun, 23 Feb 2020 07:19:47 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [rcu:dev.2020.02.20a] BUILD SUCCESS
+ e60d76b6e8cd6b7058bbcfce6cfcd895ad5cedd7
+Message-ID: <5e51b713.f0kWSY9rZ7ctWapR%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2020-02-23 at 03:21 +0530, Kaaira Gupta wrote:
-> Write a macro QLGE_DUMP_DBG having a function print_hex_dump so that
-> the debug and dump are emitted at the same KERN_<LEVEL> and code becomes
-> simpler. Write a macro instead of calling the function directly in
-> ql_mpi_core_to_log() to go according to the coding practices followed in
-> other drivers such as nvec and vc04_services.
-> 
-> Signed-off-by: Kaaira Gupta <kgupta@es.iitr.ac.in>
-> ---
-> 
-> changes since v1: make code of ql_mpi_core_to_log() simpler.
-> 
-> ----
-> ---
->  drivers/staging/qlge/qlge_dbg.c | 25 +++++--------------------
->  1 file changed, 5 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/staging/qlge/qlge_dbg.c b/drivers/staging/qlge/qlge_dbg.c
-[]
-> @@ -1,5 +1,8 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +#define QLGE_DUMP_DBG(str, buf, len)			    \
-> +	print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_OFFSET, \
-> +			32, 4, buf, len, false)
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git  dev.2020.02.20a
+branch HEAD: e60d76b6e8cd6b7058bbcfce6cfcd895ad5cedd7  kcsan: Add option for verbose reporting
 
-There is no need to create a used-once macro.
-Just code the one use in-place.
+elapsed time: 1087m
 
->  #include <linux/slab.h>
->  
-> @@ -1324,27 +1327,9 @@ void ql_mpi_core_to_log(struct work_struct *work)
->  {
->  	struct ql_adapter *qdev =
->  		container_of(work, struct ql_adapter, mpi_core_to_log.work);
-> -	u32 *tmp, count;
-> -	int i;
->  
-> -	count = sizeof(struct ql_mpi_coredump) / sizeof(u32);
-> -	tmp = (u32 *)qdev->mpi_coredump;
-> -	netif_printk(qdev, drv, KERN_DEBUG, qdev->ndev,
-> -		     "Core is dumping to log file!\n");
-> -
-> -	for (i = 0; i < count; i += 8) {
-> -		pr_err("%.08x: %.08x %.08x %.08x %.08x %.08x "
-> -			"%.08x %.08x %.08x\n", i,
-> -			tmp[i + 0],
-> -			tmp[i + 1],
-> -			tmp[i + 2],
-> -			tmp[i + 3],
-> -			tmp[i + 4],
-> -			tmp[i + 5],
-> -			tmp[i + 6],
-> -			tmp[i + 7]);
-> -		msleep(5);
-> -	}
-> +	QLGE_DUMP_DBG("Core is dumping to log file!\n", qdev->mpi_coredump,
-> +		      sizeof(*qdev->mpi_coredump));
->  }
->  
->  #ifdef QL_REG_DUMP
+configs tested: 203
+configs skipped: 0
 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
+sparc                            allyesconfig
+riscv                             allnoconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+h8300                    h8300h-sim_defconfig
+openrisc                 simple_smp_defconfig
+riscv                            allmodconfig
+mips                             allmodconfig
+ia64                                defconfig
+riscv                            allyesconfig
+m68k                       m5475evb_defconfig
+i386                                defconfig
+parisc                generic-32bit_defconfig
+i386                              allnoconfig
+i386                             alldefconfig
+i386                             allyesconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+nios2                         3c120_defconfig
+nios2                         10m50_defconfig
+c6x                        evmc6678_defconfig
+xtensa                          iss_defconfig
+c6x                              allyesconfig
+xtensa                       common_defconfig
+openrisc                    or1ksim_defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+h8300                     edosk2674_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+arc                                 defconfig
+arc                              allyesconfig
+powerpc                          rhel-kconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+parisc                            allnoconfig
+parisc                generic-64bit_defconfig
+parisc                           allyesconfig
+x86_64               randconfig-a001-20200223
+x86_64               randconfig-a002-20200223
+x86_64               randconfig-a003-20200223
+i386                 randconfig-a001-20200223
+i386                 randconfig-a002-20200223
+i386                 randconfig-a003-20200223
+x86_64               randconfig-a001-20200222
+x86_64               randconfig-a002-20200222
+i386                 randconfig-a002-20200222
+x86_64               randconfig-a003-20200222
+i386                 randconfig-a001-20200222
+i386                 randconfig-a003-20200222
+alpha                randconfig-a001-20200222
+m68k                 randconfig-a001-20200222
+mips                 randconfig-a001-20200222
+nds32                randconfig-a001-20200222
+parisc               randconfig-a001-20200222
+riscv                randconfig-a001-20200222
+alpha                randconfig-a001-20200223
+m68k                 randconfig-a001-20200223
+mips                 randconfig-a001-20200223
+nds32                randconfig-a001-20200223
+parisc               randconfig-a001-20200223
+c6x                  randconfig-a001-20200222
+h8300                randconfig-a001-20200222
+microblaze           randconfig-a001-20200222
+nios2                randconfig-a001-20200222
+sparc64              randconfig-a001-20200222
+c6x                  randconfig-a001-20200223
+h8300                randconfig-a001-20200223
+microblaze           randconfig-a001-20200223
+nios2                randconfig-a001-20200223
+sparc64              randconfig-a001-20200223
+csky                 randconfig-a001-20200223
+openrisc             randconfig-a001-20200223
+s390                 randconfig-a001-20200223
+sh                   randconfig-a001-20200223
+xtensa               randconfig-a001-20200223
+csky                 randconfig-a001-20200222
+openrisc             randconfig-a001-20200222
+s390                 randconfig-a001-20200222
+sh                   randconfig-a001-20200222
+xtensa               randconfig-a001-20200222
+x86_64               randconfig-b001-20200222
+x86_64               randconfig-b002-20200222
+x86_64               randconfig-b003-20200222
+i386                 randconfig-b001-20200222
+i386                 randconfig-b002-20200222
+i386                 randconfig-b003-20200222
+x86_64               randconfig-b001-20200223
+x86_64               randconfig-b002-20200223
+x86_64               randconfig-b003-20200223
+i386                 randconfig-b001-20200223
+i386                 randconfig-b002-20200223
+i386                 randconfig-b003-20200223
+x86_64               randconfig-d001-20200223
+x86_64               randconfig-d002-20200223
+x86_64               randconfig-d003-20200223
+i386                 randconfig-d001-20200223
+i386                 randconfig-d002-20200223
+i386                 randconfig-d003-20200223
+x86_64               randconfig-e001-20200223
+x86_64               randconfig-e002-20200223
+x86_64               randconfig-e003-20200223
+i386                 randconfig-e001-20200223
+i386                 randconfig-e002-20200223
+i386                 randconfig-e003-20200223
+x86_64               randconfig-f001-20200222
+x86_64               randconfig-f002-20200222
+x86_64               randconfig-f003-20200222
+i386                 randconfig-f001-20200222
+i386                 randconfig-f002-20200222
+i386                 randconfig-f003-20200222
+x86_64               randconfig-f001-20200223
+x86_64               randconfig-f002-20200223
+x86_64               randconfig-f003-20200223
+i386                 randconfig-f001-20200223
+i386                 randconfig-f002-20200223
+i386                 randconfig-f003-20200223
+x86_64               randconfig-g001-20200222
+i386                 randconfig-g002-20200222
+i386                 randconfig-g003-20200222
+i386                 randconfig-g001-20200222
+x86_64               randconfig-g003-20200222
+x86_64               randconfig-g002-20200222
+x86_64               randconfig-g001-20200223
+x86_64               randconfig-g002-20200223
+x86_64               randconfig-g003-20200223
+i386                 randconfig-g001-20200223
+i386                 randconfig-g002-20200223
+i386                 randconfig-g003-20200223
+x86_64               randconfig-h001-20200222
+x86_64               randconfig-h002-20200222
+x86_64               randconfig-h003-20200222
+i386                 randconfig-h001-20200222
+i386                 randconfig-h002-20200222
+i386                 randconfig-h003-20200222
+x86_64               randconfig-h001-20200223
+x86_64               randconfig-h002-20200223
+x86_64               randconfig-h003-20200223
+i386                 randconfig-h001-20200223
+i386                 randconfig-h002-20200223
+i386                 randconfig-h003-20200223
+arc                  randconfig-a001-20200223
+arm                  randconfig-a001-20200223
+arm64                randconfig-a001-20200223
+ia64                 randconfig-a001-20200223
+powerpc              randconfig-a001-20200223
+sparc                randconfig-a001-20200223
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                               allmodconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
