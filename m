@@ -2,185 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5870A1691D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 22:07:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 564561691D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 22:01:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbgBVVF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 16:05:59 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:47685 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbgBVVF7 (ORCPT
+        id S1726907AbgBVVBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 16:01:06 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:52212 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbgBVVBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 16:05:59 -0500
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j5byF-0003Ad-Pu; Sat, 22 Feb 2020 22:05:55 +0100
-Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 10562FFC77;
-        Sat, 22 Feb 2020 22:05:55 +0100 (CET)
-Date:   Sat, 22 Feb 2020 21:00:04 -0000
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] irq fixes for 5.6-rc3
-Message-ID: <158240520445.852.16454463053831663511.tglx@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Sat, 22 Feb 2020 16:01:05 -0500
+Received: by mail-pj1-f68.google.com with SMTP id fa20so2309051pjb.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 13:01:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=laEHxH1L9Tdj6O2OTgMojiMOqUUb6PedrFi1g5j2gKw=;
+        b=Q1hFllBqSn4fR6AzHGxaLoq0TcAbiOW4B6TXVyl+M2UM3D4qQ4964Ctex/XFU1tGyK
+         p4sSTdV2w4cFfCI9XEQElJygM/3XzhR8EFSUSvKz7mNzOEMB+cHMbexGgCjICFh2b9M0
+         k0k5iaTF06fD26i1vgUA31A0EdTX8LJvk9iEUSgr2JYUlx9/wYBj3wVJCSkVC7YsPR6O
+         Q6hbctC7OjLYEM0wXL150Y4H6JU9goQrzKhXP5WTyHmgQhnCJ15UN4Mmi21hgr+P5kCL
+         8lpPKAdaUWw04SHJie6s4ltpdlFqGOi1vsnXmhNF/pRtr3ZV4ozshwJfy7NngXubhExM
+         MVNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=laEHxH1L9Tdj6O2OTgMojiMOqUUb6PedrFi1g5j2gKw=;
+        b=DAtDUZwzs7x1S/sZ8Fpe75csTuCeUjTABNCFf9OTtvdEFBoOMSXlDQuNvWsVHi+t9+
+         uiz3DZUy53ki6puXtzh7M+jCWN4ugIwrgHNEitcAklM5aYT4NNfb+fhp1Y6GnfMxIYhG
+         G+Xe0xawvSoqw2l6g6sQlnHrBiG6MkV3R9H392LhMs75RjTNy6I+mUdS52l7+UCf9Ig0
+         0A4f4Ua67B3aKaaR9Ic6+BG87ZB3W+cpu96xPr7AOn76BxweMm3oWGhDp8MGQN4uYOhD
+         CrLVke74fqnWBnsh+pwJAGh56j4rCS0gMsINh3AQIsgyzUnWJ+r1aUdOrpRQ75MSbOng
+         MTVA==
+X-Gm-Message-State: APjAAAXG+jo0hZeKCRLtoOxmjScIZugI5OSGqjq6eAQ7Eux8HZsgyrLw
+        AdztTzXQ1lwGVjMxcrMn/jWrYA==
+X-Google-Smtp-Source: APXvYqxoMTRXvtk+LvyaNv3ILd1j6HwkVq68c8JHrJjI4QZ8TdCjLQMCRi/WdV/nRpCfwkVL6khcLw==
+X-Received: by 2002:a17:902:5a0c:: with SMTP id q12mr43016059pli.301.1582405264875;
+        Sat, 22 Feb 2020 13:01:04 -0800 (PST)
+Received: from google.com ([2620:15c:2ce:0:9efe:9f1:9267:2b27])
+        by smtp.gmail.com with ESMTPSA id 72sm7400306pfw.7.2020.02.22.13.01.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2020 13:01:04 -0800 (PST)
+Date:   Sat, 22 Feb 2020 13:01:01 -0800
+From:   Fangrui Song <maskray@google.com>
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Michael Matz <matz@suse.de>
+Subject: Re: [PATCH] x86/boot/compressed: Fix compressed kernel linking with
+ lld
+Message-ID: <20200222210101.diqw4zt6lz42ekgx@google.com>
+References: <20200222164419.GB3326744@rani.riverdale.lan>
+ <20200222171859.3594058-1-nivedita@alum.mit.edu>
+ <20200222181413.GA22627@ubuntu-m2-xlarge-x86>
+ <20200222185806.ywnqhfqmy67akfsa@google.com>
+ <20200222201715.GA3674682@rani.riverdale.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20200222201715.GA3674682@rani.riverdale.lan>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 2020-02-22, Arvind Sankar wrote:
+>On Sat, Feb 22, 2020 at 10:58:06AM -0800, Fangrui Song wrote:
+>> On 2020-02-22, Nathan Chancellor wrote:
+>> >On Sat, Feb 22, 2020 at 12:18:59PM -0500, Arvind Sankar wrote:
+>> >> Commit TBD ("x86/boot/compressed: Remove unnecessary sections from
+>> >> bzImage") discarded unnecessary sections with *(*). While this works
+>> >> fine with the bfd linker, lld tries to also discard essential sections
+>> >> like .shstrtab, .symtab and .strtab, which results in the link failing
+>> >> since .shstrtab is required by the ELF specification. .symtab and
+>> >> .strtab are also necessary to generate the zoffset.h file for the
+>> >> bzImage header.
+>> >>
+>> >> Since the only sizeable section that can be discarded is .eh_frame,
+>> >> restrict the discard to only .eh_frame to be safe.
+>> >>
+>> >> Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+>> >> ---
+>> >> Sending as a fix on top of tip/x86/boot.
+>> >>
+>> >>  arch/x86/boot/compressed/vmlinux.lds.S | 4 ++--
+>> >>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> >>
+>> >> diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
+>> >> index 12a20603d92e..469dcf800a2c 100644
+>> >> --- a/arch/x86/boot/compressed/vmlinux.lds.S
+>> >> +++ b/arch/x86/boot/compressed/vmlinux.lds.S
+>> >> @@ -74,8 +74,8 @@ SECTIONS
+>> >>  	. = ALIGN(PAGE_SIZE);	/* keep ZO size page aligned */
+>> >>  	_end = .;
+>> >>
+>> >> -	/* Discard all remaining sections */
+>> >> +	/* Discard .eh_frame to save some space */
+>> >>  	/DISCARD/ : {
+>> >> -		*(*)
+>> >> +		*(.eh_frame)
+>> >>  	}
+>> >>  }
+>> >> --
+>> >> 2.24.1
+>> >>
+>> >
+>> >FWIW:
+>> >
+>> >Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+>>
+>> I am puzzled. Doesn't -fno-asynchronous-unwind-tables suppress
+>> .eh_frame in the object files? Why are there still .eh_frame?
+>>
+>> Though, there is prior art: arch/s390/boot/compressed/vmlinux.lds.S also discards .eh_frame
+>
+>The compressed kernel doesn't use the regular flags and it seems it
+>doesn't have that option. Maybe we should add it in to avoid generating
+>those in the first place.
+>
+>The .eh_frame discard in arch/x86/kernel/vmlinux.lds.S does seem
+>superfluous though.
 
-please pull the latest irq/urgent branch from:
+Yes, please do that. I recommend suppressting unneeded sections at
+compile time, instead of discarding them at link time.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-2020-02-22
+https://github.com/torvalds/linux/commit/83a092cf95f28696ddc36c8add0cf03ac034897f
+added -Wl,--orphan-handling=warn to arch/powerpc/Makefile .
+x86 can follow if that is appropriate.
 
-up to:  2546287c5fb3: genirq/irqdomain: Make sure all irq domain flags are distinct
-
-Two fixes for the irq core code which are follow ups to the recent MSI
-fixes:
-
- - The WARN_ON which was put into the MSI setaffinity callback for paranoia
-   reasons actually triggered via a callchain which escaped when all the
-   possible ways to reach that code were analyzed.
-
-   The proc/irq/$N/*affinity interfaces have a quirk which came in when
-   ALPHA moved to the generic interface: In case that the written affinity
-   mask does not contain any online CPU it calls into ALPHAs magic auto
-   affinity setting code.
-
-   A few years later this mechanism was also made available to x86 for no
-   good reasons and in a way which circumvents all sanity checks for
-   interrupts which cannot have their affinity set from process context on
-   X86 due to the way the X86 interrupt delivery works.
-
-   It would be possible to make this work properly, but there is no point
-   in doing so. If the interrupt is not yet started then the affinity
-   setting has no effect and if it is started already then it is already
-   assigned to an online CPU so there is no point to randomly move it to
-   some other CPU. Just return EINVAL as the code has done before that
-   change forever.
-
- - The new MSI quirk bit in the irq domain flags turned out to be already
-   occupied, which escaped the author and the reviewers because the already
-   in use bits were 0,6,2,3,4,5 listed in that order. That bit 6 was simply
-   overlooked because the ordering was straight forward linear
-   otherwise. So the new bit ended up being a duplicate. Fix it up by
-   switching the oddball 6 to the obvious 1.
-
-Thanks,
-
-	tglx
-
------------------->
-Thomas Gleixner (1):
-      genirq/proc: Reject invalid affinity masks (again)
-
-Zenghui Yu (1):
-      genirq/irqdomain: Make sure all irq domain flags are distinct
-
-
- include/linux/irqdomain.h |  2 +-
- kernel/irq/internals.h    |  2 --
- kernel/irq/manage.c       | 18 ++----------------
- kernel/irq/proc.c         | 22 ++++++++++++++++++++++
- 4 files changed, 25 insertions(+), 19 deletions(-)
-
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index b2d47571ab67..8d062e86d954 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -192,7 +192,7 @@ enum {
- 	IRQ_DOMAIN_FLAG_HIERARCHY	= (1 << 0),
- 
- 	/* Irq domain name was allocated in __irq_domain_add() */
--	IRQ_DOMAIN_NAME_ALLOCATED	= (1 << 6),
-+	IRQ_DOMAIN_NAME_ALLOCATED	= (1 << 1),
- 
- 	/* Irq domain is an IPI domain with virq per cpu */
- 	IRQ_DOMAIN_FLAG_IPI_PER_CPU	= (1 << 2),
-diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
-index 3924fbe829d4..c9d8eb7f5c02 100644
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -128,8 +128,6 @@ static inline void unregister_handler_proc(unsigned int irq,
- 
- extern bool irq_can_set_affinity_usr(unsigned int irq);
- 
--extern int irq_select_affinity_usr(unsigned int irq);
--
- extern void irq_set_thread_affinity(struct irq_desc *desc);
- 
- extern int irq_do_set_affinity(struct irq_data *data,
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 3089a60ea8f9..7eee98c38f25 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -481,23 +481,9 @@ int irq_setup_affinity(struct irq_desc *desc)
- {
- 	return irq_select_affinity(irq_desc_get_irq(desc));
- }
--#endif
-+#endif /* CONFIG_AUTO_IRQ_AFFINITY */
-+#endif /* CONFIG_SMP */
- 
--/*
-- * Called when a bogus affinity is set via /proc/irq
-- */
--int irq_select_affinity_usr(unsigned int irq)
--{
--	struct irq_desc *desc = irq_to_desc(irq);
--	unsigned long flags;
--	int ret;
--
--	raw_spin_lock_irqsave(&desc->lock, flags);
--	ret = irq_setup_affinity(desc);
--	raw_spin_unlock_irqrestore(&desc->lock, flags);
--	return ret;
--}
--#endif
- 
- /**
-  *	irq_set_vcpu_affinity - Set vcpu affinity for the interrupt
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index 9e5783d98033..32c071d7bc03 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -111,6 +111,28 @@ static int irq_affinity_list_proc_show(struct seq_file *m, void *v)
- 	return show_irq_affinity(AFFINITY_LIST, m);
- }
- 
-+#ifndef CONFIG_AUTO_IRQ_AFFINITY
-+static inline int irq_select_affinity_usr(unsigned int irq)
-+{
-+	/*
-+	 * If the interrupt is started up already then this fails. The
-+	 * interrupt is assigned to an online CPU already. There is no
-+	 * point to move it around randomly. Tell user space that the
-+	 * selected mask is bogus.
-+	 *
-+	 * If not then any change to the affinity is pointless because the
-+	 * startup code invokes irq_setup_affinity() which will select
-+	 * a online CPU anyway.
-+	 */
-+	return -EINVAL;
-+}
-+#else
-+/* ALPHA magic affinity auto selector. Keep it for historical reasons. */
-+static inline int irq_select_affinity_usr(unsigned int irq)
-+{
-+	return irq_select_affinity(irq);
-+}
-+#endif
- 
- static ssize_t write_irq_affinity(int type, struct file *file,
- 		const char __user *buffer, size_t count, loff_t *pos)
-
+I don't recommend -Wl,--orphan-handling=error, which can unnecessarily
+break the builds.
