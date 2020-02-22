@@ -2,114 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8B35168AA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:00:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C98A168AA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729715AbgBVAA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:00:58 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:35624 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbgBVAA6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:00:58 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01M00Vfk122309;
-        Sat, 22 Feb 2020 00:00:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=EWJFhG6yhtm3ul3h7WoSZAkEKq6UjIeEomHo8PWThow=;
- b=KPQE/C9esyf64uM6XExvFniOurRwQ4sK/tyKdJRr2W6jcDL2NAtcHqTmJxu84c0z95SL
- Ezdjvhg3Hfmyo0IK55dFbfPyIPiQwRn6Vd01zixrO0RMHatzpLdHQklZ5LXFjDFTHaib
- hA2HlPYiBLkw9Q7SPRKWNPBFYbtqXxB10icU1Nj51wIuDO2k4cu4M57NLMNxFYWExww+
- X6F7t3f5NIFYdfgIxkK4dyUCcr06WYsvan6dDCslbVnTJgWksoWj0KAfixsAKQpC/VCs
- dtdLgxj2X5C05I12xICyQy52WetIBXXYPVhMXYbDpsXO9/G9uRmxjlw2c9XP/noh+run 2g== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2y8udkufqu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 22 Feb 2020 00:00:31 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01LNvpU6153765;
-        Sat, 22 Feb 2020 00:00:30 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2y8ud7vec6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 22 Feb 2020 00:00:30 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01M00SuG007204;
-        Sat, 22 Feb 2020 00:00:29 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 21 Feb 2020 16:00:28 -0800
-Date:   Fri, 21 Feb 2020 19:00:45 -0500
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        linux-crypto@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 061/191] padata: always acquire cpu_hotplug_lock
- before pinst->lock
-Message-ID: <20200222000045.cl45vclfhvkjursm@ca-dmjordan1.us.oracle.com>
-References: <20200221072250.732482588@linuxfoundation.org>
- <20200221072258.745173144@linuxfoundation.org>
+        id S1729788AbgBVACo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:02:44 -0500
+Received: from mga02.intel.com ([134.134.136.20]:43852 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729755AbgBVACn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 19:02:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 16:02:43 -0800
+X-IronPort-AV: E=Sophos;i="5.70,470,1574150400"; 
+   d="scan'208";a="383605949"
+Received: from jbrandeb-desk.jf.intel.com ([10.166.244.152])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 16:02:43 -0800
+From:   Jesse Brandeburg <jesse.brandeburg@intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
+Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk,
+        andriy.shevchenko@intel.com, dan.j.williams@intel.com,
+        peterz@infradead.org
+Subject: [PATCH v4 1/2] x86: fix bitops.h warning with a moved cast
+Date:   Fri, 21 Feb 2020 16:02:13 -0800
+Message-Id: <20200222000214.2169531-1-jesse.brandeburg@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221072258.745173144@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9538 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
- mlxlogscore=503 suspectscore=0 adultscore=0 spamscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002210180
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9538 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 adultscore=0 mlxscore=0 clxscore=1011
- malwarescore=0 mlxlogscore=552 phishscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002210180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 08:40:34AM +0100, Greg Kroah-Hartman wrote:
-> From: Daniel Jordan <daniel.m.jordan@oracle.com>
-> 
-> [ Upstream commit 38228e8848cd7dd86ccb90406af32de0cad24be3 ]
-> 
-> lockdep complains when padata's paths to update cpumasks via CPU hotplug
-> and sysfs are both taken:
-> 
->   # echo 0 > /sys/devices/system/cpu/cpu1/online
->   # echo ff > /sys/kernel/pcrypt/pencrypt/parallel_cpumask
-> 
->   ======================================================
->   WARNING: possible circular locking dependency detected
->   5.4.0-rc8-padata-cpuhp-v3+ #1 Not tainted
->   ------------------------------------------------------
->   bash/205 is trying to acquire lock:
->   ffffffff8286bcd0 (cpu_hotplug_lock.rw_sem){++++}, at: padata_set_cpumask+0x2b/0x120
-> 
->   but task is already holding lock:
->   ffff8880001abfa0 (&pinst->lock){+.+.}, at: padata_set_cpumask+0x26/0x120
-> 
->   which lock already depends on the new lock.
+Fix many sparse warnings when building with C=1.
 
-I think this patch should be dropped from all stable queues (4.4, 4.9, 4.14,
-4.19, 5.4, and 5.5).
+When the kernel is compiled with C=1, there are lots of messages like:
+  arch/x86/include/asm/bitops.h:77:37: warning: cast truncates bits from constant value (ffffff7f becomes 7f)
 
-The main benefit is to un-break lockdep for testing with future padata changes,
-and an actual deadlock seems unlikely.
+CONST_MASK() is using a signed integer "1" to create the mask which
+is later cast to (u8) when used. Move the cast to the definition and
+clean up the calling sites to prevent sparse from warning.
 
-These stable versions don't fix the ordering in padata_remove_cpu() either
-(nothing calls it though).
+The reason the warning was occurring is because certain bitmasks that
+end with a mask next to a natural boundary like 7, 15, 23, 31, end up
+with a mask like 0x7f, which then results in sign extension when doing
+an invert (but I'm not a compiler expert). It was really only
+"clear_bit" that was having problems, and it was only on bit checks next
+to a byte boundary (top bit).
 
-I tried the other stable padata patch in this cycle ("padata: validate cpumask
-without removed CPU during offline"), it passed my tests and should stay in.
+Verified with a test module (see next patch) and assembly inspection
+that the patch doesn't introduce any change in generated code.
 
-thanks,
-Daniel
+Signed-off-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+---
+v4: reverse argument order as suggested by David Laight, added reviewed-by
+v3: Clean up the header file changes as per peterz.
+v2: use correct CC: list
+---
+ arch/x86/include/asm/bitops.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
+index 062cdecb2f24..fed152434ed0 100644
+--- a/arch/x86/include/asm/bitops.h
++++ b/arch/x86/include/asm/bitops.h
+@@ -46,7 +46,7 @@
+  * a mask operation on a byte.
+  */
+ #define CONST_MASK_ADDR(nr, addr)	WBYTE_ADDR((void *)(addr) + ((nr)>>3))
+-#define CONST_MASK(nr)			(1 << ((nr) & 7))
++#define CONST_MASK(nr)			((u8)1 << ((nr) & 7))
+ 
+ static __always_inline void
+ arch_set_bit(long nr, volatile unsigned long *addr)
+@@ -54,7 +54,7 @@ arch_set_bit(long nr, volatile unsigned long *addr)
+ 	if (__builtin_constant_p(nr)) {
+ 		asm volatile(LOCK_PREFIX "orb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+-			: "iq" ((u8)CONST_MASK(nr))
++			: "iq" (CONST_MASK(nr))
+ 			: "memory");
+ 	} else {
+ 		asm volatile(LOCK_PREFIX __ASM_SIZE(bts) " %1,%0"
+@@ -74,7 +74,7 @@ arch_clear_bit(long nr, volatile unsigned long *addr)
+ 	if (__builtin_constant_p(nr)) {
+ 		asm volatile(LOCK_PREFIX "andb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+-			: "iq" ((u8)~CONST_MASK(nr)));
++			: "iq" (CONST_MASK(nr) ^ 0xff));
+ 	} else {
+ 		asm volatile(LOCK_PREFIX __ASM_SIZE(btr) " %1,%0"
+ 			: : RLONG_ADDR(addr), "Ir" (nr) : "memory");
+
+base-commit: ca7e1fd1026c5af6a533b4b5447e1d2f153e28f2
+-- 
+2.24.1
+
