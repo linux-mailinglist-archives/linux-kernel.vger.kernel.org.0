@@ -2,148 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D463168AF0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:24:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26685168AF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 01:28:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbgBVAYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 19:24:53 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:38616 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbgBVAYx (ORCPT
+        id S1726945AbgBVA2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 19:28:52 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:36164 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbgBVA2w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 19:24:53 -0500
-Received: by mail-il1-f194.google.com with SMTP id f5so3123520ilq.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2020 16:24:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8A1YE2lgpZQL8AL3OpYvUcklk0ocIiXfWyGf6voJc/k=;
-        b=A468YAmhVxOg4ZCPKOO+HngxVCenqPG6tj44flBbVH8f0eC10zN6F7so5Iev26O7H3
-         Dcsyd/DKYvl/F4qOhbUwZDjGaZHo+I6NqfzROPeoW+GPOiXj/5HtYN6ANTurUUlsuJaN
-         8f0DGvEnng1nQwEWMBgCZAYHTG4b+WAwOJ5fgYtWTlP8+p9yMFax/5n8UAOOXpuytHyB
-         2hE4m8cteF5vy3AH2wICcLz8Mi8V2SgRiC4nKCHUD2Ne+Bs1bClF0dMrRD6rQIo48kBv
-         VxPIWQ5NlFCu2saASVViOuZxbRZfzoDCCWgikDXNTqOVuvbkg1tkP6SF84FmR+cL7RXg
-         ohFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8A1YE2lgpZQL8AL3OpYvUcklk0ocIiXfWyGf6voJc/k=;
-        b=rDaa187VTMhWDkyBKRGgDrgA+wXMBRjJiDkX1hX6ZrqiFAGCXMhJNB17piY0Q9W0SG
-         rZXVzStOpgjxOU+IUvIEfe6PVPDgvwdihYOt/voroTSYz595x0gEMi+DYMK0J9NpMza1
-         NgQnEVK41x1fC/7bLsLgttJiEb9ed7UlzhKHu39h+8g06JYHiZZ0n9IcsX9OEdrfEKPw
-         owQ/LbpHDgMr7U9tbzKEd9drq4AucJLzSK38J2EjwOGewTBcNvWGaHXZ2Z3VsBXv9PQY
-         xSTz+8WDoAnlESG/PBi4uJ/RxFW67P5EAUmolXERxFxW3ZdxvSguzH+AOzhEXu9ekE9h
-         /cPQ==
-X-Gm-Message-State: APjAAAVI7m5By8OyJP9hL0y2vI58dOiCh4ei4Ra397Ypu0oev+H/5ypH
-        QrV+uzZXIxJ/j3iq15n6QeNOWH4d0/qg7MVCsgs=
-X-Google-Smtp-Source: APXvYqzyTmI7bo/6oBqxlPJ5xgkoN62fwV92kXNShjSSyHmeuvF/zl8mHMsAJqA1ekSUggc1pmy4NQfL9c8FeSt751E=
-X-Received: by 2002:a92:7402:: with SMTP id p2mr38368278ilc.64.1582331092334;
- Fri, 21 Feb 2020 16:24:52 -0800 (PST)
+        Fri, 21 Feb 2020 19:28:52 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01M0IJ9o062366;
+        Sat, 22 Feb 2020 00:28:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=/VPVeh1c+6mc9B9FJQZVdoDMBgYy/1D1NNm9h5BUePQ=;
+ b=w/v2PiDCjJ37v8mFyABwCCdqxpL2+e7giVrv7yNq1kYmANdP5xf4oPmNaRFaLEy0Ys9v
+ 0UKiHeccK9N/EgPGv037qg612gn+gXMppnYvBDXnE1iEOuhm/x1MGHTCq74/RCrgJZzb
+ bHj95B2HTHriEc3BT2FZ8z2mHKLz0G0FnNGdMOTi5evKFxqGHMJctFEK3U1sT3egJNjk
+ xwH6W5msLM897b0g2gAj6jdl5PiZWlumUyGanjOshSX+yVQ4bnIPrDW92esF3+hHiI1Y
+ 6ZS3v2UdzzOUjcbDoeY0Cu3sG90PrmYFDiNszq3ve1Iy93s0JeVVBAtyVSJLP6Iv/5a5 Jg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2y8ud1kj0x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 22 Feb 2020 00:28:30 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01M0STRT038398;
+        Sat, 22 Feb 2020 00:28:29 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2y8udg7t2h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 22 Feb 2020 00:28:29 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01M0SNgV005254;
+        Sat, 22 Feb 2020 00:28:23 GMT
+Received: from localhost (/10.145.179.117)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 21 Feb 2020 16:28:22 -0800
+Date:   Fri, 21 Feb 2020 16:28:21 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     ira.weiny@intel.com
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V4 06/13] fs/xfs: Create function xfs_inode_enable_dax()
+Message-ID: <20200222002821.GD9506@magnolia>
+References: <20200221004134.30599-1-ira.weiny@intel.com>
+ <20200221004134.30599-7-ira.weiny@intel.com>
 MIME-Version: 1.0
-References: <1575420174-19171-1-git-send-email-yang.shi@linux.alibaba.com>
- <CAKgT0UdHhZznoS0kMdacCqgc=sFXj1Djmpd-DbPvAmyrhJq6CA@mail.gmail.com> <9b8ff9ca-75b0-c256-cf37-885ccd786de7@linux.alibaba.com>
-In-Reply-To: <9b8ff9ca-75b0-c256-cf37-885ccd786de7@linux.alibaba.com>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Fri, 21 Feb 2020 16:24:41 -0800
-Message-ID: <CAKgT0UfPW+DKZhze-hCL6mThak+qJjx4wb-rXn+NKnp6-9RBDQ@mail.gmail.com>
-Subject: Re: [v2 PATCH] mm: shmem: allow split THP when truncating THP partially
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221004134.30599-7-ira.weiny@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9538 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 adultscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 suspectscore=1 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002220000
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9538 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=1 bulkscore=0 spamscore=0 priorityscore=1501 phishscore=0
+ impostorscore=0 mlxlogscore=999 clxscore=1015 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002220000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 10:24 AM Yang Shi <yang.shi@linux.alibaba.com> wrote:
->
->
->
-> On 2/20/20 10:16 AM, Alexander Duyck wrote:
-> > On Tue, Dec 3, 2019 at 4:43 PM Yang Shi <yang.shi@linux.alibaba.com> wrote:
-> >> Currently when truncating shmem file, if the range is partial of THP
-> >> (start or end is in the middle of THP), the pages actually will just get
-> >> cleared rather than being freed unless the range cover the whole THP.
-> >> Even though all the subpages are truncated (randomly or sequentially),
-> >> the THP may still be kept in page cache.  This might be fine for some
-> >> usecases which prefer preserving THP.
-> >>
-> >> But, when doing balloon inflation in QEMU, QEMU actually does hole punch
-> >> or MADV_DONTNEED in base page size granulairty if hugetlbfs is not used.
-> >> So, when using shmem THP as memory backend QEMU inflation actually doesn't
-> >> work as expected since it doesn't free memory.  But, the inflation
-> >> usecase really needs get the memory freed.  Anonymous THP will not get
-> >> freed right away too but it will be freed eventually when all subpages are
-> >> unmapped, but shmem THP would still stay in page cache.
-> >>
-> >> Split THP right away when doing partial hole punch, and if split fails
-> >> just clear the page so that read to the hole punched area would return
-> >> zero.
-> >>
-> >> Cc: Hugh Dickins <hughd@google.com>
-> >> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> >> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> >> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> > One question I would have is if this is really the desired behavior we
-> > are looking for?
-> >
-> > By proactively splitting the THP you are likely going to see a
-> > performance regression with the virtio-balloon driver enabled in QEMU.
-> > I would suspect the response to that would be to update the QEMU code
-> > to  identify the page size of the shared memory ramblock. At that
-> > point I suspect it would start behaving the same as how it currently
-> > handles anonymous memory, and the work done here would essentially
-> > have been wasted other than triggering the desire to resolve this in
-> > QEMU to avoid a performance regression.
-> >
-> > The code for inflating a the balloon in virtio-balloon in QEMU can be
-> > found here:
-> > https://github.com/qemu/qemu/blob/master/hw/virtio/virtio-balloon.c#L66
-> >
-> > If there is a way for us to just populate the value obtained via
-> > qemu_ram_pagesize with the THP page size instead of leaving it at 4K,
-> > which is the size I am assuming it is at since you indicated that it
-> > is just freeing the base page size, then we could address the same
-> > issue and likely get the desired outcome of freeing the entire THP
-> > page when it is no longer used.
->
-> If qemu could punch hole (this is how qemu free file-backed memory) in
-> THP unit, either w/ or w/o the patch the THP won't get split since the
-> whole THP will get truncated. But, if qemu has to free memory in sub-THP
-> size due to whatever reason (for example, 1MB for every 2MB section),
-> then we have to split THP otherwise no memory will be freed actually
-> with the current code. It is not about performance, it is about really
-> giving memory back to host.
+On Thu, Feb 20, 2020 at 04:41:27PM -0800, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> xfs_inode_supports_dax() should reflect if the inode can support DAX not
+> that it is enabled for DAX.
+> 
+> Change the use of xfs_inode_supports_dax() to reflect only if the inode
+> and underlying storage support dax.
+> 
+> Add a new function xfs_inode_enable_dax() which reflects if the inode
 
-I get that, but at the same time I am not sure if everyone will be
-happy with the trade-off. That is my concern.
+Heavily into bikeshedding here, but "enable" sounds like a verb, but
+this function doesn't actually turn dax on for a file, it merely decides
+if we /should/ turn it on.
 
-You may want to change the patch description above if that is the
-case. Based on the description above it makes it sound as if the issue
-is that QEMU is using hole punch or MADV_DONTNEED with the wrong
-granularity. Based on your comment here it sounds like you want to
-have the ability to break up the larger THP page as soon as you want
-to push out a single 4K page from it.
+xfs_inode_wants_dax() ?
 
-I am not sure the description for the behavior of anonymous THP with
-respect to QEMU makes sense either. Based on the description you made
-it sound like it was somehow using the same process used for huge
-pages. That isn't the case right? My understanding is that in the case
-of an anonymous THP it is getting broken into 4K subpages and then
-those are freed individually. That should leave you with the same
-performance regression that I had brought up earlier.
+--D
 
-So if anything it sounds like what you are really wanting is feature
-parity with anonymous THP which will split the anonymous THP page when
-a single 4K page within the THP is hit with MADV_DONTNEED.
-
-- Alex
+> should be enabled for DAX.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+> ---
+> Changes from v3:
+> 	Update functions and names to be more clear
+> 	Update commit message
+> 	Merge with
+> 		'fs/xfs: Clean up DAX support check'
+> 		don't allow IS_DAX() on a directory
+> 		use STATIC macro for static
+> 		make xfs_inode_supports_dax() static
+> ---
+>  fs/xfs/xfs_iops.c | 25 +++++++++++++++++++------
+>  1 file changed, 19 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 81f2f93caec0..ff711efc5247 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -1237,19 +1237,18 @@ static const struct inode_operations xfs_inline_symlink_inode_operations = {
+>  };
+>  
+>  /* Figure out if this file actually supports DAX. */
+> -static bool
+> +STATIC bool
+>  xfs_inode_supports_dax(
+>  	struct xfs_inode	*ip)
+>  {
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  
+>  	/* Only supported on non-reflinked files. */
+> -	if (!S_ISREG(VFS_I(ip)->i_mode) || xfs_is_reflink_inode(ip))
+> +	if (xfs_is_reflink_inode(ip))
+>  		return false;
+>  
+> -	/* DAX mount option or DAX iflag must be set. */
+> -	if (!(mp->m_flags & XFS_MOUNT_DAX) &&
+> -	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
+> +	/* Only supported on regular files. */
+> +	if (!S_ISREG(VFS_I(ip)->i_mode))
+>  		return false;
+>  
+>  	/* Block size must match page size */
+> @@ -1260,6 +1259,20 @@ xfs_inode_supports_dax(
+>  	return xfs_inode_buftarg(ip)->bt_daxdev != NULL;
+>  }
+>  
+> +STATIC bool
+> +xfs_inode_enable_dax(
+> +	struct xfs_inode *ip)
+> +{
+> +	if (!xfs_inode_supports_dax(ip))
+> +		return false;
+> +
+> +	if (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)
+> +		return true;
+> +	if (ip->i_mount->m_flags & XFS_MOUNT_DAX)
+> +		return true;
+> +	return false;
+> +}
+> +
+>  STATIC void
+>  xfs_diflags_to_iflags(
+>  	struct inode		*inode,
+> @@ -1278,7 +1291,7 @@ xfs_diflags_to_iflags(
+>  		inode->i_flags |= S_SYNC;
+>  	if (flags & XFS_DIFLAG_NOATIME)
+>  		inode->i_flags |= S_NOATIME;
+> -	if (xfs_inode_supports_dax(ip))
+> +	if (xfs_inode_enable_dax(ip))
+>  		inode->i_flags |= S_DAX;
+>  }
+>  
+> -- 
+> 2.21.0
+> 
