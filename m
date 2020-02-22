@@ -2,98 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B8B3168CEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 07:45:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ACCE168CFB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 07:53:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbgBVGp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 01:45:29 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:58837 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbgBVGp3 (ORCPT
+        id S1727159AbgBVGxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 01:53:09 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37813 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbgBVGxJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 01:45:29 -0500
-Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id 01M6ik5S005982;
-        Sat, 22 Feb 2020 15:44:49 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com 01M6ik5S005982
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1582353889;
-        bh=QqGyHAeO/ubqw+w/CGTT6IeJ8TCbUiUiGrqEMAfnxi0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LTJLxviy0//6PBFHicl9ayUMniCHU2eba/TlzDSH/zXskm74nbSi1qOoY6VLNBwC5
-         PFSgmku0BNeEYOan3HeY85X6gzU5RDQB+r8yI9WhgOWObiAduIm0p2aTzccXu2iQaJ
-         ycyLpUJU3lX2eCWq8USB9t8glHCDvU1QzoMusnYu27k8Vzqjr5YmGCET9prTxaNIqy
-         75X2fETzshvUHcqwFzPtZH82kORGdkSnWztOoc4FLiYIAD26PuhtI2ioQ9MePOb+9T
-         NzL/ryQ88XD7hI2j5Ug4sC7QRRfhfNrCCBjg4d2534VNax99fPk+DJFKrnVKR1Ltzq
-         Wcne4+TPzZ2bA==
-X-Nifty-SrcIP: [126.93.102.113]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, masahiroy@kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4/4] arm64: dts: uniphier: rename aidet node names to follow json-schema
-Date:   Sat, 22 Feb 2020 15:44:45 +0900
-Message-Id: <20200222064445.14903-4-yamada.masahiro@socionext.com>
+        Sat, 22 Feb 2020 01:53:09 -0500
+Received: by mail-pf1-f194.google.com with SMTP id p14so2465547pfn.4;
+        Fri, 21 Feb 2020 22:53:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=O8dGjw47rBMTaYq9ZdIJC+Ct6bZIAQqAuCZjvsrgZq8=;
+        b=UWf3o/nEx+XZVQxA8TbPakPz+HWWS1vWyxffSLKKOmh+vtB76WPi9666TVY80DE/54
+         yg78oRlOJ2rdlUSabRRdLed8VYF+rMDwp5eKKRnbaaXgAgu3f7/Chf8CK/lukAacHOF/
+         P6AQsNmXhOlxvgTgdWidnw0QYm/ZpAj8NLRccYR+wWCODSJPt+HRtt88Z+3YNwSmf0mc
+         FvgILHFFOr+fHt13B30aqvt4SFTrhr3udX6vMgo75SeWR3aXipNHfm0W6r7rUi+izf+z
+         y3Piw82miHXfGGz9IWG9hzgrsuBOswaCUIDloVHoPfjDMD8+b5CRhlP//O6kGC3nGYMl
+         6rAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=O8dGjw47rBMTaYq9ZdIJC+Ct6bZIAQqAuCZjvsrgZq8=;
+        b=XMQn7ki7BJeGNuz0UeObzvK/If+4ML6m9LVXR7TCwcy5CoTAyBxvzivXFcnm71L3s5
+         JIxXmpTVzmEqGDQ01GSfZwdxqqnG+Dh2Zr/yF2WfamAMcJ+mdsZ0yNfdW5xSakyxkvlH
+         MZ6hGYRZEapmjHCrltZBwcncDs5Bce6SXevN4mGiceu878Gziyh0bFfZuUhZ1krw7XEo
+         YgpEwfg//+SI0bAM2U3t1MWZDzdazDJ/TFqkcoi04VUX6y3tZ4ONJJ16gARpHo/nrx+H
+         CwvYlyQaIXY4ZXdIasWFbBjDJV7jHRN0KvHNJoKURgnaa//YBcGAsRLOOnGetyetOBfd
+         GxcA==
+X-Gm-Message-State: APjAAAX+o51JdRntTULEAYCmH8BlJhNLMru93nOOQALH603cwEJ/ENqK
+        XImLc6XcLZX/YVySXzn+Iw==
+X-Google-Smtp-Source: APXvYqxCu6MyWMp3NdwLGo82GJR7m2KUSumjYRTil3dfhsgIWR7CGlVVNIztSQdZsszDa4hWCju4GA==
+X-Received: by 2002:a63:5e07:: with SMTP id s7mr41011057pgb.261.1582354388478;
+        Fri, 21 Feb 2020 22:53:08 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:536:efd4:3cf2:2ab1:f2dc:185c])
+        by smtp.gmail.com with ESMTPSA id d14sm4708631pjz.12.2020.02.21.22.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 22:53:07 -0800 (PST)
+From:   madhuparnabhowmik10@gmail.com
+To:     jiri@mellanox.com, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        joel@joelfernandes.org, frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Subject: [PATCH] net: core: devlink.c: Hold devlink->lock from the beginning of devlink_dpipe_table_register()
+Date:   Sat, 22 Feb 2020 12:22:34 +0530
+Message-Id: <20200222065234.8829-1-madhuparnabhowmik10@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200222064445.14903-1-yamada.masahiro@socionext.com>
-References: <20200222064445.14903-1-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Follow the standard nodename pattern "^interrupt-controller(@[0-9a-f,]+)*$"
-defined in schemas/interrupt-controller.yaml of dt-schema.
+From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+devlink_dpipe_table_find() should be called under either
+rcu_read_lock() or devlink->lock. devlink_dpipe_table_register()
+calls devlink_dpipe_table_find() without holding the lock
+and acquires it later. Therefore hold the devlink->lock
+from the beginning of devlink_dpipe_table_register().
+
+Suggested-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 ---
+ net/core/devlink.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
- arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi | 2 +-
- arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi | 2 +-
- arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
-index 7510db465f33..2e53daca9f5c 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
-@@ -566,7 +566,7 @@
- 			};
- 		};
+diff --git a/net/core/devlink.c b/net/core/devlink.c
+index 3e8c94155d93..ba9dd8cb98c3 100644
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -6840,22 +6840,29 @@ int devlink_dpipe_table_register(struct devlink *devlink,
+ {
+ 	struct devlink_dpipe_table *table;
  
--		aidet: aidet@5fc20000 {
-+		aidet: interrupt-controller@5fc20000 {
- 			compatible = "socionext,uniphier-ld11-aidet";
- 			reg = <0x5fc20000 0x200>;
- 			interrupt-controller;
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
-index 8d360c5cc32b..be984200a70e 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
-@@ -664,7 +664,7 @@
- 			};
- 		};
+-	if (devlink_dpipe_table_find(&devlink->dpipe_table_list, table_name))
++	mutex_lock(&devlink->lock);
++
++	if (devlink_dpipe_table_find(&devlink->dpipe_table_list, table_name)) {
++		mutex_unlock(&devlink->lock);
+ 		return -EEXIST;
++	}
  
--		aidet: aidet@5fc20000 {
-+		aidet: interrupt-controller@5fc20000 {
- 			compatible = "socionext,uniphier-ld20-aidet";
- 			reg = <0x5fc20000 0x200>;
- 			interrupt-controller;
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi b/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
-index d51b0735917c..994fea7b12c1 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
-@@ -462,7 +462,7 @@
- 			};
- 		};
+-	if (WARN_ON(!table_ops->size_get))
++	if (WARN_ON(!table_ops->size_get)) {
++		mutex_unlock(&devlink->lock);
+ 		return -EINVAL;
++	}
  
--		aidet: aidet@5fc20000 {
-+		aidet: interrupt-controller@5fc20000 {
- 			compatible = "socionext,uniphier-pxs3-aidet";
- 			reg = <0x5fc20000 0x200>;
- 			interrupt-controller;
+ 	table = kzalloc(sizeof(*table), GFP_KERNEL);
+-	if (!table)
++	if (!table) {
++		mutex_unlock(&devlink->lock);
+ 		return -ENOMEM;
++	}
+ 
+ 	table->name = table_name;
+ 	table->table_ops = table_ops;
+ 	table->priv = priv;
+ 	table->counter_control_extern = counter_control_extern;
+ 
+-	mutex_lock(&devlink->lock);
+ 	list_add_tail_rcu(&table->list, &devlink->dpipe_table_list);
+ 	mutex_unlock(&devlink->lock);
+ 	return 0;
 -- 
 2.17.1
 
