@@ -2,90 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F2A9168F3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 14:55:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54949168F52
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 15:26:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727741AbgBVNzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 08:55:03 -0500
-Received: from s3.sipsolutions.net ([144.76.43.62]:59284 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbgBVNzD (ORCPT
+        id S1727700AbgBVOZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 09:25:59 -0500
+Received: from smtp.bonedaddy.net ([45.33.94.42]:37686 "EHLO
+        smtp.bonedaddy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727230AbgBVOZ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 08:55:03 -0500
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.93)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1j5VF2-000nAx-QM; Sat, 22 Feb 2020 14:54:48 +0100
-Message-ID: <229913c0b0481c3572032b2f64ce0202f5c66c23.camel@sipsolutions.net>
-Subject: Re: [PATCH] net: mac80211: rx.c: Use built-in RCU list checking
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-Cc:     davem@davemloft.net, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, frextrite@gmail.com,
-        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org
-Date:   Sat, 22 Feb 2020 14:54:47 +0100
-In-Reply-To: <20200222133928.GA10397@madhuparna-HP-Notebook> (sfid-20200222_143938_994762_F2980624)
-References: <20200222101831.8001-1-madhuparnabhowmik10@gmail.com>
-         <f1913847671d0b7e19aaa9bef1e1eb89febfa942.camel@sipsolutions.net>
-         <20200222133928.GA10397@madhuparna-HP-Notebook>
-         (sfid-20200222_143938_994762_F2980624)
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+        Sat, 22 Feb 2020 09:25:59 -0500
+X-Greylist: delayed 518 seconds by postgrey-1.27 at vger.kernel.org; Sat, 22 Feb 2020 09:25:58 EST
+Received: from chianamo (n58-108-121-150.per1.wa.optusnet.com.au [58.108.121.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: pabs3@bonedaddy.net)
+        by smtp.bonedaddy.net (Postfix) with ESMTPSA id A518F180043;
+        Sat, 22 Feb 2020 09:17:35 -0500 (EST)
+Authentication-Results: smtp.bonedaddy.net; dmarc=fail (p=none dis=none) header.from=bonedaddy.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bonedaddy.net;
+        s=mail; t=1582381058;
+        bh=sFZalxrzyGgpN/Td8/kt8HImdYHzCbjxAtB41PKPcDs=;
+        h=Subject:From:To:Cc:In-Reply-To:References:Date;
+        b=g2DTDYAAajsWyIL/efTWqJnYdhcNzemJDlTXWKbvu6E7esIf7bn0a1n8hO7xxc9QZ
+         /gMWkiTWsTCij4gyyypjL/lQbtG+LUxq6bA3RLfWY/MF6qUhlOnKhvFTzPsBHiPhiu
+         un/2sz0xIH2AWCf/Bf8n4lA5PLcJPjKur7lgKipzswPxfBwhJYmZ/W3U6lZwWP8eiP
+         7tFZcnJPz3EMgfGGtD3PDiXN7EEJDk78k9nfGzqhouoqtLM/pu8ShLVDwNJJEK9hpD
+         lQCwCVyiJQkLyOKZv6XKABIe7Vxi70mn1GzgYa8q3FMbqdDS2GENNoBiTRkaBYQERB
+         mvKbu6CtJEiBg==
+Message-ID: <645fcbdfdd1321ff3e0afaafe7eccfd034e57748.camel@bonedaddy.net>
+Subject: Re: [PATCH 0/1] coredump: Fix null pointer dereference when
+ kernel.core_pattern is "|"
+From:   Paul Wise <pabs3@bonedaddy.net>
+To:     Matthew Ruffell <matthew.ruffell@canonical.com>,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Neil Horman <nhorman@tuxdriver.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jakub Wilk <jwilk@jwilk.net>
+In-Reply-To: <20200220051015.14971-1-matthew.ruffell@canonical.com>
+References: <20200220051015.14971-1-matthew.ruffell@canonical.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-NVKkbFdhyq8AeNl+7/qp"
+Date:   Sat, 22 Feb 2020 22:17:14 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+User-Agent: Evolution 3.34.1-4 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> If list_for_each_entry_rcu() is called from non rcu protection
-> i.e without holding rcu_read_lock, but under the protection of
-> a different lock then we can pass that as the condition for lockdep checking
-> because otherwise lockdep will complain if list_for_each_entry_rcu()
-> is used without rcu protection. So, if we do not pass this argument
-> (cond) it may lead to false lockdep warnings.
+--=-NVKkbFdhyq8AeNl+7/qp
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sure. But what's the specific warning you see?
+On Thu, 2020-02-20 at 18:10 +1300, Matthew Ruffell wrote:
 
-> > > -	list_for_each_entry_rcu(sdata, &local->interfaces, list) {
-> > > +	list_for_each_entry_rcu(sdata, &local->interfaces, list,
-> > > +				lockdep_is_held(&rx->local->rx_path_lock)) {
-> > >  		if (!ieee80211_sdata_running(sdata))
-> > >  			continue;
-> > 
-> > This is not related at all.
-> 
-> I analysed the following traces:
-> ieee80211_rx_handlers() -> ieee80211_rx_handlers_result() -> ieee80211_rx_cooked_monitor()
-> 
-> here ieee80211_rx_handlers() is holding the rx->local->rx_path_lock and
-> therefore I used this for the cond argument.
-> 
->  If this is not right, can you help me in figuring out that which other
->  lock is held?
+> A user was setting their kernel.core_pattern to "|" to disable coredumps
 
-It's _clearly_ not right, that's the RX spinlock, it has nothing to do
-with the interface list.
+Hmm, that doesn't seem to be the right way to do that :)
 
-But I'd have to see the warning. Perhaps the driver you're using is
-wrongly calling something in the stack.
+> and encountered the following null pointer dereference
 
-> > >  	lockdep_assert_held(&local->sta_mtx);
-> > >  
-> > > -	list_for_each_entry_rcu(sta, &local->sta_list, list) {
-> > > +	list_for_each_entry_rcu(sta, &local->sta_list, list,
-> > > +				lockdep_is_held(&local->sta_mtx)) {
-> > 
-> > And this isn't even a real RCU iteration, since we _must_ hold the mutex
-> > here.
-> > 
-> Yeah exactly, dropping _rcu (use list_for_each_entry()) would be a good option in this case.
-> Let me know if that is alright and I will send a new patch with all the
-> changes required.
+Thanks for forwarding that. I've bounced your mails to a few extra
+folks, please include them in CC in future. Neil last touched the
+coredump pipe stuff before me, Jakub reported the spaces in
+core_pattern issue and Andrew merged my patch.
 
-Seems fine, also better to split the patches anyway.
+The patch seems like a reasonable approach but I don't have much
+experience with Linux kernel internals.
 
-johannes
+--=20
+bye,
+pabs
+
+https://bonedaddy.net/pabs3/
+
+--=-NVKkbFdhyq8AeNl+7/qp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEYQsotVz8/kXqG1Y7MRa6Xp/6aaMFAl5RN+cACgkQMRa6Xp/6
+aaOyWg//b4T0PTtUcImVqaVTd4AamfBETQG8e6Sg0dzSUWam1aubpGwPOtjVCLu9
+fn0DxK44nMiksq9PO7m/9Fkg1PxgurzVvMNY7J/gO1qAH5xsZ5FJlnj5obCzTabt
+dZSKmSKMMX80tMLq7HuXPHgGKQmHJofGf4Kl4pFb25KZQuP7S/z5B4q8PT2Z5875
+EvJqbDUONam2EfUdLUgWTPEzfyoPy6WNajc4qjLNlG4HbRMkRaVqfdAK/R6uKjoH
+gVu1yd0j+FPfez4G4q1ZEoFiIdvf0LbzV8C6gfz/f9VN1ND8kQQSWWOVhQk35eAI
+umqUd1Z3/9N7/Ut16XnG7tyzAxkdFeBjrPsEbr85PX/X1/rCOnyg6uHyiovyAGrj
+tbJE4ZzX9YUJ28ezsGWlviCJjfO+KmSy7M/fuEdVVOdcBrSMN8QRoO9b1W9ijRFF
+URaUp077Fr+Z5wkGmuzQJUzb19XvPDa+aeeExRP1t6Wmn3urrB3+igMczTNfosYX
+ejTZPYmZn4gsYsS7CDhYaXLJw8FoBIfebC0Af6ij1G0Qly5hJmJgwOHNjpborpV4
+ezxssrXO55xVa40B/dIkOUvSys4hqgk4IVHMj/iSjtg1TJ1ceEReUBueiotUAQqk
+tQAcdjuD6oJFOzS7d+g4XoRsC6X+crCpTzwJxppU+UJTgY4oiIs=
+=klPT
+-----END PGP SIGNATURE-----
+
+--=-NVKkbFdhyq8AeNl+7/qp--
 
