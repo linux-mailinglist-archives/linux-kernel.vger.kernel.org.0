@@ -2,63 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7956C169216
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 23:32:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0CE7169225
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 23:46:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbgBVWcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 17:32:00 -0500
-Received: from vps.xff.cz ([195.181.215.36]:33652 "EHLO vps.xff.cz"
+        id S1726934AbgBVWqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 17:46:16 -0500
+Received: from mail.andi.de1.cc ([85.214.55.253]:46988 "EHLO mail.andi.de1.cc"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726865AbgBVWb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 17:31:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1582410717; bh=JXyUwfOt5qQZMrdIu4ex8maESbx2epZpUJC0gC9L4w4=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=AUYJNq8I8IHJuRrgU97v7kcLO4ytgLad+vrkMhZa1fJO9jjlC+X/sS6h3G5NFAgFg
-         4sOA6z6mAqm85JzyZElUYrIjUnGeXw8fkXPK16MAdCnbXudapqntos2Mb4FYL9aItt
-         3YUU54zQa0yTtHBfR8mlfZRX4t7AhE8SHY6zL6bk=
-From:   Ondrej Jirman <megous@megous.com>
-To:     linux-sunxi@googlegroups.com, Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     Ondrej Jirman <megous@megous.com>,
-        Tomas Novotny <tomas@novotny.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
-        sunXi SoC support), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 4/4] ARM: dts: sun8i-a83t-tbs-a711: Drop superfluous dr_mode
-Date:   Sat, 22 Feb 2020 23:31:54 +0100
-Message-Id: <20200222223154.221632-5-megous@megous.com>
-In-Reply-To: <20200222223154.221632-1-megous@megous.com>
-References: <20200222223154.221632-1-megous@megous.com>
+        id S1726853AbgBVWqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 17:46:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=fQVN1Sdm8ne/62EI+E621DP/kcvj/V1goR5+XSu89jw=; b=jfIEtAZEmNc9FCp2CrCrq5+HmH
+        PYCktzJHUGSW56qL3Jw7/O9udGIFNVr/I86GglrDPnDA/l54sPp+ZcTUVeDjqoVgxJDdiYVAF1jVr
+        Q9PKnzPklBUn09E2FL7cwTJ8IdA9VqdlerDmqco58AuqO3h6sl1hxcUbcgbd9hcMkhAA=;
+Received: from p200300ccff354600e2cec3fffe93fc31.dip0.t-ipconnect.de ([2003:cc:ff35:4600:e2ce:c3ff:fe93:fc31] helo=eeepc)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j5dXF-0007uH-Q4; Sat, 22 Feb 2020 23:46:09 +0100
+Received: from andi by eeepc with local (Exim 4.92)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j5dXF-0002yp-78; Sat, 22 Feb 2020 23:46:09 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        lee.jones@linaro.org, b.galvani@gmail.com,
+        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, phh@phh.me, stefan@agner.ch,
+        letux-kernel@openphoenux.org, martin.blumenstingl@googlemail.com,
+        jic23@kernel.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v4 0/2] mfd: rn5t618: add ADC support
+Date:   Sat, 22 Feb 2020 23:46:00 +0100
+Message-Id: <20200222224602.11413-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Property dr_mode = "otg" is the default in sun8i-a83t.dtsi
+This series adds support for the ADC in the RN5T618/RC5T619.
+It depends on the IRQ support added in the RTC support series here:
+https://lore.kernel.org/lkml/20191220122416.31881-1-andreas@kemnade.info/
 
-Signed-off-by: Ondrej Jirman <megous@megous.com>
----
- arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 1 -
- 1 file changed, 1 deletion(-)
+I tested the driver only with the RC5T619 but it should work with the with 
+the RN5T618 as well based on these facts:
+- The corresponding register definitions originally went into the kernel
+  for the RN5T618
+- Public datasheet sections about the ADC look same.
+- Out-of-tree code for these chips look same regarding to ADC
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-index 32fa64a44d8b4..267653775203e 100644
---- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-@@ -490,7 +490,6 @@ gnss {
- };
- 
- &usb_otg {
--	dr_mode = "otg";
- 	status = "okay";
- };
- 
+But due to missing hardware I cannot test the patches 2/3 and 3/3 which
+add support for the RN5T618 ADC.
+I marked these untested patches as RFC, and IMHO they require a Tested-By.
+Feel free to ignore them if the whole series would be delayed just because
+of missing Tested-By for those.
+
+Changes in v4:
+- drop RFC patches, seems nobody finds time to test now
+- added trivial change and Reviewed-By
+
+Changes in v3:
+- re-included former 2/5 of these patches, since it was not applied
+
+Changes in v2:
+- got an "Applied, thanks" message for the first two, so I do not include
+  them anymore
+- some cleanups for the ADC driver itself
+
+Andreas Kemnade (2):
+  mfd: rn5t618: add ADC subdevice for RC5T619
+  iio: adc: rn5t618: Add ADC driver for RN5T618/RC5T619
+
+ drivers/iio/adc/Kconfig       |  10 ++
+ drivers/iio/adc/Makefile      |   1 +
+ drivers/iio/adc/rn5t618-adc.c | 256 ++++++++++++++++++++++++++++++++++
+ drivers/mfd/rn5t618.c         |   1 +
+ 4 files changed, 268 insertions(+)
+ create mode 100644 drivers/iio/adc/rn5t618-adc.c
+
 -- 
-2.25.1
+2.20.1
 
