@@ -2,81 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F68E168C3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 05:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED90F168C48
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 05:18:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbgBVEBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Feb 2020 23:01:04 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:57549 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbgBVEBD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Feb 2020 23:01:03 -0500
-Received: from [10.28.90.152] (10.28.90.152) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Sat, 22 Feb 2020
- 12:01:26 +0800
-Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Add arm,smc-wdt watchdog
- arm,smc-wdt compatible
-To:     Julius Werner <jwerner@chromium.org>
-CC:     Evan Benn <evanbenn@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        id S1728030AbgBVESk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Feb 2020 23:18:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57590 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726472AbgBVESk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Feb 2020 23:18:40 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 049CC208C3;
+        Sat, 22 Feb 2020 04:18:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582345119;
+        bh=K2HDrAKj7hj+2CKvJF8xxV8d26LJI0EnDte3e8IkOao=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LRiRzVbcteB3Volmi03sResRMRYDN3BmjYwifXRV+ywPsz2VCrpiWQYzhrC0TxyJE
+         HWwyt8ag1ZbHA1snRpeiV2DSGzb7cyPoUDyMLBFAOWqa3n487khYqgleadwySGSWCf
+         5LTvKRf9sy8RH0X0nc/BWvG4Hs4RNC89AwvKePmU=
+Date:   Sat, 22 Feb 2020 13:18:33 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-watchdog@vger.kernel.org>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Yonghui Yu <yonghui.yu@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>
-References: <20200214062637.216209-1-evanbenn@chromium.org>
- <20200214172512.1.I02ebc5b8743b1a71e0e15f68ea77e506d4e6f840@changeid>
- <20200219223046.GA16537@bogus>
- <CAODwPW8JspiUtyU4CC95w9rbNRyUF-Aeb9TuPm1PzmP6u=y1EA@mail.gmail.com>
- <20200219232005.GA9737@roeck-us.net>
- <CAKz_xw2hvHL=a4s37dmuCTWDbxefQFR3rfcaNiWYJY4T+jqabA@mail.gmail.com>
- <e42320b8-266f-0b0e-b20b-b72228510e81@amlogic.com>
- <CAODwPW94KX46PzSrf_uuEFPKudXor=26d=g3Qta5veRfxmMDUA@mail.gmail.com>
-From:   Xingyu Chen <xingyu.chen@amlogic.com>
-Message-ID: <1326f594-3cfd-c03d-4f2c-50eeb75724b2@amlogic.com>
-Date:   Sat, 22 Feb 2020 12:01:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <CAODwPW94KX46PzSrf_uuEFPKudXor=26d=g3Qta5veRfxmMDUA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-Originating-IP: [10.28.90.152]
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tim Bird <Tim.Bird@sony.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [for-next][12/26] Documentation: bootconfig: Add a doc for
+ extended boot config
+Message-Id: <20200222131833.56a5be2d36033dc5a77a9f0b@kernel.org>
+In-Reply-To: <5ade73b0-a3e8-e71a-3685-6485f37ac8b7@web.de>
+References: <23e371ca-5df8-3ae3-c685-b01c07b55540@web.de>
+        <20200220221340.2b66fd2051a5da74775c474b@kernel.org>
+        <5ed96b7b-7485-1ea0-16e2-d39c14ae266d@web.de>
+        <20200221191637.e9eed4268ff607a98200628c@kernel.org>
+        <5ade73b0-a3e8-e71a-3685-6485f37ac8b7@web.de>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Julius
+On Fri, 21 Feb 2020 17:43:32 +0100
+Markus Elfring <Markus.Elfring@web.de> wrote:
 
-On 2020/2/22 3:41, Julius Werner wrote:
->> Because the ATF does not define standard wdt index, each vendor defines
->> its own index.
->> So I don't think that the current driver[0] can fully cover my usecases.
-> I think the best way to solve this would be to put the SMC function ID
-> as another field into the device tree, so that multiple vendors could
-> share the same driver even if their firmware interface uses a
-> different SMC. But they still have to implement the same API for that
-> SMC, of course, not sure if the Meson driver is suitable for that (but
-> if it is then I think merging those drivers would be a good idea).
-The SMC function ID may be solved by the DTS, but the wdt indexs(Eg: 
-SMCWD_INFO) are also different
-for each vendor. The imx_sc_wdt.c is also use the SMC to operate the 
-WDT, but the wdt indexs(Eg: IMX_SIP_TIMER_START_WDOG)
-are different from ours. IMO, If the ATF can implement a common hal 
-interface and index for watchdog, then writing a
-common smc wdt driver will be easier to compatible with all vendors.
+> >> Is there a need to separate the number from the following unit?
+> >
+> > Sorry, I couldn't understand what you pointed here.
+> 
+> Can the specification “… size is 32 KiB …”be more appropriate
+> (besides a small wording adjustment)?
 
-Best Regards
->
-> .
+OK, I'll update as so :)
+
+> > Like "descriptions of ..." ?
+> 
+> I got another idea also for the provided documentation format.
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/admin-guide/bootconfig.rst?id=bee46b309a13ca158c99c325d0408fb2f0db207f#n18
+> 
+> * Will a file format description become helpful in the way of
+>   an extended Backus–Naur form?
+
+Good suggestion! Let me try to write an EBNF section.
+I think EBNF can logically explain the format, but not intuitive
+- we need some examples.
+
+> * How will data processing evolve around the added structures?
+
+OK, I'll add some more API (and usage) differences from the legacy
+command line.
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
