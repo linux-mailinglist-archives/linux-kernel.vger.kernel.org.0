@@ -2,100 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CDE7168E25
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 11:22:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7762168E36
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2020 11:26:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbgBVKVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 05:21:38 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44537 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbgBVKVi (ORCPT
+        id S1727429AbgBVK0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 05:26:19 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:26628 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726836AbgBVK0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 05:21:38 -0500
-Received: by mail-pf1-f196.google.com with SMTP id y5so2636994pfb.11;
-        Sat, 22 Feb 2020 02:21:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=EvDiT7bfIhipTWPuk+o95uS98pfW7H0yCdQ9Sfbo/Ig=;
-        b=E1/3ABOeJQH0wnuX05IolVmIzSvEmtPAQMAKISZRE2fJdP4fBRe0LzXpHBx0nbm2Yg
-         lbQgRPmdPW2NVHfTSiMcq2H1nq9eZJCEm3LI6QpEmGESMe7eryC9V6t5CQEe+2qUExb6
-         t4+djDOoQcjMF7AnYmD1vYKdIqS61aN0vSirk9KlUFq6vWvGAOX11edipD39TDR57tv9
-         itNEOpo9JNzTejTF9m0WNGX3It/h0umtzpGcidkTTyq63GBC1N2cQgdl8QuAv+zpr2mn
-         45ZsKYRnx9mGvpeqUnb2vIRZfhfLM5cw5ncI4t21CVsOvUgiUPMtLgTJM4yvANTIoKoo
-         Dksw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EvDiT7bfIhipTWPuk+o95uS98pfW7H0yCdQ9Sfbo/Ig=;
-        b=KlTOl63PT+uwcAugbpn1D4VK65/OLIj5vH6oviUT+U6fLSIfbPXljaV+FJSKjgDc7j
-         vsV0UY29hjx7I4NVO2uqe2MhrrMOojbPNbgNokiGaju/MZIdBbSgQErYp1Q6R9EHz4hI
-         f9KhwQst1Onrez6Et74zbDLFVGwjH5PEOJ0NYbgGvgDflyBK3ceOXy5pDtpXwqz2mXcS
-         mGoBo8MRMn1wkl8DUQ07mpRlMfHkZAr6tTwR+Mygm4GAq4/L2Ul/4CxDZNs/hnsemgxq
-         QbxQAbGzSnd9YcJ/dQwtxZdwPlnqyRjjvQpM2S/gbsM2D5dYqnnvObVxqlYEWDQxXfcu
-         HU0Q==
-X-Gm-Message-State: APjAAAVGU4KtZBlEmdqNtqAcd2PsbvfXIz0bP44mLEGJMRUG+j+3SVTg
-        CNOqJp5nZeF0FHQ97Ci2eg==
-X-Google-Smtp-Source: APXvYqxkjfb1mnSYTDk9CIGFnAcTYxjBa2sZc0qY+qzvciaOoKV49y+B/rTlCXGag1kwqiL1Eb3YpA==
-X-Received: by 2002:a63:d003:: with SMTP id z3mr41300183pgf.448.1582366897473;
-        Sat, 22 Feb 2020 02:21:37 -0800 (PST)
-Received: from madhuparna-HP-Notebook.nitk.ac.in ([112.79.49.48])
-        by smtp.gmail.com with ESMTPSA id w6sm6237352pfq.99.2020.02.22.02.21.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2020 02:21:36 -0800 (PST)
-From:   madhuparnabhowmik10@gmail.com
-To:     johannes@sipsolutions.net, davem@davemloft.net
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
-        frextrite@gmail.com,
-        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-Subject: [PATCH] net: mac80211: rx.c: Use built-in RCU list checking
-Date:   Sat, 22 Feb 2020 15:48:31 +0530
-Message-Id: <20200222101831.8001-1-madhuparnabhowmik10@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 22 Feb 2020 05:26:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582367158;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=SiwwAkpMQ5R9PFzitEkUcxAMsUE5YVrpE889lO+ukdA=;
+        b=bXX9h/iLzi9QefgnTJAtvhUvND95se8JweonUIslVPTVx78OLgkLJO/ycGyxq9ywYx
+        B/fuqOy6dtMDvyO1hgBLFjwyUFZZC5wCU0lnnXwCw+pQZZ9vnsq/9/K55z0AcS7qg17y
+        354eM0iL860+E4icTqWwvRYyxTUvs4JK8bbIyHUkkRE4ozK50E2zwGXyB3XM2tUGT4JQ
+        UbtFJrmuzDX7ND9eeItmva5bJBOFqNgVuIhZrNk6+NCK29r+IMM0zlR4WuWqaH17IcJ7
+        xlm8VrZQ4NxsPXLmwrBl+N7gKSn43ag5VH/3JbwXawXJJVdA7EcVwTG4lBgoz4v2aFXU
+        bZSA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0pAz7pC6Q5M"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id U06217w1MAPgjMZ
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Sat, 22 Feb 2020 11:25:42 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com
+Subject: [PATCH v5 0/6] MIPS: CI20: Add efuse driver for Ingenic JZ4780 and attach to DM9000 for stable MAC addresses
+Date:   Sat, 22 Feb 2020 11:25:35 +0100
+Message-Id: <cover.1582367141.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+* no longer RFC but PATCH
+* add yaml bindings (by Andreas Kemnade <andreas@kemnade.info>)
+* fixes to yaml (suggested by Rob Herring <robh@kernel.org>)
 
-list_for_each_entry_rcu() has built-in RCU and lock checking.
+RFC V4 2020-02-17 17:55:35:
+* removed read_only for nvmem config because there is no write method
+* Kconfig: replaced depends MACH_JZ4780 with MACH_INGENIC
+* run through checkpatch and fixed issues
+* made use of devm_nvram_register() and get rid of jz4780_efuse_remove()
+  (suggested by Srinivas Kandagatla <srinivas.kandagatla@linaro.org>)
+* squashed previous patch 1/9 and 2/9 into single (regmap based) driver
 
-Pass cond argument to list_for_each_entry_rcu() to silence
-false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
-by default.
+RFC V3 2020-02-16 20:20:59:
 
-Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
----
- net/mac80211/rx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+This series is based on and a follow up for
 
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 0e05ff037672..0967bdc75938 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -3547,7 +3547,8 @@ static void ieee80211_rx_cooked_monitor(struct ieee80211_rx_data *rx,
- 	skb->pkt_type = PACKET_OTHERHOST;
- 	skb->protocol = htons(ETH_P_802_2);
- 
--	list_for_each_entry_rcu(sdata, &local->interfaces, list) {
-+	list_for_each_entry_rcu(sdata, &local->interfaces, list,
-+				lockdep_is_held(&rx->local->rx_path_lock)) {
- 		if (!ieee80211_sdata_running(sdata))
- 			continue;
- 
-@@ -4114,7 +4115,8 @@ void __ieee80211_check_fast_rx_iface(struct ieee80211_sub_if_data *sdata)
- 
- 	lockdep_assert_held(&local->sta_mtx);
- 
--	list_for_each_entry_rcu(sta, &local->sta_list, list) {
-+	list_for_each_entry_rcu(sta, &local->sta_list, list,
-+				lockdep_is_held(&local->sta_mtx)) {
- 		if (sdata != sta->sdata &&
- 		    (!sta->sdata->bss || sta->sdata->bss != sdata->bss))
- 			continue;
+https://lore.kernel.org/patchwork/cover/868157/
+
+("[v2,0/2] Add efuse driver for Ingenic JZ4780 SoC")
+
+Original authors were
+PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Mathieu Malaterre <malat@debian.org>
+
+and there are additions / code improvements by
+H. Nikolaus Schaller <hns@goldelico.com>
+Paul Cercueil <paul@crapouillou.net>
+
+This setup works, if the dm9000 driver is compiled
+as a module.
+
+Therefore it is all RFC level. It is also not completely
+checkpatched.
+
+
+H. Nikolaus Schaller (1):
+  MIPS: DTS: CI20: make DM9000 Ethernet controller use NVMEM to find the
+    default MAC address
+
+PrasannaKumar Muralidharan (5):
+  nvmem: add driver for JZ4780 efuse
+  Bindings: nvmem: add bindings for JZ4780 efuse
+  Documentation: ABI: nvmem: add documentation for JZ4780 efuse ABI
+  nvmem: MAINTAINERS: add maintainer for JZ4780 efuse driver
+  MIPS: DTS: JZ4780: define node for JZ4780 efuse
+
+ .../ABI/testing/sysfs-driver-jz4780-efuse     |  16 ++
+ .../bindings/nvmem/ingenic,jz4780-efuse.yaml  |  50 ++++
+ MAINTAINERS                                   |   5 +
+ arch/mips/boot/dts/ingenic/ci20.dts           |   3 +
+ arch/mips/boot/dts/ingenic/jz4780.dtsi        |  17 +-
+ drivers/nvmem/Kconfig                         |  10 +
+ drivers/nvmem/Makefile                        |   2 +
+ drivers/nvmem/jz4780-efuse.c                  | 229 ++++++++++++++++++
+ 8 files changed, 331 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-jz4780-efuse
+ create mode 100644 Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
+ create mode 100644 drivers/nvmem/jz4780-efuse.c
+
 -- 
-2.17.1
+2.23.0
 
