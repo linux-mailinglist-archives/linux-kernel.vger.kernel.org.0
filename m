@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82733169387
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:24:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6241D169389
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:24:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728730AbgBWCXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 21:23:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53064 "EHLO mail.kernel.org"
+        id S1728743AbgBWCXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 21:23:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728002AbgBWCXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:23:31 -0500
+        id S1728729AbgBWCXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:23:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E561221D56;
-        Sun, 23 Feb 2020 02:23:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEC20208C3;
+        Sun, 23 Feb 2020 02:23:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424610;
-        bh=PtriBsXyW8kGTAqXSDy7UYBdHikaU5JTUnz/W1iCUdQ=;
+        s=default; t=1582424615;
+        bh=1CKLZHDjWSPRbxdC/lD+Y2DZ+zwKh+7ZDnwzhGxcMXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fzp7kC+kU2UnuVJjIq6os+Ue2DKOyY265IbI6KbWrzIfzQZ01nE65zFwWdkvnYBNm
-         19jxuJPH9qXk2Gx44pgzU3Ku6xPe0kb+rpeQc47agn1v284yFGwd8CWuJNyUD6UO1a
-         HOMPMVXqPXd/7+4ARf/Zi4fQWoRpg1XiezbzA3zE=
+        b=mxMhNewOVh3V8WDGuTw9vza6I4eEZbFvVo6fzbEZFL3FSPa2Ru5++WlPgUfzFW0Yr
+         NukSmE9kjTfK0e1SNRxsDxTDjJkVdmJ6N4VEh38jflanaPmLTupBoRQGdlT+wAjxjA
+         hkg5sAvmVN/PpcLQk9VjSjar7WpZgnO7r9oG+WtU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Shay Bar <shay.bar@celeno.com>,
-        Aviad Brikman <aviad.brikman@celeno.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 45/50] mac80211: fix wrong 160/80+80 MHz setting
-Date:   Sat, 22 Feb 2020 21:22:30 -0500
-Message-Id: <20200223022235.1404-45-sashal@kernel.org>
+Cc:     Nigel Kirkland <nigel.kirkland@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 49/50] nvme: prevent warning triggered by nvme_stop_keep_alive
+Date:   Sat, 22 Feb 2020 21:22:34 -0500
+Message-Id: <20200223022235.1404-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200223022235.1404-1-sashal@kernel.org>
 References: <20200223022235.1404-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -46,68 +46,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shay Bar <shay.bar@celeno.com>
+From: Nigel Kirkland <nigel.kirkland@broadcom.com>
 
-[ Upstream commit 33181ea7f5a62a17fbe55f0f73428ecb5e686be8 ]
+[ Upstream commit 97b2512ad000a409b4073dd1a71e4157d76675cb ]
 
-Before this patch, STA's would set new width of 160/80+80 MHz based on AP capability only.
-This is wrong because STA may not support > 80MHz BW.
-Fix is to verify STA has 160/80+80 MHz capability before increasing its width to > 80MHz.
+Delayed keep alive work is queued on system workqueue and may be cancelled
+via nvme_stop_keep_alive from nvme_reset_wq, nvme_fc_wq or nvme_wq.
 
-The "support_80_80" and "support_160" setting is based on:
-"Table 9-272 — Setting of the Supported Channel Width Set subfield and Extended NSS BW
-Support subfield at a STA transmitting the VHT Capabilities Information field"
-From "Draft P802.11REVmd_D3.0.pdf"
+Check_flush_dependency detects mismatched attributes between the work-queue
+context used to cancel the keep alive work and system-wq. Specifically
+system-wq does not have the WQ_MEM_RECLAIM flag, whereas the contexts used
+to cancel keep alive work have WQ_MEM_RECLAIM flag.
 
-Signed-off-by: Aviad Brikman <aviad.brikman@celeno.com>
-Signed-off-by: Shay Bar <shay.bar@celeno.com>
-Link: https://lore.kernel.org/r/20200210130728.23674-1-shay.bar@celeno.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Example warning:
+
+  workqueue: WQ_MEM_RECLAIM nvme-reset-wq:nvme_fc_reset_ctrl_work [nvme_fc]
+	is flushing !WQ_MEM_RECLAIM events:nvme_keep_alive_work [nvme_core]
+
+To avoid the flags mismatch, delayed keep alive work is queued on nvme_wq.
+
+However this creates a secondary concern where work and a request to cancel
+that work may be in the same work queue - namely err_work in the rdma and
+tcp transports, which will want to flush/cancel the keep alive work which
+will now be on nvme_wq.
+
+After reviewing the transports, it looks like err_work can be moved to
+nvme_reset_wq. In fact that aligns them better with transition into
+RESETTING and performing related reset work in nvme_reset_wq.
+
+Change nvme-rdma and nvme-tcp to perform err_work in nvme_reset_wq.
+
+Signed-off-by: Nigel Kirkland <nigel.kirkland@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/util.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/nvme/host/core.c | 10 +++++-----
+ drivers/nvme/host/rdma.c |  2 +-
+ drivers/nvme/host/tcp.c  |  2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/net/mac80211/util.c b/net/mac80211/util.c
-index 739e90555d8b9..decd46b383938 100644
---- a/net/mac80211/util.c
-+++ b/net/mac80211/util.c
-@@ -2993,10 +2993,22 @@ bool ieee80211_chandef_vht_oper(struct ieee80211_hw *hw,
- 	int cf0, cf1;
- 	int ccfs0, ccfs1, ccfs2;
- 	int ccf0, ccf1;
-+	u32 vht_cap;
-+	bool support_80_80 = false;
-+	bool support_160 = false;
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index e703827d27e9c..7dacfd102a992 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -66,8 +66,8 @@ MODULE_PARM_DESC(streams, "turn on support for Streams write directives");
+  * nvme_reset_wq - hosts nvme reset works
+  * nvme_delete_wq - hosts nvme delete works
+  *
+- * nvme_wq will host works such are scan, aen handling, fw activation,
+- * keep-alive error recovery, periodic reconnects etc. nvme_reset_wq
++ * nvme_wq will host works such as scan, aen handling, fw activation,
++ * keep-alive, periodic reconnects etc. nvme_reset_wq
+  * runs reset works which also flush works hosted on nvme_wq for
+  * serialization purposes. nvme_delete_wq host controller deletion
+  * works which flush reset works for serialization.
+@@ -972,7 +972,7 @@ static void nvme_keep_alive_end_io(struct request *rq, blk_status_t status)
+ 		startka = true;
+ 	spin_unlock_irqrestore(&ctrl->lock, flags);
+ 	if (startka)
+-		schedule_delayed_work(&ctrl->ka_work, ctrl->kato * HZ);
++		queue_delayed_work(nvme_wq, &ctrl->ka_work, ctrl->kato * HZ);
+ }
  
- 	if (!oper || !htop)
- 		return false;
+ static int nvme_keep_alive(struct nvme_ctrl *ctrl)
+@@ -1002,7 +1002,7 @@ static void nvme_keep_alive_work(struct work_struct *work)
+ 		dev_dbg(ctrl->device,
+ 			"reschedule traffic based keep-alive timer\n");
+ 		ctrl->comp_seen = false;
+-		schedule_delayed_work(&ctrl->ka_work, ctrl->kato * HZ);
++		queue_delayed_work(nvme_wq, &ctrl->ka_work, ctrl->kato * HZ);
+ 		return;
+ 	}
  
-+	vht_cap = hw->wiphy->bands[chandef->chan->band]->vht_cap.cap;
-+	support_160 = (vht_cap & (IEEE80211_VHT_CAP_SUPP_CHAN_WIDTH_MASK |
-+				  IEEE80211_VHT_CAP_EXT_NSS_BW_MASK));
-+	support_80_80 = ((vht_cap &
-+			 IEEE80211_VHT_CAP_SUPP_CHAN_WIDTH_160_80PLUS80MHZ) ||
-+			(vht_cap & IEEE80211_VHT_CAP_SUPP_CHAN_WIDTH_160MHZ &&
-+			 vht_cap & IEEE80211_VHT_CAP_EXT_NSS_BW_MASK) ||
-+			((vht_cap & IEEE80211_VHT_CAP_EXT_NSS_BW_MASK) >>
-+				    IEEE80211_VHT_CAP_EXT_NSS_BW_SHIFT > 1));
- 	ccfs0 = oper->center_freq_seg0_idx;
- 	ccfs1 = oper->center_freq_seg1_idx;
- 	ccfs2 = (le16_to_cpu(htop->operation_mode) &
-@@ -3024,10 +3036,10 @@ bool ieee80211_chandef_vht_oper(struct ieee80211_hw *hw,
- 			unsigned int diff;
+@@ -1019,7 +1019,7 @@ static void nvme_start_keep_alive(struct nvme_ctrl *ctrl)
+ 	if (unlikely(ctrl->kato == 0))
+ 		return;
  
- 			diff = abs(ccf1 - ccf0);
--			if (diff == 8) {
-+			if ((diff == 8) && support_160) {
- 				new.width = NL80211_CHAN_WIDTH_160;
- 				new.center_freq1 = cf1;
--			} else if (diff > 8) {
-+			} else if ((diff > 8) && support_80_80) {
- 				new.width = NL80211_CHAN_WIDTH_80P80;
- 				new.center_freq2 = cf1;
- 			}
+-	schedule_delayed_work(&ctrl->ka_work, ctrl->kato * HZ);
++	queue_delayed_work(nvme_wq, &ctrl->ka_work, ctrl->kato * HZ);
+ }
+ 
+ void nvme_stop_keep_alive(struct nvme_ctrl *ctrl)
+diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
+index cb4c3000a57e8..4ff51da3b13fa 100644
+--- a/drivers/nvme/host/rdma.c
++++ b/drivers/nvme/host/rdma.c
+@@ -1088,7 +1088,7 @@ static void nvme_rdma_error_recovery(struct nvme_rdma_ctrl *ctrl)
+ 	if (!nvme_change_ctrl_state(&ctrl->ctrl, NVME_CTRL_RESETTING))
+ 		return;
+ 
+-	queue_work(nvme_wq, &ctrl->err_work);
++	queue_work(nvme_reset_wq, &ctrl->err_work);
+ }
+ 
+ static void nvme_rdma_wr_error(struct ib_cq *cq, struct ib_wc *wc,
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index a870144542159..244984420b41b 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -422,7 +422,7 @@ static void nvme_tcp_error_recovery(struct nvme_ctrl *ctrl)
+ 	if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_RESETTING))
+ 		return;
+ 
+-	queue_work(nvme_wq, &to_tcp_ctrl(ctrl)->err_work);
++	queue_work(nvme_reset_wq, &to_tcp_ctrl(ctrl)->err_work);
+ }
+ 
+ static int nvme_tcp_process_nvme_cqe(struct nvme_tcp_queue *queue,
 -- 
 2.20.1
 
