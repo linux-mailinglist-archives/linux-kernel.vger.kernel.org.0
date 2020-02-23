@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F6B8169546
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:37:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B255F169530
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:37:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728919AbgBWChK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 21:37:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50304 "EHLO mail.kernel.org"
+        id S1727926AbgBWCWD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 21:22:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727733AbgBWCVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:21:47 -0500
+        id S1727734AbgBWCVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:21:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D218120707;
-        Sun, 23 Feb 2020 02:21:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E4572192A;
+        Sun, 23 Feb 2020 02:21:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424506;
-        bh=g7lm6YgSyj6c2NL8Mpa/jUwJdQ2wfy+ZGEYhea2EoUw=;
+        s=default; t=1582424509;
+        bh=r4h0h0vNmAe26MlCqgqj9TQfWY49lPNNCtdDgv9Pe6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ltvRQ1ujoxLuCxyIWjIcJh+GQbydud0EGsziMp0Efd52862DfTNtuLCJCrt/b6MeJ
-         VU0Nh9T1ZsttgHtUDXmx3ChB+4GndSPS8NiCBFSgBWWktmgtVHuUiMNUmuTErLJAUX
-         rSsy2S5Ji8bOESvWrx0mRCfxqo9Z4PnSS1viIOEQ=
+        b=QmxzgkbhdK8/m/C2Kqnza6vEp8Q54Do8dT7HLUgMC7lP6vpTG/eqG7gr17gtYnL6F
+         1Beldf0czJvQpMAZw4wtP2xvcJWNqE2d6Z+5+0enc6KfaF0s+u5AKRrNDtB1HUd20+
+         dCunEmLZ0OuTLvZ8k/CFAYbyOWfEeWD+ZFxdT55o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sung Lee <sung.lee@amd.com>, Tony Cheng <Tony.Cheng@amd.com>,
+Cc:     Aric Cyr <aric.cyr@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
         Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.5 22/58] drm/amd/display: Do not set optimized_require to false after plane disable
-Date:   Sat, 22 Feb 2020 21:20:43 -0500
-Message-Id: <20200223022119.707-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 24/58] drm/amd/display: Check engine is not NULL before acquiring
+Date:   Sat, 22 Feb 2020 21:20:45 -0500
+Message-Id: <20200223022119.707-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200223022119.707-1-sashal@kernel.org>
 References: <20200223022119.707-1-sashal@kernel.org>
@@ -45,39 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sung Lee <sung.lee@amd.com>
+From: Aric Cyr <aric.cyr@amd.com>
 
-[ Upstream commit df36f6cf23ada812930afa8ee76681d4ad307c61 ]
+[ Upstream commit 2b63d0ec0daf79ba503fa8bfa25e07dc3da274f3 ]
 
-[WHY]
-The optimized_require flag is needed to set watermarks and clocks lower
-in certain conditions. This flag is set to true and then set to false
-while programming front end in dcn20.
+[Why]
+Engine can be NULL in some cases, so we must not acquire it.
 
-[HOW]
-Do not set the flag to false while disabling plane.
+[How]
+Check for NULL engine before acquiring.
 
-Signed-off-by: Sung Lee <sung.lee@amd.com>
-Reviewed-by: Tony Cheng <Tony.Cheng@amd.com>
+Signed-off-by: Aric Cyr <aric.cyr@amd.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
 Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/dce/dce_aux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-index ac8c18fadefce..448bc9b39942f 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-@@ -493,7 +493,6 @@ static void dcn20_plane_atomic_disable(struct dc *dc, struct pipe_ctx *pipe_ctx)
- 	dpp->funcs->dpp_dppclk_control(dpp, false, false);
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
+index 793c0cec407f9..5fcffb29317e3 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
+@@ -398,7 +398,7 @@ static bool acquire(
+ {
+ 	enum gpio_result result;
  
- 	hubp->power_gated = true;
--	dc->optimized_required = false; /* We're powering off, no need to optimize */
+-	if (!is_engine_available(engine))
++	if ((engine == NULL) || !is_engine_available(engine))
+ 		return false;
  
- 	dc->hwss.plane_atomic_power_down(dc,
- 			pipe_ctx->plane_res.dpp,
+ 	result = dal_ddc_open(ddc, GPIO_MODE_HARDWARE,
 -- 
 2.20.1
 
