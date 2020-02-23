@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4B531698F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 18:29:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0446C1698FC
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 18:29:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbgBWR32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 12:29:28 -0500
-Received: from vps.xff.cz ([195.181.215.36]:44440 "EHLO vps.xff.cz"
+        id S1727637AbgBWR33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 12:29:29 -0500
+Received: from vps.xff.cz ([195.181.215.36]:44468 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726740AbgBWR31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 12:29:27 -0500
+        id S1727080AbgBWR32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 12:29:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1582478965; bh=7OA3oWwjm5heb675PLFXd94nLmDlc4h89uOCL49bwbE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=do7Ry5KQdS859DmYMjl2iQfQvJErf8fAL4oA6Avl3X2DoA/1JG0G877TeQdtF7MjH
-         pmgsmUwo+c+Ue3MLERcZtsdRm6IVip1pQUknf0rc34bOVMJkp0mRzAoaj/iQXLtrIe
-         A0H/a/En2wRe7NW0nhu9rahYeaHpBnKm46z2T2aQ=
+        t=1582478966; bh=z3p4j/I6/eYDYtEmmShKMGzml/S7bFHapqciJWMfdL4=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=DAeW3Wz2Wqb3DNXLKpcFl2LG5UH5IZcJUJYZ4gStfDzlmhnvFsdCijXHTg68FvrnM
+         8Sgp4ENQWGfOyvgrNwKto8fFqa23crgNcBz0OAMxUTWBMozkWH2SN5e1zWciJjI6yH
+         K9Eq1puI7TZ4W75eiOhfh60uEzyzCUMLeJ35/ANw=
 From:   Ondrej Jirman <megous@megous.com>
 To:     linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <mripard@kernel.org>,
@@ -30,9 +30,11 @@ Cc:     Ondrej Jirman <megous@megous.com>,
         Bhushan Shah <bshah@kde.org>, Icenowy Zheng <icenowy@aosc.io>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] Add support for Pine64 PinePhone Linux Smartphone
-Date:   Sun, 23 Feb 2020 18:29:13 +0100
-Message-Id: <20200223172916.843379-1-megous@megous.com>
+Subject: [PATCH 1/3] arm64: dts: sun50i-a64: Add i2c2 pins
+Date:   Sun, 23 Feb 2020 18:29:14 +0100
+Message-Id: <20200223172916.843379-2-megous@megous.com>
+In-Reply-To: <20200223172916.843379-1-megous@megous.com>
+References: <20200223172916.843379-1-megous@megous.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -40,30 +42,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds an initial support for Pine64
-PinePhone.
+PinePhone needs I2C2 pins description. Add it.
 
-Please take a look.
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-thank you and regards,
-  Ondrej Jirman
-
-Ondrej Jirman (3):
-  arm64: dts: sun50i-a64: Add i2c2 pins
-  dt-bindings: arm: sunxi: Add PinePhone 1.0 and 1.1 bindings
-  arm64: dts: allwinner: Add initial support for Pine64 PinePhone
-
- .../devicetree/bindings/arm/sunxi.yaml        |  10 +
- arch/arm64/boot/dts/allwinner/Makefile        |   2 +
- .../allwinner/sun50i-a64-pinephone-1.0.dts    |  11 +
- .../allwinner/sun50i-a64-pinephone-1.1.dts    |  11 +
- .../dts/allwinner/sun50i-a64-pinephone.dtsi   | 385 ++++++++++++++++++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |   5 +
- 6 files changed, 424 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.0.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.1.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 862b47dc9dc90..0fdf5f400d743 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -671,6 +671,11 @@ i2c1_pins: i2c1-pins {
+ 				function = "i2c1";
+ 			};
+ 
++			i2c2_pins: i2c2-pins {
++				pins = "PE14", "PE15";
++				function = "i2c2";
++			};
++
+ 			/omit-if-no-ref/
+ 			lcd_rgb666_pins: lcd-rgb666-pins {
+ 				pins = "PD0", "PD1", "PD2", "PD3", "PD4",
 -- 
 2.25.1
 
