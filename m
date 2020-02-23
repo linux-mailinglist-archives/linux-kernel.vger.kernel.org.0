@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 711DB1694B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:32:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7949316948E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:32:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbgBWCcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 21:32:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52422 "EHLO mail.kernel.org"
+        id S1728566AbgBWCXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 21:23:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728470AbgBWCXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:23:08 -0500
+        id S1728481AbgBWCXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:23:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 397E720702;
-        Sun, 23 Feb 2020 02:23:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BA6A20707;
+        Sun, 23 Feb 2020 02:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424588;
-        bh=nu12upa2YBED248NaTn+dMF9VDPyyAVLRlkgIW0kpbc=;
+        s=default; t=1582424589;
+        bh=QaUmGOs6VeR87aE8yHZMtpxIbTBHgOfdmQpPxvkOCs0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ctjQr527dfwdfDOlF9M9dXm6qrTWpOXe21lMgfLxtfKKPc7nsuuaWudg1SaJj8m2D
-         uHrjOntD1fnxR89EyCHC5xQg5b3BsCQQMtUQSVa1ylRhN/pgphd/WxLGD4H/FHDXW0
-         eZQpVWOpj0FcCvg+zF96HKNU0ye0OUXbbTF+zM4w=
+        b=KU+L7qypDmL2RhBqw3Q6DKJexz1n0/0iIr2dM9leMngmWDly+bmD/0C1m2vqjHCke
+         pAcRvb8D25WfvG0SNYO/8jKAbRVO/invzkGgcyOVvkds+YX0VF3VsCjQaF9YcKaF7j
+         aFwU5NoSlED7ZzlWBDR8BTmpaKfP65j/jm+mL9Co=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Kolesa <daniel@octaforge.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 26/50] amdgpu: Prevent build errors regarding soft/hard-float FP ABI tags
-Date:   Sat, 22 Feb 2020 21:22:11 -0500
-Message-Id: <20200223022235.1404-26-sashal@kernel.org>
+Cc:     Thierry Reding <treding@nvidia.com>,
+        kbuild test robot <lkp@intel.com>,
+        Olof Johansson <olof@lixom.net>,
+        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 27/50] soc/tegra: fuse: Fix build with Tegra194 configuration
+Date:   Sat, 22 Feb 2020 21:22:12 -0500
+Message-Id: <20200223022235.1404-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200223022235.1404-1-sashal@kernel.org>
 References: <20200223022235.1404-1-sashal@kernel.org>
@@ -44,46 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Kolesa <daniel@octaforge.org>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit 416611d9b6eebaeae58ed26cc7d23131c69126b1 ]
+[ Upstream commit 6f4ecbe284df5f22e386a640d9a4b32cede62030 ]
 
-On PowerPC, the compiler will tag object files with whether they
-use hard or soft float FP ABI and whether they use 64 or 128-bit
-long double ABI. On systems with 64-bit long double ABI, a tag
-will get emitted whenever a double is used, as on those systems
-a long double is the same as a double. This will prevent linkage
-as other files are being compiled with hard-float.
+If only Tegra194 support is enabled, the tegra30_fuse_read() and
+tegra30_fuse_init() function are not declared and cause a build failure.
+Add Tegra194 to the preprocessor guard to make sure these functions are
+available for Tegra194-only builds as well.
 
-On ppc64, this code will never actually get used for the time
-being, as the only currently existing hardware using it are the
-Renoir APUs. Therefore, until this is testable and can be fixed
-properly, at least make sure the build will not fail.
-
-Signed-off-by: Daniel Kolesa <daniel@octaforge.org>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Link: https://lore.kernel.org/r/20200203143114.3967295-1-thierry.reding@gmail.com
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/clk_mgr/Makefile | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/soc/tegra/fuse/fuse-tegra30.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/Makefile b/drivers/gpu/drm/amd/display/dc/clk_mgr/Makefile
-index b864869cc7e3e..6fa7422c51da5 100644
---- a/drivers/gpu/drm/amd/display/dc/clk_mgr/Makefile
-+++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/Makefile
-@@ -91,6 +91,12 @@ ifdef CONFIG_DRM_AMD_DC_DCN2_1
- ###############################################################################
- CLK_MGR_DCN21 = rn_clk_mgr.o rn_clk_mgr_vbios_smu.o
- 
-+# prevent build errors regarding soft-float vs hard-float FP ABI tags
-+# this code is currently unused on ppc64, as it applies to Renoir APUs only
-+ifdef CONFIG_PPC64
-+CFLAGS_$(AMDDALPATH)/dc/clk_mgr/dcn21/rn_clk_mgr.o := $(call cc-option,-mno-gnu-attribute)
-+endif
-+
- AMD_DAL_CLK_MGR_DCN21 = $(addprefix $(AMDDALPATH)/dc/clk_mgr/dcn21/,$(CLK_MGR_DCN21))
- 
- AMD_DISPLAY_FILES += $(AMD_DAL_CLK_MGR_DCN21)
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+index be9424a871734..9c3ef0a02fd4e 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra30.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+@@ -35,7 +35,8 @@
+     defined(CONFIG_ARCH_TEGRA_124_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_132_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_210_SOC) || \
+-    defined(CONFIG_ARCH_TEGRA_186_SOC)
++    defined(CONFIG_ARCH_TEGRA_186_SOC) || \
++    defined(CONFIG_ARCH_TEGRA_194_SOC)
+ static u32 tegra30_fuse_read_early(struct tegra_fuse *fuse, unsigned int offset)
+ {
+ 	if (WARN_ON(!fuse->base))
 -- 
 2.20.1
 
