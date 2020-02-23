@@ -2,100 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0C28169867
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 16:28:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E06316986B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 16:32:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbgBWP2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 10:28:48 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:46983 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgBWP2r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 10:28:47 -0500
-Received: by mail-yw1-f67.google.com with SMTP id z141so4042596ywd.13
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 07:28:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=pdhNSS0LwSG6340/VCqgO4fM6CVikX2mBmvb1QW6kC0=;
-        b=T/sRoJRsw9d3eCdmH6OL13Co6ku9hSbQjXgf5rXLuz2XAxFQK3O7GbBsNiq90rFr8l
-         zmLh1W1ZvekSaYpqw8Fr92xftD47/FIej/Rb8cGqpsxWHNCFbTO8TW/9qCgJGiHYJZ3L
-         rrrzsJALmPcSax3ZyH2SObK7LzehQhJPPgTigbYFLZEhZ0oKVbEiE7DbQwCqkSUFIcOa
-         iFgYo4k8rU/ccPURf9l1AL0x9uIMcBEiz0DM0iuHQVu20d4yRo5H2YjaE8ftohck5GXX
-         2XjUrZR+H52I9GuQDXRWjjNRB3pDERw1mzF2/tXST/vkR8jOb/L3tk2kRKDKDmDiBlak
-         n7Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=pdhNSS0LwSG6340/VCqgO4fM6CVikX2mBmvb1QW6kC0=;
-        b=ojZjLY/f6QfTaEW2ePEI29h8tfjW4aeygTf5sq5HYgc3LnFJdwOyorrKx/L1CPfb+Z
-         mrvYRdTqR4Nr9U+/kp+wzV1vP+J6Tftex6l2zn68fM1kgJUOwjPamIVA4fmkSpgkuNAe
-         UBYbMwSIGK+zy3jzVYM5bYe/esgjluqiBwrB2yPmwmocEjgZ0XGA2mgDyo+M4l66cYiZ
-         fLKZCukX2NEXjdEl/VWwMUc/Gszlflk5j0nb7+ri8jdXkzwpIune5YGzSGg4Y3SGicsW
-         wayld39flSG5mzKeU410gyagqKK9w85eab7mO9mrdcdUy+t8vmXK3FqFC3CkT08GoTng
-         5XFQ==
-X-Gm-Message-State: APjAAAWwWt8x5NGPTbAUwB+LXMMxIWPc0axK9vBHQIcehrlwlJW/X6x0
-        jKcoTsRAUXU0CLuiPvcMTya6iTnrfs7pB7e6Bjs=
-X-Google-Smtp-Source: APXvYqzi+25eOEGRXgn8M8wBmClYDf2O9LxK7xYtruyHxYenxK7or1DCq21uYZUYku6/QyrU5ckPLhjmClphXOipOBo=
-X-Received: by 2002:a0d:c243:: with SMTP id e64mr38297316ywd.12.1582471726524;
- Sun, 23 Feb 2020 07:28:46 -0800 (PST)
+        id S1727004AbgBWPcl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 23 Feb 2020 10:32:41 -0500
+Received: from mga17.intel.com ([192.55.52.151]:40832 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726208AbgBWPcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 10:32:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2020 07:32:40 -0800
+X-IronPort-AV: E=Sophos;i="5.70,476,1574150400"; 
+   d="scan'208";a="230388634"
+Received: from rcoelln-mobl.ger.corp.intel.com (HELO localhost) ([10.252.40.180])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2020 07:32:37 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        intel-gfx@lists.freedesktop.org,
+        Alexander Potapenko <glider@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Intel-gfx] [PATCH v2] drm/i915: Distribute switch variables for initialization
+In-Reply-To: <20200221113057.GL13686@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <202002201602.92CADF7D@keescook> <20200221113057.GL13686@intel.com>
+Date:   Sun, 23 Feb 2020 17:32:49 +0200
+Message-ID: <87h7zhtj32.fsf@intel.com>
 MIME-Version: 1.0
-Received: by 2002:a5b:f08:0:0:0:0:0 with HTTP; Sun, 23 Feb 2020 07:28:46 -0800 (PST)
-Reply-To: antoinm93@yahoo.com
-From:   Mrs Elodie Antoine <marianmichel236@gmail.com>
-Date:   Sun, 23 Feb 2020 07:28:46 -0800
-Message-ID: <CAOJar2+cNvDqZV5rbozdoTRvy_xjEu+VuW7T+pGqAbt7dASL3w@mail.gmail.com>
-Subject: Greetings from Mrs Elodie Antoine,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings from Mrs Elodie Antoine,
+On Fri, 21 Feb 2020, Ville Syrjälä <ville.syrjala@linux.intel.com> wrote:
+> On Thu, Feb 20, 2020 at 04:05:17PM -0800, Kees Cook wrote:
+>> Variables declared in a switch statement before any case statements
+>> cannot be automatically initialized with compiler instrumentation (as
+>> they are not part of any execution flow). With GCC's proposed automatic
+>> stack variable initialization feature, this triggers a warning (and they
+>> don't get initialized). Clang's automatic stack variable initialization
+>> (via CONFIG_INIT_STACK_ALL=y) doesn't throw a warning, but it also
+>> doesn't initialize such variables[1]. Note that these warnings (or silent
+>> skipping) happen before the dead-store elimination optimization phase,
+>> so even when the automatic initializations are later elided in favor of
+>> direct initializations, the warnings remain.
+>> 
+>> To avoid these problems, move such variables into the "case" where
+>> they're used or lift them up into the main function body.
+>> 
+>> drivers/gpu/drm/i915/display/intel_display.c: In function ‘check_digital_port_conflicts’:
+>> drivers/gpu/drm/i915/display/intel_display.c:12963:17: warning: statement will never be executed [-Wswitch-unreachable]
+>> 12963 |    unsigned int port_mask;
+>>       |                 ^~~~~~~~~
+>> 
+>> drivers/gpu/drm/i915/intel_pm.c: In function ‘vlv_get_fifo_size’:
+>> drivers/gpu/drm/i915/intel_pm.c:474:7: warning: statement will never be executed [-Wswitch-unreachable]
+>>   474 |   u32 dsparb, dsparb2, dsparb3;
+>>       |       ^~~~~~
+>> drivers/gpu/drm/i915/intel_pm.c: In function ‘vlv_atomic_update_fifo’:
+>> drivers/gpu/drm/i915/intel_pm.c:1997:7: warning: statement will never be executed [-Wswitch-unreachable]
+>>  1997 |   u32 dsparb, dsparb2, dsparb3;
+>>       |       ^~~~~~
+>> 
+>> [1] https://bugs.llvm.org/show_bug.cgi?id=44916
+>> 
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> ---
+>> v2: remove port_mask entirely (Ville Syrjälä)
+>> v1: https://lore.kernel.org/lkml/20200220062258.68854-1-keescook@chromium.org
+>> ---
+>>  drivers/gpu/drm/i915/display/intel_display.c | 7 ++-----
+>>  drivers/gpu/drm/i915/intel_pm.c              | 4 ++--
+>>  2 files changed, 4 insertions(+), 7 deletions(-)
+>> 
+>> diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
+>> index 064dd99bbc49..5f8c61932e82 100644
+>> --- a/drivers/gpu/drm/i915/display/intel_display.c
+>> +++ b/drivers/gpu/drm/i915/display/intel_display.c
+>> @@ -12960,7 +12960,6 @@ static bool check_digital_port_conflicts(struct intel_atomic_state *state)
+>>  		WARN_ON(!connector_state->crtc);
+>>  
+>>  		switch (encoder->type) {
+>> -			unsigned int port_mask;
+>>  		case INTEL_OUTPUT_DDI:
+>>  			if (WARN_ON(!HAS_DDI(to_i915(dev))))
+>>  				break;
+>> @@ -12968,13 +12967,11 @@ static bool check_digital_port_conflicts(struct intel_atomic_state *state)
+>>  		case INTEL_OUTPUT_DP:
+>>  		case INTEL_OUTPUT_HDMI:
+>>  		case INTEL_OUTPUT_EDP:
+>> -			port_mask = 1 << encoder->port;
+>> -
+>>  			/* the same port mustn't appear more than once */
+>> -			if (used_ports & port_mask)
+>> +			if (used_ports & BIT(encoder->port))
+>>  				ret = false;
+>>  
+>> -			used_ports |= port_mask;
+>> +			used_ports |= BIT(encoder->port);
+>
+> Thanks. Looks good.
+>
+> Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-Calvary Greetings in the name of the LORD Almighty and Our LORD JESUS
-CHRIST the giver of every good thing. Good day,i know this letter will
-definitely come to you as a huge surprise, but I implore you to take
-the time to go through it carefully as the decision you make will go
-off a long way to determine my future and continued existence. I am
-Mrs Elodie Antoine
-aging widow of 59 years old suffering from long time illness. I have
-some funds I inherited from my late husband,
+Thanks for the patch and review, pushed to dinq.
 
-The sum of (US$4.5 Million Dollars) and I needed a very honest and God
-fearing  who can withdraw this money then use the funds for Charity
-works. I WISH TO GIVE THIS FUNDS TO YOU FOR CHARITY WORKS. I found
-your email address from the internet after honest prayers  to the LORD
-to bring me a helper and i decided to contact you if you may be
-willing and interested to handle these trust funds in good faith
-before anything happens to me.
-I accept this decision because I do not have any child who will
-inherit this money after I die. I want your urgent reply to me so that
-I will give you the deposit receipt which the  COMPANY issued to me as
-next of kin for immediate transfer of the money to your account in
-your country, to start the good work of God, I want you to use the
-15/percent of the total amount to help yourself in doing the project.
+BR,
+Jani.
 
+>
+>>  			break;
+>>  		case INTEL_OUTPUT_DP_MST:
+>>  			used_mst_ports |=
+>> diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
+>> index bd2d30ecc030..17d8833787c4 100644
+>> --- a/drivers/gpu/drm/i915/intel_pm.c
+>> +++ b/drivers/gpu/drm/i915/intel_pm.c
+>> @@ -469,9 +469,9 @@ static void vlv_get_fifo_size(struct intel_crtc_state *crtc_state)
+>>  	struct vlv_fifo_state *fifo_state = &crtc_state->wm.vlv.fifo_state;
+>>  	enum pipe pipe = crtc->pipe;
+>>  	int sprite0_start, sprite1_start;
+>> +	u32 dsparb, dsparb2, dsparb3;
+>>  
+>>  	switch (pipe) {
+>> -		u32 dsparb, dsparb2, dsparb3;
+>>  	case PIPE_A:
+>>  		dsparb = I915_READ(DSPARB);
+>>  		dsparb2 = I915_READ(DSPARB2);
+>> @@ -1969,6 +1969,7 @@ static void vlv_atomic_update_fifo(struct intel_atomic_state *state,
+>>  	const struct vlv_fifo_state *fifo_state =
+>>  		&crtc_state->wm.vlv.fifo_state;
+>>  	int sprite0_start, sprite1_start, fifo_size;
+>> +	u32 dsparb, dsparb2, dsparb3;
+>>  
+>>  	if (!crtc_state->fifo_changed)
+>>  		return;
+>> @@ -1994,7 +1995,6 @@ static void vlv_atomic_update_fifo(struct intel_atomic_state *state,
+>>  	spin_lock(&uncore->lock);
+>>  
+>>  	switch (crtc->pipe) {
+>> -		u32 dsparb, dsparb2, dsparb3;
+>>  	case PIPE_A:
+>>  		dsparb = intel_uncore_read_fw(uncore, DSPARB);
+>>  		dsparb2 = intel_uncore_read_fw(uncore, DSPARB2);
+>> -- 
+>> 2.20.1
+>> 
+>> 
+>> -- 
+>> Kees Cook
+>> _______________________________________________
+>> Intel-gfx mailing list
+>> Intel-gfx@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
 
-I am desperately in keen need of assistance and I have summoned up
-courage to contact you for this task, you must not fail me and the
-millions of the poor people in our todays WORLD. This is no stolen
-money and there are no dangers involved,100% RISK FREE with full legal
-proof. Please if you would be able to use the funds for the Charity
-works kindly let me know immediately.I will appreciate your utmost
-confidentiality and trust in this matter to accomplish my heart
-desire, as I don't want anything that will jeopardize my last wish. I
-want you to take 15 percent of the total money for your personal use
-while 85% of the money will go to charity.I will appreciate your
-utmost confidentiality and trust in this matter to accomplish my heart
-desire, as I don't want anything that will jeopardize my last wish.
-
-
-kindly respond for further details.
-
-Thanks and God bless you,
-
-Mrs Elodie Antoine
+-- 
+Jani Nikula, Intel Open Source Graphics Center
