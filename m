@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F294E1699B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 20:30:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7742E1699B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 20:30:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbgBWTaP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 14:30:15 -0500
-Received: from foss.arm.com ([217.140.110.172]:51476 "EHLO foss.arm.com"
+        id S1727366AbgBWTaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 14:30:18 -0500
+Received: from foss.arm.com ([217.140.110.172]:51484 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727229AbgBWTaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 14:30:12 -0500
+        id S1727306AbgBWTaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 14:30:13 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D23E330E;
-        Sun, 23 Feb 2020 11:30:11 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E9F53FEC;
+        Sun, 23 Feb 2020 11:30:12 -0800 (PST)
 Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D28083F6CF;
-        Sun, 23 Feb 2020 11:30:10 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 11AE13F6CF;
+        Sun, 23 Feb 2020 11:30:11 -0800 (PST)
 From:   Qais Yousef <qais.yousef@arm.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     "Paul E . McKenney" <paulmck@kernel.org>,
         Qais Yousef <qais.yousef@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 12/15] firmware: psci: Replace cpu_up/down with add/remove_cpu
-Date:   Sun, 23 Feb 2020 19:29:39 +0000
-Message-Id: <20200223192942.18420-13-qais.yousef@arm.com>
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 13/15] torture: Replace cpu_up/down with add/remove_cpu
+Date:   Sun, 23 Feb 2020 19:29:40 +0000
+Message-Id: <20200223192942.18420-14-qais.yousef@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200223192942.18420-1-qais.yousef@arm.com>
 References: <20200223192942.18420-1-qais.yousef@arm.com>
@@ -46,36 +46,57 @@ This also prepares to make cpu_up/down a private interface for anything
 but the cpu subsystem.
 
 Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-CC: Mark Rutland <mark.rutland@arm.com>
-CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC: linux-arm-kernel@lists.infradead.org
+CC: Davidlohr Bueso <dave@stgolabs.net>
+CC: "Paul E. McKenney" <paulmck@kernel.org>
+CC: Josh Triplett <josh@joshtriplett.org>
 CC: linux-kernel@vger.kernel.org
 ---
- drivers/firmware/psci/psci_checker.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/torture.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/firmware/psci/psci_checker.c b/drivers/firmware/psci/psci_checker.c
-index 6a445397771c..873841af8d57 100644
---- a/drivers/firmware/psci/psci_checker.c
-+++ b/drivers/firmware/psci/psci_checker.c
-@@ -84,7 +84,7 @@ static unsigned int down_and_up_cpus(const struct cpumask *cpus,
+diff --git a/kernel/torture.c b/kernel/torture.c
+index 7c13f5558b71..a479689eac73 100644
+--- a/kernel/torture.c
++++ b/kernel/torture.c
+@@ -97,7 +97,7 @@ bool torture_offline(int cpu, long *n_offl_attempts, long *n_offl_successes,
+ 			 torture_type, cpu);
+ 	starttime = jiffies;
+ 	(*n_offl_attempts)++;
+-	ret = cpu_down(cpu);
++	ret = remove_cpu(cpu);
+ 	if (ret) {
+ 		if (verbose)
+ 			pr_alert("%s" TORTURE_FLAG
+@@ -148,7 +148,7 @@ bool torture_online(int cpu, long *n_onl_attempts, long *n_onl_successes,
+ 			 torture_type, cpu);
+ 	starttime = jiffies;
+ 	(*n_onl_attempts)++;
+-	ret = cpu_up(cpu);
++	ret = add_cpu(cpu);
+ 	if (ret) {
+ 		if (verbose)
+ 			pr_alert("%s" TORTURE_FLAG
+@@ -192,17 +192,18 @@ torture_onoff(void *arg)
+ 	for_each_online_cpu(cpu)
+ 		maxcpu = cpu;
+ 	WARN_ON(maxcpu < 0);
+-	if (!IS_MODULE(CONFIG_TORTURE_TEST))
++	if (!IS_MODULE(CONFIG_TORTURE_TEST)) {
+ 		for_each_possible_cpu(cpu) {
+ 			if (cpu_online(cpu))
+ 				continue;
+-			ret = cpu_up(cpu);
++			ret = add_cpu(cpu);
+ 			if (ret && verbose) {
+ 				pr_alert("%s" TORTURE_FLAG
+ 					 "%s: Initial online %d: errno %d\n",
+ 					 __func__, torture_type, cpu, ret);
+ 			}
+ 		}
++	}
  
- 	/* Try to power down all CPUs in the mask. */
- 	for_each_cpu(cpu, cpus) {
--		int ret = cpu_down(cpu);
-+		int ret = remove_cpu(cpu);
- 
- 		/*
- 		 * cpu_down() checks the number of online CPUs before the TOS
-@@ -116,7 +116,7 @@ static unsigned int down_and_up_cpus(const struct cpumask *cpus,
- 
- 	/* Try to power up all the CPUs that have been offlined. */
- 	for_each_cpu(cpu, offlined_cpus) {
--		int ret = cpu_up(cpu);
-+		int ret = add_cpu(cpu);
- 
- 		if (ret != 0) {
- 			pr_err("Error occurred (%d) while trying "
+ 	if (maxcpu == 0) {
+ 		VERBOSE_TOROUT_STRING("Only one CPU, so CPU-hotplug testing is disabled");
 -- 
 2.17.1
 
