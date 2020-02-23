@@ -2,121 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3AB7169269
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 01:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A33A216926B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 01:01:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbgBVX5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 18:57:14 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:39294 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbgBVX5N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 18:57:13 -0500
-Received: by mail-qk1-f195.google.com with SMTP id e16so2744664qkl.6
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 15:57:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=x3kNv1Qo240QfKiRXPHrXVP2xwNuaSo/ZPmgca9G6zk=;
-        b=uI78GAmGOCdbULOlC+/g+i08hNp2OlgSgaGnHvs01r4HehJ0GPr61JHC/dvRK6UZbE
-         odgsNZCScJbd/v6Xzrn+5l2/FjC7M0Sd+DzD4oKsCZRh80NJvNLbrwkoPNPLvc2rxR1Y
-         O/GninOVEFOfwC9qOIR3ytdnsmuhwt4PL89Zp2TebcvPbIUvJk14wvbyEcs6joJ8OmUL
-         CeVchfd/mkvoTacyDyMXnWXVhx9Ci08RNr3+7XBaWwJ03iOMunv5jhxQ8lPUKcQKpUIf
-         Psj/UWz/KEk3MvevIZ5FxLcssPe2oOJofulQkwNXZZi9lp2Q4ZNtZAmKZ7TVeWoUfc0g
-         MqDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x3kNv1Qo240QfKiRXPHrXVP2xwNuaSo/ZPmgca9G6zk=;
-        b=RxUB+pYj8zcnDSBJZ/dBlUHtHi8A2xB3E0SRPMip8k0AIwi+fqpBH9wkG5Y/KIX17/
-         3zGcy4JvVG7GLRDW0BsITQoviTtDWgDwTOCaERwLBpJGvG0yHKZYleIQg3sYxUzu/mrQ
-         KpOOHc71CIRxWd1ej12t+PPGr8NSLn5PW7MNuP2zexKvRI0m/MnAAVFWLSLkUTw1FhTg
-         QaSBmGzXDhklh997W7BWAcUW8pLgUDp7lEQntuHiTupy6GPwAJJltZr7jOasl/vNRnZY
-         wI8xpt2nBLWG9egNrK0pHOVFS+vsBAM5HeKOKpGMARgu5XoWdLAEmSZfXITAo3MDtqhw
-         G9Yg==
-X-Gm-Message-State: APjAAAU+K5yQo5VN1gJS0mOCVmT1ODbgwVletugl4TWOkVb8+dPGSlYX
-        inmjywLIUPLK4e3W0z92e5I=
-X-Google-Smtp-Source: APXvYqwNiN9O2wYZSCOb0Hl7BHpnlRomDDawwk/27k2zInDHWUT/mh47f0i0Q+HicW2AQ9szw6uEXg==
-X-Received: by 2002:a37:4a46:: with SMTP id x67mr36506139qka.160.1582415832601;
-        Sat, 22 Feb 2020 15:57:12 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id o7sm3800660qkd.119.2020.02.22.15.57.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2020 15:57:12 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Sat, 22 Feb 2020 18:57:10 -0500
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Michael Matz <matz@suse.de>, Fangrui Song <maskray@google.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] x86/boot/compressed: Fix compressed kernel linking with
- lld
-Message-ID: <20200222235709.GA3786197@rani.riverdale.lan>
-References: <20200222164419.GB3326744@rani.riverdale.lan>
- <20200222171859.3594058-1-nivedita@alum.mit.edu>
- <20200222181413.GA22627@ubuntu-m2-xlarge-x86>
- <20200222185806.ywnqhfqmy67akfsa@google.com>
- <20200222201715.GA3674682@rani.riverdale.lan>
- <20200222210101.diqw4zt6lz42ekgx@google.com>
- <CAKwvOdn2pmRqJ+Rs+dhAPJy3hOb4VNn70XB40jcVgTeM8XmeFQ@mail.gmail.com>
+        id S1726984AbgBWABo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 19:01:44 -0500
+Received: from mail-eopbgr130054.outbound.protection.outlook.com ([40.107.13.54]:22401
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726881AbgBWABn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 19:01:43 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Q1Ocl/eyCAo0o4avnpq5ecN9yDL5TH6E/hiMP/5DbZF+YGW7BstieX6zdsk/8U1EbXRko4CZ+tLJX5jRSTXRWIrWGfHrG/zyXiWuVJOwrCCUEGY+twpykwcqPzKo2PqgaUfqLYiiVaGwy42ViWuKIRHwrMn4GbphD6wA4ZdwH7eYx8QEmj8Hp60mVzugAcfW9gWTA4LKzKYwI61QcFb2TZPj/LnvY5VhkAIGxEJKQpvzhD2PF2EK2L5BRxR88jL2FL+GSr/F7J4DyTJs9k44g7qIfVSPiy+m0Wnci6fLRFf2YWoY4KiLTptB9lyD1H+xcP0WXsCP4ozoDS58GaIGBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZwE/mmrHGrzg8quN3M2ttt3p23R1oFXKNG8rqxD47jc=;
+ b=IpJzCqIBUppgbM25LZVVgxrpblhCjrPV2oHwEIaT21dhyDvZEZmFwAFgENdWlfVL4h0XyWaSpM8YrO14und9UwIVCre4oKFfVcownIoS36/SfGoi4k+Pto4t/JnziQwH5d2t2VAbsvF/QHZilzkYcPvyh2xM7xiu0q0epnEW+JTdMCCLcnfEJlnL5TP6mwNilQpzcZobi+d2H794PE0tkmJV4bThHqNECgpUGD2PRkVEPLzCwA9Rq5/BwPJFAGcOXxmtaCNiCpJLlF3AAFIj3dbP3ifMiZONi859hhq4KmTbp6hZZoRnkZ4ksyVu+yfLghYk+jKfxP6vubNXbWQKcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZwE/mmrHGrzg8quN3M2ttt3p23R1oFXKNG8rqxD47jc=;
+ b=jnTHWOW50KqeAYMTaqgRSDXaVXQB2Ha7VGyde68zB7xvyByZP/FCb40GIDpF8hGqX5A0Vx78AsIRPF1SAWpmnMpXZG7+VyJGEFghposRuv0W504oh6QSCVY4XevLRpIPzP1+IPWXF8OEe0ZPc5Pg8noyRm6h8qIxnF2IyqRe8P8=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4785.eurprd04.prod.outlook.com (20.176.215.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2750.21; Sun, 23 Feb 2020 00:01:38 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2729.033; Sun, 23 Feb 2020
+ 00:01:38 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     "ohad@wizery.com" <ohad@wizery.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 3/9] remoteproc: add support to skip firmware load when
+ recovery
+Thread-Topic: [PATCH 3/9] remoteproc: add support to skip firmware load when
+ recovery
+Thread-Index: AQHV5vbtBcsi7uUDB0+hcFvNM8RaVqgl/3AAgAHq/5A=
+Date:   Sun, 23 Feb 2020 00:01:38 +0000
+Message-ID: <AM0PR04MB44810B020E8C4F099D8F47A588EF0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
+ <1582097265-20170-4-git-send-email-peng.fan@nxp.com>
+ <20200221184236.GA10368@xps15>
+In-Reply-To: <20200221184236.GA10368@xps15>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [117.82.241.14]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 458ee98e-6f4e-45c7-31d9-08d7b7f38e25
+x-ms-traffictypediagnostic: AM0PR04MB4785:|AM0PR04MB4785:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB478503D2AC58297EB7CA7D2188EF0@AM0PR04MB4785.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2331;
+x-forefront-prvs: 0322B4EDE1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(396003)(346002)(39860400002)(136003)(189003)(199004)(86362001)(52536014)(81166006)(8676002)(81156014)(8936002)(6916009)(7696005)(4326008)(54906003)(76116006)(66476007)(66946007)(66556008)(7416002)(5660300002)(71200400001)(316002)(64756008)(66446008)(6506007)(44832011)(26005)(186003)(2906002)(33656002)(55016002)(9686003)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4785;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: L2LsAKB3OMKFCfMX60UD+S3ROmC8lelaat7eu1NAJaE1hWPznZMAajG5yag9iKpZT5j5MDoqQr/lC6WfyfIbQ3PkBDF4hyohUgiEPxsW9yvhGXSEtgHhWhMEuN+JVZltwVCdlyrHFwLqg5k41wWPL6hU+I/2RaZNRtLVU9o7cLzcvtsSpxEHqhq055o/BGyb0H3AmleZtoJ7Uhof9LZhL7bFPfszkk+vaCQz1o0GfVspsVnXPFYgRDp5tqPvN0ZIKx2xZUhmvjNc4bGlWkkfliGaztBL8xGL2pYwMMVNRSl6UTTpVHxjwFyYFDb4rR2Y7CX9O2x0BEGAxsqvhnNkixaXTLM1dkV8e/w0LpsErs3/Utt/Y/LgG4/q6BC4NPOPjjb2S8K7n8k3N1xi7DCunfA3oMAufuAsFX/cf1awoWZZw00MACjUY01boDm+ZmBX
+x-ms-exchange-antispam-messagedata: MF6f8pFJx4pAbTJ8sRbTCfGVGfkmTA6zqNG1sgfFzQbxT0wMoU/51bppjga26axigMQiMwfROJDzrQl985Vb7mt/f6SKxA5lZov6uvqOQCRaw2MJtY0Dlx2YGNHJxsyP+me2YqxiWKgJkJ7JwYKeHA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdn2pmRqJ+Rs+dhAPJy3hOb4VNn70XB40jcVgTeM8XmeFQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 458ee98e-6f4e-45c7-31d9-08d7b7f38e25
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2020 00:01:38.5073
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GJovSucEXBk3laAdehfJbRjMtt0TrC5vFmIHN9HbTfPnHJTtrD9RDpkDGWg1YpoH94i3CGPPozgqLdHDRvx/SA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4785
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 03:33:20PM -0800, Nick Desaulniers wrote:
-> 
-> Ah, yikes.  For reference, please see my commit:
-> 
-> commit b059f801a937 ("x86/purgatory: Use CFLAGS_REMOVE rather than
-> reset KBUILD_CFLAGS")
-> 
-> I'm of the conviction that reassigning KBUILD_CFLAGS via `:=`, as
-> opposed to strictly filtering flags out of it or appending to it, is
-> an antipattern.  We very very carefully construct KBUILD_CFLAGS in top
-> level and arch/ Makefiles, and it's very easy to miss a flag or to
-> when you "reset" KBUILD_CFLAGS.
-> 
-> *Boom* Case in point.
-> 
-> I meant to audit the rest of the places we do this in the kernel, but
-> haven't had the time to revisit arch/x86/boot/compressed/Makefile.
-> 
-> For now, I suggest:
-> 1. revert `Commit TBD ("x86/boot/compressed: Remove unnecessary
-> sections from bzImage")` as it runs afoul differences in `*` for
-> `DISCARD` sections between linkers, as the intent was to remove
-> .eh_frame, of which it's less work to not generate them in the first
-> place via compiler flag, rather than generate then discard via linker.
-> 2. simply add `KBUILD_CFLAGS += -fno-asynchronous-unwind-tables` to
-> arch/x86/boot/compressed/Makefile with Fangrui's Sugguested-by tag.
-> 3. Remind me to revisit my proposed cleanup of
-> arch/x86/boot/compressed/Makefile (which eventually will undo #2). ;)
-> 4. tglx to remind me that my compiler is broken and that I should fix it. :P
+Hi Mathieu,
 
-Ok. For reference, note that arch/x86/boot/Makefile also redefines
-KBUILD_CFLAGS and missed this option, which is why commit 163159aad74d
-("x86/boot: Discard .eh_frame sections") was necessary.
+> Subject: Re: [PATCH 3/9] remoteproc: add support to skip firmware load wh=
+en
+> recovery
+>=20
+> Hi Peng,
+>=20
+> On Wed, Feb 19, 2020 at 03:27:39PM +0800, peng.fan@nxp.com wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > Remote processor such as M4 inside i.MX8QXP is not handled by Linux
+> > when it is configured to run inside its own hardware partition by
+> > system control unit(SCU). So even remote processor crash reset, it is
+> > handled by SCU, not linux. To such case, firmware load should be
+> > ignored, So introduce skip_fw_load_recovery and platform driver should
+> > set it if needed.
+>=20
+> For now I will not comment on the code - I just need clarifications on th=
+e
+> scenario.
+>=20
+> In the specific case you are trying to address here, I understand that wh=
+en the
+> M4 crashes, the SCU will recognize that and reload the MCU firmware. Does
+> the SCU also start the MCU or is that left to the remoteproc subsystem?
 
-There's also arch/x86/realmode/rm/Makefile as well.
+SCU starts M4. Linux has no permission to start/stop M4 from hardware
+perspective with hardware partition feature enabled.
 
-There's also a bunch of places where the CFLAGS_REMOVE have fallen
-behind the times -- they remove only -pg rather than CC_FLAGS_FTRACE.
-Probably harmless currently since the other flags should be ineffective
-without the -pg but might want to clean this up as well.
+Regards,
+Peng.
+
+>=20
+> Thanks,
+> Mathieu
+>=20
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >  drivers/remoteproc/remoteproc_core.c | 19 +++++++++++--------
+> >  include/linux/remoteproc.h           |  1 +
+> >  2 files changed, 12 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/remoteproc/remoteproc_core.c
+> > b/drivers/remoteproc/remoteproc_core.c
+> > index 876b5420a32b..ca310e3582bf 100644
+> > --- a/drivers/remoteproc/remoteproc_core.c
+> > +++ b/drivers/remoteproc/remoteproc_core.c
+> > @@ -1678,20 +1678,23 @@ int rproc_trigger_recovery(struct rproc *rproc)
+> >  	if (ret)
+> >  		goto unlock_mutex;
+> >
+> > -	/* generate coredump */
+> > -	rproc_coredump(rproc);
+> > +	if (!rproc->skip_fw_load_recovery) {
+> > +		/* generate coredump */
+> > +		rproc_coredump(rproc);
+> >
+> > -	/* load firmware */
+> > -	ret =3D request_firmware(&firmware_p, rproc->firmware, dev);
+> > -	if (ret < 0) {
+> > -		dev_err(dev, "request_firmware failed: %d\n", ret);
+> > -		goto unlock_mutex;
+> > +		/* load firmware */
+> > +		ret =3D request_firmware(&firmware_p, rproc->firmware, dev);
+> > +		if (ret < 0) {
+> > +			dev_err(dev, "request_firmware failed: %d\n", ret);
+> > +			goto unlock_mutex;
+> > +		}
+> >  	}
+> >
+> >  	/* boot the remote processor up again */
+> >  	ret =3D rproc_start(rproc, firmware_p);
+> >
+> > -	release_firmware(firmware_p);
+> > +	if (!rproc->skip_fw_load_recovery)
+> > +		release_firmware(firmware_p);
+> >
+> >  unlock_mutex:
+> >  	mutex_unlock(&rproc->lock);
+> > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> > index 4fd5bedab4fa..fe6ee253b385 100644
+> > --- a/include/linux/remoteproc.h
+> > +++ b/include/linux/remoteproc.h
+> > @@ -514,6 +514,7 @@ struct rproc {
+> >  	bool has_iommu;
+> >  	bool auto_boot;
+> >  	bool skip_fw_load;
+> > +	bool skip_fw_load_recovery;
+> >  	struct list_head dump_segments;
+> >  	int nb_vdev;
+> >  };
+> > --
+> > 2.16.4
+> >
