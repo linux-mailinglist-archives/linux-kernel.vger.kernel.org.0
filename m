@@ -2,80 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60B501694A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:32:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8953A169505
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:35:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbgBWCb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 21:31:57 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39563 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728062AbgBWCbs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:31:48 -0500
-Received: by mail-lj1-f194.google.com with SMTP id o15so6246747ljg.6
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 18:31:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lv+/zskqFVdIq9wYZU4Gj6+TZNyU98SMKPYNicpHw4g=;
-        b=PdzKp2iGm64BKP+6/6oZhsfTC0LquC9kExy0BphI8KeK0rEElaWmw6ds7noalV8Q5V
-         0+UHb2/Y5DN+HwP48Fr362DHpaGN35gYNg1QtVPfHYYSgcKmgPYEJSUsLdwOezgHJwYm
-         rbzVeBYbSzQqV+vTo3/JMPpkQRk/AZOMYdEOc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lv+/zskqFVdIq9wYZU4Gj6+TZNyU98SMKPYNicpHw4g=;
-        b=DJiC59Cg/JFb+Naa0SqLfjItVOHUm5e/gswxuDArBAYbIElLgutiHyBBlUNruWJT0y
-         EvykUK1TzBueHJMN39s2gHTreUdhfTN0QjsOo8dMy3wgqjOxfPX1yUm4YmGEamWB78Fl
-         I+nNnWuWt/YL15JrSIJN5nQwcp7ogBCMGuGwWi/A4Vm4DmBvuDDVEOIzxkqme/MyOcfR
-         RjoYPONCr7NNxZOUFbQi+gqRo4RhHVvxK8MNK8Smxl2aEhqJ4d6ERRuk0iLZOQ+rM/4n
-         KxOzhIJy3P3eQ+QpP/QDEBp3zX7SZu64NEFUxJujeDhKVssByfajbBhgBVWHOrVqz0La
-         E91w==
-X-Gm-Message-State: APjAAAU4f4fqGwpJhaemOvlV7GFL6+ulcUmDVdh8+H5NAAwDD3OUqSGj
-        b6P6tOI5Vgl3P56fpQAd68GVlWB07rM=
-X-Google-Smtp-Source: APXvYqyMhKXyju48sEcW/OnMED9K3kUbI5hcBxisniCu0SGaiwg3JKnAQGW0g5KAh6nMbLWrnDHApQ==
-X-Received: by 2002:a2e:80d1:: with SMTP id r17mr26809836ljg.292.1582425106954;
-        Sat, 22 Feb 2020 18:31:46 -0800 (PST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id b1sm4709993ljp.72.2020.02.22.18.31.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Feb 2020 18:31:46 -0800 (PST)
-Received: by mail-lf1-f44.google.com with SMTP id z5so4286997lfd.12
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 18:31:45 -0800 (PST)
-X-Received: by 2002:ac2:490e:: with SMTP id n14mr9091492lfi.142.1582425105432;
- Sat, 22 Feb 2020 18:31:45 -0800 (PST)
-MIME-Version: 1.0
-References: <20200223011154.GY23230@ZenIV.linux.org.uk> <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
- <20200223011626.4103706-24-viro@ZenIV.linux.org.uk>
-In-Reply-To: <20200223011626.4103706-24-viro@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 22 Feb 2020 18:31:29 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiJaHi2wzcJ8KBEtm3r_a2OVXHEvPnXMb_WCqA1cU3eGg@mail.gmail.com>
-Message-ID: <CAHk-=wiJaHi2wzcJ8KBEtm3r_a2OVXHEvPnXMb_WCqA1cU3eGg@mail.gmail.com>
-Subject: Re: [RFC][PATCH v2 24/34] finally fold get_link() into pick_link()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        id S1728720AbgBWCfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 21:35:01 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:39463 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728110AbgBWCfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:35:00 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48Q8Rk3hndz9sR4;
+        Sun, 23 Feb 2020 13:34:57 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1582425298;
+        bh=dRb5zLS6ETe8D++xeu8xpRqKrDs7UJOVhNBa9XQTBHY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=SpFbpKVOGZBGSO0xACHxQSWyW/acnCZyUhDincIsvQK2/Gra60X8gkh7YZz9SSmT/
+         3a0PnE4M56LRzvK9lt+35j1pkgI5ejvT+7zKRNkyB4Z6pxbTFs0RttLaiDC/8axJ6G
+         2iJA7YwhXXssoCeIXhL83dLOyKOQgyEaxjQ6Kjj9Z61Klocm2mWNVemfkdjJJ15izC
+         Qs+PaA75xE5GBnY4c0z7Oc0ZkSfTCeNz2icPEmKE+VRxyL8yl2XG2E5EVpQ3Syt7Oe
+         kPcWJ2bkMwsjPgKS0oURiGZ3m9ZQ76akE3AzlFehVlVADJWVgR/ldbYE9HQZISDrpu
+         dnIeGehhO4vSw==
+Date:   Sun, 23 Feb 2020 13:34:51 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: linux-next: Signed-off-by missing for commit in the csky tree
+Message-ID: <20200223133451.0c8c0f09@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/X9iNySGKKX_gbiMwpaVRvMG";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 5:23 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> From: Al Viro <viro@zeniv.linux.org.uk>
->
-> kill nd->link_inode, while we are at it
+--Sig_/X9iNySGKKX_gbiMwpaVRvMG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I like that part, but that pick_link() function is now the function from hell.
+Hi all,
 
-It's now something like a hundred lines of fairly dense code, isn't it?
+Commit
 
-Oh well. Maybe it's easier to follow since it's straight-line. So this
-is more of an observation than a complaint.
+  24cfce6b33f2 ("csky: Replace <linux/clk-provider.h> by <linux/of_clk.h>")
 
-             Linus
+is missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/X9iNySGKKX_gbiMwpaVRvMG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5R5MwACgkQAVBC80lX
+0GyG+Qf+MMuLExVboEViTvo8N/+g5AafwdhCM1fc+87FFTrqo8mvb/en1ky8rxYo
+zCkaKn9gpBuCy6RBb2SNBfY9OVwtBsxsr5D1boX/JgOMveOlEniMqwhVXUCFccfF
+vSSjOokdKB/5JkvmFglWyP0NcR0/qFvy+fnrvGMP1BtQVMK+hXSc0YU/OZpDESGG
+WxsOgs+eWPHH0fG9v2R58YWQL7uR/xe+z1XNiN/5j0kmuhgIIZZhEdIpnoyJkk3T
+l0rLluQt/ah23Iung7mPCpQTJhMdD+vXS2VFLTnXKJRnnrd+lJ05Ouyq4hdi/IGb
+A5/qdFr6AfPM2D01bvsVhh5nV74JUQ==
+=5gJ5
+-----END PGP SIGNATURE-----
+
+--Sig_/X9iNySGKKX_gbiMwpaVRvMG--
