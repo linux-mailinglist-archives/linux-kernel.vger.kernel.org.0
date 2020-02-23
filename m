@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E82481694C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:34:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E6991694B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:32:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbgBWCcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 21:32:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52208 "EHLO mail.kernel.org"
+        id S1727706AbgBWCXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 21:23:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728431AbgBWCXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:23:02 -0500
+        id S1728421AbgBWCXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:23:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB9C12071E;
-        Sun, 23 Feb 2020 02:23:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 981A8208C4;
+        Sun, 23 Feb 2020 02:23:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424581;
-        bh=g9RnykzEodxfWrp1WVCnoI0ktr7vw50NZU8MMja7NyI=;
+        s=default; t=1582424585;
+        bh=DRIj/511LI9YCCerkUGQuQURMrZ2X0geKBW/bOYrSwk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y87Rya1TBP8S+RjeFfC3SGQCfK39VR1RgAA1Tt21Ml30Bl442zkklGXEIv/EyTdQM
-         1K63s7SzIyVrBor025ZJi5ttsHzNfMq4OWVMq4XC8y+I3a5t2qg+qJ9DSCw1XU8TxB
-         6TxhnTLzYeEWHbF9o89jOluvmM6XJ0kmm+fC3xQw=
+        b=tT6I7qmb96XSR3nffMDZSi2LZ4+V6HpLkjGiMqs9sonosk4dGQZG/2z/8k26SC9zl
+         QGlbS5eN6rbJuUdlLe6m2FyhEBsHrm3f23T3c6mMHdf7C5XI/s0lyctf8mMfRnXZtx
+         4O2hnIiOs01xNzWdH0AyHp8aSqVAl6VKVkXZi92I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sung Lee <sung.lee@amd.com>, Tony Cheng <Tony.Cheng@amd.com>,
+Cc:     Yongqiang Sun <yongqiang.sun@amd.com>,
+        Eric Yang <eric.yang2@amd.com>,
         Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 21/50] drm/amd/display: Do not set optimized_require to false after plane disable
-Date:   Sat, 22 Feb 2020 21:22:06 -0500
-Message-Id: <20200223022235.1404-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 24/50] drm/amd/display: Limit minimum DPPCLK to 100MHz.
+Date:   Sat, 22 Feb 2020 21:22:09 -0500
+Message-Id: <20200223022235.1404-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200223022235.1404-1-sashal@kernel.org>
 References: <20200223022235.1404-1-sashal@kernel.org>
@@ -45,39 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sung Lee <sung.lee@amd.com>
+From: Yongqiang Sun <yongqiang.sun@amd.com>
 
-[ Upstream commit df36f6cf23ada812930afa8ee76681d4ad307c61 ]
+[ Upstream commit 6c81917a0485ee2a1be0dc23321ac10ecfd9578b ]
 
-[WHY]
-The optimized_require flag is needed to set watermarks and clocks lower
-in certain conditions. This flag is set to true and then set to false
-while programming front end in dcn20.
+[Why]
+Underflow is observed when plug in a 4K@60 monitor with
+1366x768 eDP due to DPPCLK is too low.
 
-[HOW]
-Do not set the flag to false while disabling plane.
+[How]
+Limit minimum DPPCLK to 100MHz.
 
-Signed-off-by: Sung Lee <sung.lee@amd.com>
-Reviewed-by: Tony Cheng <Tony.Cheng@amd.com>
+Signed-off-by: Yongqiang Sun <yongqiang.sun@amd.com>
+Reviewed-by: Eric Yang <eric.yang2@amd.com>
 Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/clk_mgr/dcn21/rn_clk_mgr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-index 937a8ba811603..e933f6a369f92 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-@@ -493,7 +493,6 @@ static void dcn20_plane_atomic_disable(struct dc *dc, struct pipe_ctx *pipe_ctx)
- 	dpp->funcs->dpp_dppclk_control(dpp, false, false);
+diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn21/rn_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn21/rn_clk_mgr.c
+index 787f94d815f42..dd92f9c295b45 100644
+--- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn21/rn_clk_mgr.c
++++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn21/rn_clk_mgr.c
+@@ -91,6 +91,12 @@ void rn_update_clocks(struct clk_mgr *clk_mgr_base,
+ 		rn_vbios_smu_set_min_deep_sleep_dcfclk(clk_mgr, clk_mgr_base->clks.dcfclk_deep_sleep_khz);
+ 	}
  
- 	hubp->power_gated = true;
--	dc->optimized_required = false; /* We're powering off, no need to optimize */
- 
- 	dc->hwss.plane_atomic_power_down(dc,
- 			pipe_ctx->plane_res.dpp,
++	// workaround: Limit dppclk to 100Mhz to avoid lower eDP panel switch to plus 4K monitor underflow.
++	if (!IS_DIAG_DC(dc->ctx->dce_environment)) {
++		if (new_clocks->dppclk_khz < 100000)
++			new_clocks->dppclk_khz = 100000;
++	}
++
+ 	if (should_set_clock(safe_to_lower, new_clocks->dppclk_khz, clk_mgr->base.clks.dppclk_khz)) {
+ 		if (clk_mgr->base.clks.dppclk_khz > new_clocks->dppclk_khz)
+ 			dpp_clock_lowered = true;
 -- 
 2.20.1
 
