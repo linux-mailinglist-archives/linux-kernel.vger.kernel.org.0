@@ -2,181 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 621011695A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 04:46:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C4BB1695AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 04:54:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbgBWDpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 22:45:44 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:60769 "EHLO
+        id S1727166AbgBWDyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 22:54:25 -0500
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:44435 "EHLO
         new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727024AbgBWDph (ORCPT
+        by vger.kernel.org with ESMTP id S1726983AbgBWDyZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 22:45:37 -0500
+        Sat, 22 Feb 2020 22:54:25 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id EFD236A2F;
-        Sat, 22 Feb 2020 22:45:35 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sat, 22 Feb 2020 22:45:35 -0500
+        by mailnew.nyi.internal (Postfix) with ESMTP id D30BD141E;
+        Sat, 22 Feb 2020 22:54:23 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sat, 22 Feb 2020 22:54:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=4ICm2QiFFrbgz
-        aDEtX2KVwTyX394xQzW/xM+H9iBcqc=; b=agoHeIJBkFE8vM94ydHTpyvjB0qFM
-        A1aev+Pi8n9nMYjxLGXQ8iDyzOiC78x+wn+GGx8bsoTBZgo6HFsZwWapTJP0qyMC
-        d3Abr2s/bjgxDfDCSkett3ede2X1EDKkEy/eAY/81KOc+MLkd5R3ML5Hp8/WmClv
-        8AOQbJtEGqVdqVGJllDo291TytjBkGKmaeWrZMOtEOcTupzzvG0ENZDbxrDjXCln
-        4hsq7CHtUitYTv8aSw+4N8fj3PVCCkO/N9iA3DlW8T0Oh6Zz9kegtLlaHAiRRntm
-        RerTMI4ZSN+lfHajI8UvgXjZZLG1jUEVZ9xLVeaiu5bDC/AbjW9bh3OKQ==
+        subject:to:cc:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm2; bh=U
+        tQ4ZCxViuOYrkl32VfE2T3Vc4NBhu7cH68gein0hZ8=; b=eH3O+UhtcNk39WqG7
+        7++FXGFTX+4Z2PcXe3xjcwJsOODd4hxFQavwi0/mUwTIoxG9JBuAOmvs5HQJt990
+        QIgs1pI/FaTRd3ev0T4IL+aTvVevCQh7OFSFWKaP/KY94r+EE9D8RHkP90X8PxFC
+        oBLmR6XHSy54HBa/H14DQ7lYQ0J/Ydfp27ocjSVODTDsMZjhEZb10ccofds6YtNi
+        oaCndzsfnBoKSmoY5aRfQXCd4KQVTdffKFdF/fHmCrQVYwGy8OLV2MowadGuAqHn
+        YIqEA+IgJP8fQu88VichUhpYSu9m/bVcLBBWNImzHZQ0a/ObPiE6NmPeg6oxGd8W
+        K6ySQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=4ICm2QiFFrbgzaDEtX2KVwTyX394xQzW/xM+H9iBcqc=; b=wMBMws10
-        Ui0bo5OH5A12RmpyiDmmKuvRD+LID9AY1Nh3UlT5gbxz3QecDa6K3QyBpspb8uPZ
-        6XQQMceuurNnNKqnViNatEjjaVFX9LDi8RCcJvo8Re8q01JvsOZWTZCnJm3wYaDw
-        EGBc1MdPOn+kw7zA5R/5aktN1pb0fArKLMgQpVE29IroiKSjv1GKDEHy7iCiUC2D
-        vnof129FN904ItAhaUTJ+trJE3t5jTXFx9qmquKiwbWOXzOlYhde5MfS9aj0eh8H
-        n4XMA+Ovd36OD3xOwK1mk0CTKFh7haqtXeFG+5qo6y4ONxxBv/FFd9BtIe04e53Q
-        odY5tYWt8SMg5w==
-X-ME-Sender: <xms:X_VRXgn8aeoKZE50Ng_InK50I28l8xaYg78eezvHXUqtUKB95GW0fA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkeejgdeitdcutefuodetggdotefrodftvf
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=UtQ4ZCxViuOYrkl32VfE2T3Vc4NBhu7cH68gein0h
+        Z8=; b=GyuP/YCv6RLhHx+tybgAMZbAWarsj8Ii4R+BOab0Cw4iOfoJaifZtVc/6
+        5Fd1ZIpBORlLHlM5LdItWCbg4TqjJbGHEkASpjlrm+3gGzqj/BwAaZuqBOH0YZxx
+        XM34+pmlF976U4TwYysQcVWaDYNCrA75o/b6cM0a0sM3lmw8zmvMMPJXYX3Fpv4I
+        yYjTsV717azlzXouTRBaux6jcJMDECw07ZfLymaJ80a20T9FvQsSwAYXw9m6V4Vd
+        pFLgMxSD48vcLM7SooibOaf/fbhrA+Hv9V84TE7nSgj9bXlkh7UwPQfclWjLbRGz
+        K9IGLkbdVO+s8xbaE9j7kamSgE9ZQ==
+X-ME-Sender: <xms:avdRXiuiOsH3o0DSLtQ5DE1m9D-9YuzK8izj4qTuqAIMxZEQ3TuaEQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkeejgdeiudcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
-    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
-    ejtddrudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
-    mhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:X_VRXsJSh-_Xp4KYzi3-OayVKioWZvt8DzXLcVhki34Uggvppzlm_w>
-    <xmx:X_VRXhaSzyYnVEZCLJydXyRn5fZFVSKcQ2m9qDLco6IB3pY3Uu8pxw>
-    <xmx:X_VRXuaWfJzW42Ckaf-qWfVnCgeracm8-yZHTygKEIEH_HE3xsJ_ww>
-    <xmx:X_VRXt0GR8nimMRxItRqt9DqUWcD-c7x7BsXaoVI7CBTNDXPPhgVag>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5F4303060FD3;
-        Sat, 22 Feb 2020 22:45:35 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Mark Brown <broonie@kernel.org>,
+    fjughrpefuvfhfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghmuhgv
+    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
+    epjedtrddufeehrddugeekrdduhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghr
+    rghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:avdRXn51utho87JkjiCEVKsYSyaYUpq6F3T40tibOEYao28SHO_3Bw>
+    <xmx:avdRXjN-2TXP4CKuwakTE1BqjwcSJb_74ylsLvfxdtvCfcsv01adtw>
+    <xmx:avdRXrLkOPwWjIuYPLMnhvX-YnhSwzeK0a3As4WIj5J_T5iK2msXFw>
+    <xmx:b_dRXgzcsgknp-tn_3NniTdvYlav4zzWm91Lza6tirW8ghCKDJ3peg>
+Received: from [192.168.50.169] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4E23C3280059;
+        Sat, 22 Feb 2020 22:54:18 -0500 (EST)
+Subject: Re: [PATCH 5/8] ASoC: sun50i-codec-analog: Enable DAPM for headphone
+ switch
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Ondrej Jirman <megous@megous.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v3 3/3] ASoC: simple-card: Add support for codec2codec DAI links
-Date:   Sat, 22 Feb 2020 21:45:33 -0600
-Message-Id: <20200223034533.1035-4-samuel@sholland.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200223034533.1035-1-samuel@sholland.org>
-References: <20200223034533.1035-1-samuel@sholland.org>
+        Maxime Ripard <mripard@kernel.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20200217021813.53266-1-samuel@sholland.org>
+ <20200217021813.53266-6-samuel@sholland.org>
+ <CAGb2v65v=wPJNxPfOzp2bcevk0qoDiW-+KFBO1MKHz6gE86DPQ@mail.gmail.com>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <f0037c9d-e3b5-3fa9-1f1a-d52d26de3ed7@sholland.org>
+Date:   Sat, 22 Feb 2020 21:54:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGb2v65v=wPJNxPfOzp2bcevk0qoDiW-+KFBO1MKHz6gE86DPQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Following the example in cb2cf0de1174 ("ASoC: soc-core: care Codec <->
-Codec case by non_legacy_dai_naming"), determine if a DAI link contains
-only codec DAIs by examining the non_legacy_dai_naming flag in each
-DAI's component.
+On 2/17/20 1:17 AM, Chen-Yu Tsai wrote:
+> On Mon, Feb 17, 2020 at 10:18 AM Samuel Holland <samuel@sholland.org> wrote:
+>>
+>> By including the headphone mute switch to the DAPM graph, both the
+>> headphone amplifier and the Mixer/DAC inputs can be powered off when
+>> the headphones are muted.
+>>
+>> The mute switch is between the source selection and the amplifier,
+>> as per the diagram in the SoC manual.
+>>
+>> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> 
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> 
+> BTW, have you also considered tying in the headphone volume control?
+> It also has a mute setting.
 
-For now, we assume there is only one or a small set of valid PCM stream
-parameters, so num_params == 1 is good enough. We also assume that the
-same params are valid for all supported streams. params is set to the
-subset of parameters common among all DAIs, and then the existing code
-automatically chooses the highest quality of the remaining values when
-the link is brought up.
+As far as I can tell, setting a volume control to its "mute" level has no effect
+on the DAPM power state. So I didn't add PGA widgets for the volume controls on
+either codec. I can add them if there's some benefit to doing so.
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- Documentation/sound/soc/codec-to-codec.rst |  9 +++-
- sound/soc/generic/simple-card-utils.c      | 49 ++++++++++++++++++++++
- 2 files changed, 56 insertions(+), 2 deletions(-)
+> ChenYu
+> 
 
-diff --git a/Documentation/sound/soc/codec-to-codec.rst b/Documentation/sound/soc/codec-to-codec.rst
-index 810109d7500d..4eaa9a0c41fc 100644
---- a/Documentation/sound/soc/codec-to-codec.rst
-+++ b/Documentation/sound/soc/codec-to-codec.rst
-@@ -104,5 +104,10 @@ Make sure to name your corresponding cpu and codec playback and capture
- dai names ending with "Playback" and "Capture" respectively as dapm core
- will link and power those dais based on the name.
- 
--Note that in current device tree there is no way to mark a dai_link
--as codec to codec. However, it may change in future.
-+A dai_link in a "simple-audio-card" will automatically be detected as
-+codec to codec when all DAIs on the link belong to codec components.
-+The dai_link will be initialized with the subset of stream parameters
-+(channels, format, sample rate) supported by all DAIs on the link. Since
-+there is no way to provide these parameters in the device tree, this is
-+mostly useful for communication with simple fixed-function codecs, such
-+as a Bluetooth controller or cellular modem.
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index 9b794775df53..54294367a40f 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -331,6 +331,51 @@ static int asoc_simple_init_dai(struct snd_soc_dai *dai,
- 	return 0;
- }
- 
-+static int asoc_simple_init_dai_link_params(struct snd_soc_pcm_runtime *rtd,
-+					    struct simple_dai_props *dai_props)
-+{
-+	struct snd_soc_dai_link *dai_link = rtd->dai_link;
-+	struct snd_soc_component *component;
-+	struct snd_soc_rtdcom_list *rtdcom;
-+	struct snd_soc_pcm_stream *params;
-+	struct snd_pcm_hardware hw;
-+	int i, ret, stream;
-+
-+	/* Only codecs should have non_legacy_dai_naming set. */
-+	for_each_rtd_components(rtd, i, component) {
-+		if (!component->driver->non_legacy_dai_naming)
-+			return 0;
-+	}
-+
-+	/* Assumes the capabilities are the same for all supported streams */
-+	for (stream = 0; stream < 2; stream++) {
-+		ret = snd_soc_runtime_calc_hw(rtd, &hw, stream);
-+		if (ret == 0)
-+			break;
-+	}
-+
-+	if (ret < 0) {
-+		dev_err(rtd->dev, "simple-card: no valid dai_link params\n");
-+		return ret;
-+	}
-+
-+	params = devm_kzalloc(rtd->dev, sizeof(*params), GFP_KERNEL);
-+	if (!params)
-+		return -ENOMEM;
-+
-+	params->formats = hw.formats;
-+	params->rates = hw.rates;
-+	params->rate_min = hw.rate_min;
-+	params->rate_max = hw.rate_max;
-+	params->channels_min = hw.channels_min;
-+	params->channels_max = hw.channels_max;
-+
-+	dai_link->params = params;
-+	dai_link->num_params = 1;
-+
-+	return 0;
-+}
-+
- int asoc_simple_dai_init(struct snd_soc_pcm_runtime *rtd)
- {
- 	struct asoc_simple_priv *priv = snd_soc_card_get_drvdata(rtd->card);
-@@ -347,6 +392,10 @@ int asoc_simple_dai_init(struct snd_soc_pcm_runtime *rtd)
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = asoc_simple_init_dai_link_params(rtd, dai_props);
-+	if (ret < 0)
-+		return ret;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(asoc_simple_dai_init);
--- 
-2.24.1
-
+Regards,
+Samuel
