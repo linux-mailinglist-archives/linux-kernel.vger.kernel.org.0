@@ -2,113 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E52B1698D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 18:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4B531698F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 18:29:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbgBWR0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 12:26:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60708 "EHLO mail.kernel.org"
+        id S1727589AbgBWR32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 12:29:28 -0500
+Received: from vps.xff.cz ([195.181.215.36]:44440 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726302AbgBWR0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 12:26:08 -0500
-Received: from localhost (95-141-97-180.as16211.net [95.141.97.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20A652067D;
-        Sun, 23 Feb 2020 17:26:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582478766;
-        bh=/ZkETHgTdYzbHnFqULWsjzMztm5RWK6yU5jFZTyLP1M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T3YAJkNMAl3s5FiFsAcCORC/PFvKxlYmrAz6iyrywPDyzc7a6oJ6mJzMa3ZDVeZip
-         1tpvniBBXwnNyyoWKnpt8O39QujKJ9iqxc77z1ibflIbLSPv7HvD4HS8LVgD9ViEdf
-         ErXeHQQczK6+CeeV8roE6m9SqtgBWOa9y/+kzat0=
-Date:   Sun, 23 Feb 2020 18:26:04 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        "tony@atomide.com" <tony@atomide.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.4 000/344] 5.4.22-stable review
-Message-ID: <20200223172604.GC349989@kroah.com>
-References: <20200221072349.335551332@linuxfoundation.org>
- <529a5a4a-974e-995a-9556-c2a14d09bb5d@nvidia.com>
- <CA+G9fYv-KC0v++YsyXR-rhC2JBGUfhNGD+XYaZjN3fJSX1x_mg@mail.gmail.com>
- <f671fbf6-1cd5-ae8a-82e7-d3aba63e9840@ti.com>
+        id S1726740AbgBWR31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 12:29:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1582478965; bh=7OA3oWwjm5heb675PLFXd94nLmDlc4h89uOCL49bwbE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=do7Ry5KQdS859DmYMjl2iQfQvJErf8fAL4oA6Avl3X2DoA/1JG0G877TeQdtF7MjH
+         pmgsmUwo+c+Ue3MLERcZtsdRm6IVip1pQUknf0rc34bOVMJkp0mRzAoaj/iQXLtrIe
+         A0H/a/En2wRe7NW0nhu9rahYeaHpBnKm46z2T2aQ=
+From:   Ondrej Jirman <megous@megous.com>
+To:     linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     Ondrej Jirman <megous@megous.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Georgii Staroselskii <georgii.staroselskii@emlid.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Martijn Braam <martijn@brixit.nl>, Luca Weiss <luca@z3ntu.xyz>,
+        Bhushan Shah <bshah@kde.org>, Icenowy Zheng <icenowy@aosc.io>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] Add support for Pine64 PinePhone Linux Smartphone
+Date:   Sun, 23 Feb 2020 18:29:13 +0100
+Message-Id: <20200223172916.843379-1-megous@megous.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f671fbf6-1cd5-ae8a-82e7-d3aba63e9840@ti.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 01:57:20PM +0200, Tero Kristo wrote:
-> On 21/02/2020 13:17, Naresh Kamboju wrote:
-> > On Fri, 21 Feb 2020 at 15:34, Jon Hunter <jonathanh@nvidia.com> wrote:
-> > > 
-> > > 
-> > > On 21/02/2020 07:36, Greg Kroah-Hartman wrote:
-> > > > This is the start of the stable review cycle for the 5.4.22 release.
-> > > > There are 344 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Sun, 23 Feb 2020 07:19:49 +0000.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > > The whole patch series can be found in one patch at:
-> > > >        https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.22-rc1.gz
-> > > > or in the git tree and branch at:
-> > > >        git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > > > and the diffstat can be found below.
-> > > > 
-> > > > thanks,
-> > > > 
-> > > > greg k-h
-> > > > 
-> > > > -------------
-> > > > Pseudo-Shortlog of commits:
-> > > 
-> > > ...
-> > > 
-> > > > Tero Kristo <t-kristo@ti.com>
-> > > >      ARM: OMAP2+: pdata-quirks: add PRM data for reset support
-> > > 
-> > > 
-> > > The above commit is generating the following build error on ARM systems ...
-> > > 
-> > > dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/mach-omap2/pdata-quirks.c:27:10: fatal error: linux/platform_data/ti-prm.h: No such file or directory
-> > >   #include <linux/platform_data/ti-prm.h>
-> > >            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > 
-> > build error:
-> > 
-> > ../arch/arm/mach-omap2/pdata-quirks.c:27:10: fatal error:
-> > linux/platform_data/ti-prm.h: No such file or directory
-> >     27 | #include <linux/platform_data/ti-prm.h>
-> >        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > compilation terminated.
-> > make[2]: *** [../scripts/Makefile.build:265:
-> > arch/arm/mach-omap2/pdata-quirks.o] Error 1
-> > 
-> > With these below three patches, it applies cleanly and builds.
-> > But I'm not sure these are not expected to get into stable rc 5.4 branch.
-> 
-> Yeah, without PRM driver the pdata-quirk patch should not have been picked
-> up. I wonder why it ended up in stable. Tony, any ideas?
+This series adds an initial support for Pine64
+PinePhone.
 
-I've dropped the offending patch now, sorry about that.
+Please take a look.
 
-greg k-h
+thank you and regards,
+  Ondrej Jirman
+
+Ondrej Jirman (3):
+  arm64: dts: sun50i-a64: Add i2c2 pins
+  dt-bindings: arm: sunxi: Add PinePhone 1.0 and 1.1 bindings
+  arm64: dts: allwinner: Add initial support for Pine64 PinePhone
+
+ .../devicetree/bindings/arm/sunxi.yaml        |  10 +
+ arch/arm64/boot/dts/allwinner/Makefile        |   2 +
+ .../allwinner/sun50i-a64-pinephone-1.0.dts    |  11 +
+ .../allwinner/sun50i-a64-pinephone-1.1.dts    |  11 +
+ .../dts/allwinner/sun50i-a64-pinephone.dtsi   | 385 ++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |   5 +
+ 6 files changed, 424 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.0.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.1.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+
+-- 
+2.25.1
+
