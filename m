@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F32731694CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:34:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A77F31694CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:34:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728680AbgBWCdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 21:33:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52146 "EHLO mail.kernel.org"
+        id S1728636AbgBWCdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 21:33:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728313AbgBWCW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:22:58 -0500
+        id S1728406AbgBWCXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:23:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3483524676;
-        Sun, 23 Feb 2020 02:22:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FBF322464;
+        Sun, 23 Feb 2020 02:22:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424577;
-        bh=nWKwmnt7V+VmRBijgT0w4CKnk9ky7pcdeZKE9vO47Bg=;
+        s=default; t=1582424580;
+        bh=b0T7XcKyF7fdfoO4CCzBX1iv4p+VefjFERsskt64TYA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BJ5mDGI3ayY8XIyUMBUmZjGE2SX+nSvkZAiyXSIViMV60h/3iYuCu0+j4l2YLinZd
-         Kglj6MSBn2/7RkAM3dZYWO4NbJA8om3BWRZfgNBuhfm3fBVdCWqlqEraeixQ2bz4KA
-         qUQoEha0/6R2w41n7I5wyKEYP8yH2Z1c59ZqZdlw=
+        b=SubP6+ehdXAUX7Da6ZZ/IuGDkVkuKQMk9DIffcj0mvc16lc6Vj8F8j4R5OIgCSWrr
+         QxH49UWAVijsHvHIa2OAHAx6/HBE1hvzO0CTnbDKEmPKLiFbasdJsQringWaRM9T/k
+         /yfWMK/RzM+1xNPbQyA0MNVA1SWlbBxjQTwmdGSk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 18/50] perf/x86/msr: Add Tremont support
-Date:   Sat, 22 Feb 2020 21:22:03 -0500
-Message-Id: <20200223022235.1404-18-sashal@kernel.org>
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 20/50] ARM: dts: sti: fixup sound frame-inversion for stihxxx-b2120.dtsi
+Date:   Sat, 22 Feb 2020 21:22:05 -0500
+Message-Id: <20200223022235.1404-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200223022235.1404-1-sashal@kernel.org>
 References: <20200223022235.1404-1-sashal@kernel.org>
@@ -45,38 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-[ Upstream commit 0aa0e0d6b34b89649e6b5882a7e025a0eb9bd832 ]
+[ Upstream commit f24667779b5348279e5e4328312a141a730a1fc7 ]
 
-Tremont is Intel's successor to Goldmont Plus. SMI_COUNT MSR is also
-supported.
+frame-inversion is "flag" not "uint32".
+This patch fixup it.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Link: https://lkml.kernel.org/r/1580236279-35492-3-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Reviewed-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/msr.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/stihxxx-b2120.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/msr.c b/arch/x86/events/msr.c
-index 6f86650b3f77d..a949f6f55991d 100644
---- a/arch/x86/events/msr.c
-+++ b/arch/x86/events/msr.c
-@@ -75,8 +75,9 @@ static bool test_intel(int idx, void *data)
- 
- 	case INTEL_FAM6_ATOM_GOLDMONT:
- 	case INTEL_FAM6_ATOM_GOLDMONT_D:
--
- 	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
-+	case INTEL_FAM6_ATOM_TREMONT_D:
-+	case INTEL_FAM6_ATOM_TREMONT:
- 
- 	case INTEL_FAM6_XEON_PHI_KNL:
- 	case INTEL_FAM6_XEON_PHI_KNM:
+diff --git a/arch/arm/boot/dts/stihxxx-b2120.dtsi b/arch/arm/boot/dts/stihxxx-b2120.dtsi
+index 60e11045ad762..d051f080e52ec 100644
+--- a/arch/arm/boot/dts/stihxxx-b2120.dtsi
++++ b/arch/arm/boot/dts/stihxxx-b2120.dtsi
+@@ -46,7 +46,7 @@
+ 			/* DAC */
+ 			format = "i2s";
+ 			mclk-fs = <256>;
+-			frame-inversion = <1>;
++			frame-inversion;
+ 			cpu {
+ 				sound-dai = <&sti_uni_player2>;
+ 			};
 -- 
 2.20.1
 
