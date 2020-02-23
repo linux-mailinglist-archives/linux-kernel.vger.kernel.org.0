@@ -2,61 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E93A169ABF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:18:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CF1E169AC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:18:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbgBWXSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 18:18:39 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35710 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727837AbgBWXSg (ORCPT
+        id S1727893AbgBWXSq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 18:18:46 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35874 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727148AbgBWXSh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 18:18:36 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w12so8248404wrt.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 15:18:35 -0800 (PST)
+        Sun, 23 Feb 2020 18:18:37 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z3so8240078wru.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 15:18:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=d52I2cg4cQGyAeOzWmCnImcQNbb68kdLDPhQMpl0hX0=;
-        b=iRYBDkeQ4db5W3MUDu0oR5U/Kb/B0rCA+HzQGJSDMO1cEzbzEJK2wWaP5MDxjSKr1h
-         j1rOgh/9eTwk+Xu5o7uVeYMmTjEZZNCLqkcL1nfYmCgwYopCzLPlI/g22fJGCLbnJqeo
-         AEYr421i8eeHOjanFCkblFnv2Is0kxbP+es1kQLIRF4zI2T0Y5Wp9mikAunnv3U02FvH
-         5Nydert3ZrjQSiGEyy6E28QTzou9vF3s9+68a08XhtCKA7eKcObub1NhHvBihg32j8+1
-         KwqRUvHVR6Sy4+Rzdy7snQEJsahkHApsArExqEovxJWjqx3WxIom+5bZ1a2UBsm+Ymb8
-         Zl8A==
+        bh=+JsFjKcOu7jW/M1qrYTdBQPFBg6qfbgh2FpuNfUuXtg=;
+        b=Ib/ipaTmEoXe9NTmOlqz8W7PT38FAENFsjMIGAsVjg0W6UlWPO4+jbIJSv6XxMsBCO
+         zZzj4A7rmOCqAa6sMqPaNgPBOCv2z2Us8/cSMNmjtCSeBWYpzENgrLlXlTSfZQF2kfR9
+         cfRg7jXaU8VY56kT/ak2YgSdY6cnGhyDZUDLWKFxYPijI4kewwoap4UlC1O+rrx4zJPz
+         Nlc0S2kzqpV0rqkKYh+yM+/mtXplVppLtisfT2Vxj+zUUyCkcMDLZuNH80f1/0hdTGzV
+         sJfazOx6VfBJBvB877pyNRW20Ko/pbROOEg+rclygzDMLnhPovnDbJBXXzcS06v73pO9
+         REgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=d52I2cg4cQGyAeOzWmCnImcQNbb68kdLDPhQMpl0hX0=;
-        b=LB+LnjkZ52X3SK51sPdNjjgAL4ln8nQlvI3R4ocOaD3akcO8kVGWrC/aiB2jtat1hF
-         /mXnNgf/kXrz1Di2UIMKch5U+in7ZLZvOsmjoit36e0YiedzM6TIvhlIFry/npFrOQOM
-         dFUJS6ie7C/EdJObGg/Pa4KXmwUThto9wYkVB77EJUdVL9W24dScXXgSXh6LXDqyCsJZ
-         Kc1XES+RRv9grxlSpbroJRFXRTwTWq6Qv26B2pnZFutmvonNmsSKaqFqiMSgb3+1zjcE
-         k7OAcNZiT9W4tlsyZvJIMCk2+QWFB3Gd7bhLZU+1SHSoAsra66CquUK+wCnPEeSaxeh4
-         6cKQ==
-X-Gm-Message-State: APjAAAVrIliOINl7u5B24HuHNTlJ62LO1sS0zTwzZ6xgUhjTzPLCqeZ1
-        hNImPLIvB+eaWPor7Qq2dQ==
-X-Google-Smtp-Source: APXvYqzpMefoVwUp3yuLfioLy/yTmYHOYMZwjTho0L2njh6fr9gV3sTHqGTH4o32XE/47kp46mrc/w==
-X-Received: by 2002:a5d:5267:: with SMTP id l7mr61272635wrc.84.1582499914687;
-        Sun, 23 Feb 2020 15:18:34 -0800 (PST)
+        bh=+JsFjKcOu7jW/M1qrYTdBQPFBg6qfbgh2FpuNfUuXtg=;
+        b=YJgBANlkK896qj3BBVydVBbvcHsbLViJHVW1nrSW8dBGYL6Ct/IHB4Jg1DcUaJN333
+         So4zHOeZRs/yRv1qGlu3/AolIHTLhjG2lhQ9zlolJzxGxT9b7K8MtfQumjfE23+2KQcM
+         xjLy+OElmI35ub0gd7M//pFppR5ts/tYLZ2W00eb8CuV7NN9FDNsnjLNc6hKJkPzSx8m
+         YCxw9U0wLr7Gn0Fg4FBKLXxDpPw4qktQ7CumPaM+T3+jRnKV6o+PtyPuz0FNVVul1fXm
+         BYE0Xy/GKXUs0NqZIVoU4vFd7uWr1pBRSKWEOTHVJ+7uKB6T7szMl+SUNqWudvs4pQkn
+         9sUw==
+X-Gm-Message-State: APjAAAWbBimEl3MXrOWlkYP6epMRPVSV3V7yIMJd8nWOvDpnN1vE6Hcu
+        kpJ/xz9FOLjonbk8TO2FkyHy7dtlYL+w
+X-Google-Smtp-Source: APXvYqwJdi6xigWsNZ2RU+hwdKtpaD4ZKfpvLJf4GZNTJsaOlEPPTKtS2G1+BcqPM54FUtkYtD5uqw==
+X-Received: by 2002:a05:6000:114f:: with SMTP id d15mr36435712wrx.130.1582499915766;
+        Sun, 23 Feb 2020 15:18:35 -0800 (PST)
 Received: from ninjahost.lan (host-2-102-13-223.as13285.net. [2.102.13.223])
-        by smtp.googlemail.com with ESMTPSA id q6sm8968203wrf.67.2020.02.23.15.18.33
+        by smtp.googlemail.com with ESMTPSA id q6sm8968203wrf.67.2020.02.23.15.18.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2020 15:18:34 -0800 (PST)
+        Sun, 23 Feb 2020 15:18:35 -0800 (PST)
 From:   Jules Irenge <jbi.octave@gmail.com>
 To:     boqun.feng@gmail.com
 Cc:     jbi.octave@gmail.com, linux-kernel@vger.kernel.org,
-        Oded Gabbay <oded.gabbay@gmail.com>,
+        Cliff Whickman <cpw@sgi.com>,
+        Robin Holt <robinmholt@gmail.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tomer Tayar <ttayar@habana.ai>,
-        Omer Shpigelman <oshpigelman@habana.ai>,
-        Dalit Ben Zoor <dbenzoor@habana.ai>
-Subject: [PATCH 28/30] habanalabs: Add missing annotation for goya_hw_queues_unlock()
-Date:   Sun, 23 Feb 2020 23:17:09 +0000
-Message-Id: <20200223231711.157699-29-jbi.octave@gmail.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 29/30] sgi-xp: Add missing annotation for xpc_disconnect_channel()
+Date:   Sun, 23 Feb 2020 23:17:10 +0000
+Message-Id: <20200223231711.157699-30-jbi.octave@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200223231711.157699-1-jbi.octave@gmail.com>
 References: <0/30>
@@ -68,27 +66,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sparse reports a warning at goya_hw_queues_unlock()
-warning: context imbalance in goya_hw_queues_unlock() - unexpected unlock
-The root cause is a missing annotation at goya_hw_queues_unlock()
-Add the missing __releases(&goya->hw_queues_lock) annotation
+Sparse reports a warning at xpc_disconnect_channel()
+warning: context imbalance in xpc_disconnect_channel() - unexpected unlock
+The root cause is a missing annotation at xpc_disconnect_channel()
+Add the missing __must_hold(&ch->lock) annotation
 
 Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 ---
- drivers/misc/habanalabs/goya/goya.c | 1 +
+ drivers/misc/sgi-xp/xpc_channel.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index 8ca7ee57cbc1..6138b461d0f8 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -5081,6 +5081,7 @@ static void goya_hw_queues_lock(struct hl_device *hdev)
- }
- 
- static void goya_hw_queues_unlock(struct hl_device *hdev)
-+	__releases(&goya->hw_queues_lock)
+diff --git a/drivers/misc/sgi-xp/xpc_channel.c b/drivers/misc/sgi-xp/xpc_channel.c
+index 8e6607fc8a67..a1e92488e9bc 100644
+--- a/drivers/misc/sgi-xp/xpc_channel.c
++++ b/drivers/misc/sgi-xp/xpc_channel.c
+@@ -752,6 +752,7 @@ xpc_initiate_disconnect(int ch_number)
+ void
+ xpc_disconnect_channel(const int line, struct xpc_channel *ch,
+ 		       enum xp_retval reason, unsigned long *irq_flags)
++	__must_hold(&ch->lock)
  {
- 	struct goya_device *goya = hdev->asic_specific;
+ 	u32 channel_was_connected = (ch->flags & XPC_C_CONNECTED);
  
 -- 
 2.24.1
