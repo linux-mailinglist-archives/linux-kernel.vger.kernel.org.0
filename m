@@ -2,154 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 788FA169A9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:11:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79C47169AAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:17:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbgBWXLR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 18:11:17 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:50009 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727064AbgBWXLR (ORCPT
+        id S1727193AbgBWXRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 18:17:55 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46583 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbgBWXRz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 18:11:17 -0500
-Received: from [78.134.20.33] (port=59608 helo=[192.168.77.67])
-        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1j60P0-00FBU2-SK; Mon, 24 Feb 2020 00:11:10 +0100
-Subject: Re: [RFC PATCH 3/7] i2c: allow DT nodes without 'compatible'
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-i3c@lists.infradead.org,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-References: <20200220172403.26062-1-wsa+renesas@sang-engineering.com>
- <20200220172403.26062-4-wsa+renesas@sang-engineering.com>
- <CAMuHMdWaPfc050dZiRr+gAFzsdjSo9Vo70ztWgrMGPJxLUqupw@mail.gmail.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <e43eaaf1-a294-902f-9a52-ebf8b29acab1@lucaceresoli.net>
-Date:   Mon, 24 Feb 2020 00:11:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Sun, 23 Feb 2020 18:17:55 -0500
+Received: by mail-wr1-f65.google.com with SMTP id g4so1880615wro.13
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 15:17:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=oZgBbz79hmqX3go7ROSzEjM0UpKrjbRuPfObyg90ozQ=;
+        b=accRnb7YPBpVPrrT3402sunXt6zcrpzUvR3P97NL9ptYD2H+bDJ5CD5t19bHvQcv+x
+         gH9LiJHj0DmN2toqcGBhlWZqkWlZwhuvFuEd4hvCAokbWZq1IzbuDiIrsEyzL+/5k2PV
+         rYluJm+kwydz79JKXhD45f+nmYRk3k8+qDcbU7UsbLdbummfG0rLhsJZFOAnCdn3hJWQ
+         MUrIRKgW6opZQVzz+CmdrvzujzRiTkORFno1QTfo2xkkmxMLZDD0fS+eamHMvFx1aFvy
+         OggQuWVDDvUw4XAoiiLQJssj7wPz9G9gcpZARA21h73swYIu79dEUSVcIDiqWTn2G932
+         dijQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=oZgBbz79hmqX3go7ROSzEjM0UpKrjbRuPfObyg90ozQ=;
+        b=Tbnal5TePLND94WhBnG7VgJwTteOmfkXfowL6aa0gvr1ByjMSE+IYgmrpeYpLj76DX
+         YVci2fVcc/wJrA9ke0jQYmOOEREFXvd6V37yzaaUmWrHwTUvcKDssMU3Ri1KicOaNQko
+         jsiB85eDVUkwkEK8XCLPcjU62bAmSwdtBd0Y8vnjh6KbrT0VEK1xbJ4uWyHNdAr1Sxjx
+         pJzpne6VtiO6ESDVlHoxMtSZ1h6jV52zkXmUxEai4lc5yoxa2yR+HTiIneNf7ALLcl53
+         OzkopdPvP1ZbHn6VGDpzrkFVzEeTRoHQb2JwZLdRVYbENxKl7yPSrqWK11w9rsHIiryl
+         TlYQ==
+X-Gm-Message-State: APjAAAU7eEtn/At+ltKdNSqNgIiUfE5tEFh5IEb5Jwp8/W6Puubg6Dve
+        jHdppUMdbxWmji1udL+n7g==
+X-Google-Smtp-Source: APXvYqyNxVW28RSL6CwK86oMcDuKnijKUNx5elk9KZ8y0Eite7fkrEdmQi021hqZPcmISoJRXb6IiQ==
+X-Received: by 2002:adf:e746:: with SMTP id c6mr59555131wrn.323.1582499873385;
+        Sun, 23 Feb 2020 15:17:53 -0800 (PST)
+Received: from ninjahost.lan (host-2-102-13-223.as13285.net. [2.102.13.223])
+        by smtp.googlemail.com with ESMTPSA id q6sm8968203wrf.67.2020.02.23.15.17.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2020 15:17:52 -0800 (PST)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     boqun.feng@gmail.com
+Cc:     jbi.octave@gmail.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/30] Lock warning cleanups  
+Date:   Sun, 23 Feb 2020 23:16:41 +0000
+Message-Id: <20200223231711.157699-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <0/30>
+References: <0/30>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWaPfc050dZiRr+gAFzsdjSo9Vo70ztWgrMGPJxLUqupw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch series adds missing annotations to various functions,
+that register warnings of context imbalance when built with Sparse tool.
+The adds fix the warnings, improve on readability odf the code
+and give better insight or directive on what the functions are actually doing.
 
-On 21/02/20 10:45, Geert Uytterhoeven wrote:
-> Hi Wolfram,
-> 
-> On Thu, Feb 20, 2020 at 6:26 PM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
->> Sometimes, we have unknown devices in a system and still want to block
->> their address. For that, we allow DT nodes with only a 'reg' property.
->> These devices will be bound to the "dummy" driver but with the name
->> "reserved". That way, we can distinguish them and even hand them over to
->> the "dummy" driver later when they are really requested using
->> i2c_new_ancillary_device().
->>
->> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Jules Irenge (30):
+  btrfs: Add missing annotation for release_extent_buffer()
+  dax: Add missing annotations ofr dax_read_lock() and dax_read_unlock()
+  xfs: Add missing annotation to xfs_ail_check()
+  sctp: Add missing annotation for sctp_err_finish()
+  sctp: Add missing annotation for sctp_transport_walk_start()
+  sctp: Add missing annotation for sctp_transport_walk_stop()
+  net: Add missing annotation for llc_seq_start()
+  netrom: Add missing annotation for nr_info_start()
+  netrom: Add missing annotation for nr_info_stop()
+  net: netrom: Add missing annotation for nr_node_start()
+  net: netrom: Add missing annotation for nr_node_stop()
+  net: netrom: Add missing annotation for nr_neigh_start()
+  net: netrom: Add missing annotation for nr_neigh_stop()
+  dccp: Add missing annotation for dccp_child_process()
+  af_unix: Add missing annotation for unix_wait_for_peer()
+  proc: Add missing annotation for close_pdeo()
+  mm/zsmalloc: Add missing annotation for zs_map_object()
+  mm/zsmalloc: Add missing annotation for zs_unmap_object()
+  mm/zsmalloc: Add missing annotation for migrate_write_lock()
+  mm/zsmalloc: Add missing annotation for migrate_write_unlock()
+  scsi: csiostor: Add missing annotation for csio_scsi_cleanup_io_q()
+  ACPI: OSL: Add missing annotation for acpi_os_acquire_lock()
+  ACPI: OSL: Add missing annotation for acpi_os_release_lock()
+  dmaengine: mic_x100_dma: Add missing annotation for
+    mic_dma_tx_submit_unlock()
+  zram: Add missing annotatin for zram_slot_lock()
+  zram: Add missing annotatin for zram_slot_unlock()
+  habanalabs: Add missing annotation for goya_hw_queues_lock()
+  habanalabs: Add missing annotation for goya_hw_queues_unlock()
+  sgi-xp: Add missing annotation for xpc_disconnect_channel()
+  sgi-xp: Add missing annotation for ocfs2_inode_cache_lock() and
+    ocfs2_inode_cache_unlock()
 
-Cc:ing Alexandre who raised the need for a described-but-disabled I2C node.
-
-> Thanks for your patch!
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> but one question below.
-> 
->> --- a/Documentation/devicetree/bindings/i2c/i2c-ocores.txt
->> +++ b/Documentation/devicetree/bindings/i2c/i2c-ocores.txt
->> @@ -50,7 +50,6 @@ Examples:
->>                 reg-io-width = <1>;     /* 8 bit read/write */
->>
->>                 dummy@60 {
->> -                       compatible = "dummy";
->>                         reg = <0x60>;
->>                 };
->>         };
-> 
-> There's a second instance to remove 18 lines below.
-> 
->> --- a/drivers/i2c/i2c-core-of.c
->> +++ b/drivers/i2c/i2c-core-of.c
->> @@ -27,17 +27,15 @@ int of_i2c_get_board_info(struct device *dev, struct device_node *node,
->>
->>         memset(info, 0, sizeof(*info));
->>
->> -       if (of_modalias_node(node, info->type, sizeof(info->type)) < 0) {
->> -               dev_err(dev, "of_i2c: modalias failure on %pOF\n", node);
->> -               return -EINVAL;
->> -       }
->> -
->>         ret = of_property_read_u32(node, "reg", &addr);
->>         if (ret) {
->>                 dev_err(dev, "of_i2c: invalid reg on %pOF\n", node);
->>                 return ret;
->>         }
->>
->> +       if (of_modalias_node(node, info->type, sizeof(info->type)) < 0)
->> +               strlcpy(info->type, I2C_RESERVED_DRV_NAME, sizeof(I2C_RESERVED_DRV_NAME));
-> 
-> Could this cause a regression, e.g. if people already have such dummy
-> nodes in their DTS, and use sysfs new_device from userspace to
-> instantiate the device later?
-
-Such a DTS would be illegal because "compatible" has been a required
-property so far. Thus one could leave such people out in the cold
-because they went on an unsupported path. Not super nice anyway.
-
-However I'd like to view the issue from the DT point of view. DT
-describes the hardware, and it is possible (and even desirable) that the
-firmware provides the DTB independently from the OS, and the kernel
-consumes it. It this scenario, firmware could and should describe all
-I2C slaves with proper "compatible" property, and there is no way to
-remove it, in a clean way at least.
-
-But the kernel currently ignores nodes that have no matching driver,
-right? So in this case the kernel knows that that address is used, but
-ignores this information and considers the address as available.
-Seen in this perspective, we should have a "compatible" for all nodes:
-it is just describing the hardware and could be out of the kernel
-control. But instead of discarding all nodes without a matching driver,
-the i2c-core-of code should mark them as "reserved".
-
-Does it sound correct?
-
-Clearly this does not fit the case reported by Alexandre: a device
-having a driver which is known to be badly buggy, so we don't want to
-instantiate it. But again, this should not affect DT as it is not
-describing the HW, but only an implementation detail. Probably disabling
-or blacklisting the driver would be a better option there?
-
-My apologies to Wolfram, I appreciate a lot the effort you are doing,
-but before reviewing this patch I have never realized what I tried to
-explain above.
+ drivers/acpi/osl.c                  | 2 ++
+ drivers/block/zram/zram_drv.c       | 2 ++
+ drivers/dax/super.c                 | 4 ++--
+ drivers/dma/mic_x100_dma.c          | 1 +
+ drivers/misc/habanalabs/goya/goya.c | 2 ++
+ drivers/misc/sgi-xp/xpc_channel.c   | 1 +
+ drivers/scsi/csiostor/csio_scsi.c   | 1 +
+ fs/btrfs/extent_io.c                | 1 +
+ fs/ocfs2/inode.c                    | 2 ++
+ fs/proc/inode.c                     | 1 +
+ fs/xfs/xfs_trans_ail.c              | 1 +
+ mm/zsmalloc.c                       | 4 ++++
+ net/dccp/minisocks.c                | 1 +
+ net/llc/llc_proc.c                  | 2 +-
+ net/netrom/af_netrom.c              | 2 ++
+ net/netrom/nr_route.c               | 4 ++++
+ net/sctp/input.c                    | 1 +
+ net/sctp/socket.c                   | 4 ++--
+ net/unix/af_unix.c                  | 1 +
+ 19 files changed, 32 insertions(+), 5 deletions(-)
 
 -- 
-Luca
+2.24.1
+
