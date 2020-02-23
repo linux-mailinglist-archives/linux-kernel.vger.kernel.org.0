@@ -2,154 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC8CA1692D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 02:26:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EEE21692C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 02:24:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbgBWB0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 20:26:18 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50304 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726884AbgBWB0S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 20:26:18 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5g1v-00HDqV-Vc; Sun, 23 Feb 2020 01:26:05 +0000
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC][PATCH v2 34/34] split the lookup-related parts of do_last() into a separate helper
-Date:   Sun, 23 Feb 2020 01:16:26 +0000
-Message-Id: <20200223011626.4103706-34-viro@ZenIV.linux.org.uk>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
-References: <20200223011154.GY23230@ZenIV.linux.org.uk>
- <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
+        id S1727366AbgBWBYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 20:24:17 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10672 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726934AbgBWBYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 20:24:17 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D1DEDE6A910DC861A4E4;
+        Sun, 23 Feb 2020 09:24:12 +0800 (CST)
+Received: from [127.0.0.1] (10.177.246.209) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Sun, 23 Feb 2020
+ 09:24:03 +0800
+Subject: Re: [PATCH v2] mm/hugetlb: fix a addressing exception caused by
+ huge_pte_offset()
+To:     Matthew Wilcox <willy@infradead.org>, Qian Cai <cai@lca.pw>
+CC:     <akpm@linux-foundation.org>, <mike.kravetz@oracle.com>,
+        <kirill.shutemov@linux.intel.com>, <linux-kernel@vger.kernel.org>,
+        <arei.gonglei@huawei.com>, <weidong.huang@huawei.com>,
+        <weifuqiang@huawei.com>, <kvm@vger.kernel.org>,
+        <linux-mm@kvack.org>,
+        "Sean Christopherson" <sean.j.christopherson@intel.com>,
+        <stable@vger.kernel.org>
+References: <C4ED630A-FAD8-4998-A0A3-9C36F3303379@lca.pw>
+ <f274b368-6fdb-2ae3-160e-fd8b105b9ac4@huawei.com>
+ <20200222170222.GJ24185@bombadil.infradead.org>
+From:   "Longpeng (Mike)" <longpeng2@huawei.com>
+Message-ID: <dfbfbf46-483a-808f-d197-388f75569d9c@huawei.com>
+Date:   Sun, 23 Feb 2020 09:24:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <20200222170222.GJ24185@bombadil.infradead.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.246.209]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+在 2020/2/23 1:02, Matthew Wilcox 写道:
+> On Sat, Feb 22, 2020 at 02:33:10PM +0800, Longpeng (Mike) wrote:
+>> 在 2020/2/22 13:23, Qian Cai 写道:
+>>>> On Feb 21, 2020, at 10:34 PM, Longpeng(Mike) <longpeng2@huawei.com> wrote:
+>>>>
+>>>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>>>> index dd8737a..90daf37 100644
+>>>> --- a/mm/hugetlb.c
+>>>> +++ b/mm/hugetlb.c
+>>>> @@ -4910,28 +4910,30 @@ pte_t *huge_pte_offset(struct mm_struct *mm,
+>>>> {
+>>>>    pgd_t *pgd;
+>>>>    p4d_t *p4d;
+>>>> -    pud_t *pud;
+>>>> -    pmd_t *pmd;
+>>>> +    pud_t *pud, pud_entry;
+>>>> +    pmd_t *pmd, pmd_entry;
+>>>>
+>>>>    pgd = pgd_offset(mm, addr);
+>>>> -    if (!pgd_present(*pgd))
+>>>> +    if (!pgd_present(READ_ONCE(*pgd)))
+>>>>        return NULL;
+>>>>    p4d = p4d_offset(pgd, addr);
+>>>> -    if (!p4d_present(*p4d))
+>>>> +    if (!p4d_present(READ_ONCE(*p4d)))
+>>>>        return NULL;
+>>>
+>>> What’s the point of READ_ONCE() on those two places?
+>>>
+>> As explained in the commit messages, it's for safe(e.g. avoid the compilier
+>> mischief). You can also find the same usage in the ARM64's huge_pte_offset() in
+>> arch/arm64/mm/hugetlbpage.c
+> 
+> I rather agree with Qian; if we need something like READ_ONCE() here,
+> why don't we always need it as part of pgd_present()?  It seems like an
+> unnecessary burden for every user.
+> 
+Hi Matthew & Qian,
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/namei.c | 51 +++++++++++++++++++++++++++++----------------------
- 1 file changed, 29 insertions(+), 22 deletions(-)
+Firstly, this is NOT a 'blindly copy', it's an unwise words. I don't know
+whether you read the commit message (commit 20a004e7) of ARM64's huge_pte_offset
+? If you read, I think worry about the safe is necessary.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 37cbe7806677..96182a947ca1 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3121,19 +3121,12 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 	return ERR_PTR(error);
- }
- 
--/*
-- * Handle the last step of open()
-- */
--static const char *do_last(struct nameidata *nd,
-+static const char *open_last_lookups(struct nameidata *nd,
- 		   struct file *file, const struct open_flags *op)
- {
- 	struct dentry *dir = nd->path.dentry;
--	kuid_t dir_uid = nd->inode->i_uid;
--	umode_t dir_mode = nd->inode->i_mode;
- 	int open_flag = op->open_flag;
--	bool do_truncate;
- 	bool got_write = false;
--	int acc_mode;
- 	unsigned seq;
- 	struct inode *inode;
- 	struct dentry *dentry;
-@@ -3145,9 +3138,9 @@ static const char *do_last(struct nameidata *nd,
- 
- 	if (nd->last_type != LAST_NORM) {
- 		error = handle_dots(nd, nd->last_type);
--		if (unlikely(error))
--			return ERR_PTR(error);
--		goto finish_open;
-+		if (likely(!error))
-+			error = complete_walk(nd);
-+		return ERR_PTR(error);
- 	}
- 
- 	if (!(open_flag & O_CREAT)) {
-@@ -3160,7 +3153,6 @@ static const char *do_last(struct nameidata *nd,
- 		if (likely(dentry))
- 			goto finish_lookup;
- 
--		BUG_ON(nd->inode != dir->d_inode);
- 		BUG_ON(nd->flags & LOOKUP_RCU);
- 	} else {
- 		/* create side of things */
-@@ -3170,7 +3162,7 @@ static const char *do_last(struct nameidata *nd,
- 		 * about to look up
- 		 */
- 		error = complete_walk(nd);
--		if (error)
-+		if (unlikely(error))
- 			return ERR_PTR(error);
- 
- 		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
-@@ -3199,10 +3191,8 @@ static const char *do_last(struct nameidata *nd,
- 	else
- 		inode_unlock_shared(dir->d_inode);
- 
--	if (got_write) {
-+	if (got_write)
- 		mnt_drop_write(nd->path.mnt);
--		got_write = false;
--	}
- 
- 	if (IS_ERR(dentry))
- 		return ERR_CAST(dentry);
-@@ -3210,7 +3200,7 @@ static const char *do_last(struct nameidata *nd,
- 	if (file->f_mode & (FMODE_OPENED | FMODE_CREATED)) {
- 		dput(nd->path.dentry);
- 		nd->path.dentry = dentry;
--		goto finish_open_created;
-+		return NULL;
- 	}
- 
- finish_lookup:
-@@ -3226,12 +3216,29 @@ static const char *do_last(struct nameidata *nd,
- 		audit_inode(nd->name, nd->path.dentry, 0);
- 		return ERR_PTR(-EEXIST);
- 	}
--finish_open:
-+
- 	/* Why this, you ask?  _Now_ we might have grown LOOKUP_JUMPED... */
--	error = complete_walk(nd);
--	if (error)
--		return ERR_PTR(error);
--finish_open_created:
-+	return ERR_PTR(complete_walk(nd));
-+}
-+
-+/*
-+ * Handle the last step of open()
-+ */
-+static const char *do_last(struct nameidata *nd,
-+		   struct file *file, const struct open_flags *op)
-+{
-+	kuid_t dir_uid = nd->inode->i_uid;
-+	umode_t dir_mode = nd->inode->i_mode;
-+	int open_flag = op->open_flag;
-+	bool do_truncate;
-+	int acc_mode;
-+	const char *link;
-+	int error;
-+
-+	link = open_last_lookups(nd, file, op);
-+	if (unlikely(link))
-+		return link;
-+
- 	if (!(file->f_mode & FMODE_CREATED))
- 		audit_inode(nd->name, nd->path.dentry, 0);
- 	if (open_flag & O_CREAT) {
+Secondly, huge_pte_offset in mm/hugetlb.c is for ARCH_WANT_GENERAL_HUGETLB, many
+architectures use it, can you make sure there is no issue on all the
+architectures using it with all the version of gcc ?
+
+Thirdly, there are several places use READ_ONCE to access the page table in mm/*
+(e.g. gup_pmd_range), they're also generical for all architectures, and they're
+much more like unnecessary than here, so why there can use but not here? What's
+more, you can read this commit 688272809.
+
 -- 
-2.11.0
+Regards,
+Longpeng(Mike)
 
