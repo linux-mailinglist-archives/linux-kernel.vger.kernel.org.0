@@ -2,93 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8841699BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 20:30:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 873F51699C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 20:32:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbgBWTac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 14:30:32 -0500
-Received: from foss.arm.com ([217.140.110.172]:51422 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727267AbgBWTaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 14:30:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4526106F;
-        Sun, 23 Feb 2020 11:30:07 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D44E3F6CF;
-        Sun, 23 Feb 2020 11:30:06 -0800 (PST)
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Paul E . McKenney" <paulmck@kernel.org>,
-        Qais Yousef <qais.yousef@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        id S1727151AbgBWTcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 14:32:09 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:51681 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbgBWTcJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 14:32:09 -0500
+Received: by mail-pj1-f68.google.com with SMTP id fa20so3159460pjb.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 11:32:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=es-iitr-ac-in.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ycAvVlhM3IO/JQS62drEKBmRbhPxXEBTGHsInI3waLg=;
+        b=TitZxSaBobT9tPfdZrNZvIHxzF+BBxBy5IunhWGvp860IEAs8/nzK+TLG0fYoK0DBg
+         jrP956ZuTjKZW97+ovKYFsGK5VDKGYnjfMPdWbhINqHoy/rAc27Nwbnp3kxqn0jT26tN
+         kvdb8ZOxcAVE6d42mGTSe5nic07NoBjLsKyJlbBzjO9Uiy5uPbFnd1WAFHuXqjxAYhGa
+         FBUGcFj6W5GPK6jSKvXEWZYlj5pvMQhy7yrBtxdemhU2n2CY8uwSzVZYLXKBw/yLYGu7
+         Pi/CWxphvgdaT/iyQ90ut1Qog5Xc+o8HJZw9ovLD/29AqdmYvcxO1Vxl0dijKwY9goFU
+         ut3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ycAvVlhM3IO/JQS62drEKBmRbhPxXEBTGHsInI3waLg=;
+        b=Y+a2cQopZn24Q3Jimf+RIrC0ikgVn4WxtFlP2fW+aVQETDmPme6gPCvsdkkDJ0m0oW
+         T11J+9b6IQXQwOr3ijBIOLxFLQiLz81XxBEFfPPn9QsO8CSl4/jBNWacTGcTDqoEbUbi
+         l9Ape8ft/582v707VbuKGvw9EwWt9DBdqOo3p55GZ1SsLb8R/Ot8FwnzGrZks4lGDA6K
+         9yt+aUOYtV6E5ofa3ZFpdGIB8GoU0FTyW1maLOXfjd/7tzqwkM+XAvAFJbLgIcdzl+ZC
+         OPDgCX1YnolN2XQCOFEHjTVjecuWbUp9AiwvCB3qgbKYp40oxrubDT0rhbqD0KiYKS2D
+         3new==
+X-Gm-Message-State: APjAAAX+vJ0xY16OikZgrltK01jW8mKbB2L/gyH//o+DYhYGOT4dDkIL
+        AZDOhQ3ueKAt8MAr7d0obsvqvA==
+X-Google-Smtp-Source: APXvYqxJR0Ts6qfEF5vjfPugyC9xbDtHJaUVC5LSOBYdcnYOK7L0K+xJCiO6VWQOXsAOy6mA4Ngfkw==
+X-Received: by 2002:a17:90a:f013:: with SMTP id bt19mr15959661pjb.47.1582486328414;
+        Sun, 23 Feb 2020 11:32:08 -0800 (PST)
+Received: from kaaira-HP-Pavilion-Notebook ([103.37.201.174])
+        by smtp.gmail.com with ESMTPSA id p4sm9667513pgh.14.2020.02.23.11.32.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 23 Feb 2020 11:32:07 -0800 (PST)
+Date:   Mon, 24 Feb 2020 01:02:01 +0530
+From:   Kaaira Gupta <kgupta@es.iitr.ac.in>
+To:     =?iso-8859-1?B?Suly9G1l?= Pouiller <jerome.pouiller@silabs.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 09/15] sparc: Replace cpu_up/down with add/remove_cpu
-Date:   Sun, 23 Feb 2020 19:29:36 +0000
-Message-Id: <20200223192942.18420-10-qais.yousef@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200223192942.18420-1-qais.yousef@arm.com>
-References: <20200223192942.18420-1-qais.yousef@arm.com>
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: wfx: match parentheses alignment
+Message-ID: <20200223193201.GA20843@kaaira-HP-Pavilion-Notebook>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The core device API performs extra housekeeping bits that are missing
-from directly calling cpu_up/down.
+match next line with open parentheses by giving appropriate tabs.
 
-See commit a6717c01ddc2 ("powerpc/rtas: use device model APIs and
-serialization during LPM") for an example description of what might go
-wrong.
-
-This also prepares to make cpu_up/down a private interface for anything
-but the cpu subsystem.
-
-Acked-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-CC: "David S. Miller" <davem@davemloft.net>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Bjorn Helgaas <bhelgaas@google.com>
-CC: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Sakari Ailus <sakari.ailus@linux.intel.com>
-CC: sparclinux@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
+Signed-off-by: Kaaira Gupta <kgupta@es.iitr.ac.in>
 ---
+ drivers/staging/wfx/data_tx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-David, this now uses add/remove_cpu() which you should be CCed on. I wasn't
-sure if I can keep your Ack or remove it in this case. Please let me know if
-you need more clarification.
-
- arch/sparc/kernel/ds.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/sparc/kernel/ds.c b/arch/sparc/kernel/ds.c
-index bbf59b3b4af8..75232cbd58bf 100644
---- a/arch/sparc/kernel/ds.c
-+++ b/arch/sparc/kernel/ds.c
-@@ -555,7 +555,7 @@ static int dr_cpu_configure(struct ds_info *dp, struct ds_cap_state *cp,
+diff --git a/drivers/staging/wfx/data_tx.c b/drivers/staging/wfx/data_tx.c
+index 20f4740734f2..815fde0913f5 100644
+--- a/drivers/staging/wfx/data_tx.c
++++ b/drivers/staging/wfx/data_tx.c
+@@ -300,8 +300,8 @@ static void wfx_tx_manage_pm(struct wfx_vif *wvif, struct ieee80211_hdr *hdr,
+ }
  
- 		printk(KERN_INFO "ds-%llu: Starting cpu %d...\n",
- 		       dp->id, cpu);
--		err = cpu_up(cpu);
-+		err = add_cpu(cpu);
- 		if (err) {
- 			__u32 res = DR_CPU_RES_FAILURE;
- 			__u32 stat = DR_CPU_STAT_UNCONFIGURED;
-@@ -611,7 +611,7 @@ static int dr_cpu_unconfigure(struct ds_info *dp,
+ static u8 wfx_tx_get_raw_link_id(struct wfx_vif *wvif,
+-				      struct ieee80211_sta *sta,
+-				      struct ieee80211_hdr *hdr)
++				 struct ieee80211_sta *sta,
++				 struct ieee80211_hdr *hdr)
+ {
+ 	struct wfx_sta_priv *sta_priv =
+ 		sta ? (struct wfx_sta_priv *) &sta->drv_priv : NULL;
+@@ -368,7 +368,7 @@ static void wfx_tx_fixup_rates(struct ieee80211_tx_rate *rates)
+ }
  
- 		printk(KERN_INFO "ds-%llu: Shutting down cpu %d...\n",
- 		       dp->id, cpu);
--		err = cpu_down(cpu);
-+		err = remove_cpu(cpu);
- 		if (err)
- 			dr_cpu_mark(resp, cpu, ncpus,
- 				    DR_CPU_RES_FAILURE,
+ static u8 wfx_tx_get_rate_id(struct wfx_vif *wvif,
+-				  struct ieee80211_tx_info *tx_info)
++			     struct ieee80211_tx_info *tx_info)
+ {
+ 	bool tx_policy_renew = false;
+ 	u8 rate_id;
 -- 
 2.17.1
 
