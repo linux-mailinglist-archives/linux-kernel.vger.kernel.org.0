@@ -2,103 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EEE21692C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 02:24:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 124B41692D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 02:35:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbgBWBYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 20:24:17 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10672 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726934AbgBWBYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 20:24:17 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D1DEDE6A910DC861A4E4;
-        Sun, 23 Feb 2020 09:24:12 +0800 (CST)
-Received: from [127.0.0.1] (10.177.246.209) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Sun, 23 Feb 2020
- 09:24:03 +0800
-Subject: Re: [PATCH v2] mm/hugetlb: fix a addressing exception caused by
- huge_pte_offset()
-To:     Matthew Wilcox <willy@infradead.org>, Qian Cai <cai@lca.pw>
-CC:     <akpm@linux-foundation.org>, <mike.kravetz@oracle.com>,
-        <kirill.shutemov@linux.intel.com>, <linux-kernel@vger.kernel.org>,
-        <arei.gonglei@huawei.com>, <weidong.huang@huawei.com>,
-        <weifuqiang@huawei.com>, <kvm@vger.kernel.org>,
-        <linux-mm@kvack.org>,
-        "Sean Christopherson" <sean.j.christopherson@intel.com>,
-        <stable@vger.kernel.org>
-References: <C4ED630A-FAD8-4998-A0A3-9C36F3303379@lca.pw>
- <f274b368-6fdb-2ae3-160e-fd8b105b9ac4@huawei.com>
- <20200222170222.GJ24185@bombadil.infradead.org>
-From:   "Longpeng (Mike)" <longpeng2@huawei.com>
-Message-ID: <dfbfbf46-483a-808f-d197-388f75569d9c@huawei.com>
-Date:   Sun, 23 Feb 2020 09:24:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727136AbgBWBfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 20:35:47 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41921 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726955AbgBWBfr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 20:35:47 -0500
+Received: by mail-ed1-f65.google.com with SMTP id c26so7399115eds.8
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 17:35:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=20P6VASIF4kXfRxGqIIEpQkeQCJGweC3KQmcTkimeB8=;
+        b=RTm5uGX/k3ITY+whCQAA9gNJQlCO2ccrxW7bPatxz5RysxYUoyBKUJQyI17tNp1my6
+         dYqJYn+aQk9mPJ7BHPPbv+On5oUrc0mBKp9Zb3eF6JM0hXDdEPX2dMVYeBCUvn3NebzG
+         Bh3X/gOaNPBAAz5wUZ3gqxd/XfB08PaQ1YConNfBeJ4wBPGGv1q9UrkRd0aueq5oyRBf
+         QSItvuj9Ngw4iRUBu+3c0XqFBxS3m4PcmKSxjEjOjI5NXjow8Wb4nytvKIY3Z8Ur27cz
+         MN32/dxEY8gBK2EPgM/zcnJ+e7jOYYufjVHY0UgvtWKG8xjWwThRuoPd1ElKzZ7P7Rjr
+         XwDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=20P6VASIF4kXfRxGqIIEpQkeQCJGweC3KQmcTkimeB8=;
+        b=UC0q0c8LqZVKiTZuC03ILA7kjH6mpf2VoXK00c6brbhd97BIiXIQI71Zkeo/ZrWAWb
+         p391wbO6gnFJIA7gcoi22TpCjbq6cmv8I5nYzmTOoNy23iyvi30BYdNfGXsecDJaQeeM
+         kbZJDn8jyJ4CUgAQzMYIi7RaarO1PECBYn6SIkCoQHkoow+u7TNxsJc0rTd7c5wbd4Yy
+         tmlRB4nGIlvFhyWLYxTHPEXl2XgjUB7QDT6i+0jZxY3mQ3Eb1kiGy5Vmx2GfecYFruUa
+         bO9NwnXP7+pDv7Cfl3WIo0ny+vLwA+o9q7l0P/IaUPZgFFlkWAs9AF5hpmcBtMFNx+Je
+         Yw3Q==
+X-Gm-Message-State: APjAAAWP51ZSpXByYwpKTtefic8r30iUpsDNzqBzT7IpJLzXfKgLITHN
+        dlpgIZBZkkg+d2NK2Kv3FdWEWwg4b1raosy7JsQ6
+X-Google-Smtp-Source: APXvYqz8DJKS5CKcLnZfHxjXlihVmzI0hJTOjd6/HsN9rvUBib9qD32P32RQSfCFIFr+XM7mZe8f07VSy739INwIpBk=
+X-Received: by 2002:a17:906:9352:: with SMTP id p18mr40572590ejw.95.1582421743723;
+ Sat, 22 Feb 2020 17:35:43 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200222170222.GJ24185@bombadil.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.246.209]
-X-CFilter-Loop: Reflected
+References: <0000000000008e18fb059f1fd725@google.com>
+In-Reply-To: <0000000000008e18fb059f1fd725@google.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sat, 22 Feb 2020 20:35:32 -0500
+Message-ID: <CAHC9VhTKzn-OdmmvCRPQSNF2beaA6E7Cm0KkxN0u3UjA3OkyXA@mail.gmail.com>
+Subject: Re: kernel BUG at arch/x86/mm/physaddr.c:LINE! (4)
+To:     linux-audit@redhat.com
+Cc:     Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+1f4d90ead370d72e450b@syzkaller.appspotmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2020/2/23 1:02, Matthew Wilcox 写道:
-> On Sat, Feb 22, 2020 at 02:33:10PM +0800, Longpeng (Mike) wrote:
->> 在 2020/2/22 13:23, Qian Cai 写道:
->>>> On Feb 21, 2020, at 10:34 PM, Longpeng(Mike) <longpeng2@huawei.com> wrote:
->>>>
->>>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->>>> index dd8737a..90daf37 100644
->>>> --- a/mm/hugetlb.c
->>>> +++ b/mm/hugetlb.c
->>>> @@ -4910,28 +4910,30 @@ pte_t *huge_pte_offset(struct mm_struct *mm,
->>>> {
->>>>    pgd_t *pgd;
->>>>    p4d_t *p4d;
->>>> -    pud_t *pud;
->>>> -    pmd_t *pmd;
->>>> +    pud_t *pud, pud_entry;
->>>> +    pmd_t *pmd, pmd_entry;
->>>>
->>>>    pgd = pgd_offset(mm, addr);
->>>> -    if (!pgd_present(*pgd))
->>>> +    if (!pgd_present(READ_ONCE(*pgd)))
->>>>        return NULL;
->>>>    p4d = p4d_offset(pgd, addr);
->>>> -    if (!p4d_present(*p4d))
->>>> +    if (!p4d_present(READ_ONCE(*p4d)))
->>>>        return NULL;
->>>
->>> What’s the point of READ_ONCE() on those two places?
->>>
->> As explained in the commit messages, it's for safe(e.g. avoid the compilier
->> mischief). You can also find the same usage in the ARM64's huge_pte_offset() in
->> arch/arm64/mm/hugetlbpage.c
-> 
-> I rather agree with Qian; if we need something like READ_ONCE() here,
-> why don't we always need it as part of pgd_present()?  It seems like an
-> unnecessary burden for every user.
-> 
-Hi Matthew & Qian,
+On Fri, Feb 21, 2020 at 8:13 PM syzbot
+<syzbot+1f4d90ead370d72e450b@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    36a44bcd Merge branch 'bnxt_en-shutdown-and-kexec-kdump-re..
+> git tree:       net
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12524265e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=768cc3d3e277cc16
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1f4d90ead370d72e450b
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=123d9de9e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1648fe09e00000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+1f4d90ead370d72e450b@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> kernel BUG at arch/x86/mm/physaddr.c:28!
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 9873 Comm: syz-executor039 Not tainted 5.6.0-rc1-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:__phys_addr+0xb3/0x120 arch/x86/mm/physaddr.c:28
+> Code: 09 4c 89 e3 31 ff 48 d3 eb 48 89 de e8 36 e2 40 00 48 85 db 75 0f e8 8c e0 40 00 4c 89 e0 5b 41 5c 41 5d 5d c3 e8 7d e0 40 00 <0f> 0b e8 76 e0 40 00 48 c7 c0 10 50 a7 89 48 ba 00 00 00 00 00 fc
+> RSP: 0018:ffffc90005b47490 EFLAGS: 00010093
+> RAX: ffff8880944f4600 RBX: 0000000002777259 RCX: ffffffff8134ad32
+> RDX: 0000000000000000 RSI: ffffffff8134ad93 RDI: 0000000000000006
+> RBP: ffffc90005b474a8 R08: ffff8880944f4600 R09: ffffed1015d2707c
+> R10: ffffed1015d2707b R11: ffff8880ae9383db R12: 0000778002777259
+> R13: 0000000082777259 R14: ffff88809a765000 R15: 0000000000000010
+> FS:  0000000001436880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000200004c0 CR3: 0000000096da8000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  virt_to_head_page include/linux/mm.h:721 [inline]
+>  virt_to_cache mm/slab.h:472 [inline]
+>  kfree+0x7b/0x2c0 mm/slab.c:3749
+>  audit_free_lsm_field kernel/auditfilter.c:76 [inline]
+>  audit_free_rule kernel/auditfilter.c:91 [inline]
+>  audit_data_to_entry+0xb7b/0x25f0 kernel/auditfilter.c:603
+>  audit_rule_change+0x6b5/0x1130 kernel/auditfilter.c:1130
+>  audit_receive_msg+0xda5/0x28b0 kernel/audit.c:1368
+>  audit_receive+0x114/0x230 kernel/audit.c:1513
 
-Firstly, this is NOT a 'blindly copy', it's an unwise words. I don't know
-whether you read the commit message (commit 20a004e7) of ARM64's huge_pte_offset
-? If you read, I think worry about the safe is necessary.
+Ugh, I think I see the problem.
 
-Secondly, huge_pte_offset in mm/hugetlb.c is for ARCH_WANT_GENERAL_HUGETLB, many
-architectures use it, can you make sure there is no issue on all the
-architectures using it with all the version of gcc ?
+In audit_data_to_entry() the code sets both an audit_field->type and
+an audit_field->val near the top of the big for-loop (lines 466 and
+467 in Linus' tree as of now); if the type happens to be one of the
+types which cause the lsm_str field to be kfree()'d (see
+audit_free_lsm_field()), then we could run into problems if we end up
+following an error path in audit_data_to_entry() before the lsm_str
+field is populated with an actual string.
 
-Thirdly, there are several places use READ_ONCE to access the page table in mm/*
-(e.g. gup_pmd_range), they're also generical for all architectures, and they're
-much more like unnecessary than here, so why there can use but not here? What's
-more, you can read this commit 688272809.
+If the above reasoning proves to be correct, it looks like the problem
+was caused by 219ca39427bf ("audit: use union for audit_field values
+since they are mutually exclusive").
 
--- 
-Regards,
-Longpeng(Mike)
+I'll see about working up a fix.
 
+--
+paul moore
+www.paul-moore.com
