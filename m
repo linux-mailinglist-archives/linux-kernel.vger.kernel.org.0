@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A6AA16934B
+	by mail.lfdr.de (Postfix) with ESMTP id DEA4216934D
 	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:22:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbgBWCWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 21:22:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50636 "EHLO mail.kernel.org"
+        id S1728062AbgBWCWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 21:22:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727708AbgBWCV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:21:57 -0500
+        id S1727887AbgBWCV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:21:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2C4A22525;
-        Sun, 23 Feb 2020 02:21:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41B3A2071E;
+        Sun, 23 Feb 2020 02:21:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424516;
-        bh=Wn/4Yi/m96hOLe/jzp6H24+r/KiD9+YMjhMDtg05hG0=;
+        s=default; t=1582424519;
+        bh=EkFTaxNeRWoAph9sd5w3nMrfRhI4lP9sUIK9fUjXBxg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dCJvVFO5IFVmYO9VcdkFjk2WGmC/N70nsfZYIg32/LGA4Hju4hz8CbMTmHLjFfjwr
-         M0Q/q5JYpJz4AvOpOI6V6+kKq/LWVSeVtLIlppaIeNAjwLncgp4plXChrjoTe81+CR
-         I4l/C5FTZ+tgpEfMonSqPqia4wAtND4iXLcrLpZk=
+        b=SSd5XD5bSYqipME9eXa2yEXqmKrBxuBMYOidF8PNEgnbwBXh2dMB8VZqx7uev0fSe
+         vw7rsddnD/8YNXrY+kx6fiUsvY/MX2YJfadgTZb7sWuDCEqEdiES9kuY7JFcRP8ZY2
+         lGvK2oMqtofJUC/x9Q65RqmWlroOqQq4rQ985LC0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arthur Kiyanovski <akiyano@amazon.com>,
-        Sameeh Jubran <sameehj@amazon.com>,
+        Ezequiel Lara Gomez <ezegomez@amazon.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 30/58] net: ena: fix potential crash when rxfh key is NULL
-Date:   Sat, 22 Feb 2020 21:20:51 -0500
-Message-Id: <20200223022119.707-30-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 32/58] net: ena: add missing ethtool TX timestamping indication
+Date:   Sat, 22 Feb 2020 21:20:53 -0500
+Message-Id: <20200223022119.707-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200223022119.707-1-sashal@kernel.org>
 References: <20200223022119.707-1-sashal@kernel.org>
@@ -46,51 +46,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arthur Kiyanovski <akiyano@amazon.com>
 
-[ Upstream commit 91a65b7d3ed8450f31ab717a65dcb5f9ceb5ab02 ]
+[ Upstream commit cf6d17fde93bdda23c9b02dd5906a12bf8c55209 ]
 
-When ethtool -X is called without an hkey, ena_com_fill_hash_function()
-is called with key=NULL, which is passed to memcpy causing a crash.
+Current implementation of the driver calls skb_tx_timestamp()to add a
+software tx timestamp to the skb, however the software-transmit capability
+is not reported in ethtool -T.
 
-This commit fixes this issue by checking key is not NULL.
+This commit updates the ethtool structure to report the software-transmit
+capability in ethtool -T using the standard ethtool_op_get_ts_info().
+This function reports all software timestamping capabilities (tx and rx),
+as well as setting phc_index = -1. phc_index is the index of the PTP
+hardware clock device that will be used for hardware timestamps. Since we
+don't have such a device in ENA, using the default -1 value is the correct
+setting.
 
 Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
+Signed-off-by: Ezequiel Lara Gomez <ezegomez@amazon.com>
 Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_com.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/amazon/ena/ena_ethtool.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
-index ea62604fdf8ca..e54c44fdcaa73 100644
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -2297,15 +2297,16 @@ int ena_com_fill_hash_function(struct ena_com_dev *ena_dev,
+diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+index fc96c66b44cb5..8b56383b64aea 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
++++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+@@ -812,6 +812,7 @@ static const struct ethtool_ops ena_ethtool_ops = {
+ 	.set_channels		= ena_set_channels,
+ 	.get_tunable		= ena_get_tunable,
+ 	.set_tunable		= ena_set_tunable,
++	.get_ts_info            = ethtool_op_get_ts_info,
+ };
  
- 	switch (func) {
- 	case ENA_ADMIN_TOEPLITZ:
--		if (key_len > sizeof(hash_key->key)) {
--			pr_err("key len (%hu) is bigger than the max supported (%zu)\n",
--			       key_len, sizeof(hash_key->key));
--			return -EINVAL;
-+		if (key) {
-+			if (key_len != sizeof(hash_key->key)) {
-+				pr_err("key len (%hu) doesn't equal the supported size (%zu)\n",
-+				       key_len, sizeof(hash_key->key));
-+				return -EINVAL;
-+			}
-+			memcpy(hash_key->key, key, key_len);
-+			rss->hash_init_val = init_val;
-+			hash_key->keys_num = key_len >> 2;
- 		}
--
--		memcpy(hash_key->key, key, key_len);
--		rss->hash_init_val = init_val;
--		hash_key->keys_num = key_len >> 2;
- 		break;
- 	case ENA_ADMIN_CRC32:
- 		rss->hash_init_val = init_val;
+ void ena_set_ethtool_ops(struct net_device *netdev)
 -- 
 2.20.1
 
