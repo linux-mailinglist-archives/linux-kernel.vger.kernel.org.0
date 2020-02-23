@@ -2,125 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC3F5169AA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:17:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0A0D169AC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:19:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbgBWXRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 18:17:00 -0500
-Received: from ozlabs.org ([203.11.71.1]:51165 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727064AbgBWXRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 18:17:00 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48Qh0l2zmzz9sPK;
-        Mon, 24 Feb 2020 10:16:55 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1582499816;
-        bh=ZDsuoOV08OG4rWiKXytPH30q7PC/XrARg94GbSYzkBw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AKp3byLjUgGeWJ48kznETWc0Q3R5R+v1q1teBHVmawsNupD3Pe0ucEI5ezfd7pOAy
-         PW/mL8pfaMHcX16KOvg6I71vLR4Bieg2nsmUWXZItzr0DqnsomYD7lx/lHov0Ft8fQ
-         Hf9+mEEH7uRY8xZKIUCj0bEH679ZzqORtM5yx8UTUHzGIBFxluhGQUmhq4N54emir2
-         DaqzTzxbhB0bQqArroPfI+p1d3N/FF3ywJHRFrTAM8fouTZOkblsC/wk0kpn1xMWFG
-         BG9VEhQqMOam6UjEzDAKYuuUNUCRK7y1rY9DM21KuhEbv+hcA0Ck6cutVtrQKqe0bu
-         jN215DYPbaD8g==
-Date:   Mon, 24 Feb 2020 10:16:54 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>
-Subject: Re: [PATCH] soc: amlogic: fix compile failure with
- MESON_SECURE_PM_DOMAINS & !MESON_SM
-Message-ID: <20200224101654.530f1837@canb.auug.org.au>
-In-Reply-To: <20200218092229.0448d266@canb.auug.org.au>
-References: <1581955933-69832-1-git-send-email-jianxin.pan@amlogic.com>
-        <20200218080743.07e58c6e@canb.auug.org.au>
-        <20200218092229.0448d266@canb.auug.org.au>
+        id S1727637AbgBWXSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 18:18:18 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38961 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727394AbgBWXSL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 18:18:11 -0500
+Received: by mail-wr1-f68.google.com with SMTP id y11so8225777wrt.6;
+        Sun, 23 Feb 2020 15:18:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=fPUr8jCY8JIDce77aHKLu0kesj5mi5yI8K5HlZIk77s=;
+        b=umWQtF4rQ643Qg1LiBfMBoOhKtVIL5uLVM5lEckOEZTF4gFu93yUOZqUT2SSb79R6N
+         NbsX2uOQCz3H6bKZ/2Ht9YiHeP5bHRxfeCpxWOYKuz3FhMEZgnd7O4/x+72Y8TbrhSDk
+         B+JDguRpue+4HBlYQ6OO7qtJ606wfHWf95eKi47/FdVq0IoOyRbz1EZ7wmp0GjuLMvbq
+         jld1eUMgJMKReDoqZ+I9U7dD/yPB8VEl68LZrwovEVCWPJ+U68q0FES6/ZA6yUR8uJnd
+         THp2YnDws/QDxvFIjAVkx+FwvDvdggLHZzCznpEduCVtBuq0k4AlsHN3HbVne4GXbZK9
+         Cb9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=fPUr8jCY8JIDce77aHKLu0kesj5mi5yI8K5HlZIk77s=;
+        b=kj3fjDniI4wiQM3rFoi3Z5EAZiUpLMQMzNtH5W9GJBZh6xZvodFGNYG1Y+VgP59PDJ
+         PD/5nEb5JhsQ9v9uTfnvAYDFJDl48mgsBGlp2xWRE++84QblEWLrEVYZ13/5xS54l+9t
+         xLmUomEt4I4/j/qptKVafnziC42Kw4rFllhSou+4TWB+Ds4xgfKAyYqeaxAzcB7/T/Jv
+         uBIWbk9qDkkXtDYWRc/HuQ6wNZwDYvaFr+6ybwLkGal5+kSibhJ2ymoihUX/Nhqkc9xL
+         R7KG6/4SGSm3feTc9VlqDv4MvLlfU1UtMgL1HwwmMwL2kd97FN6K40d2hLgXtwfPdYH8
+         ApuA==
+X-Gm-Message-State: APjAAAVhwm5aIJiH5XTJHhtPDt1VqDwkNG3loX1lVruWguegXmZREZHC
+        YTlLj7tN3ouhFAFUB5GP2g==
+X-Google-Smtp-Source: APXvYqzZlbx8It43QShJfKjvjpoTUrSmBRIOwdew2A0aFJvxC0n1wEo4RUyL+HsNRtPaB8C/DW+LWQ==
+X-Received: by 2002:a5d:638f:: with SMTP id p15mr61891483wru.402.1582499889294;
+        Sun, 23 Feb 2020 15:18:09 -0800 (PST)
+Received: from ninjahost.lan (host-2-102-13-223.as13285.net. [2.102.13.223])
+        by smtp.googlemail.com with ESMTPSA id q6sm8968203wrf.67.2020.02.23.15.18.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2020 15:18:08 -0800 (PST)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     boqun.feng@gmail.com
+Cc:     jbi.octave@gmail.com, linux-kernel@vger.kernel.org,
+        Gerrit Renker <gerrit@erg.abdn.ac.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        dccp@vger.kernel.org (open list:DCCP PROTOCOL),
+        netdev@vger.kernel.org (open list:NETWORKING [GENERAL])
+Subject: [PATCH 14/30] dccp: Add missing annotation for dccp_child_process()
+Date:   Sun, 23 Feb 2020 23:16:55 +0000
+Message-Id: <20200223231711.157699-15-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200223231711.157699-1-jbi.octave@gmail.com>
+References: <0/30>
+ <20200223231711.157699-1-jbi.octave@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/HRS=wqj=EXtghxVG08E8STH";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/HRS=wqj=EXtghxVG08E8STH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Sparse reports a warning at dccp_child_process()
+warning: context imbalance in dccp_child_process() - unexpected unlock
+The root cause is the missing annotation at dccp_child_process()
+Add the missing __releases(child) annotation
 
-Hi all,
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+---
+ net/dccp/minisocks.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Tue, 18 Feb 2020 09:22:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Tue, 18 Feb 2020 08:07:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > On Tue, 18 Feb 2020 00:12:13 +0800 Jianxin Pan <jianxin.pan@amlogic.com=
-> wrote: =20
-> > >
-> > > When MESON_SECURE_PM_DOMAINS & !MESON_SM, there will be compile failu=
-re:
-> > > .../meson-secure-pwrc.o: In function `meson_secure_pwrc_on':
-> > > .../meson-secure-pwrc.c:76: undefined reference to `meson_sm_call'
-> > >=20
-> > > Fix this by adding depends on MESON_SM for MESON_SECURE_PM_DOMAINS.
-> > >=20
-> > > Fixes: b3dde5013e13 ("soc: amlogic: Add support for Secure power doma=
-ins controller")
-> > >=20
-> > > Reported-by: kbuild test robot <lkp@intel.com>
-> > > Reported-by: patchwork-bot+linux-amlogic<patchwork-bot+linux-amlogic@=
-kernel.org>
-> > > Reported-by: Stephen Rothwell<sfr@canb.auug.org.au>
-> > > Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-> > > ---
-> > >  drivers/soc/amlogic/Kconfig | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)   =20
-> >=20
-> > I will apply that patch to linux-next today. =20
->=20
-> This fixes the build for me.
->=20
-> Tested-by: Stephen Rothwell<sfr@canb.auug.org.au>
->=20
-> Also, please keep the commit message tags together at the end of the
-> commit message i.e. remove the blank line after the Fixes: tag above.
-> (see "git interpret-trailers ")
+diff --git a/net/dccp/minisocks.c b/net/dccp/minisocks.c
+index 25187528c308..c5c74a34d139 100644
+--- a/net/dccp/minisocks.c
++++ b/net/dccp/minisocks.c
+@@ -216,6 +216,7 @@ EXPORT_SYMBOL_GPL(dccp_check_req);
+  */
+ int dccp_child_process(struct sock *parent, struct sock *child,
+ 		       struct sk_buff *skb)
++	__releases(child)
+ {
+ 	int ret = 0;
+ 	const int state = child->sk_state;
+-- 
+2.24.1
 
-I am still applying this patch ...
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/HRS=wqj=EXtghxVG08E8STH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5TB+YACgkQAVBC80lX
-0Gw1Ygf9FYA4QbsYVulSaeKZSzIU8INOux2IozBcABlP9zBBHobUJpQC28V80fti
-ImqOIwDNv+r67DnCKDg64+X5PfPyOySRYssr9sRSWcjwoud1qt2ln0iez9tDMG0t
-B7ntUEWmRAFZ0GtBYqSGZw73lldQRod4lD7B1RrxVK36xIVMUo+X/ZWAEbvlQGn1
-oWkoVMxhbDK6crqYBKgTfAVSa2QbpNQV++y0fmmfJUMl/8txhSYEhMIrKr+pr4i6
-xHLq3w3J4HJXTo/07+1RjlhgVHdO+e3JyLunOA5MA+aW215AjiCXGcSLHX7PD1QM
-mtWa7KCNYCHULAxJs6JOuzD+gOMLLg==
-=gH3w
------END PGP SIGNATURE-----
-
---Sig_/HRS=wqj=EXtghxVG08E8STH--
