@@ -2,516 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A6C51698FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 18:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FCCB169901
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 18:30:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbgBWR3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 12:29:31 -0500
-Received: from vps.xff.cz ([195.181.215.36]:44524 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727183AbgBWR33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 12:29:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1582478966; bh=nYjRE42O8TZ0UQythdBEtkVY0pFM4voKWIXFp4mwsM8=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=sHbX+Q0rsKk4TaP+hTIf87Boz7laVCWZHrz6vsXgkrct+eQld00O9iqKtkZyUUI9s
-         1CNz0gnZS6M628hTF7+/EvsPZ9eWgF47Bee+UKC1fk3J8J2ZBLOzDdC4Yn9ZgeDgEJ
-         URkqVq0TAZ7ut6H5eMn4EyJ9RNQTaQ/7QnnhPvcI=
-From:   Ondrej Jirman <megous@megous.com>
-To:     linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     Ondrej Jirman <megous@megous.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Georgii Staroselskii <georgii.staroselskii@emlid.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Martijn Braam <martijn@brixit.nl>, Luca Weiss <luca@z3ntu.xyz>,
-        Bhushan Shah <bshah@kde.org>, Icenowy Zheng <icenowy@aosc.io>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: allwinner: Add initial support for Pine64 PinePhone
-Date:   Sun, 23 Feb 2020 18:29:16 +0100
-Message-Id: <20200223172916.843379-4-megous@megous.com>
-In-Reply-To: <20200223172916.843379-1-megous@megous.com>
-References: <20200223172916.843379-1-megous@megous.com>
+        id S1727166AbgBWRaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 12:30:14 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:53311 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbgBWRaN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 12:30:13 -0500
+Received: by mail-il1-f197.google.com with SMTP id d3so12716844ilg.20
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 09:30:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=R7hdqwHw5eeNO6TxhG5nNkBVCSV9QlKOYXhwkg+mFF4=;
+        b=OCX3JMaQ0CRQudvbGmFLJuiFnL7TVLSiS7kkq8pHesbwy0PknqruD329AHRqR91C5b
+         T+cUpYufizzdIA+j59+h7rQjaQRNniaBGLz0KWxY/Vp3rcLWIOuTMDKOJWL72XF6lSsL
+         OdsKe7t9WMLT4+CaODj/BBg5ZveiusTZvbtfZE52BlccP0p5uPXtWkfKGz0ON1TU3d8x
+         07m9aUZZ9gsLZwn/roX6BwHCJqlFwD6/ym54thaW8ySFf+1qU1EzElSR1X13sC6i3z2x
+         ejluvsJK5qaMo2nrYMBG+KcLNQlv+/+F3VtTHHYYMnnfCsaHJ04nMf0oQjkhVlDOyD1P
+         uT5A==
+X-Gm-Message-State: APjAAAX6w2CHGfEZkyzfYsCEmwQqEu1WkphnbsdjR6O/LlEme9e7eabE
+        WpTUbI+DX9+keH4TeA17mVUwmMaaZCrzLm6DvUJM0P1PNb76
+X-Google-Smtp-Source: APXvYqy4iLo3RVULMi3CTSwi49Esqx+pcgimJdeqKMBPmV+C9TwdSokxPkYzwsPWOYE4QbyPVJO1ScaLlStwh5B53y36BlfwMOOQ
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:af99:: with SMTP id v25mr55751208ill.289.1582479012287;
+ Sun, 23 Feb 2020 09:30:12 -0800 (PST)
+Date:   Sun, 23 Feb 2020 09:30:12 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000064653f059f419b58@google.com>
+Subject: KASAN: use-after-free Read in bit_putcs
+From:   syzbot <syzbot+b308f5fd049fbbc6e74f@syzkaller.appspotmail.com>
+To:     b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At them moment PinePhone comes in two slightly incompatible variants:
+Hello,
 
-- 1.0: Early Developer Batch
-- 1.1: Braveheart Batch
+syzbot found the following crash on:
 
-There will be at least one more incompatible variant in the very near
-future, so let's start by sharing the dtsi among multiple variants,
-right away, even though the HW description doesn't yet include the
-different bits.
+HEAD commit:    0a44cac8 Merge tag 'dma-mapping-5.6' of git://git.infradea..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11bfb74ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a61f2164c515c07f
+dashboard link: https://syzkaller.appspot.com/bug?extid=b308f5fd049fbbc6e74f
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
 
-This is a basic DT that includes only features that are already
-supported by mainline drivers.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Co-developed-by: Samuel Holland <samuel@sholland.org>
-Signed-off-by: Samuel Holland <samuel@sholland.org>
-Co-developed-by: Martijn Braam <martijn@brixit.nl>
-Signed-off-by: Martijn Braam <martijn@brixit.nl>
-Co-developed-by: Luca Weiss <luca@z3ntu.xyz>
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-Signed-off-by: Bhushan Shah <bshah@kde.org>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Ondrej Jirman <megous@megous.com>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b308f5fd049fbbc6e74f@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in __fb_pad_aligned_buffer include/linux/fb.h:655 [inline]
+BUG: KASAN: use-after-free in bit_putcs_aligned drivers/video/fbdev/core/bitblit.c:96 [inline]
+BUG: KASAN: use-after-free in bit_putcs+0x13ee/0x1cc0 drivers/video/fbdev/core/bitblit.c:185
+Read of size 1 at addr ffff8880a8087c10 by task syz-executor.2/5278
+
+CPU: 1 PID: 5278 Comm: syz-executor.2 Not tainted 5.6.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1fb/0x318 lib/dump_stack.c:118
+ print_address_description+0x74/0x5c0 mm/kasan/report.c:374
+ __kasan_report+0x149/0x1c0 mm/kasan/report.c:506
+ kasan_report+0x26/0x50 mm/kasan/common.c:641
+ __asan_report_load1_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+ __fb_pad_aligned_buffer include/linux/fb.h:655 [inline]
+ bit_putcs_aligned drivers/video/fbdev/core/bitblit.c:96 [inline]
+ bit_putcs+0x13ee/0x1cc0 drivers/video/fbdev/core/bitblit.c:185
+ fbcon_putcs+0x7b4/0xad0 drivers/video/fbdev/core/fbcon.c:1360
+ do_update_region+0x462/0x600 drivers/tty/vt/vt.c:677
+ redraw_screen+0xcc5/0x1830 drivers/tty/vt/vt.c:1011
+ vc_do_resize+0x12af/0x1af0 drivers/tty/vt/vt.c:1284
+ vc_resize+0x4f/0x60 drivers/tty/vt/vt.c:1304
+ vt_ioctl+0x2fa8/0x3a70 drivers/tty/vt/vt_ioctl.c:887
+ tty_ioctl+0xee6/0x15c0 drivers/tty/tty_io.c:2660
+ vfs_ioctl fs/ioctl.c:47 [inline]
+ ksys_ioctl fs/ioctl.c:763 [inline]
+ __do_sys_ioctl fs/ioctl.c:772 [inline]
+ __se_sys_ioctl+0x113/0x190 fs/ioctl.c:770
+ __x64_sys_ioctl+0x7b/0x90 fs/ioctl.c:770
+ do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45c449
+Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f74261f2c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f74261f36d4 RCX: 000000000045c449
+RDX: 0000000020000080 RSI: 000000000000560a RDI: 0000000000000003
+RBP: 000000000076bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 000000000000066b R14: 00000000004c8fe0 R15: 000000000076bf2c
+
+Allocated by task 2919:
+ save_stack mm/kasan/common.c:72 [inline]
+ set_track mm/kasan/common.c:80 [inline]
+ __kasan_kmalloc+0x118/0x1c0 mm/kasan/common.c:515
+ kasan_kmalloc+0x9/0x10 mm/kasan/common.c:529
+ __do_kmalloc_node mm/slab.c:3616 [inline]
+ __kmalloc_node_track_caller+0x4d/0x60 mm/slab.c:3630
+ __kmalloc_reserve net/core/skbuff.c:142 [inline]
+ __alloc_skb+0xe8/0x500 net/core/skbuff.c:210
+ alloc_skb include/linux/skbuff.h:1051 [inline]
+ _sctp_make_chunk+0x60/0x460 net/sctp/sm_make_chunk.c:1394
+ sctp_make_data net/sctp/sm_make_chunk.c:1426 [inline]
+ sctp_make_datafrag_empty+0xa3/0x5b0 net/sctp/sm_make_chunk.c:740
+ sctp_datamsg_from_user+0x7a8/0x1020 net/sctp/chunk.c:262
+ sctp_sendmsg_to_asoc+0x7a9/0x1500 net/sctp/socket.c:1844
+ sctp_sendmsg+0x15a1/0x3570 net/sctp/socket.c:2016
+ inet_sendmsg+0x147/0x310 net/ipv4/af_inet.c:807
+ sock_sendmsg_nosec net/socket.c:652 [inline]
+ sock_sendmsg net/socket.c:672 [inline]
+ ____sys_sendmsg+0x4f7/0x7f0 net/socket.c:2343
+ ___sys_sendmsg net/socket.c:2397 [inline]
+ __sys_sendmsg+0x1ed/0x290 net/socket.c:2430
+ __do_sys_sendmsg net/socket.c:2439 [inline]
+ __se_sys_sendmsg net/socket.c:2437 [inline]
+ __x64_sys_sendmsg+0x7f/0x90 net/socket.c:2437
+ do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 2919:
+ save_stack mm/kasan/common.c:72 [inline]
+ set_track mm/kasan/common.c:80 [inline]
+ kasan_set_free_info mm/kasan/common.c:337 [inline]
+ __kasan_slab_free+0x12e/0x1e0 mm/kasan/common.c:476
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
+ __cache_free mm/slab.c:3426 [inline]
+ kfree+0x10d/0x220 mm/slab.c:3757
+ skb_free_head net/core/skbuff.c:592 [inline]
+ skb_release_data+0x72f/0x8c0 net/core/skbuff.c:612
+ skb_release_all net/core/skbuff.c:666 [inline]
+ __kfree_skb+0x59/0x1c0 net/core/skbuff.c:680
+ consume_skb+0x72/0x110 net/core/skbuff.c:839
+ sctp_chunk_destroy net/sctp/sm_make_chunk.c:1454 [inline]
+ sctp_chunk_put+0x17b/0x200 net/sctp/sm_make_chunk.c:1481
+ sctp_chunk_free+0x59/0x60 net/sctp/sm_make_chunk.c:1468
+ sctp_outq_sack+0x1169/0x16a0 net/sctp/outqueue.c:1352
+ sctp_cmd_process_sack net/sctp/sm_sideeffect.c:798 [inline]
+ sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1354 [inline]
+ sctp_side_effects net/sctp/sm_sideeffect.c:1185 [inline]
+ sctp_do_sm+0x18f3/0x5840 net/sctp/sm_sideeffect.c:1156
+ sctp_assoc_bh_rcv+0x494/0x770 net/sctp/associola.c:1044
+ sctp_inq_push+0x1ab/0x1d0 net/sctp/inqueue.c:80
+ sctp_backlog_rcv+0x16c/0x4b0 net/sctp/input.c:344
+ sk_backlog_rcv include/net/sock.h:938 [inline]
+ __release_sock+0x1c1/0x4b0 net/core/sock.c:2437
+ release_sock+0x65/0x1c0 net/core/sock.c:2953
+ sctp_wait_for_connect+0x2f6/0x590 net/sctp/socket.c:9280
+ sctp_sendmsg_to_asoc+0x11ba/0x1500 net/sctp/socket.c:1870
+ sctp_sendmsg+0x15a1/0x3570 net/sctp/socket.c:2016
+ inet_sendmsg+0x147/0x310 net/ipv4/af_inet.c:807
+ sock_sendmsg_nosec net/socket.c:652 [inline]
+ sock_sendmsg net/socket.c:672 [inline]
+ ____sys_sendmsg+0x4f7/0x7f0 net/socket.c:2343
+ ___sys_sendmsg net/socket.c:2397 [inline]
+ __sys_sendmsg+0x1ed/0x290 net/socket.c:2430
+ __do_sys_sendmsg net/socket.c:2439 [inline]
+ __se_sys_sendmsg net/socket.c:2437 [inline]
+ __x64_sys_sendmsg+0x7f/0x90 net/socket.c:2437
+ do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8880a8087c00
+ which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 16 bytes inside of
+ 512-byte region [ffff8880a8087c00, ffff8880a8087e00)
+The buggy address belongs to the page:
+page:ffffea0002a021c0 refcount:1 mapcount:0 mapping:ffff8880aa400a80 index:0x0
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea0002431688 ffffea000259d648 ffff8880aa400a80
+raw: 0000000000000000 ffff8880a8087000 0000000100000004 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8880a8087b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8880a8087b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff8880a8087c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                         ^
+ ffff8880a8087c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880a8087d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- arch/arm64/boot/dts/allwinner/Makefile        |   2 +
- .../allwinner/sun50i-a64-pinephone-1.0.dts    |  11 +
- .../allwinner/sun50i-a64-pinephone-1.1.dts    |  11 +
- .../dts/allwinner/sun50i-a64-pinephone.dtsi   | 385 ++++++++++++++++++
- 4 files changed, 409 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.0.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.1.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-index cf4f78617c3f3..79ca263672c38 100644
---- a/arch/arm64/boot/dts/allwinner/Makefile
-+++ b/arch/arm64/boot/dts/allwinner/Makefile
-@@ -9,6 +9,8 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-orangepi-win.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-lts.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pinebook.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pinephone-1.0.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pinephone-1.1.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-sopine-baseboard.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-teres-i.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-bananapi-m2-plus.dtb
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.0.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.0.dts
-new file mode 100644
-index 0000000000000..0c42272106afa
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.0.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+// Copyright (C) 2020 Ondrej Jirman <megous@megous.com>
-+
-+/dts-v1/;
-+
-+#include "sun50i-a64-pinephone.dtsi"
-+
-+/ {
-+	model = "Pine64 PinePhone Developer Batch (1.0)";
-+	compatible = "pine64,pinephone-1.0", "allwinner,sun50i-a64";
-+};
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.1.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.1.dts
-new file mode 100644
-index 0000000000000..06a775c41664b
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.1.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+// Copyright (C) 2020 Ondrej Jirman <megous@megous.com>
-+
-+/dts-v1/;
-+
-+#include "sun50i-a64-pinephone.dtsi"
-+
-+/ {
-+	model = "Pine64 PinePhone Braveheart (1.1)";
-+	compatible = "pine64,pinephone-1.1", "allwinner,sun50i-a64";
-+};
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-new file mode 100644
-index 0000000000000..d0cf21d82c9e9
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-@@ -0,0 +1,385 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+// Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.xyz>
-+// Copyright (C) 2020 Ondrej Jirman <megous@megous.com>
-+
-+#include "sun50i-a64.dtsi"
-+#include "sun50i-a64-cpu-opp.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/pwm/pwm.h>
-+
-+/ {
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		blue {
-+			function = LED_FUNCTION_INDICATOR;
-+			function-enumerator = <1>;
-+			color = <LED_COLOR_ID_BLUE>;
-+			gpios = <&pio 3 20 GPIO_ACTIVE_HIGH>; /* PD20 */
-+		};
-+
-+		green {
-+			function = LED_FUNCTION_INDICATOR;
-+			function-enumerator = <2>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			gpios = <&pio 3 18 GPIO_ACTIVE_HIGH>; /* PD18 */
-+		};
-+
-+		red {
-+			function = LED_FUNCTION_INDICATOR;
-+			function-enumerator = <3>;
-+			color = <LED_COLOR_ID_RED>;
-+			gpios = <&pio 3 19 GPIO_ACTIVE_HIGH>; /* PD19 */
-+		};
-+	};
-+
-+	speaker_amp: audio-amplifier {
-+		compatible = "simple-audio-amplifier";
-+		enable-gpios = <&pio 2 7 GPIO_ACTIVE_HIGH>; /* PC7 */
-+		sound-name-prefix = "Speaker Amp";
-+	};
-+
-+	vibrator {
-+		compatible = "gpio-vibrator";
-+		enable-gpios = <&pio 3 2 GPIO_ACTIVE_HIGH>; /* PD2 */
-+		vcc-supply = <&reg_dcdc1>;
-+	};
-+};
-+
-+&codec {
-+	status = "okay";
-+};
-+
-+&codec_analog {
-+	cpvdd-supply = <&reg_eldo1>;
-+	status = "okay";
-+};
-+
-+&cpu0 {
-+	cpu-supply = <&reg_dcdc2>;
-+};
-+
-+&cpu1 {
-+	cpu-supply = <&reg_dcdc2>;
-+};
-+
-+&cpu2 {
-+	cpu-supply = <&reg_dcdc2>;
-+};
-+
-+&cpu3 {
-+	cpu-supply = <&reg_dcdc2>;
-+};
-+
-+&dai {
-+	status = "okay";
-+};
-+
-+&ehci0 {
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
-+	status = "okay";
-+
-+	/* Magnetometer */
-+	lis3mdl@1e {
-+		compatible = "st,lis3mdl-magn";
-+		reg = <0x1e>;
-+		vdd-supply = <&reg_dldo1>;
-+		vddio-supply = <&reg_dldo1>;
-+	};
-+
-+	/* Accelerometer/gyroscope */
-+	mpu6050@68 {
-+		compatible = "invensense,mpu6050";
-+		reg = <0x68>;
-+		interrupt-parent = <&pio>;
-+		interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
-+		vdd-supply = <&reg_dldo1>;
-+		vddio-supply = <&reg_dldo1>;
-+	};
-+};
-+
-+/* Connected to pogo pins */
-+&i2c2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pins>;
-+	status = "okay";
-+};
-+
-+&lradc {
-+	vref-supply = <&reg_aldo3>;
-+	status = "okay";
-+
-+	button-200 {
-+		label = "Volume Up";
-+		linux,code = <KEY_VOLUMEUP>;
-+		channel = <0>;
-+		voltage = <200000>;
-+	};
-+
-+	button-400 {
-+		label = "Volume Down";
-+		linux,code = <KEY_VOLUMEDOWN>;
-+		channel = <0>;
-+		voltage = <400000>;
-+	};
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins>;
-+	vmmc-supply = <&reg_dcdc1>;
-+	vqmmc-supply = <&reg_dcdc1>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
-+	disable-wp;
-+	bus-width = <4>;
-+	status = "okay";
-+};
-+
-+&mmc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc2_pins>;
-+	vmmc-supply = <&reg_dcdc1>;
-+	vqmmc-supply = <&reg_dcdc1>;
-+	bus-width = <8>;
-+	non-removable;
-+	cap-mmc-hw-reset;
-+	status = "okay";
-+};
-+
-+&ohci0 {
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
-+&pio {
-+	vcc-pb-supply = <&reg_dcdc1>;
-+	vcc-pc-supply = <&reg_dcdc1>;
-+	vcc-pd-supply = <&reg_dcdc1>;
-+	vcc-pe-supply = <&reg_aldo1>;
-+	vcc-pf-supply = <&reg_dcdc1>;
-+	vcc-pg-supply = <&reg_dldo4>;
-+	vcc-ph-supply = <&reg_dcdc1>;
-+};
-+
-+&r_pio {
-+	/*
-+	 * FIXME: We can't add that supply for now since it would
-+	 * create a circular dependency between pinctrl, the regulator
-+	 * and the RSB Bus.
-+	 *
-+	 * vcc-pl-supply = <&reg_aldo2>;
-+	 */
-+};
-+
-+&r_rsb {
-+	status = "okay";
-+
-+	axp803: pmic@3a3 {
-+		compatible = "x-powers,axp803";
-+		reg = <0x3a3>;
-+		interrupt-parent = <&r_intc>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
-+#include "axp803.dtsi"
-+
-+&ac_power_supply {
-+	status = "okay";
-+};
-+
-+&battery_power_supply {
-+	status = "okay";
-+};
-+
-+&reg_aldo1 {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "dovdd-csi";
-+};
-+
-+&reg_aldo2 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "vcc-pl";
-+};
-+
-+&reg_aldo3 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <2700000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-pll-avcc";
-+};
-+
-+&reg_dcdc1 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-3v3";
-+};
-+
-+&reg_dcdc2 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1000000>;
-+	regulator-max-microvolt = <1300000>;
-+	regulator-name = "vdd-cpux";
-+};
-+
-+/* DCDC3 is polyphased with DCDC2 */
-+
-+&reg_dcdc5 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1200000>;
-+	regulator-max-microvolt = <1200000>;
-+	regulator-name = "vcc-dram";
-+};
-+
-+&reg_dcdc6 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1100000>;
-+	regulator-max-microvolt = <1100000>;
-+	regulator-name = "vdd-sys";
-+};
-+
-+&reg_dldo1 {
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-dsi-sensor";
-+};
-+
-+&reg_dldo2 {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "vcc-mipi-io";
-+};
-+
-+&reg_dldo3 {
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <2800000>;
-+	regulator-name = "avdd-csi";
-+};
-+
-+&reg_dldo4 {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-wifi-io";
-+};
-+
-+&reg_eldo1 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "vcc-lpddr";
-+};
-+
-+&reg_eldo3 {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "dvdd-1v8-csi";
-+};
-+
-+&reg_fldo1 {
-+	regulator-min-microvolt = <1200000>;
-+	regulator-max-microvolt = <1200000>;
-+	regulator-name = "vcc-1v2-hsic";
-+};
-+
-+&reg_fldo2 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1100000>;
-+	regulator-max-microvolt = <1100000>;
-+	regulator-name = "vdd-cpus";
-+};
-+
-+&reg_ldo_io0 {
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-lcd-ctp-stk";
-+	status = "okay";
-+};
-+
-+&reg_ldo_io1 {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "vcc-1v8-typec";
-+	status = "okay";
-+};
-+
-+&reg_rtc_ldo {
-+	regulator-name = "vcc-rtc";
-+};
-+
-+&sound {
-+	status = "okay";
-+	simple-audio-card,aux-devs = <&codec_analog>, <&speaker_amp>;
-+	simple-audio-card,widgets = "Microphone", "Headset Microphone",
-+				    "Microphone", "Internal Microphone",
-+				    "Headphone", "Headphone Jack",
-+				    "Speaker", "Internal Earpiece",
-+				    "Speaker", "Internal Speaker";
-+	simple-audio-card,routing =
-+			"Headphone Jack", "HP",
-+			"Internal Earpiece", "EARPIECE",
-+			"Internal Speaker", "Speaker Amp OUTL",
-+			"Internal Speaker", "Speaker Amp OUTR",
-+			"Speaker Amp INL", "LINEOUT",
-+			"Speaker Amp INR", "LINEOUT",
-+			"Left DAC", "AIF1 Slot 0 Left",
-+			"Right DAC", "AIF1 Slot 0 Right",
-+			"AIF1 Slot 0 Left ADC", "Left ADC",
-+			"AIF1 Slot 0 Right ADC", "Right ADC",
-+			"Internal Microphone", "MBIAS",
-+			"MIC1", "Internal Microphone",
-+			"Headset Microphone", "HBIAS",
-+			"MIC2", "Headset Microphone";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pb_pins>;
-+	status = "okay";
-+};
-+
-+/* Connected to the modem */
-+&uart3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart3_pins>;
-+	status = "okay";
-+};
-+
-+&usb_otg {
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&usb_power_supply {
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	status = "okay";
-+};
--- 
-2.25.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
