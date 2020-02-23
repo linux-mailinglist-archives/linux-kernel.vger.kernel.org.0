@@ -2,66 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 292E81698D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 18:25:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 419A71698DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 18:26:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgBWRZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 12:25:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60584 "EHLO mail.kernel.org"
+        id S1727202AbgBWR0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 12:26:39 -0500
+Received: from mga17.intel.com ([192.55.52.151]:33282 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726302AbgBWRZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 12:25:43 -0500
-Received: from localhost (95-141-97-180.as16211.net [95.141.97.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 948A92067D;
-        Sun, 23 Feb 2020 17:25:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582478743;
-        bh=/XKa3BFRoBFcTCYsAFpSQqMrFFlg1SCddpWYBY2aSx0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=paYladZMtZEgIYpny4kTreoohUj7Hk277otkGLZBd9Nsun6pst8BWdhM0nIHY2Zxs
-         wLAaaDMZAhIhw1XIlHyFj0KYK3VNbFPnC7YT/CoA1CvfjQUdqosa6zOlMNVoAyQOQB
-         XeJjeap9UkUAIBTwhc7hzE3joxAyxn9fVVbEg/J4=
-Date:   Sun, 23 Feb 2020 18:25:40 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.5 000/399] 5.5.6-stable review
-Message-ID: <20200223172540.GB349989@kroah.com>
-References: <20200221072402.315346745@linuxfoundation.org>
- <20200223154024.GA131562@kroah.com>
+        id S1727164AbgBWR0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 12:26:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2020 09:26:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,476,1574150400"; 
+   d="scan'208";a="229650051"
+Received: from ajbergin-mobl.ger.corp.intel.com (HELO localhost) ([10.252.23.203])
+  by fmsmga007.fm.intel.com with ESMTP; 23 Feb 2020 09:26:31 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v27 03/22] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
+Date:   Sun, 23 Feb 2020 19:25:40 +0200
+Message-Id: <20200223172559.6912-4-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200223172559.6912-1-jarkko.sakkinen@linux.intel.com>
+References: <20200223172559.6912-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200223154024.GA131562@kroah.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 04:40:24PM +0100, Greg Kroah-Hartman wrote:
-> On Fri, Feb 21, 2020 at 08:35:25AM +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.5.6 release.
-> > There are 399 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sun, 23 Feb 2020 07:19:49 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.6-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
-> > and the diffstat can be found below.
-> 
-> I've released -rc2 with a bunch of changes that I hope should resolve
-> the issues reported:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.6-rc2.gz
-> 
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Ugh, -rc3 is coming soon...
+Include SGX bit to the PF error codes and throw SIGSEGV with PF_SGX when
+a #PF with SGX set happens.
+
+CPU throws a #PF with the SGX bit in the event of Enclave Page Cache Map
+(EPCM) conflict. The EPCM is a CPU-internal table, which describes the
+properties for a enclave page. Enclaves are measured and signed software
+entities, which SGX hosts. [1]
+
+Although the primary purpose of the EPCM conflict checks  is to prevent
+malicious accesses to an enclave, an illegit access can happen also for
+legit reasons.
+
+All SGX reserved memory, including EPCM is encrypted with a transient
+key that does not survive from the power transition. Throwing a SIGSEGV
+allows user space software react when this happens (e.g. rec-create the
+enclave, which was invalidated).
+
+[1] Intel SDM: 36.5.1 Enclave Page Cache Map (EPCM)
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/asm/traps.h |  1 +
+ arch/x86/mm/fault.c          | 13 +++++++++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
+index ffa0dc8a535e..bb8d5ae74dbc 100644
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -174,5 +174,6 @@ enum x86_pf_error_code {
+ 	X86_PF_RSVD	=		1 << 3,
+ 	X86_PF_INSTR	=		1 << 4,
+ 	X86_PF_PK	=		1 << 5,
++	X86_PF_SGX	=		1 << 15,
+ };
+ #endif /* _ASM_X86_TRAPS_H */
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index fa4ea09593ab..dee9504cde79 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1179,6 +1179,19 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
+ 	if (error_code & X86_PF_PK)
+ 		return 1;
+ 
++	/*
++	 * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
++	 * access is allowed by the PTE but not the EPCM. This usually happens
++	 * when the EPCM is yanked out from under us, e.g. by hardware after a
++	 * suspend/resume cycle. In any case, software, i.e. the kernel, can't
++	 * fix the source of the fault as the EPCM can't be directly modified by
++	 * software. Handle the fault as an access error in order to signal
++	 * userspace so that userspace can rebuild their enclave(s), even though
++	 * userspace may not have actually violated access permissions.
++	 */
++	if (unlikely(error_code & X86_PF_SGX))
++		return 1;
++
+ 	/*
+ 	 * Make sure to check the VMA so that we do not perform
+ 	 * faults just to hit a X86_PF_PK as soon as we fill in a
+-- 
+2.20.1
+
