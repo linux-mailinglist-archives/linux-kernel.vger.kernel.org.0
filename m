@@ -2,122 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E7321695B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 05:04:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A43F01695B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 05:09:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbgBWEEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 23:04:00 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33787 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726983AbgBWED7 (ORCPT
+        id S1727312AbgBWEI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 23:08:57 -0500
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:35767 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727024AbgBWEI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 23:03:59 -0500
-Received: by mail-ed1-f67.google.com with SMTP id r21so7647530edq.0;
-        Sat, 22 Feb 2020 20:03:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BwEdqYydc8kdzSGTpNrqTMnSIQHLxOA+j53stoAmXIE=;
-        b=AYn5m+1G10wSaRo1IWwIUeGU9gyPu6w0eVfT8R5p4QCPQNgyiLRYXfqC/natGksJ3R
-         z4oA5oH2+OM7L02kX1Ug55K7cm0AhLmL33X0xe5E4augSwdECK7QkB2oleu/TrWIvt4a
-         0NbSbfMNQysYBSyQRyUPAyiXmWMDo+/HsWH4dg0dnSWNg4lueXxwr5eYtC5gDfM8HiVV
-         ZEUqeAe3DH1j4MdD17N4PJl/x96FY7YyOryHcprI6Y2KdQphg2f7kmOxH1qCG7fHBxPi
-         8BPCLct1XZ0RH/YsuD/MkXXjSMdUZy0ku1Bmx06CPxaan7qZ2/9YwhDGuJd+0eaLawpx
-         xQ0Q==
-X-Gm-Message-State: APjAAAV8PvCjCMjJVOxi/cVn3X74nJtxU7brEvOhVgIzWLDVIA95xydc
-        z4AVwHDECfbb+KGOtA3raV4lI3no07s=
-X-Google-Smtp-Source: APXvYqzrGSKXsrUGEXvzayBJLLJsND9LjHZK33uvYbD3CrtB/5P33UQxvPC1QhwB/L2HmC6n3SNaAA==
-X-Received: by 2002:a17:906:b2c5:: with SMTP id cf5mr41763793ejb.325.1582430637215;
-        Sat, 22 Feb 2020 20:03:57 -0800 (PST)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
-        by smtp.gmail.com with ESMTPSA id i11sm582047ejv.64.2020.02.22.20.03.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Feb 2020 20:03:56 -0800 (PST)
-Received: by mail-wr1-f42.google.com with SMTP id n10so6439954wrm.1;
-        Sat, 22 Feb 2020 20:03:56 -0800 (PST)
-X-Received: by 2002:a5d:640d:: with SMTP id z13mr55885217wru.181.1582430636158;
- Sat, 22 Feb 2020 20:03:56 -0800 (PST)
-MIME-Version: 1.0
-References: <20200222223154.221632-1-megous@megous.com> <20200222223154.221632-2-megous@megous.com>
- <CAGb2v67XwrYA8FLF9wpnngm9F-F9UV2m+rr+r3t+KUVv5-EMiw@mail.gmail.com>
-In-Reply-To: <CAGb2v67XwrYA8FLF9wpnngm9F-F9UV2m+rr+r3t+KUVv5-EMiw@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sun, 23 Feb 2020 12:03:46 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66G5P_souwFHodO0_NYhWyQ+dGE4fbqLLK3qd9ue7Kk9g@mail.gmail.com>
-Message-ID: <CAGb2v66G5P_souwFHodO0_NYhWyQ+dGE4fbqLLK3qd9ue7Kk9g@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 1/4] ARM: dts: sun8i-a83t-tbs-a711: OOB WiFi
- interrupt doesn't work
-To:     =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megous@megous.com>
-Cc:     linux-sunxi <linux-sunxi@googlegroups.com>,
+        Sat, 22 Feb 2020 23:08:57 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id B1EC65F00;
+        Sat, 22 Feb 2020 23:08:55 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sat, 22 Feb 2020 23:08:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm2; bh=q4Ot3OeJR3RSzSA1Bg9G4BvjjT
+        WwbYiknLcd/Pnw3hY=; b=oxxpck8PRbftTSecbIJZKvtQAp3/63KVp8GEO6InhT
+        yyX7TLVAQLSqAzvVmhgiWFhGtgFSX3ogu0InMV25csi15GK7SF1JYtY+jHVPsWvE
+        7G352uk0MMh7hiUmeVv7zSPUCD1zjxMbKDPSDTfkbOiN9dn+2uzJTp/VIgStN+GN
+        oW+HWVWxDzsoHYXtZxFbbSxNoIVsfU2KtN0QFacOMik0DCqQ4T9MDGIDxcqwSPeL
+        8eSDu+iEvqwKfM2+iuCR3vSWYD1yQu9tubDRx3AzbQLtKVbAPFLTS78gxGiSzu1A
+        VEWBXVPlDHWVPdGsXDuGXGhrUT4ajvtw4LT0o44RfmtQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=q4Ot3OeJR3RSzSA1B
+        g9G4BvjjTWwbYiknLcd/Pnw3hY=; b=SXPtn60L+C5blGwK36ygthuZnv82hw8Pq
+        TsYnaEYe9rdUAIKTzS+UUCbadTNpExorwKbMBRvT+y8KPeiyI5zp+UXRpdHIO0Vt
+        GOv0UjVJsUqV1wRD6WztNMKDMwN5vF31R+xNvHm5ZNKgaKVYLgloyJeoKQKXJZVm
+        2xlWQsmFhRVMOcfB2M3a0BPyr7v96A3yHLoJpIKiaW/ECnWua4kwv7xHDeiLVWX3
+        V+lq4jDvkOyLB66k9HxkVykLvc0ItbulhFehTbSj6uza19kFYFflFyjEBEUwmfuW
+        2rCSu97wTmmrYxcehhVbgU7wewROVd4xMKE38eWqqRxeSrc/gHaWA==
+X-ME-Sender: <xms:1vpRXgUY7eRF4M6nH0c28YrLTJPsT3EG-FYZqPI9jxZIuTYa9K2URw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkeejgdeigecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghlucfj
+    ohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppeejtd
+    drudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
+    mhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:1vpRXkc3Bhic1H0udd1jzMF34-yyhTWiKKmQsCeS9MxiAXc_6lZWzw>
+    <xmx:1vpRXhtam65ZIHFvz1C9rp59zXEGH0C_CbGT2dBKe53J3JWXZt930A>
+    <xmx:1vpRXrhWrk0080BXohQ6CacYUiZ87kCizWfPSv-ReW0pLeLYehqJQg>
+    <xmx:1_pRXs9GeGkNps2mHiVMg2TzJN4DWd0yYpw4Byw9kfjOW-qT0VfKAg>
+Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 10F313280060;
+        Sat, 22 Feb 2020 23:08:54 -0500 (EST)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
         Maxime Ripard <mripard@kernel.org>,
-        Tomas Novotny <tomas@novotny.cz>,
-        Rob Herring <robh+dt@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ondrej Jirman <megous@megous.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v7 0/6] Allwinner sun6i message box support
+Date:   Sat, 22 Feb 2020 22:08:47 -0600
+Message-Id: <20200223040853.2658-1-samuel@sholland.org>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 11:26 AM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> Hi,
->
->
-> On Sun, Feb 23, 2020 at 6:32 AM Ondrej Jirman <megous@megous.com> wrote:
-> >
-> > It just causes a constant rate of 5000 interrupts per second for both
-> > GPIO and MMC, even if nothing is happening. Rely on in-band interrupts
-> > instead.
-> >
-> > Fixes: 0e23372080def7bb ("arm: dts: sun8i: Add the TBS A711 tablet devicetree")
-> > Signed-off-by: Ondrej Jirman <megous@megous.com>
->
-> What WiFi chip/module does this use? It might be worth asking Broadcom
-> people to help with this and fix the driver.
+This series adds support for the "hardware message box" in sun8i, sun9i,
+and sun50i SoCs, used for communication with the ARISC management
+processor (the platform's equivalent of the ARM SCP). The end goal is to
+use the arm_scpi driver as a client, communicating with firmware running
+on the ARISC CPU.
 
-Based on the comments in the device tree file, it uses an AP6210, which
-is a BCM43362 inside for SDIO-based WiFi. There is a recent fix in 5.6-rc1
-for this,
+I have tested this driver with various firmware programs and mailbox
+clients on the A64, H5, and H6 SoCs (including specifically a patched
+version of the arm_scpi driver), and Ondrej Jirman has tested the driver
+on the A83T (using a similar patch to arm_scpi).
 
-    8c8e60fb86a9 brcmfmac: sdio: Fix OOB interrupt initialization on brcm43362
+This patch series includes just the driver and the device tree changes.
 
-which seems to fix things for me. Could you try it on your end?
+Thanks,
+Samuel
 
-ChenYu
+Changes from v6:
+  - Rebased on tag v5.6-rc2
+  - Collected Acked-by/Reviewed-by tags
+  - Dropped "FIFO full" check in sun6i_msgbox_send_data()
 
+Changes from v5:
+  - Rebased on tag sunxi-dt-for-5.5-2
+  - Dropped unnecessary/unrelated patches
+  - Addressed Maxime's dt-binding comments
+  - Used devm_reset_control_get_exclusive
 
-> ChenYu
->
-> > ---
-> >  arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 3 ---
-> >  1 file changed, 3 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-> > index 2fd31a0a0b344..ee5ce3556b2ad 100644
-> > --- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-> > +++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-> > @@ -214,9 +214,6 @@ &mmc1 {
-> >         brcmf: wifi@1 {
-> >                 reg = <1>;
-> >                 compatible = "brcm,bcm4329-fmac";
-> > -               interrupt-parent = <&r_pio>;
-> > -               interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>; /* PL3 WL_WAKE_UP */
-> > -               interrupt-names = "host-wake";
-> >         };
-> >  };
-> >
-> > --
-> > 2.25.1
-> >
-> > --
-> > You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> > To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> > To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20200222223154.221632-2-megous%40megous.com.
+Changes from v4:
+  - Rebased on sunxi-next
+  - Dropped AR100 clock patch, as it was controversial and unnecessary
+  - Renamed sunxi-msgbox to sun6i-msgbox and sun6i-a31-msgbox
+  - Added comments about not asserting the reset line
+  - Dropped A80 DTS changes as they were untested
+  - Added Ondrej's Tested-by for A83T
+  - Dropped the demo; replaced with a real arm_scpi fix
+
+Changes from v3:
+  - Rebased on sunxi-next
+  - Added Rob's Reviewed-by for patch 3
+  - Fixed a crash when receiving a message on a disabled channel
+  - Cleaned up some comments/formatting in the driver
+  - Fixed #mbox-cells in sunxi-h3-h5.dtsi (patch 7)
+  - Removed the irqchip example (no longer relevant to the fw design)
+  - Added a demo/example client that uses the driver and a toy firmware
+
+Changes from v2:
+  - Merge patches 1-3
+  - Add a comment in the code explaining the CLK_IS_CRITICAL usage
+  - Add a patch to mark the AR100 clocks as critical
+  - Use YAML for the device tree binding
+  - Include a not-for-merge example usage of the mailbox
+
+Changes from v1:
+  - Marked message box clocks as critical instead of hacks in the driver
+  - 8 unidirectional channels instead of 4 bidirectional pairs
+  - Use per-SoC compatible strings and an A31 fallback compatible
+  - Dropped the mailbox framework patch
+  - Include DT patches for SoCs that document the message box
+
+Samuel Holland (6):
+  dt-bindings: mailbox: Add a binding for the sun6i msgbox
+  mailbox: sun6i-msgbox: Add a new mailbox driver
+  ARM: dts: sunxi: a83t: Add msgbox node
+  ARM: dts: sunxi: h3/h5: Add msgbox node
+  arm64: dts: allwinner: a64: Add msgbox node
+  arm64: dts: allwinner: h6: Add msgbox node
+
+ .../mailbox/allwinner,sun6i-a31-msgbox.yaml   |  80 +++++
+ arch/arm/boot/dts/sun8i-a83t.dtsi             |  10 +
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  10 +
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  10 +
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  10 +
+ drivers/mailbox/Kconfig                       |   9 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/sun6i-msgbox.c                | 326 ++++++++++++++++++
+ 8 files changed, 457 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
+ create mode 100644 drivers/mailbox/sun6i-msgbox.c
+
+-- 
+2.24.1
+
