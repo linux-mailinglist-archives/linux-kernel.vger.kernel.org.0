@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCBDD16947E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:31:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B22016946E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:30:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbgBWCas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 21:30:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53114 "EHLO mail.kernel.org"
+        id S1727093AbgBWCXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 21:23:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728719AbgBWCXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:23:34 -0500
+        id S1728764AbgBWCXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:23:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77FE62071E;
-        Sun, 23 Feb 2020 02:23:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 377EE24650;
+        Sun, 23 Feb 2020 02:23:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424614;
-        bh=cACRJLPYJUGqekbbL6xWCecdMYb50zkd2HoNIw//Oyc=;
+        s=default; t=1582424623;
+        bh=dj1HLVWtS06vubJbJJPoUV4zTCw6tLtJL83/NG1u1nE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b6XNaKwCrdR/zoLjg2tZ1IgNynM8WaXGtIOia6IA2gPnu1OqLzaIvUDDOYcMU46GV
-         Wmq394k3rCrqeQvuiAC0VPsi5qm5MlOYP9okXRKoTd8XP+RY3GKOPeZJFtOwy+jBWX
-         QgPhPoGrigHjyyAMYsvCSdt76QhVAciOvFO3sUiw=
+        b=AUyzHSlUtVsBVaXkxmDNoRESGMFNYyp+2yQsNE7FtZTzWhz3iEzc2KQqjE7vcqDpj
+         GGwQCm/fl8GDsPrsXxDs+DGXSysZxDp3ztb+A/Yf0TqdKP2Q7V6lfYcEr8BSbF87SD
+         A4UpZoMtPI7fkpPfWqoJnhnUCCWZhps04Ueae690=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anton Eidelman <anton@lightbitslabs.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 48/50] nvme/tcp: fix bug on double requeue when send fails
-Date:   Sat, 22 Feb 2020 21:22:33 -0500
-Message-Id: <20200223022235.1404-48-sashal@kernel.org>
+Cc:     Scott Wood <swood@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 03/25] sched/core: Don't skip remote tick for idle CPUs
+Date:   Sat, 22 Feb 2020 21:23:17 -0500
+Message-Id: <20200223022339.1885-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200223022235.1404-1-sashal@kernel.org>
-References: <20200223022235.1404-1-sashal@kernel.org>
+In-Reply-To: <20200223022339.1885-1-sashal@kernel.org>
+References: <20200223022339.1885-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -44,52 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Eidelman <anton@lightbitslabs.com>
+From: Scott Wood <swood@redhat.com>
 
-[ Upstream commit 2d570a7c0251c594489a2c16b82b14ae30345c03 ]
+[ Upstream commit 488603b815a7514c7009e6fc339d74ed4a30f343 ]
 
-When nvme_tcp_io_work() fails to send to socket due to
-connection close/reset, error_recovery work is triggered
-from nvme_tcp_state_change() socket callback.
-This cancels all the active requests in the tagset,
-which requeues them.
+This will be used in the next patch to get a loadavg update from
+nohz cpus.  The delta check is skipped because idle_sched_class
+doesn't update se.exec_start.
 
-The failed request, however, was ended and thus requeued
-individually as well unless send returned -EPIPE.
-Another return code to be treated the same way is -ECONNRESET.
-
-Double requeue caused BUG_ON(blk_queued_rq(rq))
-in blk_mq_requeue_request() from either the individual requeue
-of the failed request or the bulk requeue from
-blk_mq_tagset_busy_iter(, nvme_cancel_request, );
-
-Signed-off-by: Anton Eidelman <anton@lightbitslabs.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Scott Wood <swood@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lkml.kernel.org/r/1578736419-14628-2-git-send-email-swood@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/tcp.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ kernel/sched/core.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index 7544be84ab358..a870144542159 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -1054,7 +1054,12 @@ static void nvme_tcp_io_work(struct work_struct *w)
- 		} else if (unlikely(result < 0)) {
- 			dev_err(queue->ctrl->ctrl.device,
- 				"failed to send request %d\n", result);
--			if (result != -EPIPE)
-+
-+			/*
-+			 * Fail the request unless peer closed the connection,
-+			 * in which case error recovery flow will complete all.
-+			 */
-+			if ((result != -EPIPE) && (result != -ECONNRESET))
- 				nvme_tcp_fail_request(queue->request);
- 			nvme_tcp_done_send_req(queue);
- 			return;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 2befd2c4ce9e6..3c7e039eae9a1 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3117,22 +3117,24 @@ static void sched_tick_remote(struct work_struct *work)
+ 	 * statistics and checks timeslices in a time-independent way, regardless
+ 	 * of when exactly it is running.
+ 	 */
+-	if (idle_cpu(cpu) || !tick_nohz_tick_stopped_cpu(cpu))
++	if (!tick_nohz_tick_stopped_cpu(cpu))
+ 		goto out_requeue;
+ 
+ 	rq_lock_irq(rq, &rf);
+ 	curr = rq->curr;
+-	if (is_idle_task(curr) || cpu_is_offline(cpu))
++	if (cpu_is_offline(cpu))
+ 		goto out_unlock;
+ 
+ 	update_rq_clock(rq);
+-	delta = rq_clock_task(rq) - curr->se.exec_start;
+ 
+-	/*
+-	 * Make sure the next tick runs within a reasonable
+-	 * amount of time.
+-	 */
+-	WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
++	if (!is_idle_task(curr)) {
++		/*
++		 * Make sure the next tick runs within a reasonable
++		 * amount of time.
++		 */
++		delta = rq_clock_task(rq) - curr->se.exec_start;
++		WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
++	}
+ 	curr->sched_class->task_tick(rq, curr, 0);
+ 
+ out_unlock:
 -- 
 2.20.1
 
