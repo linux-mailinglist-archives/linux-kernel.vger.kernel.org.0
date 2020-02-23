@@ -2,78 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B6C1169A3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 22:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30E1F169A61
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 23:03:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbgBWVZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 16:25:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49180 "EHLO mail.kernel.org"
+        id S1727186AbgBWWDb convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 23 Feb 2020 17:03:31 -0500
+Received: from mail.umc.edu.ve ([190.202.0.214]:34545 "EHLO mail.umc.edu.ve"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727149AbgBWVZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 16:25:08 -0500
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97C7120880
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 21:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582493107;
-        bh=UBZMLJ+hZwk33B6GKkoXn94+jtXkwzrj0yNNWPz/3zQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=XkUKzUybg2pHtUVaVP9yJElwd741P/VdnxJGLiUaj5n3khB/T8MsfTcyiF25DQjsh
-         YnLROAuTTrZYHcRiagNAXXsrOlPgTdi5pMkLJDSXFzz/thSYAmEdu9Vy2YAB9P1uvS
-         NQkqe/05Dc1LUVi28ZoxakXhsEzNLJMO6ApN2c9A=
-Received: by mail-wr1-f52.google.com with SMTP id g4so1707105wro.13
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 13:25:07 -0800 (PST)
-X-Gm-Message-State: APjAAAXTl8DQW1ahKNUdrc+avBcQmo0tj8d/nfi8zvM3r1xLQHaA/pDj
-        LTAaRF16NXQvF5fc+p8lx4DNU68etxTWJwjE9wQvDA==
-X-Google-Smtp-Source: APXvYqx5cdb7YOSRkBl6KJs6CwbRsq8y0XEDkKBScl7E1mxta09QfvSexEeWzzLkmkDwZiaAgEBpJ9t4aXi16/X071I=
-X-Received: by 2002:a05:6000:110b:: with SMTP id z11mr9787955wrw.252.1582493105928;
- Sun, 23 Feb 2020 13:25:05 -0800 (PST)
+        id S1726302AbgBWWDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 17:03:30 -0500
+X-Greylist: delayed 13898 seconds by postgrey-1.27 at vger.kernel.org; Sun, 23 Feb 2020 17:03:30 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.umc.edu.ve (Postfix) with ESMTP id B411C51A7451;
+        Sun, 23 Feb 2020 09:35:27 -0400 (BOT)
+X-Virus-Scanned: amavisd-new at mail.umc.edu.ve
+Received: from mail.umc.edu.ve ([127.0.0.1])
+        by localhost (mail.umc.edu.ve [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id cYYmQ5pEtYID; Sun, 23 Feb 2020 09:35:27 -0400 (BOT)
+Received: from [192.168.0.103] (unknown [154.230.218.240])
+        by mail.umc.edu.ve (Postfix) with ESMTPSA id 69E165361B9E;
+        Sun, 23 Feb 2020 07:09:22 -0400 (BOT)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-References: <20200223205435.114915-1-xypron.glpk@gmx.de>
-In-Reply-To: <20200223205435.114915-1-xypron.glpk@gmx.de>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Sun, 23 Feb 2020 22:24:54 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu_NoXwpgrdnTh54SJhCODoPc1WF0CUdQKGTM-YKqsJ12g@mail.gmail.com>
-Message-ID: <CAKv+Gu_NoXwpgrdnTh54SJhCODoPc1WF0CUdQKGTM-YKqsJ12g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] efi/capsule-loader: superfluous assignment
-To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: LOAN
+To:     Recipients <gguerra@umc.edu.ve>
+From:   "Samantha Yankee" <gguerra@umc.edu.ve>
+Date:   Sun, 23 Feb 2020 14:09:13 +0300
+Reply-To: mloanpl@gmail.com
+X-Antivirus: Avast (VPS 200222-0, 02/22/2020), Outbound message
+X-Antivirus-Status: Clean
+Message-Id: <20200223110922.69E165361B9E@mail.umc.edu.ve>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 23 Feb 2020 at 21:54, Heinrich Schuchardt <xypron.glpk@gmx.de> wrote:
->
-> In efi_capsule_write() the value 0 assigned to ret is never used.
->
-> Identified with cppcheck.
->
-> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
 
-Queued in efi/next, thanks
+ 2% LOAN OFFER, We Are Certified To Offer The Following Kinds Of Loans * Personal Loan(Unsecured) * Business Loan (Unsecured) * Debt Consolidation LoanLooking forward in doing a nice business with you,
 
-> ---
->  drivers/firmware/efi/capsule-loader.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/firmware/efi/capsule-loader.c b/drivers/firmware/efi/capsule-loader.c
-> index d3067cbd5114..4dde8edd53b6 100644
-> --- a/drivers/firmware/efi/capsule-loader.c
-> +++ b/drivers/firmware/efi/capsule-loader.c
-> @@ -168,7 +168,7 @@ static ssize_t efi_capsule_submit_update(struct capsule_info *cap_info)
->  static ssize_t efi_capsule_write(struct file *file, const char __user *buff,
->                                  size_t count, loff_t *offp)
->  {
-> -       int ret = 0;
-> +       int ret;
->         struct capsule_info *cap_info = file->private_data;
->         struct page *page;
->         void *kbuff = NULL;
-> --
-> 2.25.0
->
+1) Name            2) Country         3) Loan Amount            4) Loan Duration            5) Telephone number           6) Occupation.
+
+Yours In Service,
+MEGG Funding Management.
+Reply to Email:  mloanpl@gmail.com
