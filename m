@@ -2,117 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF7361698DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 18:26:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 292E81698D5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 18:25:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbgBWR0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 12:26:31 -0500
-Received: from mga04.intel.com ([192.55.52.120]:37634 "EHLO mga04.intel.com"
+        id S1727064AbgBWRZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 12:25:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726302AbgBWR0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 12:26:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2020 09:26:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,476,1574150400"; 
-   d="scan'208";a="229650034"
-Received: from ajbergin-mobl.ger.corp.intel.com (HELO localhost) ([10.252.23.203])
-  by fmsmga007.fm.intel.com with ESMTP; 23 Feb 2020 09:26:20 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v27 02/22] x86/cpufeatures: x86/msr: Intel SGX Launch Control hardware bits
-Date:   Sun, 23 Feb 2020 19:25:39 +0200
-Message-Id: <20200223172559.6912-3-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200223172559.6912-1-jarkko.sakkinen@linux.intel.com>
-References: <20200223172559.6912-1-jarkko.sakkinen@linux.intel.com>
+        id S1726302AbgBWRZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 12:25:43 -0500
+Received: from localhost (95-141-97-180.as16211.net [95.141.97.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 948A92067D;
+        Sun, 23 Feb 2020 17:25:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582478743;
+        bh=/XKa3BFRoBFcTCYsAFpSQqMrFFlg1SCddpWYBY2aSx0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=paYladZMtZEgIYpny4kTreoohUj7Hk277otkGLZBd9Nsun6pst8BWdhM0nIHY2Zxs
+         wLAaaDMZAhIhw1XIlHyFj0KYK3VNbFPnC7YT/CoA1CvfjQUdqosa6zOlMNVoAyQOQB
+         XeJjeap9UkUAIBTwhc7hzE3joxAyxn9fVVbEg/J4=
+Date:   Sun, 23 Feb 2020 18:25:40 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5.5 000/399] 5.5.6-stable review
+Message-ID: <20200223172540.GB349989@kroah.com>
+References: <20200221072402.315346745@linuxfoundation.org>
+ <20200223154024.GA131562@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200223154024.GA131562@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Sun, Feb 23, 2020 at 04:40:24PM +0100, Greg Kroah-Hartman wrote:
+> On Fri, Feb 21, 2020 at 08:35:25AM +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.5.6 release.
+> > There are 399 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sun, 23 Feb 2020 07:19:49 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.6-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
+> > and the diffstat can be found below.
+> 
+> I've released -rc2 with a bunch of changes that I hope should resolve
+> the issues reported:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.6-rc2.gz
+> 
 
-Add X86_FEATURE_SGX_LC, which informs whether or not the CPU supports SGX
-Launch Control.
-
-Add MSR_IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}, which when combined contain a
-SHA256 hash of a 3072-bit RSA public key. SGX backed software packages, so
-called enclaves, are always signed. All enclaves signed with the public key
-are unconditionally allowed to initialize. [1]
-
-Add FEATURE_CONTROL_SGX_LE_WR bit of the feature control MSR, which informs
-whether the formentioned MSRs are writable or not. If the bit is off, the
-public key MSRs are read-only for the OS.
-
-If the MSRs are read-only, the platform must provide a launch enclave (LE).
-LE can create cryptographic tokens for other enclaves that they can pass
-together with their signature to the ENCLS(EINIT) opcode, which is used
-to initialize enclaves.
-
-Linux is unlikely to support the locked configuration because it takes away
-the control of the launch decisions from the kernel.
-
-[1] Intel SDM: 38.1.4 Intel SGX Launch Control Configuration
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/asm/cpufeatures.h | 1 +
- arch/x86/include/asm/msr-index.h   | 7 +++++++
- 2 files changed, 8 insertions(+)
-
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 42ae9fb06987..bc5ad93cbeb6 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -350,6 +350,7 @@
- #define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
- #define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
- #define X86_FEATURE_MOVDIR64B		(16*32+28) /* MOVDIR64B instruction */
-+#define X86_FEATURE_SGX_LC		(16*32+30) /* Software Guard Extensions Launch Control */
- 
- /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
- #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index a5e580097c95..a0776c262820 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -564,6 +564,7 @@
- #define FEAT_CTL_LOCKED				BIT(0)
- #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
- #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
-+#define FEAT_CTL_SGX_LC_ENABLED			BIT(17)
- #define FEAT_CTL_SGX_ENABLED			BIT(18)
- #define FEAT_CTL_LMCE_ENABLED			BIT(20)
- 
-@@ -584,6 +585,12 @@
- #define MSR_IA32_UCODE_WRITE		0x00000079
- #define MSR_IA32_UCODE_REV		0x0000008b
- 
-+/* Intel SGX Launch Enclave Public Key Hash MSRs */
-+#define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
-+#define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
-+#define MSR_IA32_SGXLEPUBKEYHASH2	0x0000008E
-+#define MSR_IA32_SGXLEPUBKEYHASH3	0x0000008F
-+
- #define MSR_IA32_SMM_MONITOR_CTL	0x0000009b
- #define MSR_IA32_SMBASE			0x0000009e
- 
--- 
-2.20.1
-
+Ugh, -rc3 is coming soon...
