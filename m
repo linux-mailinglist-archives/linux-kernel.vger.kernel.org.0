@@ -2,222 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3934A169839
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 16:05:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E2E9169849
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 16:07:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbgBWPE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 10:04:56 -0500
-Received: from mga12.intel.com ([192.55.52.136]:40581 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbgBWPEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 10:04:55 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2020 07:04:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,476,1574150400"; 
-   d="scan'208";a="435670098"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga005.fm.intel.com with ESMTP; 23 Feb 2020 07:04:54 -0800
-Date:   Sun, 23 Feb 2020 07:04:54 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 09/13] fs/xfs: Add write aops lock to xfs layer
-Message-ID: <20200223150454.GD29607@iweiny-DESK2.sc.intel.com>
-References: <20200221004134.30599-1-ira.weiny@intel.com>
- <20200221004134.30599-10-ira.weiny@intel.com>
- <20200222003109.GE9506@magnolia>
+        id S1727136AbgBWPHt convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 23 Feb 2020 10:07:49 -0500
+Received: from szxga01-in.huawei.com ([45.249.212.187]:2969 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726208AbgBWPHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 10:07:48 -0500
+Received: from dggeml405-hub.china.huawei.com (unknown [172.30.72.54])
+        by Forcepoint Email with ESMTP id 24FA44E78D2DE86FD79A;
+        Sun, 23 Feb 2020 23:06:10 +0800 (CST)
+Received: from DGGEML511-MBX.china.huawei.com ([169.254.1.89]) by
+ dggeml405-hub.china.huawei.com ([10.3.17.49]) with mapi id 14.03.0439.000;
+ Sun, 23 Feb 2020 23:06:01 +0800
+From:   "Gonglei (Arei)" <arei.gonglei@huawei.com>
+To:     LABBE Corentin <clabbe@baylibre.com>
+CC:     "jasowang@redhat.com" <jasowang@redhat.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "Liujinsong (Paul)" <liu.jinsong@huawei.com>
+Subject: RE: [CRASH] crypto: virtio: crash when modprobing tcrypt on 5.5-rc7
+ / next-20200122
+Thread-Topic: [CRASH] crypto: virtio: crash when modprobing tcrypt on
+ 5.5-rc7 / next-20200122
+Thread-Index: AQHV0dVNhsJsLHebl0+mdNNoLPAyfKgKTXoAgBnNFYCABPE9UA==
+Date:   Sun, 23 Feb 2020 15:06:00 +0000
+Message-ID: <33183CC9F5247A488A2544077AF19020DF4B2ED4@dggeml511-mbx.china.huawei.com>
+References: <20200123101000.GB24255@Red>
+ <20200204041419-mutt-send-email-mst@kernel.org> <20200220191553.GA30549@Red>
+In-Reply-To: <20200220191553.GA30549@Red>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.133.225.234]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200222003109.GE9506@magnolia>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 04:31:09PM -0800, Darrick J. Wong wrote:
-> On Thu, Feb 20, 2020 at 04:41:30PM -0800, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > XFS requires the use of the aops of an inode to quiesced prior to
-> > changing it to/from the DAX aops vector.
-> > 
-> > Take the aops write lock while changing DAX state.
-> > 
-> > We define a new XFS_DAX_EXCL lock type to carry the lock through to
-> > transaction completion.
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > ---
-> > Changes from v3:
-> > 	Change locking function names to reflect changes in previous
-> > 	patches.
-> > 
-> > Changes from V2:
-> > 	Change name of patch (WAS: fs/xfs: Add lock/unlock state to xfs)
-> > 	Remove the xfs specific lock and move to the vfs layer.
-> > 		We still use XFS_LOCK_DAX_EXCL to be able to pass this
-> > 		flag through to the transaction code.  But we no longer
-> > 		have a lock specific to xfs.  This removes a lot of code
-> > 		from the XFS layer, preps us for using this in ext4, and
-> > 		is actually more straight forward now that all the
-> > 		locking requirements are better known.
-> > 
-> > 	Fix locking order comment
-> > 	Rework for new 'state' names
-> > 	(Other comments on the previous patch are not applicable with
-> > 	new patch as much of the code was removed in favor of the vfs
-> > 	level lock)
-> > ---
-> >  fs/xfs/xfs_inode.c | 22 ++++++++++++++++++++--
-> >  fs/xfs/xfs_inode.h |  7 +++++--
-> >  2 files changed, 25 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > index 35df324875db..5b014c428f0f 100644
-> > --- a/fs/xfs/xfs_inode.c
-> > +++ b/fs/xfs/xfs_inode.c
-> > @@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
-> >   *
-> >   * Basic locking order:
-> >   *
-> > - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-> > + * s_dax_sem -> i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
+
+> -----Original Message-----
+> From: LABBE Corentin [mailto:clabbe@baylibre.com]
+> Sent: Friday, February 21, 2020 3:16 AM
+> To: Gonglei (Arei) <arei.gonglei@huawei.com>
+> Cc: jasowang@redhat.com; herbert@gondor.apana.org.au;
+> davem@davemloft.net; virtualization@lists.linux-foundation.org;
+> linux-crypto@vger.kernel.org; linux-kernel@vger.kernel.org; mst@redhat.com
+> Subject: Re: [CRASH] crypto: virtio: crash when modprobing tcrypt on 5.5-rc7 /
+> next-20200122
 > 
-> "dax_sem"?  I thought this was now called i_aops_sem?
-
-:-/ yep...
-
+> On Tue, Feb 04, 2020 at 04:15:22AM -0500, Michael S. Tsirkin wrote:
+> > On Thu, Jan 23, 2020 at 11:10:00AM +0100, LABBE Corentin wrote:
+> > > Hello
+> > >
+> > > When modprobing tcrypt on qemu 4.1.0 I get a kernel panic on 5.5-rc7
+> > > and next-20200122 qemu is started by:
+> > > /usr/bin/qemu-system-x86_64 -cpu host -enable-kvm -nographic -net
+> > > nic,model=e1000,macaddr=52:54:00:12:34:58 -net tap -m 512 -monitor
+> > > none -object cryptodev-backend-builtin,id=cryptodev0 -device
+> > > virtio-crypto-pci,id=crypto0,cryptodev=cryptodev0 -append
+> > > 'console=ttyS0 root=/dev/ram0 ip=dhcp' -kernel
+> > > /var/lib/lava/dispatcher/tmp/41332/deployimages-td18675m/kernel/bzIm
+> > > age -initrd
+> > > /var/lib/lava/dispatcher/tmp/41332/deployimages-td18675m/ramdisk/roo
+> > > tfs.cpio.gz -drive
+> > > format=qcow2,file=/var/lib/lava/dispatcher/tmp/41332/apply-overlay-g
+> > > uest-icy4k1ol/lava-guest.qcow2,media=disk,if=ide,id=lavatest
+> > >
+> > > [  112.771925] general protection fault: 0000 [#1] SMP PTI [
+> > > 112.772686] CPU: 0 PID: 126 Comm: virtio0-engine Not tainted
+> > > 5.5.0-rc7+ #1 [  112.773576] Hardware name: QEMU Standard PC (i440FX
+> > > + PIIX, 1996), BIOS
+> > > ?-20190711_202441-buildvm-armv7-10.arm.fedoraproject.org-2.fc31
+> > > 04/01/2014 [  112.775319] RIP: 0010:sg_next+0x0/0x20 [  112.775821]
+> > > Code: cc cc cc cc cc cc cc cc cc cc c7 47 10 00 00 00 00 89 57 0c 48
+> > > 89 37 89 4f 08 c3 0f 1f 44 00 00 66 2e 0f 1f 84 00 00 00 00 00 <f6>
+> > > 07 02 75 17 48 8b 57 20 48 8d 47 20 48 89 d1 48 83 e1 fc 83 e2 [
+> > > 112.778330] RSP: 0018:ffffa92440237d90 EFLAGS: 00010006 [
+> > > 112.779071] RAX: fefefefe00000000 RBX: 000000000000000a RCX:
+> > > fefefefe00000000 [  112.780081] RDX: 0000000000000001 RSI:
+> > > ffff9b19da1a2180 RDI: fefefefe00000000 [  112.781081] RBP:
+> > > ffff9b19da1a2198 R08: ffff9b19dfb24ee8 R09: 0000000000000a20 [
+> > > 112.782079] R10: ffff9b19da125010 R11: 0000000000000000 R12:
+> ffff9b19da1a21b8 [  112.783079] R13: 0000000000000003 R14:
+> ffff9b19da1a2180 R15: 0000000000000004 [  112.784077] FS:
+> 0000000000000000(0000) GS:ffff9b19de400000(0000)
+> knlGS:0000000000000000 [  112.785202] CS:  0010 DS: 0000 ES: 0000 CR0:
+> 0000000080050033 [  112.786030] CR2: 00007f18a157b050 CR3:
+> 000000001040a004 CR4: 0000000000060ef0 [  112.787034] Call Trace:
+> > > [  112.787393]  virtqueue_add_sgs+0x4c/0x90 [  112.787998]
+> > > virtio_crypto_skcipher_crypt_req+0x310/0x3e0
+> > > [  112.788817]  crypto_pump_work+0x10c/0x240 [  112.789420]  ?
+> > > __kthread_init_worker+0x50/0x50 [  112.790082]
+> > > kthread_worker_fn+0x89/0x180 [  112.790690]  kthread+0x10e/0x130 [
+> > > 112.791182]  ? kthread_park+0x80/0x80 [  112.791736]
+> > > ret_from_fork+0x35/0x40 [  112.792282] Modules linked in: cts lzo
+> > > salsa20_generic camellia_x86_64 camellia_generic fcrypt pcbc tgr192
+> > > anubis wp512 khazad tea michael_mic arc4 cast6_generic cast5_generic
+> > > cast_common deflate sha512_ssse3 sha512_generic cfb ofb
+> > > serpent_sse2_x86_64 serpent_generic lrw twofish_x86_64_3way
+> > > twofish_x86_64 crypto_simd cryptd glue_helper twofish_generic
+> > > twofish_common blowfish_x86_64 blowfish_generic blowfish_common md4
+> > > tcrypt(+) [  112.797652] ---[ end trace 4a8142d4a08c2518 ]--- [
+> > > 112.798320] RIP: 0010:sg_next+0x0/0x20 [  112.798865] Code: cc cc cc
+> > > cc cc cc cc cc cc cc c7 47 10 00 00 00 00 89 57 0c 48 89 37 89 4f 08
+> > > c3 0f 1f 44 00 00 66 2e 0f 1f 84 00 00 00 00 00 <f6> 07 02 75 17 48
+> > > 8b 57 20 48 8d 47 20 48 89 d1 48 83 e1 fc 83 e2 [  112.801452] RSP:
+> > > 0018:ffffa92440237d90 EFLAGS: 00010006 [  112.802189] RAX:
+> > > fefefefe00000000 RBX: 000000000000000a RCX: fefefefe00000000 [
+> > > 112.803190] RDX: 0000000000000001 RSI: ffff9b19da1a2180 RDI:
+> > > fefefefe00000000 [  112.804192] RBP: ffff9b19da1a2198 R08:
+> > > ffff9b19dfb24ee8 R09: 0000000000000a20 [  112.805201] R10:
+> > > ffff9b19da125010 R11: 0000000000000000 R12: ffff9b19da1a21b8 [
+> > > 112.806195] R13: 0000000000000003 R14: ffff9b19da1a2180 R15:
+> > > 0000000000000004 [  112.807222] FS:  0000000000000000(0000)
+> > > GS:ffff9b19de400000(0000) knlGS:0000000000000000 [  112.808352] CS:
+> > > 0010 DS: 0000 ES: 0000 CR0: 0000000080050033 [  112.809169] CR2:
+> > > 00007f18a157b050 CR3: 000000001040a004 CR4: 0000000000060ef0
+> > >
+> > > I have tested also 5.4.14
+> > > and I got random freeze with:
+> > > qemu-system-x86_64: virtio: zero sized buffers are not allowed
+> > >
+> > > Regards
+> >
+> > Cc: Gonglei <arei.gonglei@huawei.com>
+> >
 > 
-> >   *
-> >   * mmap_sem locking order:
-> >   *
-> >   * i_rwsem -> page lock -> mmap_sem
-> > - * mmap_sem -> i_mmap_lock -> page_lock
-> > + * s_dax_sem -> mmap_sem -> i_mmap_lock -> page_lock
-> >   *
-> >   * The difference in mmap_sem locking order mean that we cannot hold the
-> >   * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
-> > @@ -182,6 +182,9 @@ xfs_ilock(
-> >  	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
-> >  	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
-> >  
-> > +	if (lock_flags & XFS_DAX_EXCL)
+> Hello Gonglei
 > 
-> And similarly, I think this should be XFS_OPSLOCK_EXCL...
-
-... and ... yes...
-
-Thanks for the review, I'll clean it up.
-
-Ira
-
+> Any plan to fix the driver ? It is broken since its introduction.
 > 
-> --D
-> 
-> > +		inode_aops_down_write(VFS_I(ip));
-> > +
-> >  	if (lock_flags & XFS_IOLOCK_EXCL) {
-> >  		down_write_nested(&VFS_I(ip)->i_rwsem,
-> >  				  XFS_IOLOCK_DEP(lock_flags));
-> > @@ -224,6 +227,8 @@ xfs_ilock_nowait(
-> >  	 * You can't set both SHARED and EXCL for the same lock,
-> >  	 * and only XFS_IOLOCK_SHARED, XFS_IOLOCK_EXCL, XFS_ILOCK_SHARED,
-> >  	 * and XFS_ILOCK_EXCL are valid values to set in lock_flags.
-> > +	 *
-> > +	 * XFS_DAX_* is not allowed
-> >  	 */
-> >  	ASSERT((lock_flags & (XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL)) !=
-> >  	       (XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL));
-> > @@ -232,6 +237,7 @@ xfs_ilock_nowait(
-> >  	ASSERT((lock_flags & (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL)) !=
-> >  	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
-> >  	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
-> > +	ASSERT((lock_flags & XFS_DAX_EXCL) == 0);
-> >  
-> >  	if (lock_flags & XFS_IOLOCK_EXCL) {
-> >  		if (!down_write_trylock(&VFS_I(ip)->i_rwsem))
-> > @@ -318,6 +324,9 @@ xfs_iunlock(
-> >  	else if (lock_flags & XFS_ILOCK_SHARED)
-> >  		mrunlock_shared(&ip->i_lock);
-> >  
-> > +	if (lock_flags & XFS_DAX_EXCL)
-> > +		inode_aops_up_write(VFS_I(ip));
-> > +
-> >  	trace_xfs_iunlock(ip, lock_flags, _RET_IP_);
-> >  }
-> >  
-> > @@ -333,6 +342,8 @@ xfs_ilock_demote(
-> >  	ASSERT(lock_flags & (XFS_IOLOCK_EXCL|XFS_MMAPLOCK_EXCL|XFS_ILOCK_EXCL));
-> >  	ASSERT((lock_flags &
-> >  		~(XFS_IOLOCK_EXCL|XFS_MMAPLOCK_EXCL|XFS_ILOCK_EXCL)) == 0);
-> > +	/* XFS_DAX_* is not allowed */
-> > +	ASSERT((lock_flags & XFS_DAX_EXCL) == 0);
-> >  
-> >  	if (lock_flags & XFS_ILOCK_EXCL)
-> >  		mrdemote(&ip->i_lock);
-> > @@ -465,6 +476,9 @@ xfs_lock_inodes(
-> >  	ASSERT(!(lock_mode & XFS_ILOCK_EXCL) ||
-> >  		inodes <= XFS_ILOCK_MAX_SUBCLASS + 1);
-> >  
-> > +	/* XFS_DAX_* is not allowed */
-> > +	ASSERT((lock_mode & XFS_DAX_EXCL) == 0);
-> > +
-> >  	if (lock_mode & XFS_IOLOCK_EXCL) {
-> >  		ASSERT(!(lock_mode & (XFS_MMAPLOCK_EXCL | XFS_ILOCK_EXCL)));
-> >  	} else if (lock_mode & XFS_MMAPLOCK_EXCL)
-> > @@ -566,6 +580,10 @@ xfs_lock_two_inodes(
-> >  	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
-> >  	       !(ip1_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
-> >  
-> > +	/* XFS_DAX_* is not allowed */
-> > +	ASSERT((ip0_mode & XFS_DAX_EXCL) == 0);
-> > +	ASSERT((ip1_mode & XFS_DAX_EXCL) == 0);
-> > +
-> >  	ASSERT(ip0->i_ino != ip1->i_ino);
-> >  
-> >  	if (ip0->i_ino > ip1->i_ino) {
-> > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> > index 492e53992fa9..25fe20740bf7 100644
-> > --- a/fs/xfs/xfs_inode.h
-> > +++ b/fs/xfs/xfs_inode.h
-> > @@ -278,10 +278,12 @@ static inline void xfs_ifunlock(struct xfs_inode *ip)
-> >  #define	XFS_ILOCK_SHARED	(1<<3)
-> >  #define	XFS_MMAPLOCK_EXCL	(1<<4)
-> >  #define	XFS_MMAPLOCK_SHARED	(1<<5)
-> > +#define	XFS_DAX_EXCL		(1<<6)
-> >  
-> >  #define XFS_LOCK_MASK		(XFS_IOLOCK_EXCL | XFS_IOLOCK_SHARED \
-> >  				| XFS_ILOCK_EXCL | XFS_ILOCK_SHARED \
-> > -				| XFS_MMAPLOCK_EXCL | XFS_MMAPLOCK_SHARED)
-> > +				| XFS_MMAPLOCK_EXCL | XFS_MMAPLOCK_SHARED \
-> > +				| XFS_DAX_EXCL)
-> >  
-> >  #define XFS_LOCK_FLAGS \
-> >  	{ XFS_IOLOCK_EXCL,	"IOLOCK_EXCL" }, \
-> > @@ -289,7 +291,8 @@ static inline void xfs_ifunlock(struct xfs_inode *ip)
-> >  	{ XFS_ILOCK_EXCL,	"ILOCK_EXCL" }, \
-> >  	{ XFS_ILOCK_SHARED,	"ILOCK_SHARED" }, \
-> >  	{ XFS_MMAPLOCK_EXCL,	"MMAPLOCK_EXCL" }, \
-> > -	{ XFS_MMAPLOCK_SHARED,	"MMAPLOCK_SHARED" }
-> > +	{ XFS_MMAPLOCK_SHARED,	"MMAPLOCK_SHARED" }, \
-> > +	{ XFS_DAX_EXCL,		"DAX_EXCL" }
-> >  
-> >  
-> >  /*
-> > -- 
-> > 2.21.0
-> > 
+Thanks for your report firstly.
+I've been busy launching new products recently, so I don't have much time
+to invest in the open source community. 
+
+I spent some time investigating the BUG this weekend, 
+and IMO I found the root cause. The following patch, please help test it, thanks!
+
+[PATCH] virtio-crypto: fix src/dst scatterlist calculation
+
+Usually the next entry of one sg will be @sg@ + 1, but if this sg element
+is part of a chained scatterlist, it could jump to the start of a new
+scatterlist array. Let's fix it by sg_next() on calculation of src/dst
+scatterlist.
+
+BTW I add a check for sg_nents_for_len() its return value since
+sg_nents_for_len() function could fail.
+
+Signed-off-by: Gonglei <arei.gonglei@huawei.com>
+---
+ drivers/crypto/virtio/virtio_crypto_algs.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/crypto/virtio/virtio_crypto_algs.c b/drivers/crypto/virtio/virtio_crypto_algs.c
+index fd045e64..bde0539 100644
+--- a/drivers/crypto/virtio/virtio_crypto_algs.c
++++ b/drivers/crypto/virtio/virtio_crypto_algs.c
+@@ -355,8 +355,14 @@ static int virtio_crypto_skcipher_setkey(struct crypto_skcipher *tfm,
+ 	unsigned int num_out = 0, num_in = 0;
+ 	int sg_total;
+ 	uint8_t *iv;
++	struct scatterlist *sg;
+ 
+ 	src_nents = sg_nents_for_len(req->src, req->cryptlen);
++	if (src_nents < 0) {
++		pr_err("Invalid number of src SG.\n");
++		return src_nents;
++	}
++
+ 	dst_nents = sg_nents(req->dst);
+ 
+ 	pr_debug("virtio_crypto: Number of sgs (src_nents: %d, dst_nents: %d)\n",
+@@ -442,12 +448,18 @@ static int virtio_crypto_skcipher_setkey(struct crypto_skcipher *tfm,
+ 	vc_sym_req->iv = iv;
+ 
+ 	/* Source data */
+-	for (i = 0; i < src_nents; i++)
+-		sgs[num_out++] = &req->src[i];
++	sg = req->src;
++	for (i = 0; sg && i < src_nents; sg = sg_next(sg)) {
++		i++;
++		sgs[num_out++] = sg;
++	}
+ 
+ 	/* Destination data */
+-	for (i = 0; i < dst_nents; i++)
+-		sgs[num_out + num_in++] = &req->dst[i];
++	sg = req->dst;
++	for (i = 0; sg && i < dst_nents; sg = sg_next(sg)) {
++		i++;
++		sgs[num_out + num_in++] = sg;
++	}
+ 
+ 	/* Status */
+ 	sg_init_one(&status_sg, &vc_req->status, sizeof(vc_req->status));
+-- 
+1.8.3.1
+
+
+Regards
+-Gonglei
