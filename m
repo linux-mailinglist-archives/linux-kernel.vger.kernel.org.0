@@ -2,148 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 451FE16988B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 17:00:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76EC11698A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 17:23:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbgBWP7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 10:59:35 -0500
-Received: from mga01.intel.com ([192.55.52.88]:36989 "EHLO mga01.intel.com"
+        id S1727004AbgBWQXi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 11:23:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbgBWP7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 10:59:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2020 07:59:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,476,1574150400"; 
-   d="scan'208";a="409638642"
-Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.252.23.197]) ([10.252.23.197])
-  by orsmga005.jf.intel.com with ESMTP; 23 Feb 2020 07:59:31 -0800
-Subject: Re: [PATCH] Intel: Skylake: Fix inconsistent IS_ERR and PTR_ERR
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Joe Perches <joe@perches.com>, Xu Wang <vulab@iscas.ac.cn>,
-        "Slawinski, AmadeuszX" <amadeuszx.slawinski@intel.com>
-Cc:     perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-References: <20200221101112.3104-1-vulab@iscas.ac.cn>
- <1247da797bc0a860e845989241385e124e589063.camel@perches.com>
- <8e96c207-cdf8-2d1f-755e-be60555c8728@linux.intel.com>
-From:   Cezary Rojewski <cezary.rojewski@intel.com>
-Message-ID: <a0f5a3bc-3814-4e96-f81a-b693f78d2511@intel.com>
-Date:   Sun, 23 Feb 2020 16:59:30 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <8e96c207-cdf8-2d1f-755e-be60555c8728@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1726208AbgBWQXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 11:23:37 -0500
+Received: from localhost.localdomain (89.208.247.74.16clouds.com [89.208.247.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9B25206E0;
+        Sun, 23 Feb 2020 16:23:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582475017;
+        bh=tm6U0RsfbLgt6+HZ125jJ+1tmKJHn2WgIllq+q4yaXw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=rY7tgvt8Od9nK6RFxOXGJBDpww6h3kgy6mXJfeQd0+nv6PoAkMXYLF9NC0D5JnVoa
+         Er1J4+DXyq7yG3Cw3culKBS4u/uv4biwxQMXTqO8bJYtdmbhkh9YaUiKukzz3ot6+p
+         Ed5wQYLykAr1hx3jgtinLdBov6fjRjKtD7WRSS8Q=
+From:   guoren@kernel.org
+To:     torvalds@linux-foundation.org
+Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-csky@vger.kernel.org
+Subject: [GIT PULL] csky updates for 5.6-rc3
+Date:   Mon, 24 Feb 2020 00:23:32 +0800
+Message-Id: <20200223162332.16495-1-guoren@kernel.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-21 16:40, Pierre-Louis Bossart wrote:
-> On 2/21/20 8:41 AM, Joe Perches wrote:
->> On Fri, 2020-02-21 at 18:11 +0800, Xu Wang wrote:
->>> PTR_ERR should access the value just tested by IS_ERR.
->>> In skl_clk_dev_probe(),it is inconsistent.
+Hi Linus,
 
-Please include all maintainers of given driver when submitting the 
-patch, thank you.
+Please pull the changes for 5.6-rc3. Sorry, I missed 5.6-rc1 merge window,
+but in this pull request the most are the fixes and the rests are between
+fixes and features. The only outside modification is the MAINTAINERS file
+update with our mailing list.
 
->> []
->>> diff --git a/sound/soc/intel/skylake/skl-ssp-clk.c 
->>> b/sound/soc/intel/skylake/skl-ssp-clk.c
->> []
->>> @@ -384,7 +384,7 @@ static int skl_clk_dev_probe(struct 
->>> platform_device *pdev)
->>>                   &clks[i], clk_pdata, i);
->>>           if (IS_ERR(data->clk[data->avail_clk_cnt])) {
->>> -            ret = PTR_ERR(data->clk[data->avail_clk_cnt++]);
->>> +            ret = PTR_ERR(data->clk[data->avail_clk_cnt]);
->>
->> NAK.
->>
->> This is not inconsistent and you are removing the ++
->> which is a post increment.  Likely that is necessary.
->>
->> You could write the access and the increment as two
->> separate statements if it confuses you.
-> 
-> Well to be fair the code is far from clear.
+Best Regards
+ Guo Ren
 
-Thanks for notifying, Pierre.
+The following changes since commit 11a48a5a18c63fd7621bb050228cebf13566e4d8:
 
-Although NAK is upheld here. Proposed change is likely to introduce 
-regression.
+  Linux 5.6-rc2 (2020-02-16 13:16:59 -0800)
 
-> 
-> the post-increment is likely needed because of the error handling in 
-> unregister_src_clk 1
->          data->clk[data->avail_clk_cnt] = register_skl_clk(dev,
->                  &clks[i], clk_pdata, i);
-> 
->          if (IS_ERR(data->clk[data->avail_clk_cnt])) {
->              ret = PTR_ERR(data->clk[data->avail_clk_cnt++]);
->              goto err_unreg_skl_clk;
->          }
->      }
-> 
->      platform_set_drvdata(pdev, data);
-> 
->      return 0;
-> 
-> err_unreg_skl_clk:
->      unregister_src_clk(data);
-> 
-> static void unregister_src_clk(struct skl_clk_data *dclk)
-> {
->      while (dclk->avail_clk_cnt--)
->          clkdev_drop(dclk->clk[dclk->avail_clk_cnt]->lookup);
-> }
-> 
-> So the post-increment is cancelled in the while().
-> 
-> That said, the avail_clk_cnt field is never initialized or incremented 
-> in normal usages so the code looks quite suspicious indeed.
+are available in the Git repository at:
 
-As basically entire old Skylake code, so no surprises here : )
-struct skl_clk_data::avail_clk_cnt field is initialized with 0 via 
-devm_kzalloc in skl_clk_dev_probe().
+  https://github.com/c-sky/csky-linux.git tags/csky-for-linus-5.6-rc3
 
-> 
-> gitk tells me this patch is likely the culprit:
-> 
-> 6ee927f2f01466 ('ASoC: Intel: Skylake: Fix NULL ptr dereference when 
-> unloading clk dev')
-> 
-> -        data->clk[i] = register_skl_clk(dev, &clks[i], clk_pdata, i);
-> -        if (IS_ERR(data->clk[i])) {
-> -            ret = PTR_ERR(data->clk[i]);
-> +        data->clk[data->avail_clk_cnt] = register_skl_clk(dev,
-> +                &clks[i], clk_pdata, i);
-> +
-> +        if (IS_ERR(data->clk[data->avail_clk_cnt])) {
-> +            ret = PTR_ERR(data->clk[data->avail_clk_cnt++]);
->               goto err_unreg_skl_clk;
->           }
-> -
-> -        data->avail_clk_cnt++;
-> 
-> That last removal is probably wrong. Cezary and Amadeusz, you may want 
-> to look at this?
+for you to fetch changes up to 99db590b083fa2bc60adfcb5c839a62db4ef1d79:
 
-Indeed, code looks wrong. Idk what are we even dropping in 
-unregister_src_clk() if register_skl_clk() fails and avail_clk_cnt gets 
-incremented anyway.
+  csky: Replace <linux/clk-provider.h> by <linux/of_clk.h> (2020-02-23 12:48:55 +0800)
 
-In general usage of while(ptr->counter--) (example of which is present 
-in unregister_src_clk()) is prone to errors. Decrementation happens 
-regardless of while's check outcome and caller may receive back handle 
-in invalid state.
+----------------------------------------------------------------
+csky updates for 5.6-rc3
 
-Amadeo, your thoughts?
+ - Fix up cache flush implementations.
 
-Czarek
+ - Fix up ftrace modify panic.
+
+ - Fix up CONFIG_SMP boot problem.
+
+ - Fix up pt_regs saving for atomic.S.
+
+ - Fix up fixaddr_init without highmem.
+
+ - Fix up stack protector support.
+
+ - Fix up fake Tightly-Coupled Memory codes compile and use.
+
+ - Fix up some typos and coding convention.
+
+The tag is tested with [1].
+
+ 1: https://gitlab.com/c-sky/buildroot/pipelines/120268254
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      csky: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+
+Guo Ren (17):
+      MAINTAINERS: csky: Add mailing list for csky
+      csky: Tightly-Coupled Memory or Sram support
+      csky: Separate fixaddr_init from highmem
+      csky/mm: Fixup export invalid_pte_table symbol
+      csky: Set regs->usp to kernel sp, when the exception is from kernel
+      csky/smp: Fixup boot failed when CONFIG_SMP
+      csky/Kconfig: Add Kconfig.platforms to support some drivers
+      csky: Support icache flush without specific instructions
+      csky: Remove unnecessary flush_icache_* implementation
+      csky: Enable defer flush_dcache_page for abiv2 cpus (807/810/860)
+      csky: Optimize abiv2 copy_to_user_page with VM_EXEC
+      csky: Add flush_icache_mm to defer flush icache all
+      csky: Fixup ftrace modify panic
+      csky: Remove unused cache implementation
+      csky: Fixup compile warning for three unimplemented syscalls
+      csky: Add setup_initrd check code
+      csky: Implement copy_thread_tls
+
+Krzysztof Kozlowski (1):
+      csky: Cleanup old Kconfig options
+
+Ma Jun (1):
+      csky: Minimize defconfig to support buildroot config.fragment
+
+MaJun (1):
+      csky: Add PCI support
+
+Mao Han (1):
+      csky: Initial stack protector support
+
+Randy Dunlap (1):
+      arch/csky: fix some Kconfig typos
+
+ MAINTAINERS                            |   1 +
+ arch/csky/Kconfig                      |  51 +++++++++-
+ arch/csky/Kconfig.platforms            |   9 ++
+ arch/csky/abiv1/inc/abi/cacheflush.h   |   5 +-
+ arch/csky/abiv1/inc/abi/entry.h        |  19 +++-
+ arch/csky/abiv2/cacheflush.c           |  84 +++++++++++-----
+ arch/csky/abiv2/inc/abi/cacheflush.h   |  33 ++++---
+ arch/csky/abiv2/inc/abi/entry.h        |  11 +++
+ arch/csky/configs/defconfig            |   8 --
+ arch/csky/include/asm/Kbuild           |   1 -
+ arch/csky/include/asm/cache.h          |   1 +
+ arch/csky/include/asm/cacheflush.h     |   1 +
+ arch/csky/include/asm/fixmap.h         |   9 +-
+ arch/csky/include/asm/memory.h         |  25 +++++
+ arch/csky/include/asm/mmu.h            |   1 +
+ arch/csky/include/asm/mmu_context.h    |   2 +
+ arch/csky/include/asm/pci.h            |  34 +++++++
+ arch/csky/include/asm/pgtable.h        |   6 +-
+ arch/csky/include/asm/stackprotector.h |  29 ++++++
+ arch/csky/include/asm/tcm.h            |  24 +++++
+ arch/csky/include/uapi/asm/unistd.h    |   3 +
+ arch/csky/kernel/atomic.S              |   8 +-
+ arch/csky/kernel/process.c             |  13 ++-
+ arch/csky/kernel/setup.c               |   5 +-
+ arch/csky/kernel/smp.c                 |   2 +-
+ arch/csky/kernel/time.c                |   2 +-
+ arch/csky/kernel/vmlinux.lds.S         |  49 ++++++++++
+ arch/csky/mm/Makefile                  |   3 +
+ arch/csky/mm/cachev1.c                 |   5 +
+ arch/csky/mm/cachev2.c                 |  45 +++++----
+ arch/csky/mm/highmem.c                 |  64 +------------
+ arch/csky/mm/init.c                    |  92 ++++++++++++++++++
+ arch/csky/mm/syscache.c                |  13 +--
+ arch/csky/mm/tcm.c                     | 169 +++++++++++++++++++++++++++++++++
+ 34 files changed, 663 insertions(+), 164 deletions(-)
+ create mode 100644 arch/csky/Kconfig.platforms
+ create mode 100644 arch/csky/include/asm/memory.h
+ create mode 100644 arch/csky/include/asm/pci.h
+ create mode 100644 arch/csky/include/asm/stackprotector.h
+ create mode 100644 arch/csky/include/asm/tcm.h
+ create mode 100644 arch/csky/mm/tcm.c
