@@ -2,118 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC73E16938A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E7F16936C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:23:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728755AbgBWCXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 21:23:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728002AbgBWCXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:23:37 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D818227BF;
-        Sun, 23 Feb 2020 02:23:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424617;
-        bh=z6zUjYv03o/ZBQbMjsGF1EYgUSVBYR0phVp6qM4MZ/o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FmVtGLUYOSd3nrpn2uBsGbCRQPrloEn1rbO9f2E1ZhpkxDgSL/2W9GLb5dF+4NPTV
-         L/9JWpOD+vkalWxzjk5/2AZHI5hPEDcYlgB3Bl5oCIbP2XGifq3ewyXDmIqY56z8x3
-         FRs+dy8KigGP/cerQkJrWYJ/Jj78UeMfdP3HRLSk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 50/50] nvme/pci: move cqe check after device shutdown
-Date:   Sat, 22 Feb 2020 21:22:35 -0500
-Message-Id: <20200223022235.1404-50-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200223022235.1404-1-sashal@kernel.org>
-References: <20200223022235.1404-1-sashal@kernel.org>
+        id S1728445AbgBWCXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 21:23:04 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43546 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728421AbgBWCXC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:23:02 -0500
+Received: by mail-lj1-f195.google.com with SMTP id a13so6204759ljm.10
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 18:23:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nRiUMLVal6a47Pn0KiyPnBHZC0rhgcARtYIItZoVMts=;
+        b=cONgu9fG5pE/tWCiXtgOF5ceYHdHZxNumSvYoyFsvLp9PS5M3fb0VPF5CuTOccSzER
+         r2NpU2iSrvNXG0WR0NFnOm0HM9MXa0tN+yL++q7ziS1cy/uG5oeUPcx10pfWU/Hr0Ynu
+         w3/+07uf8cXa3uKMy2VDDKuUVcP4LO3LE57ko=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nRiUMLVal6a47Pn0KiyPnBHZC0rhgcARtYIItZoVMts=;
+        b=T1GkbsGDeDB9lckNPv14wndX7laCG/n5/mvBOCS+FlCMb9AMW6+SdpMehxsgDt9Xdy
+         xY0WTQth4aTs/Pa13wvzXEIOymVfrYOAKxu2c+E4cmKVmPzkw87Z/D9GJ6R6mxhkdG2Z
+         run53r3gV8YtkwIOLBm6bJZBSuUVMxJZi11IkSsl34wfU3kNSvRkhOOpV0/bU5ncPjoL
+         ZHM+gd8AaxFgeQtdefwxpb8pWsCZrQln0LI+p61K3tBy9qIve8cOMmyutzDn8a/8qeth
+         0XRJ25O5uxA1AV6/2VeYhreUQlisU3NhpXr4jw78Oo8AM4ReXwIRS75gV6fJBsOsHNOg
+         P//w==
+X-Gm-Message-State: APjAAAXVYXHSsn7F/VeG7w+M5J8/+scktlTLCOro6Dj5mn5sVlReb3F6
+        St6M7xLvhgzSgPo3G0RFas3xEun/M0c=
+X-Google-Smtp-Source: APXvYqwSSUbkYiaIpWP8rqQeMBhUJ1TFu17o/wQjFQbjsfJvTz0wVnbCyuN8VuYEIyhMuhSBgNS8vg==
+X-Received: by 2002:a2e:81d0:: with SMTP id s16mr26739439ljg.166.1582424579974;
+        Sat, 22 Feb 2020 18:22:59 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id y2sm3993816ljm.28.2020.02.22.18.22.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Feb 2020 18:22:59 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id l16so4319818lfg.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2020 18:22:59 -0800 (PST)
+X-Received: by 2002:a19:f514:: with SMTP id j20mr23906945lfb.31.1582424578811;
+ Sat, 22 Feb 2020 18:22:58 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20200223011154.GY23230@ZenIV.linux.org.uk> <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
+ <20200223011626.4103706-22-viro@ZenIV.linux.org.uk>
+In-Reply-To: <20200223011626.4103706-22-viro@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 22 Feb 2020 18:22:43 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiQaqgkZiNX6+zG5kqOPWSiGKh6iis_n+Z0dfTBJeQLCg@mail.gmail.com>
+Message-ID: <CAHk-=wiQaqgkZiNX6+zG5kqOPWSiGKh6iis_n+Z0dfTBJeQLCg@mail.gmail.com>
+Subject: Re: [RFC][PATCH v2 22/34] merging pick_link() with get_link(), part 5
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Keith Busch <kbusch@kernel.org>
+Ok, one step back:
 
-[ Upstream commit fa46c6fb5d61b1f17b06d7c6ef75478b576304c7 ]
+On Sat, Feb 22, 2020 at 5:22 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> +       if (err > 0)
+> +               return get_link(nd);
+> +       else
+> +               return ERR_PTR(err);
+>  }
 
-Many users have reported nvme triggered irq_startup() warnings during
-shutdown. The driver uses the nvme queue's irq to synchronize scanning
-for completions, and enabling an interrupt affined to only offline CPUs
-triggers the alarming warning.
+.. and two steps forward, as you then entirely remove the code I just
+complained about.
 
-Move the final CQE check to after disabling the device and all
-registered interrupts have been torn down so that we do not have any
-IRQ to synchronize.
+> -       err = step_into(nd, flags, dentry, inode, seq);
+> -       if (!err)
+> -               return NULL;
+> -       else if (err > 0)
+> -               return get_link(nd);
+> -       else
+> -               return ERR_PTR(err);
+> +       return step_into(nd, flags, dentry, inode, seq);
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206509
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/nvme/host/pci.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+I'm waiting with bated breath if the next patch will then remove the
+new odd if-return-else thing. But I'm not going to peek, it's going to
+be a surprise.
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 14d513087a14b..858805929b2cd 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1413,6 +1413,23 @@ static void nvme_disable_admin_queue(struct nvme_dev *dev, bool shutdown)
- 	nvme_poll_irqdisable(nvmeq, -1);
- }
- 
-+/*
-+ * Called only on a device that has been disabled and after all other threads
-+ * that can check this device's completion queues have synced. This is the
-+ * last chance for the driver to see a natural completion before
-+ * nvme_cancel_request() terminates all incomplete requests.
-+ */
-+static void nvme_reap_pending_cqes(struct nvme_dev *dev)
-+{
-+	u16 start, end;
-+	int i;
-+
-+	for (i = dev->ctrl.queue_count - 1; i > 0; i--) {
-+		nvme_process_cq(&dev->queues[i], &start, &end, -1);
-+		nvme_complete_cqes(&dev->queues[i], start, end);
-+	}
-+}
-+
- static int nvme_cmb_qdepth(struct nvme_dev *dev, int nr_io_queues,
- 				int entry_size)
- {
-@@ -2248,11 +2265,6 @@ static bool __nvme_disable_io_queues(struct nvme_dev *dev, u8 opcode)
- 		if (timeout == 0)
- 			return false;
- 
--		/* handle any remaining CQEs */
--		if (opcode == nvme_admin_delete_cq &&
--		    !test_bit(NVMEQ_DELETE_ERROR, &nvmeq->flags))
--			nvme_poll_irqdisable(nvmeq, -1);
--
- 		sent--;
- 		if (nr_queues)
- 			goto retry;
-@@ -2441,6 +2453,7 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- 	nvme_suspend_io_queues(dev);
- 	nvme_suspend_queue(&dev->queues[0]);
- 	nvme_pci_disable(dev);
-+	nvme_reap_pending_cqes(dev);
- 
- 	blk_mq_tagset_busy_iter(&dev->tagset, nvme_cancel_request, &dev->ctrl);
- 	blk_mq_tagset_busy_iter(&dev->admin_tagset, nvme_cancel_request, &dev->ctrl);
--- 
-2.20.1
-
+              Linus
