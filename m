@@ -2,58 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1135A169ABA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:18:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B9B169ABD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:18:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbgBWXS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 18:18:26 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35789 "EHLO
+        id S1727830AbgBWXSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 18:18:32 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55566 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727736AbgBWXSY (ORCPT
+        with ESMTP id S1727151AbgBWXS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 18:18:24 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b17so7458149wmb.0;
-        Sun, 23 Feb 2020 15:18:24 -0800 (PST)
+        Sun, 23 Feb 2020 18:18:26 -0500
+Received: by mail-wm1-f66.google.com with SMTP id q9so7177675wmj.5;
+        Sun, 23 Feb 2020 15:18:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eQ5r1R+UXgGBuhFGCv+iPfwy5B5w68fhiQyCKeEBPYo=;
-        b=HwmZB7S8xicuJrpOFUlYj6Ywn+OcDppxlvgApU3s1ba85vApmC+cFGYcw1DfOobyc+
-         377o2d2eVuGlEGGsGSrGfo1nh0BMD+Gf/tHin6Ro+tEEnUH0EGHqFTgMaavwLJi86Nr9
-         p/QGVc/Oo4oFsgCtjMe+2EIvVKqsOSKzfIX0ZI7Jt2PQBjf43lRChJ/mE8oOaGGGhuQU
-         XQvZkkWki2aSOv9m86A6T2UG5t6F7YD5uYy1Y7pmAqETA+NYfQPUJs0snqG5pdvp/aLq
-         K+8kL0OfVBmD1tS0XT66jfv29XWpVp8p1CpQyEv6PEpz1VmaTRr/FlxBpvQ4gfjfPDrl
-         hslA==
+        bh=D226Q712hm4RRuLjuRLwvzFIxXTYHeeP4FIQmGcb/n4=;
+        b=GCLwLyyF5ZoS6d1OmnyDt1cTIkPYcFUnQewizYiPNQ5Ombi1m0z17U0Krh/rOyOkn4
+         n/Lc0hrlyUSfl3Fwv+bRNjPqgyHv8WnWsf2K36q9iXs4xQBQFhovuQH4CyTn8DWIp6WY
+         AVdnQxUK2GhvjAlHrepv5euNhFIhhlxmSN4b3/7PIHcAFnT5wmB41qb2SDo45QOfBVWi
+         RfO+9IF/OYARyUrm1WbG9pkWGpdEEz6OH0f2w8i1kM0zZAkFN5LmzTa9Y7iuxa/nDnAS
+         ZhA3AFm6+1JRxWw0c+3J6/saRBfwGeI+cLXUGPf5tOtREVUIAD8EGjMKzp0KAED2OP4o
+         ViUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eQ5r1R+UXgGBuhFGCv+iPfwy5B5w68fhiQyCKeEBPYo=;
-        b=ucRtrGTh+GWdEoEKlAP+5GW2fBCv5O3kTR7cYnuXMkYxu5xPFL5c8jgg/aoDLuqUUF
-         gxEm34mULCdNgwBlDCUpLQvbPoiG29+I4qyvynHgs8JoXpGVvnXIuvoSkuGAiNoQtDwD
-         DwGlYS2PWgdgGu/TApbwfMuBWy1o0XkoaAd7J92sLBkiyIhiFKClgBJ1PPQ/v1ep9Vfz
-         39QvS+4+m7NzFl6mKNb5W5WKBjU3ME/4atU2REtW+0n6BoHGkeJbQXvxywpXQ+gTz9/F
-         DgP0603jAkf9CLT6TykwdvXMf73S0Tdfve6VtGKS9cdemfnCiWTqjrbCzB0hkOPa5GV8
-         zW7A==
-X-Gm-Message-State: APjAAAV7JMk9w+s464yAT9AV/5EO4Yp/1wLocH/lELBdIahcVU8bU2+q
-        WUDfyqUYiNQu2s34zrzEbg==
-X-Google-Smtp-Source: APXvYqwuXB8nvNhZzMwFqEvDoIykVeaCu/TUBfTRvhnQKrU5oyx+n944YvUaV3THAhlRAMI2/lRwzw==
-X-Received: by 2002:a7b:cb97:: with SMTP id m23mr17317321wmi.37.1582499903296;
-        Sun, 23 Feb 2020 15:18:23 -0800 (PST)
+        bh=D226Q712hm4RRuLjuRLwvzFIxXTYHeeP4FIQmGcb/n4=;
+        b=VgY4x1uKfMT9EpSgGUPN6h2TMgyMWcoDK86GZBRPRfqXTgGG0jplICfPxBukOdcLeZ
+         ZZpHLp6pEbO2KiqeCvBOFx6RI4/+pZLhu6CVcfHPJQkjukeEEbhQl/LWGiDrDG+ti+8O
+         8uel0U2tJN9Uu0erWa4ZE2ZK546rGGZ/I9PzxnZzUnJFy3neMjn/u7CydVOEjmSz8X+T
+         RZHv+X8A5/RwWe6sJylXMwKeWiWhnE3Musa8SCjcfQ4VSeKTFBo5Ww6tYs1ugohVilk8
+         +cvH8FDbb08QHUET21Ze93rDTN9LX+4WH135Ea++pyaTipUiNRQH8q0XOCt2pnFKFh+W
+         I47Q==
+X-Gm-Message-State: APjAAAUwWJPhq+0/lmjFCSeVKw8q70ui/LMDGjIyKvCVZuxF42T5XprR
+        1vNkn1BWKpxJeawXRFpZhw==
+X-Google-Smtp-Source: APXvYqxbSpeNGF2MlyRcH36FppSj1XVmUcZHhQGSkPs2u0+P5CusVXHN5m8U3eJCh0HQtgoHaUvzpA==
+X-Received: by 2002:a05:600c:414e:: with SMTP id h14mr17871964wmm.179.1582499904465;
+        Sun, 23 Feb 2020 15:18:24 -0800 (PST)
 Received: from ninjahost.lan (host-2-102-13-223.as13285.net. [2.102.13.223])
-        by smtp.googlemail.com with ESMTPSA id q6sm8968203wrf.67.2020.02.23.15.18.22
+        by smtp.googlemail.com with ESMTPSA id q6sm8968203wrf.67.2020.02.23.15.18.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2020 15:18:22 -0800 (PST)
+        Sun, 23 Feb 2020 15:18:24 -0800 (PST)
 From:   Jules Irenge <jbi.octave@gmail.com>
 To:     boqun.feng@gmail.com
 Cc:     jbi.octave@gmail.com, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org (open list:ACPI)
-Subject: [PATCH 23/30] ACPI: OSL: Add missing annotation for acpi_os_release_lock()
-Date:   Sun, 23 Feb 2020 23:17:04 +0000
-Message-Id: <20200223231711.157699-24-jbi.octave@gmail.com>
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        dmaengine@vger.kernel.org (open list:DMA GENERIC OFFLOAD ENGINE
+        SUBSYSTEM)
+Subject: [PATCH 24/30] dmaengine: mic_x100_dma: Add missing annotation for mic_dma_tx_submit_unlock()
+Date:   Sun, 23 Feb 2020 23:17:05 +0000
+Message-Id: <20200223231711.157699-25-jbi.octave@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200223231711.157699-1-jbi.octave@gmail.com>
 References: <0/30>
@@ -65,30 +68,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sparse reports a warning at acpi_os_release_lock()
+Sparse reports a warning dma_cookie_t mic_dma_tx_submit_unlock()
 
-warning: context imbalance in acpi_os_release_lock() - unexpected unlock
+warning: context imbalance in  mic_dma_tx_submit_unlock()
+	- unexpected unlock
 
-The root cause is the missing annotation at acpi_os_release_lock()
-Add the missing annotation __releases(lockp)
+The root cause is the missing annotation at  mic_dma_tx_submit_unlock()
+Add the missing annotation __releases(&mic_ch->prep_lock)
 
 Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 ---
- drivers/acpi/osl.c | 1 +
+ drivers/dma/mic_x100_dma.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index 7094abc5ffc6..762c5d50b8fe 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -1610,6 +1610,7 @@ acpi_cpu_flags acpi_os_acquire_lock(acpi_spinlock lockp)
-  */
- 
- void acpi_os_release_lock(acpi_spinlock lockp, acpi_cpu_flags flags)
-+	__releases(lockp)
- {
- 	spin_unlock_irqrestore(lockp, flags);
+diff --git a/drivers/dma/mic_x100_dma.c b/drivers/dma/mic_x100_dma.c
+index fea8608a7810..d15c41151d09 100644
+--- a/drivers/dma/mic_x100_dma.c
++++ b/drivers/dma/mic_x100_dma.c
+@@ -236,6 +236,7 @@ static inline void mic_dma_update_pending(struct mic_dma_chan *ch)
  }
+ 
+ static dma_cookie_t mic_dma_tx_submit_unlock(struct dma_async_tx_descriptor *tx)
++	__releases(&mic_ch->prep_lock)
+ {
+ 	struct mic_dma_chan *mic_ch = to_mic_dma_chan(tx->chan);
+ 	dma_cookie_t cookie;
 -- 
 2.24.1
 
