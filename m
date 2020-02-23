@@ -2,123 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CEB31695CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 05:19:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4276F1695D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 05:21:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbgBWETv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 23:19:51 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:53607 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726884AbgBWETv (ORCPT
+        id S1727227AbgBWEVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 23:21:31 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:60286 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726983AbgBWEVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 23:19:51 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5824321B01;
-        Sat, 22 Feb 2020 23:19:50 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sat, 22 Feb 2020 23:19:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=3tufXe1fL7t2q
-        MfUV7AoAiRO7jy5bJvdqR1dzLQlDus=; b=TsBQ7D98kh1a8h/iD/7I72q/WG6yY
-        0pkwFIcJndxaNtJ+XQ9l+MNjsh7Z4W27s/+7CM/8BCOkx0a1JlsWAqtESIP/tPfk
-        9rXkDeGOsOtYtn7sDaZTaZ6koH9O62VWP7y0ybUX0FXH+mIRCp99rv5gP4cAaplo
-        uK6GKuddfNKXy3x7Mksw7RR7M9iSbt/mMcJKTau/W7rUfEK6507yRHHPdk9F1Dal
-        Dq0qR0DIItwLDPauI8ks4Awdkzl4WBuKH+53CMzO8oqsajoz8h7Fxa1gYRV31SLg
-        sYYk9SOr7JkE5jCEri8swDi2Z4ENGpcvJMCIInjr/A0fx68g6ALha2XBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=3tufXe1fL7t2qMfUV7AoAiRO7jy5bJvdqR1dzLQlDus=; b=s72qjcMR
-        rkgX7SucHtZUUEYCFB1aG7fR7wLJ94MeJIVywjxQNFwGWAHpm9ghrmQTkhlvicI7
-        pxiWYaXH1tc4koeocnjm3RoEWPD2SiAm4FFl1p0DJElRb/ZSCE7rE2w0+2txjtpN
-        bGxHbWV+o/wGpuJPWSI4yEfsAaB+iXAp3Njlo7tmt3ymiRqkpYj1zkMeU+06VcG8
-        DGJeIXYPbPPLASNFT/Cv9iwNI28kZLu13e9cr4FbT74XJ5z62EQBk1Uq66G/70Kn
-        GHQftx9sgjdEcBb05sEm3BY0i9y4QEq1OOJ4Wly6A6WFBGzKEVtvYhjAG4dfv1cg
-        bnQ9MOuaR4PYuA==
-X-ME-Sender: <xms:Zf1RXqidYo4dxs34wPwvLCTzrcnBicU1EgWtK3TuduAI0iq7y2NCIg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkeejgdeiiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
-    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
-    ejtddrudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
-    mhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:Zf1RXn7ln8dz9-LF5s3x_RmmCbIFy7S7lt2mdXPtq88lfcjZn2ESEw>
-    <xmx:Zf1RXh2g-IjbKl_TKWU9VdY4M8oURlTNwxFIG3cPxiaCgRBsecu7-A>
-    <xmx:Zf1RXitq8vP3mDa2BhFMBC2GNAfB7wtUwKULDBrfybSSRdFN8fYLFQ>
-    <xmx:Zv1RXiYirALwDSpzHxQ2bD2RDBBwxKqnfi-8LQGqZzqV9UioZoccXg>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4A0C4328005A;
-        Sat, 22 Feb 2020 23:19:49 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 2/2] Revert "clk: qcom: Support 'protected-clocks' property"
-Date:   Sat, 22 Feb 2020 22:19:48 -0600
-Message-Id: <20200223041948.3218-2-samuel@sholland.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200223041948.3218-1-samuel@sholland.org>
-References: <20200223041948.3218-1-samuel@sholland.org>
+        Sat, 22 Feb 2020 23:21:31 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R671e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TqdtHoh_1582431686;
+Received: from 30.27.235.101(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0TqdtHoh_1582431686)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sun, 23 Feb 2020 12:21:28 +0800
+Subject: Re: [PATCH] crypto: sm3 - export crypto_sm3_final function
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     davem@davemloft.net, ebiggers@kernel.org, pvanleeuwen@rambus.com,
+        zohar@linux.ibm.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gilad@benyossef.com
+References: <20200216090233.109416-1-tianjia.zhang@linux.alibaba.com>
+ <20200222011926.GA18695@gondor.apana.org.au>
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Message-ID: <8acc79e8-8b3d-856d-06d2-5322c9a66be9@linux.alibaba.com>
+Date:   Sun, 23 Feb 2020 12:21:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200222011926.GA18695@gondor.apana.org.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that protected-clocks is handled in the clk core, this
-driver-specific implementation is redundant.
 
-This reverts commit b181b3b801da8893c8eb706e448dd5111b02de60.
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- drivers/clk/qcom/common.c | 18 ------------------
- 1 file changed, 18 deletions(-)
+On 2020/2/22 9:19, Herbert Xu wrote:
+> On Sun, Feb 16, 2020 at 05:02:33PM +0800, Tianjia Zhang wrote:
+>> Both crypto_sm3_update and crypto_sm3_finup have been
+>> exported, exporting crypto_sm3_final, to avoid having to
+>> use crypto_sm3_finup(desc, NULL, 0, dgst) to calculate
+>> the hash in some cases.
+>>
+>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+>> ---
+>>   crypto/sm3_generic.c | 7 ++++---
+>>   include/crypto/sm3.h | 2 ++
+>>   2 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> Please add this into the series that actually uses the function.
+> It makes no sense on its own.
+> 
+> Thanks,
+> 
 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 60d2a78d1395..6e150fd32dbe 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -194,22 +194,6 @@ int qcom_cc_register_sleep_clk(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(qcom_cc_register_sleep_clk);
- 
--/* Drop 'protected-clocks' from the list of clocks to register */
--static void qcom_cc_drop_protected(struct device *dev, struct qcom_cc *cc)
--{
--	struct device_node *np = dev->of_node;
--	struct property *prop;
--	const __be32 *p;
--	u32 i;
--
--	of_property_for_each_u32(np, "protected-clocks", prop, p, i) {
--		if (i >= cc->num_rclks)
--			continue;
--
--		cc->rclks[i] = NULL;
--	}
--}
--
- static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
- 					 void *data)
- {
-@@ -272,8 +256,6 @@ int qcom_cc_really_probe(struct platform_device *pdev,
- 	cc->rclks = rclks;
- 	cc->num_rclks = num_clks;
- 
--	qcom_cc_drop_protected(dev, cc);
--
- 	for (i = 0; i < num_clk_hws; i++) {
- 		ret = devm_clk_hw_register(dev, clk_hws[i]);
- 		if (ret)
--- 
-2.24.1
-
+The actual use of this function is in sm2 and OSCCA certificates. This 
+set of patches has been submitted to the community. Please review them.
