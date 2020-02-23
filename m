@@ -2,82 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B9F916972D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 11:20:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EF0D169733
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 11:34:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbgBWKUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 05:20:47 -0500
-Received: from vps.xff.cz ([195.181.215.36]:41666 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725980AbgBWKUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 05:20:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1582453245; bh=2tN9XTMyK3Umo3ghVIJmzvxq0UXC2Jq+XBIALehkoD0=;
-        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
-        b=XkoEqgLqCnr+tkqDHpkd4XMU7/XEpc92wTJDACbB7353407pP6PMR1qytzkz8FZu9
-         50U87c+urvZy12Gr8YgpdEk3XegL8DQZRxBdek5sj07FSSwcPyS+ePNawjzN/TcXEx
-         1AP8JFD35wgNTZAY7pyYtQYQcHvAp7Uu2ccSeofs=
-Date:   Sun, 23 Feb 2020 11:20:44 +0100
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Lars Melin <larsm17@gmail.com>
-Cc:     linux-usb@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Support Castles Vega5000 PoS terminal USB
-Message-ID: <20200223102044.odcmcxdk45egxu5i@core.my.home>
-Mail-Followup-To: Lars Melin <larsm17@gmail.com>, linux-usb@vger.kernel.org,
-        Oliver Neukum <oneukum@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20200222233202.237967-1-megous@megous.com>
- <9d9263a0-cddb-0efb-46a5-1d223a8232e3@gmail.com>
+        id S1727104AbgBWKd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 05:33:26 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:58620 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbgBWKd0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 05:33:26 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 991AF1C036F; Sun, 23 Feb 2020 11:33:24 +0100 (CET)
+Date:   Sun, 23 Feb 2020 11:33:23 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 032/191] usb: gadget: udc: fix possible
+ sleep-in-atomic-context bugs in gr_probe()
+Message-ID: <20200223103323.GD14067@amd>
+References: <20200221072250.732482588@linuxfoundation.org>
+ <20200221072255.095987384@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="9dgjiU4MmWPVapMU"
 Content-Disposition: inline
-In-Reply-To: <9d9263a0-cddb-0efb-46a5-1d223a8232e3@gmail.com>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
+In-Reply-To: <20200221072255.095987384@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On Sun, Feb 23, 2020 at 10:08:04AM +0700, Lars Melin wrote:
-> On 2/23/2020 06:32, Ondrej Jirman wrote:
-> > This terminal's USB port needs NO_UNION_NORMAL quirk to work with
-> > cdc-acm driver.
-> > 
-> > Signed-off-by: Ondrej Jirman <megous@megous.com>
-> > ---
-> >   drivers/usb/class/cdc-acm.c | 3 +++
-> >   1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
-> > index 62f4fb9b362f1..8577441c81a4d 100644
-> > --- a/drivers/usb/class/cdc-acm.c
-> > +++ b/drivers/usb/class/cdc-acm.c
-> > @@ -1739,6 +1739,9 @@ static const struct usb_device_id acm_ids[] = {
-> >   	{ USB_DEVICE(0x22b8, 0x2d9a),   /* modem + AT port + diagnostics + NMEA */
-> >   	.driver_info = NO_UNION_NORMAL, /* handle only modem interface          */
-> >   	},
-> > +	{ USB_DEVICE(0x0ca6, 0xa050), /* Castles Technology VEGA 5000 */
-> > +	.driver_info = NO_UNION_NORMAL, /* reports zero length descriptor */
-> > +	},
-> >   	{ USB_DEVICE(0x0572, 0x1329), /* Hummingbird huc56s (Conexant) */
-> >   	.driver_info = NO_UNION_NORMAL, /* union de
-> 
-> This quirk is in the driver since almost a year ago.
+--9dgjiU4MmWPVapMU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You're right. Thank you.
+Hi!
 
-I held to the patch for way too long, and didn't notice someone else patched
-it in the meantime.
+> From: Jia-Ju Bai <baijiaju1990@gmail.com>
+>=20
+> [ Upstream commit 9c1ed62ae0690dfe5d5e31d8f70e70a95cb48e52 ]
+>=20
+> The driver may sleep while holding a spinlock.
 
-regards,
-	o.
+True, but you can't just fix that by removing the locking.
 
-> br
-> /Lars
-> 
+> +++ b/drivers/usb/gadget/udc/gr_udc.c
+> @@ -2180,8 +2180,6 @@ static int gr_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  	}
+> =20
+> -	spin_lock(&dev->lock);
+> -
+>  	/* Inside lock so that no gadget can use this udc until probe is done */
+>  	retval =3D usb_add_gadget_udc(dev->dev, &dev->gadget);
+>  	if (retval) {
+
+As this comment tries to explain. It is possible that the comment can
+just be removed, but it looks like the code needs to be rearranged so
+that rest of system does not see partly-initialized device.
+
+Best regards,
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--9dgjiU4MmWPVapMU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl5SVPMACgkQMOfwapXb+vLO7wCePfBiWkxUG6iwBB+/Zrtrmnaq
+9GsAnibVRvR1tYRkGwmR5Die/TAMKTeg
+=eY8A
+-----END PGP SIGNATURE-----
+
+--9dgjiU4MmWPVapMU--
