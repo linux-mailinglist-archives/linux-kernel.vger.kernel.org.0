@@ -2,87 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD080169A5D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 23:01:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6F0F169A63
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 23:07:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbgBWWAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 17:00:35 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:44799 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbgBWWAf (ORCPT
+        id S1727156AbgBWWHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 17:07:49 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:34946 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbgBWWHs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 17:00:35 -0500
-Received: by mail-yw1-f68.google.com with SMTP id t141so4352573ywc.11
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 14:00:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oEv7z6kfjOWhzFJ0U6oJmvXOArxz5ZVjmjpUgwRoIf8=;
-        b=jAF7dl79q0/wXBaOE+MXaj+rL4QmCUiy1BQrAY9Pg1t6LCgdtpDDs7//QZ+RFR8+sa
-         FXvaTB1zX8q7xrgU1QvqhU1YncMD9zHbG6G5NQFMFqw4O9o+I/alBs4f1JpSdvnRhNoB
-         C3brQnZsUKLdY885UJcYHp26WELQ8I8pnNQ7E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oEv7z6kfjOWhzFJ0U6oJmvXOArxz5ZVjmjpUgwRoIf8=;
-        b=niktMy5j27Zi4PA97PW0uCFW57s1Xux6K8pY9rWWW9vgu763PYB2T6xRKlAEL5dzsv
-         bF2ZzvN7vK7IlLQLKrgQV7ADQ73kXD7FFBjOIWWsigl145mox+wVFwgPx22LTX3fgA3U
-         ONZkaRhHYjav3CW6OhZbp9GCjZLkqs+mPFl2jxquBw1NGJquaLolyHSYMahJeFpBYbkg
-         9WLsPFj56/ZrtcKvPnFN9sfkUvdMleebhkapYb8gPTyd5VpLjgcT3PK75Q3jbS0tlemi
-         BwR/8cUYzc2NlpBfitlLkvjguMh77YJe/zZdthC6VC91AdZM/uGb2QlfSvrS8FqQHOk1
-         LI/g==
-X-Gm-Message-State: APjAAAVCar0ddG2+VAmYmG3cUeYkJynyuBS1S9vADia4+E6jXM1vPH2C
-        xEkERc24LVH0B1Qnqg8PLVUZnP46Yss=
-X-Google-Smtp-Source: APXvYqzgpJ6jKtTA4mnBKg80mHPt0TE/IensxVJ2W3hjvlXkxtWHCBkw0VPd7sl1UV2QXFrbFmH3uw==
-X-Received: by 2002:a0d:edc1:: with SMTP id w184mr1494108ywe.204.1582495232529;
-        Sun, 23 Feb 2020 14:00:32 -0800 (PST)
-Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
-        by smtp.gmail.com with ESMTPSA id 207sm4323110ywq.100.2020.02.23.14.00.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Feb 2020 14:00:30 -0800 (PST)
-Received: by mail-yw1-f43.google.com with SMTP id i126so4364971ywe.7
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 14:00:30 -0800 (PST)
-X-Received: by 2002:a81:3888:: with SMTP id f130mr36072275ywa.138.1582495229594;
- Sun, 23 Feb 2020 14:00:29 -0800 (PST)
+        Sun, 23 Feb 2020 17:07:48 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j5zPf-0003GM-9F; Sun, 23 Feb 2020 22:07:47 +0000
+Date:   Sun, 23 Feb 2020 22:07:47 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCH v2 14/34] new step_into() flag: WALK_NOFOLLOW
+Message-ID: <20200223220747.GZ23230@ZenIV.linux.org.uk>
+References: <20200223011154.GY23230@ZenIV.linux.org.uk>
+ <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
+ <20200223011626.4103706-14-viro@ZenIV.linux.org.uk>
+ <CAHk-=whzmY4RdkqtitWVB=OJvHG-8_VLZrU1oXBX8b+5qJKBag@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200222164419.GB3326744@rani.riverdale.lan> <20200222171859.3594058-1-nivedita@alum.mit.edu>
- <20200222181413.GA22627@ubuntu-m2-xlarge-x86> <20200222185806.ywnqhfqmy67akfsa@google.com>
- <20200222201715.GA3674682@rani.riverdale.lan> <20200222210101.diqw4zt6lz42ekgx@google.com>
-In-Reply-To: <20200222210101.diqw4zt6lz42ekgx@google.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sun, 23 Feb 2020 14:00:15 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJQRnPQDq6ZLrtCB-i0A_+AifY2me-BinuKz7LJU8=ePQ@mail.gmail.com>
-Message-ID: <CAGXu5jJQRnPQDq6ZLrtCB-i0A_+AifY2me-BinuKz7LJU8=ePQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/boot/compressed: Fix compressed kernel linking with lld
-To:     Fangrui Song <maskray@google.com>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com, Michael Matz <matz@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whzmY4RdkqtitWVB=OJvHG-8_VLZrU1oXBX8b+5qJKBag@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 1:01 PM 'Fangrui Song' via Clang Built Linux
-<clang-built-linux@googlegroups.com> wrote:
-> https://github.com/torvalds/linux/commit/83a092cf95f28696ddc36c8add0cf03ac034897f
-> added -Wl,--orphan-handling=warn to arch/powerpc/Makefile .
-> x86 can follow if that is appropriate.
+On Sat, Feb 22, 2020 at 06:14:45PM -0800, Linus Torvalds wrote:
+> On Sat, Feb 22, 2020 at 5:20 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> >         if (likely(!d_is_symlink(path->dentry)) ||
+> > -          !(flags & WALK_FOLLOW || nd->flags & LOOKUP_FOLLOW)) {
+> > +          !(flags & WALK_FOLLOW || nd->flags & LOOKUP_FOLLOW) ||
+> > +          flags & WALK_NOFOLLOW) {
+> 
+> Humor me, and don't mix bitwise ops with logical boolean ops without
+> parentheses, ok?
+> 
+> And yes, the old code did it too, so it's not a new thing.
+> 
+> But as it gets even more complex, let's just generally strive for doing
+> 
+>    (a & b) || (c & d)
+> 
+> instead of
+> 
+>    a & b || c & d
+> 
+> to make it easier to mentally see the grouping.
 
-I've been playing with a series to do this, here:
+Can do...  FWIW, the only case where the normal "'and' is multiplication,
+'or' is addition" doesn't give the right result is
+	x | y && z
+written instead of
+	x | (y && z)
+where you would be better off rewriting the expression anyway.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=linker/orphans/x86-arm
+FWIW, one of the things in the local pile is this:
 
-There's some work to be done still...
+commit cc1b6724b32de1be108cf6a5f28dbb5aa424b42f
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Sun Jan 19 12:44:18 2020 -0500
 
--- 
-Kees Cook
+    namei: invert the meaning of WALK_FOLLOW
+    
+    old flags & WALK_FOLLOW <=> new !(flags & WALK_TRAILING)
+    That's what that flag had really been used for.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 6eb708014d4b..7d938241157f 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1786,7 +1786,7 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
+ 	return NULL;
+ }
+ 
+-enum {WALK_FOLLOW = 1, WALK_MORE = 2, WALK_NOFOLLOW = 4};
++enum {WALK_TRAILING = 1, WALK_MORE = 2, WALK_NOFOLLOW = 4};
+ 
+ /*
+  * Do we need to follow links? We _really_ want to be able
+@@ -1805,7 +1805,7 @@ static const char *step_into(struct nameidata *nd, int flags,
+ 	if (!(flags & WALK_MORE) && nd->depth)
+ 		put_link(nd);
+ 	if (likely(!d_is_symlink(path.dentry)) ||
+-	   !(flags & WALK_FOLLOW || nd->flags & LOOKUP_FOLLOW) ||
++	   (flags & WALK_TRAILING && !(nd->flags & LOOKUP_FOLLOW)) ||
+ 	   flags & WALK_NOFOLLOW) {
+ 		/* not a symlink or should not follow */
+ 		path_to_nameidata(&path, nd);
+@@ -2157,10 +2157,10 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+ 			if (!name)
+ 				return 0;
+ 			/* last component of nested symlink */
+-			link = walk_component(nd, WALK_FOLLOW);
++			link = walk_component(nd, 0);
+ 		} else {
+ 			/* not the last component */
+-			link = walk_component(nd, WALK_FOLLOW | WALK_MORE);
++			link = walk_component(nd, WALK_MORE);
+ 		}
+ 		if (unlikely(link)) {
+ 			if (IS_ERR(link))
+@@ -2288,7 +2288,7 @@ static inline const char *lookup_last(struct nameidata *nd)
+ 		nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+ 
+ 	nd->flags &= ~LOOKUP_PARENT;
+-	link = walk_component(nd, 0);
++	link = walk_component(nd, WALK_TRAILING);
+ 	if (link) {
+ 		nd->flags |= LOOKUP_PARENT;
+ 		nd->stack[0].name = NULL;
+@@ -3241,7 +3241,7 @@ static const char *do_last(struct nameidata *nd,
+ 	}
+ 
+ finish_lookup:
+-	link = step_into(nd, 0, dentry, inode, seq);
++	link = step_into(nd, WALK_TRAILING, dentry, inode, seq);
+ 	if (unlikely(link)) {
+ 		nd->flags |= LOOKUP_PARENT;
+ 		nd->flags &= ~(LOOKUP_OPEN|LOOKUP_CREATE|LOOKUP_EXCL);
+
+
+and I can simply fold adding extra parens into it.  Or I can fold that into
+the patch you'd been replying to  - I'm still uncertain about the series
+containing WALK_TRAILING...
