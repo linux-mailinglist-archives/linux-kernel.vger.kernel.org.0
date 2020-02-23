@@ -2,261 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E266169795
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 13:57:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6B761697B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 14:18:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbgBWM4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 07:56:19 -0500
-Received: from mx1.cock.li ([185.10.68.5]:46317 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726592AbgBWM4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 07:56:19 -0500
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
+        id S1726678AbgBWNSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 08:18:54 -0500
+Received: from sender4-pp-o97.zoho.com ([136.143.188.97]:25767 "EHLO
+        sender4-pp-o97.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbgBWNSx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 08:18:53 -0500
+X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Sun, 23 Feb 2020 08:18:53 EST
+ARC-Seal: i=1; a=rsa-sha256; t=1582463030; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=QXYz5ZLqwfdrNcaAtFIqgwmXpH0LNQCFMideA43IRSlCYoLc0OMWPgRvKO1zExMddC3ryWrIxwMdcrrTMkMkfj2YFADUE0VQOE75lybPVKFDmIyrhFJ91Rz160ulqHG+LH4l9awAcvNhcs1zuMNsEUEXgbRaV7OmUluXDHWYIr8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1582463030; h=Content-Type:Content-Transfer-Encoding:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=3lx6dYpOAuBPP+/IJMKqzEmGYzk0NdW5qFQFIvEbp14=; 
+        b=Kqhs5ntZ0k9EGtm9PeGu5XJFTh1w8/DTAZvMGEtBLhdzAgXyLTp1i6Sslc9PeDoA3uUAqBVA0z0n0yfFvRWAMdIZzrc3NqN/ODgUBR4bgtc2WvjqebDkgV2trXAyLWcWzwTMwO4nDAYFFMjp7F3MhbkfGC3q77XgmYa5CO2L9S4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=taz.007@zoho.com;
+        dmarc=pass header.from=<taz.007@zoho.com> header.from=<taz.007@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:subject:to:message-id:date:user-agent:mime-version:content-type; 
+  b=N6GSCerbyOLzk9c0PBIV4xDNQhMA6oAKzvK9MILGNDaTigVFReKZnMh7hu9wP70fXkF9SUCL36JL
+    bEM8EVvh//f8zhMg9aW6/ttOpl1XYkveCIgSwX1/sGp2DR9Gjwwi  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1582463030;
+        s=zm2020; d=zoho.com; i=taz.007@zoho.com;
+        h=From:Subject:To:Message-ID:Date:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=3lx6dYpOAuBPP+/IJMKqzEmGYzk0NdW5qFQFIvEbp14=;
+        b=bGKSOqbdkutdlI+HvMNDTj8Vab+UaWA8cPc1h6LwJPE9mN70DU6gPTAYuVSrTXEM
+        sk35LXdbl6RT2xkPJL7GYtE0qXErwxu5QPmZ8WqfqNDuNIbzK8SGNMgit0gWFw/TPw7
+        HJfrF9N4NZCUnQdgGBIG2N3TS5HhSN29XWbnaBX8=
+Received: from [192.168.1.5] (77.109.97.112.adsl.dyn.edpnet.net [77.109.97.112]) by mx.zohomail.com
+        with SMTPS id 1582463028376772.0239410694745; Sun, 23 Feb 2020 05:03:48 -0800 (PST)
+From:   "taz.007" <taz.007@zoho.com>
+Subject: fuse freeze and usb devices
+To:     linux-kernel@vger.kernel.org
+Message-ID: <0408cef1-683f-ec03-cdef-894f1e48b869@zoho.com>
+Date:   Sun, 23 Feb 2020 14:03:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=waifu.club; s=mail;
-        t=1582462574; bh=4ITLP1PGeo1OSB8THVq3LWuy2mKx3wLhor3GPRr25vs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VcNMyCasv+cKcIEd3T/Ul42UJ/jnSKlPjDFpwrQvzRwaTX/monqFLr9Nb87enjsKx
-         B1hQDPv8+D6dBy4msVpCraaCOmt3yCXfb03TTR+AHZ+8v94R/LsF9Hl1xYzb3jZupL
-         MenIJBZrU8Sm0qvAfaI8MJYtz9+SKWV1Hq5Y7wnRzI0TmUVSwktcs8cIhDo6DGK/s5
-         lx7mUHE78uP7pkTCW+TPo0Ig7m3fHMpk9qHXabHvt8Aiv3lNOVJz/Wk7waoaY/f+rI
-         p5VaGEcXyVaqJ6+ENqWo8PQ+8qScYTiYmCrKb6ahW5SPuAEJkTr6CiimcK6dW/ZOYC
-         mr/ral6ezHdlg==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Sun, 23 Feb 2020 12:56:13 +0000
-From:   whywontyousue@waifu.club
-To:     Stephan von Krawczynski <skraw.ml@ithnet.com>
-Cc:     linux-kernel@vger.kernel.org, rms@gnu.org, bruce@perens.com,
-        bind-users@lists.isc.org
-Subject: Re: General Discussion about GPLness
-In-Reply-To: <20200223133301.03eab91d@ithnet.com>
-References: <8b0e828da35ab77c1ad4603768c6eab6@waifu.club>
- <20200223133301.03eab91d@ithnet.com>
-Message-ID: <2241a3e0c8dcba5b69b4f670e181d7cd@waifu.club>
-X-Sender: whywontyousue@waifu.club
-User-Agent: Roundcube Webmail/1.3.10
+Content-Language: en-CA
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If you don't understand English, it will be difficult to get any points 
-across to you. I will try
-
-In simple terms:
-1) Look up the court case "Universal City Studios Inc v Reimerdes,"
-
-2) In this case someone else' software was running at the same time as 
-the other persons software, and made changes, extensions _ONLY_ when 
-running. Just like a non-gpl'd (or gpl'd) module might make changes and 
-extensions.
-
-3) The court found this was obviously a modification of the Copyright 
-owners Work and barred in on summary judgement.
-
-That is why you're not allowed to do as you wish with non-gpl'd modules: 
-the US Copyright Jurisprudence forbids marring a Copyright owners 
-_running_ _in_memory_ property against his wishes: it's a Copyright 
-violation.
-
-That is the reason: people don't want to get sued. That is the ONLY 
-reason. That's it.
-
-The thing is, the linux copyright owners are wimps and won't sue anyone 
-even for blatant infringement; so what is the conversation about?
-
-It's like if you were in Russia, and you were copying DVDs. No one is 
-going to punish you for it: so what is there to discuss? The US 
-Copyright owners don't have the rocks to Invade Russia, Start a Nuclear 
-Winter, and DESTROY you for your Copyright Infringement in Russia.
-
-JUST AS, the DOG LIKE Linux Copyright owners don't have the BALLS to 
-risk being blackballed from the programming industry for DEFENDING THEIR 
-COPYRIGHT.
-
-The GPL ___IS___ dead. The FSF doesn't protect GCC copyright, and is 
-opposed to taking any action against blantant in-writing infringers 
-(OpenSourceSecurity (Grsecurity)) of GCC, just as the LINUX COMMUNITY is 
-OPPOSED to taking ANY action to defend its Copyrights and moves to 
-PUNISH those rightsholders who do.
-
-> And another thing: court is for lawyers. Whenever the lawyers take over
-> something they don't (want to) understand the end is near ...
-
-I'm a lawyer and a programmer, got something to say?
+Hello kernel experts,
 
 
-> How about talking with real names?
-Why would I do that? Tell me? What is in it for me?
-I can stand here, in the forest, taking shots at your bullshit. Safe. 
-Secure. My words and their veracity the only measure.
+I'm experiencing some fuse user space daemon freeze.
 
-But if I reveal the messanger; you'll just attack the messenger.
-Tell me how _I_ benifit from telling YOU my name. Tell me.
-Is it some sort of stupid werkin man white man bravado?
+I've created a bugzilla entry so I won't repeat all the details, so see 
+here:
 
-> I have no idea why you spam rms or bruce
-> with this, as the question is all about _one_ project, namely 
-> linux-kernel.
+https://bugzilla.kernel.org/show_bug.cgi?id=206643
 
-You sent a message to the LKML "Hey why can't I violate the GPL? Let's 
-just do it!". IE: a licensing discussion. RMS and Bruce Perens, the 
-founder of the Free Software Movement and the Open Source Initiative are 
-relevant parties to the discussion.
+TLDR:
 
+mergerfs is stuck inside pread64(). system is idle, manually accessing 
+one of the drives via hdparm/ls (or sync) unblocks the syscall and 
+mergerfs resumes.
 
-> I'd suggest taking them off this topic again ...
-You also suggested I reveal my identity on the internet...
+I have no idea which subsystem is responsible for this behaviour, as the 
+scenario is a bit complex.
+
+Thanks for your help.
 
 
-On 2020-02-23 12:33, Stephan von Krawczynski wrote:
-> Dear whoeveryouare,
-> 
-> can you please state in a clearer form (more understandable to 
-> non-native
-> english talkers) what your true opinion on the topic is?
-> And in case you did not understand what I was saying, here is clearer 
-> form of
-> my opinion:
-> 
-> A kernel module with another license (be it whatsoever) is _no_ 
-> modification
-> of the kernel, but an extension of its features. If feature-extension 
-> is
-> against the GPL (which I seriously doubt) then I would say "go back 
-> onto your
-> trees". Because the human race and evolution is about little else than
-> feature-extension.
-> 
-> And another thing: court is for lawyers. Whenever the lawyers take over
-> something they don't (want to) understand the end is near ...
-> 
-> How about talking with real names? I have no idea why you spam rms or 
-> bruce
-> with this, as the question is all about _one_ project, namely 
-> linux-kernel.
-> I'd suggest taking them off this topic again ...
-> 
-> --
-> Regards,
-> Stephan
-> 
-> 
-> 
-> On Sun, 23 Feb 2020 11:03:56 +0000
-> whywontyousue@waifu.club wrote:
-> 
->> Dear Stephan von Krawczynski;
->> 
->> Universal City Studios Inc v Reimerdes, piece of shit.
->> 
->> "[The court] reasoned that Ferret consumers who used the Ferret as a
->> plug-in to the Real Player altered the Real Player user interface by
->> adding the Snap search button or replacing it with the Stream box 
->> search
->> engine button. The court concluded that the plaintiff raised 
->> sufficently
->> serious questions going to the merits of its claims to warrant an
->> injunction pending trial"
->> 
->> Want to violate the linux kernel copyright, you fucking piece of shit?
->> Yes you do. Yes modifying the running kernel with violating pieces is
->> copyright infringement, you fucking piece of shit. Yes you should be
->> sued. Just as Open Source Security (Grsecurity) should be sued for 
->> their
->> violations (of section 4 and 6 of the linux kernel copyright license
->> (they're also violating the GCC copyrights too)).
->> 
->> Will they be sued? Will you be sued? No: Linux copyright holders are
->> scared little wageslave worker bees. They aren't going to sue you;
->> sorry. Why are you even announcing you intent to violate the 
->> copyright?
->> Why even give these dogs such intellectual deference?
->> 
->> I wish OpenSourceSecurity would be sued. I wish you would be sued. But
->> linux WERKIN MAHN wage slave piece of shit idiots won't do it: I hate
->> them much more than I hate the violators. Complete Dogs. They could 
->> move
->> from strenght to strenght, from victory to victory; but they're scared
->> for their "JEHRB"s. I have to say: white men are pathetic scum. If 
->> Linux
->> was built by others there would rightfully be lawsuits.
->> 
->> 
->> 
->> > Stephan von Krawczynski wrote:
->> > Hello all,
->> >
->> > you may have already heard about it or not (several times in the past),
->> > non-kernel devices run into a symbol export problem as soon as
->> > something is
->> > only exported GPL from the kernel.
->> > Currently there is a discussion regarding zfs using this call chain:
->> >
->> > vdev_bio_associate_blkg (zfs) -> blkg_tryget (kernel) ->
->> > percpu_ref_tryget
->> > (kernel) -> rcu_read_unlock (kernel) -> __rcu_read_unlock (kernel)
->> >
->> > where __rcu_read_[lock|unlock] is a GPL symbol now used by (not GPL
->> > exported)
->> > percpu_ref_tryget.
->> >
->> > That this popped up (again) made me think a bit more general about the
->> > issue.
->> > And I do wonder if this rather ideologic problem is on the right track
->> > currently. Because what the kernel tries to do with the export GPL
->> > symbol
->> > stuff is to prevent any other licensed software from _using_ it in
->> > _runtime_.
->> > It does not try to prevent use/copy of the source code inside another
->> > non-gpl
->> > project.
->> > And I do think that this is not the intention of GPL. If it were, then
->> > 100% of
->> > all mobile phones on this planet are illegal. All of them use GPL
->> > software
->> > from non-gpl software, be it kernel modules or apps - and I see no
->> > difference
->> > in the two. The constructed difference between kernel mode software and
->> > user-space software is pure ideology. Because during runtime everything
->> > is
->> > just call-chained.
->> > Which means if you fopen() a file in user-space it of course uses GPL
->> > symbols
->> > down in the chain somewhere. The contents of the opened file are not
->> > heaven-sent.
->> > If you/we follow the current completely ideology-driven GPL strategy
->> > then I am
->> > all for completely giving up this whole project. In real world you
->> > simply
->> > cannot use such a piece of software. The success of linux during the
->> > last
->> > years (i.e. decade) is not based on the pure GPL strategy, but on the
->> > successful interaction between linux and non-GPL software.
->> > Just think of the billions of smartphones all using a non-gpl firmware
->> > (underneath, and there is no GPL version at all), the kernel (with
->> > non-gpl
->> > modules) and apps (quite some of which are non-gpl).
->> > This is only one prominent example, but there are lots of others.
->> > In the end it all sums up to one simple question:
->> > Can one _use_ GPL software during runtime as a base for own projects of
->> > any
->> > license type or not? We are not talking about _copying_ gpl code, we
->> > are
->> > talking about runtime use.
->> > If runtime use is generally allowed, then the export gpl symbol stuff
->> > inside
->> > the kernel code is nonsense. Because to use the kernel you must be
->> > allowed to
->> > call it, no matter from where.
->> > Hit me.
->> >
->> > --
->> > Regards,
->> > Stephan
+P.S. Add me in CC as I'm not subscribed to the ML.
+
+
