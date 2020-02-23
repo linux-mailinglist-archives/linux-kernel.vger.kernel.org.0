@@ -2,78 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 114B7169AF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:38:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 397E6169AF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:38:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbgBWXhw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 18:37:52 -0500
-Received: from mga05.intel.com ([192.55.52.43]:65515 "EHLO mga05.intel.com"
+        id S1727190AbgBWXiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 18:38:20 -0500
+Received: from ozlabs.org ([203.11.71.1]:34057 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726534AbgBWXhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 18:37:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2020 15:34:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,477,1574150400"; 
-   d="scan'208";a="349801062"
-Received: from blu2-mobl3.ccr.corp.intel.com (HELO [10.254.212.230]) ([10.254.212.230])
-  by fmsmga001.fm.intel.com with ESMTP; 23 Feb 2020 15:34:48 -0800
-Cc:     baolu.lu@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH RESEND] iommu: dmar: Fix RCU list debugging warnings
-To:     Amol Grover <frextrite@gmail.com>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Qian Cai <cai@lca.pw>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>
-References: <20200223165538.29870-1-frextrite@gmail.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <d1d7506c-b692-3730-fb01-5af86ab06258@linux.intel.com>
-Date:   Mon, 24 Feb 2020 07:34:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726534AbgBWXiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 18:38:20 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48QhTK2MHWz9sPK;
+        Mon, 24 Feb 2020 10:38:13 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1582501098;
+        bh=Yq+U2+OV7jbRAuCHl+F+0GVlXi1B9ySL65WiNoIKVFc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=hybumsL/5KArw/L4lAg/knFB3+T/hPG5zCV5yisKcj0OH6PDJqHZxDIUl+Zr/3bm1
+         gqw4nwbRXubICzgjv8NfcmmDE6MRPrpi5Yyum+fI/z0oVeDqjjOnYMvSgsPtlfttTT
+         flz3V5ds8acuRARED6ZNBRmH7DcsJPV6dD4dRurdKugZKdhThj+0JPdnqcUdm2Mpa7
+         ySl9JY44xsCMMouEuqD2cELlz32H7wu0fNFM9TElVLlzWimJMSer2g3ivB3PuPyd/E
+         gzhW8iR0S29tqlCpC359Ivbpub4vcO8QMZwHcmB6uxjQZHbANIMSmb15Y8HwjqfNcJ
+         rY+uTIzHYfZbw==
+Date:   Mon, 24 Feb 2020 10:38:12 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Alex Deucher <alexdeucher@gmail.com>,
+        Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian =?UTF-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>
+Subject: linux-next: manual merge of the amdgpu tree with the drm tree
+Message-ID: <20200224103812.017657a3@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20200223165538.29870-1-frextrite@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/yGuS3+67JTCIx4QWNVhlbGu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/2/24 0:55, Amol Grover wrote:
-> dmar_drhd_units is traversed using list_for_each_entry_rcu()
-> outside of an RCU read side critical section but under the
-> protection of dmar_global_lock. Hence add corresponding lockdep
-> expression to silence the following false-positive warnings:
-> 
-> [    1.603975] =============================
-> [    1.603976] WARNING: suspicious RCU usage
-> [    1.603977] 5.5.4-stable #17 Not tainted
-> [    1.603978] -----------------------------
-> [    1.603980] drivers/iommu/intel-iommu.c:4769 RCU-list traversed in non-reader section!!
-> 
-> [    1.603869] =============================
-> [    1.603870] WARNING: suspicious RCU usage
-> [    1.603872] 5.5.4-stable #17 Not tainted
-> [    1.603874] -----------------------------
-> [    1.603875] drivers/iommu/dmar.c:293 RCU-list traversed in non-reader section!!
-> 
-> Tested-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-> Signed-off-by: Amol Grover <frextrite@gmail.com>
+--Sig_/yGuS3+67JTCIx4QWNVhlbGu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the fix.
+Hi all,
 
-Cc: stable@vger.kernel.org
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
+Today's linux-next merge of the amdgpu tree got conflicts in:
 
-Best regards,
-baolu
+  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+
+between commit:
+
+  5e791166d377 ("drm/ttm: nuke invalidate_caches callback")
+
+from the drm tree and commit:
+
+  58e6933fa53e ("drm/amdgpu/ttm: move debugfs init into core amdgpu debugfs=
+")
+
+from the amdgpu tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+index 3ab46d4647e4,660867cf2597..000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@@ -66,9 -68,11 +68,6 @@@ static int amdgpu_map_buffer(struct ttm
+  			     struct amdgpu_ring *ring,
+  			     uint64_t *addr);
+ =20
+- static int amdgpu_ttm_debugfs_init(struct amdgpu_device *adev);
+- static void amdgpu_ttm_debugfs_fini(struct amdgpu_device *adev);
+ -static int amdgpu_invalidate_caches(struct ttm_bo_device *bdev, uint32_t =
+flags)
+ -{
+ -	return 0;
+ -}
+--
+  /**
+   * amdgpu_init_mem_type - Initialize a memory manager for a specific type=
+ of
+   * memory request.
+
+--Sig_/yGuS3+67JTCIx4QWNVhlbGu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5TDOQACgkQAVBC80lX
+0GwoHAf7Baph4dkZitGT+gcCnOblCteMTYT6mixpfWu4upUAGfF7QZrqkVrXc2HI
+RrjXC23mezv8iS8o6N3CO9ZGSDkWyHTOhRsDpk5cPZYVX5dJ/Hg89tKe1uphOd41
+wimjTJ4UmhqkQG84pNuoUGVxtW6Z3vaPvgxcYmOTEIoviewiCnRBtCnPQlOMdCi9
+tddKAs/DclUQXN/w+y23sXiyvzD9Ebdyhd6xOV1DPwHcvQtFI+u4gd+AykrNDxWT
+KuO5sHSJTd8/II6bosR+cKu/TVRSEMx6a1QrN+uI8g38FeDThD48aCxRWxjzC0BL
+WiK7dn9PO0LXSxWV8qv39Zg5/CS2vw==
+=NemJ
+-----END PGP SIGNATURE-----
+
+--Sig_/yGuS3+67JTCIx4QWNVhlbGu--
