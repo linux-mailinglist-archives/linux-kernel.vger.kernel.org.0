@@ -2,78 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BFDC169ACA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 612BD169AC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 00:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbgBWXTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 18:19:06 -0500
-Received: from foss.arm.com ([217.140.110.172]:53936 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727624AbgBWXST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 18:18:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B05630E;
-        Sun, 23 Feb 2020 15:18:18 -0800 (PST)
-Received: from [10.43.4.116] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 007193F534;
-        Sun, 23 Feb 2020 15:18:16 -0800 (PST)
-Subject: Re: [PATCH v2 6/6] sched/rt: Remove unnecessary assignment in
- inc/dec_rt_migration
-To:     Qais Yousef <qais.yousef@arm.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-References: <20200223184001.14248-1-qais.yousef@arm.com>
- <20200223184001.14248-7-qais.yousef@arm.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <a000f6b4-7548-1964-ba30-e8396c727d31@arm.com>
-Date:   Mon, 24 Feb 2020 00:16:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727699AbgBWXSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 18:18:22 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50832 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727521AbgBWXSQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 18:18:16 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a5so7183499wmb.0;
+        Sun, 23 Feb 2020 15:18:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=6tp05cGAxe3eIAI8tMjX09BksdgimN4FGWQ4p10y87E=;
+        b=IHcYEAyD7OH6N4cL0P01zGS1LY6NLpg17xhAMUoQ4l2qCBTShJSU+V+GD8NffSJ4yR
+         4nUyMeDByIIBzyKyaGsDY397cpdL7irHiYrtXcT8bIav5QzTbLZ21z10LtnrPhNPhzdN
+         YgDkNRYklHfcShlp9+zlNXf1OwyoW3NiKKrF4NLRP56+3ZynTZNypVrzhDKxWOTlAMBu
+         gBZFN+bbP+cSq4lf7ViI9IVFtM/7fl6ywIL+fgxJGILSK8hXqIcE/vmXuvYfRR74OtP3
+         ZucYROCXTgAw4psyntFEkwA6PDaYyuYum7csOkeZhg76TaUFLSz3AWx7t8TmAlFb/+qE
+         PXzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=6tp05cGAxe3eIAI8tMjX09BksdgimN4FGWQ4p10y87E=;
+        b=uDQCbRQUJLla6BWdyE6JuH66kUUIThlDkYabclQBCe7CiszVl/A18xKIhg7rjxZ0kh
+         6IL9y7nAFMzg2vXg9cW5fFJgqYHMXF8S637l+6kz0k441XU6s4550/eDteOjZDW72BWS
+         8sBaBMJ7dlH/i/pCQvGZtgR2E7ujJ75BhoOG+GJoHrhx4vSerIj6xL7rlbEuBlIMiWyx
+         nS6sobe6atnHhOkxFxtYJGhyeMABmCb7CsNIta2Ji7EtbEDH2l7cuKCfAmmKVqHCTSoI
+         jGNMHMsV+cP3jOFg2BwXziy7O2AiIJpFItMZCc0FLYTBdmvZlAF4PEt7+Lk5yl5VDVU2
+         RhZQ==
+X-Gm-Message-State: APjAAAWzZlaYBFfcNrUkJRtXpTQkt+s83v7w+IN+78VDUkf3nqJRMw+y
+        2I8AcB2fwietXPnq5dx8uw==
+X-Google-Smtp-Source: APXvYqxmP9PDF4LsKT7mYYTv0s5mGlu+CW99N9R7sNSqlyQ8gB98iLC5Vz0HHbfaWWhib/bujdpbZw==
+X-Received: by 2002:a1c:2d91:: with SMTP id t139mr7703539wmt.114.1582499894164;
+        Sun, 23 Feb 2020 15:18:14 -0800 (PST)
+Received: from ninjahost.lan (host-2-102-13-223.as13285.net. [2.102.13.223])
+        by smtp.googlemail.com with ESMTPSA id q6sm8968203wrf.67.2020.02.23.15.18.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2020 15:18:13 -0800 (PST)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     boqun.feng@gmail.com
+Cc:     jbi.octave@gmail.com, linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM)
+Subject: [PATCH 16/30] proc: Add missing annotation for close_pdeo()
+Date:   Sun, 23 Feb 2020 23:16:57 +0000
+Message-Id: <20200223231711.157699-17-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200223231711.157699-1-jbi.octave@gmail.com>
+References: <0/30>
+ <20200223231711.157699-1-jbi.octave@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200223184001.14248-7-qais.yousef@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.02.20 19:40, Qais Yousef wrote:
-> The statement
-> 
-> 	rt_rq = &rq_of_rt_rq(rt_rq)->rt
-> 
-> Was just dereferencing rt_rq to get a pointer to itself. Which is a NOP.
-> Remove it.
-> 
-> Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> ---
->  kernel/sched/rt.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index b35e49cdafcc..520e84993fe7 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -343,7 +343,6 @@ static void inc_rt_migration(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
->  		return;
->  
->  	p = rt_task_of(rt_se);
-> -	rt_rq = &rq_of_rt_rq(rt_rq)->rt;
+Sparse reports a warning at close_pdeo()
+warning: context imbalance in close_pdeo() - unexpected unlock
+The root cause is the missing annotation at close_pdeo()
+Add the missing __releases(&pde->pde_unload_lock) annotation
 
-IMHO, this is here to get the root rt_rq from any rt_rq (task_groups).
-Looks like that e.g rt_nr_total is only maintained on root rt_rq's.
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+---
+ fs/proc/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Similar to CFS' &rq_of(cfs_rq)->cfs (cfs_rq_util_change()) to get root
-cfs_rq.
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 6da18316d209..1f33cb7a6c47 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -139,6 +139,7 @@ static void unuse_pde(struct proc_dir_entry *pde)
+ 
+ /* pde is locked on entry, unlocked on exit */
+ static void close_pdeo(struct proc_dir_entry *pde, struct pde_opener *pdeo)
++	__releases(&pde->pde_unload_lock)
+ {
+ 	/*
+ 	 * close() (proc_reg_release()) can't delete an entry and proceed:
+-- 
+2.24.1
 
-Not sure where CONFIG_RT_GROUP_SCHED=y is used but it's part of the rt
-class implementation.
-
-[...]
