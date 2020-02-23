@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7585E169529
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:37:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F6B8169546
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2020 03:37:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbgBWCV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Feb 2020 21:21:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50266 "EHLO mail.kernel.org"
+        id S1728919AbgBWChK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Feb 2020 21:37:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727708AbgBWCVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:21:45 -0500
+        id S1727733AbgBWCVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:21:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD362214DB;
-        Sun, 23 Feb 2020 02:21:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D218120707;
+        Sun, 23 Feb 2020 02:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424505;
-        bh=b0T7XcKyF7fdfoO4CCzBX1iv4p+VefjFERsskt64TYA=;
+        s=default; t=1582424506;
+        bh=g7lm6YgSyj6c2NL8Mpa/jUwJdQ2wfy+ZGEYhea2EoUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i77Vk/J7TDJqXKm6002HID74eMcTfYAZSaWrtUgisXwgqrP7uaWz+jsZd1UfIdSuY
-         qVGo6Vda6oDP2e/05DGGsRZGdZNb8ewq5oAlwSNhKimgt/Lm1KkstX7O9aYljVb0+O
-         upakQSOxY5hobZaEu1y+Wx4hIC5hzRD/tCgjuNn0=
+        b=ltvRQ1ujoxLuCxyIWjIcJh+GQbydud0EGsziMp0Efd52862DfTNtuLCJCrt/b6MeJ
+         VU0Nh9T1ZsttgHtUDXmx3ChB+4GndSPS8NiCBFSgBWWktmgtVHuUiMNUmuTErLJAUX
+         rSsy2S5Ji8bOESvWrx0mRCfxqo9Z4PnSS1viIOEQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 21/58] ARM: dts: sti: fixup sound frame-inversion for stihxxx-b2120.dtsi
-Date:   Sat, 22 Feb 2020 21:20:42 -0500
-Message-Id: <20200223022119.707-21-sashal@kernel.org>
+Cc:     Sung Lee <sung.lee@amd.com>, Tony Cheng <Tony.Cheng@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.5 22/58] drm/amd/display: Do not set optimized_require to false after plane disable
+Date:   Sat, 22 Feb 2020 21:20:43 -0500
+Message-Id: <20200223022119.707-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200223022119.707-1-sashal@kernel.org>
 References: <20200223022119.707-1-sashal@kernel.org>
@@ -44,34 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Sung Lee <sung.lee@amd.com>
 
-[ Upstream commit f24667779b5348279e5e4328312a141a730a1fc7 ]
+[ Upstream commit df36f6cf23ada812930afa8ee76681d4ad307c61 ]
 
-frame-inversion is "flag" not "uint32".
-This patch fixup it.
+[WHY]
+The optimized_require flag is needed to set watermarks and clocks lower
+in certain conditions. This flag is set to true and then set to false
+while programming front end in dcn20.
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Reviewed-by: Patrice Chotard <patrice.chotard@st.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+[HOW]
+Do not set the flag to false while disabling plane.
+
+Signed-off-by: Sung Lee <sung.lee@amd.com>
+Reviewed-by: Tony Cheng <Tony.Cheng@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/stihxxx-b2120.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/stihxxx-b2120.dtsi b/arch/arm/boot/dts/stihxxx-b2120.dtsi
-index 60e11045ad762..d051f080e52ec 100644
---- a/arch/arm/boot/dts/stihxxx-b2120.dtsi
-+++ b/arch/arm/boot/dts/stihxxx-b2120.dtsi
-@@ -46,7 +46,7 @@
- 			/* DAC */
- 			format = "i2s";
- 			mclk-fs = <256>;
--			frame-inversion = <1>;
-+			frame-inversion;
- 			cpu {
- 				sound-dai = <&sti_uni_player2>;
- 			};
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
+index ac8c18fadefce..448bc9b39942f 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
+@@ -493,7 +493,6 @@ static void dcn20_plane_atomic_disable(struct dc *dc, struct pipe_ctx *pipe_ctx)
+ 	dpp->funcs->dpp_dppclk_control(dpp, false, false);
+ 
+ 	hubp->power_gated = true;
+-	dc->optimized_required = false; /* We're powering off, no need to optimize */
+ 
+ 	dc->hwss.plane_atomic_power_down(dc,
+ 			pipe_ctx->plane_res.dpp,
 -- 
 2.20.1
 
