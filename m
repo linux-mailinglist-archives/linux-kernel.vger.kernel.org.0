@@ -2,99 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9719316B614
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78FE016B590
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:30:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbgBXX5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:57:09 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:38302 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgBXX5J (ORCPT
+        id S1728221AbgBXXaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:30:39 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33163 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727843AbgBXXaj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:57:09 -0500
-Received: from zyt.lan (unknown [IPv6:2a02:169:3df5::564])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 667575C4EBF;
-        Tue, 25 Feb 2020 00:57:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1582588627;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=knLzyUSaJSbGxSDiQWBKWSmgmd9VevAPMusi7YBYNHE=;
-        b=ceeCpOs0KDH76Fhq1yqjouLmKosOdGCevr1YfOv4yVjc8Z+OsDMJwrNk6say9sS1HJ/wmm
-        eVdwfy/QLoagc0p2slD6o4t9+eTdOq6u/MVGyTs9ScrjpKXY7WkgphAb9iB88PMxDBpoiL
-        JBVu74Lybsi108UWChsqo1JKUK5xrSc=
-From:   Stefan Agner <stefan@agner.ch>
-To:     linux@armlinux.org.uk
-Cc:     arnd@arndb.de, manojgupta@google.com, jiancai@google.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] ARM: use assembly mnemonics for VFP register access
-Date:   Fri, 21 Feb 2020 07:34:21 +0100
-Message-Id: <8bb16ac4b15a7e28a8e819ef9aae20bfc3f75fbc.1582266841.git.stefan@agner.ch>
-X-Mailer: git-send-email 2.25.1
+        Mon, 24 Feb 2020 18:30:39 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 6so5938319pgk.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 15:30:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZMfELxm44QBYo6rqimr2zJP2ICXy8S+lHokTgtg/D4E=;
+        b=Y9e4ZIE5sYme6vUvmNceDkdcQi1HW6RxS/O7bdBL2efZiEFOoPlFp2fix/+QfBXf0H
+         EE2ck+WCDQW2gXqsByg98LiFSO+ffvL9TZq43PeHnPAXbUp4/YKlH26meHvoP/ChIy6E
+         3RArlP3A0Cv8NcjrvpVhFFF3u44a3UhlLnklcguHhMDxP9h5GI14G984+L4Y2R8DptdE
+         2DiTiBc6oN3cR6M5nGciwHJZOKS/EMvGE03g/E7Et2J7x6vVpGlywddysND2+meThPrK
+         aSA4FQU/XEpp0SYOaMPhw/GkQ/ohqAHUflYI4Li15KhXT/xqA1cOp3lOQ+peiqSeWt7l
+         PTnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZMfELxm44QBYo6rqimr2zJP2ICXy8S+lHokTgtg/D4E=;
+        b=fQHMbBVwTFA6Dm04kmQ/STuX812GlkvA/s6ZodvLK4k/jvgKDZoNzhRTjVDoQyfQy1
+         xPXO30iNZmzC7VWpe5pyL7KU9rdcQpE9rm1N31FygJYlhTSNcFsnDU6B3S1cL3/b0ZAw
+         31GADqUu6MnpHvuPUNJNyQlGdCC1VqjTUhiXtckS2UDj+a+dlH3C4O/eBlNTRD9LcXSq
+         im9XTc63Dvbih05JqBnxxKb/4kIcASz2zrURa76CIQSXUuL4jXa9hSHfZhTTEj+pyQ8p
+         QEeAb3OoHYHGQrNJOJmtht0Hf03rCM1mGeonWvbG4JQbZkcTYUKHTzO7vkwfZoHOsijx
+         7Neg==
+X-Gm-Message-State: APjAAAVT1UlUGeBxUXGF15+L5qhlAuDCa0R+Q+D5FrSoyzVGcUmCqZna
+        xOG/FZkTSMhIzQt0OkhIvohaQ3M8sg3WvOyPTuYIpg==
+X-Google-Smtp-Source: APXvYqyaYgD8sF+7bCA4bKk2zu1PgTz4YvdEDHPuaaFjjEjglq/OVNho4DdMEfj698J9qe5fK5qBWwUr/aBynLmqA/w=
+X-Received: by 2002:a63:4e22:: with SMTP id c34mr19298985pgb.263.1582587038117;
+ Mon, 24 Feb 2020 15:30:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAKwvOdn6cxm9EpB7A9kLasttPwLY2csnhqgNAdkJ6_s2DP1-HA@mail.gmail.com>
+ <20200224232129.597160-2-nivedita@alum.mit.edu>
+In-Reply-To: <20200224232129.597160-2-nivedita@alum.mit.edu>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 24 Feb 2020 15:30:27 -0800
+Message-ID: <CAKwvOdkG-fFLce+1UNxRXSptkwWUJU9=MG2Pcd_SJiGUmhaHPg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] arch/x86: Use -fno-asynchronous-unwind-tables to
+ suppress .eh_frame sections
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Michael Matz <matz@suse.de>, Fangrui Song <maskray@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang's integrated assembler does not allow to to use the mcr
-instruction to access floating point co-processor registers:
-arch/arm/vfp/vfpmodule.c:342:2: error: invalid operand for instruction
-        fmxr(FPEXC, fpexc & ~(FPEXC_EX|FPEXC_DEX|FPEXC_FP2V|FPEXC_VV|FPEXC_TRAP_MASK));
-        ^
-arch/arm/vfp/vfpinstr.h:79:6: note: expanded from macro 'fmxr'
-        asm("mcr p10, 7, %0, " vfpreg(_vfp_) ", cr0, 0 @ fmxr   " #_vfp_ ", %0" \
-            ^
-<inline asm>:1:6: note: instantiated into assembly here
-        mcr p10, 7, r0, cr8, cr0, 0 @ fmxr      FPEXC, r0
-            ^
+On Mon, Feb 24, 2020 at 3:21 PM Arvind Sankar <nivedita@alum.mit.edu> wrote:
+>
+> While discussing a patch to discard .eh_frame from the compressed
+> vmlinux using the linker script, Fangrui Song pointed out [1] that these
+> sections shouldn't exist in the first place because arch/x86/Makefile
+> uses -fno-asynchronous-unwind-tables.
+>
+> It turns out this is because the Makefiles used to build the compressed
+> kernel redefine KBUILD_CFLAGS, dropping this flag.
+>
+> Add the flag to the Makefile for the compressed kernel, as well as the
+> EFI stub Makefile to fix this.
+>
+> Also add the flag to boot/Makefile and realmode/rm/Makefile so that the
+> kernel's boot code (boot/setup.elf) and realmode trampoline
+> (realmode/rm/realmode.elf) won't be compiled with .eh_frame sections,
+> since their linker scripts also just discard it.
+>
+> Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+> Suggested-By: Fangrui Song <maskray@google.com>
 
-The GNU assembler supports the .fpu directive at least since 2.17 (when
-documentation has been added). Since Linux requires binutils 2.21 it is
-safe to use .fpu directive. Use the .fpu directive and mnemonics for VFP
-register access.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-This allows to build vfpmodule.c with Clang and its integrated assembler.
+> [1] https://lore.kernel.org/lkml/20200222185806.ywnqhfqmy67akfsa@google.com/
+> ---
+>  arch/x86/boot/Makefile                | 1 +
+>  arch/x86/boot/compressed/Makefile     | 1 +
+>  arch/x86/realmode/rm/Makefile         | 1 +
+>  drivers/firmware/efi/libstub/Makefile | 3 ++-
+>  4 files changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+> index 012b82fc8617..24f011e0adf1 100644
+> --- a/arch/x86/boot/Makefile
+> +++ b/arch/x86/boot/Makefile
+> @@ -68,6 +68,7 @@ clean-files += cpustr.h
+>  KBUILD_CFLAGS  := $(REALMODE_CFLAGS) -D_SETUP
+>  KBUILD_AFLAGS  := $(KBUILD_CFLAGS) -D__ASSEMBLY__
+>  KBUILD_CFLAGS  += $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
+> +KBUILD_CFLAGS  += -fno-asynchronous-unwind-tables
+>  GCOV_PROFILE := n
+>  UBSAN_SANITIZE := n
+>
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index 26050ae0b27e..c33111341325 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -39,6 +39,7 @@ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+>  KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+>  KBUILD_CFLAGS += -Wno-pointer-sign
+>  KBUILD_CFLAGS += $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
+> +KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
+>
+>  KBUILD_AFLAGS  := $(KBUILD_CFLAGS) -D__ASSEMBLY__
+>  GCOV_PROFILE := n
+> diff --git a/arch/x86/realmode/rm/Makefile b/arch/x86/realmode/rm/Makefile
+> index 99b6332ba540..b11ec5d8f8ac 100644
+> --- a/arch/x86/realmode/rm/Makefile
+> +++ b/arch/x86/realmode/rm/Makefile
+> @@ -71,5 +71,6 @@ $(obj)/realmode.relocs: $(obj)/realmode.elf FORCE
+>  KBUILD_CFLAGS  := $(REALMODE_CFLAGS) -D_SETUP -D_WAKEUP \
+>                    -I$(srctree)/arch/x86/boot
+>  KBUILD_AFLAGS  := $(KBUILD_CFLAGS) -D__ASSEMBLY__
+> +KBUILD_CFLAGS  += -fno-asynchronous-unwind-tables
+>  GCOV_PROFILE := n
+>  UBSAN_SANITIZE := n
+> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> index 98a81576213d..a1140c4ee478 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -12,7 +12,8 @@ cflags-$(CONFIG_X86)          += -m$(BITS) -D__KERNEL__ -O2 \
+>                                    -mno-mmx -mno-sse -fshort-wchar \
+>                                    -Wno-pointer-sign \
+>                                    $(call cc-disable-warning, address-of-packed-member) \
+> -                                  $(call cc-disable-warning, gnu)
+> +                                  $(call cc-disable-warning, gnu) \
+> +                                  -fno-asynchronous-unwind-tables
+>
+>  # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
+>  # disable the stackleak plugin
+> --
+> 2.24.1
+>
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/905
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/vfp/vfpinstr.h | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/vfp/vfpinstr.h b/arch/arm/vfp/vfpinstr.h
-index 38dc154e39ff..799ccf065406 100644
---- a/arch/arm/vfp/vfpinstr.h
-+++ b/arch/arm/vfp/vfpinstr.h
-@@ -62,21 +62,17 @@
- #define FPSCR_C (1 << 29)
- #define FPSCR_V	(1 << 28)
- 
--/*
-- * Since we aren't building with -mfpu=vfp, we need to code
-- * these instructions using their MRC/MCR equivalents.
-- */
--#define vfpreg(_vfp_) #_vfp_
--
- #define fmrx(_vfp_) ({			\
- 	u32 __v;			\
--	asm("mrc p10, 7, %0, " vfpreg(_vfp_) ", cr0, 0 @ fmrx	%0, " #_vfp_	\
-+	asm(".fpu	vfpv2\n"	\
-+	    "vmrs	%0, " #_vfp_	\
- 	    : "=r" (__v) : : "cc");	\
- 	__v;				\
-  })
- 
- #define fmxr(_vfp_,_var_)		\
--	asm("mcr p10, 7, %0, " vfpreg(_vfp_) ", cr0, 0 @ fmxr	" #_vfp_ ", %0"	\
-+	asm(".fpu	vfpv2\n"	\
-+	    "vmsr	" #_vfp_ ", %0"	\
- 	   : : "r" (_var_) : "cc")
- 
- u32 vfp_single_cpdo(u32 inst, u32 fpscr);
 -- 
-2.25.1
-
+Thanks,
+~Nick Desaulniers
