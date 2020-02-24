@@ -2,94 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF8FF169C1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 03:02:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AD2C169C40
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 03:13:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbgBXCC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 21:02:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54018 "EHLO mail.kernel.org"
+        id S1727311AbgBXCNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 21:13:51 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:53222 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727151AbgBXCC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 21:02:58 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C8D82051A;
-        Mon, 24 Feb 2020 02:02:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582509777;
-        bh=cHdXWjpBFusazvMN9LdKno9+AYhTzTc6BdgJplICU2g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tsznOYtCHh2XnqXgIpKmtke23itFEAACrRE3GJiz6WIYoGItnDbBIu3DMTSQtZ9R4
-         kBmDpblUpygrz979M3SO6qGIspeWwJF31KLot86qxH5FCUJlWSgubL70CosOXXfP/V
-         HKSE7N22nGHlH8PYegB3WYfXDm8KymJHCI5bOJoA=
-Date:   Mon, 24 Feb 2020 10:02:52 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Martin Kepplinger <martin.kepplinger@puri.sm>
-Cc:     robh@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, linux-imx@nxp.com, Anson.Huang@nxp.com,
-        devicetree@vger.kernel.org, kernel@puri.sm,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>
-Subject: Re: [PATCH v2 4/9] arm64: dts: librem5-devkit: allow modem to wake
- the system from suspend
-Message-ID: <20200224020251.GF27688@dragon>
-References: <20200218084942.4884-1-martin.kepplinger@puri.sm>
- <20200218084942.4884-5-martin.kepplinger@puri.sm>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218084942.4884-5-martin.kepplinger@puri.sm>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1727151AbgBXCNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 21:13:51 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A58971A4006;
+        Mon, 24 Feb 2020 03:13:49 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8952B1A051F;
+        Mon, 24 Feb 2020 03:13:42 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CE499402B3;
+        Mon, 24 Feb 2020 10:13:33 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        leonard.crestez@nxp.com, daniel.baluta@nxp.com,
+        horia.geanta@nxp.com, peng.fan@nxp.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2] arm64: dts: imx8mn: Adjust 1.2GHz OPP voltage to OD mode
+Date:   Mon, 24 Feb 2020 10:07:40 +0800
+Message-Id: <1582510060-12272-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 09:49:37AM +0100, Martin Kepplinger wrote:
-> From: "Angus Ainslie (Purism)" <angus@akkea.ca>
-> 
-> Connect the WoWWAN signal to a gpio key to wake up the system from suspend.
-> 
-> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-> Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
-> ---
->  .../arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-> index ec12477d925d..9c81b07f43f3 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-> @@ -55,6 +55,15 @@
->  			wakeup-source;
->  			linux,code = <KEY_HP>;
->  		};
-> +
-> +		wwan_wake {
+According to latest datasheet Rev.0, 10/2019, there is restriction
+as below:
 
-We prefer to use hyphen over underscore in node name.
+"If VDD_SOC/GPU/DDR = 0.95V, then VDD_ARM must be >= 0.95V."
 
-Shawn
+As by default SoC is running at OD mode(VDD_SOC = 0.95V), so
+VDD_ARM 1.2GHz OPP's voltage should be increased to 0.95V.
 
-> +			label = "WWAN_WAKE";
-> +			gpios = <&gpio3 8 GPIO_ACTIVE_LOW>;
-> +			interrupt-parent = <&gpio3>;
-> +			interrupts = <8 GPIO_ACTIVE_LOW>;
-> +			wakeup-source;
-> +			linux,code = <KEY_PHONE>;
-> +		};
->  	};
->  
->  	leds {
-> @@ -574,6 +583,7 @@
->  			MX8MQ_IOMUXC_SAI2_RXFS_GPIO4_IO21	0x16
->  			MX8MQ_IOMUXC_SAI2_RXC_GPIO4_IO22	0x16
->  			MX8MQ_IOMUXC_SAI5_RXC_GPIO3_IO20	0x180  /* HP_DET */
-> +			MX8MQ_IOMUXC_NAND_DATA02_GPIO3_IO8	0x80   /* nWoWWAN */
->  		>;
->  	};
->  
-> -- 
-> 2.20.1
-> 
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V1:
+	- Move the OPP change from board dts for soc dtsi.
+---
+ arch/arm64/boot/dts/freescale/imx8mn.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+index c98a376..f277572 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+@@ -116,7 +116,7 @@
+ 
+ 		opp-1200000000 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+-			opp-microvolt = <850000>;
++			opp-microvolt = <950000>;
+ 			opp-supported-hw = <0xb00>, <0x7>;
+ 			clock-latency-ns = <150000>;
+ 			opp-suspend;
+-- 
+2.7.4
+
