@@ -2,97 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 721D516B453
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:43:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1A7016B434
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:41:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728489AbgBXWnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 17:43:10 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36825 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728423AbgBXWmy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 17:42:54 -0500
-Received: by mail-lj1-f193.google.com with SMTP id r19so11912989ljg.3;
-        Mon, 24 Feb 2020 14:42:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=I/mPxVay/Hu7K8kphFH3cVYIKPmVTHJMz4OBtoUwnDw=;
-        b=pck/NJYXlaxPY/Q2J7OuVN6xmLsa88Uo+1U6VsrkPtynrVeYdq58ngBpPJxUOrd2Vt
-         yuwC94w71HwS9MpFJoJwOGJ4soe6WOpN0TVYTOZWZSnCF2Kiuzc1dhBt3Ho7p5LuThmu
-         EbEDSmkg+2vzCpnlxld3cUuk6LP76DO0IeeFJGSFVcywbk5Qo8KhIWkpgvrddHtZzqnv
-         5Hcn4MNg62vOb7OEAqKS3SQYKUmV8ude/Tytebl0h6RCm3nqG0zuqaH/w7B372Y1CHZO
-         kaXf8V9l6Y9dx6iXtFcwTuAMnAg5v0VxJTVJN3M+H+AJ/CjOUG3yNdQ1BEjCf0GOsZUW
-         kH5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=I/mPxVay/Hu7K8kphFH3cVYIKPmVTHJMz4OBtoUwnDw=;
-        b=bxZTEqVoKLMO3dgjHBei2Gn2SsFE+AcscU3Dp1C8syG6PJQHLUwl8yOYMfyXKLFpH4
-         Pl6VVt154NdsGg1G2akqSH44/u10eHBINxS9ds7nLBz/hTH7+fRoqOOMMLebAoYX1Toa
-         fFWvuCY7lH1unChhuwC29nB5An0uPzjxD5K6xNHamRCO1Qp1InOiHgvDk/fBfe7y6C6M
-         QUt52aI65gUWVTt9cOTAxTc51GoUDvK7xrFtnq8MPMatjqRPKc7O9d9UXtcl/o3n7WeA
-         +JuUD5NVOkExeWfYRNNqlWdVpAeKQ5Yu2I/pAYihYQ2rlgdHrNPiHKp8gpJkx/V9AWrJ
-         wfyw==
-X-Gm-Message-State: APjAAAVGS2uTDRT8EZSLXsh++xu0XElhHkpEqKeuMszeaWp3XbcIxBct
-        iU1/TnVh+Z8PZcFTUa0PP5Q=
-X-Google-Smtp-Source: APXvYqzSdEcbWR3nCTxQCqY20tMSNhhfhYra8xq6nWa3oEW2qkCRskdNNhiQ6sqd9ohn/Q1yrUTREw==
-X-Received: by 2002:a2e:9143:: with SMTP id q3mr30254680ljg.199.1582584172729;
-        Mon, 24 Feb 2020 14:42:52 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id j7sm6264833lfh.25.2020.02.24.14.42.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 14:42:52 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Jasper Korten <jja2000@gmail.com>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v11 17/17] ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-Date:   Tue, 25 Feb 2020 01:40:57 +0300
-Message-Id: <20200224224057.21877-18-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200224224057.21877-1-digetx@gmail.com>
-References: <20200224224057.21877-1-digetx@gmail.com>
+        id S1728073AbgBXWlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 17:41:11 -0500
+Received: from mga14.intel.com ([192.55.52.115]:51792 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726651AbgBXWlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 17:41:11 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 14:41:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
+   d="scan'208";a="260493792"
+Received: from wtczc53028gn.jf.intel.com (HELO skl-build) ([10.54.87.17])
+  by fmsmga004.fm.intel.com with ESMTP; 24 Feb 2020 14:41:09 -0800
+Date:   Mon, 24 Feb 2020 14:40:59 -0800
+From:   "Christopher S. Hall" <christopher.s.hall@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, mingo@redhat.com, x86@kernel.org,
+        jacob.e.keller@intel.com, richardcochran@gmail.com,
+        davem@davemloft.net, sean.v.kelley@intel.com
+Subject: Re: [Intel PMC TGPIO Driver 0/5] Add support for Intel PMC Time GPIO
+ Driver with PHC interface changes to support additional H/W Features
+Message-ID: <20200224224059.GC1508@skl-build>
+References: <20191211214852.26317-1-christopher.s.hall@intel.com>
+ <87eevf4hnq.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87eevf4hnq.fsf@nanos.tec.linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Tegra CPU Idle driver was moved out into driver/cpuidle/ directory and
-it is now a proper platform driver.
+Thanks for reviewing.
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, Jan 31, 2020 at 07:14:49PM +0100, Thomas Gleixner wrote:
+> christopher.s.hall@intel.com writes:
+> > From: Christopher Hall <christopher.s.hall@intel.com>
+> >
+> > The TGPIO hardware doesn't implement interrupts. For TGPIO input, the
+> > output edge-timestamp API is re-used to implement a user-space polling
+> > interface. For periodic input (e.g. PPS) this is fairly efficient,
+> > requiring only a marginally faster poll rate than the input event
+> > frequency.
+> 
+> I really have a hard time to understand why this is implemented as part
+> of PTP while you talk about PPS at the same time.
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index a27592d3b1fa..aa94369bdd0f 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -25,6 +25,7 @@ CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
- CONFIG_CPUFREQ_DT=y
- CONFIG_CPU_IDLE=y
-+CONFIG_ARM_TEGRA_CPUIDLE=y
- CONFIG_VFP=y
- CONFIG_NEON=y
- CONFIG_TRUSTED_FOUNDATIONS=y
--- 
-2.24.0
+We primarily need support for periodic input and output uses cases.
+Apologies for omitting the periodic output use case from the cover
+letter. While TGPIO isn't associated with a PTP timestamp clock, the PHC
+pin/clock interface fits the usage otherwise.
 
+The PHC periodic output API is the closest fit for periodic output without
+creating a new API. The PHC interface can also register as a PPS source. I
+am, however, concerned in general about implementing PPS input in the
+driver because the hardware doesn't implement interrupts - requiring
+polling.
+
+> Proper information about why this approach was chosen and what that
+> magic device is used for would be really helpful.
+
+The customer requested usages are 1 kHz and 1 Hz for both input and
+output. Some higher level use cases are:
+- using a GPS PPS signal to sync the system clock
+- auditing timesync precision for financial services, especially high
+	frequency trading (e.g. MiFID).
+
+Apart from clock import/export applications, timestamping single I/O
+events are potentially valuable for industrial control applications
+(e.g. motor position sensing vs. time). As time sync precision
+requirements for these applications are tightened, standard GPIO
+timing precision will not be good enough.
+
+> Thanks,
+> 
+>         tglx
+
+Thanks,
+Christopher
