@@ -2,102 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E45416B37D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:01:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CA1B16B381
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:02:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbgBXWBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 17:01:51 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33393 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbgBXWBu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 17:01:50 -0500
-Received: by mail-pl1-f196.google.com with SMTP id ay11so4608246plb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 14:01:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IWLJOFGxvVMno0/8se2X6awifOIRIcp17izGUYTA88c=;
-        b=R6ZspJE6BKeyLBYb3uDCGB6uHR5kSBAGhpFj+YA6ggUG2ZOClQsLxq2H5hDhWdv1++
-         zxhxpdFAAlnEW7lBsiHuxygxgE/tAJxDARzipH13NUvi18Qgtl1uliBn6eO72WI7eu32
-         2BW6jv64X8G+aHxSlFoUZY3/QYui6aQ1eo6HyU7UkveWV2VFSF5xEGjAqrEoqISa7MVl
-         tZozoWXHvvVIoiz5YkdSHqDxhS99/qqMbqeG7rq3jDocLmHr/cMl5k1TgSxhgKzol/XV
-         pfZXXq7U8/9NZp7ctavoZ95mCuAmoTFZ2s9t0lQ18rUr4beSKmILAAnxxlGt4W1fA3Wl
-         cHgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IWLJOFGxvVMno0/8se2X6awifOIRIcp17izGUYTA88c=;
-        b=CGiviftn2hw4qhqVs9F6P/EyPtI42Ikc23aII5/WNSvf5MXfohttZyZPBRA8fI4kAS
-         6zd82LRZ8LeERnTvmKBZ2azUqb0pymE+vbELcHhY03plvq23IsNqjNdVgC1kuafbbiQE
-         82yfyGA2p6ldTn4EHFRegRmpSq40+PqYmRgNLfpPMVXwz0wLw3/GvT6wkHLV3HhmiFvB
-         fqGogbFeATpZK4qi4Ccqt7lqxplTtLGWn8nEDwXCHvB9+iYux9lj1qf9n5UYUNEHrNDg
-         rSFuMfSfRda1lEgBolBb26/+1rlit7yDGGNwiSQ2WqTPrP8B+mwotveme8EE/ekHgw5S
-         YzqA==
-X-Gm-Message-State: APjAAAU1ufkUEUbXF+DR3DHK6IeUi6g2aYlDk0gjxKG1WEoV7P0iajRd
-        8G3w+9fnBMRoFyzBfPsFesI1Oo8ye/aIKlldb/Lrnw==
-X-Google-Smtp-Source: APXvYqxKzg/oBaNl//6NNxQfT+omS7C/oZWisYiab6zxk3PPHgMQSrnjUUqPCUpzYK0+BMtWF+YBjdZj7kMWAboOC9E=
-X-Received: by 2002:a17:90a:7784:: with SMTP id v4mr1372238pjk.134.1582581709602;
- Mon, 24 Feb 2020 14:01:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20200222235709.GA3786197@rani.riverdale.lan> <20200223193715.83729-1-nivedita@alum.mit.edu>
- <CAKwvOd=qVmb7UEzUSQ5-MUhpRA9Jpu3fMmmMLGdmydLoJV-kkQ@mail.gmail.com> <20200224215330.GA560533@rani.riverdale.lan>
-In-Reply-To: <20200224215330.GA560533@rani.riverdale.lan>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 24 Feb 2020 14:01:38 -0800
-Message-ID: <CAKwvOd=wGYRPY32P3xA-WGG5FiNYk-S6BrjLw3nRqcQ3X0oPFg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Stop generating .eh_frame sections
-To:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Borislav Petkov <bp@alien8.de>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        id S1728286AbgBXWCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 17:02:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726980AbgBXWCf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 17:02:35 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21B6F20CC7;
+        Mon, 24 Feb 2020 22:02:33 +0000 (UTC)
+Date:   Mon, 24 Feb 2020 17:02:31 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Michael Matz <matz@suse.de>, Fangrui Song <maskray@google.com>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arch <linux-arch@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Greg KH <gregkh@linuxfoundation.org>, gustavo@embeddedor.com,
+        Thomas Gleixner <tglx@linutronix.de>, paulmck@kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v4 05/27] x86: Replace ist_enter() with nmi_enter()
+Message-ID: <20200224170231.3807931d@gandalf.local.home>
+In-Reply-To: <20200224213139.GO11457@worktop.programming.kicks-ass.net>
+References: <20200221133416.777099322@infradead.org>
+        <20200221134215.328642621@infradead.org>
+        <CALCETrU7nezN7d3GEZ8h8HbRfvZ0+F9+Ahb7fLvZ9FVaHN9x2w@mail.gmail.com>
+        <20200221202246.GA14897@hirez.programming.kicks-ass.net>
+        <20200224104346.GJ14946@hirez.programming.kicks-ass.net>
+        <20200224112708.4f307ba3@gandalf.local.home>
+        <20200224163409.GJ18400@hirez.programming.kicks-ass.net>
+        <20200224114754.0fb798c1@gandalf.local.home>
+        <20200224213139.GO11457@worktop.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 1:53 PM Arvind Sankar <nivedita@alum.mit.edu> wrote:
->
-> On Mon, Feb 24, 2020 at 12:49:03PM -0800, Nick Desaulniers wrote:
-> > On Sun, Feb 23, 2020 at 11:37 AM Arvind Sankar <nivedita@alum.mit.edu> wrote:
-> > >
-> > > In three places in the x86 kernel we are currently generating .eh_frame
-> > > sections only to discard them later via linker script. This is in the
-> > > boot code (setup.elf), the realmode trampoline (realmode.elf) and the
-> > > compressed kernel.
-> > >
-> > > Implement Fangrui and Nick's suggestion [1] to fix KBUILD_CFLAGS by
-> > > adding -fno-asynchronous-unwind-tables to avoid generating .eh_frame
-> > > sections in the first place, rather than discarding it in the linker
-> > > script.
-> > >
-> > > Arvind Sankar (2):
-> > >   arch/x86: Use -fno-asynchronous-unwind-tables to suppress .eh_frame sections
-> > >   arch/x86: Drop unneeded linker script discard of .eh_frame
-> >
-> > Thanks for the series! I've left some feedback for a v2. Would you
-> > mind please including a revert of ("x86/boot/compressed: Remove
-> > unnecessary sections from bzImage") in a v2 series?  Our CI being red
-> > through the weekend is no bueno.
->
-> Sorry about that. Boris already updated tip:x86/boot to only discard
-> eh_frame, so your CI should be ok at least now.
+On Mon, 24 Feb 2020 22:31:39 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Yep: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86/boot&id=0eea39a234dc52063d14541fabcb2c64516a2328
-Looks like our daily CI ran 6 hours ago just missed it:
-https://travis-ci.com/ClangBuiltLinux/continuous-integration/jobs/290435629
-Thanks for the fix!
+> > Just want to confirm that printk_nmi_enter(), lockdep_off(),
+> > and ftrace_nmi_enter() are all marked fully with NOKPROBE.  
+> 
+> *sigh*, right you are, I only looked at notrace, not nokprobe.
+> 
+> In particular the ftrace one is a bit off a mess, let me sort through
+> that.
 
--- 
-Thanks,
-~Nick Desaulniers
+ftrace_nmi_enter() has two purposes. One, for archs that need to deal with
+NMIs while they still use stop machine. Although, it appears sh is the only
+arch that does that. I can look to see if it can be ripped out.
+
+The other is for the hwlat detector that measures the time it was in an
+NMI, as NMIs appear as a hardware latency too.
+
+-- Steve
