@@ -2,127 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD20916B0B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 20:59:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2C8216B0BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 21:01:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbgBXT7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 14:59:52 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33992 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbgBXT7w (ORCPT
+        id S1727278AbgBXUBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 15:01:50 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:47560 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbgBXUBu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 14:59:52 -0500
-Received: by mail-pg1-f195.google.com with SMTP id j4so5688267pgi.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 11:59:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=8cle6FmbDb89jzrGhTz6Cfv64lMjzYvvlKlpjrjSc90=;
-        b=LD7UkEVnWYtjbAEFsWGmA8GKCjrtpc0lyPmTM8VxYWF8oCcYQu2iGetGy/nkiJuCNp
-         FiYj7LadGa2h1DpKPJJlxlNmhF761uq+vkok4cx9VYt/IbkgbBh/T1pZF9qVBCG21oZH
-         CBtaqrurZ8jrjB/j9OiPFXD8NPnMJZtXSdgtlM6SzEQTo3kp3uTUE6QJnYtZeEtBSkbj
-         0FStMzXtcrsgss9eyQ2encwCCVtUITNChpdUWhmkFfbvEJSe1FnRrLr1eOwIOR9TQdAm
-         1dBmU+UYLN6FWiPGz26Ci2Mk1SFtxNnygtxiYkC8XgZHfGX8/O6uGPe0UApIA/yplPVU
-         ArWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=8cle6FmbDb89jzrGhTz6Cfv64lMjzYvvlKlpjrjSc90=;
-        b=Zh5Jx3faepm4m1uvYVeTv7iLYEOBAyqgQSclZcbWYQdyg/uhLGL8PeOuiYCS1td/Nw
-         BOEX3dV0H34ArXUPAOSyRUnbuxasGevLcSzJz9Vyt8E1K2RMpKwKp8qptpaXnqu+8Bn2
-         ylXJbiM4wW6C2ceIAujYLAa9ZQxQ9Wv99sD24uoM8td+NowydwMeIQbdG1f2eChS55jH
-         6I6uevPT4tIL59Y5uf1uNgujISxX7lLdwKmwQoujeeBz2ZTgree5nMGQUTs/5iq2Fi1g
-         2+dG2u+6BhI4JRmx6aOQ+8hhVqHgnkgVOf6CdcOVzxNENKhUAeJ2QcYpVggTY/AJZ8aG
-         7vaQ==
-X-Gm-Message-State: APjAAAXyNfHCwDwxvhJBykFBjl0TbYGX0lVdo3XyV1UI+ZfWWDhe2CZT
-        wOt48IfKKDoXBYfU1zn45uwWAw==
-X-Google-Smtp-Source: APXvYqx6ZBKJM5xOsEMNoHeqwFTTiZsYugC3HTFOB2sN6LRNFH3whHanvzIo4xFKtfkPH8oWIHUgBw==
-X-Received: by 2002:a63:ec0c:: with SMTP id j12mr52450477pgh.78.1582574391510;
-        Mon, 24 Feb 2020 11:59:51 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:bc61:d85d:eb16:9036])
-        by smtp.gmail.com with ESMTPSA id j125sm13845759pfg.160.2020.02.24.11.59.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 11:59:50 -0800 (PST)
-Date:   Mon, 24 Feb 2020 11:59:43 -0800
-From:   Benson Leung <bleung@google.com>
-To:     sre@kernel.org
-Cc:     bleung@kernel.org, bleung@chromium.org, bleung@google.com,
-        enric.balletbo@collabora.com, linux-kernel@vger.kernel.org,
-        sre@kernel.org, sebastian.reichel@collabora.com,
-        pmalani@chromium.org
-Subject: [GIT PULL] IB between chrome-platform/power_supply for v5.7
-Message-ID: <20200224195943.GA30398@google.com>
+        Mon, 24 Feb 2020 15:01:50 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01OK1fNA089741;
+        Mon, 24 Feb 2020 20:01:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=FpQQf0lMmWt1gONn/OVl+/71hdBmyk1yroGkgirNhIQ=;
+ b=WB5Mqc+83TDlSnPNCMtDkUdKKv7Pv59WCOKWMZokdPUgzXZOpPqpiuJkfgratdRHnYrN
+ Gfuc8af1zRprS8FTpThgZDBHi9WTHG2iK5G4oq30vTssRrLc0tnWK3iKtiGhG54CuX0g
+ 39Lu8ufta53uuJhMUOK3P/Pw++zEJr3PXOlYViN3Lx3DpJCQevY06Tjwjrkm9B6UQsZX
+ jFpaHcwwYQvk/wvev7ptCZ+sfsVPuN2VYgzZc70bvevjHCEyLzcfcNugJG4mYgng04dw
+ TPG238Xfdf7oK5bqmhUEYkLZXY9J7fEYtoWaB0bbfzpPIt7D49uBx+oICtknRM5EUw9E fA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2ybvr4p0d4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Feb 2020 20:01:46 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01OJud0E128929;
+        Mon, 24 Feb 2020 19:59:46 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2ybduv3kus-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Feb 2020 19:59:45 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01OJxfiY028192;
+        Mon, 24 Feb 2020 19:59:42 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 24 Feb 2020 11:59:41 -0800
+To:     Diego Elio =?utf-8?Q?Petten=C3=B2?= <flameeyes@flameeyes.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Subject: Re: [PATCH] sr_vendor: remove references to BLK_DEV_SR_VENDOR, leave it enabled.
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20200223191144.726-1-flameeyes@flameeyes.com>
+Date:   Mon, 24 Feb 2020 14:59:39 -0500
+In-Reply-To: <20200223191144.726-1-flameeyes@flameeyes.com> ("Diego Elio
+        =?utf-8?Q?Petten=C3=B2=22's?= message of "Sun, 23 Feb 2020 19:11:44 +0000")
+Message-ID: <yq1lfordadw.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
-Content-Disposition: inline
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9541 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 mlxscore=0 spamscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002240145
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9541 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
+ clxscore=1011 adultscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002240145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---0F1p//8PRICkK4MW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Diego,
 
-Hi Sebastian,
+> This kernel configuration is basically enabling/disabling sr driver
+> quirks detection. While these quirks are for fairly rare devices (very
+> old CD burners, and a glucometer), the additional detection of these
+> models is a very minimal amount of code.
+>
+> The logic behind the quirks is always built into the sr driver.
+>
+> This also removes the config from all the defconfig files that are
+> enabling this already.
 
-The immutable branch ib-chrome-platform-power-supply-cros-usbpd-notify
-is now ready. Please merge for v5.7.
+Applied to 5.7/scsi-queue, thanks!
 
-The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
-
-  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git i=
-b-chrome-platform-power-supply-cros-usbpd-notify
-
-for you to fetch changes up to f2437e48ac7ae0e99b8e76d88aaf24a9b2e6d3e2:
-
-  power: supply: cros-ec-usbpd-charger: Fix host events (2020-02-10 11:01:3=
-3 -0800)
-
-----------------------------------------------------------------
-Jon Flatley (2):
-      platform: chrome: Add cros-usbpd-notify driver
-      power: supply: cros-ec-usbpd-charger: Fix host events
-
- drivers/platform/chrome/Kconfig                 |  14 ++
- drivers/platform/chrome/Makefile                |   1 +
- drivers/platform/chrome/cros_usbpd_notify.c     | 169 ++++++++++++++++++++=
-++++
- drivers/power/supply/Kconfig                    |   2 +-
- drivers/power/supply/cros_usbpd-charger.c       |  50 +++----
- include/linux/platform_data/cros_usbpd_notify.h |  17 +++
- 6 files changed, 220 insertions(+), 33 deletions(-)
- create mode 100644 drivers/platform/chrome/cros_usbpd_notify.c
- create mode 100644 include/linux/platform_data/cros_usbpd_notify.h
-
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---0F1p//8PRICkK4MW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCXlQrLwAKCRBzbaomhzOw
-wsW6AQCiQwv3nbMrcYA4r09kSGBHW/FfRYpz99u88LC/vtoNCwEA76winASDD5nJ
-floO1hr1/Wgahu7MarUwpSJnjX2GKwE=
-=23Ly
------END PGP SIGNATURE-----
-
---0F1p//8PRICkK4MW--
+-- 
+Martin K. Petersen	Oracle Linux Engineering
