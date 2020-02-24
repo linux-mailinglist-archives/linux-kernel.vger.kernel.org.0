@@ -2,118 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD9BA169FE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:24:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED0ED169FF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:28:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbgBXIY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:24:57 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38734 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbgBXIY5 (ORCPT
+        id S1727193AbgBXI2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:28:14 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:39084 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbgBXI2O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:24:57 -0500
-Received: by mail-pg1-f196.google.com with SMTP id d6so4746907pgn.5
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 00:24:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=es-iitr-ac-in.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=lhlKxXAIvhacc2714cSl7CgN47VyLjNdXE5+TJ+pWfc=;
-        b=iVRInhr+0XNetO76iReb1HcqRUj2veJmpOz2VGFnl2Wxi+8TPSjiu/xM/adgh6XmCK
-         8Vk6u/EjOINY+qvQ7ISa91IkBrWENxEMunIgH0aMBekN48kC+rBPr5JyAEUo45egz+Tp
-         cAfVlus1c+zANML1yovm8FDV01jcNS6RpGQajOVBDCK+/Jjc/UJNt13m1yDXbJXfPS4M
-         QAqcA/H6ZQ2ZJC+3y7NBZgnRHOcGHpQmT90FXX4cLkHmg4AhWA2om8knIKC7EegqlEK1
-         HwC07FQ6y/BIblr71lhZuxonaXOkd4NCVQG97jtEN56rZ5z7djSpq3XiLZDJB2BvC/Ns
-         iMGg==
+        Mon, 24 Feb 2020 03:28:14 -0500
+Received: by mail-il1-f199.google.com with SMTP id c24so16967221ila.6
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 00:28:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=lhlKxXAIvhacc2714cSl7CgN47VyLjNdXE5+TJ+pWfc=;
-        b=R10nCbZSxNEkyNfjpYp1p29NFyJtgcX3dzQZ0PgX1AqJGnCZoVgMmLrMJ0e53WmCch
-         7oYffyV3r5jKWuvXsbjrx54pMi0gjAPW6LmWhhFfo4AlBKJVNgdl91yHP9FWMNH649MS
-         Gl+DrfMH0XRh5QARvbduvKM5qVgFUj0NHqFtrxtp/Ietf8FsFdN7wS6b6AI+R3yndMb5
-         GC4LUdfAB+bMjENzyCvcZw/2TYSl/pu2L1qCarnHAjqn2soHGJ9YsKrEqlxaaDYwGkYZ
-         gc646CRfDWLknwctXvBmnybu5nOtjWCLNDdJb9bukCt/jnAkwBjzoNHHhTzn1rggfmXC
-         W/aQ==
-X-Gm-Message-State: APjAAAX0/nak44pBjojHIwpvnOq5cU9yJ2tWQUG3d+SYCmBaK4SlAHL+
-        KMXe5aDHN32MbZWoW/Bw24Wv1/5Oheo1GjIM
-X-Google-Smtp-Source: APXvYqw7fF7F0dn1XMTNUKU+SpQUH74ObcV+LpB7LmVe/J4gIU4K/TSo0CCwfrQ6XOBMin29oU+CKw==
-X-Received: by 2002:aa7:84c4:: with SMTP id x4mr50338458pfn.144.1582532696231;
-        Mon, 24 Feb 2020 00:24:56 -0800 (PST)
-Received: from kaaira-HP-Pavilion-Notebook ([103.37.201.170])
-        by smtp.gmail.com with ESMTPSA id g12sm11515210pfh.170.2020.02.24.00.24.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Feb 2020 00:24:55 -0800 (PST)
-Date:   Mon, 24 Feb 2020 13:54:48 +0530
-From:   Kaaira Gupta <kgupta@es.iitr.ac.in>
-To:     Manish Chopra <manishc@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        netdev@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4] staging: qlge: emit debug and dump at same level
-Message-ID: <20200224082448.GA6826@kaaira-HP-Pavilion-Notebook>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=pYGatFicrbglupdARJznOrNIqMZ4ujkbH/2DBHb9eKg=;
+        b=i56z8reU9ZGioytBJmyDT5JSUt0/zDugHxh8xCi8YHcic08RAYu+4EpPeZ3HHxqSCC
+         nrHHl3mcwExYWfRgMV60GwIZ7YDgiCwZ9Ya8kxpxE123P8aoRBO7rxiVvZsYuPq43/jm
+         OYrNcaVapwNFTMuZ6FMmwv1qJGB1hYSZXweTwjFK29VigkkFUHlDSgsfaH9SQB87kGcj
+         ba/iGkZaX0/hBYi/zbozSsq2uK8YqHgnrUgxNds4S1XBM/1DYGW1fEY9hE1NTptKFGpj
+         YSK8teOpMpksX5Lk+ut/DhlCZTckigf+l9UElj1RFw0J/rtAr8QssOaSte5j4DYAZczI
+         k9Vg==
+X-Gm-Message-State: APjAAAV+sh7tU0AdF1F1BEJGXiK0ueE+cVZSavmyv1qSp2s4iQ/0GoZH
+        ydenb6jE7gtp2qqw+0cT776unF+W4gOxwpFa7BcAXKxP2d64
+X-Google-Smtp-Source: APXvYqzBY2WbTHwkw5r6uemXyd4m2EQk7GMd+RoLGF9laEPT2xiswkHlF8OOmE7RkUrrGhPe6sa0+d9ze2j6ARx+pXcDCeWtia6D
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Received: by 2002:a92:cc04:: with SMTP id s4mr35066051ilp.193.1582532893787;
+ Mon, 24 Feb 2020 00:28:13 -0800 (PST)
+Date:   Mon, 24 Feb 2020 00:28:13 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fac9a5059f4e266d@google.com>
+Subject: KMSAN: uninit-value in audit_log_vformat
+From:   syzbot <syzbot+e4b12d8d202701f08b6d@syzkaller.appspotmail.com>
+To:     eparis@redhat.com, glider@google.com, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simplify code in ql_mpi_core_to_log() by calling print_hex_dump()
-instead of existing functions so that the debug and dump are
-emitted at the same KERN_<LEVEL>
+Hello,
 
-Signed-off-by: Kaaira Gupta <kgupta@es.iitr.ac.in>
+syzbot found the following crash on:
+
+HEAD commit:    8bbbc5cf kmsan: don't compile memmove
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d7c109e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cd0e9a6b0e555cc3
+dashboard link: https://syzkaller.appspot.com/bug?extid=e4b12d8d202701f08b6d
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1287fdd9e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ffec81e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e4b12d8d202701f08b6d@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in string_nocheck lib/vsprintf.c:608 [inline]
+BUG: KMSAN: uninit-value in string+0x522/0x690 lib/vsprintf.c:689
+CPU: 1 PID: 12069 Comm: syz-executor170 Not tainted 5.6.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x220 lib/dump_stack.c:118
+ kmsan_report+0xf7/0x1e0 mm/kmsan/kmsan_report.c:118
+ __msan_warning+0x58/0xa0 mm/kmsan/kmsan_instr.c:215
+ string_nocheck lib/vsprintf.c:608 [inline]
+ string+0x522/0x690 lib/vsprintf.c:689
+ vsnprintf+0x207d/0x31b0 lib/vsprintf.c:2574
+ audit_log_vformat+0x583/0xcd0 kernel/audit.c:1856
+ audit_log_format+0x220/0x260 kernel/audit.c:1890
+ audit_receive_msg kernel/audit.c:1338 [inline]
+ audit_receive+0x3688/0x6be0 kernel/audit.c:1513
+ netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+ netlink_unicast+0xf9e/0x1100 net/netlink/af_netlink.c:1328
+ netlink_sendmsg+0x1246/0x14d0 net/netlink/af_netlink.c:1917
+ sock_sendmsg_nosec net/socket.c:652 [inline]
+ sock_sendmsg net/socket.c:672 [inline]
+ ____sys_sendmsg+0x12b6/0x1350 net/socket.c:2343
+ ___sys_sendmsg net/socket.c:2397 [inline]
+ __sys_sendmsg+0x451/0x5f0 net/socket.c:2430
+ __compat_sys_sendmsg net/compat.c:642 [inline]
+ __do_compat_sys_sendmsg net/compat.c:649 [inline]
+ __se_compat_sys_sendmsg net/compat.c:646 [inline]
+ __ia32_compat_sys_sendmsg+0xed/0x130 net/compat.c:646
+ do_syscall_32_irqs_on arch/x86/entry/common.c:339 [inline]
+ do_fast_syscall_32+0x3c7/0x6e0 arch/x86/entry/common.c:410
+ entry_SYSENTER_compat+0x68/0x77 arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f12d99
+Code: 90 e8 0b 00 00 00 f3 90 0f ae e8 eb f9 8d 74 26 00 89 3c 24 c3 90 90 90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000ffadf8ac EFLAGS: 00000246 ORIG_RAX: 0000000000000172
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000020000200
+RDX: 0000000000000000 RSI: 00000000080ea080 RDI: 00000000ffadf900
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:144 [inline]
+ kmsan_internal_poison_shadow+0x66/0xd0 mm/kmsan/kmsan.c:127
+ kmsan_slab_alloc+0x8a/0xe0 mm/kmsan/kmsan_hooks.c:82
+ slab_alloc_node mm/slub.c:2793 [inline]
+ __kmalloc_node_track_caller+0xb40/0x1200 mm/slub.c:4401
+ __kmalloc_reserve net/core/skbuff.c:142 [inline]
+ __alloc_skb+0x2fd/0xac0 net/core/skbuff.c:210
+ alloc_skb include/linux/skbuff.h:1051 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1174 [inline]
+ netlink_sendmsg+0x7d3/0x14d0 net/netlink/af_netlink.c:1892
+ sock_sendmsg_nosec net/socket.c:652 [inline]
+ sock_sendmsg net/socket.c:672 [inline]
+ ____sys_sendmsg+0x12b6/0x1350 net/socket.c:2343
+ ___sys_sendmsg net/socket.c:2397 [inline]
+ __sys_sendmsg+0x451/0x5f0 net/socket.c:2430
+ __compat_sys_sendmsg net/compat.c:642 [inline]
+ __do_compat_sys_sendmsg net/compat.c:649 [inline]
+ __se_compat_sys_sendmsg net/compat.c:646 [inline]
+ __ia32_compat_sys_sendmsg+0xed/0x130 net/compat.c:646
+ do_syscall_32_irqs_on arch/x86/entry/common.c:339 [inline]
+ do_fast_syscall_32+0x3c7/0x6e0 arch/x86/entry/common.c:410
+ entry_SYSENTER_compat+0x68/0x77 arch/x86/entry/entry_64_compat.S:139
+=====================================================
+
+
 ---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-changes since v1: make code of ql_mpi_core_to_log() simpler.
-changes since v2: directly call the function instead of defining a
-macro.
-changes since v3: Remove prefix string.
-
-----
----
- drivers/staging/qlge/qlge_dbg.c | 23 +++--------------------
- 1 file changed, 3 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/staging/qlge/qlge_dbg.c b/drivers/staging/qlge/qlge_dbg.c
-index c7af2548d119..0c5f6859e645 100644
---- a/drivers/staging/qlge/qlge_dbg.c
-+++ b/drivers/staging/qlge/qlge_dbg.c
-@@ -1324,27 +1324,10 @@ void ql_mpi_core_to_log(struct work_struct *work)
- {
- 	struct ql_adapter *qdev =
- 		container_of(work, struct ql_adapter, mpi_core_to_log.work);
--	u32 *tmp, count;
--	int i;
- 
--	count = sizeof(struct ql_mpi_coredump) / sizeof(u32);
--	tmp = (u32 *)qdev->mpi_coredump;
--	netif_printk(qdev, drv, KERN_DEBUG, qdev->ndev,
--		     "Core is dumping to log file!\n");
--
--	for (i = 0; i < count; i += 8) {
--		pr_err("%.08x: %.08x %.08x %.08x %.08x %.08x "
--			"%.08x %.08x %.08x\n", i,
--			tmp[i + 0],
--			tmp[i + 1],
--			tmp[i + 2],
--			tmp[i + 3],
--			tmp[i + 4],
--			tmp[i + 5],
--			tmp[i + 6],
--			tmp[i + 7]);
--		msleep(5);
--	}
-+	print_hex_dump(KERN_DEBUG, "", DUMP_PREFIX_OFFSET,
-+		       32, 4, qdev->mpi_coredump,
-+		       sizeof(*qdev->mpi_coredump), false);
- }
- 
- #ifdef QL_REG_DUMP
--- 
-2.17.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
