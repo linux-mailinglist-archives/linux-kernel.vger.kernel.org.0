@@ -2,148 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADC2A16A0A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:55:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC20716A04C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:46:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbgBXIy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:54:59 -0500
-Received: from mga03.intel.com ([134.134.136.65]:55741 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727539AbgBXIxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:53:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 00:53:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,479,1574150400"; 
-   d="scan'208";a="437630183"
-Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.16])
-  by fmsmga006.fm.intel.com with ESMTP; 24 Feb 2020 00:53:34 -0800
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     alex.williamson@redhat.com, zhenyuw@linux.intel.com
-Cc:     intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        kevin.tian@intel.com, peterx@redhat.com,
-        Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH v3 0/7] use vfio_dma_rw to read/write IOVAs from CPU side
-Date:   Mon, 24 Feb 2020 03:43:50 -0500
-Message-Id: <20200224084350.31574-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727235AbgBXIq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:46:29 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:6274 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726509AbgBXIq3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 03:46:29 -0500
+X-UUID: ad29b07bf7aa4fe49e2a5091d670f26c-20200224
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=ucwhUjhwtXJ7fomoy+TbQYpZVLRcyud+cUdXEQuJ3Mw=;
+        b=iiH3PAIEkFzFwIci+IKErSH9RGG4s3HsUgyJ3C11MY4TDwR+IL482XiFT0x87OM742CNXyv0z9eyF6xYFm9moaLwe10IOxyqAauNKuJVjLqq9jxoHShr9PIOnTHWTDg7H1Cf06xQ6envjtcTDsyJpf4vHpLmYX2hq73y+GRAbqg=;
+X-UUID: ad29b07bf7aa4fe49e2a5091d670f26c-20200224
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 131449361; Mon, 24 Feb 2020 16:46:24 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 24 Feb 2020 16:45:34 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 24 Feb 2020 16:46:39 +0800
+Message-ID: <1582533982.12922.5.camel@mtksdaap41>
+Subject: Re: [PATCH v6 1/4] dt-bindings: display: mediatek: update dpi
+ supported chips
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Jitao Shi <jitao.shi@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
+        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <stonea168@163.com>,
+        <huijuan.xie@mediatek.com>
+Date:   Mon, 24 Feb 2020 16:46:22 +0800
+In-Reply-To: <20200221112828.55837-2-jitao.shi@mediatek.com>
+References: <20200221112828.55837-1-jitao.shi@mediatek.com>
+         <20200221112828.55837-2-jitao.shi@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is better for a device model to use IOVAs to read/write memory to
-perform some sort of virtual DMA on behalf of the device.
-
-patch 1 exports VFIO group to external user so that it can hold the group
-reference until finishing using of it. It saves ~500 cycles that are spent
-on VFIO group looking up, referencing and dereferencing. (this data is
-measured with 1 VFIO user).
-
-patch 2 introduces interface vfio_dma_rw().
-
-patch 3 introduces interfaces vfio_pin_pages_from_group() and
-vfio_unpin_pages_from_group() to get rid of VFIO group looking-up in
-vfio_pin_pages() and vfio_unpin_pages().
-
-patch 4-5 let kvmgt switch from calling kvm_read/write_guest() to calling
-vfio_dma_rw to rw IOVAs.
-
-patch 6 let kvmgt switch to use lighter version of vfio_pin/unpin_pages(),
-i.e. vfio_pin/unpin_pages_from_group()
-
-patch 7 enables kvmgt to read/write IOVAs of size larger than PAGE_SIZE.
-
-
-Performance:
-
-Comparison between vfio_dma_rw() and kvm_read/write_guest():
-
-1. avergage CPU cycles of each interface measured with 1 running VM:
- --------------------------------------------------
-|  rw       |          avg cycles of               |
-|  size     | (vfio_dma_rw - kvm_read/write_guest) |
-|---------- ---------------------------------------|
-| <= 1 page |            +155 ~ +195               |        
-|--------------------------------------------------|
-| 5 pages   |                -530                  |
-|--------------------------------------------------|
-| 20 pages  |           -2005 ~ -2533              |
- --------------------------------------------------
-
-2. average scores
-
-base: base code before applying code in this series. use
-kvm_read/write_pages() to rw IOVAs
-
-base + this series: use vfio_dma_rw() to read IOVAs and use
-vfio_pin/unpin_pages_from_group(), and kvmgt is able to rw several pages
-at a time.
-
-Scores of benchmarks running in 1 VM each:
- -----------------------------------------------------------------
-|                    | glmark2 | lightsmark | openarena | heavens |
-|-----------------------------------------------------------------|
-|       base         |  1248   |  219.70    |  114.9    |   560   |
-|-----------------------------------------------------------------|
-|base + this series  |  1248   |  225.8     |   115     |   559   |
- -----------------------------------------------------------------
-
-Sum of scores of two benchmark instances running in 2 VMs each:
- -------------------------------------------------------
-|                    | glmark2 | lightsmark | openarena |
-|-------------------------------------------------------|
-|       base         |  812    |  211.46    |  115.3    |
-|-------------------------------------------------------|
-|base + this series  |  814    |  214.69    |  115.9    |
- -------------------------------------------------------
-
-
-Changelogs:
-v2 --> v3:
-- add vfio_group_get_external_user_from_dev() to improve performance (Alex)
-- add vfio_pin/unpin_pages_from_group() to avoid repeated looking up of
-  VFIO group in vfio_pin/unpin_pages() (Alex)
-- add a check for IOMMU_READ permission. (Alex)
-- rename vfio_iommu_type1_rw_dma_nopin() to
-  vfio_iommu_type1_dma_rw_chunk(). (Alex)
-- in kvmgt, change "write ? vfio_dma_rw(...,true) :
-  vfio_dma_rw(...,false)" to vfio_dma_rw(dev, gpa, buf, len, write)
-  (Alex and Paolo)
-- in kvmgt, instead of read/write context pages 1:1, combining the
-  reads/writes of continuous IOVAs to take advantage of vfio_dma_rw() for
-  faster crossing page boundary accesses.
-
-v1 --> v2:
-- rename vfio_iova_rw to vfio_dma_rw, vfio iommu driver ops .iova_rw
-to .dma_rw. (Alex).
-- change iova and len from unsigned long to dma_addr_t and size_t,
-respectively. (Alex)
-- fix possible overflow in dma->vaddr + iova - dma->iova + offset (Alex)
-- split DMAs from on page boundary to on max available size to eliminate
-  redundant searching of vfio_dma and switching mm. (Alex)
-- add a check for IOMMU_WRITE permission.
-
- Yan Zhao (7):
-  vfio: allow external user to get vfio group from device
-  vfio: introduce vfio_dma_rw to read/write a range of IOVAs
-  vfio: avoid inefficient lookup of VFIO group in vfio_pin/unpin_pages
-  drm/i915/gvt: hold reference of VFIO group during opening of vgpu
-  drm/i915/gvt: subsitute kvm_read/write_guest with vfio_dma_rw
-  drm/i915/gvt: avoid unnecessary lookup in each vfio pin & unpin pages
-  drm/i915/gvt: rw more pages a time for shadow context
-
- drivers/gpu/drm/i915/gvt/gvt.h       |   1 +
- drivers/gpu/drm/i915/gvt/kvmgt.c     |  43 +++----
- drivers/gpu/drm/i915/gvt/scheduler.c | 101 +++++++++++-----
- drivers/vfio/vfio.c                  | 175 +++++++++++++++++++++++++++
- drivers/vfio/vfio_iommu_type1.c      |  77 ++++++++++++
- include/linux/vfio.h                 |  13 ++
- 6 files changed, 358 insertions(+), 52 deletions(-)
-
--- 
-2.17.1
+SGksIEppdGFvOg0KDQpPbiBGcmksIDIwMjAtMDItMjEgYXQgMTk6MjggKzA4MDAsIEppdGFvIFNo
+aSB3cm90ZToNCj4gQWRkIGRlY3JpcHRpb25zIGFib3V0IHN1cHBvcnRlZCBjaGlwcywgaW5jbHVk
+aW5nIE1UMjcwMSAmIE1UODE3MyAmDQo+IG10ODE4Mw0KPiANCj4gMS4gQWRkIG1vcmUgY2hpcHMg
+c3VwcG9ydC4gZXguIE1UMjcwMSAmIE1UODE3MyAmIE1UODE4Mw0KPiAyLiBBZGQgcHJvcGVydHkg
+ImRwaV9waW5fbW9kZV9zd2FwIiBhbmQgInBpbmN0cmwtbmFtZXMiIGdwaW8gbW9kZSBkcGkgbW9k
+ZSBhbmQNCj4gICAgZ3BpbyBvdXBwdXQtbG93IHRvIGF2b2lkIGxlYWthZ2UgY3VycmVudC4NCj4g
+My4gQWRkIHByb3BlcnR5ICJkcGlfZHVhbF9lZGdlIiB0byBjb25maWcgdGhlIGRwaSBwaW4gb3V0
+cHV0IG1vZGUgZHVhbCBlZGdlIG9yDQo+ICAgIHNpbmdsZSBlZGdlIHNhbXBsZSBkYXRhLg0KPiAN
+Cj4gU2lnbmVkLW9mZi1ieTogSml0YW8gU2hpIDxqaXRhby5zaGlAbWVkaWF0ZWsuY29tPg0KPiAt
+LS0NCj4gIC4uLi9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQgICAg
+ICAgIHwgMTEgKysrKysrKysrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCsp
+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rp
+c3BsYXkvbWVkaWF0ZWsvbWVkaWF0ZWssZHBpLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQNCj4gaW5kZXggYjZh
+N2U3Mzk3YjhiLi5jZDZhMTQ2OWM4YjcgMTAwNjQ0DQo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQNCj4gKysr
+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvbWVkaWF0ZWsvbWVk
+aWF0ZWssZHBpLnR4dA0KPiBAQCAtNyw2ICs3LDcgQEAgb3V0cHV0IGJ1cy4NCj4gIA0KPiAgUmVx
+dWlyZWQgcHJvcGVydGllczoNCj4gIC0gY29tcGF0aWJsZTogIm1lZGlhdGVrLDxjaGlwPi1kcGki
+DQo+ICsgIHRoZSBzdXBwb3J0ZWQgY2hpcHMgYXJlIG10MjcwMSAsIG10ODE3MyBhbmQgbXQ4MTgz
+Lg0KPiAgLSByZWc6IFBoeXNpY2FsIGJhc2UgYWRkcmVzcyBhbmQgbGVuZ3RoIG9mIHRoZSBjb250
+cm9sbGVyJ3MgcmVnaXN0ZXJzDQo+ICAtIGludGVycnVwdHM6IFRoZSBpbnRlcnJ1cHQgc2lnbmFs
+IGZyb20gdGhlIGZ1bmN0aW9uIGJsb2NrLg0KPiAgLSBjbG9ja3M6IGRldmljZSBjbG9ja3MNCj4g
+QEAgLTE2LDYgKzE3LDExIEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+ICAgIERvY3VtZW50YXRp
+b24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncmFwaC50eHQuIFRoaXMgcG9ydCBzaG91bGQgYmUgY29u
+bmVjdGVkDQo+ICAgIHRvIHRoZSBpbnB1dCBwb3J0IG9mIGFuIGF0dGFjaGVkIEhETUkgb3IgTFZE
+UyBlbmNvZGVyIGNoaXAuDQo+ICANCj4gK09wdGlvbmFsIHByb3BlcnRpZXM6DQo+ICstIGRwaV9w
+aW5fbW9kZV9zd2FwOiBTd2FwIHRoZSBwaW4gbW9kZSBiZXR3ZWVuIGRwaSBtb2RlIGFuZCBncGlv
+IG1vZGUuDQo+ICstIHBpbmN0cmwtbmFtZXM6IENvbnRhaW4gImdwaW9tb2RlIiBhbmQgImRwaW1v
+ZGUiLg0KPiArLSBkcGlfZHVhbF9lZGdlOiBDb250cm9sIHRoZSBSR0IgMjRiaXQgZGF0YSBvbiAx
+MiBwaW5zIG9yIDI0IHBpbnMuDQoNCkkndmUgZmluZCB0aGF0IGluIFsxXSwgdGhlcmUgYXJlIGFs
+cmVhZHkgYSBwcm9wZXJ0eSBvZiAicGNsay1zYW1wbGUiDQp3aGljaCBsaWtlIHRoaXMsIGJ1dCBp
+dCBvbmx5IGhhdmUgcmlzaW5nICgxKSBvciBmYWxsaW5nICgwKSBzdGF0dXMuIERvZXMNCnRoYXQg
+cHJvcGVydHkgZGVzY3JpYmUgdGhlIHNhbWUgdGhpbmcgd2l0aCB0aGlzIHByb3BlcnR5PyBJZiB0
+aGV5IGFyZQ0KdGhlIHNhbWUsIEkgdGhpbmsgeW91IHNob3VsZCBhZGQgbmV3IHN0YXRlLCBkdWFs
+ICgyKSwgZm9yICJwY2xrLXNhbXBsZSIuDQoNClsxXQ0KaHR0cHM6Ly9naXQua2VybmVsLm9yZy9w
+dWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3ZpZGVvLWludGVyZmFjZXMudHh0P2g9djUu
+Ni1yYzMNCg0KUmVnYXJkcywNCkNLDQoNCj4gKw0KPiAgRXhhbXBsZToNCj4gIA0KPiAgZHBpMDog
+ZHBpQDE0MDFkMDAwIHsNCj4gQEAgLTI2LDYgKzMyLDExIEBAIGRwaTA6IGRwaUAxNDAxZDAwMCB7
+DQo+ICAJCSA8Jm1tc3lzIENMS19NTV9EUElfRU5HSU5FPiwNCj4gIAkJIDwmYXBtaXhlZHN5cyBD
+TEtfQVBNSVhFRF9UVkRQTEw+Ow0KPiAgCWNsb2NrLW5hbWVzID0gInBpeGVsIiwgImVuZ2luZSIs
+ICJwbGwiOw0KPiArCWRwaV9kdWFsX2VkZ2U7DQo+ICsJZHBpX3Bpbl9tb2RlX3N3YXA7DQo+ICsJ
+cGluY3RybC1uYW1lcyA9ICJncGlvbW9kZSIsICJkcGltb2RlIjsNCj4gKwlwaW5jdHJsLTAgPSA8
+JmRwaV9waW5fZ3Bpbz47DQo+ICsJcGluY3RybC0xID0gPCZkcGlfcGluX2Z1bmM+Ow0KPiAgDQo+
+ICAJcG9ydCB7DQo+ICAJCWRwaTBfb3V0OiBlbmRwb2ludCB7DQoNCg==
 
