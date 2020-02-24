@@ -2,109 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CFFA16A6BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 14:04:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B342216A6D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 14:06:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbgBXNEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 08:04:52 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34939 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727329AbgBXNEw (ORCPT
+        id S1727464AbgBXNGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 08:06:45 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:40303 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727299AbgBXNGo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 08:04:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582549491;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mIKqdTyz5+ImR2nkZFVBhUc+4BM9OsRtqGi03fmbSvE=;
-        b=XP9Yx0ZcPx5DtFhJBUfphXai0X6xqvj23DsbkEJGQOHzCeOrbHtMDTSmilMrKRxBAD53Je
-        E+XxmZQFXTNMrreG3cQOiZr0JQxYeeOay0EWjeOpHXCWy0rVgNEOmAbX/GaW2gFny0N/Ba
-        DvHv0T14zDxSVLjPgVGK97FeNxLDvCU=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-148-MBVb_VALNl-hjEOpCPDz1w-1; Mon, 24 Feb 2020 08:04:49 -0500
-X-MC-Unique: MBVb_VALNl-hjEOpCPDz1w-1
-Received: by mail-wr1-f70.google.com with SMTP id o9so5578851wrw.14
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 05:04:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=mIKqdTyz5+ImR2nkZFVBhUc+4BM9OsRtqGi03fmbSvE=;
-        b=hhBLO+JM7zSzvLUGaOAr4gz13ycljQaegpxjqBA3VszbOnvTJZWB4ax3hs6dwkExzE
-         b0Mm3ihUlBXuHVdFwxLFyanyO4J4uYHfKXmdPrfrZAkZ4LLAP8E+l/rJdp/0cI1eqLE7
-         cRx6uvuiF0m/FWfVkMR096U4SbwOcSc+uhPvG+F15thBUjXl1pMRE67Ouu+2uxbYvFFh
-         CdGs+tWkl8iPt8dRlK0AqZfAr8cr/vTiGc3Izqd+MKxcgLMpfI4gtfETje9vgqJ5B9jS
-         MDFmJnAPaP2/j5cc2n27N+4GjN2jGkH4kmSS2aGMr5gKPNnyzt9bBgpbjm6lAumF1Ufv
-         UThA==
-X-Gm-Message-State: APjAAAUcpPPIxOidOe9JcUZAwSC2wJIeyeo1cREaYeyjquaK6dLknS58
-        Jn9kWcaRsMB6Xyei/c8hl5IO8Qj8LdhKjnjpyId5x9LANAPf954P5LlgFUTIydQiNzqU8sfIgir
-        at8QoMgMezHYaFbwuEFoXpbZ1
-X-Received: by 2002:adf:e401:: with SMTP id g1mr11153801wrm.165.1582549488599;
-        Mon, 24 Feb 2020 05:04:48 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxG1YTc0sc80OFrDGBo0TAMpvdqkU5rb8GaSOHzb9RQKL5aY4N4+m+dNRLG71F1VA35nN64NA==
-X-Received: by 2002:adf:e401:: with SMTP id g1mr11153777wrm.165.1582549488312;
-        Mon, 24 Feb 2020 05:04:48 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id c9sm18385475wme.41.2020.02.24.05.04.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 05:04:46 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH 1/2] kvm: vmx: Use basic exit reason to check if it's the specific VM EXIT
-In-Reply-To: <d9744594-4a66-d867-f785-64ce4d42b848@intel.com>
-References: <20200224020751.1469-1-xiaoyao.li@intel.com> <20200224020751.1469-2-xiaoyao.li@intel.com> <87lfosp9xs.fsf@vitty.brq.redhat.com> <d9744594-4a66-d867-f785-64ce4d42b848@intel.com>
-Date:   Mon, 24 Feb 2020 14:04:46 +0100
-Message-ID: <87imjwp24x.fsf@vitty.brq.redhat.com>
+        Mon, 24 Feb 2020 08:06:44 -0500
+Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <o.rempel@pengutronix.de>)
+        id 1j6DRa-0008Nf-79; Mon, 24 Feb 2020 14:06:42 +0100
+Subject: Re: [PATCH 1/3] dt-bindings: mailbox: imx-mu: add fsl,scu property
+To:     peng.fan@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        jassisinghbrar@gmail.com, leonard.crestez@nxp.com
+Cc:     aisheng.dong@nxp.com, devicetree@vger.kernel.org,
+        hongxing.zhu@nxp.com, m.felsch@pengutronix.de,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, festevam@gmail.com,
+        linux-arm-kernel@lists.infradead.org
+References: <1582546474-21721-1-git-send-email-peng.fan@nxp.com>
+ <1582546474-21721-2-git-send-email-peng.fan@nxp.com>
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <ad6b8ee4-f5c5-dc44-b06e-d265101ce5ad@pengutronix.de>
+Date:   Mon, 24 Feb 2020 14:06:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1582546474-21721-2-git-send-email-peng.fan@nxp.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
+X-SA-Exim-Mail-From: o.rempel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xiaoyao Li <xiaoyao.li@intel.com> writes:
+Hi Peng,
 
-> On 2/24/2020 6:16 PM, Vitaly Kuznetsov wrote:
->> Xiaoyao Li <xiaoyao.li@intel.com> writes:
->> 
+On 24.02.20 13:14, peng.fan@nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Add fsl,scu property, this needs to be enabled for SCU channel type.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>   Documentation/devicetree/bindings/mailbox/fsl,mu.txt | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/fsl,mu.txt b/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+> index 9c43357c5924..5b502bcf7122 100644
+> --- a/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+> +++ b/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+> @@ -45,6 +45,7 @@ Optional properties:
+>   -------------------
+>   - clocks :	phandle to the input clock.
+>   - fsl,mu-side-b : Should be set for side B MU.
+> +- fsl,scu: Support i.MX8/8X SCU channel type
 
-...
+Hm.. what you are doing is a "link aggregation" with round-robin scheduling:
+https://en.wikipedia.org/wiki/Link_aggregation
 
->>>   		rip = kvm_rip_read(vcpu);
->>>   		rip += vmcs_read32(VM_EXIT_INSTRUCTION_LEN);
->>>   		kvm_rip_write(vcpu, rip);
->>> @@ -5797,6 +5797,7 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
->>>   {
->>>   	struct vcpu_vmx *vmx = to_vmx(vcpu);
->>>   	u32 exit_reason = vmx->exit_reason;
->>> +	u16 basic_exit_reason = basic(exit_reason);
->> 
->> I don't think renaming local variable is needed, let's just do
->> 
->> 'u16 exit_reason = basic_exit_reason(vmx->exit_reason)' and keep the
->> rest of the code as-is.
->
-> No, we can't do this.
->
-> It's not just renaming local variable, the full 32-bit exit reason is 
-> used elsewhere in this function that needs the upper 16-bit.
->
-> Here variable basic_exit_reason is added for the cases where only basic 
-> exit reason number is needed.
->
+I would be happy if we can define a generic mailbox property for this.
 
-Can we do the other way around, i.e. introduce 'extended_exit_reason'
-and use it where all 32 bits are needed? I'm fine with the change, just
-trying to minimize the (unneeded) code churn.
+Kind regards,
+Oleksij Rempel
 
 -- 
-Vitaly
-
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
