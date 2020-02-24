@@ -2,93 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C134116A6B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:59:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF51B16A6BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 14:03:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbgBXM7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 07:59:49 -0500
-Received: from vps.xff.cz ([195.181.215.36]:56912 "EHLO vps.xff.cz"
+        id S1727486AbgBXND0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 08:03:26 -0500
+Received: from foss.arm.com ([217.140.110.172]:36814 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727501AbgBXM7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 07:59:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1582549185; bh=9fyMxLMlwNi2Pk+BMp46DoE3AKNIuGLa/wjI2H1/1TI=;
-        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
-        b=ReGabWjx50JtBWZQvXOEPZalcv6O4nOrPEOA0yDYfRykQcuZ3agnsQV5wgtsd6W4n
-         yr1RWff/zDZU/rJ9AOp3C5rmlya4/6RRiVFTVr0OB/lw8G8mIBPKbgQXFCBpoiysjw
-         yzyyjqY5Fxsqg1cDwZhOnyUI+uM9SHFXIx4UYacg=
-Date:   Mon, 24 Feb 2020 13:59:45 +0100
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Georgii Staroselskii <georgii.staroselskii@emlid.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Martijn Braam <martijn@brixit.nl>, Luca Weiss <luca@z3ntu.xyz>,
-        Bhushan Shah <bshah@kde.org>, Icenowy Zheng <icenowy@aosc.io>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S1727329AbgBXND0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 08:03:26 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BFF1530E;
+        Mon, 24 Feb 2020 05:03:25 -0800 (PST)
+Received: from [10.0.8.126] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 839543F534;
+        Mon, 24 Feb 2020 05:03:24 -0800 (PST)
+Subject: Re: [PATCH v2 6/6] sched/rt: Remove unnecessary assignment in
+ inc/dec_rt_migration
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] arm64: dts: sun50i-a64: Add i2c2 pins
-Message-ID: <20200224125945.dyl7reaqqiqds4ee@core.my.home>
-Mail-Followup-To: Maxime Ripard <maxime@cerno.tech>,
-        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Georgii Staroselskii <georgii.staroselskii@emlid.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Martijn Braam <martijn@brixit.nl>, Luca Weiss <luca@z3ntu.xyz>,
-        Bhushan Shah <bshah@kde.org>, Icenowy Zheng <icenowy@aosc.io>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20200223172916.843379-1-megous@megous.com>
- <20200223172916.843379-2-megous@megous.com>
- <20200224110100.acwln7zv3j5y67b2@gilmour.lan>
+References: <20200223184001.14248-1-qais.yousef@arm.com>
+ <20200223184001.14248-7-qais.yousef@arm.com>
+ <a000f6b4-7548-1964-ba30-e8396c727d31@arm.com>
+ <20200224123123.gbox3tcqcist7bbg@e107158-lin.cambridge.arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <90e4af9c-b4e3-00bf-ebe6-5d4fe6f892aa@arm.com>
+Date:   Mon, 24 Feb 2020 13:03:23 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224110100.acwln7zv3j5y67b2@gilmour.lan>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
+In-Reply-To: <20200224123123.gbox3tcqcist7bbg@e107158-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 12:01:00PM +0100, Maxime Ripard wrote:
-> On Sun, Feb 23, 2020 at 06:29:14PM +0100, Ondrej Jirman wrote:
-> > PinePhone needs I2C2 pins description. Add it.
-> >
-> > Signed-off-by: Ondrej Jirman <megous@megous.com>
-> > ---
-> >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> > index 862b47dc9dc90..0fdf5f400d743 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> > @@ -671,6 +671,11 @@ i2c1_pins: i2c1-pins {
-> >  				function = "i2c1";
-> >  			};
-> >
-> > +			i2c2_pins: i2c2-pins {
-> > +				pins = "PE14", "PE15";
-> > +				function = "i2c2";
-> > +			};
-> > +
+On 24.02.20 12:31, Qais Yousef wrote:
+> On 02/24/20 00:16, Dietmar Eggemann wrote:
+>> On 23.02.20 19:40, Qais Yousef wrote:
+
+[...]
+
+>>> -	rt_rq = &rq_of_rt_rq(rt_rq)->rt;
+>>
+>> IMHO, this is here to get the root rt_rq from any rt_rq (task_groups).
+>> Looks like that e.g rt_nr_total is only maintained on root rt_rq's.
+>>
+>> Similar to CFS' &rq_of(cfs_rq)->cfs (cfs_rq_util_change()) to get root
+>> cfs_rq.
+>>
+>> Not sure where CONFIG_RT_GROUP_SCHED=y is used but it's part of the rt
+>> class implementation.
 > 
-> Setting it as the default muxing for i2c2 would be great
+> Ah I see. That was obvious.. How about the below comment?
+> 
+> This code is executed only if rt_entity_is_task(), I don't think this grantees
+> that the rt_rq isn't for a group?
 
-Right, I checked the datasheet and it looks like this is the only pins where
-i2c2 can be muxed to.
+No, an rt task can run in this taskgroup (e.g. "/tg/tg1"), i.e. in
+tg1->rt_rq[cpu].
 
-I will change it.
+The taskgroup skeleton rt_se of e.g. "/tg/tg1/tg11" would also run in
+tg1->rt_rq[cpu] but for those rt_se's we bail out of [inc/dec]_rt_migration.
 
-regards,
-	o.
+> 
+> I need to go and unravel the layers maybe.
+> 
+> Thanks!
+> 
+> --
+> Qais Yousef
+> 
+> -->8--
+> 
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index b35e49cdafcc..f929867215c4 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -343,6 +343,8 @@ static void inc_rt_migration(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
+>                 return;
+> 
+>         p = rt_task_of(rt_se);
+> +
+> +       /* get the root rt_rq if this is the rt_rq of a group */
 
-> Maxime
+Not sure if a comment like this will help since:
 
+(a) the definition of rq_of_rt_rq() for the !CONFIG_RT_GROUP_SCHED case
 
+(b) rt_rq might already be the root rt_rq in case the task runs in "/"
+
+[...]
