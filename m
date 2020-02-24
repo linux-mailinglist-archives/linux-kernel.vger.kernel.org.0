@@ -2,101 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 322BC16A817
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 15:15:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B4A16A810
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 15:14:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbgBXOPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 09:15:03 -0500
-Received: from smtprelay0052.hostedemail.com ([216.40.44.52]:38336 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727489AbgBXOPD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 09:15:03 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 070C1837F27E;
-        Mon, 24 Feb 2020 14:15:02 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:982:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1543:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3354:3622:3865:3867:3870:3871:3872:3874:4321:4823:5007:6119:7903:10004:10400:10848:11658:11914:12043:12048:12296:12297:12438:12740:12760:12895:13018:13019:13161:13229:13439:14096:14097:14181:14659:21080:21212:21451:21611:21627:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:3,LUA_SUMMARY:none
-X-HE-Tag: owner35_6600d9892995f
-X-Filterd-Recvd-Size: 4636
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 24 Feb 2020 14:15:00 +0000 (UTC)
-Message-ID: <8c458c189abb45fb3021f7882a40d28a24cc662d.camel@perches.com>
-Subject: Re: [PATCH] staging: wfx: match parentheses alignment
-From:   Joe Perches <joe@perches.com>
-To:     Kaaira Gupta <kgupta@es.iitr.ac.in>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller <jerome.pouiller@silabs.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Date:   Mon, 24 Feb 2020 06:13:32 -0800
-In-Reply-To: <20200223193201.GA20843@kaaira-HP-Pavilion-Notebook>
-References: <20200223193201.GA20843@kaaira-HP-Pavilion-Notebook>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1727646AbgBXOOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 09:14:40 -0500
+Received: from vps.xff.cz ([195.181.215.36]:57708 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727489AbgBXOOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 09:14:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1582553677; bh=4qDdtHK5hpCLQh/4Uxuvof/n91iXc4o9/kYFieclHC8=;
+        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
+        b=CwmjtlevBGOGFS8tVAlWHK3CGBEAbWk3XpVkFnTMNxRatJOHfMJRhY/V+cJaC9zkG
+         kFFMrySU1yL2EhmJVrqKIs2OUozxpQaH0D0Mi30i/jvrY2o06kF1QS38dP51YcxIo+
+         9SvdGqY+Z+0RUU6DBQ99AxkJxqCUok4wPDxeL7oc=
+Date:   Mon, 24 Feb 2020 15:14:37 +0100
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     linux-sunxi@googlegroups.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Luca Weiss <luca@z3ntu.xyz>, Tomas Novotny <tomas@novotny.cz>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/4] ARM: dts: sun8i-a83t-tbs-a711: Add support for the
+ vibrator motor
+Message-ID: <20200224141437.opcsfhozfppulu4g@core.my.home>
+Mail-Followup-To: Maxime Ripard <maxime@cerno.tech>,
+        linux-sunxi@googlegroups.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Mark Rutland <mark.rutland@arm.com>, Luca Weiss <luca@z3ntu.xyz>,
+        Tomas Novotny <tomas@novotny.cz>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20200222231428.233621-1-megous@megous.com>
+ <20200222231428.233621-4-megous@megous.com>
+ <20200224091059.lljffogofbexhudt@gilmour.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200224091059.lljffogofbexhudt@gilmour.lan>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-02-24 at 01:02 +0530, Kaaira Gupta wrote:
-> match next line with open parentheses by giving appropriate tabs.
+Hello,
 
-This patch is only for data_tx.c
+On Mon, Feb 24, 2020 at 10:10:59AM +0100, Maxime Ripard wrote:
+> Hi,
+> 
+> On Sun, Feb 23, 2020 at 12:14:27AM +0100, Ondrej Jirman wrote:
+> > The board has a vibrator mottor. Hook it to the input subsystem.
+> >
+> > Signed-off-by: Ondrej Jirman <megous@megous.com>
+> > ---
+> >  arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+> > index 2fd31a0a0b344..a22920275e99b 100644
+> > --- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+> > +++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+> > @@ -99,6 +99,11 @@ panel_input: endpoint {
+> >  		};
+> >  	};
+> >
+> > +	vibrator {
+> > +		compatible = "gpio-vibrator";
+> > +		vcc-supply = <&reg_ldo_io1>;
+> > +	};
+> > +
+> 
+> LDO IO1 can also be muxed in as a GPIO iirc, why did you choose the
+> regulator instead?
 
-There are many more parentheses that are not aligned
-in staging/wfx in other files.
+According to the specification, LDO needs to be enabled (value 0b11)
+to achieve the specified max driving current of 150mA:
 
-Realistically, either change the subject to show
-that it's only for data_tx or do them all.
+  https://megous.com/dl/tmp/92b7d9d94820c3ba.png
 
-(but not traces.h, those use a different style)
+Otherwise the chip is probably just using the regular CMOS logic output
+(typically limited to around 20-35mA, but not specified in this datasheet),
+which would be probably overdriven, if we try to drive the motor with it.
 
-$ ./scripts/checkpatch.pl -f --terse --nosummary --types=parenthesis_alignment drivers/staging/wfx/*.[ch]
-drivers/staging/wfx/data_tx.c:303: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/data_tx.c:371: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/debug.c:35: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/key.c:35: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/key.c:45: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/key.c:55: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/key.c:72: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/key.c:97: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/key.c:106: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/key.c:118: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/key.c:133: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/key.c:147: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/queue.c:393: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/queue.c:408: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/queue.c:433: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/sta.c:123: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/sta.c:235: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/sta.c:291: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/sta.c:340: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/sta.c:717: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:156: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:194: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:206: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:211: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:234: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:257: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:265: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:271: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:278: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:296: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:302: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:307: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:313: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:324: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:329: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:334: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:351: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:362: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:416: CHECK: Alignment should match open parenthesis
-drivers/staging/wfx/traces.h:418: CHECK: Alignment should match open parenthesis
+And since we're driving a motor directly, the more the better.
 
+thank you and regards,
+	o.
 
+> Maxime
 
 
