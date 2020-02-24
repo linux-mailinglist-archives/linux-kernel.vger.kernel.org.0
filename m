@@ -2,49 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11BC3169B2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 01:22:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2864C169B2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 01:29:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbgBXAWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 19:22:43 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:36366 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgBXAWn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 19:22:43 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j61WD-00066Y-Qy; Mon, 24 Feb 2020 00:22:41 +0000
-Date:   Mon, 24 Feb 2020 00:22:41 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [git pull] vfs.git fixes
-Message-ID: <20200224002241.GA23230@ZenIV.linux.org.uk>
+        id S1727170AbgBXA2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 19:28:15 -0500
+Received: from mga06.intel.com ([134.134.136.31]:61331 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726534AbgBXA2P (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 19:28:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2020 16:28:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,478,1574150400"; 
+   d="scan'208";a="349808261"
+Received: from yjin15-mobl1.ccr.corp.intel.com (HELO [10.238.4.151]) ([10.238.4.151])
+  by fmsmga001.fm.intel.com with ESMTP; 23 Feb 2020 16:28:11 -0800
+Subject: Re: [PATCH v2 2/2] perf annotate: Support interactive annotation of
+ code without symbols
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <20200221024608.1847-1-yao.jin@linux.intel.com>
+ <20200221024608.1847-3-yao.jin@linux.intel.com>
+ <20200221144531.GA657629@krava>
+ <6bb8c073-4a10-8e49-05dc-819b671a875d@linux.intel.com>
+ <20200223195030.GB16664@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <f5fe3519-3c16-7913-f422-ddc874678979@linux.intel.com>
+Date:   Mon, 24 Feb 2020 08:28:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20200223195030.GB16664@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Regression from fs_parse series this cycle...
 
-The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
-  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+On 2/24/2020 3:50 AM, Jiri Olsa wrote:
+> On Sat, Feb 22, 2020 at 07:37:49AM +0800, Jin, Yao wrote:
+>>
+>>
+>> On 2/21/2020 10:45 PM, Jiri Olsa wrote:
+>>> On Fri, Feb 21, 2020 at 10:46:08AM +0800, Jin Yao wrote:
+>>>
+>>> SNIP
+>>>
+>>>>
+>>>> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+>>>> ---
+>>>>    tools/perf/ui/browsers/hists.c | 51 +++++++++++++++++++++++++++++-----
+>>>>    tools/perf/util/annotate.h     |  2 ++
+>>>>    2 files changed, 46 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+>>>> index f36dee499320..5144528b2931 100644
+>>>> --- a/tools/perf/ui/browsers/hists.c
+>>>> +++ b/tools/perf/ui/browsers/hists.c
+>>>> @@ -2465,13 +2465,47 @@ do_annotate(struct hist_browser *browser, struct popup_action *act)
+>>>>    	return 0;
+>>>>    }
+>>>> +static struct symbol *new_annotate_sym(u64 addr, struct map *map,
+>>>> +				       struct annotation_options *opts)
+>>>> +{
+>>>> +	struct symbol *sym;
+>>>> +	struct annotated_source *src;
+>>>> +	char name[64];
+>>>> +
+>>>> +	snprintf(name, sizeof(name), "%-#.*lx", BITS_PER_LONG / 4, addr);
+>>>> +
+>>>> +	sym = symbol__new(addr,
+>>>> +			  opts->annotate_dummy_len ?
+>>>> +			  opts->annotate_dummy_len : ANNOTATION_DUMMY_LEN,
+>>>
+>>> I can't see annotate_dummy_len being set anywhere..
+>>>
+>>
+>> Yes, annotate_dummy_len is not set in this patch. Currently we just use the
+>> default value. While maybe in future we will provide a perf report option or
+>> set it in perf config. Now I just leave an interface here.
+> 
+> if that's just 'maybe in future we will provide' then please keep just the
+> ANNOTATION_DUMMY_LEN, the abandoned opts->annotate_dummy_len var is confusing
+> 
+> thanks,
+> jirka
+> 
 
-are available in the git repository at:
+OK, I will keep just the ANNOTATION_DUMMY_LEN and remove the 
+opts->annotate_dummy_len in next version.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
-
-for you to fetch changes up to bf4498ad3f9a0f7202cf90e52b5ce9bb31700b91:
-
-  tmpfs: deny and force are not huge mount options (2020-02-18 15:07:30 -0500)
-
-----------------------------------------------------------------
-Hugh Dickins (1):
-      tmpfs: deny and force are not huge mount options
-
- mm/shmem.c | 2 --
- 1 file changed, 2 deletions(-)
+Thanks
+Jin Yao
