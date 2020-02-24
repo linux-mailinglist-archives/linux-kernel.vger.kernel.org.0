@@ -2,49 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA5A16B0EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 21:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17CBA16B0ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 21:25:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbgBXUZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 15:25:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38668 "EHLO mail.kernel.org"
+        id S1727168AbgBXUZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 15:25:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbgBXUZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 15:25:03 -0500
-Subject: Re: [git pull] vfs.git fixes
+        id S1726722AbgBXUZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 15:25:11 -0500
+Subject: Re: [GIT PULL] Crypto Fixes for 5.6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582575903;
-        bh=oisAD9tMq5d5kXXXzZfh97L19gwIy1AWlqqeixm3LTE=;
+        s=default; t=1582575910;
+        bh=HYM0NFUe8/gsTbLv+UZz00goi0LnoF+tZL7s26DcjUo=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=0n3YCpKfuwf2qfgjhDDQFQhcvWPeebuWNvrWLVH6PabeLivd+bqmd2zTXIpbGPJXO
-         kJ2o6qnNSPBywg/FB8m7KrDFdwLrLdh9q61T0ilXZYNm4pOvG6S6y5bYsI7J+jAc2a
-         2cWbPTegnv3vhYs7ANnKv9n3qweQaud8VuDb0mME=
+        b=tnoL2NvidhSTGp9r3hHST2FjLRMVzmIFtmJ9FD/KQSTvQhc/BD9VGIXf5uteKC9aa
+         apHQwZ/wGrCKMwm+/BcMRuz0CiHCgIKfVI2gLF0Yq+b58gm9c1YgdmuFG1SfrfCvUe
+         2lhaHfuosOF4zO2lBLTomNHC1lbrIa1U/sn8i+Ug=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200224002241.GA23230@ZenIV.linux.org.uk>
-References: <20200224002241.GA23230@ZenIV.linux.org.uk>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200224002241.GA23230@ZenIV.linux.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
-X-PR-Tracked-Commit-Id: bf4498ad3f9a0f7202cf90e52b5ce9bb31700b91
+In-Reply-To: <20200224060042.GA26184@gondor.apana.org.au>
+References: <20190916084901.GA20338@gondor.apana.org.au>
+ <20190923050515.GA6980@gondor.apana.org.au>
+ <20191202062017.ge4rz72ki3vczhgb@gondor.apana.org.au>
+ <20191214084749.jt5ekav5o5pd2dcp@gondor.apana.org.au>
+ <20200115150812.mo2eycc53lbsgvue@gondor.apana.org.au>
+ <20200213033231.xjwt6uf54nu26qm5@gondor.apana.org.au>
+ <20200224060042.GA26184@gondor.apana.org.au>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200224060042.GA26184@gondor.apana.org.au>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+X-PR-Tracked-Commit-Id: c9cc0517bba9f0213f1e55172feceb99e5512daf
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: bc570c14b260946a66e13882eace862dc6eb16f8
-Message-Id: <158257590316.9578.11347867378764271819.pr-tracker-bot@kernel.org>
-Date:   Mon, 24 Feb 2020 20:25:03 +0000
-To:     Al Viro <viro@zeniv.linux.org.uk>
+X-PR-Merge-Commit-Id: 7031ecffab86199c2c688f7a723d03dfa6910fa6
+Message-Id: <158257591092.9578.17346989825929490230.pr-tracker-bot@kernel.org>
+Date:   Mon, 24 Feb 2020 20:25:10 +0000
+To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 24 Feb 2020 00:22:41 +0000:
+The pull request you sent on Mon, 24 Feb 2020 17:00:42 +1100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/bc570c14b260946a66e13882eace862dc6eb16f8
+https://git.kernel.org/torvalds/c/7031ecffab86199c2c688f7a723d03dfa6910fa6
 
 Thank you!
 
