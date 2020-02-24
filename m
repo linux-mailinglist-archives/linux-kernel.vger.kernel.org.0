@@ -2,164 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A7F5169EFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:16:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5209169EF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:14:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbgBXHPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 02:15:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725792AbgBXHPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 02:15:53 -0500
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727185AbgBXHOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 02:14:31 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:20298 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725792AbgBXHOb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 02:14:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582528470;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=shbhF5QPWUZF4FXtBT/Y7FxOTeIlf15w2VQZ89Q+vRY=;
+        b=UwKpSGkPGh7UNxT74qJIn4FObT7Wn/jQ1aIzuxUWRXWRnUHq3XnFxTlfjQ4DabZcXo6bfY
+        2mU1CRKQiuKw5872w2bUqTEiOkfyserutaJ48qHePvl7vR5uQgptb1iqDGe5iWCZHv+rOB
+        m6/v2bZIVfpsuaqi+1peTzwWhWoQhu4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-101-OTADVYNTP1KgIKmAqwLMEg-1; Mon, 24 Feb 2020 02:14:28 -0500
+X-MC-Unique: OTADVYNTP1KgIKmAqwLMEg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DB8620714;
-        Mon, 24 Feb 2020 07:15:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582528552;
-        bh=O5gx7RXQR9bY77xQn2cdv1ZCNWAV+F97wB/3j6ceEDc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F5icqZq8NWiQPJCM2anA+SM7RyQ500TqlEkxw6ErzWdFhog1nm4Ga9ywtcx7ffzNB
-         6lZwDGWQWYoSeJdwzLT7VMDPQkQLLEY4oYEBLL/+d0jYwHRD7L3e/Pa5wIH816Qk6G
-         q/SuzJPyI9vNSaRyO5p/V3PBr3dBoSiyfzSMmtYk=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Eric Dumazet <edumazet@google.com>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Subject: [PATCH] vt: vt_ioctl: fix VT_DISALLOCATE freeing in-use virtual console
-Date:   Sun, 23 Feb 2020 23:12:47 -0800
-Message-Id: <20200224071247.283098-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <0000000000006663de0598d25ab1@google.com>
-References: <0000000000006663de0598d25ab1@google.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DC3CE185734F;
+        Mon, 24 Feb 2020 07:14:26 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-13-44.pek2.redhat.com [10.72.13.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 336B15C105;
+        Mon, 24 Feb 2020 07:14:23 +0000 (UTC)
+Date:   Mon, 24 Feb 2020 15:14:19 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org
+Subject: Re: [PATCH] x86/kexec: do not reserve kexec setup_data in kexec e820
+ table
+Message-ID: <20200224071419.GA18237@dhcp-128-65.nay.redhat.com>
+References: <20200212110424.GA2938@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200212110424.GA2938@dhcp-128-65.nay.redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On 02/12/20 at 07:04pm, Dave Young wrote:
+> The e820 table for kexec kernel always takes setup_data as reserved.
+> It is reasonable for the setup_data passed by the 1st kernel boot loader,
+> for example SETUP_PCI etc.  But SETUP_EFI is used by kexec itself to
+> enable EFI in 2nd kernel, also kexec setups it every time. Thus it
+> is pointless to reserve kexec prepared setup_data.
+> 
+> 1st physical boot: no SETUP_EFI
+> kexec load new kernel and prepare a SETUP_EFI setup_data, then reboot
+>  -> 2nd kernel sees SETUP_EFI, reserves in both e820 and kexec e820
+>     another kexec load prepare a new SETUP_EFI, then reboot
+>     -> 3rd kernel has two SETUP_EFI ranges reserved
+>        -> and so on..
+> 
+> Thus skip SETUP_EFI while reserving setup_data for kexec kernel.
+> 
+> Signed-off-by: Dave Young <dyoung@redhat.com>
+> ---
+>  arch/x86/kernel/e820.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> --- linux-x86.orig/arch/x86/kernel/e820.c
+> +++ linux-x86/arch/x86/kernel/e820.c
+> @@ -999,7 +999,9 @@ void __init e820__reserve_setup_data(voi
+>  	while (pa_data) {
+>  		data = early_memremap(pa_data, sizeof(*data));
+>  		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+> -		e820__range_update_kexec(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+> +		/* Skip kexec passed setup_data */
+> +		if (data->type != SETUP_EFI)
+> +			e820__range_update_kexec(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+>  
+>  		if (data->type == SETUP_INDIRECT &&
+>  		    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
 
-The VT_DISALLOCATE ioctl can free a virtual console while tty_release()
-is still running, causing a use-after-free in con_shutdown().  This
-occurs because VT_DISALLOCATE only considers a virtual console to be
-in-use if it has a tty_struct with count > 0.  But actually when
-count == 0, the tty is still in the process of being closed.
+Ping, can someone review this? It caused fragmented memory in kexec
+kernel also waste memory.
 
-Fix this by treating a virtual console as in-use if it has a tty_struct
-at all, even with zero count; and by making VT_DISALLOCATE take the
-tty_mutex in order to provide synchronization with release_tty().
-
-Reproducer:
-	#include <fcntl.h>
-	#include <linux/vt.h>
-	#include <sys/ioctl.h>
-	#include <unistd.h>
-
-	int main()
-	{
-		if (fork()) {
-			for (;;)
-				close(open("/dev/tty5", O_RDWR));
-		} else {
-			int fd = open("/dev/tty10", O_RDWR);
-
-			for (;;)
-				ioctl(fd, VT_DISALLOCATE, 5);
-		}
-	}
-
-KASAN report:
-	BUG: KASAN: use-after-free in con_shutdown+0x76/0x80 drivers/tty/vt/vt.c:3278
-	Write of size 8 at addr ffff88806a4ec108 by task syz_vt/129
-
-	CPU: 0 PID: 129 Comm: syz_vt Not tainted 5.6.0-rc2 #11
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20191223_100556-anatol 04/01/2014
-	Call Trace:
-	 [...]
-	 con_shutdown+0x76/0x80 drivers/tty/vt/vt.c:3278
-	 release_tty+0xa8/0x410 drivers/tty/tty_io.c:1514
-	 tty_release_struct+0x34/0x50 drivers/tty/tty_io.c:1629
-	 tty_release+0x984/0xed0 drivers/tty/tty_io.c:1789
-	 [...]
-
-	Allocated by task 129:
-	 [...]
-	 kzalloc include/linux/slab.h:669 [inline]
-	 vc_allocate drivers/tty/vt/vt.c:1085 [inline]
-	 vc_allocate+0x1ac/0x680 drivers/tty/vt/vt.c:1066
-	 con_install+0x4d/0x3f0 drivers/tty/vt/vt.c:3229
-	 tty_driver_install_tty drivers/tty/tty_io.c:1228 [inline]
-	 tty_init_dev+0x94/0x350 drivers/tty/tty_io.c:1341
-	 tty_open_by_driver drivers/tty/tty_io.c:1987 [inline]
-	 tty_open+0x3ca/0xb30 drivers/tty/tty_io.c:2035
-	 [...]
-
-	Freed by task 130:
-	 [...]
-	 kfree+0xbf/0x1e0 mm/slab.c:3757
-	 vt_disallocate drivers/tty/vt/vt_ioctl.c:300 [inline]
-	 vt_ioctl+0x16dc/0x1e30 drivers/tty/vt/vt_ioctl.c:818
-	 tty_ioctl+0x9db/0x11b0 drivers/tty/tty_io.c:2660
-	 [...]
-
-Fixes: 4001d7b7fc27 ("vt: push down the tty lock so we can see what is left to tackle")
-Cc: <stable@vger.kernel.org> # v3.4+
-Reported-by: syzbot+522643ab5729b0421998@syzkaller.appspotmail.com
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- drivers/tty/vt/vt_ioctl.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
-index ee6c91ef1f6cf..57d681706fa85 100644
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -42,7 +42,7 @@
- char vt_dont_switch;
- extern struct tty_driver *console_driver;
- 
--#define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
-+#define VT_IS_IN_USE(i)	(console_driver->ttys[i] != NULL)
- #define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_cons[i].d == sel_cons)
- 
- /*
-@@ -288,12 +288,14 @@ static int vt_disallocate(unsigned int vc_num)
- 	struct vc_data *vc = NULL;
- 	int ret = 0;
- 
-+	mutex_lock(&tty_mutex); /* synchronize with release_tty() */
- 	console_lock();
- 	if (VT_BUSY(vc_num))
- 		ret = -EBUSY;
- 	else if (vc_num)
- 		vc = vc_deallocate(vc_num);
- 	console_unlock();
-+	mutex_unlock(&tty_mutex);
- 
- 	if (vc && vc_num >= MIN_NR_CONSOLES) {
- 		tty_port_destroy(&vc->port);
-@@ -309,6 +311,7 @@ static void vt_disallocate_all(void)
- 	struct vc_data *vc[MAX_NR_CONSOLES];
- 	int i;
- 
-+	mutex_lock(&tty_mutex); /* synchronize with release_tty() */
- 	console_lock();
- 	for (i = 1; i < MAX_NR_CONSOLES; i++)
- 		if (!VT_BUSY(i))
-@@ -316,6 +319,7 @@ static void vt_disallocate_all(void)
- 		else
- 			vc[i] = NULL;
- 	console_unlock();
-+	mutex_unlock(&tty_mutex);
- 
- 	for (i = 1; i < MAX_NR_CONSOLES; i++) {
- 		if (vc[i] && i >= MIN_NR_CONSOLES) {
--- 
-2.25.1
+Thanks
+Dave
 
