@@ -2,98 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9E8916A5BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:07:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0386C16A5A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:03:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbgBXMHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 07:07:00 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:51068 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727185AbgBXMHA (ORCPT
+        id S1727429AbgBXMDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 07:03:14 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:39532 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727265AbgBXMDN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 07:07:00 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01OC2ohJ009781;
-        Mon, 24 Feb 2020 07:06:45 -0500
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2yb23adfjw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Feb 2020 07:06:45 -0500
-Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 01OC6ikQ039835
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Mon, 24 Feb 2020 07:06:44 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Mon, 24 Feb
- 2020 07:06:43 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Mon, 24 Feb 2020 07:06:43 -0500
-Received: from btogorean-pc.ad.analog.com ([10.48.65.107])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01OC5I6l002703;
-        Mon, 24 Feb 2020 07:06:40 -0500
-From:   Bogdan Togorean <bogdan.togorean@analog.com>
-To:     <dri-devel@lists.freedesktop.org>
-CC:     <airlied@linux.ie>, <daniel@ffwll.ch>, <narmstrong@baylibre.com>,
-        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@siol.net>, <tglx@linutronix.de>,
-        <alexios.zavras@intel.com>, <linux-kernel@vger.kernel.org>,
-        Bogdan Togorean <bogdan.togorean@analog.com>
-Subject: [RESEND 2/2] drm: bridge: adv7511: Extend list of audio sample rates
-Date:   Mon, 24 Feb 2020 14:01:57 +0200
-Message-ID: <20200224120155.15510-2-bogdan.togorean@analog.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200224120155.15510-1-bogdan.togorean@analog.com>
-References: <20200224120155.15510-1-bogdan.togorean@analog.com>
+        Mon, 24 Feb 2020 07:03:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=t5KPllfCzU4AasIlRCx7IzfWUIVfM/xDWS4+N7wn5YA=; b=g1I9RIlPEPLzZWdOSbIZxCjpj
+        LpMV7CqOwjfFjrIcnMazJf2/Mmg90x8pv9//qmp8jQeSXfZjcEgb41hEb0Cpa+JHdndB/RDrHMXEl
+        kWz02pgsYVHwIV4OEGIvsFv7Zm5QioaBlb2MUhpFH7eu7fQoVzymGUxZZ0fMCIkyqDk1cT36KuBGE
+        iO73eFzbLIc6kluM0d8NpnNsm0iSbUFe1j3WLJFgVwOe69LzYFiPwTvkfQdqP98jFOyoqtFohXZQJ
+        NGcvXqREeIXSER4KikTrW7pnujpKNi56cCH2F1FGoJqfsDl2o/y/N349pCffazDf2+vgVaH715U5T
+        EkbTycHjg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56262)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1j6CS5-0002Xr-Ky; Mon, 24 Feb 2020 12:03:09 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1j6CRz-0006P7-9v; Mon, 24 Feb 2020 12:03:03 +0000
+Date:   Mon, 24 Feb 2020 12:03:03 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     yifeng wu <y1feng.wu1234@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: Subject: [PATCH] arm/kernel/head.S: optimize
+ __create_page_tables function
+Message-ID: <20200224120303.GQ25745@shell.armlinux.org.uk>
+References: <CAKy1Xqcnkfm7Dn9UvJ7Ufio-szQ75kbGS+GurBjuUFBydi21GA@mail.gmail.com>
+ <20200224110508.GP25745@shell.armlinux.org.uk>
+ <CAKy1XqdBt=LNpk-7Rt2LXU3tky=fS9jHxD0DV5CKh4wYWxFVRQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-24_03:2020-02-21,2020-02-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 clxscore=1015 impostorscore=0 mlxlogscore=999 adultscore=0
- mlxscore=0 bulkscore=0 priorityscore=1501 suspectscore=1 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002240100
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKy1XqdBt=LNpk-7Rt2LXU3tky=fS9jHxD0DV5CKh4wYWxFVRQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ADV7511 support sample rates up to 192kHz. CTS and N parameters should
-be computed accordingly so this commit extend the list up to maximum
-supported sample rate.
+Hi,
 
-Signed-off-by: Bogdan Togorean <bogdan.togorean@analog.com>
----
- drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Mon, Feb 24, 2020 at 07:54:07PM +0800, yifeng wu wrote:
+> Thank you very much for your reply.
+> I have tested on my machine. It takes about 0.5 seconds to copy the memory
+> (16M size) with "str" instruction, and only 0.1 seconds with "stmia"
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-index 1e9b128d229b..13e8cee6e827 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-@@ -27,6 +27,18 @@ static void adv7511_calc_cts_n(unsigned int f_tmds, unsigned int fs,
- 	case 48000:
- 		*n = 6144;
- 		break;
-+	case 88200:
-+		*n = 12544;
-+		break;
-+	case 96000:
-+		*n = 12288;
-+		break;
-+	case 176400:
-+		*n = 25088;
-+		break;
-+	case 192000:
-+		*n = 24576;
-+		break;
- 	}
- 
- 	*cts = ((f_tmds * *n) / (128 * fs)) * 1000;
+ITYM 16k.  You say "copy" but we're setting memory to zero.  I'm quite
+surprised by that difference, which CPU was this measured on?
+
 -- 
-2.25.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
