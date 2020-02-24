@@ -2,70 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD2C169C40
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 03:13:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72547169C39
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 03:13:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbgBXCNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 21:13:51 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:53222 "EHLO inva020.nxp.com"
+        id S1727235AbgBXCND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 21:13:03 -0500
+Received: from mga06.intel.com ([134.134.136.31]:24747 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727151AbgBXCNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 21:13:51 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A58971A4006;
-        Mon, 24 Feb 2020 03:13:49 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8952B1A051F;
-        Mon, 24 Feb 2020 03:13:42 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CE499402B3;
-        Mon, 24 Feb 2020 10:13:33 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        leonard.crestez@nxp.com, daniel.baluta@nxp.com,
-        horia.geanta@nxp.com, peng.fan@nxp.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2] arm64: dts: imx8mn: Adjust 1.2GHz OPP voltage to OD mode
-Date:   Mon, 24 Feb 2020 10:07:40 +0800
-Message-Id: <1582510060-12272-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727151AbgBXCND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 21:13:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2020 18:13:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,478,1574150400"; 
+   d="scan'208";a="255437173"
+Received: from lxy-dell.sh.intel.com ([10.239.13.109])
+  by orsmga002.jf.intel.com with ESMTP; 23 Feb 2020 18:13:00 -0800
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: [PATCH 0/2] KVM: VMX: Use basic exit reason for cheking and indexing
+Date:   Mon, 24 Feb 2020 10:07:49 +0800
+Message-Id: <20200224020751.1469-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to latest datasheet Rev.0, 10/2019, there is restriction
-as below:
+Current KVM directly uses the whole 32-bit EXIT REASON when
+1) checking: if (vmx->exit_reason == EXIT_REASON_*)
+2) indexing: kvm_vmx_exit_handlers[exit_reason]
 
-"If VDD_SOC/GPU/DDR = 0.95V, then VDD_ARM must be >= 0.95V."
+However, only the low 16-bit of EXIT REASON serves as basic Exit Reason.
+Fix it by using the 16-bit basic exit reason.
 
-As by default SoC is running at OD mode(VDD_SOC = 0.95V), so
-VDD_ARM 1.2GHz OPP's voltage should be increased to 0.95V.
+BTW, I'm not sure if it's necessary to split nested case into a seperate
+patch.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V1:
-	- Move the OPP change from board dts for soc dtsi.
----
- arch/arm64/boot/dts/freescale/imx8mn.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Xiaoyao Li (2):
+  kvm: vmx: Use basic exit reason to check if it's the specific VM EXIT
+  kvm: nvmx: Use basic(exit_reason) when checking specific EXIT_REASON
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-index c98a376..f277572 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-@@ -116,7 +116,7 @@
- 
- 		opp-1200000000 {
- 			opp-hz = /bits/ 64 <1200000000>;
--			opp-microvolt = <850000>;
-+			opp-microvolt = <950000>;
- 			opp-supported-hw = <0xb00>, <0x7>;
- 			clock-latency-ns = <150000>;
- 			opp-suspend;
+ arch/x86/kvm/vmx/nested.c |  6 +++---
+ arch/x86/kvm/vmx/nested.h |  2 +-
+ arch/x86/kvm/vmx/vmx.c    | 44 ++++++++++++++++++++-------------------
+ arch/x86/kvm/vmx/vmx.h    |  2 ++
+ 4 files changed, 29 insertions(+), 25 deletions(-)
+
 -- 
-2.7.4
+2.23.0
 
