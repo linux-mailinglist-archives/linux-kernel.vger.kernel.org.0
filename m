@@ -2,128 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF1916A4DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:27:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EADA16A4E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:29:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbgBXL1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 06:27:45 -0500
-Received: from mga12.intel.com ([192.55.52.136]:50199 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726509AbgBXL1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 06:27:45 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 03:27:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,480,1574150400"; 
-   d="scan'208";a="349902804"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 24 Feb 2020 03:27:41 -0800
-Received: by lahna (sSMTP sendmail emulation); Mon, 24 Feb 2020 13:27:40 +0200
-Date:   Mon, 24 Feb 2020 13:27:40 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Martin Volf <martin.volf.42@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-hwmon@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Subject: Re: [regression] nct6775 does not load in 5.4 and 5.5, bisected to
- b84398d6d7f90080
-Message-ID: <20200224112740.GL2667@lahna.fi.intel.com>
-References: <CAM1AHpQ4196tyD=HhBu-2donSsuogabkfP03v1YF26Q7_BgvgA@mail.gmail.com>
- <1bdbac08-86f8-2a57-2b0d-8cd2beb2a1c0@roeck-us.net>
- <CAM1AHpSKFk9ZosQf=k-Rm2=EFqco7y4Lpfb7m07r=j_uJd4T0A@mail.gmail.com>
- <85356d1a-f90d-e94d-16eb-1071d4e94753@roeck-us.net>
- <CAM1AHpSpEFshpUGxKdhLV3XuThQg_XVaPgOWzvrTv6YtzHyO+A@mail.gmail.com>
- <bec1f81c-09a8-ba48-c6c4-5d9b340f7c0b@roeck-us.net>
- <20200224101800.GJ2667@lahna.fi.intel.com>
- <20200224103731.GA10400@smile.fi.intel.com>
- <20200224105121.GK2667@lahna.fi.intel.com>
+        id S1727329AbgBXL3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 06:29:06 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:1321 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbgBXL3F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 06:29:05 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e53b35c0000>; Mon, 24 Feb 2020 03:28:29 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 24 Feb 2020 03:29:04 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 24 Feb 2020 03:29:04 -0800
+Received: from [10.26.11.229] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Feb
+ 2020 11:28:59 +0000
+Subject: Re: [PATCH v3 03/10] ASoC: tegra: add Tegra210 based DMIC driver
+To:     Mark Brown <broonie@kernel.org>
+CC:     Sameer Pujar <spujar@nvidia.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <thierry.reding@gmail.com>, <digetx@gmail.com>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>, <mkumard@nvidia.com>,
+        <viswanathl@nvidia.com>, <rlokhande@nvidia.com>,
+        <dramesh@nvidia.com>, <atalambedu@nvidia.com>
+References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
+ <1582180492-25297-4-git-send-email-spujar@nvidia.com>
+ <20200221130005.GD5546@sirena.org.uk>
+ <316ce0d5-318d-0533-ef06-bd7e8672f893@nvidia.com>
+ <20200221165535.GG5546@sirena.org.uk>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <47f94534-e997-d56c-5793-ae832fb2add4@nvidia.com>
+Date:   Mon, 24 Feb 2020 11:28:57 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224105121.GK2667@lahna.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200221165535.GG5546@sirena.org.uk>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582543709; bh=qUgfEWROPZ5NHbaz93BXjwIxn40AQzx3A83F2mD4UMA=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Kp6riYbQFS4x3zgXyfXPsN6bYbX54Fntx/GCuBqqbnS0IE6/fyN+OtDghfd4BpB7P
+         zjLe27l68nvPON2uD7gvad/ZVCmufdxg5wxwScrI0ksow9L4VkjQI5hKlRQJ/F/Zub
+         LEbfEwVLHDfm6ReBG/qCck9VkkX+jnLJl39xeoYaYwenen8ELQ+5N8x9Qph+OZg8Ig
+         EcCKu4t5zkX6rvri0dmWALx77bFUXW/HO4bdQA6+IGceTEy4FrN5LStg5r/1kgvqOd
+         xuO++9PCrU+goQkxYxguIHcbGfRtguYIAtITIRhLmGI3ldjt7dmijOL1qC7dL4eZf2
+         GoD1tGkiqCrHg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 12:51:25PM +0200, Mika Westerberg wrote:
-> > I'm wondering if
-> > 
-> > 		pci_dev_is_present(...);
-> > 
-> > returns false here.
+
+On 21/02/2020 16:55, Mark Brown wrote:
+> On Fri, Feb 21, 2020 at 02:31:05PM +0000, Jon Hunter wrote:
+>> On 21/02/2020 13:00, Mark Brown wrote:
 > 
-> Well that might also be the case since lspci shows this:
+>>>> +	srate = params_rate(params);
+>>>> +	if (dmic->srate_override)
+>>>> +		srate = dmic->srate_override;
 > 
-> 00:1f.0 ISA bridge: Intel Corporation Z390 Chipset LPC/eSPI Controller (rev 10)
-> 00:1f.3 Audio device: Intel Corporation Cannon Lake PCH cAVS (rev 10)
-> 00:1f.4 SMBus: Intel Corporation Cannon Lake PCH SMBus Controller (rev 10)
+>>> How does this work for userspace?  If we just ignore the sample rate we
+>>> were asked for I'd expect that the application would get upset.
 > 
-> PMC is 1f.2 and not present here. However, it may be that the PMC is
-> still there it just does not "enumerate" because its devid/vendorid are
-> set to 0xffff. Similar hiding was done for the P2SB bridge.
+>> Tegra has a hardware sample rate converter (though driver not yet
+>> upstream or part of this initial series) and if using the sample-rate
+>> converter, then the actual rate captured by the DMIC interface could be
+>> different from the resulting sample-rate.
+> 
+> The ideal thing in a component model would be to represent those sample
+> rate convertors directly to usrspace so the routing and rewriting is
+> explicit.
 
-Actually I think this is the case here.
+I assume that it would be OK for the sample rate converter itself to
+expose mixer controls to configure its input and output rates so the
+user could configure as needed?
 
-I don't know the iTCO_wdt well enough to say if it could live without
-the ICH_RES_IO_SMI. It looks like this register is used to disable SMI
-generation but not sure how well it works if it is left to BIOS to
-configure. I suppose these systems should use WDAT instead.
+>> So we want a way to indicate to the DMIC it is capturing at rate X,
+>> while the resulting sample-rate is Y.
+> 
+>> I am not sure if there is a better way to do this? Ideally, the DMIC
+>> would query the rate from the upstream MUX it is connected to, but I am
+>> not sure if there is a way to do that. So right now it is a manual
+>> process and the user has to configure these which are not ideal.
+> 
+> Is there any *need* for these to be user configurable?  What's normally
+> happening at the minute is that either the external DAIs are fixed
+> configuration and the DSP just converts everything or there's no format
+> conversion done and things get passed through.
 
-Martin, can you try the below patch?
+I can see that in most cases there are a finite set of configurations
+that the end user may use. However, we would like to make the
+configuration flexible as possible and this also allow us to test lots
+of different configurations for verification purposes as well.
 
-diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
-index ba87305f4332..c16e5ad08641 100644
---- a/drivers/i2c/busses/i2c-i801.c
-+++ b/drivers/i2c/busses/i2c-i801.c
-@@ -1593,7 +1593,7 @@ i801_add_tco_cnl(struct i801_priv *priv, struct pci_dev *pci_dev,
- static void i801_add_tco(struct i801_priv *priv)
- {
- 	u32 base_addr, tco_base, tco_ctl, ctrl_val;
--	struct pci_dev *pci_dev = priv->pci_dev;
-+	struct pci_dev *pmc_dev, *pci_dev = priv->pci_dev;
- 	struct resource tco_res[3], *res;
- 	unsigned int devfn;
- 
-@@ -1620,7 +1620,12 @@ static void i801_add_tco(struct i801_priv *priv)
- 	 * Power Management registers.
- 	 */
- 	devfn = PCI_DEVFN(PCI_SLOT(pci_dev->devfn), 2);
--	pci_bus_read_config_dword(pci_dev->bus, devfn, ACPIBASE, &base_addr);
-+	pmc_dev = pci_get_slot(pci_dev->bus, devfn);
-+	if (!pmc_dev) {
-+		dev_info(&pci_dev->dev, "PMC device disabled, not enabling iTCO\n");
-+		return;
-+	}
-+	pci_read_config_dword(pmc_dev, ACPIBASE, &base_addr);
- 
- 	res = &tco_res[ICH_RES_IO_SMI];
- 	res->start = (base_addr & ~1) + ACPIBASE_SMI_OFF;
-@@ -1630,15 +1635,17 @@ static void i801_add_tco(struct i801_priv *priv)
- 	/*
- 	 * Enable the ACPI I/O space.
- 	 */
--	pci_bus_read_config_dword(pci_dev->bus, devfn, ACPICTRL, &ctrl_val);
-+	pci_read_config_dword(pmc_dev, ACPICTRL, &ctrl_val);
- 	ctrl_val |= ACPICTRL_EN;
--	pci_bus_write_config_dword(pci_dev->bus, devfn, ACPICTRL, ctrl_val);
-+	pci_write_config_dword(pmc_dev, ACPICTRL, ctrl_val);
- 
- 	if (priv->features & FEATURE_TCO_CNL)
- 		priv->tco_pdev = i801_add_tco_cnl(priv, pci_dev, tco_res);
- 	else
- 		priv->tco_pdev = i801_add_tco_spt(priv, pci_dev, tco_res);
- 
-+	pci_dev_put(pmc_dev);
-+
- 	if (IS_ERR(priv->tco_pdev))
- 		dev_warn(&pci_dev->dev, "failed to create iTCO device\n");
- }
+So a typical scenario would be ...
+
+DMIC --> SRC --> DMA
+
+Where SRC is the sample-rate converter. Now, the DMICs support upto
+48kHz and although it maybe unlikely that someone would want to up
+convert to say 96kHz, it is possible we can do this with the SRC.
+
+So if the user executes arecord with '-r 96000', the DMIC hw_params
+would return an error as this is not supported. So today we override
+this. However, the best solution would be to allow the user the set the
+input of the SRC and then if the DMIC output is routed via the SRC use
+the SRC input rate instead of the actual rate seen/specified by the
+user. So like you said in your other mail, if we could propagate the
+rate information that would be ideal.
+
+Jon
+
+-- 
+nvpublic
