@@ -2,140 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C8A16AB24
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:17:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90D1216AB28
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:18:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbgBXQRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:17:31 -0500
-Received: from mga04.intel.com ([192.55.52.120]:33402 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727177AbgBXQR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:17:29 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 08:17:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,480,1574150400"; 
-   d="scan'208";a="384179330"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga004.jf.intel.com with ESMTP; 24 Feb 2020 08:17:28 -0800
-Date:   Mon, 24 Feb 2020 08:17:28 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH 1/2] kvm: vmx: Use basic exit reason to check if it's the
- specific VM EXIT
-Message-ID: <20200224161728.GC29865@linux.intel.com>
-References: <20200224020751.1469-1-xiaoyao.li@intel.com>
- <20200224020751.1469-2-xiaoyao.li@intel.com>
- <87lfosp9xs.fsf@vitty.brq.redhat.com>
- <d9744594-4a66-d867-f785-64ce4d42b848@intel.com>
- <87imjwp24x.fsf@vitty.brq.redhat.com>
+        id S1727895AbgBXQSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:18:11 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:34535 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbgBXQSK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 11:18:10 -0500
+Received: by mail-pj1-f67.google.com with SMTP id f2so83454pjq.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 08:18:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gsYjXT5y25umLgajERgJkh5L1V1CQFDUxeGT2hMU0Ag=;
+        b=acqvOVaeFEL79wYat2Tu3xMbROsub914649oLTiIJFKmM6hLpIwCk81mP38kiSLcG7
+         hpW8G8cTnyB7C2ICizsNPFnKw5yk46IsPsiViE1aaPyKts/TRsCu8ZkCRQaAKZ8Zf3kr
+         JxJuk5BXNUySbjUF6LqA79YyCYOLsiIVFRRPIwhUOyplAIgTR7wmWPsaBM4mLr0CWM8q
+         3YOABfY9X004jaZotMkXA0kEpXibJ6hwd83/sr7aCJWt/tHYOMmc1QUYlXjNmc295M++
+         dWdwI/yfuchvWch1On+7IfjfuhRgXjVLzq8RdNfqV+9Za2yQvGv9rlrSIX6qHol4jMPf
+         L7tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gsYjXT5y25umLgajERgJkh5L1V1CQFDUxeGT2hMU0Ag=;
+        b=EI8dku5F3ffmsEuSSRro9jQswfwdKlk6JeSFukM1MhAB5bUEVZTJh+MiPk7cOu8UwJ
+         b+lofjov1kL83Q/sfZJz+Ecunw8ETUneuEUot94ovvARJDGbGM5IZeEFO9rmeNDfDnqx
+         dmY15Pfhy/BCCdPfyOU7FrUB8PYslv/HqBvGvZWlq29UaZYf9FxuElMLohqPSGoG1VmO
+         ym+eKgvrtZPeyUHJkv7LBJ6PN20PXuXFnGx23xZ9pWmT3PSgyMAn3WPsq4rz5hUiA3pi
+         SfYGXwSuFLR3J2cj4pn8u8j5crrYyN9Pqk/5q99/Q91XzFqpkN8zRpHgtaWIuT0JqF3s
+         8wKw==
+X-Gm-Message-State: APjAAAWWcDu9BmwBnDBR1/dO4+k1ERh5zVrH6HoYQwBH4VBZLYFsdlQf
+        acpErz1U9xTWIKqHEZR1MZul+kOu5dTOtit5IBMTeA==
+X-Google-Smtp-Source: APXvYqyct0MEZT8sBmLAJscQlsCSHUJ5kQli5XgQjFwmUvv+IvpSsHmF36IHxJv2zBF57KhhLIrasKR3AYCHB69TpOE=
+X-Received: by 2002:a17:902:9889:: with SMTP id s9mr46549947plp.252.1582561089283;
+ Mon, 24 Feb 2020 08:18:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87imjwp24x.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <cover.1582560596.git.andreyknvl@google.com>
+In-Reply-To: <cover.1582560596.git.andreyknvl@google.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Mon, 24 Feb 2020 17:17:58 +0100
+Message-ID: <CAAeHK+y7yKwQP-prUv17gFXKnKtBdfz7fQ8Gc5vwL49R4yCHuA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/1] usb: gadget: add raw-gadget interface
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 02:04:46PM +0100, Vitaly Kuznetsov wrote:
-> Xiaoyao Li <xiaoyao.li@intel.com> writes:
-> 
-> > On 2/24/2020 6:16 PM, Vitaly Kuznetsov wrote:
-> >> Xiaoyao Li <xiaoyao.li@intel.com> writes:
-> >> 
-> 
-> ...
-> 
-> >>>   		rip = kvm_rip_read(vcpu);
-> >>>   		rip += vmcs_read32(VM_EXIT_INSTRUCTION_LEN);
-> >>>   		kvm_rip_write(vcpu, rip);
-> >>> @@ -5797,6 +5797,7 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
-> >>>   {
-> >>>   	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> >>>   	u32 exit_reason = vmx->exit_reason;
-> >>> +	u16 basic_exit_reason = basic(exit_reason);
-> >> 
-> >> I don't think renaming local variable is needed, let's just do
-> >> 
-> >> 'u16 exit_reason = basic_exit_reason(vmx->exit_reason)' and keep the
-> >> rest of the code as-is.
-> >
-> > No, we can't do this.
-> >
-> > It's not just renaming local variable, the full 32-bit exit reason is 
-> > used elsewhere in this function that needs the upper 16-bit.
-> >
-> > Here variable basic_exit_reason is added for the cases where only basic 
-> > exit reason number is needed.
-> >
-> 
-> Can we do the other way around, i.e. introduce 'extended_exit_reason'
-> and use it where all 32 bits are needed? I'm fine with the change, just
-> trying to minimize the (unneeded) code churn.
+On Mon, Feb 24, 2020 at 5:13 PM Andrey Konovalov <andreyknvl@google.com> wrote:
+>
+> This patchset (currently a single patch) adds a new userspace interface
+> for the USB Gadget subsystem called USB Raw Gadget. This is what is
+> currently being used to enable coverage-guided USB fuzzing with syzkaller:
+>
+> https://github.com/google/syzkaller/blob/master/docs/linux/external_fuzzing_usb.md
+>
+> Initially I was using GadgetFS (together with the Dummy HCD/UDC module)
+> to perform emulation of USB devices for fuzzing, but later switched to a
+> custom written interface. The incentive to implement a different interface
+> was to provide a somewhat raw and direct access to the USB Gadget layer
+> for the userspace, where every USB request is passed to the userspace to
+> get a response. See documentation for the list of differences between
+> Raw Gadget and GadgetFS.
+>
+> Currently Raw Gadget only supports blocking I/O mode, that synchronously
+> waits for the result of each operation to allow collecting coverage per
+> operation.
+>
+> This patchset has been pushed to the public Linux kernel Gerrit instance:
+>
+> https://linux-review.googlesource.com/c/linux/kernel/git/torvalds/linux/+/2144
+>
+> Changes v5 -> v6:
+> - Prevent raw_process_ep_io() racing with raw_ioctl_ep_disable() by
+>   checking urb_queued flag in the latter.
+> - Use GFP_KERNEL instead of GFP_ATOMIC where possible.
+> - Reject opening raw-gadget with O_NONBLOCK to allow future extensions to
+>   support nonblocking IO.
+> - Reduce RAW_EVENT_QUEUE_SIZE to 16.
 
-100% agree.  Even better than adding a second field to vcpu_vmx would be
-to make it a union, though we'd probably want to call it something like
-full_exit_reason in that case.  That should give us compile-time checks on
-exit_reason, e.g. if we try to query one of the upper bits using a u16, e.g.
+Hi Felipe! I'm still hoping for a review :)
 
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5818,7 +5818,7 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
-        if (is_guest_mode(vcpu) && nested_vmx_exit_reflected(vcpu, exit_reason))
-                return nested_vmx_reflect_vmexit(vcpu, exit_reason);
+(Forgot to add a link to the example that emulates a USB keyboard via
+Raw Gadget into the cover letter:
 
--       if (exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY) {
-+       if (vmx->full_exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY) {
-                dump_vmcs();
-                vcpu->run->exit_reason = KVM_EXIT_FAIL_ENTRY;
-                vcpu->run->fail_entry.hardware_entry_failure_reason
-@@ -6620,11 +6620,12 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
-        vmx->nested.nested_run_pending = 0;
-        vmx->idt_vectoring_info = 0;
+https://github.com/xairy/raw-gadget/blob/master/examples/keyboard.c)
 
--       vmx->exit_reason = vmx->fail ? 0xdead : vmcs_read32(VM_EXIT_REASON);
--       if ((u16)vmx->exit_reason == EXIT_REASON_MCE_DURING_VMENTRY)
-+       vmx->full_exit_reason = vmx->fail ? 0xdead : vmcs_read32(VM_EXIT_REASON);
-+       if (vmx->exit_reason == EXIT_REASON_MCE_DURING_VMENTRY)
-                kvm_machine_check();
-
--       if (vmx->fail || (vmx->exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY))
-+       if (vmx->fail ||
-+           (vmx->full_exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY))
-                return;
-
-        vmx->loaded_vmcs->launched = 1;
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 7f42cf3dcd70..60c09640ea59 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -260,7 +260,10 @@ struct vcpu_vmx {
-        int vpid;
-        bool emulation_required;
-
--       u32 exit_reason;
-+       union {
-+               u16 exit_reason;
-+               u32 full_exit_reason;
-+       }
-
-        /* Posted interrupt descriptor */
-        struct pi_desc pi_desc;
-
-
-
-
-
-> -- 
-> Vitaly
-> 
+>
+> Changes v4 -> v5:
+> - Specified explicit usb_raw_event_type enum values for all entries.
+> - Dropped pointless locking in gadget_unbind().
+>
+> Changes v3 -> v4:
+> - Print debug message when maxpacket check fails.
+> - Use module_misc_device() instead of module_init/exit().
+> - Reuse DRIVER_NAME macro in raw_device struct definition.
+> - Don't print WARNING in raw_release().
+> - Add comment that explains locking into raw_event_queue_fetch().
+> - Print a WARNING when event queue size is exceeded.
+> - Rename raw.c to raw_gadget.c.
+> - Mention module name in Kconfig.
+> - Reworked logging to use dev_err/dbg() instead of pr_err/debug().
+>
+> Changes v2 -> v3:
+> - Updated device path in documentation.
+> - Changed usb_raw_init struct layout to make it the same for 32 bit compat
+>   mode.
+> - Added compat_ioctl to raw_fops.
+> - Changed raw_ioctl_init() to return EINVAL for invalid USB speeds, except
+>   for USB_SPEED_UNKNOWN, which defaults to USB_SPEED_HIGH.
+> - Reject endpoints with maxpacket = 0 in raw_ioctl_ep_enable().
+>
+> Changes v1 -> v2:
+> - Moved raw.c to legacy/.
+> - Changed uapi header to use __u* types.
+> - Switched from debugfs entry to a misc device.
+> - Changed raw_dev from refcount to kref.
+> - Moved UDC_NAME_LENGTH_MAX to uapi headers.
+> - Used usb_endpoint_type() and usb_endpoint_dir_in/out() functions instead
+>   of open coding them.
+> - Added "WITH Linux-syscall-note" to SPDX id in the uapi header.
+> - Removed pr_err() if case dev_new() fails.
+> - Reduced the number of debugging messages.
+>
+> Andrey Konovalov (1):
+>   usb: gadget: add raw-gadget interface
+>
+>  Documentation/usb/index.rst            |    1 +
+>  Documentation/usb/raw-gadget.rst       |   61 ++
+>  drivers/usb/gadget/legacy/Kconfig      |   11 +
+>  drivers/usb/gadget/legacy/Makefile     |    1 +
+>  drivers/usb/gadget/legacy/raw_gadget.c | 1078 ++++++++++++++++++++++++
+>  include/uapi/linux/usb/raw_gadget.h    |  167 ++++
+>  6 files changed, 1319 insertions(+)
+>  create mode 100644 Documentation/usb/raw-gadget.rst
+>  create mode 100644 drivers/usb/gadget/legacy/raw_gadget.c
+>  create mode 100644 include/uapi/linux/usb/raw_gadget.h
+>
+> --
+> 2.25.0.265.gbab2e86ba0-goog
+>
