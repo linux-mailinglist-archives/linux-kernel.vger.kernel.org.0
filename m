@@ -2,86 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D801C16AC5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:57:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1DDC16AC6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:59:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbgBXQ53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:57:29 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38685 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727874AbgBXQ53 (ORCPT
+        id S1728010AbgBXQ7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:59:01 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:31778 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727644AbgBXQ7A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:57:29 -0500
-Received: by mail-ot1-f67.google.com with SMTP id z9so9327833oth.5;
-        Mon, 24 Feb 2020 08:57:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6g/0/6uHeJ9SHvtHOygjn4v068gQNv45K/NSYSZDP4E=;
-        b=U4bVxMHNwJ6W7JIAPFLUPteLmJJA0QGPR31VfFdSP8+ZGFAdgDOYzlj0ym5qD1aIJM
-         Bmib+pRnAW4kq0/k8psdKx5rpJLLXoV8zu5Qv6C5XJPUuHov3HldBPDZwnhZVekqAkfy
-         aQymTIFOScZk02GEXFHyuE75t4Zhw0GfDZCgFqSD+Z//bMVDFVmUS5Hyc4GPJkISlo2u
-         VTf962Unq7aK78r8TtxckMzbAf7f0I4aJKmv4nco3IKg8Y8POpM5s+xspmcX5WZII3q9
-         CkHNZBug1qUSRBzuSut9u2erF2aRNolrksI7E4U6j7w9nf8Mp1s/CF5ZSwK4kaOP5hIL
-         Sq/g==
-X-Gm-Message-State: APjAAAXpeCOe1ykqxhRx9rHz7u29dcVf1xT9Zuap25zZ3IkYOHbr/NW7
-        /jPesK7HPXFUGqWp4eDsgg==
-X-Google-Smtp-Source: APXvYqzBSMqtk4LzoxQnFIH5IwbuCE4Q4g+OfNbeilXK0aQ5gXGWn1SAYGX3ICKI7wCB5mXfcqXu7A==
-X-Received: by 2002:a05:6830:1d8b:: with SMTP id y11mr42737812oti.4.1582563448155;
-        Mon, 24 Feb 2020 08:57:28 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a1sm4610066oti.2.2020.02.24.08.57.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 08:57:27 -0800 (PST)
-Received: (nullmailer pid 27821 invoked by uid 1000);
-        Mon, 24 Feb 2020 16:57:26 -0000
-Date:   Mon, 24 Feb 2020 10:57:26 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     David Daney <david.daney@cavium.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Will Deacon <will@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, Joe Perches <joe@perches.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: clean up PCIE DRIVER FOR CAVIUM THUNDERX
-Message-ID: <20200224165726.GA27161@bogus>
-References: <20200223090950.5259-1-lukas.bulwahn@gmail.com>
-MIME-Version: 1.0
+        Mon, 24 Feb 2020 11:59:00 -0500
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01OGwd8f018659;
+        Mon, 24 Feb 2020 08:58:43 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=cFGH9Gb7AqQkHT7XJzDU0ZuJUXF6HTB5rFqcAor6bE4=;
+ b=XmrLKy1tBA6zH7ouasfOOougCVOzsMFXhUhwfEe9LH9RZgAOhNNvs8gK3JaC2eAYO6Mp
+ ogPXl0AYiYmsHIQ3c1H3BAJBg1EXSSLWx4G3R2nc3Wiq9SomOxyvmulzrf8ziiks48XM
+ l8kjZn3axjy7P6ugtE09v+9xHvtECcJYNoc= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2ybn985we3-6
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 24 Feb 2020 08:58:43 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 24 Feb 2020 08:58:02 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SgBiZ4s6NMoGQozrVeW4EPgNQ3zKXeTWFnS7UnBArKKkF03BJlQ0TrU4XmYlF2G7XK7e283r2kBtKxuFJm70NlvemmpHBjkXtCujaVFS86V57B3LMKCLFZaMabRv/h298KloM8Uo//Iszhn9K3PFqH+A1qm3AmTN67PyglE0A1V0N6RvzKnv6z4lH6OdJJOmaJl5t4oYVNEQFwBgb1FMyVlHAHn8iFiTfjMXc5GhS0UEiwAEhhbn+tu4G2bb3n5wzZRCs6o7h+kJh+x41s8K2lyxkC8ySzWrsXWPSJdYwp9Ymexgt7tlp9U9mVkw8+AfUFOOiGEs/PbwfKLVeaqEnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cFGH9Gb7AqQkHT7XJzDU0ZuJUXF6HTB5rFqcAor6bE4=;
+ b=JDx/5CBFKJAJWUPWnUxSS1+Y94mjJZlnntUjU1QXyZAdq0pN07h5BpDXHOUPOBpPCyDe8YObgbxaY/eHi9y/QhPF9OAcgo1UYi/lSxAU6srcxJwxYK5mGrfl1s+LqZ3nqVqQQESqvzVrwXi3DavarQOkVCDlZXoU5uZXMh3XvTPnl55wpdqBR90ND4WsgOr9iOUf2yBv40rbT2QLQhIm5VOjd9X0sdPAety2g7Ccz/vLX7br0424XT+RPvYJZM0Ahzj4ZyZgTfAH3R8dsO8xXjy6+4YCM+fNTB6t4zwb09mLOFc9Wx5FBXTXrE2at5yF1uKEl1jE3pFSMuBCkoB5vg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cFGH9Gb7AqQkHT7XJzDU0ZuJUXF6HTB5rFqcAor6bE4=;
+ b=bzq0EGslyUOG2ZlSpnO9+GsNVyscg63QxtblwHdNKJ0EN6oas5Q/9dmPJQbJbwyW9RD+4OpFp6wkihoT9fjidULVKfCON78jK7MjhWYFf0IbNpyvITZev4+ZIlr3vBUBO/oMEiasGy/mDIr5ZmUlghMpLU2odUtsw3E/nhqQUps=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (2603:10b6:a03:150::19)
+ by BYAPR15MB2472.namprd15.prod.outlook.com (2603:10b6:a02:8b::32) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.21; Mon, 24 Feb
+ 2020 16:58:01 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ccb6:a331:77d8:d308]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ccb6:a331:77d8:d308%7]) with mapi id 15.20.2750.021; Mon, 24 Feb 2020
+ 16:58:01 +0000
+Date:   Mon, 24 Feb 2020 08:57:50 -0800
+From:   Roman Gushchin <guro@fb.com>
+To:     Christopher Lameter <cl@linux.com>
+CC:     Wen Yang <wenyang@linux.alibaba.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Xunlei Pang <xlpang@linux.alibaba.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm/slub: improve count_partial() for
+ CONFIG_SLUB_CPU_PARTIAL
+Message-ID: <20200224165750.GA478187@carbon.dhcp.thefacebook.com>
+References: <20200222092428.99488-1-wenyang@linux.alibaba.com>
+ <alpine.DEB.2.21.2002240126190.13486@www.lameter.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200223090950.5259-1-lukas.bulwahn@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <alpine.DEB.2.21.2002240126190.13486@www.lameter.com>
+X-ClientProxiedBy: MWHPR17CA0087.namprd17.prod.outlook.com
+ (2603:10b6:300:c2::25) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:150::19)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from carbon.dhcp.thefacebook.com (2620:10d:c090:500::5:ee6) by MWHPR17CA0087.namprd17.prod.outlook.com (2603:10b6:300:c2::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18 via Frontend Transport; Mon, 24 Feb 2020 16:58:00 +0000
+X-Originating-IP: [2620:10d:c090:500::5:ee6]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 978567b5-6c45-4df6-a219-08d7b94ab4fd
+X-MS-TrafficTypeDiagnostic: BYAPR15MB2472:
+X-Microsoft-Antispam-PRVS: <BYAPR15MB2472A0B8DFD43EA07A2F07D0BEEC0@BYAPR15MB2472.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:3826;
+X-Forefront-PRVS: 032334F434
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(39860400002)(136003)(376002)(189003)(199004)(33656002)(6666004)(6916009)(2906002)(316002)(81166006)(8676002)(54906003)(81156014)(4326008)(86362001)(5660300002)(8936002)(16526019)(186003)(6506007)(9686003)(55016002)(1076003)(66556008)(478600001)(66476007)(66946007)(52116002)(7696005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2472;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: rogg/I0puHduQmEtZe4JbRL0rC33ffrzOUBQ8LKIvqylOfrmO2GvtzWmMRgFXgoCuTngageQWelMmu+70ZDtnyy5tBx3COvxb+DgCP8X3pFn88SXp1LkYrCISP6xyeEQZAn766I8uatYYsWlifp2tFJZctQDbglDhjvmbCtG+koxHPp4afPYLgeJ0psSvGrmwLvlc6an7oINxL/WJT+Nhc+n6FIG/ynh8wI/BdievhUWktMezShAp3O3gvIcxzZPj583OfSLsmg4KOtgi8YPmzEXAHGyS1eprmPuEPqxwsEnY8UsoQt0cX/tgddbmpNQF8kk1uJlpJRbtLCDqzJKqjlf/fVm2DpUw1qpbDmGn2Mr+Q7Kcp8B5NHfYCJHRnQxeuUdWZEuTjJAL1dXV9HQsEbDXKGvucmIu1OId0ZWmVd7RBZMNoRQzAs7i9BOlYUE
+X-MS-Exchange-AntiSpam-MessageData: VUUktkCO8ePt7ZOjV3OaK+GuXXbEbIrXuemFtRazX/43EVnuCGHjd+judStzFiyRivNBbI3gPXuObTu4vwFgTLEhYi4vTmSepQVAj833sS9dHkaWUW9fv7E1i20UCz9ylmLJuaux05WmDcEEpUApUMnazV87UiPxpSgwqdFcvsJyAdMLxn2OjjurzCRWUEKQ
+X-MS-Exchange-CrossTenant-Network-Message-Id: 978567b5-6c45-4df6-a219-08d7b94ab4fd
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2020 16:58:01.3982
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lA8dFl/LEtY+dYPLHEqOaf3Ec2ttMQMFgxi3iPYcREGMSzXyggFxO2QzccBt5uOe
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2472
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-24_07:2020-02-21,2020-02-24 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=591
+ spamscore=0 adultscore=0 phishscore=0 impostorscore=0 bulkscore=0
+ suspectscore=5 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002240130
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 10:09:50AM +0100, Lukas Bulwahn wrote:
-> Commit e1ac611f57c9 ("dt-bindings: PCI: Convert generic host binding to
-> DT schema") combines all information from pci-thunder-{pem,ecam}.txt
-> into host-generic-pci.yaml, and deleted the two files in
-> Documentation/devicetree/bindings/pci/.
-> 
-> Since then, ./scripts/get_maintainer.pl --self-test complains:
-> 
->   no file matches F: Documentation/devicetree/bindings/pci/pci-thunder-*
-> 
-> As the PCIE DRIVER FOR CAVIUM THUNDERX-relevant information is only a
-> small part of the host-generic-pci.yaml, do not add this file to the
-> PCIE DRIVER FOR CAVIUM THUNDERX entry, and only drop the reference to
-> the removed files.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Robert, are you still the maintainer of this driver?
-> Rob Herring, please pick this patch.
-> applies cleanly on current master and next-20200221
+On Mon, Feb 24, 2020 at 01:29:09AM +0000, Christoph Lameter wrote:
+> On Sat, 22 Feb 2020, Wen Yang wrote:
 
-Applied, thanks.
+Hello, Christopher!
 
-Rob
+> 
+> > We also observed that in this scenario, CONFIG_SLUB_CPU_PARTIAL is turned
+> > on by default, and count_partial() is useless because the returned number
+> > is far from the reality.
+> 
+> Well its not useless. Its just not counting the partial objects in per cpu
+> partial slabs. Those are counted by a different counter it.
+
+Do you mean CPU_PARTIAL_ALLOC or something else?
+
+"useless" isn't the most accurate wording, sorry for that.
+
+The point is that the number of active objects displayed in /proc/slabinfo
+is misleading if percpu partial lists are used. So it's strange to pay
+for it by potentially slowing down concurrent allocations.
+
+> 
+> > Therefore, we can simply return 0, then nr_free is also 0, and eventually
+> > active_objects == total_objects. We do not introduce any regression, and
+> > it's preferable to show the unrealistic uniform 100% slab utilization
+> > rather than some very high but incorrect value.
+> 
+> I suggest that you simply use the number of partial slabs and multiply
+> them by the number of objects in a slab and use that as a value. Both
+> values are readily available via /sys/kernel/slab/<...>/
+
+So maybe something like this?
+
+@@ -5907,7 +5907,9 @@ void get_slabinfo(struct kmem_cache *s, struct slabinfo *sinfo)
+ 	for_each_kmem_cache_node(s, node, n) {
+ 		nr_slabs += node_nr_slabs(n);
+ 		nr_objs += node_nr_objs(n);
++#ifndef CONFIG_SLUB_CPU_PARTIAL
+ 		nr_free += count_partial(n, count_free);
++#endif
+ 	}
+ 
+ 	sinfo->active_objs = nr_objs - nr_free;
+
+
+Thank you!
