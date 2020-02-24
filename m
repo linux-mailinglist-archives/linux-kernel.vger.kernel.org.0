@@ -2,132 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC98B169EF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:15:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D21F9169EFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:17:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbgBXHPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 02:15:45 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37126 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725792AbgBXHPo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 02:15:44 -0500
-Received: by mail-pl1-f194.google.com with SMTP id c23so3682841plz.4;
-        Sun, 23 Feb 2020 23:15:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E3dZo4uyTHIfwZ9buqAY9fgJTMYKM8S4o+B958cH0P0=;
-        b=ehE+U/VgTg7m+pmMZp4h+iqFSuLlZSWHaLtxGJqjla6QPNjUUZuEuKw/tCz7PuBTnk
-         CBq5+x6flfuP/ns7aBp/o/P3ZMlFcU77agAVttX9uv783bO6DpT42S1SljjagYHrHdqh
-         sNZGAKrhFmMlwxDpE6qLBgN0CAAjZvZutJwUzlLqevQN6XIlptdqGbFaJBW7K38PDSet
-         rNgayJaEDUuNm29xM/l+FmDKTfR9Wh1NsmdZTyJNuuFz8PyKs3PcMch8Y5KMqw5/vJac
-         1yo7qCcNjpbmbP3/aB3Wv0mPtBQoCSwXYMAwhAyBr9weHp5ZIO/9PkDidANfLnPfUxbU
-         Fe1A==
-X-Gm-Message-State: APjAAAVX7YVV5M3o6K8yyHXRrrCNIGz3mZo/2Fqze1D3OZ4WOmcgRZqB
-        7WfyU0DBu59nnaJ9bFGsNoM=
-X-Google-Smtp-Source: APXvYqyZdO6HOxgfMd5MC+igzpT5WulQVFMxrwUSLIpPtC6nN/jtILTAjxyoe6dcCiVEJGYvwnAHVw==
-X-Received: by 2002:a17:90a:2545:: with SMTP id j63mr19008657pje.128.1582528543711;
-        Sun, 23 Feb 2020 23:15:43 -0800 (PST)
-Received: from localhost (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
-        by smtp.gmail.com with ESMTPSA id w25sm11267765pfi.106.2020.02.23.23.15.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2020 23:15:42 -0800 (PST)
-From:   You-Sheng Yang <vicamo.yang@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Hayes Wang <hayeswang@realtek.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Prashant Malani <pmalani@chromium.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     Grant Grundler <grundler@chromium.org>,
-        You-Sheng Yang <vicamo@gmail.com>, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: r8151: check disconnect status after long sleep
-Date:   Mon, 24 Feb 2020 15:15:41 +0800
-Message-Id: <20200224071541.117363-1-vicamo.yang@canonical.com>
-X-Mailer: git-send-email 2.25.0
+        id S1727206AbgBXHRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 02:17:44 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10679 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725792AbgBXHRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 02:17:44 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8238FEBECE607EF86A2F;
+        Mon, 24 Feb 2020 15:17:36 +0800 (CST)
+Received: from [127.0.0.1] (10.67.101.242) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Mon, 24 Feb 2020
+ 15:17:28 +0800
+Subject: Re: [PATCH] uacce: unmap remaining mmapping from user space
+To:     Zhangfei Gao <zhangfei.gao@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        <jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
+        <grant.likely@arm.com>, jean-philippe <jean-philippe@linaro.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        <ilias.apalodimas@linaro.org>, <francois.ozog@linaro.org>,
+        <kenneth-lee-2012@foxmail.com>, Wangzhou <wangzhou1@hisilicon.com>,
+        "haojian . zhuang" <haojian.zhuang@linaro.org>,
+        <guodong.xu@linaro.org>
+References: <1582528016-2873-1-git-send-email-zhangfei.gao@linaro.org>
+CC:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-accelerators@lists.ozlabs.org>,
+        <linux-crypto@vger.kernel.org>
+From:   Xu Zaibo <xuzaibo@huawei.com>
+Message-ID: <a4716453-0607-d613-e632-173d1ebc424e@huawei.com>
+Date:   Mon, 24 Feb 2020 15:17:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1582528016-2873-1-git-send-email-zhangfei.gao@linaro.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.101.242]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dell USB Type C docking WD19/WD19DC attaches additional peripherals as:
+Hi Zhangfei,
 
-  /: Bus 02.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/6p, 5000M
-      |__ Port 1: Dev 11, If 0, Class=Hub, Driver=hub/4p, 5000M
-          |__ Port 3: Dev 12, If 0, Class=Hub, Driver=hub/4p, 5000M
-          |__ Port 4: Dev 13, If 0, Class=Vendor Specific Class,
-              Driver=r8152, 5000M
 
-where usb 2-1-3 is a hub connecting all USB Type-A/C ports on the dock.
+On 2020/2/24 15:06, Zhangfei Gao wrote:
+> When uacce parent device module is removed, user app may
+> still keep the mmaped area, which can be accessed unsafely.
+> When rmmod, Parent device drvier will call uacce_remove,
+> which unmap all remaining mapping from user space for safety.
+> VM_FAULT_SIGBUS is also reported to user space accordingly.
+>
+> Suggested-by: Dave Jiang <dave.jiang@intel.com>
+> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+> ---
+>   drivers/misc/uacce/uacce.c | 17 +++++++++++++++++
+>   include/linux/uacce.h      |  2 ++
+>   2 files changed, 19 insertions(+)
+>
+> diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
+> index ffced4d..1bcc5e6 100644
+> --- a/drivers/misc/uacce/uacce.c
+> +++ b/drivers/misc/uacce/uacce.c
+> @@ -224,6 +224,7 @@ static int uacce_fops_open(struct inode *inode, struct file *filep)
+>   
+>   	init_waitqueue_head(&q->wait);
+>   	filep->private_data = q;
+> +	uacce->inode = inode;
+>   	q->state = UACCE_Q_INIT;
+>   
+>   	return 0;
+> @@ -253,6 +254,14 @@ static int uacce_fops_release(struct inode *inode, struct file *filep)
+>   	return 0;
+>   }
+>   
+> +static vm_fault_t uacce_vma_fault(struct vm_fault *vmf)
+> +{
+> +	if (vmf->flags & (FAULT_FLAG_MKWRITE | FAULT_FLAG_WRITE))
+> +		return VM_FAULT_SIGBUS;
+> +
+> +	return 0;
+> +}
+> +
+>   static void uacce_vma_close(struct vm_area_struct *vma)
+>   {
+>   	struct uacce_queue *q = vma->vm_private_data;
+> @@ -265,6 +274,7 @@ static void uacce_vma_close(struct vm_area_struct *vma)
+>   }
+>   
+>   static const struct vm_operations_struct uacce_vm_ops = {
+> +	.fault = uacce_vma_fault,
+>   	.close = uacce_vma_close,
+>   };
+>   
+> @@ -585,6 +595,13 @@ void uacce_remove(struct uacce_device *uacce)
+>   		cdev_device_del(uacce->cdev, &uacce->dev);
+>   	xa_erase(&uacce_xa, uacce->dev_id);
+>   	put_device(&uacce->dev);
+> +
+> +	/*
+> +	 * unmap remainning mapping from user space, preventing user still
+> +	 * access the mmaped area while parent device is already removed
+> +	 */
+> +	if (uacce->inode)
+> +		unmap_mapping_range(uacce->inode->i_mapping, 0, 0, 1);
+Should we unmap them at the first of 'uacce_remove',  and before 
+'uacce_put_queue'?
 
-When hotplugging such dock with additional usb devices already attached on
-it, the probing process may reset usb 2.1 port, therefore r8152 ethernet
-device is also reset. However, during r8152 device init there are several
-for-loops that, when it's unable to retrieve hardware registers due to
-being discconected from USB, may take up to 14 seconds each in practice,
-and that has to be completed before USB may re-enumerate devices on the
-bus. As a result, devices attached to the dock will only be available
-after nearly 1 minute after the dock was plugged in:
+Thanks,
+Zaibo
 
-  [ 216.388290] [250] r8152 2-1.4:1.0: usb_probe_interface
-  [ 216.388292] [250] r8152 2-1.4:1.0: usb_probe_interface - got id
-  [ 258.830410] r8152 2-1.4:1.0 (unnamed net_device) (uninitialized): PHY not ready
-  [ 258.830460] r8152 2-1.4:1.0 (unnamed net_device) (uninitialized): Invalid header when reading pass-thru MAC addr
-  [ 258.830464] r8152 2-1.4:1.0 (unnamed net_device) (uninitialized): Get ether addr fail
+.
+>   }
+>   EXPORT_SYMBOL_GPL(uacce_remove);
+>   
+> diff --git a/include/linux/uacce.h b/include/linux/uacce.h
+> index 904a461..0e215e6 100644
+> --- a/include/linux/uacce.h
+> +++ b/include/linux/uacce.h
+> @@ -98,6 +98,7 @@ struct uacce_queue {
+>    * @priv: private pointer of the uacce
+>    * @mm_list: list head of uacce_mm->list
+>    * @mm_lock: lock for mm_list
+> + * @inode: core vfs
+>    */
+>   struct uacce_device {
+>   	const char *algs;
+> @@ -113,6 +114,7 @@ struct uacce_device {
+>   	void *priv;
+>   	struct list_head mm_list;
+>   	struct mutex mm_lock;
+> +	struct inode *inode;
+>   };
+>   
+>   /**
 
-This can be reproduced on all kernel versions up to latest v5.6-rc2, but
-after v5.5-rc7 the reproduce rate is dramatically lower to 1/30 or so
-while it was around 1/2.
-
-The time consuming for-loops are at:
-https://elixir.bootlin.com/linux/v5.5/source/drivers/net/usb/r8152.c#L3206
-https://elixir.bootlin.com/linux/v5.5/source/drivers/net/usb/r8152.c#L5400
-https://elixir.bootlin.com/linux/v5.5/source/drivers/net/usb/r8152.c#L5537
-
-Signed-off-by: You-Sheng Yang <vicamo.yang@canonical.com>
----
- drivers/net/usb/r8152.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index 78ddbaf6401b..95b19ce96513 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -3221,6 +3221,8 @@ static u16 r8153_phy_status(struct r8152 *tp, u16 desired)
- 		}
- 
- 		msleep(20);
-+		if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+			break;
- 	}
- 
- 	return data;
-@@ -5402,7 +5404,10 @@ static void r8153_init(struct r8152 *tp)
- 		if (ocp_read_word(tp, MCU_TYPE_PLA, PLA_BOOT_CTRL) &
- 		    AUTOLOAD_DONE)
- 			break;
-+
- 		msleep(20);
-+		if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+			break;
- 	}
- 
- 	data = r8153_phy_status(tp, 0);
-@@ -5539,7 +5544,10 @@ static void r8153b_init(struct r8152 *tp)
- 		if (ocp_read_word(tp, MCU_TYPE_PLA, PLA_BOOT_CTRL) &
- 		    AUTOLOAD_DONE)
- 			break;
-+
- 		msleep(20);
-+		if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+			break;
- 	}
- 
- 	data = r8153_phy_status(tp, 0);
--- 
-2.25.0
 
