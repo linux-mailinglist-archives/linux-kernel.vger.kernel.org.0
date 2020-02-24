@@ -2,63 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0C5216B59B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:32:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89AE316B5A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:32:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbgBXXbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:31:53 -0500
-Received: from ozlabs.org ([203.11.71.1]:33703 "EHLO ozlabs.org"
+        id S1728708AbgBXXcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:32:11 -0500
+Received: from ozlabs.org ([203.11.71.1]:48545 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728593AbgBXXbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:31:51 -0500
+        id S1727843AbgBXXbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 18:31:52 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 48RJHT2jVKz9sRG; Tue, 25 Feb 2020 10:31:49 +1100 (AEDT)
+        id 48RJHV2RF7z9sRJ; Tue, 25 Feb 2020 10:31:50 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1582587109;
-        bh=qAkvkPIb2184/CM7bghWxy4H6X1MMehAVdAaBWnulSc=;
+        s=201909; t=1582587110;
+        bh=iMhwIn4qZ6J9t/aXW+vFOqz6zFFtCUD/Scd2rEKsk6I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HJq7+z+Y4dXUOKRfV1sAnSnmjEPJkN9omyF4y9RI0bcVxPFkHbMdNb2ARhO+oLseO
-         wHF7L3iO9lc79ThzX4kKY3D0FO2T/pdaD74icIaxqvQDM9TMQ4D24AW+Ojw2+6XrxB
-         ek6TGnlL2eOuAORk3XEWZRffU5lvsNBwXB1ICswEIc5TOLda3quw14a9rWHJClBuN7
-         mVGN0YSjQj/vRhT0A1yQ5fSuNY3DiN8M4RFk2AxRwFD5AhcD2dU35fm/xY77LPanF4
-         r+hzhSyDd5CI1QB//Rj2AVDo1YKt+eIHICqqhLQd4V1tnHReW0womCxGW8D3X6++0m
-         3HiXfFGhDKWtg==
+        b=X0VLEUMqCZTTFakFDK0QSpyidvf//x3QQ8H+dKeS57KHmsX8U24xBpGITYIBPutAC
+         /Pc4T5VbukMx8OsMy/+DJC+Jc7QFxZKNuLNnCmpDgA3hz8HS4LZXx1MExfE474IgQ/
+         XG6jHlyCucjU+yzfdgzMjt0+xTlOD1utjCC9nuVLxtqB8hRW45Dg4Xj4IWqBaMyywc
+         aSQs5vUFCcLD7Z1CC8VUSRY5xe+yMBo2NReQ9yU1qh5Nwtoj7BmEwdxqRyWme7i7OT
+         V27rNh0Ij6pD1Pt06Y/vlQUT745n7tywAGDKyjMVACy5AdoIB6QDK2eEtS1eeUeSO5
+         BIYCjYUo2uEqA==
 From:   Michael Ellerman <mpe@ellerman.id.au>
 To:     linuxppc-dev@ozlabs.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] powerpc: Update wiki link in MAINTAINERS
-Date:   Tue, 25 Feb 2020 10:31:40 +1100
-Message-Id: <20200224233146.23734-2-mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
+Subject: [PATCH 3/8] powerpc: Remove PA SEMI MAINTAINERS entries
+Date:   Tue, 25 Feb 2020 10:31:41 +1100
+Message-Id: <20200224233146.23734-3-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200224233146.23734-1-mpe@ellerman.id.au>
 References: <20200224233146.23734-1-mpe@ellerman.id.au>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The wiki has moved, update the link.
+The PA SEMI entries have been orphaned for 3 ½ years, so fold them
+into the main POWERPC entry. The result of get_maintainer.pl is more
+or less unchanged.
 
+Cc: Olof Johansson <olof@lixom.net>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 339bc3e53862..435e4efc9a32 100644
+index 435e4efc9a32..5c4f37c41188 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -9604,7 +9604,7 @@ LINUX FOR POWERPC (32-BIT AND 64-BIT)
- M:	Michael Ellerman <mpe@ellerman.id.au>
- R:	Benjamin Herrenschmidt <benh@kernel.crashing.org>
- R:	Paul Mackerras <paulus@samba.org>
--W:	https://github.com/linuxppc/linux/wiki
-+W:	https://github.com/linuxppc/wiki/wiki
- L:	linuxppc-dev@lists.ozlabs.org
- Q:	http://patchwork.ozlabs.org/project/linuxppc-dev/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git
+@@ -9621,6 +9621,8 @@ F:	drivers/crypto/vmx/
+ F:	drivers/i2c/busses/i2c-opal.c
+ F:	drivers/net/ethernet/ibm/ibmveth.*
+ F:	drivers/net/ethernet/ibm/ibmvnic.*
++F:	drivers/*/*/*pasemi*
++F:	drivers/*/*pasemi*
+ F:	drivers/pci/hotplug/pnv_php.c
+ F:	drivers/pci/hotplug/rpa*
+ F:	drivers/rtc/rtc-opal.c
+@@ -9675,13 +9677,6 @@ S:	Orphan
+ F:	arch/powerpc/*/*virtex*
+ F:	arch/powerpc/*/*/*virtex*
+ 
+-LINUX FOR POWERPC PA SEMI PWRFICIENT
+-L:	linuxppc-dev@lists.ozlabs.org
+-S:	Orphan
+-F:	arch/powerpc/platforms/pasemi/
+-F:	drivers/*/*pasemi*
+-F:	drivers/*/*/*pasemi*
+-
+ LINUX KERNEL DUMP TEST MODULE (LKDTM)
+ M:	Kees Cook <keescook@chromium.org>
+ S:	Maintained
+@@ -12541,16 +12536,6 @@ W:	http://wireless.kernel.org/en/users/Drivers/p54
+ S:	Maintained
+ F:	drivers/net/wireless/intersil/p54/
+ 
+-PA SEMI ETHERNET DRIVER
+-L:	netdev@vger.kernel.org
+-S:	Orphan
+-F:	drivers/net/ethernet/pasemi/*
+-
+-PA SEMI SMBUS DRIVER
+-L:	linux-i2c@vger.kernel.org
+-S:	Orphan
+-F:	drivers/i2c/busses/i2c-pasemi.c
+-
+ PACKING
+ M:	Vladimir Oltean <olteanv@gmail.com>
+ L:	netdev@vger.kernel.org
 -- 
 2.21.1
 
