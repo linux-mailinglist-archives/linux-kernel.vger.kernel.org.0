@@ -2,174 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36161169D17
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 05:38:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5349B169D10
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 05:38:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbgBXEih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 23:38:37 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44830 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727706AbgBXEid (ORCPT
+        id S1727290AbgBXEiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 23:38:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56808 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727421AbgBXEiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 23:38:33 -0500
-Received: by mail-pl1-f194.google.com with SMTP id d9so3511799plo.11;
-        Sun, 23 Feb 2020 20:38:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Bkf6Qs7ci8lu0oz3mgFCvqHY9Lyghcvow3vv5vNXGOI=;
-        b=e3sQ7oPa4hfEtJJBUpwWOq+kdNSNlV0xpK8jm/eZ6A+V4LQtaQ1J70DDokig/mz7cQ
-         oux8DruDbIiBqNNxmyy+yvkKdVGIFX7PtBWQS8tP7Fly5Sua8pR0EOi4aBm5DeILLEVc
-         MCgJwk2v+6nmg7VdHUSdpnGWxB3Iw3457oD/R4TySDB/0O/KslA9oAxuFzBoTqJHzff0
-         gMzsnCNZQJ5agC7M0QFwdHaUT6J5PNhOviCk9sBpwUMzLJrm7Nbf1IXHa6t1lj/bjnVB
-         QlVp8ArDXCGiIHUZVhXuWNKpl2XK4MzTVDfoG8FmxdjhAddAQQQpH//u+8tSHguFqONa
-         PDng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=Bkf6Qs7ci8lu0oz3mgFCvqHY9Lyghcvow3vv5vNXGOI=;
-        b=IXqd6ptF9X+AeRw/5An05gu9G2xxLJA0bw00XLexq1ZVjx2m/os5LC4/cFlrA4HBT4
-         zzSNux7CoSk+kMYuE9Xa5igydU/Z2/0BB6kaRxxU4bDLnPzqnuyvsrrtMIvWi15BklqG
-         hVf9erf6R4Z9GelyaQ6NphkH5qf1vNrJj/zroO4AeMHuS4c6luw2pJjaYmITI+4PRijU
-         UFTTzLZfmVgSaEwyMyjByVS/nqPASB8KMgN4YWsj/qZU8T8QF3NMcgBO+XaSg/CWp6oT
-         XfaSeUtDdBVvrCgUuhNKN6YFZPwXhO2f8Uedmcy/YsrjqIJQcaXFQmZ63qmsVsBP26N0
-         muGQ==
-X-Gm-Message-State: APjAAAUood3MM7wPLWbYbQmd3ZQyfPacI5QShftJZPQjtZ/Mamwfz/d5
-        PB+CFYs+jgmqeiUseViZ9tI=
-X-Google-Smtp-Source: APXvYqws5Mva9l1z/d48Uc0o1rlaMrv58I/q+sLVJsC9NSx3wnPvxjNedOjPhaXtNFv4TkCcA6xPBQ==
-X-Received: by 2002:a17:902:8e84:: with SMTP id bg4mr46769157plb.11.1582519112582;
-        Sun, 23 Feb 2020 20:38:32 -0800 (PST)
-Received: from gaurie.seo.corp.google.com ([2401:fa00:d:1:4eb0:a5ef:3975:7440])
-        by smtp.gmail.com with ESMTPSA id g16sm10914060pgb.54.2020.02.23.20.38.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2020 20:38:32 -0800 (PST)
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: [PATCH 10/10] perf script: Add --show-cgroup-events option
-Date:   Mon, 24 Feb 2020 13:37:49 +0900
-Message-Id: <20200224043749.69466-11-namhyung@kernel.org>
-X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
-In-Reply-To: <20200224043749.69466-1-namhyung@kernel.org>
-References: <20200224043749.69466-1-namhyung@kernel.org>
+        Sun, 23 Feb 2020 23:38:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=3x72YyawiT+qy2td7cpd28NQAFlPEu7/enza7D57Et4=; b=YnvgoyzDCY7RY0g+SAmg6beiS+
+        ZxADpTEUvAfco3MMCmW2+jIaN/5jUoEeRSOth35TpB+zO89Nd7QPAmtF2tNA/5EFvRTI9ASvQcBTZ
+        S811CVIJn5Z61wJcKTnhjULCopl2lMpaSlzG2P209wiZEz/A4Gm838o9rSt3ju0q2HheM9nKP4mwL
+        sSEZtCJCAJ7JPsGeqB8JwK5p9p7gNig9e5CVSjRUtjtyQEmC0+lm94GK1srxAlmp3xhmuFWhvlKza
+        4AdO6LBTv4ODP59vG9o46FZE4VeF7HplPeIie846DiECSHQO8R6h7xmOIHsbX+UXWR4GxVCf9P//M
+        Y1y1PXqA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j65V8-0001aO-Bq; Mon, 24 Feb 2020 04:37:50 +0000
+Date:   Sun, 23 Feb 2020 20:37:50 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Alastair D'Silva <alastair@au1.ibm.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>
+Subject: Re: [PATCH v3 00/27] Add support for OpenCAPI Persistent Memory
+ devices
+Message-ID: <20200224043750.GM24185@bombadil.infradead.org>
+References: <20200221032720.33893-1-alastair@au1.ibm.com>
+ <CAPcyv4j2hut1YDrotC=QkcM+S0SZwpd9_4hD2aChn+cKD+62oA@mail.gmail.com>
+ <240fbefc6275ac0a6f2aa68715b3b73b0e7a8310.camel@au1.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <240fbefc6275ac0a6f2aa68715b3b73b0e7a8310.camel@au1.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The --show-cgroup-events option is to print CGROUP events in the
-output like others.
+On Mon, Feb 24, 2020 at 03:34:07PM +1100, Alastair D'Silva wrote:
+> V3:
+>   - Rebase against next/next-20200220
+>   - Move driver to arch/powerpc/platforms/powernv, we now expect this
+>     driver to go upstream via the powerpc tree
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/Documentation/perf-script.txt |  3 ++
- tools/perf/builtin-script.c              | 41 ++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
-
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 2599b057e47b..3dd297600427 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -319,6 +319,9 @@ OPTIONS
- --show-bpf-events
- 	Display bpf events i.e. events of type PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT.
- 
-+--show-cgroup-events
-+	Display cgroup events i.e. events of type PERF_RECORD_CGROUP.
-+
- --demangle::
- 	Demangle symbol names to human readable form. It's enabled by default,
- 	disable with --no-demangle.
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index e2406b291c1c..3db4afc29430 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1681,6 +1681,7 @@ struct perf_script {
- 	bool			show_lost_events;
- 	bool			show_round_events;
- 	bool			show_bpf_events;
-+	bool			show_cgroup_events;
- 	bool			allocated;
- 	bool			per_event_dump;
- 	struct evswitch		evswitch;
-@@ -2199,6 +2200,41 @@ static int process_namespaces_event(struct perf_tool *tool,
- 	return ret;
- }
- 
-+static int process_cgroup_event(struct perf_tool *tool,
-+				union perf_event *event,
-+				struct perf_sample *sample,
-+				struct machine *machine)
-+{
-+	struct thread *thread;
-+	struct perf_script *script = container_of(tool, struct perf_script, tool);
-+	struct perf_session *session = script->session;
-+	struct evsel *evsel = perf_evlist__id2evsel(session->evlist, sample->id);
-+	int ret = -1;
-+
-+	thread = machine__findnew_thread(machine, sample->pid, sample->tid);
-+	if (thread == NULL) {
-+		pr_debug("problem processing CGROUP event, skipping it.\n");
-+		return -1;
-+	}
-+
-+	if (perf_event__process_cgroup(tool, event, sample, machine) < 0)
-+		goto out;
-+
-+	if (!evsel->core.attr.sample_id_all) {
-+		sample->cpu = 0;
-+		sample->time = 0;
-+	}
-+	if (!filter_cpu(sample)) {
-+		perf_sample__fprintf_start(sample, thread, evsel,
-+					   PERF_RECORD_CGROUP, stdout);
-+		perf_event__fprintf(event, stdout);
-+	}
-+	ret = 0;
-+out:
-+	thread__put(thread);
-+	return ret;
-+}
-+
- static int process_fork_event(struct perf_tool *tool,
- 			      union perf_event *event,
- 			      struct perf_sample *sample,
-@@ -2538,6 +2574,8 @@ static int __cmd_script(struct perf_script *script)
- 		script->tool.context_switch = process_switch_event;
- 	if (script->show_namespace_events)
- 		script->tool.namespaces = process_namespaces_event;
-+	if (script->show_cgroup_events)
-+		script->tool.cgroup = process_cgroup_event;
- 	if (script->show_lost_events)
- 		script->tool.lost = process_lost_event;
- 	if (script->show_round_events) {
-@@ -3463,6 +3501,7 @@ int cmd_script(int argc, const char **argv)
- 			.mmap2		 = perf_event__process_mmap2,
- 			.comm		 = perf_event__process_comm,
- 			.namespaces	 = perf_event__process_namespaces,
-+			.cgroup		 = perf_event__process_cgroup,
- 			.exit		 = perf_event__process_exit,
- 			.fork		 = perf_event__process_fork,
- 			.attr		 = process_attr,
-@@ -3563,6 +3602,8 @@ int cmd_script(int argc, const char **argv)
- 		    "Show context switch events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-namespace-events", &script.show_namespace_events,
- 		    "Show namespace events (if recorded)"),
-+	OPT_BOOLEAN('\0', "show-cgroup-events", &script.show_cgroup_events,
-+		    "Show cgroup events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-lost-events", &script.show_lost_events,
- 		    "Show lost events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-round-events", &script.show_round_events,
--- 
-2.25.0.265.gbab2e86ba0-goog
+That's rather the opposite direction of normal; mostly drivers live under
+drivers/ and not in arch/.  It's easier for drivers to get overlooked
+when doing tree-wide changes if they're hiding.
 
