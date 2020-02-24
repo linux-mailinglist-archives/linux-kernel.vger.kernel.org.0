@@ -2,285 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD99E16A13D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:11:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F21D916A10B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:09:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbgBXJLY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 04:11:24 -0500
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:37505 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728298AbgBXJK7 (ORCPT
+        id S1727351AbgBXJJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 04:09:03 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35913 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbgBXJJB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 04:10:59 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id 1C799648;
-        Mon, 24 Feb 2020 04:10:58 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 24 Feb 2020 04:10:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=B52jsyVmTXygr
-        78dQDAoJEvEls8jV0jAU4I4CCulLxc=; b=LRMoYV/KRcEHJNOyHqqiZ9A7WD7sK
-        DtJHaaw04LZFG/P5Q+6fQv+BbROcPNOYM5IAqiL9ilhsZsgmvydRzqLYra6f8uBU
-        N3/DVNYdryAyD2HoE+DlFoZvU+Ef00CYSs9HcyrroctOtXozmlJTYbcg4+hy6TMV
-        KJcZX/nPTpbkKLTBes8PXiLTbGQaYVqTp2iKeRDgbk29BesnGfsq2xIWwkOO8SKJ
-        QaQ7U3iwk2UpkUEfCDtsOd4Q6OaZPd411AL9z7MLQnagLU4PcEx66gm7n2m2fBjs
-        ihiqnfrNvf6VZYvzBjiTbHm6d14KodhMxFSHrxnQtCz1Ekkt3cbUjwSJQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=B52jsyVmTXygr78dQDAoJEvEls8jV0jAU4I4CCulLxc=; b=NF5oUwDg
-        VjNbU3jOHePE30DeYeCnZt+JG+qes61RaKajUGY64FSkg0Zel5uZd4JKWD9uMV78
-        fh1x73uauqNtDv7qc4ywgZhR0aFqer98jCiwqc0sdTVHo59b1yXt3isTejpC7dGD
-        2IwHOeZR5P0RIvrrN615X9XBpIML8V8NktPrHvY4KHL4DH94lVa6507C08AP8dza
-        7omeYvPZ9SXlXgJSDlzG1Pq2TOH2mleprgdiRHBc5a1OmBKUUozy6lHsA47ATSwV
-        mLky+uizaa1NMo+aWeg3xtaua0KHn61VxTtBTFBsA1Rau7Qv3B8N8sVEzlmGlV+x
-        LrrkoS011B/B8A==
-X-ME-Sender: <xms:IZNTXhbMdskEF-E8e1a1ctXhtApEpQdhj98Ow8MKS61A_2RgoPPWLA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrledtucetufdoteggodetrfdotffvucfrrh
-    hofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    ephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcutfhi
-    phgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltddrkeelrd
-    eikedrjeeinecuvehluhhsthgvrhfuihiivgepvdejnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:IZNTXl3vEg5rUXy9xNGUM2Vtd0wAdOpjuMlfUNcs9frdX3zwFLxPIw>
-    <xmx:IZNTXj40Km_V-m_U88kRcxUb8sjObsSiiLUdAD5ZEo-N9ksadPOCYw>
-    <xmx:IZNTXhSLVJcGzbk826Loq5ZQOmkWztsrMo29nUyB-HV3f4DyLTFBrA>
-    <xmx:IZNTXu6uYh_9TC4XPWUDIh4WMzNi6DzQrsL8hFDMnZs3BqFW7XHxeiU55gc>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5DD873060D1A;
-        Mon, 24 Feb 2020 04:10:57 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH 89/89] ARM: dts: bcm2711: Enable the display pipeline
-Date:   Mon, 24 Feb 2020 10:07:31 +0100
-Message-Id: <80651ac7f73e3af8744c16efa0f83bed2cb14678.1582533919.git-series.maxime@cerno.tech>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 24 Feb 2020 04:09:01 -0500
+Received: by mail-pg1-f193.google.com with SMTP id d9so4813515pgu.3;
+        Mon, 24 Feb 2020 01:09:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=GajakFXyxMUa9GNvnGruzNckL7Z3CRJUy+Vqs4Yc4uI=;
+        b=TVJhfUQoGV593qut6pCiS/bCkZgzc7RtJeAtWE9Uz5zqFFd/b42P0f30AVI6Im20JL
+         1tBQogDqHgVi7A5ig4oxX7GqP0XCnzhojJuQf5koMb6hCIn6do0B/LWBg04MQOBl5JX2
+         Y0bC36gaebvgxHMiGB3cb0z63mbBon8aauz9PipRLcZ/2sPgIx5+Yx7V3pFxiA23G0X7
+         Td5RIFboO9BnaKISaPlgxt6yyucrPy8EKg917V9LwjH4BziziPEYp6AXOTRKWJW1aqDW
+         PdWOdKtS8owG/JSWK/VqeTd0pNUW8rEl92PNYpwTxhOhK2S/0JQo2my3V/E/J16PwJlp
+         RwDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GajakFXyxMUa9GNvnGruzNckL7Z3CRJUy+Vqs4Yc4uI=;
+        b=juJwC3Gut22hji8QD8o6xPzxkAKTN3KbratDkA90E+BlrNybaMdjDbrcjWhvKlv7OA
+         FJr5GCopPTVbpjBS7DbXlCHYLACwOzkTS6mmEAaKNiAoTEOZE5Y26Fr2jC9GiCafiHJt
+         YjG3cr5qF5iDaagZ0JGE81ueZYihvA4kA0r4mspQcOmOkcaGEmo8YPwmyq3q8d6T18AR
+         jhIWZ/IHp/XwvHVD8121h4DJ9DDnnl0L270FZDioUdUHBPtmuz+KgRS9yPRo2rcKW7q2
+         BZ6dTKfGmFvO2GS2ceYBA7on3t1vd5qalLjavbgEZcwNDwNLNzAeUPje3UQVrHUBfcyZ
+         EeqQ==
+X-Gm-Message-State: APjAAAWkUQlgW5HIXJJvSDBSoAZxN3aWByYrowqZyDvMyYR4h6NGGnPa
+        WBbOqqpFO6v8Rgr3Rtdt7vc=
+X-Google-Smtp-Source: APXvYqy+7zLvfzNMJy6gcXf74WOA+gfoYUuV3jX3LYG4EOi+ogkHGDKa2vIarB4A5dQhlzlKd9EnCg==
+X-Received: by 2002:a62:1a09:: with SMTP id a9mr50691454pfa.64.1582535341020;
+        Mon, 24 Feb 2020 01:09:01 -0800 (PST)
+Received: from sh03840pcu.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id t17sm4521674pgn.94.2020.02.24.01.08.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 24 Feb 2020 01:09:00 -0800 (PST)
+From:   Baolin Wang <baolin.wang7@gmail.com>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang7@gmail.com,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: host: sdhci-sprd: Set the missing MMC_CAP_WAIT_WHILE_BUSY flag
+Date:   Mon, 24 Feb 2020 17:08:49 +0800
+Message-Id: <96f16647f6a6e8cb058c44e46c61b122df027059.1582535202.git.baolin.wang7@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all the drivers have been adjusted for it, let's bring in the
-necessary device tree changes.
+The Spreadtrum host controller supports HW busy detection for I/O
+operations, which means when the host gets a transfer complete event,
+that always indicates the busy signal is released. Thus we can set
+the MMC_CAP_WAIT_WHILE_BUSY flag to remove some redundant software
+busy polling.
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
 ---
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts |  40 ++++++++++-
- arch/arm/boot/dts/bcm2711.dtsi        | 110 +++++++++++++++++++++++++++-
- 2 files changed, 150 insertions(+)
+ drivers/mmc/host/sdhci-sprd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-index 1b5a835f66bd..db96319b3a40 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-@@ -138,3 +138,43 @@
- &vchiq {
- 	interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
- };
-+
-+&vc4 {
-+	status = "okay";
-+};
-+
-+&pixelvalve0 {
-+	status = "okay";
-+};
-+
-+&pixelvalve1 {
-+	status = "okay";
-+};
-+
-+&pixelvalve2 {
-+	status = "okay";
-+};
-+
-+&pixelvalve3 {
-+	status = "okay";
-+};
-+
-+&pixelvalve4 {
-+	status = "okay";
-+};
-+
-+&hdmi0 {
-+	status = "okay";
-+};
-+
-+&ddc0 {
-+	status = "okay";
-+};
-+
-+&hdmi1 {
-+	status = "okay";
-+};
-+
-+&ddc1 {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dtsi
-index 1e89f2a810f3..98fb36c35033 100644
---- a/arch/arm/boot/dts/bcm2711.dtsi
-+++ b/arch/arm/boot/dts/bcm2711.dtsi
-@@ -13,6 +13,11 @@
- 	interrupt-parent = <&gicv2>;
+diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+index d346223..2ab42c5 100644
+--- a/drivers/mmc/host/sdhci-sprd.c
++++ b/drivers/mmc/host/sdhci-sprd.c
+@@ -556,7 +556,7 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
+ 		sdhci_sprd_voltage_switch;
  
- 
-+	vc4: gpu {
-+		compatible = "brcm,bcm2711-vc5";
-+		status = "disabled";
-+	};
-+
- 	clk_108MHz: clk-108M {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
-@@ -245,6 +250,27 @@
- 			status = "disabled";
- 		};
- 
-+		pixelvalve0: pixelvalve@7e206000 {
-+			compatible = "brcm,bcm2711-pixelvalve0";
-+			reg = <0x7e206000 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		pixelvalve1: pixelvalve@7e207000 {
-+			compatible = "brcm,bcm2711-pixelvalve1";
-+			reg = <0x7e207000 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		pixelvalve2: pixelvalve@7e20a000 {
-+			compatible = "brcm,bcm2711-pixelvalve2";
-+			reg = <0x7e20a000 0x100>;
-+			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
- 		pwm1: pwm@7e20c800 {
- 			compatible = "brcm,bcm2835-pwm";
- 			reg = <0x7e20c800 0x28>;
-@@ -255,6 +281,13 @@
- 			status = "disabled";
- 		};
- 
-+		pixelvalve4: pixelvalve@7e216000 {
-+			compatible = "brcm,bcm2711-pixelvalve4";
-+			reg = <0x7e216000 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
- 		emmc2: emmc2@7e340000 {
- 			compatible = "brcm,bcm2711-emmc2";
- 			reg = <0x7e340000 0x100>;
-@@ -267,6 +300,13 @@
- 			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		pixelvalve3: pixelvalve@7ec12000 {
-+			compatible = "brcm,bcm2711-pixelvalve3";
-+			reg = <0x7ec12000 0x100>;
-+			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
- 		dvp: clock@7ef00000 {
- 			compatible = "brcm,brcm2711-dvp";
- 			reg = <0x7ef00000 0x10>;
-@@ -274,6 +314,76 @@
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 		};
-+
-+		hdmi0: hdmi@7ef00700 {
-+			compatible = "brcm,bcm2711-hdmi0";
-+			reg = <0x7ef00700 0x300>,
-+			      <0x7ef00300 0x200>,
-+			      <0x7ef00f00 0x80>,
-+			      <0x7ef00f80 0x80>,
-+			      <0x7ef01b00 0x200>,
-+			      <0x7ef01f00 0x400>,
-+			      <0x7ef00200 0x80>,
-+			      <0x7ef04300 0x100>,
-+			      <0x7ef20000 0x100>;
-+			reg-names = "hdmi",
-+				    "dvp",
-+				    "phy",
-+				    "rm",
-+				    "packet",
-+				    "metadata",
-+				    "csc",
-+				    "cec",
-+				    "hd";
-+			clocks = <&firmware_clocks 13>;
-+			clock-names = "hdmi";
-+			resets = <&dvp 0>;
-+			ddc = <&ddc0>;
-+			status = "disabled";
-+		};
-+
-+		ddc0: i2c@7ef04500 {
-+			compatible = "brcm,bcm2711-hdmi-i2c";
-+			reg = <0x7ef04500 0x100>, <0x7ef00b00 0x300>;
-+			reg-names = "bsc", "auto-i2c";
-+			clock-frequency = <390000>;
-+			status = "disabled";
-+		};
-+
-+		hdmi1: hdmi@7ef05700 {
-+			compatible = "brcm,bcm2711-hdmi1";
-+			reg = <0x7ef05700 0x300>,
-+			      <0x7ef05300 0x200>,
-+			      <0x7ef05f00 0x80>,
-+			      <0x7ef05f80 0x80>,
-+			      <0x7ef06b00 0x200>,
-+			      <0x7ef06f00 0x400>,
-+			      <0x7ef00280 0x80>,
-+			      <0x7ef09300 0x100>,
-+			      <0x7ef20000 0x100>;
-+			reg-names = "hdmi",
-+				    "dvp",
-+				    "phy",
-+				    "rm",
-+				    "packet",
-+				    "metadata",
-+				    "csc",
-+				    "cec",
-+				    "hd";
-+			ddc = <&ddc1>;
-+			clocks = <&firmware_clocks 13>;
-+			clock-names = "hdmi";
-+			resets = <&dvp 1>;
-+			status = "disabled";
-+		};
-+
-+		ddc1: i2c@7ef09500 {
-+			compatible = "brcm,bcm2711-hdmi-i2c";
-+			reg = <0x7ef09500 0x100>, <0x7ef05b00 0x300>;
-+			reg-names = "bsc", "auto-i2c";
-+			clock-frequency = <390000>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	arm-pmu {
+ 	host->mmc->caps = MMC_CAP_SD_HIGHSPEED | MMC_CAP_MMC_HIGHSPEED |
+-		MMC_CAP_ERASE | MMC_CAP_CMD23;
++		MMC_CAP_ERASE | MMC_CAP_CMD23 | MMC_CAP_WAIT_WHILE_BUSY;
+ 	ret = mmc_of_parse(host->mmc);
+ 	if (ret)
+ 		goto pltfm_free;
 -- 
-git-series 0.9.1
+1.9.1
+
