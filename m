@@ -2,107 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B24516AAF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:11:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36B5216AB09
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:14:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbgBXQLt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:11:49 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36388 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727474AbgBXQLt (ORCPT
+        id S1727903AbgBXQNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:13:10 -0500
+Received: from mail-ua1-f73.google.com ([209.85.222.73]:45348 "EHLO
+        mail-ua1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727755AbgBXQNJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:11:49 -0500
-Received: by mail-lf1-f66.google.com with SMTP id f24so7205814lfh.3;
-        Mon, 24 Feb 2020 08:11:47 -0800 (PST)
+        Mon, 24 Feb 2020 11:13:09 -0500
+Received: by mail-ua1-f73.google.com with SMTP id h10so1298923uab.12
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 08:13:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dT/SyLKmpe9sG8DmvT5flFskfE0S96hCFL6E52t9dYE=;
-        b=qCzZu9aIPTC8GZ0LZ09WmqXDNYp4fklD1BL9dEquCOQWYzgB0AEGgtyDVq5STwAvTn
-         FILj8Mjvif4CmdRI+1srVEWLDRpxSXSqSQcwno6EMOwgJv42dw8hDtvNU2Ah0TkpLhs2
-         mitPt50zLdJUVcDIMz6aj4vhUD/5wVqfS4ktYl14E7Vz9CkkxW04pjedHr3pZDhW2xF1
-         LKcdDLD9bT/3U2Se/T/0W9Hda+Cg8yCtoMLjYWORV7vvUdMLiObHzExFypRj+NAns4Dz
-         AvFBcB9eNSa9xvt6+wnWQChYXjeJ+WKljMCdxUeiMf/8wILNel6XGz2PZvHMvYsfecZ0
-         jzyQ==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=h60gecOqE+CkPbm4fQgbS/Dl80MdiGYEyWLaquQ9wSQ=;
+        b=Ox8snbgmpRptmL9zqZZzMCWd9miSlaakRxq5b+8hKP3Yn242ka+PSr3D+Z0cjjsqLZ
+         VUU3/kCii9htAhzkEU3llvBIaGwZLd5kXUgP3qKr3lNHHLn1V0JCvCgVXbJDzWW2Z0Km
+         Z/S144HTsa9nOCjY3v68Eo7kQqTPoYme2phc5yY914d2MPgffby6E1G/gciDcClsNrPs
+         bDhZ/IvTzB3CN2NzTTiDXkemmLTkUIofuSewsyOfC0SJNl2FNkyDeD87RpJoPIG4/KKo
+         bUGBVstY6o6OqeKzMEhyUnvXetvVsvQ1fznOBCzfg+uwOYqtZabEtYKz0pSCyXOEswqh
+         xyCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dT/SyLKmpe9sG8DmvT5flFskfE0S96hCFL6E52t9dYE=;
-        b=VpPckgixD7VAj1LAp7oEu4ozMwDiuiIV/zu/tJkBvm8qKYECgzUyccNbQF+st9AQvY
-         MxQmr0nC1UyIc6QPyZGaKdMnKn9X3P5xuwVGJ8OWVDXIwwaiGEk3kjhHYKuQO4m4WHLy
-         5qJDjb59dbQxrjwCheh3VWs+9lUpOzLn+JZ8X1IQdSS/8pgiUzTU2/ksQyqPh0Uf9M9Q
-         fgIpWXq6DZby4iazwRy0dsQKRcLgI6YuM6MPR6z7JGjZ63Qp8Q87T5pd/NQciteZu46P
-         vhkmTYEC6RuOau2RY0DxNvqNmGbhBL1nxgGWIV/8HirfM46Xjx8ll1ssczWT1tPFDSGz
-         qeWQ==
-X-Gm-Message-State: APjAAAXTXGt2xZUC982Pv2J3LO9jVgM29STg1AaQwAapEeY/MMwsCA/A
-        mk5ByY5k1eTwJQtSqD5znsM=
-X-Google-Smtp-Source: APXvYqynLmBPyJr1btY1NobYmJeSnkFcTPR33J+NHhzHumsVCNfJ9yHy5ARrE8i6qquRX9XL2hSNtg==
-X-Received: by 2002:a19:7b0a:: with SMTP id w10mr27755407lfc.90.1582560706930;
-        Mon, 24 Feb 2020 08:11:46 -0800 (PST)
-Received: from pc636 ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id n14sm6480728lji.37.2020.02.24.08.11.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 08:11:46 -0800 (PST)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Mon, 24 Feb 2020 17:11:36 +0100
-To:     Boqun Feng <boqun.feng@gmail.com>
-Cc:     paulmck@kernel.org, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: Re: [PATCH tip/core/rcu 1/2] rcu: Support kfree_bulk() interface in
- kfree_rcu()
-Message-ID: <20200224161136.GA21167@pc636>
-References: <20200215000031.GA14315@paulmck-ThinkPad-P72>
- <20200215000053.14456-1-paulmck@kernel.org>
- <20200224114551.GE110915@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224114551.GE110915@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=h60gecOqE+CkPbm4fQgbS/Dl80MdiGYEyWLaquQ9wSQ=;
+        b=rHo+j53drjMd13ZVLF4PnJzdHOQ8TjsVWq2i2VkUgw2WaDu21pcZWhfcrNGgVj0lNs
+         FZrRrynjBlN9grVaQgtD4UTnYH/zeDqf8Yq5PCIsCFjn0PN+5ntX229zv2IiN2E7he6r
+         y12mXsAb6dVVL5oQliNmplYxQImBs+g5FxTz1y9cP7dBf6NVYMPhwtuSYi3lSv8f+ZlT
+         RJgSlNG7n5Eg+AJRHGCNv35mSzVUPoGi/oHVoEof5oQSjEYTI6oyrpTSy4MFdTIoCN+q
+         ZyWmZ/isHrpwgvixpA8+dEg08dOciSAqPdyZ7wsfG4FAD7RIJXuf+iO2AKwIVokp67eJ
+         xKAw==
+X-Gm-Message-State: APjAAAUuB9OYAuz3gbTLV6b0yhC7XHJvvowMMmK3XBPcT1eKwsYRCtSJ
+        DTGBWn2uCZAUVMVvf0els+6W0Q3BAo54Sgxs
+X-Google-Smtp-Source: APXvYqyHYOouo+7ZokPmPMZJo8lMfUVKGwR65i04F8Dcl7WDv1r/VG4+3hLIzOU3dosUsBLyR8+ZT+rVqJHxCCoD
+X-Received: by 2002:ab0:74ce:: with SMTP id f14mr24789698uaq.118.1582560787523;
+ Mon, 24 Feb 2020 08:13:07 -0800 (PST)
+Date:   Mon, 24 Feb 2020 17:13:02 +0100
+Message-Id: <cover.1582560596.git.andreyknvl@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+Subject: [PATCH v6 0/1] usb: gadget: add raw-gadget interface
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >  
-> > +/*
-> > + * This macro defines how many entries the "records" array
-> > + * will contain. It is based on the fact that the size of
-> > + * kfree_rcu_bulk_data structure becomes exactly one page.
-> > + */
-> > +#define KFREE_BULK_MAX_ENTR ((PAGE_SIZE / sizeof(void *)) - 3)
-> > +
-> 
-> Why use the "magic" number "3" here? Could we just define struct
-> kfree_rcu_bulk_data as:
-> 
-> struct kfree_rcu_bulk_data {
-> 	struct kfree_rcu_bulk_data *next;
-> 	struct rcu_head *head_free_debug;
-> 	unsigned long nr_records;
-> 	void *records[];
-> }
-> 
-> ?
-> 
-> And the the above macro becomes:
-> 
-> #define KFREE_BULK_MAX_ENTR ((PAGE_SIZE - sizeof(struct kfree_rcu_bulk_data)) / sizeof(void *))
-> 
-That should work. I agree that looks better :)
+This patchset (currently a single patch) adds a new userspace interface
+for the USB Gadget subsystem called USB Raw Gadget. This is what is
+currently being used to enable coverage-guided USB fuzzing with syzkaller:
 
-We can fix that by submitting a separate patch.
+https://github.com/google/syzkaller/blob/master/docs/linux/external_fuzzing_usb.md
 
-Thank you!
+Initially I was using GadgetFS (together with the Dummy HCD/UDC module)
+to perform emulation of USB devices for fuzzing, but later switched to a
+custom written interface. The incentive to implement a different interface
+was to provide a somewhat raw and direct access to the USB Gadget layer
+for the userspace, where every USB request is passed to the userspace to
+get a response. See documentation for the list of differences between
+Raw Gadget and GadgetFS.
 
---
-Vlad Rezki
+Currently Raw Gadget only supports blocking I/O mode, that synchronously
+waits for the result of each operation to allow collecting coverage per
+operation.
+
+This patchset has been pushed to the public Linux kernel Gerrit instance:
+
+https://linux-review.googlesource.com/c/linux/kernel/git/torvalds/linux/+/2144
+
+Changes v5 -> v6:
+- Prevent raw_process_ep_io() racing with raw_ioctl_ep_disable() by
+  checking urb_queued flag in the latter.
+- Use GFP_KERNEL instead of GFP_ATOMIC where possible.
+- Reject opening raw-gadget with O_NONBLOCK to allow future extensions to
+  support nonblocking IO.
+- Reduce RAW_EVENT_QUEUE_SIZE to 16.
+
+Changes v4 -> v5:
+- Specified explicit usb_raw_event_type enum values for all entries.
+- Dropped pointless locking in gadget_unbind().
+
+Changes v3 -> v4:
+- Print debug message when maxpacket check fails.
+- Use module_misc_device() instead of module_init/exit().
+- Reuse DRIVER_NAME macro in raw_device struct definition.
+- Don't print WARNING in raw_release().
+- Add comment that explains locking into raw_event_queue_fetch().
+- Print a WARNING when event queue size is exceeded.
+- Rename raw.c to raw_gadget.c.
+- Mention module name in Kconfig.
+- Reworked logging to use dev_err/dbg() instead of pr_err/debug().
+
+Changes v2 -> v3:
+- Updated device path in documentation.
+- Changed usb_raw_init struct layout to make it the same for 32 bit compat
+  mode.
+- Added compat_ioctl to raw_fops.
+- Changed raw_ioctl_init() to return EINVAL for invalid USB speeds, except
+  for USB_SPEED_UNKNOWN, which defaults to USB_SPEED_HIGH.
+- Reject endpoints with maxpacket = 0 in raw_ioctl_ep_enable().
+
+Changes v1 -> v2:
+- Moved raw.c to legacy/.
+- Changed uapi header to use __u* types.
+- Switched from debugfs entry to a misc device.
+- Changed raw_dev from refcount to kref.
+- Moved UDC_NAME_LENGTH_MAX to uapi headers.
+- Used usb_endpoint_type() and usb_endpoint_dir_in/out() functions instead
+  of open coding them.
+- Added "WITH Linux-syscall-note" to SPDX id in the uapi header.
+- Removed pr_err() if case dev_new() fails.
+- Reduced the number of debugging messages.
+
+Andrey Konovalov (1):
+  usb: gadget: add raw-gadget interface
+
+ Documentation/usb/index.rst            |    1 +
+ Documentation/usb/raw-gadget.rst       |   61 ++
+ drivers/usb/gadget/legacy/Kconfig      |   11 +
+ drivers/usb/gadget/legacy/Makefile     |    1 +
+ drivers/usb/gadget/legacy/raw_gadget.c | 1078 ++++++++++++++++++++++++
+ include/uapi/linux/usb/raw_gadget.h    |  167 ++++
+ 6 files changed, 1319 insertions(+)
+ create mode 100644 Documentation/usb/raw-gadget.rst
+ create mode 100644 drivers/usb/gadget/legacy/raw_gadget.c
+ create mode 100644 include/uapi/linux/usb/raw_gadget.h
+
+-- 
+2.25.0.265.gbab2e86ba0-goog
+
