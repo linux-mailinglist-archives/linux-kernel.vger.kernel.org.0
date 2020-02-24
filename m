@@ -2,105 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 855F816AD61
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:29:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFAFB16AD6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:30:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbgBXR3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 12:29:02 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:46278 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727644AbgBXR3B (ORCPT
+        id S1728056AbgBXRaP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 12:30:15 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:48213 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728011AbgBXRaO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:29:01 -0500
-Received: by mail-qk1-f194.google.com with SMTP id u124so9345577qkh.13;
-        Mon, 24 Feb 2020 09:28:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=fkrdTkaLK8LsFSzQaFmY694I4SUfdUSLTGI/jzws3rk=;
-        b=V+e0zaub0CggXtFAk2QyuHHSqeqOowEm0cVWsFdYU7UeEwGcL9JGnjfbOkgOnAsX7q
-         HzMiE+p3hQhuyAbQm7j3tdn9cXC7CwUbMm1mM1EW0p0nHcnW+7cZEzJ3oYd3WYKeUDyE
-         RyPStmdm54SFqr1FTm1KmWbb6j2ZhYQrmYPezgrB02COTHifRGx+bZY4OnHiBUi3dJ6L
-         sijV8YPmkIoV2MucDWW12TUDGdwvd0RUz9o0NHUs34fCvtakMz+lRJGuoW+eBFCU4bik
-         eEXi4UbwpfqViyR4zxdzc3PmQC0b1BUK/Ib9z79eDhxlJuDlHxh/wywU6WmB+gzPJb0g
-         bzCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=fkrdTkaLK8LsFSzQaFmY694I4SUfdUSLTGI/jzws3rk=;
-        b=Pp0sydAL2jPsD4/LZISXDyJkq/6HNSkFafRP0dmz+3/aUQ7MqLFa7CAORbdFXEbNfC
-         DtVJTBSIJwYZlBcT5iJjsjWZAZ0/0rK765pDf8tMKbOZXkxpXf3mKnjyzr0N2pZxV0z0
-         SrFtT//aLOo9y2yUcGPoTafEklhQ9O6wVHKgQ5pobQGSddFNG/v1WiyM0rZEZJIjFtkE
-         esYmj92wlJlxg1x13EjQ773WTPzexZc5eqHqYbrtJWBHFFehSQRg9lljDakwB2PygvpF
-         l+8BTpkSpYIun6+R+ssh1nyV3X7S1q64ZkHe/CR8XfCGVfNh7ByqvdGVDkdJ86UlxApx
-         FGmw==
-X-Gm-Message-State: APjAAAUQ1E+DPryp6n9d8YWThzPmORT2R1PRXN/AxrPWC3hu7STVI+0H
-        5NQZfzdq6dmhAP73Hsci82E=
-X-Google-Smtp-Source: APXvYqzIJm8JWShD8Zy/n4ceotflse8kCVF8TUswcEveWpx3d3ByuUN4vnXAeZq9HYobUdx3+lyDBg==
-X-Received: by 2002:a37:4755:: with SMTP id u82mr49108164qka.43.1582565339365;
-        Mon, 24 Feb 2020 09:28:59 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id q5sm6107440qkf.14.2020.02.24.09.28.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 09:28:59 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Mon, 24 Feb 2020 12:28:57 -0500
-To:     Borislav Petkov <bp@suse.de>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        linux-tip-commits@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [tip: x86/boot] x86/boot/compressed: Remove .eh_frame section
- from bzImage
-Message-ID: <20200224172857.GA334627@rani.riverdale.lan>
-References: <20200109150218.16544-2-nivedita@alum.mit.edu>
- <158254422067.28353.10866888120950973607.tip-bot2@tip-bot2>
- <20200224164129.GA312716@rani.riverdale.lan>
- <20200224171618.GA29636@zn.tnic>
+        Mon, 24 Feb 2020 12:30:14 -0500
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1j6HYO-0004HS-08; Mon, 24 Feb 2020 18:30:00 +0100
+Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1j6HYL-0007Ys-IA; Mon, 24 Feb 2020 18:29:57 +0100
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc:     kernel@pengutronix.de, Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] net: ethernet: stmmac: demote warnings about missing optional clocks
+Date:   Mon, 24 Feb 2020 18:29:54 +0100
+Message-Id: <20200224172956.28744-1-a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200224171618.GA29636@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 06:16:18PM +0100, Borislav Petkov wrote:
-> On Mon, Feb 24, 2020 at 11:41:29AM -0500, Arvind Sankar wrote:
-> > Hi Boris, apologies for the confusion and unnecessary work I've created,
-> > but I think the preference is to merge the 2-patch series I posted
-> > yesterday [1] instead of this.
-> > 
-> > [1] https://lore.kernel.org/lkml/20200223193715.83729-1-nivedita@alum.mit.edu/
-> 
-> What guarantees this would work and we won't hit some corner case or
-> toolchain configuration this hasn't been tested on?
-> 
-> If that happens, I need to have a state to revert back to, i.e., this
-> patch, discarding .eh_frame explicitly.
-> 
-> So I'll pick up [1] too, but give people a couple of days - a chance to
-> complain about. :)
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
+The specification of a "eth-ck" and a "ptp_ref" clock is optional per
+the binding and the driver handles them gracefully.
+Demote the output to an info message accordingly.
 
-Ok, note that the 2-patch series assumed that it would replace this one,
-so it doesn't contain a revert of discarding .eh_frame explicitly for
-the compressed kernel.
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c     | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-The first patch of that series at least should be safe enough, it will
-stop generating .eh_frame sections in most cases, and shouldn't make any
-edge cases worse than before. The second one might be a regression if we
-do have some case that still creates them though.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+index 9b7be996d07b..dc84e5066bf8 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+@@ -304,7 +304,7 @@ static int stm32mp1_parse_data(struct stm32_dwmac *dwmac,
+ 	/*  Get ETH_CLK clocks */
+ 	dwmac->clk_eth_ck = devm_clk_get(dev, "eth-ck");
+ 	if (IS_ERR(dwmac->clk_eth_ck)) {
+-		dev_warn(dev, "No phy clock provided...\n");
++		dev_info(dev, "No phy clock provided...\n");
+ 		dwmac->clk_eth_ck = NULL;
+ 	}
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index d10ac54bf385..165958c9f069 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -588,7 +588,7 @@ stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
+ 	if (IS_ERR(plat->clk_ptp_ref)) {
+ 		plat->clk_ptp_rate = clk_get_rate(plat->stmmac_clk);
+ 		plat->clk_ptp_ref = NULL;
+-		dev_warn(&pdev->dev, "PTP uses main clock\n");
++		dev_info(&pdev->dev, "PTP uses main clock\n");
+ 	} else {
+ 		plat->clk_ptp_rate = clk_get_rate(plat->clk_ptp_ref);
+ 		dev_dbg(&pdev->dev, "PTP rate %d\n", plat->clk_ptp_rate);
+-- 
+2.25.0
+
