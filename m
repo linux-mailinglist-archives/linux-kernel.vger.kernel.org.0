@@ -2,203 +2,319 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0553C16A76C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 14:42:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B1E016A784
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 14:44:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbgBXNmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 08:42:01 -0500
-Received: from foss.arm.com ([217.140.110.172]:37216 "EHLO foss.arm.com"
+        id S1727393AbgBXNob (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 08:44:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47080 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727108AbgBXNmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 08:42:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDC7C30E;
-        Mon, 24 Feb 2020 05:41:59 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 623473F534;
-        Mon, 24 Feb 2020 05:41:59 -0800 (PST)
-Date:   Mon, 24 Feb 2020 13:41:57 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: tlv320adcx140: Add DRE and AGC support" to the asoc tree
-In-Reply-To:  <20200221181358.22526-1-dmurphy@ti.com>
-Message-Id:  <applied-20200221181358.22526-1-dmurphy@ti.com>
-X-Patchwork-Hint: ignore
+        id S1725535AbgBXNob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 08:44:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 02C22AC67;
+        Mon, 24 Feb 2020 13:44:28 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Yan, Zheng" <zyan@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.com>
+Subject: [PATCH v2] ceph: re-org copy_file_range and fix some error paths
+Date:   Mon, 24 Feb 2020 13:44:32 +0000
+Message-Id: <20200224134432.25888-1-lhenriques@suse.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+This patch re-organizes copy_file_range, trying to fix a few issues in the
+error handling.  Here's the summary:
 
-   ASoC: tlv320adcx140: Add DRE and AGC support
+- Abort copy if initial do_splice_direct() returns fewer bytes than
+  requested.
 
-has been applied to the asoc tree at
+- Move the 'size' initialization (with i_size_read()) further down in the
+  code, after the initial call to do_splice_direct().  This avoids issues
+  with a possibly stale value if a manual copy is done.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+- Move the object copy loop into a separate function.  This makes it
+  easier to handle errors (e.g, dirtying caps and updating the MDS
+  metadata if only some objects have been copied before an error has
+  occurred).
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+- Added calls to ceph_oloc_destroy() to avoid leaking memory with src_oloc
+  and dst_oloc
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+- After the object copy loop, the new file size to be reported to the MDS
+  (if there's file size change) is now the actual file size, and not the
+  size after an eventual extra manual copy.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+- Added a few dout() to show the number of bytes copied in the two manual
+  copies and in the object copy loop.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 8a329dbd4a02dc4e4ff78b006c33676f867f2726 Mon Sep 17 00:00:00 2001
-From: Dan Murphy <dmurphy@ti.com>
-Date: Fri, 21 Feb 2020 12:13:57 -0600
-Subject: [PATCH] ASoC: tlv320adcx140: Add DRE and AGC support
-
-The TLV320ADCx140 parts support Dynamic Range Enhancer (DRE) as defined
-in Section 8.3.2 of the data sheets.
-
-The DRE achieves a complete-channel dynamic range as high as 120 dB.
-At a system level, the DRE scheme enables far-field, high-fidelity recording
-of audio signals in very quiet environments and low-distortion recording in
-loud environments.
-
-There are 2 enables for DRE.  The first is a global setting that enables
-the DRE engine in the device and the other enable is per channel.  If
-the DRE is enabled globally then either DRE or AGC can be used per each
-configured channel.  If global DRE is disabled then even setting the DRE
-enable bit in the channel config register will have no effect.
-
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
-Link: https://lore.kernel.org/r/20200221181358.22526-1-dmurphy@ti.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
 ---
- sound/soc/codecs/tlv320adcx140.c | 55 ++++++++++++++++++++++++++++++++
- sound/soc/codecs/tlv320adcx140.h |  1 +
- 2 files changed, 56 insertions(+)
+Hi,
 
-diff --git a/sound/soc/codecs/tlv320adcx140.c b/sound/soc/codecs/tlv320adcx140.c
-index 8182c584de9c..105e51be6fe6 100644
---- a/sound/soc/codecs/tlv320adcx140.c
-+++ b/sound/soc/codecs/tlv320adcx140.c
-@@ -108,6 +108,7 @@ static const struct reg_default adcx140_reg_defaults[] = {
- 	{ ADCX140_DSP_CFG0, 0x01 },
- 	{ ADCX140_DSP_CFG1, 0x40 },
- 	{ ADCX140_DRE_CFG0, 0x7b },
-+	{ ADCX140_AGC_CFG0, 0xe7 },
- 	{ ADCX140_IN_CH_EN, 0xf0 },
- 	{ ADCX140_ASI_OUT_CH_EN, 0x00 },
- 	{ ADCX140_PWR_CFG, 0x00 },
-@@ -158,6 +159,16 @@ static DECLARE_TLV_DB_SCALE(dig_vol_tlv, -10000, 50, 0);
- /* ADC gain. From 0 to 42 dB in 1 dB steps */
- static DECLARE_TLV_DB_SCALE(adc_tlv, 0, 100, 0);
- 
-+/* DRE Level. From -12 dB to -66 dB in 1 dB steps */
-+static DECLARE_TLV_DB_SCALE(dre_thresh_tlv, -6600, 100, 0);
-+/* DRE Max Gain. From 2 dB to 26 dB in 2 dB steps */
-+static DECLARE_TLV_DB_SCALE(dre_gain_tlv, 200, 200, 0);
-+
-+/* AGC Level. From -6 dB to -36 dB in 2 dB steps */
-+static DECLARE_TLV_DB_SCALE(agc_thresh_tlv, -3600, 200, 0);
-+/* AGC Max Gain. From 3 dB to 42 dB in 3 dB steps */
-+static DECLARE_TLV_DB_SCALE(agc_gain_tlv, 300, 300, 0);
-+
- static const char * const resistor_text[] = {
- 	"2.5 kOhm", "10 kOhm", "20 kOhm"
- };
-@@ -281,6 +292,18 @@ static const struct snd_kcontrol_new adcx140_dapm_ch3_en_switch =
- static const struct snd_kcontrol_new adcx140_dapm_ch4_en_switch =
- 	SOC_DAPM_SINGLE("Switch", ADCX140_ASI_OUT_CH_EN, 4, 1, 0);
- 
-+static const struct snd_kcontrol_new adcx140_dapm_ch1_dre_en_switch =
-+	SOC_DAPM_SINGLE("Switch", ADCX140_CH1_CFG0, 0, 1, 0);
-+static const struct snd_kcontrol_new adcx140_dapm_ch2_dre_en_switch =
-+	SOC_DAPM_SINGLE("Switch", ADCX140_CH2_CFG0, 0, 1, 0);
-+static const struct snd_kcontrol_new adcx140_dapm_ch3_dre_en_switch =
-+	SOC_DAPM_SINGLE("Switch", ADCX140_CH3_CFG0, 0, 1, 0);
-+static const struct snd_kcontrol_new adcx140_dapm_ch4_dre_en_switch =
-+	SOC_DAPM_SINGLE("Switch", ADCX140_CH4_CFG0, 0, 1, 0);
-+
-+static const struct snd_kcontrol_new adcx140_dapm_dre_en_switch =
-+	SOC_DAPM_SINGLE("Switch", ADCX140_DSP_CFG1, 3, 1, 0);
-+
- /* Output Mixer */
- static const struct snd_kcontrol_new adcx140_output_mixer_controls[] = {
- 	SOC_DAPM_SINGLE("Digital CH1 Switch", 0, 0, 0, 0),
-@@ -361,6 +384,18 @@ static const struct snd_soc_dapm_widget adcx140_dapm_widgets[] = {
- 	SND_SOC_DAPM_SWITCH("CH4_ASI_EN", SND_SOC_NOPM, 0, 0,
- 			    &adcx140_dapm_ch4_en_switch),
- 
-+	SND_SOC_DAPM_SWITCH("DRE_ENABLE", SND_SOC_NOPM, 0, 0,
-+			    &adcx140_dapm_dre_en_switch),
-+
-+	SND_SOC_DAPM_SWITCH("CH1_DRE_EN", SND_SOC_NOPM, 0, 0,
-+			    &adcx140_dapm_ch1_dre_en_switch),
-+	SND_SOC_DAPM_SWITCH("CH2_DRE_EN", SND_SOC_NOPM, 0, 0,
-+			    &adcx140_dapm_ch2_dre_en_switch),
-+	SND_SOC_DAPM_SWITCH("CH3_DRE_EN", SND_SOC_NOPM, 0, 0,
-+			    &adcx140_dapm_ch3_dre_en_switch),
-+	SND_SOC_DAPM_SWITCH("CH4_DRE_EN", SND_SOC_NOPM, 0, 0,
-+			    &adcx140_dapm_ch4_dre_en_switch),
-+
- 	SND_SOC_DAPM_MUX("IN1 Analog Mic Resistor", SND_SOC_NOPM, 0, 0,
- 			in1_resistor_controls),
- 	SND_SOC_DAPM_MUX("IN2 Analog Mic Resistor", SND_SOC_NOPM, 0, 0,
-@@ -383,6 +418,16 @@ static const struct snd_soc_dapm_route adcx140_audio_map[] = {
- 	{"CH3_ASI_EN", "Switch", "CH3_ADC"},
- 	{"CH4_ASI_EN", "Switch", "CH4_ADC"},
- 
-+	{"DRE_ENABLE", "Switch", "CH1_DRE_EN"},
-+	{"DRE_ENABLE", "Switch", "CH2_DRE_EN"},
-+	{"DRE_ENABLE", "Switch", "CH3_DRE_EN"},
-+	{"DRE_ENABLE", "Switch", "CH4_DRE_EN"},
-+
-+	{"CH1_DRE_EN", "Switch", "CH1_ADC"},
-+	{"CH2_DRE_EN", "Switch", "CH2_ADC"},
-+	{"CH3_DRE_EN", "Switch", "CH3_ADC"},
-+	{"CH4_DRE_EN", "Switch", "CH4_ADC"},
-+
- 	/* Mic input */
- 	{"CH1_ADC", NULL, "MIC_GAIN_CTL_CH1"},
- 	{"CH2_ADC", NULL, "MIC_GAIN_CTL_CH2"},
-@@ -455,6 +500,16 @@ static const struct snd_kcontrol_new adcx140_snd_controls[] = {
- 	SOC_SINGLE_TLV("Analog CH4 Mic Gain Volume", ADCX140_CH1_CFG4, 2, 42, 0,
- 			adc_tlv),
- 
-+	SOC_SINGLE_TLV("DRE Threshold", ADCX140_DRE_CFG0, 4, 9, 0,
-+		       dre_thresh_tlv),
-+	SOC_SINGLE_TLV("DRE Max Gain", ADCX140_DRE_CFG0, 0, 12, 0,
-+		       dre_gain_tlv),
-+
-+	SOC_SINGLE_TLV("AGC Threshold", ADCX140_AGC_CFG0, 4, 15, 0,
-+		       agc_thresh_tlv),
-+	SOC_SINGLE_TLV("AGC Max Gain", ADCX140_AGC_CFG0, 0, 13, 0,
-+		       agc_gain_tlv),
-+
- 	SOC_SINGLE_TLV("Digital CH1 Out Volume", ADCX140_CH1_CFG2,
- 			0, 0xff, 0, dig_vol_tlv),
- 	SOC_SINGLE_TLV("Digital CH2 Out Volume", ADCX140_CH2_CFG2,
-diff --git a/sound/soc/codecs/tlv320adcx140.h b/sound/soc/codecs/tlv320adcx140.h
-index 66b1c3b33f1e..6d055e55909e 100644
---- a/sound/soc/codecs/tlv320adcx140.h
-+++ b/sound/soc/codecs/tlv320adcx140.h
-@@ -84,6 +84,7 @@
- #define ADCX140_DSP_CFG0	0x6b
- #define ADCX140_DSP_CFG1	0x6c
- #define ADCX140_DRE_CFG0	0x6d
-+#define ADCX140_AGC_CFG0	0x70
- #define ADCX140_IN_CH_EN	0x73
- #define ADCX140_ASI_OUT_CH_EN	0x74
- #define ADCX140_PWR_CFG		0x75
--- 
-2.20.1
+Just a respin including Jeff's suggestions from initial post.
 
+Changes since v1:
+
+- Don't bother trying a second splice once we fail during the remote
+  object copies; let user-space retry instead.
+
+Cheers,
+--
+Luis
+
+ fs/ceph/file.c | 173 ++++++++++++++++++++++++++++---------------------
+ 1 file changed, 100 insertions(+), 73 deletions(-)
+
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index c3b8e8e0bf17..e0bae6b71d7b 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1931,6 +1931,71 @@ static int is_file_size_ok(struct inode *src_inode, struct inode *dst_inode,
+ 	return 0;
+ }
+ 
++static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off,
++				    struct ceph_inode_info *dst_ci, u64 *dst_off,
++				    struct ceph_fs_client *fsc,
++				    size_t len, unsigned int flags)
++{
++	struct ceph_object_locator src_oloc, dst_oloc;
++	struct ceph_object_id src_oid, dst_oid;
++	size_t bytes = 0;
++	u64 src_objnum, src_objoff, dst_objnum, dst_objoff;
++	u32 src_objlen, dst_objlen;
++	u32 object_size = src_ci->i_layout.object_size;
++	int ret;
++
++	src_oloc.pool = src_ci->i_layout.pool_id;
++	src_oloc.pool_ns = ceph_try_get_string(src_ci->i_layout.pool_ns);
++	dst_oloc.pool = dst_ci->i_layout.pool_id;
++	dst_oloc.pool_ns = ceph_try_get_string(dst_ci->i_layout.pool_ns);
++
++	while (len >= object_size) {
++		ceph_calc_file_object_mapping(&src_ci->i_layout, *src_off,
++					      object_size, &src_objnum,
++					      &src_objoff, &src_objlen);
++		ceph_calc_file_object_mapping(&dst_ci->i_layout, *dst_off,
++					      object_size, &dst_objnum,
++					      &dst_objoff, &dst_objlen);
++		ceph_oid_init(&src_oid);
++		ceph_oid_printf(&src_oid, "%llx.%08llx",
++				src_ci->i_vino.ino, src_objnum);
++		ceph_oid_init(&dst_oid);
++		ceph_oid_printf(&dst_oid, "%llx.%08llx",
++				dst_ci->i_vino.ino, dst_objnum);
++		/* Do an object remote copy */
++		ret = ceph_osdc_copy_from(&fsc->client->osdc,
++					  src_ci->i_vino.snap, 0,
++					  &src_oid, &src_oloc,
++					  CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
++					  CEPH_OSD_OP_FLAG_FADVISE_NOCACHE,
++					  &dst_oid, &dst_oloc,
++					  CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
++					  CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
++					  dst_ci->i_truncate_seq,
++					  dst_ci->i_truncate_size,
++					  CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
++		if (ret) {
++			if (ret == -EOPNOTSUPP) {
++				fsc->have_copy_from2 = false;
++				pr_notice("OSDs don't support copy-from2; disabling copy offload\n");
++			}
++			dout("ceph_osdc_copy_from returned %d\n", ret);
++			if (!bytes)
++				bytes = ret;
++			goto out;
++		}
++		len -= object_size;
++		bytes += object_size;
++		*src_off += object_size;
++		*dst_off += object_size;
++	}
++
++out:
++	ceph_oloc_destroy(&src_oloc);
++	ceph_oloc_destroy(&dst_oloc);
++	return bytes;
++}
++
+ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 				      struct file *dst_file, loff_t dst_off,
+ 				      size_t len, unsigned int flags)
+@@ -1941,14 +2006,11 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 	struct ceph_inode_info *dst_ci = ceph_inode(dst_inode);
+ 	struct ceph_cap_flush *prealloc_cf;
+ 	struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
+-	struct ceph_object_locator src_oloc, dst_oloc;
+-	struct ceph_object_id src_oid, dst_oid;
+-	loff_t endoff = 0, size;
+-	ssize_t ret = -EIO;
++	loff_t size;
++	ssize_t ret = -EIO, bytes;
+ 	u64 src_objnum, dst_objnum, src_objoff, dst_objoff;
+-	u32 src_objlen, dst_objlen, object_size;
++	u32 src_objlen, dst_objlen;
+ 	int src_got = 0, dst_got = 0, err, dirty;
+-	bool do_final_copy = false;
+ 
+ 	if (src_inode->i_sb != dst_inode->i_sb) {
+ 		struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
+@@ -2026,22 +2088,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 	if (ret < 0)
+ 		goto out_caps;
+ 
+-	size = i_size_read(dst_inode);
+-	endoff = dst_off + len;
+-
+ 	/* Drop dst file cached pages */
+ 	ret = invalidate_inode_pages2_range(dst_inode->i_mapping,
+ 					    dst_off >> PAGE_SHIFT,
+-					    endoff >> PAGE_SHIFT);
++					    (dst_off + len) >> PAGE_SHIFT);
+ 	if (ret < 0) {
+ 		dout("Failed to invalidate inode pages (%zd)\n", ret);
+ 		ret = 0; /* XXX */
+ 	}
+-	src_oloc.pool = src_ci->i_layout.pool_id;
+-	src_oloc.pool_ns = ceph_try_get_string(src_ci->i_layout.pool_ns);
+-	dst_oloc.pool = dst_ci->i_layout.pool_id;
+-	dst_oloc.pool_ns = ceph_try_get_string(dst_ci->i_layout.pool_ns);
+-
+ 	ceph_calc_file_object_mapping(&src_ci->i_layout, src_off,
+ 				      src_ci->i_layout.object_size,
+ 				      &src_objnum, &src_objoff, &src_objlen);
+@@ -2060,6 +2114,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 	 * starting at the src_off
+ 	 */
+ 	if (src_objoff) {
++		dout("Initial partial copy of %u bytes\n", src_objlen);
++
+ 		/*
+ 		 * we need to temporarily drop all caps as we'll be calling
+ 		 * {read,write}_iter, which will get caps again.
+@@ -2067,8 +2123,9 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 		put_rd_wr_caps(src_ci, src_got, dst_ci, dst_got);
+ 		ret = do_splice_direct(src_file, &src_off, dst_file,
+ 				       &dst_off, src_objlen, flags);
+-		if (ret < 0) {
+-			dout("do_splice_direct returned %d\n", err);
++		/* Abort on short copies or on error */
++		if (ret < src_objlen) {
++			dout("Failed partial copy (%zd)\n", ret);
+ 			goto out;
+ 		}
+ 		len -= ret;
+@@ -2081,62 +2138,29 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 		if (err < 0)
+ 			goto out_caps;
+ 	}
+-	object_size = src_ci->i_layout.object_size;
+-	while (len >= object_size) {
+-		ceph_calc_file_object_mapping(&src_ci->i_layout, src_off,
+-					      object_size, &src_objnum,
+-					      &src_objoff, &src_objlen);
+-		ceph_calc_file_object_mapping(&dst_ci->i_layout, dst_off,
+-					      object_size, &dst_objnum,
+-					      &dst_objoff, &dst_objlen);
+-		ceph_oid_init(&src_oid);
+-		ceph_oid_printf(&src_oid, "%llx.%08llx",
+-				src_ci->i_vino.ino, src_objnum);
+-		ceph_oid_init(&dst_oid);
+-		ceph_oid_printf(&dst_oid, "%llx.%08llx",
+-				dst_ci->i_vino.ino, dst_objnum);
+-		/* Do an object remote copy */
+-		err = ceph_osdc_copy_from(
+-			&src_fsc->client->osdc,
+-			src_ci->i_vino.snap, 0,
+-			&src_oid, &src_oloc,
+-			CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
+-			CEPH_OSD_OP_FLAG_FADVISE_NOCACHE,
+-			&dst_oid, &dst_oloc,
+-			CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
+-			CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
+-			dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
+-			CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
+-		if (err) {
+-			if (err == -EOPNOTSUPP) {
+-				src_fsc->have_copy_from2 = false;
+-				pr_notice("OSDs don't support copy-from2; disabling copy offload\n");
+-			}
+-			dout("ceph_osdc_copy_from returned %d\n", err);
+-			if (!ret)
+-				ret = err;
+-			goto out_caps;
+-		}
+-		len -= object_size;
+-		src_off += object_size;
+-		dst_off += object_size;
+-		ret += object_size;
+-	}
+ 
+-	if (len)
+-		/* We still need one final local copy */
+-		do_final_copy = true;
++	size = i_size_read(dst_inode);
++	bytes = ceph_do_objects_copy(src_ci, &src_off, dst_ci, &dst_off,
++				     src_fsc, len, flags);
++	if (bytes <= 0) {
++		if (!ret)
++			ret = bytes;
++		goto out_caps;
++	}
++	dout("Copied %zu bytes out of %zu\n", bytes, len);
++	len -= bytes;
++	ret += bytes;
+ 
+ 	file_update_time(dst_file);
+ 	inode_inc_iversion_raw(dst_inode);
+ 
+-	if (endoff > size) {
++	if (dst_off > size) {
+ 		int caps_flags = 0;
+ 
+ 		/* Let the MDS know about dst file size change */
+-		if (ceph_quota_is_max_bytes_approaching(dst_inode, endoff))
++		if (ceph_quota_is_max_bytes_approaching(dst_inode, dst_off))
+ 			caps_flags |= CHECK_CAPS_NODELAY;
+-		if (ceph_inode_set_size(dst_inode, endoff))
++		if (ceph_inode_set_size(dst_inode, dst_off))
+ 			caps_flags |= CHECK_CAPS_AUTHONLY;
+ 		if (caps_flags)
+ 			ceph_check_caps(dst_ci, caps_flags, NULL);
+@@ -2152,15 +2176,18 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ out_caps:
+ 	put_rd_wr_caps(src_ci, src_got, dst_ci, dst_got);
+ 
+-	if (do_final_copy) {
+-		err = do_splice_direct(src_file, &src_off, dst_file,
+-				       &dst_off, len, flags);
+-		if (err < 0) {
+-			dout("do_splice_direct returned %d\n", err);
+-			goto out;
+-		}
+-		len -= err;
+-		ret += err;
++	/*
++	 * Do the final manual copy if we still have some bytes left, unless
++	 * there were errors in remote object copies (len >= object_size).
++	 */
++	if (len && (len < src_ci->i_layout.object_size)) {
++		dout("Final partial copy of %zu bytes\n", len);
++		bytes = do_splice_direct(src_file, &src_off, dst_file,
++					 &dst_off, len, flags);
++		if (bytes > 0)
++			ret += bytes;
++		else
++			dout("Failed partial copy (%zd)\n", bytes);
+ 	}
+ 
+ out:
