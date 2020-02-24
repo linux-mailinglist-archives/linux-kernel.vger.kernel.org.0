@@ -2,133 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7450516AB4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:26:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5FA316AB65
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:28:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbgBXQ0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:26:31 -0500
-Received: from mail-pf1-f175.google.com ([209.85.210.175]:34202 "EHLO
-        mail-pf1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727160AbgBXQ0b (ORCPT
+        id S1727948AbgBXQ2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:28:48 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:49320 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727299AbgBXQ2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:26:31 -0500
-Received: by mail-pf1-f175.google.com with SMTP id i6so5622187pfc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 08:26:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=es-iitr-ac-in.20150623.gappssmtp.com; s=20150623;
-        h=from:date:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=m2SYjv+WSIEyCd9YYi/1aawcHK0IZwr//QTPDichDN0=;
-        b=IdepHxc6KkcyTk8ncFDkh5MXIGnZ/47N3RqgZ0sd8tuKKO9B8glAf9z2NKCH30gRkw
-         ZqQCm+kELeNc7VR7B2uKTrTTHWazMdrBrp5gdRh8UK+mW9kOuwTpmWlyqID/wG3dxsZd
-         wIL5kof/O4t5+x8WtjaMRFEw0F/udp/D43ah/OeAJFiRLwROHo7ODPGjS4E5Xtwcrku4
-         bLueJRXUC8WAKCJkumnDTB3TnJBBlBYqh72xwUjMThPTGnhEpbZFbhRuyvHvgNszJzkv
-         4QZhZIxxug87/FXM9arlkD8Axb9TNGd1vqXkDAowPf8rVr6jKFu/iAxFVww2Se95c+PO
-         fM7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m2SYjv+WSIEyCd9YYi/1aawcHK0IZwr//QTPDichDN0=;
-        b=fO38s8QPIfb7OkmrauJgbO7avtux66QETLsGtSjoruhSk5SdTWKBxU8/xYXPMW+LQ2
-         UJs54z3Yv2BfKOEbnUQBX4dv8+QJ5hGuJsQAxQEzFVHPS8z2ioz5/tRyNCLI1oChh0ai
-         hzgxVndQWmTfJmsySsggCCRCB6ZM1jZaBKUGSXowXEi82zDA91nuSIVSl6yzinh0j78J
-         pObevvKTeRNGveZ5Ct1EbxV02RHDosFMVxQSpPEw41b4Dvg7Ti625rLXigGf2d4TMDGR
-         Tj9qWaQ9gj/WIkElBJEPYHGFy+M0OXMN3NRGZZG39pilfl1NFoZVeDQ9+EA1kmEfStaV
-         dy6A==
-X-Gm-Message-State: APjAAAVRdpIojbMg7sr+2d9UeDJWquoSl0nSOYxUeovsYVrYp9J9+GSx
-        V760uVGkN6/I15FuphMe7nYuVQ==
-X-Google-Smtp-Source: APXvYqy2QAxSH9ctP0UdJ+fs8W2TMLmCqGTbi8rEuL1kdzOsyFTeq3R31E6PiTreju3ez36x0mrg0A==
-X-Received: by 2002:a62:7b93:: with SMTP id w141mr53773935pfc.226.1582561587654;
-        Mon, 24 Feb 2020 08:26:27 -0800 (PST)
-Received: from kaaira-HP-Pavilion-Notebook ([103.37.201.170])
-        by smtp.gmail.com with ESMTPSA id y3sm14025292pff.52.2020.02.24.08.26.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Feb 2020 08:26:27 -0800 (PST)
-From:   Kaaira Gupta <kgupta@es.iitr.ac.in>
-X-Google-Original-From: Kaaira Gupta <Kaairakgupta@es.iitr.ac.in>
-Date:   Mon, 24 Feb 2020 21:56:21 +0530
-To:     Joe Perches <joe@perches.com>, jerome.pouiller@silabs.com,
+        Mon, 24 Feb 2020 11:28:47 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j6Gb9-0004LB-2f; Mon, 24 Feb 2020 09:28:47 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j6Gb7-0007hr-Mu; Mon, 24 Feb 2020 09:28:46 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: wfx: data_tx.c: match parentheses alignment
-Message-ID: <20200224162621.GA6611@kaaira-HP-Pavilion-Notebook>
-References: <20200223193201.GA20843@kaaira-HP-Pavilion-Notebook>
- <8c458c189abb45fb3021f7882a40d28a24cc662d.camel@perches.com>
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>
+References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
+        <87v9odlxbr.fsf@x220.int.ebiederm.org>
+        <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
+        <87tv3vkg1a.fsf@x220.int.ebiederm.org>
+        <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+        <87v9obipk9.fsf@x220.int.ebiederm.org>
+        <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
+        <20200212200335.GO23230@ZenIV.linux.org.uk>
+        <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
+        <20200212203833.GQ23230@ZenIV.linux.org.uk>
+        <20200212204124.GR23230@ZenIV.linux.org.uk>
+        <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
+        <87lfp7h422.fsf@x220.int.ebiederm.org>
+        <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+        <87pnejf6fz.fsf@x220.int.ebiederm.org>
+        <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
+        <871rqk2brn.fsf_-_@x220.int.ebiederm.org>
+Date:   Mon, 24 Feb 2020 10:26:42 -0600
+In-Reply-To: <871rqk2brn.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Mon, 24 Feb 2020 10:25:16 -0600")
+Message-ID: <87v9nw0x4t.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c458c189abb45fb3021f7882a40d28a24cc662d.camel@perches.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-XM-SPF: eid=1j6Gb7-0007hr-Mu;;;mid=<87v9nw0x4t.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+1jB7207zqKuGkzNocTI/FE1FQ8bEJSFo=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,LotsOfNums_01,T_TooManySym_01,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4979]
+        *  0.7 XMSubLong Long Subject
+        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=98]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=98 
+X-Spam-Combo: *;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 533 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 2.9 (0.5%), b_tie_ro: 2.0 (0.4%), parse: 0.97
+        (0.2%), extract_message_metadata: 11 (2.1%), get_uri_detail_list: 1.63
+        (0.3%), tests_pri_-1000: 15 (2.8%), tests_pri_-950: 1.24 (0.2%),
+        tests_pri_-900: 1.04 (0.2%), tests_pri_-90: 27 (5.0%), check_bayes: 25
+        (4.8%), b_tokenize: 10 (1.9%), b_tok_get_all: 7 (1.4%), b_comp_prob:
+        2.1 (0.4%), b_tok_touch_all: 3.9 (0.7%), b_finish: 0.62 (0.1%),
+        tests_pri_0: 462 (86.7%), check_dkim_signature: 0.61 (0.1%),
+        check_dkim_adsp: 2.4 (0.5%), poll_dns_idle: 0.64 (0.1%), tests_pri_10:
+        2.1 (0.4%), tests_pri_500: 7 (1.3%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH v2 1/6] proc: Rename in proc_inode rename sysctl_inodes sibling_inodes
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 06:13:32AM -0800, Joe Perches wrote:
-> On Mon, 2020-02-24 at 01:02 +0530, Kaaira Gupta wrote:
-> > Match next line with open parentheses by giving appropriate tabs.
 
-Changed the first word to caps. Will keep this in mind from now on.
-Thanks!
+I about to need and use the same functionality for pid based
+inodes and there is no point in adding a second field when
+this field is already here and serving the same purporse.
 
-> 
-> This patch is only for data_tx.c
-> 
-> There are many more parentheses that are not aligned
-> in staging/wfx in other files.
-> 
-> Realistically, either change the subject to show
-> that it's only for data_tx or do them all.
+Just give the field a generic name so it is clear that
+it is no longer sysctl specific.
 
-I have made the changes in the subject line and will submit a separate
-patch with clean-ups in all the other files
+Also for good measure initialize sibling_inodes when
+proc_inode is initialized.
 
-> 
-> (but not traces.h, those use a different style)
-> 
-> $ ./scripts/checkpatch.pl -f --terse --nosummary --types=parenthesis_alignment drivers/staging/wfx/*.[ch]
-> drivers/staging/wfx/data_tx.c:303: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/data_tx.c:371: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/debug.c:35: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/key.c:35: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/key.c:45: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/key.c:55: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/key.c:72: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/key.c:97: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/key.c:106: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/key.c:118: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/key.c:133: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/key.c:147: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/queue.c:393: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/queue.c:408: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/queue.c:433: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/sta.c:123: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/sta.c:235: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/sta.c:291: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/sta.c:340: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/sta.c:717: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:156: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:194: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:206: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:211: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:234: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:257: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:265: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:271: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:278: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:296: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:302: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:307: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:313: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:324: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:329: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:334: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:351: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:362: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:416: CHECK: Alignment should match open parenthesis
-> drivers/staging/wfx/traces.h:418: CHECK: Alignment should match open parenthesis
-> 
-> 
-> 
-> 
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+---
+ fs/proc/inode.c       | 1 +
+ fs/proc/internal.h    | 2 +-
+ fs/proc/proc_sysctl.c | 8 ++++----
+ 3 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 6da18316d209..bdae442d5262 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -68,6 +68,7 @@ static struct inode *proc_alloc_inode(struct super_block *sb)
+ 	ei->pde = NULL;
+ 	ei->sysctl = NULL;
+ 	ei->sysctl_entry = NULL;
++	INIT_HLIST_NODE(&ei->sibling_inodes);
+ 	ei->ns_ops = NULL;
+ 	return &ei->vfs_inode;
+ }
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 41587276798e..366cd3aa690b 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -91,7 +91,7 @@ struct proc_inode {
+ 	struct proc_dir_entry *pde;
+ 	struct ctl_table_header *sysctl;
+ 	struct ctl_table *sysctl_entry;
+-	struct hlist_node sysctl_inodes;
++	struct hlist_node sibling_inodes;
+ 	const struct proc_ns_operations *ns_ops;
+ 	struct inode vfs_inode;
+ } __randomize_layout;
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index c75bb4632ed1..42fbb7f3c587 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -279,9 +279,9 @@ static void proc_sys_prune_dcache(struct ctl_table_header *head)
+ 		node = hlist_first_rcu(&head->inodes);
+ 		if (!node)
+ 			break;
+-		ei = hlist_entry(node, struct proc_inode, sysctl_inodes);
++		ei = hlist_entry(node, struct proc_inode, sibling_inodes);
+ 		spin_lock(&sysctl_lock);
+-		hlist_del_init_rcu(&ei->sysctl_inodes);
++		hlist_del_init_rcu(&ei->sibling_inodes);
+ 		spin_unlock(&sysctl_lock);
+ 
+ 		inode = &ei->vfs_inode;
+@@ -483,7 +483,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
+ 	}
+ 	ei->sysctl = head;
+ 	ei->sysctl_entry = table;
+-	hlist_add_head_rcu(&ei->sysctl_inodes, &head->inodes);
++	hlist_add_head_rcu(&ei->sibling_inodes, &head->inodes);
+ 	head->count++;
+ 	spin_unlock(&sysctl_lock);
+ 
+@@ -514,7 +514,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
+ void proc_sys_evict_inode(struct inode *inode, struct ctl_table_header *head)
+ {
+ 	spin_lock(&sysctl_lock);
+-	hlist_del_init_rcu(&PROC_I(inode)->sysctl_inodes);
++	hlist_del_init_rcu(&PROC_I(inode)->sibling_inodes);
+ 	if (!--head->count)
+ 		kfree_rcu(head, rcu);
+ 	spin_unlock(&sysctl_lock);
+-- 
+2.25.0
+
