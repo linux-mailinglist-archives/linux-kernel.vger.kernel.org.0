@@ -2,107 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F2B116B594
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:31:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5703416B59A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:31:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbgBXXbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:31:20 -0500
-Received: from mga17.intel.com ([192.55.52.151]:27849 "EHLO mga17.intel.com"
+        id S1728592AbgBXXbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:31:50 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:33299 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728412AbgBXXbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:31:19 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 15:31:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
-   d="scan'208";a="284499484"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by FMSMGA003.fm.intel.com with ESMTP; 24 Feb 2020 15:31:19 -0800
-Date:   Mon, 24 Feb 2020 15:31:19 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 48/61] KVM: x86: Do host CPUID at load time to mask KVM
- cpu caps
-Message-ID: <20200224233119.GS29865@linux.intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
- <20200201185218.24473-49-sean.j.christopherson@intel.com>
- <87o8tnmwni.fsf@vitty.brq.redhat.com>
+        id S1727843AbgBXXbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 18:31:49 -0500
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 48RJHS1d3Gz9sQt; Tue, 25 Feb 2020 10:31:47 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1582587108;
+        bh=dgwevY/cbVBUKvHBjKo8eRwTGaVpoR07XLgC87drZAs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OlLvd/khE22BvAY7FkF1axztd0x6G5QdCblYJx6mhD2FFaXz0Nte1soEfRJvZmUUB
+         Tcsm8tmBQq8uY0+8acHI97OQMBfj3nMij37tUBjUUus30ciwBaOCXWNbFltiiZ4fGG
+         Itdx7yFMSQb6CwFonqg7wvSKQxqM3W0G0kyoBPrP+IONe8JP+Mj1fcKjHCz3S2Tg+2
+         1Nz8t5vLXwmctNMU+Jms2l99/b5nxQ5fBAQJES5+Bcv4QkfNbv2dO/cNXrcJIdLX5C
+         OfTMOGfqriVzjaL2WDwrJn72xlGK6AzExIMDEQD9wj8K+bfDNTf8HQAKwRmWdAPAry
+         jXRTDNk+j8V4g==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     linuxppc-dev@ozlabs.org
+Cc:     linux-kernel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Subject: [PATCH 1/8] powerpc: Update MAINTAINERS
+Date:   Tue, 25 Feb 2020 10:31:39 +1100
+Message-Id: <20200224233146.23734-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o8tnmwni.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 11:46:09PM +0100, Vitaly Kuznetsov wrote:
-> Sean Christopherson <sean.j.christopherson@intel.com> writes:
-> 
-> > Mask kvm_cpu_caps based on host CPUID in preparation for overriding the
-> > CPUID results during KVM_GET_SUPPORTED_CPUID instead of doing the
-> > masking at runtime.
-> >
-> > Note, masking may or may not be necessary, e.g. the kernel rarely, if
-> > ever, sets real CPUID bits that are not supported by hardware.  But, the
-> > code is cheap and only runs once at load, so an abundance of caution is
-> > warranted.
-> >
-> > No functional change intended.
-> >
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > ---
-> >  arch/x86/kvm/cpuid.c | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
-> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> > index ab2a34337588..4416f2422321 100644
-> > --- a/arch/x86/kvm/cpuid.c
-> > +++ b/arch/x86/kvm/cpuid.c
-> > @@ -272,8 +272,22 @@ static __always_inline void cpuid_entry_mask(struct kvm_cpuid_entry2 *entry,
-> >  
-> >  static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
-> >  {
-> > +	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
-> > +	struct kvm_cpuid_entry2 entry;
-> > +
-> >  	reverse_cpuid_check(leaf);
-> >  	kvm_cpu_caps[leaf] &= mask;
-> > +
-> > +#ifdef CONFIG_KVM_CPUID_AUDIT
-> > +	/* Entry needs to be fully populated when auditing is enabled. */
-> > +	entry.function = cpuid.function;
-> > +	entry.index = cpuid.index;
-> > +#endif
-> > +
-> > +	cpuid_count(cpuid.function, cpuid.index,
-> > +		    &entry.eax, &entry.ebx, &entry.ecx, &entry.edx);
-> > +
-> > +	kvm_cpu_caps[leaf] &= *__cpuid_entry_get_reg(&entry, &cpuid);
-> >  }
-> >  
-> >  void kvm_set_cpu_caps(void)
-> 
-> If we don't really believe that masking will actually mask anything,
-> maybe we should move it under '#ifdef CONFIG_KVM_CPUID_AUDIT'? And/or 
-> add a WARN_ON()?
+A while back Paul pointed out I'd been maintaining the tree more or
+less solo for over five years, so perhaps it's time to update the
+MAINTAINERS entry.
 
-I'm not opposed to trying that, but I'd definitely want to do it as a
-separate patch, or maybe even let it stew separately in kvm/queue for a
-few cycles.
+Ben & Paul still wrote most of the code, so keep them as Reviewers so
+they still get Cc'ed on things. But if you're wondering why your patch
+hasn't been merged that's my fault.
 
-> The patch itself looks good, so:
-> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> 
-> -- 
-> Vitaly
-> 
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fcd79fc38928..339bc3e53862 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9601,9 +9601,9 @@ F:	arch/powerpc/platforms/powermac/
+ F:	drivers/macintosh/
+ 
+ LINUX FOR POWERPC (32-BIT AND 64-BIT)
+-M:	Benjamin Herrenschmidt <benh@kernel.crashing.org>
+-M:	Paul Mackerras <paulus@samba.org>
+ M:	Michael Ellerman <mpe@ellerman.id.au>
++R:	Benjamin Herrenschmidt <benh@kernel.crashing.org>
++R:	Paul Mackerras <paulus@samba.org>
+ W:	https://github.com/linuxppc/linux/wiki
+ L:	linuxppc-dev@lists.ozlabs.org
+ Q:	http://patchwork.ozlabs.org/project/linuxppc-dev/list/
+-- 
+2.21.1
+
