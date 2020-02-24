@@ -2,68 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F7C169E93
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 07:39:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C4FB169EB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 07:44:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbgBXGjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 01:39:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35300 "EHLO mail.kernel.org"
+        id S1727357AbgBXGn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 01:43:59 -0500
+Received: from ozlabs.org ([203.11.71.1]:56775 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbgBXGjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 01:39:40 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BC9820661;
-        Mon, 24 Feb 2020 06:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582526379;
-        bh=E75ambiZWtDC8+PzuPEM8PwrEqFHtP0j+JO70AOquzo=;
+        id S1727306AbgBXGn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 01:43:56 -0500
+Received: by ozlabs.org (Postfix, from userid 1007)
+        id 48QswS4FsCz9sSD; Mon, 24 Feb 2020 17:43:52 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=gibson.dropbear.id.au; s=201602; t=1582526632;
+        bh=PgCI+bQgZ1XEAWYR7dFuO4T5LpjfnQ3xxjbWGrDvPA0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VVGC9XIfm/Ss6rxMN8hoMIyaU6Mbgjg2qJU69VxnHI7Ms0QJQvAtUG/3GAPo/X/jH
-         oCZi/v+bq0pWYxbA82xUjWibhiPKwuRq88DwYHiIA0KBP3S9srMb5tqDXTlSBEZL1U
-         7+9zNlk+NF02H24zKGrNunIVRbPZ/y8CYnxi9V7c=
-Date:   Mon, 24 Feb 2020 14:39:33 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Michael Walle <michael@walle.cc>, Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        netdev <netdev@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Vivien Didelot <vivien.didelot@gmail.com>
-Subject: Re: [PATCH v2 net-next/devicetree 5/5] arm64: dts: fsl: ls1028a:
- enable switch PHYs on RDB
-Message-ID: <20200224063933.GN27688@dragon>
-References: <20200219151259.14273-6-olteanv@gmail.com>
- <20200222114136.595-1-michael@walle.cc>
- <CA+h21hrXAFWfjcKfj+QAcQauDqvLS0Vzp9Uvv6ewqxDSF7yRpg@mail.gmail.com>
+        b=EdoHemir0eTgk8BRcIPowD0AcmEOyYGN8DMhWrfYjA45tXuHpS0wUH3Y65npJ23PS
+         2pQo0daNHIii7W9t8lSK+AezB8S3C4RPLWlBDg3Tf3LiPs2CQWVzeigXD7nDQXprhX
+         toNPDPF6tsj41hTAEsfQxq38VaNq0RlRTNO+xg6U=
+Date:   Mon, 24 Feb 2020 17:40:41 +1100
+From:   David Gibson <david@gibson.dropbear.id.au>
+To:     Tom Lendacky <thomas.lendacky@amd.com>
+Cc:     Halil Pasic <pasic@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>, linux-s390@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Michael Mueller <mimu@linux.ibm.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Huang, Wei" <wei.huang2@amd.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: Re: [PATCH 2/2] virtio: let virtio use DMA API when guest RAM is
+ protected
+Message-ID: <20200224064041.GL1751@umbus.fritz.box>
+References: <20200220160606.53156-1-pasic@linux.ibm.com>
+ <20200220160606.53156-3-pasic@linux.ibm.com>
+ <20200220154904-mutt-send-email-mst@kernel.org>
+ <20200221141230.13eebc35.pasic@linux.ibm.com>
+ <bf0c87a2-adc6-a05a-835f-f98e7cd0cd3b@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="huBJOJF9BsF479P6"
 Content-Disposition: inline
-In-Reply-To: <CA+h21hrXAFWfjcKfj+QAcQauDqvLS0Vzp9Uvv6ewqxDSF7yRpg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <bf0c87a2-adc6-a05a-835f-f98e7cd0cd3b@amd.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 02:17:54PM +0200, Vladimir Oltean wrote:
-> Hi Michael,
-> 
-> On Sat, 22 Feb 2020 at 13:41, Michael Walle <michael@walle.cc> wrote:
-> >
-> > Hi,
-> >
-> > status should be the last property, correct?
-> >
-> > -michael
-> 
-> I know of no such convention to exist.
 
-Hmm, it's a convention for DTS files that I'm looking after.
+--huBJOJF9BsF479P6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Shawn
+On Fri, Feb 21, 2020 at 09:39:38AM -0600, Tom Lendacky wrote:
+> On 2/21/20 7:12 AM, Halil Pasic wrote:
+> > On Thu, 20 Feb 2020 15:55:14 -0500
+> > "Michael S. Tsirkin" <mst@redhat.com> wrote:
+> >=20
+> >> On Thu, Feb 20, 2020 at 05:06:06PM +0100, Halil Pasic wrote:
+> >>> Currently the advanced guest memory protection technologies (AMD SEV,
+> >>> powerpc secure guest technology and s390 Protected VMs) abuse the
+> >>> VIRTIO_F_IOMMU_PLATFORM flag to make virtio core use the DMA API, whi=
+ch
+> >>> is in turn necessary, to make IO work with guest memory protection.
+> >>>
+> >>> But VIRTIO_F_IOMMU_PLATFORM a.k.a. VIRTIO_F_ACCESS_PLATFORM is really=
+ a
+> >>> different beast: with virtio devices whose implementation runs on an =
+SMP
+> >>> CPU we are still fine with doing all the usual optimizations, it is j=
+ust
+> >>> that we need to make sure that the memory protection mechanism does n=
+ot
+> >>> get in the way. The VIRTIO_F_ACCESS_PLATFORM mandates more work on the
+> >>> side of the guest (and possibly he host side as well) than we actually
+> >>> need.
+> >>>
+> >>> An additional benefit of teaching the guest to make the right decision
+> >>> (and use DMA API) on it's own is: removing the need, to mandate speci=
+al
+> >>> VM configuration for guests that may run with protection. This is
+> >>> especially interesting for s390 as VIRTIO_F_IOMMU_PLATFORM pushes all
+> >>> the virtio control structures into the first 2G of guest memory:
+> >>> something we don't necessarily want to do per-default.
+> >>>
+> >>> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+> >>> Tested-by: Ram Pai <linuxram@us.ibm.com>
+> >>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> >>
+> >> This might work for you but it's fragile, since without
+> >> VIRTIO_F_ACCESS_PLATFORM hypervisor assumes it gets
+> >> GPA's, not DMA addresses.
+> >>
+> >=20
+> > Thanks for your constructive approach. I do want the hypervisor to
+> > assume it gets GPA's. My train of thought was that the guys that need
+> > to use IOVA's that are not GPA's when force_dma_unencrypted() will have
+> > to to specify VIRTIO_F_ACCESS_PLATFORM (at the device) anyway, because
+> > otherwise it won't work. But I see your point: in case of a
+> > mis-configuration and provided the DMA API returns IOVA's one could end
+> > up trying to touch wrong memory locations. But this should be similar to
+> > what would happen if DMA ops are not used, and memory is not made acces=
+sible.
+> >=20
+> >>
+> >>
+> >> IOW this looks like another iteration of:
+> >>
+> >> 	virtio: Support encrypted memory on powerpc secure guests
+> >>
+> >> which I was under the impression was abandoned as unnecessary.
+> >=20
+> > Unnecessary for powerpc because they do normal PCI. In the context of
+> > CCW there are only guest physical addresses (CCW I/O has no concept of
+> > IOMMU or IOVAs).
+> >=20
+> >>
+> >>
+> >> To summarize, the necessary conditions for a hack along these lines
+> >> (using DMA API without VIRTIO_F_ACCESS_PLATFORM) are that we detect th=
+at:
+> >>
+> >>   - secure guest mode is enabled - so we know that since we don't share
+> >>     most memory regular virtio code won't
+> >>     work, even though the buggy hypervisor didn't set VIRTIO_F_ACCESS_=
+PLATFORM
+> >=20
+> > force_dma_unencrypted(&vdev->dev) is IMHO exactly about this.
+> >=20
+> >>   - DMA API is giving us addresses that are actually also physical
+> >>     addresses
+> >=20
+> > In case of s390 this is given. I talked with the power people before
+> > posting this, and they ensured me they can are willing to deal with
+> > this. I was hoping to talk abut this with the AMD SEV people here (hence
+> > the cc).
+>=20
+> Yes, physical addresses are fine for SEV - the key is that the DMA API is
+> used so that an address for unencrypted, or shared, memory is returned.
+> E.g. for a dma_alloc_coherent() call this is an allocation that has had
+> set_memory_decrypted() called or for a dma_map_page() call this is an
+> address from SWIOTLB, which was mapped shared during boot, where the data
+> will be bounce-buffered.
+>=20
+> We don't currently support an emulated IOMMU in our SEV guest because that
+> would require a lot of support in the driver to make IOMMU data available
+> to the hypervisor (I/O page tables, etc.). We would need hardware support
+> to really make this work easily in the guest.
+
+A tangent here: note that on POWER our IOMMU is paravirtualized
+(updated with hypercalls), it's also always enabled.  For that reason
+we can and do combine vIOMMU translation with the need for bounce
+buffering for secure guests.
+
+(We generally statically configure the vIOMMU to have a huge window
+which just maps GPAs 1-to-1, which means we can still use dma-direct,
+but the vIOMMU is still there from the platform point of view)
+
+--=20
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
+
+--huBJOJF9BsF479P6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl5Tb+cACgkQbDjKyiDZ
+s5JuYA/+PfSvSTQHH+JQEj0OF/7dpLptTGSV1vu254FmtjttOv1Jp6vV1qNrERui
+WrRDf1Hu/dKxuJty9TNapcUvBHFWP5NtSSRXXYsTRm+A629Ykjtom+0/2TjOzKbF
+oX7NvwxIc33a0Y64z3cstNSKcj8eTrRZC1SvIwezFXL1uldfKOq+WH42U/cImXy7
+Br6oWhkuV5EHDcshTAQ2FLz6zxhzp0hPuL2+PrYETrqHJq2Vx08goX4ZgwH6iL40
+NDTT6JNniVQE3rZ8NimqdXJETTXVuqTKPVinVod77U6V/QSEKf1YYL9upvc6oYSU
+LZKsXAlQVgdSepYV/3PMafrZ6OhX0ZorfqzfDn/p0FkHYAKmSNgBG3mzI8JbIrE/
+kPCF6Jo8vbs0SX24V4N/cTFxAodz+YQaMGtf+IZQ1LB56XhQBv2GES82btCMM8Re
+1e6T6AXQuXUb0db5JsYzh9Iopa8cqABVVNqYKoCcDKll1bkCDW2OA0jK3qtz9wH6
+mNNLn8ZLZDX0OjwINwQK2brVa6p5UTrk0l+Tgg94EbpISG5R4pb1e9rGK8UUrVcg
+G4AqmwA8NkFmCJPEbeWxYwE2Rg73yJx1C3okR5KTC/odF/7Pw6KParzV1Wn3lMdz
+WLYS9wIe5ZmNIjpbAPS1dEM1cjyza4Qyuu3xyvKcoKuT/uxPl5c=
+=VdBp
+-----END PGP SIGNATURE-----
+
+--huBJOJF9BsF479P6--
