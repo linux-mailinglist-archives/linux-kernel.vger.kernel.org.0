@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCF2116B4D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:09:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A32516B4D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbgBXXJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:09:00 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:43484 "EHLO inva021.nxp.com"
+        id S1728575AbgBXXJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:09:02 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:44972 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728298AbgBXXId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728312AbgBXXId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 24 Feb 2020 18:08:33 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9A57C210046;
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E05211B0792;
         Tue, 25 Feb 2020 00:08:31 +0100 (CET)
 Received: from smtp.na-rdc02.nxp.com (usphx01srsp001v.us-phx01.nxp.com [134.27.49.11])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 63D98210045;
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A8A281B0786;
         Tue, 25 Feb 2020 00:08:31 +0100 (CET)
 Received: from right.am.freescale.net (right.am.freescale.net [10.81.116.70])
-        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id E931140A55;
-        Mon, 24 Feb 2020 16:08:30 -0700 (MST)
+        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id 3608440A63;
+        Mon, 24 Feb 2020 16:08:31 -0700 (MST)
 From:   Li Yang <leoyang.li@nxp.com>
 To:     shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>
-Subject: [PATCH 08/15] arm64: defconfig: Enable ARM SBSA watchdog driver
-Date:   Mon, 24 Feb 2020 17:08:03 -0600
-Message-Id: <1582585690-463-9-git-send-email-leoyang.li@nxp.com>
+Subject: [PATCH 09/15] arm64: defconfig: Enable QorIQ IFC NAND controller driver
+Date:   Mon, 24 Feb 2020 17:08:04 -0600
+Message-Id: <1582585690-463-10-git-send-email-leoyang.li@nxp.com>
 X-Mailer: git-send-email 1.9.0
 In-Reply-To: <1582585690-463-1-git-send-email-leoyang.li@nxp.com>
 References: <1582585690-463-1-git-send-email-leoyang.li@nxp.com>
@@ -35,26 +35,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enables ARM generic SBSA compatible watchdog driver for NXP LX2160a SoC.
-Enabled as built-in for it is a core feature.
+Enables NXP/FSL QorIQ IFC flash controller driver for NAND.  Enabled as
+built-in to load RFS from nand flash without initramfs.
 
 Signed-off-by: Li Yang <leoyang.li@nxp.com>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/configs/defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 996dc749ea5c..d2d5d470a6fc 100644
+index d2d5d470a6fc..a625e322fa27 100644
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -480,6 +480,7 @@ CONFIG_QCOM_SPMI_TEMP_ALARM=m
- CONFIG_UNIPHIER_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_ARM_SP805_WATCHDOG=y
-+CONFIG_ARM_SBSA_WATCHDOG=y
- CONFIG_S3C2410_WATCHDOG=y
- CONFIG_DW_WATCHDOG=y
- CONFIG_SUNXI_WATCHDOG=m
+@@ -217,6 +217,7 @@ CONFIG_MTD_BLOCK=y
+ CONFIG_MTD_RAW_NAND=y
+ CONFIG_MTD_NAND_DENALI_DT=y
+ CONFIG_MTD_NAND_MARVELL=y
++CONFIG_MTD_NAND_FSL_IFC=y
+ CONFIG_MTD_NAND_QCOM=y
+ CONFIG_MTD_SPI_NOR=y
+ CONFIG_SPI_CADENCE_QUADSPI=y
+@@ -801,7 +802,6 @@ CONFIG_ARCH_K3_J721E_SOC=y
+ CONFIG_TI_SCI_PM_DOMAINS=y
+ CONFIG_EXTCON_USB_GPIO=y
+ CONFIG_EXTCON_USBC_CROS_EC=y
+-CONFIG_MEMORY=y
+ CONFIG_IIO=y
+ CONFIG_EXYNOS_ADC=y
+ CONFIG_QCOM_SPMI_ADC5=m
 -- 
 2.17.1
 
