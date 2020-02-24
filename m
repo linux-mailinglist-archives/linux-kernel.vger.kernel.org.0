@@ -2,179 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9C7616A63E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:36:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C762316A649
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:38:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbgBXMfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 07:35:42 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:21187 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726778AbgBXMfm (ORCPT
+        id S1727438AbgBXMiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 07:38:08 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:36918 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727281AbgBXMiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 07:35:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582547741;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=A76EGrw49ZVRKmkTyfyUNvOOyxmLePhddhz/3ngCACc=;
-        b=P8411zTkx7ua9nNUfDHH5ePnNeMRrUvF5H15dlDWtJWO4muTsBxe5Hcn+iLJdGAyd3Nna0
-        dGPCHtKs/fRK5BotpT3qd9m+ptwZtb09qoIhcmHSlnzyxsTdtFjAUkvz8dRvPUvPCiLzfW
-        njY590SLV71BRFrv8LfCcUUqtU1aeiw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-194-Vn3EV3SMO1yNpkDnjwMgZw-1; Mon, 24 Feb 2020 07:35:33 -0500
-X-MC-Unique: Vn3EV3SMO1yNpkDnjwMgZw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D5E74DB60;
-        Mon, 24 Feb 2020 12:35:31 +0000 (UTC)
-Received: from krava (ovpn-204-56.brq.redhat.com [10.40.204.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1C28B1001B2C;
-        Mon, 24 Feb 2020 12:35:28 +0000 (UTC)
-Date:   Mon, 24 Feb 2020 13:35:26 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Jin Yao <yao.jin@linux.intel.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v3 2/2] Support interactive annotation of code without
- symbols
-Message-ID: <20200224123526.GF16664@krava>
-References: <20200224022225.30264-1-yao.jin@linux.intel.com>
- <20200224022225.30264-3-yao.jin@linux.intel.com>
+        Mon, 24 Feb 2020 07:38:07 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01OCVJEA070995;
+        Mon, 24 Feb 2020 12:37:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=JWjEVGlBtHCHL7wbXZnNZbCFVHqD6Ma/Z5LZAI5EdvM=;
+ b=sgptO4V3yccmzCZMjETC6Q1XEopEzi0ahsTKI2uNE14yzEh7oI+sd3UmToZ99Vcac0mN
+ njdmGX+sjON2+8JvYbkMds2Vf6g4vmFU7Kf42yGTGuBB/c7sz27l6843JJVC8hc+718C
+ hrCccEwd8w7lmKwpD4rG8L8Rh+oIXkM23Q6q6/higmQ4dmhuZUeZ7TTS7bvIMfMa0BDM
+ WYmldOaEFqLrNoO7vRFt4Th/OO5YWQWHg0RmvLgg8cxiNCfV5ciIP1hRcB5b/29Z9AB1
+ R+Zbpx0NlcFk8rc0i3ReZNO0N2lIst6BMLcK/7tnSsgtP9Tl1GcsegERvuzrXBCcJAaL 4A== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2yauqu71s8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Feb 2020 12:37:47 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01OCS7J4039875;
+        Mon, 24 Feb 2020 12:37:47 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2ybe1151an-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Feb 2020 12:37:46 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01OCbful003249;
+        Mon, 24 Feb 2020 12:37:41 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 24 Feb 2020 04:37:40 -0800
+Date:   Mon, 24 Feb 2020 15:37:30 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Christian Brauner <christian@brauner.io>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH][next] clone3: fix an unsigned args.cgroup comparison to
+ less than zero
+Message-ID: <20200224123730.GB3308@kadam>
+References: <20200222001513.43099-1-colin.king@canonical.com>
+ <20200222121801.cu4dfnk4z5xd5uc2@wittgenstein>
+ <20200224073157.GB3286@kadam>
+ <20200224122503.2m4oc5wgg2oqpjsi@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200224022225.30264-3-yao.jin@linux.intel.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200224122503.2m4oc5wgg2oqpjsi@wittgenstein>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9540 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 bulkscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002240102
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9540 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0
+ clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=999 spamscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002240102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 10:22:25AM +0800, Jin Yao wrote:
-> For perf report on stripped binaries it is currently impossible to do
-> annotation. The annotation state is all tied to symbols, but there are
-> either no symbols, or symbols are not covering all the code.
->=20
-> We should support the annotation functionality even without symbols.
->=20
-> This patch fakes a symbol and the symbol name is the string of address.
-> After that, we just follow current annotation working flow.
->=20
-> For example,
->=20
-> 1. perf report
->=20
-> Overhead  Command  Shared Object     Symbol
->   20.67%  div      libc-2.27.so      [.] __random_r
->   17.29%  div      libc-2.27.so      [.] __random
->   10.59%  div      div               [.] 0x0000000000000628
->    9.25%  div      div               [.] 0x0000000000000612
->    6.11%  div      div               [.] 0x0000000000000645
->=20
-> 2. Select the line of "10.59%  div      div               [.] 0x0000000=
-000000628" and ENTER.
->=20
-> Annotate 0x0000000000000628
-> Zoom into div thread
-> Zoom into div DSO (use the 'k' hotkey to zoom directly into the kernel)
-> Browse map details
-> Run scripts for samples of symbol [0x0000000000000628]
-> Run scripts for all samples
-> Switch to another data file in PWD
-> Exit
->=20
-> 3. Select the "Annotate 0x0000000000000628" and ENTER.
->=20
-> Percent=E2=94=82
->        =E2=94=82
->        =E2=94=82
->        =E2=94=82     Disassembly of section .text:
->        =E2=94=82
->        =E2=94=82     0000000000000628 <.text+0x68>:
->        =E2=94=82       divsd %xmm4,%xmm0
->        =E2=94=82       divsd %xmm3,%xmm1
->        =E2=94=82       movsd (%rsp),%xmm2
->        =E2=94=82       addsd %xmm1,%xmm0
->        =E2=94=82       addsd %xmm2,%xmm0
->        =E2=94=82       movsd %xmm0,(%rsp)
->=20
-> Now we can see the dump of object starting from 0x628.
->=20
->  v3:
->  ---
->  Keep just the ANNOTATION_DUMMY_LEN, and remove the
->  opts->annotate_dummy_len since it's the "maybe in future
->  we will provide" feature.
->=20
->  v2:
->  ---
->  Fix a crash issue when annotating an address in "unknown" object.
->=20
->  The steps to reproduce this issue:
->=20
->  perf record -e cycles:u ls
->  perf report
->=20
->     75.29%  ls       ld-2.27.so        [.] do_lookup_x
->     23.64%  ls       ld-2.27.so        [.] __GI___tunables_init
->      1.04%  ls       [unknown]         [k] 0xffffffff85c01210
->      0.03%  ls       ld-2.27.so        [.] _start
->=20
->  When annotating 0xffffffff85c01210, the crash happens.
->=20
->  v2 adds checking for ms->map in add_annotate_opt(). If the object is
->  "unknown", ms->map is NULL.
->=20
-> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-> ---
->  tools/perf/ui/browsers/hists.c | 43 +++++++++++++++++++++++++++++-----
->  tools/perf/util/annotate.h     |  1 +
->  2 files changed, 38 insertions(+), 6 deletions(-)
->=20
-> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hi=
-sts.c
-> index f36dee499320..2f07680559c4 100644
-> --- a/tools/perf/ui/browsers/hists.c
-> +++ b/tools/perf/ui/browsers/hists.c
-> @@ -2465,13 +2465,41 @@ do_annotate(struct hist_browser *browser, struc=
-t popup_action *act)
->  	return 0;
->  }
-> =20
-> +static struct symbol *new_annotate_sym(u64 addr, struct map *map)
-> +{
-> +	struct symbol *sym;
-> +	struct annotated_source *src;
-> +	char name[64];
-> +
-> +	snprintf(name, sizeof(name), "%-#.*lx", BITS_PER_LONG / 4, addr);
-> +
-> +	sym =3D symbol__new(addr, ANNOTATION_DUMMY_LEN, 0, 0, name);
-> +	if (sym) {
-> +		src =3D symbol__hists(sym, 1);
-> +		if (!src) {
-> +			symbol__delete(sym);
-> +			return NULL;
-> +		}
+On Mon, Feb 24, 2020 at 01:25:03PM +0100, Christian Brauner wrote:
+> On Mon, Feb 24, 2020 at 10:31:57AM +0300, Dan Carpenter wrote:
+> > On Sat, Feb 22, 2020 at 01:18:01PM +0100, Christian Brauner wrote:
+> > > On Sat, Feb 22, 2020 at 12:15:13AM +0000, Colin King wrote:
+> > > > From: Colin Ian King <colin.king@canonical.com>
+> > > diff --git a/kernel/fork.c b/kernel/fork.c
+> > > index 2diff --git a/kernel/fork.c b/kernel/fork.c
+> > > index 2853e258fe1f..dca4dde3b5b2 100644
+> > > --- a/kernel/fork.c
+> > > +++ b/kernel/fork.c
+> > > @@ -2618,7 +2618,8 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+> > >                      !valid_signal(args.exit_signal)))
+> > >                 return -EINVAL;
+> > > 
+> > > -       if ((args.flags & CLONE_INTO_CGROUP) && args.cgroup < 0)
+> > > +       if ((args.flags & CLONE_INTO_CGROUP) &&
+> > > +           (args.cgroup > INT_MAX || (s64)args.cgroup < 0))
+> > 
+> > If we're capping it at INT_MAX then the check for negative isn't
+> > required and static analysis tools know it's not so they might complain.
+> 
+> It isn't, but it's easier to understand for the reader. But I don't care
+> that much and if it's trouble for tools than fine.
 
-hi,
-I like the patchset:
+It's not trouble for tools, (the tools parse it correctly), it's trouble
+for me looking at the static checker warnings...
 
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-
-could you please also check if we can do this earlier,
-so the dummy symbol is actualy collecting all the hits?
-
-like within the symbol__inc_addr_samples function,
-but I mght be missing something..
-
-thanks,
-jirka
-
+regards,
+dan carpenter
