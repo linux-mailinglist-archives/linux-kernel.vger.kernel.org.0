@@ -2,164 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 495B216B21C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:22:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5E7016B256
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:29:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbgBXVWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 16:22:23 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45424 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgBXVWW (ORCPT
+        id S1728304AbgBXV3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 16:29:48 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40607 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728257AbgBXV3o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 16:22:22 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 2so5981038pfg.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:22:22 -0800 (PST)
+        Mon, 24 Feb 2020 16:29:44 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t14so891771wmi.5;
+        Mon, 24 Feb 2020 13:29:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bH6EploGU3w+XX+y+9X71Wyht2oE1L8WWitTABuRGD4=;
-        b=JeKTqq/Ix2Z64h5hXGhO3BfyYx3eQN8cqoo3ojfGrKXDfsjPGtwJWiXv/pVA5KDLqA
-         1woYIXuC5x5EM0WpJUWj6rjG65W+uG3YNEnsX/4VAVWNYxwdmmKr76meSKAU3j/ul047
-         mZ/2gZEiXP4neMPeGMjbGdDKc6ZN/vQYxCAszbaO5CU7LQAC4Y7dGqHMydpGyr1gbzjG
-         xF+oI+xVoXIuNjGwvk02TSUR41f/ZiQil54xotrFYZYY2WnbnYYBNwbu/cZb7sFay1OM
-         fHEan28VIjkYh8sBwrIpGcxGXi4GeORcAOx2nbBFly9XwFpEsG4mBsdahZYcwuxByifp
-         aYEw==
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=E9/8+yaqRvrAtgc15Q6xGgpo7ZqTiVPb7l/6H6m7t5Q=;
+        b=NKaXURfZ1NqkGkQxTkR2n9fqQBrq9+jibXeSJpxwl573MInYBFnVXqncS4vCeGwfJb
+         CEL+dWVBeljqEiJQiQCHw2PAK5YFI989FTKqVYOG37zNldMa9Z5Ka2fNfB87YKIDusKe
+         1ZUSR7DIIEbQEjn37yQHSZm+7OOCFB45tbekmmy3j2Fds/Kq/1htSxXBzsEc+70O/Iv6
+         SqleS/u/K7t1VW08LzIvNVT0h1hwY7XZw/RDiNFoUul2asLJphUNp5VknyCGdvKXtHr3
+         rtHqjm7F7jGPmi6uhbuKE6mKt7vTagMbsL0RB5AEpxy/wu0XgQ8jTprhjUuS614eKB6+
+         LtdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bH6EploGU3w+XX+y+9X71Wyht2oE1L8WWitTABuRGD4=;
-        b=irerlqlJlK6DR6fMPo+aay9JnMn9UsouYT9akUu65EEhDBZYHCcaGW6zU1UfCBP1aN
-         KuL2WDcMnUg0lPi6KVr0ug6657Ny0apBm/vUUT2oNByPG+9D8jmBJPQdkB+035iLgnqf
-         rsOGmamI6USNeK7dJ/QGMdRTIkPJixAzUnyCNl6a3CIYl+Y3yOKO6AE3XpRmUAwtfdvq
-         IQDM5W3/di5S6KUKOAvmm2dY5etpD5bs2Hg91I8FbDogeZlAGx9Hs052zHnskxG8b97N
-         k3gjY8e2xIHV4h2BYk6B8X7Wwu2KvuwO31/RdSRg9WI/53Vv8UdwDy2r0JzpG7lCWrGe
-         UTAg==
-X-Gm-Message-State: APjAAAWk55cC2AbjoyQ/xKp5wGTi/cL5xfqlKuNhK//j4u6cnkAlsLDM
-        qVXyfrAMqnobOkLO77F55S7lj3h/6VOJl+FFbm61fA==
-X-Google-Smtp-Source: APXvYqzAZ16Zg0jjIROjTgN53DC2hQo3zYxMHYvl5OwyxgB2WLc4rEW2lAgeXD7LRtD548EgaRpOwVMEQ00RQW3MzFM=
-X-Received: by 2002:a62:37c7:: with SMTP id e190mr53845033pfa.165.1582579341630;
- Mon, 24 Feb 2020 13:22:21 -0800 (PST)
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=E9/8+yaqRvrAtgc15Q6xGgpo7ZqTiVPb7l/6H6m7t5Q=;
+        b=spoiul36vtl6smEjodHHnja7FNFgCz1sJmW5U8nc8obyLrOoZ/2DFRjQCroo3Q8ew1
+         lS2bLOHPN2SVlVCz8oxSSK/ckrbRwgwlH6BQSI8Q4jzdpU+MEHP+h2QfL/csbCT4tgv1
+         vTxKXKEZSu0yVkL2s2j/E+qxq/z86qzkmX+kFE56ECzciudBs9BfGOaV882OzUDXIOZQ
+         AMg446SgMbEayQq6LHUi3xz6I3pZGLb8gySNn6pkPsICuLRKkiY13nGRkDblsrbJ7R/D
+         GN2j+9lkCPpq29uBet3bocQIKlBWQyBmNvyC8NnR5/+RFmPZTzD00/dssXQlovwJRjC3
+         ezfA==
+X-Gm-Message-State: APjAAAXWrVGoJCaoNzPWJdvsrtNOpzhDhGKhmBRJdOkIV4xuKuznFXlQ
+        ZSdMe0aOmbrneFLL1XMYriPhRUlk
+X-Google-Smtp-Source: APXvYqxruEH1sHYvFUjylGwTeW642aO6q6BjVx/Msh+bTzEzlkZWlryBOCDvfSOwyOr70XLRs3JCoQ==
+X-Received: by 2002:a7b:ce0b:: with SMTP id m11mr1020524wmc.4.1582579782522;
+        Mon, 24 Feb 2020 13:29:42 -0800 (PST)
+Received: from ?IPv6:2003:ea:8f29:6000:3d90:eff:31bc:c6a9? (p200300EA8F2960003D900EFF31BCC6A9.dip0.t-ipconnect.de. [2003:ea:8f29:6000:3d90:eff:31bc:c6a9])
+        by smtp.googlemail.com with ESMTPSA id e8sm13925652wrr.69.2020.02.24.13.29.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2020 13:29:42 -0800 (PST)
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH 1/8] PCI: add constant PCI_STATUS_ERROR_BITS
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        David Miller <davem@davemloft.net>,
+        Mirko Lindner <mlindner@marvell.com>,
+        Stephen Hemminger <stephen@networkplumber.org>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <5939f711-92aa-e7ed-2a26-4f1e4169f786@gmail.com>
+Message-ID: <d61cddab-785b-7a57-4b2d-2fbdd34766d7@gmail.com>
+Date:   Mon, 24 Feb 2020 22:22:49 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200222235709.GA3786197@rani.riverdale.lan> <20200223193715.83729-2-nivedita@alum.mit.edu>
- <CAKwvOdniNba30cUX9QAZdVPg2MhjVETVgrvUUzwaHF70Dr3PrQ@mail.gmail.com>
- <20200224210522.GA409112@rani.riverdale.lan> <20200224211209.3snqf7atf5h4ywcr@google.com>
- <CAKwvOd=4YAj1yzncXeyDvw4ghuPCHNYU0NMGnYEDwKNozcm-uw@mail.gmail.com>
-In-Reply-To: <CAKwvOd=4YAj1yzncXeyDvw4ghuPCHNYU0NMGnYEDwKNozcm-uw@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 24 Feb 2020 13:22:10 -0800
-Message-ID: <CAKwvOdkoy_oaZP1fxybJu23f+V0fyrESzFO63UZenUDy+5290A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arch/x86: Use -fno-asynchronous-unwind-tables to
- suppress .eh_frame sections
-To:     Fangrui Song <maskray@google.com>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Michael Matz <matz@suse.de>, Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ardb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5939f711-92aa-e7ed-2a26-4f1e4169f786@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 1:17 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Mon, Feb 24, 2020 at 1:12 PM Fangrui Song <maskray@google.com> wrote:
-> >
-> > On 2020-02-24, Arvind Sankar wrote:
-> > >On Mon, Feb 24, 2020 at 12:33:49PM -0800, Nick Desaulniers wrote:
-> > >> On Sun, Feb 23, 2020 at 11:37 AM Arvind Sankar <nivedita@alum.mit.edu> wrote:
-> > >> >
-> > >> > While discussing a patch to discard .eh_frame from the compressed
-> > >> > vmlinux using the linker script, Fangrui Song pointed out [1] that these
-> > >> > sections shouldn't exist in the first place because arch/x86/Makefile
-> > >> > uses -fno-asynchronous-unwind-tables.
-> > >>
-> > >> Another benefit is that -fno-asynchronous-unwind-tables may help
-> > >> reduce the size of .text!
-> > >> https://stackoverflow.com/a/26302715/1027966
-> > >
-> > >Hm I don't see any change in .text size.
-> > >> > diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-> > >> > index 98a81576213d..a1140c4ee478 100644
-> > >> > --- a/drivers/firmware/efi/libstub/Makefile
-> > >> > +++ b/drivers/firmware/efi/libstub/Makefile
-> > >> > @@ -12,7 +12,8 @@ cflags-$(CONFIG_X86)          += -m$(BITS) -D__KERNEL__ -O2 \
-> > >> >                                    -mno-mmx -mno-sse -fshort-wchar \
-> > >> >                                    -Wno-pointer-sign \
-> > >> >                                    $(call cc-disable-warning, address-of-packed-member) \
-> > >> > -                                  $(call cc-disable-warning, gnu)
-> > >> > +                                  $(call cc-disable-warning, gnu) \
-> > >> > +                                  -fno-asynchronous-unwind-tables
-> > >>
-> > >> I think we want to add this flag a little lower, line 27 has:
-> > >>
-> > >> KBUILD_CFLAGS     := $(cflags-y) -DDISABLE_BRANCH_PROFILING \
-> > >>
-> > >> so the `cflags-y` variable you modify in this hunk will only set
-> > >> -fno-asynchronous-unwind-tables for CONFIG_X86, which I don't think is
-> > >> intentional.  Though when I run
-> > >
-> > >It is intentional -- the other case is that we're building for ARM,
-> > >which only filters out the regular KBUILD_CFLAGS, so adding the flag for
-> > >it should not be necessary. The cflags for ARM are constructed by
-> > >manipulating KBUILD_CFLAGS. Besides it may or may not want unwind
-> > >tables. 32-bit ARM appears to have an option to enable -funwind-tables.
->
-> Ah, right the `subst` from `KBUILD_CFLAGS`.
-> Are there other architectures that care about EFI beyond x86 and ARM? IA64?
+This constant is used (with different names) in more than one driver,
+so move it to the PCI core.
 
-Looks like while IA64 supports CONFIG_EFI, it doesn't support
-CONFIG_EFI_STUB, which controls whether drivers/firmware/efi/libstub/
-gets built or not. So that patch should be good to go.
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+---
+ drivers/net/ethernet/marvell/skge.h | 6 ------
+ drivers/net/ethernet/marvell/sky2.h | 6 ------
+ include/uapi/linux/pci_regs.h       | 7 +++++++
+ 3 files changed, 7 insertions(+), 12 deletions(-)
 
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-
->
-> >
-> > clang (as of today) has not implemented the
-> > -funwind-tables/-fasynchronous-unwind-tables distinction as GCC does..
-> > (probably because not many people care..)
->
-> Ah, thanks for the clarification.
->
-> >
-> > >>
-> > >> $ llvm-readelf -S drivers/firmware/efi/libstub/lib.a | grep eh_frame
-> > >>
-> > >> after doing an x86_64 defconfig, I don't get any hits. Do you observe
-> > >> .eh_frame sections on any of these objects in this dir? (I'm fine
-> > >> adding it to be safe, but I'm curious why I'm not seeing any
-> > >> .eh_frame)
-> > >>
-> > >
-> > >You mean before this patch, right? I see hits on every .o file in there
-> > >(compiling with gcc 9.2.0).
-> > >
-> > >> >
-> > >> >  # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
-> > >> >  # disable the stackleak plugin
-> > >> > --
-> > >> > 2.24.1
-> > >> >
->
->
->
-> --
-> Thanks,
-> ~Nick Desaulniers
-
-
-
+diff --git a/drivers/net/ethernet/marvell/skge.h b/drivers/net/ethernet/marvell/skge.h
+index 6fa7b6a34..e149bdfe1 100644
+--- a/drivers/net/ethernet/marvell/skge.h
++++ b/drivers/net/ethernet/marvell/skge.h
+@@ -15,12 +15,6 @@
+ #define  PCI_VPD_ROM_SZ	7L<<14	/* VPD ROM size 0=256, 1=512, ... */
+ #define  PCI_REV_DESC	1<<2	/* Reverse Descriptor bytes */
+ 
+-#define PCI_STATUS_ERROR_BITS (PCI_STATUS_DETECTED_PARITY | \
+-			       PCI_STATUS_SIG_SYSTEM_ERROR | \
+-			       PCI_STATUS_REC_MASTER_ABORT | \
+-			       PCI_STATUS_REC_TARGET_ABORT | \
+-			       PCI_STATUS_PARITY)
+-
+ enum csr_regs {
+ 	B0_RAP	= 0x0000,
+ 	B0_CTST	= 0x0004,
+diff --git a/drivers/net/ethernet/marvell/sky2.h b/drivers/net/ethernet/marvell/sky2.h
+index b02b65230..851d8ed34 100644
+--- a/drivers/net/ethernet/marvell/sky2.h
++++ b/drivers/net/ethernet/marvell/sky2.h
+@@ -252,12 +252,6 @@ enum {
+ };
+ 
+ 
+-#define PCI_STATUS_ERROR_BITS (PCI_STATUS_DETECTED_PARITY | \
+-			       PCI_STATUS_SIG_SYSTEM_ERROR | \
+-			       PCI_STATUS_REC_MASTER_ABORT | \
+-			       PCI_STATUS_REC_TARGET_ABORT | \
+-			       PCI_STATUS_PARITY)
+-
+ enum csr_regs {
+ 	B0_RAP		= 0x0000,
+ 	B0_CTST		= 0x0004,
+diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+index 543769048..9b84a1278 100644
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -68,6 +68,13 @@
+ #define  PCI_STATUS_SIG_SYSTEM_ERROR	0x4000 /* Set when we drive SERR */
+ #define  PCI_STATUS_DETECTED_PARITY	0x8000 /* Set on parity error */
+ 
++#define PCI_STATUS_ERROR_BITS (PCI_STATUS_DETECTED_PARITY  | \
++			       PCI_STATUS_SIG_SYSTEM_ERROR | \
++			       PCI_STATUS_REC_MASTER_ABORT | \
++			       PCI_STATUS_REC_TARGET_ABORT | \
++			       PCI_STATUS_SIG_TARGET_ABORT | \
++			       PCI_STATUS_PARITY)
++
+ #define PCI_CLASS_REVISION	0x08	/* High 24 bits are class, low 8 revision */
+ #define PCI_REVISION_ID		0x08	/* Revision ID */
+ #define PCI_CLASS_PROG		0x09	/* Reg. Level Programming Interface */
 -- 
-Thanks,
-~Nick Desaulniers
+2.25.1
+
+
