@@ -2,95 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B26A16B0C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 21:08:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3AED16B0D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 21:17:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbgBXUIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 15:08:14 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:33774 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbgBXUIN (ORCPT
+        id S1727389AbgBXURM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 15:17:12 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39192 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbgBXURL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 15:08:13 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01OK4TLV133082;
-        Mon, 24 Feb 2020 20:07:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2020-01-29;
- bh=Hd3LEkvAPQYHika9QfHdeFbvOxdWRjzd8q/4lvbxKVY=;
- b=CbIF5SEdVsVyMvVmRJoqInq/Vinm8gJQXm7cSWIwJYJSMP40NrswmhZMDmaO1sp8O8l3
- Sth6a2w7STp5MrgFIfRADFjWYny5vl2WbLIdDAZKjh1MMzKMs6e7nQR3D2uQ/jXx6Co4
- fQEbk/2detkbcClGayIPs3kqgUPZMH+I/KdB2T4MVjDCiKNPJz54PyVdyr+Lim0aRd/I
- 08fzRb/1+KwZWIHUoA8Xg9msKIpHelK18bghPrcnHuVUh9vbFQTYbkWGHLTDywNFqVz1
- GZQkOgS9WUzAOzLZ2jW/tS2exLXUEZYhuIS/fn/0zqDpPleCrYQtbmpX4CAd3+QiyRrj Sw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2yavxrhqkv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Feb 2020 20:07:21 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01OK2pQe147603;
-        Mon, 24 Feb 2020 20:07:20 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2ybduv428f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Feb 2020 20:07:20 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01OK7DdR008300;
-        Mon, 24 Feb 2020 20:07:15 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 24 Feb 2020 12:07:13 -0800
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Adam Williamson <awilliam@redhat.com>,
-        Chris Murphy <bugzilla@colorremedies.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Tim Waugh <tim@cyberelk.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH] compat_ioctl, cdrom: Replace .ioctl with .compat_ioctl in four appropriate places
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20200219165139.3467320-1-arnd@arndb.de>
-Date:   Mon, 24 Feb 2020 15:07:10 -0500
-In-Reply-To: <20200219165139.3467320-1-arnd@arndb.de> (Arnd Bergmann's message
-        of "Wed, 19 Feb 2020 17:50:07 +0100")
-Message-ID: <yq1eeujda1d.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Mon, 24 Feb 2020 15:17:11 -0500
+Received: by mail-lj1-f196.google.com with SMTP id o15so11567813ljg.6
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 12:17:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oSNWnI1c4cFgTcFCSRSzkFHe/QpedNaBy4vNqxXbuAQ=;
+        b=P4EToDhGbYQaUjVNwLblwoyyxDJN17G6hPH1HFtBMlD4Sm85+CNr4EuAtf/OOgxD7O
+         sgIgV8GbuChgLLkXofo4JOa408otw3lNhEm3RVv9gqIiH/qgS7OIT/FiTT2/KCMTeg9c
+         OpMF+TVpR4qvKxn0OBH7tGju7hH+ptq8xN8G4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oSNWnI1c4cFgTcFCSRSzkFHe/QpedNaBy4vNqxXbuAQ=;
+        b=rlC1h7kvuEXybynYp9wCxSzv2KveTBSEHoRRK6Cv9DKW/Yxb8bhgcud1t2RbzxfiYd
+         13sqvd0KazphyeMHJsA9NK+PKA0dNcLWQRIy//FnapiddZDkns9k7yuGof5m3lL0EZkv
+         9MFtCBSxBcBXsGLBhuDF0ZNDrNvQm+gGXnMqqiHfnidDu/SCz6Fi67cPDfDvhvq9U0i8
+         RNLUKAahDLBa/CXaUveZSuHyZ9X2TumCz0rQq5Bfcz93Xb1EKHc3thhtEyOd1Q4o0l11
+         y9WDqBDElKOn48x/gu7L+CV1jTXWiJ4TCoEQZHoEGWiI9PWFC4gWkg2u92FQGj99ZOcf
+         ncAQ==
+X-Gm-Message-State: APjAAAXZhyOV9Ggb1vCRbQF5+xxDlIYhUtiaGIcflEtxGCpUlJVZdFmn
+        67FSW7B144BhPT++Mtp/NTdLDCxq1GU=
+X-Google-Smtp-Source: APXvYqwXVR+sziyZDFlAFLhSKKrNacOeqFWN5GIQtSB7/0AEsvwOUMLilMBF8V2L4zy7PitPdne4+g==
+X-Received: by 2002:a2e:7d0e:: with SMTP id y14mr32471956ljc.158.1582575427403;
+        Mon, 24 Feb 2020 12:17:07 -0800 (PST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id s17sm8088541ljo.18.2020.02.24.12.17.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2020 12:17:07 -0800 (PST)
+Received: by mail-lj1-f171.google.com with SMTP id n18so11559375ljo.7
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 12:17:06 -0800 (PST)
+X-Received: by 2002:a2e:461a:: with SMTP id t26mr31070734lja.204.1582574960486;
+ Mon, 24 Feb 2020 12:09:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9541 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
- mlxlogscore=999 malwarescore=0 mlxscore=0 spamscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002240146
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9541 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 lowpriorityscore=0
- spamscore=0 clxscore=1011 suspectscore=0 bulkscore=0 mlxlogscore=999
- malwarescore=0 phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002240146
+References: <20200205123216.GO12867@shao2-debian> <20200205125804.GM14879@hirez.programming.kicks-ass.net>
+ <20200221080325.GA67807@shbuild999.sh.intel.com> <20200221132048.GE652992@krava>
+ <20200223141147.GA53531@shbuild999.sh.intel.com> <CAHk-=wjKFTzfDWjAAabHTZcityeLpHmEQRrKdTuk0f4GWcoohQ@mail.gmail.com>
+ <20200224003301.GA5061@shbuild999.sh.intel.com> <CAHk-=whi87NNOnNXJ6CvyyedmhnS8dZA2YkQQSajvBArH5XOeA@mail.gmail.com>
+ <20200224021915.GC5061@shbuild999.sh.intel.com> <CAHk-=wjkSb1OkiCSn_fzf2v7A=K0bNsUEeQa+06XMhTO+oQUaA@mail.gmail.com>
+In-Reply-To: <CAHk-=wjkSb1OkiCSn_fzf2v7A=K0bNsUEeQa+06XMhTO+oQUaA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 24 Feb 2020 12:09:04 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wifdJHrfnmwwzPpH-0X6SaZxtdmRWpSNwf8xsXD2iE4dA@mail.gmail.com>
+Message-ID: <CAHk-=wifdJHrfnmwwzPpH-0X6SaZxtdmRWpSNwf8xsXD2iE4dA@mail.gmail.com>
+Subject: Re: [LKP] Re: [perf/x86] 81ec3f3c4c: will-it-scale.per_process_ops
+ -5.5% regression
+To:     Feng Tang <feng.tang@intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        andi.kleen@intel.com, "Huang, Ying" <ying.huang@intel.com>
+Content-Type: multipart/mixed; boundary="0000000000005a186a059f57f234"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--0000000000005a186a059f57f234
+Content-Type: text/plain; charset="UTF-8"
 
-Arnd,
+On Mon, Feb 24, 2020 at 11:24 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> I don't know. This does not seem to be a particularly serious load.
+> But it does feel like it should be possible to combine the two atomic
+> accesses into one, where you don't need to do the refcount thing
+> except for the case where sigcount goes from zero to non-zero (and
+> back to zero again).
 
-> Arnd Bergmann inadvertently typoed these in d320a9551e394 and
-> 64cbfa96551a; they seem to be the cause of
-> https://bugzilla.redhat.com/show_bug.cgi?id=1801353 , invalid SCSI
-> commands when udev tries to query a DVD drive.
+Ok, that looks just as simple as I thought it would be.
 
-Applied to 5.6/scsi-fixes. Thanks!
+TOTALLY UNTESTED patch attached. It may be completely buggy garbage,
+but it _looks_ trivial enough. Just make the rule be that "if we have
+any user->sigpending cases, we'll get a ref to the user for the first
+one, and drop it only when getting rid of the last one".
 
-Jens, I hope that's OK? I keep getting mail about this bug.
+So it might be worth testing this. But again: I have NOT done so.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+There might be some silly reason why this doesn't work because I just
+did the tests wrong or missed some case.
+
+Or there might be some subtle reason why it doesn't work because I
+didn't think this through properly.
+
+But it _looks_ obvious and simple enough. And it compiles for me. So
+maybe it works.
+
+              Linus
+
+--0000000000005a186a059f57f234
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k70w8onv0>
+X-Attachment-Id: f_k70w8onv0
+
+IGtlcm5lbC9zaWduYWwuYyB8IDE3ICsrKysrKysrKysrLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwg
+MTEgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9rZXJuZWwvc2ln
+bmFsLmMgYi9rZXJuZWwvc2lnbmFsLmMKaW5kZXggOWFkOGRlYTkzZGJiLi4wMGFkZGFhODMxOWYg
+MTAwNjQ0Ci0tLSBhL2tlcm5lbC9zaWduYWwuYworKysgYi9rZXJuZWwvc2lnbmFsLmMKQEAgLTQx
+NywxMCArNDE3LDE1IEBAIF9fc2lncXVldWVfYWxsb2MoaW50IHNpZywgc3RydWN0IHRhc2tfc3Ry
+dWN0ICp0LCBnZnBfdCBmbGFncywgaW50IG92ZXJyaWRlX3JsaW1pCiAJLyoKIAkgKiBQcm90ZWN0
+IGFjY2VzcyB0byBAdCBjcmVkZW50aWFscy4gVGhpcyBjYW4gZ28gYXdheSB3aGVuIGFsbAogCSAq
+IGNhbGxlcnMgaG9sZCByY3UgcmVhZCBsb2NrLgorCSAqCisJICogTk9URSEgQSBwZW5kaW5nIHNp
+Z25hbCB3aWxsIGhvbGQgb24gdG8gdGhlIHVzZXIgcmVmY291bnQsCisJICogYW5kIHdlIGdldC9w
+dXQgdGhlIHJlZmNvdW50IG9ubHkgd2hlbiB0aGUgc2lncGVuZGluZyBjb3VudAorCSAqIGNoYW5n
+ZXMgZnJvbS90byB6ZXJvLgogCSAqLwogCXJjdV9yZWFkX2xvY2soKTsKLQl1c2VyID0gZ2V0X3Vp
+ZChfX3Rhc2tfY3JlZCh0KS0+dXNlcik7Ci0JYXRvbWljX2luYygmdXNlci0+c2lncGVuZGluZyk7
+CisJdXNlciA9IF9fdGFza19jcmVkKHQpLT51c2VyOworCWlmIChhdG9taWNfaW5jX3JldHVybigm
+dXNlci0+c2lncGVuZGluZykgPT0gMSkKKwkJZ2V0X3VpZCh1c2VyKTsKIAlyY3VfcmVhZF91bmxv
+Y2soKTsKIAogCWlmIChvdmVycmlkZV9ybGltaXQgfHwKQEAgLTQzMiw4ICs0MzcsOCBAQCBfX3Np
+Z3F1ZXVlX2FsbG9jKGludCBzaWcsIHN0cnVjdCB0YXNrX3N0cnVjdCAqdCwgZ2ZwX3QgZmxhZ3Ms
+IGludCBvdmVycmlkZV9ybGltaQogCX0KIAogCWlmICh1bmxpa2VseShxID09IE5VTEwpKSB7Ci0J
+CWF0b21pY19kZWMoJnVzZXItPnNpZ3BlbmRpbmcpOwotCQlmcmVlX3VpZCh1c2VyKTsKKwkJaWYg
+KGF0b21pY19kZWNfYW5kX3Rlc3QoJnVzZXItPnNpZ3BlbmRpbmcpKQorCQkJZnJlZV91aWQodXNl
+cik7CiAJfSBlbHNlIHsKIAkJSU5JVF9MSVNUX0hFQUQoJnEtPmxpc3QpOwogCQlxLT5mbGFncyA9
+IDA7CkBAIC00NDcsOCArNDUyLDggQEAgc3RhdGljIHZvaWQgX19zaWdxdWV1ZV9mcmVlKHN0cnVj
+dCBzaWdxdWV1ZSAqcSkKIHsKIAlpZiAocS0+ZmxhZ3MgJiBTSUdRVUVVRV9QUkVBTExPQykKIAkJ
+cmV0dXJuOwotCWF0b21pY19kZWMoJnEtPnVzZXItPnNpZ3BlbmRpbmcpOwotCWZyZWVfdWlkKHEt
+PnVzZXIpOworCWlmIChhdG9taWNfZGVjX2FuZF90ZXN0KCZxLT51c2VyLT5zaWdwZW5kaW5nKSkK
+KwkJZnJlZV91aWQocS0+dXNlcik7CiAJa21lbV9jYWNoZV9mcmVlKHNpZ3F1ZXVlX2NhY2hlcCwg
+cSk7CiB9CiAK
+--0000000000005a186a059f57f234--
