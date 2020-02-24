@@ -2,150 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E7F416A55E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:44:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77E2516A4FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:37:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727700AbgBXLom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 06:44:42 -0500
-Received: from mx01-sz.bfs.de ([194.94.69.67]:13014 "EHLO mx01-sz.bfs.de"
+        id S1727306AbgBXLhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 06:37:00 -0500
+Received: from foss.arm.com ([217.140.110.172]:35634 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726509AbgBXLol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 06:44:41 -0500
-X-Greylist: delayed 505 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Feb 2020 06:44:40 EST
-Received: from SRVEX01-SZ.bfs.intern (exchange-sz.bfs.de [10.129.90.31])
-        by mx01-sz.bfs.de (Postfix) with ESMTPS id 5D528202D9;
-        Mon, 24 Feb 2020 12:36:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-        t=1582544174; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WQfCLb+2eT+U7A5VwBTNyMYdMQKUx4lCZB/1s9gm2Io=;
-        b=uf58EdpYHgG/inEbgiLTnQ5LWQDAsIiWHmkXOr9sYNHfbGmeqAN9EbAnZ2O8YZdZGLrDMx
-        RBcvSO7b2Wp4wbKL6gYz8W8Jl1G8Gbr3+/VcpY114Q74iUSfB1o9YnfMdM67cdFE+wGTct
-        6ZEAqygTrwyMCZzRpA7uhldwKu7AwE+rVZvg4ze2JgiBJmJXXkotHMC7m9qaFWtnF3lIah
-        uJExg3dRtK4K6+o/EF7MAvl8L9+ywuWyr2bPt/dvgkC8LBIiCB9kz/z2Suj5I172loAzyw
-        htLcUD9xoota4LhorlwtaWFbuo0ecqsUqyTmAp6WRY4ch8fsTcCcz0GXh6ubcw==
-Received: from SRVEX01-SZ.bfs.intern (10.129.90.31) by SRVEX01-SZ.bfs.intern
- (10.129.90.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.1913.5; Mon, 24 Feb
- 2020 12:36:13 +0100
-Received: from SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a]) by
- SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a%6]) with mapi id
- 15.01.1913.005; Mon, 24 Feb 2020 12:36:13 +0100
-From:   Walter Harms <wharms@bfs.de>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Colin King <colin.king@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: AW: [PATCH] staging: rtl8723bs: core: remove redundant zero'ing of
- counter variable k
-Thread-Topic: [PATCH] staging: rtl8723bs: core: remove redundant zero'ing of
- counter variable k
-Thread-Index: AQHV6l3vorwXgv50W0ysut7cburs2qgqLndI///23ICAABIfGA==
-Date:   Mon, 24 Feb 2020 11:36:13 +0000
-Message-ID: <af6f814014104e3c899c5d0f4890beae@bfs.de>
-References: <20200223152840.418439-1-colin.king@canonical.com>
- <5f875f84e6014d2bb5b78f71dc2831a2@bfs.de>,<20200224112735.GC3286@kadam>
-In-Reply-To: <20200224112735.GC3286@kadam>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.137.16.39]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726778AbgBXLg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 06:36:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1234E30E;
+        Mon, 24 Feb 2020 03:36:59 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 897CF3F703;
+        Mon, 24 Feb 2020 03:36:58 -0800 (PST)
+Date:   Mon, 24 Feb 2020 11:36:57 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Vinod Koul <vkoul@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] dt-bindings: Fix dtc warnings in examples
+Message-ID: <20200224113657.GA6215@sirena.org.uk>
+References: <20200221222711.15973-1-robh@kernel.org>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-0.96
-Authentication-Results: mx01-sz.bfs.de;
-        none
-X-Spamd-Result: default: False [-0.96 / 7.00];
-         ARC_NA(0.00)[];
-         TO_DN_EQ_ADDR_SOME(0.00)[];
-         HAS_XOIP(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         RCPT_COUNT_FIVE(0.00)[6];
-         DKIM_SIGNED(0.00)[];
-         NEURAL_HAM(-0.00)[-0.981,0];
-         RCVD_NO_TLS_LAST(0.10)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[];
-         BAYES_HAM(-0.96)[86.71%]
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
+Content-Disposition: inline
+In-Reply-To: <20200221222711.15973-1-robh@kernel.org>
+X-Cookie: How you look depends on where you go.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-________________________________________
-Von: Dan Carpenter <dan.carpenter@oracle.com>
-Gesendet: Montag, 24. Februar 2020 12:27
-An: Walter Harms
-Cc: Colin King; Greg Kroah-Hartman; devel@driverdev.osuosl.org; kernel-jani=
-tors@vger.kernel.org; linux-kernel@vger.kernel.org
-Betreff: Re: [PATCH] staging: rtl8723bs: core: remove redundant zero'ing of=
- counter variable k
+--2oS5YaxWCcQjTEyO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Feb 24, 2020 at 11:07:55AM +0000, Walter Harms wrote:
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_efuse.c b/drivers/staging=
-/rtl8723bs/core/rtw_efuse.c
-> index 3b8848182221..bdb6ff8aab7d 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_efuse.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_efuse.c
-> @@ -244,10 +244,8 @@ u16        Address)
->                 while (!(Bytetemp & 0x80)) {
->                         Bytetemp =3D rtw_read8(Adapter, EFUSE_CTRL+3);
->                         k++;
-> -                       if (k =3D=3D 1000) {
-> -                               k =3D 0;
-> +                       if (k =3D=3D 1000)
->                                 break;
-> -                       }
->
-> IMHO this is confusing to read, i suggest:
->
->  for(k=3D0;k<1000;k++) {
->       Bytetemp =3D rtw_read8(Adapter, EFUSE_CTRL+3);
->       if ( Bytetemp & 0x80 )
->                break;
->       }
->
+On Fri, Feb 21, 2020 at 04:27:10PM -0600, Rob Herring wrote:
+> Fix all the warnings in the DT binding schema examples when built with
+> 'W=1'. This is in preparation to make that the default for examples.
 
-The problem with the original code is that the variable is named "k"
-instead of "retry".  It should be:
+Acked-by: Mark Brown <broonie@kernel.org>
 
-        do {
-                Bytetemp =3D rtw_read8(Adapter, EFUSE_CTRL+3);
-        } while (!(Bytetemp & 0x80)) && ++retry < 1000);
+--2oS5YaxWCcQjTEyO
+Content-Type: application/pgp-signature; name="signature.asc"
 
-good point,
-personally i try to avoid putting to much into braces, so i
-would go for the additional if() but this is for the maintainer.
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5TtVYACgkQJNaLcl1U
+h9CNEAf/eNHuOKO9UX+XLz39Z16Ulv5iko14dyR+Uci0d4nowFtBZ1253dv32wRW
+pDpU9iu7Ha04MkvyNDFgz5RsgR/jyLE8/t30zbbaJZWwc6XGVI/KCZkvfdNYrAsq
+J4NEjRnt/M+HN0ZUsu30SS95/X50PMTLNJ8gU4OwsohVranbzKRqFcoCbbGvpXUw
+yP6W5MiCrd3LpU1sG20gJK1ZJQHPO4R3U/sUwyEbJmhvZYJB+KOC2Jl+paUbHrSO
+DLZeZ+w3AOroZ5oxxzPMO5033k7K6NI0mA449VtZ6BXgjGuhlMaQCbJFE8aAGWJi
+eajjwC/Ufgc8Il8KswwWGa5j9e6ZZQ==
+=f6dA
+-----END PGP SIGNATURE-----
 
->  NTL is am wondering what will happen if k=3D=3D1000
->  and Bytetemp is still invalid. Will rtw_read8() fail or
->  simply return invalid data ?
-
-Yeah.  That was my thought reviewing this patch as well.
-
-It should probably return 0xff on failure.
-
-        if (retry >=3D 1000)
-                return 0xff;
-
-looks nice,
-
-re,
- wh
-regards,
-dan carpenter
-
+--2oS5YaxWCcQjTEyO--
