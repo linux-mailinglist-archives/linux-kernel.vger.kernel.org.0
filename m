@@ -2,111 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E078516ACE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:16:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00E1316ACEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:16:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbgBXRQE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Feb 2020 12:16:04 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:42874 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727090AbgBXRQE (ORCPT
+        id S1727934AbgBXRQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 12:16:30 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42788 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727746AbgBXRQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:16:04 -0500
-Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id AAE8367A7D5;
-        Mon, 24 Feb 2020 18:16:01 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
- (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1913.5; Mon, 24 Feb
- 2020 18:16:01 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1913.005; Mon, 24 Feb 2020 18:16:01 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Linus Walleij <linus.ml.walleij@gmail.com>,
-        "NXP Linux Team" <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "Vinod Koul" <vkoul@kernel.org>
-CC:     Schrempf Frieder <frieder.schrempf@kontron.de>,
-        "stable@vger.kernel" <stable@vger.kernel>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] dma: imx-sdma: Fix the event id check to include RX event for
- UART6
-Thread-Topic: [PATCH] dma: imx-sdma: Fix the event id check to include RX
- event for UART6
-Thread-Index: AQHV6zYWVmd7WYLi20CvYMo8u04O/w==
-Date:   Mon, 24 Feb 2020 17:16:01 +0000
-Message-ID: <20200224171531.22204-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [172.25.9.193]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Mon, 24 Feb 2020 12:16:28 -0500
+Received: by mail-wr1-f66.google.com with SMTP id p18so7678698wre.9;
+        Mon, 24 Feb 2020 09:16:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0mUehRl6KMNyxPy2WBMaLDkn8cB+64Jlo40lEAysQVs=;
+        b=E2kHgHUHZYFsu4ArMDd4YgaJnRYKXqg8RXElwRek/AS2KEntghEVplQNAcQti8+QYa
+         rgxez2p0woWT2m/Ys7GaVR7bLGVp6QvLSdlXWSiC+0aJ2rEkKD3cifLSilvFe/r/iYWO
+         rkyGwVoOhKMB7M6toZl/8D9psgbqaADgxzuqYKe9kCN4e3fxXhvaM3iMP1tYr5WmVQ5t
+         r0jOy+vG67yYgM8T9v7gh5oLkfl6qZc8Ahthf3WMefV5aKjhyfWxKy5D5SjEnJzaFo9f
+         eJ/Q2MmuZOIq+uylv93xouAuCnZEwsR/gg+yM4qfGgh2AOkjFdp4lKQayaRfmgc//bwc
+         OwbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0mUehRl6KMNyxPy2WBMaLDkn8cB+64Jlo40lEAysQVs=;
+        b=nEq56RScbod6X9PTM44GzVuAtVX93XFfQre72cRXI8fqN2V+0X/iBY8ZpaYyZTKnY+
+         cNi3C5KRCBj2H6D/TLZwCmx9KLtNG0iA2YHijHGPRclHEJGyrW4YOSZWipNidnMboZwj
+         oy5V17l8CziZg+15tjzRZIOVmLSCRfYai70gOZM4FVHQnTjkoRO5+X+0LDJwd31Ej6dp
+         ltSfAgKZGlS39mwj+4c7yZp8gSI+P5k+87LUKRMrAmDc6jWFzWWxuaTwpE8ssxdy81fa
+         Y9M3kx/zi59jt3SZBOw3oHzNyyzx/hr+FhIbpGHtsxNi5na+CmeuBXmVudNe27hkSxTj
+         pX/g==
+X-Gm-Message-State: APjAAAU8Rgv915phJmYm7icEOu7od2I3Qz540R050LQtvBp/l5n9rD+Y
+        0pI7pzaA04z5VxFdd4zj2jssBXbhJPYJCv+sOhg=
+X-Google-Smtp-Source: APXvYqyYs34kxyM1cQUafvzz2HLWMvmqs3efpVNtCRIY34M1tXu+q5qXU2FMmODfmEHBzQsVh9zoKosyUtXRmIs7/x8=
+X-Received: by 2002:adf:fac9:: with SMTP id a9mr3637820wrs.232.1582564585869;
+ Mon, 24 Feb 2020 09:16:25 -0800 (PST)
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: AAE8367A7D5.A05BA
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        festevam@gmail.com, kernel@pengutronix.de,
-        linus.ml.walleij@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        s.hauer@pengutronix.de, shawnguo@kernel.org, stable@vger.kernel,
-        vkoul@kernel.org
-X-Spam-Status: No
+References: <20200127165646.19806-1-andrew.smirnov@gmail.com>
+ <20200127165646.19806-6-andrew.smirnov@gmail.com> <VI1PR0402MB348549DDA8FE2EEB436D3F09981B0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR0402MB348549DDA8FE2EEB436D3F09981B0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Mon, 24 Feb 2020 09:16:14 -0800
+Message-ID: <CAHQ1cqGYEubQMS2y7nPnTo=Bbs=97ojCu6OjyNkc6dcVO_w_cA@mail.gmail.com>
+Subject: Re: [PATCH v7 5/9] crypto: caam - simplify RNG implementation
+To:     Horia Geanta <horia.geanta@nxp.com>
+Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On Wed, Feb 12, 2020 at 5:20 AM Horia Geanta <horia.geanta@nxp.com> wrote:
+>
+> On 1/27/2020 6:57 PM, Andrey Smirnov wrote:
+> > Rework CAAM RNG implementation as follows:
+> >
+> > - Make use of the fact that HWRNG supports partial reads and will
+> > handle such cases gracefully by removing recursion in caam_read()
+> >
+> > - Convert blocking caam_read() codepath to do a single blocking job
+> > read directly into requested buffer, bypassing any intermediary
+> > buffers
+> >
+> > - Convert async caam_read() codepath into a simple single
+> > reader/single writer FIFO use-case, thus simplifying concurrency
+> > handling and delegating buffer read/write position management to KFIFO
+> > subsystem.
+> >
+> > - Leverage the same low level RNG data extraction code for both async
+> > and blocking caam_read() scenarios, get rid of the shared job
+> > descriptor and make non-shared one as a simple as possible (just
+> > HEADER + ALGORITHM OPERATION + FIFO STORE)
+> >
+> > - Split private context from DMA related memory, so that the former
+> > could be allocated without GFP_DMA.
+> >
+> > NOTE: On its face value this commit decreased throughput numbers
+> > reported by
+> >
+> >   dd if=/dev/hwrng of=/dev/null bs=1 count=100K [iflag=nonblock]
+> >
+> > by about 15%, however commits that enable prediction resistance and
+> Running dd as mentioned above, on a i.MX8MM board I see:
+> ~ 20% decrease in non-blocking case (525 kB/s vs. 662 kB/s)
+> ~ 75% decrease in blocking case (170 kB/s vs. 657 kB/s)
+>
+> bs=1 is a bit drastic.
+> Using bs=16 the numbers look better in terms of overall speed,
+> however the relative degradation is still there:
+> ~ 66% decrease in blocking case (3.5 MB/s vs. 10.1 MB/s)
+>
+> > limit JR total size impact the performance so much and move the
+> > bottleneck such as to make this regression irrelevant.
+> >
+> Yes, performance is greatly impacted by moving from a DRBG configuration
+> to a TRNG one.
+>
+> The speed that I get with this patch set (1.3 kB/s)
+> is ~ 20% lower than theoretical output (1.583 kB/s) (see below).
+> Seeing this and also the relative decrease in case of DRBG
+> makes me wonder whether the SW overhead could be lowered.
+>
+> Theoretical TRNG output speed in this configuration
+> can be computed as:
+> Speed = (SZ x CAAM_CLK_FREQ) / (RTSDCTL[ENT_DLY] x RTSDCTL[SAMP_SIZE]) [bps]
+>
+> SZ is sample taken from the DRBG, b/w two consecutive reseedings.
+> As previously discussed, this is limited to 128 bits (16 bytes),
+> such that the DRBG behaves as a TRNG.
+>
+> If:
+> -CAAM_CLK_FREQ = 166 MHz (as for i.MXM*)
+> -RTSDCTL[ENT_DLY] = 3200 clocks (default / POR value)
+> -RTSDCTL[SAMP_SIZE] = 512 (recommended; default / POR value is 2500)
+> then theoretical speed is 1.583 kB/s.
+>
+> > @@ -45,38 +22,34 @@
+> >  #include "jr.h"
+> >  #include "error.h"
+> >
+> > +/* length of descriptors */
+> This comment is misplaced, length of descriptors (CAAM_RNG_DESC_LEN)
+> is further below.
+>
+> > +#define CAAM_RNG_MAX_FIFO_STORE_SIZE U16_MAX
+> > +
+> > +#define CAAM_RNG_FIFO_LEN            SZ_32K /* Must be a multiple of 2 */
+> > +
+> >  /*
+> > - * Maximum buffer size: maximum number of random, cache-aligned bytes that
+> > - * will be generated and moved to seq out ptr (extlen not allowed)
+> > + * See caam_init_desc()
+> >   */
+> > -#define RN_BUF_SIZE                  (0xffff / L1_CACHE_BYTES * \
+> > -                                      L1_CACHE_BYTES)
+> > +#define CAAM_RNG_DESC_LEN (CAAM_CMD_SZ +                             \
+> > +                        CAAM_CMD_SZ +                                \
+> > +                        CAAM_CMD_SZ + CAAM_PTR_SZ_MAX)
+>
+> > +typedef u8 caam_rng_desc[CAAM_RNG_DESC_LEN];
+> Is this really necessary?
+>
 
-On i.MX6 the DMA event for the RX channel of UART6 is '0'. To fix
-the broken DMA support for UART6, we change the check for event_id0
-to include '0' as a valid id.
+Will drop in v8.
 
-Fixes: 1ec1e82f2510 ("dmaengine: Add Freescale i.MX SDMA support")
-Cc: stable@vger.kernel
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
----
- drivers/dma/imx-sdma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > -static int caam_read(struct hwrng *rng, void *data, size_t max, bool wait)
+> > +static int caam_rng_read_one(struct device *jrdev,
+> > +                          void *dst, int len,
+> > +                          void *desc,
+> > +                          struct completion *done)
+> [...]
+> > +     len = min_t(int, len, CAAM_RNG_MAX_FIFO_STORE_SIZE);
+> For the blocking case, i.e. caam_read() -> caam_rng_read_one(),
+> "len" is at least 32B - cf. include/linux/hw_random.h:
+>  * @read:               New API. drivers can fill up to max bytes of data
+>  *                      into the buffer. The buffer is aligned for any type
+>  *                      and max is a multiple of 4 and >= 32 bytes.
+>
+> For reducing the SW overhead, it might be worth optimizing this path.
+> For example, considering
+> min_t(int, len, CAAM_RNG_MAX_FIFO_STORE_SIZE) = CAAM_RNG_MAX_FIFO_STORE_SIZE
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index 066b21a32232..3d4aac97b1fc 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -1331,7 +1331,7 @@ static void sdma_free_chan_resources(struct dma_chan *chan)
- 
- 	sdma_channel_synchronize(chan);
- 
--	if (sdmac->event_id0)
-+	if (sdmac->event_id0 >= 0)
- 		sdma_event_disable(sdmac, sdmac->event_id0);
- 	if (sdmac->event_id1)
- 		sdma_event_disable(sdmac, sdmac->event_id1);
-@@ -1631,7 +1631,7 @@ static int sdma_config(struct dma_chan *chan,
- 	memcpy(&sdmac->slave_config, dmaengine_cfg, sizeof(*dmaengine_cfg));
- 
- 	/* Set ENBLn earlier to make sure dma request triggered after that */
--	if (sdmac->event_id0) {
-+	if (sdmac->event_id0 >= 0) {
- 		if (sdmac->event_id0 >= sdmac->sdma->drvdata->num_events)
- 			return -EINVAL;
- 		sdma_event_enable(sdmac, sdmac->event_id0);
--- 
-2.17.1
+This isn't true until next commit. Here CAAM_RNG_MAX_FIFO_STORE_SIZE
+is still 32K, so "len" is going to be smaller. I'll update the code to
+assume fixed length once CAAM_RNG_MAX_FIFO_STORE_SIZE becomes 16
+bytes.
+
+> this means length is fixed, thus also ctx->desc[DESC_SYNC] descriptor is fixed
+> and its generation could be moved out of the hot path.
+
+That descriptor also includes DMA address of a buffer we are given, so
+the descriptor is never fixed.
+
+Thanks,
+Andrey Smirnov
