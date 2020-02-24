@@ -2,116 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 999C616B205
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:19:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 495B216B21C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:22:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbgBXVTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 16:19:38 -0500
-Received: from mail.archive.org ([207.241.224.6]:55240 "EHLO mail.archive.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726651AbgBXVTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 16:19:38 -0500
-Received: from mail.archive.org (localhost [127.0.0.1])
-        by mail.archive.org (Postfix) with ESMTP id 97A571FCA5;
-        Mon, 24 Feb 2020 21:19:35 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.archive.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,SHORTCIRCUIT
-        autolearn=disabled version=3.4.2
-Received: from [0.0.0.0] (a82-161-36-93.adsl.xs4all.nl [82.161.36.93])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: merlijn@archive.org)
-        by mail.archive.org (Postfix) with ESMTPSA id 2F49A1FCA0;
-        Mon, 24 Feb 2020 21:19:34 +0000 (UTC)
-Subject: Re: [PATCH v2] scsi: sr: get rid of sr global mutex
-To:     "Merlijn B.W. Wajer" <merlijn@wizzup.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        James Bottomley <jejb@linux.ibm.com>
-Cc:     linux-scsi@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-References: <20200218143918.30267-1-merlijn@archive.org>
- <20200218171259.GA6724@infradead.org>
- <1582046428.16681.7.camel@linux.ibm.com>
- <20200218172347.GA3020@infradead.org>
- <1582046914.16681.11.camel@linux.ibm.com>
- <20200218173158.GA18386@infradead.org>
- <33da5f81-ad37-05fd-d765-8bd997995dd2@archive.org>
-From:   "Merlijn B.W. Wajer" <merlijn@archive.org>
-Message-ID: <9d50ecd4-9fd1-6865-5509-a5ef119828df@archive.org>
-Date:   Mon, 24 Feb 2020 22:20:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1727689AbgBXVWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 16:22:23 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45424 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbgBXVWW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 16:22:22 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 2so5981038pfg.12
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:22:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bH6EploGU3w+XX+y+9X71Wyht2oE1L8WWitTABuRGD4=;
+        b=JeKTqq/Ix2Z64h5hXGhO3BfyYx3eQN8cqoo3ojfGrKXDfsjPGtwJWiXv/pVA5KDLqA
+         1woYIXuC5x5EM0WpJUWj6rjG65W+uG3YNEnsX/4VAVWNYxwdmmKr76meSKAU3j/ul047
+         mZ/2gZEiXP4neMPeGMjbGdDKc6ZN/vQYxCAszbaO5CU7LQAC4Y7dGqHMydpGyr1gbzjG
+         xF+oI+xVoXIuNjGwvk02TSUR41f/ZiQil54xotrFYZYY2WnbnYYBNwbu/cZb7sFay1OM
+         fHEan28VIjkYh8sBwrIpGcxGXi4GeORcAOx2nbBFly9XwFpEsG4mBsdahZYcwuxByifp
+         aYEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bH6EploGU3w+XX+y+9X71Wyht2oE1L8WWitTABuRGD4=;
+        b=irerlqlJlK6DR6fMPo+aay9JnMn9UsouYT9akUu65EEhDBZYHCcaGW6zU1UfCBP1aN
+         KuL2WDcMnUg0lPi6KVr0ug6657Ny0apBm/vUUT2oNByPG+9D8jmBJPQdkB+035iLgnqf
+         rsOGmamI6USNeK7dJ/QGMdRTIkPJixAzUnyCNl6a3CIYl+Y3yOKO6AE3XpRmUAwtfdvq
+         IQDM5W3/di5S6KUKOAvmm2dY5etpD5bs2Hg91I8FbDogeZlAGx9Hs052zHnskxG8b97N
+         k3gjY8e2xIHV4h2BYk6B8X7Wwu2KvuwO31/RdSRg9WI/53Vv8UdwDy2r0JzpG7lCWrGe
+         UTAg==
+X-Gm-Message-State: APjAAAWk55cC2AbjoyQ/xKp5wGTi/cL5xfqlKuNhK//j4u6cnkAlsLDM
+        qVXyfrAMqnobOkLO77F55S7lj3h/6VOJl+FFbm61fA==
+X-Google-Smtp-Source: APXvYqzAZ16Zg0jjIROjTgN53DC2hQo3zYxMHYvl5OwyxgB2WLc4rEW2lAgeXD7LRtD548EgaRpOwVMEQ00RQW3MzFM=
+X-Received: by 2002:a62:37c7:: with SMTP id e190mr53845033pfa.165.1582579341630;
+ Mon, 24 Feb 2020 13:22:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <33da5f81-ad37-05fd-d765-8bd997995dd2@archive.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Envelope-From: <merlijn@archive.org>
+References: <20200222235709.GA3786197@rani.riverdale.lan> <20200223193715.83729-2-nivedita@alum.mit.edu>
+ <CAKwvOdniNba30cUX9QAZdVPg2MhjVETVgrvUUzwaHF70Dr3PrQ@mail.gmail.com>
+ <20200224210522.GA409112@rani.riverdale.lan> <20200224211209.3snqf7atf5h4ywcr@google.com>
+ <CAKwvOd=4YAj1yzncXeyDvw4ghuPCHNYU0NMGnYEDwKNozcm-uw@mail.gmail.com>
+In-Reply-To: <CAKwvOd=4YAj1yzncXeyDvw4ghuPCHNYU0NMGnYEDwKNozcm-uw@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 24 Feb 2020 13:22:10 -0800
+Message-ID: <CAKwvOdkoy_oaZP1fxybJu23f+V0fyrESzFO63UZenUDy+5290A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arch/x86: Use -fno-asynchronous-unwind-tables to
+ suppress .eh_frame sections
+To:     Fangrui Song <maskray@google.com>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Borislav Petkov <bp@alien8.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Michael Matz <matz@suse.de>, Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ardb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+On Mon, Feb 24, 2020 at 1:17 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> On Mon, Feb 24, 2020 at 1:12 PM Fangrui Song <maskray@google.com> wrote:
+> >
+> > On 2020-02-24, Arvind Sankar wrote:
+> > >On Mon, Feb 24, 2020 at 12:33:49PM -0800, Nick Desaulniers wrote:
+> > >> On Sun, Feb 23, 2020 at 11:37 AM Arvind Sankar <nivedita@alum.mit.edu> wrote:
+> > >> >
+> > >> > While discussing a patch to discard .eh_frame from the compressed
+> > >> > vmlinux using the linker script, Fangrui Song pointed out [1] that these
+> > >> > sections shouldn't exist in the first place because arch/x86/Makefile
+> > >> > uses -fno-asynchronous-unwind-tables.
+> > >>
+> > >> Another benefit is that -fno-asynchronous-unwind-tables may help
+> > >> reduce the size of .text!
+> > >> https://stackoverflow.com/a/26302715/1027966
+> > >
+> > >Hm I don't see any change in .text size.
+> > >> > diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> > >> > index 98a81576213d..a1140c4ee478 100644
+> > >> > --- a/drivers/firmware/efi/libstub/Makefile
+> > >> > +++ b/drivers/firmware/efi/libstub/Makefile
+> > >> > @@ -12,7 +12,8 @@ cflags-$(CONFIG_X86)          += -m$(BITS) -D__KERNEL__ -O2 \
+> > >> >                                    -mno-mmx -mno-sse -fshort-wchar \
+> > >> >                                    -Wno-pointer-sign \
+> > >> >                                    $(call cc-disable-warning, address-of-packed-member) \
+> > >> > -                                  $(call cc-disable-warning, gnu)
+> > >> > +                                  $(call cc-disable-warning, gnu) \
+> > >> > +                                  -fno-asynchronous-unwind-tables
+> > >>
+> > >> I think we want to add this flag a little lower, line 27 has:
+> > >>
+> > >> KBUILD_CFLAGS     := $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+> > >>
+> > >> so the `cflags-y` variable you modify in this hunk will only set
+> > >> -fno-asynchronous-unwind-tables for CONFIG_X86, which I don't think is
+> > >> intentional.  Though when I run
+> > >
+> > >It is intentional -- the other case is that we're building for ARM,
+> > >which only filters out the regular KBUILD_CFLAGS, so adding the flag for
+> > >it should not be necessary. The cflags for ARM are constructed by
+> > >manipulating KBUILD_CFLAGS. Besides it may or may not want unwind
+> > >tables. 32-bit ARM appears to have an option to enable -funwind-tables.
+>
+> Ah, right the `subst` from `KBUILD_CFLAGS`.
+> Are there other architectures that care about EFI beyond x86 and ARM? IA64?
 
-Just wanted to check if you planned to apply this v2 (you tried to apply
-v1 but it didn't compile, so I rebased it onto 5.7/scsi-queue as you
-requested). Please let me know if there's anything you'd like to see
-changed.
+Looks like while IA64 supports CONFIG_EFI, it doesn't support
+CONFIG_EFI_STUB, which controls whether drivers/firmware/efi/libstub/
+gets built or not. So that patch should be good to go.
 
-Regards,
-Merlijn
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-On 18/02/2020 20:21, Merlijn B.W. Wajer wrote:
-> Hi,
-> 
-> On 18/02/2020 18:31, Christoph Hellwig wrote:
->> On Tue, Feb 18, 2020 at 09:28:34AM -0800, James Bottomley wrote:
->>> On Tue, 2020-02-18 at 09:23 -0800, Christoph Hellwig wrote:
->>>> On Tue, Feb 18, 2020 at 09:20:28AM -0800, James Bottomley wrote:
->>>>>>> Replace the global mutex with per-sr-device mutex.
->>>>>>
->>>>>> Do we actually need the lock at all?  What is protected by it?
->>>>>
->>>>> We do at least for cdrom_open.  It modifies the cdi structure with
->>>>> no other protection and concurrent modification would at least
->>>>> screw up the use counter which is not atomic.  Same reasoning for
->>>>> cdrom_release.
->>>>
->>>> Wouldn't the right fix to add locking to cdrom_open/release instead
->>>> of having an undocumented requirement for the callers?
->>>
->>> Yes ... but that's somewhat of a bigger patch because you now have to
->>> reason about the callbacks within cdrom.  There's also the question of
->>> whether you can assume ops->generic_packet() has its own concurrency
->>> protections ... it's certainly true for SCSI, but is it for anything
->>> else?  Although I suppose you can just not care and run the internal
->>> lock over it anyway.
->>
->> We have 4 instances of struct cdrom_device_ops in the kernel, one of
->> which has a no-op generic_packet.  So I don't think this should be a
->> huge project.
-> 
-> The are two reasons I decided to make minor changes to fix the
-> performance regression.
-> 
-> First, being able to send the patch to the various stable branches once
-> merged. For people working with many CD drives attached to one station,
-> this is a pretty big deal, so I tried to keep the patch simple. It fixes
-> the regression introduced in another commit.
-> 
-> Secondly, I don't have the hardware to test sophisticated or old setups,
-> like some of the issues linked from my patch. I have SATA CD drives with
-> USB->SATA bridges, no IDE, no PATA, etc. So the testing I can do is
-> relatively limited.
-> 
-> Perhaps I or someone else can work on removing the usage of the locks,
-> but as it stands I think this addresses the performance issue present in
-> the current kernel, and removing locks and the associated testing
-> required with that is something I am not entirely comfortable doing.
-> 
-> Cheers,
-> Merlijn
-> 
+>
+> >
+> > clang (as of today) has not implemented the
+> > -funwind-tables/-fasynchronous-unwind-tables distinction as GCC does..
+> > (probably because not many people care..)
+>
+> Ah, thanks for the clarification.
+>
+> >
+> > >>
+> > >> $ llvm-readelf -S drivers/firmware/efi/libstub/lib.a | grep eh_frame
+> > >>
+> > >> after doing an x86_64 defconfig, I don't get any hits. Do you observe
+> > >> .eh_frame sections on any of these objects in this dir? (I'm fine
+> > >> adding it to be safe, but I'm curious why I'm not seeing any
+> > >> .eh_frame)
+> > >>
+> > >
+> > >You mean before this patch, right? I see hits on every .o file in there
+> > >(compiling with gcc 9.2.0).
+> > >
+> > >> >
+> > >> >  # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
+> > >> >  # disable the stackleak plugin
+> > >> > --
+> > >> > 2.24.1
+> > >> >
+>
+>
+>
+> --
+> Thanks,
+> ~Nick Desaulniers
+
+
+
+-- 
+Thanks,
+~Nick Desaulniers
