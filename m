@@ -2,209 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 246B5169E5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 07:25:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E92169EB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 07:44:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbgBXGZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 01:25:52 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35715 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726365AbgBXGZw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 01:25:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582525550;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dckTTjxyBibi0/eHSJpegNMnKv/ZFpoC0SMhoS98gYQ=;
-        b=J9MjwsR9yWxHoBpvY6osQMej9F2RPXRVh0ZcTzMqRTgtr4fkOgBbb3YlfrVhOCdRHq2xXC
-        jKxCot0ZRzTBBmr8If6HTmRqCBvUgXS739ET/A9q2TP1/TzJMfYR1IqojBrhPryvbOG2S9
-        8RiEFUprSXMkp93Ce+R69pUmKTVIAak=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-373-R58UNRq-MPqAMN2K99bKdw-1; Mon, 24 Feb 2020 01:25:49 -0500
-X-MC-Unique: R58UNRq-MPqAMN2K99bKdw-1
-Received: by mail-wr1-f72.google.com with SMTP id o9so5110138wrw.14
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 22:25:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dckTTjxyBibi0/eHSJpegNMnKv/ZFpoC0SMhoS98gYQ=;
-        b=C6hqNSE15KOi7VkLgZMa8ldULOvEGdgCJW1RH/1FYVozBGccMX21v/OAP7E1CZ/UsB
-         ol6FPdjqgXpta0EcYwM1G01EGAU7mOSyVB8KIelSL7UhEC7QXcFjeO1W2AJ8V0RYCayZ
-         l1xQ/CkKrosAH+ArnfiJBbhogN8jf6KH44B873WAFbXygg9o9nsg53mxJ4o+Kw3Vds/8
-         xNagFPIPb4LZV4twSIU6ja7NYiDDE3+pu7fo50pRFHJaoyt5cu6h3ANC58/5CgkIRLkh
-         1kzBlRKwATnFbFTeWiSflg1uEjmSrPY7i69VNFMe1WwNFAmN2ljzAtzH/LLnwoByESvS
-         uBYA==
-X-Gm-Message-State: APjAAAWxY1t4gsrItJJdZu6wAbLJfkbq9+mt64xIko7kaWdYMgnk4nKD
-        N10pA60+7WQrqAlRsJ2cxF9GznzFrW4t52m+ydzNYZdYE5vRVAPfAolkDESMVkvZBmCQCpImOpx
-        10vXSAAx9cK7hR4gVto/NEeIoZ1NAiUmpScoiwNgL
-X-Received: by 2002:a1c:6755:: with SMTP id b82mr20610993wmc.126.1582525547966;
-        Sun, 23 Feb 2020 22:25:47 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyxA5kdvYr5b57CvBHEyg7SYwjy39EA3KJkD+2t/YLueVtODgOYqrVfSMUaLHTeag8+AJUU1fdINXjmJPOfgzU=
-X-Received: by 2002:a1c:6755:: with SMTP id b82mr20610946wmc.126.1582525547617;
- Sun, 23 Feb 2020 22:25:47 -0800 (PST)
+        id S1727329AbgBXGnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 01:43:55 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:51167 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726925AbgBXGny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 01:43:54 -0500
+Received: by ozlabs.org (Postfix, from userid 1007)
+        id 48QswR352Lz9sRR; Mon, 24 Feb 2020 17:43:51 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=gibson.dropbear.id.au; s=201602; t=1582526631;
+        bh=HE+dMIiDFpTtJfitS88px2QE5uurDOINjlLTLx6xBso=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Zc4b1jGX8kDXRZ1/cxrzaVVzmmi3Jbx5z+q4guCIZLM1Y9iri/Msd8YT7mp3duvPv
+         lZjUNHzQT4RarBAuU51b2dq+ass/738MniN+F2rqaZcXondrlOoj5IxTkyHcwg8+nK
+         1J6cZyaSBlb6Qhiu+Uk9hyWjjsOcm4EaK0zEMN1Y=
+Date:   Mon, 24 Feb 2020 14:33:14 +1100
+From:   David Gibson <david@gibson.dropbear.id.au>
+To:     Halil Pasic <pasic@linux.ibm.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-s390@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Michael Mueller <mimu@linux.ibm.com>
+Subject: Re: [PATCH 1/2] mm: move force_dma_unencrypted() to mem_encrypt.h
+Message-ID: <20200224033314.GC1751@umbus.fritz.box>
+References: <20200220160606.53156-1-pasic@linux.ibm.com>
+ <20200220160606.53156-2-pasic@linux.ibm.com>
+ <20200220161146.GA12709@lst.de>
+ <4369f099-e4e4-4a58-b38b-642cf53ccca6@de.ibm.com>
+ <20200220163135.GA13192@lst.de>
+ <20200221032727.GC2298@umbus.fritz.box>
+ <20200221140639.54928efe.pasic@linux.ibm.com>
+ <20200221104724-mutt-send-email-mst@kernel.org>
+ <20200221190702.68fd57fc.pasic@linux.ibm.com>
 MIME-Version: 1.0
-References: <1575057559-25496-1-git-send-email-bhsharma@redhat.com>
- <1575057559-25496-3-git-send-email-bhsharma@redhat.com> <63d6e63c-7218-d2dd-8767-4464be83603f@arm.com>
- <af0fd2b0-99db-9d58-bc8d-0dd9d640b1eb@redhat.com> <f791e777-781c-86ce-7619-1de3fe3e7b90@arm.com>
- <351975548.1986001.1578682810951.JavaMail.zimbra@redhat.com>
- <04287d60-e99e-631b-c134-d6dc39e6a193@redhat.com> <974f3601-25f8-f4e6-43a8-ff4275e9c174@arm.com>
-In-Reply-To: <974f3601-25f8-f4e6-43a8-ff4275e9c174@arm.com>
-From:   Bhupesh Sharma <bhsharma@redhat.com>
-Date:   Mon, 24 Feb 2020 11:55:35 +0530
-Message-ID: <CACi5LpOK6Q3ud3M3zakexLJNOtHy9TODHyYSHVwE3JHVakKzqA@mail.gmail.com>
-Subject: Re: [RESEND PATCH v5 2/5] arm64/crash_core: Export TCR_EL1.T1SZ in vmcoreinfo
-To:     Amit Kachhap <amit.kachhap@arm.com>
-Cc:     Dave Anderson <anderson@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
-        kexec mailing list <kexec@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
-        bhupesh linux <bhupesh.linux@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Steve Capper <steve.capper@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gatW/ieO32f1wygP"
+Content-Disposition: inline
+In-Reply-To: <20200221190702.68fd57fc.pasic@linux.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Amit,
 
-On Fri, Feb 21, 2020 at 2:36 PM Amit Kachhap <amit.kachhap@arm.com> wrote:
->
-> Hi Bhupesh,
->
-> On 1/13/20 5:44 PM, Bhupesh Sharma wrote:
-> > Hi James,
-> >
-> > On 01/11/2020 12:30 AM, Dave Anderson wrote:
-> >>
-> >> ----- Original Message -----
-> >>> Hi Bhupesh,
-> >>>
-> >>> On 25/12/2019 19:01, Bhupesh Sharma wrote:
-> >>>> On 12/12/2019 04:02 PM, James Morse wrote:
-> >>>>> On 29/11/2019 19:59, Bhupesh Sharma wrote:
-> >>>>>> vabits_actual variable on arm64 indicates the actual VA space size,
-> >>>>>> and allows a single binary to support both 48-bit and 52-bit VA
-> >>>>>> spaces.
-> >>>>>>
-> >>>>>> If the ARMv8.2-LVA optional feature is present, and we are running
-> >>>>>> with a 64KB page size; then it is possible to use 52-bits of address
-> >>>>>> space for both userspace and kernel addresses. However, any kernel
-> >>>>>> binary that supports 52-bit must also be able to fall back to 48-bit
-> >>>>>> at early boot time if the hardware feature is not present.
-> >>>>>>
-> >>>>>> Since TCR_EL1.T1SZ indicates the size offset of the memory region
-> >>>>>> addressed by TTBR1_EL1 (and hence can be used for determining the
-> >>>>>> vabits_actual value) it makes more sense to export the same in
-> >>>>>> vmcoreinfo rather than vabits_actual variable, as the name of the
-> >>>>>> variable can change in future kernel versions, but the architectural
-> >>>>>> constructs like TCR_EL1.T1SZ can be used better to indicate intended
-> >>>>>> specific fields to user-space.
-> >>>>>>
-> >>>>>> User-space utilities like makedumpfile and crash-utility, need to
-> >>>>>> read/write this value from/to vmcoreinfo
-> >>>>>
-> >>>>> (write?)
-> >>>>
-> >>>> Yes, also write so that the vmcoreinfo from an (crashing) arm64
-> >>>> system can
-> >>>> be used for
-> >>>> analysis of the root-cause of panic/crash on say an x86_64 host using
-> >>>> utilities like
-> >>>> crash-utility/gdb.
-> >>>
-> >>> I read this as as "User-space [...] needs to write to vmcoreinfo".
-> >
-> > That's correct. But for writing to vmcore dump in the kdump kernel, we
-> > need to read the symbols from the vmcoreinfo in the primary kernel.
-> >
-> >>>>>> for determining if a virtual address lies in the linear map range.
-> >>>>>
-> >>>>> I think this is a fragile example. The debugger shouldn't need to know
-> >>>>> this.
-> >>>>
-> >>>> Well that the current user-space utility design, so I am not sure we
-> >>>> can
-> >>>> tweak that too much.
-> >>>>
-> >>>>>> The user-space computation for determining whether an address lies in
-> >>>>>> the linear map range is the same as we have in kernel-space:
-> >>>>>>
-> >>>>>>     #define __is_lm_address(addr)    (!(((u64)addr) &
-> >>>>>> BIT(vabits_actual -
-> >>>>>>     1)))
-> >>>>>
-> >>>>> This was changed with 14c127c957c1 ("arm64: mm: Flip kernel VA
-> >>>>> space"). If
-> >>>>> user-space
-> >>>>> tools rely on 'knowing' the kernel memory layout, they must have to
-> >>>>> constantly be fixed
-> >>>>> and updated. This is a poor argument for adding this to something that
-> >>>>> ends up as ABI.
-> >>>>
-> >>>> See above. The user-space has to rely on some ABI/guaranteed
-> >>>> hardware-symbols which can be
-> >>>> used for 'determining' the kernel memory layout.
-> >>>
-> >>> I disagree. Everything and anything in the kernel will change. The
-> >>> ABI rules apply to
-> >>> stuff exposed via syscalls and kernel filesystems. It does not apply
-> >>> to kernel internals,
-> >>> like the memory layout we used yesterday. 14c127c957c1 is a case in
-> >>> point.
-> >>>
-> >>> A debugger trying to rely on this sort of thing would have to play
-> >>> catchup whenever it
-> >>> changes.
-> >>
-> >> Exactly.  That's the whole point.
-> >>
-> >> The crash utility and makedumpfile are not in the same league as other
-> >> user-space tools.
-> >> They have always had to "play catchup" precisely because they depend
-> >> upon kernel internals,
-> >> which constantly change.
-> >
-> > I agree with you and DaveA here. Software user-space debuggers are
-> > dependent on kernel internals (which can change from time-to-time) and
-> > will have to play catch-up (which has been the case since the very start).
-> >
-> > Unfortunately we don't have any clear ABI for software debugging tools -
-> > may be something to look for in future.
-> >
-> > A case in point is gdb/kgdb, which still needs to run with KASLR
-> > turned-off (nokaslr) for debugging, as it confuses gdb which resolve
-> > kernel symbol address from symbol table of vmlinux. But we can
-> > work-around the same in makedumpfile/crash by reading the 'kaslr_offset'
-> > value. And I have several users telling me now they cannot use gdb on
-> > KASLR enabled kernel to debug panics, but can makedumpfile + crash
-> > combination to achieve the same.
-> >
-> > So, we should be looking to fix these utilities which are broken since
-> > the 52-bit changes for arm64. Accordingly, I will try to send the v6
-> > soon while incorporating the comments posted on the v5.
->
-> Any update on the next v6 version. Since this patch series is fixing the
-> current broken kdump so need this series to add some more fields in
-> vmcoreinfo for Pointer Authentication work.
+--gatW/ieO32f1wygP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for the delay. I was caught up in some other urgent arm64
-user-space issues.
-I am preparing the v6 now and hopefully will be able to post it out
-for review later today.
+On Fri, Feb 21, 2020 at 07:07:02PM +0100, Halil Pasic wrote:
+> On Fri, 21 Feb 2020 10:48:15 -0500
+> "Michael S. Tsirkin" <mst@redhat.com> wrote:
+>=20
+> > On Fri, Feb 21, 2020 at 02:06:39PM +0100, Halil Pasic wrote:
+> > > On Fri, 21 Feb 2020 14:27:27 +1100
+> > > David Gibson <david@gibson.dropbear.id.au> wrote:
+> > >=20
+> > > > On Thu, Feb 20, 2020 at 05:31:35PM +0100, Christoph Hellwig wrote:
+> > > > > On Thu, Feb 20, 2020 at 05:23:20PM +0100, Christian Borntraeger w=
+rote:
+> > > > > > >From a users perspective it makes absolutely perfect sense to =
+use the
+> > > > > > bounce buffers when they are NEEDED.=20
+> > > > > > Forcing the user to specify iommu_platform just because you nee=
+d bounce buffers
+> > > > > > really feels wrong. And obviously we have a severe performance =
+issue
+> > > > > > because of the indirections.
+> > > > >=20
+> > > > > The point is that the user should not have to specify iommu_platf=
+orm.
+> > > > > We need to make sure any new hypervisor (especially one that migh=
+t require
+> > > > > bounce buffering) always sets it,
+> > > >=20
+> > > > So, I have draft qemu patches which enable iommu_platform by defaul=
+t.
+> > > > But that's really because of other problems with !iommu_platform, n=
+ot
+> > > > anything to do with bounce buffering or secure VMs.
+> > > >=20
+> > > > The thing is that the hypervisor *doesn't* require bounce buffering.
+> > > > In the POWER (and maybe s390 as well) models for Secure VMs, it's t=
+he
+> > > > *guest*'s choice to enter secure mode, so the hypervisor has no rea=
+son
+> > > > to know whether the guest needs bounce buffering.  As far as the
+> > > > hypervisor and qemu are concerned that's a guest internal detail, it
+> > > > just expects to get addresses it can access whether those are GPAs
+> > > > (iommu_platform=3Doff) or IOVAs (iommu_platform=3Don).
+> > >=20
+> > > I very much agree!
+> > >=20
+> > > >=20
+> > > > > as was a rather bogus legacy hack
+> > > >=20
+> > > > It was certainly a bad idea, but it was a bad idea that went into a
+> > > > public spec and has been widely deployed for many years.  We can't
+> > > > just pretend it didn't happen and move on.
+> > > >=20
+> > > > Turning iommu_platform=3Don by default breaks old guests, some of w=
+hich
+> > > > we still care about.  We can't (automatically) do it only for guests
+> > > > that need bounce buffering, because the hypervisor doesn't know that
+> > > > ahead of time.
+> > >=20
+> > > Turning iommu_platform=3Don for virtio-ccw makes no sense whatsover,
+> > > because for CCW I/O there is no such thing as IOMMU and the addresses
+> > > are always physical addresses.
+> >=20
+> > Fix the name then. The spec calls is ACCESS_PLATFORM now, which
+> > makes much more sense.
+>=20
+> I don't quite get it. Sorry. Maybe I will revisit this later.
 
-Thanks,
-Bhupesh
+Halil, I think I can clarify this.
 
+The "iommu_platform" flag doesn't necessarily have anything to do with
+an iommu, although it often will.  Basically it means "access guest
+memory via the bus's normal DMA mechanism" rather than "access guest
+memory using GPA, because you're the hypervisor and you can do that".
+
+For the case of ccw, both mechanisms end up being the same thing,
+since CCW's normal DMA *is* untranslated GPA access.
+
+For this reason, the flag in the spec was renamed to ACCESS_PLATFORM,
+but the flag in qemu still has the old name.
+
+AIUI, Michael is saying you could trivially change the name in qemu
+(obviously you'd need to alias the old name to the new one for
+compatibility).
+
+
+Actually, the fact that ccw has no translation makes things easier for
+you: you don't really have any impediment to turning ACCESS_PLATFORM
+on by default, since it doesn't make any real change to how things
+work.
+
+The remaining difficulty is that the virtio driver - since it can sit
+on multiple buses - won't know this, and will reject the
+ACCESS_PLATFORM flag, even though it could just do what it normally
+does on ccw and it would work.
+
+For that case, we could consider a hack in qemu where for virtio-ccw
+devices *only* we allow the guest to nack the ACCESS_PLATFORM flag and
+carry on anyway.  Normally we insist that the guest accept the
+ACCESS_PLATFORM flag if offered, because on most platforms they
+*don't* amount to the same thing.
+
+--=20
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
+
+--gatW/ieO32f1wygP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl5TQ/gACgkQbDjKyiDZ
+s5KScw/6A2bpuaDoeyju/89gg/50j1boGL5GLhZekxNikY9NGo8Q75SrCFgLeofE
+WKee9dbP9N7t/rufx/3GTmHZdcG1Ag+7CJmiDZbkROVckdBwRex/g8Og8iQa97gK
+aPUZKxNShLlV6p3FAUYYrv9F7t3nsJXLijRv/2t07uSKVsxY19DXGzgXFDrWj2R8
+C/Xond2gjve7erMO8Ld/yFxAU20E3zj0LgFWiqwUnAWMgPFxPlx1L6ssv0kTOcD3
+6tWGB5efKZz3UAbHHQyC3ziru+kPIRRKrk2tQ7rzQpoW8uPquTPZWl6+nJ6rKj4m
+/QU++2cDASm+dTHnTRXiTUsZt26+VBgcDh+CZmGu9vvf2OJgmCJzeGwpuf1mWYCY
+VXyT8dpChUq3q3YMxzoIuRVeyLJuBdZ8a8zofP6BCrXY4aMTji5eclg327DFonZB
+0u3oKQxUR+vcPjWjsASjSnePzE/qxMABZboqSErqXNzeNq6AZen/s9ctO6E6wuHk
+mXty/bXyjOeL/PI3kOUljvF7qtrGssMH+lxBxAaFdRD3DTdDxMwRd9bdYRBr7SJh
+lwt0VMzt9PaXGATp73GTB+Mp5hlzcgIuaZS4/+ksp98iOPQ9nmbpXfqr4NZG/YZs
+Uy5FiOjXXQASBIn+E2e83zoLgNsGMgTWDLh4NYs5vvzNxwD0YcM=
+=jat8
+-----END PGP SIGNATURE-----
+
+--gatW/ieO32f1wygP--
