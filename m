@@ -2,104 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B7F216AC05
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:47:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F3A816AC0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:48:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbgBXQr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:47:29 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:40389 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726806AbgBXQr3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:47:29 -0500
-Received: by mail-pj1-f66.google.com with SMTP id 12so4441379pjb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 08:47:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=es-iitr-ac-in.20150623.gappssmtp.com; s=20150623;
-        h=from:date:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2zePMqHb3pxqOSl/NHaUkMDrUSvpWjI4HscCu6Jr28k=;
-        b=ZwdohMMjroCJi5cDmXzMY1AW4fuHeMb0XbtE7ZyLvdY2TmdNxW4nhXx6yqm4f03V4O
-         eT3TFPHeWwM2FEyVDDAvDi+WtbvSyoqjV6MkeirxuqmP70depek/y+KRWpeWdnaiqGFS
-         Z+76/2ZoqQLn0ew3wr7AJ39b3DSalwhweP2CQvZ+O4/N03aQ5R9CV9iSLCv0j9dL6TD7
-         kUY6/Bb4yRNNfLGRj60fR0SUuwvkwcMrTFRjB/tqpFiiMhw1aKdRg1Tq7qyEe8SKRNxZ
-         uNmI5mAV5zoffPBG/GN2+NvnGFdN5MUCEB3F34AXL5kmt26jahSW5Do+o6OUe1BLRTfL
-         buyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2zePMqHb3pxqOSl/NHaUkMDrUSvpWjI4HscCu6Jr28k=;
-        b=XM+my4xUUjhh8BmSfFxf4ntlXM0XefsHvsyo8xKXJvDPMHengbwnPD+5v+S4tejBO1
-         iGMN4QCLDoic0lyzSnL7crwgLIfExH4TDHlh9O46Otr1OpeCuPFf3tNMjd9gwz71C0yZ
-         qXweh0SOhR1JHe2uyuw1nhXWm5t2gRn5MIyylX+RodXO8T8hTF3+ab4+3+SClqXUMSc2
-         /DtxXpzFHLdvN/2ewVgmw0gnHguoF/U8D0HB1ka/yTNwv+0clfWNNZ5AdVJHsQwBomzq
-         pJBsQb+IFU8KIlli0rTyHrYlxz/MK8wt52sHKNWYslwl4a+z07D6zv86lLh9oLQytjN+
-         HP9g==
-X-Gm-Message-State: APjAAAUmLtEHxGlCeeGi8AbqXnJ+FH3HuNca8+dXDe74bWM/UfDd4zAy
-        xf1tyZbMVdTAEWyBBEpWgo43Kg==
-X-Google-Smtp-Source: APXvYqwecQZyBx2Lu6irbcoubh2qjH4GBrXCroPb6bZfgoJ7nVIHn8R8yjAR6JV/sdr+Y/WoSHiLuw==
-X-Received: by 2002:a17:902:9342:: with SMTP id g2mr49081074plp.339.1582562848308;
-        Mon, 24 Feb 2020 08:47:28 -0800 (PST)
-Received: from kaaira-HP-Pavilion-Notebook ([103.37.201.170])
-        by smtp.gmail.com with ESMTPSA id d3sm13201089pfn.113.2020.02.24.08.47.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Feb 2020 08:47:27 -0800 (PST)
-From:   Kaaira Gupta <kgupta@es.iitr.ac.in>
-X-Google-Original-From: Kaaira Gupta <Kaairakgupta@es.iitr.ac.in>
-Date:   Mon, 24 Feb 2020 22:17:21 +0530
-To:     Joe Perches <joe@perches.com>, Manish Chopra <manishc@marvell.com>,
-        GR-Linux-NIC-Dev@marvell.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        netdev@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] staging: qlge: emit debug and dump at same level
-Message-ID: <20200224164721.GA7214@kaaira-HP-Pavilion-Notebook>
-References: <20200224082448.GA6826@kaaira-HP-Pavilion-Notebook>
- <84410699e6acbffca960aa2944e9f5869478b178.camel@perches.com>
+        id S1727922AbgBXQr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:47:59 -0500
+Received: from mga02.intel.com ([134.134.136.20]:34633 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726762AbgBXQr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 11:47:57 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP; 24 Feb 2020 08:47:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,480,1574150400"; 
+   d="scan'208";a="226036617"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga007.jf.intel.com with ESMTP; 24 Feb 2020 08:47:50 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1j6GtZ-000FSk-V3; Tue, 25 Feb 2020 00:47:49 +0800
+Date:   Tue, 25 Feb 2020 00:47:40 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     kbuild-all@lists.01.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 22/89] clk: bcm: rpi: Discover the firmware clocks
+Message-ID: <202002250020.9fsQ277c%lkp@intel.com>
+References: <d197ab836d84b89b94ff1927872126767d921e94.1582533919.git-series.maxime@cerno.tech>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <84410699e6acbffca960aa2944e9f5869478b178.camel@perches.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <d197ab836d84b89b94ff1927872126767d921e94.1582533919.git-series.maxime@cerno.tech>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 05:38:09AM -0800, Joe Perches wrote:
-> On Mon, 2020-02-24 at 13:54 +0530, Kaaira Gupta wrote:
-> > Simplify code in ql_mpi_core_to_log() by calling print_hex_dump()
-> > instead of existing functions so that the debug and dump are
-> > emitted at the same KERN_<LEVEL>
-> []
-> > diff --git a/drivers/staging/qlge/qlge_dbg.c b/drivers/staging/qlge/qlge_dbg.c
-> []
-> > @@ -1324,27 +1324,10 @@ void ql_mpi_core_to_log(struct work_struct *work)
-> >  {
-> >  	struct ql_adapter *qdev =
-> >  		container_of(work, struct ql_adapter, mpi_core_to_log.work);
-> > -	u32 *tmp, count;
-> > -	int i;
-> >  
-> > -	count = sizeof(struct ql_mpi_coredump) / sizeof(u32);
-> > -	tmp = (u32 *)qdev->mpi_coredump;
-> > -	netif_printk(qdev, drv, KERN_DEBUG, qdev->ndev,
-> > -		     "Core is dumping to log file!\n");
-> 
-> There is no real need to delete this line.
-> 
-> And if you really want to, it'd be better to mention
-> the removal in the commit message description.
-> 
-> As is for this change, there is no "debug" and "dump"
-> as the commit message description shows, just "dump".
+Hi Maxime,
 
-This patch has already been added to the tree, if I amend the commit now
-using git rebase, won't it affect the upstream as the SHA-1 of the
-commit and it's children will change?
+I love your patch! Perhaps something to improve:
 
-> 
-> 
-> 
-> 
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on robh/for-next anholt/for-next v5.6-rc3 next-20200224]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+url:    https://github.com/0day-ci/linux/commits/Maxime-Ripard/drm-vc4-Support-BCM2711-Display-Pipeline/20200224-172730
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+coccinelle warnings: (new ones prefixed by >>)
+
+>> drivers/clk/bcm/clk-raspberrypi.c:327:31-37: ERROR: application of sizeof to pointer
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
