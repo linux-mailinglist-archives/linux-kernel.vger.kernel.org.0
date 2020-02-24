@@ -2,213 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4E6816B056
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 20:34:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D74F16B063
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 20:41:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbgBXTej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 14:34:39 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:30774 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbgBXTej (ORCPT
+        id S1727310AbgBXTlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 14:41:19 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:51010 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbgBXTlT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 14:34:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1582572879; x=1614108879;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TaX3Wv7PyIziT4d1G8a+2bb+qyLwg4X9NtQlx1p7X3Q=;
-  b=pWIKHL5pLp3lpk75g+i8mVPHmMAb2bClf739S+9XtaBmGeHl8/LbgT+e
-   Z2d2KZzb+lW9uEPoiEzNgx8RmZR5w8TCWjFH6jjgQ9a6Izhbv9x4CZ+IP
-   0O49GCNyBPXDLmcAb2b+95jNtWtM2+drd0QTDaDgHe1GV+QRJkptQHu/B
-   RhTtBNbXaKccBrDCfQLhfojrIQvDC0rXHT57NuKMRoZH8ckv32qcCTotG
-   62IClb8BZBJBSI5Gg7VlMP4pNj1trKKUSmDf9gUDTPK5Oh+oQ05rb09Qo
-   DVFxD3WNYgTOqWULyAcm3EDab2pd2dDqVSU3H1nf6In2iDEbTl2imaroV
-   Q==;
-IronPort-SDR: /GP6jn2SwZSjRQSmLmU2MYE6e6cst6DhkMNRrDaRh9cMgd4+3qy2nRqXmDRJ81IlAOBt9P5KNx
- joPb8nzn+uVi9aNsRzXuyzUcWLaFx+z2u6JmKe1QezZlJrNTnwU6VnJYITxATe4TvJ/suxfRwp
- EhndQl1BXY/IEPB+PLzneERAEVzKahlwPSWVXT40nY2trIqiZtr+mE1Dw3ZvggaocY8flxJ4B+
- fNlFoNUbdfPI49hJUD13sZNrbbGHX74qW8KMjGdJhntHfcuR9C1h9CMk+L6LAKOp88+Nkls2/k
- nJk=
-X-IronPort-AV: E=Sophos;i="5.70,481,1574092800"; 
-   d="scan'208";a="132056460"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Feb 2020 03:34:39 +0800
-IronPort-SDR: YG2MsjojoEmZd7aWHauY9CtzTMyU/cjyZxx/I5gFLksZUld+K9jrhlVyQk8RquETIBh+5soJvH
- zMz8dpDKCYbBAKWWA7riYV3fVM1Cdg68Kk5AneZfItIpTrOTODnFiBzUqLrUC7Qywb73MQyrjX
- rXhY4vgzXCmk1QvUebRqd297jfUfm8BUjq+iqbiveZBMgmy6ViBWfDbw1jszcw236Re/xqbEz+
- yq3/ayg+KlUNXH4BSw7eUSG0jnyE5tuaQjkuAoSHgA/4GGItyjtZ59a2mkWEQqVOEAEPLRWtMG
- KNjgIFn8IexulcTKw0RTF7yC
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 11:27:06 -0800
-IronPort-SDR: LshLh2Ryp4MLHSTzrZvRnNagIEJVqT3vitq311Cg7HS3btSIzWem6KWLj2Y9gw6moLXBQD7fod
- jcDC6jdh97rNR4tF3uTDPierzwc9cnleC3BOAWeMZMjfvd9hoWCUqel08HYj3PvqoQQ0/j721I
- IfuZjo7wUx74Y1P2TBU09zonoUrf5FZ25qCiA4ecgvYJoG4c0oflw3guWuZsiAbYcKH2Zcp3Rw
- 8Dqy89EHkMLPBGLKg4KkD6Kn5R5DqpW0Epb6tsw1zBCssis/eYU7PYuLHHPF0QPklXHpmNVslL
- cic=
-WDCIronportException: Internal
-Received: from yoda.sdcorp.global.sandisk.com (HELO yoda.int.fusionio.com) ([10.196.158.80])
-  by uls-op-cesaip01.wdc.com with ESMTP; 24 Feb 2020 11:34:37 -0800
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>, stable@vger.kernel.org,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@gmail.com>,
-        David Abdurachmanov <david.abdurachmanov@gmail.com>,
-        Greentime Hu <greentime.hu@sifive.com>,
-        linux-riscv@lists.infradead.org,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Nick Hu <nickhu@andestech.com>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] RISC-V: Move all address space definition macros to one place
-Date:   Mon, 24 Feb 2020 11:34:36 -0800
-Message-Id: <20200224193436.26860-1-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.25.0
+        Mon, 24 Feb 2020 14:41:19 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1j6JZE-00042F-00; Mon, 24 Feb 2020 20:39:01 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 49DC51C2141;
+        Mon, 24 Feb 2020 20:38:53 +0100 (CET)
+Date:   Mon, 24 Feb 2020 19:38:52 -0000
+From:   "tip-bot2 for Dave Hansen" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/fpu] x86/pkeys: Add check for pkey "overflow"
+Cc:     Alex Shi <alex.shi@linux.alibaba.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200122165346.AD4DA150@viggo.jf.intel.com>
+References: <20200122165346.AD4DA150@viggo.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <158257313295.28353.13260588823755271323.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If both CONFIG_KASAN and CONFIG_SPARSEMEM_VMEMMAP are set, we get the
-following compilation error.
+The following commit has been merged into the x86/fpu branch of tip:
 
----------------------------------------------------------------
-./arch/riscv/include/asm/pgtable-64.h: In function ‘pud_page’:
-./include/asm-generic/memory_model.h:54:29: error: ‘vmemmap’ undeclared
-(first use in this function); did you mean ‘mem_map’?
- #define __pfn_to_page(pfn) (vmemmap + (pfn))
-                             ^~~~~~~
-./include/asm-generic/memory_model.h:82:21: note: in expansion of
-macro ‘__pfn_to_page’
+Commit-ID:     16171bffc829272d5e6014bad48f680cb50943d9
+Gitweb:        https://git.kernel.org/tip/16171bffc829272d5e6014bad48f680cb50943d9
+Author:        Dave Hansen <dave.hansen@linux.intel.com>
+AuthorDate:    Wed, 22 Jan 2020 08:53:46 -08:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Mon, 24 Feb 2020 20:25:21 +01:00
 
- #define pfn_to_page __pfn_to_page
-                     ^~~~~~~~~~~~~
-./arch/riscv/include/asm/pgtable-64.h:70:9: note: in expansion of macro
-‘pfn_to_page’
-  return pfn_to_page(pud_val(pud) >> _PAGE_PFN_SHIFT);
----------------------------------------------------------------
+x86/pkeys: Add check for pkey "overflow"
 
-Fix the compliation errors by moving all the address space definition
-macros before including pgtable-64.h.
+Alex Shi reported the pkey macros above arch_set_user_pkey_access()
+to be unused.  They are unused, and even refer to a nonexistent
+CONFIG option.
 
-Cc: stable@vger.kernel.org
-Fixes: 8ad8b72721d0 (riscv: Add KASAN support)
+But, they might have served a good use, which was to ensure that
+the code does not try to set values that would not fit in the
+PKRU register.  As it stands, a too-large 'pkey' value would
+be likely to silently overflow the u32 new_pkru_bits.
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
+Add a check to look for overflows.  Also add a comment to remind
+any future developer to closely examine the types used to store
+pkey values if arch_max_pkey() ever changes.
+
+This boots and passes the x86 pkey selftests.
+
+Reported-by: Alex Shi <alex.shi@linux.alibaba.com>
+Signed-off-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20200122165346.AD4DA150@viggo.jf.intel.com
 ---
- arch/riscv/include/asm/pgtable.h | 78 +++++++++++++++++---------------
- 1 file changed, 41 insertions(+), 37 deletions(-)
+ arch/x86/include/asm/pkeys.h |  5 +++++
+ arch/x86/kernel/fpu/xstate.c |  9 +++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 453afb0a570a..4f6ee48a42e8 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -19,6 +19,47 @@
- #include <asm/tlbflush.h>
- #include <linux/mm_types.h>
+diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
+index 19b137f..2ff9b98 100644
+--- a/arch/x86/include/asm/pkeys.h
++++ b/arch/x86/include/asm/pkeys.h
+@@ -4,6 +4,11 @@
  
-+#ifdef CONFIG_MMU
-+
-+#define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
-+#define VMALLOC_END      (PAGE_OFFSET - 1)
-+#define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
-+
-+#define BPF_JIT_REGION_SIZE	(SZ_128M)
-+#define BPF_JIT_REGION_START	(PAGE_OFFSET - BPF_JIT_REGION_SIZE)
-+#define BPF_JIT_REGION_END	(VMALLOC_END)
-+
+ #define ARCH_DEFAULT_PKEY	0
+ 
 +/*
-+ * Roughly size the vmemmap space to be large enough to fit enough
-+ * struct pages to map half the virtual address space. Then
-+ * position vmemmap directly below the VMALLOC region.
++ * If more than 16 keys are ever supported, a thorough audit
++ * will be necessary to ensure that the types that store key
++ * numbers and masks have sufficient capacity.
 + */
-+#define VMEMMAP_SHIFT \
-+	(CONFIG_VA_BITS - PAGE_SHIFT - 1 + STRUCT_PAGE_MAX_SHIFT)
-+#define VMEMMAP_SIZE	BIT(VMEMMAP_SHIFT)
-+#define VMEMMAP_END	(VMALLOC_START - 1)
-+#define VMEMMAP_START	(VMALLOC_START - VMEMMAP_SIZE)
-+
-+/*
-+ * Define vmemmap for pfn_to_page & page_to_pfn calls. Needed if kernel
-+ * is configured with CONFIG_SPARSEMEM_VMEMMAP enabled.
-+ */
-+#define vmemmap		((struct page *)VMEMMAP_START)
-+
-+#define PCI_IO_SIZE      SZ_16M
-+#define PCI_IO_END       VMEMMAP_START
-+#define PCI_IO_START     (PCI_IO_END - PCI_IO_SIZE)
-+
-+#define FIXADDR_TOP      PCI_IO_START
-+#ifdef CONFIG_64BIT
-+#define FIXADDR_SIZE     PMD_SIZE
-+#else
-+#define FIXADDR_SIZE     PGDIR_SIZE
-+#endif
-+#define FIXADDR_START    (FIXADDR_TOP - FIXADDR_SIZE)
-+
-+#endif
-+
- #ifdef CONFIG_64BIT
- #include <asm/pgtable-64.h>
- #else
-@@ -90,31 +131,6 @@ extern pgd_t swapper_pg_dir[];
- #define __S110	PAGE_SHARED_EXEC
- #define __S111	PAGE_SHARED_EXEC
+ #define arch_max_pkey() (boot_cpu_has(X86_FEATURE_OSPKE) ? 16 : 1)
  
--#define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
--#define VMALLOC_END      (PAGE_OFFSET - 1)
--#define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
--
--#define BPF_JIT_REGION_SIZE	(SZ_128M)
--#define BPF_JIT_REGION_START	(PAGE_OFFSET - BPF_JIT_REGION_SIZE)
--#define BPF_JIT_REGION_END	(VMALLOC_END)
--
--/*
-- * Roughly size the vmemmap space to be large enough to fit enough
-- * struct pages to map half the virtual address space. Then
-- * position vmemmap directly below the VMALLOC region.
-- */
--#define VMEMMAP_SHIFT \
--	(CONFIG_VA_BITS - PAGE_SHIFT - 1 + STRUCT_PAGE_MAX_SHIFT)
--#define VMEMMAP_SIZE	BIT(VMEMMAP_SHIFT)
--#define VMEMMAP_END	(VMALLOC_START - 1)
--#define VMEMMAP_START	(VMALLOC_START - VMEMMAP_SIZE)
--
--/*
-- * Define vmemmap for pfn_to_page & page_to_pfn calls. Needed if kernel
-- * is configured with CONFIG_SPARSEMEM_VMEMMAP enabled.
-- */
--#define vmemmap		((struct page *)VMEMMAP_START)
--
- static inline int pmd_present(pmd_t pmd)
- {
- 	return (pmd_val(pmd) & (_PAGE_PRESENT | _PAGE_PROT_NONE));
-@@ -452,18 +468,6 @@ static inline int ptep_clear_flush_young(struct vm_area_struct *vma,
- #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
- #define __swp_entry_to_pte(x)	((pte_t) { (x).val })
+ extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 73fe597..32b153d 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -895,8 +895,6 @@ const void *get_xsave_field_ptr(int xfeature_nr)
  
--#define PCI_IO_SIZE      SZ_16M
--#define PCI_IO_END       VMEMMAP_START
--#define PCI_IO_START     (PCI_IO_END - PCI_IO_SIZE)
--
--#define FIXADDR_TOP      PCI_IO_START
--#ifdef CONFIG_64BIT
--#define FIXADDR_SIZE     PMD_SIZE
--#else
--#define FIXADDR_SIZE     PGDIR_SIZE
--#endif
--#define FIXADDR_START    (FIXADDR_TOP - FIXADDR_SIZE)
--
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+ 
+-#define NR_VALID_PKRU_BITS (CONFIG_NR_PROTECTION_KEYS * 2)
+-#define PKRU_VALID_MASK (NR_VALID_PKRU_BITS - 1)
  /*
-  * Task size is 0x4000000000 for RV64 or 0x9fc00000 for RV32.
-  * Note that PGDIR_SIZE must evenly divide TASK_SIZE.
--- 
-2.25.0
-
+  * This will go out and modify PKRU register to set the access
+  * rights for @pkey to @init_val.
+@@ -915,6 +913,13 @@ int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+ 	if (!boot_cpu_has(X86_FEATURE_OSPKE))
+ 		return -EINVAL;
+ 
++	/*
++	 * This code should only be called with valid 'pkey'
++	 * values originating from in-kernel users.  Complain
++	 * if a bad value is observed.
++	 */
++	WARN_ON_ONCE(pkey >= arch_max_pkey());
++
+ 	/* Set the bits we need in PKRU:  */
+ 	if (init_val & PKEY_DISABLE_ACCESS)
+ 		new_pkru_bits |= PKRU_AD_BIT;
