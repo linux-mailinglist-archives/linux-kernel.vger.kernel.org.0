@@ -2,44 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD86E169FF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1A7B169FEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:28:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbgBXI2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:28:38 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:34297 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727237AbgBXI2P (ORCPT
+        id S1727327AbgBXI2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:28:18 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:34292 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727290AbgBXI2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:28:15 -0500
-Received: by mail-il1-f199.google.com with SMTP id l13so17084843ils.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 00:28:15 -0800 (PST)
+        Mon, 24 Feb 2020 03:28:16 -0500
+Received: by mail-il1-f198.google.com with SMTP id l13so17084818ils.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 00:28:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=W9h08KTSjSCdy4kLKcKAldx/qM48NLEiDmE9jIQx3TQ=;
-        b=WEuwcvoUwBRmS7HwEGpTdlxnH0PDYcOYMEN/M6ut7nLFJaAFXip0FXBdomH/8mY8Kt
-         7s/huKgEdPqvJyZP+MDxFElidGX/S373I/lX2qO8owCF+ym90+SiTgD2eK7ScR4Y8Wnq
-         dVZKEFZeSXZGq+OhCXMb1kPQTk2qy1+ejLR9sKjTIX4A+uLEyuX+XU3buMvdAloJ2FlQ
-         9hw51FWzpHZwRla4Ap95i8ANkXF+z8/Mo/SU3YTidSHr4xoz9uLMNdtWjrD8mpqOtbRC
-         3Q3ClHhuVVTBucOqevgBS2vNUt0YlhnfRXoqW6hZouSZjs2ir3alqhWwJDruV1Dtel/c
-         tAaA==
-X-Gm-Message-State: APjAAAUsCCT6JHMEt1SYSO/gyxXG8MDEZGrh0T2t8IE6ZI3yjq5qnbhB
-        uR2TEoQYn3yT5VRe5qADFn2FPVJ57xiUN6NMKlVA7+YovZAE
-X-Google-Smtp-Source: APXvYqx1krtC9a0XOk9/Sr6rX0i4xU5AKD6T/W5yYOfuYSjBW0REBDhxBqlsBR3+vBeHdhRO59PmNGVwgEeiqnW3xJFbNyHyLykv
+        bh=vIr8nJYtkSIDBRrSoe4ExdWOaV6ukpSgeZOvoFewiik=;
+        b=U0g3fdM4OQdkzmdelvG8CqcV+pGepf75SDdA+q7edT87jauIYi6BH9+Z9So23WPPCI
+         tG1AzxJFFeulpLH1/dQ399WScQkffI8xVwN5nKRXONBWHlSxAHbX6Xa9eIfe69ckNDv1
+         MAFbVRbWsuvtNFci1OZu7hQ3pFTdtYckvi/5glqGMvnhLwlAiZFaTtpjX5ahzWPAdJml
+         YRQpXZyZCnL9DyRwCXjESqM6NqrCMXAH14mbcAMiCfRQZkKHLJULOq0Rluw+RM2WNslS
+         Y7h6kyEB140eVBfhcQ/OBHsD3sKJNhAOlOQKNJSBrFoqkIHEqRB1P5MhQsJvs73sMtW6
+         9P7w==
+X-Gm-Message-State: APjAAAXeaGB762L3vJ9TVdBaRLXDiDan2lBiqG6Y1kZ1jg1Gz4f4EnrE
+        7shEiJTwUiq6dnZu4UA47LgumI1Fpb+oxddYRKN5KkLJo60d
+X-Google-Smtp-Source: APXvYqz6Dl+O/zUPHweusabUaTXYFRCVXNHMMm6d2eRzNjR6zt40sXIZNX4g6R3D/LevvNRZjCkHkhD6GjX3E/r9k8PpGfjbo4O2
 MIME-Version: 1.0
-X-Received: by 2002:a02:b38f:: with SMTP id p15mr50212592jan.56.1582532894740;
+X-Received: by 2002:a6b:5905:: with SMTP id n5mr49714675iob.242.1582532894287;
  Mon, 24 Feb 2020 00:28:14 -0800 (PST)
 Date:   Mon, 24 Feb 2020 00:28:14 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000955df059f4e276f@google.com>
-Subject: KMSAN: uninit-value in number (2)
-From:   syzbot <syzbot+9bcb0c9409066696d3aa@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, glider@google.com, kuba@kernel.org,
-        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mkl@pengutronix.de, netdev@vger.kernel.org, socketcan@hartkopp.net,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000026ac5059f4e27f3@google.com>
+Subject: WARNING: kobject bug in ib_register_device
+From:   syzbot <syzbot+da615ac67d4dbea32cbc@syzkaller.appspotmail.com>
+To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,87 +48,78 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    8bbbc5cf kmsan: don't compile memmove
-git tree:       https://github.com/google/kmsan.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=1661da7ee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cd0e9a6b0e555cc3
-dashboard link: https://syzkaller.appspot.com/bug?extid=9bcb0c9409066696d3aa
+HEAD commit:    d2eee258 Merge tag 'for-5.6-rc2-tag' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1176f74ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3e57a6b450fb9883
+dashboard link: https://syzkaller.appspot.com/bug?extid=da615ac67d4dbea32cbc
 compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111141a1e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ad5245e00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1146d245e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12e2fde9e00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9bcb0c9409066696d3aa@syzkaller.appspotmail.com
+Reported-by: syzbot+da615ac67d4dbea32cbc@syzkaller.appspotmail.com
 
-=====================================================
-BUG: KMSAN: uninit-value in number+0x9f8/0x2000 lib/vsprintf.c:459
-CPU: 1 PID: 11897 Comm: syz-executor136 Not tainted 5.6.0-rc2-syzkaller #0
+batman_adv: batadv0: Interface activated: batadv_slave_1
+------------[ cut here ]------------
+kobject: (000000005127ca6c): attempted to be registered with empty name!
+WARNING: CPU: 0 PID: 8971 at lib/kobject.c:236 kobject_add_internal+0x12c/0xaa0 lib/kobject.c:234
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 8971 Comm: syz-executor318 Not tainted 5.6.0-rc2-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x220 lib/dump_stack.c:118
- kmsan_report+0xf7/0x1e0 mm/kmsan/kmsan_report.c:118
- __msan_warning+0x58/0xa0 mm/kmsan/kmsan_instr.c:215
- number+0x9f8/0x2000 lib/vsprintf.c:459
- vsnprintf+0x1d85/0x31b0 lib/vsprintf.c:2640
- vscnprintf+0xc2/0x180 lib/vsprintf.c:2677
- vprintk_store+0xef/0x11d0 kernel/printk/printk.c:1917
- vprintk_emit+0x2c0/0x860 kernel/printk/printk.c:1984
- vprintk_default+0x90/0xa0 kernel/printk/printk.c:2029
- vprintk_func+0x636/0x820 kernel/printk/printk_safe.c:386
- printk+0x18b/0x1d3 kernel/printk/printk.c:2062
- canfd_rcv+0x370/0x3a0 net/can/af_can.c:697
- __netif_receive_skb_one_core net/core/dev.c:5198 [inline]
- __netif_receive_skb net/core/dev.c:5312 [inline]
- netif_receive_skb_internal net/core/dev.c:5402 [inline]
- netif_receive_skb+0xe77/0xf20 net/core/dev.c:5461
- tun_rx_batched include/linux/skbuff.h:4321 [inline]
- tun_get_user+0x6aef/0x6f60 drivers/net/tun.c:1997
- tun_chr_write_iter+0x1f2/0x360 drivers/net/tun.c:2026
- call_write_iter include/linux/fs.h:1901 [inline]
- new_sync_write fs/read_write.c:483 [inline]
- __vfs_write+0xa5a/0xca0 fs/read_write.c:496
- vfs_write+0x44a/0x8f0 fs/read_write.c:558
- ksys_write+0x267/0x450 fs/read_write.c:611
- __do_sys_write fs/read_write.c:623 [inline]
- __se_sys_write+0x92/0xb0 fs/read_write.c:620
- __x64_sys_write+0x4a/0x70 fs/read_write.c:620
- do_syscall_64+0xb8/0x160 arch/x86/entry/common.c:296
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x440239
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd3d6d1f28 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000003172 RCX: 0000000000440239
-RDX: 0000000000000004 RSI: 0000000020000200 RDI: 0000000000000003
-RBP: 656c6c616b7a7973 R08: 0000000000401ac0 R09: 0000000000401ac0
-R10: 0000000000401ac0 R11: 0000000000000246 R12: 0000000000401ac0
-R13: 0000000000401b50 R14: 0000000000000000 R15: 0000000000000000
-
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:144 [inline]
- kmsan_internal_poison_shadow+0x66/0xd0 mm/kmsan/kmsan.c:127
- kmsan_slab_alloc+0x8a/0xe0 mm/kmsan/kmsan_hooks.c:82
- slab_alloc_node mm/slub.c:2793 [inline]
- __kmalloc_node_track_caller+0xb40/0x1200 mm/slub.c:4401
- __kmalloc_reserve net/core/skbuff.c:142 [inline]
- __alloc_skb+0x2fd/0xac0 net/core/skbuff.c:210
- alloc_skb include/linux/skbuff.h:1051 [inline]
- alloc_skb_with_frags+0x18c/0xa70 net/core/skbuff.c:5766
- sock_alloc_send_pskb+0xada/0xc60 net/core/sock.c:2242
- tun_alloc_skb drivers/net/tun.c:1529 [inline]
- tun_get_user+0x10ae/0x6f60 drivers/net/tun.c:1843
- tun_chr_write_iter+0x1f2/0x360 drivers/net/tun.c:2026
- call_write_iter include/linux/fs.h:1901 [inline]
- new_sync_write fs/read_write.c:483 [inline]
- __vfs_write+0xa5a/0xca0 fs/read_write.c:496
- vfs_write+0x44a/0x8f0 fs/read_write.c:558
- ksys_write+0x267/0x450 fs/read_write.c:611
- __do_sys_write fs/read_write.c:623 [inline]
- __se_sys_write+0x92/0xb0 fs/read_write.c:620
- __x64_sys_write+0x4a/0x70 fs/read_write.c:620
- do_syscall_64+0xb8/0x160 arch/x86/entry/common.c:296
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-=====================================================
+ dump_stack+0x1fb/0x318 lib/dump_stack.c:118
+ panic+0x264/0x7a9 kernel/panic.c:221
+ __warn+0x209/0x210 kernel/panic.c:582
+ report_bug+0x1b6/0x2f0 lib/bug.c:195
+ fixup_bug arch/x86/kernel/traps.c:174 [inline]
+ do_error_trap+0xcf/0x1c0 arch/x86/kernel/traps.c:267
+ do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:286
+ invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+RIP: 0010:kobject_add_internal+0x12c/0xaa0 lib/kobject.c:234
+Code: 64 f9 41 be fe ff ff ff e9 59 06 00 00 e8 4c 63 64 f9 eb 05 e8 45 63 64 f9 48 c7 c7 83 8b 08 89 4c 89 ee 31 c0 e8 f4 28 36 f9 <0f> 0b 41 be ea ff ff ff e9 2f 06 00 00 48 89 45 b8 e8 1e 63 64 f9
+RSP: 0018:ffffc900077e71b0 EFLAGS: 00010246
+RAX: 5b8212945f64c000 RBX: 0000000000000000 RCX: ffff888091c3a2c0
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc900077e7230 R08: ffffffff81600324 R09: ffffed1015d46618
+R10: ffffed1015d46618 R11: 0000000000000000 R12: dffffc0000000000
+R13: ffff88809fb88668 R14: 1ffff11013f710cd R15: 0000000000000000
+ kobject_add_varg lib/kobject.c:390 [inline]
+ kobject_add+0xef/0x190 lib/kobject.c:442
+ device_add+0x4b2/0x1ad0 drivers/base/core.c:2412
+ ib_register_device+0x11df/0x15b0 drivers/infiniband/core/device.c:1371
+ rxe_register_device+0x3f6/0x530 drivers/infiniband/sw/rxe/rxe_verbs.c:1231
+ rxe_add+0x1373/0x14f0 drivers/infiniband/sw/rxe/rxe.c:302
+ rxe_net_add+0x79/0xe0 drivers/infiniband/sw/rxe/rxe_net.c:539
+ rxe_newlink+0x31/0x90 drivers/infiniband/sw/rxe/rxe.c:318
+ nldev_newlink+0x403/0x4a0 drivers/infiniband/core/nldev.c:1538
+ rdma_nl_rcv_msg drivers/infiniband/core/netlink.c:195 [inline]
+ rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+ rdma_nl_rcv+0x701/0xa20 drivers/infiniband/core/netlink.c:259
+ netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
+ netlink_unicast+0x766/0x920 net/netlink/af_netlink.c:1329
+ netlink_sendmsg+0xa2b/0xd40 net/netlink/af_netlink.c:1918
+ sock_sendmsg_nosec net/socket.c:652 [inline]
+ sock_sendmsg net/socket.c:672 [inline]
+ ____sys_sendmsg+0x4f7/0x7f0 net/socket.c:2343
+ ___sys_sendmsg net/socket.c:2397 [inline]
+ __sys_sendmsg+0x1ed/0x290 net/socket.c:2430
+ __do_sys_sendmsg net/socket.c:2439 [inline]
+ __se_sys_sendmsg net/socket.c:2437 [inline]
+ __x64_sys_sendmsg+0x7f/0x90 net/socket.c:2437
+ do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4433f9
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b 10 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffd5d50d798 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004433f9
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 00007ffd5d50d7b0 R08: 0000000001bbbbbb R09: 0000000001bbbbbb
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000404990 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
