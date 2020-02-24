@@ -2,436 +2,306 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 425B816AB8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:31:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84FE916ABB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:35:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbgBXQbr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:31:47 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:48478 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727160AbgBXQbq (ORCPT
+        id S1727854AbgBXQfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:35:55 -0500
+Received: from m9a0014g.houston.softwaregrp.com ([15.124.64.90]:51002 "EHLO
+        m9a0014g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727299AbgBXQfz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:31:46 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j6Ge1-0004uo-5E; Mon, 24 Feb 2020 09:31:45 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j6Gdx-00052X-3L; Mon, 24 Feb 2020 09:31:44 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>
-References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
-        <87v9odlxbr.fsf@x220.int.ebiederm.org>
-        <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
-        <87tv3vkg1a.fsf@x220.int.ebiederm.org>
-        <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
-        <87v9obipk9.fsf@x220.int.ebiederm.org>
-        <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
-        <20200212200335.GO23230@ZenIV.linux.org.uk>
-        <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
-        <20200212203833.GQ23230@ZenIV.linux.org.uk>
-        <20200212204124.GR23230@ZenIV.linux.org.uk>
-        <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
-        <87lfp7h422.fsf@x220.int.ebiederm.org>
-        <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
-        <87pnejf6fz.fsf@x220.int.ebiederm.org>
-        <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
-        <871rqk2brn.fsf_-_@x220.int.ebiederm.org>
-Date:   Mon, 24 Feb 2020 10:29:38 -0600
-In-Reply-To: <871rqk2brn.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Mon, 24 Feb 2020 10:25:16 -0600")
-Message-ID: <8736b00wzx.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 24 Feb 2020 11:35:55 -0500
+Received: FROM m9a0014g.houston.softwaregrp.com (15.121.0.191) BY m9a0014g.houston.softwaregrp.com WITH ESMTP;
+ Mon, 24 Feb 2020 16:35:05 +0000
+Received: from M9W0068.microfocus.com (2002:f79:bf::f79:bf) by
+ M9W0068.microfocus.com (2002:f79:bf::f79:bf) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Mon, 24 Feb 2020 16:31:06 +0000
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (15.124.72.14) by
+ M9W0068.microfocus.com (15.121.0.191) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Mon, 24 Feb 2020 16:31:06 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dgZO5Rfj88quCU9WXlH1bLtkgLuSO2Xg5qgCk20A/Bth932OdqlkBhmvzmmeu7XV+zQE8IcLx+MNRUYKE7a6iC46DQDZbniQ0a5MTM8m79xs1SwNHDHdbUuZGpD+y3yuqE5E4wEhZ+V/7aJgjm3iy+FDhVViLRQ1izadRkflunLgaaKyK6BbRsKyJ1iT8TZxKxudg3z5HtVkNtD6bFNRYk/U7SP2pmd7n7IDGypHnr/q7jCXr6FhbbdDX3EeIQ4gLV3cQ6hV7UQPiFmLsrV8AM3w4fi5vAL5+BgRwFPb+VJWuErN3WJC5ghHkBcRqW7oiwzckvAGJD8b2WDyM9z0Xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6HR6pUWFkg+EcQburVmSFJycNDCLdx0/NXWpYcPhROw=;
+ b=ZENs5hvC72KQ1ZzFxHdwEJrBwD2333frsXRbrRYzY4ZBmGI9FbV9JLFaPI/uyuYGxWqwhPtUr1TaUCYr/CcJquYTs+IOL+QBYAtrSRiJE6uRIguIgwIZHLTfC1wvRB7efO37uGonDmyzAqmgHWP9DnWdfMbGHlNnSICUf7vhH0fe0DdYg0La+lzGNRJC8s275/0KTbT+sLhrTdK4mLLYi9nmzACXiz+ZNkbtlFDklFpJ9m/x2iYR4h9hQLLnjGR+YK/YLqfCR99FFetAKnS9AtZJjzKe0sjjj112G5zE2+ezVrPPHixBvRvMCdny83NZIZSI3zyJPSCNM7WRJT8pwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=LDuncan@suse.com; 
+Received: from MN2PR18MB3278.namprd18.prod.outlook.com (2603:10b6:208:168::12)
+ by MN2PR18MB3496.namprd18.prod.outlook.com (2603:10b6:208:269::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.21; Mon, 24 Feb
+ 2020 16:31:05 +0000
+Received: from MN2PR18MB3278.namprd18.prod.outlook.com
+ ([fe80::257e:4933:95ff:e316]) by MN2PR18MB3278.namprd18.prod.outlook.com
+ ([fe80::257e:4933:95ff:e316%5]) with mapi id 15.20.2750.021; Mon, 24 Feb 2020
+ 16:31:05 +0000
+Subject: Re: [PATCH] scsi: Replace zero-length array with flexible-array
+ member
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Satish Kharat <satishkh@cisco.com>,
+        Sesidhar Baddela <sebaddel@cisco.com>,
+        Karan Tilak Kumar <kartilak@cisco.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Brian King <brking@us.ibm.com>,
+        Intel SCU Linux support <intel-linux-scu@intel.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>,
+        Chris Leech <cleech@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <MPT-FusionLinux.pdl@broadcom.com>, <open-iscsi@googlegroups.com>,
+        <linux-rdma@vger.kernel.org>
+References: <20200224161406.GA21454@embeddedor>
+From:   Lee Duncan <lduncan@suse.com>
+Message-ID: <b44f60b7-3091-592e-b319-a929bcd19486@suse.com>
+Date:   Mon, 24 Feb 2020 08:30:53 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+In-Reply-To: <20200224161406.GA21454@embeddedor>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LNXP123CA0024.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:d2::36) To MN2PR18MB3278.namprd18.prod.outlook.com
+ (2603:10b6:208:168::12)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1j6Gdx-00052X-3L;;;mid=<8736b00wzx.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19MH8OOLAnkeXKMBLr4LWC1fUGnAEgCvqg=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: ***
-X-Spam-Status: No, score=3.1 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,FVGT_m_MULTI_ODD,LotsOfNums_01,
-        T_FILL_THIS_FORM_SHORT,T_TM2_M_HEADER_IN_MSG,T_XMDrugObfuBody_08,
-        XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4998]
-        *  0.7 XMSubLong Long Subject
-        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.4 FVGT_m_MULTI_ODD Contains multiple odd letter combinations
-        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
-        *  0.0 T_FILL_THIS_FORM_SHORT Fill in a short form with personal
-        *      information
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ***;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 3638 ms - load_scoreonly_sql: 0.09 (0.0%),
-        signal_user_changed: 8 (0.2%), b_tie_ro: 5 (0.1%), parse: 2.2 (0.1%),
-        extract_message_metadata: 24 (0.7%), get_uri_detail_list: 6 (0.2%),
-        tests_pri_-1000: 26 (0.7%), tests_pri_-950: 1.80 (0.0%),
-        tests_pri_-900: 1.11 (0.0%), tests_pri_-90: 52 (1.4%), check_bayes: 50
-        (1.4%), b_tokenize: 23 (0.6%), b_tok_get_all: 14 (0.4%), b_comp_prob:
-        4.3 (0.1%), b_tok_touch_all: 6 (0.2%), b_finish: 0.72 (0.0%),
-        tests_pri_0: 580 (15.9%), check_dkim_signature: 0.93 (0.0%),
-        check_dkim_adsp: 2.4 (0.1%), poll_dns_idle: 2927 (80.4%),
-        tests_pri_10: 2.2 (0.1%), tests_pri_500: 2937 (80.7%), rewrite_mail:
-        0.00 (0.0%)
-Subject: [PATCH v2 6/6] proc: Use a list of inodes to flush from proc
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.20.3] (73.25.22.216) by LNXP123CA0024.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:d2::36) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18 via Frontend Transport; Mon, 24 Feb 2020 16:30:59 +0000
+X-Originating-IP: [73.25.22.216]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 955004f1-2185-4c35-2a01-08d7b946f196
+X-MS-TrafficTypeDiagnostic: MN2PR18MB3496:
+X-Microsoft-Antispam-PRVS: <MN2PR18MB3496B3A535E2FC4F7FBF09BFDAEC0@MN2PR18MB3496.namprd18.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1751;
+X-Forefront-PRVS: 032334F434
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(366004)(376002)(396003)(39860400002)(136003)(189003)(199004)(26005)(86362001)(966005)(186003)(16526019)(36756003)(52116002)(6666004)(478600001)(8936002)(4326008)(7416002)(316002)(66946007)(81166006)(8676002)(81156014)(6486002)(2616005)(2906002)(956004)(31686004)(110136005)(53546011)(66556008)(66476007)(16576012)(31696002)(5660300002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR18MB3496;H:MN2PR18MB3278.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9DJcUpUKHs3xBrUjyykKQqfZbcrEnLBvMg7iQrhZCxci0ieGiA6vouTs0X4ki4WF6l26V8LTfBg9SZ0BHvOI0EjHnEGLOr+V85g1a/U399TPlynmZIOFZMH05OFORRmh7eM2T4MQCugEAlxmKZssmtJtYPnjz6MLmM1hKr7w0tWNaUwTAW+tN+ZPdjFbBgdu9omiapLgCItUIcFmc9LiNWzsP3LInhNYLU44P1QXtoVrfp6yVAzG/OGawOBRll5dWEWJ0SDXpUlKoa8PipFwvh1/bZgWDKosuPLaPodWfmJXfrD6ZBGTDonGfn/gbr59LshHB6ZhdhnjadwZg6TdiDY3QBapNIkS2vt6H+AmBK8ZPj/QCeUODZQCYwu+Fk02cWefCbuYKAimecmP6hm+a1ZNJ22zi4TwX0wUirfowFG6j3ApaLzdXJHLwkS19cxLUthOer7ut7Tvoh1apg7bhPJ8MuEAp8ldzkKo3PRS+G+fYtC3RmtE7pLkmz4Cybds8Q2V7BMpjF6f8cFa4+K5+94pGZ/CdKc16wYmbiYiCKDtpZpeVv8iw3MtpiuKkdWNIzCMFWl7wcIXi+7E4B2jFQ==
+X-MS-Exchange-AntiSpam-MessageData: vTepvfULObDcHan0zqFIkMHmhiUT8+/KO2k5Sx+WYx1BVeuxSXEFCwF4Q+KzwQoq4mbfmB1kR+ffYk5Q+KuGMxJm8qLr3+6a90wrF5uhGYWGOTQC/cMNk+glxGgUKUw+a/NQKn4nXG42+1XnTfqKHA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 955004f1-2185-4c35-2a01-08d7b946f196
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2020 16:31:05.0672
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 544Z785+9IpSGObDTUov+bzAy2pt6JDvlenvpkCpf+UfZz9zF6H4JLvWQ5oiweN2ulT2F+XQpcK+Ir+e4lkpAA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3496
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2/24/20 8:14 AM, Gustavo A. R. Silva wrote:
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
+> 
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
+> 
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+> 
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+> 
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+> 
+> This issue was found with the help of Coccinelle.
+> 
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  ...
+> diff --git a/include/scsi/iscsi_if.h b/include/scsi/iscsi_if.h
+> index 92b11c7e0b4f..b0e240b10bf9 100644
+> --- a/include/scsi/iscsi_if.h
+> +++ b/include/scsi/iscsi_if.h
+> @@ -311,7 +311,7 @@ enum iscsi_param_type {
+>  struct iscsi_param_info {
+>  	uint32_t len;		/* Actual length of the param value */
+>  	uint16_t param;		/* iscsi param */
+> -	uint8_t value[0];	/* length sized value follows */
+> +	uint8_t value[];	/* length sized value follows */
+>  } __packed;
+>  
+>  struct iscsi_iface_param_info {
+> @@ -320,7 +320,7 @@ struct iscsi_iface_param_info {
+>  	uint16_t param;		/* iscsi param value */
+>  	uint8_t iface_type;	/* IPv4 or IPv6 */
+>  	uint8_t param_type;	/* iscsi_param_type */
+> -	uint8_t value[0];	/* length sized value follows */
+> +	uint8_t value[];	/* length sized value follows */
+>  } __packed;
+>  
+>  /*
+> @@ -697,7 +697,7 @@ enum iscsi_flashnode_param {
+>  struct iscsi_flashnode_param_info {
+>  	uint32_t len;		/* Actual length of the param */
+>  	uint16_t param;		/* iscsi param value */
+> -	uint8_t value[0];	/* length sized value follows */
+> +	uint8_t value[];	/* length sized value follows */
+>  } __packed;
+>  
+>  enum iscsi_discovery_parent_type {
+> @@ -815,7 +815,7 @@ struct iscsi_stats {
+>  	 * up to ISCSI_STATS_CUSTOM_MAX
+>  	 */
+>  	uint32_t custom_length;
+> -	struct iscsi_stats_custom custom[0]
+> +	struct iscsi_stats_custom custom[]
+>  		__attribute__ ((aligned (sizeof(uint64_t))));
+>  };
+>  
+> @@ -946,7 +946,7 @@ struct iscsi_offload_host_stats {
+>  	 * up to ISCSI_HOST_STATS_CUSTOM_MAX
+>  	 */
+>  	uint32_t custom_length;
+> -	struct iscsi_host_stats_custom custom[0]
+> +	struct iscsi_host_stats_custom custom[]
+>  		__aligned(sizeof(uint64_t));
+>  };
+>  
+> diff --git a/include/scsi/scsi_bsg_iscsi.h b/include/scsi/scsi_bsg_iscsi.h
+> index fa0c820a1663..6b8128005af8 100644
+> --- a/include/scsi/scsi_bsg_iscsi.h
+> +++ b/include/scsi/scsi_bsg_iscsi.h
+> @@ -52,7 +52,7 @@ struct iscsi_bsg_host_vendor {
+>  	uint64_t vendor_id;
+>  
+>  	/* start of vendor command area */
+> -	uint32_t vendor_cmd[0];
+> +	uint32_t vendor_cmd[];
+>  };
+>  
+>  /* Response:
+> diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+> index f8312a3e5b42..4dc158cf09b8 100644
+> --- a/include/scsi/scsi_device.h
+> +++ b/include/scsi/scsi_device.h
+> @@ -231,7 +231,7 @@ struct scsi_device {
+>  	struct mutex		state_mutex;
+>  	enum scsi_device_state sdev_state;
+>  	struct task_struct	*quiesced_by;
+> -	unsigned long		sdev_data[0];
+> +	unsigned long		sdev_data[];
+>  } __attribute__((aligned(sizeof(unsigned long))));
+>  
+>  #define	to_scsi_device(d)	\
+> @@ -315,7 +315,7 @@ struct scsi_target {
+>  	char			scsi_level;
+>  	enum scsi_target_state	state;
+>  	void 			*hostdata; /* available to low-level driver */
+> -	unsigned long		starget_data[0]; /* for the transport */
+> +	unsigned long		starget_data[]; /* for the transport */
+>  	/* starget_data must be the last element!!!! */
+>  } __attribute__((aligned(sizeof(unsigned long))));
+>  
+> diff --git a/include/scsi/scsi_host.h b/include/scsi/scsi_host.h
+> index 7a97fb8104cf..e6811ea8f984 100644
+> --- a/include/scsi/scsi_host.h
+> +++ b/include/scsi/scsi_host.h
+> @@ -682,7 +682,7 @@ struct Scsi_Host {
+>  	 * and also because some compilers (m68k) don't automatically force
+>  	 * alignment to a long boundary.
+>  	 */
+> -	unsigned long hostdata[0]  /* Used for storage of host specific stuff */
+> +	unsigned long hostdata[]  /* Used for storage of host specific stuff */
+>  		__attribute__ ((aligned (sizeof(unsigned long))));
+>  };
+>  
+> diff --git a/include/scsi/scsi_ioctl.h b/include/scsi/scsi_ioctl.h
+> index 4fe69d863b5d..b465799f4d2d 100644
+> --- a/include/scsi/scsi_ioctl.h
+> +++ b/include/scsi/scsi_ioctl.h
+> @@ -27,7 +27,7 @@ struct scsi_device;
+>  typedef struct scsi_ioctl_command {
+>  	unsigned int inlen;
+>  	unsigned int outlen;
+> -	unsigned char data[0];
+> +	unsigned char data[];
+>  } Scsi_Ioctl_Command;
+>  
+>  typedef struct scsi_idlun {
+> diff --git a/include/scsi/srp.h b/include/scsi/srp.h
+> index 9220758d5087..177d8026e96f 100644
+> --- a/include/scsi/srp.h
+> +++ b/include/scsi/srp.h
+> @@ -109,7 +109,7 @@ struct srp_direct_buf {
+>  struct srp_indirect_buf {
+>  	struct srp_direct_buf	table_desc;
+>  	__be32			len;
+> -	struct srp_direct_buf	desc_list[0];
+> +	struct srp_direct_buf	desc_list[];
+>  } __attribute__((packed));
+>  
+>  /* Immediate data buffer descriptor as defined in SRP2. */
+> @@ -244,7 +244,7 @@ struct srp_cmd {
+>  	u8	reserved4;
+>  	u8	add_cdb_len;
+>  	u8	cdb[16];
+> -	u8	add_data[0];
+> +	u8	add_data[];
+>  };
+>  
+>  enum {
+> @@ -274,7 +274,7 @@ struct srp_rsp {
+>  	__be32	data_in_res_cnt;
+>  	__be32	sense_data_len;
+>  	__be32	resp_data_len;
+> -	u8	data[0];
+> +	u8	data[];
+>  } __attribute__((packed));
+>  
+>  struct srp_cred_req {
+> @@ -306,7 +306,7 @@ struct srp_aer_req {
+>  	struct scsi_lun	lun;
+>  	__be32	sense_data_len;
+>  	u32	reserved3;
+> -	u8	sense_data[0];
+> +	u8	sense_data[];
+>  } __attribute__((packed));
+>  
+>  struct srp_aer_rsp {
+> diff --git a/include/uapi/scsi/scsi_bsg_fc.h b/include/uapi/scsi/scsi_bsg_fc.h
+> index 3ae65e93235c..7f5930801f72 100644
+> --- a/include/uapi/scsi/scsi_bsg_fc.h
+> +++ b/include/uapi/scsi/scsi_bsg_fc.h
+> @@ -209,7 +209,7 @@ struct fc_bsg_host_vendor {
+>  	__u64 vendor_id;
+>  
+>  	/* start of vendor command area */
+> -	__u32 vendor_cmd[0];
+> +	__u32 vendor_cmd[];
+>  };
+>  
+>  /* Response:
+> 
 
-Rework the flushing of proc to use a list of directory inodes that
-need to be flushed.
-
-The list is kept on struct pid not on struct task_struct, as there is
-a fixed connection between proc inodes and pids but at least for the
-case of de_thread the pid of a task_struct changes.
-
-This removes the dependency on proc_mnt which allows for different
-mounts of proc having different mount options even in the same pid
-namespace and this allows for the removal of proc_mnt which will
-trivially the first mount of proc to honor it's mount options.
-
-This flushing remains an optimization.  The functions
-pid_delete_dentry and pid_revalidate ensure that ordinary dcache
-management will not attempt to use dentries past the point their
-respective task has died.  When unused the shrinker will
-eventually be able to remove these dentries.
-
-There is a case in de_thread where proc_flush_pid can be
-called early for a given pid.  Which winds up being
-safe (if suboptimal) as this is just an optiimization.
-
-Only pid directories are put on the list as the other
-per pid files are children of those directories and
-d_invalidate on the directory will get them as well.
-
-So that the pid can be used during flushing it's reference count is
-taken in release_task and dropped in proc_flush_pid.  Further the call
-of proc_flush_pid is moved after the tasklist_lock is released in
-release_task so that it is certain that the pid has already been
-unhashed when flushing it taking place.  This removes a small race
-where a dentry could recreated.
-
-As struct pid is supposed to be small and I need a per pid lock
-I reuse the only lock that currently exists in struct pid the
-the wait_pidfd.lock.
-
-The net result is that this adds all of this functionality
-with just a little extra list management overhead and
-a single extra pointer in struct pid.
-
-v2: Initialize pid->inodes.  I somehow failed to get that
-    initialization into the initial version of the patch.  A boot
-    failure was reported by "kernel test robot <lkp@intel.com>", and
-    failure to initialize that pid->inodes matches all of the reported
-    symptoms.
-
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
----
- fs/proc/base.c          | 111 +++++++++++++---------------------------
- fs/proc/inode.c         |   2 +-
- fs/proc/internal.h      |   1 +
- include/linux/pid.h     |   1 +
- include/linux/proc_fs.h |   4 +-
- kernel/exit.c           |   4 +-
- kernel/pid.c            |   1 +
- 7 files changed, 45 insertions(+), 79 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index c7c64272b0fa..e7efe9d6f3d6 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1834,11 +1834,25 @@ void task_dump_owner(struct task_struct *task, umode_t mode,
- 	*rgid = gid;
- }
- 
-+void proc_pid_evict_inode(struct proc_inode *ei)
-+{
-+	struct pid *pid = ei->pid;
-+
-+	if (S_ISDIR(ei->vfs_inode.i_mode)) {
-+		spin_lock(&pid->wait_pidfd.lock);
-+		hlist_del_init_rcu(&ei->sibling_inodes);
-+		spin_unlock(&pid->wait_pidfd.lock);
-+	}
-+
-+	put_pid(pid);
-+}
-+
- struct inode *proc_pid_make_inode(struct super_block * sb,
- 				  struct task_struct *task, umode_t mode)
- {
- 	struct inode * inode;
- 	struct proc_inode *ei;
-+	struct pid *pid;
- 
- 	/* We need a new inode */
- 
-@@ -1856,10 +1870,18 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
- 	/*
- 	 * grab the reference to task.
- 	 */
--	ei->pid = get_task_pid(task, PIDTYPE_PID);
--	if (!ei->pid)
-+	pid = get_task_pid(task, PIDTYPE_PID);
-+	if (!pid)
- 		goto out_unlock;
- 
-+	/* Let the pid remember us for quick removal */
-+	ei->pid = pid;
-+	if (S_ISDIR(mode)) {
-+		spin_lock(&pid->wait_pidfd.lock);
-+		hlist_add_head_rcu(&ei->sibling_inodes, &pid->inodes);
-+		spin_unlock(&pid->wait_pidfd.lock);
-+	}
-+
- 	task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
- 	security_task_to_inode(task, inode);
- 
-@@ -3230,90 +3252,29 @@ static const struct inode_operations proc_tgid_base_inode_operations = {
- 	.permission	= proc_pid_permission,
- };
- 
--static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
--{
--	struct dentry *dentry, *leader, *dir;
--	char buf[10 + 1];
--	struct qstr name;
--
--	name.name = buf;
--	name.len = snprintf(buf, sizeof(buf), "%u", pid);
--	/* no ->d_hash() rejects on procfs */
--	dentry = d_hash_and_lookup(mnt->mnt_root, &name);
--	if (dentry) {
--		d_invalidate(dentry);
--		dput(dentry);
--	}
--
--	if (pid == tgid)
--		return;
--
--	name.name = buf;
--	name.len = snprintf(buf, sizeof(buf), "%u", tgid);
--	leader = d_hash_and_lookup(mnt->mnt_root, &name);
--	if (!leader)
--		goto out;
--
--	name.name = "task";
--	name.len = strlen(name.name);
--	dir = d_hash_and_lookup(leader, &name);
--	if (!dir)
--		goto out_put_leader;
--
--	name.name = buf;
--	name.len = snprintf(buf, sizeof(buf), "%u", pid);
--	dentry = d_hash_and_lookup(dir, &name);
--	if (dentry) {
--		d_invalidate(dentry);
--		dput(dentry);
--	}
--
--	dput(dir);
--out_put_leader:
--	dput(leader);
--out:
--	return;
--}
--
- /**
-- * proc_flush_task -  Remove dcache entries for @task from the /proc dcache.
-- * @task: task that should be flushed.
-+ * proc_flush_pid -  Remove dcache entries for @pid from the /proc dcache.
-+ * @pid: pid that should be flushed.
-  *
-- * When flushing dentries from proc, one needs to flush them from global
-- * proc (proc_mnt) and from all the namespaces' procs this task was seen
-- * in. This call is supposed to do all of this job.
-- *
-- * Looks in the dcache for
-- * /proc/@pid
-- * /proc/@tgid/task/@pid
-- * if either directory is present flushes it and all of it'ts children
-- * from the dcache.
-+ * This function walks a list of inodes (that belong to any proc
-+ * filesystem) that are attached to the pid and flushes them from
-+ * the dentry cache.
-  *
-  * It is safe and reasonable to cache /proc entries for a task until
-  * that task exits.  After that they just clog up the dcache with
-  * useless entries, possibly causing useful dcache entries to be
-- * flushed instead.  This routine is proved to flush those useless
-- * dcache entries at process exit time.
-+ * flushed instead.  This routine is provided to flush those useless
-+ * dcache entries when a process is reaped.
-  *
-  * NOTE: This routine is just an optimization so it does not guarantee
-- *       that no dcache entries will exist at process exit time it
-- *       just makes it very unlikely that any will persist.
-+ *       that no dcache entries will exist after a process is reaped
-+ *       it just makes it very unlikely that any will persist.
-  */
- 
--void proc_flush_task(struct task_struct *task)
-+void proc_flush_pid(struct pid *pid)
- {
--	int i;
--	struct pid *pid, *tgid;
--	struct upid *upid;
--
--	pid = task_pid(task);
--	tgid = task_tgid(task);
--
--	for (i = 0; i <= pid->level; i++) {
--		upid = &pid->numbers[i];
--		proc_flush_task_mnt(upid->ns->proc_mnt, upid->nr,
--					tgid->numbers[i].nr);
--	}
-+	proc_invalidate_siblings_dcache(&pid->inodes, &pid->wait_pidfd.lock);
-+	put_pid(pid);
- }
- 
- static struct dentry *proc_pid_instantiate(struct dentry * dentry,
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index d9243b24554a..1e730ea1dcd6 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -40,7 +40,7 @@ static void proc_evict_inode(struct inode *inode)
- 
- 	/* Stop tracking associated processes */
- 	if (ei->pid) {
--		put_pid(ei->pid);
-+		proc_pid_evict_inode(ei);
- 		ei->pid = NULL;
- 	}
- 
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index fd470172675f..9e294f0290e5 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -158,6 +158,7 @@ extern int proc_pid_statm(struct seq_file *, struct pid_namespace *,
- extern const struct dentry_operations pid_dentry_operations;
- extern int pid_getattr(const struct path *, struct kstat *, u32, unsigned int);
- extern int proc_setattr(struct dentry *, struct iattr *);
-+extern void proc_pid_evict_inode(struct proc_inode *);
- extern struct inode *proc_pid_make_inode(struct super_block *, struct task_struct *, umode_t);
- extern void pid_update_inode(struct task_struct *, struct inode *);
- extern int pid_delete_dentry(const struct dentry *);
-diff --git a/include/linux/pid.h b/include/linux/pid.h
-index 998ae7d24450..01a0d4e28506 100644
---- a/include/linux/pid.h
-+++ b/include/linux/pid.h
-@@ -62,6 +62,7 @@ struct pid
- 	unsigned int level;
- 	/* lists of tasks that use this pid */
- 	struct hlist_head tasks[PIDTYPE_MAX];
-+	struct hlist_head inodes;
- 	/* wait queue for pidfd notifications */
- 	wait_queue_head_t wait_pidfd;
- 	struct rcu_head rcu;
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 3dfa92633af3..40a7982b7285 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -32,7 +32,7 @@ struct proc_ops {
- typedef int (*proc_write_t)(struct file *, char *, size_t);
- 
- extern void proc_root_init(void);
--extern void proc_flush_task(struct task_struct *);
-+extern void proc_flush_pid(struct pid *);
- 
- extern struct proc_dir_entry *proc_symlink(const char *,
- 		struct proc_dir_entry *, const char *);
-@@ -105,7 +105,7 @@ static inline void proc_root_init(void)
- {
- }
- 
--static inline void proc_flush_task(struct task_struct *task)
-+static inline void proc_flush_pid(struct pid *pid)
- {
- }
- 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 2833ffb0c211..502b4995b688 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -191,6 +191,7 @@ void put_task_struct_rcu_user(struct task_struct *task)
- void release_task(struct task_struct *p)
- {
- 	struct task_struct *leader;
-+	struct pid *thread_pid;
- 	int zap_leader;
- repeat:
- 	/* don't need to get the RCU readlock here - the process is dead and
-@@ -199,11 +200,11 @@ void release_task(struct task_struct *p)
- 	atomic_dec(&__task_cred(p)->user->processes);
- 	rcu_read_unlock();
- 
--	proc_flush_task(p);
- 	cgroup_release(p);
- 
- 	write_lock_irq(&tasklist_lock);
- 	ptrace_release_task(p);
-+	thread_pid = get_pid(p->thread_pid);
- 	__exit_signal(p);
- 
- 	/*
-@@ -226,6 +227,7 @@ void release_task(struct task_struct *p)
- 	}
- 
- 	write_unlock_irq(&tasklist_lock);
-+	proc_flush_pid(thread_pid);
- 	release_thread(p);
- 	put_task_struct_rcu_user(p);
- 
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 0f4ecb57214c..ca08d6a3aa77 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -258,6 +258,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
- 		INIT_HLIST_HEAD(&pid->tasks[type]);
- 
- 	init_waitqueue_head(&pid->wait_pidfd);
-+	INIT_HLIST_HEAD(&pid->inodes);
- 
- 	upid = pid->numbers + ns->level;
- 	spin_lock_irq(&pidmap_lock);
--- 
-2.25.0
-
+Reviewed-by: Lee Duncan <lduncan@suse.com>
