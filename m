@@ -2,167 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0C9A16A9FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:25:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD35116AA0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:26:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbgBXPZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 10:25:34 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:39764 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727539AbgBXPZd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 10:25:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1582557931; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=SmPgy2zJNFt//FFDsKzJvPnH2D7WIJX2Um97SB6yv+c=;
-        b=LFgcDy1+ROVN5JpGz88s8QhlbuOHE3h8ALc+Z9060O/Mrdqm+FEkrgUqWw1BJ05pUgReqH
-        AZu/manhY5V9y5dnsMJkCN5mbesaJWCIctAsJBznYNr2lo3BsQ92JTRnzbbegS3BODcoPD
-        ufIDouoowNNxWM0auRjpUlLpA4sVhUw=
-Date:   Mon, 24 Feb 2020 12:25:14 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v5 3/5] remoteproc: Add prepare/unprepare callbacks
-To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, od@zcrc.me,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-Id: <1582557914.3.1@crapouillou.net>
-In-Reply-To: <daf58c35-c240-e50a-da50-48b14c0e097c@st.com>
-References: <20200211142614.13567-1-paul@crapouillou.net>
-        <20200211142614.13567-3-paul@crapouillou.net>
-        <daf58c35-c240-e50a-da50-48b14c0e097c@st.com>
+        id S1727867AbgBXP0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 10:26:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46670 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727701AbgBXP0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 10:26:52 -0500
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E7B220828;
+        Mon, 24 Feb 2020 15:26:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582558011;
+        bh=8N5QNPLpkgzq3RYMZ3/aBwBH9betmd6dohxLwvdK3p0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Z5MuclNp7MYxT5IBCI2G2sQzYvDTngaP6kghRjsNtUzkhhlI48hatsq9uMcvhVZ1p
+         10oI5hji875cQGXpy4YncTWGvb3G0yug8uKfvBJxxcmWe96/ifD+7r00c8N9fGetZJ
+         ZoqURztkwjfv/fenCABp992VuHUEKgzzxJ0xVWvM=
+Received: by mail-qt1-f179.google.com with SMTP id i23so6783694qtr.5;
+        Mon, 24 Feb 2020 07:26:51 -0800 (PST)
+X-Gm-Message-State: APjAAAW6rA3R3J46m9WnqgawQllvhTjkWHivOYtSmKe9OpPo4dqf8Owg
+        MomGSxWf0LkJpOTORGhMIzC0As2FTMPUktF38g==
+X-Google-Smtp-Source: APXvYqwycJnlUss4EYMa12eUzhhIhR27BPGX4l1gt+HbU1ugfbjsQcwgjLaS7LQEn4iYWXtThxlL8gmlHYkAs+wteKg=
+X-Received: by 2002:ac8:59:: with SMTP id i25mr49052121qtg.110.1582558010446;
+ Mon, 24 Feb 2020 07:26:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+References: <20200217111519.29163-1-kishon@ti.com> <20200217111519.29163-3-kishon@ti.com>
+ <20200219203205.GA14068@bogus> <2b927c66-d640-fb11-878a-c69a459a28f8@ti.com>
+In-Reply-To: <2b927c66-d640-fb11-878a-c69a459a28f8@ti.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 24 Feb 2020 09:26:38 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLYScxGySy8xaN-UB6URfw8K_jSiuSXwVoTU9-RdJecww@mail.gmail.com>
+Message-ID: <CAL_JsqLYScxGySy8xaN-UB6URfw8K_jSiuSXwVoTU9-RdJecww@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] dt-bindings: PCI: Convert PCIe Host/Endpoint in
+ Cadence platform to DT schema
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Tom Joseph <tjoseph@cadence.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        PCI <linux-pci@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaud,
+On Mon, Feb 24, 2020 at 4:14 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>
+> Hi Rob,
+>
+> On 20/02/20 2:02 am, Rob Herring wrote:
+> > On Mon, Feb 17, 2020 at 04:45:19PM +0530, Kishon Vijay Abraham I wrote:
+> >> Include Cadence core DT schema and define the Cadence platform DT schema
+> >> for both Host and Endpoint mode. Note: The Cadence core DT schema could
+> >> be included for other platforms using Cadence PCIe core.
+> >>
+> >> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> >> ---
+> >>  .../bindings/pci/cdns,cdns-pcie-ep.txt        | 27 -------
+> >>  .../bindings/pci/cdns,cdns-pcie-ep.yaml       | 48 ++++++++++++
+> >>  .../bindings/pci/cdns,cdns-pcie-host.txt      | 66 ----------------
+> >>  .../bindings/pci/cdns,cdns-pcie-host.yaml     | 76 +++++++++++++++++++
+> >>  MAINTAINERS                                   |  2 +-
+> >>  5 files changed, 125 insertions(+), 94 deletions(-)
+> >>  delete mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt
+> >>  create mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml
+> >>  delete mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
+> >>  create mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
+> >
+> >
+> >> diff --git a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
+> >> new file mode 100644
+> >> index 000000000000..2f605297f862
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
+> >> @@ -0,0 +1,76 @@
+> >> +# SPDX-License-Identifier: GPL-2.0-only
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/pci/cdns,cdns-pcie-host.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: Cadence PCIe host controller
+> >> +
+> >> +maintainers:
+> >> +  - Tom Joseph <tjoseph@cadence.com>
+> >> +
+> >> +allOf:
+> >> +  - $ref: /schemas/pci/pci-bus.yaml#
+> >> +  - $ref: "cdns-pcie-host.yaml#"
+> >> +
+> >> +properties:
+> >> +  compatible:
+> >> +    const: cdns,cdns-pcie-host
+> >> +
+> >> +  reg:
+> >> +    maxItems: 3
+> >> +
+> >> +  reg-names:
+> >> +    items:
+> >> +      - const: reg
+> >> +      - const: cfg
+> >> +      - const: mem
+> >> +
+> >> +  msi-parent: true
+> >> +
+> >> +required:
+> >> +  - reg
+> >> +  - reg-names
+> >> +
+> >> +examples:
+> >> +  - |
+> >> +    bus {
+> >> +        #address-cells = <2>;
+> >> +        #size-cells = <2>;
+> >> +
+> >> +        pcie@fb000000 {
+> >> +            compatible = "cdns,cdns-pcie-host";
+> >> +            device_type = "pci";
+> >> +            #address-cells = <3>;
+> >> +            #size-cells = <2>;
+> >> +            bus-range = <0x0 0xff>;
+> >> +            linux,pci-domain = <0>;
+> >> +            cdns,max-outbound-regions = <16>;
+> >> +            cdns,no-bar-match-nbits = <32>;
+> >
+> >> +            vendor-id = /bits/ 16 <0x17cd>;
+> >> +            device-id = /bits/ 16 <0x0200>;
+> >
+> > Please make these 32-bit as that is what the spec says.
+>
+> Can you clarify this is mentioned in which spec? PCI spec has both of
+> these 16 bits and I checked the PCI binding doc but couldn't spot the
+> size of these fields.
+>
+> [1] -> https://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
 
+Section 4.1.2.1. The key point is the type is 'encode-int' which means
+32-bit. Keep in mind, that 16-bits was not a defined type when this
+spec was written. We added that for FDT.
 
-Le mar., f=E9vr. 18, 2020 at 17:31, Arnaud POULIQUEN=20
-<arnaud.pouliquen@st.com> a =E9crit :
-> Hi Paul,
->=20
-> I still wonder about the use of pm_runtime mechanism as a more=20
-> generic alternative...
+Also, look at other instances of reading 'vendor-id' in the kernel.
 
-The use of pm_runtime is perfect if CONFIG_PM is enabled, but otherwise=20
-it's a bit cumbersome, as the clocks must be enabled in the probe.
-
--Paul
-
-> Else just a minor remark inline.
->=20
-> On 2/11/20 3:26 PM, Paul Cercueil wrote:
->>  The .prepare() callback is called before the firmware is loaded to
->>  memory. This is useful for instance in the case where some setup is
->>  required for the memory to be accessible.
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  ---
->>=20
->>  Notes:
->>      v2-v4: No change
->>      v5: Move calls to prepare/unprepare to=20
->> rproc_fw_boot/rproc_shutdown
->>=20
->>   drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
->>   include/linux/remoteproc.h           |  4 ++++
->>   2 files changed, 19 insertions(+), 1 deletion(-)
->>=20
->>  diff --git a/drivers/remoteproc/remoteproc_core.c=20
->> b/drivers/remoteproc/remoteproc_core.c
->>  index fe5c7a2f9767..022b927e176b 100644
->>  --- a/drivers/remoteproc/remoteproc_core.c
->>  +++ b/drivers/remoteproc/remoteproc_core.c
->>  @@ -1373,6 +1373,14 @@ static int rproc_fw_boot(struct rproc=20
->> *rproc, const struct firmware *fw)
->>=20
->>   	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
->>=20
->>  +	if (rproc->ops->prepare) {
->>  +		ret =3D rproc->ops->prepare(rproc);
->>  +		if (ret) {
->>  +			dev_err(dev, "Failed to prepare rproc: %d\n", ret);
->>  +			return ret;
->>  +		}
->>  +	}
->>  +
->>   	/*
->>   	 * if enabling an IOMMU isn't relevant for this rproc, this is
->>   	 * just a nop
->>  @@ -1380,7 +1388,7 @@ static int rproc_fw_boot(struct rproc *rproc,=20
->> const struct firmware *fw)
->>   	ret =3D rproc_enable_iommu(rproc);
->>   	if (ret) {
->>   		dev_err(dev, "can't enable iommu: %d\n", ret);
->>  -		return ret;
->>  +		goto unprepare_rproc;
->>   	}
->>=20
->>   	rproc->bootaddr =3D rproc_get_boot_addr(rproc, fw);
->>  @@ -1424,6 +1432,9 @@ static int rproc_fw_boot(struct rproc *rproc,=20
->> const struct firmware *fw)
->>   	rproc->table_ptr =3D NULL;
->>   disable_iommu:
->>   	rproc_disable_iommu(rproc);
->>  +unprepare_rproc:
->>  +	if (rproc->ops->unprepare)
->>  +		rproc->ops->unprepare(rproc);
->>   	return ret;
->>   }
->>=20
->>  @@ -1823,6 +1834,9 @@ void rproc_shutdown(struct rproc *rproc)
->>=20
->>   	rproc_disable_iommu(rproc);
->>=20
->>  +	if (rproc->ops->unprepare)
->>  +		rproc->ops->unprepare(rproc);
->>  +
->>   	/* Free the copy of the resource table */
->>   	kfree(rproc->cached_table);
->>   	rproc->cached_table =3D NULL;
->>  diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>  index 5f201f0c86c3..a6272d1ba384 100644
->>  --- a/include/linux/remoteproc.h
->>  +++ b/include/linux/remoteproc.h
->>  @@ -355,6 +355,8 @@ enum rsc_handling_status {
->>=20
->>   /**
->>    * struct rproc_ops - platform-specific device handlers
->>  + * @prepare:	prepare the device for power up (before the firmware=20
->> is loaded)
->>  + * @unprepare:	unprepare the device after it is stopped
->=20
-> Would be nice here to precise that these functions are optional
-> you can look at rproc_ops struct for example.
->=20
-> Regards,
-> Arnaud
->=20
->>    * @start:	power on the device and boot it
->>    * @stop:	power off the device
->>    * @kick:	kick a virtqueue (virtqueue id given as a parameter)
->>  @@ -371,6 +373,8 @@ enum rsc_handling_status {
->>    * @get_boot_addr:	get boot address to entry point specified in=20
->> firmware
->>    */
->>   struct rproc_ops {
->>  +	int (*prepare)(struct rproc *rproc);
->>  +	void (*unprepare)(struct rproc *rproc);
->>   	int (*start)(struct rproc *rproc);
->>   	int (*stop)(struct rproc *rproc);
->>   	void (*kick)(struct rproc *rproc, int vqid);
->>=20
-
-=
-
+Rob
