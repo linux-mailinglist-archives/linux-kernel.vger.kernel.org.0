@@ -2,69 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A20EB16A26E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:37:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A830A16A2CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:41:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbgBXJhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 04:37:01 -0500
-Received: from sonic303-20.consmr.mail.ne1.yahoo.com ([66.163.188.146]:36127
-        "EHLO sonic303-20.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726216AbgBXJhB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 04:37:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1582537018; bh=vdONypa+pmkSCxMpJ481zxWsfmYXdIIKq3bhYsM38cE=; h=Date:From:Reply-To:Subject:References:From:Subject; b=YzBuTw2+HE5j2YcFjVmX71RzAQcFmpGcTO6jV2EKTSuJfQ8McK+MllbqZyYObik9h7jMzN0DqQHL5OFbIf7nZc5moczKy4GHOLtLMyvSbr+EwWSn/+3dL/VA7sA0Wdrqm4yXpdgllLKmAJDrPDuSbs4Al1IJPU3cmPxrdtCQMGVn24SXAVm/ibr+VWH7zS9vFIWA89Y9+a2Rm+C/gYDkAuc/y1AVv7gDkx2KlEjhSE6egKx4KsI6Yt3r8kTKMyB9zKVcT0C/agts58trFa7VwMdnooSTxkrlbec4neiQpu32ZJFJVeZFMe2yIIJPypXOhWDWHq6K+9uaTUlqQGuE7g==
-X-YMail-OSG: GFuyTS4VM1neyoGYaA9zMb0qB1NUK56U7qu7__oKJfBpw4fjUDpv9gMVYc1Y7sz
- TQ4BhbPPRdBl_f6PApOz73VG327JKvyu8bYYXd09k_Jjb8WDeBTm168mpDqWVfiYG1WiR2PlX06T
- LlYspsDR9I1gzjSj_zoYQ7258vSbMDPELnTS7CDMVrFvywI7j1Q61kFe2uWs8tObR52It3M4HgIx
- 69VF5k.mwQaiAn9bUESZwSb44WWgA7_PxOTuR05mREa_1fyKyXOcFWRZ3d.bpqRtKf1Su_n1duYp
- f790D6lXI7ABsmgsfv161gIV_j1dQDYV2N58T30Mu.SIND6qO1O7Mdd6a.tAQjRcocS5uuDJarFf
- _TlC9sSyb_D3escikkEv.tzpn8JCP1dngQg93b_1EAXvgVz.9GgNer7b0k8NOIH5ywXZxIYxxOU0
- _G35MvXFTLUzqdQiLzPDY_ozlRLKmIXDBe7HX_LcNWxNVxrvCr5YTIuthQw_uyIEqtowVvXNkqL8
- vNePoEets0DcjJCxQmmvKEON6DOSaz4.nmhMjLFWhNuvPlA2zlwUIdw6yOrLzaB.PMgN.krFvW9x
- Ft5H9GkAuYfR.08HoE_vJlM5WIDDI7wRGLHSEVdC9DFZhcHbC8GA.LHhIYxfkY.Go.cV_5Azf9ma
- mfEwk0pLa1j1u9QdEYqZAwA.pgMrPrxfeAJWNBtbmJFHQ6DcuU8jyrKwnG9My4EbV8F7Cgo4PXeG
- XUZ47yXcfhrmBDRkns_ak8nN4ZMvbDelyCZc0i.rej74DTJLoHaRkrwPNhFDrVW5nhMDaYMn..dq
- 9_vwYmDCt18Sp.rEHuLHdrTj2FKw.3KAKLgnP8nAIltzRzDpmOXj4uurSW02CzmjWar_YnAp4h7W
- w7sr33Zi8N9n.uWzQt0l0KyPL44gFWjX6JApjnEEpvtDhFGtM4gTl3PNLOPim1.7hEUCaGmdRE1h
- 7bumqjbvNr3_RiRJw4wFzxI9Fgnb3CYKhRGqZZpu8vxY7pTxLX4jIpdi_ixfL.ZfIHVDgFNbFA8y
- WXRKRC_7whwcXSIkhpnLOnSdSzA4CCLPSB9.jtd5_7i1hD1UvSh2mgulzivmrNw00FFPliWbEwDr
- KwR_9SWwBZOv9ovTm.PWFmYc2LqyQYqwmoKrFaRTFDCdF8IdtH_DyIuaJ5.TJkEgoaR3QYUwMS_8
- YpvZreICIydj2FA7f9xqTnNqPaM3gslf_9fDzrQ1p1u08oXE.ky8eNgc5NpaxBCxd2_5SPap3vEs
- PCCg9fDiytAIesN_zzG_D0jHirNYkc0CxnEr3zBUs.akBqe6CLhtf9Ziasy6HysB2fXA3pQvDxGr
- I36IM
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Mon, 24 Feb 2020 09:36:58 +0000
-Date:   Mon, 24 Feb 2020 09:36:57 +0000 (UTC)
-From:   Mrs Elodie Antoine <mrselodieantoine@gmail.com>
-Reply-To: antoinm93@yahoo.com
-Message-ID: <1960607964.7298163.1582537017884@mail.yahoo.com>
-Subject: Greetings From Mrs Elodie,
+        id S1727306AbgBXJlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 04:41:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726673AbgBXJlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 04:41:21 -0500
+Received: from localhost (unknown [213.57.247.131])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 369712082E;
+        Mon, 24 Feb 2020 09:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582537280;
+        bh=1nAZsSaUpHnLId7l7noD4HYXX57ZdAUDrqEkhcXwCPM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GskwDtqL8f/ZWRzCOvxGcyxW6mNShCW4StY026PH6q/pDUg7tyPsi1NDpHEPqYTyX
+         n4Qwp1T/y5YcTHSj+6iAGjmOodjHRq5qCwbhYdOl97tIujIo7+N5x0no0YeI4lUw5Q
+         Lp1Vj/BfZuEJ0I+HOis1+V3nFXWuVeS3Rgk8QFjc=
+Date:   Mon, 24 Feb 2020 11:41:16 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     "Kiyanovski, Arthur" <akiyano@amazon.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Keyur Chudgar <keyur@os.amperecomputing.com>,
+        Don Fry <pcnet32@frontier.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Jay Vosburgh <j.vosburgh@gmail.com>,
+        "linux-acenic@sunsite.dk" <linux-acenic@sunsite.dk>,
+        Maxime Ripard <mripard@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Mark Einon <mark.einon@gmail.com>,
+        Chris Snook <chris.snook@gmail.com>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+        Igor Russkikh <irusskikh@marvell.com>,
+        David Dillow <dave@thedillows.org>,
+        "Belgazal, Netanel" <netanel@amazon.com>,
+        Quan Nguyen <quan@os.amperecomputing.com>,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Andreas Larsson <andreas@gaisler.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Thor Thayer <thor.thayer@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ion Badulescu <ionut@badula.org>,
+        Jes Sorensen <jes@trained-monkey.org>,
+        "nios2-dev@lists.rocketboards.org" <nios2-dev@lists.rocketboards.org>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH net-next v1 12/18] net/amazon: Ensure that driver version
+ is aligned to the linux kernel
+Message-ID: <20200224094116.GD422704@unreal>
+References: <20200224085311.460338-1-leon@kernel.org>
+ <20200224085311.460338-13-leon@kernel.org>
+ <79ed2b392b4e413faef03f4bb2f8d562@EX13D22EUA004.ant.amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <1960607964.7298163.1582537017884.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15199 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:73.0) Gecko/20100101 Firefox/73.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79ed2b392b4e413faef03f4bb2f8d562@EX13D22EUA004.ant.amazon.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 24, 2020 at 09:03:14AM +0000, Kiyanovski, Arthur wrote:
+>
+>
+> > -----Original Message-----
+> > From: Leon Romanovsky <leon@kernel.org>
+> > Sent: Monday, February 24, 2020 10:53 AM
+> > To: David S. Miller <davem@davemloft.net>; Jakub Kicinski <kuba@kernel.org>
+> > Cc: Leon Romanovsky <leonro@mellanox.com>; Tom Lendacky
+> > <thomas.lendacky@amd.com>; Keyur Chudgar
+> > <keyur@os.amperecomputing.com>; Don Fry <pcnet32@frontier.com>;
+> > Veaceslav Falico <vfalico@gmail.com>; Jay Vosburgh <j.vosburgh@gmail.com>;
+> > linux-acenic@sunsite.dk; Maxime Ripard <mripard@kernel.org>; Heiko Stuebner
+> > <heiko@sntech.de>; Mark Einon <mark.einon@gmail.com>; Chris Snook
+> > <chris.snook@gmail.com>; linux-rockchip@lists.infradead.org; Iyappan
+> > Subramanian <iyappan@os.amperecomputing.com>; Igor Russkikh
+> > <irusskikh@marvell.com>; David Dillow <dave@thedillows.org>; Belgazal,
+> > Netanel <netanel@amazon.com>; Quan Nguyen
+> > <quan@os.amperecomputing.com>; Jay Cliburn <jcliburn@gmail.com>; Lino
+> > Sanfilippo <LinoSanfilippo@gmx.de>; linux-arm-kernel@lists.infradead.org;
+> > Andreas Larsson <andreas@gaisler.com>; Andy Gospodarek
+> > <andy@greyhouse.net>; netdev@vger.kernel.org; Thor Thayer
+> > <thor.thayer@linux.intel.com>; linux-kernel@vger.kernel.org; Ion Badulescu
+> > <ionut@badula.org>; Kiyanovski, Arthur <akiyano@amazon.com>; Jes Sorensen
+> > <jes@trained-monkey.org>; nios2-dev@lists.rocketboards.org; Chen-Yu Tsai
+> > <wens@csie.org>
+> > Subject: [PATCH net-next v1 12/18] net/amazon: Ensure that driver version is
+> > aligned to the linux kernel
+> >
+> > From: Leon Romanovsky <leonro@mellanox.com>
+> >
+> > Upstream drivers are managed inside global repository and released all
+> > together, this ensure that driver version is the same as linux kernel, so update
+> > amazon drivers to properly reflect it.
+> >
+> > Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+> > ---
+> >  drivers/net/ethernet/amazon/ena/ena_ethtool.c |  1 -
+> > drivers/net/ethernet/amazon/ena/ena_netdev.c  | 17 ++---------------
+> > drivers/net/ethernet/amazon/ena/ena_netdev.h  | 11 -----------
+> >  3 files changed, 2 insertions(+), 27 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+> > b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+> > index ced1d577b62a..19262f37db84 100644
+> > --- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+> > +++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+> > @@ -404,7 +404,6 @@ static void ena_get_drvinfo(struct net_device *dev,
+> >  	struct ena_adapter *adapter = netdev_priv(dev);
+> >
+> >  	strlcpy(info->driver, DRV_MODULE_NAME, sizeof(info->driver));
+> > -	strlcpy(info->version, DRV_MODULE_VERSION, sizeof(info->version));
+> >  	strlcpy(info->bus_info, pci_name(adapter->pdev),
+> >  		sizeof(info->bus_info));
+> >  }
+> > diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > index 0b2fd96b93d7..4faf81c456d8 100644
+> > --- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > +++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > @@ -49,12 +49,9 @@
+> >  #include <linux/bpf_trace.h>
+> >  #include "ena_pci_id_tbl.h"
+> >
+> > -static char version[] = DEVICE_NAME " v" DRV_MODULE_VERSION "\n";
+> > -
+> >  MODULE_AUTHOR("Amazon.com, Inc. or its affiliates");
+> > MODULE_DESCRIPTION(DEVICE_NAME);  MODULE_LICENSE("GPL"); -
+> > MODULE_VERSION(DRV_MODULE_VERSION);
+> >
+> >  /* Time in jiffies before concluding the transmitter is hung. */  #define
+> > TX_TIMEOUT  (5 * HZ) @@ -3093,11 +3090,7 @@ static void
+> > ena_config_host_info(struct ena_com_dev *ena_dev,
+> >  	host_info->os_dist = 0;
+> >  	strncpy(host_info->os_dist_str, utsname()->release,
+> >  		sizeof(host_info->os_dist_str) - 1);
+> > -	host_info->driver_version =
+> > -		(DRV_MODULE_VER_MAJOR) |
+> > -		(DRV_MODULE_VER_MINOR <<
+> > ENA_ADMIN_HOST_INFO_MINOR_SHIFT) |
+> > -		(DRV_MODULE_VER_SUBMINOR <<
+> > ENA_ADMIN_HOST_INFO_SUB_MINOR_SHIFT) |
+> > -		("K"[0] << ENA_ADMIN_HOST_INFO_MODULE_TYPE_SHIFT);
+> > +	host_info->driver_version = LINUX_VERSION_CODE;
+> >  	host_info->num_cpus = num_online_cpus();
+> >
+> >  	host_info->driver_supported_features = @@ -3476,9 +3469,7 @@
+> > static int ena_restore_device(struct ena_adapter *adapter)
+> >  		netif_carrier_on(adapter->netdev);
+> >
+> >  	mod_timer(&adapter->timer_service, round_jiffies(jiffies + HZ));
+> > -	dev_err(&pdev->dev,
+> > -		"Device reset completed successfully, Driver info: %s\n",
+> > -		version);
+> > +	dev_err(&pdev->dev, "Device reset completed successfully\n");
+> >
+> >  	return rc;
+> >  err_disable_msix:
+> > @@ -4116,8 +4107,6 @@ static int ena_probe(struct pci_dev *pdev, const
+> > struct pci_device_id *ent)
+> >
+> >  	dev_dbg(&pdev->dev, "%s\n", __func__);
+> >
+> > -	dev_info_once(&pdev->dev, "%s", version);
+> > -
+> >  	rc = pci_enable_device_mem(pdev);
+> >  	if (rc) {
+> >  		dev_err(&pdev->dev, "pci_enable_device_mem() failed!\n");
+> > @@ -4429,8 +4418,6 @@ static struct pci_driver ena_pci_driver = {
+> >
+> >  static int __init ena_init(void)
+> >  {
+> > -	pr_info("%s", version);
+> > -
+> >  	ena_wq = create_singlethread_workqueue(DRV_MODULE_NAME);
+> >  	if (!ena_wq) {
+> >  		pr_err("Failed to create workqueue\n"); diff --git
+> > a/drivers/net/ethernet/amazon/ena/ena_netdev.h
+> > b/drivers/net/ethernet/amazon/ena/ena_netdev.h
+> > index 8795e0b1dc3c..74c7f10b60dd 100644
+> > --- a/drivers/net/ethernet/amazon/ena/ena_netdev.h
+> > +++ b/drivers/net/ethernet/amazon/ena/ena_netdev.h
+> > @@ -45,18 +45,7 @@
+> >  #include "ena_com.h"
+> >  #include "ena_eth_com.h"
+> >
+> > -#define DRV_MODULE_VER_MAJOR	2
+> > -#define DRV_MODULE_VER_MINOR	1
+> > -#define DRV_MODULE_VER_SUBMINOR 0
+> > -
+> >  #define DRV_MODULE_NAME		"ena"
+> > -#ifndef DRV_MODULE_VERSION
+> > -#define DRV_MODULE_VERSION \
+> > -	__stringify(DRV_MODULE_VER_MAJOR) "."	\
+> > -	__stringify(DRV_MODULE_VER_MINOR) "."	\
+> > -	__stringify(DRV_MODULE_VER_SUBMINOR) "K"
+> > -#endif
+> > -
+> >  #define DEVICE_NAME	"Elastic Network Adapter (ENA)"
+> >
+> >  /* 1 for AENQ + ADMIN */
+> > --
+> > 2.24.1
+>
+> Hi Leon, David,
+>
+> This patch is not good for the ENA driver as it breaks the interface with the FW of the ENA device in ena_config_host_info(), host_info is later reported to the FW.
+> Please do not merge it yet.
 
+As I wrote here [1], I tried to avoid any changes in SW<->FW interfaces.
+Can you please show me the dump stack of how is such info forwarded to FW?
+How do you distinguish between different distro versions and driver
+releases?
 
-Greetings From Mrs Elodie,
+> We are now working on altering your patch so that it won't break this interface and will send it to you in the next few hours.
 
-Calvary Greetings in the name of the LORD Almighty and Our LORD JESUS CHRIST the giver of every good thing. Good day,i know this letter will definitely come to you as a huge surprise, but I implore you to take the time to go through it carefully as the decision you make will go off a long way to determine my future and continued existence. I am Mrs Elodie Antoine
-aging widow of 59 years old suffering from long time illness. I have some funds I inherited from my late husband,
+It is good, thanks.
 
-The sum of (US$4.5 Million Dollars) and I needed a very honest and God fearing who can withdraw this money then use the funds for Charity works. I WISH TO GIVE THIS FUNDS TO YOU FOR CHARITY WORKS. I found your email address from the internet after honest prayers to the LORD to bring me a helper and i decided to contact you if you may be willing and interested to handle these trust funds in good faith before anything happens to me.
-I accept this decision because I do not have any child who will inherit this money after I die. I want your urgent reply to me so that I will give you the deposit receipt which the COMPANY issued to me as next of kin for immediate transfer of the money to your account in your country, to start the good work of God, I want you to use the 15/percent of the total amount to help yourself in doing the project.
+[1] https://lore.kernel.org/netdev/20200223091031.GA422704@unreal
 
-
-I am desperately in keen need of assistance and I have summoned up courage to contact you for this task, you must not fail me and the millions of the poor people in our todays WORLD. This is no stolen money and there are no dangers involved,100% RISK FREE with full legal proof. Please if you would be able to use the funds for the Charity works kindly let me know immediately.I will appreciate your utmost confidentiality and trust in this matter to accomplish my heart desire, as I don't want anything that will jeopardize my last wish. I want you to take 15 percent of the total money for your personal use while 85% of the money will go to charity.I will appreciate your utmost confidentiality and trust in this matter to accomplish my heart desire, as I don't want anything that will jeopardize my last wish.
-
-
-kindly respond for further details.
-
-Thanks and God bless you,
-
-Mrs Elodie Antoine
+>
+> Thanks,
+> Arthur
+>
