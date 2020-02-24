@@ -2,152 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4837C16A408
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FDD316A410
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:38:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgBXKhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 05:37:47 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10681 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726452AbgBXKhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 05:37:47 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7443657F6A9DEF15FE73;
-        Mon, 24 Feb 2020 18:37:43 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 24 Feb
- 2020 18:37:42 +0800
-Subject: Re: Writes stoped working on f2fs after the compression support was
- added
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20191209222345.1078-1-jaegeuk@kernel.org>
- <20200222044617.pfrhnz2iavkrtdn6@core.my.home>
- <20200222181721.tzrrohep5l3yklpf@core.my.home>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <bec3798b-f861-b132-9138-221027bb5195@huawei.com>
-Date:   Mon, 24 Feb 2020 18:37:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727464AbgBXKi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 05:38:27 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42907 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbgBXKi1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 05:38:27 -0500
+Received: by mail-ed1-f65.google.com with SMTP id e10so11288449edv.9;
+        Mon, 24 Feb 2020 02:38:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6Uw+EFVoa4I93GT2kj8Y5Rr/8NCWuvO6exBhY+QuuAk=;
+        b=c5AcVu9PctAre5ABV75TS3znJyeDih2j1yHWb4Wfz/I/N1JpBKbK4dNfH2npBrnLnw
+         IEQtZlIcQjmb0e/SMBt2xU46exTD4aA0NrjeDJfOz2dVMd2ad4zP7nzUacFVNyQWDiYH
+         XNwbISsZTcUWTwPlQwL8SrZD416ykM+ccxrjrD5ee5rlPF0iMsdQ5p46Q7GGN6M+jjjb
+         zGlhE+OCHvQy6b8sHfh8kJre4M2NlvfHrwzrUngGyukcrAMDkB1q1XL4JtNs0Z+iAbuz
+         pV+OEi22T/RMZHB4Dk9dGs7XZH9j+0mu02SiNyc14s8a9LCyVzbCByAJ1NmEdl2SPqm7
+         cc0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6Uw+EFVoa4I93GT2kj8Y5Rr/8NCWuvO6exBhY+QuuAk=;
+        b=BTaoHkiLuntczZN7/MOVzwFrLnkPieaLb9sPQB5cEyPhiTUJHaamRKjV4WGkuaz6fv
+         V7E75R2vRnX30TSod0/AY9dUGnEUF4FwUa31ns/F6La6u2ftLjvsnSLGoaxqi2KJryKK
+         8mRoRpTpUsyMHfNIJrlQym1mMf4WDh7Ao+g6WVS3hDLf34bHhdboi5cOTTFMEjiFVRqt
+         Yd/8SYBWW894K61Xw6V7yUKlguYJJvjJaQo/eB8bsH2/iLJA2vZGknX0M2qAGxfuRRjx
+         owAci2GSv+h2hwsBDFsvq/tKCBJFTD9SpyxbSGg5OVpa2Cb5VPc2GOPKLg44t7xq6dmj
+         FFbg==
+X-Gm-Message-State: APjAAAXw4dPdCEsOmk7W9Ydj5+c2CZHO5v4dXqlEFe1D6H1kO6il9TPk
+        IKVSQqmxjMFg3VFXX8YmZmgh7jQ34yzCtubJvR7uFCr8
+X-Google-Smtp-Source: APXvYqwLc8EpHY93rVYt2IJXVaFijY0IR4REiDEXSkA+bIixGeASRBQOWvOJJG9DFOsEdRQdFnuPVT/PZvPS8ELwr50=
+X-Received: by 2002:aa7:d3cb:: with SMTP id o11mr46199101edr.145.1582540704910;
+ Mon, 24 Feb 2020 02:38:24 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200222181721.tzrrohep5l3yklpf@core.my.home>
+References: <1559287017-32397-1-git-send-email-horatiu.vultur@microchip.com> <1559287017-32397-2-git-send-email-horatiu.vultur@microchip.com>
+In-Reply-To: <1559287017-32397-2-git-send-email-horatiu.vultur@microchip.com>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Mon, 24 Feb 2020 12:38:14 +0200
+Message-ID: <CA+h21hoSA5DECsA+faJ91n0jBhAR5BZnkMm=Dx4JfNDp8J+xbw@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 1/2] net: mscc: ocelot: Add support for tcam
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Horatiu,
 
-Thanks for the report.
+On Fri, 31 May 2019 at 10:18, Horatiu Vultur
+<horatiu.vultur@microchip.com> wrote:
+>
+> Add ACL support using the TCAM. Using ACL it is possible to create rules
+> in hardware to filter/redirect frames.
+>
+> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> ---
+>  arch/mips/boot/dts/mscc/ocelot.dtsi      |   5 +-
+>  drivers/net/ethernet/mscc/Makefile       |   2 +-
+>  drivers/net/ethernet/mscc/ocelot.c       |  13 +
+>  drivers/net/ethernet/mscc/ocelot.h       |   8 +
+>  drivers/net/ethernet/mscc/ocelot_ace.c   | 777 +++++++++++++++++++++++++++++++
+>  drivers/net/ethernet/mscc/ocelot_ace.h   | 227 +++++++++
+>  drivers/net/ethernet/mscc/ocelot_board.c |   1 +
+>  drivers/net/ethernet/mscc/ocelot_regs.c  |  11 +
+>  drivers/net/ethernet/mscc/ocelot_s2.h    |  64 +++
+>  drivers/net/ethernet/mscc/ocelot_vcap.h  | 403 ++++++++++++++++
+>  10 files changed, 1508 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/net/ethernet/mscc/ocelot_ace.c
+>  create mode 100644 drivers/net/ethernet/mscc/ocelot_ace.h
+>  create mode 100644 drivers/net/ethernet/mscc/ocelot_s2.h
+>  create mode 100644 drivers/net/ethernet/mscc/ocelot_vcap.h
+>
 
-On 2020/2/23 2:17, Ondřej Jirman wrote:
-> Hello,
-> 
-> I observe hung background f2fs task on 5.6-rc2+ shortly after boot, leading to
-> panics. I use f2fs as rootfs. See below for stack trace. The reads continue to
-> work (if I disable panic on hung task). But sync blocks, writes block, etc.
-> 
-> It does not happen on all my f2fs filesystems, so it may depend on workload
-> or my particular filesystem state. It happens on two separate devices though,
-> both 32-bit, and doesn't happen on a 64-bit device. (might be a false lead,
-> though)
-> 
-> I went through the f2fs-for-5.6 tag/branch and reverted each patch right
-> down to:
-> 
->   4c8ff7095bef64fc47e996a938f7d57f9e077da3 f2fs: support data compression
-> 
-> I could still reproduce the issue.
-> 
-> After reverting the data compression too, I could no longer reproduce the
-> issue. Perhaps not very helpful, since that patch is huge.
-> 
-> I tried to collect some information. Some ftrace logs, etc. Not sure what would
-> help debug this. Let me know if I can help debug this more.
-> 
-> Symptoms look the same as this issue:
-> 
->   https://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg15298.html
-> 
-> ftrace: https://megous.com/dl/tmp/f2fs-debug-info.txt
-> 
-> longer ftrace: https://megous.com/dl/tmp/f2fs-debug-info-full.txt
+I was testing this functionality and it looks like the MAC_ETYPE keys
+(src_mac, dst_mac) only match non-IP frames.
+Example, this rule doesn't drop ping traffic:
 
-I checked the full trace log, however I didn't find any clue to troubleshot this issue.
+tc qdisc add dev swp0 clsact
+tc filter add dev swp0 ingress flower skip_sw dst_mac
+96:e1:ef:64:1b:44 action drop
 
-[snip]
-
-> dmesg:
-
-Could you dump all other task stack info via "echo "t" > /proc/sysrq-trigger"?
-
-> 
-> [  246.758021] INFO: task kworker/u16:1:58 blocked for more than 122 seconds.
-> [  246.758040]       Not tainted 5.6.0-rc2-00590-g9983bdae4974e #11
-> [  246.758044] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [  246.758052] kworker/u16:1   D    0    58      2 0x00000000
-> [  246.758090] Workqueue: writeback wb_workfn (flush-179:0)
-> [  246.758099] Backtrace:
-> [  246.758121] [<c0912b90>] (__schedule) from [<c0913234>] (schedule+0x78/0xf4)
-> [  246.758130]  r10:da644000 r9:00000000 r8:da645a60 r7:da283e10 r6:00000002 r5:da644000
-> [  246.758132]  r4:da4d3600
-> [  246.758148] [<c09131bc>] (schedule) from [<c017ec74>] (rwsem_down_write_slowpath+0x24c/0x4c0)
-> [  246.758152]  r5:00000001 r4:da283e00
-> [  246.758161] [<c017ea28>] (rwsem_down_write_slowpath) from [<c0915f2c>] (down_write+0x6c/0x70)
-> [  246.758167]  r10:da283e00 r9:da645d80 r8:d9ed0000 r7:00000001 r6:00000000 r5:eff213b0
-> [  246.758169]  r4:da283e00
-> [  246.758187] [<c0915ec0>] (down_write) from [<c0435b80>] (f2fs_write_single_data_page+0x608/0x7ac)
-
-I'm not sure what is this semaphore, I suspect this is F2FS_I(inode)->i_sem, in order to make
-sure of this, can you help to add below function, and use them to replace
-all {down,up}_{write,read}(&.i_sem) invoking? then reproduce this issue and catch the log.
+Would it be possible to do anything about that?
 
 Thanks,
-
-> [  246.758190]  r5:eff213b0 r4:da283c60
-> [  246.758198] [<c0435578>] (f2fs_write_single_data_page) from [<c0435fd8>] (f2fs_write_cache_pages+0x2b4/0x7c4)
-> [  246.758204]  r10:da645c28 r9:da283d60 r8:da283c60 r7:0000000f r6:da645d80 r5:00000001
-> [  246.758206]  r4:eff213b0
-> [  246.758214] [<c0435d24>] (f2fs_write_cache_pages) from [<c043682c>] (f2fs_write_data_pages+0x344/0x35c)
-> [  246.758220]  r10:00000000 r9:d9ed002c r8:d9ed0000 r7:00000004 r6:da283d60 r5:da283c60
-> [  246.758223]  r4:da645d80
-> [  246.758238] [<c04364e8>] (f2fs_write_data_pages) from [<c0267ee8>] (do_writepages+0x3c/0xd4)
-> [  246.758244]  r10:0000000a r9:c0e03d00 r8:00000c00 r7:c0264ddc r6:da645d80 r5:da283d60
-> [  246.758246]  r4:da283c60
-> [  246.758254] [<c0267eac>] (do_writepages) from [<c0310cbc>] (__writeback_single_inode+0x44/0x454)
-> [  246.758259]  r7:da283d60 r6:da645eac r5:da645d80 r4:da283c60
-> [  246.758266] [<c0310c78>] (__writeback_single_inode) from [<c03112d0>] (writeback_sb_inodes+0x204/0x4b0)
-> [  246.758272]  r10:0000000a r9:c0e03d00 r8:da283cc8 r7:da283c60 r6:da645eac r5:da283d08
-> [  246.758274]  r4:d9dc9848
-> [  246.758281] [<c03110cc>] (writeback_sb_inodes) from [<c03115cc>] (__writeback_inodes_wb+0x50/0xe4)
-> [  246.758287]  r10:da3797a8 r9:c0e03d00 r8:d9dc985c r7:da645eac r6:00000000 r5:d9dc9848
-> [  246.758289]  r4:da5a8800
-> [  246.758296] [<c031157c>] (__writeback_inodes_wb) from [<c03118f4>] (wb_writeback+0x294/0x338)
-> [  246.758302]  r10:fffbf200 r9:da644000 r8:c0e04e64 r7:d9dc9848 r6:d9dc9874 r5:da645eac
-> [  246.758305]  r4:d9dc9848
-> [  246.758312] [<c0311660>] (wb_writeback) from [<c0312dac>] (wb_workfn+0x35c/0x54c)
-> [  246.758318]  r10:da5f2005 r9:d9dc984c r8:d9dc9948 r7:d9dc9848 r6:00000000 r5:d9dc9954
-> [  246.758321]  r4:000031e6
-> [  246.758334] [<c0312a50>] (wb_workfn) from [<c014f2b8>] (process_one_work+0x214/0x544)
-> [  246.758340]  r10:da5f2005 r9:00000200 r8:00000000 r7:da5f2000 r6:ef044400 r5:da5eb000
-> [  246.758343]  r4:d9dc9954
-> [  246.758350] [<c014f0a4>] (process_one_work) from [<c014f634>] (worker_thread+0x4c/0x574)
-> [  246.758357]  r10:ef044400 r9:c0e03d00 r8:ef044418 r7:00000088 r6:ef044400 r5:da5eb014
-> [  246.758359]  r4:da5eb000
-> [  246.758368] [<c014f5e8>] (worker_thread) from [<c01564fc>] (kthread+0x144/0x170)
-> [  246.758374]  r10:ec9e5e90 r9:dabf325c r8:da5eb000 r7:da644000 r6:00000000 r5:da5fe000
-> [  246.758377]  r4:dabf3240
-> [  246.758386] [<c01563b8>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-> [  246.758391] Exception stack(0xda645fb0 to 0xda645ff8)
-> [  246.758397] 5fa0:                                     00000000 00000000 00000000 00000000
-> [  246.758402] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> [  246.758407] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> [  246.758413]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c01563b8
-> [  246.758416]  r4:da5fe000
-> .
-> 
+-Vladimir
