@@ -2,27 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E33B816A842
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 15:25:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CAE416A84A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 15:26:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbgBXOZM convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Feb 2020 09:25:12 -0500
-Received: from mail.funvisis.gob.ve ([200.11.216.34]:36175 "EHLO
+        id S1727703AbgBXOZ6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Feb 2020 09:25:58 -0500
+Received: from mail.funvisis.gob.ve ([200.11.216.34]:46847 "EHLO
         mail.funvisis.gob.ve" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727506AbgBXOZM (ORCPT
+        with ESMTP id S1727281AbgBXOZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 09:25:12 -0500
-X-Greylist: delayed 1728 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Feb 2020 09:25:12 EST
+        Mon, 24 Feb 2020 09:25:58 -0500
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by linuxmail.funvisis.gob.ve (Postfix) with ESMTP id 980ED15F408B;
-        Mon, 24 Feb 2020 09:55:58 -0400 (BOT)
+        by linuxmail.funvisis.gob.ve (Postfix) with ESMTP id BB98D15EF6BA;
+        Mon, 24 Feb 2020 09:58:17 -0400 (BOT)
 X-Virus-Scanned: by amavisd-new-2.7.1 (20120429) (Debian) at funvisis.gob.ve
 Received: from mail.funvisis.gob.ve ([127.0.0.1])
         by localhost (linuxmail.funvisis.gob.ve [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id rRMCZrIx5YDt; Mon, 24 Feb 2020 09:55:51 -0400 (BOT)
+        with ESMTP id Hr5mLyudw9Jy; Mon, 24 Feb 2020 09:58:11 -0400 (BOT)
 Received: from [100.87.16.14] (unknown [106.197.209.141])
-        by linuxmail.funvisis.gob.ve (Postfix) with ESMTPSA id 5BBA315F3C91;
-        Mon, 24 Feb 2020 09:53:03 -0400 (BOT)
+        by linuxmail.funvisis.gob.ve (Postfix) with ESMTPSA id 5F6F115EB023;
+        Mon, 24 Feb 2020 09:54:45 -0400 (BOT)
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
@@ -30,8 +29,8 @@ Content-Description: Mail message body
 Subject: =?utf-8?q?Verifique_su_correo_electr=C3=B3nico?=
 To:     Recipients <presidencia@funvisis.gob.ve>
 From:   Administrador de correo web <presidencia@funvisis.gob.ve>
-Date:   Mon, 24 Feb 2020 19:22:51 +0530
-Message-Id: <20200224135558.980ED15F408B@linuxmail.funvisis.gob.ve>
+Date:   Mon, 24 Feb 2020 19:24:39 +0530
+Message-Id: <20200224135817.BB98D15EF6BA@linuxmail.funvisis.gob.ve>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
