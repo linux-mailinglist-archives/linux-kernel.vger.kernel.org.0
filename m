@@ -2,85 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB7D16B437
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 811FE16B44D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:43:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbgBXWmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 17:42:21 -0500
-Received: from mga06.intel.com ([134.134.136.31]:24890 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726651AbgBXWmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 17:42:20 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 14:42:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
-   d="scan'208";a="237471606"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga003.jf.intel.com with ESMTP; 24 Feb 2020 14:42:19 -0800
-Date:   Mon, 24 Feb 2020 14:42:19 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 27/61] KVM: x86: Introduce
- cpuid_entry_{change,set,clear}() mutators
-Message-ID: <20200224224219.GN29865@linux.intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
- <20200201185218.24473-28-sean.j.christopherson@intel.com>
- <87ftf0p0d0.fsf@vitty.brq.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ftf0p0d0.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1728432AbgBXWmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 17:42:55 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:39606 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728361AbgBXWmr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 17:42:47 -0500
+Received: from localhost (unknown [50.226.181.18])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 51CF21235830D;
+        Mon, 24 Feb 2020 14:42:46 -0800 (PST)
+Date:   Mon, 24 Feb 2020 14:42:43 -0800 (PST)
+Message-Id: <20200224.144243.1485587034182183004.davem@davemloft.net>
+To:     sfr@canb.auug.org.au
+Cc:     netdev@vger.kernel.org, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org, martin.varghese@nokia.com,
+        willemb@google.com
+Subject: Re: linux-next: build warning after merge of the net-next tree
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200225092736.137df206@canb.auug.org.au>
+References: <20200225092736.137df206@canb.auug.org.au>
+X-Mailer: Mew version 6.8 on Emacs 26.3
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 24 Feb 2020 14:42:47 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 02:43:07PM +0100, Vitaly Kuznetsov wrote:
-> Sean Christopherson <sean.j.christopherson@intel.com> writes:
-> 
-> > diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-> > index 64e96e4086e2..51f19eade5a0 100644
-> > --- a/arch/x86/kvm/cpuid.h
-> > +++ b/arch/x86/kvm/cpuid.h
-> > @@ -135,6 +135,37 @@ static __always_inline bool cpuid_entry_has(struct kvm_cpuid_entry2 *entry,
-> >  	return cpuid_entry_get(entry, x86_feature);
-> >  }
-> >  
-> > +static __always_inline void cpuid_entry_clear(struct kvm_cpuid_entry2 *entry,
-> > +					      unsigned x86_feature)
-> > +{
-> > +	u32 *reg = cpuid_entry_get_reg(entry, x86_feature);
-> > +
-> > +	*reg &= ~__feature_bit(x86_feature);
-> > +}
-> > +
-> > +static __always_inline void cpuid_entry_set(struct kvm_cpuid_entry2 *entry,
-> > +					    unsigned x86_feature)
-> > +{
-> > +	int *reg = cpuid_entry_get_reg(entry, x86_feature);
-> 
-> I think 'reg' should be 'u32', similar to cpuid_entry_clear()
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 25 Feb 2020 09:27:36 +1100
 
-Doh, thanks!
+> After merging the net-next tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/net/bareudp.c: In function 'bareudp_xmit_skb':
+> drivers/net/bareudp.c:346:9: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   346 |  return err;
+>       |         ^~~
+> drivers/net/bareudp.c: In function 'bareudp6_xmit_skb':
+> drivers/net/bareudp.c:407:9: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   407 |  return err;
+>       |         ^~~
+> 
+> Introduced by commit
+> 
+>   571912c69f0e ("net: UDP tunnel encapsulation module for tunnelling different protocols like MPLS, IP, NSH etc.")
 
-> > +
-> > +	*reg |= __feature_bit(x86_feature);
-> > +}
-> > +
-> > +static __always_inline void cpuid_entry_change(struct kvm_cpuid_entry2 *entry,
-> > +					       unsigned x86_feature, bool set)
-> > +{
-> > +	int *reg = cpuid_entry_get_reg(entry, x86_feature);
-> 
-> Ditto.
-> 
+Sorry, my compiler didn't show this.
+
+I've committed the following into net-next, hopefully it does the trick:
+
+====================
+[PATCH] bareudp: Fix uninitialized variable warnings.
+
+drivers/net/bareudp.c: In function 'bareudp_xmit_skb':
+drivers/net/bareudp.c:346:9: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  346 |  return err;
+      |         ^~~
+drivers/net/bareudp.c: In function 'bareudp6_xmit_skb':
+drivers/net/bareudp.c:407:9: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  407 |  return err;
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/bareudp.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/bareudp.c b/drivers/net/bareudp.c
+index 77e72477499d..15337e9d4fad 100644
+--- a/drivers/net/bareudp.c
++++ b/drivers/net/bareudp.c
+@@ -320,6 +320,7 @@ static int bareudp_xmit_skb(struct sk_buff *skb, struct net_device *dev,
+ 	df = key->tun_flags & TUNNEL_DONT_FRAGMENT ? htons(IP_DF) : 0;
+ 	skb_scrub_packet(skb, xnet);
+ 
++	err = -ENOSPC;
+ 	if (!skb_pull(skb, skb_network_offset(skb)))
+ 		goto free_dst;
+ 
+@@ -381,6 +382,7 @@ static int bareudp6_xmit_skb(struct sk_buff *skb, struct net_device *dev,
+ 
+ 	skb_scrub_packet(skb, xnet);
+ 
++	err = -ENOSPC;
+ 	if (!skb_pull(skb, skb_network_offset(skb)))
+ 		goto free_dst;
+ 
+-- 
+2.21.1
+
