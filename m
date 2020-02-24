@@ -2,179 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2991516A00A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:32:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92B9816A00D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:33:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbgBXIcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:32:18 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39304 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbgBXIcS (ORCPT
+        id S1727275AbgBXIdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:33:43 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37262 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbgBXIdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:32:18 -0500
-Received: by mail-lj1-f194.google.com with SMTP id o15so9079829ljg.6
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 00:32:15 -0800 (PST)
+        Mon, 24 Feb 2020 03:33:43 -0500
+Received: by mail-wr1-f67.google.com with SMTP id l5so5015994wrx.4;
+        Mon, 24 Feb 2020 00:33:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XJRgxNIsppv7vONIRKrF9gVAm4UMJ5H/Ru2R3Bz9H+c=;
-        b=LdMixJJCYCeW+0+fhCp7YjLrLwmzuXw5+YBZZ7/ZQWqmVWX3QyJo+5alqv8hMLfggr
-         lj4lOI2jBfPnlsSFWniy9pJ1nGQ1CasY6fdJb+2TE85qljjWVeYwUSu3cyg60yd4kOFE
-         Jt5BbNUdilPfQsvW0OQ3DI/VvHwpZuPXIbVSAllaF9r6rDf76f9n2YATDNAosk636v39
-         k6B0GEnS08oPozQMarxl8QE1oISB18wO5VND9utNo0uuPnYAiGPwAqfuVbLd4b6qSgEg
-         qvEne9gisvjzoQhem+UCXJ9+u4IMxQ/HsV7iXrCO7HJnKOLaCxfCci4fzvGJ+YlIQp/S
-         /UAA==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nymHRd519oEr/2Ol/xDdmyiQN5tOm+qHNfWBj7Ts3V0=;
+        b=f9F5h86Uonh3ZWKSL+1FCIP03WC4MMNfKcSmK25Xr0N791WFzTrf2v66QMzZh2Jfl9
+         JJNRhxQtuh72EIjk5glA0KYpFknjSsmDgXCRxV//qj1aAnqZSz+OEkXCOrraCMjLaNy6
+         XCOBCAyjmwAKvaPw9tQthGqqYUfvGj/GBTygchwX9h0wtS5TU/QpZdOqfs28gPUTXoH9
+         cUlfNSRBU2wZTpG7pZUbwN5auFruRHJxmqiNg4eP1Im9ntsdt96Nt3EmxPhjDL0cpBM6
+         WHE/7/FCLs2HNCePWMYlDYQtBqfZe5HVqsCbbkpHwEIrrNBG/lqeu6shzgkl+kngVmOC
+         FkkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XJRgxNIsppv7vONIRKrF9gVAm4UMJ5H/Ru2R3Bz9H+c=;
-        b=lY+ePKoFpxajUBRZOdm3W40dB55zYqrAJ1cg2L143hssyTZV8Kl3AQooaRsydkhWCp
-         Y6Dh3gBkk+LNYiwL8vnqglY3wADCghqUuHRPiCiMFBEbP/oOnJ3JrhX+me6ZGh5w8K1p
-         9svbOuQ8yDhQF2haXKKgUVEuNlqVyO8ew/m7uMIaJ5ZEOT4YHf4dgeeIoluSUED3QJ54
-         KXyJ/9GmFZMVy5pnA8AZatjH+g9M2OF9gFh8G2JZCllqdDCXNTb0kJyWaDgBbken42oy
-         d+EU4RVUbJar7MTBlptwIeDf7liH/uQ2UZIp6r5F2TxtVhDOuT1FNLu+yjYMkv00FNAe
-         RINg==
-X-Gm-Message-State: APjAAAVXTa8FnDGzyJJUqh/sRP4t30r6riwm6pytlqGvjRvBk6lfPDtJ
-        AnDDMoeTqHlKGaBZZP5HKRPGcTIgNK1gY3j5y4yw1A==
-X-Google-Smtp-Source: APXvYqzQzXy127bLWQiTgNAlPeV7wkROPuOjgKaR4adX5Qbe5ZjNe+c4FcEbBIjQ08YtQLSOScd+jlKHlX2IAsZN074=
-X-Received: by 2002:a2e:8699:: with SMTP id l25mr28711426lji.137.1582533135007;
- Mon, 24 Feb 2020 00:32:15 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nymHRd519oEr/2Ol/xDdmyiQN5tOm+qHNfWBj7Ts3V0=;
+        b=KjnuwkLxMmN6qxHmbXqZopXN6NmSscNZ96BAHcfWt+0NGJhjby6o1kHqII7frnfwfQ
+         mR+XFa+BnHMEE3GXH9e/Swo92m3JlFwMi0X9Xt991MYCfqvBv3VgVQlBKbDoTD4OzLlo
+         eWzijsyq4Rpc/nKWY3XWC1sNNgLkiV2cr+9YGdc+IN/gYyqH1oDRpWS5HzxQaKJ/XIFR
+         0l2pYm8Bp9/+3sr8wjGkAXHrQHcF+kYnv6F1ZIjvwIXDPAyVgthMNLrQioyt523fy9mL
+         z8fx6O0gXM6VcaIv9WFWdzPafJxpdTW1Hf1NtPvOGGnS86FReT2WDr8B2A/pOUAbJN63
+         69Pw==
+X-Gm-Message-State: APjAAAXlUMa3LMnmrB7Uz5GTVx7AGq9bgTtWDiK643oti6Minl1xXA+b
+        UnLnf0HUUI/MxC01nL+FveE=
+X-Google-Smtp-Source: APXvYqx6/EIheiy/mnQqM+vtj3ky8o4pyJEHDw44B4na02N1359EweZ63qj/IwFcV5ldpqL4GHrwHA==
+X-Received: by 2002:adf:f744:: with SMTP id z4mr60283849wrp.318.1582533220739;
+        Mon, 24 Feb 2020 00:33:40 -0800 (PST)
+Received: from localhost.localdomain ([109.126.137.65])
+        by smtp.gmail.com with ESMTPSA id p15sm16695353wma.40.2020.02.24.00.33.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2020 00:33:40 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] io_uring: add splice(2) support
+Date:   Mon, 24 Feb 2020 11:32:42 +0300
+Message-Id: <cover.1582530525.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20200221132715.20648-1-vincent.guittot@linaro.org> <20200222055522.9548-1-hdanton@sina.com>
-In-Reply-To: <20200222055522.9548-1-hdanton@sina.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Mon, 24 Feb 2020 09:32:03 +0100
-Message-ID: <CAKfTPtB4g099_JHG3d0duoggL2fYPVH9b2mxixe88KPveD-RhA@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] sched/fair: Take into account runnable_avg to
- classify group
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 22 Feb 2020 at 06:55, Hillf Danton <hdanton@sina.com> wrote:
->
->
-> On Fri, 21 Feb 2020 14:27:15 +0100 Vincent Guittot wrote:
-> >
-> > Take into account the new runnable_avg signal to classify a group and to
-> > mitigate the volatility of util_avg in face of intensive migration or
-> > new task with random utilization.
-> >
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > Reviewed-by: "Dietmar Eggemann <dietmar.eggemann@arm.com>"
-> > ---
-> >  kernel/sched/fair.c | 31 ++++++++++++++++++++++++++++++-
-> >  1 file changed, 30 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 608c26d59c46..ef96049a02c3 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -5449,6 +5449,24 @@ static unsigned long cpu_runnable(struct rq *rq)
-> >       return cfs_rq_runnable_avg(&rq->cfs);
-> >  }
-> >
-> > +static unsigned long cpu_runnable_without(struct rq *rq, struct task_struct *p)
-> > +{
-> > +     struct cfs_rq *cfs_rq;
-> > +     unsigned int runnable;
-> > +
-> > +     /* Task has no contribution or is new */
-> > +     if (cpu_of(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-> > +             return cpu_runnable(rq);
-> > +
-> > +     cfs_rq = &rq->cfs;
-> > +     runnable = READ_ONCE(cfs_rq->avg.runnable_avg);
-> > +
-> > +     /* Discount task's runnable from CPU's runnable */
-> > +     lsub_positive(&runnable, p->se.avg.runnable_avg);
-> > +
-> > +     return runnable;
-> > +}
-> > +
-> >  static unsigned long capacity_of(int cpu)
-> >  {
-> >       return cpu_rq(cpu)->cpu_capacity;
-> > @@ -7718,7 +7736,8 @@ struct sg_lb_stats {
-> >       unsigned long avg_load; /*Avg load across the CPUs of the group */
-> >       unsigned long group_load; /* Total load over the CPUs of the group */
-> >       unsigned long group_capacity;
-> > -     unsigned long group_util; /* Total utilization of the group */
-> > +     unsigned long group_util; /* Total utilization over the CPUs of the group */
-> > +     unsigned long group_runnable; /* Total runnable time over the CPUs of the group */
-> >       unsigned int sum_nr_running; /* Nr of tasks running in the group */
-> >       unsigned int sum_h_nr_running; /* Nr of CFS tasks running in the group */
-> >       unsigned int idle_cpus;
-> > @@ -7939,6 +7958,10 @@ group_has_capacity(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
-> >       if (sgs->sum_nr_running < sgs->group_weight)
-> >               return true;
-> >
-> > +     if ((sgs->group_capacity * imbalance_pct) <
-> > +                     (sgs->group_runnable * 100))
-> > +             return false;
-> > +
-> >       if ((sgs->group_capacity * 100) >
-> >                       (sgs->group_util * imbalance_pct))
-> >               return true;
->
-> Is it likely to compare capacity with runnable in the same way as
-> with util e.g
+*on top of for-5.6 + async patches*
 
-We don't want to compare util and runnable in the same way because
-util_avg is a lower bound of the utilization of the capacity so we
-consider taht the group doesn't have spare capacity if util_avg is
-close but below the capacity whereas runnable is the upper bound so it
-must be higher than capacity before considering that there is no
-capacity.
+Not the fastets implementation, but I'd need to stir up/duplicate
+splice.c bits to do it more efficiently.
 
->
->         if ((sgs->group_capacity * 100) >
->             (max(sgs->group_util, sgs->group_runnable) * imbalance_pct))
->                 return true;
->
-> > @@ -7964,6 +7987,10 @@ group_is_overloaded(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
-> >                       (sgs->group_util * imbalance_pct))
-> >               return true;
-> >
-> > +     if ((sgs->group_capacity * imbalance_pct) <
-> > +                     (sgs->group_runnable * 100))
-> > +             return true;
-> > +
-> >       return false;
-> >  }
-> >
-> > @@ -8058,6 +8085,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
-> >
-> >               sgs->group_load += cpu_load(rq);
-> >               sgs->group_util += cpu_util(i);
-> > +             sgs->group_runnable += cpu_runnable(rq);
-> >               sgs->sum_h_nr_running += rq->cfs.h_nr_running;
-> >
-> >               nr_running = rq->nr_running;
-> > @@ -8333,6 +8361,7 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
-> >
-> >               sgs->group_load += cpu_load_without(rq, p);
-> >               sgs->group_util += cpu_util_without(i, p);
-> > +             sgs->group_runnable += cpu_runnable_without(rq, p);
-> >               local = task_running_on_cpu(i, p);
-> >               sgs->sum_h_nr_running += rq->cfs.h_nr_running - local;
-> >
-> > --
-> > 2.17.1
-> >
-> >
->
+note: rebase on top of the recent inflight patchset.
+
+v2:
+- u32 len and SQE layout changes (Jens)
+- output file is in sqe->fd for automatic hash_reg_file support
+- handle unbound_nonreg_file for the second fd
+- file leaks fixed with REQ_F_NEED_CLEANUP
+- place SPLICE_F_FD_IN_FIXED in splice flags (Jens)
+- loff_t* -> loff_t, -1 means not specified offset
+
+v3: [PATCH 3/3] changes
+- fd u32 -> s32 (Stefan Metzmacher)
+- add BUILD_BUG_SQE_ELEM() (Stefan Metzmacher)
+- accept and ignore ioprio (Stefan Metzmacher)
+- off_in -> splice_off_in
+
+v4:
+- rebase + a bit of function renaming
+- make file_get/put accept req instead of ctx (Jens)
+- fix lost REQ_F_FIXED_FILE
+
+Pavel Begunkov (3):
+  splice: make do_splice public
+  io_uring: add interface for getting files
+  io_uring: add splice(2) support
+
+ fs/io_uring.c                 | 181 ++++++++++++++++++++++++++++------
+ fs/splice.c                   |   6 +-
+ include/linux/splice.h        |   3 +
+ include/uapi/linux/io_uring.h |  14 ++-
+ 4 files changed, 171 insertions(+), 33 deletions(-)
+
+-- 
+2.24.0
+
