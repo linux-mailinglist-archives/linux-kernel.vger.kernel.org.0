@@ -2,101 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EF3A16A4AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:14:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3258316A4B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:16:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbgBXLOv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 06:14:51 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36822 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727185AbgBXLOv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 06:14:51 -0500
-Received: by mail-oi1-f194.google.com with SMTP id c16so8583869oic.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 03:14:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6J56GZAIisN7s+G2kGZDSpihGRsq1TAS9IAl8pKmY94=;
-        b=Z0jP380Lxb0eRiJN5AEV9SSTUKxx1hREr5vNP3OB+wgj+pYvYBya7wCD6B1n3Iyfqk
-         NJlqS5wyXs/tqTW8GXMUsZkSwnNz6eipE/QTRM86gG1LqO2TFMtgFbcxLm48hh30Tk0/
-         Wacgs88yW5yUl8y91pZljIE6YGOu4GXJOKNo4k7BfkVhWMCgtPB346JwIUReJ+3qXR2l
-         qAGaXZoiN/rDZejL1S2m2iua+Mo2aJX1fmD9w1AXdFgaPQcnB2v2hXaCKjbEaHZKxf6t
-         WtLJJOKoYg2u8M/ALDjJmBuLUgwBn/jnXBnGb7EpfEod/YH+sKZZnuttOe98CYAPOXNQ
-         mCEw==
-X-Gm-Message-State: APjAAAV/58Q64LbPpfp7lcJKyvbwo2UsPE9VrECGYsbBT9nfDjyhppnx
-        7VVy9JDWJSZWodDOyNH5/18hN3dY+ajgkJ2OPF0=
-X-Google-Smtp-Source: APXvYqyJGLntakWARp86s91QH32t/qVwHjeTCsojy/gtzoQLTXH03yoyT3RIy6NniXxO35oP/uCuX+NiSRuYe1mWX5k=
-X-Received: by 2002:aca:b4c3:: with SMTP id d186mr11814856oif.131.1582542890533;
- Mon, 24 Feb 2020 03:14:50 -0800 (PST)
+        id S1727352AbgBXLQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 06:16:55 -0500
+Received: from mail-bn8nam11on2051.outbound.protection.outlook.com ([40.107.236.51]:20960
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727183AbgBXLQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 06:16:54 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nLLMxOzo2X4DsbAO3mSaz12G8BlOk4ImDN/9sBVv086OW/fA2j2QEwn/l+A7TfcUwDHN1Sr8jPu0o/s8C72HiGoTdbF4Vnht8+tF+roqNiK3fqO4mpbun7DcR0y93A0J1tugd5Jw5J7O3VvsjqmVAhx1r1PTxVnjfvdfS1M/xkgJ1GbH7c53NmSj8OB6k8tVqyGex0o4a37pSieFAzx2yupv1cZ03R3LrSjca7+GI9BeD36KhZCVE5T8BqBhW8bT/GdvnFdBopmlgxjQALBY5cb4sDlh3OXkeI4uDkqNEnNo2eFKr5kn8znn3oCywisTEyG5hlFA/xVIqGROK9B19w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Pr7gPEiD0+bE0kBCHf08UVzDpL18zDobWFqHourYQQ=;
+ b=Qg617cDdcO41of+fbZCoY/oXxEBpYPTdDfwNNnFWsgr8fKuylHrgBZyScYlWsmAcLDVpoqC8NHu0qYYylvZmKjDCfr2DuyZ3+Mctjjx3CGdYYBewGcSWCodWX2ZXYOei5xBFsXE0XLvyTBl5bLWbl2Cy2tgwHZUz1yu13tOHub982PTDL7zNLDxsdV5MndjaOOIP2Dl4nLvN1j8yn06D17wgumPXQhotxz3fG+c5A19QyOR3Etq7uvcr1dwjAqkF2am91VTlgYjkrlojnbWFwP0QYf7OMnzGbHm9GLJ3gY6DmTXfBaU3DivTDbwD9oPdKLWNClzb35mSAQjd9ZIn2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Pr7gPEiD0+bE0kBCHf08UVzDpL18zDobWFqHourYQQ=;
+ b=XMyKjqXjxtUAx7QyxnuNKuqSCQLTqJPZm7GGeO5dVAVmO0e1eVcbjEexl7Z9T7PvA48NVZM869Xp3LF/xnFYQUH9vtf2u479T5BqpD1j8lzapnW5DaKm6B2duY+oWiKyoKObjFXnKVQJgLEuFWUD0a3Vt/H3KAvBd9O8z5w7RRY=
+Received: from BL0PR02CA0078.namprd02.prod.outlook.com (2603:10b6:208:51::19)
+ by DM5PR02MB3877.namprd02.prod.outlook.com (2603:10b6:4:b9::34) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.21; Mon, 24 Feb
+ 2020 11:16:51 +0000
+Received: from SN1NAM02FT026.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::201) by BL0PR02CA0078.outlook.office365.com
+ (2603:10b6:208:51::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.17 via Frontend
+ Transport; Mon, 24 Feb 2020 11:16:51 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT026.mail.protection.outlook.com (10.152.72.97) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2750.19
+ via Frontend Transport; Mon, 24 Feb 2020 11:16:50 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1j6BjG-0004T4-7i; Mon, 24 Feb 2020 03:16:50 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1j6BjB-0000gg-4M; Mon, 24 Feb 2020 03:16:45 -0800
+Received: from [172.30.17.108]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1j6Bj5-0000fs-Su; Mon, 24 Feb 2020 03:16:40 -0800
+Subject: Re: [PATCH] rtc: zynqmp: Add calibration set and get support
+To:     Srinivas Neeli <srinivas.neeli@xilinx.com>, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, michal.simek@xilinx.com,
+        sgoud@xilinx.com, shubhraj@xilinx.com
+Cc:     linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, git@xilinx.com,
+        Srinivas Goud <srinivas.goud@xilinx.com>
+References: <1582191106-30431-1-git-send-email-srinivas.neeli@xilinx.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <00b3e6dd-50d6-f5a7-a861-e6db91f6eafb@xilinx.com>
+Date:   Mon, 24 Feb 2020 12:16:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20180603201202.15468-1-robert.jarzmik@free.fr>
-In-Reply-To: <20180603201202.15468-1-robert.jarzmik@free.fr>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 24 Feb 2020 12:14:39 +0100
-Message-ID: <CAMuHMdU3uxfBwKd8SkOtZSDV5Ai3CKc3CWRhDy0Cz94T1Hn0iA@mail.gmail.com>
-Subject: non-existent SND_SOC_AC97_BUS_NEW (was: Re: [PATCH v9] ASoC: pxa:
- switch to new ac97 bus support)
-To:     Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1582191106-30431-1-git-send-email-srinivas.neeli@xilinx.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(346002)(396003)(376002)(189003)(199004)(26005)(478600001)(31696002)(6636002)(107886003)(316002)(5660300002)(2906002)(31686004)(8676002)(8936002)(356004)(9786002)(36756003)(426003)(186003)(2616005)(70586007)(81166006)(81156014)(44832011)(6666004)(336012)(70206006)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR02MB3877;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4c0055e7-0c45-4e62-5bb0-08d7b91b0bb9
+X-MS-TrafficTypeDiagnostic: DM5PR02MB3877:
+X-Microsoft-Antispam-PRVS: <DM5PR02MB38772BCC31E42BF62A0E98F6C6EC0@DM5PR02MB3877.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-Forefront-PRVS: 032334F434
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: WyCVdl8W3E/fdoqXSuRd94M9GmTHEcfgerXl8ImW4uRIydZFyfrPXJ18QArwrzVPjUmB+IvRL/wkmLL1hYstWnLkBgx2ZTtJ/QJjcTKEpIUyoSPv0FDUv/YMac2WvRoNgBtBk4ExwP7y6p+FAnKaGNaLqIU0U36IIlomNAhLO57L0uigmNowPdNWjfAxiMlfhyg+HwnFYGWU+heG3vM7MCeDwZ+l7xy3d9zMAs/92iOXO3RI5Xx/ItDV2IwRnnlgxA/KvxIEDYz8c5pMFNQj9V3kUxlJtUq4RXSNVMcTrX9rYLG/D16FxuNfzKmPkvzjVADiby2AqNbKsEr+3cRF+B70M6iPrFMOGpx+9wIe+pl25bGu/qx9SPb1apJqdcyBuTDYW1/m0oVqK7zmKGWUMUSIaZ91MV27ZawOlOJRoQZKuNuhLb5fn8Jka7ovfVod
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2020 11:16:50.6675
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c0055e7-0c45-4e62-5bb0-08d7b91b0bb9
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB3877
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robert,
+On 20. 02. 20 10:31, Srinivas Neeli wrote:
+> ZynqMp RTC controller has a calibration feature to compensate
+> time deviation due to input clock inaccuracy.
+> Set and get calibration API's are used for setting and getting
+> calibration value from the controller calibration register.
+> 
+> Signed-off-by: Srinivas Goud <srinivas.goud@xilinx.com>
+> Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
+> ---
+>  drivers/rtc/rtc-zynqmp.c | 78 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 78 insertions(+)
+> 
+> diff --git a/drivers/rtc/rtc-zynqmp.c b/drivers/rtc/rtc-zynqmp.c
+> index 4b1077e2f826..b4118e9e4fcc 100644
+> --- a/drivers/rtc/rtc-zynqmp.c
+> +++ b/drivers/rtc/rtc-zynqmp.c
+> @@ -40,6 +40,12 @@
+>  #define RTC_CALIB_MASK		0x1FFFFF
+>  #define RTC_ALRM_MASK          BIT(1)
+>  #define RTC_MSEC               1000
+> +#define RTC_FR_MASK             0xF0000
+> +#define RTC_SEC_MAX_VAL         0xFFFFFFFF
+> +#define RTC_FR_MAX_TICKS        16
+> +#define RTC_OFFSET_MAX          150000
+> +#define RTC_OFFSET_MIN          -150000
+> +#define RTC_PPB                 1000000000LL
+>  
 
-On Sun, Jun 3, 2018 at 10:12 PM Robert Jarzmik <robert.jarzmik@free.fr> wrote:
-> Switch to the new ac97 bus support in sound/ac97 instead of the legacy
-> snd_ac97 one.
->
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+please use tabs here.
 
-This is commit 1c8bc7b3de5e76cb ("ASoC: pxa: switch to new ac97 bus
-support") in v4.20-rc1 and later.
+>  struct xlnx_rtc_dev {
+>  	struct rtc_device	*rtc;
+> @@ -184,12 +190,84 @@ static void xlnx_init_rtc(struct xlnx_rtc_dev *xrtcdev)
+>  	writel(xrtcdev->calibval, (xrtcdev->reg_base + RTC_CALIB_WR));
+>  }
+>  
+> +static int xlnx_rtc_read_offset(struct device *dev, long *offset)
+> +{
+> +	struct xlnx_rtc_dev *xrtcdev = dev_get_drvdata(dev);
+> +	long offset_val;
+> +	unsigned int reg;
+> +	unsigned int tick_mult = RTC_PPB / xrtcdev->calibval;
+> +
+> +	reg = readl(xrtcdev->reg_base + RTC_CALIB_RD);
+> +
+> +	/* Offset with seconds ticks */
+> +	offset_val = reg & RTC_TICK_MASK;
+> +	offset_val = offset_val - xrtcdev->calibval;
+> +	offset_val = offset_val * tick_mult;
+> +
+> +	/* Offset with fractional ticks */
+> +	if (reg & RTC_FR_EN)
+> +		offset_val += ((reg & RTC_FR_MASK) >> RTC_FR_DATSHIFT)
+> +			* (tick_mult / RTC_FR_MAX_TICKS);
+> +	*offset = offset_val;
+> +
+> +	return 0;
+> +}
+> +
+> +static int xlnx_rtc_set_offset(struct device *dev, long offset)
+> +{
+> +	struct xlnx_rtc_dev *xrtcdev = dev_get_drvdata(dev);
+> +	short int  max_tick;
+> +	unsigned char fract_tick = 0;
+> +	unsigned int  calibval;
 
-> --- a/sound/soc/pxa/Kconfig
-> +++ b/sound/soc/pxa/Kconfig
-> @@ -20,13 +20,12 @@ config SND_MMP_SOC
->
->  config SND_PXA2XX_AC97
->         tristate
-> -       select SND_AC97_CODEC
->
->  config SND_PXA2XX_SOC_AC97
->         tristate
-> -       select AC97_BUS
-> +       select AC97_BUS_NEW
->         select SND_PXA2XX_LIB_AC97
-> -       select SND_SOC_AC97_BUS
-> +       select SND_SOC_AC97_BUS_NEW
+double space.
 
-The actual SND_SOC_AC97_BUS_NEW symbol never made it upstream, although
-4 of its users did (3 have been removed in commit ea00d95200d02ece
-("ASoC: Use imply for SND_SOC_ALL_CODECS")).
+> +	int fract_offset;
+> +	unsigned int tick_mult = RTC_PPB / xrtcdev->calibval;
+> +
+> +	/* Make sure offset value is within supported range */
+> +	if (offset < RTC_OFFSET_MIN || offset > RTC_OFFSET_MAX)
+> +		return -ERANGE;
+> +
+> +	/* Number ticks for given offset */
+> +	max_tick = div_s64_rem(offset, tick_mult, &fract_offset);
+> +
+> +	/* Number fractional ticks for given offset */
+> +	if (fract_offset) {
+> +		if (fract_offset < 0) {
+> +			fract_offset = fract_offset + tick_mult;
+> +			max_tick--;
+> +		}
+> +		if (fract_offset > (tick_mult / RTC_FR_MAX_TICKS)) {
+> +			for (fract_tick = 1; fract_tick < 16; fract_tick++) {
+> +				if (fract_offset <=
+> +				    (fract_tick *
+> +				     (tick_mult / RTC_FR_MAX_TICKS)))
+> +					break;
+> +			}
+> +		}
+> +	}
+> +
+> +	/* Zynqmp RTC uses second and fractional tick
+> +	 * counters for compensation
+> +	 */
+> +	calibval = max_tick + xrtcdev->calibval;
+> +
+> +	if (fract_tick)
+> +		calibval |= RTC_FR_EN;
+> +
+> +	calibval |= (fract_tick <<  RTC_FR_DATSHIFT);
 
-The definition seems to have been dropped silently in v4 of the series.
-What should the select be replaced with? Or should it just be dropped?
+here is double space.
 
-Thanks!
+> +
+> +	writel(calibval, (xrtcdev->reg_base + RTC_CALIB_WR));
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct rtc_class_ops xlnx_rtc_ops = {
+>  	.set_time	  = xlnx_rtc_set_time,
+>  	.read_time	  = xlnx_rtc_read_time,
+>  	.read_alarm	  = xlnx_rtc_read_alarm,
+>  	.set_alarm	  = xlnx_rtc_set_alarm,
+>  	.alarm_irq_enable = xlnx_rtc_alarm_irq_enable,
+> +	.read_offset    = xlnx_rtc_read_offset,
+> +	.set_offset     = xlnx_rtc_set_offset,
 
-Gr{oetje,eeting}s,
+use tabs as is done above.
 
-                        Geert
+>  };
+>  
+>  static irqreturn_t xlnx_rtc_interrupt(int irq, void *id)
+> 
 
+The rest looks good.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Michal
