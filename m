@@ -2,103 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F40016A646
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57BB216A623
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:31:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbgBXMgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 07:36:35 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:63149 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727351AbgBXMge (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 07:36:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1582547795; x=1614083795;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=O8LGBsnXgijOOUtrnFOXnfiw5ca+3nT7gjvYhrB43+o=;
-  b=kYnMWbkoDQfotnqQIHuFuKICeA30lEXDUA4+E1RnrZR8o6thWlRw0xLg
-   JgL19DgzYJXoxkAq0wnKn7alXNN9uv5N+jib+q5Pv3mS37JzM02Sl5KZk
-   AKOzD4WG0ygUPKi+vjKx7oBrFPjuI4g9WCt046XpkLkDvP8EFUvfczP0K
-   U=;
-IronPort-SDR: 7MmmB4teexlrOucahk/xGCtElV29EAjQsDV2YuRCtqVuWZD20xfSluwlg7rRaeIbWsax3HYxMr
- ltIafHMfn3Fg==
-X-IronPort-AV: E=Sophos;i="5.70,480,1574121600"; 
-   d="scan'208";a="18295746"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-c300ac87.us-west-2.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 24 Feb 2020 12:36:32 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2b-c300ac87.us-west-2.amazon.com (Postfix) with ESMTPS id D4385A2479;
-        Mon, 24 Feb 2020 12:36:29 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Mon, 24 Feb 2020 12:36:29 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.53) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 24 Feb 2020 12:36:17 +0000
-From:   SeongJae Park <sjpark@amazon.com>
-To:     <akpm@linux-foundation.org>
-CC:     SeongJae Park <sjpark@amazon.de>, <aarcange@redhat.com>,
-        <yang.shi@linux.alibaba.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <amit@kernel.org>,
-        <brendan.d.gregg@gmail.com>, <brendanhiggins@google.com>,
-        <cai@lca.pw>, <colin.king@canonical.com>, <corbet@lwn.net>,
-        <dwmw@amazon.com>, <jolsa@redhat.com>, <kirill@shutemov.name>,
-        <mark.rutland@arm.com>, <mgorman@suse.de>, <minchan@kernel.org>,
-        <mingo@redhat.com>, <namhyung@kernel.org>, <peterz@infradead.org>,
-        <rdunlap@infradead.org>, <rientjes@google.com>,
-        <rostedt@goodmis.org>, <shuah@kernel.org>, <sj38.park@gmail.com>,
-        <vbabka@suse.cz>, <vdavydov.dev@gmail.com>, <linux-mm@kvack.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 14/14] MAINTAINERS: Update for DAMON
-Date:   Mon, 24 Feb 2020 13:30:47 +0100
-Message-ID: <20200224123047.32506-15-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200224123047.32506-1-sjpark@amazon.com>
-References: <20200224123047.32506-1-sjpark@amazon.com>
+        id S1727378AbgBXMbZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 07:31:25 -0500
+Received: from foss.arm.com ([217.140.110.172]:36478 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726778AbgBXMbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 07:31:25 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C6B8A30E;
+        Mon, 24 Feb 2020 04:31:24 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B2C93F534;
+        Mon, 24 Feb 2020 04:31:24 -0800 (PST)
+Date:   Mon, 24 Feb 2020 12:31:22 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Andreas Kemnade <andreas@kemnade.info>, j.neuschaefer@gmx.net,
+        contact@paulk.fr, GNUtoo@cyberdimension.org, josua.mayer@jm0.eu,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] regulator: core: fix handling negative voltages e.g.
+ in EPD PMICs
+Message-ID: <20200224123122.GH6215@sirena.org.uk>
+References: <20200223153502.15306-1-andreas@kemnade.info>
+ <20200224120512.GG6215@sirena.org.uk>
+ <1548203B-9D64-4128-9BED-D3BC30F9DC49@goldelico.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.162.53]
-X-ClientProxiedBy: EX13D19UWC003.ant.amazon.com (10.43.162.184) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="X1xGqyAVbSpAWs5A"
+Content-Disposition: inline
+In-Reply-To: <1548203B-9D64-4128-9BED-D3BC30F9DC49@goldelico.com>
+X-Cookie: How you look depends on where you go.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
 
-This commit updates MAINTAINERS file for DAMON related files.
+--X1xGqyAVbSpAWs5A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- MAINTAINERS | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Mon, Feb 24, 2020 at 01:22:21PM +0100, H. Nikolaus Schaller wrote:
+> > Am 24.02.2020 um 13:05 schrieb Mark Brown <broonie@kernel.org>:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 56765f542244..422c86f64cdd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4611,6 +4611,18 @@ F:	net/ax25/ax25_out.c
- F:	net/ax25/ax25_timer.c
- F:	net/ax25/sysctl_net_ax25.c
- 
-+DATA ACCESS MONITOR
-+M:	SeongJae Park <sjpark@amazon.de>
-+L:	linux-mm@kvack.org
-+S:	Maintained
-+F:	Documentation/admin-guide/mm/data_access_monitor.rst
-+F:	include/linux/damon.h
-+F:	include/trace/events/damon.h
-+F:	mm/damon-test.h
-+F:	mm/damon.c
-+F:	tools/damon/*
-+F:	tools/testing/selftests/damon/*
-+
- DAVICOM FAST ETHERNET (DMFE) NETWORK DRIVER
- L:	netdev@vger.kernel.org
- S:	Orphan
--- 
-2.17.1
+> > This is what'd be needed, your approach here is a bit of a hack and
+> > leaves some values unrepresentable if they overlap with errnos which
+> > obviously has issues if someone has a need for those values.
 
+> Negative ERRNOs have BIT(31) set.
+
+This code is working with the numberic representation, not with the
+bitwise representation - it's using -MAX_ERRNO. =20
+
+> But then it seems to be a little inconsistent that the voltage
+> parameters of regulator_set_voltage_unlocked() are signed integers
+> and not unsigned.
+
+> So shouldn't that be protected against attempting to set negative voltage=
+s?
+
+Or just convert it to unsigned, I don't recall there being any
+particular reason why it's signed.
+
+--X1xGqyAVbSpAWs5A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5TwhoACgkQJNaLcl1U
+h9B1IAf/bzn84Uy6Bu9ClVtEYIjBmXCGq7OXxfeMu26eU/ISxWvDeS+0uCXCuCR1
+2MmGJxh0llTRdUsDFbuwe+OT5UcKwqmo4sihpXPPn35v9VsiBsIu4hIBu4foFuQh
+a5vNLVGJ1wx0KHiwFrn/8hqFYZ2JGmOBVF6SWxhCMlvsr3Cuw+QGAM0//38Prrwl
+oXTzv48sWaFCFs6829R99KbSykCnvTTa5zsNS683vLEcxpTb7jbL5r1ylTcC1PcK
+7zJjYTgiMw87uSeEoc3nvR9lpP0FNga4yKoABbv+y8Oiyc5r7bJpCgzGTqvlsHON
+LA04m9mKcjXyBzj0Et2Tk+qj+CElOQ==
+=Izqs
+-----END PGP SIGNATURE-----
+
+--X1xGqyAVbSpAWs5A--
