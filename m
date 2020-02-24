@@ -2,440 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9594B16ABA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:33:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FCA616AB7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:30:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbgBXQdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:33:12 -0500
-Received: from gateway36.websitewelcome.com ([192.185.192.36]:23416 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727636AbgBXQdL (ORCPT
+        id S1728031AbgBXQa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:30:29 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:47882 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbgBXQa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:33:11 -0500
-X-Greylist: delayed 1311 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Feb 2020 11:33:10 EST
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id EFC3A400E11C7
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 09:26:01 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 6GKFj97RkSl8q6GKFjoG2L; Mon, 24 Feb 2020 10:11:19 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=7e28GVAyaL5GQzoBarUOu44L4v9JQuyAxSP9Znha/Wk=; b=puN1Lussep5gXOv/gmquixC6bQ
-        uGkaPq4clH1SG9fvZzyt4GM0BMPmrr5U7x4sDkMrDPqIld+Nx8mDr1QnsaY7pwAqk93c9ktb+EbjD
-        V8t2SsudejtcX5MPaNZrpT9wzjVvzIFa22O62xaxfJ5XVuo+Lbox2S3gKdI8o53oNCmtNgi0yjZAL
-        O9Wikro0wr320gWtWMzj+WHHdZPDmE+H+xgBJgQsyQkL9lakmiWx57dWvc2Ji6V0KwwrTDb9LKEUf
-        hTKcafblNzcqJFFIOM1mC7LTuD+3z+a/O0qmF+E5CO2gfPT/4ObsWSGV0mNZJsVpJlE2QLiLnU75y
-        ehZ3mEHw==;
-Received: from [200.68.140.135] (port=3410 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j6GKC-002dTZ-Uk; Mon, 24 Feb 2020 10:11:17 -0600
-Date:   Mon, 24 Feb 2020 10:14:06 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Satish Kharat <satishkh@cisco.com>,
-        Sesidhar Baddela <sebaddel@cisco.com>,
-        Karan Tilak Kumar <kartilak@cisco.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Brian King <brking@us.ibm.com>,
-        Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        MPT-FusionLinux.pdl@broadcom.com, open-iscsi@googlegroups.com,
-        linux-rdma@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] scsi: Replace zero-length array with flexible-array member
-Message-ID: <20200224161406.GA21454@embeddedor>
+        Mon, 24 Feb 2020 11:30:28 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j6Gcl-0004et-I3; Mon, 24 Feb 2020 09:30:27 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j6Gcj-00087b-GZ; Mon, 24 Feb 2020 09:30:26 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>
+References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
+        <87v9odlxbr.fsf@x220.int.ebiederm.org>
+        <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
+        <87tv3vkg1a.fsf@x220.int.ebiederm.org>
+        <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+        <87v9obipk9.fsf@x220.int.ebiederm.org>
+        <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
+        <20200212200335.GO23230@ZenIV.linux.org.uk>
+        <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
+        <20200212203833.GQ23230@ZenIV.linux.org.uk>
+        <20200212204124.GR23230@ZenIV.linux.org.uk>
+        <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
+        <87lfp7h422.fsf@x220.int.ebiederm.org>
+        <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+        <87pnejf6fz.fsf@x220.int.ebiederm.org>
+        <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
+        <871rqk2brn.fsf_-_@x220.int.ebiederm.org>
+Date:   Mon, 24 Feb 2020 10:28:22 -0600
+In-Reply-To: <871rqk2brn.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Mon, 24 Feb 2020 10:25:16 -0600")
+Message-ID: <87eeuk0x21.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.135
-X-Source-L: No
-X-Exim-ID: 1j6GKC-002dTZ-Uk
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.135]:3410
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+X-XM-SPF: eid=1j6Gcj-00087b-GZ;;;mid=<87eeuk0x21.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/swQCQNy2YwWznsTE8zPB0PTznWyDneD8=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        XMGappySubj_01,XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4998]
+        *  0.5 XMGappySubj_01 Very gappy subject
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1256 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.9 (0.2%), b_tie_ro: 2.1 (0.2%), parse: 1.05
+        (0.1%), extract_message_metadata: 12 (1.0%), get_uri_detail_list: 2.2
+        (0.2%), tests_pri_-1000: 30 (2.4%), tests_pri_-950: 2.0 (0.2%),
+        tests_pri_-900: 1.43 (0.1%), tests_pri_-90: 49 (3.9%), check_bayes: 47
+        (3.8%), b_tokenize: 18 (1.4%), b_tok_get_all: 18 (1.4%), b_comp_prob:
+        2.7 (0.2%), b_tok_touch_all: 4.5 (0.4%), b_finish: 0.88 (0.1%),
+        tests_pri_0: 1142 (90.9%), check_dkim_signature: 0.96 (0.1%),
+        check_dkim_adsp: 3.2 (0.3%), poll_dns_idle: 0.52 (0.0%), tests_pri_10:
+        2.2 (0.2%), tests_pri_500: 11 (0.8%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH v2 4/6] proc: Use d_invalidate in proc_prune_siblings_dcache
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+The function d_prune_aliases has the problem that it will only prune
+aliases thare are completely unused.  It will not remove aliases for
+the dcache or even think of removing mounts from the dcache.  For that
+behavior d_invalidate is needed.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+To use d_invalidate replace d_prune_aliases with d_find_alias followed
+by d_invalidate and dput.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+For completeness the directory and the non-directory cases are
+separated because in theory (although not in currently in practice for
+proc) directories can only ever have a single dentry while
+non-directories can have hardlinks and thus multiple dentries.
+As part of this separation use d_find_any_alias for directories
+to spare d_find_alias the extra work of doing that.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+Plus the differences between d_find_any_alias and d_find_alias makes
+it clear why the directory and non-directory code and not share code.
 
-This issue was found with the help of Coccinelle.
+To make it clear these routines now invalidate dentries rename
+proc_prune_siblings_dache to proc_invalidate_siblings_dcache, and rename
+proc_sys_prune_dcache proc_sys_invalidate_dcache.
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+V2: Split the directory and non-directory cases.  To make this
+    code robust to future changes in proc.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- drivers/scsi/fnic/vnic_devcmd.h      |  2 +-
- drivers/scsi/ipr.h                   |  6 +++---
- drivers/scsi/isci/sas.h              |  2 +-
- drivers/scsi/mpt3sas/mpt3sas_scsih.c |  2 +-
- drivers/scsi/mvsas/mv_sas.h          |  2 +-
- drivers/scsi/mvumi.h                 |  4 ++--
- drivers/scsi/pmcraid.h               |  2 +-
- drivers/scsi/snic/vnic_devcmd.h      |  2 +-
- drivers/scsi/stex.c                  |  2 +-
- include/scsi/iscsi_if.h              | 10 +++++-----
- include/scsi/scsi_bsg_iscsi.h        |  2 +-
- include/scsi/scsi_device.h           |  4 ++--
- include/scsi/scsi_host.h             |  2 +-
- include/scsi/scsi_ioctl.h            |  2 +-
- include/scsi/srp.h                   |  8 ++++----
- include/uapi/scsi/scsi_bsg_fc.h      |  2 +-
- 16 files changed, 27 insertions(+), 27 deletions(-)
+ fs/proc/inode.c       | 16 ++++++++++++++--
+ fs/proc/internal.h    |  2 +-
+ fs/proc/proc_sysctl.c |  8 ++++----
+ 3 files changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/fnic/vnic_devcmd.h b/drivers/scsi/fnic/vnic_devcmd.h
-index c5dde556dc7c..c20d30e36dfc 100644
---- a/drivers/scsi/fnic/vnic_devcmd.h
-+++ b/drivers/scsi/fnic/vnic_devcmd.h
-@@ -442,7 +442,7 @@ struct vnic_devcmd_notify {
- struct vnic_devcmd_provinfo {
- 	u8 oui[3];
- 	u8 type;
--	u8 data[0];
-+	u8 data[];
- };
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index fa2dc732cd77..ba6acd300ce1 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -103,7 +103,7 @@ void __init proc_init_kmemcache(void)
+ 	BUILD_BUG_ON(sizeof(struct proc_dir_entry) >= SIZEOF_PDE);
+ }
  
- /*
-diff --git a/drivers/scsi/ipr.h b/drivers/scsi/ipr.h
-index a67baeb36d1f..fd3929a19ab5 100644
---- a/drivers/scsi/ipr.h
-+++ b/drivers/scsi/ipr.h
-@@ -451,12 +451,12 @@ struct ipr_config_table_hdr64 {
+-void proc_prune_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock)
++void proc_invalidate_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock)
+ {
+ 	struct inode *inode;
+ 	struct proc_inode *ei;
+@@ -137,7 +137,19 @@ void proc_prune_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock)
+ 			continue;
+ 		}
  
- struct ipr_config_table {
- 	struct ipr_config_table_hdr hdr;
--	struct ipr_config_table_entry dev[0];
-+	struct ipr_config_table_entry dev[];
- }__attribute__((packed, aligned (4)));
+-		d_prune_aliases(inode);
++		if (S_ISDIR(inode->i_mode)) {
++			struct dentry *dir = d_find_any_alias(inode);
++			if (dir) {
++				d_invalidate(dir);
++				dput(dir);
++			}
++		} else {
++			struct dentry *dentry;
++			while ((dentry = d_find_alias(inode))) {
++				d_invalidate(dentry);
++				dput(dentry);
++			}
++		}
+ 		iput(inode);
  
- struct ipr_config_table64 {
- 	struct ipr_config_table_hdr64 hdr64;
--	struct ipr_config_table_entry64 dev[0];
-+	struct ipr_config_table_entry64 dev[];
- }__attribute__((packed, aligned (8)));
+ 		rcu_read_lock();
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index ba9a991824a5..fd470172675f 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -210,7 +210,7 @@ extern const struct inode_operations proc_pid_link_inode_operations;
+ extern const struct super_operations proc_sops;
  
- struct ipr_config_table_entry_wrapper {
-@@ -792,7 +792,7 @@ struct ipr_mode_page28 {
- 	struct ipr_mode_page_hdr hdr;
- 	u8 num_entries;
- 	u8 entry_length;
--	struct ipr_dev_bus_entry bus[0];
-+	struct ipr_dev_bus_entry bus[];
- }__attribute__((packed));
+ void proc_init_kmemcache(void);
+-void proc_prune_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock);
++void proc_invalidate_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock);
+ void set_proc_pid_nlink(void);
+ extern struct inode *proc_get_inode(struct super_block *, struct proc_dir_entry *);
+ extern void proc_entry_rundown(struct proc_dir_entry *);
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 5da9d7f7ae34..b6f5d459b087 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -267,9 +267,9 @@ static void unuse_table(struct ctl_table_header *p)
+ 			complete(p->unregistering);
+ }
  
- struct ipr_mode_page24 {
-diff --git a/drivers/scsi/isci/sas.h b/drivers/scsi/isci/sas.h
-index dc26b4aea99e..15d8f3631ab7 100644
---- a/drivers/scsi/isci/sas.h
-+++ b/drivers/scsi/isci/sas.h
-@@ -201,7 +201,7 @@ struct smp_req {
- 	u8 func;		/* byte 1 */
- 	u8 alloc_resp_len;	/* byte 2 */
- 	u8 req_len;		/* byte 3 */
--	u8 req_data[0];
-+	u8 req_data[];
- }  __packed;
+-static void proc_sys_prune_dcache(struct ctl_table_header *head)
++static void proc_sys_invalidate_dcache(struct ctl_table_header *head)
+ {
+-	proc_prune_siblings_dcache(&head->inodes, &sysctl_lock);
++	proc_invalidate_siblings_dcache(&head->inodes, &sysctl_lock);
+ }
  
- /*
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index c597d544eb39..778d5e6ce385 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -207,7 +207,7 @@ struct fw_event_work {
- 	u8			ignore;
- 	u16			event;
- 	struct kref		refcount;
--	char			event_data[0] __aligned(4);
-+	char			event_data[] __aligned(4);
- };
- 
- static void fw_event_work_free(struct kref *r)
-diff --git a/drivers/scsi/mvsas/mv_sas.h b/drivers/scsi/mvsas/mv_sas.h
-index 519edc796691..327fdd5ee962 100644
---- a/drivers/scsi/mvsas/mv_sas.h
-+++ b/drivers/scsi/mvsas/mv_sas.h
-@@ -394,7 +394,7 @@ struct mvs_info {
- 	dma_addr_t bulk_buffer_dma1;
- #define TRASH_BUCKET_SIZE    	0x20000
- 	void *dma_pool;
--	struct mvs_slot_info slot_info[0];
-+	struct mvs_slot_info slot_info[];
- };
- 
- struct mvs_prv_info{
-diff --git a/drivers/scsi/mvumi.h b/drivers/scsi/mvumi.h
-index ec8cc2207536..60d5691fc4ab 100644
---- a/drivers/scsi/mvumi.h
-+++ b/drivers/scsi/mvumi.h
-@@ -130,7 +130,7 @@ enum {
- struct mvumi_hotplug_event {
- 	u16 size;
- 	u8 dummy[2];
--	u8 bitmap[0];
-+	u8 bitmap[];
- };
- 
- struct mvumi_driver_event {
-@@ -290,7 +290,7 @@ struct mvumi_rsp_frame {
- 
- struct mvumi_ob_data {
- 	struct list_head list;
--	unsigned char data[0];
-+	unsigned char data[];
- };
- 
- struct version_info {
-diff --git a/drivers/scsi/pmcraid.h b/drivers/scsi/pmcraid.h
-index a4f7eb8f50a3..15c962108075 100644
---- a/drivers/scsi/pmcraid.h
-+++ b/drivers/scsi/pmcraid.h
-@@ -623,7 +623,7 @@ struct pmcraid_aen_msg {
- 	u32 hostno;
- 	u32 length;
- 	u8  reserved[8];
--	u8  data[0];
-+	u8  data[];
- };
- 
- /* Controller state event message type */
-diff --git a/drivers/scsi/snic/vnic_devcmd.h b/drivers/scsi/snic/vnic_devcmd.h
-index d81b4f0ceaaa..0e0fa38f8d90 100644
---- a/drivers/scsi/snic/vnic_devcmd.h
-+++ b/drivers/scsi/snic/vnic_devcmd.h
-@@ -208,7 +208,7 @@ struct vnic_devcmd_notify {
- struct vnic_devcmd_provinfo {
- 	u8 oui[3];
- 	u8 type;
--	u8 data[0];
-+	u8 data[];
- };
- 
- /*
-diff --git a/drivers/scsi/stex.c b/drivers/scsi/stex.c
-index 33287b6bdf0e..d4f10c0d813c 100644
---- a/drivers/scsi/stex.c
-+++ b/drivers/scsi/stex.c
-@@ -236,7 +236,7 @@ struct req_msg {
- 	u8 data_dir;
- 	u8 payload_sz;		/* payload size in 4-byte, not used */
- 	u8 cdb[STEX_CDB_LENGTH];
--	u32 variable[0];
-+	u32 variable[];
- };
- 
- struct status_msg {
-diff --git a/include/scsi/iscsi_if.h b/include/scsi/iscsi_if.h
-index 92b11c7e0b4f..b0e240b10bf9 100644
---- a/include/scsi/iscsi_if.h
-+++ b/include/scsi/iscsi_if.h
-@@ -311,7 +311,7 @@ enum iscsi_param_type {
- struct iscsi_param_info {
- 	uint32_t len;		/* Actual length of the param value */
- 	uint16_t param;		/* iscsi param */
--	uint8_t value[0];	/* length sized value follows */
-+	uint8_t value[];	/* length sized value follows */
- } __packed;
- 
- struct iscsi_iface_param_info {
-@@ -320,7 +320,7 @@ struct iscsi_iface_param_info {
- 	uint16_t param;		/* iscsi param value */
- 	uint8_t iface_type;	/* IPv4 or IPv6 */
- 	uint8_t param_type;	/* iscsi_param_type */
--	uint8_t value[0];	/* length sized value follows */
-+	uint8_t value[];	/* length sized value follows */
- } __packed;
- 
- /*
-@@ -697,7 +697,7 @@ enum iscsi_flashnode_param {
- struct iscsi_flashnode_param_info {
- 	uint32_t len;		/* Actual length of the param */
- 	uint16_t param;		/* iscsi param value */
--	uint8_t value[0];	/* length sized value follows */
-+	uint8_t value[];	/* length sized value follows */
- } __packed;
- 
- enum iscsi_discovery_parent_type {
-@@ -815,7 +815,7 @@ struct iscsi_stats {
- 	 * up to ISCSI_STATS_CUSTOM_MAX
+ /* called under sysctl_lock, will reacquire if has to wait */
+@@ -291,10 +291,10 @@ static void start_unregistering(struct ctl_table_header *p)
+ 		spin_unlock(&sysctl_lock);
+ 	}
+ 	/*
+-	 * Prune dentries for unregistered sysctls: namespaced sysctls
++	 * Invalidate dentries for unregistered sysctls: namespaced sysctls
+ 	 * can have duplicate names and contaminate dcache very badly.
  	 */
- 	uint32_t custom_length;
--	struct iscsi_stats_custom custom[0]
-+	struct iscsi_stats_custom custom[]
- 		__attribute__ ((aligned (sizeof(uint64_t))));
- };
- 
-@@ -946,7 +946,7 @@ struct iscsi_offload_host_stats {
- 	 * up to ISCSI_HOST_STATS_CUSTOM_MAX
- 	 */
- 	uint32_t custom_length;
--	struct iscsi_host_stats_custom custom[0]
-+	struct iscsi_host_stats_custom custom[]
- 		__aligned(sizeof(uint64_t));
- };
- 
-diff --git a/include/scsi/scsi_bsg_iscsi.h b/include/scsi/scsi_bsg_iscsi.h
-index fa0c820a1663..6b8128005af8 100644
---- a/include/scsi/scsi_bsg_iscsi.h
-+++ b/include/scsi/scsi_bsg_iscsi.h
-@@ -52,7 +52,7 @@ struct iscsi_bsg_host_vendor {
- 	uint64_t vendor_id;
- 
- 	/* start of vendor command area */
--	uint32_t vendor_cmd[0];
-+	uint32_t vendor_cmd[];
- };
- 
- /* Response:
-diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
-index f8312a3e5b42..4dc158cf09b8 100644
---- a/include/scsi/scsi_device.h
-+++ b/include/scsi/scsi_device.h
-@@ -231,7 +231,7 @@ struct scsi_device {
- 	struct mutex		state_mutex;
- 	enum scsi_device_state sdev_state;
- 	struct task_struct	*quiesced_by;
--	unsigned long		sdev_data[0];
-+	unsigned long		sdev_data[];
- } __attribute__((aligned(sizeof(unsigned long))));
- 
- #define	to_scsi_device(d)	\
-@@ -315,7 +315,7 @@ struct scsi_target {
- 	char			scsi_level;
- 	enum scsi_target_state	state;
- 	void 			*hostdata; /* available to low-level driver */
--	unsigned long		starget_data[0]; /* for the transport */
-+	unsigned long		starget_data[]; /* for the transport */
- 	/* starget_data must be the last element!!!! */
- } __attribute__((aligned(sizeof(unsigned long))));
- 
-diff --git a/include/scsi/scsi_host.h b/include/scsi/scsi_host.h
-index 7a97fb8104cf..e6811ea8f984 100644
---- a/include/scsi/scsi_host.h
-+++ b/include/scsi/scsi_host.h
-@@ -682,7 +682,7 @@ struct Scsi_Host {
- 	 * and also because some compilers (m68k) don't automatically force
- 	 * alignment to a long boundary.
- 	 */
--	unsigned long hostdata[0]  /* Used for storage of host specific stuff */
-+	unsigned long hostdata[]  /* Used for storage of host specific stuff */
- 		__attribute__ ((aligned (sizeof(unsigned long))));
- };
- 
-diff --git a/include/scsi/scsi_ioctl.h b/include/scsi/scsi_ioctl.h
-index 4fe69d863b5d..b465799f4d2d 100644
---- a/include/scsi/scsi_ioctl.h
-+++ b/include/scsi/scsi_ioctl.h
-@@ -27,7 +27,7 @@ struct scsi_device;
- typedef struct scsi_ioctl_command {
- 	unsigned int inlen;
- 	unsigned int outlen;
--	unsigned char data[0];
-+	unsigned char data[];
- } Scsi_Ioctl_Command;
- 
- typedef struct scsi_idlun {
-diff --git a/include/scsi/srp.h b/include/scsi/srp.h
-index 9220758d5087..177d8026e96f 100644
---- a/include/scsi/srp.h
-+++ b/include/scsi/srp.h
-@@ -109,7 +109,7 @@ struct srp_direct_buf {
- struct srp_indirect_buf {
- 	struct srp_direct_buf	table_desc;
- 	__be32			len;
--	struct srp_direct_buf	desc_list[0];
-+	struct srp_direct_buf	desc_list[];
- } __attribute__((packed));
- 
- /* Immediate data buffer descriptor as defined in SRP2. */
-@@ -244,7 +244,7 @@ struct srp_cmd {
- 	u8	reserved4;
- 	u8	add_cdb_len;
- 	u8	cdb[16];
--	u8	add_data[0];
-+	u8	add_data[];
- };
- 
- enum {
-@@ -274,7 +274,7 @@ struct srp_rsp {
- 	__be32	data_in_res_cnt;
- 	__be32	sense_data_len;
- 	__be32	resp_data_len;
--	u8	data[0];
-+	u8	data[];
- } __attribute__((packed));
- 
- struct srp_cred_req {
-@@ -306,7 +306,7 @@ struct srp_aer_req {
- 	struct scsi_lun	lun;
- 	__be32	sense_data_len;
- 	u32	reserved3;
--	u8	sense_data[0];
-+	u8	sense_data[];
- } __attribute__((packed));
- 
- struct srp_aer_rsp {
-diff --git a/include/uapi/scsi/scsi_bsg_fc.h b/include/uapi/scsi/scsi_bsg_fc.h
-index 3ae65e93235c..7f5930801f72 100644
---- a/include/uapi/scsi/scsi_bsg_fc.h
-+++ b/include/uapi/scsi/scsi_bsg_fc.h
-@@ -209,7 +209,7 @@ struct fc_bsg_host_vendor {
- 	__u64 vendor_id;
- 
- 	/* start of vendor command area */
--	__u32 vendor_cmd[0];
-+	__u32 vendor_cmd[];
- };
- 
- /* Response:
+-	proc_sys_prune_dcache(p);
++	proc_sys_invalidate_dcache(p);
+ 	/*
+ 	 * do not remove from the list until nobody holds it; walking the
+ 	 * list in do_sysctl() relies on that.
 -- 
 2.25.0
 
