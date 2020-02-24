@@ -2,137 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5E7016B256
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:29:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0655B16B220
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:23:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbgBXV3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 16:29:48 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40607 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728257AbgBXV3o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 16:29:44 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t14so891771wmi.5;
-        Mon, 24 Feb 2020 13:29:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=E9/8+yaqRvrAtgc15Q6xGgpo7ZqTiVPb7l/6H6m7t5Q=;
-        b=NKaXURfZ1NqkGkQxTkR2n9fqQBrq9+jibXeSJpxwl573MInYBFnVXqncS4vCeGwfJb
-         CEL+dWVBeljqEiJQiQCHw2PAK5YFI989FTKqVYOG37zNldMa9Z5Ka2fNfB87YKIDusKe
-         1ZUSR7DIIEbQEjn37yQHSZm+7OOCFB45tbekmmy3j2Fds/Kq/1htSxXBzsEc+70O/Iv6
-         SqleS/u/K7t1VW08LzIvNVT0h1hwY7XZw/RDiNFoUul2asLJphUNp5VknyCGdvKXtHr3
-         rtHqjm7F7jGPmi6uhbuKE6mKt7vTagMbsL0RB5AEpxy/wu0XgQ8jTprhjUuS614eKB6+
-         LtdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=E9/8+yaqRvrAtgc15Q6xGgpo7ZqTiVPb7l/6H6m7t5Q=;
-        b=spoiul36vtl6smEjodHHnja7FNFgCz1sJmW5U8nc8obyLrOoZ/2DFRjQCroo3Q8ew1
-         lS2bLOHPN2SVlVCz8oxSSK/ckrbRwgwlH6BQSI8Q4jzdpU+MEHP+h2QfL/csbCT4tgv1
-         vTxKXKEZSu0yVkL2s2j/E+qxq/z86qzkmX+kFE56ECzciudBs9BfGOaV882OzUDXIOZQ
-         AMg446SgMbEayQq6LHUi3xz6I3pZGLb8gySNn6pkPsICuLRKkiY13nGRkDblsrbJ7R/D
-         GN2j+9lkCPpq29uBet3bocQIKlBWQyBmNvyC8NnR5/+RFmPZTzD00/dssXQlovwJRjC3
-         ezfA==
-X-Gm-Message-State: APjAAAXWrVGoJCaoNzPWJdvsrtNOpzhDhGKhmBRJdOkIV4xuKuznFXlQ
-        ZSdMe0aOmbrneFLL1XMYriPhRUlk
-X-Google-Smtp-Source: APXvYqxruEH1sHYvFUjylGwTeW642aO6q6BjVx/Msh+bTzEzlkZWlryBOCDvfSOwyOr70XLRs3JCoQ==
-X-Received: by 2002:a7b:ce0b:: with SMTP id m11mr1020524wmc.4.1582579782522;
-        Mon, 24 Feb 2020 13:29:42 -0800 (PST)
-Received: from ?IPv6:2003:ea:8f29:6000:3d90:eff:31bc:c6a9? (p200300EA8F2960003D900EFF31BCC6A9.dip0.t-ipconnect.de. [2003:ea:8f29:6000:3d90:eff:31bc:c6a9])
-        by smtp.googlemail.com with ESMTPSA id e8sm13925652wrr.69.2020.02.24.13.29.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 13:29:42 -0800 (PST)
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH 1/8] PCI: add constant PCI_STATUS_ERROR_BITS
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        David Miller <davem@davemloft.net>,
-        Mirko Lindner <mlindner@marvell.com>,
-        Stephen Hemminger <stephen@networkplumber.org>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-References: <5939f711-92aa-e7ed-2a26-4f1e4169f786@gmail.com>
-Message-ID: <d61cddab-785b-7a57-4b2d-2fbdd34766d7@gmail.com>
-Date:   Mon, 24 Feb 2020 22:22:49 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727910AbgBXVXW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 16:23:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38002 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727322AbgBXVXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 16:23:22 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1758C218AC;
+        Mon, 24 Feb 2020 21:23:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582579401;
+        bh=XnkYOmulZ8/lTR2roVqGnBGPNTBbKp8TG7sz+XwMTDk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YEBbehGBXvp3CPzembrHbTI7ud/HJbKPdfdL/5pEC9w0esFKdekF03AbMqJimpl3v
+         GyNxtEab/KQ7pvDrxIQLOiihaSlLV3ofzr6lxx3lXS8nfHcuHYlg/ojkeQRf93SlxT
+         WILXyi0OKIOmyLdmAOyEDENKwyzUFskZ0DxFhC4c=
+Date:   Mon, 24 Feb 2020 16:23:19 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Andreas Tobler <andreas.tobler@onway.ch>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Robin Gong <yibin.gong@nxp.com>, Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH 5.4 160/344] dmaengine: imx-sdma: Fix memory leak
+Message-ID: <20200224212319.GE26320@sasha-vm>
+References: <20200221072349.335551332@linuxfoundation.org>
+ <20200221072403.369335694@linuxfoundation.org>
+ <1429291b-77c5-41aa-8dee-8858eba6d138@onway.ch>
+ <20200224145718.GD3335@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <5939f711-92aa-e7ed-2a26-4f1e4169f786@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20200224145718.GD3335@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This constant is used (with different names) in more than one driver,
-so move it to the PCI core.
+On Mon, Feb 24, 2020 at 03:57:18PM +0100, Sascha Hauer wrote:
+>On Mon, Feb 24, 2020 at 01:24:04PM +0000, Andreas Tobler wrote:
+>> Hi all,
+>>
+>> On 21.02.20 08:39, Greg Kroah-Hartman wrote:
+>> > From: Sascha Hauer <s.hauer@pengutronix.de>
+>> >
+>> > [ Upstream commit 02939cd167095f16328a1bd5cab5a90b550606df ]
+>> >
+>> > The current descriptor is not on any list of the virtual DMA channel.
+>> > Once sdma_terminate_all() is called when a descriptor is currently
+>> > in flight then this one is forgotten to be freed. We have to call
+>> > vchan_terminate_vdesc() on this descriptor to re-add it to the lists.
+>> > Now that we also free the currently running descriptor we can (and
+>> > actually have to) remove the current descriptor from its list also
+>> > for the cyclic case.
+>> >
+>> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+>> > Reviewed-by: Robin Gong <yibin.gong@nxp.com>
+>> > Tested-by: Robin Gong <yibin.gong@nxp.com>
+>> > Link: https://lore.kernel.org/r/20191216105328.15198-10-s.hauer@pengutronix.de
+>> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+>> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> > ---
+>> >   drivers/dma/imx-sdma.c | 19 +++++++++++--------
+>> >   1 file changed, 11 insertions(+), 8 deletions(-)
+>> >
+>> > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+>> > index c27e206a764c3..66f1b2ac5cde4 100644
+>> > --- a/drivers/dma/imx-sdma.c
+>> > +++ b/drivers/dma/imx-sdma.c
+>> > @@ -760,12 +760,8 @@ static void sdma_start_desc(struct sdma_channel *sdmac)
+>> >   		return;
+>> >   	}
+>> >   	sdmac->desc = desc = to_sdma_desc(&vd->tx);
+>> > -	/*
+>> > -	 * Do not delete the node in desc_issued list in cyclic mode, otherwise
+>> > -	 * the desc allocated will never be freed in vchan_dma_desc_free_list
+>> > -	 */
+>> > -	if (!(sdmac->flags & IMX_DMA_SG_LOOP))
+>> > -		list_del(&vd->node);
+>> > +
+>> > +	list_del(&vd->node);
+>> >
+>> >   	sdma->channel_control[channel].base_bd_ptr = desc->bd_phys;
+>> >   	sdma->channel_control[channel].current_bd_ptr = desc->bd_phys;
+>> > @@ -1071,7 +1067,6 @@ static void sdma_channel_terminate_work(struct work_struct *work)
+>> >
+>> >   	spin_lock_irqsave(&sdmac->vc.lock, flags);
+>> >   	vchan_get_all_descriptors(&sdmac->vc, &head);
+>> > -	sdmac->desc = NULL;
+>> >   	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
+>> >   	vchan_dma_desc_free_list(&sdmac->vc, &head);
+>> >   	sdmac->context_loaded = false;
+>> > @@ -1080,11 +1075,19 @@ static void sdma_channel_terminate_work(struct work_struct *work)
+>> >   static int sdma_disable_channel_async(struct dma_chan *chan)
+>> >   {
+>> >   	struct sdma_channel *sdmac = to_sdma_chan(chan);
+>> > +	unsigned long flags;
+>> > +
+>> > +	spin_lock_irqsave(&sdmac->vc.lock, flags);
+>> >
+>> >   	sdma_disable_channel(chan);
+>> >
+>> > -	if (sdmac->desc)
+>> > +	if (sdmac->desc) {
+>> > +		vchan_terminate_vdesc(&sdmac->desc->vd);
+>> > +		sdmac->desc = NULL;
+>> >   		schedule_work(&sdmac->terminate_worker);
+>> > +	}
+>> > +
+>> > +	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
+>> >
+>> >   	return 0;
+>> >   }
+>> >
+>>
+>> This patch breaks our imx6 board with the attached trace.  Reverting the
+>> patch makes it boot again.
+>> I tried also 5.6-rc3 and it booted too. A closer look into imx-sdma.c
+>> from 5.6-rc3 showed me some details which might have to be backported as
+>> well to make this patch work.
+>> I tried a1ff6a07f5a3951fcac84f064a76d1ad79c10e40 and was somehow
+>> successful. I still have one trace but the board boots now.
+>>
+>> Any insights from the experts?
+>
+>This series should be applied as a whole or not, only 7/9 is optional.
+>
+>It seems I have to avoid the trigger word "fix" in my commit messages or
+>make sure these patches won't apply without their dependencies :-/
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- drivers/net/ethernet/marvell/skge.h | 6 ------
- drivers/net/ethernet/marvell/sky2.h | 6 ------
- include/uapi/linux/pci_regs.h       | 7 +++++++
- 3 files changed, 7 insertions(+), 12 deletions(-)
+Or you could just tag the dependencies so that we could take all of them
+as well? We have a nice "Depends-on:" tag that makes it easy.
 
-diff --git a/drivers/net/ethernet/marvell/skge.h b/drivers/net/ethernet/marvell/skge.h
-index 6fa7b6a34..e149bdfe1 100644
---- a/drivers/net/ethernet/marvell/skge.h
-+++ b/drivers/net/ethernet/marvell/skge.h
-@@ -15,12 +15,6 @@
- #define  PCI_VPD_ROM_SZ	7L<<14	/* VPD ROM size 0=256, 1=512, ... */
- #define  PCI_REV_DESC	1<<2	/* Reverse Descriptor bytes */
- 
--#define PCI_STATUS_ERROR_BITS (PCI_STATUS_DETECTED_PARITY | \
--			       PCI_STATUS_SIG_SYSTEM_ERROR | \
--			       PCI_STATUS_REC_MASTER_ABORT | \
--			       PCI_STATUS_REC_TARGET_ABORT | \
--			       PCI_STATUS_PARITY)
--
- enum csr_regs {
- 	B0_RAP	= 0x0000,
- 	B0_CTST	= 0x0004,
-diff --git a/drivers/net/ethernet/marvell/sky2.h b/drivers/net/ethernet/marvell/sky2.h
-index b02b65230..851d8ed34 100644
---- a/drivers/net/ethernet/marvell/sky2.h
-+++ b/drivers/net/ethernet/marvell/sky2.h
-@@ -252,12 +252,6 @@ enum {
- };
- 
- 
--#define PCI_STATUS_ERROR_BITS (PCI_STATUS_DETECTED_PARITY | \
--			       PCI_STATUS_SIG_SYSTEM_ERROR | \
--			       PCI_STATUS_REC_MASTER_ABORT | \
--			       PCI_STATUS_REC_TARGET_ABORT | \
--			       PCI_STATUS_PARITY)
--
- enum csr_regs {
- 	B0_RAP		= 0x0000,
- 	B0_CTST		= 0x0004,
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index 543769048..9b84a1278 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -68,6 +68,13 @@
- #define  PCI_STATUS_SIG_SYSTEM_ERROR	0x4000 /* Set when we drive SERR */
- #define  PCI_STATUS_DETECTED_PARITY	0x8000 /* Set on parity error */
- 
-+#define PCI_STATUS_ERROR_BITS (PCI_STATUS_DETECTED_PARITY  | \
-+			       PCI_STATUS_SIG_SYSTEM_ERROR | \
-+			       PCI_STATUS_REC_MASTER_ABORT | \
-+			       PCI_STATUS_REC_TARGET_ABORT | \
-+			       PCI_STATUS_SIG_TARGET_ABORT | \
-+			       PCI_STATUS_PARITY)
-+
- #define PCI_CLASS_REVISION	0x08	/* High 24 bits are class, low 8 revision */
- #define PCI_REVISION_ID		0x08	/* Revision ID */
- #define PCI_CLASS_PROG		0x09	/* Reg. Level Programming Interface */
+As with everything in life, you want to communicate more effectively
+rather than not communicate at all.
+
 -- 
-2.25.1
-
-
+Thanks,
+Sasha
