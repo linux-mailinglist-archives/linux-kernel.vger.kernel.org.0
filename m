@@ -2,159 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD94116B50E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:21:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8014916B555
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:23:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbgBXXVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:21:35 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44430 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728432AbgBXXVd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:21:33 -0500
-Received: by mail-qt1-f196.google.com with SMTP id j23so7786716qtr.11
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 15:21:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dV6KOm+5xGU5Fmvg1Yr6S6y1zc/vzXFOAFt08+WthgA=;
-        b=m0bXc9iU3025kiRW/zZjI4AHtpGqnPDVrvT76l6lBRbXl611pzzso6MtT2rLsBKo3A
-         yfMAPOQHSbyjrSnuB5wPnLOrtgxnHj6BmR2cNb2bOcA8jMjhLkrenCizh75wFuQVjjzv
-         RxRmFpkXA8iPedJ8Rs1mFLYr5/6uplx4qkfwU/CV4gqooY8vjip0ufMx8ZpWJcYZsguw
-         VgFgun9fIko2IvS9gfEBR+0657gCXh73rlFuwdQE6ODg5NuaHaTnvXYXdIVkfJcbNP0u
-         20ceS+QFzd3EDy+rW6E3YNZb/xoIWJSWUW5UTrw8YfpY5Y0J8puA/+09CAxAEOUi7PgM
-         0zCg==
-X-Gm-Message-State: APjAAAWEpI9CNupr53QLV0phrP2uQOxwSEiYEADDLzbMcKKFk6GZS+Dx
-        uiy6kZoIbLVLMK30tkZqXFo=
-X-Google-Smtp-Source: APXvYqwzjiEdJSCtQN0uWeuS+nLM4wOfpUHiwi8ohS+H86cVpr85z8lnfiQC7w8HvqxzlhbpVk8FgA==
-X-Received: by 2002:ac8:2784:: with SMTP id w4mr195974qtw.218.1582586492814;
-        Mon, 24 Feb 2020 15:21:32 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id 202sm3757849qkg.132.2020.02.24.15.21.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 15:21:32 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Michael Matz <matz@suse.de>, Fangrui Song <maskray@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH v2 2/2] arch/x86: Drop unneeded linker script discard of .eh_frame
-Date:   Mon, 24 Feb 2020 18:21:29 -0500
-Message-Id: <20200224232129.597160-3-nivedita@alum.mit.edu>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <CAKwvOdn6cxm9EpB7A9kLasttPwLY2csnhqgNAdkJ6_s2DP1-HA@mail.gmail.com>
-References: <CAKwvOdn6cxm9EpB7A9kLasttPwLY2csnhqgNAdkJ6_s2DP1-HA@mail.gmail.com>
+        id S1728356AbgBXXXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:23:09 -0500
+Received: from mga05.intel.com ([192.55.52.43]:28122 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727081AbgBXXXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 18:23:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 15:23:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
+   d="scan'208";a="350025802"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga001.fm.intel.com with ESMTP; 24 Feb 2020 15:23:07 -0800
+Date:   Mon, 24 Feb 2020 15:23:07 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 43/61] KVM: x86: Use KVM cpu caps to mark CR4.LA57 as
+ not-reserved
+Message-ID: <20200224232307.GQ29865@linux.intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
+ <20200201185218.24473-44-sean.j.christopherson@intel.com>
+ <8736azocyp.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8736azocyp.fsf@vitty.brq.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we don't generate .eh_frame sections for the files in setup.elf
-and realmode.elf, the linker scripts don't need the /DISCARD/ any more.
+On Mon, Feb 24, 2020 at 11:08:30PM +0100, Vitaly Kuznetsov wrote:
+> Sean Christopherson <sean.j.christopherson@intel.com> writes:
+> 
+> > Add accessor(s) for KVM cpu caps and use said accessor to detect
+> > hardware support for LA57 instead of manually querying CPUID.
+> >
+> > No functional change intended.
+> >
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > ---
+> >  arch/x86/kvm/cpuid.h | 13 +++++++++++++
+> >  arch/x86/kvm/x86.c   |  2 +-
+> >  2 files changed, 14 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+> > index 7b71ae0ca05e..5ce4219d465f 100644
+> > --- a/arch/x86/kvm/cpuid.h
+> > +++ b/arch/x86/kvm/cpuid.h
+> > @@ -274,6 +274,19 @@ static __always_inline void kvm_cpu_cap_set(unsigned x86_feature)
+> >  	kvm_cpu_caps[x86_leaf] |= __feature_bit(x86_feature);
+> >  }
+> >  
+> > +static __always_inline u32 kvm_cpu_cap_get(unsigned x86_feature)
+> > +{
+> > +	unsigned x86_leaf = x86_feature / 32;
+> > +
+> > +	reverse_cpuid_check(x86_leaf);
+> > +	return kvm_cpu_caps[x86_leaf] & __feature_bit(x86_feature);
+> > +}
+> > +
+> > +static __always_inline bool kvm_cpu_cap_has(unsigned x86_feature)
+> > +{
+> > +	return kvm_cpu_cap_get(x86_feature);
+> > +}
+> 
+> I know this works (and I even checked C99 to make sure that it works not
+> by accident) but I have to admit that explicit '!!' conversion to bool
+> always makes me feel safer :-)
 
-Remove the one in the main kernel linker script as well, since there are
-no .eh_frame sections already, and fix up a comment referencing .eh_frame.
+Eh, the flip side of blasting it everywhere is that people then forget why
+the pattern exists in the first place and don't understand when it's truly
+necessary.
 
-Update the comment in asm/dwarf2.h referring to .eh_frame so it continues
-to make sense, as well as being more specific.
-
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
----
- arch/x86/boot/compressed/vmlinux.lds.S | 5 -----
- arch/x86/boot/setup.ld                 | 1 -
- arch/x86/include/asm/dwarf2.h          | 4 ++--
- arch/x86/kernel/vmlinux.lds.S          | 7 ++-----
- arch/x86/realmode/rm/realmode.lds.S    | 1 -
- 5 files changed, 4 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
-index 469dcf800a2c..508cfa6828c5 100644
---- a/arch/x86/boot/compressed/vmlinux.lds.S
-+++ b/arch/x86/boot/compressed/vmlinux.lds.S
-@@ -73,9 +73,4 @@ SECTIONS
- #endif
- 	. = ALIGN(PAGE_SIZE);	/* keep ZO size page aligned */
- 	_end = .;
--
--	/* Discard .eh_frame to save some space */
--	/DISCARD/ : {
--		*(.eh_frame)
--	}
- }
-diff --git a/arch/x86/boot/setup.ld b/arch/x86/boot/setup.ld
-index 3da1c37c6dd5..24c95522f231 100644
---- a/arch/x86/boot/setup.ld
-+++ b/arch/x86/boot/setup.ld
-@@ -52,7 +52,6 @@ SECTIONS
- 	_end = .;
- 
- 	/DISCARD/	: {
--		*(.eh_frame)
- 		*(.note*)
- 	}
- 
-diff --git a/arch/x86/include/asm/dwarf2.h b/arch/x86/include/asm/dwarf2.h
-index ae391f609840..f71a0cce9373 100644
---- a/arch/x86/include/asm/dwarf2.h
-+++ b/arch/x86/include/asm/dwarf2.h
-@@ -42,8 +42,8 @@
- 	 * Emit CFI data in .debug_frame sections, not .eh_frame sections.
- 	 * The latter we currently just discard since we don't do DWARF
- 	 * unwinding at runtime.  So only the offline DWARF information is
--	 * useful to anyone.  Note we should not use this directive if
--	 * vmlinux.lds.S gets changed so it doesn't discard .eh_frame.
-+	 * useful to anyone.  Note we should not use this directive if we
-+	 * ever decide to enable DWARF unwinding at runtime.
- 	 */
- 	.cfi_sections .debug_frame
- #else
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index e3296aa028fe..5cab3a29adcb 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -313,8 +313,8 @@ SECTIONS
- 
- 	. = ALIGN(8);
- 	/*
--	 * .exit.text is discard at runtime, not link time, to deal with
--	 *  references from .altinstructions and .eh_frame
-+	 * .exit.text is discarded at runtime, not link time, to deal with
-+	 *  references from .altinstructions
- 	 */
- 	.exit.text : AT(ADDR(.exit.text) - LOAD_OFFSET) {
- 		EXIT_TEXT
-@@ -412,9 +412,6 @@ SECTIONS
- 	DWARF_DEBUG
- 
- 	DISCARDS
--	/DISCARD/ : {
--		*(.eh_frame)
--	}
- }
- 
- 
-diff --git a/arch/x86/realmode/rm/realmode.lds.S b/arch/x86/realmode/rm/realmode.lds.S
-index 64d135d1ee63..63aa51875ba0 100644
---- a/arch/x86/realmode/rm/realmode.lds.S
-+++ b/arch/x86/realmode/rm/realmode.lds.S
-@@ -71,7 +71,6 @@ SECTIONS
- 	/DISCARD/ : {
- 		*(.note*)
- 		*(.debug*)
--		*(.eh_frame*)
- 	}
- 
- #include "pasyms.h"
--- 
-2.24.1
-
+> > +
+> >  static __always_inline void kvm_cpu_cap_check_and_set(unsigned x86_feature)
+> >  {
+> >  	if (boot_cpu_has(x86_feature))
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index c5ed199d6cd9..cb40737187a1 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -912,7 +912,7 @@ static u64 kvm_host_cr4_reserved_bits(struct cpuinfo_x86 *c)
+> >  {
+> >  	u64 reserved_bits = __cr4_reserved_bits(cpu_has, c);
+> >  
+> > -	if (cpuid_ecx(0x7) & feature_bit(LA57))
+> > +	if (kvm_cpu_cap_has(X86_FEATURE_LA57))
+> >  		reserved_bits &= ~X86_CR4_LA57;
+> >  
+> >  	if (kvm_x86_ops->umip_emulated())
+> 
+> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> 
+> -- 
+> Vitaly
+> 
