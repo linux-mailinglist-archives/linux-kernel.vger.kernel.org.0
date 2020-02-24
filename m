@@ -2,94 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB82C16A978
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:08:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08C7716A97F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbgBXPIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 10:08:24 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55332 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbgBXPIW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 10:08:22 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q9so9307924wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 07:08:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Rm7gksVRI42mlVOGy1QSc0Bs/gLhlfgLmvHJ12ilWYc=;
-        b=solSGzyOpCALZIol/9eX3klRZa/VQdMYTbQBEm3R2+CXxwHY7ORsZxepUjufVAgr/n
-         lPvxwjjkKTf1a4uhuX6XOlCowMpj+tBU3a9kRsfw1+OTt7lyjTotIdKpTipAAeUF+Jf1
-         +uuEW2OmCf5iPIKK6pSpCoQvppKws6WbMv/ybweGlPY1YVepgJXpbnHqgEu5f6zI8R2d
-         5dtOspEoU1EnQr+M+vo+MkRJ1bPVECvimj2eUJUTLBX/X/m7w3tNYeZ96lKRkAp2Sj80
-         Iqjo/kDU3E/1TpsPAkOZLia1fdsIFzo4rjl4kQRbUA4cSyzwF3Xk0p8cfGApk/9PftSk
-         1WZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Rm7gksVRI42mlVOGy1QSc0Bs/gLhlfgLmvHJ12ilWYc=;
-        b=mOk4S9pHRw2i+GwDepF+WNJ8IfCjnrXtkFPUfKMilzK/BGZgp9uLyEcNmrEIJwZjof
-         tb4G3z76H/qzKqSPcgMiWjWlUlkg1Rw4/TFGCfOau1RZFoLE5AKqVknmMc18wzMYdsnM
-         VOBzvr0ozoqjL12dMRKFLNGnIE4gtpIKvqui4XvY7lwjeB0i5EVUNop7SP+06Ia+m4ga
-         OJ+/N9zHASOkZ5AxZVMq/dw1XOtiRlRSefk2cSX4ZvBVfiOKXTKWEzkyqUeFbvRHTXeG
-         DQ2nzRGM7L4maKNdVNqBnj9V95lD4aDPIwOj4l6CwhrX7ChofZWAJQSmNodrnm6WrtIU
-         Lt5A==
-X-Gm-Message-State: APjAAAVrs+K1P7F3VjgOSKhgrhhuj4WfDcdJTrgEYR498QVUHQnEUA43
-        DQp0oT2Hng1LBGUPxCIUST07Qw==
-X-Google-Smtp-Source: APXvYqxC477Fxo92CZIa3vtqqWrP1cxhxUqPpogpwG0PJda6xORaSel0ea0bHewHcS6+aS7i8BSsEw==
-X-Received: by 2002:a1c:6189:: with SMTP id v131mr23600114wmb.185.1582556900435;
-        Mon, 24 Feb 2020 07:08:20 -0800 (PST)
-Received: from starbuck.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id c15sm19074794wrt.1.2020.02.24.07.08.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 07:08:19 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: meson: sei510: fix sound card codec node
-Date:   Mon, 24 Feb 2020 16:08:12 +0100
-Message-Id: <20200224150812.263980-4-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200224150812.263980-1-jbrunet@baylibre.com>
-References: <20200224150812.263980-1-jbrunet@baylibre.com>
+        id S1727756AbgBXPLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 10:11:33 -0500
+Received: from vps.xff.cz ([195.181.215.36]:58468 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727299AbgBXPLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 10:11:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1582557091; bh=9aE+a8E4LVEOkt4HFGQF11TSms2VZ1eBDyNQaeKqK74=;
+        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
+        b=tfQ1X2cSGvWyWkk8cfn533l5XKTK8qIsCqHpeifhVET6YwxrfV/c4HQ7kAgDyZtg1
+         EemSNHRmabcJvOtTSMSP1I33wJwaxrfobg/YeZItZIRq2JW7elPmz3bbDuCsibqTVH
+         aM1WXmMSCOmobj2LdNFrUK8MQqCd/7ErnT0+zGIU=
+Date:   Mon, 24 Feb 2020 16:11:31 +0100
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: sun50i-h5-orange-pi-pc2: Add CPUX voltage
+ regulator
+Message-ID: <20200224151131.fw7to7pmegj5ylqy@core.my.home>
+Mail-Followup-To: Maxime Ripard <maxime@cerno.tech>,
+        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20200223104019.527587-1-megous@megous.com>
+ <20200224092704.gnnjwds3zmmravrw@gilmour.lan>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200224092704.gnnjwds3zmmravrw@gilmour.lan>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A codec node of the sei510 sound card is numbered with the pattern
-codec@XX. This pattern should be used only if there is a reg property in
-the node which is not case here. Change this to something acceptable.
+On Mon, Feb 24, 2020 at 10:27:04AM +0100, Maxime Ripard wrote:
+> On Sun, Feb 23, 2020 at 11:40:19AM +0100, Ondrej Jirman wrote:
+> > Orange Pi PC2 features sy8106a regulator just like Orange Pi PC.
+> >
+> > Signed-off-by: Ondrej Jirman <megous@megous.com>
+> > Reviewed-by: Samuel Holland <samuel@sholland.org>
+> > ---
+> >  .../dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 20 +++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
+> 
+> Having a changelog would be great
+> 
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
+> > index 70b5f09984218..7b2572dc84857 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
+> > @@ -93,6 +93,10 @@ &codec {
+> >  	status = "okay";
+> >  };
+> >
+> > +&cpu0 {
+> > +	cpu-supply = <&reg_vdd_cpux>;
+> > +};
+> > +
+> >  &de {
+> >  	status = "okay";
+> >  };
+> > @@ -168,6 +172,22 @@ &ohci3 {
+> >  	status = "okay";
+> >  };
+> >
+> > +&r_i2c {
+> > +	status = "okay";
+> > +
+> > +	reg_vdd_cpux: regulator@65 {
+> > +		compatible = "silergy,sy8106a";
+> > +		reg = <0x65>;
+> > +		regulator-name = "vdd-cpux";
+> > +		silergy,fixed-microvolt = <1100000>;
+> > +		regulator-min-microvolt = <1000000>;
+> > +		regulator-max-microvolt = <1400000>;
+> > +		regulator-ramp-delay = <200>;
+> > +		regulator-boot-on;
+> > +		regulator-always-on;
+> > +	};
+> > +};
+> > +
+> 
+> Looks like you fixed the issues reported by Samuel though. I've
+> applied it.
 
-This change is only to better comply with the DT spec. No functional
-changes expected.
+Sorry, yes, I just did that. Re-ordering + removing a comment and changing the
+fixed voltage.
 
-Fixes: 64c10554bf9c ("arm64: dts: meson: sei510: add sound card")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you,
+	o.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-index 2ac9e3a43b96..168f460e11fa 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-@@ -269,7 +269,7 @@ dai-link-7 {
- 			dai-tdm-slot-tx-mask-3 = <1 1>;
- 			mclk-fs = <256>;
- 
--			codec@0 {
-+			codec {
- 				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_B>;
- 			};
- 		};
--- 
-2.24.1
+> Maxime
+
 
