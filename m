@@ -2,94 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36EA016A4C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:20:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C928516A4D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:22:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbgBXLUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 06:20:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727185AbgBXLUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 06:20:34 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        id S1727324AbgBXLWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 06:22:11 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54092 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726778AbgBXLWL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 06:22:11 -0500
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8CB220828;
-        Mon, 24 Feb 2020 11:20:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582543234;
-        bh=tfwxnUm8CTy64G41f2iMr9bjPIyqP0yFAFqjYV9SOYE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FnM2JMMOaqo3jU/7fznFVD+LadG9PBNNBtKfvwkV4jblDtsqK1/uqVUVQqc7uf1cF
-         AAD2elF8e05a0Y47WScHvQyp8eLtZPQjLNNyAs2WFWXTmnoZ0n8u6n4uKUhFe6G1Ja
-         VH+gdhqHJxRWBqUuU4vEgOzijzhE7+Zx+uBTI0Ng=
-Date:   Mon, 24 Feb 2020 19:20:26 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, andrew@lunn.ch,
-        vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        alexandru.marginean@nxp.com, claudiu.manoil@nxp.com,
-        michael@walle.cc, davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 devicetree 0/6] DT bindings for Felix DSA switch on
- LS1028A
-Message-ID: <20200224112026.GF27688@dragon>
-References: <20200223204716.26170-1-olteanv@gmail.com>
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 6730E29047B;
+        Mon, 24 Feb 2020 11:22:09 +0000 (GMT)
+Date:   Mon, 24 Feb 2020 12:22:06 +0100
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Vitor Soares <Vitor.Soares@synopsys.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "wsa@the-dreams.de" <wsa@the-dreams.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [PATCH v3 4/5] i3c: add i3cdev module to expose i3c dev in /dev
+Message-ID: <20200224122206.10984b3f@collabora.com>
+In-Reply-To: <CH2PR12MB42163351853CCC029D28164BAEEC0@CH2PR12MB4216.namprd12.prod.outlook.com>
+References: <cover.1582069402.git.vitor.soares@synopsys.com>
+        <e093ae9da81e7702c188a20d1e8b9d7f8024bfeb.1582069402.git.vitor.soares@synopsys.com>
+        <20200221233216.3b2038f8@collabora.com>
+        <CH2PR12MB42163351853CCC029D28164BAEEC0@CH2PR12MB4216.namprd12.prod.outlook.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200223204716.26170-1-olteanv@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 10:47:10PM +0200, Vladimir Oltean wrote:
-> This series officializes the device tree bindings for the embedded
-> Ethernet switch on NXP LS1028A (and for the reference design board).
-> The driver has been in the tree since v5.4-rc6.
-> 
-> It also performs some DT binding changes and minor cleanup, as per
-> feedback received in v1 and v2:
-> 
-> - I've changed the DT bindings for the internal ports from "gmii" to
->   "internal". This means changing the ENETC phy-mode as well, for
->   uniformity. So I would like the entire series to be merged through a
->   single tree, probably the devicetree one - something which David
->   Miller has aggreed to, here [0].
-> - Disabled all Ethernet ports in the LS1028A DTSI by default, which
->   means not only the newly introduced switch ports, but also RGMII
->   standalone port 1.
-> 
-> [0]: https://lkml.org/lkml/2020/2/19/973
-> 
-> Claudiu Manoil (2):
->   arm64: dts: fsl: ls1028a: add node for Felix switch
->   arm64: dts: fsl: ls1028a: enable switch PHYs on RDB
-> 
-> Vladimir Oltean (4):
->   arm64: dts: fsl: ls1028a: delete extraneous #interrupt-cells for ENETC
->     RCIE
->   arm64: dts: fsl: ls1028a: disable all enetc ports by default
+On Mon, 24 Feb 2020 11:04:50 +0000
+Vitor Soares <Vitor.Soares@synopsys.com> wrote:
 
-I applied these 4 DTS patches with changing prefix to 'arm64: dts: ls1028a: '.
+> Hi Boris,
+> 
+> From: Boris Brezillon <boris.brezillon@collabora.com>
+> Date: Fri, Feb 21, 2020 at 22:32:16
+> 
+> > On Wed, 19 Feb 2020 01:20:42 +0100
+> > Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+> >   
+> > > +static int i3cdev_detach(struct device *dev, void *dummy)
+> > > +{
+> > > +	struct i3cdev_data *i3cdev;
+> > > +	struct i3c_device *i3c;
+> > > +
+> > > +	if (dev->type == &i3c_masterdev_type)
+> > > +		return 0;
+> > > +
+> > > +	i3c = dev_to_i3cdev(dev);
+> > > +
+> > > +	i3cdev = i3cdev_get_drvdata(i3c);
+> > > +	if (!i3cdev)
+> > > +		return 0;
+> > > +
+> > > +	/* Prevent transfers while cdev removal */
+> > > +	mutex_lock(&i3cdev->xfer_lock);
+> > > +	cdev_del(&i3cdev->cdev);  
+> > 
+> > When cdev_del() returns there might be opened FDs pointing to your
+> > i3cdev [1] ...  
+> 
+> Yes, I know. I protected the driver part but I missed the 
+> file->private_data.
 
-Shawn
+Not sure what you mean by protection, but if you meant locking, then
+it's not enough: you need to refcnt the struct if you want to prevent
+use-after-free situations.
 
->   net: dsa: felix: Use PHY_INTERFACE_MODE_INTERNAL instead of GMII
->   dt-bindings: net: dsa: ocelot: document the vsc9959 core
-> 
->  .../devicetree/bindings/net/dsa/ocelot.txt    | 116 ++++++++++++++++++
->  .../boot/dts/freescale/fsl-ls1028a-qds.dts    |   1 +
->  .../boot/dts/freescale/fsl-ls1028a-rdb.dts    |  61 ++++++++-
->  .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |  89 +++++++++++++-
->  drivers/net/dsa/ocelot/felix.c                |   3 +-
->  drivers/net/dsa/ocelot/felix_vsc9959.c        |   3 +-
->  6 files changed, 265 insertions(+), 8 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/net/dsa/ocelot.txt
-> 
-> -- 
-> 2.17.1
-> 
+BTW, I had a closer look at the usbdev implementation, and maybe you
+should base yours on usb instead of i2c. They seem to register a cdev at
+module init time, and add a dev_t per device at device registration
+time. Not sure how they handle the userspace-driver vs kernel-driver
+concurrency, but maybe returning EACCES (or EBUSY) instead of
+detaching/attaching the i3cdev everytime a device is bound/unbound
+would be simpler.
+
+Also, I think Arnd was right, it'd be simpler if i3cdev support was
+integrated to the core (still left as a option so it can be disabled,
+but with a dedicated i3cdev field in i3c_device instead hijacking the
+driver private field).
+
