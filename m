@@ -2,67 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD48C16A5F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:19:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 027E916A5A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:01:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbgBXMTy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 07:19:54 -0500
-Received: from sv-email-p02.tjgo.jus.br ([45.71.214.97]:34428 "EHLO
-        sv-email-p02.tjgo.jus.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbgBXMTx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 07:19:53 -0500
-X-Greylist: delayed 5095 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Feb 2020 07:19:52 EST
-Received: from localhost (localhost [127.0.0.1])
-        by sv-email-p02.tjgo.ldc (Postfix) with ESMTP id E16E86A312;
-        Mon, 24 Feb 2020 07:13:36 -0300 (-03)
-Received: from sv-email-p02.tjgo.jus.br ([127.0.0.1])
-        by localhost (sv-email-p02.tjgo.ldc [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Q_6Oz8SOU12p; Mon, 24 Feb 2020 07:13:36 -0300 (-03)
-Received: from localhost (localhost [127.0.0.1])
-        by sv-email-p02.tjgo.ldc (Postfix) with ESMTP id DF8196A2EF;
-        Mon, 24 Feb 2020 07:13:35 -0300 (-03)
-DKIM-Filter: OpenDKIM Filter v2.10.3 sv-email-p02.tjgo.ldc DF8196A2EF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tjgo.jus.br;
-        s=DB6EB6C0-19CB-11E9-B608-74AECE7D716B; t=1582539215;
-        bh=Br/8x1Rs0egV5xdLzp5m3aFy4/EnepQfRyowgc4eQr0=;
-        h=Date:From:Message-ID:MIME-Version;
-        b=Z4s+As3plYw9tH0zp4f6ftqcrx0Gf9/Bfk34k4ZzYbTIM3StbPMjPjV5ae3VBWNr2
-         IJ1OviHgImd5/14gwKN1tKKjxyAL64fV0fTiSpB3esqIhhwYVDTxyUr42niCFJxJ2z
-         CbN+rhwViQUIKRE6G46YW5eReZAKGN6sSpcQxWdjiBXSlZO0wIH3LlNSpiXAGTfhfF
-         SGalIxZKb/arEqGNsTlHd/uJQPF6pjETRF5kRiaRUBwkhuylz5OAVILe1q8A5k5las
-         5aKOLPuGsqVMbCru7/HG8WYoTfXysFZBnIVs4pdk+s+oYDsoFhlbl1hz2ndZ1/qodS
-         MlM5ieUgURgrg==
-X-Virus-Scanned: amavisd-new at sv-email-p02.tjgo.ldc
-Received: from sv-email-p02.tjgo.jus.br ([127.0.0.1])
-        by localhost (sv-email-p02.tjgo.ldc [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id s1FGnHopITFV; Mon, 24 Feb 2020 07:13:35 -0300 (-03)
-Received: from sv-email-p00.tjgo.ldc (sv-email-p00.tjgo.ldc [45.71.214.95])
-        by sv-email-p02.tjgo.ldc (Postfix) with ESMTP id A7DB86A2DC;
-        Mon, 24 Feb 2020 07:13:35 -0300 (-03)
-Date:   Mon, 24 Feb 2020 07:13:35 -0300 (BRT)
-From:   Mr Azim <msgarcia@tjgo.jus.br>
-Reply-To: Mr Azim <azimhashimpremji298521@gmail.com>
-Message-ID: <223937106.3168251.1582539215639.JavaMail.zimbra@tjgo.jus.br>
-Subject: Bargeld Geschenk
+        id S1727425AbgBXMBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 07:01:30 -0500
+Received: from mga12.intel.com ([192.55.52.136]:52215 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727185AbgBXMBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 07:01:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 04:01:29 -0800
+X-IronPort-AV: E=Sophos;i="5.70,480,1574150400"; 
+   d="scan'208";a="230626314"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.249.174.151]) ([10.249.174.151])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 24 Feb 2020 04:01:26 -0800
+Subject: Re: [PATCH 1/2] kvm: vmx: Use basic exit reason to check if it's the
+ specific VM EXIT
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+References: <20200224020751.1469-1-xiaoyao.li@intel.com>
+ <20200224020751.1469-2-xiaoyao.li@intel.com>
+ <87lfosp9xs.fsf@vitty.brq.redhat.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <d9744594-4a66-d867-f785-64ce4d42b848@intel.com>
+Date:   Mon, 24 Feb 2020 20:01:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [5.62.51.103]
-X-Mailer: Zimbra 8.8.15_GA_3829 (zclient/8.8.15_GA_3829)
-Thread-Index: cWHX5qvex9yUdT+4OWed0FYiZjCvfg==
-Thread-Topic: Bargeld Geschenk
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <87lfosp9xs.fsf@vitty.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ich kenne Sie vielleicht nicht, aber ich glaube, wenn Sie von Gott ausgew=
-=C3=A4hlt wurden, um eine Geldspende in H=C3=B6he von 2.000.000,00 Euro von=
- Herrn Azim Hashim zu erhalten, antworten Sie mir f=C3=BCr weitere Informat=
-ionen per E-Mail an: azimhashimpremji298521@gmail.com  Sie k=C3=B6nnen auch=
- mehr =C3=BCber mich =C3=BCber den Link lesen: https://en.wikipedia.org/wik=
-i/Azim_Premji
+On 2/24/2020 6:16 PM, Vitaly Kuznetsov wrote:
+> Xiaoyao Li <xiaoyao.li@intel.com> writes:
+> 
+>> Current kvm uses the 32-bit exit reason to check if it's any specific VM
+>> EXIT, however only the low 16-bit of VM EXIT REASON acts as the basic
+>> exit reason.
+>>
+>> Introduce Macro basic(exit_reaso)
+> 
+> "exit_reason"
 
-Freundliche Gr=C3=BC=C3=9Fe
+Ah, will correct it in v2.
+
+>>   to help retrieve the basic exit reason
+>> from VM EXIT REASON, and use the basic exit reason for checking and
+>> indexing the exit hanlder.
+>>
+>> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+>> ---
+>>   arch/x86/kvm/vmx/vmx.c | 44 ++++++++++++++++++++++--------------------
+>>   arch/x86/kvm/vmx/vmx.h |  2 ++
+>>   2 files changed, 25 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+>> index 9a6664886f2e..85da72d4dc92 100644
+>> --- a/arch/x86/kvm/vmx/vmx.c
+>> +++ b/arch/x86/kvm/vmx/vmx.c
+>> @@ -1584,7 +1584,7 @@ static int skip_emulated_instruction(struct kvm_vcpu *vcpu)
+>>   	 * i.e. we end up advancing IP with some random value.
+>>   	 */
+>>   	if (!static_cpu_has(X86_FEATURE_HYPERVISOR) ||
+>> -	    to_vmx(vcpu)->exit_reason != EXIT_REASON_EPT_MISCONFIG) {
+>> +	    basic(to_vmx(vcpu)->exit_reason) != EXIT_REASON_EPT_MISCONFIG) {
+> 
+> "basic" word is probably 'too basic' to be used for this purpose. Even
+> if we need a macro for it (I'm not really convinced it improves the
+> readability), I'd suggest we name it 'basic_exit_reason()' instead.
+
+Agreed.
+
+>>   		rip = kvm_rip_read(vcpu);
+>>   		rip += vmcs_read32(VM_EXIT_INSTRUCTION_LEN);
+>>   		kvm_rip_write(vcpu, rip);
+>> @@ -5797,6 +5797,7 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
+>>   {
+>>   	struct vcpu_vmx *vmx = to_vmx(vcpu);
+>>   	u32 exit_reason = vmx->exit_reason;
+>> +	u16 basic_exit_reason = basic(exit_reason);
+> 
+> I don't think renaming local variable is needed, let's just do
+> 
+> 'u16 exit_reason = basic_exit_reason(vmx->exit_reason)' and keep the
+> rest of the code as-is.
+
+No, we can't do this.
+
+It's not just renaming local variable, the full 32-bit exit reason is 
+used elsewhere in this function that needs the upper 16-bit.
+
+Here variable basic_exit_reason is added for the cases where only basic 
+exit reason number is needed.
+
+>>   	u32 vectoring_info = vmx->idt_vectoring_info;
+>>   
+>>   	trace_kvm_exit(exit_reason, vcpu, KVM_ISA_VMX);
+>> @@ -5842,17 +5843,17 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
+>>   	 * will cause infinite loop.
+>>   	 */
+>>   	if ((vectoring_info & VECTORING_INFO_VALID_MASK) &&
+>> -			(exit_reason != EXIT_REASON_EXCEPTION_NMI &&
+>> -			exit_reason != EXIT_REASON_EPT_VIOLATION &&
+>> -			exit_reason != EXIT_REASON_PML_FULL &&
+>> -			exit_reason != EXIT_REASON_TASK_SWITCH)) {
+>> +			(basic_exit_reason != EXIT_REASON_EXCEPTION_NMI &&
+>> +			 basic_exit_reason != EXIT_REASON_EPT_VIOLATION &&
+>> +			 basic_exit_reason != EXIT_REASON_PML_FULL &&
+>> +			 basic_exit_reason != EXIT_REASON_TASK_SWITCH)) {
+>>   		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
+>>   		vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_DELIVERY_EV;
+>>   		vcpu->run->internal.ndata = 3;
+>>   		vcpu->run->internal.data[0] = vectoring_info;
+>>   		vcpu->run->internal.data[1] = exit_reason;
+>>   		vcpu->run->internal.data[2] = vcpu->arch.exit_qualification;
+>> -		if (exit_reason == EXIT_REASON_EPT_MISCONFIG) {
+>> +		if (basic_exit_reason == EXIT_REASON_EPT_MISCONFIG) {
+>>   			vcpu->run->internal.ndata++;
+>>   			vcpu->run->internal.data[3] =
+>>   				vmcs_read64(GUEST_PHYSICAL_ADDRESS);
+>> @@ -5884,32 +5885,32 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
+>>   		return 1;
+>>   	}
+>>   
+>> -	if (exit_reason >= kvm_vmx_max_exit_handlers)
+>> +	if (basic_exit_reason >= kvm_vmx_max_exit_handlers)
+>>   		goto unexpected_vmexit;
+>>   #ifdef CONFIG_RETPOLINE
+>> -	if (exit_reason == EXIT_REASON_MSR_WRITE)
+>> +	if (basic_exit_reason == EXIT_REASON_MSR_WRITE)
+>>   		return kvm_emulate_wrmsr(vcpu);
+>> -	else if (exit_reason == EXIT_REASON_PREEMPTION_TIMER)
+>> +	else if (basic_exit_reason == EXIT_REASON_PREEMPTION_TIMER)
+>>   		return handle_preemption_timer(vcpu);
+>> -	else if (exit_reason == EXIT_REASON_INTERRUPT_WINDOW)
+>> +	else if (basic_exit_reason == EXIT_REASON_INTERRUPT_WINDOW)
+>>   		return handle_interrupt_window(vcpu);
+>> -	else if (exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
+>> +	else if (basic_exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
+>>   		return handle_external_interrupt(vcpu);
+>> -	else if (exit_reason == EXIT_REASON_HLT)
+>> +	else if (basic_exit_reason == EXIT_REASON_HLT)
+>>   		return kvm_emulate_halt(vcpu);
+>> -	else if (exit_reason == EXIT_REASON_EPT_MISCONFIG)
+>> +	else if (basic_exit_reason == EXIT_REASON_EPT_MISCONFIG)
+>>   		return handle_ept_misconfig(vcpu);
+>>   #endif
+>>   
+>> -	exit_reason = array_index_nospec(exit_reason,
+>> +	basic_exit_reason = array_index_nospec(basic_exit_reason,
+>>   					 kvm_vmx_max_exit_handlers);
+>> -	if (!kvm_vmx_exit_handlers[exit_reason])
+>> +	if (!kvm_vmx_exit_handlers[basic_exit_reason])
+>>   		goto unexpected_vmexit;
+>>   
+>> -	return kvm_vmx_exit_handlers[exit_reason](vcpu);
+>> +	return kvm_vmx_exit_handlers[basic_exit_reason](vcpu);
+>>   
+>>   unexpected_vmexit:
+>> -	vcpu_unimpl(vcpu, "vmx: unexpected exit reason 0x%x\n", exit_reason);
+>> +	vcpu_unimpl(vcpu, "vmx: unexpected exit reason 0x%x\n", basic_exit_reason);
+>>   	dump_vmcs();
+>>   	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
+>>   	vcpu->run->internal.suberror =
+>> @@ -6241,13 +6242,14 @@ static void vmx_handle_exit_irqoff(struct kvm_vcpu *vcpu,
+>>   	enum exit_fastpath_completion *exit_fastpath)
+>>   {
+>>   	struct vcpu_vmx *vmx = to_vmx(vcpu);
+>> +	u16 basic_exit_reason = basic(vmx->exit_reason);
+> 
+> Here I'd suggest we also use the same
+> 
+> 'u16 exit_reason = basic_exit_reason(vmx->exit_reason)'
+> 
+> as above.
+> 
+>>   
+>> -	if (vmx->exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
+>> +	if (basic_exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
+>>   		handle_external_interrupt_irqoff(vcpu);
+>> -	else if (vmx->exit_reason == EXIT_REASON_EXCEPTION_NMI)
+>> +	else if (basic_exit_reason == EXIT_REASON_EXCEPTION_NMI)
+>>   		handle_exception_nmi_irqoff(vmx);
+>>   	else if (!is_guest_mode(vcpu) &&
+>> -		vmx->exit_reason == EXIT_REASON_MSR_WRITE)
+>> +		 basic_exit_reason == EXIT_REASON_MSR_WRITE)
+>>   		*exit_fastpath = handle_fastpath_set_msr_irqoff(vcpu);
+>>   }
+>>   
+>> @@ -6621,7 +6623,7 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
+>>   	vmx->idt_vectoring_info = 0;
+>>   
+>>   	vmx->exit_reason = vmx->fail ? 0xdead : vmcs_read32(VM_EXIT_REASON);
+>> -	if ((u16)vmx->exit_reason == EXIT_REASON_MCE_DURING_VMENTRY)
+>> +	if (basic(vmx->exit_reason) == EXIT_REASON_MCE_DURING_VMENTRY)
+>>   		kvm_machine_check();
+>>   
+>>   	if (vmx->fail || (vmx->exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY))
+>> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+>> index 7f42cf3dcd70..c6ba33eedb59 100644
+>> --- a/arch/x86/kvm/vmx/vmx.h
+>> +++ b/arch/x86/kvm/vmx/vmx.h
+>> @@ -22,6 +22,8 @@ extern u32 get_umwait_control_msr(void);
+>>   
+>>   #define X2APIC_MSR(r) (APIC_BASE_MSR + ((r) >> 4))
+>>   
+>> +#define basic(exit_reason) ((u16)(exit_reason))
+>> +
+>>   #ifdef CONFIG_X86_64
+>>   #define NR_SHARED_MSRS	7
+>>   #else
+> 
+
