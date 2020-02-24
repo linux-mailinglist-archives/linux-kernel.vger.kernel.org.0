@@ -2,110 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2901416A441
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A14616A453
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:51:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbgBXKsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 05:48:19 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35048 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbgBXKsT (ORCPT
+        id S1727326AbgBXKvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 05:51:15 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:49463 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbgBXKvP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 05:48:19 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b17so8842521wmb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 02:48:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=DlS9HvBeJ40C/txSt07sCwih0YUG8h5KLHioIGiWog4=;
-        b=weB3LAGarjV2WryBzxjWn93uxEzAa6HvBZ+ZsQexkSc2sZnWRUUthgdeTkLri+9MzM
-         oZMMrELL7KqxQU9+KOidn+3/LdCnUl3+xL7SFrJN1C+rsX4h1tK13srwP+BtbYuC58ID
-         jOpps72H1/OPwudWSxLhRDhzFdJi9bfmBLvvvJwCygP6DHtN6qmihvWHJJX//uD9QptP
-         Q4a6NfCee2B+PcGRRFHu9oRAXqLDVF3a0mUcCEfISNh8x0nlR8pKVVKPax6NBT8aObWE
-         hXmOTSSYJ4YCWZFQ/ta6uFjkhbygSy1IPMLWipCFgAmmcSC4w+Vl6p53tsYlt9VA6aX1
-         NvYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=DlS9HvBeJ40C/txSt07sCwih0YUG8h5KLHioIGiWog4=;
-        b=rf96ef78QYeA/pIONmP4kTq7WiXV5UXcGwcF1yhXloHquVqDVdhq9P/AlTJa4OsGEV
-         57uTkm0v/9MfFUsac14J57FdFdcvijVlwuYD1UIO3x7sw0X9WFf5Ry4pSUwad4BUc0qe
-         F8EVncuyRE8WWB2iR3PAIpM/Oldy58u/4Rt9vzf97HXHJmDZX0jvbhJdeZvvntVPKJK+
-         br/I/hzrPw3qe53gpNO8b7WMzYxABHRHZG8uniV/gZSipNyWbFl8UJgxN2TpHjjPXVel
-         tTybR6auFqb6W9ZRlWq51gSzAXVmJUEjVWbrlnQnOtXtaMSdZQi7pd0I6FmPqE1OAE+T
-         nHPg==
-X-Gm-Message-State: APjAAAXxgIbvdiJUtqz6IL6LOUyGwn1w4alsIOzbGIHkBk+FTD6GedAU
-        pgXZ3UuanORy9kSmt/uiuMPTuL+u6jQ=
-X-Google-Smtp-Source: APXvYqysLZLszWQRkkFDtdkz0vqL9kByB/8xkSBa91ZWllcVHRPpcTzSJsPfX0RQyNQTE4qG0xBX9g==
-X-Received: by 2002:a1c:3d46:: with SMTP id k67mr22204894wma.171.1582541295301;
-        Mon, 24 Feb 2020 02:48:15 -0800 (PST)
-Received: from dell ([2.31.163.122])
-        by smtp.gmail.com with ESMTPSA id i204sm17574955wma.44.2020.02.24.02.48.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 02:48:14 -0800 (PST)
-Date:   Mon, 24 Feb 2020 10:48:45 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: omap-usb-tll: Replace zero-length array with
- flexible-array member
-Message-ID: <20200224104845.GP3494@dell>
-References: <20200212235642.GA19206@embeddedor.com>
+        Mon, 24 Feb 2020 05:51:15 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1j6BKP-0008RK-V6; Mon, 24 Feb 2020 11:51:10 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6EF3D1C1A0F;
+        Mon, 24 Feb 2020 11:51:09 +0100 (CET)
+Date:   Mon, 24 Feb 2020 10:51:08 -0000
+From:   "tip-bot2 for Dave Young" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/kdump] x86/kexec: Do not reserve EFI setup_data in the
+ kexec e820 table
+Cc:     Dave Young <dyoung@redhat.com>, Borislav Petkov <bp@suse.de>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200212110424.GA2938@dhcp-128-65.nay.redhat.com>
+References: <20200212110424.GA2938@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200212235642.GA19206@embeddedor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <158254146897.28353.4247096498069522547.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Feb 2020, Gustavo A. R. Silva wrote:
+The following commit has been merged into the x86/kdump branch of tip:
 
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/mfd/omap-usb-tll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Commit-ID:     8efbc518b884e1db2dd6a6fce62d0112ab871dcf
+Gitweb:        https://git.kernel.org/tip/8efbc518b884e1db2dd6a6fce62d0112ab871dcf
+Author:        Dave Young <dyoung@redhat.com>
+AuthorDate:    Wed, 12 Feb 2020 19:04:24 +08:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Mon, 24 Feb 2020 11:41:57 +01:00
 
-Applied, thanks.
+x86/kexec: Do not reserve EFI setup_data in the kexec e820 table
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+The e820 table for the kexec kernel unconditionally marks setup_data as
+reserved because the second kernel can reuse setup_data passed by the
+1st kernel's boot loader, for example SETUP_PCI marked regions like PCI
+BIOS, etc.
+
+SETUP_EFI types, however, are used by kexec itself to enable EFI in the
+2nd kernel. Thus, it is pointless to add this type of setup_data to the
+kexec e820 table as reserved.
+
+IOW, what happens is this:
+
+  -  1st physical boot: no SETUP_EFI.
+
+  - kexec loads a new kernel and prepares a SETUP_EFI setup_data blob, then
+  reboots the machine.
+
+  - 2nd kernel sees SETUP_EFI, reserves it both in the e820 and in the
+  kexec e820 table.
+
+  - If another kexec load is executed, it prepares a new SETUP_EFI blob and
+  then reboots the machine into the new kernel.
+
+  5. The 3rd kexec-ed kernel has two SETUP_EFI ranges reserved. And so on...
+
+Thus skip SETUP_EFI while reserving setup_data in the e820_table_kexec
+table because it is not needed.
+
+ [ bp: Heavily massage commit message, shorten line and improve comment. ]
+
+Signed-off-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20200212110424.GA2938@dhcp-128-65.nay.redhat.com
+---
+ arch/x86/kernel/e820.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index c5399e8..c920296 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -999,7 +999,15 @@ void __init e820__reserve_setup_data(void)
+ 	while (pa_data) {
+ 		data = early_memremap(pa_data, sizeof(*data));
+ 		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+-		e820__range_update_kexec(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
++
++		/*
++		 * SETUP_EFI is supplied by kexec and does not need to be
++		 * reserved.
++		 */
++		if (data->type != SETUP_EFI)
++			e820__range_update_kexec(pa_data,
++						 sizeof(*data) + data->len,
++						 E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
+ 
+ 		if (data->type == SETUP_INDIRECT &&
+ 		    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
