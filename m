@@ -2,113 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06D2516B288
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:33:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 476E216B28F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:33:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbgBXVdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 16:33:23 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39525 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbgBXVdW (ORCPT
+        id S1728079AbgBXVdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 16:33:43 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:41546 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726980AbgBXVdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 16:33:22 -0500
-Received: by mail-qk1-f194.google.com with SMTP id e16so7256213qkl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:33:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jRWoeoOM8DL9OmT3+yYVal9mOTve0BZlMU96rBIIFe0=;
-        b=E9YB0nYWyyqpbnhocJZ8cG/fU3LFV5rYqfrQVQ6ggzZbU09l2ZOa+8zYB9o5rcQykY
-         KkX+C5jQspLPr+su1sQHvmXtf8cebQcqN/URtvzxylUvBst7P49jC7Ka+QWawUifzD7O
-         KJ+46Cfra+s7sfRvYu3LZ6bW62hG64FoVYV5l5iIGbAcf/QUkBSAz8DY2ABk3wsuKlNZ
-         jqffs0SivE29ITfqb6DjFe9XecxTiK7kwIZzYr6Bd4rBpyPkbCKntST5NbJyIsmk3z5X
-         WlGFxI8T/pl5ROuE4ftxTNgkIxFTJM8TyWCUlMScCiDGabeQBEMd46kn4Y8AzFwNtEj9
-         zLog==
+        Mon, 24 Feb 2020 16:33:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582580020;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=c8+XmMTcQu9NRSgMktjQy1xQLejdPrZ1ttEMyUDWp7M=;
+        b=bf95SKPLTUleHCRsO6cY9yIz8Uzdmlj1D4UeFrVCNeLWCrnZzwXGWqVgXyzbl7S+WLvoo9
+        OPIWOwI/Tbr3QSnquARhKKKFCZu1/c5YliVJCUmgnaOYURwrgkf/Dg1jt1QPMXWOMS0LPj
+        3PNomdqvzhmW01vkuzbBfSCf99zHEGA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-104-3yyvE0AxOyeOMTQ4xOdCYA-1; Mon, 24 Feb 2020 16:33:38 -0500
+X-MC-Unique: 3yyvE0AxOyeOMTQ4xOdCYA-1
+Received: by mail-wr1-f70.google.com with SMTP id t6so6235348wru.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:33:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jRWoeoOM8DL9OmT3+yYVal9mOTve0BZlMU96rBIIFe0=;
-        b=paOISClX27NWDwR9xSNOucEzsA4bVmc9CaIRD3fTRvkv3rQr6AnNL5H/s58Gjnonks
-         coVSVMuySL3Hy9kjIRgshVEkSKFdawomfM0nk9DFjys14L5dKUJhNtW23I6+804rgyM0
-         j+iJNkxSjrk1Mrf7aLvlpbY3oehRSS0jmQRMLv0enmuxgFsV/LF2RnQ8rxY+01kZN8Tk
-         NlbNR7WJEOhv+kJNxSbxvfYdcWnc2gnspQ4Qu6jKxZQihtIDK89/HdawUmgsNg57/1Oz
-         jx/lNOoXg9GY5EV8i8JL2ZL7Cs/kJ36IQSAjsd5s7BKkThJABKROaQQ4uOjCu15pjzhg
-         f4zg==
-X-Gm-Message-State: APjAAAWKBSMIZRA0q9osQ9VPmbFCp9O3DzYLpT1qwCa1QqgMFNOsGTP/
-        3E4wGvNEmrL/KsPZQKyJTE0=
-X-Google-Smtp-Source: APXvYqy4/TarFYSnVxoCsF3QA4gs91/IwvBd/MT049wjd2XdXdsBEFfmCj6sek4n5bI8YLgzyqy6+A==
-X-Received: by 2002:a05:620a:2224:: with SMTP id n4mr4141190qkh.21.1582580001588;
-        Mon, 24 Feb 2020 13:33:21 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id 132sm6409229qkn.109.2020.02.24.13.33.21
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=c8+XmMTcQu9NRSgMktjQy1xQLejdPrZ1ttEMyUDWp7M=;
+        b=DeNxxPa4Tak2rFv/R8ULQmdHwamhfPqYydyrGq7g+wABBI9G+L03XwxmKnwchp1iGY
+         cmCA/7h1D7L4JXW/ju6HNYesW3F7ArCs4fNBJvv+XUpe/g14CqOsOnYB5ULl5xvW/t8u
+         dDOd8J8Yx4stbQsqnvJg526M1y06exWrcdC06f7EPNNVK7RXbsubI3iLWCM3O4peQs3q
+         hhxQW0XBJQkTnoqIF47LIzy1+FUMfeF1NP3mxAf9xuFDA97cJ1AYcZzqeWvAjPbLYNrc
+         neX3rz8m6u7bELDHHmz76QZVZrLjSmCAQ9bt3BxKdTliLKisfex1PGogIEXWokq4aSyj
+         2B0g==
+X-Gm-Message-State: APjAAAV8Ev7i7MOgkInJKdFv/MAtHaBhjnd6BO/879LPIiSYooHuT3+D
+        OSIgfIAdZejFUcnZqHgKA3MzC6CxqeMM7ald5c5FU7JiBV2aYRZ437djWbbTBoVfqjennblhsG8
+        R3RptODsfGs7cxxo48MBrGo3A
+X-Received: by 2002:a1c:2b44:: with SMTP id r65mr963813wmr.72.1582580016825;
+        Mon, 24 Feb 2020 13:33:36 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwhJwlnq6aBlscqWEwyDJc0FvxuLMx0zkO0HNxZHKJdkV1VLwBYu8uFo3PsO3iYz3LrtvhQ6Q==
+X-Received: by 2002:a1c:2b44:: with SMTP id r65mr963789wmr.72.1582580016516;
+        Mon, 24 Feb 2020 13:33:36 -0800 (PST)
+Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
+        by smtp.gmail.com with ESMTPSA id y8sm1002966wma.10.2020.02.24.13.33.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 13:33:21 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Mon, 24 Feb 2020 16:33:19 -0500
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Michael Matz <matz@suse.de>, Fangrui Song <maskray@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 2/2] arch/x86: Drop unneeded linker script discard of
- .eh_frame
-Message-ID: <20200224213319.GB409112@rani.riverdale.lan>
-References: <20200222235709.GA3786197@rani.riverdale.lan>
- <20200223193715.83729-3-nivedita@alum.mit.edu>
- <CAKwvOdmqM5aHnDCyL62gmWV5wFrKwAEdkHq+HPnvp3ZYA=dtbg@mail.gmail.com>
+        Mon, 24 Feb 2020 13:33:35 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 39/61] KVM: SVM: Convert feature updates from CPUID to KVM cpu caps
+In-Reply-To: <20200201185218.24473-40-sean.j.christopherson@intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-40-sean.j.christopherson@intel.com>
+Date:   Mon, 24 Feb 2020 22:33:34 +0100
+Message-ID: <87eeujoekx.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdmqM5aHnDCyL62gmWV5wFrKwAEdkHq+HPnvp3ZYA=dtbg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 12:45:51PM -0800, Nick Desaulniers wrote:
-> 
-> grepping for eh_frame in arch/x86/ there's a comment in
-> arch/x86/include/asm/dwarf2.h:
->  40 #ifndef BUILD_VDSO
->  41   /*
->  42    * Emit CFI data in .debug_frame sections, not .eh_frame
-> sections.
->  43    * The latter we currently just discard since we don't do DWARF
->  44    * unwinding at runtime.  So only the offline DWARF information is
->  45    * useful to anyone.  Note we should not use this directive if
->  46    * vmlinux.lds.S gets changed so it doesn't discard .eh_frame.
->  47    */
->  48   .cfi_sections .debug_frame
-> 
-> add via:
-> commit 7b956f035a9ef ("x86/asm: Re-add parts of the manual CFI infrastructure")
-> 
-> https://sourceware.org/binutils/docs/as/CFI-directives.html#g_t_002ecfi_005fsections-section_005flist
-> is the manual's section on .cfi_sections directives, and states `The
-> default if this directive is not used is .cfi_sections .eh_frame.`.
-> So the comment is slightly stale since we're no longer explicitly
-> discarding .eh_frame in arch/x86/kernel/vmlinux.lds.S, rather
-> preventing the generation via -fno-asynchronous-unwind-tables in
-> KBUILD_CFLAGS (across a few different Makefiles).  Would you mind also
-> updating the comment in arch/x86/include/asm/dwarf2.h in a V2? The
-> rest of this patch LGTM.
-> 
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-i.e. just replace that last sentence with "Note ... if we decide to use
-runtime DWARF unwinding again"?
+> Use the recently introduced KVM CPU caps to propagate SVM-only (kernel)
+> settings to supported CPUID flags.
+>
+> Note, setting a flag based on a *different* feature is effectively
+> emulation, and so must be done at runtime via ->set_supported_cpuid().
+>
+> Opportunistically add a technically unnecessary break and fix an
+> indentation issue in svm_set_supported_cpuid().
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/kvm/svm.c | 40 +++++++++++++++++++++++-----------------
+>  1 file changed, 23 insertions(+), 17 deletions(-)
+>
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index 630520f8adfa..f98a192459f7 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -1350,6 +1350,25 @@ static __init void svm_adjust_mmio_mask(void)
+>  	kvm_mmu_set_mmio_spte_mask(mask, mask, PT_WRITABLE_MASK | PT_USER_MASK);
+>  }
+>  
 
-The whole ifdef-ery machinery there is obsolete, all the directives its
-checking support for have been there since binutils-2.18, so should
-probably also clean it up to just unconditionally define them.
+Can we probably add the comment about what can be done here and what
+needs to go to svm_set_supported_cpuid()? (The one about 'emulation'
+from your commit message would do).
+
+> +static __init void svm_set_cpu_caps(void)
+> +{
+> +	/* CPUID 0x1 */
+> +	if (avic)
+> +		kvm_cpu_cap_clear(X86_FEATURE_X2APIC);
+> +
+> +	/* CPUID 0x80000001 */
+> +	if (nested)
+> +		kvm_cpu_cap_set(X86_FEATURE_SVM);
+> +
+> +	/* CPUID 0x8000000A */
+> +	/* Support next_rip if host supports it */
+> +	if (boot_cpu_has(X86_FEATURE_NRIPS))
+> +		kvm_cpu_cap_set(X86_FEATURE_NRIPS);
+
+Unrelated to your patch but the way we handle 'nrips' is a bit weird: we
+can disable it with 'nrips' module parameter but L1 hypervisor will get
+it unconditionally.
+
+Also, what about all the rest of 0x8000000A.EDX features? Nested SVM
+would appreciate some love... 
+
+> +
+> +	if (npt_enabled)
+> +		kvm_cpu_cap_set(X86_FEATURE_NPT);
+> +}
+> +
+>  static __init int svm_hardware_setup(void)
+>  {
+>  	int cpu;
+> @@ -1462,6 +1481,8 @@ static __init int svm_hardware_setup(void)
+>  			pr_info("Virtual GIF supported\n");
+>  	}
+>  
+> +	svm_set_cpu_caps();
+> +
+>  	return 0;
+>  
+>  err:
+> @@ -6033,17 +6054,9 @@ static void svm_cpuid_update(struct kvm_vcpu *vcpu)
+>  static void svm_set_supported_cpuid(struct kvm_cpuid_entry2 *entry)
+>  {
+>  	switch (entry->function) {
+> -	case 0x1:
+> -		if (avic)
+> -			cpuid_entry_clear(entry, X86_FEATURE_X2APIC);
+> -		break;
+> -	case 0x80000001:
+> -		if (nested)
+> -			cpuid_entry_set(entry, X86_FEATURE_SVM);
+> -		break;
+>  	case 0x80000008:
+>  		if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD) ||
+> -		     boot_cpu_has(X86_FEATURE_AMD_SSBD))
+> +		    boot_cpu_has(X86_FEATURE_AMD_SSBD))
+>  			cpuid_entry_set(entry, X86_FEATURE_VIRT_SSBD);
+>  		break;
+>  	case 0x8000000A:
+> @@ -6053,14 +6066,7 @@ static void svm_set_supported_cpuid(struct kvm_cpuid_entry2 *entry)
+>  		entry->ecx = 0; /* Reserved */
+>  		entry->edx = 0; /* Per default do not support any
+>  				   additional features */
+> -
+> -		/* Support next_rip if host supports it */
+> -		if (boot_cpu_has(X86_FEATURE_NRIPS))
+> -			cpuid_entry_set(entry, X86_FEATURE_NRIPS);
+> -
+> -		/* Support NPT for the guest if enabled */
+> -		if (npt_enabled)
+> -			cpuid_entry_set(entry, X86_FEATURE_NPT);
+> +		break;
+>  	}
+>  }
+
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+
+-- 
+Vitaly
+
