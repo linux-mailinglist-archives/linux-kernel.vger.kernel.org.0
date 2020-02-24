@@ -2,89 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3057B16B612
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:56:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6978E16B619
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:58:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbgBXX4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:56:40 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35152 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgBXX4k (ORCPT
+        id S1728357AbgBXX6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:58:32 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:52542 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbgBXX6c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:56:40 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m3so1053139wmi.0;
-        Mon, 24 Feb 2020 15:56:38 -0800 (PST)
+        Mon, 24 Feb 2020 18:58:32 -0500
+Received: by mail-pj1-f68.google.com with SMTP id ep11so454932pjb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 15:58:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=CqieUl+jBlAbwvJufoMKdaWiCvMyZZmPHn8pxLLM7h8=;
-        b=H4QmnGRqnIsqApz0w95u5syLy4ZXEp7B6h+/NcX774qJfNa338N4qQ1XN6glS90Ltl
-         s8yf9WcShB47P+eEGXTUPaPVHPKWhhADeb4MnIkXO3xN5S8ETcxiFSsxKWEPZ9smy6ne
-         qXzkhn6EnqqT/d9CCZafOmRvrJB5jKjRloJfNt4NsY4GAhaOVj0KsUbluiKlHZUYuTss
-         N7XFUu1NN7WzBCm5DUaNhZ7H8DKvfsLSw9Vp+JzXc07+EJeGFegHtysQB8sgZ7e199S/
-         UEqRuhXykIJ6z2qH9B0WUf9Zh0grv7cbwT4T5884KTo/EuA88IAidAjwYwRJOpW0nJVk
-         v4Tw==
+        bh=6t8fAStxyMBpqFhnRnERlhVNkOeAX250LE3Yg/qJtM8=;
+        b=o39UkheKhEstLndzZrMbL+uItsNfKE3pcAHUUmxaDwxXiEUgy5omwFZz8TyaVSnu9U
+         aovk8jgepOxixvkDRIp8E/K7ucmeYnK8npXg6riGqFT06hHFpf9/O9afTGUPVIiZlTkH
+         IfmYYyfv+8/u9gpTHXxm+iGvXMO6RnLZAL7UNIwFZT0U5Lz2iQki3Bg2+aiMS1/ZsgT2
+         FLUeJFA/dUMDPvFkoGSTvfC7WOcxI4SUILbd+plkMJaRWWoq6Kywx0soolVBMDth88C0
+         GgKSBEjRWmzxBwpM18lifmRFPXn4qPPAT88Ss/rzFjE/kd1i4YXpn8YdGVyQUUVv+WSn
+         rSUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CqieUl+jBlAbwvJufoMKdaWiCvMyZZmPHn8pxLLM7h8=;
-        b=CsMP4dLfFcPdh/hEKnMjx7nm0kcac8/2A4msej8b0YCB3IZ3HOPb2pO5kF3RM9WeNL
-         b4MUBUWjdsx8VAMwLgFnhJiqCu0kIIldMOlaHYcvw5Wg/ZNVnZCHUhsYi4KPlgggfZzD
-         3vitMDzumQp4hHt6SLtd0Y2lhkiUk63yfIxEmPK64I1e3E9IGpuNX98tDgFNi5egKEE2
-         3QBdsNBRSanauoaDlw2ntxWa38y2G6yd01Awx3Xz1ZGBr3Jy0T4RZ3Y7582BnCs8fkOe
-         V2AJ3pXhMjfIwh0B0iCDyIIhb84N3L1u9/EqIjvwqjnPzTiN3OKJijSZSd9Ha+Tdr2S0
-         0y6w==
-X-Gm-Message-State: APjAAAVOFx2agrlg02jia8nvgTclbOJ1DTSq++uQi7y1DpP0jpmXmcSV
-        UykFd3AZqv6pvS9XiU/hJYh7M3oR
-X-Google-Smtp-Source: APXvYqyB703UxFv3cQK5R0yMqnHpiLTlcrDKONLVyyjb8dqcZ1vBqdBHbXTyuhEvv5yHuhdTQ68W0g==
-X-Received: by 2002:a05:600c:1007:: with SMTP id c7mr1419958wmc.158.1582588597682;
-        Mon, 24 Feb 2020 15:56:37 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9sm21424459wrx.94.2020.02.24.15.56.35
+        bh=6t8fAStxyMBpqFhnRnERlhVNkOeAX250LE3Yg/qJtM8=;
+        b=rh9BUyj3Ogad8Dwg6ihnM1uMcH3qede43pUOFQiPVperoEMikxXb/67fWQbtSJDRAd
+         9RdB1Ns+PH3SqDKrbwOnhhiPP8xuepCEjrh5hDYdCil1wVfVbFxKV07bopiT2SVqQ/ni
+         Ih8AdHvvy07vFN8QR8dtmOmFSHhc1lhIRqjCuB9PJ0bW9Xj6iB+nmWBzcHasDr2hRvRw
+         hhigHEqE/mgirZhPf7fs2Vus3AUHOqddCHoLbQYh75e6LO+q/khiDKJDxtPbxZjiFDDJ
+         4vDYvT3jluSFNQlhGkcxdGwYbYcepubV2Vg68vd8/Bl4N60G8NoHe9wnrCrCQKbWpXfl
+         1DEQ==
+X-Gm-Message-State: APjAAAWw3etKpaWFPUWqHgjNh8iXWckMaabey/JKkUxbcEoauh0PD2r4
+        PfaQqtjix4YBWt1TfSm8bAyURCcMXnk=
+X-Google-Smtp-Source: APXvYqxgK51lews+aPtRw5PC8+zgnvRIKVb/FG9m/YAhAkl3B9LTwpPt3W1OfC4eiv8dEXuA5NZm6w==
+X-Received: by 2002:a17:90a:9285:: with SMTP id n5mr1945580pjo.58.1582588711134;
+        Mon, 24 Feb 2020 15:58:31 -0800 (PST)
+Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
+        by smtp.gmail.com with ESMTPSA id y1sm14000747pgi.56.2020.02.24.15.58.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 15:56:37 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] net: dsa: bcm_sf2: Forcibly configure IMP port for 1Gb/sec
-Date:   Mon, 24 Feb 2020 15:56:32 -0800
-Message-Id: <20200224235632.5163-1-f.fainelli@gmail.com>
+        Mon, 24 Feb 2020 15:58:30 -0800 (PST)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>
+Subject: [RFC][PATCH] checkpatch: Properly warn if Change-Id comes after first Signed-off-by line
+Date:   Mon, 24 Feb 2020 23:58:24 +0000
+Message-Id: <20200224235824.126361-1-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are still experiencing some packet loss with the existing advanced
-congestion buffering (ACB) settings with the IMP port configured for
-2Gb/sec, so revert to conservative link speeds that do not produce
-packet loss until this is resolved.
+Quite often, the Change-Id may be between Signed-off-by: lines or
+at the end of them. Unfortunately checkpatch won't catch these
+cases as it disables in_commit_log when it catches the first
+Signed-off-by line.
 
-Fixes: 8f1880cbe8d0 ("net: dsa: bcm_sf2: Configure IMP port for 2Gb/sec")
-Fixes: de34d7084edd ("net: dsa: bcm_sf2: Only 7278 supports 2Gb/sec IMP port")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+This has bitten me many many times.
+
+I suspect this patch will break other use cases, so it probably
+shouldn't be merged, but I wanted to share it just to help
+illustrate the problem.
+
+Cc: Andy Whitcroft <apw@canonical.com>
+Cc: Joe Perches <joe@perches.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- drivers/net/dsa/bcm_sf2.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ scripts/checkpatch.pl | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index d1955543acd1..b0f5280a83cb 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -69,8 +69,7 @@ static void bcm_sf2_imp_setup(struct dsa_switch *ds, int port)
- 		/* Force link status for IMP port */
- 		reg = core_readl(priv, offset);
- 		reg |= (MII_SW_OR | LINK_STS);
--		if (priv->type == BCM7278_DEVICE_ID)
--			reg |= GMII_SPEED_UP_2G;
-+		reg &= ~GMII_SPEED_UP_2G;
- 		core_writel(priv, reg, offset);
- 
- 		/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index a63380c6b0d2..a55340a9e3ea 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2609,7 +2609,8 @@ sub process {
+ # Check the patch for a signoff:
+ 		if ($line =~ /^\s*signed-off-by:/i) {
+ 			$signoff++;
+-			$in_commit_log = 0;
++			#Disabling in_commit_log here breaks Change-Id checking in some cases
++			#$in_commit_log = 0;
+ 			if ($author ne '') {
+ 				my $l = $line;
+ 				$l =~ s/"//g;
 -- 
 2.17.1
 
