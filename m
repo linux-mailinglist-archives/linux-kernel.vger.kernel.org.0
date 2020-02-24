@@ -2,329 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 074E716AB13
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:14:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3182916AB18
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:14:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbgBXQNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:13:38 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:52634 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727489AbgBXQNh (ORCPT
+        id S1728054AbgBXQNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:13:51 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52752 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727673AbgBXQNv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:13:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1582560811; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HwWywXWtl0lHU0hr4om7dgYTxZAMZAHHLQqSA06y8PA=;
-        b=dMcwB4GEZfo+CJwU8C8yCM0YsSPkZyVEQtQdsM4q2wsELCEh/aQNBhlvs5jMUbYy8fO4ey
-        N1xjYV4mrJuoiMMg0rh8440JwSY3x8+Cj9ktrfVzM13UnpGruI6vVVajoWlnU+9bPXiE3D
-        //SycfvUDTEHB8t2i9Ig6hUW4BueL+U=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     od@zcrc.me, linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 2/2] usb: phy: Add driver for the Ingenic JZ4770 USB transceiver
-Date:   Mon, 24 Feb 2020 13:13:16 -0300
-Message-Id: <20200224161316.15070-2-paul@crapouillou.net>
-In-Reply-To: <20200224161316.15070-1-paul@crapouillou.net>
-References: <20200224161316.15070-1-paul@crapouillou.net>
+        Mon, 24 Feb 2020 11:13:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=NO21zwFdqpu/weoM9tn/iJhZEF/u/8RdieTUDh+pJxo=; b=Pm/f1X/m6b8y5upqQPbSQMJWE1
+        PH5lKwn+gLwpf7qDd+/YsKWxLUBHtzqU0NDw7ut9NV+4G/oc+WLV7d0kpFLlTkKcs+BgU/yizDbG+
+        z4avraDnM/9k8G4eAmF9rSHSfntNK6Tc9l/FR17NUepU0ou5AjsPii3BMWPDE77rYYSRMk2Pb+RPr
+        kaJuWRrgnNgqTf7M/hGoHdoTx3PGx7aSBkntAneF6Qik9bs9oF6NQYFrC6DItYlmW6Z5scrvvlfI+
+        DoFyWvns4YCGl2daOlK4BJNguiQH5iV+rRqYUiDQmUTvI81bh3BndSrMW5F3Wdfw2pxZL/jPpNskM
+        rQJtGR+w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6GME-0002cN-3Q; Mon, 24 Feb 2020 16:13:22 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 611A930605A;
+        Mon, 24 Feb 2020 17:11:24 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CA8522B9A66D8; Mon, 24 Feb 2020 17:13:18 +0100 (CET)
+Date:   Mon, 24 Feb 2020 17:13:18 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        rostedt@goodmis.org, mingo@kernel.org, joel@joelfernandes.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        luto@kernel.org, tony.luck@intel.com, dan.carpenter@oracle.com,
+        mhiramat@kernel.org, Will Deacon <will@kernel.org>,
+        Petr Mladek <pmladek@suse.com>, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v4 02/27] hardirq/nmi: Allow nested nmi_enter()
+Message-ID: <20200224161318.GG14897@hirez.programming.kicks-ass.net>
+References: <20200221133416.777099322@infradead.org>
+ <20200221134215.149193474@infradead.org>
+ <20200221222129.GB28251@lenoir>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221222129.GB28251@lenoir>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver to support the USB PHY found in the JZ4770 SoC from
-Ingenic.
+On Fri, Feb 21, 2020 at 11:21:30PM +0100, Frederic Weisbecker wrote:
+> On Fri, Feb 21, 2020 at 02:34:18PM +0100, Peter Zijlstra wrote:
+> > Since there are already a number of sites (ARM64, PowerPC) that
+> > effectively nest nmi_enter(), lets make the primitive support this
+> > before adding even more.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Reviewed-by: Petr Mladek <pmladek@suse.com>
+> > Acked-by: Will Deacon <will@kernel.org>
+> > Acked-by: Marc Zyngier <maz@kernel.org>
+> > ---
+> >  arch/arm64/include/asm/hardirq.h |    4 ++--
+> >  arch/arm64/kernel/sdei.c         |   14 ++------------
+> >  arch/arm64/kernel/traps.c        |    8 ++------
+> >  arch/powerpc/kernel/traps.c      |   22 ++++++----------------
+> >  include/linux/hardirq.h          |    5 ++++-
+> >  include/linux/preempt.h          |    4 ++--
+> >  kernel/printk/printk_safe.c      |    6 ++++--
+> >  7 files changed, 22 insertions(+), 41 deletions(-)
+> > 
+> > --- a/kernel/printk/printk_safe.c
+> > +++ b/kernel/printk/printk_safe.c
+> > @@ -296,12 +296,14 @@ static __printf(1, 0) int vprintk_nmi(co
+> >  
+> >  void notrace printk_nmi_enter(void)
+> >  {
+> > -	this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
+> > +	if (!in_nmi())
+> > +		this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
+> >  }
+> >  
+> >  void notrace printk_nmi_exit(void)
+> >  {
+> > -	this_cpu_and(printk_context, ~PRINTK_NMI_CONTEXT_MASK);
+> > +	if (!in_nmi())
+> > +		this_cpu_and(printk_context, ~PRINTK_NMI_CONTEXT_MASK);
+> >  }
+> 
+> If the outermost NMI is interrupted while between printk_nmi_enter()
+> and preempt_count_add(), there is still a risk that we race and clear?
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Damn, true. That also means I need to fix the arm64 bits, and that's a
+little more tricky.
+
+Something like so perhaps.. hmm?
+
 ---
- drivers/usb/phy/Kconfig      |   8 ++
- drivers/usb/phy/Makefile     |   1 +
- drivers/usb/phy/phy-jz4770.c | 242 +++++++++++++++++++++++++++++++++++
- 3 files changed, 251 insertions(+)
- create mode 100644 drivers/usb/phy/phy-jz4770.c
-
-diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
-index ff24fca0a2d9..4b3fa78995cf 100644
---- a/drivers/usb/phy/Kconfig
-+++ b/drivers/usb/phy/Kconfig
-@@ -184,4 +184,12 @@ config USB_ULPI_VIEWPORT
- 	  Provides read/write operations to the ULPI phy register set for
- 	  controllers with a viewport register (e.g. Chipidea/ARC controllers).
+--- a/arch/arm64/include/asm/hardirq.h
++++ b/arch/arm64/include/asm/hardirq.h
+@@ -32,30 +32,52 @@ u64 smp_irq_stat_cpu(unsigned int cpu);
  
-+config JZ4770_PHY
-+	tristate "Ingenic JZ4770 Transceiver Driver"
-+	depends on MIPS || COMPILE_TEST
-+	select USB_PHY
-+	help
-+	  This driver provides PHY support for the USB controller found
-+	  on the JZ4770 SoC from Ingenic.
-+
- endmenu
-diff --git a/drivers/usb/phy/Makefile b/drivers/usb/phy/Makefile
-index df1d99010079..b352bdbe8712 100644
---- a/drivers/usb/phy/Makefile
-+++ b/drivers/usb/phy/Makefile
-@@ -24,3 +24,4 @@ obj-$(CONFIG_USB_MXS_PHY)		+= phy-mxs-usb.o
- obj-$(CONFIG_USB_ULPI)			+= phy-ulpi.o
- obj-$(CONFIG_USB_ULPI_VIEWPORT)		+= phy-ulpi-viewport.o
- obj-$(CONFIG_KEYSTONE_USB_PHY)		+= phy-keystone.o
-+obj-$(CONFIG_JZ4770_PHY)		+= phy-jz4770.o
-diff --git a/drivers/usb/phy/phy-jz4770.c b/drivers/usb/phy/phy-jz4770.c
-new file mode 100644
-index 000000000000..afc1b42f655a
---- /dev/null
-+++ b/drivers/usb/phy/phy-jz4770.c
-@@ -0,0 +1,242 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Ingenic JZ4770 USB PHY driver
-+ * Copyright (c) Paul Cercueil <paul@crapouillou.net>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/usb/otg.h>
-+#include <linux/usb/phy.h>
-+
-+#define REG_USBPCR_OFFSET	0x00
-+#define REG_USBRDT_OFFSET	0x04
-+#define REG_USBVBFIL_OFFSET	0x08
-+#define REG_USBPCR1_OFFSET	0x0c
-+
-+/* USBPCR */
-+#define USBPCR_USB_MODE		BIT(31)
-+#define USBPCR_AVLD_REG		BIT(30)
-+#define USBPCR_INCRM		BIT(27)
-+#define USBPCR_CLK12_EN		BIT(26)
-+#define USBPCR_COMMONONN	BIT(25)
-+#define USBPCR_VBUSVLDEXT	BIT(24)
-+#define USBPCR_VBUSVLDEXTSEL	BIT(23)
-+#define USBPCR_POR		BIT(22)
-+#define USBPCR_SIDDQ		BIT(21)
-+#define USBPCR_OTG_DISABLE	BIT(20)
-+#define USBPCR_TXPREEMPHTUNE	BIT(6)
-+
-+#define USBPCR_IDPULLUP_LSB	28
-+#define USBPCR_IDPULLUP_MASK	GENMASK(29, USBPCR_IDPULLUP_LSB)
-+#define USBPCR_IDPULLUP_ALWAYS	(3 << USBPCR_IDPULLUP_LSB)
-+#define USBPCR_IDPULLUP_SUSPEND	(1 << USBPCR_IDPULLUP_LSB)
-+#define USBPCR_IDPULLUP_OTG	(0 << USBPCR_IDPULLUP_LSB)
-+
-+#define USBPCR_COMPDISTUNE_LSB	17
-+#define USBPCR_COMPDISTUNE_MASK	GENMASK(19, USBPCR_COMPDISTUNE_LSB)
-+#define USBPCR_COMPDISTUNE_DFT	4
-+
-+#define USBPCR_OTGTUNE_LSB	14
-+#define USBPCR_OTGTUNE_MASK	GENMASK(16, USBPCR_OTGTUNE_LSB)
-+#define USBPCR_OTGTUNE_DFT	4
-+
-+#define USBPCR_SQRXTUNE_LSB	11
-+#define USBPCR_SQRXTUNE_MASK	GENMASK(13, USBPCR_SQRXTUNE_LSB)
-+#define USBPCR_SQRXTUNE_DFT	3
-+
-+#define USBPCR_TXFSLSTUNE_LSB	7
-+#define USBPCR_TXFSLSTUNE_MASK	GENMASK(10, USBPCR_TXFSLSTUNE_LSB)
-+#define USBPCR_TXFSLSTUNE_DFT	3
-+
-+#define USBPCR_TXRISETUNE_LSB	4
-+#define USBPCR_TXRISETUNE_MASK	GENMASK(5, USBPCR_TXRISETUNE_LSB)
-+#define USBPCR_TXRISETUNE_DFT	3
-+
-+#define USBPCR_TXVREFTUNE_LSB	0
-+#define USBPCR_TXVREFTUNE_MASK	GENMASK(3, USBPCR_TXVREFTUNE_LSB)
-+#define USBPCR_TXVREFTUNE_DFT	5
-+
-+/* USBRDT */
-+#define USBRDT_VBFIL_LD_EN	BIT(25)
-+#define USBRDT_IDDIG_EN		BIT(24)
-+#define USBRDT_IDDIG_REG	BIT(23)
-+
-+#define USBRDT_USBRDT_LSB	0
-+#define USBRDT_USBRDT_MASK	GENMASK(22, USBRDT_USBRDT_LSB)
-+
-+/* USBPCR1 */
-+#define USBPCR1_UHC_POWON	BIT(5)
-+
-+struct jz4770_phy {
-+	struct usb_phy phy;
-+	struct usb_otg otg;
-+	struct device *dev;
-+	void __iomem *base;
-+	struct clk *clk;
-+	struct regulator *vcc_supply;
-+};
-+
-+static inline struct jz4770_phy *otg_to_jz4770_phy(struct usb_otg *otg)
-+{
-+	return container_of(otg, struct jz4770_phy, otg);
-+}
-+
-+static inline struct jz4770_phy *phy_to_jz4770_phy(struct usb_phy *phy)
-+{
-+	return container_of(phy, struct jz4770_phy, phy);
-+}
-+
-+static int jz4770_phy_set_peripheral(struct usb_otg *otg,
-+				     struct usb_gadget *gadget)
-+{
-+	struct jz4770_phy *priv = otg_to_jz4770_phy(otg);
-+	u32 reg;
-+
-+	reg = readl(priv->base + REG_USBPCR_OFFSET);
-+	reg &= ~USBPCR_USB_MODE;
-+	reg |= USBPCR_VBUSVLDEXT | USBPCR_VBUSVLDEXTSEL | USBPCR_OTG_DISABLE;
-+	writel(reg, priv->base + REG_USBPCR_OFFSET);
-+
-+	return 0;
-+}
-+
-+static int jz4770_phy_set_host(struct usb_otg *otg, struct usb_bus *host)
-+{
-+	struct jz4770_phy *priv = otg_to_jz4770_phy(otg);
-+	u32 reg;
-+
-+	reg = readl(priv->base + REG_USBPCR_OFFSET);
-+	reg &= ~(USBPCR_VBUSVLDEXT | USBPCR_VBUSVLDEXTSEL | USBPCR_OTG_DISABLE);
-+	reg |= USBPCR_USB_MODE;
-+	writel(reg, priv->base + REG_USBPCR_OFFSET);
-+
-+	return 0;
-+}
-+
-+static int jz4770_phy_init(struct usb_phy *phy)
-+{
-+	struct jz4770_phy *priv = phy_to_jz4770_phy(phy);
-+	int err;
-+	u32 reg;
-+
-+	err = regulator_enable(priv->vcc_supply);
-+	if (err) {
-+		dev_err(priv->dev, "Unable to enable VCC: %d", err);
-+		return err;
-+	}
-+
-+	err = clk_prepare_enable(priv->clk);
-+	if (err) {
-+		dev_err(priv->dev, "Unable to start clock: %d", err);
-+		return err;
-+	}
-+
-+	reg = USBPCR_AVLD_REG | USBPCR_COMMONONN | USBPCR_IDPULLUP_ALWAYS |
-+		(USBPCR_COMPDISTUNE_DFT << USBPCR_COMPDISTUNE_LSB) |
-+		(USBPCR_OTGTUNE_DFT << USBPCR_OTGTUNE_LSB) |
-+		(USBPCR_SQRXTUNE_DFT << USBPCR_SQRXTUNE_LSB) |
-+		(USBPCR_TXFSLSTUNE_DFT << USBPCR_TXFSLSTUNE_LSB) |
-+		(USBPCR_TXRISETUNE_DFT << USBPCR_TXRISETUNE_LSB) |
-+		(USBPCR_TXVREFTUNE_DFT << USBPCR_TXVREFTUNE_LSB) |
-+		USBPCR_POR;
-+	writel(reg, priv->base + REG_USBPCR_OFFSET);
-+
-+	/* Wait for PHY to reset */
-+	usleep_range(30, 300);
-+	writel(reg & ~USBPCR_POR, priv->base + REG_USBPCR_OFFSET);
-+	usleep_range(300, 1000);
-+
-+	return 0;
-+}
-+
-+static void jz4770_phy_shutdown(struct usb_phy *phy)
-+{
-+	struct jz4770_phy *priv = phy_to_jz4770_phy(phy);
-+
-+	clk_disable_unprepare(priv->clk);
-+	regulator_disable(priv->vcc_supply);
-+}
-+
-+static void jz4770_phy_remove(void *phy)
-+{
-+	usb_remove_phy(phy);
-+}
-+
-+static int jz4770_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct jz4770_phy *priv;
-+	int err;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, priv);
-+	priv->dev = dev;
-+	priv->phy.dev = dev;
-+	priv->phy.otg = &priv->otg;
-+	priv->phy.label = "jz4770-phy";
-+	priv->phy.init = jz4770_phy_init;
-+	priv->phy.shutdown = jz4770_phy_shutdown;
-+
-+	priv->otg.state = OTG_STATE_UNDEFINED;
-+	priv->otg.usb_phy = &priv->phy;
-+	priv->otg.set_host = jz4770_phy_set_host;
-+	priv->otg.set_peripheral = jz4770_phy_set_peripheral;
-+
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base)) {
-+		dev_err(dev, "Failed to map registers");
-+		return PTR_ERR(priv->base);
-+	}
-+
-+	priv->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(priv->clk)) {
-+		err = PTR_ERR(priv->clk);
-+		if (err != -EPROBE_DEFER)
-+			dev_err(dev, "Failed to get clock");
-+		return err;
-+	}
-+
-+	priv->vcc_supply = devm_regulator_get(dev, "vcc");
-+	if (IS_ERR(priv->vcc_supply)) {
-+		err = PTR_ERR(priv->vcc_supply);
-+		if (err != -EPROBE_DEFER)
-+			dev_err(dev, "failed to get regulator");
-+		return err;
-+	}
-+
-+	err = usb_add_phy(&priv->phy, USB_PHY_TYPE_USB2);
-+	if (err) {
-+		if (err != -EPROBE_DEFER)
-+			dev_err(dev, "Unable to register PHY");
-+		return err;
-+	}
-+
-+	return devm_add_action_or_reset(dev, jz4770_phy_remove, &priv->phy);
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id jz4770_phy_of_matches[] = {
-+	{ .compatible = "ingenic,jz4770-phy" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, jz4770_phy_of_matches);
-+#endif
-+
-+static struct platform_driver jz4770_phy_driver = {
-+	.probe		= jz4770_phy_probe,
-+	.driver		= {
-+		.name	= "jz4770-phy",
-+		.of_match_table = of_match_ptr(jz4770_phy_of_matches),
-+	},
-+};
-+module_platform_driver(jz4770_phy_driver);
-+
-+MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
-+MODULE_DESCRIPTION("Ingenic JZ4770 USB PHY driver");
-+MODULE_LICENSE("GPL");
--- 
-2.25.0
-
+ struct nmi_ctx {
+ 	u64 hcr;
++	unsigned int cnt;
+ };
+ 
+ DECLARE_PER_CPU(struct nmi_ctx, nmi_contexts);
+ 
+-#define arch_nmi_enter()							\
+-	do {									\
+-		if (is_kernel_in_hyp_mode() && !in_nmi()) {			\
+-			struct nmi_ctx *nmi_ctx = this_cpu_ptr(&nmi_contexts);	\
+-			nmi_ctx->hcr = read_sysreg(hcr_el2);			\
+-			if (!(nmi_ctx->hcr & HCR_TGE)) {			\
+-				write_sysreg(nmi_ctx->hcr | HCR_TGE, hcr_el2);	\
+-				isb();						\
+-			}							\
+-		}								\
+-	} while (0)
++#define arch_nmi_enter()						\
++do {									\
++	struct nmi_ctx *___ctx;						\
++	unsigned int ___cnt;						\
++									\
++	if (!is_kernel_in_hyp_mode() || in_nmi())			\
++		break;							\
++									\
++	___ctx = this_cpu_ptr(&nmi_contexts);				\
++	___cnt = ___ctx->cnt;						\
++	if (!(___cnt & 1) && __cnt) {					\
++		___ctx->cnt += 2;					\
++		break;							\
++	}								\
++									\
++	___ctx->cnt |= 1;						\
++	barrier();							\
++	nmi_ctx->hcr = read_sysreg(hcr_el2);				\
++	if (!(nmi_ctx->hcr & HCR_TGE)) {				\
++		write_sysreg(nmi_ctx->hcr | HCR_TGE, hcr_el2);		\
++		isb();							\
++	}								\
++	barrier();							\
++	if (!(___cnt & 1))						\
++		___ctx->cnt++;						\
++} while (0)
+ 
+-#define arch_nmi_exit()								\
+-	do {									\
+-		if (is_kernel_in_hyp_mode() && !in_nmi()) {			\
+-			struct nmi_ctx *nmi_ctx = this_cpu_ptr(&nmi_contexts);	\
+-			if (!(nmi_ctx->hcr & HCR_TGE))				\
+-				write_sysreg(nmi_ctx->hcr, hcr_el2);		\
+-		}								\
+-	} while (0)
++#define arch_nmi_exit()							\
++do {									\
++	struct nmi_ctx *___ctx;						\
++									\
++	if (!is_kernel_in_hyp_mode() || in_nmi())			\
++		break;							\
++									\
++	___ctx = this_cpu_ptr(&nmi_contexts);				\
++	if ((___ctx->cnt & 1) || (___ctx->cnt -= 2))			\
++		break;							\
++									\
++	if (!(nmi_ctx->hcr & HCR_TGE))					\
++		write_sysreg(nmi_ctx->hcr, hcr_el2);			\
++} while (0)
+ 
+ static inline void ack_bad_irq(unsigned int irq)
+ {
