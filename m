@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F2C16A124
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:10:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 874BF16A158
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:12:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbgBXJKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 04:10:21 -0500
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:56525 "EHLO
+        id S1728328AbgBXJM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 04:12:27 -0500
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:38139 "EHLO
         wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728138AbgBXJKO (ORCPT
+        by vger.kernel.org with ESMTP id S1728148AbgBXJKQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 04:10:14 -0500
+        Mon, 24 Feb 2020 04:10:16 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id 76055616;
-        Mon, 24 Feb 2020 04:10:13 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 24 Feb 2020 04:10:14 -0500
+        by mailnew.west.internal (Postfix) with ESMTP id EB85063D;
+        Mon, 24 Feb 2020 04:10:14 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 24 Feb 2020 04:10:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=SJtIc/FI3m39G
-        lx6PQQ37P9dal41lxfK3JGC+OKfen8=; b=V5YZdFPQTsAsGibsBfMei1a4MGDCc
-        5+G9OvcCkgia/tfLtIvwu7D8maB2yr/R4rM3/4UKkRVZOa0c4mU/Sev0z2QonS5F
-        xlf2asE0dG1jrvXpafu+wWaGt3TRRsM8+ze7JZnxOWf0salQs3FcgAdnb8Zly4CH
-        dUlM/iHEqAiAvxanbpJ7JtpDkJk715RA/yaQoYiGKyINPq7StjRTrnf1RrYSnVeE
-        ADn0dEp8u4dESTixhwC7p38K+u/QXinkbeSe75RUlmc+suRKXIJZCsDJkSAbqcL5
-        FnZiNTKR+kaivbBtcNDPABN81cqLD3Pg/triK4IGx+lNeOEWYWsZjoZPg==
+        :mime-version:content-transfer-encoding; s=fm2; bh=/HqohafekctYs
+        ueNYIyWADwS7ESNsNdoU7kv2sDLpQo=; b=pvpq2n60UGf4X+eFGCIt/2VXcc/in
+        uQzJPBTxVii1lVzHbVsyvpuP2t1h2UZYIb+MXv7dfNN8XNfstibVzypy7bj2Be0K
+        0L1nbW88TdBUw2GFRqYCPozPAEVlbugMdvTDXIvshn2hEn4PR2owUgNhKyIiGN5r
+        JGb3eNedCN/PdV1rfV4CS5o8lDEX6cdZOA38dGyepuX4pLCJcEMs/xX4kmauKYRN
+        RvMaYSD7zbR4+mBH6ab9MCUhhyJy1j7iaMyBB/KhAxtfwoH55AX5ZUJUvQR+7b94
+        bgO8m0YAVHsTS/U3tK+0tnVi+I+t5/RoQ2/xgpVUMX4k4CXQlptFtrAVA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=SJtIc/FI3m39Glx6PQQ37P9dal41lxfK3JGC+OKfen8=; b=injtkpYU
-        F1OYfj5+JSxYt9xG6FwnJv53yzevcPra6Vczb/YDAtO6I9t2een0RCCOv3DcItTj
-        U1q/7n32H5cNaXH324qSJRWATo9mPAt6Iwqf0YNXdlDi/UIvaqSclwzTDcKHKQbi
-        Ba87M06y/1YesXOSMSHxKhMiQ2Kd3CkEX2ny8kgSRc874uOEK+r/GS8foq5nFzfC
-        /i9/liNY7NTQiuAaSdeMWDUAmjLjMfSf28yO0ubfGYexNq5ebzeoHarvn7s1Hth6
-        78eP/k/VkBvjrd+5rsywvFS8x3iWb0ZJTqncnlWO2PnvACMSBL6qKOsPHYX3oP1f
-        v0WqjjlJxq4LeQ==
-X-ME-Sender: <xms:9ZJTXl89-xxwSyWDyS1-6BT0KH9PyJHKGOPZsRmqYpdo9rpTT0erkg>
+        fm2; bh=/HqohafekctYsueNYIyWADwS7ESNsNdoU7kv2sDLpQo=; b=yZxC22rL
+        EMci14Nm05ggtARzA9rU83oKRSc5Zl585o7m2dZAYZhyO3RfGAtxdt4zxoojni8w
+        l1b7ZwqRRDXxqHAriHm6bfodBA9nuAEeV0aBZT8VWOa8Ip6yM1Hs4h0T164MUfWp
+        d540vpSEzfWJlaqHYY7VWwvBB6L0agUQ7J7c7T2B/1zUz34s2nUGLkm7p/Kbz+Gl
+        65OsW9zXQ4ajLoOWAiXFW4JH68/Jq1ZF6D31wZhIfXMGmcwVreSkHrbBVVKnZ2/s
+        HPeNsFYZjSZGsGbIm9BPtdswJnNGubQcaibw3d0juswOQK8YEjYPzo6c5veWblTg
+        3AApcviCxLp7og==
+X-ME-Sender: <xms:9pJTXrwGr7g2eqIARQfwcccnahb1kZVaEcvlUna49LLAaMaHXpHQwA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrledtucetufdoteggodetrfdotffvucfrrh
     hofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgenuceurghi
     lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
@@ -45,13 +45,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrledtucetufdoteggodetrfdotf
     phgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltddrkeelrd
     eikedrjeeinecuvehluhhsthgvrhfuihiivgephedvnecurfgrrhgrmhepmhgrihhlfhhr
     ohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:9ZJTXpn6kiY5jktwCY2Q8n5OOlD3Hdfyxyck01svoDpgUu3s54mclA>
-    <xmx:9ZJTXgUwnoNTtwC5Yo0MrmhCI_XDrLWFqeCJAdTH7ILN0AA5jQn6jg>
-    <xmx:9ZJTXlqny6vI7JdLHiPNF-b_QHPijEOy__OR_ONTsLF7Im_WSUE7WA>
-    <xmx:9ZJTXtKgsua7QUrdHocCmpS9t9vtMfh3M-22us3LSFFIlz1XvzL3znSsriI>
+X-ME-Proxy: <xmx:9pJTXmXHV1BOGwG5xrVVMWCVEoE42m_R-0N_5Q58ZKUGu0lcyzf-2w>
+    <xmx:9pJTXv97vtXsaMU5pITI1ZTwpds3buEu_VQq0qth5b3iljbkry4Jsg>
+    <xmx:9pJTXhtdmG-omkQfWmHZ_fnkgZ227PIky5DzV_SV4zfZwNFOyPHPBw>
+    <xmx:9pJTXqggLtWmhBICgx3_WOosJU5CevJe16gHtMqf2DnOatNsjVirN2GSqys>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B81F3328005A;
-        Mon, 24 Feb 2020 04:10:12 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 34CF83060BD1;
+        Mon, 24 Feb 2020 04:10:14 -0500 (EST)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Eric Anholt <eric@anholt.net>
@@ -62,10 +62,11 @@ Cc:     dri-devel@lists.freedesktop.org,
         Dave Stevenson <dave.stevenson@raspberrypi.com>,
         Tim Gover <tim.gover@raspberrypi.com>,
         Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH 58/89] drm/vc4: crtc: Disable color management for HVS5
-Date:   Mon, 24 Feb 2020 10:07:00 +0100
-Message-Id: <3310bccae61f92c54934274cb595d0c91e60d943.1582533919.git-series.maxime@cerno.tech>
+        Maxime Ripard <maxime@cerno.tech>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH 59/89] dt-bindings: display: vc4: pv: Add BCM2711 pixel valves
+Date:   Mon, 24 Feb 2020 10:07:01 +0100
+Message-Id: <4a3c6e3cad10eeff93fafbc512c35b0c69dd1c68.1582533919.git-series.maxime@cerno.tech>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
 References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
@@ -76,56 +77,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HVS5 uses different color matrices. Disable color management support
-for now.
+The BCM2711 comes with other pixelvalves that have different requirements
+and capabilities. Let's document their compatible.
 
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/gpu/drm/vc4/vc4_crtc.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_crtc.c b/drivers/gpu/drm/vc4/vc4_crtc.c
-index 67d9beb2cff0..b10b267f56fe 100644
---- a/drivers/gpu/drm/vc4/vc4_crtc.c
-+++ b/drivers/gpu/drm/vc4/vc4_crtc.c
-@@ -441,7 +441,7 @@ static void vc4_crtc_mode_set_nofb(struct drm_crtc *crtc)
+diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml
+index e60791db1fa1..4e1ba03f6477 100644
+--- a/Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml
++++ b/Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml
+@@ -15,6 +15,11 @@ properties:
+       - brcm,bcm2835-pixelvalve0
+       - brcm,bcm2835-pixelvalve1
+       - brcm,bcm2835-pixelvalve2
++      - brcm,bcm2711-pixelvalve0
++      - brcm,bcm2711-pixelvalve1
++      - brcm,bcm2711-pixelvalve2
++      - brcm,bcm2711-pixelvalve3
++      - brcm,bcm2711-pixelvalve4
  
- 	HVS_WRITE(SCALER_DISPBKGNDX(vc4_state->assigned_channel),
- 		  SCALER_DISPBKGND_AUTOHS |
--		  SCALER_DISPBKGND_GAMMA |
-+		  ((!vc4->hvs->hvs5) ? SCALER_DISPBKGND_GAMMA : 0) |
- 		  (interlace ? SCALER_DISPBKGND_INTERLACE : 0));
- 
- 	/* Reload the LUT, since the SRAMs would have been disabled if
-@@ -1155,6 +1155,7 @@ static int vc4_crtc_bind(struct device *dev, struct device *master, void *data)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct drm_device *drm = dev_get_drvdata(master);
-+	struct vc4_dev *vc4 = to_vc4_dev(drm);
- 	struct vc4_crtc *vc4_crtc;
- 	struct drm_crtc *crtc;
- 	struct drm_plane *primary_plane, *destroy_plane, *temp;
-@@ -1196,12 +1197,16 @@ static int vc4_crtc_bind(struct device *dev, struct device *master, void *data)
- 	drm_crtc_init_with_planes(drm, crtc, primary_plane, NULL,
- 				  &vc4_crtc_funcs, NULL);
- 	drm_crtc_helper_add(crtc, &vc4_crtc_helper_funcs);
--	drm_mode_crtc_set_gamma_size(crtc, ARRAY_SIZE(vc4_crtc->lut_r));
- 
--	/* We support CTM, but only for one CRTC at a time. It's therefore
--	 * implemented as private driver state in vc4_kms, not here.
--	 */
--	drm_crtc_enable_color_mgmt(crtc, 0, true, crtc->gamma_size);
-+	if (!vc4->hvs->hvs5) {
-+		drm_mode_crtc_set_gamma_size(crtc, ARRAY_SIZE(vc4_crtc->lut_r));
-+
-+		/* We support CTM, but only for one CRTC at a
-+		 * time. It's therefore implemented as private driver
-+		 * state in vc4_kms, not here.
-+		 */
-+		drm_crtc_enable_color_mgmt(crtc, 0, true, crtc->gamma_size);
-+	}
- 
- 	CRTC_WRITE(PV_INTEN, 0);
- 	CRTC_WRITE(PV_INTSTAT, PV_INT_VFP_START);
+   reg:
+     maxItems: 1
 -- 
 git-series 0.9.1
