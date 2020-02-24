@@ -2,90 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF51116A331
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:54:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4039416A336
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:55:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbgBXJyq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Feb 2020 04:54:46 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:32870 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbgBXJyp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 04:54:45 -0500
-Received: by mail-ot1-f65.google.com with SMTP id w6so8182695otk.0;
-        Mon, 24 Feb 2020 01:54:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gc6ixcj3vcw3nu96Ty+gdGEq2138xYv/wwhs4XUu2JA=;
-        b=tmAb1VYcMDhWJ0yTxSndDi4CVoc1mbrUMwol37RDmTWtqSN2ivlBNBSjkskjnt7l3L
-         Bv5hvvDgkmw10ftcd83CADKWctU/mHCnp7Gfdwf69k7MyeNQc5/Lj97PtMSwHXmgFyGv
-         A/6Bp42/Q0od1NYRYl2GwIStuAsyngKtEq2cN2eKrd/GiqiWlbkz9pAdM1pgQIvTdzPD
-         g5pPplwVn2b3HovZMm1GO+Lq8J8Vp+Q+u6MKILNOzSAvnhgxNBpTh+PFppS9FZ9bZUf0
-         NYEqB4d5dPzU73M5e9yTiZARBF/ZX/rtV39erW1XSpNm5PSc81txEEU6Sf9rfXES4Lkq
-         gBmQ==
-X-Gm-Message-State: APjAAAVJ2SuHxQGvv+6F5Vf/8R1O4rTZlD+l+uzjCfHojmZBXevO7/th
-        4Fewyxn/lhq6/ROK8LEW18+TJcLXwAUXRx50VV7aIgaj
-X-Google-Smtp-Source: APXvYqwA/mVepV1pQKvgqqZxKBhmxkxDpD3Midirk8+nN9iSD2FCRjNLiUIZZcvJ8NGUXV4sWFOoHCwmaSvVBvDl5ag=
-X-Received: by 2002:a05:6830:1651:: with SMTP id h17mr37281264otr.167.1582538084570;
- Mon, 24 Feb 2020 01:54:44 -0800 (PST)
+        id S1727789AbgBXJzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 04:55:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38056 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726765AbgBXJzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 04:55:05 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 8D88EAC0C;
+        Mon, 24 Feb 2020 09:55:02 +0000 (UTC)
+Date:   Mon, 24 Feb 2020 10:55:01 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] vsprintf: sanely handle NULL passed to %pe
+Message-ID: <20200224095501.ds7pbjwj2izmcvus@pathway.suse.cz>
+References: <CAOi1vP-4=QCSZ2A89g1po2p=6n_g09SXUCa0_r2SBJm2greRmw@mail.gmail.com>
+ <0fef2a1f-9391-43a9-32d5-2788ae96c529@rasmusvillemoes.dk>
+ <20200219134826.qqdhy2z67ubsnr2m@pathway.suse.cz>
+ <5459eb50-48e2-2fd9-3560-0bc921e3678c@rasmusvillemoes.dk>
+ <20200219144558.2jbawr52qb63vysq@pathway.suse.cz>
+ <bcfb2f94-e7a8-0860-86e3-9fc866d98742@rasmusvillemoes.dk>
+ <20200220125707.hbcox3xgevpezq4l@pathway.suse.cz>
+ <CAOi1vP8E_DL7y=STP5-vbe_Wf5PZRiXWGTNV3rN96i4N2R3zUQ@mail.gmail.com>
+ <20200221130506.mly26uycxpdjl6oz@pathway.suse.cz>
+ <cec0c65b-5b5d-6268-dae0-1d4088baab76@rasmusvillemoes.dk>
 MIME-Version: 1.0
-References: <CAJZ5v0iSEV9S=zTa9++vUCO6GTfBE2sxNY+b4mMMt4Y6RCRvjA@mail.gmail.com>
- <62491094-D13B-4EED-8190-4AA4EB77036B@lca.pw>
-In-Reply-To: <62491094-D13B-4EED-8190-4AA4EB77036B@lca.pw>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 24 Feb 2020 10:54:33 +0100
-Message-ID: <CAJZ5v0jXZOd0yfnwcP1NrfrXnALx=5E1nmK8DHk8bJ0SLUYzAQ@mail.gmail.com>
-Subject: Re: [PATCH -next] power/qos: fix a data race in pm_qos_*_value
-To:     Qian Cai <cai@lca.pw>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, elver@google.com,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cec0c65b-5b5d-6268-dae0-1d4088baab76@rasmusvillemoes.dk>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 2:01 AM Qian Cai <cai@lca.pw> wrote:
->
->
->
-> > On Feb 23, 2020, at 7:12 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > It may be a bug under certain conditions, but you don't mention what
-> > conditions they are.  Reporting it as a general bug is not accurate at
-> > the very least.
->
-> Could we rule out load tearing, store tearing and reload of global_req in cpuidle_governor_latency() for all compilers and architectures which could introduce logic bugs?
->
->         int global_req = cpu_latency_qos_limit();
->
->         if (device_req > global_req)
->                 device_req = global_req;
->
-> If under register pressure, the compiler might get ride of the tmp variable, i.e.,
->
-> If (device_req > cpu_latency_qos_limit())
-> —-> race with the writer.
->          device_req = cpu_latency_qos_limit();
+On Sat 2020-02-22 00:52:27, Rasmus Villemoes wrote:
+> On 21/02/2020 14.05, Petr Mladek wrote:
+> > On Thu 2020-02-20 16:02:48, Ilya Dryomov wrote:
+> 
+> >> I would like to see it in 5.6, so that it is backported to 5.4 and 5.5.
+> > 
+> Sorry to be that guy, but yes, I'm against changing the behavior of
+> vsnprintf() without at least some test(s) added to the test suite - the
+> lack of machine-checked documentation in the form of tests is what led
+> to that regression in the first place.
 
-Yes, there is a race here with or without the WRITE_ONCE()/READ_ONCE()
-annotations (note that these annotations don't prevent CPUs from
-reordering things, so device_req may be set before global_req
-regardless).
+I would not call this regression. It was intentional. The change in
+5.2 unified the behavior for the other %p? modifiers. I simply did
+not care about plain %p because it was already crippled by the hashing.
 
-However, worst-case it may cause an old value to be used and that can
-happen anyway if the entire cpuidle_governor_latency_req() runs
-between the curr_value update and pm_qos_set_value() in
-pm_qos_update_target(), for example.
+I am fine with the proposed change. But the more I think about it
+the less I want to rush it in for 5.6. The proposed patch changes
+the behavior again:
 
-IOW, there is no guarantee that the new value will be used immediately
-after updating a QoS request anyway.
+Value           Output v5.1       Output v5.2      Proposal
 
-I agree with adding the annotations (I was considering posting a patch
-doing that myself), but just as a matter of making the intention
-clear.
+NULL                       (null) 00000000<.hash.> 0000000000000000
+fffffffffffffffe 00000000<.hash.> 00000000<.hash.> fffffffffffffffe
+ffffffff12345678 00000000<.hash.> 00000000<.hash.> 00000000<.hash.>
+
+I do not want to change this in rc phase. I would really like to wait
+for 5.7.
+
+
+> But I agree that there's no point adding another helper function and
+> muddying the test suite even more (especially as the name error_pointer
+> is too close to the name errptr() I chose a few months back for the %pe).
+> 
+> So how about
+> 
+> - remove the now stale test_hashed("%p", NULL); from null_pointer()
+> - add tests of "%p", NULL and "%p", ERR_PTR(-123) to plain()
+> 
+> and we save testing the "%px" case for when we figure out a good name
+> for a helper for that (explicit_pointer? pointer_as_hex?)
+
+In this, case I would prefer to fix the tests properly first. There
+have been only few commits in lib/test_printf.c since 5.2. And they
+should not conflict with the changes proposed at
+https://lkml.kernel.org/r/20200220125707.hbcox3xgevpezq4l@pathway.suse.cz
+So it should be easy to backport as well.
+
+If you want, I could sent the cleanup patch properly for review.
+
+Best Regards,
+Petr
