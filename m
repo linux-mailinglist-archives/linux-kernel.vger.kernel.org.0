@@ -2,117 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA81416A916
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:02:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5517816A947
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:04:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbgBXPCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 10:02:53 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42658 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbgBXPCx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 10:02:53 -0500
-Received: by mail-pf1-f195.google.com with SMTP id 4so5484212pfz.9;
-        Mon, 24 Feb 2020 07:02:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=MqdixoOgTkid8+Igi0K+piNqZGtHwUC43IEz9dtWBa8=;
-        b=fd9uNPoGcCCgVSBzjhg4rXdj4rAxhm3G+GO/ouItobNPkHfo68yVIKeOwtHQ0Roajy
-         BNJ6Km3orPHsL8e+NK+DczL92xtGiefjqbbRr4ea89ydKoYZMsEbRBg/2nh0NfKIyIor
-         P/gdjg+/r+unTYDArz+0FrpRMT8cy57rMdvzUhNe3u3CKmYu/UKLHCR/9KxyOFhLgHbF
-         d3cqROD10UwMoJ2x+ZEVajnvuHbtRLNQvaeBbf7oEQAeLPtttn8M+JzmDGLautHcmi8O
-         C7owb9D/RpasV8Tj5P36XMMvRBy80G24H4K1pXwNhEWhIpSuKek7QNtfjD4t5pmNDyI0
-         HbHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MqdixoOgTkid8+Igi0K+piNqZGtHwUC43IEz9dtWBa8=;
-        b=a1kJ1lhMCs5ggwwUq/bcRHmqb1FTZcKu6Lk3ow/R00M75IieOiO2xDJShfvwO0BO/O
-         K/eSWM2qu9iWcofAXzM9lXv9t4p+BswiM0PFDZTz4qlq71qj8HopfZIntA/wHauwdH9n
-         QoH/0UoXPlFZpH2fJ0e/sET4ieVcr0QByi8zOHq6BnHFS0VBMxFyvS103xSNy0zTFrgV
-         vJHowKEuxQ/ZIHJhyzhhd1Vo44byBYIwH3ZnVTnn3dmB0iVYTWnk+3JEqqoIXYk3a70e
-         L/au2is2CqHSe54pVcg7K7wY4dv6K0GcTBTYGLlVSU2AxddzWk4hkgD+NFk/XAV9ONUy
-         6a0A==
-X-Gm-Message-State: APjAAAWUez6hU1a6yptgNLkRcVRP0qQ9gX4rYKkSDdui6sE1lr+ZWs0b
-        FFnEkJ2NHEmNvCnzR+teDvQ=
-X-Google-Smtp-Source: APXvYqw2gcWuwuGmlAm4ZLwrGxqdp8YUs0sgM7ic1srb0L85ZcGJXTSFSmFARvunvAtYXvey5HN3ow==
-X-Received: by 2002:aa7:9a96:: with SMTP id w22mr34718079pfi.210.1582556570917;
-        Mon, 24 Feb 2020 07:02:50 -0800 (PST)
-Received: from VM_0_35_centos.localdomain ([150.109.62.251])
-        by smtp.gmail.com with ESMTPSA id w2sm12888585pfw.43.2020.02.24.07.02.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Feb 2020 07:02:50 -0800 (PST)
-From:   Qiujun Huang <hqjagain@gmail.com>
-To:     tytso@mit.edu
-Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>
-Subject: [PATCH] ext4: fix a data race at inode->i_disksize
-Date:   Mon, 24 Feb 2020 23:02:46 +0800
-Message-Id: <1582556566-3909-1-git-send-email-hqjagain@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1728328AbgBXPEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 10:04:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36726 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727646AbgBXPEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 10:04:30 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 5690CB038;
+        Mon, 24 Feb 2020 15:04:28 +0000 (UTC)
+Subject: Re: [PATCH 1/2] mm,compaction,cma: add alloc_contig flag to
+ compact_control
+To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org,
+        riel@fb.com
+Cc:     kernel-team@fb.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        mhocko@kernel.org, mgorman@techsingularity.net,
+        rientjes@google.com, aarcange@redhat.com
+References: <cover.1582321645.git.riel@surriel.com>
+ <c21c46cb76de2d991fd23164489f763bb385c152.1582321645.git.riel@surriel.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ mQINBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABtCBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PokCVAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJcbbyGBQkH8VTqAAoJECJPp+fMgqZkpGoP
+ /1jhVihakxw1d67kFhPgjWrbzaeAYOJu7Oi79D8BL8Vr5dmNPygbpGpJaCHACWp+10KXj9yz
+ fWABs01KMHnZsAIUytVsQv35DMMDzgwVmnoEIRBhisMYOQlH2bBn/dqBjtnhs7zTL4xtqEcF
+ 1hoUFEByMOey7gm79utTk09hQE/Zo2x0Ikk98sSIKBETDCl4mkRVRlxPFl4O/w8dSaE4eczH
+ LrKezaFiZOv6S1MUKVKzHInonrCqCNbXAHIeZa3JcXCYj1wWAjOt9R3NqcWsBGjFbkgoKMGD
+ usiGabetmQjXNlVzyOYdAdrbpVRNVnaL91sB2j8LRD74snKsV0Wzwt90YHxDQ5z3M75YoIdl
+ byTKu3BUuqZxkQ/emEuxZ7aRJ1Zw7cKo/IVqjWaQ1SSBDbZ8FAUPpHJxLdGxPRN8Pfw8blKY
+ 8mvLJKoF6i9T6+EmlyzxqzOFhcc4X5ig5uQoOjTIq6zhLO+nqVZvUDd2Kz9LMOCYb516cwS/
+ Enpi0TcZ5ZobtLqEaL4rupjcJG418HFQ1qxC95u5FfNki+YTmu6ZLXy+1/9BDsPuZBOKYpUm
+ 3HWSnCS8J5Ny4SSwfYPH/JrtberWTcCP/8BHmoSpS/3oL3RxrZRRVnPHFzQC6L1oKvIuyXYF
+ rkybPXYbmNHN+jTD3X8nRqo+4Qhmu6SHi3Vq
+Message-ID: <49d4dec8-d908-80f3-d24c-6ab155aa3daf@suse.cz>
+Date:   Mon, 24 Feb 2020 16:04:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <c21c46cb76de2d991fd23164489f763bb385c152.1582321645.git.riel@surriel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KCSAN find inode->i_disksize could be accessed concurrently.
+On 2/21/20 10:53 PM, Rik van Riel wrote:
+> Add information to struct compact_control to indicate that the allocator
+> would really like to clear out this specific part of memory, used by for
+> example CMA.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
 
-BUG: KCSAN: data-race in ext4_mark_iloc_dirty / ext4_write_end
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-write (marked) to 0xffff8b8932f40090 of 8 bytes by task 66792 on cpu 0:
- ext4_write_end+0x53f/0x5b0
- ext4_da_write_end+0x237/0x510
- generic_perform_write+0x1c4/0x2a0
- ext4_buffered_write_iter+0x13a/0x210
- ext4_file_write_iter+0xe2/0x9b0
- new_sync_write+0x29c/0x3a0
- __vfs_write+0x92/0xa0
- vfs_write+0xfc/0x2a0
- ksys_write+0xe8/0x140
- __x64_sys_write+0x4c/0x60
- do_syscall_64+0x8a/0x2a0
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Could have been just squashed into patch 2, but no strong feelings.
 
-read to 0xffff8b8932f40090 of 8 bytes by task 14414 on cpu 1:
- ext4_mark_iloc_dirty+0x716/0x1190
- ext4_mark_inode_dirty+0xc9/0x360
- ext4_convert_unwritten_extents+0x1bc/0x2a0
- ext4_convert_unwritten_io_end_vec+0xc5/0x150
- ext4_put_io_end+0x82/0x130
- ext4_writepages+0xae7/0x16f0
- do_writepages+0x64/0x120
- __writeback_single_inode+0x7d/0x650
- writeback_sb_inodes+0x3a4/0x860
- __writeback_inodes_wb+0xc4/0x150
- wb_writeback+0x43f/0x510
- wb_workfn+0x3b2/0x8a0
- process_one_work+0x39b/0x7e0
- worker_thread+0x88/0x650
- kthread+0x1d4/0x1f0
- ret_from_fork+0x35/0x40
-
-The plain read is outside of inode->i_data_sem critical section
-which results in a data race. Fix it by adding READ_ONCE().
-
-Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
----
- fs/ext4/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index fa0ff78..c787703 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4982,7 +4982,7 @@ static int ext4_do_update_inode(handle_t *handle,
- 		raw_inode->i_file_acl_high =
- 			cpu_to_le16(ei->i_file_acl >> 32);
- 	raw_inode->i_file_acl_lo = cpu_to_le32(ei->i_file_acl);
--	if (ei->i_disksize != ext4_isize(inode->i_sb, raw_inode)) {
-+	if (READ_ONCE(ei->i_disksize) != ext4_isize(inode->i_sb, raw_inode)) {
- 		ext4_isize_set(raw_inode, ei->i_disksize);
- 		need_datasync = 1;
- 	}
--- 
-1.8.3.1
+> ---
+>  mm/internal.h   | 1 +
+>  mm/page_alloc.c | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 3cf20ab3ca01..78492d9815b4 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -206,6 +206,7 @@ struct compact_control {
+>  	bool whole_zone;		/* Whole zone should/has been scanned */
+>  	bool contended;			/* Signal lock or sched contention */
+>  	bool rescan;			/* Rescanning the same pageblock */
+> +	bool alloc_contig;		/* alloc_contig_range allocation */
+>  };
+>  
+>  /*
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 3c4eb750a199..a36736812596 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -8402,6 +8402,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
+>  		.ignore_skip_hint = true,
+>  		.no_set_skip_hint = true,
+>  		.gfp_mask = current_gfp_context(gfp_mask),
+> +		.alloc_contig = true,
+>  	};
+>  	INIT_LIST_HEAD(&cc.migratepages);
+>  
+> 
 
