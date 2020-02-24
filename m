@@ -2,120 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA90169F4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:32:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFB15169F66
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:38:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbgBXHcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 02:32:43 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:57500 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725792AbgBXHcm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 02:32:42 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01O7VL7i053525;
-        Mon, 24 Feb 2020 07:32:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=ctgNwyDsGErJORzON8g3jp9u7VQvJRVglKKheMnzkkU=;
- b=h5bFUu77Tdpq7K6YcUFW/6O4hLpE73MsWFyh9w4MrdE0V4+wivoFHCxCP8oTouXgs3qA
- oOlexsdjkR9v5E/7QDKns/Ma8KiqUA8jnAtfbpwJmfjLWOIFdYT1+KL9qH8uD8J+1GpX
- PsNboxUAIqwRoBjNifdVjVhhQlsFsO07gYgWywQ5MOt9B3WHsIit5Ok4rdXba8gGCVLb
- 1YjHM4VscAqNv2BnyyPq60MTgaujJVZKMyKAIXOXAj1qMmKyqsC9FL43rSAO5M8GoWvc
- N2tQWhWrmDoXh66/Ih8FuPrYpB/k7y5lCRBCX5zPD1I4vEUNv0OXXEvPDMBBI5rk/D8s 2Q== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2yauqu5f6b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Feb 2020 07:32:13 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01O7SLXe162686;
-        Mon, 24 Feb 2020 07:32:12 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2yby5anfs9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Feb 2020 07:32:12 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01O7W9o4007023;
-        Mon, 24 Feb 2020 07:32:10 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 23 Feb 2020 23:32:09 -0800
-Date:   Mon, 24 Feb 2020 10:31:57 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Christian Brauner <christian@brauner.io>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH][next] clone3: fix an unsigned args.cgroup comparison to
- less than zero
-Message-ID: <20200224073157.GB3286@kadam>
-References: <20200222001513.43099-1-colin.king@canonical.com>
- <20200222121801.cu4dfnk4z5xd5uc2@wittgenstein>
+        id S1727267AbgBXHiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 02:38:14 -0500
+Received: from mail.andi.de1.cc ([85.214.55.253]:49762 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727183AbgBXHiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 02:38:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=451vApj/9D7x1KWh4ddIWyxRkUvpD9CgPV5nIaS4pg8=; b=KtY/YwwrUmK+tuG8zoyRvRTIJ
+        pq2X+lzhaJ1cHUq/lJhqBVnIzeaAxq+CaQU7AnlTTjWrQ7+89qicwrmxEDbh9YIu6rmNDHyCdy1v0
+        EWPbjWxdd53ySVmT1PJ+NCG7WHA3Ght0BVs1kdgbT7Ffmdakqn25D1iGxFOqsbY1QizTo=;
+Received: from p578b2b7d.dip0.t-ipconnect.de ([87.139.43.125] helo=localhost)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j68JF-00021S-3e; Mon, 24 Feb 2020 08:37:45 +0100
+Received: from localhost ([::1])
+        by localhost with esmtp (Exim 4.92)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j68GR-0007vf-WD; Mon, 24 Feb 2020 08:34:52 +0100
+Date:   Mon, 24 Feb 2020 08:33:35 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com
+Subject: Re: [PATCH v5 2/6] Bindings: nvmem: add bindings for JZ4780 efuse
+Message-ID: <20200224083335.06a352f8@kemnade.info>
+In-Reply-To: <D59DC84C-837E-4856-8FED-580381F748FF@goldelico.com>
+References: <cover.1582367141.git.hns@goldelico.com>
+        <51642368a064073ab99bb3110863b5fadc382f82.1582367141.git.hns@goldelico.com>
+        <20200222165738.61cde2a0@kemnade.info>
+        <D59DC84C-837E-4856-8FED-580381F748FF@goldelico.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200222121801.cu4dfnk4z5xd5uc2@wittgenstein>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9540 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 bulkscore=0
- suspectscore=0 mlxlogscore=999 phishscore=0 adultscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002240065
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9540 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0
- clxscore=1011 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
- priorityscore=1501 mlxlogscore=999 spamscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002240065
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jAuKxTh/ki.VbCviTA9NKWw"; protocol="application/pgp-signature"
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 01:18:01PM +0100, Christian Brauner wrote:
-> On Sat, Feb 22, 2020 at 12:15:13AM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The less than zero comparison of args.cgroup is aways false because
-> > args.cgroup is a u64 and can never be less than zero.  I believe the
-> > correct check is to cast args.cgroup to a s64 first to ensure an
-> > invalid value is not copied to kargs->cgroup.
-> > 
-> > Addresses-Coverity: ("Unsigned compared against 0")
-> > Fixes: ef2c41cf38a7 ("clone3: allow spawning processes into cgroups")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Thanks, Colin.
-> Dan has reported this issue a few days prior on the janitors list so he
-> likely should get a 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> too.
+--Sig_/jAuKxTh/ki.VbCviTA9NKWw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Colin found it independently so no need for a Reported-by.
+On Sat, 22 Feb 2020 17:34:06 +0100
+"H. Nikolaus Schaller" <hns@goldelico.com> wrote:
 
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 2diff --git a/kernel/fork.c b/kernel/fork.c
-> index 2853e258fe1f..dca4dde3b5b2 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -2618,7 +2618,8 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
->                      !valid_signal(args.exit_signal)))
->                 return -EINVAL;
-> 
-> -       if ((args.flags & CLONE_INTO_CGROUP) && args.cgroup < 0)
-> +       if ((args.flags & CLONE_INTO_CGROUP) &&
-> +           (args.cgroup > INT_MAX || (s64)args.cgroup < 0))
+> > Am 22.02.2020 um 16:57 schrieb Andreas Kemnade <andreas@kemnade.info>:
+> >=20
+> > On Sat, 22 Feb 2020 11:25:37 +0100
+> > "H. Nikolaus Schaller" <hns@goldelico.com> wrote:
+> >  =20
+> >> From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+> >>=20
+> >> This patch brings support for the JZ4780 efuse. Currently it only expo=
+ses
+> >> a read only access to the entire 8K bits efuse memory.
+> >>=20
+> >> Tested-by: Mathieu Malaterre <malat@debian.org>
+> >> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+> >> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> >> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> >> [converted to yaml]
+> >> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> >> ---
+> >> .../bindings/nvmem/ingenic,jz4780-efuse.yaml  | 50 +++++++++++++++++++
+> >> 1 file changed, 50 insertions(+)
+> >> create mode 100644 Documentation/devicetree/bindings/nvmem/ingenic,jz4=
+780-efuse.yaml
+> >>=20
+> >> diff --git a/Documentation/devicetree/bindings/nvmem/ingenic,jz4780-ef=
+use.yaml b/Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
+> >> new file mode 100644
+> >> index 000000000000..09a8ef937750
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
+> >> @@ -0,0 +1,50 @@
+> >> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/nvmem/ingenic,jz4780-efuse.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: Ingenic JZ EFUSE driver bindings
+> >> +
+> >> +maintainers:
+> >> +  - PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+> >> +
+> >> +allOf:
+> >> +  - $ref: "nvmem.yaml#"
+> >> +
+> >> +properties:
+> >> +  compatible:
+> >> +    enum:
+> >> +      - ingenic,jz4780-efuse
+> >> +
+> >> +  reg:
+> >> +    maxItems: 1
+> >> +
+> >> +  clocks:
+> >> +    # Handle for the ahb for the efuse.
+> >> +    maxItems: 1
+> >> +
+> >> +  clock-names:
+> >> +   items:
+> >> +     - const:  ahb2 =20
+> > as Rob said: probably not needed, since it is a single
+> > clock, and the driver uses devm_clk_get(dev, NULL), so it should be pre=
+pared
+> > for that without any extra work. =20
+>=20
+> The question is if a specific driver implementation should determine
+> what the DT requires or the other way round. I don't know...
+>=20
+> I did interpret Rob's comment differently: there was
+>=20
+> > - "clock-names"		Must be "bus_clk" =20
+>=20
+> and he did say:=20
+>=20
+> 	'clk' is redundant. How about 'ahb'?
+>=20
+> So I thought he refers to the _clk suffix?
+>=20
+> >  =20
+> >> +
+> >> +required:
+> >> +  - compatible
+> >> +  - reg
+> >> +  - clock-names =20
+> > so it is not required here (but "- clocks" (not "- clock") as said in e=
+arlier
+> > mail). =20
+>=20
+> Well, this is another example where I do not yet see any improvement by y=
+aml.
+> It is the same amount of guessing what should be written where. Is this to
+> be added or not? When is it and why, when not and why?
+>=20
+well, this is the list of required properties which have to be an any
+devicetree using that device, the conversion of the comments for the proper=
+ties
+in the .txt-file.
+So, if you do not declare a property before, you cannot specify that it is
+required. So if we drop the definition of clock-names we cannot declare it
+as required.=20
 
-If we're capping it at INT_MAX then the check for negative isn't
-required and static analysis tools know it's not so they might complain.
+Regards,
+Andreas
 
-regards,
-dan carpenter
+--Sig_/jAuKxTh/ki.VbCviTA9NKWw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl5TfE8ACgkQl4jFM1s/
+ye+aFQ//eslMTAbmAQ0DqEVfmmyBhqkH057WoRaE73bxRve/4YpLAdx9IFVnaznl
+vdFg1N8Z2FAnktyM5rZJ0BUFt4U5U61DcCYrFUSg7MRWu74DxMQIhx/e0s9IMJM2
+CldWXozOxoT1sYQ/eb4e6Gu9P9F2yu1qgsSDxRn+4hriUkXLI1x8BJz0myZyp32m
+I1MTHTP9n5aVWKj1xo/FwrF2FNWRgLFAFsPwV0/Q7UWld/175hbYKnH5kcyho7sA
+sNu0RnnG3Oh1gAiHbUlWLAZIT/3hwmR8yZ6EVYTmFEwxnb3nOQrI91NomP5wHBYf
+tp+f2EDYJMZCC0Sopnzm/Vw8etxSSxMtViyVltSr7D798O9nMBhpSrqvttCNPC9o
+0v2lJcTGxsilklPXZ7cJJyoiyKTMacv6JOZk7skDtpaojCdb/tDdutsN8i1CMcYC
+yorhcdlDAHdB/JaSw0qXocir4UAwlmJHA4chSuPmhbBCpXl29QW3tMi4IGbYerCk
+iMZWJV0prIsXQRUoxsV65rnuAIhtaPNadjJvSdd4tC5YZ1KwaCg5nr1Oh+Ja8Sen
+Tx/QYAeLT5bdQYpgENgunibR7m8c+WUUhLs7sdEU6pfDGzQS2YFlR6pXAdH2bPzn
+2S8jAKo8sxOGVzAcDfBALaendEYoVDv9ElnffqemmRDhumzlnAI=
+=QwX9
+-----END PGP SIGNATURE-----
+
+--Sig_/jAuKxTh/ki.VbCviTA9NKWw--
