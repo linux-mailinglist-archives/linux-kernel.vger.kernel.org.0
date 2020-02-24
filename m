@@ -2,44 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 539C216A97A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:09:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20A7D16A91A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:03:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbgBXPJS convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Feb 2020 10:09:18 -0500
-Received: from mail.umc.edu.ve ([190.202.0.214]:43100 "EHLO mail.umc.edu.ve"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727673AbgBXPJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 10:09:18 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.umc.edu.ve (Postfix) with ESMTP id E32465347227;
-        Sun, 23 Feb 2020 06:37:02 -0400 (BOT)
-X-Virus-Scanned: amavisd-new at mail.umc.edu.ve
-Received: from mail.umc.edu.ve ([127.0.0.1])
-        by localhost (mail.umc.edu.ve [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id wh2kaGLPtEyK; Sun, 23 Feb 2020 06:37:02 -0400 (BOT)
-Received: from [192.168.0.103] (unknown [154.230.218.240])
-        by mail.umc.edu.ve (Postfix) with ESMTPSA id 1CDE95346DB5;
-        Sun, 23 Feb 2020 05:50:28 -0400 (BOT)
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: LOAN
-To:     Recipients <gguerra@umc.edu.ve>
-From:   "Samantha Yankee" <gguerra@umc.edu.ve>
-Date:   Sun, 23 Feb 2020 12:50:19 +0300
-Reply-To: 3mloan@gmail.com
-X-Antivirus: Avast (VPS 200222-0, 02/22/2020), Outbound message
-X-Antivirus-Status: Clean
-Message-Id: <20200223095029.1CDE95346DB5@mail.umc.edu.ve>
+        id S1727887AbgBXPDV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 10:03:21 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:50176 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbgBXPDU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 10:03:20 -0500
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1j6FFo-0004s1-Lj; Mon, 24 Feb 2020 16:02:40 +0100
+Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 4EDAFFFB71;
+        Mon, 24 Feb 2020 16:02:40 +0100 (CET)
+Message-Id: <20200224140131.461979697@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Mon, 24 Feb 2020 15:01:31 +0100
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     David Miller <davem@davemloft.net>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sebastian Sewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Clark Williams <williams@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        Jakub Kicinski <kuba@kernel.org>
+Subject: [patch V3 00/22] bpf: Make BPF and PREEMPT_RT co-exist
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- 2% LOAN OFFER, We Are Certified To Offer The Following Kinds Of Loans * Personal Loan(Unsecured) * Business Loan (Unsecured) * Debt Consolidation LoanLooking forward in doing a nice business with you,
+Hi!
 
-1) Name            2) Country         3) Loan Amount            4) Loan Duration            5) Telephone number           6) Occupation.
+This is the third version of the BPF/RT patch set which makes both coexist
+nicely. The long explanation can be found in the cover letter of the V1
+submission:
 
-Reply to Email:  3mloan@gmail.com
+  https://lore.kernel.org/r/20200214133917.304937432@linutronix.de
+
+V2 is here:
+
+  https://lore.kernel.org/r/20200220204517.863202864@linutronix.de
+
+The following changes vs. V2 have been made:
+
+  - Rebased to bpf-next, adjusted to the lock changes in the hashmap code.
+
+  - Split the preallocation enforcement patch for instrumentation type BPF
+    programs into two pieces:
+
+    1) Emit a one-time warning on !RT kernels when any instrumentation type
+       BPF program uses run-time allocation. Emit also a corresponding
+       warning in the verifier log. But allow the program to run for
+       backward compatibility sake. After a grace period this should be
+       enforced.
+
+    2) On RT reject such programs because on RT the memory allocator cannot
+       be called from truly atomic contexts.
+       
+  - Fixed the fallout from V2 as reported by Alexei and 0-day
+
+  - Removed the redundant preempt_disable() from trace_call_bpf()
+
+  - Removed the unused export of trace_call_bpf()
+
+The series applies on top of:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+
+Selftest result:
+  # Summary: 1580 PASSED, 0 SKIPPED, 0 FAILED
+
+Thanks,
+
+	tglx
+---
+ include/linux/bpf.h          |   38 ++++++++-
+ include/linux/filter.h       |   37 +++++++--
+ kernel/bpf/hashtab.c         |  172 ++++++++++++++++++++++++++++++-------------
+ kernel/bpf/lpm_trie.c        |   12 +--
+ kernel/bpf/percpu_freelist.c |   20 ++---
+ kernel/bpf/stackmap.c        |   18 +++-
+ kernel/bpf/syscall.c         |   27 ++----
+ kernel/bpf/trampoline.c      |    9 +-
+ kernel/bpf/verifier.c        |   40 +++++++---
+ kernel/events/core.c         |    2 
+ kernel/seccomp.c             |    4 -
+ kernel/trace/bpf_trace.c     |    7 -
+ lib/test_bpf.c               |    4 -
+ net/bpf/test_run.c           |    8 +-
+ net/core/flow_dissector.c    |    4 -
+ net/core/skmsg.c             |    8 --
+ net/kcm/kcmsock.c            |    4 -
+ 17 files changed, 274 insertions(+), 140 deletions(-)
