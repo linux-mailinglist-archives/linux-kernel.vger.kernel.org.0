@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA0E7169FF4
+	by mail.lfdr.de (Postfix) with ESMTP id 4842A169FF3
 	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:28:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbgBXI2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:28:33 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:35440 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbgBXI2Q (ORCPT
+        id S1727394AbgBXI22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:28:28 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:42862 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbgBXI2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 24 Feb 2020 03:28:16 -0500
-Received: by mail-io1-f72.google.com with SMTP id x10so14242481iob.2
+Received: by mail-io1-f70.google.com with SMTP id e7so14267283iog.9
         for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 00:28:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=jkIHcFv+DAETasj6Ak4atc745RnMAvxgLBeQXLrAduY=;
-        b=dwDZFpJ9a4oZMKmKv580rwCBVExdOQaVPCnab2aIzwQWVurQT9EpMUlzmJftDEbyQS
-         CIsHQob//+IfsCjQidPbDFyiXClW9dl5b0lupNukW7bO7f8Uq3ceprHYlEdCoalw2K0u
-         Pi4A7GeHtR/KPfvFqL73xe4Wxg25P0A73Vds/yrhNKYaj7kjAAysttOlMKtop1BfztKN
-         YRXH9INfBKn5oqerP8aImaraKs8MAdsSe7WQvcjW9xDm0iID9jjKPkfQiaXaGRBIoGJQ
-         IGTkaSvZE0YU9yI1fB2hXjDgK7yQd1S1gfDWBFVE4otE6PTViZUGv7Q8Py8iyTOZ5177
-         6QEg==
-X-Gm-Message-State: APjAAAXBOMNE9tZ9y7adM23kRdDEElIITT+SWgFKB8JypAZJiThbBhqi
-        CXMmAZGyft9EkK4aAbRyAzkpVR4g8I7C5kbG2KFTyozVW2mJ
-X-Google-Smtp-Source: APXvYqzChRnrXRXig1dG/LpkZGbFdxMHCeQQc71jNgGiaVOKB8EIMEb8rcDbjyjIxv3RVeM8MJDV5+YpDn1CkX8ycqWRGTUurcRE
+        bh=zPnGdhYe6fx/GA1y4l3lAwfwfLNCOo6iSouDNT5vfw0=;
+        b=jq7ANbYmEqMWNYp4M1+Se3Z0gYQO0quTIVg/Vy4FBW26TYAlHRX1kDGj9DT/MHRdIa
+         oRy91zo1/qsheQYLFIRVjnkHG+MSfaa00GTIYZZmYCVGSXet72DoN6Gykr431LVg00B3
+         EjwzI3+HA4VMl6Qz6n0sao8cCLxYLUFwRIHM9XIZVk4SPw4ikX9CtFmp49vtBzz+4ONZ
+         n5lm/Go1tgCxhRQXC2h69Wi50J+2Veb1kJlrTLoo60tdqhdKp3dd6pOw8/qUGedaX2AB
+         U2/yWr+cV2Q1vlmk74fSoh6ZU7F0WcmDOthENYei1a0WP127MIosVs83KjSx0DDySVHa
+         T5JA==
+X-Gm-Message-State: APjAAAUQtReeGmo+rNZT9vVI2jA4YHAVu1mzXzptG1RqQdAWibT67bGm
+        A2tX/e941ZHL6dELT/qOh/u4EkuRmwZLtlCo3BLB1yJ+J6rX
+X-Google-Smtp-Source: APXvYqwjfTMec2vNK5//uIvwTzm0pcHaYTeC1+EaGLWrGBFccLzIF/ifYG9oXPoiMpuifFdYc7ZA6MDqjneRpTBqEbyKn+cP7pcR
 MIME-Version: 1.0
-X-Received: by 2002:a5e:d616:: with SMTP id w22mr45950888iom.57.1582532894967;
- Mon, 24 Feb 2020 00:28:14 -0800 (PST)
-Date:   Mon, 24 Feb 2020 00:28:14 -0800
+X-Received: by 2002:a92:7301:: with SMTP id o1mr56267048ilc.272.1582532895280;
+ Mon, 24 Feb 2020 00:28:15 -0800 (PST)
+Date:   Mon, 24 Feb 2020 00:28:15 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000cce30059f4e27e9@google.com>
-Subject: WARNING: refcount bug in l2cap_chan_put
-From:   syzbot <syzbot+198362c76088d1515529@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, johan.hedberg@gmail.com, kuba@kernel.org,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        marcel@holtmann.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000011953b059f4e27f7@google.com>
+Subject: KASAN: slab-out-of-bounds Read in ethnl_update_bitset32
+From:   syzbot <syzbot+983cb8fb2d17a7af549d@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, f.fainelli@gmail.com, kuba@kernel.org,
+        linux-kernel@vger.kernel.org, mkubecek@suse.cz,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,61 +49,122 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    bee46b30 Add linux-next specific files for 20200221
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1244ea7ee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=10693880b4976691
-dashboard link: https://syzkaller.appspot.com/bug?extid=198362c76088d1515529
+HEAD commit:    d2eee258 Merge tag 'for-5.6-rc2-tag' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11199109e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3b8906eb6a7d6028
+dashboard link: https://syzkaller.appspot.com/bug?extid=983cb8fb2d17a7af549d
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=160a03d9e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10f8e1dde00000
-
-Bisection is inconclusive: the bug happens on the oldest tested release.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13f03a7ee00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=10083a7ee00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17f03a7ee00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1399a3d9e00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+198362c76088d1515529@syzkaller.appspotmail.com
+Reported-by: syzbot+983cb8fb2d17a7af549d@syzkaller.appspotmail.com
 
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 1 PID: 2940 at lib/refcount.c:28 refcount_warn_saturate+0x1dc/0x1f0 lib/refcount.c:28
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 2940 Comm: kworker/1:12 Not tainted 5.6.0-rc2-next-20200221-syzkaller #0
+==================================================================
+BUG: KASAN: slab-out-of-bounds in ethnl_bitmap32_not_zero net/ethtool/bitset.c:112 [inline]
+BUG: KASAN: slab-out-of-bounds in ethnl_compact_sanity_checks net/ethtool/bitset.c:529 [inline]
+BUG: KASAN: slab-out-of-bounds in ethnl_update_bitset32.part.0+0x8db/0x1820 net/ethtool/bitset.c:572
+Read of size 4 at addr ffff8880a9750c3c by task syz-executor.0/9818
+
+CPU: 0 PID: 9818 Comm: syz-executor.0 Not tainted 5.6.0-rc2-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: events do_enable_set
 Call Trace:
  __dump_stack lib/dump_stack.c:77 [inline]
  dump_stack+0x197/0x210 lib/dump_stack.c:118
- panic+0x2e3/0x75c kernel/panic.c:221
- __warn.cold+0x2f/0x3e kernel/panic.c:582
- report_bug+0x289/0x300 lib/bug.c:195
- fixup_bug arch/x86/kernel/traps.c:175 [inline]
- fixup_bug arch/x86/kernel/traps.c:170 [inline]
- do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
- do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
- invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:refcount_warn_saturate+0x1dc/0x1f0 lib/refcount.c:28
-Code: e9 d8 fe ff ff 48 89 df e8 81 81 10 fe e9 85 fe ff ff e8 07 54 d1 fd 48 c7 c7 00 c8 91 88 c6 05 6b f6 fc 06 01 e8 23 74 a1 fd <0f> 0b e9 ac fe ff ff 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 00 55 48
-RSP: 0018:ffffc9000952fbd8 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815ee766 RDI: fffff520012a5f6d
-RBP: ffffc9000952fbe8 R08: ffff88809e82e600 R09: ffffed1015d26661
-R10: ffffed1015d26660 R11: ffff8880ae933307 R12: 0000000000000003
-R13: ffff888095b3f018 R14: dead000000000122 R15: ffffc9000952fc98
- refcount_sub_and_test include/linux/refcount.h:261 [inline]
- refcount_dec_and_test include/linux/refcount.h:281 [inline]
- kref_put include/linux/kref.h:64 [inline]
- l2cap_chan_put+0x1d9/0x240 net/bluetooth/l2cap_core.c:501
- do_enable_set+0x54b/0x960 net/bluetooth/6lowpan.c:1075
- process_one_work+0xa05/0x17a0 kernel/workqueue.c:2266
- worker_thread+0x98/0xe40 kernel/workqueue.c:2412
- kthread+0x361/0x430 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+ print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+ __kasan_report.cold+0x1b/0x32 mm/kasan/report.c:506
+ kasan_report+0x12/0x20 mm/kasan/common.c:641
+ __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:134
+ ethnl_bitmap32_not_zero net/ethtool/bitset.c:112 [inline]
+ ethnl_compact_sanity_checks net/ethtool/bitset.c:529 [inline]
+ ethnl_update_bitset32.part.0+0x8db/0x1820 net/ethtool/bitset.c:572
+ ethnl_update_bitset32 net/ethtool/bitset.c:562 [inline]
+ ethnl_update_bitset+0x4d/0x67 net/ethtool/bitset.c:734
+ ethnl_update_linkmodes net/ethtool/linkmodes.c:303 [inline]
+ ethnl_set_linkmodes+0x461/0xc30 net/ethtool/linkmodes.c:357
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:672 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:717 [inline]
+ genl_rcv_msg+0x67d/0xea0 net/netlink/genetlink.c:734
+ netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2478
+ genl_rcv+0x29/0x40 net/netlink/genetlink.c:745
+ netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
+ netlink_unicast+0x59e/0x7e0 net/netlink/af_netlink.c:1329
+ netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1918
+ sock_sendmsg_nosec net/socket.c:652 [inline]
+ sock_sendmsg+0xd7/0x130 net/socket.c:672
+ ____sys_sendmsg+0x753/0x880 net/socket.c:2343
+ ___sys_sendmsg+0x100/0x170 net/socket.c:2397
+ __sys_sendmsg+0x105/0x1d0 net/socket.c:2430
+ __do_sys_sendmsg net/socket.c:2439 [inline]
+ __se_sys_sendmsg net/socket.c:2437 [inline]
+ __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2437
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45c429
+Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:0000000000c7fb78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 000000000289b914 RCX: 000000000045c429
+RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000003
+RBP: 000000000076bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000904 R14: 00000000004d4f90 R15: 000000000076bf2c
+
+Allocated by task 4801:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ __kasan_kmalloc mm/kasan/common.c:515 [inline]
+ __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:488
+ kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:523
+ slab_post_alloc_hook mm/slab.h:584 [inline]
+ slab_alloc mm/slab.c:3320 [inline]
+ kmem_cache_alloc+0x121/0x710 mm/slab.c:3484
+ kmem_cache_zalloc include/linux/slab.h:659 [inline]
+ copy_signal kernel/fork.c:1558 [inline]
+ copy_process+0x2155/0x7290 kernel/fork.c:2078
+ _do_fork+0x146/0x1090 kernel/fork.c:2430
+ __do_sys_clone kernel/fork.c:2585 [inline]
+ __se_sys_clone kernel/fork.c:2566 [inline]
+ __x64_sys_clone+0x19a/0x260 kernel/fork.c:2566
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 0:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ kasan_set_free_info mm/kasan/common.c:337 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/common.c:476
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
+ __cache_free mm/slab.c:3426 [inline]
+ kmem_cache_free+0x86/0x320 mm/slab.c:3694
+ free_signal_struct kernel/fork.c:728 [inline]
+ put_signal_struct kernel/fork.c:734 [inline]
+ __put_task_struct+0x327/0x530 kernel/fork.c:748
+ put_task_struct include/linux/sched/task.h:122 [inline]
+ delayed_put_task_struct+0x253/0x3c0 kernel/exit.c:182
+ rcu_do_batch kernel/rcu/tree.c:2186 [inline]
+ rcu_core+0x5e1/0x1390 kernel/rcu/tree.c:2410
+ rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2419
+ __do_softirq+0x262/0x98c kernel/softirq.c:292
+
+The buggy address belongs to the object at ffff8880a97506c0
+ which belongs to the cache signal_cache of size 1328
+The buggy address is located 76 bytes to the right of
+ 1328-byte region [ffff8880a97506c0, ffff8880a9750bf0)
+The buggy address belongs to the page:
+page:ffffea0002a5d400 refcount:1 mapcount:0 mapping:ffff88821bc468c0 index:0xffff8880a9750100 compound_mapcount: 0
+flags: 0xfffe0000010200(slab|head)
+raw: 00fffe0000010200 ffffea0002636888 ffffea00029fa308 ffff88821bc468c0
+raw: ffff8880a9750100 ffff8880a9750100 0000000100000002 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8880a9750b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880a9750b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
+>ffff8880a9750c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                        ^
+ ffff8880a9750c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880a9750d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
@@ -114,6 +174,5 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this bug, for details see:
 https://goo.gl/tpsmEJ#testing-patches
