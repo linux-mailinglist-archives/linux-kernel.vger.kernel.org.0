@@ -2,135 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36DF716A3C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:18:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 487D516A3A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:14:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbgBXKSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 05:18:05 -0500
-Received: from mga11.intel.com ([192.55.52.93]:56440 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726509AbgBXKSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 05:18:04 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 02:18:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,479,1574150400"; 
-   d="scan'208";a="349891776"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 24 Feb 2020 02:18:00 -0800
-Received: by lahna (sSMTP sendmail emulation); Mon, 24 Feb 2020 12:18:00 +0200
-Date:   Mon, 24 Feb 2020 12:18:00 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Martin Volf <martin.volf.42@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-hwmon@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Subject: Re: [regression] nct6775 does not load in 5.4 and 5.5, bisected to
- b84398d6d7f90080
-Message-ID: <20200224101800.GJ2667@lahna.fi.intel.com>
-References: <CAM1AHpQ4196tyD=HhBu-2donSsuogabkfP03v1YF26Q7_BgvgA@mail.gmail.com>
- <1bdbac08-86f8-2a57-2b0d-8cd2beb2a1c0@roeck-us.net>
- <CAM1AHpSKFk9ZosQf=k-Rm2=EFqco7y4Lpfb7m07r=j_uJd4T0A@mail.gmail.com>
- <85356d1a-f90d-e94d-16eb-1071d4e94753@roeck-us.net>
- <CAM1AHpSpEFshpUGxKdhLV3XuThQg_XVaPgOWzvrTv6YtzHyO+A@mail.gmail.com>
- <bec1f81c-09a8-ba48-c6c4-5d9b340f7c0b@roeck-us.net>
+        id S1727306AbgBXKOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 05:14:48 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:50914 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbgBXKOs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 05:14:48 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01OAEf0Q121189;
+        Mon, 24 Feb 2020 04:14:41 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582539281;
+        bh=j5EShPBLoNlbSYRTeOcz+xqi62LNvQ2h7rAp88THS0k=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=gKBFDLay1h129RL9y1t9AdnzTRjKEovZTPDIz6BDaI80a6V6NN4Dz7eLKBoD+80xB
+         Z15ZfDVzImqZ8Zb4/cjDK8OR4Y4UrvWSopueTxKYdm6mM2bvIblA/VA5nGLowdq0qo
+         924xKQZThIU+KYkidZgHxofwhGN1T6/GuQ7XSZKk=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01OAEfeP125615
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Feb 2020 04:14:41 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 24
+ Feb 2020 04:14:41 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 24 Feb 2020 04:14:41 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01OAEc93090524;
+        Mon, 24 Feb 2020 04:14:38 -0600
+Subject: Re: [PATCH v2 2/2] dt-bindings: PCI: Convert PCIe Host/Endpoint in
+ Cadence platform to DT schema
+To:     Rob Herring <robh@kernel.org>
+CC:     Tom Joseph <tjoseph@cadence.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200217111519.29163-1-kishon@ti.com>
+ <20200217111519.29163-3-kishon@ti.com> <20200219203205.GA14068@bogus>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <2b927c66-d640-fb11-878a-c69a459a28f8@ti.com>
+Date:   Mon, 24 Feb 2020 15:48:21 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bec1f81c-09a8-ba48-c6c4-5d9b340f7c0b@roeck-us.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200219203205.GA14068@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Andy and Jarkko
+Hi Rob,
 
-On Sat, Feb 22, 2020 at 01:26:48PM -0800, Guenter Roeck wrote:
-> On 2/22/20 12:49 PM, Martin Volf wrote:
-> > Hello,
-> > 
-> > On Sat, Feb 22, 2020 at 8:05 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> > > On 2/22/20 9:55 AM, Martin Volf wrote:
-> > > > On Sat, Feb 22, 2020 at 4:41 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> > > > > On 2/22/20 3:13 AM, Martin Volf wrote:
-> > > > > > hardware monitoring sensors NCT6796D on my Asus PRIME Z390M-PLUS
-> > > > > > motherboard with Intel i7-9700 CPU don't work with 5.4 and newer linux
-> > > > > > kernels, the driver nct6775 does not load.
-> > > > > > 
-> > > > > > It is working OK in version 5.3. I have used almost all released stable
-> > > > > > versions from 5.3.8 to 5.3.16; I didn't try older kernels.
-> > > > ...
-> > > > > My wild guess would be that the i801 driver is a bit aggressive with
-> > > > > reserving memory spaces, but I don't immediately see what it does
-> > > > > differently in that regard after the offending patch. Does it work
-> > > > > if you unload the i2c_i801 driver first ?
-> > > > 
-> > > > Yes, after unloading i2c_i801, the nct6775 works.
-> > ...
-> > > > This is diff of /proc/ioports in 5.3.18 with loaded nct6775 and in
-> > > > 5.4.21 without:
-> > > > 
-> > > > --- ioports-5.3.18
-> > > > +++ ioports-5.4.21
-> > > > @@ -2,6 +2,7 @@
-> > > >      0000-001f : dma1
-> > > >      0020-0021 : pic1
-> > > >      002e-0031 : iTCO_wdt
-> > > > +    002e-0031 : iTCO_wdt
-> > > >      0040-0043 : timer0
-> > > >      0050-0053 : timer1
-> > ...
-> > > > So 0x2e is the resource the two drivers are fighting for.
-> > ...
-> > > Yes, and it should not do that, since the range can be used to access
-> > > different segments of the same chip from multiple drivers. This region
-> > > should only be reserved temporarily, using request_muxed_region() when
-> > > needed and release_region() after the access is complete. Either case,
-> > > I don't immediately see why that region would be interesting for the
-> > > iTCO watchdog driver.
-> > > 
-> > > Can you add some debugging into the i801 driver to see what memory regions
-> > > it reserves, and how it gets to reserve 0x2e..0x31 ? That range really
-> > > doesn't make any sense to me.
-> > 
-> > in the function i801_add_tco() in drivers/i2c/busses/i2c-i801.c
-> > (line 1601 in 5.4.21), there is this code:
-> > 
-> >          /*
-> >           * Power Management registers.
-> >           */
-> >          devfn = PCI_DEVFN(PCI_SLOT(pci_dev->devfn), 2);
-> >          pci_bus_read_config_dword(pci_dev->bus, devfn, ACPIBASE, &base_addr);
-> > 
-> >          res = &tco_res[ICH_RES_IO_SMI];
-> >          res->start = (base_addr & ~1) + ACPIBASE_SMI_OFF;
-> >          res->end = res->start + 3;
-> >          res->flags = IORESOURCE_IO;
-> > 
-> > base_addr is 0xffffffff after pci_bus_read_config_dword() call.
-> > ACPIBASE_SMI_OFF is 0x030, therefore res->start is 0x2e.
-> > Not that I understand even a bit of this...
-> > 
+On 20/02/20 2:02 am, Rob Herring wrote:
+> On Mon, Feb 17, 2020 at 04:45:19PM +0530, Kishon Vijay Abraham I wrote:
+>> Include Cadence core DT schema and define the Cadence platform DT schema
+>> for both Host and Endpoint mode. Note: The Cadence core DT schema could
+>> be included for other platforms using Cadence PCIe core.
+>>
+>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> ---
+>>  .../bindings/pci/cdns,cdns-pcie-ep.txt        | 27 -------
+>>  .../bindings/pci/cdns,cdns-pcie-ep.yaml       | 48 ++++++++++++
+>>  .../bindings/pci/cdns,cdns-pcie-host.txt      | 66 ----------------
+>>  .../bindings/pci/cdns,cdns-pcie-host.yaml     | 76 +++++++++++++++++++
+>>  MAINTAINERS                                   |  2 +-
+>>  5 files changed, 125 insertions(+), 94 deletions(-)
+>>  delete mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt
+>>  create mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml
+>>  delete mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
+>>  create mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
 > 
-> Outch. This means that the code is broken. ACPIBASE is not configured,
-> or disabled, or the code reads from the wrong PCI configuration register.
-> What I don't understand is why this works with v5.3 kernels; the code
-> looks just as bad there for me. I must be missing something. Either case,
-> the only thing you can really do at this point is to blacklist the
-> iTCO_wdt driver.
+> 
+>> diff --git a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
+>> new file mode 100644
+>> index 000000000000..2f605297f862
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
+>> @@ -0,0 +1,76 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pci/cdns,cdns-pcie-host.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Cadence PCIe host controller
+>> +
+>> +maintainers:
+>> +  - Tom Joseph <tjoseph@cadence.com>
+>> +
+>> +allOf:
+>> +  - $ref: /schemas/pci/pci-bus.yaml#
+>> +  - $ref: "cdns-pcie-host.yaml#"
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: cdns,cdns-pcie-host
+>> +
+>> +  reg:
+>> +    maxItems: 3
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: reg
+>> +      - const: cfg
+>> +      - const: mem
+>> +
+>> +  msi-parent: true
+>> +
+>> +required:
+>> +  - reg
+>> +  - reg-names
+>> +
+>> +examples:
+>> +  - |
+>> +    bus {
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
+>> +
+>> +        pcie@fb000000 {
+>> +            compatible = "cdns,cdns-pcie-host";
+>> +            device_type = "pci";
+>> +            #address-cells = <3>;
+>> +            #size-cells = <2>;
+>> +            bus-range = <0x0 0xff>;
+>> +            linux,pci-domain = <0>;
+>> +            cdns,max-outbound-regions = <16>;
+>> +            cdns,no-bar-match-nbits = <32>;
+> 
+>> +            vendor-id = /bits/ 16 <0x17cd>;
+>> +            device-id = /bits/ 16 <0x0200>;
+> 
+> Please make these 32-bit as that is what the spec says.
 
-Indeed it looks like the code reads from a register that is not there
-anymore in this generation hardware, or something like that. It tries to
-read the PMC (1f.2) register add address 0x40 which is supposed to be
-base of ACPI PM registers but that does not seem to exist any more in
-newer chipset.
+Can you clarify this is mentioned in which spec? PCI spec has both of
+these 16 bits and I checked the PCI binding doc but couldn't spot the
+size of these fields.
 
-We'll look into this more and return back.
+[1] -> https://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
+
+Thanks
+Kishon
