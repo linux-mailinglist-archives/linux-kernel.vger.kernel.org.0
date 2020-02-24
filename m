@@ -2,119 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7909B169C76
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 03:57:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21E2F169C68
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 03:51:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbgBXC5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 21:57:35 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:56216 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727158AbgBXC5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 21:57:34 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7EDB020CD73;
-        Mon, 24 Feb 2020 03:57:32 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 36B8C204377;
-        Mon, 24 Feb 2020 03:57:27 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8E19E402B3;
-        Mon, 24 Feb 2020 10:57:20 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     wim@linux-watchdog.org, linux@roeck-us.net, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] watchdog: imx2_wdt: Drop .remove callback
-Date:   Mon, 24 Feb 2020 10:51:27 +0800
-Message-Id: <1582512687-13312-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727256AbgBXCvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 21:51:44 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62260 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727156AbgBXCvo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 21:51:44 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01O2niYG106474
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 21:51:42 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yb16176rv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 21:51:42 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ajd@linux.ibm.com>;
+        Mon, 24 Feb 2020 02:51:40 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 24 Feb 2020 02:51:32 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01O2pVLd49676454
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Feb 2020 02:51:31 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D97AAA405C;
+        Mon, 24 Feb 2020 02:51:31 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7FC2CA405B;
+        Mon, 24 Feb 2020 02:51:31 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 24 Feb 2020 02:51:31 +0000 (GMT)
+Received: from [10.61.2.125] (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 9F4A9A00E5;
+        Mon, 24 Feb 2020 13:51:26 +1100 (AEDT)
+Subject: Re: [PATCH v3 03/27] powerpc: Map & release OpenCAPI LPC memory
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+References: <20200221032720.33893-1-alastair@au1.ibm.com>
+ <20200221032720.33893-4-alastair@au1.ibm.com>
+From:   Andrew Donnellan <ajd@linux.ibm.com>
+Date:   Mon, 24 Feb 2020 13:51:29 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <20200221032720.33893-4-alastair@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 20022402-0020-0000-0000-000003ACF11B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20022402-0021-0000-0000-000022050039
+Message-Id: <61e2b75b-334e-9eec-d14d-7dfdb4654415@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-23_07:2020-02-21,2020-02-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ bulkscore=0 impostorscore=0 adultscore=0 phishscore=0 malwarescore=0
+ mlxscore=0 suspectscore=0 mlxlogscore=527 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002240022
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-.remove callback implementation doesn' call clk_disable_unprepare() which
-is buggy, actually, we can just use devm_watchdog_register_device() and
-devm_add_action_or_reset() to handle all necessary operations for remove
-action, then .remove callback can be dropped.
+On 21/2/20 2:26 pm, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> This patch adds platform support to map & release LPC memory.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/watchdog/imx2_wdt.c | 37 ++++++++++---------------------------
- 1 file changed, 10 insertions(+), 27 deletions(-)
+Nothing seems obviously wrong here.
 
-diff --git a/drivers/watchdog/imx2_wdt.c b/drivers/watchdog/imx2_wdt.c
-index f8d58bf..1fe472f 100644
---- a/drivers/watchdog/imx2_wdt.c
-+++ b/drivers/watchdog/imx2_wdt.c
-@@ -244,6 +244,11 @@ static const struct regmap_config imx2_wdt_regmap_config = {
- 	.max_register = 0x8,
- };
- 
-+static void imx2_wdt_action(void *data)
-+{
-+	clk_disable_unprepare(data);
-+}
-+
- static int __init imx2_wdt_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -292,6 +297,10 @@ static int __init imx2_wdt_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	ret = devm_add_action_or_reset(dev, imx2_wdt_action, wdev->clk);
-+	if (ret)
-+		return ret;
-+
- 	regmap_read(wdev->regmap, IMX2_WDT_WRSR, &val);
- 	wdog->bootstatus = val & IMX2_WDT_WRSR_TOUT ? WDIOF_CARDRESET : 0;
- 
-@@ -315,32 +324,7 @@ static int __init imx2_wdt_probe(struct platform_device *pdev)
- 	 */
- 	regmap_write(wdev->regmap, IMX2_WDT_WMCR, 0);
- 
--	ret = watchdog_register_device(wdog);
--	if (ret)
--		goto disable_clk;
--
--	dev_info(dev, "timeout %d sec (nowayout=%d)\n",
--		 wdog->timeout, nowayout);
--
--	return 0;
--
--disable_clk:
--	clk_disable_unprepare(wdev->clk);
--	return ret;
--}
--
--static int __exit imx2_wdt_remove(struct platform_device *pdev)
--{
--	struct watchdog_device *wdog = platform_get_drvdata(pdev);
--	struct imx2_wdt_device *wdev = watchdog_get_drvdata(wdog);
--
--	watchdog_unregister_device(wdog);
--
--	if (imx2_wdt_is_running(wdev)) {
--		imx2_wdt_ping(wdog);
--		dev_crit(&pdev->dev, "Device removed: Expect reboot!\n");
--	}
--	return 0;
-+	return devm_watchdog_register_device(dev, wdog);
- }
- 
- static void imx2_wdt_shutdown(struct platform_device *pdev)
-@@ -417,7 +401,6 @@ static const struct of_device_id imx2_wdt_dt_ids[] = {
- MODULE_DEVICE_TABLE(of, imx2_wdt_dt_ids);
- 
- static struct platform_driver imx2_wdt_driver = {
--	.remove		= __exit_p(imx2_wdt_remove),
- 	.shutdown	= imx2_wdt_shutdown,
- 	.driver		= {
- 		.name	= DRIVER_NAME,
+Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
+
+
 -- 
-2.7.4
+Andrew Donnellan              OzLabs, ADL Canberra
+ajd@linux.ibm.com             IBM Australia Limited
 
