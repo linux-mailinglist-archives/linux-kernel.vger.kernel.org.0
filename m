@@ -2,149 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4BCB16B2FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:43:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0C6D16B328
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:50:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbgBXVnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 16:43:09 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:55949 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727421AbgBXVnJ (ORCPT
+        id S1727895AbgBXVuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 16:50:18 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43254 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726980AbgBXVuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 16:43:09 -0500
-Received: by mail-pj1-f66.google.com with SMTP id d5so315673pjz.5
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:43:09 -0800 (PST)
+        Mon, 24 Feb 2020 16:50:18 -0500
+Received: by mail-ed1-f65.google.com with SMTP id dc19so13725804edb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:50:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=f4i1Oi5gvnAT7W5MjdBiXsrt20m/drKTjt6b50/GmPk=;
-        b=L7SG/xfX1nYfYR47lHZ/EU0bNdSkhTKLbKcDJ/0L4JsRZcNcDOwhFktZmAfS9XsEIb
-         Eg4CWq2HuCVTvqoUK5NOUuVL7lhPfJG40VnuzY1tIcjUT7c+r1/jVyw1+gZVdVfaJAcM
-         7Oqb/WvCaX08H6RatY4KlDnmebPamywqyhtN5cDyAcuK24daaFV75HsmTVlStqGr8xvD
-         DtxBS46FVZ63h6pu17YHdQegTTHPEi6m4iEMqQ+6HpMnVbcFX3+Ea4HwCvhRQRDfSUza
-         RHwop0L14gPlk5dnkyDk1/RTel8oW5xep+mKhfWXfAEMFN8EvOqxZHssMAtcazIX9JFM
-         QCVA==
+        bh=ZpRlNJyxjURpxSeo9TgDWjOVoYB3eEWq/qH5+c8IPvQ=;
+        b=eyZAPIDtfYGAJMFSbiOA8WQ5iUhe96wmEjyfCJ34B+4o7j9kYZVEhFkBmiZl7ADo+f
+         PyP6gf2SNcUFSNj7E6uihJH7h9RPze99rK4fpnXvren68bqmdd2LQKtC1k1NOzSOjcLo
+         1YoTHieJQZU3MaTRlKUzerS3gODLbLoBhaXeo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=f4i1Oi5gvnAT7W5MjdBiXsrt20m/drKTjt6b50/GmPk=;
-        b=YgOU/DeH1CB4RMNdxrjF4ufODruYRE2Fjc7mHiTOEkQLb3kz9YvkM8h4GdbxcoMpCj
-         2oyzRnUVPkw44swwqlX9SH1vSEeIhZEYKoxy1iwUF5dm7I1SdVnE4EtNecp6u4MI4jNN
-         sD5jSkMsxLAvWw/sGFn55cVJ/tgYcZRBnF3+ExDADWOWoc3FEAF6YeYBANcG40eu/Gm9
-         t+xWlRA96EJ2jfJN/d7dwVfgx8LYdxbEl8lR5HElx67X57aLi2KpPB3WB9NWuqxoAHxB
-         MIVJmIimovdEgjwhVEZGvkus6LfUApETGKSUbXijNJ/kpn06s8A0+5cTV3vu4if6hytd
-         Zrzw==
-X-Gm-Message-State: APjAAAXz69sgjJX/DgG6kj7jHHRIce4rYVg5VXBcXbfL9l+rpec3nJuv
-        uUffc2Don+YeRBELQ7w7pNo81bCzadq8Dd6TjJLfeQ==
-X-Google-Smtp-Source: APXvYqx5PDmpmRkn5e1Czz8bTwU/PYLt2gbRo8nyFaCfXHR8fdccOtxwzqqR/+IBZX4HgL76XY/OS0FsqY1hOMTMEC8=
-X-Received: by 2002:a17:902:760e:: with SMTP id k14mr49231805pll.119.1582580588273;
- Mon, 24 Feb 2020 13:43:08 -0800 (PST)
+        bh=ZpRlNJyxjURpxSeo9TgDWjOVoYB3eEWq/qH5+c8IPvQ=;
+        b=fH09HLc0N+ePWhTa6AHDpU7f7NC9gQZFbWbxdbhlui+28rVavz/MudSsIFY0ioSwGp
+         QrjsskxaosSfmwjx92ls/S9FT9vgyV8nCiu1FHWcNYPbTa3ZBZo/cO1Cp2SWVJUDj0Db
+         7MGa+25newOlZ1tu+3qs+yurMyAZ12/X9LIryvvltm5gDGIoiSX3KgZZLSA6xwtokxRU
+         yNOKMZroyIk3He13x3kKORPs2PF8X7zHa8d17TNrxgOaeE22MNehfOURXGf4fDExl50s
+         vOL8/A3VmAvTWITQC5IR1C5cUIPGng2qj3AWVbHswKopbV9A3wSioqW22aKVRSVpY2tL
+         7vlg==
+X-Gm-Message-State: APjAAAXOR93EdVpYAjdbXhtRSoOTAOY4lXmdiwkVLQegjRkYDeWyAcMi
+        nDgOfqJlJXQfwZqgw3DSLNxqcjAEEIo=
+X-Google-Smtp-Source: APXvYqxuh8lMpC3ktOOu/YZa4gbcXc09qkEGn3GPZbSHUSO+hbMFrF3PDo1iQbmwjXIfzOg7a83jCg==
+X-Received: by 2002:aa7:c803:: with SMTP id a3mr46470366edt.99.1582581015992;
+        Mon, 24 Feb 2020 13:50:15 -0800 (PST)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id ck19sm853924ejb.48.2020.02.24.13.50.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2020 13:50:15 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id r18so13772788edl.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:50:15 -0800 (PST)
+X-Received: by 2002:a19:6144:: with SMTP id m4mr1561198lfk.192.1582580600346;
+ Mon, 24 Feb 2020 13:43:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20191023002014.22571-1-natechancellor@gmail.com> <20200221045740.GA43417@ubuntu-m2-xlarge-x86>
-In-Reply-To: <20200221045740.GA43417@ubuntu-m2-xlarge-x86>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 24 Feb 2020 13:42:57 -0800
-Message-ID: <CAKwvOdku24UV8J4uSKFFc7gmwOP28-8K352BJepb_z-octFoPw@mail.gmail.com>
-Subject: Re: [PATCH] usb: gadget: udc: bdc: Remove unnecessary NULL checks in bdc_req_complete
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Ashwini Pahuja <ashwini.linux@gmail.com>,
-        Felipe Balbi <balbi@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
+References: <20200205123216.GO12867@shao2-debian> <20200205125804.GM14879@hirez.programming.kicks-ass.net>
+ <20200221080325.GA67807@shbuild999.sh.intel.com> <20200221132048.GE652992@krava>
+ <20200223141147.GA53531@shbuild999.sh.intel.com> <CAHk-=wjKFTzfDWjAAabHTZcityeLpHmEQRrKdTuk0f4GWcoohQ@mail.gmail.com>
+ <20200224003301.GA5061@shbuild999.sh.intel.com> <CAHk-=whi87NNOnNXJ6CvyyedmhnS8dZA2YkQQSajvBArH5XOeA@mail.gmail.com>
+ <20200224021915.GC5061@shbuild999.sh.intel.com> <CAHk-=wjkSb1OkiCSn_fzf2v7A=K0bNsUEeQa+06XMhTO+oQUaA@mail.gmail.com>
+ <CAHk-=wifdJHrfnmwwzPpH-0X6SaZxtdmRWpSNwf8xsXD2iE4dA@mail.gmail.com>
+ <CAHk-=wgbR4ocHAOiaj7x+V7dVoYr-mD2N7Y_MRPJ+Q+GohDYeg@mail.gmail.com> <87a757znqd.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87a757znqd.fsf@x220.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 24 Feb 2020 13:43:02 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh0z0LErNzwe-AqrEkv3BNzJep58Qmi2dM775UPtmq0og@mail.gmail.com>
+Message-ID: <CAHk-=wh0z0LErNzwe-AqrEkv3BNzJep58Qmi2dM775UPtmq0og@mail.gmail.com>
+Subject: Re: [LKP] Re: [perf/x86] 81ec3f3c4c: will-it-scale.per_process_ops
+ -5.5% regression
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Feng Tang <feng.tang@intel.com>, Oleg Nesterov <oleg@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        andi.kleen@intel.com, "Huang, Ying" <ying.huang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 8:57 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
+On Mon, Feb 24, 2020 at 1:22 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
 >
-> I know it has been a while but ping?
+> I keep looking at your patch and wondering if there isn't a way
+> to remove the uid refcount entirely on this path.
 
-Sorry! Too many bugs...barely treading water! Send help!
+I agree. I tried to come up with something, but couldn't.
 
->
-> On Tue, Oct 22, 2019 at 05:20:15PM -0700, Nathan Chancellor wrote:
-> > When building with Clang + -Wtautological-pointer-compare:
-> >
-> > drivers/usb/gadget/udc/bdc/bdc_ep.c:543:28: warning: comparison of
-> > address of 'req->queue' equal to a null pointer is always false
-> > [-Wtautological-pointer-compare]
-> >         if (req == NULL  || &req->queue == NULL || &req->usb_req == NULL)
-> >                              ~~~~~^~~~~    ~~~~
-> > drivers/usb/gadget/udc/bdc/bdc_ep.c:543:51: warning: comparison of
-> > address of 'req->usb_req' equal to a null pointer is always false
-> > [-Wtautological-pointer-compare]
-> >         if (req == NULL  || &req->queue == NULL || &req->usb_req == NULL)
-> >                                                     ~~~~~^~~~~~~    ~~~~
-> > 2 warnings generated.
-> >
-> > As it notes, these statements will always evaluate to false so remove
-> > them.
+> Linus I might be wrong but I have this sense that your change will only
+> help when signal delivery is backed up.  I expect in the common case
+> there won't be any pending signals outstanding for the user.
 
-`req` is an instance of a `struct bdc_req` defined in
-drivers/usb/gadget/udc/bdc/bdc.h as:
-333 struct bdc_req {
-334   struct usb_request  usb_req;
-335   struct list_head  queue;
-336   struct bdc_ep   *ep;
-337   /* only one Transfer per request */
-338   struct bd_transfer bd_xfr;
-339   int epnum;
-340 };
+Again, 100% agreed.
 
-So indeed the non-pointer, struct members can never be NULL.
+HOWEVER.
 
-I think the second check that was removed should be
-`req->usb_req.complete == NULL`, since otherwise `&req->usb_req` may
-be passed to usb_gadget_giveback_request which tries to invoke the
-`complete` member as a callback.  There are numerous places in
-drivers/usb/gadget/udc/bdc/bdc_ep.c that assign `complete = NULL`.
+The normal case where there's one only signal pending is also the case
+where we don't care about the extra atomic RMW access. By definition
+that's not going to ever going to show up as a performance issue or
+for cacheline contention.
 
-Can the maintainers clarify?
+So the only case that matters from a performance standpoint is the
+"lots of signals" case, in which case you'll see that sigqueue become
+backed up.
 
-> >
-> > Fixes: efed421a94e6 ("usb: gadget: Add UDC driver for Broadcom USB3.0 device controller IP BDC")
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/749
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >
-> > Note: I am not sure if these checks were intended to check if the
-> > contents of these arrays were NULL or if there should be some other
-> > checks in lieu of these; I am not familiar with the USB subsystem to
-> > answer this but I will happily respin the patch if this is not correct.
-> >
-> >  drivers/usb/gadget/udc/bdc/bdc_ep.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/usb/gadget/udc/bdc/bdc_ep.c b/drivers/usb/gadget/udc/bdc/bdc_ep.c
-> > index a4d9b5e1e50e..d49c6dc1082d 100644
-> > --- a/drivers/usb/gadget/udc/bdc/bdc_ep.c
-> > +++ b/drivers/usb/gadget/udc/bdc/bdc_ep.c
-> > @@ -540,7 +540,7 @@ static void bdc_req_complete(struct bdc_ep *ep, struct bdc_req *req,
-> >  {
-> >       struct bdc *bdc = ep->bdc;
-> >
-> > -     if (req == NULL  || &req->queue == NULL || &req->usb_req == NULL)
-> > +     if (req == NULL)
-> >               return;
-> >
-> >       dev_dbg(bdc->dev, "%s ep:%s status:%d\n", __func__, ep->name, status);
-> > --
-> > 2.23.0
-> >
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20200221045740.GA43417%40ubuntu-m2-xlarge-x86.
+But as I said in the original thread (before you got added to the list):
 
+ "I don't know. This does not seem to be a particularly serious load."
 
+I'm not convinced this will show up outside of this kind of
+signal-sending microbenchmark.
 
--- 
-Thanks,
-~Nick Desaulniers
+That said, I don't really see any downside to the patch either, so...
+
+                Linus
