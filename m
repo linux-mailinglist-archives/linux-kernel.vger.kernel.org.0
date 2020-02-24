@@ -2,61 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B56E0169B37
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 01:33:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04C73169B3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 01:35:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbgBXAdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 19:33:04 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:58010 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbgBXAdE (ORCPT
+        id S1727197AbgBXAfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 19:35:03 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:43679 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727151AbgBXAfD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 19:33:04 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::f0c])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 78C6F158DAD43;
-        Sun, 23 Feb 2020 16:33:03 -0800 (PST)
-Date:   Sun, 23 Feb 2020 16:33:02 -0800 (PST)
-Message-Id: <20200223.163302.12435682075168491.davem@davemloft.net>
-To:     haiyangz@microsoft.com
-Cc:     sashal@kernel.org, linux-hyperv@vger.kernel.org,
-        netdev@vger.kernel.org, kys@microsoft.com, sthemmin@microsoft.com,
-        olaf@aepfle.de, vkuznets@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [net PATCH] hv_netvsc: Fix unwanted wakeup in netvsc_attach()
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1582302738-24352-1-git-send-email-haiyangz@microsoft.com>
-References: <1582302738-24352-1-git-send-email-haiyangz@microsoft.com>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 23 Feb 2020 16:33:03 -0800 (PST)
+        Sun, 23 Feb 2020 19:35:03 -0500
+Received: from dread.disaster.area (pa49-195-185-106.pa.nsw.optusnet.com.au [49.195.185.106])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id B52CD3A211E;
+        Mon, 24 Feb 2020 11:34:57 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j61i4-0004s8-0Y; Mon, 24 Feb 2020 11:34:56 +1100
+Date:   Mon, 24 Feb 2020 11:34:55 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     ira.weiny@intel.com
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V4 09/13] fs/xfs: Add write aops lock to xfs layer
+Message-ID: <20200224003455.GY10776@dread.disaster.area>
+References: <20200221004134.30599-1-ira.weiny@intel.com>
+ <20200221004134.30599-10-ira.weiny@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221004134.30599-10-ira.weiny@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
+        a=bkRQb8bsQZKWSSj4M57YXw==:117 a=bkRQb8bsQZKWSSj4M57YXw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=jzfXMxHasCwLGlr9pT0A:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
-Date: Fri, 21 Feb 2020 08:32:18 -0800
+On Thu, Feb 20, 2020 at 04:41:30PM -0800, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> XFS requires the use of the aops of an inode to quiesced prior to
+> changing it to/from the DAX aops vector.
+> 
+> Take the aops write lock while changing DAX state.
+> 
+> We define a new XFS_DAX_EXCL lock type to carry the lock through to
+> transaction completion.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+> ---
+> Changes from v3:
+> 	Change locking function names to reflect changes in previous
+> 	patches.
+> 
+> Changes from V2:
+> 	Change name of patch (WAS: fs/xfs: Add lock/unlock state to xfs)
+> 	Remove the xfs specific lock and move to the vfs layer.
+> 		We still use XFS_LOCK_DAX_EXCL to be able to pass this
+> 		flag through to the transaction code.  But we no longer
+> 		have a lock specific to xfs.  This removes a lot of code
+> 		from the XFS layer, preps us for using this in ext4, and
+> 		is actually more straight forward now that all the
+> 		locking requirements are better known.
+> 
+> 	Fix locking order comment
+> 	Rework for new 'state' names
+> 	(Other comments on the previous patch are not applicable with
+> 	new patch as much of the code was removed in favor of the vfs
+> 	level lock)
+> ---
+>  fs/xfs/xfs_inode.c | 22 ++++++++++++++++++++--
+>  fs/xfs/xfs_inode.h |  7 +++++--
+>  2 files changed, 25 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index 35df324875db..5b014c428f0f 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
+>   *
+>   * Basic locking order:
+>   *
+> - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
+> + * s_dax_sem -> i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
+>   *
+>   * mmap_sem locking order:
+>   *
+>   * i_rwsem -> page lock -> mmap_sem
+> - * mmap_sem -> i_mmap_lock -> page_lock
+> + * s_dax_sem -> mmap_sem -> i_mmap_lock -> page_lock
+>   *
+>   * The difference in mmap_sem locking order mean that we cannot hold the
+>   * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
+> @@ -182,6 +182,9 @@ xfs_ilock(
+>  	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
+>  	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
+>  
+> +	if (lock_flags & XFS_DAX_EXCL)
+> +		inode_aops_down_write(VFS_I(ip));
 
-> When netvsc_attach() is called by operations like changing MTU, etc.,
-> an extra wakeup may happen while netvsc_attach() calling
-> rndis_filter_device_add() which sends rndis messages when queue is
-> stopped in netvsc_detach(). The completion message will wake up queue 0.
-> 
-> We can reproduce the issue by changing MTU etc., then the wake_queue
-> counter from "ethtool -S" will increase beyond stop_queue counter:
->      stop_queue: 0
->      wake_queue: 1
-> The issue causes queue wake up, and counter increment, no other ill
-> effects in current code. So we didn't see any network problem for now.
-> 
-> To fix this, initialize tx_disable to true, and set it to false when
-> the NIC is ready to be attached or registered.
-> 
-> Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
-> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+I largely don't see the point of adding this to xfs_ilock/iunlock.
 
-Applied, thank you.
+It's only got one caller, so I don't see much point in adding it to
+an interface that has over a hundred other call sites that don't
+need or use this lock. just open code it where it is needed in the
+ioctl code.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
