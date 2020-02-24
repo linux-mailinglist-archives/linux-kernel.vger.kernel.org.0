@@ -2,96 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC623169FA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37333169FB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:07:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgBXIAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:00:01 -0500
-Received: from mx1.cock.li ([185.10.68.5]:48559 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727242AbgBXIAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:00:01 -0500
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
+        id S1727239AbgBXIHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:07:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33328 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726216AbgBXIHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 03:07:44 -0500
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0C1020658;
+        Mon, 24 Feb 2020 08:07:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582531664;
+        bh=OAXJTTmgTmEwVHhk5H89yyZFslSLfmpQCmgtbI60Lhw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=E1vM+3wjaToZ2s1x4W5c7Dom2Z7kVhwudHTheTqJ1p0GWFwAus8mxD07N/b1NtwJI
+         HwL56jAS85wEcXV31NrIbD4hyqnfPtnelblYc0fQjINvC3QfAN4xu1MMSwstu7OKB6
+         yBNIetODIrrhv9eux4D/Mcr61IxwMf6mihi5TXwI=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] vt: vt_ioctl: remove unnecessary console allocation checks
+Date:   Mon, 24 Feb 2020 00:03:26 -0800
+Message-Id: <20200224080326.295046-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=waifu.club; s=mail;
-        t=1582531198; bh=+RYp5w7nTvZrdCFnc7G5TlYKlGNP7JgXLabNqYMThng=;
-        h=Date:From:To:Subject:From;
-        b=luBUxXAie0zOY/hc7JOox59dYOXrLNLnv5vznSY1akLcUIwrRe9Hm6DboM1FoxARC
-         XJifxcX1yoflrMLbRG3qBdCQBrwYPtfVoLCG6jx4O/E3TIPt6VV5PUhkHEczf4IwYo
-         surtfTSPpD0fkjd/hTAtg69Aq7So38PlmVXk9OQMyrnMvT+tOsQwqTjU9DBRKg+Nrl
-         2lmdfhfNU9YdS2fxlQ/xjIjPdJJbQ8XhIN1UG0Uf+IUmwN8kweul089SANC27hkjAn
-         qQH8/8Z1OjLGhQr+WWnjqF5d8AezVzcXfj4Byo4HKZ0eH1CMFCioWL3xadCKuNtlrt
-         ZGdv8Rjaehy5A==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 24 Feb 2020 07:59:58 +0000
-From:   whywontyousue@waifu.club
-To:     linux-kernel@vger.kernel.org
-Subject: LKRG: "there won't be a grsecurity alike situation where everything
- gets closed down".  (Linux Kernel Runtime Guard)
-Message-ID: <b91eda4a1a5184e11c9c11161fc7ea51@waifu.club>
-X-Sender: whywontyousue@waifu.club
-User-Agent: Roundcube Webmail/1.3.10
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> "there won't be a grsecurity alike situation where everything gets 
-> closed down".
+From: Eric Biggers <ebiggers@google.com>
 
-(from: www whonix org/wiki/Linux_Kernel_Runtime_Guard_LKRG )
+The vc_cons_allocated() checks in vt_ioctl() and vt_compat_ioctl() are
+unnecessary because they can only be reached by calling ioctl() on an
+open tty, which implies the corresponding virtual console is allocated.
 
-First of all, linux copyright holder: why don't you sue Grsecurity. They 
-are violating your copyright license. They proffer additional terms and 
-enforce additional restrictions. That's both a violation of section 4 
-and section 6 of GPL v2.
+And even if the virtual console *could* be freed concurrently, then
+these checks would be broken since they aren't done under console_lock,
+and the vc_data is dereferenced before them anyway.
 
-Now onto this Linux Kernel Runtime Guard:
+So, remove these unneeded checks to avoid confusion.
 
->    LKRG performs runtime integrity checking of the Linux kernel and 
-> detection of security vulnerability exploits against the kernel.
-> 
->    As controversial as this concept is, LKRG attempts to post-detect 
-> and hopefully promptly respond to unauthorized modifications to the 
-> running Linux kernel (integrity checking) or to credentials such as 
-> user IDs of the running processes (exploit detection). For process 
-> credentials, LKRG attempts to detect the exploit and take action before 
-> the kernel would grant access (such as open a file) based on the 
-> unauthorized credentials.
-> 
->    LKRG defeats many pre-existing exploits of Linux kernel 
-> vulnerabilities, and will likely defeat many future exploits (including 
-> of yet unknown vulnerabilities) that do not specifically attempt to 
-> bypass LKRG. While LKRG is bypassable by design, such bypasses tend to 
-> require more complicated and/or less reliable exploits.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ drivers/tty/vt/vt_ioctl.c | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
 
+diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
+index 57d681706fa85..400000a8830a1 100644
+--- a/drivers/tty/vt/vt_ioctl.c
++++ b/drivers/tty/vt/vt_ioctl.c
+@@ -339,22 +339,13 @@ int vt_ioctl(struct tty_struct *tty,
+ {
+ 	struct vc_data *vc = tty->driver_data;
+ 	struct console_font_op op;	/* used in multiple places here */
+-	unsigned int console;
++	unsigned int console = vc->vc_num;
+ 	unsigned char ucval;
+ 	unsigned int uival;
+ 	void __user *up = (void __user *)arg;
+ 	int i, perm;
+ 	int ret = 0;
+ 
+-	console = vc->vc_num;
+-
+-
+-	if (!vc_cons_allocated(console)) { 	/* impossible? */
+-		ret = -ENOIOCTLCMD;
+-		goto out;
+-	}
+-
+-
+ 	/*
+ 	 * To have permissions to do most of the vt ioctls, we either have
+ 	 * to be the owner of the tty, or have CAP_SYS_TTY_CONFIG.
+@@ -1184,14 +1175,9 @@ long vt_compat_ioctl(struct tty_struct *tty,
+ {
+ 	struct vc_data *vc = tty->driver_data;
+ 	struct console_font_op op;	/* used in multiple places here */
+-	unsigned int console = vc->vc_num;
+ 	void __user *up = compat_ptr(arg);
+ 	int perm;
+ 
+-
+-	if (!vc_cons_allocated(console)) 	/* impossible? */
+-		return -ENOIOCTLCMD;
+-
+ 	/*
+ 	 * To have permissions to do most of the vt ioctls, we either have
+ 	 * to be the owner of the tty, or have CAP_SYS_TTY_CONFIG.
+-- 
+2.25.1
 
-Allright, so it interferes with the running kernel, your copyrighted 
-work.
-
-Thus, if we imagine a court would use the same analysis as in Universal 
-City Studios Inc v Reimerdes, whatever this is has to abide your 
-copyright, just as the app in that case could not modify the running 
-RealPlayer without the permission of the copyright owners of RealPlayer.
-
-> We will likely use GPLv2 at least for LKRG free. We might or might not 
-> use a different license for LKRG Pro, if we ever make it.
-
-You don't have a choice in this matter. If RealPlayer cannot be modified 
-when running except as directed by it's copyright owners, by another 
-entity's program; neither can Linux kernel. You have to obey the 
-copyright owners permissions here.
-
-Now: will the linux copyright owners ever sue you if you ignore their 
-terms? Lol, comon, let's be reasonable. They fall into two camps 1) 
-scared little wageslaves, and 2) some corporations that feel the GPL is 
-too restrictive.
-
-Nothing to worry about: the wageslaves have shown themselves to be 
-worthless people with no fight in them.
