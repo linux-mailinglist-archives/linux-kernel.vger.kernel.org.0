@@ -2,51 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D82E016A0BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FA9216A0BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:56:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbgBXIzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:55:06 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:48778 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727235AbgBXIzD (ORCPT
+        id S1727735AbgBXIzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:55:36 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:35779 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbgBXIzf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:55:03 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1j69W0-0005YK-NS; Mon, 24 Feb 2020 09:55:00 +0100
-Date:   Mon, 24 Feb 2020 09:55:00 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     zanussi@kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>, Daniel Wagner <wagi@monom.org>
-Subject: Re: [PATCH RT 17/25] x86/fpu: Don't cache access to
- fpu_fpregs_owner_ctx
-Message-ID: <20200224085500.nub2zjcucwx2nwiw@linutronix.de>
-References: <cover.1582320278.git.zanussi@kernel.org>
- <25549e4ff2e5d78e663cf6e5cd8ed108ef03ff44.1582320278.git.zanussi@kernel.org>
+        Mon, 24 Feb 2020 03:55:35 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j69WW-00077v-B4; Mon, 24 Feb 2020 09:55:32 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j69WV-0006J8-IS; Mon, 24 Feb 2020 09:55:31 +0100
+Date:   Mon, 24 Feb 2020 09:55:31 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH 3/4] pwm: omap-dmtimer: Do not disable pwm before
+ changing period/duty_cycle
+Message-ID: <20200224085531.zab5ewr2nfi2shem@pengutronix.de>
+References: <20200224052135.17278-1-lokeshvutla@ti.com>
+ <20200224052135.17278-4-lokeshvutla@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <25549e4ff2e5d78e663cf6e5cd8ed108ef03ff44.1582320278.git.zanussi@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200224052135.17278-4-lokeshvutla@ti.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-21 15:24:45 [-0600], zanussi@kernel.org wrote:
-> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Hello,
+
+On Mon, Feb 24, 2020 at 10:51:34AM +0530, Lokesh Vutla wrote:
+> Only the Timer control register(TCLR) can be updated only when the timer
+> is stopped. Registers like Counter register(TCRR), loader register(TLDR),
+> match register(TMAR) can be updated when the counter is running. Since
+> TCLR is not updated in pwm_omap_dmtimer_config(), do not stop the
+> timer for period/duty_cycle update.
 > 
-> v4.14.170-rt75-rc1 stable review patch.
-> If anyone has any objections, please let me know.
+> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> ---
+>  drivers/pwm/pwm-omap-dmtimer.c | 14 --------------
+>  1 file changed, 14 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+> index f13be7216847..58c61559e72f 100644
+> --- a/drivers/pwm/pwm-omap-dmtimer.c
+> +++ b/drivers/pwm/pwm-omap-dmtimer.c
+> @@ -102,7 +102,6 @@ static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
+>  	u32 load_value, match_value;
+>  	struct clk *fclk;
+>  	unsigned long clk_rate;
+> -	bool timer_active;
+>  
+>  	dev_dbg(chip->dev, "requested duty cycle: %d ns, period: %d ns\n",
+>  		duty_ns, period_ns);
+> @@ -178,25 +177,12 @@ static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
+>  	load_value = (DM_TIMER_MAX - period_cycles) + 1;
+>  	match_value = load_value + duty_cycles - 1;
+>  
+> -	/*
+> -	 * We MUST stop the associated dual-mode timer before attempting to
+> -	 * write its registers, but calls to omap_dm_timer_start/stop must
+> -	 * be balanced so check if timer is active before calling timer_stop.
+> -	 */
+> -	timer_active = pm_runtime_active(&omap->dm_timer_pdev->dev);
+> -	if (timer_active)
+> -		omap->pdata->stop(omap->dm_timer);
+> -
+>  	omap->pdata->set_load(omap->dm_timer, true, load_value);
+>  	omap->pdata->set_match(omap->dm_timer, true, match_value);
 
-Please don't apply this for the reasons I mentioned in
-	https://lkml.kernel.org/r/20200122084352.nyqnlfaumjgnvgih@linutronix.de
+(Without having looked into the depths of the driver I assume
+.set_load() sets the period of the PWM and .set_match() the duty cycle.)
 
-I guess they still apply (haven't checked).
+What happens on a running PWM if you change the period? Consider you
+change from duty_cycle = 1000, period = 5000 to duty_cycle = 4000,
+period = 10000. As you set the period first, can it happen the hardware
+produces a cycle with duty_cycle = 1000, period = 10000?
 
-Sebastian
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
