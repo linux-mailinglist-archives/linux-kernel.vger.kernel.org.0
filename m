@@ -2,74 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3F1216A31A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:52:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4F9716A302
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:50:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbgBXJwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 04:52:36 -0500
-Received: from foss.arm.com ([217.140.110.172]:34476 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726765AbgBXJwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 04:52:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74A4E30E;
-        Mon, 24 Feb 2020 01:52:35 -0800 (PST)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 244F73F703;
-        Mon, 24 Feb 2020 01:52:34 -0800 (PST)
-Date:   Mon, 24 Feb 2020 09:52:32 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Elliot Berman <eberman@codeaurora.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Trilok Soni <tsoni@codeaurora.org>,
-        Prasad Sodagudi <psodagud@codeaurora.org>,
-        David Collins <collinsd@codeaurora.org>,
-        linux-arm-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt: psci: Add arm,psci-sys-reset2-type property
-Message-ID: <20200224095232.GB28594@bogus>
-References: <1582327685-6316-1-git-send-email-eberman@codeaurora.org>
- <1582327685-6316-2-git-send-email-eberman@codeaurora.org>
+        id S1727429AbgBXJuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 04:50:03 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:36498 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727311AbgBXJuD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 04:50:03 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01O9nwWL077916;
+        Mon, 24 Feb 2020 03:49:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582537798;
+        bh=HLip2YpnIGSxCwy5xrSBcH9I9sf6oirYzrhmh5MeiXA=;
+        h=From:To:CC:Subject:Date;
+        b=N51uzigHsE1ZPyzRl0CJpmg5wq7auBaamExDjhbMdcCpCxaTL4pEizhmxZHK6IfGR
+         ONmRBcsYzHjo2+TTtiCDDs0HwgW/XjEm8LquqxWSccaL37jsIJf7CAn6gVo9Xq7A+e
+         wAyofX/qBwoYoHq4ZVaX8/drBHwJdJOWJFNeD0KM=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01O9nww6097396
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Feb 2020 03:49:58 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 24
+ Feb 2020 03:49:57 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 24 Feb 2020 03:49:57 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01O9nsnB103443;
+        Mon, 24 Feb 2020 03:49:55 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/5] PCI: Endpoint: Miscellaneous improvements
+Date:   Mon, 24 Feb 2020 15:23:33 +0530
+Message-ID: <20200224095338.3758-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1582327685-6316-2-git-send-email-eberman@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 03:28:03PM -0800, Elliot Berman wrote:
-> Some implementors of PSCI may relax the requirements of the PSCI
-> architectural warm reset. In order to comply with PSCI specification, a
-> different reset_type value must be used. The alternate PSCI
-> SYSTEM_RESET2 may be used in all warm/soft reboot scenarios, replacing
-> the architectural warm reset.
-> 
-> Signed-off-by: Elliot Berman <eberman@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/arm/psci.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/psci.yaml b/Documentation/devicetree/bindings/arm/psci.yaml
-> index 8ef8542..a790e5a 100644
-> --- a/Documentation/devicetree/bindings/arm/psci.yaml
-> +++ b/Documentation/devicetree/bindings/arm/psci.yaml
-> @@ -102,6 +102,11 @@ properties:
->        [1] Kernel documentation - ARM idle states bindings
->          Documentation/devicetree/bindings/arm/idle-states.txt
->  
-> +  arm,psci-sys-reset2-type:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +        reset_type parameter value to use during a warm or soft reboot.
-> +
+Changes from v2:
+*) Added "Tested-by" tag from Vidya Sagar
+*) Added stable fixes tag to "Fix for concurrent memory allocation in
+   OB address region"
+   
+Changes from v1:
+Rebased to Linux 5.6-rc1 and removed dependencies to my other series
+to unblock [1]
 
-I would rather use param instead of type in the name.
+[1] -> http://lore.kernel.org/r/20200103100736.27627-1-vidyas@nvidia.com
 
---
-Regards,
-Sudeep
+v1 of this patch series can be found @
+http://lore.kernel.org/r/20191231100331.6316-1-kishon@ti.com
+
+This series adds miscellaneous improvements to PCIe endpoint core.
+1) Protect concurrent access to memory allocation in pci-epc-mem
+2) Replace spinlock with mutex in pci-epc-core and also use
+   notification chain mechanism to notify EPC events to EPF driver.
+3) Since endpoint function device can be created by multiple
+   mechanisms (configfs, devicetree, etc..), allowing each of these
+   mechanisms to assign a function number would result in mutliple
+   endpoint function devices having the same function number. In order
+   to avoid this, let EPC core assign a function number to the
+   endpoint device.
+
+Kishon Vijay Abraham I (5):
+  PCI: endpoint: Use notification chain mechanism to notify EPC events
+    to EPF
+  PCI: endpoint: Replace spinlock with mutex
+  PCI: endpoint: Fix for concurrent memory allocation in OB address
+    region
+  PCI: endpoint: Protect concurrent access to pci_epf_ops with mutex
+  PCI: endpoint: Assign function number for each PF in EPC core
+
+ drivers/pci/endpoint/functions/pci-epf-test.c |  13 +-
+ drivers/pci/endpoint/pci-ep-cfs.c             |  27 +----
+ drivers/pci/endpoint/pci-epc-core.c           | 113 ++++++++----------
+ drivers/pci/endpoint/pci-epc-mem.c            |  10 +-
+ drivers/pci/endpoint/pci-epf-core.c           |  33 ++---
+ include/linux/pci-epc.h                       |  19 ++-
+ include/linux/pci-epf.h                       |   9 +-
+ 7 files changed, 108 insertions(+), 116 deletions(-)
+
+-- 
+2.17.1
+
