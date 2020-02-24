@@ -2,173 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8EB516AD36
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:23:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A521516AD3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:23:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728417AbgBXRXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 12:23:17 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45117 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728384AbgBXRXN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:23:13 -0500
-Received: by mail-wr1-f65.google.com with SMTP id g3so11308994wrs.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 09:23:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z7r4FCCdgK//1AJV7o7c7T7DxWEhsHdVIX0fUYjE4Ts=;
-        b=g+oJppTDpv5kQixddVJjhu7C9YgdQArMSg5hmvMNu3Y69lt1nSnlv6e4GUhHjgzmhc
-         kpyDv0phuVbr2tlC8zCjmDiCR1McS75gOj4mhVZnXt6t/GONUhBWF2zamYaURL31rXtE
-         7lQy0TnmmSKA733p9DxpdQcfGDWL0NZ7BMpRU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z7r4FCCdgK//1AJV7o7c7T7DxWEhsHdVIX0fUYjE4Ts=;
-        b=OxzgBnYTXyU0vNwDHo16U0lfOOc3+uhsSHsk7j6NTEMmbhKcn0coJ86h6wuoMqCVVh
-         0vL27BQhyCBg9lRzmohJ2DIn7UstH2WHB6Bqj4XM4WMexQJVpd1JDI/OEIDDb8AMeF7w
-         fFhU+1b/QOGLR49HvyK17YkxtrxxdUlSNjVMLWLBZipG5/aQfyJOs9yqW+V85YHGjHEH
-         iaCIzX30R0FGLWMAttxSNCC4Y6Wn6j8LHH5LlK4bgtaQ82GyE1OcuwjMC/ECZH7avbtR
-         4tCF0ao/fMSXT1dElE/fsFyNcsoF4fVE5lCq3FxnQO/9gr7Jk6i+limkRUYcY23v7sMg
-         uf1w==
-X-Gm-Message-State: APjAAAXHGW142xkLuBkgb9v1Lrgxq5dfZR1gfD+UugseUn8S5Nm6d2GQ
-        SFUgKG9CYyi2gAwtON3MTY4C8IlJwl0=
-X-Google-Smtp-Source: APXvYqw/rLv+BSiAvCyHeUmMe9yYodWuPz2r3aFrU2+asq1tfmpvCuhAPRCp6EaiEEqrhW9IeqWgdQ==
-X-Received: by 2002:a5d:5706:: with SMTP id a6mr67768995wrv.108.1582564990967;
-        Mon, 24 Feb 2020 09:23:10 -0800 (PST)
-Received: from chromium.org ([2620:0:105f:fd00:d960:542a:a1d:648a])
-        by smtp.gmail.com with ESMTPSA id j15sm20087903wrp.9.2020.02.24.09.23.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 09:23:10 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Mon, 24 Feb 2020 18:23:09 +0100
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        James Morris <jmorris@namei.org>
-Subject: Re: [PATCH bpf-next v4 3/8] bpf: lsm: provide attachment points for
- BPF LSM programs
-Message-ID: <20200224172309.GB21886@chromium.org>
-References: <20200220175250.10795-1-kpsingh@chromium.org>
- <20200220175250.10795-4-kpsingh@chromium.org>
- <0ef26943-9619-3736-4452-fec536a8d169@schaufler-ca.com>
- <202002211946.A23A987@keescook>
+        id S1728425AbgBXRXd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 12:23:33 -0500
+Received: from vps.xff.cz ([195.181.215.36]:60214 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727797AbgBXRXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 12:23:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1582565008; bh=bd4Uuy+8NdF8pyhX5zAyIND0GOYY5+tfdsLIGI0STkY=;
+        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
+        b=h1RRqRCRYXFCxoDJO6jPP6II2ps9oswey4T2PFiwvq2vrZbVBQg2rrJiJzV7Xyk4r
+         kNPRhzIQeeePwaujC76aAlQCVufqcsuTc9SYASpY8Uj1FJxVnoc3Aim4E1c8LyGl97
+         GLzrudZoPO8yo1w/G52Ig9+sYovPq+/rJoTbsdrA=
+Date:   Mon, 24 Feb 2020 18:23:28 +0100
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: sun8i-a83t: Add thermal trip points/cooling
+ maps
+Message-ID: <20200224172328.yauwfgov664ayrd6@core.my.home>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20200224165417.334617-1-megous@megous.com>
+ <2e4213a6-2aaf-641c-f741-9503f3ffd5fe@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <202002211946.A23A987@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2e4213a6-2aaf-641c-f741-9503f3ffd5fe@linaro.org>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kees,
+Hi, 
 
-Thanks for the feedback!
+On Mon, Feb 24, 2020 at 06:06:20PM +0100, Daniel Lezcano wrote:
+> On 24/02/2020 17:54, Ondrej Jirman wrote:
+> > This enables passive cooling by down-regulating CPU voltage
+> >  			clocks = <&ccu CLK_C1CPUX>;
+> > @@ -1188,12 +1188,60 @@ cpu0_thermal: cpu0-thermal {
+> >  			polling-delay-passive = <0>;
+> >  			polling-delay = <0>;
+> >  			thermal-sensors = <&ths 0>;
+> > +
+> > +			trips {
+> > +				cpu0_hot: cpu-hot {
+> > +					temperature = <80000>;
+> > +					hysteresis = <2000>;
+> > +					type = "passive";
+> > +				};
+> > +
+> > +				cpu0_very_hot: cpu-very-hot {
+> > +					temperature = <100000>;
+> > +					hysteresis = <0>;
+> > +					type = "critical";
+> > +				};
+> > +			};
+> > +
+> > +			cooling-maps {
+> > +				cpu-hot-limit {
+> > +					trip = <&cpu0_hot>;
+> > +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> > +				};
+> > +			};
+> >  		};
+> >  
+> >  		cpu1_thermal: cpu1-thermal {
+> >  			polling-delay-passive = <0>;
+> 
+> No polling to mitigate?
 
-On 21-Feb 20:22, Kees Cook wrote:
-> On Thu, Feb 20, 2020 at 03:49:05PM -0800, Casey Schaufler wrote:
-> > On 2/20/2020 9:52 AM, KP Singh wrote:
-> > > From: KP Singh <kpsingh@google.com>
+Polling to mitigate what?
+
+The driver is using interrupts whenever new reading is available, and
+notifies tz of the change. I don't have a reason to believe any new
+values are available from thermal sensor outside of the interrupt
+period.
+
+> >  			polling-delay = <0>;
+> >  			thermal-sensors = <&ths 1>;
+> > +
+> > +			trips {
+> > +				cpu1_hot: cpu-hot {
+> > +					temperature = <80000>;
+> > +					hysteresis = <2000>;
+> > +					type = "passive";
+> 
+> I'm curious, can you really reach this temperature with a cortex-a7
+> running at 1.2GHz max?
+
+That depends on ambient temperature. I'd say easily. My A83T is running
+iniside enclosed space with no cooling other than dissipating heat to
+the board.
+
+Anyway, I'm running my A83T boards at 1.8GHz. And A83T can run up to 2GHz
+at the best SoC bin.
+
+I'll probably submit updated cpufreq table at some point too, once I fix
+it up to use the SoC bin information.
+
+https://megous.com/git/linux/commit/?h=ths-5.6&id=171b7c3c3db98b5939d28d0c96b384edda95cec3
+
+regards,
+	o.
+
+> > +				};
+> > +
+> > +				cpu1_very_hot: cpu-very-hot {
+> > +					temperature = <100000>;
+> > +					hysteresis = <0>;
+> > +					type = "critical";
+> > +				};
+> > +			};
+> > +
+> > +			cooling-maps {
+> > +				cpu-hot-limit {
+> > +					trip = <&cpu1_hot>;
+> > +					cooling-device = <&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > +							 <&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > +							 <&cpu102 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > +							 <&cpu103 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> > +				};
+> > +			};
+> >  		};
+> >  
+> >  		gpu_thermal: gpu-thermal {
 > > 
-> > Sorry about the heavy list pruning - the original set
-> > blows thunderbird up.
 > 
-> (I've added some people back; I had to dig this thread back out of lkml
-> since I didn't get a direct copy...)
-> 
-> > > The BPF LSM programs are implemented as fexit trampolines to avoid the
-> > > overhead of retpolines. These programs cannot be attached to security_*
-> > > wrappers as there are quite a few security_* functions that do more than
-> > > just calling the LSM callbacks.
-> > >
-> > > This was discussed on the lists in:
-> > >
-> > >   https://lore.kernel.org/bpf/20200123152440.28956-1-kpsingh@chromium.org/T/#m068becce588a0cdf01913f368a97aea4c62d8266
-> > >
-> > > Adding a NOP callback after all the static LSM callbacks are called has
-> > > the following benefits:
-> > >
-> > > - The BPF programs run at the right stage of the security_* wrappers.
-> > > - They run after all the static LSM hooks allowed the operation,
-> > >   therefore cannot allow an action that was already denied.
-> > 
-> > I still say that the special call-out to BPF is unnecessary.
-> > I remain unconvinced by the arguments. You aren't doing anything
-> > so special that the general mechanism won't work.
-> 
-> If I'm understanding this correctly, there are two issues:
-> 
-> 1- BPF needs to be run last due to fexit trampolines (?)
-> 
-> 2- BPF hooks don't know what may be attached at any given time, so
->    ALL LSM hooks need to be universally hooked. THIS turns out to create
->    a measurable performance problem in that the cost of the indirect call
->    on the (mostly/usually) empty BPF policy is too high.
-> 
-> "1" can be solved a lot of ways, and doesn't seem to be a debated part
-> of this series.
-> 
-> "2" is interesting -- it creates a performance problem for EVERYONE that
-> builds in this kernel feature, regardless of them using it. Excepting
-> SELinux, "traditional" LSMs tends to be relatively sparse in their hooking:
-> 
-> $ grep '^      struct hlist_head' include/linux/lsm_hooks.h | wc -l
-> 230
-> $ for i in apparmor loadpin lockdown safesetid selinux smack tomoyo yama ; \
->   do echo -n "$i " && (cd $i && git grep LSM_HOOK_INIT | wc -l) ; done
-> apparmor   68
-> loadpin     3
-> lockdown    1
-> safesetid   2
-> selinux   202
-> smack     108
-> tomoyo     28
-> yama        4
-> 
-> So, trying to avoid the indirect calls is, as you say, an optimization,
-> but it might be a needed one due to the other limitations.
-> 
-> To me, some questions present themselves:
-> 
-> a) What, exactly, are the performance characteristics of:
-> 	"before"
-> 	"with indirect calls"
-> 	"with static keys optimization"
-
-Good suggestion!
-
-I will do some analysis and come back with the numbers.
-
-> 
-> b) Would there actually be a global benefit to using the static keys
->    optimization for other LSMs? (Especially given that they're already
->    sparsely populated and policy likely determines utility -- all the
->    LSMs would just turn ON all their static keys or turn off ALL their
->    static keys depending on having policy loaded.)
-
-As Alexei mentioned, we can use the patches for static calls after
-they are merged:
-
-https://lore.kernel.org/lkml/8bc857824f82462a296a8a3c4913a11a7f801e74.1547073843.git.jpoimboe@redhat.com/
-
-to make the framework better (as a separate series) especially given
-that we are unsure how they work with BPF.
-
-- KP
-
-> 
-> If static keys are justified for KRSI (by "a") then it seems the approach
-> here should stand. If "b" is also true, then we need an additional
-> series to apply this optimization for the other LSMs (but that seems
-> distinctly separate from THIS series).
 > 
 > -- 
-> Kees Cook
+>  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> 
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+> 
