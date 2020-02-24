@@ -2,215 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0E5516A30E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:50:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDA7E16A329
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:54:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbgBXJuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 04:50:19 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41374 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726838AbgBXJuP (ORCPT
+        id S1727701AbgBXJyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 04:54:13 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43434 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726838AbgBXJyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 04:50:15 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01O9o9co041541;
-        Mon, 24 Feb 2020 03:50:09 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582537809;
-        bh=LAHbe1ep18MRMLKppKExizKw+8T2sbESWHHKJMLTnvs=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Gqa7nUisMfOXQOO0TSe1AbhPrlWNpoOYp7MkBTCMPdaeG9Y1Vq0UTzzTtY1XUPxQS
-         Bf6+smAp4+3JOg6uHUeUc1aMLa8KgxnGdRVZh039ZrdlVSXMe1lMbXrIIcwzd9Lo/P
-         1JVEexUv2hs+SXKihiM5k/SWI3XT4fAYH/q408TA=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01O9o9qG099304
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Feb 2020 03:50:09 -0600
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 24
- Feb 2020 03:50:09 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 24 Feb 2020 03:50:09 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01O9nsnG103443;
-        Mon, 24 Feb 2020 03:50:07 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 5/5] PCI: endpoint: Assign function number for each PF in EPC core
-Date:   Mon, 24 Feb 2020 15:23:38 +0530
-Message-ID: <20200224095338.3758-6-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200224095338.3758-1-kishon@ti.com>
-References: <20200224095338.3758-1-kishon@ti.com>
+        Mon, 24 Feb 2020 04:54:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ox3XWd1h0UFdpJWgXqkeLH4EDTvT30rmX9E287Fs9Mc=; b=hvufIr9pooCrFsZ9kEGSb3f9zq
+        4Q9DVNZ15CcdRQCq97rhL4JOELdYuB6qgEtuCrUXJHS5a0aNDfaTGG2YzSnEUhQBrUkW2ezu5tHoq
+        JnPB18Zj+IhYdDz8luHXPvbKtHYB7nHZPOpNRQnGUD09DeR/ZMph9x3QOiTH2A4oTGvBsVYYMlMrT
+        Yvjqsqkd+Hagu08xedXb36TL04iGKAQingnpTBCRpMNfjHSJ0HCaVYpJVjIoZ2hd4ZfoSnRP5ConU
+        Zu55UjbeVcGBan5KNcYVpVgT46OwtMa/4w0uIXpGDXRWaP7xfUbEY+480pUtO8Z+FEGs9IG+mqDLc
+        HWexdmVg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6ARA-00007B-RU; Mon, 24 Feb 2020 09:54:05 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DD7B730783F;
+        Mon, 24 Feb 2020 10:52:07 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 636002B4DAAD2; Mon, 24 Feb 2020 10:54:02 +0100 (CET)
+Date:   Mon, 24 Feb 2020 10:54:02 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Andriy Shevchenko <andriy.shevchenko@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v4 1/2] x86: fix bitops.h warning with a moved cast
+Message-ID: <20200224095402.GD14897@hirez.programming.kicks-ass.net>
+References: <20200222000214.2169531-1-jesse.brandeburg@intel.com>
+ <CAHp75Vc=9aSt1DH-LzDHnX1+fnPpkJWHkkh0-ApTL0zm+ZA2oQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vc=9aSt1DH-LzDHnX1+fnPpkJWHkkh0-ApTL0zm+ZA2oQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PCIe endpoint core relies on the drivers that invoke the
-pci_epc_add_epf() API to allocate and assign a function number
-to each physical function (PF). Since endpoint function device can
-be created by multiple mechanisms (configfs, devicetree, etc..),
-allowing each of these mechanisms to assign a function number
-would result in mutliple endpoint function devices having the
-same function number. In order to avoid this, let EPC core assign
-a function number to the endpoint device.
+On Sat, Feb 22, 2020 at 11:39:57AM +0200, Andy Shevchenko wrote:
+> On Sat, Feb 22, 2020 at 2:04 AM Jesse Brandeburg
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/pci/endpoint/pci-ep-cfs.c   | 27 +++++----------------------
- drivers/pci/endpoint/pci-epc-core.c | 26 ++++++++++++++++++++++----
- include/linux/pci-epc.h             |  2 ++
- 3 files changed, 29 insertions(+), 26 deletions(-)
+> > -#define CONST_MASK(nr)                 (1 << ((nr) & 7))
+> > +#define CONST_MASK(nr)                 ((u8)1 << ((nr) & 7))
+> >
+> >  static __always_inline void
+> >  arch_set_bit(long nr, volatile unsigned long *addr)
+> > @@ -54,7 +54,7 @@ arch_set_bit(long nr, volatile unsigned long *addr)
+> >         if (__builtin_constant_p(nr)) {
+> >                 asm volatile(LOCK_PREFIX "orb %1,%0"
+> >                         : CONST_MASK_ADDR(nr, addr)
+> > -                       : "iq" ((u8)CONST_MASK(nr))
+> > +                       : "iq" (CONST_MASK(nr))
 
-diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
-index d1288a0bd530..e7e8367eead1 100644
---- a/drivers/pci/endpoint/pci-ep-cfs.c
-+++ b/drivers/pci/endpoint/pci-ep-cfs.c
-@@ -29,7 +29,6 @@ struct pci_epc_group {
- 	struct config_group group;
- 	struct pci_epc *epc;
- 	bool start;
--	unsigned long function_num_map;
- };
- 
- static inline struct pci_epf_group *to_pci_epf_group(struct config_item *item)
-@@ -89,37 +88,22 @@ static int pci_epc_epf_link(struct config_item *epc_item,
- 			    struct config_item *epf_item)
- {
- 	int ret;
--	u32 func_no = 0;
- 	struct pci_epf_group *epf_group = to_pci_epf_group(epf_item);
- 	struct pci_epc_group *epc_group = to_pci_epc_group(epc_item);
- 	struct pci_epc *epc = epc_group->epc;
- 	struct pci_epf *epf = epf_group->epf;
- 
--	func_no = find_first_zero_bit(&epc_group->function_num_map,
--				      BITS_PER_LONG);
--	if (func_no >= BITS_PER_LONG)
--		return -EINVAL;
--
--	set_bit(func_no, &epc_group->function_num_map);
--	epf->func_no = func_no;
--
- 	ret = pci_epc_add_epf(epc, epf);
- 	if (ret)
--		goto err_add_epf;
-+		return ret;
- 
- 	ret = pci_epf_bind(epf);
--	if (ret)
--		goto err_epf_bind;
-+	if (ret) {
-+		pci_epc_remove_epf(epc, epf);
-+		return ret;
-+	}
- 
- 	return 0;
--
--err_epf_bind:
--	pci_epc_remove_epf(epc, epf);
--
--err_add_epf:
--	clear_bit(func_no, &epc_group->function_num_map);
--
--	return ret;
- }
- 
- static void pci_epc_epf_unlink(struct config_item *epc_item,
-@@ -134,7 +118,6 @@ static void pci_epc_epf_unlink(struct config_item *epc_item,
- 
- 	epc = epc_group->epc;
- 	epf = epf_group->epf;
--	clear_bit(epf->func_no, &epc_group->function_num_map);
- 	pci_epf_unbind(epf);
- 	pci_epc_remove_epf(epc, epf);
- }
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index e51a12ed85bb..dc1c673534e0 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -471,22 +471,39 @@ EXPORT_SYMBOL_GPL(pci_epc_write_header);
-  */
- int pci_epc_add_epf(struct pci_epc *epc, struct pci_epf *epf)
- {
-+	u32 func_no;
-+	int ret = 0;
-+
- 	if (epf->epc)
- 		return -EBUSY;
- 
- 	if (IS_ERR(epc))
- 		return -EINVAL;
- 
--	if (epf->func_no > epc->max_functions - 1)
--		return -EINVAL;
-+	mutex_lock(&epc->lock);
-+	func_no = find_first_zero_bit(&epc->function_num_map,
-+				      BITS_PER_LONG);
-+	if (func_no >= BITS_PER_LONG) {
-+		ret = -EINVAL;
-+		goto ret;
-+	}
-+
-+	if (func_no > epc->max_functions - 1) {
-+		dev_err(&epc->dev, "Exceeding max supported Function Number\n");
-+		ret = -EINVAL;
-+		goto ret;
-+	}
- 
-+	set_bit(func_no, &epc->function_num_map);
-+	epf->func_no = func_no;
- 	epf->epc = epc;
- 
--	mutex_lock(&epc->lock);
- 	list_add_tail(&epf->list, &epc->pci_epf);
-+
-+ret:
- 	mutex_unlock(&epc->lock);
- 
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(pci_epc_add_epf);
- 
-@@ -503,6 +520,7 @@ void pci_epc_remove_epf(struct pci_epc *epc, struct pci_epf *epf)
- 		return;
- 
- 	mutex_lock(&epc->lock);
-+	clear_bit(epf->func_no, &epc->function_num_map);
- 	list_del(&epf->list);
- 	epf->epc = NULL;
- 	mutex_unlock(&epc->lock);
-diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-index 4e3e527c49d1..ccaf6e3fa931 100644
---- a/include/linux/pci-epc.h
-+++ b/include/linux/pci-epc.h
-@@ -92,6 +92,7 @@ struct pci_epc_mem {
-  * @max_functions: max number of functions that can be configured in this EPC
-  * @group: configfs group representing the PCI EPC device
-  * @lock: mutex to protect pci_epc ops
-+ * @function_num_map: bitmap to manage physical function number
-  * @notifier: used to notify EPF of any EPC events (like linkup)
-  */
- struct pci_epc {
-@@ -103,6 +104,7 @@ struct pci_epc {
- 	struct config_group		*group;
- 	/* mutex to protect against concurrent access of EP controller */
- 	struct mutex			lock;
-+	unsigned long			function_num_map;
- 	struct atomic_notifier_head	notifier;
- };
- 
--- 
-2.17.1
+Note how this is not equivalent, the old code actually handed in a u8
+while the new code hands int. By moving the (u8) cast into the parens,
+you casl 1 to u8, which then instantly gets promoted to 'int' due to the
+'<<' operator.
 
+> >                         : "memory");
+> >         } else {
+> >                 asm volatile(LOCK_PREFIX __ASM_SIZE(bts) " %1,%0"
+> > @@ -74,7 +74,7 @@ arch_clear_bit(long nr, volatile unsigned long *addr)
+> >         if (__builtin_constant_p(nr)) {
+> >                 asm volatile(LOCK_PREFIX "andb %1,%0"
+> >                         : CONST_MASK_ADDR(nr, addr)
+> > -                       : "iq" ((u8)~CONST_MASK(nr)));
+> > +                       : "iq" (CONST_MASK(nr) ^ 0xff));
+> 
+> I'm wondering if the original, by Peter Z, order allows us to drop
+> (u8) casting in the CONST_MASK completely.
+
+I'm thinking it's all nonsense anyway :-), the result of either << or ^
+is always promoted to int anyway.
+
+The sparse complaint was that ~CONST_MASK(nr) had high bits set which
+were lost, which is true, but a copmletely stupid warning IMO.
+
+By using 0xff ^ CONST_MASK(nr), those bits will not be set and will not
+be lost.
+
+None of that has anything to do with where we place a pointless cast
+more or less.
