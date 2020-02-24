@@ -2,149 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3AED16B0D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 21:17:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D088C16B0CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 21:10:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbgBXURM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 15:17:12 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39192 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbgBXURL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 15:17:11 -0500
-Received: by mail-lj1-f196.google.com with SMTP id o15so11567813ljg.6
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 12:17:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oSNWnI1c4cFgTcFCSRSzkFHe/QpedNaBy4vNqxXbuAQ=;
-        b=P4EToDhGbYQaUjVNwLblwoyyxDJN17G6hPH1HFtBMlD4Sm85+CNr4EuAtf/OOgxD7O
-         sgIgV8GbuChgLLkXofo4JOa408otw3lNhEm3RVv9gqIiH/qgS7OIT/FiTT2/KCMTeg9c
-         OpMF+TVpR4qvKxn0OBH7tGju7hH+ptq8xN8G4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oSNWnI1c4cFgTcFCSRSzkFHe/QpedNaBy4vNqxXbuAQ=;
-        b=rlC1h7kvuEXybynYp9wCxSzv2KveTBSEHoRRK6Cv9DKW/Yxb8bhgcud1t2RbzxfiYd
-         13sqvd0KazphyeMHJsA9NK+PKA0dNcLWQRIy//FnapiddZDkns9k7yuGof5m3lL0EZkv
-         9MFtCBSxBcBXsGLBhuDF0ZNDrNvQm+gGXnMqqiHfnidDu/SCz6Fi67cPDfDvhvq9U0i8
-         RNLUKAahDLBa/CXaUveZSuHyZ9X2TumCz0rQq5Bfcz93Xb1EKHc3thhtEyOd1Q4o0l11
-         y9WDqBDElKOn48x/gu7L+CV1jTXWiJ4TCoEQZHoEGWiI9PWFC4gWkg2u92FQGj99ZOcf
-         ncAQ==
-X-Gm-Message-State: APjAAAXZhyOV9Ggb1vCRbQF5+xxDlIYhUtiaGIcflEtxGCpUlJVZdFmn
-        67FSW7B144BhPT++Mtp/NTdLDCxq1GU=
-X-Google-Smtp-Source: APXvYqwXVR+sziyZDFlAFLhSKKrNacOeqFWN5GIQtSB7/0AEsvwOUMLilMBF8V2L4zy7PitPdne4+g==
-X-Received: by 2002:a2e:7d0e:: with SMTP id y14mr32471956ljc.158.1582575427403;
-        Mon, 24 Feb 2020 12:17:07 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id s17sm8088541ljo.18.2020.02.24.12.17.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 12:17:07 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id n18so11559375ljo.7
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 12:17:06 -0800 (PST)
-X-Received: by 2002:a2e:461a:: with SMTP id t26mr31070734lja.204.1582574960486;
- Mon, 24 Feb 2020 12:09:20 -0800 (PST)
+        id S1727425AbgBXUK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 15:10:29 -0500
+Received: from vps-vb.mhejs.net ([37.28.154.113]:40112 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726628AbgBXUK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 15:10:28 -0500
+Received: from MUA
+        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92.3)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1j6K3b-0001SI-W7; Mon, 24 Feb 2020 21:10:24 +0100
+Subject: Re: [PATCH] cpuidle-haltpoll: allow force loading on hosts without
+ the REALTIME hint
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Joao Martins <joao.m.martins@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org
+References: <20200221174331.1480468-1-mail@maciej.szmigiero.name>
+Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
+ mQINBFpGusUBEADXUMM2t7y9sHhI79+2QUnDdpauIBjZDukPZArwD+sDlx5P+jxaZ13XjUQc
+ 6oJdk+jpvKiyzlbKqlDtw/Y2Ob24tg1g/zvkHn8AVUwX+ZWWewSZ0vcwp7u/LvA+w2nJbIL1
+ N0/QUUdmxfkWTHhNqgkNX5hEmYqhwUPozFR0zblfD/6+XFR7VM9yT0fZPLqYLNOmGfqAXlxY
+ m8nWmi+lxkd/PYqQQwOq6GQwxjRFEvSc09m/YPYo9hxh7a6s8hAP88YOf2PD8oBB1r5E7KGb
+ Fv10Qss4CU/3zaiyRTExWwOJnTQdzSbtnM3S8/ZO/sL0FY/b4VLtlZzERAraxHdnPn8GgxYk
+ oPtAqoyf52RkCabL9dsXPWYQjkwG8WEUPScHDy8Uoo6imQujshG23A99iPuXcWc/5ld9mIo/
+ Ee7kN50MOXwS4vCJSv0cMkVhh77CmGUv5++E/rPcbXPLTPeRVy6SHgdDhIj7elmx2Lgo0cyh
+ uyxyBKSuzPvb61nh5EKAGL7kPqflNw7LJkInzHqKHDNu57rVuCHEx4yxcKNB4pdE2SgyPxs9
+ 9W7Cz0q2Hd7Yu8GOXvMfQfrBiEV4q4PzidUtV6sLqVq0RMK7LEi0RiZpthwxz0IUFwRw2KS/
+ 9Kgs9LmOXYimodrV0pMxpVqcyTepmDSoWzyXNP2NL1+GuQtaTQARAQABtDBNYWNpZWogUy4g
+ U3ptaWdpZXJvIDxtYWlsQG1hY2llai5zem1pZ2llcm8ubmFtZT6JAlQEEwEIAD4CGwMFCwkI
+ BwIGFQoJCAsCBBYCAwECHgECF4AWIQRyeg1N257Z9gOb7O+Ef143kM4JdwUCXgY+twUJBDYq
+ 8gAKCRCEf143kM4Jd/45D/wJvB7YuXuQvgqB9rG2b6cxMe2hriH9iLnpJlUjgzHwNDWkVF6v
+ ZYJeIhYyUSxHNK/XExDS7UfH8E9Z7Jo9AoSlw+EBcUcw/HEwRI0DACicKemdJZVTsRn+sOC8
+ Imw/pWRyMHLy/Fc59xa68x7+6XFuABrcik05LTF6CDB/1EeUAPVY7mfQOpPUx4G72TZj93F5
+ 30MnFj2PWJIiQ0T3MxDH02+TRdussTcaCy7opx5xOQER6kPIaQVKfNfEftT+p7B8Cr+jZJMo
+ K7Lib6BnZJKXzYw0M8aB+qAbsipv/ctozOjzHLwTLuhpFcQV+ExccuWg53+pk71j9Pd+u8hq
+ qNx9iNJtCb+jsbLbtoOtWpDLdTvSrXp7dQBCcqMs9CCBVPKdgyg+YPOcAgbGitygIpJCs0s9
+ 5WRSv+lGmad14GDnp6c01kFnUqZ3G4B5/WLqmCFsIzZTnvW+kH5gw5PFBI0eD7s8Gf523NgX
+ 0U2c1hEtFyW539v8b+5USIYgLNqFjhJ0u8Fp4re5TFI16/rG8Ts+fpsPzJGx5LcrD+OIqN7A
+ VRIWAyNhUZpczp7e391R2MT4W1ee5lywt4YfC3/7ifBZ/lFZgsPmGRlhT+PT4ZBiTL6w8pP9
+ HT+KiMAtgvISfoOgeMQ5NE0+DIV615CEKXGtTGeeBoHOza2Oq5BSIPvKwbkBjQRaRrtSAQwA
+ 1c8skXiNYGgitv7X8osxlkOGiqvy1WVV6jJsv068W6irDhVETSB6lSc7Qozk9podxjlrae9b
+ vqfaJxsWhuwQjd+QKAvklWiLqw4dll2R3+aanBcRJcdZ9iw0T63ctD26xz84Wm7HIVhGOKsS
+ yHHWJv2CVHjfD9ppxs62XuQNNb3vP3i7LEto9zT1Zwt6TKsJy5kWSjfRr+2eoSi0LIzBFaGN
+ D8UOP8FdpS7MEkqUQPMI17E+02+5XCLh33yXgHFVyWUxChqL2r8y57iXBYE/9XF3j4+58oTD
+ ne/3ef+6dwZGyqyP1C34vWoh/IBq2Ld4cKWhzOUXlqKJno0V6pR0UgnIJN7SchdZy5jd0Mrq
+ yEI5k7fcQHJxLK6wvoQv3mogZok4ddLRJdADifE4+OMyKwzjLXtmjqNtW1iLGc/JjMXQxRi0
+ ksC8iTXgOjY0f7G4iMkgZkBfd1zqfS+5DfcGdxgpM0m9EZ1mhERRR80U6C+ZZ5VzXga2bj0o
+ ZSumgODJABEBAAGJA/IEGAEIACYCGwIWIQRyeg1N257Z9gOb7O+Ef143kM4JdwUCXgY/uAUJ
+ BDYrZgHAwPQgBBkBCAAdFiEE4ndqq6COJv9aG0oJUrHW6VHQzgcFAlpGu1IACgkQUrHW6VHQ
+ zgdztQv+PRhCVQ7KUuQMEvMaH+rc1GIaHT6Igbvn77bEG1Kd39jX3lJDdyZXrVqxFylLu64r
+ +9kHeCslM+Uq/fUM94od7cXGkvCW7ST1MUGQ3g+/rAf88F5l+KjUzLShw2sxElP+sjGQGQ4z
+ Llve5MarGtV4TH6dJlDXZTtxwHotHZDiA2bUeJYLlMAggwLM/rBS9xfytMNuFk8U0THR/TVw
+ vu3VymjdOjJnSecFyu9iRskRXc8LA9JxqDbfmETePg1dPehxiwgMvdi3WdYk4BB1wMl0MdnU
+ 2Ea3AdjU3nX+Uc/npPMvDuzai9ZA7/tVG1RaQhIElL85+A5Tb2Wzl0IoO1kTafkaQNBOStEe
+ O1fhLSz5/3Dt+dOOqxp7VuwSHqEXb3jc6WgnwZiimF8vvGzE2PNBAuIAwGItY2fkpGblbmmN
+ b/qYZEjdbVNjfJXyVyez//QoiUrQk2sC9nNL7zYTEMocuJFN90a2158h5ve1qBT0jpUx69Ok
+ yR8/DxnAEmj04WSoCRCEf143kM4Jd7OzEADUrk8wzAA0xcA90X0xp2FkANDA82fxCdnXYjQ/
+ IJW+GVupSQ/eWBzUprtb8tELSBnIWQ6bLv7vbetN1zPy+n6YeB0IVgwWoOObnT0BOeLleUsy
+ KKBhtD6Vw3u5QxdpdGUIwPB39+NaBgo1Sh99fAVNv2ARNa12jzI2lRvVtWMdRkMaLclkMCpB
+ Lw3UItHfwPhHhxwwfQ/s37acPHoxf+Jg3C0oDNAjNzOlDbuoa0sYlrJ17ExDuoH/SzGu+zAo
+ XWIZG/JWQahS2HTLfjQDsLq0NdNfgPCpa7TZJIAimXAUqR1zKBJtDpbt5rdFJR9dHXipab/W
+ rDKeBgMIgv8rwcJMFHwbr72ht/5imC3uInxCCI76w3MpxuHfXWzWsbOXwceZ9La3k/MHEGtc
+ 05yGMerio0MZHJwRuG7wI4xBMt5LP6KMQcsEMdDQaiZxC3GgBAuU1ewdj6sKodCAUOFXBiXx
+ ePW59LVYZVHCAwYXBoCgy0P1BpFbYNY5p0tzWakCSw94YC2yVjc+8xoJCdlBN3dHJStrOTQ4
+ P1nWwO5ELit0mW+yLtsumj0mlNs1EzSnhKhrci4YfOLOGV3Wnp/QqfVU1uArhC8yZ/FWBNau
+ MKYJmFdTOS89DdqGx2/VjICOaG28GL75QXwcbViNJukN5kx0b6cGlnm9tr8DZ/4AHFDmBrkB
+ jQRaRrwiAQwAxnVmJqeP9VUTISps+WbyYFYlMFfIurl7tzK74bc67KUBp+PHuDP9p4ZcJUGC
+ 3UZJP85/GlUVdE1NairYWEJQUB7bpogTuzMI825QXIB9z842HwWfP2RW5eDtJMeujzJeFaUp
+ meTG9snzaYxYN3r0TDKj5dZwSIThIMQpsmhH2zylkT0jH7kBPxb8IkCQ1c6wgKITwoHFjTIO
+ 0B75U7bBNSDpXUaUDvd6T3xd1Fz57ujAvKHrZfWtaNSGwLmUYQAcFvrKDGPB5Z3ggkiTtkmW
+ 3OCQbnIxGJJw/+HefYhB5/kCcpKUQ2RYcYgCZ0/WcES1xU5dnNe4i0a5gsOFSOYCpNCfTHtt
+ VxKxZZTQ/rxjXwTuToXmTI4Nehn96t25DHZ0t9L9UEJ0yxH2y8Av4rtf75K2yAXFZa8dHnQg
+ CkyjA/gs0ujGwD+Gs7dYQxP4i+rLhwBWD3mawJxLxY0vGwkG7k7npqanlsWlATHpOdqBMUiA
+ R22hs02FikAoiXNgWTy7ABEBAAGJAjwEGAEIACYCGwwWIQRyeg1N257Z9gOb7O+Ef143kM4J
+ dwUCXgZABwUJBDYq5QAKCRCEf143kM4Jd8WEEAC1D/p5Fi/YvVlUUBHhI+WS5c8SqdZaM//h
+ r0RfyrUaKwU+XR+wB6HACwfvN3t0i7BhiER9s6UaMcxWzZfVZYcLcgaKvucHkQMkO+XxGcqE
+ /7m0j7r4iERxCi3FZTNMLGjxzG2teWesUSbvtlrFMtc3lxwdAiA/kF8FBkesG7acP0saiIJr
+ UcMfU+ZsXGxMSrZ4RRRFESvcgvK95KgnlsyuRouyVFu7tJVbTnW6/65JRFNlEQ6Wsbx/0C90
+ KWkF9R7DLtcVxno75+pXiXDdy9bq54uQeT+9dr+EdyVL0H3eTzP9js7GrRahuHD6/AxekQwX
+ afDLYnExRXL7acu5a1fUpDKWe/CigtyjJz73Dvs9eV7Wvk69TFV60Ft84UEqNBqSha7s1/m8
+ tQW4InvfnL9h0LWVvwUZe5HKCPe65amwBOvwkkYd4OfNb0NDVudTMsCYLJ8al57zLelH2hcS
+ wOiVdXBsbePjzLy2exEXUb1bHFjBoHnHX6uszBOzM/Dv1eNWJPZ3r3PRFnQk/D9ohEXVEmUI
+ TLDd7lR06Nr8J4oG1RprRTW1T8xE6lSwbfsp9ApU1QuDZzSI1hdNpDYRVUmQeiXnSjR1YBVb
+ zOyMU+hnnsQZMdTQ2qVFZs4JGCA9/wSOMMsohDbJNX2iGR1S+RFpZY9sipuGBVM7wIVrz4Ac Iw==
+Message-ID: <114f7b8d-6f88-222a-d1fa-abcfc0e6a1f2@maciej.szmigiero.name>
+Date:   Mon, 24 Feb 2020 21:10:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200205123216.GO12867@shao2-debian> <20200205125804.GM14879@hirez.programming.kicks-ass.net>
- <20200221080325.GA67807@shbuild999.sh.intel.com> <20200221132048.GE652992@krava>
- <20200223141147.GA53531@shbuild999.sh.intel.com> <CAHk-=wjKFTzfDWjAAabHTZcityeLpHmEQRrKdTuk0f4GWcoohQ@mail.gmail.com>
- <20200224003301.GA5061@shbuild999.sh.intel.com> <CAHk-=whi87NNOnNXJ6CvyyedmhnS8dZA2YkQQSajvBArH5XOeA@mail.gmail.com>
- <20200224021915.GC5061@shbuild999.sh.intel.com> <CAHk-=wjkSb1OkiCSn_fzf2v7A=K0bNsUEeQa+06XMhTO+oQUaA@mail.gmail.com>
-In-Reply-To: <CAHk-=wjkSb1OkiCSn_fzf2v7A=K0bNsUEeQa+06XMhTO+oQUaA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 24 Feb 2020 12:09:04 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wifdJHrfnmwwzPpH-0X6SaZxtdmRWpSNwf8xsXD2iE4dA@mail.gmail.com>
-Message-ID: <CAHk-=wifdJHrfnmwwzPpH-0X6SaZxtdmRWpSNwf8xsXD2iE4dA@mail.gmail.com>
-Subject: Re: [LKP] Re: [perf/x86] 81ec3f3c4c: will-it-scale.per_process_ops
- -5.5% regression
-To:     Feng Tang <feng.tang@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kernel test robot <rong.a.chen@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        andi.kleen@intel.com, "Huang, Ying" <ying.huang@intel.com>
-Content-Type: multipart/mixed; boundary="0000000000005a186a059f57f234"
+In-Reply-To: <20200221174331.1480468-1-mail@maciej.szmigiero.name>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000005a186a059f57f234
-Content-Type: text/plain; charset="UTF-8"
+(CC'ing also Marcelo as the cpuidle-haltpoll driver author and the KVM ML).
 
-On Mon, Feb 24, 2020 at 11:24 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I don't know. This does not seem to be a particularly serious load.
-> But it does feel like it should be possible to combine the two atomic
-> accesses into one, where you don't need to do the refcount thing
-> except for the case where sigcount goes from zero to non-zero (and
-> back to zero again).
-
-Ok, that looks just as simple as I thought it would be.
-
-TOTALLY UNTESTED patch attached. It may be completely buggy garbage,
-but it _looks_ trivial enough. Just make the rule be that "if we have
-any user->sigpending cases, we'll get a ref to the user for the first
-one, and drop it only when getting rid of the last one".
-
-So it might be worth testing this. But again: I have NOT done so.
-
-There might be some silly reason why this doesn't work because I just
-did the tests wrong or missed some case.
-
-Or there might be some subtle reason why it doesn't work because I
-didn't think this through properly.
-
-But it _looks_ obvious and simple enough. And it compiles for me. So
-maybe it works.
-
-              Linus
-
---0000000000005a186a059f57f234
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k70w8onv0>
-X-Attachment-Id: f_k70w8onv0
-
-IGtlcm5lbC9zaWduYWwuYyB8IDE3ICsrKysrKysrKysrLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwg
-MTEgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9rZXJuZWwvc2ln
-bmFsLmMgYi9rZXJuZWwvc2lnbmFsLmMKaW5kZXggOWFkOGRlYTkzZGJiLi4wMGFkZGFhODMxOWYg
-MTAwNjQ0Ci0tLSBhL2tlcm5lbC9zaWduYWwuYworKysgYi9rZXJuZWwvc2lnbmFsLmMKQEAgLTQx
-NywxMCArNDE3LDE1IEBAIF9fc2lncXVldWVfYWxsb2MoaW50IHNpZywgc3RydWN0IHRhc2tfc3Ry
-dWN0ICp0LCBnZnBfdCBmbGFncywgaW50IG92ZXJyaWRlX3JsaW1pCiAJLyoKIAkgKiBQcm90ZWN0
-IGFjY2VzcyB0byBAdCBjcmVkZW50aWFscy4gVGhpcyBjYW4gZ28gYXdheSB3aGVuIGFsbAogCSAq
-IGNhbGxlcnMgaG9sZCByY3UgcmVhZCBsb2NrLgorCSAqCisJICogTk9URSEgQSBwZW5kaW5nIHNp
-Z25hbCB3aWxsIGhvbGQgb24gdG8gdGhlIHVzZXIgcmVmY291bnQsCisJICogYW5kIHdlIGdldC9w
-dXQgdGhlIHJlZmNvdW50IG9ubHkgd2hlbiB0aGUgc2lncGVuZGluZyBjb3VudAorCSAqIGNoYW5n
-ZXMgZnJvbS90byB6ZXJvLgogCSAqLwogCXJjdV9yZWFkX2xvY2soKTsKLQl1c2VyID0gZ2V0X3Vp
-ZChfX3Rhc2tfY3JlZCh0KS0+dXNlcik7Ci0JYXRvbWljX2luYygmdXNlci0+c2lncGVuZGluZyk7
-CisJdXNlciA9IF9fdGFza19jcmVkKHQpLT51c2VyOworCWlmIChhdG9taWNfaW5jX3JldHVybigm
-dXNlci0+c2lncGVuZGluZykgPT0gMSkKKwkJZ2V0X3VpZCh1c2VyKTsKIAlyY3VfcmVhZF91bmxv
-Y2soKTsKIAogCWlmIChvdmVycmlkZV9ybGltaXQgfHwKQEAgLTQzMiw4ICs0MzcsOCBAQCBfX3Np
-Z3F1ZXVlX2FsbG9jKGludCBzaWcsIHN0cnVjdCB0YXNrX3N0cnVjdCAqdCwgZ2ZwX3QgZmxhZ3Ms
-IGludCBvdmVycmlkZV9ybGltaQogCX0KIAogCWlmICh1bmxpa2VseShxID09IE5VTEwpKSB7Ci0J
-CWF0b21pY19kZWMoJnVzZXItPnNpZ3BlbmRpbmcpOwotCQlmcmVlX3VpZCh1c2VyKTsKKwkJaWYg
-KGF0b21pY19kZWNfYW5kX3Rlc3QoJnVzZXItPnNpZ3BlbmRpbmcpKQorCQkJZnJlZV91aWQodXNl
-cik7CiAJfSBlbHNlIHsKIAkJSU5JVF9MSVNUX0hFQUQoJnEtPmxpc3QpOwogCQlxLT5mbGFncyA9
-IDA7CkBAIC00NDcsOCArNDUyLDggQEAgc3RhdGljIHZvaWQgX19zaWdxdWV1ZV9mcmVlKHN0cnVj
-dCBzaWdxdWV1ZSAqcSkKIHsKIAlpZiAocS0+ZmxhZ3MgJiBTSUdRVUVVRV9QUkVBTExPQykKIAkJ
-cmV0dXJuOwotCWF0b21pY19kZWMoJnEtPnVzZXItPnNpZ3BlbmRpbmcpOwotCWZyZWVfdWlkKHEt
-PnVzZXIpOworCWlmIChhdG9taWNfZGVjX2FuZF90ZXN0KCZxLT51c2VyLT5zaWdwZW5kaW5nKSkK
-KwkJZnJlZV91aWQocS0+dXNlcik7CiAJa21lbV9jYWNoZV9mcmVlKHNpZ3F1ZXVlX2NhY2hlcCwg
-cSk7CiB9CiAK
---0000000000005a186a059f57f234--
+On 21.02.2020 18:43, Maciej S. Szmigiero wrote:
+> From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
+> 
+> Before commit 1328edca4a14 ("cpuidle-haltpoll: Enable kvm guest polling
+> when dedicated physical CPUs are available") the cpuidle-haltpoll driver
+> could also be used in scenarios when the host does not advertise the
+> KVM_HINTS_REALTIME hint.
+> 
+> While the behavior introduced by the aforementioned commit makes sense as
+> the default there are cases where the old behavior is desired, for example,
+> when other kernel changes triggered by presence by this hint are unwanted,
+> for some workloads where the latency benefit from polling overweights the
+> loss from idle CPU capacity that otherwise would be available, or just when
+> running under older Qemu versions that lack this hint.
+> 
+> Let's provide a typical "force" module parameter that allows restoring the
+> old behavior.
+> 
+> Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
+> ---
+>  drivers/cpuidle/cpuidle-haltpoll.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle-haltpoll.c
+> index b0ce9bc78113..07e5b36076bb 100644
+> --- a/drivers/cpuidle/cpuidle-haltpoll.c
+> +++ b/drivers/cpuidle/cpuidle-haltpoll.c
+> @@ -18,6 +18,11 @@
+>  #include <linux/kvm_para.h>
+>  #include <linux/cpuidle_haltpoll.h>
+>  
+> +static bool force __read_mostly;
+> +module_param(force, bool, 0444);
+> +MODULE_PARM_DESC(force,
+> +		 "Load even if the host does not provide the REALTIME hint");
+> +
+>  static struct cpuidle_device __percpu *haltpoll_cpuidle_devices;
+>  static enum cpuhp_state haltpoll_hp_state;
+>  
+> @@ -90,6 +95,11 @@ static void haltpoll_uninit(void)
+>  	haltpoll_cpuidle_devices = NULL;
+>  }
+>  
+> +static bool haltpool_want(void)
+> +{
+> +	return kvm_para_has_hint(KVM_HINTS_REALTIME) || force;
+> +}
+> +
+>  static int __init haltpoll_init(void)
+>  {
+>  	int ret;
+> @@ -102,7 +112,7 @@ static int __init haltpoll_init(void)
+>  	cpuidle_poll_state_init(drv);
+>  
+>  	if (!kvm_para_available() ||
+> -		!kvm_para_has_hint(KVM_HINTS_REALTIME))
+> +	    !haltpool_want())
+>  		return -ENODEV;
+>  
+>  	ret = cpuidle_register_driver(drv);
+> 
