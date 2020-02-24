@@ -2,91 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 763B616A00B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:33:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2722716A018
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:34:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbgBXIdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:33:07 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:48724 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbgBXIdH (ORCPT
+        id S1727256AbgBXIe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:34:56 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:40247 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726216AbgBXIe4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:33:07 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1j69Am-00050y-Eh; Mon, 24 Feb 2020 09:33:04 +0100
-Date:   Mon, 24 Feb 2020 09:33:03 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     zanussi@kernel.org, Juri Lelli <juri.lelli@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>, Daniel Wagner <wagi@monom.org>
-Subject: Re: [PATCH RT 03/25] sched/deadline: Ensure inactive_timer runs in
- hardirq context
-Message-ID: <20200224083303.cdj27guxfxqkbyqo@linutronix.de>
-References: <cover.1582320278.git.zanussi@kernel.org>
- <11a532007a600928e64e761722da7100e19a0c5f.1582320278.git.zanussi@kernel.org>
+        Mon, 24 Feb 2020 03:34:56 -0500
+Received: from [109.168.11.45] (port=57856 helo=pc-ceresoli.dev.aim)
+        by hostingweb31.netsons.net with esmtpa (Exim 4.92)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1j69CW-000pN8-1J; Mon, 24 Feb 2020 09:34:52 +0100
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+To:     linux-i3c@lists.infradead.org
+Cc:     Boris Brezillon <bbrezillon@kernel.org>,
+        linux-kernel@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>
+Subject: [PATCH] i3c: master: use 'dev' variable in dev_err
+Date:   Mon, 24 Feb 2020 09:34:39 +0100
+Message-Id: <20200224083439.3487-1-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <11a532007a600928e64e761722da7100e19a0c5f.1582320278.git.zanussi@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-21 15:24:31 [-0600], zanussi@kernel.org wrote:
-> [ Upstream commit ba94e7aed7405c58251b1380e6e7d73aa8284b41 ]
-> 
-> SCHED_DEADLINE inactive timer needs to run in hardirq context (as
-> dl_task_timer already does) on PREEMPT_RT
+of_i3c_master_add_i2c_boardinfo() already has a handy 'dev' variable, use
+it and simplify code.
 
-The message says "dl_task_timer already does" but this is not true for
-v4.14 as it still runs in softirq context on RT. v4.19 has this either
-via
-  https://lkml.kernel.org/r/20190731103715.4047-1-juri.lelli@redhat.com
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+---
+ drivers/i3c/master.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-or the patch which got merged upstream.
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 7f8f896fa0c3..b56207bbed2b 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -1953,7 +1953,7 @@ of_i3c_master_add_i2c_boardinfo(struct i3c_master_controller *master,
+ 	 * DEFSLVS command.
+ 	 */
+ 	if (boardinfo->base.flags & I2C_CLIENT_TEN) {
+-		dev_err(&master->dev, "I2C device with 10 bit address not supported.");
++		dev_err(dev, "I2C device with 10 bit address not supported.");
+ 		return -ENOTSUPP;
+ 	}
+ 
+-- 
+2.25.0
 
-Juri, I guess we want this for v4.14, too?
-
-> Change the mode to HRTIMER_MODE_REL_HARD.
-> 
-> [ tglx: Fixed up the start site, so mode debugging works ]
-> 
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Link: https://lkml.kernel.org/r/20190731103715.4047-1-juri.lelli@redhat.com
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Tom Zanussi <zanussi@kernel.org>
-> ---
->  kernel/sched/deadline.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index eb68f7fb8a36..7b04e54bea01 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -252,7 +252,7 @@ static void task_non_contending(struct task_struct *p)
->  
->  	dl_se->dl_non_contending = 1;
->  	get_task_struct(p);
-> -	hrtimer_start(timer, ns_to_ktime(zerolag_time), HRTIMER_MODE_REL);
-> +	hrtimer_start(timer, ns_to_ktime(zerolag_time), HRTIMER_MODE_REL_HARD);
->  }
->  
->  static void task_contending(struct sched_dl_entity *dl_se, int flags)
-> @@ -1234,7 +1234,7 @@ void init_dl_inactive_task_timer(struct sched_dl_entity *dl_se)
->  {
->  	struct hrtimer *timer = &dl_se->inactive_timer;
->  
-> -	hrtimer_init(timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> +	hrtimer_init(timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
->  	timer->function = inactive_task_timer;
->  }
->  
-
-Sebastian
