@@ -2,70 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5AC416A56D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAEA416A57E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:49:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbgBXLqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 06:46:03 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:54577 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbgBXLqC (ORCPT
+        id S1727444AbgBXLtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 06:49:53 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:47118 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727318AbgBXLtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 06:46:02 -0500
-Received: by mail-il1-f198.google.com with SMTP id t4so17805994ili.21
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 03:46:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=TPDa8vA3dA5ocPrn3u12l+xTYIvr8/gY5caMU69qWlU=;
-        b=ClHxSw/PS8pLWGkr7/fVhHSAqF9s1JBQbG2jE1UYyOJMzhuw+pxJx3jKV5ZkX9EP5/
-         NL0BnZ0/r3kSp1SRRaKbV+52c6V6NtTkXRJkS6Z0eJejy00jTEVBPcXXcduRyEhsN4J9
-         vCfJj+XmtiRGUuBaBKkHC41x1ntKM2jeJuRGibppRwaE1WhWJAvGSSL2yqO5DcCl77VS
-         xHmHRrhQs0dPJ/ftXozCDmeAtL+PoWucYGfo0W6j0mH/cwXbKp/V3CNKXp3S5ld/Q1nT
-         1FvYvl2pDbGPHs1QREvxFhIT4sv2QrBtVk+Gcw9zLICIjQK1jKHtWmQoLp3Nwtx+9xsQ
-         kp/g==
-X-Gm-Message-State: APjAAAXYxyFp0oHN41ZHNerdrad9SEx0loJFLflgDP9zicgHPSl1Zq4/
-        B8bRZIoz5AXErwMyLcpdwhpXzieLWZcqhejvtPt9zzb+TedU
-X-Google-Smtp-Source: APXvYqw8hJLLKQWy7t1wn0gt4p/CBTAWcz0u7a08HT32PVYseKb6Zst8oSvvhVBG6HkcXdOrZxccOixjo3lFs6l0GucGK/G5V7q9
+        Mon, 24 Feb 2020 06:49:53 -0500
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 12C21E89;
+        Mon, 24 Feb 2020 12:49:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1582544991;
+        bh=VVerRb6P9n4J0byG4RDsnhoDAwB4cAvUJUyugM/0Jkc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ugYQv4c39w/BkPop3ddbphnw7qyYCMDbqcgPLKuDgjGcZC5LoOJius+czrFIHnrb+
+         u816peG8yGigqAo9ygdzkTC9q7i8yW3GmL2ZSQlkPVa5pSTcbXErFNcBc5VMpcR6Cd
+         Zk0y5c8XWW8nPgbWZw6H0KcjPP3rblcv841JCdU8=
+Date:   Mon, 24 Feb 2020 13:49:29 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Kaaira Gupta <kgupta@es.iitr.ac.in>
+Cc:     Vaibhav Agarwal <vaibhav.sr@gmail.com>,
+        Mark Greer <mgreer@animalcreek.com>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [greybus-dev] [PATCH] staging: greybus: match parenthesis
+ alignment
+Message-ID: <20200224114929.GB4827@pendragon.ideasonboard.com>
+References: <20200219195651.GA485@kaaira-HP-Pavilion-Notebook>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:730c:: with SMTP id e12mr48673976ioh.4.1582544761598;
- Mon, 24 Feb 2020 03:46:01 -0800 (PST)
-Date:   Mon, 24 Feb 2020 03:46:01 -0800
-In-Reply-To: <00000000000005efef059f4e27e1@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005b46ba059f50ea17@google.com>
-Subject: Re: KASAN: use-after-free Read in ethnl_update_bitset32
-From:   syzbot <syzbot+709b7a64d57978247e44@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, f.fainelli@gmail.com, kuba@kernel.org,
-        linux-kernel@vger.kernel.org, mkubecek@suse.cz,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200219195651.GA485@kaaira-HP-Pavilion-Notebook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+Hi Kaaira,
 
-commit bfbcfe2032e70bd8598d680d39ac177d507e39ac
-Author: Michal Kubecek <mkubecek@suse.cz>
-Date:   Fri Dec 27 14:56:13 2019 +0000
+Thank you for the patch.
 
-    ethtool: set link modes related data with LINKMODES_SET request
+On Thu, Feb 20, 2020 at 01:26:51AM +0530, Kaaira Gupta wrote:
+> Fix checkpatch.pl warning of alignment should match open parenthesis in
+> audio_codec.c
+> 
+> Signed-off-by: Kaaira Gupta <kgupta@es.iitr.ac.in>
+> ---
+>  drivers/staging/greybus/audio_codec.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/greybus/audio_codec.c b/drivers/staging/greybus/audio_codec.c
+> index 08746c85dea6..d62f91f4e9a2 100644
+> --- a/drivers/staging/greybus/audio_codec.c
+> +++ b/drivers/staging/greybus/audio_codec.c
+> @@ -70,7 +70,7 @@ static int gbaudio_module_enable_tx(struct gbaudio_codec_info *codec,
+>  		i2s_port = 0;	/* fixed for now */
+>  		cportid = data->connection->hd_cport_id;
+>  		ret = gb_audio_apbridgea_register_cport(data->connection,
+> -						i2s_port, cportid,
+> +							i2s_port, cportid,
+>  						AUDIO_APBRIDGEA_DIRECTION_TX);
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16d59109e00000
-start commit:   0c0ddd6a Merge tag 'linux-watchdog-5.6-rc3' of git://www.l..
-git tree:       net
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=15d59109e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11d59109e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b8906eb6a7d6028
-dashboard link: https://syzkaller.appspot.com/bug?extid=709b7a64d57978247e44
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13885de9e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1518127ee00000
+I'm curious to know why you think the line you changed deserves a
+modification, while the next one doesn't :-)
 
-Reported-by: syzbot+709b7a64d57978247e44@syzkaller.appspotmail.com
-Fixes: bfbcfe2032e7 ("ethtool: set link modes related data with LINKMODES_SET request")
+>  		if (ret) {
+>  			dev_err_ratelimited(module->dev,
+> @@ -160,7 +160,7 @@ static int gbaudio_module_disable_tx(struct gbaudio_module_info *module, int id)
+>  		i2s_port = 0;	/* fixed for now */
+>  		cportid = data->connection->hd_cport_id;
+>  		ret = gb_audio_apbridgea_unregister_cport(data->connection,
+> -						i2s_port, cportid,
+> +							  i2s_port, cportid,
+>  						AUDIO_APBRIDGEA_DIRECTION_TX);
+>  		if (ret) {
+>  			dev_err_ratelimited(module->dev,
+> @@ -205,7 +205,7 @@ static int gbaudio_module_enable_rx(struct gbaudio_codec_info *codec,
+>  		i2s_port = 0;	/* fixed for now */
+>  		cportid = data->connection->hd_cport_id;
+>  		ret = gb_audio_apbridgea_register_cport(data->connection,
+> -						i2s_port, cportid,
+> +							i2s_port, cportid,
+>  						AUDIO_APBRIDGEA_DIRECTION_RX);
+>  		if (ret) {
+>  			dev_err_ratelimited(module->dev,
+> @@ -295,7 +295,7 @@ static int gbaudio_module_disable_rx(struct gbaudio_module_info *module, int id)
+>  		i2s_port = 0;	/* fixed for now */
+>  		cportid = data->connection->hd_cport_id;
+>  		ret = gb_audio_apbridgea_unregister_cport(data->connection,
+> -						i2s_port, cportid,
+> +							  i2s_port, cportid,
+>  						AUDIO_APBRIDGEA_DIRECTION_RX);
+>  		if (ret) {
+>  			dev_err_ratelimited(module->dev,
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+Regards,
+
+Laurent Pinchart
