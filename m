@@ -2,88 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E6A016B067
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 20:42:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E75B16B07C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 20:45:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbgBXTmr convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Feb 2020 14:42:47 -0500
-Received: from mga02.intel.com ([134.134.136.20]:47751 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbgBXTmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 14:42:47 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 11:42:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
-   d="scan'208";a="255690915"
-Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
-  by orsmga002.jf.intel.com with ESMTP; 24 Feb 2020 11:42:46 -0800
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.107]) by
- ORSMSX102.amr.corp.intel.com ([169.254.3.242]) with mapi id 14.03.0439.000;
- Mon, 24 Feb 2020 11:42:46 -0800
-From:   "Kleen, Andi" <andi.kleen@intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Tang, Feng" <feng.tang@intel.com>
-CC:     Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Chen, Rong A" <rong.a.chen@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Vince Weaver" <vincent.weaver@maine.edu>,
-        Jiri Olsa <jolsa@kernel.org>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Stephane Eranian <eranian@google.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "lkp@lists.01.org" <lkp@lists.01.org>,
-        "Huang, Ying" <ying.huang@intel.com>
-Subject: RE: [LKP] Re: [perf/x86] 81ec3f3c4c: will-it-scale.per_process_ops
- -5.5% regression
-Thread-Topic: [LKP] Re: [perf/x86] 81ec3f3c4c: will-it-scale.per_process_ops
- -5.5% regression
-Thread-Index: AQHV60gfK6eA3q3jR0u6sMXxx2rr5qgqvXYq
-Date:   Mon, 24 Feb 2020 19:42:45 +0000
-Message-ID: <E8ECBC65D0B2554DAD44EBE43059B3740F2AA1@ORSMSX110.amr.corp.intel.com>
-References: <20200205123216.GO12867@shao2-debian>
- <20200205125804.GM14879@hirez.programming.kicks-ass.net>
- <20200221080325.GA67807@shbuild999.sh.intel.com>
- <20200221132048.GE652992@krava>
- <20200223141147.GA53531@shbuild999.sh.intel.com>
- <CAHk-=wjKFTzfDWjAAabHTZcityeLpHmEQRrKdTuk0f4GWcoohQ@mail.gmail.com>
- <20200224003301.GA5061@shbuild999.sh.intel.com>
- <CAHk-=whi87NNOnNXJ6CvyyedmhnS8dZA2YkQQSajvBArH5XOeA@mail.gmail.com>
- <20200224021915.GC5061@shbuild999.sh.intel.com>,<CAHk-=wjkSb1OkiCSn_fzf2v7A=K0bNsUEeQa+06XMhTO+oQUaA@mail.gmail.com>
-In-Reply-To: <CAHk-=wjkSb1OkiCSn_fzf2v7A=K0bNsUEeQa+06XMhTO+oQUaA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.3.86.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727672AbgBXTpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 14:45:25 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47728 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727306AbgBXTpM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 14:45:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=Gm+CZDA4foMEAz/S+YdRBY9FpP1n0eNdAAovqDbFGNg=; b=kOdWiO2RLPJPCA0ELRlD0fILnT
+        Hi17mnHqCr3opBFn3tuitDQ9PxTd5CxA8RrpffuZlpZUQUuTCUbA/BMJ/yAzkokW5xwqVmVQl6DEo
+        Hi0W2vxjbyZnTDPXfH7Ijkrysfk6fHLOAzCzJ3e88xupPe+U0VuVbftERt+dg39KCPM8wZZAxckFC
+        9KFd7o9hjEIGnP0u6hKYx5GMF3xVd8rv/AS2KPITioAVtYya/wB/YIzTZX0VXITAt1pqDLfdSzekD
+        SVtd+sn9CvtDhaY+TIbSPFpU1aQ52j6ym6jqrKZn1g3k+cLllQ2KdXym3e1aIJ/lbzDZw43sVXMFV
+        13FNIrsA==;
+Received: from [4.28.11.157] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6Jeo-0006X6-W0; Mon, 24 Feb 2020 19:44:47 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        openrisc@lists.librecores.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: provide in-place uncached remapping for dma-direct v2
+Date:   Mon, 24 Feb 2020 11:44:40 -0800
+Message-Id: <20200224194446.690816-1-hch@lst.de>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->Does anybody else have any ideas?
+Hi all,
 
-We've had problems with atomics having strange ordering constraints before.
+this series provides support for remapping places uncached in-place in
+the generic dma-direct code, and moves openrisc over from its own
+in-place remapping scheme.  The arm64 folks also had interest in such
+a scheme to avoid problems with speculating into cache aliases.
 
-But it might be c2c missing the right cache line. There are some known cases where that can happen.
+Also all architectures that always use small page mappings for the
+kernel and have non-coherent DMA should look into enabling this
+scheme, as it is much more efficient than the vmap remapping.
 
-Feng, can you double check with 
-
-perf record -a -d -e mem_load_l3_hit_retired.xsnp_hitm:pp,mem_load_l3_miss_retired.remote_hitm:pp ...
-
-Does it report the same hot IPs as c2c?
-What's the break down between the first and the second event for the hot IPs? The first is inside socket, the second between sockets.
-
--Andi
-
+Changes since v1:
+ - share the arch hook for inline remap and uncached segment support
