@@ -2,120 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A24216A14B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:12:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ED3716A104
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:07:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbgBXJKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 04:10:25 -0500
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:40061 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728204AbgBXJKX (ORCPT
+        id S1727206AbgBXJHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 04:07:13 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46381 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbgBXJHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 04:10:23 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id 1A25D64F;
-        Mon, 24 Feb 2020 04:10:22 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 24 Feb 2020 04:10:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=6JOaOIBdtoUeg
-        Tom2QhdvjNsliMPVjzGF5uofD2u6GM=; b=Qwp3WREauSmn3syjd2bLg6Kp0KLJl
-        1S8qZDMGmTJrRCy6UKsxLGDY8s1iGZ1II+dE28sJG+BqbDxWLoimibqBh19FatYv
-        8l9OxZFlIFdVYFwP5l+3fSZJa9R2MuQ/3sQKWpFJD5/1zEPD+ELuORvLli/9DpOv
-        1TAd97CJ/q8jy1vg29suZFskvGUe0vGAMGuebYuWL1rCRa979x8XHyRkhvxXHGoS
-        HvCO4uu28rbIWhyj0vRXWOgikuhgfxddBTsw0u9vWJmTuetgDM92AOlRSrKIU06K
-        UDOtTCFWtiXO11wyOHVEf3hVC6+fBg2Cj0QJjYw8p/Pqcxu4XCpceW7Bw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=6JOaOIBdtoUegTom2QhdvjNsliMPVjzGF5uofD2u6GM=; b=F6a6wT3i
-        hdeG4O8c+tU2PiY9n7KTlspa1912oveMwFLIsgAJ2l+yZK3gyWOru0pP6A/IJq9o
-        FVWzyJ1e7xv4vlnRltEJmlLg2x85QhW8cE+iBQMM+tJTzRIZXHBp1kZC3lcl3QXV
-        lhWe9ybOlOrYHuKCW+AQIZHs+U606AVgI3e1dMhKXv1tC7bGWBCelXv+S5/JxmTJ
-        jD3kH9nmpwfeoxyoQgoOLasxKHGzeOP6DTFEC7X9mx9d4RJ9Cdp3SxRCi0RT7Qq2
-        Rtb02moXEZTmsCnMea5dSFr+1vj5GnTswO6oS8J53wL8esTK1cLBeQV8/Dyibqp8
-        7px6LaAXTyQUKw==
-X-ME-Sender: <xms:_ZJTXrKjEB-nE1m6jQlJ-6BCSlMuCpxA5Gp4UIiULrEeMITj56R60Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrledtucetufdoteggodetrfdotffvucfrrh
-    hofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    ephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcutfhi
-    phgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltddrkeelrd
-    eikedrjeeinecuvehluhhsthgvrhfuihiivgepheenucfrrghrrghmpehmrghilhhfrhho
-    mhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:_ZJTXsXT70TtNnpj0hr-flM9M67K2OuZDhBIbCQDoYd6dMMoZ8YGPQ>
-    <xmx:_ZJTXsR2_3Z6leGn1EOMplEoVAMoATFZRvcbedjBEq4pcO3i-mwaRQ>
-    <xmx:_ZJTXkBHZV5TSp59Bi02XsX2Al9gt4FZn-L98mSGcOLNliWvqLRLog>
-    <xmx:_ZJTXr5OG8n2hjJZVcclbrQeQ-FMsbb77orqb-2XI5WdETINDgjMzmOfJjI>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 55D16328005D;
-        Mon, 24 Feb 2020 04:10:21 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH 64/89] drm/vc4: hdmi: Remove DDC argument to connector_init
+        Mon, 24 Feb 2020 04:07:13 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j69hj-0000fq-GO; Mon, 24 Feb 2020 10:07:07 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j69hi-00070c-HT; Mon, 24 Feb 2020 10:07:06 +0100
 Date:   Mon, 24 Feb 2020 10:07:06 +0100
-Message-Id: <dcd899740da0e221ae9bcfe8906e7de3a68922ad.1582533919.git-series.maxime@cerno.tech>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH 4/4] pwm: omap-dmtimer: Implement .apply callback
+Message-ID: <20200224090706.xsujpc3yiqlmmrmm@pengutronix.de>
+References: <20200224052135.17278-1-lokeshvutla@ti.com>
+ <20200224052135.17278-5-lokeshvutla@ti.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200224052135.17278-5-lokeshvutla@ti.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we are passing the vc4_hdmi structure to the connector init
-function, we can simply use the pointer in that structure instead of
-having the pointer as an argument.
+On Mon, Feb 24, 2020 at 10:51:35AM +0530, Lokesh Vutla wrote:
+> Implement .apply callback and drop the legacy callbacks(enable, disable,
+> config, set_polarity).
+> 
+> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> ---
+>  drivers/pwm/pwm-omap-dmtimer.c | 141 +++++++++++++++++++--------------
+>  1 file changed, 80 insertions(+), 61 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+> index 58c61559e72f..aeda4ab12385 100644
+> --- a/drivers/pwm/pwm-omap-dmtimer.c
+> +++ b/drivers/pwm/pwm-omap-dmtimer.c
+> @@ -31,8 +31,18 @@
+>  #define DM_TIMER_LOAD_MIN 0xfffffffe
+>  #define DM_TIMER_MAX      0xffffffff
+>  
+> +/**
+> + * struct pwm_omap_dmtimer_chip - Structure representing a pwm chip
+> + *				  corresponding to omap dmtimer.
+> + * @chip:		PWM chip structure representing PWM controller
+> + * @mutex:		Mutex to protect pwm apply state
+> + * @dm_timer:		Pointer to omap dm timer.
+> + * @pdata:		Pointer to omap dm timer ops.
+> + * dm_timer_pdev:	Pointer to omap dm timer platform device
+> + */
+>  struct pwm_omap_dmtimer_chip {
+>  	struct pwm_chip chip;
+> +	/* Mutex to protect pwm apply state */
+>  	struct mutex mutex;
+>  	struct omap_dm_timer *dm_timer;
+>  	const struct omap_dm_timer_ops *pdata;
+> @@ -45,11 +55,22 @@ to_pwm_omap_dmtimer_chip(struct pwm_chip *chip)
+>  	return container_of(chip, struct pwm_omap_dmtimer_chip, chip);
+>  }
+>  
+> +/**
+> + * pwm_omap_dmtimer_get_clock_cycles() - Get clock cycles in a time frame
+> + * @clk_rate:	pwm timer clock rate
+> + * @ns:		time frame in nano seconds.
+> + *
+> + * Return number of clock cycles in a given period(ins ns).
+> + */
+>  static u32 pwm_omap_dmtimer_get_clock_cycles(unsigned long clk_rate, int ns)
+>  {
+>  	return DIV_ROUND_CLOSEST_ULL((u64)clk_rate * ns, NSEC_PER_SEC);
+>  }
+>  
+> +/**
+> + * pwm_omap_dmtimer_start() - Start the pwm omap dm timer in pwm mode
+> + * @omap:	Pointer to pwm omap dm timer chip
+> + */
+>  static void pwm_omap_dmtimer_start(struct pwm_omap_dmtimer_chip *omap)
+>  {
+>  	/*
+> @@ -67,32 +88,16 @@ static void pwm_omap_dmtimer_start(struct pwm_omap_dmtimer_chip *omap)
+>  	omap->pdata->start(omap->dm_timer);
+>  }
+>  
+> -static int pwm_omap_dmtimer_enable(struct pwm_chip *chip,
+> -				   struct pwm_device *pwm)
+> -{
+> -	struct pwm_omap_dmtimer_chip *omap = to_pwm_omap_dmtimer_chip(chip);
+> -
+> -	mutex_lock(&omap->mutex);
+> -	omap->pdata->set_pwm(omap->dm_timer,
+> -			     pwm_get_polarity(pwm) == PWM_POLARITY_INVERSED,
+> -			     true, OMAP_TIMER_TRIGGER_OVERFLOW_AND_COMPARE);
+> -
+> -	pwm_omap_dmtimer_start(omap);
+> -	mutex_unlock(&omap->mutex);
+> -
+> -	return 0;
+> -}
+> -
+> -static void pwm_omap_dmtimer_disable(struct pwm_chip *chip,
+> -				     struct pwm_device *pwm)
+> -{
+> -	struct pwm_omap_dmtimer_chip *omap = to_pwm_omap_dmtimer_chip(chip);
+> -
+> -	mutex_lock(&omap->mutex);
+> -	omap->pdata->stop(omap->dm_timer);
+> -	mutex_unlock(&omap->mutex);
+> -}
+> -
+> +/**
+> + * pwm_omap_dmtimer_config() - Update the configuration of pwm omap dm timer
+> + * @chip:	Pointer to PWM controller
+> + * @pwm:	Pointer to PWM channel
+> + * @duty_ns:	New duty cycle in nano seconds
+> + * @period_ns:	New period in nano seconds
+> + *
+> + * Return 0 if successfully changed the period/duty_cycle else appropriate
+> + * error.
+> + */
+>  static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
+>  				   struct pwm_device *pwm,
+>  				   int duty_ns, int period_ns)
+> @@ -100,30 +105,26 @@ static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
+>  	struct pwm_omap_dmtimer_chip *omap = to_pwm_omap_dmtimer_chip(chip);
+>  	u32 period_cycles, duty_cycles;
+>  	u32 load_value, match_value;
+> -	struct clk *fclk;
+>  	unsigned long clk_rate;
+> +	struct clk *fclk;
+>  
+>  	dev_dbg(chip->dev, "requested duty cycle: %d ns, period: %d ns\n",
+>  		duty_ns, period_ns);
+>  
+> -	mutex_lock(&omap->mutex);
+>  	if (duty_ns == pwm_get_duty_cycle(pwm) &&
+> -	    period_ns == pwm_get_period(pwm)) {
+> -		/* No change - don't cause any transients. */
+> -		mutex_unlock(&omap->mutex);
+> +	    period_ns == pwm_get_period(pwm))
+>  		return 0;
+> -	}
+>  
+>  	fclk = omap->pdata->get_fclk(omap->dm_timer);
+>  	if (!fclk) {
+>  		dev_err(chip->dev, "invalid pmtimer fclk\n");
+> -		goto err_einval;
+> +		return -EINVAL;
+>  	}
+>  
+>  	clk_rate = clk_get_rate(fclk);
+>  	if (!clk_rate) {
+>  		dev_err(chip->dev, "invalid pmtimer fclk rate\n");
+> -		goto err_einval;
+> +		return -EINVAL;
+>  	}
+>  
+>  	dev_dbg(chip->dev, "clk rate: %luHz\n", clk_rate);
+> @@ -151,7 +152,7 @@ static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
+>  		dev_info(chip->dev,
+>  			 "period %d ns too short for clock rate %lu Hz\n",
+>  			 period_ns, clk_rate);
+> -		goto err_einval;
+> +		return -EINVAL;
+>  	}
+>  
+>  	if (duty_cycles < 1) {
+> @@ -183,54 +184,72 @@ static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
+>  	dev_dbg(chip->dev, "load value: %#08x (%d), match value: %#08x (%d)\n",
+>  		load_value, load_value,	match_value, match_value);
+>  
+> -	mutex_unlock(&omap->mutex);
+> -
+>  	return 0;
+> -
+> -err_einval:
+> -	mutex_unlock(&omap->mutex);
+> -
+> -	return -EINVAL;
+>  }
+>  
+> -static int pwm_omap_dmtimer_set_polarity(struct pwm_chip *chip,
+> -					 struct pwm_device *pwm,
+> -					 enum pwm_polarity polarity)
+> +/**
+> + * pwm_omap_dmtimer_apply() - Changes the state of the pwm omap dm timer.
+> + * @chip:	Pointer to PWM controller
+> + * @pwm:	Pointer to PWM channel
+> + * @state:	New sate to apply
+> + *
+> + * Return 0 if successfully changed the state else appropriate error.
+> + */
+> +static int pwm_omap_dmtimer_apply(struct pwm_chip *chip,
+> +				  struct pwm_device *pwm,
+> +				  const struct pwm_state *state)
+>  {
+>  	struct pwm_omap_dmtimer_chip *omap = to_pwm_omap_dmtimer_chip(chip);
+> +	int ret = 0;
+>  
+> -	/*
+> -	 * PWM core will not call set_polarity while PWM is enabled so it's
+> -	 * safe to reconfigure the timer here without stopping it first.
+> -	 */
+>  	mutex_lock(&omap->mutex);
+> -	omap->pdata->set_pwm(omap->dm_timer,
+> -			     polarity == PWM_POLARITY_INVERSED,
+> -			     true, OMAP_TIMER_TRIGGER_OVERFLOW_AND_COMPARE);
+> +
+> +	if (pwm_is_enabled(pwm) && !state->enabled) {
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/vc4/vc4_hdmi.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+In my book calling PWM API functions (designed for PWM consumers) is not
+so nice. I would prefer you checking the hardware registers or cache the
+state locally instead of relying on the core here.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 5db003bb3cf5..4964ec6f5608 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -191,8 +191,7 @@ static const struct drm_connector_helper_funcs vc4_hdmi_connector_helper_funcs =
- };
- 
- static int vc4_hdmi_connector_init(struct drm_device *dev,
--				   struct vc4_hdmi *vc4_hdmi,
--				   struct i2c_adapter *ddc)
-+				   struct vc4_hdmi *vc4_hdmi)
- {
- 	struct vc4_hdmi_connector *hdmi_connector = &vc4_hdmi->connector;
- 	struct drm_connector *connector = &hdmi_connector->base;
-@@ -204,7 +203,7 @@ static int vc4_hdmi_connector_init(struct drm_device *dev,
- 	drm_connector_init_with_ddc(dev, connector,
- 				    &vc4_hdmi_connector_funcs,
- 				    DRM_MODE_CONNECTOR_HDMIA,
--				    ddc);
-+				    vc4_hdmi->ddc);
- 	drm_connector_helper_add(connector, &vc4_hdmi_connector_helper_funcs);
- 
- 	/* Create and attach TV margin props to this connector. */
-@@ -1317,7 +1316,7 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
- 			 DRM_MODE_ENCODER_TMDS, NULL);
- 	drm_encoder_helper_add(encoder, &vc4_hdmi_encoder_helper_funcs);
- 
--	ret = vc4_hdmi_connector_init(drm, vc4_hdmi, vc4_hdmi->ddc);
-+	ret = vc4_hdmi_connector_init(drm, vc4_hdmi);
- 	if (ret)
- 		goto err_destroy_encoder;
- 
+It would be great to have a general description at the top of the driver
+(like for example drivers/pwm/pwm-sifive.c) that answers things like:
+
+ - Does calling .stop completes the currently running period (it
+   should)?
+ - Does changing polarity, duty_cycle and period complete the running
+   period?
+ - How does the hardware behave on disable? (i.e. does it output the
+   state the pin is at in that moment? Does it go High-Z?)
+
+Best regards
+Uwe
+
 -- 
-git-series 0.9.1
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
