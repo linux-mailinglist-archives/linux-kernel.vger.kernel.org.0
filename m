@@ -2,111 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C356816AD30
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:23:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8EB516AD36
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:23:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728354AbgBXRW5 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Feb 2020 12:22:57 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:49414 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727758AbgBXRWv (ORCPT
+        id S1728417AbgBXRXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 12:23:17 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45117 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728384AbgBXRXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:22:51 -0500
-Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 2B61C67A860;
-        Mon, 24 Feb 2020 18:22:47 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
- (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1913.5; Mon, 24 Feb
- 2020 18:22:46 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1913.005; Mon, 24 Feb 2020 18:22:46 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Linus Walleij <linus.ml.walleij@gmail.com>,
-        "NXP Linux Team" <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "Vinod Koul" <vkoul@kernel.org>
-CC:     Schrempf Frieder <frieder.schrempf@kontron.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] dma: imx-sdma: Fix the event id check to include RX event for
- UART6
-Thread-Topic: [PATCH] dma: imx-sdma: Fix the event id check to include RX
- event for UART6
-Thread-Index: AQHV6zcHvJnYHLnVJki1UPp7vKjn9Q==
-Date:   Mon, 24 Feb 2020 17:22:46 +0000
-Message-ID: <20200224172236.22478-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [172.25.9.193]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Mon, 24 Feb 2020 12:23:13 -0500
+Received: by mail-wr1-f65.google.com with SMTP id g3so11308994wrs.12
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 09:23:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Z7r4FCCdgK//1AJV7o7c7T7DxWEhsHdVIX0fUYjE4Ts=;
+        b=g+oJppTDpv5kQixddVJjhu7C9YgdQArMSg5hmvMNu3Y69lt1nSnlv6e4GUhHjgzmhc
+         kpyDv0phuVbr2tlC8zCjmDiCR1McS75gOj4mhVZnXt6t/GONUhBWF2zamYaURL31rXtE
+         7lQy0TnmmSKA733p9DxpdQcfGDWL0NZ7BMpRU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z7r4FCCdgK//1AJV7o7c7T7DxWEhsHdVIX0fUYjE4Ts=;
+        b=OxzgBnYTXyU0vNwDHo16U0lfOOc3+uhsSHsk7j6NTEMmbhKcn0coJ86h6wuoMqCVVh
+         0vL27BQhyCBg9lRzmohJ2DIn7UstH2WHB6Bqj4XM4WMexQJVpd1JDI/OEIDDb8AMeF7w
+         fFhU+1b/QOGLR49HvyK17YkxtrxxdUlSNjVMLWLBZipG5/aQfyJOs9yqW+V85YHGjHEH
+         iaCIzX30R0FGLWMAttxSNCC4Y6Wn6j8LHH5LlK4bgtaQ82GyE1OcuwjMC/ECZH7avbtR
+         4tCF0ao/fMSXT1dElE/fsFyNcsoF4fVE5lCq3FxnQO/9gr7Jk6i+limkRUYcY23v7sMg
+         uf1w==
+X-Gm-Message-State: APjAAAXHGW142xkLuBkgb9v1Lrgxq5dfZR1gfD+UugseUn8S5Nm6d2GQ
+        SFUgKG9CYyi2gAwtON3MTY4C8IlJwl0=
+X-Google-Smtp-Source: APXvYqw/rLv+BSiAvCyHeUmMe9yYodWuPz2r3aFrU2+asq1tfmpvCuhAPRCp6EaiEEqrhW9IeqWgdQ==
+X-Received: by 2002:a5d:5706:: with SMTP id a6mr67768995wrv.108.1582564990967;
+        Mon, 24 Feb 2020 09:23:10 -0800 (PST)
+Received: from chromium.org ([2620:0:105f:fd00:d960:542a:a1d:648a])
+        by smtp.gmail.com with ESMTPSA id j15sm20087903wrp.9.2020.02.24.09.23.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2020 09:23:10 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Mon, 24 Feb 2020 18:23:09 +0100
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        James Morris <jmorris@namei.org>
+Subject: Re: [PATCH bpf-next v4 3/8] bpf: lsm: provide attachment points for
+ BPF LSM programs
+Message-ID: <20200224172309.GB21886@chromium.org>
+References: <20200220175250.10795-1-kpsingh@chromium.org>
+ <20200220175250.10795-4-kpsingh@chromium.org>
+ <0ef26943-9619-3736-4452-fec536a8d169@schaufler-ca.com>
+ <202002211946.A23A987@keescook>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 2B61C67A860.AF1C6
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        festevam@gmail.com, kernel@pengutronix.de,
-        linus.ml.walleij@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        s.hauer@pengutronix.de, shawnguo@kernel.org, stable@vger.kernel.org,
-        vkoul@kernel.org
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202002211946.A23A987@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+Hi Kees,
 
-On i.MX6 the DMA event for the RX channel of UART6 is '0'. To fix
-the broken DMA support for UART6, we change the check for event_id0
-to include '0' as a valid id.
+Thanks for the feedback!
 
-Fixes: 1ec1e82f2510 ("dmaengine: Add Freescale i.MX SDMA support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
----
- drivers/dma/imx-sdma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 21-Feb 20:22, Kees Cook wrote:
+> On Thu, Feb 20, 2020 at 03:49:05PM -0800, Casey Schaufler wrote:
+> > On 2/20/2020 9:52 AM, KP Singh wrote:
+> > > From: KP Singh <kpsingh@google.com>
+> > 
+> > Sorry about the heavy list pruning - the original set
+> > blows thunderbird up.
+> 
+> (I've added some people back; I had to dig this thread back out of lkml
+> since I didn't get a direct copy...)
+> 
+> > > The BPF LSM programs are implemented as fexit trampolines to avoid the
+> > > overhead of retpolines. These programs cannot be attached to security_*
+> > > wrappers as there are quite a few security_* functions that do more than
+> > > just calling the LSM callbacks.
+> > >
+> > > This was discussed on the lists in:
+> > >
+> > >   https://lore.kernel.org/bpf/20200123152440.28956-1-kpsingh@chromium.org/T/#m068becce588a0cdf01913f368a97aea4c62d8266
+> > >
+> > > Adding a NOP callback after all the static LSM callbacks are called has
+> > > the following benefits:
+> > >
+> > > - The BPF programs run at the right stage of the security_* wrappers.
+> > > - They run after all the static LSM hooks allowed the operation,
+> > >   therefore cannot allow an action that was already denied.
+> > 
+> > I still say that the special call-out to BPF is unnecessary.
+> > I remain unconvinced by the arguments. You aren't doing anything
+> > so special that the general mechanism won't work.
+> 
+> If I'm understanding this correctly, there are two issues:
+> 
+> 1- BPF needs to be run last due to fexit trampolines (?)
+> 
+> 2- BPF hooks don't know what may be attached at any given time, so
+>    ALL LSM hooks need to be universally hooked. THIS turns out to create
+>    a measurable performance problem in that the cost of the indirect call
+>    on the (mostly/usually) empty BPF policy is too high.
+> 
+> "1" can be solved a lot of ways, and doesn't seem to be a debated part
+> of this series.
+> 
+> "2" is interesting -- it creates a performance problem for EVERYONE that
+> builds in this kernel feature, regardless of them using it. Excepting
+> SELinux, "traditional" LSMs tends to be relatively sparse in their hooking:
+> 
+> $ grep '^      struct hlist_head' include/linux/lsm_hooks.h | wc -l
+> 230
+> $ for i in apparmor loadpin lockdown safesetid selinux smack tomoyo yama ; \
+>   do echo -n "$i " && (cd $i && git grep LSM_HOOK_INIT | wc -l) ; done
+> apparmor   68
+> loadpin     3
+> lockdown    1
+> safesetid   2
+> selinux   202
+> smack     108
+> tomoyo     28
+> yama        4
+> 
+> So, trying to avoid the indirect calls is, as you say, an optimization,
+> but it might be a needed one due to the other limitations.
+> 
+> To me, some questions present themselves:
+> 
+> a) What, exactly, are the performance characteristics of:
+> 	"before"
+> 	"with indirect calls"
+> 	"with static keys optimization"
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index 066b21a32232..3d4aac97b1fc 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -1331,7 +1331,7 @@ static void sdma_free_chan_resources(struct dma_chan *chan)
- 
- 	sdma_channel_synchronize(chan);
- 
--	if (sdmac->event_id0)
-+	if (sdmac->event_id0 >= 0)
- 		sdma_event_disable(sdmac, sdmac->event_id0);
- 	if (sdmac->event_id1)
- 		sdma_event_disable(sdmac, sdmac->event_id1);
-@@ -1631,7 +1631,7 @@ static int sdma_config(struct dma_chan *chan,
- 	memcpy(&sdmac->slave_config, dmaengine_cfg, sizeof(*dmaengine_cfg));
- 
- 	/* Set ENBLn earlier to make sure dma request triggered after that */
--	if (sdmac->event_id0) {
-+	if (sdmac->event_id0 >= 0) {
- 		if (sdmac->event_id0 >= sdmac->sdma->drvdata->num_events)
- 			return -EINVAL;
- 		sdma_event_enable(sdmac, sdmac->event_id0);
--- 
-2.17.1
+Good suggestion!
+
+I will do some analysis and come back with the numbers.
+
+> 
+> b) Would there actually be a global benefit to using the static keys
+>    optimization for other LSMs? (Especially given that they're already
+>    sparsely populated and policy likely determines utility -- all the
+>    LSMs would just turn ON all their static keys or turn off ALL their
+>    static keys depending on having policy loaded.)
+
+As Alexei mentioned, we can use the patches for static calls after
+they are merged:
+
+https://lore.kernel.org/lkml/8bc857824f82462a296a8a3c4913a11a7f801e74.1547073843.git.jpoimboe@redhat.com/
+
+to make the framework better (as a separate series) especially given
+that we are unsure how they work with BPF.
+
+- KP
+
+> 
+> If static keys are justified for KRSI (by "a") then it seems the approach
+> here should stand. If "b" is also true, then we need an additional
+> series to apply this optimization for the other LSMs (but that seems
+> distinctly separate from THIS series).
+> 
+> -- 
+> Kees Cook
