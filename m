@@ -2,146 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0307016ADB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:39:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A7DA16ADBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:39:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbgBXRjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 12:39:20 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36784 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727890AbgBXRjR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:39:17 -0500
-Received: by mail-pg1-f195.google.com with SMTP id d9so5520801pgu.3;
-        Mon, 24 Feb 2020 09:39:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QEO8rTktMvRi8FtiFiyJa1SjpwFUmvt+6z/DR6CHzlc=;
-        b=BkOYsO85JBCOFoHCw2dvRsiIEv//20PB4jPPY6MkUNR+zbwfatSCClbHttFb1wPQ09
-         JvwXCZYPxBOlLsRS4pzV7kdXeZPgfbddAJBmtB56tle1mFh5PzsgaHDk/gMsL9Qb/6Vz
-         cPU5+ioBfq81FSe4FUzea6IX7B0bxg2EorNVnIIqre1jKxcNigHkOd2oNQl2qvWLXZA0
-         f3l4Sr5+7+fKkiKpbyJtwFeeAn85FMjleZ9wnhQI/2w3fNwdlncPrBIHc2XHBAzKWZhb
-         isAjE2igvzqjF3+VZWvHnP6Lmcro9RB69BSlChTNj2IwDFZQ+EF5MMUXK5L8CjpMW02B
-         sqpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=QEO8rTktMvRi8FtiFiyJa1SjpwFUmvt+6z/DR6CHzlc=;
-        b=SrNE6tc1aBR3d2ijqNMcNCGkPFE6vQELTHTOjJu5ewcSmPV3WV8ezEiktrAB79Q7wg
-         HfitALWbfZ4HtiHSkllSmDV9kOqwFFysKM9TJ8oewpupd/6+2iYFHLPF9krM0pQ4V3jk
-         g0hL0+BHeaJhQG5tl5nfAGWkLNKDJyzh8YLSoxiCYve+R3VfJNBZMOG2oGlPyG1T7YK6
-         K7LU0Hff8lR7jH5khE49ismyFE/pSDUT1VxHefYyozhl4GjBX9NODUkqdbQ6PACXaefX
-         vm3FdaWX2aVohjD9+8q3ES8bmxf4gBkXizQnzbvoUMUHL4snmlVjxEnI3VR+KBDc0n5h
-         1bYw==
-X-Gm-Message-State: APjAAAWiqxopTFZgmm9Wnt2+QM1A+Fa07UA/xwd8aYc11F2rG/A0OTpy
-        X4mU6oNBRZefr94Cp1jIrQP81lhi
-X-Google-Smtp-Source: APXvYqyfgF/YFSdXOWoBOSqpXVi5iH4JEg2sA5QjqwWDlhCicysDKINzvP95J4Eb/cQ6Qjbi7SZPvA==
-X-Received: by 2002:a65:56c6:: with SMTP id w6mr55910617pgs.167.1582565957016;
-        Mon, 24 Feb 2020 09:39:17 -0800 (PST)
-Received: from [10.67.50.18] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id g13sm13389828pgh.82.2020.02.24.09.39.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 09:39:15 -0800 (PST)
-Subject: Re: [PATCH 04/89] i2c: brcmstb: Allow to compile it on BCM2835
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
- <0ec2a26c7492b1ef6554d3bdada7a6fb8b41ab1c.1582533919.git-series.maxime@cerno.tech>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
- xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
- X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
- AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
- ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
- SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
- nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
- qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
- YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
- FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
- 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSDOwU0EVxvH8AEQAOqv6agYuT4x3DgFIJNv9i0e
- S443rCudGwmg+CbjXGA4RUe1bNdPHYgbbIaN8PFkXfb4jqg64SyU66FXJJJO+DmPK/t7dRNA
- 3eMB1h0GbAHlLzsAzD0DKk1ARbjIusnc02aRQNsAUfceqH5fAMfs2hgXBa0ZUJ4bLly5zNbr
- r0t/fqZsyI2rGQT9h1D5OYn4oF3KXpSpo+orJD93PEDeseho1EpmMfsVH7PxjVUlNVzmZ+tc
- IDw24CDSXf0xxnaojoicQi7kzKpUrJodfhNXUnX2JAm/d0f9GR7zClpQMezJ2hYAX7BvBajb
- Wbtzwi34s8lWGI121VjtQNt64mSqsK0iQAE6OYk0uuQbmMaxbBTT63+04rTPBO+gRAWZNDmQ
- b2cTLjrOmdaiPGClSlKx1RhatzW7j1gnUbpfUl91Xzrp6/Rr9BgAZydBE/iu57KWsdMaqu84
- JzO9UBGomh9eyBWBkrBt+Fe1qN78kM7JO6i3/QI56NA4SflV+N4PPgI8TjDVaxgrfUTV0gVa
- cr9gDE5VgnSeSiOleChM1jOByZu0JTShOkT6AcSVW0kCz3fUrd4e5sS3J3uJezSvXjYDZ53k
- +0GS/Hy//7PSvDbNVretLkDWL24Sgxu/v8i3JiYIxe+F5Br8QpkwNa1tm7FK4jOd95xvYADl
- BUI1EZMCPI7zABEBAAHCwagEGBECAAkFAlcbx/ACGwICKQkQYVeZFbVjdg7BXSAEGQECAAYF
- Alcbx/AACgkQh9CWnEQHBwSJBw//Z5n6IO19mVzMy/ZLU/vu8flv0Aa0kwk5qvDyvuvfiDTd
- WQzq2PLs+obX0y1ffntluhvP+8yLzg7h5O6/skOfOV26ZYD9FeV3PIgR3QYF26p2Ocwa3B/k
- P6ENkk2pRL2hh6jaA1Bsi0P34iqC2UzzLq+exctXPa07ioknTIJ09BT31lQ36Udg7NIKalnj
- 5UbkRjqApZ+Rp0RAP9jFtq1n/gjvZGyEfuuo/G+EVCaiCt3Vp/cWxDYf2qsX6JxkwmUNswuL
- C3duQ0AOMNYrT6Pn+Vf0kMboZ5UJEzgnSe2/5m8v6TUc9ZbC5I517niyC4+4DY8E2m2V2LS9
- es9uKpA0yNcd4PfEf8bp29/30MEfBWOf80b1yaubrP5y7yLzplcGRZMF3PgBfi0iGo6kM/V2
- 13iD/wQ45QTV0WTXaHVbklOdRDXDHIpT69hFJ6hAKnnM7AhqZ70Qi31UHkma9i/TeLLzYYXz
- zhLHGIYaR04dFT8sSKTwTSqvm8rmDzMpN54/NeDSoSJitDuIE8givW/oGQFb0HGAF70qLgp0
- 2XiUazRyRU4E4LuhNHGsUxoHOc80B3l+u3jM6xqJht2ZyMZndbAG4LyVA2g9hq2JbpX8BlsF
- skzW1kbzIoIVXT5EhelxYEGqLFsZFdDhCy8tjePOWK069lKuuFSssaZ3C4edHtkZ8gCfWWtA
- 8dMsqeOIg9Trx7ZBCDOZGNAAnjYQmSb2eYOAti3PX3Ex7vI8ZhJCzsNNBEjPuBIQEAC/6NPW
- 6EfQ91ZNU7e/oKWK91kOoYGFTjfdOatp3RKANidHUMSTUcN7J2mxww80AQHKjr3Yu2InXwVX
- SotMMR4UrkQX7jqabqXV5G+88bj0Lkr3gi6qmVkUPgnNkIBe0gaoM523ujYKLreal2OQ3GoJ
- PS6hTRoSUM1BhwLCLIWqdX9AdT6FMlDXhCJ1ffA/F3f3nTN5oTvZ0aVF0SvQb7eIhGVFxrlb
- WS0+dpyulr9hGdU4kzoqmZX9T/r8WCwcfXipmmz3Zt8o2pYWPMq9Utby9IEgPwultaP06MHY
- nhda1jfzGB5ZKco/XEaXNvNYADtAD91dRtNGMwRHWMotIGiWwhEJ6vFc9bw1xcR88oYBs+7p
- gbFSpmMGYAPA66wdDKGj9+cLhkd0SXGht9AJyaRA5AWB85yNmqcXXLkzzh2chIpSEawRsw8B
- rQIZXc5QaAcBN2dzGN9UzqQArtWaTTjMrGesYhN+aVpMHNCmJuISQORhX5lkjeg54oplt6Zn
- QyIsOCH3MfG95ha0TgWwyFtdxOdY/UY2zv5wGivZ3WeS0TtQf/BcGre2y85rAohFziWOzTaS
- BKZKDaBFHwnGcJi61Pnjkz82hena8OmsnsBIucsz4N0wE+hVd6AbDYN8ZcFNIDyt7+oGD1+c
- PfqLz2df6qjXzq27BBUboklbGUObNwADBQ//V45Z51Q4fRl/6/+oY5q+FPbRLDPlUF2lV6mb
- hymkpqIzi1Aj/2FUKOyImGjbLAkuBQj3uMqy+BSSXyQLG3sg8pDDe8AJwXDpG2fQTyTzQm6l
- OnaMCzosvALk2EOPJryMkOCI52+hk67cSFA0HjgTbkAv4Mssd52y/5VZR28a+LW+mJIZDurI
- Y14UIe50G99xYxjuD1lNdTa/Yv6qFfEAqNdjEBKNuOEUQOlTLndOsvxOOPa1mRUk8Bqm9BUt
- LHk3GDb8bfDwdos1/h2QPEi+eI+O/bm8YX7qE7uZ13bRWBY+S4+cd+Cyj8ezKYAJo9B+0g4a
- RVhdhc3AtW44lvZo1h2iml9twMLfewKkGV3oG35CcF9mOd7n6vDad3teeNpYd/5qYhkopQrG
- k2oRBqxyvpSLrJepsyaIpfrt5NNaH7yTCtGXcxlGf2jzGdei6H4xQPjDcVq2Ra5GJohnb/ix
- uOc0pWciL80ohtpSspLlWoPiIowiKJu/D/Y0bQdatUOZcGadkywCZc/dg5hcAYNYchc8AwA4
- 2dp6w8SlIsm1yIGafWlNnfvqbRBglSTnxFuKqVggiz2zk+1wa/oP+B96lm7N4/3Aw6uy7lWC
- HvsHIcv4lxCWkFXkwsuWqzEKK6kxVpRDoEQPDj+Oy/ZJ5fYuMbkdHrlegwoQ64LrqdmiVVPC
- TwQYEQIADwIbDAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2Do+FAJ956xSz2XpDHql+Wg/2qv3b
- G10n8gCguORqNGMsVRxrlLs7/himep7MrCc=
-Message-ID: <86695f21-367e-7dbc-bdd5-b908f798118d@gmail.com>
-Date:   Mon, 24 Feb 2020 09:39:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728158AbgBXRjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 12:39:44 -0500
+Received: from vps.xff.cz ([195.181.215.36]:60558 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727108AbgBXRjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 12:39:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1582565980; bh=bssBG1gkye/nYahI0KI7q69HyEXw05nP1PGKKo8PTDc=;
+        h=Date:From:To:Subject:References:X-My-GPG-KeyId:From;
+        b=FoSjuyUEQg2Zi08JDwJhfQKkeU+UWADJZHnAIBU7RY8JU1qByM7iZvFuW4x2nwBhW
+         LQFABB99Nv08xlfT9LxVBgzfhtmJdwqdWhQL/3tmhYi4PipX5/Iz3/KcHZUkzBtI1T
+         2QNNcU+zW2sm3ErVaf8txlY3VNGztiHLu/jjvP6E=
+Date:   Mon, 24 Feb 2020 18:39:40 +0100
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: sun8i-a83t: Add thermal trip points/cooling
+ maps
+Message-ID: <20200224173940.huwpaqhrc5ngbmji@core.my.home>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20200224165417.334617-1-megous@megous.com>
+ <2e4213a6-2aaf-641c-f741-9503f3ffd5fe@linaro.org>
+ <20200224172328.yauwfgov664ayrd6@core.my.home>
 MIME-Version: 1.0
-In-Reply-To: <0ec2a26c7492b1ef6554d3bdada7a6fb8b41ab1c.1582533919.git-series.maxime@cerno.tech>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200224172328.yauwfgov664ayrd6@core.my.home>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/24/20 1:06 AM, Maxime Ripard wrote:
-> The BCM2711, supported by ARCH_BCM2835, also has a controller by the
-> brcmstb driver so let's allow it to be compiled on that platform.
+On Mon, Feb 24, 2020 at 06:23:28PM +0100, megous hlavni wrote:
+> Hi, 
 > 
-> Cc: Kamal Dasu <kdasu.kdev@gmail.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: bcm-kernel-feedback-list@broadcom.com
-> Cc: linux-i2c@vger.kernel.org
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> On Mon, Feb 24, 2020 at 06:06:20PM +0100, Daniel Lezcano wrote:
+> > On 24/02/2020 17:54, Ondrej Jirman wrote:
+> > > This enables passive cooling by down-regulating CPU voltage
+> > >  			clocks = <&ccu CLK_C1CPUX>;
+> > > @@ -1188,12 +1188,60 @@ cpu0_thermal: cpu0-thermal {
+> > >  			polling-delay-passive = <0>;
+> > >  			polling-delay = <0>;
+> > >  			thermal-sensors = <&ths 0>;
+> > > +
+> > > +			trips {
+> > > +				cpu0_hot: cpu-hot {
+> > > +					temperature = <80000>;
+> > > +					hysteresis = <2000>;
+> > > +					type = "passive";
+> > > +				};
+> > > +
+> > > +				cpu0_very_hot: cpu-very-hot {
+> > > +					temperature = <100000>;
+> > > +					hysteresis = <0>;
+> > > +					type = "critical";
+> > > +				};
+> > > +			};
+> > > +
+> > > +			cooling-maps {
+> > > +				cpu-hot-limit {
+> > > +					trip = <&cpu0_hot>;
+> > > +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > > +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > > +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > > +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> > > +				};
+> > > +			};
+> > >  		};
+> > >  
+> > >  		cpu1_thermal: cpu1-thermal {
+> > >  			polling-delay-passive = <0>;
+> > 
+> > No polling to mitigate?
+> 
+> Polling to mitigate what?
+> 
+> The driver is using interrupts whenever new reading is available, and
+> notifies tz of the change. I don't have a reason to believe any new
+> values are available from thermal sensor outside of the interrupt
+> period.
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+To be more clear, new temperatures are available from the thermal sensor driver
+at the rate of 4 per second, which should be enough to do quick adjustments to
+the thermal zone/cooling device even for quick temperature rises.
+
+https://elixir.bootlin.com/linux/v5.6-rc3/source/drivers/thermal/sun8i_thermal.c#L442
+
+There's no slow/fast period depending on whether the cooling is active.
+It's always fast and no polling of the thermal sensor is needed.
+
+regards,
+	o.
+
+> > >  			polling-delay = <0>;
+> > >  			thermal-sensors = <&ths 1>;
+> > > +
+> > > +			trips {
+> > > +				cpu1_hot: cpu-hot {
+> > > +					temperature = <80000>;
+> > > +					hysteresis = <2000>;
+> > > +					type = "passive";
+> > 
+> > I'm curious, can you really reach this temperature with a cortex-a7
+> > running at 1.2GHz max?
+> 
+> That depends on ambient temperature. I'd say easily. My A83T is running
+> iniside enclosed space with no cooling other than dissipating heat to
+> the board.
+> 
+> Anyway, I'm running my A83T boards at 1.8GHz. And A83T can run up to 2GHz
+> at the best SoC bin.
+> 
+> I'll probably submit updated cpufreq table at some point too, once I fix
+> it up to use the SoC bin information.
+> 
+> https://megous.com/git/linux/commit/?h=ths-5.6&id=171b7c3c3db98b5939d28d0c96b384edda95cec3
+> 
+> regards,
+> 	o.
+> 
+> > > +				};
+> > > +
+> > > +				cpu1_very_hot: cpu-very-hot {
+> > > +					temperature = <100000>;
+> > > +					hysteresis = <0>;
+> > > +					type = "critical";
+> > > +				};
+> > > +			};
+> > > +
+> > > +			cooling-maps {
+> > > +				cpu-hot-limit {
+> > > +					trip = <&cpu1_hot>;
+> > > +					cooling-device = <&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > > +							 <&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > > +							 <&cpu102 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > > +							 <&cpu103 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> > > +				};
+> > > +			};
+> > >  		};
+> > >  
+> > >  		gpu_thermal: gpu-thermal {
+> > > 
+> > 
+> > 
+> > -- 
+> >  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> > 
+> > Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> > <http://twitter.com/#!/linaroorg> Twitter |
+> > <http://www.linaro.org/linaro-blog/> Blog
+> > 
