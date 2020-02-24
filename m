@@ -2,113 +2,606 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE6C16A4D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:25:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D22116A47D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:00:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbgBXLZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 06:25:41 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:38270 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbgBXLZk (ORCPT
+        id S1727295AbgBXLAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 06:00:32 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:41989 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726509AbgBXLAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 06:25:40 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01O87YYb160437;
-        Mon, 24 Feb 2020 08:09:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2020-01-29;
- bh=6qKJx4gzfpljmcOcHGiZyzYN7Uu40KJ6LMB+X9Hu3pM=;
- b=XyvGvgkMuU4oe4Kzr5MzIxqxC+MueWnjd1wupeXsL9K9hXTjjJ6cIu4lDsnEob+ZeSLO
- bAazjaqCAshQfY2xw1WvrBuTF54mzLT8+JRflg74v7DZCg6dJnLBBU0TN7y8p9tZ0UN3
- yPWVNQHZltckspOi/qND1jd7zQw0PDfhL20h482qprLNvVhTjFutQ1eWB46kc22OhSeB
- 4RfxIcLwMZHi3bNkQuV3LoLYsAclXmH9jfdJa3f1fv3zX5ok+ATBKwRBNKJLfn0eXdAh
- NJxkNQ33cwRn1beht/VJWiNTl5fP1UIyZZc2HIGo/ScUc490uAZP21v0Xzbux6HIAZTy nw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2ybvr4hw5m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Feb 2020 08:09:04 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01O87q9q182572;
-        Mon, 24 Feb 2020 08:09:03 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2ybe10nc98-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Feb 2020 08:09:03 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01O88xmR024337;
-        Mon, 24 Feb 2020 08:08:59 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 24 Feb 2020 00:08:59 -0800
-Date:   Mon, 24 Feb 2020 11:08:42 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH v2 3/7] test_firmware: add partial read support for
- request_firmware_into_buf
-Message-ID: <20200224080842.GA3308@kadam>
-References: <20200220004825.23372-1-scott.branden@broadcom.com>
- <20200220004825.23372-4-scott.branden@broadcom.com>
- <20200220084255.GW7838@kadam>
- <9afab7f8-1b5f-a7bb-6b76-f7b19efb2979@broadcom.com>
- <4a666590-461d-17f9-5580-31a41869383f@broadcom.com>
+        Mon, 24 Feb 2020 06:00:32 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 72CC8700C;
+        Mon, 24 Feb 2020 06:00:30 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Mon, 24 Feb 2020 06:00:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=6ks5PrS3oCrxl+JG6PDdMPRI6wj
+        8YDA6wVKNfQP9BCk=; b=kK3TH6rtGuokRs+ChsxsFv/4v5lIvJpZToAJJQYoQQm
+        tspXsnOyQGEAhAqojsdNgIFqaWklIPSI/WJqy+xqIuuadewWI2/Ux17TSvJVcG4N
+        Jtq5HFpknOKWXz8ejEGto2b7YkJzHitbOzdU9qdCvbCluQflDlOw0iT73i+9+UkP
+        S0bi+6wNmfENbDpSRh/y6YfZqYmc9Rgh2iNUeOi4vPJ3hX1Z7mO76e7+ssMqKqAp
+        PNmWS1KxHw91P/7jLG3rr80H7uXUGpG2qf9Vgj0bSoEUrTsHldV6xHHYz/VpVnEv
+        dF8+HNEDdbbfLjloEqdhuK5gA7aSitN/A90pu5YXZcA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=6ks5Pr
+        S3oCrxl+JG6PDdMPRI6wj8YDA6wVKNfQP9BCk=; b=B0AjRA2LvX3wO6Cpby/rvb
+        GGojYQsUwO5NJQUbzY1OGAOPg3k436U90LN/GfmUu1mvC6F5SfdsKDjczBds/rTG
+        WmtVqZbpWazKEgJJFUImI8LZQ4Vqv64XMTMlhclm8v6RMups+fxuCM+2PUUQmUwf
+        0u0cWpHTKzKacvaEE8SV0C+5zrL/r4imMSMtLoQ4NMqRQlm/cIEP0RJfLnqXdQOL
+        tVSI89af70yeKHqpWH63S3hGFp7WO+m7L3Svy6Y/S3tbcqvsl0Y0uaKn6nPOIzt+
+        DaTavwXjzOZsrfVFMccfGb+ZdHE1MzScRV+dSPX2PIwR/R/alADnJTf1RPD5pHKQ
+        ==
+X-ME-Sender: <xms:zaxTXoHPmacLr4yGm1RxHVNM3HAANqK29UuTBnRDmkALyGMoK-yhhQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrledtgddvfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
+    hrlhcuvffnffculddutddmnecujfgurhepfffhvffukfhfgggtuggjsehgtderredttddv
+    necuhfhrohhmpeforgigihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhord
+    htvggthheqnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgep
+    tdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:zaxTXmlJ1sSyAOi6jmm2s1V8g3JoqUl13BCla-Zag00qiJo3L02hAA>
+    <xmx:zaxTXj03keg2gZ2dHzvm63P0DCLQTCAHWPBtXK0Zl0l3tMMlbDNNrQ>
+    <xmx:zaxTXiRJ-oN9bgX4kY8IMFo5k8qTGRY4X_tXgeaiM3dNjOG97yB8Wg>
+    <xmx:zqxTXrJvWDZewlAIkg_ykxyHEMrmoyDoUqcqJltOMWPLpIPmgjGy1w>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0C842328005D;
+        Mon, 24 Feb 2020 06:00:28 -0500 (EST)
+Date:   Mon, 24 Feb 2020 12:00:27 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Ondrej Jirman <megous@megous.com>
+Cc:     linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Georgii Staroselskii <georgii.staroselskii@emlid.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Martijn Braam <martijn@brixit.nl>, Luca Weiss <luca@z3ntu.xyz>,
+        Bhushan Shah <bshah@kde.org>, Icenowy Zheng <icenowy@aosc.io>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: allwinner: Add initial support for
+ Pine64 PinePhone
+Message-ID: <20200224110027.ry3v7ms76hwbdn22@gilmour.lan>
+References: <20200223172916.843379-1-megous@megous.com>
+ <20200223172916.843379-4-megous@megous.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uymrrh6prr5faoxw"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4a666590-461d-17f9-5580-31a41869383f@broadcom.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9540 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- suspectscore=0 malwarescore=0 phishscore=0 bulkscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002240071
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9540 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- clxscore=1015 adultscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002240071
+In-Reply-To: <20200223172916.843379-4-megous@megous.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 05:13:08PM -0800, Scott Branden wrote:
-> > > > +static ssize_t test_dev_config_show_size_t(char *buf, int cfg)
-> > > > +{
-> > > > +    size_t val;
-> > > > +
-> > > > +    mutex_lock(&test_fw_mutex);
-> > > > +    val = cfg;
-> > > > +    mutex_unlock(&test_fw_mutex);
-> > > Both val and cfg are stack variables so there is no need for locking.
-> > > Probably you meant to pass a pointer to cfg?
-> I am following the existing code as was done for
-> test_dev_config_show_bool(),
-> test_dev_config_show_int(),
-> test_dev_config_show_u8()
 
-Heh.  Yes.  Those are buggy as well.  Good eyes.  Could you send a patch
-to fix them?
+--uymrrh6prr5faoxw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-regards,
-dan caprnter
+Hi,
 
+On Sun, Feb 23, 2020 at 06:29:16PM +0100, Ondrej Jirman wrote:
+> At them moment PinePhone comes in two slightly incompatible variants:
+>
+> - 1.0: Early Developer Batch
+> - 1.1: Braveheart Batch
+>
+> There will be at least one more incompatible variant in the very near
+> future, so let's start by sharing the dtsi among multiple variants,
+> right away, even though the HW description doesn't yet include the
+> different bits.
+>
+> This is a basic DT that includes only features that are already
+> supported by mainline drivers.
+
+What are those incompatibilities? It's not really obvious from your
+patch.
+
+> Co-developed-by: Samuel Holland <samuel@sholland.org>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> Co-developed-by: Martijn Braam <martijn@brixit.nl>
+> Signed-off-by: Martijn Braam <martijn@brixit.nl>
+> Co-developed-by: Luca Weiss <luca@z3ntu.xyz>
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> Signed-off-by: Bhushan Shah <bshah@kde.org>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> ---
+>  arch/arm64/boot/dts/allwinner/Makefile        |   2 +
+>  .../allwinner/sun50i-a64-pinephone-1.0.dts    |  11 +
+>  .../allwinner/sun50i-a64-pinephone-1.1.dts    |  11 +
+>  .../dts/allwinner/sun50i-a64-pinephone.dtsi   | 385 ++++++++++++++++++
+>  4 files changed, 409 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.0.dts
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.1.dts
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+> index cf4f78617c3f3..79ca263672c38 100644
+> --- a/arch/arm64/boot/dts/allwinner/Makefile
+> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> @@ -9,6 +9,8 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-orangepi-win.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-lts.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pinebook.dtb
+> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pinephone-1.0.dtb
+> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pinephone-1.1.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-sopine-baseboard.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-teres-i.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-bananapi-m2-plus.dtb
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.0.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.0.dts
+> new file mode 100644
+> index 0000000000000..0c42272106afa
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.0.dts
+> @@ -0,0 +1,11 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +// Copyright (C) 2020 Ondrej Jirman <megous@megous.com>
+
+Given the list of authors, surely you're not the sole copyright owner
+here?
+
+> +/dts-v1/;
+> +
+> +#include "sun50i-a64-pinephone.dtsi"
+> +
+> +/ {
+> +	model = "Pine64 PinePhone Developer Batch (1.0)";
+> +	compatible = "pine64,pinephone-1.0", "allwinner,sun50i-a64";
+> +};
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.1.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.1.dts
+> new file mode 100644
+> index 0000000000000..06a775c41664b
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone-1.1.dts
+> @@ -0,0 +1,11 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +// Copyright (C) 2020 Ondrej Jirman <megous@megous.com>
+> +
+> +/dts-v1/;
+> +
+> +#include "sun50i-a64-pinephone.dtsi"
+> +
+> +/ {
+> +	model = "Pine64 PinePhone Braveheart (1.1)";
+> +	compatible = "pine64,pinephone-1.1", "allwinner,sun50i-a64";
+> +};
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> new file mode 100644
+> index 0000000000000..d0cf21d82c9e9
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> @@ -0,0 +1,385 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +// Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.xyz>
+> +// Copyright (C) 2020 Ondrej Jirman <megous@megous.com>
+> +
+> +#include "sun50i-a64.dtsi"
+> +#include "sun50i-a64-cpu-opp.dtsi"
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/pwm/pwm.h>
+> +
+> +/ {
+> +	aliases {
+> +		serial0 = &uart0;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		blue {
+> +			function = LED_FUNCTION_INDICATOR;
+> +			function-enumerator = <1>;
+> +			color = <LED_COLOR_ID_BLUE>;
+> +			gpios = <&pio 3 20 GPIO_ACTIVE_HIGH>; /* PD20 */
+> +		};
+> +
+> +		green {
+> +			function = LED_FUNCTION_INDICATOR;
+> +			function-enumerator = <2>;
+> +			color = <LED_COLOR_ID_GREEN>;
+> +			gpios = <&pio 3 18 GPIO_ACTIVE_HIGH>; /* PD18 */
+> +		};
+> +
+> +		red {
+> +			function = LED_FUNCTION_INDICATOR;
+> +			function-enumerator = <3>;
+> +			color = <LED_COLOR_ID_RED>;
+> +			gpios = <&pio 3 19 GPIO_ACTIVE_HIGH>; /* PD19 */
+> +		};
+> +	};
+
+LEDs should be named using the $color:$board:$usage pattern
+
+> +
+> +	speaker_amp: audio-amplifier {
+> +		compatible = "simple-audio-amplifier";
+> +		enable-gpios = <&pio 2 7 GPIO_ACTIVE_HIGH>; /* PC7 */
+> +		sound-name-prefix = "Speaker Amp";
+> +	};
+> +
+> +	vibrator {
+> +		compatible = "gpio-vibrator";
+> +		enable-gpios = <&pio 3 2 GPIO_ACTIVE_HIGH>; /* PD2 */
+> +		vcc-supply = <&reg_dcdc1>;
+> +	};
+> +};
+> +
+> +&codec {
+> +	status = "okay";
+> +};
+> +
+> +&codec_analog {
+> +	cpvdd-supply = <&reg_eldo1>;
+> +	status = "okay";
+> +};
+> +
+> +&cpu0 {
+> +	cpu-supply = <&reg_dcdc2>;
+> +};
+> +
+> +&cpu1 {
+> +	cpu-supply = <&reg_dcdc2>;
+> +};
+> +
+> +&cpu2 {
+> +	cpu-supply = <&reg_dcdc2>;
+> +};
+> +
+> +&cpu3 {
+> +	cpu-supply = <&reg_dcdc2>;
+> +};
+> +
+> +&dai {
+> +	status = "okay";
+> +};
+> +
+> +&ehci0 {
+> +	status = "okay";
+> +};
+> +
+> +&ehci1 {
+> +	status = "okay";
+> +};
+> +
+> +&i2c1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c1_pins>;
+
+That's the default
+
+> +	status = "okay";
+> +
+> +	/* Magnetometer */
+> +	lis3mdl@1e {
+> +		compatible = "st,lis3mdl-magn";
+> +		reg = <0x1e>;
+> +		vdd-supply = <&reg_dldo1>;
+> +		vddio-supply = <&reg_dldo1>;
+> +	};
+> +
+> +	/* Accelerometer/gyroscope */
+> +	mpu6050@68 {
+> +		compatible = "invensense,mpu6050";
+> +		reg = <0x68>;
+> +		interrupt-parent = <&pio>;
+> +		interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
+> +		vdd-supply = <&reg_dldo1>;
+> +		vddio-supply = <&reg_dldo1>;
+> +	};
+> +};
+> +
+> +/* Connected to pogo pins */
+> +&i2c2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c2_pins>;
+
+That's the default as well
+
+> +	status = "okay";
+> +};
+
+And I'm not sure what the pogo pins are?
+
+> +
+> +&lradc {
+> +	vref-supply = <&reg_aldo3>;
+> +	status = "okay";
+> +
+> +	button-200 {
+> +		label = "Volume Up";
+> +		linux,code = <KEY_VOLUMEUP>;
+> +		channel = <0>;
+> +		voltage = <200000>;
+> +	};
+> +
+> +	button-400 {
+> +		label = "Volume Down";
+> +		linux,code = <KEY_VOLUMEDOWN>;
+> +		channel = <0>;
+> +		voltage = <400000>;
+> +	};
+> +};
+> +
+> +&mmc0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mmc0_pins>;
+
+That's the default
+
+> +	vmmc-supply = <&reg_dcdc1>;
+> +	vqmmc-supply = <&reg_dcdc1>;
+> +	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
+> +	disable-wp;
+> +	bus-width = <4>;
+> +	status = "okay";
+> +};
+> +
+> +&mmc2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mmc2_pins>;
+
+Ditto
+
+> +	vmmc-supply = <&reg_dcdc1>;
+> +	vqmmc-supply = <&reg_dcdc1>;
+> +	bus-width = <8>;
+> +	non-removable;
+> +	cap-mmc-hw-reset;
+> +	status = "okay";
+> +};
+> +
+> +&ohci0 {
+> +	status = "okay";
+> +};
+> +
+> +&ohci1 {
+> +	status = "okay";
+> +};
+> +
+> +&pio {
+> +	vcc-pb-supply = <&reg_dcdc1>;
+> +	vcc-pc-supply = <&reg_dcdc1>;
+> +	vcc-pd-supply = <&reg_dcdc1>;
+> +	vcc-pe-supply = <&reg_aldo1>;
+> +	vcc-pf-supply = <&reg_dcdc1>;
+> +	vcc-pg-supply = <&reg_dldo4>;
+> +	vcc-ph-supply = <&reg_dcdc1>;
+> +};
+> +
+> +&r_pio {
+> +	/*
+> +	 * FIXME: We can't add that supply for now since it would
+> +	 * create a circular dependency between pinctrl, the regulator
+> +	 * and the RSB Bus.
+> +	 *
+> +	 * vcc-pl-supply = <&reg_aldo2>;
+> +	 */
+> +};
+> +
+> +&r_rsb {
+> +	status = "okay";
+> +
+> +	axp803: pmic@3a3 {
+> +		compatible = "x-powers,axp803";
+> +		reg = <0x3a3>;
+> +		interrupt-parent = <&r_intc>;
+> +		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +};
+> +
+> +#include "axp803.dtsi"
+> +
+> +&ac_power_supply {
+> +	status = "okay";
+> +};
+> +
+> +&battery_power_supply {
+> +	status = "okay";
+> +};
+> +
+> +&reg_aldo1 {
+> +	regulator-min-microvolt = <1800000>;
+> +	regulator-max-microvolt = <1800000>;
+> +	regulator-name = "dovdd-csi";
+> +};
+> +
+> +&reg_aldo2 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <1800000>;
+> +	regulator-max-microvolt = <1800000>;
+> +	regulator-name = "vcc-pl";
+> +};
+> +
+> +&reg_aldo3 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <2700000>;
+> +	regulator-max-microvolt = <3300000>;
+> +	regulator-name = "vcc-pll-avcc";
+> +};
+> +
+> +&reg_dcdc1 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <3300000>;
+> +	regulator-max-microvolt = <3300000>;
+> +	regulator-name = "vcc-3v3";
+> +};
+> +
+> +&reg_dcdc2 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <1000000>;
+> +	regulator-max-microvolt = <1300000>;
+> +	regulator-name = "vdd-cpux";
+> +};
+> +
+> +/* DCDC3 is polyphased with DCDC2 */
+> +
+> +&reg_dcdc5 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <1200000>;
+> +	regulator-max-microvolt = <1200000>;
+> +	regulator-name = "vcc-dram";
+> +};
+> +
+> +&reg_dcdc6 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <1100000>;
+> +	regulator-max-microvolt = <1100000>;
+> +	regulator-name = "vdd-sys";
+> +};
+> +
+> +&reg_dldo1 {
+> +	regulator-min-microvolt = <3300000>;
+> +	regulator-max-microvolt = <3300000>;
+> +	regulator-name = "vcc-dsi-sensor";
+> +};
+> +
+> +&reg_dldo2 {
+> +	regulator-min-microvolt = <1800000>;
+> +	regulator-max-microvolt = <1800000>;
+> +	regulator-name = "vcc-mipi-io";
+> +};
+> +
+> +&reg_dldo3 {
+> +	regulator-min-microvolt = <2800000>;
+> +	regulator-max-microvolt = <2800000>;
+> +	regulator-name = "avdd-csi";
+> +};
+> +
+> +&reg_dldo4 {
+> +	regulator-min-microvolt = <1800000>;
+> +	regulator-max-microvolt = <3300000>;
+> +	regulator-name = "vcc-wifi-io";
+> +};
+> +
+> +&reg_eldo1 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <1800000>;
+> +	regulator-max-microvolt = <1800000>;
+> +	regulator-name = "vcc-lpddr";
+> +};
+> +
+> +&reg_eldo3 {
+> +	regulator-min-microvolt = <1800000>;
+> +	regulator-max-microvolt = <1800000>;
+> +	regulator-name = "dvdd-1v8-csi";
+> +};
+> +
+> +&reg_fldo1 {
+> +	regulator-min-microvolt = <1200000>;
+> +	regulator-max-microvolt = <1200000>;
+> +	regulator-name = "vcc-1v2-hsic";
+> +};
+> +
+> +&reg_fldo2 {
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <1100000>;
+> +	regulator-max-microvolt = <1100000>;
+> +	regulator-name = "vdd-cpus";
+> +};
+> +
+> +&reg_ldo_io0 {
+> +	regulator-min-microvolt = <3300000>;
+> +	regulator-max-microvolt = <3300000>;
+> +	regulator-name = "vcc-lcd-ctp-stk";
+> +	status = "okay";
+> +};
+> +
+> +&reg_ldo_io1 {
+> +	regulator-min-microvolt = <1800000>;
+> +	regulator-max-microvolt = <1800000>;
+> +	regulator-name = "vcc-1v8-typec";
+> +	status = "okay";
+> +};
+> +
+> +&reg_rtc_ldo {
+> +	regulator-name = "vcc-rtc";
+> +};
+> +
+> +&sound {
+> +	status = "okay";
+> +	simple-audio-card,aux-devs = <&codec_analog>, <&speaker_amp>;
+> +	simple-audio-card,widgets = "Microphone", "Headset Microphone",
+> +				    "Microphone", "Internal Microphone",
+> +				    "Headphone", "Headphone Jack",
+> +				    "Speaker", "Internal Earpiece",
+> +				    "Speaker", "Internal Speaker";
+> +	simple-audio-card,routing =
+> +			"Headphone Jack", "HP",
+> +			"Internal Earpiece", "EARPIECE",
+> +			"Internal Speaker", "Speaker Amp OUTL",
+> +			"Internal Speaker", "Speaker Amp OUTR",
+> +			"Speaker Amp INL", "LINEOUT",
+> +			"Speaker Amp INR", "LINEOUT",
+> +			"Left DAC", "AIF1 Slot 0 Left",
+> +			"Right DAC", "AIF1 Slot 0 Right",
+> +			"AIF1 Slot 0 Left ADC", "Left ADC",
+> +			"AIF1 Slot 0 Right ADC", "Right ADC",
+> +			"Internal Microphone", "MBIAS",
+> +			"MIC1", "Internal Microphone",
+> +			"Headset Microphone", "HBIAS",
+> +			"MIC2", "Headset Microphone";
+> +};
+> +
+> +&uart0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart0_pb_pins>;
+> +	status = "okay";
+> +};
+> +
+> +/* Connected to the modem */
+> +&uart3 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart3_pins>;
+
+That's the default too, and I guess you'd need hardware flow control
+here?
+
+> +	status = "okay";
+> +};
+> +
+> +&usb_otg {
+> +	dr_mode = "peripheral";
+> +	status = "okay";
+> +};
+> +
+> +&usb_power_supply {
+> +	status = "okay";
+> +};
+> +
+> +&usbphy {
+> +	status = "okay";
+> +};
+> --
+> 2.25.1
+>
+
+Looks good otherwise, thanks!
+Maxime
+
+--uymrrh6prr5faoxw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXlOsywAKCRDj7w1vZxhR
+xSU/AP9+Lt0tBM8l+5ZIh1vMifmm3bDSpP8AYj5WsE/e1in7GAEAwOQ8YQ8L30Y6
+0nxnNMIryYRNH8tw4bYXUmHK3q3IQQc=
+=lQ5J
+-----END PGP SIGNATURE-----
+
+--uymrrh6prr5faoxw--
