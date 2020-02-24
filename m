@@ -2,177 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4842A169FF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:28:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A780169FFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:29:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbgBXI22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:28:28 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:42862 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbgBXI2Q (ORCPT
+        id S1727318AbgBXI3a convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Feb 2020 03:29:30 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37428 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726687AbgBXI3a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:28:16 -0500
-Received: by mail-io1-f70.google.com with SMTP id e7so14267283iog.9
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 00:28:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=zPnGdhYe6fx/GA1y4l3lAwfwfLNCOo6iSouDNT5vfw0=;
-        b=jq7ANbYmEqMWNYp4M1+Se3Z0gYQO0quTIVg/Vy4FBW26TYAlHRX1kDGj9DT/MHRdIa
-         oRy91zo1/qsheQYLFIRVjnkHG+MSfaa00GTIYZZmYCVGSXet72DoN6Gykr431LVg00B3
-         EjwzI3+HA4VMl6Qz6n0sao8cCLxYLUFwRIHM9XIZVk4SPw4ikX9CtFmp49vtBzz+4ONZ
-         n5lm/Go1tgCxhRQXC2h69Wi50J+2Veb1kJlrTLoo60tdqhdKp3dd6pOw8/qUGedaX2AB
-         U2/yWr+cV2Q1vlmk74fSoh6ZU7F0WcmDOthENYei1a0WP127MIosVs83KjSx0DDySVHa
-         T5JA==
-X-Gm-Message-State: APjAAAUQtReeGmo+rNZT9vVI2jA4YHAVu1mzXzptG1RqQdAWibT67bGm
-        A2tX/e941ZHL6dELT/qOh/u4EkuRmwZLtlCo3BLB1yJ+J6rX
-X-Google-Smtp-Source: APXvYqwjfTMec2vNK5//uIvwTzm0pcHaYTeC1+EaGLWrGBFccLzIF/ifYG9oXPoiMpuifFdYc7ZA6MDqjneRpTBqEbyKn+cP7pcR
+        Mon, 24 Feb 2020 03:29:30 -0500
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-290-z-P-SpuqO9aP6hr7_tNl8Q-1; Mon, 24 Feb 2020 03:29:25 -0500
+X-MC-Unique: z-P-SpuqO9aP6hr7_tNl8Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 36FA113E2;
+        Mon, 24 Feb 2020 08:29:23 +0000 (UTC)
+Received: from krava.redhat.com (ovpn-205-68.brq.redhat.com [10.40.205.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DD7BE85781;
+        Mon, 24 Feb 2020 08:29:19 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCHv2 0/5] perf expr: Add flex scanner
+Date:   Mon, 24 Feb 2020 09:29:13 +0100
+Message-Id: <20200224082918.58489-1-jolsa@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:7301:: with SMTP id o1mr56267048ilc.272.1582532895280;
- Mon, 24 Feb 2020 00:28:15 -0800 (PST)
-Date:   Mon, 24 Feb 2020 00:28:15 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000011953b059f4e27f7@google.com>
-Subject: KASAN: slab-out-of-bounds Read in ethnl_update_bitset32
-From:   syzbot <syzbot+983cb8fb2d17a7af549d@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, f.fainelli@gmail.com, kuba@kernel.org,
-        linux-kernel@vger.kernel.org, mkubecek@suse.cz,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: kernel.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+hi,
+while preparing changes for user defined metric expressions
+I also moved the expression manual parser to flex.
 
-syzbot found the following crash on:
+The reason is to have an easy and reasonable way to support
+and parse multiple user-defined metric expressions from
+command line or file.
 
-HEAD commit:    d2eee258 Merge tag 'for-5.6-rc2-tag' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11199109e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b8906eb6a7d6028
-dashboard link: https://syzkaller.appspot.com/bug?extid=983cb8fb2d17a7af549d
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1399a3d9e00000
+I was posponing the change, but I just saw another update to
+the expr manual scanner (from Kajol Jain), so cherry picked
+just the expr flex code changes to get it out.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+983cb8fb2d17a7af549d@syzkaller.appspotmail.com
+Kajol Jain,
+I think it should ease up your change for unknown values marked
+by '?'. Would you consider rebasing your changes on top of this?
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in ethnl_bitmap32_not_zero net/ethtool/bitset.c:112 [inline]
-BUG: KASAN: slab-out-of-bounds in ethnl_compact_sanity_checks net/ethtool/bitset.c:529 [inline]
-BUG: KASAN: slab-out-of-bounds in ethnl_update_bitset32.part.0+0x8db/0x1820 net/ethtool/bitset.c:572
-Read of size 4 at addr ffff8880a9750c3c by task syz-executor.0/9818
 
-CPU: 0 PID: 9818 Comm: syz-executor.0 Not tainted 5.6.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
- __kasan_report.cold+0x1b/0x32 mm/kasan/report.c:506
- kasan_report+0x12/0x20 mm/kasan/common.c:641
- __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:134
- ethnl_bitmap32_not_zero net/ethtool/bitset.c:112 [inline]
- ethnl_compact_sanity_checks net/ethtool/bitset.c:529 [inline]
- ethnl_update_bitset32.part.0+0x8db/0x1820 net/ethtool/bitset.c:572
- ethnl_update_bitset32 net/ethtool/bitset.c:562 [inline]
- ethnl_update_bitset+0x4d/0x67 net/ethtool/bitset.c:734
- ethnl_update_linkmodes net/ethtool/linkmodes.c:303 [inline]
- ethnl_set_linkmodes+0x461/0xc30 net/ethtool/linkmodes.c:357
- genl_family_rcv_msg_doit net/netlink/genetlink.c:672 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:717 [inline]
- genl_rcv_msg+0x67d/0xea0 net/netlink/genetlink.c:734
- netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2478
- genl_rcv+0x29/0x40 net/netlink/genetlink.c:745
- netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
- netlink_unicast+0x59e/0x7e0 net/netlink/af_netlink.c:1329
- netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1918
- sock_sendmsg_nosec net/socket.c:652 [inline]
- sock_sendmsg+0xd7/0x130 net/socket.c:672
- ____sys_sendmsg+0x753/0x880 net/socket.c:2343
- ___sys_sendmsg+0x100/0x170 net/socket.c:2397
- __sys_sendmsg+0x105/0x1d0 net/socket.c:2430
- __do_sys_sendmsg net/socket.c:2439 [inline]
- __se_sys_sendmsg net/socket.c:2437 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2437
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45c429
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:0000000000c7fb78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 000000000289b914 RCX: 000000000045c429
-RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000003
-RBP: 000000000076bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000904 R14: 00000000004d4f90 R15: 000000000076bf2c
+v2 changes:
+  - handle special chars properly
+  - fix return value for expr__parse
 
-Allocated by task 4801:
- save_stack+0x23/0x90 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- __kasan_kmalloc mm/kasan/common.c:515 [inline]
- __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:488
- kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:523
- slab_post_alloc_hook mm/slab.h:584 [inline]
- slab_alloc mm/slab.c:3320 [inline]
- kmem_cache_alloc+0x121/0x710 mm/slab.c:3484
- kmem_cache_zalloc include/linux/slab.h:659 [inline]
- copy_signal kernel/fork.c:1558 [inline]
- copy_process+0x2155/0x7290 kernel/fork.c:2078
- _do_fork+0x146/0x1090 kernel/fork.c:2430
- __do_sys_clone kernel/fork.c:2585 [inline]
- __se_sys_clone kernel/fork.c:2566 [inline]
- __x64_sys_clone+0x19a/0x260 kernel/fork.c:2566
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Available also in:
+  git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+  perf/metric_flex
 
-Freed by task 0:
- save_stack+0x23/0x90 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- kasan_set_free_info mm/kasan/common.c:337 [inline]
- __kasan_slab_free+0x102/0x150 mm/kasan/common.c:476
- kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
- __cache_free mm/slab.c:3426 [inline]
- kmem_cache_free+0x86/0x320 mm/slab.c:3694
- free_signal_struct kernel/fork.c:728 [inline]
- put_signal_struct kernel/fork.c:734 [inline]
- __put_task_struct+0x327/0x530 kernel/fork.c:748
- put_task_struct include/linux/sched/task.h:122 [inline]
- delayed_put_task_struct+0x253/0x3c0 kernel/exit.c:182
- rcu_do_batch kernel/rcu/tree.c:2186 [inline]
- rcu_core+0x5e1/0x1390 kernel/rcu/tree.c:2410
- rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2419
- __do_softirq+0x262/0x98c kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff8880a97506c0
- which belongs to the cache signal_cache of size 1328
-The buggy address is located 76 bytes to the right of
- 1328-byte region [ffff8880a97506c0, ffff8880a9750bf0)
-The buggy address belongs to the page:
-page:ffffea0002a5d400 refcount:1 mapcount:0 mapping:ffff88821bc468c0 index:0xffff8880a9750100 compound_mapcount: 0
-flags: 0xfffe0000010200(slab|head)
-raw: 00fffe0000010200 ffffea0002636888 ffffea00029fa308 ffff88821bc468c0
-raw: ffff8880a9750100 ffff8880a9750100 0000000100000002 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8880a9750b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880a9750b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
->ffff8880a9750c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                                        ^
- ffff8880a9750c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880a9750d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+thanks,
+jirka
 
 
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Jiri Olsa (5):
+      perf expr: Add expr.c object
+      perf expr: Move expr lexer to flex
+      perf expr: Increase EXPR_MAX_OTHER
+      perf expr: Straighten expr__parse/expr__find_other interface
+      perf expr: Make expr__parse return -1 on error
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+ tools/perf/tests/expr.c       |  10 +++---
+ tools/perf/util/Build         |  11 ++++++-
+ tools/perf/util/expr.c        | 112 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/expr.h        |   8 ++---
+ tools/perf/util/expr.l        |  87 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/expr.y        | 208 ++++++++++++++++++++++++++++++++-----------------------------------------------------------------------------------------
+ tools/perf/util/stat-shadow.c |   4 +--
+ 7 files changed, 272 insertions(+), 168 deletions(-)
+ create mode 100644 tools/perf/util/expr.c
+ create mode 100644 tools/perf/util/expr.l
+
