@@ -2,248 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E3DD16ABAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:34:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3895216ABBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:37:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbgBXQeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:34:07 -0500
-Received: from gateway20.websitewelcome.com ([192.185.47.18]:22616 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727299AbgBXQeH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:34:07 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 25B39400D85DC
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 09:19:52 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 6GgHjFGWeXVkQ6GgHjawBm; Mon, 24 Feb 2020 10:34:05 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=oRyPAqEfBDa/tLG88bXJE7FMTqiLhKmjjZXGqSidZ4s=; b=yu3S1FSyyGJd97k4HHw4zuyghZ
-        l7HwR2O63VREJfdgc2hqfXsyUjAGpGYt1OM1GCJ/jCIu2xJRI/RxACdTY8O9L0NdO44b0HuARmDPe
-        yU3YY3Y1cj8/EXtnc4l/BWEsBr7/pjOsBK0KvArh1R8H3sOpDXlkLAC5EUfEmhKmC4TkxvNL13S20
-        GtaNQNY48+frLA2qiH8QjVPn+wG7xnrF8rzZ2lA0s/cM85t9h4AYMOLJhNi+0k49ruWL5RNHUpfQr
-        VnsptMp4TZYmUZVXYVD125rCAZM10B1ylTP0iQ0/LNqXr5qbz7BUKInH5TlZnYB3uo6VxMvXOimXx
-        OY3Lx83g==;
-Received: from [200.68.140.135] (port=6208 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j6GgF-002qzP-Vr; Mon, 24 Feb 2020 10:34:04 -0600
-Date:   Mon, 24 Feb 2020 10:36:52 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jakub Kicinski <kuba@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>
-Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
-        oss-drivers@netronome.com, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] netronome: Replace zero-length array with
- flexible-array member
-Message-ID: <20200224163652.GA31089@embeddedor>
+        id S1727867AbgBXQhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:37:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727160AbgBXQhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 11:37:13 -0500
+Received: from localhost (unknown [122.182.199.233])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 009AA20637;
+        Mon, 24 Feb 2020 16:37:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582562232;
+        bh=EaF2MyjS2zZaaolBzvb8Q1sCIgrqXN34CG6/GRVu+iw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tPm95vGIpi/ZtZoLMfrUCE5SZ1PDT8Cqi/ELFlvHsA0J9xzr54BhKa5RXGOBckvjD
+         OEqlGIjTd8HOAwSrcTqxPCRsYsGZiQY0h4/c84ANrlzg9t/pFgFAtnM4nv/xrdDYV2
+         lhOTZmDtPZ50QYXLS/9CWV4vnFKRBxEVBXYuBZSk=
+Date:   Mon, 24 Feb 2020 22:07:07 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dan.j.williams@intel.com, geert@linux-m68k.org
+Subject: Re: [PATCH v3] dmaengine: Add basic debugfs support
+Message-ID: <20200224163707.GA2618@vkoul-mobl>
+References: <20200205111557.24125-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.135
-X-Source-L: No
-X-Exim-ID: 1j6GgF-002qzP-Vr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.135]:6208
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 61
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200205111557.24125-1-peter.ujfalusi@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On 05-02-20, 13:15, Peter Ujfalusi wrote:
+> Via the /sys/kernel/debug/dmaengine users can get information about the
+> DMA devices and the used channels.
+> 
+> Example output on am654-evm with audio using two channels and after running
+> dmatest on 6 channels:
+> 
+> # cat /sys/kernel/debug/dmaengine
+> dma0 (285c0000.dma-controller): number of channels: 96
+> 
+> dma1 (31150000.dma-controller): number of channels: 267
+>  dma1chan0    | 2b00000.mcasp:tx
+>  dma1chan1    | 2b00000.mcasp:rx
+>  dma1chan2    | in-use
+>  dma1chan3    | in-use
+>  dma1chan4    | in-use
+>  dma1chan5    | in-use
+>  dma1chan6    | in-use
+>  dma1chan7    | in-use
+> 
+> For slave channels we can show the device and the channel name a given
+> channel is requested.
+> For non slave devices the only information we know is that the channel is
+> in use.
+> 
+> DMA drivers can implement the optional dbg_show callback to provide
+> controller specific information instead of the generic one.
+> 
+> It is easy to extend the generic dmaengine_dbg_show() to print additional
+> information about the used channels.
+> 
+> I have taken the idea from gpiolib.
+> 
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
+> Hi,
+> 
+> Changes since v2:
+> - Use dma_chan_name() for printing the channel's name
+> 
+> Changes since v1:
+> - Use much more simplified fops for the debugfs file (via DEFINE_SHOW_ATTRIBUTE)
+> - do not allow modification to dma_device_list while the debugfs file is read
+> - rename the slave_name to dbg_client_name (it is only for debugging)
+> - print information about dma_router if it is used by the channel
+> - Formating of the output slightly changed
+> 
+> Regards,
+> Peter
+> 
+>  drivers/dma/dmaengine.c   | 65 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/dmaengine.h | 12 +++++++-
+>  2 files changed, 76 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> index c3b1283b6d31..37c3a4cd5b1a 100644
+> --- a/drivers/dma/dmaengine.c
+> +++ b/drivers/dma/dmaengine.c
+> @@ -32,6 +32,7 @@
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>  
+>  #include <linux/platform_device.h>
+> +#include <linux/debugfs.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/init.h>
+>  #include <linux/module.h>
+> @@ -760,6 +761,11 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+>  		return chan ? chan : ERR_PTR(-EPROBE_DEFER);
+>  
+>  found:
+> +#ifdef CONFIG_DEBUG_FS
+> +	chan->dbg_client_name = kasprintf(GFP_KERNEL, "%s:%s", dev_name(dev),
+> +					  name);
+> +#endif
+> +
+>  	chan->name = kasprintf(GFP_KERNEL, "dma:%s", name);
+>  	if (!chan->name)
+>  		return chan;
+> @@ -837,6 +843,11 @@ void dma_release_channel(struct dma_chan *chan)
+>  		chan->name = NULL;
+>  		chan->slave = NULL;
+>  	}
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +	kfree(chan->dbg_client_name);
+> +	chan->dbg_client_name = NULL;
+> +#endif
+>  	mutex_unlock(&dma_list_mutex);
+>  }
+>  EXPORT_SYMBOL_GPL(dma_release_channel);
+> @@ -1562,3 +1573,57 @@ static int __init dma_bus_init(void)
+>  	return class_register(&dma_devclass);
+>  }
+>  arch_initcall(dma_bus_init);
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +static void dmaengine_dbg_show(struct seq_file *s, struct dma_device *dma_dev)
+> +{
+> +	struct dma_chan *chan;
+> +
+> +	list_for_each_entry(chan, &dma_dev->channels, device_node) {
+> +		if (chan->client_count) {
+> +			seq_printf(s, " %-13s| %s", dma_chan_name(chan),
+> +				   chan->dbg_client_name ?: "in-use");
+> +
+> +			if (chan->router)
+> +				seq_printf(s, " (via router: %s)\n",
+> +					dev_name(chan->router->dev));
+> +			else
+> +				seq_puts(s, "\n");
+> +		}
+> +	}
+> +}
+> +
+> +static int dmaengine_debugfs_show(struct seq_file *s, void *data)
+> +{
+> +	struct dma_device *dma_dev = NULL;
+> +
+> +	mutex_lock(&dma_list_mutex);
+> +	list_for_each_entry(dma_dev, &dma_device_list, global_node) {
+> +		seq_printf(s, "dma%d (%s): number of channels: %u\n",
+> +			   dma_dev->dev_id, dev_name(dma_dev->dev),
+> +			   dma_dev->chancnt);
+> +
+> +		if (dma_dev->dbg_show)
+> +			dma_dev->dbg_show(s, dma_dev);
+ do we really want a custom dbg_show()..? Drivers can add their own
+files...
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+> +		else
+> +			dmaengine_dbg_show(s, dma_dev);
+> +
+> +		if (!list_is_last(&dma_dev->global_node, &dma_device_list))
+> +			seq_puts(s, "\n");
+> +	}
+> +	mutex_unlock(&dma_list_mutex);
+> +
+> +	return 0;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(dmaengine_debugfs);
+> +
+> +static int __init dmaengine_debugfs_init(void)
+> +{
+> +	/* /sys/kernel/debug/dmaengine */
+> +	debugfs_create_file("dmaengine", 0444, NULL, NULL,
+> +			    &dmaengine_debugfs_fops);
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/netronome/nfp/bpf/fw.h            | 6 +++---
- drivers/net/ethernet/netronome/nfp/flower/cmsg.h       | 4 ++--
- drivers/net/ethernet/netronome/nfp/nfp_main.h          | 2 +-
- drivers/net/ethernet/netronome/nfp/nfp_net_debugdump.c | 8 ++++----
- drivers/net/ethernet/netronome/nfp/nfp_net_repr.h      | 2 +-
- drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.h   | 2 +-
- 6 files changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/net/ethernet/netronome/nfp/bpf/fw.h b/drivers/net/ethernet/netronome/nfp/bpf/fw.h
-index a83a0ad5e27d..4268a7e0f344 100644
---- a/drivers/net/ethernet/netronome/nfp/bpf/fw.h
-+++ b/drivers/net/ethernet/netronome/nfp/bpf/fw.h
-@@ -104,14 +104,14 @@ struct cmsg_req_map_op {
- 	__be32 tid;
- 	__be32 count;
- 	__be32 flags;
--	u8 data[0];
-+	u8 data[];
- };
- 
- struct cmsg_reply_map_op {
- 	struct cmsg_reply_map_simple reply_hdr;
- 	__be32 count;
- 	__be32 resv;
--	u8 data[0];
-+	u8 data[];
- };
- 
- struct cmsg_bpf_event {
-@@ -120,6 +120,6 @@ struct cmsg_bpf_event {
- 	__be64 map_ptr;
- 	__be32 data_size;
- 	__be32 pkt_size;
--	u8 data[0];
-+	u8 data[];
- };
- #endif
-diff --git a/drivers/net/ethernet/netronome/nfp/flower/cmsg.h b/drivers/net/ethernet/netronome/nfp/flower/cmsg.h
-index 9b50d76bbc09..bf516285510f 100644
---- a/drivers/net/ethernet/netronome/nfp/flower/cmsg.h
-+++ b/drivers/net/ethernet/netronome/nfp/flower/cmsg.h
-@@ -587,7 +587,7 @@ struct nfp_flower_cmsg_mac_repr {
- 		u8 info;
- 		u8 nbi_port;
- 		u8 phys_port;
--	} ports[0];
-+	} ports[];
- };
- 
- #define NFP_FLOWER_CMSG_MAC_REPR_NBI		GENMASK(1, 0)
-@@ -619,7 +619,7 @@ struct nfp_flower_cmsg_merge_hint {
- 	struct {
- 		__be32 host_ctx;
- 		__be64 host_cookie;
--	} __packed flow[0];
-+	} __packed flow[];
- };
- 
- enum nfp_flower_cmsg_port_type {
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_main.h b/drivers/net/ethernet/netronome/nfp/nfp_main.h
-index 5d5812fd9317..fa6b13a05941 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_main.h
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_main.h
-@@ -42,7 +42,7 @@ struct nfp_shared_buf;
-  */
- struct nfp_dumpspec {
- 	u32 size;
--	u8 data[0];
-+	u8 data[];
- };
- 
- /**
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_debugdump.c b/drivers/net/ethernet/netronome/nfp/nfp_net_debugdump.c
-index 769ceef09756..a614df095b08 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_debugdump.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_debugdump.c
-@@ -36,7 +36,7 @@ enum nfp_dumpspec_type {
- struct nfp_dump_tl {
- 	__be32 type;
- 	__be32 length;	/* chunk length to follow, aligned to 8 bytes */
--	char data[0];
-+	char data[];
- };
- 
- /* NFP CPP parameters */
-@@ -62,7 +62,7 @@ struct nfp_dumpspec_csr {
- 
- struct nfp_dumpspec_rtsym {
- 	struct nfp_dump_tl tl;
--	char rtsym[0];
-+	char rtsym[];
- };
- 
- /* header for register dumpable */
-@@ -79,7 +79,7 @@ struct nfp_dump_rtsym {
- 	struct nfp_dump_common_cpp cpp;
- 	__be32 error;		/* error code encountered while reading */
- 	u8 padded_name_length;	/* pad so data starts at 8 byte boundary */
--	char rtsym[0];
-+	char rtsym[];
- 	/* after padded_name_length, there is dump_length data */
- };
- 
-@@ -92,7 +92,7 @@ struct nfp_dump_error {
- 	struct nfp_dump_tl tl;
- 	__be32 error;
- 	char padding[4];
--	char spec[0];
-+	char spec[];
- };
- 
- /* to track state through debug size calculation TLV traversal */
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_repr.h b/drivers/net/ethernet/netronome/nfp/nfp_net_repr.h
-index e0f13dfe1f39..48a74accbbd3 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_repr.h
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_repr.h
-@@ -18,7 +18,7 @@ struct nfp_port;
-  */
- struct nfp_reprs {
- 	unsigned int num_reprs;
--	struct net_device __rcu *reprs[0];
-+	struct net_device __rcu *reprs[];
- };
- 
- /**
-diff --git a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.h b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.h
-index 1531c1870020..f5360bae6f75 100644
---- a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.h
-+++ b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.h
-@@ -183,7 +183,7 @@ struct nfp_eth_table {
- 		bool is_split;
- 
- 		unsigned int fec_modes_supported;
--	} ports[0];
-+	} ports[];
- };
- 
- struct nfp_eth_table *nfp_eth_read_ports(struct nfp_cpp *cpp);
+Should we add a directory? That way we can keep adding stuff into that
+one
 -- 
-2.25.0
-
+~Vinod
