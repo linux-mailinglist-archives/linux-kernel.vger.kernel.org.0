@@ -2,35 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EA2216B59C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18A5316B5A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:32:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbgBXXbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:31:55 -0500
-Received: from ozlabs.org ([203.11.71.1]:48109 "EHLO ozlabs.org"
+        id S1728698AbgBXXcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:32:10 -0500
+Received: from ozlabs.org ([203.11.71.1]:48545 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728316AbgBXXbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:31:53 -0500
+        id S1728593AbgBXXbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 18:31:55 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 48RJHW2JVVz9sRN; Tue, 25 Feb 2020 10:31:51 +1100 (AEDT)
+        id 48RJHX3jXFz9sRG; Tue, 25 Feb 2020 10:31:52 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1582587111;
-        bh=JzgZyPtOaifXii+bpzYFkorbOTXtLl84vde0igBpI0o=;
+        s=201909; t=1582587112;
+        bh=njTLi7D5ip7n3f03+M5bR2JYHfPVMZZ1e3nNXFT2Clg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VutxjaFjIPCAC+QUqHa7de4fOg3E1IPiTsRhP98+0Mhi3erfRWlnTIyktEYg1pP3I
-         dO4jtMOYodRk/ezMNRiyGocluiy1onVaAM/02hQjkuBZmwBttuynzhKQqZ4oAzDsFZ
-         EAC9B/iw6rJahhmdaStmAlyv0ghqwcRjRXeNDK1rtS4fkWrYInSEyD3rOT5iA59C6S
-         F3hm1OBSckNw04wf+XeEGS3QeQawLYhRVdBx0akLzZ7yacEBOVFEDDh3o7fUNUox3I
-         Vm9+eWc0/QsMCf0E/b6Mzw7nSrh/owEbSOeV6XIMuNp9wgMzMrUP2NvXHPLEig1TUb
-         zyNr6MQ8Jr6/w==
+        b=TSLzswJTlkFp3AllxzJXzByQVXuFj0PSpuq0gzkClTXPsZFbmhhdwicQWtFtbyDzk
+         kAQs+o2OMCOj9RYOyvfNEO5mgUXz8LZ+HlJ94wvJLFYZQKxFoxuGHDLCwLwy1rB/H4
+         D3hIop/r6BJx0im8ft/ZoJS9cyICkAmQv4oMLYX5G+a7X9+O4uXHOfsEkSY2+9whqm
+         Ppt5oBOiGhToEzTTIW4m1ntbYHadpVWEjCyzBfYoUr4Js+4mT7ciSOnIc6U/y8VILB
+         YATymtBYz7dyW9kSR+i3OC1CgX3PpKeIfH5Nh1DGgBCsudmPudBncsk/9EejcVP4jZ
+         sTQ7YtSi0M8nA==
 From:   Michael Ellerman <mpe@ellerman.id.au>
 To:     linuxppc-dev@ozlabs.org
-Cc:     linux-kernel@vger.kernel.org,
-        Alistair Popple <alistair@popple.id.au>,
-        Matt Porter <mporter@kernel.crashing.org>
-Subject: [PATCH 4/8] powerpc: Mark 4xx as Orphan in MAINTAINERS
-Date:   Tue, 25 Feb 2020 10:31:42 +1100
-Message-Id: <20200224233146.23734-4-mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, Grant Likely <grant.likely@arm.com>
+Subject: [PATCH 5/8] powerpc: Drop XILINX MAINTAINERS entry
+Date:   Tue, 25 Feb 2020 10:31:43 +1100
+Message-Id: <20200224233146.23734-5-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200224233146.23734-1-mpe@ellerman.id.au>
 References: <20200224233146.23734-1-mpe@ellerman.id.au>
@@ -41,32 +39,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 4xx platforms are no longer maintained.
+This has been orphaned for ~7 years, remove it.
 
-Cc: Alistair Popple <alistair@popple.id.au>
-Cc: Matt Porter <mporter@kernel.crashing.org>
+Cc: Grant Likely <grant.likely@arm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- MAINTAINERS | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ MAINTAINERS | 6 ------
+ 1 file changed, 6 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 5c4f37c41188..939da2ac08db 100644
+index 939da2ac08db..d5db5cac5a39 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -9645,11 +9645,8 @@ F:	arch/powerpc/platforms/512x/
- F:	arch/powerpc/platforms/52xx/
+@@ -9668,12 +9668,6 @@ L:	linuxppc-dev@lists.ozlabs.org
+ S:	Maintained
+ F:	arch/powerpc/platforms/8xx/
  
- LINUX FOR POWERPC EMBEDDED PPC4XX
--M:	Alistair Popple <alistair@popple.id.au>
--M:	Matt Porter <mporter@kernel.crashing.org>
--W:	http://www.penguinppc.org/
- L:	linuxppc-dev@lists.ozlabs.org
--S:	Maintained
-+S:	Orphan
- F:	arch/powerpc/platforms/40x/
- F:	arch/powerpc/platforms/44x/
- 
+-LINUX FOR POWERPC EMBEDDED XILINX VIRTEX
+-L:	linuxppc-dev@lists.ozlabs.org
+-S:	Orphan
+-F:	arch/powerpc/*/*virtex*
+-F:	arch/powerpc/*/*/*virtex*
+-
+ LINUX KERNEL DUMP TEST MODULE (LKDTM)
+ M:	Kees Cook <keescook@chromium.org>
+ S:	Maintained
 -- 
 2.21.1
 
