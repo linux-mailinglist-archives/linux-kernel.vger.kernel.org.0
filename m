@@ -2,156 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 487D516A3A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:14:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD72F16A3CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:22:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbgBXKOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 05:14:48 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:50914 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbgBXKOs (ORCPT
+        id S1727307AbgBXKWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 05:22:25 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55547 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbgBXKWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 05:14:48 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01OAEf0Q121189;
-        Mon, 24 Feb 2020 04:14:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582539281;
-        bh=j5EShPBLoNlbSYRTeOcz+xqi62LNvQ2h7rAp88THS0k=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=gKBFDLay1h129RL9y1t9AdnzTRjKEovZTPDIz6BDaI80a6V6NN4Dz7eLKBoD+80xB
-         Z15ZfDVzImqZ8Zb4/cjDK8OR4Y4UrvWSopueTxKYdm6mM2bvIblA/VA5nGLowdq0qo
-         924xKQZThIU+KYkidZgHxofwhGN1T6/GuQ7XSZKk=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01OAEfeP125615
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Feb 2020 04:14:41 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 24
- Feb 2020 04:14:41 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 24 Feb 2020 04:14:41 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01OAEc93090524;
-        Mon, 24 Feb 2020 04:14:38 -0600
-Subject: Re: [PATCH v2 2/2] dt-bindings: PCI: Convert PCIe Host/Endpoint in
- Cadence platform to DT schema
-To:     Rob Herring <robh@kernel.org>
-CC:     Tom Joseph <tjoseph@cadence.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200217111519.29163-1-kishon@ti.com>
- <20200217111519.29163-3-kishon@ti.com> <20200219203205.GA14068@bogus>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <2b927c66-d640-fb11-878a-c69a459a28f8@ti.com>
-Date:   Mon, 24 Feb 2020 15:48:21 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Mon, 24 Feb 2020 05:22:24 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j6AsO-0006AU-OD; Mon, 24 Feb 2020 11:22:12 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j6AsN-00010t-EU; Mon, 24 Feb 2020 11:22:11 +0100
+Date:   Mon, 24 Feb 2020 11:22:11 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     wim@linux-watchdog.org, linux@roeck-us.net, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH] watchdog: imx2_wdt: Drop .remove callback
+Message-ID: <20200224102211.clzqw4vtzc4nz5df@pengutronix.de>
+References: <1582512687-13312-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20200219203205.GA14068@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1582512687-13312-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On 20/02/20 2:02 am, Rob Herring wrote:
-> On Mon, Feb 17, 2020 at 04:45:19PM +0530, Kishon Vijay Abraham I wrote:
->> Include Cadence core DT schema and define the Cadence platform DT schema
->> for both Host and Endpoint mode. Note: The Cadence core DT schema could
->> be included for other platforms using Cadence PCIe core.
->>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  .../bindings/pci/cdns,cdns-pcie-ep.txt        | 27 -------
->>  .../bindings/pci/cdns,cdns-pcie-ep.yaml       | 48 ++++++++++++
->>  .../bindings/pci/cdns,cdns-pcie-host.txt      | 66 ----------------
->>  .../bindings/pci/cdns,cdns-pcie-host.yaml     | 76 +++++++++++++++++++
->>  MAINTAINERS                                   |  2 +-
->>  5 files changed, 125 insertions(+), 94 deletions(-)
->>  delete mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.txt
->>  create mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml
->>  delete mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
->>  create mode 100644 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
+On Mon, Feb 24, 2020 at 10:51:27AM +0800, Anson Huang wrote:
+> .remove callback implementation doesn' call clk_disable_unprepare() which
+> is buggy, actually, we can just use devm_watchdog_register_device() and
+> devm_add_action_or_reset() to handle all necessary operations for remove
+> action, then .remove callback can be dropped.
 > 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/watchdog/imx2_wdt.c | 37 ++++++++++---------------------------
+>  1 file changed, 10 insertions(+), 27 deletions(-)
 > 
->> diff --git a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
->> new file mode 100644
->> index 000000000000..2f605297f862
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
->> @@ -0,0 +1,76 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/pci/cdns,cdns-pcie-host.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Cadence PCIe host controller
->> +
->> +maintainers:
->> +  - Tom Joseph <tjoseph@cadence.com>
->> +
->> +allOf:
->> +  - $ref: /schemas/pci/pci-bus.yaml#
->> +  - $ref: "cdns-pcie-host.yaml#"
->> +
->> +properties:
->> +  compatible:
->> +    const: cdns,cdns-pcie-host
->> +
->> +  reg:
->> +    maxItems: 3
->> +
->> +  reg-names:
->> +    items:
->> +      - const: reg
->> +      - const: cfg
->> +      - const: mem
->> +
->> +  msi-parent: true
->> +
->> +required:
->> +  - reg
->> +  - reg-names
->> +
->> +examples:
->> +  - |
->> +    bus {
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +
->> +        pcie@fb000000 {
->> +            compatible = "cdns,cdns-pcie-host";
->> +            device_type = "pci";
->> +            #address-cells = <3>;
->> +            #size-cells = <2>;
->> +            bus-range = <0x0 0xff>;
->> +            linux,pci-domain = <0>;
->> +            cdns,max-outbound-regions = <16>;
->> +            cdns,no-bar-match-nbits = <32>;
-> 
->> +            vendor-id = /bits/ 16 <0x17cd>;
->> +            device-id = /bits/ 16 <0x0200>;
-> 
-> Please make these 32-bit as that is what the spec says.
+> diff --git a/drivers/watchdog/imx2_wdt.c b/drivers/watchdog/imx2_wdt.c
+> index f8d58bf..1fe472f 100644
+> --- a/drivers/watchdog/imx2_wdt.c
+> +++ b/drivers/watchdog/imx2_wdt.c
+> @@ -244,6 +244,11 @@ static const struct regmap_config imx2_wdt_regmap_config = {
+>  	.max_register = 0x8,
+>  };
+>  
+> +static void imx2_wdt_action(void *data)
+> +{
+> +	clk_disable_unprepare(data);
 
-Can you clarify this is mentioned in which spec? PCI spec has both of
-these 16 bits and I checked the PCI binding doc but couldn't spot the
-size of these fields.
+Does this have the effect of stopping the watchdog? Maybe we can have a
+more expressive function name here (imx2_wdt_stop_clk or similar)?
 
-[1] -> https://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
+Is there some watchdog core policy that tells if the watchdog should be
+stopped on unload?
 
-Thanks
-Kishon
+> +}
+> +
+>  static int __init imx2_wdt_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -292,6 +297,10 @@ static int __init imx2_wdt_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> +	ret = devm_add_action_or_reset(dev, imx2_wdt_action, wdev->clk);
+> +	if (ret)
+> +		return ret;
+> +
+>  	regmap_read(wdev->regmap, IMX2_WDT_WRSR, &val);
+>  	wdog->bootstatus = val & IMX2_WDT_WRSR_TOUT ? WDIOF_CARDRESET : 0;
+>  
+> @@ -315,32 +324,7 @@ static int __init imx2_wdt_probe(struct platform_device *pdev)
+>  	 */
+>  	regmap_write(wdev->regmap, IMX2_WDT_WMCR, 0);
+>  
+> -	ret = watchdog_register_device(wdog);
+> -	if (ret)
+> -		goto disable_clk;
+> -
+> -	dev_info(dev, "timeout %d sec (nowayout=%d)\n",
+> -		 wdog->timeout, nowayout);
+
+Does the core put this info in the kernel log? If not dropping it isn't
+obviously right enough to be done en passant.
+
+> -	return 0;
+> -
+> -disable_clk:
+> -	clk_disable_unprepare(wdev->clk);
+> -	return ret;
+> -}
+> -
+> -static int __exit imx2_wdt_remove(struct platform_device *pdev)
+> -{
+> -	struct watchdog_device *wdog = platform_get_drvdata(pdev);
+> -	struct imx2_wdt_device *wdev = watchdog_get_drvdata(wdog);
+> -
+> -	watchdog_unregister_device(wdog);
+> -
+> -	if (imx2_wdt_is_running(wdev)) {
+> -		imx2_wdt_ping(wdog);
+> -		dev_crit(&pdev->dev, "Device removed: Expect reboot!\n");
+> -	}
+
+I also wonder about this one. This changes the timing behaviour and so
+IMHO shouldn't be done as a side effect of a cleanup patch.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
