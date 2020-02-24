@@ -2,115 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B154216A625
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:31:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8211E16A637
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:34:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbgBXMb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 07:31:28 -0500
-Received: from foss.arm.com ([217.140.110.172]:36500 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726778AbgBXMb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 07:31:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82CCD1063;
-        Mon, 24 Feb 2020 04:31:27 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30FA53F534;
-        Mon, 24 Feb 2020 04:31:26 -0800 (PST)
-Date:   Mon, 24 Feb 2020 12:31:23 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] sched/rt: Remove unnecessary assignment in
- inc/dec_rt_migration
-Message-ID: <20200224123123.gbox3tcqcist7bbg@e107158-lin.cambridge.arm.com>
-References: <20200223184001.14248-1-qais.yousef@arm.com>
- <20200223184001.14248-7-qais.yousef@arm.com>
- <a000f6b4-7548-1964-ba30-e8396c727d31@arm.com>
+        id S1727693AbgBXMeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 07:34:18 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36746 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726778AbgBXMeQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 07:34:16 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z3so10196102wru.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 04:34:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=YsyHMGLT1kWo5YixySq4Ncge1TA1bP8HOjZ5/uDC2V0=;
+        b=WaYvlAi+1e/82tblH+OGfN5A+rBla6IK9WHA5RFJiR2hBxk8FRuKxcLNKXexgy1Fze
+         TxRITbfKr1g956AdE0Bcq2q8AwU94UBiXw7o7Ttm3E0+qTp0tWQBr5qzYtltAbP10Gwc
+         vSiCdPLlI/5prvJN/VSvJhXLofpnrZ/qB+ORo2CMdzCNtfvgJuOISqHAnjobsLLhw5QY
+         U7TjL24cqDZwpnMBcuN4Vzs9vddw6dRqdA2UgCvQvvKWemWlqY5/WfNTQ7DV9yCDVDUL
+         n8y4t7tyoWWJ3G0qCYQMexeknuPeWJBT1jHclUW75Cl+vj0gXkZ637aVAGBz62WlZA0v
+         rHuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=YsyHMGLT1kWo5YixySq4Ncge1TA1bP8HOjZ5/uDC2V0=;
+        b=g4xtfSq7UDd31yahRe/plgu//BCNk4wcImzQ/TZRZbCDyAhsYF5ZjErvmJFfJWhOVz
+         T0VID+ECY9F+u1saC7+ck4HLg/YjDvjPtpRMOXCjV/Tg0cfTtSjtoJqQ6R+4BD8tBh5s
+         Jnc94DN43PxHtcE+3f5JZltc7xG2G5qmm3zvOsrPxMThaqjexNFxp/PgIRI4VcSg2nI6
+         v1dGYHh2IzoB2CjQHVVZ2kaCD6HARlJOVovm1ZHxJj/C6Wy6hrXWPTn5UoKaZhAkpSi+
+         4KLuEiJW6oC1fc/Qkaz5go7Vjpsi3u5S2/DZ7wE0/GoLU9SgROPIBMIABf/YO0UnrUMp
+         IzPQ==
+X-Gm-Message-State: APjAAAXMhQp/W6inBvqlp/a9aEolkp7NlAl6yGHxAxHGh3ofjk9jipjb
+        PlZbxw23bMTbxyCYg/iHshJiZcIs5l8=
+X-Google-Smtp-Source: APXvYqw4B2ZyNX7HQsew9G7peWOh/KR3gX7BaGUMh/dFyOA2I7XsjQo17MQ5v7RrSzaCXLLJTINLbw==
+X-Received: by 2002:a5d:6802:: with SMTP id w2mr65761060wru.353.1582547654858;
+        Mon, 24 Feb 2020 04:34:14 -0800 (PST)
+Received: from debian ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id z6sm19032323wrs.96.2020.02.24.04.34.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Feb 2020 04:34:14 -0800 (PST)
+Date:   Mon, 24 Feb 2020 12:34:12 +0000
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] ppdev: Distribute switch variables for initialization
+Message-ID: <20200224123412.bo6e5yfjtinqzhle@debian>
+References: <20200220062311.69121-1-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a000f6b4-7548-1964-ba30-e8396c727d31@arm.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200220062311.69121-1-keescook@chromium.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/24/20 00:16, Dietmar Eggemann wrote:
-> On 23.02.20 19:40, Qais Yousef wrote:
-> > The statement
-> > 
-> > 	rt_rq = &rq_of_rt_rq(rt_rq)->rt
-> > 
-> > Was just dereferencing rt_rq to get a pointer to itself. Which is a NOP.
-> > Remove it.
-> > 
-> > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> > ---
-> >  kernel/sched/rt.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> > index b35e49cdafcc..520e84993fe7 100644
-> > --- a/kernel/sched/rt.c
-> > +++ b/kernel/sched/rt.c
-> > @@ -343,7 +343,6 @@ static void inc_rt_migration(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
-> >  		return;
-> >  
-> >  	p = rt_task_of(rt_se);
-> > -	rt_rq = &rq_of_rt_rq(rt_rq)->rt;
+On Wed, Feb 19, 2020 at 10:23:11PM -0800, Kees Cook wrote:
+> Variables declared in a switch statement before any case statements
+> cannot be automatically initialized with compiler instrumentation (as
+> they are not part of any execution flow). With GCC's proposed automatic
+> stack variable initialization feature, this triggers a warning (and they
+> don't get initialized). Clang's automatic stack variable initialization
+> (via CONFIG_INIT_STACK_ALL=y) doesn't throw a warning, but it also
+> doesn't initialize such variables[1]. Note that these warnings (or silent
+> skipping) happen before the dead-store elimination optimization phase,
+> so even when the automatic initializations are later elided in favor of
+> direct initializations, the warnings remain.
 > 
-> IMHO, this is here to get the root rt_rq from any rt_rq (task_groups).
-> Looks like that e.g rt_nr_total is only maintained on root rt_rq's.
+> To avoid these problems, move such variables into the "case" where
+> they're used or lift them up into the main function body.
 > 
-> Similar to CFS' &rq_of(cfs_rq)->cfs (cfs_rq_util_change()) to get root
-> cfs_rq.
+> drivers/char/ppdev.c: In function ‘pp_do_ioctl’:
+> drivers/char/ppdev.c:516:25: warning: statement will never be executed [-Wswitch-unreachable]
+>   516 |   struct ieee1284_info *info;
+>       |                         ^~~~
 > 
-> Not sure where CONFIG_RT_GROUP_SCHED=y is used but it's part of the rt
-> class implementation.
+> [1] https://bugs.llvm.org/show_bug.cgi?id=44916
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Ah I see. That was obvious.. How about the below comment?
+Acked-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-This code is executed only if rt_entity_is_task(), I don't think this grantees
-that the rt_rq isn't for a group?
-
-I need to go and unravel the layers maybe.
-
-Thanks!
+Greg, Can you please take it in your tree...
 
 --
-Qais Yousef
-
--->8--
-
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index b35e49cdafcc..f929867215c4 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -343,6 +343,8 @@ static void inc_rt_migration(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
-                return;
-
-        p = rt_task_of(rt_se);
-+
-+       /* get the root rt_rq if this is the rt_rq of a group */
-        rt_rq = &rq_of_rt_rq(rt_rq)->rt;
-
-        rt_rq->rt_nr_total++;
-@@ -368,6 +370,8 @@ static void dec_rt_migration(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
-                return;
-
-        p = rt_task_of(rt_se);
-+
-+       /* get the root rt_rq if this is the rt_rq of a group */
-        rt_rq = &rq_of_rt_rq(rt_rq)->rt;
-
-        rt_rq->rt_nr_total--;
-
+Regards
+Sudip
