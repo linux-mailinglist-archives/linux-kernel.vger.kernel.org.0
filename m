@@ -2,87 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CD8016B5AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:34:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28F8A16B5CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:39:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbgBXXds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:33:48 -0500
-Received: from mga05.intel.com ([192.55.52.43]:28745 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726651AbgBXXds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:33:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 15:33:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
-   d="scan'208";a="237485225"
-Received: from jacob-xps-13-9365.jf.intel.com (HELO jacob-XPS-13-9365) ([10.54.75.153])
-  by orsmga003.jf.intel.com with ESMTP; 24 Feb 2020 15:33:45 -0800
-Date:   Mon, 24 Feb 2020 15:34:10 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     "Yi Liu" <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 1/2] iommu/vt-d: report SVA feature with generic flag
-Message-ID: <20200224153410.23a96bc1@jacob-XPS-13-9365>
-In-Reply-To: <1582586797-61697-2-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1582586797-61697-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1582586797-61697-2-git-send-email-jacob.jun.pan@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1728320AbgBXXjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:39:21 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:40196 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbgBXXjV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 18:39:21 -0500
+Received: from localhost (unknown [50.226.181.18])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 49B1012543265;
+        Mon, 24 Feb 2020 15:39:20 -0800 (PST)
+Date:   Mon, 24 Feb 2020 15:39:17 -0800 (PST)
+Message-Id: <20200224.153917.813576310969410957.davem@davemloft.net>
+To:     a.fatoum@pengutronix.de
+Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
+        kernel@pengutronix.de, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] net: ethernet: stmmac: demote warnings about
+ missing optional clocks
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200224172956.28744-1-a.fatoum@pengutronix.de>
+References: <20200224172956.28744-1-a.fatoum@pengutronix.de>
+X-Mailer: Mew version 6.8 on Emacs 26.3
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 24 Feb 2020 15:39:20 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please ignore this one, use "[PATCH 1/2] iommu/vt-d: Report SVA feature
-with generic flag" instead. Sorry about the noise.
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Date: Mon, 24 Feb 2020 18:29:54 +0100
 
-On Mon, 24 Feb 2020 15:26:35 -0800
-Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
-
-> Query Shared Virtual Address/Memory capability is a generic feature.
-> Report Intel SVM as SVA feature such that generic code such as Uacce
-> [1] can use it.
-> [1] https://lkml.org/lkml/2020/1/15/604
+> The specification of a "eth-ck" and a "ptp_ref" clock is optional per
+> the binding and the driver handles them gracefully.
+> Demote the output to an info message accordingly.
 > 
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> ---
->  drivers/iommu/intel-iommu.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 92c2f2e4197b..5eca6e10d2a4 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -6346,9 +6346,14 @@ intel_iommu_dev_has_feat(struct device *dev,
-> enum iommu_dev_features feat) static int
->  intel_iommu_dev_enable_feat(struct device *dev, enum
-> iommu_dev_features feat) {
-> +	struct intel_iommu *intel_iommu = dev_to_intel_iommu(dev);
-> +
->  	if (feat == IOMMU_DEV_FEAT_AUX)
->  		return intel_iommu_enable_auxd(dev);
->  
-> +	if (feat == IOMMU_DEV_FEAT_SVA)
-> +		return intel_iommu->flags & VTD_FLAG_SVM_CAPABLE;
-> +
->  	return -ENODEV;
->  }
->  
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-[Jacob Pan]
+Applied.
