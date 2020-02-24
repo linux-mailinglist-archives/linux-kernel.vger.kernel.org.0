@@ -2,185 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F1F716A792
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 14:49:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE64016A797
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 14:50:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbgBXNtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 08:49:39 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:58399 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727160AbgBXNtj (ORCPT
+        id S1727636AbgBXNu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 08:50:27 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:32113 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727460AbgBXNu1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 08:49:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582552177;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tAQyvgVC9umTI3C0mE/08IO0Mq8UDdBPvvOVcWUX2u0=;
-        b=GKohwu+ZwHce2xVgsnBKrRTdlLt77EghCyVdljb+KWvS4/bNq83FOlmbkUyGWDdZIwD+Ye
-        A9l5HGpOgoDwAj8xNtT7120KTbWiSvSvYELuJR95MqF0NbeA57V9+HOBKfbur5AQMSWu3s
-        B0B3YSoPBxEBs+ai1IFiXbyrH2WR8to=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-316-YctGikqoPl2t24QX7pcTTg-1; Mon, 24 Feb 2020 08:49:36 -0500
-X-MC-Unique: YctGikqoPl2t24QX7pcTTg-1
-Received: by mail-wm1-f71.google.com with SMTP id p2so2393541wmi.8
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 05:49:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=tAQyvgVC9umTI3C0mE/08IO0Mq8UDdBPvvOVcWUX2u0=;
-        b=eVaAqVgMQbaeT1fJQIu4U7Kup+q1mwz5HtJd5hVu8/SJTs24P1H70e5XBJOdN9HI3z
-         y9RoatWQ9M7MJjRq5lLludDt8bGUdn1CMbgEL307Cex77t89zQ4K7DKivzyCKF63h+qW
-         HxPUgNdqxpTiiKIgXu6kNQQRBeIvdRGMKg46AzU52+GSRiK2DpmnUc4Lbh8zbVi09YIk
-         IsNP+N7fXptbIjXqZLhFIycYhXLAI+5XLcwUUf4+2Hf30q8gdMZk3L6drakJi7soTbPz
-         5kIfhfuwPYKZb7rGE4bjjVJQPJlI6aZ2Oe6QeOl5JPoJj2U9H6glrmPZZ4sjf1Pv/E6p
-         c2FQ==
-X-Gm-Message-State: APjAAAVg2RQd3Il/ea8R88Z+1w7iyGqvwlP4t5hVsZSYeDk/mW1+QDon
-        k9U3GdfWgLZqXpdlsAgVHh7Z/Q7+3ww5QHZXCwPRDL61CYNjxMKt0XdTCnZHZTWpAxDYFEf4C0g
-        aWrOFVx2TCRNiwYyA6cq5QjSw
-X-Received: by 2002:a5d:4a06:: with SMTP id m6mr67336211wrq.155.1582552175129;
-        Mon, 24 Feb 2020 05:49:35 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxdBw9gt33lYnR/XKzr9wDVBrAP8s0iq8iWevpyYhiw+9MMonU5wAHsUexqdA1oN+hOyWiseQ==
-X-Received: by 2002:a5d:4a06:: with SMTP id m6mr67336184wrq.155.1582552174866;
-        Mon, 24 Feb 2020 05:49:34 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id t128sm19156199wmf.28.2020.02.24.05.49.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 05:49:34 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 28/61] KVM: x86: Refactor cpuid_mask() to auto-retrieve the register
-In-Reply-To: <20200201185218.24473-29-sean.j.christopherson@intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-29-sean.j.christopherson@intel.com>
-Date:   Mon, 24 Feb 2020 14:49:33 +0100
-Message-ID: <87d0a4p02a.fsf@vitty.brq.redhat.com>
+        Mon, 24 Feb 2020 08:50:27 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582552226; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=W628OvkNRlX9E5Eh9zzngUI5dh1s51b264AW8MC+oWY=; b=R73ILrFsCnkrfH3vy5VdaBgWbrCpH+iuRuDH7ksxFM5xR/287U2sMPhAPxMfSx/hrTNOMV8N
+ 99cx0Bbf5wUVIMbgBhJ0WBEXYqbD8YQV8Iktekz/A4cRe9IevO/NlQCBkx1lG/y0iveVvRQz
+ BkirgDwDL2zQpLgpN84eoNhb1/g=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e53d498.7f1382beb7d8-smtp-out-n03;
+ Mon, 24 Feb 2020 13:50:16 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 42017C4479F; Mon, 24 Feb 2020 13:50:15 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [10.206.25.140] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vbadigan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9DBA9C43383;
+        Mon, 24 Feb 2020 13:50:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9DBA9C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+Subject: Re: [PATCH RFC] mmc: sdhci-msm: Toggle fifo write clk after ungating
+ sdcc clk
+To:     Sayali Lokhande <sayalil@codeaurora.org>,
+        bjorn.andersson@linaro.org, adrian.hunter@intel.com,
+        robh+dt@kernel.org, ulf.hansson@linaro.org,
+        asutoshd@codeaurora.org, stummala@codeaurora.org,
+        ppvk@codeaurora.org, rampraka@codeaurora.org, sboyd@kernel.org,
+        georgi.djakov@linaro.org, mka@chromium.org
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        agross@kernel.org, linux-mmc-owner@vger.kernel.org
+References: <1582190446-4778-1-git-send-email-sayalil@codeaurora.org>
+ <1582190446-4778-2-git-send-email-sayalil@codeaurora.org>
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Message-ID: <4e4f1e44-8033-94e9-641c-a74232727895@codeaurora.org>
+Date:   Mon, 24 Feb 2020 19:19:58 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1582190446-4778-2-git-send-email-sayalil@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-> Use the recently introduced cpuid_entry_get_reg() to automatically get
-> the appropriate register when masking a CPUID entry.
+On 2/20/2020 2:50 PM, Sayali Lokhande wrote:
+> From: Ram Prakash Gupta <rampraka@codeaurora.org>
 >
-> No functional change intended.
+> During GCC level clock gating of MCLK, the async FIFO
+> gets into some hang condition, such that for the next
+> transfer after MCLK ungating, first bit of CMD response
+> doesn't get written in to the FIFO. This cause the CPSM
+> to hang eventually leading to SW timeout.
 >
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> To fix the issue, toggle the FIFO write clock after
+> MCLK ungated to get the FIFO pointers and flags to
+> valid states.
+>
+> Change-Id: Ibef2d1d283ac0b6983c609a4abc98bc574d31fa6
+> Signed-off-by: Ram Prakash Gupta <rampraka@codeaurora.org>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 > ---
->  arch/x86/kvm/cpuid.c | 28 +++++++++++++++-------------
->  1 file changed, 15 insertions(+), 13 deletions(-)
+>   drivers/mmc/host/sdhci-msm.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 43 insertions(+)
 >
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 195f4dcc8c6a..cb5870a323cc 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -254,10 +254,12 @@ int kvm_vcpu_ioctl_get_cpuid2(struct kvm_vcpu *vcpu,
->  	return r;
->  }
->  
-> -static __always_inline void cpuid_mask(u32 *word, int wordnum)
-> +static __always_inline void cpuid_entry_mask(struct kvm_cpuid_entry2 *entry,
-> +					     enum cpuid_leafs leaf)
->  {
-> -	reverse_cpuid_check(wordnum);
-> -	*word &= boot_cpu_data.x86_capability[wordnum];
-> +	u32 *reg = cpuid_entry_get_reg(entry, leaf * 32);
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index c3a160c..eaa3e95 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -127,6 +127,8 @@
+>   #define CQHCI_VENDOR_CFG1	0xA00
+>   #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
+>   
+> +#define RCLK_TOGGLE 0x2
 > +
-> +	*reg &= boot_cpu_data.x86_capability[leaf];
->  }
->  
->  struct kvm_cpuid_array {
-> @@ -373,13 +375,13 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
->  	case 0:
->  		entry->eax = min(entry->eax, 1u);
->  		entry->ebx &= kvm_cpuid_7_0_ebx_x86_features;
-> -		cpuid_mask(&entry->ebx, CPUID_7_0_EBX);
-> +		cpuid_entry_mask(entry, CPUID_7_0_EBX);
->  		/* TSC_ADJUST is emulated */
->  		cpuid_entry_set(entry, X86_FEATURE_TSC_ADJUST);
->  
->  		entry->ecx &= kvm_cpuid_7_0_ecx_x86_features;
->  		f_la57 = cpuid_entry_get(entry, X86_FEATURE_LA57);
-> -		cpuid_mask(&entry->ecx, CPUID_7_ECX);
-> +		cpuid_entry_mask(entry, CPUID_7_ECX);
->  		/* Set LA57 based on hardware capability. */
->  		entry->ecx |= f_la57;
->  		entry->ecx |= f_umip;
-> @@ -389,7 +391,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
->  			cpuid_entry_clear(entry, X86_FEATURE_PKU);
->  
->  		entry->edx &= kvm_cpuid_7_0_edx_x86_features;
-> -		cpuid_mask(&entry->edx, CPUID_7_EDX);
-> +		cpuid_entry_mask(entry, CPUID_7_EDX);
->  		if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IBRS))
->  			cpuid_entry_set(entry, X86_FEATURE_SPEC_CTRL);
->  		if (boot_cpu_has(X86_FEATURE_STIBP))
-> @@ -507,9 +509,9 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
->  		break;
->  	case 1:
->  		entry->edx &= kvm_cpuid_1_edx_x86_features;
-> -		cpuid_mask(&entry->edx, CPUID_1_EDX);
-> +		cpuid_entry_mask(entry, CPUID_1_EDX);
->  		entry->ecx &= kvm_cpuid_1_ecx_x86_features;
-> -		cpuid_mask(&entry->ecx, CPUID_1_ECX);
-> +		cpuid_entry_mask(entry, CPUID_1_ECX);
->  		/* we support x2apic emulation even if host does not support
->  		 * it since we emulate x2apic in software */
->  		cpuid_entry_set(entry, X86_FEATURE_X2APIC);
-> @@ -619,7 +621,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
->  			goto out;
->  
->  		entry->eax &= kvm_cpuid_D_1_eax_x86_features;
-> -		cpuid_mask(&entry->eax, CPUID_D_1_EAX);
-> +		cpuid_entry_mask(entry, CPUID_D_1_EAX);
->  		if (entry->eax & (F(XSAVES)|F(XSAVEC)))
->  			entry->ebx = xstate_required_size(supported_xcr0, true);
->  		else
-> @@ -699,9 +701,9 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
->  		break;
->  	case 0x80000001:
->  		entry->edx &= kvm_cpuid_8000_0001_edx_x86_features;
-> -		cpuid_mask(&entry->edx, CPUID_8000_0001_EDX);
-> +		cpuid_entry_mask(entry, CPUID_8000_0001_EDX);
->  		entry->ecx &= kvm_cpuid_8000_0001_ecx_x86_features;
-> -		cpuid_mask(&entry->ecx, CPUID_8000_0001_ECX);
-> +		cpuid_entry_mask(entry, CPUID_8000_0001_ECX);
->  		break;
->  	case 0x80000007: /* Advanced power management */
->  		/* invariant TSC is CPUID.80000007H:EDX[8] */
-> @@ -720,7 +722,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
->  		entry->eax = g_phys_as | (virt_as << 8);
->  		entry->edx = 0;
->  		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
-> -		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
-> +		cpuid_entry_mask(entry, CPUID_8000_0008_EBX);
->  		/*
->  		 * AMD has separate bits for each SPEC_CTRL bit.
->  		 * arch/x86/kernel/cpu/bugs.c is kind enough to
-> @@ -763,7 +765,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
->  		break;
->  	case 0xC0000001:
->  		entry->edx &= kvm_cpuid_C000_0001_edx_x86_features;
-> -		cpuid_mask(&entry->edx, CPUID_C000_0001_EDX);
-> +		cpuid_entry_mask(entry, CPUID_C000_0001_EDX);
->  		break;
->  	case 3: /* Processor serial number */
->  	case 5: /* MONITOR/MWAIT */
+>   struct sdhci_msm_offset {
+>   	u32 core_hc_mode;
+>   	u32 core_mci_data_cnt;
+> @@ -1554,6 +1556,43 @@ static void __sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+>   	sdhci_enable_clk(host, clk);
+>   }
+>   
+> +/*
+> + * After MCLK ugating, toggle the FIFO write clock to get
+> + * the FIFO pointers and flags to valid state.
+> + */
+> +static void sdhci_msm_toggle_fifo_write_clk(struct sdhci_host *host)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	const struct sdhci_msm_offset *msm_offset =
+> +					msm_host->offset;
+> +	struct mmc_card *card = host->mmc->card;
+> +
+> +	if (msm_host->tuning_done ||
+> +			(card && card->ext_csd.strobe_support &&
+> +			card->host->ios.enhanced_strobe)) {
 
+This issue is present on only HS400ES mode.
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+If(host->ios.enhanced_strob) check should be sufficient, other checks 
+are not needed.
 
--- 
-Vitaly
-
+> +		/*
+> +		 * set HC_REG_DLL_CONFIG_3[1] to select MCLK as
+> +		 * DLL input clock
+> +		 */
+> +		writel_relaxed(((readl_relaxed(host->ioaddr +
+> +			msm_offset->core_dll_config_3))
+> +			| RCLK_TOGGLE), host->ioaddr +
+> +			msm_offset->core_dll_config_3);
+> +		/* ensure above write as toggling same bit quickly */
+> +		wmb();
+> +		udelay(2);
+> +		/*
+> +		 * clear HC_REG_DLL_CONFIG_3[1] to select RCLK as
+> +		 * DLL input clock
+> +		 */
+> +		writel_relaxed(((readl_relaxed(host->ioaddr +
+> +			msm_offset->core_dll_config_3))
+> +			& ~RCLK_TOGGLE), host->ioaddr +
+> +			msm_offset->core_dll_config_3);
+> +	}
+> +}
+> +
+>   /* sdhci_msm_set_clock - Called with (host->lock) spinlock held. */
+>   static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+>   {
+> @@ -2149,6 +2188,10 @@ static __maybe_unused int sdhci_msm_runtime_resume(struct device *dev)
+>   				       msm_host->bulk_clks);
+>   	if (ret)
+>   		return ret;
+> +	if (host->mmc &&
+> +			(host->mmc->ios.timing == MMC_TIMING_MMC_HS400))
+These checks are not needed. You can have these checks within 
+sdhci_msm_toggle_fifo_write_clk
+> +		sdhci_msm_toggle_fifo_write_clk(host);
+> +
+>   	/*
+>   	 * Whenever core-clock is gated dynamically, it's needed to
+>   	 * restore the SDR DLL settings when the clock is ungated.
