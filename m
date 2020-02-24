@@ -2,178 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4955516B5AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:34:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CD8016B5AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:34:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbgBXXeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:34:08 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41617 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgBXXeI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:34:08 -0500
-Received: by mail-pf1-f196.google.com with SMTP id j9so6161865pfa.8
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 15:34:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XFUwyglKUk6D3XnYFci54N4jRavS/ro7uLfU4m/GniE=;
-        b=ZH0IMObbBzdbEvGLMiR+AhQjZGn/KBdMbVAUeo871hTKbVzyvOmqjAdj6St5uBXTzW
-         WgLB0byK5ETSpcf5NIZAZY2jCOr/zMPBRp/nld3flkLd9hr/nJkErmSW0wkNMmAw2xjt
-         NGlcdOCaeo7/OVWl/W2grC68GnqjCQkSHMnML1q5CnEmUhdTWBtCGPFhiCLP4M3ULCG1
-         fcr1JXGGh1tKrLKTfrDnUULqzmuERWuhFWtz4fCIrdSciumxtzDm4/pV/p2x2aZ4ivIm
-         w279KDWJw7mItg1JRpfAgNV+LYeE5oryl09+C4uDZFVCeEuHnXofk4F82z9hvaK4rBu3
-         uiiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XFUwyglKUk6D3XnYFci54N4jRavS/ro7uLfU4m/GniE=;
-        b=Dx91cFOlU9q4/1gmPKj/wBe/14ceD4+BKe66CxoL01jkt2AMu8BvAPGyUSt6PR0t4H
-         uKPkVhZdYN03g5SjaV6+fP72KxR8h3G2klIUdJlOiXVFPG/D4Gm4AYBHVQ1F0S4qIOHS
-         vincDRVInVTl3pjp3bXJZVQO2ZDpGX9deYne08g34BVyn6CGt5Mj3CpK7S/pb63yWuGT
-         QAcYwpNHynHdAULkV4QvuhPyMw3RWWT6W3KbgFbLhuaPM4DuLjwWHyj1T7IPscRPSLV+
-         D0Fwp+upI+/J3Scxbehu1JKwaudfG/MjwbEa1lyH/HsLu8Y4ulIDMqtk/G2ZjGLWJa/r
-         gabw==
-X-Gm-Message-State: APjAAAUgkguGGpoAeY2KVJQzEqJzhVcGlWI8ya2/zdxG+f/VOTszcT5F
-        nR+JKj532sohuCYNpzJWySY/hrHpdj5z8KeDXwB+qw==
-X-Google-Smtp-Source: APXvYqxssqGs7Cd1lrmBD20nEdXSsZWmF/sgEBDu1IZKtH0aM8k0IbjBxLCTR7C85yydryXFiH8QMgo2MmZ1VqHnMgk=
-X-Received: by 2002:a62:37c7:: with SMTP id e190mr54344990pfa.165.1582587246762;
- Mon, 24 Feb 2020 15:34:06 -0800 (PST)
-MIME-Version: 1.0
-References: <CAKwvOdn6cxm9EpB7A9kLasttPwLY2csnhqgNAdkJ6_s2DP1-HA@mail.gmail.com>
- <20200224232129.597160-3-nivedita@alum.mit.edu>
-In-Reply-To: <20200224232129.597160-3-nivedita@alum.mit.edu>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 24 Feb 2020 15:33:55 -0800
-Message-ID: <CAKwvOdm1yGkYtiqHqDvi_e+jSdbp102AbPsaXG42fR4Tyw42Aw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] arch/x86: Drop unneeded linker script discard of .eh_frame
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        id S1728429AbgBXXds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:33:48 -0500
+Received: from mga05.intel.com ([192.55.52.43]:28745 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726651AbgBXXds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 18:33:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 15:33:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
+   d="scan'208";a="237485225"
+Received: from jacob-xps-13-9365.jf.intel.com (HELO jacob-XPS-13-9365) ([10.54.75.153])
+  by orsmga003.jf.intel.com with ESMTP; 24 Feb 2020 15:33:45 -0800
+Date:   Mon, 24 Feb 2020 15:34:10 -0800
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     iommu@lists.linux-foundation.org,
         LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Michael Matz <matz@suse.de>, Fangrui Song <maskray@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     "Yi Liu" <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 1/2] iommu/vt-d: report SVA feature with generic flag
+Message-ID: <20200224153410.23a96bc1@jacob-XPS-13-9365>
+In-Reply-To: <1582586797-61697-2-git-send-email-jacob.jun.pan@linux.intel.com>
+References: <1582586797-61697-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1582586797-61697-2-git-send-email-jacob.jun.pan@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 3:21 PM Arvind Sankar <nivedita@alum.mit.edu> wrote:
->
-> Now that we don't generate .eh_frame sections for the files in setup.elf
-> and realmode.elf, the linker scripts don't need the /DISCARD/ any more.
->
-> Remove the one in the main kernel linker script as well, since there are
-> no .eh_frame sections already, and fix up a comment referencing .eh_frame.
->
-> Update the comment in asm/dwarf2.h referring to .eh_frame so it continues
-> to make sense, as well as being more specific.
->
-> Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+Please ignore this one, use "[PATCH 1/2] iommu/vt-d: Report SVA feature
+with generic flag" instead. Sorry about the noise.
 
-Thanks for cleaning up the comments.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+On Mon, 24 Feb 2020 15:26:35 -0800
+Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
 
+> Query Shared Virtual Address/Memory capability is a generic feature.
+> Report Intel SVM as SVA feature such that generic code such as Uacce
+> [1] can use it.
+> [1] https://lkml.org/lkml/2020/1/15/604
+> 
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 > ---
->  arch/x86/boot/compressed/vmlinux.lds.S | 5 -----
->  arch/x86/boot/setup.ld                 | 1 -
->  arch/x86/include/asm/dwarf2.h          | 4 ++--
->  arch/x86/kernel/vmlinux.lds.S          | 7 ++-----
->  arch/x86/realmode/rm/realmode.lds.S    | 1 -
->  5 files changed, 4 insertions(+), 14 deletions(-)
->
-> diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
-> index 469dcf800a2c..508cfa6828c5 100644
-> --- a/arch/x86/boot/compressed/vmlinux.lds.S
-> +++ b/arch/x86/boot/compressed/vmlinux.lds.S
-> @@ -73,9 +73,4 @@ SECTIONS
->  #endif
->         . = ALIGN(PAGE_SIZE);   /* keep ZO size page aligned */
->         _end = .;
-> -
-> -       /* Discard .eh_frame to save some space */
-> -       /DISCARD/ : {
-> -               *(.eh_frame)
-> -       }
+>  drivers/iommu/intel-iommu.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 92c2f2e4197b..5eca6e10d2a4 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -6346,9 +6346,14 @@ intel_iommu_dev_has_feat(struct device *dev,
+> enum iommu_dev_features feat) static int
+>  intel_iommu_dev_enable_feat(struct device *dev, enum
+> iommu_dev_features feat) {
+> +	struct intel_iommu *intel_iommu = dev_to_intel_iommu(dev);
+> +
+>  	if (feat == IOMMU_DEV_FEAT_AUX)
+>  		return intel_iommu_enable_auxd(dev);
+>  
+> +	if (feat == IOMMU_DEV_FEAT_SVA)
+> +		return intel_iommu->flags & VTD_FLAG_SVM_CAPABLE;
+> +
+>  	return -ENODEV;
 >  }
-> diff --git a/arch/x86/boot/setup.ld b/arch/x86/boot/setup.ld
-> index 3da1c37c6dd5..24c95522f231 100644
-> --- a/arch/x86/boot/setup.ld
-> +++ b/arch/x86/boot/setup.ld
-> @@ -52,7 +52,6 @@ SECTIONS
->         _end = .;
->
->         /DISCARD/       : {
-> -               *(.eh_frame)
->                 *(.note*)
->         }
->
-> diff --git a/arch/x86/include/asm/dwarf2.h b/arch/x86/include/asm/dwarf2.h
-> index ae391f609840..f71a0cce9373 100644
-> --- a/arch/x86/include/asm/dwarf2.h
-> +++ b/arch/x86/include/asm/dwarf2.h
-> @@ -42,8 +42,8 @@
->          * Emit CFI data in .debug_frame sections, not .eh_frame sections.
->          * The latter we currently just discard since we don't do DWARF
->          * unwinding at runtime.  So only the offline DWARF information is
-> -        * useful to anyone.  Note we should not use this directive if
-> -        * vmlinux.lds.S gets changed so it doesn't discard .eh_frame.
-> +        * useful to anyone.  Note we should not use this directive if we
-> +        * ever decide to enable DWARF unwinding at runtime.
->          */
->         .cfi_sections .debug_frame
->  #else
-> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-> index e3296aa028fe..5cab3a29adcb 100644
-> --- a/arch/x86/kernel/vmlinux.lds.S
-> +++ b/arch/x86/kernel/vmlinux.lds.S
-> @@ -313,8 +313,8 @@ SECTIONS
->
->         . = ALIGN(8);
->         /*
-> -        * .exit.text is discard at runtime, not link time, to deal with
-> -        *  references from .altinstructions and .eh_frame
-> +        * .exit.text is discarded at runtime, not link time, to deal with
-> +        *  references from .altinstructions
->          */
->         .exit.text : AT(ADDR(.exit.text) - LOAD_OFFSET) {
->                 EXIT_TEXT
-> @@ -412,9 +412,6 @@ SECTIONS
->         DWARF_DEBUG
->
->         DISCARDS
-> -       /DISCARD/ : {
-> -               *(.eh_frame)
-> -       }
->  }
->
->
-> diff --git a/arch/x86/realmode/rm/realmode.lds.S b/arch/x86/realmode/rm/realmode.lds.S
-> index 64d135d1ee63..63aa51875ba0 100644
-> --- a/arch/x86/realmode/rm/realmode.lds.S
-> +++ b/arch/x86/realmode/rm/realmode.lds.S
-> @@ -71,7 +71,6 @@ SECTIONS
->         /DISCARD/ : {
->                 *(.note*)
->                 *(.debug*)
-> -               *(.eh_frame*)
->         }
->
->  #include "pasyms.h"
-> --
-> 2.24.1
->
+>  
 
-
--- 
-Thanks,
-~Nick Desaulniers
+[Jacob Pan]
