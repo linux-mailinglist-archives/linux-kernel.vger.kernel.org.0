@@ -2,75 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B11C16B59F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:32:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4645716B5AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:34:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbgBXXcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:32:02 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:37147 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728653AbgBXXb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:31:58 -0500
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 48RJHc4FLjz9sRN; Tue, 25 Feb 2020 10:31:56 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1582587116;
-        bh=e+3S5c2g5Nka9xFqjuZ71WCKyjhhE+9WODC+LK78bD8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mnsO4rESThUzbouiP/Ygtw9wkEaYY7Tu9u2nvdJOILEdxeoPcT+rkxwa35wyNoYwY
-         O/7R81Ij+KqHvu6v7/AHce+9syqNu+emDTOX0x2GRlo7Ip0uCISfYjhiGW/052iudU
-         P3hsWzqJaDbsh942QuA9YmETjLxe9TxQwej5s1C6Ttd1TzMiEvRttnG8YqL3ViQxdu
-         VZHth2JulDJ7DpLRxUWXawl5WzRJiiKKdjeqDoyzanP1V6DakM9TyMAAp9rcsX9DNA
-         uraTO/ZHZ4XDphJCiLfV3yT9mux9zT5U7Cqdl4aBvV8JeXe4nt/dZ+bign5QVIAZak
-         D5mka8sRLtKoQ==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     linuxppc-dev@ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, Scott Wood <oss@buserror.net>,
-        Kumar Gala <galak@kernel.crashing.org>
-Subject: [PATCH 8/8] powerpc: Update 83xx/85xx MAINTAINERS entry
-Date:   Tue, 25 Feb 2020 10:31:46 +1100
-Message-Id: <20200224233146.23734-8-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200224233146.23734-1-mpe@ellerman.id.au>
-References: <20200224233146.23734-1-mpe@ellerman.id.au>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1728551AbgBXXdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:33:54 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:40140 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbgBXXdy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 18:33:54 -0500
+Received: from localhost (unknown [50.226.181.18])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 50CCD124CE3F3;
+        Mon, 24 Feb 2020 15:33:53 -0800 (PST)
+Date:   Mon, 24 Feb 2020 15:33:52 -0800 (PST)
+Message-Id: <20200224.153352.364779446032996784.davem@davemloft.net>
+To:     hkallweit1@gmail.com
+Cc:     bhelgaas@google.com, nic_swsd@realtek.com, mlindner@marvell.com,
+        stephen@networkplumber.org, clemens@ladisch.de, perex@perex.cz,
+        tiwai@suse.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 0/9] PCI: add and use constant PCI_STATUS_ERROR_BITS
+ and helper pci_status_get_and_clear_errors
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <5939f711-92aa-e7ed-2a26-4f1e4169f786@gmail.com>
+References: <5939f711-92aa-e7ed-2a26-4f1e4169f786@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.3
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 24 Feb 2020 15:33:53 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Scott said he was still maintaining this "sort of", so change the
-status to Odd Fixes.
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Date: Mon, 24 Feb 2020 22:20:08 +0100
 
-Kumar has long ago moved on to greener pastures.
+> Few drivers have own definitions for this constant, so move it to the
+> PCI core. In addition there are several places where the following
+> code sequence is used:
+> 1. Read PCI_STATUS
+> 2. Mask out non-error bits
+> 3. Action based on set error bits
+> 4. Write back set error bits to clear them
+> 
+> As this is a repeated pattern, add a helper to the PCI core.
+> 
+> Most affected drivers are network drivers. But as it's about core
+> PCI functionality, I suppose the series should go through the PCI
+> tree.
 
-Remove the dead penguinppc.org link.
+Heiner, something is up with this submission.
 
-Cc: Scott Wood <oss@buserror.net>
-Cc: Kumar Gala <galak@kernel.crashing.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- MAINTAINERS | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+The subject line here says 0/9, but the patches say N/8 and patch #8 never
+showed up on the list.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index febffee28d00..2e917116ef6a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9650,11 +9650,9 @@ F:	arch/powerpc/platforms/44x/
- 
- LINUX FOR POWERPC EMBEDDED PPC83XX AND PPC85XX
- M:	Scott Wood <oss@buserror.net>
--M:	Kumar Gala <galak@kernel.crashing.org>
--W:	http://www.penguinppc.org/
- L:	linuxppc-dev@lists.ozlabs.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/scottwood/linux.git
--S:	Maintained
-+S:	Odd fixes
- F:	arch/powerpc/platforms/83xx/
- F:	arch/powerpc/platforms/85xx/
- F:	Documentation/devicetree/bindings/powerpc/fsl/
--- 
-2.21.1
-
+Sort out what this should be and resubmit, thank you.
