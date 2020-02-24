@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFC0816A129
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:10:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 424C616A14D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:12:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbgBXJKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 04:10:35 -0500
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:44299 "EHLO
+        id S1728466AbgBXJLx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 04:11:53 -0500
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:40555 "EHLO
         wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728243AbgBXJKa (ORCPT
+        by vger.kernel.org with ESMTP id S1728244AbgBXJKc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 04:10:30 -0500
+        Mon, 24 Feb 2020 04:10:32 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id 59A93640;
-        Mon, 24 Feb 2020 04:10:29 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 24 Feb 2020 04:10:30 -0500
+        by mailnew.west.internal (Postfix) with ESMTP id B0D8960C;
+        Mon, 24 Feb 2020 04:10:30 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Mon, 24 Feb 2020 04:10:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=8vnyvQchUM5GD
-        hGpfg5Wl2vkK3QenNvOhFfrgj3MyFM=; b=cE2uRva7yTkvzp8Ykf+Ux+LDOmcl4
-        n0l+mazPkzN6E4rC2LSteF4lrm0JIxZW6jdzR1yWXSy1kB5UdEI/S4lzz0r6WboY
-        0OosIa1si5ZBDoNRRQUvzyY2nlZNs9HK9h3hRsGV5W26GlwlcMMb7CCoIE0kCmct
-        C+mHglTl75qgTrGLWHBr7Ew/xDa1uLCX2JDbhkI/NzCz+WQhOiyPYlM0myfZWONR
-        UPgYzYIet8E32cP+zXMORqbjZXzB8YaeswxWa49+peEqaZOW26dCwuyPIBZK7LNL
-        Ges+mbDE7gHVMFD9u0++y9Aw6BtV/v+MbExPXjW/M9H0Qk7wT6IpoTvFA==
+        :mime-version:content-transfer-encoding; s=fm2; bh=+XZflkMN+F3s2
+        aHb7igSvjepl8jJm9YiHUTgsFfZFFY=; b=VUY2kQbAOjCNyQkKO2Zm5VzORmjA+
+        jRLWp0LHCS37qoLYraz4yl34DmrY4Tfv1bnIcT4ThCuQLtCHVC9lTgvuRfC4sfHD
+        8aYrqTnjWXNoWXTCCRuJ9zm/chZQysL8YI+Pirw8akm71PXiU83uRD1pOv63g6Dt
+        iIsDtp3VomdNl0Zb1uXYohPO92+LXHtyT4txSolb1kld1sv43PiXr+x9DcswCylD
+        BXvZjn+9wKPIAJWjFvRs5kKyWf5jjU/cN6rR5pbXmvfmLPh4F5d6QuYAe5yy01aA
+        34F5zH/eumR+CddBBQ9JT0zyFbmK4Oj639qC3vDOrbyivkbLGqLcCSbIg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=8vnyvQchUM5GDhGpfg5Wl2vkK3QenNvOhFfrgj3MyFM=; b=t8vMOezo
-        blP0DN8+yN8ocQmvMfGnh5/kaHowwsy1J5YuZrGk7wVoSqZQNz5atSH+3zsPFeck
-        FdlqIim3+jKlGwRzERXBij4uFbRnncpurjfAx93fsYW1zbc2Nw+37emm3K7Dm8Lq
-        aD1lRPG6MOCLZD9klqg7y9R05sWK9heWWv+zao8TXyi9tQezwT3jeHL+YBQ6vpT+
-        4UpXB6CZ3QaRtE4FMbvoLOcRP3g5yHIk+afAxan54mASRcDiRkuggyfyNWwgebUz
-        rn+0rRO/mquXnFbJ8EB9oJyt0KhWzZxCAtgxZTaSMyRh+yUesjVVaNzXUfzFSdb1
-        3TR4/mQzlYNBOg==
-X-ME-Sender: <xms:BJNTXjw6Qn978-Mpmv-cphP71dv_peXCoCRg5AkQ-whY6Rf5x8AUPA>
+        fm2; bh=+XZflkMN+F3s2aHb7igSvjepl8jJm9YiHUTgsFfZFFY=; b=xCn2oNaa
+        V9PLTlOA8wksqUCMvcvAc1oWKVaVzhDHMB7xy195Pk0ewb95xsO0nfa/O5uf+Hso
+        DztbThska6ihSatVVUYqL/pefbPjqihPyCNP7iM+x+sreT8uNHOTa73IFLa/axUh
+        nyyjGY27XWIRdFsBdaDHuQ+0uzDEKglS/LbWivtnhlazkA7OpreE0JoUX5ROLPgH
+        1EY8yl8g14ZTVAGK69B3kV/0y2PoeTNJfacHtvpNJOkwEwXSp7ccgmrL0G2IZ9pY
+        xKzcJ99toyjZ2QzeDak0duVnQNv9lpyLRZYX4aqlYmpdO7/wZecqAGDAycdhKzV2
+        TPeRJmqNWPy8gw==
+X-ME-Sender: <xms:BpNTXqKDmbO8CAW7kH6vfvEn7lOW_dDC6Of7i1brzRIOaXnDQF4sXw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrledtucetufdoteggodetrfdotffvucfrrh
     hofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgenuceurghi
     lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
@@ -45,13 +45,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrledtucetufdoteggodetrfdotf
     phgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltddrkeelrd
     eikedrjeeinecuvehluhhsthgvrhfuihiivgepjeenucfrrghrrghmpehmrghilhhfrhho
     mhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:BJNTXlUmL2bhe_SP3yGh4Kgzl7y7R692cfuvUU79zu8IJ_ukmhboRA>
-    <xmx:BJNTXsbLG08h5eXEbotU-DB0lZ5yfmntJ0atNYdZ-44L5Vqdk6CJYw>
-    <xmx:BJNTXloa3evRfJA67MAFRnhXL1sld5XCSCWx06jvr-JRZnhHph2MTA>
-    <xmx:BZNTXnABFTDo5hCCvnhOaRI1HFnkwkZRIcNCUjpRLm2DvRjGEZ6-Cco8ZT4>
+X-ME-Proxy: <xmx:BpNTXovYQOA8BPJ9exFzJS27jZ8JtrnedxyjUUEmgONYfUFoSLysLQ>
+    <xmx:BpNTXn5B1lmv6rHlHshTjwV1BeeDxjwXTuuTEQPjdA9Hi0jf02TRbQ>
+    <xmx:BpNTXhf4bXAHrMvucG7b8yWILIBgLC8Je2UNOcmyYsnSddkKc3WFgQ>
+    <xmx:BpNTXvsz0v5upZY4Hs9bUwUn7khUzzviT9vNBIA2H-wZrqhkPUXM--SMscs>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 966E23060D1A;
-        Mon, 24 Feb 2020 04:10:28 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 00C2C328005A;
+        Mon, 24 Feb 2020 04:10:29 -0500 (EST)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Eric Anholt <eric@anholt.net>
@@ -63,9 +63,9 @@ Cc:     dri-devel@lists.freedesktop.org,
         Tim Gover <tim.gover@raspberrypi.com>,
         Phil Elwell <phil@raspberrypi.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH 69/89] drm/vc4: hdmi: Pass vc4_hdmi to CEC code
-Date:   Mon, 24 Feb 2020 10:07:11 +0100
-Message-Id: <fbd516a0242c2607ee4c56a960e89e5da71a4e8c.1582533919.git-series.maxime@cerno.tech>
+Subject: [PATCH 70/89] drm/vc4: hdmi: Remove vc4_dev hdmi pointer
+Date:   Mon, 24 Feb 2020 10:07:12 +0100
+Message-Id: <6d37b2cff8ff9a2076cd6ae5a631a8830eedf89c.1582533919.git-series.maxime@cerno.tech>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
 References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
@@ -76,81 +76,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our CEC code also retrieves the associated vc4_hdmi by setting the
-vc4_dev pointer as its private data, and then dereferences its vc4_hdmi
-pointer.
-
-In order to eventually get rid of that pointer, we can simply pass the
-vc4_hdmi pointer directly.
+Now that we don't have any users anymore, we can kill that pointer.
 
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/gpu/drm/vc4/vc4_hdmi.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/vc4/vc4_drv.h  |  1 -
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 14 ++++++--------
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
+index 1e44a3a8c2b0..d5c832c99460 100644
+--- a/drivers/gpu/drm/vc4/vc4_drv.h
++++ b/drivers/gpu/drm/vc4/vc4_drv.h
+@@ -73,7 +73,6 @@ struct vc4_perfmon {
+ struct vc4_dev {
+ 	struct drm_device *dev;
+ 
+-	struct vc4_hdmi *hdmi;
+ 	struct vc4_hvs *hvs;
+ 	struct vc4_v3d *v3d;
+ 	struct vc4_dpi *dpi;
 diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index e3f81cbcbe6c..9fec97a328a7 100644
+index 9fec97a328a7..8049a5ba291f 100644
 --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
 +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -1028,8 +1028,7 @@ static int vc4_hdmi_audio_init(struct vc4_hdmi *vc4_hdmi)
- #ifdef CONFIG_DRM_VC4_HDMI_CEC
- static irqreturn_t vc4_cec_irq_handler_thread(int irq, void *priv)
- {
--	struct vc4_dev *vc4 = priv;
--	struct vc4_hdmi *vc4_hdmi = vc4->hdmi;
-+	struct vc4_hdmi *vc4_hdmi = priv;
- 
- 	if (vc4_hdmi->cec_irq_was_rx) {
- 		if (vc4_hdmi->cec_rx_msg.len)
-@@ -1068,8 +1067,7 @@ static void vc4_cec_read_msg(struct vc4_dev *vc4, u32 cntrl1)
- 
- static irqreturn_t vc4_cec_irq_handler(int irq, void *priv)
- {
--	struct vc4_dev *vc4 = priv;
--	struct vc4_hdmi *vc4_hdmi = vc4->hdmi;
-+	struct vc4_hdmi *vc4_hdmi = priv;
- 	u32 stat = HDMI_READ(VC4_HDMI_CPU_STATUS);
- 	u32 cntrl1, cntrl5;
- 
-@@ -1096,7 +1094,7 @@ static irqreturn_t vc4_cec_irq_handler(int irq, void *priv)
- 
- static int vc4_hdmi_cec_adap_enable(struct cec_adapter *adap, bool enable)
- {
--	struct vc4_dev *vc4 = cec_get_drvdata(adap);
-+	struct vc4_hdmi *vc4_hdmi = cec_get_drvdata(adap);
- 	/* clock period in microseconds */
- 	const u32 usecs = 1000000 / CEC_CLOCK_FREQ;
- 	u32 val = HDMI_READ(VC4_HDMI_CEC_CNTRL_5);
-@@ -1139,7 +1137,7 @@ static int vc4_hdmi_cec_adap_enable(struct cec_adapter *adap, bool enable)
- 
- static int vc4_hdmi_cec_adap_log_addr(struct cec_adapter *adap, u8 log_addr)
- {
--	struct vc4_dev *vc4 = cec_get_drvdata(adap);
-+	struct vc4_hdmi *vc4_hdmi = cec_get_drvdata(adap);
- 
- 	HDMI_WRITE(VC4_HDMI_CEC_CNTRL_1,
- 		   (HDMI_READ(VC4_HDMI_CEC_CNTRL_1) & ~VC4_HDMI_CEC_ADDR_MASK) |
-@@ -1150,7 +1148,7 @@ static int vc4_hdmi_cec_adap_log_addr(struct cec_adapter *adap, u8 log_addr)
- static int vc4_hdmi_cec_adap_transmit(struct cec_adapter *adap, u8 attempts,
- 				      u32 signal_free_time, struct cec_msg *msg)
- {
--	struct vc4_dev *vc4 = cec_get_drvdata(adap);
-+	struct vc4_hdmi *vc4_hdmi = cec_get_drvdata(adap);
- 	u32 val;
- 	unsigned int i;
- 
-@@ -1320,10 +1318,10 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
- 	ret = devm_request_threaded_irq(dev, platform_get_irq(pdev, 0),
- 					vc4_cec_irq_handler,
- 					vc4_cec_irq_handler_thread, 0,
--					"vc4 hdmi cec", vc4);
-+					"vc4 hdmi cec", vc4_hdmi);
- 	if (ret)
- 		goto err_delete_cec_adap;
--	ret = cec_register_adapter(vc4_hdmi->cec_adap, dev);
-+	ret = cec_register_adapter(vc4_hdmi->cec_adap, vc4_hdmi);
- 	if (ret < 0)
- 		goto err_delete_cec_adap;
+@@ -1184,7 +1184,6 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
  #endif
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct drm_device *drm = dev_get_drvdata(master);
+-	struct vc4_dev *vc4 = drm->dev_private;
+ 	struct vc4_hdmi *vc4_hdmi;
+ 	struct drm_encoder *encoder;
+ 	struct device_node *ddc_node;
+@@ -1272,8 +1271,6 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
+ 		vc4_hdmi->hpd_active_low = hpd_gpio_flags & OF_GPIO_ACTIVE_LOW;
+ 	}
+ 
+-	vc4->hdmi = vc4_hdmi;
+-
+ 	/* HDMI core must be enabled. */
+ 	if (!(HD_READ(VC4_HD_M_CTL) & VC4_HD_M_ENABLE)) {
+ 		HD_WRITE(VC4_HD_M_CTL, VC4_HD_M_SW_RST);
+@@ -1354,9 +1351,12 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
+ static void vc4_hdmi_unbind(struct device *dev, struct device *master,
+ 			    void *data)
+ {
+-	struct drm_device *drm = dev_get_drvdata(master);
+-	struct vc4_dev *vc4 = drm->dev_private;
+-	struct vc4_hdmi *vc4_hdmi = vc4->hdmi;
++	/*
++	 * snd_soc_register_card will set the device drvdata pointer
++	 * to the card being registered.
++	 */
++	struct snd_soc_card *card = dev_get_drvdata(dev);
++	struct vc4_hdmi *vc4_hdmi = snd_soc_card_get_drvdata(card);
+ 
+ 	cec_unregister_adapter(vc4_hdmi->cec_adap);
+ 	vc4_hdmi_connector_destroy(&vc4_hdmi->connector.base);
+@@ -1366,8 +1366,6 @@ static void vc4_hdmi_unbind(struct device *dev, struct device *master,
+ 	pm_runtime_disable(dev);
+ 
+ 	put_device(&vc4_hdmi->ddc->dev);
+-
+-	vc4->hdmi = NULL;
+ }
+ 
+ static const struct component_ops vc4_hdmi_ops = {
 -- 
 git-series 0.9.1
