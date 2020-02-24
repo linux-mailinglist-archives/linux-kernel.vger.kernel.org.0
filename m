@@ -2,84 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C465F16AB6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:29:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0427216AB79
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:30:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727895AbgBXQ3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:29:09 -0500
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:33378 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727299AbgBXQ3J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:29:09 -0500
-Received: by mail-qv1-f67.google.com with SMTP id ek2so4399166qvb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 08:29:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ayL/a+KEUEgG8kUr32wkz/zkDzUV2JeP3xXHo8B3UmY=;
-        b=H70cCu9pyk/xG3LyHYdYjgRM9JXlOdn+iavwajhfdD56D1QKqyTUIY2WkWWtme6T0R
-         X0EtycCQX0mfKuXRA6ip6+B1shl+Y6MAmt8aVaNkw+P3d2QwiRZOY4VAilSFo2tH6GIQ
-         8uEVQQOlAQDRDWY2xyGEK8Q0x9rigYd6AkhIDBvgupLxMxT8V29iDdKekTkoNVIIZNPd
-         7015RAXtidGAd5WyQQRSIZmwrkqDA9hCTOs1MQAWoZxLPA70GcMdUahyXRINEk0eQgq/
-         9IVdQi0vJuUcoWegqbsfRr+0WWwFJ+hfJsYJI+qic+gun0s6YEN3aVVEXUYixc8DAe2r
-         K4cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ayL/a+KEUEgG8kUr32wkz/zkDzUV2JeP3xXHo8B3UmY=;
-        b=JyrN9sdm5dV0N91Z/1AhP7JfRe1krOgUin1mvjcriQNd9n7v4MysW/Xn4iFEpWryG/
-         TWQrEZeUdJiwLpAd1M0TjYwoc9+uABT1alYqPSxDG68u5aMFTmmicDh7ogP6Gfhweg9X
-         6CnOYrEwzuidA1wML7rRXKGoz7H6XGj5kO3QsLnzR9GYDFPEdTmvm3ZIO+UfJ9t1cw5e
-         +y4W8i+7jKdbYfWNlfC//RmXXqrDOWCQm6FSM10Py3zXb2X4pGOkpgh6vDGUSaAnea+8
-         YyIh7jN39cfujUyrdVyBWwpwf01U32r0Q9INr+dWfg5T67f/ayDlAh54FpJaLpXa0pTg
-         VpBQ==
-X-Gm-Message-State: APjAAAV+V30BoquT1riS+9rVwoGlFNMPJDyrjRC6+ViXL7/CNjxnxFMu
-        cJCOiN/VkfVC02QeHtoEvniAJw==
-X-Google-Smtp-Source: APXvYqx0pL8vfqPmQyNgg4FDblN91V9G8PXmIWaM6qg3/8YLstc1EGv3MDjK1Z35pn05cPP4mT77ew==
-X-Received: by 2002:a0c:ed32:: with SMTP id u18mr45645692qvq.2.1582561748197;
-        Mon, 24 Feb 2020 08:29:08 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::1:e64b])
-        by smtp.gmail.com with ESMTPSA id y91sm6291011qtd.13.2020.02.24.08.29.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 08:29:07 -0800 (PST)
-Date:   Mon, 24 Feb 2020 11:29:06 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     tj@kernel.org, lizefan@huawei.com, cgroups@vger.kernel.org,
+        id S1728011AbgBXQaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:30:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53536 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727426AbgBXQaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 11:30:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id AB05CACE3;
+        Mon, 24 Feb 2020 16:30:07 +0000 (UTC)
+Message-ID: <074b4845119e1cdc500290922d4a43e8135acb7e.camel@suse.de>
+Subject: Re: [PATCH] net: bcmgenet: Clear ID_MODE_DIS in EXT_RGMII_OOB_CTRL
+ when not needed
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     Doug Berger <opendmb@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cgroup: fix psi_show() crash on 32bit ino archs
-Message-ID: <20200224162906.GB1674@cmpxchg.org>
-References: <20200224030007.3990-1-cai@lca.pw>
+Date:   Mon, 24 Feb 2020 17:30:05 +0100
+In-Reply-To: <20200224162804.GB4526@unreal>
+References: <20200224153609.24948-1-nsaenzjulienne@suse.de>
+         <20200224162804.GB4526@unreal>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-pKqKvFzgfdAwTnH1ApAy"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224030007.3990-1-cai@lca.pw>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 10:00:07PM -0500, Qian Cai wrote:
-> Similar to the commit d7495343228f ("cgroup: fix incorrect
-> WARN_ON_ONCE() in cgroup_setup_root()"), cgroup_id(root_cgrp) does not
-> equal to 1 on 32bit ino archs which triggers all sorts of issues with
-> psi_show() on s390x. For example,
-> 
->  BUG: KASAN: slab-out-of-bounds in collect_percpu_times+0x2d0/
->  Read of size 4 at addr 000000001e0ce000 by task read_all/3667
->  collect_percpu_times+0x2d0/0x798
->  psi_show+0x7c/0x2a8
->  seq_read+0x2ac/0x830
->  vfs_read+0x92/0x150
->  ksys_read+0xe2/0x188
->  system_call+0xd8/0x2b4
-> 
-> Fix it by using cgroup_ino().
-> 
-> Fixes: 743210386c03 ("cgroup: use cgrp->kn->id as the cgroup ID")
-> Signed-off-by: Qian Cai <cai@lca.pw>
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+--=-pKqKvFzgfdAwTnH1ApAy
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 2020-02-24 at 18:28 +0200, Leon Romanovsky wrote:
+> On Mon, Feb 24, 2020 at 04:36:09PM +0100, Nicolas Saenz Julienne wrote:
+> > Outdated Raspberry Pi 4 firmware might configure the external PHY as
+> > rgmii although the kernel currently sets it as rgmii-rxid. This makes
+> > connections unreliable as ID_MODE_DIS is left enabled. To avoid this,
+> > explicitly clear that bit whenever we don't need it.
+> >=20
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > Fixes: da38802211cc ("net: bcmgenet: Add RGMII_RXID support")
+>=20
+> The expectation is that Fixes line comes before SOB line.
+
+Ouch, sorry for that.
+
+I'll edit that on v2.
+
+Regards,
+Nicolas
+
+
+--=-pKqKvFzgfdAwTnH1ApAy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5T+g0ACgkQlfZmHno8
+x/5AawgAhxQzd1l2sjLbsOEIm4ht9sW2fOkbKnJXED3/nAZzT6C+oEvnqe4cEITd
+FxHfxwbZ+jf6GTby+44Wk4xyIPNeew7z0cmgZbsWvag8KXnYgFEbO+fPMbXIglNW
+f0ll63GKz0LS1FksO7qV7Wi6Jmj7FMRhrd04LWCJz6q5e8DB/5Ge0POkS5M+lEd9
+c5a5mEqVqTfvupwptoXGEEmyuqG1vXvgNLdCyplNMUdzAzQDyb25zz5bn2iGMrtH
+E/VuGQ9GrnoS/FJ7/ELMEjOb+YGs9aUJ3OM2lEl/rTiQRMMf8vJYrCLOAtKbHO4X
+KNz/45NZ4fP6uI7ko7hA0Q0XuKGVgw==
+=Dbex
+-----END PGP SIGNATURE-----
+
+--=-pKqKvFzgfdAwTnH1ApAy--
+
