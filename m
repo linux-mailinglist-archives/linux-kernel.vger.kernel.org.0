@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58B3B16A328
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:54:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E3B016A32A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 10:54:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbgBXJyJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 04:54:09 -0500
-Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:54279 "EHLO
-        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726838AbgBXJyJ (ORCPT
+        id S1727716AbgBXJyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 04:54:20 -0500
+Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:37757 "EHLO
+        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726838AbgBXJyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 04:54:09 -0500
+        Mon, 24 Feb 2020 04:54:20 -0500
 Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id 73A9C1C359D
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 09:54:07 +0000 (GMT)
-Received: (qmail 25002 invoked from network); 24 Feb 2020 09:54:07 -0000
+        by outbound-smtp10.blacknight.com (Postfix) with ESMTPS id A52221C35A8
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 09:54:17 +0000 (GMT)
+Received: (qmail 25669 invoked from network); 24 Feb 2020 09:54:17 -0000
 Received: from unknown (HELO stampy.112glenside.lan) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPA; 24 Feb 2020 09:54:07 -0000
+  by 81.17.254.9 with ESMTPA; 24 Feb 2020 09:54:17 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Ingo Molnar <mingo@kernel.org>,
@@ -30,9 +30,9 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         Phil Auld <pauld@redhat.com>, Hillf Danton <hdanton@sina.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 09/13] sched/fair: Take into account runnable_avg to classify group
-Date:   Mon, 24 Feb 2020 09:52:19 +0000
-Message-Id: <20200224095223.13361-10-mgorman@techsingularity.net>
+Subject: [PATCH 10/13] sched/numa: Prefer using an idle cpu as a migration target instead of comparing tasks
+Date:   Mon, 24 Feb 2020 09:52:20 +0000
+Message-Id: <20200224095223.13361-11-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20200224095223.13361-1-mgorman@techsingularity.net>
 References: <20200224095223.13361-1-mgorman@techsingularity.net>
@@ -41,96 +41,228 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Guittot <vincent.guittot@linaro.org>
+task_numa_find_cpu can scan a node multiple times. Minimally it scans to
+gather statistics and later to find a suitable target. In some cases, the
+second scan will simply pick an idle CPU if the load is not imbalanced.
 
-Take into account the new runnable_avg signal to classify a group and to
-mitigate the volatility of util_avg in face of intensive migration or
-new task with random utilization.
+This patch caches information on an idle core while gathering statistics
+and uses it immediately if load is not imbalanced to avoid a second scan
+of the node runqueues. Preference is given to an idle core rather than an
+idle SMT sibling to avoid packing HT siblings due to linearly scanning the
+node cpumask.
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-Reviewed-by: "Dietmar Eggemann <dietmar.eggemann@arm.com>"
+As a side-effect, even when the second scan is necessary, the importance
+of using select_idle_sibling is much reduced because information on idle
+CPUs is cached and can be reused.
+
+Note that this patch actually makes is harder to move to an idle CPU
+as multiple tasks can race for the same idle CPU due to a race checking
+numa_migrate_on. This is addressed in the next patch.
+
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- kernel/sched/fair.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+ kernel/sched/fair.c | 119 ++++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 102 insertions(+), 17 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 24fbbb588df2..8ce9a04e7efb 100644
+index 8ce9a04e7efb..e285aa0cdd4f 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5470,6 +5470,24 @@ static unsigned long cpu_runnable(struct rq *rq)
- 	return cfs_rq_runnable_avg(&rq->cfs);
- }
+@@ -1500,8 +1500,29 @@ struct numa_stats {
+ 	unsigned int nr_running;
+ 	unsigned int weight;
+ 	enum numa_type node_type;
++	int idle_cpu;
+ };
  
-+static unsigned long cpu_runnable_without(struct rq *rq, struct task_struct *p)
++static inline bool is_core_idle(int cpu)
 +{
-+	struct cfs_rq *cfs_rq;
-+	unsigned int runnable;
++#ifdef CONFIG_SCHED_SMT
++	int sibling;
 +
-+	/* Task has no contribution or is new */
-+	if (cpu_of(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-+		return cpu_runnable(rq);
++	for_each_cpu(sibling, cpu_smt_mask(cpu)) {
++		if (cpu == sibling)
++			continue;
 +
-+	cfs_rq = &rq->cfs;
-+	runnable = READ_ONCE(cfs_rq->avg.runnable_avg);
++		if (!idle_cpu(cpu))
++			return false;
++	}
++#endif
 +
-+	/* Discount task's runnable from CPU's runnable */
-+	lsub_positive(&runnable, p->se.avg.runnable_avg);
-+
-+	return runnable;
++	return true;
 +}
 +
- static unsigned long capacity_of(int cpu)
- {
- 	return cpu_rq(cpu)->cpu_capacity;
-@@ -7753,7 +7771,8 @@ struct sg_lb_stats {
- 	unsigned long avg_load; /*Avg load across the CPUs of the group */
- 	unsigned long group_load; /* Total load over the CPUs of the group */
- 	unsigned long group_capacity;
--	unsigned long group_util; /* Total utilization of the group */
-+	unsigned long group_util; /* Total utilization over the CPUs of the group */
-+	unsigned long group_runnable; /* Total runnable time over the CPUs of the group */
- 	unsigned int sum_nr_running; /* Nr of tasks running in the group */
- 	unsigned int sum_h_nr_running; /* Nr of CFS tasks running in the group */
- 	unsigned int idle_cpus;
-@@ -7974,6 +7993,10 @@ group_has_capacity(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
- 	if (sgs->sum_nr_running < sgs->group_weight)
- 		return true;
- 
-+	if ((sgs->group_capacity * imbalance_pct) <
-+			(sgs->group_runnable * 100))
-+		return false;
++/* Forward declarations of select_idle_sibling helpers */
++static inline bool test_idle_cores(int cpu, bool def);
 +
- 	if ((sgs->group_capacity * 100) >
- 			(sgs->group_util * imbalance_pct))
- 		return true;
-@@ -7999,6 +8022,10 @@ group_is_overloaded(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
- 			(sgs->group_util * imbalance_pct))
- 		return true;
+ struct task_numa_env {
+ 	struct task_struct *p;
  
-+	if ((sgs->group_capacity * imbalance_pct) <
-+			(sgs->group_runnable * 100))
-+		return true;
-+
- 	return false;
+@@ -1537,15 +1558,39 @@ numa_type numa_classify(unsigned int imbalance_pct,
+ 	return node_fully_busy;
  }
  
-@@ -8093,6 +8120,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
++static inline int numa_idle_core(int idle_core, int cpu)
++{
++#ifdef CONFIG_SCHED_SMT
++	if (!static_branch_likely(&sched_smt_present) ||
++	    idle_core >= 0 || !test_idle_cores(cpu, false))
++		return idle_core;
++
++	/*
++	 * Prefer cores instead of packing HT siblings
++	 * and triggering future load balancing.
++	 */
++	if (is_core_idle(cpu))
++		idle_core = cpu;
++#endif
++
++	return idle_core;
++}
++
+ /*
+- * XXX borrowed from update_sg_lb_stats
++ * Gather all necessary information to make NUMA balancing placement
++ * decisions that are compatible with standard load balancer. This
++ * borrows code and logic from update_sg_lb_stats but sharing a
++ * common implementation is impractical.
+  */
+ static void update_numa_stats(struct task_numa_env *env,
+-			      struct numa_stats *ns, int nid)
++			      struct numa_stats *ns, int nid,
++			      bool find_idle)
+ {
+-	int cpu;
++	int cpu, idle_core = -1;
  
- 		sgs->group_load += cpu_load(rq);
- 		sgs->group_util += cpu_util(i);
-+		sgs->group_runnable += cpu_runnable(rq);
- 		sgs->sum_h_nr_running += rq->cfs.h_nr_running;
+ 	memset(ns, 0, sizeof(*ns));
++	ns->idle_cpu = -1;
++
+ 	for_each_cpu(cpu, cpumask_of_node(nid)) {
+ 		struct rq *rq = cpu_rq(cpu);
  
- 		nr_running = rq->nr_running;
-@@ -8368,6 +8396,7 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
+@@ -1553,11 +1598,25 @@ static void update_numa_stats(struct task_numa_env *env,
+ 		ns->util += cpu_util(cpu);
+ 		ns->nr_running += rq->cfs.h_nr_running;
+ 		ns->compute_capacity += capacity_of(cpu);
++
++		if (find_idle && !rq->nr_running && idle_cpu(cpu)) {
++			if (READ_ONCE(rq->numa_migrate_on) ||
++			    !cpumask_test_cpu(cpu, env->p->cpus_ptr))
++				continue;
++
++			if (ns->idle_cpu == -1)
++				ns->idle_cpu = cpu;
++
++			idle_core = numa_idle_core(idle_core, cpu);
++		}
+ 	}
  
- 		sgs->group_load += cpu_load_without(rq, p);
- 		sgs->group_util += cpu_util_without(i, p);
-+		sgs->group_runnable += cpu_runnable_without(rq, p);
- 		local = task_running_on_cpu(i, p);
- 		sgs->sum_h_nr_running += rq->cfs.h_nr_running - local;
+ 	ns->weight = cpumask_weight(cpumask_of_node(nid));
  
+ 	ns->node_type = numa_classify(env->imbalance_pct, ns);
++
++	if (idle_core >= 0)
++		ns->idle_cpu = idle_core;
+ }
+ 
+ static void task_numa_assign(struct task_numa_env *env,
+@@ -1566,7 +1625,7 @@ static void task_numa_assign(struct task_numa_env *env,
+ 	struct rq *rq = cpu_rq(env->dst_cpu);
+ 
+ 	/* Bail out if run-queue part of active NUMA balance. */
+-	if (xchg(&rq->numa_migrate_on, 1))
++	if (env->best_cpu != env->dst_cpu && xchg(&rq->numa_migrate_on, 1))
+ 		return;
+ 
+ 	/*
+@@ -1730,19 +1789,39 @@ static void task_numa_compare(struct task_numa_env *env,
+ 		goto unlock;
+ 
+ assign:
+-	/*
+-	 * One idle CPU per node is evaluated for a task numa move.
+-	 * Call select_idle_sibling to maybe find a better one.
+-	 */
++	/* Evaluate an idle CPU for a task numa move. */
+ 	if (!cur) {
++		int cpu = env->dst_stats.idle_cpu;
++
++		/* Nothing cached so current CPU went idle since the search. */
++		if (cpu < 0)
++			cpu = env->dst_cpu;
++
+ 		/*
+-		 * select_idle_siblings() uses an per-CPU cpumask that
+-		 * can be used from IRQ context.
++		 * If the CPU is no longer truly idle and the previous best CPU
++		 * is, keep using it.
+ 		 */
+-		local_irq_disable();
+-		env->dst_cpu = select_idle_sibling(env->p, env->src_cpu,
++		if (!idle_cpu(cpu) && env->best_cpu >= 0 &&
++		    idle_cpu(env->best_cpu)) {
++			cpu = env->best_cpu;
++		}
++
++		/*
++		 * Use select_idle_sibling if the previously found idle CPU is
++		 * not idle any more.
++		 */
++		if (!idle_cpu(cpu)) {
++			/*
++			 * select_idle_siblings() uses an per-CPU cpumask that
++			 * can be used from IRQ context.
++			 */
++			local_irq_disable();
++			cpu = select_idle_sibling(env->p, env->src_cpu,
+ 						   env->dst_cpu);
+-		local_irq_enable();
++			local_irq_enable();
++		}
++
++		env->dst_cpu = cpu;
+ 	}
+ 
+ 	task_numa_assign(env, cur, imp);
+@@ -1776,8 +1855,14 @@ static void task_numa_find_cpu(struct task_numa_env *env,
+ 		imbalance = adjust_numa_imbalance(imbalance, src_running);
+ 
+ 		/* Use idle CPU if there is no imbalance */
+-		if (!imbalance)
++		if (!imbalance) {
+ 			maymove = true;
++			if (env->dst_stats.idle_cpu >= 0) {
++				env->dst_cpu = env->dst_stats.idle_cpu;
++				task_numa_assign(env, NULL, 0);
++				return;
++			}
++		}
+ 	} else {
+ 		long src_load, dst_load, load;
+ 		/*
+@@ -1850,10 +1935,10 @@ static int task_numa_migrate(struct task_struct *p)
+ 	dist = env.dist = node_distance(env.src_nid, env.dst_nid);
+ 	taskweight = task_weight(p, env.src_nid, dist);
+ 	groupweight = group_weight(p, env.src_nid, dist);
+-	update_numa_stats(&env, &env.src_stats, env.src_nid);
++	update_numa_stats(&env, &env.src_stats, env.src_nid, false);
+ 	taskimp = task_weight(p, env.dst_nid, dist) - taskweight;
+ 	groupimp = group_weight(p, env.dst_nid, dist) - groupweight;
+-	update_numa_stats(&env, &env.dst_stats, env.dst_nid);
++	update_numa_stats(&env, &env.dst_stats, env.dst_nid, true);
+ 
+ 	/* Try to find a spot on the preferred nid. */
+ 	task_numa_find_cpu(&env, taskimp, groupimp);
+@@ -1886,7 +1971,7 @@ static int task_numa_migrate(struct task_struct *p)
+ 
+ 			env.dist = dist;
+ 			env.dst_nid = nid;
+-			update_numa_stats(&env, &env.dst_stats, env.dst_nid);
++			update_numa_stats(&env, &env.dst_stats, env.dst_nid, true);
+ 			task_numa_find_cpu(&env, taskimp, groupimp);
+ 		}
+ 	}
 -- 
 2.16.4
 
