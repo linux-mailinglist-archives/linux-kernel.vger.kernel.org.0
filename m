@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E2616B3C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:21:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D3316B3D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:25:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbgBXWVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 17:21:55 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:58045 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726687AbgBXWVy (ORCPT
+        id S1727972AbgBXWZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 17:25:32 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24931 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726651AbgBXWZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 17:21:54 -0500
+        Mon, 24 Feb 2020 17:25:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582582913;
+        s=mimecast20190719; t=1582583130;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=MlgLBPA54fWuuAEYeFoGWhJfgNH9YMvWTW66al92frM=;
-        b=TI4kigIRN0rrL2w9tuK8x0JjwZgh4OVns11CTARDvOzghFEMGuItLtLQijrNFlnCHZVnZg
-        oUgfxG9QwSNc0bwunRsDOmiv1+NqEOmZYUwvAfw3ymbSPZBdPYzirHFvPtO1PhRwmTBqM7
-        /avtTPQJuqQZ9U8kDxJzXq6iI+/6HWQ=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-407-ZOGpzucaNq28w5mdfVtyKg-1; Mon, 24 Feb 2020 17:21:50 -0500
-X-MC-Unique: ZOGpzucaNq28w5mdfVtyKg-1
-Received: by mail-wr1-f72.google.com with SMTP id d9so3055788wrv.21
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 14:21:50 -0800 (PST)
+        bh=Bot62eJ1QDSkALNx5M99l4TX45t0SfA6NlI29a+aUK0=;
+        b=hpsUEzkVdVV+83QHXQFzaJ+25pZLN9Y0dZEGhHHWyykvymlhA3iLfDMhFGavtp8tAJcw1G
+        g+j4kZTfaI8P8mDyp/i9+gYqEGoJ7UX6O0TUexPcHkeOm/NnUd9Jd6N7Q4eckNWckBmrN/
+        Rj4nOAhIf40hI9LIDn2g0eddVm/6tS4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-177-0bomdRrbPVyUWNUKPxy_Gw-1; Mon, 24 Feb 2020 17:25:28 -0500
+X-MC-Unique: 0bomdRrbPVyUWNUKPxy_Gw-1
+Received: by mail-wm1-f69.google.com with SMTP id o24so327114wmh.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 14:25:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=MlgLBPA54fWuuAEYeFoGWhJfgNH9YMvWTW66al92frM=;
-        b=cg85wTCY6z251BeEMSJT+OM4dTaRA5DDBvLsxQpyPbOp+6l0RIBiExvHl/YdZY6RD/
-         mcpu/DDwuDb/G80+ww5LNMnG1Vo2Y3hX8NebvTEmuj1So/L/4v/gjaIh6dvnoSeDyvuP
-         UYl6FK3FmDgkoZx8S4cFSB5ZuqUbAHb8jS3ts8Gf/lOY5FsRgDeoRh2jPGH6zSB7qPqP
-         ye6y1AZsKRZhu8JrnGa+6pILkFvCwt95SOV7nwxQ2z6acgtmVqaI07UwNyQrLvldC8/z
-         qvsuSj3Kb12u1eSEaf+KjzwzvDdegNp7RqTVZU1hlrLXFfLj4SIUXRKdfsxQhXLztMAA
-         hjtw==
-X-Gm-Message-State: APjAAAWDc4KExoOgVoYIwwXBgYeGoNUIZGyHuERvrpzHFScCFTrDgjL+
-        x4U7L3LKCJdEGe7VzWlgnbG/ugbvXS6OGZ0KWNzElzDPPm001zaFlbNJMfLV8bP3q0Cb4v/HW2k
-        jm6KuW2tJOptKYrT1u93Kt/Ic
-X-Received: by 2002:a5d:55d2:: with SMTP id i18mr12087167wrw.287.1582582909001;
-        Mon, 24 Feb 2020 14:21:49 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwv1OrYJptTCi459Nv4K1OBAqX8b1+jzsWwgqC+Y0BdxTs1+Ttq2a4ssxOPNtqrc/4OGz6Qyg==
-X-Received: by 2002:a5d:55d2:: with SMTP id i18mr12087142wrw.287.1582582908750;
-        Mon, 24 Feb 2020 14:21:48 -0800 (PST)
+        bh=Bot62eJ1QDSkALNx5M99l4TX45t0SfA6NlI29a+aUK0=;
+        b=nKfroqcX+iDkCuBurc3BhCj5IZOljpO3W6oJEm5tSN/TIHfNXnylSsVMUEZtLII+Yl
+         biKrTFcrlQqXo8UWsOVpCWDZn2laPFxqEcQfW8KCcLIxHkE1jl0+avHODVYWivw/FFK7
+         //bWr9JVF0mOkXjDyKLoD1hZdoGpqNNrvwYKBCwYgDbNZLish8PVk3tAYdvdK+RGe1hy
+         2QlCQStpBKjAkNfJmMWXKJTG9UKtImHVTOJ6g0c1FEXmOXGzkaov6Ub0k8sd9IG8rP35
+         BnZxAB9PRuglYM9pCsPrbzHEwhvgFhVoGoObdBR8otY6vWIhq/1fAy7HIXgGMNmq7KXt
+         t1vw==
+X-Gm-Message-State: APjAAAXJZHLfZRxO5TrpMtX4GVt+TQPH63ah25GEl+0OtMjzM2flZZ/C
+        Q9JPJJno7HiYHk97ef0HSpovrmE5zwj0FJdpn4PJmeY9Ce0/iZcDygImbrTXy/E0v6pz/DNHjYc
+        cqwKKApq+5802uM9hPZDZEyek
+X-Received: by 2002:a5d:6284:: with SMTP id k4mr70626440wru.398.1582583126671;
+        Mon, 24 Feb 2020 14:25:26 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxdW0lbkDcKo6cvmGoaTL3byAKPZzz+xGIZ0lou3jF2Nzg4YqBYrlczj+0NSU2EHCBclycImw==
+X-Received: by 2002:a5d:6284:: with SMTP id k4mr70626416wru.398.1582583126397;
+        Mon, 24 Feb 2020 14:25:26 -0800 (PST)
 Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
-        by smtp.gmail.com with ESMTPSA id p15sm1067820wma.40.2020.02.24.14.21.47
+        by smtp.gmail.com with ESMTPSA id b67sm1206714wmc.38.2020.02.24.14.25.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 14:21:48 -0800 (PST)
+        Mon, 24 Feb 2020 14:25:25 -0800 (PST)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -57,11 +57,11 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Jim Mattson <jmattson@google.com>,
         Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 45/61] KVM: x86: Fold CPUID 0x7 masking back into __do_cpuid_func()
-In-Reply-To: <20200201185218.24473-46-sean.j.christopherson@intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-46-sean.j.christopherson@intel.com>
-Date:   Mon, 24 Feb 2020 23:21:47 +0100
-Message-ID: <87wo8bmxs4.fsf@vitty.brq.redhat.com>
+Subject: Re: [PATCH 46/61] KVM: x86: Remove the unnecessary loop on CPUID 0x7 sub-leafs
+In-Reply-To: <20200201185218.24473-47-sean.j.christopherson@intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-47-sean.j.christopherson@intel.com>
+Date:   Mon, 24 Feb 2020 23:25:24 +0100
+Message-ID: <87tv3fmxm3.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -71,106 +71,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-> Move the CPUID 0x7 masking back into __do_cpuid_func() now that the
-> size of the code has been trimmed down significantly.
->
-> Tweak the WARN case, which is impossible to hit unless the CPU is
-> completely broken, to break the loop before creating the bogus entry.
->
-> Opportunustically reorder the cpuid_entry_set() calls and shorten the
-> comment about emulation to further reduce the footprint of CPUID 0x7.
+> Explicitly handle CPUID 0x7 sub-leaf 1.  The kernel is currently aware
+> of exactly one feature in CPUID 0x7.1,  which means there is room for
+> another 127 features before CPUID 0x7.2 will see the light of day, i.e.
+> the looping is likely to be dead code for years to come.
 >
 > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > ---
->  arch/x86/kvm/cpuid.c | 62 ++++++++++++++++----------------------------
->  1 file changed, 22 insertions(+), 40 deletions(-)
+>  arch/x86/kvm/cpuid.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 >
 > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 77a6c1db138d..7362e5238799 100644
+> index 7362e5238799..47f61f4497fb 100644
 > --- a/arch/x86/kvm/cpuid.c
 > +++ b/arch/x86/kvm/cpuid.c
-> @@ -456,44 +456,6 @@ static int __do_cpuid_func_emulated(struct kvm_cpuid_array *array, u32 func)
->  	return 0;
->  }
+> @@ -533,11 +533,9 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+>  		if (boot_cpu_has(X86_FEATURE_AMD_SSBD))
+>  			cpuid_entry_set(entry, X86_FEATURE_SPEC_CTRL_SSBD);
 >  
-> -static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
-> -{
-> -	switch (entry->index) {
-> -	case 0:
-> -		entry->eax = min(entry->eax, 1u);
-> -		cpuid_entry_mask(entry, CPUID_7_0_EBX);
-> -		/* TSC_ADJUST is emulated */
-> -		cpuid_entry_set(entry, X86_FEATURE_TSC_ADJUST);
-> -		cpuid_entry_mask(entry, CPUID_7_ECX);
-> -		cpuid_entry_mask(entry, CPUID_7_EDX);
-> -		if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IBRS))
-> -			cpuid_entry_set(entry, X86_FEATURE_SPEC_CTRL);
-> -		if (boot_cpu_has(X86_FEATURE_STIBP))
-> -			cpuid_entry_set(entry, X86_FEATURE_INTEL_STIBP);
-> -		if (boot_cpu_has(X86_FEATURE_AMD_SSBD))
-> -			cpuid_entry_set(entry, X86_FEATURE_SPEC_CTRL_SSBD);
-> -		/*
-> -		 * We emulate ARCH_CAPABILITIES in software even
-> -		 * if the host doesn't support it.
-> -		 */
-> -		cpuid_entry_set(entry, X86_FEATURE_ARCH_CAPABILITIES);
-> -		break;
-> -	case 1:
-> -		cpuid_entry_mask(entry, CPUID_7_1_EAX);
-> -		entry->ebx = 0;
-> -		entry->ecx = 0;
-> -		entry->edx = 0;
-> -		break;
-> -	default:
-> -		WARN_ON_ONCE(1);
-> -		entry->eax = 0;
-> -		entry->ebx = 0;
-> -		entry->ecx = 0;
-> -		entry->edx = 0;
-> -		break;
-> -	}
-> -}
+> -		for (i = 1, max_idx = entry->eax; i <= max_idx; i++) {
+> -			if (WARN_ON_ONCE(i > 1))
+> -				break;
 > -
->  static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
->  {
->  	struct kvm_cpuid_entry2 *entry;
-> @@ -555,14 +517,34 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
->  		break;
->  	/* function 7 has additional index. */
->  	case 7:
-> -		do_cpuid_7_mask(entry);
-> +		entry->eax = min(entry->eax, 1u);
-> +		cpuid_entry_mask(entry, CPUID_7_0_EBX);
-> +		cpuid_entry_mask(entry, CPUID_7_ECX);
-> +		cpuid_entry_mask(entry, CPUID_7_EDX);
-> +
-> +		/* TSC_ADJUST and ARCH_CAPABILITIES are emulated in software. */
-> +		cpuid_entry_set(entry, X86_FEATURE_TSC_ADJUST);
-> +		cpuid_entry_set(entry, X86_FEATURE_ARCH_CAPABILITIES);
-> +
-> +		if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IBRS))
-> +			cpuid_entry_set(entry, X86_FEATURE_SPEC_CTRL);
-> +		if (boot_cpu_has(X86_FEATURE_STIBP))
-> +			cpuid_entry_set(entry, X86_FEATURE_INTEL_STIBP);
-> +		if (boot_cpu_has(X86_FEATURE_AMD_SSBD))
-> +			cpuid_entry_set(entry, X86_FEATURE_SPEC_CTRL_SSBD);
->  
->  		for (i = 1, max_idx = entry->eax; i <= max_idx; i++) {
-> +			if (WARN_ON_ONCE(i > 1))
-> +				break;
-> +
->  			entry = do_host_cpuid(array, function, i);
+> -			entry = do_host_cpuid(array, function, i);
+> +		/* KVM only supports 0x7.0 and 0x7.1, capped above via min(). */
+> +		if (entry->eax == 1) {
+> +			entry = do_host_cpuid(array, function, 1);
 >  			if (!entry)
 >  				goto out;
->  
-> -			do_cpuid_7_mask(entry);
-> +			cpuid_entry_mask(entry, CPUID_7_1_EAX);
-> +			entry->ebx = 0;
-> +			entry->ecx = 0;
-> +			entry->edx = 0;
->  		}
->  		break;
->  	case 9:
 
 Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
