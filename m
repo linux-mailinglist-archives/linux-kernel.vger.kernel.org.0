@@ -2,55 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE75816A5A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:59:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD48C16A5F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:19:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbgBXL7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 06:59:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727351AbgBXL7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 06:59:02 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B914D20828;
-        Mon, 24 Feb 2020 11:58:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582545542;
-        bh=527/P0PCxAx1P3oVPckFcLKVR2UnWZl2M0CPxqoBIk8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GSTFUuC4JnlbirXZ+HGrAkvpP4DjdiSDsPM/8vaNQ/PdHplKpt7o8SMDP5X+QAGDZ
-         XphGKVbFzlZ5C7s1+3sNbaMLp+VUtyJuONxTUP57vTEcx6ETyWOG3/n1GH4nNwOo6K
-         eMFJVma+cPkZWrzifs/dc/QW0e3OmBlFzwoKoLWQ=
-Date:   Mon, 24 Feb 2020 19:58:55 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, Li Yang <leoyang.li@nxp.com>
-Subject: Re: [PATCH] arm64: dts: ls1028: sl28: explicitly enable network ports
-Message-ID: <20200224115854.GG27688@dragon>
-References: <20200224115052.27328-1-michael@walle.cc>
+        id S1727351AbgBXMTy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 07:19:54 -0500
+Received: from sv-email-p02.tjgo.jus.br ([45.71.214.97]:34428 "EHLO
+        sv-email-p02.tjgo.jus.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726778AbgBXMTx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 07:19:53 -0500
+X-Greylist: delayed 5095 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Feb 2020 07:19:52 EST
+Received: from localhost (localhost [127.0.0.1])
+        by sv-email-p02.tjgo.ldc (Postfix) with ESMTP id E16E86A312;
+        Mon, 24 Feb 2020 07:13:36 -0300 (-03)
+Received: from sv-email-p02.tjgo.jus.br ([127.0.0.1])
+        by localhost (sv-email-p02.tjgo.ldc [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Q_6Oz8SOU12p; Mon, 24 Feb 2020 07:13:36 -0300 (-03)
+Received: from localhost (localhost [127.0.0.1])
+        by sv-email-p02.tjgo.ldc (Postfix) with ESMTP id DF8196A2EF;
+        Mon, 24 Feb 2020 07:13:35 -0300 (-03)
+DKIM-Filter: OpenDKIM Filter v2.10.3 sv-email-p02.tjgo.ldc DF8196A2EF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tjgo.jus.br;
+        s=DB6EB6C0-19CB-11E9-B608-74AECE7D716B; t=1582539215;
+        bh=Br/8x1Rs0egV5xdLzp5m3aFy4/EnepQfRyowgc4eQr0=;
+        h=Date:From:Message-ID:MIME-Version;
+        b=Z4s+As3plYw9tH0zp4f6ftqcrx0Gf9/Bfk34k4ZzYbTIM3StbPMjPjV5ae3VBWNr2
+         IJ1OviHgImd5/14gwKN1tKKjxyAL64fV0fTiSpB3esqIhhwYVDTxyUr42niCFJxJ2z
+         CbN+rhwViQUIKRE6G46YW5eReZAKGN6sSpcQxWdjiBXSlZO0wIH3LlNSpiXAGTfhfF
+         SGalIxZKb/arEqGNsTlHd/uJQPF6pjETRF5kRiaRUBwkhuylz5OAVILe1q8A5k5las
+         5aKOLPuGsqVMbCru7/HG8WYoTfXysFZBnIVs4pdk+s+oYDsoFhlbl1hz2ndZ1/qodS
+         MlM5ieUgURgrg==
+X-Virus-Scanned: amavisd-new at sv-email-p02.tjgo.ldc
+Received: from sv-email-p02.tjgo.jus.br ([127.0.0.1])
+        by localhost (sv-email-p02.tjgo.ldc [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id s1FGnHopITFV; Mon, 24 Feb 2020 07:13:35 -0300 (-03)
+Received: from sv-email-p00.tjgo.ldc (sv-email-p00.tjgo.ldc [45.71.214.95])
+        by sv-email-p02.tjgo.ldc (Postfix) with ESMTP id A7DB86A2DC;
+        Mon, 24 Feb 2020 07:13:35 -0300 (-03)
+Date:   Mon, 24 Feb 2020 07:13:35 -0300 (BRT)
+From:   Mr Azim <msgarcia@tjgo.jus.br>
+Reply-To: Mr Azim <azimhashimpremji298521@gmail.com>
+Message-ID: <223937106.3168251.1582539215639.JavaMail.zimbra@tjgo.jus.br>
+Subject: Bargeld Geschenk
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224115052.27328-1-michael@walle.cc>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [5.62.51.103]
+X-Mailer: Zimbra 8.8.15_GA_3829 (zclient/8.8.15_GA_3829)
+Thread-Index: cWHX5qvex9yUdT+4OWed0FYiZjCvfg==
+Thread-Topic: Bargeld Geschenk
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 12:50:52PM +0100, Michael Walle wrote:
-> Since commit b9213899d2b0 ("arm64: dts: ls1028a: disable all enetc ports
-> by default") all the network ports are disabled by default. This makes
-> sense, but now we have to enable them explicitly in the boards. Do so
-> for the sl28 module.
-> 
-> Since we are at it. Make sure the second port is only enabled for the
-> variant 4 of the module. Variant 3 has only one network port.
-> 
-> Signed-off-by: Michael Walle <michael@walle.cc>
+Ich kenne Sie vielleicht nicht, aber ich glaube, wenn Sie von Gott ausgew=
+=C3=A4hlt wurden, um eine Geldspende in H=C3=B6he von 2.000.000,00 Euro von=
+ Herrn Azim Hashim zu erhalten, antworten Sie mir f=C3=BCr weitere Informat=
+ionen per E-Mail an: azimhashimpremji298521@gmail.com  Sie k=C3=B6nnen auch=
+ mehr =C3=BCber mich =C3=BCber den Link lesen: https://en.wikipedia.org/wik=
+i/Azim_Premji
 
-Applied, thanks.
+Freundliche Gr=C3=BC=C3=9Fe
