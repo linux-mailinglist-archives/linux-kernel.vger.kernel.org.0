@@ -2,96 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4D316A355
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:00:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9A616A3A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:15:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbgBXKAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 05:00:08 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39723 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbgBXKAI (ORCPT
+        id S1727329AbgBXKPO convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Feb 2020 05:15:14 -0500
+Received: from ip-206-210-112-178.FTTH.standardbroadband.ca ([206.210.112.178]:53688
+        "EHLO spammx02.iasl.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726838AbgBXKPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 05:00:08 -0500
-Received: by mail-wr1-f67.google.com with SMTP id y17so799293wrn.6
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 02:00:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=5kMWKYrh992GZWTACf9amzemAuduDOlF955KN5EwvQw=;
-        b=wOJl5CgbQy6U3aWnwofJi51rIVWN4K+Ld9+tffFieiVlVfi2/dHqXF40Cq3T1kb4Hd
-         JUNcqOCZ8LswILeUgNcr8bP9l5VvdXg6prdZboDZ0FklYR/nEO/5G5+SLS2xyvII0M8O
-         MyPUv37S1xPx4szsummDjBD7YuBDtftwpdc1a/douez9IdwrT/1qWH81PPr5mWk5S5ZX
-         Dr6JVrft/D6igiJSAztEKvVYmr3wkssu/UxOPrnYXEYS1jrqH3t1kEYNrzRLZy50NY+k
-         2LTdsT4gZ8wC7Xunm8aJACAx3yBq5deU3CkCN7mubwdZRtAB9YKvzKBmufAgRjdi8ydd
-         L/nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=5kMWKYrh992GZWTACf9amzemAuduDOlF955KN5EwvQw=;
-        b=ESjUYaheMTCX3XM36zTqLWhozBy+ui7ekgBq20v8w/ZZ5M7wSWzmet0/R8XX1pz7rf
-         ILMShMPjbcZTypPVQQUq7CNfI5UFA7D58tvhe5yOWEIFwewgnT25/xyw0JWM0N6cavV9
-         xNDcAt9eqZoNL+0HhCaGi1tg8po9nyPC3Pjgqyi2A2/ZyulOScou85b3zuA3mFDoCqnA
-         Qo6HN6aSZiQIGjCwWXOu8bKUcv/FBkW9VwvNwq6cCBBkQN5BUMfFASPL9ZWP5yP6RH/y
-         +vCy+11l5FjWW0bU//goty1v5U0q70/b16VJW/Bf+5rFd2fpYi9ng+Eng0ro0PvCDNM5
-         IDXA==
-X-Gm-Message-State: APjAAAXhLD3m90f/PZ1Ei9J7gaHpmXiVJS9CtaoUcyz1g6vA7fhVAOOj
-        JmeABLZcqaaSYm51T82w5ynIYQ==
-X-Google-Smtp-Source: APXvYqw+eVT/ekOFVzqh6k7LzKVEDiUtf7y1cMrybh2fcleVG3PtFkiVzf5QhVfc93XqXI91aPlTag==
-X-Received: by 2002:a5d:45ca:: with SMTP id b10mr9472914wrs.250.1582538406847;
-        Mon, 24 Feb 2020 02:00:06 -0800 (PST)
-Received: from dell ([2.31.163.122])
-        by smtp.gmail.com with ESMTPSA id v1sm11105968wrp.16.2020.02.24.02.00.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 02:00:06 -0800 (PST)
-Date:   Mon, 24 Feb 2020 10:00:37 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        David Lechner <david@lechnology.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Roger Quadros <rogerq@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH v2] mfd: syscon: Use a unique name with regmap_config
-Message-ID: <20200224100037.GK3494@dell>
-References: <20200127231208.1443-1-s-anna@ti.com>
+        Mon, 24 Feb 2020 05:15:12 -0500
+X-Greylist: delayed 10681 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Feb 2020 05:15:12 EST
+X-ASG-Debug-ID: 1582528628-13ceae16f240fa60001-xx1T2L
+Received: from fixed-189-203-132-241.totalplay.net (ip-206-210-112-177.FTTH.standardbroadband.ca [206.210.112.177]) by spammx02.iasl.com with ESMTP id aKDBZCBiGmEroz6g for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 02:17:08 -0500 (EST)
+X-Barracuda-Envelope-From: linux-kernel@vger.kernel.org
+X-Barracuda-Effective-Source-IP: ip-206-210-112-177.FTTH.standardbroadband.ca[206.210.112.177]
+X-Barracuda-Apparent-Source-IP: 206.210.112.177
+From:   Antonio Amezcua <linux-kernel@vger.kernel.org>
+To:     linux-kernel@vger.kernel.org
+Subject: Anunciese con 100 mil clientes potenciales.
+Date:   24 Feb 2020 01:17:07 -0600
+X-ASG-Orig-Subj: Anunciese con 100 mil clientes potenciales.
+Message-ID: <20200224011629.8E1D341DC75EC2BA@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200127231208.1443-1-s-anna@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Barracuda-Connect: ip-206-210-112-177.FTTH.standardbroadband.ca[206.210.112.177]
+X-Barracuda-Start-Time: 1582528628
+X-Barracuda-URL: https://206.210.112.178:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at iasl.com
+X-Barracuda-Scan-Msg-Size: 498
+X-Barracuda-Spam-Score: 0.50
+X-Barracuda-Spam-Status: No, SCORE=0.50 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=BSF_SC0_SA_TO_FROM_ADDR_MATCH
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.80218
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        0.50 BSF_SC0_SA_TO_FROM_ADDR_MATCH Sender Address Matches Recipient
+                                   Address
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 Jan 2020, Suman Anna wrote:
 
-> The DT node full name is currently being used in regmap_config
-> which in turn is used to create the regmap debugfs directories.
-> This name however is not guaranteed to be unique and the regmap
-> debugfs registration can fail in the cases where the syscon nodes
-> have the same unit-address but are present in different DT node
-> hierarchies. Replace this logic using the syscon reg resource
-> address instead (inspired from logic used while creating platform
-> devices) to ensure a unique name is given for each syscon.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> ---
-> v2: Fix build warning reported by kbuild test bot
-> v1: https://patchwork.kernel.org/patch/11346363/
-> 
->  drivers/mfd/syscon.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+Promocione su empresa o negocio ante 100 mil clientes potenciales 
+en Mexico.
 
-Waiting for Arnd to review.
+Por tan solo 99 USD. Resultados inmediatos, medibles y tangibles.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Contamos con bases actualizadas y segmentadas de industrias, 
+comercios, prestadores de servicios
+y profesionistas en todo el pais.
+
+Para mayor informacion escribanos a 
+publidirecto.mx(arroba)gmail.com con el subject "informacion"
+
+---------------------
+
+Oferta valida por tiempo limitado para linux-
+kernel@vger.kernel.org.
+
+
+
+
