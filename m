@@ -2,348 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3C5216A763
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 14:40:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79A8616A76F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 14:42:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbgBXNkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 08:40:40 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:35825 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727339AbgBXNkk (ORCPT
+        id S1727624AbgBXNmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 08:42:06 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:39819 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbgBXNmF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 08:40:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582551638;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PZLvpz3KL3hcQZqXig2m3yrQ87ZacoCyeVdZ86y6lXs=;
-        b=GRJT1aNA/k3cgdp8pcMfOsHvU5zEKQtQVBHdSqxi9Q+ez6yqlSs+CTcFDadigBfa98p1/p
-        N7ze/ZtMye9xJ4Ec5UEySIWhhrUu6Hq/+s/x1HKPVx9fOduIfdzw+rPN/R1XglareXe1NO
-        j1eripHzNYBnz6bkExffltp717WO0VY=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-395-zNGmNhiAMNGXpNHb7JPmyw-1; Mon, 24 Feb 2020 08:40:37 -0500
-X-MC-Unique: zNGmNhiAMNGXpNHb7JPmyw-1
-Received: by mail-qk1-f198.google.com with SMTP id c206so10661326qkg.6
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 05:40:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=PZLvpz3KL3hcQZqXig2m3yrQ87ZacoCyeVdZ86y6lXs=;
-        b=EkRp1xOYVt4PcxmYchO346U/BOurFTg0wTtN4YoMYmr8Ewv9xaXa0VfUQ3r63mcizl
-         DZJAaM7VkNiKctuXdtys+qXmcTs7bvwWK6Ft15xYToVSfaUWWPL5Z9cTNIyZiW1Nf1Du
-         K7qZNTE4x7UohFormJTLCSNx8fbR6QQgG9gVO8miTfnvj4o/bPNakD3BcYjRh30nd/n/
-         v0/d1hfx+FfMDpbCmN6RqYMRMiZqsJ5LXbgXi94y2cd//o0QJMDnw5A6F9cZ9EfHywLc
-         fBwTkoOojaM8lzIKMj+w5LnWjeKcuDpeVEjexZ2eCSc+uukw1T1bl4XlyVaiQT1VykUp
-         JnfA==
-X-Gm-Message-State: APjAAAWQBrJUhNrxhIYZSqi/nlvm0ycbnqUUjdyIldar7pSaq7iS4ZfR
-        pKEjVZFuEMABJtMy4049//p+6k5lEE9ywZqJtJzDetNuImTjSuDfFjJAjoTEihhQPyaanctQ86N
-        61OVupIoICOf9p7ZGTZf9ftMV
-X-Received: by 2002:ac8:7550:: with SMTP id b16mr157561qtr.114.1582551636531;
-        Mon, 24 Feb 2020 05:40:36 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyt6oN5U/oTa2csPXnfRXiMAKAD9AwlAa2uq7VfRJWX7cd4YRox+4h9pKNIpt/2MVkBYa2GaQ==
-X-Received: by 2002:ac8:7550:: with SMTP id b16mr157532qtr.114.1582551636198;
-        Mon, 24 Feb 2020 05:40:36 -0800 (PST)
-Received: from redhat.com (bzq-79-178-2-214.red.bezeqint.net. [79.178.2.214])
-        by smtp.gmail.com with ESMTPSA id a192sm5892195qkb.53.2020.02.24.05.40.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 05:40:35 -0800 (PST)
-Date:   Mon, 24 Feb 2020 08:40:29 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Halil Pasic <pasic@linux.ibm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>, linux-s390@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        Michael Mueller <mimu@linux.ibm.com>
-Subject: Re: [PATCH 0/2] virtio: decouple protected guest RAM form
- VIRTIO_F_IOMMU_PLATFORM
-Message-ID: <20200224083845-mutt-send-email-mst@kernel.org>
-References: <20200220160606.53156-1-pasic@linux.ibm.com>
- <426e6972-0565-c931-e171-da0f58fbf856@redhat.com>
- <20200221155602.4de41fa7.pasic@linux.ibm.com>
- <0181712c-e533-fcfd-2638-8a0649d713dd@redhat.com>
- <20200224010607-mutt-send-email-mst@kernel.org>
- <b3c52c67-c740-a50e-2595-fe04d179c881@redhat.com>
- <20200224024641-mutt-send-email-mst@kernel.org>
- <08d6bdfb-9b49-c278-3c0b-2e02376cf0cf@redhat.com>
+        Mon, 24 Feb 2020 08:42:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1582551726; x=1614087726;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=dt2ZsR5KGBnBGqZxTpFYgfWI7bLFKN7JNRHXrQWWar8=;
+  b=FdiHJv9zU/dI4BWZ9qIHxcVevi8Xu7ISu9fqOiIlhpZd9HWOSULh+lzU
+   uW9WtLymUmg4SEgFwg2gCwVNbI4iNfYwoow9Tc7rPOzJrTLhPV7WPWm3N
+   OzYCmY1wY12sAILJkgX1dhZe5F5m9pO93BrzRiubpGbRWW5ltmG86yNVr
+   4=;
+IronPort-SDR: UUgnZmmZaH3T6RjtT44dGzKyOZqtMUA7LJGNJkg87/77Bt1q/cca31zToLy2aOCCXOMLeVK+eO
+ q0TntbULHd3Q==
+X-IronPort-AV: E=Sophos;i="5.70,480,1574121600"; 
+   d="scan'208";a="27088075"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2a-22cc717f.us-west-2.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 24 Feb 2020 13:42:04 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2a-22cc717f.us-west-2.amazon.com (Postfix) with ESMTPS id 4464AA255F;
+        Mon, 24 Feb 2020 13:42:02 +0000 (UTC)
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Mon, 24 Feb 2020 13:42:01 +0000
+Received: from uf25486d27d2d5b.ant.amazon.com (10.43.161.8) by
+ EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Mon, 24 Feb 2020 13:41:51 +0000
+From:   Talel Shenhar <talel@amazon.com>
+To:     <bp@alien8.de>, <mchehab@kernel.org>, <james.morse@arm.com>,
+        <talel@amazon.com>, <davem@davemloft.net>,
+        <gregkh@linuxfoundation.org>, <nicolas.ferre@microchip.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linux-edac@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
+        <hhhawa@amazon.com>, <ronenk@amazon.com>, <jonnyc@amazon.com>,
+        <hanochu@amazon.com>, <eitan@amazon.com>
+Subject: [PATCH v6 0/2] Amazon's Annapurna Labs Memory Controller EDAC
+Date:   Mon, 24 Feb 2020 15:41:30 +0200
+Message-ID: <20200224134132.23924-1-talel@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <08d6bdfb-9b49-c278-3c0b-2e02376cf0cf@redhat.com>
+Content-Type: text/plain
+X-Originating-IP: [10.43.161.8]
+X-ClientProxiedBy: EX13D35UWC002.ant.amazon.com (10.43.162.218) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 05:26:20PM +0800, Jason Wang wrote:
-> 
-> On 2020/2/24 下午3:48, Michael S. Tsirkin wrote:
-> > On Mon, Feb 24, 2020 at 02:45:03PM +0800, Jason Wang wrote:
-> > > On 2020/2/24 下午2:06, Michael S. Tsirkin wrote:
-> > > > On Mon, Feb 24, 2020 at 12:01:57PM +0800, Jason Wang wrote:
-> > > > > On 2020/2/21 下午10:56, Halil Pasic wrote:
-> > > > > > On Fri, 21 Feb 2020 14:22:26 +0800
-> > > > > > Jason Wang <jasowang@redhat.com> wrote:
-> > > > > > 
-> > > > > > > On 2020/2/21 上午12:06, Halil Pasic wrote:
-> > > > > > > > Currently if one intends to run a memory protection enabled VM with
-> > > > > > > > virtio devices and linux as the guest OS, one needs to specify the
-> > > > > > > > VIRTIO_F_IOMMU_PLATFORM flag for each virtio device to make the guest
-> > > > > > > > linux use the DMA API, which in turn handles the memory
-> > > > > > > > encryption/protection stuff if the guest decides to turn itself into
-> > > > > > > > a protected one. This however makes no sense due to multiple reasons:
-> > > > > > > > * The device is not changed by the fact that the guest RAM is
-> > > > > > > > protected. The so called IOMMU bypass quirk is not affected.
-> > > > > > > > * This usage is not congruent with  standardised semantics of
-> > > > > > > > VIRTIO_F_IOMMU_PLATFORM. Guest memory protected is an orthogonal reason
-> > > > > > > > for using DMA API in virtio (orthogonal with respect to what is
-> > > > > > > > expressed by VIRTIO_F_IOMMU_PLATFORM).
-> > > > > > > > 
-> > > > > > > > This series aims to decouple 'have to use DMA API because my (guest) RAM
-> > > > > > > > is protected' and 'have to use DMA API because the device told me
-> > > > > > > > VIRTIO_F_IOMMU_PLATFORM'.
-> > > > > > > > 
-> > > > > > > > Please find more detailed explanations about the conceptual aspects in
-> > > > > > > > the individual patches. There is however also a very practical problem
-> > > > > > > > that is addressed by this series.
-> > > > > > > > 
-> > > > > > > > For vhost-net the feature VIRTIO_F_IOMMU_PLATFORM has the following side
-> > > > > > > > effect The vhost code assumes it the addresses on the virtio descriptor
-> > > > > > > > ring are not guest physical addresses but iova's, and insists on doing a
-> > > > > > > > translation of these regardless of what transport is used (e.g. whether
-> > > > > > > > we emulate a PCI or a CCW device). (For details see commit 6b1e6cc7855b
-> > > > > > > > "vhost: new device IOTLB API".) On s390 this results in severe
-> > > > > > > > performance degradation (c.a. factor 10).
-> > > > > > > Do you see a consistent degradation on the performance, or it only
-> > > > > > > happen when for during the beginning of the test?
-> > > > > > > 
-> > > > > > AFAIK the degradation is consistent.
-> > > > > > 
-> > > > > > > > BTW with ccw I/O there is
-> > > > > > > > (architecturally) no IOMMU, so the whole address translation makes no
-> > > > > > > > sense in the context of virtio-ccw.
-> > > > > > > I suspect we can do optimization in qemu side.
-> > > > > > > 
-> > > > > > > E.g send memtable entry via IOTLB API when vIOMMU is not enabled.
-> > > > > > > 
-> > > > > > > If this makes sense, I can draft patch to see if there's any difference.
-> > > > > > Frankly I would prefer to avoid IOVAs on the descriptor ring (and the
-> > > > > > then necessary translation) for virtio-ccw altogether. But Michael
-> > > > > > voiced his opinion that we should mandate F_IOMMU_PLATFORM for devices
-> > > > > > that could be used with guests running in protected mode. I don't share
-> > > > > > his opinion, but that's an ongoing discussion.
-> > > > > > 
-> > > > > > Should we end up having to do translation from IOVA in vhost, we are
-> > > > > > very interested in that translation being fast and efficient.
-> > > > > > 
-> > > > > > In that sense we would be very happy to test any optimization that aim
-> > > > > > into that direction.
-> > > > > > 
-> > > > > > Thank you very much for your input!
-> > > > > Using IOTLB API on platform without IOMMU support is not intended. Please
-> > > > > try the attached patch to see if it helps.
-> > > > > 
-> > > > > Thanks
-> > > > > 
-> > > > > 
-> > > > > > Regards,
-> > > > > > Halil
-> > > > > > 
-> > > > > > > Thanks
-> > > > > > > 
-> > > > > > > 
-> > > > > > > > Halil Pasic (2):
-> > > > > > > >       mm: move force_dma_unencrypted() to mem_encrypt.h
-> > > > > > > >       virtio: let virtio use DMA API when guest RAM is protected
-> > > > > > > > 
-> > > > > > > >      drivers/virtio/virtio_ring.c |  3 +++
-> > > > > > > >      include/linux/dma-direct.h   |  9 ---------
-> > > > > > > >      include/linux/mem_encrypt.h  | 10 ++++++++++
-> > > > > > > >      3 files changed, 13 insertions(+), 9 deletions(-)
-> > > > > > > > 
-> > > > > > > > 
-> > > > > > > > base-commit: ca7e1fd1026c5af6a533b4b5447e1d2f153e28f2
-> > > > > >From 66fa730460875ac99e81d7db2334cd16bb1d2b27 Mon Sep 17 00:00:00 2001
-> > > > > From: Jason Wang <jasowang@redhat.com>
-> > > > > Date: Mon, 24 Feb 2020 12:00:10 +0800
-> > > > > Subject: [PATCH] virtio: turn on IOMMU_PLATFORM properly
-> > > > > 
-> > > > > When transport does not support IOMMU, we should clear IOMMU_PLATFORM
-> > > > > even if the device and vhost claims to support that. This help to
-> > > > > avoid the performance overhead caused by unnecessary IOTLB miss/update
-> > > > > transactions on such platform.
-> > > > > 
-> > > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > > > ---
-> > > > >    hw/virtio/virtio-bus.c | 6 +++---
-> > > > >    1 file changed, 3 insertions(+), 3 deletions(-)
-> > > > > 
-> > > > > diff --git a/hw/virtio/virtio-bus.c b/hw/virtio/virtio-bus.c
-> > > > > index d6332d45c3..2741b9fdd2 100644
-> > > > > --- a/hw/virtio/virtio-bus.c
-> > > > > +++ b/hw/virtio/virtio-bus.c
-> > > > > @@ -47,7 +47,6 @@ void virtio_bus_device_plugged(VirtIODevice *vdev, Error **errp)
-> > > > >        VirtioBusState *bus = VIRTIO_BUS(qbus);
-> > > > >        VirtioBusClass *klass = VIRTIO_BUS_GET_CLASS(bus);
-> > > > >        VirtioDeviceClass *vdc = VIRTIO_DEVICE_GET_CLASS(vdev);
-> > > > > -    bool has_iommu = virtio_host_has_feature(vdev, VIRTIO_F_IOMMU_PLATFORM);
-> > > > >        Error *local_err = NULL;
-> > > > >        DPRINTF("%s: plug device.\n", qbus->name);
-> > > > > @@ -77,10 +76,11 @@ void virtio_bus_device_plugged(VirtIODevice *vdev, Error **errp)
-> > > > >            return;
-> > > > >        }
-> > > > > -    if (klass->get_dma_as != NULL && has_iommu) {
-> > > > > -        virtio_add_feature(&vdev->host_features, VIRTIO_F_IOMMU_PLATFORM);
-> > > > > +    if (false && klass->get_dma_as != NULL &&
-> > > > > +        virtio_host_has_feature(vdev, VIRTIO_F_IOMMU_PLATFORM)) {
-> > > > >            vdev->dma_as = klass->get_dma_as(qbus->parent);
-> > > > >        } else {
-> > > > > +        virtio_clear_feature(&vdev->host_features, VIRTIO_F_IOMMU_PLATFORM);
-> > > > >            vdev->dma_as = &address_space_memory;
-> > > > >        }
-> > > > >    }
-> > > > This seems to clear it unconditionally. I guess it's just a debugging
-> > > > patch, the real one will come later?
-> > > 
-> > > My bad, here's the correct one.
-> > > 
-> > > Thanks
-> > > 
-> > > 
-> > > > > -- 
-> > > > > 2.19.1
-> > > > > 
-> > > >From b8a8b582f46bb86c7a745b272db7b744779e5cc7 Mon Sep 17 00:00:00 2001
-> > > From: Jason Wang <jasowang@redhat.com>
-> > > Date: Mon, 24 Feb 2020 12:00:10 +0800
-> > > Subject: [PATCH] virtio: turn on IOMMU_PLATFORM properly
-> > > 
-> > > When transport does not support IOMMU, we should clear IOMMU_PLATFORM
-> > > even if the device and vhost claims to support that. This help to
-> > > avoid the performance overhead caused by unnecessary IOTLB miss/update
-> > > transactions on such platform.
-> > > 
-> > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > ---
-> > >   hw/virtio/virtio-bus.c | 6 +++---
-> > >   1 file changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/hw/virtio/virtio-bus.c b/hw/virtio/virtio-bus.c
-> > > index d6332d45c3..4be64e193e 100644
-> > > --- a/hw/virtio/virtio-bus.c
-> > > +++ b/hw/virtio/virtio-bus.c
-> > > @@ -47,7 +47,6 @@ void virtio_bus_device_plugged(VirtIODevice *vdev, Error **errp)
-> > >       VirtioBusState *bus = VIRTIO_BUS(qbus);
-> > >       VirtioBusClass *klass = VIRTIO_BUS_GET_CLASS(bus);
-> > >       VirtioDeviceClass *vdc = VIRTIO_DEVICE_GET_CLASS(vdev);
-> > > -    bool has_iommu = virtio_host_has_feature(vdev, VIRTIO_F_IOMMU_PLATFORM);
-> > >       Error *local_err = NULL;
-> > >       DPRINTF("%s: plug device.\n", qbus->name);
-> > > @@ -77,10 +76,11 @@ void virtio_bus_device_plugged(VirtIODevice *vdev, Error **errp)
-> > >           return;
-> > >       }
-> > > -    if (klass->get_dma_as != NULL && has_iommu) {
-> > > -        virtio_add_feature(&vdev->host_features, VIRTIO_F_IOMMU_PLATFORM);
-> > So it looks like this line is unnecessary, but it's an unrelated
-> > cleanup, right?
-> 
-> 
-> Yes.
-> 
-> 
-> > 
-> > > +    if (klass->get_dma_as != NULL &&
-> > > +        virtio_host_has_feature(vdev, VIRTIO_F_IOMMU_PLATFORM)) {
-> > >           vdev->dma_as = klass->get_dma_as(qbus->parent);
-> > >       } else {
-> > > +        virtio_clear_feature(&vdev->host_features, VIRTIO_F_IOMMU_PLATFORM);
-> > 
-> > Of course any change like that will have to affect migration compat, etc.
-> > Can't we clear the bit when we are sending the features to vhost
-> > instead?
-> 
-> 
-> That's better.
-> 
-> How about attached?
-> 
-> Thanks
-> 
-> 
-> > 
-> > 
-> > >           vdev->dma_as = &address_space_memory;
-> > >       }
-> > >   }
-> > > -- 
-> > > 2.19.1
-> > > 
+This series introduces support for Amazon's Annapurna Labs Memory
+Controller EDAC driver.
 
-> >From 3177c5194c729f3056b84c67664c59b9b949bb76 Mon Sep 17 00:00:00 2001
-> From: Jason Wang <jasowang@redhat.com>
-> Date: Mon, 24 Feb 2020 17:24:14 +0800
-> Subject: [PATCH] vhost: do not set VIRTIO_F_IOMMU_PLATFORM when IOMMU is not
->  used
-> 
-> We enable device IOTLB unconditionally when VIRTIO_F_IOMMU_PLATFORM is
-> negotiated. This lead unnecessary IOTLB miss/update transactions when
-> IOMMU is used. This patch fixes this.
-> 
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  hw/net/virtio-net.c | 3 +++
->  hw/virtio/vhost.c   | 4 +---
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/hw/net/virtio-net.c b/hw/net/virtio-net.c
-> index 3627bb1717..0d50e8bd34 100644
-> --- a/hw/net/virtio-net.c
-> +++ b/hw/net/virtio-net.c
-> @@ -879,6 +879,9 @@ static void virtio_net_set_features(VirtIODevice *vdev, uint64_t features)
->          virtio_net_apply_guest_offloads(n);
->      }
->  
-> +    if (vdev->dma_as == &address_space_memory)
-> +        features &= ~(1ULL << VIRTIO_F_IOMMU_PLATFORM);
-> +
->      for (i = 0;  i < n->max_queues; i++) {
->          NetClientState *nc = qemu_get_subqueue(n->nic, i);
+Changes since v5:
+=================
+- rebased and retested for tag Linux 5.6-rc2
+- added Reviewed-By for dt-binding (Rob Herring <robh@kernel.org>)
+- added Reviewed-By for driver (James Morse <james.morse@arm.com>)
 
-This pokes at acked features. I think they are also
-guest visible ...
+Changes since v4:
+=================
+- fixed dt-binding interrupt to have min of 1
+- updated dt-binding GPL-2.0 to GPL-2.0-only
+- changed writel to relaxed flavor
+- added managed device driver unwind
 
-> diff --git a/hw/virtio/vhost.c b/hw/virtio/vhost.c
-> index 9edfadc81d..711b1136f6 100644
-> --- a/hw/virtio/vhost.c
-> +++ b/hw/virtio/vhost.c
-> @@ -288,9 +288,7 @@ static inline void vhost_dev_log_resize(struct vhost_dev *dev, uint64_t size)
->  
->  static int vhost_dev_has_iommu(struct vhost_dev *dev)
->  {
-> -    VirtIODevice *vdev = dev->vdev;
-> -
-> -    return virtio_host_has_feature(vdev, VIRTIO_F_IOMMU_PLATFORM);
-> +    return virtio_has_feature(dev->acked_features, VIRTIO_F_IOMMU_PLATFORM);
->  }
->  
->  static void *vhost_memory_map(struct vhost_dev *dev, hwaddr addr,
-> -- 
-> 2.19.1
-> 
+Changes since v3:
+=================
+- removed quotation marks and hyphen from compatible dt-binding
+- added interrupts and interrupt-names description to dt-binding
+- added missing include to dt-binding
+
+Changes since v2:
+=================
+- added missing includes
+- aggregated variables to same line
+- removed ranks read
+- added spinlock to mc reporting
+- made irq handler clearer
+- freed irq before freeing device memory
+- changed Kconfig to tristate
+- added COMPILE_TEST to Kconfig
+- converted dt binding to new scheme
+- used devm_platform_ioremap_resource instead of get&ioremap
+
+Changes since v1:
+=================
+- updated dt binding node name and added Rob Reviewed-By
+- removed auto selecting of this driver
+
+
+Talel Shenhar (2):
+  dt-bindings: edac: al-mc-edac: Amazon's Annapurna Labs Memory
+    Controller EDAC
+  EDAC: al-mc-edac: Introduce Amazon's Annapurna Labs Memory Controller
+    EDAC
+
+ .../bindings/edac/amazon,al-mc-edac.yaml      |  52 +++
+ MAINTAINERS                                   |   7 +
+ drivers/edac/Kconfig                          |   7 +
+ drivers/edac/Makefile                         |   1 +
+ drivers/edac/al_mc_edac.c                     | 355 ++++++++++++++++++
+ 5 files changed, 422 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/edac/amazon,al-mc-edac.yaml
+ create mode 100644 drivers/edac/al_mc_edac.c
+
+-- 
+2.17.1
 
