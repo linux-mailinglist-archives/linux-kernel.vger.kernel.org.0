@@ -2,85 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9DE116AC0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:47:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68ECC16AC11
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:48:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbgBXQrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:47:55 -0500
-Received: from mga07.intel.com ([134.134.136.100]:54257 "EHLO mga07.intel.com"
+        id S1727968AbgBXQsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:48:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726762AbgBXQrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:47:55 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP; 24 Feb 2020 08:47:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,480,1574150400"; 
-   d="scan'208";a="229890996"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 24 Feb 2020 08:47:50 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1j6Gta-000FUS-Ae; Tue, 25 Feb 2020 00:47:50 +0800
-Date:   Tue, 25 Feb 2020 00:47:41 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     kbuild-all@lists.01.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: bcm: rpi: fix noderef.cocci warnings
-Message-ID: <20200224164741.GA25223@e50d7db646c3>
-References: <d197ab836d84b89b94ff1927872126767d921e94.1582533919.git-series.maxime@cerno.tech>
+        id S1727644AbgBXQr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 11:47:58 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51DC220836;
+        Mon, 24 Feb 2020 16:47:56 +0000 (UTC)
+Date:   Mon, 24 Feb 2020 11:47:54 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Greg KH <gregkh@linuxfoundation.org>, gustavo@embeddedor.com,
+        Thomas Gleixner <tglx@linutronix.de>, paulmck@kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v4 05/27] x86: Replace ist_enter() with nmi_enter()
+Message-ID: <20200224114754.0fb798c1@gandalf.local.home>
+In-Reply-To: <20200224163409.GJ18400@hirez.programming.kicks-ass.net>
+References: <20200221133416.777099322@infradead.org>
+        <20200221134215.328642621@infradead.org>
+        <CALCETrU7nezN7d3GEZ8h8HbRfvZ0+F9+Ahb7fLvZ9FVaHN9x2w@mail.gmail.com>
+        <20200221202246.GA14897@hirez.programming.kicks-ass.net>
+        <20200224104346.GJ14946@hirez.programming.kicks-ass.net>
+        <20200224112708.4f307ba3@gandalf.local.home>
+        <20200224163409.GJ18400@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d197ab836d84b89b94ff1927872126767d921e94.1582533919.git-series.maxime@cerno.tech>
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <lkp@intel.com>
+On Mon, 24 Feb 2020 17:34:09 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-drivers/clk/bcm/clk-raspberrypi.c:327:31-37: ERROR: application of sizeof to pointer
+> Looking at nmi_enter(), that leaves trace_hardirq_enter(), since we know
+> we marked rcu_nmi_enter() as NOKPROBES, per the patches elsewhere in
+> this series.
 
- sizeof when applied to a pointer typed expression gives the size of
- the pointer
+Maybe this was addressed already in the series, but I'm just looking at
+Linus's master branch we have:
 
-Generated by: scripts/coccinelle/misc/noderef.cocci
+#define nmi_enter()                                             \
+        do {                                                    \
+                arch_nmi_enter();                               \
+                printk_nmi_enter();                             \
+                lockdep_off();                                  \
+                ftrace_nmi_enter();                             \
+                BUG_ON(in_nmi());                               \
+                preempt_count_add(NMI_OFFSET + HARDIRQ_OFFSET); \
+                rcu_nmi_enter();                                \
+                trace_hardirq_enter();                          \
+        } while (0)
 
-Fixes: 56ccc5cfbb47 ("clk: bcm: rpi: Discover the firmware clocks")
-CC: Maxime Ripard <maxime@cerno.tech>
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
 
-url:    https://github.com/0day-ci/linux/commits/Maxime-Ripard/drm-vc4-Support-BCM2711-Display-Pipeline/20200224-172730
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+Just want to confirm that printk_nmi_enter(), lockdep_off(),
+and ftrace_nmi_enter() are all marked fully with NOKPROBE.
 
- clk-raspberrypi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -324,7 +324,7 @@ static struct clk_hw *raspberrypi_clk_re
- 		return hw;
- 	}
- 
--	data = devm_kzalloc(rpi->dev, sizeof(data), GFP_KERNEL);
-+	data = devm_kzalloc(rpi->dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return ERR_PTR(-ENOMEM);
- 	data->rpi = rpi;
+-- Steve
