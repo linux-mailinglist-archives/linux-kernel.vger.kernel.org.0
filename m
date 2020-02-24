@@ -2,139 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE65616B4F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:17:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 933B716B541
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbgBXXRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:17:54 -0500
-Received: from mga07.intel.com ([134.134.136.100]:15611 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726651AbgBXXRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:17:54 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 15:17:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
-   d="scan'208";a="410039160"
-Received: from wtczc53028gn.jf.intel.com (HELO skl-build) ([10.54.87.17])
-  by orsmga005.jf.intel.com with ESMTP; 24 Feb 2020 15:17:53 -0800
-Date:   Mon, 24 Feb 2020 15:17:42 -0800
-From:   "Christopher S. Hall" <christopher.s.hall@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        netdev <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        jacob.e.keller@intel.com,
-        Richard Cochran <richardcochran@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, sean.v.kelley@intel.com
-Subject: Re: [Intel PMC TGPIO Driver 5/5] drivers/ptp: Add PMC Time-Aware
- GPIO Driver
-Message-ID: <20200224231742.GD1508@skl-build>
-References: <20191211214852.26317-1-christopher.s.hall@intel.com>
- <20191211214852.26317-6-christopher.s.hall@intel.com>
- <CACRpkdbi7q5Vr2Lt12eirs3Z8GLL2AuLLrAARCHkYEYgKbYkHg@mail.gmail.com>
+        id S1728594AbgBXXWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:22:13 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34447 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728269AbgBXXWN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 18:22:13 -0500
+Received: by mail-lj1-f196.google.com with SMTP id x7so12010378ljc.1;
+        Mon, 24 Feb 2020 15:22:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zapvrSfkAB3Uioa0nez7vq8hKDYWAUjvXWTGHeYzWos=;
+        b=LBIgL2R1SmP7LAGLEx/TpjHkceKP+P5sl9nZPJ1hyTlDFlMVMehRZ6uaqa+TmbNivl
+         faAZ7A4q4sjwQCEyeZ9hJ/CvLphRdl5um0VN8X5bgUKsyc9F/ObUKhLmiWf5Q4tDJKzA
+         bDfgQmQtHNWU7CkdR2DYcddL8JvY18DthXp4V0ZjlqGewVd6CTgko6T9FVyF2K4aWs4L
+         xUOwjQnG7Dk8f8UNVz+n+d6LjH4R+kLPxipZum7HQwCjUAQIoHq+pp7+lByDPDinoxXv
+         ggEw+ESzTgAwIDbRlh2KpoQ+/avsXQ1LWmGn0C0+m2uT4LdPgEGuIUXtYpM+tGQ27rwi
+         Kd7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zapvrSfkAB3Uioa0nez7vq8hKDYWAUjvXWTGHeYzWos=;
+        b=POx4EAh/Ir1mibZFKohq8D55HPE0RABKqYXRzFYOD+qGwZLFPITuh+wMFP1cHR/wDF
+         WWADpCscaaXCThw/xGXMWoYXt9/KHeqgGcXavW7QJk92MJk8iqLaGfSsp24QGhcQ/3/I
+         zw4mvXt7uWOW3pLfW7TTBc/XvlfSUPqH+0wxP+ee9nwykykWVKF5J1Trhapqo+DG7HFf
+         06BOO/kpmaVv8LC2l+J7hpQ140BUACOkASUO5X+DDryUNhmwsMx9mVF+0s/RRQg1xph8
+         DDjx4A06+1LiESzyTmNcWUpj/s2kNKQJuRwqPW2V8c4tvUBQNAXIq2WzQ7xQQV6VcapV
+         HosQ==
+X-Gm-Message-State: APjAAAXhtVutycekfAHiEAEXNah/rdMz8WWtegOG7ru4DTgAdhRU/mlG
+        AsTCLpl4OHBGfnS46q/sM48=
+X-Google-Smtp-Source: APXvYqy2AwxPlR5v2q81yED52jU8uKleIyr/LgSvP0EERemjAGpVSBC7rLykQwNndyW1YfTzcJkBnQ==
+X-Received: by 2002:a2e:9d11:: with SMTP id t17mr32664047lji.169.1582586530637;
+        Mon, 24 Feb 2020 15:22:10 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id r10sm8154071ljk.9.2020.02.24.15.22.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2020 15:22:10 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Billy Laws <blaws05@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
+        Andrey Danin <danindrey@mail.ru>,
+        Gilles Grandou <gilles@grandou.net>,
+        Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/3] Introduce NVIDIA Tegra Partition Table
+Date:   Tue, 25 Feb 2020 02:18:38 +0300
+Message-Id: <20200224231841.26550-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbi7q5Vr2Lt12eirs3Z8GLL2AuLLrAARCHkYEYgKbYkHg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Some NVIDIA Tegra devices have GPT entry at a wrong location and others may
+even not have it at all. So either a custom workaround for GPT parsing or
+TegraPT support is needed for those devices if we want to support them in
+upstream kernel. The former solution was already rejected [1], let's try
+the latter.
 
-Thanks for the review.
+[1] https://patchwork.ozlabs.org/patch/1240809/
 
-On Fri, Feb 07, 2020 at 06:10:46PM +0100, Linus Walleij wrote:
-> Hi Christopher,
-> 
-> thanks for your patch!
-> 
-> On Fri, Jan 31, 2020 at 7:41 AM <christopher.s.hall@intel.com> wrote:
-> 
-> > From: Christopher Hall <christopher.s.hall@intel.com>
-> >
+Big thanks to everyone who helped with figuring out the TegraPT format!
 
-> > The driver implements to the expanded PHC interface. Input requires use of
-> > the user-polling interface. Also, since the ART clock can't be adjusted,
-> > modulating the output frequency uses the edge timestamp interface
-> > (EVENT_COUNT_TSTAMP2) and the PEROUT2 ioctl output frequency adjustment
-> > interface.
-> >
-> > Acknowledgment: Portions of the driver code were authored by Felipe
-> > Balbi <balbi@kernel.org>
-> >
-> > Signed-off-by: Christopher Hall <christopher.s.hall@intel.com>
+Dmitry Osipenko (3):
+  mmc: core: Add raw_boot_mult field to mmc_ext_csd
+  mmc: block: Add mmc_bdev_to_card() helper
+  partitions: Introduce NVIDIA Tegra Partition Table
 
-> This driver becomes a big confusion for the GPIO maintainer...
+ arch/arm/mach-tegra/tegra.c         |  35 +++
+ block/partitions/Kconfig            |   8 +
+ block/partitions/Makefile           |   1 +
+ block/partitions/check.c            |   4 +
+ block/partitions/tegra.c            | 373 ++++++++++++++++++++++++++++
+ block/partitions/tegra.h            |  71 ++++++
+ drivers/mmc/core/block.c            |  14 ++
+ drivers/mmc/core/mmc.c              |   2 +
+ include/linux/mmc/card.h            |   4 +
+ include/soc/tegra/bct.h             |  42 ++++
+ include/soc/tegra/common.h          |   9 +
+ include/soc/tegra/partition_table.h |  18 ++
+ 12 files changed, 581 insertions(+)
+ create mode 100644 block/partitions/tegra.c
+ create mode 100644 block/partitions/tegra.h
+ create mode 100644 include/soc/tegra/bct.h
+ create mode 100644 include/soc/tegra/partition_table.h
 
-I see your concern. TGPIO is Intel's internal name for the device, but
-there's no reason we can't use some other terminology in the context of
-the Linux kernel. How about removing the GP? We could refer to the device
-as "timed I/O". I think that is still fairly descriptive, but removes the
-confusion. Does this help the problem?
+-- 
+2.24.0
 
-> > +config PTP_INTEL_PMC_TGPIO
-> > +       tristate "Intel PMC Timed GPIO"
-> > +       depends on X86
-> > +       depends on ACPI
-> > +       depends on PTP_1588_CLOCK
-> (...)
-> > +#include <linux/gpio.h>
-> 
-> Don't use this header in new code, use <linux/gpio/driver.h>
-> 
-> But it looks like you should just drop it because there is no GPIO
-> of that generic type going on at all?
-
-Yes. You're correct. Removed.
-
-> > +/* Control Register */
-> > +#define TGPIOCTL_EN                    BIT(0)
-> > +#define TGPIOCTL_DIR                   BIT(1)
-> > +#define TGPIOCTL_EP                    GENMASK(3, 2)
-> > +#define TGPIOCTL_EP_RISING_EDGE                (0 << 2)
-> > +#define TGPIOCTL_EP_FALLING_EDGE       (1 << 2)
-> > +#define TGPIOCTL_EP_TOGGLE_EDGE                (2 << 2)
-> > +#define TGPIOCTL_PM                    BIT(4)
-> 
-> OK this looks like some GPIO registers...
-> 
-> Then there is a bunch of PTP stuff I don't understand I suppose
-> related to the precision time protocol.
-> 
-> Could you explain to a simple soul like me what is going on?
-> Should I bother myself with this or is this "some other GPIO,
-> not what you work on" or could it be that it's something I should
-> review?
-
-The Timed GPIO device has some GPIO-like features, but is mostly used to
-import/export a clock signal. It doesn't implement PWM or some other "GP"
-features like reading/setting pin state. I think you can safely ignore
-the feature.
-
-> I get the impression that this so-called "general purpose I/O"
-> isn't very general purpose at all, it seems to be very PTP-purpose
-
-Yes. It is missing many of general purpose features.
-
-> rather, so this confusion needs to be explained in the commit
-> message and possibly in the code as well.
-> 
-> What is it for really?
-
-For import/export system clock, primarily.
-
-> Yours,
-> Linus Walleij
-
-Thanks,
-Christopher
