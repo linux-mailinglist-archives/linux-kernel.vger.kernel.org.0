@@ -2,86 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2B516B480
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:47:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8173016B486
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:49:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbgBXWrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 17:47:20 -0500
-Received: from ozlabs.org ([203.11.71.1]:33421 "EHLO ozlabs.org"
+        id S1728262AbgBXWtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 17:49:21 -0500
+Received: from mga12.intel.com ([192.55.52.136]:37327 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726651AbgBXWrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 17:47:19 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48RHJ54KSbz9sPR;
-        Tue, 25 Feb 2020 09:47:17 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1582584437;
-        bh=vfJOx5tLhhMomws9ueSanwVw/zLkBBGcyCECo+XL7EE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=D1Nb9GkFHHoYso8VO2hzVDarY4ayYPEIaHCSvftsIN4iKcTMmUYfp0icyWhelT3jk
-         pVcnGj3FJll26r/gL2IXExj+Saa8NXG0hr505VkNpUbhKWeZnCdV8phwYIRl40bZBv
-         FVsMIjDmHFzR57BLiwjHwLwKe8qrDaklaAjFcdT3kMwMDwq018V5Xmsmx1CXcO6UM5
-         YYMmv5Q5kdthvVpHVPjjT0FDjsFljLdkGQPb6VZY/hdhxl+gr2cTiS4uCw1pIQyxlI
-         Yg3HQDvOSBlL8uuN5ED4TAkyAGo9gK6+Sspsvi5GCbMIosKASiUdBAF3Uq6In8BJXt
-         5DDry5CrY/tdQ==
-Date:   Tue, 25 Feb 2020 09:47:17 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org, martin.varghese@nokia.com,
-        willemb@google.com
-Subject: Re: linux-next: build warning after merge of the net-next tree
-Message-ID: <20200225094717.241cef90@canb.auug.org.au>
-In-Reply-To: <20200224.144243.1485587034182183004.davem@davemloft.net>
-References: <20200225092736.137df206@canb.auug.org.au>
-        <20200224.144243.1485587034182183004.davem@davemloft.net>
+        id S1726651AbgBXWtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 17:49:21 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 14:49:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
+   d="scan'208";a="231269244"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga008.fm.intel.com with ESMTP; 24 Feb 2020 14:49:20 -0800
+Date:   Mon, 24 Feb 2020 14:49:20 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Alistair Delva <adelva@google.com>
+Cc:     linux-kernel@vger.kernel.org, Kenny Root <kroot@google.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, devicetree@vger.kernel.org,
+        linux-nvdimm@lists.01.org, kernel-team@android.com
+Subject: Re: [PATCH v2 1/3] libnvdimm/of_pmem: factor out region registration
+Message-ID: <20200224224920.GA8867@iweiny-DESK2.sc.intel.com>
+References: <20200224020815.139570-1-adelva@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7WdfuLsgSNjHxudAQ3i4qO6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200224020815.139570-1-adelva@google.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/7WdfuLsgSNjHxudAQ3i4qO6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Feb 23, 2020 at 06:08:13PM -0800, Alistair Delva wrote:
+> From: Kenny Root <kroot@google.com>
+> 
+> From: Kenny Root <kroot@google.com>
+> 
+> Factor out region registration for 'reg' node. A follow-up change will
+> use of_pmem_register_region() to handle memory-region nodes too.
 
-Hi Dave,
+Thanks!
 
-On Mon, 24 Feb 2020 14:42:43 -0800 (PST) David Miller <davem@davemloft.net>=
- wrote:
->
-> Sorry, my compiler didn't show this.
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-Yeah, these ones especially change with compiler version.  I am
-currently running gcc v9.2.1 if it matters.
-
-> I've committed the following into net-next, hopefully it does the trick:
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/7WdfuLsgSNjHxudAQ3i4qO6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5UUnUACgkQAVBC80lX
-0GyJcwf+OpfhwXjW2MtUL3rY/Aup9ojzEyDatjhR7JjeW7LxMavSo/ZJkq9Xctr9
-zOHUk9NznLJrg1JA5SXkO/h8nvPzYhB78bOZ79KgkNwepDjc4Ip71z0RpwLFv0x9
-Y6jFHlX/Y+LoWSCrUrrc00B0dJKiE4yXcmBfn8Cu2BEGBG3s0KGATTNkmFYxQuha
-JhyGgd336Ik48fG1CE967vfjomfKTQSbQEkrzPS+UkY5o9xtzFTXDOjDbaAF3Xcg
-L+5NS0if9VXhwlrM+TgkiWW7e2ystAXD37Tf3sGQpHg1FiVCnc91kgDN+Nn2K1oU
-o7CPaxN6r9GFRGx/AlCTLkoq3oBuuA==
-=vP2X
------END PGP SIGNATURE-----
-
---Sig_/7WdfuLsgSNjHxudAQ3i4qO6--
+> 
+> Signed-off-by: Kenny Root <kroot@google.com>
+> Signed-off-by: Alistair Delva <adelva@google.com>
+> Reviewed-by: "Oliver O'Halloran" <oohall@gmail.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-nvdimm@lists.01.org
+> Cc: kernel-team@android.com
+> ---
+>  drivers/nvdimm/of_pmem.c | 60 +++++++++++++++++++++++-----------------
+>  1 file changed, 35 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/of_pmem.c b/drivers/nvdimm/of_pmem.c
+> index 8224d1431ea9..fdf54494e8c9 100644
+> --- a/drivers/nvdimm/of_pmem.c
+> +++ b/drivers/nvdimm/of_pmem.c
+> @@ -14,6 +14,39 @@ struct of_pmem_private {
+>  	struct nvdimm_bus *bus;
+>  };
+>  
+> +static void of_pmem_register_region(struct platform_device *pdev,
+> +				    struct nvdimm_bus *bus,
+> +				    struct device_node *np,
+> +				    struct resource *res, bool is_volatile)
+> +{
+> +	struct nd_region_desc ndr_desc;
+> +	struct nd_region *region;
+> +
+> +	/*
+> +	 * NB: libnvdimm copies the data from ndr_desc into it's own
+> +	 * structures so passing a stack pointer is fine.
+> +	 */
+> +	memset(&ndr_desc, 0, sizeof(ndr_desc));
+> +	ndr_desc.numa_node = dev_to_node(&pdev->dev);
+> +	ndr_desc.target_node = ndr_desc.numa_node;
+> +	ndr_desc.res = res;
+> +	ndr_desc.of_node = np;
+> +	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
+> +
+> +	if (is_volatile)
+> +		region = nvdimm_volatile_region_create(bus, &ndr_desc);
+> +	else
+> +		region = nvdimm_pmem_region_create(bus, &ndr_desc);
+> +
+> +	if (!region)
+> +		dev_warn(&pdev->dev,
+> +			 "Unable to register region %pR from %pOF\n",
+> +			 ndr_desc.res, np);
+> +	else
+> +		dev_dbg(&pdev->dev, "Registered region %pR from %pOF\n",
+> +			ndr_desc.res, np);
+> +}
+> +
+>  static int of_pmem_region_probe(struct platform_device *pdev)
+>  {
+>  	struct of_pmem_private *priv;
+> @@ -46,31 +79,8 @@ static int of_pmem_region_probe(struct platform_device *pdev)
+>  			is_volatile ? "volatile" : "non-volatile",  np);
+>  
+>  	for (i = 0; i < pdev->num_resources; i++) {
+> -		struct nd_region_desc ndr_desc;
+> -		struct nd_region *region;
+> -
+> -		/*
+> -		 * NB: libnvdimm copies the data from ndr_desc into it's own
+> -		 * structures so passing a stack pointer is fine.
+> -		 */
+> -		memset(&ndr_desc, 0, sizeof(ndr_desc));
+> -		ndr_desc.numa_node = dev_to_node(&pdev->dev);
+> -		ndr_desc.target_node = ndr_desc.numa_node;
+> -		ndr_desc.res = &pdev->resource[i];
+> -		ndr_desc.of_node = np;
+> -		set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
+> -
+> -		if (is_volatile)
+> -			region = nvdimm_volatile_region_create(bus, &ndr_desc);
+> -		else
+> -			region = nvdimm_pmem_region_create(bus, &ndr_desc);
+> -
+> -		if (!region)
+> -			dev_warn(&pdev->dev, "Unable to register region %pR from %pOF\n",
+> -					ndr_desc.res, np);
+> -		else
+> -			dev_dbg(&pdev->dev, "Registered region %pR from %pOF\n",
+> -					ndr_desc.res, np);
+> +		of_pmem_register_region(pdev, bus, np, &pdev->resource[i],
+> +					is_volatile);
+>  	}
+>  
+>  	return 0;
+> -- 
+> 2.25.0.265.gbab2e86ba0-goog
+> 
