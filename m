@@ -2,107 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E71169CE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 05:10:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDA4B169CEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 05:16:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbgBXEJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 23:09:59 -0500
-Received: from mail27.static.mailgun.info ([104.130.122.27]:26873 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727202AbgBXEJ6 (ORCPT
+        id S1727237AbgBXEPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 23:15:45 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:47083 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbgBXEPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 23:09:58 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1582517398; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=nrgehuA5vlcZy6vJf6jRjU/2UWV2v8BoCSYVRst3lyM=; b=fk0g1frYq+2/Ni1a/2QKVeCQoEfy2mq/Xp4iPLE0dIqt5eYv7wDh24wTkdY3c16N+qQnMPyg
- DATQ1p3AqExVyrSX/7CMn3gdEbRDfhmOJ9f0K2RxjGP4sBJCTxcOeKiaB05WpjnDP6FWsYer
- 4rnfHfUbpnD1hLRe5321OXl49dA=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e534c90.7f0c04ac2ae8-smtp-out-n01;
- Mon, 24 Feb 2020 04:09:52 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A82F8C447A9; Mon, 24 Feb 2020 04:09:50 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E58A0C43383;
-        Mon, 24 Feb 2020 04:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E58A0C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        hongwus@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Evan Green <evgreen@chromium.org>,
-        Bean Huo <beanhuo@micron.com>,
+        Sun, 23 Feb 2020 23:15:45 -0500
+Received: by mail-oi1-f195.google.com with SMTP id a22so7703085oid.13
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 20:15:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FtOOndOWZSDXybYasUpcnffIRI9DWgK6w/MiME7iIyA=;
+        b=ubxAfdRSx4t292O11yEtyiS45hr76kV1ZivVX31imh2sVv75jLafbyUz7Sk1vhKyxp
+         U13Q/QyCrb1aj+hIbtw0GbB38ZxZTf8ujH/gF/AoxXfgmJIQZRUmNB+wz9ovq7qGobWp
+         G44SlHNyrlhH9etlitz8Coe5/JG8nsbDkfJCXZEdB2d57vC+27jxfoP7pvkjpGMwE2tv
+         UKWS3Qba+HfkFV3b9bj1Lw+a0LCULnCBDhQAcmEbJZatno/M2G5bGIAYZAF+xe3JMZSb
+         MpBmk1MgsDydiP+3bWDi+e8VGZtDdj2UKTO7P8FWNWodW+Olv4cSOHD49ywVJrYVUDsr
+         1ksA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FtOOndOWZSDXybYasUpcnffIRI9DWgK6w/MiME7iIyA=;
+        b=Fgb0QQb6Ak7phZ9iF1Ap2MbPUnik/uBW7+qgY8558YjtblooxzZBn16aTvyGYzfO+p
+         ufuzWmaRKG4l6GICczxaQUWWuxPGiL3eBQMXnuDNf7OaQ2GMJERTuzbZsTHfD5Ccaljp
+         Q/q06w/Crno/gQRhtN9uC3zuk3tmVInpL7zUyECq58+HtuMT4zgZX5R0EHuyOXVYUhwc
+         9Yjj1gyvfyKGjaptMxaZezjuVaj7+bZaZjC4XkotfOqbUDFUL8V33CvL4BAU0O9PK4/W
+         YhJ4p1d9vsYLO/KiIVXusj9zvXea0RC2MWzrFdgCkbfX6mq6jGlvlGszFqcxwzyMXAFj
+         SEtQ==
+X-Gm-Message-State: APjAAAXq3TVJ4AQiB9uNbF1bLOD9nTgGwY9anLhC0tK02sHhrKX2MbhW
+        y+5Zqvw1e6m7ih6qhZNzGW0=
+X-Google-Smtp-Source: APXvYqzq2PcrTKVvsY8h4Bm2ZVrzilS6ewqvNS0QEaJ85ba/Rqs8yck9S9qvBi4qg2zbS1IE0l8juQ==
+X-Received: by 2002:aca:5f87:: with SMTP id t129mr11397800oib.36.1582517744531;
+        Sun, 23 Feb 2020 20:15:44 -0800 (PST)
+Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id j13sm3701944oii.14.2020.02.23.20.15.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 23 Feb 2020 20:15:43 -0800 (PST)
+Date:   Sun, 23 Feb 2020 21:15:42 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Borislav Petkov <bp@alien8.de>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/2] scsi: ufs-qcom: Apply QUIRK_HOST_TACTIVATE for WDC UFS devices
-Date:   Sun, 23 Feb 2020 20:09:22 -0800
-Message-Id: <1582517363-11536-3-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1582517363-11536-1-git-send-email-cang@codeaurora.org>
-References: <1582517363-11536-1-git-send-email-cang@codeaurora.org>
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Michael Matz <matz@suse.de>, Fangrui Song <maskray@google.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 0/2] Stop generating .eh_frame sections
+Message-ID: <20200224041542.GA55909@ubuntu-m2-xlarge-x86>
+References: <20200222235709.GA3786197@rani.riverdale.lan>
+ <20200223193715.83729-1-nivedita@alum.mit.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200223193715.83729-1-nivedita@alum.mit.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Western Digital UFS devices require host's PA_TACTIVATE to be lower than
-device's PA_TACTIVATE, otherwise it may get stuck during hibern8 sequence.
+On Sun, Feb 23, 2020 at 02:37:13PM -0500, Arvind Sankar wrote:
+> In three places in the x86 kernel we are currently generating .eh_frame
+> sections only to discard them later via linker script. This is in the
+> boot code (setup.elf), the realmode trampoline (realmode.elf) and the
+> compressed kernel.
+> 
+> Implement Fangrui and Nick's suggestion [1] to fix KBUILD_CFLAGS by
+> adding -fno-asynchronous-unwind-tables to avoid generating .eh_frame
+> sections in the first place, rather than discarding it in the linker
+> script.
+> 
+> Arvind Sankar (2):
+>   arch/x86: Use -fno-asynchronous-unwind-tables to suppress .eh_frame sections
+>   arch/x86: Drop unneeded linker script discard of .eh_frame
+> 
+>  arch/x86/boot/Makefile                | 1 +
+>  arch/x86/boot/compressed/Makefile     | 1 +
+>  arch/x86/boot/setup.ld                | 1 -
+>  arch/x86/kernel/vmlinux.lds.S         | 3 ---
+>  arch/x86/realmode/rm/Makefile         | 1 +
+>  arch/x86/realmode/rm/realmode.lds.S   | 1 -
+>  drivers/firmware/efi/libstub/Makefile | 3 ++-
+>  7 files changed, 5 insertions(+), 6 deletions(-)
+> 
+> -- 
+> 2.24.1
+> 
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
----
- drivers/scsi/ufs/ufs-qcom.c   | 3 +++
- drivers/scsi/ufs/ufs_quirks.h | 1 +
- 2 files changed, 4 insertions(+)
+With both of these patches applied on top of next-20200221 and a revert
+of commit e11831d0ada3 ("x86/boot/compressed: Remove unnecessary
+sections from bzImage"), I do not see any .eh_frame sections in the
+following files:
 
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index c69c29a1c..4caa57f 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -956,6 +956,9 @@ static int ufs_qcom_apply_dev_quirks(struct ufs_hba *hba)
- 	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME)
- 		err = ufs_qcom_quirk_host_pa_saveconfigtime(hba);
- 
-+	if (hba->dev_info.wmanufacturerid == UFS_VENDOR_WDC)
-+		hba->dev_quirks |= UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE;
-+
- 	return err;
- }
- 
-diff --git a/drivers/scsi/ufs/ufs_quirks.h b/drivers/scsi/ufs/ufs_quirks.h
-index d0ab147..df7a1e6 100644
---- a/drivers/scsi/ufs/ufs_quirks.h
-+++ b/drivers/scsi/ufs/ufs_quirks.h
-@@ -15,6 +15,7 @@
- #define UFS_VENDOR_TOSHIBA     0x198
- #define UFS_VENDOR_SAMSUNG     0x1CE
- #define UFS_VENDOR_SKHYNIX     0x1AD
-+#define UFS_VENDOR_WDC         0x145
- 
- /**
-  * ufs_dev_fix - ufs device quirk info
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+$ readelf -S arch/x86/boot/setup.elf \
+arch/x86/realmode/rm/realmode.elf \
+arch/x86/boot/compressed/vmlinux \
+vmlinux |& grep eh_frame
+
+Additionally, I can see -fno-asynchronous-unwind-tables get added to
+files that didn't previously have it.
+
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
