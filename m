@@ -2,133 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E594C169FD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:18:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F4152169FE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:19:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbgBXISP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:18:15 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:45181 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbgBXISO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:18:14 -0500
-Received: by mail-il1-f199.google.com with SMTP id w6so16871360ill.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 00:18:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=JLPU87tnj1f/dwZOZUf4sgSYUIjyyQgE9NDCtchiKHg=;
-        b=iDiJoJom4dFwQsql6tud6GBE+qqlhd/b5s15nM6V0Q8YYDVqJTHGy3k9KS7EGDt3I9
-         tbDERtfpJu7N0rlSmhtX1kpUFf8mjF2fxftcYb4hZUF3kI+yBMa9CmCHWfz5Py5UHcJ5
-         kymi/3ssjpVCQKiCd1bZdOcE3gU9PCikBlxGRLi3vt287niJIHSu4OHoJBTlfiMkK4ya
-         D9q2Y9PnOldw45OlRs1IWOtoT25Trk2d3pFbiDQOLzXTqUw2Mvo9Lxnn+EEyjNtG/RiN
-         tlxgf7n6qPWKRGblK3VMlGC5n0W6R5exvAF7TJj2TloAqxu/eDvHXyKYIkCFKTwIX8mx
-         HIYA==
-X-Gm-Message-State: APjAAAVj2bEwmqCsNMYqOk/VJY1M/btrTJuM3o+kd3qGUUKF73XGtmQm
-        msVCSdZ4peXY21qPJHGszpXs0WkdP86ssS2KOUwrGi/bZJ8U
-X-Google-Smtp-Source: APXvYqweqrylK3pukroyPFpF1CqM/vmRCGM+KOrt5PclygW/HBOfAPZfaJMekDpiEsgrLRmdG8dMFShCCyW/LuXmtBU0b3/BSwvs
+        id S1727277AbgBXITQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:19:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726509AbgBXITQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 03:19:16 -0500
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 112FE20658;
+        Mon, 24 Feb 2020 08:19:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582532355;
+        bh=UG25DR76Ubm+4It1jFHBHY9eXtM6lci9jA6RyXpUoKY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dDLyM1NxTxWqYDDCvpr7XSc8hlxvB05ruv9u3xgLz25YmB5SnhN95CiXSj72Q/QuP
+         3Lib4QLAqYgNe/QsWpwBlF52oiQkbSTCa6JkF6o4saNTcA/wQQRnKj93F+6XK/o6Yu
+         tw/Vkar+4YX3RHFFTMsdWo87KlNQEmwsbvTQJADk=
+Date:   Mon, 24 Feb 2020 00:19:13 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jiri Slaby <jslaby@suse.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Eric Dumazet <edumazet@google.com>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH] vt: vt_ioctl: fix VT_DISALLOCATE freeing in-use virtual
+ console
+Message-ID: <20200224081913.GA299238@sol.localdomain>
+References: <0000000000006663de0598d25ab1@google.com>
+ <20200224071247.283098-1-ebiggers@kernel.org>
+ <8fb00b38-abd0-6895-3ad2-85a6f05ee6cf@suse.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:3a07:: with SMTP id h7mr57387937ila.203.1582532294128;
- Mon, 24 Feb 2020 00:18:14 -0800 (PST)
-Date:   Mon, 24 Feb 2020 00:18:14 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003cbb40059f4e0346@google.com>
-Subject: kernel panic: audit: backlog limit exceeded
-From:   syzbot <syzbot+9a5e789e4725b9ef1316@syzkaller.appspotmail.com>
-To:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
-        dan.carpenter@oracle.com, davem@davemloft.net, eparis@redhat.com,
-        fzago@cray.com, gregkh@linuxfoundation.org, john.hammond@intel.com,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        mareklindner@neomailbox.ch, netdev@vger.kernel.org,
-        paul@paul-moore.com, sw@simonwunderlich.de,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8fb00b38-abd0-6895-3ad2-85a6f05ee6cf@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Feb 24, 2020 at 09:04:33AM +0100, Jiri Slaby wrote:
+> > KASAN report:
+> > 	BUG: KASAN: use-after-free in con_shutdown+0x76/0x80 drivers/tty/vt/vt.c:3278
+> > 	Write of size 8 at addr ffff88806a4ec108 by task syz_vt/129
+> > 
+> > 	CPU: 0 PID: 129 Comm: syz_vt Not tainted 5.6.0-rc2 #11
+> > 	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20191223_100556-anatol 04/01/2014
+> > 	Call Trace:
+> > 	 [...]
+> > 	 con_shutdown+0x76/0x80 drivers/tty/vt/vt.c:3278
+> > 	 release_tty+0xa8/0x410 drivers/tty/tty_io.c:1514
+> > 	 tty_release_struct+0x34/0x50 drivers/tty/tty_io.c:1629
+> > 	 tty_release+0x984/0xed0 drivers/tty/tty_io.c:1789
+> > 	 [...]
+> > 
+> > 	Allocated by task 129:
+> > 	 [...]
+> > 	 kzalloc include/linux/slab.h:669 [inline]
+> > 	 vc_allocate drivers/tty/vt/vt.c:1085 [inline]
+> > 	 vc_allocate+0x1ac/0x680 drivers/tty/vt/vt.c:1066
+> > 	 con_install+0x4d/0x3f0 drivers/tty/vt/vt.c:3229
+> > 	 tty_driver_install_tty drivers/tty/tty_io.c:1228 [inline]
+> > 	 tty_init_dev+0x94/0x350 drivers/tty/tty_io.c:1341
+> > 	 tty_open_by_driver drivers/tty/tty_io.c:1987 [inline]
+> > 	 tty_open+0x3ca/0xb30 drivers/tty/tty_io.c:2035
+> > 	 [...]
+> > 
+> > 	Freed by task 130:
+> > 	 [...]
+> > 	 kfree+0xbf/0x1e0 mm/slab.c:3757
+> > 	 vt_disallocate drivers/tty/vt/vt_ioctl.c:300 [inline]
+> > 	 vt_ioctl+0x16dc/0x1e30 drivers/tty/vt/vt_ioctl.c:818
+> > 	 tty_ioctl+0x9db/0x11b0 drivers/tty/tty_io.c:2660
+> 
+> That means the associated tty_port is destroyed while the tty layer
+> still has a tty on the top of it. That is a BUG anyway.
+> 
+> > Fixes: 4001d7b7fc27 ("vt: push down the tty lock so we can see what is left to tackle")
+> > Cc: <stable@vger.kernel.org> # v3.4+
+> > Reported-by: syzbot+522643ab5729b0421998@syzkaller.appspotmail.com
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> >  drivers/tty/vt/vt_ioctl.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
+> > index ee6c91ef1f6cf..57d681706fa85 100644
+> > --- a/drivers/tty/vt/vt_ioctl.c
+> > +++ b/drivers/tty/vt/vt_ioctl.c
+> > @@ -42,7 +42,7 @@
+> >  char vt_dont_switch;
+> >  extern struct tty_driver *console_driver;
+> >  
+> > -#define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
+> > +#define VT_IS_IN_USE(i)	(console_driver->ttys[i] != NULL)
+> >  #define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_cons[i].d == sel_cons)
+> >  
+> >  /*
+> > @@ -288,12 +288,14 @@ static int vt_disallocate(unsigned int vc_num)
+> >  	struct vc_data *vc = NULL;
+> >  	int ret = 0;
+> >  
+> > +	mutex_lock(&tty_mutex); /* synchronize with release_tty() */
+> >  	console_lock();
+> 
+> Is this lock dependency new or pre-existing?
 
-syzbot found the following crash on:
+It's the same locking order used during release_tty().
 
-HEAD commit:    36a44bcd Merge branch 'bnxt_en-shutdown-and-kexec-kdump-re..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=148bfdd9e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=768cc3d3e277cc16
-dashboard link: https://syzkaller.appspot.com/bug?extid=9a5e789e4725b9ef1316
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=151b1109e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=128bfdd9e00000
+> 
+> Locking tty_mutex here does not sound quite right. What about switching
+> vc_data to proper refcounting based on tty_port? (Instead of doing
+> tty_port_destroy and kfree in vt_disallocate*.)
+> 
 
-The bug was bisected to:
+How would that work?  We could make struct vc_data refcounted such that
+VT_DISALLOCATE doesn't free it right away but rather it's freed in the next
+con_shutdown().  But release_tty() still accesses tty->port afterwards, which is
+part of the 'struct vc_data' that would have just been freed.
 
-commit 0c1b9970ddd4cc41002321c3877e7f91aacb896d
-Author: Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Fri Jul 28 14:42:27 2017 +0000
-
-    staging: lustre: lustre: Off by two in lmv_fid2path()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17e6c3e9e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=1416c3e9e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1016c3e9e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9a5e789e4725b9ef1316@syzkaller.appspotmail.com
-Fixes: 0c1b9970ddd4 ("staging: lustre: lustre: Off by two in lmv_fid2path()")
-
-audit: audit_backlog=13 > audit_backlog_limit=7
-audit: audit_lost=1 audit_rate_limit=0 audit_backlog_limit=7
-Kernel panic - not syncing: audit: backlog limit exceeded
-CPU: 1 PID: 9913 Comm: syz-executor024 Not tainted 5.6.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- panic+0x2e3/0x75c kernel/panic.c:221
- audit_panic.cold+0x32/0x32 kernel/audit.c:307
- audit_log_lost kernel/audit.c:377 [inline]
- audit_log_lost+0x8b/0x180 kernel/audit.c:349
- audit_log_start kernel/audit.c:1788 [inline]
- audit_log_start+0x70e/0x7c0 kernel/audit.c:1745
- audit_log+0x95/0x120 kernel/audit.c:2345
- xt_replace_table+0x61d/0x830 net/netfilter/x_tables.c:1413
- __do_replace+0x1da/0x950 net/ipv6/netfilter/ip6_tables.c:1084
- do_replace net/ipv6/netfilter/ip6_tables.c:1157 [inline]
- do_ip6t_set_ctl+0x33a/0x4c8 net/ipv6/netfilter/ip6_tables.c:1681
- nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
- nf_setsockopt+0x77/0xd0 net/netfilter/nf_sockopt.c:115
- ipv6_setsockopt net/ipv6/ipv6_sockglue.c:949 [inline]
- ipv6_setsockopt+0x147/0x180 net/ipv6/ipv6_sockglue.c:933
- tcp_setsockopt net/ipv4/tcp.c:3165 [inline]
- tcp_setsockopt+0x8f/0xe0 net/ipv4/tcp.c:3159
- sock_common_setsockopt+0x94/0xd0 net/core/sock.c:3149
- __sys_setsockopt+0x261/0x4c0 net/socket.c:2130
- __do_sys_setsockopt net/socket.c:2146 [inline]
- __se_sys_setsockopt net/socket.c:2143 [inline]
- __x64_sys_setsockopt+0xbe/0x150 net/socket.c:2143
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x44720a
-Code: 49 89 ca b8 37 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 1a e0 fb ff c3 66 0f 1f 84 00 00 00 00 00 49 89 ca b8 36 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 fa df fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007ffd032dec78 EFLAGS: 00000286 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000044720a
-RDX: 0000000000000040 RSI: 0000000000000029 RDI: 0000000000000003
-RBP: 00007ffd032deda0 R08: 00000000000003b8 R09: 0000000000004000
-R10: 00000000006d7b40 R11: 0000000000000286 R12: 00007ffd032deca0
-R13: 00000000006d9d60 R14: 0000000000000029 R15: 00000000006d7ba0
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+- Eric
