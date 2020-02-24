@@ -2,113 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7857016AF70
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 19:41:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 120C116AF7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 19:42:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbgBXSlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 13:41:10 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34724 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbgBXSlK (ORCPT
+        id S1728011AbgBXSmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 13:42:21 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:50947 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727689AbgBXSmU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 13:41:10 -0500
-Received: by mail-ot1-f65.google.com with SMTP id j16so9683567otl.1;
-        Mon, 24 Feb 2020 10:41:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+sVRf7GGeylhrZHXm0oszIDVdS6Xo7uktXxhGGTwofg=;
-        b=iydNxzvclwjihQb67loXDkI8fF91EHbg9XHu2Ik2mIzwnEOWCM9bB33SM31iz1pXO8
-         A9A1kQFNAZ9RbDV9LkDcTsssEIZoq/d1mcvRd50vZ/eh2tuMSmT0hmqSAS0xLjavUlfn
-         P29+S9PK5vC2RvxTsj2r3+yjqXBzku0WOfQvpkT3kv6M+nIxbXMja/M35gv1RpIindjy
-         AERUuuuJbG43MqZgMt3wLus7w9Yi8dvbDeDVe/Z/xKj8v0YM0xrCvwMSE9Siyk0EodaP
-         fU6RwolapCkZNJRYhq1IG4fil3hdRY2opJ6zNxvE+DMJF7kOTPON06pzC2CAdH9aulbl
-         J8dA==
-X-Gm-Message-State: APjAAAVhWJ69d5jXUqxbxJp/wdGnA3DUoqnwtPUhxN/lqLbuHjPGvU3r
-        Lj9m75qC9+Guh1iCKelYrw==
-X-Google-Smtp-Source: APXvYqwOcQ+Wis2rH/zphuGcXoi5E6fO/77Hc1wq8cqj519RKyKMhXx/ovrxEJoXA98US2+hSw3maw==
-X-Received: by 2002:a9d:6e02:: with SMTP id e2mr42973744otr.194.1582569668643;
-        Mon, 24 Feb 2020 10:41:08 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i6sm4685288oto.62.2020.02.24.10.41.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 10:41:08 -0800 (PST)
-Received: (nullmailer pid 5865 invoked by uid 1000);
-        Mon, 24 Feb 2020 18:41:07 -0000
-Date:   Mon, 24 Feb 2020 12:41:07 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>, devicetree@vger.kernel.org
-Subject: Re: [PATCH 29/89] dt-bindings: display: Convert VC4 bindings to
- schemas
-Message-ID: <20200224184107.GA4189@bogus>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
- <bf8aa2deea50cc3599caeb9ed1a07556353415df.1582533919.git-series.maxime@cerno.tech>
+        Mon, 24 Feb 2020 13:42:20 -0500
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1j6Ify-0002Ue-0v; Mon, 24 Feb 2020 19:41:54 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 614FA104088; Mon, 24 Feb 2020 19:41:53 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     David Miller <davem@davemloft.net>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sebastian Sewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Clark Williams <williams@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        Jakub Kicinski <kuba@kernel.org>
+Subject: [patch V4 10/22] bpf: Provide bpf_prog_run_pin_on_cpu() helper
+In-Reply-To: <20200224145643.474592620@linutronix.de>
+References: <20200224140131.461979697@linutronix.de> <20200224145643.474592620@linutronix.de>
+Date:   Mon, 24 Feb 2020 19:41:53 +0100
+Message-ID: <87pne3n7ym.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf8aa2deea50cc3599caeb9ed1a07556353415df.1582533919.git-series.maxime@cerno.tech>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Feb 2020 10:06:31 +0100, Maxime Ripard wrote:
-> The BCM283x SoCs have a display pipeline composed of several controllers
-> with device tree bindings that are supported by Linux.
-> 
-> Now that we have the DT validation in place, let's split into separate
-> files and convert the device tree bindings for those controllers to
-> schemas.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->  Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt              | 174 +------------------------------------------------------------------------
->  Documentation/devicetree/bindings/display/brcm,bcm2835-dpi.yaml         |  66 +++++++++++++++++++++++++++-
->  Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml        |  73 ++++++++++++++++++++++++++++++-
->  Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml        |  75 +++++++++++++++++++++++++++++++-
->  Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml         |  37 +++++++++++++++-
->  Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml |  40 +++++++++++++++++-
->  Documentation/devicetree/bindings/display/brcm,bcm2835-txp.yaml         |  37 +++++++++++++++-
->  Documentation/devicetree/bindings/display/brcm,bcm2835-v3d.yaml         |  42 +++++++++++++++++-
->  Documentation/devicetree/bindings/display/brcm,bcm2835-vc4.yaml         |  34 ++++++++++++++-
->  Documentation/devicetree/bindings/display/brcm,bcm2835-vec.yaml         |  44 ++++++++++++++++++-
->  MAINTAINERS                                                             |   2 +-
->  11 files changed, 449 insertions(+), 175 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
->  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-dpi.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-txp.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-v3d.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-vc4.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-vec.yaml
-> 
+BPF programs require to run on one CPU to completion as they use per CPU
+storage, but according to Alexei they don't need reentrancy protection as
+obviously BPF programs running in thread context can always be 'preempted'
+by hard and soft interrupts and instrumentation and the same program can
+run concurrently on a different CPU.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+The currently used mechanism to ensure CPUness is to wrap the invocation
+into a preempt_disable/enable() pair. Disabling preemption is also
+disabling migration for a task.
 
-warning: no schema found in file: Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml: ignoring, error in schema: properties
-Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml: properties: '#clock-cells' is a dependency of 'clock-output-names'
-Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.example.dts' failed
-make[1]: *** [Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.example.dts] Error 1
-Makefile:1263: recipe for target 'dt_binding_check' failed
-make: *** [dt_binding_check] Error 2
+preempt_disable/enable() is used because there is no explicit way to
+reliably disable only migration.
 
-See https://patchwork.ozlabs.org/patch/1242907
-Please check and re-submit.
+Provide a separate macro to invoke a BPF program which can be used in
+migrateable task context.
+
+It wraps BPF_PROG_RUN() in a migrate_disable/enable() pair which maps on
+non RT enabled kernels to preempt_disable/enable(). On RT enabled kernels
+this merely disables migration. Both methods ensure that the invoked BPF
+program runs on one CPU to completion.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+V4: Make it const for real
+V3: Make the 'ctx' argument const to unbreak the build
+V2: Use an inline function (Mathieu)
+---
+ include/linux/filter.h |   26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
+
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -576,8 +576,30 @@ DECLARE_STATIC_KEY_FALSE(bpf_stats_enabl
+ 	}								\
+ 	ret; })
+ 
+-#define BPF_PROG_RUN(prog, ctx) __BPF_PROG_RUN(prog, ctx,		\
+-					       bpf_dispatcher_nopfunc)
++#define BPF_PROG_RUN(prog, ctx)						\
++	__BPF_PROG_RUN(prog, ctx, bpf_dispatcher_nopfunc)
++
++/*
++ * Use in preemptible and therefore migratable context to make sure that
++ * the execution of the BPF program runs on one CPU.
++ *
++ * This uses migrate_disable/enable() explicitly to document that the
++ * invocation of a BPF program does not require reentrancy protection
++ * against a BPF program which is invoked from a preempting task.
++ *
++ * For non RT enabled kernels migrate_disable/enable() maps to
++ * preempt_disable/enable(), i.e. it disables also preemption.
++ */
++static inline u32 bpf_prog_run_pin_on_cpu(const struct bpf_prog *prog,
++					  const void *ctx)
++{
++	u32 ret;
++
++	migrate_disable();
++	ret = __BPF_PROG_RUN(prog, ctx, bpf_dispatcher_nopfunc);
++	migrate_enable();
++	return ret;
++}
+ 
+ #define BPF_SKB_CB_LEN QDISC_CB_PRIV_LEN
+ 
