@@ -2,108 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8936916A3E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:27:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDC5616A3E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 11:29:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbgBXK13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 05:27:29 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39053 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbgBXK13 (ORCPT
+        id S1727277AbgBXK30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 05:29:26 -0500
+Received: from mail-a09.ithnet.com ([217.64.83.104]:59760 "EHLO
+        mail-a09.ithnet.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbgBXK3Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 05:27:29 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y17so909118wrn.6
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 02:27:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=/wPxcyrQruYDAUyh+jsOvRDd2ILov7dBYbjfQHdUR9k=;
-        b=OM1HSWa05yHXwkkMJacChsT5B/1SWbWNLxCzkWbbOoDmENeKMuT66ieIDskm160KTb
-         0sbwd12T2eCBlJlA4lggTfxd1OQ81GmrG6BbeKSBJHvS5vgX7HjTzsflOdqniSLoMJaU
-         /k1WGJ2ew/1V7nH6CxDjxb4Q50En04RBWnNBMZJLRe1dKdOctHgl49WA/xeXUHE9eJmF
-         tc+a96pghF5lTrYgXKzyWjtq25uFpjadgURs27R/4CTUnOBJsrRrc8oQstDpVJMYNBY4
-         RF7AUNQGUS4O7xIQLzeDwb6ZsqWHa5hLvKiCjr4+h+oXcfMY95FXUvUMPuCQ32exkDx5
-         XnBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=/wPxcyrQruYDAUyh+jsOvRDd2ILov7dBYbjfQHdUR9k=;
-        b=NDA4POB/RokkcmTk2uDwx/PuFNn0o3uOfYG2imw4xxCotRn06kQTLAxJDGPSV0aDcr
-         cmwVG6wr3eoJArGDVv8W92FCZqJUZxrodX1Hkjfqwzng+0B0WhTppQtrksk1W6fROzs5
-         FppZmULbrELR2l1v75x1d5Fc0r8NunwBwppuFMiLlmfBTRRGYCCYMZM+amy8aTc2cgeS
-         ACcYJRUFb7AWDeOtj8nVr1h4X1un5K2nviqa5WTEMeOv0BqAEBtfH3QYMjYr+fJl+yfu
-         7GZw69g3l+eAWUCU1nt4WSSGkNq9xh0Jzrig2hmmaJXuoNG7pAfkWMChnnNscxV3zuh1
-         ymkQ==
-X-Gm-Message-State: APjAAAXB6GpvPxLQ/QVbg6lRyeyUD0Z+p0Pc+zVci2Bq6kKQNwUjLRY1
-        vcGbR29wW5ahfGItmrwgdFL42g==
-X-Google-Smtp-Source: APXvYqzt5+G2FRAHu4Ld1WC5LSxw0Vs4RC2Rs28c7+oDkTb503qdeuPcpgIfu31rO5pd3EWywZu3KQ==
-X-Received: by 2002:a5d:4c41:: with SMTP id n1mr2207962wrt.183.1582540047270;
-        Mon, 24 Feb 2020 02:27:27 -0800 (PST)
-Received: from dell ([2.31.163.122])
-        by smtp.gmail.com with ESMTPSA id d3sm6569072wrr.56.2020.02.24.02.27.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 02:27:26 -0800 (PST)
-Date:   Mon, 24 Feb 2020 10:27:58 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Prashant Malani <pmalani@chromium.org>
-Cc:     enric.balletbo@collabora.com, groeck@chromium.org,
-        bleung@chromium.org, sre@kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v8 3/4] mfd: cros_ec: Check DT node for usbpd-notify add
-Message-ID: <20200224102758.GN3494@dell>
-References: <20200124231834.63628-1-pmalani@chromium.org>
- <20200124231834.63628-3-pmalani@chromium.org>
+        Mon, 24 Feb 2020 05:29:25 -0500
+Received: (qmail 29254 invoked by uid 0); 24 Feb 2020 10:29:23 -0000
+Received: from skraw.ml@ithnet.com by mail-a09 
+ (Processed in 4.581523 secs); 24 Feb 2020 10:29:23 -0000
+X-Spam-Status: No, hits=-1.2 required=5.0
+X-Virus-Status: No
+X-ExecutableContent: No
+Received: from dialin014-sr.ithnet.com (HELO ithnet.com) (217.64.64.14)
+  by mail-a09.ithnet.com with ESMTPS (ECDHE-RSA-AES256-GCM-SHA384 encrypted); 24 Feb 2020 10:29:18 -0000
+X-Sender-Authentication: SMTP AUTH verified <skraw.ml@ithnet.com>
+Date:   Mon, 24 Feb 2020 11:29:17 +0100
+From:   Stephan von Krawczynski <skraw.ml@ithnet.com>
+To:     Bernd Petrovitsch <bernd@tuxoid.at>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: General Discussion about GPLness
+Message-ID: <20200224112917.201ffb29@ithnet.com>
+In-Reply-To: <7896b0b9-c12e-5327-f531-95097cf04eca@tuxoid.at>
+References: <8b0e828da35ab77c1ad4603768c6eab6@waifu.club>
+        <20200223133301.03eab91d@ithnet.com>
+        <2241a3e0c8dcba5b69b4f670e181d7cd@waifu.club>
+        <20200223153909.1ba91bae@ithnet.com>
+        <dadb648cd23ee79dacf5992ff5ca6094@waifu.club>
+        <20200223214757.5adf49e4@ithnet.com>
+        <7896b0b9-c12e-5327-f531-95097cf04eca@tuxoid.at>
+Organization: ith Kommunikationstechnik GmbH
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200124231834.63628-3-pmalani@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 Jan 2020, Prashant Malani wrote:
+On Mon, 24 Feb 2020 00:46:03 +0100
+Bernd Petrovitsch <bernd@tuxoid.at> wrote:
 
-> Add a check to ensure there is indeed an EC device tree entry before
-> adding the cros-usbpd-notify device. This covers configs where both
-> CONFIG_ACPI and CONFIG_OF are defined, but the EC device is defined
-> using device tree and not in ACPI.
+> Hi all!
 
-Don't this 'fix' a patch in *this* set?
-
-If so, please squash and resend.
-
-> Signed-off-by: Prashant Malani <pmalani@chromium.org>
-> ---
+Hello Bernd,
+ 
+> On 23/02/2020 21:47, Stephan von Krawczynski wrote:
+> [...]
+> > I do understand why you cannot enter a discussion with your real name, as
+> > most  
 > 
-> Changes in v8:
-> - Patch first introduced in v8 of the series.
+> I ignore folks who don't use their real name - this is since Usenet
+> times an indication for a troll ...
+
+Well, yes. But I don't want to start a topic and ignore the first answer right
+away ... Call me naive
+ 
+> > of your input is of zero quality - and below.  
+> [...]
+> >                                                              But our story
+> > is about kernel modules, something everybody is free to write and publish,
+> > with a  
 > 
->  drivers/mfd/cros_ec_dev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> ... publish implicitly with a GPLv2 or compatible license ...
+
+Ok, you cannot really mean this. Because what you say is that no company
+making some hardware is allowed to produce a closed-source kernel driver for
+it. You know who are the last ones on the planet taking that approach? It's
+China. If you want to build some car there, you have to give them all the
+details of everything and only then are allowed to do a joint-venture with
+chinese where you are not allowed to hold a majority.
+You are saying that every company creating new hardware must open up the
+details to it so that they themselves or someone else is capable to write a
+GPL-driver for it. Is that the world you want to live in? China? Really?
+ 
+> > defined and open interface for interaction. No kernel code is modified in
+> > that  
 > 
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index d0c28a4c10ad0..411e80fc9a066 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -212,7 +212,7 @@ static int ec_device_probe(struct platform_device *pdev)
->  	 * explicitly added on platforms that don't have the PD notifier ACPI
->  	 * device entry defined.
->  	 */
-> -	if (IS_ENABLED(CONFIG_OF)) {
-> +	if (IS_ENABLED(CONFIG_OF) && ec->ec_dev->dev->of_node) {
->  		if (cros_ec_check_features(ec, EC_FEATURE_USB_PD)) {
->  			retval = mfd_add_hotplug_devices(ec->dev,
->  					cros_usbpd_notify_cells,
+> And that's a point which is completely wrong: the only *defined*
+> interface of the kernel is sys-calls, /proc and similar. And all of this
+> is from user-space to kernel-space and back.
+
+This is "said" to be so. But since I wrote several kernel drivers I know that
+there is at least a skeleton of what a driver should look like. And this means
+that there is a definition. I know what you mean. It is said that none of the
+interfacing is defined as some standard written in stone. But we all know the
+reason: the project wants to stay evulatory and wants to be able to implement
+new - possibly better ideas. But only because its flowing does not mean there
+is none. Else there would not be lots of people working on different drivers,
+filesystems and the like. They all have to meet at some point in the code. And
+that meeting point(s) is(are) the open interface. And it's open because
+everyone is allowed to read the source and use the exported functions (be them
+GPL-defined or not) to write some _extensions_.
+ 
+> There is no (and never was) a "defined interface" within the kernel
+> (inter-operating in kernel space) in any direction simply because the
+> kernel-internal (infra)structure changes more or less constantly - some
+> may call that evolution;-)
+
+Yes, read above.
+ 
+> And I don't get what an "open interface" here couls seriously mean. You
+> surely don't want to call the list of the GPL_EXPORTed C functions
+> (which may change from one kernel version to the next) an "open
+> interface" (whatever that should suggest).
+> 
+> At most the list of GPL_EXPORTed C functions is a de-facto interface and
+> that may change from one git-commit to the next.
+
+The lifetime of the details of this interface is not relevant. Some last
+years, some maybe only days. Nevertheless the EXPORT per se means that someone
+_else_ should and can use them. Otherwise there would be no EXPORT definition.
+ 
+> > sense. But you fail to understand that.
+> > Hopefully others here do. I do not expect them to stand up and jump into a
+> > discussion where you are a part of. But I hope people start to think about
+> > it  
+> 
+> And you are barking up the wrong tree. The discussion has to happen in
+> the ZFS-world so that they fix their license if they want to interface
+> with any GPL software (without sys-calls etc. in between - WTF it works
+> via FUSE) like they seen to do now.
+
+Ok, now please stay serious. FUSE is nothing more than a hack for people who
+want to make case studies on projects but is completely useless in production.
+Because it is DEAD slow. If you want to check out, look at glusterfs (that
+never managed to be implemented as kernel driver). And nobody used ZFS on FUSE,
+because it was unusably slow. Since it has become a kernel space driver it is
+amongst the best fs around.
+But zfs is not the main issue. It is only an example of the problem. 
+Companies and other entities must be allowed to make kernel drivers and
+therefore interface with the kernel in kernel space no matter what licensing
+they prefer. This is my opinion. I would love to hear if this really is the
+projects' policy or not though. This is what this thread is all about.
+
+Of course, I would prefer a GPL driver as well. That's why I use ATI and not
+nvidia. But nevertheless I think nvidia and all the others should be allowed
+to make their drivers. I'd say the rest is market/customer choice.
+
+> MfG,
+> 	Bernd
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Regards,
+Stephan
+
