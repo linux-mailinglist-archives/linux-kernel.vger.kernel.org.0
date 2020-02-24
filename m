@@ -2,109 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECDF416B4CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:08:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50FB416B4C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:08:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728524AbgBXXIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:08:55 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:55322 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728356AbgBXXIv (ORCPT
+        id S1728441AbgBXXIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:08:38 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35958 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728357AbgBXXIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:08:51 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01ON2ZCb038164;
-        Mon, 24 Feb 2020 23:08:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=brSGtrMRAEqE8jsZSHP6UZ54R1yT9YteYXUdJKcFQkA=;
- b=gux9dGHkowSbpOfN5vk9N36R+hONfco1cd1psbJ4nPTbQfr4L4Gzy6yLqfrz/AQvxHBQ
- x3V2Tm+vSwLphlO/Q/71HWaMR9AKU7JuVH+FfaPMk44DrAUuekgxh4aeMmYYXG8SuYLj
- TUgI7eR25teEcb4rOa5bWcXGbzEVbFfX6eFuESnZp9HM65t10b6egk28lwy3UeQY9R5o
- zGUNrj+0Vu1f3Qz3UfDzPc+OOkcloKcZaHGXwJC1i99Dl03mtnnbRjIpmXlPU84v+g/p
- DNe6hO2rROVNZw8Q2qX2LTVHwC5y6p+ksxgXEtLY1BJWsrI9pKH0Kh91IIzaCe0B4CUg 7A== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2yavxrjjc8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Feb 2020 23:08:22 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01ON8MGl102472;
-        Mon, 24 Feb 2020 23:08:22 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2ybdshufjb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Feb 2020 23:08:22 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01ON8Gkt028649;
-        Mon, 24 Feb 2020 23:08:16 GMT
-Received: from [192.168.0.195] (/69.207.174.138)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 24 Feb 2020 15:08:16 -0800
-Subject: Re: [PATCH v4 4/4] sched/core: Add permission checks for setting the
- latency_nice value
-To:     Parth Shah <parth@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, qais.yousef@arm.com,
-        patrick.bellasi@matbug.net, valentin.schneider@arm.com,
-        David.Laight@ACULAB.COM, pjt@google.com, pavel@ucw.cz,
-        tj@kernel.org, dhaval.giani@oracle.com, qperret@google.com,
-        tim.c.chen@linux.intel.com
-References: <20200224085918.16955-1-parth@linux.ibm.com>
- <20200224085918.16955-5-parth@linux.ibm.com>
-From:   chris hyser <chris.hyser@oracle.com>
-Message-ID: <6fb7926e-c8bb-e4a0-c527-feb38c948716@oracle.com>
-Date:   Mon, 24 Feb 2020 18:08:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Mon, 24 Feb 2020 18:08:34 -0500
+Received: by mail-qk1-f196.google.com with SMTP id f3so7354604qkh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 15:08:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=K/3B2abZ2PBE11q9O8trcN53LJz/Y46vhRJiFNVlNjE=;
+        b=ZJQfuOa4PmMxgwNEyZ6LbhqGYDrh/NXEos30/OO8oYeHjhLasX46l3geY6DYzl4SoT
+         A5+rgGQX/fo6zsfo0klq8ZAphcq4fDYw3J/MsZtMdR/P1uF0bMd1N6TLLubpi54nddF8
+         ZV2Lvt6SmVFmJ85zetUMSTb3KQ84s7GRRhjlnyPpkiLEMYOdMem6Cg4n1JTOi5favvdn
+         uGVCcWcdP6vgUY/etcNj4bc++Q4AukRLnsMg54OgNTVY0yP4lcxxmcJhT6igJriEZhu3
+         +9IrwT87rpdudARyQSlqdXXpOAJKwMrYTiUI+ZvPaeLKokZA3jl7WLFCbXwOosz/Ms4h
+         f7bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=K/3B2abZ2PBE11q9O8trcN53LJz/Y46vhRJiFNVlNjE=;
+        b=USmyCRzXohRBvAZQ+gGAJ5DpXIyixMBg8OwgRQZUygNDDt15ru3jV9lNZUfAqpMKyF
+         tcpaoE8g8ctFOk8JRex6BR0GiCbT565rtKdd/Pm7xEgDSRqQT1FNFuhdrVXgv/m5lT74
+         5+53tdTOazTobW7gUhC4TLWJ7Mqet6eDhIL+ar1l0VoLuf34nc8xrAsxx6IcoKHj4PiE
+         /jsSSvkZlpjWr7Q4cMdTnjZHUI/X46JaneUWTblVHHYgWD5cX0EyKv3wJNwwQx2KteWB
+         aKZRhv0OHz3s5bHWvNVNIWjUqysNLEkEg2O8iP/hEY3NRwEOaMbtuqTKjejn8DX+vLh7
+         QWFQ==
+X-Gm-Message-State: APjAAAU+pS1cZ2XvLIe1sJatsR7I0egm8wEGOkshp/P2mWo/7LFss28Q
+        wzdEbNx3MvNbf4k1QWYCwDA=
+X-Google-Smtp-Source: APXvYqzDjfHjXkHL9dWj2tEj72QxQ6RQ2vTvOLp2ezZ82vnFjdEmd7u+/uDH3Q2z4seWbwktDVCUuA==
+X-Received: by 2002:a37:40d2:: with SMTP id n201mr53037062qka.211.1582585711270;
+        Mon, 24 Feb 2020 15:08:31 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id z18sm2813397qki.8.2020.02.24.15.08.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2020 15:08:31 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Mon, 24 Feb 2020 18:08:29 -0500
+To:     Fangrui Song <maskray@google.com>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Michael Matz <matz@suse.de>, Borislav Petkov <bp@alien8.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 2/2] x86/boot/compressed: Remove unnecessary sections
+ from bzImage
+Message-ID: <20200224230829.GA586317@rani.riverdale.lan>
+References: <20200222074254.GB11284@zn.tnic>
+ <20200222162225.GA3326744@rani.riverdale.lan>
+ <CAKwvOdnvMS21s9gLp5nUpDAOu=c7-iWYuKTeFUq+PMhsJOKUgw@mail.gmail.com>
+ <alpine.LSU.2.21.2002241319150.12812@wotan.suse.de>
+ <CAKwvOd=nCAyXtng1N-fvNYa=-NGD0yu+Rm6io9F1gs0FieatwA@mail.gmail.com>
+ <20200224212828.xvxl3mklpvlrdtiw@google.com>
+ <20200224214845.GC409112@rani.riverdale.lan>
+ <20200224221703.eqql5hrx4ccngwa5@google.com>
+ <20200224224343.GA572699@rani.riverdale.lan>
+ <20200224225059.2scjklfi4g7wwdkp@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200224085918.16955-5-parth@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9541 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 spamscore=0
- malwarescore=0 mlxscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002240171
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9541 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 lowpriorityscore=0
- spamscore=0 clxscore=1011 suspectscore=0 bulkscore=0 mlxlogscore=999
- malwarescore=0 phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002240170
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200224225059.2scjklfi4g7wwdkp@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/24/20 3:59 AM, Parth Shah wrote:
-> Since the latency_nice uses the similar infrastructure as NICE, use the
-> already existing CAP_SYS_NICE security checks for the latency_nice. This
-> should return -EPERM for the non-root user when trying to set the task
-> latency_nice value to any lower than the current value.
+On Mon, Feb 24, 2020 at 02:50:59PM -0800, Fangrui Song wrote:
+> On 2020-02-24, Arvind Sankar wrote:
+> >On Mon, Feb 24, 2020 at 02:17:03PM -0800, Fangrui Song wrote:
+> >> On 2020-02-24, Arvind Sankar wrote:
+> >> >On Mon, Feb 24, 2020 at 01:28:28PM -0800, Fangrui Song wrote:
+> >> >> Hi Michael, please see my other reply on this thread: https://lkml.org/lkml/2020/2/24/47
+> >> >>
+> >> >> Synthesized sections can be matched as well. For example, SECTIONS { .pltfoo : { *(.plt) }} can rename the output section .plt to .pltfoo
+> >> >> It seems that in GNU ld, the synthesized section is associated with the
+> >> >> original object file, so it can be written as:
+> >> >>
+> >> >>    SECTIONS { .pltfoo : { a.o(.plt) }}
+> >> >>
+> >> >> In lld, you need a wildcard to match the synthesized section *(.plt)
+> >> >>
+> >> >> .rela.dyn is another example.
+> >> >>
+> >> >
+> >> >With the BFD toolchain, file matching doesn't actually seem to work at
+> >> >least for .rela.dyn. I've tried playing around with it in the past and
+> >> >if you try to use file-matching to capture relocations from a particular
+> >> >input file, it just doesn't work sensibly.
+> >>
+> >> I think most things are working in GNU ld...
+> >>
+> >> /* a.x */
+> >> SECTIONS {
+> >>    .rela.pltfoo : { a.o(.rela.plt) }  /* *(.rela.plt) with lld */
+> >>    .rela.dynfoo : { a.o(.rela.data) } /* *(.rela.dyn) with lld */
+> >> }
+> >
+> >The file matching doesn't do anything sensible. If you split your .data
+> >section out into b.s, and update the linker script so it filters for
+> >b.o(.rela.data), .rela.dynfoo doesn't get created, instead the default
+> >.rela.dyn will contains the .data section relocation. If you keep the
+> >filter as a.o(.rela.data), you get .rela.dynfoo, even though a.o doesn't
+> >actually contain any .rela.data section any more.
 > 
-> Signed-off-by: Parth Shah <parth@linux.ibm.com>
+> I raised the examples to support my viewpoint "synthesized sections can
+> be matched, as well as input sections."
+> 
+> If there is really a need (rare, not recommended) to rename output
+> sections only consisting of synthesized sections (e.g. .plt .rela.dyn),
+> for linker portability, it is better using a wildcard for the input
+> filename pattern.
 
-Reviewed-by: Chris Hyser <chris.hyser@oracle.com>
+Yep, you have to use * for the filename. My comment was only addressing
+the fact that this part isn't accurate:
 
-> ---
->   kernel/sched/core.c | 4 ++++
->   1 file changed, 4 insertions(+)
+> >> >> It seems that in GNU ld, the synthesized section is associated with the
+> >> >> original object file, so it can be written as:
+
+I can't make head or tail of how GNU ld decides what file to associate
+with the synthesized sections.
+
+Also, even section name matching doesn't work with all synthesized
+sections -- it's not possible to match .strtab or .shstrtab with GNU ld
+in order to rename them, in addition to not being able to discard them,
+while that does work with LLD.
+
 > 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index e1dc536d4ca3..f883e1d3cd10 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -4887,6 +4887,10 @@ static int __sched_setscheduler(struct task_struct *p,
->   			return -EINVAL;
->   		if (attr->sched_latency_nice < MIN_LATENCY_NICE)
->   			return -EINVAL;
-> +		/* Use the same security checks as NICE */
-> +		if (attr->sched_latency_nice < p->latency_nice &&
-> +		    !can_nice(p, attr->sched_latency_nice))
-> +			return -EPERM;
->   	}
->   
->   	if (pi)
+> As another example, SECTIONS { /DISCARD/ : { *(.rela.*) } } discards synthesized .rela.*
 > 
+> >>
+> >> % cat <<e > a.s
+> >>   .globl foo
+> >>   foo:
+> >>     call bar
+> >>   .data
+> >>   .quad quz
+> >> e
+> >> % as a.s -o a.o
+> >> % ld.bfd -T a.x a.o -shared -o a.so
