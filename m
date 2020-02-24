@@ -2,88 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E85616AA14
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:28:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E653016AA16
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:29:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbgBXP2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 10:28:54 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37866 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727877AbgBXP2x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 10:28:53 -0500
-Received: by mail-io1-f66.google.com with SMTP id k24so10639710ioc.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 07:28:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MPLy+I1kf18awADSJ+a+kXYkss5ko3QnxlgaP18iAaI=;
-        b=hR91BNo0v9W2lKGsQ+28dV2f5cukj0J5Cq2WtUwQzy8DbroeQONE8wkNp/8DXGAj0b
-         wS2gR97Spg4fao+tg+p7ub4Y30ipXiXecLYvggLQhPDsYbVIzad1QzrJYKXyFNitudhw
-         elclO4ETUa54GEeb88QHzma/x6byZ9ENFz9rc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MPLy+I1kf18awADSJ+a+kXYkss5ko3QnxlgaP18iAaI=;
-        b=ss1dhZQYcITWHpuBTMl4zJdreQHyQTcyyYjAL3s86Qm9SxhcXOfbRlbxrUU26cWMQD
-         GRemaq6XWV45LVjMoob+EMdGt/p45w1LvsHMVC7tPr1dRXbhtjdAeNukex0wzZ6RyNoK
-         PqEbimJktXT7Uod+jvhN4klVeROhUsZs6G+FLFc+hXYP8RHcSd9aqHXf6hj5lhM3eONz
-         56XH7fE5ujd2mRLSmSbCepz5G2ZT2YI/43fJQJTpM9sd6KG6qplEb6HigJy+rtp850la
-         cNIVnLO2JgHCOxVYdlMGWe6jHA1YzxDnE1bzmiJo32WbuIbH2f2oYLggjMHk0/77B4gG
-         VvOw==
-X-Gm-Message-State: APjAAAVHSD0UBKjq3NHpwILrteGIK/OMjzMkFl/bCHfuptpIWVBMrm4o
-        zVwS87LuCXEfjsA9NHsZauczP9fW/AN3w5udkAKhYw==
-X-Google-Smtp-Source: APXvYqyvNJZ5VSWFSREvni1YMdamiTezkJiBrYDHxTOY/6jEk+6CRYsk62v8jxoGiT8VHnrEWrOj1S3gMbDf4tiBSQw=
-X-Received: by 2002:a02:cc59:: with SMTP id i25mr50551851jaq.78.1582558131274;
- Mon, 24 Feb 2020 07:28:51 -0800 (PST)
+        id S1727926AbgBXP3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 10:29:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49788 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727581AbgBXP3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 10:29:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2EF5DADBE;
+        Mon, 24 Feb 2020 15:29:10 +0000 (UTC)
+Subject: Re: [PATCH 2/2] mm,thp,compaction,cma: allow THP migration for CMA
+ allocations
+To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org,
+        riel@fb.com
+Cc:     kernel-team@fb.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        mhocko@kernel.org, mgorman@techsingularity.net,
+        rientjes@google.com, aarcange@redhat.com
+References: <cover.1582321645.git.riel@surriel.com>
+ <3289dc5e6c4c3174999598d8293adf8ed3e93b57.1582321645.git.riel@surriel.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ mQINBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABtCBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PokCVAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJcbbyGBQkH8VTqAAoJECJPp+fMgqZkpGoP
+ /1jhVihakxw1d67kFhPgjWrbzaeAYOJu7Oi79D8BL8Vr5dmNPygbpGpJaCHACWp+10KXj9yz
+ fWABs01KMHnZsAIUytVsQv35DMMDzgwVmnoEIRBhisMYOQlH2bBn/dqBjtnhs7zTL4xtqEcF
+ 1hoUFEByMOey7gm79utTk09hQE/Zo2x0Ikk98sSIKBETDCl4mkRVRlxPFl4O/w8dSaE4eczH
+ LrKezaFiZOv6S1MUKVKzHInonrCqCNbXAHIeZa3JcXCYj1wWAjOt9R3NqcWsBGjFbkgoKMGD
+ usiGabetmQjXNlVzyOYdAdrbpVRNVnaL91sB2j8LRD74snKsV0Wzwt90YHxDQ5z3M75YoIdl
+ byTKu3BUuqZxkQ/emEuxZ7aRJ1Zw7cKo/IVqjWaQ1SSBDbZ8FAUPpHJxLdGxPRN8Pfw8blKY
+ 8mvLJKoF6i9T6+EmlyzxqzOFhcc4X5ig5uQoOjTIq6zhLO+nqVZvUDd2Kz9LMOCYb516cwS/
+ Enpi0TcZ5ZobtLqEaL4rupjcJG418HFQ1qxC95u5FfNki+YTmu6ZLXy+1/9BDsPuZBOKYpUm
+ 3HWSnCS8J5Ny4SSwfYPH/JrtberWTcCP/8BHmoSpS/3oL3RxrZRRVnPHFzQC6L1oKvIuyXYF
+ rkybPXYbmNHN+jTD3X8nRqo+4Qhmu6SHi3Vq
+Message-ID: <05027092-a43e-756f-4fee-78f29a048ca1@suse.cz>
+Date:   Mon, 24 Feb 2020 16:29:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
- <1582316494.3376.45.camel@HansenPartnership.com> <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
- <1582556135.3384.4.camel@HansenPartnership.com>
-In-Reply-To: <1582556135.3384.4.camel@HansenPartnership.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 24 Feb 2020 16:28:40 +0100
-Message-ID: <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <3289dc5e6c4c3174999598d8293adf8ed3e93b57.1582321645.git.riel@surriel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 3:55 PM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+On 2/21/20 10:53 PM, Rik van Riel wrote:
+> @@ -981,7 +981,9 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+>  		if (__isolate_lru_page(page, isolate_mode) != 0)
+>  			goto isolate_fail;
+>  
+> -		VM_BUG_ON_PAGE(PageCompound(page), page);
+> +		/* The whole page is taken off the LRU; skip the tail pages. */
+> +		if (PageCompound(page))
+> +			low_pfn += compound_nr(page) - 1;
+>  
+>  		/* Successfully isolated */
+>  		del_page_from_lru_list(page, lruvec, page_lru(page));
 
-> Once it's table driven, certainly a sysfs directory becomes possible.
-> The problem with ST_DEV is filesystems like btrfs and xfs that may have
-> multiple devices.
+This continues by:
+inc_node_page_state(page, NR_ISOLATED_ANON + page_is_file_cache(page));
 
-For XFS there's always  a single sb->s_dev though, that's what st_dev
-will be set to on all files.
 
-Btrfs subvolume is sort of a lightweight superblock, so basically all
-such st_dev's are aliases of the same master superblock.  So lookup of
-all subvolume st_dev's could result in referencing the same underlying
-struct super_block (just like /proc/$PID will reference the same
-underlying task group regardless of which of the task group member's
-PID is used).
+I think it now needs to use mod_node_page_state() with
+hpage_nr_pages(page) otherwise the counter will underflow after the
+migration?
 
-Having this info in sysfs would spare us a number of issues that a set
-of new syscalls would bring.  The question is, would that be enough,
-or is there a reason that sysfs can't be used to present the various
-filesystem related information that fsinfo is supposed to present?
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index a36736812596..38c8ddfcecc8 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -8253,14 +8253,16 @@ struct page *has_unmovable_pages(struct zone *zone, struct page *page,
+>  
+>  		/*
+>  		 * Hugepages are not in LRU lists, but they're movable.
+> +		 * THPs are on the LRU, but need to be counted as #small pages.
+>  		 * We need not scan over tail pages because we don't
+>  		 * handle each tail page individually in migration.
+>  		 */
+> -		if (PageHuge(page)) {
+> +		if (PageTransHuge(page)) {
 
-Thanks,
-Miklos
+Hmm, PageTransHuge() has VM_BUG_ON() for tail pages, while this code is
+written so that it can encounter a tail page and skip the rest of the
+compound page properly. So I would be worried about this.
+
+Also PageTransHuge() is basically just a PageHead() so for each
+non-hugetlbfs compound page this will assume it's a THP, while correctly
+it should reach the __PageMovable() || PageLRU(page) tests below.
+
+So probably this should do something like.
+
+if (PageHuge(page) || PageTransCompound(page)) {
+...
+   if (PageHuge(page) && !hpage_migration_supported)) return page.
+   if (!PageLRU(head) && !__PageMovable(head)) return page
+...
+
+>  			struct page *head = compound_head(page);
+>  			unsigned int skip_pages;
+>  
+> -			if (!hugepage_migration_supported(page_hstate(head)))
+> +			if (PageHuge(page) &&
+> +			    !hugepage_migration_supported(page_hstate(head)))
+>  				return page;
+>  
+>  			skip_pages = compound_nr(head) - (page - head);
+> 
+
