@@ -2,202 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD0DD16ABC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:38:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1F5316ABD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:41:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbgBXQiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:38:18 -0500
-Received: from gateway30.websitewelcome.com ([50.116.127.1]:43898 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727160AbgBXQiS (ORCPT
+        id S1728072AbgBXQle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:41:34 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39399 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727673AbgBXQld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:38:18 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 6DD4A1AE8D
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 10:38:17 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 6GkLjYJ0jRP4z6GkLjxUKe; Mon, 24 Feb 2020 10:38:17 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=S0AyG7seDWMBMmxU4BsRCeIyHUa4A6ug84bj5qC2RXY=; b=E8C9IKlq2rdwzJTeXM09AcnuNq
-        TXpCEQTZuAzMri3Pty4EMu+Yafx6/kOWeuAEjBm1W4uVaZaadlgobfmdVBzJ1YzCfSFtytU+qGy2p
-        ddUmqVlMjP5/nmli1fpe9ZuVacrGfAXiQqpZ3AIsweZYFhfqrg71Rb25yQLzPKIgCXRf4ZWE6eQG4
-        n0/fqKgPLEPkUCZg/K3x+HkNywnjtSYiuJ7fIVlSjINOvce4rtGR9d0NG83KaPqHnZy47VgCpCtm0
-        N8CF63ihcWBQrclgTt9gqT4kbzOpxAuh5VOwd6+d/EuGXgZV6pFn/heFKDJDVCgVHhhj5nvtBCJb5
-        94Y59TVA==;
-Received: from [200.68.140.135] (port=18936 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j6GkJ-002tKI-Th; Mon, 24 Feb 2020 10:38:16 -0600
-Date:   Mon, 24 Feb 2020 10:41:06 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] intel: Replace zero-length array with flexible-array
- member
-Message-ID: <20200224164106.GA1787@embeddedor>
+        Mon, 24 Feb 2020 11:41:33 -0500
+Received: by mail-qk1-f193.google.com with SMTP id e16so6416963qkl.6;
+        Mon, 24 Feb 2020 08:41:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KgaP9kfhgbQPcLmwOVvyl3qUPWyDRWXIggQgrOZJnPU=;
+        b=VqshzTI1c2dtcWeo7t2Iz1lROlK0exHkZtWqTk0/QudIUBDQcTSj/AdNExlGIBjo/G
+         tod4bSblMawKNPN7xMYHqMYJjJrW6rWb8S+TmXz34PQ2SNZuKn98VmqpLdMi2JDPla9M
+         i6lBZV8Pxy/zciCTWqHrTtvq2QreyPRDS3BE9XIYAiPzNCGI5RzUUnEZYsuu+ydeksmW
+         xMQ5P66N5H/KVqH2lmhrxwUS+UPgNRBiu2o+N2zxuYhmX6PHsLqzA6s3TosbK5VgQfaE
+         fQ5bkmUDPQAjttOZfFuv4LwpyNl1amGx/t2IjL4mP3jLMCBZt5qPjvBUMGcshVX+l/fr
+         qNww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KgaP9kfhgbQPcLmwOVvyl3qUPWyDRWXIggQgrOZJnPU=;
+        b=L+Gb8i6ZaL2mxvDhG4hLyXY3UdGofI61O3fr9zlTlLL9u7xs1Ez2cjGKIAhxNAwyWB
+         KtbQc+TptATORJ/l0Hj20mmwqURRtvNsgMEZsF5ig1OVsI7CSyj979Y0cGHuy9LRtyZd
+         QCa+SXQm22AlcttLPN4O+LZtX3jKFUyrxlZqWz2wfoeqWAJ5HP/2wf1O+DxaDRLVKtPn
+         wG1BlHqdOqzbxmt2jgQkwWgTJg5BEaBW3AzG6BKdukYA3roXhEeGvjpaj7ozajGcMrGd
+         WbqPmvJNbGtisw7nV+ps8MLS6vm6ftF/YJGjx7fXosrk425R6i+YkzCdBNR2k6eCmISu
+         qYGg==
+X-Gm-Message-State: APjAAAUH3PhIqZNAQUKwYOvFSHSSwHfPM5cHDoIcAsqvQ40qfp4r0zGp
+        UIyyiIfkvDC3WjrzFjKSBSM=
+X-Google-Smtp-Source: APXvYqyG9rasJcmAxXd/HsQxuO6sM/fXQAyqQlhlbY9+JUzKIR8upAMXrWKSxBZHwBnt4Q3n/hhnnA==
+X-Received: by 2002:a37:7a04:: with SMTP id v4mr15387961qkc.246.1582562491536;
+        Mon, 24 Feb 2020 08:41:31 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id l184sm5913461qkc.107.2020.02.24.08.41.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2020 08:41:31 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Mon, 24 Feb 2020 11:41:29 -0500
+To:     Borislav Petkov <bp@suse.de>
+Cc:     linux-tip-commits@vger.kernel.org,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Borislav Petkov <bp@suse.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [tip: x86/boot] x86/boot/compressed: Remove .eh_frame section
+ from bzImage
+Message-ID: <20200224164129.GA312716@rani.riverdale.lan>
+References: <20200109150218.16544-2-nivedita@alum.mit.edu>
+ <158254422067.28353.10866888120950973607.tip-bot2@tip-bot2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.135
-X-Source-L: No
-X-Exim-ID: 1j6GkJ-002tKI-Th
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.135]:18936
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 66
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <158254422067.28353.10866888120950973607.tip-bot2@tip-bot2>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Mon, Feb 24, 2020 at 11:37:00AM -0000, tip-bot2 for Arvind Sankar wrote:
+> The following commit has been merged into the x86/boot branch of tip:
+> 
+> Commit-ID:     0eea39a234dc52063d14541fabcb2c64516a2328
+> Gitweb:        https://git.kernel.org/tip/0eea39a234dc52063d14541fabcb2c64516a2328
+> Author:        Arvind Sankar <nivedita@alum.mit.edu>
+> AuthorDate:    Thu, 09 Jan 2020 10:02:18 -05:00
+> Committer:     Borislav Petkov <bp@suse.de>
+> CommitterDate: Mon, 24 Feb 2020 12:30:28 +01:00
+> 
+> x86/boot/compressed: Remove .eh_frame section from bzImage
+> 
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Hi Boris, apologies for the confusion and unnecessary work I've created,
+but I think the preference is to merge the 2-patch series I posted
+yesterday [1] instead of this.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/intel/fm10k/fm10k.h | 6 +++---
- drivers/net/ethernet/intel/i40e/i40e.h   | 4 ++--
- drivers/net/ethernet/intel/igb/igb.h     | 2 +-
- drivers/net/ethernet/intel/igc/igc.h     | 2 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe.h | 2 +-
- 5 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/fm10k/fm10k.h b/drivers/net/ethernet/intel/fm10k/fm10k.h
-index f306084ca12c..5b78362b82ac 100644
---- a/drivers/net/ethernet/intel/fm10k/fm10k.h
-+++ b/drivers/net/ethernet/intel/fm10k/fm10k.h
-@@ -41,7 +41,7 @@ struct fm10k_l2_accel {
- 	u16 count;
- 	u16 dglort;
- 	struct rcu_head rcu;
--	struct net_device *macvlan[0];
-+	struct net_device *macvlan[];
- };
- 
- enum fm10k_ring_state_t {
-@@ -198,7 +198,7 @@ struct fm10k_q_vector {
- 	struct rcu_head rcu;	/* to avoid race with update stats on free */
- 
- 	/* for dynamic allocation of rings associated with this q_vector */
--	struct fm10k_ring ring[0] ____cacheline_internodealigned_in_smp;
-+	struct fm10k_ring ring[] ____cacheline_internodealigned_in_smp;
- };
- 
- enum fm10k_ring_f_enum {
-@@ -218,7 +218,7 @@ struct fm10k_iov_data {
- 	unsigned int		num_vfs;
- 	unsigned int		next_vf_mbx;
- 	struct rcu_head		rcu;
--	struct fm10k_vf_info	vf_info[0];
-+	struct fm10k_vf_info	vf_info[];
- };
- 
- struct fm10k_udp_port {
-diff --git a/drivers/net/ethernet/intel/i40e/i40e.h b/drivers/net/ethernet/intel/i40e/i40e.h
-index 4833187bd259..e95b8da45e07 100644
---- a/drivers/net/ethernet/intel/i40e/i40e.h
-+++ b/drivers/net/ethernet/intel/i40e/i40e.h
-@@ -334,13 +334,13 @@ int i40e_ddp_flash(struct net_device *netdev, struct ethtool_flash *flash);
- 
- struct i40e_ddp_profile_list {
- 	u32 p_count;
--	struct i40e_profile_info p_info[0];
-+	struct i40e_profile_info p_info[];
- };
- 
- struct i40e_ddp_old_profile_list {
- 	struct list_head list;
- 	size_t old_ddp_size;
--	u8 old_ddp_buf[0];
-+	u8 old_ddp_buf[];
- };
- 
- /* macros related to FLX_PIT */
-diff --git a/drivers/net/ethernet/intel/igb/igb.h b/drivers/net/ethernet/intel/igb/igb.h
-index 49b5fa9d4783..0c9282e2aaec 100644
---- a/drivers/net/ethernet/intel/igb/igb.h
-+++ b/drivers/net/ethernet/intel/igb/igb.h
-@@ -306,7 +306,7 @@ struct igb_q_vector {
- 	char name[IFNAMSIZ + 9];
- 
- 	/* for dynamic allocation of rings associated with this q_vector */
--	struct igb_ring ring[0] ____cacheline_internodealigned_in_smp;
-+	struct igb_ring ring[] ____cacheline_internodealigned_in_smp;
- };
- 
- enum e1000_ring_flags_t {
-diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
-index 0014828eec46..a1f845a2aa80 100644
---- a/drivers/net/ethernet/intel/igc/igc.h
-+++ b/drivers/net/ethernet/intel/igc/igc.h
-@@ -326,7 +326,7 @@ struct igc_q_vector {
- 	struct net_device poll_dev;
- 
- 	/* for dynamic allocation of rings associated with this q_vector */
--	struct igc_ring ring[0] ____cacheline_internodealigned_in_smp;
-+	struct igc_ring ring[] ____cacheline_internodealigned_in_smp;
- };
- 
- #define MAX_ETYPE_FILTER		(4 - 1)
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe.h b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-index 39e73ad60352..2833e4f041ce 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-@@ -462,7 +462,7 @@ struct ixgbe_q_vector {
- 	char name[IFNAMSIZ + 9];
- 
- 	/* for dynamic allocation of rings associated with this q_vector */
--	struct ixgbe_ring ring[0] ____cacheline_internodealigned_in_smp;
-+	struct ixgbe_ring ring[] ____cacheline_internodealigned_in_smp;
- };
- 
- #ifdef CONFIG_IXGBE_HWMON
--- 
-2.25.0
-
+[1] https://lore.kernel.org/lkml/20200223193715.83729-1-nivedita@alum.mit.edu/
