@@ -2,183 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EC2716A87F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 15:37:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD33316A890
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 15:40:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbgBXOhh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 09:37:37 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45763 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727299AbgBXOhg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 09:37:36 -0500
-Received: by mail-wr1-f65.google.com with SMTP id g3so10618898wrs.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 06:37:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9+dEXm0EW4AqC+rVEUCsC6kfYVjwM2LHbBTMjmfwX+0=;
-        b=T/K12c8BM2KGNjae4ESXgmmX434EVW2tgxnu5qr9T/urQ4KqQxduG0ppOaXbA+KzB9
-         R2df5S1skJnnx9QeeT1RrlBXExEKxPKtAmvQbwoGn3QaCdulIvHUfDY3q4OEqAtkVNVQ
-         NfGWqpHLHLIVnK0hCNpCscvpylrdhM10knOvP94kb/mYAYIKdf2zbhSlmH6oAAZg/hCh
-         weqxmaH+6XetTuD4Of2arJpXmu2dC4dQOGyG/3p2iPN6nAUP0LbFLZUktas5CHcE+gXm
-         43xo6P7qMPy4suktSbzwcLT4yvvJ1DtLgwKaqJw461CqKzizPW6pp/QRa/sUn7PlVRGJ
-         5T3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9+dEXm0EW4AqC+rVEUCsC6kfYVjwM2LHbBTMjmfwX+0=;
-        b=b9lzP0IWaDSvIv+1BXgzgVlF/1MOnShbPnwdqKxGRZI940ILe0/6aIY4ccTZEoW9E1
-         okt9tm/Z+76MjAQR8vYBPAvo1ZK7Ce/XxJucnGaDUM5Hz2JrdR2P1vw85yKTSfKIXdSS
-         HArp+cW1wt917Qai79o9saOEZyGbqEGMgtlOrtwrGk6uVTZDcrUQxZe7rSoGppTjjydo
-         2ILVaummCvik6LEzni2P3xjVapiJ2Go+lf5GNEz0famjKtV+A/iWhgRRQDLWm22Nus5J
-         fH4p5Q++EAkBufJGA3E889jxeIsroStPvps3LOAPjyptj3uCSOnLSiChp6G7Yme85G6H
-         +Ohw==
-X-Gm-Message-State: APjAAAVwoQt8PRAMUTv4zY064xw8DfRxPVkErLkifI2CEdWnByqJfEEm
-        b08MJmPO6EymHbEJqie05o5GnA==
-X-Google-Smtp-Source: APXvYqzwYD1PoLIfQsVjOS6Sm0sNQ5F8CCnPX/8OqfcJBAxeuNDjV+ugt84otU30yh5VP4rX2h2s9Q==
-X-Received: by 2002:a5d:5264:: with SMTP id l4mr15650576wrc.275.1582555055097;
-        Mon, 24 Feb 2020 06:37:35 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id f127sm17713682wma.4.2020.02.24.06.37.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 06:37:34 -0800 (PST)
-Date:   Mon, 24 Feb 2020 14:37:32 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Milo Kim <milo.kim@ti.com>, Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] backlight: lp855x: Ensure regulators are disabled on
- probe failure
-Message-ID: <20200224143732.rreev3ypou26hvx3@holly.lan>
-References: <20200224140748.2182-1-jonathanh@nvidia.com>
+        id S1727521AbgBXOkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 09:40:36 -0500
+Received: from foss.arm.com ([217.140.110.172]:38082 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726762AbgBXOkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 09:40:36 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A3FE30E;
+        Mon, 24 Feb 2020 06:40:35 -0800 (PST)
+Received: from [10.1.197.50] (e120937-lin.cambridge.arm.com [10.1.197.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CB8F3F534;
+        Mon, 24 Feb 2020 06:40:34 -0800 (PST)
+Subject: Re: [RFC PATCH v2 00/13] SCMI Notifications Core Support
+To:     Jim Quinlan <james.quinlan@broadcom.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lukasz Luba <lukasz.luba@arm.com>, Jonathan.Cameron@huawei.com
+References: <20200214153535.32046-1-cristian.marussi@arm.com>
+ <CA+-6iNyFYusJTfiFgCNoRrcT5Xo4nof4fc=d46GiPAUD4o2j+Q@mail.gmail.com>
+From:   Cristian Marussi <cristian.marussi@arm.com>
+Message-ID: <68cbc7a3-dfcd-99c9-c8be-c2dc15de09f4@arm.com>
+Date:   Mon, 24 Feb 2020 14:40:33 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224140748.2182-1-jonathanh@nvidia.com>
+In-Reply-To: <CA+-6iNyFYusJTfiFgCNoRrcT5Xo4nof4fc=d46GiPAUD4o2j+Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 02:07:48PM +0000, Jon Hunter wrote:
-> If probing the LP885x backlight fails after the regulators have been
-> enabled, then the following warning is seen when releasing the
-> regulators ...
-> 
->  WARNING: CPU: 1 PID: 289 at drivers/regulator/core.c:2051 _regulator_put.part.28+0x158/0x160
->  Modules linked in: tegra_xudc lp855x_bl(+) host1x pwm_tegra ip_tables x_tables ipv6 nf_defrag_ipv6
->  CPU: 1 PID: 289 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200224 #1
->  Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
-> 
->  ...
-> 
->  Call trace:
->   _regulator_put.part.28+0x158/0x160
->   regulator_put+0x34/0x50
->   devm_regulator_release+0x10/0x18
->   release_nodes+0x12c/0x230
->   devres_release_all+0x34/0x50
->   really_probe+0x1c0/0x370
->   driver_probe_device+0x58/0x100
->   device_driver_attach+0x6c/0x78
->   __driver_attach+0xb0/0xf0
->   bus_for_each_dev+0x68/0xc8
->   driver_attach+0x20/0x28
->   bus_add_driver+0x160/0x1f0
->   driver_register+0x60/0x110
->   i2c_register_driver+0x40/0x80
->   lp855x_driver_init+0x20/0x1000 [lp855x_bl]
->   do_one_initcall+0x58/0x1a0
->   do_init_module+0x54/0x1d0
->   load_module+0x1d80/0x21c8
->   __do_sys_finit_module+0xe8/0x100
->   __arm64_sys_finit_module+0x18/0x20
->   el0_svc_common.constprop.3+0xb0/0x168
->   do_el0_svc+0x20/0x98
->   el0_sync_handler+0xf4/0x1b0
->   el0_sync+0x140/0x180
-> 
-> Fix this by ensuring that the regulators are disabled, if enabled, on
-> probe failure.
-> 
-> Finally, ensure that the vddio regulator is disabled in the driver
-> remove handler.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Hi Jim
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-
-
-
-> ---
->  drivers/video/backlight/lp855x_bl.c | 20 ++++++++++++++++----
->  1 file changed, 16 insertions(+), 4 deletions(-)
+On 18/02/2020 20:19, Jim Quinlan wrote:
+> Hi Cristian,
 > 
-> diff --git a/drivers/video/backlight/lp855x_bl.c b/drivers/video/backlight/lp855x_bl.c
-> index f68920131a4a..e94932c69f54 100644
-> --- a/drivers/video/backlight/lp855x_bl.c
-> +++ b/drivers/video/backlight/lp855x_bl.c
-> @@ -456,7 +456,7 @@ static int lp855x_probe(struct i2c_client *cl, const struct i2c_device_id *id)
->  		ret = regulator_enable(lp->enable);
->  		if (ret < 0) {
->  			dev_err(lp->dev, "failed to enable vddio: %d\n", ret);
-> -			return ret;
-> +			goto disable_supply;
->  		}
->  
->  		/*
-> @@ -471,24 +471,34 @@ static int lp855x_probe(struct i2c_client *cl, const struct i2c_device_id *id)
->  	ret = lp855x_configure(lp);
->  	if (ret) {
->  		dev_err(lp->dev, "device config err: %d", ret);
-> -		return ret;
-> +		goto disable_vddio;
->  	}
->  
->  	ret = lp855x_backlight_register(lp);
->  	if (ret) {
->  		dev_err(lp->dev,
->  			"failed to register backlight. err: %d\n", ret);
-> -		return ret;
-> +		goto disable_vddio;
->  	}
->  
->  	ret = sysfs_create_group(&lp->dev->kobj, &lp855x_attr_group);
->  	if (ret) {
->  		dev_err(lp->dev, "failed to register sysfs. err: %d\n", ret);
-> -		return ret;
-> +		goto disable_vddio;
->  	}
->  
->  	backlight_update_status(lp->bl);
-> +
->  	return 0;
-> +
-> +disable_vddio:
-> +	if (lp->enable)
-> +		regulator_disable(lp->enable);
-> +disable_supply:
-> +	if (lp->supply)
-> +		regulator_disable(lp->supply);
-> +
-> +	return ret;
->  }
->  
->  static int lp855x_remove(struct i2c_client *cl)
-> @@ -497,6 +507,8 @@ static int lp855x_remove(struct i2c_client *cl)
->  
->  	lp->bl->props.brightness = 0;
->  	backlight_update_status(lp->bl);
-> +	if (lp->enable)
-> +		regulator_disable(lp->enable);
->  	if (lp->supply)
->  		regulator_disable(lp->supply);
->  	sysfs_remove_group(&lp->dev->kobj, &lp855x_attr_group);
-> -- 
-> 2.17.1
+> This looks very robust and general but I'm wondering about the
+> "notification -> user" latency.  It appears there are at least five or
+> so memcpy()s of the notification message as it works its way to the
+> user, and added to that is the work queue deferral latency.  Is there
+> a concern on your end for low latency notifications, perhaps for
+> emergency notifications or do you consider this to be quick enough?
 > 
+> Note that we (BrcmSTB) have implemented our own  SCMI notification
+> system for a proprietary protocol and we designed it to deliver
+> notifications as quickly as possible.  Our system is more or less a
+> disposable hack and would not stand up to heavy or general usage.  We
+> fully intend to move to the approved Linux notification system.  On
+> that note,  I'm just wondering if you had any comment on the
+> possibility of  "slimming down" your RFC, e.g. perhaps somehow
+> collapsing some memcpy()s.
+
+Besides other still open considerations on latency, I spotted one certainly
+not strictly needed event-payload-sized memcpy that I'm going to remove so as
+to have only the bare minimum bytes copied in and out the queues. (it will
+complicate a bit the code in the worker but not dramatically)
+I'll do that not in today v3 but in the next v4 (due anyway to solve some
+residual initialization corner cases).
+
+Thanks
+
+Regards
+
+Cristian
+
+> 
+> Thanks,
+> Jim
+> PS I'm going on vacation so I won't be able to email for a week.
+> 
+> 
+> On Fri, Feb 14, 2020 at 10:36 AM Cristian Marussi
+> <cristian.marussi@arm.com> wrote:
+>>
+>> Hi all,
+>>
+>> this series wants to introduce SCMI Notification Support, built on top of
+>> the standard Kernel notification chain subsystem.
+>>
+>> At initialization time each SCMI Protocol takes care to register with the
+>> new SCMI notification core the set of its own events which it intends to
+>> support.
+>>
+>> Using a possibly proposed API in include/linux/scmi_protocol.h (not
+>> finalized though, NO EXPORTs_) a Kernel user can register its own
+>> notifier_t callback (via a notifier_block as usual) against any registered
+>> event as identified by the tuple:
+>>
+>>                 (proto_id, event_id, src_id)
+>>
+>> where src_id represents a generic source identifier which is protocol
+>> dependent like domain_id, performance_id, sensor_id and so forth.
+>> (users can anyway do NOT provide any src_id, and subscribe instead to ALL
+>>  the existing (if any) src_id sources for that proto_id/evt_id combination)
+>>
+>> Each of the above tuple-specified event will be served on its own dedicated
+>> blocking notification chain.
+>>
+>> Upon a notification delivery all the users' registered notifier_t callbacks
+>> will be in turn invoked and fed with the event_id as @action param and a
+>> generated custom per-event struct _report as @data param.
+>> (as in include/linux/scmi_protocol.h)
+>>
+>> The final step of notification delivery via users' callback invocation is
+>> instead delegated to a pool of deferred workers (Kernel cmwq): each
+>> SCMI protocol has its own dedicated worker and dedicated queue to push
+>> events from the rx ISR to the worker.
+>>
+>> The series is marked as RFC mainly because:
+>>
+>> - the API as said is tentative and not EXPORTed; currently consisting of a
+>>   generic interface like:
+>>
+>>          scmi_register_event_notifier(proto_id, evt_id, *src_id, *nb)
+>>
+>>   as found in scmi_protocol.h, or using the equivalent 'handle' operations
+>>   in scmi_notify_ops if used by an scmi_driver.
+>>
+>>   It's open for discussion.
+>>
+>> - no Event priorization has been considered: each protocol has its own
+>>   queue and deferred worker instance, so as to avoid that one protocol
+>>   flood can overrun a single queue and influence other protocols'
+>>   notifications' delivery.
+>>   But that's it, all the workers are unbound, low_pri cmwq workers.
+>>
+>>   Should we enforce some sort of built-in prio amongst the events ?
+>>   Should this priority instead be compile time configurable ?#git send-email --dry-run --suppress-cc=all --to=linux-kernel@vger.kernel.org,linux-arm-kernel@lists.infradead.org --cc=sudeep.holla@arm.com,lukasz.luba@arm.com,james.quinlan@broadcom.com,Jonathan.Cameron@Huawei.com,cristian.marussi@arm.com patch_scmi_notif/ext_V1/final/
+>>
+>>   Again, open for discussion.
+>>
+>> - no configuration is possible: it can be imagined that on a real platform
+>>   events' priority (if any) and events queues' depth could be something
+>>   somehow compile-time configurable, but this is not addressed by this
+>>   series at all.
+>>
+>> Based on scmi-next 5.6 [1], on top of:
+>>
+>> commit 5c8a47a5a91d ("firmware: arm_scmi: Make scmi core independent of
+>>                       the transport type")
+>>
+>> This series has been tested on JUNO with an experimental firmware only
+>> supporting Perf Notifications.
+>>
+>> Any thoughts ?
+>>
+>> Thanks
+>>
+>> Cristian
+>> ----
+>>
+>> v1 --> v2:
+>> - dropped anti-tampering patch
+>> - rebased on top of scmi-for-next-5.6, which includes Viresh series that
+>>   make SCMI core independent of transport (5c8a47a5a91d)
+>> - add a few new SCMI transport methods on top of Viresh patch to address
+>>   needs of SCMI Notifications
+>> - reviewed/renamed scmi_handle_xfer_delayed_resp()
+>> - split main SCMI Notification core patch (~1k lines) into three chunks:
+>>   protocol-registration / callbacks-registration / dispatch-and-delivery
+>> - removed awkward usage of IDR maps in favour of pure hashtables
+>> - added enable/disable refcounting in notification core (was broken in v1)
+>> - removed per-protocol candidate API: a single generic API is now proposed
+>>   instead of scmi_register_<proto>_event_notifier(evt_id, *src_id, *nb)
+>> - added handle->notify_ops as an alternative notification API
+>>   for scmi_driver
+>> - moved ALL_SRCIDs enabled handling from protocol code to core code
+>> - reviewed protocol registration/unregistration logic to use devres
+>> - reviewed cleanup phase on shutdown
+>> - fixed  ERROR: reference preceded by free as reported by kbuild test robot
+>>
+>> [1] git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git
+>>
+>> Cristian Marussi (10):
+>>   firmware: arm_scmi: Add notifications support in transport layer
+>>   firmware: arm_scmi: Add notification protocol-registration
+>>   firmware: arm_scmi: Add notification callbacks-registration
+>>   firmware: arm_scmi: Add notification dispatch and delivery
+>>   firmware: arm_scmi: Enable notification core
+>>   firmware: arm_scmi: Add Power notifications support
+>>   firmware: arm_scmi: Add Perf notifications support
+>>   firmware: arm_scmi: Add Sensor notifications support
+>>   firmware: arm_scmi: Add Reset notifications support
+>>   firmware: arm_scmi: Add Base notifications support
+>>
+>> Sudeep Holla (3):
+>>   firmware: arm_scmi: Add receive buffer support for notifications
+>>   firmware: arm_scmi: Update protocol commands and notification list
+>>   firmware: arm_scmi: Add support for notifications message processing
+>>
+>>  drivers/firmware/arm_scmi/Makefile  |    2 +-
+>>  drivers/firmware/arm_scmi/base.c    |  121 +++
+>>  drivers/firmware/arm_scmi/bus.c     |   11 +
+>>  drivers/firmware/arm_scmi/common.h  |   12 +
+>>  drivers/firmware/arm_scmi/driver.c  |  118 ++-
+>>  drivers/firmware/arm_scmi/mailbox.c |   17 +
+>>  drivers/firmware/arm_scmi/notify.c  | 1102 +++++++++++++++++++++++++++
+>>  drivers/firmware/arm_scmi/notify.h  |   78 ++
+>>  drivers/firmware/arm_scmi/perf.c    |  140 +++-
+>>  drivers/firmware/arm_scmi/power.c   |  133 +++-
+>>  drivers/firmware/arm_scmi/reset.c   |  100 ++-
+>>  drivers/firmware/arm_scmi/sensors.c |   77 +-
+>>  drivers/firmware/arm_scmi/shmem.c   |   15 +
+>>  include/linux/scmi_protocol.h       |  114 +++
+>>  14 files changed, 2009 insertions(+), 31 deletions(-)
+>>  create mode 100644 drivers/firmware/arm_scmi/notify.c
+>>  create mode 100644 drivers/firmware/arm_scmi/notify.h
+>>
+>> --
+>> 2.17.1
+>>
+
