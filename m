@@ -2,155 +2,278 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A1EB16B42E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:38:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0475C16B46B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:44:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbgBXWin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 17:38:43 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37646 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727459AbgBXWin (ORCPT
+        id S1728211AbgBXWmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 17:42:37 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45783 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728104AbgBXWmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 17:38:43 -0500
-Received: by mail-ed1-f66.google.com with SMTP id t7so13887492edr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 14:38:42 -0800 (PST)
+        Mon, 24 Feb 2020 17:42:37 -0500
+Received: by mail-lj1-f194.google.com with SMTP id e18so11884276ljn.12;
+        Mon, 24 Feb 2020 14:42:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Am1tgX996z1ppxv6KMXbcSkx7Xx4s/5SxOG8NwtW1po=;
-        b=128yUKO7rcI157pfejcd9t2zQycldfxQIqIc8cRktUGVtjEdYJS7Xa2EEt4NCp6cMj
-         ccOG/dx9wXq7fMbzKK9/c7gB/ST6TIrQg1OjwnQQg+hSWoeKvgzRSMREJxlV9nv3iZ/r
-         8R3sj1oXQ/MGMYqXhA9xggevnRUy18QlEfCXwLdv2LD9aNUakDNtJQAeNmi7jl/F/7/j
-         8h4jxBu2dbtGtfbkW010yvY9lkLUukFR4hU0J+O64RWRMGeWffLAgOFtZ4X0bzq7CxP3
-         PqoEz7RcxB0OAwtf3M7T07PnxyBA2lRFoYnVrcskyMkOASjt0wJOA70Fs7rjWV8wW65t
-         1Xnw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ni+9+C2OixXBozsO+Vukxpmas05+jGj37YYvv1otaGU=;
+        b=mIDmf64usA3lY1ve2h7wNxlX75VUo8vdW1zR6TRiZHBsRf24rNM/rnrJrGhU8Hg+0S
+         QnSZTAQbXD3tfA/D6Vgbj0JdFdQivpb4LuF9+nQUh2pGk2Dm3rtxAc58hRSBplT3H8NX
+         Kb9wDhQfQKLuXKDFkn+kmmsInPCXM0xmfioSx8hoW9va6kwLKFzrm6y0tQFmh4Rtfj/2
+         DH9w0oROR6qGfIL6CMIXzwvoODHXPp5/dWcDw9U1SYAGBdXGoG9xgP486IbO8M6tjBEq
+         5B2sAPbMYMC0bYSabNYbQQzh/Eee7VqMpq2r/oT5c7OMqwNNLckuf1bOytP9o2SsuFZ4
+         kuPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Am1tgX996z1ppxv6KMXbcSkx7Xx4s/5SxOG8NwtW1po=;
-        b=m2ahGBitANnWA2izkRcTMprvbt2jEensXP85b7ng519D+eGphfUYK+unlPDB0Z/BxR
-         kkD4+OvVcKkzb467hh0hj54RcGJTEYW6VWh9vMSmlOgt8c+ARLMLLglPj/NesgC2OZxp
-         Wvzzk3SjmfKJ4QDKV2JrrPM7u1LqxibMW2xzjdLk3eAUOFJsYZRwSFK0OcwjjsFIqc5r
-         y+4gzgSBj5jtDrWjppq+Ln/22oztSuoNSEpFCg0yFVrJGyhqnTbfP40YS1wRROnuPjtc
-         hzU/dDHZnXx1ilQiwbOA13Hrgr56xZkISG3r9m1AP5+UBx0XSAi5hA/VuCpkLZe4fELy
-         GHYg==
-X-Gm-Message-State: APjAAAXaKJsgZknnPYec4jf0NZgONZXFsKAgxSQRz8cgWkFejj4k4mgc
-        +ONl4hOx7cRW+/7lRNYo6RV0uTgHyTUTq8vmLaV4
-X-Google-Smtp-Source: APXvYqxEBymbJcwpeAcsqEent6pUKYyaxYqCtvnCFKaEevNm78Aalz+Q0v7wR9q33U6yWP+EFiJQt51zFjYAEi6KtSM=
-X-Received: by 2002:a50:fd15:: with SMTP id i21mr48320647eds.12.1582583922225;
- Mon, 24 Feb 2020 14:38:42 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ni+9+C2OixXBozsO+Vukxpmas05+jGj37YYvv1otaGU=;
+        b=HpcNd8Tm8R3fih3PGM2qc0wIJoGjU80Xs+piiRSoeAkWltLRxRbLl4Kqw3RO45rAma
+         bVEil1O/XImVEqLb8TzR3B0neZ+x1OiJ/k+SqgSzXgk8dWeH/xMssiSJg++BnAnj8Oz4
+         bOTl+VRnesitHG1vXAFdeBnla5u92n3RnBM3RNU7IjJkvlL+ysFDr2dnIJ9ZLclEdQWB
+         KoG11pnix4NX3JS4zts5avLVNZ2d+5OemmUpYMvlrth892959x2Uxsx4w9TSOR2TwzfE
+         lXiPJ1M8L5hK99QN8eiRbchqG4SijZjrvVVSlCyFk+EVvDYbiPIlVbIZyqD17MjrTwJz
+         DrEw==
+X-Gm-Message-State: APjAAAW2TPCZnNLY8/980LMXk1ELXSLfzxFlV92B7XlbS+aT7m5nKSv7
+        6qkcTP3iLH6dDNf2T7cAnW4=
+X-Google-Smtp-Source: APXvYqyajfWTUwTxY/nQW9d5FP5Av8CektEP+9OYz9Dm+Lxuq0uwtm7IPeGJZsNsXl+CukmsEysAkA==
+X-Received: by 2002:a2e:8145:: with SMTP id t5mr32085323ljg.144.1582584153582;
+        Mon, 24 Feb 2020 14:42:33 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id j7sm6264833lfh.25.2020.02.24.14.42.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2020 14:42:32 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Jasper Korten <jja2000@gmail.com>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v11 00/17] Consolidate and improve NVIDIA Tegra CPUIDLE driver(s)
+Date:   Tue, 25 Feb 2020 01:40:40 +0300
+Message-Id: <20200224224057.21877-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <0000000000003cbb40059f4e0346@google.com>
-In-Reply-To: <0000000000003cbb40059f4e0346@google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 24 Feb 2020 17:38:31 -0500
-Message-ID: <CAHC9VhQVXk5ucd3=7OC=BxEkZGGLfXv9bESX67Mr-TRmTwxjEg@mail.gmail.com>
-Subject: Re: kernel panic: audit: backlog limit exceeded
-To:     syzbot <syzbot+9a5e789e4725b9ef1316@syzkaller.appspotmail.com>
-Cc:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
-        dan.carpenter@oracle.com, davem@davemloft.net,
-        Eric Paris <eparis@redhat.com>, fzago@cray.com,
-        gregkh@linuxfoundation.org, john.hammond@intel.com,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        mareklindner@neomailbox.ch, netdev@vger.kernel.org,
-        sw@simonwunderlich.de, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 3:18 AM syzbot
-<syzbot+9a5e789e4725b9ef1316@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    36a44bcd Merge branch 'bnxt_en-shutdown-and-kexec-kdump-re..
-> git tree:       net
-> console output: https://syzkaller.appspot.com/x/log.txt?x=148bfdd9e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=768cc3d3e277cc16
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9a5e789e4725b9ef1316
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=151b1109e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=128bfdd9e00000
->
-> The bug was bisected to:
->
-> commit 0c1b9970ddd4cc41002321c3877e7f91aacb896d
-> Author: Dan Carpenter <dan.carpenter@oracle.com>
-> Date:   Fri Jul 28 14:42:27 2017 +0000
->
->     staging: lustre: lustre: Off by two in lmv_fid2path()
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17e6c3e9e00000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=1416c3e9e00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1016c3e9e00000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9a5e789e4725b9ef1316@syzkaller.appspotmail.com
-> Fixes: 0c1b9970ddd4 ("staging: lustre: lustre: Off by two in lmv_fid2path()")
->
-> audit: audit_backlog=13 > audit_backlog_limit=7
-> audit: audit_lost=1 audit_rate_limit=0 audit_backlog_limit=7
-> Kernel panic - not syncing: audit: backlog limit exceeded
-> CPU: 1 PID: 9913 Comm: syz-executor024 Not tainted 5.6.0-rc1-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x197/0x210 lib/dump_stack.c:118
->  panic+0x2e3/0x75c kernel/panic.c:221
->  audit_panic.cold+0x32/0x32 kernel/audit.c:307
->  audit_log_lost kernel/audit.c:377 [inline]
->  audit_log_lost+0x8b/0x180 kernel/audit.c:349
->  audit_log_start kernel/audit.c:1788 [inline]
->  audit_log_start+0x70e/0x7c0 kernel/audit.c:1745
->  audit_log+0x95/0x120 kernel/audit.c:2345
->  xt_replace_table+0x61d/0x830 net/netfilter/x_tables.c:1413
->  __do_replace+0x1da/0x950 net/ipv6/netfilter/ip6_tables.c:1084
->  do_replace net/ipv6/netfilter/ip6_tables.c:1157 [inline]
->  do_ip6t_set_ctl+0x33a/0x4c8 net/ipv6/netfilter/ip6_tables.c:1681
->  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
->  nf_setsockopt+0x77/0xd0 net/netfilter/nf_sockopt.c:115
->  ipv6_setsockopt net/ipv6/ipv6_sockglue.c:949 [inline]
->  ipv6_setsockopt+0x147/0x180 net/ipv6/ipv6_sockglue.c:933
->  tcp_setsockopt net/ipv4/tcp.c:3165 [inline]
->  tcp_setsockopt+0x8f/0xe0 net/ipv4/tcp.c:3159
->  sock_common_setsockopt+0x94/0xd0 net/core/sock.c:3149
->  __sys_setsockopt+0x261/0x4c0 net/socket.c:2130
->  __do_sys_setsockopt net/socket.c:2146 [inline]
->  __se_sys_setsockopt net/socket.c:2143 [inline]
->  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:2143
->  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x44720a
-> Code: 49 89 ca b8 37 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 1a e0 fb ff c3 66 0f 1f 84 00 00 00 00 00 49 89 ca b8 36 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 fa df fb ff c3 66 0f 1f 84 00 00 00 00 00
-> RSP: 002b:00007ffd032dec78 EFLAGS: 00000286 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000044720a
-> RDX: 0000000000000040 RSI: 0000000000000029 RDI: 0000000000000003
-> RBP: 00007ffd032deda0 R08: 00000000000003b8 R09: 0000000000004000
-> R10: 00000000006d7b40 R11: 0000000000000286 R12: 00007ffd032deca0
-> R13: 00000000006d9d60 R14: 0000000000000029 R15: 00000000006d7ba0
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+Hello,
 
-Similar to syzbot report 72461ac44b36c98f58e5, see my comments there.
+This series does the following:
+
+  1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
+     into common drivers/cpuidle/ directory.
+
+  2. Prepares upcoming CPU cluster power-down idling state enabling for
+     Tegra30.
+
+In the end there is a quite nice clean up of the Tegra CPUIDLE drivers
+and of the Tegra's arch code in general. Please apply, thanks!
+
+!!!WARNING!!! This series was made on top of the cpufreq patches [1]. But it
+              should be fine as long as Thierry Reding would pick up this and
+              the cpufreq patchsets via the Tegra tree, otherwise there will
+              one minor merge-conflict.
+
+[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=158206
+
+Changelog:
+
+v11: - Added acks from Daniel Lezcano.
+
+     - Added t-b from Nicolas Chauvet.
+
+     - @Daniel Lezcano: In regards to -M, I assume it's useless. The
+       cpuidle-tegra driver was rewritten from scratch, it's not a simple
+       code move.
+
+         rename arch/arm/mach-tegra/cpuidle-tegra20.c => drivers/cpuidle/cpuidle-tegra.c (9%)
+
+     - Replaced ktime_get() with udelay(), thanks to Daniel Lezcano for the
+       suggestion.
+
+     - Note to Thierry: this series uses [1] +  next-20200218 for the base,
+       you could also cherry-pick the patches from the grate-kernel if it
+       makes things easier (it is up-to-date).
+
+v10: - Added acks from Peter De Schrijver.
+
+    - Added tested-by from Peter Geis, Jasper Korten and David Heidelberg
+      who tested these patches on Ouya, TF300T and Nexus 7 devices.
+
+    - Temporarily dropped the "cpuidle: tegra: Support CPU cluster power-down
+      state on Tegra30" patch because Michał Mirosław reported that it didn't
+      work well on his TF300T. After some testing we found that changing
+      a way in which firmware performs L2 cache maintenance helps, but later
+      on we also found that the current v9 series works just fine without the
+      extra firmware changes using recent linux-next and the reason why v8
+      didn't work before is still unknown (need more testing). So I decided
+      that it will be better to postpone the dropped patch until we know for
+      sure that it works well for everyone in every possible configuration.
+
+    - Rebased this series on top of recent linux-next, in a result dropped
+      the "cpuidle: Avoid NULL dereference in cpuidle_driver_state_disabled()"
+      patch because it's not needed anymore.
+
+v9: - Rebased on recent linux-next. Dropped the v8 "Avoid NULL dereference.."
+      patch as a result, it's not needed anymore.
+
+    - Temporarily dropped "cpuidle: tegra: Support CPU cluster power-down
+      state on Tegra30" patch because Michał Mirosław reported that it causes
+      problem for ASUS TF300T Tegra30 device, we'll have to resolve the
+      problem first.
+
+    - Added ACKs from Peter De Schrijver to the patches.
+
+v8: - Rebased on recent linux-next, now making use of
+      cpuidle_driver_state_disabled(). Added new patch to make this new API
+      usable by the updated Tegra cpuidle driver:
+
+        cpuidle: Avoid NULL dereference in cpuidle_driver_state_disabled()
+
+    - Added new patch to handle case where LP2 isn't available:
+
+        cpuidle: tegra: Disable CC6 state if LP2 unavailable
+
+v7: - drivers/cpuidle/cpuidle-tegra.c now includes an explicit comment that
+      clarifies the new terminology that is used for naming of the idling
+      states. This change was suggested by Peter De Schrijver in the review
+      comment to v6. See the comment to struct tegra_idle_driver in the code.
+
+    - (!) This series is now based on top of the "NVIDIA Tegra20 CPUFreq
+      driver major update" patchset. The conflict between these two series
+      is trivial to resolve, but still it's worth to mention about that.
+
+v6: - Addressed request from Thierry Reding to change the way patches are
+      organized by making changes in a more incremental manner.
+
+    - tegra_sleep_cpu() now checks for the secondary CPUs to be offline
+      in the "Make outer_disable() open-coded" patch.
+
+v5: - Rebased on a recent linux-next, fixed one minor conflict in Kconfig.
+
+    - Improved commit's message of the "Support CPU cluster power-down state
+      on Tegra30" patch.
+
+    - The "Support CPU cluster power-down state on Tegra30" patch is also
+      got split and now there is additional "Make outer_disable() open-coded"
+      patch.
+
+    - Made minor cosmetic changes to the "Introduce unified driver for
+      NVIDIA Tegra SoCs" patch by improving error message and renaming
+      one variable.
+
+v4: - Fixed compilation with !CONFIG_CACHE_L2X0 (and tested that it still
+      works).
+
+    - Replaced ktime_compare() with ktime_before() in the new driver,
+      for consistency.
+
+v3: - Addressed review comments that were made by Jon Hunter to v2 by
+      splitting patches into smaller (and simpler) chunks, better
+      documenting changes in the commit messages and using proper error
+      codes in the code.
+
+      Warnings are replaced with a useful error messages in the code of
+      "Introduce unified driver for NVIDIA Tegra SoCs" patch.
+
+      Secondary CPUs parking timeout increased to 100ms because I found
+      that it actually may happen to take more than 1ms if CPU is running
+      on a *very* low frequency.
+
+      Added diagnostic messages that are reporting Flow Controller state
+      when CPU parking fails.
+
+      Further polished cpuidle driver's code.
+
+      The coupled state entering is now aborted if there is a pending SGI
+      (Software Generated Interrupt) because it will be lost after GIC's
+      power-cycling. Like it was done by the old Tegra20 CPUIDLE driver.
+
+v2: - Added patches to enable the new cpuidle driver in the defconfigs:
+
+        ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
+        ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
+
+    - Dropped patches that removed CPUIDLE_FLAG_TIMER_STOP from the idling
+      states because that flag actually doesn't have any negative effects,
+      but still is correct for the case of a local CPU timer on older Tegra
+      SoCs:
+
+        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from Tegra114/124 idle-state
+        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from all states
+
+    - The "Add unified driver for NVIDIA Tegra SoCs" patch got more polish.
+      Tegra30 and Terga114 states are now squashed into a single common C7
+      state (following Parker TRM terminology, see 17.2.2.2 Power Management
+      States), more comments added, etc minor changes.
+
+Dmitry Osipenko (17):
+  ARM: tegra: Compile sleep-tegra20/30.S unconditionally
+  ARM: tegra: Add tegra_pm_park_secondary_cpu()
+  ARM: tegra: Remove pen-locking from cpuidle-tegra20
+  ARM: tegra: Change tegra_set_cpu_in_lp2() type to void
+  ARM: tegra: Propagate error from tegra_idle_lp2_last()
+  ARM: tegra: Expose PM functions required for new cpuidle driver
+  ARM: tegra: Rename some of the newly exposed PM functions
+  ARM: tegra: Make outer_disable() open-coded
+  arm: tegra20: cpuidle: Handle case where secondary CPU hangs on
+    entering LP2
+  arm: tegra20: cpuidle: Make abort_flag atomic
+  arm: tegra20/30: cpuidle: Remove unnecessary memory barrier
+  cpuidle: Refactor and move out NVIDIA Tegra20 driver into
+    drivers/cpuidle
+  cpuidle: tegra: Squash Tegra30 driver into the common driver
+  cpuidle: tegra: Squash Tegra114 driver into the common driver
+  cpuidle: tegra: Disable CC6 state if LP2 unavailable
+  ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
+  ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
+
+ arch/arm/configs/multi_v7_defconfig           |   1 +
+ arch/arm/configs/tegra_defconfig              |   1 +
+ arch/arm/mach-tegra/Makefile                  |  19 +-
+ arch/arm/mach-tegra/cpuidle-tegra114.c        |  89 ----
+ arch/arm/mach-tegra/cpuidle-tegra20.c         | 212 ----------
+ arch/arm/mach-tegra/cpuidle-tegra30.c         | 132 ------
+ arch/arm/mach-tegra/cpuidle.c                 |  50 ---
+ arch/arm/mach-tegra/cpuidle.h                 |  21 -
+ arch/arm/mach-tegra/irq.c                     |   3 +-
+ arch/arm/mach-tegra/pm.c                      |  54 ++-
+ arch/arm/mach-tegra/pm.h                      |   4 -
+ arch/arm/mach-tegra/reset-handler.S           |  11 -
+ arch/arm/mach-tegra/reset.h                   |   9 +-
+ arch/arm/mach-tegra/sleep-tegra20.S           | 170 --------
+ arch/arm/mach-tegra/sleep-tegra30.S           |   6 +-
+ arch/arm/mach-tegra/sleep.h                   |  15 -
+ arch/arm/mach-tegra/tegra.c                   |   7 +-
+ drivers/cpuidle/Kconfig.arm                   |   8 +
+ drivers/cpuidle/Makefile                      |   1 +
+ drivers/cpuidle/cpuidle-tegra.c               | 392 ++++++++++++++++++
+ include/soc/tegra/cpuidle.h                   |   2 +-
+ .../mach-tegra => include/soc/tegra}/irq.h    |   8 +-
+ include/soc/tegra/pm.h                        |  31 ++
+ 23 files changed, 485 insertions(+), 761 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra114.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra20.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra30.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle.h
+ create mode 100644 drivers/cpuidle/cpuidle-tegra.c
+ rename {arch/arm/mach-tegra => include/soc/tegra}/irq.h (59%)
 
 -- 
-paul moore
-www.paul-moore.com
+2.24.0
+
