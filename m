@@ -2,228 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 027E916A5A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:01:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4134F16A5B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:06:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbgBXMBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 07:01:30 -0500
-Received: from mga12.intel.com ([192.55.52.136]:52215 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727185AbgBXMBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 07:01:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 04:01:29 -0800
-X-IronPort-AV: E=Sophos;i="5.70,480,1574150400"; 
-   d="scan'208";a="230626314"
-Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.249.174.151]) ([10.249.174.151])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 24 Feb 2020 04:01:26 -0800
-Subject: Re: [PATCH 1/2] kvm: vmx: Use basic exit reason to check if it's the
- specific VM EXIT
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-References: <20200224020751.1469-1-xiaoyao.li@intel.com>
- <20200224020751.1469-2-xiaoyao.li@intel.com>
- <87lfosp9xs.fsf@vitty.brq.redhat.com>
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-Message-ID: <d9744594-4a66-d867-f785-64ce4d42b848@intel.com>
-Date:   Mon, 24 Feb 2020 20:01:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727670AbgBXMF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 07:05:56 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:46714 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727185AbgBXMF4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 07:05:56 -0500
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01OC4iAI014149;
+        Mon, 24 Feb 2020 07:05:31 -0500
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2yay1bns8y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Feb 2020 07:05:31 -0500
+Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 01OC5TQm039486
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Mon, 24 Feb 2020 07:05:29 -0500
+Received: from SCSQCASHYB6.ad.analog.com (10.77.17.132) by
+ SCSQMBX10.ad.analog.com (10.77.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 24 Feb 2020 04:05:28 -0800
+Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by
+ SCSQCASHYB6.ad.analog.com (10.77.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 24 Feb 2020 04:05:17 -0800
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX10.ad.analog.com
+ (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Mon, 24 Feb 2020 04:05:27 -0800
+Received: from btogorean-pc.ad.analog.com ([10.48.65.107])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01OC5I6k002703;
+        Mon, 24 Feb 2020 07:05:18 -0500
+From:   Bogdan Togorean <bogdan.togorean@analog.com>
+To:     <dri-devel@lists.freedesktop.org>
+CC:     <airlied@linux.ie>, <daniel@ffwll.ch>, <narmstrong@baylibre.com>,
+        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@siol.net>, <tglx@linutronix.de>,
+        <alexios.zavras@intel.com>, <linux-kernel@vger.kernel.org>,
+        Bogdan Togorean <bogdan.togorean@analog.com>
+Subject: [RESEND 1/2] drm: bridge: adv7511: Enable SPDIF DAI
+Date:   Mon, 24 Feb 2020 14:01:55 +0200
+Message-ID: <20200224120155.15510-1-bogdan.togorean@analog.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <87lfosp9xs.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-24_03:2020-02-21,2020-02-24 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=820 spamscore=0
+ suspectscore=1 adultscore=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1011 malwarescore=0 bulkscore=0 mlxscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002240101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/24/2020 6:16 PM, Vitaly Kuznetsov wrote:
-> Xiaoyao Li <xiaoyao.li@intel.com> writes:
-> 
->> Current kvm uses the 32-bit exit reason to check if it's any specific VM
->> EXIT, however only the low 16-bit of VM EXIT REASON acts as the basic
->> exit reason.
->>
->> Introduce Macro basic(exit_reaso)
-> 
-> "exit_reason"
+ADV7511 support I2S or SPDIF as audio input interfaces. This commit
+enable support for SPDIF.
 
-Ah, will correct it in v2.
+Signed-off-by: Bogdan Togorean <bogdan.togorean@analog.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
->>   to help retrieve the basic exit reason
->> from VM EXIT REASON, and use the basic exit reason for checking and
->> indexing the exit hanlder.
->>
->> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
->> ---
->>   arch/x86/kvm/vmx/vmx.c | 44 ++++++++++++++++++++++--------------------
->>   arch/x86/kvm/vmx/vmx.h |  2 ++
->>   2 files changed, 25 insertions(+), 21 deletions(-)
->>
->> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
->> index 9a6664886f2e..85da72d4dc92 100644
->> --- a/arch/x86/kvm/vmx/vmx.c
->> +++ b/arch/x86/kvm/vmx/vmx.c
->> @@ -1584,7 +1584,7 @@ static int skip_emulated_instruction(struct kvm_vcpu *vcpu)
->>   	 * i.e. we end up advancing IP with some random value.
->>   	 */
->>   	if (!static_cpu_has(X86_FEATURE_HYPERVISOR) ||
->> -	    to_vmx(vcpu)->exit_reason != EXIT_REASON_EPT_MISCONFIG) {
->> +	    basic(to_vmx(vcpu)->exit_reason) != EXIT_REASON_EPT_MISCONFIG) {
-> 
-> "basic" word is probably 'too basic' to be used for this purpose. Even
-> if we need a macro for it (I'm not really convinced it improves the
-> readability), I'd suggest we name it 'basic_exit_reason()' instead.
-
-Agreed.
-
->>   		rip = kvm_rip_read(vcpu);
->>   		rip += vmcs_read32(VM_EXIT_INSTRUCTION_LEN);
->>   		kvm_rip_write(vcpu, rip);
->> @@ -5797,6 +5797,7 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
->>   {
->>   	struct vcpu_vmx *vmx = to_vmx(vcpu);
->>   	u32 exit_reason = vmx->exit_reason;
->> +	u16 basic_exit_reason = basic(exit_reason);
-> 
-> I don't think renaming local variable is needed, let's just do
-> 
-> 'u16 exit_reason = basic_exit_reason(vmx->exit_reason)' and keep the
-> rest of the code as-is.
-
-No, we can't do this.
-
-It's not just renaming local variable, the full 32-bit exit reason is 
-used elsewhere in this function that needs the upper 16-bit.
-
-Here variable basic_exit_reason is added for the cases where only basic 
-exit reason number is needed.
-
->>   	u32 vectoring_info = vmx->idt_vectoring_info;
->>   
->>   	trace_kvm_exit(exit_reason, vcpu, KVM_ISA_VMX);
->> @@ -5842,17 +5843,17 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
->>   	 * will cause infinite loop.
->>   	 */
->>   	if ((vectoring_info & VECTORING_INFO_VALID_MASK) &&
->> -			(exit_reason != EXIT_REASON_EXCEPTION_NMI &&
->> -			exit_reason != EXIT_REASON_EPT_VIOLATION &&
->> -			exit_reason != EXIT_REASON_PML_FULL &&
->> -			exit_reason != EXIT_REASON_TASK_SWITCH)) {
->> +			(basic_exit_reason != EXIT_REASON_EXCEPTION_NMI &&
->> +			 basic_exit_reason != EXIT_REASON_EPT_VIOLATION &&
->> +			 basic_exit_reason != EXIT_REASON_PML_FULL &&
->> +			 basic_exit_reason != EXIT_REASON_TASK_SWITCH)) {
->>   		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
->>   		vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_DELIVERY_EV;
->>   		vcpu->run->internal.ndata = 3;
->>   		vcpu->run->internal.data[0] = vectoring_info;
->>   		vcpu->run->internal.data[1] = exit_reason;
->>   		vcpu->run->internal.data[2] = vcpu->arch.exit_qualification;
->> -		if (exit_reason == EXIT_REASON_EPT_MISCONFIG) {
->> +		if (basic_exit_reason == EXIT_REASON_EPT_MISCONFIG) {
->>   			vcpu->run->internal.ndata++;
->>   			vcpu->run->internal.data[3] =
->>   				vmcs_read64(GUEST_PHYSICAL_ADDRESS);
->> @@ -5884,32 +5885,32 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
->>   		return 1;
->>   	}
->>   
->> -	if (exit_reason >= kvm_vmx_max_exit_handlers)
->> +	if (basic_exit_reason >= kvm_vmx_max_exit_handlers)
->>   		goto unexpected_vmexit;
->>   #ifdef CONFIG_RETPOLINE
->> -	if (exit_reason == EXIT_REASON_MSR_WRITE)
->> +	if (basic_exit_reason == EXIT_REASON_MSR_WRITE)
->>   		return kvm_emulate_wrmsr(vcpu);
->> -	else if (exit_reason == EXIT_REASON_PREEMPTION_TIMER)
->> +	else if (basic_exit_reason == EXIT_REASON_PREEMPTION_TIMER)
->>   		return handle_preemption_timer(vcpu);
->> -	else if (exit_reason == EXIT_REASON_INTERRUPT_WINDOW)
->> +	else if (basic_exit_reason == EXIT_REASON_INTERRUPT_WINDOW)
->>   		return handle_interrupt_window(vcpu);
->> -	else if (exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
->> +	else if (basic_exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
->>   		return handle_external_interrupt(vcpu);
->> -	else if (exit_reason == EXIT_REASON_HLT)
->> +	else if (basic_exit_reason == EXIT_REASON_HLT)
->>   		return kvm_emulate_halt(vcpu);
->> -	else if (exit_reason == EXIT_REASON_EPT_MISCONFIG)
->> +	else if (basic_exit_reason == EXIT_REASON_EPT_MISCONFIG)
->>   		return handle_ept_misconfig(vcpu);
->>   #endif
->>   
->> -	exit_reason = array_index_nospec(exit_reason,
->> +	basic_exit_reason = array_index_nospec(basic_exit_reason,
->>   					 kvm_vmx_max_exit_handlers);
->> -	if (!kvm_vmx_exit_handlers[exit_reason])
->> +	if (!kvm_vmx_exit_handlers[basic_exit_reason])
->>   		goto unexpected_vmexit;
->>   
->> -	return kvm_vmx_exit_handlers[exit_reason](vcpu);
->> +	return kvm_vmx_exit_handlers[basic_exit_reason](vcpu);
->>   
->>   unexpected_vmexit:
->> -	vcpu_unimpl(vcpu, "vmx: unexpected exit reason 0x%x\n", exit_reason);
->> +	vcpu_unimpl(vcpu, "vmx: unexpected exit reason 0x%x\n", basic_exit_reason);
->>   	dump_vmcs();
->>   	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
->>   	vcpu->run->internal.suberror =
->> @@ -6241,13 +6242,14 @@ static void vmx_handle_exit_irqoff(struct kvm_vcpu *vcpu,
->>   	enum exit_fastpath_completion *exit_fastpath)
->>   {
->>   	struct vcpu_vmx *vmx = to_vmx(vcpu);
->> +	u16 basic_exit_reason = basic(vmx->exit_reason);
-> 
-> Here I'd suggest we also use the same
-> 
-> 'u16 exit_reason = basic_exit_reason(vmx->exit_reason)'
-> 
-> as above.
-> 
->>   
->> -	if (vmx->exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
->> +	if (basic_exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
->>   		handle_external_interrupt_irqoff(vcpu);
->> -	else if (vmx->exit_reason == EXIT_REASON_EXCEPTION_NMI)
->> +	else if (basic_exit_reason == EXIT_REASON_EXCEPTION_NMI)
->>   		handle_exception_nmi_irqoff(vmx);
->>   	else if (!is_guest_mode(vcpu) &&
->> -		vmx->exit_reason == EXIT_REASON_MSR_WRITE)
->> +		 basic_exit_reason == EXIT_REASON_MSR_WRITE)
->>   		*exit_fastpath = handle_fastpath_set_msr_irqoff(vcpu);
->>   }
->>   
->> @@ -6621,7 +6623,7 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
->>   	vmx->idt_vectoring_info = 0;
->>   
->>   	vmx->exit_reason = vmx->fail ? 0xdead : vmcs_read32(VM_EXIT_REASON);
->> -	if ((u16)vmx->exit_reason == EXIT_REASON_MCE_DURING_VMENTRY)
->> +	if (basic(vmx->exit_reason) == EXIT_REASON_MCE_DURING_VMENTRY)
->>   		kvm_machine_check();
->>   
->>   	if (vmx->fail || (vmx->exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY))
->> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
->> index 7f42cf3dcd70..c6ba33eedb59 100644
->> --- a/arch/x86/kvm/vmx/vmx.h
->> +++ b/arch/x86/kvm/vmx/vmx.h
->> @@ -22,6 +22,8 @@ extern u32 get_umwait_control_msr(void);
->>   
->>   #define X2APIC_MSR(r) (APIC_BASE_MSR + ((r) >> 4))
->>   
->> +#define basic(exit_reason) ((u16)(exit_reason))
->> +
->>   #ifdef CONFIG_X86_64
->>   #define NR_SHARED_MSRS	7
->>   #else
-> 
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+index a428185be2c1..1e9b128d229b 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+@@ -119,6 +119,9 @@ int adv7511_hdmi_hw_params(struct device *dev, void *data,
+ 		audio_source = ADV7511_AUDIO_SOURCE_I2S;
+ 		i2s_format = ADV7511_I2S_FORMAT_LEFT_J;
+ 		break;
++	case HDMI_SPDIF:
++		audio_source = ADV7511_AUDIO_SOURCE_SPDIF;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -175,11 +178,21 @@ static int audio_startup(struct device *dev, void *data)
+ 	/* use Audio infoframe updated info */
+ 	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(1),
+ 				BIT(5), 0);
++	/* enable SPDIF receiver */
++	if (adv7511->audio_source == ADV7511_AUDIO_SOURCE_SPDIF)
++		regmap_update_bits(adv7511->regmap, ADV7511_REG_AUDIO_CONFIG,
++				   BIT(7), BIT(7));
++
+ 	return 0;
+ }
+ 
+ static void audio_shutdown(struct device *dev, void *data)
+ {
++	struct adv7511 *adv7511 = dev_get_drvdata(dev);
++
++	if (adv7511->audio_source == ADV7511_AUDIO_SOURCE_SPDIF)
++		regmap_update_bits(adv7511->regmap, ADV7511_REG_AUDIO_CONFIG,
++				   BIT(7), 0);
+ }
+ 
+ static int adv7511_hdmi_i2s_get_dai_id(struct snd_soc_component *component,
+@@ -213,6 +226,7 @@ static const struct hdmi_codec_pdata codec_data = {
+ 	.ops = &adv7511_codec_ops,
+ 	.max_i2s_channels = 2,
+ 	.i2s = 1,
++	.spdif = 1,
+ };
+ 
+ int adv7511_audio_init(struct device *dev, struct adv7511 *adv7511)
+-- 
+2.25.0
 
