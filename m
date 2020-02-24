@@ -2,106 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC20716A04C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:46:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C48BE16A0BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:56:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbgBXIq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:46:29 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:6274 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726509AbgBXIq3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:46:29 -0500
-X-UUID: ad29b07bf7aa4fe49e2a5091d670f26c-20200224
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=ucwhUjhwtXJ7fomoy+TbQYpZVLRcyud+cUdXEQuJ3Mw=;
-        b=iiH3PAIEkFzFwIci+IKErSH9RGG4s3HsUgyJ3C11MY4TDwR+IL482XiFT0x87OM742CNXyv0z9eyF6xYFm9moaLwe10IOxyqAauNKuJVjLqq9jxoHShr9PIOnTHWTDg7H1Cf06xQ6envjtcTDsyJpf4vHpLmYX2hq73y+GRAbqg=;
-X-UUID: ad29b07bf7aa4fe49e2a5091d670f26c-20200224
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 131449361; Mon, 24 Feb 2020 16:46:24 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 24 Feb 2020 16:45:34 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 24 Feb 2020 16:46:39 +0800
-Message-ID: <1582533982.12922.5.camel@mtksdaap41>
-Subject: Re: [PATCH v6 1/4] dt-bindings: display: mediatek: update dpi
- supported chips
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <stonea168@163.com>,
-        <huijuan.xie@mediatek.com>
-Date:   Mon, 24 Feb 2020 16:46:22 +0800
-In-Reply-To: <20200221112828.55837-2-jitao.shi@mediatek.com>
-References: <20200221112828.55837-1-jitao.shi@mediatek.com>
-         <20200221112828.55837-2-jitao.shi@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        id S1727636AbgBXI4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:56:09 -0500
+Received: from mga12.intel.com ([192.55.52.136]:40096 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726925AbgBXI4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 03:56:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 00:56:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,479,1574150400"; 
+   d="scan'208";a="231068681"
+Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.16])
+  by fmsmga008.fm.intel.com with ESMTP; 24 Feb 2020 00:56:06 -0800
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     alex.williamson@redhat.com
+Cc:     zhenyuw@linux.intel.com, intel-gvt-dev@lists.freedesktop.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, kevin.tian@intel.com, peterx@redhat.com,
+        Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH v3 1/7] vfio: allow external user to get vfio group from device
+Date:   Mon, 24 Feb 2020 03:46:41 -0500
+Message-Id: <20200224084641.31696-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200224084350.31574-1-yan.y.zhao@intel.com>
+References: <20200224084350.31574-1-yan.y.zhao@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEppdGFvOg0KDQpPbiBGcmksIDIwMjAtMDItMjEgYXQgMTk6MjggKzA4MDAsIEppdGFvIFNo
-aSB3cm90ZToNCj4gQWRkIGRlY3JpcHRpb25zIGFib3V0IHN1cHBvcnRlZCBjaGlwcywgaW5jbHVk
-aW5nIE1UMjcwMSAmIE1UODE3MyAmDQo+IG10ODE4Mw0KPiANCj4gMS4gQWRkIG1vcmUgY2hpcHMg
-c3VwcG9ydC4gZXguIE1UMjcwMSAmIE1UODE3MyAmIE1UODE4Mw0KPiAyLiBBZGQgcHJvcGVydHkg
-ImRwaV9waW5fbW9kZV9zd2FwIiBhbmQgInBpbmN0cmwtbmFtZXMiIGdwaW8gbW9kZSBkcGkgbW9k
-ZSBhbmQNCj4gICAgZ3BpbyBvdXBwdXQtbG93IHRvIGF2b2lkIGxlYWthZ2UgY3VycmVudC4NCj4g
-My4gQWRkIHByb3BlcnR5ICJkcGlfZHVhbF9lZGdlIiB0byBjb25maWcgdGhlIGRwaSBwaW4gb3V0
-cHV0IG1vZGUgZHVhbCBlZGdlIG9yDQo+ICAgIHNpbmdsZSBlZGdlIHNhbXBsZSBkYXRhLg0KPiAN
-Cj4gU2lnbmVkLW9mZi1ieTogSml0YW8gU2hpIDxqaXRhby5zaGlAbWVkaWF0ZWsuY29tPg0KPiAt
-LS0NCj4gIC4uLi9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQgICAg
-ICAgIHwgMTEgKysrKysrKysrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCsp
-DQo+IA0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rp
-c3BsYXkvbWVkaWF0ZWsvbWVkaWF0ZWssZHBpLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQNCj4gaW5kZXggYjZh
-N2U3Mzk3YjhiLi5jZDZhMTQ2OWM4YjcgMTAwNjQ0DQo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQNCj4gKysr
-IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvbWVkaWF0ZWsvbWVk
-aWF0ZWssZHBpLnR4dA0KPiBAQCAtNyw2ICs3LDcgQEAgb3V0cHV0IGJ1cy4NCj4gIA0KPiAgUmVx
-dWlyZWQgcHJvcGVydGllczoNCj4gIC0gY29tcGF0aWJsZTogIm1lZGlhdGVrLDxjaGlwPi1kcGki
-DQo+ICsgIHRoZSBzdXBwb3J0ZWQgY2hpcHMgYXJlIG10MjcwMSAsIG10ODE3MyBhbmQgbXQ4MTgz
-Lg0KPiAgLSByZWc6IFBoeXNpY2FsIGJhc2UgYWRkcmVzcyBhbmQgbGVuZ3RoIG9mIHRoZSBjb250
-cm9sbGVyJ3MgcmVnaXN0ZXJzDQo+ICAtIGludGVycnVwdHM6IFRoZSBpbnRlcnJ1cHQgc2lnbmFs
-IGZyb20gdGhlIGZ1bmN0aW9uIGJsb2NrLg0KPiAgLSBjbG9ja3M6IGRldmljZSBjbG9ja3MNCj4g
-QEAgLTE2LDYgKzE3LDExIEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+ICAgIERvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncmFwaC50eHQuIFRoaXMgcG9ydCBzaG91bGQgYmUgY29u
-bmVjdGVkDQo+ICAgIHRvIHRoZSBpbnB1dCBwb3J0IG9mIGFuIGF0dGFjaGVkIEhETUkgb3IgTFZE
-UyBlbmNvZGVyIGNoaXAuDQo+ICANCj4gK09wdGlvbmFsIHByb3BlcnRpZXM6DQo+ICstIGRwaV9w
-aW5fbW9kZV9zd2FwOiBTd2FwIHRoZSBwaW4gbW9kZSBiZXR3ZWVuIGRwaSBtb2RlIGFuZCBncGlv
-IG1vZGUuDQo+ICstIHBpbmN0cmwtbmFtZXM6IENvbnRhaW4gImdwaW9tb2RlIiBhbmQgImRwaW1v
-ZGUiLg0KPiArLSBkcGlfZHVhbF9lZGdlOiBDb250cm9sIHRoZSBSR0IgMjRiaXQgZGF0YSBvbiAx
-MiBwaW5zIG9yIDI0IHBpbnMuDQoNCkkndmUgZmluZCB0aGF0IGluIFsxXSwgdGhlcmUgYXJlIGFs
-cmVhZHkgYSBwcm9wZXJ0eSBvZiAicGNsay1zYW1wbGUiDQp3aGljaCBsaWtlIHRoaXMsIGJ1dCBp
-dCBvbmx5IGhhdmUgcmlzaW5nICgxKSBvciBmYWxsaW5nICgwKSBzdGF0dXMuIERvZXMNCnRoYXQg
-cHJvcGVydHkgZGVzY3JpYmUgdGhlIHNhbWUgdGhpbmcgd2l0aCB0aGlzIHByb3BlcnR5PyBJZiB0
-aGV5IGFyZQ0KdGhlIHNhbWUsIEkgdGhpbmsgeW91IHNob3VsZCBhZGQgbmV3IHN0YXRlLCBkdWFs
-ICgyKSwgZm9yICJwY2xrLXNhbXBsZSIuDQoNClsxXQ0KaHR0cHM6Ly9naXQua2VybmVsLm9yZy9w
-dWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3ZpZGVvLWludGVyZmFjZXMudHh0P2g9djUu
-Ni1yYzMNCg0KUmVnYXJkcywNCkNLDQoNCj4gKw0KPiAgRXhhbXBsZToNCj4gIA0KPiAgZHBpMDog
-ZHBpQDE0MDFkMDAwIHsNCj4gQEAgLTI2LDYgKzMyLDExIEBAIGRwaTA6IGRwaUAxNDAxZDAwMCB7
-DQo+ICAJCSA8Jm1tc3lzIENMS19NTV9EUElfRU5HSU5FPiwNCj4gIAkJIDwmYXBtaXhlZHN5cyBD
-TEtfQVBNSVhFRF9UVkRQTEw+Ow0KPiAgCWNsb2NrLW5hbWVzID0gInBpeGVsIiwgImVuZ2luZSIs
-ICJwbGwiOw0KPiArCWRwaV9kdWFsX2VkZ2U7DQo+ICsJZHBpX3Bpbl9tb2RlX3N3YXA7DQo+ICsJ
-cGluY3RybC1uYW1lcyA9ICJncGlvbW9kZSIsICJkcGltb2RlIjsNCj4gKwlwaW5jdHJsLTAgPSA8
-JmRwaV9waW5fZ3Bpbz47DQo+ICsJcGluY3RybC0xID0gPCZkcGlfcGluX2Z1bmM+Ow0KPiAgDQo+
-ICAJcG9ydCB7DQo+ICAJCWRwaTBfb3V0OiBlbmRwb2ludCB7DQoNCg==
+external user is able to
+1. add a device into an vfio group
+2. call vfio_group_get_external_user_from_dev() with the device pointer
+to get vfio_group associated with this device and increments the container
+user counter to prevent the VFIO group from disposal before KVM exits.
+3. When the external KVM finishes, it calls vfio_group_put_external_user()
+to release the VFIO group.
+
+Suggested-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+ drivers/vfio/vfio.c  | 37 +++++++++++++++++++++++++++++++++++++
+ include/linux/vfio.h |  2 ++
+ 2 files changed, 39 insertions(+)
+
+diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+index c8482624ca34..914bdf4b9d73 100644
+--- a/drivers/vfio/vfio.c
++++ b/drivers/vfio/vfio.c
+@@ -1720,6 +1720,43 @@ struct vfio_group *vfio_group_get_external_user(struct file *filep)
+ }
+ EXPORT_SYMBOL_GPL(vfio_group_get_external_user);
+ 
++/**
++ * External user API, exported by symbols to be linked dynamically.
++ *
++ * The protocol includes:
++ * 1. External user add a device into a vfio group
++ *
++ * 2. The external user calls vfio_group_get_external_user_from_dev()
++ * with the device pointer
++ * to verify that:
++ *	- there's a vfio group associated with it and is initialized;
++ *	- IOMMU is set for the vfio group.
++ * If both checks passed, vfio_group_get_external_user_from_dev()
++ * increments the container user counter to prevent
++ * the VFIO group from disposal before KVM exits.
++ *
++ * 3. When the external KVM finishes, it calls
++ * vfio_group_put_external_user() to release the VFIO group.
++ * This call decrements the container user counter.
++ */
++
++struct vfio_group *vfio_group_get_external_user_from_dev(struct device *dev)
++{
++	struct vfio_group *group;
++	int ret;
++
++	group = vfio_group_get_from_dev(dev);
++	if (!group)
++		return ERR_PTR(-ENODEV);
++
++	ret = vfio_group_add_container_user(group);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return group;
++}
++EXPORT_SYMBOL_GPL(vfio_group_get_external_user_from_dev);
++
+ void vfio_group_put_external_user(struct vfio_group *group)
+ {
+ 	vfio_group_try_dissolve_container(group);
+diff --git a/include/linux/vfio.h b/include/linux/vfio.h
+index e42a711a2800..2e1fa0c7396f 100644
+--- a/include/linux/vfio.h
++++ b/include/linux/vfio.h
+@@ -94,6 +94,8 @@ extern void vfio_unregister_iommu_driver(
+  */
+ extern struct vfio_group *vfio_group_get_external_user(struct file *filep);
+ extern void vfio_group_put_external_user(struct vfio_group *group);
++extern
++struct vfio_group *vfio_group_get_external_user_from_dev(struct device *dev);
+ extern bool vfio_external_group_match_file(struct vfio_group *group,
+ 					   struct file *filep);
+ extern int vfio_external_user_iommu_id(struct vfio_group *group);
+-- 
+2.17.1
 
