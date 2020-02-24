@@ -2,266 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A4D16A097
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:54:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59E3E16A0B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbgBXIyb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:54:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38094 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727202AbgBXIyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:54:16 -0500
-Received: from localhost (unknown [213.57.247.131])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1287A24649;
-        Mon, 24 Feb 2020 08:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582534455;
-        bh=HuMfClWLP58bKyff8e+Ck8/eUabt3cCepUeA1J/GuZY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dPhCbKpZozRvmghhAoSo5+NS/jwZ0hNm7WiWQnGqisJXAaSVD5cCm1rizCtjEh45Q
-         SHEqPbqhQ6r3Hsr8fjZMa/6epvapn81a7xCIq3B6T839t+MbC1ebPNH7EbA6QHfA39
-         CSBIQtTT5G2tOVKPYKZ8xAfyilFnPC4GcTwe754w=
-From:   Leon Romanovsky <leon@kernel.org>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     Leon Romanovsky <leonro@mellanox.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Keyur Chudgar <keyur@os.amperecomputing.com>,
-        Don Fry <pcnet32@frontier.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Jay Vosburgh <j.vosburgh@gmail.com>, linux-acenic@sunsite.dk,
-        Maxime Ripard <mripard@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Mark Einon <mark.einon@gmail.com>,
-        Chris Snook <chris.snook@gmail.com>,
-        linux-rockchip@lists.infradead.org,
-        Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-        Igor Russkikh <irusskikh@marvell.com>,
-        David Dillow <dave@thedillows.org>,
-        Netanel Belgazal <netanel@amazon.com>,
-        Quan Nguyen <quan@os.amperecomputing.com>,
-        Jay Cliburn <jcliburn@gmail.com>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Andreas Larsson <andreas@gaisler.com>,
-        Andy Gospodarek <andy@greyhouse.net>, netdev@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Ion Badulescu <ionut@badula.org>,
-        Arthur Kiyanovski <akiyano@amazon.com>,
-        Jes Sorensen <jes@trained-monkey.org>,
-        nios2-dev@lists.rocketboards.org, Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH net-next v1 18/18] net/atheros: Clean atheros code from driver version
-Date:   Mon, 24 Feb 2020 10:53:11 +0200
-Message-Id: <20200224085311.460338-19-leon@kernel.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200224085311.460338-1-leon@kernel.org>
-References: <20200224085311.460338-1-leon@kernel.org>
+        id S1727445AbgBXIxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:53:32 -0500
+Received: from mail-am6eur05on2078.outbound.protection.outlook.com ([40.107.22.78]:27942
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727348AbgBXIx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 03:53:29 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ne7teBaqIlrdQPDd9JaxmSXOsDVZRsBAL0GTTkRispZx44zZ+WRaqCScM3Hike5mI49A82m5aGGMZbWa6X2mkN/BjGpHJX0+dlvB+fNZoekcIUn9lzpEuMAcCsLJVdmBINKL3heJb5MA9N+Z7cwB4dnYygMgSNHYanR+Va23CdZOWVxhxpScgVVkBoAkkX9UKFxS52ITtlZxNHXwHJJFUfyFULHH3WUx8tph/lZAwBVL6pUZZ2uBMM3Nx6sBwR2CEktTuxj9csXXv1ppm5uUoLBmZOlEAWwYnSYBEF4ipxOAnhn9uJfp0RHaYnqCwxK2gvreX0yRDOO7rzV6iomOFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=39ZpzOZDMlgUHdjcgSEY5oRnIiqbOuAoG3PMp076Lbo=;
+ b=htuiyNYNHpTpzxWdK5Tv/DiygHEXSAg/coJ6lYwIKQ6sU4yokFfYKMdBjvBiRFzBPjRvXjMurnY1VmNdUKyAeZhi9O59s/sH251ykc8pbySRS3W1wog6wsIiF60+EDBIUb/fNrDXibH+Nwpd6V2ihZPglqQV4idjE3giq3PaGYZA9rOxTQQSG/Hz2YqFii4vFiDnTmoFgeWDIXPWMAARPPrc84Ts3epKmR/dL9iS59m/x8OW4mghxNqYEWQXhmByhPY5OZcAIRSmwyoxbwOgfRpTln7BQVegoCXTUDeAtVLlNtHyY3P9mXuwonyv2Ih8lPHStjJ9kaoUTVksVHQ91w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=39ZpzOZDMlgUHdjcgSEY5oRnIiqbOuAoG3PMp076Lbo=;
+ b=qxmS1PNMCHIJEN5frCv5iP7B7297bi+IDREMXDkkBM3DyES3JBZnycp0BfGQ0PbH12nkUI94hm43h+4tAL+wmW2qVEiHoOChY50KUywjsVXVoEEwWAd3JXiy+4oGwJSiihs4Y9Rh6jzogDwqAbbTfskZBcM9ocd50dY1w5/2+YQ=
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com (20.179.232.225) by
+ VE1PR04MB6606.eurprd04.prod.outlook.com (20.179.235.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2750.18; Mon, 24 Feb 2020 08:53:26 +0000
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::2075:2c31:f78a:23a4]) by VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::2075:2c31:f78a:23a4%5]) with mapi id 15.20.2729.033; Mon, 24 Feb 2020
+ 08:53:25 +0000
+From:   "S.j. Wang" <shengjiu.wang@nxp.com>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+CC:     "timur@kernel.org" <timur@kernel.org>,
+        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/3] ASoC: fsl_easrc: Add EASRC ASoC CPU DAI and
+ platform drivers
+Thread-Topic: [PATCH v2 3/3] ASoC: fsl_easrc: Add EASRC ASoC CPU DAI and
+ platform drivers
+Thread-Index: AdXq7zKbRo5k9O0MQoSy/99vj57qYQ==
+Date:   Mon, 24 Feb 2020 08:53:25 +0000
+Message-ID: <VE1PR04MB6479BCA376502F6F1251602BE3EC0@VE1PR04MB6479.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=shengjiu.wang@nxp.com; 
+x-originating-ip: [101.86.209.67]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 1e08fdfd-4cb4-4e99-3420-08d7b90702b9
+x-ms-traffictypediagnostic: VE1PR04MB6606:
+x-microsoft-antispam-prvs: <VE1PR04MB66060C1F0041F6A9ADD08884E3EC0@VE1PR04MB6606.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 032334F434
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(376002)(396003)(366004)(136003)(199004)(189003)(9686003)(186003)(6916009)(316002)(7696005)(76116006)(33656002)(478600001)(55016002)(6506007)(26005)(81166006)(81156014)(5660300002)(2906002)(66946007)(66446008)(8676002)(64756008)(66476007)(66556008)(71200400001)(52536014)(54906003)(4326008)(86362001)(8936002)(7416002);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6606;H:VE1PR04MB6479.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: o3WWhM5TJLrHi8gznmjIIIzZGx/b7VImqyt4nB4PcK+IaUgb0NNapjhMX5NAkDCrKnFkhJmpFsL/AcabJVEFo3Ys/7rL3gx+ydIAV/RPUqYrXkKlp1NappXM6nXGmDK4pHd4xfPyBBMK9KTF+Kjq0n9UFvuPe1JMBmYq25iTh8l3h7p94x1Q77TpVXQrX1C4XxkLzJO5NzQhBiyAhRVd+UvexgnjPXeiuj0PCmgSraIbXs4F8NWg2MSgRmoaE7858ovNREUjwRvnn9su6Ti1By1pbt7nRl66gHoraJRjMwvSSPShWNjWjxu/GUefpdt3N39gwDzBjgjcEvcKCFQ0aP9uMrCaw1MkyvfTktxfYYN5YBrkLZlIfysoXOCTNmm6WLTp8mm+IRoE4q2EeHssmrJgitFP7TVxWO1F921x3L6EujGEix7OcGCnAG5Dn6jJ
+x-ms-exchange-antispam-messagedata: fPiDTjYFKXg/lfnBsTO3GteZXyVRssejJyoDRenaez1X/YyWKTPQrjkzR6KKazjbJM+/kk9VK0/0UWk3JDNxuceiN66P6ZGXwyIuslwmUoCXdprrZegm2CuPWEe6XKak4QbH6G80hkUthaoUnaZEkg==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e08fdfd-4cb4-4e99-3420-08d7b90702b9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2020 08:53:25.6346
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: k/pYfVM/+CVio65/5mb01LolyoelAriE93P4OgG3QKflkvmLzB7fC2LWyjezZpiu41FMFEEnD9ZLVh0k86TM/A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6606
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leon Romanovsky <leonro@mellanox.com>
+Hi
 
-Use linux kernel version for ethtool and module versions.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  sound/soc/fsl/Kconfig           |   10 +
+> >  sound/soc/fsl/Makefile          |    2 +
+> >  sound/soc/fsl/fsl_asrc_common.h |    1 +
+> >  sound/soc/fsl/fsl_easrc.c       | 2265 +++++++++++++++++++++++++++++++
+> >  sound/soc/fsl/fsl_easrc.h       |  668 +++++++++
+> >  sound/soc/fsl/fsl_easrc_dma.c   |  440 ++++++
+>=20
+> I see a 90% similarity between fsl_asrc_dma and fsl_easrc_dma files.
+> Would it be possible reuse the existing code? Could share structures from
+> my point of view, just like it reuses "enum asrc_pair_index", I know
+> differentiating "pair" and "context" is a big point here though.
+>=20
+> A possible quick solution for that, off the top of my head, could be:
+>=20
+> 1) in fsl_asrc_common.h
+>=20
+>         struct fsl_asrc {
+>                 ....
+>         };
+>=20
+>         struct fsl_asrc_pair {
+>                 ....
+>         };
+>=20
+> 2) in fsl_easrc.h
+>=20
+>         /* Renaming shared structures */
+>         #define fsl_easrc fsl_asrc
+>         #define fsl_easrc_context fsl_asrc_pair
+>=20
+> May be a good idea to see if others have some opinion too.
+>=20
 
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
----
- drivers/net/ethernet/atheros/atl1c/atl1c.h         |  1 -
- drivers/net/ethernet/atheros/atl1c/atl1c_ethtool.c |  2 --
- drivers/net/ethernet/atheros/atl1c/atl1c_main.c    |  5 -----
- drivers/net/ethernet/atheros/atl1e/atl1e.h         |  1 -
- drivers/net/ethernet/atheros/atl1e/atl1e_ethtool.c |  2 --
- drivers/net/ethernet/atheros/atl1e/atl1e_main.c    |  4 ----
- drivers/net/ethernet/atheros/atlx/atl1.c           |  6 ------
- drivers/net/ethernet/atheros/atlx/atl2.c           | 10 ----------
- 8 files changed, 31 deletions(-)
+We need to modify the fsl_asrc and fsl_asrc_pair, let them
+To be used by both driver,  also we need to put the specific
+Definition for each module to same struct, right?
 
-diff --git a/drivers/net/ethernet/atheros/atl1c/atl1c.h b/drivers/net/ethernet/atheros/atl1c/atl1c.h
-index 60b2febd7315..a0562a90fb6d 100644
---- a/drivers/net/ethernet/atheros/atl1c/atl1c.h
-+++ b/drivers/net/ethernet/atheros/atl1c/atl1c.h
-@@ -583,7 +583,6 @@ struct atl1c_adapter {
- 		readl(((a)->hw_addr + reg) + ((offset) << 2)))
+>=20
+> > +static const struct regmap_config fsl_easrc_regmap_config =3D {
+> > +     .readable_reg =3D fsl_easrc_readable_reg,
+> > +     .volatile_reg =3D fsl_easrc_volatile_reg,
+> > +     .writeable_reg =3D fsl_easrc_writeable_reg,
+>=20
+> Can we use regmap_range and regmap_access_table?
+>=20
 
- extern char atl1c_driver_name[];
--extern char atl1c_driver_version[];
+Can the regmap_range support discontinuous registers?  The
+reg_stride =3D 4.
 
- void atl1c_reinit_locked(struct atl1c_adapter *adapter);
- s32 atl1c_reset_hw(struct atl1c_hw *hw);
-diff --git a/drivers/net/ethernet/atheros/atl1c/atl1c_ethtool.c b/drivers/net/ethernet/atheros/atl1c/atl1c_ethtool.c
-index b5a70a36fa04..e2eb7b8c63a0 100644
---- a/drivers/net/ethernet/atheros/atl1c/atl1c_ethtool.c
-+++ b/drivers/net/ethernet/atheros/atl1c/atl1c_ethtool.c
-@@ -221,8 +221,6 @@ static void atl1c_get_drvinfo(struct net_device *netdev,
- 	struct atl1c_adapter *adapter = netdev_priv(netdev);
-
- 	strlcpy(drvinfo->driver,  atl1c_driver_name, sizeof(drvinfo->driver));
--	strlcpy(drvinfo->version, atl1c_driver_version,
--		sizeof(drvinfo->version));
- 	strlcpy(drvinfo->bus_info, pci_name(adapter->pdev),
- 		sizeof(drvinfo->bus_info));
- }
-diff --git a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
-index 0d67b951c0b2..00bd7bd55794 100644
---- a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
-+++ b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
-@@ -8,9 +8,7 @@
-
- #include "atl1c.h"
-
--#define ATL1C_DRV_VERSION "1.0.1.1-NAPI"
- char atl1c_driver_name[] = "atl1c";
--char atl1c_driver_version[] = ATL1C_DRV_VERSION;
-
- /*
-  * atl1c_pci_tbl - PCI Device ID Table
-@@ -37,7 +35,6 @@ MODULE_AUTHOR("Jie Yang");
- MODULE_AUTHOR("Qualcomm Atheros Inc., <nic-devel@qualcomm.com>");
- MODULE_DESCRIPTION("Qualcomm Atheros 100/1000M Ethernet Network Driver");
- MODULE_LICENSE("GPL");
--MODULE_VERSION(ATL1C_DRV_VERSION);
-
- static int atl1c_stop_mac(struct atl1c_hw *hw);
- static void atl1c_disable_l0s_l1(struct atl1c_hw *hw);
-@@ -2642,8 +2639,6 @@ static int atl1c_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto err_register;
- 	}
-
--	if (netif_msg_probe(adapter))
--		dev_info(&pdev->dev, "version %s\n", ATL1C_DRV_VERSION);
- 	cards_found++;
- 	return 0;
-
-diff --git a/drivers/net/ethernet/atheros/atl1e/atl1e.h b/drivers/net/ethernet/atheros/atl1e/atl1e.h
-index e9893da50995..9fcad783c939 100644
---- a/drivers/net/ethernet/atheros/atl1e/atl1e.h
-+++ b/drivers/net/ethernet/atheros/atl1e/atl1e.h
-@@ -482,7 +482,6 @@ struct atl1e_adapter {
- 		readl(((a)->hw_addr + reg) + ((offset) << 2)))
-
- extern char atl1e_driver_name[];
--extern char atl1e_driver_version[];
-
- void atl1e_check_options(struct atl1e_adapter *adapter);
- int atl1e_up(struct atl1e_adapter *adapter);
-diff --git a/drivers/net/ethernet/atheros/atl1e/atl1e_ethtool.c b/drivers/net/ethernet/atheros/atl1e/atl1e_ethtool.c
-index c6b9e7ea8e38..0cbde352d1ba 100644
---- a/drivers/net/ethernet/atheros/atl1e/atl1e_ethtool.c
-+++ b/drivers/net/ethernet/atheros/atl1e/atl1e_ethtool.c
-@@ -307,8 +307,6 @@ static void atl1e_get_drvinfo(struct net_device *netdev,
- 	struct atl1e_adapter *adapter = netdev_priv(netdev);
-
- 	strlcpy(drvinfo->driver,  atl1e_driver_name, sizeof(drvinfo->driver));
--	strlcpy(drvinfo->version, atl1e_driver_version,
--		sizeof(drvinfo->version));
- 	strlcpy(drvinfo->fw_version, "L1e", sizeof(drvinfo->fw_version));
- 	strlcpy(drvinfo->bus_info, pci_name(adapter->pdev),
- 		sizeof(drvinfo->bus_info));
-diff --git a/drivers/net/ethernet/atheros/atl1e/atl1e_main.c b/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
-index e0d89942d537..223ef846123e 100644
---- a/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
-+++ b/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
-@@ -8,10 +8,7 @@
-
- #include "atl1e.h"
-
--#define DRV_VERSION "1.0.0.7-NAPI"
--
- char atl1e_driver_name[] = "ATL1E";
--char atl1e_driver_version[] = DRV_VERSION;
- #define PCI_DEVICE_ID_ATTANSIC_L1E      0x1026
- /*
-  * atl1e_pci_tbl - PCI Device ID Table
-@@ -33,7 +30,6 @@ MODULE_DEVICE_TABLE(pci, atl1e_pci_tbl);
- MODULE_AUTHOR("Atheros Corporation, <xiong.huang@atheros.com>, Jie Yang <jie.yang@atheros.com>");
- MODULE_DESCRIPTION("Atheros 1000M Ethernet Network Driver");
- MODULE_LICENSE("GPL");
--MODULE_VERSION(DRV_VERSION);
-
- static void atl1e_setup_mac_ctrl(struct atl1e_adapter *adapter);
-
-diff --git a/drivers/net/ethernet/atheros/atlx/atl1.c b/drivers/net/ethernet/atheros/atlx/atl1.c
-index b498fd6a47d0..271e7034fa70 100644
---- a/drivers/net/ethernet/atheros/atlx/atl1.c
-+++ b/drivers/net/ethernet/atheros/atlx/atl1.c
-@@ -65,12 +65,10 @@
-
- #include "atl1.h"
-
--#define ATLX_DRIVER_VERSION "2.1.3"
- MODULE_AUTHOR("Xiong Huang <xiong.huang@atheros.com>, "
- 	      "Chris Snook <csnook@redhat.com>, "
- 	      "Jay Cliburn <jcliburn@gmail.com>");
- MODULE_LICENSE("GPL");
--MODULE_VERSION(ATLX_DRIVER_VERSION);
-
- /* Temporary hack for merging atl1 and atl2 */
- #include "atlx.c"
-@@ -2965,8 +2963,6 @@ static int atl1_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* get device revision number */
- 	adapter->hw.dev_rev = ioread16(adapter->hw.hw_addr +
- 		(REG_MASTER_CTRL + 2));
--	if (netif_msg_probe(adapter))
--		dev_info(&pdev->dev, "version %s\n", ATLX_DRIVER_VERSION);
-
- 	/* set default ring resource counts */
- 	adapter->rfd_ring.count = adapter->rrd_ring.count = ATL1_DEFAULT_RFD;
-@@ -3344,8 +3340,6 @@ static void atl1_get_drvinfo(struct net_device *netdev,
- 	struct atl1_adapter *adapter = netdev_priv(netdev);
-
- 	strlcpy(drvinfo->driver, ATLX_DRIVER_NAME, sizeof(drvinfo->driver));
--	strlcpy(drvinfo->version, ATLX_DRIVER_VERSION,
--		sizeof(drvinfo->version));
- 	strlcpy(drvinfo->bus_info, pci_name(adapter->pdev),
- 		sizeof(drvinfo->bus_info));
- }
-diff --git a/drivers/net/ethernet/atheros/atlx/atl2.c b/drivers/net/ethernet/atheros/atlx/atl2.c
-index b81a4e0c5b57..7c52b92b599d 100644
---- a/drivers/net/ethernet/atheros/atlx/atl2.c
-+++ b/drivers/net/ethernet/atheros/atlx/atl2.c
-@@ -36,18 +36,13 @@
-
- #include "atl2.h"
-
--#define ATL2_DRV_VERSION "2.2.3"
--
- static const char atl2_driver_name[] = "atl2";
- static const char atl2_driver_string[] = "Atheros(R) L2 Ethernet Driver";
--static const char atl2_copyright[] = "Copyright (c) 2007 Atheros Corporation.";
--static const char atl2_driver_version[] = ATL2_DRV_VERSION;
- static const struct ethtool_ops atl2_ethtool_ops;
-
- MODULE_AUTHOR("Atheros Corporation <xiong.huang@atheros.com>, Chris Snook <csnook@redhat.com>");
- MODULE_DESCRIPTION("Atheros Fast Ethernet Network Driver");
- MODULE_LICENSE("GPL");
--MODULE_VERSION(ATL2_DRV_VERSION);
-
- /*
-  * atl2_pci_tbl - PCI Device ID Table
-@@ -1688,9 +1683,6 @@ static struct pci_driver atl2_driver = {
-  */
- static int __init atl2_init_module(void)
- {
--	printk(KERN_INFO "%s - version %s\n", atl2_driver_string,
--		atl2_driver_version);
--	printk(KERN_INFO "%s\n", atl2_copyright);
- 	return pci_register_driver(&atl2_driver);
- }
- module_init(atl2_init_module);
-@@ -2011,8 +2003,6 @@ static void atl2_get_drvinfo(struct net_device *netdev,
- 	struct atl2_adapter *adapter = netdev_priv(netdev);
-
- 	strlcpy(drvinfo->driver,  atl2_driver_name, sizeof(drvinfo->driver));
--	strlcpy(drvinfo->version, atl2_driver_version,
--		sizeof(drvinfo->version));
- 	strlcpy(drvinfo->fw_version, "L2", sizeof(drvinfo->fw_version));
- 	strlcpy(drvinfo->bus_info, pci_name(adapter->pdev),
- 		sizeof(drvinfo->bus_info));
---
-2.24.1
+Best regards
+Wang shengjiu
 
