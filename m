@@ -2,100 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B13F16ACFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:21:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C384B16AD34
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:23:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727895AbgBXRVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 12:21:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58088 "EHLO mail.kernel.org"
+        id S1728392AbgBXRXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 12:23:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727785AbgBXRVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:21:17 -0500
+        id S1727775AbgBXRVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 12:21:18 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2796B20836;
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D41D20838;
         Mon, 24 Feb 2020 17:21:17 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1j6HPv-001AbM-Te; Mon, 24 Feb 2020 12:21:15 -0500
-Message-Id: <20200224172022.330525468@goodmis.org>
+        id 1j6HPw-001Abu-2d; Mon, 24 Feb 2020 12:21:16 -0500
+Message-Id: <20200224172115.943693379@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Mon, 24 Feb 2020 12:20:22 -0500
+Date:   Mon, 24 Feb 2020 12:20:23 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [for-linus][PATCH 00/15] tracing: Updates coming for 5.6 rc release
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Tom Zanussi <zanussi@kernel.org>
+Subject: [for-linus][PATCH 01/15] tracing: Make sure synth_event_trace() example always uses u64
+References: <20200224172022.330525468@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Tom Zanussi <zanussi@kernel.org>
 
-Some updates coming with 5.6 rc:
+synth_event_trace() is the varargs version of synth_event_trace_array(),
+which takes an array of u64, as do synth_event_add_val() et al.
 
- Change in API of bootconfig (before it comes live in a release)
-  - Have a magic value "BOOTCONFIG" in initrd to know a bootconfig exists
-  - Set CONFIG_BOOT_CONFIG to 'n' by default
-  - Show error if "bootconfig" on cmdline but not compiled in
-  - Prevent redefining the same value
-  - Have a way to append values
+To not only be consistent with those, but also to address the fact
+that synth_event_trace() expects every arg to be of the same type
+since it doesn't also pass in e.g. a format string, the caller needs
+to make sure all args are of the same type, u64.  u64 is used because
+it needs to accomodate the largest type available in synthetic events,
+which is u64.
 
- Synthetic event fixes:
-  - Switch to raw_smp_processor_id() for recording CPU value in preempt
-    section. (No care for what the value actually is)
-  - Fix samples always recording u64 values
-  - Fix endianess
-  - Check number of values matches number of fields
-  - Fix a printing bug
+This fixes the bug reported by the kernel test robot/Rong Chen.
 
- Fix of trace_printk() breaking postponed start up tests
+Link: https://lore.kernel.org/lkml/20200212113444.GS12867@shao2-debian/
+Link: http://lkml.kernel.org/r/894c4e955558b521210ee0642ba194a9e603354c.1581720155.git.zanussi@kernel.org
 
- Make a function static that is only used in a single file.
+Fixes: 9fe41efaca084 ("tracing: Add synth event generation test module")
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/synth_event_gen_test.c | 34 ++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-Masami Hiramatsu (8):
-      tracing: Clear trace_state when starting trace
-      bootconfig: Set CONFIG_BOOT_CONFIG=n by default
-      bootconfig: Add bootconfig magic word for indicating bootconfig explicitly
-      tools/bootconfig: Remove unneeded error message silencer
-      bootconfig: Reject subkey and value on same parent key
-      bootconfig: Print array as multiple commands for legacy command line
-      bootconfig: Prohibit re-defining value on same key
-      bootconfig: Add append value operator support
+diff --git a/kernel/trace/synth_event_gen_test.c b/kernel/trace/synth_event_gen_test.c
+index 4aefe003cb7c..6866280a9b10 100644
+--- a/kernel/trace/synth_event_gen_test.c
++++ b/kernel/trace/synth_event_gen_test.c
+@@ -111,11 +111,11 @@ static int __init test_gen_synth_cmd(void)
+ 	/* Create some bogus values just for testing */
+ 
+ 	vals[0] = 777;			/* next_pid_field */
+-	vals[1] = (u64)"hula hoops";	/* next_comm_field */
++	vals[1] = (u64)(long)"hula hoops";	/* next_comm_field */
+ 	vals[2] = 1000000;		/* ts_ns */
+ 	vals[3] = 1000;			/* ts_ms */
+ 	vals[4] = smp_processor_id();	/* cpu */
+-	vals[5] = (u64)"thneed";	/* my_string_field */
++	vals[5] = (u64)(long)"thneed";	/* my_string_field */
+ 	vals[6] = 598;			/* my_int_field */
+ 
+ 	/* Now generate a gen_synth_test event */
+@@ -218,11 +218,11 @@ static int __init test_empty_synth_event(void)
+ 	/* Create some bogus values just for testing */
+ 
+ 	vals[0] = 777;			/* next_pid_field */
+-	vals[1] = (u64)"tiddlywinks";	/* next_comm_field */
++	vals[1] = (u64)(long)"tiddlywinks";	/* next_comm_field */
+ 	vals[2] = 1000000;		/* ts_ns */
+ 	vals[3] = 1000;			/* ts_ms */
+ 	vals[4] = smp_processor_id();	/* cpu */
+-	vals[5] = (u64)"thneed_2.0";	/* my_string_field */
++	vals[5] = (u64)(long)"thneed_2.0";	/* my_string_field */
+ 	vals[6] = 399;			/* my_int_field */
+ 
+ 	/* Now trace an empty_synth_test event */
+@@ -290,11 +290,11 @@ static int __init test_create_synth_event(void)
+ 	/* Create some bogus values just for testing */
+ 
+ 	vals[0] = 777;			/* next_pid_field */
+-	vals[1] = (u64)"tiddlywinks";	/* next_comm_field */
++	vals[1] = (u64)(long)"tiddlywinks";	/* next_comm_field */
+ 	vals[2] = 1000000;		/* ts_ns */
+ 	vals[3] = 1000;			/* ts_ms */
+ 	vals[4] = smp_processor_id();	/* cpu */
+-	vals[5] = (u64)"thneed";	/* my_string_field */
++	vals[5] = (u64)(long)"thneed";	/* my_string_field */
+ 	vals[6] = 398;			/* my_int_field */
+ 
+ 	/* Now generate a create_synth_test event */
+@@ -330,7 +330,7 @@ static int __init test_add_next_synth_val(void)
+ 		goto out;
+ 
+ 	/* next_comm_field */
+-	ret = synth_event_add_next_val((u64)"slinky", &trace_state);
++	ret = synth_event_add_next_val((u64)(long)"slinky", &trace_state);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -350,7 +350,7 @@ static int __init test_add_next_synth_val(void)
+ 		goto out;
+ 
+ 	/* my_string_field */
+-	ret = synth_event_add_next_val((u64)"thneed_2.01", &trace_state);
++	ret = synth_event_add_next_val((u64)(long)"thneed_2.01", &trace_state);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -396,12 +396,12 @@ static int __init test_add_synth_val(void)
+ 	if (ret)
+ 		goto out;
+ 
+-	ret = synth_event_add_val("next_comm_field", (u64)"silly putty",
++	ret = synth_event_add_val("next_comm_field", (u64)(long)"silly putty",
+ 				  &trace_state);
+ 	if (ret)
+ 		goto out;
+ 
+-	ret = synth_event_add_val("my_string_field", (u64)"thneed_9",
++	ret = synth_event_add_val("my_string_field", (u64)(long)"thneed_9",
+ 				  &trace_state);
+ 	if (ret)
+ 		goto out;
+@@ -423,13 +423,13 @@ static int __init test_trace_synth_event(void)
+ 
+ 	/* Trace some bogus values just for testing */
+ 	ret = synth_event_trace(create_synth_test, 7,	/* number of values */
+-				444,			/* next_pid_field */
+-				(u64)"clackers",	/* next_comm_field */
+-				1000000,		/* ts_ns */
+-				1000,			/* ts_ms */
+-				smp_processor_id(),	/* cpu */
+-				(u64)"Thneed",		/* my_string_field */
+-				999);			/* my_int_field */
++				(u64)444,		/* next_pid_field */
++				(u64)(long)"clackers",	/* next_comm_field */
++				(u64)1000000,		/* ts_ns */
++				(u64)1000,		/* ts_ms */
++				(u64)smp_processor_id(),/* cpu */
++				(u64)(long)"Thneed",	/* my_string_field */
++				(u64)999);		/* my_int_field */
+ 	return ret;
+ }
+ 
+-- 
+2.25.0
 
-Qiujun Huang (1):
-      bootconfig: Mark boot_config_checksum() static
 
-Steven Rostedt (VMware) (2):
-      tracing: Have synthetic event test use raw_smp_processor_id()
-      tracing: Disable trace_printk() on post poned tests
-
-Tom Zanussi (4):
-      tracing: Make sure synth_event_trace() example always uses u64
-      tracing: Make synth_event trace functions endian-correct
-      tracing: Check that number of vals matches number of synth event fields
-      tracing: Fix number printing bug in print_synth_event()
-
-----
- Documentation/admin-guide/bootconfig.rst     |  34 +++++++-
- include/linux/bootconfig.h                   |   3 +
- init/Kconfig                                 |   3 +-
- init/main.c                                  |  38 +++++----
- kernel/trace/Kconfig                         |   3 +-
- kernel/trace/synth_event_gen_test.c          |  44 +++++------
- kernel/trace/trace.c                         |   2 +
- kernel/trace/trace_events_hist.c             | 112 ++++++++++++++++++++++++---
- lib/bootconfig.c                             |  36 ++++++---
- tools/bootconfig/include/linux/printk.h      |   5 +-
- tools/bootconfig/main.c                      |  51 +++++++-----
- tools/bootconfig/samples/bad-mixed-kv1.bconf |   3 +
- tools/bootconfig/samples/bad-mixed-kv2.bconf |   3 +
- tools/bootconfig/samples/bad-samekey.bconf   |   6 ++
- tools/bootconfig/test-bootconfig.sh          |  18 ++++-
- 15 files changed, 271 insertions(+), 90 deletions(-)
- create mode 100644 tools/bootconfig/samples/bad-mixed-kv1.bconf
- create mode 100644 tools/bootconfig/samples/bad-mixed-kv2.bconf
- create mode 100644 tools/bootconfig/samples/bad-samekey.bconf
