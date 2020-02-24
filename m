@@ -2,363 +2,547 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08FF316ACB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:08:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9953616AC9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:06:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727902AbgBXRIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 12:08:45 -0500
-Received: from mail-eopbgr80057.outbound.protection.outlook.com ([40.107.8.57]:47296
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727090AbgBXRIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:08:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5j5EbNtXhjI/xzwoRPqJRnzcOInSJH93pw/2oaS7uNI=;
- b=UPMuqG9XjhTXkutYlN1FexM74XaFWAQ/PzjtVtdMo7Hyzmv/XX78CeqCsxkOsvtdc4IuTymPV84GkBXEAR9H8canMZdUQaJRHe2v0sNLaOzOls2NP9CMpArq0htae1aYXhOBZZHaFN0F9qov+SY1DVUTIqoPGU1XaAnZj+IlIF8=
-Received: from AM4PR08CA0076.eurprd08.prod.outlook.com (2603:10a6:205:2::47)
- by HE1PR0801MB1977.eurprd08.prod.outlook.com (2603:10a6:3:4d::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.21; Mon, 24 Feb
- 2020 17:08:36 +0000
-Received: from VE1EUR03FT003.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e09::201) by AM4PR08CA0076.outlook.office365.com
- (2603:10a6:205:2::47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18 via Frontend
- Transport; Mon, 24 Feb 2020 17:08:36 +0000
-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=bestguesspass
- action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- VE1EUR03FT003.mail.protection.outlook.com (10.152.18.108) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2750.17 via Frontend Transport; Mon, 24 Feb 2020 17:08:36 +0000
-Received: ("Tessian outbound d1ceabc7047e:v42"); Mon, 24 Feb 2020 17:08:35 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 00ba86d25ee069a5
-X-CR-MTA-TID: 64aa7808
-Received: from cbbe8957c54d.2
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 5B71721C-5EB2-41BD-AE96-11CC6B3453B3.1;
-        Mon, 24 Feb 2020 17:08:30 +0000
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id cbbe8957c54d.2
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Mon, 24 Feb 2020 17:08:30 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cPvm5GUlh/9u85VOLTje7QRTac82iQ7ZNE8OOjomN4LKKGU3Acig6PoaXz5WabPTriw+OUuubghTYIWbax4On2cpHA1dev4S64mdOoJzFf7c1i9G0OPWjDEuCfVUaVH0aQySdXlTRNcRahqwOw+accIqBXMlV1oFsi64RBZCZFNbG9b27K66HS0hbuQ8TbEc8jr/U2ZEbtt2kvDIOcJzrw+FDZ3zTwUPh6nOqZTXHKcBQmIyPyc9VEwUqAwsvHxYuJm8H9pO7PmEF/qU6wxuKXo1oZAPw7kwsN/J7C7YtMnqqx6pSyu0xanhdr4TvMvBXwfM03Fe1D0nIXjB+5DyrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5j5EbNtXhjI/xzwoRPqJRnzcOInSJH93pw/2oaS7uNI=;
- b=G0ymCWXsK0c4GSzf6U6Nn4JRC9VAJ85j+ASg9m9Z0/WssYMb/unDxVkwygoqLi++P00ORCYdcQJPQWQGwIlWmaFPNdG4BeIbPbecfYsDVMYLESPJ2icOGFRGphpLSxS49lnG0Lwon1LjwDwAJJhfnTro1CL1mzvJHKJpOKkel43BlLjLNG0/aIJLvxxhVIuU0gsgtZA3yytwi8ZuOSx/QweWCJ5qUECyar5ry7qFlxzqc+4ME4gLd5ioVr6u5Qx5qx21ewIwB0dKSyf27s4cMyKd0e4iLFf8LKNUVEHcfIZVYeaT/qAD5MedWE90R5qVOz7zQnoJ8S9AwNaGH732zA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5j5EbNtXhjI/xzwoRPqJRnzcOInSJH93pw/2oaS7uNI=;
- b=UPMuqG9XjhTXkutYlN1FexM74XaFWAQ/PzjtVtdMo7Hyzmv/XX78CeqCsxkOsvtdc4IuTymPV84GkBXEAR9H8canMZdUQaJRHe2v0sNLaOzOls2NP9CMpArq0htae1aYXhOBZZHaFN0F9qov+SY1DVUTIqoPGU1XaAnZj+IlIF8=
-Authentication-Results-Original: spf=none (sender IP is )
- smtp.mailfrom=James.Clark@arm.com; 
-Received: from DB6PR0802MB2519.eurprd08.prod.outlook.com (10.172.251.18) by
- DB6PR0802MB2198.eurprd08.prod.outlook.com (10.172.227.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2750.21; Mon, 24 Feb 2020 17:08:29 +0000
-Received: from DB6PR0802MB2519.eurprd08.prod.outlook.com
- ([fe80::1d47:e75a:d449:605c]) by DB6PR0802MB2519.eurprd08.prod.outlook.com
- ([fe80::1d47:e75a:d449:605c%6]) with mapi id 15.20.2750.021; Mon, 24 Feb 2020
- 17:08:28 +0000
-Subject: Re: [PATCH v4 4/4] perf tools: Support "branch-misses:pp" on arm64
-To:     Adrian Hunter <adrian.hunter@intel.com>, jolsa@redhat.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     nd@arm.com, Tan Xiaojun <tanxiaojun@huawei.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Al Grant <al.grant@arm.com>, Namhyung Kim <namhyung@kernel.org>
-References: <20200210122509.GA2005279@krava>
- <20200211140445.21986-1-james.clark@arm.com>
- <20200211140445.21986-5-james.clark@arm.com>
- <3114ea3a-5d9b-2c25-af41-cead352b6a02@intel.com>
-From:   James Clark <james.clark@arm.com>
-Message-ID: <96a814b2-23b8-2ac0-9dc5-0a4b70ddf895@arm.com>
-Date:   Mon, 24 Feb 2020 17:08:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-In-Reply-To: <3114ea3a-5d9b-2c25-af41-cead352b6a02@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P123CA0015.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:a6::27) To DB6PR0802MB2519.eurprd08.prod.outlook.com
- (2603:10a6:4:a0::18)
+        id S1727714AbgBXRGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 12:06:21 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.51]:47889 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727259AbgBXRGV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 12:06:21 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 4B1AC5FC7
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 11:06:19 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 6HBTjeW2rAGTX6HBTjoEwm; Mon, 24 Feb 2020 11:06:19 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=O10piskvmeldfVVJejkQxB0SXPAWTxh0tLVp0iAU9MU=; b=X/v5OueXOc3toNPFnoZwP52nNr
+        kEodOpB71BF/q04Wq29wN9ZRRSLVS1SDQrWGsMU0U56vPTWG14WHDGZL6C6EJvaD6Qhnhc9JxBfEL
+        cG1fIiOncUSB+bPPkboZ/vMQzj3sE4+2F9U7KjI+yFLqWV46hkxS7zz8qJXh++BaK0yMdOVKngtgi
+        7iov53JgBGZ1K25FdlOMRDTVffycdwMmLvBF93Nf7UBpO7RlCG7OZWlpMSL4WlDF1w/08vXNfKBxs
+        3kVFbrRZlsL4nz9Rwn3EuJgj8ZijsXiDVo1xSJr4jT5t9MnprNVohGNrgyEZmPyLvnpVd4Whkvl8c
+        PlL1EFJA==;
+Received: from [200.68.140.135] (port=5352 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j6HBR-00397R-Ea; Mon, 24 Feb 2020 11:06:17 -0600
+Date:   Mon, 24 Feb 2020 11:09:07 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Stanislav Yakovlev <stas.yakovlev@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Stanislaw Gruszka <stf_xl@wp.pl>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] wireless: intel: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200224170907.GA9948@embeddedor>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.32.36.33] (217.140.106.40) by LO2P123CA0015.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:a6::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18 via Frontend Transport; Mon, 24 Feb 2020 17:08:28 +0000
-X-Originating-IP: [217.140.106.40]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: bf89d400-4f55-4432-6186-08d7b94c2fa0
-X-MS-TrafficTypeDiagnostic: DB6PR0802MB2198:|DB6PR0802MB2198:|HE1PR0801MB1977:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <HE1PR0801MB197739B84B0AE233245BFF10E2EC0@HE1PR0801MB1977.eurprd08.prod.outlook.com>
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Oob-TLC-OOBClassifiers: OLM:4941;OLM:4941;
-X-Forefront-PRVS: 032334F434
-X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(136003)(396003)(376002)(39860400002)(189003)(199004)(53546011)(81156014)(66946007)(66476007)(4326008)(66556008)(44832011)(186003)(16526019)(16576012)(6486002)(81166006)(7416002)(54906003)(8936002)(36756003)(8676002)(5660300002)(2906002)(31696002)(31686004)(316002)(2616005)(956004)(26005)(86362001)(52116002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0802MB2198;H:DB6PR0802MB2519.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: 48L+5rSr2sWjEdKsVXhE+Nk09UMySIAdf9Bbf+G6WcGHSUcyMamyXX+IKh71KkMxYdZYZqzBCKbTc721KfPdnA1wYDp4DaWdx/RgLAo6//NNH6jxX2Vrv4lESGH2liEDevbYVof831viJhS4YRnegVBHh71YeudCm3lwudHfHUx5bFGtZT9rUnLfgiktx9oIWa0k/5Xt/6+FCnKOh/aI4t47c2lI12m0OqpIuhA7rNcR4REEyL4Bwjd7dtbwCoVTNjgbi9eGZ7GVrS3cqWBwjMY829FpNTB/qXyxBBCor/0TYPAxSNFsj5AoqA1e4WxVjPZYBfYDLnpQJYfXAtHVb3ircSdHqoMXsuwQNDF/s/NIk2YRWc1+UcMTQ44EFCqpv1kN8mOKs8QxE6zk+vRhyapUd3OENmEpepnASlSZidizHG44lzjgGIeC8yRKpn/f
-X-MS-Exchange-AntiSpam-MessageData: bnXmvizNkUB8Zghv/mcmEddA6V3icJPVXzfeSPN+SaQg2iExOoPtdplccSBwrk3eDuL/mCTuf4KKE748A8nlDpcI++ylzcjdzhhsrJUXslxbjHwufE+vE/XIH+jg6f76yqnZqjeUeyrmCzBFu+o5fw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0802MB2198
-Original-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=James.Clark@arm.com; 
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT003.eop-EUR03.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(346002)(376002)(39860400002)(189003)(199004)(2616005)(956004)(26005)(6486002)(5660300002)(186003)(31686004)(2906002)(70586007)(70206006)(16576012)(316002)(26826003)(478600001)(44832011)(81156014)(8936002)(356004)(336012)(53546011)(54906003)(86362001)(81166006)(36906005)(16526019)(4326008)(36756003)(8676002)(31696002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0801MB1977;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:Pass;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 3affae31-d935-4dce-d8f2-08d7b94c2aeb
-X-Forefront-PRVS: 032334F434
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: cxEm//duisuEi7Gb2O8l1PdbPJHfBLQxrlzoZlM02YKZ5V2akrMgFgvhV35zbm5KsOfilTUuy3oZ0izrErKy+HtOlu5erMk/0aWVaZnbj7JqGYP6RCW3nC0Y6JfbzQzxIDf0DP+wu9kPprYpv5eAP4Rc+Dge/e8TNdKdPWYyw9WwYiWmb0E0R5II2ZnY5/+D1bp3cSrxAb7uRKObuLY7ock4Mgfgu/SAo7GIU9ODiCWFUaJ+Lp6hRYTjweS4vhYZHJKjWqzQUM4caVfHfRHd9GOAd+NkGGQxZI20EAwhrCpd230YSiHCoj35qZWJ5/Y+syp77kGWXP53mYeJBs9axWyqZC6xEfqAstOeqiLFucFpwBaVpdF14jqZkx/uT2iXYP06/4UL60Al9Ih1Pwd/8f+7X85mnHLTwvmAP0lKtl2m3isXcsm3kPYeknKWxN7Q
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2020 17:08:36.2356
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf89d400-4f55-4432-6186-08d7b94c2fa0
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1977
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.135
+X-Source-L: No
+X-Exim-ID: 1j6HBR-00397R-Ea
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.140.135]:5352
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian,
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-On 2/17/20 11:42 AM, Adrian Hunter wrote:
-> On 11/02/20 4:04 pm, James Clark wrote:
->> From: Tan Xiaojun <tanxiaojun@huawei.com>
->>
->> At the suggestion of James Clark, use spe to support the precise
->> ip of some events. Currently its support event is:
->> branch-misses.
->>
->> Example usage:
->>
->> $ ./perf record -e branch-misses:pp dd if=/dev/zero of=/dev/null count=10000
->> (:p/pp/ppp is same for this case.)
->>
->> $ ./perf report --stdio
->> ("--stdio is not necessary")
->>
->> --------------------------------------------------------------------
->> ...
->>  # Samples: 14  of event 'branch-misses:pp'
->>  # Event count (approx.): 14
->>  #
->>  # Children      Self  Command  Shared Object      Symbol
->>  # ........  ........  .......  .................  ..........................
->>  #
->>     14.29%    14.29%  dd       [kernel.kallsyms]  [k] __arch_copy_from_user
->>     14.29%    14.29%  dd       libc-2.28.so       [.] _dl_addr
->>      7.14%     7.14%  dd       [kernel.kallsyms]  [k] __free_pages
->>      7.14%     7.14%  dd       [kernel.kallsyms]  [k] __pi_memcpy
->>      7.14%     7.14%  dd       [kernel.kallsyms]  [k] pagecache_get_page
->>      7.14%     7.14%  dd       [kernel.kallsyms]  [k] unmap_single_vma
->>      7.14%     7.14%  dd       dd                 [.] 0x00000000000025ec
->>      7.14%     7.14%  dd       ld-2.28.so         [.] _dl_lookup_symbol_x
->>      7.14%     7.14%  dd       ld-2.28.so         [.] check_match
->>      7.14%     7.14%  dd       libc-2.28.so       [.] __mpn_rshift
->>      7.14%     7.14%  dd       libc-2.28.so       [.] _nl_intern_locale_data
->>      7.14%     7.14%  dd       libc-2.28.so       [.] read_alias_file
->> ...
->> --------------------------------------------------------------------
->>
->> Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
->> Suggested-by: James Clark <James.Clark@arm.com>
->> Tested-by: Qi Liu <liuqi115@hisilicon.com>
->> Signed-off-by: James Clark <james.clark@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->> Cc: Jiri Olsa <jolsa@redhat.com>
->> Cc: Tan Xiaojun <tanxiaojun@huawei.com>
->> Cc: Al Grant <al.grant@arm.com>
->> Cc: Namhyung Kim <namhyung@kernel.org>
->> ---
->>  tools/perf/arch/arm/util/auxtrace.c | 38 +++++++++++++++++++++++++++++
->>  tools/perf/builtin-record.c         |  5 ++++
->>  tools/perf/util/arm-spe.c           |  9 +++++++
->>  tools/perf/util/arm-spe.h           |  3 +++
->>  tools/perf/util/auxtrace.h          |  6 +++++
->>  5 files changed, 61 insertions(+)
->>
->> diff --git a/tools/perf/arch/arm/util/auxtrace.c b/tools/perf/arch/arm/util/auxtrace.c
->> index 0a6e75b8777a..18f0ea7556e7 100644
->> --- a/tools/perf/arch/arm/util/auxtrace.c
->> +++ b/tools/perf/arch/arm/util/auxtrace.c
->> @@ -10,11 +10,25 @@
->>  
->>  #include "../../util/auxtrace.h"
->>  #include "../../util/debug.h"
->> +#include "../../util/env.h"
->>  #include "../../util/evlist.h"
->>  #include "../../util/pmu.h"
->>  #include "cs-etm.h"
->>  #include "arm-spe.h"
->>  
->> +#define SPE_ATTR_TS_ENABLE		BIT(0)
->> +#define SPE_ATTR_PA_ENABLE		BIT(1)
->> +#define SPE_ATTR_PCT_ENABLE		BIT(2)
->> +#define SPE_ATTR_JITTER			BIT(16)
->> +#define SPE_ATTR_BRANCH_FILTER		BIT(32)
->> +#define SPE_ATTR_LOAD_FILTER		BIT(33)
->> +#define SPE_ATTR_STORE_FILTER		BIT(34)
->> +
->> +#define SPE_ATTR_EV_RETIRED		BIT(1)
->> +#define SPE_ATTR_EV_CACHE		BIT(3)
->> +#define SPE_ATTR_EV_TLB			BIT(5)
->> +#define SPE_ATTR_EV_BRANCH		BIT(7)
->> +
->>  static struct perf_pmu **find_all_arm_spe_pmus(int *nr_spes, int *err)
->>  {
->>  	struct perf_pmu **arm_spe_pmus = NULL;
->> @@ -108,3 +122,27 @@ struct auxtrace_record
->>  	*err = 0;
->>  	return NULL;
->>  }
->> +
->> +void auxtrace__preprocess_evlist(struct evlist *evlist)
->> +{
->> +	struct evsel *evsel;
->> +	struct perf_pmu *pmu;
->> +
->> +	evlist__for_each_entry(evlist, evsel) {
->> +		/* Currently only supports precise_ip for branch-misses on arm64 */
->> +		if (!strcmp(perf_env__arch(evlist->env), "arm64")
-> 
-> Isn't config ambiguous unless you also check type i.e.
-> 
-> 			&& evsel->core.attr.type == PERF_TYPE_HARDWARE
-> 
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-Yes you're right I will add this.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
->> +			&& evsel->core.attr.config == PERF_COUNT_HW_BRANCH_MISSES
->> +			&& evsel->core.attr.precise_ip)
->> +		{
->> +			pmu = perf_pmu__find("arm_spe_0");
->> +			if (pmu) {
-> 
-> Changing the event seems a bit weird.
-> 
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-This is because there is no support in the kernel for the precise_ip attribute on Arm.
-SPE can give you precise ip data for the same event, but changing the event is required.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was detected with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/wireless/intel/ipw2x00/ipw2200.c  |  2 +-
+ drivers/net/wireless/intel/ipw2x00/ipw2200.h  | 10 +++----
+ drivers/net/wireless/intel/ipw2x00/libipw.h   | 28 +++++++++----------
+ .../wireless/intel/iwlegacy/iwl-spectrum.h    |  4 +--
+ .../wireless/intel/iwlwifi/fw/api/dbg-tlv.h   |  2 +-
+ .../net/wireless/intel/iwlwifi/fw/api/debug.h |  4 +--
+ .../wireless/intel/iwlwifi/fw/api/filter.h    |  2 +-
+ .../wireless/intel/iwlwifi/fw/api/nvm-reg.h   |  4 +--
+ .../net/wireless/intel/iwlwifi/fw/api/sta.h   |  2 +-
+ .../net/wireless/intel/iwlwifi/fw/api/tdls.h  |  2 +-
+ .../net/wireless/intel/iwlwifi/fw/debugfs.c   |  2 +-
+ .../wireless/intel/iwlwifi/fw/error-dump.h    |  2 +-
+ drivers/net/wireless/intel/iwlwifi/fw/file.h  | 12 ++++----
+ .../net/wireless/intel/iwlwifi/iwl-op-mode.h  |  2 +-
+ .../net/wireless/intel/iwlwifi/iwl-trans.h    |  2 +-
+ 15 files changed, 40 insertions(+), 40 deletions(-)
+
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+index 5ef6f87a48ac..f7c7b2cb73b8 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+@@ -3386,7 +3386,7 @@ struct ipw_fw {
+ 	__le32 boot_size;
+ 	__le32 ucode_size;
+ 	__le32 fw_size;
+-	u8 data[0];
++	u8 data[];
+ };
  
->> +				evsel->pmu_name = pmu->name;
->> +				evsel->core.attr.type = pmu->type;
->> +				evsel->core.attr.config = SPE_ATTR_TS_ENABLE
->> +							| SPE_ATTR_BRANCH_FILTER;
->> +				evsel->core.attr.config1 = SPE_ATTR_EV_BRANCH;
->> +				evsel->core.attr.precise_ip = 0;
->> +			}
->> +		}
->> +	}
->> +}
->> \ No newline at end of file
->> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
->> index 4c301466101b..3bc61f03d572 100644
->> --- a/tools/perf/builtin-record.c
->> +++ b/tools/perf/builtin-record.c
->> @@ -2451,6 +2451,11 @@ int cmd_record(int argc, const char **argv)
->>  
->>  	argc = parse_options(argc, argv, record_options, record_usage,
->>  			    PARSE_OPT_STOP_AT_NON_OPTION);
->> +
->> +	if (auxtrace__preprocess_evlist) {
->> +		auxtrace__preprocess_evlist(rec->evlist);
->> +	}
->> +
->>  	if (quiet)
->>  		perf_quiet_option();
->>  
->> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
->> index 4ef22a0775a9..b21806c97dd8 100644
->> --- a/tools/perf/util/arm-spe.c
->> +++ b/tools/perf/util/arm-spe.c
->> @@ -778,6 +778,15 @@ arm_spe_synth_events(struct arm_spe *spe, struct perf_session *session)
->>  	attr.sample_id_all = evsel->core.attr.sample_id_all;
->>  	attr.read_format = evsel->core.attr.read_format;
->>  
->> +	/* If it is in the precise ip mode, there is no need to
->> +	 * synthesize new events. */
->> +	if (!strncmp(evsel->name, "branch-misses", 13)) {
->> +		spe->sample_branch_miss = true;
->> +		spe->branch_miss_id = evsel->core.id[0];
->> +
->> +		return 0;
->> +	}
->> +
->>  	/* create new id val to be a fixed offset from evsel id */
->>  	id = evsel->core.id[0] + 1000000000;
->>  
->> diff --git a/tools/perf/util/arm-spe.h b/tools/perf/util/arm-spe.h
->> index 98d3235781c3..8b1fb191d03a 100644
->> --- a/tools/perf/util/arm-spe.h
->> +++ b/tools/perf/util/arm-spe.h
->> @@ -20,6 +20,8 @@ enum {
->>  union perf_event;
->>  struct perf_session;
->>  struct perf_pmu;
->> +struct evlist;
->> +struct evsel;
->>  
->>  struct auxtrace_record *arm_spe_recording_init(int *err,
->>  					       struct perf_pmu *arm_spe_pmu);
->> @@ -28,4 +30,5 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
->>  				  struct perf_session *session);
->>  
->>  struct perf_event_attr *arm_spe_pmu_default_config(struct perf_pmu *arm_spe_pmu);
->> +void arm_spe_precise_ip_support(struct evlist *evlist, struct evsel *evsel);
->>  #endif
->> diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
->> index 80617b0d044d..4f89a3a31ab2 100644
->> --- a/tools/perf/util/auxtrace.h
->> +++ b/tools/perf/util/auxtrace.h
->> @@ -584,6 +584,7 @@ void auxtrace__dump_auxtrace_sample(struct perf_session *session,
->>  int auxtrace__flush_events(struct perf_session *session, struct perf_tool *tool);
->>  void auxtrace__free_events(struct perf_session *session);
->>  void auxtrace__free(struct perf_session *session);
->> +void auxtrace__preprocess_evlist(struct evlist *evlist) __attribute__((weak));
->>  
->>  #define ITRACE_HELP \
->>  "				i:	    		synthesize instructions events\n"		\
->> @@ -728,6 +729,11 @@ void auxtrace__free(struct perf_session *session __maybe_unused)
->>  {
->>  }
->>  
->> +static inline
->> +void auxtrace__preprocess_evlist(struct evlist *evlist __maybe_unused)
->> +{
->> +}
->> +
->>  static inline
->>  int auxtrace_index__write(int fd __maybe_unused,
->>  			  struct list_head *head __maybe_unused)
->>
-> 
+ static int ipw_get_fw(struct ipw_priv *priv,
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.h b/drivers/net/wireless/intel/ipw2x00/ipw2200.h
+index 4346520545c4..09fa7f19050f 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.h
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.h
+@@ -448,7 +448,7 @@ struct tfd_command {
+ 	u8 index;
+ 	u8 length;
+ 	__le16 reserved;
+-	u8 payload[0];
++	u8 payload[];
+ } __packed;
+ 
+ struct tfd_data {
+@@ -675,7 +675,7 @@ struct ipw_rx_frame {
+ 	// is identical)
+ 	u8 rtscts_seen;		// 0x1 RTS seen ; 0x2 CTS seen
+ 	__le16 length;
+-	u8 data[0];
++	u8 data[];
+ } __packed;
+ 
+ struct ipw_rx_header {
+@@ -1002,7 +1002,7 @@ struct ipw_cmd {	 /* XXX */
+    * Incoming parameters listed 1-st, followed by outcoming params.
+    * nParams=(len+3)/4+status_len
+    */
+-	u32 param[0];
++	u32 param[];
+ } __packed;
+ 
+ #define STATUS_HCMD_ACTIVE      (1<<0)	/**< host command in progress */
+@@ -1108,7 +1108,7 @@ struct ipw_fw_error {	 /* XXX */
+ 	u32 log_len;
+ 	struct ipw_error_elem *elem;
+ 	struct ipw_event *log;
+-	u8 payload[0];
++	u8 payload[];
+ } __packed;
+ 
+ #ifdef CONFIG_IPW2200_PROMISCUOUS
+@@ -1153,7 +1153,7 @@ struct ipw_rt_hdr {
+ 	s8 rt_dbmsignal;	/* signal in dbM, kluged to signed */
+ 	s8 rt_dbmnoise;
+ 	u8 rt_antenna;	/* antenna number */
+-	u8 payload[0];  /* payload... */
++	u8 payload[];  /* payload... */
+ } __packed;
+ #endif
+ 
+diff --git a/drivers/net/wireless/intel/ipw2x00/libipw.h b/drivers/net/wireless/intel/ipw2x00/libipw.h
+index e4a6ab4e8391..e87538a8b88b 100644
+--- a/drivers/net/wireless/intel/ipw2x00/libipw.h
++++ b/drivers/net/wireless/intel/ipw2x00/libipw.h
+@@ -334,7 +334,7 @@ struct libipw_hdr_1addr {
+ 	__le16 frame_ctl;
+ 	__le16 duration_id;
+ 	u8 addr1[ETH_ALEN];
+-	u8 payload[0];
++	u8 payload[];
+ } __packed;
+ 
+ struct libipw_hdr_2addr {
+@@ -342,7 +342,7 @@ struct libipw_hdr_2addr {
+ 	__le16 duration_id;
+ 	u8 addr1[ETH_ALEN];
+ 	u8 addr2[ETH_ALEN];
+-	u8 payload[0];
++	u8 payload[];
+ } __packed;
+ 
+ struct libipw_hdr_3addr {
+@@ -352,7 +352,7 @@ struct libipw_hdr_3addr {
+ 	u8 addr2[ETH_ALEN];
+ 	u8 addr3[ETH_ALEN];
+ 	__le16 seq_ctl;
+-	u8 payload[0];
++	u8 payload[];
+ } __packed;
+ 
+ struct libipw_hdr_4addr {
+@@ -363,7 +363,7 @@ struct libipw_hdr_4addr {
+ 	u8 addr3[ETH_ALEN];
+ 	__le16 seq_ctl;
+ 	u8 addr4[ETH_ALEN];
+-	u8 payload[0];
++	u8 payload[];
+ } __packed;
+ 
+ struct libipw_hdr_3addrqos {
+@@ -380,7 +380,7 @@ struct libipw_hdr_3addrqos {
+ struct libipw_info_element {
+ 	u8 id;
+ 	u8 len;
+-	u8 data[0];
++	u8 data[];
+ } __packed;
+ 
+ /*
+@@ -406,7 +406,7 @@ struct libipw_auth {
+ 	__le16 transaction;
+ 	__le16 status;
+ 	/* challenge */
+-	struct libipw_info_element info_element[0];
++	struct libipw_info_element info_element[];
+ } __packed;
+ 
+ struct libipw_channel_switch {
+@@ -442,7 +442,7 @@ struct libipw_disassoc {
+ struct libipw_probe_request {
+ 	struct libipw_hdr_3addr header;
+ 	/* SSID, supported rates */
+-	struct libipw_info_element info_element[0];
++	struct libipw_info_element info_element[];
+ } __packed;
+ 
+ struct libipw_probe_response {
+@@ -452,7 +452,7 @@ struct libipw_probe_response {
+ 	__le16 capability;
+ 	/* SSID, supported rates, FH params, DS params,
+ 	 * CF params, IBSS params, TIM (if beacon), RSN */
+-	struct libipw_info_element info_element[0];
++	struct libipw_info_element info_element[];
+ } __packed;
+ 
+ /* Alias beacon for probe_response */
+@@ -463,7 +463,7 @@ struct libipw_assoc_request {
+ 	__le16 capability;
+ 	__le16 listen_interval;
+ 	/* SSID, supported rates, RSN */
+-	struct libipw_info_element info_element[0];
++	struct libipw_info_element info_element[];
+ } __packed;
+ 
+ struct libipw_reassoc_request {
+@@ -471,7 +471,7 @@ struct libipw_reassoc_request {
+ 	__le16 capability;
+ 	__le16 listen_interval;
+ 	u8 current_ap[ETH_ALEN];
+-	struct libipw_info_element info_element[0];
++	struct libipw_info_element info_element[];
+ } __packed;
+ 
+ struct libipw_assoc_response {
+@@ -480,7 +480,7 @@ struct libipw_assoc_response {
+ 	__le16 status;
+ 	__le16 aid;
+ 	/* supported rates */
+-	struct libipw_info_element info_element[0];
++	struct libipw_info_element info_element[];
+ } __packed;
+ 
+ struct libipw_txb {
+@@ -490,7 +490,7 @@ struct libipw_txb {
+ 	u8 reserved;
+ 	u16 frag_size;
+ 	u16 payload_size;
+-	struct sk_buff *fragments[0];
++	struct sk_buff *fragments[];
+ };
+ 
+ /* SWEEP TABLE ENTRIES NUMBER */
+@@ -594,7 +594,7 @@ struct libipw_ibss_dfs {
+ 	struct libipw_info_element ie;
+ 	u8 owner[ETH_ALEN];
+ 	u8 recovery_interval;
+-	struct libipw_channel_map channel_map[0];
++	struct libipw_channel_map channel_map[];
+ };
+ 
+ struct libipw_csa {
+@@ -830,7 +830,7 @@ struct libipw_device {
+ 
+ 	/* This must be the last item so that it points to the data
+ 	 * allocated beyond this structure by alloc_libipw */
+-	u8 priv[0];
++	u8 priv[];
+ };
+ 
+ #define IEEE_A            (1<<0)
+diff --git a/drivers/net/wireless/intel/iwlegacy/iwl-spectrum.h b/drivers/net/wireless/intel/iwlegacy/iwl-spectrum.h
+index a3b490501a70..1e8ab704dbfb 100644
+--- a/drivers/net/wireless/intel/iwlegacy/iwl-spectrum.h
++++ b/drivers/net/wireless/intel/iwlegacy/iwl-spectrum.h
+@@ -53,7 +53,7 @@ struct ieee80211_measurement_params {
+ struct ieee80211_info_element {
+ 	u8 id;
+ 	u8 len;
+-	u8 data[0];
++	u8 data[];
+ } __packed;
+ 
+ struct ieee80211_measurement_request {
+@@ -61,7 +61,7 @@ struct ieee80211_measurement_request {
+ 	u8 token;
+ 	u8 mode;
+ 	u8 type;
+-	struct ieee80211_measurement_params params[0];
++	struct ieee80211_measurement_params params[];
+ } __packed;
+ 
+ struct ieee80211_measurement_report {
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/dbg-tlv.h b/drivers/net/wireless/intel/iwlwifi/fw/api/dbg-tlv.h
+index b9d7ed93311c..da84dc69dbd0 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/dbg-tlv.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/dbg-tlv.h
+@@ -77,7 +77,7 @@ struct iwl_fw_ini_hcmd {
+ 	u8 id;
+ 	u8 group;
+ 	__le16 reserved;
+-	u8 data[0];
++	u8 data[];
+ } __packed; /* FW_DEBUG_TLV_HCMD_DATA_API_S_VER_1 */
+ 
+ /**
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/debug.h b/drivers/net/wireless/intel/iwlwifi/fw/api/debug.h
+index 98e957ecbeed..d3791f73b67f 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/debug.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/debug.h
+@@ -266,7 +266,7 @@ struct iwl_mfu_assert_dump_notif {
+ 	__le16   index_num;
+ 	__le16   parts_num;
+ 	__le32   data_size;
+-	__le32   data[0];
++	__le32   data[];
+ } __packed; /* MFU_DUMP_ASSERT_API_S_VER_1 */
+ 
+ /**
+@@ -302,7 +302,7 @@ struct iwl_mvm_marker {
+ 	u8 marker_id;
+ 	__le16 reserved;
+ 	__le64 timestamp;
+-	__le32 metadata[0];
++	__le32 metadata[];
+ } __packed; /* MARKER_API_S_VER_1 */
+ 
+ /**
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/filter.h b/drivers/net/wireless/intel/iwlwifi/fw/api/filter.h
+index befc3b126041..a4064a6fb4d1 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/filter.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/filter.h
+@@ -89,7 +89,7 @@ struct iwl_mcast_filter_cmd {
+ 	u8 pass_all;
+ 	u8 bssid[6];
+ 	u8 reserved[2];
+-	u8 addr_list[0];
++	u8 addr_list[];
+ } __packed; /* MCAST_FILTERING_CMD_API_S_VER_1 */
+ 
+ #define MAX_BCAST_FILTERS 8
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/nvm-reg.h b/drivers/net/wireless/intel/iwlwifi/fw/api/nvm-reg.h
+index 97b49843e318..397ac89a04c2 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/nvm-reg.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/nvm-reg.h
+@@ -351,7 +351,7 @@ struct iwl_mcc_update_resp_v3 {
+ 	__le16 time;
+ 	__le16 geo_info;
+ 	__le32 n_channels;
+-	__le32 channels[0];
++	__le32 channels[];
+ } __packed; /* LAR_UPDATE_MCC_CMD_RESP_S_VER_3 */
+ 
+ /**
+@@ -380,7 +380,7 @@ struct iwl_mcc_update_resp {
+ 	u8 source_id;
+ 	u8 reserved[3];
+ 	__le32 n_channels;
+-	__le32 channels[0];
++	__le32 channels[];
+ } __packed; /* LAR_UPDATE_MCC_CMD_RESP_S_VER_4 */
+ 
+ /**
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/sta.h b/drivers/net/wireless/intel/iwlwifi/fw/api/sta.h
+index 970e9e508ad0..8f9ef474f3b1 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/sta.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/sta.h
+@@ -552,7 +552,7 @@ struct iwl_mvm_wep_key_cmd {
+ 	u8 decryption_type;
+ 	u8 flags;
+ 	u8 reserved;
+-	struct iwl_mvm_wep_key wep_key[0];
++	struct iwl_mvm_wep_key wep_key[];
+ } __packed; /* SEC_CURR_WEP_KEY_CMD_API_S_VER_2 */
+ 
+ /**
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h b/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h
+index b089285ac466..ec2a00d6c684 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h
+@@ -190,7 +190,7 @@ struct iwl_tdls_config_cmd {
+ 
+ 	__le32 pti_req_data_offset;
+ 	struct iwl_tx_cmd pti_req_tx_cmd;
+-	u8 pti_req_template[0];
++	u8 pti_req_template[];
+ } __packed; /* TDLS_CONFIG_CMD_API_S_VER_1 */
+ 
+ /**
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c b/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
+index 89f74116569d..cc1d93606d9b 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
++++ b/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
+@@ -261,7 +261,7 @@ struct hcmd_write_data {
+ 	__be32 cmd_id;
+ 	__be32 flags;
+ 	__be16 length;
+-	u8 data[0];
++	u8 data[];
+ } __packed;
+ 
+ static ssize_t iwl_dbgfs_send_hcmd_write(struct iwl_fw_runtime *fwrt, char *buf,
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h b/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
+index f008e1bbfdf4..f331a16fd940 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
+@@ -141,7 +141,7 @@ struct iwl_fw_error_dump_data {
+ struct iwl_fw_error_dump_file {
+ 	__le32 barker;
+ 	__le32 file_len;
+-	u8 data[0];
++	u8 data[];
+ } __packed;
+ 
+ /**
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/file.h b/drivers/net/wireless/intel/iwlwifi/fw/file.h
+index 1554f5fdd483..92910af88666 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/file.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/file.h
+@@ -165,7 +165,7 @@ enum iwl_ucode_tlv_type {
+ struct iwl_ucode_tlv {
+ 	__le32 type;		/* see above */
+ 	__le32 length;		/* not including type/length fields */
+-	u8 data[0];
++	u8 data[];
+ };
+ 
+ #define IWL_TLV_UCODE_MAGIC		0x0a4c5749
+@@ -191,7 +191,7 @@ struct iwl_tlv_ucode_header {
+ 	 * Note that each TLV is padded to a length
+ 	 * that is a multiple of 4 for alignment.
+ 	 */
+-	u8 data[0];
++	u8 data[];
+ };
+ 
+ /*
+@@ -652,7 +652,7 @@ struct iwl_fw_dbg_dest_tlv_v1 {
+ 	__le32 wrap_count;
+ 	u8 base_shift;
+ 	u8 end_shift;
+-	struct iwl_fw_dbg_reg_op reg_ops[0];
++	struct iwl_fw_dbg_reg_op reg_ops[];
+ } __packed;
+ 
+ /* Mask of the register for defining the LDBG MAC2SMEM buffer SMEM size */
+@@ -672,14 +672,14 @@ struct iwl_fw_dbg_dest_tlv {
+ 	__le32 wrap_count;
+ 	u8 base_shift;
+ 	u8 size_shift;
+-	struct iwl_fw_dbg_reg_op reg_ops[0];
++	struct iwl_fw_dbg_reg_op reg_ops[];
+ } __packed;
+ 
+ struct iwl_fw_dbg_conf_hcmd {
+ 	u8 id;
+ 	u8 reserved;
+ 	__le16 len;
+-	u8 data[0];
++	u8 data[];
+ } __packed;
+ 
+ /**
+@@ -754,7 +754,7 @@ struct iwl_fw_dbg_trigger_tlv {
+ 	u8 flags;
+ 	u8 reserved[5];
+ 
+-	u8 data[0];
++	u8 data[];
+ } __packed;
+ 
+ #define FW_DBG_START_FROM_ALIVE	0
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-op-mode.h b/drivers/net/wireless/intel/iwlwifi/iwl-op-mode.h
+index 3008a5246be8..b35b8920941b 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-op-mode.h
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-op-mode.h
+@@ -175,7 +175,7 @@ void iwl_opmode_deregister(const char *name);
+ struct iwl_op_mode {
+ 	const struct iwl_op_mode_ops *ops;
+ 
+-	char op_mode_specific[0] __aligned(sizeof(void *));
++	char op_mode_specific[] __aligned(sizeof(void *));
+ };
+ 
+ static inline void iwl_op_mode_stop(struct iwl_op_mode *op_mode)
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-trans.h b/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
+index 7b3b1f4c99b4..a3fdaa9f2654 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
+@@ -875,7 +875,7 @@ struct iwl_trans {
+ 
+ 	/* pointer to trans specific struct */
+ 	/*Ensure that this pointer will always be aligned to sizeof pointer */
+-	char trans_specific[0] __aligned(sizeof(void *));
++	char trans_specific[] __aligned(sizeof(void *));
+ };
+ 
+ const char *iwl_get_cmd_string(struct iwl_trans *trans, u32 id);
+-- 
+2.25.0
+
