@@ -2,72 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1A6616A03E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADC2A16A0A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:55:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbgBXInS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:43:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55138 "EHLO mail.kernel.org"
+        id S1727758AbgBXIy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:54:59 -0500
+Received: from mga03.intel.com ([134.134.136.65]:55741 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbgBXInR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:43:17 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 543AB20661;
-        Mon, 24 Feb 2020 08:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582533797;
-        bh=9veiwHQ321Wt5pyHqEi/01Nw1+0zBBW21SsYQPjAqOc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=U0n5WXGRRH/yQhjuQyGKM/mRikRUbqKQ4zz6qfsZ+Gowv69j8/VHm2lzuTmD9hJvn
-         /kSOKy0zDgzWKceEvlzewW3AnxCtUEaQKmNAjGFnbeHsgsAY+AfCxD9MOMPm+D4G/x
-         4Y6PxQOrEdSh8ieKEQVtvoGvSkQCfIglQ6GLai5k=
-Date:   Mon, 24 Feb 2020 16:43:10 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     xiaowei.bao@nxp.com, Zhiqiang.Hou@nxp.com, bhelgaas@google.com,
-        devicetree@vger.kernel.org, leoyang.li@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        lorenzo.pieralisi@arm.com, mark.rutland@arm.com,
-        minghuan.Lian@nxp.com, mingkai.hu@nxp.com, robh+dt@kernel.org,
-        roy.zang@nxp.com
-Subject: Re: [PATCH v6 2/3] arm64: dts: ls1028a: Add PCIe controller DT nodes
-Message-ID: <20200224084307.GD27688@dragon>
-References: <20190902034319.14026-2-xiaowei.bao@nxp.com>
- <20200224081105.13878-1-michael@walle.cc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224081105.13878-1-michael@walle.cc>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1727539AbgBXIxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 03:53:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 00:53:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,479,1574150400"; 
+   d="scan'208";a="437630183"
+Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.16])
+  by fmsmga006.fm.intel.com with ESMTP; 24 Feb 2020 00:53:34 -0800
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     alex.williamson@redhat.com, zhenyuw@linux.intel.com
+Cc:     intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        kevin.tian@intel.com, peterx@redhat.com,
+        Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH v3 0/7] use vfio_dma_rw to read/write IOVAs from CPU side
+Date:   Mon, 24 Feb 2020 03:43:50 -0500
+Message-Id: <20200224084350.31574-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 09:11:05AM +0100, Michael Walle wrote:
-> Hi Xiaowei, Hi Shawn,
-> 
-> > LS1028a implements 2 PCIe 3.0 controllers.
-> 
-> Patch 1/3 and 3/3 are in Linus' tree but nobody seems to care about this patch
-> anymore :(
-> 
-> This doesn't work well with the IOMMU, because the iommu-map property is
-> missing. The bootloader needs the &smmu phandle to fixup the entry. See
-> below.
-> 
-> Shawn, will you add this patch to your tree once its fixed, considering it
-> just adds the device tree node for the LS1028A?
+It is better for a device model to use IOVAs to read/write memory to
+perform some sort of virtual DMA on behalf of the device.
 
-The patch/thread is a bit aged.  You may want to send an updated patch
-for discussion.
+patch 1 exports VFIO group to external user so that it can hold the group
+reference until finishing using of it. It saves ~500 cycles that are spent
+on VFIO group looking up, referencing and dereferencing. (this data is
+measured with 1 VFIO user).
 
-Shawn
+patch 2 introduces interface vfio_dma_rw().
 
-> 
-> > 
-> > Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> > Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+patch 3 introduces interfaces vfio_pin_pages_from_group() and
+vfio_unpin_pages_from_group() to get rid of VFIO group looking-up in
+vfio_pin_pages() and vfio_unpin_pages().
+
+patch 4-5 let kvmgt switch from calling kvm_read/write_guest() to calling
+vfio_dma_rw to rw IOVAs.
+
+patch 6 let kvmgt switch to use lighter version of vfio_pin/unpin_pages(),
+i.e. vfio_pin/unpin_pages_from_group()
+
+patch 7 enables kvmgt to read/write IOVAs of size larger than PAGE_SIZE.
+
+
+Performance:
+
+Comparison between vfio_dma_rw() and kvm_read/write_guest():
+
+1. avergage CPU cycles of each interface measured with 1 running VM:
+ --------------------------------------------------
+|  rw       |          avg cycles of               |
+|  size     | (vfio_dma_rw - kvm_read/write_guest) |
+|---------- ---------------------------------------|
+| <= 1 page |            +155 ~ +195               |        
+|--------------------------------------------------|
+| 5 pages   |                -530                  |
+|--------------------------------------------------|
+| 20 pages  |           -2005 ~ -2533              |
+ --------------------------------------------------
+
+2. average scores
+
+base: base code before applying code in this series. use
+kvm_read/write_pages() to rw IOVAs
+
+base + this series: use vfio_dma_rw() to read IOVAs and use
+vfio_pin/unpin_pages_from_group(), and kvmgt is able to rw several pages
+at a time.
+
+Scores of benchmarks running in 1 VM each:
+ -----------------------------------------------------------------
+|                    | glmark2 | lightsmark | openarena | heavens |
+|-----------------------------------------------------------------|
+|       base         |  1248   |  219.70    |  114.9    |   560   |
+|-----------------------------------------------------------------|
+|base + this series  |  1248   |  225.8     |   115     |   559   |
+ -----------------------------------------------------------------
+
+Sum of scores of two benchmark instances running in 2 VMs each:
+ -------------------------------------------------------
+|                    | glmark2 | lightsmark | openarena |
+|-------------------------------------------------------|
+|       base         |  812    |  211.46    |  115.3    |
+|-------------------------------------------------------|
+|base + this series  |  814    |  214.69    |  115.9    |
+ -------------------------------------------------------
+
+
+Changelogs:
+v2 --> v3:
+- add vfio_group_get_external_user_from_dev() to improve performance (Alex)
+- add vfio_pin/unpin_pages_from_group() to avoid repeated looking up of
+  VFIO group in vfio_pin/unpin_pages() (Alex)
+- add a check for IOMMU_READ permission. (Alex)
+- rename vfio_iommu_type1_rw_dma_nopin() to
+  vfio_iommu_type1_dma_rw_chunk(). (Alex)
+- in kvmgt, change "write ? vfio_dma_rw(...,true) :
+  vfio_dma_rw(...,false)" to vfio_dma_rw(dev, gpa, buf, len, write)
+  (Alex and Paolo)
+- in kvmgt, instead of read/write context pages 1:1, combining the
+  reads/writes of continuous IOVAs to take advantage of vfio_dma_rw() for
+  faster crossing page boundary accesses.
+
+v1 --> v2:
+- rename vfio_iova_rw to vfio_dma_rw, vfio iommu driver ops .iova_rw
+to .dma_rw. (Alex).
+- change iova and len from unsigned long to dma_addr_t and size_t,
+respectively. (Alex)
+- fix possible overflow in dma->vaddr + iova - dma->iova + offset (Alex)
+- split DMAs from on page boundary to on max available size to eliminate
+  redundant searching of vfio_dma and switching mm. (Alex)
+- add a check for IOMMU_WRITE permission.
+
+ Yan Zhao (7):
+  vfio: allow external user to get vfio group from device
+  vfio: introduce vfio_dma_rw to read/write a range of IOVAs
+  vfio: avoid inefficient lookup of VFIO group in vfio_pin/unpin_pages
+  drm/i915/gvt: hold reference of VFIO group during opening of vgpu
+  drm/i915/gvt: subsitute kvm_read/write_guest with vfio_dma_rw
+  drm/i915/gvt: avoid unnecessary lookup in each vfio pin & unpin pages
+  drm/i915/gvt: rw more pages a time for shadow context
+
+ drivers/gpu/drm/i915/gvt/gvt.h       |   1 +
+ drivers/gpu/drm/i915/gvt/kvmgt.c     |  43 +++----
+ drivers/gpu/drm/i915/gvt/scheduler.c | 101 +++++++++++-----
+ drivers/vfio/vfio.c                  | 175 +++++++++++++++++++++++++++
+ drivers/vfio/vfio_iommu_type1.c      |  77 ++++++++++++
+ include/linux/vfio.h                 |  13 ++
+ 6 files changed, 358 insertions(+), 52 deletions(-)
+
+-- 
+2.17.1
+
