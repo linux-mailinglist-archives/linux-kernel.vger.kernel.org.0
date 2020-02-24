@@ -2,106 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 500EA169B50
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 01:43:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A7D6169B48
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 01:43:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbgBXAnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 19:43:09 -0500
-Received: from esgaroth.petrovitsch.at ([78.47.184.11]:5712 "EHLO
-        esgaroth.tuxoid.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbgBXAnI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 19:43:08 -0500
-X-Greylist: delayed 3401 seconds by postgrey-1.27 at vger.kernel.org; Sun, 23 Feb 2020 19:43:08 EST
-Received: from thorin.petrovitsch.priv.at (80-110-97-114.cgn.dynamic.surfer.at [80.110.97.114])
-        (authenticated bits=0)
-        by esgaroth.tuxoid.at (8.15.2/8.15.2) with ESMTPSA id 01NNk3Mg005792
-        (version=TLSv1 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO);
-        Mon, 24 Feb 2020 00:46:09 +0100
-Subject: Re: General Discussion about GPLness
-To:     Stephan von Krawczynski <skraw.ml@ithnet.com>
-Cc:     linux-kernel@vger.kernel.org, bruce@perens.com
-References: <8b0e828da35ab77c1ad4603768c6eab6@waifu.club>
- <20200223133301.03eab91d@ithnet.com>
- <2241a3e0c8dcba5b69b4f670e181d7cd@waifu.club>
- <20200223153909.1ba91bae@ithnet.com>
- <dadb648cd23ee79dacf5992ff5ca6094@waifu.club>
- <20200223214757.5adf49e4@ithnet.com>
-From:   Bernd Petrovitsch <bernd@tuxoid.at>
-Message-ID: <7896b0b9-c12e-5327-f531-95097cf04eca@tuxoid.at>
-Date:   Mon, 24 Feb 2020 00:46:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <20200223214757.5adf49e4@ithnet.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-DCC--Metrics: esgaroth.tuxoid.at 1481; Body=3 Fuz1=3 Fuz2=3
-X-Virus-Scanned: clamav-milter 0.97 at esgaroth.tuxoid.at
-X-Virus-Status: Clean
-X-Spam-Status: No, score=-0.5 required=5.0 tests=AWL,UNPARSEABLE_RELAY
-        autolearn=unavailable version=3.3.1
-X-Spam-Report: *  0.0 UNPARSEABLE_RELAY Informational: message has unparseable relay lines
-        * -0.5 AWL AWL: Adjusted score from AWL reputation of From: address
-X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on esgaroth.tuxoid.at
+        id S1727227AbgBXAmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 19:42:55 -0500
+Received: from mga11.intel.com ([192.55.52.93]:23673 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727151AbgBXAmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Feb 2020 19:42:54 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2020 16:42:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,478,1574150400"; 
+   d="scan'208";a="349809813"
+Received: from hao-dev.bj.intel.com ([10.238.157.65])
+  by fmsmga001.fm.intel.com with ESMTP; 23 Feb 2020 16:42:52 -0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     mdf@kernel.org, will@kernel.org, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, atull@kernel.org, yilun.xu@intel.com,
+        Wu Hao <hao.wu@intel.com>
+Subject: [PATCH v8 0/2] add performance reporting support to FPGA DFL drivers
+Date:   Mon, 24 Feb 2020 08:21:45 +0800
+Message-Id: <1582503707-10737-1-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all!
+Hi all,
 
-On 23/02/2020 21:47, Stephan von Krawczynski wrote:
-[...]
-> I do understand why you cannot enter a discussion with your real name, as most
+This patchset adds performance reporting support for FPGA DFL drivers. It
+introduces one pmu to expose userspace interfaces via standard perf API.
+User could use standard perf tool to access perf events exposed via pmu.
 
-I ignore folks who don't use their real name - this is since Usenet
-times an indication for a troll ...
+This patchset is generated based on 5.6-rc2.
 
-> of your input is of zero quality - and below.
-[...]
->                                                              But our story is
-> about kernel modules, something everybody is free to write and publish, with a
+Main changes from v7:
+ - rename pmu name from "fme%d" to "dfl_fme%d".
+ - monitor cpu hotplug for cpumask sysfs and update cpumask sysfs doc.
+ - add extra read for 64bit counter registers to avoid 2-32bit readl issue.
 
-... publish implicitly with a GPLv2 or compatible license ...
+Main changes from v6:
+ - add a new ABI/testing/ sysfs documentation in patch #2.
+ - fix a warning reported by kbuild in patch #2.
 
-> defined and open interface for interaction. No kernel code is modified in that
+Main changes from v5:
+ - use dev_ext_attribute instead of fme_perf_event_attr.
+ - use is_visible function to decide which events to expose per
+   hardware capability, and add event_init checking for all events.
 
-And that's a point which is completely wrong: the only *defined*
-interface of the kernel is sys-calls, /proc and similar. And all of this
-is from user-space to kernel-space and back.
+Main changes from v4:
+ - rebase and clean up.
+ - update Kconfig for PERF_EVENTS dependency.
 
-There is no (and never was) a "defined interface" within the kernel
-(inter-operating in kernel space) in any direction simply because the
-kernel-internal (infra)structure changes more or less constantly - some
-may call that evolution;-)
+Main changes from v3:
+ - add more descriptions in doc, including how to use perf tool for these
+   hardware counters. (patch #1)
+ - use standard perf API instead of sysfs entries. (patch #2)
 
-And I don't get what an "open interface" here couls seriously mean. You
-surely don't want to call the list of the GPL_EXPORTed C functions
-(which may change from one kernel version to the next) an "open
-interface" (whatever that should suggest).
+Wu Hao (1):
+  fpga: dfl: fme: add performance reporting support
 
-At most the list of GPL_EXPORTed C functions is a de-facto interface and
-that may change from one git-commit to the next.
+Xu Yilun (1):
+  Documentation: fpga: dfl: add description for performance reporting
+    support
 
-> sense. But you fail to understand that.
-> Hopefully others here do. I do not expect them to stand up and jump into a
-> discussion where you are a part of. But I hope people start to think about it
+ .../testing/sysfs-bus-event_source-devices-dfl_fme |  104 ++
+ Documentation/fpga/dfl.rst                         |   84 ++
+ drivers/fpga/Kconfig                               |    2 +-
+ drivers/fpga/Makefile                              |    1 +
+ drivers/fpga/dfl-fme-main.c                        |    4 +
+ drivers/fpga/dfl-fme-perf.c                        | 1021 ++++++++++++++++++++
+ drivers/fpga/dfl-fme.h                             |    2 +
+ drivers/fpga/dfl.h                                 |    2 +
+ 8 files changed, 1219 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-event_source-devices-dfl_fme
+ create mode 100644 drivers/fpga/dfl-fme-perf.c
 
-And you are barking up the wrong tree. The discussion has to happen in
-the ZFS-world so that they fix their license if they want to interface
-with any GPL software (without sys-calls etc. in between - WTF it works
-via FUSE) like they seen to do now.
-
-And no, I'm not a lawyer so I won't comment more on the law-aspects -
-the above is my short summary of discussions hereover about license
-clashes etc. over the last decades ...
-
-[ Full quote deleted - pls do not top-post]
-
-MfG,
-	Bernd
 -- 
-Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
-                     LUGA : http://www.luga.at
+1.8.3.1
