@@ -2,113 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E404C16A4D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3869E16A4D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 12:25:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbgBXLYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 06:24:47 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54156 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbgBXLYq (ORCPT
+        id S1727448AbgBXLZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 06:25:48 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:36400 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726778AbgBXLZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 06:24:46 -0500
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 13F10292B4E;
-        Mon, 24 Feb 2020 11:24:45 +0000 (GMT)
-Date:   Mon, 24 Feb 2020 12:24:42 +0100
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Vitor Soares <Vitor.Soares@synopsys.com>
-Cc:     "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "wsa@the-dreams.de" <wsa@the-dreams.de>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>
-Subject: Re: [PATCH v3 0/5] Introduce i3c device userspace interface
-Message-ID: <20200224122442.7cb6e8d8@collabora.com>
-In-Reply-To: <CH2PR12MB4216F86F6820CC5247B89BA8AEEC0@CH2PR12MB4216.namprd12.prod.outlook.com>
-References: <cover.1582069402.git.vitor.soares@synopsys.com>
-        <CH2PR12MB421604E9272413A6C456AB16AE100@CH2PR12MB4216.namprd12.prod.outlook.com>
-        <20200219091658.7506e7bd@collabora.com>
-        <CH2PR12MB4216ECDC745C8255DF8106A3AE120@CH2PR12MB4216.namprd12.prod.outlook.com>
-        <20200221184116.1d8f0677@collabora.com>
-        <CH2PR12MB4216F86F6820CC5247B89BA8AEEC0@CH2PR12MB4216.namprd12.prod.outlook.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 24 Feb 2020 06:25:47 -0500
+Received: from ramsan ([84.195.182.253])
+        by baptiste.telenet-ops.be with bizsmtp
+        id 6bRe2200c5USYZQ01bReUi; Mon, 24 Feb 2020 12:25:45 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j6Brm-0003AP-QG; Mon, 24 Feb 2020 12:25:38 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j6Brm-0003mM-NM; Mon, 24 Feb 2020 12:25:38 +0100
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] ASoC: Fix SND_SOC_ALL_CODECS imply ac97 fallout
+Date:   Mon, 24 Feb 2020 12:25:37 +0100
+Message-Id: <20200224112537.14483-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Feb 2020 10:53:25 +0000
-Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+On i386 randconfig:
 
-> Hi Boris,
-> 
-> From: Boris Brezillon <boris.brezillon@collabora.com>
-> Date: Fri, Feb 21, 2020 at 17:41:16
-> 
-> > > > > 
-> > > > > I want to make you know that none of your previous comments was ignored 
-> > > > > and  I would like to start the discussion from this point.    
-> > > > 
-> > > > Sure, np. I'll probably wait for a v4 exploring the option I proposed
-> > > > then.    
-> > > 
-> > > I would like to check with you:
-> > >   - How can we prioritize the device driver over the i3cdev driver if the 
-> > > driver is loaded after i3cdev? Currently, this is done automatically 
-> > > without any command, and for me, this is a requirement.  
-> > 
-> > No devs would be bound to the i3cdev driver by default, it would have
-> > to be done explicitly through a sysfs knob. Which makes me realize
-> > we can't use the generic bind knob since it doesn't let the subsystem
-> > know that it's a manual bind. I thought there was a way to distinguish
-> > between manual and auto-bind.
-> >   
-> > >   - For the ioctl command structure, there is no rule about the way I did 
-> > > or what you proposed, both are currently used in the kernel. For me it is 
-> > > one more structure to deal with, can you point the advantages of your 
-> > > purpose?  
-> > 
-> > I don't have a strong opinion on that one, though I find it a bit
-> > easier to follow when the number of xfers is encoded in a separate
-> > struct rather than extracted from the data size passed through the cmd
-> > argument.  
-> 
-> I will change it then. Do you have any suggestion for the naming to keep 
-> it short?
+    sound/soc/codecs/wm9705.o: In function `wm9705_soc_resume':
+    wm9705.c:(.text+0x128): undefined reference to `snd_ac97_reset'
+    sound/soc/codecs/wm9712.o: In function `wm9712_soc_resume':
+    wm9712.c:(.text+0x2d1): undefined reference to `snd_ac97_reset'
+    sound/soc/codecs/wm9713.o: In function `wm9713_soc_resume':
+    wm9713.c:(.text+0x820): undefined reference to `snd_ac97_reset'
 
-I named it i3cdev_priv_xfers in the patch I sent, but you can pick a
-different name if you don't like this one.
+Fix this by adding the missing dependencies on SND_SOC_AC97_BUS.
 
-> 
-> >   
-> > >   - Regarding the ioctl codes, I tried to use those after I2C.  
-> > 
-> > Why start from 0x30? It doesn't make sense to me. Just because you base
-> > your code on something that already exists doesn't mean you have to
-> > copy all of it.  
-> 
-> I might be wrong but last I2C command is 0x20 and I tried to let some 
-> free space in case they need.
-> Also I think that make sense I2C and I3C share the same 'magic number'.
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+Before commit ea00d95200d02ece ("ASoC: Use imply for
+SND_SOC_ALL_CODECS"), SND_SOC_ALL_CODECS used:
 
-Hm, I'm not sure that's a good idea. The set of ioctls for I2C and I3C
-are likely to be completely different, so I'd recommend using a
-separate namespace (AKA ioctl magic number). Wolfram, any opinion?
+    select SND_SOC_WM9705 if (SND_SOC_AC97_BUS || SND_SOC_AC97_BUS_NEW)
+    select SND_SOC_WM9712 if (SND_SOC_AC97_BUS || SND_SOC_AC97_BUS_NEW)
+    select SND_SOC_WM9713 if (SND_SOC_AC97_BUS || SND_SOC_AC97_BUS_NEW)
 
-> 
-> BTW, in ioctl-numbers documentation there is no reference for code 0x07.
+but SND_SOC_AC97_BUS_NEW never existed in upstream.
+Should there be another dependency>
 
-Indeed, looks like it's not documented.
+See also "non-existent SND_SOC_AC97_BUS_NEW (was: Re: [PATCH v9] ASoC:
+pxa: switch to new ac97 bus support)"
+http://lore.kernel.org/r/CAMuHMdU3uxfBwKd8SkOtZSDV5Ai3CKc3CWRhDy0Cz94T1Hn0iA@mail.gmail.com
+---
+ sound/soc/codecs/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index 9e9d54e4576ce5ba..a7e89567edbe8b47 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -1610,16 +1610,19 @@ config SND_SOC_WM9090
+ 
+ config SND_SOC_WM9705
+ 	tristate
++	depends on SND_SOC_AC97_BUS
+ 	select REGMAP_AC97
+ 	select AC97_BUS_COMPAT if AC97_BUS_NEW
+ 
+ config SND_SOC_WM9712
+ 	tristate
++	depends on SND_SOC_AC97_BUS
+ 	select REGMAP_AC97
+ 	select AC97_BUS_COMPAT if AC97_BUS_NEW
+ 
+ config SND_SOC_WM9713
+ 	tristate
++	depends on SND_SOC_AC97_BUS
+ 	select REGMAP_AC97
+ 	select AC97_BUS_COMPAT if AC97_BUS_NEW
+ 
+-- 
+2.17.1
+
