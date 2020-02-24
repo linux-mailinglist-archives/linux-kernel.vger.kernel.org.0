@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD3C16AD2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:23:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E5FD16AD33
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:23:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbgBXRVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 12:21:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58162 "EHLO mail.kernel.org"
+        id S1728375AbgBXRXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 12:23:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727889AbgBXRVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727785AbgBXRVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 24 Feb 2020 12:21:18 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A785422525;
+        by mail.kernel.org (Postfix) with ESMTPSA id D2FC720CC7;
         Mon, 24 Feb 2020 17:21:17 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1j6HPw-001AdN-Ie; Mon, 24 Feb 2020 12:21:16 -0500
-Message-Id: <20200224172116.421202035@goodmis.org>
+        id 1j6HPw-001Ads-Og; Mon, 24 Feb 2020 12:21:16 -0500
+Message-Id: <20200224172116.608333548@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Mon, 24 Feb 2020 12:20:26 -0500
+Date:   Mon, 24 Feb 2020 12:20:27 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
@@ -29,7 +29,7 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Tom Zanussi <zanussi@kernel.org>
-Subject: [for-linus][PATCH 04/15] tracing: Fix number printing bug in print_synth_event()
+Subject: [for-linus][PATCH 05/15] tracing: Have synthetic event test use raw_smp_processor_id()
 References: <20200224172022.330525468@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -38,86 +38,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <zanussi@kernel.org>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Fix a varargs-related bug in print_synth_event() which resulted in
-strange output and oopses on 32-bit x86 systems. The problem is that
-trace_seq_printf() expects the varargs to match the format string, but
-print_synth_event() was always passing u64 values regardless.  This
-results in unspecified behavior when unpacking with va_arg() in
-trace_seq_printf().
+The test code that tests synthetic event creation pushes in as one of its
+test fields the current CPU using "smp_processor_id()". As this is just
+something to see if the value is correctly passed in, and the actual CPU
+used does not matter, use raw_smp_processor_id(), otherwise with debug
+preemption enabled, a warning happens as the smp_processor_id() is called
+without preemption enabled.
 
-Add a function that takes the size into account when calling
-trace_seq_printf().
+Link: http://lkml.kernel.org/r/20200220162950.35162579@gandalf.local.home
 
-Before:
-
-  modprobe-1731  [003] ....   919.039758: gen_synth_test: next_pid_field=777(null)next_comm_field=hula hoops ts_ns=1000000 ts_ms=1000 cpu=3(null)my_string_field=thneed my_int_field=598(null)
-
-After:
-
- insmod-1136  [001] ....    36.634590: gen_synth_test: next_pid_field=777 next_comm_field=hula hoops ts_ns=1000000 ts_ms=1000 cpu=1 my_string_field=thneed my_int_field=598
-
-Link: http://lkml.kernel.org/r/a9b59eb515dbbd7d4abe53b347dccf7a8e285657.1581720155.git.zanussi@kernel.org
-
-Reported-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+Reviewed-by: Tom Zanussi <zanussi@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_events_hist.c | 32 +++++++++++++++++++++++++++++---
- 1 file changed, 29 insertions(+), 3 deletions(-)
+ kernel/trace/synth_event_gen_test.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 45622194a34d..f068d55bd37f 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -820,6 +820,29 @@ static const char *synth_field_fmt(char *type)
- 	return fmt;
- }
+diff --git a/kernel/trace/synth_event_gen_test.c b/kernel/trace/synth_event_gen_test.c
+index 6866280a9b10..7d56d621ffea 100644
+--- a/kernel/trace/synth_event_gen_test.c
++++ b/kernel/trace/synth_event_gen_test.c
+@@ -114,7 +114,7 @@ static int __init test_gen_synth_cmd(void)
+ 	vals[1] = (u64)(long)"hula hoops";	/* next_comm_field */
+ 	vals[2] = 1000000;		/* ts_ns */
+ 	vals[3] = 1000;			/* ts_ms */
+-	vals[4] = smp_processor_id();	/* cpu */
++	vals[4] = raw_smp_processor_id(); /* cpu */
+ 	vals[5] = (u64)(long)"thneed";	/* my_string_field */
+ 	vals[6] = 598;			/* my_int_field */
  
-+static void print_synth_event_num_val(struct trace_seq *s,
-+				      char *print_fmt, char *name,
-+				      int size, u64 val, char *space)
-+{
-+	switch (size) {
-+	case 1:
-+		trace_seq_printf(s, print_fmt, name, (u8)val, space);
-+		break;
-+
-+	case 2:
-+		trace_seq_printf(s, print_fmt, name, (u16)val, space);
-+		break;
-+
-+	case 4:
-+		trace_seq_printf(s, print_fmt, name, (u32)val, space);
-+		break;
-+
-+	default:
-+		trace_seq_printf(s, print_fmt, name, val, space);
-+		break;
-+	}
-+}
-+
- static enum print_line_t print_synth_event(struct trace_iterator *iter,
- 					   int flags,
- 					   struct trace_event *event)
-@@ -858,10 +881,13 @@ static enum print_line_t print_synth_event(struct trace_iterator *iter,
- 		} else {
- 			struct trace_print_flags __flags[] = {
- 			    __def_gfpflag_names, {-1, NULL} };
-+			char *space = (i == se->n_fields - 1 ? "" : " ");
+@@ -221,7 +221,7 @@ static int __init test_empty_synth_event(void)
+ 	vals[1] = (u64)(long)"tiddlywinks";	/* next_comm_field */
+ 	vals[2] = 1000000;		/* ts_ns */
+ 	vals[3] = 1000;			/* ts_ms */
+-	vals[4] = smp_processor_id();	/* cpu */
++	vals[4] = raw_smp_processor_id(); /* cpu */
+ 	vals[5] = (u64)(long)"thneed_2.0";	/* my_string_field */
+ 	vals[6] = 399;			/* my_int_field */
  
--			trace_seq_printf(s, print_fmt, se->fields[i]->name,
--					 entry->fields[n_u64],
--					 i == se->n_fields - 1 ? "" : " ");
-+			print_synth_event_num_val(s, print_fmt,
-+						  se->fields[i]->name,
-+						  se->fields[i]->size,
-+						  entry->fields[n_u64],
-+						  space);
+@@ -293,7 +293,7 @@ static int __init test_create_synth_event(void)
+ 	vals[1] = (u64)(long)"tiddlywinks";	/* next_comm_field */
+ 	vals[2] = 1000000;		/* ts_ns */
+ 	vals[3] = 1000;			/* ts_ms */
+-	vals[4] = smp_processor_id();	/* cpu */
++	vals[4] = raw_smp_processor_id(); /* cpu */
+ 	vals[5] = (u64)(long)"thneed";	/* my_string_field */
+ 	vals[6] = 398;			/* my_int_field */
  
- 			if (strcmp(se->fields[i]->type, "gfp_t") == 0) {
- 				trace_seq_puts(s, " (");
+@@ -345,7 +345,7 @@ static int __init test_add_next_synth_val(void)
+ 		goto out;
+ 
+ 	/* cpu */
+-	ret = synth_event_add_next_val(smp_processor_id(), &trace_state);
++	ret = synth_event_add_next_val(raw_smp_processor_id(), &trace_state);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -388,7 +388,7 @@ static int __init test_add_synth_val(void)
+ 	if (ret)
+ 		goto out;
+ 
+-	ret = synth_event_add_val("cpu", smp_processor_id(), &trace_state);
++	ret = synth_event_add_val("cpu", raw_smp_processor_id(), &trace_state);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -427,7 +427,7 @@ static int __init test_trace_synth_event(void)
+ 				(u64)(long)"clackers",	/* next_comm_field */
+ 				(u64)1000000,		/* ts_ns */
+ 				(u64)1000,		/* ts_ms */
+-				(u64)smp_processor_id(),/* cpu */
++				(u64)raw_smp_processor_id(), /* cpu */
+ 				(u64)(long)"Thneed",	/* my_string_field */
+ 				(u64)999);		/* my_int_field */
+ 	return ret;
 -- 
 2.25.0
 
