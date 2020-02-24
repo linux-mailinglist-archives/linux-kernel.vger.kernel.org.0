@@ -2,125 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FA1C169C36
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 03:11:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A477A169C1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 03:04:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbgBXCLT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Feb 2020 21:11:19 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31028 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727151AbgBXCLS (ORCPT
+        id S1727228AbgBXCEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Feb 2020 21:04:00 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:18790 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbgBXCEA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Feb 2020 21:11:18 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01O29J6h032642
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 21:11:17 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yb1pfwhgc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 21:11:17 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ajd@linux.ibm.com>;
-        Mon, 24 Feb 2020 02:11:14 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Feb 2020 02:11:07 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01O2B6LF27000902
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Feb 2020 02:11:06 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 17C76A405C;
-        Mon, 24 Feb 2020 02:11:06 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3B92A405B;
-        Mon, 24 Feb 2020 02:11:05 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Feb 2020 02:11:05 +0000 (GMT)
-Received: from [10.61.2.125] (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 08C47A00E5;
-        Mon, 24 Feb 2020 13:11:01 +1100 (AEDT)
-Subject: Re: [PATCH v3 05/27] ocxl: Address kernel doc errors & warnings
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
- <20200221032720.33893-6-alastair@au1.ibm.com>
-From:   Andrew Donnellan <ajd@linux.ibm.com>
-Date:   Mon, 24 Feb 2020 13:11:04 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Sun, 23 Feb 2020 21:04:00 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200224020358epoutp0103530bdc67196f24398edb042e831425~2NFBQ5v1E0956209562epoutp01Q
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 02:03:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200224020358epoutp0103530bdc67196f24398edb042e831425~2NFBQ5v1E0956209562epoutp01Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1582509838;
+        bh=vl6Ojc+zco5UtPwYSOOb2Qzu8IEALnZuby32ONvRoiw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=kLkv19DxiyRllK29o8R0BJUAGhC073zaAE+Y2NrN0XFFVWdDvOYhy36d1q9wdPlhv
+         ZqBgL3s+56YYd3zn2DQg+Q/kL5+/qnrm7YHcxoop3KD0ILa1gW3aviOxupYmW+Nqgv
+         oBmlTDfdmzMYyiYLADFkNuyBZKOQ9xyMpgdVNQm4=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200224020358epcas1p421d702e325eb222b6a1d8f3030073e68~2NFA0y63j1136311363epcas1p4C;
+        Mon, 24 Feb 2020 02:03:58 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.157]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 48QljR0wQnzMqYkp; Mon, 24 Feb
+        2020 02:03:55 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3F.F7.51241.60F235E5; Mon, 24 Feb 2020 11:03:50 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200224020350epcas1p35854e9285c6cf55fe7df24ae2d205b07~2NE5nlxRC0559005590epcas1p3K;
+        Mon, 24 Feb 2020 02:03:50 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200224020350epsmtrp1aa2b5044e3cda186d5cec6f70d5b3766~2NE5m4t7E3122931229epsmtrp1G;
+        Mon, 24 Feb 2020 02:03:50 +0000 (GMT)
+X-AuditID: b6c32a39-14bff7000001c829-38-5e532f060a0b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F5.79.10238.60F235E5; Mon, 24 Feb 2020 11:03:50 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200224020350epsmtip1da1adba78b87a751e294f2dead23a052~2NE5b2-GH2332523325epsmtip1S;
+        Mon, 24 Feb 2020 02:03:50 +0000 (GMT)
+Subject: Re: [PATCH v3] extcon: palmas: hide error messages if gpio returns
+ -EPROBE_DEFER
+To:     Ladislav Michl <ladis@linux-mips.org>
+Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, linux-omap@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <1cf484d9-572c-ea19-49d6-cd4cf61c9965@samsung.com>
+Date:   Mon, 24 Feb 2020 11:12:08 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <20200221032720.33893-6-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200221074740.GA44103@lenoch>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20022402-0016-0000-0000-000002E99DB3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022402-0017-0000-0000-0000334CC2CC
-Message-Id: <acb1ea38-8a91-075a-4eb4-73e6ddbfe7a9@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-23_07:2020-02-21,2020-02-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=659
- clxscore=1015 suspectscore=0 lowpriorityscore=0 priorityscore=1501
- mlxscore=0 malwarescore=0 phishscore=0 impostorscore=0 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002240016
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmni6bfnCcwb/ZRhY/tn1lsrj0tcZi
+        9srJTBZb/1xis7i8aw6bxewl/SwWtxtXsDmwe6x5f4rZ4+jKtUweLZN2sXt8aWlm9ujbsorR
+        4/MmuQC2qGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfM
+        HKBTlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFlgV6xYm5xaV56XrJ+blWhgYG
+        RqZAhQnZGW3ntzAW/OavWPzzOWMD40LeLkZODgkBE4nrnR+Yuxi5OIQEdjBKnNvdBeV8YpRY
+        fm0nE4TzjVHi5qHDTDAt815PharayyjxZN0bKOc9o8SL2/NYQaqEBaIlfky6yNjFyMEhIqAp
+        ceePPkgNs8B5Romja6exg9SwCWhJ7H9xgw3E5hdQlLj64zEjiM0rYCfx93wb2BwWAVWJ/hX3
+        wOKiAmESJ7e1QNUISpyc+YQFxOYU0JH4sP8AWJxZQFzi1pP5TBC2vMT2t3PAjpMQ+M4mce30
+        PhaIF1wknj/7yAxhC0u8Or6FHcKWknjZ3wZlV0usPHmEDaK5g1Fiy/4LrBAJY4n9SyczgXzG
+        DPTZ+l36EGFFiZ2/50IdwSfx7msPK0iJhACvREebEESJssTlB3ehoSgpsbi9k20Co9IsJO/M
+        QvLCLCQvzEJYtoCRZRWjWGpBcW56arFhgSlydG9iBKdTLcsdjMfO+RxiFOBgVOLhXXEkKE6I
+        NbGsuDL3EKMEB7OSCK83I1CINyWxsiq1KD++qDQntfgQoykwtCcyS4km5wNTfV5JvKGpkbGx
+        sYWJoZmpoaGSOO/DSM04IYH0xJLU7NTUgtQimD4mDk6pBsbmwN2ne6fp//lddnx26v7lcaKn
+        jJa27Ag7JLw1LkHm2/N/j04xunaJbtZf4hB3fWqAS8k5a5blc+fO/2znoatjmHRvSknW3PKl
+        zFN/fuljM03Qea2580Tv1Z5dXf+Oz0vrMU/eorIvhq+Pe99J4ZKLoQ/fPZVxnjXVqzRiWhXD
+        SgEBaYeAfiYlluKMREMt5qLiRAA9p0D0vQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSnC6bfnCcQfMHUYsf274yWVz6WmMx
+        e+VkJoutfy6xWVzeNYfNYvaSfhaL240r2BzYPda8P8XscXTlWiaPlkm72D2+tDQze/RtWcXo
+        8XmTXABbFJdNSmpOZllqkb5dAldG2/ktjAW/+SsW/3zO2MC4kLeLkZNDQsBEYt7rqcwgtpDA
+        bkaJv585IOKSEtMuHgWKcwDZwhKHDxd3MXIBlbxllLjycDcbSI2wQLTEj0kXGUFqRAQ0Je78
+        0QepYRY4zyhx4MZ7RoiGTcwSf/c9ZwdpYBPQktj/4gZYM7+AosTVH48ZQWxeATuJv+fbWEFs
+        FgFVif4V98DiogJhEjuXPGaCqBGUODnzCQuIzSmgI/Fh/wGwGmYBdYk/8y4xQ9jiEreezGeC
+        sOUltr+dwzyBUXgWkvZZSFpmIWmZhaRlASPLKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0veT8
+        3E2M4KjS0tzBeHlJ/CFGAQ5GJR7egENBcUKsiWXFlbmHGCU4mJVEeL0ZgUK8KYmVValF+fFF
+        pTmpxYcYpTlYlMR5n+YdixQSSE8sSc1OTS1ILYLJMnFwSjUwRn9/EfXh84wSOX6z0C7tL4zr
+        eHl8GfZn6f0UemfqPeeRs++pXfbLPn41YbwYYh4RU/n7bK16wJ6bkjHuHU5Xbhd3f7TVvvvb
+        jV9gKmtioZ5z1NfCeW8SbSO7Tzvxrzu/zO/x5PR8D/Mf9+5tqvwpKvk17khP/lmrS93fzG7u
+        z7EovcZa9ChZiaU4I9FQi7moOBEAUQoQaaYCAAA=
+X-CMS-MailID: 20200224020350epcas1p35854e9285c6cf55fe7df24ae2d205b07
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200217133832epcas1p329af393e88fa76189ca141d2534f9ad2
+References: <CGME20200217133832epcas1p329af393e88fa76189ca141d2534f9ad2@epcas1p3.samsung.com>
+        <d5c2826a5f00fcaee62f00662ae2a44dc4a5395d.1581946695.git.hns@goldelico.com>
+        <b2655a58-6541-a2c9-c44d-536e5cef1ee3@samsung.com>
+        <20200218102140.GA193069@lenoch>
+        <cbee6f0b-f268-2e77-f7b7-f19114fdf178@samsung.com>
+        <20200218104810.GA194120@lenoch>
+        <34f3cd11-321b-9aab-31a7-a3fb03691980@samsung.com>
+        <20200221074740.GA44103@lenoch>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/2/20 2:26 pm, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
+On 2/21/20 4:47 PM, Ladislav Michl wrote:
+> On Tue, Feb 18, 2020 at 08:09:16PM +0900, Chanwoo Choi wrote:
+>> On 2/18/20 7:48 PM, Ladislav Michl wrote:
+>>> On Tue, Feb 18, 2020 at 07:35:47PM +0900, Chanwoo Choi wrote:
+>>>> On 2/18/20 7:21 PM, Ladislav Michl wrote:
+>>>>> On Tue, Feb 18, 2020 at 12:28:25PM +0900, Chanwoo Choi wrote:
+>>>>>> On 2/17/20 10:38 PM, H. Nikolaus Schaller wrote:
+>>>>>>> If the gpios are probed after this driver (e.g. if they
+>>>>>>> come from an i2c expander) there is no need to print an
+>>>>>>> error message.
+>>>>>>>
+>>>>>>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+>>>>>>> ---
+>>>>>>>  drivers/extcon/extcon-palmas.c | 8 ++++++--
+>>>>>>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/extcon/extcon-palmas.c b/drivers/extcon/extcon-palmas.c
+>>>>>>> index edc5016f46f1..cea58d0cb457 100644
+>>>>>>> --- a/drivers/extcon/extcon-palmas.c
+>>>>>>> +++ b/drivers/extcon/extcon-palmas.c
+>>>>>>> @@ -205,14 +205,18 @@ static int palmas_usb_probe(struct platform_device *pdev)
+>>>>>>>  
+>>>>>>>  	palmas_usb->id_gpiod = devm_gpiod_get_optional(&pdev->dev, "id",
+>>>>>>>  							GPIOD_IN);
+>>>>>>> -	if (IS_ERR(palmas_usb->id_gpiod)) {
+>>>>>>> +	if (PTR_ERR(palmas_usb->id_gpiod) == -EPROBE_DEFER) {
+>>>>>>> +		return -EPROBE_DEFER;
+>>>
+>>> Here we returned...
+>>
+>> hmm. you better to suggest the result of cocci script
+>> to understand why it is matter.
 > 
-> This patch addresses warnings and errors from the kernel doc scripts for
-> the OpenCAPI driver.
+> You can browse similar fixes online :)
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?qt=grep&q=else+after+return
 > 
-> It also makes minor tweaks to make the docs more consistent.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 
-Looks good, fixes all the kerneldoc warnings I get.
+As you commented, please share the result
+of cocci or checkpatch warning. It is simple to finish
+this discussion. 
 
-Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
+As I commented on other reply,
+"I think that my suggestion is better because 'if' and 'else if'
+check the error state of same 'palmas_usb->id_gpiod' variable.
+
+If 'if' and 'else if' checks the different variable,
+your suggestion is better."
 
 
 -- 
-Andrew Donnellan              OzLabs, ADL Canberra
-ajd@linux.ibm.com             IBM Australia Limited
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
