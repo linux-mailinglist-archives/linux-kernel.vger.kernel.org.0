@@ -2,71 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4997E16B3A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:17:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75F5316B3AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:18:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbgBXWRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 17:17:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43178 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgBXWRu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 17:17:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=SD1yx0YoAU9Bzlni+o86AkG96/rc/8SSS4sRPjtuIYU=; b=pB+5oZWVTu+RlW3J/EESOvRbJB
-        BhenyWBT/6m8GOFdFElQJCxMbpx1xaeKthjka5pjD6jbGH4Yb4isWW678N/C1jEWJrUjOlo+gO3Wr
-        Fc+GPx4uW5jDWOEduKUpXye86IX3XAlQeX17eAH1O9MrALkq72vBwumB3SryCX1PQ21Cu5rjB+LH+
-        LFNujmpdrRUyH0LpGKYHkHsi54xutUiobEdAg4riDPA5mRYuMsyFoBP03wVQn0kFpk94BKaabAiRg
-        qtA4ThIZJjuV+zv0m358v08Y+jltVma43bg6qDq7T97btYMe7X25tdyvSveobCz77SFx4CC7cEIkX
-        lGoig/Dw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j6M2v-00087x-1f; Mon, 24 Feb 2020 22:17:49 +0000
-Date:   Mon, 24 Feb 2020 14:17:49 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 21/24] iomap: Restructure iomap_readpages_actor
-Message-ID: <20200224221749.GA22231@infradead.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-22-willy@infradead.org>
- <20200220154741.GB19577@infradead.org>
- <20200220162404.GY24185@bombadil.infradead.org>
+        id S1728241AbgBXWSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 17:18:10 -0500
+Received: from mga01.intel.com ([192.55.52.88]:38699 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728087AbgBXWSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 17:18:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 14:18:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
+   d="scan'208";a="436057537"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga005.fm.intel.com with ESMTP; 24 Feb 2020 14:18:08 -0800
+Date:   Mon, 24 Feb 2020 14:18:07 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 19/61] KVM: VMX: Add helpers to query Intel PT mode
+Message-ID: <20200224221807.GM29865@linux.intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
+ <20200201185218.24473-20-sean.j.christopherson@intel.com>
+ <87pne8q8c0.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200220162404.GY24185@bombadil.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <87pne8q8c0.fsf@vitty.brq.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 08:24:04AM -0800, Matthew Wilcox wrote:
-> On Thu, Feb 20, 2020 at 07:47:41AM -0800, Christoph Hellwig wrote:
-> > On Wed, Feb 19, 2020 at 01:01:00PM -0800, Matthew Wilcox wrote:
-> > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > > 
-> > > By putting the 'have we reached the end of the page' condition at the end
-> > > of the loop instead of the beginning, we can remove the 'submit the last
-> > > page' code from iomap_readpages().  Also check that iomap_readpage_actor()
-> > > didn't return 0, which would lead to an endless loop.
-> > 
-> > I'm obviously biassed a I wrote the original code, but I find the new
-> > very much harder to understand (not that the previous one was easy, this
-> > is tricky code..).
+On Fri, Feb 21, 2020 at 04:16:31PM +0100, Vitaly Kuznetsov wrote:
+> Sean Christopherson <sean.j.christopherson@intel.com> writes:
 > 
-> Agreed, I found the original code hard to understand.  I think this is
-> easier because now cur_page doesn't leak outside this loop, so it has
-> an obvious lifecycle.
+> > diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> > index a4f7f737c5d4..70eafa88876a 100644
+> > --- a/arch/x86/kvm/vmx/vmx.h
+> > +++ b/arch/x86/kvm/vmx/vmx.h
+> > @@ -449,7 +449,7 @@ static inline void vmx_segment_cache_clear(struct vcpu_vmx *vmx)
+> >  static inline u32 vmx_vmentry_ctrl(void)
+> >  {
+> >  	u32 vmentry_ctrl = vmcs_config.vmentry_ctrl;
+> > -	if (pt_mode == PT_MODE_SYSTEM)
+> > +	if (vmx_pt_mode_is_system())
+> 
+> Just wondering, would it rather be better to say
+>         if (!vmx_pt_supported())
+> here?
+> 
+> >  		vmentry_ctrl &= ~(VM_ENTRY_PT_CONCEAL_PIP |
+> >  				  VM_ENTRY_LOAD_IA32_RTIT_CTL);
+> >  	/* Loading of EFER and PERF_GLOBAL_CTRL are toggled dynamically */
+> > @@ -460,7 +460,7 @@ static inline u32 vmx_vmentry_ctrl(void)
+> >  static inline u32 vmx_vmexit_ctrl(void)
+> >  {
+> >  	u32 vmexit_ctrl = vmcs_config.vmexit_ctrl;
+> > -	if (pt_mode == PT_MODE_SYSTEM)
+> > +	if (vmx_pt_mode_is_system())
+> 
+> ... and here? I.e. to cover the currently unsupported 'host-only' mode.
 
-I really don't like this patch, and would prefer if the series goes
-ahead without it, as the current sctructure works just fine even
-with the readahead changes.
+Hmm, good question.  I don't think so?  On VM-Enter, RTIT_CTL would need to
+be loaded to disable PT.  Clearing RTIT_CTL on VM-Exit would be redundant
+at that point[1].  And AIUI, the PIP for VM-Enter/VM-Exit isn't needed
+because there is no context switch from the decoder's perspective.
+
+Note, the original upstreaming series also used "pt_mode == PT_MODE_SYSTEM"
+logic for this check when "host-only mode" was supported[2].
+
+[1] Arguably, KVM should use the VM-Exit MSR load list to atomically
+    reenable tracing, but that's feedback for a non-existence patch :-).
+[2] https://patchwork.kernel.org/patch/10104533/
+
+> 
+> >  		vmexit_ctrl &= ~(VM_EXIT_PT_CONCEAL_PIP |
+> >  				 VM_EXIT_CLEAR_IA32_RTIT_CTL);
+> >  	/* Loading of EFER and PERF_GLOBAL_CTRL are toggled dynamically */
