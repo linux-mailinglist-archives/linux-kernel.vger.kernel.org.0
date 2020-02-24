@@ -2,128 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3FA4169F34
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:27:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADD8A169F42
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:29:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbgBXH1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 02:27:13 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43466 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbgBXH1N (ORCPT
+        id S1727235AbgBXH3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 02:29:20 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:42070 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725792AbgBXH3T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 02:27:13 -0500
-Received: by mail-qt1-f195.google.com with SMTP id g21so5918643qtq.10
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 23:27:12 -0800 (PST)
+        Mon, 24 Feb 2020 02:29:19 -0500
+Received: by mail-yw1-f68.google.com with SMTP id b81so4793901ywe.9
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 23:29:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=GaWjN7xgfONUxUKKxeVFd7mycg6sh46IcFSsgiJU4YE=;
-        b=OqTizYX0M/sI/IY3bSoYqNVVa2otisZKFz6W9gS36s9ITRQ1qcx0cjF9r4xwSu+4rR
-         GUkB8tpojtvR9A/SR5I69umk/08G50pl9oAnN588AJ4+9IPKVLE1BMoQ121tpNvypcE/
-         X2w9293rh3O3JVfzzkBFdQtP+11CSywPo1/lzOL3B7g2dh3RYZZprETZIsOkS9hq/C9k
-         QplCDoGa3cSCJ5qf6qPwa1cjcNjwfqGb9L9dCUdz5EXFRHvfVvg0Kr8TR3nxv14LPj8A
-         Q1Am7bnyOrW8ab/Z/8FwW4gYcaNuKU2Fuv/DrucAygXAtIRpLo/Dcsg90fdZm11XiFJ7
-         UJXQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pu7YZUk9S4E/pNGkKq9v6WlWWKovjGT+ogGtMRUpTlY=;
+        b=cT1aVW9aEmNffyJsbSnpD1pePBSTJmnbrzeS1G1xYMa+f/EI6Ix7TCrDA2k7COPesT
+         nCNnqeSTzMOzj9Dop4WbLhHHv4N6u/cpIlGFjewYNHHviMvEopaL5JfcJWNiNYOy828a
+         5q0KS5TdQWwz9hJAk7r952F3mLit5GROR1edHOg1LGu+yE8oWQ3LB3TLurElJ+N/IUhS
+         yJOqnGyl9XxLMZrwR8wmW/j6Hkht8FySi7RJe6fJtKM5dYhMdn9bTuo8r9THb3skjq7K
+         /3mYHGC5MFfzeDS085t/m1H8wI9bVvbmxd3lRfq7AH9PkcpWJXQWmBQKz0NmH5Zm2SVy
+         CC+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=GaWjN7xgfONUxUKKxeVFd7mycg6sh46IcFSsgiJU4YE=;
-        b=Hc1D1En+Kkr3KUPSVQ4Xkg/v7Bqy7RBDydEC2uJ+EtjwLxJC7c4G2yyDa9l4sTAgvz
-         ch6F9qcEzZRGWYC92H4EfxJXkejMFocbAXlHsie/WLdW2d/FKhMbgJGVU3zCW57K1VRL
-         YIS1tnEeVfCGo7O3BYWl/k3MfFO1WtYXbEzY64QCTMyiSiSIkU5wlw8qHJjG/8PJDAyU
-         b95h2NtqVjXnFZcHVkEjwuEUzOnJvsqR0FU0+/6RCkITe5xRUHBtyyBscZiAwoTvl25W
-         qMrFvyja15p5fqdP1qTnqxv0oEONLDoy0dx+Kh9sGPO5BT9vCb29Ei0Hx5KsxW4OyO/w
-         u1dA==
-X-Gm-Message-State: APjAAAWgh3+zJAFfr3FDhbu2/K/aV5eT29145tAxHFrymAJ8c+rt2AoK
-        MOHmXXn0PT8Pi+1LUZZzw27m66N6h547M3sDeC0=
-X-Google-Smtp-Source: APXvYqxQ/mCjzAoeoaIVXoKHoNcuXVPg8/qqEfDVYZO+U4EmI39KXrKcoiF8ZQDXmRS4Mvya0z6cfk0B0X9DRi/Z3eE=
-X-Received: by 2002:ac8:5447:: with SMTP id d7mr33648356qtq.137.1582529231917;
- Sun, 23 Feb 2020 23:27:11 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pu7YZUk9S4E/pNGkKq9v6WlWWKovjGT+ogGtMRUpTlY=;
+        b=d+NpYbbZqS3CeC6wEK1c1f1ijCJ7yPoK1NohuHdKquiiOwApxBGTXrDy9t7Hf+cw3+
+         4sNEgLgm1a/Qz58AUDyhXk4YXrvC7CmOAuEmHwqDzPIu327A9PA1IFYg6EERqVyhDy3Z
+         NCCk3HjuohPFyN/PSMDyKH/QdMQ/PljFpvhOCzzmD1o0VtKrsUkwmzXp9FL8YDXh6ROw
+         0xhSSOFnV2aTVL/fZ+H/Lv9UvoUfMhfnrxt8SRpQnYScMsid3dxXtSEv2b0FbHyBFpGU
+         zgoamkiANOqQ44+E1YrLBsiowon29Zs2FT6aevleFOOXPlE3VR4aGgcVxwU0VE94ie6j
+         5c9A==
+X-Gm-Message-State: APjAAAX5BFl30e/sziUgiiEQv4zSryBI0jfioOuUMv+NLuqXdWsEnv7V
+        b68+IfTqwPUgpM1KM5AmhnjEhiF8+2/LK0nzBhZ2ZQ==
+X-Google-Smtp-Source: APXvYqxZIwuqqBEDmmlfQUkUBgpzYL2C3CpS2lE4a1qMVtMJH7Paj2i9si0t8xcdBW8R0TX6IMVC8K2dWXRjAM3RHXU=
+X-Received: by 2002:a81:3a06:: with SMTP id h6mr39722556ywa.170.1582529356484;
+ Sun, 23 Feb 2020 23:29:16 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a0c:de0d:0:0:0:0:0 with HTTP; Sun, 23 Feb 2020 23:27:11
- -0800 (PST)
-Reply-To: ambrosecooker389@gmail.com
-From:   Ambrose Cooker <islamnurulislam402@gmail.com>
-Date:   Sun, 23 Feb 2020 23:27:11 -0800
-Message-ID: <CANFLDfGYzvHLMsCg_acBPnAB3r3Pd1V-sy4Ccg0sTHS5T7Usyw@mail.gmail.com>
-Subject: Greetings to you my Dear!
-To:     undisclosed-recipients:;
+References: <20200222010456.40635-1-shakeelb@google.com>
+In-Reply-To: <20200222010456.40635-1-shakeelb@google.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Sun, 23 Feb 2020 23:29:04 -0800
+Message-ID: <CANn89iJ2CWSeLp-+mfBLWKNdS2vw=r1iLFtWhyzav_SYcjFrAg@mail.gmail.com>
+Subject: Re: [PATCH] net: memcg: late association of sock to memcg
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        netdev <netdev@vger.kernel.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        linux-mm <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings My Dear Friend,
+On Fri, Feb 21, 2020 at 5:05 PM Shakeel Butt <shakeelb@google.com> wrote:
+>
+> If a TCP socket is allocated in IRQ context or cloned from unassociated
+> (i.e. not associated to a memcg) in IRQ context then it will remain
+> unassociated for its whole life. Almost half of the TCPs created on the
+> system are created in IRQ context, so, memory used by suck sockets will
+> not be accounted by the memcg.
+>
+> This issue is more widespread in cgroup v1 where network memory
+> accounting is opt-in but it can happen in cgroup v2 if the source socket
+> for the cloning was created in root memcg.
+>
+> To fix the issue, just do the late association of the unassociated
+> sockets at accept() time in the process context and then force charge
+> the memory buffer already reserved by the socket.
+>
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> ---
+>  net/ipv4/inet_connection_sock.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
+> index a4db79b1b643..df9c8ef024a2 100644
+> --- a/net/ipv4/inet_connection_sock.c
+> +++ b/net/ipv4/inet_connection_sock.c
+> @@ -482,6 +482,13 @@ struct sock *inet_csk_accept(struct sock *sk, int flags, int *err, bool kern)
+>                 }
+>                 spin_unlock_bh(&queue->fastopenq.lock);
+>         }
+> +
+> +       if (mem_cgroup_sockets_enabled && !newsk->sk_memcg) {
+> +               mem_cgroup_sk_alloc(newsk);
+> +               if (newsk->sk_memcg)
+> +                       mem_cgroup_charge_skmem(newsk->sk_memcg,
+> +                                       sk_mem_pages(newsk->sk_forward_alloc));
 
-Please reply to my private email ambrosecooker389@gmail.com
+I am not sure what you  are trying to do here.
 
-Before I introduce myself, I wish to inform you that this letter is
-not a hoax mail and I urge you to treat it serious.This letter must
-come to you as a big surprise, but I believe it is only a day that
-people meet and become great friends and business partners. Please I
-want you to read this letter very carefully and I must apologize for
-barging this message into your mail box without any formal
-introduction due to the urgency and confidentiality of this business.
-I make this contact with you as I believe that you can be of great
-assistance to me. My name is Mr.Ambrose Cooker, from Burkina Faso,
-West Africa. I work in African Development Bank (ADB) as telex
-manager, please see this as a confidential message and do not reveal
-it to another person and let me know whether you can be of assistance
-regarding my proposal below because it is top secret.
+sk->sk_forward_alloc is not the total amount of memory used by a TCP socket.
+It is only some part that has been reserved, but not yet consumed.
 
-I am about to retire from active Banking service to start a new life
-but I am skeptical to reveal this particular secret to a stranger. You
-must assure me that everything will be handled confidentially because
-we are not going to suffer again in life. It has been 10 years now
-that most of the greedy African Politicians used our bank to launder
-money overseas through the help of their Political advisers. Most of
-the funds which they transferred out of the shores of Africa were gold
-and oil money that was supposed to have been used to develop the
-continent. Their Political advisers always inflated the amounts before
-transferring to foreign accounts, so I also used the opportunity to
-divert part of the funds hence I am aware that there is no official
-trace of how much was transferred as all the accounts used for such
-transfers were being closed after transfer. I acted as the Bank
-Officer to most of the politicians and when I discovered that they
-were using me to succeed in their greedy act; I also cleaned some of
-their banking records from the Bank files and no one cared to ask me
-because the money was too much for them to control. They laundered
-over $5billion Dollars during the process.
+For example, every skb that has been stored in TCP receive queue or
+out-of-order queue might have
+used memory.
 
-Before I send this message to you, I have already diverted
-($10.5million Dollars) to an escrow account belonging to no one in the
-bank. The bank is anxious now to know who the beneficiary to the funds
- because they have made a lot of profits with the funds. It is more
-than Eight years now and most of the politicians are no longer using
-our bank to transfer funds overseas. The ($10.5million Dollars) has
-been laying waste in our bank and I don=E2=80=99t want to retire from the b=
-ank
-without transferring the funds to a foreign account to enable me share
-the proceeds with the receiver (a foreigner). The money will be shared
-60% for me and 40% for you. There is no one coming to ask you about
-the funds because I secured everything. I only want you to assist me
-by providing a reliable bank account where the funds can be
-transferred.
+I guess that if we assume that  a not yet accepted socket can not have
+any outstanding data in its transmit queue,
+you need to use sk->sk_rmem_alloc as well.
 
-You are not to face any difficulties or legal implications as I am
-going to handle the transfer personally. If you are capable of
-receiving the funds, do let me know immediately to enable me give you
-a detailed information on what to do. For me, I have not stolen the
-money from anyone because the other people that took the whole money
-did not face any problems. This is my chance to grab my own life
-opportunity but you must keep the details of the funds secret to avoid
-any leakages as no one in the bank knows about my plans.Please get
-back to me if you are interested and capable to handle this project, I
-am looking forward to hear from you immediately for further
-information.Please reply to my private email
-ambrosecooker389@gmail.com
+To test this patch, make sure to add a delay before accept(), so that
+2MB worth of data can be queued before accept() happens.
 
-Thanks with my best regards.
-Mr.Ambrose Cooker.
-Telex Manager
-African Development Bank (ADB)
-Burkina Faso.
+Thanks.
