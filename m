@@ -2,127 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D032616B36E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:58:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BC1D16B373
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:00:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbgBXV6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 16:58:49 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35626 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbgBXV6s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 16:58:48 -0500
-Received: by mail-pf1-f194.google.com with SMTP id i19so6055919pfa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:58:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AlniHU7g9k96/uUW/5ypNnFyMnufPLmI9nvXsoiLe/g=;
-        b=DpUIx8INd405dnm5VcX8QJ7nbI+ViAejLCkj+OXRG7zPaFMR8n3Zv2BfOEAYdraTBX
-         DOsURALwsVRKQR6m9AW+DQWN+G/jg6g4tpPVnA8XVLmyyV6/3b9ntjfpYCh8Jo0B1owN
-         moBFH9jmFSwRt98lpmA7Wso663+jWPBy5q1WDaQMggthTL7PJmo0rbvu3UyFqsn/gt8A
-         TdP3MCbeyt81rtKb64x7WMcqmqTuszy03WZgH/8v2lmUt4lPDoqo0hCtCqNq7i6qzIh7
-         cjclWVI6Y4GuJyiOZ5dJTolpcVu/9WVLUcP7LwjGv/ybNjDzzhylU1HHP2+Wn7Sx0Kas
-         D2KQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AlniHU7g9k96/uUW/5ypNnFyMnufPLmI9nvXsoiLe/g=;
-        b=ENxNkT0MgvmGNtFlO6z8MgxRjo2aZZtq+nhvLCGeBMVWrUSoaM+wXJB8QLAwz4fZTm
-         wWYbMZtZfZdIManBk3+aqc9BJVqFXD3O6HjBtB+vtUxhLL6S+nxubSKZNYhK/jjehWEZ
-         HT28tvKhQazjgQr9tfPm+AUSHkB6mNi2jRW5tk0CjZovoj6UxVQEWlpP05Qrbz5SvlZq
-         68c+M5SUBjQNlddUFJS14uzJYYlZSovuqB5T6hLhh/rvbp2EMvAVoepyNXIrt0oFmCWD
-         kxK/0aVmTgFD/dR2fYOcWL1Tc/l14Pxi8L0NOCOLzv6qFvfKTDI+oWL2TpcZ2nOl2QUI
-         HrpA==
-X-Gm-Message-State: APjAAAU7MRc9JOTwOtCYbu1IwJbmey4lhG5YwStueERNuss7USZptwi/
-        HQkK7Db1qpEp/pQnwYsiu63PH/xShCbpfp9ym9Djog==
-X-Google-Smtp-Source: APXvYqwXiS5VJLfKFLWVe0HMFWPJZhrjN8WAE38qYzfXReNIc9dhwOItemZQiQdfviqGqLjTDDML7d83fQOGXj9tsm8=
-X-Received: by 2002:aa7:8618:: with SMTP id p24mr54461821pfn.3.1582581526452;
- Mon, 24 Feb 2020 13:58:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20200222235709.GA3786197@rani.riverdale.lan> <20200223193715.83729-3-nivedita@alum.mit.edu>
- <CAKwvOdmqM5aHnDCyL62gmWV5wFrKwAEdkHq+HPnvp3ZYA=dtbg@mail.gmail.com> <20200224213319.GB409112@rani.riverdale.lan>
-In-Reply-To: <20200224213319.GB409112@rani.riverdale.lan>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 24 Feb 2020 13:58:35 -0800
-Message-ID: <CAKwvOdn6cxm9EpB7A9kLasttPwLY2csnhqgNAdkJ6_s2DP1-HA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arch/x86: Drop unneeded linker script discard of .eh_frame
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Michael Matz <matz@suse.de>, Fangrui Song <maskray@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728185AbgBXWAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 17:00:36 -0500
+Received: from mga06.intel.com ([134.134.136.31]:22327 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727421AbgBXWAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 17:00:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 14:00:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
+   d="scan'208";a="284477336"
+Received: from otc-lr-04.jf.intel.com ([10.54.39.48])
+  by FMSMGA003.fm.intel.com with ESMTP; 24 Feb 2020 14:00:33 -0800
+From:   kan.liang@linux.intel.com
+To:     acme@kernel.org, jolsa@redhat.com, mingo@redhat.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, namhyung@kernel.org,
+        ravi.bangoria@linux.ibm.com, yao.jin@linux.intel.com,
+        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V2 0/5] Support metric group constraint
+Date:   Mon, 24 Feb 2020 13:59:19 -0800
+Message-Id: <1582581564-184429-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 1:33 PM Arvind Sankar <nivedita@alum.mit.edu> wrote:
->
-> On Mon, Feb 24, 2020 at 12:45:51PM -0800, Nick Desaulniers wrote:
-> >
-> > grepping for eh_frame in arch/x86/ there's a comment in
-> > arch/x86/include/asm/dwarf2.h:
-> >  40 #ifndef BUILD_VDSO
-> >  41   /*
-> >  42    * Emit CFI data in .debug_frame sections, not .eh_frame
-> > sections.
-> >  43    * The latter we currently just discard since we don't do DWARF
-> >  44    * unwinding at runtime.  So only the offline DWARF information is
-> >  45    * useful to anyone.  Note we should not use this directive if
-> >  46    * vmlinux.lds.S gets changed so it doesn't discard .eh_frame.
-> >  47    */
-> >  48   .cfi_sections .debug_frame
-> >
-> > add via:
-> > commit 7b956f035a9ef ("x86/asm: Re-add parts of the manual CFI infrastructure")
-> >
-> > https://sourceware.org/binutils/docs/as/CFI-directives.html#g_t_002ecfi_005fsections-section_005flist
-> > is the manual's section on .cfi_sections directives, and states `The
-> > default if this directive is not used is .cfi_sections .eh_frame.`.
-> > So the comment is slightly stale since we're no longer explicitly
-> > discarding .eh_frame in arch/x86/kernel/vmlinux.lds.S, rather
-> > preventing the generation via -fno-asynchronous-unwind-tables in
-> > KBUILD_CFLAGS (across a few different Makefiles).  Would you mind also
-> > updating the comment in arch/x86/include/asm/dwarf2.h in a V2? The
-> > rest of this patch LGTM.
-> >
->
-> i.e. just replace that last sentence with "Note ... if we decide to use
-> runtime DWARF unwinding again"?
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Yeah that should be good.  Maybe these cleanups could be a separate
-patch, if you prefer?
+Changes since V1:
+- Remove global static flag violate_nmi_constraint, and add a new
+  function metricgroup___watchdog_constraint_hint() for all
+  watchdog constraint hints in patch 4.
+  The rest of the patches are not changed.
 
->
-> The whole ifdef-ery machinery there is obsolete, all the directives its
-> checking support for have been there since binutils-2.18, so should
-> probably also clean it up to just unconditionally define them.
+Some metric groups, e.g. Page_Walks_Utilization, will never count when
+NMI watchdog is enabled.
 
-arch/x86/Makefile:
-184 # do binutils support CFI?
-185 cfi := $(call as-instr,.cfi_startproc\n.cfi_rel_offset
-$(sp-y)$(comma)0\n.cfi_endproc,-DCONFIG_AS_CFI=1)
-186 # is .cfi_signal_frame supported too?
-187 cfi-sigframe := $(call
-as-instr,.cfi_startproc\n.cfi_signal_frame\n.cfi_endproc,-DCONFIG_AS_CFI_SIGNAL_FRAME=1)
-188 cfi-sections := $(call as-instr,.cfi_sections
-.debug_frame,-DCONFIG_AS_CFI_SECTIONS=1)
+ $echo 1 > /proc/sys/kernel/nmi_watchdog
+ $perf stat -M Page_Walks_Utilization
 
-2.18? Oh, yeah, we can clean that up to.
-Documentation/process/changes.rst list binutils 2.21 as the minimum
-supported version.  Then I assume that code that uses those -D flags
-can go, too.
+ Performance counter stats for 'system wide':
+
+ <not counted>      itlb_misses.walk_pending       (0.00%)
+ <not counted>      dtlb_load_misses.walk_pending  (0.00%)
+ <not counted>      dtlb_store_misses.walk_pending (0.00%)
+ <not counted>      ept.walk_pending               (0.00%)
+ <not counted>      cycles                         (0.00%)
+
+       2.343460588 seconds time elapsed
+
+ Some events weren't counted. Try disabling the NMI watchdog:
+        echo 0 > /proc/sys/kernel/nmi_watchdog
+        perf stat ...
+        echo 1 > /proc/sys/kernel/nmi_watchdog
+ The events in group usually have to be from the same PMU. Try
+ reorganizing the group.
+
+A metric group is a weak group, which relies on group validation
+code in the kernel to determine whether to be opened as a group or
+a non-group. However, group validation code may return false-positives,
+especially when NMI watchdog is enabled. (The metric group is allowed
+as a group but will never be scheduled.)
+
+The attempt to fix the group validation code has been rejected.
+https://lore.kernel.org/lkml/20200117091341.GX2827@hirez.programming.kicks-ass.net/
+Because we cannot accurately predict whether the group can be scheduled
+as a group, only by checking current status.
+
+This patch set provides another solution to mitigate the issue.
+Add "MetricConstraint" in event list, which provides a hint for perf tool,
+e.g. "MetricConstraint": "NO_NMI_WATCHDOG". Perf tool can change the
+metric group to non-group (standalone metrics) if NMI watchdog is enabled.
+
+After applying the patch,
+
+ $echo 1 > /proc/sys/kernel/nmi_watchdog
+ $perf stat -M Page_Walks_Utilization
+  Splitting metric group Page_Walks_Utilization into standalone metrics.
+  Try disabling the NMI watchdog to comply NO_NMI_WATCHDOG metric constraint:
+        echo 0 > /proc/sys/kernel/nmi_watchdog
+        perf stat ...
+        echo 1 > /proc/sys/kernel/nmi_watchdog
+
+ Performance counter stats for 'system wide':
+
+        18,253,454      itlb_misses.walk_pending  #      0.0
+                              Page_Walks_Utilization   (50.55%)
+        78,051,525      dtlb_load_misses.walk_pending  (50.55%)
+        29,213,063      dtlb_store_misses.walk_pending (50.55%)
+                 0      ept.walk_pending               (50.55%)
+     2,542,132,364      cycles                         (49.92%)
+
+       1.037095993 seconds time elapsed
+
+Kan Liang (5):
+  perf jevents: Support metric constraint
+  perf metricgroup: Factor out metricgroup__add_metric_weak_group()
+  perf util: Factor out sysctl__nmi_watchdog_enabled()
+  perf metricgroup: Support metric constraint
+  perf vendor events: Add NO_NMI_WATCHDOG metric constraint
+
+ .../arch/x86/cascadelakex/clx-metrics.json         |   3 +-
+ .../pmu-events/arch/x86/skylake/skl-metrics.json   |   3 +-
+ .../pmu-events/arch/x86/skylakex/skx-metrics.json  |   3 +-
+ tools/perf/pmu-events/jevents.c                    |  19 ++--
+ tools/perf/pmu-events/jevents.h                    |   2 +-
+ tools/perf/pmu-events/pmu-events.h                 |   1 +
+ tools/perf/util/metricgroup.c                      | 109 ++++++++++++++++-----
+ tools/perf/util/stat-display.c                     |   6 +-
+ tools/perf/util/util.c                             |  18 ++++
+ tools/perf/util/util.h                             |   2 +
+ 10 files changed, 128 insertions(+), 38 deletions(-)
+
 -- 
-Thanks,
-~Nick Desaulniers
+2.7.4
+
