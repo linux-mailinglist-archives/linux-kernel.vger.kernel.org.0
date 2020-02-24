@@ -2,94 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F034B16A9BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:16:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7732916A9C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 16:16:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbgBXPQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 10:16:09 -0500
-Received: from foss.arm.com ([217.140.110.172]:38764 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727701AbgBXPQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 10:16:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31D9E1FB;
-        Mon, 24 Feb 2020 07:16:08 -0800 (PST)
-Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A05783F534;
-        Mon, 24 Feb 2020 07:16:06 -0800 (PST)
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-To:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        linux@armlinux.org.uk, tglx@linutronix.de, luto@kernel.org,
-        m.szyprowski@samsung.com, maz@kernel.org, Mark.Rutland@arm.com,
-        vincenzo.frascino@arm.com
-Subject: [PATCH v3] clocksource: Fix arm_arch_timer clockmode when vDSO disabled
-Date:   Mon, 24 Feb 2020 15:15:52 +0000
-Message-Id: <20200224151552.57274-1-vincenzo.frascino@arm.com>
-X-Mailer: git-send-email 2.25.0
+        id S1727855AbgBXPQq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 10:16:46 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34972 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbgBXPQq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 10:16:46 -0500
+Received: by mail-wm1-f65.google.com with SMTP id b17so9815375wmb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 07:16:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CqVvyjr72l7GvXkRWMW7L0FSrdJA85t6oDGifsmwlm8=;
+        b=l+4AxzNapEhq9AsxW24XIMk6YIdoEzrG5Nk8ElQPjS15clqXQvbTNzg4F8uUe9IrVa
+         B3AmniB+0m8QrRYamEQ9AU8Pe9Bwi+dVVBlWFHhtopYo4oQyV+ZG0mlHLpX4UHZUpkWv
+         RGfeV+C0cO/W/ZdEvAlS+WyAW2QAXIJfkVN9oyC7o41BIWF7hqm6wPXQ4ZlwQ4BqyNog
+         +C29/Zt5BuYe23/ZiCp7L24NtdqfM1lsp1oKD+D5KRy7dA0EWqBaAqWQiJ6F3ZKOnZoX
+         U2UEpxh0RMNVi9KzqSmvbGHqY1YJdCS5iqSWY7zIhnd/arRQ0IAON38amuVctYWCNP3P
+         UfWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CqVvyjr72l7GvXkRWMW7L0FSrdJA85t6oDGifsmwlm8=;
+        b=FngKYnFWhiksIFReJvGn/2Yxl/zEGvLGjJ3IMwbnE5MuwlfDQv/3hYH4csJ+RKkHZt
+         o5wlxSPvr4ZFHlYQl5WLs2Azsvy2NGA6f25TqgOUBGNQgS2Wz6TdgKJvnaLaky2KTDNl
+         xEqkoPpFAMqIwC6LlEhATDAX71dB1+mE/hqAGokvbWu+izvyCGxu0OFidLtSl8HIUic0
+         /s/xvLi1zv8BRL/zwaVQvbFlsflSMHQpI+UXhRbfuA2SymzB+zR5hEhaZbydmMkSMuzP
+         dH/0L2IgHRWiF5Ocvy7LLPUXxApV8zsESKGrs86zVyiz/HMYZl3UL/fQw5C7uop/TpSz
+         DxyA==
+X-Gm-Message-State: APjAAAUZSTe23kJxqrIB72Sk1OLDNgZonNZmwzifBNxu8fM6ScLV/VCp
+        Dik0JljHSNsS6uBHtSJYPss=
+X-Google-Smtp-Source: APXvYqxcuahIGIZddPtvRNsIsiwnGqPIO9L1692MF0AMkZYpVJBZ/4tvXWJsj/yV8RrZsedWOd4tuA==
+X-Received: by 2002:a1c:7315:: with SMTP id d21mr22753769wmb.186.1582557404074;
+        Mon, 24 Feb 2020 07:16:44 -0800 (PST)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id i204sm18539040wma.44.2020.02.24.07.16.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2020 07:16:43 -0800 (PST)
+Date:   Mon, 24 Feb 2020 16:16:41 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Phil Auld <pauld@redhat.com>, Hillf Danton <hdanton@sina.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/13] Reconcile NUMA balancing decisions with the load
+ balancer v6
+Message-ID: <20200224151641.GA24316@gmail.com>
+References: <20200224095223.13361-1-mgorman@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200224095223.13361-1-mgorman@techsingularity.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The arm_arch_timer requires that VDSO_CLOCKMODE_ARCHTIMER to be
-defined to compile correctly. On arm the vDSO can be disabled and when
-this is the case the compilation ends prematurely with an error:
 
- $ make ARCH=arm multi_v7_defconfig
- $ ./scripts/config -d VDSO
- $ make
+* Mel Gorman <mgorman@techsingularity.net> wrote:
 
-drivers/clocksource/arm_arch_timer.c:73:44: error:
-‘VDSO_CLOCKMODE_ARCHTIMER’ undeclared here (not in a function)
-  static enum vdso_clock_mode vdso_default = VDSO_CLOCKMODE_ARCHTIMER;
-                                             ^
-scripts/Makefile.build:267: recipe for target
-'drivers/clocksource/arm_arch_timer.o' failed
-make[2]: *** [drivers/clocksource/arm_arch_timer.o] Error 1
-make[2]: *** Waiting for unfinished jobs....
-scripts/Makefile.build:505: recipe for target 'drivers/clocksource' failed
-make[1]: *** [drivers/clocksource] Error 2
-make[1]: *** Waiting for unfinished jobs....
-Makefile:1683: recipe for target 'drivers' failed
-make: *** [drivers] Error 2
+> The only differences in V6 are due to Vincent's latest patch series.
+> 
+> This is V5 which includes the latest versions of Vincent's patch
+> addressing review feedback. Patches 4-9 are Vincent's work plus one
+> important performance fix. Vincent's patches were retested and while
+> not presented in detail, it was mostly an improvement.
+> 
+> Changelog since V5:
+> o Import Vincent's latest patch set
 
-Define VDSO_CLOCKMODE_ARCHTIMER as VDSO_CLOCKMODE_NONE when the vDSOs are
-not enabled to address the issue.
+>  include/linux/sched.h        |  31 ++-
+>  include/trace/events/sched.h |  49 ++--
+>  kernel/sched/core.c          |  13 -
+>  kernel/sched/debug.c         |  17 +-
+>  kernel/sched/fair.c          | 626 ++++++++++++++++++++++++++++---------------
+>  kernel/sched/pelt.c          |  59 ++--
+>  kernel/sched/sched.h         |  42 ++-
+>  7 files changed, 535 insertions(+), 302 deletions(-)
 
-Fixes: 5e3c6a312a09 ("ARM/arm64: vdso: Use common vdso clock mode storage")
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Mark Rutland <Mark.Rutland@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
----
- drivers/clocksource/arm_arch_timer.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Applied to tip:sched/core for v5.7 inclusion, thanks Mel and Vincent!
 
-This patch has been rebased and tested on tip/timers/core.
+Please base future iterations on top of a0f03b617c3b (current 
+sched/core).
 
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index ee2420d56f67..d53f4c7ccaae 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -69,7 +69,11 @@ static enum arch_timer_ppi_nr arch_timer_uses_ppi = ARCH_TIMER_VIRT_PPI;
- static bool arch_timer_c3stop;
- static bool arch_timer_mem_use_virtual;
- static bool arch_counter_suspend_stop;
-+#ifdef CONFIG_GENERIC_GETTIMEOFDAY
- static enum vdso_clock_mode vdso_default = VDSO_CLOCKMODE_ARCHTIMER;
-+#else
-+static enum vdso_clock_mode vdso_default = VDSO_CLOCKMODE_NONE;
-+#endif /* CONFIG_GENERIC_GETTIMEOFDAY */
- 
- static cpumask_t evtstrm_available = CPU_MASK_NONE;
- static bool evtstrm_enable = IS_ENABLED(CONFIG_ARM_ARCH_TIMER_EVTSTREAM);
--- 
-2.25.0
+Thanks!
 
+	Ingo
