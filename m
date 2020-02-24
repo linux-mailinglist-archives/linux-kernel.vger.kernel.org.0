@@ -2,48 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D111C16A853
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 15:28:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7822416A7E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 15:08:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbgBXO2u convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Feb 2020 09:28:50 -0500
-Received: from mail.funvisis.gob.ve ([200.11.216.34]:48780 "EHLO
-        mail.funvisis.gob.ve" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727299AbgBXO2t (ORCPT
+        id S1727627AbgBXOIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 09:08:18 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5063 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727451AbgBXOIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 09:28:49 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by linuxmail.funvisis.gob.ve (Postfix) with ESMTP id 2BCDE15F4E9F;
-        Mon, 24 Feb 2020 10:22:31 -0400 (BOT)
-X-Virus-Scanned: by amavisd-new-2.7.1 (20120429) (Debian) at funvisis.gob.ve
-Received: from mail.funvisis.gob.ve ([127.0.0.1])
-        by localhost (linuxmail.funvisis.gob.ve [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id w1w4VE-XKIt4; Mon, 24 Feb 2020 10:22:29 -0400 (BOT)
-Received: from [100.87.16.14] (unknown [106.197.209.141])
-        by linuxmail.funvisis.gob.ve (Postfix) with ESMTPSA id 208AF15EBD69;
-        Mon, 24 Feb 2020 10:07:14 -0400 (BOT)
-Content-Type: text/plain; charset="iso-8859-1"
+        Mon, 24 Feb 2020 09:08:17 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e53d8840000>; Mon, 24 Feb 2020 06:07:00 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 24 Feb 2020 06:08:16 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 24 Feb 2020 06:08:16 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Feb
+ 2020 14:08:16 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 24 Feb 2020 14:08:15 +0000
+Received: from thunderball.nvidia.com (Not Verified[10.21.140.91]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e53d8cd0006>; Mon, 24 Feb 2020 06:08:15 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Milo Kim <milo.kim@ti.com>, Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] backlight: lp855x: Ensure regulators are disabled on probe failure
+Date:   Mon, 24 Feb 2020 14:07:48 +0000
+Message-ID: <20200224140748.2182-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Verifique_su_correo_electr=C3=B3nico?=
-To:     Recipients <presidencia@funvisis.gob.ve>
-From:   Administrador de correo web <presidencia@funvisis.gob.ve>
-Date:   Mon, 24 Feb 2020 19:37:07 +0530
-Message-Id: <20200224142231.2BCDE15F4E9F@linuxmail.funvisis.gob.ve>
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582553220; bh=B1HKOxHeQwu3ZxgJLvSfafO1owYsd38lFNvB2Oh8gBc=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=bnwYpe6isaqG2Bp36VGI0VAYjd8jtznqNulwkVw85vf5zOMSfv809Oou4taz+1W9g
+         /eTLeJozbJBXhllQfybYW8hX4fyWIjWNON8aQugt/0HrnKAjg5r9wLT5lTgmy+8n2B
+         YrCJM3gob7XIi7l0cbONUTfyGssXmyEi+0SUamN4DDOnXIFxHBentnbyQdvOQ9+11P
+         Dr5X+zeRff1B/SMt2pdNwrja2cVOPDRGAM+U4epkb2bICZZUiGv1fQLKa+KgJ7xMMS
+         AwmdVrZ/6l2MAKwM+FuIqdF/x7mpCYg64MWX7TFFRwOSCFwNeq1fcK5TWItV01qcCa
+         mFLwbcDwN/IQA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If probing the LP885x backlight fails after the regulators have been
+enabled, then the following warning is seen when releasing the
+regulators ...
 
-Querido usuario,
+ WARNING: CPU: 1 PID: 289 at drivers/regulator/core.c:2051 _regulator_put.part.28+0x158/0x160
+ Modules linked in: tegra_xudc lp855x_bl(+) host1x pwm_tegra ip_tables x_tables ipv6 nf_defrag_ipv6
+ CPU: 1 PID: 289 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200224 #1
+ Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
 
-Como parte de nuestros problemas de seguridad, actualizamos regularmente todas las direcciones de correo electrónico en nuestro sistema de base de datos, no podemos actualizar su cuenta, por lo tanto, suspenderemos su acceso a su dirección de correo electrónico temporalmente para permitir la actualización.
+ ...
 
-Para evitar la interrupción de su servicio de correo electrónico, tome unos minutos para actualizar sus datos completando el formulario de verificación manualmente.
+ Call trace:
+  _regulator_put.part.28+0x158/0x160
+  regulator_put+0x34/0x50
+  devm_regulator_release+0x10/0x18
+  release_nodes+0x12c/0x230
+  devres_release_all+0x34/0x50
+  really_probe+0x1c0/0x370
+  driver_probe_device+0x58/0x100
+  device_driver_attach+0x6c/0x78
+  __driver_attach+0xb0/0xf0
+  bus_for_each_dev+0x68/0xc8
+  driver_attach+0x20/0x28
+  bus_add_driver+0x160/0x1f0
+  driver_register+0x60/0x110
+  i2c_register_driver+0x40/0x80
+  lp855x_driver_init+0x20/0x1000 [lp855x_bl]
+  do_one_initcall+0x58/0x1a0
+  do_init_module+0x54/0x1d0
+  load_module+0x1d80/0x21c8
+  __do_sys_finit_module+0xe8/0x100
+  __arm64_sys_finit_module+0x18/0x20
+  el0_svc_common.constprop.3+0xb0/0x168
+  do_el0_svc+0x20/0x98
+  el0_sync_handler+0xf4/0x1b0
+  el0_sync+0x140/0x180
 
-Haga clic en la copia y obtenga el enlace: http://correoverificaciones.wapkiz.com/index.html en su navegador y verifique.
+Fix this by ensuring that the regulators are disabled, if enabled, on
+probe failure.
 
-Gracias,
-Equipo de soporte técnico.
+Finally, ensure that the vddio regulator is disabled in the driver
+remove handler.
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/video/backlight/lp855x_bl.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/video/backlight/lp855x_bl.c b/drivers/video/backlight/lp855x_bl.c
+index f68920131a4a..e94932c69f54 100644
+--- a/drivers/video/backlight/lp855x_bl.c
++++ b/drivers/video/backlight/lp855x_bl.c
+@@ -456,7 +456,7 @@ static int lp855x_probe(struct i2c_client *cl, const struct i2c_device_id *id)
+ 		ret = regulator_enable(lp->enable);
+ 		if (ret < 0) {
+ 			dev_err(lp->dev, "failed to enable vddio: %d\n", ret);
+-			return ret;
++			goto disable_supply;
+ 		}
+ 
+ 		/*
+@@ -471,24 +471,34 @@ static int lp855x_probe(struct i2c_client *cl, const struct i2c_device_id *id)
+ 	ret = lp855x_configure(lp);
+ 	if (ret) {
+ 		dev_err(lp->dev, "device config err: %d", ret);
+-		return ret;
++		goto disable_vddio;
+ 	}
+ 
+ 	ret = lp855x_backlight_register(lp);
+ 	if (ret) {
+ 		dev_err(lp->dev,
+ 			"failed to register backlight. err: %d\n", ret);
+-		return ret;
++		goto disable_vddio;
+ 	}
+ 
+ 	ret = sysfs_create_group(&lp->dev->kobj, &lp855x_attr_group);
+ 	if (ret) {
+ 		dev_err(lp->dev, "failed to register sysfs. err: %d\n", ret);
+-		return ret;
++		goto disable_vddio;
+ 	}
+ 
+ 	backlight_update_status(lp->bl);
++
+ 	return 0;
++
++disable_vddio:
++	if (lp->enable)
++		regulator_disable(lp->enable);
++disable_supply:
++	if (lp->supply)
++		regulator_disable(lp->supply);
++
++	return ret;
+ }
+ 
+ static int lp855x_remove(struct i2c_client *cl)
+@@ -497,6 +507,8 @@ static int lp855x_remove(struct i2c_client *cl)
+ 
+ 	lp->bl->props.brightness = 0;
+ 	backlight_update_status(lp->bl);
++	if (lp->enable)
++		regulator_disable(lp->enable);
+ 	if (lp->supply)
+ 		regulator_disable(lp->supply);
+ 	sysfs_remove_group(&lp->dev->kobj, &lp855x_attr_group);
+-- 
+2.17.1
+
