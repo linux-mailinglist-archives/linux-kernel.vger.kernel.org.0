@@ -2,77 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5FAA16B502
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:21:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 284FF16B55B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:26:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbgBXXVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:21:12 -0500
-Received: from mga11.intel.com ([192.55.52.93]:48177 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728298AbgBXXVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:21:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 15:21:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
-   d="scan'208";a="255749665"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 24 Feb 2020 15:21:11 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     "Yi Liu" <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH 1/2] iommu/vt-d: report SVA feature with generic flag
-Date:   Mon, 24 Feb 2020 15:26:35 -0800
-Message-Id: <1582586797-61697-2-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582586797-61697-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1582586797-61697-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        id S1728402AbgBXX0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:26:37 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:40008 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbgBXX0h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 18:26:37 -0500
+Received: from localhost (unknown [50.226.181.18])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id A3A45124CE3CD;
+        Mon, 24 Feb 2020 15:26:36 -0800 (PST)
+Date:   Mon, 24 Feb 2020 15:26:35 -0800 (PST)
+Message-Id: <20200224.152635.883427110923588122.davem@davemloft.net>
+To:     gustavo@embeddedor.com
+Cc:     vishal@chelsio.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] chelsio: Replace zero-length array with
+ flexible-array member
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200224163024.GA27867@embeddedor>
+References: <20200224163024.GA27867@embeddedor>
+X-Mailer: Mew version 6.8 on Emacs 26.3
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 24 Feb 2020 15:26:36 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Query Shared Virtual Address/Memory capability is a generic feature. Report
-Intel SVM as SVA feature such that generic code such as Uacce [1] can use
-it.
-[1] https://lkml.org/lkml/2020/1/15/604
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Mon, 24 Feb 2020 10:30:24 -0600
 
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
----
- drivers/iommu/intel-iommu.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
+> 
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
+> 
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+> 
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+> 
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+> 
+> This issue was found with the help of Coccinelle.
+> 
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 92c2f2e4197b..5eca6e10d2a4 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -6346,9 +6346,14 @@ intel_iommu_dev_has_feat(struct device *dev, enum iommu_dev_features feat)
- static int
- intel_iommu_dev_enable_feat(struct device *dev, enum iommu_dev_features feat)
- {
-+	struct intel_iommu *intel_iommu = dev_to_intel_iommu(dev);
-+
- 	if (feat == IOMMU_DEV_FEAT_AUX)
- 		return intel_iommu_enable_auxd(dev);
- 
-+	if (feat == IOMMU_DEV_FEAT_SVA)
-+		return intel_iommu->flags & VTD_FLAG_SVM_CAPABLE;
-+
- 	return -ENODEV;
- }
- 
--- 
-2.7.4
-
+Applied.
