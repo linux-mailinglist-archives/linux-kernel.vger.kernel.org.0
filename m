@@ -2,120 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0C6D16B328
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:50:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED42916B2FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:43:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727895AbgBXVuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 16:50:18 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43254 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbgBXVuS (ORCPT
+        id S1728117AbgBXVn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 16:43:27 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:32754 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727932AbgBXVn0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 16:50:18 -0500
-Received: by mail-ed1-f65.google.com with SMTP id dc19so13725804edb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:50:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZpRlNJyxjURpxSeo9TgDWjOVoYB3eEWq/qH5+c8IPvQ=;
-        b=eyZAPIDtfYGAJMFSbiOA8WQ5iUhe96wmEjyfCJ34B+4o7j9kYZVEhFkBmiZl7ADo+f
-         PyP6gf2SNcUFSNj7E6uihJH7h9RPze99rK4fpnXvren68bqmdd2LQKtC1k1NOzSOjcLo
-         1YoTHieJQZU3MaTRlKUzerS3gODLbLoBhaXeo=
+        Mon, 24 Feb 2020 16:43:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582580605;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2ZTIZjXSpWgQEjNf7zkISWcKkdhFuO/dpS7p5N+PWmY=;
+        b=AZZQBgPssL0UVRSABmgpnuAINdUPi9XKPkgmDypzIg/PEKhIkt1qgHBs2C+E5V6T93z2fR
+        szNxX5h0LmKtdy9DQauc5PKnk0jTx7uuz3CHWEkuf88oWTl0ha3mwZvdrMyCVLXDbl0hk1
+        OCdmu1AsTEh9T2qCr3UwJ0BTYvYMpXQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-295-8RgybDzNO9SrVQlAViwwiw-1; Mon, 24 Feb 2020 16:43:24 -0500
+X-MC-Unique: 8RgybDzNO9SrVQlAViwwiw-1
+Received: by mail-wm1-f72.google.com with SMTP id r19so104134wmh.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:43:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZpRlNJyxjURpxSeo9TgDWjOVoYB3eEWq/qH5+c8IPvQ=;
-        b=fH09HLc0N+ePWhTa6AHDpU7f7NC9gQZFbWbxdbhlui+28rVavz/MudSsIFY0ioSwGp
-         QrjsskxaosSfmwjx92ls/S9FT9vgyV8nCiu1FHWcNYPbTa3ZBZo/cO1Cp2SWVJUDj0Db
-         7MGa+25newOlZ1tu+3qs+yurMyAZ12/X9LIryvvltm5gDGIoiSX3KgZZLSA6xwtokxRU
-         yNOKMZroyIk3He13x3kKORPs2PF8X7zHa8d17TNrxgOaeE22MNehfOURXGf4fDExl50s
-         vOL8/A3VmAvTWITQC5IR1C5cUIPGng2qj3AWVbHswKopbV9A3wSioqW22aKVRSVpY2tL
-         7vlg==
-X-Gm-Message-State: APjAAAXOR93EdVpYAjdbXhtRSoOTAOY4lXmdiwkVLQegjRkYDeWyAcMi
-        nDgOfqJlJXQfwZqgw3DSLNxqcjAEEIo=
-X-Google-Smtp-Source: APXvYqxuh8lMpC3ktOOu/YZa4gbcXc09qkEGn3GPZbSHUSO+hbMFrF3PDo1iQbmwjXIfzOg7a83jCg==
-X-Received: by 2002:aa7:c803:: with SMTP id a3mr46470366edt.99.1582581015992;
-        Mon, 24 Feb 2020 13:50:15 -0800 (PST)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id ck19sm853924ejb.48.2020.02.24.13.50.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 13:50:15 -0800 (PST)
-Received: by mail-ed1-f45.google.com with SMTP id r18so13772788edl.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:50:15 -0800 (PST)
-X-Received: by 2002:a19:6144:: with SMTP id m4mr1561198lfk.192.1582580600346;
- Mon, 24 Feb 2020 13:43:20 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=2ZTIZjXSpWgQEjNf7zkISWcKkdhFuO/dpS7p5N+PWmY=;
+        b=eHRwFY6aVsE5FEnu2e04rEqieF9862ZsfAozvKfH3pOWu1bx5wAGBkpq2Jiamr6k3c
+         2tIfqHyDrkA1R6bOpMa+rJz2TNRpJa5UMrUEW9MXKCC+vr1glkuCIwNC9s784waz5OYK
+         6Vh0kq9uXi9dW/MrSE6HcyCKuWwi1da0ENPwJrew0GgFZT+lKHHI5BqB4uhWzNQZe0Y3
+         qrwD1VYZVXCAk5yGNrZVspoMvWg8VLOwDj4uVp8ShrMuIw7mbC7A0kclwn8En07/X+Sx
+         CTYMWe5d874JL+anQ1qBC3R7V2IF0rSYwKA8S1HbIB6JuY4EitpA9HsCj4o8cK2ybCAL
+         GwDA==
+X-Gm-Message-State: APjAAAWiEs8MGMKy3hBhfgh+4aPtPxocWhSTznZcG48Z4mFKwiFXwNsG
+        VUcnsdZzIMOFFCtdrJ9tVm2Dzjn5bXNAS2Lc3UvfFz78/ja9zXem+R9AkrLjYj4x/L4PmwFBt0k
+        Wt6spN0kuRHgezAunaaikfy71
+X-Received: by 2002:adf:ee4c:: with SMTP id w12mr141256wro.310.1582580603021;
+        Mon, 24 Feb 2020 13:43:23 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxfUQpyKHaWhH8NpLQgO8sQ2P6mnJ1qvsJ2nyTxYMe6mzd0IBSOhbjFl56D51dU32ArURO5eg==
+X-Received: by 2002:adf:ee4c:: with SMTP id w12mr141245wro.310.1582580602825;
+        Mon, 24 Feb 2020 13:43:22 -0800 (PST)
+Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
+        by smtp.gmail.com with ESMTPSA id t131sm1077916wmb.13.2020.02.24.13.43.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2020 13:43:22 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 41/61] KVM: x86: Move XSAVES CPUID adjust to VMX's KVM cpu cap update
+In-Reply-To: <20200201185218.24473-42-sean.j.christopherson@intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-42-sean.j.christopherson@intel.com>
+Date:   Mon, 24 Feb 2020 22:43:20 +0100
+Message-ID: <878skroe4n.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-References: <20200205123216.GO12867@shao2-debian> <20200205125804.GM14879@hirez.programming.kicks-ass.net>
- <20200221080325.GA67807@shbuild999.sh.intel.com> <20200221132048.GE652992@krava>
- <20200223141147.GA53531@shbuild999.sh.intel.com> <CAHk-=wjKFTzfDWjAAabHTZcityeLpHmEQRrKdTuk0f4GWcoohQ@mail.gmail.com>
- <20200224003301.GA5061@shbuild999.sh.intel.com> <CAHk-=whi87NNOnNXJ6CvyyedmhnS8dZA2YkQQSajvBArH5XOeA@mail.gmail.com>
- <20200224021915.GC5061@shbuild999.sh.intel.com> <CAHk-=wjkSb1OkiCSn_fzf2v7A=K0bNsUEeQa+06XMhTO+oQUaA@mail.gmail.com>
- <CAHk-=wifdJHrfnmwwzPpH-0X6SaZxtdmRWpSNwf8xsXD2iE4dA@mail.gmail.com>
- <CAHk-=wgbR4ocHAOiaj7x+V7dVoYr-mD2N7Y_MRPJ+Q+GohDYeg@mail.gmail.com> <87a757znqd.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87a757znqd.fsf@x220.int.ebiederm.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 24 Feb 2020 13:43:02 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh0z0LErNzwe-AqrEkv3BNzJep58Qmi2dM775UPtmq0og@mail.gmail.com>
-Message-ID: <CAHk-=wh0z0LErNzwe-AqrEkv3BNzJep58Qmi2dM775UPtmq0og@mail.gmail.com>
-Subject: Re: [LKP] Re: [perf/x86] 81ec3f3c4c: will-it-scale.per_process_ops
- -5.5% regression
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Feng Tang <feng.tang@intel.com>, Oleg Nesterov <oleg@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kernel test robot <rong.a.chen@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        andi.kleen@intel.com, "Huang, Ying" <ying.huang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 1:22 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
+
+> Move the clearing of the XSAVES CPUID bit into VMX, which has a separate
+> VMCS control to enable XSAVES in non-root, to eliminate the last ugly
+> renmant of the undesirable "unsigned f_* = *_supported ? F(*) : 0"
+> pattern in the common CPUID handling code.
 >
-> I keep looking at your patch and wondering if there isn't a way
-> to remove the uid refcount entirely on this path.
+> Drop ->xsaves_supported(), CPUID adjustment was the only user.
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h | 1 -
+>  arch/x86/kvm/cpuid.c            | 4 ----
+>  arch/x86/kvm/svm.c              | 6 ------
+>  arch/x86/kvm/vmx/vmx.c          | 5 ++++-
+>  4 files changed, 4 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index ba828569cda5..dd690fb5ceca 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1163,7 +1163,6 @@ struct kvm_x86_ops {
+>  	void (*handle_exit_irqoff)(struct kvm_vcpu *vcpu,
+>  		enum exit_fastpath_completion *exit_fastpath);
+>  
+> -	bool (*xsaves_supported)(void);
+>  	bool (*umip_emulated)(void);
+>  	bool (*pt_supported)(void);
+>  
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index c2a4c9df49a9..77a6c1db138d 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -626,10 +626,6 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+>  			goto out;
+>  
+>  		cpuid_entry_mask(entry, CPUID_D_1_EAX);
+> -
+> -		if (!kvm_x86_ops->xsaves_supported())
+> -			cpuid_entry_clear(entry, X86_FEATURE_XSAVES);
+> -
+>  		if (entry->eax & (F(XSAVES)|F(XSAVEC)))
+>  			entry->ebx = xstate_required_size(supported_xcr0, true);
+>  		else
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index f98a192459f7..7cb05945162e 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -6080,11 +6080,6 @@ static bool svm_rdtscp_supported(void)
+>  	return boot_cpu_has(X86_FEATURE_RDTSCP);
+>  }
+>  
+> -static bool svm_xsaves_supported(void)
+> -{
+> -	return boot_cpu_has(X86_FEATURE_XSAVES);
+> -}
+> -
+>  static bool svm_umip_emulated(void)
+>  {
+>  	return false;
+> @@ -7455,7 +7450,6 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
+>  	.cpuid_update = svm_cpuid_update,
+>  
+>  	.rdtscp_supported = svm_rdtscp_supported,
+> -	.xsaves_supported = svm_xsaves_supported,
+>  	.umip_emulated = svm_umip_emulated,
+>  	.pt_supported = svm_pt_supported,
+>  
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index bae915431c72..cfd0ef314176 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -7131,6 +7131,10 @@ static __init void vmx_set_cpu_caps(void)
+>  	    boot_cpu_has(X86_FEATURE_OSPKE))
+>  		kvm_cpu_cap_set(X86_FEATURE_PKU);
+>  
+> +	/* CPUID 0xD.1 */
+> +	if (!vmx_xsaves_supported())
+> +		kvm_cpu_cap_clear(X86_FEATURE_XSAVES);
+> +
+>  	/* CPUID 0x80000001 */
+>  	if (!cpu_has_vmx_rdtscp())
+>  		kvm_cpu_cap_clear(X86_FEATURE_RDTSCP);
+> @@ -7886,7 +7890,6 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
+>  
+>  	.check_intercept = vmx_check_intercept,
+>  	.handle_exit_irqoff = vmx_handle_exit_irqoff,
+> -	.xsaves_supported = vmx_xsaves_supported,
+>  	.umip_emulated = vmx_umip_emulated,
+>  	.pt_supported = vmx_pt_supported,
 
-I agree. I tried to come up with something, but couldn't.
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-> Linus I might be wrong but I have this sense that your change will only
-> help when signal delivery is backed up.  I expect in the common case
-> there won't be any pending signals outstanding for the user.
+-- 
+Vitaly
 
-Again, 100% agreed.
-
-HOWEVER.
-
-The normal case where there's one only signal pending is also the case
-where we don't care about the extra atomic RMW access. By definition
-that's not going to ever going to show up as a performance issue or
-for cacheline contention.
-
-So the only case that matters from a performance standpoint is the
-"lots of signals" case, in which case you'll see that sigqueue become
-backed up.
-
-But as I said in the original thread (before you got added to the list):
-
- "I don't know. This does not seem to be a particularly serious load."
-
-I'm not convinced this will show up outside of this kind of
-signal-sending microbenchmark.
-
-That said, I don't really see any downside to the patch either, so...
-
-                Linus
