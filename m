@@ -2,292 +2,283 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48A6516AC8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:02:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3174316AC9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:06:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbgBXRCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 12:02:32 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42869 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726806AbgBXRCc (ORCPT
+        id S1727796AbgBXRG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 12:06:26 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53374 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727727AbgBXRGZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:02:32 -0500
-Received: by mail-lj1-f194.google.com with SMTP id d10so10903756ljl.9;
-        Mon, 24 Feb 2020 09:02:29 -0800 (PST)
+        Mon, 24 Feb 2020 12:06:25 -0500
+Received: by mail-wm1-f65.google.com with SMTP id s10so66727wmh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 09:06:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kEZH26El7LbHnMTCcKjSEmfN6drHvY8nyMRzI4reNIs=;
-        b=TVFJJZhRdJI/fSpjbpdQI6bDcDel+iw/0zQxxDld08Aw7jS9pkaP4S7gL1KIXRjASt
-         IbOLcxu6H2RcJ6EhPZgJYr6jyABFDcyr0bdqIs+CC1sUGQrneulNbqxpWvuMk1xJ2+IO
-         73n9p7WAYPuQq4FGB0sW5NsV6xrCjWyTYZHMcisUd4x5qazjyHpVogWe4fPs8E0Omg4l
-         29UDjr9Z++QrwGIM+MyK4jpZ4c3ljaSb2Ikhfx/Ol/Uu8VvAQYl2SYAqqyDVEN61YCel
-         HE7uKpBY6Y8ztwyTnSOB4gOuZFoBkFh2W7c6h5QG4skYoEU5vB31CStaMV36CHsOFXcL
-         sEtQ==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FV1+URIh0vJGkDR+Y3sgl5GcK5Z91KqhxIrgPs2m0DY=;
+        b=P607In2Fd4CMWizhD2Dp+XgvX5J21OTVO3M/zrdlEnePBi1j+EdqlODhZk9VNI2RxS
+         yV9vgn07rxiOxdi1oeTea2Vsanjsmsg3bW82s/rvoJoG6SgI8ZEbs8lCrjcUghuJGmxZ
+         V68cEH3CyvgKFafmHF+ZfQH6hLLT/74AzJbQfCkCb6pjLtkw/aw7kdY6TzdqAShE7X+c
+         0JrDF8xysaCATUr3QbFX4Sgjw7bkZ0Pdd+7KA1v4/2qi8+lO84pEeNlt1IqAkMjbthoy
+         3tVV1RoKkOBtY8pQkss4G2RXfEakw1sJIPbvcIrOm544+8ebLT7GRCln9WOoLR+60HOO
+         l8AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kEZH26El7LbHnMTCcKjSEmfN6drHvY8nyMRzI4reNIs=;
-        b=pBt7hCBmqM60sK6WlPP5w0Gzr8MFgXHZ5xQjEHuOZPR8786NYXmMBdcV1N0XXjoy38
-         mVZNPLnoIusBfsoYcxx6cI6a8VbFwrT+5LsMlCEpRUBG65c2ANUq6yug6wskAsaI/HV1
-         1W9qvUazySa1DxMn/lFl7BTI+Q6Ns7SpEOoxLDW0eogHo5lRm7IF3KrhRJv85/dzreB4
-         CGWCcjTnHvYSHl8wNnMtLpCGbrVLaygX5TCHqIV2IhUb12kBqAvgUKLa3Qi/VvvltSTw
-         yEBcSgJA7LRaipzARjY6B3GBg/a4O+8eSaL61uC7znD1xtQGf8FKS+Yurp8lEVweyCQO
-         V86g==
-X-Gm-Message-State: APjAAAWJvRfw0yQnTJ02rZonzlWa7x0252tVoX0zlULukoM/RcHjVmA4
-        cO9X4Gd9Bma9pM800SSbUAY=
-X-Google-Smtp-Source: APXvYqzWqTNwBzK9Dk1MDN+1y6ZvXjDdggeT6iZFk+01Ar9QCsAhmWLggU3WTMMdR/dDkpakCvGi8A==
-X-Received: by 2002:a2e:a490:: with SMTP id h16mr31419432lji.115.1582563748614;
-        Mon, 24 Feb 2020 09:02:28 -0800 (PST)
-Received: from pc636 ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id w3sm6549715ljo.66.2020.02.24.09.02.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 09:02:27 -0800 (PST)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Mon, 24 Feb 2020 18:02:19 +0100
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Suraj Jitindar Singh <surajjs@amazon.com>,
-        LKML <linux-kernel@vger.kernel.org>, rcu@vger.kernel.org
-Subject: Re: [PATCH RFC] ext4: fix potential race between online resizing and
- write operations
-Message-ID: <20200224170219.GA21229@pc636>
-References: <20200215233817.GA670792@mit.edu>
- <20200216121246.GG2935@paulmck-ThinkPad-P72>
- <20200217160827.GA5685@pc636>
- <20200217193314.GA12604@mit.edu>
- <20200218170857.GA28774@pc636>
- <20200221120618.GA194360@google.com>
- <20200221132817.GB194360@google.com>
- <20200221192152.GA6306@pc636>
- <20200222221253.GB191380@google.com>
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=FV1+URIh0vJGkDR+Y3sgl5GcK5Z91KqhxIrgPs2m0DY=;
+        b=FnqlzIamc074OSebidkSOfsNqv2yyJNPlE2CdluBBwRn08AV9H6mqloCTbUlLJinOf
+         Cxb0T32uh72tcKmHrzfyvR52AHoEOyFEaacMZWn/lo0xRACNOYiwruBCyCHaMwnissyP
+         elOhIsgCj8ELE87l3EZYeunTo4jVF92WzEZODXBX+2i/yXeRqDfi/djVBgmxvyjAc4kR
+         /EA+SUCTJcbsYT6rsZGiC3wm+HvoP8dPKhFWHejgMpPyuz1RCP9QHVInYQrJD/gbtqNr
+         SI1fylPtRM2gzGXyWFTque8ueCr9A7mRlXsEPa/aEX++CBIY9av61zfQ9O2pKjJ6gDcS
+         isrg==
+X-Gm-Message-State: APjAAAXpMeNcXFzIMBFCeqW2OD32qG8A6kVJMpk0llTyOA7x6wCAnbuP
+        9ztZtjVbaX2Mrdgt5jOgdzcoY/ZebMQ=
+X-Google-Smtp-Source: APXvYqyvdVU6XrIfybjn/aVZi9uPZ1QB0thGmlars9DoePVBy4bV+vuFggKy8v0x+56p9oi82M1+1g==
+X-Received: by 2002:a1c:610a:: with SMTP id v10mr50621wmb.44.1582563982624;
+        Mon, 24 Feb 2020 09:06:22 -0800 (PST)
+Received: from ?IPv6:2a01:e34:ed2f:f020:545a:2a71:2add:41f7? ([2a01:e34:ed2f:f020:545a:2a71:2add:41f7])
+        by smtp.googlemail.com with ESMTPSA id c77sm44829wmd.12.2020.02.24.09.06.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2020 09:06:21 -0800 (PST)
+Subject: Re: [PATCH v2] ARM: dts: sun8i-a83t: Add thermal trip points/cooling
+ maps
+To:     Ondrej Jirman <megous@megous.com>, linux-sunxi@googlegroups.com
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20200224165417.334617-1-megous@megous.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2e4213a6-2aaf-641c-f741-9503f3ffd5fe@linaro.org>
+Date:   Mon, 24 Feb 2020 18:06:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200222221253.GB191380@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200224165417.334617-1-megous@megous.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > > 
-> > > > Overall this implementation is nice. You are basically avoiding allocating
-> > > > rcu_head like Ted did by using the array-of-pointers technique we used for
-> > > > the previous kfree_rcu() work.
-> > > > 
-> > > > One thing stands out, the path where we could not allocate a page for the new
-> > > > block node:
-> > > > 
-> > > > > @@ -3061,6 +3148,11 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
-> > > > >         if (krcp->initialized)
-> > > > >                 spin_unlock(&krcp->lock);
-> > > > >         local_irq_restore(flags);
-> > > > > +
-> > > > > +       if (!skip_call_rcu) {
-> > > > > +               synchronize_rcu();
-> > > > > +               kvfree(ptr_to_free);
-> > > > 
-> > > > We can't block, it has to be async otherwise everything else blocks, and I
-> > > > think this can also be used from interrupt handlers which would at least be
-> > > > an SWA violation. So perhaps it needs to allocate an rcu_head wrapper object
-> > > > itself for the 'emergeny case' and use the regular techniques.
-> > > > 
-> > > > Another thing that stands out is the code duplication, if we can make this
-> > > > reuse as much as of the previous code as possible, that'd be great. I'd like
-> > > > to avoid bvcached and bvhead if possible. Maybe we can store information
-> > > > about the fact that this is a 'special object' in some of the lower-order
-> > > > bits of the pointer. Then we can detect that it is 'special' and free it
-> > > > using kvfree() during the reclaim
-> > > 
-> > > Basically what I did different is:
-> > > 1. Use the existing kfree_rcu_bulk_data::records array to store the
-> > >    to-be-freed array.
-> > > 2. In case of emergency, allocate a new wrapper and tag the pointer.
-> > >    Read the tag later to figure its an array wrapper and do additional kvfree.
-> > >
-> > I see your point and agree that duplication is odd and we should avoid
-> > it as much as possible. Also, i like the idea of using the wrapper as
-> > one more chance to build a "head" for headless object.
-> > 
-> > I did not mix pointers because then you will need to understand what is what.
+On 24/02/2020 17:54, Ondrej Jirman wrote:
+> This enables passive cooling by down-regulating CPU voltage
+> and frequency.
 > 
-> Well that's why I brought up the whole tagging idea. Then you don't need
-> separate pointers to manage either (edit: but maybe you do as you mentioned
-> vfree below..).
+> For the trip points, I used values from the BSP code directly.
 > 
-Right. We can use tagging idea to separate kmalloc/vmalloc pointers to
-place them into different arrays. Because kvmalloc() can return either
-SLAB pointer or vmalloc one.
+> The critical trip point value is 30°C above the maximum recommended
+> ambient temperature (70°C) for the SoC from the datasheet, so there's
+> some headroom even at such a high ambient temperature.
+> 
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> ---
+>  arch/arm/boot/dts/sun8i-a83t.dtsi | 60 +++++++++++++++++++++++++++----
+>  1 file changed, 54 insertions(+), 6 deletions(-)
+> 
+> v2:
+> - added more detail to the commit description
+> 
+> diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+> index 74ac7ee9383cf..53c2b6a836f27 100644
+> --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+> @@ -72,7 +72,7 @@ cpu0: cpu@0 {
+>  			#cooling-cells = <2>;
+>  		};
+>  
+> -		cpu@1 {
+> +		cpu1: cpu@1 {
+>  			compatible = "arm,cortex-a7";
+>  			device_type = "cpu";
+>  			clocks = <&ccu CLK_C0CPUX>;
+> @@ -83,7 +83,7 @@ cpu@1 {
+>  			#cooling-cells = <2>;
+>  		};
+>  
+> -		cpu@2 {
+> +		cpu2: cpu@2 {
+>  			compatible = "arm,cortex-a7";
+>  			device_type = "cpu";
+>  			clocks = <&ccu CLK_C0CPUX>;
+> @@ -94,7 +94,7 @@ cpu@2 {
+>  			#cooling-cells = <2>;
+>  		};
+>  
+> -		cpu@3 {
+> +		cpu3: cpu@3 {
+>  			compatible = "arm,cortex-a7";
+>  			device_type = "cpu";
+>  			clocks = <&ccu CLK_C0CPUX>;
+> @@ -116,7 +116,7 @@ cpu100: cpu@100 {
+>  			#cooling-cells = <2>;
+>  		};
+>  
+> -		cpu@101 {
+> +		cpu101: cpu@101 {
+>  			compatible = "arm,cortex-a7";
+>  			device_type = "cpu";
+>  			clocks = <&ccu CLK_C1CPUX>;
+> @@ -127,7 +127,7 @@ cpu@101 {
+>  			#cooling-cells = <2>;
+>  		};
+>  
+> -		cpu@102 {
+> +		cpu102: cpu@102 {
+>  			compatible = "arm,cortex-a7";
+>  			device_type = "cpu";
+>  			clocks = <&ccu CLK_C1CPUX>;
+> @@ -138,7 +138,7 @@ cpu@102 {
+>  			#cooling-cells = <2>;
+>  		};
+>  
+> -		cpu@103 {
+> +		cpu103: cpu@103 {
+>  			compatible = "arm,cortex-a7";
+>  			device_type = "cpu";
+>  			clocks = <&ccu CLK_C1CPUX>;
+> @@ -1188,12 +1188,60 @@ cpu0_thermal: cpu0-thermal {
+>  			polling-delay-passive = <0>;
+>  			polling-delay = <0>;
+>  			thermal-sensors = <&ths 0>;
+> +
+> +			trips {
+> +				cpu0_hot: cpu-hot {
+> +					temperature = <80000>;
+> +					hysteresis = <2000>;
+> +					type = "passive";
+> +				};
+> +
+> +				cpu0_very_hot: cpu-very-hot {
+> +					temperature = <100000>;
+> +					hysteresis = <0>;
+> +					type = "critical";
+> +				};
+> +			};
+> +
+> +			cooling-maps {
+> +				cpu-hot-limit {
+> +					trip = <&cpu0_hot>;
+> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +				};
+> +			};
+>  		};
+>  
+>  		cpu1_thermal: cpu1-thermal {
+>  			polling-delay-passive = <0>;
 
-> > It is OK for "emergency" path, because we simply can just serialize it by kvfree()
-> > call, it checks inside what the ptr address belong to:
-> > 
-> > <snip>
-> > void kvfree(const void *addr)
-> > {
-> >     if (is_vmalloc_addr(addr))
-> >         vfree(addr);
-> >     else
-> >         kfree(addr);
-> > }
-> > <snip>
-> > 
-> > whereas normal path, i mean "bulk one" where we store pointers into array
-> > would be broken. We can not call kfree_bulk(array, nr_entries) if the passed
-> > array contains "vmalloc" pointers, because it is different allocator. Therefore,
-> > i deliberately have made it as a special case.
-> 
-> Ok, it would be nice if you can verify that ptr_to_free passed to
-> kfree_call_rcu() is infact a vmalloc pointer.
-> 
-We can do that. We can check it by calling is_vmalloc_addr() on ptr. 
-So it is possible to differentiate.
+No polling to mitigate?
 
-> > > Perhaps the synchronize_rcu() should be done from a workqueue handler
-> > > to prevent IRQ crapping out?
-> > >
-> > I think so. For example one approach would be:
-> > 
-> > <snip>
-> > struct free_deferred {
-> >  struct llist_head list;
-> >  struct work_struct wq;
-> > };
-> > static DEFINE_PER_CPU(struct free_deferred, free_deferred);
-> > 
-> > static void free_work(struct work_struct *w)
-> > {
-> >   struct free_deferred *p = container_of(w, struct free_deferred, wq);
-> >   struct llist_node *t, *llnode;
-> > 
-> >   synchronize_rcu();
-> > 
-> >   llist_for_each_safe(llnode, t, llist_del_all(&p->list))
-> >      vfree((void *)llnode, 1);
-> > }
-> > 
-> > static inline void free_deferred_common(void *ptr_to_free)
-> > {
-> >     struct free_deferred *p = raw_cpu_ptr(&free_deferred);
-> > 
-> >     if (llist_add((struct llist_node *)ptr_to_free, &p->list))
-> 
-> Would this not corrupt the ptr_to_free pointer which readers might still be
-> accessing since grace period has not yet ended?
-> 
-> We cannot touch the ptr_to_free pointer until after the grace period has
-> ended.
-> 
-Right you are. We can do that only after grace period is passed, 
-after synchronize_rcu(). Good point :)
+>  			polling-delay = <0>;
+>  			thermal-sensors = <&ths 1>;
+> +
+> +			trips {
+> +				cpu1_hot: cpu-hot {
+> +					temperature = <80000>;
+> +					hysteresis = <2000>;
+> +					type = "passive";
 
-> > }
-> > <snip>
-> > 
-> > and it seems it should work. Because we know that KMALLOC_MIN_SIZE
-> > can not be less then machine word:
-> > 
-> > /*
-> >  * Kmalloc subsystem.
-> >  */
-> >  #ifndef KMALLOC_MIN_SIZE
-> >  #define KMALLOC_MIN_SIZE (1 << KMALLOC_SHIFT_LOW)
-> >  #endif
-> > 
-> > when it comes to vmalloc pointer it can not be less then one PAGE_SIZE :)
-> > 
-> > Another thing:
-> > 
-> > we are talking about "headless" variant that is special, therefore it
-> > implies to have some restrictions, since we need a dynamic memory to
-> > drive it. For example "headless" object can be freed from preemptible
-> > context only, because freeing can be inlined:
-> > 
-> > <snip>
-> > +   // NOT SURE if permitted due to IRQ. Maybe we
-> > +   // should try doing this from WQ?
-> > +   synchronize_rcu();
-> > +   kvfree(ptr);
-> > <snip>
-> > 
-> > Calling synchronize_rcu() from the IRQ context will screw the system up :)
-> > Because the current CPU will never pass the QS state if i do not miss something.
+I'm curious, can you really reach this temperature with a cortex-a7
+running at 1.2GHz max?
+
+> +				};
+> +
+> +				cpu1_very_hot: cpu-very-hot {
+> +					temperature = <100000>;
+> +					hysteresis = <0>;
+> +					type = "critical";
+> +				};
+> +			};
+> +
+> +			cooling-maps {
+> +				cpu-hot-limit {
+> +					trip = <&cpu1_hot>;
+> +					cooling-device = <&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu102 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu103 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +				};
+> +			};
+>  		};
+>  
+>  		gpu_thermal: gpu-thermal {
 > 
-> Yes are you right, calling synchronize_rcu() from IRQ context is a strict no-no.
-> 
-> I believe we could tap into the GFP_ATOMIC emergency memory pool for this
-> emergency situation. This pool is used for emergency cases. I think in
-> emergency we can grow an rcu_head on this pool.
-> 
-> > Also kvfree() itself can be called from the preemptible context only, excluding IRQ,
-> > there is a special path for it, otherwise vfree() can sleep. 
-> 
-> Ok that's good to know.
-> 
-> > > debug_objects bits wouldn't work obviously for the !emergency kvfree case,
-> > > not sure what we can do there.
-> > >
-> > Agree.
-> > 
-> > Thank you, Joel, for your comments!
-> 
-> No problem, I think we have a couple of ideas here.
-> 
-> What I also wanted to do was (may be after all this), see if we can create an
-> API for head-less kfree based on the same ideas. Not just for arrays for for
-> any object. Calling it, say, kfree_rcu_headless() and then use the bulk array
-> as we have been doing. That would save any users from having an rcu_head --
-> of course with all needed warnings about memory allocation failure. Vlad,
-> What do you think? Paul, any thoughts on this?
-> 
-I like it. It would be more clean interface. Also there are places where
-people do not embed the rcu_head into their stuctures for some reason
-and do like:
 
 
-<snip>
-    synchronize_rcu();
-    kfree(p);
-<snip>
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-<snip>
-urezki@pc636:~/data/ssd/coding/linux-rcu$ find ./ -name "*.c" | xargs grep -C 1 -rn "synchronize_rcu" | grep kfree
-./arch/x86/mm/mmio-mod.c-314-           kfree(found_trace);
-./kernel/module.c-3910- kfree(mod->args);
-./kernel/trace/ftrace.c-5078-                   kfree(direct);
-./kernel/trace/ftrace.c-5155-                   kfree(direct);
-./kernel/trace/trace_probe.c-1087-      kfree(link);
-./fs/nfs/sysfs.c-113-           kfree(old);
-./fs/ext4/super.c-1701- kfree(old_qname);
-./net/ipv4/gre.mod.c-36-        { 0xfc3fcca2, "kfree_skb" },
-./net/core/sysctl_net_core.c-143-                               kfree(cur);
-./drivers/crypto/nx/nx-842-pseries.c-1010-      kfree(old_devdata);
-./drivers/misc/vmw_vmci/vmci_context.c-692-             kfree(notifier);
-./drivers/misc/vmw_vmci/vmci_event.c-213-       kfree(s);
-./drivers/infiniband/core/device.c:2162:                         * synchronize_rcu before the netdev is kfreed, so we
-./drivers/infiniband/hw/hfi1/sdma.c-1337-       kfree(dd->per_sdma);
-./drivers/net/ethernet/myricom/myri10ge/myri10ge.c-3582-        kfree(mgp->ss);
-./drivers/net/ethernet/myricom/myri10ge/myri10ge.mod.c-156-     { 0x37a0cba, "kfree" },
-./drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c:286:       synchronize_rcu(); /* before kfree(flow) */
-./drivers/net/ethernet/mellanox/mlxsw/core.c-1504-      kfree(rxl_item);
-./drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c-6648- kfree(adapter->mbox_log);
-./drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c-6650- kfree(adapter);
-./drivers/block/drbd/drbd_receiver.c-3804-      kfree(old_net_conf);
-./drivers/block/drbd/drbd_receiver.c-4176-                      kfree(old_disk_conf);
-./drivers/block/drbd/drbd_state.c-2074-         kfree(old_conf);
-./drivers/block/drbd/drbd_nl.c-1689-    kfree(old_disk_conf);
-./drivers/block/drbd/drbd_nl.c-2522-    kfree(old_net_conf);
-./drivers/block/drbd/drbd_nl.c-2935-            kfree(old_disk_conf);
-./drivers/mfd/dln2.c-178-               kfree(i);
-./drivers/staging/fwserial/fwserial.c-2122-     kfree(peer);
-<snip>
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
---
-Vlad Rezki
