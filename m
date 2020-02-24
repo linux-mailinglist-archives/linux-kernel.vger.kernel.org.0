@@ -2,185 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2C33169F89
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:52:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFA1E169F90
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:53:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbgBXHwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 02:52:43 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:45143 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbgBXHwn (ORCPT
+        id S1727351AbgBXHxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 02:53:06 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53391 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727197AbgBXHxG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 02:52:43 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 975662305A;
-        Mon, 24 Feb 2020 08:52:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1582530759;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xBxlnsiSNn4IX2ytnABMPUzdL3xMEAvDHZtEeRFmG94=;
-        b=TgxEEuOOX2NQW0xSnlCCubFfdMs868+Mu+uyGOlDyWzMFhoT8PGDwgoJnWGTwPZBdcMtB/
-        cpZ+J+O2fOrzeGoWpoavutSwiW9RL3neWAD1MkQvs9AHS4TpAf6QV55O/k/J1X0etziHd/
-        rn+acdcNfpQ65nRlFndPz78IjYnTboM=
+        Mon, 24 Feb 2020 02:53:06 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j68Y3-00081w-Ej; Mon, 24 Feb 2020 08:53:03 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j68Y2-000422-7S; Mon, 24 Feb 2020 08:53:02 +0100
+Date:   Mon, 24 Feb 2020 08:53:02 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH 1/4] pwm: omap-dmtimer: Drop unused header file
+Message-ID: <20200224075302.jd3vcrdl6fuqrkpb@pengutronix.de>
+References: <20200224052135.17278-1-lokeshvutla@ti.com>
+ <20200224052135.17278-2-lokeshvutla@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 24 Feb 2020 08:52:38 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>, Leo Li <leoyang.li@nxp.com>,
-        Jiri Slaby <jslaby@suse.com>, Yuan Yao <yao.yuan@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: Re: [PATCH 1/7] Revert "tty: serial: fsl_lpuart: drop
- EARLYCON_DECLARE"
-In-Reply-To: <AM0PR04MB4481B36B83A67E32EA816A5988EC0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <20200220174334.23322-1-michael@walle.cc>
- <AM0PR04MB44817308EA80EBEDC0338E6D88120@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <51db0e6ba10b4b32dab207e0df8ef0d8@walle.cc>
- <AM0PR04MB4481B36B83A67E32EA816A5988EC0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-Message-ID: <d549c0ec7d39d38492a9680fc66fe86f@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.10
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: 975662305A
-X-Spamd-Result: default: False [1.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[13];
-         NEURAL_HAM(-0.00)[-0.594];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200224052135.17278-2-lokeshvutla@ti.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello,
 
+On Mon, Feb 24, 2020 at 10:51:32AM +0530, Lokesh Vutla wrote:
+> @@ -190,9 +190,8 @@ static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
+>  		load_value, load_value,	match_value, match_value);
+>  
+>  	omap->pdata->set_pwm(omap->dm_timer,
+> -			      pwm_get_polarity(pwm) == PWM_POLARITY_INVERSED,
+> -			      true,
+> -			      PWM_OMAP_DMTIMER_TRIGGER_OVERFLOW_AND_COMPARE);
+> +			     pwm_get_polarity(pwm) == PWM_POLARITY_INVERSED,
+> +			     true, OMAP_TIMER_TRIGGER_OVERFLOW_AND_COMPARE);
 
-Am 2020-02-24 02:12, schrieb Peng Fan:
->> Subject: Re: [PATCH 1/7] Revert "tty: serial: fsl_lpuart: drop
->> EARLYCON_DECLARE"
->> 
->> Hi,
->> 
->> Am 2020-02-21 02:30, schrieb Peng Fan:
->> >> Subject: [PATCH 1/7] Revert "tty: serial: fsl_lpuart: drop
->> >> EARLYCON_DECLARE"
->> >>
->> >> This reverts commit a659652f6169240a5818cb244b280c5a362ef5a4.
->> >>
->> >> This broke the earlycon on LS1021A processors because the order of
->> >> the
->> >> earlycon_setup() functions were changed. Before the commit the normal
->> >> lpuart32_early_console_setup() was called. After the commit the
->> >> lpuart32_imx_early_console_setup() is called instead.
->> >
->> > How do you pass earlycon args to kernel?
->> 
->> earlycon=lpuart32,mmio32be,0x2950000,115200
->> 
->> please note that there are two possible declarations: (1) an OF/ACPI 
->> based
->> earlycon, eg just "earlycon" on the bootargs and (2) an elaborate one 
->> where
->> you can give the offset and access method yourself, eg. the one from 
->> above.
->> 
->> (1) will still work even with the EARLYCON_DECLARE() removed. But (2) 
->> will
->> search through all possible
->>    OF_DELARE_EARLYCON(lpuart32,..)
->>    EARLYCON_DECLARE(lpuart32,..)
->> 
->> and doesn't take the compatible into account. So which setup function 
->> is
->> actually called depends on (a) the order of the OF_DECLARE_EARLYCON() 
->> and
->> EARLYCON_DECLARE() statements and (b) on the compiler (thats just a 
->> guess!).
->> For me, the order in which it will actually end up in the 
->> __earlycon_table is
->> reversed, eg. the last one is called. So now that you've removed the
->> EARLYCON_DECLARE() the last one is the imx setup function which will 
->> add
->> the reg offset and doesn't work on LS1021A.
-> 
-> You mean the OF_DECLARD_EARLYCON for i.MX7ULP will be put before 
-> LS1021A
-> in Image? I am not sure about this. If this is true, you could try
-> below diff, to see
+This is unrelated.
 
-well, you could have a look at the disassembly; so no need for real 
-hardware,
-if thats what you're missing.
+>  
+>  	/* If config was called while timer was running it must be reenabled. */
+>  	if (timer_active)
+> @@ -220,9 +219,8 @@ static int pwm_omap_dmtimer_set_polarity(struct pwm_chip *chip,
+>  	 */
+>  	mutex_lock(&omap->mutex);
+>  	omap->pdata->set_pwm(omap->dm_timer,
+> -			      polarity == PWM_POLARITY_INVERSED,
+> -			      true,
+> -			      PWM_OMAP_DMTIMER_TRIGGER_OVERFLOW_AND_COMPARE);
+> +			     polarity == PWM_POLARITY_INVERSED,
+> +			     true, OMAP_TIMER_TRIGGER_OVERFLOW_AND_COMPARE);
 
+ditto
 
-> whether it works. i.MX always use little endian.
-> 
-> diff --git a/drivers/tty/serial/fsl_lpuart.c 
-> b/drivers/tty/serial/fsl_lpuart.c
-> index 91e2805e6441..1b0aa3b836c5 100644
-> --- a/drivers/tty/serial/fsl_lpuart.c
-> +++ b/drivers/tty/serial/fsl_lpuart.c
-> @@ -2381,8 +2381,10 @@ static int __init
-> lpuart32_imx_early_console_setup(struct earlycon_device *devic
->         if (!device->port.membase)
->                 return -ENODEV;
-> 
-> -       device->port.iotype = UPIO_MEM32;
-> -       device->port.membase += IMX_REG_OFF;
-> +       if (device->port.iotype != UPIO_MEM32BE) {
-> +               device->port.iotype = UPIO_MEM32;
-> +               device->port.membase += IMX_REG_OFF;
-> +       }
->         device->con->write = lpuart32_early_write;
-> 
->         return 0;
+>  	mutex_unlock(&omap->mutex);
+>  
+>  	return 0;
+> @@ -244,7 +242,7 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
+>  	struct pwm_omap_dmtimer_chip *omap;
+>  	struct dmtimer_platform_data *timer_pdata;
+>  	const struct omap_dm_timer_ops *pdata;
+> -	pwm_omap_dmtimer *dm_timer;
+> +	struct omap_dm_timer *dm_timer;
+>  	u32 v;
+>  	int ret = 0;
+>  
 
-while that would also fix the problem (I guess; I'm too lazy to try), it 
-is
-really bad because:
-  (A) it doesn't fix the underlying problem that there are multiple setup
-      functions for lpuart32 (and this is not only a problem for 
-lpuart32)
-  (B) it would've broken the lpuart32 for IMX in the form (2), if it had 
-ever
-      been working.
-  (C) it will break if some developer adds a new setup function to the 
-end of
-      the list
-  (D) you basically make every setup() function behave like the ls1021a 
-setup()
-      if its called in form (2)
+Other than that looks fine.
 
-Please, lets try to find a more generic solution for this, like my 
-proposed
-patch [1].
+Best regards
+Uwe
 
--michael
-
-[1] 
-https://lore.kernel.org/linux-serial/20200220174607.24285-1-michael@walle.cc
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
