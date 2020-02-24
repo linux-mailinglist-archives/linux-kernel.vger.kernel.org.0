@@ -2,145 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBEB616B4FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:20:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 484B516B53A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 00:22:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbgBXXUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 18:20:11 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:21391 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726651AbgBXXUK (ORCPT
+        id S1728567AbgBXXVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 18:21:54 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:43701 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728423AbgBXXVd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 18:20:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582586408;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3xN9hq90N1oCxmHLczxcJX9jZofURAy8C2m6ZpIZZKs=;
-        b=cKQHMhMnqZKg69DgkLqrXdyHbMTOdgi8DToVxGYzq5/YbPyhTbKMujbjTCqPSWpM3pKNgR
-        NyIWdBv7QW+e99AXKJlwTVPQ23utTC4g6iDDrxZEDEkd3vqBXfQgpzn9K+Z5VpId3aTKWR
-        ajchrLyhtpZHlQnCNVXcb8L21K/9D2I=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-362-73rCJALWNH-LXBWSyqBjrA-1; Mon, 24 Feb 2020 18:20:07 -0500
-X-MC-Unique: 73rCJALWNH-LXBWSyqBjrA-1
-Received: by mail-wr1-f70.google.com with SMTP id l1so6370775wrt.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 15:20:06 -0800 (PST)
+        Mon, 24 Feb 2020 18:21:33 -0500
+Received: by mail-qv1-f68.google.com with SMTP id p2so4910434qvo.10
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 15:21:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=3xN9hq90N1oCxmHLczxcJX9jZofURAy8C2m6ZpIZZKs=;
-        b=XZSdmx/hVOrz/f1UHa4KhY+k07JfCmENay9e5qF7OJiJM61KS5upDojRaLtajgHPKK
-         W0LMTKIH3zdmu9u6FM4b3fWwguEnMCbpRSC5xOaUcOkhf37m+/ubLK31bD+dRixVjCsQ
-         e9K8L6YXDF3BYLNv/0B7NCFAfwXphz5iXbcV6lIQ+6/tSZsMx0G9KlM3GRZUfvgemHnh
-         Cr9Rs75GQU9bUhGUYwlRnzeAIwtpiu++ZGEnpDSzZe6XmXOkM+6uF+csQtzIXPWwa+re
-         izOyoBXGWizWsX0Wj86mhs4sp1J8zaGn+5r08J9JpLTTIiFLFvWNR1dD8dOLPzdxs8u/
-         TZuw==
-X-Gm-Message-State: APjAAAVOBJ5gIsibmFLcfvLvO/o/MNH5H6mNIzAm+1g+AsDKDNAdZ6Y9
-        uZLcNmj45BhmtTrh6uyZ0VmVN2aheRA0f+BI53RG/5HDHvJEFxuCCPOGRkrkz9GeL7ZJBtjsUCE
-        IOnEJLYvi2gwFdIBusttFt+Lp
-X-Received: by 2002:a1c:9d85:: with SMTP id g127mr1267506wme.75.1582586405669;
-        Mon, 24 Feb 2020 15:20:05 -0800 (PST)
-X-Google-Smtp-Source: APXvYqw4/T7cggFhTWfC4KkRP75jACd72Qyu+h14eKTuE+dLWVQ5k57SvfKJwNvSwtdxDI6CJ+/UOw==
-X-Received: by 2002:a1c:9d85:: with SMTP id g127mr1267494wme.75.1582586405459;
-        Mon, 24 Feb 2020 15:20:05 -0800 (PST)
-Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
-        by smtp.gmail.com with ESMTPSA id o9sm21491605wrw.20.2020.02.24.15.20.04
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7eJOUKA9+YMnHErB2iphiqe6znDzVNUSfeCBuEYYLTo=;
+        b=GPE3CUlzT3eyIhBmINTkYX8CdPykwb7Lmj44V0fBTtJy1w9lWv18/XIO9TLvii0hwJ
+         5l0RAtQFCqgTTf/TaEjCDlvJqbaSprGm4QJNokODwI3P+3DdpZgJtj1NToOInEe6J0eO
+         IoA2/XmVPwenRjy8sSZaQ6fv/ObwpvLdncch0sg9NfzZ1juvv8v/4QsACigG/YfgRggn
+         k3uo3mxbvxNiVLczUeMZy+CyRvzR+Q3ETtzIkNCLvJOeM59N4Fj7rhtPg3h6GOrkOeA5
+         kidBXIDPMCZVpNO68XkDdCH0tQePA8ui2TcUbOMLzlXfzDvBvX3bSeWP7z7pErpYTD36
+         QUBA==
+X-Gm-Message-State: APjAAAXME+vVI1deLLgpZ3mW1zPSY2YdR6qbogIveyZGwsXQ1XBtiimp
+        yExSx+stjH/UBBQquC/LiEE=
+X-Google-Smtp-Source: APXvYqweEcGUAPh3nLyKqwQtOcSUxZYzKkDEZDE1pbyx598pt0vVqfbz2Ci4kDXbHLybdeSWfOCj1A==
+X-Received: by 2002:ad4:580b:: with SMTP id dd11mr45660696qvb.242.1582586491073;
+        Mon, 24 Feb 2020 15:21:31 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id 202sm3757849qkg.132.2020.02.24.15.21.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 15:20:04 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 38/61] KVM: x86: Introduce kvm_cpu_caps to replace runtime CPUID masking
-In-Reply-To: <20200224225743.GP29865@linux.intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-39-sean.j.christopherson@intel.com> <87h7zgndxl.fsf@vitty.brq.redhat.com> <20200224225743.GP29865@linux.intel.com>
-Date:   Tue, 25 Feb 2020 00:20:03 +0100
-Message-ID: <87ftezmv30.fsf@vitty.brq.redhat.com>
+        Mon, 24 Feb 2020 15:21:30 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Michael Matz <matz@suse.de>, Fangrui Song <maskray@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH v2 0/2] Stop generating .eh_frame sections
+Date:   Mon, 24 Feb 2020 18:21:27 -0500
+Message-Id: <20200224232129.597160-1-nivedita@alum.mit.edu>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <CAKwvOdn6cxm9EpB7A9kLasttPwLY2csnhqgNAdkJ6_s2DP1-HA@mail.gmail.com>
+References: <CAKwvOdn6cxm9EpB7A9kLasttPwLY2csnhqgNAdkJ6_s2DP1-HA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+In three places in the x86 kernel we are currently generating .eh_frame
+sections only to discard them later via linker script. This is in the
+boot code (setup.elf), the realmode trampoline (realmode.elf) and the
+compressed kernel.
 
-> On Mon, Feb 24, 2020 at 05:32:54PM +0100, Vitaly Kuznetsov wrote:
->> Sean Christopherson <sean.j.christopherson@intel.com> writes:
->> 
+Implement Fangrui and Nick's suggestion [1] to fix KBUILD_CFLAGS by
+adding -fno-asynchronous-unwind-tables to avoid generating .eh_frame
+sections in the first place, rather than discarding it in the linker
+script.
 
-...
+Changes from v1:
 
->
->> > +
->> > +	BUILD_BUG_ON(sizeof(kvm_cpu_caps) >
->> > +		     sizeof(boot_cpu_data.x86_capability));
->> > +
->> > +	memcpy(&kvm_cpu_caps, &boot_cpu_data.x86_capability,
->> > +	       sizeof(kvm_cpu_caps));
->> > +
->> > +	kvm_cpu_cap_mask(CPUID_1_EDX,
->> > +		F(FPU) | F(VME) | F(DE) | F(PSE) |
->> > +		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
->> > +		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SEP) |
->> > +		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
->> > +		F(PAT) | F(PSE36) | 0 /* PSN */ | F(CLFLUSH) |
->> > +		0 /* Reserved, DS, ACPI */ | F(MMX) |
->> > +		F(FXSR) | F(XMM) | F(XMM2) | F(SELFSNOOP) |
->> > +		0 /* HTT, TM, Reserved, PBE */
->> > +	);
->> > +
->> > +	kvm_cpu_cap_mask(CPUID_8000_0001_EDX,
->> > +		F(FPU) | F(VME) | F(DE) | F(PSE) |
->> > +		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
->> > +		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SYSCALL) |
->> > +		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
->> > +		F(PAT) | F(PSE36) | 0 /* Reserved */ |
->> > +		f_nx | 0 /* Reserved */ | F(MMXEXT) | F(MMX) |
->> > +		F(FXSR) | F(FXSR_OPT) | f_gbpages | F(RDTSCP) |
->> > +		0 /* Reserved */ | f_lm | F(3DNOWEXT) | F(3DNOW)
->> > +	);
->> > +
->> > +	kvm_cpu_cap_mask(CPUID_1_ECX,
->> > +		/* NOTE: MONITOR (and MWAIT) are emulated as NOP,
->> > +		 * but *not* advertised to guests via CPUID ! */
->> > +		F(XMM3) | F(PCLMULQDQ) | 0 /* DTES64, MONITOR */ |
->> > +		0 /* DS-CPL, VMX, SMX, EST */ |
->> > +		0 /* TM2 */ | F(SSSE3) | 0 /* CNXT-ID */ | 0 /* Reserved */ |
->> > +		F(FMA) | F(CX16) | 0 /* xTPR Update, PDCM */ |
->> > +		F(PCID) | 0 /* Reserved, DCA */ | F(XMM4_1) |
->> > +		F(XMM4_2) | F(X2APIC) | F(MOVBE) | F(POPCNT) |
->> > +		0 /* Reserved*/ | F(AES) | F(XSAVE) | 0 /* OSXSAVE */ | F(AVX) |
->> > +		F(F16C) | F(RDRAND)
->> > +	);
->> 
->> I would suggest we order things by CPUID_NUM here, i.e.
->> 
->> CPUID_1_ECX
->> CPUID_1_EDX
->> CPUID_7_1_EAX
->> CPUID_7_0_EBX
->> CPUID_7_ECX
->> CPUID_7_EDX
->> CPUID_D_1_EAX
->> ...
->
-> Hmm, generally speaking I agree, but I didn't want to change the ordering
-> in this patch when moving the code.  Throw a patch on top?  Leave as is?
-> Something else?
+Rebase on top of tip:x86/boot and include reverting the addition of
+	.eh_frame discard in compressed/vmlinux.lds.S.
+Fix up a comment that refers to .eh_frame, pointed out by Nick.
 
-My line of thought was: it's not a mechanical "s,const u32
-xxx_x86_features =,kvm_cpu_cap_mask...," change, things get moved from
-do_cpuid_7_mask() and __do_cpuid_func() so we may as well re-order them,
-reviewing-wise it's more or less the same. But honestly, this is very
-minor, feel free to leave as-is.
+Arvind Sankar (2):
+  arch/x86: Use -fno-asynchronous-unwind-tables to suppress .eh_frame sections
+  arch/x86: Drop unneeded linker script discard of .eh_frame
+
+ arch/x86/boot/Makefile                 | 1 +
+ arch/x86/boot/compressed/Makefile      | 1 +
+ arch/x86/boot/compressed/vmlinux.lds.S | 5 -----
+ arch/x86/boot/setup.ld                 | 1 -
+ arch/x86/include/asm/dwarf2.h          | 4 ++--
+ arch/x86/kernel/vmlinux.lds.S          | 7 ++-----
+ arch/x86/realmode/rm/Makefile          | 1 +
+ arch/x86/realmode/rm/realmode.lds.S    | 1 -
+ drivers/firmware/efi/libstub/Makefile  | 3 ++-
+ 9 files changed, 9 insertions(+), 15 deletions(-)
 
 -- 
-Vitaly
+2.24.1
 
