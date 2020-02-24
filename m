@@ -2,103 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84EAC16B325
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:48:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48A0416B32E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 22:53:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbgBXVst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 16:48:49 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46263 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727459AbgBXVst (ORCPT
+        id S1728019AbgBXVxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 16:53:25 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38516 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726980AbgBXVxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 16:48:49 -0500
-Received: by mail-qk1-f196.google.com with SMTP id u124so10077163qkh.13
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 13:48:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rwxcsAsN75o6auj6h/UwQ4eouOT0rdFuNimYtBXVVqI=;
-        b=EMh21tWVMiKtiMX/15mlFW2bkqdUQzzSFFTAwEgTUc+9dfctVYJVnF2sKau3SsZwyd
-         rz9qJ8H6WOhD5TCqnWWhlB2a2KsmTREx1Fn1CKeeia6tqHROYd0RrQzIc4RoASmXTZpE
-         TEkdXXtrOjxqJ9Ty9jRFJCNytmMnaToeuugYwoR2CR/hkhR/X4n7HllPU+PTGZ73NdBB
-         uccc8HzbvJO3ywnozyzL3S1m7I9yN+uhXIHDuVCwIvVjLsqgV7qpJQO5N0sB3pjuO/VK
-         n1MG6Tejq9uTKlBLRW6WfBYZKe0mB1erHdHY9QSveOxTIsm8pzvGD69lrM7IiHx75lFL
-         vKQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rwxcsAsN75o6auj6h/UwQ4eouOT0rdFuNimYtBXVVqI=;
-        b=GNkIgcZ6Cm0ZSK9Ek52meN9sRFElm+T9GNGc4F8/U5Sk2jEqFqk+4KBxInWh6yNoMr
-         bWnZDr5auO+LcVFSKyZ/+uyyAoUTHq+LkuzIxWImJciAwJXBda1JhOnqWB+rl+4lOYIx
-         9vdk8fYO711cgj4tt8dwmpbjbddLgBrJUwmfJyEWkw5UjRMpxUXXkM4lDEhpIZcR2GaW
-         Gs+AzQflLZqpEVqx3oPRufXj2OFwmHa2qvpuQposrl8XXJP8zEvJuF8Y2DlSYSl+L0bh
-         3nsgpjZFz7zYPv7QIgSCRagLEvRLG165y8g7WxnoGyIx5k+XFH+NOQPVhoZzdgmPiJRn
-         3iug==
-X-Gm-Message-State: APjAAAVrqUzCOkwpO4tv1pWvP55Da5+QMdbaH9mfg+f+ye99N5QjgMYR
-        Ft5uzETj96pUBGeN9CdU2ftHM+xgQno=
-X-Google-Smtp-Source: APXvYqyytMHKYCD286xJ3ougS17+qx/IydYF3O2pRQIi7aToLTd9QIRAntsDUW4ZoTWEhicSbubAJg==
-X-Received: by 2002:a37:a78d:: with SMTP id q135mr48484895qke.158.1582580928204;
-        Mon, 24 Feb 2020 13:48:48 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id m27sm6760596qta.21.2020.02.24.13.48.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 13:48:47 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Mon, 24 Feb 2020 16:48:45 -0500
-To:     Fangrui Song <maskray@google.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Michael Matz <matz@suse.de>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 2/2] x86/boot/compressed: Remove unnecessary sections
- from bzImage
-Message-ID: <20200224214845.GC409112@rani.riverdale.lan>
-References: <20200222050845.GA19912@ubuntu-m2-xlarge-x86>
- <20200222065521.GA11284@zn.tnic>
- <20200222070218.GA27571@ubuntu-m2-xlarge-x86>
- <20200222072144.asqaxlv364s6ezbv@google.com>
- <20200222074254.GB11284@zn.tnic>
- <20200222162225.GA3326744@rani.riverdale.lan>
- <CAKwvOdnvMS21s9gLp5nUpDAOu=c7-iWYuKTeFUq+PMhsJOKUgw@mail.gmail.com>
- <alpine.LSU.2.21.2002241319150.12812@wotan.suse.de>
- <CAKwvOd=nCAyXtng1N-fvNYa=-NGD0yu+Rm6io9F1gs0FieatwA@mail.gmail.com>
- <20200224212828.xvxl3mklpvlrdtiw@google.com>
+        Mon, 24 Feb 2020 16:53:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=mw9BVCxn7pfkdLzlqdnU62sf9jMMFSFqSbqAU1P/njM=; b=RwxpBsPsAgcRXU3+CiEQvZpAse
+        L2XfCTem5LohmiBMGiEV7Hm4Q3mq7vEyPk+b+gdQxjievErsV1U0sY4fKiS2rqk8DgPLM6tE/jyo7
+        RUfRapcRZfourQ1+8voII3tkr9GhwLaPUKBKdb6fQeopIO4chmzl/v5t6FIfWR7wbQiRF1O6EBK0h
+        WaTduDEs7a07V+6hmEAGyqVmyNUglmconIZmqhNx+20JaYUAmyxvUJX8V1fiSDOy0IFJWCuWrnlre
+        puYN8dx/kZQdNIUe/ZOCrJV6SjguxVWedPzERekOT5SPrIVJ6wsJiCGW49A+qXEg0yXWQjvam0IVc
+        Md0CFWPg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6LfI-0004DG-G7; Mon, 24 Feb 2020 21:53:24 +0000
+Date:   Mon, 24 Feb 2020 13:53:24 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
+        linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [Cluster-devel] [PATCH v7 12/24] mm: Add
+ page_cache_readahead_unbounded
+Message-ID: <20200224215324.GA16051@infradead.org>
+References: <20200219210103.32400-1-willy@infradead.org>
+ <20200219210103.32400-13-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200224212828.xvxl3mklpvlrdtiw@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200219210103.32400-13-willy@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 01:28:28PM -0800, Fangrui Song wrote:
-> Hi Michael, please see my other reply on this thread: https://lkml.org/lkml/2020/2/24/47
+On Wed, Feb 19, 2020 at 01:00:51PM -0800, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> Synthesized sections can be matched as well. For example, SECTIONS { .pltfoo : { *(.plt) }} can rename the output section .plt to .pltfoo
-> It seems that in GNU ld, the synthesized section is associated with the
-> original object file, so it can be written as:
-> 
->    SECTIONS { .pltfoo : { a.o(.plt) }}
-> 
-> In lld, you need a wildcard to match the synthesized section *(.plt)
-> 
-> .rela.dyn is another example.
-> 
+> ext4 and f2fs have duplicated the guts of the readahead code so
+> they can read past i_size.  Instead, separate out the guts of the
+> readahead code so they can call it directly.
 
-With the BFD toolchain, file matching doesn't actually seem to work at
-least for .rela.dyn. I've tried playing around with it in the past and
-if you try to use file-matching to capture relocations from a particular
-input file, it just doesn't work sensibly.
+I don't like this, but then I like the horrible open coded versions
+even less..  Can you add a do not use for new code comment to the
+function as well?
+
+Otherwise looks good:
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
