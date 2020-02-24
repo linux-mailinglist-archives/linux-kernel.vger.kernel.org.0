@@ -2,98 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8211E16A637
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:34:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9C7616A63E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:36:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbgBXMeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 07:34:18 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36746 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbgBXMeQ (ORCPT
+        id S1727513AbgBXMfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 07:35:42 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:21187 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726778AbgBXMfm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 07:34:16 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z3so10196102wru.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 04:34:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=YsyHMGLT1kWo5YixySq4Ncge1TA1bP8HOjZ5/uDC2V0=;
-        b=WaYvlAi+1e/82tblH+OGfN5A+rBla6IK9WHA5RFJiR2hBxk8FRuKxcLNKXexgy1Fze
-         TxRITbfKr1g956AdE0Bcq2q8AwU94UBiXw7o7Ttm3E0+qTp0tWQBr5qzYtltAbP10Gwc
-         vSiCdPLlI/5prvJN/VSvJhXLofpnrZ/qB+ORo2CMdzCNtfvgJuOISqHAnjobsLLhw5QY
-         U7TjL24cqDZwpnMBcuN4Vzs9vddw6dRqdA2UgCvQvvKWemWlqY5/WfNTQ7DV9yCDVDUL
-         n8y4t7tyoWWJ3G0qCYQMexeknuPeWJBT1jHclUW75Cl+vj0gXkZ637aVAGBz62WlZA0v
-         rHuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=YsyHMGLT1kWo5YixySq4Ncge1TA1bP8HOjZ5/uDC2V0=;
-        b=g4xtfSq7UDd31yahRe/plgu//BCNk4wcImzQ/TZRZbCDyAhsYF5ZjErvmJFfJWhOVz
-         T0VID+ECY9F+u1saC7+ck4HLg/YjDvjPtpRMOXCjV/Tg0cfTtSjtoJqQ6R+4BD8tBh5s
-         Jnc94DN43PxHtcE+3f5JZltc7xG2G5qmm3zvOsrPxMThaqjexNFxp/PgIRI4VcSg2nI6
-         v1dGYHh2IzoB2CjQHVVZ2kaCD6HARlJOVovm1ZHxJj/C6Wy6hrXWPTn5UoKaZhAkpSi+
-         4KLuEiJW6oC1fc/Qkaz5go7Vjpsi3u5S2/DZ7wE0/GoLU9SgROPIBMIABf/YO0UnrUMp
-         IzPQ==
-X-Gm-Message-State: APjAAAXMhQp/W6inBvqlp/a9aEolkp7NlAl6yGHxAxHGh3ofjk9jipjb
-        PlZbxw23bMTbxyCYg/iHshJiZcIs5l8=
-X-Google-Smtp-Source: APXvYqw4B2ZyNX7HQsew9G7peWOh/KR3gX7BaGUMh/dFyOA2I7XsjQo17MQ5v7RrSzaCXLLJTINLbw==
-X-Received: by 2002:a5d:6802:: with SMTP id w2mr65761060wru.353.1582547654858;
-        Mon, 24 Feb 2020 04:34:14 -0800 (PST)
-Received: from debian ([167.98.27.226])
-        by smtp.gmail.com with ESMTPSA id z6sm19032323wrs.96.2020.02.24.04.34.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Feb 2020 04:34:14 -0800 (PST)
-Date:   Mon, 24 Feb 2020 12:34:12 +0000
-From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alexander Potapenko <glider@google.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] ppdev: Distribute switch variables for initialization
-Message-ID: <20200224123412.bo6e5yfjtinqzhle@debian>
-References: <20200220062311.69121-1-keescook@chromium.org>
+        Mon, 24 Feb 2020 07:35:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582547741;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=A76EGrw49ZVRKmkTyfyUNvOOyxmLePhddhz/3ngCACc=;
+        b=P8411zTkx7ua9nNUfDHH5ePnNeMRrUvF5H15dlDWtJWO4muTsBxe5Hcn+iLJdGAyd3Nna0
+        dGPCHtKs/fRK5BotpT3qd9m+ptwZtb09qoIhcmHSlnzyxsTdtFjAUkvz8dRvPUvPCiLzfW
+        njY590SLV71BRFrv8LfCcUUqtU1aeiw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-194-Vn3EV3SMO1yNpkDnjwMgZw-1; Mon, 24 Feb 2020 07:35:33 -0500
+X-MC-Unique: Vn3EV3SMO1yNpkDnjwMgZw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D5E74DB60;
+        Mon, 24 Feb 2020 12:35:31 +0000 (UTC)
+Received: from krava (ovpn-204-56.brq.redhat.com [10.40.204.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1C28B1001B2C;
+        Mon, 24 Feb 2020 12:35:28 +0000 (UTC)
+Date:   Mon, 24 Feb 2020 13:35:26 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v3 2/2] Support interactive annotation of code without
+ symbols
+Message-ID: <20200224123526.GF16664@krava>
+References: <20200224022225.30264-1-yao.jin@linux.intel.com>
+ <20200224022225.30264-3-yao.jin@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200220062311.69121-1-keescook@chromium.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20200224022225.30264-3-yao.jin@linux.intel.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 10:23:11PM -0800, Kees Cook wrote:
-> Variables declared in a switch statement before any case statements
-> cannot be automatically initialized with compiler instrumentation (as
-> they are not part of any execution flow). With GCC's proposed automatic
-> stack variable initialization feature, this triggers a warning (and they
-> don't get initialized). Clang's automatic stack variable initialization
-> (via CONFIG_INIT_STACK_ALL=y) doesn't throw a warning, but it also
-> doesn't initialize such variables[1]. Note that these warnings (or silent
-> skipping) happen before the dead-store elimination optimization phase,
-> so even when the automatic initializations are later elided in favor of
-> direct initializations, the warnings remain.
-> 
-> To avoid these problems, move such variables into the "case" where
-> they're used or lift them up into the main function body.
-> 
-> drivers/char/ppdev.c: In function ‘pp_do_ioctl’:
-> drivers/char/ppdev.c:516:25: warning: statement will never be executed [-Wswitch-unreachable]
->   516 |   struct ieee1284_info *info;
->       |                         ^~~~
-> 
-> [1] https://bugs.llvm.org/show_bug.cgi?id=44916
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On Mon, Feb 24, 2020 at 10:22:25AM +0800, Jin Yao wrote:
+> For perf report on stripped binaries it is currently impossible to do
+> annotation. The annotation state is all tied to symbols, but there are
+> either no symbols, or symbols are not covering all the code.
+>=20
+> We should support the annotation functionality even without symbols.
+>=20
+> This patch fakes a symbol and the symbol name is the string of address.
+> After that, we just follow current annotation working flow.
+>=20
+> For example,
+>=20
+> 1. perf report
+>=20
+> Overhead  Command  Shared Object     Symbol
+>   20.67%  div      libc-2.27.so      [.] __random_r
+>   17.29%  div      libc-2.27.so      [.] __random
+>   10.59%  div      div               [.] 0x0000000000000628
+>    9.25%  div      div               [.] 0x0000000000000612
+>    6.11%  div      div               [.] 0x0000000000000645
+>=20
+> 2. Select the line of "10.59%  div      div               [.] 0x0000000=
+000000628" and ENTER.
+>=20
+> Annotate 0x0000000000000628
+> Zoom into div thread
+> Zoom into div DSO (use the 'k' hotkey to zoom directly into the kernel)
+> Browse map details
+> Run scripts for samples of symbol [0x0000000000000628]
+> Run scripts for all samples
+> Switch to another data file in PWD
+> Exit
+>=20
+> 3. Select the "Annotate 0x0000000000000628" and ENTER.
+>=20
+> Percent=E2=94=82
+>        =E2=94=82
+>        =E2=94=82
+>        =E2=94=82     Disassembly of section .text:
+>        =E2=94=82
+>        =E2=94=82     0000000000000628 <.text+0x68>:
+>        =E2=94=82       divsd %xmm4,%xmm0
+>        =E2=94=82       divsd %xmm3,%xmm1
+>        =E2=94=82       movsd (%rsp),%xmm2
+>        =E2=94=82       addsd %xmm1,%xmm0
+>        =E2=94=82       addsd %xmm2,%xmm0
+>        =E2=94=82       movsd %xmm0,(%rsp)
+>=20
+> Now we can see the dump of object starting from 0x628.
+>=20
+>  v3:
+>  ---
+>  Keep just the ANNOTATION_DUMMY_LEN, and remove the
+>  opts->annotate_dummy_len since it's the "maybe in future
+>  we will provide" feature.
+>=20
+>  v2:
+>  ---
+>  Fix a crash issue when annotating an address in "unknown" object.
+>=20
+>  The steps to reproduce this issue:
+>=20
+>  perf record -e cycles:u ls
+>  perf report
+>=20
+>     75.29%  ls       ld-2.27.so        [.] do_lookup_x
+>     23.64%  ls       ld-2.27.so        [.] __GI___tunables_init
+>      1.04%  ls       [unknown]         [k] 0xffffffff85c01210
+>      0.03%  ls       ld-2.27.so        [.] _start
+>=20
+>  When annotating 0xffffffff85c01210, the crash happens.
+>=20
+>  v2 adds checking for ms->map in add_annotate_opt(). If the object is
+>  "unknown", ms->map is NULL.
+>=20
+> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> ---
+>  tools/perf/ui/browsers/hists.c | 43 +++++++++++++++++++++++++++++-----
+>  tools/perf/util/annotate.h     |  1 +
+>  2 files changed, 38 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hi=
+sts.c
+> index f36dee499320..2f07680559c4 100644
+> --- a/tools/perf/ui/browsers/hists.c
+> +++ b/tools/perf/ui/browsers/hists.c
+> @@ -2465,13 +2465,41 @@ do_annotate(struct hist_browser *browser, struc=
+t popup_action *act)
+>  	return 0;
+>  }
+> =20
+> +static struct symbol *new_annotate_sym(u64 addr, struct map *map)
+> +{
+> +	struct symbol *sym;
+> +	struct annotated_source *src;
+> +	char name[64];
+> +
+> +	snprintf(name, sizeof(name), "%-#.*lx", BITS_PER_LONG / 4, addr);
+> +
+> +	sym =3D symbol__new(addr, ANNOTATION_DUMMY_LEN, 0, 0, name);
+> +	if (sym) {
+> +		src =3D symbol__hists(sym, 1);
+> +		if (!src) {
+> +			symbol__delete(sym);
+> +			return NULL;
+> +		}
 
-Acked-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+hi,
+I like the patchset:
 
-Greg, Can you please take it in your tree...
+Acked-by: Jiri Olsa <jolsa@redhat.com>
 
---
-Regards
-Sudip
+could you please also check if we can do this earlier,
+so the dummy symbol is actualy collecting all the hits?
+
+like within the symbol__inc_addr_samples function,
+but I mght be missing something..
+
+thanks,
+jirka
+
