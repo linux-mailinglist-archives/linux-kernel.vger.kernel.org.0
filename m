@@ -2,130 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADC5516B468
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:43:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 925DF16B477
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:46:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbgBXWns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 17:43:48 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45245 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728226AbgBXWnr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 17:43:47 -0500
-Received: by mail-qt1-f194.google.com with SMTP id d9so7723593qte.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 14:43:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2fqwSDzA0qJPpkXoUfayaMO91DSowAScYmB2Y++l/a8=;
-        b=U5wcAY78fNAT6JrMEi+/p2hrw25/AJUpkfQvL/Ljki2hEcUEkNRdFH8A3WZk7VqHj4
-         KSasPNBO/tnV+eC4t8T8Wyrda8gK6tx9L4ysCtVbFDLZtkfOomSfGbgns1UKOJwRE45W
-         dZL7ofeJ83oWexlCiTL71Anr2EQH4b8JnACYvqtNzFbts09bV4aNf7RE1w+W+nYChgsr
-         59GrzZSQnPUf5VtOtohsMcP7OFjM+qStclRVdkbLMoJqUJ9VYRl+/yW7fjVGElRtHLNs
-         1CV3CY2YgO2e1xKCiy1tQU6x/HA/xB5wj5Gjz3h2ddh0VAEPOOmBWw19f4JwFSLtnAEv
-         smrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2fqwSDzA0qJPpkXoUfayaMO91DSowAScYmB2Y++l/a8=;
-        b=pUvrSTS8bMoIbQAnCh3Ov5H2nOEhZLNbVQDz3S8C1/KH3C1qKLFHeEBoNhLtvtccCP
-         FJWsbBvikD8ogBbjpeqqaY7aeqqgi8Gw3U6B+aClOgI6Gb2kZQKvnL3isqMcNxfYpnnS
-         RuzDO3uIcWQaDqGWFCVfcW7Z5kpyJhdhi0dP3rTxJ+HBJ9lqsTmLKVj0g+RG1/1kDYAh
-         exh8f/7XhqL5cSeKSfQP1tk7Yjn6Gq5MoJ8L6h8jfFcEewpCZBpVotuM/DmyPxjQolux
-         uPEFMBtWY5AhAzmALBboqoxXtN0ZGbT++T0gjAqLM1sUlCq21O+FEDa2N/Ihv1RazRwN
-         o+1g==
-X-Gm-Message-State: APjAAAVMbo85RRmj556VtxuutA9fv8cfz5CWbMo//vSUbR3ZJyPw7dUm
-        M7Zk6dUbBnVNnE/FBHtvzZo=
-X-Google-Smtp-Source: APXvYqw8+jEg8gvPmeH8S420a8jIk4XnnJGz1ipKsykeqLPVFuVVoCftrE9rn0JljXfx/6JhabMxGg==
-X-Received: by 2002:ac8:1b59:: with SMTP id p25mr51970654qtk.336.1582584226324;
-        Mon, 24 Feb 2020 14:43:46 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id g17sm6599084qtq.29.2020.02.24.14.43.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 14:43:45 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Mon, 24 Feb 2020 17:43:44 -0500
-To:     Fangrui Song <maskray@google.com>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Michael Matz <matz@suse.de>, Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 2/2] x86/boot/compressed: Remove unnecessary sections
- from bzImage
-Message-ID: <20200224224343.GA572699@rani.riverdale.lan>
-References: <20200222070218.GA27571@ubuntu-m2-xlarge-x86>
- <20200222072144.asqaxlv364s6ezbv@google.com>
- <20200222074254.GB11284@zn.tnic>
- <20200222162225.GA3326744@rani.riverdale.lan>
- <CAKwvOdnvMS21s9gLp5nUpDAOu=c7-iWYuKTeFUq+PMhsJOKUgw@mail.gmail.com>
- <alpine.LSU.2.21.2002241319150.12812@wotan.suse.de>
- <CAKwvOd=nCAyXtng1N-fvNYa=-NGD0yu+Rm6io9F1gs0FieatwA@mail.gmail.com>
- <20200224212828.xvxl3mklpvlrdtiw@google.com>
- <20200224214845.GC409112@rani.riverdale.lan>
- <20200224221703.eqql5hrx4ccngwa5@google.com>
+        id S1728135AbgBXWqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 17:46:14 -0500
+Received: from mga12.intel.com ([192.55.52.136]:37123 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727459AbgBXWqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 17:46:14 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 14:46:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
+   d="scan'208";a="284488539"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by FMSMGA003.fm.intel.com with ESMTP; 24 Feb 2020 14:46:11 -0800
+Date:   Mon, 24 Feb 2020 14:46:13 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 29/61] KVM: x86: Add Kconfig-controlled auditing of
+ reverse CPUID lookups
+Message-ID: <20200224224613.GO29865@linux.intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
+ <20200201185218.24473-30-sean.j.christopherson@intel.com>
+ <87a758oztt.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200224221703.eqql5hrx4ccngwa5@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87a758oztt.fsf@vitty.brq.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 02:17:03PM -0800, Fangrui Song wrote:
-> On 2020-02-24, Arvind Sankar wrote:
-> >On Mon, Feb 24, 2020 at 01:28:28PM -0800, Fangrui Song wrote:
-> >> Hi Michael, please see my other reply on this thread: https://lkml.org/lkml/2020/2/24/47
-> >>
-> >> Synthesized sections can be matched as well. For example, SECTIONS { .pltfoo : { *(.plt) }} can rename the output section .plt to .pltfoo
-> >> It seems that in GNU ld, the synthesized section is associated with the
-> >> original object file, so it can be written as:
-> >>
-> >>    SECTIONS { .pltfoo : { a.o(.plt) }}
-> >>
-> >> In lld, you need a wildcard to match the synthesized section *(.plt)
-> >>
-> >> .rela.dyn is another example.
-> >>
+On Mon, Feb 24, 2020 at 02:54:38PM +0100, Vitaly Kuznetsov wrote:
+> Sean Christopherson <sean.j.christopherson@intel.com> writes:
+> 
+> > Add WARNs in the low level __cpuid_entry_get_reg() to assert that the
+> > function and index of the CPUID entry and reverse CPUID entry match.
+> > Wrap the WARNs in a new Kconfig, KVM_CPUID_AUDIT, as the checks add
+> > almost no value in a production environment, i.e. will only detect
+> > blatant KVM bugs and fatal hardware errors.  Add a Kconfig instead of
+> > simply wrapping the WARNs with an off-by-default #ifdef so that syzbot
+> > and other automated testing can enable the auditing.
 > >
-> >With the BFD toolchain, file matching doesn't actually seem to work at
-> >least for .rela.dyn. I've tried playing around with it in the past and
-> >if you try to use file-matching to capture relocations from a particular
-> >input file, it just doesn't work sensibly.
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > ---
+> >  arch/x86/kvm/Kconfig | 10 ++++++++++
+> >  arch/x86/kvm/cpuid.h |  5 +++++
+> >  2 files changed, 15 insertions(+)
+> >
+> > diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> > index 840e12583b85..bbbc3258358e 100644
+> > --- a/arch/x86/kvm/Kconfig
+> > +++ b/arch/x86/kvm/Kconfig
+> > @@ -96,6 +96,16 @@ config KVM_MMU_AUDIT
+> >  	 This option adds a R/W kVM module parameter 'mmu_audit', which allows
+> >  	 auditing of KVM MMU events at runtime.
+> >  
+> > +config KVM_CPUID_AUDIT
+> > +	bool "Audit KVM reverse CPUID lookups"
+> > +	depends on KVM
+> > +	help
+> > +	 This option enables runtime checking of reverse CPUID lookups in KVM
+> > +	 to verify the function and index of the referenced X86_FEATURE_* match
+> > +	 the function and index of the CPUID entry being accessed.
+> > +
+> > +	 If unsure, say N.
+> > +
+> >  # OK, it's a little counter-intuitive to do this, but it puts it neatly under
+> >  # the virtualization menu.
+> >  source "drivers/vhost/Kconfig"
+> > diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+> > index 51f19eade5a0..41ff94a7d3e0 100644
+> > --- a/arch/x86/kvm/cpuid.h
+> > +++ b/arch/x86/kvm/cpuid.h
+> > @@ -98,6 +98,11 @@ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+> >  static __always_inline u32 *__cpuid_entry_get_reg(struct kvm_cpuid_entry2 *entry,
+> >  						  const struct cpuid_reg *cpuid)
+> >  {
+> > +#ifdef CONFIG_KVM_CPUID_AUDIT
+> > +	WARN_ON_ONCE(entry->function != cpuid->function);
+> > +	WARN_ON_ONCE(entry->index != cpuid->index);
+> > +#endif
+> > +
+> >  	switch (cpuid->reg) {
+> >  	case CPUID_EAX:
+> >  		return &entry->eax;
 > 
-> I think most things are working in GNU ld...
-> 
-> /* a.x */
-> SECTIONS {
->    .rela.pltfoo : { a.o(.rela.plt) }  /* *(.rela.plt) with lld */
->    .rela.dynfoo : { a.o(.rela.data) } /* *(.rela.dyn) with lld */
-> }
+> Honestly, I was thinking we should BUG_ON() and even in production builds
+> but not everyone around is so rebellious I guess, so
 
-The file matching doesn't do anything sensible. If you split your .data
-section out into b.s, and update the linker script so it filters for
-b.o(.rela.data), .rela.dynfoo doesn't get created, instead the default
-.rela.dyn will contains the .data section relocation. If you keep the
-filter as a.o(.rela.data), you get .rela.dynfoo, even though a.o doesn't
-actually contain any .rela.data section any more.
-
+LOL.  It's a waste of cycles for something that will "never" be hit, i.e.
+we _really_ dropped the ball if a bug of this natures makes it into a
+kernel release.
+ 
+> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 > 
-> % cat <<e > a.s
->   .globl foo
->   foo:
->     call bar
->   .data
->   .quad quz
-> e
-> % as a.s -o a.o
-> % ld.bfd -T a.x a.o -shared -o a.so
+> -- 
+> Vitaly
+> 
