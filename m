@@ -2,110 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 051B816B0D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 21:13:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96DC816B0D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 21:18:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbgBXUNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 15:13:02 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41201 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbgBXUNB (ORCPT
+        id S1727461AbgBXUSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 15:18:23 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40431 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbgBXUSW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 15:13:01 -0500
-Received: by mail-ed1-f68.google.com with SMTP id c26so13451500eds.8;
-        Mon, 24 Feb 2020 12:13:00 -0800 (PST)
+        Mon, 24 Feb 2020 15:18:22 -0500
+Received: by mail-lj1-f195.google.com with SMTP id n18so11562575ljo.7
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 12:18:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Ton2dy5GNqJyLPJEEIDedKcsvitgM4YKPz9ezK/FmE0=;
+        b=bc1jk6Z6X5J0gkzdttLCx6ihvZcpztqqdW5l9vvmxaZPW3vSAmMBFMQW8ztbsx2qQf
+         enD1xQhjmUaaapmJ4YS+GQJxZDWSwnCjw16rQN4BIbIqI5pcEcoyRlwS4BBNoa+UuF7M
+         8Yp8BcvIpPQz6RMk4VAm8jOL8DI1gTL1lm728=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TwCT11Q8st6DRF5f77QlbvmNTg2E5sCFURGACQNwpRo=;
-        b=M0qrcKD1M4eGLM7wE1bVijszZHCZ3HAstykQhGiAT8kwM8u1A9FA1M4/bnWGs2SSAh
-         OntM4rK2t0bx1eZ6Sw2QpBNjWHAjZwm40zs8dqcLB/5QKPdLg+gVBgriIHgBxLeqiQGH
-         mtkzawKMsPDG9So3snvEEO6qFzcSSsC6FFQAKTBFH9ym+/1F9lcSy9eePmGzYOLNdhO9
-         TEtWXhuBSb/BIcd1ep2Ok/JepZ9Ng4roi+GKiHpao87Y+cDWflKUHF5+Kpl+jHXxh6PX
-         WsfHbUnTuD8OGBwOu7J621GKErKrMKzQMS6LIIZ8dmEb6Ys41qhHvQ02EHLcnqDMf4H+
-         X0Zg==
-X-Gm-Message-State: APjAAAU9VPfYo01EI2VXMD3RZzz/NZyPDrMzZo1mqary0+ox0yd4l30D
-        TI1HIJd7M700ixCfF7hvfDQ=
-X-Google-Smtp-Source: APXvYqz1+/Sz4RMczX4pFEQdlHMFqh55PdbPuTHZn3Ir9AYpBo51uk9X0M9WvatqCco7VEZqEmqhhQ==
-X-Received: by 2002:a17:906:2653:: with SMTP id i19mr47243420ejc.287.1582575180052;
-        Mon, 24 Feb 2020 12:13:00 -0800 (PST)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id d16sm1051538eds.18.2020.02.24.12.12.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Feb 2020 12:12:59 -0800 (PST)
-Date:   Mon, 24 Feb 2020 21:12:56 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 1/3] regulator: max14577: Add proper dt-compatible strings
-Message-ID: <20200224201256.GA8060@kozik-lap>
-References: <CGME20200220145134eucas1p288ae1910d3e8d12dc12f010ed0b07b45@eucas1p2.samsung.com>
- <20200220145127.21273-1-m.szyprowski@samsung.com>
- <20200220165614.GD3926@sirena.org.uk>
- <964b8c4c-36ca-203d-e62b-4a8fc970e23d@samsung.com>
- <20200221123813.GB5546@sirena.org.uk>
- <b52332cd-1dec-fdfe-51fc-8605d94abe7d@samsung.com>
- <20200221171342.GI5546@sirena.org.uk>
- <61dc8192-e313-021f-9e23-928257a66984@samsung.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Ton2dy5GNqJyLPJEEIDedKcsvitgM4YKPz9ezK/FmE0=;
+        b=lHarbtJBYVxJDFSDHcTz1PR1rOGzpELHM+c5WL0/qC2Pr5KaSUHtIK9MPgDNLKnUQD
+         JdePrWPFUVpj7WkB6zgeJ2UZOkNvknHXGIBQcO3Yz0TA5WxT5PWzFyRGZDyvqWlBxErG
+         2M9N8cSx0oiGsWxOEWekvMR9tbi5qOwd97DbI7vjvkR5aZcdfNGE0fdwka+S6UiU4AwT
+         JzjJqzuXwt+zXgMU8l4LuCOBuzhq9FQdgaV+BQTudvkPujL9vG1V5K3uRom6TXHHXyjG
+         30q2YGy6I252KDqJhTnmto5PUV7fOtShChJ1shlk6hXrqZm3hQsmTRsNApaUwvhP0hkZ
+         G09g==
+X-Gm-Message-State: APjAAAUqDxtBA57WbswdJFutiY8DKxeMGJ9D7Cifkabm9aonIM4fzRnw
+        R/Cxy+hm/zXSHWRlWfjIUssBmY6Q3g0=
+X-Google-Smtp-Source: APXvYqzWad1kcQKrVvBQ5MmNzkGOjsHQ1xAS8h4Kxqxkp/wmeztDPwDjjJcNBpBZk7S37tnxpduYjw==
+X-Received: by 2002:a2e:9b05:: with SMTP id u5mr31661858lji.59.1582575500249;
+        Mon, 24 Feb 2020 12:18:20 -0800 (PST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id a25sm3815985lfi.53.2020.02.24.12.18.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2020 12:18:19 -0800 (PST)
+Received: by mail-lj1-f171.google.com with SMTP id x7so11580634ljc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 12:18:19 -0800 (PST)
+X-Received: by 2002:a2e:580c:: with SMTP id m12mr31671680ljb.150.1582575498886;
+ Mon, 24 Feb 2020 12:18:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <61dc8192-e313-021f-9e23-928257a66984@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CADDKRnBq6oFFfVzqDRwwx2Eoc74M7f_9Z7UCdSVmS_xGMD1wdQ@mail.gmail.com>
+In-Reply-To: <CADDKRnBq6oFFfVzqDRwwx2Eoc74M7f_9Z7UCdSVmS_xGMD1wdQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 24 Feb 2020 12:18:03 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh101Kcdby3UwzGWcCVELdGJoyduQ7Hwp2B6tavzx8ULw@mail.gmail.com>
+Message-ID: <CAHk-=wh101Kcdby3UwzGWcCVELdGJoyduQ7Hwp2B6tavzx8ULw@mail.gmail.com>
+Subject: Re: i915 GPU-hang regression in v5.6-rcx
+To:     =?UTF-8?Q?J=C3=B6rg_Otte?= <jrg.otte@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Mika Kuoppala <mika.kuoppala@linux.intel.com>
+Cc:     Dave Airlie <airlied@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        intel-gfx@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 03:08:05PM +0100, Marek Szyprowski wrote:
-> Hi Mark,
-> 
-> On 21.02.2020 18:13, Mark Brown wrote:
-> > On Fri, Feb 21, 2020 at 02:23:57PM +0100, Marek Szyprowski wrote:
-> >> On 21.02.2020 13:38, Mark Brown wrote:
-> >>> We could just remove the compatible strings from the binding
-> >>> documentation, they won't do any harm if we don't use them.
-> >> Frankly I have no strong opinion on this. I've just wanted to fix the
-> >> broken autoloading of the drivers compiled as modules.
-> > Shouldn't adding the relevant module table for the platform devices work
-> > just as well for that?  Possibly also deleting the of_compatible bits in
-> > the MFD as well, ISTR that's needed to make the platform device work.
-> 
-> Right. This will work too. MFD cells will match to their drivers by the 
-> name and modalias strings will be correct. The question is which 
-> approach is preffered? Krzysztof? I've checked other mfd drivers, but I 
-> cannot find any pattern in this area.
+Let's add in some of the i915 people and list.
 
-I would guess that adding MODULE_DEVICE_TABLE() for OF-matches in main
-MFD driver would fix the issue... otherwise the same problem we have
-with max77693 (also MUIC/extcon/regulator/charger).
+Everything quoted below for the new participants.
 
-Some of these drivers (I guess only charger) bind to a OF node so they
-need a compatible. I think we added this to regulators and extcon for
-symmetry.
-Without this binding, the charger would need to read a specific child
-node from parent. This make them tightly coupled. It seems to me more
-robust for each component to bind to his own node, when needed.
+              Linus
 
-Another reason of adding compatibles was an idea of reusability of
-MFD children (between different MFD drivers or even standalone) but it
-never got implemented (children still depend on parent significantly).
-
-In general, I like the approach of children with compatibles but I will
-not argue against changing the drivers. They could really use some
-cleanup :)
-Long time I tried to remove the support for platform_data [1] - maybe
-let's continue?
-
-[1] https://lore.kernel.org/lkml/20170217200200.4521-1-krzk@kernel.org/
-
-Best regards,
-Krzysztof
-
+On Mon, Feb 24, 2020 at 2:52 AM J=C3=B6rg Otte <jrg.otte@gmail.com> wrote:
+>
+> In v5.6-rcx I sporadically see a hanging GPU.
+>
+> [  640.919302] i915 0000:00:02.0: Resetting chip for stopped heartbeat on=
+ rcs0
+> [  641.021808] i915 0000:00:02.0: Xorg[722] context reset due to GPU hang
+>
+> [ 2229.764709] i915 0000:00:02.0: Resetting chip for stopped heartbeat on=
+ rcs0
+> [ 2229.867534] i915 0000:00:02.0: kwin_x11[1005] context reset due to GPU=
+ hang
+>
+> To recover Xorg must be killed and restarted or reboot is required.
+> I've never seen this before v5.6-rcx.
+>
+> Best way to reproduce seem to be "heavily scrolling with the mouse wheel"
+> in graphic applications. I also saw this once while video streaming in
+> a browser.
+>
+>
+> System:  Host: fichte Kernel: 5.6.0-rc1 x86_64 bits: 64 Console: tty 3
+> Distro: Ubuntu 18.04.3 LTS
+> Machine: Device: Notebook System: FUJITSU product: LIFEBOOK A544
+> serial: <filter>
+>          Mobo: FUJITSU model: FJNBB35 serial: <filter>
+>          BIOS: FUJITSU // Phoenix v: Version 1.17 rv 1.17 date: 05/09/201=
+4
+> CPU:     Dual core Intel Core i5-4200M (-MT-MCP-) cache: 3072 KB
+>          clock speeds: max: 3100 MHz 1: 1127 MHz 2: 964 MHz 3: 1034
+> MHz 4: 984 MHz
+> Graphics:Card: Intel 4th Gen Core Processor Integrated Graphics Controlle=
+r
+>          Display Server: X.Org 1.19.6 drivers: modesetting (unloaded:
+> fbdev,vesa) Resolution: 1366x768@60.00hz
+>          OpenGL: renderer: Mesa DRI Intel Haswell Mobile version: 4.5
+> Mesa 19.2.8
+>
+>
+> Thanks, J=C3=B6rg
