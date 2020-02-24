@@ -2,170 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19DC616AE2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:55:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB70416AE37
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 18:56:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbgBXRz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 12:55:26 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51320 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbgBXRzZ (ORCPT
+        id S1727903AbgBXR4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 12:56:16 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:33607 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727259AbgBXR4P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:55:25 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t23so237310wmi.1;
-        Mon, 24 Feb 2020 09:55:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=98hkSdEFZYYm7ue/qKLU11DJOrIsjwH9kzLWsOMOGoQ=;
-        b=Vwkro33JPZEjGumCkuOvUlXTzL/fDauJkqYW8YDyhgcyZDvc9+xMMcMOp48V0SqDew
-         NtZUkEKblDHV8EvfvK5BMWroYkI+HmgUETvMBfgEvKXitmgQ7Q17y7t3jbtzZVMUfsVV
-         2q+nx/5gFgfqeKXnYe26ES5rnCgKJ0zRS9NoP/lHphqkoWgjMOMf8N8/5ou/BHKyduSO
-         EXsoKJqN/LfLHO2l/qdzEDlohe3shxKYZ6B+aPP0xIOdEclw/+Y1DRRXEi7oX0dgIBAH
-         zB3Xaxk8XQnRDP6nozRFtcBs+u9kZ/tEPdwEyTkYXbNnNHclyKJVgsX5VOyr8TkORgHs
-         RPlQ==
+        Mon, 24 Feb 2020 12:56:15 -0500
+Received: by mail-oi1-f194.google.com with SMTP id q81so9818079oig.0;
+        Mon, 24 Feb 2020 09:56:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=98hkSdEFZYYm7ue/qKLU11DJOrIsjwH9kzLWsOMOGoQ=;
-        b=Y5IiOE4LLchXd85N0or0eR7qizY9Ym6foC5grB+tFOQ5WppPvQgXc1yNtbflfsRadZ
-         8NXGvPkvqy4eMit0maJ6+lgWZZSiXVQd9T+mf19h5Y2SumtPsohInEhGlQgPLmCGcO5a
-         jw6P5DAjekgxppebKpG+TlKQ5FFWELq+9M88Ce0T51n2oBVLwrE8WbxEoCPThOEI9tnF
-         JN7MGb3BZVUr/a8CJqChDVxkiL3guoroTusAkOcDKFGPQLMUTxNpDQhRRlDzs2rznX3Z
-         8lN1g+hjO3Urj7LxPc3MYAWBo2qDgciFQLTMly5wIZXSXWxIOd4saZXApX1bfjmuTC1H
-         C1sQ==
-X-Gm-Message-State: APjAAAXac9hzKJnSdhvaMShT4w2xern07MGB6Ziru916d8jiDEHV6Dy+
-        LtPlDOb7oLDN1PsSeIZpea6amc8=
-X-Google-Smtp-Source: APXvYqxm0NJVyiy1qW3kAmbakTqJFJUOQ0dfkTq8hktodIEO2WpsI8z91rO0JnAJZ5HXpylenvl3GA==
-X-Received: by 2002:a1c:990b:: with SMTP id b11mr211208wme.15.1582566923445;
-        Mon, 24 Feb 2020 09:55:23 -0800 (PST)
-Received: from avx2 ([46.53.250.94])
-        by smtp.gmail.com with ESMTPSA id s8sm20772193wrt.57.2020.02.24.09.55.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 09:55:22 -0800 (PST)
-Date:   Mon, 24 Feb 2020 20:55:20 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] proc: faster open/read/close with "permanent" files
-Message-ID: <20200224175520.GA3401@avx2>
-References: <20200222201539.GA22576@avx2>
- <7c30fd26941948fa1aedd1e73bdc2ebb8efec477.camel@perches.com>
- <20200223113024.GA4941@avx2>
- <dc93d5299169a33e00fc35a4c5f29ea72764bce0.camel@perches.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YIkdD31bYp03upGvFS6JQiE90wpfUQKAjIeFAC5gg5U=;
+        b=CeKApxK+gyenHAfGaVsHA8s4L8mN/9EF5ldvBGNmwjaepltE5w+Eah79hJoi8IZggo
+         mJJLseNRfgAV18BgzZJMKtPsotD7DslaeRyvCsxJLCqcpyHzU4Dbhoywio8TxZaz+Okg
+         4el9ZaiKuJcZA6daho4JJBKTzn2NB2MvjkrpCySPRi/VspfJR4HeLMC1ifr76Y5gDfVz
+         QV0VUR5sRIUPUikuCO+9Lif2TKiIliiKtUUhlY5GtQMGpRpwIbPddTlWo9q6kP5cUT5G
+         nwlWowvIucBO57ZqkQPQNCHeC8oVbgGpWojgW3eqG7PZtJ/QkpcO16Dv1obiqZjA3Vw/
+         5vfQ==
+X-Gm-Message-State: APjAAAWmo7WBsg2FItdbbNW7A4zIPfOPm1upi+DLhH7rkztmjBzYpGdk
+        2BhVvcv+kVHi6wkT/S2WNOYQni2kGvAm+ZHvu88=
+X-Google-Smtp-Source: APXvYqwkZyLoQysqRPUYbaGABE/a7gGjukUY/U2cDRw3W7lwKCfYD1fdCwMfodOKZda7l3h4WxMqo9fbfaGQfqXPmQA=
+X-Received: by 2002:a54:4e96:: with SMTP id c22mr231243oiy.110.1582566975064;
+ Mon, 24 Feb 2020 09:56:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <dc93d5299169a33e00fc35a4c5f29ea72764bce0.camel@perches.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200224172110.4121492-1-christian.brauner@ubuntu.com> <20200224172110.4121492-7-christian.brauner@ubuntu.com>
+In-Reply-To: <20200224172110.4121492-7-christian.brauner@ubuntu.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 24 Feb 2020 18:56:03 +0100
+Message-ID: <CAJZ5v0gDuP33TFNocsSgTD4QFQTQeczwWUXegU2GDzMAFq5Vvg@mail.gmail.com>
+Subject: Re: [PATCH v4 6/9] drivers/base/power: add dpm_sysfs_change_owner()
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 06:48:38PM -0800, Joe Perches wrote:
-> On Sun, 2020-02-23 at 14:30 +0300, Alexey Dobriyan wrote:
-> > On Sat, Feb 22, 2020 at 12:39:39PM -0800, Joe Perches wrote:
-> > > On Sat, 2020-02-22 at 23:15 +0300, Alexey Dobriyan wrote:
-> > > > Now that "struct proc_ops" exist we can start putting there stuff which
-> > > > could not fly with VFS "struct file_operations"...
-> > > > 
-> > > > Most of fs/proc/inode.c file is dedicated to make open/read/.../close reliable
-> > > > in the event of disappearing /proc entries which usually happens if module is
-> > > > getting removed. Files like /proc/cpuinfo which never disappear simply do not
-> > > > need such protection.
-> > > > 
-> > > > Save 2 atomic ops, 1 allocation, 1 free per open/read/close sequence for such
-> > > > "permanent" files.
-> > > > 
-> > > > Enable "permanent" flag for
-> > > > 
-> > > > 	/proc/cpuinfo
-> > > > 	/proc/kmsg
-> > > > 	/proc/modules
-> > > > 	/proc/slabinfo
-> > > > 	/proc/stat
-> > > > 	/proc/sysvipc/*
-> > > > 	/proc/swaps
-> > > > 
-> > > > More will come once I figure out foolproof way to prevent out module
-> > > > authors from marking their stuff "permanent" for performance reasons
-> > > > when it is not.
-> > > > 
-> > > > This should help with scalability: benchmark is "read /proc/cpuinfo R times
-> > > > by N threads scattered over the system".
-> > > 
-> > > Is this an actual expected use-case?
-> > 
-> > Yes.
-> > 
-> > > Is there some additional unnecessary memory consumption
-> > > in the unscaled systems?
-> > 
-> > No, it's the opposite. Less memory usage for everyone and noticeable
-> > performance improvement for contented case.
-> > 
-> > > >  static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> > > >  {
-> > > >  	struct proc_dir_entry *pde = PDE(file_inode(file));
-> > > >  	ssize_t rv = -EIO;
-> > > > -	if (use_pde(pde)) {
-> > > > -		typeof_member(struct proc_ops, proc_read) read;
-> > > >  
-> > > > -		read = pde->proc_ops->proc_read;
-> > > > -		if (read)
-> > > > -			rv = read(file, buf, count, ppos);
-> > > > +	if (pde_is_permanent(pde)) {
-> > > > +		return pde_read(pde, file, buf, count, ppos);
-> > > > +	} else if (use_pde(pde)) {
-> > > > +		rv = pde_read(pde, file, buf, count, ppos);
-> > > >  		unuse_pde(pde);
-> > > 
-> > > Perhaps all the function call duplication could be minimized
-> > > by using code without direct returns like:
-> > > 
-> > > 	rv = pde_read(pde, file, buf, count, pos);
-> > > 	if (!pde_is_permanent(pde))
-> > > 		unuse_pde(pde);
-> > > 
-> > > 	return rv;
-> > 
-> > Function call non-duplication is false goal.
-> 
-> Depends, copy/paste errors are common and object code
-> size generally increases.
-> 
-> > Surprisingly it makes code bigger:
-> 
-> Not so far as I can tell.  Are you sure?
-> 
-> > 	$ ./scripts/bloat-o-meter ../vmlinux-000 ../obj/vmlinux
-> > 	add/remove: 0/0 grow/shrink: 1/0 up/down: 10/0 (10)
-> > 	Function                                     old     new   delta
-> > 	proc_reg_read                                108     118     +10
-> > 
-> > and worse too: "rv" is carried on stack through "unuse_pde" call.
-> 
-> With gcc 9.2.1 x86-64 defconfig:
-> 
-> Changing just proc_reg_read to:
-> 
-> static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> {
-> 	struct proc_dir_entry *pde = PDE(file_inode(file));
-> 	ssize_t rv;
-> 
-> 	rv = pde_read(pde, file, buf, count, ppos);
-> 	if (use_pde(pde))
-> 		unuse_pde(pde);
+On Mon, Feb 24, 2020 at 6:21 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> Add a helper to change the owner of a device's power entries. This
+> needs to happen when the ownership of a device is changed, e.g. when
+> moving network devices between network namespaces.
+> This function will be used to correctly account for ownership changes,
+> e.g. when moving network devices between network namespaces.
+>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+> /* v2 */
+> - "Rafael J. Wysocki" <rafael@kernel.org>:
+>   -  Fold if (dev->power.wakeup && dev->power.wakeup->dev) check into
+>      if (device_can_wakeup(dev)) check since the former can never be true if
+>      the latter is false.
+>
+> - Christian Brauner <christian.brauner@ubuntu.com>:
+>   - Place (dev->power.wakeup && dev->power.wakeup->dev) check under
+>     CONFIG_PM_SLEEP ifdefine since it will wakeup_source will only be available
+>     when this config option is set.
+>
+> /* v3 */
+> -  Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+>    - Add explicit uid/gid parameters.
+>
+> /* v4 */
+> - "Rafael J. Wysocki" <rafael@kernel.org>:
+>    - Remove in-function #ifdef in favor of separate helper that is a nop
+>      whenver !CONFIG_PM_SLEEP.
+> ---
+>  drivers/base/core.c        |  4 +++
+>  drivers/base/power/power.h |  3 ++
+>  drivers/base/power/sysfs.c | 61 +++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 67 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 988f34ce2eb0..fb8b7990f6fd 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -3552,6 +3552,10 @@ int device_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid)
+>         if (error)
+>                 goto out;
+>
+> +       error = dpm_sysfs_change_owner(dev, kuid, kgid);
+> +       if (error)
+> +               goto out;
+> +
+>  #ifdef CONFIG_BLOCK
+>         if (sysfs_deprecated && dev->class == &block_class)
+>                 goto out;
+> diff --git a/drivers/base/power/power.h b/drivers/base/power/power.h
+> index 444f5c169a0b..54292cdd7808 100644
+> --- a/drivers/base/power/power.h
+> +++ b/drivers/base/power/power.h
+> @@ -74,6 +74,7 @@ extern int pm_qos_sysfs_add_flags(struct device *dev);
+>  extern void pm_qos_sysfs_remove_flags(struct device *dev);
+>  extern int pm_qos_sysfs_add_latency_tolerance(struct device *dev);
+>  extern void pm_qos_sysfs_remove_latency_tolerance(struct device *dev);
+> +extern int dpm_sysfs_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid);
+>
+>  #else /* CONFIG_PM */
+>
+> @@ -88,6 +89,8 @@ static inline void pm_runtime_remove(struct device *dev) {}
+>
+>  static inline int dpm_sysfs_add(struct device *dev) { return 0; }
+>  static inline void dpm_sysfs_remove(struct device *dev) {}
+> +static inline int dpm_sysfs_change_owner(struct device *dev, kuid_t kuid,
+> +                                        kgid_t kgid) { return 0; }
+>
+>  #endif
+>
+> diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
+> index d7d82db2e4bc..d2955784d98d 100644
+> --- a/drivers/base/power/sysfs.c
+> +++ b/drivers/base/power/sysfs.c
+> @@ -480,6 +480,20 @@ static ssize_t wakeup_last_time_ms_show(struct device *dev,
+>         return enabled ? sprintf(buf, "%lld\n", msec) : sprintf(buf, "\n");
+>  }
+>
+> +static int dpm_sysfs_wakeup_change_owner(struct device *dev, kuid_t kuid,
+> +                                        kgid_t kgid)
+> +{
+> +       int rc = 0;
+> +
+> +       if (dev->power.wakeup && dev->power.wakeup->dev) {
+> +               rc = device_change_owner(dev->power.wakeup->dev, kuid, kgid);
+> +               if (rc)
+> +                       return rc;
+> +       }
+> +
+> +       return rc;
 
-What?
+Why not to do
 
-Please make non-racy patch before doing anything.
+if (dev->power.wakeup && dev->power.wakeup->dev)
+        return device_change_owner(dev->power.wakeup->dev, kuid, kgid);
 
-> 
-> 	return rv;
-> }
+return 0;
+
+here instead?
+
+> +}
+> +
+>  static DEVICE_ATTR_RO(wakeup_last_time_ms);
+>
+>  #ifdef CONFIG_PM_AUTOSLEEP
+> @@ -501,7 +515,13 @@ static ssize_t wakeup_prevent_sleep_time_ms_show(struct device *dev,
+>
+>  static DEVICE_ATTR_RO(wakeup_prevent_sleep_time_ms);
+>  #endif /* CONFIG_PM_AUTOSLEEP */
+> -#endif /* CONFIG_PM_SLEEP */
+> +#else /* CONFIG_PM_SLEEP */
+> +static inline int dpm_sysfs_wakeup_change_owner(struct device *dev, kuid_t kuid,
+> +                                               kgid_t kgid)
+> +{
+> +       return 0;
+> +}
+> +#endif
+>
+>  #ifdef CONFIG_PM_ADVANCED_DEBUG
+>  static ssize_t runtime_usage_show(struct device *dev,
+> @@ -684,6 +704,45 @@ int dpm_sysfs_add(struct device *dev)
+>         return rc;
+>  }
+>
+> +int dpm_sysfs_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid)
+> +{
+> +       int rc;
+> +
+> +       if (device_pm_not_required(dev))
+> +               return 0;
+> +
+> +       rc = sysfs_group_change_owner(&dev->kobj, &pm_attr_group, kuid, kgid);
+> +       if (rc)
+> +               return rc;
+> +
+> +       if (pm_runtime_callbacks_present(dev)) {
+> +               rc = sysfs_group_change_owner(
+> +                       &dev->kobj, &pm_runtime_attr_group, kuid, kgid);
+> +               if (rc)
+> +                       return rc;
+> +       }
+> +
+> +       if (device_can_wakeup(dev)) {
+> +               rc = sysfs_group_change_owner(&dev->kobj, &pm_wakeup_attr_group,
+> +                                             kuid, kgid);
+> +               if (rc)
+> +                       return rc;
+> +
+> +               rc = dpm_sysfs_wakeup_change_owner(dev, kuid, kgid);
+> +               if (rc)
+> +                       return rc;
+> +       }
+> +
+> +       if (dev->power.set_latency_tolerance) {
+> +               rc = sysfs_group_change_owner(
+> +                       &dev->kobj, &pm_qos_latency_tolerance_attr_group, kuid,
+> +                       kgid);
+> +               if (rc)
+> +                       return rc;
+> +       }
+> +       return 0;
+> +}
+> +
+>  int wakeup_sysfs_add(struct device *dev)
+>  {
+>         return sysfs_merge_group(&dev->kobj, &pm_wakeup_attr_group);
+> --
+> 2.25.1
+>
