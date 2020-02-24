@@ -2,127 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E4AD169FD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:15:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA50169FDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:18:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbgBXIPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:15:54 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45893 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbgBXIPx (ORCPT
+        id S1727276AbgBXISQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:18:16 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:51535 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbgBXISQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:15:53 -0500
-Received: by mail-lj1-f196.google.com with SMTP id e18so8991349ljn.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 00:15:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=9E4atKHNFhMUgRRiEy/HKZbsazKIFq0A6zQaS+Ym2Rs=;
-        b=0aRJ8jlk7K/HKTsns95GBBaEHmGtOdnFbjYj9vIhbo4+tLtlyfufBnVwleKPB1/X98
-         Pgtv8FVCl9tXtLobT7bdmwNtDdZHepJTvYQCXdV9n1wLvHk+nzSJlzAmbOEH8mlNtA7v
-         2DGluNg5tOwwERslMq2gB1V/ls4vsq6Q3436qFBbuOHbRKV974b0zOc/iXXNTzaB7r9u
-         0Y+UxTJda51orCm8P6331EASksnvu6HLENq7I9WhIqKwFNvx+Aj7pHEwlDpT19zJbP6d
-         hq9a+vogQGu+76vpLV9FQ94YnCrRP3OaxqfAj5NR7t5mEhqvtmmMD5AZ5LSwOYCEeT2G
-         hHlg==
+        Mon, 24 Feb 2020 03:18:16 -0500
+Received: by mail-il1-f197.google.com with SMTP id c12so16882586ilr.18
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 00:18:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=9E4atKHNFhMUgRRiEy/HKZbsazKIFq0A6zQaS+Ym2Rs=;
-        b=d6nbSiQT8mHiQrl/7LyMzYoCYuDsFJAj7OrTktOooIZDkzlwz2DI+RD/t3TXJXs5oW
-         cnJ/3PubEVkZ6ubNWIEHOme47ORyRcQxwHXTvL6VFJp6F6+R+X57wugAlg+UwKYCcb3F
-         T9DY8EEx6D0zbg9Bm/ZibKWPqK+bYK/Y/GGn0WpjmS+CcxePLI95K2Q6/ZXpfswhh3fh
-         yz1//Xdp05a9x9dB/6aACN4oBgylVpbZhqLbqdMcHkZXy9IeDQZ7H3KqZT36f+V6Bmm+
-         wQuGYiXX2kCrf/qK5kwG18JJYTDxY+a741kmyAbBeHjwJYP91CQaMyJx6YqFFtfny227
-         y7XA==
-X-Gm-Message-State: APjAAAWCCBTpWjKao6Z6Sj+RwW5Wr/sSlxVKSSzZkdE3YZVow7QNDGXH
-        CSEdkVhF+vFKedDDW7yQ7tqBzg==
-X-Google-Smtp-Source: APXvYqzgh1ZGX/532+S4qeKBsp3fOZk0JQWUNLbURDxZxQbr4hjc1+mWNY2lYVuZyvgFoFMOCV92hw==
-X-Received: by 2002:a2e:9b5a:: with SMTP id o26mr29929299ljj.190.1582532151395;
-        Mon, 24 Feb 2020 00:15:51 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id n189sm3008847lfa.14.2020.02.24.00.15.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 00:15:50 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id DF908100FD9; Mon, 24 Feb 2020 11:16:22 +0300 (+03)
-Date:   Mon, 24 Feb 2020 11:16:22 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Brian Geffon <bgeffon@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-api@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Deacon <will@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Yu Zhao <yuzhao@google.com>,
-        Jesse Barnes <jsbarnes@google.com>,
-        Florian Weimer <fweimer@redhat.com>, mtk.manpages@gmail.com,
-        linux-man@vger.kernel.org, Lokesh Gidra <lokeshgidra@google.com>
-Subject: Re: [PATCH v7 1/2] mm: Add MREMAP_DONTUNMAP to mremap().
-Message-ID: <20200224081622.f4oy2pqk6aq6krfp@box>
-References: <20200221174248.244748-1-bgeffon@google.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=FsNWyF8SgwfIXC0WUBYHcHMlv2/lUMvY9fiX4dlbpeQ=;
+        b=Yxe+FAP0iuonD5zuAYk2CLfUjXMOM/p/eGcquXRkzEC5Fe1+tBZQC8i17nuHM1Yb3y
+         aFRnkyYkXEg0JiOFybhGWDuXR5AosZzdwnkDFAoybKeYyURSHgsS2pnOrRnUHTHIW45O
+         nzSQ9YY/8kv50mZXjGP77yX5jvX6D+yttyEErtezmeklIA/p+L5WK+s2wTuFKZCtyvPb
+         hNoXD/rGVfsgg/Mm9mBw5dmYgKddot9cE5uTpetft4RRFnYXcEJ7e2One5bIOMOvsq0K
+         x434XNDaRzylaKSaSPg5FleLgr0qQddHCXeRTV59ULYQU/pwzlmbh+P7KtskSA3dtnIU
+         00sQ==
+X-Gm-Message-State: APjAAAUtXkyKgorBFPjpVuk5RGIgohAplFUpPmRGBPpaeA2aYr2ddj34
+        exLGBMmRJfQkPJxWVTezabyJMO1h/JI/fiTRJB2mYRlQfbVq
+X-Google-Smtp-Source: APXvYqw7v6LwcrY8hQt9SyX0LsdrCEgrm7QDbjGm7XPl9gB33GqYrZsWDZOBUvk5YjUOR4Vc3DmTRlN6cDUFF0gJtJXBRUUOXQg9
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200221174248.244748-1-bgeffon@google.com>
+X-Received: by 2002:a05:6e02:80c:: with SMTP id u12mr59585701ilm.273.1582532293849;
+ Mon, 24 Feb 2020 00:18:13 -0800 (PST)
+Date:   Mon, 24 Feb 2020 00:18:13 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000387920059f4e0351@google.com>
+Subject: KMSAN: kernel-infoleak in tty_compat_ioctl
+From:   syzbot <syzbot+8da9175e28eadcb203ce@syzkaller.appspotmail.com>
+To:     glider@google.com, gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 09:42:46AM -0800, Brian Geffon wrote:
-> When remapping an anonymous, private mapping, if MREMAP_DONTUNMAP is
-> set, the source mapping will not be removed. The remap operation
-> will be performed as it would have been normally by moving over the
-> page tables to the new mapping. The old vma will have any locked
-> flags cleared, have no pagetables, and any userfaultfds that were
-> watching that range will continue watching it.
-> 
-> For a mapping that is shared or not anonymous, MREMAP_DONTUNMAP will cause
-> the mremap() call to fail. Because MREMAP_DONTUNMAP always results in moving
-> a VMA you MUST use the MREMAP_MAYMOVE flag, it's not possible to resize
-> a VMA while also moving with MREMAP_DONTUNMAP so old_len must always
-> be equal to the new_len otherwise it will return -EINVAL.
-> 
-> We hope to use this in Chrome OS where with userfaultfd we could write
-> an anonymous mapping to disk without having to STOP the process or worry
-> about VMA permission changes.
-> 
-> This feature also has a use case in Android, Lokesh Gidra has said
-> that "As part of using userfaultfd for GC, We'll have to move the physical
-> pages of the java heap to a separate location. For this purpose mremap
-> will be used. Without the MREMAP_DONTUNMAP flag, when I mremap the java
-> heap, its virtual mapping will be removed as well. Therefore, we'll
-> require performing mmap immediately after. This is not only time consuming
-> but also opens a time window where a native thread may call mmap and
-> reserve the java heap's address range for its own usage. This flag
-> solves the problem."
-> 
->   v6 -> v7:
->     - Don't allow resizing VMA as part of MREMAP_DONTUNMAP.
->       There is no clear use case at the moment and it can be added
->       later as it simplifies the implementation for now.
-> 
->   v5 -> v6:
->     - Code cleanup suggested by Kirill.
-> 
->   v4 -> v5:
->     - Correct commit message to more accurately reflect the behavior.
->     - Clear VM_LOCKED and VM_LOCKEDONFAULT on the old vma.
->            
-> Signed-off-by: Brian Geffon <bgeffon@google.com>
-> Reviewed-by: Minchan Kim <minchan@kernel.org>
-> Tested-by: Lokesh Gidra <lokeshgidra@google.com>
+Hello,
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+syzbot found the following crash on:
 
--- 
- Kirill A. Shutemov
+HEAD commit:    8bbbc5cf kmsan: don't compile memmove
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=1280ea7ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cd0e9a6b0e555cc3
+dashboard link: https://syzkaller.appspot.com/bug?extid=8da9175e28eadcb203ce
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1722a3d9e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1071e265e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+8da9175e28eadcb203ce@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: kernel-infoleak in kmsan_copy_to_user+0x81/0x90 mm/kmsan/kmsan_hooks.c:253
+CPU: 1 PID: 11476 Comm: syz-executor814 Not tainted 5.6.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x220 lib/dump_stack.c:118
+ kmsan_report+0xf7/0x1e0 mm/kmsan/kmsan_report.c:118
+ kmsan_internal_check_memory+0x238/0x3d0 mm/kmsan/kmsan.c:423
+ kmsan_copy_to_user+0x81/0x90 mm/kmsan/kmsan_hooks.c:253
+ _copy_to_user+0x15a/0x1f0 lib/usercopy.c:33
+ copy_to_user include/linux/uaccess.h:174 [inline]
+ compat_tty_tiocgserial drivers/tty/tty_io.c:2748 [inline]
+ tty_compat_ioctl+0x1482/0x1850 drivers/tty/tty_io.c:2846
+ __do_compat_sys_ioctl fs/ioctl.c:857 [inline]
+ __se_compat_sys_ioctl+0x57c/0xed0 fs/ioctl.c:808
+ __ia32_compat_sys_ioctl+0xd9/0x110 fs/ioctl.c:808
+ do_syscall_32_irqs_on arch/x86/entry/common.c:339 [inline]
+ do_fast_syscall_32+0x3c7/0x6e0 arch/x86/entry/common.c:410
+ entry_SYSENTER_compat+0x68/0x77 arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7ff7d99
+Code: 90 e8 0b 00 00 00 f3 90 0f ae e8 eb f9 8d 74 26 00 89 3c 24 c3 90 90 90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000ff97b20c EFLAGS: 00000213 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000000541e
+RDX: 0000000020000300 RSI: 00000000080ea078 RDI: 00000000ff97b260
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Local variable ----v32.i105@tty_compat_ioctl created at:
+ compat_tty_tiocgserial drivers/tty/tty_io.c:2735 [inline]
+ tty_compat_ioctl+0xf12/0x1850 drivers/tty/tty_io.c:2846
+ compat_tty_tiocgserial drivers/tty/tty_io.c:2735 [inline]
+ tty_compat_ioctl+0xf12/0x1850 drivers/tty/tty_io.c:2846
+
+Bytes 50-51 of 60 are uninitialized
+Memory access of size 60 starts at ffffb50b0158fce0
+Data copied to user address 0000000020000300
+=====================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
