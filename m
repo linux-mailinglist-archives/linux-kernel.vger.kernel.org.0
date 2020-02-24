@@ -2,527 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E652B16A5D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:14:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FCFF16A601
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 13:21:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbgBXMOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 07:14:33 -0500
-Received: from mga03.intel.com ([134.134.136.65]:3635 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727727AbgBXMO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 07:14:29 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 04:14:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,480,1574150400"; 
-   d="scan'208";a="349909459"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 24 Feb 2020 04:14:26 -0800
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Benson Leung <bleung@chromium.org>,
-        Prashant Malani <pmalani@chromium.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH v2 9/9] usb: typec: driver for Intel PMC mux control
-Date:   Mon, 24 Feb 2020 15:14:06 +0300
-Message-Id: <20200224121406.2419-10-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200224121406.2419-1-heikki.krogerus@linux.intel.com>
-References: <20200224121406.2419-1-heikki.krogerus@linux.intel.com>
-MIME-Version: 1.0
+        id S1727497AbgBXMVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 07:21:09 -0500
+Received: from mail-am6eur05on2070.outbound.protection.outlook.com ([40.107.22.70]:4353
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726778AbgBXMVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 07:21:09 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HRSpCH3MopZXovxP8JvDHsmVKEzoOSf4n7hR8TGepZphB/CXrJBkH/+p0F3kNmaY4/eJ5Sm3WfdZbY4fR9Qw/yKnAEp+foJYX0fK4EtXOjE3obJVmqMsnPgIjgpuXn0EkkyY0rXur1Sb0IxhakVvwRJ1cVhSd5PDeqztCff9hujlXjb8rrop6BcGT/c1lwZIZ+D1S9j9MJX4vGlyVYMxS17UgJ9FATIuNxch7o5PbE9PCHbEOSyuBgZB5+ML1/5Zv0ds2ceOISP1jYavbeDSBmuVICLB2GdMbWnldBk4OtrRDiy12RIBqDWdiI3mwPOz2a9LI7aHJnXCEEQ9C3HoRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=04xwWlKpfUL5XJz/UKIeC7AAetjrv4OYHyJM2OF5ZMU=;
+ b=iaxP8CKUBL96LKPuTQDNftps24L84IfeY+Jm1p1SaoagEA2FSgKwYVeKjk9GAI5OU4jhNqF2SU3WoUko9BO530buzD2vwgjvorFi11QQDUv12U1QfiyGU/6To1977ZgjSsVmeNjtZ1pwEH7De+igJ47EwUcHUVtBLoxj2WVnklSUG98FuRxhS2rAxLxybe8JQv1fAzucOdUm+gOnCGdi739ZRhgAoAGHzBT+GCrWFGnZB4Zr3ZW+eQ2IaJ6n2GldolQWk3fBk4YaECQhnhSoLnboDckrbeb8Jcw89B4TYhBXTyOWRCQCzkenzpivi0iUE900sKa/S2opQI6boakBdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=04xwWlKpfUL5XJz/UKIeC7AAetjrv4OYHyJM2OF5ZMU=;
+ b=qg0zf+/uM+bqT++BcdsdNRttRhHsIkmE2QtMD//FokdaafmgVGMltLQbrnV2KuFAFPptrcI7Jp+3Bzb/lkAZAYHtfomhmr2oxAf68Ub5ZUFWbWgJ8o7OoXOX+q69RDANI9LK7t6sx5N1/QY5IAfsI4g1rIZSBkeKRIfZG7+Ipas=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6289.eurprd04.prod.outlook.com (20.179.35.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2750.21; Mon, 24 Feb 2020 12:20:54 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2750.021; Mon, 24 Feb 2020
+ 12:20:54 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de,
+        jassisinghbrar@gmail.com, leonard.crestez@nxp.com,
+        o.rempel@pengutronix.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        m.felsch@pengutronix.de, hongxing.zhu@nxp.com,
+        aisheng.dong@nxp.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 0/3] mailbox/firmware: imx: support SCU channel type
+Date:   Mon, 24 Feb 2020 20:14:31 +0800
+Message-Id: <1582546474-21721-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: HK2PR04CA0077.apcprd04.prod.outlook.com
+ (2603:1096:202:15::21) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by HK2PR04CA0077.apcprd04.prod.outlook.com (2603:1096:202:15::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2750.18 via Frontend Transport; Mon, 24 Feb 2020 12:20:50 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 95d77886-9da7-46ab-f12d-08d7b923fe7e
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6289:|AM0PR04MB6289:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB628992EF2030FA99A0D4875E88EC0@AM0PR04MB6289.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2201;
+X-Forefront-PRVS: 032334F434
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(39860400002)(136003)(366004)(376002)(189003)(199004)(6486002)(66556008)(5660300002)(16526019)(316002)(66476007)(956004)(2906002)(478600001)(186003)(66946007)(36756003)(4326008)(26005)(86362001)(15650500001)(6666004)(81166006)(52116002)(6506007)(9686003)(6512007)(2616005)(7416002)(8936002)(8676002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6289;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 806otxI4zRBdyE+kbKD4PYV8lEKZxca2OY7Zji7+Iu+xaobqdU/+fgYH9jU+8M9sUgAGdv1iDCpNacnXW66RJ1OpGUZOiVUdpI+Im5DvzWm52M/l2rqpvh3abGP6SWs0JTl4p5ONlsxXM6Ok1aEiWxJnlIfFxeLaOUyDoAJjys+NK+rRrBMkMyXYXkqyHaP4O1BsEfPh+aXqk3uz1f6vW1SMfdPo7ktsJ5xwP+jPyvYd8jL8BOwstrAOW/Dqm7CGneR5fxEu4+njsIRc6aXxJvWiHz2VyBvmd0Z+egFc2xc28Z2RvDbuOL5g3LMR+Wwk5K16kfYY5wwTTG3E5CwIwPU0GUmqUuC+Kgjp5IpiO0PFGwwF9hB2IkyqMUQkPN7+JUBi8Fq4DbZTEgl5dy5tNpuoWIyxwBwcAmtPj7uf3ga3Ei1NLYCqS7jV4DOF1zgD
+X-MS-Exchange-AntiSpam-MessageData: P/bh15ORX3FvZrT4EEYcOEh5xQoHsgZICsPdmMYeDsfjTU+6bU9SvzhIqv8J3ycGSmeDd7xD96gNi3kpc+MHdr2pg5MCFnn84rKsagQWRyAuvhv7pC9s1p3QD2bVGT5esJQop/yti+7eK3H8XWp8Fg==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95d77886-9da7-46ab-f12d-08d7b923fe7e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2020 12:20:54.3219
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hB3er9aBN/5I9bN7+7Q16u0MnAHjcFuW3dryhw3op2Csq4BK9ghLCDdiOACE7csSaVT9rw1Wy8At5A6K3o28IA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6289
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Intel PMC microcontroller on the latest Intel platforms
-has a new function that allows configuration of the USB
-Multiplexer/DeMultiplexer switches that are under the
-control of the PMC.
+From: Peng Fan <peng.fan@nxp.com>
 
-The Intel PMC mux control (aka. mux-agent) can be used for
-swapping the USB data role and for entering alternate modes,
-DisplayPort or Thunderbolt3.
+Sorry to bind the mailbox/firmware patch together. This is make it
+to understand what changed to support using 1 TX and 1 RX channel
+for SCFW message.
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- drivers/usb/typec/mux/Kconfig         |   9 +
- drivers/usb/typec/mux/Makefile        |   1 +
- drivers/usb/typec/mux/intel_pmc_mux.c | 434 ++++++++++++++++++++++++++
- 3 files changed, 444 insertions(+)
- create mode 100644 drivers/usb/typec/mux/intel_pmc_mux.c
+Per i.MX8QXP Reference mannual, there are several message using
+examples. One of them is:
+Passing short messages: Transmit register(s) can be used to pass
+short messages from one to four words in length. For example,
+when a four-word message is desired, only one of the registers
+needs to have its corresponding interrupt enable bit set at the
+receiver side.
 
-diff --git a/drivers/usb/typec/mux/Kconfig b/drivers/usb/typec/mux/Kconfig
-index 01ed0d5e10e8..77eb97b2aa86 100644
---- a/drivers/usb/typec/mux/Kconfig
-+++ b/drivers/usb/typec/mux/Kconfig
-@@ -9,4 +9,13 @@ config TYPEC_MUX_PI3USB30532
- 	  Say Y or M if your system has a Pericom PI3USB30532 Type-C cross
- 	  switch / mux chip found on some devices with a Type-C port.
+This patchset is to using this for SCFW message to replace four TX
+and four RX method.
+
+Pachset based on i.MX Shawn's for-next branch, commit fd7eba9fa1f534b710.
+
+To test this patchset, I applied the below diff:
+ diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+ index fb5f752b15fe..c5636624726e 100644
+ --- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+ +++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+ @@ -140,17 +140,11 @@
  
-+config TYPEC_MUX_INTEL_PMC
-+	tristate "Intel PMC mux control"
-+	depends on INTEL_PMC_IPC
-+	select USB_ROLE_SWITCH
-+	help
-+	  Driver for USB muxes controlled by Intel PMC FW. Intel PMC FW can
-+	  control the USB role switch and also the multiplexer/demultiplexer
-+	  switches used with USB Type-C Alternate Modes.
-+
- endmenu
-diff --git a/drivers/usb/typec/mux/Makefile b/drivers/usb/typec/mux/Makefile
-index 1332e469b8a0..280a6f553115 100644
---- a/drivers/usb/typec/mux/Makefile
-+++ b/drivers/usb/typec/mux/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
+         scu {
+                 compatible = "fsl,imx-scu";
+ -               mbox-names = "tx0", "tx1", "tx2", "tx3",
+ -                            "rx0", "rx1", "rx2", "rx3",
+ +               mbox-names = "tx0",
+ +                            "rx0",
+                              "gip3";
+                 mboxes = <&lsio_mu1 0 0
+ -                         &lsio_mu1 0 1
+ -                         &lsio_mu1 0 2
+ -                         &lsio_mu1 0 3
+                           &lsio_mu1 1 0
+ -                         &lsio_mu1 1 1
+ -                         &lsio_mu1 1 2
+ -                         &lsio_mu1 1 3
+                           &lsio_mu1 3 3>;
  
- obj-$(CONFIG_TYPEC_MUX_PI3USB30532)	+= pi3usb30532.o
-+obj-$(CONFIG_TYPEC_MUX_INTEL_PMC)	+= intel_pmc_mux.o
-diff --git a/drivers/usb/typec/mux/intel_pmc_mux.c b/drivers/usb/typec/mux/intel_pmc_mux.c
-new file mode 100644
-index 000000000000..f5c5e0aef66f
---- /dev/null
-+++ b/drivers/usb/typec/mux/intel_pmc_mux.c
-@@ -0,0 +1,434 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for Intel PMC USB mux control
-+ *
-+ * Copyright (C) 2020 Intel Corporation
-+ * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-+ */
-+
-+#include <linux/acpi.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/usb/role.h>
-+#include <linux/usb/typec_mux.h>
-+#include <linux/usb/typec_dp.h>
-+#include <linux/usb/typec_tbt.h>
-+
-+#include <asm/intel_pmc_ipc.h>
-+
-+#define PMC_USBC_CMD		0xa7
-+
-+/* "Usage" OOB Message field values */
-+enum {
-+	PMC_USB_CONNECT,
-+	PMC_USB_DISCONNECT,
-+	PMC_USB_SAFE_MODE,
-+	PMC_USB_ALT_MODE,
-+	PMC_USB_DP_HPD,
-+};
-+
-+#define PMC_USB_MSG_USB2_PORT_SHIFT	0
-+#define PMC_USB_MSG_USB3_PORT_SHIFT	4
-+#define PMC_USB_MSG_UFP_SHIFT		4
-+#define PMC_USB_MSG_ORI_HSL_SHIFT	5
-+#define PMC_USB_MSG_ORI_AUX_SHIFT	6
-+
-+/* Alt Mode Request */
-+struct altmode_req {
-+	u8 usage;
-+	u8 mode_type;
-+	u8 mode_id;
-+	u8 reserved;
-+	u32 mode_data;
-+} __packed;
-+
-+#define PMC_USB_MODE_TYPE_SHIFT		4
-+
-+enum {
-+	PMC_USB_MODE_TYPE_USB,
-+	PMC_USB_MODE_TYPE_DP,
-+	PMC_USB_MODE_TYPE_TBT,
-+};
-+
-+/* Common Mode Data bits */
-+#define PMC_USB_ALTMODE_ACTIVE_CABLE	BIT(2)
-+
-+#define PMC_USB_ALTMODE_ORI_SHIFT	1
-+#define PMC_USB_ALTMODE_UFP_SHIFT	3
-+#define PMC_USB_ALTMODE_ORI_AUX_SHIFT	4
-+#define PMC_USB_ALTMODE_ORI_HSL_SHIFT	5
-+
-+/* DP specific Mode Data bits */
-+#define PMC_USB_ALTMODE_DP_MODE_SHIFT	8
-+
-+/* TBT specific Mode Data bits */
-+#define PMC_USB_ALTMODE_TBT_TYPE	BIT(17)
-+#define PMC_USB_ALTMODE_CABLE_TYPE	BIT(18)
-+#define PMC_USB_ALTMODE_ACTIVE_LINK	BIT(20)
-+#define PMC_USB_ALTMODE_FORCE_LSR	BIT(23)
-+#define PMC_USB_ALTMODE_CABLE_SPD(_s_)	(((_s_) & GENMASK(2, 0)) << 25)
-+#define   PMC_USB_ALTMODE_CABLE_USB31	1
-+#define   PMC_USB_ALTMODE_CABLE_10GPS	2
-+#define   PMC_USB_ALTMODE_CABLE_20GPS	3
-+#define PMC_USB_ALTMODE_TBT_GEN(_g_)	(((_g_) & GENMASK(1, 0)) << 28)
-+
-+/* Display HPD Request bits */
-+#define PMC_USB_DP_HPD_IRQ		BIT(5)
-+#define PMC_USB_DP_HPD_LVL		BIT(6)
-+
-+struct pmc_usb;
-+
-+struct pmc_usb_port {
-+	int num;
-+	struct pmc_usb *pmc;
-+	struct typec_mux *typec_mux;
-+	struct typec_switch *typec_sw;
-+	struct usb_role_switch *usb_sw;
-+
-+	enum typec_orientation orientation;
-+	enum usb_role role;
-+
-+	u8 usb2_port;
-+	u8 usb3_port;
-+};
-+
-+struct pmc_usb {
-+	u8 num_ports;
-+	struct device *dev;
-+	struct pmc_usb_port *port;
-+};
-+
-+static int pmc_usb_command(struct pmc_usb_port *port, u8 *msg, u32 len)
-+{
-+	u8 response[4];
-+
-+	/*
-+	 * Error bit will always be 0 with the USBC command.
-+	 * Status can be checked from the response message.
-+	 */
-+	intel_pmc_ipc_command(PMC_USBC_CMD, 0, msg, len,
-+			      (void *)response, 1);
-+
-+	if (response[2]) {
-+		if (response[2] & BIT(1))
-+			return -EIO;
-+		return -EBUSY;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+pmc_usb_mux_dp_hpd(struct pmc_usb_port *port, struct typec_mux_state *state)
-+{
-+	struct typec_displayport_data *data = state->data;
-+	u8 msg[2] = { };
-+
-+	msg[0] = PMC_USB_DP_HPD;
-+	msg[0] |= port->usb3_port << PMC_USB_MSG_USB3_PORT_SHIFT;
-+
-+	msg[1] = PMC_USB_DP_HPD_IRQ;
-+
-+	if (data->status & DP_STATUS_HPD_STATE)
-+		msg[1] |= PMC_USB_DP_HPD_LVL;
-+
-+	return pmc_usb_command(port, msg, sizeof(msg));
-+}
-+
-+static int
-+pmc_usb_mux_dp(struct pmc_usb_port *port, struct typec_mux_state *state)
-+{
-+	struct typec_displayport_data *data = state->data;
-+	struct altmode_req req = { };
-+
-+	if (data->status & DP_STATUS_IRQ_HPD)
-+		return pmc_usb_mux_dp_hpd(port, state);
-+
-+	req.usage = PMC_USB_ALT_MODE;
-+	req.usage |= port->usb3_port << PMC_USB_MSG_USB3_PORT_SHIFT;
-+	req.mode_type = PMC_USB_MODE_TYPE_DP << PMC_USB_MODE_TYPE_SHIFT;
-+
-+	req.mode_data = (port->orientation - 1) << PMC_USB_ALTMODE_ORI_SHIFT;
-+	req.mode_data |= (port->role - 1) << PMC_USB_ALTMODE_UFP_SHIFT;
-+	req.mode_data |= (port->orientation - 1) << PMC_USB_ALTMODE_ORI_AUX_SHIFT;
-+	req.mode_data |= (port->orientation - 1) << PMC_USB_ALTMODE_ORI_HSL_SHIFT;
-+
-+	req.mode_data |= (state->mode - TYPEC_STATE_MODAL) <<
-+			 PMC_USB_ALTMODE_DP_MODE_SHIFT;
-+
-+	return pmc_usb_command(port, (void *)&req, sizeof(req));
-+}
-+
-+static int
-+pmc_usb_mux_tbt(struct pmc_usb_port *port, struct typec_mux_state *state)
-+{
-+	struct typec_thunderbolt_data *data = state->data;
-+	u8 cable_speed = TBT_CABLE_SPEED(data->cable_mode);
-+	struct altmode_req req = { };
-+
-+	req.usage = PMC_USB_ALT_MODE;
-+	req.usage |= port->usb3_port << PMC_USB_MSG_USB3_PORT_SHIFT;
-+	req.mode_type = PMC_USB_MODE_TYPE_TBT << PMC_USB_MODE_TYPE_SHIFT;
-+
-+	req.mode_data = (port->orientation - 1) << PMC_USB_ALTMODE_ORI_SHIFT;
-+	req.mode_data |= (port->role - 1) << PMC_USB_ALTMODE_UFP_SHIFT;
-+	req.mode_data |= (port->orientation - 1) << PMC_USB_ALTMODE_ORI_AUX_SHIFT;
-+	req.mode_data |= (port->orientation - 1) << PMC_USB_ALTMODE_ORI_HSL_SHIFT;
-+
-+	if (TBT_ADAPTER(data->device_mode) == TBT_ADAPTER_TBT3)
-+		req.mode_data |= PMC_USB_ALTMODE_TBT_TYPE;
-+
-+	if (data->cable_mode & TBT_CABLE_OPTICAL)
-+		req.mode_data |= PMC_USB_ALTMODE_CABLE_TYPE;
-+
-+	if (data->cable_mode & TBT_CABLE_LINK_TRAINING)
-+		req.mode_data |= PMC_USB_ALTMODE_ACTIVE_LINK;
-+
-+	if (data->enter_vdo & TBT_ENTER_MODE_ACTIVE_CABLE)
-+		req.mode_data |= PMC_USB_ALTMODE_ACTIVE_CABLE;
-+
-+	req.mode_data |= PMC_USB_ALTMODE_CABLE_SPD(cable_speed);
-+
-+	return pmc_usb_command(port, (void *)&req, sizeof(req));
-+}
-+
-+static int pmc_usb_mux_safe_state(struct pmc_usb_port *port)
-+{
-+	u8 msg;
-+
-+	msg = PMC_USB_SAFE_MODE;
-+	msg |= port->usb3_port << PMC_USB_MSG_USB3_PORT_SHIFT;
-+
-+	return pmc_usb_command(port, &msg, sizeof(msg));
-+}
-+
-+static int pmc_usb_connect(struct pmc_usb_port *port)
-+{
-+	u8 msg[2];
-+
-+	msg[0] = PMC_USB_CONNECT;
-+	msg[0] |= port->usb3_port << PMC_USB_MSG_USB3_PORT_SHIFT;
-+
-+	msg[1] = port->usb2_port << PMC_USB_MSG_USB2_PORT_SHIFT;
-+	msg[1] |= (port->orientation - 1) << PMC_USB_MSG_ORI_HSL_SHIFT;
-+	msg[1] |= (port->orientation - 1) << PMC_USB_MSG_ORI_AUX_SHIFT;
-+
-+	return pmc_usb_command(port, msg, sizeof(msg));
-+}
-+
-+static int pmc_usb_disconnect(struct pmc_usb_port *port)
-+{
-+	u8 msg[2];
-+
-+	msg[0] = PMC_USB_DISCONNECT;
-+	msg[0] |= port->usb3_port << PMC_USB_MSG_USB3_PORT_SHIFT;
-+
-+	msg[1] = port->usb2_port << PMC_USB_MSG_USB2_PORT_SHIFT;
-+
-+	return pmc_usb_command(port, msg, sizeof(msg));
-+}
-+
-+static int
-+pmc_usb_mux_set(struct typec_mux *mux, struct typec_mux_state *state)
-+{
-+	struct pmc_usb_port *port = typec_mux_get_drvdata(mux);
-+
-+	if (!state->alt)
-+		return 0;
-+
-+	if (state->mode == TYPEC_STATE_SAFE)
-+		return pmc_usb_mux_safe_state(port);
-+
-+	switch (state->alt->svid) {
-+	case USB_TYPEC_TBT_SID:
-+		return pmc_usb_mux_tbt(port, state);
-+	case USB_TYPEC_DP_SID:
-+		return pmc_usb_mux_dp(port, state);
-+	}
-+
-+	return -EOPNOTSUPP;
-+}
-+
-+static int pmc_usb_set_orientation(struct typec_switch *sw,
-+				   enum typec_orientation orientation)
-+{
-+	struct pmc_usb_port *port = typec_switch_get_drvdata(sw);
-+
-+	if (port->orientation == orientation)
-+		return 0;
-+
-+	port->orientation = orientation;
-+
-+	if (port->role) {
-+		if (orientation == TYPEC_ORIENTATION_NONE)
-+			return pmc_usb_disconnect(port);
-+		else
-+			return pmc_usb_connect(port);
-+	}
-+
-+	return 0;
-+}
-+
-+static int pmc_usb_set_role(struct usb_role_switch *sw, enum usb_role role)
-+{
-+	struct pmc_usb_port *port = usb_role_switch_get_drvdata(sw);
-+
-+	if (port->role == role)
-+		return 0;
-+
-+	port->role = role;
-+
-+	if (port->orientation) {
-+		if (role == USB_ROLE_NONE)
-+			return pmc_usb_disconnect(port);
-+		else
-+			return pmc_usb_connect(port);
-+	}
-+
-+	return 0;
-+}
-+
-+static int pmc_usb_register_port(struct pmc_usb *pmc, int index,
-+				 struct fwnode_handle *fwnode)
-+{
-+	struct pmc_usb_port *port = &pmc->port[index];
-+	struct usb_role_switch_desc desc = { };
-+	struct typec_switch_desc sw_desc = { };
-+	struct typec_mux_desc mux_desc = { };
-+	int ret;
-+
-+	ret = fwnode_property_read_u8(fwnode, "usb2-port", &port->usb2_port);
-+	if (ret)
-+		return ret;
-+
-+	ret = fwnode_property_read_u8(fwnode, "usb3-port", &port->usb3_port);
-+	if (ret)
-+		return ret;
-+
-+	port->num = index;
-+	port->pmc = pmc;
-+
-+	sw_desc.fwnode = fwnode;
-+	sw_desc.drvdata = port;
-+	sw_desc.name = fwnode_get_name(fwnode);
-+	sw_desc.set = pmc_usb_set_orientation;
-+
-+	port->typec_sw = typec_switch_register(pmc->dev, &sw_desc);
-+	if (IS_ERR(port->typec_sw))
-+		return PTR_ERR(port->typec_sw);
-+
-+	mux_desc.fwnode = fwnode;
-+	mux_desc.drvdata = port;
-+	mux_desc.name = fwnode_get_name(fwnode);
-+	mux_desc.set = pmc_usb_mux_set;
-+
-+	port->typec_mux = typec_mux_register(pmc->dev, &mux_desc);
-+	if (IS_ERR(port->typec_mux)) {
-+		ret = PTR_ERR(port->typec_mux);
-+		goto err_unregister_switch;
-+	}
-+
-+	desc.fwnode = fwnode;
-+	desc.driver_data = port;
-+	desc.name = fwnode_get_name(fwnode);
-+	desc.set = pmc_usb_set_role;
-+
-+	port->usb_sw = usb_role_switch_register(pmc->dev, &desc);
-+	if (IS_ERR(port->usb_sw)) {
-+		ret = PTR_ERR(port->usb_sw);
-+		goto err_unregister_mux;
-+	}
-+
-+	return 0;
-+
-+err_unregister_mux:
-+	typec_mux_unregister(port->typec_mux);
-+
-+err_unregister_switch:
-+	typec_switch_unregister(port->typec_sw);
-+
-+	return ret;
-+}
-+
-+static int pmc_usb_probe(struct platform_device *pdev)
-+{
-+	struct fwnode_handle *fwnode = NULL;
-+	struct pmc_usb *pmc;
-+	int i = 0;
-+	int ret;
-+
-+	pmc = devm_kzalloc(&pdev->dev, sizeof(*pmc), GFP_KERNEL);
-+	if (!pmc)
-+		return -ENOMEM;
-+
-+	device_for_each_child_node(&pdev->dev, fwnode)
-+		pmc->num_ports++;
-+
-+	pmc->port = devm_kcalloc(&pdev->dev, pmc->num_ports,
-+				 sizeof(struct pmc_usb_port), GFP_KERNEL);
-+	if (!pmc->port)
-+		return -ENOMEM;
-+
-+	pmc->dev = &pdev->dev;
-+
-+	/*
-+	 * For every physical USB connector (USB2 and USB3 combo) there is a
-+	 * child ACPI device node under the PMC mux ACPI device object.
-+	 */
-+	for (i = 0; i < pmc->num_ports; i++) {
-+		fwnode = device_get_next_child_node(pmc->dev, fwnode);
-+		if (!fwnode)
-+			break;
-+
-+		ret = pmc_usb_register_port(pmc, i, fwnode);
-+		if (ret)
-+			goto err_remove_ports;
-+	}
-+
-+	platform_set_drvdata(pdev, pmc);
-+
-+	return 0;
-+
-+err_remove_ports:
-+	for (i = 0; i < pmc->num_ports; i++) {
-+		typec_switch_unregister(pmc->port[i].typec_sw);
-+		typec_mux_unregister(pmc->port[i].typec_mux);
-+	}
-+
-+	return ret;
-+}
-+
-+static int pmc_usb_remove(struct platform_device *pdev)
-+{
-+	struct pmc_usb *pmc = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < pmc->num_ports; i++) {
-+		typec_switch_unregister(pmc->port[i].typec_sw);
-+		typec_mux_unregister(pmc->port[i].typec_mux);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct acpi_device_id pmc_usb_acpi_ids[] = {
-+	{ "INTC105C", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, pmc_usb_acpi_ids);
-+
-+static struct platform_driver pmc_usb_driver = {
-+	.driver = {
-+		.name = "intel_pmc_usb",
-+		.acpi_match_table = ACPI_PTR(pmc_usb_acpi_ids),
-+	},
-+	.probe = pmc_usb_probe,
-+	.remove = pmc_usb_remove,
-+};
-+
-+module_platform_driver(pmc_usb_driver);
-+
-+MODULE_AUTHOR("Heikki Krogerus <heikki.krogerus@linux.intel.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Intel PMC USB mux control");
+                 clk: clock-controller {
+ @@ -546,6 +540,7 @@
+                         reg = <0x5d1c0000 0x10000>;
+                         interrupts = <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>;
+                         #mbox-cells = <2>;
+ +                       fsl,scu;
+                 };
+ 
+                 lsio_mu2: mailbox@5d1d0000 {
+
+
+Peng Fan (3):
+  dt-bindings: mailbox: imx-mu: add fsl,scu property
+  mailbox: imx: support SCU channel type
+  firmware: imx-scu: Support one TX and one RX
+
+ .../devicetree/bindings/mailbox/fsl,mu.txt         |  1 +
+ drivers/firmware/imx/imx-scu.c                     | 54 +++++++++++++++++-----
+ drivers/mailbox/imx-mailbox.c                      | 42 +++++++++++++++--
+ 3 files changed, 82 insertions(+), 15 deletions(-)
+
+
+base-commit: fd7eba9fa1f534b7102f4762e25c991f78ec283d
 -- 
-2.25.0
+2.16.4
 
