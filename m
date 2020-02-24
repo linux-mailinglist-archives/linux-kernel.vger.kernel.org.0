@@ -2,104 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37B6A16A07C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:53:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD6816A08D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 09:54:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbgBXIxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 03:53:39 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:57057 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbgBXIxh (ORCPT
+        id S1727281AbgBXIyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 03:54:04 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42370 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727256AbgBXIyA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 03:53:37 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id B794923059;
-        Mon, 24 Feb 2020 09:53:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1582534414;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yGHRW3l5rCA287QCNNdGXSdyqq9QPHkLJ+IpgLfP+T0=;
-        b=Ta29z0+G9GOKfOY5pEnNbXDdYrHts1jhuNXUK+UU5pGYZYKRousrquA57hOniFUq4neRJv
-        CWF0Ds23phwNWukPNrMpGKwE0OE5mmUIhqM0t2PymJhANWOk8Jh/P/Ff1ecxm+VF0nYmBQ
-        +xZno6FiY9P/UzW4OQIkZlENAnPp3wU=
+        Mon, 24 Feb 2020 03:54:00 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 66so7985638otd.9
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 00:54:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=ICQqJ5nTQBj63/kFKTmwVgFzvoSrAgyXz/sQL2og8oc=;
+        b=RLjJCiNd1FrU28Nb517dZC4xcmzyTbA/RrGtrNz05uAmBcCSnQhdnqfh960b3hka13
+         4RQfu7tI308tGVassrOIcdOHnGQPDNP85b8N2Qy1XjNVkBPUFVMMFY89A66S1BfWe7gC
+         3ffEO3MKo8BrBbqfOs7/t4aVpBTWYgT+gA7DCnzhDyINwXS3uBuLRRcdFGwRDo1zbuZZ
+         vLot1wx+K1HB5vY/4qvJ2bOMrZfSUPkyzpCb8QwTrFZ95Ml3780AK07cGksqpIIuOfV0
+         R8x7bF/BOolkf9wtpQ4hzDoNZHPqMvA1VqOGwTSTNoRRxHghPpHiuZSmCuyFEVaiJMDU
+         r71w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=ICQqJ5nTQBj63/kFKTmwVgFzvoSrAgyXz/sQL2og8oc=;
+        b=FIlObbITU0hJrN1EvW5CEV/YSgxwKcSv7nSVvM+EC2O0NAn5rLZeFT+6bZtGAUTuM4
+         YbrNL/+PNf44OdVIBOqCeXemmIRRYU6QckeIbTIAVKabTzHhjDZI2MqpT0OJdF5P1WXZ
+         9nUiHnE6VFIutwrI/WZTI1fwm8RmF7WGQU1HKL69M9msGlbhrigbaws6wOQF+86KtUHN
+         huzCu7eJBvxaRMgjLb83rvnuL56RIvHaMmYUT/BFfFN9J4EhEqcQSoSGsNFG/CK4qsWe
+         zoYwL6G3QSqZtqVOwNiBrA6aAL4XrH66MkP7ISMj80TUyGt03iXE7L7nqcHsSaOBZwp2
+         6dqg==
+X-Gm-Message-State: APjAAAUcnk83UmfmJ2PG6LaZ6WI09Z9hVqz/VEEYCfOi/csPNdKH1XtJ
+        Udco4ldd6S+ZyMcXx+G1zGBjiAuhkSeEV/gjSko=
+X-Google-Smtp-Source: APXvYqwzphSo4QDZjaGTPAHujxpwNAKq21uAd2GaZLVGeoRcPwQDEY8Mc7oC6bnJmhQTjDRreBjGTFep6mYYvs7ZXtU=
+X-Received: by 2002:a9d:754e:: with SMTP id b14mr23564567otl.59.1582534440272;
+ Mon, 24 Feb 2020 00:54:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 24 Feb 2020 09:53:34 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     xiaowei.bao@nxp.com, Zhiqiang.Hou@nxp.com, bhelgaas@google.com,
-        devicetree@vger.kernel.org, leoyang.li@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        lorenzo.pieralisi@arm.com, mark.rutland@arm.com,
-        minghuan.Lian@nxp.com, mingkai.hu@nxp.com, robh+dt@kernel.org,
-        roy.zang@nxp.com
-Subject: Re: [PATCH v6 2/3] arm64: dts: ls1028a: Add PCIe controller DT nodes
-In-Reply-To: <20200224084307.GD27688@dragon>
-References: <20190902034319.14026-2-xiaowei.bao@nxp.com>
- <20200224081105.13878-1-michael@walle.cc> <20200224084307.GD27688@dragon>
-Message-ID: <a3aeabddc82ca86e3dca9c26081a0077@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.10
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: B794923059
-X-Spamd-Result: default: False [1.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[16];
-         NEURAL_HAM(-0.00)[-0.572];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+Received: by 2002:a4a:e3c7:0:0:0:0:0 with HTTP; Mon, 24 Feb 2020 00:54:00
+ -0800 (PST)
+Reply-To: cyeden1@gmail.com
+From:   Cynthia Eden <vvra.martins@gmail.com>
+Date:   Mon, 24 Feb 2020 08:54:00 +0000
+Message-ID: <CAFyQ66gh4FsNKzexLxE2seNgBevVV9i4O48u0Z62CiygrDQRuA@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shawn, all,
-
-Am 2020-02-24 09:43, schrieb Shawn Guo:
-> On Mon, Feb 24, 2020 at 09:11:05AM +0100, Michael Walle wrote:
->> Hi Xiaowei, Hi Shawn,
->> 
->> > LS1028a implements 2 PCIe 3.0 controllers.
->> 
->> Patch 1/3 and 3/3 are in Linus' tree but nobody seems to care about 
->> this patch
->> anymore :(
->> 
->> This doesn't work well with the IOMMU, because the iommu-map property 
->> is
->> missing. The bootloader needs the &smmu phandle to fixup the entry. 
->> See
->> below.
->> 
->> Shawn, will you add this patch to your tree once its fixed, 
->> considering it
->> just adds the device tree node for the LS1028A?
-> 
-> The patch/thread is a bit aged.  You may want to send an updated patch
-> for discussion.
-
-So should I just pick up the patch add my two fixes and send it again? 
-What about
-the Signed-off-by tags? Leave them? Replace them? Add mine?
-
--michael
+Hello i have some good news for you,get back to me for more details
