@@ -2,148 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42B2A16AB16
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:14:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAD7F16AB1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:14:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbgBXQNj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:13:39 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:40799 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727874AbgBXQNi (ORCPT
+        id S1727711AbgBXQOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:14:40 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39692 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbgBXQOk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:13:38 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 394406D98;
-        Mon, 24 Feb 2020 11:13:37 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 24 Feb 2020 11:13:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=q96RioY8BsR7brS2orsnP3F5i2+
-        XuFH0NxA6g4n1MCU=; b=SIibQvtYJJh2Z2bUPQ48iYczwowW5hI6SjxL8fF0bXz
-        F6AAgLsYlkg+gV2inWgm6U4JrwoJneHW5GivyL7tcsyi2+iXFvq0VTTLs5xeoUgh
-        ailh6Dh9OgE3NXpemYsA856ULtNHOBA5acxXqzJfut03zx5YYgJTlFvmqocFSm3S
-        uJTJ6RFp+UzBUlV15JegYoCOiVnU76HPRuXAZBKJXLfT66Gaag2X7UhrutopD+4o
-        J6u8IPjcO2UCX7Ssannt2obo0P/00Y+jZTUfXYh0oh2HFgUL1CZZRXMX8wGeqVBr
-        NFop4LE991CuM0p9dy59PrxKZT318SOVSDUVp9BIV2A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=q96Rio
-        Y8BsR7brS2orsnP3F5i2+XuFH0NxA6g4n1MCU=; b=D0LBK/mU6zq4aSxI3aFkS+
-        cJyPXCWrMTo9T8gFaOcdnYJCNVHBUyfo7V+mcvrGl+6EdlAYCWQy4fCUhjJnhg6I
-        nm3WXkZdFcH0J6juNF5pAr6xqrXJbmulOGhrau7eI8FqLkV4EyI03yIuZ1pKV81H
-        Tc2MvzW+yh6ChrTjwiUyEI3RrnGuM33b3LQQgtgg7EvUz7IHnFl2mXgiHpH5F6C5
-        kiXIgSUXPLi/e2gq1bCFeC1lBt0VG2ZQHMUCR2yTK0lsv3Zdrx2J+9rVY+aZ9ZvE
-        1Oa1xwNu5NYgJltfSMKIfVyYl4Mx+5fecqGx20Zqgm145hD5bJqdIS26aicBnN6A
-        ==
-X-ME-Sender: <xms:K_ZTXkUHZiy6j97bmy8d0Os2zHpOjxeK2KImr6kSrVri8LZVlSmlvA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrledtgdekiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtjeenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucffohhmrghinh
-    epmhgvghhouhhsrdgtohhmnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgv
-    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnh
-    hordhtvggthh
-X-ME-Proxy: <xmx:K_ZTXkRPO4_FWkOhOcK2nQxPBWEYRmY-26Ox5oXgsE0HYez1wQJw_w>
-    <xmx:K_ZTXk3ZnICLKmJW8vVOJQaPyH2Q0TFjVX5J6euuKA3NGhsPf6IFEw>
-    <xmx:K_ZTXseLHSN4asOJKE6unoum5NglQFv8lGw0n_gfai21t__grIUP2Q>
-    <xmx:MfZTXssX3z2zJY4pHhinKCkREtdRqWuWVnrYW0oW6ONYFwu01yOVjg>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id ACEC33060F9B;
-        Mon, 24 Feb 2020 11:13:31 -0500 (EST)
-Date:   Mon, 24 Feb 2020 17:13:30 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     linux-sunxi@googlegroups.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Luca Weiss <luca@z3ntu.xyz>, Tomas Novotny <tomas@novotny.cz>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/4] ARM: dts: sun8i-a83t-tbs-a711: Add support for the
- vibrator motor
-Message-ID: <20200224161330.4att6sleqm3al47f@gilmour.lan>
-References: <20200222231428.233621-1-megous@megous.com>
- <20200222231428.233621-4-megous@megous.com>
- <20200224091059.lljffogofbexhudt@gilmour.lan>
- <20200224141437.opcsfhozfppulu4g@core.my.home>
+        Mon, 24 Feb 2020 11:14:40 -0500
+Received: by mail-pl1-f196.google.com with SMTP id g6so4240314plp.6
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 08:14:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UNCPDhY2rBi3SKiGAc64x5UFQgTRx5e56yo7dkev/24=;
+        b=sJmbsmwR6bcWllqxgVn8BygS5XA3EAIPcJNmFUi4aLASR48L3gS37YAJa9jF1vytX9
+         OCz/nm3XPUlz/n3DALojC2+gw/TM6lUuQJ/qObnvHaiylbmkEENUg3vvvjslVka9aeeN
+         FDoGZgMzPDaoIRbZxt0KK+M8YjFTBIStk+b+42cyMnSPHEeftqPlqBMGiX1IBbTwoxwy
+         QAYUe7cKpHc5odKqaJ28LkMk0CisrmO8PAxU/do7mAfOnBZT2p72DSdeQqbkrS2frH3U
+         S1I+RCw/WlxAg73158fyqFbzBYwzL1Bkt4v183osjbcgOMux4R0Tn3jolfbtIsL1B18k
+         orTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UNCPDhY2rBi3SKiGAc64x5UFQgTRx5e56yo7dkev/24=;
+        b=p9/0vYFkSzbujHNBwbljzmPDWufhsOBWMX6scwsJCq19WrQvVxknToGtTQ5d8iDx5Z
+         FIJkBKsyUZLrObyvFf/G09zTt4f26q1veAHgSoPCC8q3VlzeBXg72hV7+YZ6srVP7bIL
+         uKt9LV/8wQ217JBXvHKpy1MgM1F3WshB4Rljd4ThmuhHEXuz1Xx6i3Scg8fNTi5jUrqG
+         hYLra1gl9w1qKFhBJaqy316OpdNJ0aIDp5UjB5eDblOADk3ikFuot3pWgl8glSHRAINb
+         HWUuZGItko6QOi421fMqXUPypQXL0vMjaKcFojstTZunaEjD0FYmugdOY+7gGPtl+lne
+         yUsQ==
+X-Gm-Message-State: APjAAAXhtAeoM5xba1Itdj7tu8rQ1BwDq9S5zboqhnc6b/PARDq/SvCb
+        /ON2YyGQlfcra+Ez7HcqFlafkJSS5+J9s1e2ePqwcQ==
+X-Google-Smtp-Source: APXvYqwEO19ym1rQgbvAzn0qCjC/bIx9lh8iZOfduzyeDaY/Z2z0u8K18I3iutG4FujiM2k8vObhxg8pTrzBn9i5TMY=
+X-Received: by 2002:a17:902:8486:: with SMTP id c6mr52636096plo.147.1582560878971;
+ Mon, 24 Feb 2020 08:14:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zp4wvrz5w52hdyou"
-Content-Disposition: inline
-In-Reply-To: <20200224141437.opcsfhozfppulu4g@core.my.home>
+References: <000000000000058a87059f1882b9@google.com> <Pine.LNX.4.44L0.2002211138300.1488-100000@iolanthe.rowland.org>
+ <CAAeHK+yGS+wj5ovxu5P2Wyc=hgcmwEgK8LJ62+_T25vv8JOaOA@mail.gmail.com> <CAAeHK+wdVKrmQq1aDqJALMmCUAWfDuz4LT0pm4cYJpH_MfSO+w@mail.gmail.com>
+In-Reply-To: <CAAeHK+wdVKrmQq1aDqJALMmCUAWfDuz4LT0pm4cYJpH_MfSO+w@mail.gmail.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Mon, 24 Feb 2020 17:14:28 +0100
+Message-ID: <CAAeHK+zMNKSUo4PoJLRaHcGRx66890HBkSET_NA5o8rwcTbZag@mail.gmail.com>
+Subject: Re: WARNING in dummy_free_request
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     syzbot <syzbot+55ae006e0a1feae5aeab@syzkaller.appspotmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---zp4wvrz5w52hdyou
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Feb 24, 2020 at 03:14:37PM +0100, Ond=C5=99ej Jirman wrote:
-> Hello,
+On Mon, Feb 24, 2020 at 4:48 PM Andrey Konovalov <andreyknvl@google.com> wrote:
 >
-> On Mon, Feb 24, 2020 at 10:10:59AM +0100, Maxime Ripard wrote:
-> > Hi,
+> On Fri, Feb 21, 2020 at 7:44 PM Andrey Konovalov <andreyknvl@google.com> wrote:
 > >
-> > On Sun, Feb 23, 2020 at 12:14:27AM +0100, Ondrej Jirman wrote:
-> > > The board has a vibrator mottor. Hook it to the input subsystem.
+> > On Fri, Feb 21, 2020 at 5:41 PM Alan Stern <stern@rowland.harvard.edu> wrote:
 > > >
-> > > Signed-off-by: Ondrej Jirman <megous@megous.com>
-> > > ---
-> > >  arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 5 +++++
-> > >  1 file changed, 5 insertions(+)
+> > > On Fri, 21 Feb 2020, syzbot wrote:
 > > >
-> > > diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boo=
-t/dts/sun8i-a83t-tbs-a711.dts
-> > > index 2fd31a0a0b344..a22920275e99b 100644
-> > > --- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-> > > +++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-> > > @@ -99,6 +99,11 @@ panel_input: endpoint {
-> > >  		};
-> > >  	};
+> > > > Hello,
+> > > >
+> > > > syzbot found the following crash on:
+> > > >
+> > > > HEAD commit:    7f0cd6c7 usb: gadget: add raw-gadget interface
+> > > > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=17b58e5ee00000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=f10b12ae04e03319
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=55ae006e0a1feae5aeab
+> > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > >
+> > > > Unfortunately, I don't have any reproducer for this crash yet.
+> > > >
+> > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > > Reported-by: syzbot+55ae006e0a1feae5aeab@syzkaller.appspotmail.com
+> > > >
+> > > > ------------[ cut here ]------------
+> > > > WARNING: CPU: 1 PID: 19332 at drivers/usb/gadget/udc/dummy_hcd.c:679 dummy_free_request+0x6c/0x80 drivers/usb/gadget/udc/dummy_hcd.c:679
+> > > > Kernel panic - not syncing: panic_on_warn set ...
+> > > > CPU: 1 PID: 19332 Comm: syz-executor.5 Not tainted 5.6.0-rc1-syzkaller #0
+> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> > > > Call Trace:
+> > > >  __dump_stack lib/dump_stack.c:77 [inline]
+> > > >  dump_stack+0xef/0x16e lib/dump_stack.c:118
+> > > >  panic+0x2aa/0x6e1 kernel/panic.c:221
+> > > >  __warn.cold+0x2f/0x30 kernel/panic.c:582
+> > > >  report_bug+0x27b/0x2f0 lib/bug.c:195
+> > > >  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+> > > >  fixup_bug arch/x86/kernel/traps.c:169 [inline]
+> > > >  do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:267
+> > > >  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
+> > > >  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+> > > > RIP: 0010:dummy_free_request+0x6c/0x80 drivers/usb/gadget/udc/dummy_hcd.c:679
+> > > > Code: c5 75 22 e8 26 06 96 fd 48 89 ef e8 3e 54 be fd 5b 5d e9 17 06 96 fd e8 12 06 96 fd 0f 0b 5b 5d e9 09 06 96 fd e8 04 06 96 fd <0f> 0b eb d5 48 89 ef e8 08 ae be fd eb c2 66 0f 1f 44 00 00 41 56
+> > > > RSP: 0018:ffff8881c9eafdd8 EFLAGS: 00010016
+> > > > RAX: 0000000000040000 RBX: ffff8881d0d5aa10 RCX: ffffc900012a0000
+> > > > RDX: 000000000000012f RSI: ffffffff83a95c1c RDI: ffff8881d4d501c8
+> > > > RBP: ffff8881d0d5aa00 R08: ffff8881d0f9b100 R09: ffffed103b666a84
+> > > > R10: ffffed103b666a83 R11: ffff8881db33541b R12: 0000000000000212
+> > > > R13: ffff8881ca832008 R14: 0000000000000000 R15: ffff8881ca832180
+> > > >  raw_ioctl_ep_disable drivers/usb/gadget/legacy/raw_gadget.c:814 [inline]
+> > > >  raw_ioctl+0x1281/0x19e0 drivers/usb/gadget/legacy/raw_gadget.c:1031
 > > >
-> > > +	vibrator {
-> > > +		compatible =3D "gpio-vibrator";
-> > > +		vcc-supply =3D <&reg_ldo_io1>;
-> > > +	};
-> > > +
+> > > Andrey:
+> > >
+> > > This could be a bug in your raw_gadget driver.  This particular WARN is
+> > > triggered when a gadget driver tries to call usb_ep_free_request() for
+> > > a request that is still in flight.
 > >
-> > LDO IO1 can also be muxed in as a GPIO iirc, why did you choose the
-> > regulator instead?
+> > Hi Alan,
+> >
+> > It might. It's not obvious what's wrong though. raw_ioctl_ep_disable()
+> > calls usb_ep_disable()->dummy_disable() first, that supposedly does
+> > list_del_init(&req->queue). And then it calls
+> > usb_ep_free_request()->dummy_free_request(), which for some reason
+> > still causes the warning. And a racy queueing of another request
+> > should be prevented by the disabling flag.
+> >
+> > I'll take a closer look on Monday.
 >
-> According to the specification, LDO needs to be enabled (value 0b11)
-> to achieve the specified max driving current of 150mA:
->
->   https://megous.com/dl/tmp/92b7d9d94820c3ba.png
->
-> Otherwise the chip is probably just using the regular CMOS logic output
-> (typically limited to around 20-35mA, but not specified in this datasheet=
-),
-> which would be probably overdriven, if we try to drive the motor with it.
->
-> And since we're driving a motor directly, the more the better.
+> OK, I see the issue, will post v6 with a fix soon.
 
-Ok, that works for me then. This is typically the kind of things that
-should be in your commit log though, since it's basically the
-motivation for doing what you're doing in your patches.
-
-Maxime
-
---zp4wvrz5w52hdyou
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXlP2KgAKCRDj7w1vZxhR
-xcqcAQCXerWJNQWeY178xiMvfPAmMNbC8H5ZByXeaxC/SXh6uwD+IosF9jDvAZpG
-y+FKGGhJKhcy68xqvVnjrDUxrAJjKg4=
-=Cv2A
------END PGP SIGNATURE-----
-
---zp4wvrz5w52hdyou--
+#syz invalid
