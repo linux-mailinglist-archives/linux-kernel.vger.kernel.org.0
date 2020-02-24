@@ -2,390 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C963A169F30
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:26:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3FA4169F34
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 08:27:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbgBXHZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 02:25:57 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44098 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727334AbgBXHZ4 (ORCPT
+        id S1727186AbgBXH1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 02:27:13 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43466 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbgBXH1N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 02:25:56 -0500
-Received: by mail-pl1-f195.google.com with SMTP id d9so3672381plo.11
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 23:25:55 -0800 (PST)
+        Mon, 24 Feb 2020 02:27:13 -0500
+Received: by mail-qt1-f195.google.com with SMTP id g21so5918643qtq.10
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2020 23:27:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=J1gAzTYfSIPQWBo5afUVA7fbeA6fOiqj7Y8eCbgr5WQ=;
-        b=Qn6AqQ1HolgmgiER4czPVmMw1y7AzSpzYl5JzzWyI16mnEjGkzrEx3Vnk+MNDX4BbT
-         M4S6EzHkI1MLZpcS5W/Hq9vOghtcgsKmP67bEj9rZDh8EXFbKSyYRYJ4aMlN1GwI2g60
-         pl1nl45YntLmjrRcujhaoi0reGDb/Y9vnhuA+OCAK4l/0BXDLjFOgrqXAIilITF4gKkn
-         BtIf/5adaEWovn2prsDh63wA2U0DNXlnA2UdieB+n/am8fSxqLEYjdNHEQ/u2YUYtIoz
-         UCaQH/m8v2kIfggdYzSOXvYz2GRZ4RJ/uc2Vlg+caN5eIKBSIy7PBU1wMlncDsoEPlEi
-         bwdw==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=GaWjN7xgfONUxUKKxeVFd7mycg6sh46IcFSsgiJU4YE=;
+        b=OqTizYX0M/sI/IY3bSoYqNVVa2otisZKFz6W9gS36s9ITRQ1qcx0cjF9r4xwSu+4rR
+         GUkB8tpojtvR9A/SR5I69umk/08G50pl9oAnN588AJ4+9IPKVLE1BMoQ121tpNvypcE/
+         X2w9293rh3O3JVfzzkBFdQtP+11CSywPo1/lzOL3B7g2dh3RYZZprETZIsOkS9hq/C9k
+         QplCDoGa3cSCJ5qf6qPwa1cjcNjwfqGb9L9dCUdz5EXFRHvfVvg0Kr8TR3nxv14LPj8A
+         Q1Am7bnyOrW8ab/Z/8FwW4gYcaNuKU2Fuv/DrucAygXAtIRpLo/Dcsg90fdZm11XiFJ7
+         UJXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=J1gAzTYfSIPQWBo5afUVA7fbeA6fOiqj7Y8eCbgr5WQ=;
-        b=juI5jo9i2fPkORV6AopWhta2Tqbh/R6azAr2NcTTfN+jmcenAfo+XpGj8FCIEZzKTB
-         kn8O6HVBGY1pcohHjkjCCAPBxMTPLSvJHEfJpuB/2n1NtMtJ48ArFPLiHAxD6oT4bKvE
-         hHHIgs10Su0mxqtBgXFbp8agu8Swrkvz7zWagfc5g2jTvF55pSmash2TCAU8La85Ioqk
-         9q3iG4quYwuKgBiaf/zQLFUjZ3ASvHl0A8klSofmTE+KVMKsF3MTfm9Qzh5LoA3Fi8T6
-         krao4QBt8I8AhPlf4MYbRpMt+K0lZZF77YDYnZUAwxjCo4hAhF0NJxDNNEFVeD5Me9Av
-         2/yw==
-X-Gm-Message-State: APjAAAWXKqZGC/4t//PLymnxIozmi90NmzGzsWZ4VXcpM00oV5Xrap0g
-        9YvvtigqIcjdQI7g5EnpPXTozJ2K1vc=
-X-Google-Smtp-Source: APXvYqyYdLmanIqj6aKVNUA2vF4Ylji4MeLP4dTsLHYQQX8i2z0K2Qky7Vvj8EouL56tkcxxVxTBFQ==
-X-Received: by 2002:a17:90a:3a86:: with SMTP id b6mr18448172pjc.96.1582529154491;
-        Sun, 23 Feb 2020 23:25:54 -0800 (PST)
-Received: from localhost ([45.127.44.57])
-        by smtp.gmail.com with ESMTPSA id q6sm11408012pfh.127.2020.02.23.23.25.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2020 23:25:53 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        swboyd@chromium.org, mka@chromium.org, daniel.lezcano@linaro.org,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [RFC PATCH v1 3/3] dt-bindings: thermal: Add yaml bindings for thermal zones
-Date:   Mon, 24 Feb 2020 12:55:37 +0530
-Message-Id: <59d24f8ec98e29d119c5cbdb2abe6d4644cc51cf.1582528977.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1582528977.git.amit.kucheria@linaro.org>
-References: <cover.1582528977.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=GaWjN7xgfONUxUKKxeVFd7mycg6sh46IcFSsgiJU4YE=;
+        b=Hc1D1En+Kkr3KUPSVQ4Xkg/v7Bqy7RBDydEC2uJ+EtjwLxJC7c4G2yyDa9l4sTAgvz
+         ch6F9qcEzZRGWYC92H4EfxJXkejMFocbAXlHsie/WLdW2d/FKhMbgJGVU3zCW57K1VRL
+         YIS1tnEeVfCGo7O3BYWl/k3MfFO1WtYXbEzY64QCTMyiSiSIkU5wlw8qHJjG/8PJDAyU
+         b95h2NtqVjXnFZcHVkEjwuEUzOnJvsqR0FU0+/6RCkITe5xRUHBtyyBscZiAwoTvl25W
+         qMrFvyja15p5fqdP1qTnqxv0oEONLDoy0dx+Kh9sGPO5BT9vCb29Ei0Hx5KsxW4OyO/w
+         u1dA==
+X-Gm-Message-State: APjAAAWgh3+zJAFfr3FDhbu2/K/aV5eT29145tAxHFrymAJ8c+rt2AoK
+        MOHmXXn0PT8Pi+1LUZZzw27m66N6h547M3sDeC0=
+X-Google-Smtp-Source: APXvYqxQ/mCjzAoeoaIVXoKHoNcuXVPg8/qqEfDVYZO+U4EmI39KXrKcoiF8ZQDXmRS4Mvya0z6cfk0B0X9DRi/Z3eE=
+X-Received: by 2002:ac8:5447:: with SMTP id d7mr33648356qtq.137.1582529231917;
+ Sun, 23 Feb 2020 23:27:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a0c:de0d:0:0:0:0:0 with HTTP; Sun, 23 Feb 2020 23:27:11
+ -0800 (PST)
+Reply-To: ambrosecooker389@gmail.com
+From:   Ambrose Cooker <islamnurulislam402@gmail.com>
+Date:   Sun, 23 Feb 2020 23:27:11 -0800
+Message-ID: <CANFLDfGYzvHLMsCg_acBPnAB3r3Pd1V-sy4Ccg0sTHS5T7Usyw@mail.gmail.com>
+Subject: Greetings to you my Dear!
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As part of moving the thermal bindings to YAML, split it up into 3
-bindings: thermal sensors, cooling devices and thermal zones.
+Greetings My Dear Friend,
 
-The thermal-zone binding is a software abstraction to capture the
-properties of each zone - how often they should be checked, the
-temperature thresholds (trips) at which mitigation actions need to be
-taken and the level of mitigation needed at those thresholds.
+Please reply to my private email ambrosecooker389@gmail.com
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- .../bindings/thermal/thermal-zones.yaml       | 302 ++++++++++++++++++
- 1 file changed, 302 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/thermal-zones.yaml
+Before I introduce myself, I wish to inform you that this letter is
+not a hoax mail and I urge you to treat it serious.This letter must
+come to you as a big surprise, but I believe it is only a day that
+people meet and become great friends and business partners. Please I
+want you to read this letter very carefully and I must apologize for
+barging this message into your mail box without any formal
+introduction due to the urgency and confidentiality of this business.
+I make this contact with you as I believe that you can be of great
+assistance to me. My name is Mr.Ambrose Cooker, from Burkina Faso,
+West Africa. I work in African Development Bank (ADB) as telex
+manager, please see this as a confidential message and do not reveal
+it to another person and let me know whether you can be of assistance
+regarding my proposal below because it is top secret.
 
-diff --git a/Documentation/devicetree/bindings/thermal/thermal-zones.yaml b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
-new file mode 100644
-index 000000000000..bc1ce8e41324
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
-@@ -0,0 +1,302 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+# Copyright 2020 Linaro Ltd.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/thermal/thermal-zones.yaml#
-+$schema: http://devicetree.org/meta-schemas/base.yaml#
-+
-+title: Thermal zone binding
-+
-+maintainers:
-+  - Amit Kucheria <amitk@kernel.org>
-+
-+description: |
-+  Thermal management is achieved in devicetree by describing the sensor hardware
-+  and the software abstraction of cooling devices and thermal zones required to
-+  take appropriate action to mitigate thermal overloads.
-+
-+  The following node types are used to completely describe a thermal management
-+  system in devicetree:
-+   - thermal-sensor: device that measures temperature, has SoC-specific bindings
-+   - cooling-device: device used to dissipate heat either passively or artively
-+   - thermal-zones: a container of the following node types used to describe all
-+     thermal data for the platform
-+
-+  This binding describes the thermal-zones.
-+
-+  The polling-delay properties of a thermal-zone are bound to the maximum dT/dt
-+  (temperature derivative over time) in two situations for a thermal zone:
-+    1. when passive cooling is activated (polling-delay-passive)
-+    2. when the zone just needs to be monitored (polling-delay) or when
-+       active cooling is activated.
-+
-+  The maximum dT/dt is highly bound to hardware power consumption and
-+  dissipation capability. The delays should be chosen to account for said
-+  max dT/dt, such that a device does not cross several trip boundaries
-+  unexpectedly between polls. Choosing the right polling delays shall avoid
-+  having the device in temperature ranges that may damage the silicon structures
-+  and reduce silicon lifetime.
-+
-+properties:
-+  thermal-zones:
-+    type: object
-+    description:
-+      A /thermal-zones node is required in order to use the thermal framework to
-+      manage input from the various thermal zones in the system in order to
-+      mitigate thermal overload conditions. It does not represent a real device
-+      in the system, but acts as a container to link thermal sensor devices,
-+      platform-data regarding temperature thresholds and the mitigation actions
-+      to take when the temperature crosses those thresholds.
-+
-+    properties:
-+      $nodename:
-+        pattern: "^[a-zA-Z][a-zA-Z0-9,\\-]{1,12}-thermal$"
-+        type: object
-+        description:
-+          Each thermal zone node contains information about how frequently it
-+          must be checked, the sensor responsible for reporting temperature for
-+          this zone, one sub-node containing the various trip points for this
-+          zone and one sub-node containing all the zone cooling-maps.
-+
-+        properties:
-+          polling-delay:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 0
-+            description:
-+              The maximum number of milliseconds to wait between polls when
-+              checking this thermal zone. Setting this to 0 disables the polling
-+              timers setup by the thermal framework and assumes that the thermal
-+              sensors in this zone support interrupts.
-+
-+          polling-delay-passive:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            minimum: 0
-+            description:
-+              The maximum number of milliseconds to wait between polls when
-+              checking this thermal zone while doing passive cooling. Setting
-+              this to 0 disables the polling timers setup by the thermal
-+              framework and assumes that the thermal sensors in this zone
-+              support interrupts.
-+
-+          thermal-sensors:
-+            $ref: /schemas/types.yaml#/definitions/phandle-array
-+            description:
-+              A list of thermal sensor phandles and sensor specifiers used to
-+              monitor this thermal zone.
-+
-+          trips:
-+            type: object
-+            description:
-+              This node describes a set of points in the temperature domain at
-+              which the thermal framework needs to takes action. The actions to
-+              be taken are defined in another node called cooling-maps.
-+
-+            patternProperties:
-+              "^[a-zA-Z][a-zA-Z0-9,+\\._]{0,63}$":
-+                type: object
-+
-+                properties:
-+                  temperature:
-+                    $ref: /schemas/types.yaml#/definitions/int32
-+                    description:
-+                      An integer expressing the trip temperature in millicelsius.
-+
-+                  hysteresis:
-+                    $ref: /schemas/types.yaml#/definitions/uint32
-+                    description:
-+                      An unsigned integer expressing the hysteresis delta with
-+                      respect to the trip temperature property above, also in
-+                      millicelsius.
-+
-+                  type:
-+                    oneOf:
-+                      - items:
-+                        - enum:
-+                            - active
-+                            - passive
-+                            - hot
-+                            - critical
-+                    description: |
-+                      There are four valid trip types,
-+                       - active   - enable active cooling e.g. fans
-+                       - passive  - enable passive cooling e.g. throttling cpu
-+                       - hot      - send notification to driver if .notify
-+                                    callback registered
-+                       - critical - send notification to driver if .notify
-+                                    callback registered and trigger a shutdown
-+
-+                required:
-+                  - temperature
-+                  - hysteresis
-+                  - type
-+
-+          cooling-maps:
-+            type: object
-+            description:
-+              This node describes the action to be taken when a thermal zone
-+              crosses one of the temperature thresholds described in the trips
-+              node. The action takes the form of a mapping relation between a
-+              trip and the target cooling device state.
-+
-+            patternProperties:
-+              "^map[0-9][-a-zA-Z0-9]*$":
-+                type: object
-+
-+                properties:
-+                  trip:
-+                    $ref: /schemas/types.yaml#/definitions/phandle
-+                    description:
-+                      A phandle of a trip point node within this thermal zone.
-+
-+                  cooling-device:
-+                    $ref: /schemas/types.yaml#/definitions/phandle-array
-+                    description:
-+                      A list of cooling device phandles along with the minimum
-+                      and maximum cooling state specifiers for each cooling
-+                      device. Using the THERMAL_NO_LIMIT (-1UL) constant in the
-+                      cooling-device phandle limit specifier lets the framework
-+                      use the minimum and maximum cooling state for that cooling
-+                      device automatically.
-+
-+                  contribution:
-+                    $ref: /schemas/types.yaml#/definitions/uint32
-+                    minimum: 0
-+                    maximum: 100
-+                    description:
-+                      The contribution of the cooling devices at the trip
-+                      temperature, both referenced in this map, to this thermal
-+                      zone as a percentage.
-+
-+                required:
-+                  - trip
-+                  - cooling-device
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/thermal/thermal.h>
-+
-+    // Example 1: SDM845 TSENS
-+    soc: soc@0 {
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+
-+            /* ... */
-+
-+            tsens0: thermal-sensor@c263000 {
-+                    compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
-+                    reg = <0 0x0c263000 0 0x1ff>, /* TM */
-+                          <0 0x0c222000 0 0x1ff>; /* SROT */
-+                    #qcom,sensors = <13>;
-+                    interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>;
-+                    interrupt-names = "uplow";
-+                    #thermal-sensor-cells = <1>;
-+            };
-+
-+            tsens1: thermal-sensor@c265000 {
-+                    compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
-+                    reg = <0 0x0c265000 0 0x1ff>, /* TM */
-+                          <0 0x0c223000 0 0x1ff>; /* SROT */
-+                    #qcom,sensors = <8>;
-+                    interrupts = <GIC_SPI 507 IRQ_TYPE_LEVEL_HIGH>;
-+                    interrupt-names = "uplow";
-+                    #thermal-sensor-cells = <1>;
-+            };
-+    };
-+
-+    /* ... */
-+
-+    thermal-zones {
-+            cpu0-thermal {
-+                    polling-delay-passive = <250>;
-+                    polling-delay = <1000>;
-+
-+                    thermal-sensors = <&tsens0 1>;
-+
-+                    trips {
-+                            cpu0_alert0: trip-point0 {
-+                                    temperature = <90000>;
-+                                    hysteresis = <2000>;
-+                                    type = "passive";
-+                            };
-+
-+                            cpu0_alert1: trip-point1 {
-+                                    temperature = <95000>;
-+                                    hysteresis = <2000>;
-+                                    type = "passive";
-+                            };
-+
-+                            cpu0_crit: cpu_crit {
-+                                    temperature = <110000>;
-+                                    hysteresis = <1000>;
-+                                    type = "critical";
-+                            };
-+                    };
-+
-+                    cooling-maps {
-+                            map0 {
-+                                    trip = <&cpu0_alert0>;
-+                                    cooling-device = <&CPU0 THERMAL_NO_LIMIT
-+                                                            THERMAL_NO_LIMIT>,
-+                                                     <&CPU1 THERMAL_NO_LIMIT
-+                                                            THERMAL_NO_LIMIT>,
-+                                                     <&CPU2 THERMAL_NO_LIMIT
-+                                                            THERMAL_NO_LIMIT>,
-+                                                     <&CPU3 THERMAL_NO_LIMIT
-+                                                            THERMAL_NO_LIMIT>;
-+                            };
-+
-+                            map1 {
-+                                    trip = <&cpu0_alert1>;
-+                                    cooling-device = <&CPU0 THERMAL_NO_LIMIT
-+                                                            THERMAL_NO_LIMIT>,
-+                                                     <&CPU1 THERMAL_NO_LIMIT
-+                                                            THERMAL_NO_LIMIT>,
-+                                                     <&CPU2 THERMAL_NO_LIMIT
-+                                                            THERMAL_NO_LIMIT>,
-+                                                     <&CPU3 THERMAL_NO_LIMIT
-+                                                            THERMAL_NO_LIMIT>;
-+                            };
-+                    };
-+            };
-+
-+            /* ... */
-+
-+            cluster0-thermal {
-+                    polling-delay-passive = <250>;
-+                    polling-delay = <1000>;
-+
-+                    thermal-sensors = <&tsens0 5>;
-+
-+                    trips {
-+                            cluster0_alert0: trip-point0 {
-+                                    temperature = <90000>;
-+                                    hysteresis = <2000>;
-+                                    type = "hot";
-+                            };
-+                            cluster0_crit: cluster0_crit {
-+                                    temperature = <110000>;
-+                                    hysteresis = <2000>;
-+                                    type = "critical";
-+                            };
-+                    };
-+            };
-+
-+            /* ... */
-+
-+            gpu-thermal-top {
-+                    polling-delay-passive = <250>;
-+                    polling-delay = <1000>;
-+
-+                    thermal-sensors = <&tsens0 11>;
-+
-+                    trips {
-+                            gpu1_alert0: trip-point0 {
-+                                    temperature = <90000>;
-+                                    hysteresis = <2000>;
-+                                    type = "hot";
-+                            };
-+                    };
-+            };
-+    };
-+...
--- 
-2.20.1
+I am about to retire from active Banking service to start a new life
+but I am skeptical to reveal this particular secret to a stranger. You
+must assure me that everything will be handled confidentially because
+we are not going to suffer again in life. It has been 10 years now
+that most of the greedy African Politicians used our bank to launder
+money overseas through the help of their Political advisers. Most of
+the funds which they transferred out of the shores of Africa were gold
+and oil money that was supposed to have been used to develop the
+continent. Their Political advisers always inflated the amounts before
+transferring to foreign accounts, so I also used the opportunity to
+divert part of the funds hence I am aware that there is no official
+trace of how much was transferred as all the accounts used for such
+transfers were being closed after transfer. I acted as the Bank
+Officer to most of the politicians and when I discovered that they
+were using me to succeed in their greedy act; I also cleaned some of
+their banking records from the Bank files and no one cared to ask me
+because the money was too much for them to control. They laundered
+over $5billion Dollars during the process.
 
+Before I send this message to you, I have already diverted
+($10.5million Dollars) to an escrow account belonging to no one in the
+bank. The bank is anxious now to know who the beneficiary to the funds
+ because they have made a lot of profits with the funds. It is more
+than Eight years now and most of the politicians are no longer using
+our bank to transfer funds overseas. The ($10.5million Dollars) has
+been laying waste in our bank and I don=E2=80=99t want to retire from the b=
+ank
+without transferring the funds to a foreign account to enable me share
+the proceeds with the receiver (a foreigner). The money will be shared
+60% for me and 40% for you. There is no one coming to ask you about
+the funds because I secured everything. I only want you to assist me
+by providing a reliable bank account where the funds can be
+transferred.
+
+You are not to face any difficulties or legal implications as I am
+going to handle the transfer personally. If you are capable of
+receiving the funds, do let me know immediately to enable me give you
+a detailed information on what to do. For me, I have not stolen the
+money from anyone because the other people that took the whole money
+did not face any problems. This is my chance to grab my own life
+opportunity but you must keep the details of the funds secret to avoid
+any leakages as no one in the bank knows about my plans.Please get
+back to me if you are interested and capable to handle this project, I
+am looking forward to hear from you immediately for further
+information.Please reply to my private email
+ambrosecooker389@gmail.com
+
+Thanks with my best regards.
+Mr.Ambrose Cooker.
+Telex Manager
+African Development Bank (ADB)
+Burkina Faso.
