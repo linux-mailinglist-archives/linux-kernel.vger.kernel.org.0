@@ -2,293 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9769016AB2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:18:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E5AB16AB3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 17:23:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbgBXQSP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 11:18:15 -0500
-Received: from gateway22.websitewelcome.com ([192.185.46.225]:19047 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727090AbgBXQSN (ORCPT
+        id S1727673AbgBXQXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 11:23:16 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34584 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727378AbgBXQXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:18:13 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 125BA5EA9
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 10:18:12 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 6GQujEvNRXVkQ6GQujabAu; Mon, 24 Feb 2020 10:18:12 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=BK34gbLB0O61efyzvyQ9e7T52/oWtRmHRLRXHAw2v7A=; b=OHU2Pf21ilVR4MIoRzfIuodi0t
-        pC+s5ssxjXj8L3bE0xKBCzGGycCO0QybaEiSs0oa/u4/UXDHzCU82ejg2pXvoxO8l4vsTETQ3uWss
-        fxKalF60rtAuTQNT9lFIWavUT3LzGwO1hgYvNuc9GpNEFlLTWFZnvzR+6N2HOUwBmEXJeIhUZciQl
-        5epUOHZpAs7Ae3uniNt4jskl/P1ZENzz4i0NtOuJtErWQJ/rbMHxAaP/RUl9R4UWnvw00KGPHYTaH
-        cSAagkMPtII9V80o5IQ1FUjs4xwqa4cqFwCsDaYJhSs8msYuP2hb01LXn37DfcZQoQGkodd1LvYky
-        WuUVvmiQ==;
-Received: from [200.68.140.135] (port=11044 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j6GQr-002hbl-Rj; Mon, 24 Feb 2020 10:18:09 -0600
-Date:   Mon, 24 Feb 2020 10:21:00 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Atul Gupta <atul.gupta@chelsio.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Breno =?iso-8859-1?Q?Leit=E3o?= <leitao@debian.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Paulo Flabiano Smorigo <pfsmorigo@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] crypto: Replace zero-length array with flexible-array member
-Message-ID: <20200224162100.GA25697@embeddedor>
+        Mon, 24 Feb 2020 11:23:16 -0500
+Received: by mail-io1-f66.google.com with SMTP id 13so10305085iou.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 08:23:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cdH1MvvC7rUuS4KMjyzC13eGx35pprvSgBak/SE0yDY=;
+        b=MlFeKYpdGaZT6w34tn6UFiEg5Qu4hA9w7O6A9cIiaoRQtKmhSi2DoL/6YteNJlg9YE
+         NgHRstjBoCMp2W8rfpiMDU4KbItudyyg4ytb79MSCjGDGDRRvZzvDYecDvaczbeslPJG
+         ApTtFYFtGhY70jJFfyAFPuvg4WmY24LXDJ5YXmiZArOovzz84VmKp4OppNCjMNF/vwcd
+         FcvV1jIapAwYuxO21y88pG/KN98bbsuiO4xF/gq7+XoIymUrffXa/0s5rijokVIBefHd
+         vvil+w87/K6Imf7715nhMQhuh0DHonMpPezoW7cLQZBe0d0bEAgl/YgPpozox1sV3n+l
+         Tjgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cdH1MvvC7rUuS4KMjyzC13eGx35pprvSgBak/SE0yDY=;
+        b=DNF/dMiqvGuPCom8G5c6Y4WNBnVXkFBUvycgg+nZIo15F7UIaRCASqpsj1qHl/gVaa
+         8XQX18OaFRPuoWIywy6YistxMupbgYa8I66akpt+BOBB36zgSgCUcSFwHYiiuQ44FfUh
+         zrk4fIQlS8NDFNtQbXn2qgthGtLx/CeF0qM8fzLPf3JZcCGL6Q/TCPrhpSjaJcaovLZ5
+         joxJP0+xo4PVjsV0O9qIcfGtEqk5TPEIRqep3F0xd/4/U2Z8325OM6OfWn5kVovm4pDn
+         ++R8IQjRPfyd9x+OZpro5lck8bLBKnokCNF+60DM1nP+lBSW2RxKvLNgQp1ULhebvkwV
+         jexQ==
+X-Gm-Message-State: APjAAAW6BuY9DvPVTGwiqxVMTHqu00LNDONNKhP0VPTtRMvPIUbD5cQX
+        ZF6LuMssSKE7FAbx0J93YtZZeKJ4q+o=
+X-Google-Smtp-Source: APXvYqwlY2sK74rRUwE66MTs9Vld2g2g6L09aji8FUtw894gQCIG22oW4xtpGFOq9D4DS8+9Glemdw==
+X-Received: by 2002:a6b:6108:: with SMTP id v8mr50420904iob.210.1582561394387;
+        Mon, 24 Feb 2020 08:23:14 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id w15sm3115476iow.61.2020.02.24.08.23.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2020 08:23:13 -0800 (PST)
+Subject: Re: [PATCH] sr_vendor: remove references to BLK_DEV_SR_VENDOR, leave
+ it enabled.
+To:     =?UTF-8?Q?Diego_Elio_Petten=c3=b2?= <flameeyes@flameeyes.com>
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+References: <20200223191144.726-1-flameeyes@flameeyes.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <28e56c52-1f36-eaf5-0a92-2ffd494472ac@kernel.dk>
+Date:   Mon, 24 Feb 2020 09:23:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.68.140.135
-X-Source-L: No
-X-Exim-ID: 1j6GQr-002hbl-Rj
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.68.140.135]:11044
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 33
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200223191144.726-1-flameeyes@flameeyes.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On 2/23/20 12:11 PM, Diego Elio Pettenò wrote:
+> This kernel configuration is basically enabling/disabling sr driver quirks
+> detection. While these quirks are for fairly rare devices (very old CD
+> burners, and a glucometer), the additional detection of these models is a
+> very minimal amount of code.
+> 
+> The logic behind the quirks is always built into the sr driver.
+> 
+> This also removes the config from all the defconfig files that are enabling
+> this already.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Looks fine to me, kind of silly to have that option.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+Assuming the SCSI tree will pick this up.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/crypto/caam/caamalg.c              | 2 +-
- drivers/crypto/caam/caamalg_qi.c           | 4 ++--
- drivers/crypto/caam/caamalg_qi2.h          | 6 +++---
- drivers/crypto/caam/caamhash.c             | 2 +-
- drivers/crypto/cavium/nitrox/nitrox_main.c | 2 +-
- drivers/crypto/chelsio/chcr_core.h         | 2 +-
- drivers/crypto/mediatek/mtk-sha.c          | 2 +-
- drivers/crypto/nx/nx.h                     | 2 +-
- drivers/crypto/omap-sham.c                 | 4 ++--
- include/crypto/if_alg.h                    | 2 +-
- 10 files changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/crypto/caam/caamalg.c b/drivers/crypto/caam/caamalg.c
-index 03797f9b1050..b7bb7c30adeb 100644
---- a/drivers/crypto/caam/caamalg.c
-+++ b/drivers/crypto/caam/caamalg.c
-@@ -909,7 +909,7 @@ struct skcipher_edesc {
- 	bool bklog;
- 	dma_addr_t sec4_sg_dma;
- 	struct sec4_sg_entry *sec4_sg;
--	u32 hw_desc[0];
-+	u32 hw_desc[];
- };
- 
- static void caam_unmap(struct device *dev, struct scatterlist *src,
-diff --git a/drivers/crypto/caam/caamalg_qi.c b/drivers/crypto/caam/caamalg_qi.c
-index 4a29e0ef9d63..27e36bdf6163 100644
---- a/drivers/crypto/caam/caamalg_qi.c
-+++ b/drivers/crypto/caam/caamalg_qi.c
-@@ -783,7 +783,7 @@ struct aead_edesc {
- 	unsigned int assoclen;
- 	dma_addr_t assoclen_dma;
- 	struct caam_drv_req drv_req;
--	struct qm_sg_entry sgt[0];
-+	struct qm_sg_entry sgt[];
- };
- 
- /*
-@@ -803,7 +803,7 @@ struct skcipher_edesc {
- 	int qm_sg_bytes;
- 	dma_addr_t qm_sg_dma;
- 	struct caam_drv_req drv_req;
--	struct qm_sg_entry sgt[0];
-+	struct qm_sg_entry sgt[];
- };
- 
- static struct caam_drv_ctx *get_drv_ctx(struct caam_ctx *ctx,
-diff --git a/drivers/crypto/caam/caamalg_qi2.h b/drivers/crypto/caam/caamalg_qi2.h
-index 706736776b47..f29cb7bd7dd3 100644
---- a/drivers/crypto/caam/caamalg_qi2.h
-+++ b/drivers/crypto/caam/caamalg_qi2.h
-@@ -114,7 +114,7 @@ struct aead_edesc {
- 	dma_addr_t qm_sg_dma;
- 	unsigned int assoclen;
- 	dma_addr_t assoclen_dma;
--	struct dpaa2_sg_entry sgt[0];
-+	struct dpaa2_sg_entry sgt[];
- };
- 
- /*
-@@ -132,7 +132,7 @@ struct skcipher_edesc {
- 	dma_addr_t iv_dma;
- 	int qm_sg_bytes;
- 	dma_addr_t qm_sg_dma;
--	struct dpaa2_sg_entry sgt[0];
-+	struct dpaa2_sg_entry sgt[];
- };
- 
- /*
-@@ -146,7 +146,7 @@ struct ahash_edesc {
- 	dma_addr_t qm_sg_dma;
- 	int src_nents;
- 	int qm_sg_bytes;
--	struct dpaa2_sg_entry sgt[0];
-+	struct dpaa2_sg_entry sgt[];
- };
- 
- /**
-diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
-index 2fe852853d40..943bc0296267 100644
---- a/drivers/crypto/caam/caamhash.c
-+++ b/drivers/crypto/caam/caamhash.c
-@@ -536,7 +536,7 @@ struct ahash_edesc {
- 	int sec4_sg_bytes;
- 	bool bklog;
- 	u32 hw_desc[DESC_JOB_IO_LEN_MAX / sizeof(u32)] ____cacheline_aligned;
--	struct sec4_sg_entry sec4_sg[0];
-+	struct sec4_sg_entry sec4_sg[];
- };
- 
- static inline void ahash_unmap(struct device *dev,
-diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
-index c4632d84c9a1..e91be9b8b083 100644
---- a/drivers/crypto/cavium/nitrox/nitrox_main.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
-@@ -71,7 +71,7 @@ struct ucode {
- 	char version[VERSION_LEN - 1];
- 	__be32 code_size;
- 	u8 raz[12];
--	u64 code[0];
-+	u64 code[];
- };
- 
- /**
-diff --git a/drivers/crypto/chelsio/chcr_core.h b/drivers/crypto/chelsio/chcr_core.h
-index b41ef1abfe74..e480096754b5 100644
---- a/drivers/crypto/chelsio/chcr_core.h
-+++ b/drivers/crypto/chelsio/chcr_core.h
-@@ -68,7 +68,7 @@ struct _key_ctx {
- 	__be32 ctx_hdr;
- 	u8 salt[MAX_SALT];
- 	__be64 iv_to_auth;
--	unsigned char key[0];
-+	unsigned char key[];
- };
- 
- #define KEYCTX_TX_WR_IV_S  55
-diff --git a/drivers/crypto/mediatek/mtk-sha.c b/drivers/crypto/mediatek/mtk-sha.c
-index 9e9f48bb7f85..bd6309e57ab8 100644
---- a/drivers/crypto/mediatek/mtk-sha.c
-+++ b/drivers/crypto/mediatek/mtk-sha.c
-@@ -107,7 +107,7 @@ struct mtk_sha_ctx {
- 	u8 id;
- 	u8 buf[SHA_BUF_SIZE] __aligned(sizeof(u32));
- 
--	struct mtk_sha_hmac_ctx	base[0];
-+	struct mtk_sha_hmac_ctx	base[];
- };
- 
- struct mtk_sha_drv {
-diff --git a/drivers/crypto/nx/nx.h b/drivers/crypto/nx/nx.h
-index 91c54289124a..c6233173c612 100644
---- a/drivers/crypto/nx/nx.h
-+++ b/drivers/crypto/nx/nx.h
-@@ -37,7 +37,7 @@ struct max_sync_cop {
- 	u32 fc;
- 	u32 mode;
- 	u32 triplets;
--	struct msc_triplet trip[0];
-+	struct msc_triplet trip[];
- } __packed;
- 
- struct alg_props {
-diff --git a/drivers/crypto/omap-sham.c b/drivers/crypto/omap-sham.c
-index 4f915a4ef5b0..e4072cd38585 100644
---- a/drivers/crypto/omap-sham.c
-+++ b/drivers/crypto/omap-sham.c
-@@ -159,7 +159,7 @@ struct omap_sham_reqctx {
- 	int			sg_len;
- 	unsigned int		total;	/* total request */
- 
--	u8			buffer[0] OMAP_ALIGNED;
-+	u8			buffer[] OMAP_ALIGNED;
- };
- 
- struct omap_sham_hmac_ctx {
-@@ -176,7 +176,7 @@ struct omap_sham_ctx {
- 	/* fallback stuff */
- 	struct crypto_shash	*fallback;
- 
--	struct omap_sham_hmac_ctx base[0];
-+	struct omap_sham_hmac_ctx base[];
- };
- 
- #define OMAP_SHAM_QUEUE_LENGTH	10
-diff --git a/include/crypto/if_alg.h b/include/crypto/if_alg.h
-index 24cfa96f98ea..56527c85d122 100644
---- a/include/crypto/if_alg.h
-+++ b/include/crypto/if_alg.h
-@@ -66,7 +66,7 @@ struct af_alg_sgl {
- struct af_alg_tsgl {
- 	struct list_head list;
- 	unsigned int cur;		/* Last processed SG entry */
--	struct scatterlist sg[0];	/* Array of SGs forming the SGL */
-+	struct scatterlist sg[];	/* Array of SGs forming the SGL */
- };
- 
- #define MAX_SGL_ENTS ((4096 - sizeof(struct af_alg_tsgl)) / \
 -- 
-2.25.0
+Jens Axboe
 
