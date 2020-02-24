@@ -2,106 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D3316B3D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:25:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9A6D16B3E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2020 23:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbgBXWZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 17:25:32 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24931 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726651AbgBXWZb (ORCPT
+        id S1728018AbgBXW1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 17:27:06 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39876 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727249AbgBXW1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 17:25:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582583130;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Bot62eJ1QDSkALNx5M99l4TX45t0SfA6NlI29a+aUK0=;
-        b=hpsUEzkVdVV+83QHXQFzaJ+25pZLN9Y0dZEGhHHWyykvymlhA3iLfDMhFGavtp8tAJcw1G
-        g+j4kZTfaI8P8mDyp/i9+gYqEGoJ7UX6O0TUexPcHkeOm/NnUd9Jd6N7Q4eckNWckBmrN/
-        Rj4nOAhIf40hI9LIDn2g0eddVm/6tS4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-177-0bomdRrbPVyUWNUKPxy_Gw-1; Mon, 24 Feb 2020 17:25:28 -0500
-X-MC-Unique: 0bomdRrbPVyUWNUKPxy_Gw-1
-Received: by mail-wm1-f69.google.com with SMTP id o24so327114wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 14:25:27 -0800 (PST)
+        Mon, 24 Feb 2020 17:27:05 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 84so6078118pfy.6
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 14:27:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=N8uW5I9vM7M9dgZNeVW89oSVwdXb7JJspNMFnTdsIHM=;
+        b=jjb/ltj6Dl/BLTImTnJOx8f83qe1X4RzfCIi0nAKuiuNm3I+v4BiMZM3nVaxBwTeMc
+         l3pBEm+HLYafUv3VwQdccIkJfM7jJ17q2NBMff+Xrh7g8a2/wWd/VZqn0/VA0K9pVNrk
+         2rvarsLrO+8NmUy3S4E0Tr8l1mM/QmYgVZlVIq2QZKbZI7ZAeWabBUvaEWdKlGaQ713s
+         aLRbqW0JQ3aTtmT/yflWtlmiIFAfgGsy/8fRQUq3qM8XyzI/PWHF10BSbeQv/UVNyryi
+         wI/S7mR3tpBOQY7dW143Gh5Rc1V8IlnUBh3Ec6i14WV6z65uFb3RZ+h9gU6MwghxdEmk
+         tbaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=Bot62eJ1QDSkALNx5M99l4TX45t0SfA6NlI29a+aUK0=;
-        b=nKfroqcX+iDkCuBurc3BhCj5IZOljpO3W6oJEm5tSN/TIHfNXnylSsVMUEZtLII+Yl
-         biKrTFcrlQqXo8UWsOVpCWDZn2laPFxqEcQfW8KCcLIxHkE1jl0+avHODVYWivw/FFK7
-         //bWr9JVF0mOkXjDyKLoD1hZdoGpqNNrvwYKBCwYgDbNZLish8PVk3tAYdvdK+RGe1hy
-         2QlCQStpBKjAkNfJmMWXKJTG9UKtImHVTOJ6g0c1FEXmOXGzkaov6Ub0k8sd9IG8rP35
-         BnZxAB9PRuglYM9pCsPrbzHEwhvgFhVoGoObdBR8otY6vWIhq/1fAy7HIXgGMNmq7KXt
-         t1vw==
-X-Gm-Message-State: APjAAAXJZHLfZRxO5TrpMtX4GVt+TQPH63ah25GEl+0OtMjzM2flZZ/C
-        Q9JPJJno7HiYHk97ef0HSpovrmE5zwj0FJdpn4PJmeY9Ce0/iZcDygImbrTXy/E0v6pz/DNHjYc
-        cqwKKApq+5802uM9hPZDZEyek
-X-Received: by 2002:a5d:6284:: with SMTP id k4mr70626440wru.398.1582583126671;
-        Mon, 24 Feb 2020 14:25:26 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxdW0lbkDcKo6cvmGoaTL3byAKPZzz+xGIZ0lou3jF2Nzg4YqBYrlczj+0NSU2EHCBclycImw==
-X-Received: by 2002:a5d:6284:: with SMTP id k4mr70626416wru.398.1582583126397;
-        Mon, 24 Feb 2020 14:25:26 -0800 (PST)
-Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
-        by smtp.gmail.com with ESMTPSA id b67sm1206714wmc.38.2020.02.24.14.25.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 14:25:25 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 46/61] KVM: x86: Remove the unnecessary loop on CPUID 0x7 sub-leafs
-In-Reply-To: <20200201185218.24473-47-sean.j.christopherson@intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-47-sean.j.christopherson@intel.com>
-Date:   Mon, 24 Feb 2020 23:25:24 +0100
-Message-ID: <87tv3fmxm3.fsf@vitty.brq.redhat.com>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=N8uW5I9vM7M9dgZNeVW89oSVwdXb7JJspNMFnTdsIHM=;
+        b=iALbhxzo2ulmmhgdM6YxLYS+/5BDAb29YrFr7QnO7oYU2xnEPfPeXFyEeFNCGJTEtg
+         SxLy6S/0YsBP6rcd29NB6UEbat1aSaULA49o+/E3lOB3ChfWwpvI1gf52N8lI04l31nc
+         o7Qd4lWmUUVdj766fOowTeX4x8w1/3GrRmWabMS7qN1sZWCjL4cPolYGmtIHEt+HcxH8
+         58Oi0ZGviLM89D5sxQUV4fyCf11hBYmfH/BnYuoktQiQU0oPoe0f6/CVxPgXC15dknvU
+         P7fH0Vl2EIsCGhJ77mSUQAwnC5Ja6B3dnxHS4eu6rz5mj3/bTGTPSAu65q+6Twn4l4S8
+         kBBQ==
+X-Gm-Message-State: APjAAAU35FHTFLWHwxGPlXOdfAIivQssbzxZGGrx6R3g5Fyxh7XXYeGG
+        Qik2oQSbYIh22Ncl9tosvzqljQ==
+X-Google-Smtp-Source: APXvYqzh5p4xJuU9VecvA+EavGY+LuUQ1KKByt917r/gAyMV0FwOD6sP6TJIudNiZHy7NfjhmNHCAQ==
+X-Received: by 2002:a63:1a5b:: with SMTP id a27mr3598267pgm.249.1582583224197;
+        Mon, 24 Feb 2020 14:27:04 -0800 (PST)
+Received: from [100.112.92.218] ([104.133.9.106])
+        by smtp.gmail.com with ESMTPSA id v25sm13820038pfe.147.2020.02.24.14.27.02
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 24 Feb 2020 14:27:03 -0800 (PST)
+Date:   Mon, 24 Feb 2020 14:26:45 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Dan Schatzberg <schatzberg.dan@gmail.com>
+cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
+        <linux-mm@kvack.org>
+Subject: Re: [PATCH v3 2/3] mm: Charge active memcg when no mm is set
+In-Reply-To: <4456276af198412b2d41cd09d246cd20e0c6d22a.1582581887.git.schatzberg.dan@gmail.com>
+Message-ID: <alpine.LSU.2.11.2002241425001.1576@eggly.anvils>
+References: <cover.1582581887.git.schatzberg.dan@gmail.com> <4456276af198412b2d41cd09d246cd20e0c6d22a.1582581887.git.schatzberg.dan@gmail.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+On Mon, 24 Feb 2020, Dan Schatzberg wrote:
 
-> Explicitly handle CPUID 0x7 sub-leaf 1.  The kernel is currently aware
-> of exactly one feature in CPUID 0x7.1,  which means there is room for
-> another 127 features before CPUID 0x7.2 will see the light of day, i.e.
-> the looping is likely to be dead code for years to come.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> memalloc_use_memcg() worked for kernel allocations but was silently
+> ignored for user pages.
+> 
+> This patch establishes a precedence order for who gets charged:
+> 
+> 1. If there is a memcg associated with the page already, that memcg is
+>    charged. This happens during swapin.
+> 
+> 2. If an explicit mm is passed, mm->memcg is charged. This happens
+>    during page faults, which can be triggered in remote VMs (eg gup).
+> 
+> 3. Otherwise consult the current process context. If it has configured
+>    a current->active_memcg, use that. Otherwise, current->mm->memcg.
+> 
+> Previously, if a NULL mm was passed to mem_cgroup_try_charge (case 3) it
+> would always charge the root cgroup. Now it looks up the current
+> active_memcg first (falling back to charging the root cgroup if not
+> set).
+> 
+> Signed-off-by: Dan Schatzberg <schatzberg.dan@gmail.com>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> Acked-by: Tejun Heo <tj@kernel.org>
+> Acked-by: Chris Down <chris@chrisdown.name>
+
+Acked-by: Hugh Dickins <hughd@google.com>
+
+> Reviewed-by: Shakeel Butt <shakeelb@google.com>
+> Signed-off-by: Dan Schatzberg <schatzberg.dan@gmail.com>
 > ---
->  arch/x86/kvm/cpuid.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 7362e5238799..47f61f4497fb 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -533,11 +533,9 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
->  		if (boot_cpu_has(X86_FEATURE_AMD_SSBD))
->  			cpuid_entry_set(entry, X86_FEATURE_SPEC_CTRL_SSBD);
+>  mm/memcontrol.c | 11 ++++++++---
+>  mm/shmem.c      |  4 ++--
+>  2 files changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index d09776cd6e10..222e4aac0c85 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -6319,7 +6319,8 @@ enum mem_cgroup_protection mem_cgroup_protected(struct mem_cgroup *root,
+>   * @compound: charge the page as compound or small page
+>   *
+>   * Try to charge @page to the memcg that @mm belongs to, reclaiming
+> - * pages according to @gfp_mask if necessary.
+> + * pages according to @gfp_mask if necessary. If @mm is NULL, try to
+> + * charge to the active memcg.
+>   *
+>   * Returns 0 on success, with *@memcgp pointing to the charged memcg.
+>   * Otherwise, an error code is returned.
+> @@ -6363,8 +6364,12 @@ int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
+>  		}
+>  	}
 >  
-> -		for (i = 1, max_idx = entry->eax; i <= max_idx; i++) {
-> -			if (WARN_ON_ONCE(i > 1))
-> -				break;
-> -
-> -			entry = do_host_cpuid(array, function, i);
-> +		/* KVM only supports 0x7.0 and 0x7.1, capped above via min(). */
-> +		if (entry->eax == 1) {
-> +			entry = do_host_cpuid(array, function, 1);
->  			if (!entry)
->  				goto out;
-
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-
--- 
-Vitaly
-
+> -	if (!memcg)
+> -		memcg = get_mem_cgroup_from_mm(mm);
+> +	if (!memcg) {
+> +		if (!mm)
+> +			memcg = get_mem_cgroup_from_current();
+> +		else
+> +			memcg = get_mem_cgroup_from_mm(mm);
+> +	}
+>  
+>  	ret = try_charge(memcg, gfp_mask, nr_pages);
+>  
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index c8f7540ef048..8664c97851f2 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1631,7 +1631,7 @@ static int shmem_swapin_page(struct inode *inode, pgoff_t index,
+>  {
+>  	struct address_space *mapping = inode->i_mapping;
+>  	struct shmem_inode_info *info = SHMEM_I(inode);
+> -	struct mm_struct *charge_mm = vma ? vma->vm_mm : current->mm;
+> +	struct mm_struct *charge_mm = vma ? vma->vm_mm : NULL;
+>  	struct mem_cgroup *memcg;
+>  	struct page *page;
+>  	swp_entry_t swap;
+> @@ -1766,7 +1766,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+>  	}
+>  
+>  	sbinfo = SHMEM_SB(inode->i_sb);
+> -	charge_mm = vma ? vma->vm_mm : current->mm;
+> +	charge_mm = vma ? vma->vm_mm : NULL;
+>  
+>  	page = find_lock_entry(mapping, index);
+>  	if (xa_is_value(page)) {
+> -- 
+> 2.17.1
