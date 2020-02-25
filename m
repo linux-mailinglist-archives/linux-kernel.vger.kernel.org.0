@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 954E316F32B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 986CF16F32D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:26:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729912AbgBYX0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:26:09 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55614 "EHLO
+        id S1730072AbgBYX0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:26:16 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55700 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729757AbgBYX0C (ORCPT
+        with ESMTP id S1730008AbgBYX0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:26:02 -0500
+        Tue, 25 Feb 2020 18:26:13 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j6jaF-0004eW-BC; Wed, 26 Feb 2020 00:25:47 +0100
+        id 1j6jaG-0004es-RT; Wed, 26 Feb 2020 00:25:49 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 82FDF1039F7;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id B83F110408E;
         Wed, 26 Feb 2020 00:25:37 +0100 (CET)
-Message-Id: <20200225222648.682036985@linutronix.de>
+Message-Id: <20200225222648.772492410@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Feb 2020 23:16:11 +0100
+Date:   Tue, 25 Feb 2020 23:16:12 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [patch 05/24] x86/entry/32: Provide macro to emit IDT entry stubs
+Subject: [patch 06/24] x86/idtentry: Provide macros to define/declare IDT entry points
 References: <20200225221606.511535280@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,71 +42,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-32 and 64 bit have unnecessary different ways to populate the exception
-entry code. Provide a idtentry macro which allows to consolidate all of
-that.
+Provide DECLARE/DEFINE_IDTENTRY() macros.
+
+DEFINE_IDTENTRY() provides a wrapper which acts as the function
+definition. The exception handler body is just appended to it with curly
+brackets. The entry point is marked notrace/noprobe so that irq tracing and
+the enter_from_user_mode() can be moved into the C-entry point. As all
+C-entries use the same macro (or a later variant) the necessary entry
+handling can be implemented at one central place.
+
+DECLARE_IDTENTRY() provides the function prototypes:
+  - The C entry point 	    	cfunc
+  - The ASM entry point		asm_cfunc
+  - The XEN/PV entry point	xen_asm_cfunc
+
+They all follow the same naming convention.
+
+When included from ASM code DECLARE_IDTENTRY() is a macro which emits the
+low level entry point in assembly by instantiating idtentry.
+
+IDTENTRY is the simplest variant which just has a pt_regs argument. It's
+going to be used for all exceptions which have no error code.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/entry/entry_32.S |   42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ arch/x86/entry/entry_32.S       |    6 +++
+ arch/x86/entry/entry_64.S       |    6 +++
+ arch/x86/include/asm/idtentry.h |   79 ++++++++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/traps.h    |    2 -
+ 4 files changed, 92 insertions(+), 1 deletion(-)
 
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -44,6 +44,7 @@
- #include <asm/asm.h>
- #include <asm/smap.h>
- #include <asm/frame.h>
-+#include <asm/trapnr.h>
- #include <asm/nospec-branch.h>
- 
- #include "calling.h"
-@@ -726,6 +727,47 @@
- 
- .Lend_\@:
+@@ -769,6 +769,12 @@ SYM_CODE_END(\asmsym)
  .endm
-+
-+#ifdef CONFIG_X86_INVD_BUG
-+.macro idtentry_push_func vector cfunc
-+	.if \vector == X86_TRAP_XF
-+		/* AMD 486 bug: invd from userspace calls exception 19 instead of #GP */
-+		ALTERNATIVE "pushl	$do_general_protection",	\
-+			    "pushl	$do_simd_coprocessor_error",	\
-+			    X86_FEATURE_XMM
-+	.else
-+		pushl $\cfunc
-+	.endif
-+.endm
-+#else
-+.macro idtentry_push_func vector cfunc
-+	pushl $\cfunc
-+.endm
-+#endif
-+
-+/**
-+ * idtentry - Macro to generate entry stubs for simple IDT entries
-+ * @vector:		Vector number
-+ * @asmsym:		ASM symbol for the entry point
-+ * @cfunc:		C function to be called
-+ * @has_error_code:	Hardware pushed error code on stack
-+ */
-+.macro idtentry vector asmsym cfunc has_error_code:req
-+SYM_CODE_START(\asmsym)
-+	ASM_CLAC
-+	cld
-+
-+	.if \has_error_code == 0
-+		pushl	$0		/* Clear the error code */
-+	.endif
-+
-+	/* Push the C-function address into the GS slot */
-+	idtentry_push_func \vector \cfunc
-+	/* Invoke the common exception entry */
-+	jmp	common_exception
-+SYM_CODE_END(\asmsym)
-+.endm
-+
+ 
  /*
++ * Include the defines which emit the idt entries which are shared
++ * shared between 32 and 64 bit.
++ */
++#include <asm/idtentry.h>
++
++/*
   * %eax: prev task
   * %edx: next task
+  */
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -688,6 +688,12 @@ SYM_CODE_END(\asmsym)
+ .endm
+ 
+ /*
++ * Include the defines which emit the idt entries which are shared
++ * shared between 32 and 64 bit.
++ */
++#include <asm/idtentry.h>
++
++/*
+  * Interrupt entry helper function.
+  *
+  * Entry runs with interrupts off. Stack layout at entry:
+--- /dev/null
++++ b/arch/x86/include/asm/idtentry.h
+@@ -0,0 +1,79 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_IDTENTRY_H
++#define _ASM_X86_IDTENTRY_H
++
++/* Interrupts/Exceptions */
++#include <asm/trapnr.h>
++
++#ifndef __ASSEMBLY__
++
++/**
++ * idtentry_enter - Handle state tracking on idtentry
++ * @regs:	Pointer to pt_regs of interrupted context
++ *
++ * Place holder for now.
++ */
++static __always_inline void idtentry_enter(struct pt_regs *regs)
++{
++}
++
++/**
++ * idtentry_exit - Prepare returning to low level ASM code
++ *
++ * Place holder for now.
++ */
++static __always_inline void idtentry_exit(struct pt_regs *regs)
++{
++}
++
++/**
++ * DECLARE_IDTENTRY - Declare functions for simple IDT entry points
++ *		      No error code pushed by hardware
++ * @vector:	Vector number (ignored for C)
++ * @func:	Function name of the entry point
++ *
++ * Declares three functions:
++ * - The ASM entry point: asm_##func
++ * - The XEN PV trap entry point: xen_##func (maybe unused)
++ * - The C handler called from the ASM entry point
++ */
++#define DECLARE_IDTENTRY(vector, func)					\
++	asmlinkage void asm_##func(void);				\
++	asmlinkage void xen_asm_##func(void);				\
++	__visible void func(struct pt_regs *regs)
++
++/**
++ * DEFINE_IDTENTRY - Emit code for simple IDT entry points
++ * @func:	Function name of the entry point
++ *
++ * @func is called from ASM entry code with interrupts disabled.
++ *
++ * The macro is written so it acts as function definition. Append the
++ * body with a pair of curly brackets.
++ *
++ * idtentry_enter() contains common code which has to be invoked before
++ * arbitrary code in the body. idtentry_exit() contains common code
++ * which has to run before returning to the low level assembly code.
++ */
++#define DEFINE_IDTENTRY(func)						\
++static __always_inline void __##func(struct pt_regs *regs);		\
++									\
++__visible notrace void func(struct pt_regs *regs)			\
++{									\
++	idtentry_enter(regs);						\
++	__##func (regs);						\
++	idtentry_exit(regs);						\
++}									\
++NOKPROBE_SYMBOL(func);							\
++									\
++static __always_inline void __##func(struct pt_regs *regs)
++
++#else /* !__ASSEMBLY__ */
++
++/* Defines for ASM code to construct the IDT entries */
++#define DECLARE_IDTENTRY(vector, func)				\
++	idtentry vector asm_##func func has_error_code=0
++
++#endif /* __ASSEMBLY__ */
++
++#endif
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -6,8 +6,8 @@
+ #include <linux/kprobes.h>
+ 
+ #include <asm/debugreg.h>
++#include <asm/idtentry.h>
+ #include <asm/siginfo.h>			/* TRAP_TRACE, ... */
+-#include <asm/trapnr.h>
+ 
+ #define dotraplinkage __visible
+ 
 
