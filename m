@@ -2,115 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DD9916B784
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 03:06:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E05A416B787
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 03:06:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbgBYCGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 21:06:00 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:39554 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726962AbgBYCGA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 21:06:00 -0500
-X-UUID: ee94dd2ad54942ba852a7be265f12645-20200225
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=1GkVtHnMOGUYvyU+Z3t+4TNCCd4NtYShAbetZq0c0zI=;
-        b=N6TqeEdBXrovHIN7+j91FZa6eCDCfPzFxjj85Io9UsSEone8wwmr4rexgCHVBqGTeHxPSxZ4A2q0Uo/o5b+gKvbT2zyBDJgL3NSn0MGC9/w0lXFuycanSgMEyvzudSM7ySzB0gEyacePOsanixfh4zJjbrUCaMFrp5vLhitmIQk=;
-X-UUID: ee94dd2ad54942ba852a7be265f12645-20200225
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1663242324; Tue, 25 Feb 2020 10:05:50 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 25 Feb
- 2020 10:04:28 +0800
-Received: from [10.16.6.141] (10.16.6.141) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 25 Feb 2020 10:04:30 +0800
-Message-ID: <1582596343.12484.6.camel@mszsdaap41>
-Subject: Re: [PATCH v6 1/4] dt-bindings: display: mediatek: update dpi
- supported chips
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        id S1728780AbgBYCGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 21:06:50 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58960 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728011AbgBYCGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 21:06:50 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8828C5E565293787A2F6;
+        Tue, 25 Feb 2020 10:06:48 +0800 (CST)
+Received: from [127.0.0.1] (10.173.222.27) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 25 Feb 2020
+ 10:06:27 +0800
+Subject: Re: [PATCH] irqchip/gic-v3-its: Clear Valid before writing any bits
+ else in VPENDBASER
+To:     Marc Zyngier <maz@kernel.org>
+CC:     <kvmarm@lists.cs.columbia.edu>,
         <linux-arm-kernel@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <stonea168@163.com>,
-        <huijuan.xie@mediatek.com>
-Date:   Tue, 25 Feb 2020 10:05:43 +0800
-In-Reply-To: <1582533982.12922.5.camel@mtksdaap41>
-References: <20200221112828.55837-1-jitao.shi@mediatek.com>
-         <20200221112828.55837-2-jitao.shi@mediatek.com>
-         <1582533982.12922.5.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>,
+        Yanlei Jia <jiayanlei@huawei.com>
+References: <20200224025029.92-1-yuzenghui@huawei.com>
+ <bb7cdb29eda9cf160bcf85a58a9fc63d@kernel.org>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <6ce5c751-6d17-b9ee-4054-edad7de075bf@huawei.com>
+Date:   Tue, 25 Feb 2020 10:06:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: DF4CC5F84BD1563D748466E071B8B5DE1401EC4BA0F4ADFB867FD7306FEC15252000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <bb7cdb29eda9cf160bcf85a58a9fc63d@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.222.27]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDIwLTAyLTI0IGF0IDE2OjQ2ICswODAwLCBDSyBIdSB3cm90ZToNCj4gSGksIEpp
-dGFvOg0KPiANCj4gT24gRnJpLCAyMDIwLTAyLTIxIGF0IDE5OjI4ICswODAwLCBKaXRhbyBTaGkg
-d3JvdGU6DQo+ID4gQWRkIGRlY3JpcHRpb25zIGFib3V0IHN1cHBvcnRlZCBjaGlwcywgaW5jbHVk
-aW5nIE1UMjcwMSAmIE1UODE3MyAmDQo+ID4gbXQ4MTgzDQo+ID4gDQo+ID4gMS4gQWRkIG1vcmUg
-Y2hpcHMgc3VwcG9ydC4gZXguIE1UMjcwMSAmIE1UODE3MyAmIE1UODE4Mw0KPiA+IDIuIEFkZCBw
-cm9wZXJ0eSAiZHBpX3Bpbl9tb2RlX3N3YXAiIGFuZCAicGluY3RybC1uYW1lcyIgZ3BpbyBtb2Rl
-IGRwaSBtb2RlIGFuZA0KPiA+ICAgIGdwaW8gb3VwcHV0LWxvdyB0byBhdm9pZCBsZWFrYWdlIGN1
-cnJlbnQuDQo+ID4gMy4gQWRkIHByb3BlcnR5ICJkcGlfZHVhbF9lZGdlIiB0byBjb25maWcgdGhl
-IGRwaSBwaW4gb3V0cHV0IG1vZGUgZHVhbCBlZGdlIG9yDQo+ID4gICAgc2luZ2xlIGVkZ2Ugc2Ft
-cGxlIGRhdGEuDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogSml0YW8gU2hpIDxqaXRhby5zaGlA
-bWVkaWF0ZWsuY29tPg0KPiA+IC0tLQ0KPiA+ICAuLi4vYmluZGluZ3MvZGlzcGxheS9tZWRpYXRl
-ay9tZWRpYXRlayxkcGkudHh0ICAgICAgICB8IDExICsrKysrKysrKysrDQo+ID4gIDEgZmlsZSBj
-aGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50
-YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50
-eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9tZWRpYXRlay9t
-ZWRpYXRlayxkcGkudHh0DQo+ID4gaW5kZXggYjZhN2U3Mzk3YjhiLi5jZDZhMTQ2OWM4YjcgMTAw
-NjQ0DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
-bWVkaWF0ZWsvbWVkaWF0ZWssZHBpLnR4dA0KPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQNCj4gPiBAQCAt
-Nyw2ICs3LDcgQEAgb3V0cHV0IGJ1cy4NCj4gPiAgDQo+ID4gIFJlcXVpcmVkIHByb3BlcnRpZXM6
-DQo+ID4gIC0gY29tcGF0aWJsZTogIm1lZGlhdGVrLDxjaGlwPi1kcGkiDQo+ID4gKyAgdGhlIHN1
-cHBvcnRlZCBjaGlwcyBhcmUgbXQyNzAxICwgbXQ4MTczIGFuZCBtdDgxODMuDQo+ID4gIC0gcmVn
-OiBQaHlzaWNhbCBiYXNlIGFkZHJlc3MgYW5kIGxlbmd0aCBvZiB0aGUgY29udHJvbGxlcidzIHJl
-Z2lzdGVycw0KPiA+ICAtIGludGVycnVwdHM6IFRoZSBpbnRlcnJ1cHQgc2lnbmFsIGZyb20gdGhl
-IGZ1bmN0aW9uIGJsb2NrLg0KPiA+ICAtIGNsb2NrczogZGV2aWNlIGNsb2Nrcw0KPiA+IEBAIC0x
-Niw2ICsxNywxMSBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+ICAgIERvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9ncmFwaC50eHQuIFRoaXMgcG9ydCBzaG91bGQgYmUgY29ubmVj
-dGVkDQo+ID4gICAgdG8gdGhlIGlucHV0IHBvcnQgb2YgYW4gYXR0YWNoZWQgSERNSSBvciBMVkRT
-IGVuY29kZXIgY2hpcC4NCj4gPiAgDQo+ID4gK09wdGlvbmFsIHByb3BlcnRpZXM6DQo+ID4gKy0g
-ZHBpX3Bpbl9tb2RlX3N3YXA6IFN3YXAgdGhlIHBpbiBtb2RlIGJldHdlZW4gZHBpIG1vZGUgYW5k
-IGdwaW8gbW9kZS4NCj4gPiArLSBwaW5jdHJsLW5hbWVzOiBDb250YWluICJncGlvbW9kZSIgYW5k
-ICJkcGltb2RlIi4NCj4gPiArLSBkcGlfZHVhbF9lZGdlOiBDb250cm9sIHRoZSBSR0IgMjRiaXQg
-ZGF0YSBvbiAxMiBwaW5zIG9yIDI0IHBpbnMuDQo+IA0KPiBJJ3ZlIGZpbmQgdGhhdCBpbiBbMV0s
-IHRoZXJlIGFyZSBhbHJlYWR5IGEgcHJvcGVydHkgb2YgInBjbGstc2FtcGxlIg0KPiB3aGljaCBs
-aWtlIHRoaXMsIGJ1dCBpdCBvbmx5IGhhdmUgcmlzaW5nICgxKSBvciBmYWxsaW5nICgwKSBzdGF0
-dXMuIERvZXMNCj4gdGhhdCBwcm9wZXJ0eSBkZXNjcmliZSB0aGUgc2FtZSB0aGluZyB3aXRoIHRo
-aXMgcHJvcGVydHk/IElmIHRoZXkgYXJlDQo+IHRoZSBzYW1lLCBJIHRoaW5rIHlvdSBzaG91bGQg
-YWRkIG5ldyBzdGF0ZSwgZHVhbCAoMiksIGZvciAicGNsay1zYW1wbGUiLg0KPiANCj4gWzFdDQo+
-IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRz
-L2xpbnV4LmdpdC90cmVlL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS92
-aWRlby1pbnRlcmZhY2VzLnR4dD9oPXY1LjYtcmMzDQo+IA0KPiBSZWdhcmRzLA0KPiBDSw0KPiAN
-Cg0KcGNsay1zYW1wbGUgaGFzIHR3byBwcm9wZXJ0aWVzICByaXNpbmcgb3IgZmFsbGluZy4NCkl0
-IG1lYW5zIHRvIHNhbXBsZSBvbiByaXNpbmcgb3IgZmFsbGluZyBlZGdlLg0KDQpCdXQsIGRwaV9k
-dWFsX2VkZ2UgbWVhbnMgdG8gc2FtcGxlIG9uIGJvdGggcmlzaW5nIGFuZCBmYWxsaW5nIGVkZ2Uu
-DQoNCkJlc3QgUmVnYXJkcw0KSml0YW8NCj4gPiArDQo+ID4gIEV4YW1wbGU6DQo+ID4gIA0KPiA+
-ICBkcGkwOiBkcGlAMTQwMWQwMDAgew0KPiA+IEBAIC0yNiw2ICszMiwxMSBAQCBkcGkwOiBkcGlA
-MTQwMWQwMDAgew0KPiA+ICAJCSA8Jm1tc3lzIENMS19NTV9EUElfRU5HSU5FPiwNCj4gPiAgCQkg
-PCZhcG1peGVkc3lzIENMS19BUE1JWEVEX1RWRFBMTD47DQo+ID4gIAljbG9jay1uYW1lcyA9ICJw
-aXhlbCIsICJlbmdpbmUiLCAicGxsIjsNCj4gPiArCWRwaV9kdWFsX2VkZ2U7DQo+ID4gKwlkcGlf
-cGluX21vZGVfc3dhcDsNCj4gPiArCXBpbmN0cmwtbmFtZXMgPSAiZ3Bpb21vZGUiLCAiZHBpbW9k
-ZSI7DQo+ID4gKwlwaW5jdHJsLTAgPSA8JmRwaV9waW5fZ3Bpbz47DQo+ID4gKwlwaW5jdHJsLTEg
-PSA8JmRwaV9waW5fZnVuYz47DQo+ID4gIA0KPiA+ICAJcG9ydCB7DQo+ID4gIAkJZHBpMF9vdXQ6
-IGVuZHBvaW50IHsNCj4gDQo+IA0KDQo=
+Hi Marc,
+
+On 2020/2/25 7:47, Marc Zyngier wrote:
+> Hi Zenghui,
+> 
+> On 2020-02-24 02:50, Zenghui Yu wrote:
+>> The Valid bit must be cleared before changing anything else when writing
+>> GICR_VPENDBASER to avoid the UNPREDICTABLE behavior. This is exactly what
+>> we've done on 32bit arm, but not on arm64.
+> 
+> I'm not quite sure how you decide that Valid must be cleared before 
+> changing
+> anything else. The reason why we do it on 32bit is that we cannot update
+> the full 64bit register at once, so we start by clearing Valid so that
+> we can update the rest. arm64 doesn't require that.
+
+The problem came out from discussions with our GIC engineers and what we
+talked about at that time was IHI 0069E 9.11.36 - the description of the
+Valid field:
+
+"Writing a new value to any bit of GICR_VPENDBASER, other than
+GICR_VPENDBASER.Valid, when GICR_VPENDBASER.Valid==1 is UNPREDICTABLE."
+
+It looks like we should first clear the Valid and then write something
+else. We might have some mis-understanding about this statement..
+
+> 
+> For the rest of discussion, let's ignore GICv4.1 32bit support (I'm
+> pretty sure nobody cares about that).
+> 
+>> This works fine on GICv4 where we only clear Valid for a vPE deschedule.
+>> With the introduction of GICv4.1, we might also need to talk something 
+>> else
+>> (e.g., PendingLast, Doorbell) to the redistributor when clearing the 
+>> Valid.
+>> Let's port the 32bit gicr_write_vpendbaser() to arm64 so that hardware 
+>> can
+>> do the right thing after descheduling the vPE.
+> 
+> The spec says that:
+> 
+> "For a write that writes GICR_VPENDBASER.Valid from 1 to 0, if
+> GICR_VPENDBASER.PendingLast is written as 1 then 
+> GICR_VPENDBASER.PendingLast
+> takes an UNKNOWN value and GICR_VPENDBASER.Doorbell is treated as being 0."
+> 
+> and
+> 
+> "When GICR_VPENDBASER.Valid is written from 1 to 0, if there are 
+> outstanding
+> enabled pending interrupts GICR_VPENDBASER.Doorbell is treated as 0."
+> 
+> which indicate that PendingLast/Doorbell have to be written at the same 
+> time
+> as we clear Valid.
+
+Yes. I obviously missed these two points when writing this patch.
+
+> Can you point me to the bit of the v4.1 spec that makes
+> this "clear Valid before doing anything else" requirement explicit?
+
+No, nothing in v4.1 spec supports me :-(  The above has been forwarded
+to Hisilicon and I will confirm these with them. It would be easy for
+hardware to handle the PendingLast/DB when clearing Valid, I think.
+
+
+Thank you,
+Zenghui
 
