@@ -2,90 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9614116C32C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:02:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 731A916C332
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:03:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730512AbgBYOCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 09:02:17 -0500
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:31526 "EHLO 1wt.eu"
+        id S1730573AbgBYODK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 09:03:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729952AbgBYOCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:02:16 -0500
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id 01PE27FN031971;
-        Tue, 25 Feb 2020 15:02:07 +0100
-Date:   Tue, 25 Feb 2020 15:02:07 +0100
-From:   Willy Tarreau <w@1wt.eu>
-To:     Denis Efremov <efremov@linux.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 01/10] floppy: cleanup: expand macro FDCS
-Message-ID: <20200225140207.GA31782@1wt.eu>
-References: <20200224212352.8640-1-w@1wt.eu>
- <20200224212352.8640-2-w@1wt.eu>
- <CAHk-=wi4R_nPdE4OuNW9daKFD4FpV74PkG4USHqub+nuvOWYFg@mail.gmail.com>
- <28e72058-021d-6de0-477e-6038a10d96da@linux.com>
- <20200225034529.GA8908@1wt.eu>
- <c181b184-1785-b221-76fa-4313bbada09d@linux.com>
+        id S1729952AbgBYODJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 09:03:09 -0500
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 304F3222C2;
+        Tue, 25 Feb 2020 14:03:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582639388;
+        bh=4qn639jYpkdf96gHfdgJKSoL+lKpXNE16GpYcCHFXTM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=sqaAjA+1J37y6usfnHDwA4/OPvt8xEEcMGoo7tGxh/P0Vae37EDc4g8FeFQ734fso
+         ujnVJrGDk7kz88ouzyl4RZj7pyWvILr85MF/rZsmxEpQDWYfMHPagkvnTe4Bvmfi6c
+         +ZMYg64fbo2gpCPpTf/D5pugasetDk/eo77dBmBM=
+Received: by mail-qt1-f176.google.com with SMTP id p34so9083679qtb.6;
+        Tue, 25 Feb 2020 06:03:08 -0800 (PST)
+X-Gm-Message-State: APjAAAXs5FRU0HuEtJQiGxCQYniLbIicK3XZno69ZKtiXGjBUPvtd6K0
+        dJho0kJKKaRlJwC0OC/2AJjR0Y7SOZlZx2rmQg==
+X-Google-Smtp-Source: APXvYqyY0f8YCsY0KVybyegDUL7R6z4tio3DOIbnu6bhfP9ELYYo0gmY/zYUsN5JJ1tibdP6DSvSpwzCZG6i3yyhwsE=
+X-Received: by 2002:ac8:59:: with SMTP id i25mr54944784qtg.110.1582639387281;
+ Tue, 25 Feb 2020 06:03:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c181b184-1785-b221-76fa-4313bbada09d@linux.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
+ <bf8aa2deea50cc3599caeb9ed1a07556353415df.1582533919.git-series.maxime@cerno.tech>
+ <20200224184107.GA4189@bogus> <20200225115447.yntzkh3vfnw67ial@gilmour.lan>
+In-Reply-To: <20200225115447.yntzkh3vfnw67ial@gilmour.lan>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 25 Feb 2020 08:02:55 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+kBNkTApDoyQ55gwW2WpHo7ywJ-UJ=-vGmWYsvshRijw@mail.gmail.com>
+Message-ID: <CAL_Jsq+kBNkTApDoyQ55gwW2WpHo7ywJ-UJ=-vGmWYsvshRijw@mail.gmail.com>
+Subject: Re: [PATCH 29/89] dt-bindings: display: Convert VC4 bindings to schemas
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Eric Anholt <eric@anholt.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 10:14:40AM +0300, Denis Efremov wrote:
-> 
-> 
-> On 2/25/20 6:45 AM, Willy Tarreau wrote:
-> > On Tue, Feb 25, 2020 at 02:13:42AM +0300, Denis Efremov wrote:
-> >> On 2/25/20 12:53 AM, Linus Torvalds wrote:
-> >>> So I'd like to see that second step that does the
-> >>>
-> >>>     -static int fdc;                 /* current fdc */
-> >>>     +static int current_fdc;
-> >>>
-> >>> change.
-> >>>
-> >>> We already call the global 'drive' variable 'current_drive', so it
-> >>> really is 'fdc' that is misnamed and ambiguous because it then has two
-> >>> different cases: the global 'fdc' and then the various shadowing local
-> >>> 'fdc' variables (or function arguments).
-> >>>
-> >>> Mind adding that too? Slightly less automatic, I agree, because then
-> >>> you really do have to disambiguate between the "is this the shadowed
-> >>> use of a local 'fdc'" case or the "this is the global 'fdc' use" case.
-> > 
-> > I definitely agree. I first wanted to be sure the patches were acceptable
-> > as a principle, but disambiguating the variables is easy to do now.
-> 
-> Ok, I don't want to break in the middle of your changes in this case.
+On Tue, Feb 25, 2020 at 5:54 AM Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> Hi Rob,
+>
+> On Mon, Feb 24, 2020 at 12:41:07PM -0600, Rob Herring wrote:
+> > On Mon, 24 Feb 2020 10:06:31 +0100, Maxime Ripard wrote:
+> > > The BCM283x SoCs have a display pipeline composed of several controllers
+> > > with device tree bindings that are supported by Linux.
+> > >
+> > > Now that we have the DT validation in place, let's split into separate
+> > > files and convert the device tree bindings for those controllers to
+> > > schemas.
+> > >
+> > > Cc: Rob Herring <robh+dt@kernel.org>
+> > > Cc: devicetree@vger.kernel.org
+> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > > ---
+> > >  Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt              | 174 +------------------------------------------------------------------------
+> > >  Documentation/devicetree/bindings/display/brcm,bcm2835-dpi.yaml         |  66 +++++++++++++++++++++++++++-
+> > >  Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml        |  73 ++++++++++++++++++++++++++++++-
+> > >  Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml        |  75 +++++++++++++++++++++++++++++++-
+> > >  Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml         |  37 +++++++++++++++-
+> > >  Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml |  40 +++++++++++++++++-
+> > >  Documentation/devicetree/bindings/display/brcm,bcm2835-txp.yaml         |  37 +++++++++++++++-
+> > >  Documentation/devicetree/bindings/display/brcm,bcm2835-v3d.yaml         |  42 +++++++++++++++++-
+> > >  Documentation/devicetree/bindings/display/brcm,bcm2835-vc4.yaml         |  34 ++++++++++++++-
+> > >  Documentation/devicetree/bindings/display/brcm,bcm2835-vec.yaml         |  44 ++++++++++++++++++-
+> > >  MAINTAINERS                                                             |   2 +-
+> > >  11 files changed, 449 insertions(+), 175 deletions(-)
+> > >  delete mode 100644 Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-dpi.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-txp.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-v3d.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-vc4.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-vec.yaml
+> > >
+> >
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> >
+> > warning: no schema found in file: Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml
+> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml: ignoring, error in schema: properties
+> > Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
+> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml: properties: '#clock-cells' is a dependency of 'clock-output-names'
+> > Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.example.dts' failed
+> > make[1]: *** [Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.example.dts] Error 1
+> > Makefile:1263: recipe for target 'dt_binding_check' failed
+> > make: *** [dt_binding_check] Error 2
+> >
+> > See https://patchwork.ozlabs.org/patch/1242907
+> > Please check and re-submit.
+>
+> Yeah, that was fixed in patch 31 ("dt-bindings: display: vc4: dsi: Add
+> missing clock properties"). I'm not quite sure what the preferred
+> approach here would be: I did a conversion as is of the binding, and
+> then fixed it, or do you prefer having it all in the same patch?
 
-So I started this and discovered the nice joke you were telling me
-about regarding FD_IOPORT which references fdc. Then the address
-registers FD_STATUS, FD_DATA, FD_DOR, FD_DIR, FD_DCR which are
-based on FD_IOPORT also depend on it.
+A note in this patch should be enough. I do review these before
+sending them. I was puzzled having one from you fail.
 
-These ones are used by fd_outb() which is arch-dependent, so if we
-want to pass a third argument we have to change them all and make sure
-not to break them too much.
-
-In addition the FD_* macros defined above are used by x86, and FD_DOR is
-also used by arm while all other archs hard-code all the values. ARM also
-uses floppy_selects[fdc] and new_dor... I'm starting to feel the trap here!
-I also feel a bit concerned that these are exported in uapi with a hard-coded
-0x3f0 base address. I'm just not sure how portable all of this is in
-the end :-/
-
-Now I'm wondering, how far should we go and how much is it acceptable to
-change ? I'd rather not have "#define fdc current_fdc" just so that it
-builds, but on the other hand this problem clearly outlights the roots
-of the issue, which lies in "fdc" being silently accessed by macros with
-nobody noticing!
-
-Willy
+Rob
