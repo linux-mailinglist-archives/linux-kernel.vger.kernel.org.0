@@ -2,159 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 823F416EAB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:01:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E0516EAC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:02:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730950AbgBYQBC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 11:01:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41860 "EHLO mx2.suse.de"
+        id S1731015AbgBYQCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 11:02:53 -0500
+Received: from mga03.intel.com ([134.134.136.65]:47504 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730422AbgBYQBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 11:01:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 2B30FADBE;
-        Tue, 25 Feb 2020 16:00:58 +0000 (UTC)
-Message-ID: <71cd7b35af81ee91c3b4dc5e7c05760ecd590c5d.camel@suse.de>
-Subject: Re: [PATCH 07/89] clk: bcm: rpi: Allow the driver to be probed by DT
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Maxime Ripard <maxime@cerno.tech>, Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Date:   Tue, 25 Feb 2020 17:00:56 +0100
-In-Reply-To: <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
-         <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-rHY9rlJOyK3Y6KPoBaSb"
-User-Agent: Evolution 3.34.4 
+        id S1730616AbgBYQCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 11:02:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 08:02:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,484,1574150400"; 
+   d="scan'208";a="438109107"
+Received: from djiang5-desk3.ch.intel.com ([143.182.136.137])
+  by fmsmga006.fm.intel.com with ESMTP; 25 Feb 2020 08:02:50 -0800
+Subject: Re: [PATCH] MAINTAINERS: add maintainers for uacce
+To:     Zhangfei Gao <zhangfei.gao@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        jonathan.cameron@huawei.com, grant.likely@arm.com,
+        jean-philippe <jean-philippe@linaro.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
+        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
+        "haojian . zhuang" <haojian.zhuang@linaro.org>,
+        guodong.xu@linaro.org
+Cc:     linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org
+References: <1582611475-32691-1-git-send-email-zhangfei.gao@linaro.org>
+From:   Dave Jiang <dave.jiang@intel.com>
+Message-ID: <b424d911-7293-0048-3270-0f7c1502c928@intel.com>
+Date:   Tue, 25 Feb 2020 09:02:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <1582611475-32691-1-git-send-email-zhangfei.gao@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-rHY9rlJOyK3Y6KPoBaSb
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Maxime,
+On 2/24/20 11:17 PM, Zhangfei Gao wrote:
+> Add Zhangfei Gao and Zhou Wang as maintainers for uacce
+> 
+> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+> Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
+> ---
+>   MAINTAINERS | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 38fe2f3..22e647f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17039,6 +17039,16 @@ W:	http://linuxtv.org
+>   S:	Maintained
+>   F:	drivers/media/pci/tw686x/
+>   
+> +UACCE ACCELERATOR FRAMEWORK
+> +M:	Zhangfei Gao <zhangfei.gao@linaro.org>
+> +M:	Zhou Wang <wangzhou1@hisilicon.com>
+> +S:	Maintained
+> +F:	Documentation/ABI/testing/sysfs-driver-uacce
+> +F:	Documentation/misc-devices/uacce.rst
+> +F:	drivers/misc/uacce/
+> +F:	include/linux/uacce.h
+> +F:	include/uapi/misc/uacce/
 
-On Mon, 2020-02-24 at 10:06 +0100, Maxime Ripard wrote:
-> The current firmware clock driver for the RaspberryPi can only be probed =
-by
-> manually registering an associated platform_device.
->=20
-> While this works fine for cpufreq where the device gets attached a clkdev
-> lookup, it would be tedious to maintain a table of all the devices using
-> one of the clocks exposed by the firmware.
->=20
-> Since the DT on the other hand is the perfect place to store those
-> associations, make the firmware clocks driver probe-able through the devi=
-ce
-> tree so that we can represent it as a node.
+Mailing list for patch submission?
++L: linux-accelerators@lists.ozlabs.org ?
 
-I'm not convinced this is the right approach, and if we decide to go this w=
-ay,
-there are more changes to take into account.
-
-For one, if we create a dt node for this driver, we'd have to delete the
-platform device creation in firmware/raspberrypi.c and then we'd be even ab=
-le
-to bypass raspberrypi-cpufreq altogether by creating opp tables in dt. But
-there are reasons we didn't go that way at the time.
-
-We've made an effort to avoid using dt for firmware interfaces whenever
-possible as, on one hand, it's arguable they don't fit device-tree's hardwa=
-re
-description paradigm and, on the other, the lack of flexibility they impose
-once the binding is defined. VC4's firmware interfaces are not set in stone=
-,
-nor standardized like SCMI, so the more flexible we are to future changes t=
-he
-better.
-
-Another thing I'm not all that happy about it's how dynamic clock registeri=
-ng
-is handled in patch #22 (but I'll keep it here as relevant to the discussio=
-n):
-
-- Some of those fw managed clocks you're creating have their mmio counterpa=
-rt
-  being registered by clk-bcm238. IMO either register one or the other, giv=
-ing
-  precedence to the mmio counterpart. Note that for pllb, we deleted the
-  relevant code from clk-bcm2385.
-
-- The same way we were able to map the fw CPU clock into the clk tree
-  (pllb/pllb_arm) there are no reasons we shouldn't be able to do the same =
-for
-  the VPU clocks. It's way nicer and less opaque to users (this being a
-  learning platform adds to the argument).
-
-- On top of that, having a special case for the CPU clock registration is
-  nasty. Lets settle for one solution and make everyone follow it.
-
-- I don't see what's so bad about creating clock lookups. IIUC there are on=
-ly
-  two clocks that need this special handling CPU & HDMI, It's manageable. Y=
-ou
-  don't even have to mess with the consumer driver, if there was ever to be=
- a
-  dt provided mmio option to this clock.
-
->  drivers/clk/bcm/clk-raspberrypi.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-
-> raspberrypi.c
-> index 1654fd0eedc9..94870234824c 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -255,15 +255,13 @@ static int raspberrypi_clk_probe(struct platform_de=
-vice
-> *pdev)
->  	struct raspberrypi_clk *rpi;
->  	int ret;
-> =20
-> -	firmware_node =3D of_find_compatible_node(NULL, NULL,
-> -					"raspberrypi,bcm2835-firmware");
-> +	firmware_node =3D of_parse_phandle(dev->of_node, "raspberrypi,firmware"=
-,
-> 0);
-
-There is no such phandle in the upstream device tree. Maybe this was aimed =
-at
-the downstream dt?
-
-Regards,
-Nicolas
-
-
---=-rHY9rlJOyK3Y6KPoBaSb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5VRLgACgkQlfZmHno8
-x/6Q2gf+ISkwE0dJhNaeauh1TOB9Ymx8NHoZYccWJLmwg4vqH+nOGwxQM4O26qbu
-lXwrXTBzGcDwvdJkGmBsrTqRGGRbgtmeBQu4siPFNjD7hl775Uz2FIfNlWnUEieQ
-lKbdquRkNjoHvXoDDuHEHuBlHQ2W0IckhNFiEMhdDGb2n9eAvBaILoba+pgjgwP6
-IAnRGDlk7JBf7kuWHk6RWEOjOwKoCJlHJsNA09ZK2tjXMkaOqKLWnGIVGFMECm7/
-ThGgG9gqv65WG/8uK1E/F5hnR3qVbYXLcXAXZLK28nxkXODDw7fNBEXEUfXHJKqT
-TtEHMJ79mu2FeQA32GE0G3lduoWGjg==
-=HBgi
------END PGP SIGNATURE-----
-
---=-rHY9rlJOyK3Y6KPoBaSb--
-
+> +
+>   UBI FILE SYSTEM (UBIFS)
+>   M:	Richard Weinberger <richard@nod.at>
+>   L:	linux-mtd@lists.infradead.org
+> 
