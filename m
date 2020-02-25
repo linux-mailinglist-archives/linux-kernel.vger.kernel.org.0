@@ -2,58 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A153816EEAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:10:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A67E16EEAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:10:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731307AbgBYTKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 14:10:32 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:48774 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbgBYTKb (ORCPT
+        id S1731694AbgBYTKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 14:10:38 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52516 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728065AbgBYTKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 14:10:31 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0C11313B48C3E;
-        Tue, 25 Feb 2020 11:10:31 -0800 (PST)
-Date:   Tue, 25 Feb 2020 11:10:30 -0800 (PST)
-Message-Id: <20200225.111030.1608169659746789536.davem@davemloft.net>
-To:     aaro.koskinen@nokia.com
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: stmmac: move notifier block to private data
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200225111615.17964-1-aaro.koskinen@nokia.com>
-References: <20200225111615.17964-1-aaro.koskinen@nokia.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 25 Feb 2020 11:10:31 -0800 (PST)
+        Tue, 25 Feb 2020 14:10:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=/QPdaZH+DsUudIW2GdY/uk6YzgGjD4GCaet27A7iu4Q=; b=a2+ao7c9edC3GjXQUaEmUb/HTT
+        hGvinhlKAZkBaIiM4qb96MUs2X0Q4fRunGkB/CeQARPEpMClpLIQKcKBb5rTezSOsV64m559qLGiR
+        3saeYmoNvg4raBqUeMGE7xiqMAcXlVqS/pW4goL2Lyd+V3kM0jEELT9iBfsdNnaVd+1qif0otTydH
+        TkgO1N1uYu5RFWYaIQ1w+Viu7/I9ta3Dwr1Gt8B6TbdhPWWFwPqtTdIUdhP8zDFwA8BUJUyQOZyAn
+        rcb8SQa10L2M87oDjwKIWAZOas6e5R4DhX3dgJfAupdWwyey767howjeF3tzZ/SHDR/eZXWl593m5
+        voledIJQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6fbG-0000xA-RV; Tue, 25 Feb 2020 19:10:34 +0000
+Date:   Tue, 25 Feb 2020 11:10:34 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>
+Subject: Re: [PATCH 2/2] iommu/vt-d: Replace intel SVM APIs with generic SVA
+ APIs
+Message-ID: <20200225191034.GA29045@infradead.org>
+References: <1582586797-61697-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1582586797-61697-4-git-send-email-jacob.jun.pan@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1582586797-61697-4-git-send-email-jacob.jun.pan@linux.intel.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: aaro.koskinen@nokia.com
-Date: Tue, 25 Feb 2020 13:16:15 +0200
+On Mon, Feb 24, 2020 at 03:26:37PM -0800, Jacob Pan wrote:
+> This patch is an initial step to replace Intel SVM code with the
+> following IOMMU SVA ops:
+> intel_svm_bind_mm() => iommu_sva_bind_device()
+> intel_svm_unbind_mm() => iommu_sva_unbind_device()
+> intel_svm_is_pasid_valid() => iommu_sva_get_pasid()
 
-> From: Aaro Koskinen <aaro.koskinen@nokia.com>
-> 
-> Move notifier block to private data. Otherwise notifier code will complain
-> about double register with multiple stmmac instances.
-> 
-> Fixes: 481a7d154cbb ("stmmac: debugfs entry name is not be changed when udev rename device name.")
-> Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+How did either set APIs end up being added to the kernel without users
+to start with?
 
-This doesn't make any sense.
-
-We need only one instance of the stmmac notifier registered, no matter how many
-stmmac devices are probed.
-
-Please change it such that we only call register_notifier() once (when the first
-stmmac device is probed) and only unregister_notifier() when the last one is
-removed.
+Please remove both the old intel and the iommu ones given that neither
+has any users.
