@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F61316F35C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:29:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0AA316F333
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:26:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730128AbgBYX24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:28:56 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55798 "EHLO
+        id S1730314AbgBYX0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:26:35 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55806 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730182AbgBYX0Z (ORCPT
+        with ESMTP id S1730199AbgBYX00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:26:25 -0500
+        Tue, 25 Feb 2020 18:26:26 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j6jaY-0004py-6h; Wed, 26 Feb 2020 00:26:07 +0100
+        id 1j6jaZ-0004pz-HL; Wed, 26 Feb 2020 00:26:08 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 77206104089;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id AD7491040A7;
         Wed, 26 Feb 2020 00:25:41 +0100 (CET)
-Message-Id: <20200225222650.431925624@linutronix.de>
+Message-Id: <20200225222650.523393652@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Feb 2020 23:16:29 +0100
+Date:   Tue, 25 Feb 2020 23:16:30 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [patch 23/24] x86/entry: Convert SIMD coprocessor error exception to IDTENTRY
+Subject: [patch 24/24] x86/entry/32: Convert IRET exception to IDTENTRY_SW
 References: <20200225221606.511535280@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,11 +42,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert #XF to IDTENTRY_ERRORCODE:
-  - Implement the C entry point with DEFINE_IDTENTRY
-  - Emit the ASM stub with DECLARE_IDTENTRY
-  - Remove the ASM idtentry in 64bit
-  - Remove the open coded ASM entry code in 32bit
+Convert the IRET exception handler to IDTENTRY_SW. This is slightly
+different than the conversions of hardware exceptions as the IRET exception
+is invoked via an exception table when IRET faults. So it just uses the
+IDTENTRY_SW mechanism for consistency. It does not emit ASM code as it does
+not fit the other idtentry exceptions.
+
+  - Implement the C entry point with DEFINE_IDTENTRY_SW() which maps to
+    DEFINE_IDTENTRY()
   - Fixup the XEN/PV code
   - Remove the old prototyoes
 
@@ -54,185 +57,139 @@ No functional change.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/entry/entry_32.S       |   16 +---------------
- arch/x86/entry/entry_64.S       |    2 --
- arch/x86/include/asm/idtentry.h |    1 +
+ arch/x86/entry/entry_32.S       |   12 ++++++------
+ arch/x86/include/asm/idtentry.h |   11 ++++++++++-
  arch/x86/include/asm/traps.h    |    3 ---
- arch/x86/kernel/idt.c           |    2 +-
- arch/x86/kernel/traps.c         |   21 ++++++++++-----------
- arch/x86/xen/enlighten_pv.c     |    2 +-
- arch/x86/xen/xen-asm_64.S       |    2 +-
- 8 files changed, 15 insertions(+), 34 deletions(-)
+ arch/x86/kernel/traps.c         |    6 +++---
+ arch/x86/xen/xen-asm_32.S       |    2 +-
+ 5 files changed, 20 insertions(+), 14 deletions(-)
 
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -733,7 +733,7 @@
- 	.if \vector == X86_TRAP_XF
- 		/* AMD 486 bug: invd from userspace calls exception 19 instead of #GP */
- 		ALTERNATIVE "pushl	$exc_general_protection",	\
--			    "pushl	$do_simd_coprocessor_error",	\
-+			    "pushl	$exc_simd_coprocessor_error",	\
- 			    X86_FEATURE_XMM
- 	.else
- 		pushl $\cfunc
-@@ -1299,20 +1299,6 @@ SYM_FUNC_END(name)
- /* The include is where all of the SMP etc. interrupts come from */
- #include <asm/entry_arch.h>
+@@ -1156,9 +1156,9 @@ SYM_FUNC_START(entry_INT80_32)
+ 	jmp	.Lirq_return
  
--SYM_CODE_START(simd_coprocessor_error)
--	ASM_CLAC
--	pushl	$0
--#ifdef CONFIG_X86_INVD_BUG
--	/* AMD 486 bug: invd from userspace calls exception 19 instead of #GP */
--	ALTERNATIVE "pushl	$do_general_protection",	\
--		    "pushl	$do_simd_coprocessor_error",	\
--		    X86_FEATURE_XMM
--#else
--	pushl	$do_simd_coprocessor_error
--#endif
--	jmp	common_exception
--SYM_CODE_END(simd_coprocessor_error)
--
+ .section .fixup, "ax"
+-SYM_CODE_START(iret_exc)
++SYM_CODE_START(asm_exc_iret_error)
+ 	pushl	$0				# no error code
+-	pushl	$do_iret_error
++	pushl	$exc_iret_error
+ 
+ #ifdef CONFIG_DEBUG_ENTRY
+ 	/*
+@@ -1173,9 +1173,9 @@ SYM_CODE_START(iret_exc)
+ #endif
+ 
+ 	jmp	common_exception
+-SYM_CODE_END(iret_exc)
++SYM_CODE_END(asm_exc_iret_error)
+ .previous
+-	_ASM_EXTABLE(.Lirq_return, iret_exc)
++	_ASM_EXTABLE(.Lirq_return, asm_exc_iret_error)
+ SYM_FUNC_END(entry_INT80_32)
+ 
+ .macro FIXUP_ESPFIX_STACK
+@@ -1302,7 +1302,7 @@ SYM_FUNC_END(name)
  #ifdef CONFIG_PARAVIRT
  SYM_CODE_START(native_iret)
  	iret
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1061,8 +1061,6 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
-  * Exception entry points.
-  */
- 
--idtentry	X86_TRAP_XF		simd_coprocessor_error	do_simd_coprocessor_error	has_error_code=0
--
- idtentry	X86_TRAP_PF		page_fault		do_page_fault			has_error_code=1
- #ifdef CONFIG_KVM_GUEST
- idtentry	X86_TRAP_PF		async_page_fault	do_async_page_fault		has_error_code=1
---- a/arch/x86/include/asm/idtentry.h
-+++ b/arch/x86/include/asm/idtentry.h
-@@ -129,6 +129,7 @@ DECLARE_IDTENTRY(X86_TRAP_NM,		exc_devic
- DECLARE_IDTENTRY(X86_TRAP_OLD_MF,	exc_coproc_segment_overrun);
- DECLARE_IDTENTRY(X86_TRAP_SPURIOUS,	exc_spurious_interrupt_bug);
- DECLARE_IDTENTRY(X86_TRAP_MF,		exc_coprocessor_error);
-+DECLARE_IDTENTRY(X86_TRAP_XF,		exc_simd_coprocessor_error);
- 
- /* Simple exception entries with error code pushed by hardware */
- DECLARE_IDTENTRY_ERRORCODE(X86_TRAP_TS,	exc_invalid_tss);
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -21,7 +21,6 @@ asmlinkage void async_page_fault(void);
- #ifdef CONFIG_X86_MCE
- asmlinkage void machine_check(void);
- #endif /* CONFIG_X86_MCE */
--asmlinkage void simd_coprocessor_error(void);
- 
- #if defined(CONFIG_X86_64) && defined(CONFIG_XEN_PV)
- asmlinkage void xen_xennmi(void);
-@@ -31,7 +30,6 @@ asmlinkage void xen_page_fault(void);
- #ifdef CONFIG_X86_MCE
- asmlinkage void xen_machine_check(void);
- #endif /* CONFIG_X86_MCE */
--asmlinkage void xen_simd_coprocessor_error(void);
+-	_ASM_EXTABLE(native_iret, iret_exc)
++	_ASM_EXTABLE(native_iret, asm_exc_iret_error)
+ SYM_CODE_END(native_iret)
  #endif
  
- dotraplinkage void do_debug(struct pt_regs *regs, long error_code);
-@@ -40,7 +38,6 @@ dotraplinkage void do_nmi(struct pt_regs
+@@ -1367,7 +1367,7 @@ SYM_FUNC_START(xen_failsafe_callback)
+ 	popl	%eax
+ 	lea	16(%esp), %esp
+ 	jz	5f
+-	jmp	iret_exc
++	jmp	asm_exc_iret_error
+ 5:	pushl	$-1				/* orig_ax = -1 => not a system call */
+ 	SAVE_ALL
+ 	ENCODE_FRAME_POINTER
+--- a/arch/x86/include/asm/idtentry.h
++++ b/arch/x86/include/asm/idtentry.h
+@@ -68,6 +68,10 @@ NOKPROBE_SYMBOL(func);							\
+ 									\
+ static __always_inline void __##func(struct pt_regs *regs)
+ 
++/* Special case for 32bit IRET 'trap' */
++#define DECLARE_IDTENTRY_SW	DECLARE_IDTENTRY
++#define DEFINE_IDTENTRY_SW	DEFINE_IDTENTRY
++
+ /**
+  * DECLARE_IDTENTRY_ERRORCODE - Declare functions for simple IDT entry points
+  *				Error code pushed by hardware
+@@ -107,7 +111,6 @@ NOKPROBE_SYMBOL(func);							\
+ static __always_inline void __##func(struct pt_regs *regs,		\
+ 				     unsigned long error_code)
+ 
+-
+ #else /* !__ASSEMBLY__ */
+ 
+ /* Defines for ASM code to construct the IDT entries */
+@@ -117,6 +120,9 @@ static __always_inline void __##func(str
+ #define DECLARE_IDTENTRY_ERRORCODE(vector, func)		\
+ 	idtentry vector asm_##func func has_error_code=1
+ 
++/* Special case for 32bit IRET 'trap'. Do not emit ASM code */
++#define DECLARE_IDTENTRY_SW(vector, func)
++
+ #endif /* __ASSEMBLY__ */
+ 
+ /* Simple exception entries: */
+@@ -131,6 +137,9 @@ DECLARE_IDTENTRY(X86_TRAP_SPURIOUS,	exc_
+ DECLARE_IDTENTRY(X86_TRAP_MF,		exc_coprocessor_error);
+ DECLARE_IDTENTRY(X86_TRAP_XF,		exc_simd_coprocessor_error);
+ 
++/* 32bit software IRET trap. Do not emit ASM code */
++DECLARE_IDTENTRY_SW(X86_TRAP_IRET,	exc_iret_error);
++
+ /* Simple exception entries with error code pushed by hardware */
+ DECLARE_IDTENTRY_ERRORCODE(X86_TRAP_TS,	exc_invalid_tss);
+ DECLARE_IDTENTRY_ERRORCODE(X86_TRAP_NP,	exc_segment_not_present);
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -38,9 +38,6 @@ dotraplinkage void do_nmi(struct pt_regs
  dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code, unsigned long cr2);
  #endif
  dotraplinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code, unsigned long address);
--dotraplinkage void do_simd_coprocessor_error(struct pt_regs *regs, long error_code);
- #ifdef CONFIG_X86_32
- dotraplinkage void do_iret_error(struct pt_regs *regs, long error_code);
- #endif
---- a/arch/x86/kernel/idt.c
-+++ b/arch/x86/kernel/idt.c
-@@ -83,7 +83,7 @@ static const __initconst struct idt_data
- 	INTG(X86_TRAP_SPURIOUS,		asm_exc_spurious_interrupt_bug),
- 	INTG(X86_TRAP_MF,		asm_exc_coprocessor_error),
- 	INTG(X86_TRAP_AC,		asm_exc_alignment_check),
--	INTG(X86_TRAP_XF,		simd_coprocessor_error),
-+	INTG(X86_TRAP_XF,		asm_exc_simd_coprocessor_error),
+-#ifdef CONFIG_X86_32
+-dotraplinkage void do_iret_error(struct pt_regs *regs, long error_code);
+-#endif
+ dotraplinkage void do_mce(struct pt_regs *regs, long error_code);
  
- #ifdef CONFIG_X86_32
- 	TSKG(X86_TRAP_DF,		GDT_ENTRY_DOUBLEFAULT_TSS),
+ #ifdef CONFIG_X86_64
 --- a/arch/x86/kernel/traps.c
 +++ b/arch/x86/kernel/traps.c
-@@ -848,7 +848,7 @@ NOKPROBE_SYMBOL(do_debug);
-  * the correct behaviour even in the presence of the asynchronous
-  * IRQ13 behaviour
-  */
--static void math_error(struct pt_regs *regs, int error_code, int trapnr)
-+static void math_error(struct pt_regs *regs, int trapnr)
+@@ -956,14 +956,14 @@ DEFINE_IDTENTRY(exc_device_not_available
+ }
+ 
+ #ifdef CONFIG_X86_32
+-dotraplinkage void do_iret_error(struct pt_regs *regs, long error_code)
++DEFINE_IDTENTRY_SW(exc_iret_error)
  {
- 	struct task_struct *task = current;
- 	struct fpu *fpu = &task->thread.fpu;
-@@ -859,15 +859,15 @@ static void math_error(struct pt_regs *r
- 	cond_local_irq_enable(regs);
+ 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+ 	local_irq_enable();
  
- 	if (!user_mode(regs)) {
--		if (fixup_exception(regs, trapnr, error_code, 0))
-+		if (fixup_exception(regs, trapnr, 0, 0))
- 			return;
- 
--		task->thread.error_code = error_code;
-+		task->thread.error_code = 0;
- 		task->thread.trap_nr = trapnr;
- 
--		if (notify_die(DIE_TRAP, str, regs, error_code,
--					trapnr, SIGFPE) != NOTIFY_STOP)
--			die(str, regs, error_code);
-+		if (notify_die(DIE_TRAP, str, regs, 0,trapnr,
-+			       SIGFPE) != NOTIFY_STOP)
-+			die(str, regs, 0);
- 		return;
+-	if (notify_die(DIE_TRAP, "iret exception", regs, error_code,
++	if (notify_die(DIE_TRAP, "iret exception", regs, 0,
+ 			X86_TRAP_IRET, SIGILL) != NOTIFY_STOP) {
+-		do_trap(X86_TRAP_IRET, SIGILL, "iret exception", regs, error_code,
++		do_trap(X86_TRAP_IRET, SIGILL, "iret exception", regs, 0,
+ 			ILL_BADSTK, (void __user *)NULL);
  	}
- 
-@@ -877,7 +877,7 @@ static void math_error(struct pt_regs *r
- 	fpu__save(fpu);
- 
- 	task->thread.trap_nr	= trapnr;
--	task->thread.error_code = error_code;
-+	task->thread.error_code = 0;
- 
- 	si_code = fpu__exception_code(fpu, trapnr);
- 	/* Retry when we get spurious exceptions: */
-@@ -891,14 +891,13 @@ static void math_error(struct pt_regs *r
- DEFINE_IDTENTRY(exc_coprocessor_error)
- {
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
--	math_error(regs, 0, X86_TRAP_MF);
-+	math_error(regs, X86_TRAP_MF);
  }
+--- a/arch/x86/xen/xen-asm_32.S
++++ b/arch/x86/xen/xen-asm_32.S
+@@ -117,7 +117,7 @@ SYM_CODE_START(xen_iret)
  
--dotraplinkage void
--do_simd_coprocessor_error(struct pt_regs *regs, long error_code)
-+DEFINE_IDTENTRY(exc_simd_coprocessor_error)
- {
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
--	math_error(regs, error_code, X86_TRAP_XF);
-+	math_error(regs, X86_TRAP_XF);
- }
+ 1:	iret
+ xen_iret_end_crit:
+-	_ASM_EXTABLE(1b, iret_exc)
++	_ASM_EXTABLE(1b, asm_exc_iret_error)
  
- DEFINE_IDTENTRY(exc_spurious_interrupt_bug)
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -632,7 +632,7 @@ static struct trap_array_entry trap_arra
- 	TRAP_ENTRY(exc_spurious_interrupt_bug,		false ),
- 	TRAP_ENTRY(exc_coprocessor_error,		false ),
- 	TRAP_ENTRY(exc_alignment_check,			false ),
--	{ simd_coprocessor_error,      xen_simd_coprocessor_error,      false },
-+	TRAP_ENTRY(exc_simd_coprocessor_error,		false ),
- };
- 
- static bool __ref get_trap_addr(void **addr, unsigned int ist)
---- a/arch/x86/xen/xen-asm_64.S
-+++ b/arch/x86/xen/xen-asm_64.S
-@@ -50,7 +50,7 @@ xen_pv_trap asm_exc_alignment_check
- #ifdef CONFIG_X86_MCE
- xen_pv_trap machine_check
- #endif /* CONFIG_X86_MCE */
--xen_pv_trap simd_coprocessor_error
-+xen_pv_trap asm_exc_simd_coprocessor_error
- #ifdef CONFIG_IA32_EMULATION
- xen_pv_trap entry_INT80_compat
- #endif
+ hyper_iret:
+ 	/* put this out of line since its very rarely used */
 
