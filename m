@@ -2,178 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4745F16EDD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:20:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C22F216ED68
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731492AbgBYSUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 13:20:30 -0500
-Received: from foss.arm.com ([217.140.110.172]:54460 "EHLO foss.arm.com"
+        id S1730017AbgBYSB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 13:01:29 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46726 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727983AbgBYSU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 13:20:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C6EBFEC;
-        Tue, 25 Feb 2020 09:55:47 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50ACA3F6CF;
-        Tue, 25 Feb 2020 09:55:45 -0800 (PST)
-Subject: Re: [PATCH v2] arm64:kgdb: Fix kernel single-stepping
-To:     cminyard@mvista.com
-Cc:     minyard@acm.org, Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20200219152403.3495-1-minyard@acm.org>
- <20200220142214.GC14459@willie-the-truck> <20200220163038.GJ3704@minyard.net>
- <20200220213040.GA2919@minyard.net>
- <9e2eac0b-ab60-6316-4976-686a8ab7ac8f@arm.com>
- <20200225153801.GD3865@minyard.net>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <52fbb8a7-9dc9-508a-80f6-36ba42d5dacb@arm.com>
-Date:   Tue, 25 Feb 2020 17:55:44 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727983AbgBYSB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 13:01:29 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 641A4AD48;
+        Tue, 25 Feb 2020 18:01:26 +0000 (UTC)
+Date:   Tue, 25 Feb 2020 19:01:25 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Joe Lawrence <joe.lawrence@redhat.com>
+cc:     Petr Mladek <pmladek@suse.com>, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-team@android.com,
+        akpm@linux-foundation.org,
+        "K . Prasad" <prasad@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Quentin Perret <qperret@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH 0/3] Unexport kallsyms_lookup_name() and
+ kallsyms_on_each_symbol()
+In-Reply-To: <943e7093-2862-53c6-b7f4-96c7d65789b9@redhat.com>
+Message-ID: <alpine.LSU.2.21.2002251854550.1630@pobox.suse.cz>
+References: <20200221114404.14641-1-will@kernel.org> <alpine.LSU.2.21.2002251104130.11531@pobox.suse.cz> <20200225121125.psvuz6e7coa77vxe@pathway.suse.cz> <943e7093-2862-53c6-b7f4-96c7d65789b9@redhat.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20200225153801.GD3865@minyard.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="1678380546-697660208-1582653686=:1630"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Corey,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 25/02/2020 15:38, Corey Minyard wrote:
-> On Mon, Feb 24, 2020 at 06:07:17PM +0000, James Morse wrote:
->> On 20/02/2020 21:30, Corey Minyard wrote:
->>> Ok, this is the disconnect.  I was assuming that single step would stop
->>> at the next instruction after returning from an exception.  qemu works
->>> the same way the hardware I have does.  So I'm assuming arm64 doesn't
->>> clear PTRACE.SS on an exception, even though that seems to be what the
->>> manual says.
->>
->> PSTATE.SS isn't an enable bit for single step ... its part of a bigger state-machine.
->> (my made-up terminology for it is 'PSTATE.Suppress-Step'...)
->>
->> The diagram in the Arm-Arm's D2.12.3 "The software step state machine" may help.
->>
->> MDSCR_EL1.SS enables single-step, if PSTATE.D is clear the CPU will now take step
->> exceptions instead of pretty much anything else. (active pending state)
->> To execute one instruction you need to ERET with SPSR_ELx.SS set. (active, not pending)
->> The CPU will execute one instruction, then clear PSTATE.SS. (taking us back to active pending)
->>
->> Taking an exception clears PSTATE.SS so that you know you're in active-pending state, and
->> will take a step exception once you re-enable debug with PSTATE.D. This lets you step the
->> exception handlers.
->> (if it was set, you wouldn't see the first instruction in the step handler, if it was
->> inherited, you couldn't know if you would see the first instruction or not).
->> If you take something other than a step exception, PSTATE.SS will be preserved in SPSR_EL1.SS.
->>
->>
->> What I think you are seeing is the step exception once debug is re-enabled, after taking
->> an exception you didn't want. This happens because MDSCR_EL1.SS is still set.
+--1678380546-697660208-1582653686=:1630
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
+On Tue, 25 Feb 2020, Joe Lawrence wrote:
 
-> Ok, I was familiar with that diagram, but I was trying to fit it into
-> how the other architectures where I have done this type of work.  This
-> is a little bizarre to me, but I understand now.  Your explaination was
-> very helpful, though the code I have is correct either way.
-
-| +/*
-| + * The task that is currently being single-stepped.  There can be only
-| + * one.
-| + */
-| +struct task_struct *single_step_task;
-
-? I think this would break kprobes and perf's use of single-step on SMP systems.
-
-
-> The problem is that kgdb doesn't work right with the current
-> implementation.  If you continue from a breakpoint, it does not
-> continue.  It just stops at the same place.  What happens is:
+> On 2/25/20 7:11 AM, Petr Mladek wrote:
+> > On Tue 2020-02-25 11:05:39, Miroslav Benes wrote:
+> >> CC live-patching ML, because this could affect many of its users...
+> >>
+> >> On Fri, 21 Feb 2020, Will Deacon wrote:
+> >>
+> >>> Hi folks,
+> >>>
+> >>> Despite having just a single modular in-tree user that I could spot,
+> >>> kallsyms_lookup_name() is exported to modules and provides a mechanism
+> >>> for out-of-tree modules to access and invoke arbitrary, non-exported
+> >>> kernel symbols when kallsyms is enabled.
+> > 
+> > Just to explain how this affects livepatching users.
+> > 
+> > Livepatch is a module that inludes fixed copies of functions that
+> > are buggy in the running kernel. These functions often
+> > call functions or access variables that were defined static in
+> > the original source code. There are two ways how this is currently
+> > solved.
+> > 
+> > Some livepatch authors use kallsyms_lookup_name() to locate the
+> > non-exported symbols in the running kernel and then use these
+> > address in the fixed code.
+> > 
 > 
-> * gdb remove the breakpoint and single steps.
-> * An exception happens and the single step stops in the kernel entry.
->   Thus the state machine goes to inactive.
+> FWIW, kallsyms was historically used by the out-of-tree kpatch support module
+> to resolve external symbols as well as call set_memory_r{w,o}() API.  All of
+> that support code has been merged upstream, so modern kpatch modules* no
+> longer leverage kallsyms by default.
 
-(e.g. the original instruction caused a page fault)
-
-
-> * gdb re-inserts the breakpoint and continues.
-
-> * When the exception returns, the breakpoint is there and is hit again.
-
-Yes, because the original instruction hadn't run, it caused a page fault. This time its
-more likely to succeed.
-
-perf's use of arm64's breakpoints is quite happy with this. It means if you hit a
-breakpoint in the fault handler, you see those too. If an instruction causes a page-fault,
-you may see it twice, but that is because the CPU tried to execute it twice.
-
-(I agree the irq case is probably just annoying for kgdb)
-
-
-> You can never continue from a breakpoint without removing it, because
-> there's alway a timer interrupt pending.
-
-Are you driving the single-step hardware directly here, or using the behaviour from
-breakpoint_handler() and reinstall_suspended_bps()?
-
-These disable breakpoints and step the original instruction, then re-enable breakpoints.
-This is because breakpoints fire before the instruction runs, and single-step doesn't
-suppress breakpoints. This has to happen regardless of asynchronous exceptions.
-
-
-> You can't single-step through
-> instructions (stepi) because it always stops in the kernel entry.  If
-> you do a normal gdb single step in code it just hangs because it keeps
-> trying to single step through instructions and keeps stopping in kernel
-> entry.  So gdb does not expect the behavior that is currently
-> implemented.
-
-Is it fair to say that the user driving kgdb is very-slow compared to IRQs firing?
-This isn't true for the other consumers of single-step (kprobes, perf).
-
-
-> The patch as I have posted it is probably the simplest way to fix it.
-> It basically makes single-step work like other architectures, and like
-> the userspace single step works.  I could ifdef it so that the entry
-> code is only there if kgdb is enabled.  You can single step through
-> instructions that cause page faults, so it's a little more general.
-
-> The other way is to run the single-stepped instruction with interrupts
-> disabled and emulate any messing with the DAIF bits.  I assume
-> that's only "MRS <Xt>, DAIF", "MSR DAIF, <Xt>", "MSR DAIFSet, #<imm>",
-> and "MSR DAIFClr, #<imm>". 
-
-> Well, I guess ERET also does that, but maybe
-> that's ok, probably not a big deal.
-
-(tangent: you can't step ERET!)
-
-
-> In this case you can't single step over instructions that take page faults.
-
-This works for perf. It doesn't for kprobes, which is why kprobes blacklists those sites.
-
-
-> I'm not sure if that's a big
-> deal or not, but I assume users would do that.  And it's more complex
-> since you have to emulate those instructions messing with DAIF.
+Good. Quick grep through the sources gave me a couple of hits, so I was 
+not sure.
+ 
+> * That said, there are still some users who still use the deprecated support
+> module with newer kernels, but that is not officially supported by the
+> project.
 > 
-> I would like to get this fixed, either way.
+> > Another possibility is to used special relocation sections,
+> > see Documentation/livepatch/module-elf-format.rst
+> > 
+> > The problem with the special relocations sections is that the support
+> > to generate them is not ready yet. The main piece would klp-convert
+> > tool. Its development is pretty slow. The last version can be
+> > found at
+> > https://lkml.kernel.org/r/20190509143859.9050-1-joe.lawrence@redhat.com
+> > 
+> > I am not sure if this use case is enough to keep the symbols exported.
+> > Anyway, there are currently some out-of-tree users.
+> > 
+> 
+> Another (temporary?) klp-relocation issue is that binutils has limited support
+> for them as currently implemented:
+> 
+>   https://sourceware.org/ml/binutils/2020-02/msg00317.html
+> 
+> For example, try running strip or objcopy on a .ko that includes them and you
+> may find surprising results :(
+> 
+> 
+> As far as the klp-convert patchset goes, I forget whether or not we tied its
+> use case to source-based livepatch creation.  If kallsyms goes unexported,
+> perhaps it finds more immediate users.
+>
+> However since klp-convert provides nearly the same functionality as kallsyms,
+> i.e. both can be used to circumvent symbol export licensing -- one could make
+> similar arguments against its inclusion.
 
-If the problem is IRQs preventing the very-slow user making forward-progress, it may be
-possible for kgdb to ask the irqchip code to mute all IRQs on this CPU while it is
-stepping. The PMR mechanism we use for pNMI could do this for the GIC. (Caveat: I don't
-know anything about the GIC). For the pi ... no idea.
+In a way yes, but as Masami described elsewhere in the thread there are 
+more convenient ways to circumvent it even now. Not as convenient as 
+kallsyms, of course. 
+ 
+> If there is renewed (or greater, to be more accurate) interest in the
+> klp-convert patchset, we can dust it off and see what's left.  AFAIK it was
+> blocked on arch-specific klp-relocations and whether per-object​ livepatch
+> modules would remove that requirement.
 
-This doesn't stop you seeing instructions that fault from taking a fault, or taking the
-breakpoint twice when the CPU tries to run the instruction twice. This is just the debug
-hardware showing you what happened.
+Yes, I think it is on standby now. I thought about it while walking 
+through Petr's module split patch set and it seemed to me that klp-convert 
+could be made much much simpler on top of that. So we should start there.
 
+Anyway, as far as Will's patch set is concerned, there is no real obstacle 
+on our side, is there?
 
-Thanks,
+Alexei mentioned ksplice from git history, but no one cares about ksplice 
+in upstream now, I would say.
 
-James
+Thanks
+Miroslav
+--1678380546-697660208-1582653686=:1630--
