@@ -2,102 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC23616C43A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:40:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CAC416C448
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:44:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730827AbgBYOkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 09:40:53 -0500
-Received: from mga05.intel.com ([192.55.52.43]:22384 "EHLO mga05.intel.com"
+        id S1730858AbgBYOox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 09:44:53 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:39988 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730532AbgBYOkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:40:52 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 06:40:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,484,1574150400"; 
-   d="scan'208";a="350159059"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 25 Feb 2020 06:40:48 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 25 Feb 2020 16:40:47 +0200
-Date:   Tue, 25 Feb 2020 16:40:47 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Martin Volf <martin.volf.42@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] i2c: i801: Do not add ICH_RES_IO_SMI if PMC device
- is not present
-Message-ID: <20200225144047.GC2667@lahna.fi.intel.com>
-References: <20200225123802.88984-1-mika.westerberg@linux.intel.com>
- <20200225123802.88984-4-mika.westerberg@linux.intel.com>
- <2dec872e-26fb-eefc-5606-cfb1bf55d02e@roeck-us.net>
+        id S1730627AbgBYOox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 09:44:53 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id 01PEfvnc028868
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 25 Feb 2020 06:42:07 -0800
+Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
+ 14.3.468.0; Tue, 25 Feb 2020 06:41:46 -0800
+From:   <zhe.he@windriver.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+        <jolsa@redhat.com>, <namhyung@kernel.org>, <mhiramat@kernel.org>,
+        <kstewart@linuxfoundation.org>, <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>, <zhe.he@windriver.com>
+Subject: [PATCH 1/2] perf: Fix checking of duplicate probe to give proper hint
+Date:   Tue, 25 Feb 2020 22:41:42 +0800
+Message-ID: <1582641703-233485-1-git-send-email-zhe.he@windriver.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2dec872e-26fb-eefc-5606-cfb1bf55d02e@roeck-us.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 06:21:16AM -0800, Guenter Roeck wrote:
-> On 2/25/20 4:38 AM, Mika Westerberg wrote:
-> > Martin noticed that nct6775 driver does not load properly on his system
-> > in v5.4+ kernels. The issue was bisected to commit b84398d6d7f9 ("i2c:
-> > i801: Use iTCO version 6 in Cannon Lake PCH and beyond") but it is
-> > likely not the culprit because the faulty code has been in the driver
-> > already since commit 9424693035a5 ("i2c: i801: Create iTCO device on
-> > newer Intel PCHs"). So more likely some commit that added PCI IDs of
-> > recent chipsets made the driver to create the iTCO_wdt device on Martins
-> > system.
-> > 
-> > The issue was debugged to be PCI configuration access to the PMC device
-> > that is not present. This returns all 1's when read and this caused the
-> > iTCO_wdt driver to accidentally request resourses used by nct6775.
-> > 
-> > Fix this by checking that the PMC device is there and only then populate
-> > the iTCO_wdt ICH_RES_IO_SMI resource. Since the resource is now optional
-> > the iTCO_wdt driver should continue to work on recent systems without it.
-> > 
-> > Link: https://lore.kernel.org/linux-hwmon/CAM1AHpQ4196tyD=HhBu-2donSsuogabkfP03v1YF26Q7_BgvgA@mail.gmail.com/
-> > Fixes: 9424693035a5 ("i2c: i801: Create iTCO device on newer Intel PCHs")
-> > Reported-by: Martin Volf <martin.volf.42@gmail.com>
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > ---
-> >   drivers/i2c/busses/i2c-i801.c | 45 +++++++++++++++++++++--------------
-> >   1 file changed, 27 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
-> > index ca4f096fef74..7fa58375bd4b 100644
-> > --- a/drivers/i2c/busses/i2c-i801.c
-> > +++ b/drivers/i2c/busses/i2c-i801.c
-> > @@ -1519,7 +1519,7 @@ static DEFINE_SPINLOCK(p2sb_spinlock);
-> >   static struct platform_device *
-> >   i801_add_tco_spt(struct i801_priv *priv, struct pci_dev *pci_dev,
-> > -		 struct resource *tco_res)
-> > +		 struct resource *tco_res, size_t nres)
-> >   {
-> >   	struct resource *res;
-> >   	unsigned int devfn;
-> > @@ -1563,7 +1563,7 @@ i801_add_tco_spt(struct i801_priv *priv, struct pci_dev *pci_dev,
-> >   	res->flags = IORESOURCE_MEM;
-> >   	return platform_device_register_resndata(&pci_dev->dev, "iTCO_wdt", -1,
-> > -					tco_res, 3, &spt_tco_platform_data,
-> > +					tco_res, nres + 1, &spt_tco_platform_data,
-> 
-> Does this work as intended ? It still adds ICH_RES_MEM_OFF at index 2,
-> but if there is no SMI resource it will only pass two sets of resources
-> to the wdt driver, one of which (the SMI resource) would be empty,
-> ie have start == NULL and size == 0.
+From: He Zhe <zhe.he@windriver.com>
 
-Good point that would not work as expected. I'll fix this one in the
-next version.
+Since commit 72363540c009 ("perf probe: Support multiprobe event") and its
+series, if there are multiple probes for one event,
+__probe_file__get_namelist would return -EEXIST and cause the following
+failure without proper hint, due to adding existing entry to output list.
+
+root@qemuarm64:~# perf probe -x /lib64/libc.so.6 free
+Added new events:
+  probe_libc:free      (on free in /lib64/libc-2.31.so)
+  probe_libc:free      (on free in /lib64/libc-2.31.so)
+
+You can now use it in all perf tools, such as:
+
+        perf record -e probe_libc:free -aR sleep 1
+
+root@qemuarm64:~# perf probe -l
+  probe_libc:free      (on free@plt in /lib64/libc-2.31.so)
+  probe_libc:free      (on cfree in /lib64/libc-2.31.so)
+root@qemuarm64:~# perf probe -x /lib64/libc.so.6 free
+  Error: Failed to add events.
+
+As we just want to check if there is any probe with the same name, -EEXIST
+can be ignored, so we can have the right hint as before.
+
+root@qemuarm64:~# perf probe -x /lib64/libc.so.6 free
+Error: event "free" already exists.
+ Hint: Remove existing event by 'perf probe -d'
+       or force duplicates by 'perf probe -f'
+       or set 'force=yes' in BPF source.
+  Error: Failed to add events.
+
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+ tools/perf/util/probe-file.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
+index 5003ba403345..cf44c05f89c1 100644
+--- a/tools/perf/util/probe-file.c
++++ b/tools/perf/util/probe-file.c
+@@ -201,10 +201,16 @@ static struct strlist *__probe_file__get_namelist(int fd, bool include_group)
+ 		if (include_group) {
+ 			ret = e_snprintf(buf, 128, "%s:%s", tev.group,
+ 					tev.event);
+-			if (ret >= 0)
++			if (ret >= 0) {
+ 				ret = strlist__add(sl, buf);
+-		} else
++				if (ret == -EEXIST)
++					ret = 0;
++			}
++		} else {
+ 			ret = strlist__add(sl, tev.event);
++			if (ret == -EEXIST)
++				ret = 0;
++		}
+ 		clear_probe_trace_event(&tev);
+ 		if (ret < 0)
+ 			break;
+-- 
+2.24.1
+
