@@ -2,78 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 434F616B69F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:20:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12A8116B6AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:27:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728475AbgBYAUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 19:20:10 -0500
-Received: from avon.wwwdotorg.org ([104.237.132.123]:53770 "EHLO
-        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgBYAUK (ORCPT
+        id S1728574AbgBYA11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 19:27:27 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:44694 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728087AbgBYA11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 19:20:10 -0500
-Received: from [10.20.204.51] (unknown [216.228.112.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by avon.wwwdotorg.org (Postfix) with ESMTPSA id DD3721C03C9;
-        Mon, 24 Feb 2020 17:20:07 -0700 (MST)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.1 at avon.wwwdotorg.org
-Subject: Re: [PATCH v1 3/3] partitions: Introduce NVIDIA Tegra Partition Table
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Billy Laws <blaws05@gmail.com>, linux-tegra@vger.kernel.org,
-        linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>,
-        Gilles Grandou <gilles@grandou.net>,
-        Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200224231841.26550-1-digetx@gmail.com>
- <20200224231841.26550-4-digetx@gmail.com>
-From:   Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <44c22925-a14e-96d0-1f93-1979c0c60525@wwwdotorg.org>
-Date:   Mon, 24 Feb 2020 17:20:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 24 Feb 2020 19:27:27 -0500
+Received: by mail-il1-f195.google.com with SMTP id s85so9305675ill.11
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 16:27:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=SQsmpamnEC+1G39fOnv3AHWet4T1m/yewhekPzkg6oM=;
+        b=BQCQ10WEVUabUm+celhXtz0JdV/fkLvArkq4WsPhiiiAA43MY858di0FZp521E3XTa
+         5gqYAYDSdEkYN7SnEs4kyHgKuDAokjOrwg8sDzoyGx+kRiRQoeYPAVL27o3UY1SptQ6P
+         pawfnNYmAT74vVjX3bw3QxdpPYAKa7PertS4SDxi5/4YRqLx4WUWY4Ylh1MJTe0qeGqM
+         r7Zso+I/9Be7mulc84it+ioN3JpDc0n0Kd2afVxxvFbzx11l8++ZB3RGjGPJCEOH5hAH
+         GLMKZmfBiPVmTF/1Gi+sS0w11tan1GNl6HxPE8SWZpwc/YwfxcOn9Pqvsn0bWAq+BB1q
+         KTHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SQsmpamnEC+1G39fOnv3AHWet4T1m/yewhekPzkg6oM=;
+        b=jiu4XJqyxdOia2uQdn7IhHFjHlCeB0FxQu/gCBZg2vmiUemD+sqBsMKKcDltFCFqHs
+         2qDGVt38TswMh+HHv0EeF02lis7c3Z3OIAnlSKUYFF4Q+iVgahexff1BR/zLLA2zBEYv
+         v1cPkiITg8/BrAnVx0I9CwMBp8+1hd4ukbvonr2XT2ODZiO9FnWxdocyyHdzKCvJC8FU
+         xtD8om8KaKbvKh59PE56rovGqgka243aQkKY7u6JCvOh8XDTG3yg5lOaez8jbj/jz9Gj
+         tk2zrWwfesCEqG5vCYpYEV2p7LYeS/jLvmy+S7pOzDf/AJThXXVWyjebzO37OPLrqyyN
+         RzdA==
+X-Gm-Message-State: APjAAAWHwvbAoSG2aWd+3nnOU62TP2ugFq3em7mlnc29/kPV+VeeX6ld
+        T4STkcUyd0DcGhqu/lL01umqtlgEYT82jDpg0qLTGDLJ
+X-Google-Smtp-Source: APXvYqywoJznArA+B42fE3qotZLbAO/lZwwwFgSnCIFaKH0Kz32B3tEXhjaA2SpvadNI/Y+gQm5xbMlQ4ziEB+Eb1ho=
+X-Received: by 2002:a92:db49:: with SMTP id w9mr59714964ilq.277.1582590446536;
+ Mon, 24 Feb 2020 16:27:26 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200224231841.26550-4-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200224233146.23734-1-mpe@ellerman.id.au> <20200224233146.23734-3-mpe@ellerman.id.au>
+In-Reply-To: <20200224233146.23734-3-mpe@ellerman.id.au>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Mon, 24 Feb 2020 16:27:15 -0800
+Message-ID: <CAOesGMhHSYHvAXAH-kBxxGhd05Q0bbxDa9dyuw7oKTH96PTi0w@mail.gmail.com>
+Subject: Re: [PATCH 3/8] powerpc: Remove PA SEMI MAINTAINERS entries
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/24/20 4:18 PM, Dmitry Osipenko wrote:
-> All NVIDIA Tegra devices use a special partition table format for the
-> internal storage partitioning. Most of Tegra devices have GPT partition
-> in addition to TegraPT, but some older Android consumer-grade devices do
-> not or GPT is placed in a wrong sector, and thus, the TegraPT is needed
-> in order to support these devices properly in the upstream kernel. This
-> patch adds support for NVIDIA Tegra Partition Table format that is used
-> at least by all NVIDIA Tegra20 and Tegra30 devices.
+On Mon, Feb 24, 2020 at 3:31 PM Michael Ellerman <mpe@ellerman.id.au> wrote=
+:
+>
+> The PA SEMI entries have been orphaned for 3 =C2=BD years, so fold them
+> into the main POWERPC entry. The result of get_maintainer.pl is more
+> or less unchanged.
+>
+> Cc: Olof Johansson <olof@lixom.net>
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 
-> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+Acked-by: Olof Johansson <olof@lixom.net>
 
-> +static void __init tegra_boot_config_table_init(void)
-> +{
-> +	void __iomem *bct_base;
-> +	u16 pt_addr, pt_size;
-> +
-> +	bct_base = IO_ADDRESS(TEGRA_IRAM_BASE) + TEGRA_IRAM_BCT_OFFSET;
 
-This shouldn't be hard-coded. IIRC, the boot ROM writes a BIT (Boot 
-Information Table) to a fixed location in IRAM, and there's some value 
-in the BIT that points to where the BCT is in IRAM. In practice, it 
-might work out that the BCT is always at the same place in IRAM, but 
-this certainly isn't guaranteed. I think there's code in U-Boot which 
-extracts the BCT location from the BIT? Yes, see 
-arch/arm/mach-tegra/ap.c:get_odmdata().
+-Olof
