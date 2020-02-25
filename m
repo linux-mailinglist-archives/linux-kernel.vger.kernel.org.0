@@ -2,54 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75DD616C177
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 240F716C19F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 14:05:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729602AbgBYM4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 07:56:33 -0500
-Received: from mga11.intel.com ([192.55.52.93]:35478 "EHLO mga11.intel.com"
+        id S1730035AbgBYNFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 08:05:30 -0500
+Received: from foss.arm.com ([217.140.110.172]:50534 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725788AbgBYM4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 07:56:32 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 04:56:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,484,1574150400"; 
-   d="scan'208";a="350143671"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 25 Feb 2020 04:56:30 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 25 Feb 2020 14:56:29 +0200
-Date:   Tue, 25 Feb 2020 14:56:29 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v1 2/3] Revert "thunderbolt: Prevent crash if non-active
- NVMem file is read"
-Message-ID: <20200225125629.GB2667@lahna.fi.intel.com>
-References: <PSXP216MB043899D4B8F693E1E5C3ECCE80EC0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <PSXP216MB04383751C15C4D66B59335DA80EC0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PSXP216MB04383751C15C4D66B59335DA80EC0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        id S1729193AbgBYNFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 08:05:30 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B085E11B3;
+        Tue, 25 Feb 2020 03:57:55 -0800 (PST)
+Received: from e121896.warwick.arm.com (e121896.warwick.arm.com [10.32.36.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AFE943F6CF;
+        Tue, 25 Feb 2020 03:57:52 -0800 (PST)
+From:   James Clark <james.clark@arm.com>
+To:     adrian.hunter@intel.com, jolsa@redhat.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     nd@arm.com, Tan Xiaojun <tanxiaojun@huawei.com>,
+        James Clark <james.clark@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Al Grant <al.grant@arm.com>, Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH v5 3/4] perf report: Add SPE options to --itrace argument
+Date:   Tue, 25 Feb 2020 11:57:38 +0000
+Message-Id: <20200225115739.18740-4-james.clark@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200225115739.18740-1-james.clark@arm.com>
+References: <768a33f2-8694-270e-d3e8-3da4c65e96b3@intel.com>
+ <20200225115739.18740-1-james.clark@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 05:43:05PM +0000, Nicholas Johnson wrote:
-> This reverts commit 03cd45d2e219301880cabc357e3cf478a500080f.
-> 
-> Since commit cd76ed9e5913 ("nvmem: add support for write-only
-> instances"), this work around is no longer required, so drop it.
+From: Tan Xiaojun <tanxiaojun@huawei.com>
 
-I don't think you can refer commits that only exists in your local tree.
-I would just say that "since NVMem subsystem gained support for
-write-only instances this workaround is not needed anymore" or somesuch.
+The previous patch added support in "perf report" for some arm-spe
+events(llc-miss, tlb-miss, branch-miss, remote_access). This patch
+adds their help instructions.
 
-Otherwise this looks good to me, no objections and thanks for doing this :)
+Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
+Tested-by: Qi Liu <liuqi115@hisilicon.com>
+Signed-off-by: James Clark <james.clark@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Tan Xiaojun <tanxiaojun@huawei.com>
+Cc: Al Grant <al.grant@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/Documentation/itrace.txt | 5 ++++-
+ tools/perf/util/auxtrace.h          | 5 ++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/Documentation/itrace.txt b/tools/perf/Documentation/itrace.txt
+index 82ff7dad40c2..da3e5ccc039e 100644
+--- a/tools/perf/Documentation/itrace.txt
++++ b/tools/perf/Documentation/itrace.txt
+@@ -1,5 +1,5 @@
+ 		i	synthesize instructions events
+-		b	synthesize branches events
++		b	synthesize branches events (branch misses on Arm)
+ 		c	synthesize branches events (calls only)
+ 		r	synthesize branches events (returns only)
+ 		x	synthesize transactions events
+@@ -9,6 +9,9 @@
+ 			of aux-output (refer to perf record)
+ 		e	synthesize error events
+ 		d	create a debug log
++		m	synthesize LLC miss events
++		t	synthesize TLB miss events
++		a	synthesize remote access events
+ 		g	synthesize a call chain (use with i or x)
+ 		l	synthesize last branch entries (use with i or x)
+ 		s       skip initial number of events
+diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+index 80617b0d044d..52e148eea7f8 100644
+--- a/tools/perf/util/auxtrace.h
++++ b/tools/perf/util/auxtrace.h
+@@ -587,7 +587,7 @@ void auxtrace__free(struct perf_session *session);
+ 
+ #define ITRACE_HELP \
+ "				i:	    		synthesize instructions events\n"		\
+-"				b:	    		synthesize branches events\n"		\
++"				b:	    		synthesize branches events (branch misses on Arm)\n" \
+ "				c:	    		synthesize branches events (calls only)\n"	\
+ "				r:	    		synthesize branches events (returns only)\n" \
+ "				x:	    		synthesize transactions events\n"		\
+@@ -595,6 +595,9 @@ void auxtrace__free(struct perf_session *session);
+ "				p:	    		synthesize power events\n"			\
+ "				e:	    		synthesize error events\n"			\
+ "				d:	    		create a debug log\n"			\
++"				m:	    		synthesize LLC miss events\n" \
++"				t:	    		synthesize TLB miss events\n" \
++"				a:	    		synthesize remote access events\n" \
+ "				g[len]:     		synthesize a call chain (use with i or x)\n" \
+ "				l[len]:     		synthesize last branch entries (use with i or x)\n" \
+ "				sNUMBER:    		skip initial number of events\n"		\
+-- 
+2.17.1
+
