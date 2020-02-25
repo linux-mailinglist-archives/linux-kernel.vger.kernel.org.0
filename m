@@ -2,235 +2,295 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C72A16EFD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 21:11:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A517716EFD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 21:12:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731648AbgBYULj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 15:11:39 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:54422 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730794AbgBYULi (ORCPT
+        id S1731720AbgBYUMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 15:12:23 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:51429 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731330AbgBYUMX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 15:11:38 -0500
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1j6gYH-00024R-8I; Tue, 25 Feb 2020 21:11:33 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <parri.andrea@gmail.com>,
+        Tue, 25 Feb 2020 15:12:23 -0500
+Received: by mail-pj1-f65.google.com with SMTP id fa20so208320pjb.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 12:12:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=sH+NLiTWqgzfHa6XdfsJ+yIT5+v5YhITRd9gV+lY4/o=;
+        b=OxnZll4KWu8fDEfWx3E6Z3IPUFOMDdGPcSCPwhvAEtbtj8JF5K5pLJiU3MnEimbv6S
+         M9oK+LxP7mGI14KGWgxXjs2YCNF9H1e4e5R7b7g1L6nFYRg1FJq2Z9lhdZMROIwlpHZi
+         HvhGy2mZDC5myUOCmkwAXWRtdDL/oJU1sUK5U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=sH+NLiTWqgzfHa6XdfsJ+yIT5+v5YhITRd9gV+lY4/o=;
+        b=EumIjamsNfHrxFgDrgPf9RDtr1Pmn77UhQLN2w9zgNzHTAQURX5nSs991r03zkH9A7
+         /MMg68B+eSehzHePfzVlvJjvm1NFS+vM9vQk1j5jr7UVvbqkdsl3PrhM8iYA1DugI1jP
+         9m51jrqzSE/DnnxqDbyPwp74EBTOK4P/2AnrFXC4BUsbQJ7dBDII6dD0Th/FAalbhPoP
+         /4xBTI8XwGy3LI+JPTA5gAKfdiHPKjLPceWuiA+COOfdZaC/W7XCew5s+JiObYZ/1w3D
+         rh6eTbZwtKnAGEpiKxCTMZlU0cCWgIuzwL55bzYo/H2qreUg5W/k9wvitTLGHbmEIDzQ
+         CfoA==
+X-Gm-Message-State: APjAAAVPgRlZcDJoUEjso23WIWM+sMGcfKSORA3zZ9Dj6TdOG1XHfwNC
+        S89foyft+wiBy3XwO2bHm5vvUw==
+X-Google-Smtp-Source: APXvYqwGU1tp/k5dqMPOjRYB6TzpbdnoXTKgSeVo8Ij8qJpFvzQqyaC5Vn3cvvDaYS/11NVEinm0gg==
+X-Received: by 2002:a17:90a:cf08:: with SMTP id h8mr799455pju.81.1582661541799;
+        Tue, 25 Feb 2020 12:12:21 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id t11sm4255164pjo.21.2020.02.25.12.12.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2020 12:12:21 -0800 (PST)
+Date:   Tue, 25 Feb 2020 12:12:19 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: misc details: Re: [PATCH 2/2] printk: use the lockless ringbuffer
-References: <20200128161948.8524-1-john.ogness@linutronix.de>
-        <20200128161948.8524-3-john.ogness@linutronix.de>
-        <20200217144110.xiqlzhs6ynoqdpun@pathway.suse.cz>
-Date:   Tue, 25 Feb 2020 21:11:31 +0100
-In-Reply-To: <20200217144110.xiqlzhs6ynoqdpun@pathway.suse.cz> (Petr Mladek's
-        message of "Mon, 17 Feb 2020 15:41:10 +0100")
-Message-ID: <87h7zeqvf0.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, x86-patch-review@intel.com
+Subject: Re: [RFC PATCH v9 08/27] x86/mm: Change _PAGE_DIRTY to _PAGE_DIRTY_HW
+Message-ID: <202002251212.6A0968F@keescook>
+References: <20200205181935.3712-1-yu-cheng.yu@intel.com>
+ <20200205181935.3712-9-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200205181935.3712-9-yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> - Record meta-data is now stored in a separate array of descriptors.
->>   This is an additional 72 * (2 ^ ((CONFIG_LOG_BUF_SHIFT - 6))) bytes
->>   for the static array and 72 * (2 ^ ((log_buf_len - 6))) bytes for
->>   the dynamic array.
->
-> It might help to show some examples. I mean to mention the sizes
-> when CONFIG_LOG_BUF_SHIFT is 12 or so.
+On Wed, Feb 05, 2020 at 10:19:16AM -0800, Yu-cheng Yu wrote:
+> Before introducing _PAGE_DIRTY_SW for non-hardware memory management
+> purposes in the next patch, rename _PAGE_DIRTY to _PAGE_DIRTY_HW and
+> _PAGE_BIT_DIRTY to _PAGE_BIT_DIRTY_HW to make these PTE dirty bits
+> more clear.  There are no functional changes from this patch.
+> 
+> v9:
+> - At some places _PAGE_DIRTY were not changed to _PAGE_DIRTY_HW, because
+>   they will be changed again in the next patch to _PAGE_DIRTY_BITS.
+>   However, this causes compile issues if the next patch is not yet applied.
+>   Fix it by changing all _PAGE_DIRTY to _PAGE_DRITY_HW.
+> 
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 
-OK.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
->> --- a/kernel/printk/printk.c
->> +++ b/kernel/printk/printk.c
->> - * Every record carries the monotonic timestamp in microseconds, as well as
->> - * the standard userspace syslog level and syslog facility. The usual
->> + * Every record meta-data carries the monotonic timestamp in microseconds, as
->
-> I am afraid that we could not guarantee monotonic timestamp because
-> the writers are not synchronized. I hope that it will not create
-> real problems and we could just remove the word "monotonic" ;-)
+-Kees
 
-I removed "monotonic". I hope userspace doesn't require the ringbuffer
-to be chronologically sorted. That would explain why the safe buffers
-use bogus timestamps. :-/
+> ---
+>  arch/x86/include/asm/pgtable.h       | 18 +++++++++---------
+>  arch/x86/include/asm/pgtable_types.h | 17 +++++++++--------
+>  arch/x86/kernel/relocate_kernel_64.S |  2 +-
+>  arch/x86/kvm/vmx/vmx.c               |  2 +-
+>  4 files changed, 20 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+> index ad97dc155195..ab50d25f9afc 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -122,7 +122,7 @@ extern pmdval_t early_pmd_flags;
+>   */
+>  static inline int pte_dirty(pte_t pte)
+>  {
+> -	return pte_flags(pte) & _PAGE_DIRTY;
+> +	return pte_flags(pte) & _PAGE_DIRTY_HW;
+>  }
+>  
+>  
+> @@ -161,7 +161,7 @@ static inline int pte_young(pte_t pte)
+>  
+>  static inline int pmd_dirty(pmd_t pmd)
+>  {
+> -	return pmd_flags(pmd) & _PAGE_DIRTY;
+> +	return pmd_flags(pmd) & _PAGE_DIRTY_HW;
+>  }
+>  
+>  static inline int pmd_young(pmd_t pmd)
+> @@ -171,7 +171,7 @@ static inline int pmd_young(pmd_t pmd)
+>  
+>  static inline int pud_dirty(pud_t pud)
+>  {
+> -	return pud_flags(pud) & _PAGE_DIRTY;
+> +	return pud_flags(pud) & _PAGE_DIRTY_HW;
+>  }
+>  
+>  static inline int pud_young(pud_t pud)
+> @@ -312,7 +312,7 @@ static inline pte_t pte_clear_flags(pte_t pte, pteval_t clear)
+>  
+>  static inline pte_t pte_mkclean(pte_t pte)
+>  {
+> -	return pte_clear_flags(pte, _PAGE_DIRTY);
+> +	return pte_clear_flags(pte, _PAGE_DIRTY_HW);
+>  }
+>  
+>  static inline pte_t pte_mkold(pte_t pte)
+> @@ -332,7 +332,7 @@ static inline pte_t pte_mkexec(pte_t pte)
+>  
+>  static inline pte_t pte_mkdirty(pte_t pte)
+>  {
+> -	return pte_set_flags(pte, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
+> +	return pte_set_flags(pte, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
+>  }
+>  
+>  static inline pte_t pte_mkyoung(pte_t pte)
+> @@ -396,7 +396,7 @@ static inline pmd_t pmd_mkold(pmd_t pmd)
+>  
+>  static inline pmd_t pmd_mkclean(pmd_t pmd)
+>  {
+> -	return pmd_clear_flags(pmd, _PAGE_DIRTY);
+> +	return pmd_clear_flags(pmd, _PAGE_DIRTY_HW);
+>  }
+>  
+>  static inline pmd_t pmd_wrprotect(pmd_t pmd)
+> @@ -406,7 +406,7 @@ static inline pmd_t pmd_wrprotect(pmd_t pmd)
+>  
+>  static inline pmd_t pmd_mkdirty(pmd_t pmd)
+>  {
+> -	return pmd_set_flags(pmd, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
+> +	return pmd_set_flags(pmd, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
+>  }
+>  
+>  static inline pmd_t pmd_mkdevmap(pmd_t pmd)
+> @@ -450,7 +450,7 @@ static inline pud_t pud_mkold(pud_t pud)
+>  
+>  static inline pud_t pud_mkclean(pud_t pud)
+>  {
+> -	return pud_clear_flags(pud, _PAGE_DIRTY);
+> +	return pud_clear_flags(pud, _PAGE_DIRTY_HW);
+>  }
+>  
+>  static inline pud_t pud_wrprotect(pud_t pud)
+> @@ -460,7 +460,7 @@ static inline pud_t pud_wrprotect(pud_t pud)
+>  
+>  static inline pud_t pud_mkdirty(pud_t pud)
+>  {
+> -	return pud_set_flags(pud, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
+> +	return pud_set_flags(pud, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
+>  }
+>  
+>  static inline pud_t pud_mkdevmap(pud_t pud)
+> diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+> index b5e49e6bac63..e647e3c75578 100644
+> --- a/arch/x86/include/asm/pgtable_types.h
+> +++ b/arch/x86/include/asm/pgtable_types.h
+> @@ -15,7 +15,7 @@
+>  #define _PAGE_BIT_PWT		3	/* page write through */
+>  #define _PAGE_BIT_PCD		4	/* page cache disabled */
+>  #define _PAGE_BIT_ACCESSED	5	/* was accessed (raised by CPU) */
+> -#define _PAGE_BIT_DIRTY		6	/* was written to (raised by CPU) */
+> +#define _PAGE_BIT_DIRTY_HW	6	/* was written to (raised by CPU) */
+>  #define _PAGE_BIT_PSE		7	/* 4 MB (or 2MB) page */
+>  #define _PAGE_BIT_PAT		7	/* on 4KB pages */
+>  #define _PAGE_BIT_GLOBAL	8	/* Global TLB entry PPro+ */
+> @@ -45,7 +45,7 @@
+>  #define _PAGE_PWT	(_AT(pteval_t, 1) << _PAGE_BIT_PWT)
+>  #define _PAGE_PCD	(_AT(pteval_t, 1) << _PAGE_BIT_PCD)
+>  #define _PAGE_ACCESSED	(_AT(pteval_t, 1) << _PAGE_BIT_ACCESSED)
+> -#define _PAGE_DIRTY	(_AT(pteval_t, 1) << _PAGE_BIT_DIRTY)
+> +#define _PAGE_DIRTY_HW	(_AT(pteval_t, 1) << _PAGE_BIT_DIRTY_HW)
+>  #define _PAGE_PSE	(_AT(pteval_t, 1) << _PAGE_BIT_PSE)
+>  #define _PAGE_GLOBAL	(_AT(pteval_t, 1) << _PAGE_BIT_GLOBAL)
+>  #define _PAGE_SOFTW1	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW1)
+> @@ -73,7 +73,7 @@
+>  			 _PAGE_PKEY_BIT3)
+>  
+>  #if defined(CONFIG_X86_64) || defined(CONFIG_X86_PAE)
+> -#define _PAGE_KNL_ERRATUM_MASK (_PAGE_DIRTY | _PAGE_ACCESSED)
+> +#define _PAGE_KNL_ERRATUM_MASK (_PAGE_DIRTY_HW | _PAGE_ACCESSED)
+>  #else
+>  #define _PAGE_KNL_ERRATUM_MASK 0
+>  #endif
+> @@ -111,9 +111,9 @@
+>  #define _PAGE_PROTNONE	(_AT(pteval_t, 1) << _PAGE_BIT_PROTNONE)
+>  
+>  #define _PAGE_TABLE_NOENC	(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER |\
+> -				 _PAGE_ACCESSED | _PAGE_DIRTY)
+> +				 _PAGE_ACCESSED | _PAGE_DIRTY_HW)
+>  #define _KERNPG_TABLE_NOENC	(_PAGE_PRESENT | _PAGE_RW |		\
+> -				 _PAGE_ACCESSED | _PAGE_DIRTY)
+> +				 _PAGE_ACCESSED | _PAGE_DIRTY_HW)
+>  
+>  /*
+>   * Set of bits not changed in pte_modify.  The pte's
+> @@ -122,7 +122,7 @@
+>   * pte_modify() does modify it.
+>   */
+>  #define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
+> -			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
+> +			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY_HW |	\
+>  			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
+>  #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
+>  
+> @@ -167,7 +167,8 @@ enum page_cache_mode {
+>  					 _PAGE_ACCESSED)
+>  
+>  #define __PAGE_KERNEL_EXEC						\
+> -	(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_GLOBAL)
+> +	(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY_HW | _PAGE_ACCESSED | \
+> +	 _PAGE_GLOBAL)
+>  #define __PAGE_KERNEL		(__PAGE_KERNEL_EXEC | _PAGE_NX)
+>  
+>  #define __PAGE_KERNEL_RO		(__PAGE_KERNEL & ~_PAGE_RW)
+> @@ -186,7 +187,7 @@ enum page_cache_mode {
+>  #define _PAGE_ENC	(_AT(pteval_t, sme_me_mask))
+>  
+>  #define _KERNPG_TABLE	(_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED |	\
+> -			 _PAGE_DIRTY | _PAGE_ENC)
+> +			 _PAGE_DIRTY_HW | _PAGE_ENC)
+>  #define _PAGE_TABLE	(_KERNPG_TABLE | _PAGE_USER)
+>  
+>  #define __PAGE_KERNEL_ENC	(__PAGE_KERNEL | _PAGE_ENC)
+> diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+> index ef3ba99068d3..3acd75f97b61 100644
+> --- a/arch/x86/kernel/relocate_kernel_64.S
+> +++ b/arch/x86/kernel/relocate_kernel_64.S
+> @@ -15,7 +15,7 @@
+>   */
+>  
+>  #define PTR(x) (x << 3)
+> -#define PAGE_ATTR (_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY)
+> +#define PAGE_ATTR (_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY_HW)
+>  
+>  /*
+>   * control_page + KEXEC_CONTROL_CODE_MAX_SIZE
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index e3394c839dea..fbbbf621b0d9 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -3503,7 +3503,7 @@ static int init_rmode_identity_map(struct kvm *kvm)
+>  	/* Set up identity-mapping pagetable for EPT in real mode */
+>  	for (i = 0; i < PT32_ENT_PER_PAGE; i++) {
+>  		tmp = (i << 22) + (_PAGE_PRESENT | _PAGE_RW | _PAGE_USER |
+> -			_PAGE_ACCESSED | _PAGE_DIRTY | _PAGE_PSE);
+> +			_PAGE_ACCESSED | _PAGE_DIRTY_HW | _PAGE_PSE);
+>  		r = kvm_write_guest_page(kvm, identity_map_pfn,
+>  				&tmp, i * sizeof(tmp), sizeof(tmp));
+>  		if (r < 0)
+> -- 
+> 2.21.0
+> 
 
->> +/*
->> + * Define the average message size. This only affects the number of
->> + * descriptors that will be available. Underestimating is better than
->> + * overestimating (too many available descriptors is better than not enough).
->> + * The dictionary buffer will be the same size as the text buffer.
->> + */
->> +#define PRB_AVGBITS 6
->
-> Do I get it correctly that '6' means 2^6 = 64 characters?
-
-Correct.
-
-> Some ugly counting on my test systems shows the average 49 chars:
->
-> $> dmesg | cut -d ']' -f 2- | wc -c
-> 30172
-> $> dmesg | cut -d ']' -f 2- | wc -l
-> 612
-> $> echo $((30172 / 612))
-> 49
->
-> If I get it correctly then lower number is the more safe side.
-> So, a more safe default should be 5?
-
-For v2 the value will be lowered to 5.
-
->> -	if (log_make_free_space(size)) {
->> +	if (!prb_reserve(&e, prb, &r)) {
->>  		/* truncate the message if it is too long for empty buffer */
->> -		size = truncate_msg(&text_len, &trunc_msg_len,
->> -				    &dict_len, &pad_len);
->> +		truncate_msg(&text_len, &trunc_msg_len, &dict_len);
->> +		r.text_buf_size = text_len + trunc_msg_len;
-
-Note that the additional space for the trunc_msg_len is being reserved.
-
->> +		r.dict_buf_size = dict_len;
->>  		/* survive when the log buffer is too small for trunc_msg */
->> -		if (log_make_free_space(size))
->> +		if (!prb_reserve(&e, prb, &r))
->>  			return 0;
->>  	}
->>  
->> -	if (log_next_idx + size + sizeof(struct printk_log) > log_buf_len) {
->> -		/*
->> -		 * This message + an additional empty header does not fit
->> -		 * at the end of the buffer. Add an empty header with len == 0
->> -		 * to signify a wrap around.
->> -		 */
->> -		memset(log_buf + log_next_idx, 0, sizeof(struct printk_log));
->> -		log_next_idx = 0;
->> -	}
->> -
->>  	/* fill message */
->> -	msg = (struct printk_log *)(log_buf + log_next_idx);
->> -	memcpy(log_text(msg), text, text_len);
->> -	msg->text_len = text_len;
->> -	if (trunc_msg_len) {
->> -		memcpy(log_text(msg) + text_len, trunc_msg, trunc_msg_len);
->> -		msg->text_len += trunc_msg_len;
->
-> Note that the old code updates msg->text_len.
-
-msg->text_len is equivalent to r.info->text_len, which was already set
-by the prb_reserve() (and already includes the trunc_msg_len).
-
->> -	}
->> -	memcpy(log_dict(msg), dict, dict_len);
->> -	msg->dict_len = dict_len;
->> -	msg->facility = facility;
->> -	msg->level = level & 7;
->> -	msg->flags = flags & 0x1f;
->> +	memcpy(&r.text_buf[0], text, text_len);
->> +	if (trunc_msg_len)
->> +		memcpy(&r.text_buf[text_len], trunc_msg, trunc_msg_len);
->
-> The new one just appends the string.
-
-That is all it needs to do here.
-
->> +	if (r.dict_buf)
->> +		memcpy(&r.dict_buf[0], dict, dict_len);
->> +	r.info->facility = facility;
->> +	r.info->level = level & 7;
->> +	r.info->flags = flags & 0x1f;
->>  	if (ts_nsec > 0)
->> -		msg->ts_nsec = ts_nsec;
->> +		r.info->ts_nsec = ts_nsec;
->>  	else
->> -		msg->ts_nsec = local_clock();
->> -#ifdef CONFIG_PRINTK_CALLER
->> -	msg->caller_id = caller_id;
->> -#endif
->> -	memset(log_dict(msg) + dict_len, 0, pad_len);
->> -	msg->len = size;
->> +		r.info->ts_nsec = local_clock();
->> +	r.info->caller_id = caller_id;
->>  
->>  	/* insert message */
->> -	log_next_idx += msg->len;
->> -	log_next_seq++;
->> +	prb_commit(&e);
->>  
->> -	return msg->text_len;
->> +	return text_len;
->
-> So, this should be text_len + trunc_msg_len.
-
-Good catch! Yes. Fixed for v2. Thank you.
-
-(Note that simply returning r.info->text_len is not allowed because the
-writer must not access that data after calling prb_commit()).
-
->> @@ -1974,9 +1966,9 @@ asmlinkage int vprintk_emit(int facility, int level,
->>  
->>  	/* This stops the holder of console_sem just where we want him */
->>  	logbuf_lock_irqsave(flags);
->> -	curr_log_seq = log_next_seq;
->> +	pending_output = !prb_read_valid(prb, console_seq, NULL);
->>  	printed_len = vprintk_store(facility, level, dict, dictlen, fmt, args);
->> -	pending_output = (curr_log_seq != log_next_seq);
->> +	pending_output &= prb_read_valid(prb, console_seq, NULL);
->
-> The original code checked whether vprintk_store() stored the text
-> into the main log buffer or only into the cont buffer.
->
-> The new code checks whether console is behind which is something
-> different.
-
-I would argue that they are the same thing in this context. Keep in mind
-that we are under the logbuf_lock. If there was previously nothing
-pending and now there is, this context is the only one that could have
-added it.
-
-This logic will change significantly when we remove the locks (and it
-will disappear once we go to kthreads). But we aren't that far at this
-stage and I'd like to keep the general logic somewhat close to the
-current mainline implementation for now.
-
-> I prefer to call wake_up_klogd() directly from log_output() or
-> log_store() instead. It might later be used to wake up
-> printk kthreads as well.
->
-> It was done this way because consoles were historically  preferred
-> over userspace loggers. But the difference will be lower when
-> consoles are handled by kthread.
-
-Agreed, but that is something I would like to save for a later
-series. Right now I only want to replace the ringbuffer without
-rearranging priorities.
-
->> -skip:
->> -		if (console_seq == log_next_seq)
->> -			break;
->> +		console_seq = console_record.info->seq;
->
-> This code suggests that it might be possible to get
-> console_seq > console_record.info->seq and we just
-> ignore it. I prefer to make it clear by:
->
-> 		if (console_seq != console_record.info->seq) {
-
-OK.
-
-Thanks for your help.
-
-John Ogness
+-- 
+Kees Cook
