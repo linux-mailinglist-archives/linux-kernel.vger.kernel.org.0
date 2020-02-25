@@ -2,85 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D25C16EE21
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:39:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8FB016EE0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:31:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731575AbgBYSjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 13:39:21 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:33696 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731439AbgBYSjU (ORCPT
+        id S1731578AbgBYSbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 13:31:36 -0500
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:53558 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731421AbgBYSbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 13:39:20 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01PHprpF117879;
-        Tue, 25 Feb 2020 11:51:53 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582653113;
-        bh=/d5Vd5oiaQH19vYJUAtx0fN3kkFJcOQ0EtyuBQuYOwY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=kCihkCk38atKc2IxuB5xoD9DirvUYwJcUd1ugSK0if2KKycinf/7Bm1jPAKnj1+9u
-         UE9pvz+empMdjcCuQuojTptgqCD8G4tT/qQbWxs2MArXWVSmxrHnvO+dmTOjjnTWgh
-         A6zZFtxD6fYyHo/PENXqmEicRNBEraLhBTf+hQ9g=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01PHprKL018788
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 25 Feb 2020 11:51:53 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 25
- Feb 2020 11:51:53 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 25 Feb 2020 11:51:53 -0600
-Received: from [158.218.117.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01PHpppQ060872;
-        Tue, 25 Feb 2020 11:51:51 -0600
-Subject: Re: [EXT] Re: [v1,net-next, 1/2] ethtool: add setting frame
- preemption of traffic classes
-To:     Po Liu <po.liu@nxp.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "hauke.mehrtens@intel.com" <hauke.mehrtens@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "allison@lohutok.net" <allison@lohutok.net>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "saeedm@mellanox.com" <saeedm@mellanox.com>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "alexandru.ardelean@analog.com" <alexandru.ardelean@analog.com>,
-        "jiri@mellanox.com" <jiri@mellanox.com>,
-        "ayal@mellanox.com" <ayal@mellanox.com>,
-        "pablo@netfilter.org" <pablo@netfilter.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     "simon.horman@netronome.com" <simon.horman@netronome.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Alexandru Marginean <alexandru.marginean@nxp.com>,
-        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-References: <20191127094517.6255-1-Po.Liu@nxp.com>
- <87a75br4ze.fsf@linux.intel.com>
- <VE1PR04MB64968E2DE71D1BCE48C6E17192EE0@VE1PR04MB6496.eurprd04.prod.outlook.com>
-From:   Murali Karicheri <m-karicheri2@ti.com>
-Message-ID: <7d68d83c-c81d-5221-b843-07adb40e4b93@ti.com>
-Date:   Tue, 25 Feb 2020 12:59:03 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 25 Feb 2020 13:31:35 -0500
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id E09013C009D;
+        Tue, 25 Feb 2020 19:31:31 +0100 (CET)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id XMi49W9SirJX; Tue, 25 Feb 2020 19:31:22 +0100 (CET)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 9D4043C005E;
+        Tue, 25 Feb 2020 19:31:22 +0100 (CET)
+Received: from lxhi-065.adit-jv.com (10.72.93.66) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 25 Feb
+ 2020 19:31:22 +0100
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Alan Stern <stern@rowland.harvard.edu>,
+        <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        "Lee, Chiasheng" <chiasheng.lee@intel.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Hardik Gajjar <hgajjar@de.adit-jv.com>,
+        <scan-admin@coverity.com>
+Subject: [PATCH v2] usb: hub: Fix unhandled return value of usb_autopm_get_interface()
+Date:   Tue, 25 Feb 2020 19:30:57 +0100
+Message-ID: <20200225183057.31953-1-erosca@de.adit-jv.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <VE1PR04MB64968E2DE71D1BCE48C6E17192EE0@VE1PR04MB6496.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.72.93.66]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-<<< No Message Collected >>>
+Address below Coverity complaint (Feb 25, 2020, 8:06 AM CET):
+
+*** CID 1458999:  Error handling issues  (CHECKED_RETURN)
+/drivers/usb/core/hub.c: 1869 in hub_probe()
+1863
+1864            if (id->driver_info & HUB_QUIRK_CHECK_PORT_AUTOSUSPEND)
+1865                    hub->quirk_check_port_auto_suspend = 1;
+1866
+1867            if (id->driver_info & HUB_QUIRK_DISABLE_AUTOSUSPEND) {
+1868                    hub->quirk_disable_autosuspend = 1;
+ >>>     CID 1458999:  Error handling issues  (CHECKED_RETURN)
+ >>>     Calling "usb_autopm_get_interface" without checking return value (as is done elsewhere 97 out of 111 times).
+1869                    usb_autopm_get_interface(intf);
+1870            }
+1871
+1872            if (hub_configure(hub, &desc->endpoint[0].desc) >= 0)
+1873                    return 0;
+1874
+
+Rather than checking the return value of 'usb_autopm_get_interface()',
+switch to the usb_autpm_get_interface_no_resume() API, as per:
+
+On Tue, Feb 25, 2020 at 10:32:32AM -0500, Alan Stern wrote:
+ ------ 8< ------
+ > This change (i.e. 'ret = usb_autopm_get_interface') is not necessary,
+ > because the resume operation cannot fail at this point (interfaces
+ > are always powered-up during probe). A better solution would be to
+ > call usb_autpm_get_interface_no_resume() instead.
+ ------ 8< ------
+
+Fixes: 1208f9e1d758c9 ("USB: hub: Fix the broken detection of USB3 device in SMSC hub")
+Cc: Hardik Gajjar <hgajjar@de.adit-jv.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: scan-admin@coverity.com
+Suggested-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+---
+
+v2:
+ - [Alan Stern] Use usb_autpm_get_interface_no_resume() instead of
+   usb_autopm_get_interface()
+ - Augment commit description to provide background
+
+v1:
+ - Link: https://lore.kernel.org/lkml/20200225130846.20236-1-erosca@de.adit-jv.com
+---
+ drivers/usb/core/hub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 1d212f82c69b..1105983b5c1c 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -1866,7 +1866,7 @@ static int hub_probe(struct usb_interface *intf, const struct usb_device_id *id)
+ 
+ 	if (id->driver_info & HUB_QUIRK_DISABLE_AUTOSUSPEND) {
+ 		hub->quirk_disable_autosuspend = 1;
+-		usb_autopm_get_interface(intf);
++		usb_autopm_get_interface_no_resume(intf);
+ 	}
+ 
+ 	if (hub_configure(hub, &desc->endpoint[0].desc) >= 0)
+-- 
+2.25.1
+
