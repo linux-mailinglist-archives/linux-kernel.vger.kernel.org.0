@@ -2,115 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7161416F3EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:53:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DE9916F393
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:45:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729631AbgBYXxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:53:09 -0500
-Received: from mail.willitsonline.com ([216.7.65.54]:51378 "EHLO
-        mail.willitsonline.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729182AbgBYXxJ (ORCPT
+        id S1729445AbgBYXpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:45:53 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.38]:26538 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729391AbgBYXpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:53:09 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mail.willitsonline.com (Postfix) with ESMTP id B93B7111E08
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 15:46:50 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at iredmail2.willitsonline.com
-Received: from mail.willitsonline.com ([127.0.0.1])
-        by localhost (iredmail2.willitsonline.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id bmK5K-ZCg5s5 for <linux-kernel@vger.kernel.org>;
-        Tue, 25 Feb 2020 15:46:50 -0800 (PST)
-Received: from _ (localhost.localdomain [127.0.0.1])
-        (Authenticated sender: bluerocksaddles@willitsonline.com)
-        by mail.willitsonline.com (Postfix) with ESMTPSA id E6052111D61;
-        Tue, 25 Feb 2020 15:46:35 -0800 (PST)
+        Tue, 25 Feb 2020 18:45:51 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 8AFBE400C57F9
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 17:45:49 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 6jtdj8zHERP4z6jtdjXtwJ; Tue, 25 Feb 2020 17:45:49 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=8kpppuVxEfbw1HY9gBs/P7x/njX6QXOO1jMPxsNR6sQ=; b=LdFi92iGDpBZAOEsGks8AdD4mT
+        auLnIL2SJ/JwRgBeofSCcegK3Uv5sAHC2DZfOZ2k2yOpHIy8hWmokqXZojvcnp5U5t5C18ared7y4
+        fH2sRDUIpzmxnyX/j2/hnOOcik3PohMovNqK/m2+9LZve2J6y71A7vYqydRumrArUNyeeiZ8k+gUX
+        uGUwCFc0WJH2XLrMxyivzrz6wLTpe81q2ysj3PJv4emwPEmXQFMKNZqtHBF7iwdfZfOCfztLJPwzt
+        ErqJagG72z1hQ/8Nx5Rj/HvJgsLQJLBqmtKcW47hVisLRS2ET9m5tGNkUYyb3VU1gTMnzPvHiH2UT
+        0cwKBDeQ==;
+Received: from [201.162.241.105] (port=30500 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j6jtb-001yzF-GN; Tue, 25 Feb 2020 17:45:48 -0600
+Date:   Tue, 25 Feb 2020 17:48:37 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "Richard Russon (FlatCap)" <ldm@flatcap.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>
+Cc:     linux-ntfs-dev@lists.sourceforge.net, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        ceph-devel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] block: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200225234836.GA31741@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 25 Feb 2020 15:46:35 -0800
-From:   bluerocksaddles@willitsonline.com
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        "Michael ." <keltoiboy@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Trevor Jacobs <trevor_jacobs@aol.com>,
-        Kris Cleveland <tridentperfusion@yahoo.com>,
-        Morgan Klym <moklym@gmail.com>,
-        Philip Langdale <philipl@overt.org>,
-        Pierre Ossman <pierre@ossman.eu>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        linux-mmc@vger.kernel.org
-Subject: Re: PCI device function not being enumerated [Was: PCMCIA not working
- on Panasonic Toughbook CF-29]
-In-Reply-To: <CAPDyKFq_exHufHyibFCjS78PTZ7duS9ZSt3vi18CNM6+jMmwnw@mail.gmail.com>
-References: <20191029170250.GA43972@google.com>
- <20200222165617.GA207731@google.com>
- <CAPDyKFq_exHufHyibFCjS78PTZ7duS9ZSt3vi18CNM6+jMmwnw@mail.gmail.com>
-Message-ID: <37a39a53a54ca4ae09b4cfa9d999a47e@willitsonline.com>
-X-Sender: bluerocksaddles@willitsonline.com
-User-Agent: Roundcube Webmail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.162.241.105
+X-Source-L: No
+X-Exim-ID: 1j6jtb-001yzF-GN
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.162.241.105]:30500
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bjorn,
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-If you folks need a test unit or five, let me know. I can donate any 
-Mark CF-29 to the project. (MK 2 or 3 will duplicate the "problem".) 
-They are non-pae 386.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-Jeff
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-On 2020-02-25 07:03, Ulf Hansson wrote:
-> On Sat, 22 Feb 2020 at 17:56, Bjorn Helgaas <helgaas@kernel.org> wrote:
->> 
->> On Tue, Oct 29, 2019 at 12:02:50PM -0500, Bjorn Helgaas wrote:
->> > [+cc Ulf, Philip, Pierre, Maxim, linux-mmc; see [1] for beginning of
->> > thread, [2] for problem report and the patch Michael tested]
->> >
->> > On Tue, Oct 29, 2019 at 07:58:27PM +1100, Michael . wrote:
->> > > Bjorn and Dominik.
->> > > I am happy to let you know the patch did the trick, it compiled well
->> > > on 5.4-rc4 and my friends in the CC list have tested the modified
->> > > kernel and confirmed that both slots are now working as they should.
->> > > As a group of dedicated Toughbook users and Linux users please accept
->> > > our thanks your efforts and assistance is greatly appreciated.
->> > >
->> > > Now that we know this patch works what kernel do you think it will be
->> > > released in? Will it make 5.4 or will it be put into 5.5 development
->> > > for further testing?
->> >
->> > That patch was not intended to be a fix; it was just to test my guess
->> > that the quirk might be related.
->> >
->> > Removing the quirk solved the problem *you're* seeing, but the quirk
->> > was added in the first place to solve some other problem, and if we
->> > simply remove the quirk, we may reintroduce the original problem.
->> >
->> > So we have to look at the history and figure out some way to solve
->> > both problems.  I cc'd some people who might have insight.  Here are
->> > some commits that look relevant:
->> >
->> >   5ae70296c85f ("mmc: Disabler for Ricoh MMC controller")
->> >   03cd8f7ebe0c ("ricoh_mmc: port from driver to pci quirk")
->> >
->> >
->> > [1] https://lore.kernel.org/r/CAFjuqNi+knSb9WVQOahCVFyxsiqoGgwoM7Z1aqDBebNzp_-jYw@mail.gmail.com/
->> > [2] https://lore.kernel.org/r/20191021160952.GA229204@google.com/
->> 
->> I guess this problem is still unfixed?  I hate the fact that we broke
->> something that used to work.
->> 
->> Maybe we need some sort of DMI check in ricoh_mmc_fixup_rl5c476() so
->> we skip it for Toughbooks?  Or maybe we limit the quirk to the
->> machines where it was originally needed?
-> 
-> Both options seems reasonable to me. Do you have time to put together a 
-> patch?
-> 
-> Kind regards
-> Uffe
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ block/partitions/ldm.h             | 2 +-
+ drivers/block/drbd/drbd_int.h      | 2 +-
+ drivers/block/drbd/drbd_protocol.h | 8 ++++----
+ drivers/block/rbd_types.h          | 2 +-
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/block/partitions/ldm.h b/block/partitions/ldm.h
+index 1ca63e97bccc..172432ce5c0f 100644
+--- a/block/partitions/ldm.h
++++ b/block/partitions/ldm.h
+@@ -93,7 +93,7 @@ struct frag {				/* VBLK Fragment handling */
+ 	u8		num;		/* Total number of records */
+ 	u8		rec;		/* This is record number n */
+ 	u8		map;		/* Which portions are in use */
+-	u8		data[0];
++	u8		data[];
+ };
+ 
+ /* In memory LDM database structures. */
+diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
+index aae99a2d7bd4..a3314dd781a7 100644
+--- a/drivers/block/drbd/drbd_int.h
++++ b/drivers/block/drbd/drbd_int.h
+@@ -620,7 +620,7 @@ struct fifo_buffer {
+ 	unsigned int head_index;
+ 	unsigned int size;
+ 	int total; /* sum of all values */
+-	int values[0];
++	int values[];
+ };
+ extern struct fifo_buffer *fifo_alloc(unsigned int fifo_size);
+ 
+diff --git a/drivers/block/drbd/drbd_protocol.h b/drivers/block/drbd/drbd_protocol.h
+index e6fc5ad72501..dea59c92ecc1 100644
+--- a/drivers/block/drbd/drbd_protocol.h
++++ b/drivers/block/drbd/drbd_protocol.h
+@@ -271,7 +271,7 @@ struct p_rs_param {
+ 	u32 resync_rate;
+ 
+ 	      /* Since protocol version 88 and higher. */
+-	char verify_alg[0];
++	char verify_alg[];
+ } __packed;
+ 
+ struct p_rs_param_89 {
+@@ -305,7 +305,7 @@ struct p_protocol {
+ 	u32 two_primaries;
+ 
+ 	/* Since protocol version 87 and higher. */
+-	char integrity_alg[0];
++	char integrity_alg[];
+ 
+ } __packed;
+ 
+@@ -360,7 +360,7 @@ struct p_sizes {
+ 	u16	    dds_flags; /* use enum dds_flags here. */
+ 
+ 	/* optional queue_limits if (agreed_features & DRBD_FF_WSAME) */
+-	struct o_qlim qlim[0];
++	struct o_qlim qlim[];
+ } __packed;
+ 
+ struct p_state {
+@@ -409,7 +409,7 @@ struct p_compressed_bm {
+ 	 */
+ 	u8 encoding;
+ 
+-	u8 code[0];
++	u8 code[];
+ } __packed;
+ 
+ struct p_delay_probe93 {
+diff --git a/drivers/block/rbd_types.h b/drivers/block/rbd_types.h
+index ac98ab6ccd3b..a600e0eb6b6f 100644
+--- a/drivers/block/rbd_types.h
++++ b/drivers/block/rbd_types.h
+@@ -93,7 +93,7 @@ struct rbd_image_header_ondisk {
+ 	__le32 snap_count;
+ 	__le32 reserved;
+ 	__le64 snap_names_len;
+-	struct rbd_image_snap_ondisk snaps[0];
++	struct rbd_image_snap_ondisk snaps[];
+ } __attribute__((packed));
+ 
+ 
+-- 
+2.25.0
+
