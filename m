@@ -2,104 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 502FC16F09E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 21:53:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA8F216F0A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 21:54:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729583AbgBYUxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 15:53:22 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62992 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729130AbgBYUxS (ORCPT
+        id S1729719AbgBYUyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 15:54:21 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:39632 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728714AbgBYUyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 15:53:18 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01PKoDnR056523;
-        Tue, 25 Feb 2020 15:53:13 -0500
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yd1q8mgxh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Feb 2020 15:53:13 -0500
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01PKgF1B013333;
-        Tue, 25 Feb 2020 20:53:12 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma01dal.us.ibm.com with ESMTP id 2yaux6xxj3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Feb 2020 20:53:12 +0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01PKrA3k45941180
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Feb 2020 20:53:10 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BE3F2136053;
-        Tue, 25 Feb 2020 20:53:10 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C0DE136051;
-        Tue, 25 Feb 2020 20:53:10 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 25 Feb 2020 20:53:10 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org
-Cc:     aik@ozlabs.ru, david@gibson.dropbear.id.au,
-        linux-kernel@vger.kernel.org, nayna@linux.vnet.ibm.com,
-        gcwilson@linux.ibm.com, jgg@ziepe.ca,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v3 4/4] tpm: ibmvtpm: Add support for TPM 2
-Date:   Tue, 25 Feb 2020 15:53:05 -0500
-Message-Id: <20200225205305.3948001-5-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200225205305.3948001-1-stefanb@linux.vnet.ibm.com>
-References: <20200225205305.3948001-1-stefanb@linux.vnet.ibm.com>
+        Tue, 25 Feb 2020 15:54:21 -0500
+Received: (qmail 6720 invoked by uid 2102); 25 Feb 2020 15:54:20 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 25 Feb 2020 15:54:20 -0500
+Date:   Tue, 25 Feb 2020 15:54:20 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+cc:     linux-usb@vger.kernel.org, <linux-renesas-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        "Lee, Chiasheng" <chiasheng.lee@intel.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Hardik Gajjar <hgajjar@de.adit-jv.com>,
+        <scan-admin@coverity.com>, Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH] usb: hub: Fix unhandled return value of usb_autopm_get_interface()
+In-Reply-To: <20200225202223.GA9154@lxhi-065.adit-jv.com>
+Message-ID: <Pine.LNX.4.44L0.2002251553030.1485-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-25_08:2020-02-25,2020-02-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 spamscore=0 impostorscore=0
- adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002250145
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Tue, 25 Feb 2020, Eugeniu Rosca wrote:
 
-Support TPM 2 in the IBM vTPM driver. The hypervisor tells us what
-version of TPM is connected through the vio_device_id.
+> Hi Alan,
+> 
+> On Tue, Feb 25, 2020 at 02:39:23PM -0500, Alan Stern wrote:
+> > On Tue, 25 Feb 2020, Eugeniu Rosca wrote:
+> > > [1] (v5.6-rc3) git grep -En "[^=]\s+usb_autopm_get_interface\("
+> > >   drivers/input/touchscreen/usbtouchscreen.c:1788:  usb_autopm_get_interface(intf);
+> > >   drivers/media/usb/stkwebcam/stk-webcam.c:628:     usb_autopm_get_interface(dev->interface);
+> > >   drivers/net/usb/hso.c:1308:                       usb_autopm_get_interface(serial->parent->interface);
+> > >   drivers/net/usb/r8152.c:5231:                     usb_autopm_get_interface(tp->intf);
+> > >   sound/usb/usx2y/us122l.c:192:                     usb_autopm_get_interface(iface);
+> > 
+> > Your regular expression isn't right because it doesn't match lines
+> > where the usb_autopm_get_interface() is preceded only by one whitespace
+> > character (i.e., a tab).  It also will match lines where there are two
+> > space characters between the = sign and the function name.  I think
+> > what you want is more like "(^|[^=[:space:]])\s*" at the start of the
+> > RE.
+> 
+> Agreed. My version filters out some true positives.
+> 
+> > 
+> > A revised search finds line 997 in drivers/usb/core/hub.c and lines
+> > 216, 269 in drivers/usb/core/port.c.  (I didn't try looking in any
+> > other directories.)  AFAICT all three of these should check the return
+> > value, although a error message in the kernel log probably isn't
+> > needed.
+> > 
+> > Do you want to fix those instances up also, maybe merging them in with
+> > the existing patch?
+> 
+> I wonder if squashing all these fixes into one patch is the best option.
+> 
+> There are three commits fixed by the proposed changes in usb core:
+>  - v5.6-rc3 commit 1208f9e1d758c9 ("USB: hub: Fix the broken detection of USB3 device in SMSC hub")
+>  - v3.9-rc1 commit 971fcd492cebf5 ("usb: add runtime pm support for usb port device")
+>  - v2.6.33-rc1 commit 253e05724f9230 ("USB: add a "remove hardware" sysfs attribute")
+> 
+> I assume a single fix will create some pain when applying it to the
+> stable branches. Do you have any preference/inputs about that?
 
-In case a TPM 2 is found, we set the TPM_CHIP_FLAG_TPM2 flag.
+If you prefer to split this up into multiple patches, that's fine with 
+me.
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index eee566eddb35..0df815f9a6c5 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -29,6 +29,7 @@ static const char tpm_ibmvtpm_driver_name[] = "tpm_ibmvtpm";
- 
- static const struct vio_device_id tpm_ibmvtpm_device_table[] = {
- 	{ "IBM,vtpm", "IBM,vtpm"},
-+	{ "IBM,vtpm", "IBM,vtpm20"},
- 	{ "", "" }
- };
- MODULE_DEVICE_TABLE(vio, tpm_ibmvtpm_device_table);
-@@ -672,6 +673,9 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
- 	if (rc)
- 		goto init_irq_cleanup;
- 
-+	if (!strcmp(id->compat, "IBM,vtpm20"))
-+		chip->flags |= TPM_CHIP_FLAG_TPM2;
-+
- 	if (!wait_event_timeout(ibmvtpm->crq_queue.wq,
- 				ibmvtpm->rtce_buf != NULL,
- 				HZ)) {
--- 
-2.23.0
+Alan Stern
 
