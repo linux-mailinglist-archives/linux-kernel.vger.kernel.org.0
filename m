@@ -2,106 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7D4616F035
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 21:36:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A33A16F038
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 21:37:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731776AbgBYUgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 15:36:52 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:54474 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731354AbgBYUgv (ORCPT
+        id S1731832AbgBYUhm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 15:37:42 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45506 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731297AbgBYUhk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 15:36:51 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j6gwd-0002P5-Bw; Tue, 25 Feb 2020 21:36:43 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C56181C2153;
-        Tue, 25 Feb 2020 21:36:42 +0100 (CET)
-Date:   Tue, 25 Feb 2020 20:36:42 -0000
-From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/urgent] x86/mce/therm_throt: Undo thermal polling properly
- on CPU offline
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        "Pandruvada, Srinivas" <srinivas.pandruvada@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <158120068234.18291.7938335950259651295@skylake-alporthouse-com>
-References: <158120068234.18291.7938335950259651295@skylake-alporthouse-com>
+        Tue, 25 Feb 2020 15:37:40 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 59so759152otp.12;
+        Tue, 25 Feb 2020 12:37:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wCbOtZ15xQuIXsi/eFHFiZS0CcZ7vLne0v/3tqD0yao=;
+        b=T13AgVeydbsga6v6DVD0Y4Bw6GVwrJA1DuhCi9PrMmmcWja2YeVmOhvvw/ffrmhQBU
+         8Zmx1gl+QBq4Sn98QDSCNWrDagJ88Qz5zB90AQH7QaMwgrB50adxtfY38Fm4IJlKTVuq
+         8RczIQlueqNsinaVlpYpUnQ53S41LkmFECja5+AM/fm8WMI8OPhpuVqEoAkInIQMcSsV
+         cmLJQTOwnkJSp4YxiGGME8MHdF5N3KeYrmUVKYocYq0QJxxpKqPBa8zmzki90SjQelbE
+         pYoL3Y8ScAqEzds/X7oed2ykPfd7WCTn5/armttgSQUqQSoRipUvQZmURlqwYOf+pLhn
+         PQcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wCbOtZ15xQuIXsi/eFHFiZS0CcZ7vLne0v/3tqD0yao=;
+        b=N15Mew0c5toCBkxb/FwM1jAPKMOKG1r59U8/Qmds1ehXCjv8UQ76i2wMUevQ/GGXMs
+         V7yxLec304mbjPOzn7vQ5rfJ75b3WnZEUirnG/n4U13bi+2O6rpJbG9RyDlzgB8ORf7A
+         j4EVlElkqC92MA7vTsuQKgduYF2LTnMe0BcpH8FPlw7t8rIe3o1r7q5uTMYAu0qDhC3w
+         kJw0OlGnhkxzmTBvo+PnQ3sjCr+RILnggDB/LU+Qbre4PzSPVh/1h80kJyuyLyO/b4IH
+         uFH6jDx2OdQ3UDOBOjDpZ6amMBaqoXlKBIq+k7Gn5WfJe2HJJo4Taj/0oeSAMXV/7q6c
+         fAhw==
+X-Gm-Message-State: APjAAAUTVtCpEoS9Bgkxhs5mhRE1rCxfzHP0xJhLdTMjAjZX/Kde70gQ
+        P+Q80zkGUk18atgTRjORldG2j9TdZ8+Cdnp5uXfYk5AA
+X-Google-Smtp-Source: APXvYqwvxkiHwOg1asDMUxgb4LtyfmUmP1DAZC1krO6OSv88b5pwt67XyL2rFPVpnGDeSylzyo8AI1275i9bguQJ9ww=
+X-Received: by 2002:a9d:664a:: with SMTP id q10mr312446otm.298.1582663059013;
+ Tue, 25 Feb 2020 12:37:39 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <158266300251.28353.3340868799140664997.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20200203053650.8923-1-xiyou.wangcong@gmail.com> <CAM_iQpVegeSSWDWZTt4+ZT6qE3-AwsyHj7DAkFiFu8+8Hy-5jA@mail.gmail.com>
+In-Reply-To: <CAM_iQpVegeSSWDWZTt4+ZT6qE3-AwsyHj7DAkFiFu8+8Hy-5jA@mail.gmail.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Tue, 25 Feb 2020 12:37:24 -0800
+Message-ID: <CAM_iQpUn9EpwrWAYKwoJDzS8eQm=XCrvGeC_HV2EiZ4cnvk7Ag@mail.gmail.com>
+Subject: Re: [Patch v3] block: introduce block_rq_error tracepoint
+To:     linux-block@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the ras/urgent branch of tip:
+On Tue, Feb 18, 2020 at 10:40 AM Cong Wang <xiyou.wangcong@gmail.com> wrote:
+>
+> Hi, Jens
+>
+>
+> On Sun, Feb 2, 2020 at 9:37 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
+> >
+> > Currently, rasdaemon uses the existing tracepoint block_rq_complete
+> > and filters out non-error cases in order to capture block disk errors.
+> >
+> > But there are a few problems with this approach:
+> >
+> > 1. Even kernel trace filter could do the filtering work, there is
+> >    still some overhead after we enable this tracepoint.
+> >
+> > 2. The filter is merely based on errno, which does not align with kernel
+> >    logic to check the errors for print_req_error().
+> >
+> > 3. block_rq_complete only provides dev major and minor to identify
+> >    the block device, it is not convenient to use in user-space.
+> >
+> > So introduce a new tracepoint block_rq_error just for the error case
+> > and provides the device name for convenience too. With this patch,
+> > rasdaemon could switch to block_rq_error.
+> >
+> > Cc: Jens Axboe <axboe@kernel.dk>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+>
+> Can you take this patch?
 
-Commit-ID:     d364847eed890211444ad74496bb549f838c6018
-Gitweb:        https://git.kernel.org/tip/d364847eed890211444ad74496bb549f838c6018
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Tue, 25 Feb 2020 14:55:15 +01:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Tue, 25 Feb 2020 21:21:44 +01:00
+Any response?
 
-x86/mce/therm_throt: Undo thermal polling properly on CPU offline
-
-Chris Wilson reported splats from running the thermal throttling
-workqueue callback on offlined CPUs. The problem is that that callback
-should not even run on offlined CPUs but it happens nevertheless because
-the offlining callback thermal_throttle_offline() does not symmetrically
-undo the setup work done in its onlining counterpart. IOW,
-
- 1. The thermal interrupt vector should be masked out before ...
-
- 2. ... cancelling any pending work synchronously so that no new work is
- enqueued anymore.
-
-Do those things and fix the issue properly.
-
- [ bp: Write commit message. ]
-
-Fixes: f6656208f04e ("x86/mce/therm_throt: Optimize notifications of thermal throttle")
-Reported-by: Chris Wilson <chris@chris-wilson.co.uk>
-Tested-by: Pandruvada, Srinivas <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/158120068234.18291.7938335950259651295@skylake-alporthouse-com
----
- arch/x86/kernel/cpu/mce/therm_throt.c |  9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/mce/therm_throt.c b/arch/x86/kernel/cpu/mce/therm_throt.c
-index 58b4ee3..f36dc07 100644
---- a/arch/x86/kernel/cpu/mce/therm_throt.c
-+++ b/arch/x86/kernel/cpu/mce/therm_throt.c
-@@ -486,9 +486,14 @@ static int thermal_throttle_offline(unsigned int cpu)
- {
- 	struct thermal_state *state = &per_cpu(thermal_state, cpu);
- 	struct device *dev = get_cpu_device(cpu);
-+	u32 l;
-+
-+	/* Mask the thermal vector before draining evtl. pending work */
-+	l = apic_read(APIC_LVTTHMR);
-+	apic_write(APIC_LVTTHMR, l | APIC_LVT_MASKED);
- 
--	cancel_delayed_work(&state->package_throttle.therm_work);
--	cancel_delayed_work(&state->core_throttle.therm_work);
-+	cancel_delayed_work_sync(&state->package_throttle.therm_work);
-+	cancel_delayed_work_sync(&state->core_throttle.therm_work);
- 
- 	state->package_throttle.rate_control_active = false;
- 	state->core_throttle.rate_control_active = false;
+Thanks.
