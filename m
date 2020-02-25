@@ -2,65 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FEA616C34F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74DE216C365
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:08:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730588AbgBYOHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 09:07:54 -0500
-Received: from sonic313-13.consmr.mail.bf2.yahoo.com ([74.6.133.123]:34084
-        "EHLO sonic313-13.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730109AbgBYOHy (ORCPT
+        id S1730714AbgBYOIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 09:08:54 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:56456 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730656AbgBYOIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:07:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1582639673; bh=vFR/xlds8eKkS3F/y7lHfGoxODDm9autl1GsnmcX5JM=; h=Date:From:Reply-To:Subject:References:From:Subject; b=dbv4DYl6BdWf96KCYSU7f0iDjIWR4YAG42elcXfcZUpZU7Y9WgwTOSx8VH9iUfLrkHSX4MXWkZu475bicFnm/bkBPYMLerbMQZMBk2gbUpvuKPThNLuWQwS7sMizbSrgovriRITCE0nsChtX7f0Z2hEYQ6NYI3rMfVORXXTnERDz59FWbx5TqE7foIIOjdndOpzu61Pit25swEDyVVsKLha4yNou3VFRB4clqzhBGmb8YO0T9IZVIUf+VBi3Q1J3BANz6SVYt7qThoXL3OeEbJi8/SG0gtDHAMoDFKcY5jTQnU0oG1uvZ3uLVkdvRTzbYhqxIE6YHjO+cnTN3iF/iw==
-X-YMail-OSG: J7zUg0sVM1kmSiW0mufYM0GL_dQA7GWyvndXEyCZmt1qXoFrFBkv7ADPsgsyS1n
- dvrqN7tQ5Uws8BN_L_VUQPdXxL_StP7ctVZjJ9A99k76nzGV9772Yh2LxFsLL9ZdyaXfZBpahZe2
- Ir39GwDz9OD.uTbFX3bLMWNz9r4MZaVUrbCngiczMWiodk.1mrb7KhOzshlzdsUnxYxD7HY8BZ3P
- q0IFO8tobt9lBXhSpupY_w.zcFGeGwr9.RO9bY.I.U3A3pw0dGuNX0OoNAH4hhr7mrHJg4oskvYU
- uV4fSYAWs.lEua1qKHH3gJJTWI8lrs15Yv4I..69cHXF2KCpjUvRckcAlXPJcuzOmVdI7qtSYIJo
- u_j0qb0zVcZRyGaJ5f8QLA5CIo777l.4ymlrEqKZlPMeFvn7eBsssPa8d3nAK1xfrTZuHF3Pkou0
- tD1FPtZwCx03nTj.Hkw5UvWBR0zOKnGwHm2BGFNXW41QshBJ.fIVQOrVhnnguOSHX3zQy7.ykht0
- o1wJF_N3IqbLPJzUKxNE438xkvLKedxDk7xDUG8MW3BWy3DiXvq3P95pQP58kDlOSmgxDWxjtIcd
- vuni6XMyEaCf.difRfXDu_o_4tTp6EesoFp9sod8KBvwCxYiPdZDQHz8HgTu0Jh88YB.2fL5FK9z
- ifptZJx3.vNbDYHdpGAvzAtpAuoWh73pJRVpRR7lNlSiYY3MJzXi77_e9t4JH9TV.gc1WDQxqYy8
- 4tQ8KqdRjoyKH6MR6tR_FuEojdR4uUrxEwzvkvkZWcQ0EyG5.VVQxLZodIXMXqOygQvMe_xqBToA
- NhW9YCEhilNvX8wmUFgQZdBNsOLfTYDhQ1O5ZmxlwOMYExNdbGkdlrUGdNnhgLdhR9xD1K9nFgXa
- 6ElWSyghG7y6h0x_JZj81WRlHzKBrIAQYoPSFJwTksCuX_q50X.jdTb0o98O51fKlrzSgigsoLuI
- CPpKfLSFQbxRqg__nMbR6Q6sv7nmqeq1f49Du9aZa4Ye3rXHlaSB78aG5IkMm1Nuq29VhM6LAR8K
- QM0vf0R9k07mBCDICKYSwu4gsewakZGbI_DXvvSjuYP0frqWn1hAPa0d95a_Z3RpbspRUQjQpQM3
- kQhPU0MyvysmJO9WL7oSw9qPBpydod4WRlpUaY_nMDlMBaFHytzSZG8rkUkPTck4m5dCpzzcIONc
- jJdSk447DfohGy84EQUvDOBJbLxhgz5caXPBsAnuKpzvXYHdi03IljUA2ThdW.b7uvnpoSoL5AYv
- fgJOG8.fM.S2hMc.Fs1nASv2g0ihPLRTVLh_WiO05ZEm59M0bLfL8pLk7MbXk6t2UdhUqfX39OiR
- pQkOmycGqKcRscxnsV_sZ99dzlOaba3XCOSvBjA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Tue, 25 Feb 2020 14:07:53 +0000
-Date:   Tue, 25 Feb 2020 14:07:49 +0000 (UTC)
-From:   MR FELIX ANTHONY <mrfelix.anthony2@gmail.com>
-Reply-To: mrfelix.anthony1@gmail.com
-Message-ID: <796894690.121559.1582639669533@mail.yahoo.com>
-Subject: Good day To You
+        Tue, 25 Feb 2020 09:08:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582639731;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/lSNkNp1bZNFOwihFsQzXh596wRz5oBaDvQpBBfk2vI=;
+        b=gkSEnI6C32B/is3lO7dg+iIcNiJGXOVIdE4lVw32ufPBkdvbfnbN0XYqj52J5BUhJkqMbQ
+        3gkdz+Et+dsTXVSxuSrcUjDQW+ZoMl1LyT689EypzBjqxFxCGJYzkrJqCD17sTZ7PQHp4B
+        gGXxld9TZIlydvt6COw8SCXac0wrQdc=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-333-kuxjlCaXPz2nj95-q9jeVw-1; Tue, 25 Feb 2020 09:08:49 -0500
+X-MC-Unique: kuxjlCaXPz2nj95-q9jeVw-1
+Received: by mail-wr1-f71.google.com with SMTP id s13so7330037wru.7
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 06:08:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=/lSNkNp1bZNFOwihFsQzXh596wRz5oBaDvQpBBfk2vI=;
+        b=KWmuN2CusGuCOxkC7cbYeu8LNGQMxiAlrOSS8Pfq/92ni2zwwDLLo97sfBk94ZyzJY
+         3TngD+h2OUiV9nohFAlPmPstDdKTEwHmYJjxQhNdKUvUhu/Uhzxu/so7dJKf6a6XFBSM
+         zVz9laswVudgt/0idXd3T4xfCVfrUeEeoxzTdOr6KMeTvYzAdWVPPMI/I8+bJuy2K0MI
+         zrdM3AjiIFYX1tTcMfr1378t052zc4E2BKtYiQvvTTIqk0DLKhV/xpn1/QdrFzogTjZU
+         giqRiugOf/II1HfcwQQ26Lre7A20Q/bFInIRydQan/9v4jdzto1bWIL/xv8nWBUD5qyg
+         qTBg==
+X-Gm-Message-State: APjAAAVD/4sT6pD2EtglYGNYK7hPqDpneh8ABv9iNelPUnk1eF00DmLW
+        K6Cy/MkgknnH1ycMuwrCSLwk2RNGKQ/ColHXl4GZVdhhFDKXQPv6u+HKRxJqYM7Y0G0B0BQpdex
+        uuWBsT5RMv9wPVPWEsunZvV55
+X-Received: by 2002:a5d:4088:: with SMTP id o8mr23584053wrp.144.1582639728079;
+        Tue, 25 Feb 2020 06:08:48 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyMdmkl8+gCuselr6HXjJJMzQ+xx0En2OokGP5Smh6ixD+ug+Af3wea8+RvP+rkmkQ6jjWqJg==
+X-Received: by 2002:a5d:4088:: with SMTP id o8mr23584035wrp.144.1582639727892;
+        Tue, 25 Feb 2020 06:08:47 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id a16sm24785070wrx.87.2020.02.25.06.08.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2020 06:08:47 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 52/61] KVM: x86: Use KVM cpu caps to detect MSR_TSC_AUX virt support
+In-Reply-To: <20200201185218.24473-53-sean.j.christopherson@intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-53-sean.j.christopherson@intel.com>
+Date:   Tue, 25 Feb 2020 15:08:46 +0100
+Message-ID: <87sgiylpxt.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <796894690.121559.1582639669533.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15302 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:56.0) Gecko/20100101 Firefox/56.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day To You
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
+> Check for MSR_TSC_AUX virtualization via kvm_cpu_cap_has() and drop
+> ->rdtscp_supported().
+>
+> Note, vmx_rdtscp_supported() needs to hang around a tiny bit longer due
+> other usage in VMX code.
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h | 1 -
+>  arch/x86/kvm/svm.c              | 6 ------
+>  arch/x86/kvm/vmx/vmx.c          | 3 ---
+>  arch/x86/kvm/x86.c              | 2 +-
+>  4 files changed, 1 insertion(+), 11 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 113b138a0347..1dd5ac8a2136 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1143,7 +1143,6 @@ struct kvm_x86_ops {
+>  	int (*get_tdp_level)(struct kvm_vcpu *vcpu);
+>  	u64 (*get_mt_mask)(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio);
+>  	int (*get_lpage_level)(void);
+> -	bool (*rdtscp_supported)(void);
+>  
+>  	void (*set_tdp_cr3)(struct kvm_vcpu *vcpu, unsigned long cr3);
+>  
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index f4434816dcdf..6dd9c810c0dc 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -6074,11 +6074,6 @@ static int svm_get_lpage_level(void)
+>  	return PT_PDPE_LEVEL;
+>  }
+>  
+> -static bool svm_rdtscp_supported(void)
+> -{
+> -	return boot_cpu_has(X86_FEATURE_RDTSCP);
+> -}
+> -
+>  static bool svm_pt_supported(void)
+>  {
+>  	return false;
+> @@ -7443,7 +7438,6 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
+>  
+>  	.cpuid_update = svm_cpuid_update,
+>  
+> -	.rdtscp_supported = svm_rdtscp_supported,
+>  	.pt_supported = svm_pt_supported,
+>  
+>  	.set_supported_cpuid = svm_set_supported_cpuid,
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 2a1df1b714db..c3577f11f538 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -7870,9 +7870,6 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
+>  	.get_lpage_level = vmx_get_lpage_level,
+>  
+>  	.cpuid_update = vmx_cpuid_update,
+> -
+> -	.rdtscp_supported = vmx_rdtscp_supported,
+> -
+>  	.set_supported_cpuid = vmx_set_supported_cpuid,
+>  
+>  	.has_wbinvd_exit = cpu_has_vmx_wbinvd_exit,
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index a6d5f22c7ef6..e4353c03269c 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -5246,7 +5246,7 @@ static void kvm_init_msr_list(void)
+>  				continue;
+>  			break;
+>  		case MSR_TSC_AUX:
+> -			if (!kvm_x86_ops->rdtscp_supported())
+> +			if (!kvm_cpu_cap_has(X86_FEATURE_RDTSCP))
+>  				continue;
+>  			break;
+>  		case MSR_IA32_RTIT_CTL:
 
-   Please i need your kind Assistance assistance to receive this sum of ( $18. Million US dollars.) into your
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-bank account for the benefit of our both families, 
-    
-   Please reply me if you are interested
-(mrfelix.anthony1@gmail.com)
+-- 
+Vitaly
 
-FROM 
-
-Mr Felix Anthony
-
-      
