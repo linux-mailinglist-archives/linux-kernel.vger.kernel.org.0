@@ -2,116 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEBA116E9C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 16:15:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F008C16EA13
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 16:28:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731013AbgBYPPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 10:15:47 -0500
-Received: from gateway23.websitewelcome.com ([192.185.49.184]:19631 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730925AbgBYPPr (ORCPT
+        id S1731110AbgBYP2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 10:28:25 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.210]:25518 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730987AbgBYP2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 10:15:47 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 062D22FAB
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 08:01:39 -0600 (CST)
+        Tue, 25 Feb 2020 10:28:22 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 8787D4190D2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 08:01:10 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 6amJjdGGHXVkQ6amJjykYB; Tue, 25 Feb 2020 08:01:39 -0600
+        id 6alqjwAniRP4z6alqjLAgb; Tue, 25 Feb 2020 08:01:10 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vMBlVPzaIiSjManqY0KCJvaCyM1jD85Wg0xf6rY5fno=; b=VeeT7ifCi+xO7jV1VQHyzhT9Cx
-        jmcPu7R0Z9o+ePr+bK4oZp/KhqSZ/BzZrZILU0Go0NN66poiMvC2h0t1LKPI2jGafSWM+UJZG08Ju
-        YgTDYRHJxEN6H/BQXI9qAnmj9pQrs8r5axg+0cA9yaBVJq2H8SpTfy0hJYdc05wfc/dJUJ7C4/tXl
-        Y5fL+t6liOoWenNtRFz3vT5fkluk/6Mk/+iUMavq3g2dCqimGh3e46jE/ee7JTgVljconreRfbuwO
-        +lWMlzfDoa5MoRma/YBF7bpg8BH85Us5n+i4uX+xOK+wCfUA61GW4foeWnoG8Qrenv2v2zji+Z89/
-        +zgeSEOQ==;
-Received: from [201.162.241.105] (port=21897 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=RUoiJPKbXOORUMcByfg3y59aLbGOyCajhNRZHKwxYdM=; b=K2TmY80nKM6JNCRMaqOjv6Y2II
+        XFqNYwg3sy7pV8Klv6Z2CYpDDYYf3KFpYCENAtHow/6zmfi1f5q6y9f2zAkS9jI/oYF4JoAq+wcST
+        AJvHG3FrQ7FB4RDL0KCggXRvfAB9mLOHtLxM4N9XJxuGDQXCDr09AhZkPVaQ9WHITZXV0N+oC/5vX
+        i4tsYSH5RXHtjYhQ+ymmn1vXlNxuQXTnaGZlVoSlMissVsAOwJ5GiFCvfz9gDgQb3M4rd1vkhzFdL
+        wjuWLRYQKT5yXwh7t7fk5QpAOoAYW2enhrqXF1i/udxOwjZOK/vU2qCxp0TyiL/cLLfqcR1NIu8T8
+        5HxBx97Q==;
+Received: from [201.162.241.105] (port=19602 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j6amI-001OnG-Kx; Tue, 25 Feb 2020 08:01:38 -0600
-Subject: Re: [PATCH] crypto: Replace zero-length array with flexible-array
- member
-To:     Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Atul Gupta <atul.gupta@chelsio.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        =?UTF-8?Q?Breno_Leit=c3=a3o?= <leitao@debian.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Paulo Flabiano Smorigo <pfsmorigo@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20200224162100.GA25697@embeddedor>
- <VI1PR0402MB3485175AB5B3092409DC26AA98ED0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+        id 1j6alo-001QK9-7P; Tue, 25 Feb 2020 08:01:08 -0600
+Date:   Tue, 25 Feb 2020 08:03:47 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <1d4ae159-f45b-e12d-1fa1-e7671f76fefc@embeddedor.com>
-Date:   Tue, 25 Feb 2020 08:00:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+To:     Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Eric Anholt <eric@anholt.net>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] drm: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200225140347.GA22864@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <VI1PR0402MB3485175AB5B3092409DC26AA98ED0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -120,13 +77,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 201.162.241.105
 X-Source-L: No
-X-Exim-ID: 1j6amI-001OnG-Kx
+X-Exim-ID: 1j6alo-001QK9-7P
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [201.162.241.105]:21897
+X-Source-Sender: (embeddedor) [201.162.241.105]:19602
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 48
+X-Email-Count: 23
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -134,53 +91,259 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-On 2/25/20 07:44, Horia Geanta wrote:
-> On 2/24/2020 6:18 PM, Gustavo A. R. Silva wrote:
->> The current codebase makes use of the zero-length array language
->> extension to the C90 standard, but the preferred mechanism to declare
->> variable-length types such as these ones is a flexible array member[1][2],
->> introduced in C99:
->>
->> struct foo {
->>         int stuff;
->>         struct boo array[];
->> };
->>
->> By making use of the mechanism above, we will get a compiler warning
->> in case the flexible array does not occur last in the structure, which
->> will help us prevent some kind of undefined behavior bugs from being
->> inadvertently introduced[3] to the codebase from now on.
->>
->> Also, notice that, dynamic memory allocations won't be affected by
->> this change:
->>
->> "Flexible array members have incomplete type, and so the sizeof operator
->> may not be applied. As a quirk of the original implementation of
->> zero-length arrays, sizeof evaluates to zero."[1]
->>
->> This issue was found with the help of Coccinelle.
->>
->> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->> [2] https://github.com/KSPP/linux/issues/21
->> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
-> 
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-Thank you, Horia.
---
-Gustavo
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-> for caam driver:
-> 
->>  drivers/crypto/caam/caamalg.c              | 2 +-
->>  drivers/crypto/caam/caamalg_qi.c           | 4 ++--
->>  drivers/crypto/caam/caamalg_qi2.h          | 6 +++---
->>  drivers/crypto/caam/caamhash.c             | 2 +-
-> 
-> Thanks,
-> Horia
-> 
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/etnaviv/etnaviv_gem.h         | 2 +-
+ drivers/gpu/drm/gma500/intel_bios.h           | 2 +-
+ drivers/gpu/drm/i915/display/intel_vbt_defs.h | 4 ++--
+ drivers/gpu/drm/i915/gt/intel_lrc.c           | 2 +-
+ drivers/gpu/drm/i915/i915_gpu_error.h         | 2 +-
+ drivers/gpu/drm/msm/msm_gem.h                 | 2 +-
+ drivers/gpu/drm/qxl/qxl_cmd.c                 | 2 +-
+ drivers/gpu/drm/vboxvideo/vboxvideo.h         | 2 +-
+ drivers/gpu/drm/vc4/vc4_drv.h                 | 2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c    | 2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_surface.c       | 2 +-
+ include/drm/bridge/mhl.h                      | 4 ++--
+ include/drm/drm_displayid.h                   | 2 +-
+ include/uapi/drm/i915_drm.h                   | 4 ++--
+ 14 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.h b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+index 6b68fe16041b..98e60df882b6 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem.h
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+@@ -105,7 +105,7 @@ struct etnaviv_gem_submit {
+ 	unsigned int nr_pmrs;
+ 	struct etnaviv_perfmon_request *pmrs;
+ 	unsigned int nr_bos;
+-	struct etnaviv_gem_submit_bo bos[0];
++	struct etnaviv_gem_submit_bo bos[];
+ 	/* No new members here, the previous one is variable-length! */
+ };
+ 
+diff --git a/drivers/gpu/drm/gma500/intel_bios.h b/drivers/gpu/drm/gma500/intel_bios.h
+index a1f9ce9465a5..0e6facf21e33 100644
+--- a/drivers/gpu/drm/gma500/intel_bios.h
++++ b/drivers/gpu/drm/gma500/intel_bios.h
+@@ -227,7 +227,7 @@ struct bdb_general_definitions {
+ 	 * number = (block_size - sizeof(bdb_general_definitions))/
+ 	 *	     sizeof(child_device_config);
+ 	 */
+-	struct child_device_config devices[0];
++	struct child_device_config devices[];
+ };
+ 
+ struct bdb_lvds_options {
+diff --git a/drivers/gpu/drm/i915/display/intel_vbt_defs.h b/drivers/gpu/drm/i915/display/intel_vbt_defs.h
+index 05c7cbe32eb4..aef7fe932d1a 100644
+--- a/drivers/gpu/drm/i915/display/intel_vbt_defs.h
++++ b/drivers/gpu/drm/i915/display/intel_vbt_defs.h
+@@ -462,7 +462,7 @@ struct bdb_general_definitions {
+ 	 * number = (block_size - sizeof(bdb_general_definitions))/
+ 	 *	     defs->child_dev_size;
+ 	 */
+-	u8 devices[0];
++	u8 devices[];
+ } __packed;
+ 
+ /*
+@@ -839,7 +839,7 @@ struct bdb_mipi_config {
+ 
+ struct bdb_mipi_sequence {
+ 	u8 version;
+-	u8 data[0]; /* up to 6 variable length blocks */
++	u8 data[]; /* up to 6 variable length blocks */
+ } __packed;
+ 
+ /*
+diff --git a/drivers/gpu/drm/i915/gt/intel_lrc.c b/drivers/gpu/drm/i915/gt/intel_lrc.c
+index 47561dc29304..5cec79152f17 100644
+--- a/drivers/gpu/drm/i915/gt/intel_lrc.c
++++ b/drivers/gpu/drm/i915/gt/intel_lrc.c
+@@ -216,7 +216,7 @@ struct virtual_engine {
+ 
+ 	/* And finally, which physical engines this virtual engine maps onto. */
+ 	unsigned int num_siblings;
+-	struct intel_engine_cs *siblings[0];
++	struct intel_engine_cs *siblings[];
+ };
+ 
+ static struct virtual_engine *to_virtual_engine(struct intel_engine_cs *engine)
+diff --git a/drivers/gpu/drm/i915/i915_gpu_error.h b/drivers/gpu/drm/i915/i915_gpu_error.h
+index 0d1f6c8ff355..5a6561f7a210 100644
+--- a/drivers/gpu/drm/i915/i915_gpu_error.h
++++ b/drivers/gpu/drm/i915/i915_gpu_error.h
+@@ -42,7 +42,7 @@ struct i915_vma_coredump {
+ 	int num_pages;
+ 	int page_count;
+ 	int unused;
+-	u32 *pages[0];
++	u32 *pages[];
+ };
+ 
+ struct i915_request_coredump {
+diff --git a/drivers/gpu/drm/msm/msm_gem.h b/drivers/gpu/drm/msm/msm_gem.h
+index 9e0953c2b7ce..37aa556c5f92 100644
+--- a/drivers/gpu/drm/msm/msm_gem.h
++++ b/drivers/gpu/drm/msm/msm_gem.h
+@@ -157,7 +157,7 @@ struct msm_gem_submit {
+ 			uint32_t handle;
+ 		};
+ 		uint64_t iova;
+-	} bos[0];
++	} bos[];
+ };
+ 
+ #endif /* __MSM_GEM_H__ */
+diff --git a/drivers/gpu/drm/qxl/qxl_cmd.c b/drivers/gpu/drm/qxl/qxl_cmd.c
+index ef09dc6bc635..d1086b2a6892 100644
+--- a/drivers/gpu/drm/qxl/qxl_cmd.c
++++ b/drivers/gpu/drm/qxl/qxl_cmd.c
+@@ -36,7 +36,7 @@ static int qxl_reap_surface_id(struct qxl_device *qdev, int max_to_reap);
+ 
+ struct ring {
+ 	struct qxl_ring_header      header;
+-	uint8_t                     elements[0];
++	uint8_t                     elements[];
+ };
+ 
+ struct qxl_ring {
+diff --git a/drivers/gpu/drm/vboxvideo/vboxvideo.h b/drivers/gpu/drm/vboxvideo/vboxvideo.h
+index 0592004f71aa..a5de40fe1a76 100644
+--- a/drivers/gpu/drm/vboxvideo/vboxvideo.h
++++ b/drivers/gpu/drm/vboxvideo/vboxvideo.h
+@@ -138,7 +138,7 @@ struct vbva_buffer {
+ 
+ 	u32 data_len;
+ 	/* variable size for the rest of the vbva_buffer area in VRAM. */
+-	u8 data[0];
++	u8 data[];
+ } __packed;
+ 
+ #define VBVA_MAX_RECORD_SIZE (128 * 1024 * 1024)
+diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
+index 6627b20c99e9..282293e6f751 100644
+--- a/drivers/gpu/drm/vc4/vc4_drv.h
++++ b/drivers/gpu/drm/vc4/vc4_drv.h
+@@ -65,7 +65,7 @@ struct vc4_perfmon {
+ 	 * Note that counter values can't be reset, but you can fake a reset by
+ 	 * destroying the perfmon and creating a new one.
+ 	 */
+-	u64 counters[0];
++	u64 counters[];
+ };
+ 
+ struct vc4_dev {
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c b/drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c
+index f07aa857587c..60cfbfadd3f2 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c
+@@ -69,7 +69,7 @@ struct vmw_bo_dirty {
+ 	unsigned int ref_count;
+ 	unsigned long bitmap_size;
+ 	size_t size;
+-	unsigned long bitmap[0];
++	unsigned long bitmap[];
+ };
+ 
+ /**
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c b/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
+index 3ce630aa4fde..ec893cd17b50 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
+@@ -79,7 +79,7 @@ struct vmw_surface_dirty {
+ 	struct svga3dsurface_cache cache;
+ 	size_t size;
+ 	u32 num_subres;
+-	SVGA3dBox boxes[0];
++	SVGA3dBox boxes[];
+ };
+ 
+ static void vmw_user_surface_free(struct vmw_resource *res);
+diff --git a/include/drm/bridge/mhl.h b/include/drm/bridge/mhl.h
+index 1cc77bf38324..d96626a0e3fa 100644
+--- a/include/drm/bridge/mhl.h
++++ b/include/drm/bridge/mhl.h
+@@ -327,13 +327,13 @@ struct mhl_burst_bits_per_pixel_fmt {
+ 	struct {
+ 		u8 stream_id;
+ 		u8 pixel_format;
+-	} __packed desc[0];
++	} __packed desc[];
+ } __packed;
+ 
+ struct mhl_burst_emsc_support {
+ 	struct mhl3_burst_header hdr;
+ 	u8 num_entries;
+-	__be16 burst_id[0];
++	__be16 burst_id[];
+ } __packed;
+ 
+ struct mhl_burst_audio_descr {
+diff --git a/include/drm/drm_displayid.h b/include/drm/drm_displayid.h
+index 9d3b745c3107..94b4390bf990 100644
+--- a/include/drm/drm_displayid.h
++++ b/include/drm/drm_displayid.h
+@@ -89,7 +89,7 @@ struct displayid_detailed_timings_1 {
+ 
+ struct displayid_detailed_timing_block {
+ 	struct displayid_block base;
+-	struct displayid_detailed_timings_1 timings[0];
++	struct displayid_detailed_timings_1 timings[];
+ };
+ 
+ #define for_each_displayid_db(displayid, block, idx, length) \
+diff --git a/include/uapi/drm/i915_drm.h b/include/uapi/drm/i915_drm.h
+index 829c0a48577f..33de5dfadaf5 100644
+--- a/include/uapi/drm/i915_drm.h
++++ b/include/uapi/drm/i915_drm.h
+@@ -1708,7 +1708,7 @@ struct i915_context_engines_load_balance {
+ 
+ 	__u64 mbz64; /* reserved for future use; must be zero */
+ 
+-	struct i915_engine_class_instance engines[0];
++	struct i915_engine_class_instance engines[];
+ } __attribute__((packed));
+ 
+ #define I915_DEFINE_CONTEXT_ENGINES_LOAD_BALANCE(name__, N__) struct { \
+@@ -1746,7 +1746,7 @@ struct i915_context_engines_bond {
+ 	__u64 flags; /* all undefined flags must be zero */
+ 	__u64 mbz64[4]; /* reserved for future use; must be zero */
+ 
+-	struct i915_engine_class_instance engines[0];
++	struct i915_engine_class_instance engines[];
+ } __attribute__((packed));
+ 
+ #define I915_DEFINE_CONTEXT_ENGINES_BOND(name__, N__) struct { \
+-- 
+2.25.0
+
