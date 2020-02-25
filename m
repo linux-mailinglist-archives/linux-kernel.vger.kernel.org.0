@@ -2,210 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34ABF16B78A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 03:07:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 508A416B786
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 03:06:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbgBYCHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 21:07:09 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:45872 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728011AbgBYCHJ (ORCPT
+        id S1728764AbgBYCGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 21:06:25 -0500
+Received: from gateway33.websitewelcome.com ([192.185.145.23]:39040 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728011AbgBYCGY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 21:07:09 -0500
-Received: by mail-qk1-f193.google.com with SMTP id a2so10588561qko.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 18:07:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3mznXbsbUvYPe8XJoSstKhdOEAESChOu2NvRTa96OnE=;
-        b=ZiHhh13QsXN70Ie3m4A3k+ikWm/78R8O4lbb6ufEmPiNprHKas4nJapW16m4s7I3CU
-         mj2KFCW2rDiqVgsFKSfWuO2FUK7IY0jOtPL5T4wNI1uel1sCEV4idiAq3FZ7S0xWhAY0
-         j4SluSDH+xbyLZ3FNnHgmFO2/2eMNYASTTDd4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3mznXbsbUvYPe8XJoSstKhdOEAESChOu2NvRTa96OnE=;
-        b=fEBwbzefYjDx16sD0GxdX6uUTyo4kESqkXACwcT2+J6plJmfAeiKdo4WVov7BDsMV2
-         NaJkNO09G0FbxMQqrFCOBGsaKyYSGOYkNLlw2MbDPgLkVCx2ww+4XRKrOyHBcVEOGPme
-         Ouc440jRgSsWN60YqCCVxm/4YIkhc3RDQoK2VNQvgQvrlsSXNLjJVvY1ivP4RPPAC/NZ
-         oJXASZ+9rvEjZeArPWeu9mtOn/n51b+/yka+J5JyBozCGrq0kBVzEos8lpAk3oRRd379
-         ef7IcTWHI9YEC6LZte+xHNLPGTc7T7O2MBowPBuyXgZVngruJMkVys5NQuSAzrtSNjL9
-         +weg==
-X-Gm-Message-State: APjAAAV9Ylx74ysSbf1QvaaV22wQggRZRssXDSCFkEp5BiCLpdfBTiGR
-        MZa06Vpsw/qoEdd3zJ3zSHxmew==
-X-Google-Smtp-Source: APXvYqxXN2kGyj8r+eTUAi0jxwBVvuizCQ+ex4C8syV7lN0zNdne2k4oiZ5pVdfLyYXtocBcJDpgKA==
-X-Received: by 2002:a05:620a:1037:: with SMTP id a23mr53404655qkk.82.1582596427646;
-        Mon, 24 Feb 2020 18:07:07 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id o127sm1850657qke.92.2020.02.24.18.07.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 18:07:06 -0800 (PST)
-Date:   Mon, 24 Feb 2020 21:07:05 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Suraj Jitindar Singh <surajjs@amazon.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC] ext4: fix potential race between online resizing and
- write operations
-Message-ID: <20200225020705.GA253171@google.com>
-References: <20200217160827.GA5685@pc636>
- <20200217193314.GA12604@mit.edu>
- <20200218170857.GA28774@pc636>
- <20200220045233.GC476845@mit.edu>
- <20200221003035.GC2935@paulmck-ThinkPad-P72>
- <20200221131455.GA4904@pc636>
- <20200221202250.GK2935@paulmck-ThinkPad-P72>
- <20200222222415.GC191380@google.com>
- <20200223011018.GB2935@paulmck-ThinkPad-P72>
- <20200224174030.GA22138@pc636>
+        Mon, 24 Feb 2020 21:06:24 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 7DEDD15796E
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 20:06:21 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 6PbnjoxeHAGTX6PbxjycOH; Mon, 24 Feb 2020 20:06:19 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=3WYY4D95dFsGR6aMI/L2pR572DKPC2ZtgZvA51FyZmc=; b=SDfjbEqUWa5eyJtudos2VU69K3
+        slC/oG4O9+M6lqicfB/Ypvnl9pHtHkvcPAIjDbTrwGhc8GHF4Au8ftHWr+66MZVLJVQ7dZ0OsGH1Z
+        9Sucy77xWuZhLOkv/4ujdkydQ1ibfudhitglXMVtz1bJoWHMjxniLqb9N2jd5UPyR8eJRymHlK8tX
+        4RZghqUUz+K6pn6HbGp6HZAQQf85GBWGNLEbaF6n0Ny1YItVZmR0769hFHowRnXBb3oLJFXbxGYVN
+        o/70KaI/Ig0ILP2MtfxHPPJml1+3We6thtdY1fFwKJch3vb1g90h7wwsGjfOgCVaisGZQnWeL3pvS
+        ZtP5SOxQ==;
+Received: from [201.166.191.97] (port=60674 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j6PbT-003Hcz-Ke; Mon, 24 Feb 2020 20:05:44 -0600
+Date:   Mon, 24 Feb 2020 20:08:04 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] brcmfmac: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200225020804.GA9428@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200224174030.GA22138@pc636>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.166.191.97
+X-Source-L: No
+X-Exim-ID: 1j6PbT-003Hcz-Ke
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.166.191.97]:60674
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 21
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 06:40:30PM +0100, Uladzislau Rezki wrote:
-> On Sat, Feb 22, 2020 at 05:10:18PM -0800, Paul E. McKenney wrote:
-> > On Sat, Feb 22, 2020 at 05:24:15PM -0500, Joel Fernandes wrote:
-> > > On Fri, Feb 21, 2020 at 12:22:50PM -0800, Paul E. McKenney wrote:
-> > > > On Fri, Feb 21, 2020 at 02:14:55PM +0100, Uladzislau Rezki wrote:
-> > > > > On Thu, Feb 20, 2020 at 04:30:35PM -0800, Paul E. McKenney wrote:
-> > > > > > On Wed, Feb 19, 2020 at 11:52:33PM -0500, Theodore Y. Ts'o wrote:
-> > > > > > > On Tue, Feb 18, 2020 at 06:08:57PM +0100, Uladzislau Rezki wrote:
-> > > > > > > > now it becomes possible to use it like: 
-> > > > > > > > 	...
-> > > > > > > > 	void *p = kvmalloc(PAGE_SIZE);
-> > > > > > > > 	kvfree_rcu(p);
-> > > > > > > > 	...
-> > > > > > > > also have a look at the example in the mm/list_lru.c diff.
-> > > > > > > 
-> > > > > > > I certainly like the interface, thanks!  I'm going to be pushing
-> > > > > > > patches to fix this using ext4_kvfree_array_rcu() since there are a
-> > > > > > > number of bugs in ext4's online resizing which appear to be hitting
-> > > > > > > multiple cloud providers (with reports from both AWS and GCP) and I
-> > > > > > > want something which can be easily backported to stable kernels.
-> > > > > > > 
-> > > > > > > But once kvfree_rcu() hits mainline, I'll switch ext4 to use it, since
-> > > > > > > your kvfree_rcu() is definitely more efficient than my expedient
-> > > > > > > jury-rig.
-> > > > > > > 
-> > > > > > > I don't feel entirely competent to review the implementation, but I do
-> > > > > > > have one question.  It looks like the rcutiny implementation of
-> > > > > > > kfree_call_rcu() isn't going to do the right thing with kvfree_rcu(p).
-> > > > > > > Am I missing something?
-> > > > > > 
-> > > > > > Good catch!  I believe that rcu_reclaim_tiny() would need to do
-> > > > > > kvfree() instead of its current kfree().
-> > > > > > 
-> > > > > > Vlad, anything I am missing here?
-> > > > > >
-> > > > > Yes something like that. There are some open questions about
-> > > > > realization, when it comes to tiny RCU. Since we are talking
-> > > > > about "headless" kvfree_rcu() interface, i mean we can not link
-> > > > > freed "objects" between each other, instead we should place a
-> > > > > pointer directly into array that will be drained later on.
-> > > > > 
-> > > > > It would be much more easier to achieve that if we were talking
-> > > > > about the interface like: kvfree_rcu(p, rcu), but that is not our
-> > > > > case :)
-> > > > > 
-> > > > > So, for CONFIG_TINY_RCU we should implement very similar what we
-> > > > > have done for CONFIG_TREE_RCU or just simply do like Ted has done
-> > > > > with his
-> > > > > 
-> > > > > void ext4_kvfree_array_rcu(void *to_free)
-> > > > > 
-> > > > > i mean:
-> > > > > 
-> > > > >    local_irq_save(flags);
-> > > > >    struct foo *ptr = kzalloc(sizeof(*ptr), GFP_ATOMIC);
-> > > > > 
-> > > > >    if (ptr) {
-> > > > >            ptr->ptr = to_free;
-> > > > >            call_rcu(&ptr->rcu, kvfree_callback);
-> > > > >    }
-> > > > >    local_irq_restore(flags);
-> > > > 
-> > > > We really do still need the emergency case, in this case for when
-> > > > kzalloc() returns NULL.  Which does indeed mean an rcu_head in the thing
-> > > > being freed.  Otherwise, you end up with an out-of-memory deadlock where
-> > > > you could free memory only if you had memor to allocate.
-> > > 
-> > > Can we rely on GFP_ATOMIC allocations for these? These have emergency memory
-> > > pools which are reserved.
-> > 
-> > You can, at least until the emergency memory pools are exhausted.
-> > 
-> > > I was thinking a 2 fold approach (just thinking out loud..):
-> > > 
-> > > If kfree_call_rcu() is called in atomic context or in any rcu reader, then
-> > > use GFP_ATOMIC to grow an rcu_head wrapper on the atomic memory pool and
-> > > queue that.
-> > > 
-> I am not sure if that is acceptable, i mean what to do when GFP_ATOMIC
-> gets failed in atomic context? Or we can just consider it as out of
-> memory and another variant is to say that headless object can be called
-> from preemptible context only.
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Yes that makes sense, and we can always put disclaimer in the API's comments
-saying if this object is expected to be freed a lot, then don't use the
-headless-API to be extra safe.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-BTW, GFP_ATOMIC the documentation says if GFP_ATOMIC reserves are depleted,
-the kernel can even panic some times, so if GFP_ATOMIC allocation fails, then
-there seems to be bigger problems in the system any way. I would say let us
-write a patch to allocate there and see what the -mm guys think.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-> > > Otherwise, grow an rcu_head on the stack of kfree_call_rcu() and call
-> > > synchronize_rcu() inline with it.
-> > > 
-> > >
-> What do you mean here, Joel? "grow an rcu_head on the stack"?
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-By "grow on the stack", use the compiler-allocated rcu_head on the
-kfree_rcu() caller's stack.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-I meant here to say, if we are not in atomic context, then we use regular
-GFP_KERNEL allocation, and if that fails, then we just use the stack's
-rcu_head and call synchronize_rcu() or even synchronize_rcu_expedited since
-the allocation failure would mean the need for RCU to free some memory is
-probably great.
+This issue was found with the help of Coccinelle.
 
-> > > Use preemptible() andr task_struct's rcu_read_lock_nesting to differentiate
-> > > between the 2 cases.
-> > > 
-> If the current context is preemptable then we can inline synchronize_rcu()
-> together with freeing to handle such corner case, i mean when we are run
-> out of memory.
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-Ah yes, exactly what I mean.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.h | 2 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> As for "task_struct's rcu_read_lock_nesting". Will it be enough just
-> have a look at preempt_count of current process? If we have for example
-> nested rcu_read_locks:
-> 
-> <snip>
-> rcu_read_lock()
->     rcu_read_lock()
->         rcu_read_lock()
-> <snip>
-> 
-> the counter would be 3.
-
-No, because preempt_count is not incremented during rcu_read_lock(). RCU
-reader sections can be preempted, they just cannot goto sleep in a reader
-section (unless the kernel is RT).
-
-thanks,
-
- - Joel
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.h
+index 3347439543bb..46c66415b4a6 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.h
+@@ -60,7 +60,7 @@ struct brcmf_fw_request {
+ 	u16 bus_nr;
+ 	u32 n_items;
+ 	const char *board_type;
+-	struct brcmf_fw_item items[0];
++	struct brcmf_fw_item items[];
+ };
+ 
+ struct brcmf_fw_name {
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c
+index 79c8a858b6d6..a5cced2c89ac 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c
+@@ -32,7 +32,7 @@ struct brcmf_fweh_queue_item {
+ 	u8 ifaddr[ETH_ALEN];
+ 	struct brcmf_event_msg_be emsg;
+ 	u32 datalen;
+-	u8 data[0];
++	u8 data[];
+ };
+ 
+ /**
+-- 
+2.25.0
 
