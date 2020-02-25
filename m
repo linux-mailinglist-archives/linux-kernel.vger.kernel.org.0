@@ -2,132 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 115C716BBA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 09:16:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DA8416BB94
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 09:13:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbgBYIQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 03:16:33 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43308 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729360AbgBYIQd (ORCPT
+        id S1729732AbgBYINA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 03:13:00 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:41006 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729458AbgBYINA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 03:16:33 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01P8E7U6014007
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 03:16:31 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yayb0jy27-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 03:16:31 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
-        Tue, 25 Feb 2020 08:16:29 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 25 Feb 2020 08:16:24 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01P8GNgE47513644
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Feb 2020 08:16:23 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2E38152051;
-        Tue, 25 Feb 2020 08:16:23 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.35.187])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 8DCE75204E;
-        Tue, 25 Feb 2020 08:16:20 +0000 (GMT)
-Subject: Re: [PATCH v4 2/4] sched/core: Propagate parent task's latency
- requirements to the child task
-To:     Pavan Kondeti <pkondeti@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, qais.yousef@arm.com,
-        chris.hyser@oracle.com, patrick.bellasi@matbug.net,
-        valentin.schneider@arm.com, David.Laight@ACULAB.COM,
-        pjt@google.com, pavel@ucw.cz, tj@kernel.org,
-        dhaval.giani@oracle.com, qperret@google.com,
-        tim.c.chen@linux.intel.com
-References: <20200224085918.16955-1-parth@linux.ibm.com>
- <20200224085918.16955-3-parth@linux.ibm.com>
- <20200225063226.GJ28029@codeaurora.org>
-From:   Parth Shah <parth@linux.ibm.com>
-Date:   Tue, 25 Feb 2020 13:46:19 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 25 Feb 2020 03:13:00 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01P8CdVP022785;
+        Tue, 25 Feb 2020 02:12:39 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582618359;
+        bh=xkzJNhAlvIUswcXOd5q7Ot5BwbFTcYnpu6axmC8+x1c=;
+        h=From:To:CC:Subject:Date;
+        b=FoXCHVRFSklOB8eUHOzbY459HgtxT2Y16H80LUfNCBLxeow0X2sd7EbOBLXPz6PfA
+         MK0EqVWoxMmRfOXKIIej6I0xze+qD/MtUVygkflRp+WYQF18/91VtSBrVQJt9wI0ZF
+         NY6U/8nkxr81SIWr7jmn8VCLMfduChkSBtI+VZFg=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01P8CdES092156
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Feb 2020 02:12:39 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 25
+ Feb 2020 02:12:38 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 25 Feb 2020 02:12:38 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01P8CYu8026220;
+        Tue, 25 Feb 2020 02:12:35 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Murali Karicheri <m-karicheri2@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+CC:     <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: [PATCH v2 0/3] PCIe: Endpoint: Redesign MSI-X support
+Date:   Tue, 25 Feb 2020 13:47:00 +0530
+Message-ID: <20200225081703.8857-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20200225063226.GJ28029@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20022508-0012-0000-0000-0000038A094B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022508-0013-0000-0000-000021C6AB0C
-Message-Id: <a954a83b-ff3c-1fc2-a70e-7d1482502ed6@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-25_02:2020-02-21,2020-02-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- bulkscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0 spamscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002250068
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Existing MSI-X support in Endpoint core has limitations:
+ 1) MSIX table (which is mapped to a BAR) is not allocated by
+    anyone. Ideally this should be allocated by endpoint
+    function driver.
+ 2) Endpoint controller can choose any random BARs for MSIX
+    table (irrespective of whether the endpoint function driver
+    has allocated memory for it or not)
 
+In order to avoid these limitations, pci_epc_set_msix() is
+modified to include BAR Indicator register (BIR) configuration
+and MSIX table offset as arguments. This series also fixed MSIX
+support in dwc driver and add MSI-X support in Cadence PCIe driver.
 
-On 2/25/20 12:02 PM, Pavan Kondeti wrote:
-> On Mon, Feb 24, 2020 at 02:29:16PM +0530, Parth Shah wrote:
->> Clone parent task's latency_nice attribute to the forked child task.
->>
->> Reset the latency_nice value to default value when the child task is
->> set to sched_reset_on_fork.
->>
->> Signed-off-by: Parth Shah <parth@linux.ibm.com>
->> Reviewed-by: Qais Yousef <qais.yousef@arm.com>
->> ---
->>  kernel/sched/core.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index 377ec26e9159..65b6c00d6dac 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -2860,6 +2860,9 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
->>  	 */
->>  	p->prio = current->normal_prio;
->>  
->> +	/* Propagate the parent's latency requirements to the child as well */
->> +	p->latency_nice = current->latency_nice;
->> +
->>  	uclamp_fork(p);
->>  
->>  	/*
->> @@ -2876,6 +2879,7 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
->>  		p->prio = p->normal_prio = __normal_prio(p);
->>  		set_load_weight(p, false);
->>  
->> +		p->latency_nice = DEFAULT_LATENCY_NICE;
->>  		/*
->>  		 * We don't need the reset flag anymore after the fork. It has
->>  		 * fulfilled its duty:
->> -- 
->> 2.17.2
->>
-> 
-> LGTM.
-> 
-> latency_nice value initialization is missing for the init_task.
+Changes from v1:
+*) Removed Cadence MSI-X support from the series
+*) Fixed nits pointed out by Bjorn
 
-good catch. Will add that part too. Thanks for pointing out.
+Kishon Vijay Abraham I (3):
+  PCI: endpoint: Fix ->set_msix() to take BIR and offset as arguments
+  PCI: dwc: Fix dw_pcie_ep_raise_msix_irq() to get correct MSI-X table
+    address
+  PCI: keystone: Allow AM654 PCIe Endpoint to raise MSI-X interrupt
 
-- Parth
+ drivers/pci/controller/dwc/pci-keystone.c     |  5 +-
+ .../pci/controller/dwc/pcie-designware-ep.c   | 61 +++++++++----------
+ drivers/pci/controller/dwc/pcie-designware.h  |  1 +
+ drivers/pci/endpoint/functions/pci-epf-test.c | 31 ++++++++--
+ drivers/pci/endpoint/pci-epc-core.c           |  7 ++-
+ drivers/pci/endpoint/pci-epf-core.c           |  2 +
+ include/linux/pci-epc.h                       |  6 +-
+ include/linux/pci-epf.h                       | 15 +++++
+ 8 files changed, 86 insertions(+), 42 deletions(-)
 
-> 
-> Thanks,
-> Pavan
-> 
+-- 
+2.17.1
 
