@@ -2,92 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF3D16ED4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 18:58:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD6E416ED5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 18:59:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731170AbgBYR6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 12:58:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730582AbgBYR6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 12:58:32 -0500
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F048024672
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 17:58:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582653511;
-        bh=Sva3j0zxk8ZOvePoBklb1lV/d69k6BLltGcoL8zx+i8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=XvibRSSoNRmYfm+qIPIN7nGGePEDaM41FlNmAuDbFkQjS98jnypCTx3K7+hk1vN2/
-         M/lQCP9nHUXhPsxFFSSFNpzmY/5oXAOoWByYfG7uXgQ6bYNEqrMDvD9uDvFaTSYfzq
-         f+9pjizLNvqqgFV8yly2QYf2270oA547XfqE0UTY=
-Received: by mail-wm1-f53.google.com with SMTP id a6so115068wme.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 09:58:30 -0800 (PST)
-X-Gm-Message-State: APjAAAXMjfXq3+Hb/hHHN3tbITbEGeuma56JREscXyz/qnZJd0GsevwB
-        1Al3P1IKmP3/QVC0TYFUlj1xztk50RLhQe4iKDbmWg==
-X-Google-Smtp-Source: APXvYqxhDCWtAL9XVlcgMQcvnJk1Yjnsuht22saRgp4RLN0yPuLVMLnzI7N2hk/Y4yIm7rpnYZjw7y3JX1RRjlmthUI=
-X-Received: by 2002:a7b:c4cc:: with SMTP id g12mr477751wmk.68.1582653509278;
- Tue, 25 Feb 2020 09:58:29 -0800 (PST)
+        id S1731399AbgBYR72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 12:59:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39164 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730829AbgBYR72 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 12:59:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=/kPd72L2NTbA3prrCkJX+T5HQUkpWtEmXQRVd+BkfJ0=; b=AcufC8xSi1fboQhsUYGFToSFOR
+        78qYe41745VJ22m4tMZ1rEHdv7ghQ8RZZ9FQFWO9KN3O87ToWyXBaJiMxGBRT4qLo/Vaa1S3TTY5K
+        Bg+chVynEZjdk3F6MhkRnBWxvWwvDDQzqLOZbbh3FTOz57vEOtDO9CWTmEAbrru8adqN8M1bq4n7N
+        7tkGFSV2aAdu+P9HEb3HiZAlmUsfr85SfCGusyQA7994aaRrs/EqkNdTotVK8Yd3bug0hV1MjssMg
+        CnqwnjynmSwuZYTeSKl9+9tMgrIRCYfz7gubrrGTuH5kfyRPM6ca/aaBUbY8OAeE+ZFS/iM4+/urK
+        ntXvLOEw==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6eUQ-00043g-VW; Tue, 25 Feb 2020 17:59:27 +0000
+Subject: Re: [PATCH] bootconfig: Fix CONFIG_BOOTTIME_TRACING dependency issue
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200225220551.d9a409bc04b77cdf48eae3ea@kernel.org>
+ <158264140162.23842.11237423518607465535.stgit@devnote2>
+ <c9604764-bd0f-67e9-56c8-fb6ffaf9b430@infradead.org>
+ <20200225125335.5bbc3ed4@gandalf.local.home>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <aa78add3-a6d9-e316-cfba-3432e347bec4@infradead.org>
+Date:   Tue, 25 Feb 2020 09:59:25 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <261ea8108c6290e95962be2638bd204f90787c1c.1582652466.git.thomas.lendacky@amd.com>
- <CAKv+Gu_FJeiaY5yw9=ER4XyBZrDFZ5L4igrqxP6hhJ7Z8easpw@mail.gmail.com> <9e16fed9-4399-5c78-cbfb-6be75c295f31@amd.com>
-In-Reply-To: <9e16fed9-4399-5c78-cbfb-6be75c295f31@amd.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Tue, 25 Feb 2020 18:58:18 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu_0LUY67DwSLU1tyijuF+0mKPpvq1j3RSMy5HBxYE-3qw@mail.gmail.com>
-Message-ID: <CAKv+Gu_0LUY67DwSLU1tyijuF+0mKPpvq1j3RSMy5HBxYE-3qw@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/efi: Add additional efi tables for unencrypted
- mapping checks
-To:     Tom Lendacky <thomas.lendacky@amd.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200225125335.5bbc3ed4@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Feb 2020 at 18:54, Tom Lendacky <thomas.lendacky@amd.com> wrote:
->
-> On 2/25/20 11:45 AM, Ard Biesheuvel wrote:
-> > On Tue, 25 Feb 2020 at 18:41, Tom Lendacky <thomas.lendacky@amd.com> wrote:
-> >>
-> >> When booting with SME active, EFI tables must be mapped unencrypted since
-> >> they were built by UEFI in unencrypted memory. Update the list of tables
-> >> to be checked during early_memremap() processing to account for new EFI
-> >> tables.
-> >>
-> >> This fixes a bug where an EFI TPM log table has been created by UEFI, but
-> >> it lives in memory that has been marked as usable rather than reserved.
-> >>
-> >> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-> >>
-> >> ---
-> >> Changes since v1:
-> >> - Re-spun against EFI tree
-> >
-> > Which one? Surely not the one in the link I included?
->
-> I did a git clone of
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git
->
-> and checked out branch next. Not sure what I missed...
->
+On 2/25/20 9:53 AM, Steven Rostedt wrote:
+> On Tue, 25 Feb 2020 09:49:25 -0800
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+>>> Fixes: d8a953ddde5e ("bootconfig: Set CONFIG_BOOT_CONFIG=n by default")
+>>> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+>>> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>  
+>>
+>> Hi,
+>> I'm no fan of "select", but this does fix the kconfig warnings and
+>> build errors that I have reported.  Thanks.
+> 
+> I'm not big on select either, but this is fine (I'm running it through my
+> tests now).
+> 
+>>
+>> Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+> 
+> Is it OK if I change this to "Tested-by:"?
 
-Weird. Do you see commit 5d288dbd88606d8f215c7138b10649115d79cadd on
-that branch? It removes rng_seed from struct efi, hence my request to
-rebase your patch.
+Yes, as long as someone doesn't read (interpret) that as runtime-tested-by. :)
 
-IMO, best is to simply drop the 'static' from rng_seed, rename it to
-efi_rng_seed, and drop an extern declaration in linux/efi.h so it is
-accessible from your code. I'm reluctant to put it back in struct efi.
+-- 
+~Randy
+
