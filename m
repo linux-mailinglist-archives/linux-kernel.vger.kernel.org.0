@@ -2,160 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D29C16B716
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 02:17:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A228B16B721
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 02:21:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbgBYBRW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 20:17:22 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.38]:40192 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728135AbgBYBRW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 20:17:22 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 0AE66400C7D90
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 19:17:21 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 6Oqfjcfhw8vkB6OqfjY8xq; Mon, 24 Feb 2020 19:17:21 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8PuKkfXcmVyx3upImaxoOPndGOZW+wA+Sy4Sih/Rb3U=; b=fNVAqJz/DRQv+OOERZb352EIG2
-        c41NMqpOz2CQ44CATBGzKrFbwtNxw1WK6PZewR66YgVClYxFBgohbKBIE1fRdHE+rsGdmmM8sI6Cx
-        uqlTZGaE3XJWFq4+c39PBtxKOmaHDa/YQpyj1CAY7dapnHIXmrncAuu4MaHxh3RLNi9XYR609Pz+B
-        6UHaC3Ak3feP3RO/Uqdv2d0kJgjdtu05UYAZUONpbbfLSjQqwvcRg7YZkaTMK00txwHpSh5oBEUTZ
-        VboH0gquje3vTf8J4TjcGVHlVdazQsUQPRY5bt0Hp9VlstlgWNYGiK3U/S9drUzHSO47/axkGoPYn
-        YsIED7HQ==;
-Received: from [201.166.191.50] (port=58608 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j6Oqd-002v0R-6d; Mon, 24 Feb 2020 19:17:19 -0600
-Date:   Mon, 24 Feb 2020 19:20:08 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] prism54: Replace zero-length array with flexible-array
- member
-Message-ID: <20200225012008.GA4309@embeddedor>
+        id S1728671AbgBYBVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 20:21:05 -0500
+Received: from ozlabs.org ([203.11.71.1]:57017 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728011AbgBYBVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 20:21:05 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48RLjT4Hl5z9sP7;
+        Tue, 25 Feb 2020 12:21:01 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1582593662;
+        bh=d6HO5ySeJXMzi+AidWGMjv7hJJDzyM+3Bx0nUBRpKUA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=XahQBe57ar85xxAJnvzdYTz3eHK4JZ/JnvxmWkVzOb89HJpyKtIUwxHKMPYik4l8n
+         NGOSUxd77ylWngJOWhIE6T5w7clwa0IKeGvjRw99eS/FrrC43zvg41nSPrwibBaPB7
+         1gOEt0O4+5NR8PRn8LHoqTli993pI9faQBSp0Zf+2IigVmxsZKC8REMZUm7Gg0M4GW
+         LKhd74IeRjk+w8b2HACEKEfAnIWR7wZuss6MXosZtnPC+jltyR9jUJmXSvUczg1OUt
+         2GOtx/rwo44BfTivBmatQfVlOz6ucdiHEtkf62uiK5f+mZUnHr/7ooj5ANiea1wnBf
+         IaUYgVo8xE/wg==
+Date:   Tue, 25 Feb 2020 12:21:00 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Subject: linux-next: build failure after merge of the pinctrl tree
+Message-ID: <20200225122100.34284341@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.191.50
-X-Source-L: No
-X-Exim-ID: 1j6Oqd-002v0R-6d
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.191.50]:58608
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 29
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; boundary="Sig_/yuxPvEhu_ui62k8yKV93olQ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+--Sig_/yuxPvEhu_ui62k8yKV93olQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Hi all,
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+After merging the pinctrl tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+ERROR: "gpiochip_get_desc" [drivers/pinctrl/pinctrl-da9062.ko] undefined!
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+Caused by commit
 
-This issue was found with the help of Coccinelle.
+  56cc3af4e8c8 ("pinctrl: da9062: add driver support")
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+I used the pinctrl tree from next-20200224 for today.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/wireless/intersil/prism54/isl_oid.h    | 8 ++++----
- drivers/net/wireless/intersil/prism54/islpci_mgt.h | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+--=20
+Cheers,
+Stephen Rothwell
 
-diff --git a/drivers/net/wireless/intersil/prism54/isl_oid.h b/drivers/net/wireless/intersil/prism54/isl_oid.h
-index 5441c1f9f2fc..1afc2ccf94ca 100644
---- a/drivers/net/wireless/intersil/prism54/isl_oid.h
-+++ b/drivers/net/wireless/intersil/prism54/isl_oid.h
-@@ -37,7 +37,7 @@ struct obj_mlmeex {
- 	u16 state;
- 	u16 code;
- 	u16 size;
--	u8 data[0];
-+	u8 data[];
- } __packed;
- 
- struct obj_buffer {
-@@ -68,12 +68,12 @@ struct obj_bss {
- 
- struct obj_bsslist {
- 	u32 nr;
--	struct obj_bss bsslist[0];
-+	struct obj_bss bsslist[];
- } __packed;
- 
- struct obj_frequencies {
- 	u16 nr;
--	u16 mhz[0];
-+	u16 mhz[];
- } __packed;
- 
- struct obj_attachment {
-@@ -81,7 +81,7 @@ struct obj_attachment {
- 	char reserved;
- 	short id;
- 	short size;
--	char data[0];
-+	char data[];
- } __packed;
- 
- /*
-diff --git a/drivers/net/wireless/intersil/prism54/islpci_mgt.h b/drivers/net/wireless/intersil/prism54/islpci_mgt.h
-index d6bbbac46b4a..1f87d0aea60c 100644
---- a/drivers/net/wireless/intersil/prism54/islpci_mgt.h
-+++ b/drivers/net/wireless/intersil/prism54/islpci_mgt.h
-@@ -99,7 +99,7 @@ struct islpci_mgmtframe {
- 	pimfor_header_t *header;      /* payload header, points into buf */
- 	void *data;		      /* payload ex header, points into buf */
-         struct work_struct ws;	      /* argument for schedule_work() */
--	char buf[0];		      /* fragment buffer */
-+	char buf[];		      /* fragment buffer */
- };
- 
- int
--- 
-2.25.0
+--Sig_/yuxPvEhu_ui62k8yKV93olQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5UdnwACgkQAVBC80lX
+0GzAjAf/etqeQLbmePhLNQcO/HqAoI6++KtyIk0TbMRYXo8GTl6PLU6Y7hJzc1ds
+ZVtWDbHnMeZGEglOpxoFgGTsDcBTE2SOgJ07+UKbfgwVRkMYyarrp/pVDSFaE0JZ
+wXj5mZHT1qOZG+W809Bld4LDo86f7VZA0UXT16kL15MktqQuqRMih3iZ+LNN4JVP
+xrLiCUwiWsaQaW3KydfU3PV+lJ//JBPDRBCmsFS7obQD9C18EnEsI0ZvaJgCjxdU
+9V+sywGeo4cAd+m2B8ujUqp2PJpVGcwTWPuIAvHKFSVJ8GihXXN5nl5BY7KmmhuP
+W5v31/ZNFW4ueP5FEkK36mmUtwWuHg==
+=RF3M
+-----END PGP SIGNATURE-----
+
+--Sig_/yuxPvEhu_ui62k8yKV93olQ--
