@@ -2,250 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16AED16BF77
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 12:19:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1F1316BF82
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 12:22:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730457AbgBYLTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 06:19:46 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:42747 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729708AbgBYLTp (ORCPT
+        id S1730474AbgBYLWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 06:22:05 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44047 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbgBYLWE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 06:19:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582629582;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=U3hPikohRml3lL8Jogc7iVoQHY1Ph6Jcqk0meeV3PT4=;
-        b=LtFNel6glRAsmWsWPrgUNsD4m5ETvQJYK7a13H5RzEACZIkNfo63C2klMEKPbZY4wGAn/h
-        PLVTmShrDsy+K78owDlDXqXe7i6TCxCiW2ONDv4Sia45mPGloFfaEy3ZSo1uPNdE130DM7
-        ZPzay6qb1pacKzJyHiNseZO6FNg5odI=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-191-wmU98-eQMBOt_ndOGwwkRQ-1; Tue, 25 Feb 2020 06:19:37 -0500
-X-MC-Unique: wmU98-eQMBOt_ndOGwwkRQ-1
-Received: by mail-qt1-f197.google.com with SMTP id e37so14472297qtk.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 03:19:37 -0800 (PST)
+        Tue, 25 Feb 2020 06:22:04 -0500
+Received: by mail-pf1-f196.google.com with SMTP id y5so7012276pfb.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 03:22:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=EUm9z7WkAiCk1ivsS8Uff7qEBq+u4XWDIwD3YfqnT88=;
+        b=ZIALNDBsJ79rIl/zg545heZl09NGHH3PzyR5iRsqOD8S3Cg53zpEx/H3rE59vH2P/c
+         rUjuxXkDXQ6vKrjWldp4Jug6HvW0nXKXCkLH9+JE7SH9tLb+9ltHjVm+FeHwvM6xVx+z
+         hqQgeTdHJ8GXAfTck5v+pd4aC/IDWkvRhZoHQubmL9dcKbhB4TSJeP7iYUT6JavMY+Fh
+         lx613k/duwL9PieW9Ar8DqUUPABr6LvWxIkSq4F7IYtxVpVuwBvKrQ0CjZiJSkRqArT6
+         J5uBQAEX5Q0asJFAvqrwXGpvNJxDcJktuSD7Ym9q29gBUx7/AMY5jXoP4hzMNDBeOZjo
+         3WuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=U3hPikohRml3lL8Jogc7iVoQHY1Ph6Jcqk0meeV3PT4=;
-        b=kkcP5Ql6mbSB2IrEETEhtmQV/4mIjF6xswaNDJm1YOyjTLeNjgc3ZIm2fqilmu4reS
-         upLkVdslO4ymJ3X7fc7k+trEoHGJLg0WRUHwzYAMAHWc4Ineu0sOjfkMWF3nUeSZ2hS4
-         tHP3Sixgz+Dk35ZoKL9KSIsNuXjvXFMQag3EmKRUtOAbt9jeWJIchKq3cki56lyXXMLb
-         LPsOnukybLngf3RVUZ32vveVDWSpDAIzhIg3Nw9lN44Vnai6wXoNWoIbs92rWZOFhVV/
-         26nmn06HKbiQ/VFkMQuxJ9rILpMBayJSt/2oftiJ4lxpc54r3PehqXhqhMFmQmgy90SA
-         779g==
-X-Gm-Message-State: APjAAAUIGuiZxhwm31u76ZkQUiKu62gn01aC9xxMsR0gA46nlO6BameN
-        bkMmaAUGyC/7aaYce2jSRl9Z6Ui/BA75/KQE/1LpjI7YGBWMGcnnb7TawJ6XAYbNL5+NG+EZSIn
-        GGEMnZk3ZEjESfIXO78Jkdgmi
-X-Received: by 2002:a0c:cc89:: with SMTP id f9mr33125103qvl.17.1582629577152;
-        Tue, 25 Feb 2020 03:19:37 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyzqcUgpQYhMUX/J07TlPjovku9kP6MRHH8Rhup5+jLZ30rCBS87MFDxy5DJWXwBXW2rSktqg==
-X-Received: by 2002:a0c:cc89:: with SMTP id f9mr33125064qvl.17.1582629576871;
-        Tue, 25 Feb 2020 03:19:36 -0800 (PST)
-Received: from redhat.com (bzq-79-178-2-214.red.bezeqint.net. [79.178.2.214])
-        by smtp.gmail.com with ESMTPSA id t6sm3732951qke.57.2020.02.25.03.19.32
+        bh=EUm9z7WkAiCk1ivsS8Uff7qEBq+u4XWDIwD3YfqnT88=;
+        b=Vx4ObsqgKfZy0o5ljc1jkhQaHYn4ezro7azeYiEqYjuwqva5NocbFNYiKbb24Lo5RD
+         lnHuzhzZcnIA/V/RRt4bz+imOKM+5yVhIzL8A2cj3NT2L0hkWdfhxcZBI8TLOFDv/Sul
+         c5CBz5C7kf2rF481p/eqDJd1JseQd6ZIzQlc9fMvukZhhlAc9ZIGAiV6BRh4TwOz1ZiD
+         Opy7gIJ2jbQeAX6fkJqdXhjA5anoPf3peNe2fADzDferwyRVi/i1Afm3BP+tUWHPns1f
+         JOSyMh+sB9tGU4u93TPgumLn1F2oiMNho4bAoMer6FQdoXKHL+C/KCIme0Y7s3TTalyx
+         3ueA==
+X-Gm-Message-State: APjAAAUW1knhMoKc8WxJprXLwzJqc6whrKCs21b+scO37ZDFqwo3X2mT
+        YOJpry+1NQU3ozgDnACAxh0=
+X-Google-Smtp-Source: APXvYqxEWDB8BEiZ4a3fNfbf3wzXr3d2SPXsKomACVc3xo+rVC4Hj+BRzuNEqn6W72NuTU+Edj1CIA==
+X-Received: by 2002:a62:6842:: with SMTP id d63mr57013823pfc.113.1582629723147;
+        Tue, 25 Feb 2020 03:22:03 -0800 (PST)
+Received: from ziqianlu-desktop.localdomain ([47.89.83.64])
+        by smtp.gmail.com with ESMTPSA id r145sm17039849pfr.5.2020.02.25.03.21.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 03:19:36 -0800 (PST)
-Date:   Tue, 25 Feb 2020 06:19:30 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Yuya Kusakabe <yuya.kusakabe@gmail.com>
-Cc:     jasowang@redhat.com, andriin@fb.com, ast@kernel.org,
-        bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net,
-        hawk@kernel.org, john.fastabend@gmail.com, kafai@fb.com,
-        kuba@kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, songliubraving@fb.com, yhs@fb.com
-Subject: Re: [PATCH bpf-next v6 2/2] virtio_net: add XDP meta data support
-Message-ID: <20200225061923-mutt-send-email-mst@kernel.org>
-References: <20200225033103.437305-1-yuya.kusakabe@gmail.com>
- <20200225033212.437563-1-yuya.kusakabe@gmail.com>
- <20200225033212.437563-2-yuya.kusakabe@gmail.com>
+        Tue, 25 Feb 2020 03:22:02 -0800 (PST)
+Date:   Tue, 25 Feb 2020 19:21:53 +0800
+From:   Aaron Lu <aaron.lwe@gmail.com>
+To:     Aubrey Li <aubrey.intel@gmail.com>
+Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Dario Faggioli <dfaggioli@suse.com>,
+        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [RFC PATCH v4 00/19] Core scheduling v4
+Message-ID: <20200225112153.GA618752@ziqianlu-desktop.localdomain>
+References: <3c3c56c1-b8dc-652c-535e-74f6dcf45560@linux.intel.com>
+ <CANaguZAz+mw1Oi8ecZt+JuCWbf=g5UvKrdSvAeM82Z1c+9oWAw@mail.gmail.com>
+ <e322a252-f983-e3f3-f823-16d0c16b2867@linux.intel.com>
+ <20200212230705.GA25315@sinkpad>
+ <29d43466-1e18-6b42-d4d0-20ccde20ff07@linux.intel.com>
+ <CAERHkruG4y8si9FrBp7cZNEdfP7EzxbmYwvdF2EvHLf=mU1mgg@mail.gmail.com>
+ <20200225034438.GA617271@ziqianlu-desktop.localdomain>
+ <CAERHkrs_WX=gS0sQ2Wg_SZuAcf_qhKfT05co0uYgaQk8cFj0ag@mail.gmail.com>
+ <20200225073446.GA618392@ziqianlu-desktop.localdomain>
+ <CAERHkrtraNqWj+RZnUFBaR8Cxk_cprQnzyKEgZ=6K+1mb1Jifw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200225033212.437563-2-yuya.kusakabe@gmail.com>
+In-Reply-To: <CAERHkrtraNqWj+RZnUFBaR8Cxk_cprQnzyKEgZ=6K+1mb1Jifw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 12:32:12PM +0900, Yuya Kusakabe wrote:
-> Implement support for transferring XDP meta data into skb for
-> virtio_net driver; before calling into the program, xdp.data_meta points
-> to xdp.data, where on program return with pass verdict, we call
-> into skb_metadata_set().
+On Tue, Feb 25, 2020 at 06:40:02PM +0800, Aubrey Li wrote:
+> On Tue, Feb 25, 2020 at 3:34 PM Aaron Lu <aaron.lwe@gmail.com> wrote:
+> >
+> > On Tue, Feb 25, 2020 at 01:32:35PM +0800, Aubrey Li wrote:
+> > > Aaron - did you test this before? In other words, if you reset repo to your
+> > > last commit:
+> >
+> > I did this test only recently when I started to think if I can use
+> > coresched to boost main workload's performance in a colocated
+> > environment.
+> >
+> > >
+> > > - 5bd3c80 sched/fair : Wake up forced idle siblings if needed
+> > >
+> > > Does the problem remain? Just want to check if this is a regression
+> > >  introduced by the subsequent patchset.
+> >
+> > The problem isn't there with commit 5bd3c80 as the head, so yes, it
+> > looks like indeed a regression introduced by subsequent patchset.
+> >
+> > P.S. I will need to take a closer look if each cgA's task is running
+> > on a different core later but the cpu usage of cgA is back to 800% with
+> > commit 5bd3c80.
 > 
-> Tested with the script at
-> https://github.com/higebu/virtio_net-xdp-metadata-test.
+> Hmm..., I went through the subsequent patches, and I think this one
 > 
-> Signed-off-by: Yuya Kusakabe <yuya.kusakabe@gmail.com>
-> ---
-
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-
->  drivers/net/virtio_net.c | 52 ++++++++++++++++++++++++----------------
->  1 file changed, 32 insertions(+), 20 deletions(-)
+> - 4041eeb8f3 sched/fair: don't migrate task if cookie not match
 > 
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index f39d0218bdaa..12d115ef5e74 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -371,7 +371,7 @@ static struct sk_buff *page_to_skb(struct virtnet_info *vi,
->  				   struct receive_queue *rq,
->  				   struct page *page, unsigned int offset,
->  				   unsigned int len, unsigned int truesize,
-> -				   bool hdr_valid)
-> +				   bool hdr_valid, unsigned int metasize)
->  {
->  	struct sk_buff *skb;
->  	struct virtio_net_hdr_mrg_rxbuf *hdr;
-> @@ -393,6 +393,7 @@ static struct sk_buff *page_to_skb(struct virtnet_info *vi,
->  	else
->  		hdr_padded_len = sizeof(struct padded_vnet_hdr);
->  
-> +	/* hdr_valid means no XDP, so we can copy the vnet header */
->  	if (hdr_valid)
->  		memcpy(hdr, p, hdr_len);
->  
-> @@ -405,6 +406,11 @@ static struct sk_buff *page_to_skb(struct virtnet_info *vi,
->  		copy = skb_tailroom(skb);
->  	skb_put_data(skb, p, copy);
->  
-> +	if (metasize) {
-> +		__skb_pull(skb, metasize);
-> +		skb_metadata_set(skb, metasize);
-> +	}
-> +
->  	len -= copy;
->  	offset += copy;
->  
-> @@ -450,10 +456,6 @@ static int __virtnet_xdp_xmit_one(struct virtnet_info *vi,
->  	struct virtio_net_hdr_mrg_rxbuf *hdr;
->  	int err;
->  
-> -	/* virtqueue want to use data area in-front of packet */
-> -	if (unlikely(xdpf->metasize > 0))
-> -		return -EOPNOTSUPP;
-> -
->  	if (unlikely(xdpf->headroom < vi->hdr_len))
->  		return -EOVERFLOW;
->  
-> @@ -644,6 +646,7 @@ static struct sk_buff *receive_small(struct net_device *dev,
->  	unsigned int delta = 0;
->  	struct page *xdp_page;
->  	int err;
-> +	unsigned int metasize = 0;
->  
->  	len -= vi->hdr_len;
->  	stats->bytes += len;
-> @@ -683,8 +686,8 @@ static struct sk_buff *receive_small(struct net_device *dev,
->  
->  		xdp.data_hard_start = buf + VIRTNET_RX_PAD + vi->hdr_len;
->  		xdp.data = xdp.data_hard_start + xdp_headroom;
-> -		xdp_set_data_meta_invalid(&xdp);
->  		xdp.data_end = xdp.data + len;
-> +		xdp.data_meta = xdp.data;
->  		xdp.rxq = &rq->xdp_rxq;
->  		orig_data = xdp.data;
->  		act = bpf_prog_run_xdp(xdp_prog, &xdp);
-> @@ -695,6 +698,7 @@ static struct sk_buff *receive_small(struct net_device *dev,
->  			/* Recalculate length in case bpf program changed it */
->  			delta = orig_data - xdp.data;
->  			len = xdp.data_end - xdp.data;
-> +			metasize = xdp.data - xdp.data_meta;
->  			break;
->  		case XDP_TX:
->  			stats->xdp_tx++;
-> @@ -740,6 +744,9 @@ static struct sk_buff *receive_small(struct net_device *dev,
->  		memcpy(skb_vnet_hdr(skb), buf, vi->hdr_len);
->  	} /* keep zeroed vnet hdr since XDP is loaded */
->  
-> +	if (metasize)
-> +		skb_metadata_set(skb, metasize);
-> +
->  err:
->  	return skb;
->  
-> @@ -760,8 +767,8 @@ static struct sk_buff *receive_big(struct net_device *dev,
->  				   struct virtnet_rq_stats *stats)
->  {
->  	struct page *page = buf;
-> -	struct sk_buff *skb = page_to_skb(vi, rq, page, 0, len,
-> -					  PAGE_SIZE, true);
-> +	struct sk_buff *skb =
-> +		page_to_skb(vi, rq, page, 0, len, PAGE_SIZE, true, 0);
->  
->  	stats->bytes += len - vi->hdr_len;
->  	if (unlikely(!skb))
-> @@ -793,6 +800,7 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
->  	unsigned int truesize;
->  	unsigned int headroom = mergeable_ctx_to_headroom(ctx);
->  	int err;
-> +	unsigned int metasize = 0;
->  
->  	head_skb = NULL;
->  	stats->bytes += len - vi->hdr_len;
-> @@ -839,8 +847,8 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
->  		data = page_address(xdp_page) + offset;
->  		xdp.data_hard_start = data - VIRTIO_XDP_HEADROOM + vi->hdr_len;
->  		xdp.data = data + vi->hdr_len;
-> -		xdp_set_data_meta_invalid(&xdp);
->  		xdp.data_end = xdp.data + (len - vi->hdr_len);
-> +		xdp.data_meta = xdp.data;
->  		xdp.rxq = &rq->xdp_rxq;
->  
->  		act = bpf_prog_run_xdp(xdp_prog, &xdp);
-> @@ -848,24 +856,27 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
->  
->  		switch (act) {
->  		case XDP_PASS:
-> +			metasize = xdp.data - xdp.data_meta;
-> +
->  			/* recalculate offset to account for any header
-> -			 * adjustments. Note other cases do not build an
-> -			 * skb and avoid using offset
-> +			 * adjustments and minus the metasize to copy the
-> +			 * metadata in page_to_skb(). Note other cases do not
-> +			 * build an skb and avoid using offset
->  			 */
-> -			offset = xdp.data -
-> -					page_address(xdp_page) - vi->hdr_len;
-> +			offset = xdp.data - page_address(xdp_page) -
-> +				 vi->hdr_len - metasize;
->  
-> -			/* recalculate len if xdp.data or xdp.data_end were
-> -			 * adjusted
-> +			/* recalculate len if xdp.data, xdp.data_end or
-> +			 * xdp.data_meta were adjusted
->  			 */
-> -			len = xdp.data_end - xdp.data + vi->hdr_len;
-> +			len = xdp.data_end - xdp.data + vi->hdr_len + metasize;
->  			/* We can only create skb based on xdp_page. */
->  			if (unlikely(xdp_page != page)) {
->  				rcu_read_unlock();
->  				put_page(page);
-> -				head_skb = page_to_skb(vi, rq, xdp_page,
-> -						       offset, len,
-> -						       PAGE_SIZE, false);
-> +				head_skb = page_to_skb(vi, rq, xdp_page, offset,
-> +						       len, PAGE_SIZE, false,
-> +						       metasize);
->  				return head_skb;
->  			}
->  			break;
-> @@ -921,7 +932,8 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
->  		goto err_skb;
->  	}
->  
-> -	head_skb = page_to_skb(vi, rq, page, offset, len, truesize, !xdp_prog);
-> +	head_skb = page_to_skb(vi, rq, page, offset, len, truesize, !xdp_prog,
-> +			       metasize);
->  	curr_skb = head_skb;
->  
->  	if (unlikely(!curr_skb))
-> -- 
-> 2.24.1
+> is probably the major cause, can you please revert this one to see
+> if the problem is gone?
 
+Yes, reverting this one fixed the problem.
