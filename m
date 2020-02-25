@@ -2,116 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F26D316EB82
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:33:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BC7816EB9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:42:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731203AbgBYQdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 11:33:35 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33424 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730628AbgBYQde (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 11:33:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=YKyZV60LHUuQnl24YQ6e7CN9lTy1VXZjsH7/atkgKsQ=; b=lTpmZeZ1NeoF6dscoMg4qMMjFo
-        glMYR+C65qyUo9XeiQnzabqMC7yYHKugSV9aEx4q2bfFnZyr60vQTPd8Kf/UhIZHUNcyam1POEBuV
-        vc/XzzQPk9KxrdLDFtulgA59QtmYM/nSoKY4M8hCrdgHzDIvGeHtdBbx3djNmAjsMXAJZ/StGa7NN
-        irttrCy8WbAwz9vC0ihJM9pKB+D4cUL66aIEflu+R+kwLj/fk2IJFu00pZUU9NXQWT7cfHRG6UqXl
-        VI2pdKL1/UdqS7wLaZFULOlPOs3YIA62BCA2etGDwY1DXdGVw//V6KKMAQ/UJkqIljws5M5knWV93
-        oUNXOZTA==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j6d9G-0007zL-Uv; Tue, 25 Feb 2020 16:33:31 +0000
-Subject: Re: [PATCH] Initialize ATA before graphics
-To:     Paul Menzel <pmenzel@molgen.mpg.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
+        id S1731149AbgBYQmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 11:42:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728499AbgBYQmD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 11:42:03 -0500
+Received: from paulmck-ThinkPad-P72.home (unknown [163.114.132.128])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7003720732;
+        Tue, 25 Feb 2020 16:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582648922;
+        bh=HCcldr63vGZliX4tFsN//KvWjU/8RG5en/RcSjTvcAQ=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=lobyvBc918gRy0eR7ZvL/SIDpZAJi496eFdW07XJlgT2Y/z+g5/+WlmWcQnXfdNKT
+         gYSMTgT/geHJHpC5RlFX3Sv0PmyBytJdMCwC8M5trCAUdoDqVE0Z1oKeCyK/ep8yWa
+         Uevlc1CqYAZf/obUxw1gkDsARH4794jUR5k8DpUs=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 09FBB3521A4D; Tue, 25 Feb 2020 08:38:27 -0800 (PST)
+Date:   Tue, 25 Feb 2020 08:38:27 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Uladzislau Rezki <urezki@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Suraj Jitindar Singh <surajjs@amazon.com>,
         LKML <linux-kernel@vger.kernel.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Arjan van de Ven <arjan@linux.intel.com>
-References: <041f4abd-f894-b990-b320-bf0aab4242f2@molgen.mpg.de>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <0da5bb70-2e55-0fa2-d950-3832f9ff7bcd@infradead.org>
-Date:   Tue, 25 Feb 2020 08:33:29 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+Subject: Re: [PATCH RFC] ext4: fix potential race between online resizing and
+ write operations
+Message-ID: <20200225163826.GW2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200220045233.GC476845@mit.edu>
+ <20200221003035.GC2935@paulmck-ThinkPad-P72>
+ <20200221131455.GA4904@pc636>
+ <20200221202250.GK2935@paulmck-ThinkPad-P72>
+ <20200222222415.GC191380@google.com>
+ <20200223011018.GB2935@paulmck-ThinkPad-P72>
+ <20200224174030.GA22138@pc636>
+ <20200225020705.GA253171@google.com>
+ <20200225035549.GU2935@paulmck-ThinkPad-P72>
+ <CAEXW_YQbiHW=yKiYAs0=8Mp84W6UunM6OOkHE66yXT6cSchm7A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <041f4abd-f894-b990-b320-bf0aab4242f2@molgen.mpg.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEXW_YQbiHW=yKiYAs0=8Mp84W6UunM6OOkHE66yXT6cSchm7A@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
-You should have also Cc-ed Arjan on this email. [done]
+On Tue, Feb 25, 2020 at 09:17:11AM -0500, Joel Fernandes wrote:
+> On Mon, Feb 24, 2020 at 10:55 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> [...]
+> > > > As for "task_struct's rcu_read_lock_nesting". Will it be enough just
+> > > > have a look at preempt_count of current process? If we have for example
+> > > > nested rcu_read_locks:
+> > > >
+> > > > <snip>
+> > > > rcu_read_lock()
+> > > >     rcu_read_lock()
+> > > >         rcu_read_lock()
+> > > > <snip>
+> > > >
+> > > > the counter would be 3.
+> > >
+> > > No, because preempt_count is not incremented during rcu_read_lock(). RCU
+> > > reader sections can be preempted, they just cannot goto sleep in a reader
+> > > section (unless the kernel is RT).
+> >
+> > You are both right.
+> >
+> > Vlad is correct for CONFIG_PREEMPT=n and CONFIG_DEBUG_ATOMIC_SLEEP=y
+> > and Joel is correct otherwise, give or take the possibility of other
+> > late-breaking corner cases.  ;-)
+> 
+> Oh yes, but even for PREEMPT=n, rcu_read_lock() is just a NOOP for
+> that configuration and doesn't really mess around with preempt_count
+> if I recall :-D. (doesn't need to mess with preempt_count because
+> being in kernel mode is non-preemptible for PREEMPT=n anyway).
 
+For PREEMPT=n, rcu_read_lock() is preempt_disable(), see the code
+in include/linux/rcupdate.h.  ;-)
 
-On 2/24/20 6:09 AM, Paul Menzel wrote:
-> From: Arjan van de Ven <arjan@linux.intel.com>
-> Date: Thu, 2 Jun 2016 23:36:32 -0500
-> 
-> ATA init is the long pole in the boot process, and its asynchronous.
-> Move the graphics init after it, so that ATA and graphics initialize
-> in parallel.
-> 
-> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> ---
-> 
-> 1.  Taken from Clear Linux: https://github.com/clearlinux-pkgs/linux/commits/master/0110-Initialize-ata-before-graphics.patch
-> 2.  Arjan, can you please add your Signed-off-by line?
-> 
->  drivers/Makefile | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/Makefile b/drivers/Makefile
-> index aaef17c..d08f3a3 100644
-> --- a/drivers/Makefile
-> +++ b/drivers/Makefile
-> @@ -58,15 +58,8 @@ obj-y                                += char/
->  # iommu/ comes before gpu as gpu are using iommu controllers
->  obj-y                          += iommu/
->  
-> -# gpu/ comes after char for AGP vs DRM startup and after iommu
-> -obj-y                          += gpu/
-> -
->  obj-$(CONFIG_CONNECTOR)                += connector/
->  
-> -# i810fb and intelfb depend on char/agp/
-> -obj-$(CONFIG_FB_I810)           += video/fbdev/i810/
-> -obj-$(CONFIG_FB_INTEL)          += video/fbdev/intelfb/
-> -
->  obj-$(CONFIG_PARPORT)          += parport/
->  obj-$(CONFIG_NVM)              += lightnvm/
->  obj-y                          += base/ block/ misc/ mfd/ nfc/
-> @@ -79,6 +72,14 @@ obj-$(CONFIG_IDE)            += ide/
->  obj-y                          += scsi/
->  obj-y                          += nvme/
->  obj-$(CONFIG_ATA)              += ata/
-> +
-> +# gpu/ comes after char for AGP vs DRM startup and after iommu
-> +obj-y                          += gpu/
-> +
-> +# i810fb and intelfb depend on char/agp/
-> +obj-$(CONFIG_FB_I810)           += video/fbdev/i810/
-> +obj-$(CONFIG_FB_INTEL)          += video/fbdev/intelfb/
-> +
->  obj-$(CONFIG_TARGET_CORE)      += target/
->  obj-$(CONFIG_MTD)              += mtd/
->  obj-$(CONFIG_SPI)              += spi/
-> 
-
-
--- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+							Thanx, Paul
