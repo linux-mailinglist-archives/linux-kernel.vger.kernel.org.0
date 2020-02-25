@@ -2,238 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD09716BA78
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:18:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D71F16BA40
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:07:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbgBYHRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 02:17:01 -0500
-Received: from mga05.intel.com ([192.55.52.43]:56462 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729282AbgBYHRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 02:17:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 23:17:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,483,1574150400"; 
-   d="scan'208";a="230068218"
-Received: from plaxmina-desktop.iind.intel.com ([10.145.162.62])
-  by fmsmga007.fm.intel.com with ESMTP; 24 Feb 2020 23:16:54 -0800
-From:   Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
-To:     jani.nikula@linux.intel.com, daniel@ffwll.ch,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        ville.syrjala@linux.intel.com, airlied@linux.ie,
-        maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
-        mripard@kernel.org, mihail.atanassov@arm.com,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        =?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Uma Shankar <uma.shankar@intel.com>
-Cc:     pankaj.laxminarayan.bharadiya@intel.com,
-        linux-kernel@vger.kernel.org, ankit.k.nautiyal@intel.com
-Subject: [RFC][PATCH 5/5] drm/i915/display: Add Nearest-neighbor based integer scaling support
-Date:   Tue, 25 Feb 2020 12:35:45 +0530
-Message-Id: <20200225070545.4482-6-pankaj.laxminarayan.bharadiya@intel.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200225070545.4482-1-pankaj.laxminarayan.bharadiya@intel.com>
-References: <20200225070545.4482-1-pankaj.laxminarayan.bharadiya@intel.com>
+        id S1729268AbgBYHHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 02:07:30 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35201 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729131AbgBYHH3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 02:07:29 -0500
+Received: by mail-wr1-f66.google.com with SMTP id w12so13347971wrt.2;
+        Mon, 24 Feb 2020 23:07:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=SrZGU1G41mv2qo7iIZNTk8CjAnB4XhhlNzKIGNifM0Q=;
+        b=jk50YlopcwFVRMPmcDUM4T5pppnv57UfoUrrPKa/JFtcjo0yOqHtm2QZrZGRPH5sp8
+         MxL2mrGSG78JYZwEWVFPPvBTDRKnGlydyla7Gyi+Z4RIbTByvXOpkO2SLaxut4YAj8oq
+         B6nh7qgqH+FLCINiDppYKzLugPogIu81SvQGqqCSNZ+Bo9ILa4Q9GhMTiEYv2XAQ53IT
+         jRYulYvfmsLkFL1NZmsDXu5rW53n5f6Vmnjb8kgoF5QUiSuVp36Dxejpb1Bbp5RNLww5
+         TEwo/v+SooIj5PNHEA6v3PLD6+AwujIF2UaO3405spRFSL4kOJD0N21LZ9pdCeo+zEHF
+         HYEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=SrZGU1G41mv2qo7iIZNTk8CjAnB4XhhlNzKIGNifM0Q=;
+        b=ZiixYLksIdfznPNS5eeEMgVBPvqE9DhMaeBUySc5XlcKYFnj8kGLLYrtmSo0675rxK
+         9V/f1OZmdlLGzuQrTVJ+jeXro98jbxst/uYv8w58QO1DsnBS4rCHrrRz+JCfU8dInuEK
+         W4XLRIB5Ef85cHMLfIg1u2tvU6D2EfBdU+R+ZsKrDJ5qnRnXd5TJjv6wu0hSUq0py/AO
+         I9xE5wEhkaPkquGUbrpJzNIgTLY/XzQ8XFTD/GqScC9Mz5AjraJNE/dHkybzwiASfIOW
+         a6tlL0fm4kICYEiW9nMknL6Efuyi7wvogAkpiss+u/gEo5bhkMj47KPn2bxQ+v6BrZt6
+         rbsA==
+X-Gm-Message-State: APjAAAXTqQKmWjkyYEGTeNkqvd3XpHRQ/KBukWiVZzFwkSxv/VDYYw1+
+        Ho3Joy3NC2M2JLjpz1U6NDI=
+X-Google-Smtp-Source: APXvYqysD1p70Ezv+KN17DCQ5At5jsTA6LK4mGbct2w3ALF7Jx1cPZVxtyDnNXicOuATMH89iy1bCA==
+X-Received: by 2002:a5d:4b03:: with SMTP id v3mr74472281wrq.178.1582614447704;
+        Mon, 24 Feb 2020 23:07:27 -0800 (PST)
+Received: from ?IPv6:2003:ea:8f29:6000:6c81:a415:de47:1314? (p200300EA8F2960006C81A415DE471314.dip0.t-ipconnect.de. [2003:ea:8f29:6000:6c81:a415:de47:1314])
+        by smtp.googlemail.com with ESMTPSA id f11sm2878410wml.3.2020.02.24.23.07.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2020 23:07:27 -0800 (PST)
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH v2 0/8] PCI: add and use constant PCI_STATUS_ERROR_BITS and
+ helper pci_status_get_and_clear_errors
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        David Miller <davem@davemloft.net>,
+        Mirko Lindner <mlindner@marvell.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        alsa-devel@alsa-project.org
+Message-ID: <c1a84adc-a864-4f46-c8de-7ea533a7fdc3@gmail.com>
+Date:   Tue, 25 Feb 2020 08:07:21 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Integer scaling (IS) is a nearest-neighbor upscaling technique that
-simply scales up the existing pixels by an integer
-(i.e., whole number) multiplier.Nearest-neighbor (NN) interpolation
-works by filling in the missing color values in the upscaled image
-with that of the coordinate-mapped nearest source pixel value.
+Few drivers have own definitions for this constant, so move it to the
+PCI core. In addition there are several places where the following
+code sequence is used:
+1. Read PCI_STATUS
+2. Mask out non-error bits
+3. Action based on set error bits
+4. Write back set error bits to clear them
 
-Both IS and NN preserve the clarity of the original image. Integer
-scaling is particularly useful for pixel art games that rely on
-sharp, blocky images to deliver their distinctive look.
+As this is a repeated pattern, add a helper to the PCI core.
 
-Program the scaler filter coefficients to enable the NN filter if
-scaling filter property is set to DRM_SCALING_FILTER_NEAREST_NEIGHBOR
-and enable integer scaling.
+Most affected drivers are network drivers. But as it's about core
+PCI functionality, I suppose the series should go through the PCI
+tree.
 
-Bspec: 49247
+v2:
+- fix formal issue with cover letter
 
-Signed-off-by: Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
-Signed-off-by: Ankit Nautiyal <ankit.k.nautiyal@intel.com>
----
- drivers/gpu/drm/i915/display/intel_display.c | 83 +++++++++++++++++++-
- drivers/gpu/drm/i915/display/intel_display.h |  2 +
- drivers/gpu/drm/i915/display/intel_sprite.c  | 20 +++--
- 3 files changed, 97 insertions(+), 8 deletions(-)
+Heiner Kallweit (8):
+  PCI: add constant PCI_STATUS_ERROR_BITS
+  PCI: add pci_status_get_and_clear_errors
+  r8169: use pci_status_get_and_clear_errors
+  net: cassini: use pci_status_get_and_clear_errors
+  net: sungem: use pci_status_get_and_clear_errors
+  net: skfp: use PCI_STATUS_ERROR_BITS
+  PCI: pci-bridge-emul: use PCI_STATUS_ERROR_BITS
+  sound: bt87x: use pci_status_get_and_clear_errors
 
-diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
-index b5903ef3c5a0..6d5f59203258 100644
---- a/drivers/gpu/drm/i915/display/intel_display.c
-+++ b/drivers/gpu/drm/i915/display/intel_display.c
-@@ -6237,6 +6237,73 @@ void skl_scaler_disable(const struct intel_crtc_state *old_crtc_state)
- 		skl_detach_scaler(crtc, i);
- }
- 
-+/**
-+ *  Theory behind setting nearest-neighbor integer scaling:
-+ *
-+ *  17 phase of 7 taps requires 119 coefficients in 60 dwords per set.
-+ *  The letter represents the filter tap (D is the center tap) and the number
-+ *  represents the coefficient set for a phase (0-16).
-+ *
-+ *         +------------+------------------------+------------------------+
-+ *         |Index value | Data value coeffient 1 | Data value coeffient 2 |
-+ *         +------------+------------------------+------------------------+
-+ *         |   00h      |          B0            |          A0            |
-+ *         +------------+------------------------+------------------------+
-+ *         |   01h      |          D0            |          C0            |
-+ *         +------------+------------------------+------------------------+
-+ *         |   02h      |          F0            |          E0            |
-+ *         +------------+------------------------+------------------------+
-+ *         |   03h      |          A1            |          G0            |
-+ *         +------------+------------------------+------------------------+
-+ *         |   04h      |          C1            |          B1            |
-+ *         +------------+------------------------+------------------------+
-+ *         |   ...      |          ...           |          ...           |
-+ *         +------------+------------------------+------------------------+
-+ *         |   38h      |          B16           |          A16           |
-+ *         +------------+------------------------+------------------------+
-+ *         |   39h      |          D16           |          C16           |
-+ *         +------------+------------------------+------------------------+
-+ *         |   3Ah      |          F16           |          C16           |
-+ *         +------------+------------------------+------------------------+
-+ *         |   3Bh      |        Reserved        |          G16           |
-+ *         +------------+------------------------+------------------------+
-+ *
-+ *  To enable nearest-neighbor scaling:  program scaler coefficents with
-+ *  the center tap (Dxx) values set to 1 and all other values set to 0 as per
-+ *  SCALER_COEFFICIENT_FORMAT
-+ *
-+ */
-+void skl_setup_nearest_neighbor_filter(struct drm_i915_private *dev_priv,
-+				  enum pipe pipe, int scaler_id)
-+{
-+
-+	int coeff = 0;
-+	int phase = 0;
-+	int tap;
-+	int val = 0;
-+
-+	/*enable the index auto increment.*/
-+	intel_de_write_fw(dev_priv, SKL_PS_COEF_INDEX_SET0(pipe, scaler_id),
-+			  _PS_COEE_INDEX_AUTO_INC);
-+
-+	for (phase = 0; phase < 17; phase++) {
-+		for (tap = 0; tap < 7; tap++) {
-+			coeff++;
-+			if (tap == 3)
-+				val = (phase % 2) ? (0x800) : (0x800 << 16);
-+
-+			if (coeff % 2 == 0) {
-+				intel_de_write_fw(dev_priv, SKL_PS_COEF_DATA_SET0(pipe, scaler_id), val);
-+				val = 0;
-+			}
-+
-+		}
-+
-+	}
-+
-+	intel_de_write_fw(dev_priv, SKL_PS_COEF_DATA_SET0(pipe, scaler_id), 0);
-+}
-+
- static void skl_pfit_enable(const struct intel_crtc_state *crtc_state)
- {
- 	struct intel_crtc *crtc = to_intel_crtc(crtc_state->uapi.crtc);
-@@ -6260,9 +6327,23 @@ static void skl_pfit_enable(const struct intel_crtc_state *crtc_state)
- 		pfit_w = (crtc_state->pch_pfit.size >> 16) & 0xFFFF;
- 		pfit_h = crtc_state->pch_pfit.size & 0xFFFF;
- 
-+		id = scaler_state->scaler_id;
-+
- 		if (state->scaling_filter ==
- 		    DRM_SCALING_FILTER_NEAREST_NEIGHBOR) {
- 			scaling_filter = PS_FILTER_PROGRAMMED;
-+			skl_setup_nearest_neighbor_filter(dev_priv, pipe, id);
-+
-+			/* Make the scaling window size to integer multiple of
-+			 * source.
-+			 *
-+			 * TODO: Should userspace take desision to round
-+			 * scaling window to integer multiple?
-+			 */
-+			pfit_w = rounddown(pfit_w,
-+					   (crtc_state->pipe_src_w << 16));
-+			pfit_h = rounddown(pfit_h,
-+					   (crtc_state->pipe_src_h << 16));
- 		}
- 
- 		hscale = (crtc_state->pipe_src_w << 16) / pfit_w;
-@@ -6271,8 +6352,6 @@ static void skl_pfit_enable(const struct intel_crtc_state *crtc_state)
- 		uv_rgb_hphase = skl_scaler_calc_phase(1, hscale, false);
- 		uv_rgb_vphase = skl_scaler_calc_phase(1, vscale, false);
- 
--		id = scaler_state->scaler_id;
--
- 		spin_lock_irqsave(&dev_priv->uncore.lock, irqflags);
- 
- 		intel_de_write_fw(dev_priv, SKL_PS_CTRL(pipe, id),
-diff --git a/drivers/gpu/drm/i915/display/intel_display.h b/drivers/gpu/drm/i915/display/intel_display.h
-index f92efbbec838..49f58d3c98fe 100644
---- a/drivers/gpu/drm/i915/display/intel_display.h
-+++ b/drivers/gpu/drm/i915/display/intel_display.h
-@@ -586,6 +586,8 @@ void intel_crtc_arm_fifo_underrun(struct intel_crtc *crtc,
- u16 skl_scaler_calc_phase(int sub, int scale, bool chroma_center);
- int skl_update_scaler_crtc(struct intel_crtc_state *crtc_state);
- void skl_scaler_disable(const struct intel_crtc_state *old_crtc_state);
-+void skl_setup_nearest_neighbor_filter(struct drm_i915_private *dev_priv,
-+				  enum pipe pipe, int scaler_id);
- void ilk_pfit_disable(const struct intel_crtc_state *old_crtc_state);
- u32 glk_plane_color_ctl(const struct intel_crtc_state *crtc_state,
- 			const struct intel_plane_state *plane_state);
-diff --git a/drivers/gpu/drm/i915/display/intel_sprite.c b/drivers/gpu/drm/i915/display/intel_sprite.c
-index fd7b31a21723..5bef5c031374 100644
---- a/drivers/gpu/drm/i915/display/intel_sprite.c
-+++ b/drivers/gpu/drm/i915/display/intel_sprite.c
-@@ -415,18 +415,26 @@ skl_program_scaler(struct intel_plane *plane,
- 	u16 y_vphase, uv_rgb_vphase;
- 	int hscale, vscale;
- 	const struct drm_plane_state *state = &plane_state->uapi;
-+	u32 src_w = drm_rect_width(&plane_state->uapi.src) >> 16;
-+	u32 src_h = drm_rect_height(&plane_state->uapi.src) >> 16;
- 	u32 scaling_filter = PS_FILTER_MEDIUM;
-+	struct drm_rect dst;
- 
- 	if (state->scaling_filter == DRM_SCALING_FILTER_NEAREST_NEIGHBOR) {
- 		scaling_filter = PS_FILTER_PROGRAMMED;
-+		skl_setup_nearest_neighbor_filter(dev_priv, pipe, scaler_id);
-+
-+		/* Make the scaling window size to integer multiple of source
-+		 * TODO: Should userspace take desision to round scaling window
-+		 * to integer multiple?
-+		 */
-+		crtc_w = rounddown(crtc_w, src_w);
-+		crtc_h = rounddown(crtc_h, src_h);
- 	}
- 
--	hscale = drm_rect_calc_hscale(&plane_state->uapi.src,
--				      &plane_state->uapi.dst,
--				      0, INT_MAX);
--	vscale = drm_rect_calc_vscale(&plane_state->uapi.src,
--				      &plane_state->uapi.dst,
--				      0, INT_MAX);
-+	drm_rect_init(&dst, crtc_x, crtc_y, crtc_w, crtc_h);
-+	hscale = drm_rect_calc_hscale(&plane_state->uapi.src, &dst, 0, INT_MAX);
-+	vscale = drm_rect_calc_vscale(&plane_state->uapi.src, &dst, 0, INT_MAX);
- 
- 	/* TODO: handle sub-pixel coordinates */
- 	if (intel_format_info_is_yuv_semiplanar(fb->format, fb->modifier) &&
+ drivers/net/ethernet/marvell/skge.h       |  6 -----
+ drivers/net/ethernet/marvell/sky2.h       |  6 -----
+ drivers/net/ethernet/realtek/r8169_main.c | 15 +++++-------
+ drivers/net/ethernet/sun/cassini.c        | 28 ++++++++-------------
+ drivers/net/ethernet/sun/sungem.c         | 30 +++++++----------------
+ drivers/net/fddi/skfp/drvfbi.c            |  2 +-
+ drivers/net/fddi/skfp/h/skfbi.h           |  5 ----
+ drivers/pci/pci-bridge-emul.c             | 14 ++---------
+ drivers/pci/pci.c                         | 23 +++++++++++++++++
+ include/linux/pci.h                       |  1 +
+ include/uapi/linux/pci_regs.h             |  7 ++++++
+ sound/pci/bt87x.c                         |  7 +-----
+ 12 files changed, 60 insertions(+), 84 deletions(-)
+
 -- 
-2.23.0
+2.25.1
+
+
 
