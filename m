@@ -2,157 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4179B16C449
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:45:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C44616C440
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:43:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730868AbgBYOo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 09:44:56 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:39990 "EHLO mail5.wrs.com"
+        id S1730835AbgBYOnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 09:43:02 -0500
+Received: from mga05.intel.com ([192.55.52.43]:22559 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730627AbgBYOoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:44:55 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id 01PEfvnd028868
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 25 Feb 2020 06:42:58 -0800
-Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
- ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
- 14.3.468.0; Tue, 25 Feb 2020 06:42:22 -0800
-From:   <zhe.he@windriver.com>
-To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-        <jolsa@redhat.com>, <namhyung@kernel.org>, <mhiramat@kernel.org>,
-        <kstewart@linuxfoundation.org>, <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>, <zhe.he@windriver.com>
-Subject: [PATCH 2/2] perf: probe-file: Check return value of strlist__add
-Date:   Tue, 25 Feb 2020 22:41:43 +0800
-Message-ID: <1582641703-233485-2-git-send-email-zhe.he@windriver.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582641703-233485-1-git-send-email-zhe.he@windriver.com>
-References: <1582641703-233485-1-git-send-email-zhe.he@windriver.com>
+        id S1728981AbgBYOnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 09:43:02 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 06:43:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,484,1574150400"; 
+   d="scan'208";a="350159283"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 25 Feb 2020 06:42:58 -0800
+Received: by lahna (sSMTP sendmail emulation); Tue, 25 Feb 2020 16:42:57 +0200
+Date:   Tue, 25 Feb 2020 16:42:57 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Jean Delvare <jdelvare@suse.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Martin Volf <martin.volf.42@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] watchdog: iTCO_wdt: Make ICH_RES_IO_SMI optional
+Message-ID: <20200225144257.GD2667@lahna.fi.intel.com>
+References: <20200225123802.88984-1-mika.westerberg@linux.intel.com>
+ <20200225123802.88984-3-mika.westerberg@linux.intel.com>
+ <20200225143709.GA450@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200225143709.GA450@roeck-us.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+On Tue, Feb 25, 2020 at 06:37:09AM -0800, Guenter Roeck wrote:
+> On Tue, Feb 25, 2020 at 03:38:01PM +0300, Mika Westerberg wrote:
+> > The iTCO_wdt driver only needs ICH_RES_IO_SMI I/O resource when either
+> > turn_SMI_watchdog_clear_off module parameter is set to match ->iTCO_version
+> > (or higher), and when legacy iTCO_vendorsupport is set. Modify the driver
+> > so that ICH_RES_IO_SMI is optional if the two conditions are not met.
+> > 
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > ---
+> >  drivers/watchdog/iTCO_wdt.c | 22 +++++++++++++---------
+> >  1 file changed, 13 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
+> > index 156360e37714..f1692452bc25 100644
+> > --- a/drivers/watchdog/iTCO_wdt.c
+> > +++ b/drivers/watchdog/iTCO_wdt.c
+> > @@ -460,7 +460,7 @@ static int iTCO_wdt_probe(struct platform_device *pdev)
+> >  		return -ENODEV;
+> >  
+> >  	p->smi_res = platform_get_resource(pdev, IORESOURCE_IO, ICH_RES_IO_SMI);
+> > -	if (!p->smi_res)
+> > +	if (!p->smi_res && iTCO_vendorsupport)
+> >  		return -ENODEV;
+> >  
+> >  	p->iTCO_version = pdata->version;
+> > @@ -492,15 +492,19 @@ static int iTCO_wdt_probe(struct platform_device *pdev)
+> >  	/* Set the NO_REBOOT bit to prevent later reboots, just for sure */
+> >  	p->update_no_reboot_bit(p->no_reboot_priv, true);
+> >  
+> > -	/* The TCO logic uses the TCO_EN bit in the SMI_EN register */
+> > -	if (!devm_request_region(dev, p->smi_res->start,
+> > -				 resource_size(p->smi_res),
+> > -				 pdev->name)) {
+> > -		pr_err("I/O address 0x%04llx already in use, device disabled\n",
+> > -		       (u64)SMI_EN(p));
+> > -		return -EBUSY;
+> > -	}
+> >  	if (turn_SMI_watchdog_clear_off >= p->iTCO_version) {
+> > +		if (!p->smi_res) {
+> > +			pr_err("SMI I/O resource is missing\n");
+> > +			return -EINVAL;
+> > +		}
+> > +		/* The TCO logic uses the TCO_EN bit in the SMI_EN register */
+> > +		if (!devm_request_region(dev, p->smi_res->start,
+> > +					 resource_size(p->smi_res),
+> > +					 pdev->name)) {
+> > +			pr_err("I/O address 0x%04llx already in use, device disabled\n",
+> > +			       (u64)SMI_EN(p));
+> > +			return -EBUSY;
+> > +		}
+> 
+> The request_region call is also needed if iTCO_vendorsupport is true.
+> Well, not strictly speaking, I guess, but then one could argue that
+> it isn't needed at all.
 
-strlist__add may fail with -ENOMEM or -EEXIST. Check it and give debugging
-hint when necessary.
+Indeed, this is good point as well. Will be fixed in v2.
 
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
- tools/perf/builtin-probe.c   | 30 ++++++++++++++++--------------
- tools/perf/util/probe-file.c | 26 +++++++++++++++++++++-----
- 2 files changed, 37 insertions(+), 19 deletions(-)
+> In this context - looking into the vendorsupport code, I wonder if
+> it is time to retire it. Separate patch, of course, but still.
+> Any thoughts ?
 
-diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
-index 26bc5923e6b5..8b4511c70fed 100644
---- a/tools/perf/builtin-probe.c
-+++ b/tools/perf/builtin-probe.c
-@@ -442,24 +442,26 @@ static int perf_del_probe_events(struct strfilter *filter)
- 	}
- 
- 	ret = probe_file__get_events(kfd, filter, klist);
--	if (ret == 0) {
--		strlist__for_each_entry(ent, klist)
--			pr_info("Removed event: %s\n", ent->s);
-+	if (ret < 0)
-+		goto out;
- 
--		ret = probe_file__del_strlist(kfd, klist);
--		if (ret < 0)
--			goto error;
--	}
-+	strlist__for_each_entry(ent, klist)
-+		pr_info("Removed event: %s\n", ent->s);
-+
-+	ret = probe_file__del_strlist(kfd, klist);
-+	if (ret < 0)
-+		goto error;
- 
- 	ret2 = probe_file__get_events(ufd, filter, ulist);
--	if (ret2 == 0) {
--		strlist__for_each_entry(ent, ulist)
--			pr_info("Removed event: %s\n", ent->s);
-+	if (ret2 < 0)
-+		goto out;
- 
--		ret2 = probe_file__del_strlist(ufd, ulist);
--		if (ret2 < 0)
--			goto error;
--	}
-+	strlist__for_each_entry(ent, ulist)
-+		pr_info("Removed event: %s\n", ent->s);
-+
-+	ret2 = probe_file__del_strlist(ufd, ulist);
-+	if (ret2 < 0)
-+		goto error;
- 
- 	if (ret == -ENOENT && ret2 == -ENOENT)
- 		pr_warning("\"%s\" does not hit any event.\n", str);
-diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
-index cf44c05f89c1..00f086cba88f 100644
---- a/tools/perf/util/probe-file.c
-+++ b/tools/perf/util/probe-file.c
-@@ -307,10 +307,14 @@ int probe_file__get_events(int fd, struct strfilter *filter,
- 		p = strchr(ent->s, ':');
- 		if ((p && strfilter__compare(filter, p + 1)) ||
- 		    strfilter__compare(filter, ent->s)) {
--			strlist__add(plist, ent->s);
--			ret = 0;
-+			ret = strlist__add(plist, ent->s);
-+			if (ret < 0) {
-+				pr_debug("strlist__add failed (%d)\n", ret);
-+				goto out;
-+			}
- 		}
- 	}
-+out:
- 	strlist__delete(namelist);
- 
- 	return ret;
-@@ -517,7 +521,11 @@ static int probe_cache__load(struct probe_cache *pcache)
- 				ret = -EINVAL;
- 				goto out;
- 			}
--			strlist__add(entry->tevlist, buf);
-+			ret = strlist__add(entry->tevlist, buf);
-+			if (ret < 0) {
-+				pr_debug("strlist__add failed (%d)\n", ret);
-+				goto out;
-+			}
- 		}
- 	}
- out:
-@@ -678,7 +686,12 @@ int probe_cache__add_entry(struct probe_cache *pcache,
- 		command = synthesize_probe_trace_command(&tevs[i]);
- 		if (!command)
- 			goto out_err;
--		strlist__add(entry->tevlist, command);
-+		ret = strlist__add(entry->tevlist, command);
-+		if (ret < 0) {
-+			pr_debug("strlist__add failed (%d)\n", ret);
-+			goto out_err;
-+		}
-+
- 		free(command);
- 	}
- 	list_add_tail(&entry->node, &pcache->entries);
-@@ -859,7 +872,10 @@ int probe_cache__scan_sdt(struct probe_cache *pcache, const char *pathname)
- 			break;
- 		}
- 
--		strlist__add(entry->tevlist, buf);
-+		ret = strlist__add(entry->tevlist, buf);
-+		if (ret < 0)
-+			pr_debug("strlist__add failed (%d)\n", ret);
-+
- 		free(buf);
- 		entry = NULL;
- 	}
--- 
-2.24.1
-
+No objections from me ;-)
