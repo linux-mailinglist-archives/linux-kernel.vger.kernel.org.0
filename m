@@ -2,93 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0BBA16EEFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:29:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37F6F16EEBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:12:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731538AbgBYT3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 14:29:02 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:33984 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731425AbgBYT3C (ORCPT
+        id S1731357AbgBYTMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 14:12:31 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57398 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728913AbgBYTMa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 14:29:02 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01PHovn2044086;
-        Tue, 25 Feb 2020 11:50:57 -0600
+        Tue, 25 Feb 2020 14:12:30 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01PHmo2Z000692;
+        Tue, 25 Feb 2020 11:48:50 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582653057;
-        bh=oUfgz4jpNu++9i18Bck0PQmtMSSoE4RnFSLpUGi+yRc=;
+        s=ti-com-17Q1; t=1582652930;
+        bh=12s3X3izH7v/kPf++ntOe88qKZbyQH4fY+tAP53VpyY=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=F4DThKHvDUq/YhNYRfTUL6Z0MBQFb9KraV2xGrx/mr+bB3tXdsB7ZgmYTswdDCeZw
-         C1lSvfr/ZeE189rlQRqdvlDCmqJ8n7A17RR/IZCyzev73hsAYrWj6MRjkTYYpsrs6e
-         EuvgmfpJaOCQeVcpdzJkPyY6WpLVkCAQqgSmhkxU=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01PHov0M049083;
-        Tue, 25 Feb 2020 11:50:57 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+        b=Czs0op2WyFonLyjwUBBRDqhwgiFz+qFy3ZFROi52MGVp5i4Nspk4g2gJw7YsfyYsR
+         SOiXFE2IWD+gbhjNVDvJY9d0T0e+DvUmvlHXwmu6i4BWQprayuqzyCmTT0jZ6u3I6g
+         YzJIFbdMNrRQHoP6K4/KoP8oqBtXetUZcZDqKBng=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01PHmorR013552
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Feb 2020 11:48:50 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 25
- Feb 2020 11:50:56 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ Feb 2020 11:48:49 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 25 Feb 2020 11:50:56 -0600
-Received: from [128.247.59.107] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01PHouID046652;
-        Tue, 25 Feb 2020 11:50:56 -0600
-Subject: Re: [PATCH linux-master 1/3] can: tcan4x5x: Move clock init to TCAN
- driver
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        <linux-kernel@vger.kernel.org>, <linux-can@vger.kernel.org>,
-        <wg@grandegger.com>, <sriram.dash@samsung.com>
-CC:     <davem@davemloft.net>
-References: <20200131183433.11041-1-dmurphy@ti.com>
- <20200131183433.11041-2-dmurphy@ti.com>
- <06af6e1d-aec4-189c-378a-77af4073a1a6@ti.com>
- <fed1d801-e284-eada-d5b3-ae78089b3ead@pengutronix.de>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <e420c667-23d8-9739-1905-4a89570ddb72@ti.com>
-Date:   Tue, 25 Feb 2020 11:45:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Frontend Transport; Tue, 25 Feb 2020 11:48:49 -0600
+Received: from [158.218.117.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01PHmmOj055084;
+        Tue, 25 Feb 2020 11:48:48 -0600
+Subject: Re: [v1,net-next, 1/2] ethtool: add setting frame preemption of
+ traffic classes
+To:     Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        Vladimir Oltean <olteanv@gmail.com>
+CC:     Po Liu <po.liu@nxp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "hauke.mehrtens@intel.com" <hauke.mehrtens@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "allison@lohutok.net" <allison@lohutok.net>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "saeedm@mellanox.com" <saeedm@mellanox.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "alexandru.ardelean@analog.com" <alexandru.ardelean@analog.com>,
+        "jiri@mellanox.com" <jiri@mellanox.com>,
+        "ayal@mellanox.com" <ayal@mellanox.com>,
+        "pablo@netfilter.org" <pablo@netfilter.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "simon.horman@netronome.com" <simon.horman@netronome.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
+References: <20191127094517.6255-1-Po.Liu@nxp.com>
+ <87v9p93a2s.fsf@linux.intel.com>
+ <9b13a47e-8ca3-66b0-063c-798a5fa71149@ti.com>
+ <CA+h21hqk2pCfrQg5kC6HzmL=eEqJXjuRsu+cVkGsEi8OXGpKJA@mail.gmail.com>
+ <87d0bajc3l.fsf@linux.intel.com>
+ <70deb628-d7bc-d2a3-486d-d3e53854c06e@ti.com>
+ <877e0tx71r.fsf@linux.intel.com>
+From:   Murali Karicheri <m-karicheri2@ti.com>
+Message-ID: <b1ef134d-e275-439f-f7a1-038537af4855@ti.com>
+Date:   Tue, 25 Feb 2020 12:55:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <fed1d801-e284-eada-d5b3-ae78089b3ead@pengutronix.de>
+In-Reply-To: <877e0tx71r.fsf@linux.intel.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marc
+Hi Vinicius,
 
-On 2/21/20 8:43 AM, Marc Kleine-Budde wrote:
-> On 2/21/20 3:25 PM, Dan Murphy wrote:
->> Hello
+On 02/11/2020 02:22 PM, Vinicius Costa Gomes wrote:
+> Murali Karicheri <m-karicheri2@ti.com> writes:
+> 
+>> We are still working to send a patch for taprio offload on our hardware
+>> and it may take a while to get to this. So if someone can help to add
+>> the required kernel/driver interface for this, that will be great!
+> 
+> Will add this to my todo list. But if anyone else has the spare cycles
+> feel free to have a go at it.
+> 
+Thanks! We have made some progress in sending the base driver to netdev
+list now https://lkml.org/lkml/2020/2/22/157
+
+This device is taprio offload capable. Next step is to add taprio
+offload to this driver. Then other features will follow.
+
 >>
->> On 1/31/20 12:34 PM, Dan Murphy wrote:
->>> Move the clock discovery and initialization from the m_can framework to
->>> the registrar.  This allows for registrars to have unique clock
->>> initialization.  The TCAN device only needs the CAN clock reference.
+>>>>>        - ConfigChangeError - Error in configuration (AdminBaseTime <
+>>>>>          CurrentTime)
+>>>>
+>>>> This can be exported similarly.
 >>>
->>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>> ---
->> I would like to have these 3 patches reviewed and integrated (post
->> review) so I can work on other issues identified.
-> Applied to linux-can-next/testing.
+>>> In my view, having this as a "runtime" error is not useful, as we can
+>>> verify this at configuration time.
+>>
+>> Looks like this is not an error per 802.1Q standard if I understood it
+>> correctly.
+>>
+>> This is what I see.
+>> =======================================================================
+>>   From 802.1Q 2018, 8.6.9.1.1 SetCycleStartTime()
+>>
+>> If AdminBaseTime is set to the same time in the past in all bridges and
+>> end stations, OperBaseTime is always in the past, and all cycles start
+>> synchronized. Using AdminBaseTime in the past is appropriate when you
+>> can start schedules prior to starting the application that uses the
+>> schedules. Use of AdminBaseTime in the future is intended to change a
+>> currently running schedule in all bridges and end stations to a new
+>> schedule at a future time. Using AdminBaseTime in the future is
+>> appropriate when schedules must be changed without stopping the
+>> application
+>> ========================================================================
+>>
+> 
+> What I meant here is the case that I already have an "oper" schedule
+> running, so my "oper->base_time" is in the past, and I try to add an
+> "admin" schedule with a "base_time" also in the past. What's the
+> expected behavior in this case? The text about stopping/starting
+> applications doesn't seem to apply to the way the tc subsystem interacts
+> with the applications.
+> 
+ > I try to add an "admin" schedule with a "base_time" also in the past.
+ > What's the expected behavior in this case?
 
-I am not seeing these patches applied
+Ok got it. I don't think this behavior is explained in the spec. I would
+assume a sane thing to do is to switch to admin schedule if 
+admin->base_time is newer than oper->base_time and flag
+the ConfigChangeError to be compliant to the spec, but frankly speaking
+I don't know how application is going to use this. It is a low priority
+item IMO and can be added as needed.
 
-I am looking here 
-https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git/log/?h=testing
+Regards,
 
-But they could be in a different repo
+Murali
+>>>
+>>>>
+>>>>>        - SupportedListMax - Maximum supported Admin/Open shed list.
+>>>>>
+>>>>> Is there a plan to export these from driver through tc show or such
+>>>>> command? The reason being, there would be applications developed to
+>>>>> manage configuration/schedule of TSN nodes that would requires these
+>>>>> information from the node. So would need a support either in tc or
+>>>>> some other means to retrieve them from hardware or driver. That is my
+>>>>> understanding...
+>>>>>
+>>>
+>>> Hm, now I understamd what you meant here...
+>>>
+>>>>
+>>>> Not sure what answer you expect to receive for "is there any plan".
+>>>> You can go ahead and propose something, as long as it is reasonably
+>>>> useful to have.
+>>>
+>>> ... if this is indeed useful, perhaps one way to do is to add a subcommand
+>>> to TC_SETUP_QDISC_TAPRIO, so we can retrieve the stats/information we want
+>>> from the driver. Similar to what cls_flower does.
+>>>
+>>
+>> What I understand is that there will be some work done to allow auto
+>> configuration of TSN nodes from user space and that would need access to
+>> all or some of the above parameters along with tc command to configure
+>> the same. May be a open source project for this or some custom
+>> application? Any such projects existing??
+> 
+> Yeah, this is a big missing piece for TSN. I've heard 'netopeer2' and
+> 'sysrepo' mentioned when similar questions were asked, but I have still
+> to take a look at them and see what's missing. (Or if they are the right
+> tool for the job)
+> 
+> 
 
-Dan
-
->
-> tnx,
-> Marc
->
+-- 
+Murali Karicheri
+Texas Instruments
