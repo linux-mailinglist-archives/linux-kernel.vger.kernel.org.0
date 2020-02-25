@@ -2,168 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C87F16BB88
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 09:09:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF7016BB85
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 09:08:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729698AbgBYIJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 03:09:47 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:54157 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbgBYIJq (ORCPT
+        id S1729686AbgBYIIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 03:08:17 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:38281 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729111AbgBYIIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 03:09:46 -0500
-Received: by mail-pj1-f66.google.com with SMTP id n96so913386pjc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 00:09:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8GMndQt2LnEzHjp6exHJ3T1kYTJRoFEg9wZ1HqA6gkQ=;
-        b=SekV8AVX6D+Htv0APvQ/2D+MFX2epnEwFRcP84WiMctH3PKMmMv3J7li3o6RdTIYQy
-         7G+7xHWlBDJYSHCbl0SaHksode9OJULFyaTJvq+71L4aY4H8UIyLkxaNqd1w0I2huZIg
-         Ghr6tkjBcWxetOGM/b7t2weEV1nrXLOgV+SQ0=
+        Tue, 25 Feb 2020 03:08:16 -0500
+Received: by mail-io1-f69.google.com with SMTP id x2so19715779iog.5
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 00:08:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8GMndQt2LnEzHjp6exHJ3T1kYTJRoFEg9wZ1HqA6gkQ=;
-        b=a/eMBUoKdFRMT0uDLdy+hvntOgXh9VwVEZ2PHVLRswFovZQrLsUrQSo/0XBfaHoHmd
-         Ff4Y78LkcOCEX8dRbMc1Gp025/dwvV5G/sWzGw59pdO5u1o/AlkjH39Vr2VNLbDWEb7B
-         BOv/CZeX+sSWxZo91mFZwSkKU4ZKnYu7GL1WH/qEjVHaQyd2hia0vqxG1FdU8vH67MgF
-         y0NLJLtAB3QUxTXoFof3JPkoYUp9rHondyeDl3JvIu8LUxAUKETqV428wVIbMGHd287Y
-         oGWR4NRp2Fj1kwd/ML3EHdCSHIGD5nrL+d+EXoGIfhQQMe1MpyZwa5FBqD0qDhwMQLEa
-         QEzw==
-X-Gm-Message-State: APjAAAVKuEXRTo4Hb63KdBHGjXGft38Q0FQNeawlH9QlqL3dCrAUYgsm
-        5q7+Pf7hdHFR6sgncRe0StzVwg==
-X-Google-Smtp-Source: APXvYqyHkDcXeUanCiEXGA0ZJYMMwDV4rYcjrFNFdPbqYec8VEXM5eZDYZphfwlSJ62fbCzN6dUrFg==
-X-Received: by 2002:a17:90a:5d97:: with SMTP id t23mr3732775pji.61.1582618186124;
-        Tue, 25 Feb 2020 00:09:46 -0800 (PST)
-Received: from ikjn-p920.tpe.corp.google.com ([2401:fa00:1:10:254e:2b40:ef8:ee17])
-        by smtp.gmail.com with ESMTPSA id c26sm16071506pfj.8.2020.02.25.00.09.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 00:09:45 -0800 (PST)
-From:   Ikjoon Jang <ikjn@chromium.org>
-To:     linux-mediatek@lists.infradead.org,
-        James Liao <jamesjj.liao@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, hsinyi@chromium.org,
-        drinkcat@chromium.org, Ikjoon Jang <ikjn@chromium.org>
-Subject: [PATCH] arm64: dts: mt8183: adjust cpuidle target residency
-Date:   Tue, 25 Feb 2020 16:07:53 +0800
-Message-Id: <20200225080752.200952-1-ikjn@chromium.org>
-X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=oBN7oAkwhJVbDOrp7SHliafS7zMYsi6zrfd5xebUUMY=;
+        b=i7oLRI1h1RwG8vJwbr/UzwvLabguVl9InfSkQAC5RmU3yfSIE1Rrxppd1lyo1tgDIv
+         p8RJT24nhZ2bgXx4d/EGdUOI0ZLThVnIwNezQcAXXeqvYFPe3NO+jbjp47R2McRsM8tu
+         DXtDRE1ywyAK1q8rBwinhQIkZZWMfty53hYwEpWyrXO5wQSeYS05NT/EAaTIlk92zs/t
+         /zxvBWqPs0yRMBQp/v3FoAH+mFGorRn9AL5EdBSVfOkSkNCk4ZQkj1PiSPhU0gH7jn4O
+         pYijGmjF/QP+yVvhTibAF/DlWrpdpxwkrRLoTbEuf3vwnloSLj+Cco0AJO0MB77HQCEM
+         XRSQ==
+X-Gm-Message-State: APjAAAU4+1d7ml4pdF4BFpzaEyOVJ0AO7XhOmBzwxWKqMX/iGVWysvx9
+        ljhBpnq6eD1dliVFWrheBKLHUeaXgIC6cu1iS3p5/rNF9099
+X-Google-Smtp-Source: APXvYqwVT2913CZ9DmaHsTWnMfMyzl+yPM99L45ZuUJFLfuF0xfQmiUugmqk4q+DNzUnn8LFfOxEA/PPyut8NcjwQmAU2MZZLYbD
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a5e:8e4d:: with SMTP id r13mr50829768ioo.60.1582618094122;
+ Tue, 25 Feb 2020 00:08:14 -0800 (PST)
+Date:   Tue, 25 Feb 2020 00:08:14 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000050bd7c059f61fd8c@google.com>
+Subject: BUG: unable to handle kernel NULL pointer dereference in inet_release
+From:   syzbot <syzbot+1938db17e275e85dc328@syzkaller.appspotmail.com>
+To:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, davem@davemloft.net, kafai@fb.com,
+        kuba@kernel.org, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com,
+        yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split a cluster level cpuidle state into two, so mt8183 variant
-boards can adjust parameters for each cluster, and reduce cluster0's
-default target residency to 1000us as power measurements showed that
-its minimum residency is slightly less than cluster1's 1300us.
+Hello,
 
-Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
+syzbot found the following crash on:
+
+HEAD commit:    54dedb5b Merge tag 'for-linus-5.6-rc3-tag' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=168f7de9e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3e57a6b450fb9883
+dashboard link: https://syzkaller.appspot.com/bug?extid=1938db17e275e85dc328
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1681fe09e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+1938db17e275e85dc328@syzkaller.appspotmail.com
+
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+#PF: supervisor instruction fetch in kernel mode
+#PF: error_code(0x0010) - not-present page
+PGD a0113067 P4D a0113067 PUD a8771067 PMD 0 
+Oops: 0010 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 10686 Comm: syz-executor.0 Not tainted 5.6.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:0x0
+Code: Bad RIP value.
+RSP: 0018:ffffc9000281fce0 EFLAGS: 00010246
+RAX: 1ffffffff15f48ac RBX: ffffffff8afa4560 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a69a8f40
+RBP: ffffc9000281fd10 R08: ffffffff86ed9b0c R09: ffffed1014d351f5
+R10: ffffed1014d351f5 R11: 0000000000000000 R12: ffff8880920d3098
+R13: 1ffff1101241a613 R14: ffff8880a69a8f40 R15: 0000000000000000
+FS:  00007f2ae75db700(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 00000000a3b85000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ inet_release+0x165/0x1c0 net/ipv4/af_inet.c:427
+ __sock_release net/socket.c:605 [inline]
+ sock_close+0xe1/0x260 net/socket.c:1283
+ __fput+0x2e4/0x740 fs/file_table.c:280
+ ____fput+0x15/0x20 fs/file_table.c:313
+ task_work_run+0x176/0x1b0 kernel/task_work.c:113
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_usermode_loop arch/x86/entry/common.c:164 [inline]
+ prepare_exit_to_usermode+0x480/0x5b0 arch/x86/entry/common.c:195
+ syscall_return_slowpath+0x113/0x4a0 arch/x86/entry/common.c:278
+ do_syscall_64+0x11f/0x1c0 arch/x86/entry/common.c:304
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45c429
+Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f2ae75dac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: 0000000000000000 RBX: 00007f2ae75db6d4 RCX: 000000000045c429
+RDX: 0000000000000001 RSI: 000000000000011a RDI: 0000000000000004
+RBP: 000000000076bf20 R08: 0000000000000038 R09: 0000000000000000
+R10: 0000000020000180 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000a9d R14: 00000000004ccfb4 R15: 000000000076bf2c
+Modules linked in:
+CR2: 0000000000000000
+---[ end trace 82567b5207e87bae ]---
+RIP: 0010:0x0
+Code: Bad RIP value.
+RSP: 0018:ffffc9000281fce0 EFLAGS: 00010246
+RAX: 1ffffffff15f48ac RBX: ffffffff8afa4560 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a69a8f40
+RBP: ffffc9000281fd10 R08: ffffffff86ed9b0c R09: ffffed1014d351f5
+R10: ffffed1014d351f5 R11: 0000000000000000 R12: ffff8880920d3098
+R13: 1ffff1101241a613 R14: ffff8880a69a8f40 R15: 0000000000000000
+FS:  00007f2ae75db700(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 00000000a3b85000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 26 ++++++++++++++++--------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index f1381e77918b..5c7dd262eaf3 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -74,7 +74,7 @@ cpu0: cpu@0 {
- 			reg = <0x000>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <741>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
-+			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP0>;
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -83,7 +83,7 @@ cpu1: cpu@1 {
- 			reg = <0x001>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <741>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
-+			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP0>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -92,7 +92,7 @@ cpu2: cpu@2 {
- 			reg = <0x002>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <741>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
-+			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP0>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -101,7 +101,7 @@ cpu3: cpu@3 {
- 			reg = <0x003>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <741>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
-+			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP0>;
- 		};
- 
- 		cpu4: cpu@100 {
-@@ -110,7 +110,7 @@ cpu4: cpu@100 {
- 			reg = <0x100>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
-+			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP1>;
- 		};
- 
- 		cpu5: cpu@101 {
-@@ -119,7 +119,7 @@ cpu5: cpu@101 {
- 			reg = <0x101>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
-+			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP1>;
- 		};
- 
- 		cpu6: cpu@102 {
-@@ -128,7 +128,7 @@ cpu6: cpu@102 {
- 			reg = <0x102>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
-+			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP1>;
- 		};
- 
- 		cpu7: cpu@103 {
-@@ -137,7 +137,7 @@ cpu7: cpu@103 {
- 			reg = <0x103>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
-+			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP1>;
- 		};
- 
- 		idle-states {
-@@ -152,7 +152,15 @@ CPU_SLEEP: cpu-sleep {
- 				min-residency-us = <800>;
- 			};
- 
--			CLUSTER_SLEEP: cluster-sleep {
-+			CLUSTER_SLEEP0: cluster-sleep@0 {
-+				compatible = "arm,idle-state";
-+				local-timer-stop;
-+				arm,psci-suspend-param = <0x01010001>;
-+				entry-latency-us = <250>;
-+				exit-latency-us = <400>;
-+				min-residency-us = <1000>;
-+			};
-+			CLUSTER_SLEEP1: cluster-sleep@1 {
- 				compatible = "arm,idle-state";
- 				local-timer-stop;
- 				arm,psci-suspend-param = <0x01010001>;
--- 
-2.25.0.265.gbab2e86ba0-goog
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
