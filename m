@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B69C316F344
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:27:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F307416F354
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:28:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730644AbgBYX1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:27:15 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56009 "EHLO
+        id S1730820AbgBYX21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:28:27 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55896 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730480AbgBYX0y (ORCPT
+        with ESMTP id S1730312AbgBYX0h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:26:54 -0500
+        Tue, 25 Feb 2020 18:26:37 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j6jal-0004wR-41; Wed, 26 Feb 2020 00:26:19 +0100
+        id 1j6jal-0004x3-3y; Wed, 26 Feb 2020 00:26:19 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 6E02E1040B3;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id A961C1040B5;
         Wed, 26 Feb 2020 00:25:46 +0100 (CET)
-Message-Id: <20200225224145.126704384@linutronix.de>
+Message-Id: <20200225224145.233039728@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Feb 2020 23:33:31 +0100
+Date:   Tue, 25 Feb 2020 23:33:32 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [patch 10/16] x86/entry: Convert double fault exception to IDTENTRY_DF
+Subject: [patch 11/16] x86/entry: Switch XEN/PV hypercall entry to IDTENTRY
 References: <20200225223321.231477305@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,11 +42,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert #DF to IDTENTRY_DF
-  - Implement the C entry point with DEFINE_IDTENTRY_DF
-  - Emit the ASM stub with DECLARE_IDTENTRY_DF on 64bit
+Convert # to IDTENTRY:
+  - Implement the C entry point with DEFINE_IDTENTRY
+  - Emit the ASM stub with DECLARE_IDTENTRY
   - Remove the ASM idtentry in 64bit
-  - Adjust the 32bit shim code
+  - Remove the open coded ASM entry code in 32bit
   - Fixup the XEN/PV code
   - Remove the old prototyoes
 
@@ -54,218 +54,197 @@ No functional change.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/entry/entry_32.S        |    4 ++--
- arch/x86/entry/entry_64.S        |   10 +---------
- arch/x86/include/asm/idtentry.h  |    5 +++++
- arch/x86/include/asm/traps.h     |    7 -------
- arch/x86/kernel/doublefault_32.c |    7 +++----
- arch/x86/kernel/idt.c            |    4 ++--
- arch/x86/kernel/traps.c          |    8 +++++---
- arch/x86/xen/enlighten_pv.c      |    4 ++--
- arch/x86/xen/xen-asm_64.S        |    2 +-
- 9 files changed, 21 insertions(+), 30 deletions(-)
+ arch/x86/entry/entry_32.S       |    7 +++++--
+ arch/x86/entry/entry_64.S       |   11 ++++-------
+ arch/x86/include/asm/idtentry.h |   13 +++++++++++++
+ arch/x86/xen/setup.c            |    4 +++-
+ arch/x86/xen/smp_pv.c           |    3 ++-
+ arch/x86/xen/xen-asm_32.S       |    8 ++++----
+ arch/x86/xen/xen-asm_64.S       |    2 +-
+ arch/x86/xen/xen-ops.h          |    1 -
+ 8 files changed, 32 insertions(+), 17 deletions(-)
 
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -1456,7 +1456,7 @@ SYM_CODE_START_LOCAL_NOALIGN(common_exce
- SYM_CODE_END(common_exception)
- 
- #ifdef CONFIG_DOUBLEFAULT
--SYM_CODE_START(double_fault)
-+SYM_CODE_START(asm_exc_double_fault)
- 1:
- 	/*
- 	 * This is a task gate handler, not an interrupt gate handler.
-@@ -1494,7 +1494,7 @@ SYM_CODE_START(double_fault)
- 1:
- 	hlt
- 	jmp 1b
--SYM_CODE_END(double_fault)
-+SYM_CODE_END(asm_exc_double_fault)
+@@ -1307,7 +1307,10 @@ SYM_CODE_END(native_iret)
  #endif
  
+ #ifdef CONFIG_XEN_PV
+-SYM_FUNC_START(xen_hypervisor_callback)
++/*
++ * See comment in entry_64.S for further explanation
++ */
++SYM_FUNC_START(exc_xen_hypervisor_callback)
+ 	/*
+ 	 * Check to see if we got the event in the critical
+ 	 * region in xen_iret_direct, after we've reenabled
+@@ -1331,7 +1334,7 @@ SYM_FUNC_START(xen_hypervisor_callback)
+ 	call	xen_maybe_preempt_hcall
+ #endif
+ 	jmp	ret_from_intr
+-SYM_FUNC_END(xen_hypervisor_callback)
++SYM_FUNC_END(exc_xen_hypervisor_callback)
+ 
  /*
+  * Hypervisor uses this for application faults while it executes.
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -669,15 +669,9 @@ SYM_CODE_START(\asmsym)
- 	call	paranoid_entry
- 	UNWIND_HINT_REGS
- 
--	/* Read CR2 early */
--	GET_CR2_INTO(%r12);
--
--	TRACE_IRQS_OFF
--
- 	movq	%rsp, %rdi		/* pt_regs pointer into first argument */
- 	movq	ORIG_RAX(%rsp), %rsi	/* get error code into 2nd argument*/
- 	movq	$-1, ORIG_RAX(%rsp)	/* no syscall to restart */
--	movq	%r12, %rdx		/* Move CR2 into 3rd argument */
- 	call	\cfunc
- 
- 	jmp	paranoid_exit
-@@ -906,7 +900,7 @@ SYM_INNER_LABEL(native_irq_return_iret,
- 	/*
- 	 * This may fault.  Non-paranoid faults on return to userspace are
- 	 * handled by fixup_bad_iret.  These include #SS, #GP, and #NP.
--	 * Double-faults due to espfix64 are handled in do_double_fault.
-+	 * Double-faults due to espfix64 are handled in exc_double_fault.
- 	 * Other faults here are fatal.
- 	 */
- 	iretq
-@@ -1065,8 +1059,6 @@ idtentry	X86_TRAP_PF		page_fault		do_pag
+@@ -1059,10 +1059,6 @@ idtentry	X86_TRAP_PF		page_fault		do_pag
  idtentry	X86_TRAP_PF		async_page_fault	do_async_page_fault		has_error_code=1
  #endif
  
--idtentry_df	X86_TRAP_DF		double_fault		do_double_fault
+-#ifdef CONFIG_XEN_PV
+-idtentry	512 /* dummy */		hypervisor_callback	xen_do_hypervisor_callback	has_error_code=0
+-#endif
 -
- #ifdef CONFIG_XEN_PV
- idtentry	512 /* dummy */		hypervisor_callback	xen_do_hypervisor_callback	has_error_code=0
+ 	/*
+ 	 * Reload gs selector with exception handling
+ 	 * edi:  new selector
+@@ -1125,9 +1121,10 @@ SYM_FUNC_END(do_softirq_own_stack)
+  * So, on entry to the handler we detect whether we interrupted an
+  * existing activation in its critical region -- if so, we pop the current
+  * activation and restart the handler using the previous one.
++ *
++ * C calling convention: exc_xen_hypervisor_callback(struct *pt_regs)
+  */
+-/* do_hypervisor_callback(struct *pt_regs) */
+-SYM_CODE_START_LOCAL(xen_do_hypervisor_callback)
++SYM_CODE_START_LOCAL(exc_xen_hypervisor_callback)
+ 
+ /*
+  * Since we don't modify %rdi, evtchn_do_upall(struct *pt_regs) will
+@@ -1145,7 +1142,7 @@ SYM_CODE_START_LOCAL(xen_do_hypervisor_c
+ 	call	xen_maybe_preempt_hcall
  #endif
+ 	jmp	error_exit
+-SYM_CODE_END(xen_do_hypervisor_callback)
++SYM_CODE_END(exc_xen_hypervisor_callback)
+ 
+ /*
+  * Hypervisor uses this for application faults while it executes.
 --- a/arch/x86/include/asm/idtentry.h
 +++ b/arch/x86/include/asm/idtentry.h
-@@ -343,4 +343,9 @@ DECLARE_IDTENTRY_XEN(X86_TRAP_NMI,	nmi);
- DECLARE_IDTENTRY_DEBUG(X86_TRAP_DB,	exc_debug);
- DECLARE_IDTENTRY_XEN(X86_TRAP_DB,	debug);
+@@ -308,6 +308,13 @@ static __always_inline void __##func(str
  
-+/* #DF */
-+#if defined(CONFIG_X86_64) || defined(CONFIG_DOUBLEFAULT)
-+DECLARE_IDTENTRY_DF(X86_TRAP_DF,	exc_double_fault);
+ #endif /* __ASSEMBLY__ */
+ 
++/*
++ * Dummy trap number so the low level ASM macro vector number checks do not
++ * match which results in emitting plain IDTENTRY stubs without bells and
++ * whistels.
++ */
++#define X86_TRAP_OTHER		~0uL
++
+ /* Simple exception entries: */
+ DECLARE_IDTENTRY(X86_TRAP_DE,		exc_divide_error);
+ DECLARE_IDTENTRY(X86_TRAP_BP,		exc_int3);
+@@ -348,4 +355,10 @@ DECLARE_IDTENTRY_XEN(X86_TRAP_DB,	debug)
+ DECLARE_IDTENTRY_DF(X86_TRAP_DF,	exc_double_fault);
+ #endif
+ 
++#ifdef CONFIG_XEN_PV
++DECLARE_IDTENTRY(X6_TRAP_OTHER,		exc_xen_hypervisor_callback);
 +#endif
 +
++#undef X86_TRAP_OTHER
++
  #endif
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -11,20 +11,13 @@
+--- a/arch/x86/xen/setup.c
++++ b/arch/x86/xen/setup.c
+@@ -20,6 +20,7 @@
+ #include <asm/setup.h>
+ #include <asm/acpi.h>
+ #include <asm/numa.h>
++#include <asm/idtentry.h>
+ #include <asm/xen/hypervisor.h>
+ #include <asm/xen/hypercall.h>
  
- #define dotraplinkage __visible
+@@ -993,7 +994,8 @@ void __init xen_pvmmu_arch_setup(void)
+ 	HYPERVISOR_vm_assist(VMASST_CMD_enable,
+ 			     VMASST_TYPE_pae_extended_cr3);
  
--#ifdef CONFIG_X86_64
--asmlinkage void double_fault(void);
--#endif
- asmlinkage void page_fault(void);
- asmlinkage void async_page_fault(void);
+-	if (register_callback(CALLBACKTYPE_event, xen_hypervisor_callback) ||
++	if (register_callback(CALLBACKTYPE_event,
++			      asm_exc_xen_hypervisor_callback) ||
+ 	    register_callback(CALLBACKTYPE_failsafe, xen_failsafe_callback))
+ 		BUG();
  
- #if defined(CONFIG_X86_64) && defined(CONFIG_XEN_PV)
--asmlinkage void xen_double_fault(void);
- asmlinkage void xen_page_fault(void);
- #endif
- 
--#if defined(CONFIG_X86_64) || defined(CONFIG_DOUBLEFAULT)
--dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code, unsigned long cr2);
--#endif
- dotraplinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code, unsigned long address);
- 
- #ifdef CONFIG_X86_64
---- a/arch/x86/kernel/doublefault_32.c
-+++ b/arch/x86/kernel/doublefault_32.c
-@@ -11,7 +11,6 @@
+--- a/arch/x86/xen/smp_pv.c
++++ b/arch/x86/xen/smp_pv.c
+@@ -27,6 +27,7 @@
+ #include <asm/paravirt.h>
  #include <asm/desc.h>
- #include <asm/traps.h>
+ #include <asm/pgtable.h>
++#include <asm/idtentry.h>
+ #include <asm/cpu.h>
  
--extern void double_fault(void);
- #define ptr_ok(x) ((x) > PAGE_OFFSET && (x) < PAGE_OFFSET + MAXMEM)
- 
- #define TSS(x) this_cpu_read(cpu_tss_rw.x86_tss.x)
-@@ -41,7 +40,7 @@ asmlinkage notrace void __noreturn doubl
- 	 * Fill in pt_regs.  A downside of doing this in C is that the unwinder
- 	 * won't see it (no ENCODE_FRAME_POINTER), so a nested stack dump
- 	 * won't successfully unwind to the source of the double fault.
--	 * The main dump from do_double_fault() is fine, though, since it
-+	 * The main dump from exc_double_fault() is fine, though, since it
- 	 * uses these regs directly.
- 	 *
- 	 * If anyone ever cares, this could be moved to asm.
-@@ -71,7 +70,7 @@ asmlinkage notrace void __noreturn doubl
- 	regs.cx		= TSS(cx);
- 	regs.bx		= TSS(bx);
- 
--	do_double_fault(&regs, 0, cr2);
-+	exc_double_fault(&regs, 0, cr2);
+ #include <xen/interface/xen.h>
+@@ -346,7 +347,7 @@ cpu_initialize_context(unsigned int cpu,
+ 	ctxt->gs_base_kernel = per_cpu_offset(cpu);
+ #endif
+ 	ctxt->event_callback_eip    =
+-		(unsigned long)xen_hypervisor_callback;
++		(unsigned long)asm_exc_xen_hypervisor_callback;
+ 	ctxt->failsafe_callback_eip =
+ 		(unsigned long)xen_failsafe_callback;
+ 	per_cpu(xen_cr3, cpu) = __pa(swapper_pg_dir);
+--- a/arch/x86/xen/xen-asm_32.S
++++ b/arch/x86/xen/xen-asm_32.S
+@@ -93,7 +93,7 @@ SYM_CODE_START(xen_iret)
  
  	/*
- 	 * x86_32 does not save the original CR3 anywhere on a task switch.
-@@ -96,7 +95,7 @@ DEFINE_PER_CPU_PAGE_ALIGNED(struct doubl
- 		.ldt		= 0,
- 	.io_bitmap_base	= IO_BITMAP_OFFSET_INVALID,
- 
--		.ip		= (unsigned long) double_fault,
-+		.ip		= (unsigned long) asm_exc_double_fault,
- 		.flags		= X86_EFLAGS_FIXED,
- 		.es		= __USER_DS,
- 		.cs		= __KERNEL_CS,
---- a/arch/x86/kernel/idt.c
-+++ b/arch/x86/kernel/idt.c
-@@ -88,7 +88,7 @@ static const __initconst struct idt_data
- #ifdef CONFIG_X86_32
- 	TSKG(X86_TRAP_DF,		GDT_ENTRY_DOUBLEFAULT_TSS),
- #else
--	INTG(X86_TRAP_DF,		double_fault),
-+	INTG(X86_TRAP_DF,		asm_exc_double_fault),
- #endif
- 	INTG(X86_TRAP_DB,		asm_exc_debug),
- 
-@@ -184,7 +184,7 @@ gate_desc debug_idt_table[IDT_ENTRIES] _
- static const __initconst struct idt_data ist_idts[] = {
- 	ISTG(X86_TRAP_DB,	asm_exc_debug,		IST_INDEX_DB),
- 	ISTG(X86_TRAP_NMI,	asm_exc_nmi,		IST_INDEX_NMI),
--	ISTG(X86_TRAP_DF,	double_fault,		IST_INDEX_DF),
-+	ISTG(X86_TRAP_DF,	asm_exc_double_fault,	IST_INDEX_DF),
- #ifdef CONFIG_X86_MCE
- 	ISTG(X86_TRAP_MC,	asm_exc_machine_check,	IST_INDEX_MCE),
- #endif
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -358,7 +358,7 @@ DEFINE_IDTENTRY_ERRORCODE(exc_alignment_
-  * be lost.  If, for some reason, we need to return to a context with modified
-  * regs, the shim code could be adjusted to synchronize the registers.
-  */
--dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code, unsigned long cr2)
-+DEFINE_IDTENTRY_DF(exc_double_fault)
- {
- 	static const char str[] = "double fault";
- 	struct task_struct *tsk = current;
-@@ -457,8 +457,10 @@ dotraplinkage void do_double_fault(struc
- 	 * stack even if the actual trigger for the double fault was
- 	 * something else.
+ 	 * If there's something pending, mask events again so we can
+-	 * jump back into xen_hypervisor_callback. Otherwise do not
++	 * jump back into exc_xen_hypervisor_callback. Otherwise do not
+ 	 * touch XEN_vcpu_info_mask.
  	 */
--	if ((unsigned long)task_stack_page(tsk) - 1 - cr2 < PAGE_SIZE)
--		handle_stack_overflow("kernel stack overflow (double-fault)", regs, cr2);
-+	if ((unsigned long)task_stack_page(tsk) - 1 - address < PAGE_SIZE) {
-+		handle_stack_overflow("kernel stack overflow (double-fault)",
-+				      regs, address);
-+	}
- #endif
- 
- 	pr_emerg("PANIC: double fault, error_code: 0x%lx\n", error_code);
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -614,7 +614,7 @@ struct trap_array_entry {
- 
- static struct trap_array_entry trap_array[] = {
- 	TRAP_ENTRY_REDIR(exc_debug, exc_xendebug,	true  ),
--	{ double_fault,                xen_double_fault,                true },
-+	TRAP_ENTRY(exc_double_fault,			true  ),
- #ifdef CONFIG_X86_MCE
- 	TRAP_ENTRY(exc_machine_check,			true  ),
- #endif
-@@ -649,7 +649,7 @@ static bool __ref get_trap_addr(void **a
- 	 * Replace trap handler addresses by Xen specific ones.
- 	 * Check for known traps using IST and whitelist them.
- 	 * The debugger ones are the only ones we care about.
--	 * Xen will handle faults like double_fault, * so we should never see
-+	 * Xen will handle faults like double_fault, so we should never see
- 	 * them.  Warn if there's an unexpected IST-using fault handler.
+ 	jne 1f
+@@ -113,7 +113,7 @@ SYM_CODE_START(xen_iret)
+ 	 * Events are masked, so jumping out of the critical region is
+ 	 * OK.
  	 */
- 	for (nr = 0; nr < ARRAY_SIZE(trap_array); nr++) {
+-	je xen_hypervisor_callback
++	je asm_exc_xen_hypervisor_callback
+ 
+ 1:	iret
+ xen_iret_end_crit:
+@@ -127,7 +127,7 @@ SYM_CODE_END(xen_iret)
+ 	.globl xen_iret_start_crit, xen_iret_end_crit
+ 
+ /*
+- * This is called by xen_hypervisor_callback in entry_32.S when it sees
++ * This is called by exc_xen_hypervisor_callback in entry_32.S when it sees
+  * that the EIP at the time of interrupt was between
+  * xen_iret_start_crit and xen_iret_end_crit.
+  *
+@@ -144,7 +144,7 @@ SYM_CODE_END(xen_iret)
+  *	 eflags		}
+  *	 cs		}  nested exception info
+  *	 eip		}
+- *	 return address	: (into xen_hypervisor_callback)
++ *	 return address	: (into asm_exc_xen_hypervisor_callback)
+  *
+  * In order to deliver the nested exception properly, we need to discard the
+  * nested exception frame such that when we handle the exception, we do it
 --- a/arch/x86/xen/xen-asm_64.S
 +++ b/arch/x86/xen/xen-asm_64.S
-@@ -37,7 +37,7 @@ xen_pv_trap asm_exc_overflow
- xen_pv_trap asm_exc_bounds
- xen_pv_trap asm_exc_invalid_op
- xen_pv_trap asm_exc_device_not_available
--xen_pv_trap double_fault
-+xen_pv_trap asm_exc_double_fault
- xen_pv_trap asm_exc_coproc_segment_overrun
- xen_pv_trap asm_exc_invalid_tss
- xen_pv_trap asm_exc_segment_not_present
+@@ -54,7 +54,7 @@ xen_pv_trap asm_exc_simd_coprocessor_err
+ #ifdef CONFIG_IA32_EMULATION
+ xen_pv_trap entry_INT80_compat
+ #endif
+-xen_pv_trap hypervisor_callback
++xen_pv_trap asm_exc_xen_hypervisor_callback
+ 
+ 	__INIT
+ SYM_CODE_START(xen_early_idt_handler_array)
+--- a/arch/x86/xen/xen-ops.h
++++ b/arch/x86/xen/xen-ops.h
+@@ -8,7 +8,6 @@
+ #include <xen/xen-ops.h>
+ 
+ /* These are code, but not functions.  Defined in entry.S */
+-extern const char xen_hypervisor_callback[];
+ extern const char xen_failsafe_callback[];
+ 
+ void xen_sysenter_target(void);
 
