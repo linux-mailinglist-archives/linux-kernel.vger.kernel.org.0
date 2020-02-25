@@ -2,155 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F7816E92D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:59:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0667116E935
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 16:01:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730942AbgBYO7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 09:59:52 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33099 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730754AbgBYO7w (ORCPT
+        id S1730969AbgBYPBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 10:01:10 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:20378 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730955AbgBYPBJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:59:52 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u6so15136391wrt.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 06:59:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VAjOwG3wByBMn+LNEOxqdTA7mvnfEFLl2FcpxcCoSHY=;
-        b=BD+8OaHiDfSbH7mVkARg8BcbO6G1kpEnyE0SAe8AOMg0N1S4RUYy7IXx4Qd2yfoLvP
-         P6mxlyK3EkbxhO2pn1wEc9tlQR3cORggeQs+dWlJ9XcG35sX61+FZpkvqQbu+YZbcsMc
-         VZ5qDRe+dzkSOfRm6PTWaGhF1lh3/Tz0tVr8znpFmII4uoh4iaBl/aCSP/r3sbPo7TcT
-         7NMCc0qOSKz8WzRtRbnwD2dQ1935AdUB1JOzDpibqbtFq8BaekxDmJi93R59b4u8CP0/
-         eT3XRv7fM85vO1Zg59FyAmGLGPNJ0U0dIPFjn6PdOhjaJmEiCD1yj6DPR7M+3q8/+CaG
-         ocyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VAjOwG3wByBMn+LNEOxqdTA7mvnfEFLl2FcpxcCoSHY=;
-        b=V87Kn7uHe7xxTQr9+D+KHQEWtyt2199R1LAipd/TCp77/6E4N6rSIT+HPwhkN7lSRl
-         SnF8c//ZrWTPhtfCGoZCTV9+fAl77XDpwMvT7p3yy7Vx5PlVBrzLrKvWq3oVN0Bmnknn
-         lC7SlklvWWvra3LGpOq0HpcSEiGdQxj+tzieWoDDkrbVWAUmGb4rrpsPom7RrA/wVCmb
-         WPBKuV5i6YFvOp8eKMahvE44zpSuRM445EAO5GCkMA8Kqm9cQ41Uzk7ZmHzufBirPV+e
-         4Vcr7HlNrzwLl1pegIXg+77TGenNS5AVdB3sNW/2wouRpO8cKAFyt46n3tHS0lOiECDl
-         GW6A==
-X-Gm-Message-State: APjAAAXZ8EBElfqJf0YEZomwnsWw7wFtcWAmLqB5k4MPMHEUQweN83JC
-        VRtY90DvmX7cYU38AVtjm2Fs+VxRfG0=
-X-Google-Smtp-Source: APXvYqw9an6YxPnDrgXVKv0CbD1q2jHIoY1bGakjZHnAcqiimhqxTF4jdZIxXob6UuVvTeA2gWTbLQ==
-X-Received: by 2002:a05:6000:188:: with SMTP id p8mr72417075wrx.336.1582642787608;
-        Tue, 25 Feb 2020 06:59:47 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id b7sm16062991wrs.97.2020.02.25.06.59.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Feb 2020 06:59:46 -0800 (PST)
-Subject: Re: [PATCH v1 0/3] nvmem: Add support for write-only instances, and
- clean-up
-To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <PSXP216MB043899D4B8F693E1E5C3ECCE80EC0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <abdbeaf4-487d-8921-facc-b979421e97e7@linaro.org>
-Date:   Tue, 25 Feb 2020 14:59:46 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 25 Feb 2020 10:01:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582642869;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9ULjGkWTIVT0iQqr4VAoSIQ4cPhGUNMPfY7Wm+7UQ8w=;
+        b=YGb0+qLZ0nKwxXeT+qmbbsB3csXANApoSKS/Wo8pia3qJYO68CZTUlklsW1+Gok3C0d44A
+        OBEq30OC4tg0A/wT3q8O/niDmaQms0v2/Bp6/ACDOC2lKZfQW13jvQkifC3Hjl0qoBFp1a
+        jnRgQUTI+1ApVoZkZp54nLUMbQEIo3o=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-255-53fqC5C8MaGqofn20Xz7ew-1; Tue, 25 Feb 2020 10:00:51 -0500
+X-MC-Unique: 53fqC5C8MaGqofn20Xz7ew-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5C68B1922965;
+        Tue, 25 Feb 2020 15:00:48 +0000 (UTC)
+Received: from [10.18.17.119] (dhcp-17-119.bos.redhat.com [10.18.17.119])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A505390F5F;
+        Tue, 25 Feb 2020 15:00:46 +0000 (UTC)
+Subject: Re: [PATCH 0/3] Unexport kallsyms_lookup_name() and
+ kallsyms_on_each_symbol()
+To:     Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>
+Cc:     Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, akpm@linux-foundation.org,
+        "K . Prasad" <prasad@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Quentin Perret <qperret@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        live-patching@vger.kernel.org
+References: <20200221114404.14641-1-will@kernel.org>
+ <alpine.LSU.2.21.2002251104130.11531@pobox.suse.cz>
+ <20200225121125.psvuz6e7coa77vxe@pathway.suse.cz>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Message-ID: <943e7093-2862-53c6-b7f4-96c7d65789b9@redhat.com>
+Date:   Tue, 25 Feb 2020 10:00:45 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <PSXP216MB043899D4B8F693E1E5C3ECCE80EC0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+In-Reply-To: <20200225121125.psvuz6e7coa77vxe@pathway.suse.cz>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2/25/20 7:11 AM, Petr Mladek wrote:
+> On Tue 2020-02-25 11:05:39, Miroslav Benes wrote:
+>> CC live-patching ML, because this could affect many of its users...
+>>
+>> On Fri, 21 Feb 2020, Will Deacon wrote:
+>>
+>>> Hi folks,
+>>>
+>>> Despite having just a single modular in-tree user that I could spot,
+>>> kallsyms_lookup_name() is exported to modules and provides a mechanis=
+m
+>>> for out-of-tree modules to access and invoke arbitrary, non-exported
+>>> kernel symbols when kallsyms is enabled.
+>=20
+> Just to explain how this affects livepatching users.
+>=20
+> Livepatch is a module that inludes fixed copies of functions that
+> are buggy in the running kernel. These functions often
+> call functions or access variables that were defined static in
+> the original source code. There are two ways how this is currently
+> solved.
+>=20
+> Some livepatch authors use kallsyms_lookup_name() to locate the
+> non-exported symbols in the running kernel and then use these
+> address in the fixed code.
+>=20
+
+FWIW, kallsyms was historically used by the out-of-tree kpatch support=20
+module to resolve external symbols as well as call set_memory_r{w,o}()=20
+API.  All of that support code has been merged upstream, so modern=20
+kpatch modules* no longer leverage kallsyms by default.
+
+* That said, there are still some users who still use the deprecated=20
+support module with newer kernels, but that is not officially supported=20
+by the project.
+
+> Another possibility is to used special relocation sections,
+> see Documentation/livepatch/module-elf-format.rst
+>=20
+> The problem with the special relocations sections is that the support
+> to generate them is not ready yet. The main piece would klp-convert
+> tool. Its development is pretty slow. The last version can be
+> found at
+> https://lkml.kernel.org/r/20190509143859.9050-1-joe.lawrence@redhat.com
+>=20
+> I am not sure if this use case is enough to keep the symbols exported.
+> Anyway, there are currently some out-of-tree users.
+>=20
+
+Another (temporary?) klp-relocation issue is that binutils has limited=20
+support for them as currently implemented:
+
+   https://sourceware.org/ml/binutils/2020-02/msg00317.html
+
+For example, try running strip or objcopy on a .ko that includes them=20
+and you may find surprising results :(
 
 
-On 24/02/2020 17:41, Nicholas Johnson wrote:
-> [Based on Linux v5.6-rc3, does not apply successfully to Linux v5.6-rc2]
-> 
-> Hello all,
-> 
-> I offer the first patch in this series to support write-only instances
-> of nvmem. The use-case is the Thunderbolt driver, for which Mika
-> Westerberg needs write-only nvmem. Refer to 03cd45d2e219 ("thunderbolt:
-> Prevent crash if non-active NVMem file is read").
-> 
+As far as the klp-convert patchset goes, I forget whether or not we tied=20
+its use case to source-based livepatch creation.  If kallsyms goes=20
+unexported, perhaps it finds more immediate users.
 
-Had a look at the crash trace from the mentioned patch.
-
-Why can not we add a check for reg_read in bin_attr_nvmem_read() before 
-dereferencing it?
-
-The reason I ask this is because removing read_only is not that simple 
-as you think.
-Firstly because a there is no way to derive this flag by just looking at 
-read/write callbacks.
-Providers are much more generic drivers ex: at24 which can have 
-read/write interfaces implemented, however read only flag is enforced at 
-board/platform level config either via device tree property bindings or 
-a write protection gpio.
-Removing this is also going to break the device tree bindings.
-
-only alternative I can see ATM is the mentioned check.
-
---srini
+However since klp-convert provides nearly the same functionality as=20
+kallsyms, i.e. both can be used to circumvent symbol export licensing --=20
+one could make similar arguments against its inclusion.
 
 
+If there is renewed (or greater, to be more accurate) interest in the=20
+klp-convert patchset, we can dust it off and see what's left.  AFAIK it=20
+was blocked on arch-specific klp-relocations and whether per-object=E2=80=
+=8B=20
+livepatch modules would remove that requirement.
 
-> The second patch in this series reverts the workaround 03cd45d2e219
-> ("thunderbolt: Prevent crash if non-active NVMem file is read") which
-> Mika applied in the mean time to prevent a kernel-mode NULL dereference.
-> If Mika wants to do this himself or there is some reason not to apply
-> this, that is fine, but in my mind, it is a logical progression to apply
-> one after the other in the same series.
-> 
-> The third patch in this series removes the .read_only field, because we
-> do not have a .write_only field. It only makes sense to have both or
-> neither. Having either of them makes it hard to be consistent - what
-> happens if a driver were to set both .read_only and .write_only? And
-> there is the question of deciding if the nvmem is read-only because of
-> the .read_only, or based on if the .reg_read is not NULL. What if they
-> disagree? This patch does touch a lot of files, and I will understand if
-> you do not wish to apply it. It is optional and does not need to be
-> applied with the first two.
-> 
-> Thank you in advance for reviewing these.
-> 
-> Kind regards,
-> 
-> Nicholas Johnson (3):
->    nvmem: Add support for write-only instances
->    Revert "thunderbolt: Prevent crash if non-active NVMem file is read"
->    nvmem: Remove .read_only field from nvmem_config
-> 
->   drivers/misc/eeprom/at24.c          |  4 +-
->   drivers/misc/eeprom/at25.c          |  4 +-
->   drivers/misc/eeprom/eeprom_93xx46.c |  4 +-
->   drivers/mtd/mtdcore.c               |  1 -
->   drivers/nvmem/bcm-ocotp.c           |  1 -
->   drivers/nvmem/core.c                |  5 +-
->   drivers/nvmem/imx-iim.c             |  1 -
->   drivers/nvmem/imx-ocotp-scu.c       |  1 -
->   drivers/nvmem/imx-ocotp.c           |  1 -
->   drivers/nvmem/lpc18xx_otp.c         |  1 -
->   drivers/nvmem/meson-mx-efuse.c      |  1 -
->   drivers/nvmem/nvmem-sysfs.c         | 77 ++++++++++++++++++++++++++---
->   drivers/nvmem/nvmem.h               |  1 -
->   drivers/nvmem/rockchip-efuse.c      |  1 -
->   drivers/nvmem/rockchip-otp.c        |  1 -
->   drivers/nvmem/sc27xx-efuse.c        |  1 -
->   drivers/nvmem/sprd-efuse.c          |  1 -
->   drivers/nvmem/stm32-romem.c         |  1 -
->   drivers/nvmem/sunxi_sid.c           |  1 -
->   drivers/nvmem/uniphier-efuse.c      |  1 -
->   drivers/nvmem/zynqmp_nvmem.c        |  1 -
->   drivers/soc/tegra/fuse/fuse-tegra.c |  1 -
->   drivers/thunderbolt/switch.c        |  8 ---
->   drivers/w1/slaves/w1_ds250x.c       |  1 -
->   include/linux/nvmem-provider.h      |  2 -
->   25 files changed, 77 insertions(+), 45 deletions(-)
-> 
+-- Joe
+
