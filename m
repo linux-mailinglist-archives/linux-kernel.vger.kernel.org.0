@@ -2,214 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 786A816B6BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:31:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B89BC16B6CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:38:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728664AbgBYAbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 19:31:32 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.202]:19455 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728515AbgBYAbb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 19:31:31 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 7389C2CF5D
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 18:31:29 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 6O8HjOydJXVkQ6O8Hjka4K; Mon, 24 Feb 2020 18:31:29 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=+57+TZ+YS4fZoiEVbZiT3ANzLG4Ir1hQoUxGBfOF4M4=; b=sh51uhl5baRoJtHSTmrspjD2QJ
-        Ru1DDAERaQUgtBRxZld32WPyJwVT46uq1l+8Dm7ktFw8/+cR+HBNcpQqTrmfxn/I7t8b/mXhyebJh
-        gHHyc1h5/ES31UlOe69t8dHj7i/t766pPjoJY2KCBztNdeP5FMnuGwWJBon6cuWTa6vl0t2xkGhb3
-        VHzUpTqGZNbl8aF9+WAYd83VcHLdE71nAgWU6i6cs57sVllG1ntZZay8LOLuE6mz2ccNZ47wjYEbZ
-        EVVIFs/ZL+DpxGZcMFGxs1buz+JD2OegK3gY2/nautdm4Pg8ePmI1I8vKKNe7mSzWqzDCbaBQl6i+
-        rFBfrZIw==;
-Received: from [201.166.191.211] (port=54920 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j6O8F-002YvY-IY; Mon, 24 Feb 2020 18:31:27 -0600
-Date:   Mon, 24 Feb 2020 18:34:08 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] wireless: ti: Replace zero-length array with
- flexible-array member
-Message-ID: <20200225003408.GA28675@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.191.211
-X-Source-L: No
-X-Exim-ID: 1j6O8F-002YvY-IY
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.191.211]:54920
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 45
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1728593AbgBYAij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 19:38:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43460 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728011AbgBYAii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 19:38:38 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 727EC2072D;
+        Tue, 25 Feb 2020 00:38:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582591116;
+        bh=jq3ODePJ3Q6zoN0OHkVIb2ToZ28VrtYjD3/dPpBAwUM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=0bkniVS3jwtRsC+8G6oMWVV5CiKekmBhS3eBDkSEHm1jAB9Mfu7zT2BAsRTwSnOI/
+         nif9ExSCKPT2copXKF7CCogu+iOq9LFdzn2HmqT3glMgLZcwi4tcTrNbdL8/+akbXD
+         NpvxEngILyVqP2R1oZSb+x6GvzBiTtenwtM26xGI=
+Date:   Mon, 24 Feb 2020 16:38:35 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Jason Baron <jbaron@akamai.com>
+Cc:     dave@stgolabs.net, rpenyaev@suse.de, linux-kernel@vger.kernel.org,
+        normalperson@yhbt.net, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs/epoll: make nesting accounting safe for -rt kernel
+Message-Id: <20200224163835.08ab964483519052d7c2e39b@linux-foundation.org>
+In-Reply-To: <1579288607-11868-1-git-send-email-jbaron@akamai.com>
+References: <20200106210104.4hqlgpujqujcbeg7@linux-p48b>
+        <1579288607-11868-1-git-send-email-jbaron@akamai.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Fri, 17 Jan 2020 14:16:47 -0500 Jason Baron <jbaron@akamai.com> wrote:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+> Davidlohr Bueso pointed out that when CONFIG_DEBUG_LOCK_ALLOC is set
+> ep_poll_safewake() can take several non-raw spinlocks after disabling
+> pre-emption which is no no for the -rt kernel. So let's re-work how we
+> determine the nesting level such that it plays nicely with -rt kernel.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+"no no" isn't terribly informative, and knowledge of -rt's requirements
+isn't widespread.  Can we please spell this requirement out in full
+detail, if only to spread the -rt education a bit?
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+> Let's introduce a 'nests' field in struct eventpoll that records the
+> current nesting level during ep_poll_callback(). Then, if we nest again we
+> can find the previous struct eventpoll that we were called from and
+> increase our count by 1. The 'nests' field is protected by
+> ep->poll_wait.lock.
+> 
+> I've also moved napi_id field into a hole in struct eventpoll as part of
+> introduing the nests field. This change reduces the struct eventpoll from
+> 184 bytes to 176 bytes on x86_64 for the !CONFIG_DEBUG_LOCK_ALLOC
+> production config.
+> 
+> ...
+>
+> @@ -551,30 +557,43 @@ static int ep_call_nested(struct nested_calls *ncalls,
+>   */
+>  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>  
+> -static DEFINE_PER_CPU(int, wakeup_nest);
+> -
+> -static void ep_poll_safewake(wait_queue_head_t *wq)
+> +static void ep_poll_safewake(struct eventpoll *ep, struct epitem *epi)
+>  {
+> +	struct eventpoll *ep_src;
+>  	unsigned long flags;
+> -	int subclass;
+> +	u8 nests = 0;
+>  
+> -	local_irq_save(flags);
+> -	preempt_disable();
+> -	subclass = __this_cpu_read(wakeup_nest);
+> -	spin_lock_nested(&wq->lock, subclass + 1);
+> -	__this_cpu_inc(wakeup_nest);
+> -	wake_up_locked_poll(wq, POLLIN);
+> -	__this_cpu_dec(wakeup_nest);
+> -	spin_unlock(&wq->lock);
+> -	local_irq_restore(flags);
+> -	preempt_enable();
+> +	/*
+> +	 * If we are not being call from ep_poll_callback(), epi is
+> +	 * NULL and we are at the first level of nesting, 0. Otherwise,
+> +	 * we are being called from ep_poll_callback() and if a previous
+> +	 * wakeup source is not an epoll file itself, we are at depth
+> +	 * 1 since the wakeup source is depth 0. If the wakeup source
+> +	 * is a previous epoll file in the wakeup chain then we use its
+> +	 * nests value and record ours as nests + 1. The previous epoll
+> +	 * file nests value is stable since its already holding its
+> +	 * own poll_wait.lock.
+> +	 */
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+Similarly, it would be helpful if this comment were to explain that
+this code exists for -rt's requirements, and to briefly describe what
+that requirement is.
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/wireless/ti/wl1251/cmd.h          | 4 ++--
- drivers/net/wireless/ti/wl1251/wl12xx_80211.h | 2 +-
- drivers/net/wireless/ti/wlcore/acx.h          | 2 +-
- drivers/net/wireless/ti/wlcore/boot.h         | 2 +-
- drivers/net/wireless/ti/wlcore/cmd.h          | 2 +-
- drivers/net/wireless/ti/wlcore/conf.h         | 2 +-
- drivers/net/wireless/ti/wlcore/wl12xx_80211.h | 2 +-
- 7 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/wireless/ti/wl1251/cmd.h b/drivers/net/wireless/ti/wl1251/cmd.h
-index 1c1a591c6055..e5874186f9d7 100644
---- a/drivers/net/wireless/ti/wl1251/cmd.h
-+++ b/drivers/net/wireless/ti/wl1251/cmd.h
-@@ -90,7 +90,7 @@ struct wl1251_cmd_header {
- 	u16 id;
- 	u16 status;
- 	/* payload */
--	u8 data[0];
-+	u8 data[];
- } __packed;
- 
- struct  wl1251_command {
-@@ -281,7 +281,7 @@ struct wl1251_cmd_packet_template {
- 	struct wl1251_cmd_header header;
- 
- 	__le16 size;
--	u8 data[0];
-+	u8 data[];
- } __packed;
- 
- #define TIM_ELE_ID    5
-diff --git a/drivers/net/wireless/ti/wl1251/wl12xx_80211.h b/drivers/net/wireless/ti/wl1251/wl12xx_80211.h
-index 7fabe702c4cc..7e28fe435b43 100644
---- a/drivers/net/wireless/ti/wl1251/wl12xx_80211.h
-+++ b/drivers/net/wireless/ti/wl1251/wl12xx_80211.h
-@@ -65,7 +65,7 @@ struct ieee80211_header {
- 	u8 sa[ETH_ALEN];
- 	u8 bssid[ETH_ALEN];
- 	__le16 seq_ctl;
--	u8 payload[0];
-+	u8 payload[];
- } __packed;
- 
- struct wl12xx_ie_header {
-diff --git a/drivers/net/wireless/ti/wlcore/acx.h b/drivers/net/wireless/ti/wlcore/acx.h
-index a265fba0cb4c..c725f5855c13 100644
---- a/drivers/net/wireless/ti/wlcore/acx.h
-+++ b/drivers/net/wireless/ti/wlcore/acx.h
-@@ -938,7 +938,7 @@ struct acx_rx_filter_cfg {
- 	u8 action;
- 
- 	u8 num_fields;
--	u8 fields[0];
-+	u8 fields[];
- } __packed;
- 
- struct acx_roaming_stats {
-diff --git a/drivers/net/wireless/ti/wlcore/boot.h b/drivers/net/wireless/ti/wlcore/boot.h
-index 14b367e98dce..24a2dfcb41ea 100644
---- a/drivers/net/wireless/ti/wlcore/boot.h
-+++ b/drivers/net/wireless/ti/wlcore/boot.h
-@@ -26,7 +26,7 @@ struct wl1271_static_data {
- 	u8 fw_version[WL1271_FW_VERSION_MAX_LEN];
- 	u32 hw_version;
- 	u8 tx_power_table[WL1271_NO_SUBBANDS][WL1271_NO_POWER_LEVELS];
--	u8 priv[0];
-+	u8 priv[];
- };
- 
- /* number of times we try to read the INIT interrupt */
-diff --git a/drivers/net/wireless/ti/wlcore/cmd.h b/drivers/net/wireless/ti/wlcore/cmd.h
-index bfad7b5a1ac6..f2609d5b6bf7 100644
---- a/drivers/net/wireless/ti/wlcore/cmd.h
-+++ b/drivers/net/wireless/ti/wlcore/cmd.h
-@@ -209,7 +209,7 @@ struct wl1271_cmd_header {
- 	__le16 id;
- 	__le16 status;
- 	/* payload */
--	u8 data[0];
-+	u8 data[];
- } __packed;
- 
- #define WL1271_CMD_MAX_PARAMS 572
-diff --git a/drivers/net/wireless/ti/wlcore/conf.h b/drivers/net/wireless/ti/wlcore/conf.h
-index 6116383ee248..31be425f2332 100644
---- a/drivers/net/wireless/ti/wlcore/conf.h
-+++ b/drivers/net/wireless/ti/wlcore/conf.h
-@@ -1150,7 +1150,7 @@ struct wlcore_conf {
- struct wlcore_conf_file {
- 	struct wlcore_conf_header header;
- 	struct wlcore_conf core;
--	u8 priv[0];
-+	u8 priv[];
- } __packed;
- 
- #endif
-diff --git a/drivers/net/wireless/ti/wlcore/wl12xx_80211.h b/drivers/net/wireless/ti/wlcore/wl12xx_80211.h
-index 181be725eff8..1dd7ecc11f86 100644
---- a/drivers/net/wireless/ti/wlcore/wl12xx_80211.h
-+++ b/drivers/net/wireless/ti/wlcore/wl12xx_80211.h
-@@ -66,7 +66,7 @@ struct ieee80211_header {
- 	u8 sa[ETH_ALEN];
- 	u8 bssid[ETH_ALEN];
- 	__le16 seq_ctl;
--	u8 payload[0];
-+	u8 payload[];
- } __packed;
- 
- struct wl12xx_ie_header {
--- 
-2.25.0
+> +	if (epi) {
+> +		if ((is_file_epoll(epi->ffd.file))) {
+> +			ep_src = epi->ffd.file->private_data;
+> +			nests = ep_src->nests;
+> +		} else {
+> +			nests = 1;
+> +		}
+> +	}
+> +	spin_lock_irqsave_nested(&ep->poll_wait.lock, flags, nests);
+> +	ep->nests = nests + 1;
+> +	wake_up_locked_poll(&ep->poll_wait, EPOLLIN);
+> +	ep->nests = 0;
+> +	spin_unlock_irqrestore(&ep->poll_wait.lock, flags);
+>  }
 
