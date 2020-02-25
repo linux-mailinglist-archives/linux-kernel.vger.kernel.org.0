@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51EB816F37B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:30:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EAA016F378
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:30:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730194AbgBYXaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:30:39 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55524 "EHLO
+        id S1729607AbgBYXZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:25:53 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55517 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729489AbgBYXZu (ORCPT
+        with ESMTP id S1729477AbgBYXZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 25 Feb 2020 18:25:50 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j6ja6-0004aP-Gp; Wed, 26 Feb 2020 00:25:38 +0100
+        id 1j6ja6-0004au-Q9; Wed, 26 Feb 2020 00:25:39 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 3C91D104097;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id A6DAC104099;
         Wed, 26 Feb 2020 00:25:33 +0100 (CET)
-Message-Id: <20200225221305.719921962@linutronix.de>
+Message-Id: <20200225221305.919875257@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Feb 2020 23:08:06 +0100
+Date:   Tue, 25 Feb 2020 23:08:08 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [patch 5/8] x86/entry/common: Provide trace/kprobe safe exit to user space functions
+Subject: [patch 7/8] x86/entry: Move irq tracing to prepare_exit_to_user_mode()
 References: <20200225220801.571835584@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,65 +42,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split prepare_enter_to_user_mode() and mark it notrace/noprobe so the irq
-flags tracing on return can be put into it.
+which again gets it out of the ASM code.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/entry/common.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ arch/x86/entry/common.c   |    1 +
+ arch/x86/entry/entry_32.S |    2 +-
+ arch/x86/entry/entry_64.S |    1 -
+ 3 files changed, 2 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/entry/common.c
 +++ b/arch/x86/entry/common.c
-@@ -196,7 +196,7 @@ static void exit_to_usermode_loop(struct
- }
- 
- /* Called with IRQs disabled. */
--__visible inline void prepare_exit_to_usermode(struct pt_regs *regs)
-+static inline void __prepare_exit_to_usermode(struct pt_regs *regs)
+@@ -244,6 +244,7 @@ static inline void __prepare_exit_to_use
+ __visible inline notrace void prepare_exit_to_usermode(struct pt_regs *regs)
  {
- 	struct thread_info *ti = current_thread_info();
- 	u32 cached_flags;
-@@ -241,6 +241,12 @@ static void exit_to_usermode_loop(struct
- 	mds_user_clear_cpu_buffers();
+ 	__prepare_exit_to_usermode(regs);
++	trace_hardirqs_on();
  }
+ NOKPROBE_SYMBOL(prepare_exit_to_usermode);
  
-+__visible inline notrace void prepare_exit_to_usermode(struct pt_regs *regs)
-+{
-+	__prepare_exit_to_usermode(regs);
-+}
-+NOKPROBE_SYMBOL(prepare_exit_to_usermode);
-+
- #define SYSCALL_EXIT_WORK_FLAGS				\
- 	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT |	\
- 	 _TIF_SINGLESTEP | _TIF_SYSCALL_TRACEPOINT)
-@@ -271,7 +277,7 @@ static void syscall_slow_exit_work(struc
-  * Called with IRQs on and fully valid regs.  Returns with IRQs off in a
-  * state such that we can immediately switch to user mode.
-  */
--__visible inline void syscall_return_slowpath(struct pt_regs *regs)
-+__visible inline notrace void syscall_return_slowpath(struct pt_regs *regs)
- {
- 	struct thread_info *ti = current_thread_info();
- 	u32 cached_flags = READ_ONCE(ti->flags);
-@@ -292,8 +298,9 @@ static void syscall_slow_exit_work(struc
- 		syscall_slow_exit_work(regs, cached_flags);
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -855,7 +855,7 @@ SYM_CODE_START_LOCAL(ret_from_exception)
+ 	TRACE_IRQS_OFF
+ 	movl	%esp, %eax
+ 	call	prepare_exit_to_usermode
+-	jmp	restore_all
++	jmp	restore_all_switch_stack
+ SYM_CODE_END(ret_from_exception)
  
- 	local_irq_disable();
--	prepare_exit_to_usermode(regs);
-+	__prepare_exit_to_usermode(regs);
- }
-+NOKPROBE_SYMBOL(syscall_return_slowpath);
+ SYM_ENTRY(__begin_SYSENTER_singlestep_region, SYM_L_GLOBAL, SYM_A_NONE)
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -614,7 +614,6 @@ SYM_CODE_START_LOCAL(common_interrupt)
+ .Lretint_user:
+ 	mov	%rsp,%rdi
+ 	call	prepare_exit_to_usermode
+-	TRACE_IRQS_ON
  
- #ifdef CONFIG_X86_64
- static __always_inline
-@@ -417,7 +424,7 @@ static __always_inline long do_fast_sysc
- 		/* User code screwed up. */
- 		local_irq_disable();
- 		regs->ax = -EFAULT;
--		prepare_exit_to_usermode(regs);
-+		__prepare_exit_to_usermode(regs);
- 		return 0;	/* Keep it simple: use IRET. */
- 	}
- 
+ SYM_INNER_LABEL(swapgs_restore_regs_and_return_to_usermode, SYM_L_GLOBAL)
+ #ifdef CONFIG_DEBUG_ENTRY
 
