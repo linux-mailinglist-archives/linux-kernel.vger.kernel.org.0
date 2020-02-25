@@ -2,105 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7366316BA98
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:30:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CDCB16BA9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:30:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729278AbgBYHaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 02:30:23 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41054 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbgBYHaX (ORCPT
+        id S1729326AbgBYHa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 02:30:27 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33492 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729055AbgBYHaZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 02:30:23 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v4so525074wrs.8
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 23:30:22 -0800 (PST)
+        Tue, 25 Feb 2020 02:30:25 -0500
+Received: by mail-pf1-f195.google.com with SMTP id n7so6726835pfn.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 23:30:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EQMT6lDKStyiOUIYBwkRHyQecoL65OHS2/xGbDrARdU=;
-        b=vgSELXD8DgGTQSv5a9IRoU2vtK9mb9ywLlrNtNTfRByEKonxyGGQfz/bGiGZIVWhSg
-         BzzgxbqaG//TC38gDoGSIy5avusNbIPE6sjoLz84rZF2c2wFoHfBQ3iwVQrMI5PauN8B
-         EAyxHujlLgelVEI1uF2NJcG412aR9yLyioUc3bc4J9XUPxsxMjPPgwc5OcIaWUqLI2Q7
-         93jeIzpMQ8sP011Rr83RsF8dVv7vVtfmAIMXl3AGtQRoUT8SByWxj0tGM9EvZUu+4B82
-         QpmP/9+h9DlZJurP/vlC3xHOf1o+C66VkrjeuC0eaU2/2gJuU+gCwyy0uf8Rvnn/L0fp
-         ZjKQ==
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E829NU76QDF3cP/NsyErXF/fNnm7bAZiWaUr7fUocZ8=;
+        b=QTiTs3aoEEiRq3DT0rUxnmFQocgrrfwNw1ly2CM7jAB6Z81aRWuSBtnCqw+Tt8oY1Q
+         +auweEAILHLb6ZWPUWiZErDojNz6vcZ+I5Ip45q5dna8/Of5jGzziSqbFtPZkVndOrTm
+         DKOSyjrdGGIIGeT/HH4KFmvW8ZtjX1PFCzR1uRi4pdDc4XFut+Jtl8thk/LSyn6dWcVH
+         yA/0wjuouCUKi33ywydJR9L3xdPEQMq+lr6ZzmW8TjrM8LJ3cR00TULafnOY27yZeXLd
+         rhGArS8UOg+Shp7IcB3T8Zx1uEztrfbJxKDjAWkRJ5lFq6S0FwPQxcQURr6pF9GLAdIV
+         My/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EQMT6lDKStyiOUIYBwkRHyQecoL65OHS2/xGbDrARdU=;
-        b=mlj5UB2wRpUgUAjdHXmcgNromN/9HiZ6hX+zvWZZQltyZeu1i6ClPKS9hbQx9lT+7j
-         jCWfh/Ai2eV2Gl5+BayVvqKEWnYRc9s/jIz9rqH5HN8GI+iq8Sm5lXS1Vn0sA6j+D2kH
-         KpR581oV7JuSmgtocEe5Lwy9AUp2axosaYZSZmsz4ABQRv+Kj2UlTzPQh3cuyi3PKthC
-         G2xpJYDWr0dkh9WOHHZpprVrCq5Gl0wHfIJFNTuVqa8dBonDaz63HUlTiIuNQc4cy2p9
-         AP1gvRDUdKUQu9jxL3AO4z5FZaQeQrIur0S1g9+dyWwUAkZ9OmifkGm0U+Shas9KZGBy
-         fvsg==
-X-Gm-Message-State: APjAAAUGQOb2fAM3LhbrHUAsAFU+2U0evyVlBbaZ8Fw+vBf+msNSxWnK
-        n3ytqlprfT1p7L2+MAIk+3HbHT7obHAcm9h82TE35w==
-X-Google-Smtp-Source: APXvYqxwdub7/sbabb0IU0ArscIZ++rPosDp5bcpc1f1YhP3DV42pWo8sOtcmqMfJnBEAUHeeC6p36vrruaZ75Dn9nA=
-X-Received: by 2002:adf:fc12:: with SMTP id i18mr12634989wrr.354.1582615821594;
- Mon, 24 Feb 2020 23:30:21 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E829NU76QDF3cP/NsyErXF/fNnm7bAZiWaUr7fUocZ8=;
+        b=UJLeo5kmqqUrOx3MVP3ndc0gcTbaoBcR0li3y+zhV3PuriJVcKZJlttCJ6zJX6IelT
+         XLueeVbbvI09eNwfWwxwC+UqOP1fI30ygF2aeePhT6dYmDNn86vi5HclaOcW/jejz4Ey
+         mKplyJpzApLhaQ4MN3iXNRCMJU86C4+7Nbg0ic1+XJ4UUDZ/LJxvk12nGrInnKHhN1oe
+         GQot80YUi5YB9W88A0c3t4DcHjbKmb06EOyc2TzrCk49jYooOI0evguyx7ZYfslgvrMS
+         v1zzbKJbt+5HyP3klhuA0PMe970T0uvP1FiAvYkQCi2rNJxJqdMIdnlW9BIUgxt6Gatj
+         qOPg==
+X-Gm-Message-State: APjAAAVflPrfxt7/09BSpP59vnKVWJqY5r2JCxl9gi1Q3fTarkLyM8uj
+        q2lBHt/FPnReqBNFaAfy5kNFTg==
+X-Google-Smtp-Source: APXvYqzXPXVTEmI4sSnMC//AihHYA7770hDbD0z2yO5l63QvCrokdmPOorLFdPHTa0VvcKMZjmxfeg==
+X-Received: by 2002:aa7:8e88:: with SMTP id a8mr33713851pfr.254.1582615825187;
+        Mon, 24 Feb 2020 23:30:25 -0800 (PST)
+Received: from starnight.endlessm-sf.com (ec2-34-209-191-27.us-west-2.compute.amazonaws.com. [34.209.191.27])
+        by smtp.googlemail.com with ESMTPSA id s13sm1796960pjp.1.2020.02.24.23.30.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2020 23:30:24 -0800 (PST)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Takashi Iwai <tiwai@suse.com>
+Cc:     Kailang Yang <kailang@realtek.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux@endlessm.com,
+        Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH] ALSA: hda/realtek - Enable the headset of ASUS B9450FA with ALC294
+Date:   Tue, 25 Feb 2020 15:29:21 +0800
+Message-Id: <20200225072920.109199-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20200225070545.4482-1-pankaj.laxminarayan.bharadiya@intel.com> <20200225070545.4482-6-pankaj.laxminarayan.bharadiya@intel.com>
-In-Reply-To: <20200225070545.4482-6-pankaj.laxminarayan.bharadiya@intel.com>
-From:   Daniel Stone <daniel@fooishbar.org>
-Date:   Tue, 25 Feb 2020 07:29:44 +0000
-Message-ID: <CAPj87rPHFCntSOCx=92HitNxRBkXx3xSft0krkFLzdM2FrDSRw@mail.gmail.com>
-Subject: Re: [Intel-gfx] [RFC][PATCH 5/5] drm/i915/display: Add
- Nearest-neighbor based integer scaling support
-To:     Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        tzimmermann@suse.de, Maxime Ripard <mripard@kernel.org>,
-        mihail.atanassov@arm.com,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Uma Shankar <uma.shankar@intel.com>,
-        "Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+A headset on the laptop like ASUS B9450FA does not work, until quirk
+ALC294_FIXUP_ASUS_HPE is applied.
 
-On Tue, 25 Feb 2020 at 07:17, Pankaj Bharadiya
-<pankaj.laxminarayan.bharadiya@intel.com> wrote:
-> @@ -415,18 +415,26 @@ skl_program_scaler(struct intel_plane *plane,
->         u16 y_vphase, uv_rgb_vphase;
->         int hscale, vscale;
->         const struct drm_plane_state *state = &plane_state->uapi;
-> +       u32 src_w = drm_rect_width(&plane_state->uapi.src) >> 16;
-> +       u32 src_h = drm_rect_height(&plane_state->uapi.src) >> 16;
->         u32 scaling_filter = PS_FILTER_MEDIUM;
-> +       struct drm_rect dst;
->
->         if (state->scaling_filter == DRM_SCALING_FILTER_NEAREST_NEIGHBOR) {
->                 scaling_filter = PS_FILTER_PROGRAMMED;
-> +               skl_setup_nearest_neighbor_filter(dev_priv, pipe, scaler_id);
-> +
-> +               /* Make the scaling window size to integer multiple of source
-> +                * TODO: Should userspace take desision to round scaling window
-> +                * to integer multiple?
-> +                */
-> +               crtc_w = rounddown(crtc_w, src_w);
-> +               crtc_h = rounddown(crtc_h, src_h);
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Singed-off-by: Kailang Yang <kailang@realtek.com>
+---
+ sound/pci/hda/patch_realtek.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-The kernel should absolutely not be changing the co-ordinates that
-userspace requested.
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 477589e7ec1d..a47f6404aea9 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5920,7 +5920,7 @@ enum {
+ 	ALC289_FIXUP_DUAL_SPK,
+ 	ALC294_FIXUP_SPK2_TO_DAC1,
+ 	ALC294_FIXUP_ASUS_DUAL_SPK,
+-
++	ALC294_FIXUP_ASUS_HPE,
+ };
+ 
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -7040,7 +7040,17 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.chained = true,
+ 		.chain_id = ALC294_FIXUP_SPK2_TO_DAC1
+ 	},
+-
++	[ALC294_FIXUP_ASUS_HPE] = {
++		.type = HDA_FIXUP_VERBS,
++		.v.verbs = (const struct hda_verb[]) {
++			/* Set EAPD high */
++			{ 0x20, AC_VERB_SET_COEF_INDEX, 0x0f },
++			{ 0x20, AC_VERB_SET_PROC_COEF, 0x7774 },
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC294_FIXUP_ASUS_HEADSET_MIC
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -7204,6 +7214,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1043, 0x16e3, "ASUS UX50", ALC269_FIXUP_STEREO_DMIC),
+ 	SND_PCI_QUIRK(0x1043, 0x17d1, "ASUS UX431FL", ALC294_FIXUP_ASUS_DUAL_SPK),
+ 	SND_PCI_QUIRK(0x1043, 0x18b1, "Asus MJ401TA", ALC256_FIXUP_ASUS_HEADSET_MIC),
++	SND_PCI_QUIRK(0x1043, 0x19ce, "ASUS B9450FA", ALC294_FIXUP_ASUS_HPE),
+ 	SND_PCI_QUIRK(0x1043, 0x1a13, "Asus G73Jw", ALC269_FIXUP_ASUS_G73JW),
+ 	SND_PCI_QUIRK(0x1043, 0x1a30, "ASUS X705UD", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1b13, "Asus U41SV", ALC269_FIXUP_INV_DMIC),
+-- 
+2.25.1
 
-Cheers,
-Daniel
