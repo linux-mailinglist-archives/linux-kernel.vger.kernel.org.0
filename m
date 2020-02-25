@@ -2,56 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56E4416F101
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 22:19:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E595F16F0C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 22:01:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbgBYVTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 16:19:52 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:49648 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728555AbgBYVTw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 16:19:52 -0500
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
-        by isilmar-4.linta.de (Postfix) with ESMTPSA id 54A0E200A8F;
-        Tue, 25 Feb 2020 21:19:50 +0000 (UTC)
-Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id 9CC8D20BD6; Tue, 25 Feb 2020 20:49:31 +0100 (CET)
-Date:   Tue, 25 Feb 2020 20:49:31 +0100
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Brian Gerst <brgerst@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v2 3/8] x86, syscalls: Refactor COND_SYSCALL macros
-Message-ID: <20200225194931.GC3954@light.dominikbrodowski.net>
-References: <20200224181757.724961-1-brgerst@gmail.com>
- <20200224181757.724961-4-brgerst@gmail.com>
+        id S1729080AbgBYVBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 16:01:51 -0500
+Received: from mga09.intel.com ([134.134.136.24]:44473 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726764AbgBYVBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 16:01:51 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 13:01:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,485,1574150400"; 
+   d="scan'208";a="438193201"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga006.fm.intel.com with ESMTP; 25 Feb 2020 13:01:50 -0800
+Date:   Tue, 25 Feb 2020 13:01:50 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 58/61] KVM: x86/mmu: Configure max page level during
+ hardware setup
+Message-ID: <20200225210149.GH9245@linux.intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
+ <20200201185218.24473-59-sean.j.christopherson@intel.com>
+ <87blpmlobr.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200224181757.724961-4-brgerst@gmail.com>
+In-Reply-To: <87blpmlobr.fsf@vitty.brq.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 01:17:52PM -0500, Brian Gerst wrote:
-> Pull the common code out from the COND_SYSCALL macros into a new
-> __COND_SYSCALL macro.  Also conditionalize the X64 version in preparation
-> for enabling syscall wrappers on 32-bit native kernels.
+On Tue, Feb 25, 2020 at 03:43:36PM +0100, Vitaly Kuznetsov wrote:
+> Sean Christopherson <sean.j.christopherson@intel.com> writes:
+> 
+> > Configure the max page level during hardware setup to avoid a retpoline
+> > in the page fault handler.  Drop ->get_lpage_level() as the page fault
+> > handler was the last user.
+> > @@ -6064,11 +6064,6 @@ static void svm_set_supported_cpuid(struct kvm_cpuid_entry2 *entry)
+> >  	}
+> >  }
+> >  
+> > -static int svm_get_lpage_level(void)
+> > -{
+> > -	return PT_PDPE_LEVEL;
+> > -}
+> 
+> I've probably missed something but before the change, get_lpage_level()
+> on AMD was always returning PT_PDPE_LEVEL, but after the change and when
+> NPT is disabled, we set max_page_level to either PT_PDPE_LEVEL (when
+> boot_cpu_has(X86_FEATURE_GBPAGES)) or PT_DIRECTORY_LEVEL
+> (otherwise). This sounds like a change) unless we think that
+> boot_cpu_has(X86_FEATURE_GBPAGES) is always true on AMD.
 
-With the same caveat as the last patch: Nice work!
+It looks like a functional change, but isn't.  kvm_mmu_hugepage_adjust()
+caps the page size used by KVM's MMU at the minimum of ->get_lpage_level()
+and the host's mapping level.  Barring an egregious bug in the kernel MMU,
+the host page tables will max out at PT_DIRECTORY_LEVEL (2mb) unless
+boot_cpu_has(X86_FEATURE_GBPAGES) is true.
 
-Thanks,
-	Dominik
+In other words, this is effectively a "documentation" change.  I'll figure
+out a way to explain this in the changelog...
+
+        max_level = min(max_level, kvm_x86_ops->get_lpage_level());
+        for ( ; max_level > PT_PAGE_TABLE_LEVEL; max_level--) {
+                linfo = lpage_info_slot(gfn, slot, max_level);
+                if (!linfo->disallow_lpage)
+                        break;
+        }
+
+        if (max_level == PT_PAGE_TABLE_LEVEL)
+                return PT_PAGE_TABLE_LEVEL;
+
+        level = host_pfn_mapping_level(vcpu, gfn, pfn, slot);
+        if (level == PT_PAGE_TABLE_LEVEL)
+                return level;
+
+        level = min(level, max_level); <---------
