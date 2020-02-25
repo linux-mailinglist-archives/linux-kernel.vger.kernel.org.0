@@ -2,82 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D28A216EE19
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:36:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9700E16EE25
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:39:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731597AbgBYSf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 13:35:58 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40984 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727983AbgBYSf6 (ORCPT
+        id S1731604AbgBYSjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 13:39:25 -0500
+Received: from mail-pl1-f171.google.com ([209.85.214.171]:34804 "EHLO
+        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731439AbgBYSjX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 13:35:58 -0500
-Received: by mail-pl1-f196.google.com with SMTP id t14so136758plr.8
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 10:35:58 -0800 (PST)
+        Tue, 25 Feb 2020 13:39:23 -0500
+Received: by mail-pl1-f171.google.com with SMTP id j7so158172plt.1;
+        Tue, 25 Feb 2020 10:39:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/Oq7ZlHByEKisw958sDxdjAX7fiFkXlFc5ymByAOxAI=;
-        b=DS824e58go8okeMKOqEHEbHc21x7FkHA0PkE7JjUV/ffMD1jaGlRVRKQiy5G78ZSYi
-         w1g8VqpgDd0aOt7TLWrv9NKqWgKZYpnTPxeD6k9lHXhVVPmM22eWvb8eWDmVot6ePvL1
-         8WChB0KvbivUsKRrpzgsb+e+Tym3KoTwLEdn4=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=P8swh48wfTLZuYv02RwLOZrF/pIWOZiF/oICtKiXMJc=;
+        b=BE3s7hwKT6oHvUI0W48DjcFi/+3Hm2fY5rHl1CjxQYcS3UXiBjlQrNiwrts0qBdgSB
+         j1gHofmQS/zw6Ow8MGCGQbrJ6pYOzQn90TkBw5kVQMF29L74lTeFJz4BjauMjqwRLf2X
+         Dxil8Dcz1j3AbCnF0KEKSQ6gXAx5uODlCKBGh6XHZhgGlhBajcLIXZ+01G4onRqFQC5S
+         9EC6Tnp7y1l+A7yekcWnRJDUZ4RQGGYs7CWGdtFB4p2fMkE4fatO4YIEowrnXuUhArzp
+         Lq98HT7Ge/L87abL8+It18Av1Iudc9SKBC8ibN4Fwt7X9Y88Ipe1fEahDJYWuuAU9uOu
+         WKxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/Oq7ZlHByEKisw958sDxdjAX7fiFkXlFc5ymByAOxAI=;
-        b=OUxh0P1LKWXu33iYr9pX2pU+SVoeLn8OCtYMP+Quv135e2Qc3PlUMGl+iY9pejqv3O
-         v4LHFIOLg6Rl/J54DgxhBy78G2Sq/V6BAbrgXkCKpZ1BcgxN+qYz08tDgv7n7JgOvnXX
-         +TtrCEpxwHWUhkFBtjQXFMnuZF4zByP8cJ4jXpjhqJIxtXTgA9e/t54ebhXMQDH6olcL
-         GpO1YxDbeDLBRvGZhG1A6pp4c2qaLbvAHeOTv6tcZGHnH9yDJRA1Rxo5pFshi0GRY/Uo
-         CSPEzp8MO9m2rpzmsl1Ck+KuuVjvE7ui3uy8a8Szygnm0ElgCgqrf4ZMLuBsR1+rHZ5L
-         LhGA==
-X-Gm-Message-State: APjAAAWTqhmJ6SO0v8EWyoyQ//KlHiZNQTxn7DxlCUx0f5qZ6/29XZGj
-        4iX74SKJ7+0nmA9lcLb7fYL63w==
-X-Google-Smtp-Source: APXvYqyPmhYJr4gUqySGuqxkFqZHzAJ4hcxUjGcAw4ErEw4uaojqet99DnUp7LnumFp67PKFXpJf/w==
-X-Received: by 2002:a17:90a:7187:: with SMTP id i7mr379790pjk.6.1582655757813;
-        Tue, 25 Feb 2020 10:35:57 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d3sm4311417pjx.10.2020.02.25.10.35.56
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=P8swh48wfTLZuYv02RwLOZrF/pIWOZiF/oICtKiXMJc=;
+        b=fCHgPHfkU/1t40RjXXovjIymU9tPktYWSiayfP3hC5+OvQVPiJQdbs6Y1HViyKdNs9
+         uh1vmk5A6RR+tz7f1OIB7qAnh+TuM0dToexpC+JGAWtJdwmfeBVxiE8NJkuJ3kyJWJs8
+         47LXscySUMwn2CDCUzyk04KHPEOBeH27EJZG9fsAB0ntAEBqY3cC5dC1cHYEF0yyIN3x
+         75bOIFwcDRL3buQHnZMlnanMQqNK+V0+VG9/CCdK+e9pxHeUGTQNm0UA97euzOGjdEIl
+         w9afgcJSJly5yHQJ7NTAQNuTEobuecj9p7zatnAKM9FTQQNhHCGmksCOwksijRpwNS3Q
+         He3g==
+X-Gm-Message-State: APjAAAWk38VSdppr/EX64hwV4rBhxLIaMMDtXFCSHs1c/zmCmUarIcLX
+        hTEk3Joq6hep30FpAL87Y1s=
+X-Google-Smtp-Source: APXvYqyApWD8VybffrlZ5mdReiC24DM6E2uK/QjrEZU40b4xruIxjMwwS+Yey6Aplb1bHaeECPA3bw==
+X-Received: by 2002:a17:90a:cc04:: with SMTP id b4mr369278pju.136.1582655962841;
+        Tue, 25 Feb 2020 10:39:22 -0800 (PST)
+Received: from localhost.localdomain ([103.46.201.207])
+        by smtp.gmail.com with ESMTPSA id 13sm17803325pfi.78.2020.02.25.10.39.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 10:35:57 -0800 (PST)
-Date:   Tue, 25 Feb 2020 10:35:56 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Daniel Micay <danielmicay@gmail.com>
-Cc:     Daniel Axtens <dja@axtens.net>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 5/5] [RFC] mm: annotate memory allocation functions with
- their sizes
-Message-ID: <202002251035.AD29F84@keescook>
-References: <20200120074344.504-1-dja@axtens.net>
- <20200120074344.504-6-dja@axtens.net>
- <CA+DvKQJ6jRHZeZteqY7q-9sU8v3xacSPj65uac3PQfst4cKiMA@mail.gmail.com>
+        Tue, 25 Feb 2020 10:39:22 -0800 (PST)
+From:   amanharitsh123 <amanharitsh123@gmail.com>
+Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Jonathan Corbet <corbet@lwn.net>, rcu@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] doc: Convert to checklist.txt to checklist.rst
+Date:   Wed, 26 Feb 2020 00:09:16 +0530
+Message-Id: <20200225183916.4555-1-amanharitsh123@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+DvKQJ6jRHZeZteqY7q-9sU8v3xacSPj65uac3PQfst4cKiMA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 03:38:22PM -0500, Daniel Micay wrote:
-> There are some uses of ksize in the kernel making use of the real
-> usable size of memory allocations rather than only the requested
-> amount. It's incorrect when mixed with alloc_size markers, since if a
-> number like 14 is passed that's used as the upper bound, rather than a
-> rounded size like 16 returned by ksize. It's unlikely to trigger any
-> issues with only CONFIG_FORTIFY_SOURCE, but it becomes more likely
-> with -fsanitize=object-size or other library-based usage of
-> __builtin_object_size.
+This patch converts checklist.txt to checklist.rst and
+adds it to index.rst
 
-I think the solution here is to use a macro that does the per-bucket
-rounding and applies them to the attributes. Keep the bucket size lists
-in sync will likely need some BUILD_BUG_ON()s or similar.
+Signed-off-by: amanharitsh123 <amanharitsh123@gmail.com>
+---
+ Documentation/RCU/{checklist.txt => checklist.rst} | 8 +++++---
+ Documentation/RCU/index.rst                        | 1 +
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+ rename Documentation/RCU/{checklist.txt => checklist.rst} (99%)
 
+diff --git a/Documentation/RCU/checklist.txt b/Documentation/RCU/checklist.rst
+similarity index 99%
+rename from Documentation/RCU/checklist.txt
+rename to Documentation/RCU/checklist.rst
+index e98ff261a438..49bf7862c950 100644
+--- a/Documentation/RCU/checklist.txt
++++ b/Documentation/RCU/checklist.rst
+@@ -1,5 +1,7 @@
+-Review Checklist for RCU Patches
++.. checklist doc:
+ 
++Review Checklist for RCU Patches
++================================
+ 
+ This document contains a checklist for producing and reviewing patches
+ that make use of RCU.  Violating any of the rules listed below will
+@@ -442,8 +444,8 @@ over a rather long period of time, but improvements are always welcome!
+ 
+ 	You instead need to use one of the barrier functions:
+ 
+-	o	call_rcu() -> rcu_barrier()
+-	o	call_srcu() -> srcu_barrier()
++	-	call_rcu() -> rcu_barrier()
++	-	call_srcu() -> srcu_barrier()
+ 
+ 	However, these barrier functions are absolutely -not- guaranteed
+ 	to wait for a grace period.  In fact, if there are no call_rcu()
+diff --git a/Documentation/RCU/index.rst b/Documentation/RCU/index.rst
+index 81a0a1e5f767..d60eb4ba2cd0 100644
+--- a/Documentation/RCU/index.rst
++++ b/Documentation/RCU/index.rst
+@@ -10,6 +10,7 @@ RCU concepts
+    arrayRCU
+    rcubarrier
+    rcu_dereference
++   checklist
+    whatisRCU
+    rcu
+    listRCU
 -- 
-Kees Cook
+2.20.1
+
