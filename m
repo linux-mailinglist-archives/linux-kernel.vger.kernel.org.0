@@ -2,104 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0708F16B88E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 05:42:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5385816B89B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 05:48:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbgBYElx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 23:41:53 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38081 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728725AbgBYElw (ORCPT
+        id S1728949AbgBYEsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 23:48:18 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:47103 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728725AbgBYEsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 23:41:52 -0500
-Received: by mail-io1-f67.google.com with SMTP id s24so12775101iog.5
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 20:41:52 -0800 (PST)
+        Mon, 24 Feb 2020 23:48:17 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a22so11308704oid.13
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 20:48:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=yPlXEoNM3yOu5GPRYvdxJajDqBUS+kobiBjSqzSqhzM=;
-        b=OHX/yLc/wB9TpLHldMeJcWSy+lrhT97L+Kn1Z4VhhfEtc2lB/V/RW8UzBCYLTB0F9H
-         Uj6YOqak062kVoDt9DYYlfVIBrNVK/wT/IgumcnpKbxR6U0m6vhNhXv9HvbngIsm0LCd
-         Eskz3sNNG8i61YSxjLFBdIFYZwoIQJMq0mFLjsP678urVDwQvTi3Q106G/RgQIE6S59I
-         WdJzzC9G/q8di8brQNcZ7F6UVd1DPhrZbq4vRLh/uR0xp4ZSw2UtLis30xnyzoThEc1p
-         iQ0Z6oM96CCMGNepgU9UmEjzdKd6Jm61TdoVR25wvhBvph5PgFwXCScfzkqB/2zkvkzw
-         1IEA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8hFw/2+e8yIu+oTQjZtUyU9ErjqR4pVSuUZ3rcndg9o=;
+        b=PtLRFYdfyktEzYOdMmbb3eY6tduFNbai+BV6dXjHQCTHU+3fydBmhbTlqegbs1yR16
+         LPNSt855td+Q0EsunAbcNQj1mLHMp7F4jvI/ZmEmyHG/AKi/GXyE9EdahXOih1/2Lmyx
+         jy/kxHEjGzdCyWqbc4cNybxMZNnupy/PgEawcaJ/tsZLG8bJLJ3dXRDhVjyngu645E3X
+         jjeVWrkTqEjHjfL00MQXDmUJpuaicDcS9KPMCECwe1yu+LE48wXVUEejUkih+FBoWjhl
+         XxWLgeAQjgqudo1cmUEZpS4KFF05sU/ytaHw136r5YPg9/5tS3KuszIAKr+UhOJm59zH
+         2zOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to:content-transfer-encoding;
-        bh=yPlXEoNM3yOu5GPRYvdxJajDqBUS+kobiBjSqzSqhzM=;
-        b=YEdk7ECcA+sYfazmpRaFG98XlM29GUnxEugSelPJRJVYuFSHfe3LQUXfi5pnhrVq+1
-         yrK+1s+FhLR+nBzlc6F4vHe4r1GZt0zzoGFO0Aoe5XOr0vwuYA1WS8i9hqt3i1No2mSV
-         RoW4oTuKtbOERlMCLIoAvhsy19YAUQlY7QcTA6GzQThpEyYP9sM3ltdIZNjsGnaYx3nE
-         FgkOLwYNQweErJ5C7a+CTcsFlbS/yXXxn0EGmCPLTNCLJa+nQ593N6POup50Hm7M0YKk
-         ChhgO8buA++58n7Nn+5mjVb2KJyFAI3mHCPVpRI49z3xafUKBXLNYtR8aJR1IQsjv27X
-         qVYQ==
-X-Gm-Message-State: APjAAAXlv9qjCfCG/ykgF+wWLENB3EAQFEkLOrPQdpqfaEgF+IgsTRe0
-        NSf/LtPMnfnXwwRk58ztyiC/trv/EC2doTue/rQ=
-X-Google-Smtp-Source: APXvYqwZK7j1BNZlx0ZpqUpTD6xbr819oudfW01KEaGl9fC8DDMmjMLlQ6EMUdVZXYvHpiD9KburSiljMLEyRKuB3ss=
-X-Received: by 2002:a05:6602:2510:: with SMTP id i16mr13786768ioe.172.1582605711970;
- Mon, 24 Feb 2020 20:41:51 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8hFw/2+e8yIu+oTQjZtUyU9ErjqR4pVSuUZ3rcndg9o=;
+        b=cYzCVrg5S6KW6L6MnKx0dnKfp4xyYz4g3F0J04X6RRpI6K6WQMPESEmBFqCvSF3qwP
+         dOXQBlLBEMM2p8IzuY/jp9tBMQH0vzWIHNWQz7EsJY2xsVxEboqHpL+BdVYPr4XCznNz
+         QpnFuvPsegZ1y2X+R4yt4yr41lqR5RhkDmC7JhoeQWQ5qy3eAgCAXmuPiwReAaM6tew+
+         dJPkxDuvwDw4dWaqsQOJAD+moM5/SMsVcK3KwjRdIOHOT3kuzMK9fOTxmkuIE2e0iGiz
+         eHrK6vsjBXFdVOCszUBT5Yr1OlG23VWzSlEQnoIufDX0ZPsRBBpwa5eHfTt35pdT8mBk
+         f95A==
+X-Gm-Message-State: APjAAAUTQm+x6fAhE7ytkqL5U6E4giS/GE7Rb/p7podUsjH0JPWJteRF
+        fC+ouPLTBS2SoGiHZIxI6MTNlYJQqdznyac3yA6Hzg==
+X-Google-Smtp-Source: APXvYqwQ2ScdUlCWKvSQ/ccc0w/PD1wrET6jN+awWxy5+xpXca7W/SbgKWYlDVYNHanQ8IXhf/O29RbhRyXCMS/3WE0=
+X-Received: by 2002:aca:50cd:: with SMTP id e196mr2001704oib.178.1582606095459;
+ Mon, 24 Feb 2020 20:48:15 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a02:8798:0:0:0:0:0 with HTTP; Mon, 24 Feb 2020 20:41:51
- -0800 (PST)
-From:   Donna Louise <donnalouisemchince@gmail.com>
-Date:   Mon, 24 Feb 2020 16:41:51 -1200
-X-Google-Sender-Auth: S7je1U0tcEeIynKBDTMwSAlMRv0
-Message-ID: <CAGPv-0H-raj0c8XxQt=Qaw2zBY54wfT42-t7ULw1HGxA7ex4YA@mail.gmail.com>
-Subject: Hello,
-To:     undisclosed-recipients:;
+References: <20200224235824.126361-1-john.stultz@linaro.org> <a8af6c423501d5d49f1d81997b3a2295c0df7b9e.camel@perches.com>
+In-Reply-To: <a8af6c423501d5d49f1d81997b3a2295c0df7b9e.camel@perches.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Mon, 24 Feb 2020 20:48:03 -0800
+Message-ID: <CALAqxLW7xjPh8SZtZ+ES9fghdMDQZfG_ToSrX+u7DMAOixyQ1Q@mail.gmail.com>
+Subject: Re: [RFC][PATCH] checkpatch: Properly warn if Change-Id comes after
+ first Signed-off-by line
+To:     Joe Perches <joe@perches.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Andy Whitcroft <apw@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings.
+On Mon, Feb 24, 2020 at 6:13 PM Joe Perches <joe@perches.com> wrote:
+>
+> On Mon, 2020-02-24 at 23:58 +0000, John Stultz wrote:
+> > Quite often, the Change-Id may be between Signed-off-by: lines or
+> > at the end of them. Unfortunately checkpatch won't catch these
+> > cases as it disables in_commit_log when it catches the first
+> > Signed-off-by line.
+> >
+> > This has bitten me many many times.
+>
+> Hmm.  When is change-id used in your workflow?
 
+Since I have a few kernel repos that I use for both upstream work and
+work targeting AOSP trees, I usually have the gerrit commit hook
+enabled in my tree (its easier to strip with sed then it is to re-add
+after submitting to gerrit), and at least the commit-msg hook I have
+will usually append a Change-Id: line at the end of the commit
+message, usually after the signed-off-by line.
 
-Please do not feel disturbed for contacting =C2=A0you in this manner, It
-was based on the critical health condition I find mine self.=C2=A0 My names
-are Mrs. Donna McInnes Louise, a widow and I=E2=80=99m suffering from brain
-tumor disease and this illness has gotten to a very bad stage, I
-married my husband for Ten years without any family members and no
-child.=C2=A0 My husband died after a brief illness that lasted for few
-days.
+Even in the example in the README from:
+  https://android.googlesource.com/kernel/common/+/android-mainline
+shows how one might have the change-id and other AOSP tags added after
+the existing sob-chain. So it doesn't seem to be that rare.
 
+Some other examples from the android-mainline tree:
+https://android.googlesource.com/kernel/common/+/5fba1b18cfc72e264e5f3ce49020ed322aa6ac9f
+https://android.googlesource.com/kernel/common/+/6ea0a439a15ba42b6c5f81618e53d5c61f89e4ac
+https://android.googlesource.com/kernel/common/+/99f4553ab4a6b008b37e878f7046a2202cdb2ec4
 
-Since the death of my husband, I decided not to remarry again, When my
-late husband was alive he deposited the sum of =C2=A0($11.000.000 Eleven
-million dollars.) with the Bank. Presently this money is still in
-bank. And My Doctor told me that I don't have much time to live
-because my illness has gotten to a very bad stage, Having known my
-condition I decided to entrust over the deposited fund under your
-custody to take care of the less-privileged ones therein your country
-or position, which i believe that you will utilize this money the way
-I am going to instruct herein.
+> > I suspect this patch will break other use cases, so it probably
+> > shouldn't be merged, but I wanted to share it just to help
+> > illustrate the problem.
+> >
+> > Cc: Andy Whitcroft <apw@canonical.com>
+> > Cc: Joe Perches <joe@perches.com>
+> > Signed-off-by: John Stultz <john.stultz@linaro.org>
+>
+> Yes, I expect this will break things.
 
+Suggestions for a better approach? I can't say I'm very familiar with
+checkpatch's code.
 
-However all I need and required from you is your sincerity and ability
-to carry out the transaction successfully and fulfill my final wish in
-implementing the charitable project as it requires absolute trust and
-devotion without any failure and I will be glad to see that the bank
-finally release and transfer the fund into your bank account in your
-country even before I die here in the hospital, because my present
-health condition is very critical at the moment everything needs to be
-process rapidly as soon as possible.
+> And it's probably better to not add a Signed-off-by: when
+> you intend this not to be merged.
 
-It will be my pleasure to compensate you as my Investment
-Manager/Partner with 35 % percent of the total fund for your effort in
-handling the transaction, 5 % percent for any expenses or processing
-charges fee that will involve during this process while 60% of the
-fund will be Invested into the charity project there in your country
-for the mutual benefit of the orphans and the less privileges ones.
-Meanwhile I am waiting for your prompt respond, if only you are
-interested for further details of the transaction and execution of
-this humanitarian project for the glory and honor of God the merciful
-compassionate.
+So, I try to add Sign-off-by to all the patches I send as it certifies
+that I wrote it or otherwise have the right to pass it on as an
+open-source patch - not as "ok to merge" criteria.
 
+More vendor code then I'd like is usually not intended to be merged
+upstream, but it's still important that folks sign off their patches.
+:)
 
-May bless you and your family.
-Yours sincerely Mrs. Donna McInnes Louise.
+thanks
+-john
