@@ -2,95 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1214316B9EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 07:44:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A14E416B9F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 07:46:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbgBYGoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 01:44:10 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:29696 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729025AbgBYGoK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 01:44:10 -0500
-X-IronPort-AV: E=Sophos;i="5.70,483,1574092800"; 
-   d="scan'208";a="83891623"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 25 Feb 2020 14:44:06 +0800
-Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
-        by cn.fujitsu.com (Postfix) with ESMTP id 081C950A9976;
-        Tue, 25 Feb 2020 14:34:20 +0800 (CST)
-Received: from G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.85) by
- G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
- (TLS) id 15.0.1395.4; Tue, 25 Feb 2020 14:44:02 +0800
-Received: from Fedora-30.g08.fujitsu.local (10.167.220.106) by
- G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- id 14.3.439.0; Tue, 25 Feb 2020 14:44:05 +0800
-From:   Xiao Yang <yangx.jy@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        Xiao Yang <yangx.jy@cn.fujitsu.com>
-Subject: [PATCH] tools/perf/util/*.c: Use "%zd" output format for size_t type
-Date:   Tue, 25 Feb 2020 14:39:01 +0800
-Message-ID: <20200225063901.20165-1-yangx.jy@cn.fujitsu.com>
-X-Mailer: git-send-email 2.21.0
+        id S1729134AbgBYGqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 01:46:24 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:33934 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725851AbgBYGqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 01:46:23 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 922281C22B672596022C;
+        Tue, 25 Feb 2020 14:46:19 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 25 Feb 2020 14:46:11 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <davem@davemloft.net>, <jiri@mellanox.com>, <krzk@kernel.org>,
+        <gregkh@linuxfoundation.org>, <Jason@zx2c4.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <chenzhou10@huawei.com>
+Subject: [PATCH -next] drivers: net: WIREGUARD depends on IPV6
+Date:   Tue, 25 Feb 2020 14:39:30 +0800
+Message-ID: <20200225063930.106436-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 081C950A9976.AA05D
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: yangx.jy@cn.fujitsu.com
-X-Spam-Status: No
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoid the following errors when building perf:
------------------------------------------------
-util/session.c: In function 'perf_session__process_compressed_event':
-util/session.c:91:11: error: format '%ld' expects argument of type 'long int', but argument 4 has type 'size_t {aka unsigned int}' [-Werror=format=]
-  pr_debug("decomp (B): %ld to %ld\n", src_size, decomp_size);
-...
-til/zstd.c: In function 'zstd_decompress_stream':
-util/zstd.c:102:11: error: format '%ld' expects argument of type 'long int', but argument 4 has type 'size_t {aka unsigned int}' [-Werror=format=]
-    pr_err("failed to decompress (B): %ld -> %ld, dst_size %ld : %s\n",
-...
------------------------------------------------
+If CONFIG_IPV6 is n, build fails:
 
-Signed-off-by: Xiao Yang <yangx.jy@cn.fujitsu.com>
+drivers/net/wireguard/device.o: In function `wg_xmit':
+device.c:(.text+0xb2d): undefined reference to `icmpv6_ndo_send'
+make: *** [vmlinux] Error 1
+
+Set WIREGUARD depending on IPV6 to fix this.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
 ---
- tools/perf/util/session.c | 2 +-
- tools/perf/util/zstd.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index d0d7d25b23e3..5b74d606b4b7 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -88,7 +88,7 @@ static int perf_session__process_compressed_event(struct perf_session *session,
- 		session->decomp_last = decomp;
- 	}
- 
--	pr_debug("decomp (B): %ld to %ld\n", src_size, decomp_size);
-+	pr_debug("decomp (B): %zd to %zd\n", src_size, decomp_size);
- 
- 	return 0;
- }
-diff --git a/tools/perf/util/zstd.c b/tools/perf/util/zstd.c
-index d2202392ffdb..48dd2b018c47 100644
---- a/tools/perf/util/zstd.c
-+++ b/tools/perf/util/zstd.c
-@@ -99,7 +99,7 @@ size_t zstd_decompress_stream(struct zstd_data *data, void *src, size_t src_size
- 	while (input.pos < input.size) {
- 		ret = ZSTD_decompressStream(data->dstream, &output, &input);
- 		if (ZSTD_isError(ret)) {
--			pr_err("failed to decompress (B): %ld -> %ld, dst_size %ld : %s\n",
-+			pr_err("failed to decompress (B): %zd -> %zd, dst_size %zd : %s\n",
- 			       src_size, output.size, dst_size, ZSTD_getErrorName(ret));
- 			break;
- 		}
+diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+index 25a8f93..824292e 100644
+--- a/drivers/net/Kconfig
++++ b/drivers/net/Kconfig
+@@ -74,7 +74,7 @@ config DUMMY
+ config WIREGUARD
+ 	tristate "WireGuard secure network tunnel"
+ 	depends on NET && INET
+-	depends on IPV6 || !IPV6
++	depends on IPV6
+ 	select NET_UDP_TUNNEL
+ 	select DST_CACHE
+ 	select CRYPTO
 -- 
-2.21.0
-
-
+2.7.4
 
