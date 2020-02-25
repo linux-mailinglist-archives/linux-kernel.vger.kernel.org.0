@@ -2,86 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A09B16BCC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 09:55:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 229DD16BC2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 09:49:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbgBYIzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 03:55:35 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:46144 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730030AbgBYIze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 03:55:34 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 952C4212C07;
-        Tue, 25 Feb 2020 09:55:32 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 04548212C0C;
-        Tue, 25 Feb 2020 09:55:25 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C7F13402ED;
-        Tue, 25 Feb 2020 16:55:15 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        leonard.crestez@nxp.com, abel.vesa@nxp.com, peng.fan@nxp.com,
-        ping.bai@nxp.com, fugang.duan@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 4/4] clk: imx8mq: A53 core clock no need to be critical
-Date:   Tue, 25 Feb 2020 16:49:14 +0800
-Message-Id: <1582620554-32689-4-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582620554-32689-1-git-send-email-Anson.Huang@nxp.com>
-References: <1582620554-32689-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729760AbgBYItn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 03:49:43 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38315 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729253AbgBYItn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 03:49:43 -0500
+Received: by mail-wr1-f66.google.com with SMTP id e8so13671579wrm.5
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 00:49:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=cnofqUXRGJIN4pxgWdVN1/yaAjfW7JomRgm1+ntQ8Xw=;
+        b=EPUIycS8dIQcn0+d2qhh474RooYVtU6/d7a/56OKgbnyb/hTHvFZli8OgwvSJLKS23
+         Y57gA9Fe9lX4HdDk9iGNF8BBmrLiPQNOFG72YK48jSu3HjFkVqSwb1ndBgC/kEEqo6wT
+         3rue1Gj59uI15SbRc5/fmRBVTWBndrCkHcWG1mY29SpYTwOlXRQAw9DOV5jwBvy6btZC
+         abygQyIWqD12WZbsr2Z/Mk6QuvGDl9T78PoNJEAd5i2s9334EI6R+P19Q/YlzczgxSC+
+         mYA9Q2E2l8Mk3zIt5DdYUf6CPEzqL83yM7wdWKlw2/NkIqyWE8vRSz5xfKexTUZ9sSSF
+         tLIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=cnofqUXRGJIN4pxgWdVN1/yaAjfW7JomRgm1+ntQ8Xw=;
+        b=RrO3TcoGpX5l5LJu1cweao2VQN1GsQAETLHvPUWk8t7PC59gPMDEfEN72Jjxi060KF
+         zWA9LtRgey7Cvx1tlmfPArgDYg7yIkivRQxUUWpS51TT7U+s0FlUnv6EB3mdenU6gSqW
+         AF0pxJzg3jXinuahsckjTo0ZN3m2w0ZO8rbERrNfzq61dBy6G7blQiJgUL5ki5VjtOSy
+         hpIKI04FSibQMmA6nk0AE9PGt48OOhe5+C8ut/iBoUYnzzwchEWcp/bBgWFxQcJTq+da
+         KyUfM51CyuibgCpMHCaEvhu0g42LdTT1u+gTFrg4nyrhpucBAu+2aD0P0FiBXY0VN5mY
+         DYbA==
+X-Gm-Message-State: APjAAAUaeUIo7/GXcE5V+cQ254HnqAFItXO5Vt7W5u81WnnxMpcTw2A9
+        pIl5grX/X8P7hLtFCzgHXZT9XQ==
+X-Google-Smtp-Source: APXvYqxxuYv8m+X3ZqXUykIUrv6we6k4NcBbA+MNXbJUfsEB/CPvZdEG1qytk8+tdA2vEGN2wc0BcQ==
+X-Received: by 2002:a5d:4d4a:: with SMTP id a10mr75744408wru.220.1582620581241;
+        Tue, 25 Feb 2020 00:49:41 -0800 (PST)
+Received: from dell ([2.31.163.122])
+        by smtp.gmail.com with ESMTPSA id i4sm3174232wmd.23.2020.02.25.00.49.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2020 00:49:40 -0800 (PST)
+Date:   Tue, 25 Feb 2020 08:50:12 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Baolin Wang <baolin.wang7@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND PATCH] mfd: sc27xx: Add USB charger type detection
+ support
+Message-ID: <20200225085012.GW3494@dell>
+References: <049eb16cf995d3a2dd0de01f4c0ed09965e36f92.1581906151.git.baolin.wang7@gmail.com>
+ <20200224113926.GU3494@dell>
+ <CADBw62ry=+2Rm-Xnar-oeGe_JipvZ9zw=stT7vMHd+QR_m-JEw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADBw62ry=+2Rm-Xnar-oeGe_JipvZ9zw=stT7vMHd+QR_m-JEw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'A53_CORE' is just a mux and no need to be critical, being critical
-will cause its parent clock always ON which does NOT make sense,
-to make sure CPU's hardware clock source NOT being disabled during
-clock tree setup, need to move the 'A53_SRC'/'A53_CORE' reparent
-operations to after critical clock 'ARM_CLK' setup finished.
+On Tue, 25 Feb 2020, Baolin Wang wrote:
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx8mq.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> Hi Lee,
+> 
+> On Mon, Feb 24, 2020 at 7:38 PM Lee Jones <lee.jones@linaro.org> wrote:
+> >
+> > On Mon, 17 Feb 2020, Baolin Wang wrote:
+> >
+> > > The Spreadtrum SC27XX series PMICs supply the USB charger type detection
+> > > function, and related registers are located on the PMIC global registers
+> > > region, thus we implement and export this function in the MFD driver for
+> > > users to get the USB charger type.
+> > >
+> > > Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+> > > ---
+> > >  drivers/mfd/sprd-sc27xx-spi.c   |   52 +++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/mfd/sc27xx-pmic.h |    7 ++++++
+> > >  2 files changed, 59 insertions(+)
+> > >  create mode 100644 include/linux/mfd/sc27xx-pmic.h
+> >
+> > [...]
+> >
+> > > +enum usb_charger_type sprd_pmic_detect_charger_type(struct device *dev)
+> > > +{
+> > > +     struct spi_device *spi = to_spi_device(dev);
+> > > +     struct sprd_pmic *ddata = spi_get_drvdata(spi);
+> > > +     const struct sprd_pmic_data *pdata = ddata->pdata;
+> > > +     enum usb_charger_type type;
+> > > +     u32 val;
+> > > +     int ret;
+> > > +
+> > > +     ret = regmap_read_poll_timeout(ddata->regmap, pdata->charger_det, val,
+> > > +                                    (val & SPRD_PMIC_CHG_DET_DONE),
+> > > +                                    SPRD_PMIC_CHG_DET_DELAY_US,
+> > > +                                    SPRD_PMIC_CHG_DET_TIMEOUT);
+> > > +     if (ret) {
+> > > +             dev_err(&spi->dev, "failed to detect charger type\n");
+> > > +             return UNKNOWN_TYPE;
+> > > +     }
+> > > +
+> > > +     switch (val & SPRD_PMIC_CHG_TYPE_MASK) {
+> > > +     case SPRD_PMIC_CDP_TYPE:
+> > > +             type = CDP_TYPE;
+> > > +             break;
+> > > +     case SPRD_PMIC_DCP_TYPE:
+> > > +             type = DCP_TYPE;
+> > > +             break;
+> > > +     case SPRD_PMIC_SDP_TYPE:
+> > > +             type = SDP_TYPE;
+> > > +             break;
+> > > +     default:
+> > > +             type = UNKNOWN_TYPE;
+> > > +             break;
+> > > +     }
+> > > +
+> > > +     return type;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(sprd_pmic_detect_charger_type);
+> >
+> > Where is this called from?
+> 
+> Our USB phy driver will call this API to get the charger type, which
+> is used to notify the corresponding current can be drawn to charger
+> drivers. And we will introduce users after this patch getting applied.
+> 
+> > Why isn't the charger type detected in the charger driver?
+> 
+> The charger type detection operation is not a part of charger, and its
+> related registers are located on the PMIC global registers area. So I
+> think the PMIC driver is the right place to implement. Moreover Arnd
+> also suggested us to implement these APIs in the PMIC driver if I
+> remember correctly.
 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index b81f02a..fdc68db 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -428,7 +428,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MQ_CLK_GPU_SHADER_DIV] = hws[IMX8MQ_CLK_GPU_SHADER];
- 
- 	/* CORE SEL */
--	hws[IMX8MQ_CLK_A53_CORE] = imx_clk_hw_mux2_flags("arm_a53_core", base + 0x9880, 24, 1, imx8mq_a53_core_sels, ARRAY_SIZE(imx8mq_a53_core_sels), CLK_IS_CRITICAL);
-+	hws[IMX8MQ_CLK_A53_CORE] = imx_clk_hw_mux2("arm_a53_core", base + 0x9880, 24, 1, imx8mq_a53_core_sels, ARRAY_SIZE(imx8mq_a53_core_sels));
- 
- 	/* BUS */
- 	hws[IMX8MQ_CLK_MAIN_AXI] = imx8m_clk_hw_composite_critical("main_axi", imx8mq_main_axi_sels, base + 0x8800);
-@@ -593,15 +593,15 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MQ_GPT_3M_CLK] = imx_clk_hw_fixed_factor("gpt_3m", "osc_25m", 1, 8);
- 	hws[IMX8MQ_CLK_DRAM_ALT_ROOT] = imx_clk_hw_fixed_factor("dram_alt_root", "dram_alt", 1, 4);
- 
--	clk_hw_set_parent(hws[IMX8MQ_CLK_A53_SRC], hws[IMX8MQ_SYS1_PLL_800M]);
--	clk_hw_set_parent(hws[IMX8MQ_CLK_A53_CORE], hws[IMX8MQ_ARM_PLL_OUT]);
--
- 	hws[IMX8MQ_CLK_ARM] = imx_clk_hw_cpu("arm", "arm_a53_core",
- 					   hws[IMX8MQ_CLK_A53_CORE]->clk,
- 					   hws[IMX8MQ_CLK_A53_CORE]->clk,
- 					   hws[IMX8MQ_ARM_PLL_OUT]->clk,
- 					   hws[IMX8MQ_CLK_A53_DIV]->clk);
- 
-+	clk_hw_set_parent(hws[IMX8MQ_CLK_A53_SRC], hws[IMX8MQ_SYS1_PLL_800M]);
-+	clk_hw_set_parent(hws[IMX8MQ_CLK_A53_CORE], hws[IMX8MQ_ARM_PLL_OUT]);
-+
- 	imx_check_clk_hws(hws, IMX8MQ_CLK_END);
- 
- 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+You shouldn't think of this as a PMIC driver.  This is a device's
+parent were functional drivers are allocated and registered.  Any
+useful functionality should be farmed out to the child devices which
+are to be appropriately dispersed and located into the subsystems.
+
+It looks like the charger has access to the same register map as this
+parent driver.  I do not see any compelling reason to provide charger
+specific functionality in the parent driver at this point.
+
 -- 
-2.7.4
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
