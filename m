@@ -2,118 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FD5216C363
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:08:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 477C016C34B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:07:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730671AbgBYOIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 09:08:41 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44621 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730636AbgBYOIh (ORCPT
+        id S1730552AbgBYOHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 09:07:05 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57636 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725788AbgBYOHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:08:37 -0500
-Received: by mail-wr1-f67.google.com with SMTP id m16so14856169wrx.11;
-        Tue, 25 Feb 2020 06:08:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JL4Q1l1W07XAcq8S0r/D3xLT9kgasro6XokOt1NtSiI=;
-        b=MZWJuGhSP85kFq7spVW+O11aVWt7Xewr+oYPq73Zn+JD71eMwAVPXm96SD2gdNAGJZ
-         1uqEuPNRjme7Ac18Ghbp/9K0bvBLXE0S0l/2/dO3VQQZxs4aCuxhDhSCFKQq8k55DZeR
-         x5r58FBU/txaSh/cZGJ0KnOFihaNVpZD98mNtEZcnF6SzGEMkaK3nK8b9C4PGsaN1goo
-         PwJ90DzR/4H3SckQI2tetCNgH+GWBb+qhxjV+MGMeFIZPByu6ko6cpkAt7ebZ2f7A7SH
-         D2XvgJ0+uFfilXnxRp7REUQ3T1Gp8mEHOxk83fay7bep2rjiklcBwzO0fO0s2lkspwgS
-         aj5g==
+        Tue, 25 Feb 2020 09:07:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582639623;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nsLsuFeIQPYcnkAa/VDzmAJLH88gjRW8GgyCncxisZ4=;
+        b=IQAxfxhQedse0fMW8pb2e+3TJrYdaciwLEpYhEHz70scRi/B/Mr4FlnLEyst/PAHCQS0lI
+        jBmonpQC2tqvdG8WkejA83zfhg+OT865aP2FBKVCZkSeNHsB5fbHFetrxPGLsQREjV9EbC
+        lVdIHRnJ0FKct1xxAhnx8WpvtrBSprw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-406-F1leL3HyPj6Lhu-XYCTfbQ-1; Tue, 25 Feb 2020 09:06:59 -0500
+X-MC-Unique: F1leL3HyPj6Lhu-XYCTfbQ-1
+Received: by mail-wm1-f71.google.com with SMTP id p2so910444wma.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 06:06:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JL4Q1l1W07XAcq8S0r/D3xLT9kgasro6XokOt1NtSiI=;
-        b=SzZ6c3A4vHY369iaphSRRejz4UoK4d5jtg/taJmRTn9ZCYYPVnVbABXzsnF5nGiLRK
-         MrpgTRnfDx+eHl6roUm40eknZIsaTaeHU7YaHXT5fvHzFj/XEJx2kRhztThN/tTAld4b
-         pIzwM7tuiQETNoUDibhr2JWrrZe4nhXk+aZlLHjdPoWRPzAjeORfJNKKvlFw5IOqcM0B
-         9faXhGr/WHGeLzm/TeSVo3h0cmRsoPL/w5YU8AIyfPXEby739JvU1rAtCbiu0B7vDpP+
-         N5UzVq0Q91j1egLSaVJyDumdW3Cd4ZRyPbQyQGbzVbim0zvXjOGEsKd+grpEiW2EMC/L
-         Gqtw==
-X-Gm-Message-State: APjAAAVQT5RpoLlsO41Sl46S0bj4DIPgTB98QY5mHTmUTcH9C7/TdXi6
-        ZqZlOUNKSfzXfbP/Y9g8eHM=
-X-Google-Smtp-Source: APXvYqxaeJdsQZUPEGWE+H0VhtPrOGAnLR724qjByg+055q0tc1L6tghO3BMF3ID4Tp9+RTEOOTWBg==
-X-Received: by 2002:a05:6000:188:: with SMTP id p8mr72225419wrx.336.1582639715749;
-        Tue, 25 Feb 2020 06:08:35 -0800 (PST)
-Received: from ?IPv6:2003:ea:8f29:6000:30a8:e117:ed7d:d145? (p200300EA8F29600030A8E117ED7DD145.dip0.t-ipconnect.de. [2003:ea:8f29:6000:30a8:e117:ed7d:d145])
-        by smtp.googlemail.com with ESMTPSA id m21sm4155888wmi.27.2020.02.25.06.08.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2020 06:08:35 -0800 (PST)
-Subject: [PATCH v3 6/8] net: skfp: use PCI_STATUS_ERROR_BITS
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        David Miller <davem@davemloft.net>,
-        Mirko Lindner <mlindner@marvell.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        alsa-devel@alsa-project.org
-References: <20ca7c1f-7530-2d89-40a6-d97a65aa25ef@gmail.com>
-Message-ID: <a012a7cf-d960-0bf8-29d2-403b75589c64@gmail.com>
-Date:   Tue, 25 Feb 2020 15:06:17 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=nsLsuFeIQPYcnkAa/VDzmAJLH88gjRW8GgyCncxisZ4=;
+        b=PqTwR44ySRAkOJN1EC/prFS+pU+J1RZzjD1uKTXRXiJs723xp3MV0vZVw7aFxmVE4c
+         IHJEnOSs04Cvih5AuzHHoignTJXCxLPcexVML7+c3HPJyP6NRbfbZGr0t1l+y3F9lgwz
+         UT49oxsrMCk5R/qDNonXqO9W+49MhOh0Y2VlG8ZQkdXYNSFQwpQgus8BW3QDdykQNVAw
+         yZKQ52/JUibMMl6MJQPD8bH1KjY+Wfq4y4a2ieiT6xONXJCgV8D6Se4IQKVHIw/yXfqP
+         o159jVc8k5MYIbQ8EAAtZeRjZ0VIkRii3jVlvPr7bAMSNe1sW7Oz3A0aK/SvteOdfjkF
+         gy9w==
+X-Gm-Message-State: APjAAAUPg/2MtNqwVH17nKoKmxDj27VubfBRjC2FkAjtzlzDp7klRr/F
+        c8+5UqQ5w8+lz2jweL+cyI0QrJqg5Akp3S4jTjfOAigSWJ0ufvQPrNjfyxhcVuF5nXLyD4zc52v
+        5nMX5Vv/6EWN21eHgDQU/WkKQ
+X-Received: by 2002:a1c:f008:: with SMTP id a8mr5388830wmb.81.1582639618476;
+        Tue, 25 Feb 2020 06:06:58 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwaifqeoSZjnYk4Mg1qtEqaTG7voewFuaRxLLbNZc17nvAEuudygfkwayhsT4aeCSe1PaUqaw==
+X-Received: by 2002:a1c:f008:: with SMTP id a8mr5388814wmb.81.1582639618233;
+        Tue, 25 Feb 2020 06:06:58 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id j66sm4400946wmb.21.2020.02.25.06.06.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2020 06:06:57 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 51/61] KVM: x86: Use kvm_cpu_caps to detect Intel PT support
+In-Reply-To: <20200201185218.24473-52-sean.j.christopherson@intel.com>
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-52-sean.j.christopherson@intel.com>
+Date:   Tue, 25 Feb 2020 15:06:56 +0100
+Message-ID: <87v9nulq0v.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20ca7c1f-7530-2d89-40a6-d97a65aa25ef@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new constant PCI_STATUS_ERROR_BITS to simplify the code.
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- drivers/net/fddi/skfp/drvfbi.c  | 2 +-
- drivers/net/fddi/skfp/h/skfbi.h | 5 -----
- 2 files changed, 1 insertion(+), 6 deletions(-)
+> Check for Intel PT using kvm_cpu_cap_has() to pave the way toward
+> eliminating ->pt_supported().
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/kvm/cpuid.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index a37cb6fda979..3d287fc6eb6e 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -507,7 +507,6 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+>  {
+>  	struct kvm_cpuid_entry2 *entry;
+>  	int r, i, max_idx;
+> -	unsigned f_intel_pt = kvm_x86_ops->pt_supported() ? F(INTEL_PT) : 0;
+>  
+>  	/* all calls to cpuid_count() should be made on the same cpu */
+>  	get_cpu();
+> @@ -687,7 +686,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+>  		break;
+>  	/* Intel PT */
+>  	case 0x14:
+> -		if (!f_intel_pt) {
+> +		if (!kvm_cpu_cap_has(X86_FEATURE_INTEL_PT)) {
+>  			entry->eax = entry->ebx = entry->ecx = entry->edx = 0;
+>  			break;
+>  		}
 
-diff --git a/drivers/net/fddi/skfp/drvfbi.c b/drivers/net/fddi/skfp/drvfbi.c
-index 9c8aa3a95..d5937aff5 100644
---- a/drivers/net/fddi/skfp/drvfbi.c
-+++ b/drivers/net/fddi/skfp/drvfbi.c
-@@ -112,7 +112,7 @@ static void card_start(struct s_smc *smc)
- 	 */
- 	outp(ADDR(B0_TST_CTRL), TST_CFG_WRITE_ON) ;	/* enable for writes */
- 	word = inpw(PCI_C(PCI_STATUS)) ;
--	outpw(PCI_C(PCI_STATUS), word | PCI_ERRBITS) ;
-+	outpw(PCI_C(PCI_STATUS), word | PCI_STATUS_ERROR_BITS) ;
- 	outp(ADDR(B0_TST_CTRL), TST_CFG_WRITE_OFF) ;	/* disable writes */
- 
- 	/*
-diff --git a/drivers/net/fddi/skfp/h/skfbi.h b/drivers/net/fddi/skfp/h/skfbi.h
-index 480795681..ccee00b71 100644
---- a/drivers/net/fddi/skfp/h/skfbi.h
-+++ b/drivers/net/fddi/skfp/h/skfbi.h
-@@ -33,11 +33,6 @@
-  */
- #define I2C_ADDR_VPD	0xA0	/* I2C address for the VPD EEPROM */ 
- 
--
--#define PCI_ERRBITS	(PCI_STATUS_DETECTED_PARITY | PCI_STATUS_SIG_SYSTEM_ERROR | PCI_STATUS_REC_MASTER_ABORT | PCI_STATUS_SIG_TARGET_ABORT | PCI_STATUS_PARITY)
--
--
--
- /*
-  *	Control Register File:
-  *	Bank 0
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+
 -- 
-2.25.1
-
-
-
+Vitaly
 
