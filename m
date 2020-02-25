@@ -2,214 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B910716C19D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 14:05:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBCB316C1A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 14:05:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729853AbgBYNFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 08:05:00 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41227 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729179AbgBYNE7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 08:04:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582635898;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Wr/4QhoIdyKmpfoHFgfDcEpRgcidquLqA/yQ2x5bvuA=;
-        b=gr1JjuCIbUprYNUHfYMk3EYjcDvz+TomQvTN1mdTUEBFaPYPY1A0+qi5NTmfNpiD9iu4PZ
-        YhW89qWlEzrq3JWXNYO07qa4NQzxBJenqpc3vrw8OoPFOHnCeghjDPkIJtpoRJoUyD2qDB
-        rapVhb7ipBZUf+tjZkFnxcffuWZFGB8=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-250-vUM4-yfZNsW2wXoTHqlWbw-1; Tue, 25 Feb 2020 08:04:56 -0500
-X-MC-Unique: vUM4-yfZNsW2wXoTHqlWbw-1
-Received: by mail-wr1-f72.google.com with SMTP id u8so7272239wrp.10
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 05:04:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=Wr/4QhoIdyKmpfoHFgfDcEpRgcidquLqA/yQ2x5bvuA=;
-        b=ogT7FqOnrOPauXo/sMtK3aMU5FlYm23d1bzN/ZTFeakyg9iHlUg1EhTVnW8DHYIww2
-         1v1TxQRps9aACUEVq7J0UmOJtvTYnIKByJX5Lc4CWYLnyGBI/fjIoQMpY55t2SSFi1kF
-         11n+AMyOhUm8s6H8SpfATI8QAE56kkcW0xhQ0+HgdErJduj2T4JWS50bjBfsq1ohUNS9
-         wwCmmoRS+NZVt+iwLODYOB5ciDxBA5M31iue+Fgzn4REEiqYqHuslgY/sd1xMfuuma9c
-         TJ2N7gXQVlzwtfmiisGXQstYc5BXbsv7LW5JSAV0hLfsYaLM7tDRTS0NnomhUQYG3Mbd
-         yAhg==
-X-Gm-Message-State: APjAAAWN1v1CKVEdemR8QyIaj2fIFbB3bJZoXQwCBYH4FSREkztTOw4u
-        d697CpN0RQQvm9CPDofL2/x4uKOzevGLkF4FBkxn4k2q0fS2Kf2or57KFaxV6tCQNakexaDGe7d
-        gkUYEdzubEzSTe1mhWx13IEGx
-X-Received: by 2002:a7b:c119:: with SMTP id w25mr5415527wmi.112.1582635895387;
-        Tue, 25 Feb 2020 05:04:55 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyMhQLPO2Buf1atpRVMyumAnUgxEsGE0upmjnhSgc1g1Vuy8u7WHuZjeWgOyZUChgbQ47LhCQ==
-X-Received: by 2002:a7b:c119:: with SMTP id w25mr5415495wmi.112.1582635895060;
-        Tue, 25 Feb 2020 05:04:55 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id p5sm23402409wrt.79.2020.02.25.05.04.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 05:04:54 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     linmiaohe <linmiaohe@huawei.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        sean.j.christopherson@intel.com, wanpengli@tencent.com,
-        jmattson@google.com, joro@8bytes.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com
-Subject: Re: [PATCH] KVM: Fix some obsolete comments
-In-Reply-To: <1582599915-425-1-git-send-email-linmiaohe@huawei.com>
-References: <1582599915-425-1-git-send-email-linmiaohe@huawei.com>
-Date:   Tue, 25 Feb 2020 14:04:53 +0100
-Message-ID: <87a756n7gq.fsf@vitty.brq.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1730139AbgBYNF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 08:05:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39440 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729193AbgBYNF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 08:05:56 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9C8D21556;
+        Tue, 25 Feb 2020 13:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582635955;
+        bh=+As4mDnnLApyLyfQzFILmdOY51jEVGMNz0BBktEP5V8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=B0MNX8mYwhgjQSRUkltS9baZmcWNRjxPdc3tem6vzw9m6VGZZkcMOemqJCOiD+xrZ
+         ShKuWcvCzvshiIR8rh3fuDNdOIyR/4wJD+amV/Vpof1hptLAbGIE2KIApfVKbRCWba
+         cjq4De6w8vlTQFhBLZj1+Otvk+5Z0fq8IaLbQDCU=
+Date:   Tue, 25 Feb 2020 22:05:51 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: Tree for Feb 25 (BOOT_CONFIG)
+Message-Id: <20200225220551.d9a409bc04b77cdf48eae3ea@kernel.org>
+In-Reply-To: <20200225192304.f3ccd36bd1c451e3a1969255@kernel.org>
+References: <20200225142452.14d4e169@canb.auug.org.au>
+        <7e8f78b4-12f9-6bd3-72dc-08152fbe9345@infradead.org>
+        <20200225192304.f3ccd36bd1c451e3a1969255@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-linmiaohe <linmiaohe@huawei.com> writes:
+On Tue, 25 Feb 2020 19:23:04 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> From: Miaohe Lin <linmiaohe@huawei.com>
->
-> Remove some obsolete comments, fix wrong function name and description.
->
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->  arch/x86/kvm/svm.c        | 3 ---
->  arch/x86/kvm/vmx/nested.c | 4 ++--
->  arch/x86/kvm/vmx/vmx.c    | 2 +-
->  3 files changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index fd3fc9fbefff..ee114a9913eb 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -3228,9 +3228,6 @@ static int nested_svm_exit_special(struct vcpu_svm *svm)
->  	return NESTED_EXIT_CONTINUE;
->  }
->  
-> -/*
-> - * If this function returns true, this #vmexit was already handled
-> - */
->  static int nested_svm_intercept(struct vcpu_svm *svm)
->  {
+> On Mon, 24 Feb 2020 22:58:01 -0800
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+> > On 2/24/20 7:24 PM, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Changes since 20200224:
+> > > 
+> > 
+> > 
+> > on i386:
+> > 
+> > WARNING: unmet direct dependencies detected for BOOT_CONFIG
+> >   Depends on [n]: BLK_DEV_INITRD [=n]
+> >   Selected by [y]:
+> >   - BOOTTIME_TRACING [=y] && TRACING_SUPPORT [=y] && FTRACE [=y] && TRACING [=y]
+> 
+> Oops, thanks for reporting!
+> 
+> So I made the Boottime tracing selects the bootconfig, but the bootconfig depends on initrd support.
+> Hmm, should I make BOOTTIME_TRACING depends on BLK_DEV_INITRD??
 
-Thank you for the cleanup, I looked at nested_svm_intercept() and I see
-room for improvement, e.g. (completely untested!)
+OK, there are 3 options.
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 76c24b3491f6..fcb26d64d3c7 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -3280,42 +3280,36 @@ static int nested_svm_intercept(struct vcpu_svm *svm)
-        case SVM_EXIT_IOIO:
-                vmexit = nested_svm_intercept_ioio(svm);
-                break;
--       case SVM_EXIT_READ_CR0 ... SVM_EXIT_WRITE_CR8: {
--               u32 bit = 1U << (exit_code - SVM_EXIT_READ_CR0);
--               if (svm->nested.intercept_cr & bit)
-+       case SVM_EXIT_READ_CR0 ... SVM_EXIT_WRITE_CR8:
-+               if (svm->nested.intercept_cr &
-+                   BIT(exit_code - SVM_EXIT_READ_CR0))
-                        vmexit = NESTED_EXIT_DONE;
-                break;
--       }
--       case SVM_EXIT_READ_DR0 ... SVM_EXIT_WRITE_DR7: {
--               u32 bit = 1U << (exit_code - SVM_EXIT_READ_DR0);
--               if (svm->nested.intercept_dr & bit)
-+       case SVM_EXIT_READ_DR0 ... SVM_EXIT_WRITE_DR7:
-+               if (svm->nested.intercept_dr &
-+                   BIT(exit_code - SVM_EXIT_READ_DR0))
-                        vmexit = NESTED_EXIT_DONE;
-                break;
--       }
--       case SVM_EXIT_EXCP_BASE ... SVM_EXIT_EXCP_BASE + 0x1f: {
--               u32 excp_bits = 1 << (exit_code - SVM_EXIT_EXCP_BASE);
--               if (svm->nested.intercept_exceptions & excp_bits) {
-+       case SVM_EXIT_EXCP_BASE ... SVM_EXIT_EXCP_BASE + 0x1f:
-+               if (svm->nested.intercept_exceptions &
-+                   BIT(exit_code - SVM_EXIT_EXCP_BASE)) {
-                        if (exit_code == SVM_EXIT_EXCP_BASE + DB_VECTOR)
-                                vmexit = nested_svm_intercept_db(svm);
-                        else
-                                vmexit = NESTED_EXIT_DONE;
--               }
--               /* async page fault always cause vmexit */
--               else if ((exit_code == SVM_EXIT_EXCP_BASE + PF_VECTOR) &&
--                        svm->vcpu.arch.exception.nested_apf != 0)
-+               } else if ((exit_code == SVM_EXIT_EXCP_BASE + PF_VECTOR) &&
-+                          svm->vcpu.arch.exception.nested_apf != 0) {
-+                       /* async page fault always cause vmexit */
-                        vmexit = NESTED_EXIT_DONE;
-+               }
-                break;
--       }
--       case SVM_EXIT_ERR: {
-+       case SVM_EXIT_ERR:
-                vmexit = NESTED_EXIT_DONE;
-                break;
--       }
--       default: {
--               u64 exit_bits = 1ULL << (exit_code - SVM_EXIT_INTR);
--               if (svm->nested.intercept & exit_bits)
-+       default:
-+               if (svm->nested.intercept & BIT_ULL(exit_code - SVM_EXIT_INTR))
-                        vmexit = NESTED_EXIT_DONE;
-        }
--       }
- 
-        return vmexit;
- }
+1) make BOOTTIME_TRACING depends on BOOT_CONFIG
+2) make BOOTTIME_TRACING selects BLK_DEV_INITRD
+3) make BOOT_CONFIG selects BLK_DEV_INITRD (and BOOTTIME_TRACING=n by default)
 
-Feel free to pick stuff you like and split your changes to this function
-in a separate patch.
+Or, I'll hurry to implement CONFIG_BUILTIN_BOOT_CONFIG support.
 
->  	u32 exit_code = svm->vmcb->control.exit_code;
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 0946122a8d3b..46c5f63136a8 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -2960,7 +2960,7 @@ static int nested_vmx_check_vmentry_hw(struct kvm_vcpu *vcpu)
->  	/*
->  	 * Induce a consistency check VMExit by clearing bit 1 in GUEST_RFLAGS,
->  	 * which is reserved to '1' by hardware.  GUEST_RFLAGS is guaranteed to
-> -	 * be written (by preparve_vmcs02()) before the "real" VMEnter, i.e.
-> +	 * be written (by prepare_vmcs02()) before the "real" VMEnter, i.e.
->  	 * there is no need to preserve other bits or save/restore the field.
->  	 */
->  	vmcs_writel(GUEST_RFLAGS, 0);
-> @@ -4382,7 +4382,7 @@ void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
->   * Decode the memory-address operand of a vmx instruction, as recorded on an
->   * exit caused by such an instruction (run by a guest hypervisor).
->   * On success, returns 0. When the operand is invalid, returns 1 and throws
-> - * #UD or #GP.
-> + * #UD, #GP or #SS.
+Thank you, 
 
-Oxford comma, anyone? :-)))
 
->   */
->  int get_vmx_mem_address(struct kvm_vcpu *vcpu, unsigned long exit_qualification,
->  			u32 vmx_instruction_info, bool wr, int len, gva_t *ret)
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 69948aa1b127..8d91fa9acbb2 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -808,7 +808,7 @@ void update_exception_bitmap(struct kvm_vcpu *vcpu)
->  	if (to_vmx(vcpu)->rmode.vm86_active)
->  		eb = ~0;
->  	if (enable_ept)
-> -		eb &= ~(1u << PF_VECTOR); /* bypass_guest_pf = 0 */
-> +		eb &= ~(1u << PF_VECTOR);
->  
->  	/* When we are running a nested L2 guest and L1 specified for it a
->  	 * certain exception bitmap, we must trap the same exceptions and pass
 
-All your changes look correct, so
+> 
+> Thank you,
+> 
+> > 
+> > 
+> > Full randconfig file is attached.
+> > 
+> > -- 
+> > ~Randy
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> 
+> 
+> -- 
+> Masami Hiramatsu <mhiramat@kernel.org>
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
 -- 
-Vitaly
-
+Masami Hiramatsu <mhiramat@kernel.org>
