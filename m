@@ -2,287 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD47016B836
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 04:53:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A34A16B83C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 04:55:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728898AbgBYDxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 22:53:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36116 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726962AbgBYDxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 22:53:50 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728883AbgBYDzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 22:55:40 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:29341 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726962AbgBYDzk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 22:55:40 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582602939; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=s35BPNR6Z45kmkW/uZVQApEVNGV6Tou60aGUAhwOQt4=; b=xUld4MdSUBAmhxKRdwbrDLGX3A5pJr0pX755vZhl+G6C0W7vz9gjdp0j6eFFDSQ/zIVZ0Rcw
+ sz2//BeWjD5/msinWx8p9GDvEqjC6MWnuHcTz++JJoSChJUZcywxbif/4Uop0DX3HZgowLmP
+ rDeGU4VaXXTqamu/x8TLAUuHBOM=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e549aa3.7f32c5460a08-smtp-out-n03;
+ Tue, 25 Feb 2020 03:55:15 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 59122C447A2; Tue, 25 Feb 2020 03:55:13 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A24C24650;
-        Tue, 25 Feb 2020 03:53:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582602828;
-        bh=koPgXElOih0cHRYQuFumtU7dgElgJGvVvzCfFQ098bM=;
-        h=Date:From:To:Subject:In-Reply-To:From;
-        b=SJ7Jdw3kGDoTi50wuyM9QJkdZWUnZfLInS6dtym0k66rr4ft64l8GrsX5J/O16guu
-         mrt71if0TCKsrBkppfKtJ9ZVMnrTILe3Z0w3meeWFgBEzHd2jHjTGtUaT0FcPkkmQJ
-         LaFxu+TZDqnDhgnHMzzhoyC5SsV2mKBMYWNuOWM8=
-Date:   Mon, 24 Feb 2020 19:53:48 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2020-02-24-19-53 uploaded
-Message-ID: <20200225035348.xf9KRK471%akpm@linux-foundation.org>
-In-Reply-To: <20200203173311.6269a8be06a05e5a4aa08a93@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        (Authenticated sender: pkondeti)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 13E91C43383;
+        Tue, 25 Feb 2020 03:55:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 13E91C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
+Date:   Tue, 25 Feb 2020 09:25:05 +0530
+From:   Pavan Kondeti <pkondeti@codeaurora.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 5/6] sched/rt: Better manage pushing unfit tasks on
+ wakeup
+Message-ID: <20200225035505.GI28029@codeaurora.org>
+References: <20200223184001.14248-1-qais.yousef@arm.com>
+ <20200223184001.14248-6-qais.yousef@arm.com>
+ <20200224061004.GH28029@codeaurora.org>
+ <20200224121139.cbz2dt5heiouknif@e107158-lin.cambridge.arm.com>
+ <CAEU1=PncyV=-vqjkDHSJ4hUhhTfYUgVN-HAe4zXMHtFx1oc5XA@mail.gmail.com>
+ <20200224174138.n6pmoeffqg7eqiy2@e107158-lin.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200224174138.n6pmoeffqg7eqiy2@e107158-lin.cambridge.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2020-02-24-19-53 has been uploaded to
+On Mon, Feb 24, 2020 at 05:41:39PM +0000, Qais Yousef wrote:
+> On 02/24/20 21:34, Pavan Kondeti wrote:
+> > Hi Qais,
+> > 
+> > On Mon, Feb 24, 2020 at 5:42 PM Qais Yousef <qais.yousef@arm.com> wrote:
+> > [...]
+> > > We could do, temporarily, to get these fixes into 5.6. But I do think
+> > > select_task_rq_rt() doesn't do a good enough job into pushing unfit tasks to
+> > > the right CPUs.
+> > >
+> > > I don't understand the reasons behind your objection. It seems you think that
+> > > select_task_rq_rt() should be enough, but not AFAICS. Can you be a bit more
+> > > detailed please?
+> > >
+> > > FWIW, here's a screenshot of what I see
+> > >
+> > >         https://imgur.com/a/peV27nE
+> > >
+> > > After the first activation, select_task_rq_rt() fails to find the right CPU
+> > > (due to the same move all tasks to the cpumask_fist()) - but when the task
+> > > wakes up on 4, the logic I put causes it to migrate to CPU2, which is the 2nd
+> > > big core. CPU1 and CPU2 are the big cores on Juno.
+> > >
+> > > Now maybe we should fix select_task_rq_rt() to better balance tasks, but not
+> > > sure how easy is that.
+> > >
+> > 
+> > Thanks for the trace. Now things are clear to me. Two RT tasks woke up
+> > simultaneously and the first task got its previous CPU i.e CPU#1. The next task
+> > goes through find_lowest_rq() and got the same CPU#1. Since this task priority
+> > is not more than the just queued task (already queued on CPU#1), it is sent
+> > to its previous CPU i.e CPU#4 in your case.
+> > 
+> > From task_woken_rt() path, CPU#4 attempts push_rt_tasks(). CPU#4 is
+> > not overloaded,
+> > but we have rt_task_fits_capacity() check which forces the push. Since the CPU
+> > is not overloaded, your has_unfit_tasks() comes to rescue and push the
+> > task. Since
+> > the task has not scheduled in yet, it is eligible for push. You added checks
+> > to skip resched_curr() in push_rt_tasks() otherwise the push won't happen.
+> 
+> Nice summary, that's exactly what it is :)
+> 
+> > Finally, I understood your patch. Obviously this is not clear to me
+> > before. I am not
+> > sure if this patch is the right approach to solve this race. I will
+> > think a bit more.
+> 
+> I haven't been staring at this code for as long as you, but since we have
+> logic at wakeup to do a push, I think we need something here anyway for unfit
+> tasks.
+> 
+> Fixing select_task_rq_rt() to better balance tasks will help a lot in general,
+> but if that was enough already then why do we need to consider a push at the
+> wakeup at all then?
+> 
+> AFAIU, in SMP the whole push-pull mechanism is racy and we introduce redundancy
+> at taking the decision on various points to ensure we minimize this racy nature
+> of SMP systems. Anything could have happened between the time we called
+> select_task_rq_rt() and the wakeup, so we double check again before we finally
+> go and run. That's how I interpret it.
+> 
+> I am open to hear about other alternatives first anyway. Your help has been
+> much appreciated so far.
+> 
 
-   http://www.ozlabs.org/~akpm/mmotm/
+The search inside find_lowest_rq() happens without any locks so I believe it
+is expected to have races like this. In fact there is a comment in the code
+saying "This test is optimistic, if we get it wrong the load-balancer
+will have to sort it out" in select_task_rq_rt(). However, the push logic
+as of today works only for overloaded case. In that sense, your patch fixes
+this race for b.L systems. At the same time, I feel like tracking nonfit tasks
+just to fix this race seems to be too much. I will leave this to Steve and
+others to take a decision.
 
-mmotm-readme.txt says
+I thought of suggesting to remove the below check from select_task_rq_rt()
 
-README for mm-of-the-moment:
+p->prio < cpu_rq(target)->rt.highest_prio.curr
 
-http://www.ozlabs.org/~akpm/mmotm/
+which would then make the target CPU overloaded and the push logic would
+spread the tasks. That works for a b.L system too. However there seems to
+be a very good reason for doing this. see
+https://lore.kernel.org/patchwork/patch/539137/
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+The fact that a CPU is part of lowest_mask but running a higher prio RT
+task means there is a race. Should we retry one more time to see if we find
+another CPU?
 
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+Thanks,
+Pavan
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-	https://github.com/hnaz/linux-mm
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is also available at
-
-	https://github.com/hnaz/linux-mm
-
-
-
-This mmotm tree contains the following patches against 5.6-rc3:
-(patches marked "*" will be included in linux-next)
-
-* mm-numa-fix-bad-pmd-by-atomically-check-for-pmd_trans_huge-when-marking-page-tables-prot_numa.patch
-* mm-numa-fix-bad-pmd-by-atomically-check-for-pmd_trans_huge-when-marking-page-tables-prot_numa-fix.patch
-* mm-fix-possible-pmd-dirty-bit-lost-in-set_pmd_migration_entry.patch
-* mm-avoid-data-corruption-on-cow-fault-into-pfn-mapped-vma.patch
-* mm-hugetlb-fix-a-addressing-exception-caused-by-huge_pte_offset.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* fat-fix-uninit-memory-access-for-partial-initialized-inode.patch
-* mm-z3fold-do-not-include-rwlockh-directly.patch
-* mm-hotplug-fix-page-online-with-debug_pagealloc-compiled-but-not-enabled.patch
-* arch-kconfig-update-have_reliable_stacktrace-description.patch
-* x86-mm-split-vmalloc_sync_all.patch
-* kthread-mark-timer-used-by-delayed-kthread-works-as-irq-safe.patch
-* asm-generic-make-more-kernel-space-headers-mandatory.patch
-* scripts-spellingtxt-add-syfs-sysfs-pattern.patch
-* ocfs2-remove-fs_ocfs2_nm.patch
-* ocfs2-remove-unused-macros.patch
-* ocfs2-use-ocfs2_sec_bits-in-macro.patch
-* ocfs2-remove-dlm_lock_is_remote.patch
-* ocfs2-there-is-no-need-to-log-twice-in-several-functions.patch
-* ocfs2-correct-annotation-from-l_next_rec-to-l_next_free_rec.patch
-* ocfs2-remove-useless-err.patch
-* ocfs2-add-missing-annotations-for-ocfs2_refcount_cache_lock-and-ocfs2_refcount_cache_unlock.patch
-* ramfs-support-o_tmpfile.patch
-* kernel-watchdog-flush-all-printk-nmi-buffers-when-hardlockup-detected.patch
-  mm.patch
-* mm-slubc-replace-cpu_slab-partial-with-wrapped-apis.patch
-* mm-slubc-replace-kmem_cache-cpu_partial-with-wrapped-apis.patch
-* mm-kmemleak-use-address-of-operator-on-section-symbols.patch
-* mm-debug-add-tests-validating-architecture-page-table-helpers.patch
-* mm-dont-bother-dropping-mmap_sem-for-zero-size-readahead.patch
-* mm-page-writebackc-write_cache_pages-deduplicate-identical-checks.patch
-* mm-gup-split-get_user_pages_remote-into-two-routines.patch
-* mm-gup-pass-a-flags-arg-to-__gup_device_-functions.patch
-* mm-introduce-page_ref_sub_return.patch
-* mm-gup-pass-gup-flags-to-two-more-routines.patch
-* mm-gup-require-foll_get-for-get_user_pages_fast.patch
-* mm-gup-track-foll_pin-pages.patch
-* mm-gup-page-hpage_pinned_refcount-exact-pin-counts-for-huge-pages.patch
-* mm-gup-proc-vmstat-pin_user_pages-foll_pin-reporting.patch
-* mm-gup_benchmark-support-pin_user_pages-and-related-calls.patch
-* selftests-vm-run_vmtests-invoke-gup_benchmark-with-basic-foll_pin-coverage.patch
-* mm-improve-dump_page-for-compound-pages.patch
-* mm-dump_page-additional-diagnostics-for-huge-pinned-pages.patch
-* mm-swap-move-inode_lock-out-of-claim_swapfile.patch
-* mm-swapfilec-fix-comments-for-swapcache_prepare.patch
-* mm-swapc-not-necessary-to-export-__pagevec_lru_add.patch
-* mm-swapfile-fix-data-races-in-try_to_unuse.patch
-* mm-memcg-fix-build-error-around-the-usage-of-kmem_caches.patch
-* mm-allocate-shrinker_map-on-appropriate-numa-node.patch
-* mm-memcg-slab-introduce-mem_cgroup_from_obj.patch
-* mm-memcg-slab-introduce-mem_cgroup_from_obj-v2.patch
-* mm-kmem-cleanup-__memcg_kmem_charge_memcg-arguments.patch
-* mm-kmem-cleanup-memcg_kmem_uncharge_memcg-arguments.patch
-* mm-kmem-rename-memcg_kmem_uncharge-into-memcg_kmem_uncharge_page.patch
-* mm-kmem-switch-to-nr_pages-in-__memcg_kmem_charge_memcg.patch
-* mm-memcg-slab-cache-page-number-in-memcg_uncharge_slab.patch
-* mm-kmem-rename-__memcg_kmem_uncharge_memcg-to-__memcg_kmem_uncharge.patch
-* mm-mapping_dirty_helpers-update-huge-page-table-entry-callbacks.patch
-* mm-dont-prepare-anon_vma-if-vma-has-vm_wipeonfork.patch
-* revert-mm-rmapc-reuse-mergeable-anon_vma-as-parent-when-fork.patch
-* mm-set-vm_next-and-vm_prev-to-null-in-vm_area_dup.patch
-* mm-vma-add-missing-vma-flag-readable-name-for-vm_sync.patch
-* mm-vma-make-vma_is_accessible-available-for-general-use.patch
-* mm-vma-replace-all-remaining-open-encodings-with-is_vm_hugetlb_page.patch
-* mm-vma-replace-all-remaining-open-encodings-with-vma_is_anonymous.patch
-* mm-vma-append-unlikely-while-testing-vma-access-permissions.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* mm-add-mremap_dontunmap-to-mremap.patch
-* mm-add-mremap_dontunmap-to-mremap-v6.patch
-* mm-add-mremap_dontunmap-to-mremap-v7.patch
-* selftest-add-mremap_dontunmap-selftest.patch
-* selftest-add-mremap_dontunmap-selftest-fix.patch
-* selftest-add-mremap_dontunmap-selftest-v7.patch
-* selftest-add-mremap_dontunmap-selftest-v7-checkpatch-fixes.patch
-* mm-sparsemem-get-address-to-page-struct-instead-of-address-to-pfn.patch
-* mm-sparse-rename-pfn_present-as-pfn_in_present_section.patch
-* mm-page_alloc-increase-default-min_free_kbytes-bound.patch
-* mm-vmpressure-dont-need-call-kfree-if-kstrndup-fails.patch
-* mm-vmpressure-use-mem_cgroup_is_root-api.patch
-* mm-vmscan-replace-open-codings-to-numa_no_node.patch
-* mm-vmscanc-remove-cpu-online-notification-for-now.patch
-* mm-mempolicy-support-mpol_mf_strict-for-huge-page-mapping.patch
-* mm-mempolicy-checking-hugepage-migration-is-supported-by-arch-in-vma_migratable.patch
-* mm-mempolicy-use-vm_bug_on_vma-in-queue_pages_test_walk.patch
-* hugetlb_cgroup-add-hugetlb_cgroup-reservation-counter.patch
-* hugetlb_cgroup-add-interface-for-charge-uncharge-hugetlb-reservations.patch
-* mm-hugetlb_cgroup-fix-hugetlb_cgroup-migration.patch
-* hugetlb_cgroup-add-reservation-accounting-for-private-mappings.patch
-* hugetlb_cgroup-add-reservation-accounting-for-private-mappings-fix.patch
-* hugetlb-disable-region_add-file_region-coalescing.patch
-* hugetlb-disable-region_add-file_region-coalescing-fix.patch
-* hugetlb_cgroup-add-accounting-for-shared-mappings.patch
-* hugetlb_cgroup-add-accounting-for-shared-mappings-fix.patch
-* hugetlb_cgroup-support-noreserve-mappings.patch
-* hugetlb-support-file_region-coalescing-again.patch
-* hugetlb-support-file_region-coalescing-again-fix.patch
-* hugetlb-support-file_region-coalescing-again-fix-2.patch
-* hugetlb_cgroup-add-hugetlb_cgroup-reservation-tests.patch
-* hugetlb_cgroup-add-hugetlb_cgroup-reservation-docs.patch
-* mm-migratec-no-need-to-check-for-i-start-in-do_pages_move.patch
-* mm-migratec-wrap-do_move_pages_to_node-and-store_status.patch
-* mm-migratec-check-pagelist-in-move_pages_and_store_status.patch
-* mm-migratec-unify-not-queued-for-migration-handling-in-do_pages_move.patch
-* mm-migratec-migrate-pg_readahead-flag.patch
-* mm-migratec-migrate-pg_readahead-flag-fix.patch
-* drivers-base-memoryc-cache-memory-blocks-in-xarray-to-accelerate-lookup.patch
-* drivers-base-memoryc-cache-memory-blocks-in-xarray-to-accelerate-lookup-fix.patch
-* mm-adjust-shuffle-code-to-allow-for-future-coalescing.patch
-* mm-use-zone-and-order-instead-of-free-area-in-free_list-manipulators.patch
-* mm-add-function-__putback_isolated_page.patch
-* mm-introduce-reported-pages.patch
-* virtio-balloon-pull-page-poisoning-config-out-of-free-page-hinting.patch
-* virtio-balloon-add-support-for-providing-free-page-reports-to-host.patch
-* mm-page_reporting-rotate-reported-pages-to-the-tail-of-the-list.patch
-* mm-page_reporting-add-budget-limit-on-how-many-pages-can-be-reported-per-pass.patch
-* mm-page_reporting-add-free-page-reporting-documentation.patch
-* drivers-base-memoryc-indicate-all-memory-blocks-as-removable.patch
-* drivers-base-memoryc-drop-section_count.patch
-* drivers-base-memoryc-drop-pages_correctly_probed.patch
-* mm-page_extc-drop-pfn_present-check-when-onlining.patch
-* mm-hotplug-only-respect-mem=-parameter-during-boot-stage.patch
-* shmem-distribute-switch-variables-for-initialization.patch
-* zswap-allow-setting-default-status-compressor-and-allocator-in-kconfig.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* proc-faster-open-read-close-with-permanent-files.patch
-* proc-faster-open-read-close-with-permanent-files-checkpatch-fixes.patch
-* asm-generic-fix-unistd_32h-generation-format.patch
-* kernel-extable-use-address-of-operator-on-section-symbols.patch
-* maintainers-add-an-entry-for-kfifo.patch
-* lib-test_lockup-test-module-to-generate-lockups.patch
-* lib-bch-replace-zero-length-array-with-flexible-array-member.patch
-* lib-ts_bm-replace-zero-length-array-with-flexible-array-member.patch
-* lib-ts_fsm-replace-zero-length-array-with-flexible-array-member.patch
-* lib-ts_kmp-replace-zero-length-array-with-flexible-array-member.patch
-* lib-scatterlist-fix-sg_copy_buffer-kerneldoc.patch
-* lib-test_stackinitc-xfail-switch-variable-init-tests.patch
-* stackdepot-check-depot_index-before-accessing-the-stack-slab.patch
-* stackdepot-build-with-fno-builtin.patch
-* kasan-stackdepot-move-filter_irq_stacks-to-stackdepotc.patch
-* percpu_counter-fix-a-data-race-at-vm_committed_as.patch
-* lib-test_lockup-fix-spelling-mistake-iteraions-iterations.patch
-* lib-test_bitmap-make-use-of-exp2_in_bits.patch
-* string-add-stracpy-and-stracpy_pad-mechanisms.patch
-* documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
-* checkpatch-remove-email-address-comment-from-email-address-comparisons.patch
-* checkpatch-check-spdx-tags-in-yaml-files.patch
-* checkpatch-support-base-commit-format.patch
-* checkpatch-prefer-fallthrough-over-fallthrough-comments.patch
-* checkpatch-fix-minor-typo-and-mixed-spacetab-in-indentation.patch
-* checkpatch-fix-multiple-const-types.patch
-* checkpatch-add-command-line-option-for-tab-size.patch
-* epoll-fix-possible-lost-wakeup-on-epoll_ctl-path.patch
-* kselftest-introduce-new-epoll-test-case.patch
-* elf-delete-loc-variable.patch
-* elf-allocate-less-for-static-executable.patch
-* elf-dont-free-interpreters-elf-pheaders-on-common-path.patch
-* samples-hw_breakpoint-drop-hw_breakpoint_r-when-reporting-writes.patch
-* samples-hw_breakpoint-drop-use-of-kallsyms_lookup_name.patch
-* kallsyms-unexport-kallsyms_lookup_name-and-kallsyms_on_each_symbol.patch
-* init-mainc-mark-boot_config_checksum-static.patch
-* loop-use-worker-per-cgroup-instead-of-kworker.patch
-* mm-charge-active-memcg-when-no-mm-is-set.patch
-* loop-charge-i-o-to-mem-and-blk-cg.patch
-* kernel-relayc-fix-read_pos-error-when-multiple-readers.patch
-* aio-simplify-read_events.patch
-* init-cleanup-anon_inodes-and-old-io-schedulers-options.patch
-  linux-next.patch
-  linux-next-rejects.patch
-  linux-next-fix.patch
-* mm-frontswap-mark-various-intentional-data-races.patch
-* mm-page_io-mark-various-intentional-data-races.patch
-* mm-page_io-mark-various-intentional-data-races-v2.patch
-* mm-swap_state-mark-various-intentional-data-races.patch
-* mm-kmemleak-annotate-various-data-races-obj-ptr.patch
-* mm-filemap-fix-a-data-race-in-filemap_fault.patch
-* mm-swapfile-fix-and-annotate-various-data-races.patch
-* mm-swapfile-fix-and-annotate-various-data-races-v2.patch
-* mm-page_counter-fix-various-data-races-at-memsw.patch
-* mm-memcontrol-fix-a-data-race-in-scan-count.patch
-* mm-list_lru-fix-a-data-race-in-list_lru_count_one.patch
-* mm-mempool-fix-a-data-race-in-mempool_free.patch
-* mm-util-annotate-an-data-race-at-vm_committed_as.patch
-* mm-rmap-annotate-a-data-race-at-tlb_flush_batched.patch
-* mm-annotate-a-data-race-in-page_zonenum.patch
-* mm-refactor-insert_page-to-prepare-for-batched-lock-insert.patch
-* mm-add-vm_insert_pages.patch
-* mm-add-vm_insert_pages-fix.patch
-* mm-add-vm_insert_pages-2.patch
-* net-zerocopy-use-vm_insert_pages-for-tcp-rcv-zerocopy.patch
-* net-zerocopy-use-vm_insert_pages-for-tcp-rcv-zerocopy-fix.patch
-* drivers-tty-serial-sh-scic-suppress-warning.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
