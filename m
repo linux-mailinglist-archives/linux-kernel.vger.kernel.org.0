@@ -2,69 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25E8F16C0F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:37:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E047016C0FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:38:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729988AbgBYMg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 07:36:57 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:52876 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbgBYMg4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 07:36:56 -0500
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j6ZRg-0002g5-4R; Tue, 25 Feb 2020 13:36:16 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 135EB101226; Tue, 25 Feb 2020 13:36:15 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sebastian Sewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Clark Williams <williams@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: Re: [patch V3 06/22] bpf/trace: Remove redundant preempt_disable from trace_call_bpf()
-In-Reply-To: <20200225003351.vvsrgyta47ciqhvo@ast-mbp>
-References: <20200224140131.461979697@linutronix.de> <20200224145643.059995527@linutronix.de> <20200224194017.rtwjcgjxnmltisfe@ast-mbp> <875zfvk983.fsf@nanos.tec.linutronix.de> <20200225003351.vvsrgyta47ciqhvo@ast-mbp>
-Date:   Tue, 25 Feb 2020 13:36:15 +0100
-Message-ID: <8736aykfnk.fsf@nanos.tec.linutronix.de>
+        id S1730127AbgBYMiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 07:38:13 -0500
+Received: from mga09.intel.com ([134.134.136.24]:55277 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730033AbgBYMiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 07:38:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 04:38:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,484,1574150400"; 
+   d="scan'208";a="231008511"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga008.jf.intel.com with ESMTP; 25 Feb 2020 04:38:03 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 318713F4; Tue, 25 Feb 2020 14:38:02 +0200 (EET)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Jean Delvare <jdelvare@suse.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     Martin Volf <martin.volf.42@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] i2c: i801: Fix iTCO_wdt resource creation if PMC is not present
+Date:   Tue, 25 Feb 2020 15:37:59 +0300
+Message-Id: <20200225123802.88984-1-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
-> On Mon, Feb 24, 2020 at 09:42:52PM +0100, Thomas Gleixner wrote:
->> > But looking at your patch cant_sleep() seems unnecessary strong.
->> > Should it be cant_migrate() instead?
->> 
->> Yes, if we go with the migrate_disable(). OTOH, having a
->> preempt_disable() in that uprobe callsite should work as well, then we
->> can keep the cant_sleep() check which covers all other callsites
->> properly. No strong opinion though.
->
-> ok. I went with preempt_disable() for uprobes. It's simpler.
-> And pushed the whole set to bpf-next.
-> In few days we'll send it to Dave for net-next and on the way
-> to Linus's next release. imo it's a big milestone.
-> Thank you for the hard work to make it happen.
+Hi all,
 
-Thank you for guidance and review!
+This series aims to fix the issue reported by Martin Volf [1] that prevents
+the nct6775 driver from loading.
 
-      tglx
+I added Fixes tag to the last patch but not stable tag because the other
+two patches it depends are not really stable material IMO. Please let me
+know if there is a better way to organize these :)
+
+[1] https://lore.kernel.org/linux-hwmon/CAM1AHpQ4196tyD=HhBu-2donSsuogabkfP03v1YF26Q7_BgvgA@mail.gmail.com/
+
+Mika Westerberg (3):
+  watchdog: iTCO_wdt: Export vendorsupport
+  watchdog: iTCO_wdt: Make ICH_RES_IO_SMI optional
+  i2c: i801: Do not add ICH_RES_IO_SMI if PMC device is not present
+
+ drivers/i2c/busses/i2c-i801.c          | 45 +++++++++++++++-----------
+ drivers/watchdog/iTCO_vendor.h         |  2 ++
+ drivers/watchdog/iTCO_vendor_support.c | 16 +++++----
+ drivers/watchdog/iTCO_wdt.c            | 22 +++++++------
+ 4 files changed, 51 insertions(+), 34 deletions(-)
+
+-- 
+2.25.0
+
