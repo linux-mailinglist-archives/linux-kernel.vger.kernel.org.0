@@ -2,63 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C515B16F2D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:01:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84A1B16F2E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:04:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbgBYXBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:01:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41008 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726827AbgBYXBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:01:18 -0500
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FE44222C2;
-        Tue, 25 Feb 2020 23:01:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582671677;
-        bh=dX3IH9+5MjEzzkpanrcFRcHLXK3db4PSfS7mYxOwq5I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dK7Qh1V+/6N9Ri6cBZVJJAyuxHrt62nYmzLwNHeF5eLsgRwAg0AlLDfRuabi5Ael2
-         lBw+YxKraYNgvJxltcWbxv30vto+EjhtGNF4YMhD/g598FAdKSWrYxUJsFPlYiCqHe
-         HvQXtPDf6n6Nws2JRCGkXUxKanHv1tM1potbJUio=
-Received: by mail-lj1-f173.google.com with SMTP id o15so756414ljg.6;
-        Tue, 25 Feb 2020 15:01:17 -0800 (PST)
-X-Gm-Message-State: APjAAAUAV/x1lOByHgfTvDol0laWvUaJ9Pwoi8K+zaWivxP9OY3JPCe0
-        zvHLa95BTm3Y2xVh7BA4xKJfI5zF7Uv8VDNtqA8=
-X-Google-Smtp-Source: APXvYqyWPLHEoDNa6vGMqUhEnWzOeu73cs3upPf8yYw4aW/Tm/zxrPw4BfXF/A8nCsyx+Fa3/MbFo/fS+xU0rdej0KY=
-X-Received: by 2002:a05:651c:239:: with SMTP id z25mr778144ljn.48.1582671675745;
- Tue, 25 Feb 2020 15:01:15 -0800 (PST)
+        id S1729281AbgBYXEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:04:15 -0500
+Received: from smtprelay0007.hostedemail.com ([216.40.44.7]:37452 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729090AbgBYXEP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 18:04:15 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 01AFD181D341A;
+        Tue, 25 Feb 2020 23:04:14 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:69:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1714:1730:1747:1777:1792:2198:2199:2393:2559:2562:2689:2828:3138:3139:3140:3141:3142:3350:3622:3865:3866:3867:3870:4321:5007:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12438:12683:12740:12760:12895:13069:13311:13357:13439:14110:14659:14721:21080:21451:21611:21626:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: brake21_7beb87a1c190d
+X-Filterd-Recvd-Size: 1650
+Received: from XPS-9350 (unknown [172.58.27.58])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 25 Feb 2020 23:04:11 +0000 (UTC)
+Message-ID: <37831d22bd91f9694f7b35be158969fb997cc544.camel@perches.com>
+Subject: Re: [PATCH] tools/perf/util/*.c: Use "%zd" output format for size_t
+ type
+From:   Joe Perches <joe@perches.com>
+To:     Xiao Yang <yangx.jy@cn.fujitsu.com>, linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org
+Date:   Tue, 25 Feb 2020 15:02:39 -0800
+In-Reply-To: <20200225063901.20165-1-yangx.jy@cn.fujitsu.com>
+References: <20200225063901.20165-1-yangx.jy@cn.fujitsu.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-References: <20200225205426.6975-1-scott.branden@broadcom.com>
-In-Reply-To: <20200225205426.6975-1-scott.branden@broadcom.com>
-From:   Song Liu <song@kernel.org>
-Date:   Tue, 25 Feb 2020 15:01:04 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW5h9FoYxzMFmKwMOKktn_a0uej2tmmGoXXfq2RtThAF8A@mail.gmail.com>
-Message-ID: <CAPhsuW5h9FoYxzMFmKwMOKktn_a0uej2tmmGoXXfq2RtThAF8A@mail.gmail.com>
-Subject: Re: [PATCH] scripts/bpf: switch to more portable python3 shebang
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 12:55 PM Scott Branden
-<scott.branden@broadcom.com> wrote:
->
-> Change "/usr/bin/python3" to "/usr/bin/env python3" for
-> more portable solution in bpf_helpers_doc.py.
->
-> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+On Tue, 2020-02-25 at 14:39 +0800, Xiao Yang wrote:
+> Avoid the following errors when building perf:
+> -----------------------------------------------
+> util/session.c: In function 'perf_session__process_compressed_event':
+> util/session.c:91:11: error: format '%ld' expects argument of type 'long int', but argument 4 has type 'size_t {aka unsigned int}' [-Werror=format=]
+>   pr_debug("decomp (B): %ld to %ld\n", src_size, decomp_size);
+[]
+> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+[]
+> @@ -88,7 +88,7 @@ static int perf_session__process_compressed_event(struct perf_session *session,
+>  		session->decomp_last = decomp;
+>  	}
+>  
+> -	pr_debug("decomp (B): %ld to %ld\n", src_size, decomp_size);
+> +	pr_debug("decomp (B): %zd to %zd\n", src_size, decomp_size);
 
-Acked-by: Song Liu <songliubraving@fb.com>
+likely better as %zu, etc...
+
+
