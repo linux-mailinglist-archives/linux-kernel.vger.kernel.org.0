@@ -2,63 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1AD716B8D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 06:13:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8420616B8E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 06:15:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbgBYFNU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 00:13:20 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43961 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbgBYFNR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 00:13:17 -0500
-Received: by mail-pg1-f193.google.com with SMTP id u12so6271811pgb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 21:13:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KFgEd5ihB5mpYJHgTJ73YmLe+8HUk6ELkCILmCi0oOk=;
-        b=FNMuINYqjkWcMKmsC54Bq/gTZBk8TfWE/kHSeHazPaZ6Qsgq4UEwtaKxNjx3U/LSOL
-         lSxriB94mOtmP7ZumY1pLpyXNh1eiELD+deo2AfzoltvtXbJresnxC13IfnGI7/zF0u8
-         gfw7+zy+BpP4vi9hf0mYsgj0+sBmXM2UX7Dlk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KFgEd5ihB5mpYJHgTJ73YmLe+8HUk6ELkCILmCi0oOk=;
-        b=CmF0hHovJCU5yDRxBH0shhA3bbUbrDvNq609gTIRNveoQYla3WyYJYAJeu/wvk9k6j
-         61pXqQ0HMHv8m/Q3V5q1pMa+rGreVDohyc3VRgBSp79Cfutv3BR289BSk2cDcYM1V6ym
-         LmkyANADzwDIox90tWGg9+O/yLxf5oeKoQ74tKZKXQC43FFmH4e1ntd5Nw+pA0CiCi5w
-         ifZytMq3l5s9GyJHE5StIm4lfF67sjPEl9OccDeTgyawYT3znuv6ArTecfL4pRAYLkMp
-         /Ucf/l2VEaeUEJiZmzZzhhpmS6bfehJDmvhwVS+zUYubNzwo0YJbMokK6987Sb4ZnmAl
-         umWw==
-X-Gm-Message-State: APjAAAU+PVovzWzHP6LWONVYOyVw1crguRkIVjekVGC488ITLAcqLHkF
-        2ZroEYqTj/YJUBbt4NXnqO7EZvG3i/U=
-X-Google-Smtp-Source: APXvYqwchftXeveUuXJHknSGejturvoBpu91/DIibP3TqJfUAAo+U3HXFzD6DGyObdeKZ5MP3RURPQ==
-X-Received: by 2002:a63:5b54:: with SMTP id l20mr19043243pgm.324.1582607596247;
-        Mon, 24 Feb 2020 21:13:16 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j17sm14695804pfa.16.2020.02.24.21.13.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 21:13:15 -0800 (PST)
-From:   Kees Cook <keescook@chromium.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Hector Marco-Gisbert <hecmargi@upv.es>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will@kernel.org>, Jann Horn <jannh@google.com>,
-        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/6] arm64, elf: Disable automatic READ_IMPLIES_EXEC for 64-bit address spaces
-Date:   Mon, 24 Feb 2020 21:13:07 -0800
-Message-Id: <20200225051307.6401-7-keescook@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200225051307.6401-1-keescook@chromium.org>
-References: <20200225051307.6401-1-keescook@chromium.org>
+        id S1726901AbgBYFPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 00:15:10 -0500
+Received: from mga12.intel.com ([192.55.52.136]:61438 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725788AbgBYFPJ (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 00:15:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 21:15:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,482,1574150400"; 
+   d="scan'208";a="350074468"
+Received: from kbl.sh.intel.com ([10.239.159.24])
+  by fmsmga001.fm.intel.com with ESMTP; 24 Feb 2020 21:15:07 -0800
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v4 0/2] perf report: Support annotation of code without symbols
+Date:   Tue, 25 Feb 2020 13:14:36 +0800
+Message-Id: <20200225051438.16253-1-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -67,58 +38,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With arm64 64-bit environments, there should never be a need for automatic
-READ_IMPLIES_EXEC, as the architecture has always been execute-bit aware
-(as in, the default memory protection should be NX unless a region
-explicitly requests to be executable).
+For perf report on stripped binaries it is currently impossible to do
+annotation. The annotation state is all tied to symbols, but there are
+either no symbols, or symbols are not covering all the code.
 
-Suggested-by: Hector Marco-Gisbert <hecmargi@upv.es>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
----
- arch/arm64/include/asm/elf.h | 4 ++--
- fs/compat_binfmt_elf.c       | 5 +++++
- 2 files changed, 7 insertions(+), 2 deletions(-)
+We should support the annotation functionality even without symbols.
 
-diff --git a/arch/arm64/include/asm/elf.h b/arch/arm64/include/asm/elf.h
-index 03ada29984a7..ea9221ed68a1 100644
---- a/arch/arm64/include/asm/elf.h
-+++ b/arch/arm64/include/asm/elf.h
-@@ -105,7 +105,7 @@
-  *             CPU*: | arm32      | arm64      |
-  * ELF:              |            |            |
-  * -------------------------------|------------|
-- * missing GNU_STACK | exec-all   | exec-all   |
-+ * missing GNU_STACK | exec-all   | exec-none  |
-  * GNU_STACK == RWX  | exec-stack | exec-stack |
-  * GNU_STACK == RW   | exec-none  | exec-none  |
-  *
-@@ -117,7 +117,7 @@
-  *  *all arm64 CPUs support NX, so there is no "lacks NX" column.
-  *
-  */
--#define elf_read_implies_exec(ex,stk)	(stk == EXSTACK_DEFAULT)
-+#define compat_elf_read_implies_exec(ex, stk)	(stk == EXSTACK_DEFAULT)
- 
- #define CORE_DUMP_USE_REGSET
- #define ELF_EXEC_PAGESIZE	PAGE_SIZE
-diff --git a/fs/compat_binfmt_elf.c b/fs/compat_binfmt_elf.c
-index aaad4ca1217e..3068d57436b3 100644
---- a/fs/compat_binfmt_elf.c
-+++ b/fs/compat_binfmt_elf.c
-@@ -113,6 +113,11 @@
- #define	arch_setup_additional_pages compat_arch_setup_additional_pages
- #endif
- 
-+#ifdef	compat_elf_read_implies_exec
-+#undef	elf_read_implies_exec
-+#define	elf_read_implies_exec compat_elf_read_implies_exec
-+#endif
-+
- /*
-  * Rename a few of the symbols that binfmt_elf.c will define.
-  * These are all local so the names don't really matter, but it
+The first patch uses al_addr to print because it's easy to dump
+the instructions from this address in binary for branch mode.
+
+The second patch supports the annotation on stripped binary.
+
+ v4:
+ ---
+ 1. Support the hotkey 'a'. When we press 'a' on address,
+    now it supports the annotation.
+
+ 2. Change the patch title from
+    "Support interactive annotation of code without symbols" to
+    "perf report: Support interactive annotation of code without symbols"
+
+ v3:
+ ---
+ Keep just the ANNOTATION_DUMMY_LEN, and remove the
+ opts->annotate_dummy_len since it's the "maybe in future
+ we will provide" feature.
+
+ v2:
+ ---
+ Fix a crash issue when annotating an address in "unknown" object.
+
+Jin Yao (2):
+  perf util: Print al_addr when symbol is not found
+  perf report: Support interactive annotation of code without symbols
+
+ tools/perf/ui/browsers/hists.c | 83 ++++++++++++++++++++++++++--------
+ tools/perf/util/annotate.h     |  1 +
+ tools/perf/util/sort.c         |  6 ++-
+ 3 files changed, 70 insertions(+), 20 deletions(-)
+
 -- 
-2.20.1
+2.17.1
 
