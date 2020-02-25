@@ -2,156 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E946716EF44
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:45:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A54716EF55
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:45:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731449AbgBYTpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 14:45:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49502 "EHLO mail.kernel.org"
+        id S1731561AbgBYTpd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 14:45:33 -0500
+Received: from foss.arm.com ([217.140.110.172]:55106 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730841AbgBYTpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 14:45:08 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6E1F2084E;
-        Tue, 25 Feb 2020 19:45:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582659908;
-        bh=Nj5eGcXxyq9FnFZMfH7juRDhSHO1VgSMIrQjWtUxLn8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IlAG4Obz3PchfypDD708rExwBwE8cN7Zb9TRW43BV8yBwUbOw1SG3pVS4jKhcUEfs
-         Zq8EsYhwA62Wkl862PGh5g3ox767G98NOPHNJ+jTL4s8KzmRdkSWWsdoTEjlq0IZQN
-         XJ/aF0pQe0zMPC/F0O/4v9baF14IWkzC4VdPyCwo=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1j6g8g-007uWl-5Q; Tue, 25 Feb 2020 19:45:06 +0000
+        id S1731029AbgBYTpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 14:45:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 714AE31B;
+        Tue, 25 Feb 2020 11:45:30 -0800 (PST)
+Received: from [192.168.1.123] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A62DC3FA00;
+        Tue, 25 Feb 2020 11:45:28 -0800 (PST)
+Subject: Re: [PATCH] ARM: use assembly mnemonics for VFP register access
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>,
+        Stefan Agner <stefan@agner.ch>, Jian Cai <jiancai@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <8bb16ac4b15a7e28a8e819ef9aae20bfc3f75fbc.1582266841.git.stefan@agner.ch>
+ <CAKwvOdmV80xgvBnhB6ZpqYaqkxKi-_p+StnMojwNnf3kdxTT1A@mail.gmail.com>
+ <CAKv+Gu881ZSwvuACmsbBnpfdeJpNYsEQxLSoepJBbZ=O6D6Rcg@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <d7047fca-7efb-94bc-51aa-c33934df0721@arm.com>
+Date:   Tue, 25 Feb 2020 19:45:14 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 25 Feb 2020 19:45:06 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Zenghui Yu <yuzenghui@huawei.com>
-Cc:     kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, wanghaibin.wang@huawei.com,
-        Yanlei Jia <jiayanlei@huawei.com>
-Subject: Re: [PATCH] irqchip/gic-v3-its: Clear Valid before writing any bits
- else in VPENDBASER
-In-Reply-To: <6ce5c751-6d17-b9ee-4054-edad7de075bf@huawei.com>
-References: <20200224025029.92-1-yuzenghui@huawei.com>
- <bb7cdb29eda9cf160bcf85a58a9fc63d@kernel.org>
- <6ce5c751-6d17-b9ee-4054-edad7de075bf@huawei.com>
-Message-ID: <d8d9fbeddfe59574c457b2f803d0af6c@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.10
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, wanghaibin.wang@huawei.com, jiayanlei@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+In-Reply-To: <CAKv+Gu881ZSwvuACmsbBnpfdeJpNYsEQxLSoepJBbZ=O6D6Rcg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zenghui,
-
-On 2020-02-25 02:06, Zenghui Yu wrote:
-> Hi Marc,
+On 2020-02-25 7:33 pm, Ard Biesheuvel wrote:
+> On Tue, 25 Feb 2020 at 20:10, Nick Desaulniers <ndesaulniers@google.com> wrote:
+>>
+>> On Mon, Feb 24, 2020 at 9:22 PM Stefan Agner <stefan@agner.ch> wrote:
+>>>
+>>> Clang's integrated assembler does not allow to to use the mcr
+>>> instruction to access floating point co-processor registers:
+>>> arch/arm/vfp/vfpmodule.c:342:2: error: invalid operand for instruction
+>>>          fmxr(FPEXC, fpexc & ~(FPEXC_EX|FPEXC_DEX|FPEXC_FP2V|FPEXC_VV|FPEXC_TRAP_MASK));
+>>>          ^
+>>> arch/arm/vfp/vfpinstr.h:79:6: note: expanded from macro 'fmxr'
+>>>          asm("mcr p10, 7, %0, " vfpreg(_vfp_) ", cr0, 0 @ fmxr   " #_vfp_ ", %0" \
+>>>              ^
+>>> <inline asm>:1:6: note: instantiated into assembly here
+>>>          mcr p10, 7, r0, cr8, cr0, 0 @ fmxr      FPEXC, r0
+>>>              ^
+>>>
+>>> The GNU assembler supports the .fpu directive at least since 2.17 (when
+>>> documentation has been added). Since Linux requires binutils 2.21 it is
+>>> safe to use .fpu directive. Use the .fpu directive and mnemonics for VFP
+>>> register access.
+>>>
+>>> This allows to build vfpmodule.c with Clang and its integrated assembler.
+>>>
+>>> Link: https://github.com/ClangBuiltLinux/linux/issues/905
+>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>>> ---
+>>>   arch/arm/vfp/vfpinstr.h | 12 ++++--------
+>>>   1 file changed, 4 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/arch/arm/vfp/vfpinstr.h b/arch/arm/vfp/vfpinstr.h
+>>> index 38dc154e39ff..799ccf065406 100644
+>>> --- a/arch/arm/vfp/vfpinstr.h
+>>> +++ b/arch/arm/vfp/vfpinstr.h
+>>> @@ -62,21 +62,17 @@
+>>>   #define FPSCR_C (1 << 29)
+>>>   #define FPSCR_V        (1 << 28)
+>>>
+>>> -/*
+>>> - * Since we aren't building with -mfpu=vfp, we need to code
+>>> - * these instructions using their MRC/MCR equivalents.
+>>> - */
+>>> -#define vfpreg(_vfp_) #_vfp_
+>>> -
+>>>   #define fmrx(_vfp_) ({                 \
+>>>          u32 __v;                        \
+>>> -       asm("mrc p10, 7, %0, " vfpreg(_vfp_) ", cr0, 0 @ fmrx   %0, " #_vfp_    \
+>>> +       asm(".fpu       vfpv2\n"        \
+>>> +           "vmrs       %0, " #_vfp_    \
+>>>              : "=r" (__v) : : "cc");     \
+>>>          __v;                            \
+>>>    })
+>>>
+>>>   #define fmxr(_vfp_,_var_)              \
+>>> -       asm("mcr p10, 7, %0, " vfpreg(_vfp_) ", cr0, 0 @ fmxr   " #_vfp_ ", %0" \
+>>> +       asm(".fpu       vfpv2\n"        \
+>>> +           "vmsr       " #_vfp_ ", %0" \
+>>>             : : "r" (_var_) : "cc")
+>>>
+>>>   u32 vfp_single_cpdo(u32 inst, u32 fpscr);
+>>> --
+>>
+>> Hi Stefan,
+>> Thanks for the patch.  Reading through:
+>> - FMRX, FMXR, and FMSTAT:
+>> http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0068b/Bcfbdihi.html
+>> - VMRS and VMSR:
+>> http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0204h/Bcfbdihi.html
+>>
+>> Should a macro called `fmrx` that had a comment about `fmrx` be using
+>> `vmrs` in place of `fmrx`?
+>>
+>> It looks like Clang treats them the same, but GCC keeps them separate:
+>> https://godbolt.org/z/YKmSAs
+>> Ah, this is only when streaming to assembly. Looks like they have the
+>> same encoding, and produce the same disassembly. (Godbolt emits
+>> assembly by default, and has the option to compile, then disassemble).
+>> If I take my case from godbolt above:
+>>
+>> ➜  /tmp arm-linux-gnueabihf-gcc -O2 -c x.c
+>> ➜  /tmp llvm-objdump -dr x.o
+>>
+>> x.o: file format elf32-arm-little
+>>
+>>
+>> Disassembly of section .text:
+>>
+>> 00000000 bar:
+>>         0: f1 ee 10 0a                  vmrs r0, fpscr
+>>         4: 70 47                        bx lr
+>>         6: 00 bf                        nop
+>>
+>> 00000008 baz:
+>>         8: f1 ee 10 0a                  vmrs r0, fpscr
+>>         c: 70 47                        bx lr
+>>         e: 00 bf                        nop
+>>
+>> So indeed a similar encoding exists for the two different assembler
+>> instructions.
 > 
-> On 2020/2/25 7:47, Marc Zyngier wrote:
->> Hi Zenghui,
->> 
->> On 2020-02-24 02:50, Zenghui Yu wrote:
->>> The Valid bit must be cleared before changing anything else when 
->>> writing
->>> GICR_VPENDBASER to avoid the UNPREDICTABLE behavior. This is exactly 
->>> what
->>> we've done on 32bit arm, but not on arm64.
->> 
->> I'm not quite sure how you decide that Valid must be cleared before 
->> changing
->> anything else. The reason why we do it on 32bit is that we cannot 
->> update
->> the full 64bit register at once, so we start by clearing Valid so that
->> we can update the rest. arm64 doesn't require that.
-> 
-> The problem came out from discussions with our GIC engineers and what 
-> we
-> talked about at that time was IHI 0069E 9.11.36 - the description of 
-> the
-> Valid field:
-> 
-> "Writing a new value to any bit of GICR_VPENDBASER, other than
-> GICR_VPENDBASER.Valid, when GICR_VPENDBASER.Valid==1 is UNPREDICTABLE."
-> 
-> It looks like we should first clear the Valid and then write something
-> else. We might have some mis-understanding about this statement..
+> Does that hold for ARM (A32) instructions as well?
 
-So that's the v4.0 version of VPENDBASER. On v4.0, you start by clearing
-Valid, not changing any other bit. Subsequent polling of the leads to
-the PendingLast bit once Dirty clears. The current code follows this
-principle.
+It should do - they're all the same thing underneath. The UAL syntax 
+just renamed all the legacy VFP mnemonics from Fxxx to Vxxx form, apart 
+from a couple of things that were already deprecated. GAS still accepts 
+both regardless of ".syntax unified", and as a result GCC never saw a 
+reason to stop emitting the old mnemonics.
 
->> For the rest of discussion, let's ignore GICv4.1 32bit support (I'm
->> pretty sure nobody cares about that).
->> 
->>> This works fine on GICv4 where we only clear Valid for a vPE 
->>> deschedule.
->>> With the introduction of GICv4.1, we might also need to talk 
->>> something else
->>> (e.g., PendingLast, Doorbell) to the redistributor when clearing the 
->>> Valid.
->>> Let's port the 32bit gicr_write_vpendbaser() to arm64 so that 
->>> hardware can
->>> do the right thing after descheduling the vPE.
->> 
->> The spec says that:
->> 
->> "For a write that writes GICR_VPENDBASER.Valid from 1 to 0, if
->> GICR_VPENDBASER.PendingLast is written as 1 then 
->> GICR_VPENDBASER.PendingLast
->> takes an UNKNOWN value and GICR_VPENDBASER.Doorbell is treated as 
->> being 0."
->> 
->> and
->> 
->> "When GICR_VPENDBASER.Valid is written from 1 to 0, if there are 
->> outstanding
->> enabled pending interrupts GICR_VPENDBASER.Doorbell is treated as 0."
->> 
->> which indicate that PendingLast/Doorbell have to be written at the 
->> same time
->> as we clear Valid.
-> 
-> Yes. I obviously missed these two points when writing this patch.
-> 
->> Can you point me to the bit of the v4.1 spec that makes
->> this "clear Valid before doing anything else" requirement explicit?
-> 
-> No, nothing in v4.1 spec supports me :-(  The above has been forwarded
-> to Hisilicon and I will confirm these with them. It would be easy for
-> hardware to handle the PendingLast/DB when clearing Valid, I think.
-
-v4.1 changes the way VPENDBASER works in a number of way. Clearing Valid 
-allows
-a "handshake": At the point of making the vPE non-resident, to specify 
-the
-expected behaviour of the redistributor once the residency has been 
-completed.
-This includes requesting the doorbell or telling the GIC that we don't 
-care to
-know about PendingLast.
-
-This is effectively a relaxation of the v4.0 behaviour. I believe the 
-current
-state of the driver matches both specs (not using common code though).
-
-Thanks,
-
-         M.
-
--- 
-Jazz is not dead. It just smells funny...
+Robin.
