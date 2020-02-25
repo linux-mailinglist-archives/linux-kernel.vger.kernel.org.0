@@ -2,159 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5539516BA08
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 07:47:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73AC816BA11
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 07:48:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbgBYGrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 01:47:42 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28222 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726936AbgBYGrl (ORCPT
+        id S1729221AbgBYGsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 01:48:36 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:37011 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729064AbgBYGsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 01:47:41 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01P6jOwI071567
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 01:47:40 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yb1as9208-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 01:47:40 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
-        Tue, 25 Feb 2020 06:47:38 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 25 Feb 2020 06:47:33 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01P6kZfH45744390
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Feb 2020 06:46:35 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 85A6652051;
-        Tue, 25 Feb 2020 06:47:32 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.35.187])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 158BA5204E;
-        Tue, 25 Feb 2020 06:47:29 +0000 (GMT)
-Subject: Re: [PATCH v4 4/4] sched/core: Add permission checks for setting the
- latency_nice value
-To:     Qais Yousef <qais.yousef@arm.com>, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, chris.hyser@oracle.com,
-        patrick.bellasi@matbug.net, valentin.schneider@arm.com,
-        tim.c.chen@linux.intel.com
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@redhat.com, David.Laight@ACULAB.COM, pjt@google.com,
-        pavel@ucw.cz, tj@kernel.org, dhaval.giani@oracle.com,
-        qperret@google.com
-References: <20200224085918.16955-1-parth@linux.ibm.com>
- <20200224085918.16955-5-parth@linux.ibm.com>
- <20200224132905.32sdpbydnzypib47@e107158-lin.cambridge.arm.com>
-From:   Parth Shah <parth@linux.ibm.com>
-Date:   Tue, 25 Feb 2020 12:17:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 25 Feb 2020 01:48:36 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j6U1C-0007Ok-Cf; Tue, 25 Feb 2020 07:48:34 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j6U1B-0006eH-R5; Tue, 25 Feb 2020 07:48:33 +0100
+Date:   Tue, 25 Feb 2020 07:48:33 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH 3/4] pwm: omap-dmtimer: Do not disable pwm before
+ changing period/duty_cycle
+Message-ID: <20200225064833.kmvaplfqqf53s3iy@pengutronix.de>
+References: <20200224052135.17278-1-lokeshvutla@ti.com>
+ <20200224052135.17278-4-lokeshvutla@ti.com>
+ <20200224085531.zab5ewr2nfi2shem@pengutronix.de>
+ <4aedb6d4-1823-ab46-b7e6-cc0b30f7747d@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20200224132905.32sdpbydnzypib47@e107158-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20022506-0016-0000-0000-000002EA0157
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022506-0017-0000-0000-0000334D2B4D
-Message-Id: <9a4132f2-62cc-4132-1c6d-964ed679afc7@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-25_01:2020-02-21,2020-02-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 mlxlogscore=999 malwarescore=0 mlxscore=0 adultscore=0
- phishscore=0 bulkscore=0 clxscore=1015 impostorscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002250054
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4aedb6d4-1823-ab46-b7e6-cc0b30f7747d@ti.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-
-On 2/24/20 6:59 PM, Qais Yousef wrote:
-> On 02/24/20 14:29, Parth Shah wrote:
->> Since the latency_nice uses the similar infrastructure as NICE, use the
->> already existing CAP_SYS_NICE security checks for the latency_nice. This
->> should return -EPERM for the non-root user when trying to set the task
->> latency_nice value to any lower than the current value.
->>
->> Signed-off-by: Parth Shah <parth@linux.ibm.com>
+On Tue, Feb 25, 2020 at 10:32:42AM +0530, Lokesh Vutla wrote:
+> On 24/02/20 2:25 PM, Uwe Kleine-König wrote:
+> > Hello,
+> > 
+> > On Mon, Feb 24, 2020 at 10:51:34AM +0530, Lokesh Vutla wrote:
+> >> Only the Timer control register(TCLR) can be updated only when the timer
+> >> is stopped. Registers like Counter register(TCRR), loader register(TLDR),
+> >> match register(TMAR) can be updated when the counter is running. Since
+> >> TCLR is not updated in pwm_omap_dmtimer_config(), do not stop the
+> >> timer for period/duty_cycle update.
+> >>
+> >> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> >> ---
+> >>  drivers/pwm/pwm-omap-dmtimer.c | 14 --------------
+> >>  1 file changed, 14 deletions(-)
+> >>
+> >> diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+> >> index f13be7216847..58c61559e72f 100644
+> >> --- a/drivers/pwm/pwm-omap-dmtimer.c
+> >> +++ b/drivers/pwm/pwm-omap-dmtimer.c
+> >> @@ -102,7 +102,6 @@ static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
+> >>  	u32 load_value, match_value;
+> >>  	struct clk *fclk;
+> >>  	unsigned long clk_rate;
+> >> -	bool timer_active;
+> >>  
+> >>  	dev_dbg(chip->dev, "requested duty cycle: %d ns, period: %d ns\n",
+> >>  		duty_ns, period_ns);
+> >> @@ -178,25 +177,12 @@ static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
+> >>  	load_value = (DM_TIMER_MAX - period_cycles) + 1;
+> >>  	match_value = load_value + duty_cycles - 1;
+> >>  
+> >> -	/*
+> >> -	 * We MUST stop the associated dual-mode timer before attempting to
+> >> -	 * write its registers, but calls to omap_dm_timer_start/stop must
+> >> -	 * be balanced so check if timer is active before calling timer_stop.
+> >> -	 */
+> >> -	timer_active = pm_runtime_active(&omap->dm_timer_pdev->dev);
+> >> -	if (timer_active)
+> >> -		omap->pdata->stop(omap->dm_timer);
+> >> -
+> >>  	omap->pdata->set_load(omap->dm_timer, true, load_value);
+> >>  	omap->pdata->set_match(omap->dm_timer, true, match_value);
+> > 
+> > (Without having looked into the depths of the driver I assume
+> > .set_load() sets the period of the PWM and .set_match() the duty cycle.)
 > 
-> I'm not against this, so I'm okay if it goes in as is.
+> Right.
 > 
-> But IMO the definition of this flag is system dependent and I think it's
-> prudent to keep it an admin only configuration.
+> > 
+> > What happens on a running PWM if you change the period? Consider you
+> > change from duty_cycle = 1000, period = 5000 to duty_cycle = 4000,
+> > period = 10000. As you set the period first, can it happen the hardware
+> > produces a cycle with duty_cycle = 1000, period = 10000?
 > 
-> It'd be hard to predict how normal application could use and depend on this
-> feature in the future, which could tie our hand in terms of extending it.
-> 
+> No. So, the current cycle is un affected with duty_cycle = 1000 and period =
+> 5000. Starting from next cycle new settings gets reflected with duty_cycle =
+> 4000 and period = 10000.
 
-I am fine with this going in too. But just to lie down the fact on single
-page and starting the discussion, here are the pros and cons for including
-this permission checks:
+Is the reference manual for this hardware publically available?
 
-Pros:
-=====
-- Having this permission checks will allow only root users to promote the
-task, meaning lowering the latency_nice of the task. This is required in
-case when the admin has increased the latency_nice value of a task and
-non-root user can not lower it.
-- In absence of this check, the non-root user can decrease the latency_nice
-value against the admin configured value.
+So the .set_load callback just writes a shadow register and .set_match
+latches it into hardware atomically with its own register changes? A
+comment in the source code about this would be good. Also if .set_load
+doesn't work without .set_match I wonder if it is sane to put their
+logic in two different functions.
 
-Cons:
-=====
-- This permission check prevents the non-root user to lower the value. This
-is a problem when the user itself has increased the latency_nice value in
-the past but fails to lower it again.
-- After task fork, non-root user cannot lower the inherited child task's
-latency_nice value, which might be a problem in the future for extending
-this latency_nice ideas for different optimizations.
+Best regards
+Uwe
 
-
-> I can't argue hard about this though. But I do feel going further and have
-> a sched_feature() for each optimization that uses this flag could be necessary
-> too.
-
-I agree to your point.
-
-
-Thanks,
-Parth
-
-> 
-> Thanks
-> 
-> --
-> Qais Yousef
-> 
->> ---
->>  kernel/sched/core.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index e1dc536d4ca3..f883e1d3cd10 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -4887,6 +4887,10 @@ static int __sched_setscheduler(struct task_struct *p,
->>  			return -EINVAL;
->>  		if (attr->sched_latency_nice < MIN_LATENCY_NICE)
->>  			return -EINVAL;
->> +		/* Use the same security checks as NICE */
->> +		if (attr->sched_latency_nice < p->latency_nice &&
->> +		    !can_nice(p, attr->sched_latency_nice))
->> +			return -EPERM;
->>  	}
->>  
->>  	if (pi)
->> -- 
->> 2.17.2
->>
-
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
