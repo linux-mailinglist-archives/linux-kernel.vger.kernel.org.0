@@ -2,121 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 251A116E9BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 16:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42F2916E9CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 16:16:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730971AbgBYPOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 10:14:10 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37658 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729855AbgBYPOK (ORCPT
+        id S1730969AbgBYPQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 10:16:24 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57043 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730616AbgBYPQY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 10:14:10 -0500
-Received: by mail-wr1-f68.google.com with SMTP id l5so10917004wrx.4
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 07:14:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QXzprrtp68rQTmrZnfpbTAHahYMoR+p+Au9u2qscN2A=;
-        b=GkcVQcp/6ZPehbeQY8JZj9qHNu+KM+ij2Ac6LOcyHyi22wIPIdCemfzEJPKLf8LjLj
-         FKb4c9SDJ4iV+jyMVfobWZzBWl+d3fXt6N8z1YvZsHakD1ndKIJFlGdpSxbNSb6/5JwG
-         lxRlHQMNgeAKzX4T53OJCbDNPiDI35HTSDYdPMMLU8wm33DBGFCjTmapDBfilbz+GA1v
-         ILCCmJxgX2voBzpUL+OwmekWtTi2fSOg3z8q47KjKAwxacpL14/gMxeLQjhVdR3Ezzx0
-         8LKZK2gneeTU5kbo25SYbcsTM7Bg9QrononOXn3h0yBMFepS717EXBgMt5FQ7qD9YCeX
-         ChDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QXzprrtp68rQTmrZnfpbTAHahYMoR+p+Au9u2qscN2A=;
-        b=IKb3HzuDpFmGwOaAhbcCizp3CD6Qe9mxSJRj9njD6iJiXLaUdfwmAcXKKvOj/QkAZO
-         TBljJPDDZ/wOzekNpvr3gv8IeJWs7rxH94lrWxVU2zcGuCg0Jnlxwj8wV2J59yD3L8eN
-         AJ9lDRx2LIm5Vt0VfLTQsz0+SrIgBATgHO9LQKOxeQo3XgA2zmDepe3iqfhESDC+5bH8
-         Xr6+sn9ZjzwXNiZtquCsMx/RDcEjfpVqZ7uRAOMiopB7Azq4jPCZVuIxepbYz6XPZRIV
-         eZAXSw16oNRkwwduxxrog7arlcZyKjltDx8HY1naK6oqIcs1QYr1c+av3pPkP0yuHobM
-         JYBA==
-X-Gm-Message-State: APjAAAVkjT7YsIpWrs4M2dV8jC4WtwPP+avNagtT6Keg/rFnfaK7g68d
-        9lLNMvGPzAHlcwRGEWqkOypmX0IQtrxBd3Sj7Ng=
-X-Google-Smtp-Source: APXvYqz015XmLIRToUFz/saw+T7KQVzV9ftDiqBQjP1WNtuDuxUROpWkH2OtTEjG1hUe2M5d5d2uBilnQkLpf0g7uMc=
-X-Received: by 2002:adf:b254:: with SMTP id y20mr72518730wra.362.1582643647644;
- Tue, 25 Feb 2020 07:14:07 -0800 (PST)
+        Tue, 25 Feb 2020 10:16:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582643783;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rwYYWU17L3iTa//T0R9PqKtki3pU+tfr/muWRaBusrw=;
+        b=gxCyUUsL1FceJzvBrb9eL+66i8dyTly7k8V4nytLueU5iW4wQWLw5GuOaDgjH0Fz6jYxOU
+        JscMWpDAN/g7lOExo6L2ibFOVFeqWipwuV9pIA51kYIiEadmX+LeZYBl9FRk/02469r8DD
+        ggrmT/avJA8g49sRcoViiiqmmDXHNwk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-73-3SjZgVAVPT6ZgjRFlciJYQ-1; Tue, 25 Feb 2020 10:16:13 -0500
+X-MC-Unique: 3SjZgVAVPT6ZgjRFlciJYQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 24A4E800D5E;
+        Tue, 25 Feb 2020 15:16:12 +0000 (UTC)
+Received: from [10.18.17.119] (dhcp-17-119.bos.redhat.com [10.18.17.119])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 897735C241;
+        Tue, 25 Feb 2020 15:16:11 +0000 (UTC)
+Subject: Re: [PATCH] selftests/timers: Turn off timeout setting
+To:     Po-Hsu Lin <po-hsu.lin@canonical.com>,
+        linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org, sboyd@kernel.org,
+        tglx@linutronix.de, john.stultz@linaro.org
+References: <20200225101809.9986-1-po-hsu.lin@canonical.com>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Message-ID: <6ee3dd78-675b-ac0e-87ce-96a7766d597b@redhat.com>
+Date:   Tue, 25 Feb 2020 10:16:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200221122139.148664-1-chenzhou10@huawei.com> <MN2PR12MB33447575BAF26E919965AB5CE4EC0@MN2PR12MB3344.namprd12.prod.outlook.com>
-In-Reply-To: <MN2PR12MB33447575BAF26E919965AB5CE4EC0@MN2PR12MB3344.namprd12.prod.outlook.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 25 Feb 2020 10:13:56 -0500
-Message-ID: <CADnq5_OZgyYrkPSna0Sp+04-POYxWqgXgOPkjGfgxz2qCqiTwA@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amd/powerplay: Use bitwise instead of
- arithmetic operator for flags
-To:     "Quan, Evan" <Evan.Quan@amd.com>
-Cc:     Chen Zhou <chenzhou10@huawei.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "Feng, Kenneth" <Kenneth.Feng@amd.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200225101809.9986-1-po-hsu.lin@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 10:21 PM Quan, Evan <Evan.Quan@amd.com> wrote:
->
-> Thanks. Reviewed-by: Evan Quan <evan.quan@amd.com>
->
-
-Applied.  Thanks!
-
-Alex
-
-> -----Original Message-----
-> From: Chen Zhou <chenzhou10@huawei.com>
-> Sent: Friday, February 21, 2020 8:22 PM
-> To: Quan, Evan <Evan.Quan@amd.com>; Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>; Zhou, David(ChunMing) <David1.Zhou@amd.com>; airlied@linux.ie; daniel@ffwll.ch
-> Cc: Feng, Kenneth <Kenneth.Feng@amd.com>; amd-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; chenzhou10@huawei.com
-> Subject: [PATCH -next] drm/amd/powerplay: Use bitwise instead of arithmetic operator for flags
->
-> This silences the following coccinelle warning:
->
-> "WARNING: sum of probable bitmasks, consider |"
->
-> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+On 2/25/20 5:18 AM, Po-Hsu Lin wrote:
+> Tests in timers especially nsleep-lat, set-timer-lat,
+> inconsistency-check and raw_skew these 4 tests can take longer than
+> the default 45 seconds that introduced in commit 852c8cbf
+> (selftests/kselftest/runner.sh: Add 45 second timeout per test) to run.
+> 
+> Disable the timeout setting for timers instead of looking for an proper
+> value to make it more general.
+> 
+> Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
 > ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> index 92a65e3d..f29f95b 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> @@ -3382,7 +3382,7 @@ static int vega10_populate_and_upload_sclk_mclk_dpm_levels(
->         }
->
->         if (data->need_update_dpm_table &
-> -                       (DPMTABLE_OD_UPDATE_SCLK + DPMTABLE_UPDATE_SCLK + DPMTABLE_UPDATE_SOCCLK)) {
-> +                       (DPMTABLE_OD_UPDATE_SCLK | DPMTABLE_UPDATE_SCLK |
-> +DPMTABLE_UPDATE_SOCCLK)) {
->                 result = vega10_populate_all_graphic_levels(hwmgr);
->                 PP_ASSERT_WITH_CODE((0 == result),
->                                 "Failed to populate SCLK during PopulateNewDPMClocksStates Function!", @@ -3390,7 +3390,7 @@ static int vega10_populate_and_upload_sclk_mclk_dpm_levels(
->         }
->
->         if (data->need_update_dpm_table &
-> -                       (DPMTABLE_OD_UPDATE_MCLK + DPMTABLE_UPDATE_MCLK)) {
-> +                       (DPMTABLE_OD_UPDATE_MCLK | DPMTABLE_UPDATE_MCLK)) {
->                 result = vega10_populate_all_memory_levels(hwmgr);
->                 PP_ASSERT_WITH_CODE((0 == result),
->                                 "Failed to populate MCLK during PopulateNewDPMClocksStates Function!",
-> --
-> 2.7.4
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+>   tools/testing/selftests/timers/settings | 1 +
+>   1 file changed, 1 insertion(+)
+>   create mode 100644 tools/testing/selftests/timers/settings
+> 
+> diff --git a/tools/testing/selftests/timers/settings b/tools/testing/selftests/timers/settings
+> new file mode 100644
+> index 0000000..e7b9417
+> --- /dev/null
+> +++ b/tools/testing/selftests/timers/settings
+> @@ -0,0 +1 @@
+> +timeout=0
+> 
+
+Hi,
+
+Michael recently posted a patch that adds the various selftest settings 
+files to the TEST_FILES list, ensuring that they get copied to the 
+install directory along with the tests:
+
+https://lore.kernel.org/linux-kselftest/20200220044241.2878-1-mpe@ellerman.id.au/
+
+I think if you add that to the corresponding Makefile, you should be set.
+
+Regards,
+
+-- Joe
+
