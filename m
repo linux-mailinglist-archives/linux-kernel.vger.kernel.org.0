@@ -2,73 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C7BB16F1CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 22:49:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D329016F235
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 22:52:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbgBYVtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 16:49:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41228 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728162AbgBYVts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 16:49:48 -0500
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 879F721D7E
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 21:49:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582667387;
-        bh=HpOrLqgis/0esfG7dq2+OsTjc76h9zTqkjIJyDQmoKA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gLhc7oCBf/dMrtwgyWAQsXlJBnnS8uxHJFBQTNslU/xlcEZ2XsI37rPDayexTl/na
-         fUuMHI7ecFZvcl+kv3tj8ZSXWPVED6uI/6HeAmY/iraqGp56FGYmhadN6drQ3kLQ+1
-         Og4aSYroBhGJzgODXVENKVdfI5ISKrI2XKCmFvP0=
-Received: by mail-wr1-f48.google.com with SMTP id t3so477839wru.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 13:49:47 -0800 (PST)
-X-Gm-Message-State: APjAAAWF/Zu9rmzg/aQe37e4c16Zu7g4QsGkBMMmAbOfIDvQAmgGutSF
-        fUstQoVFYRyf85rRERTCoqGrHEdTXSZZksQEZaJi/g==
-X-Google-Smtp-Source: APXvYqwwlguw+9143UoHvRORjuDhvyP7pINZdcLc2/GmTaDHWw6AbKjBqD07WA/Fx7HmxjDN7uHVGZJ80tlj+nocYZ4=
-X-Received: by 2002:adf:df0c:: with SMTP id y12mr1116539wrl.257.1582667386041;
- Tue, 25 Feb 2020 13:49:46 -0800 (PST)
+        id S1729023AbgBYVw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 16:52:26 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:51184 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbgBYVw0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 16:52:26 -0500
+Received: by mail-pj1-f66.google.com with SMTP id r67so331620pjb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 13:52:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=67FIIq1D+V+asq39t76M7ReKeHhVxdkAMjdLa3hjO4A=;
+        b=WMlJ8w13eGrO7Kbvy/9m9s0u5Yu0HmI3lHoSYEAYxlrTLRzW/t99dMlQdrxXWUTA0D
+         zKAmdbiNd8kRXlpySjM2lvvcC2Hrmo0HP4YW9rpS6oFMjb29MVFYxZGh5TjKHEklLotV
+         /G3J3usnTgzRuBApWWMw7tLWKjHmtDNeTGVBw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=67FIIq1D+V+asq39t76M7ReKeHhVxdkAMjdLa3hjO4A=;
+        b=c0Fb5Ih6+jbCPL+71Pq13CeJgS+uOauXE88/seJQ4HW5sULUy85CCgRW6rdxq+g1IP
+         HBaAMoF640bgREICpmmzXo98cF66CLsCVSDEOXs7CYziL9UIpAnM4jKN1rKiPA3h6eyG
+         br1fYEEm86QMWzgNJk3kU4ytbzQCRIdSgk1OkUKTiItqJGhdnc61Jp5F4zVyGG2+iWE/
+         v7JWjjOJrVjauMjXY6WodaUnWCQ8fCqo63lsVTxt2ncHsgNFqEv2zQZEkRmY20T2MAGf
+         QuQAtY7SEoNf3y/4aCpflNbFdo89FtJNe0L6KVx4kDMFfm/bmt8abXvv2oAvhK3KkNda
+         jSFQ==
+X-Gm-Message-State: APjAAAWi5pt2TA+uQZGSNUXgGRvCUPl4lvLKdPYOmwPZY6Smk2bhDtcX
+        Ud0qNKKQvFefseGQTMZ2UHfrrw==
+X-Google-Smtp-Source: APXvYqytfJllWL3kvVcykyzU2VtupNrDrUaLjpP3rd5JD3s1hTnEWkeZBgHal8imd07uv+qMVVQhdg==
+X-Received: by 2002:a17:90a:aa83:: with SMTP id l3mr1311964pjq.5.1582667545448;
+        Tue, 25 Feb 2020 13:52:25 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id f18sm7161pgn.2.2020.02.25.13.52.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2020 13:52:24 -0800 (PST)
+Date:   Tue, 25 Feb 2020 13:52:23 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>, dan.carpenter@oracle.com,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Ben Hutchings <ben@decadent.org.uk>, will@kernel.org,
+        ebiederm@xmission.com, linux-arch@vger.kernel.org,
+        security@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] execve: warn if process starts with executable stack
+Message-ID: <202002251341.48BC06E@keescook>
+References: <20191208171918.GC19716@avx2>
+ <20191210174726.101e434df59b6aec8a53cca1@linux-foundation.org>
 MIME-Version: 1.0
-References: <1582498270-50674-1-git-send-email-schaecsn@gmx.net>
-In-Reply-To: <1582498270-50674-1-git-send-email-schaecsn@gmx.net>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 25 Feb 2020 13:49:34 -0800
-X-Gmail-Original-Message-ID: <CALCETrXcFrR9V_yjPRh9eJ1=1efo_DCCwGTeusmo2CQXpFFdrw@mail.gmail.com>
-Message-ID: <CALCETrXcFrR9V_yjPRh9eJ1=1efo_DCCwGTeusmo2CQXpFFdrw@mail.gmail.com>
-Subject: Re: [PATCH 0/1] i2c: imc: Add support for Intel iMC SMBus host controller.
-To:     Stefan Schaeckeler <schaecsn@gmx.net>
-Cc:     linux-i2c@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191210174726.101e434df59b6aec8a53cca1@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 2:52 PM Stefan Schaeckeler <schaecsn@gmx.net> wrote:
->
-> This patch is based on Andy Lutomirski's iMC SMBus driver patch-set
-> https://lkml.org/lkml/2016/4/28/926. It never made it into the kernel. I hope
-> this rewrite will:
->
->
-> Overview
->
-> Modern Intel memory controllers host an SMBus controller and connection to
-> DIMMs and their thermal sensors. The memory controller firmware has three modes
-> of operation: Closed Loop Thermal Throttling (CLTT), Open Loop Thermal
-> Throttling (OLTT) and none.
->
-> - CLTT: The memory controller firmware is periodically accessing the DIMM
->   temperature sensor over the SMBus.
->
+On Tue, Dec 10, 2019 at 05:47:26PM -0800, Andrew Morton wrote:
+> On Sun, 8 Dec 2019 20:19:18 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> 
+> > There were few episodes of silent downgrade to an executable stack over
+> > years:
+> > 
+> > 1) linking innocent looking assembly file will silently add executable
+> >    stack if proper linker options is not given as well:
+> > 
+> > 	$ cat f.S
+> > 	.intel_syntax noprefix
+> > 	.text
+> > 	.globl f
+> > 	f:
+> > 	        ret
+> > 
+> > 	$ cat main.c
+> > 	void f(void);
+> > 	int main(void)
+> > 	{
+> > 	        f();
+> > 	        return 0;
+> > 	}
+> > 
+> > 	$ gcc main.c f.S
+> > 	$ readelf -l ./a.out
+> > 	  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+> >                          0x0000000000000000 0x0000000000000000  RWE    0x10
+> > 			 					 ^^^
+> > 
+> > 2) converting C99 nested function into a closure
+> > https://nullprogram.com/blog/2019/11/15/
+> > 
+> > 	void intsort2(int *base, size_t nmemb, _Bool invert)
+> > 	{
+> > 	    int cmp(const void *a, const void *b)
+> > 	    {
+> > 	        int r = *(int *)a - *(int *)b;
+> > 	        return invert ? -r : r;
+> > 	    }
+> > 	    qsort(base, nmemb, sizeof(*base), cmp);
+> > 	}
+> > 
+> > will silently require stack trampolines while non-closure version will not.
+> > 
+> > Without doubt this behaviour is documented somewhere, add a warning so that
+> > developers and users can at least notice. After so many years of x86_64 having
+> > proper executable stack support it should not cause too many problems.
+> 
+> hm, OK, let's give it a trial run.
 
+So, I'm a fan of the sentiment here, but this check is bogus for
+several architectural and programmatic combinations. Sometimes
+it's an intentional choice, not an "accident". e.g. klibc
+uses trampolines for its setjmp implementation:
+https://lists.zytor.com/archives/klibc/2020-February/004271.html
 
-I think this is great!  One question, though: what happens if the
-system is in CLTT mode but you disable CLTT and claim the bus for too
-long?  For example, if there's an infinite loop or other lockup which
-you have the tsod polling interval set to 0?  Does the system catch
-fire or does the system do something intelligent like temporarily
-switching to open loop?
+So now all the klibc initrds are throwing this warning (and then never
+warning again, so it's extra pointless for such machines as "legitimate"
+cases will never be discovered).
+
+I've got a series up to fix the much sneakier version of this
+(READ_IMPLIES_EXEC[1]), but at this point, I think this problem is well
+addressed by distros scanning for this kind of thing in their repos.
+For example, Ubuntu did this years ago (and flagged klibc as having
+this condition):
+https://wiki.ubuntu.com/SecurityTeam/Roadmap/ExecutableStacks
+
+> 
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -761,6 +761,11 @@ int setup_arg_pages(struct linux_binprm *bprm,
+> >  		goto out_unlock;
+> >  	BUG_ON(prev != vma);
+> >  
+> > +	if (unlikely(vm_flags & VM_EXEC)) {
+> > +		pr_warn_once("process '%pD4' started with executable stack\n",
+> > +			     bprm->file);
+> > +	}
+> > +
+> >  	/* Move stack pages down in memory. */
+> >  	if (stack_shift) {
+> >  		ret = shift_arg_pages(vma, stack_shift);
+> 
+> What are poor users supposed to do if this message comes out? 
+> Hopefully google the message and end up at this thread.  What do you
+> want to tell them?
+
+And that's the other problem (for which I see there is a thread). The
+user can't actually do anything here.
+
+I would really like something like this check, but maintaining a whitelist
+of architectures or binaries to ignore is going to be awful, and there
+is a very non-zero amount of software is built this way intentionally...
+
+-Kees
+
+[1] https://lore.kernel.org/lkml/20200225051307.6401-1-keescook@chromium.org/#r
+
+-- 
+Kees Cook
