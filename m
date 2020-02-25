@@ -2,127 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03EE316B78F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 03:11:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C50A416B796
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 03:13:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728730AbgBYCLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 21:11:34 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33798 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728546AbgBYCLe (ORCPT
+        id S1728696AbgBYCNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 21:13:41 -0500
+Received: from smtprelay0168.hostedemail.com ([216.40.44.168]:37047 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726962AbgBYCNk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 21:11:34 -0500
-Received: by mail-qk1-f195.google.com with SMTP id 11so6528834qkd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 18:11:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mtENMlJAZmFo3hgkNlhKi1IslvUQRA06IrMNjYVS8tI=;
-        b=uMkid5thEz9LaTZqeZ1Kn68N0wqffDNu1o4VWGnZApNj5zC7JnKm16DxQBSj2QXkeF
-         R+WQfi6bZ5M6h8j1Wx+G8VqWvGDk5Dg2yqqK+sTnG5dPC6Cf1ryHk/C/6lSUq6RkRufV
-         NIfsI9DmvlMFZ5ku5VT8V8tSG/NjVL63Yoxgg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mtENMlJAZmFo3hgkNlhKi1IslvUQRA06IrMNjYVS8tI=;
-        b=RG7EBHNfCu7q9cpDQW5XTSIFs3aUbLkxQw3VrOlMt7FCMxZr/hKs4AzVnhb0hwWCZg
-         OZzv1ykQRiWZSE+7e05lamtubGA76ZmEvQoG3d8HtwnxjKRbwEiibEVPDbbFdV4z7YjX
-         eld+rw30I603zVYFXR0e2Jj22W8QA++pO+OUJ9uJKXfPc3yAoRiGoLGq82bKNglbLVfO
-         DNd/H/Bujf7AbshPz7OyfQUOs0jrsLLINrFWRrOVsKvCYnyOuSWDwlCQKM06+OJq7bob
-         wr9XtcCMI5dJZ9IMuQu3seHKeBOoKRqyVr9V1SK8+m0VA54YcYBQMuLhoJqzMINg00KV
-         PHIQ==
-X-Gm-Message-State: APjAAAU6CYVToK04EFZibedmslB/r+2Rc19gehcTyWyR5xfqNfWbeBwk
-        NgS1+F34u3L3RqoE9Y8IDNaCog==
-X-Google-Smtp-Source: APXvYqyo/AHOHks3iLCwaFh1zbfqOtfQEjQ0qQFTdT9FJaGz5646eiDKpGgbV3lLlImiH+rhJY2GEQ==
-X-Received: by 2002:a37:2f07:: with SMTP id v7mr50554065qkh.261.1582596693049;
-        Mon, 24 Feb 2020 18:11:33 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id w2sm6858994qto.73.2020.02.24.18.11.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 18:11:32 -0800 (PST)
-Date:   Mon, 24 Feb 2020 21:11:31 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Suraj Jitindar Singh <surajjs@amazon.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC] ext4: fix potential race between online resizing and
- write operations
-Message-ID: <20200225021131.GC253171@google.com>
-References: <20200216121246.GG2935@paulmck-ThinkPad-P72>
- <20200217160827.GA5685@pc636>
- <20200217193314.GA12604@mit.edu>
- <20200218170857.GA28774@pc636>
- <20200220045233.GC476845@mit.edu>
- <20200221003035.GC2935@paulmck-ThinkPad-P72>
- <20200221131455.GA4904@pc636>
- <20200221202250.GK2935@paulmck-ThinkPad-P72>
- <20200222222415.GC191380@google.com>
- <20200223011018.GB2935@paulmck-ThinkPad-P72>
+        Mon, 24 Feb 2020 21:13:40 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id A68A2182CED34;
+        Tue, 25 Feb 2020 02:13:39 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2689:2693:2828:3138:3139:3140:3141:3142:3353:3622:3653:3865:3866:3867:3868:3870:3871:3872:3873:4321:5007:10004:10400:10450:10455:10848:11026:11232:11658:11914:12297:12555:12740:12760:12895:13069:13255:13311:13357:13439:13618:14181:14659:14721:19904:19999:21080:21222:21451:21611:21627:21740:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: nest60_772b7ebd10559
+X-Filterd-Recvd-Size: 2237
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 25 Feb 2020 02:13:38 +0000 (UTC)
+Message-ID: <a8af6c423501d5d49f1d81997b3a2295c0df7b9e.camel@perches.com>
+Subject: Re: [RFC][PATCH] checkpatch: Properly warn if Change-Id comes after
+ first Signed-off-by line
+From:   Joe Perches <joe@perches.com>
+To:     John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Cc:     Andy Whitcroft <apw@canonical.com>
+Date:   Mon, 24 Feb 2020 18:12:08 -0800
+In-Reply-To: <20200224235824.126361-1-john.stultz@linaro.org>
+References: <20200224235824.126361-1-john.stultz@linaro.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200223011018.GB2935@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 05:10:18PM -0800, Paul E. McKenney wrote:
-[...] 
-> > I was thinking a 2 fold approach (just thinking out loud..):
-> > 
-> > If kfree_call_rcu() is called in atomic context or in any rcu reader, then
-> > use GFP_ATOMIC to grow an rcu_head wrapper on the atomic memory pool and
-> > queue that.
-> > 
-> > Otherwise, grow an rcu_head on the stack of kfree_call_rcu() and call
-> > synchronize_rcu() inline with it.
-> > 
-> > Use preemptible() andr task_struct's rcu_read_lock_nesting to differentiate
-> > between the 2 cases.
-> > 
-> > Thoughts?
+On Mon, 2020-02-24 at 23:58 +0000, John Stultz wrote:
+> Quite often, the Change-Id may be between Signed-off-by: lines or
+> at the end of them. Unfortunately checkpatch won't catch these
+> cases as it disables in_commit_log when it catches the first
+> Signed-off-by line.
 > 
-> How much are we really losing by having an rcu_head in the structure,
-> either separately or unioned over other fields?
+> This has bitten me many many times.
 
-It does seem a convenient API at first glance. Also seems like there are a
-number of usecases now (ext4, vfree that Vlad mentioned, and all the other
-users he mentioned, etc).
+Hmm.  When is change-id used in your workflow?
 
-> > > > Also there is one more open question what to do if GFP_ATOMIC
-> > > > gets failed in case of having low memory condition. Probably
-> > > > we can make use of "mempool interface" that allows to have
-> > > > min_nr guaranteed pre-allocated pages. 
-> > > 
-> > > But we really do still need to handle the case where everything runs out,
-> > > even the pre-allocated pages.
-> > 
-> > If *everything* runs out, you are pretty much going to OOM sooner or later
-> > anyway :D. But I see what you mean. But the 'tradeoff' is RCU can free
-> > head-less objects where possible.
+> I suspect this patch will break other use cases, so it probably
+> shouldn't be merged, but I wanted to share it just to help
+> illustrate the problem.
 > 
-> Would you rather pay an rcu_head tax (in cases where it cannot share
-> with other fields), or would you rather have states where you could free
-> a lot of memory if only there was some memory to allocate to track the
-> memory to be freed?
+> Cc: Andy Whitcroft <apw@canonical.com>
+> Cc: Joe Perches <joe@perches.com>
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
 
-Depends on the usecase we could use the right API.
+Yes, I expect this will break things.
 
-> But yes, as you suggested above, there could be an API similar to the
-> userspace RCU library's API that usually just queues the callback but
-> sometimes sleeps for a full grace period.  If enough people want this,
-> it should not be hard to set up.
+And it's probably better to not add a Signed-off-by: when
+you intend this not to be merged.
 
-Sounds good!
-
-thanks,
-
- - Joel
+> ---
+>  scripts/checkpatch.pl | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index a63380c6b0d2..a55340a9e3ea 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -2609,7 +2609,8 @@ sub process {
+>  # Check the patch for a signoff:
+>  		if ($line =~ /^\s*signed-off-by:/i) {
+>  			$signoff++;
+> -			$in_commit_log = 0;
+> +			#Disabling in_commit_log here breaks Change-Id checking in some cases
+> +			#$in_commit_log = 0;
+>  			if ($author ne '') {
+>  				my $l = $line;
+>  				$l =~ s/"//g;
 
