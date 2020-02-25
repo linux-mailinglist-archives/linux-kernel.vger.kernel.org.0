@@ -2,105 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9AA216BFC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 12:42:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D48B716BFEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 12:49:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730246AbgBYLmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 06:42:37 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:47102 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729178AbgBYLmg (ORCPT
+        id S1729947AbgBYLtZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 06:49:25 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:41281 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729510AbgBYLtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 06:42:36 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 9E1941C208D; Tue, 25 Feb 2020 12:42:35 +0100 (CET)
-Date:   Tue, 25 Feb 2020 12:42:34 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     pavel@denx.de
-Cc:     linux-kernel@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 184/191] drm/amdgpu/smu10: fix
- smu10_get_clock_by_type_with_latency
-Message-ID: <20200225114234.GB2591@amd>
-References: <20200221072250.732482588@linuxfoundation.org>
- <20200221072312.821201678@linuxfoundation.org>
+        Tue, 25 Feb 2020 06:49:25 -0500
+X-UUID: 8cd06643e6ac4fb4b42787beafb37981-20200225
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=tEuIuqbj8JcbuuArgO1nPH3pErg0cD0oQ9Q5Xkop0Zw=;
+        b=JOArML+X7PQWj2lXxm+uN287ND+vJ64UPJKoQFc/pjMgmh7U59L0X8mi3i2F3vM9bvAAs3f2Wvnnn+CyochRzDgPEbaXzTQINNBDVy9C190Z5fVfpEUYLORAHxEPUE7Bmg3SI5M0itJRjolTDtlP2whQRDHmzHLUrYZL9x05YJw=;
+X-UUID: 8cd06643e6ac4fb4b42787beafb37981-20200225
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 274965202; Tue, 25 Feb 2020 19:47:38 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
+ (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 25 Feb
+ 2020 19:48:12 +0800
+Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
+ MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Tue, 25 Feb 2020 19:46:16 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+CC:     <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
+        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
+        <stonea168@163.com>, <huijuan.xie@mediatek.com>,
+        Jitao Shi <jitao.shi@mediatek.com>
+Subject: [PATCH v2 0/4] Config mipi tx drive current and impedance
+Date:   Tue, 25 Feb 2020 19:47:26 +0800
+Message-ID: <20200225114730.124939-1-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="+pHx0qQiF2pBVqBT"
-Content-Disposition: inline
-In-Reply-To: <20200221072312.821201678@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: DBA67982F7B2CBA2F3BB6E7444224D083ADD37C79BB3BC4FC5858E737CCE96102000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Q2hhbmdlcyBzaW5jZSB2MToNCiAtIGZpeCBjb2Rpbmcgc3R5bGUuDQogLSBjaGFuZ2UgbXRrX21p
+cGlfdHhfY29uZmlnX2NhbGlicmF0aW9uX2RhdGEoKSB0byB2b2lkDQoNCkppdGFvIFNoaSAoNCk6
+DQogIGR0LWJpbmRzOiBkaXNwbGF5OiBtZWRpYXRlazogYWRkIHByb3BlcnR5IHRvIGNvbnRyb2wg
+bWlwaSB0eCBkcml2ZQ0KICAgIGN1cnJlbnQNCiAgZHQtYmluZHM6IGRpc3BsYXk6IG1lZGlhdGVr
+OiBnZXQgbWlwaXR4IGNhbGlicmF0aW9uIGRhdGEgZnJvbSBudm1lbQ0KICBkcm0vbWVkaWF0ZWs6
+IGFkZCB0aGUgbWlwaXR4IGRyaXZpbmcgY29udHJvbA0KICBkcm0vbWVkaWF0ZWs6IGNvbmZpZyBt
+aXBpdHggaW1wZWRhbmNlIHdpdGggY2FsaWJyYXRpb24gZGF0YQ0KDQogLi4uL2Rpc3BsYXkvbWVk
+aWF0ZWsvbWVkaWF0ZWssZHNpLnR4dCAgICAgICAgIHwgIDkgKysrDQogZHJpdmVycy9ncHUvZHJt
+L21lZGlhdGVrL210a19taXBpX3R4LmMgICAgICAgIHwgIDYgKysNCiBkcml2ZXJzL2dwdS9kcm0v
+bWVkaWF0ZWsvbXRrX21pcGlfdHguaCAgICAgICAgfCAgMSArDQogZHJpdmVycy9ncHUvZHJtL21l
+ZGlhdGVrL210a19tdDgxODNfbWlwaV90eC5jIHwgNjQgKysrKysrKysrKysrKysrKysrKw0KIDQg
+ZmlsZXMgY2hhbmdlZCwgODAgaW5zZXJ0aW9ucygrKQ0KDQotLSANCjIuMjEuMA0K
 
---+pHx0qQiF2pBVqBT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> From: Alex Deucher <alexander.deucher@amd.com>
->=20
-> [ Upstream commit 4d0a72b66065dd7e274bad6aa450196d42fd8f84 ]
->=20
-> Only send non-0 clocks to DC for validation.  This mirrors
-> what the windows driver does.
-
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c b/drivers/=
-gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> index 1546bc49004f8..3fa6e8123b8eb 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> @@ -994,12 +994,15 @@ static int smu10_get_clock_by_type_with_latency(str=
-uct pp_hwmgr *hwmgr,
-> =20
->  	clocks->num_levels =3D 0;
->  	for (i =3D 0; i < pclk_vol_table->count; i++) {
-> -		clocks->data[i].clocks_in_khz =3D pclk_vol_table->entries[i].clk * 10;
-> -		clocks->data[i].latency_in_us =3D latency_required ?
-> -						smu10_get_mem_latency(hwmgr,
-> -						pclk_vol_table->entries[i].clk) :
-> -						0;
-> -		clocks->num_levels++;
-> +		if (pclk_vol_table->entries[i].clk) {
-> +			clocks->data[clocks->num_levels].clocks_in_khz =3D
-> +				pclk_vol_table->entries[i].clk * 10;
-> +			clocks->data[clocks->num_levels].latency_in_us =3D latency_required ?
-> +				smu10_get_mem_latency(hwmgr,
-> +						      pclk_vol_table->entries[i].clk) :
-> +				0;
-> +			clocks->num_levels++;
-> +		}
->  	}
-
-This results in very ugly wrapping. Better way would be to do
-"if !(pclk_vol_table->entries[i].clk) continue;"...
-
-"drm/amdgpu/smu10: fix smu10_get_clock_by_type_with_voltage" could be
-improved in similar way.
-
-Best regards,
-							Pavel
-
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---+pHx0qQiF2pBVqBT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl5VCCoACgkQMOfwapXb+vLXQgCffdt12/YTK2DTCSDvMalPYVdb
-lCMAmwQ257909XAf0gGoMrf1TiEyAaJT
-=zSlR
------END PGP SIGNATURE-----
-
---+pHx0qQiF2pBVqBT--
