@@ -2,96 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F17416C471
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:54:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2675116C475
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:54:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730879AbgBYOy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 09:54:29 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:53962 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730427AbgBYOy3 (ORCPT
+        id S1730646AbgBYOyr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 09:54:47 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41760 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728515AbgBYOyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:54:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582642467;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mK3STqvNpT3jDn9vLwtg+cXgS2sGksMMsz4/c3rFMHk=;
-        b=dea58rsrPeKNMLm/+yu2kyQLKbyYLaXJdgMbVNSBpt9KdFXsqPDo7gQ3RA4ByX4/WajWKu
-        ECIn5WwcrjJCWRqd7zwlYBbsXGCWOwY8r/V39tb3CKsqTTuTHSiOxkCL28GdFSKH0Kvsqw
-        5uNJB76rewjOPbDgj7X7Aqu5SBEYZJg=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-261-ykiP9e4xPd-14i41ZdN55A-1; Tue, 25 Feb 2020 09:54:24 -0500
-X-MC-Unique: ykiP9e4xPd-14i41ZdN55A-1
-Received: by mail-wm1-f70.google.com with SMTP id f66so960939wmf.9
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 06:54:24 -0800 (PST)
+        Tue, 25 Feb 2020 09:54:47 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v4so2216109wrs.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 06:54:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=isovalent-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=y++kI/5dCtw5fZaeSgXh8lWKMSaGQmRYxWkHHDDsYEE=;
+        b=jGWepyEIkZ1p0tED+rauWwmW4k3RG+6zN0X4+Bky/2ByebPFpB9k5sL2WKPs6Odb+c
+         E5MFAI285mX4zdtjqORrRKQDBBJwXm1myO7nslK+AtFUxk5GUzxOs1R8v73pHgKaV2X0
+         7R/bLi/0hyOhShc0bz1uYhtozSNWxm0TGVRbDAkkvl0P/UQ1ljuyPwdVM1Nj0jSzRkLz
+         hmkndN0H37fZzshO4I7DzEGHOxlvrPfvsAt9p7Naj81CWN4vKqrl+nuY6mZlh+N4Rj07
+         7gnDQ/sDjdKgaWRUy/RfRO+i8ZglHkuBPTxsb18n4eB0SPCdfQsiuh1wa857P0BP4fUo
+         TgIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=mK3STqvNpT3jDn9vLwtg+cXgS2sGksMMsz4/c3rFMHk=;
-        b=WOgs+vSgl3qdWnCPgnIhYobJceBPsXReRBZs5awasZPrR3AxLSP3KUafEgVJzu+qHR
-         RldSqiSGzH+MBNbBwTfJBB5mIt2DEUuqtXc5IH+kdAlQsYVJdfTa48uuCCRJww0V9AAI
-         kRBwMISOkhbhEjeKh2xqljP+zpFQIsqhY9Mxxjdxot+pzCbYf36kHVGVrPwv9gLTkaJo
-         4eHqCnP8skVTachukjIUREVCdTpQoJ6DbXzX2gmywfkRNVMF+sjcgtguyXkwhBm4zX2k
-         5JbsABx7tfrpO6qPNXzB9QdtL79Nsnc95BHS9BzmuoTQRB/92DwNhzSLD9+WC7A4F5hs
-         S/GA==
-X-Gm-Message-State: APjAAAUpT6q3/+kswTpvUK7vBdKNR3dDgAWAtspSh1yt3PAubL1vNF+Q
-        X8GuCpiJhGe6jK/GRxNsQUH1Egh9UE98yzpKsokRXqAXajyRahyJG3oOY88Zelb9pO61jw/vf58
-        zBLc8KE0sEhsrNC4za51xIT5s
-X-Received: by 2002:adf:ef8e:: with SMTP id d14mr15574551wro.316.1582642462672;
-        Tue, 25 Feb 2020 06:54:22 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxNJivnFuLmBEUDYNzro50QPxzSsCchDfqLX6sY7HTC6bfACS5U6cknWPDlWhgge0XEZWwm3A==
-X-Received: by 2002:adf:ef8e:: with SMTP id d14mr15574535wro.316.1582642462449;
-        Tue, 25 Feb 2020 06:54:22 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:3577:1cfe:d98a:5fb6? ([2001:b07:6468:f312:3577:1cfe:d98a:5fb6])
-        by smtp.gmail.com with ESMTPSA id q3sm4200422wmj.38.2020.02.25.06.54.21
+        bh=y++kI/5dCtw5fZaeSgXh8lWKMSaGQmRYxWkHHDDsYEE=;
+        b=PM/1qSvnddFadW8v/rEcl3ywjh/iGtwFdDr6+n/LOlkjQm4mjn0OeVX+wNMObpJhlf
+         Xw5UNsQ5doJ/BmywZa77YVuk3Rw5ob5dsmwhcf8nP1jdeVS6F9NR6RMAstuVR9Y6LB1f
+         E1g25aExc2fGdoA6Bwol0/CC8VlVAJBDIV4aGduf+bev8efYqncU0wd51k3Fc2XfKaxS
+         BrffRBUxdK4oMndNBwt8VtSKYQzpsylZITUgxb4hERIehLZ1zNJTZD+YSp7Je4hdYUE3
+         WxQpDH/1NNYqTlUgpFk/mdzMg1HU9Iwsa64tQqxhQ3u/AJMZOoMcjn3/T4aF495DmFyS
+         FPOQ==
+X-Gm-Message-State: APjAAAVr8RgSrQLhJR9OsH++U7c70ygtpVFyb32NNkBk8vHmoaaYemjV
+        Ny0tMLSXvWJfgLgOyBAFhtYwxw==
+X-Google-Smtp-Source: APXvYqwfSaJ8pCA6BhtoWHv0t8xFZnZrK/CzrI1X29nZWXWlh6LSoOIjxsxgH2SsHYgerYZIkRUP+w==
+X-Received: by 2002:adf:f244:: with SMTP id b4mr20457380wrp.413.1582642485266;
+        Tue, 25 Feb 2020 06:54:45 -0800 (PST)
+Received: from [192.168.1.10] ([194.35.116.65])
+        by smtp.gmail.com with ESMTPSA id v131sm4674454wme.23.2020.02.25.06.54.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2020 06:54:21 -0800 (PST)
-Subject: Re: [PATCH 19/61] KVM: VMX: Add helpers to query Intel PT mode
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
- <20200201185218.24473-20-sean.j.christopherson@intel.com>
- <87pne8q8c0.fsf@vitty.brq.redhat.com>
- <20200224221807.GM29865@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <33a4d99d-98da-0bd8-0f9c-fc04bef54350@redhat.com>
-Date:   Tue, 25 Feb 2020 15:54:21 +0100
+        Tue, 25 Feb 2020 06:54:44 -0800 (PST)
+Subject: Re: [PATCH bpf-next v2 5/5] selftests/bpf: Add test for "bpftool
+ feature" command
+To:     Michal Rostecki <mrostecki@opensuse.org>, bpf@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+References: <20200221031702.25292-1-mrostecki@opensuse.org>
+ <20200221031702.25292-6-mrostecki@opensuse.org>
+ <d178dc6c-7696-8e58-9df9-887152104a1c@isovalent.com>
+ <c24d2b7a-889b-9294-cd30-6938f00b645a@opensuse.org>
+From:   Quentin Monnet <quentin@isovalent.com>
+Message-ID: <424b3804-a6ec-750c-bc90-753bbdf512ce@isovalent.com>
+Date:   Tue, 25 Feb 2020 14:54:43 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200224221807.GM29865@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <c24d2b7a-889b-9294-cd30-6938f00b645a@opensuse.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/02/20 23:18, Sean Christopherson wrote:
->>>  {
->>>  	u32 vmexit_ctrl = vmcs_config.vmexit_ctrl;
->>> -	if (pt_mode == PT_MODE_SYSTEM)
->>> +	if (vmx_pt_mode_is_system())
->> ... and here? I.e. to cover the currently unsupported 'host-only' mode.
-> Hmm, good question.  I don't think so?  On VM-Enter, RTIT_CTL would need to
-> be loaded to disable PT.  Clearing RTIT_CTL on VM-Exit would be redundant
-> at that point[1].  And AIUI, the PIP for VM-Enter/VM-Exit isn't needed
-> because there is no context switch from the decoder's perspective.
+2020-02-25 14:55 UTC+0100 ~ Michal Rostecki <mrostecki@opensuse.org>
+> On 2/21/20 12:28 PM, Quentin Monnet wrote:
+>>> +    @default_iface
+>>> +    def test_feature_dev(self, iface):
+>>> +        expected_patterns = [
+>>> +            SECTION_SYSCALL_CONFIG_PATTERN,
+>>> +            SECTION_PROGRAM_TYPES_PATTERN,
+>>> +            SECTION_MAP_TYPES_PATTERN,
+>>> +            SECTION_HELPERS_PATTERN,
+>>> +            SECTION_MISC_PATTERN,
+>>> +        ]
+>>
+>> Mixed feeling on the tests with plain output, as we keep telling people
+>> that plain output should not be parsed (not reliable, may change). But
+>> if you want to run one or two tests with it, why not, I guess.
+> 
+> I thought about that and yes, testing the plain output is probably
+> redundant and makes those tests less readable. However, the only plain
+> output test which I would like to keep there is test_feature_macros -
+> because I guess that we are not planning to change names or patterns of
+> generated macros (or if so, we should test that change).
+> 
 
-How does host-only mode differ from "host-guest but don't expose PT to
-the guest"?  So I would say that host-only mode is a special case of
-host-guest, not of system mode.
+I did not mentally include the header/macros output in “plain output”, 
+but yeah I guess I was not explicit on this one. So: Agreed, with 
+“macros” it should not change and it is welcome in the tests, feel free 
+to keep it :)
 
-Paolo
-
+Quentin
