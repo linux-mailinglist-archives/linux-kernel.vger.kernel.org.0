@@ -2,267 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41DF516EB99
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:42:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D43616EB9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:42:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731030AbgBYQl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 11:41:58 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:28870 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728499AbgBYQl5 (ORCPT
+        id S1730720AbgBYQmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 11:42:42 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:38558 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728499AbgBYQmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 11:41:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582648916;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wS1PbqibE4MF1fawQo+Ot2izD7TmnCuaseHprLms+BA=;
-        b=heSifKp2pS2xPu4gaV3Ovv9L7B9/fTGLlOMSnU2IuIj+/PJc8O2asx3s7QRoLsABxmpBlv
-        sbtC2i1/++wmyd4OkxVmaTg0JWPk+bskIINGpZeLLrAV1h/9BmUwcK5mdYQJDT/cb4kl7W
-        QxW9HgW9xm744Ah8WOPzCAIMwWK7BY4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-99--ZvAYXfGNxKv_6nxVRKf1Q-1; Tue, 25 Feb 2020 11:41:52 -0500
-X-MC-Unique: -ZvAYXfGNxKv_6nxVRKf1Q-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2B53B18CA242;
-        Tue, 25 Feb 2020 16:41:51 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D742790519;
-        Tue, 25 Feb 2020 16:41:45 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 01PGfjrV004485;
-        Tue, 25 Feb 2020 11:41:45 -0500
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 01PGfjJ2004481;
-        Tue, 25 Feb 2020 11:41:45 -0500
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Tue, 25 Feb 2020 11:41:45 -0500 (EST)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Lukas Straub <lukasstraub2@web.de>
-cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        dm-devel <dm-devel@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>
-Subject: Re: [dm-devel] [PATCH] dm-integrity: Prevent RMW for full tag area
- writes
-In-Reply-To: <20200220190445.2222af54@luklap>
-Message-ID: <alpine.LRH.2.02.2002251127070.1014@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20200220190445.2222af54@luklap>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Tue, 25 Feb 2020 11:42:42 -0500
+Received: by mail-il1-f195.google.com with SMTP id f5so11367373ilq.5
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 08:42:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e/LX9XNhUE11/OIZMbEr4Ajar8HsvmlKhhiknvCsycI=;
+        b=vhhX1pB4UEvGJm9ScD/HunfF61LfSOlTrZOOsE9ePWGshDfnw0/FkOz1uKt4rNd91F
+         Yj3vTKDLp7/kQynwpcM/ChuY0meT8IHXYubvOnTq68xmH8gwy+/R2HkxnOBHnaecV3Ej
+         1J/+PC8LEavy/qfdQ00lRC/6Tx8TXpPsqoUUbDIsFip1XMAuIRCbMHB9QwPksab5YnPY
+         DnSbubLyv1Fn07Hzm4FaaZHVo6KTWdNSXKmVUZ9xihahJYz/XA0Yehga8gV/utarfx5u
+         A9vfxFUEkwo3exsY4oTkORFfuTqoAG6lkunAMMbL628c0aL10uFCv1sP9CZ9ISOggxmT
+         bNRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e/LX9XNhUE11/OIZMbEr4Ajar8HsvmlKhhiknvCsycI=;
+        b=K83WI0BO8rlT9JN5KF0+AYVRY3IZxDKpKcDDspfI9ra23G6chDeGn0U3cot3MuJ4vY
+         oINPrMALwJij5/UjFEnhZXTF0C7j6NYyUpg9CRZ4yQxfEfgfMxtXrtD9YnvnY5kjEltg
+         ne7lHQvWqpbXyKsmmpyBSqXdfTj3SU9Ab+xxYHruRzeUvpCdEIKnzb/5MdPendOy6JiS
+         pOztAzpCv1AhKLmbRH41WaIsG66A+YzrAQ0GTogAL6xufoXVywPD6FqKHnCYLIUMO5Vo
+         GCyfsxvsZyEUD/Vahfr7b28J6W7RaGXhyskZxaImyPcK2WwfCz0iXotnF8K3DHXSewAG
+         j27w==
+X-Gm-Message-State: APjAAAWVeYm7DwMmdaYj8FCSQhOVrG7y4pS+k7ZjmImNmQtHSTYBZ3w0
+        StHrv6acdkgX+kasKbPdM2ZgIZeJN6sUWujARnc=
+X-Google-Smtp-Source: APXvYqwib/81OTAZBeJWH60Xfj4oh8o6WoK5rj9DBjLeHUbvnHYW+38uGTYgNPOW1+OQuw87PzQh36tVKNi2emb+9Vw=
+X-Received: by 2002:a92:dac3:: with SMTP id o3mr71110937ilq.237.1582648960946;
+ Tue, 25 Feb 2020 08:42:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <1575420174-19171-1-git-send-email-yang.shi@linux.alibaba.com>
+ <CAKgT0UdHhZznoS0kMdacCqgc=sFXj1Djmpd-DbPvAmyrhJq6CA@mail.gmail.com>
+ <20200221040237-mutt-send-email-mst@kernel.org> <f1be1da2-1acc-ddd9-3c06-bf11c0f39b8e@redhat.com>
+ <CAKgT0UeZzcigv65xjgNucFaohVHKu8MSg+-_8=YG3WiC590Xzw@mail.gmail.com>
+ <939de9de-d82a-aed2-6a51-57a55d81cbff@redhat.com> <CAKgT0UfGYqNbiFUTTbVRz3=-zftsJ5fNKeRT21PJGD+a1Knceg@mail.gmail.com>
+ <c11572bd-f4ff-421f-a9d8-46603641521c@redhat.com>
+In-Reply-To: <c11572bd-f4ff-421f-a9d8-46603641521c@redhat.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Tue, 25 Feb 2020 08:42:29 -0800
+Message-ID: <CAKgT0Udw7PNJWzTPJNt8-akburMKHKjDbLMUdGWc-i=RfzxQ-w@mail.gmail.com>
+Subject: Re: [v2 PATCH] mm: shmem: allow split THP when truncating THP partially
+To:     David Hildenbrand <david@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 25, 2020 at 12:09 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> [...]
+>
+> > I guess the question is if pressuring the guest to compact the memory
+> > to create more THP pages would add value versus letting the pressure
+> > from the inflation cause more potential fragmentation.
+>
+> Would be interesting to see some actual numbers. Right now, it's just
+> speculations. I know that there are ideas to do proactive compaction,
+> maybe that has a similar effect.
+>
+> [...]
+>
+> >
+> >>>
+> >>>> There was some work on huge page ballooning in a paper I read. But once
+> >>>> the guest is out of huge pages to report, it would want to fallback to
+> >>>> smaller granularity (down to 4k, to create real memory pressure), where
+> >>>> you would end up in the very same situation you are right now. So it's -
+> >>>> IMHO - only of limited used.
+> >>>
+> >>> I wouldn't think it would be that limited of a use case. By having the
+> >>> balloon inflate with higher order pages you should be able to put more
+> >>> pressure on the guest to compact the memory and reduce fragmentation
+> >>> instead of increasing it. If you have the balloon flushing out the
+> >>> lower order pages it is sitting on when there is pressure it seems
+> >>> like it would be more likely to reduce fragmentation further.
+> >>
+> >> As we have balloon compaction in place and balloon pages are movable, I
+> >> guess fragmentation is not really an issue.
+> >
+> > I'm not sure that is truly the case. My concern is that by allocating
+> > the 4K pages we are breaking up the higher order pages and we aren't
+> > necessarily guaranteed to obtain all pieces of the higher order page
+> > when we break it up. As a result we could end up causing the THP pages
+> > to be broken up and scattered between the balloon and other consumers
+>
+> We are allocating movable memory. We should be working on/creating
+> movable pageblocks. Yes, other concurrent allcoations can race with the
+> allocation. But after all, they are likely movable as well (because they
+> are allocating from a movable pageblock) and we do have compaction in
+> place. There are corner cases but in don't think they are very relevant.
+>
+> [...]
 
+The main advantage as I see it though is that you can much more likely
+inflate an entire THP page if you are allocating 2M pages versus 4K
+pages simply because if another thread ends up stealing one of those
+pages while you are trying to inflate the balloon it will be
+problematic. In addition by switching over to the scatterlist approach
+it would be possible to process 512 pages as a single entry which is
+already more than double the number of PFNs currently supported by
+virtio balloon.
 
-On Thu, 20 Feb 2020, Lukas Straub wrote:
+> >> Especially page compaction/migration in the guest might be tricky. AFAIK
+> >> it only works on oder-0 pages. E.g., whenever you allocated a
+> >> higher-order page in the guest and reported it to your hypervisor, you
+> >> want to split it into separate order-0 pages before adding them to the
+> >> balloon list. Otherwise, you won't be able to tag them as movable and
+> >> handle them via the existing balloon compaction framework - and that
+> >> would be a major step backwards, because you would be heavily
+> >> fragmenting your guest (and even turning MAX_ORDER - 1 into unmovable
+> >> pages means that memory offlining/alloc_contig_range() users won't be
+> >> able to move such pages around anymore).
+> >
+> > Yes, from what I can tell compaction will not touch anything that is
+> > pageblock size or larger. I am not sure if that is an issue or not.
+> >
+> > For migration is is a bit of a different story. It looks like there is
+> > logic in place for migrating huge and transparent huge pages, but not
+> > higher order pages. I'll have to take a look through the code some
+> > more to see just how difficult it would be to support migrating a 2M
+> > page. I can probably make it work if I just configure it as a
+> > transparent huge page with the appropriate flags and bits in the page
+> > being set.
+>
+> Note: With virtio-balloon you actually don't necessarily want to migrate
+> the higher-order page. E.g., migrating a higher-order page might fail
+> because there is no migration target available. Instead, you would want
+> "migrate" to multiple smaller pieces. This is esp., interesting for
+> alloc_contig_range() users. Something that the current 4k pages can
+> handle just nicely.
 
-> If a full tag area is being written, don't read it first. This prevents a
-> read-modify-write cycle and increases performance on HDDs considerably.
-> 
-> To do this we now calculate the checksums for all sectors in the bio in one
-> go in integrity_metadata and then pass the result to dm_integrity_rw_tag,
-> which now checks if we overwrite the whole tag area.
-> 
-> Benchmarking with a 5400RPM HDD with bitmap mode:
-> integritysetup format --no-wipe --batch-mode --interleave-sectors $((64*1024)) -t 4 -s 512 -I crc32c -B /dev/sdc
-> integritysetup open -I crc32c -B /dev/sdc hdda_integ
-> dd if=/dev/zero of=/dev/mapper/hdda_integ bs=64K count=$((16*1024*4)) conv=fsync oflag=direct status=progress
-> 
-> Without patch:
-> 4294967296 bytes (4.3 GB, 4.0 GiB) copied, 400.326 s, 10.7 MB/s
-> 
-> With patch:
-> 4294967296 bytes (4.3 GB, 4.0 GiB) copied, 41.2057 s, 104 MB/s
-> 
-> Signed-off-by: Lukas Straub <lukasstraub2@web.de>
-> ---
->  drivers/md/dm-integrity.c | 80 ++++++++++++++++++++++-----------------
->  1 file changed, 46 insertions(+), 34 deletions(-)
-> 
-> diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
-> index b225b3e445fa..0e5ddcf44935 100644
-> --- a/drivers/md/dm-integrity.c
-> +++ b/drivers/md/dm-integrity.c
-> @@ -1309,9 +1309,16 @@ static int dm_integrity_rw_tag(struct dm_integrity_c *ic, unsigned char *tag, se
->  		if (unlikely(r))
->  			return r;
-> 
-> -		data = dm_bufio_read(ic->bufio, *metadata_block, &b);
-> -		if (IS_ERR(data))
-> -			return PTR_ERR(data);
-> +		/* Don't read tag area from disk if we're going to overwrite it completely */
-> +		if (op == TAG_WRITE && *metadata_offset == 0 && total_size >= ic->metadata_run) {
+That is why I am thinking it would be worthwhile to explore the
+current THP approaches being used. If I could get virtio balloon to
+act as though it is allocating THP pages then what I would get is the
+ability to handle migration and the fact that THP pages already get
+broken up into lower order pages if they cannot be allocated as a
+higher order page. In reality the balloon driver doesn't really care
+about if the page is mapped as 1 2M page or 512 4K ones, however it
+would be preferred if we could get the linear 2M mapping.
 
-Hi
+> >
+> >> But then, the balloon compaction will result in single 4k pages getting
+> >> moved and deflated+inflated. Once you have order-0 pages in your list,
+> >> deflating higher-order pages becomes trickier.
+> >
+> > I probably wouldn't want to maintain them as individual lists. In my
+> > mind it would make more sense to have two separate lists with separate
+> > handlers for each. Then in the event of something such as a deflate we
+> > could choose what we free based on the number of pages we need to
+> > free. That would allow us to deflate the balloon quicker in the case
+> > of a low-memory condition which should improve our responsiveness. In
+> > addition with the driver sitting on a reserve of higher-order pages it
+> > could help to alleviate fragmentation in such a case as well since it
+> > could release larger contiguous blocks of memory.
+> >
+> >> E.g., have a look at the vmware balloon (drivers/misc/vmw_balloon.c). It
+> >> will allocate either 4k or 2MB pages, but won't be able to handle them
+> >> for balloon compaction. They don't even bother about other granularity.
+> >>
+> >>
+> >> Long story short: Inflating higher-order pages could be good for
+> >> inflation performance in some setups, but I think you'll have to fall
+> >> back to lower-order allocations +  balloon compaction on 4k.
+> >
+> > I'm not entirely sure that is the case. It seems like with a few
+> > tweaks to things we could look at doing something like splitting the
+> > balloon so that we have a 4K and a 2M balloon. At that point it would
+> > just be a matter of registering a pair of address space handlers so
+> > that the 2M balloons are handled correctly if there is a request to
+> > migrate their memory. As far as compaction that is another story since
+> > it looks like 2M pages will not be compacted.
+>
+> I am not convinced what you describe is a real issue that needs such a
+> solution. Maybe we can come up with numbers that prove this. (e.g.,
+> #THP, fragmentation, benchmark performance in your guest, etc.).
 
-This is incorrect logic because ic->metadata_run is in the units of 
-512-byte sectors and total_size is in bytes.
+As I see it there are several issues to be addressed here.
 
-If I correct the bug and change it to "if (op == TAG_WRITE && 
-*metadata_offset == 0 && total_size >= ic->metadata_run << SECTOR_SHIFT)", 
-then the benchmark doesn't show any performance advantage at all.
+1. As the size of memory increases I am not certain that operating a
+balloon at 4K page size is going to make sense for much longer.
+2. Inflating with 4K pages is likely to force the guest memory to be
+split up at the host level, and will be expensive as it requires an
+operation per 4K page on the host.
+3. Inflating with 4K pages makes it impossible to currently identify
+if the entire THP has been freed since we can only inflate half of a
+THP page at a time.
 
-You would need much bigger bios to take advantage for this - for example, 
-if we have 4k block size and 64k metadata buffer size and 4-byte crc32, 
-there are 65536/4=16384 tags in one metadata buffer and we would need 
-16384*4096=64MiB bio to completely overwrite the metadata buffer. Such big 
-bios are not realistic.
+> I'll try digging out that huge page ballooning for KVM paper, maybe that
+> has any value.
 
-Mikulas
-
-
-> +			data = dm_bufio_new(ic->bufio, *metadata_block, &b);
-> +			if (IS_ERR(data))
-> +				return PTR_ERR(data);
-> +		} else {
-> +			data = dm_bufio_read(ic->bufio, *metadata_block, &b);
-> +			if (IS_ERR(data))
-> +				return PTR_ERR(data);
-> +		}
-> 
->  		to_copy = min((1U << SECTOR_SHIFT << ic->log2_buffer_sectors) - *metadata_offset, total_size);
->  		dp = data + *metadata_offset;
-> @@ -1514,6 +1521,8 @@ static void integrity_metadata(struct work_struct *w)
->  {
->  	struct dm_integrity_io *dio = container_of(w, struct dm_integrity_io, work);
->  	struct dm_integrity_c *ic = dio->ic;
-> +	unsigned sectors_to_process = dio->range.n_sectors;
-> +	sector_t sector = dio->range.logical_sector;
-> 
->  	int r;
-> 
-> @@ -1522,16 +1531,14 @@ static void integrity_metadata(struct work_struct *w)
->  		struct bio_vec bv;
->  		unsigned digest_size = crypto_shash_digestsize(ic->internal_hash);
->  		struct bio *bio = dm_bio_from_per_bio_data(dio, sizeof(struct dm_integrity_io));
-> -		char *checksums;
-> +		char *checksums, *checksums_ptr;
->  		unsigned extra_space = unlikely(digest_size > ic->tag_size) ? digest_size - ic->tag_size : 0;
->  		char checksums_onstack[HASH_MAX_DIGESTSIZE];
-> -		unsigned sectors_to_process = dio->range.n_sectors;
-> -		sector_t sector = dio->range.logical_sector;
-> 
->  		if (unlikely(ic->mode == 'R'))
->  			goto skip_io;
-> 
-> -		checksums = kmalloc((PAGE_SIZE >> SECTOR_SHIFT >> ic->sb->log2_sectors_per_block) * ic->tag_size + extra_space,
-> +		checksums = kmalloc((dio->range.n_sectors >> ic->sb->log2_sectors_per_block) * ic->tag_size + extra_space,
->  				    GFP_NOIO | __GFP_NORETRY | __GFP_NOWARN);
->  		if (!checksums) {
->  			checksums = checksums_onstack;
-> @@ -1542,49 +1549,45 @@ static void integrity_metadata(struct work_struct *w)
->  			}
->  		}
-> 
-> +		checksums_ptr = checksums;
->  		__bio_for_each_segment(bv, bio, iter, dio->orig_bi_iter) {
->  			unsigned pos;
-> -			char *mem, *checksums_ptr;
-> -
-> -again:
-> +			char *mem;
->  			mem = (char *)kmap_atomic(bv.bv_page) + bv.bv_offset;
->  			pos = 0;
-> -			checksums_ptr = checksums;
->  			do {
->  				integrity_sector_checksum(ic, sector, mem + pos, checksums_ptr);
-> -				checksums_ptr += ic->tag_size;
-> -				sectors_to_process -= ic->sectors_per_block;
-> +
-> +				if (likely(checksums != checksums_onstack)) {
-> +					checksums_ptr += ic->tag_size;
-> +				} else {
-> +					r = dm_integrity_rw_tag(ic, checksums, &dio->metadata_block, &dio->metadata_offset,
-> +								ic->tag_size, !dio->write ? TAG_CMP : TAG_WRITE);
-> +					if (unlikely(r))
-> +						goto internal_hash_error;
-> +				}
-> +
->  				pos += ic->sectors_per_block << SECTOR_SHIFT;
->  				sector += ic->sectors_per_block;
-> -			} while (pos < bv.bv_len && sectors_to_process && checksums != checksums_onstack);
-> +				sectors_to_process -= ic->sectors_per_block;
-> +			} while (pos < bv.bv_len && sectors_to_process);
->  			kunmap_atomic(mem);
-> 
-> -			r = dm_integrity_rw_tag(ic, checksums, &dio->metadata_block, &dio->metadata_offset,
-> -						checksums_ptr - checksums, !dio->write ? TAG_CMP : TAG_WRITE);
-> -			if (unlikely(r)) {
-> -				if (r > 0) {
-> -					DMERR_LIMIT("Checksum failed at sector 0x%llx",
-> -						    (unsigned long long)(sector - ((r + ic->tag_size - 1) / ic->tag_size)));
-> -					r = -EILSEQ;
-> -					atomic64_inc(&ic->number_of_mismatches);
-> -				}
-> -				if (likely(checksums != checksums_onstack))
-> -					kfree(checksums);
-> -				goto error;
-> -			}
-> -
->  			if (!sectors_to_process)
->  				break;
-> +		}
-> 
-> -			if (unlikely(pos < bv.bv_len)) {
-> -				bv.bv_offset += pos;
-> -				bv.bv_len -= pos;
-> -				goto again;
-> +		if (likely(checksums != checksums_onstack)) {
-> +			r = dm_integrity_rw_tag(ic, checksums, &dio->metadata_block, &dio->metadata_offset,
-> +						(dio->range.n_sectors >> ic->sb->log2_sectors_per_block) * ic->tag_size,
-> +						!dio->write ? TAG_CMP : TAG_WRITE);
-> +			if (unlikely(r)) {
-> +				kfree(checksums);
-> +				goto internal_hash_error;
->  			}
-> +			kfree(checksums);
->  		}
-> 
-> -		if (likely(checksums != checksums_onstack))
-> -			kfree(checksums);
->  	} else {
->  		struct bio_integrity_payload *bip = dio->orig_bi_integrity;
-> 
-> @@ -1615,6 +1618,13 @@ static void integrity_metadata(struct work_struct *w)
->  skip_io:
->  	dec_in_flight(dio);
->  	return;
-> +internal_hash_error:
-> +	if (r > 0) {
-> +		DMERR_LIMIT("Checksum failed at sector 0x%llx",
-> +				(unsigned long long)(sector - ((r + ic->tag_size - 1) / ic->tag_size)));
-> +		r = -EILSEQ;
-> +		atomic64_inc(&ic->number_of_mismatches);
-> +	}
->  error:
->  	dio->bi_status = errno_to_blk_status(r);
->  	dec_in_flight(dio);
-> @@ -3019,6 +3029,8 @@ static void dm_integrity_io_hints(struct dm_target *ti, struct queue_limits *lim
->  		limits->physical_block_size = ic->sectors_per_block << SECTOR_SHIFT;
->  		blk_limits_io_min(limits, ic->sectors_per_block << SECTOR_SHIFT);
->  	}
-> +
-> +	blk_limits_io_opt(limits, (1U << ic->sb->log2_interleave_sectors));
->  }
-> 
->  static void calculate_journal_section_size(struct dm_integrity_c *ic)
-> --
-> 2.20.1
-> 
-> 
-> --
-> dm-devel mailing list
-> dm-devel@redhat.com
-> https://www.redhat.com/mailman/listinfo/dm-devel
-> 
-
+Thanks. Also if you have any specific benchmarks in mind that would be
+useful as well for establishing the criteria for what a
+proof-of-concept would need to accomplish.
