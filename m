@@ -2,82 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C7B816C1EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 14:18:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D66A16C1F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 14:18:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730309AbgBYNR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 08:17:58 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:52052 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729386AbgBYNR6 (ORCPT
+        id S1730411AbgBYNSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 08:18:04 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:32854 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729386AbgBYNSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 08:17:58 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01PDHOol042048;
-        Tue, 25 Feb 2020 07:17:25 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582636645;
-        bh=lZ62AKaTB/Atbtpwa67sBTXqFH1ZmiihyqLCvh1A9fA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=K4wkCBoy+olSygfm7BA8MQdkjr6f+AsXt7grThlRsMjHH8kKwfOeVLzzs5k1SCige
-         Mb5HwZ+bskuIAzm3KFEUoQVL4eJxYc0xqIv49gKT5wn70q8E9y0aJPe9wZQDZRcdTL
-         DnKH1LoUJAMAJuOJEfq3ragVeOzEFsnq4vCO4wC8=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01PDHOoS121640
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 25 Feb 2020 07:17:24 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 25
- Feb 2020 07:17:24 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 25 Feb 2020 07:17:24 -0600
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01PDHMpk082587;
-        Tue, 25 Feb 2020 07:17:22 -0600
-Subject: Re: take the bus_dma_limit into account on arm
-To:     Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>
-CC:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "Nori, Sekhar" <nsekhar@ti.com>
-References: <20200218184103.35932-1-hch@lst.de>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <6e0988f4-7958-29d9-6249-24ee51edee3a@ti.com>
-Date:   Tue, 25 Feb 2020 15:17:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200218184103.35932-1-hch@lst.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 25 Feb 2020 08:18:04 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 6so6897398pgk.0;
+        Tue, 25 Feb 2020 05:18:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=djeXvgDX1dzPvkbFDL9oeL1hgiy4iMfslVEDwCPbhX8=;
+        b=H2XBe6KHWh6J9Xj1yhLiU4JxY/ymRM7WHmVlQPgaKXfZTq+w9vv6WUKrnPWVWQ2iku
+         EOHTt8zH2Q3iFRKI2oGz5xYqJQNLd8xpcTVZprVIddn0/NfOro7dhvRsFjrAeqkfh3Bm
+         rtXTWdajE2f8cshEC/JB+YusWRnlD4sQpELYNAX8ziXxMm+zr1TuRJhtktdRuAlqJTf1
+         WWPpqGq9vDjDezjJS+KXJzmlZmYTIsdWKOvQpqaN9QcXJ0ggI6oDuTr6pd7TaWOqGITd
+         rugHlTWFQ1FFXqSmemh1mlAP0Uwo6HP7V/GdIZVPIF8cX0mQEwnr/5XqwVAb109Ev5u3
+         4xOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=djeXvgDX1dzPvkbFDL9oeL1hgiy4iMfslVEDwCPbhX8=;
+        b=WYm2R5OMVhyjQjX0BZTAS9xSptJ76Bnc5LXvdGsKjwujKrovt75pmhXgO4INUj/P9/
+         6nEljEX/kDfvIEWMzZ5Nvwa+DSlO44n/SBuCFU+2ChNljIgK8205aXQpvkoiet0TuZy3
+         27CBc0nrIVJe3NDEIG03M9r0LmuaWWGR/CdFFPBYHbWsrpCTIH4haGMivaguoBXYXmwT
+         VdOliYK/g/E7CL+TokrLw4DHnVbEXWH6WalEvG/ierln2G2KzyOIxa2+uV7UhPElYGdI
+         Ql2CJ9Rix6wdLxl+46LSab+qX1W4n0Dckz6HZIUy3m9UB4+BhRidoHTkW2WNvi6kUQ/c
+         sxvQ==
+X-Gm-Message-State: APjAAAXRZSpNsEI5juZpwQB26cVVRI7m01ulz3yzCzB4z3TOZ2fOyBq+
+        P03GitmlFO/H+QZk8ZIYLw==
+X-Google-Smtp-Source: APXvYqyZWQbaPcpdmLzEFwfknc0aITQXNKV0KYUx6HCyo9h2Nn+noGbHX128va9+iOz5v+N0ts+zSw==
+X-Received: by 2002:aa7:8717:: with SMTP id b23mr57736952pfo.53.1582636683296;
+        Tue, 25 Feb 2020 05:18:03 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:1ee1:f355:dcbb:6353:6580:5d41])
+        by smtp.gmail.com with ESMTPSA id m12sm17057416pfh.37.2020.02.25.05.17.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2020 05:18:02 -0800 (PST)
+From:   madhuparnabhowmik10@gmail.com
+To:     marcel@holtmann.org, johan.hedberg@gmail.com, davem@davemloft.net,
+        kuba@kernel.org
+Cc:     linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        frextrite@gmail.com, paulmck@kernel.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Subject: [PATCH] net: bluetooth: hci_core: Use list_for_each_entry_rcu() to traverse RCU list in RCU read-side CS
+Date:   Tue, 25 Feb 2020 18:47:53 +0530
+Message-Id: <20200225131753.690-1-madhuparnabhowmik10@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Russell,
+From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
-On 18/02/2020 20:41, Christoph Hellwig wrote:
-> Hi Russell,
-> 
-> this series fixes the arm dma coherent allocator to take the bus dma
-> mask into account, similar to what other architectures do.  Without
-> this devices that support 64-bit mask, but are limited by the
-> interconnect won't work properly.
-> 
+In function hci_is_blocked_key() RCU list is traversed with
+list_for_each_entry() in RCU read-side CS.
+Use list_for_each_entry_rcu() instead.
 
-Can we please have this series marked for -stable? Thanks.
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+---
+ net/bluetooth/hci_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index 8ddd1bea02be..4e6d61a95b20 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -2327,7 +2327,7 @@ bool hci_is_blocked_key(struct hci_dev *hdev, u8 type, u8 val[16])
+ 	struct blocked_key *b;
+ 
+ 	rcu_read_lock();
+-	list_for_each_entry(b, &hdev->blocked_keys, list) {
++	list_for_each_entry_rcu(b, &hdev->blocked_keys, list) {
+ 		if (b->type == type && !memcmp(b->val, val, sizeof(b->val))) {
+ 			blocked = true;
+ 			break;
 -- 
-cheers,
--roger
+2.17.1
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
