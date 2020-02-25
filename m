@@ -2,135 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1456816B64C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:09:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C48D816B66F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:13:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbgBYAJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 19:09:29 -0500
-Received: from gateway20.websitewelcome.com ([192.185.52.45]:14169 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728396AbgBYAJ2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 19:09:28 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 2EFB4400CE19A
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 16:55:12 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 6NmwjDxfYEfyq6NmwjKGSm; Mon, 24 Feb 2020 18:09:26 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ZwmvXNF0jxPluhfTdIp+OkMhFDGnO6D8vfAw9YlIa3k=; b=JD/Y/mISz9+s6xEcFV8VrUebnA
-        GXp81qYIO0zcoyu28r1UkT83FgP+aju1ycUxK/cvS6CYIVP90cCrNqaK1cFMulvC47GW5P0yscOq/
-        HU7qUwAULL+2b1mn3E0k6XakzlGx6bfvP6J6w5e4nmLbwrrY17Dq3IDFoR1Y+8AQ9z5VTrYU0p2MS
-        7YFfFzYQYNKkfmweNOL+uywgNzcLBMr0pBdadbrRYgozPOvTXTklF75Q05Cumo/mCmOfirpAkpSQ2
-        8Seg1Va6u0aZPU0w5lpNRL3DkoZ3ZrrUNFNViG9JhPXdYVESgL8wDtUg4TxIhcgWEpRxNvl/Yhgg2
-        IrkC12Zw==;
-Received: from [201.166.190.60] (port=54458 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j6Nmu-002OsC-IZ; Mon, 24 Feb 2020 18:09:25 -0600
-Date:   Mon, 24 Feb 2020 18:12:13 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Mirko Lindner <mlindner@marvell.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] net: marvell: Replace zero-length array with
- flexible-array member
-Message-ID: <20200225001213.GA20527@embeddedor>
+        id S1728516AbgBYANW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 19:13:22 -0500
+Received: from mga04.intel.com ([192.55.52.120]:3511 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727976AbgBYANW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 19:13:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 16:13:21 -0800
+X-IronPort-AV: E=Sophos;i="5.70,481,1574150400"; 
+   d="scan'208";a="230834764"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.249.174.151]) ([10.249.174.151])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 24 Feb 2020 16:13:18 -0800
+Subject: Re: [PATCH 1/2] kvm: vmx: Use basic exit reason to check if it's the
+ specific VM EXIT
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+References: <20200224020751.1469-1-xiaoyao.li@intel.com>
+ <20200224020751.1469-2-xiaoyao.li@intel.com>
+ <87lfosp9xs.fsf@vitty.brq.redhat.com>
+ <d9744594-4a66-d867-f785-64ce4d42b848@intel.com>
+ <87imjwp24x.fsf@vitty.brq.redhat.com>
+ <20200224161728.GC29865@linux.intel.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <50134028-ef7a-46c6-7602-095c47406ed7@intel.com>
+Date:   Tue, 25 Feb 2020 08:13:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.190.60
-X-Source-L: No
-X-Exim-ID: 1j6Nmu-002OsC-IZ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.190.60]:54458
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 26
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200224161728.GC29865@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On 2/25/2020 12:17 AM, Sean Christopherson wrote:
+> On Mon, Feb 24, 2020 at 02:04:46PM +0100, Vitaly Kuznetsov wrote:
+>> Xiaoyao Li <xiaoyao.li@intel.com> writes:
+>>
+>>> On 2/24/2020 6:16 PM, Vitaly Kuznetsov wrote:
+>>>> Xiaoyao Li <xiaoyao.li@intel.com> writes:
+>>>>
+>>
+>> ...
+>>
+>>>>>    		rip = kvm_rip_read(vcpu);
+>>>>>    		rip += vmcs_read32(VM_EXIT_INSTRUCTION_LEN);
+>>>>>    		kvm_rip_write(vcpu, rip);
+>>>>> @@ -5797,6 +5797,7 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
+>>>>>    {
+>>>>>    	struct vcpu_vmx *vmx = to_vmx(vcpu);
+>>>>>    	u32 exit_reason = vmx->exit_reason;
+>>>>> +	u16 basic_exit_reason = basic(exit_reason);
+>>>>
+>>>> I don't think renaming local variable is needed, let's just do
+>>>>
+>>>> 'u16 exit_reason = basic_exit_reason(vmx->exit_reason)' and keep the
+>>>> rest of the code as-is.
+>>>
+>>> No, we can't do this.
+>>>
+>>> It's not just renaming local variable, the full 32-bit exit reason is
+>>> used elsewhere in this function that needs the upper 16-bit.
+>>>
+>>> Here variable basic_exit_reason is added for the cases where only basic
+>>> exit reason number is needed.
+>>>
+>>
+>> Can we do the other way around, i.e. introduce 'extended_exit_reason'
+>> and use it where all 32 bits are needed? I'm fine with the change, just
+>> trying to minimize the (unneeded) code churn.
+> 
+> 100% agree.  Even better than adding a second field to vcpu_vmx would be
+> to make it a union, though we'd probably want to call it something like
+> full_exit_reason in that case.  That should give us compile-time checks on
+> exit_reason, e.g. if we try to query one of the upper bits using a u16, e.g.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+I have thought about union, but it seems
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+union {
+	u16 exit_reason;
+	u32 full_exit_reason;
+}
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+is not a good name. Since there are many codes in vmx.c and nested.c 
+assume that exit_reason stands for 32-bit EXIT REASON vmcs field as well 
+as evmcs->vm_exit_reason and vmcs12->vm_exit_reason. Do we really want 
+to also rename them to full_exit_reason?
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+Maybe we name it
 
-This issue was found with the help of Coccinelle.
+union {
+	u16 basic_exit_reason;
+	u32 exit_reason;
+}
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+as what SDM defines?
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/marvell/skge.h | 2 +-
- drivers/net/ethernet/marvell/sky2.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/skge.h b/drivers/net/ethernet/marvell/skge.h
-index 6fa7b6a34c08..a1313d57e283 100644
---- a/drivers/net/ethernet/marvell/skge.h
-+++ b/drivers/net/ethernet/marvell/skge.h
-@@ -2426,7 +2426,7 @@ struct skge_hw {
- 	spinlock_t	     phy_lock;
- 	struct tasklet_struct phy_task;
- 
--	char		     irq_name[0]; /* skge@pci:000:04:00.0 */
-+	char		     irq_name[]; /* skge@pci:000:04:00.0 */
- };
- 
- enum pause_control {
-diff --git a/drivers/net/ethernet/marvell/sky2.h b/drivers/net/ethernet/marvell/sky2.h
-index b02b6523083c..ada1ca60f088 100644
---- a/drivers/net/ethernet/marvell/sky2.h
-+++ b/drivers/net/ethernet/marvell/sky2.h
-@@ -2309,7 +2309,7 @@ struct sky2_hw {
- 	struct work_struct   restart_work;
- 	wait_queue_head_t    msi_wait;
- 
--	char		     irq_name[0];
-+	char		     irq_name[];
- };
- 
- static inline int sky2_is_copper(const struct sky2_hw *hw)
--- 
-2.25.0
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -5818,7 +5818,7 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu,
+>          if (is_guest_mode(vcpu) && nested_vmx_exit_reflected(vcpu, exit_reason))
+>                  return nested_vmx_reflect_vmexit(vcpu, exit_reason);
+> 
+> -       if (exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY) {
+> +       if (vmx->full_exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY) {
+>                  dump_vmcs();
+>                  vcpu->run->exit_reason = KVM_EXIT_FAIL_ENTRY;
+>                  vcpu->run->fail_entry.hardware_entry_failure_reason
+> @@ -6620,11 +6620,12 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
+>          vmx->nested.nested_run_pending = 0;
+>          vmx->idt_vectoring_info = 0;
+> 
+> -       vmx->exit_reason = vmx->fail ? 0xdead : vmcs_read32(VM_EXIT_REASON);
+> -       if ((u16)vmx->exit_reason == EXIT_REASON_MCE_DURING_VMENTRY)
+> +       vmx->full_exit_reason = vmx->fail ? 0xdead : vmcs_read32(VM_EXIT_REASON);
+> +       if (vmx->exit_reason == EXIT_REASON_MCE_DURING_VMENTRY)
+>                  kvm_machine_check();
+> 
+> -       if (vmx->fail || (vmx->exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY))
+> +       if (vmx->fail ||
+> +           (vmx->full_exit_reason & VMX_EXIT_REASONS_FAILED_VMENTRY))
+>                  return;
+> 
+>          vmx->loaded_vmcs->launched = 1;
+> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> index 7f42cf3dcd70..60c09640ea59 100644
+> --- a/arch/x86/kvm/vmx/vmx.h
+> +++ b/arch/x86/kvm/vmx/vmx.h
+> @@ -260,7 +260,10 @@ struct vcpu_vmx {
+>          int vpid;
+>          bool emulation_required;
+> 
+> -       u32 exit_reason;
+> +       union {
+> +               u16 exit_reason;
+> +               u32 full_exit_reason;
+> +       }
+> 
+>          /* Posted interrupt descriptor */
+>          struct pi_desc pi_desc;
+> 
+> 
+> 
+> 
+> 
+>> -- 
+>> Vitaly
+>>
 
