@@ -2,109 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2715716BFE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 12:48:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13B7A16BFF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 12:52:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730246AbgBYLsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 06:48:13 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:26576 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729238AbgBYLsM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 06:48:12 -0500
-X-UUID: d9ced703390543988f50e94f16744d79-20200225
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=npWCMlNAf6vwIc/DWpZvRQRY1F0x8+HE51QC285Pl4k=;
-        b=sqtDg3L3d40I5ysaNjB/+IPIkuekGFW5XjScZ51fpjx34sqx67jL48MWXKvq2ftr1kzHIih4HiOkmdyAQ+AD+3tfEsnGnss+U0xwu2wNlfIQIdVSlLe/EOULTHRNtwojCXpjyntQj/Br22CGGMBt56sULrTRSvevaI2TNdh9e88=;
-X-UUID: d9ced703390543988f50e94f16744d79-20200225
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 492554429; Tue, 25 Feb 2020 19:47:42 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 25 Feb
- 2020 19:46:21 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
- MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Tue, 25 Feb 2020 19:46:21 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC:     <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
-        <stonea168@163.com>, <huijuan.xie@mediatek.com>,
-        Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v2 4/4] drm/mediatek: config mipitx impedance with calibration data
-Date:   Tue, 25 Feb 2020 19:47:30 +0800
-Message-ID: <20200225114730.124939-5-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200225114730.124939-1-jitao.shi@mediatek.com>
-References: <20200225114730.124939-1-jitao.shi@mediatek.com>
+        id S1730132AbgBYLwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 06:52:21 -0500
+Received: from mga05.intel.com ([192.55.52.43]:11152 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729976AbgBYLwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 06:52:20 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 03:52:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,484,1574150400"; 
+   d="scan'208";a="271280971"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga002.fm.intel.com with ESMTP; 25 Feb 2020 03:52:18 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1j6Yl9-004eDR-MA; Tue, 25 Feb 2020 13:52:19 +0200
+Date:   Tue, 25 Feb 2020 13:52:19 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Jesse Brandeburg <jesse.brandeburg@intel.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk,
+        dan.j.williams@intel.com, peterz@infradead.org
+Subject: Re: [PATCH v5 1/2] x86: fix bitops.h warning with a moved cast
+Message-ID: <20200225115219.GI10400@smile.fi.intel.com>
+References: <20200224225020.2212544-1-jesse.brandeburg@intel.com>
+ <20200225103050.GD10400@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 6F969946ABC898804BBD49EE55557D86239B839BC7C2780C891C258D70C73D2C2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200225103050.GD10400@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UmVhZCBjYWxpYnJhdGlvbiBkYXRhIGZyb20gbnZtZW0sIGFuZCBjb25maWcgbWlwaXR4IGltcGVk
-YW5jZSB3aXRoDQpjYWxpYnJhdGlvbiBkYXRhIHRvIG1ha2Ugc3VyZSB0aGVpciBpbXBlZGFuY2Ug
-YXJlIDEwMG9obS4NCg0KU2lnbmVkLW9mZi1ieTogSml0YW8gU2hpIDxqaXRhby5zaGlAbWVkaWF0
-ZWsuY29tPg0KLS0tDQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19tdDgxODNfbWlwaV90
-eC5jIHwgNTcgKysrKysrKysrKysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCA1NyBpbnNlcnRp
-b25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX210ODE4
-M19taXBpX3R4LmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX210ODE4M19taXBpX3R4
-LmMNCmluZGV4IDEyNGZkZjk1ZjFlNS4uODc4ZmVlYjdhYzZjIDEwMDY0NA0KLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL21lZGlhdGVrL210a19tdDgxODNfbWlwaV90eC5jDQorKysgYi9kcml2ZXJzL2dw
-dS9kcm0vbWVkaWF0ZWsvbXRrX210ODE4M19taXBpX3R4LmMNCkBAIC01LDYgKzUsOCBAQA0KICAq
-Lw0KIA0KICNpbmNsdWRlICJtdGtfbWlwaV90eC5oIg0KKyNpbmNsdWRlIDxsaW51eC9udm1lbS1j
-b25zdW1lci5oPg0KKyNpbmNsdWRlIDxsaW51eC9zbGFiLmg+DQogDQogI2RlZmluZSBNSVBJVFhf
-TEFORV9DT04JCTB4MDAwYw0KICNkZWZpbmUgUkdfRFNJX0NQSFlfVDFEUlZfRU4JCUJJVCgwKQ0K
-QEAgLTI4LDYgKzMwLDcgQEANCiAjZGVmaW5lIE1JUElUWF9QTExfQ09ONAkJMHgwMDNjDQogI2Rl
-ZmluZSBSR19EU0lfUExMX0lCSUFTCQkoMyA8PCAxMCkNCiANCisjZGVmaW5lIE1JUElUWF9EMlBf
-UlRDT0RFCTB4MDEwMA0KICNkZWZpbmUgTUlQSVRYX0QyX1NXX0NUTF9FTgkweDAxNDQNCiAjZGVm
-aW5lIE1JUElUWF9EMF9TV19DVExfRU4JMHgwMjQ0DQogI2RlZmluZSBNSVBJVFhfQ0tfQ0tNT0RF
-X0VOCTB4MDMyOA0KQEAgLTEwOCw2ICsxMTEsNTggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBjbGtf
-b3BzIG10a19taXBpX3R4X3BsbF9vcHMgPSB7DQogCS5yZWNhbGNfcmF0ZSA9IG10a19taXBpX3R4
-X3BsbF9yZWNhbGNfcmF0ZSwNCiB9Ow0KIA0KK3N0YXRpYyB2b2lkIG10a19taXBpX3R4X2NvbmZp
-Z19jYWxpYnJhdGlvbl9kYXRhKHN0cnVjdCBtdGtfbWlwaV90eCAqbWlwaV90eCkNCit7DQorCXUz
-MiAqYnVmOw0KKwl1MzIgcnRfY29kZVs1XTsNCisJaW50IGksIGo7DQorCXN0cnVjdCBudm1lbV9j
-ZWxsICpjZWxsOw0KKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSBtaXBpX3R4LT5kZXY7DQorCXNpemVf
-dCBsZW47DQorDQorCWNlbGwgPSBudm1lbV9jZWxsX2dldChkZXYsICJjYWxpYnJhdGlvbi1kYXRh
-Iik7DQorCWlmIChJU19FUlIoY2VsbCkpIHsNCisJCWRldl9pbmZvKGRldiwgIm52bWVtX2NlbGxf
-Z2V0IGZhaWxcbiIpOw0KKwkJcmV0dXJuOw0KKwl9DQorDQorCWJ1ZiA9ICh1MzIgKiludm1lbV9j
-ZWxsX3JlYWQoY2VsbCwgJmxlbik7DQorDQorCW52bWVtX2NlbGxfcHV0KGNlbGwpOw0KKw0KKwlp
-ZiAoSVNfRVJSKGJ1ZikpIHsNCisJCWRldl9pbmZvKGRldiwgImNhbid0IGdldCBkYXRhXG4iKTsN
-CisJCXJldHVybjsNCisJfQ0KKw0KKwlpZiAobGVuIDwgMyAqIHNpemVvZih1MzIpKSB7DQorCQlk
-ZXZfaW5mbyhkZXYsICJpbnZhbGlkIGNhbGlicmF0aW9uIGRhdGFcbiIpOw0KKwkJa2ZyZWUoYnVm
-KTsNCisJCXJldHVybjsNCisJfQ0KKw0KKwlydF9jb2RlWzBdID0gKChidWZbMF0gPj4gNiAmIDB4
-MWYpIDw8IDUpIHwgKGJ1ZlswXSA+PiAxMSAmIDB4MWYpOw0KKwlydF9jb2RlWzFdID0gKChidWZb
-MV0gPj4gMjcgJiAweDFmKSA8PCA1KSB8IChidWZbMF0gPj4gMSAmIDB4MWYpOw0KKwlydF9jb2Rl
-WzJdID0gKChidWZbMV0gPj4gMTcgJiAweDFmKSA8PCA1KSB8IChidWZbMV0gPj4gMjIgJiAweDFm
-KTsNCisJcnRfY29kZVszXSA9ICgoYnVmWzFdID4+IDcgJiAweDFmKSA8PCA1KSB8IChidWZbMV0g
-Pj4gMTIgJiAweDFmKTsNCisJcnRfY29kZVs0XSA9ICgoYnVmWzJdID4+IDI3ICYgMHgxZikgPDwg
-NSkgfCAoYnVmWzFdID4+IDIgJiAweDFmKTsNCisNCisJZm9yIChpID0gMDsgaSA8IDU7IGkrKykg
-ew0KKwkJaWYgKChydF9jb2RlW2ldICYgMHgxZikgPT0gMCkNCisJCQlydF9jb2RlW2ldIHw9IDB4
-MTA7DQorDQorCQlpZiAoKHJ0X2NvZGVbaV0gPj4gNSAmIDB4MWYpID09IDApDQorCQkJcnRfY29k
-ZVtpXSB8PSAweDEwIDw8IDU7DQorDQorCQlmb3IgKGogPSAwOyBqIDwgMTA7IGorKykNCisJCQlt
-dGtfbWlwaV90eF91cGRhdGVfYml0cyhtaXBpX3R4LA0KKwkJCQlNSVBJVFhfRDJQX1JUQ09ERSAq
-IChpICsgMSkgKyBqICogNCwNCisJCQkJMSwgcnRfY29kZVtpXSA+PiBqICYgMSk7DQorCX0NCisN
-CisJa2ZyZWUoYnVmKTsNCit9DQorDQogc3RhdGljIHZvaWQgbXRrX21pcGlfdHhfcG93ZXJfb25f
-c2lnbmFsKHN0cnVjdCBwaHkgKnBoeSkNCiB7DQogCXN0cnVjdCBtdGtfbWlwaV90eCAqbWlwaV90
-eCA9IHBoeV9nZXRfZHJ2ZGF0YShwaHkpOw0KQEAgLTEzMCw2ICsxODUsOCBAQCBzdGF0aWMgdm9p
-ZCBtdGtfbWlwaV90eF9wb3dlcl9vbl9zaWduYWwoc3RydWN0IHBoeSAqcGh5KQ0KIAkJCQlSR19E
-U0lfSFNUWF9MRE9fUkVGX1NFTCwNCiAJCQkJbWlwaV90eC0+bWlwaXR4X2RyaXZlIDw8IDYpOw0K
-IA0KKwltdGtfbWlwaV90eF9jb25maWdfY2FsaWJyYXRpb25fZGF0YShtaXBpX3R4KTsNCisNCiAJ
-bXRrX21pcGlfdHhfc2V0X2JpdHMobWlwaV90eCwgTUlQSVRYX0NLX0NLTU9ERV9FTiwgRFNJX0NL
-X0NLTU9ERV9FTik7DQogfQ0KIA0KLS0gDQoyLjIxLjANCg==
+On Tue, Feb 25, 2020 at 12:30:50PM +0200, Andy Shevchenko wrote:
+> On Mon, Feb 24, 2020 at 02:50:19PM -0800, Jesse Brandeburg wrote:
+> > Fix many sparse warnings when building with C=1.
+> > 
+> > When the kernel is compiled with C=1, there are lots of messages like:
+> >   arch/x86/include/asm/bitops.h:77:37: warning: cast truncates bits from constant value (ffffff7f becomes 7f)
+> > 
+> > CONST_MASK() is using a signed integer "1" to create the mask which
+> > is later cast to (u8) when used, in order to yield an 8-bit value
+> > for the assembly instructions to use. Simplify the expressions used to
+> > clearly indicate they are working on 8-bit values only, which still
+> > keeps sparse happy without an accidental promotion to a 32 bit integer.
+> > 
+> 
+> > The reason the warning was occurring is because certain bitmasks that
+> > end with a mask next to a natural boundary like 7, 15, 23, 31, end up
+> > with a mask like 0x7f, which then results in sign extension when doing
+> > an invert (but I'm not a compiler expert). It was really only
+> > "clear_bit" that was having problems, and it was only on bit checks next
+> > to a byte boundary (top bit).
+> 
+> I guess this describes it incorrectly.
+
+Forget about it, I looked at the warning again and there is the 0x7f byte at
+the end. Sorry for noise.
+
+> I think it is a C standard which dictates this, compiler just follows.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
