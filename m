@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95EE216BF98
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 12:30:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C80616BFA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 12:30:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729590AbgBYLaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 06:30:11 -0500
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:13156 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729206AbgBYLaK (ORCPT
+        id S1730522AbgBYLab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 06:30:31 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:10394 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730080AbgBYLa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 06:30:10 -0500
+        Tue, 25 Feb 2020 06:30:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1582630211; x=1614166211;
+  t=1582630229; x=1614166229;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=OPMX17Omz7JYkY/istcTHVeb5cJ/SKsg2S1n95nmmHo=;
-  b=fRmQfdz0GyYNHUhhMEMESxpGsCBcMr0elhnzR3SCwN9Uw+oWrzOIINi4
-   JpTrMn9gcA/JQ7PHkLIBgZbiDgu6efUZnlG4AxgHC3NS8VtaHQOL3GedX
-   7s97v+rZKvdpuJxmSid+PYuXrR9DNRac8QFyxz9Aq1RJJW/VydOYZEfmK
-   M=;
-IronPort-SDR: m4/OPusrovruSIA3kv8CN+T8Sw+eQsWdpLoh9vySuftGgMVHUcy2Ge5FB+A5YKF5KSQvHTgTiq
- oGf7mY8qx5QQ==
+  bh=Y18lRdpyXiwYObjGQvYRFfjRCEL3pvNNrmgKJkofLnA=;
+  b=ZXwc9La5crbl8NtmmnnNIiqdIBeVjvJnXdu/fyxQWOBf9owe/QhWb3jZ
+   V4GqdrkSNdPdCA0pzDOdd4FMGBSgl4ASwPA1anaGVrtq7gDtm43fuR1UX
+   aF/6RylXXwPH2ZRuyPxYegbAeJoba4zbJvxtp3tiheTWNj77IqV/p1PDa
+   g=;
+IronPort-SDR: f2KkIDTUHo+ElgMxhkhQO3mKtxttw/b3GGHKq1YjxHDbYHXAUx5+1jjm3d8DiAH//dcJJ8cVJY
+ 2oUb6Tys7Dfw==
 X-IronPort-AV: E=Sophos;i="5.70,483,1574121600"; 
-   d="scan'208";a="18946395"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1a-af6a10df.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 25 Feb 2020 11:30:08 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1a-af6a10df.us-east-1.amazon.com (Postfix) with ESMTPS id 38AA1A28CD;
-        Tue, 25 Feb 2020 11:30:03 +0000 (UTC)
+   d="scan'208";a="18764774"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1d-37fd6b3d.us-east-1.amazon.com) ([10.43.8.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 25 Feb 2020 11:30:17 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1d-37fd6b3d.us-east-1.amazon.com (Postfix) with ESMTPS id 21B892854B7;
+        Tue, 25 Feb 2020 11:30:12 +0000 (UTC)
 Received: from EX13D19EUB003.ant.amazon.com (10.43.166.69) by
  EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Tue, 25 Feb 2020 11:30:03 +0000
+ id 15.0.1236.3; Tue, 25 Feb 2020 11:30:12 +0000
 Received: from u8a88181e7b2355.ant.amazon.com (10.43.162.50) by
  EX13D19EUB003.ant.amazon.com (10.43.166.69) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 25 Feb 2020 11:29:54 +0000
+ id 15.0.1367.3; Tue, 25 Feb 2020 11:30:02 +0000
 From:   Hanna Hawa <hhhawa@amazon.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <tsahee@annapurnalabs.com>, <antoine.tenart@bootlin.com>,
@@ -47,9 +47,9 @@ CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <dwmw@amazon.co.uk>,
         <benh@amazon.com>, <ronenk@amazon.com>, <talel@amazon.com>,
         <jonnyc@amazon.com>, <hanochu@amazon.com>, <eitan@amazon.com>
-Subject: [PATCH v4 1/6] dt-bindings: arm: amazon: rename al,alpine DT binding to amazon,al
-Date:   Tue, 25 Feb 2020 13:29:21 +0200
-Message-ID: <20200225112926.16518-2-hhhawa@amazon.com>
+Subject: [PATCH v4 2/6] arm64: dts: amazon: rename al folder to be amazon
+Date:   Tue, 25 Feb 2020 13:29:22 +0200
+Message-ID: <20200225112926.16518-3-hhhawa@amazon.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200225112926.16518-1-hhhawa@amazon.com>
 References: <20200225112926.16518-1-hhhawa@amazon.com>
@@ -64,35 +64,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 As preparation to add device tree binding for Amazon's Annapurna Labs
-Alpine v3 support. Rename al,alpine DT binding to amazon,al.
+Alpine v3 support. Rename al device tree folder to be amazon.
 
 Signed-off-by: Hanna Hawa <hhhawa@amazon.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/arm/{al,alpine.yaml => amazon,al.yaml}           | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
- rename Documentation/devicetree/bindings/arm/{al,alpine.yaml => amazon,al.yaml} (74%)
+ MAINTAINERS                                          | 2 +-
+ arch/arm64/boot/dts/Makefile                         | 2 +-
+ arch/arm64/boot/dts/{al => amazon}/Makefile          | 0
+ arch/arm64/boot/dts/{al => amazon}/alpine-v2-evp.dts | 0
+ arch/arm64/boot/dts/{al => amazon}/alpine-v2.dtsi    | 0
+ 5 files changed, 2 insertions(+), 2 deletions(-)
+ rename arch/arm64/boot/dts/{al => amazon}/Makefile (100%)
+ rename arch/arm64/boot/dts/{al => amazon}/alpine-v2-evp.dts (100%)
+ rename arch/arm64/boot/dts/{al => amazon}/alpine-v2.dtsi (100%)
 
-diff --git a/Documentation/devicetree/bindings/arm/al,alpine.yaml b/Documentation/devicetree/bindings/arm/amazon,al.yaml
-similarity index 74%
-rename from Documentation/devicetree/bindings/arm/al,alpine.yaml
-rename to Documentation/devicetree/bindings/arm/amazon,al.yaml
-index a70dff277e05..58eb4ad55a76 100644
---- a/Documentation/devicetree/bindings/arm/al,alpine.yaml
-+++ b/Documentation/devicetree/bindings/arm/amazon,al.yaml
-@@ -1,10 +1,10 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a0d86490c2c6..2ddb1b9d3a8f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1553,7 +1553,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	arch/arm/mach-alpine/
+ F:	arch/arm/boot/dts/alpine*
+-F:	arch/arm64/boot/dts/al/
++F:	arch/arm64/boot/dts/amazon/*
+ F:	drivers/*/*alpine*
+ 
+ ARM/ARTPEC MACHINE SUPPORT
+diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+index f19b762c008d..6f3e1556ce42 100644
+--- a/arch/arm64/boot/dts/Makefile
++++ b/arch/arm64/boot/dts/Makefile
+@@ -1,8 +1,8 @@
  # SPDX-License-Identifier: GPL-2.0
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/arm/al,alpine.yaml#
-+$id: http://devicetree.org/schemas/arm/amazon,al.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Annapurna Labs Alpine Platform Device Tree Bindings
-+title: Amazon's Annapurna Labs Alpine Platform Device Tree Bindings
- 
- maintainers:
-   - Tsahee Zidenberg <tsahee@annapurnalabs.com>
+ subdir-y += actions
+-subdir-y += al
+ subdir-y += allwinner
+ subdir-y += altera
++subdir-y += amazon
+ subdir-y += amd
+ subdir-y += amlogic
+ subdir-y += apm
+diff --git a/arch/arm64/boot/dts/al/Makefile b/arch/arm64/boot/dts/amazon/Makefile
+similarity index 100%
+rename from arch/arm64/boot/dts/al/Makefile
+rename to arch/arm64/boot/dts/amazon/Makefile
+diff --git a/arch/arm64/boot/dts/al/alpine-v2-evp.dts b/arch/arm64/boot/dts/amazon/alpine-v2-evp.dts
+similarity index 100%
+rename from arch/arm64/boot/dts/al/alpine-v2-evp.dts
+rename to arch/arm64/boot/dts/amazon/alpine-v2-evp.dts
+diff --git a/arch/arm64/boot/dts/al/alpine-v2.dtsi b/arch/arm64/boot/dts/amazon/alpine-v2.dtsi
+similarity index 100%
+rename from arch/arm64/boot/dts/al/alpine-v2.dtsi
+rename to arch/arm64/boot/dts/amazon/alpine-v2.dtsi
 -- 
 2.17.1
 
