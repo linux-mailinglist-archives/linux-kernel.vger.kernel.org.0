@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DDD816F379
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:30:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F50616F376
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:30:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730712AbgBYXab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:30:31 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55543 "EHLO
+        id S1730398AbgBYXaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:30:17 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55573 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729529AbgBYXZw (ORCPT
+        with ESMTP id S1729613AbgBYXZz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:25:52 -0500
+        Tue, 25 Feb 2020 18:25:55 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j6jZw-0004W0-9S; Wed, 26 Feb 2020 00:25:28 +0100
+        id 1j6ja2-0004Xx-3A; Wed, 26 Feb 2020 00:25:34 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 9EAD3100375;
-        Wed, 26 Feb 2020 00:25:27 +0100 (CET)
-Message-Id: <20200225213636.689276920@linutronix.de>
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 2F30F10408E;
+        Wed, 26 Feb 2020 00:25:29 +0100 (CET)
+Message-Id: <20200225220216.826870369@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Feb 2020 22:36:36 +0100
+Date:   Tue, 25 Feb 2020 22:36:43 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,10 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [patch 00/10] x86/entry: Consolidation - Part I
+Subject: [patch 07/10] x86/irq: Remove useless return value from do_IRQ()
+References: <20200225213636.689276920@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Linutronix-Spam-Score: -1.0
 X-Linutronix-Spam-Level: -
 X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
@@ -39,74 +42,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+Nothing is using it.
 
-This is the first batch of a 73 patches series which consolidates the x86
-entry code.
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/x86/include/asm/irq.h |    2 +-
+ arch/x86/kernel/irq.c      |    3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-This work started off as a trivial 5 patches series moving the heavy
-lifting of POSIX CPU timers out of interrupt context into thread/process
-context. This discovered that KVM is lacking to handle pending work items
-before entering guest mode and added the handling to the x86 KVM
-code. Review requested to make this a generic infrastructure.
+--- a/arch/x86/include/asm/irq.h
++++ b/arch/x86/include/asm/irq.h
+@@ -36,7 +36,7 @@ extern void native_init_IRQ(void);
+ 
+ extern void handle_irq(struct irq_desc *desc, struct pt_regs *regs);
+ 
+-extern __visible unsigned int do_IRQ(struct pt_regs *regs);
++extern __visible void do_IRQ(struct pt_regs *regs);
+ 
+ extern void init_ISA_irqs(void);
+ 
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@ -230,7 +230,7 @@ u64 arch_irq_stat(void)
+  * SMP cross-CPU interrupts have their own specific
+  * handlers).
+  */
+-__visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
++__visible void __irq_entry do_IRQ(struct pt_regs *regs)
+ {
+ 	struct pt_regs *old_regs = set_irq_regs(regs);
+ 	struct irq_desc * desc;
+@@ -263,7 +263,6 @@ u64 arch_irq_stat(void)
+ 	exiting_irq();
+ 
+ 	set_irq_regs(old_regs);
+-	return 1;
+ }
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
 
-The next series grew to 25 patches implementing the generic infrastructure,
-converting x86 (and as a POC ARM64) over, but it turned out that this was
-slightly incomplete and still had some entanglement with the rest of the
-x86 entry code as some of that functionality is shared between syscall and
-interrupt entry/exit. And it also unearthed the nastyness of IOPL which got
-already addressed in mainline.
-
-This series addresses these issues in order to prepare for making the entry
-from userspace and exit to userspace (and it's counterpart enter guest) a
-generic infrastructure in order to restrict the necessary ASM work to the
-bare minimum.
-
-The series is split into 5 parts:
-
-    - General cleanups and bugfixes
-
-    - Consolidation of the syscall entry/exit code
-
-    - Autogenerate simple exception/trap code and reduce the difference
-      between 32 and 64 bit
-
-    - Autogenerate complex exception/trap code and provide different entry
-      points for #DB and #MC exceptions which allows to address the
-      recently discovered RCU vs. world issues in a more structured way
-
-    - Convert the device interrupt entry code to use the same mechanism as
-      exceptions and traps and finally convert the system vectors over as
-      well. The last step after all those cleanups is to move the return
-      from exception/interrupt logic (user mode work, kernel preemption)
-      completely from ASM into C-code, so the ASM code just has to take
-      care about returning from the exception, which is horrible and
-      convoluted enough already.
-
-At the end the x86 entry code is ready to move the syscall parts out into
-generic code and finally tackle the initial problem which started all of
-this.
-
-The complete series is available from git:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git x86/entry
-
-which contains all 73 patches. The individual parts are tagged, so this
-part can be retrieved via:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git entry-v1-part1
-
-Thanks,
-
-	tglx
-
-8<---------------
- entry/entry_32.S          |   19 +++++++------------
- include/asm/irq.h         |    2 +-
- include/asm/mce.h         |    3 ---
- include/asm/traps.h       |   17 +++++++----------
- kernel/cpu/mce/core.c     |   12 ++++++++++--
- kernel/cpu/mce/internal.h |    3 +++
- kernel/irq.c              |    3 +--
- kernel/traps.c            |   41 ++++++++++++++++++++++++++++++++++-------
- 8 files changed, 63 insertions(+), 37 deletions(-)
