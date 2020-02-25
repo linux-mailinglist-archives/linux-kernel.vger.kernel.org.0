@@ -2,93 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08FCF16F392
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:45:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7161416F3EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:53:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729379AbgBYXps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:45:48 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:51833 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726827AbgBYXps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:45:48 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48RwY66pLTz9sPk;
-        Wed, 26 Feb 2020 10:45:46 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1582674347;
-        bh=fKVIVyscS5daYgdSxfbEf05yg+Mb5e/kjWVc93gdnBI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qVegK2nrWk4WQWs5KnuQtEl3lx+Orp7y3jRl5kKB3pBq4kevJJ2uHrujbHRAPX+Z7
-         8WXHyTqDLmcmGcTxj8v2aDZw84Euck+0Auu2snX3iHKrE/wAxIcxwX6KJ58rZiRD46
-         1GTk6LjIspFVZ4qUjE5LLCUfbkknvMk4PqoKntb0Nx8UBsh94rWbb9q3AycmWTnh/K
-         jXkm/EqvNAf7Z/WTmEbXLFOWaAksU2bFPcBG6Beel31V8u74d2TvRZHrSEqcK5QTIw
-         63PnJd6eDkmK5POH2Lizqfscz6Ckc6PK+vue/fvc/ik+JUyeGMKXMRUZNuTOacgBkB
-         vrFQ+DV7vnNlA==
-Date:   Wed, 26 Feb 2020 10:45:46 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: error when fetching the kasan-bitops tree
-Message-ID: <20200226104546.5260bdce@canb.auug.org.au>
-In-Reply-To: <87o8tmz14c.fsf@mpe.ellerman.id.au>
-References: <20200226080344.609a0bf8@canb.auug.org.au>
-        <87o8tmz14c.fsf@mpe.ellerman.id.au>
+        id S1729631AbgBYXxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:53:09 -0500
+Received: from mail.willitsonline.com ([216.7.65.54]:51378 "EHLO
+        mail.willitsonline.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729182AbgBYXxJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 18:53:09 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.willitsonline.com (Postfix) with ESMTP id B93B7111E08
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 15:46:50 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at iredmail2.willitsonline.com
+Received: from mail.willitsonline.com ([127.0.0.1])
+        by localhost (iredmail2.willitsonline.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id bmK5K-ZCg5s5 for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Feb 2020 15:46:50 -0800 (PST)
+Received: from _ (localhost.localdomain [127.0.0.1])
+        (Authenticated sender: bluerocksaddles@willitsonline.com)
+        by mail.willitsonline.com (Postfix) with ESMTPSA id E6052111D61;
+        Tue, 25 Feb 2020 15:46:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/WP/sZYvK9C++J_JEmSPg6g1";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 25 Feb 2020 15:46:35 -0800
+From:   bluerocksaddles@willitsonline.com
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        "Michael ." <keltoiboy@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Trevor Jacobs <trevor_jacobs@aol.com>,
+        Kris Cleveland <tridentperfusion@yahoo.com>,
+        Morgan Klym <moklym@gmail.com>,
+        Philip Langdale <philipl@overt.org>,
+        Pierre Ossman <pierre@ossman.eu>,
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        linux-mmc@vger.kernel.org
+Subject: Re: PCI device function not being enumerated [Was: PCMCIA not working
+ on Panasonic Toughbook CF-29]
+In-Reply-To: <CAPDyKFq_exHufHyibFCjS78PTZ7duS9ZSt3vi18CNM6+jMmwnw@mail.gmail.com>
+References: <20191029170250.GA43972@google.com>
+ <20200222165617.GA207731@google.com>
+ <CAPDyKFq_exHufHyibFCjS78PTZ7duS9ZSt3vi18CNM6+jMmwnw@mail.gmail.com>
+Message-ID: <37a39a53a54ca4ae09b4cfa9d999a47e@willitsonline.com>
+X-Sender: bluerocksaddles@willitsonline.com
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/WP/sZYvK9C++J_JEmSPg6g1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Bjorn,
 
-Hi Michael,
+If you folks need a test unit or five, let me know. I can donate any 
+Mark CF-29 to the project. (MK 2 or 3 will duplicate the "problem".) 
+They are non-pae 386.
 
-On Wed, 26 Feb 2020 10:41:07 +1100 Michael Ellerman <mpe@ellerman.id.au> wr=
-ote:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> >
-> > Fetching the kasan-bitops tree
-> > (git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git#topic/=
-kasan-bitops)
-> > produces this error:
-> >
-> > fatal: couldn't find remote ref refs/heads/topic/kasan-bitops
-> >
-> > Should I just remove it? =20
->=20
-> Yes please.
->=20
-> It was merged a while back. Sorry I forgot you had it in linux-next.
+Jeff
 
-Consider it gone.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/WP/sZYvK9C++J_JEmSPg6g1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5VsaoACgkQAVBC80lX
-0GxfvggApSkMXwuIDuTXQ/FPkKZ21vvdT9NM61j7weK30XJXdNfVr+u4G05ofTNn
-0J5ErE8DAZJAfi1dyZ9WVYDLmFA0XX7wOZ9h/GHi7prZmnP/wCxn3TOXZkoQyRtf
-71Furt2IKrLBlj8Rl6KdmI6E8TC0zmwMnPDapxO7rj8CkMkg5I3edGU9s5GV3gv6
-pHfgm4CGzrL8Cz5/0rdUm2Ln9Y6OxzNXeAseoQ/o+7dczmF+vaI/YdpddoeCypht
-c+vcxWRdeDymt0AINbarKjP82QHYMoK6xEPLCB65AXKdmnxjU7dU+dIJuFVCLXVP
-OMLWPiHJ9+12sa+ESea0Uu1U1CCxMg==
-=QhQc
------END PGP SIGNATURE-----
-
---Sig_/WP/sZYvK9C++J_JEmSPg6g1--
+On 2020-02-25 07:03, Ulf Hansson wrote:
+> On Sat, 22 Feb 2020 at 17:56, Bjorn Helgaas <helgaas@kernel.org> wrote:
+>> 
+>> On Tue, Oct 29, 2019 at 12:02:50PM -0500, Bjorn Helgaas wrote:
+>> > [+cc Ulf, Philip, Pierre, Maxim, linux-mmc; see [1] for beginning of
+>> > thread, [2] for problem report and the patch Michael tested]
+>> >
+>> > On Tue, Oct 29, 2019 at 07:58:27PM +1100, Michael . wrote:
+>> > > Bjorn and Dominik.
+>> > > I am happy to let you know the patch did the trick, it compiled well
+>> > > on 5.4-rc4 and my friends in the CC list have tested the modified
+>> > > kernel and confirmed that both slots are now working as they should.
+>> > > As a group of dedicated Toughbook users and Linux users please accept
+>> > > our thanks your efforts and assistance is greatly appreciated.
+>> > >
+>> > > Now that we know this patch works what kernel do you think it will be
+>> > > released in? Will it make 5.4 or will it be put into 5.5 development
+>> > > for further testing?
+>> >
+>> > That patch was not intended to be a fix; it was just to test my guess
+>> > that the quirk might be related.
+>> >
+>> > Removing the quirk solved the problem *you're* seeing, but the quirk
+>> > was added in the first place to solve some other problem, and if we
+>> > simply remove the quirk, we may reintroduce the original problem.
+>> >
+>> > So we have to look at the history and figure out some way to solve
+>> > both problems.  I cc'd some people who might have insight.  Here are
+>> > some commits that look relevant:
+>> >
+>> >   5ae70296c85f ("mmc: Disabler for Ricoh MMC controller")
+>> >   03cd8f7ebe0c ("ricoh_mmc: port from driver to pci quirk")
+>> >
+>> >
+>> > [1] https://lore.kernel.org/r/CAFjuqNi+knSb9WVQOahCVFyxsiqoGgwoM7Z1aqDBebNzp_-jYw@mail.gmail.com/
+>> > [2] https://lore.kernel.org/r/20191021160952.GA229204@google.com/
+>> 
+>> I guess this problem is still unfixed?  I hate the fact that we broke
+>> something that used to work.
+>> 
+>> Maybe we need some sort of DMI check in ricoh_mmc_fixup_rl5c476() so
+>> we skip it for Toughbooks?  Or maybe we limit the quirk to the
+>> machines where it was originally needed?
+> 
+> Both options seems reasonable to me. Do you have time to put together a 
+> patch?
+> 
+> Kind regards
+> Uffe
