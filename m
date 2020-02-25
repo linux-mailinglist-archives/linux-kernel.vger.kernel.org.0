@@ -2,62 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D51816BE9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 11:25:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DDE816BEA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 11:26:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730234AbgBYKZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 05:25:07 -0500
-Received: from ms.lwn.net ([45.79.88.28]:53148 "EHLO ms.lwn.net"
+        id S1730207AbgBYK0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 05:26:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730139AbgBYKZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 05:25:06 -0500
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729952AbgBYK0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 05:26:14 -0500
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 739F66D9;
-        Tue, 25 Feb 2020 10:25:05 +0000 (UTC)
-Date:   Tue, 25 Feb 2020 03:25:00 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc:     Ard Biesheuvel <ardb@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] efi/libstub: add libstub/mem.c to documentation
- tree
-Message-ID: <20200225032500.5b6be465@lwn.net>
-In-Reply-To: <20200221035832.144960-1-xypron.glpk@gmx.de>
-References: <20200221035832.144960-1-xypron.glpk@gmx.de>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03346218AC
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 10:26:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582626374;
+        bh=tsHmP0fWLGpKEusGC+Namhfpp6ZeCtBgPrPkaJzeBm0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vTn2zhVTTNRaUNn0THqocaqzF6G6ff1IXQ1Esvfo+HlsHgy8RBBTy9YpY6eylYyGg
+         1J56Qonf4Nhnmb5u65I+gMj6uAdQrc9CG38E9viTnUJ/nYuams71k0aMH7CA72JVcf
+         r90q8tEjYHiGXhzYPztWyDNmkzCjdmoandoxxstQ=
+Received: by mail-wm1-f45.google.com with SMTP id z12so2392099wmi.4
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 02:26:13 -0800 (PST)
+X-Gm-Message-State: APjAAAXmrRa3obg+oi64tDnLz0aa7TeidCrxfak3d+aJ6RY2RnQrqutW
+        9mK/zxBnT2u0nkcNG21T1OsGu1Yc3MBJ0zegDkXw3w==
+X-Google-Smtp-Source: APXvYqyeTgElbhVTNH+euGmtzAmuqWi406sfvmadlTk1C1Bko4b+id7BA1YKyd1PTSJ5Ugs12TOBNtUwVG9exr4LIZY=
+X-Received: by 2002:a1c:b603:: with SMTP id g3mr4756121wmf.133.1582626372415;
+ Tue, 25 Feb 2020 02:26:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20200221035832.144960-1-xypron.glpk@gmx.de> <20200225032500.5b6be465@lwn.net>
+In-Reply-To: <20200225032500.5b6be465@lwn.net>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Tue, 25 Feb 2020 11:26:01 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu9sjOS7S+T42UcdnA2JCwgKawRJAdKHcwXWQXQaHSPZDQ@mail.gmail.com>
+Message-ID: <CAKv+Gu9sjOS7S+T42UcdnA2JCwgKawRJAdKHcwXWQXQaHSPZDQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] efi/libstub: add libstub/mem.c to documentation tree
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Feb 2020 04:58:32 +0100
-Heinrich Schuchardt <xypron.glpk@gmx.de> wrote:
+On Tue, 25 Feb 2020 at 11:25, Jonathan Corbet <corbet@lwn.net> wrote:
+>
+> On Fri, 21 Feb 2020 04:58:32 +0100
+> Heinrich Schuchardt <xypron.glpk@gmx.de> wrote:
+>
+> > Let the description of the efi/libstub/mem.c functions appear in the Ke=
+rnel
+> > API documentation in chapter
+> >
+> >     The Linux driver implementer=E2=80=99s API guide
+> >         Linux Firmware API
+> >             UEFI Support
+> >                 UEFI stub library functions
+> >
+> > Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+> > ---
+> > The corresponding source patches are still in efi/next.
+> >
+> > https://lkml.org/lkml/2020/2/20/115
+> > https://lkml.org/lkml/2020/2/18/37
+> > https://lkml.org/lkml/2020/2/16/154
+>
+> Given that this patch depends on work in the efi tree, I'm assuming that
+> the docs changes will go in via that path as well.
+>
 
-> Let the description of the efi/libstub/mem.c functions appear in the Kernel
-> API documentation in chapter
-> 
->     The Linux driver implementer’s API guide
->         Linux Firmware API
->             UEFI Support
->                 UEFI stub library functions
-> 
-> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
-> ---
-> The corresponding source patches are still in efi/next.
-> 
-> https://lkml.org/lkml/2020/2/20/115
-> https://lkml.org/lkml/2020/2/18/37
-> https://lkml.org/lkml/2020/2/16/154
-
-Given that this patch depends on work in the efi tree, I'm assuming that
-the docs changes will go in via that path as well.
-
-Thanks,
-
-jon
+Can I take that as an acked-by?
