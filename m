@@ -2,85 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 816FA16EF23
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:37:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4269316EF28
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:39:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730506AbgBYThW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 14:37:22 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:40722 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728753AbgBYThW (ORCPT
+        id S1730845AbgBYTjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 14:39:24 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:39258 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728162AbgBYTjY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 14:37:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582659441;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3454YjUXRoDS+24Lzxnu4Pv0NqG7YV73o/VGu7/5u2E=;
-        b=MmFIV2bCFfKsScL4zbRKXb9IbJaKNNlhasHYPnSW6EodaAzOvlGhIFBPFqnHN2hU2xfdmc
-        6IZuIE8eXvoviUr+/7eQLNDd9ekMwTwuGpgD/oH4iQg2jCOn2fAejJX50YRRR0sEn1RQZh
-        WXBCorgyRMvo86IbzlBo0yzLQoCcLLI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-367-9ulGlCEBOoewJwoiFtQzDg-1; Tue, 25 Feb 2020 14:37:17 -0500
-X-MC-Unique: 9ulGlCEBOoewJwoiFtQzDg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2852C8017CC;
-        Tue, 25 Feb 2020 19:37:15 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C0FC65C296;
-        Tue, 25 Feb 2020 19:37:13 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>, jhallida@redhat.com
-Cc:     Dave Chinner <david@fromorbit.com>, ira.weiny@intel.com,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space operations state
-References: <20200221004134.30599-1-ira.weiny@intel.com>
-        <20200221004134.30599-8-ira.weiny@intel.com>
-        <20200221174449.GB11378@lst.de>
-        <20200221224419.GW10776@dread.disaster.area>
-        <20200224175603.GE7771@lst.de>
-        <20200225000937.GA10776@dread.disaster.area>
-        <20200225173633.GA30843@lst.de>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Tue, 25 Feb 2020 14:37:12 -0500
-In-Reply-To: <20200225173633.GA30843@lst.de> (Christoph Hellwig's message of
-        "Tue, 25 Feb 2020 18:36:33 +0100")
-Message-ID: <x49fteyh313.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 25 Feb 2020 14:39:24 -0500
+Received: (qmail 5824 invoked by uid 2102); 25 Feb 2020 14:39:23 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 25 Feb 2020 14:39:23 -0500
+Date:   Tue, 25 Feb 2020 14:39:23 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+cc:     linux-usb@vger.kernel.org, <linux-renesas-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        "Lee, Chiasheng" <chiasheng.lee@intel.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Hardik Gajjar <hgajjar@de.adit-jv.com>,
+        <scan-admin@coverity.com>, Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH] usb: hub: Fix unhandled return value of usb_autopm_get_interface()
+In-Reply-To: <20200225191241.GA32410@lxhi-065.adit-jv.com>
+Message-ID: <Pine.LNX.4.44L0.2002251419120.1485-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> writes:
+On Tue, 25 Feb 2020, Eugeniu Rosca wrote:
 
-> And my point is that if we ensure S_DAX can only be checked if there
-> are no blocks on the file, is is fairly easy to provide the same
-> guarantee.  And I've not heard any argument that we really need more
-> flexibility than that.  In fact I think just being able to change it
-> on the parent directory and inheriting the flag might be more than
-> plenty, which would lead to a very simple implementation without any
-> of the crazy overhead in this series.
+> Hi Alan,
+> 
+> Many thanks for the prompt review.
+> 
+> On Tue, Feb 25, 2020 at 10:32:32AM -0500, Alan Stern wrote:
+> > On Tue, 25 Feb 2020, Eugeniu Rosca wrote:
+> > > +		int r = usb_autopm_get_interface(intf);
+> > > +
+> > > +		if (!r)
+> > > +			hub->quirk_disable_autosuspend = 1;
+> > > +		else
+> > > +			dev_dbg(&intf->dev, "disable autosuspend err=%d\n", r);
+> > >  	}
+> > >  
+> > >  	if (hub_configure(hub, &desc->endpoint[0].desc) >= 0)
+> > 
+> > This change is not necessary, because the resume operation cannot fail
+> > at this point (interfaces are always powered-up during probe).
+> 
+> Agreed to avoid unneeded complexity.
+> 
+> > A better solution would be to call usb_autpm_get_interface_no_resume()
+> > instead.
+> 
+> Pushed to https://lore.kernel.org/lkml/20200225183057.31953-1-erosca@de.adit-jv.com
+> 
+> > 
+> > On the other hand, the other places that call
+> > usb_autopm_get_interface() without checking should be audited.  Some of
+> > them almost certainly need to be fixed.
+> 
+> A quick 'git grep' outputs below list of auditable candidates [1].
+> 
+> With no relevant devices at hand, I would avoid touching these drivers,
+> since oftentimes even legitimate patches introduce regressions w/o
+> testing.
+> 
+> If anybody volunteers with testing, I guess it should be quick to
+> either convert usb_autpm_get_interface to *_no_resume variant or
+> handle the return value in place in below instances.
+> 
+> [1] (v5.6-rc3) git grep -En "[^=]\s+usb_autopm_get_interface\("
+>   drivers/input/touchscreen/usbtouchscreen.c:1788:  usb_autopm_get_interface(intf);
+>   drivers/media/usb/stkwebcam/stk-webcam.c:628:     usb_autopm_get_interface(dev->interface);
+>   drivers/net/usb/hso.c:1308:                       usb_autopm_get_interface(serial->parent->interface);
+>   drivers/net/usb/r8152.c:5231:                     usb_autopm_get_interface(tp->intf);
+>   sound/usb/usx2y/us122l.c:192:                     usb_autopm_get_interface(iface);
 
-I know of one user who had at least mentioned it to me, so I cc'd him.
-Jonathan, can you describe your use case for being able to change a
-file between dax and non-dax modes?  Or, if I'm misremembering, just
-correct me?
+Your regular expression isn't right because it doesn't match lines
+where the usb_autopm_get_interface() is preceded only by one whitespace
+character (i.e., a tab).  It also will match lines where there are two
+space characters between the = sign and the function name.  I think
+what you want is more like "(^|[^=[:space:]])\s*" at the start of the
+RE.
 
-Thanks!
-Jeff
+A revised search finds line 997 in drivers/usb/core/hub.c and lines
+216, 269 in drivers/usb/core/port.c.  (I didn't try looking in any
+other directories.)  AFAICT all three of these should check the return
+value, although a error message in the kernel log probably isn't
+needed.
+
+Do you want to fix those instances up also, maybe merging them in with
+the existing patch?
+
+Alan Stern
 
