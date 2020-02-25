@@ -2,248 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1D9C16C445
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82A4216C44E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:46:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730847AbgBYOnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 09:43:43 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23963 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730627AbgBYOnn (ORCPT
+        id S1730879AbgBYOqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 09:46:44 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:30018 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730627AbgBYOqo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:43:43 -0500
+        Tue, 25 Feb 2020 09:46:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582641821;
+        s=mimecast20190719; t=1582642002;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NL4hpRgUu9vi2PlyaLvwt4FBGCUug37yQQTWgtUswns=;
-        b=QLMCWs98N/9B51anPBohoM+eKrxtWZ05ZTc8SQgunISU3vT1tQ+SvZ92Ohw7J0nS/MXUTU
-        9sPI/DhYc5lu+tNY9dZtBuvvnJTT7wxLv9qOGcc+yghI3CNXpTH0ZqQ1327p563DGbYSIi
-        R4ZHRnYL/dtTxK/C/6sVjEpjkDdbqy4=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-367-RdpWYspWPPuqJih7_KJg3A-1; Tue, 25 Feb 2020 09:43:39 -0500
-X-MC-Unique: RdpWYspWPPuqJih7_KJg3A-1
-Received: by mail-wr1-f70.google.com with SMTP id z1so3752226wrs.9
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 06:43:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=NL4hpRgUu9vi2PlyaLvwt4FBGCUug37yQQTWgtUswns=;
-        b=Ann793y2yK/McYl7b6ds47q5UXxrInDd1HF14WvDMHeHeY/GSDz6gHQaLo6CXQdFlq
-         JR+mKOeznnqbUXFN+9IdHpNPTjOpY8xQtVNAxkp30tqEgAgnM/eaa/oYwr5+WBKUb+mH
-         cG/f/+xaNEGh2HTz0jHXcxy3HMKDn/JwIGh7UWpMpw/Nsq1tSs4EsuYwhec8mKp76fmN
-         HZMXrF16WCZmzu+TlrP7RLfRDYaEuhl+3jf1xKqZkTk+uPlbiZ8shqVQA36vQc5enu7n
-         smBofjPLzuNRxEWRArurNxUlftqzmjlsSa99OLLDtAB2FF0VaQS4qSufe2Bv7UEbE4c4
-         EKyg==
-X-Gm-Message-State: APjAAAWDeZ/cYp00B/bMMnt/0tBktMIsfKPOVOGbXtp5beWEBG3KMh5H
-        dTQSNmXniD42LiRZOm7H5M03uxAlxTdf5BXz2j0rFPK/DUuM9qLSbWXMvr2Jl+ztKUSuqPHgJf3
-        7J+Reo6OE+eA8jpWWv/t7jYtc
-X-Received: by 2002:a1c:e007:: with SMTP id x7mr5495813wmg.3.1582641818484;
-        Tue, 25 Feb 2020 06:43:38 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxGHGCdhX+T/cZc36QoL3ji17Xz2OeRXdPd6Ejv5ilG8OwNLXHhXpXOGJJaG6syx0mp052XPw==
-X-Received: by 2002:a1c:e007:: with SMTP id x7mr5495788wmg.3.1582641818151;
-        Tue, 25 Feb 2020 06:43:38 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id s1sm23894050wro.66.2020.02.25.06.43.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 06:43:37 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 58/61] KVM: x86/mmu: Configure max page level during hardware setup
-In-Reply-To: <20200201185218.24473-59-sean.j.christopherson@intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com> <20200201185218.24473-59-sean.j.christopherson@intel.com>
-Date:   Tue, 25 Feb 2020 15:43:36 +0100
-Message-ID: <87blpmlobr.fsf@vitty.brq.redhat.com>
+        bh=ySDTZdGsZMxr6yIM61QwR9RYARONerfPOO6Gze9728Y=;
+        b=LD98/JVRs+4ZpU9Pj+LrDbdhwpnC7fyuvKjqjFMPhDFCMA5ojrWC41mPVsDay0Fq+cY9Jm
+        PaWxfP2rJgXSlw0uFxkC0SAFGyWDpxdv+qgA60T60gqbo3Sl9b/Yo4Ed0KvezDe+A4ZAnk
+        5oG2iT4otiMR7bv8cRO0dKrAEuw745w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-46-MGM6QP8fNpqjZFl8BpRsZA-1; Tue, 25 Feb 2020 09:46:32 -0500
+X-MC-Unique: MGM6QP8fNpqjZFl8BpRsZA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 039E6800D5A;
+        Tue, 25 Feb 2020 14:46:30 +0000 (UTC)
+Received: from ovpn-117-227.ams2.redhat.com (ovpn-117-227.ams2.redhat.com [10.36.117.227])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 31CA75DA2C;
+        Tue, 25 Feb 2020 14:46:24 +0000 (UTC)
+Message-ID: <db643ed6efb6fa04fe5753af68d13f1b2ffcf821.camel@redhat.com>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
+ cipso_v4_sock_setattr
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     syzbot <syzbot+f4dfece964792d80b139@syzkaller.appspotmail.com>,
+        cpaasch@apple.com, David Miller <davem@davemloft.net>,
+        Davide Caratti <dcaratti@redhat.com>,
+        Florian Westphal <fw@strlen.de>, kuba@kernel.org,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        matthieu.baerts@tessares.net, netdev <netdev@vger.kernel.org>,
+        peter.krystad@linux.intel.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Date:   Tue, 25 Feb 2020 15:46:23 +0100
+In-Reply-To: <CACT4Y+Y3QN9=c5JvJkecCtdQGTxHYRXMhS4f1itwU5JEZmcYtA@mail.gmail.com>
+References: <000000000000a719a9059f62246e@google.com>
+         <CAHC9VhTh6s1m7YBZp-3XO3q2EcjtMKUTcXwRzDTj_LSJd+cHTA@mail.gmail.com>
+         <CACT4Y+Y3QN9=c5JvJkecCtdQGTxHYRXMhS4f1itwU5JEZmcYtA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+On Tue, 2020-02-25 at 15:27 +0100, Dmitry Vyukov wrote:
+> On Tue, Feb 25, 2020 at 3:20 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Tue, Feb 25, 2020 at 3:19 AM syzbot
+> > <syzbot+f4dfece964792d80b139@syzkaller.appspotmail.com> wrote:
+> > > Hello,
+> > > 
+> > > syzbot found the following crash on:
+> > > 
+> > > HEAD commit:    ca7e1fd1 Merge tag 'linux-kselftest-5.6-rc3' of git://git...
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=179f0931e00000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=a61f2164c515c07f
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=f4dfece964792d80b139
+> > > compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14fdfdede00000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17667de9e00000
+> > > 
+> > > The bug was bisected to:
+> > > 
+> > > commit 2303f994b3e187091fd08148066688b08f837efc
+> > > Author: Peter Krystad <peter.krystad@linux.intel.com>
+> > > Date:   Wed Jan 22 00:56:17 2020 +0000
+> > > 
+> > >     mptcp: Associate MPTCP context with TCP socket
+> > > 
+> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14fbec81e00000
+> > > final crash:    https://syzkaller.appspot.com/x/report.txt?x=16fbec81e00000
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=12fbec81e00000
+> > > 
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+f4dfece964792d80b139@syzkaller.appspotmail.com
+> > > Fixes: 2303f994b3e1 ("mptcp: Associate MPTCP context with TCP socket")
+> > > 
+> > > BUG: kernel NULL pointer dereference, address: 0000000000000000
+> > > #PF: supervisor instruction fetch in kernel mode
+> > > #PF: error_code(0x0010) - not-present page
+> > > PGD 8e171067 P4D 8e171067 PUD 93fa2067 PMD 0
+> > > Oops: 0010 [#1] PREEMPT SMP KASAN
+> > > CPU: 0 PID: 8984 Comm: syz-executor066 Not tainted 5.6.0-rc2-syzkaller #0
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> > > RIP: 0010:0x0
+> > > Code: Bad RIP value.
+> > > RSP: 0018:ffffc900020b7b80 EFLAGS: 00010246
+> > > RAX: 1ffff110124ba600 RBX: 0000000000000000 RCX: ffff88809fefa600
+> > > RDX: ffff8880994cdb18 RSI: 0000000000000000 RDI: ffff8880925d3140
+> > > RBP: ffffc900020b7bd8 R08: ffffffff870225be R09: fffffbfff140652a
+> > > R10: fffffbfff140652a R11: 0000000000000000 R12: ffff8880925d35d0
+> > > R13: ffff8880925d3140 R14: dffffc0000000000 R15: 1ffff110124ba6ba
+> > > FS:  0000000001a0b880(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: ffffffffffffffd6 CR3: 00000000a6d6f000 CR4: 00000000001406f0
+> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > Call Trace:
+> > >  cipso_v4_sock_setattr+0x34b/0x470 net/ipv4/cipso_ipv4.c:1888
+> > >  netlbl_sock_setattr+0x2a7/0x310 net/netlabel/netlabel_kapi.c:989
+> > >  smack_netlabel security/smack/smack_lsm.c:2425 [inline]
+> > >  smack_inode_setsecurity+0x3da/0x4a0 security/smack/smack_lsm.c:2716
+> > >  security_inode_setsecurity+0xb2/0x140 security/security.c:1364
+> > >  __vfs_setxattr_noperm+0x16f/0x3e0 fs/xattr.c:197
+> > >  vfs_setxattr fs/xattr.c:224 [inline]
+> > >  setxattr+0x335/0x430 fs/xattr.c:451
+> > >  __do_sys_fsetxattr fs/xattr.c:506 [inline]
+> > >  __se_sys_fsetxattr+0x130/0x1b0 fs/xattr.c:495
+> > >  __x64_sys_fsetxattr+0xbf/0xd0 fs/xattr.c:495
+> > >  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+> > >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > 
+> > Netdev folks, I'm not very familiar with the multipath TCP code so I
+> > was wondering if you might help me out a bit with this report.  Based
+> > on the stack trace above it looks like for a given AF_INET sock "sk",
+> > inet_sk(sk)->is_icsk is true but inet_csk(sk) is NULL; should this be
+> > possible under normal conditions or is there an issue somewhere?
+> 
+> Paolo has submitted some patch for testing for this bug, not sure if
+> you have seen it, just in case:
+> https://groups.google.com/forum/#!msg/syzkaller-bugs/dqwnTBh-MQw/LhgSZYGsBgAJ
 
-> Configure the max page level during hardware setup to avoid a retpoline
-> in the page fault handler.  Drop ->get_lpage_level() as the page fault
-> handler was the last user.
->
-> No functional change intended.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  3 +--
->  arch/x86/kvm/mmu/mmu.c          | 13 +++++++++++--
->  arch/x86/kvm/svm.c              |  9 +--------
->  arch/x86/kvm/vmx/vmx.c          | 24 +++++++++++-------------
->  4 files changed, 24 insertions(+), 25 deletions(-)
->
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 1a13a53bbaeb..4165d3ef11e4 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1142,7 +1142,6 @@ struct kvm_x86_ops {
->  	int (*set_identity_map_addr)(struct kvm *kvm, u64 ident_addr);
->  	int (*get_tdp_level)(struct kvm_vcpu *vcpu);
->  	u64 (*get_mt_mask)(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio);
-> -	int (*get_lpage_level)(void);
->  
->  	void (*set_tdp_cr3)(struct kvm_vcpu *vcpu, unsigned long cr3);
->  
-> @@ -1494,7 +1493,7 @@ void kvm_mmu_invlpg(struct kvm_vcpu *vcpu, gva_t gva);
->  void kvm_mmu_invpcid_gva(struct kvm_vcpu *vcpu, gva_t gva, unsigned long pcid);
->  void kvm_mmu_new_cr3(struct kvm_vcpu *vcpu, gpa_t new_cr3, bool skip_tlb_flush);
->  
-> -void kvm_configure_mmu(bool enable_tdp);
-> +void kvm_configure_mmu(bool enable_tdp, int tdp_page_level);
->  
->  static inline gpa_t translate_gpa(struct kvm_vcpu *vcpu, gpa_t gpa, u32 access,
->  				  struct x86_exception *exception)
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 08c80c7c88d4..1aedb71e7a20 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -86,6 +86,8 @@ __MODULE_PARM_TYPE(nx_huge_pages_recovery_ratio, "uint");
->   */
->  bool tdp_enabled = false;
->  
-> +static int max_page_level __read_mostly;
-> +
->  enum {
->  	AUDIT_PRE_PAGE_FAULT,
->  	AUDIT_POST_PAGE_FAULT,
-> @@ -3280,7 +3282,7 @@ static int kvm_mmu_hugepage_adjust(struct kvm_vcpu *vcpu, gfn_t gfn,
->  	if (!slot)
->  		return PT_PAGE_TABLE_LEVEL;
->  
-> -	max_level = min(max_level, kvm_x86_ops->get_lpage_level());
-> +	max_level = min(max_level, max_page_level);
->  	for ( ; max_level > PT_PAGE_TABLE_LEVEL; max_level--) {
->  		linfo = lpage_info_slot(gfn, slot, max_level);
->  		if (!linfo->disallow_lpage)
-> @@ -5541,9 +5543,16 @@ void kvm_mmu_invpcid_gva(struct kvm_vcpu *vcpu, gva_t gva, unsigned long pcid)
->  }
->  EXPORT_SYMBOL_GPL(kvm_mmu_invpcid_gva);
->  
-> -void kvm_configure_mmu(bool enable_tdp)
-> +void kvm_configure_mmu(bool enable_tdp, int tdp_page_level)
->  {
->  	tdp_enabled = enable_tdp;
-> +
-> +	if (tdp_enabled)
-> +		max_page_level = tdp_page_level;
-> +	else if (boot_cpu_has(X86_FEATURE_GBPAGES))
-> +		max_page_level = PT_PDPE_LEVEL;
-> +	else
-> +		max_page_level = PT_DIRECTORY_LEVEL;
->  }
->  EXPORT_SYMBOL_GPL(kvm_configure_mmu);
->  
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index 19dc74ae1efb..76c24b3491f6 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -1443,7 +1443,7 @@ static __init int svm_hardware_setup(void)
->  	if (npt_enabled && !npt)
->  		npt_enabled = false;
->  
-> -	kvm_configure_mmu(npt_enabled);
-> +	kvm_configure_mmu(npt_enabled, PT_PDPE_LEVEL);
->  	pr_info("kvm: Nested Paging %sabled\n", npt_enabled ? "en" : "dis");
->  
->  	if (nrips) {
-> @@ -6064,11 +6064,6 @@ static void svm_set_supported_cpuid(struct kvm_cpuid_entry2 *entry)
->  	}
->  }
->  
-> -static int svm_get_lpage_level(void)
-> -{
-> -	return PT_PDPE_LEVEL;
-> -}
+I sent the patch to the syzbot ML only, for testing before posting on
+netdev, so Paul likely have not seen it yet, sorry.
 
-I've probably missed something but before the change, get_lpage_level()
-on AMD was always returning PT_PDPE_LEVEL, but after the change and when
-NPT is disabled, we set max_page_level to either PT_PDPE_LEVEL (when
-boot_cpu_has(X86_FEATURE_GBPAGES)) or PT_DIRECTORY_LEVEL
-(otherwise). This sounds like a change) unless we think that
-boot_cpu_has(X86_FEATURE_GBPAGES) is always true on AMD.
+@Dmitry: I did not get any reply yet from syzbot, are there any
+problems or is this the usual time-frame?
 
-> -
->  static bool svm_has_wbinvd_exit(void)
->  {
->  	return true;
-> @@ -7424,8 +7419,6 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
->  
->  	.get_exit_info = svm_get_exit_info,
->  
-> -	.get_lpage_level = svm_get_lpage_level,
-> -
->  	.cpuid_update = svm_cpuid_update,
->  
->  	.set_supported_cpuid = svm_set_supported_cpuid,
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 59206c22b5e1..3ad24ca692a6 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -6889,15 +6889,6 @@ static u64 vmx_get_mt_mask(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio)
->  	return (cache << VMX_EPT_MT_EPTE_SHIFT) | ipat;
->  }
->  
-> -static int vmx_get_lpage_level(void)
-> -{
-> -	if (enable_ept && !cpu_has_vmx_ept_1g_page())
-> -		return PT_DIRECTORY_LEVEL;
-> -	else
-> -		/* For shadow and EPT supported 1GB page */
-> -		return PT_PDPE_LEVEL;
-> -}
-> -
->  static void vmcs_set_secondary_exec_control(struct vcpu_vmx *vmx)
->  {
->  	/*
-> @@ -7584,7 +7575,7 @@ static __init int hardware_setup(void)
->  {
->  	unsigned long host_bndcfgs;
->  	struct desc_ptr dt;
-> -	int r, i;
-> +	int r, i, ept_lpage_level;
->  
->  	rdmsrl_safe(MSR_EFER, &host_efer);
->  
-> @@ -7677,7 +7668,16 @@ static __init int hardware_setup(void)
->  
->  	if (enable_ept)
->  		vmx_enable_tdp();
-> -	kvm_configure_mmu(enable_ept);
-> +
-> +	if (!enable_ept)
-> +		ept_lpage_level = 0;
-> +	else if (cpu_has_vmx_ept_1g_page())
-> +		ept_lpage_level = PT_PDPE_LEVEL;
-> +	else if (cpu_has_vmx_ept_2m_page())
-> +		ept_lpage_level = PT_DIRECTORY_LEVEL;
-> +	else
-> +		ept_lpage_level = PT_PAGE_TABLE_LEVEL;
-> +	kvm_configure_mmu(enable_ept, ept_lpage_level);
->  
->  	/*
->  	 * Only enable PML when hardware supports PML feature, and both EPT
-> @@ -7855,8 +7855,6 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
->  
->  	.get_exit_info = vmx_get_exit_info,
->  
-> -	.get_lpage_level = vmx_get_lpage_level,
-> -
->  	.cpuid_update = vmx_cpuid_update,
->  	.set_supported_cpuid = vmx_set_supported_cpuid,
+Thank you!
 
--- 
-Vitaly
+Paolo
 
