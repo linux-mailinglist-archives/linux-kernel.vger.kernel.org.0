@@ -2,90 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F58416F037
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 21:37:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9029B16F03C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 21:38:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731821AbgBYUhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 15:37:38 -0500
-Received: from mail-pj1-f52.google.com ([209.85.216.52]:55576 "EHLO
-        mail-pj1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731297AbgBYUhi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 15:37:38 -0500
-Received: by mail-pj1-f52.google.com with SMTP id d5so229929pjz.5
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 12:37:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v1XIiBi4oFqFORFlQSNw7k0aiV4sK296qJvfGhGJwdw=;
-        b=LQ3s5JsGiE5C/5QwAaBVAvmcQzFSZQV/cq37pLIqqZoS3kr5rWHIeVPeJi0QSbm7dU
-         O7s4jzwksIiWqBJl3RfEfyT4PA4Nj/Vtkwy64hhxX4FdUhNGyRFAINXPapkhR1QhuKld
-         l6+1XX+FTFlbm9z3wgR6d6GVBMsl7z+jf2myRX5SR6V7qPuYrz77DbG6ScEQXzWT0IAT
-         ib4+WM9ZvKKuzoqe96C5ctW3XxDOjZn1POfDRcLHx9jYZF6z2LihbFkU44SdtUsDvdIl
-         mVW632toRtCJCwzWCcBKjACtoXBm/Smx194+Sm3i8GOjCdsRkPNKzWG1A688jczm79dY
-         Gj6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v1XIiBi4oFqFORFlQSNw7k0aiV4sK296qJvfGhGJwdw=;
-        b=YvXNQm8Evyv2IlFtQUiS7515uJEf4vX1rmVjtR2ZLWye8RYosQJ74lH6zOzY25x+wX
-         il9q8YO6tlCeZAB0gM+3cHp/3aSOyW+rCGGvGj9XzwMtNmb/kdsfnosyt9WnoxCDPHge
-         1eks2lVm+0lgwbe8Y3+23sKuSASpbwkCu4LBU2OsxU4iVt85z0EPuZb9l98XSoJ3Oj3l
-         /9cejRUSDKag9kvLLNojTZNriMza1c4sgVaqY1OE67l42wCDpbyky0ElRSTdtSF/LKPp
-         sOCdMMKaa95b4nRfm0O8YzucJ/1muwdjvSPiu35WQT4ARHdvK2STDO8himdhi+onXcDt
-         /0nA==
-X-Gm-Message-State: APjAAAWolLf9ZiIma0cX/Z1uCDOs7vi8ghuxewhtYsPrXYy8aGXuWOqb
-        qYXx0h1UxXX/3GsjCXbOaXRRNnkU4Uv6cWwzl/LmXg==
-X-Google-Smtp-Source: APXvYqwA9l5PA1pH+Ecx/QO7gbcCcyQIT07mu96WcqOtKhnbLmxVjht2OHC1qkLLWoQLn5YC4KnOfLbelRCE2tYsDCc=
-X-Received: by 2002:a17:90a:7784:: with SMTP id v4mr955101pjk.134.1582663057319;
- Tue, 25 Feb 2020 12:37:37 -0800 (PST)
+        id S1731297AbgBYUiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 15:38:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58016 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731768AbgBYUiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 15:38:16 -0500
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A15CD24653
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 20:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582663095;
+        bh=wf1GEETTy9Tmvl1POa0eMSLJO+wb8S8fRzOb41R6aKg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=eKlezWrH87KSpUfrujyoeykj1HZ9mgwPIxYhJSyltk+oDZ9s0gybnJ/Ph8dlwV8Zv
+         UDyx+otbRGWUHTw19fQOVccBkHtAMrI8a5SXDRurnlc0VLpPb635H+cd6P7bSk8cZl
+         7sJKPmYvSkj8c0LDkyUPNLbwX69/RMuuIclLmCKU=
+Received: by mail-wm1-f52.google.com with SMTP id a6so652190wme.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 12:38:15 -0800 (PST)
+X-Gm-Message-State: APjAAAVAAF3WQ1U6z7vRzDH7TeNVRO0u+9to1PGVS6vIY+U5pmohnAxF
+        EfDXN3s2nfQoXV/d8LaHPQW67zbQiHSvEdQmLbuYAA==
+X-Google-Smtp-Source: APXvYqy10vBwMnO+jqV4umszV3JOCCoVRLjxhIPBG9u7+mlkaTCsBI5YDYsWV5XccmkFKbKBB/RigDbG1FhF+0iEJ14=
+X-Received: by 2002:a1c:bc46:: with SMTP id m67mr970737wmf.40.1582663094092;
+ Tue, 25 Feb 2020 12:38:14 -0800 (PST)
 MIME-Version: 1.0
-References: <20200109150218.16544-2-nivedita@alum.mit.edu> <20200222050845.GA19912@ubuntu-m2-xlarge-x86>
- <20200222065521.GA11284@zn.tnic> <20200222070218.GA27571@ubuntu-m2-xlarge-x86>
- <20200222072144.asqaxlv364s6ezbv@google.com> <20200222074254.GB11284@zn.tnic>
- <20200222162225.GA3326744@rani.riverdale.lan> <CAKwvOdnvMS21s9gLp5nUpDAOu=c7-iWYuKTeFUq+PMhsJOKUgw@mail.gmail.com>
- <202002242122.AA4D1B8@keescook> <20200225182951.GA1179890@rani.riverdale.lan> <202002251140.4F28F0A4F@keescook>
-In-Reply-To: <202002251140.4F28F0A4F@keescook>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 25 Feb 2020 12:37:26 -0800
-Message-ID: <CAKwvOdnkr1W4LTm8XmTKGkSDUhSBRowLbKwJwyitDMAGLh9ywg@mail.gmail.com>
-Subject: Re: --orphan-handling=warn
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Fangrui Song <maskray@google.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
+References: <cover.1582662842.git.thomas.lendacky@amd.com>
+In-Reply-To: <cover.1582662842.git.thomas.lendacky@amd.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Tue, 25 Feb 2020 21:38:03 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu_sd26ZEj8O10O3jLdzzh7FasBq9Suw_5kG_9hwtdNqmg@mail.gmail.com>
+Message-ID: <CAKv+Gu_sd26ZEj8O10O3jLdzzh7FasBq9Suw_5kG_9hwtdNqmg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] SME EFI table updates/fixes
+To:     Tom Lendacky <thomas.lendacky@amd.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Michael Matz <matz@suse.de>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 11:43 AM Kees Cook <keescook@chromium.org> wrote:
+On Tue, 25 Feb 2020 at 21:34, Tom Lendacky <thomas.lendacky@amd.com> wrote:
 >
-> On Tue, Feb 25, 2020 at 01:29:51PM -0500, Arvind Sankar wrote:
-> > On Mon, Feb 24, 2020 at 09:35:04PM -0800, Kees Cook wrote:
-> > > Note that cheating and doing the 1-to-1 mapping by handy with a 40,000
-> > > entry linker script ... made ld.lld take about 15 minutes to do the
-> > > final link. :(
-> >
-> > Out of curiosity, how long does ld.bfd take on that linker script :)
+> This patch series adds new EFI tables to the list of tables that are
+> to be mapped unencrypted when SME is active
 >
-> A single CPU at 100% for 15 minutes. :)
+> - EFI TPM log and TPM final log tables
+> - EFI RNG seed table
+>
+> ---
+>
+> Patches based on
+>   git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git next
+>
+> and commit:
+>   dc235d62fc60 ("efi: Bump the Linux EFI stub major version number to #1")
+>
+> Changes since v2:
+> - Split the patch into TPM related and RNG related patches
+> - Account for the moving of the RNG seed EFI table from struct efi
+>   to a static variable
+>
+> Tom Lendacky (2):
+>   x86/efi: Add TPM related EFI tables to unencrypted mapping checks
+>   x86/efi: Add RNG seed EFI table to unencrypted mapping check
+>
 
-I can see the implementers of linker script handling thinking "surely
-no one would ever have >10k entries." Then we invented things like
--ffunction-sections, -fdata-sections, (per basic block equivalents:
-https://reviews.llvm.org/D68049) and then finally FGKASLR. "640k ought
-to be enough for anybody" and such.
--- 
-Thanks,
-~Nick Desaulniers
+Thanks Tom. I'll queue these up.
