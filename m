@@ -2,77 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D873616B820
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 04:33:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9408B16B82B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 04:45:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbgBYDd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 22:33:56 -0500
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:41070 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbgBYDdz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 22:33:55 -0500
-Received: by mail-ot1-f44.google.com with SMTP id r27so10798506otc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 19:33:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/AtHRSTtrgdpxX7I9KkYj8t+4xP5KBWvQCkTpEy+3KU=;
-        b=pVTjx6gLDVSqirZcMfRkxTMBQy+HPbUBDYKIPzvhxPVQDlljeZa8FR8gILTA0HOUKE
-         68LfM0OV9T3nGwGa0R38F4M1VPAMD8SE9yLQ3dBnS3cTvly+m9o51ujOWtHXI5bFgKqC
-         F4JcSM81rtvzr0X+QPgs82S+fY8SHpjGeSkiXWrmy3FGJNLukuqD01iZHN2t4RfLTJ9B
-         zdOXzMxdwfusXVmubgd2Ssl4JW7DTUslWvfuiT3rB5Y8eUvOag6R3YC/n7hQISRQW4mH
-         20XW+/Ib+yFmr++JsxHxsSacy4U4Ie7N42UILVRHZMknVTlfDtUu55b/TRi8eKDf08QJ
-         /ZWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/AtHRSTtrgdpxX7I9KkYj8t+4xP5KBWvQCkTpEy+3KU=;
-        b=r42cb1mVCFZORaS69m1w8xmD1ZCLRKQR5FPqPbNfB5ElHbGxGUcVOKuxlmKyY7hLKF
-         5e+1PC1/AGykbhfU5N4NJtOvDjYx3b2ZSkQltEkOatTo1qzGW6K5KpX3SoF8Hwslj3iO
-         a1Gh6Zklg9Jp9juwijJknDhEpzHxO89pujxy4V65wjDGY+wIx1BHlW8xBmxgR4YtH2nt
-         QnF4wBtZVI/mo2YBTHHKti5rfECSpxnseL5cBDn2RHqelVPa+lyQ8tv6BbQ0d23vSj8+
-         bCGTRXMzE/M91N7Xe6ij6oZzFrfXdc017lB3+1rPPHbdpguwh9TjJTJxzao8NTTh8CCF
-         b04A==
-X-Gm-Message-State: APjAAAXHsugsrfksS2Iq/ZDkbfcEvCard0nnd4tD961FYE9O4oombkr+
-        1MtUyOQckw4L68kfxjGF5ZAT1Dsiuwwec5b6anU=
-X-Google-Smtp-Source: APXvYqwHUUEHXCJbBdkJoX9BDITo2hdWfvSbhL0O1Efu2QWpvI2GZeU35fVK5ueGzDNohKTUnHOLtZ+vBHupavqkCJA=
-X-Received: by 2002:a9d:4f04:: with SMTP id d4mr42798017otl.78.1582601634987;
- Mon, 24 Feb 2020 19:33:54 -0800 (PST)
+        id S1728898AbgBYDpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 22:45:07 -0500
+Received: from mga07.intel.com ([134.134.136.100]:30180 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726962AbgBYDpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 22:45:07 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 19:45:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,482,1574150400"; 
+   d="scan'208";a="384340464"
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
+  by orsmga004.jf.intel.com with ESMTP; 24 Feb 2020 19:45:04 -0800
+Date:   Mon, 24 Feb 2020 22:35:42 -0500
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "peterx@redhat.com" <peterx@redhat.com>
+Subject: Re: [PATCH v3 1/7] vfio: allow external user to get vfio group from
+ device
+Message-ID: <20200225033542.GE30338@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20200224084350.31574-1-yan.y.zhao@intel.com>
+ <20200224084641.31696-1-yan.y.zhao@intel.com>
+ <20200224121504.367cdfb4@w520.home>
 MIME-Version: 1.0
-References: <CADDKRnBq6oFFfVzqDRwwx2Eoc74M7f_9Z7UCdSVmS_xGMD1wdQ@mail.gmail.com>
- <CAHk-=wh101Kcdby3UwzGWcCVELdGJoyduQ7Hwp2B6tavzx8ULw@mail.gmail.com> <158257881650.26598.5580907010251811605@skylake-alporthouse-com>
-In-Reply-To: <158257881650.26598.5580907010251811605@skylake-alporthouse-com>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Tue, 25 Feb 2020 13:33:43 +1000
-Message-ID: <CAPM=9twmxKz97jMNjMq7U47tZ_3QiZp73EZrcwrYuwLhApcx4Q@mail.gmail.com>
-Subject: Re: i915 GPU-hang regression in v5.6-rcx
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        =?UTF-8?Q?J=C3=B6rg_Otte?= <jrg.otte@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200224121504.367cdfb4@w520.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Feb 2020 at 07:13, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+On Tue, Feb 25, 2020 at 03:15:04AM +0800, Alex Williamson wrote:
+> On Mon, 24 Feb 2020 03:46:41 -0500
+> Yan Zhao <yan.y.zhao@intel.com> wrote:
+> 
+> > external user is able to
+> > 1. add a device into an vfio group
+> 
+> How so?  The device is added via existing mechanisms, the only thing
+> added here is an interface to get a group reference from a struct
+> device.
+> 
+> > 2. call vfio_group_get_external_user_from_dev() with the device pointer
+> > to get vfio_group associated with this device and increments the container
+> > user counter to prevent the VFIO group from disposal before KVM exits.
+> > 3. When the external KVM finishes, it calls vfio_group_put_external_user()
+> > to release the VFIO group.
+> > 
+> > Suggested-by: Alex Williamson <alex.williamson@redhat.com>
+> > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> > ---
+> >  drivers/vfio/vfio.c  | 37 +++++++++++++++++++++++++++++++++++++
+> >  include/linux/vfio.h |  2 ++
+> >  2 files changed, 39 insertions(+)
+> > 
+> > diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+> > index c8482624ca34..914bdf4b9d73 100644
+> > --- a/drivers/vfio/vfio.c
+> > +++ b/drivers/vfio/vfio.c
+> > @@ -1720,6 +1720,43 @@ struct vfio_group *vfio_group_get_external_user(struct file *filep)
+> >  }
+> >  EXPORT_SYMBOL_GPL(vfio_group_get_external_user);
+> >  
+> > +/**
+> > + * External user API, exported by symbols to be linked dynamically.
+> > + *
+> > + * The protocol includes:
+> > + * 1. External user add a device into a vfio group
+> > + *
+> > + * 2. The external user calls vfio_group_get_external_user_from_dev()
+> > + * with the device pointer
+> > + * to verify that:
+> > + *	- there's a vfio group associated with it and is initialized;
+> > + *	- IOMMU is set for the vfio group.
+> > + * If both checks passed, vfio_group_get_external_user_from_dev()
+> > + * increments the container user counter to prevent
+> > + * the VFIO group from disposal before KVM exits.
+> > + *
+> > + * 3. When the external KVM finishes, it calls
+> > + * vfio_group_put_external_user() to release the VFIO group.
+> > + * This call decrements the container user counter.
+> > + */
+> 
+> I don't think we need to duplicate this whole comment block for a
+> _from_dev() version of the existing vfio_group_get_external_user().
+> Please merge the comments.
+ok. but I have a question: for an external user, as it already has group
+fd, it can use vfio_group_get_external_user() directly, is there a
+necessity for it to call vfio_group_get_external_user_from_dev() ?
+
+If an external user wants to call this interface, it needs to first get
+device fd, passes the device fd to kernel and kernel retrieves the pointer
+to struct device, right?
+
+
+> > +
+> > +struct vfio_group *vfio_group_get_external_user_from_dev(struct device *dev)
+> > +{
+> > +	struct vfio_group *group;
+> > +	int ret;
+> > +
+> > +	group = vfio_group_get_from_dev(dev);
+> > +	if (!group)
+> > +		return ERR_PTR(-ENODEV);
+> > +
+> > +	ret = vfio_group_add_container_user(group);
+> > +	if (ret)
+> > +		return ERR_PTR(ret);
+> 
+> Error path leaks group reference.
 >
-> Quoting Linus Torvalds (2020-02-24 20:18:03)
-> > Let's add in some of the i915 people and list.
+oops, sorry for that.
+
+> > +
+> > +	return group;
+> > +}
+> > +EXPORT_SYMBOL_GPL(vfio_group_get_external_user_from_dev);
+> > +
+> >  void vfio_group_put_external_user(struct vfio_group *group)
+> >  {
+> >  	vfio_group_try_dissolve_container(group);
+> > diff --git a/include/linux/vfio.h b/include/linux/vfio.h
+> > index e42a711a2800..2e1fa0c7396f 100644
+> > --- a/include/linux/vfio.h
+> > +++ b/include/linux/vfio.h
+> > @@ -94,6 +94,8 @@ extern void vfio_unregister_iommu_driver(
+> >   */
+> >  extern struct vfio_group *vfio_group_get_external_user(struct file *filep);
+> >  extern void vfio_group_put_external_user(struct vfio_group *group);
+> > +extern
+> > +struct vfio_group *vfio_group_get_external_user_from_dev(struct device *dev);
+> 
+> Slight cringe at this line wrap, personally would prefer to wrap the
+> args as done repeatedly elsewhere in this file.  Thanks,
 >
-> Haswell eating kittens. The offending patch will be rolled back shortly.
-> -Chris
+yeah, I tried to do in that way, but the name of this interface is too long,
+as well as its return type, it passes 80 characters limit even with just one
+arg...
 
-https://patchwork.freedesktop.org/patch/354775/
+is it better to wrap in below way?
+extern struct vfio_group *vfio_group_get_external_user_from_dev(struct device
+								*dev);
 
-is the patch that is working it's way through the system.
+or just a shorter interface name?
+extern struct vfio_group *vfio_group_get_user_from_dev(struct device *dev);
 
-Dave.
+Thanks
+Yan
+> 
+> >  extern bool vfio_external_group_match_file(struct vfio_group *group,
+> >  					   struct file *filep);
+> >  extern int vfio_external_user_iommu_id(struct vfio_group *group);
+> 
