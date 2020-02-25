@@ -2,93 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 982BB16BA38
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:05:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30D9E16BA6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:16:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbgBYHFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 02:05:18 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33174 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbgBYHFR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 02:05:17 -0500
-Received: by mail-lj1-f195.google.com with SMTP id y6so12856304lji.0;
-        Mon, 24 Feb 2020 23:05:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=D6g4FFN+2/oVw+clsWyRcWM8iKy7VGLHSR27Eox3yHM=;
-        b=g8vnnMgDO/kKH9FnhFtWoxZa4r+k8oIrtEVXMSPL/rAA3SNVTo3zhywXPgyZaHdvkz
-         yyuIlnbgLXQ3cXGldW9tr3T9bj4NhUTDaWCwn4nF8NCL4C7cOJTymqJbmg1wX9yOAOHT
-         Y2FThsgRQAxmkQeIwh4oEUIMAQHS9v9YGO9X9XGCtC7jkkNsEaI0PTFEvLJCQbny1yRs
-         KoFXK1vjuJvD6wPBlAlsTjMrAwRO/7UDy8ld/koZ0PQbU5RL8swznH7Cq70MTJ5JpbCN
-         PWM8aIN0yupzeriDf46m86JxZvearD7ef6QkSrThcu80Bmaf1wEql/YlABav0mCMWYs7
-         wvRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=D6g4FFN+2/oVw+clsWyRcWM8iKy7VGLHSR27Eox3yHM=;
-        b=NrTKYV06D2m6LFxp7atVpb9p/jbFJGJlJYyDPo131M9iMwO1Zz+b1tKFLP7z9KCtw8
-         UwwYMz0233E6JRNIWHptZGZe8rZyz4Xzbrtjgyn7qLm0fWr0TrTv3d/mPSYDtrq8W2Du
-         G1ThdvcbhL9QTiwL3nrNmC6PZWK+KyPGoSclxOtoraxfTjex7DAIE9gNuS2naUTeuaoe
-         dgS22UkxSZgjStrY4wIke4LjH+cB6SrmzIMipDXdKp5I167AUUAx6sTzenO/HG32xucU
-         yQwV2WzWnuLl49L4FbA9PQtIGj2Bpb1WGx29VFlWRZ0CC8ahjg+JvsKtnUuMitFvDGj2
-         Ho0Q==
-X-Gm-Message-State: APjAAAWC/6rFLPJb6Mi3PpkDWnhOJvOb58WStAa5/DLZlsP795ZpQ31n
-        9Mk0zv34cxaGkTvDOnh3FSWPXPRQ
-X-Google-Smtp-Source: APXvYqxqb3bIiRuvkdOQq4qHLS9yorrChDkfPCKN/aAxnhXVtgL2Fb/IO7BcwvR4aRVVc8zExU7BaQ==
-X-Received: by 2002:a05:651c:1bb:: with SMTP id c27mr33756662ljn.277.1582614314466;
-        Mon, 24 Feb 2020 23:05:14 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id b30sm6788895lfc.39.2020.02.24.23.05.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 23:05:13 -0800 (PST)
-Subject: Re: [PATCH v8 00/19] NVIDIA Tegra APB DMA driver fixes and
- improvements
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200209163356.6439-1-digetx@gmail.com>
- <20200225063200.GL2618@vkoul-mobl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <84308985-5417-eead-7edc-4984193009b0@gmail.com>
-Date:   Tue, 25 Feb 2020 10:05:13 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1729478AbgBYHQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 02:16:19 -0500
+Received: from mga17.intel.com ([192.55.52.151]:55875 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729036AbgBYHQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 02:16:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2020 23:16:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,483,1574150400"; 
+   d="scan'208";a="230068082"
+Received: from plaxmina-desktop.iind.intel.com ([10.145.162.62])
+  by fmsmga007.fm.intel.com with ESMTP; 24 Feb 2020 23:16:13 -0800
+From:   Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
+To:     jani.nikula@linux.intel.com, daniel@ffwll.ch,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        ville.syrjala@linux.intel.com, airlied@linux.ie,
+        maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
+        mripard@kernel.org, mihail.atanassov@arm.com
+Cc:     pankaj.laxminarayan.bharadiya@intel.com,
+        linux-kernel@vger.kernel.org, ankit.k.nautiyal@intel.com
+Subject: [RFC][PATCH 0/5] Introduce drm scaling filter property 
+Date:   Tue, 25 Feb 2020 12:35:40 +0530
+Message-Id: <20200225070545.4482-1-pankaj.laxminarayan.bharadiya@intel.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20200225063200.GL2618@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-25.02.2020 09:32, Vinod Koul пишет:
-> On 09-02-20, 19:33, Dmitry Osipenko wrote:
->> Hello,
->>
->> This series fixes some problems that I spotted recently, secondly the
->> driver's code gets a cleanup. Please review and apply, thanks in advance!
-> 
-> Applied, thanks
-> 
-> One note I would like to add thanking you and Jon for the series :)
-> 
-> This version was pleasure to read. A patch should do *one* thing and
-> this series really illustrates this principal and as a result I enjoyed
-> reading the series and was able to do a quick review of the series,
-> notwithstanding the fact that it had 19 patches. So thanks to you and
-> Jon (i know he pushed for split etc) for the wonderful read.
-> 
+Integer scaling (IS) is a nearest-neighbor upscaling technique that
+simply scales up the existing pixels by an integer (i.e., whole
+number) multiplier. Nearest-neighbor (NN) interpolation works by
+filling in the missing color values in the upscaled image with that of
+the coordinate-mapped nearest source pixel value.
 
-Thank you very much!
+Both IS and NN preserve the clarity of the original image. In
+contrast, traditional upscaling algorithms, such as bilinear or
+bicubic interpolation, result in blurry upscaled images because they
+employ interpolation techniques that smooth out the transition from
+one pixel to another.  Therefore, integer scaling is particularly
+useful for pixel art games that rely on sharp, blocky images to
+deliver their distinctive look.
+
+Many gaming communities have been asking for integer-mode scaling
+support, some links and background:
+
+https://software.intel.com/en-us/articles/integer-scaling-support-on-intel-graphics
+http://tanalin.com/en/articles/lossless-scaling/
+https://community.amd.com/thread/209107
+https://www.nvidia.com/en-us/geforce/forums/game-ready-drivers/13/1002/feature-request-nonblurry-upscaling-at-integer-rat/
+
+This patch series -
+  - Introduces new scaling filter property to allow userspace to
+    select  the driver's default scaling filter or Nearest-neighbor(NN)
+    filter for scaling operations on crtc/plane.
+  - Implements and enable integer scaling for i915
+
+Userspace patch series link: TBD.
+
+Thanks to Shashank for initiating this work. His initial RFC can be
+found here [1]
+
+[1] https://patchwork.freedesktop.org/patch/337082/
+
+Modifications done in this series -
+   - refactored code and incorporated initial review comments and
+     added 2 scaling filter types (default and NN) to begin with.
+   - added scaling filter property support for planes and new API
+     helpers for drivers to setup this property.
+   - rewrote code to enable integer scaling and NN filter for i915
+
+
+Pankaj Bharadiya (5):
+  drm: Introduce scaling filter property
+  drm/drm-kms.rst: Add Scaling filter property documentation
+  drm/i915: Enable scaling filter for plane and pipe
+  drm/i915: Introduce scaling filter related registers and bit fields.
+  drm/i915/display: Add Nearest-neighbor based integer scaling support
+
+ Documentation/gpu/drm-kms.rst                |   6 ++
+ drivers/gpu/drm/drm_atomic_uapi.c            |   8 ++
+ drivers/gpu/drm/drm_crtc.c                   |  16 +++
+ drivers/gpu/drm/drm_mode_config.c            |  13 +++
+ drivers/gpu/drm/drm_plane.c                  |  35 +++++++
+ drivers/gpu/drm/i915/display/intel_display.c | 100 ++++++++++++++++++-
+ drivers/gpu/drm/i915/display/intel_display.h |   2 +
+ drivers/gpu/drm/i915/display/intel_sprite.c  |  32 ++++--
+ drivers/gpu/drm/i915/i915_reg.h              |  21 ++++
+ include/drm/drm_crtc.h                       |  10 ++
+ include/drm/drm_mode_config.h                |   6 ++
+ include/drm/drm_plane.h                      |  14 +++
+ 12 files changed, 252 insertions(+), 11 deletions(-)
+
+-- 
+2.23.0
+
