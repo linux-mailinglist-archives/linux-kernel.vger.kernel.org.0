@@ -2,132 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9097616ED30
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 18:54:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 822B016ED1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 18:53:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731392AbgBYRyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 12:54:11 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39490 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729765AbgBYRyJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 12:54:09 -0500
-Received: by mail-pg1-f193.google.com with SMTP id j15so7240695pgm.6
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 09:54:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EGHWPlxApQjuktMa4xDP9Q063H+hJfu1b6AJ+NVENyk=;
-        b=mopFLxsWbeU0/yL28BByX3Qmrqu4/lNA+fcgdrQ0c38OZPHrInJHNTj2WYC/ILCWI3
-         rXsIHYNPOo1xWFMGo7b/0CEJyDfVXjQ/OF3IJs1bd8q8HuaPPs18JlBn3fRBNx7jqN5f
-         fC8vxPOg23B/AWvtJ+Qf4eNAws51cK2BgiyA2EA5uI5P3NgCw0Wv9hQUdeTRc3PUrZ0V
-         hRk0YjbtV5tCBvV82AvEH/9gQey8wstJTVxNI3gzLRzj7PSSlwWMWxLKk9pa39J5/c6r
-         JpjLoP7WYSaFE7JvzH24FqeckT308GZ6KURzKIQEE9oy3BJrKRDDhYmWeLqZFBVK+T/2
-         mbng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=EGHWPlxApQjuktMa4xDP9Q063H+hJfu1b6AJ+NVENyk=;
-        b=MjnnkPolL/bqWHtNpe9LD757AtMAdRbKg9zZXZ/v0m8+GQXTchl92INC1tJo9n4WTP
-         +iG+mfesSNGlTeQxBTVTDwJMaQjNRwkicHlFlJ25aKO+R/xJFTe6XOEx4Gq68StCeozs
-         Tfzo3sbz+h02HowQ1ID6r9fB/nScxxGzkOEXWptvMhr1T+XZwbPgvJJmgPPAHzb/4EkL
-         iZVS6m7qmR1/hPOrQJiBK0LwqLsOEVMpwPQ672KwLoq5aOtLMUkp4V0VVNWD8F5qWnCz
-         lRVLhnMk1azBSFdvZMOvtGhITD68Ya7+pDafnIBp0KscdVNerPtGR+0KfOJIpoM2pZgf
-         zBzg==
-X-Gm-Message-State: APjAAAWqqJ1KnUx+tp6gOTPaFi/LGRc/EUMgFxc1sQHcI5borbvtbh/N
-        +5hr6KoeqchEcbgLt7zlXZS8S05AGIg=
-X-Google-Smtp-Source: APXvYqzHMYAmH1VGS/4L4IKuT3hh7pV1x1nh2bDeq23It8zTwLG0Ky2zYk/YSXEkpzQl6uUTVp43bQ==
-X-Received: by 2002:a63:2b0a:: with SMTP id r10mr12434661pgr.213.1582653248359;
-        Tue, 25 Feb 2020 09:54:08 -0800 (PST)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id v8sm18013291pgt.52.2020.02.25.09.54.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 09:54:07 -0800 (PST)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Yu Chen <chenyu56@huawei.com>, Felipe Balbi <balbi@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Guillaume Gardet <Guillaume.Gardet@arm.com>,
-        Jack Pham <jackp@codeaurora.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v8 6/6] usb: dwc3: Rework resets initialization to be more flexible
-Date:   Tue, 25 Feb 2020 17:53:04 +0000
-Message-Id: <20200225175304.36406-7-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200225175304.36406-1-john.stultz@linaro.org>
-References: <20200225175304.36406-1-john.stultz@linaro.org>
+        id S1731343AbgBYRxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 12:53:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731067AbgBYRxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 12:53:37 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB96F20838;
+        Tue, 25 Feb 2020 17:53:36 +0000 (UTC)
+Date:   Tue, 25 Feb 2020 12:53:35 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bootconfig: Fix CONFIG_BOOTTIME_TRACING dependency
+ issue
+Message-ID: <20200225125335.5bbc3ed4@gandalf.local.home>
+In-Reply-To: <c9604764-bd0f-67e9-56c8-fb6ffaf9b430@infradead.org>
+References: <20200225220551.d9a409bc04b77cdf48eae3ea@kernel.org>
+        <158264140162.23842.11237423518607465535.stgit@devnote2>
+        <c9604764-bd0f-67e9-56c8-fb6ffaf9b430@infradead.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dwc3 core binding specifies one reset.
+On Tue, 25 Feb 2020 09:49:25 -0800
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-However some variants of the hardware may have more. Previously
-this was handled by using the dwc3-of-simple glue driver, but
-that resulted in a proliferation of bindings for for every
-variant, when the only difference was the clocks and resets
-lists.
+> > Fixes: d8a953ddde5e ("bootconfig: Set CONFIG_BOOT_CONFIG=n by default")
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>  
+> 
+> Hi,
+> I'm no fan of "select", but this does fix the kconfig warnings and
+> build errors that I have reported.  Thanks.
 
-So this patch reworks the reading of the resets to fetch all the
-resets specified in the dts together.
+I'm not big on select either, but this is fine (I'm running it through my
+tests now).
 
-This patch was recommended by Rob Herring <robh@kernel.org>
-as an alternative to creating multiple bindings for each variant
-of hardware.
+> 
+> Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-CC: ShuFan Lee <shufan_lee@richtek.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: Yu Chen <chenyu56@huawei.com>
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jun Li <lijun.kernel@gmail.com>
-Cc: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Guillaume Gardet <Guillaume.Gardet@arm.com>
-Cc: Jack Pham <jackp@codeaurora.org>
-Cc: linux-usb@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Suggested-by: Rob Herring <robh@kernel.org>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
-v3: Rework dwc3 core rather then adding another dwc-of-simple
-    binding.
-v6: Re-introduce this patch, on Rob's suggestion
----
- drivers/usb/dwc3/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is it OK if I change this to "Tested-by:"?
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index ba21af5c1204..2afcc04da338 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1465,7 +1465,7 @@ static int dwc3_probe(struct platform_device *pdev)
- 
- 	dwc3_get_properties(dwc);
- 
--	dwc->reset = devm_reset_control_get_optional_shared(dev, NULL);
-+	dwc->reset = devm_reset_control_array_get(dev, true, true);
- 	if (IS_ERR(dwc->reset))
- 		return PTR_ERR(dwc->reset);
- 
--- 
-2.17.1
-
+-- Steve
