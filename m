@@ -2,183 +2,273 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 437BD16EB72
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:31:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 436C416EB77
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:31:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731017AbgBYQa7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 11:30:59 -0500
-Received: from mail-eopbgr20118.outbound.protection.outlook.com ([40.107.2.118]:38414
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730966AbgBYQa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 11:30:58 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TkKkfxvzvlaIGhUqSiEYdDQbVqXAaQW651X+KLD4pbFC53Yj24G111+Dudbj/IYod3p2fxpsy5J07mMsls2LidnYaZKKrxGdCDiASIJC+nRJqbDT0XcIJnFlwswmRzG6J75Xn1h1PR+lcXOD2EYkcOpesx3bs5+gr+HXfK3hjh457Td6WYQwVBbccKh8TAn6HABu3WNxni3WthHla2+SEQpbCbfZSBnuL0nEUIVVTrVItKHw9IT/o6KK50m8YkyUCHBwuCrhv//fAuea+7kIN6RogX3c4iCrqWL3POl6SAu5sRdFMJkkN2LQC25y5fwrqbBiiMdCk9bH9FjCOhjkMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HTTr3Kb9+HPFKyFpQNnRg38BUptkaLoxOxjFpzhRrrU=;
- b=VksEezN+O2jkHArKciGKYvGSsATXIBH7XyF+bDD9XgY+OQQ0CPNLU3PhxlqCn14+4UEumAq5fSbqn1AFtOYgE4yiclsXDpqLgeU77DkmC+KIcmEtdkBgLnZDp7qttNmFtdtT+DviQuD7s+OZTwRuKk+SlJOMpr5ydQGDpGgWBz2hnrtf89Ew4Y1wd5j+7cMzJPSzGXwzL6km+gD7ijdaLghKVeNsXnOWLXRSmofmvIAQ6KV9bzCkfZyzPhTxd6qKFDU8Nz2vNyZsF2ozII4dKnAnIc76+fGCKyMLKP6KWJFj2HL+i9TEucXieTIQ+z/rm3nSyctOzACNsFeYOkyhWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=plvision.eu; dmarc=pass action=none header.from=plvision.eu;
- dkim=pass header.d=plvision.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=plvision.eu;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HTTr3Kb9+HPFKyFpQNnRg38BUptkaLoxOxjFpzhRrrU=;
- b=l8qgck3DoS6H+KGu8W30qbTp5tjZ+lzQ9d5mQaCBUCtgUT2Gwe18YBFGE2BUHspNCvMcJyY9gtHDKaQMl3/BJYF/ABOMDDG7nQwd2T06TRmlotL/jTfRfD+mCU7QhbfhUyZ0k7Swgnl25CAP0BLBnMKYjPawB6mmsYZCu/7y1u8=
-Received: from VI1P190MB0399.EURP190.PROD.OUTLOOK.COM (10.165.195.138) by
- VI1P190MB0351.EURP190.PROD.OUTLOOK.COM (10.165.197.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2750.22; Tue, 25 Feb 2020 16:30:53 +0000
-Received: from VI1P190MB0399.EURP190.PROD.OUTLOOK.COM
- ([fe80::a587:f64e:cbb8:af96]) by VI1P190MB0399.EURP190.PROD.OUTLOOK.COM
- ([fe80::a587:f64e:cbb8:af96%4]) with mapi id 15.20.2750.021; Tue, 25 Feb 2020
- 16:30:53 +0000
-Received: from pc60716vkochan.x.ow.s (217.20.186.93) by AM6P191CA0030.EURP191.PROD.OUTLOOK.COM (2603:10a6:209:8b::43) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18 via Frontend Transport; Tue, 25 Feb 2020 16:30:52 +0000
-From:   Vadym Kochan <vadym.kochan@plvision.eu>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-CC:     Vadym Kochan <vadym.kochan@plvision.eu>,
-        Oleksandr Mazur <oleksandr.mazur@plvision.eu>,
-        Taras Chornyi <taras.chornyi@plvision.eu>,
-        Serhiy Boiko <serhiy.boiko@plvision.eu>,
-        Andrii Savka <andrii.savka@plvision.eu>,
-        Volodymyr Mytnyk <volodymyr.mytnyk@plvision.eu>
-Subject: [RFC net-next 0/3] net: marvell: prestera: Add Switchdev driver for
- Prestera family ASIC device 98DX326x (AC3x)
-Thread-Topic: [RFC net-next 0/3] net: marvell: prestera: Add Switchdev driver
- for Prestera family ASIC device 98DX326x (AC3x)
-Thread-Index: AQHV6/jy7mjUjxYwxkS7hliqOPvXRQ==
-Date:   Tue, 25 Feb 2020 16:30:52 +0000
-Message-ID: <20200225163025.9430-1-vadym.kochan@plvision.eu>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P191CA0030.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:209:8b::43) To VI1P190MB0399.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:802:35::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vadym.kochan@plvision.eu; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [217.20.186.93]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4d1a56dc-5725-445f-0b26-08d7ba1014c4
-x-ms-traffictypediagnostic: VI1P190MB0351:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1P190MB03513DF5D7DE4F098184571495ED0@VI1P190MB0351.EURP190.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0324C2C0E2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(136003)(39830400003)(376002)(366004)(189003)(199004)(6512007)(5660300002)(316002)(110136005)(54906003)(4326008)(2906002)(66946007)(6506007)(66446008)(6486002)(66556008)(508600001)(64756008)(52116002)(66476007)(107886003)(8936002)(81166006)(86362001)(16526019)(186003)(26005)(81156014)(1076003)(36756003)(44832011)(2616005)(71200400001)(8676002)(956004);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1P190MB0351;H:VI1P190MB0399.EURP190.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: plvision.eu does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 1R18D48drhrot5H6XXTrxXkYoOXgjnhJMCKl6OgGvb5P0uMkwQmD/sGb0aIQfNDu6ATh1fhhOevCiFLAxk0aoxV0pVcsgFaYaHJnbOFaJjtf5d2ZfMIflSJPQExV+WYb9b6ts+LuD1QbJ59i2ZfWhJBFu467GsaoBMuPoRtLC7FMvBVp1r1NT7LMYJ/AmtSff4aOvLt7NG/5E1wNK+vg1Fprp/EaLc/VrsklYEyAxsndmNQyq+3mlusK9CDTRPMQ4P6JKff77Uaj0hXAX1RDGHzBIz0esKJ4WpEjZk09wEKi0VHM2cak1DqPxzuJVhybn8Dq5NC+xa45BcA3rAcjvXpMHsuhqbop+FZrY0Vk5+Zbbib2/YU+28EpT1eO5RE5AkGCW1DAvn7gdLceyamwDTpjkU8MAabFguv5q1mq4s9s7ft4FSOPnQXeNQZ2ao7G
-x-ms-exchange-antispam-messagedata: YdBzIo4PVWgCttPTcVhCvsRFfM3TEtWR0i6+cF+1dIeJhbTRoSF12X2gjEV9OVQCgNBBiIWaZD/JoS1C/4WAfB9QZXdybaWTruPvtYpGwx4l5GeCuR9TSM4anyORGWo8FXw89WkR647pbM7TrQqdLQ==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1731134AbgBYQbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 11:31:08 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:16288 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730966AbgBYQbH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 11:31:07 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01PGJvBO014902
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 11:31:06 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yb1638dha-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 11:31:06 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
+        Tue, 25 Feb 2020 16:31:04 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 25 Feb 2020 16:30:55 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01PGUsai37683538
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Feb 2020 16:30:54 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A49542041;
+        Tue, 25 Feb 2020 16:30:54 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0F8E34204B;
+        Tue, 25 Feb 2020 16:30:53 +0000 (GMT)
+Received: from bali.tlslab.ibm.com (unknown [9.101.4.17])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 25 Feb 2020 16:30:52 +0000 (GMT)
+Subject: Re: [PATCH v3 06/27] ocxl: Tally up the LPC memory on a link & allow
+ it to be mapped
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+References: <20200221032720.33893-1-alastair@au1.ibm.com>
+ <20200221032720.33893-7-alastair@au1.ibm.com>
+From:   Frederic Barrat <fbarrat@linux.ibm.com>
+Date:   Tue, 25 Feb 2020 17:30:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-OriginatorOrg: plvision.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d1a56dc-5725-445f-0b26-08d7ba1014c4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2020 16:30:52.9528
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 03707b74-30f3-46b6-a0e0-ff0a7438c9c4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1wtcg7BWZzEkFO7l2fh6diq/LYgKB9Sr7rUGsp0X4R3O1nuvQLRyJ4mi053qyzhmAOkf6QlkKxFxcDUJSfy1n27F5zAhj19eR1nkSJZQGaQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1P190MB0351
+In-Reply-To: <20200221032720.33893-7-alastair@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20022516-4275-0000-0000-000003A56068
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20022516-4276-0000-0000-000038B976B1
+Message-Id: <4c8f704b-5607-5ca0-c00e-01e412117f6b@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-25_05:2020-02-21,2020-02-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ bulkscore=0 impostorscore=0 adultscore=0 phishscore=0 malwarescore=0
+ mlxscore=0 suspectscore=2 mlxlogscore=999 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002250124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marvell Prestera 98DX326x integrates up to 24 ports of 1GbE with 8
-ports of 10GbE uplinks or 2 ports of 40Gbps stacking for a largely
-wireless SMB deployment.
 
-Prestera Switchdev is a firmware based driver which operates via PCI
-bus. The driver is split into 2 modules:
 
-    - prestera_sw.ko - main generic Switchdev Prestera ASIC related logic.
+Le 21/02/2020 à 04:26, Alastair D'Silva a écrit :
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> Tally up the LPC memory on an OpenCAPI link & allow it to be mapped
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> ---
+>   drivers/misc/ocxl/core.c          | 10 ++++++
+>   drivers/misc/ocxl/link.c          | 53 +++++++++++++++++++++++++++++++
+>   drivers/misc/ocxl/ocxl_internal.h | 33 +++++++++++++++++++
+>   3 files changed, 96 insertions(+)
+> 
+> diff --git a/drivers/misc/ocxl/core.c b/drivers/misc/ocxl/core.c
+> index b7a09b21ab36..2531c6cf19a0 100644
+> --- a/drivers/misc/ocxl/core.c
+> +++ b/drivers/misc/ocxl/core.c
+> @@ -230,8 +230,18 @@ static int configure_afu(struct ocxl_afu *afu, u8 afu_idx, struct pci_dev *dev)
+>   	if (rc)
+>   		goto err_free_pasid;
+>   
+> +	if (afu->config.lpc_mem_size || afu->config.special_purpose_mem_size) {
+> +		rc = ocxl_link_add_lpc_mem(afu->fn->link, afu->config.lpc_mem_offset,
+> +					   afu->config.lpc_mem_size +
+> +					   afu->config.special_purpose_mem_size);
+> +		if (rc)
+> +			goto err_free_mmio;
+> +	}
+> +
+>   	return 0;
+>   
+> +err_free_mmio:
+> +	unmap_mmio_areas(afu);
+>   err_free_pasid:
+>   	reclaim_afu_pasid(afu);
+>   err_free_actag:
+> diff --git a/drivers/misc/ocxl/link.c b/drivers/misc/ocxl/link.c
+> index 58d111afd9f6..1e039cc5ebe5 100644
+> --- a/drivers/misc/ocxl/link.c
+> +++ b/drivers/misc/ocxl/link.c
+> @@ -84,6 +84,11 @@ struct ocxl_link {
+>   	int dev;
+>   	atomic_t irq_available;
+>   	struct spa *spa;
+> +	struct mutex lpc_mem_lock; /* protects lpc_mem & lpc_mem_sz */
+> +	u64 lpc_mem_sz; /* Total amount of LPC memory presented on the link */
+> +	u64 lpc_mem;
+> +	int lpc_consumers;
+> +
+>   	void *platform_data;
+>   };
+>   static struct list_head links_list = LIST_HEAD_INIT(links_list);
+> @@ -396,6 +401,8 @@ static int alloc_link(struct pci_dev *dev, int PE_mask, struct ocxl_link **out_l
+>   	if (rc)
+>   		goto err_spa;
+>   
+> +	mutex_init(&link->lpc_mem_lock);
+> +
+>   	/* platform specific hook */
+>   	rc = pnv_ocxl_spa_setup(dev, link->spa->spa_mem, PE_mask,
+>   				&link->platform_data);
+> @@ -711,3 +718,49 @@ void ocxl_link_free_irq(void *link_handle, int hw_irq)
+>   	atomic_inc(&link->irq_available);
+>   }
+>   EXPORT_SYMBOL_GPL(ocxl_link_free_irq);
+> +
+> +int ocxl_link_add_lpc_mem(void *link_handle, u64 offset, u64 size)
+> +{
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+> +
+> +	// Check for overflow
+> +	if (offset > (offset + size))
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&link->lpc_mem_lock);
+> +	link->lpc_mem_sz = max(link->lpc_mem_sz, offset + size);
+> +
+> +	mutex_unlock(&link->lpc_mem_lock);
+> +
+> +	return 0;
+> +}
+> +
+> +u64 ocxl_link_lpc_map(void *link_handle, struct pci_dev *pdev)
+> +{
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+> +
+> +	mutex_lock(&link->lpc_mem_lock);
+> +
+> +	if(!link->lpc_mem)
+> +		link->lpc_mem = pnv_ocxl_platform_lpc_setup(pdev, link->lpc_mem_sz);
+> +
+> +	if(link->lpc_mem)
+> +		link->lpc_consumers++;
+> +	mutex_unlock(&link->lpc_mem_lock);
+> +
+> +	return link->lpc_mem;
+> +}
+> +
+> +void ocxl_link_lpc_release(void *link_handle, struct pci_dev *pdev)
+> +{
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+> +
+> +	mutex_lock(&link->lpc_mem_lock);
+> +	WARN_ON(--link->lpc_consumers < 0);
 
-    - prestera_pci.ko - bus specific code which also implements firmware
-                        loading and low-level messaging protocol between
-                        firmware and the switchdev driver.
 
-This driver implementation includes only L1 & basic L2 support.
+Here, we always decrement the lpc_consumers count. However, it was only 
+incremented if the mapping was setup correctly in opal.
 
-The core Prestera switching logic is implemented in prestera.c, there is
-an intermediate hw layer between core logic and firmware. It is
-implemented in prestera_hw.c, the purpose of it is to encapsulate hw
-related logic, in future there is a plan to support more devices with
-different HW related configurations.
+We could arguably claim that ocxl_link_lpc_release() should only be 
+called if ocxl_link_lpc_map() succeeded, but it would make error path 
+handling easier if we only decrement the lpc_consumers count if 
+link->lpc_mem is set. So that we can just call ocxl_link_lpc_release() 
+in error paths without having to worry about triggering the WARN_ON message.
 
-The firmware has to be loaded each time device is reset. The driver is
-loading it from:
+   Fred
 
-    /lib/firmware/marvell/prestera_fw_img.bin
 
-The firmware image version is located within internal header and consists
-of 3 numbers - MAJOR.MINOR.PATCH. Additionally, driver has hard-coded
-minimum supported firmware version which it can work with:
 
-    MAJOR - reflects the support on ABI level between driver and loaded
-            firmware, this number should be the same for driver and
-            loaded firmware.
-
-    MINOR - this is the minimal supported version between driver and the
-            firmware.
-
-    PATCH - indicates only fixes, firmware ABI is not changed.
-
-The firmware image will be submitted to the linux-firmware after the
-driver is accepted.
-
-The following Switchdev features are supported:
-
-    - VLAN-aware bridge offloading
-    - VLAN-unaware bridge offloading
-    - FDB offloading (learning, ageing)
-    - Switchport configuration
-
-CPU RX/TX support will be provided in the next contribution.
-
-Vadym Kochan (3):
-  net: marvell: prestera: Add Switchdev driver for Prestera family ASIC
-    device 98DX325x (AC3x)
-  net: marvell: prestera: Add PCI interface support
-  dt-bindings: marvell,prestera: Add address mapping for Prestera
-    Switchdev PCIe driver
-
- .../bindings/net/marvell,prestera.txt         |   13 +
- drivers/net/ethernet/marvell/Kconfig          |    1 +
- drivers/net/ethernet/marvell/Makefile         |    1 +
- drivers/net/ethernet/marvell/prestera/Kconfig |   24 +
- .../net/ethernet/marvell/prestera/Makefile    |    5 +
- .../net/ethernet/marvell/prestera/prestera.c  | 1502 +++++++++++++++++
- .../net/ethernet/marvell/prestera/prestera.h  |  244 +++
- .../marvell/prestera/prestera_drv_ver.h       |   23 +
- .../ethernet/marvell/prestera/prestera_hw.c   | 1094 ++++++++++++
- .../ethernet/marvell/prestera/prestera_hw.h   |  159 ++
- .../ethernet/marvell/prestera/prestera_pci.c  |  840 +++++++++
- .../marvell/prestera/prestera_switchdev.c     | 1217 +++++++++++++
- 12 files changed, 5123 insertions(+)
- create mode 100644 drivers/net/ethernet/marvell/prestera/Kconfig
- create mode 100644 drivers/net/ethernet/marvell/prestera/Makefile
- create mode 100644 drivers/net/ethernet/marvell/prestera/prestera.c
- create mode 100644 drivers/net/ethernet/marvell/prestera/prestera.h
- create mode 100644 drivers/net/ethernet/marvell/prestera/prestera_drv_ver.=
-h
- create mode 100644 drivers/net/ethernet/marvell/prestera/prestera_hw.c
- create mode 100644 drivers/net/ethernet/marvell/prestera/prestera_hw.h
- create mode 100644 drivers/net/ethernet/marvell/prestera/prestera_pci.c
- create mode 100644 drivers/net/ethernet/marvell/prestera/prestera_switchde=
-v.c
-
---=20
-2.17.1
+> +	if (link->lpc_consumers == 0) {
+> +		pnv_ocxl_platform_lpc_release(pdev);
+> +		link->lpc_mem = 0;
+> +	}
+> +
+> +	mutex_unlock(&link->lpc_mem_lock);
+> +}
+> diff --git a/drivers/misc/ocxl/ocxl_internal.h b/drivers/misc/ocxl/ocxl_internal.h
+> index 198e4e4bc51d..d0c8c4838f42 100644
+> --- a/drivers/misc/ocxl/ocxl_internal.h
+> +++ b/drivers/misc/ocxl/ocxl_internal.h
+> @@ -142,4 +142,37 @@ int ocxl_irq_offset_to_id(struct ocxl_context *ctx, u64 offset);
+>   u64 ocxl_irq_id_to_offset(struct ocxl_context *ctx, int irq_id);
+>   void ocxl_afu_irq_free_all(struct ocxl_context *ctx);
+>   
+> +/**
+> + * ocxl_link_add_lpc_mem() - Increment the amount of memory required by an OpenCAPI link
+> + *
+> + * @link_handle: The OpenCAPI link handle
+> + * @offset: The offset of the memory to add
+> + * @size: The amount of memory to increment by
+> + *
+> + * Returns 0 on success, negative on overflow
+> + */
+> +int ocxl_link_add_lpc_mem(void *link_handle, u64 offset, u64 size);
+> +
+> +/**
+> + * ocxl_link_lpc_map() - Map the LPC memory for an OpenCAPI device
+> + * Since LPC memory belongs to a link, the whole LPC memory available
+> + * on the link must be mapped in order to make it accessible to a device.
+> + * @link_handle: The OpenCAPI link handle
+> + * @pdev: A device that is on the link
+> + *
+> + * Returns the address of the mapped LPC memory, or 0 on error
+> + */
+> +u64 ocxl_link_lpc_map(void *link_handle, struct pci_dev *pdev);
+> +
+> +/**
+> + * ocxl_link_lpc_release() - Release the LPC memory device for an OpenCAPI device
+> + *
+> + * Offlines LPC memory on an OpenCAPI link for a device. If this is the
+> + * last device on the link to release the memory, unmap it from the link.
+> + *
+> + * @link_handle: The OpenCAPI link handle
+> + * @pdev: A device that is on the link
+> + */
+> +void ocxl_link_lpc_release(void *link_handle, struct pci_dev *pdev);
+> +
+>   #endif /* _OCXL_INTERNAL_H_ */
+> 
 
