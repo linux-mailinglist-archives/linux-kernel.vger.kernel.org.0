@@ -2,111 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7A3D16C065
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E89216C071
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:11:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730674AbgBYMJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 07:09:40 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:12310 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730651AbgBYMJf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 07:09:35 -0500
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01PC4tfl012993;
-        Tue, 25 Feb 2020 07:09:34 -0500
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2yay1brsvn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Feb 2020 07:09:34 -0500
-Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 01PC9WtK058810
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Tue, 25 Feb 2020 07:09:32 -0500
-Received: from SCSQCASHYB7.ad.analog.com (10.77.17.133) by
- SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Tue, 25 Feb 2020 04:09:31 -0800
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
- SCSQCASHYB7.ad.analog.com (10.77.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Tue, 25 Feb 2020 04:09:31 -0800
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Tue, 25 Feb 2020 04:09:30 -0800
-Received: from tachici-Precision-5530.ad.analog.com ([10.48.65.175])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01PC9N1I003238;
-        Tue, 25 Feb 2020 07:09:29 -0500
-From:   Alexandru Tachici <alexandru.tachici@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>
-Subject: [PATCH v2 6/6] iio: accel: adxl372: Update sysfs docs
-Date:   Tue, 25 Feb 2020 14:09:09 +0200
-Message-ID: <20200225120909.12629-7-alexandru.tachici@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200225120909.12629-1-alexandru.tachici@analog.com>
-References: <20200225120909.12629-1-alexandru.tachici@analog.com>
+        id S1729444AbgBYMLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 07:11:30 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44374 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729033AbgBYMLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 07:11:30 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A48AFAC66;
+        Tue, 25 Feb 2020 12:11:27 +0000 (UTC)
+Date:   Tue, 25 Feb 2020 13:11:25 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, akpm@linux-foundation.org,
+        "K . Prasad" <prasad@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Quentin Perret <qperret@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH 0/3] Unexport kallsyms_lookup_name() and
+ kallsyms_on_each_symbol()
+Message-ID: <20200225121125.psvuz6e7coa77vxe@pathway.suse.cz>
+References: <20200221114404.14641-1-will@kernel.org>
+ <alpine.LSU.2.21.2002251104130.11531@pobox.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-25_03:2020-02-21,2020-02-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
- suspectscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
- clxscore=1015 malwarescore=0 bulkscore=0 mlxscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002250098
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.2002251104130.11531@pobox.suse.cz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds entries in the syfs docs of ADXL372.
+On Tue 2020-02-25 11:05:39, Miroslav Benes wrote:
+> CC live-patching ML, because this could affect many of its users...
+> 
+> On Fri, 21 Feb 2020, Will Deacon wrote:
+> 
+> > Hi folks,
+> > 
+> > Despite having just a single modular in-tree user that I could spot,
+> > kallsyms_lookup_name() is exported to modules and provides a mechanism
+> > for out-of-tree modules to access and invoke arbitrary, non-exported
+> > kernel symbols when kallsyms is enabled.
 
-Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
----
- .../ABI/testing/sysfs-bus-iio-accel-adxl372   | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-accel-adxl372
+Just to explain how this affects livepatching users.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-accel-adxl372 b/Documentation/ABI/testing/sysfs-bus-iio-accel-adxl372
-new file mode 100644
-index 000000000000..709376b54bec
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-accel-adxl372
-@@ -0,0 +1,30 @@
-+What:		/sys/bus/iio/devices/iio:deviceX/buffer_peak_mode_enable
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		This attribute allows to configure the FIFO to store sample
-+		sets of impact event peak (x, y, z). As a precondition, all
-+		three channels (x, y, z) need to be enabled.
-+		Writing 1, peak fifo mode will be enabled, if cleared and
-+		all three channels are enabled, sample sets of concurrent
-+		3-axis data will be stored in the FIFO.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/activity_detect_event
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		adxl372 works in loop mode. It will loop  between activity
-+		and inactivity detection mode. The thresh_rising sysfs files
-+		found in events/ need to be configured in order to define when
-+		the device will mark a sensed acceleration over a period of
-+		time as activity.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/inactivity_detect_event
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		adxl372 works in loop mode. It will loop  between activity
-+		and inactivity detection mode. The thresh_falling sysfs files
-+		found in events/ need to be configured in order to define when
-+		the device will mark a sensed acceleration over a period of
-+		time as inactivity.
--- 
-2.20.1
+Livepatch is a module that inludes fixed copies of functions that
+are buggy in the running kernel. These functions often
+call functions or access variables that were defined static in
+the original source code. There are two ways how this is currently
+solved.
 
+Some livepatch authors use kallsyms_lookup_name() to locate the
+non-exported symbols in the running kernel and then use these
+address in the fixed code.
+
+Another possibility is to used special relocation sections,
+see Documentation/livepatch/module-elf-format.rst
+
+The problem with the special relocations sections is that the support
+to generate them is not ready yet. The main piece would klp-convert
+tool. Its development is pretty slow. The last version can be
+found at
+https://lkml.kernel.org/r/20190509143859.9050-1-joe.lawrence@redhat.com
+
+I am not sure if this use case is enough to keep the symbols exported.
+Anyway, there are currently some out-of-tree users.
+
+Best Regards,
+Petr
