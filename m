@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DF5416F33A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:27:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32B7F16F348
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:27:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729517AbgBYX07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:26:59 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55950 "EHLO
+        id S1729586AbgBYX1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:27:05 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55937 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730362AbgBYX0n (ORCPT
+        with ESMTP id S1730346AbgBYX0l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:26:43 -0500
+        Tue, 25 Feb 2020 18:26:41 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j6jas-00051R-0e; Wed, 26 Feb 2020 00:26:26 +0100
+        id 1j6jat-000520-Fh; Wed, 26 Feb 2020 00:26:27 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 67D9C1040BC;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id A12F31040BD;
         Wed, 26 Feb 2020 00:25:51 +0100 (CET)
-Message-Id: <20200225231609.110531538@linutronix.de>
+Message-Id: <20200225231609.216265343@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Feb 2020 23:47:21 +0100
+Date:   Tue, 25 Feb 2020 23:47:22 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Brian Gerst <brgerst@gmail.com>,
         Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [patch 02/15] x86/entry/64: Add ability to switch to IRQ stacks in idtentry
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [patch 03/15] x86/entry: Add IRQENTRY_IRQ macro
 References: <20200225224719.950376311@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,76 +42,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expand the idtentry macro so it supports switching to interrupt stacks on
-64bit. Preparatory change to let regular device interrupts use idtentry
-instead of having their own mechanism.
+Provide a seperate IDTENTRY macro for device interrupts, which supports the
+interrupt stack switch mode on 64 bit. Otherwise its the same as
+IDTENTRY_ERRORCODE.
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/entry/entry_64.S |   18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/idtentry.h |   44 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -495,8 +495,9 @@ SYM_CODE_END(spurious_entries_start)
-  * idtentry_body - Macro to emit code calling the C function
-  * @cfunc:		C function to be called
-  * @has_error_code:	Hardware pushed error code on stack
-+ * @irq_stack:		Execute @cfunc on the IRQ stack (device interrupts)
-  */
--.macro idtentry_body cfunc has_error_code:req
-+.macro idtentry_body cfunc has_error_code:req irq_stack:req
+--- a/arch/x86/include/asm/idtentry.h
++++ b/arch/x86/include/asm/idtentry.h
+@@ -171,6 +171,46 @@ static __always_inline void __##func(str
+ 				     unsigned long error_code,		\
+ 				     unsigned long address)
  
- 	call	error_entry
- 	UNWIND_HINT_REGS
-@@ -508,8 +509,16 @@ SYM_CODE_END(spurious_entries_start)
- 		movq	$-1, ORIG_RAX(%rsp)	/* no syscall to restart */
- 	.endif
- 
-+	.if \irq_stack
-+		ENTER_IRQ_STACK old_rsp=%rdi
-+	.endif
++/**
++ * DECLARE_IDTENTRY_IRQ - Declare functions for device interrupt IDT entry
++ *			  points (common/spurious)
++ * @vector:	Vector number (ignored for C)
++ * @func:	Function name of the entry point
++ *
++ * Declares three functions:
++ * - The ASM entry point: asm_##func
++ * - The XEN PV trap entry point: xen_##func (maybe unused)
++ * - The C handler called from the ASM entry point
++ */
++#define DECLARE_IDTENTRY_IRQ(vector, func)				\
++	asmlinkage void asm_##func(void);				\
++	asmlinkage void xen_asm_##func(void);				\
++	__visible void func(struct pt_regs *regs, unsigned long vector)
 +
- 	call	\cfunc
- 
-+	.if \irq_stack
-+		LEAVE_IRQ_STACK			/* interrupts are disabled */
-+	.endif
++/**
++ * DEFINE_IDTENTRY_IRQ - Emit code for device interrupt IDT entry points
++ * @func:	Function name of the entry point
++ *
++ * @func is called from ASM entry code with interrupts disabled.
++ *
++ * Used for C handlers which require the vector number.
++ */
++#define DEFINE_IDTENTRY_IRQ(func)					\
++static __always_inline void __##func(struct pt_regs *regs,		\
++				     unsigned long vector);		\
++									\
++__visible notrace __irq_entry void func(struct pt_regs *regs,		\
++					unsigned long vector)		\
++{									\
++	idtentry_enter(regs);						\
++	__##func (regs, vector);					\
++	idtentry_exit(regs);						\
++}									\
++NOKPROBE_SYMBOL(func);							\
++									\
++static __always_inline void __##func(struct pt_regs *regs,		\
++				     unsigned long vector)
 +
- 	jmp	error_exit
- .endm
+ #ifdef CONFIG_X86_64
+ /**
+  * DECLARE_IDTENTRY_IST - Declare functions for IST handling IDT entry points
+@@ -340,6 +380,10 @@ static __always_inline void __##func(str
+ /* Special case for 32bit IRET 'trap'. Do not emit ASM code */
+ #define DECLARE_IDTENTRY_SW(vector, func)
  
-@@ -519,11 +528,12 @@ SYM_CODE_END(spurious_entries_start)
-  * @asmsym:		ASM symbol for the entry point
-  * @cfunc:		C function to be called
-  * @has_error_code:	Hardware pushed error code on stack
-+ * @irq_stack:		Execute @cfunc on the IRQ stack (device interrupts)
-  *
-  * The macro emits code to set up the kernel context for straight forward
-  * and simple IDT entries. No IST stack, no paranoid entry checks.
-  */
--.macro idtentry vector asmsym cfunc has_error_code:req
-+.macro idtentry vector asmsym cfunc has_error_code:req irq_stack=0
- SYM_CODE_START(\asmsym)
- 	UNWIND_HINT_IRET_REGS offset=\has_error_code*8
- 	ASM_CLAC
-@@ -546,7 +556,7 @@ SYM_CODE_START(\asmsym)
- .Lfrom_usermode_no_gap_\@:
- 	.endif
- 
--	idtentry_body \cfunc \has_error_code
-+	idtentry_body \cfunc \has_error_code \irq_stack
- 
- _ASM_NOKPROBE(\asmsym)
- SYM_CODE_END(\asmsym)
-@@ -621,7 +631,7 @@ SYM_CODE_START(\asmsym)
- 
- 	/* Switch to the regular task stack and use the noist entry point */
- .Lfrom_usermode_switch_stack_\@:
--	idtentry_body noist_\cfunc, has_error_code=0
-+	idtentry_body noist_\cfunc, has_error_code=0 irq_stack=0
- 
- _ASM_NOKPROBE(\asmsym)
- SYM_CODE_END(\asmsym)
++/* Entries for common/spurious (device) interrupts */
++#define DECLARE_IDTENTRY_IRQ(vector, func)			\
++	idtentry_irq vector func
++
+ #ifdef CONFIG_X86_64
+ # define DECLARE_IDTENTRY_MCE(vector, func)			\
+ 	idtentry_mce_db vector asm_##func func
 
