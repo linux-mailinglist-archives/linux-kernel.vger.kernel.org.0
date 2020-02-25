@@ -2,126 +2,262 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 637FB16EEF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AF1B16EEFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:29:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731504AbgBYT2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 14:28:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731421AbgBYT2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 14:28:40 -0500
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 497F221556
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 19:28:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582658919;
-        bh=No7bnjFMpZoG5H+BKpwiXz76L973BCgC/d2751ecwag=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=AgkksRlijt51Q9tKY9iKGj+8UK0aw/qCD8zKaWMaH1HYuNrKTBq1GMeWJK8Fcylju
-         YZIl8g2rCaS5CGhIdVSMKqYb1U3wwp0C7rwPuV1xiMhrstdqvhmmQAcSWnmIRuZmge
-         ALwW9HV03ej2w12NvYlIi+bF+f/g7snhhaJRr3FI=
-Received: by mail-wr1-f48.google.com with SMTP id w12so44388wrt.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 11:28:39 -0800 (PST)
-X-Gm-Message-State: APjAAAUyz4AcTcqgorpPp976ASLh49Gw4ccs/lxejYL3Ezs9WN+VL/EH
-        TjmjTgeTYpl04F331iVOKWr21QYO0e7N0ZcJaceboQ==
-X-Google-Smtp-Source: APXvYqxiLow7+4oE/PJEkKz/tPa/dH2bB7gxC7MALajKR8VVqXXA4rfmpFYIQhg2vIXh479srq127AzGLjfx1DBezbc=
-X-Received: by 2002:adf:e742:: with SMTP id c2mr671445wrn.262.1582658917548;
- Tue, 25 Feb 2020 11:28:37 -0800 (PST)
+        id S1731694AbgBYT3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 14:29:20 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50871 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731482AbgBYT3T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 14:29:19 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a5so416318wmb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 11:29:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=q9wQHcHVKpbm+PWTXKD4lD9qNOkL28l1irxap1vwwV0=;
+        b=iDMybkaxhIzLT0/qkYhcqYfP+KmALoK7JuZ1RPapkyEp83UDEyiynNunHIybAzCnU0
+         zF5xVEaQrUtEPXKHjW8gYvnEm/Zi2R3MziyEZyMlV9epPtnA4N9EN5emo2t0Lzr6KxHm
+         3Vp7V/TBtApY+g9jsJpblT62E/NgWm17JDl9w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=q9wQHcHVKpbm+PWTXKD4lD9qNOkL28l1irxap1vwwV0=;
+        b=GF/CJbnMHih6YitWI++AMQ5+I8LDVrX+ex0oN4L3/AeJdEK83eWbcILfL5llhz3iYd
+         svU/h+KAyRB+rkWFSXOUTG5wGMVRuvs4OUzHxrTkSSGnMLLLiqTsTd9MH90INlzthZGL
+         Y7mo9RZ5QavPMM5rhbdZ56N4Rj/7K+Pl5CxruSYqY/DTftJXUOiTDsskrqb5bE7Pf4Eo
+         F0JWm7zAJ6lSuWGOQhQkk69WBKLHUdOoOJ+1q46vF7C78WoWB4Kz1+kd3s0SYX9WLOz7
+         UDCKjqXt8YKJWVwiD99/Nqm5rIRrOrgOlYSsNBiucohm8FMaUBqAHiUrgvpBY7QXJyAJ
+         +19g==
+X-Gm-Message-State: APjAAAXPrbKt+fyoeb49aP/qzDOgc+cWYeO0XxB+MkwjQhVNuvtpGBkr
+        B582U3GjflEQZXMee0iqmAcvyg==
+X-Google-Smtp-Source: APXvYqyFvbwsAHkU2b/+I8CfVISsVnO48EXbc4ybPESyb9eNPwL0gR6PaLBhjwmpFe+r2HQ+XLyzgQ==
+X-Received: by 2002:a7b:c24a:: with SMTP id b10mr696071wmj.19.1582658955539;
+        Tue, 25 Feb 2020 11:29:15 -0800 (PST)
+Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id c74sm5606797wmd.26.2020.02.25.11.29.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2020 11:29:14 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Tue, 25 Feb 2020 20:29:13 +0100
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        James Morris <jmorris@namei.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v4 3/8] bpf: lsm: provide attachment points for
+ BPF LSM programs
+Message-ID: <20200225192913.GA22391@chromium.org>
+References: <20200220175250.10795-1-kpsingh@chromium.org>
+ <20200220175250.10795-4-kpsingh@chromium.org>
+ <0ef26943-9619-3736-4452-fec536a8d169@schaufler-ca.com>
+ <202002211946.A23A987@keescook>
+ <20200223220833.wdhonzvven7payaw@ast-mbp>
+ <c5c67ece-e5c1-9e8f-3a2b-60d8d002c894@schaufler-ca.com>
+ <20200224171305.GA21886@chromium.org>
+ <00c216e1-bcfd-b7b1-5444-2a2dfa69190b@schaufler-ca.com>
+ <202002241136.C4F9F7DFF@keescook>
 MIME-Version: 1.0
-References: <261ea8108c6290e95962be2638bd204f90787c1c.1582652466.git.thomas.lendacky@amd.com>
- <CAKv+Gu_FJeiaY5yw9=ER4XyBZrDFZ5L4igrqxP6hhJ7Z8easpw@mail.gmail.com>
- <9e16fed9-4399-5c78-cbfb-6be75c295f31@amd.com> <CAKv+Gu_0LUY67DwSLU1tyijuF+0mKPpvq1j3RSMy5HBxYE-3qw@mail.gmail.com>
- <96417897-8bf0-e60c-6285-7286673ecd01@amd.com> <CAKv+Gu-5=5bKBdO_r=Z3bAqCM36vfH=vLcCcaFtKcwYpe=AP7g@mail.gmail.com>
- <b2374776-6499-0b99-9df0-b17a4d84b0e4@amd.com>
-In-Reply-To: <b2374776-6499-0b99-9df0-b17a4d84b0e4@amd.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Tue, 25 Feb 2020 20:28:26 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu8M5LMjA+JnJ57+BU4jmpgz0OqLyt1W9LXj_UDH=5DgjQ@mail.gmail.com>
-Message-ID: <CAKv+Gu8M5LMjA+JnJ57+BU4jmpgz0OqLyt1W9LXj_UDH=5DgjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/efi: Add additional efi tables for unencrypted
- mapping checks
-To:     Tom Lendacky <thomas.lendacky@amd.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202002241136.C4F9F7DFF@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Feb 2020 at 20:21, Tom Lendacky <thomas.lendacky@amd.com> wrote:
->
-> On 2/25/20 12:12 PM, Ard Biesheuvel wrote:
-> > On Tue, 25 Feb 2020 at 19:10, Tom Lendacky <thomas.lendacky@amd.com> wrote:
-> >>
-> >> On 2/25/20 11:58 AM, Ard Biesheuvel wrote:
-> >>> On Tue, 25 Feb 2020 at 18:54, Tom Lendacky <thomas.lendacky@amd.com> wrote:
-> >>>>
-> >>>> On 2/25/20 11:45 AM, Ard Biesheuvel wrote:
-> >>>>> On Tue, 25 Feb 2020 at 18:41, Tom Lendacky <thomas.lendacky@amd.com> wrote:
-> >>>>>>
-> >>>>>> When booting with SME active, EFI tables must be mapped unencrypted since
-> >>>>>> they were built by UEFI in unencrypted memory. Update the list of tables
-> >>>>>> to be checked during early_memremap() processing to account for new EFI
-> >>>>>> tables.
-> >>>>>>
-> >>>>>> This fixes a bug where an EFI TPM log table has been created by UEFI, but
-> >>>>>> it lives in memory that has been marked as usable rather than reserved.
-> >>>>>>
-> >>>>>> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-> >>>>>>
-> >>>>>> ---
-> >>>>>> Changes since v1:
-> >>>>>> - Re-spun against EFI tree
-> >>>>>
-> >>>>> Which one? Surely not the one in the link I included?
-> >>>>
-> >>>> I did a git clone of
-> >>>>
-> >>>>   git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git
-> >>>>
-> >>>> and checked out branch next. Not sure what I missed...
-> >>>>
-> >>>
-> >>> Weird. Do you see commit 5d288dbd88606d8f215c7138b10649115d79cadd on
-> >>> that branch? It removes rng_seed from struct efi, hence my request to
-> >>> rebase your patch.
-> >>
-> >> I had just assumed you wanted a cleaner version and didn't realize that
-> >> rng_seed was removed from struct efi. My bad for not building.
-> >>
-> >>>
-> >>> IMO, best is to simply drop the 'static' from rng_seed, rename it to
-> >>> efi_rng_seed, and drop an extern declaration in linux/efi.h so it is
-> >>> accessible from your code. I'm reluctant to put it back in struct efi.
-> >>
-> >> Ok, I'll re-work the patch.
-> >>
-> >
-> > OK
-> >
-> > Btw if you want the TPM part of the fix to go to -stable, better to
-> > split them in two (and I'll put a cc:stable on the tpm one)
->
-> I had thought about stable, but the fix gets tricky since the two tables
-> were added at different times (4.16 and 5.3) and the efi_tables array was
-> moved from drivers/firmware/efi/efi.c to arch/x86/platform/efi/efi.c in 5.4.
->
-> I could do the two TPM tables each as their own patch and add an
-> appropriate Cc: stable # v4.16.x-, etc., if you don't think that's
-> overkill. The array move shouldn't be too hard to adjust for in stable.
-> Thoughts?
->
+On 24-Feb 13:41, Kees Cook wrote:
+> On Mon, Feb 24, 2020 at 10:45:27AM -0800, Casey Schaufler wrote:
+> > On 2/24/2020 9:13 AM, KP Singh wrote:
+> > > On 24-Feb 08:32, Casey Schaufler wrote:
+> > >> On 2/23/2020 2:08 PM, Alexei Starovoitov wrote:
+> > >>> On Fri, Feb 21, 2020 at 08:22:59PM -0800, Kees Cook wrote:
+> > >>>> If I'm understanding this correctly, there are two issues:
+> > >>>>
+> > >>>> 1- BPF needs to be run last due to fexit trampolines (?)
+> > >>> no.
+> > >>> The placement of nop call can be anywhere.
+> > >>> BPF trampoline is automagically converting nop call into a sequence
+> > >>> of directly invoked BPF programs.
+> > >>> No link list traversals and no indirect calls in run-time.
+> > >> Then why the insistence that it be last?
+> > > I think this came out of the discussion about not being able to
+> > > override the other LSMs and introduce a new attack vector with some
+> > > arguments discussed at:
+> > >
+> > >   https://lore.kernel.org/bpf/20200109194302.GA85350@google.com/
+> > >
+> > > Let's say we have SELinux + BPF runnng on the system. BPF should still
+> > > respect any decisions made by SELinux. This hasn't got anything to
+> > > do with the usage of fexit trampolines.
+> > 
+> > The discussion sited is more about GPL than anything else.
+> > 
+> > The LSM rule is that any security module must be able to
+> > accept the decisions of others. SELinux has to accept decisions
+> > made ahead of it. It always has, as LSM checks occur after
+> > "traditional" checks, which may fail. The only reason that you
+> > need to be last in this implementation appears to be that you
+> > refuse to use the general mechanisms. You can't blame SELinux
+> > for that.
+> 
+> Okay, this is why I wanted to try to state things plainly. The "in last
+> position" appears to be the result of a couple design choices:
+> 
+> -the idea of "not wanting to get in the way of other LSMs", while
+>  admirable, needs to actually be a non-goal to be "just" a stacked LSM
+>  (as you're saying here Casey). This position _was_ required for the
+>  non-privileged LSM case to avoid security implications, but that goal
+>  not longer exists here either.
+> 
+> -optimally using the zero-cost call-outs (static key + fexit trampolines)
+>  meant it didn't interact well with the existing stacking mechanism.
+> 
+> So, fine, these appear to be design choices, not *specifically*
+> requirements. Let's move on, I think there is more to unpack here...
+> 
+> > >>>> 2- BPF hooks don't know what may be attached at any given time, so
+> > >>>>    ALL LSM hooks need to be universally hooked. THIS turns out to create
+> > >>>>    a measurable performance problem in that the cost of the indirect call
+> > >>>>    on the (mostly/usually) empty BPF policy is too high.
+> > >>> also no.
+> 
+> AIUI, there was some confusion on Alexei's reply here. I, perhaps,
+> was not as clear as I needed to be. I think the later discussion on
+> performance overheads gets more into the point, and gets us closer to
+> the objections Alexei had. More below...
+> 
+> > >   This approach still had the issues of an indirect call and an
+> > >   extra check when not used. So this was not truly zero overhead even
+> > >   after special casing BPF.
+> > 
+> > The LSM mechanism is not zero overhead. It never has been. That's why
+> > you can compile it out. You get added value at a price. You get the
+> > ability to use SELinux and KRSI together at a price. If that's unacceptable
+> > you can go the route of seccomp, which doesn't use LSM for many of the
+> > same reasons you're on about.
+> > [...]
+> > >>>> So, trying to avoid the indirect calls is, as you say, an optimization,
+> > >>>> but it might be a needed one due to the other limitations.
+> > >>> I'm convinced that avoiding the cost of retpoline in critical path is a
+> > >>> requirement for any new infrastructure in the kernel.
+> > >> Sorry, I haven't gotten that memo.
+> 
+> I agree with Casey here -- it's a nice goal, but those cost evaluations have
+> not yet(?[1]) hit the LSM world. I think it's a desirable goal, to be
+> sure, but this does appear to be an early optimization.
+> 
+> > [...]
+> > It can do that wholly within KRSI hooks. You don't need to
+> > put KRSI specific code into security.c.
+> 
+> This observation is where I keep coming back to.
+> 
+> Yes, the resulting code is not as fast as it could be. The fact that BPF
+> triggers the worst-case performance of LSM hooking is the "new" part
+> here, from what I can see.
+> 
+> I suspect the problem is that folks in the BPF subsystem don't want to
+> be seen as slowing anything down, even other subsystems, so they don't
+> want to see this done in the traditional LSM hooking way (which contains
+> indirect calls).
+> 
+> But the LSM subsystem doesn't want special cases (Casey has worked very
+> hard to generalize everything there for stacking). It is really hard to
+> accept adding a new special case when there are still special cases yet
+> to be worked out even in the LSM code itself[2].
+> 
+> > >>> Networking stack converted all such places to conditional calls.
+> > >>> In BPF land we converted indirect calls to direct jumps and direct calls.
+> > >>> It took two years to do so. Adding new indirect calls is not an option.
+> > >>> I'm eagerly waiting for Peter's static_call patches to land to convert
+> > >>> a lot more indirect calls. May be existing LSMs will take advantage
+> > >>> of static_call patches too, but static_call is not an option for BPF.
+> > >>> That's why we introduced BPF trampoline in the last kernel release.
+> > >> Sorry, but I don't see how BPF is so overwhelmingly special.
+> > > My analogy here is that if every tracepoint in the kernel were of the
+> > > type:
+> > >
+> > > if (trace_foo_enabled) // <-- Overhead here, solved with static key
+> > >    trace_foo(a);  // <-- retpoline overhead, solved with fexit trampolines
+> 
+> This is a helpful distillation; thanks.
+> 
+> static keys (perhaps better described as static branches) make sense to
+> me; I'm familiar with them being used all over the place[3]. The resulting
+> "zero performance" branch mechanism is extremely handy.
+> 
+> I had been thinking about the fexit stuff only as a way for BPF to call
+> into kernel functions directly, and I missed the place where this got
+> used for calling from the kernel into BPF directly. KP walked me through
+> the fexit stuff off list. I missed where there NOP stub ("noinline int
+> bpf_lsm_##NAME(__VA_ARGS__) { return 0; }") was being patched by BPF in
+> https://lore.kernel.org/lkml/20200220175250.10795-6-kpsingh@chromium.org/
+> The key bit being "bpf_trampoline_update(prog)"
+> 
+> > > It would be very hard to justify enabling them on a production system,
+> > > and the same can be said for BPF and KRSI.
+> > 
+> > The same can be and has been said about the LSM infrastructure.
+> > If BPF and KRSI are that performance critical you shouldn't be
+> > tying them to LSM, which is known to have overhead. If you can't
+> > accept the LSM overhead, get out of the LSM. Or, help us fix the
+> > LSM infrastructure to make its overhead closer to zero. Whether
+> > you believe it or not, a lot of work has gone into keeping the LSM
+> > overhead as small as possible while remaining sufficiently general
+> > to perform its function.
+> > 
+> > No. If you're too special to play by LSM rules then you're special
+> > enough to get into the kernel using more direct means.
+> 
+> So, I see the primary conflict here being about the performance
+> optimizations. AIUI:
+> 
+> - BPF subsystem maintainers do not want any new slowdown associated
+>   with BPF
+> - LSM subsystem maintainers do not want any new special cases in
+>   LSM stacking
+> 
+> So, unless James is going to take this over Casey's objections, the path
+> forward I see here is:
+> 
+> - land a "slow" KRSI (i.e. one that hooks every hook with a stub).
+> - optimize calling for all LSMs
 
-So v5.4/v5.5 seems straight-forward then, no? Once that one is in, we
-can do one specially for v4.19
+I will work on v5 which resgisters the nops as standard LSM hooks and
+we can follow-up on performance.
+
+- KP
+
+> 
+> Does this seem right to everyone?
+> 
+> -Kees
+> 
+> 
+> [1] There is a "known cost to LSM", but as Casey mentions, it's been
+> generally deemed "acceptable". There have been some recent attempts to
+> quantify it, but it's not been very clear:
+> https://lore.kernel.org/linux-security-module/c98000ea-df0e-1ab7-a0e2-b47d913f50c8@tycho.nsa.gov/ (lore is missing half this conversation for some reason)
+> 
+> [2] Casey's work to generalize the LSM interfaces continues and it quite
+> complex:
+> https://lore.kernel.org/linux-security-module/20200214234203.7086-1-casey@schaufler-ca.com/
+> 
+> [3] E.g. HARDENED_USERCOPY uses it:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/usercopy.c?h=v5.5#n258
+> and so does the heap memory auto-initialization:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/slab.h?h=v5.5#n676
+> 
+> -- 
+> Kees Cook
