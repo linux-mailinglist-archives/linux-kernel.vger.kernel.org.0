@@ -2,51 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95E4916BEAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 11:28:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF9DE16BEB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 11:28:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730261AbgBYK1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 05:27:52 -0500
-Received: from ms.lwn.net ([45.79.88.28]:53168 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730175AbgBYK1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 05:27:51 -0500
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id C9D1C6D9;
-        Tue, 25 Feb 2020 10:27:49 +0000 (UTC)
-Date:   Tue, 25 Feb 2020 03:27:45 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Stephen Kitt <steve@sk2.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: sysctl/kernel: document acpi_video_flags
-Message-ID: <20200225032745.5f81125e@lwn.net>
-In-Reply-To: <20200221165502.31770-1-steve@sk2.org>
-References: <20200221165502.31770-1-steve@sk2.org>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1730293AbgBYK2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 05:28:12 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:39558 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730175AbgBYK2M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 05:28:12 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 6237F1C0411; Tue, 25 Feb 2020 11:28:10 +0100 (CET)
+Date:   Tue, 25 Feb 2020 11:28:09 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Aditya Pakki <pakki001@umn.edu>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 079/191] orinoco: avoid assertion in case of NULL
+ pointer
+Message-ID: <20200225102809.GA2591@amd>
+References: <20200221072250.732482588@linuxfoundation.org>
+ <20200221072300.728391700@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Content-Disposition: inline
+In-Reply-To: <20200221072300.728391700@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Feb 2020 17:55:02 +0100
-Stephen Kitt <steve@sk2.org> wrote:
 
-> Based on the implementation in arch/x86/kernel/acpi/sleep.c, in
-> particular the acpi_sleep_setup() function.
-> 
-> Signed-off-by: Stephen Kitt <steve@sk2.org>
-> ---
->  Documentation/admin-guide/sysctl/kernel.rst | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+--IJpNTDwzlM2Ie8A6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks.
+Hi!
 
-jon
+> From: Aditya Pakki <pakki001@umn.edu>
+>=20
+> [ Upstream commit c705f9fc6a1736dcf6ec01f8206707c108dca824 ]
+>=20
+> In ezusb_init, if upriv is NULL, the code crashes. However, the caller
+> in ezusb_probe can handle the error and print the failure message.
+> The patch replaces the BUG_ON call to error return.
+
+The caller already checked that upriv is not NULL, AFAICT.
+
+    priv =3D alloc_orinocodev(sizeof(*upriv), &udev->dev,
+    	                         ezusb_hard_reset, NULL);
+    if (!priv) {
+        err("Couldn't allocate orinocodev");
+        retval =3D -ENOMEM;
+        goto exit;
+    }
+				=20
+I don't see this as an improvement.
+
+Best regards,
+							Pavel
+						=09
+
+> +++ b/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
+> @@ -1364,7 +1364,8 @@ static int ezusb_init(struct hermes *hw)
+>  	int retval;
+> =20
+>  	BUG_ON(in_interrupt());
+> -	BUG_ON(!upriv);
+> +	if (!upriv)
+> +		return -EINVAL;
+> =20
+>  	upriv->reply_count =3D 0;
+>  	/* Write the MAGIC number on the simulated registers to keep
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--IJpNTDwzlM2Ie8A6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl5U9rkACgkQMOfwapXb+vKmjQCgwzqrB0WO/uxLdAnnaigxtoxo
+tcwAn1E7yollUJFJJh4qsgtVH6WaXjZX
+=dz+r
+-----END PGP SIGNATURE-----
+
+--IJpNTDwzlM2Ie8A6--
