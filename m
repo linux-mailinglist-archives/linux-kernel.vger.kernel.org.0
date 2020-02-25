@@ -2,77 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B248216EDD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:19:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D76D16EDDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:20:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731482AbgBYSTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 13:19:15 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44910 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727983AbgBYSTP (ORCPT
+        id S1731502AbgBYSUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 13:20:53 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:9104 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727983AbgBYSUx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 13:19:15 -0500
-Received: by mail-oi1-f193.google.com with SMTP id d62so213837oia.11;
-        Tue, 25 Feb 2020 10:19:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iSNFodvA5lKumKKqhkZzGA6DFgZu/Be6kzIV2/+7uvI=;
-        b=nIz9f7tdSxDlTZ3LbgaPeAJ1yf0oD+3kxtisbsGlTWzVTpkKrUrwfZyxAFeViLaBe5
-         oSabcOL7rCIDdeshzHmb6lnSdvOrRwLeok9ozLMp3aBPcN7Aj4LEHc0SlRcuqG97ooAi
-         3Z/v8wmoE2YzpL24N6Qy9jhPq2RkMYlDqu5c2Sm0Qz2S5VBNf49eC0f4TQb0hQd8AS7P
-         hGrgByN3eSg6S2L2b45bZM8lr52XooB+hawoscAQjOp/g/tv4ML1yf5PGSz+WIX3yEIs
-         2WGxWZXzyYz+aaI9griXRnK6IbBi77D1I8ETlGbI3alNNP/9+SAfKvSYnXG7TIa1mMsu
-         B8dg==
-X-Gm-Message-State: APjAAAW3iGjKe3xGNnxMnFj//o7XEhKcb/N3rwOmjeWlZYsf0v7F2Zb8
-        zffOIvovTZYtZxvp7RwQXg==
-X-Google-Smtp-Source: APXvYqylGxOIYQjx7oEtM4f5L4ZlqydvtMZMW3lXsVUQ+Cx55CgvSY6HFR33P45JatrRLi9lFN5i7w==
-X-Received: by 2002:aca:d544:: with SMTP id m65mr158319oig.177.1582654754520;
-        Tue, 25 Feb 2020 10:19:14 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y6sm5921513oti.44.2020.02.25.10.19.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 10:19:14 -0800 (PST)
-Received: (nullmailer pid 7582 invoked by uid 1000);
-        Tue, 25 Feb 2020 18:19:13 -0000
-Date:   Tue, 25 Feb 2020 12:19:13 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>, devicetree@vger.kernel.org
-Subject: Re: [PATCH 59/89] dt-bindings: display: vc4: pv: Add BCM2711 pixel
- valves
-Message-ID: <20200225181913.GA7531@bogus>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
- <4a3c6e3cad10eeff93fafbc512c35b0c69dd1c68.1582533919.git-series.maxime@cerno.tech>
+        Tue, 25 Feb 2020 13:20:53 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01PIKkqY037608;
+        Tue, 25 Feb 2020 13:20:46 -0500
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yd4gr1yua-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Feb 2020 13:20:46 -0500
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01PIANLD025248;
+        Tue, 25 Feb 2020 18:20:45 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma03wdc.us.ibm.com with ESMTP id 2yaux6e0qg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Feb 2020 18:20:45 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01PIKiqU35062182
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Feb 2020 18:20:44 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C2A83AE05C;
+        Tue, 25 Feb 2020 18:20:44 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A070AE05F;
+        Tue, 25 Feb 2020 18:20:40 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 25 Feb 2020 18:20:40 +0000 (GMT)
+Subject: Re: [PATCH v2 3/4] tpm: Implement tpm2_init to call when
+ TPM_OPS_AUTO_STARTUP is not set
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, aik@ozlabs.ru,
+        david@gibson.dropbear.id.au, linux-kernel@vger.kernel.org,
+        nayna@linux.vnet.ibm.com, gcwilson@linux.ibm.com, jgg@ziepe.ca
+References: <20200213202329.898607-1-stefanb@linux.vnet.ibm.com>
+ <20200213202329.898607-4-stefanb@linux.vnet.ibm.com>
+ <20200225170015.GE15662@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <3813980a-6c5e-c99f-7b37-b20b72eb6a8a@linux.ibm.com>
+Date:   Tue, 25 Feb 2020 13:20:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a3c6e3cad10eeff93fafbc512c35b0c69dd1c68.1582533919.git-series.maxime@cerno.tech>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200225170015.GE15662@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-25_06:2020-02-25,2020-02-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ clxscore=1015 impostorscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
+ bulkscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002250130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Feb 2020 10:07:01 +0100, Maxime Ripard wrote:
-> The BCM2711 comes with other pixelvalves that have different requirements
-> and capabilities. Let's document their compatible.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->  Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+On 2/25/20 12:00 PM, Jarkko Sakkinen wrote:
+> On Thu, Feb 13, 2020 at 03:23:28PM -0500, Stefan Berger wrote:
+>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> Implement tpm2_init() that gets the TPM 2 timeouts and command durations
+>> and command code attributes. This function is to be called in case the
+>> TPM_OPS_AUTO_STARTUP flag is not set and therefore tpm2_auto_startup()
+>> is not called.
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> The commit makes zero effort trying to explain what the heck tpm_init()
+> is and when it should be used and why the function name tpm2_init().
 
-Acked-by: Rob Herring <robh@kernel.org>
+Are you saying the explanation of when to use tpm2_init above is not 
+enough? 'bviously we are trying to cover the case of using the TPM 2 by 
+a driver that doesn't use the TPM_OPS_AUTO_STARTUP flag and therefore 
+the TPM 2 timeouts and command durations and command code attributes are 
+not set as they would be if tpm2_auto_startup() was to be called and 
+tpm2_init() is the alternative to call. I didn't like tpm2_init() 
+either... any suggestions for a better name?
+
+    Stefan
+
+
+>
+> /Jarkko
+
+
