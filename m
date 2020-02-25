@@ -2,125 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 959F916EDFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:29:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 657D716EE01
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:29:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731522AbgBYS3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 13:29:17 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:54214 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbgBYS3Q (ORCPT
+        id S1731575AbgBYS3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 13:29:55 -0500
+Received: from mail-qt1-f180.google.com ([209.85.160.180]:34630 "EHLO
+        mail-qt1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbgBYS3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 13:29:16 -0500
-Received: by mail-io1-f71.google.com with SMTP id q24so139338iot.20
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 10:29:14 -0800 (PST)
+        Tue, 25 Feb 2020 13:29:55 -0500
+Received: by mail-qt1-f180.google.com with SMTP id l16so367230qtq.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 10:29:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dcyqLzOqexgUYT665cSkM8WWwCRhPRScopxtXSuIwhE=;
+        b=Jpmh+RNFwunTVE54TkNAMpIsJMC14pvYiihY2wibmIpVX0RbbLKqd+eRY+qLo+5dMX
+         SX/9q41bGSyzvt8Pwk0COP3eLMg2ZuR8i3keXR/Ugag06NeXPkgJ++b/DqwsqlDv6h7+
+         dJaE04Hrv00OVzAXInk6W742RND5wYHL7IHyjiVU9HtD+l9sgmi/BIP9DZuGBiHDIzVV
+         Rl4hgFqlbrS9uGoF/YYTKpoMUsz8acQVTVOIgh91x4yI55/FFGIeh7pE/6+FAYAlirwH
+         yPRpZ3lT1j/DlxMhxVX5gxm7z6uk+L9PQ0ggSo1OmHOQfC4eMGwm53EBmu/xPLat2a7M
+         jmeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=I6UFJnlb79zEXPRMLPthQdcBm8xLbG9d9X38VNdzh5I=;
-        b=YGpLmuRtbeV4GEuaSYrITfH9QBxlNkaDpkmoG7rGafRv+2aTw/vDrtWGXAh6ijUxIR
-         vwq/TAzT7+8c3DXqBwijcRYXodZ5zaW/sigKVfYI9FEsAQWYUHXgWDzhgcvOHrkcYlwP
-         0lYNikS1hiEquoyMdyAum+ro+1pqdIwU/8qF3pCcO2d26VOq25OBcOtS/qgd20JRJA9+
-         0grxffOlKBkZx6CePyxxkEo6EdGXK2btp3+HJdaXeyx9lx/dH+VGhHNxXs4lMluburfQ
-         Bx+c4drQSlvbCrm5Q292XiJc0E17fLFvZdgP16NJmGoHzc72OACPfy53nCMqMOZbOKxq
-         cF4Q==
-X-Gm-Message-State: APjAAAWTpoHAMnp6vfXE0I/aOmK2K98UtUfGpKJ0XjfVF7Qs3auuOZDT
-        9NYHQLuxM3FHKhY7omYvvFC0gKtlg4i7Kh5P35c4QaIYeVcJ
-X-Google-Smtp-Source: APXvYqy4V13LXEbDGJeEiMLFmiTWFhqlbNUfSf0I1y+me/7hD1uy9H2ngIyOh13oh0LwjM470mxkKEVEdicXMmzjkTAL8qT8R6eQ
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dcyqLzOqexgUYT665cSkM8WWwCRhPRScopxtXSuIwhE=;
+        b=soZxjU0yVck9VZZhsQ8G5lJERbJmWeCy3onvl6YZCHlp80UzjiNtT9IJwZ1L6alGJn
+         kI9srOfLAATUomEbrKmUHzqVoRea3Pp0wfkB2q7Xuqb5B3A8tRLrXmS6zjDBk7CZuFPF
+         U5PB+bHB//MYHG7X1HOxWjkPfgE/ZKEcmNeXYFs/al+Jk4W2CZYmrSxGFpqZB1G7y9qS
+         vfskjiTnIBbrsxpPK9XWGdJaHnB7V8FwKWzpVi4Ko8TTo1eDQzwGv+OqXLgA8N1drQfm
+         LmGTaBf5GXtFTXHLqciK98bOFNyFFiWDspIUHXB4br8UOflB3baM7ThohZi1+dR7M1dx
+         iLiA==
+X-Gm-Message-State: APjAAAVvuT5wuTQ5+cAgtLM71TzBwHRL7kvFMeCnxAl/4IXVJ8FsrFlT
+        vIwttxu7yo06mVa3RArctIg=
+X-Google-Smtp-Source: APXvYqyBzz8PIiE4DMeQoSS0UbMGeYfXX70NFgGSlsN335mu/Ia42Q1kv7+TZ9UcbD3LmRz8jwx0yQ==
+X-Received: by 2002:ac8:1e90:: with SMTP id c16mr54660410qtm.265.1582655393994;
+        Tue, 25 Feb 2020 10:29:53 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id o25sm7843946qkk.7.2020.02.25.10.29.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2020 10:29:53 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Tue, 25 Feb 2020 13:29:51 -0500
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Fangrui Song <maskray@google.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Michael Matz <matz@suse.de>
+Subject: Re: --orphan-handling=warn
+Message-ID: <20200225182951.GA1179890@rani.riverdale.lan>
+References: <20200109150218.16544-1-nivedita@alum.mit.edu>
+ <20200109150218.16544-2-nivedita@alum.mit.edu>
+ <20200222050845.GA19912@ubuntu-m2-xlarge-x86>
+ <20200222065521.GA11284@zn.tnic>
+ <20200222070218.GA27571@ubuntu-m2-xlarge-x86>
+ <20200222072144.asqaxlv364s6ezbv@google.com>
+ <20200222074254.GB11284@zn.tnic>
+ <20200222162225.GA3326744@rani.riverdale.lan>
+ <CAKwvOdnvMS21s9gLp5nUpDAOu=c7-iWYuKTeFUq+PMhsJOKUgw@mail.gmail.com>
+ <202002242122.AA4D1B8@keescook>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:76c:: with SMTP id y12mr53721381jad.95.1582655354188;
- Tue, 25 Feb 2020 10:29:14 -0800 (PST)
-Date:   Tue, 25 Feb 2020 10:29:14 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000030395e059f6aaa09@google.com>
-Subject: general protection fault in j1939_netdev_start
-From:   syzbot <syzbot+f03d384f3455d28833eb@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kernel@pengutronix.de, kuba@kernel.org,
-        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@rempel-privat.de, mkl@pengutronix.de, netdev@vger.kernel.org,
-        robin@protonic.nl, socketcan@hartkopp.net,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202002242122.AA4D1B8@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Feb 24, 2020 at 09:35:04PM -0800, Kees Cook wrote:
+> 
+> Actually, it's rather opposed to the FGKASLR series, as for that, I need
+> some kind of linker script directive like this:
+> 
+> 	/PASSTHRU/ : {
+> 		*(.text.*)
+> 	}
+> 
+> Where "PASSTHRU" would create a 1-to-1 input-section to output-section
+> with the same name, flags, etc.
+> 
+> ld.bfd's handling of orphan sections named .text.* is to put them each
+> as a separate output section, after the existing .text output section.
+> 
+> ld.lld's handling of orphan sections named .text.* is to put them into
+> the .text output section.
 
-syzbot found the following crash on:
+This doesn't match ld's documentation [1] of how orphan sections are to
+be handled, it's supposed to append it into an existing output section
+only if the names match exactly, creating a new one if that isn't so. If
+ld.lld is to be a drop-in replacement for ld.bfd, this probably needs to
+change?
 
-HEAD commit:    6132c1d9 net: core: devlink.c: Hold devlink->lock from the..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=10678909e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b8906eb6a7d6028
-dashboard link: https://syzkaller.appspot.com/bug?extid=f03d384f3455d28833eb
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e36909e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100679dde00000
+Also ld.lld doesn't seem to support the --unique option, I think you'll
+also want that for FGKASLR to avoid merging static functions with the
+same name from unrelated source files.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f03d384f3455d28833eb@syzkaller.appspotmail.com
+[1] https://sourceware.org/binutils/docs/ld/Orphan-Sections.html
 
-general protection fault, probably for non-canonical address 0xdffffc0000000c05: 0000 [#1] PREEMPT SMP KASAN
-KASAN: probably user-memory-access in range [0x0000000000006028-0x000000000000602f]
-CPU: 1 PID: 10119 Comm: syz-executor671 Not tainted 5.6.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:j1939_priv_set net/can/j1939/main.c:145 [inline]
-RIP: 0010:j1939_netdev_start+0x361/0x650 net/can/j1939/main.c:280
-Code: 03 80 3c 02 00 0f 85 bc 02 00 00 4c 8b ab 90 05 00 00 48 b8 00 00 00 00 00 fc ff df 49 8d bd 28 60 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 89 02 00 00 4d 89 a5 28 60 00 00 48 c7 c7 60 89
-RSP: 0018:ffffc900070b7d00 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: ffff888094ed4000 RCX: ffffffff8715dd84
-RDX: 0000000000000c05 RSI: ffffffff8715ed3c RDI: 0000000000006028
-RBP: ffffc900070b7d40 R08: ffff888095b121c0 R09: fffff52000e16f8e
-R10: fffff52000e16f8d R11: 0000000000000003 R12: ffff888095538000
-R13: 0000000000000000 R14: ffff888095539050 R15: ffff888094ed4558
-FS:  00007f9a340ef700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9a340eee78 CR3: 00000000947c2000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- j1939_sk_bind+0x68d/0x980 net/can/j1939/socket.c:469
- __sys_bind+0x239/0x290 net/socket.c:1662
- __do_sys_bind net/socket.c:1673 [inline]
- __se_sys_bind net/socket.c:1671 [inline]
- __x64_sys_bind+0x73/0xb0 net/socket.c:1671
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446d39
-Code: e8 8c e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f9a340eed98 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
-RAX: ffffffffffffffda RBX: 00000000006dbc78 RCX: 0000000000446d39
-RDX: 0000000000000018 RSI: 0000000020000040 RDI: 0000000000000003
-RBP: 00000000006dbc70 R08: 00007f9a340ef700 R09: 0000000000000000
-R10: 00007f9a340ef700 R11: 0000000000000246 R12: 00000000006dbc7c
-R13: 000000006f340000 R14: 0000000000000000 R15: 068500100000003c
-Modules linked in:
----[ end trace e9a9971e66fb9d42 ]---
-RIP: 0010:j1939_priv_set net/can/j1939/main.c:145 [inline]
-RIP: 0010:j1939_netdev_start+0x361/0x650 net/can/j1939/main.c:280
-Code: 03 80 3c 02 00 0f 85 bc 02 00 00 4c 8b ab 90 05 00 00 48 b8 00 00 00 00 00 fc ff df 49 8d bd 28 60 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 89 02 00 00 4d 89 a5 28 60 00 00 48 c7 c7 60 89
-RSP: 0018:ffffc900070b7d00 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: ffff888094ed4000 RCX: ffffffff8715dd84
-RDX: 0000000000000c05 RSI: ffffffff8715ed3c RDI: 0000000000006028
-RBP: ffffc900070b7d40 R08: ffff888095b121c0 R09: fffff52000e16f8e
-R10: fffff52000e16f8d R11: 0000000000000003 R12: ffff888095538000
-R13: 0000000000000000 R14: ffff888095539050 R15: ffff888094ed4558
-FS:  00007f9a340ef700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9a340eee78 CR3: 00000000947c2000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> For FGKASLR (as it is currently implemented[2]), the sections need to be
+> individually named output sections (as bfd does it). *However*, with the
+> "warn on orphans" patch, FGKASLR's intentional orphaning will backfire
+> (I guess the warning could be turned off, but I'd like lld to handle
+> FGKASLR at some point.)
+> 
+> Note that cheating and doing the 1-to-1 mapping by handy with a 40,000
+> entry linker script ... made ld.lld take about 15 minutes to do the
+> final link. :(
 
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Out of curiosity, how long does ld.bfd take on that linker script :)
