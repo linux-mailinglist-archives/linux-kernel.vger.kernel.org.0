@@ -2,151 +2,277 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABCA616B828
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 04:41:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 536AF16B833
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 04:50:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbgBYDlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 22:41:53 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36058 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbgBYDlw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 22:41:52 -0500
-Received: by mail-pl1-f194.google.com with SMTP id a6so4918379plm.3;
-        Mon, 24 Feb 2020 19:41:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=NfwJ5K56Btcw4+UaJTYHBCDqKgLQRVQFN/YDLhlR3cE=;
-        b=IyzGPlJoRjnXtrZKqxy8CeKRhhTCgUF5T/HuODbaT4Fnz4/dB1zm+tUyrECKP8GjLj
-         wXcftavqOexWAhqSdB37F8b0qGPcDAKApjrf4zBUgBTUFM48lINxJIajhQxloqZX+IxW
-         38F5jXt/v/GWOYt78t2mBu7pa3D1Gi4P+9jUxcYi5lThf6LfBOKwu6eA3QFtdi7vT3S3
-         VkcDGBjPBMfKa9JqUiAYRyIRBMDrctVjxiE49RkyjL2seI12yVdEyPnidtrncexLeIxG
-         M3FAFPcqnFhd+tQ+yc9sYVmK0pOjYGAX6ETtmSlSylfaU9Wc0JLMNRYPPXo6DX0sNrv3
-         2phA==
-X-Gm-Message-State: APjAAAURh3W1TbuYfAcWMktVqSW/ARx58xwTWQMphFuA+9J5czzle7+G
-        z6/7Mp4p/f6LxWp78l8S1NXRiPyxhP8=
-X-Google-Smtp-Source: APXvYqxjqaP4aSXz3bwzH7aV+g9LNgqYdRjYsNhqFFdaTjsULo7Q6Rj28RTLmhuTYEpfDsdsibeoqQ==
-X-Received: by 2002:a17:90a:3841:: with SMTP id l1mr2784753pjf.108.1582602111270;
-        Mon, 24 Feb 2020 19:41:51 -0800 (PST)
-Received: from ?IPv6:2601:647:4000:d7:e0d5:574d:fc92:e4e? ([2601:647:4000:d7:e0d5:574d:fc92:e4e])
-        by smtp.gmail.com with ESMTPSA id w21sm14427241pgc.87.2020.02.24.19.41.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 19:41:50 -0800 (PST)
-Subject: Re: NULL pointer dereference in qla24xx_abort_command, kernel 4.19.98
- (Debian)
-To:     Ondrej Zary <linux@zary.sk>
-Cc:     qla2xxx-upstream@qlogic.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <202002231929.01662.linux@zary.sk>
- <202002232057.16101.linux@zary.sk>
- <336cb7b1-5e40-5830-3c1c-4389257081ea@acm.org>
- <202002240920.17691.linux@zary.sk>
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <1fbad673-1b8c-0813-c60e-a4f56330a972@acm.org>
-Date:   Mon, 24 Feb 2020 19:41:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1728888AbgBYDuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 22:50:19 -0500
+Received: from mail-db8eur05on2088.outbound.protection.outlook.com ([40.107.20.88]:39649
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728523AbgBYDuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 22:50:19 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VdZgW+Vvn0lYIq9w6QIi7mbiuzrTXwamaHizNVXmgFT7jUNFU9oYq6XFFXhz5FXJDcJ8P7e8aQsDHEC+QxpPY+66nI2R05glERzmVxwSZikunQhOyjE7ppv+xDytncssl/pZG/YmYHGoXnO30ndmW+vTykqu64sgqg+MTPfhxbh5AaZm6Rxqe7otqfPHG06ec8D3AHW/TTQGm+hwFgACOnq4oN3XOhksXDuOvdrVUGuSSWK48PJG/iN7ofVVFXoV2d+mG40XoLd4mjbLV20fjoeWgEPtolJKr/mciRRuhlzJQ5aPL659Z6AhJJ4gscN4nueOOqE9X6g4xf09dunkMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LqKBiafB2ZFKfJU2Li29OXgoWjlAbRLYU3W31h0Rw/g=;
+ b=jjiAwqfplICSKSH3GVk8u9mdZ/8NWy4lS+dDbat9l9wmpmnCq/THbICj2ypbvRfgZFnevhnqBPDWY8l7wapQoGpCC1EO0MZbbgZhz2T0+kgIloxza0x0vyzuOlNO7KEJAQuljEkmnBj7mMniCnJF1TNrw/FIdqAxXH8LzSSrJHRPFB7NsbDJNEnFK4vtvKSVU9IQ4lAPSTllTp1XF+HOc3uGINjUtA789Y/te5DVQl/fapl7tj48+7s8Ex/NwYo9r20XwSTuFwW8CNZrmXkyeXRAFT5DuVXszt34cNBWSteqQn2FzdO+d+vjBigrKN+Xiaq3/H4DSLMi5DdolJ+zyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LqKBiafB2ZFKfJU2Li29OXgoWjlAbRLYU3W31h0Rw/g=;
+ b=XPmvIc+4di7FYIMp+paZ5KBAm5c9p6uoaiAoN4DWDkm3mUTtxS08/pRptePAR2DxU499UDMz+5H0hravgQ+wY7yDDtFuTgwISRvXxuVGIRWXtanAIq1pNWnxj13bUIe0oRPHbrLf8/gT+6+lT1miP8cGc4jnhHAslcSfichEG8E=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5955.eurprd04.prod.outlook.com (20.178.112.75) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2750.21; Tue, 25 Feb 2020 03:50:13 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2750.021; Tue, 25 Feb 2020
+ 03:50:13 +0000
+From:   peng.fan@nxp.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Anson.Huang@nxp.com,
+        leonard.crestez@nxp.com, daniel.baluta@nxp.com,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] ARM64: dts: imx8m: fix aips dts node
+Date:   Tue, 25 Feb 2020 11:44:02 +0800
+Message-Id: <1582602242-28577-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: HK2PR02CA0212.apcprd02.prod.outlook.com
+ (2603:1096:201:20::24) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-In-Reply-To: <202002240920.17691.linux@zary.sk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by HK2PR02CA0212.apcprd02.prod.outlook.com (2603:1096:201:20::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2750.18 via Frontend Transport; Tue, 25 Feb 2020 03:50:09 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 71b5a415-4a63-4768-48b7-08d7b9a5d175
+X-MS-TrafficTypeDiagnostic: AM0PR04MB5955:|AM0PR04MB5955:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB5955CE3BFCE163E106EC2B6A88ED0@AM0PR04MB5955.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+X-Forefront-PRVS: 0324C2C0E2
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(366004)(136003)(376002)(39860400002)(199004)(189003)(9686003)(6506007)(2616005)(26005)(52116002)(6512007)(6666004)(86362001)(8936002)(81156014)(8676002)(81166006)(956004)(66556008)(16526019)(316002)(6486002)(5660300002)(69590400006)(66946007)(186003)(2906002)(66476007)(478600001)(36756003)(4326008)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5955;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: E76lIq2/jSjWRApAnWDZRoymJqw67PPe0OM2ZAOl5rrAGccPeG3rTDCw30rS21uWmuvApc7PvuIXv8zXBUzY2m9jtCRd+azuxRGD2pIs5NMLWFnFYI5s170KX5EomKCXBU0yUYAGP5phvft683d8tE+ea+f4OLEu8f8J21tyBZHhe8WuFJ1ESNb5F/2t6WFWcvSi4qXMEBC68z0NGts/awdjE3S4qH42TDfSoD5H0cTK2pyYrv/yFyoM47SPRM/Tb6xSgvyjhbgHm7V0NxS15EcCoVW3FTR39CGv1tbefI0vJPXcMYIvFcKXQoRKBmHd+GXeJ9hyNlNmS5hg8/4+iBdeo0PyofhJk2fbvnNRif6elSmn6+J+p29RBvI+fK4Ol0i/wRv87/kJBJwy0vt+1QkSlTjQKNtubC7C8lpBjtpacVG9R97MUq9XN9oXUGIqVpRyqgcM1lkC78+KKakb+Wt6ykovlup1ICSb5Ig9aGH8OvfzQLKnsYTA9uR+1j4M8iXXfoVq3TLaa60nTeNzjO6fkkZiTff6Sd0SZFAiuTUdST0AHSl8gLE3wB1mdZaO
+X-MS-Exchange-AntiSpam-MessageData: lmeDO+5yPep9CYN0dUm5SoTBVWWI7Qjl6oC+cHql6n+SrJKuH0FnCjz/fE2+A+kS2WOQ5OdhPhm3jPA1EweZ39y8yaiJtNDEXNyW+kx7+BfLjV/hIM+tl3+G1lNRTZMsRX/I/X2otORTZbgcBxhA6g==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71b5a415-4a63-4768-48b7-08d7b9a5d175
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2020 03:50:13.5129
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9T3cuDapG7iKsyVUlguVJQb7H0k+YEV48oaLk2XnhUCmnDvpI/J0o2qJIOpfseCu1wOAlh7tsKfO20hmc8FexA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5955
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-24 00:20, Ondrej Zary wrote:
-> Looks like it's in some inlined function.
-> 
-> /usr/src/linux-source-4.19# gdb /lib/modules/4.19.0-8-amd64/kernel/drivers/scsi/qla2xxx/qla2xxx.ko
-> GNU gdb (Debian 8.2.1-2+b3) 8.2.1
-> ...
-> Reading symbols from /lib/modules/4.19.0-8-amd64/kernel/drivers/scsi/qla2xxx/qla2xxx.ko...Reading symbols 
-> from /usr/lib/debug//lib/modules/4.19.0-8-amd64/kernel/drivers/scsi/qla2xxx/qla2xxx.ko...done.
-> done.
-> 
-> (gdb) list *(qla24xx_async_abort_cmd+0x1b)
-> 0xf88b is in qla24xx_async_abort_cmd (./arch/x86/include/asm/atomic.h:97).
-> 92       *
-> 93       * Atomically increments @v by 1.
-> 94       */
-> 95      static __always_inline void arch_atomic_inc(atomic_t *v)
-> 96      {
-> 97              asm volatile(LOCK_PREFIX "incl %0"
-> 98                           : "+m" (v->counter) :: "memory");
-> 99      }
-> 100     #define arch_atomic_inc arch_atomic_inc
->
-> [ ... ]
-> 
-> (gdb) disassemble qla24xx_async_abort_cmd
-> Dump of assembler code for function qla24xx_async_abort_cmd:
->    0x000000000000f870 <+0>:     callq  0xf875 <qla24xx_async_abort_cmd+5>
->    0x000000000000f875 <+5>:     push   %r15
->    0x000000000000f877 <+7>:     push   %r14
->    0x000000000000f879 <+9>:     push   %r13
->    0x000000000000f87b <+11>:    push   %r12
->    0x000000000000f87d <+13>:    push   %rbp
->    0x000000000000f87e <+14>:    push   %rbx
->    0x000000000000f87f <+15>:    mov    0x28(%rdi),%r13
->    0x000000000000f883 <+19>:    mov    0x20(%rdi),%r15
->    0x000000000000f887 <+23>:    mov    0x48(%rdi),%r14
->    0x000000000000f88b <+27>:    lock incl 0x4(%r14)
->    0x000000000000f890 <+32>:    mfence
+From: Peng Fan <peng.fan@nxp.com>
 
-Thanks, this is very helpful. I think the above means that the crash is
-triggered by the following code:
+Per binding doc fsl,aips-bus.yaml, compatible and reg is
+required. And for reg, the AIPS configuration space should be
+used, not all the AIPS bus space.
 
-	sp = qla2xxx_get_qpair_sp(cmd_sp->qpair, cmd_sp->fcport,
-		GFP_KERNEL);
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi | 12 ++++++++----
+ arch/arm64/boot/dts/freescale/imx8mn.dtsi | 16 ++++++++--------
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi | 12 ++++++------
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 12 ++++++++----
+ 4 files changed, 30 insertions(+), 22 deletions(-)
 
-From the start of qla2xxx_get_qpair_sp():
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+index b3d0b29d7007..a4356d2047cd 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+@@ -227,7 +227,8 @@
+ 		ranges = <0x0 0x0 0x0 0x3e000000>;
+ 
+ 		aips1: bus@30000000 {
+-			compatible = "simple-bus";
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x301f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges = <0x30000000 0x30000000 0x400000>;
+@@ -496,7 +497,8 @@
+ 		};
+ 
+ 		aips2: bus@30400000 {
+-			compatible = "simple-bus";
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x305f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges = <0x30400000 0x30400000 0x400000>;
+@@ -555,7 +557,8 @@
+ 		};
+ 
+ 		aips3: bus@30800000 {
+-			compatible = "simple-bus";
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x309f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges = <0x30800000 0x30800000 0x400000>;
+@@ -800,7 +803,8 @@
+ 		};
+ 
+ 		aips4: bus@32c00000 {
+-			compatible = "simple-bus";
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x32df0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges = <0x32c00000 0x32c00000 0x400000>;
+diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+index f2775724377f..4848ce82f083 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+@@ -203,8 +203,8 @@
+ 		ranges = <0x0 0x0 0x0 0x3e000000>;
+ 
+ 		aips1: bus@30000000 {
+-			compatible = "simple-bus";
+-			reg = <0x30000000 0x400000>;
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x301f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -401,8 +401,8 @@
+ 		};
+ 
+ 		aips2: bus@30400000 {
+-			compatible = "simple-bus";
+-			reg = <0x30400000 0x400000>;
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x305f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -461,8 +461,8 @@
+ 		};
+ 
+ 		aips3: bus@30800000 {
+-			compatible = "simple-bus";
+-			reg = <0x30800000 0x400000>;
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x309f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -707,8 +707,8 @@
+ 		};
+ 
+ 		aips4: bus@32c00000 {
+-			compatible = "simple-bus";
+-			reg = <0x32c00000 0x400000>;
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x32df0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+index 71b0c8f23693..eb67f56cdfe2 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+@@ -144,8 +144,8 @@
+ 		ranges = <0x0 0x0 0x0 0x3e000000>;
+ 
+ 		aips1: bus@30000000 {
+-			compatible = "simple-bus";
+-			reg = <0x30000000 0x400000>;
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x301f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -309,8 +309,8 @@
+ 		};
+ 
+ 		aips2: bus@30400000 {
+-			compatible = "simple-bus";
+-			reg = <0x30400000 0x400000>;
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x305f0000 0x400000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -369,8 +369,8 @@
+ 		};
+ 
+ 		aips3: bus@30800000 {
+-			compatible = "simple-bus";
+-			reg = <0x30800000 0x400000>;
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x309f0000 0x400000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+index 6a1e83922c71..07070464063d 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -290,7 +290,8 @@
+ 		dma-ranges = <0x40000000 0x0 0x40000000 0xc0000000>;
+ 
+ 		bus@30000000 { /* AIPS1 */
+-			compatible = "simple-bus";
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x301f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges = <0x30000000 0x30000000 0x400000>;
+@@ -692,7 +693,8 @@
+ 		};
+ 
+ 		bus@30400000 { /* AIPS2 */
+-			compatible = "simple-bus";
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x305f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges = <0x30400000 0x30400000 0x400000>;
+@@ -751,7 +753,8 @@
+ 		};
+ 
+ 		bus@30800000 { /* AIPS3 */
+-			compatible = "simple-bus";
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x309f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges = <0x30800000 0x30800000 0x400000>,
+@@ -1023,7 +1026,8 @@
+ 		};
+ 
+ 		bus@32c00000 { /* AIPS4 */
+-			compatible = "simple-bus";
++			compatible = "fsl,aips", "simple-bus";
++			reg = <0x32df0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges = <0x32c00000 0x32c00000 0x400000>;
+-- 
+2.16.4
 
-	QLA_QPAIR_MARK_BUSY(qpair, bail);
-
-From qla_def.h:
-
-#define QLA_QPAIR_MARK_BUSY(__qpair, __bail) do {	\
-	atomic_inc(&__qpair->ref_count);		\
-	mb();						\
-	if (__qpair->delete_in_progress) {		\
-		atomic_dec(&__qpair->ref_count);	\
-		__bail = 1;				\
-	} else {					\
-	       __bail = 0;				\
-	}						\
-} while (0)
-
-One of the changes between kernel version v4.9.210 and v4.19.98 is the
-following: "qla2xxx: Add multiple queue pair functionality". I think the
- above information means that the cmd_sp->qpair pointer is NULL. I will
-let QLogic recommend a solution.
-
-Bart.
