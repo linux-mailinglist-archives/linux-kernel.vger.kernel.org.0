@@ -2,91 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E41816B726
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 02:24:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C412A16B728
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 02:25:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbgBYBYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 20:24:00 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:35835 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728135AbgBYBYA (ORCPT
+        id S1728682AbgBYBZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 20:25:00 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:54390 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728135AbgBYBY7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 20:24:00 -0500
-Received: by mail-il1-f193.google.com with SMTP id g12so9422830ild.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 17:23:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zIbp8wKGXVLLxHhTy31TRd9NVAkz0p3dg03obFlrOdo=;
-        b=cpUBPuKWaRuBRB9AUcAXjl3OxvWKcMY4ENFehlzSMbeMTdlP0YOoJTcPxN3/4bl9iN
-         y9szjZKNXJ4UqMrX6E0+0aiSkCMadw20DJuQk6IEO3ouJpLd4MgEZuCv4MVqKwNnRNTT
-         b6VQbn8bPxwvWbnqID6P7n5DHk4H+xn+aUMpQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zIbp8wKGXVLLxHhTy31TRd9NVAkz0p3dg03obFlrOdo=;
-        b=GxJIz//FqznoTa0zfchdu4zy3ytrAi9k4AzD3FPr2A+rMQDnCy+7aEj7uG/NnV34Ci
-         65SU68NNqthrz+OmoQNJsmU9cQuzUzk3oXI4N2V17LnKTZQl25IUJAuu22VK0RDiR15o
-         07oceKylIceClI99VzODroy5l2c/JTBXfc2NQ0QSw7JeFqrXNDJ+7nqaCoZbIjVA2fJg
-         L91ZaMGrUhvVZi5KVmNL5LFlacr1QPcJO9iArcxkYEYNwapxIGzcC3ka5ILHVbkNgdoL
-         1lIy/mzKnBzm1SBuSxE9UOdGh27hC4bZBlyqKTYy2+ZNC5CIpV02R61l96UigCUdKQbm
-         kYfw==
-X-Gm-Message-State: APjAAAVcGaMcAt79r4n/0/BWLfNIAyQB9RWkNmurlXnVp3mHoTi/2fQz
-        5Y0+eAxNtWOwD7Ccx9U1dWeDOZmngi1Om6fP0JPQDA==
-X-Google-Smtp-Source: APXvYqwk3gGDLKOY5+TapjWkIPZbrjyID3V+8fj4TgU6xXiz08LdytMmg+WEESMfXROgp17tvnMMjHdeReWEj3LGYBg=
-X-Received: by 2002:a92:cc04:: with SMTP id s4mr40784855ilp.193.1582593837805;
- Mon, 24 Feb 2020 17:23:57 -0800 (PST)
+        Mon, 24 Feb 2020 20:24:59 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6Oy1-000c1D-U6; Tue, 25 Feb 2020 01:24:58 +0000
+Date:   Tue, 25 Feb 2020 01:24:57 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: [RFC][PATCHSET] sanitized pathwalk machinery (v2)
+Message-ID: <20200225012457.GA138294@ZenIV.linux.org.uk>
+References: <20200223011154.GY23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20200214062637.216209-1-evanbenn@chromium.org>
- <20200214172512.1.I02ebc5b8743b1a71e0e15f68ea77e506d4e6f840@changeid>
- <20200219223046.GA16537@bogus> <CAODwPW8JspiUtyU4CC95w9rbNRyUF-Aeb9TuPm1PzmP6u=y1EA@mail.gmail.com>
- <20200219232005.GA9737@roeck-us.net> <CAKz_xw2hvHL=a4s37dmuCTWDbxefQFR3rfcaNiWYJY4T+jqabA@mail.gmail.com>
- <e42320b8-266f-0b0e-b20b-b72228510e81@amlogic.com> <CAODwPW94KX46PzSrf_uuEFPKudXor=26d=g3Qta5veRfxmMDUA@mail.gmail.com>
- <1326f594-3cfd-c03d-4f2c-50eeb75724b2@amlogic.com>
-In-Reply-To: <1326f594-3cfd-c03d-4f2c-50eeb75724b2@amlogic.com>
-From:   Julius Werner <jwerner@chromium.org>
-Date:   Mon, 24 Feb 2020 17:23:46 -0800
-Message-ID: <CAODwPW8WwntWb_=dg2J3AMy-gHw2QvNj_g98SufN13+AuGnUSg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Add arm,smc-wdt watchdog
- arm,smc-wdt compatible
-To:     Xingyu Chen <xingyu.chen@amlogic.com>
-Cc:     Julius Werner <jwerner@chromium.org>,
-        Evan Benn <evanbenn@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-watchdog@vger.kernel.org,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Yonghui Yu <yonghui.yu@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200223011154.GY23230@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The SMC function ID may be solved by the DTS, but the wdt indexs(Eg:
-> SMCWD_INFO) are also different
-> for each vendor. The imx_sc_wdt.c is also use the SMC to operate the
-> WDT, but the wdt indexs(Eg: IMX_SIP_TIMER_START_WDOG)
-> are different from ours. IMO, If the ATF can implement a common hal
-> interface and index for watchdog, then writing a
-> common smc wdt driver will be easier to compatible with all vendors.
+On Sun, Feb 23, 2020 at 01:12:21AM +0000, Al Viro wrote:
+> 	This is a slightly extended repost of the patchset posted on
+> Jan 19.  Current branch is in vfs.git#work.do_last, the main
+> difference from the last time around being a bit of do_last()
+> untangling added in the end of series.  #work.openat2 is already
+> in mainline, which simplifies the series - now it's a straight
+> branch with no merges.
 
-The MediaTek driver is still in flux (e.g. still being reviewed in
-Trusted Firmware here:
-https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/3405),
-we can still change it. So if we can now decide on making this a
-"standard" driver, we can change the MediaTek interface to match IMX
-and standardize on that. (There are existing Chromebooks shipped with
-a different interface, but we could handle those separately with
-downstream patches. I think having a unified interface that will
-prevent this problem in the future would be worth some extra
-complication right now.)
+Whee...  While trying to massage ".." handling towards the use of
+regular mount crossing semantics, I've found something interesting.
+Namely, if you start in a directory with overmounted parent,
+LOOKUP_NO_XDEV resolution of ../something will bloody well cross
+into the overmount.
+
+Reason: follow_dotdot() (and its RCU counterpart) check for LOOKUP_NO_XDEV
+when crossing into underlying fs, but not when crossing into overmount
+of the parent.
+
+Interpretation of .. is basically
+
+loop:	if we are in root					// uncommon
+		next = current position
+	else if we are in root of a mounted filesystem		// more rare
+		move to underlying mountpoint
+		goto loop
+	else
+		next = parent directory of current position	// most common
+
+	while next is overmounted				// _VERY_ uncommon
+		next = whatever's mounted on next
+
+	move to next
+
+The second loop should've been sharing code with the normal mountpoint
+crossing.  It doesn't, which has already lead to interesting inconsistencies
+(e.g. autofs generally expects ->d_manage() to be called before crossing
+into it; here it's not done).  LOOKUP_NO_XDEV has just added one more...
+
+Incidentally, another inconsistency is LOOKUP_BENEATH treatment in case
+when we have walked out of the subtree by way of e.g. procfs symlink and
+then ran into .. in the absolute root (that's
+                if (!follow_up(&nd->path))
+                        break;
+in follow_dotdot()).  Shouldn't that give the same reaction as ..
+in root (EXDEV on LOOKUP_BENEATH, that is)?  It doesn't...
+
+Another one is about LOOKUP_NO_XDEV again: suppose you have process'
+root directly overmounted and cwd in the root of whatever's overmounting
+it.  Resolution of .. will stay in cwd - we have no parent within the
+chroot jail we are in, so we move to whatever's overmounting that root.
+Which is the original location.  Should we fail on LOOKUP_NO_XDEV here?
+Plain .. in the root of chroot jail (not overmounted by anything) does
+*not*...
