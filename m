@@ -2,200 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F01D16C326
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:01:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9614116C32C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:02:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730307AbgBYOBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 09:01:37 -0500
-Received: from gateway31.websitewelcome.com ([192.185.144.29]:31766 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730111AbgBYOBg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:01:36 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 2B3FE11D42F
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 08:01:35 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 6amFjq8tc8vkB6amFjlVIE; Tue, 25 Feb 2020 08:01:35 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=r8Lc+tZ9X8OdwKV6l2Zw8M7UkDdOOthqyCbUCkNpWms=; b=m0bJra4Lu5bIWxynx+Tefu91KF
-        LY1aRxC3YPjxD0V0BN6jKbmjqD4gD9I5RqyoC3eJbRfHb5ePf5ftgdbP5VppvYH+aDuE9+jLA3ohu
-        r2mGicqOKbZ7/kVg1pwOLqskOtGyYjZnYUNZlim82l2cQN3Gq+pGCyYBNCD4O+d0NEWjbqGGIW04U
-        jTVERLg83c+VPuA+D8l1w2+Nn8dY0oIVbrinXq/gaK/GmnxnzxiJoYGOWt2EugzM+wL/TWeOQmKNM
-        TgZftGRGvh7Z5q/jAEMhe57Vy7PhDtWt3tOZXYZrjYP+OujOdnXbd5A9TfUJRnaupFnWuwI3J9YeG
-        K/Q0TFuA==;
-Received: from [201.162.241.105] (port=10609 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j6amE-001PC4-IN; Tue, 25 Feb 2020 08:01:34 -0600
-Subject: Re: [PATCH][next] sfc: Replace zero-length array with flexible-array
- member
-To:     Martin Habets <mhabets@solarflare.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Solarflare linux maintainers <linux-net-drivers@solarflare.com>,
-        Edward Cree <ecree@solarflare.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200225000647.GA17795@embeddedor>
- <6a100eb2-4ba1-32ac-35de-d02c38503785@solarflare.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <7963b6dc-cafe-f427-e634-a043c688c78a@embeddedor.com>
-Date:   Tue, 25 Feb 2020 08:01:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1730512AbgBYOCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 09:02:17 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:31526 "EHLO 1wt.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729952AbgBYOCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 09:02:16 -0500
+Received: (from willy@localhost)
+        by pcw.home.local (8.15.2/8.15.2/Submit) id 01PE27FN031971;
+        Tue, 25 Feb 2020 15:02:07 +0100
+Date:   Tue, 25 Feb 2020 15:02:07 +0100
+From:   Willy Tarreau <w@1wt.eu>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 01/10] floppy: cleanup: expand macro FDCS
+Message-ID: <20200225140207.GA31782@1wt.eu>
+References: <20200224212352.8640-1-w@1wt.eu>
+ <20200224212352.8640-2-w@1wt.eu>
+ <CAHk-=wi4R_nPdE4OuNW9daKFD4FpV74PkG4USHqub+nuvOWYFg@mail.gmail.com>
+ <28e72058-021d-6de0-477e-6038a10d96da@linux.com>
+ <20200225034529.GA8908@1wt.eu>
+ <c181b184-1785-b221-76fa-4313bbada09d@linux.com>
 MIME-Version: 1.0
-In-Reply-To: <6a100eb2-4ba1-32ac-35de-d02c38503785@solarflare.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.241.105
-X-Source-L: No
-X-Exim-ID: 1j6amE-001PC4-IN
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [201.162.241.105]:10609
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 34
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c181b184-1785-b221-76fa-4313bbada09d@linux.com>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/25/20 07:42, Martin Habets wrote:
-> On 25/02/2020 00:06, Gustavo A. R. Silva wrote:
->> The current codebase makes use of the zero-length array language
->> extension to the C90 standard, but the preferred mechanism to declare
->> variable-length types such as these ones is a flexible array member[1][2],
->> introduced in C99:
->>
->> struct foo {
->>         int stuff;
->>         struct boo array[];
->> };
->>
->> By making use of the mechanism above, we will get a compiler warning
->> in case the flexible array does not occur last in the structure, which
->> will help us prevent some kind of undefined behavior bugs from being
->> inadvertently introduced[3] to the codebase from now on.
->>
->> Also, notice that, dynamic memory allocations won't be affected by
->> this change:
->>
->> "Flexible array members have incomplete type, and so the sizeof operator
->> may not be applied. As a quirk of the original implementation of
->> zero-length arrays, sizeof evaluates to zero."[1]
+On Tue, Feb 25, 2020 at 10:14:40AM +0300, Denis Efremov wrote:
 > 
-> These padding fields are only used to enforce alignment of the struct.
-> But the patch is still ok.
 > 
-
-Correct.
-
->> This issue was found with the help of Coccinelle.
->>
->> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->> [2] https://github.com/KSPP/linux/issues/21
->> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> On 2/25/20 6:45 AM, Willy Tarreau wrote:
+> > On Tue, Feb 25, 2020 at 02:13:42AM +0300, Denis Efremov wrote:
+> >> On 2/25/20 12:53 AM, Linus Torvalds wrote:
+> >>> So I'd like to see that second step that does the
+> >>>
+> >>>     -static int fdc;                 /* current fdc */
+> >>>     +static int current_fdc;
+> >>>
+> >>> change.
+> >>>
+> >>> We already call the global 'drive' variable 'current_drive', so it
+> >>> really is 'fdc' that is misnamed and ambiguous because it then has two
+> >>> different cases: the global 'fdc' and then the various shadowing local
+> >>> 'fdc' variables (or function arguments).
+> >>>
+> >>> Mind adding that too? Slightly less automatic, I agree, because then
+> >>> you really do have to disambiguate between the "is this the shadowed
+> >>> use of a local 'fdc'" case or the "this is the global 'fdc' use" case.
+> > 
+> > I definitely agree. I first wanted to be sure the patches were acceptable
+> > as a principle, but disambiguating the variables is easy to do now.
 > 
-> Acked-by: Martin Habets <mhabets@solarflare.com>
-> 
+> Ok, I don't want to break in the middle of your changes in this case.
 
-Thanks, Martin.
---
-Gustavo
+So I started this and discovered the nice joke you were telling me
+about regarding FD_IOPORT which references fdc. Then the address
+registers FD_STATUS, FD_DATA, FD_DOR, FD_DIR, FD_DCR which are
+based on FD_IOPORT also depend on it.
 
->> ---
->>  drivers/net/ethernet/sfc/falcon/net_driver.h | 2 +-
->>  drivers/net/ethernet/sfc/net_driver.h        | 2 +-
->>  2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/sfc/falcon/net_driver.h b/drivers/net/ethernet/sfc/falcon/net_driver.h
->> index a49ea2e719b6..a529ff395ead 100644
->> --- a/drivers/net/ethernet/sfc/falcon/net_driver.h
->> +++ b/drivers/net/ethernet/sfc/falcon/net_driver.h
->> @@ -288,7 +288,7 @@ struct ef4_rx_buffer {
->>  struct ef4_rx_page_state {
->>  	dma_addr_t dma_addr;
->>  
->> -	unsigned int __pad[0] ____cacheline_aligned;
->> +	unsigned int __pad[] ____cacheline_aligned;
->>  };
->>  
->>  /**
->> diff --git a/drivers/net/ethernet/sfc/net_driver.h b/drivers/net/ethernet/sfc/net_driver.h
->> index 9f9886f222c8..392bd5b7017e 100644
->> --- a/drivers/net/ethernet/sfc/net_driver.h
->> +++ b/drivers/net/ethernet/sfc/net_driver.h
->> @@ -336,7 +336,7 @@ struct efx_rx_buffer {
->>  struct efx_rx_page_state {
->>  	dma_addr_t dma_addr;
->>  
->> -	unsigned int __pad[0] ____cacheline_aligned;
->> +	unsigned int __pad[] ____cacheline_aligned;
->>  };
->>  
->>  /**
->>
+These ones are used by fd_outb() which is arch-dependent, so if we
+want to pass a third argument we have to change them all and make sure
+not to break them too much.
+
+In addition the FD_* macros defined above are used by x86, and FD_DOR is
+also used by arm while all other archs hard-code all the values. ARM also
+uses floppy_selects[fdc] and new_dor... I'm starting to feel the trap here!
+I also feel a bit concerned that these are exported in uapi with a hard-coded
+0x3f0 base address. I'm just not sure how portable all of this is in
+the end :-/
+
+Now I'm wondering, how far should we go and how much is it acceptable to
+change ? I'd rather not have "#define fdc current_fdc" just so that it
+builds, but on the other hand this problem clearly outlights the roots
+of the issue, which lies in "fdc" being silently accessed by macros with
+nobody noticing!
+
+Willy
