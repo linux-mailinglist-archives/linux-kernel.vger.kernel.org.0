@@ -2,101 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B5F16C463
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:50:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3336016C46B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:53:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730857AbgBYOuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 09:50:18 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:28547 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729891AbgBYOuR (ORCPT
+        id S1730891AbgBYOxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 09:53:44 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:42946 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729489AbgBYOxn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:50:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582642216;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GonAkwVlYf7mzVM7tAIusLAuxzdFzrvz8yw0t7Xi+OU=;
-        b=irYTkGz7lxIK+X4SQrAhw2KvrH4aTNc0IBR6qjuL8AR9z1zV4AFEU3dQqmlSWImxK2ujcu
-        ngna4FojGDicRCs7kZHJkkluiC332H7b4PUs6njnQHmrvPLuyO5G6NQ3s0ELKdkvjFVrbq
-        9mvoV+ohHKHb32IVthEtoyLuISrwH9g=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-473-jR4PSYRCOVaITGHIYnzgsg-1; Tue, 25 Feb 2020 09:50:10 -0500
-X-MC-Unique: jR4PSYRCOVaITGHIYnzgsg-1
-Received: by mail-wr1-f72.google.com with SMTP id z1so3760431wrs.9
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 06:50:10 -0800 (PST)
+        Tue, 25 Feb 2020 09:53:43 -0500
+Received: by mail-vs1-f68.google.com with SMTP id b79so8123049vsd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 06:53:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AWz4wDeiQ+dMtZmMMfMTReHPvDQ7FFlWV1iEIBtaea4=;
+        b=SuGnhr4P2blA3x8jlYXg1G0+xqxyloO0I0ugkiAJtHLnx4kXvSifw31EVLq2SK/Imy
+         2hdmZhH8m1eQGZW9mUMi4W4fNCztO2ho0S0dXBRKKuz1bPMbFwzhCknrSFHgSOQTc42a
+         T5drEFsRvR+NK8V85+HGQ7XeEvAZCym6MS+YPy04fHNBycaAbC3Mzvv6OB0fzvM0da5G
+         rIp9QLeu1itsiEtR6gwAZl7hjMp7rK9J17wzW8x+X+Q7Luefyys7cJ1To6wCCPLri6pU
+         rHeEaeQNrzcYAyx+IVw9GojNBe/mkc1PMKz0Hjff0SLKcio+KAmnAefTm5bJwBRVYT91
+         HW/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GonAkwVlYf7mzVM7tAIusLAuxzdFzrvz8yw0t7Xi+OU=;
-        b=p+6TdjFGQjZ9mKTz0jP/8y9TT0AQweU2jk7fFl8dEvtHK6LE59dfuxr7ElK4oxjkog
-         16FSgX1yPR2yWUdgQlyc/o2SHPX7A8RaGeJb2jk49Psux9s1Pml95vorLoRPvWjojw37
-         08IZylzZyYqC0vP9dHcd51sVyFki3ZxsKW+B3OlhrsKAIJQMFJyLsUCglOJ2xTvlW0M/
-         zY76Q+0g3qGvlcvbRCT17Hto3XIn4gnuoHRAMdXbxzGXYczs8/uDB7IOEm9AGxJQqfD5
-         J/n6GFIPkX8XTNXG8f2wmwdlH1vocQ2PNyn6tKOGvZXDb5JWH9u8aYhnjt2jTu+4S2bA
-         wxow==
-X-Gm-Message-State: APjAAAU+OO5f1HwNFL6Ilxpc1kSEihJT/Uyg92EyCay51N7CiEcBqZgE
-        W21XJ2ftHVRcE+j4IZ8vOp3NFT0+ZX3Y37nID9BSvK/ojn+rw9oDtwJMqTrKIOHRCKKY5hnwvYj
-        HcqcsG0XFh0maxQqfYyKyjHcV
-X-Received: by 2002:a7b:c10e:: with SMTP id w14mr5769988wmi.61.1582642209406;
-        Tue, 25 Feb 2020 06:50:09 -0800 (PST)
-X-Google-Smtp-Source: APXvYqw+iIC5OCh2NpGwo5mA3TZ40WonwUZ+83HCqIBOQqR8BujCaubJru/+q3u54ZoDEBYYgL8adg==
-X-Received: by 2002:a7b:c10e:: with SMTP id w14mr5769960wmi.61.1582642209128;
-        Tue, 25 Feb 2020 06:50:09 -0800 (PST)
-Received: from localhost.localdomain ([151.29.22.129])
-        by smtp.gmail.com with ESMTPSA id x132sm4502638wmg.0.2020.02.25.06.50.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 06:50:08 -0800 (PST)
-Date:   Tue, 25 Feb 2020 15:50:06 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     zanussi@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>, Daniel Wagner <wagi@monom.org>
-Subject: Re: [PATCH RT 03/25] sched/deadline: Ensure inactive_timer runs in
- hardirq context
-Message-ID: <20200225145006.GH26415@localhost.localdomain>
-References: <cover.1582320278.git.zanussi@kernel.org>
- <11a532007a600928e64e761722da7100e19a0c5f.1582320278.git.zanussi@kernel.org>
- <20200224083303.cdj27guxfxqkbyqo@linutronix.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AWz4wDeiQ+dMtZmMMfMTReHPvDQ7FFlWV1iEIBtaea4=;
+        b=cOLjkXY8YR//JXXK886lu1CH0I0h5Up4zBTNGHRxz1Ihvp6cx/dhLODV9+9jB6DYn6
+         atX/HmUUlBTY+qApoS2LgfbeFFL+5yf94Kq2dOnyPG3BHgDznKGFI2GPpX5YFe/Hr2xv
+         aQqTRlF7gu4QK2YXBxmQbBLt1SFWqfIEoSm+3SYSjn7iP5zzo6vZUbUr2mPxHx57gCti
+         o96P5Zq4fdrYPJVfRyOxEamrq5+6pMVHw3N9IlV4us/xC4jg4+BpaFzXOlRAq1UaQ1Lx
+         WIoUxkBcuWTF95RKnc2GzE4SYHqsqjrMPKQfDIIfD8A/nC461AmHqAn2PnS+eD6yvFR3
+         NLWg==
+X-Gm-Message-State: APjAAAWz08fvBW0zWKLYmwR2YVB/PuX8EarX6cssYiuztFae5GoOZw7e
+        Zv5hMyR6dQkijpWia7Rm2EOnRJ92IMmN8Z3JaNkUdw==
+X-Google-Smtp-Source: APXvYqzlsHIb9YP3hCpfGA3Rdvg18zkDRP+rQoidSvkbh7QnCla2LkAkAEyvsQqyTzNbdgy/e8+g60oi0oH2Qq7EHJk=
+X-Received: by 2002:a05:6102:757:: with SMTP id v23mr30298970vsg.35.1582642420792;
+ Tue, 25 Feb 2020 06:53:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224083303.cdj27guxfxqkbyqo@linutronix.de>
+References: <20200224231841.26550-1-digetx@gmail.com> <20200224231841.26550-3-digetx@gmail.com>
+In-Reply-To: <20200224231841.26550-3-digetx@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 25 Feb 2020 15:53:04 +0100
+Message-ID: <CAPDyKFoSwjkOX85jjA-Q-ScdC0aUozroOu3_-FO4yBE8pgtCow@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] mmc: block: Add mmc_bdev_to_card() helper
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Billy Laws <blaws05@gmail.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Andrey Danin <danindrey@mail.ru>,
+        Gilles Grandou <gilles@grandou.net>,
+        Ryan Grachek <ryan@edited.us>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 25 Feb 2020 at 00:22, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> NVIDIA Tegra Partition Table takes into account MMC card's BOOT_SIZE_MULT
+> parameter, and thus, the partition parser needs to retrieve that EXT_CSD
+> value from the block device. This patch introduces new helper which takes
+> block device for the input argument and returns corresponding MMC card.
 
-On 24/02/20 09:33, Sebastian Andrzej Siewior wrote:
-> On 2020-02-21 15:24:31 [-0600], zanussi@kernel.org wrote:
-> > [ Upstream commit ba94e7aed7405c58251b1380e6e7d73aa8284b41 ]
-> > 
-> > SCHED_DEADLINE inactive timer needs to run in hardirq context (as
-> > dl_task_timer already does) on PREEMPT_RT
-> 
-> The message says "dl_task_timer already does" but this is not true for
-> v4.14 as it still runs in softirq context on RT. v4.19 has this either
-> via
->   https://lkml.kernel.org/r/20190731103715.4047-1-juri.lelli@redhat.com
-> 
-> or the patch which got merged upstream.
-> 
-> Juri, I guess we want this for v4.14, too?
+Rather than returning the card, why not return the value you are
+looking for instead? That sound more straightforward, but also allows
+mmc core code to stay closer to the mmc core.
 
-Indeed. v4.14 needs this as well.
+Kind regards
+Uffe
 
-Thanks for noticing!
-
-Best,
-
-Juri
-
+>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/mmc/core/block.c | 14 ++++++++++++++
+>  include/linux/mmc/card.h |  3 +++
+>  2 files changed, 17 insertions(+)
+>
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index 663d87924e5e..5d853450c764 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -301,6 +301,20 @@ static ssize_t force_ro_store(struct device *dev, struct device_attribute *attr,
+>         return ret;
+>  }
+>
+> +struct mmc_card *mmc_bdev_to_card(struct block_device *bdev)
+> +{
+> +       struct mmc_blk_data *md;
+> +
+> +       if (bdev->bd_disk->major != MMC_BLOCK_MAJOR)
+> +               return NULL;
+> +
+> +       md = mmc_blk_get(bdev->bd_disk);
+> +       if (!md)
+> +               return NULL;
+> +
+> +       return md->queue.card;
+> +}
+> +
+>  static int mmc_blk_open(struct block_device *bdev, fmode_t mode)
+>  {
+>         struct mmc_blk_data *md = mmc_blk_get(bdev->bd_disk);
+> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> index 90b1d83ce675..daccb0cc25f8 100644
+> --- a/include/linux/mmc/card.h
+> +++ b/include/linux/mmc/card.h
+> @@ -7,6 +7,7 @@
+>  #ifndef LINUX_MMC_CARD_H
+>  #define LINUX_MMC_CARD_H
+>
+> +#include <linux/blkdev.h>
+>  #include <linux/device.h>
+>  #include <linux/mod_devicetable.h>
+>
+> @@ -324,4 +325,6 @@ bool mmc_card_is_blockaddr(struct mmc_card *card);
+>  #define mmc_card_sd(c)         ((c)->type == MMC_TYPE_SD)
+>  #define mmc_card_sdio(c)       ((c)->type == MMC_TYPE_SDIO)
+>
+> +struct mmc_card *mmc_bdev_to_card(struct block_device *bdev);
+> +
+>  #endif /* LINUX_MMC_CARD_H */
+> --
+> 2.24.0
+>
