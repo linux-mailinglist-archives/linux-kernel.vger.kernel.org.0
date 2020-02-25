@@ -2,208 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 515B516EAC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:02:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 823F416EAB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:01:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730925AbgBYQB7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 11:01:59 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:14417 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730628AbgBYQB6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 11:01:58 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1582646518; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=Jt+IAVS9xM4+4RfW6VNL2gtvTWM4sE89zEqE8H9YrCc=; b=noWYwqMsYrlm6snjkRetK36dYayqYkBsgcyiVYp3gTqcolluaQEwr2/3pvrckGrEuHxzkPiE
- 7PI5u3egt0dJLAx+/8siNRXbleufakUZfhtxX0SsgXgpa0H9CY74H1QlcRfnFTH2flzHz4fT
- kgTJtDyeKRySa1JI/gqrDxQST1o=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e554496.7f8d2debeae8-smtp-out-n02;
- Tue, 25 Feb 2020 16:00:22 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D200AC447A3; Tue, 25 Feb 2020 16:00:20 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from okukatla1-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: okukatla)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9764BC447A3;
-        Tue, 25 Feb 2020 16:00:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9764BC447A3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=okukatla@codeaurora.org
-From:   Odelu Kukatla <okukatla@codeaurora.org>
-To:     georgi.djakov@linaro.org, daidavid1@codeaurora.org,
-        bjorn.andersson@linaro.org, evgreen@google.com,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     sboyd@kernel.org, ilina@codeaurora.org, seansw@qti.qualcomm.com,
-        elder@linaro.org, linux-pm@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org,
-        Odelu Kukatla <okukatla@codeaurora.org>
-Subject: [V4, 3/3] arm64: dts: sc7180: Add interconnect provider DT nodes
-Date:   Tue, 25 Feb 2020 21:29:44 +0530
-Message-Id: <1582646384-1458-4-git-send-email-okukatla@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1582646384-1458-1-git-send-email-okukatla@codeaurora.org>
-References: <1582646384-1458-1-git-send-email-okukatla@codeaurora.org>
+        id S1730950AbgBYQBC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 11:01:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41860 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730422AbgBYQBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 11:01:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2B30FADBE;
+        Tue, 25 Feb 2020 16:00:58 +0000 (UTC)
+Message-ID: <71cd7b35af81ee91c3b4dc5e7c05760ecd590c5d.camel@suse.de>
+Subject: Re: [PATCH 07/89] clk: bcm: rpi: Allow the driver to be probed by DT
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Maxime Ripard <maxime@cerno.tech>, Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Date:   Tue, 25 Feb 2020 17:00:56 +0100
+In-Reply-To: <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
+         <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-rHY9rlJOyK3Y6KPoBaSb"
+User-Agent: Evolution 3.34.4 
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the DT nodes for the network-on-chip interconnect buses found
-on sc7180-based platforms.
 
-Signed-off-by: Odelu Kukatla <okukatla@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 95 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
+--=-rHY9rlJOyK3Y6KPoBaSb
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index cc5a94f..3e28f34 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -748,6 +748,69 @@
- 			};
- 		};
- 
-+		config_noc: interconnect@1500000 {
-+			compatible = "qcom,sc7180-config-noc";
-+			reg = <0 0x01500000 0 0x28000>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		system_noc: interconnect@1620000 {
-+			compatible = "qcom,sc7180-system-noc";
-+			reg = <0 0x01620000 0 0x17080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		mc_virt: interconnect@1638000 {
-+			compatible = "qcom,sc7180-mc-virt";
-+			reg = <0 0x01638000 0 0x1000>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		qup_virt: interconnect@1650000 {
-+			compatible = "qcom,sc7180-qup-virt";
-+			reg = <0 0x01650000 0 0x1000>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		aggre1_noc: interconnect@16e0000 {
-+			compatible = "qcom,sc7180-aggre1-noc";
-+			reg = <0 0x016e0000 0 0x15080>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		aggre2_noc: interconnect@1705000 {
-+			compatible = "qcom,sc7180-aggre2-noc";
-+			reg = <0 0x01705000 0 0x9000>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		compute_noc: interconnect@170e000 {
-+			compatible = "qcom,sc7180-compute-noc";
-+			reg = <0 0x0170e000 0 0x6000>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		mmss_noc: interconnect@1740000 {
-+			compatible = "qcom,sc7180-mmss-noc";
-+			reg = <0 0x01740000 0 0x1c100>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		ipa_virt: interconnect@1e00000 {
-+			compatible = "qcom,sc7180-ipa-virt";
-+			reg = <0 0x01e00000 0 0x1000>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		tcsr_mutex_regs: syscon@1f40000 {
- 			compatible = "syscon";
- 			reg = <0 0x01f40000 0 0x40000>;
-@@ -1103,6 +1166,13 @@
- 			};
- 		};
- 
-+		dc_noc: interconnect@9160000 {
-+			compatible = "qcom,sc7180-dc-noc";
-+			reg = <0 0x09160000 0 0x03200>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		system-cache-controller@9200000 {
- 			compatible = "qcom,sc7180-llcc";
- 			reg = <0 0x09200000 0 0x200000>, <0 0x09600000 0 0x50000>;
-@@ -1110,6 +1180,20 @@
- 			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		gem_noc: interconnect@9680000 {
-+			compatible = "qcom,sc7180-gem-noc";
-+			reg = <0 0x09680000 0 0x3e200>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		npu_noc: interconnect@9990000 {
-+			compatible = "qcom,sc7180-npu-noc";
-+			reg = <0 0x09990000 0 0x1600>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		usb_1: usb@a6f8800 {
- 			compatible = "qcom,sc7180-dwc3", "qcom,dwc3";
- 			reg = <0 0x0a6f8800 0 0x400>;
-@@ -1154,6 +1238,13 @@
- 			};
- 		};
- 
-+		camnoc_virt: interconnect@ac00000 {
-+			compatible = "qcom,sc7180-camnoc-virt";
-+			reg = <0 0x0ac00000 0 0x1000>;
-+			#interconnect-cells = <1>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		pdc: interrupt-controller@b220000 {
- 			compatible = "qcom,sc7180-pdc", "qcom,pdc";
- 			reg = <0 0x0b220000 0 0x30000>;
-@@ -1481,6 +1572,10 @@
- 					};
- 				};
- 			};
-+
-+			apps_bcm_voter: bcm_voter {
-+				compatible = "qcom,bcm-voter";
-+			};
- 		};
- 
- 		cpufreq_hw: cpufreq@18323000 {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Hi Maxime,
+
+On Mon, 2020-02-24 at 10:06 +0100, Maxime Ripard wrote:
+> The current firmware clock driver for the RaspberryPi can only be probed =
+by
+> manually registering an associated platform_device.
+>=20
+> While this works fine for cpufreq where the device gets attached a clkdev
+> lookup, it would be tedious to maintain a table of all the devices using
+> one of the clocks exposed by the firmware.
+>=20
+> Since the DT on the other hand is the perfect place to store those
+> associations, make the firmware clocks driver probe-able through the devi=
+ce
+> tree so that we can represent it as a node.
+
+I'm not convinced this is the right approach, and if we decide to go this w=
+ay,
+there are more changes to take into account.
+
+For one, if we create a dt node for this driver, we'd have to delete the
+platform device creation in firmware/raspberrypi.c and then we'd be even ab=
+le
+to bypass raspberrypi-cpufreq altogether by creating opp tables in dt. But
+there are reasons we didn't go that way at the time.
+
+We've made an effort to avoid using dt for firmware interfaces whenever
+possible as, on one hand, it's arguable they don't fit device-tree's hardwa=
+re
+description paradigm and, on the other, the lack of flexibility they impose
+once the binding is defined. VC4's firmware interfaces are not set in stone=
+,
+nor standardized like SCMI, so the more flexible we are to future changes t=
+he
+better.
+
+Another thing I'm not all that happy about it's how dynamic clock registeri=
+ng
+is handled in patch #22 (but I'll keep it here as relevant to the discussio=
+n):
+
+- Some of those fw managed clocks you're creating have their mmio counterpa=
+rt
+  being registered by clk-bcm238. IMO either register one or the other, giv=
+ing
+  precedence to the mmio counterpart. Note that for pllb, we deleted the
+  relevant code from clk-bcm2385.
+
+- The same way we were able to map the fw CPU clock into the clk tree
+  (pllb/pllb_arm) there are no reasons we shouldn't be able to do the same =
+for
+  the VPU clocks. It's way nicer and less opaque to users (this being a
+  learning platform adds to the argument).
+
+- On top of that, having a special case for the CPU clock registration is
+  nasty. Lets settle for one solution and make everyone follow it.
+
+- I don't see what's so bad about creating clock lookups. IIUC there are on=
+ly
+  two clocks that need this special handling CPU & HDMI, It's manageable. Y=
+ou
+  don't even have to mess with the consumer driver, if there was ever to be=
+ a
+  dt provided mmio option to this clock.
+
+>  drivers/clk/bcm/clk-raspberrypi.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-
+> raspberrypi.c
+> index 1654fd0eedc9..94870234824c 100644
+> --- a/drivers/clk/bcm/clk-raspberrypi.c
+> +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> @@ -255,15 +255,13 @@ static int raspberrypi_clk_probe(struct platform_de=
+vice
+> *pdev)
+>  	struct raspberrypi_clk *rpi;
+>  	int ret;
+> =20
+> -	firmware_node =3D of_find_compatible_node(NULL, NULL,
+> -					"raspberrypi,bcm2835-firmware");
+> +	firmware_node =3D of_parse_phandle(dev->of_node, "raspberrypi,firmware"=
+,
+> 0);
+
+There is no such phandle in the upstream device tree. Maybe this was aimed =
+at
+the downstream dt?
+
+Regards,
+Nicolas
+
+
+--=-rHY9rlJOyK3Y6KPoBaSb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5VRLgACgkQlfZmHno8
+x/6Q2gf+ISkwE0dJhNaeauh1TOB9Ymx8NHoZYccWJLmwg4vqH+nOGwxQM4O26qbu
+lXwrXTBzGcDwvdJkGmBsrTqRGGRbgtmeBQu4siPFNjD7hl775Uz2FIfNlWnUEieQ
+lKbdquRkNjoHvXoDDuHEHuBlHQ2W0IckhNFiEMhdDGb2n9eAvBaILoba+pgjgwP6
+IAnRGDlk7JBf7kuWHk6RWEOjOwKoCJlHJsNA09ZK2tjXMkaOqKLWnGIVGFMECm7/
+ThGgG9gqv65WG/8uK1E/F5hnR3qVbYXLcXAXZLK28nxkXODDw7fNBEXEUfXHJKqT
+TtEHMJ79mu2FeQA32GE0G3lduoWGjg==
+=HBgi
+-----END PGP SIGNATURE-----
+
+--=-rHY9rlJOyK3Y6KPoBaSb--
+
