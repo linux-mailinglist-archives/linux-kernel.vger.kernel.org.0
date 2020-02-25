@@ -2,101 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E58EA16EDF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:27:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F9F716EDFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:29:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731557AbgBYS1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 13:27:55 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43681 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731524AbgBYS1y (ORCPT
+        id S1731565AbgBYS3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 13:29:35 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:52924 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbgBYS3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 13:27:54 -0500
-Received: by mail-lj1-f195.google.com with SMTP id a13so15127880ljm.10
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 10:27:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GuecmF1yO4tHT3TnahV50e2HzEnXvd8V5CGAOVbnplY=;
-        b=OqJ+vlEoWFx5gLSWgF61ab1/Q32WWhXbHNDXycmahm/2WHj3sW13PHAFhc/97Lcjm3
-         VSMQMXqHCzPkueoOB2jz8PRFLmWZY4M2AybZF6quz9J+a5EMqVT4V/ip8ce/YaL8wYWI
-         FnqkptEVf112Bjo5/UCNc1rFsaQgVSVoiz7xQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GuecmF1yO4tHT3TnahV50e2HzEnXvd8V5CGAOVbnplY=;
-        b=DPZrmpRRuz4VubPj1hW+TXKbhQxFu6TEkGGMsIxw4bI8bOWpxnIeAWhQEmWMTQS3p+
-         Gw5GBQFswcdcOd+LWUCzRxeL1Fbil9a1+kUeYXgq/V0OHYOsCA6pKdKD1CbeMUDlqgXi
-         Bqb9WNz6JZPI4cDWkcA7Pr+ke0AdVJBe8qvZ4UZ+Lryz+wtNfiWTFxJSVl+ganSZlK8G
-         wN35VKszb0yHRMqeKLbfqD/7o2/wLunFVamsh8E2YrY0DCPjNs+DCPP6jRnxNrDFA8Oj
-         yLid5tXHQWRfUuLSVbXA6NvWfFCdq77P82gm30jb7nDJMqls2V3SI8j5wqCh/Sh6MOMZ
-         f3HA==
-X-Gm-Message-State: APjAAAXov5EOxb1g0qSqhCYtdet0aScfpWviLC0u7rZJ+QfNcysrSkhh
-        a33lzWUsgptbGWalpaS2zRF35QLH82Y=
-X-Google-Smtp-Source: APXvYqx4BMn0mo37VR4MXrbJeqO0y6IGFHZlj59XxYbRIJO8ckUsimRlmNUaKOYymmle4eahJY6Mew==
-X-Received: by 2002:a2e:b4ac:: with SMTP id q12mr181583ljm.285.1582655271694;
-        Tue, 25 Feb 2020 10:27:51 -0800 (PST)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id w8sm8241746ljj.75.2020.02.25.10.27.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2020 10:27:50 -0800 (PST)
-Received: by mail-lj1-f175.google.com with SMTP id r19so6865ljg.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 10:27:50 -0800 (PST)
-X-Received: by 2002:a05:651c:555:: with SMTP id q21mr193655ljp.241.1582655270148;
- Tue, 25 Feb 2020 10:27:50 -0800 (PST)
+        Tue, 25 Feb 2020 13:29:35 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01PINhOG135617;
+        Tue, 25 Feb 2020 18:28:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=s65FAwe6rKkFUzFN7JM3BEeK126LVw7a/JcTrGwEU+8=;
+ b=zFak7vW096Kbg9nvSPPrC1FraCgE/MxLkheu8lIBmf0UYkGbiKB8N2l6n4GQnzLgVW8q
+ YmdnWesUf2zt+cM/iJT0KQCIOTg7omXMu6bxoT78WJkgYc2TircwN3CCo3JHh7SGNDcG
+ tXvO8h22KtDA5fxtudbWzwdGr39Hwc3nTV0ZFwgz17GGVTtv6cA1jwJErSSghUd5197/
+ OZ+JqpkqH7zw7ezWPQoNQLa45oVfyczkpOU4zUL273O8WLupqda6XXAf6wbrUXKloN1O
+ dzQNgXoG1AXm37KzgcjVsxYYinzW0ekdLzQagRJTBGyXyHfGoVOXegRZ9E1DGUQ2az7J fQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2yd093keew-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Feb 2020 18:28:28 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01PIEJk7187859;
+        Tue, 25 Feb 2020 18:28:27 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2yd0vv53r2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Feb 2020 18:28:27 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01PISQu6015812;
+        Tue, 25 Feb 2020 18:28:26 GMT
+Received: from localhost.localdomain (/10.159.148.245)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 25 Feb 2020 10:28:26 -0800
+Subject: Re: [PATCH 1/2] kvm: vmx: Use basic exit reason to check if it's the
+ specific VM EXIT
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+References: <20200224020751.1469-1-xiaoyao.li@intel.com>
+ <20200224020751.1469-2-xiaoyao.li@intel.com>
+ <87lfosp9xs.fsf@vitty.brq.redhat.com>
+ <d9744594-4a66-d867-f785-64ce4d42b848@intel.com>
+ <716806df-c0e4-43d5-b082-627d2c312f53@oracle.com>
+ <877e0an763.fsf@vitty.brq.redhat.com>
+From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Message-ID: <f109f89d-ec69-4651-140b-24cc0be233d2@oracle.com>
+Date:   Tue, 25 Feb 2020 10:28:25 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20200224212352.8640-1-w@1wt.eu> <20200224212352.8640-2-w@1wt.eu>
- <CAHk-=wi4R_nPdE4OuNW9daKFD4FpV74PkG4USHqub+nuvOWYFg@mail.gmail.com>
- <28e72058-021d-6de0-477e-6038a10d96da@linux.com> <20200225034529.GA8908@1wt.eu>
- <c181b184-1785-b221-76fa-4313bbada09d@linux.com> <20200225140207.GA31782@1wt.eu>
- <10bc7df1-7a80-a05a-3434-ed0d668d0c6c@linux.com> <CAHk-=wggnfCR2JcC-U9LxfeBo2UMagd-neEs8PwDHsGVfLfS=Q@mail.gmail.com>
- <20200225181541.GA1138@1wt.eu>
-In-Reply-To: <20200225181541.GA1138@1wt.eu>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 25 Feb 2020 10:27:34 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whyEQy771ixppPmMSYtPcFS5ZtqVWUYow8gWd=pMnATNA@mail.gmail.com>
-Message-ID: <CAHk-=whyEQy771ixppPmMSYtPcFS5ZtqVWUYow8gWd=pMnATNA@mail.gmail.com>
-Subject: Re: [PATCH 01/10] floppy: cleanup: expand macro FDCS
-To:     Willy Tarreau <w@1wt.eu>
-Cc:     Denis Efremov <efremov@linux.com>, Jens Axboe <axboe@kernel.dk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <877e0an763.fsf@vitty.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9542 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 bulkscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 adultscore=0 mlxlogscore=990
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002250130
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9542 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 suspectscore=0 priorityscore=1501
+ phishscore=0 clxscore=1015 mlxlogscore=999 spamscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002250130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 10:15 AM Willy Tarreau <w@1wt.eu> wrote:
+
+On 2/25/20 5:11 AM, Vitaly Kuznetsov wrote:
+> Krish Sadhukhan <krish.sadhukhan@oracle.com> writes:
 >
-> On Tue, Feb 25, 2020 at 10:08:51AM -0800, Linus Torvalds wrote:
-> >
-> > So we can remove at least the FD_IOPORT mess from the header file, I bet.
-> >
-> > Worst case - if somebody finds some case that uses them, we can put it back.
+>> We have a macro for bit 31,
+>>
+>>       VMX_EXIT_REASONS_FAILED_VMENTRY                0x80000000
+>>
+>>
+>> Does it make sense to define a macro like that instead ? Say,
+>>
+>>       VMX_BASIC_EXIT_REASON        0x0000ffff
+>>
+> 0xffffU ?
 >
-> I like that. And at least we'll know how they use it (likely without the
-> dependency on fdc).
+>> and then we do,
+>>
+>>       u32 exit_reason = vmx->exit_reason;
+>>       u16 basic_exit_reason = exit_reason & VMX_BASIC_EXIT_REASON;
+>>
+> Just a naming suggestion: if we decide to go down this road, let's name
+> it e.g. VMX_BASIC_EXIT_REASON_MASK to make it clear this is *not* an
+> exit reason.
+>
 
-Note that the way uapi header files generally got created was by just
-moving header files that user space used mechanically. See for example
-commit 607ca46e97a1 ("UAPI: (Scripted) Disintegrate include/linux")
-which created most of them.
+VMX_BASIC_EXIT_REASON_MASK  works.
 
-There was no careful vetting of "this is the part that is used by user
-space". It was just a "these are the files user space has used".
-
-So it's not really a "the uapi files are set in stone and you can't
-change them". Instead, you should think of the uapi files as a big red
-blinking warning that says "sure, you can change them, but you need to
-be very careful and think about the fact that user space may be
-including this thing".
-
-So it's a "think hard about it" rather than a "don't go there".
-
-Of course, usually it's much _simpler_ to just "don't go there" ;)
-
-            Linus
