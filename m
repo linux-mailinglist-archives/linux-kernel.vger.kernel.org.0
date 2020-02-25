@@ -2,56 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8C6716F103
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 22:20:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3245A16F0EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 22:11:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbgBYVUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 16:20:02 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:49686 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728753AbgBYVTw (ORCPT
+        id S1728585AbgBYVLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 16:11:22 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34496 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgBYVLW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 16:19:52 -0500
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
-        by isilmar-4.linta.de (Postfix) with ESMTPSA id 62A77200AFA;
-        Tue, 25 Feb 2020 21:19:50 +0000 (UTC)
-Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id 1D9C420BDB; Tue, 25 Feb 2020 22:11:04 +0100 (CET)
-Date:   Tue, 25 Feb 2020 22:11:04 +0100
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Brian Gerst <brgerst@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v2 4/8] x86, syscalls: Refactor SYS_NI macros
-Message-ID: <20200225211104.GD3954@light.dominikbrodowski.net>
-References: <20200224181757.724961-1-brgerst@gmail.com>
- <20200224181757.724961-5-brgerst@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224181757.724961-5-brgerst@gmail.com>
+        Tue, 25 Feb 2020 16:11:22 -0500
+Received: by mail-pg1-f195.google.com with SMTP id j4so172374pgi.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 13:11:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=tF+IlVAI+HS6Y0f+cneOLEXoT8cWlqM5wUtgnJmBx14=;
+        b=ftkdQ2hgfFVI+hwU2MK6zYKrQrPOSgrXXuFofv2ARHivbmdOfs3ssBMzmdjnP5ZzPD
+         Dr8MiMS654nUEZnmSv/nnA2aODa8F5AWISMWIlq2W5JbZQho0BgYPNraYWZPAoryyXSH
+         G+T5SQyrCZgGe4xBrhoQedScDHGxcrOiKer9O53ygw/vEXo5vFkJl3NoPmX+MdWgsP1L
+         Qan28rYEmUbwHA0ZPySQNAZQwsCrfKb4qnKz3CxjPFQlrY9yQBNHzugggZ0UiAAmEP++
+         ITepZHHQcsLZT8uewbRgRRN9T9ryRH/AJL5KBei+/II26JUJl+y9nBjMNa/GET7EKb29
+         WFlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=tF+IlVAI+HS6Y0f+cneOLEXoT8cWlqM5wUtgnJmBx14=;
+        b=djqlA2qd4QvDijP9zGhY+5PytzpSyw9/gx73suTUZVV7y+sxMz7E0XyuGlCptflwFj
+         o9bdv5Vq9jhPcmBQ1L85iYq3OdE9+5xjXyO9DXouo5tVMb7AaHoJSQyBf+0XHjiX+YrV
+         REgl9mNbVd0EIZ+mEN7BwvaS0FogNAgB4tiqtiv/4G9TzHNUw3e4jg2aBzHWgmXzNKvT
+         Kc33T1D9X4x2SflpBIpKKLkgIwxV5aa+eD883/hh7Z6Fhj/hANhRF47mCIrqy2mclJW6
+         dg6beoSAEMFWB9IU3N3itUQBqvxvMLZ24us3MyTO4WbNAl5190uFCNavFQa1Lv9rwmrF
+         gTIA==
+X-Gm-Message-State: APjAAAUc+LDdSKvK/8LaJZK/SQ51Yr6X4V7N5UA10QwkXwwl8enqbvCU
+        WkP490Ltp2S9CKooWTH4E/hKjQ==
+X-Google-Smtp-Source: APXvYqwWoqLqv60gI3Mi9a6nyAllDkJGT9fQ6YDrQ3DDVc1ZKlkRjfSci7qWel5KG88MecI6TkZFBg==
+X-Received: by 2002:a63:d90c:: with SMTP id r12mr486886pgg.106.1582665081210;
+        Tue, 25 Feb 2020 13:11:21 -0800 (PST)
+Received: from nuc7.sifive.com ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id h3sm17862064pfo.102.2020.02.25.13.11.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 25 Feb 2020 13:11:20 -0800 (PST)
+From:   Alan Mikhak <alan.mikhak@sifive.com>
+X-Google-Original-From: Alan Mikhak < alan.mikhak@sifive.com >
+To:     kishon@ti.com
+Cc:     alan.mikhak@sifive.com, amurray@thegoodpenguin.co.uk,
+        arnd@arndb.de, bhelgaas@google.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        lorenzo.pieralisi@arm.com
+Subject: [PATCH 1/5] PCI: endpoint: functions/pci-epf-test: Add DMA support to transfer data
+Date:   Tue, 25 Feb 2020 13:11:07 -0800
+Message-Id: <1582665067-20462-1-git-send-email-alan.mikhak@sifive.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <20200225091130.29467-1-kishon@ti.com>
+References: <20200225091130.29467-1-kishon@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 01:17:53PM -0500, Brian Gerst wrote:
-> Pull the common code out from the SYS_NI macros into a new __SYS_NI macro.
-> Also conditionalize the X64 version in preparation for enabling syscall
-> wrappers on 32-bit native kernels.
+@@ -380,6 +572,7 @@ static void pci_epf_test_unbind(struct pci_epf *epf)
+        int bar;
 
-Same comment about naming; looks good otherwise.
+        cancel_delayed_work(&epf_test->cmd_handler);
++       pci_epf_clean_dma_chan(epf_test);
+        pci_epc_stop(epc);
+        for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
+                epf_bar = &epf->bar[bar];
+@@ -550,6 +743,12 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+                }
+        }
 
-Thanks,
-	Dominik
++       epf_test->dma_supported = true;
++
++       ret = pci_epf_init_dma_chan(epf_test);
++       if (ret)
++               epf_test->dma_supported = false;
++
+        if (linkup_notifier) {
+                epf->nb.notifier_call = pci_epf_test_notifier;
+                pci_epc_register_notifier(epc, &epf->nb);
+
+Hi Kishon,
+
+Looking forward to building and trying this patch series on
+a platform I work on.
+
+Would you please point me to where I can find the patches
+which add pci_epf_init_dma_chan() and pci_epf_clean_dma_chan()
+to Linux PCI Endpoint Framework?
+
+Regards,
+Alan Mikhak
