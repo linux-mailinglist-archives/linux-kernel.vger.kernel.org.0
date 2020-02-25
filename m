@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A479016F349
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:27:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64D0D16F34C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:28:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbgBYX1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:27:51 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56034 "EHLO
+        id S1730207AbgBYX14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:27:56 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55994 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730514AbgBYX1A (ORCPT
+        with ESMTP id S1730440AbgBYX0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:27:00 -0500
+        Tue, 25 Feb 2020 18:26:51 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j6jb1-00056Y-ND; Wed, 26 Feb 2020 00:26:36 +0100
+        id 1j6jb2-000577-IR; Wed, 26 Feb 2020 00:26:36 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id B844F1040C6;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id F0973104092;
         Wed, 26 Feb 2020 00:25:53 +0100 (CET)
-Message-Id: <20200225231610.123348205@linutronix.de>
+Message-Id: <20200225231610.221123873@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Feb 2020 23:47:31 +0100
+Date:   Tue, 25 Feb 2020 23:47:32 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [patch 12/15] x86/entry: Remove the apic/BUILD interrupt leftovers
+Subject: [patch 13/15] x86/entry/32: Remove redundant irq disable code
 References: <20200225224719.950376311@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,172 +42,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove all the code which was there to emit the system vector stubs. All
-users are gone.
+All exceptions/interrupts return with interrupts disabled now. No point in
+doing this in ASM again.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/entry/entry_32.S |   15 -----
- arch/x86/entry/entry_64.S |  118 ----------------------------------------------
- 2 files changed, 133 deletions(-)
+ arch/x86/entry/entry_32.S |   11 -----------
+ 1 file changed, 11 deletions(-)
 
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -1271,21 +1271,6 @@ SYM_CODE_END(asm_\cfunc)
+@@ -64,12 +64,6 @@
+  * enough to patch inline, increasing performance.
   */
- #include <asm/idtentry.h>
  
--#define BUILD_INTERRUPT3(name, nr, fn)			\
--SYM_FUNC_START(name)					\
--	ASM_CLAC;					\
--	pushl	$~(nr);					\
--	SAVE_ALL switch_stacks=1;			\
--	ENCODE_FRAME_POINTER;				\
--	TRACE_IRQS_OFF					\
--	movl	%esp, %eax;				\
--	call	fn;					\
--	jmp	ret_from_intr;				\
--SYM_FUNC_END(name)
+-#ifdef CONFIG_PREEMPTION
+-# define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
+-#else
+-# define preempt_stop(clobbers)
+-#endif
 -
--#define BUILD_INTERRUPT(name, nr)		\
--	BUILD_INTERRUPT3(name, nr, smp_##name);	\
--
- #ifdef CONFIG_PARAVIRT
- SYM_CODE_START(native_iret)
- 	iret
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -700,103 +700,7 @@ SYM_CODE_END(\asmsym)
-  */
- #include <asm/idtentry.h>
+ .macro TRACE_IRQS_IRET
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ 	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)     # interrupts off?
+@@ -876,7 +870,6 @@ SYM_CODE_END(ret_from_fork)
  
--/*
-- * Interrupt entry helper function.
-- *
-- * Entry runs with interrupts off. Stack layout at entry:
-- * +----------------------------------------------------+
-- * | regs->ss						|
-- * | regs->rsp						|
-- * | regs->eflags					|
-- * | regs->cs						|
-- * | regs->ip						|
-- * +----------------------------------------------------+
-- * | regs->orig_ax = ~(interrupt number)		|
-- * +----------------------------------------------------+
-- * | return address					|
-- * +----------------------------------------------------+
-- */
--SYM_CODE_START(interrupt_entry)
--	UNWIND_HINT_FUNC
--	ASM_CLAC
--	cld
--
--	testb	$3, CS-ORIG_RAX+8(%rsp)
--	jz	1f
--	SWAPGS
--	FENCE_SWAPGS_USER_ENTRY
--	/*
--	 * Switch to the thread stack. The IRET frame and orig_ax are
--	 * on the stack, as well as the return address. RDI..R12 are
--	 * not (yet) on the stack and space has not (yet) been
--	 * allocated for them.
--	 */
--	pushq	%rdi
--
--	/* Need to switch before accessing the thread stack. */
--	SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
--	movq	%rsp, %rdi
--	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
--
--	 /*
--	  * We have RDI, return address, and orig_ax on the stack on
--	  * top of the IRET frame. That means offset=24
--	  */
--	UNWIND_HINT_IRET_REGS base=%rdi offset=24
--
--	pushq	7*8(%rdi)		/* regs->ss */
--	pushq	6*8(%rdi)		/* regs->rsp */
--	pushq	5*8(%rdi)		/* regs->eflags */
--	pushq	4*8(%rdi)		/* regs->cs */
--	pushq	3*8(%rdi)		/* regs->ip */
--	pushq	2*8(%rdi)		/* regs->orig_ax */
--	pushq	8(%rdi)			/* return address */
--	UNWIND_HINT_FUNC
--
--	movq	(%rdi), %rdi
--	jmp	2f
--1:
--	FENCE_SWAPGS_KERNEL_ENTRY
--2:
--	PUSH_AND_CLEAR_REGS save_ret=1
--	ENCODE_FRAME_POINTER 8
--
--	testb	$3, CS+8(%rsp)
--	jz	1f
--
--	/*
--	 * IRQ from user mode.
--	 *
--	 * We need to tell lockdep that IRQs are off.  We can't do this until
--	 * we fix gsbase, and we should do it before enter_from_user_mode
--	 * (which can take locks).  Since TRACE_IRQS_OFF is idempotent,
--	 * the simplest way to handle it is to just call it twice if
--	 * we enter from user mode.  There's no reason to optimize this since
--	 * TRACE_IRQS_OFF is a no-op if lockdep is off.
--	 */
--	TRACE_IRQS_OFF
--
--	CALL_enter_from_user_mode
--
--1:
--	ENTER_IRQ_STACK old_rsp=%rdi save_ret=1
--	/* We entered an interrupt context - irqs are off: */
--	TRACE_IRQS_OFF
--
--	ret
--SYM_CODE_END(interrupt_entry)
--_ASM_NOKPROBE(interrupt_entry)
--
- SYM_CODE_START_LOCAL(common_interrupt_return)
--ret_from_intr:
+ 	# userspace resumption stub bypassing syscall exit tracing
+ SYM_CODE_START_LOCAL(ret_from_exception)
+-	preempt_stop(CLBR_ANY)
+ ret_from_intr:
+ #ifdef CONFIG_VM86
+ 	movl	PT_EFLAGS(%esp), %eax		# mix EFLAGS and CS
+@@ -892,8 +885,6 @@ SYM_CODE_START_LOCAL(ret_from_exception)
+ 	cmpl	$USER_RPL, %eax
+ 	jb	restore_all_kernel		# not returning to v8086 or userspace
+ 
 -	DISABLE_INTERRUPTS(CLBR_ANY)
 -	TRACE_IRQS_OFF
--
--	LEAVE_IRQ_STACK
--
--	testb	$3, CS(%rsp)
--	jz	retint_kernel
--
- 	/* Interrupt came from user space */
- .Lretint_user:
- 	mov	%rsp,%rdi
-@@ -973,28 +877,6 @@ SYM_CODE_END(common_interrupt_return)
- _ASM_NOKPROBE(common_interrupt_return)
+ 	movl	%esp, %eax
+ 	call	prepare_exit_to_usermode
+ 	jmp	restore_all_switch_stack
+@@ -1135,7 +1126,6 @@ SYM_FUNC_START(entry_INT80_32)
  
- /*
-- * APIC interrupts.
-- */
--.macro apicinterrupt3 num sym do_sym
--SYM_CODE_START(\sym)
--	UNWIND_HINT_IRET_REGS
--	pushq	$~(\num)
--.Lcommon_\sym:
--	call	interrupt_entry
--	UNWIND_HINT_REGS indirect=1
--	call	\do_sym	/* rdi points to pt_regs */
--	jmp	ret_from_intr
--SYM_CODE_END(\sym)
--_ASM_NOKPROBE(\sym)
--.endm
--
--.macro apicinterrupt num sym do_sym
--PUSH_SECTION_IRQENTRY
--apicinterrupt3 \num \sym \do_sym
--POP_SECTION_IRQENTRY
--.endm
--
--/*
-  * Reload gs selector with exception handling
-  * edi:  new selector
-  */
+ restore_all_kernel:
+ #ifdef CONFIG_PREEMPTION
+-	DISABLE_INTERRUPTS(CLBR_ANY)
+ 	cmpl	$0, PER_CPU_VAR(__preempt_count)
+ 	jnz	.Lno_preempt
+ 	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)	# interrupts off (exception path) ?
+@@ -1299,7 +1289,6 @@ SYM_FUNC_START(exc_xen_hypervisor_callba
+ 	pushl	$-1				/* orig_ax = -1 => not a system call */
+ 	SAVE_ALL
+ 	ENCODE_FRAME_POINTER
+-	TRACE_IRQS_OFF
+ 	mov	%esp, %eax
+ 	call	xen_evtchn_do_upcall
+ #ifndef CONFIG_PREEMPTION
 
