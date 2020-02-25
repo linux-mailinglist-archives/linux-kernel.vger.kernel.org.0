@@ -2,128 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C53116EBDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:57:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8493A16EBE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:58:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbgBYQ5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 11:57:55 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34966 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727983AbgBYQ5y (ORCPT
+        id S1731261AbgBYQ6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 11:58:25 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:27966 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731215AbgBYQ6Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 11:57:54 -0500
-Received: by mail-oi1-f194.google.com with SMTP id b18so10662oie.2;
-        Tue, 25 Feb 2020 08:57:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6ACHzMKOSBk1FuBO6DMA0vB22pVYkOJchRbVTRFy7wc=;
-        b=ouSZ4V/DXQQ9ncFyDMiRSFn6QrlYM/9W0omfDOVeWpsbvVLaNdXLbLnVVVk9ZxVx0Z
-         DIPdNobyA/brtbE0/G4R8suJJt1vbW0keTz/1YlWEL017wvcvOEgA7UZlm8kAUBXcdGz
-         DY57AaGAjjMRJhQ/pDYuQGex6GBGnI4UvxhoVB1lkgtqQKovmFAP3k5D4q+aylBpRwN7
-         z/fdwWpw+Y2mvGJMT0cJgEKpqk/FVQUTSAv87X6S+IjISewANIM6UyYaZezBkkZn1siB
-         9Ybs+LeqW4zEuzO3So5k7ubMumpW22D8DIiwCEjknpoUfFCQ4QAmvgNOjh3cm8FURPOz
-         gPpg==
-X-Gm-Message-State: APjAAAX99Cpdf0USlHTR0JxyeqqrsgnqllqIcBQARWe5CJ73473m5x+7
-        NaPMkqbZ21PFWlJUibsQrQ==
-X-Google-Smtp-Source: APXvYqwCAroWxHCBDIW6Ez+l4uiPOauLqnHGApz7U1x4l+wo5KhnyaAyjioax5zei4S1Mi5WgdWp3g==
-X-Received: by 2002:aca:ebcb:: with SMTP id j194mr4456543oih.154.1582649873340;
-        Tue, 25 Feb 2020 08:57:53 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id j140sm5452376oib.46.2020.02.25.08.57.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 08:57:52 -0800 (PST)
-Received: (nullmailer pid 16625 invoked by uid 1000);
-        Tue, 25 Feb 2020 16:57:50 -0000
-Date:   Tue, 25 Feb 2020 10:57:50 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Mateusz Holenko <mholenko@antmicro.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, devicetree@vger.kernel.org,
-        linux-serial@vger.kernel.org, Stafford Horne <shorne@gmail.com>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Filip Kokosinski <fkokosinski@antmicro.com>,
-        Pawel Czarnecki <pczarnecki@internships.antmicro.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] dt-bindings: soc: document LiteX SoC Controller
-  bindings
-Message-ID: <20200225165750.GA15779@bogus>
-References: <20200225094437.4170502-0-mholenko@antmicro.com>
- <20200225094437.4170502-2-mholenko@antmicro.com>
+        Tue, 25 Feb 2020 11:58:24 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582649904; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=gW7KKTafC5UnPh4r9NHeJkvVzV8LOu3rxJ2WBv0Sl28=; b=qtkWQ55A9V3DKIK8tvAa3Un6VEROqkM46IrX+QSavT3yQmaU7PT3Osw7mfFr5TVut0izI0E4
+ Xjii0vCCBEiiD7Ch7ArF8jtbJUd8G0YgLb5SWVT7KAvEdefU5yiHxAHiGNJaOjjcxPmk4cYD
+ VSUXF5fVsuxiISkrqkJHX2Ec6J8=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e55522f.7fb60110b7d8-smtp-out-n01;
+ Tue, 25 Feb 2020 16:58:23 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 655EFC447A3; Tue, 25 Feb 2020 16:58:23 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [10.71.154.194] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: asutoshd)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8146EC43383;
+        Tue, 25 Feb 2020 16:58:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8146EC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
+Subject: Re: [PATCH v2 2/2] scsi: ufs-qcom: Apply QUIRK_HOST_TACTIVATE for WDC
+ UFS devices
+To:     Can Guo <cang@codeaurora.org>, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Evan Green <evgreen@chromium.org>,
+        Bean Huo <beanhuo@micron.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1582517363-11536-1-git-send-email-cang@codeaurora.org>
+ <1582517363-11536-3-git-send-email-cang@codeaurora.org>
+From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+Message-ID: <3fd54f3f-c580-71b4-1e05-ba9802dff995@codeaurora.org>
+Date:   Tue, 25 Feb 2020 08:58:22 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225094437.4170502-2-mholenko@antmicro.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1582517363-11536-3-git-send-email-cang@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Feb 2020 09:46:45 +0100, Mateusz Holenko wrote:
-> From: Pawel Czarnecki <pczarnecki@internships.antmicro.com>
+On 2/23/2020 8:09 PM, Can Guo wrote:
+> Western Digital UFS devices require host's PA_TACTIVATE to be lower than
+> device's PA_TACTIVATE, otherwise it may get stuck during hibern8 sequence.
 > 
-> Add documentation for LiteX SoC Controller bindings.
-> 
-> Signed-off-by: Pawel Czarnecki <pczarnecki@internships.antmicro.com>
-> Signed-off-by: Mateusz Holenko <mholenko@antmicro.com>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
 > ---
+
+Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
+
+>   drivers/scsi/ufs/ufs-qcom.c   | 3 +++
+>   drivers/scsi/ufs/ufs_quirks.h | 1 +
+>   2 files changed, 4 insertions(+)
 > 
-> Notes:
->     This commit has been introduced in v3 of the patchset.
+> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+> index c69c29a1c..4caa57f 100644
+> --- a/drivers/scsi/ufs/ufs-qcom.c
+> +++ b/drivers/scsi/ufs/ufs-qcom.c
+> @@ -956,6 +956,9 @@ static int ufs_qcom_apply_dev_quirks(struct ufs_hba *hba)
+>   	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME)
+>   		err = ufs_qcom_quirk_host_pa_saveconfigtime(hba);
+>   
+> +	if (hba->dev_info.wmanufacturerid == UFS_VENDOR_WDC)
+> +		hba->dev_quirks |= UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE;
+> +
+>   	return err;
+>   }
+>   
+> diff --git a/drivers/scsi/ufs/ufs_quirks.h b/drivers/scsi/ufs/ufs_quirks.h
+> index d0ab147..df7a1e6 100644
+> --- a/drivers/scsi/ufs/ufs_quirks.h
+> +++ b/drivers/scsi/ufs/ufs_quirks.h
+> @@ -15,6 +15,7 @@
+>   #define UFS_VENDOR_TOSHIBA     0x198
+>   #define UFS_VENDOR_SAMSUNG     0x1CE
+>   #define UFS_VENDOR_SKHYNIX     0x1AD
+> +#define UFS_VENDOR_WDC         0x145
+>   
+>   /**
+>    * ufs_dev_fix - ufs device quirk info
 > 
->  .../soc/litex/litex,soc_controller.yaml       | 46 +++++++++++++++++++
->  MAINTAINERS                                   |  6 +++
->  2 files changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/litex/litex,soc_controller.yaml
-> 
 
-My bot found errors running 'make dt_binding_check' on your patch:
 
-warning: no schema found in file: Documentation/devicetree/bindings/soc/litex/litex,soc_controller.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/litex/litex,soc_controller.yaml: ignoring, error parsing file
-Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-doc-validate", line 35, in check_doc
-    testtree = dtschema.load(filename, line_number=line_number, duplicate_keys=False)
-  File "/usr/local/lib/python3.6/dist-packages/dtschema/lib.py", line 513, in load
-    return yaml.load(f.read())
-  File "/usr/local/lib/python3.6/dist-packages/ruamel/yaml/main.py", line 343, in load
-    return constructor.get_single_data()
-  File "/usr/local/lib/python3.6/dist-packages/ruamel/yaml/constructor.py", line 111, in get_single_data
-    node = self.composer.get_single_node()
-  File "_ruamel_yaml.pyx", line 718, in _ruamel_yaml.CParser.get_single_node
-ruamel.yaml.composer.ComposerError: expected a single document in the stream
-  in "<unicode string>", line 1, column 1
-but found another document
-  in "<unicode string>", line 2, column 1
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-doc-validate", line 74, in <module>
-    ret = check_doc(args.yamldt)
-  File "/usr/local/bin/dt-doc-validate", line 40, in check_doc
-    print(filename + ":", exc.path[-1], exc.message)
-AttributeError: 'ComposerError' object has no attribute 'path'
-Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/soc/litex/litex,soc_controller.example.dts' failed
-make[1]: *** [Documentation/devicetree/bindings/soc/litex/litex,soc_controller.example.dts] Error 1
-Makefile:1263: recipe for target 'dt_binding_check' failed
-make: *** [dt_binding_check] Error 2
-
-See https://patchwork.ozlabs.org/patch/1243930
-Please check and re-submit.
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Linux Foundation Collaborative Project
