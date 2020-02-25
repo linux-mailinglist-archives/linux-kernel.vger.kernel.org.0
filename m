@@ -2,250 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14B9A16F28B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 23:22:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D37816F291
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 23:25:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbgBYWW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 17:22:27 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46954 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbgBYWW1 (ORCPT
+        id S1728989AbgBYWZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 17:25:53 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44063 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbgBYWZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 17:22:27 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y8so388990pll.13
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 14:22:26 -0800 (PST)
+        Tue, 25 Feb 2020 17:25:53 -0500
+Received: by mail-ot1-f65.google.com with SMTP id h9so1043739otj.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 14:25:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=i3qcrHEDwkcSU2z2ysXEkHeEf2Lb53ngVdO/ycr/1iw=;
-        b=jGMAVqCONYvFzTx1D9TK5w7TgtAGPN9yp2GVcdSWmKdRB6WBHsZ0jm4Yq0PgtKM77z
-         j3JuisJmAOdHUnCWonHm2DYZd7gpEGUjX2jgwcaEtGZV6AXcEqLGsTyRTJluHcBUqVJk
-         OKclfAg1Yzd0p7yiH3BAsmZg6RYEa/X6xwl9SFiPdx3RFdQ/u8vu8Yg7cuk1ar+X9fg4
-         JQA7B5vOYLrXRLSAAvAX5XnwcJBInXCKV+MMa9OV/0avfqmBvsetBAKtO/EKB++TV0AV
-         tggevLe8XSubFFiPegHVyj2pQNoVPpIq2BeLuvp1f7hXRAqpPu16E3ofTO2e9NRKmRU6
-         Hs5g==
+        d=gateworks-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XdH+yxbAhUB4UY/s7QjGS1gpAo5FXhyFRsa4xxUTp5A=;
+        b=fQ/sKKht62Wl7N94VjMHNK/K4I/aKoxyhqQyngIB+7G6dmIF77e43Dhcx2NPFKf1Hl
+         JMJ9P1uOpE99hvIkdE9+o7JvuwJKd0q4fJDVyZAXMd2hyBCVoiJEjpc+40AaARhYZ2P5
+         k151SykV9p9yuPK61UxwkIViDIEs5Mx8DV8ObsNC7hejaLVsaHxxfWxHO0RoLJE9ls/0
+         C0xPOQ///z1oz136gbT/dTZNmKrQ1iKKlnhOJF6sSViOR8d1eZFqksjhxbu9AlhTrOtz
+         kxcqcwq5gnGaCCXKOtxHqh28GczNoMDba0jDWH+XWl9GFklYcKMrPZXVzfvec4CrB275
+         DVXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i3qcrHEDwkcSU2z2ysXEkHeEf2Lb53ngVdO/ycr/1iw=;
-        b=XcGWMbcnD6Hf2Qw4MBWGflDUG41UKgLoV7+A+BFn34xwNLliWI9JBYOz1bIhWKkOBL
-         YvDAJHbzkthSoyF2cJJSZtv7x9iS6rNSIUUrbcWM6Q+MjaWpKu3TnKau3qMKOrs8AfnH
-         b5M9mVK1pNpDn+NbBrrVc8FvDlvxQf4CoUDA0c0Ly7t8jrfUksDET6KT3MUbtl54z2ob
-         7vXcAaepcNG2tncD0TXqjpk5D8WAfLiSP0gncT+GWTJtB3W9+n2e4qrr9nenjmZWcVtz
-         knbj+JXbMVrHi35WjXpWGE785oxLSuxF65GYeOSCYs94Lxos3zXZuOzdbByePpOD3CM+
-         /Oxg==
-X-Gm-Message-State: APjAAAXOH4cnZ8EYf23q9AQCiUnHAAUG/uuQkX0Yu6UCtu0zRV3JsfXD
-        kX2Gv9xEQGMVggaXR/utwbFCPAIepyCwLg==
-X-Google-Smtp-Source: APXvYqzKZ2nCPNc6QhH+oYtX1+GECkoYH1BNFvKPVMrr2AKU7Y8IUtjNjycV00baRprC58yDCr019A==
-X-Received: by 2002:a17:902:904c:: with SMTP id w12mr744060plz.35.1582669345652;
-        Tue, 25 Feb 2020 14:22:25 -0800 (PST)
-Received: from google.com ([2620:15c:2cb:1:e90c:8e54:c2b4:29e7])
-        by smtp.gmail.com with ESMTPSA id d4sm114311pjz.12.2020.02.25.14.22.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 14:22:25 -0800 (PST)
-Date:   Tue, 25 Feb 2020 14:22:21 -0800
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     Heidi Fahim <heidifahim@google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com
-Subject: Re: [PATCH 1/2] kunit: kunit_parser: making parser more robust
-Message-ID: <20200225222221.GA144971@google.com>
-References: <20200225201130.211124-1-heidifahim@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XdH+yxbAhUB4UY/s7QjGS1gpAo5FXhyFRsa4xxUTp5A=;
+        b=ZxIuN5vWhBbb9lYHXRhSnGuIHaFl9uoxvYIKQPxZZbYZ5BGB1w5xM18CeGr1wRBqc3
+         7PTkfvMhqIna6dhkIqdmA0CFw19kZQVdoQeMPzcTMeI6B1wc2TMgMgaONj0ThpalrsjT
+         RMdE8X9cKvxBUzDvh/T8/L/nAEsMcJhXqSd29hoCYgvgU5qTfYH8pa7I4oOdGcxhoiMx
+         YU6axH89zhOMeG/wFfbRKViW+VUQc4jfmbUO2hZJp6b8pIMEKlaU+nz+jsELxMKVwH5/
+         ckB0Ku8zziJ0Q3cmIfmfKWM3+rH18V3+iAuGkK/kLC8cRDeXhvQmZAQmZAs2j5jOMVqa
+         X9gg==
+X-Gm-Message-State: APjAAAXhMu0KkM2v5heXJYqbSY15yz74e48G55rg94gbh9Zuj9Hzs9AJ
+        /6XBOHtOjB5gKzWp3ow9PdCREKrIQpcC9hNr2A2LUg==
+X-Google-Smtp-Source: APXvYqx2/YsTotylW/r2EQUH4xN/RZ5uHi/ZTmKKH3C1Ka03nm+cOU0HFAzZNbSQVAM/gv7aJ8sUW6vHA7/KZMqdduo=
+X-Received: by 2002:a9d:7842:: with SMTP id c2mr591161otm.252.1582669552159;
+ Tue, 25 Feb 2020 14:25:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225201130.211124-1-heidifahim@google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <1582655734-20890-1-git-send-email-tharvey@gateworks.com> <0ac77abd-0df5-e437-ea46-f6c77f59b81c@pengutronix.de>
+In-Reply-To: <0ac77abd-0df5-e437-ea46-f6c77f59b81c@pengutronix.de>
+From:   Tim Harvey <tharvey@gateworks.com>
+Date:   Tue, 25 Feb 2020 14:25:40 -0800
+Message-ID: <CAJ+vNU3vk92_1UnrYH72QgD3-q9Oy9As=jCiup42jzx_2LG9FA@mail.gmail.com>
+Subject: Re: [PATCH] can: mcp251x: convert to half-duplex SPI
+To:     Marc Kleine-Budde <mkl@pengutronix.de>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux-can@vger.kernel.org, Wolfgang Grandegger <wg@grandegger.com>,
+        =?UTF-8?B?VGltbyBTY2hsw7zDn2xlcg==?= <schluessler@krause.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 12:11:29PM -0800, 'Heidi Fahim' via KUnit Development wrote:
+On Tue, Feb 25, 2020 at 1:43 PM Marc Kleine-Budde <mkl@pengutronix.de> wrote:
+>
+> On 2/25/20 7:35 PM, Tim Harvey wrote:
+> > Some SPI host controllers such as the Cavium Thunder do not support
+> > full-duplex SPI. Using half-duplex transfers allows the driver to work
+> > with those host controllers.
+>
+> There are several transfers left in the driver, where both rx_buf and
+> tx_buf are set. How does your host controller driver know which one to
+> handle?
+>
 
-nit: On the subject, please use the imperative. Instead of
+Marc,
 
-> kunit: kunit_parser: making parser more robust
+Your right... there is the mcp251x_hw_rx_frame() call that also uses
+spi_rx_buf after a synchronous transfer (I didn't see any others).
+I'll look at this again.
 
-it should be
+In general is it an ok approach to switch the driver to half-duplex
+for this issue without the need of complicating things with a
+module/dt param?
 
-> kunit: kunit_parser: make parser more robust
+Regards,
 
-> Previously, kunit_parser did not properly handle kunit TAP output that
-> - had any prefixes (generated from different configs)
-
-Specify example config that breaks kunit_parser.
-
-> - had unrelated kernel output mixed in the middle of it, which has
-> shown up when testing with allyesconfig
-> To remove prefixes, the parser looks for the first line that includes
-> TAP output, "TAP version 14".  It then determines the length of the
-> string before this sequence, and strips that number of characters off
-> the beginning of the following lines until the last KUnit output line is
-> reached.
-> These fixes have been tested with additional tests in the
-> KUnitParseTest and their associated logs have also been added.
-> 
-> Signed-off-by: Heidi Fahim <heidifahim@google.com>
-
-A couple of minor nits, and questions below.
-
-> ---
->  tools/testing/kunit/kunit_parser.py           | 54 +++++++--------
->  tools/testing/kunit/kunit_tool_test.py        | 69 +++++++++++++++++++
->  .../test_data/test_config_printk_time.log     | 31 +++++++++
->  .../test_data/test_interrupted_tap_output.log | 37 ++++++++++
->  .../test_data/test_kernel_panic_interrupt.log | 25 +++++++
->  .../test_data/test_multiple_prefixes.log      | 31 +++++++++
->  ..._output_with_prefix_isolated_correctly.log | 33 +++++++++
->  .../kunit/test_data/test_pound_no_prefix.log  | 33 +++++++++
->  .../kunit/test_data/test_pound_sign.log       | 33 +++++++++
->  9 files changed, 319 insertions(+), 27 deletions(-)
->  create mode 100644 tools/testing/kunit/test_data/test_config_printk_time.log
->  create mode 100644 tools/testing/kunit/test_data/test_interrupted_tap_output.log
->  create mode 100644 tools/testing/kunit/test_data/test_kernel_panic_interrupt.log
->  create mode 100644 tools/testing/kunit/test_data/test_multiple_prefixes.log
->  create mode 100644 tools/testing/kunit/test_data/test_output_with_prefix_isolated_correctly.log
->  create mode 100644 tools/testing/kunit/test_data/test_pound_no_prefix.log
->  create mode 100644 tools/testing/kunit/test_data/test_pound_sign.log
-> 
-> diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
-> index 4ffbae0f6732..077b21d42258 100644
-> --- a/tools/testing/kunit/kunit_parser.py
-> +++ b/tools/testing/kunit/kunit_parser.py
-> @@ -46,19 +46,21 @@ class TestStatus(Enum):
->  	TEST_CRASHED = auto()
->  	NO_TESTS = auto()
->  
-> -kunit_start_re = re.compile(r'^TAP version [0-9]+$')
-> -kunit_end_re = re.compile('List of all partitions:')
-> +kunit_start_re = re.compile(r'TAP version [0-9]+$')
-> +kunit_end_re = re.compile('(List of all partitions:|'
-> +			  'Kernel panic - not syncing: VFS:|reboot: System halted)')
->  
->  def isolate_kunit_output(kernel_output):
->  	started = False
->  	for line in kernel_output:
-> -		if kunit_start_re.match(line):
-> +		if kunit_start_re.search(line):
-> +			prefix_len = len(line.split('TAP version')[0])
->  			started = True
-> -			yield line
-> -		elif kunit_end_re.match(line):
-> +			yield line[prefix_len:] if prefix_len > 0 else line
-> +		elif kunit_end_re.search(line):
->  			break
->  		elif started:
-> -			yield line
-> +			yield line[prefix_len:] if prefix_len > 0 else line
->  
->  def raw_output(kernel_output):
->  	for line in kernel_output:
-> @@ -91,35 +93,33 @@ def print_log(log):
->  	for m in log:
->  		print_with_timestamp(m)
->  
-> -TAP_ENTRIES = re.compile(r'^(TAP|\t?ok|\t?not ok|\t?[0-9]+\.\.[0-9]+|\t?#).*$')
-> +TAP_ENTRIES = re.compile(r'(TAP|\t?ok|\t?not ok|\t?[0-9]+\.\.[0-9]+|\t# .*?:.*?).*$')
-
-Since you now strip off prefixes using length, does the old TAP regex no
-longer work?
-
->  def consume_non_diagnositic(lines: List[str]) -> None:
-> -	while lines and not TAP_ENTRIES.match(lines[0]):
-> +	while lines and not TAP_ENTRIES.search(lines[0]):
->  		lines.pop(0)
->  
->  def save_non_diagnositic(lines: List[str], test_case: TestCase) -> None:
-> -	while lines and not TAP_ENTRIES.match(lines[0]):
-> +	while lines and not TAP_ENTRIES.search(lines[0]):
->  		test_case.log.append(lines[0])
->  		lines.pop(0)
->  
->  OkNotOkResult = namedtuple('OkNotOkResult', ['is_ok','description', 'text'])
->  
-> -OK_NOT_OK_SUBTEST = re.compile(r'^\t(ok|not ok) [0-9]+ - (.*)$')
-> +OK_NOT_OK_SUBTEST = re.compile(r'\t(ok|not ok) [0-9]+ - (.*)$')
->  
-> -OK_NOT_OK_MODULE = re.compile(r'^(ok|not ok) [0-9]+ - (.*)$')
-> +OK_NOT_OK_MODULE = re.compile(r'(ok|not ok) [0-9]+ - (.*)$')
-
-Same here.
-
-> -def parse_ok_not_ok_test_case(lines: List[str],
-> -			      test_case: TestCase,
-> -			      expecting_test_case: bool) -> bool:
-> +def parse_ok_not_ok_test_case(lines: List[str], test_case: TestCase) -> bool:
->  	save_non_diagnositic(lines, test_case)
->  	if not lines:
-> -		if expecting_test_case:
-> -			test_case.status = TestStatus.TEST_CRASHED
-> -			return True
-> -		else:
-> -			return False
-> +		test_case.status = TestStatus.TEST_CRASHED
-> +		return True
->  	line = lines[0]
->  	match = OK_NOT_OK_SUBTEST.match(line)
-> +	while not match and lines:
-> +		line = lines.pop(0)
-> +		match = OK_NOT_OK_SUBTEST.match(line)
->  	if match:
->  		test_case.log.append(lines.pop(0))
->  		test_case.name = match.group(2)
-> @@ -150,12 +150,12 @@ def parse_diagnostic(lines: List[str], test_case: TestCase) -> bool:
->  	else:
->  		return False
->  
-> -def parse_test_case(lines: List[str], expecting_test_case: bool) -> TestCase:
-> +def parse_test_case(lines: List[str]) -> TestCase:
->  	test_case = TestCase()
->  	save_non_diagnositic(lines, test_case)
->  	while parse_diagnostic(lines, test_case):
->  		pass
-> -	if parse_ok_not_ok_test_case(lines, test_case, expecting_test_case):
-> +	if parse_ok_not_ok_test_case(lines, test_case):
->  		return test_case
->  	else:
->  		return None
-> @@ -202,7 +202,7 @@ def parse_ok_not_ok_test_suite(lines: List[str], test_suite: TestSuite) -> bool:
->  		test_suite.status = TestStatus.TEST_CRASHED
->  		return False
->  	line = lines[0]
-> -	match = OK_NOT_OK_MODULE.match(line)
-> +	match = OK_NOT_OK_MODULE.search(line)
->  	if match:
->  		lines.pop(0)
->  		if match.group(1) == 'ok':
-> @@ -234,11 +234,11 @@ def parse_test_suite(lines: List[str]) -> TestSuite:
->  	expected_test_case_num = parse_subtest_plan(lines)
->  	if not expected_test_case_num:
->  		return None
-> -	test_case = parse_test_case(lines, expected_test_case_num > 0)
-> -	expected_test_case_num -= 1
-> -	while test_case:
-> +	while expected_test_case_num > 0:
-> +		test_case = parse_test_case(lines)
-> +		if not test_case:
-> +			break
->  		test_suite.cases.append(test_case)
-> -		test_case = parse_test_case(lines, expected_test_case_num > 0)
->  		expected_test_case_num -= 1
-
-Do we use this variable anymore?
-
->  	if parse_ok_not_ok_test_suite(lines, test_suite):
->  		test_suite.status = bubble_up_test_case_errors(test_suite)
-> @@ -250,7 +250,7 @@ def parse_test_suite(lines: List[str]) -> TestSuite:
->  		print('failed to parse end of suite' + lines[0])
->  		return None
->  
-> -TAP_HEADER = re.compile(r'^TAP version 14$')
-> +TAP_HEADER = re.compile(r'TAP version 14$')
->  
->  def parse_tap_header(lines: List[str]) -> bool:
->  	consume_non_diagnositic(lines)
-
-Cheers
+Tim
