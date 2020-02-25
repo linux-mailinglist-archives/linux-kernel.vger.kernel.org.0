@@ -2,115 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BA0516EE7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0BBA16EEFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:29:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731609AbgBYS6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 13:58:32 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41869 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730080AbgBYS6c (ORCPT
+        id S1731538AbgBYT3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 14:29:02 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:33984 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731425AbgBYT3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 13:58:32 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 70so7308015pgf.8
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 10:58:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Iv8nu0Tmrew9fnUnqPnKjAEYAPCBJwm2aHqQgQlHcXI=;
-        b=OTDHNKDTmnSxFLlKliRJJ9/P+0Gj67aV93Z9DkDKQSb5UBIv6Lf9hta72mOKzV7lCA
-         hgdCJGHTBdyOTlwFrBh3IP1/RsLtfWq4kGje6VP73W5eFbI6N6Io/NJxgJdkF05efPs5
-         m+mbix3wNRslURQ37RuZEZxFXo2t0g1SvssQ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Iv8nu0Tmrew9fnUnqPnKjAEYAPCBJwm2aHqQgQlHcXI=;
-        b=aZ8vaHD1c/yW7FgIQpMHhrOn5kAidjKJHjIXKSJNjJojnsxyc3M4fu8tEwgYcY/4WO
-         pMHzXL93yCWewbRdGBD2of4delB5ahvK9CTHHsGvP6IbNH4IBsBlRf78yb+lvQOQQ+I1
-         vNO8SdP1gkKKZ9hx5fdYkStf5NpRoLbB2yKsLHPWLm30I4zHqz3Y4pHBFDdHbMiBt5E7
-         8ka8fAnu3/J6TIgvq0wZQZhDIIG+apNY4dnxkkLvy1wTw3XAvV+UbarKvXOBfZrFpbxl
-         fZSObaZFuXyEQjKkhAX47j0RPAOazhNikgTXWA/fSVsFBNR2z34CrwnPaBlXJzgzRdIE
-         dXng==
-X-Gm-Message-State: APjAAAV9+DldzB943sSC+BGcjVLPuX2cfoX4ttRLPMqwMrwv6OEv8a+p
-        ZNCN/je6F8aIzzgcOOLKxjrBcg==
-X-Google-Smtp-Source: APXvYqwlFhU6hPGfLFawa58hpajX7pM4HYhMZNF5+kHXg+q9Uo6O71/hbEkW5Dj1+zEZt+TbulmPgw==
-X-Received: by 2002:a63:ce03:: with SMTP id y3mr62064239pgf.427.1582657109996;
-        Tue, 25 Feb 2020 10:58:29 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b18sm18196190pfd.63.2020.02.25.10.58.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 10:58:29 -0800 (PST)
-Date:   Tue, 25 Feb 2020 10:58:28 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Emese Revfy <re.emese@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        kernel-hardening@lists.openwall.com, linux-doc@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gcc-plugins: fix gcc-plugins directory path in
- documentation
-Message-ID: <202002251057.C4E397A@keescook>
-References: <20200213122410.1605-1-masahiroy@kernel.org>
+        Tue, 25 Feb 2020 14:29:02 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01PHovn2044086;
+        Tue, 25 Feb 2020 11:50:57 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582653057;
+        bh=oUfgz4jpNu++9i18Bck0PQmtMSSoE4RnFSLpUGi+yRc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=F4DThKHvDUq/YhNYRfTUL6Z0MBQFb9KraV2xGrx/mr+bB3tXdsB7ZgmYTswdDCeZw
+         C1lSvfr/ZeE189rlQRqdvlDCmqJ8n7A17RR/IZCyzev73hsAYrWj6MRjkTYYpsrs6e
+         EuvgmfpJaOCQeVcpdzJkPyY6WpLVkCAQqgSmhkxU=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01PHov0M049083;
+        Tue, 25 Feb 2020 11:50:57 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 25
+ Feb 2020 11:50:56 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 25 Feb 2020 11:50:56 -0600
+Received: from [128.247.59.107] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01PHouID046652;
+        Tue, 25 Feb 2020 11:50:56 -0600
+Subject: Re: [PATCH linux-master 1/3] can: tcan4x5x: Move clock init to TCAN
+ driver
+To:     Marc Kleine-Budde <mkl@pengutronix.de>,
+        <linux-kernel@vger.kernel.org>, <linux-can@vger.kernel.org>,
+        <wg@grandegger.com>, <sriram.dash@samsung.com>
+CC:     <davem@davemloft.net>
+References: <20200131183433.11041-1-dmurphy@ti.com>
+ <20200131183433.11041-2-dmurphy@ti.com>
+ <06af6e1d-aec4-189c-378a-77af4073a1a6@ti.com>
+ <fed1d801-e284-eada-d5b3-ae78089b3ead@pengutronix.de>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <e420c667-23d8-9739-1905-4a89570ddb72@ti.com>
+Date:   Tue, 25 Feb 2020 11:45:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213122410.1605-1-masahiroy@kernel.org>
+In-Reply-To: <fed1d801-e284-eada-d5b3-ae78089b3ead@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 09:24:10PM +0900, Masahiro Yamada wrote:
-> Fix typos "plgins" -> "plugins".
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Marc
 
-Thanks!
+On 2/21/20 8:43 AM, Marc Kleine-Budde wrote:
+> On 2/21/20 3:25 PM, Dan Murphy wrote:
+>> Hello
+>>
+>> On 1/31/20 12:34 PM, Dan Murphy wrote:
+>>> Move the clock discovery and initialization from the m_can framework to
+>>> the registrar.  This allows for registrars to have unique clock
+>>> initialization.  The TCAN device only needs the CAN clock reference.
+>>>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>> ---
+>> I would like to have these 3 patches reviewed and integrated (post
+>> review) so I can work on other issues identified.
+> Applied to linux-can-next/testing.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+I am not seeing these patches applied
 
-Jon, can you take this?
+I am looking here 
+https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git/log/?h=testing
 
--Kees
+But they could be in a different repo
 
-> ---
-> 
->  Documentation/kbuild/reproducible-builds.rst | 2 +-
->  scripts/gcc-plugins/Kconfig                  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/kbuild/reproducible-builds.rst b/Documentation/kbuild/reproducible-builds.rst
-> index 503393854e2e..3b25655e441b 100644
-> --- a/Documentation/kbuild/reproducible-builds.rst
-> +++ b/Documentation/kbuild/reproducible-builds.rst
-> @@ -101,7 +101,7 @@ Structure randomisation
->  
->  If you enable ``CONFIG_GCC_PLUGIN_RANDSTRUCT``, you will need to
->  pre-generate the random seed in
-> -``scripts/gcc-plgins/randomize_layout_seed.h`` so the same value
-> +``scripts/gcc-plugins/randomize_layout_seed.h`` so the same value
->  is used in rebuilds.
->  
->  Debug info conflicts
-> diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-> index e3569543bdac..7b63c819610c 100644
-> --- a/scripts/gcc-plugins/Kconfig
-> +++ b/scripts/gcc-plugins/Kconfig
-> @@ -86,7 +86,7 @@ config GCC_PLUGIN_RANDSTRUCT
->  	  source tree isn't cleaned after kernel installation).
->  
->  	  The seed used for compilation is located at
-> -	  scripts/gcc-plgins/randomize_layout_seed.h.  It remains after
-> +	  scripts/gcc-plugins/randomize_layout_seed.h.  It remains after
->  	  a make clean to allow for external modules to be compiled with
->  	  the existing seed and will be removed by a make mrproper or
->  	  make distclean.
-> -- 
-> 2.17.1
-> 
+Dan
 
--- 
-Kees Cook
+>
+> tnx,
+> Marc
+>
