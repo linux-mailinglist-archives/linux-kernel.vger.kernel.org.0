@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A94C616BE9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 11:25:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1493416BEA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 11:26:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730251AbgBYKZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 05:25:55 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:38138 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729952AbgBYKZy (ORCPT
+        id S1730262AbgBYK0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 05:26:19 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:64328 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729977AbgBYK0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 05:25:54 -0500
+        Tue, 25 Feb 2020 05:26:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1582626354; x=1614162354;
+  t=1582626378; x=1614162378;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=SBNXt18fiSDkKKFTHL/6fBU1JbEP1Jnn1oHT/2Qkjhc=;
-  b=llAXAoblaH989jWHXuhP8RENMXwTjEbgCasvoBG/uku6AClmCKsE/ZIa
-   y4xbP/NCqjyBF0u1spAKV+lXccRTZSaiWg9gpWseX+WnYMROGko5BwCHs
-   +IoenAv3hn5BuAa9ILW1gIdk49lxyCxVJIJUdNh1wwtBU5zOk38a16OMY
-   8=;
-IronPort-SDR: c1MTE6zIDsERP/BMd3ciZjJLwc1BK/AFz+nddmSExjM4R59h+QVfYXDT8uBjP+/NwrlmNNO5iq
- 2rJjWWTD1niQ==
+  bh=I5lhnzWRKWvNaF4MApexOfC/PP8h9gbeTKWBJi6wddY=;
+  b=K29YXvtMhCz6Syzaz8Bvk+nnc02LafaXkSYgve2gya+F7kKp644x5Gxv
+   72pw3IJP6K+rF9CKx/Q4QKbVFIt93HGWfvtKjb3cPtKkWfhZIz5sbOTYy
+   NzF8ULK4Lgzt6mNFtJi+6VJ86Nq7T++MB9gCgmcpfOU4Z0lZDKM2Urwuo
+   s=;
+IronPort-SDR: R1LTugDP/R3oV6o9+9pnARTGmnAJbZvZMbTTzEsR9MRBvgDhthg4fJm0KWxoBSLAImvpjAAaiN
+ bTDOpR4zEV5w==
 X-IronPort-AV: E=Sophos;i="5.70,483,1574121600"; 
-   d="scan'208";a="27313402"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1e-c7c08562.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 25 Feb 2020 10:25:51 +0000
+   d="scan'208";a="18757024"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1a-715bee71.us-east-1.amazon.com) ([10.43.8.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 25 Feb 2020 10:26:06 +0000
 Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1e-c7c08562.us-east-1.amazon.com (Postfix) with ESMTPS id BCFF124622A;
-        Tue, 25 Feb 2020 10:25:41 +0000 (UTC)
+        by email-inbound-relay-1a-715bee71.us-east-1.amazon.com (Postfix) with ESMTPS id 78CC1A1EFB;
+        Tue, 25 Feb 2020 10:25:56 +0000 (UTC)
 Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
  EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Tue, 25 Feb 2020 10:25:40 +0000
+ id 15.0.1236.3; Tue, 25 Feb 2020 10:25:55 +0000
 Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.53) by
  EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 25 Feb 2020 10:25:29 +0000
+ id 15.0.1367.3; Tue, 25 Feb 2020 10:25:44 +0000
 From:   SeongJae Park <sjpark@amazon.com>
 To:     <akpm@linux-foundation.org>
 CC:     SeongJae Park <sjpark@amazon.de>, <aarcange@redhat.com>,
@@ -53,9 +53,9 @@ CC:     SeongJae Park <sjpark@amazon.de>, <aarcange@redhat.com>,
         <yang.shi@linux.alibaba.com>, <ying.huang@intel.com>,
         <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [RFC v3 5/7] mm/damon-test: Add kunit test case for regions age accounting
-Date:   Tue, 25 Feb 2020 11:22:58 +0100
-Message-ID: <20200225102300.23895-6-sjpark@amazon.com>
+Subject: [RFC v3 6/7] mm/damon/selftests: Add 'schemes' debugfs tests
+Date:   Tue, 25 Feb 2020 11:22:59 +0100
+Message-ID: <20200225102300.23895-7-sjpark@amazon.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200225102300.23895-1-sjpark@amazon.com>
 References: <20200225102300.23895-1-sjpark@amazon.com>
@@ -71,40 +71,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: SeongJae Park <sjpark@amazon.de>
 
-After merges of regions, each region should know their last shape in
-proper way to measure the changes from the last modification and reset
-the age if the changes are significant.  This commit adds kunit test
-cases checking whether the regions are knowing their last shape properly
-after merges of regions.
+This commit adds simple selftets for 'schemes' debugfs file of DAMON.
 
 Signed-off-by: SeongJae Park <sjpark@amazon.de>
 ---
- mm/damon-test.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../testing/selftests/damon/debugfs_attrs.sh  | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/mm/damon-test.h b/mm/damon-test.h
-index c7dc21325c77..2ba757357211 100644
---- a/mm/damon-test.h
-+++ b/mm/damon-test.h
-@@ -540,6 +540,8 @@ static void damon_test_merge_regions_of(struct kunit *test)
+diff --git a/tools/testing/selftests/damon/debugfs_attrs.sh b/tools/testing/selftests/damon/debugfs_attrs.sh
+index d5188b0f71b1..82a98c81975b 100755
+--- a/tools/testing/selftests/damon/debugfs_attrs.sh
++++ b/tools/testing/selftests/damon/debugfs_attrs.sh
+@@ -97,6 +97,35 @@ fi
  
- 	unsigned long saddrs[] = {0, 114, 130, 156, 170};
- 	unsigned long eaddrs[] = {112, 130, 156, 170, 230};
-+	unsigned long lsa[] = {0, 114, 130, 156, 184};
-+	unsigned long lea[] = {100, 122, 156, 170, 230};
- 	int i;
+ echo $ORIG_CONTENT > $file
  
- 	t = damon_new_task(42);
-@@ -556,6 +558,9 @@ static void damon_test_merge_regions_of(struct kunit *test)
- 		r = damon_nth_region_of(t, i);
- 		KUNIT_EXPECT_EQ(test, r->vm_start, saddrs[i]);
- 		KUNIT_EXPECT_EQ(test, r->vm_end, eaddrs[i]);
-+		KUNIT_EXPECT_EQ(test, r->last_vm_start, lsa[i]);
-+		KUNIT_EXPECT_EQ(test, r->last_vm_end, lea[i]);
++# Test schemes file
++file="$DBGFS/schemes"
 +
- 	}
- 	damon_free_task(t);
- }
++ORIG_CONTENT=$(cat $file)
++echo "1 2 3 4 5 6 3" > $file
++if [ $? -ne 0 ]
++then
++	echo "$file write fail"
++	echo $ORIG_CONTENT > $file
++	exit 1
++fi
++
++echo "1 2
++3 4 5 6 3" > $file
++if [ $? -eq 0 ]
++then
++	echo "$file splitted write success (expected fail)"
++	echo $ORIG_CONTENT > $file
++	exit 1
++fi
++
++echo > $file
++if [ $? -ne 0 ]
++then
++	echo "$file empty string writing fail"
++	echo $ORIG_CONTENT > $file
++	exit 1
++fi
++
+ # Test pids file
+ file="$DBGFS/pids"
+ 
 -- 
 2.17.1
 
