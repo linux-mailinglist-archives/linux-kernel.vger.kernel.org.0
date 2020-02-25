@@ -2,70 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84A6916EBB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:49:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8783716EBC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:53:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730870AbgBYQtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 11:49:16 -0500
-Received: from mga05.intel.com ([192.55.52.43]:33228 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728200AbgBYQtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 11:49:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 08:49:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,484,1574150400"; 
-   d="scan'208";a="436319437"
-Received: from sorin-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.254.45.43])
-  by fmsmga005.fm.intel.com with ESMTP; 25 Feb 2020 08:49:14 -0800
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH] soundwire: bus: provide correct return value on error
-Date:   Tue, 25 Feb 2020 10:49:07 -0600
-Message-Id: <20200225164907.23358-1-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        id S1731030AbgBYQxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 11:53:33 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53927 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728051AbgBYQx3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 11:53:29 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1j6dSU-0007Y7-NC; Tue, 25 Feb 2020 17:53:22 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4B40D1C213B;
+        Tue, 25 Feb 2020 17:53:22 +0100 (CET)
+Date:   Tue, 25 Feb 2020 16:53:21 -0000
+From:   "tip-bot2 for Arvind Sankar" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/boot] x86/vmlinux: Drop unneeded linker script discard of .eh_frame
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Borislav Petkov <bp@suse.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200224232129.597160-3-nivedita@alum.mit.edu>
+References: <20200224232129.597160-3-nivedita@alum.mit.edu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <158264960194.28353.10560165361470246192.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
+The following commit has been merged into the x86/boot branch of tip:
 
-It seems to be a typo. It makes more sense to return the return value
-of sdw_update() instead of the value we want to update.
+Commit-ID:     6f8f0dc980028e98ae339876a8403edae4d20e39
+Gitweb:        https://git.kernel.org/tip/6f8f0dc980028e98ae339876a8403edae4d20e39
+Author:        Arvind Sankar <nivedita@alum.mit.edu>
+AuthorDate:    Mon, 24 Feb 2020 18:21:29 -05:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Tue, 25 Feb 2020 14:51:29 +01:00
 
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+x86/vmlinux: Drop unneeded linker script discard of .eh_frame
+
+Now that .eh_frame sections for the files in setup.elf and realmode.elf
+are not generated anymore, the linker scripts don't need the special
+output section name /DISCARD/ any more.
+
+Remove the one in the main kernel linker script as well, since there are
+no .eh_frame sections already, and fix up a comment referencing .eh_frame.
+
+Update the comment in asm/dwarf2.h referring to .eh_frame so it continues
+to make sense, as well as being more specific.
+
+ [ bp: Touch up commit message. ]
+
+Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: https://lkml.kernel.org/r/20200224232129.597160-3-nivedita@alum.mit.edu
 ---
- drivers/soundwire/bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/boot/compressed/vmlinux.lds.S | 5 -----
+ arch/x86/boot/setup.ld                 | 1 -
+ arch/x86/include/asm/dwarf2.h          | 4 ++--
+ arch/x86/kernel/vmlinux.lds.S          | 7 ++-----
+ arch/x86/realmode/rm/realmode.lds.S    | 1 -
+ 5 files changed, 4 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
-index 13887713f311..b8a7a84aca1c 100644
---- a/drivers/soundwire/bus.c
-+++ b/drivers/soundwire/bus.c
-@@ -1070,7 +1070,7 @@ static int sdw_initialize_slave(struct sdw_slave *slave)
- 	if (ret < 0) {
- 		dev_err(slave->bus->dev,
- 			"SDW_DP0_INTMASK read failed:%d\n", ret);
--		return val;
-+		return ret;
+diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
+index 469dcf8..508cfa6 100644
+--- a/arch/x86/boot/compressed/vmlinux.lds.S
++++ b/arch/x86/boot/compressed/vmlinux.lds.S
+@@ -73,9 +73,4 @@ SECTIONS
+ #endif
+ 	. = ALIGN(PAGE_SIZE);	/* keep ZO size page aligned */
+ 	_end = .;
+-
+-	/* Discard .eh_frame to save some space */
+-	/DISCARD/ : {
+-		*(.eh_frame)
+-	}
+ }
+diff --git a/arch/x86/boot/setup.ld b/arch/x86/boot/setup.ld
+index 3da1c37..24c9552 100644
+--- a/arch/x86/boot/setup.ld
++++ b/arch/x86/boot/setup.ld
+@@ -52,7 +52,6 @@ SECTIONS
+ 	_end = .;
+ 
+ 	/DISCARD/	: {
+-		*(.eh_frame)
+ 		*(.note*)
  	}
  
- 	return 0;
--- 
-2.20.1
-
+diff --git a/arch/x86/include/asm/dwarf2.h b/arch/x86/include/asm/dwarf2.h
+index ae391f6..f71a0cc 100644
+--- a/arch/x86/include/asm/dwarf2.h
++++ b/arch/x86/include/asm/dwarf2.h
+@@ -42,8 +42,8 @@
+ 	 * Emit CFI data in .debug_frame sections, not .eh_frame sections.
+ 	 * The latter we currently just discard since we don't do DWARF
+ 	 * unwinding at runtime.  So only the offline DWARF information is
+-	 * useful to anyone.  Note we should not use this directive if
+-	 * vmlinux.lds.S gets changed so it doesn't discard .eh_frame.
++	 * useful to anyone.  Note we should not use this directive if we
++	 * ever decide to enable DWARF unwinding at runtime.
+ 	 */
+ 	.cfi_sections .debug_frame
+ #else
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index e3296aa..5cab3a2 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -313,8 +313,8 @@ SECTIONS
+ 
+ 	. = ALIGN(8);
+ 	/*
+-	 * .exit.text is discard at runtime, not link time, to deal with
+-	 *  references from .altinstructions and .eh_frame
++	 * .exit.text is discarded at runtime, not link time, to deal with
++	 *  references from .altinstructions
+ 	 */
+ 	.exit.text : AT(ADDR(.exit.text) - LOAD_OFFSET) {
+ 		EXIT_TEXT
+@@ -412,9 +412,6 @@ SECTIONS
+ 	DWARF_DEBUG
+ 
+ 	DISCARDS
+-	/DISCARD/ : {
+-		*(.eh_frame)
+-	}
+ }
+ 
+ 
+diff --git a/arch/x86/realmode/rm/realmode.lds.S b/arch/x86/realmode/rm/realmode.lds.S
+index 64d135d..63aa518 100644
+--- a/arch/x86/realmode/rm/realmode.lds.S
++++ b/arch/x86/realmode/rm/realmode.lds.S
+@@ -71,7 +71,6 @@ SECTIONS
+ 	/DISCARD/ : {
+ 		*(.note*)
+ 		*(.debug*)
+-		*(.eh_frame*)
+ 	}
+ 
+ #include "pasyms.h"
