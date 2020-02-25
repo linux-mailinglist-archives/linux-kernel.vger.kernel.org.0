@@ -2,147 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8348F16F319
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8467716F34F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:28:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbgBYXVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:21:06 -0500
-Received: from mail-co1nam11on2098.outbound.protection.outlook.com ([40.107.220.98]:35553
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728806AbgBYXVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:21:06 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=frPTy1eZwrZp9/shrmamzDEGjH5KybXFvqqzuguct+b7Gnj+mO1LUREIESQJcRiFkRufRaLSWbEGvymy/WE9wLMKD7ShNyavU3nGsQEZNKRJYZPhACL2uXQ2n6D7+uhHfgGXQI9hJlsuAJsD+QhgHaejbRydX6xGbRXDXkjhKHsX0Ybox4d2O20lJW9A3yGqdcuNb3b8Ja97C/AFpo5sVyMnK3yeW/beTFUupD6GJMews74HpmEQc2+Deaunn/or6WQpbeFtiBgk2M2QgfKuV8w5vwMUuBbEgeaHWvuhTNnCm7QywZl9LTKESqblXeQN4Xc5nFmW2Y07WtUbBH6rLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DxvH5j3TGZCWq3GPheR1ntpAz8ujFy2EcIsfKhx1jOQ=;
- b=MBZw8g8r4rURh0iqVawdYk2jjHk3VdddflY0N0x4Bcj8i0aTJDyaWIUJ4ekeKMHMCc9B+mdTzMEmC3LLn8967Tc/nWerrAoWyTxoEV4QRuicWpzOygEXg3p/oI42t888sUMW7C1OsGmR9ejuKkLUCGjjmRnPNCOtvze06Qf2fbzyVIzXvSHtcNHGoWFsZb7MFIGgY66WG6LZpKFvSh6jXFjp6uM0mUqW83rmMEcXgl3x70e0LigSLpMNpUZT9uh6CjMjkB5vcw37Rmkbr/sPc+ISpLBFLU+uqDnk2VuXnfDRbQ56AiXOh9VB05VBbgt1xuFjpURcWbcwqXN4zuIYPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+        id S1730799AbgBYX2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:28:15 -0500
+Received: from mail-il1-f170.google.com ([209.85.166.170]:37642 "EHLO
+        mail-il1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730381AbgBYX0p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 18:26:45 -0500
+Received: by mail-il1-f170.google.com with SMTP id v13so732030iln.4
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 15:26:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DxvH5j3TGZCWq3GPheR1ntpAz8ujFy2EcIsfKhx1jOQ=;
- b=Ie3SKVn3B1OTyicDkCbQyBP34ET6VQkK9eU3vof8M4Gv8kfDCgHayVitA54msL7hh49IXbXVESAdmfj4E9jy2mDLz7BisNbNcWMNy2I4PJsCgQ4d02ieT4bSQgd3Nwp1pgSGggf2HpCoAu9BO2xC118VezHk5h6dIV5JkiScGU0=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=hoan@os.amperecomputing.com; 
-Received: from SN6PR01MB4094.prod.exchangelabs.com (2603:10b6:805:a4::23) by
- SN6PR01MB5165.prod.exchangelabs.com (2603:10b6:805:c3::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2750.21; Tue, 25 Feb 2020 23:21:03 +0000
-Received: from SN6PR01MB4094.prod.exchangelabs.com
- ([fe80::603d:70c0:63c3:9734]) by SN6PR01MB4094.prod.exchangelabs.com
- ([fe80::603d:70c0:63c3:9734%7]) with mapi id 15.20.2750.021; Tue, 25 Feb 2020
- 23:21:02 +0000
-Subject: Re: [PATCH] arm64: Kconfig: Enable NODES_SPAN_OTHER_NODES config for
- NUMA
-From:   Hoan Tran <hoan@os.amperecomputing.com>
-To:     Will Deacon <will@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        patches@os.amperecomputing.com
-References: <1580759714-4614-1-git-send-email-Hoan@os.amperecomputing.com>
- <20200206102340.GA17074@willie-the-truck>
- <c85dbc06-a72b-9c98-fe41-b25069114b2f@os.amperecomputing.com>
-Message-ID: <32a35685-ff3e-9e5c-f6bb-960dd6f3d1d3@os.amperecomputing.com>
-Date:   Tue, 25 Feb 2020 15:20:59 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.5.0
-In-Reply-To: <c85dbc06-a72b-9c98-fe41-b25069114b2f@os.amperecomputing.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CY4PR13CA0033.namprd13.prod.outlook.com
- (2603:10b6:903:99::19) To SN6PR01MB4094.prod.exchangelabs.com
- (2603:10b6:805:a4::23)
+        d=linuxfoundation.org; s=google;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language;
+        bh=TDz13QYqhBENiS22vSmmhoGhcQjNfl8OARybiBG1Mrs=;
+        b=HBnc/4KONIeGgrzzqFfzzttUZ+zEBOdpnk44/IB/4atZrHgxU3/zAAiAswYlUTaSae
+         l9Ey3TdLyO1uiq1tUbiEMNXS1ulmtUTD8+6QKwxjbWV1YZtacKtp8BYUxz9UUROwWAFL
+         JR/I1owdeTpO8ruSP+dcK0d/WF/xzXNC7av/M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language;
+        bh=TDz13QYqhBENiS22vSmmhoGhcQjNfl8OARybiBG1Mrs=;
+        b=rM31XPFv8aZL9JZPZ4MymssjzyEc2B8eV5YTTEtGjxsAHZaZHFNirvKT/VWPghylZP
+         AMHDWboVaEpopQggcHeN7esLFXpEfiVAEr0X9ntxe4nM0vAr/0KI02ykn1yDc9I0C+Ci
+         rdHDekkdK37S7JA8+xHUIalPjclFMgJ3yBjC87jy3XwfVzyxlc06EBOmDyh7GgV5vxdg
+         bcxa8TfBNx1h32HZydCl2k/3qOocQTCbJAbASdGq4hyF3eULorcL61K6yCj2wx6WDyiw
+         h/88a3JPROJEw0l0hBfxvh5JqZOyQM36Wnl+oKv3oCfEVzAqnhia6cXeqtSNieM+KbOe
+         +uEQ==
+X-Gm-Message-State: APjAAAV+PqBt/X+l4K36OvLAFMUWnvRAtJWOTniZoFM3ktKmMfXRSg36
+        rTuV1rIQ4QFP8Kg4ZtQ5i+PrpgGN0Pc=
+X-Google-Smtp-Source: APXvYqzWBicpJuvTN7crMyGDBGE/zkCkHcJviVB5SzXZL5zSVMouo/XSxKGOPxmJLBko/qThhhiKyw==
+X-Received: by 2002:a92:cb89:: with SMTP id z9mr1114854ilo.145.1582673204381;
+        Tue, 25 Feb 2020 15:26:44 -0800 (PST)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id z4sm105788ioh.26.2020.02.25.15.26.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2020 15:26:43 -0800 (PST)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Subject: [GIT PULL] Kselftest update for Linux 5.6-rc4
+Message-ID: <94b64a48-a337-63c4-c504-7e9b0c29a7c6@linuxfoundation.org>
+Date:   Tue, 25 Feb 2020 16:26:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.76.34.152] (4.28.12.214) by CY4PR13CA0033.namprd13.prod.outlook.com (2603:10b6:903:99::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.9 via Frontend Transport; Tue, 25 Feb 2020 23:21:01 +0000
-X-Originating-IP: [4.28.12.214]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a545b3d2-95ad-4918-8189-08d7ba496114
-X-MS-TrafficTypeDiagnostic: SN6PR01MB5165:
-X-Microsoft-Antispam-PRVS: <SN6PR01MB5165F04AD4BD27B7E5246479F1ED0@SN6PR01MB5165.prod.exchangelabs.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-Forefront-PRVS: 0324C2C0E2
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(396003)(39840400004)(346002)(376002)(366004)(189003)(199004)(316002)(956004)(6486002)(66556008)(52116002)(107886003)(5660300002)(2616005)(81166006)(8676002)(8936002)(66476007)(86362001)(2906002)(31696002)(66946007)(4326008)(31686004)(53546011)(966005)(16576012)(16526019)(81156014)(6916009)(478600001)(26005)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR01MB5165;H:SN6PR01MB4094.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-Received-SPF: None (protection.outlook.com: os.amperecomputing.com does not
- designate permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HFG/2yMfjKwQ2FKmktNC5vXGLum3Uj90cHeJTARfRD9XB7AGvuOHNLqK4XT/VgAoMqeP0TTaqFQrkhepx8iaiINldWIDtlSxLxygoaJmXVNPzwdtXf+vWhtZL+lPgSLG/FN2bzfD/P5kl2E+ddMgO4oWKn++EtCWUVvqflz8kX7pXioNpXCkuJmcCbREtuDpAXCnWwq3r7h2rnQZ8EmXomvjItbFbtxBKJSjMuxULXcvGLrrX4X9JhBifmxkTKUTHJhG/FTxXdvYOUK54Smtzpi3YD6JKf2qIFnRtzSeprU29Jqpis4qRgxYanoXPCtsgzU7A5GvNNZlP6wexsvpUjTPspKc8o4EguL8OdAeATYXd0bw+OvycAzzy/WP+x/snHUjO4IN84XeIn+Z3hzkGq43xE2YE5I4fHIXzCxK5I0ZCCURu+j3lRZxnvmPjAhZLEjyi4ajI99DYK0ZZpY/hVy0wf0oCOwqc4KfRxvF+m/KDxjDr5Vq7MoZp4jHYrHxRdRquaFGg+izNr3kpqiZgQ==
-X-MS-Exchange-AntiSpam-MessageData: jbp0C+4beStZMSbdJgomEvfbZOYPgtTAa8C88JlmBbEF1vCZglFBPD7PXzxiBX375EsOJQZ8dd8HekM0G+iOoV6Zh2vjBFrITgOb5Zoq3ole44Rq2ajep7ilVisxXgTElx7tWKc2pWdkLzg5CohWwQ==
-X-MS-Exchange-Transport-Forked: True
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a545b3d2-95ad-4918-8189-08d7ba496114
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2020 23:21:02.6243
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bXwHPWSfTt5ToBpBgVo7p4qw2NnLpodkiSyLrA9DpE9DZpP4iAYZz6BgF6IB3LNHS/h+h7oguszHeJ9REfDqqHX/wEWh/HCJ5Cl18CIs5nk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR01MB5165
+Content-Type: multipart/mixed;
+ boundary="------------3D667C98074F277C68BC2557"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+This is a multi-part message in MIME format.
+--------------3D667C98074F277C68BC2557
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Do you have any comments?
+Hi Linus,
 
-Thanks
-Hoan
+Please pull the following Kselftest fixes update for Linux 5.6-rc4.
 
-On 2/6/20 12:01 PM, Hoan Tran wrote:
-> Hi Will,
-> 
-> On 2/6/20 2:23 AM, Will Deacon wrote:
->> On Mon, Feb 03, 2020 at 11:55:14AM -0800, Hoan Tran wrote:
->>> Some NUMA nodes have memory ranges that span other nodes.
->>> Even though a pfn is valid and between a node's start and end pfns,
->>> it may not reside on that node.
->>>
->>> This patch enables NODES_SPAN_OTHER_NODES config for NUMA to support
->>> this type of NUMA layout.
->>>
->>> Signed-off-by: Hoan Tran <Hoan@os.amperecomputing.com>
->>> ---
->>>   arch/arm64/Kconfig | 7 +++++++
->>>   1 file changed, 7 insertions(+)
->>>
->>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->>> index e688dfa..939d28f 100644
->>> --- a/arch/arm64/Kconfig
->>> +++ b/arch/arm64/Kconfig
->>> @@ -959,6 +959,13 @@ config NEED_PER_CPU_EMBED_FIRST_CHUNK
->>>   config HOLES_IN_ZONE
->>>       def_bool y
->>> +# Some NUMA nodes have memory ranges that span other nodes.
->>> +# Even though a pfn is valid and between a node's start and end pfns,
->>> +# it may not reside on that node.
->>> +config NODES_SPAN_OTHER_NODES
->>> +    def_bool y
->>> +    depends on ACPI_NUMA
->>> +
->>
->> I thought we agreed to do this in the core code?
->>
->> https://lore.kernel.org/lkml/1562887528-5896-1-git-send-email-Hoan@os.amperecomputing.com 
->>
-> 
-> Yes, but it looks like Thomas didn't agree to apply this patch into x86.
-> 
-> https://lore.kernel.org/lkml/alpine.DEB.2.21.1907152042110.1767@nanos.tec.linutronix.de/ 
-> 
-> 
-> Regards
-> Hoan
-> 
->>
->> Will
->>
+This Kselftest update for Linux 5.6-rc4 consists of:
+
+- fixes to TIMEOUT failures and out-of-tree compilation compilation
+    errors from Michael Ellerman.
+- Declutter git status fix from Christophe Leroy
+
+diff is attached.
+
+thanks,
+-- Shuah
+
+----------------------------------------------------------------
+The following changes since commit 9a0584f05687947d5a0b87f046bcd2592a55e67c:
+
+   selftests: openat2: fix build error on newer glibc (2020-02-13 
+13:15:45 -0700)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest 
+tags/linux-kselftest-5.6-rc4
+
+for you to fetch changes up to ef89d0545132d685f73da6f58b7e7fe002536f91:
+
+   selftests/rseq: Fix out-of-tree compilation (2020-02-20 08:57:12 -0700)
+
+----------------------------------------------------------------
+linux-kselftest-5.6-rc4
+
+This Kselftest update for Linux 5.6-rc4 consists of:
+
+-  fixes to TIMEOUT failures and out-of-tree compilation compilation
+    errors from Michael Ellerman.
+- Declutter git status fix from Christophe Leroy
+
+----------------------------------------------------------------
+Christophe Leroy (1):
+       selftest/lkdtm: Don't pollute 'git status'
+
+Michael Ellerman (2):
+       selftests: Install settings files to fix TIMEOUT failures
+       selftests/rseq: Fix out-of-tree compilation
+
+  .gitignore                                 | 4 ++++
+  tools/testing/selftests/ftrace/Makefile    | 2 +-
+  tools/testing/selftests/livepatch/Makefile | 2 ++
+  tools/testing/selftests/net/mptcp/Makefile | 2 ++
+  tools/testing/selftests/rseq/Makefile      | 4 +++-
+  tools/testing/selftests/rtc/Makefile       | 2 ++
+  6 files changed, 14 insertions(+), 2 deletions(-)
+----------------------------------------------------------------
+
+--------------3D667C98074F277C68BC2557
+Content-Type: text/x-patch; charset=UTF-8;
+ name="linux-kselftest-5.6-rc4.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="linux-kselftest-5.6-rc4.diff"
+
+diff --git a/.gitignore b/.gitignore
+index 72ef86a5570d..2763fce8766c 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -100,6 +100,10 @@ modules.order
+ /include/ksym/
+ /arch/*/include/generated/
+ 
++# Generated lkdtm tests
++/tools/testing/selftests/lkdtm/*.sh
++!/tools/testing/selftests/lkdtm/run.sh
++
+ # stgit generated dirs
+ patches-*
+ 
+diff --git a/tools/testing/selftests/ftrace/Makefile b/tools/testing/selftests/ftrace/Makefile
+index cd1f5b3a7774..d6e106fbce11 100644
+--- a/tools/testing/selftests/ftrace/Makefile
++++ b/tools/testing/selftests/ftrace/Makefile
+@@ -2,7 +2,7 @@
+ all:
+ 
+ TEST_PROGS := ftracetest
+-TEST_FILES := test.d
++TEST_FILES := test.d settings
+ EXTRA_CLEAN := $(OUTPUT)/logs/*
+ 
+ include ../lib.mk
+diff --git a/tools/testing/selftests/livepatch/Makefile b/tools/testing/selftests/livepatch/Makefile
+index 3876d8d62494..1acc9e1fa3fb 100644
+--- a/tools/testing/selftests/livepatch/Makefile
++++ b/tools/testing/selftests/livepatch/Makefile
+@@ -8,4 +8,6 @@ TEST_PROGS := \
+ 	test-state.sh \
+ 	test-ftrace.sh
+ 
++TEST_FILES := settings
++
+ include ../lib.mk
+diff --git a/tools/testing/selftests/net/mptcp/Makefile b/tools/testing/selftests/net/mptcp/Makefile
+index 93de52016dde..ba450e62dc5b 100644
+--- a/tools/testing/selftests/net/mptcp/Makefile
++++ b/tools/testing/selftests/net/mptcp/Makefile
+@@ -8,6 +8,8 @@ TEST_PROGS := mptcp_connect.sh
+ 
+ TEST_GEN_FILES = mptcp_connect
+ 
++TEST_FILES := settings
++
+ EXTRA_CLEAN := *.pcap
+ 
+ include ../../lib.mk
+diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
+index d6469535630a..2af9d39a9716 100644
+--- a/tools/testing/selftests/rseq/Makefile
++++ b/tools/testing/selftests/rseq/Makefile
+@@ -4,7 +4,7 @@ ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+ CLANG_FLAGS += -no-integrated-as
+ endif
+ 
+-CFLAGS += -O2 -Wall -g -I./ -I../../../../usr/include/ -L./ -Wl,-rpath=./ \
++CFLAGS += -O2 -Wall -g -I./ -I../../../../usr/include/ -L$(OUTPUT) -Wl,-rpath=./ \
+ 	  $(CLANG_FLAGS)
+ LDLIBS += -lpthread
+ 
+@@ -19,6 +19,8 @@ TEST_GEN_PROGS_EXTENDED = librseq.so
+ 
+ TEST_PROGS = run_param_test.sh
+ 
++TEST_FILES := settings
++
+ include ../lib.mk
+ 
+ $(OUTPUT)/librseq.so: rseq.c rseq.h rseq-*.h
+diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
+index 2d93d65723c9..55198ecc04db 100644
+--- a/tools/testing/selftests/rtc/Makefile
++++ b/tools/testing/selftests/rtc/Makefile
+@@ -6,4 +6,6 @@ TEST_GEN_PROGS = rtctest
+ 
+ TEST_GEN_PROGS_EXTENDED = setdate
+ 
++TEST_FILES := settings
++
+ include ../lib.mk
+
+--------------3D667C98074F277C68BC2557--
