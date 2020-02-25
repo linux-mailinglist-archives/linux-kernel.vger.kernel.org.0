@@ -2,179 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57B1016F2A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 23:37:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC37016F2B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 23:49:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729170AbgBYWhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 17:37:41 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45618 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728865AbgBYWhl (ORCPT
+        id S1729249AbgBYWtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 17:49:55 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:51372 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728806AbgBYWty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 17:37:41 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b22so408308pls.12
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 14:37:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=ujUSpbSlCH5ZCbsE0Im09CK5jyllUEPbsT32AKCmZZ8=;
-        b=DyLkCv60xAdLCmRKcDclI0CdjpCht6vI0Kff3FlLtJ7IJj+r1jKD0DZHiRDVNX9oU2
-         4ILDtH0EHnHCBkWm9pY11x/hcehrKdRPZLnZ0B+wuKFb3zlDp6C5dn106hviyEbF5k2w
-         /2q2TLjsB4pOYE7UmuaRr59Z8/Ete9pGvTXVU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ujUSpbSlCH5ZCbsE0Im09CK5jyllUEPbsT32AKCmZZ8=;
-        b=c2qGJQB/J9+xiAheHijCVXl9WV19DBliJp/hZ2CsGNtKNEH0OJ9PSIvdkNO14ecqd8
-         Sf4lj4rWTUatPz++HWnc3oRQT0W7y8/1ZneZnbZmYPVlL//G0oGHgrqiBQHenudBAOhm
-         7tIDbOWNnQvXVejmCj7jKTjIYNhHvp+Zvr0urnbFlSoQ9LYspKNvJaVJL0k4KtcT62Pf
-         5IhMkiJVS7CicUiv/C9YDyCV6Jf5Hys1/JjBK68tAzGODmuxQTKXdjUnwRRFAEXBifyU
-         xIZDA02HjSl+OXej6nppy3awmOsV+UAtQ/DguCu52Zd4Vud64OHrSxdqwdIqTY9bDG5A
-         kcGQ==
-X-Gm-Message-State: APjAAAXsZkGwb+ryHaMBiN47GxSzkjZorCaoZAHcMbQ6iUrm7v1C53vE
-        eRs7Fv1q1BC5o2yYq/98re29Xg==
-X-Google-Smtp-Source: APXvYqyClLjlKFFh151KqjRXFbjTgwsEjNcVLzqq++3PiVnTCzW7kl9YidPkNzPtFOSSHwlCCAAalw==
-X-Received: by 2002:a17:902:bf41:: with SMTP id u1mr738034pls.207.1582670259870;
-        Tue, 25 Feb 2020 14:37:39 -0800 (PST)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id x12sm111778pfr.47.2020.02.25.14.37.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2020 14:37:39 -0800 (PST)
-Subject: Re: [PATCH v2 6/7] misc: bcm-vk: add Broadcom VK driver
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, Andy Gross <agross@kernel.org>,
-        Desmond Yan <desmond.yan@broadcom.com>,
-        James Hu <james.hu@broadcom.com>
-References: <20200220004825.23372-1-scott.branden@broadcom.com>
- <20200220004825.23372-7-scott.branden@broadcom.com>
- <20200220074711.GA3261162@kroah.com>
- <ee53fe6f-53de-87c0-db16-989cc15abbce@broadcom.com>
- <CAK8P3a0y8RfjEng4AsMr4MAPGMTXduiFOyfUzazgw9c+KVWmYA@mail.gmail.com>
- <CAOesGMj423YXNhk_vFE0ueNjzbYoD0wQ68jJApewZS8qtVX3=g@mail.gmail.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <d35204c1-054e-ec5b-069b-42a053a3863f@broadcom.com>
-Date:   Tue, 25 Feb 2020 14:37:36 -0800
+        Tue, 25 Feb 2020 17:49:54 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01PMnniE074691;
+        Tue, 25 Feb 2020 16:49:49 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582670989;
+        bh=zy1gihk/lmEzN5ETQUN08dIq2i2iSuWxptUBdri6nTQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=YqQslQS93oTE5mtL6Jffw+GDDQ9DOKvFeztI9QAisDKoNuemRUUhX7P0DSTd67j9X
+         mwRhPevGkxsB/slE4BSkYOazW5CLfcAx2ZQLjkU+yNx7ru/qAFWnLTsrPatdODSTLN
+         mEWdave3cI7F7c+crVGibb86fpp0A4KE3fUlEt8A=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01PMnn7T072939
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Feb 2020 16:49:49 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 25
+ Feb 2020 16:49:49 -0600
+Received: from localhost.localdomain (10.64.41.19) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 25 Feb 2020 16:49:49 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 01PMnnRI083447;
+        Tue, 25 Feb 2020 16:49:49 -0600
+Subject: Re: [RESEND PATCH v17 00/17] Multi Color LED Framework
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200127150032.31350-1-dmurphy@ti.com>
+ <42d9687b-b488-22cf-0e9a-ff635b2094e3@ti.com> <20200225101940.GB16252@amd>
+ <be76fdac-9d32-b9b2-c01d-3aa315b14463@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <e05580eb-670e-9e62-f3c4-84980e2193d2@ti.com>
+Date:   Tue, 25 Feb 2020 16:44:37 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <CAOesGMj423YXNhk_vFE0ueNjzbYoD0wQ68jJApewZS8qtVX3=g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <be76fdac-9d32-b9b2-c01d-3aa315b14463@gmail.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Olof/All,
+Hello
 
-I'm trying to digest all the feedback of what needs to be done.
-I will be fixing up all the valuable comments about general issues but 
-would like to know
-what needs to be done about the tty interface.
+On 2/25/20 4:17 PM, Jacek Anaszewski wrote:
+> On 2/25/20 11:19 AM, Pavel Machek wrote:
+>> Hi!
+>>
+>>>>    leds: lp5521: Add multicolor framework multicolor brightness support
+>>>>    leds: lp55xx: Fix checkpatch file permissions issues
+>>>>    leds: lp5523: Fix checkpatch issues in the code
+>>>>    dt: bindings: Update lp55xx binding to recommended LED naming
+>>> I have no open comments on this patchset except for a DT change requested by
+>>> Shawn Gao but this change should wait till after this patchset is merged.
+>>>
+>>> Is there something holding this up?
+>> Yes... my time; sorry about that.
+>>
+>> The fact that it changes API makes it important to get it right, and
+>> hard/impossible to fix it once it is merged... and I don't think this
+>> is the right interface (sorry).
+>>
+>> In particular, I don't think having directory per channel is a good
+>> idea. It makes atomic updates impossible (minor),
+> It is possible via brightness file, although it will need first writing
+> intensity files, which only will cache colors, and actual write to hw
+> occurs on write to brightness file. This has been discussed dozen of
+> times throughout last year, and you even proposed the formula for
+> calculating per-color-subled brightness basing on global brightness and
+> intensity set for each color.
 
-The VK devices are configured to write serial data to circular buffers 
-in memory or out a UART.
-When we configure a system using the UART we connect a cable to the host 
-and open a tty device.
-When we don't connect a UART cable to the host we open the tty device in 
-our driver instead.
-In this case the memory is exposed to the host via PCI BAR memory space.
-The bcm-vk host driver then accesses PCI space and presents a tty 
-interface to the host.
-We implemented a tty device to present the tty interface.
-Host doesn't change anything other than opening a different devnode in 
-UART vs. PCI case.
+I actually just got your reply Pavel.  Unfortunately I don't have the 
+band width to spin any more major framework changes and as you know this 
+has been discussed over and over and over again with multiple iterations 
+and multiple designs.
 
-Based on all the comments: what interface should we be providing in 
-driver instead?
+I still don't agree with some nebulous unbound array being passed into 
+the driver via sysfs. As we have discussed at length in the past this 
+implementation is just as bad if not worse then what I am proposing. I 
+also have provided that particular array implementation and it failed to 
+get any ACKs as it violated sysfs rules and was wrought with corner 
+cases and mismatches of color to intensity values.  And calling the 
+sysfs node channel_intensity and channel_names is not correct this is a 
+LP55xx naming convention and should not be applied.
 
-On 2020-02-23 3:55 p.m., Olof Johansson wrote:
-> On Sat, Feb 22, 2020 at 12:03 AM Arnd Bergmann <arnd@arndb.de> wrote:
->> On Fri, Feb 21, 2020 at 7:19 PM Scott Branden
->> <scott.branden@broadcom.com> wrote:
->>> On 2020-02-19 11:47 p.m., Greg Kroah-Hartman wrote:
->>>> Have you worked with the V4L developers to tie this into the proper
->>>> in-kernel apis for this type of functionality?
->>> We looked at the V4L model doesn't have any support for anything we are
->>> doing in this driver.
->>> We also want a driver that doesn't care about video.  It could be
->>> offloading crypto or other operations.
->>> We talked with Olof about all of this previously and he said leave it as
->>> a misc driver for now.
->>> He was going to discuss at linux plumbers conference that we need some
->>> sort of offload engine model that such devices could fit into.
->> I see. Have you looked at the "uacce" driver submission? It seems
->> theirs is similar enough that there might be some way to share interfaces.
-> Uacce isn't a driver (or wasn't last time I looked at it, when it had
-> a different name). It's more of a framework for standardized direct HW
-> access from userspace, and relies on I/O virtualization to keep DMA
-> secure/partitioned, etc. VK is more of a classic PCIe device, it'll
-> handle DMA to/from the host, etc.
->
->>>> Using a tty driver seems like the totally incorrect way to do this, what
->>>> am I missing?
->>> tty driver is used to provide console access to the processors running
->>> on vk.
->>> Data is sent using the bcm_vk_msg interface by read/write operations
->>> from user space.
->>> VK then gets the messages and DMA's the data to/from host memory when
->>> needed to process.
->> In turn here, it sounds like you'd want to look at what drivers/misc/mic/
->> and the mellanox bluefield drivers are doing. As I understand, they have the
->> same requirements for console, but have a nicer approach of providing
->> abstract 'virtio' channels between the PCIe endpoint and the host, and
->> then run regular virtio based drivers (console, tty, block, filesystem,
->> network, ...) along with application specific ones to provide the custom
->> high-level protocols.
-> This has more value on the device than on the host, as far as I've
-> seen it used (if you want to boot Linux on it and have things
-> exposed).
->
-> virtio isn't necessarily a match if all you really want is a character
-> stream for a console and don't need (or have performance requirements
-> beyond what virtio offers) other types of communication.
->
->> This is also similar to what the drivers/pci/endpoint
->> (from the other end) as the drivers/ntb (pci host on both ends) frameworks
->> and of course the rpmsg/remoteproc framework do.
-> remoteproc is more about booting a tightly integrated device on an
-> embedded system. Also not a match here IMHO.
->
->> In the long run, I would want much more consolidation between the
->> low-level parts of all these frameworks, but moving your high-level
->> protocols to the same virtio method would sound like a step in the
->> direction towards a generialized framework and easier sharing of
->> the abstractions.
-> For a simple naive console/character stream, doing something on top of
-> hvc might be easier -- it already does polling for you, etc.
->
-> Of course, the intent is not to ever use it as a console for the host
-> here, so that aspect of hvc isn't useful. But it gives you a bunch of
-> other stuff for free with just getchar/putchar interfaces to
-> implement.
->
->
-> -Olof
+But as Jacek indicated lets have the sysfs maintainer provide the 
+consultation on the array implementation again.
+
+And as I have stated above my time has run out on trying to get this 
+framework completed so I will just re-write the lp50xx driver against 
+the standard LED class implementation and abandon any hope of actually 
+improving the LED subsystem for multi color ICs.  As I don't have 
+another year or two to debate this interface again and try to implement 
+the code just for it to get another NACK in the end and having to 
+rewrite the framework again.
+
+Dan
+
 
