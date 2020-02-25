@@ -2,138 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19AC316ED3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 18:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E93216ED43
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 18:57:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730704AbgBYR41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 12:56:27 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41688 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728483AbgBYR40 (ORCPT
+        id S1730999AbgBYR5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 12:57:38 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:35893 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728367AbgBYR5h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 12:56:26 -0500
-Received: by mail-pl1-f194.google.com with SMTP id t14so90638plr.8;
-        Tue, 25 Feb 2020 09:56:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7V8mobxF+XaJyNJarXZVoV6oMpoHTqp4hBZryI/wxKQ=;
-        b=ZoJP6rQ/gJnaS/47WQeT38nVWiKBz3U0t6zkCBlurZzmJ/yGndM2bk6IrzfpUI5meq
-         aRh3nkoz05mlg+oKA8sL2bbUH9PdMMJwaJbSH0ooJMe6S2d3AOClAB1ibTGBMHaTS0/0
-         oMjJt1vKwja1s2nS7F9ZNgoTTmnanLEUggZ3q60lLV/bz+vfPdarkCt6lxgAGM9E5qGo
-         amTSg/0AhPTuaTZf1OEWmEr7pJPlBteMgbjBTDdHOYG/M0DOcku8QPPLna1u0LgZC0g9
-         jnrGar5X3YdmH+gcXiF8QPbPOXL+cIibp9PUhNvchaBAognkGKdejjHf+XuQTQbfrdkL
-         qY5w==
+        Tue, 25 Feb 2020 12:57:37 -0500
+Received: by mail-ot1-f67.google.com with SMTP id j20so371568otq.3;
+        Tue, 25 Feb 2020 09:57:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=7V8mobxF+XaJyNJarXZVoV6oMpoHTqp4hBZryI/wxKQ=;
-        b=XHCUF3h2NeL2yfgn/st1ozDp8B5xf7TPCEXniwf1VrBgdsJeBUSWxL6ac9ux/otGob
-         mtXJVx+oaX79xwCEhxPMH6jS64M9NFdlrlTyc4+Z5timjKDW2IFFmYi+6VkNbBIHUnrs
-         H5ZLkswnJUzYapIvMmgEW2GB6I7s4KyHwYKqNCffSigqkW6hLV220jZVWYfLDEsb1EZl
-         NvY3P/Nx/zSr1MsrcfBwgJOQiIzUwT+A0Y47Q7AFfFgzEwgsGkHHKu8rR21/moZVWJfJ
-         1uCsRsM2csDdhyri5BjayOlYIJ+vTabCFJdO9Un5fE5X5BOulXd1YVU4h1jz1K/gtLQE
-         6leA==
-X-Gm-Message-State: APjAAAUUn2rYBZXqKsqL70+E1sn2pYv/SvyaL8vRpVOL6u1Lht2KRcsO
-        H8x8GAPP8YADUkyLYOBg/0LjtClM
-X-Google-Smtp-Source: APXvYqxLOwIMvaD0MUcgscxA2+NM1pMuGhHB8o9T6X9ITnXtacoW6BfhcKxPm8x2NiZ+CSDw4EEe9A==
-X-Received: by 2002:a17:902:694c:: with SMTP id k12mr54999585plt.329.1582653384099;
-        Tue, 25 Feb 2020 09:56:24 -0800 (PST)
-Received: from [10.67.50.18] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id p17sm17860394pfn.31.2020.02.25.09.56.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2020 09:56:23 -0800 (PST)
-Subject: Re: [PATCH net v2] net: bcmgenet: Clear ID_MODE_DIS in
- EXT_RGMII_OOB_CTRL when not needed
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Stefan Wahren <wahrenst@gmx.net>
-Cc:     bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200225131159.26602-1-nsaenzjulienne@suse.de>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- G10n8gCguORqNGMsVRxrlLs7/himep7MrCc=
-Message-ID: <b82646af-9cd3-e8e8-c968-e8bca473d881@gmail.com>
-Date:   Tue, 25 Feb 2020 09:56:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=122VamsU2CoI60mTYn2qsd+kIcsNIFVhMCViO2v3gAk=;
+        b=fikrckJzIOm+2fBphtK8tDs13AaqRDplWbRlfp0ZUf9dc9pOwtDDljuE7L3B55F6dF
+         GoNHVYIDc9ROQLEgAVXuFsa3XPMTfO8sIZc9PEV5gfy6XnvvDApF6mSD1p5t8p2LQO27
+         XF6yEE1JEgOh44NW5ujASEpuvU5XMRmJrHQvmT6bTwKibwFAqaC2aHP3ZuXfbCFI/4et
+         +EjVGwXeF6MAorJT5B1dXR1ct+SmVoEnssysMgUs+ucRKHcCGkw/nyakb8hc7/fVO9/v
+         yNtvfLnPuNGqM5sqkLTFWof76QWvg5jJjGGyAimyw5I4YCIykHrzwiZ97YOfMQn+Zfp0
+         550Q==
+X-Gm-Message-State: APjAAAWFfEKwHhcj5mt2uFEsSCO/ChQA2lzOyGB/ozTdSBvnk0IXtHXp
+        +ltvtYy+TivyPMjeF0XiQA==
+X-Google-Smtp-Source: APXvYqwr8YyrYpTEaCbgBtAfIoyDJZUv/EYMnIH/R2mEqcnJjcRa6HdAJAElyOXU7kIpiPtypH3jXg==
+X-Received: by 2002:a9d:6c8d:: with SMTP id c13mr46458916otr.277.1582653456886;
+        Tue, 25 Feb 2020 09:57:36 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id i20sm5930770otp.14.2020.02.25.09.57.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2020 09:57:36 -0800 (PST)
+Received: (nullmailer pid 6790 invoked by uid 1000);
+        Tue, 25 Feb 2020 17:57:35 -0000
+Date:   Tue, 25 Feb 2020 11:57:35 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, Anson.Huang@nxp.com,
+        leonard.crestez@nxp.com, daniel.baluta@nxp.com,
+        aisheng.dong@nxp.com, peng.fan@nxp.com, fugang.duan@nxp.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] clk: imx8: Add SCU and LPCG clocks for I2C in CM40 SS
+Message-ID: <20200225175735.GA5232@bogus>
+References: <1581909561-12058-1-git-send-email-qiangqing.zhang@nxp.com>
+ <1581909561-12058-3-git-send-email-qiangqing.zhang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20200225131159.26602-1-nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1581909561-12058-3-git-send-email-qiangqing.zhang@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/25/20 5:11 AM, Nicolas Saenz Julienne wrote:
-> Outdated Raspberry Pi 4 firmware might configure the external PHY as
-> rgmii although the kernel currently sets it as rgmii-rxid. This makes
-> connections unreliable as ID_MODE_DIS is left enabled. To avoid this,
-> explicitly clear that bit whenever we don't need it.
+On Mon, Feb 17, 2020 at 11:19:16AM +0800, Joakim Zhang wrote:
+> Add SCU and LPCG clocks for I2C in CM40 SS.
 > 
-> Fixes: da38802211cc ("net: bcmgenet: Add RGMII_RXID support")
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+> ---
+>  include/dt-bindings/clock/imx8-clock.h | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/dt-bindings/clock/imx8-clock.h b/include/dt-bindings/clock/imx8-clock.h
+> index 673a8c662340..84a442be700f 100644
+> --- a/include/dt-bindings/clock/imx8-clock.h
+> +++ b/include/dt-bindings/clock/imx8-clock.h
+> @@ -131,7 +131,12 @@
+>  #define IMX_ADMA_PWM_CLK				188
+>  #define IMX_ADMA_LCD_CLK				189
+>  
+> -#define IMX_SCU_CLK_END					190
+> +/* CM40 SS */
+> +#define IMX_CM40_IPG_CLK				200
+> +#define IMX_CM40_I2C_CLK				205
+> +
+> +#define IMX_SCU_CLK_END					220
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Why are you skipping numbers?
+
+> +
+>  
+>  /* LPCG clocks */
+>  
+> @@ -290,4 +295,10 @@
+>  
+>  #define IMX_ADMA_LPCG_CLK_END				45
+>  
+> +/* CM40 SS LPCG */
+> +#define IMX_CM40_LPCG_I2C_IPG_CLK			0
+> +#define IMX_CM40_LPCG_I2C_CLK				1
+> +
+> +#define IMX_CM40_LPCG_CLK_END				2
+> +
+>  #endif /* __DT_BINDINGS_CLOCK_IMX_H */
+> -- 
+> 2.17.1
+> 
