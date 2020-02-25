@@ -2,140 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26AB916EE2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:40:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B8DF16EE49
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:44:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731633AbgBYSkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 13:40:19 -0500
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:39661 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731439AbgBYSkT (ORCPT
+        id S1731648AbgBYSoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 13:44:30 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:52759 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731611AbgBYSoa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 13:40:19 -0500
-Received: by mail-qv1-f67.google.com with SMTP id y8so132840qvk.6
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 10:40:18 -0800 (PST)
+        Tue, 25 Feb 2020 13:44:30 -0500
+Received: by mail-pj1-f66.google.com with SMTP id ep11so82313pjb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 10:44:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=i2CV/HrBlB038Ie8Qimmh82koD0NdKzml2lxz77LIw8=;
-        b=ERjzs/tXZewLwer9YDYr/IYsZ/pnkPxN3//YU6bP7CHHDRMWHkIbtg/nZJaTXwNmK7
-         4Qs4eXYUyB3Ezg+amypKAA20yzqDlEMeDIBpWdXMJnLR0PY7mXMKbXfnv97c2RPJisPX
-         mm5VxvL+kqkeqFK9E7EdHKna0JtlAdztQzV/q7yA8TjapZ/6iFqjVEf2XjpalFBXfJY5
-         qX3jcf2q9XJ5LFRVJQgHZWN8TzNR4va/XA3U7FJ79+PGCItxdnPc4CUAhu+up/bX+Tfn
-         Vfdfg2Pcea2m37AoNJ0Xto0D2JDL0rkW2eLIM8KMNVqsT+PYB2rqxqoqatC4WbAuFM49
-         3yDg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=1CE9EkzllE22YSZQFXrk7AEdGrXn0xLSmb4MyQM/dV8=;
+        b=cIrW0PacpFrEunWwPMJQpcxefvyCDLw9uZMnGlwc8cfk6ZGnFu30zLYkZYVqpbbDyR
+         d4FQPk8YSzKVG3YU27u7hjGlDRWqdCAbfl1pnOLyjJOqqEiv+jvxzQWV4UbWL3bARPcF
+         r5H+CPsNRDfXWbQFInKE+SKzTHiUgYBfhJKp0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=i2CV/HrBlB038Ie8Qimmh82koD0NdKzml2lxz77LIw8=;
-        b=StCLVzL3BPl1OjY+HQgUS45mR/xJMs4keAbNAElZLO57kSbUAfGf/2TZzVGwY1T9xI
-         mD8A8TQEpiIwXSCLcgFx0Sdhjamm2LmS6kh8q1LsaQEsbHAFZRg6X+u8eRPzybvMsn4Q
-         WCIL1EuqacHS8jX4AozWWL1CwXK3trF5ge3W8MH3RYPSKPmNKaE5O8tMOTBpRuWHBtPk
-         YodixToIrqZb2GygdiLxA+TY+B0fIHuGPHA4tB2ECm9P7oLRaRKFB6JjbHcfbQnic8Zn
-         xBi8aXdNqfgzmL9x+nTlPn6aFnc60ORMYJoXH+i6MlSTsC0NmkaQkhxisSR48GF9SBEP
-         23dg==
-X-Gm-Message-State: APjAAAUPAwGVXfUbW97IwdZRUkou8NqGuJuE5WWAEzvKgVXKStEH0jkz
-        +RMY9Tg7MyMe1m9gMWcJNBLUyw==
-X-Google-Smtp-Source: APXvYqykB1tvyK9fp2RnMOVCx8rSnGK9lnKsMu0SxzRDZPYVode1NoBodz4tt48PVsQOPvJqzVRHrQ==
-X-Received: by 2002:a0c:da08:: with SMTP id x8mr313476qvj.166.1582656018181;
-        Tue, 25 Feb 2020 10:40:18 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::1:4d9c])
-        by smtp.gmail.com with ESMTPSA id u26sm6102857qkk.18.2020.02.25.10.40.17
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding;
+        bh=1CE9EkzllE22YSZQFXrk7AEdGrXn0xLSmb4MyQM/dV8=;
+        b=aPd8e6WJDsIWu/CkWWAZV1bMTDwAmJ4gQt/XnMSJDDfijbRHRp58v2hP1fx2+Ujlti
+         /Sw5m2cWjGOSVRBIeZ9Lj7DEcKjqdboBrcMyI0/0hbr6pxRGel35YAyDuLibJoywj01K
+         M85ma9AoqKT51Ez+cuPdo1Iq08jiz7fxUlBGWw4XDWqRlcwh5T2rEqAnWfBAJrsU+v89
+         7Q6uv3kOdHUjYXi61QorBwnmtdFXI+2KDQNN80z4pi/FFuUFwGcTqdpRNOno0SQh5puS
+         WwGT+MGrNtZHp45112tiPbn+7zSAS+sFcLzgL4TZsnp1N9TNseKEMqXk6znlPh73XgNl
+         xdrA==
+X-Gm-Message-State: APjAAAVtZUPWbgiit/dpmprml79ScGxX0Fwn5z8YSXKq+tC8tiw+94G4
+        4OyVEi86eKwpTshTUbsCG/7uxw==
+X-Google-Smtp-Source: APXvYqza5a3NT6TpX//kqpYcrzwyVsvWZhehiWD3dIUtwZHKQKxsUPhAHkcexY1C9MlqwHfOCUMTMQ==
+X-Received: by 2002:a17:902:6944:: with SMTP id k4mr57380356plt.214.1582656269583;
+        Tue, 25 Feb 2020 10:44:29 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id s7sm17341197pgp.44.2020.02.25.10.44.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 10:40:17 -0800 (PST)
-Date:   Tue, 25 Feb 2020 13:40:14 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH v2 2/3] mm: memcontrol: clean up and document effective
- low/min calculations
-Message-ID: <20200225184014.GC10257@cmpxchg.org>
-References: <20191219200718.15696-1-hannes@cmpxchg.org>
- <20191219200718.15696-3-hannes@cmpxchg.org>
- <20200221171024.GA23476@blackbody.suse.cz>
+        Tue, 25 Feb 2020 10:44:28 -0800 (PST)
+Date:   Tue, 25 Feb 2020 10:44:27 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Igor M. Liplianin" <liplianin@netup.ru>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Fontana <rfontana@redhat.com>,
+        Daniel Axtens <dja@axtens.net>, linux-kernel@vger.kernel.org
+Subject: [PATCH drivers/misc] altera-stapl: altera_get_note: prevent write
+ beyond end of 'key'
+Message-ID: <202002251042.D898E67AC@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200221171024.GA23476@blackbody.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Michal,
+From: Daniel Axtens <dja@axtens.net>
 
-On Fri, Feb 21, 2020 at 06:10:24PM +0100, Michal Koutn� wrote:
-> On Thu, Dec 19, 2019 at 03:07:17PM -0500, Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > + *    Consider the following example tree:
-> >   *
-> > + *        A      A/memory.low = 2G, A/memory.current = 6G
-> > + *       //\\
-> > + *      BC  DE   B/memory.low = 3G  B/memory.current = 2G
-> > + *               C/memory.low = 1G  C/memory.current = 2G
-> > + *               D/memory.low = 0   D/memory.current = 2G
-> > + *               E/memory.low = 10G E/memory.current = 0
-> >   *
-> > + *    and memory pressure is applied, the following memory
-> > + *    distribution is expected (approximately*):
-> >   *
-> > + *      A/memory.current = 2G
-> > + *      B/memory.current = 1.3G
-> > + *      C/memory.current = 0.6G
-> > + *      D/memory.current = 0
-> > + *      E/memory.current = 0
-> >   *
-> > + *    *assuming equal allocation rate and reclaimability
-> I think the assumptions for this example don't hold (anymore).
-> Because reclaim rate depends on the usage above protection, the siblings
-> won't be reclaimed equally and so the low_usage proportionality will
-> change over time and the equilibrium distribution is IMO different (I'm
-> attaching an Octave script to calculate it).
+altera_get_note is called from altera_init, where key is kzalloc(33).
 
-Hm, this example doesn't change with my patch because there is no
-"floating" protection that gets distributed among the siblings.
+When the allocation functions are annotated to allow the compiler to see
+the sizes of objects, and with FORTIFY_SOURCE, we see:
 
-In my testing with the above parameters, the equilibrium still comes
-out to roughly this distribution.
+In file included from drivers/misc/altera-stapl/altera.c:14:0:
+In function ‘strlcpy’,
+    inlined from ‘altera_init’ at drivers/misc/altera-stapl/altera.c:2189:5:
+include/linux/string.h:378:4: error: call to ‘__write_overflow’ declared with attribute error: detected write beyond size of object passed as 1st parameter
+    __write_overflow();
+    ^~~~~~~~~~~~~~~~~~
 
-> As it depends on the initial usage, I don't think there can be given
-> such a general example (for overcommit).
+That refers to this code in altera_get_note:
 
-It's just to illustrate the pressure weight, not to reflect each
-factor that can influence the equilibrium.
+    if (key != NULL)
+            strlcpy(key, &p[note_strings +
+                            get_unaligned_be32(
+                            &p[note_table + (8 * i)])],
+                    length);
 
-I think it still has value to gain understanding of how it works, no?
+The error triggers because the length of 'key' is 33, but the copy
+uses length supplied as the 'length' parameter, which is always
+256. Split the size parameter into key_len and val_len, and use the
+appropriate length depending on what is being copied.
 
-> > @@ -6272,12 +6262,63 @@ struct cgroup_subsys memory_cgrp_subsys = {
-> >   * for next usage. This part is intentionally racy, but it's ok,
-> >   * as memory.low is a best-effort mechanism.
-> Although it's a different issue but since this updates the docs I'm
-> mentioning it -- we treat memory.min the same, i.e. it's subject to the
-> same race, however, it's not meant to be best effort. I didn't look into
-> outcomes of potential misaccounting but the comment seems to miss impact
-> on memory.min protection.
+Detected by compiler error, only compile-tested.
 
-Yeah I think we can delete that bit.
+Cc: "Igor M. Liplianin" <liplianin@netup.ru>
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Link: https://lore.kernel.org/r/20200120074344.504-2-dja@axtens.net
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+Resending with Greg in To:
+---
+ drivers/misc/altera-stapl/altera.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-> > @@ -6292,52 +6333,29 @@ enum mem_cgroup_protection mem_cgroup_protected(struct mem_cgroup *root,
-> > [...]
-> > +	if (parent == root) {
-> > +		memcg->memory.emin = memcg->memory.min;
-> > +		memcg->memory.elow = memcg->memory.low;
-> > +		goto out;
-> >  	}
-> Shouldn't this condition be 'if (parent == root_mem_cgroup)'? (I.e. 1st
-> level takes direct input, but 2nd and further levels redistribute only
-> what they really got from parent.)
+diff --git a/drivers/misc/altera-stapl/altera.c b/drivers/misc/altera-stapl/altera.c
+index 25e5f24b3fec..5bdf57472314 100644
+--- a/drivers/misc/altera-stapl/altera.c
++++ b/drivers/misc/altera-stapl/altera.c
+@@ -2112,8 +2112,8 @@ static int altera_execute(struct altera_state *astate,
+ 	return status;
+ }
+ 
+-static int altera_get_note(u8 *p, s32 program_size,
+-			s32 *offset, char *key, char *value, int length)
++static int altera_get_note(u8 *p, s32 program_size, s32 *offset,
++			   char *key, char *value, int keylen, int vallen)
+ /*
+  * Gets key and value of NOTE fields in the JBC file.
+  * Can be called in two modes:  if offset pointer is NULL,
+@@ -2170,7 +2170,7 @@ static int altera_get_note(u8 *p, s32 program_size,
+ 						&p[note_table + (8 * i) + 4])];
+ 
+ 				if (value != NULL)
+-					strlcpy(value, value_ptr, length);
++					strlcpy(value, value_ptr, vallen);
+ 
+ 			}
+ 		}
+@@ -2189,13 +2189,13 @@ static int altera_get_note(u8 *p, s32 program_size,
+ 				strlcpy(key, &p[note_strings +
+ 						get_unaligned_be32(
+ 						&p[note_table + (8 * i)])],
+-					length);
++					keylen);
+ 
+ 			if (value != NULL)
+ 				strlcpy(value, &p[note_strings +
+ 						get_unaligned_be32(
+ 						&p[note_table + (8 * i) + 4])],
+-					length);
++					vallen);
+ 
+ 			*offset = i + 1;
+ 		}
+@@ -2449,7 +2449,7 @@ int altera_init(struct altera_config *config, const struct firmware *fw)
+ 			__func__, (format_version == 2) ? "Jam STAPL" :
+ 						"pre-standardized Jam 1.1");
+ 		while (altera_get_note((u8 *)fw->data, fw->size,
+-					&offset, key, value, 256) == 0)
++					&offset, key, value, 32, 256) == 0)
+ 			printk(KERN_INFO "%s: NOTE \"%s\" = \"%s\"\n",
+ 					__func__, key, value);
+ 	}
+-- 
+2.20.1
 
-I believe we cleared this up in the parallel thread, but just in case:
-reclaim can happen due to a memory.max set lower in the
-tree. memory.low propagation is always relative from the reclaim
-scope, not the system-wide root cgroup.
+
+-- 
+Kees Cook
