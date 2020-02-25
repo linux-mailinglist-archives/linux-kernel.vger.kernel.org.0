@@ -2,92 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 725DD16B88C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 05:33:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0708F16B88E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 05:42:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbgBYEdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 23:33:50 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:47025 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728725AbgBYEdu (ORCPT
+        id S1728909AbgBYElx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 23:41:53 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38081 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728725AbgBYElw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 23:33:50 -0500
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id 01P4XZED025736;
-        Tue, 25 Feb 2020 13:33:35 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 01P4XZED025736
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1582605216;
-        bh=Ng4ZmnLemNq5HjpNISMW41r8nXw0jtXn8ANbKHl6dz0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=I48WcS7sqWVKbe3yArFzR4syEgMwUwzgIN61iX3Yq1CNxXsQu1P8ZKz7oPbyjWRmp
-         zSP+HYOMYmByFELhHZcFAaimaEmvFcUBkZa3cjJY7F5xSR5K4FcOkZEmiEAvdLjvEk
-         NDoOjMPw1jrfomDehoBL9diyHDtaMkv3TgB7iP8b99GXlfUoBWj7u91jedKMZ2o0m4
-         r6gJCV55cTOIqknbLQH62BpRz3Amp+KsWNi2rrNHqRXX3j4naawVZVdjcd1zl6QtIf
-         YDrHV3Kiv5cUHU1rDJU6qWnC/HR7Ef+xkFYbDMBNzQu57oDMz6TfgQXyCVYg7YhPaF
-         VxNVNMrVNO8vw==
-X-Nifty-SrcIP: [209.85.221.170]
-Received: by mail-vk1-f170.google.com with SMTP id b2so3149315vkk.4;
-        Mon, 24 Feb 2020 20:33:35 -0800 (PST)
-X-Gm-Message-State: APjAAAUWW5gs7clz/k8ablCltNc1/Sw6yIrn5chTRaQwK9wLu3JpLssp
-        6ac5HcGSezCgIEdazBic4s9NZtvACDI2O3Bg1Hs=
-X-Google-Smtp-Source: APXvYqy/vZEgOpeqqB8D4Pt8x5+U+blcwh6ycIWwV7z+ewuRUMKrQz/xrr83GFfUl4itdlwuCnUaS4R7PUtP0p5OO3Q=
-X-Received: by 2002:a1f:1bc3:: with SMTP id b186mr25874045vkb.96.1582605214678;
- Mon, 24 Feb 2020 20:33:34 -0800 (PST)
+        Mon, 24 Feb 2020 23:41:52 -0500
+Received: by mail-io1-f67.google.com with SMTP id s24so12775101iog.5
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 20:41:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=yPlXEoNM3yOu5GPRYvdxJajDqBUS+kobiBjSqzSqhzM=;
+        b=OHX/yLc/wB9TpLHldMeJcWSy+lrhT97L+Kn1Z4VhhfEtc2lB/V/RW8UzBCYLTB0F9H
+         Uj6YOqak062kVoDt9DYYlfVIBrNVK/wT/IgumcnpKbxR6U0m6vhNhXv9HvbngIsm0LCd
+         Eskz3sNNG8i61YSxjLFBdIFYZwoIQJMq0mFLjsP678urVDwQvTi3Q106G/RgQIE6S59I
+         WdJzzC9G/q8di8brQNcZ7F6UVd1DPhrZbq4vRLh/uR0xp4ZSw2UtLis30xnyzoThEc1p
+         iQ0Z6oM96CCMGNepgU9UmEjzdKd6Jm61TdoVR25wvhBvph5PgFwXCScfzkqB/2zkvkzw
+         1IEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to:content-transfer-encoding;
+        bh=yPlXEoNM3yOu5GPRYvdxJajDqBUS+kobiBjSqzSqhzM=;
+        b=YEdk7ECcA+sYfazmpRaFG98XlM29GUnxEugSelPJRJVYuFSHfe3LQUXfi5pnhrVq+1
+         yrK+1s+FhLR+nBzlc6F4vHe4r1GZt0zzoGFO0Aoe5XOr0vwuYA1WS8i9hqt3i1No2mSV
+         RoW4oTuKtbOERlMCLIoAvhsy19YAUQlY7QcTA6GzQThpEyYP9sM3ltdIZNjsGnaYx3nE
+         FgkOLwYNQweErJ5C7a+CTcsFlbS/yXXxn0EGmCPLTNCLJa+nQ593N6POup50Hm7M0YKk
+         ChhgO8buA++58n7Nn+5mjVb2KJyFAI3mHCPVpRI49z3xafUKBXLNYtR8aJR1IQsjv27X
+         qVYQ==
+X-Gm-Message-State: APjAAAXlv9qjCfCG/ykgF+wWLENB3EAQFEkLOrPQdpqfaEgF+IgsTRe0
+        NSf/LtPMnfnXwwRk58ztyiC/trv/EC2doTue/rQ=
+X-Google-Smtp-Source: APXvYqwZK7j1BNZlx0ZpqUpTD6xbr819oudfW01KEaGl9fC8DDMmjMLlQ6EMUdVZXYvHpiD9KburSiljMLEyRKuB3ss=
+X-Received: by 2002:a05:6602:2510:: with SMTP id i16mr13786768ioe.172.1582605711970;
+ Mon, 24 Feb 2020 20:41:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20200222190435.11767-1-masahiroy@kernel.org> <20200224225253.GA27948@bogus>
-In-Reply-To: <20200224225253.GA27948@bogus>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 25 Feb 2020 13:32:58 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS+iOAonhxN2BK4D8TSb8F-BqPxDGFU0AOv9fZ2So4iqA@mail.gmail.com>
-Message-ID: <CAK7LNAS+iOAonhxN2BK4D8TSb8F-BqPxDGFU0AOv9fZ2So4iqA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] kbuild: fix DT binding schema rule to detect command
- line changes
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a02:8798:0:0:0:0:0 with HTTP; Mon, 24 Feb 2020 20:41:51
+ -0800 (PST)
+From:   Donna Louise <donnalouisemchince@gmail.com>
+Date:   Mon, 24 Feb 2020 16:41:51 -1200
+X-Google-Sender-Auth: S7je1U0tcEeIynKBDTMwSAlMRv0
+Message-ID: <CAGPv-0H-raj0c8XxQt=Qaw2zBY54wfT42-t7ULw1HGxA7ex4YA@mail.gmail.com>
+Subject: Hello,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On Tue, Feb 25, 2020 at 7:52 AM Rob Herring <robh@kernel.org> wrote:
->
-> On Sun, Feb 23, 2020 at 04:04:31AM +0900, Masahiro Yamada wrote:
-> > This if_change_rule is not working; it cannot detect any command line
-> > changes.
-> >
-> > The reason is because cmd-check in scripts/Kbuild.include compares
-> > $(cmd_$@) and $(cmd_$1), but cmd_dtc_dt_yaml does not exist here.
-> >
-> > For if_change_rule to work properly, the stem part of cmd_* and rule_*
-> > must match. Because this cmd_and_fixdep invokes cmd_dtc, this rule must
-> > be named rule_dtc.
-> >
-> > Fixes: 4f0e3a57d6eb ("kbuild: Add support for DT binding schema checks")
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> >
-> >  scripts/Makefile.lib | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> For the series,
->
-> Acked-by: Rob Herring <robh@kernel.org>
->
-> I'm assuming you will take these? If not, I can in the DT tree.
-
-Yes, I will queue these to kbuild tree.
+Greetings.
 
 
+Please do not feel disturbed for contacting =C2=A0you in this manner, It
+was based on the critical health condition I find mine self.=C2=A0 My names
+are Mrs. Donna McInnes Louise, a widow and I=E2=80=99m suffering from brain
+tumor disease and this illness has gotten to a very bad stage, I
+married my husband for Ten years without any family members and no
+child.=C2=A0 My husband died after a brief illness that lasted for few
+days.
 
 
+Since the death of my husband, I decided not to remarry again, When my
+late husband was alive he deposited the sum of =C2=A0($11.000.000 Eleven
+million dollars.) with the Bank. Presently this money is still in
+bank. And My Doctor told me that I don't have much time to live
+because my illness has gotten to a very bad stage, Having known my
+condition I decided to entrust over the deposited fund under your
+custody to take care of the less-privileged ones therein your country
+or position, which i believe that you will utilize this money the way
+I am going to instruct herein.
 
--- 
-Best Regards
-Masahiro Yamada
+
+However all I need and required from you is your sincerity and ability
+to carry out the transaction successfully and fulfill my final wish in
+implementing the charitable project as it requires absolute trust and
+devotion without any failure and I will be glad to see that the bank
+finally release and transfer the fund into your bank account in your
+country even before I die here in the hospital, because my present
+health condition is very critical at the moment everything needs to be
+process rapidly as soon as possible.
+
+It will be my pleasure to compensate you as my Investment
+Manager/Partner with 35 % percent of the total fund for your effort in
+handling the transaction, 5 % percent for any expenses or processing
+charges fee that will involve during this process while 60% of the
+fund will be Invested into the charity project there in your country
+for the mutual benefit of the orphans and the less privileges ones.
+Meanwhile I am waiting for your prompt respond, if only you are
+interested for further details of the transaction and execution of
+this humanitarian project for the glory and honor of God the merciful
+compassionate.
+
+
+May bless you and your family.
+Yours sincerely Mrs. Donna McInnes Louise.
