@@ -2,117 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C3716BF57
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 12:10:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE5E616BF50
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 12:08:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729712AbgBYLKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 06:10:37 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41717 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728975AbgBYLKg (ORCPT
+        id S1730412AbgBYLI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 06:08:29 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:60992 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729034AbgBYLI3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 06:10:36 -0500
-Received: by mail-ot1-f66.google.com with SMTP id r27so11682922otc.8;
-        Tue, 25 Feb 2020 03:10:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ShF1rKEK1sHJi4bV5AliSANHk/vwDEu/sJwUMKOAytQ=;
-        b=Fg/TotUMSk7QXSXk+m98jtZD8Vl88pH3O57RgFun3g3aQJMM/bL9DlHkQdMlJ9HsCa
-         uPYtx9Foya/owzzapQlN7pr197BYCoNKd16yA+RHpmlBkcktnWzag9cHY3YtVtxHAgAc
-         2rXfvh9zkT25B4TsF5SxJyV7FsfG1gi+cuE8L2g43agkEq3NF/ylGx+Au152O0Qe2LYF
-         s0BDRGCjA+OIh6EwzWlA3V7ffdNlN185/fEiDBN3yAKTFvRYPUN2XsLwgn+p4Wwqz+Js
-         loTuNRZC4vD3E/tM8XzHpIDdwza9ArLxAftRJec3h8/oJ+1b95Vai7VMbko07NYYMKll
-         2GaQ==
-X-Gm-Message-State: APjAAAW4WTp5KG4Fx4NqLybVelarfBNATrKDg82H3+YEuyV687HgRoX2
-        +ovl9/N2K+u+JyReD/mppCbzFF9gpVV0oeD6ZP4=
-X-Google-Smtp-Source: APXvYqxrMaSMRykUQR0d01z8RXFwEIAPMGRIumb8H1Es0tsGNPGUfg1hHfXUZPkQRkGTPUS0CeT4/nilPWSHjFSskVc=
-X-Received: by 2002:a9d:dc1:: with SMTP id 59mr44161260ots.250.1582629035571;
- Tue, 25 Feb 2020 03:10:35 -0800 (PST)
+        Tue, 25 Feb 2020 06:08:29 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01PB8NSa067869;
+        Tue, 25 Feb 2020 05:08:23 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582628903;
+        bh=uoMbkCSIoLLqj6dt4hwCMJGT3Flkqz8R3jYK/C0whnw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=NeLcGKoR3RzYswwPTe6IX3bwX3wc3LzMxOc8HcU7xrEtY7XHfZAm5pcOc0RYhiPCm
+         4i6/TQ7L/PJZxu/YmKZMIVVoICwuPPQghe4yNmbfi6/rnL/j/QAKavHFxgRaNW+heY
+         04gVDfycTysZ2qCM1wEXZ8qIk5VfU/nSwzttATVY=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01PB8NXa013010;
+        Tue, 25 Feb 2020 05:08:23 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 25
+ Feb 2020 05:08:23 -0600
+Received: from localhost.localdomain (10.64.41.19) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 25 Feb 2020 05:08:23 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 01PB8LJL024869;
+        Tue, 25 Feb 2020 05:08:21 -0600
+Subject: Re: [PATCH RESEND] PCI: endpoint: Fix clearing start entry in
+ configfs
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1576844677-24933-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <20200221141553.GA15440@e121166-lin.cambridge.arm.com>
+ <20200225190506.7DFA.4A936039@socionext.com>
+ <20200225101825.GA4029@e121166-lin.cambridge.arm.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <4d45a8c2-c9db-6e2e-b223-69df26687e32@ti.com>
+Date:   Tue, 25 Feb 2020 16:42:51 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200225104223.30891-1-luca@lucaceresoli.net>
-In-Reply-To: <20200225104223.30891-1-luca@lucaceresoli.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 25 Feb 2020 12:10:24 +0100
-Message-ID: <CAMuHMdVuk_BcFH16eBQYeQxREAF9VPz+R_sBKQpG0jQ8JDLn0w@mail.gmail.com>
-Subject: Re: [DT-OVERLAY PATCH] of: overlay: print the offending node name on
- fixup failure
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200225101825.GA4029@e121166-lin.cambridge.arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luca,
+Hi,
 
-On Tue, Feb 25, 2020 at 11:42 AM Luca Ceresoli <luca@lucaceresoli.net> wrote:
-> When a DT overlay has a fixup node that is not present in the base DT
-> __symbols__, this error is printed:
->
->   OF: resolver: overlay phandle fixup failed: -22
->   create_overlay: Failed to create overlay (err=-22)
->
-> which does not help much in finding the node that caused the problem.
->
-> Add a debug print with the name of the fixup node that caused the
-> error. The new output is:
->
->   OF: resolver: node gpio9 not found in base DT, fixup failed
->   OF: resolver: overlay phandle fixup failed: -22
->   create_overlay: Failed to create overlay (err=-22)
->
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+On 25/02/20 3:48 pm, Lorenzo Pieralisi wrote:
+> On Tue, Feb 25, 2020 at 07:05:07PM +0900, Kunihiko Hayashi wrote:
+>> Hi Lorenzo,
+>>
+>> On Fri, 21 Feb 2020 14:15:53 +0000 <lorenzo.pieralisi@arm.com> wrote:
+>>
+>>> On Fri, Dec 20, 2019 at 09:24:37PM +0900, Kunihiko Hayashi wrote:
+>>>> The value of 'start' entry is no change whenever writing 0 to configfs.
+>>>> So the endpoint that stopped once can't restart.
+>>>>
+>>>> The following command lines are an example restarting endpoint and
+>>>> reprogramming configurations after receiving bus-reset.
+>>>>
+>>>>     echo 0 > controllers/66000000.pcie-ep/start
+>>>>     rm controllers/66000000.pcie-ep/func1
+>>>>     ln -s functions/pci_epf_test/func1 controllers/66000000.pcie-ep/
+>>>>     echo 1 > controllers/66000000.pcie-ep/start
+>>>>
+>>>> However, the first 'echo' can't set 0 to 'start', so the last 'echo' can't
+>>>> restart endpoint.
+>>>
+>>> I think your description is not correct - pci_epc_group->start is
+>>> just used to check if an endpoint has been started or not (in
+>>> pci_epc_epf_unlink() and that's a WARN_ON) but nonetheless this
+>>> looks like a bug and ought to be fixed.
+>>
+>> When pci_epc_group->start keeps 1 after starting this controller with
+>> 'echo 1 > start', we can never unlink the func1 from the controller
+>> because of WARN_ON.
+> 
+> To me "I can never unlink" means that it can't be done, which
+> is not what's happening. What's happening is that unlinking triggers
+> a warning, which is different.
+> 
+>> I think that unlink/re-link play initialization role of configfs
+>> through 'unbind' and 'bind' functions. However, we can't re-initialize
+>> configfs.
+>>
+>> If this is the intended behavior, my patch will make no sense.
+> 
+> Your patch makes sense, your commit log does not, see above.
+> 
+>>> I need Kishon's ACK to proceed.
+> 
+> Yes - then I am happy to merge this patch with a rewritten
+> commit log.
 
-Thanks for your patch!
+I think all this patch does is fixes an in-correct WARN_ON. The start
+and stop of endpoint should happen irrespective of this patch. Once the
+commit log is fixed to indicate that
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 
-> NOTE: this patch is not for mainline!
-
-Why not?
-
-> It applies on top of the runtime overlay patches at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git on
-> branch topic/overlays, currently based on v5.6-rc1. This looked like the
-> most up-to-date version of the overlay patches. Should there be a better
-> place, please let me know.
-
-Topic/overlays does not contain any changes to drivers/of/resolver.c,
-so this patch is applicable to mainline, too.
-
-> --- a/drivers/of/resolver.c
-> +++ b/drivers/of/resolver.c
-> @@ -321,8 +321,11 @@ int of_resolve_phandles(struct device_node *overlay)
->
->                 err = of_property_read_string(tree_symbols,
->                                 prop->name, &refpath);
-> -               if (err)
-> +               if (err) {
-> +                       pr_err("node %s not found in base DT, fixup failed",
-> +                              prop->name);
->                         goto out;
-> +               }
->
->                 refnode = of_find_node_by_path(refpath);
->                 if (!refnode) {
-
-Probably you want to print a helpful message here, too?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks
+Kishon
+> 
+> Thanks,
+> Lorenzo
+> 
+>> I think so, too.
+>>
+>> Thank you,
+>>
+>>>
+>>> Thanks,
+>>> Lorenzo
+>>>
+>>>> Fixes: d74679911610 ("PCI: endpoint: Introduce configfs entry for configuring EP functions")
+>>>> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+>>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+>>>> ---
+>>>>  drivers/pci/endpoint/pci-ep-cfs.c | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
+>>>> index d1288a0..4fead88 100644
+>>>> --- a/drivers/pci/endpoint/pci-ep-cfs.c
+>>>> +++ b/drivers/pci/endpoint/pci-ep-cfs.c
+>>>> @@ -58,6 +58,7 @@ static ssize_t pci_epc_start_store(struct config_item *item, const char *page,
+>>>>  
+>>>>  	if (!start) {
+>>>>  		pci_epc_stop(epc);
+>>>> +		epc_group->start = 0;
+>>>>  		return len;
+>>>>  	}
+>>>>  
+>>>> -- 
+>>>> 2.7.4
+>>>>
+>>
+>> ---
+>> Best Regards,
+>> Kunihiko Hayashi
+>>
