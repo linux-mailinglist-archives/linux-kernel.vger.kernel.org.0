@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CD2916F37C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:30:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD0E116F37A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:30:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbgBYXar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:30:47 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55477 "EHLO
+        id S1730760AbgBYXad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:30:33 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55551 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728806AbgBYXZp (ORCPT
+        with ESMTP id S1729382AbgBYXZw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:25:45 -0500
+        Tue, 25 Feb 2020 18:25:52 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j6ja2-0004Xw-2s; Wed, 26 Feb 2020 00:25:34 +0100
+        id 1j6ja2-0004Y0-LD; Wed, 26 Feb 2020 00:25:35 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 6426210408F;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id CF0D6104092;
         Wed, 26 Feb 2020 00:25:29 +0100 (CET)
-Message-Id: <20200225220216.933457250@linutronix.de>
+Message-Id: <20200225220217.150607679@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Feb 2020 22:36:44 +0100
+Date:   Tue, 25 Feb 2020 22:36:46 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Brian Gerst <brgerst@gmail.com>,
         Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [patch 08/10] x86/entry/32: Remove the 0/-1 distinction from exception entries
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [patch 10/10] x86/traps: Stop using ist_enter/exit() in do_int3()
 References: <20200225213636.689276920@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,41 +43,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nothing cares about the -1 "mark as interrupt" in the errorcode anymore. Just
-use 0 for all excpetions which do not have an errorcode consistently.
+#BP is not longer using IST and using ist_enter() and ist_exit() makes it
+harder to change ist_enter() and ist_exit()'s behavior.  Instead open-code
+the very small amount of required logic.
 
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/entry/entry_32.S |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1290,7 +1290,7 @@ SYM_CODE_END(simd_coprocessor_error)
+---
+ arch/x86/kernel/traps.c |   21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -572,14 +572,20 @@ dotraplinkage void notrace do_int3(struc
+ 		return;
  
- SYM_CODE_START(device_not_available)
- 	ASM_CLAC
--	pushl	$-1				# mark this as an int
-+	pushl	$0
- 	pushl	$do_device_not_available
- 	jmp	common_exception
- SYM_CODE_END(device_not_available)
-@@ -1531,7 +1531,7 @@ SYM_CODE_START(debug)
- 	 * Entry from sysenter is now handled in common_exception
+ 	/*
+-	 * Use ist_enter despite the fact that we don't use an IST stack.
+-	 * We can be called from a kprobe in non-CONTEXT_KERNEL kernel
+-	 * mode or even during context tracking state changes.
++	 * Unlike any other non-IST entry, we can be called from a kprobe in
++	 * non-CONTEXT_KERNEL kernel mode or even during context tracking
++	 * state changes.  Make sure that we wake up RCU even if we're coming
++	 * from kernel code.
+ 	 *
+-	 * This means that we can't schedule.  That's okay.
++	 * This means that we can't schedule even if we came from a
++	 * preemptible kernel context.  That's okay.
  	 */
- 	ASM_CLAC
--	pushl	$-1				# mark this as an int
-+	pushl	$0
- 	pushl	$do_debug
- 	jmp	common_exception
- SYM_CODE_END(debug)
-@@ -1682,7 +1682,7 @@ SYM_CODE_END(nmi)
+-	ist_enter(regs);
++	if (!user_mode(regs)) {
++		rcu_nmi_enter();
++		preempt_disable();
++	}
+ 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
++
+ #ifdef CONFIG_KGDB_LOW_LEVEL_TRAP
+ 	if (kgdb_ll_trap(DIE_INT3, "int3", regs, error_code, X86_TRAP_BP,
+ 				SIGTRAP) == NOTIFY_STOP)
+@@ -600,7 +606,10 @@ dotraplinkage void notrace do_int3(struc
+ 	cond_local_irq_disable(regs);
  
- SYM_CODE_START(int3)
- 	ASM_CLAC
--	pushl	$-1				# mark this as an int
-+	pushl	$0
+ exit:
+-	ist_exit(regs);
++	if (!user_mode(regs)) {
++		preempt_enable_no_resched();
++		rcu_nmi_exit();
++	}
+ }
+ NOKPROBE_SYMBOL(do_int3);
  
- 	SAVE_ALL switch_stacks=1
- 	ENCODE_FRAME_POINTER
 
