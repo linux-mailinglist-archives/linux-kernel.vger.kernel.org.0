@@ -2,107 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B38216C361
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:08:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FEA616C34F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 15:07:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730702AbgBYOIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 09:08:45 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54754 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730656AbgBYOIk (ORCPT
+        id S1730588AbgBYOHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 09:07:54 -0500
+Received: from sonic313-13.consmr.mail.bf2.yahoo.com ([74.6.133.123]:34084
+        "EHLO sonic313-13.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730109AbgBYOHy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:08:40 -0500
-Received: by mail-wm1-f65.google.com with SMTP id z12so3128591wmi.4;
-        Tue, 25 Feb 2020 06:08:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ArTAv9akc7/LkDwjVGNvRKjk3sNTR9LtjKLQSrks0NI=;
-        b=PDKxN0RElw9PRyO7fCZpANrOwsGJl2RaUOMlQzrM7ZJK3fzkzEvP3QXaZEMAVDMJSq
-         e+VsxVTXWKfkY29br29pSKRAFu5G4RGnDvBXYjmT6QGx85wCq5n583l5bLfm0+CyOE+q
-         Fze8QB9Ivdwg1/BqVYoOk9rfjbSDtIRovJEOhuMwRB19xdbDU2GLsoQxhLhwPF9LgAVY
-         TtO3bLG+eb+8+c4YNhY/p+iIg8inXXVLUBn3A/luUUVFOidgnsE58riyBV1l/sfgplRe
-         Rv/g+fTbTotfZZCY9WnRzssSwVi9IdWOSCl47M4YnNPz6kpQrHyDQo4j2OHULr7OlRek
-         gXsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ArTAv9akc7/LkDwjVGNvRKjk3sNTR9LtjKLQSrks0NI=;
-        b=XVMnifHkh5KwvGmu1PD3LmKaVf1TJVErxbAYHWFunX2uYQ2BHmYtODAaz05kqATHIN
-         40NJCkR6Ji2wrGwNDppoTw74UuQhd5jcYHZZMv2AOXK4HzGHNsOBLWQ82es2qHSCzzbx
-         4PHGwnK6A785fmza8FgbpkUNIALBGhVHM+G0wcdQUN+QTM13L4b+sJ/nNUpdiX1kuipc
-         9TsLtvpaDC4rsPcmgysZPqRlbMf1wKUG0csPN8mxXRQcqiXBjfyKsYw/TqcJSeb60ibg
-         DMlp+gHr9XyyBNNHz9M7YDU/9xWyn5K/Lfv2T4QwPSd3htf3wypZEmc7AWNJftzk2+Y9
-         EyNg==
-X-Gm-Message-State: APjAAAXm4ru3rdBXJ3+Hat/7SK/bYiAuDyGpMoOlHcChusI0aXHBG8v1
-        6pPyNYK48uxjvisCDGvTuvQ=
-X-Google-Smtp-Source: APXvYqzd4tD4DjZdUUgUg6ejSYxE3QSi9zi7vDtqJz1qP/UD58J1AlJbu8Ldj1JNBzQ4/T63qUh46Q==
-X-Received: by 2002:a1c:208a:: with SMTP id g132mr4839399wmg.143.1582639718246;
-        Tue, 25 Feb 2020 06:08:38 -0800 (PST)
-Received: from ?IPv6:2003:ea:8f29:6000:30a8:e117:ed7d:d145? (p200300EA8F29600030A8E117ED7DD145.dip0.t-ipconnect.de. [2003:ea:8f29:6000:30a8:e117:ed7d:d145])
-        by smtp.googlemail.com with ESMTPSA id u8sm4315813wmm.15.2020.02.25.06.08.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2020 06:08:37 -0800 (PST)
-Subject: [PATCH v3 8/8] sound: bt87x: use pci_status_get_and_clear_errors
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        David Miller <davem@davemloft.net>,
-        Mirko Lindner <mlindner@marvell.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        alsa-devel@alsa-project.org
-References: <20ca7c1f-7530-2d89-40a6-d97a65aa25ef@gmail.com>
-Message-ID: <357c0134-c927-6a97-4333-310983b63ed9@gmail.com>
-Date:   Tue, 25 Feb 2020 15:07:43 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 25 Feb 2020 09:07:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1582639673; bh=vFR/xlds8eKkS3F/y7lHfGoxODDm9autl1GsnmcX5JM=; h=Date:From:Reply-To:Subject:References:From:Subject; b=dbv4DYl6BdWf96KCYSU7f0iDjIWR4YAG42elcXfcZUpZU7Y9WgwTOSx8VH9iUfLrkHSX4MXWkZu475bicFnm/bkBPYMLerbMQZMBk2gbUpvuKPThNLuWQwS7sMizbSrgovriRITCE0nsChtX7f0Z2hEYQ6NYI3rMfVORXXTnERDz59FWbx5TqE7foIIOjdndOpzu61Pit25swEDyVVsKLha4yNou3VFRB4clqzhBGmb8YO0T9IZVIUf+VBi3Q1J3BANz6SVYt7qThoXL3OeEbJi8/SG0gtDHAMoDFKcY5jTQnU0oG1uvZ3uLVkdvRTzbYhqxIE6YHjO+cnTN3iF/iw==
+X-YMail-OSG: J7zUg0sVM1kmSiW0mufYM0GL_dQA7GWyvndXEyCZmt1qXoFrFBkv7ADPsgsyS1n
+ dvrqN7tQ5Uws8BN_L_VUQPdXxL_StP7ctVZjJ9A99k76nzGV9772Yh2LxFsLL9ZdyaXfZBpahZe2
+ Ir39GwDz9OD.uTbFX3bLMWNz9r4MZaVUrbCngiczMWiodk.1mrb7KhOzshlzdsUnxYxD7HY8BZ3P
+ q0IFO8tobt9lBXhSpupY_w.zcFGeGwr9.RO9bY.I.U3A3pw0dGuNX0OoNAH4hhr7mrHJg4oskvYU
+ uV4fSYAWs.lEua1qKHH3gJJTWI8lrs15Yv4I..69cHXF2KCpjUvRckcAlXPJcuzOmVdI7qtSYIJo
+ u_j0qb0zVcZRyGaJ5f8QLA5CIo777l.4ymlrEqKZlPMeFvn7eBsssPa8d3nAK1xfrTZuHF3Pkou0
+ tD1FPtZwCx03nTj.Hkw5UvWBR0zOKnGwHm2BGFNXW41QshBJ.fIVQOrVhnnguOSHX3zQy7.ykht0
+ o1wJF_N3IqbLPJzUKxNE438xkvLKedxDk7xDUG8MW3BWy3DiXvq3P95pQP58kDlOSmgxDWxjtIcd
+ vuni6XMyEaCf.difRfXDu_o_4tTp6EesoFp9sod8KBvwCxYiPdZDQHz8HgTu0Jh88YB.2fL5FK9z
+ ifptZJx3.vNbDYHdpGAvzAtpAuoWh73pJRVpRR7lNlSiYY3MJzXi77_e9t4JH9TV.gc1WDQxqYy8
+ 4tQ8KqdRjoyKH6MR6tR_FuEojdR4uUrxEwzvkvkZWcQ0EyG5.VVQxLZodIXMXqOygQvMe_xqBToA
+ NhW9YCEhilNvX8wmUFgQZdBNsOLfTYDhQ1O5ZmxlwOMYExNdbGkdlrUGdNnhgLdhR9xD1K9nFgXa
+ 6ElWSyghG7y6h0x_JZj81WRlHzKBrIAQYoPSFJwTksCuX_q50X.jdTb0o98O51fKlrzSgigsoLuI
+ CPpKfLSFQbxRqg__nMbR6Q6sv7nmqeq1f49Du9aZa4Ye3rXHlaSB78aG5IkMm1Nuq29VhM6LAR8K
+ QM0vf0R9k07mBCDICKYSwu4gsewakZGbI_DXvvSjuYP0frqWn1hAPa0d95a_Z3RpbspRUQjQpQM3
+ kQhPU0MyvysmJO9WL7oSw9qPBpydod4WRlpUaY_nMDlMBaFHytzSZG8rkUkPTck4m5dCpzzcIONc
+ jJdSk447DfohGy84EQUvDOBJbLxhgz5caXPBsAnuKpzvXYHdi03IljUA2ThdW.b7uvnpoSoL5AYv
+ fgJOG8.fM.S2hMc.Fs1nASv2g0ihPLRTVLh_WiO05ZEm59M0bLfL8pLk7MbXk6t2UdhUqfX39OiR
+ pQkOmycGqKcRscxnsV_sZ99dzlOaba3XCOSvBjA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Tue, 25 Feb 2020 14:07:53 +0000
+Date:   Tue, 25 Feb 2020 14:07:49 +0000 (UTC)
+From:   MR FELIX ANTHONY <mrfelix.anthony2@gmail.com>
+Reply-To: mrfelix.anthony1@gmail.com
+Message-ID: <796894690.121559.1582639669533@mail.yahoo.com>
+Subject: Good day To You
 MIME-Version: 1.0
-In-Reply-To: <20ca7c1f-7530-2d89-40a6-d97a65aa25ef@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+References: <796894690.121559.1582639669533.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.15302 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:56.0) Gecko/20100101 Firefox/56.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new helper pci_status_get_and_clear_errors() to simplify the code.
-
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- sound/pci/bt87x.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/sound/pci/bt87x.c b/sound/pci/bt87x.c
-index 8c48864c8..656750466 100644
---- a/sound/pci/bt87x.c
-+++ b/sound/pci/bt87x.c
-@@ -271,13 +271,8 @@ static void snd_bt87x_free_risc(struct snd_bt87x *chip)
- 
- static void snd_bt87x_pci_error(struct snd_bt87x *chip, unsigned int status)
- {
--	u16 pci_status;
-+	int pci_status = pci_status_get_and_clear_errors(chip->pci);
- 
--	pci_read_config_word(chip->pci, PCI_STATUS, &pci_status);
--	pci_status &= PCI_STATUS_PARITY | PCI_STATUS_SIG_TARGET_ABORT |
--		PCI_STATUS_REC_TARGET_ABORT | PCI_STATUS_REC_MASTER_ABORT |
--		PCI_STATUS_SIG_SYSTEM_ERROR | PCI_STATUS_DETECTED_PARITY;
--	pci_write_config_word(chip->pci, PCI_STATUS, pci_status);
- 	if (pci_status != PCI_STATUS_DETECTED_PARITY)
- 		dev_err(chip->card->dev,
- 			"Aieee - PCI error! status %#08x, PCI status %#04x\n",
--- 
-2.25.1
+Good day To You
 
 
+   Please i need your kind Assistance assistance to receive this sum of ( $18. Million US dollars.) into your
 
+bank account for the benefit of our both families, 
+    
+   Please reply me if you are interested
+(mrfelix.anthony1@gmail.com)
 
+FROM 
+
+Mr Felix Anthony
+
+      
