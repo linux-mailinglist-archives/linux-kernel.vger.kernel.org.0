@@ -2,76 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD6E416ED5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 18:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C0BE16ED3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 18:57:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731399AbgBYR72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 12:59:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39164 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730829AbgBYR72 (ORCPT
+        id S1730908AbgBYR51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 12:57:27 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:57954 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728367AbgBYR51 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 12:59:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=/kPd72L2NTbA3prrCkJX+T5HQUkpWtEmXQRVd+BkfJ0=; b=AcufC8xSi1fboQhsUYGFToSFOR
-        78qYe41745VJ22m4tMZ1rEHdv7ghQ8RZZ9FQFWO9KN3O87ToWyXBaJiMxGBRT4qLo/Vaa1S3TTY5K
-        Bg+chVynEZjdk3F6MhkRnBWxvWwvDDQzqLOZbbh3FTOz57vEOtDO9CWTmEAbrru8adqN8M1bq4n7N
-        7tkGFSV2aAdu+P9HEb3HiZAlmUsfr85SfCGusyQA7994aaRrs/EqkNdTotVK8Yd3bug0hV1MjssMg
-        CnqwnjynmSwuZYTeSKl9+9tMgrIRCYfz7gubrrGTuH5kfyRPM6ca/aaBUbY8OAeE+ZFS/iM4+/urK
-        ntXvLOEw==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j6eUQ-00043g-VW; Tue, 25 Feb 2020 17:59:27 +0000
-Subject: Re: [PATCH] bootconfig: Fix CONFIG_BOOTTIME_TRACING dependency issue
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200225220551.d9a409bc04b77cdf48eae3ea@kernel.org>
- <158264140162.23842.11237423518607465535.stgit@devnote2>
- <c9604764-bd0f-67e9-56c8-fb6ffaf9b430@infradead.org>
- <20200225125335.5bbc3ed4@gandalf.local.home>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <aa78add3-a6d9-e316-cfba-3432e347bec4@infradead.org>
-Date:   Tue, 25 Feb 2020 09:59:25 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 25 Feb 2020 12:57:27 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01PHvO6g118931;
+        Tue, 25 Feb 2020 11:57:24 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582653444;
+        bh=hQ2uIHjwpTtJd56UjDVGgdNIbg9rWSbDzA/3T4wHuB8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=iE2Ub7TW60Al9VxN8PEadGgbs5BBH9yGJa7MegH5Qx4FJn8tZ+fJ+KIhL50zhnSqp
+         TVeEewZXmOJYdpnNqpQPU5dWX5HtjPpkHU92DLqdf/Bv4FEh73liimeyZS4WRU5Bk0
+         SLRTI1dad94YiPWDWopxLLimPJzzIlPcfeRV3D+0=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01PHvOFv026587
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Feb 2020 11:57:24 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 25
+ Feb 2020 11:57:23 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 25 Feb 2020 11:57:23 -0600
+Received: from [158.218.117.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01PHvNdn070866;
+        Tue, 25 Feb 2020 11:57:23 -0600
+Subject: Re: [for-next PATCH 1/5] phy: ti: gmii-sel: simplify config
+ dependencies between net drivers and gmii phy
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20200222120358.10003-1-grygorii.strashko@ti.com>
+ <20200222120358.10003-2-grygorii.strashko@ti.com>
+From:   Murali Karicheri <m-karicheri2@ti.com>
+Message-ID: <78f6521a-d44b-b0b9-8dcf-4b1dc1446946@ti.com>
+Date:   Tue, 25 Feb 2020 13:04:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200225125335.5bbc3ed4@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200222120358.10003-2-grygorii.strashko@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/25/20 9:53 AM, Steven Rostedt wrote:
-> On Tue, 25 Feb 2020 09:49:25 -0800
-> Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->>> Fixes: d8a953ddde5e ("bootconfig: Set CONFIG_BOOT_CONFIG=n by default")
->>> Reported-by: Randy Dunlap <rdunlap@infradead.org>
->>> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>  
->>
->> Hi,
->> I'm no fan of "select", but this does fix the kconfig warnings and
->> build errors that I have reported.  Thanks.
-> 
-> I'm not big on select either, but this is fine (I'm running it through my
-> tests now).
-> 
->>
->> Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-> 
-> Is it OK if I change this to "Tested-by:"?
+Hi Grygorii,
 
-Yes, as long as someone doesn't read (interpret) that as runtime-tested-by. :)
+On 02/22/2020 07:03 AM, Grygorii Strashko wrote:
+> The phy-gmii-sel can be only autoselacted in Kconfig and now the pretty
+s/autoselacted/auto selected
+> complex Kconfig dependencies are defined for phy-gmii-sel driver, which
+> also need to be updated every time phy-gmii-sel is re-used for any new
+> networking driver.
+> 
+> Simplify Kconfig definotion for phy-gmii-sel PHY driver - drop all
+
+s/definotion/definition
+
+> depndencies and from networking drivers and rely on using 'imply imply
+
+s/depndencies/dependencies
+
+> PHY_TI_GMII_SEL' in Kconfig definotions for networking drivers instead.
+> 
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+>   drivers/net/ethernet/ti/Kconfig | 1 +
+>   drivers/phy/ti/Kconfig          | 3 ---
+>   2 files changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
+> index bf98e0fa7d8b..8a6ca16eee3b 100644
+> --- a/drivers/net/ethernet/ti/Kconfig
+> +++ b/drivers/net/ethernet/ti/Kconfig
+> @@ -53,6 +53,7 @@ config TI_CPSW
+>   	select MFD_SYSCON
+>   	select PAGE_POOL
+>   	select REGMAP
+> +	imply PHY_TI_GMII_SEL
+>   	---help---
+>   	  This driver supports TI's CPSW Ethernet Switch.
+>   
+> diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
+> index 6dbe9d0b9ff3..15a3bcf32308 100644
+> --- a/drivers/phy/ti/Kconfig
+> +++ b/drivers/phy/ti/Kconfig
+> @@ -106,11 +106,8 @@ config TWL4030_USB
+>   
+>   config PHY_TI_GMII_SEL
+>   	tristate
+> -	default y if TI_CPSW=y || TI_CPSW_SWITCHDEV=y
+> -	depends on TI_CPSW || TI_CPSW_SWITCHDEV || COMPILE_TEST
+>   	select GENERIC_PHY
+>   	select REGMAP
+> -	default m
+>   	help
+>   	  This driver supports configuring of the TI CPSW Port mode depending on
+>   	  the Ethernet PHY connected to the CPSW Port.
+> 
 
 -- 
-~Randy
-
+Murali Karicheri
+Texas Instruments
