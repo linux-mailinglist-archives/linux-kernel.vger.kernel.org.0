@@ -2,136 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B85B116BB77
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 09:04:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1E6816BB7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 09:07:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729633AbgBYIEB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 03:04:01 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37662 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729001AbgBYIEA (ORCPT
+        id S1729576AbgBYIHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 03:07:07 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35252 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725788AbgBYIHG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 03:04:00 -0500
-Received: by mail-pf1-f196.google.com with SMTP id p14so6754932pfn.4;
-        Tue, 25 Feb 2020 00:03:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3UwgyNGegYf+ShQWoRWvT/NL7ARqm4MqRGArNYI3who=;
-        b=kDWNGF9vw5evEFnyTn5rudlI/14OO67KtZuSmNARz8zTE4vVP7Hhc6JwfRZjCo85Z2
-         tvgyuCBpwge1k7uxAL3cVdZdd0QGzOONoXlY+5TvHTzrZZoIbbnkxtUVyXYv0RR+Vity
-         fOXvHDB3esTtnVmpSpmzuRqas5eMJ9vZFO4fAMfsF60iMsVd/vW2Bzs8+2d+xXASD2zh
-         SUjAI5xrrtkyJAoK+q4wao8cymtP54e+xRZfxO+DeDmxIwT0qBTqrTWjbSlS9EpolcvA
-         HhiiBRfm4FTS4F09uPw+SswFfyUOtYA5VfsHVt5vnwZO3TjYll5qx31WeHyUw/SVquMa
-         Xd9A==
+        Tue, 25 Feb 2020 03:07:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582618025;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oyV65P0wJT/QVCIMbi37mnuxu4JL3T8Bnc6cBnFgy0o=;
+        b=QWNbVOZfatPX523AkEdNWQ4fRkdTd9jl9D8GTFBw+Lye37X/tZ4qCvlJo0JMwJjQlbrj1H
+        b58xWE/KR0rM/18c25+NA7Njx15vE5K0KxF5mgF/Jt8Vh1g7pF8rByNDl1n47GH6xAgT4I
+        xHF37FLPE22qVupHA/AxAZlCV3qFCDw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-267-VyLbiGXCPCuMYa4GMhmnqQ-1; Tue, 25 Feb 2020 03:07:03 -0500
+X-MC-Unique: VyLbiGXCPCuMYa4GMhmnqQ-1
+Received: by mail-wm1-f70.google.com with SMTP id 7so724346wmf.9
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 00:07:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3UwgyNGegYf+ShQWoRWvT/NL7ARqm4MqRGArNYI3who=;
-        b=Kz8XWTDFQIa+CRV65GaM2DGK6zrupl5l+oZ0G+tJGBzvacECZAoK6hlGYYUCbj0ZP6
-         EjzEnDzpJVlZFdCHquwW+Ww9QOCTri9/5VqOOsSLlAK2P0q10lgIAQxYl8eTy2+WKJYj
-         UXvWd7ZSgEJ1BOxDYn9xlbi0YF7IriE8gprQegywDgFNVlR8h9/DQiFbb4BjciMVgyFp
-         uDQ0uuBF08Zcc5rsJ5t8RiKx77FXzngqrDaWq87houu+YnEQKcQ2L8Z6gSQ3yQwjw2+a
-         RzM3IF/fGv1sVHcprzbz8taVvD1NGO7iPuyLLI3zQDkfrMoseiP9IUguDmgr1mEUUG+o
-         o+Vg==
-X-Gm-Message-State: APjAAAWr6TSox7wmFS8aUUERfLOsCY9rEBsJultDc18i/35+Xy+Gueqy
-        clkvLW/rfzeLsWhZcxDcj2Q=
-X-Google-Smtp-Source: APXvYqwMRtQpYwUBTrb0+cvHPd0eiLB/R3rhnLG6W+uGQXS+JAd8tDieKTnw2v05Noa4gwMj4BMhpg==
-X-Received: by 2002:a63:d344:: with SMTP id u4mr35777777pgi.153.1582617838655;
-        Tue, 25 Feb 2020 00:03:58 -0800 (PST)
-Received: from Asurada (c-73-162-191-63.hsd1.ca.comcast.net. [73.162.191.63])
-        by smtp.gmail.com with ESMTPSA id b18sm15964609pfd.63.2020.02.25.00.03.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Feb 2020 00:03:58 -0800 (PST)
-Date:   Tue, 25 Feb 2020 00:03:50 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     "S.j. Wang" <shengjiu.wang@nxp.com>
-Cc:     "timur@kernel.org" <timur@kernel.org>,
-        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] ASoC: fsl_easrc: Add EASRC ASoC CPU DAI and
- platform drivers
-Message-ID: <20200225080350.GA11332@Asurada>
-References: <VE1PR04MB6479BCA376502F6F1251602BE3EC0@VE1PR04MB6479.eurprd04.prod.outlook.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oyV65P0wJT/QVCIMbi37mnuxu4JL3T8Bnc6cBnFgy0o=;
+        b=omV0nG0J28cpIP4krrE+IBhOkXUEVcCcuYmd+mo5Y8qQhUBzyO7o7zYfLAddihja1z
+         +q7zCBxKqEFV2EiyuXxCwlA+xHPdIs4fzy4eqZUUiPbLyoliCAx6s4LXvHH1v+Av6yQY
+         amgLpEhTPaAceB9/heNIA4hq51ufyLHDNkg+KHNLRVPgS+Yy9ujHBPaJN89E5WQfuSuB
+         U3oYkm8VYm+OJL5b7Ob4rdWo0wJkQEzOyJnN8lmhE8BEK46xeG/XFcT6k44L4NBA2riE
+         QasNoDVmfulk2u5/58exjukTzlf31+W24SE5BpgDGX3dcl6da9+ebrOcFKN1MyddmDgr
+         6Rxg==
+X-Gm-Message-State: APjAAAW3Ur8w6UB4PVsYSs4PzvY5WYfAUr74QYDuRo9yAMi9Tl7Pcfy6
+        S8MmLTqyTjhOsufuaXKqKl7PujIv7UIQQ4vr1uSRWza/DCktcCMpTcwMdpzNKA/pvipfmVI6mh1
+        iAIjsJhUs5FdsTlZIOIaBA15i
+X-Received: by 2002:adf:cc8b:: with SMTP id p11mr21179195wrj.8.1582618022681;
+        Tue, 25 Feb 2020 00:07:02 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyIVScXiu1RVWc//crX4pYvYp3oCYcgROaw86pP31PI4FMtJoAhCFDPukMCIBNUsmAJ+M+F9w==
+X-Received: by 2002:adf:cc8b:: with SMTP id p11mr21179169wrj.8.1582618022431;
+        Tue, 25 Feb 2020 00:07:02 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:60c6:7e02:8eeb:a041? ([2001:b07:6468:f312:60c6:7e02:8eeb:a041])
+        by smtp.gmail.com with ESMTPSA id b67sm3133434wmc.38.2020.02.25.00.07.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2020 00:07:01 -0800 (PST)
+Subject: Re: [PATCH] KVM: LAPIC: Recalculate apic map in batch
+To:     Wanpeng Li <kernellwp@gmail.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+References: <1582022829-27032-1-git-send-email-wanpengli@tencent.com>
+ <87zhdg84n6.fsf@vitty.brq.redhat.com>
+ <CANRm+Cyx+J+YK8FzFBV8LRNPeCaXPc93vjFdpA0D_hA+wrpywQ@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <f433ff7e-72de-e2fd-5b71-a9ac92769c03@redhat.com>
+Date:   Tue, 25 Feb 2020 09:07:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VE1PR04MB6479BCA376502F6F1251602BE3EC0@VE1PR04MB6479.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.22 (2013-10-16)
+In-Reply-To: <CANRm+Cyx+J+YK8FzFBV8LRNPeCaXPc93vjFdpA0D_hA+wrpywQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 08:53:25AM +0000, S.j. Wang wrote:
-> Hi
+On 19/02/20 01:47, Wanpeng Li wrote:
+>> An alternative idea: instead of making every caller return bool and
+>> every call site handle the result (once) just add a
+>> KVM_REQ_APIC_MAP_RECALC flag or a boolean flag to struct kvm. I
+>> understand it may not be that easy as it sounds as we may be conunting
+>> on valid mapping somewhere before we actually get to handiling
+> Yes.
 > 
-> > >
-> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > ---
-> > >  sound/soc/fsl/Kconfig           |   10 +
-> > >  sound/soc/fsl/Makefile          |    2 +
-> > >  sound/soc/fsl/fsl_asrc_common.h |    1 +
-> > >  sound/soc/fsl/fsl_easrc.c       | 2265 +++++++++++++++++++++++++++++++
-> > >  sound/soc/fsl/fsl_easrc.h       |  668 +++++++++
-> > >  sound/soc/fsl/fsl_easrc_dma.c   |  440 ++++++
-> > 
-> > I see a 90% similarity between fsl_asrc_dma and fsl_easrc_dma files.
-> > Would it be possible reuse the existing code? Could share structures from
-> > my point of view, just like it reuses "enum asrc_pair_index", I know
-> > differentiating "pair" and "context" is a big point here though.
-> > 
-> > A possible quick solution for that, off the top of my head, could be:
-> > 
-> > 1) in fsl_asrc_common.h
-> > 
-> >         struct fsl_asrc {
-> >                 ....
-> >         };
-> > 
-> >         struct fsl_asrc_pair {
-> >                 ....
-> >         };
-> > 
-> > 2) in fsl_easrc.h
-> > 
-> >         /* Renaming shared structures */
-> >         #define fsl_easrc fsl_asrc
-> >         #define fsl_easrc_context fsl_asrc_pair
-> > 
-> > May be a good idea to see if others have some opinion too.
-> > 
-> 
-> We need to modify the fsl_asrc and fsl_asrc_pair, let them
-> To be used by both driver,  also we need to put the specific
-> Definition for each module to same struct, right?
+>> KVM_REQ_APIC_MAP_RECALC but we may preserve *some*
+>> recalculate_apic_map() calls (and make it reset KVM_REQ_APIC_MAP_RECALC).
+> Paolo, keep the caller return bool or add a booleen flag to struct
+> kvm, what do you think?
 
-Yea. A merged structure if that doesn't look that bad. I see most
-of the fields in struct fsl_asrc are being reused by in fsl_easrc.
+A third possibility: add an apic_map field to struct kvm_lapic, so that
+you don't have to add bool return values everywhere.
 
-> > 
-> > > +static const struct regmap_config fsl_easrc_regmap_config = {
-> > > +     .readable_reg = fsl_easrc_readable_reg,
-> > > +     .volatile_reg = fsl_easrc_volatile_reg,
-> > > +     .writeable_reg = fsl_easrc_writeable_reg,
-> > 
-> > Can we use regmap_range and regmap_access_table?
-> > 
-> 
-> Can the regmap_range support discontinuous registers?  The
-> reg_stride = 4.
+Paolo
 
-I think it does. Giving an example here:
-https://github.com/torvalds/linux/blob/master/drivers/mfd/da9063-i2c.c
