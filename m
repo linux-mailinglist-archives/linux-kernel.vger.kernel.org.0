@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9556716BE8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 11:24:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 541CD16BE92
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 11:24:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730188AbgBYKYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 05:24:14 -0500
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:63820 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730033AbgBYKYN (ORCPT
+        id S1730210AbgBYKYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 05:24:47 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:7129 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729952AbgBYKYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 05:24:13 -0500
+        Tue, 25 Feb 2020 05:24:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1582626252; x=1614162252;
+  t=1582626284; x=1614162284;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=LQ8vfC/Yy4RDqnLc18+rRGkdm38lbp4dLOl8ELTUwIc=;
-  b=keknYfUINmh01vZw0NTeePYo/JizhGTtywds5sYUiEKoEzgPD0YnGSEA
-   CZbqisGrO0KSrOYxFkiEDWRfdz2fu9TYIDpv1qoyvXNWTNwo9lT/R/ZFY
-   zCguEXA+3lBAZ0w3f1uuaOL+wD3LLBvHWAqc0vpFrV4f/vjHI1G7okO7y
-   w=;
-IronPort-SDR: UUvdNpAW0JpUG04VUWXzNuspKtYpE7VpsjNAPzcsUvT0pdsz6Zk7T1bTrkYhswoMe7fmZuZ9Nh
- MnKWtAebI16Q==
+  bh=cruTKgEz/zvbs2SVoNSJW8F372P48VGKaxC33GYXoBQ=;
+  b=foyIz9S8DrTmHs9yBQrQGV7/z5nGfoObDKmJJq4CEUyNfN8VzJ1odON7
+   e07oqlTIZWZ4y4mWLxzNlxAYnPnhrfns2P0buhTOSAUGfxK2ya9YkLQpE
+   DfjChOsPSJdm2TQ5kufRv1LHXyPYEvPmnddds4GC/Qhm7ZZdUVpcVwno7
+   Q=;
+IronPort-SDR: skDApPe28e6C99O4I83Nc9x8cxfcwci/1dB5YpuvxzA1OelYtHZr7N/2C1xJW/PeFnKfYapmpW
+ C3WNkJeV6o6Q==
 X-IronPort-AV: E=Sophos;i="5.70,483,1574121600"; 
-   d="scan'208";a="18935475"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 25 Feb 2020 10:24:08 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com (Postfix) with ESMTPS id EEBDBC0974;
-        Tue, 25 Feb 2020 10:23:57 +0000 (UTC)
+   d="scan'208";a="18459914"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-97fdccfd.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 25 Feb 2020 10:24:44 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1e-97fdccfd.us-east-1.amazon.com (Postfix) with ESMTPS id 885E2A2B82;
+        Tue, 25 Feb 2020 10:24:34 +0000 (UTC)
 Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
  EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Tue, 25 Feb 2020 10:23:57 +0000
+ id 15.0.1236.3; Tue, 25 Feb 2020 10:24:33 +0000
 Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.53) by
  EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 25 Feb 2020 10:23:45 +0000
+ id 15.0.1367.3; Tue, 25 Feb 2020 10:24:22 +0000
 From:   SeongJae Park <sjpark@amazon.com>
 To:     <akpm@linux-foundation.org>
 CC:     SeongJae Park <sjpark@amazon.de>, <aarcange@redhat.com>,
@@ -53,9 +53,9 @@ CC:     SeongJae Park <sjpark@amazon.de>, <aarcange@redhat.com>,
         <yang.shi@linux.alibaba.com>, <ying.huang@intel.com>,
         <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [RFC v3 2/7] mm/damon: Account age of target regions
-Date:   Tue, 25 Feb 2020 11:22:55 +0100
-Message-ID: <20200225102300.23895-3-sjpark@amazon.com>
+Subject: [RFC v3 3/7] mm/damon: Implement data access monitoring-based operation schemes
+Date:   Tue, 25 Feb 2020 11:22:56 +0100
+Message-ID: <20200225102300.23895-4-sjpark@amazon.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200225102300.23895-1-sjpark@amazon.com>
 References: <20200225102300.23895-1-sjpark@amazon.com>
@@ -71,226 +71,282 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: SeongJae Park <sjpark@amazon.de>
 
-DAMON can be used as a primitive for data access pattern awared memory
-maangement optimizations.  However, users who want such optimizations
-should run DAMON, read the monitoring results, analyze it, plan a new
-memory management scheme, and apply the new scheme by themselves.  It
-would not be too hard, but still require some level of efforts.  For
-complicated optimizations, this effort is inevitable.
-
-That said, in many cases, users would simply want to apply an actions to
+In many cases, users might use DAMON for simple data access awared
+memory management optimizations such as applying an operation scheme to
 a memory region of a specific size having a specific access frequency
 for a specific time.  For example, "page out a memory region larger than
 100 MiB but having a low access frequency more than 10 minutes", or "Use
 THP for a memory region larger than 2 MiB having a high access frequency
 for more than 2 seconds".
 
-For such optimizations, users will need to first account the age of each
-region themselves.  To reduce such efforts, this commit implements a
-simple age account of each region in DAMON.  For each aggregation step,
-DAMON compares the access frequency and start/end address of each region
-with those from last aggregation and reset the age of the region if the
-change is significant.  Else, the age is incremented.
+To minimize users from spending their time for implementation of such
+simple data access monitoring-based operation schemes, this commit makes
+DAMON to handle such schemes directly.  With this commit, users can
+simply specify their desired schemes to DAMON.
+
+Each of the schemes is composed with conditions for filtering of the
+target memory regions and desired memory management action for the
+target.  In specific, the format is::
+
+    <min/max size> <min/max access frequency> <min/max age> <action>
+
+The filtering conditions are size of memory region, number of accesses
+to the region monitored by DAMON, and the age of the region.  The age of
+region is incremented periodically but reset when its addresses or
+access frequency has significanly changed or the action of a scheme has
+applied.  For the action, current implementation supports only a few of
+madvise() hints, ``MADV_WILLNEED``, ``MADV_COLD``, ``MADV_PAGEOUT``,
+``MADV_HUGEPAGE``, and ``MADV_NOHUGEPAGE``.
 
 Signed-off-by: SeongJae Park <sjpark@amazon.de>
 ---
- include/linux/damon.h |   5 ++
- mm/damon.c            | 109 ++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 109 insertions(+), 5 deletions(-)
+ include/linux/damon.h |  24 ++++++++
+ mm/damon.c            | 134 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 158 insertions(+)
 
 diff --git a/include/linux/damon.h b/include/linux/damon.h
-index 78785cb88d42..50fbe308590e 100644
+index 50fbe308590e..8cb2452579ee 100644
 --- a/include/linux/damon.h
 +++ b/include/linux/damon.h
-@@ -22,6 +22,11 @@ struct damon_region {
- 	unsigned long sampling_addr;
- 	unsigned int nr_accesses;
+@@ -36,6 +36,27 @@ struct damon_task {
  	struct list_head list;
-+
-+	unsigned int age;
-+	unsigned long last_vm_start;
-+	unsigned long last_vm_end;
-+	unsigned int last_nr_accesses;
  };
  
- /* Represents a monitoring target task */
++/* Data Access Monitoring-based Operation Scheme */
++enum damos_action {
++	DAMOS_WILLNEED,
++	DAMOS_COLD,
++	DAMOS_PAGEOUT,
++	DAMOS_HUGEPAGE,
++	DAMOS_NOHUGEPAGE,
++	DAMOS_ACTION_LEN,
++};
++
++struct damos {
++	unsigned int min_sz_region;
++	unsigned int max_sz_region;
++	unsigned int min_nr_accesses;
++	unsigned int max_nr_accesses;
++	unsigned int min_age_region;
++	unsigned int max_age_region;
++	enum damos_action action;
++	struct list_head list;
++};
++
+ struct damon_ctx {
+ 	unsigned long sample_interval;
+ 	unsigned long aggr_interval;
+@@ -58,6 +79,7 @@ struct damon_ctx {
+ 	struct rnd_state rndseed;
+ 
+ 	struct list_head tasks_list;	/* 'damon_task' objects */
++	struct list_head schemes_list;	/* 'damos' objects */
+ 
+ 	/* callbacks */
+ 	void (*sample_cb)(struct damon_ctx *context);
+@@ -66,6 +88,8 @@ struct damon_ctx {
+ 
+ int damon_set_pids(struct damon_ctx *ctx,
+ 			unsigned long *pids, ssize_t nr_pids);
++int damon_set_schemes(struct damon_ctx *ctx,
++			struct damos **schemes, ssize_t nr_schemes);
+ int damon_set_recording(struct damon_ctx *ctx,
+ 			unsigned int rbuf_len, char *rfile_path);
+ int damon_set_attrs(struct damon_ctx *ctx, unsigned long s, unsigned long a,
 diff --git a/mm/damon.c b/mm/damon.c
-index ff150ae7532a..e08dba2e2717 100644
+index e08dba2e2717..a4d6dff60b1f 100644
 --- a/mm/damon.c
 +++ b/mm/damon.c
-@@ -87,6 +87,10 @@ static struct damon_region *damon_new_region(struct damon_ctx *ctx,
- 	ret->sampling_addr = damon_rand(ctx, vm_start, vm_end);
- 	INIT_LIST_HEAD(&ret->list);
+@@ -11,6 +11,7 @@
  
-+	ret->age = 0;
-+	ret->last_vm_start = vm_start;
-+	ret->last_vm_end = vm_end;
+ #define CREATE_TRACE_POINTS
+ 
++#include <asm-generic/mman-common.h>
+ #include <linux/damon.h>
+ #include <linux/debugfs.h>
+ #include <linux/delay.h>
+@@ -24,6 +25,8 @@
+ #include <linux/slab.h>
+ #include <trace/events/damon.h>
+ 
++#include "internal.h"
 +
- 	return ret;
+ #define damon_get_task_struct(t) \
+ 	(get_pid_task(find_vpid(t->pid), PIDTYPE_PID))
+ 
+@@ -45,6 +48,12 @@
+ #define damon_for_each_task_safe(ctx, t, next) \
+ 	list_for_each_entry_safe(t, next, &(ctx)->tasks_list, list)
+ 
++#define damon_for_each_schemes(ctx, r) \
++	list_for_each_entry(r, &(ctx)->schemes_list, list)
++
++#define damon_for_each_schemes_safe(ctx, s, next) \
++	list_for_each_entry_safe(s, next, &(ctx)->schemes_list, list)
++
+ #define MAX_RFILE_PATH_LEN	256
+ 
+ /* Get a random number in [l, r) */
+@@ -190,6 +199,27 @@ static void damon_destroy_task(struct damon_task *t)
+ 	damon_free_task(t);
  }
  
-@@ -600,11 +604,44 @@ static void kdamond_flush_aggregated(struct damon_ctx *c)
- 			damon_write_rbuf(c, &r->vm_end, sizeof(r->vm_end));
- 			damon_write_rbuf(c, &r->nr_accesses,
- 					sizeof(r->nr_accesses));
-+			r->last_nr_accesses = r->nr_accesses;
- 			r->nr_accesses = 0;
- 		}
++static void damon_add_scheme(struct damon_ctx *ctx, struct damos *s)
++{
++	list_add_tail(&s->list, &ctx->schemes_list);
++}
++
++static void damon_del_scheme(struct damos *s)
++{
++	list_del(&s->list);
++}
++
++static void damon_free_scheme(struct damos *s)
++{
++	kfree(s);
++}
++
++static void damon_destroy_scheme(struct damos *s)
++{
++	damon_del_scheme(s);
++	damon_free_scheme(s);
++}
++
+ /*
+  * Returns number of monitoring target tasks
+  */
+@@ -642,6 +672,87 @@ static void kdamond_count_age(struct damon_ctx *c, unsigned int threshold)
  	}
  }
  
-+#define diff_of(a, b) (a > b ? a - b : b - a)
-+
-+/*
-+ * Increase or reset the age of the given monitoring target region
-+ *
-+ * If the area or '->nr_accesses' has changed significantly, reset the '->age'.
-+ * Else, increase the age.
-+ */
-+static void damon_do_count_age(struct damon_region *r, unsigned int threshold)
++static int damos_do_action(struct damon_task *task, struct damon_region *r,
++			enum damos_action action)
 +{
-+	unsigned long sz_threshold = (r->vm_end - r->vm_start) / 5;
++	struct task_struct *t;
++	struct mm_struct *mm;
++	int madv_action;
++	int ret = -EINVAL;
 +
-+	if (diff_of(r->vm_start, r->last_vm_start) +
-+			diff_of(r->vm_end, r->last_vm_end) > sz_threshold)
-+		r->age = 0;
-+	else if (diff_of(r->nr_accesses, r->last_nr_accesses) > threshold)
-+		r->age = 0;
-+	else
-+		r->age++;
++	switch (action) {
++	case DAMOS_WILLNEED:
++		madv_action = MADV_WILLNEED;
++		break;
++	case DAMOS_COLD:
++		madv_action = MADV_COLD;
++		break;
++	case DAMOS_PAGEOUT:
++		madv_action = MADV_PAGEOUT;
++		break;
++	case DAMOS_HUGEPAGE:
++		madv_action = MADV_HUGEPAGE;
++		break;
++	case DAMOS_NOHUGEPAGE:
++		madv_action = MADV_NOHUGEPAGE;
++		break;
++	default:
++		pr_warn("Wrong action %d\n", action);
++		goto out;
++	}
++
++	t = damon_get_task_struct(task);
++	if (!t)
++		goto out;
++	mm = damon_get_mm(task);
++	if (!mm)
++		goto put_task_out;
++
++	ret = madvise_common(t, mm, PAGE_ALIGN(r->vm_start),
++			PAGE_ALIGN(r->vm_end - r->vm_start), madv_action);
++
++	mmput(mm);
++put_task_out:
++	put_task_struct(t);
++out:
++	return ret;
 +}
 +
-+static void kdamond_count_age(struct damon_ctx *c, unsigned int threshold)
++static void damon_do_apply_schemes(struct damon_ctx *c, struct damon_task *t,
++				struct damon_region *r)
++{
++	struct damos *s;
++	unsigned long sz;
++
++	damon_for_each_schemes(c, s) {
++		sz = r->vm_end - r->vm_start;
++		if ((s->min_sz_region && sz < s->min_sz_region) ||
++				(s->max_sz_region && s->max_sz_region < sz))
++			continue;
++		if ((s->min_nr_accesses && r->nr_accesses < s->min_nr_accesses)
++				|| (s->max_nr_accesses &&
++					s->max_nr_accesses < r->nr_accesses))
++			continue;
++		if ((s->min_age_region && r->age < s->min_age_region) ||
++				(s->max_age_region &&
++				 s->max_age_region < r->age))
++			continue;
++		damos_do_action(t, r, s->action);
++		r->age = 0;
++	}
++}
++
++static void kdamond_apply_schemes(struct damon_ctx *c)
 +{
 +	struct damon_task *t;
 +	struct damon_region *r;
 +
 +	damon_for_each_task(c, t) {
 +		damon_for_each_region(r, t)
-+			damon_do_count_age(r, threshold);
++			damon_do_apply_schemes(c, t, r);
 +	}
 +}
 +
  #define sz_damon_region(r) (r->vm_end - r->vm_start)
  
  /*
-@@ -613,35 +650,90 @@ static void kdamond_flush_aggregated(struct damon_ctx *c)
- static void damon_merge_two_regions(struct damon_region *l,
- 				struct damon_region *r)
- {
--	l->nr_accesses = (l->nr_accesses * sz_damon_region(l) +
--			r->nr_accesses * sz_damon_region(r)) /
--			(sz_damon_region(l) + sz_damon_region(r));
-+	unsigned long sz_l = sz_damon_region(l), sz_r = sz_damon_region(r);
-+
-+	l->nr_accesses = (l->nr_accesses * sz_l + r->nr_accesses * sz_r) /
-+			(sz_l + sz_r);
-+	l->age = (l->age * sz_l + r->age * sz_r) / (sz_l + sz_r);
- 	l->vm_end = r->vm_end;
- 	damon_destroy_region(r);
- }
- 
--#define diff_of(a, b) (a > b ? a - b : b - a)
--
- /*
-  * Merge adjacent regions having similar access frequencies
-  *
-  * t		task that merge operation will make change
-  * thres	merge regions having '->nr_accesses' diff smaller than this
-+ *
-+ * Merged new region's '->last_vm_(start|end)' will be those of the biggest
-+ * subregion that merged into the new region.  If a region is splitted into two
-+ * segments and now both of the two segments are merged into the new region,
-+ * the size of the subregion is the sum of the two segments.  For example:
-+ *
-+ * <     A     >
-+ * split
-+ * <  A  >< A  >
-+ * merge
-+ * <     A     >
-+ *
-+ * <     A    ><    A    >
-+ * split
-+ * <  A   ><A ><   B  ><B>
-+ * merge
-+ * <   A  ><    B     ><B>
-+ *
-+ * <     A    ><        B          >
-+ * split
-+ * <  A  >< A ><  B  ><     B      >
-+ * merge
-+ * <               B               >
-+ *
-+ * <     A      ><     B        >
-+ * split
-+ * <   A     ><A><  B   ><   B  >
-+ * merge
-+ * <            A               >
-  */
- static void damon_merge_regions_of(struct damon_task *t, unsigned int thres)
- {
- 	struct damon_region *r, *prev = NULL, *next;
-+	unsigned long sz_subregion, last_last_vm = 0;
-+	unsigned long sz_biggest = 0;	/* size of the biggest subregion */
-+	struct region last_biggest;	/* last region of the biggest sub */
- 
- 	damon_for_each_region_safe(r, next, t) {
- 		if (!prev || prev->vm_end != r->vm_start)
- 			goto next;
- 		if (diff_of(prev->nr_accesses, r->nr_accesses) > thres)
- 			goto next;
-+		if (!sz_biggest) {
-+			sz_biggest = sz_damon_region(prev);
-+			last_biggest.start = prev->last_vm_start;
-+			last_biggest.end = prev->last_vm_end;
-+		}
-+		if (last_last_vm != r->last_vm_start)
-+			sz_subregion = 0;
-+		sz_subregion += sz_damon_region(r);
-+		last_last_vm = r->last_vm_start;
-+		if (sz_subregion > sz_biggest) {
-+			sz_biggest = sz_subregion;
-+			last_biggest.start = r->last_vm_start;
-+			last_biggest.end = r->last_vm_end;
-+		}
- 		damon_merge_two_regions(prev, r);
- 		continue;
- next:
-+		if (sz_biggest) {
-+			sz_biggest = 0;
-+			prev->last_vm_start = last_biggest.start;
-+			prev->last_vm_end = last_biggest.end;
-+		}
- 		prev = r;
- 	}
-+	if (sz_biggest) {
-+		prev->last_vm_start = last_biggest.start;
-+		prev->last_vm_end = last_biggest.end;
-+	}
- }
- 
- /*
-@@ -674,6 +766,12 @@ static void damon_split_region_at(struct damon_ctx *ctx,
- 	struct damon_region *new;
- 
- 	new = damon_new_region(ctx, r->vm_start + sz_r, r->vm_end);
-+	new->age = r->age;
-+	new->last_vm_start = r->vm_start;
-+	new->last_nr_accesses = r->last_nr_accesses;
-+
-+	r->last_vm_start = r->vm_start;
-+	r->last_vm_end = r->vm_end;
- 	r->vm_end = new->vm_start;
- 
- 	damon_add_region(new, r, damon_next_region(r));
-@@ -865,6 +963,7 @@ static int kdamond_fn(void *data)
- 
- 		if (kdamond_aggregate_interval_passed(ctx)) {
- 			kdamond_merge_regions(ctx, max_nr_accesses / 10);
-+			kdamond_count_age(ctx, max_nr_accesses / 10);
+@@ -966,6 +1077,7 @@ static int kdamond_fn(void *data)
+ 			kdamond_count_age(ctx, max_nr_accesses / 10);
  			if (ctx->aggregate_cb)
  				ctx->aggregate_cb(ctx);
++			kdamond_apply_schemes(ctx);
  			kdamond_flush_aggregated(ctx);
+ 			kdamond_split_regions(ctx);
+ 		}
+@@ -1040,6 +1152,27 @@ int damon_stop(struct damon_ctx *ctx)
+ 	return damon_turn_kdamond(ctx, false);
+ }
+ 
++/*
++ * Set the data access monitoring oriented schemes
++ *
++ * NOTE: This function should not be called while the kdamond of the context is
++ * running.
++ *
++ * Returns 0 if success, or negative error code otherwise.
++ */
++int damon_set_schemes(struct damon_ctx *ctx, struct damos **schemes,
++			ssize_t nr_schemes)
++{
++	struct damos *s, *next;
++	ssize_t i;
++
++	damon_for_each_schemes_safe(ctx, s, next)
++		damon_destroy_scheme(s);
++	for (i = 0; i < nr_schemes; i++)
++		damon_add_scheme(ctx, schemes[i]);
++	return 0;
++}
++
+ /*
+  * This function should not be called while the kdamond is running.
+  */
+@@ -1485,6 +1618,7 @@ static int __init damon_init_user_ctx(void)
+ 
+ 	prandom_seed_state(&ctx->rndseed, 42);
+ 	INIT_LIST_HEAD(&ctx->tasks_list);
++	INIT_LIST_HEAD(&ctx->schemes_list);
+ 
+ 	ctx->sample_cb = NULL;
+ 	ctx->aggregate_cb = NULL;
 -- 
 2.17.1
 
