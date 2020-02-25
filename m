@@ -2,115 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D63C16C0A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:20:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3060A16C02D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:04:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbgBYMUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 07:20:30 -0500
-Received: from foss.arm.com ([217.140.110.172]:50086 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729048AbgBYMU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 07:20:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11484106F;
-        Tue, 25 Feb 2020 03:57:49 -0800 (PST)
-Received: from e121896.warwick.arm.com (e121896.warwick.arm.com [10.32.36.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 68BFF3F6CF;
-        Tue, 25 Feb 2020 03:57:46 -0800 (PST)
-From:   James Clark <james.clark@arm.com>
-To:     adrian.hunter@intel.com, jolsa@redhat.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     nd@arm.com, Tan Xiaojun <tanxiaojun@huawei.com>,
-        James Clark <james.clark@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Al Grant <al.grant@arm.com>, Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH v5 1/4] perf tools: Move arm-spe-pkt-decoder.h/c to the new dir
-Date:   Tue, 25 Feb 2020 11:57:36 +0000
-Message-Id: <20200225115739.18740-2-james.clark@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200225115739.18740-1-james.clark@arm.com>
-References: <768a33f2-8694-270e-d3e8-3da4c65e96b3@intel.com>
- <20200225115739.18740-1-james.clark@arm.com>
+        id S1730220AbgBYMEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 07:04:39 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45442 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728965AbgBYMEj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 07:04:39 -0500
+Received: by mail-wr1-f68.google.com with SMTP id g3so14374318wrs.12
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 04:04:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=bZwPA3RGwD8pU8aBxNxgLZ7Z78acc8f6Au1L1blgYZs=;
+        b=RuoVrntUjxMkKp/DGeRRH5Rb5SXvh1z9Wy2+xBsTVq2/lFj3Qyfff8+z8IZnBoQmCH
+         FapxQbhdbn2R3+qqRbZhYIGEspdsBHPiAqb65ZqMo8dQ/QMicsv+/Xt7v6EB7ZisEBIE
+         UH/xvfPTryCOIvUPfsjvlOm3teoD4vITJU3gUKPjT/0xkxfLvU0AFfEe4l5xjogXTGwK
+         44vkbO20tfpFJ50TbtNoTd3/INyWHxpy4wluLMMPzx2E4jhWZPAxBEyYLl2STTlVYOSW
+         v0VYNBNYWkwKoJhVZ1DY+3nDH1XoFfKGfr+bx4WiZwRyWiw3Iy403k11rEWQWI1q4tT0
+         jcAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=bZwPA3RGwD8pU8aBxNxgLZ7Z78acc8f6Au1L1blgYZs=;
+        b=oDRryMG4F3ptBzkVOhEMRIff9BIy6+hCwM92H86KzJqR/OltqNflTKzqjYLhzhKPlc
+         9MXBJkA964R3V7WjPdbMKArPoTMYcdQyG03rUBWFAXMJgUH2rWaW7rFIuMVrCR4xnNVm
+         QFjH0K6lJ4t7k5Zpu+7Fq3TpQ4ERKaiqA8oxDSoZRhy2Ii/tbEQjRn3VZ4q4p32VAlVk
+         tL+rIkH7cCVAwfwXpXE3xpD7+T4wJyuN3Wr5zQzhPE/vomafp53MOQTdDWKBIRhOmZDG
+         5x98hMdbyls313atGb+QLDC7B39kfpGwOtppaQTsJFzJax6+a6xRqMERXDuy+Sf2RN8T
+         JLIg==
+X-Gm-Message-State: APjAAAW7MU591jLxPJEl4KQ0g6kYGvhi/5eV+wOgM2R0n+36Cn04Ot0B
+        W9wS4z9kpnmGhLB2h7JU9SkubVxqblZoebGO5+g=
+X-Google-Smtp-Source: APXvYqzhhXfMcw+Nub2bB882QV+q7F54yGp2AN9SL9LoGAFkbvFuljzIiYIrVRFi5H52UKNV3rcW39ZTQlfWgnNQtn4=
+X-Received: by 2002:a05:6000:149:: with SMTP id r9mr68666027wrx.147.1582632277159;
+ Tue, 25 Feb 2020 04:04:37 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a5d:4b82:0:0:0:0:0 with HTTP; Tue, 25 Feb 2020 04:04:36
+ -0800 (PST)
+From:   "fedmfiinance10@gmail.com" <fedmfiinance10@gmail.com>
+Date:   Tue, 25 Feb 2020 12:04:36 +0000
+Message-ID: <CAHbjaFD9V_JZW4BW+ugqEi6JqHb=8fgfTLuhhJqB-QwehYA=EA@mail.gmail.com>
+Subject: Prompt reply would be greatly appreciated
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tan Xiaojun <tanxiaojun@huawei.com>
+RE: LOAN FACILITY
 
-Create a new arm-spe-decoder directory for subsequent extensions and
-move arm-spe-pkt-decoder.h/c to this directory. No code changes.
+Have you been trying to obtain a Loan from any of the Banks or Loan
+Companies and they have refused to grant you Loan due to bad credit?.
+We have Loan facility at a low Interest Rate of 3% annually for a
+duration of 15 years with 24 months moratorium period.
 
-Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
-Tested-by: Qi Liu <liuqi115@hisilicon.com>
-Signed-off-by: James Clark <james.clark@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Tan Xiaojun <tanxiaojun@huawei.com>
-Cc: Al Grant <al.grant@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/Build                                       | 2 +-
- tools/perf/util/arm-spe-decoder/Build                       | 1 +
- tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.c | 0
- tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.h | 0
- tools/perf/util/arm-spe.c                                   | 2 +-
- 5 files changed, 3 insertions(+), 2 deletions(-)
- create mode 100644 tools/perf/util/arm-spe-decoder/Build
- rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.c (100%)
- rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.h (100%)
+The categories of Loan facility offered include but not limited to:
+Business Loan, Personal Loan, Company Loan, Mortgage Loan, Debt
+consolidation and financial funding for both turnkey and mega projects
+etc.
 
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index 07da6c790b63..0184510083c2 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -104,7 +104,7 @@ perf-$(CONFIG_AUXTRACE) += intel-pt-decoder/
- perf-$(CONFIG_AUXTRACE) += intel-pt.o
- perf-$(CONFIG_AUXTRACE) += intel-bts.o
- perf-$(CONFIG_AUXTRACE) += arm-spe.o
--perf-$(CONFIG_AUXTRACE) += arm-spe-pkt-decoder.o
-+perf-$(CONFIG_AUXTRACE) += arm-spe-decoder/
- perf-$(CONFIG_AUXTRACE) += s390-cpumsf.o
- 
- ifdef CONFIG_LIBOPENCSD
-diff --git a/tools/perf/util/arm-spe-decoder/Build b/tools/perf/util/arm-spe-decoder/Build
-new file mode 100644
-index 000000000000..16efbc245028
---- /dev/null
-+++ b/tools/perf/util/arm-spe-decoder/Build
-@@ -0,0 +1 @@
-+perf-$(CONFIG_AUXTRACE) += arm-spe-pkt-decoder.o
-diff --git a/tools/perf/util/arm-spe-pkt-decoder.c b/tools/perf/util/arm-spe-decoder/arm-spe-pkt-decoder.c
-similarity index 100%
-rename from tools/perf/util/arm-spe-pkt-decoder.c
-rename to tools/perf/util/arm-spe-decoder/arm-spe-pkt-decoder.c
-diff --git a/tools/perf/util/arm-spe-pkt-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-pkt-decoder.h
-similarity index 100%
-rename from tools/perf/util/arm-spe-pkt-decoder.h
-rename to tools/perf/util/arm-spe-decoder/arm-spe-pkt-decoder.h
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 53be12b23ff4..f3382a38d48e 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -23,7 +23,7 @@
- #include "debug.h"
- #include "auxtrace.h"
- #include "arm-spe.h"
--#include "arm-spe-pkt-decoder.h"
-+#include "arm-spe-decoder/arm-spe-pkt-decoder.h"
- 
- struct arm_spe {
- 	struct auxtrace			auxtrace;
--- 
-2.17.1
+Should you find this interesting, kindly get in touch with your
+business plan for details, terms and conditions and share your
+WhatsApp line for easy communication.
 
+Prompt reply would be greatly appreciated
+
+Best Regards,
+Mr. Shabab Isaac
+CONSULTANTS OF FINANCIAL SERVICES LIMITED
+57 Frederick Road, Sutton, Surrey,
+SM1 2HP United Kingdom
+Company number: 08898840
+Phone: +44-7452379198  / WhatsApp: +44-7978379923
