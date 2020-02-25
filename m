@@ -2,127 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B64916B682
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:14:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2850016B693
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:17:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728639AbgBYAOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 19:14:53 -0500
-Received: from mail-vi1eur05on2139.outbound.protection.outlook.com ([40.107.21.139]:29204
-        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726651AbgBYAOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 19:14:52 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=erEJpfsFFk6T3S7ekZXsWVOyXuTcXQZIzpg3g91ru5MyaLAkJrR6Ki0RrNpVTzunNhzUCg+ZsMx2IbWg3VPknsdhuanw4lT6pkY9ubFVWnf7aHo11MHdhLcZYWFZUIpMCJS1BtNXCPJYLy44TAvucfjejj38h0Xiycn5KBcnut5J0M5Xs12IwkjANZ2gzw/5gYoOtW755sFBp9uJVng+9DrqmcpcJ9Ouchz58GnLPH9uKqQ20EOQD9Yw+Uv/BJtcDPXGUNGkrzX36Vv7aGYn+TWnT1NNhn7FAZPQrzwF5ExUZsvSrkL9B1heTlVWidu/E+npQgsJgaGa2hgyiO+wag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j43+D425VRp5NzTNeMMebCI0wIQnUMk058NmHC9mSck=;
- b=jrdJp1D8posY1T3gk+zTmJ+AMUArsrgqKR++DgGHr0c++Xbbwj7r/ooipe7AmZTZR9AVW6Nx+VSYlVvK6IGnpH4DafRogNOalm7ED3DsPXwYktLIEP/7mfFBBjp/XypCxregov++gqOZ7kYtwtoasA0teBKSBLZwu8nCw8FTl1ADrYlIxvhp39rMcNeUzf8HTqVzgolImy2wvTPreWiygTfQldhdaVetDY89UHxLJ1m6Inrojyx2qCXNEhHFETY2lbzVt7FXmElkbuRaCY3WPbPpSBWJJr/ES7aPqop3ykYzyOl6+3tkv7qPOTsBNOq7SiLqBmsavJQ9YhiJJC9HfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j43+D425VRp5NzTNeMMebCI0wIQnUMk058NmHC9mSck=;
- b=YuZudngG7yF3P6o9xypq2+1f/0FHee8gdwbVczxDQHbtsLssTi3XOWmrbU9OCB63rdcirXztytqcMba/QNEysShSUgulofNq/2xbFRrYlCiwJlDWj2PJYb66pcEsF3L3+w03fjugTHuOL5n1KFRCO7UYCkBXVj/OR3rKgjBrk9g=
-Received: from DB6PR07MB4408.eurprd07.prod.outlook.com (10.168.24.141) by
- DB6PR07MB4231.eurprd07.prod.outlook.com (10.168.23.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.10; Tue, 25 Feb 2020 00:14:49 +0000
-Received: from DB6PR07MB4408.eurprd07.prod.outlook.com
- ([fe80::d40c:1a36:d897:dd7b]) by DB6PR07MB4408.eurprd07.prod.outlook.com
- ([fe80::d40c:1a36:d897:dd7b%2]) with mapi id 15.20.2772.010; Tue, 25 Feb 2020
- 00:14:49 +0000
-From:   "Varghese, Martin (Nokia - IN/Bangalore)" <martin.varghese@nokia.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "willemb@google.com" <willemb@google.com>
-Subject: RE: linux-next: build warning after merge of the net-next tree
-Thread-Topic: linux-next: build warning after merge of the net-next tree
-Thread-Index: AQHV62GlIj4EO15ztkCQL+lX7FjKtKgq8LCAgAABR4CAABdakA==
-Date:   Tue, 25 Feb 2020 00:14:49 +0000
-Message-ID: <DB6PR07MB44080818D2EB925DD9F024F1EDED0@DB6PR07MB4408.eurprd07.prod.outlook.com>
-References: <20200225092736.137df206@canb.auug.org.au>
-        <20200224.144243.1485587034182183004.davem@davemloft.net>
- <20200225094717.241cef90@canb.auug.org.au>
-In-Reply-To: <20200225094717.241cef90@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=martin.varghese@nokia.com; 
-x-originating-ip: [122.178.219.138]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b8493b2d-81a8-4fc8-e562-08d7b987ba3f
-x-ms-traffictypediagnostic: DB6PR07MB4231:
-x-microsoft-antispam-prvs: <DB6PR07MB4231E1A514554F8A052866D3EDED0@DB6PR07MB4231.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4303;
-x-forefront-prvs: 0324C2C0E2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(39860400002)(396003)(366004)(376002)(136003)(199004)(189003)(52536014)(186003)(86362001)(76116006)(26005)(478600001)(71200400001)(4744005)(66476007)(66446008)(66556008)(64756008)(8936002)(53546011)(6506007)(5660300002)(66946007)(2906002)(4326008)(55016002)(81166006)(81156014)(8676002)(9686003)(316002)(7696005)(110136005)(33656002)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR07MB4231;H:DB6PR07MB4408.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: K1Ycka361L+s4eKHm8YfX/EiHSjQqZmsVSHmTTh/OBA+7gs5hBCgKMTbyWn5OSnDqAP9K4bxIPmggP9hEWY0CaKVbbuUFz8n8KU36gpQXeU7+LN2j6Py7p22jXhAaQef1de0lKwXw2IGLS/b6vYywwQA0Z0sDNCHWnFPUm4sfffugUBtMQHmpIpxltPYt+p3J2xbQjlR1Bozx4U94RYNrhwvUU9TnEajim6zMQgnAP+UWxQV1yPZl31Rumcao1QtLMWNfmz90B2ChLfRJdDWHp1NLHxu8rNIhoEaIB++54LkFjZSHuHhtF3G+AbXgTu0Gw/xE3ZEArMPa5cIeSTvSZk4fGfGx2L6GwTQLEtyMmleZR6H5awxLh6e/VWsutIHqh+3WOff9QOrvSsCh7+MrQKmvcZSLHhiZl5xCJD2nZmEvCPQnWaq1MDKYx+dKX8m
-x-ms-exchange-antispam-messagedata: K5YynRerxxBK8Y5y2NnVp/fWEpwdnX9UuhE5fPtINljv/FnNXDRZcktzcACEXXIOXiRyEly2sDQAXyEcqMvW0AWVnC4Rzlai4kbii75fU8nq7TOEupgpMAfDq9+EDumMQWQJK1ludEtLIoVg7vIEDw==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1728529AbgBYARV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 19:17:21 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:33770 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728011AbgBYARU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Feb 2020 19:17:20 -0500
+Received: by mail-io1-f65.google.com with SMTP id z8so346408ioh.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 16:17:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=cov7YYE2sMRon3WJ16UXB2o/ljedXp9n0KufYBL1RMY=;
+        b=nARAozpxABSB/2GvELfiNKT4FHVnuDHlRJP4JcaHE2LK8teHghYXqHY8LVFqEMsnlk
+         9aIUnKw7Vf/L7CIvp8b0IFQ6Gcw2vpWSsQzgKr4QGqe8ns/3wul9MIN0b5lgvey2z7xO
+         ysosRrflLY67mEwkMaEy2mOwy6FWFu8UaMXTYleKEqkm0yqCIqJADnuKj3xz+qd/FSpy
+         Epniw+2N90acbRIOoR3zneaic4BHj6t4ZevQobAsPs/KMAnwAOBIeYJh8YypoRPouQ1H
+         LHESLt7rpCxW+egR4u8D/GUIljbcSbaa4aEYHj4TpOD8JOnelaaoWfVrbO3CJq/JCCgu
+         RAKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=cov7YYE2sMRon3WJ16UXB2o/ljedXp9n0KufYBL1RMY=;
+        b=CFzKq5k1gzKQWPizNJsfK/aUO+Ux6d+AVvD3L1rKvgX9dMAl6si6NonzkHhNLc8/uH
+         2U8w0y4DKxpJoCa/d7qzXvX2aU7tX6cn13Guxx3703puedUXSyqf6Fz29bBE3TRJm4F3
+         q7gfDp+N9fnvWanXfvs7uCSEaMEsNod/5SqE12KK+8A+XquqwVhpma3XRccUvGCrD+OM
+         Ikn76GFDbFTZemCiCADoJgaczoOSRjpkHmize746IEVYBZhqY1jRuYbtwnHsiUstxcZF
+         7xsUMe3k+NC7SsEYYxMbhgpAHGrYDWXOelen2gkiW43Yn/3P0R8v/aQ3/jQeEhmYlOjX
+         zKyg==
+X-Gm-Message-State: APjAAAUsvrRKNh0m7AFzhbhE/kT9TjQt4YYNi455M/0Gzse5f4i+lrSN
+        j7SSGAZsaeauXmS1rRgJmueyI31L1ATxaZ3/0aE=
+X-Google-Smtp-Source: APXvYqygpj3cpq+3tdkk4iMatDq+VRZWTnLmU+iwXByOcGXyNspItP9YyLd3LV4fFkxDDHDpSZFFcfIVwWgddBkK0mY=
+X-Received: by 2002:a02:cc41:: with SMTP id i1mr53127082jaq.71.1582589840035;
+ Mon, 24 Feb 2020 16:17:20 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8493b2d-81a8-4fc8-e562-08d7b987ba3f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2020 00:14:49.1338
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2kr79IuEtQRjlx2hhWqafYvAE/GveimVV6fvsmUR8BLnTSBLsuIRD4szCqxX0UdAa2bgEVqZYFtkLEYx+2nS3DNtRUssvl04CByvOIn93UY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR07MB4231
+Received: by 2002:a05:6e02:801:0:0:0:0 with HTTP; Mon, 24 Feb 2020 16:17:19
+ -0800 (PST)
+Reply-To: legalsolicitor.uk1@gmail.com
+From:   MUSTERMANN MAXIMLIAN HANNOVER <paulroberthanson707@gmail.com>
+Date:   Tue, 25 Feb 2020 01:17:19 +0100
+Message-ID: <CAMzAqJf5NcHoC29Ld3hM7rC0+rSGp52jp=VbF2o9wFtUK-mfBA@mail.gmail.com>
+Subject: =?UTF-8?B?R3J1w58=?=
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI David & Stephen,
+Gru=C3=9F
 
-In v8 version of patch while fixing reverse xmas tree I wrongly judged the =
-variable usage and removed the initialization. But wondering why compiler d=
-idn't show me that. Apologies.
-David, Thanks for fixing it.
+In einer kurzen Einf=C3=BChrung bin ich Rechtsanw=C3=A4ltin Mustermann Maxi=
+mlia
+Hannover aus Nordirland, aber jetzt lebe ich in London. Ich habe Ihnen
+eine E-Mail =C3=BCber Ihre verstorbene Verwandte gesendet, aber ich habe
+keine Antwort von Ihnen erhalten. Der Verstorbene ist ein B=C3=BCrger von
+Ihnen Land mit dem gleichen Nachnamen wie Sie, er ist ein Exporteur
+von Gold hier in London.
 
-Regards,
-Martin =20
+'Er starb vor einigen Jahren mit seiner Familie, verlie=C3=9F sein
+Unternehmen und hinterlegte riesige Geldbetr=C3=A4ge bei der UBS Investment
+Bank hier in London.
 
------Original Message-----
-From: Stephen Rothwell <sfr@canb.auug.org.au>=20
-Sent: Tuesday, February 25, 2020 4:17 AM
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org; linux-next@vger.kernel.org; linux-kernel@vger.k=
-ernel.org; Varghese, Martin (Nokia - IN/Bangalore) <martin.varghese@nokia.c=
-om>; willemb@google.com
-Subject: Re: linux-next: build warning after merge of the net-next tree
-
-Hi Dave,
-
-On Mon, 24 Feb 2020 14:42:43 -0800 (PST) David Miller <davem@davemloft.net>=
- wrote:
->
-> Sorry, my compiler didn't show this.
-
-Yeah, these ones especially change with compiler version.  I am currently r=
-unning gcc v9.2.1 if it matters.
-
-> I've committed the following into net-next, hopefully it does the trick:
-
-Thanks.
-
---
-Cheers,
-Stephen Rothwell
+Ich bin sein pers=C3=B6nlicher Anwalt und ich brauche Ihre Mitarbeit. Damit
+wir das Geld von der Bank erhalten k=C3=B6nnen, bevor die Regierung es
+endg=C3=BCltig beschlagnahmt, betr=C3=A4gt der Gesamtbetrag in der Bank 7,7
+Millionen Pfund Sterling, wird aber erkl=C3=A4rt, weitere Einzelheiten,
+wenn ich davon h=C3=B6re Sie.
