@@ -2,190 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE91E16ED6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:02:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48E8816ED75
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 19:06:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730906AbgBYSCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 13:02:44 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:48148 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726953AbgBYSCn (ORCPT
+        id S1731052AbgBYSGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 13:06:48 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:43206 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728367AbgBYSGs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 13:02:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582653761;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=jXQ5ajSsoTpibZAFkWJhv93iOc+cNRzn0v1VEP6LHTo=;
-        b=Nd3cYOeWax3uj4vlZ+YZWEXvLQmLkPKF7+cWUB5kYb8vQDVG0d/OxBDSYeHeHneU2H19XW
-        9bAYA4Ty+fy0deqdLWM/BLHFWq8sw726YOehH5Pf7R7gp4DOSDcKDImu3n62+QGM4UbVKo
-        Cc+xrEpT66f+8c0kwLpUOxhgAlSTgCU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-458-rBV5DQmhOY2_Ijcx6yi3oA-1; Tue, 25 Feb 2020 13:02:37 -0500
-X-MC-Unique: rBV5DQmhOY2_Ijcx6yi3oA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 115E8107ACC4;
-        Tue, 25 Feb 2020 18:02:36 +0000 (UTC)
-Received: from [10.36.117.12] (ovpn-117-12.ams2.redhat.com [10.36.117.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 632008C07B;
-        Tue, 25 Feb 2020 18:02:34 +0000 (UTC)
-Subject: Re: [v2 PATCH] mm: shmem: allow split THP when truncating THP
- partially
-To:     Hugh Dickins <hughd@google.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1575420174-19171-1-git-send-email-yang.shi@linux.alibaba.com>
- <alpine.LSU.2.11.1912041601270.12930@eggly.anvils>
- <00f0bb7d-3c25-a65f-ea94-3e2de8e9bcdd@linux.alibaba.com>
- <alpine.LSU.2.11.2002241831060.3084@eggly.anvils>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <14abd659-1571-8196-202d-d2fcc227a4b0@redhat.com>
-Date:   Tue, 25 Feb 2020 19:02:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 25 Feb 2020 13:06:48 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01PI31vs179450;
+        Tue, 25 Feb 2020 18:05:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=CGvHcJIJqaZaY5M0QDL05EDvM2dcrysNjTcyUx/HJDw=;
+ b=lCbDOjeRmp7BJCShZOjFG6HjxNzX/ECUjimFXRM4BxWcgHLdAMinc/HyA76/cUW51VKQ
+ ovP7segEdr/oYKiflQd4AewAXWXL2BEff87j2Oga2pTuEDJ+8Jh4Bxn4kr4WJ54UOB2V
+ 2ea890Emo5I3G54lIgmpvrS5YLdAo24+3qKj8X6TiCvR03kLxJawllGYJ9BiKjfEy8Gl
+ PoRkjOkQ8NypEv83xfeX4o6i39KsayJwJ+1P0It6NfqCdXbtqfMNo0Y882S1aq6oZpRJ
+ MrIIBcLvDgjbTOJ0mgKgfchm2XNGfCK5oAw8WoQTVugIrKh7CCf2HD5KYpO5gXkzkNZw jg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2yd0m1u64w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Feb 2020 18:05:52 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01PHm1kX031965;
+        Tue, 25 Feb 2020 18:05:52 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 2yd17qg4dh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Feb 2020 18:05:52 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 01PI5pKl134669;
+        Tue, 25 Feb 2020 18:05:52 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2yd17qg4cy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Feb 2020 18:05:51 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01PI5nw3009467;
+        Tue, 25 Feb 2020 18:05:49 GMT
+Received: from [10.209.227.41] (/10.209.227.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 25 Feb 2020 10:05:49 -0800
+Subject: Re: general protection fault in rds_ib_add_one
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+274094e62023782eeb17@syzkaller.appspotmail.com>,
+        davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        rds-devel@oss.oracle.com, syzkaller-bugs@googlegroups.com,
+        Andy Grover <andy.grover@oracle.com>
+References: <20200224103913.2776-1-hdanton@sina.com>
+ <20200225044734.14680-1-hdanton@sina.com>
+From:   santosh.shilimkar@oracle.com
+Organization: Oracle Corporation
+Message-ID: <b35981ca-f565-0169-5f99-35d67828d0b7@oracle.com>
+Date:   Tue, 25 Feb 2020 10:05:48 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.11.2002241831060.3084@eggly.anvils>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20200225044734.14680-1-hdanton@sina.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9542 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxscore=0
+ suspectscore=0 bulkscore=0 adultscore=0 impostorscore=0 spamscore=0
+ phishscore=0 clxscore=1015 priorityscore=1501 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002250129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>
->> Any update on this one?
->=20
-> I apologize for my dreadful unresponsiveness.
->=20
-> I've spent the last day trying to love yours, and considering how mine
-> might be improved; but repeatedly arrived at the conclusion that mine i=
-s
-> about as nice as we can manage, just needing more comment to dignify it=
-.
->=20
-> I did willingly call my find_get_entries() stopping at PageTransCompoun=
-d
-> a hack; but now think we should just document that behavior and accept =
-it.
-> The contortions of your patch come from the need to release those 14 ex=
-tra
-> unwanted references: much better not to get them in the first place.
->=20
-> Neither of us handle a failed split optimally, we treat every tail as a=
-n
-> opportunity to retry: which is good to recover from transient failures,
-> but probably excessive.  And we both have to restart the pagevec after
-> each attempt, but at least I don't get 14 unwanted extras each time.
->=20
-> What of other find_get_entries() users and its pagevec_lookup_entries()
-> wrapper: does an argument to select this "stop at PageTransCompound"
-> behavior need to be added?
->=20
-> No.  The pagevec_lookup_entries() calls from mm/truncate.c prefer the
-> new behavior - evicting the head from page cache removes all the tails
-> along with it, so getting the tails a waste of time there too, just as
-> it was in shmem_undo_range().
->=20
-> Whereas shmem_unlock_mapping() and shmem_seek_hole_data(), as they
-> stand, are not removing pages from cache, but actually wanting to plod
-> through the tails.  So those two would be slowed a little, while the
-> pagevec collects 1 instead of 15 pages.  However: if we care about thos=
-e
-> two at all, it's clear that we should speed them up, by noticing the
-> PageTransCompound case and accelerating over it, instead of plodding
-> through the tails.  Since we haven't bothered with that optimization
-> yet, I'm not very worried to slow them down a little until it's done.
->=20
-> I must take a look at where we stand with tmpfs 64-bit ino tomorrow,
-> then recomment my shmem_punch_compound() patch and post it properly,
-> probably day after.  (Reviewing it, I see I have a "page->index +
-> HPAGE_PMD_NR <=3D end" test which needs correcting - I tend to live
-> in the past, before v4.13 doubled the 32-bit MAX_LFS_FILESIZE.)
->=20
-> I notice that this thread has veered off into QEMU ballooning
-> territory: which may indeed be important, but there's nothing at all
-> that I can contribute on that.  I certainly do not want to slow down
-> anything important, but remain convinced that the correct filesystem
-> implementation for punching a hole is to punch a hole.
 
-I am not completely sure I follow all the shmem details (sorry!). But
-trying to "punch a partial hole punch" into a hugetlbfs page will result
-in the very same behavior as with shmem as of now, no?
 
-FALLOC_FL_PUNCH_HOLE: "Within the specified range, partial filesystem
-blocks are zeroed, and whole filesystem blocks are removed from the
-file." ... After a successful call, subsequent reads from this range
-will return zeros."
+On 2/24/20 8:47 PM, Hillf Danton wrote:
+> 
+> On Mon, 24 Feb 2020 09:51:01 -0800 Santosh Shilimkar wrote:
+>> On 2/24/20 2:39 AM, Hillf Danton wrote:
+>>>
+>>> Fall back to NUMA_NO_NODE if needed.
+> [...]
+>>>
+>> This seems good. Can you please post it as properly formatted patch ?
+> 
+Thanks !!
 
-So, as long as we are talking about partial blocks the documented
-behavior seems to be to only zero the memory.
+> ---8<---
+> Subject: [PATCH] net/rds: fix gpf in rds_ib_add_one
+> From: Hillf Danton <hdanton@sina.com>
+> 
+> The devoted syzbot posted a gpf report.
+> 
+> general protection fault, probably for non-canonical address 0xdffffc0000000086: 0000 [#1] PREEMPT SMP KASAN
+> KASAN: null-ptr-deref in range [0x0000000000000430-0x0000000000000437]
+> CPU: 0 PID: 8852 Comm: syz-executor043 Not tainted 5.6.0-rc2-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:dev_to_node include/linux/device.h:663 [inline]
+> RIP: 0010:rds_ib_add_one+0x81/0xe50 net/rds/ib.c:140
+> Code: b7 a8 06 00 00 4c 89 f0 48 c1 e8 03 42 80 3c 28 00 74 08 4c 89 f7 e8 0e e4 1d fa bb 30 04 00 00 49 03 1e 48 89 d8 48 c1 e8 03 <42> 8a 04 28 84 c0 0f 85 f0 0a 00 00 8b 1b 48 c7 c0 28 0c 09 89 48
+> RSP: 0018:ffffc90003087298 EFLAGS: 00010202
+> RAX: 0000000000000086 RBX: 0000000000000430 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000001
+> RBP: ffffc900030872f0 R08: ffffffff87964c3c R09: ffffed1014fd109c
+> R10: ffffed1014fd109c R11: 0000000000000000 R12: 0000000000000000
+> R13: dffffc0000000000 R14: ffff8880a7e886a8 R15: ffff8880a7e88000
+> FS:  0000000000c3d880(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f0318ed0000 CR3: 00000000a3167000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   add_client_context+0x482/0x660 drivers/infiniband/core/device.c:681
+>   enable_device_and_get+0x15b/0x370 drivers/infiniband/core/device.c:1316
+>   ib_register_device+0x124d/0x15b0 drivers/infiniband/core/device.c:1382
+>   rxe_register_device+0x3f6/0x530 drivers/infiniband/sw/rxe/rxe_verbs.c:1231
+>   rxe_add+0x1373/0x14f0 drivers/infiniband/sw/rxe/rxe.c:302
+>   rxe_net_add+0x79/0xe0 drivers/infiniband/sw/rxe/rxe_net.c:539
+>   rxe_newlink+0x31/0x90 drivers/infiniband/sw/rxe/rxe.c:318
+>   nldev_newlink+0x403/0x4a0 drivers/infiniband/core/nldev.c:1538
+>   rdma_nl_rcv_msg drivers/infiniband/core/netlink.c:195 [inline]
+>   rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+>   rdma_nl_rcv+0x701/0xa20 drivers/infiniband/core/netlink.c:259
+>   netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+>   netlink_unicast+0x766/0x920 net/netlink/af_netlink.c:1328
+>   netlink_sendmsg+0xa2b/0xd40 net/netlink/af_netlink.c:1917
+>   sock_sendmsg_nosec net/socket.c:652 [inline]
+>   sock_sendmsg net/socket.c:672 [inline]
+>   ____sys_sendmsg+0x4f7/0x7f0 net/socket.c:2343
+>   ___sys_sendmsg net/socket.c:2397 [inline]
+>   __sys_sendmsg+0x1ed/0x290 net/socket.c:2430
+>   __do_sys_sendmsg net/socket.c:2439 [inline]
+>   __se_sys_sendmsg net/socket.c:2437 [inline]
+>   __x64_sys_sendmsg+0x7f/0x90 net/socket.c:2437
+>   do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> 
+> It's fixed by falling back to NUMA_NO_NODE if needed while allocating
+> memory slices for send/recv rings at some cost of dip in performance.
+> 
+> Reported-by: syzbot <syzbot+274094e62023782eeb17@syzkaller.appspotmail.com>
+> Fixes: e4c52c98e049 ("RDS/IB: add _to_node() macros for numa and use {k,v}malloc_node()")
+> Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+> Cc: Andy Grover <andy.grover@oracle.com>
+> Signed-off-by: Hillf Danton <hdanton@sina.com>
+> ---
+> 
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
 
-Does this patch fix "FALLOC_FL_PUNCH_HOLE does not free blocks if called
-in block granularity on shmem" (which would be a valid fix), or does it
-try to implement something that is not documented? (removing partial
-blocks when called in sub-block granularity)
-
-I assume the latter, in which case I would interpret "punching a hole is
-to punch a hole" as "punching sub-blocks will not free blocks".
-
-(if somebody could enlighten me which important piece I am missing or
-messing up, that would be great :) )
-
---=20
-Thanks,
-
-David / dhildenb
-
+> --- a/net/rds/ib.c
+> +++ b/net/rds/ib.c
+> @@ -137,7 +137,8 @@ static void rds_ib_add_one(struct ib_dev
+>   		return;
+>   
+>   	rds_ibdev = kzalloc_node(sizeof(struct rds_ib_device), GFP_KERNEL,
+> -				 ibdev_to_node(device));
+> +				 device->dev.parent ?
+> +				 ibdev_to_node(device) : NUMA_NO_NODE);
+>   	if (!rds_ibdev)
+>   		return;
+>   
+> --
+> 
