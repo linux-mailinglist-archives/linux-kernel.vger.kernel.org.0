@@ -2,77 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F90516EB6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:29:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D14016EB12
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:14:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730846AbgBYQ3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 11:29:37 -0500
-Received: from sender11-of-f72.zoho.eu ([31.186.226.244]:17816 "EHLO
-        sender11-of-f72.zoho.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbgBYQ3h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 11:29:37 -0500
-X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Feb 2020 11:29:36 EST
-Received: from [172.30.220.169] (163.114.130.128 [163.114.130.128]) by mx.zoho.eu
-        with SMTPS id 158264725127230.28543562251855; Tue, 25 Feb 2020 17:14:11 +0100 (CET)
-Subject: Re: [PATCH][next] wireless: realtek: Replace zero-length array with
- flexible-array member
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Yan-Hsuan Chuang <yhchuang@realtek.com>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200225002746.GA26789@embeddedor>
-From:   Jes Sorensen <jes@trained-monkey.org>
-Message-ID: <04cba503-9de8-0b61-8d97-77bf47392ef5@trained-monkey.org>
-Date:   Tue, 25 Feb 2020 11:14:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1730518AbgBYQOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 11:14:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47876 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729992AbgBYQOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 11:14:33 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 9A7D0ABD7;
+        Tue, 25 Feb 2020 16:14:31 +0000 (UTC)
+Message-ID: <609c96533fec609243f12a1f5fdd494e4f1ae34e.camel@suse.de>
+Subject: Re: [PATCH 11/89] clk: bcm: rpi: Make sure pllb_arm is removed
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Maxime Ripard <maxime@cerno.tech>, Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Date:   Tue, 25 Feb 2020 17:14:30 +0100
+In-Reply-To: <5571315e0aa8c8af02ad61cb396137707d4b6da4.1582533919.git-series.maxime@cerno.tech>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
+         <5571315e0aa8c8af02ad61cb396137707d4b6da4.1582533919.git-series.maxime@cerno.tech>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-zSYz+O1TkTTw+s8JuVwF"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-In-Reply-To: <20200225002746.GA26789@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/24/20 7:27 PM, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> This issue was found with the help of Coccinelle.
 
-Hi Gustavo,
+--=-zSYz+O1TkTTw+s8JuVwF
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I really don't think this improves the code in any way for the drivers
-you are modifying. If we really want to address this corner case, it
-seems like fixing the compiler to address [0] arrays the same as []
-arrays is the right solution.
+On Mon, 2020-02-24 at 10:06 +0100, Maxime Ripard wrote:
+> The pllb_arm clock was created at probe time, but was never removed if
+> something went wrong later in probe, or if the driver was ever removed fr=
+om
+> the system.
+>=20
+> Now that we are using clk_hw_register, we can just use its managed varian=
+t
+> to take care of that for us.
+>=20
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-Cheers,
-Jes
+Acked-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+
+Thanks!
+Nicolas
+
+
+--=-zSYz+O1TkTTw+s8JuVwF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5VR+YACgkQlfZmHno8
+x/5tbgf+KEUYT0jpT3C1Unk34E5t2GRWaiQ46ZtRMRoYx60hHiygSxcrkoZOtYiF
+WgsNmLUlhgSu30qeRzOgsfYHoS7ttnuZjDXWXB2Lx27bnGBXrgZPnLfEefBAQt02
+uCd/O+Nc45NFZLfxk3AGansY5ja4i5zG115Zy5njBoDBmxdchTmh4IX6dj99heKa
+p1VeDbgDt0CTpFUpUE2vVI59mLsI9MnVyTh2CngxfW0Kev9MpEPqWcWiO1xbxae4
+AND1pPwO5aAEc0qWB2NqlDOZ+c/eJMWwQ5p7UaorMdUaURQY5zr12Qfzqnhm+6QX
+gWJJCfh07YRMgduhXRK0dagH1ddjtQ==
+=LhDi
+-----END PGP SIGNATURE-----
+
+--=-zSYz+O1TkTTw+s8JuVwF--
 
