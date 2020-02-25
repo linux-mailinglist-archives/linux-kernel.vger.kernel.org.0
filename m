@@ -2,68 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFFD316B644
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:08:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A88E16B64D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:09:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbgBYAIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 19:08:17 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42154 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728320AbgBYAIQ (ORCPT
+        id S1728615AbgBYAJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 19:09:46 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:54329 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728011AbgBYAJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 19:08:16 -0500
-Received: by mail-io1-f65.google.com with SMTP id z1so1161042iom.9
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 16:08:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yYLHirngUHxt10qFoU9xmupylPxKXSewlxECiHVcCbc=;
-        b=pdVgPiWKRIZ6FGDifzN+jO7VW4qmMUPDK9hEVvS/Uzl7iTkfQxBqNCYbyruzNjkH3R
-         FUsq75ZEMBVuEZmMvqJlBUHbo+HQ9+bhK97Nb6Qn8c+k8WLWDt6OcSir14JkDnVim3VL
-         dAhGAYEIq3EX7SLhpFZDPFNtOPhCNiVDp+YX66sO+jg2+77959SfeDUcywD9q76Qcb+n
-         SXXL7OVxUHg7VJvpXpLbuUq1cGDk5BnhUbJeWXdWWsyTnXEW2RxfLnY6YvR6kf7QgwMi
-         G9Ug6sDiaWMxQY/sQIweYBoEk6YUqtOHp1K0Y5poF5WyQOhiz1YMlOp3J8K8ilB1XVBP
-         oXZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yYLHirngUHxt10qFoU9xmupylPxKXSewlxECiHVcCbc=;
-        b=s4/6H7fm8d2lpDxl0v892+jn6aBpMiedGKNHEe8Kf+kPbelNrq/gFSmBe3j0y3Wmib
-         uTme+bWl0wQXfzXoR5/xxAWyplRBvqadXkKAR74b3G178pl/A58LVljBg6C27t/RfZMv
-         h8JPloxGVUfQoEDU1kOKS8DB7ox8thbRtRD7lLiVHdbqTE+EyKJydl7j1Ii0ec3EbpiE
-         xLQ69E2w8yawCpQGQXfBsaZsG4KcNLZJjEmVy0+Whfn4t727K6f9c0tpMkQNhzrMTFnx
-         LABDgU5iLX9sXXCEYBcv3GxMCPW0looXAnC8UpT+o0UNAQ12P9ZI/t+KCUIcliTI335y
-         erGw==
-X-Gm-Message-State: APjAAAU2urfibcY9ppLhPjxfdCtWXhTl/MLwyuFhdYatLRrNljGElKuv
-        Hsz+FfO6tIHeQ8sEFUPC0cXHjqNr0xSWutlA/Y9hGg==
-X-Google-Smtp-Source: APXvYqxTkakpljUYeVp2JLg4XJzRu6x6qf4LnVcCbcWcEYJgPZZWbcAnu6mgIc2I1Tomu0LoUoG8bchFDT2g5USxwpM=
-X-Received: by 2002:a6b:ee01:: with SMTP id i1mr54662261ioh.109.1582589295859;
- Mon, 24 Feb 2020 16:08:15 -0800 (PST)
+        Mon, 24 Feb 2020 19:09:45 -0500
+Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 899633A1961;
+        Tue, 25 Feb 2020 11:09:39 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j6Nn7-0004kt-Lc; Tue, 25 Feb 2020 11:09:37 +1100
+Date:   Tue, 25 Feb 2020 11:09:37 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
+ operations state
+Message-ID: <20200225000937.GA10776@dread.disaster.area>
+References: <20200221004134.30599-1-ira.weiny@intel.com>
+ <20200221004134.30599-8-ira.weiny@intel.com>
+ <20200221174449.GB11378@lst.de>
+ <20200221224419.GW10776@dread.disaster.area>
+ <20200224175603.GE7771@lst.de>
 MIME-Version: 1.0
-References: <20200222023413.78202-1-ehankland@google.com> <9adcb973-7b60-71dd-636d-1e451e664c55@redhat.com>
- <0c66eae3-8983-0632-6d39-fd335620b76a@linux.intel.com>
-In-Reply-To: <0c66eae3-8983-0632-6d39-fd335620b76a@linux.intel.com>
-From:   Eric Hankland <ehankland@google.com>
-Date:   Mon, 24 Feb 2020 16:08:04 -0800
-Message-ID: <CAOyeoRX8kXD4nHGCLk=pV2EHS4t9wykV5tYDfgKkTLBcN5=GGw@mail.gmail.com>
-Subject: Re: [PATCH] KVM: x86: Adjust counter sample period after a wrmsr
-To:     Like Xu <like.xu@linux.intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Peter Shier <pshier@google.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200224175603.GE7771@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=7-415B0cAAAA:8 a=Nhs22OFJWa-oc4Q03hQA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Like -
+On Mon, Feb 24, 2020 at 06:56:03PM +0100, Christoph Hellwig wrote:
+> On Sat, Feb 22, 2020 at 09:44:19AM +1100, Dave Chinner wrote:
+> > > I am very much against this.  There is a reason why we don't support
+> > > changes of ops vectors at runtime anywhere else, because it is
+> > > horribly complicated and impossible to get right.  IFF we ever want
+> > > to change the DAX vs non-DAX mode (which I'm still not sold on) the
+> > > right way is to just add a few simple conditionals and merge the
+> > > aops, which is much easier to reason about, and less costly in overall
+> > > overhead.
+> > 
+> > *cough*
+> > 
+> > That's exactly what the original code did. And it was broken
+> > because page faults call multiple aops that are dependent on the
+> > result of the previous aop calls setting up the state correctly for
+> > the latter calls. And when S_DAX changes between those calls, shit
+> > breaks.
+> 
+> No, the original code was broken because it didn't serialize between
+> DAX and buffer access.
+> 
+> Take a step back and look where the problems are, and they are not
+> mostly with the aops.  In fact the only aop useful for DAX is
+> is ->writepages, and how it uses ->writepages is actually a bit of
+> an abuse of that interface.
 
-Thanks for the feedback - is your recommendation to do the read and
-period change at the same time and only take the lock once or is there
-another way around this while still handling writes correctly?
+The races are all through the fops, too, which is one of the reasons
+Darrick mentioned we should probably move this up to file ops
+level...
 
-Eric
+> So what we really need it just a way to prevent switching the flag
+> when a file is mapped,
+
+That's not sufficient.
+
+We also have to prevent the file from being mapped *while we are
+switching*. Nothing in the mmap() path actually serialises against
+filesystem operations, and the initial behavioural checks in the
+page fault path are similarly unserialised against changing the
+S_DAX flag.
+
+e.g. there's a race against ->mmap() with switching the the S_DAX
+flag. In xfs_file_mmap():
+
+        file_accessed(file);
+        vma->vm_ops = &xfs_file_vm_ops;
+        if (IS_DAX(inode))
+                vma->vm_flags |= VM_HUGEPAGE;
+
+So if this runs while a switch from true to false is occurring,
+we've got a non-dax VMA with huge pages enabled, and the non-dax
+page fault path doesn't support this.
+
+If we are really lucky, we'll have IS_DAX() set just long
+enough to get through this check in xfs_filemap_huge_fault():
+
+        if (!IS_DAX(file_inode(vmf->vma->vm_file)))
+                return VM_FAULT_FALLBACK;
+
+and then we'll get into __xfs_filemap_fault() and block on the
+MMAPLOCK. When we actually get that lock, S_DAX will now be false
+and we have a huge page fault running through a path (page cache IO)
+that doesn't support huge pages...
+
+This is the sort of landmine switching S_DAX without serialisation
+causes. The methods themselves look sane, but it's cross-method
+dependencies for a stable S_DAX flag that is the real problem.
+
+Yes, we can probably fix this by adding XFS_MMAPLOCK_SHARED here,
+but means every filesystem has to solve the same race conditions
+itself. That's hard to get right and easy to get wrong. If the
+VFS/mm subsystem provides the infrastructure needed to use this
+functionality safely, then that is hard for filesystem developers to
+get wrong.....
+
+> and in the normal read/write path ensure the
+> flag can't be switch while I/O is going on, which could either be
+> done by ensuring it is only switched under i_rwsem or equivalent
+> protection, or by setting the DAX flag once in the iocb similar to
+> IOCB_DIRECT.
+
+The iocb path is not the problem - that's entirely serialised
+against S_DAX changes by the i_rwsem. The problem is that we have no
+equivalent filesystem level serialisation for the entire mmap/page
+fault path, and it checks S_DAX all over the place.
+
+It's basically the same limitation that we have with mmap vs direct
+IO - we can't lock out mmap when we do direct IO, so we cannot
+guarantee coherency between the two. Similar here - we cannot
+lockout mmap in any sane way, so we cannot guarantee coherency
+between mmap and changing the S_DAX flag.
+
+That's the underlying problem we need to solve here.
+
+/me wonders if the best thing to do is to add a ->fault callout to
+tell the filesystem to lock/unlock the inode right up at the top of
+the page fault path, outside even the mmap_sem.  That means all the
+methods that the page fault calls are protected against S_DAX
+changes, and it gives us a low cost method of serialising page
+faults against DIO (e.g. via inode_dio_wait())....
+
+> And they easiest way to get all this done is as a first step to
+> just allowing switching the flag when no blocks are allocated at
+> all, similar to how the rt flag works.
+
+False equivalence - it is not similar because the RT flag changes
+and their associated state checks are *already fully serialised* by
+the XFS_ILOCK_EXCL. S_DAX accesses have no such serialisation, and
+that's the problem we need to solve...
+
+In reality, I don't really care how we solve this problem, but we've
+been down the path you are suggesting at least twice before and each
+time we've ended up in a "that doesn't work" corner and had to
+persue other solutions. I don't like going around in circles.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
