@@ -2,567 +2,627 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2092316BDD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 10:48:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4AB416BDD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 10:50:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729349AbgBYJr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 04:47:59 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37620 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbgBYJr7 (ORCPT
+        id S1729536AbgBYJuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 04:50:09 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41232 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbgBYJuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 04:47:59 -0500
-Received: by mail-lj1-f194.google.com with SMTP id q23so13302730ljm.4;
-        Tue, 25 Feb 2020 01:47:57 -0800 (PST)
+        Tue, 25 Feb 2020 04:50:05 -0500
+Received: by mail-io1-f68.google.com with SMTP id m25so1172531ioo.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 01:50:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=antmicro.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0/q9cpeZXAGoxb2F7O8jteMTwUf8LcWgekZZtF1Yfto=;
+        b=vXbCJFoW/BjbvMWUu7YvRx4mnDZA3/ErmTJDWu/QKfdkLSkcbn/9dM9nI77pLjOLtG
+         Vuumg4XIP0pmOk1FCNUOokF/0CGd3sUYpbLaerfHrcb9I5I6EuC8lTZ7TnL9SW7xpb7y
+         /k3VOG1NihtAXmlLMyNRaJ7kdG43Du3+GY9B8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qhXDCVR/0HFvg0rxexmKDd40UCW8T/Aqg6KAfMG9Gvg=;
-        b=njqR8RIdrorXVyy+sLHvo9v0ZMldf8sRfHBjNn7UlT6rVJuEq4djFy9HIvUlQrhIH5
-         zI8d04f2g8HQAuL6czkUol8U+pByLOQA7Kt9NdQRp0VLqoOI556oNpis6bNTv1WPdqEq
-         8MmL/vq80EYaxFTXuRcgAMB9MlFcpg9mvJvSv2mQ/YLJtcfkXerPG7HU2hYh/7t866p0
-         TdfzheDXfIznwTLa2MVZ8Sv8dZ5WVrvzirgWXYXQ6CdJZ9twV9YFE0jNBs1XjK+N3TIj
-         C1kdiPGCwSfa0PTu+IHzm2jmOA9JvmPC0OfgKW/juYFlv9/hOGpuEmi7/wL5dCTrY46N
-         3Btw==
-X-Gm-Message-State: APjAAAWpYzDdymqFa6JTEjkb++3p9gCM1EN85vYhVUB5odibWN4qatAs
-        dZAMNOkMLXCtGCqAWSlS43k=
-X-Google-Smtp-Source: APXvYqzRm3Q/DDappLEFGVfwrkQ4Im3idqlHSc3zcc/uUzA4DkPkRC4zAPbTUOvcGjYUMbN3DwfA/w==
-X-Received: by 2002:a2e:3214:: with SMTP id y20mr32843328ljy.69.1582624076338;
-        Tue, 25 Feb 2020 01:47:56 -0800 (PST)
-Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
-        by smtp.gmail.com with ESMTPSA id x10sm7472146ljd.68.2020.02.25.01.47.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 01:47:55 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@kernel.org>)
-        id 1j6Woh-0001Sk-Oj; Tue, 25 Feb 2020 10:47:51 +0100
-Date:   Tue, 25 Feb 2020 10:47:51 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Carl Karsten <carl@nextdayvideo.com>, Tim Ansell <me@mith.ro>
-Subject: Re: [PATCH] USB: serial: Add vizzini driver for Exar USB2 serial
- adapters
-Message-ID: <20200225094751.GQ32540@localhost>
-References: <20200117044148.263556-1-joel@jms.id.au>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0/q9cpeZXAGoxb2F7O8jteMTwUf8LcWgekZZtF1Yfto=;
+        b=g/GgumRYc7tm9eBCNKRAp7b4IzPqHiYujZ1RfTRKjamYiK2H3uau0D6TbCNWEbns7N
+         fzl9qHewUO4UNcLKjRB8YyVQPux/Ht5I9bFEEwCCV1+FiYjkUfWJMCOe5mMKxTyssp/K
+         LuGzX7Lxkai/LuxPRlA5HRzyD0pvgLuftB+6R6TznqiZSWDlpNqP/zaGG8KeDLRVQpFS
+         AEKUgFYuzBCyzTxNlKrGKjGWyIpxyTL8+6El9SJUB3GUA4FbpMXXNeZaEIfkjTnx9xEH
+         zt0gePfliKd1BuRm+H/GHkDsEWY28SvvFtwkZrh+HdUOUQtPaY3ION0KAoM43pjJ/r35
+         yvAw==
+X-Gm-Message-State: APjAAAUtwHYV3Awk6caUCqVENLqbFyMcr4du+C1YMftltnXfci61YaWR
+        MTKYeSd4C54dOM4cJ45S97HEqvDJkXo1zsh6CNiE3g==
+X-Google-Smtp-Source: APXvYqxDCXMfiKN6hBTjHxO4f3SM0yMrYytXZMchD1XXSfgiwJAoZtj9X9dyILOwxDy9Y/bpJZIip6/lwAT+4C8L2FU=
+X-Received: by 2002:a02:a388:: with SMTP id y8mr57706058jak.70.1582624204127;
+ Tue, 25 Feb 2020 01:50:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200117044148.263556-1-joel@jms.id.au>
+References: <20200225094437.4170502-0-mholenko@antmicro.com> <20200225094437.4170502-5-mholenko@antmicro.com>
+In-Reply-To: <20200225094437.4170502-5-mholenko@antmicro.com>
+From:   Mateusz Holenko <mholenko@antmicro.com>
+Date:   Tue, 25 Feb 2020 10:49:53 +0100
+Message-ID: <CAPk366R7OF5nTDtgQ41Kfn8FBj2_2N6W79tnP7cibDkpgiS9Ww@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] drivers/tty/serial: add LiteUART driver
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, devicetree@vger.kernel.org,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Cc:     Stafford Horne <shorne@gmail.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Filip Kokosinski <fkokosinski@antmicro.com>,
+        Pawel Czarnecki <pczarnecki@internships.antmicro.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 02:41:48PM +1000, Joel Stanley wrote:
-> From: Ben Hutchings <ben@decadent.org.uk>
-> 
-> This driver supports the one, two and four port variants of the USB
-> serial adapters. These devices are present on the Digilent Atlys FPGA
-> board.
-> 
-> This driver was written by Ben in 2015. Minor cleanups and fixes for the
-> 1410 by Joel.
-> 
-> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+On Tue, Feb 25, 2020 at 9:47 AM Mateusz Holenko <mholenko@antmicro.com> wrote:
+>
+> From: Filip Kokosinski <fkokosinski@antmicro.com>
+>
+> This commit adds driver for the FPGA-based LiteUART serial controller
+> from LiteX SoC builder.
+>
+> The current implementation supports LiteUART configured
+> for 32 bit data width and 8 bit CSR bus width.
+>
+> It does not support IRQ.
+>
+> Signed-off-by: Filip Kokosinski <fkokosinski@antmicro.com>
+> Signed-off-by: Mateusz Holenko <mholenko@antmicro.com>
 > ---
->  drivers/usb/serial/Kconfig   |   9 +
->  drivers/usb/serial/Makefile  |   1 +
->  drivers/usb/serial/vizzini.c | 370 +++++++++++++++++++++++++++++++++++
->  3 files changed, 380 insertions(+)
->  create mode 100644 drivers/usb/serial/vizzini.c
-> 
-> diff --git a/drivers/usb/serial/Kconfig b/drivers/usb/serial/Kconfig
-> index 25d7e0c36d38..167992ad1d05 100644
-> --- a/drivers/usb/serial/Kconfig
-> +++ b/drivers/usb/serial/Kconfig
-> @@ -654,4 +654,13 @@ config USB_SERIAL_DEBUG
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called usb-debug.
->  
-> +config USB_SERIAL_VIZZINI
-> +	tristate "USB Exar XR21V141x 'Vizzini' Serial Driver"
-> +	help
-> +	  Say Y here if you want to use the Exar XR21V1410/1412/141
-> +	  USB 2 serial dapters.
+>
+> Notes:
+>     Changes in v3:
+>     - aliases made optional
+>     - used litex_get_reg/litex_set_reg functions instead of macros
+>     - SERIAL_LITEUART_NR_PORTS renamed to SERIAL_LITEUART_MAX_PORTS
+>     - PORT_LITEUART changed from 122 to 123
+>     - added dependency on LITEX_SOC_CONTROLLER
+>     - patch number changed from 4 to 5
+>
+>     No changes in v2.
+>
+>  MAINTAINERS                      |   1 +
+>  drivers/tty/serial/Kconfig       |  32 ++-
+>  drivers/tty/serial/Makefile      |   1 +
+>  drivers/tty/serial/liteuart.c    | 411 +++++++++++++++++++++++++++++++
+>  include/uapi/linux/serial_core.h |   3 +
+>  5 files changed, 447 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/tty/serial/liteuart.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 22a67514ace3..9b294f083640 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9732,6 +9732,7 @@ S:        Maintained
+>  F:     Documentation/devicetree/bindings/*/litex,*.yaml
+>  F:     drivers/soc/litex/litex_soc_ctrl.c
+>  F:     include/linux/litex.h
+> +F:     drivers/tty/serial/liteuart.c
+>
+>  LIVE PATCHING
+>  M:     Josh Poimboeuf <jpoimboe@redhat.com>
+> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> index 52eaac21ff9f..577c088b9feb 100644
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -529,7 +529,7 @@ config SERIAL_IMX_CONSOLE
+>
+>  config SERIAL_UARTLITE
+>         tristate "Xilinx uartlite serial port support"
+> -       depends on HAS_IOMEM
+> +       depends on HAS_IOMEM && LITEX_SOC_CONTROLLER
 
-typo: adapters
+Just noticed this - it's wrong. We don't want to change Xilinx UARTLITE config.
+It's SERIAL_LITEUART that should be dependent on LITEX_SOC_CONTROLLER.
 
+>         select SERIAL_CORE
+>         help
+>           Say Y here if you want to use the Xilinx uartlite serial controller.
+> @@ -1572,6 +1572,36 @@ config SERIAL_MILBEAUT_USIO_CONSOLE
+>           receives all kernel messages and warnings and which allows logins in
+>           single user mode).
+>
+> +config SERIAL_LITEUART
+> +       tristate "LiteUART serial port support"
+> +       depends on HAS_IOMEM
+> +       depends on OF
+
+This should also depend on LITEX_SOC_CONTROLLER.
+
+> +       select SERIAL_CORE
+> +       help
+> +         This driver is for the FPGA-based LiteUART serial controller from LiteX
+> +         SoC builder.
 > +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called vizzini.
+> +         Say 'Y' here if you wish to use the LiteUART serial controller.
+> +         Otherwise, say 'N'.
 > +
->  endif # USB_SERIAL
-> diff --git a/drivers/usb/serial/Makefile b/drivers/usb/serial/Makefile
-> index 2d491e434f11..9f65a4863f1d 100644
-> --- a/drivers/usb/serial/Makefile
-> +++ b/drivers/usb/serial/Makefile
-> @@ -59,6 +59,7 @@ obj-$(CONFIG_USB_SERIAL_WWAN)			+= usb_wwan.o
->  obj-$(CONFIG_USB_SERIAL_TI)			+= ti_usb_3410_5052.o
->  obj-$(CONFIG_USB_SERIAL_UPD78F0730)		+= upd78f0730.o
->  obj-$(CONFIG_USB_SERIAL_VISOR)			+= visor.o
-> +obj-$(CONFIG_USB_SERIAL_VIZZINI)		+= vizzini.o
->  obj-$(CONFIG_USB_SERIAL_WISHBONE)		+= wishbone-serial.o
->  obj-$(CONFIG_USB_SERIAL_WHITEHEAT)		+= whiteheat.o
->  obj-$(CONFIG_USB_SERIAL_XIRCOM)			+= keyspan_pda.o
-> diff --git a/drivers/usb/serial/vizzini.c b/drivers/usb/serial/vizzini.c
+> +config SERIAL_LITEUART_MAX_PORTS
+> +       int "Maximum number of LiteUART ports"
+> +       depends on SERIAL_LITEUART
+> +       default "1"
+> +       help
+> +         Set this to the maximum number of serial ports you want the driver
+> +         to support.
+> +
+> +config SERIAL_LITEUART_CONSOLE
+> +       bool "LiteUART serial port console support"
+> +       depends on SERIAL_LITEUART=y
+> +       select SERIAL_CORE_CONSOLE
+> +       help
+> +         Say 'Y' here if you wish to use the FPGA-based LiteUART serial controller
+> +         from LiteX SoC builder as the system console (the system console is the
+> +         device which receives all kernel messages and warnings and which allows
+> +         logins in single user mode). Otherwise, say 'N'.
+> +
+>  endmenu
+>
+>  config SERIAL_MCTRL_GPIO
+> diff --git a/drivers/tty/serial/Makefile b/drivers/tty/serial/Makefile
+> index d056ee6cca33..9f8ba419ff3b 100644
+> --- a/drivers/tty/serial/Makefile
+> +++ b/drivers/tty/serial/Makefile
+> @@ -89,6 +89,7 @@ obj-$(CONFIG_SERIAL_OWL)      += owl-uart.o
+>  obj-$(CONFIG_SERIAL_RDA)       += rda-uart.o
+>  obj-$(CONFIG_SERIAL_MILBEAUT_USIO) += milbeaut_usio.o
+>  obj-$(CONFIG_SERIAL_SIFIVE)    += sifive.o
+> +obj-$(CONFIG_SERIAL_LITEUART) += liteuart.o
+>
+>  # GPIOLIB helpers for modem control lines
+>  obj-$(CONFIG_SERIAL_MCTRL_GPIO)        += serial_mctrl_gpio.o
+> diff --git a/drivers/tty/serial/liteuart.c b/drivers/tty/serial/liteuart.c
 > new file mode 100644
-> index 000000000000..f4d1b9a75d8a
+> index 000000000000..184ecb9f51f3
 > --- /dev/null
-> +++ b/drivers/usb/serial/vizzini.c
-> @@ -0,0 +1,370 @@
+> +++ b/drivers/tty/serial/liteuart.c
+> @@ -0,0 +1,411 @@
 > +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * Based on vizzini driver:
+> + * LiteUART serial controller (LiteX) Driver
 > + *
-> + * Copyright (c) 2013 Exar Corporation, Inc.
-> + *
-> + * Based on USB Serial "Simple" driver
-> + *
-> + * Copyright (C) 2001-2006,2008,2013 Greg Kroah-Hartman <greg@kroah.com>
-> + * Copyright (C) 2005 Arthur Huillet (ahuillet@users.sf.net)
-> + * Copyright (C) 2005 Thomas Hergenhahn <thomas.hergenhahn@suse.de>
-> + * Copyright (C) 2009 Outpost Embedded, LLC
-> + * Copyright (C) 2010 Zilogic Systems <code@zilogic.com>
-> + * Copyright (C) 2013 Wei Shuai <cpuwolf@gmail.com>
-> + * Copyright (C) 2013 Linux Foundation
-
-This looked weird, but I understand where it comes from now. With a
-calc_num_ports() callback, you can drop this bit (see below).
-
+> + * Copyright (C) 2019 - 2020 Antmicro <www.antmicro.com>
 > + */
 > +
-> +#include <linux/kernel.h>
-> +#include <linux/tty.h>
+> +#include <linux/console.h>
 > +#include <linux/module.h>
-> +#include <linux/usb.h>
-> +#include <linux/usb/serial.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/serial.h>
+> +#include <linux/serial_core.h>
+> +#include <linux/timer.h>
+> +#include <linux/tty_flip.h>
+> +#include <linux/litex.h>
 > +
-> +#define XR_SET_REG			0
+> +/* module-related defines */
+> +#define DRIVER_NAME    "liteuart"
+> +#define DRIVER_MAJOR   0
+> +#define DRIVER_MINOR   0
+> +#define DEV_NAME       "ttyLXU"
 > +
-> +#define URM_REG_BLOCK			4
-> +#define EPLOCALS_REG_BLOCK		0x66
+> +/*
+> + * CSRs definitions
+> + * (base address offsets + width)
+> + *
+> + * The definitions below are true for
+> + * LiteX SoC configured for
+> + * 8-bit CSR Bus, 32-bit aligned.
+> + *
+> + * Supporting other configurations
+> + * might require new definitions
+> + * or a more generic way of indexing
+> + * the LiteX CSRs.
+> + *
+> + * For more details on how CSRs
+> + * are defined and handled in LiteX,
+> + * see comments in the LiteX SoC Driver:
+> + * drivers/soc/litex/litex_soc_ctrl.c
+> + */
+> +#define OFF_RXTX       0x00
+> +#define SIZE_RXTX      1
+> +#define OFF_TXFULL     0x04
+> +#define SIZE_TXFULL    1
+> +#define OFF_RXEMPTY    0x08
+> +#define SIZE_RXEMPTY   1
+> +#define OFF_EV_STATUS  0x0c
+> +#define SIZE_EV_STATUS 1
+> +#define OFF_EV_PENDING 0x10
+> +#define SIZE_EV_PENDING        1
+> +#define OFF_EV_ENABLE  0x14
+> +#define SIZE_EV_ENABLE 1
 > +
-> +#define MEM_EP_LOCALS_SIZE_S		3
-> +#define MEM_EP_LOCALS_SIZE		(1 << MEM_EP_LOCALS_SIZE_S)
+> +/* events */
+> +#define EV_TX          0x1
+> +#define EV_RX          0x2
 > +
-> +#define EP_WIDE_MODE			0x03
-> +
-> +#define UART_GPIO_MODE			0x01a
-> +
-> +#define UART_GPIO_MODE_SEL_M		0x7
-> +#define UART_GPIO_MODE_SEL_S		0
-> +#define UART_GPIO_MODE_SEL		0x007
-> +
-> +#define UART_GPIO_MODE_SEL_GPIO		(0x0 << UART_GPIO_MODE_SEL_S)
-> +#define UART_GPIO_MODE_SEL_RTS_CTS	(0x1 << UART_GPIO_MODE_SEL_S)
-> +#define UART_GPIO_MODE_SEL_DTR_DSR	(0x2 << UART_GPIO_MODE_SEL_S)
-> +
-> +#define UART_ENABLE			0x003
-> +#define UART_ENABLE_TX_M		0x1
-> +#define UART_ENABLE_TX_S		0
-
-Looks like several of these mask/shift defines are unused.
-
-> +#define UART_ENABLE_TX			0x001
-> +#define UART_ENABLE_RX_M		0x1
-> +#define UART_ENABLE_RX_S		1
-> +#define UART_ENABLE_RX			0x002
-> +
-> +#define UART_CLOCK_DIVISOR_0		0x004
-> +#define UART_CLOCK_DIVISOR_1		0x005
-> +#define UART_CLOCK_DIVISOR_2		0x006
-> +
-> +#define UART_TX_CLOCK_MASK_0		0x007
-> +#define UART_TX_CLOCK_MASK_1		0x008
-> +
-> +#define UART_RX_CLOCK_MASK_0		0x009
-> +#define UART_RX_CLOCK_MASK_1		0x00a
-> +
-> +#define UART_FORMAT			0x00b
-> +
-> +#define UART_FORMAT_SIZE_M		0xf
-> +#define UART_FORMAT_SIZE_S		0
-> +#define UART_FORMAT_SIZE		0x00f
-
-Same here.
-
-> +#define UART_FORMAT_SIZE_7		(0x7 << UART_FORMAT_SIZE_S)
-> +#define UART_FORMAT_SIZE_8		(0x8 << UART_FORMAT_SIZE_S)
-> +#define UART_FORMAT_SIZE_9		(0x9 << UART_FORMAT_SIZE_S)
-> +
-> +#define UART_FORMAT_PARITY_M		0x7
-> +#define UART_FORMAT_PARITY_S		4
-> +#define UART_FORMAT_PARITY		0x070
-> +
-> +#define UART_FORMAT_PARITY_NONE		(0x0 << UART_FORMAT_PARITY_S)
-> +#define UART_FORMAT_PARITY_ODD		(0x1 << UART_FORMAT_PARITY_S)
-> +#define UART_FORMAT_PARITY_EVEN		(0x2 << UART_FORMAT_PARITY_S)
-> +#define UART_FORMAT_PARITY_1		(0x3 << UART_FORMAT_PARITY_S)
-> +#define UART_FORMAT_PARITY_0		(0x4 << UART_FORMAT_PARITY_S)
-> +
-> +#define UART_FORMAT_STOP_M		0x1
-> +#define UART_FORMAT_STOP_S		7
-> +#define UART_FORMAT_STOP		0x080
-> +
-> +#define UART_FORMAT_STOP_1		(0x0 << UART_FORMAT_STOP_S)
-> +#define UART_FORMAT_STOP_2		(0x1 << UART_FORMAT_STOP_S)
-> +
-> +#define UART_FLOW			0x00c
-> +
-> +#define UART_FLOW_MODE_M		0x7
-> +#define UART_FLOW_MODE_S		0
-> +#define UART_FLOW_MODE			0x007
-> +
-> +#define UART_FLOW_MODE_NONE		(0x0 << UART_FLOW_MODE_S)
-> +#define UART_FLOW_MODE_HW		(0x1 << UART_FLOW_MODE_S)
-> +#define UART_FLOW_MODE_SW		(0x2 << UART_FLOW_MODE_S)
-> +
-> +#define UART_XON_CHAR			0x010
-> +#define UART_XOFF_CHAR			0x011
-> +
-> +#define URM_ENABLE_BASE			0x010
-> +#define URM_ENABLE_0			0x010
-> +#define URM_ENABLE_0_TX			0x001
-> +#define URM_ENABLE_0_RX			0x002
-> +
-> +struct vizzini_baud_rate {
-> +	unsigned int tx;
-> +	unsigned int rx0;
-> +	unsigned int rx1;
+> +struct liteuart_port {
+> +       struct uart_port port;
+> +       struct timer_list timer;
 > +};
 > +
-> +static const struct vizzini_baud_rate vizzini_baud_rates[] = {
-> +	{ 0x000, 0x000, 0x000 },
-> +	{ 0x000, 0x000, 0x000 },
-> +	{ 0x100, 0x000, 0x100 },
-> +	{ 0x020, 0x400, 0x020 },
-> +	{ 0x010, 0x100, 0x010 },
-> +	{ 0x208, 0x040, 0x208 },
-> +	{ 0x104, 0x820, 0x108 },
-> +	{ 0x844, 0x210, 0x884 },
-> +	{ 0x444, 0x110, 0x444 },
-> +	{ 0x122, 0x888, 0x224 },
-> +	{ 0x912, 0x448, 0x924 },
-> +	{ 0x492, 0x248, 0x492 },
-> +	{ 0x252, 0x928, 0x292 },
-> +	{ 0x94A, 0x4A4, 0xA52 },
-> +	{ 0x52A, 0xAA4, 0x54A },
-> +	{ 0xAAA, 0x954, 0x4AA },
-> +	{ 0xAAA, 0x554, 0xAAA },
-> +	{ 0x555, 0xAD4, 0x5AA },
-> +	{ 0xB55, 0xAB4, 0x55A },
-> +	{ 0x6B5, 0x5AC, 0xB56 },
-> +	{ 0x5B5, 0xD6C, 0x6D6 },
-> +	{ 0xB6D, 0xB6A, 0xDB6 },
-> +	{ 0x76D, 0x6DA, 0xBB6 },
-> +	{ 0xEDD, 0xDDA, 0x76E },
-> +	{ 0xDDD, 0xBBA, 0xEEE },
-> +	{ 0x7BB, 0xF7A, 0xDDE },
-> +	{ 0xF7B, 0xEF6, 0x7DE },
-> +	{ 0xDF7, 0xBF6, 0xF7E },
-> +	{ 0x7F7, 0xFEE, 0xEFE },
-> +	{ 0xFDF, 0xFBE, 0x7FE },
-> +	{ 0xF7F, 0xEFE, 0xFFE },
-> +	{ 0xFFF, 0xFFE, 0xFFD },
+> +#define to_liteuart_port(port) container_of(port, struct liteuart_port, port)
+> +
+> +static struct liteuart_port liteuart_ports[CONFIG_SERIAL_LITEUART_MAX_PORTS];
+> +static DECLARE_BITMAP(liteuart_ports_in_use, CONFIG_SERIAL_LITEUART_MAX_PORTS);
+> +
+> +#ifdef CONFIG_SERIAL_LITEUART_CONSOLE
+> +static struct console liteuart_console;
+> +#endif
+> +
+> +static struct uart_driver liteuart_driver = {
+> +       .owner = THIS_MODULE,
+> +       .driver_name = DRIVER_NAME,
+> +       .dev_name = DEV_NAME,
+> +       .major = DRIVER_MAJOR,
+> +       .minor = DRIVER_MINOR,
+> +       .nr = CONFIG_SERIAL_LITEUART_MAX_PORTS,
+> +#ifdef CONFIG_SERIAL_LITEUART_CONSOLE
+> +       .cons = &liteuart_console,
+> +#endif
 > +};
 > +
-> +static int vizzini_set_reg(struct usb_serial_port *port,
-> +			   unsigned int block, unsigned int regnum,
-> +			   unsigned int value)
+> +static void liteuart_timer(struct timer_list *t)
 > +{
-> +	dev_dbg(&port->serial->dev->dev, "%s 0x%02x:0x%02x = 0x%02x\n",
-> +		__func__, block, regnum, value);
-
-Use &port->dev instead.
-
+> +       struct liteuart_port *uart = from_timer(uart, t, timer);
+> +       struct uart_port *port = &uart->port;
+> +       unsigned char __iomem *membase = port->membase;
+> +       unsigned int flg = TTY_NORMAL;
+> +       int ch;
+> +       unsigned long status;
 > +
-> +	return usb_control_msg(port->serial->dev,
-> +			       usb_sndctrlpipe(port->serial->dev, 0),
-> +			       XR_SET_REG,
-> +			       USB_DIR_OUT | USB_TYPE_VENDOR,
-> +			       value, regnum | (block << 8),
-> +			       NULL, 0,
-> +			       5000);
-
-Use USB_CTRL_SET_TIMEOUT
-
-Report errors?
-
+> +       while ((status = !litex_get_reg(membase + OFF_RXEMPTY,
+> +                       SIZE_RXEMPTY)) == 1) {
+> +               ch = litex_get_reg(membase + OFF_RXTX, SIZE_RXTX);
+> +               port->icount.rx++;
+> +
+> +               /* necessary for RXEMPTY to refresh its value */
+> +               litex_set_reg(membase + OFF_EV_PENDING,
+> +                       SIZE_EV_PENDING, EV_TX | EV_RX);
+> +
+> +               /* no overflow bits in status */
+> +               if (!(uart_handle_sysrq_char(port, ch)))
+> +                       uart_insert_char(port, status, 0, ch, flg);
+> +
+> +               tty_flip_buffer_push(&port->state->port);
+> +       }
+> +
+> +       mod_timer(&uart->timer, jiffies + uart_poll_timeout(port));
 > +}
 > +
-> +static void vizzini_disable(struct usb_serial_port *port)
+> +static void liteuart_putchar(struct uart_port *port, int ch)
 > +{
-> +	unsigned int block = port->bulk_out_endpointAddress - 1;
-
-You should probably use port->port_number instead of relying on fixed
-endpoint addresses which you never verify.
-
+> +       while (litex_get_reg(port->membase + OFF_TXFULL, SIZE_TXFULL))
+> +               cpu_relax();
 > +
-> +	vizzini_set_reg(port, block, UART_ENABLE, 0);
-> +	vizzini_set_reg(port, URM_REG_BLOCK, URM_ENABLE_BASE + block, 0);
+> +       litex_set_reg(port->membase + OFF_RXTX, SIZE_RXTX, ch);
 > +}
 > +
-> +static void vizzini_enable(struct usb_serial_port *port)
+> +static unsigned int liteuart_tx_empty(struct uart_port *port)
 > +{
-> +	unsigned int block = port->bulk_out_endpointAddress - 1;
+> +       /* not really tx empty, just checking if tx is not full */
+> +       if (!litex_get_reg(port->membase + OFF_TXFULL, SIZE_TXFULL))
+> +               return TIOCSER_TEMT;
+> +
+> +       return 0;
+> +}
+> +
+> +static void liteuart_set_mctrl(struct uart_port *port, unsigned int mctrl)
+> +{
+> +       /* modem control register is not present in LiteUART */
+> +}
+> +
+> +static unsigned int liteuart_get_mctrl(struct uart_port *port)
+> +{
+> +       return TIOCM_CTS | TIOCM_DSR | TIOCM_CAR;
+> +}
+> +
+> +static void liteuart_stop_tx(struct uart_port *port)
+> +{
+> +}
+> +
+> +static void liteuart_start_tx(struct uart_port *port)
+> +{
+> +       struct circ_buf *xmit = &port->state->xmit;
+> +       unsigned char ch;
+> +
+> +       if (unlikely(port->x_char)) {
+> +               litex_set_reg(port->membase + OFF_RXTX,
+> +                       SIZE_RXTX, port->x_char);
+> +               port->icount.tx++;
+> +               port->x_char = 0;
+> +       } else if (!uart_circ_empty(xmit)) {
+> +               while (xmit->head != xmit->tail) {
+> +                       ch = xmit->buf[xmit->tail];
+> +                       xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
+> +                       port->icount.tx++;
+> +                       liteuart_putchar(port, ch);
+> +               }
+> +       }
+> +
+> +       if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
+> +               uart_write_wakeup(port);
+> +}
+> +
+> +static void liteuart_stop_rx(struct uart_port *port)
+> +{
+> +       struct liteuart_port *uart = to_liteuart_port(port);
+> +
+> +       /* just delete timer */
+> +       del_timer(&uart->timer);
+> +}
+> +
+> +static void liteuart_break_ctl(struct uart_port *port, int break_state)
+> +{
+> +       /* LiteUART doesn't support sending break signal */
+> +}
+> +
+> +static int liteuart_startup(struct uart_port *port)
+> +{
+> +       struct liteuart_port *uart = to_liteuart_port(port);
+> +
+> +       /* disable events */
+> +       litex_set_reg(port->membase + OFF_EV_ENABLE, SIZE_EV_ENABLE, 0);
+> +
+> +       /* prepare timer for polling */
+> +       timer_setup(&uart->timer, liteuart_timer, 0);
+> +       mod_timer(&uart->timer, jiffies + uart_poll_timeout(port));
+> +
+> +       return 0;
+> +}
+> +
+> +static void liteuart_shutdown(struct uart_port *port)
+> +{
+> +}
+> +
+> +static void liteuart_set_termios(struct uart_port *port, struct ktermios *new,
+> +                                struct ktermios *old)
+> +{
+> +       unsigned int baud;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&port->lock, flags);
+> +
+> +       /* update baudrate */
+> +       baud = uart_get_baud_rate(port, new, old, 0, 460800);
+> +       uart_update_timeout(port, new->c_cflag, baud);
+> +
+> +       spin_unlock_irqrestore(&port->lock, flags);
+> +}
+> +
+> +static const char *liteuart_type(struct uart_port *port)
+> +{
+> +       return (port->type == PORT_LITEUART) ? DRIVER_NAME : NULL;
+> +}
+> +
+> +static void liteuart_release_port(struct uart_port *port)
+> +{
+> +}
+> +
+> +static int liteuart_request_port(struct uart_port *port)
+> +{
+> +       return 0;
+> +}
+> +
+> +static void liteuart_config_port(struct uart_port *port, int flags)
+> +{
+> +       if (flags & UART_CONFIG_TYPE)
+> +               port->type = PORT_LITEUART;
+> +}
+> +
+> +static int liteuart_verify_port(struct uart_port *port,
+> +                               struct serial_struct *ser)
+> +{
+> +       if (port->type != PORT_UNKNOWN && ser->type != PORT_LITEUART)
+> +               return -EINVAL;
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct uart_ops liteuart_ops = {
+> +       .tx_empty       = liteuart_tx_empty,
+> +       .set_mctrl      = liteuart_set_mctrl,
+> +       .get_mctrl      = liteuart_get_mctrl,
+> +       .stop_tx        = liteuart_stop_tx,
+> +       .start_tx       = liteuart_start_tx,
+> +       .stop_rx        = liteuart_stop_rx,
+> +       .break_ctl      = liteuart_break_ctl,
+> +       .startup        = liteuart_startup,
+> +       .shutdown       = liteuart_shutdown,
+> +       .set_termios    = liteuart_set_termios,
+> +       .type           = liteuart_type,
+> +       .release_port   = liteuart_release_port,
+> +       .request_port   = liteuart_request_port,
+> +       .config_port    = liteuart_config_port,
+> +       .verify_port    = liteuart_verify_port,
+> +};
+> +
+> +static int liteuart_probe(struct platform_device *pdev)
+> +{
+> +       struct device_node *np = pdev->dev.of_node;
+> +       struct liteuart_port *uart;
+> +       struct uart_port *port;
+> +       int dev_id;
+> +
+> +       if (!litex_check_accessors())
+> +               return -EPROBE_DEFER;
+> +
+> +       /* no device tree */
+> +       if (!np)
+> +               return -ENODEV;
+> +
+> +       /* look for aliases; auto-enumerate for free index if not found */
+> +       dev_id = of_alias_get_id(np, "serial");
+> +       if (dev_id < 0)
+> +               dev_id = find_first_zero_bit(liteuart_ports_in_use,
+> +                                            CONFIG_SERIAL_LITEUART_MAX_PORTS);
+> +
+> +       if (dev_id >= CONFIG_SERIAL_LITEUART_MAX_PORTS)
+> +               return -ENODEV;
+> +
+> +       if (test_and_set_bit(dev_id, liteuart_ports_in_use))
+> +               return -EBUSY;
+> +
+> +       uart = &liteuart_ports[dev_id];
+> +       port = &uart->port;
+> +
+> +       /* get {map,mem}base */
+> +       port->mapbase = platform_get_resource(pdev, IORESOURCE_MEM, 0)->start;
+> +       port->membase = of_iomap(np, 0);
+> +       if (!port->membase)
+> +               return -ENXIO;
+> +
+> +       /* values not from device tree */
+> +       port->dev = &pdev->dev;
+> +       port->iotype = UPIO_MEM;
+> +       port->flags = UPF_BOOT_AUTOCONF;
+> +       port->ops = &liteuart_ops;
+> +       port->regshift = 2;
+> +       port->fifosize = 16;
+> +       port->iobase = 1;
+> +       port->type = PORT_UNKNOWN;
+> +       port->line = dev_id;
+> +
+> +       return uart_add_one_port(&liteuart_driver,
+> +                                &liteuart_ports[dev_id].port);
+> +}
+> +
+> +static int liteuart_remove(struct platform_device *pdev)
+> +{
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id liteuart_of_match[] = {
+> +       { .compatible = "litex,liteuart" },
+> +       {}
+> +};
+> +MODULE_DEVICE_TABLE(of, liteuart_of_match);
+> +
+> +static struct platform_driver liteuart_platform_driver = {
+> +       .probe = liteuart_probe,
+> +       .remove = liteuart_remove,
+> +       .driver = {
+> +               .name = DRIVER_NAME,
+> +               .of_match_table = of_match_ptr(liteuart_of_match),
+> +       },
+> +};
+> +
+> +#ifdef CONFIG_SERIAL_LITEUART_CONSOLE
+> +
+> +static void liteuart_console_write(struct console *co, const char *s,
+> +       unsigned int count)
+> +{
+> +       struct uart_port *port = &liteuart_ports[co->index].port;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&port->lock, flags);
+> +       uart_console_write(port, s, count, liteuart_putchar);
+> +       spin_unlock_irqrestore(&port->lock, flags);
+> +}
+> +
+> +static int liteuart_console_setup(struct console *co, char *options)
+> +{
+> +       struct uart_port *port;
+> +       int baud = 115200;
+> +       int bits = 8;
+> +       int parity = 'n';
+> +       int flow = 'n';
+> +
+> +       port = &liteuart_ports[co->index].port;
+> +       if (!port->membase)
+> +               return -ENODEV;
+> +
+> +       if (options)
+> +               uart_parse_options(options, &baud, &parity, &bits, &flow);
+> +
+> +       return uart_set_options(port, co, baud, parity, bits, flow);
+> +}
+> +
+> +static struct console liteuart_console = {
+> +       .name = DRIVER_NAME,
+> +       .write = liteuart_console_write,
+> +       .device = uart_console_device,
+> +       .setup = liteuart_console_setup,
+> +       .flags = CON_PRINTBUFFER,
+> +       .index = -1,
+> +       .data = &liteuart_driver,
+> +};
+> +
+> +static int __init liteuart_console_init(void)
+> +{
+> +       register_console(&liteuart_console);
+> +
+> +       return 0;
+> +}
+> +
+> +console_initcall(liteuart_console_init);
+> +#endif /* CONFIG_SERIAL_LITEUART_CONSOLE */
+> +
+> +static int __init liteuart_init(void)
+> +{
+> +       int res;
+> +
+> +       res = uart_register_driver(&liteuart_driver);
+> +       if (res)
+> +               return res;
+> +
+> +       res = platform_driver_register(&liteuart_platform_driver);
+> +       if (res) {
+> +               uart_unregister_driver(&liteuart_driver);
+> +               return res;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static void __exit liteuart_exit(void)
+> +{
+> +       platform_driver_unregister(&liteuart_platform_driver);
+> +       uart_unregister_driver(&liteuart_driver);
+> +}
+> +
+> +module_init(liteuart_init);
+> +module_exit(liteuart_exit);
+> +
+> +MODULE_AUTHOR("Antmicro <www.antmicro.com>");
+> +MODULE_DESCRIPTION("LiteUART serial driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:" DRIVER_NAME);
+> diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
+> index 8ec3dd742ea4..449b8fe9273c 100644
+> --- a/include/uapi/linux/serial_core.h
+> +++ b/include/uapi/linux/serial_core.h
+> @@ -293,4 +293,7 @@
+>  /* Freescale LINFlexD UART */
+>  #define PORT_LINFLEXUART       122
 >
-> +	vizzini_set_reg(port, URM_REG_BLOCK, URM_ENABLE_BASE + block,
-> +			URM_ENABLE_0_TX);
-
-Could you add comment about why this sequence is necessary, if it really
-is?
-
-> +	vizzini_set_reg(port, block, UART_ENABLE,
-> +			UART_ENABLE_TX | UART_ENABLE_RX);
-> +	vizzini_set_reg(port, URM_REG_BLOCK, URM_ENABLE_BASE + block,
-> +			URM_ENABLE_0_TX | URM_ENABLE_0_RX);
-
-No error handling?
-
-> +}
+> +/* LiteUART */
+> +#define PORT_LITEUART  123
 > +
-> +static void vizzini_set_baud_rate(struct usb_serial_port *port,
-> +				  unsigned int rate)
-> +{
-> +	int		block	= port->bulk_out_endpointAddress - 1;
-> +	unsigned int	divisor = 48000000 / rate;
+>  #endif /* _UAPILINUX_SERIAL_CORE_H */
+> --
+> 2.25.0
+>
 
-Use a define for the clock frequency?
 
-> +	unsigned int	i	= ((32 * 48000000) / rate) & 0x1f;
-> +	unsigned int	tx_mask = vizzini_baud_rates[i].tx;
-> +	unsigned int	rx_mask = ((divisor & 1) ? vizzini_baud_rates[i].rx1 :
-> +				   vizzini_baud_rates[i].rx0);
-
-Don't do non-trivial initialisations at declaration. And please avoid
-the ternary operator.
-
-> +
-> +	dev_dbg(&port->serial->dev->dev,
-> +		"Setting baud rate to %d: i=%u div=%u tx=%03x rx=%03x\n",
-> +		rate, i, divisor, tx_mask, rx_mask);
-> +
-> +	vizzini_set_reg(port, block, UART_CLOCK_DIVISOR_0,
-> +			(divisor >>  0) & 0xff);
-> +	vizzini_set_reg(port, block, UART_CLOCK_DIVISOR_1,
-> +			(divisor >>  8) & 0xff);
-> +	vizzini_set_reg(port, block, UART_CLOCK_DIVISOR_2,
-> +			(divisor >> 16) & 0xff);
-> +
-> +	vizzini_set_reg(port, block, UART_TX_CLOCK_MASK_0,
-> +			(tx_mask >>  0) & 0xff);
-> +	vizzini_set_reg(port, block, UART_TX_CLOCK_MASK_1,
-> +			(tx_mask >>  8) & 0xff);
-> +
-> +	vizzini_set_reg(port, block, UART_RX_CLOCK_MASK_0,
-> +			(rx_mask >>  0) & 0xff);
-> +	vizzini_set_reg(port, block, UART_RX_CLOCK_MASK_1,
-> +			(rx_mask >>  8) & 0xff);
-
-Error handling?
-
-Can you add some comment about how the masks are used?
-
-> +}
-> +
-> +static void vizzini_set_termios(struct tty_struct *tty,
-> +				struct usb_serial_port *port,
-> +				struct ktermios *termios_old)
-> +{
-> +	unsigned int             cflag, block;
-> +	speed_t                  rate;
-> +	unsigned int             format_size, format_parity, format_stop, flow, gpio_mode;
-
-One declaration per line please, at least unless they are clearly
-related (and stay under 80 cols).
-
-Looks like you can get away with just a fmt variable.
-
-> +
-> +	cflag = tty->termios.c_cflag;
-> +
-> +	block = port->bulk_out_endpointAddress - 1;
-> +
-> +	vizzini_disable(port);
-
-Do you really need to disable the port?
-
-> +
-> +	if ((cflag & CSIZE) == CS7)
-
-Use C_CSIZE() and friends.
-
-> +		format_size = UART_FORMAT_SIZE_7;
-> +	else if ((cflag & CSIZE) == CS5)
-> +		/* Enabling 5-bit mode is really 9-bit mode! */
-
-What does this mean? That you have redefined CS5?
-
-> +		format_size = UART_FORMAT_SIZE_9;
-> +	else
-> +		format_size = UART_FORMAT_SIZE_8;
-
-You need to report back the settings actually used (update termios).
-
-> +
-> +	if (cflag & PARENB) {
-
-C_PARENB() etc.
-
-> +		if (cflag & PARODD) {
-> +			if (cflag & CMSPAR)
-> +				format_parity = UART_FORMAT_PARITY_1;
-> +			else
-> +				format_parity = UART_FORMAT_PARITY_ODD;
-> +		} else {
-> +			if (cflag & CMSPAR)
-> +				format_parity = UART_FORMAT_PARITY_0;
-> +			else
-> +				format_parity = UART_FORMAT_PARITY_EVEN;
-> +		}
-> +	} else {
-> +		format_parity = UART_FORMAT_PARITY_NONE;
-> +	}
-> +
-> +	if (cflag & CSTOPB)
-> +		format_stop = UART_FORMAT_STOP_2;
-> +	else
-> +		format_stop = UART_FORMAT_STOP_1;
-> +
-> +	vizzini_set_reg(port, block, UART_FORMAT,
-> +			format_size | format_parity | format_stop);
-
-Error handling.
-
-> +
-> +	if (cflag & CRTSCTS) {
-> +		flow      = UART_FLOW_MODE_HW;
-> +		gpio_mode = UART_GPIO_MODE_SEL_RTS_CTS;
-> +	} else if (I_IXOFF(tty) || I_IXON(tty)) {
-> +		unsigned char   start_char = START_CHAR(tty);
-> +		unsigned char   stop_char  = STOP_CHAR(tty);
-> +
-> +		flow      = UART_FLOW_MODE_SW;
-> +		gpio_mode = UART_GPIO_MODE_SEL_GPIO;
-> +
-> +		vizzini_set_reg(port, block, UART_XON_CHAR, start_char);
-> +		vizzini_set_reg(port, block, UART_XOFF_CHAR, stop_char);
-> +	} else {
-> +		flow      = UART_FLOW_MODE_NONE;
-> +		gpio_mode = UART_GPIO_MODE_SEL_GPIO;
-> +	}
-> +
-> +	vizzini_set_reg(port, block, UART_FLOW, flow);
-> +	vizzini_set_reg(port, block, UART_GPIO_MODE, gpio_mode);
-> +
-> +	vizzini_set_reg(port, EPLOCALS_REG_BLOCK,
-> +			(block * MEM_EP_LOCALS_SIZE) + EP_WIDE_MODE,
-> +			format_size == UART_FORMAT_SIZE_9);
-
-What's this about?
-
-> +
-> +	rate = tty_get_baud_rate(tty);
-> +	if (rate)
-> +		vizzini_set_baud_rate(port, rate);
-> +
-> +	vizzini_enable(port);
-> +}
-> +
-> +static int vizzini_probe(struct usb_serial *serial,
-> +			 const struct usb_device_id *id)
-> +{
-> +	struct usb_host_interface *iface = serial->interface->cur_altsetting;
-> +	int i;
-> +
-> +	for (i = 0; i < iface->desc.bNumEndpoints; i++) {
-> +		if (usb_endpoint_is_bulk_out(&iface->endpoint[i].desc))
-> +			return 0;
-> +	}
-
-Set num_bulk_out (and num_bulk_in?) in struct usb_serial_driver and let
-core handle this for you, and you can drop probe() altogether.
-
-> +
-> +	/* No bulk interfaces found */
-> +	dev_dbg(&serial->dev->dev, "Invalid interface, discarding\n");
-> +
-> +	return -ENODEV;
-> +}
-> +
-> +static const struct usb_device_id id_table[] = {
-> +	{ USB_DEVICE(0x04e2, 0x1410), },
-> +	{ USB_DEVICE(0x04e2, 0x1412), },
-> +	{ USB_DEVICE(0x04e2, 0x1414), },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(usb, id_table);
-> +
-> +static const struct usb_device_id vizzini_1410_id_table[] = {
-> +	{ USB_DEVICE(0x04e2, 0x1410), },
-> +	{ },
-> +};
-> +static struct usb_serial_driver vizzini_1410_device = {
-> +	.driver = {
-> +		.owner =	THIS_MODULE,
-> +		.name =		"vizzini_1410",
-> +	},
-> +	.id_table =		vizzini_1410_id_table,
-> +	.num_ports =		1,
-> +	.set_termios =		vizzini_set_termios,
-> +	.probe =		vizzini_probe,
-> +};
-> +
-> +static const struct usb_device_id vizzini_1412_id_table[] = {
-> +	{ USB_DEVICE(0x04e2, 0x1412), },
-> +	{ },
-> +};
-> +static struct usb_serial_driver vizzini_1412_device = {
-> +	.driver = {
-> +		.owner =	THIS_MODULE,
-> +		.name =		"vizzini_1412",
-> +	},
-> +	.id_table =		vizzini_1412_id_table,
-> +	.num_ports =		2,
-> +	.set_termios =		vizzini_set_termios,
-> +};
-> +
-> +static const struct usb_device_id vizzini_1414_id_table[] = {
-> +	{ USB_DEVICE(0x04e2, 0x1414), },
-> +	{ },
-> +};
-> +static struct usb_serial_driver vizzini_1414_device = {
-> +	.driver = {
-> +		.owner =	THIS_MODULE,
-> +		.name =		"vizzini_1414",
-> +	},
-> +	.id_table =		vizzini_1414_id_table,
-> +	.num_ports =		4,
-> +	.set_termios =		vizzini_set_termios,
-> +};
-> +
-> +static struct usb_serial_driver * const serial_drivers[] = {
-> +	&vizzini_1410_device,
-> +	&vizzini_1412_device,
-> +	&vizzini_1414_device,
-> +	NULL
-> +};
-
-I think you should use a single struct usb_serial_driver for all three
-models and implement the calc_num_ports() callback instead.
-
-If you cannot determine the number of ports at runtime, you can encode
-it in the device-id table (driver_info).
-
-> +
-> +module_usb_serial_driver(serial_drivers, id_table);
-> +
-> +MODULE_LICENSE("GPL");
-
-Johan
+-- 
+Mateusz Holenko
+Antmicro Ltd | www.antmicro.com
+Roosevelta 22, 60-829 Poznan, Poland
