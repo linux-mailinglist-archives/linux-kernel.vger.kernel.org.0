@@ -2,98 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5A716EAD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:09:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1985D16EAE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 17:11:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730969AbgBYQJ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 11:09:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53826 "EHLO mail.kernel.org"
+        id S1730860AbgBYQLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 11:11:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46660 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729206AbgBYQJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 11:09:26 -0500
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67721218AC
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 16:09:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582646965;
-        bh=W/rw0F4TTsoGXD/Z2MUJTEHlnOmdJCQ0G4em+EqTpuc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=J9Sv0/poF8aA7uwh8lMKJ6OoRridBxV5Z4dxcHodYSgaSeD7fW6oLFX8F8hdtp/Qa
-         173uhTAmQq4o5Aj0+q+4whY8pma0FlZzLZ3wFLeSAbkSZXKgdViMeQKG2cWqFVelgE
-         OlAl0dYq+sUmGXs4xWEyJdpu4NY+MQXwlXNvgkpA=
-Received: by mail-wr1-f48.google.com with SMTP id j7so2861433wrp.13
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 08:09:25 -0800 (PST)
-X-Gm-Message-State: APjAAAUMwIiZE1Y72jxHT0rrB5tMAPT0U5hNf+jOE1ghp0UR4/RtcFPf
-        kXUgCSavmbaEmrDOSCQaXi/aBGE332WQZyaS4g2NpA==
-X-Google-Smtp-Source: APXvYqwVI4inFI+B0x7wF3k23C+IuGuElA1cYhw8c3JE0QaDa2Qb6+TY4k2p3S+DgBhZ+NRHGQlB/mWJN/lN5efzFCA=
-X-Received: by 2002:a5d:5188:: with SMTP id k8mr73906218wrv.151.1582646963815;
- Tue, 25 Feb 2020 08:09:23 -0800 (PST)
+        id S1729206AbgBYQLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 11:11:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id CA24AACB8;
+        Tue, 25 Feb 2020 16:11:35 +0000 (UTC)
+Message-ID: <f7d43591965dd9c5aed7af194709e15f68f63d3d.camel@suse.de>
+Subject: Re: [PATCH 09/89] clk: bcm: rpi: Use clk_hw_register for pllb_arm
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Maxime Ripard <maxime@cerno.tech>, Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Date:   Tue, 25 Feb 2020 17:11:34 +0100
+In-Reply-To: <1c47c839fda93460994d37b4c851d805a3282d5f.1582533919.git-series.maxime@cerno.tech>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
+         <1c47c839fda93460994d37b4c851d805a3282d5f.1582533919.git-series.maxime@cerno.tech>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-WxIH33aUvejlhlKylEgn"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-References: <9b52495a2d8adfc8f2d731a0236c945196143ef4.1582644865.git.thomas.lendacky@amd.com>
-In-Reply-To: <9b52495a2d8adfc8f2d731a0236c945196143ef4.1582644865.git.thomas.lendacky@amd.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Tue, 25 Feb 2020 17:09:12 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu_3=u1S1dgmjMH+0-7GhD+v3YvgQvqEUx7QSDjPMW1HVw@mail.gmail.com>
-Message-ID: <CAKv+Gu_3=u1S1dgmjMH+0-7GhD+v3YvgQvqEUx7QSDjPMW1HVw@mail.gmail.com>
-Subject: Re: [PATCH] x86/efi: Add additional efi tables for unencrypted
- mapping checks
-To:     Tom Lendacky <thomas.lendacky@amd.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Feb 2020 at 16:34, Tom Lendacky <thomas.lendacky@amd.com> wrote:
->
-> When booting with SME active, EFI tables must be mapped unencrypted since
-> they were built by UEFI in unencrypted memory. Update the list of tables
-> to be checked during early_memremap() processing to account for new EFI
-> tables.
->
-> This fixes a bug where an EFI TPM log table has been created by UEFI, but
-> it lives in memory that has been marked as usable rather than reserved.
->
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 
-Thanks Tom
+--=-WxIH33aUvejlhlKylEgn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Mind respinning this on top of efi/next?
+On Mon, 2020-02-24 at 10:06 +0100, Maxime Ripard wrote:
+> The pllb_arm clock is defined as a fixed factor clock with the pllb clock
+> as a parent. However, all its configuration is entirely static, and thus =
+we
+> don't really need to call clk_hw_register_fixed_factor but can simply cal=
+l
+> clk_hw_register with a static clk_fixed_factor structure.
+>=20
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-https://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git/
+Acked-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-Thanks,
+Thanks!
+Nicolas
 
 
-> ---
->  arch/x86/platform/efi/efi.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-> index ae923ee8e2b4..eba5038c7a44 100644
-> --- a/arch/x86/platform/efi/efi.c
-> +++ b/arch/x86/platform/efi/efi.c
-> @@ -85,6 +85,9 @@ static const unsigned long * const efi_tables[] = {
->  #ifdef CONFIG_EFI_RCI2_TABLE
->         &rci2_table_phys,
->  #endif
-> +       &efi.rng_seed,
-> +       &efi.tpm_log,
-> +       &efi.tpm_final_log,
->  };
->
->  u64 efi_setup;         /* efi setup_data physical address */
-> --
-> 2.17.1
->
+--=-WxIH33aUvejlhlKylEgn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5VRzYACgkQlfZmHno8
+x/47yggAt8HYPSSAwxIpPsTANQ5MOmHcSrWHPtoeQ9a34zlBUUytK4V4bHUW0oXO
+W1GOccGSIUHjMHxIZxvOQtiTPgQH56S9SwygQc46T1w+wk/PbuWbBIp7PD71ff1t
+JM80+4P+PUb/DU45sjzNlJ7pjVf1u5TrSjcSyZsTKgvDBH871y/+bQhv2vyvCD50
+tpnI/h4TdEg4J3xJjXGqqlKHJGUL9QzWUid4iUDzrWJUedsERifPTNTWGtHGuJrJ
+sULf1ByFTAgzjY9rY9ss+uP1lQVcspatnr8aqU9H1Zs+fBzN4f7eLnbdC3vM9SBq
+96EoI2KTjpdggc67GD/da+kMBmYCHg==
+=UyQW
+-----END PGP SIGNATURE-----
+
+--=-WxIH33aUvejlhlKylEgn--
+
