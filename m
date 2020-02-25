@@ -2,154 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B77D16B68C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:15:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 434F616B69F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:20:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728649AbgBYAPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 19:15:41 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.122]:30712 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726651AbgBYAPk (ORCPT
+        id S1728475AbgBYAUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 19:20:10 -0500
+Received: from avon.wwwdotorg.org ([104.237.132.123]:53770 "EHLO
+        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbgBYAUK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 19:15:40 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 9A7353E6D23
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 18:15:39 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 6NsxjbfvG8vkB6NsxjX9ff; Mon, 24 Feb 2020 18:15:39 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=LktvCqqFjAA8rDcg5ByaBgBcVMdxrLSTLQa6siIf2JM=; b=pKNLiHChSa57IuH8C+BZVIHDFS
-        aqbfjtyx0N/KX80jSPbfkyRg3Kinl606snDgyjpldW8hmNoGBylzcyC9KOsfjUIKxIefbEGCd9ezj
-        Kl5Idd37G/ZU8bkfgspAK2mDX9BnKt8C5dz5dlb2r8Yd4vYzw9OmQpJ3tU7FpbyShJE4cckTcv8ih
-        nZT1ZJ/IB9WvZukUDk3L2F+yBsQo5FTDiSe8YUPrbtxJ8MJItPPBKITxL5CjXKS1WFyYpIkzk9aA6
-        B5UpSthtpvXbRx7eD6dDTqAOr+7jL7HsMPuy96HZIctLtVeXLxe39J9IpZThqS7L7H40lsrbg/8wp
-        06nIXcjg==;
-Received: from [201.166.191.14] (port=54580 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j6Nsv-002Rza-GF; Mon, 24 Feb 2020 18:15:38 -0600
-Date:   Mon, 24 Feb 2020 18:18:26 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Christian Benvenuti <benve@cisco.com>,
-        Govindarajulu Varadarajan <_govind@gmx.com>,
-        Parvi Kaustubhi <pkaustub@cisco.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] net: cisco: Replace zero-length array with
- flexible-array member
-Message-ID: <20200225001826.GA22765@embeddedor>
+        Mon, 24 Feb 2020 19:20:10 -0500
+Received: from [10.20.204.51] (unknown [216.228.112.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by avon.wwwdotorg.org (Postfix) with ESMTPSA id DD3721C03C9;
+        Mon, 24 Feb 2020 17:20:07 -0700 (MST)
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.1 at avon.wwwdotorg.org
+Subject: Re: [PATCH v1 3/3] partitions: Introduce NVIDIA Tegra Partition Table
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Billy Laws <blaws05@gmail.com>, linux-tegra@vger.kernel.org,
+        linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>,
+        Gilles Grandou <gilles@grandou.net>,
+        Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200224231841.26550-1-digetx@gmail.com>
+ <20200224231841.26550-4-digetx@gmail.com>
+From:   Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <44c22925-a14e-96d0-1f93-1979c0c60525@wwwdotorg.org>
+Date:   Mon, 24 Feb 2020 17:20:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.191.14
-X-Source-L: No
-X-Exim-ID: 1j6Nsv-002Rza-GF
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.191.14]:54580
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 32
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200224231841.26550-4-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On 2/24/20 4:18 PM, Dmitry Osipenko wrote:
+> All NVIDIA Tegra devices use a special partition table format for the
+> internal storage partitioning. Most of Tegra devices have GPT partition
+> in addition to TegraPT, but some older Android consumer-grade devices do
+> not or GPT is placed in a wrong sector, and thus, the TegraPT is needed
+> in order to support these devices properly in the upstream kernel. This
+> patch adds support for NVIDIA Tegra Partition Table format that is used
+> at least by all NVIDIA Tegra20 and Tegra30 devices.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+> +static void __init tegra_boot_config_table_init(void)
+> +{
+> +	void __iomem *bct_base;
+> +	u16 pt_addr, pt_size;
+> +
+> +	bct_base = IO_ADDRESS(TEGRA_IRAM_BASE) + TEGRA_IRAM_BCT_OFFSET;
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-Lastly, fix the following checkpatch warning:
-CHECK: Prefer kernel type 'u32' over 'u_int32_t'
-#61: FILE: drivers/net/ethernet/cisco/enic/vnic_devcmd.h:653:
-+	u_int32_t val[];
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/cisco/enic/vnic_devcmd.h | 8 ++++----
- drivers/net/ethernet/cisco/enic/vnic_vic.h    | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/cisco/enic/vnic_devcmd.h b/drivers/net/ethernet/cisco/enic/vnic_devcmd.h
-index fef5a0a0663d..fcc4a3ccdd94 100644
---- a/drivers/net/ethernet/cisco/enic/vnic_devcmd.h
-+++ b/drivers/net/ethernet/cisco/enic/vnic_devcmd.h
-@@ -541,7 +541,7 @@ struct vnic_devcmd_notify {
- struct vnic_devcmd_provinfo {
- 	u8 oui[3];
- 	u8 type;
--	u8 data[0];
-+	u8 data[];
- };
- 
- /* These are used in flags field of different filters to denote
-@@ -648,9 +648,9 @@ enum {
- #define FILTER_MAX_BUF_SIZE 100
- 
- struct filter_tlv {
--	u_int32_t type;
--	u_int32_t length;
--	u_int32_t val[0];
-+	u32 type;
-+	u32 length;
-+	u32 val[];
- };
- 
- enum {
-diff --git a/drivers/net/ethernet/cisco/enic/vnic_vic.h b/drivers/net/ethernet/cisco/enic/vnic_vic.h
-index 9ef81f148351..057776908828 100644
---- a/drivers/net/ethernet/cisco/enic/vnic_vic.h
-+++ b/drivers/net/ethernet/cisco/enic/vnic_vic.h
-@@ -59,7 +59,7 @@ struct vic_provinfo {
- 		u16 type;
- 		u16 length;
- 		u8 value[0];
--	} tlv[0];
-+	} tlv[];
- } __packed;
- 
- #define VIC_PROVINFO_ADD_TLV(vp, tlvtype, tlvlen, data) \
--- 
-2.25.0
-
+This shouldn't be hard-coded. IIRC, the boot ROM writes a BIT (Boot 
+Information Table) to a fixed location in IRAM, and there's some value 
+in the BIT that points to where the BCT is in IRAM. In practice, it 
+might work out that the BCT is always at the same place in IRAM, but 
+this certainly isn't guaranteed. I think there's code in U-Boot which 
+extracts the BCT location from the BIT? Yes, see 
+arch/arm/mach-tegra/ap.c:get_odmdata().
