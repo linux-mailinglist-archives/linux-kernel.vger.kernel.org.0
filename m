@@ -2,123 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36DE616B7AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 03:19:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF00B16B7B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 03:23:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbgBYCTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 21:19:15 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:39367 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726962AbgBYCTP (ORCPT
+        id S1728857AbgBYCXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 21:23:23 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:40317 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728843AbgBYCXX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 21:19:15 -0500
-X-UUID: 8861ab10348240d184be063490a31bee-20200225
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=vFmdE11xim42gZLvGB5rqIwRp1BgTnnvR3iRXzqexqc=;
-        b=juMGCsAhVnUVJYtIRXq5E4agPjE5ofssA9lZbTNh+w0IFQIrWhSej7rzlA/B56eRpor6ShGwcv38OLUkHSK4sFAh8rTvfr0qNqbdZy8ztwda96ruRpAD9fsniUmtmoMmJ7vOPU7k8rYBmhJ7e3zCMGmgsWNSm4KENOa7ThMZUVs=;
-X-UUID: 8861ab10348240d184be063490a31bee-20200225
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 348785098; Tue, 25 Feb 2020 10:13:57 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 25 Feb 2020 10:13:03 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 25 Feb 2020 10:14:09 +0800
-Message-ID: <1582596836.31498.4.camel@mtksdaap41>
-Subject: Re: [PATCH v6 1/4] dt-bindings: display: mediatek: update dpi
- supported chips
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <stonea168@163.com>,
-        <huijuan.xie@mediatek.com>
-Date:   Tue, 25 Feb 2020 10:13:56 +0800
-In-Reply-To: <1582596343.12484.6.camel@mszsdaap41>
-References: <20200221112828.55837-1-jitao.shi@mediatek.com>
-         <20200221112828.55837-2-jitao.shi@mediatek.com>
-         <1582533982.12922.5.camel@mtksdaap41> <1582596343.12484.6.camel@mszsdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Mon, 24 Feb 2020 21:23:23 -0500
+Received: by mail-pj1-f65.google.com with SMTP id 12so602687pjb.5;
+        Mon, 24 Feb 2020 18:23:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=m8hULrGihgVZOxgfqnivBDbgwY8abtgQaozDoMq6UMc=;
+        b=hsxYTXV/qlGl3OwRfYspSMFfZJyUAcuhKwT2z7BW9BwfLwPVAeMHeUCnUy7kMMpUbt
+         SLSAgmXSXBJ2v01YlnwRI5nZnZeMj/eptGHF0FPy7/DGdOqgKIdCelCDa2iORztISSef
+         86QCX7bhIhnYKxJlAWK93SANVj2b4Oc8fLAHFOIatA531SMoDccuL6wAmq6PwchD/3ab
+         FHVE+jrQ+fhM22fG0sVzIDxLw/hGV8P/TvFd4Ldxu9hzY/vdKV9t5DKuXtbWC4oxiIw6
+         2t6JX1T0vN+D7zNGGEcBe4Uu3fCjUp+ZTgeHDuS96+rdpkgl0eSV/RZ41DpmuEaotFSh
+         7TUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=m8hULrGihgVZOxgfqnivBDbgwY8abtgQaozDoMq6UMc=;
+        b=saAhZdGi+5A8E8QPK33pM1lx5sTJ7MGwmhM0XR5ZZ7yhOqfa7J1aaok+QR27d+1lhC
+         yzoHhvTQ700Gy0bCD0nYgrlBtC3EWfb0nmvk0QLjGZxxwpR6pGjzsog8awBW6HbZvwwG
+         2TOMUeKXPo7izHI7qv1oD9yP/33BmEwCNwg12P+Et/3/836aAVH3P88Jc4Ijc0XPPhD2
+         O9+y/t1tIlq2ynRJdo2Bju6Cm9a0BIm3bIUsedd6dijqhmKJTJWlT5ITWpG/zINXtYKR
+         7f49O4STTgKkiJ9HvG2Lt2C0Ap+1sUyGn7egExaV3F3Ms22bqY/ajecdwSIHDVdECZ1v
+         H6Sw==
+X-Gm-Message-State: APjAAAXpYP64qV0BAKF2i1iHIKG9pAClw6kdKkWByjIRm6zHsAcmVRVP
+        T0hqWpO3/+hKENpyMAWkm2U=
+X-Google-Smtp-Source: APXvYqw/c5fOX/rsITgDH/vSqNiuMvjx2EnBkD83jV4tKnj3AteLYS5cn+Ng8GgddNzbzOVekee7AQ==
+X-Received: by 2002:a17:902:ab81:: with SMTP id f1mr54303402plr.5.1582597402887;
+        Mon, 24 Feb 2020 18:23:22 -0800 (PST)
+Received: from localhost ([43.224.245.180])
+        by smtp.gmail.com with ESMTPSA id m15sm5066220pgh.80.2020.02.24.18.23.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Feb 2020 18:23:22 -0800 (PST)
+From:   guosongsu@gmail.com
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        suguosong <suguosong@xiaomi.com>
+Subject: [PATCH] RTC: use kobj_to_dev
+Date:   Tue, 25 Feb 2020 10:19:23 +0800
+Message-Id: <20200225021923.8570-1-guosongsu@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEppdGFvOg0KDQpPbiBUdWUsIDIwMjAtMDItMjUgYXQgMTA6MDUgKzA4MDAsIEppdGFvIFNo
-aSB3cm90ZToNCj4gT24gTW9uLCAyMDIwLTAyLTI0IGF0IDE2OjQ2ICswODAwLCBDSyBIdSB3cm90
-ZToNCj4gPiBIaSwgSml0YW86DQo+ID4gDQo+ID4gT24gRnJpLCAyMDIwLTAyLTIxIGF0IDE5OjI4
-ICswODAwLCBKaXRhbyBTaGkgd3JvdGU6DQo+ID4gPiBBZGQgZGVjcmlwdGlvbnMgYWJvdXQgc3Vw
-cG9ydGVkIGNoaXBzLCBpbmNsdWRpbmcgTVQyNzAxICYgTVQ4MTczICYNCj4gPiA+IG10ODE4Mw0K
-PiA+ID4gDQo+ID4gPiAxLiBBZGQgbW9yZSBjaGlwcyBzdXBwb3J0LiBleC4gTVQyNzAxICYgTVQ4
-MTczICYgTVQ4MTgzDQo+ID4gPiAyLiBBZGQgcHJvcGVydHkgImRwaV9waW5fbW9kZV9zd2FwIiBh
-bmQgInBpbmN0cmwtbmFtZXMiIGdwaW8gbW9kZSBkcGkgbW9kZSBhbmQNCj4gPiA+ICAgIGdwaW8g
-b3VwcHV0LWxvdyB0byBhdm9pZCBsZWFrYWdlIGN1cnJlbnQuDQo+ID4gPiAzLiBBZGQgcHJvcGVy
-dHkgImRwaV9kdWFsX2VkZ2UiIHRvIGNvbmZpZyB0aGUgZHBpIHBpbiBvdXRwdXQgbW9kZSBkdWFs
-IGVkZ2Ugb3INCj4gPiA+ICAgIHNpbmdsZSBlZGdlIHNhbXBsZSBkYXRhLg0KPiA+ID4gDQo+ID4g
-PiBTaWduZWQtb2ZmLWJ5OiBKaXRhbyBTaGkgPGppdGFvLnNoaUBtZWRpYXRlay5jb20+DQo+ID4g
-PiAtLS0NCj4gPiA+ICAuLi4vYmluZGluZ3MvZGlzcGxheS9tZWRpYXRlay9tZWRpYXRlayxkcGku
-dHh0ICAgICAgICB8IDExICsrKysrKysrKysrDQo+ID4gPiAgMSBmaWxlIGNoYW5nZWQsIDExIGlu
-c2VydGlvbnMoKykNCj4gPiA+IA0KPiA+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQgYi9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9tZWRpYXRlay9tZWRpYXRlayxk
-cGkudHh0DQo+ID4gPiBpbmRleCBiNmE3ZTczOTdiOGIuLmNkNmExNDY5YzhiNyAxMDA2NDQNCj4g
-PiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlh
-dGVrL21lZGlhdGVrLGRwaS50eHQNCj4gPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQNCj4gPiA+IEBAIC03
-LDYgKzcsNyBAQCBvdXRwdXQgYnVzLg0KPiA+ID4gIA0KPiA+ID4gIFJlcXVpcmVkIHByb3BlcnRp
-ZXM6DQo+ID4gPiAgLSBjb21wYXRpYmxlOiAibWVkaWF0ZWssPGNoaXA+LWRwaSINCj4gPiA+ICsg
-IHRoZSBzdXBwb3J0ZWQgY2hpcHMgYXJlIG10MjcwMSAsIG10ODE3MyBhbmQgbXQ4MTgzLg0KPiA+
-ID4gIC0gcmVnOiBQaHlzaWNhbCBiYXNlIGFkZHJlc3MgYW5kIGxlbmd0aCBvZiB0aGUgY29udHJv
-bGxlcidzIHJlZ2lzdGVycw0KPiA+ID4gIC0gaW50ZXJydXB0czogVGhlIGludGVycnVwdCBzaWdu
-YWwgZnJvbSB0aGUgZnVuY3Rpb24gYmxvY2suDQo+ID4gPiAgLSBjbG9ja3M6IGRldmljZSBjbG9j
-a3MNCj4gPiA+IEBAIC0xNiw2ICsxNywxMSBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+ID4g
-ICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dyYXBoLnR4dC4gVGhpcyBwb3J0
-IHNob3VsZCBiZSBjb25uZWN0ZWQNCj4gPiA+ICAgIHRvIHRoZSBpbnB1dCBwb3J0IG9mIGFuIGF0
-dGFjaGVkIEhETUkgb3IgTFZEUyBlbmNvZGVyIGNoaXAuDQo+ID4gPiAgDQo+ID4gPiArT3B0aW9u
-YWwgcHJvcGVydGllczoNCj4gPiA+ICstIGRwaV9waW5fbW9kZV9zd2FwOiBTd2FwIHRoZSBwaW4g
-bW9kZSBiZXR3ZWVuIGRwaSBtb2RlIGFuZCBncGlvIG1vZGUuDQo+ID4gPiArLSBwaW5jdHJsLW5h
-bWVzOiBDb250YWluICJncGlvbW9kZSIgYW5kICJkcGltb2RlIi4NCj4gPiA+ICstIGRwaV9kdWFs
-X2VkZ2U6IENvbnRyb2wgdGhlIFJHQiAyNGJpdCBkYXRhIG9uIDEyIHBpbnMgb3IgMjQgcGlucy4N
-Cj4gPiANCj4gPiBJJ3ZlIGZpbmQgdGhhdCBpbiBbMV0sIHRoZXJlIGFyZSBhbHJlYWR5IGEgcHJv
-cGVydHkgb2YgInBjbGstc2FtcGxlIg0KPiA+IHdoaWNoIGxpa2UgdGhpcywgYnV0IGl0IG9ubHkg
-aGF2ZSByaXNpbmcgKDEpIG9yIGZhbGxpbmcgKDApIHN0YXR1cy4gRG9lcw0KPiA+IHRoYXQgcHJv
-cGVydHkgZGVzY3JpYmUgdGhlIHNhbWUgdGhpbmcgd2l0aCB0aGlzIHByb3BlcnR5PyBJZiB0aGV5
-IGFyZQ0KPiA+IHRoZSBzYW1lLCBJIHRoaW5rIHlvdSBzaG91bGQgYWRkIG5ldyBzdGF0ZSwgZHVh
-bCAoMiksIGZvciAicGNsay1zYW1wbGUiLg0KPiA+IA0KPiA+IFsxXQ0KPiA+IGh0dHBzOi8vZ2l0
-Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90
-cmVlL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS92aWRlby1pbnRlcmZh
-Y2VzLnR4dD9oPXY1LjYtcmMzDQo+ID4gDQo+ID4gUmVnYXJkcywNCj4gPiBDSw0KPiA+IA0KPiAN
-Cj4gcGNsay1zYW1wbGUgaGFzIHR3byBwcm9wZXJ0aWVzICByaXNpbmcgb3IgZmFsbGluZy4NCj4g
-SXQgbWVhbnMgdG8gc2FtcGxlIG9uIHJpc2luZyBvciBmYWxsaW5nIGVkZ2UuDQo+IA0KPiBCdXQs
-IGRwaV9kdWFsX2VkZ2UgbWVhbnMgdG8gc2FtcGxlIG9uIGJvdGggcmlzaW5nIGFuZCBmYWxsaW5n
-IGVkZ2UuDQo+IA0KDQpJdCBzZWVtcyB0aGF0IGJvdGggZGVzY3JpYmUgIldoZW4gdG8gc2FtcGxl
-IGRhdGEiLCBzbyB0aGV5IGFyZSB0aGUgc2FtZQ0KZm9yIG1lLg0KDQpJIHRoaW5rIHdlIHNob3Vs
-ZCBwcmV2ZW50IHRvIGludmVudCBhIG5ldyBwcm9wZXJ0eSBpZiB0aGVyZSBpcyBhbHJlYWR5IGEN
-Cm9uZS4gRXZlbiB0aG91Z2ggcGNsay1zYW1wbGUganVzdCBoYXZlIHR3byBzdGF0ZSAocmlzaW5n
-IG9yIGZhbGxpbmcNCmVkZ2UpLCBJIHRoaW5rIHdlIGNvdWxkIGFkZCBhIG5ldyBzdGF0ZSAoZHVh
-bCBlZGdlKSB0byBwY2xrLXNhbXBsZS4gDQoNClJlZ2FyZHMsDQpDSw0KDQo+IEJlc3QgUmVnYXJk
-cw0KPiBKaXRhbw0KPiA+ID4gKw0KPiA+ID4gIEV4YW1wbGU6DQo+ID4gPiAgDQo+ID4gPiAgZHBp
-MDogZHBpQDE0MDFkMDAwIHsNCj4gPiA+IEBAIC0yNiw2ICszMiwxMSBAQCBkcGkwOiBkcGlAMTQw
-MWQwMDAgew0KPiA+ID4gIAkJIDwmbW1zeXMgQ0xLX01NX0RQSV9FTkdJTkU+LA0KPiA+ID4gIAkJ
-IDwmYXBtaXhlZHN5cyBDTEtfQVBNSVhFRF9UVkRQTEw+Ow0KPiA+ID4gIAljbG9jay1uYW1lcyA9
-ICJwaXhlbCIsICJlbmdpbmUiLCAicGxsIjsNCj4gPiA+ICsJZHBpX2R1YWxfZWRnZTsNCj4gPiA+
-ICsJZHBpX3Bpbl9tb2RlX3N3YXA7DQo+ID4gPiArCXBpbmN0cmwtbmFtZXMgPSAiZ3Bpb21vZGUi
-LCAiZHBpbW9kZSI7DQo+ID4gPiArCXBpbmN0cmwtMCA9IDwmZHBpX3Bpbl9ncGlvPjsNCj4gPiA+
-ICsJcGluY3RybC0xID0gPCZkcGlfcGluX2Z1bmM+Ow0KPiA+ID4gIA0KPiA+ID4gIAlwb3J0IHsN
-Cj4gPiA+ICAJCWRwaTBfb3V0OiBlbmRwb2ludCB7DQo+ID4gDQo+ID4gDQo+IA0KPiANCg0K
+From: suguosong <suguosong@xiaomi.com>
+
+use kobj_to_dev instead of open-conding it
+
+Signed-off-by: suguosong <suguosong@xiaomi.com>
+---
+ drivers/rtc/sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/sysfs.c b/drivers/rtc/sysfs.c
+index b7ca7d79fb28..950fac0d41ff 100644
+--- a/drivers/rtc/sysfs.c
++++ b/drivers/rtc/sysfs.c
+@@ -279,7 +279,7 @@ static bool rtc_does_wakealarm(struct rtc_device *rtc)
+ static umode_t rtc_attr_is_visible(struct kobject *kobj,
+ 				   struct attribute *attr, int n)
+ {
+-	struct device *dev = container_of(kobj, struct device, kobj);
++	struct device *dev = kobj_to_dev(kobj);
+ 	struct rtc_device *rtc = to_rtc_device(dev);
+ 	umode_t mode = attr->mode;
+ 
+-- 
+2.14.1
 
