@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 175CC16F343
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:27:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2168416F33E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:27:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbgBYX11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:27:27 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56046 "EHLO
+        id S1730622AbgBYX1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:27:12 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56010 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730573AbgBYX1H (ORCPT
+        with ESMTP id S1730484AbgBYX0y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:27:07 -0500
+        Tue, 25 Feb 2020 18:26:54 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j6jb2-00057X-Sp; Wed, 26 Feb 2020 00:26:37 +0100
+        id 1j6jb4-00058E-FU; Wed, 26 Feb 2020 00:26:38 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 343421040C7;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 6DDDD1040C9;
         Wed, 26 Feb 2020 00:25:54 +0100 (CET)
-Message-Id: <20200225231610.312478926@linutronix.de>
+Message-Id: <20200225231610.418058554@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Feb 2020 23:47:33 +0100
+Date:   Tue, 25 Feb 2020 23:47:34 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [patch 14/15] x86/entry: Provide return_from exception()
+Subject: [patch 15/15] x86/entry: Use return_from_exception()
 References: <20200225224719.950376311@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,80 +42,191 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all exceptions, interrupts and system vectors are using the
-IDTENTRY machinery, the return from exception handling in ASM can be lifted
-to C.
-
-Provide a C function which:
-
-  - Invokes prepare_exit_to_user_mode() when the exception hit user mode
-  - Checks for preemption when the exception hit kernel mode
-  - Has the interrupt tracing in C
+Replace the ASM return from exception checks for user mode and kernel mode
+return with the new C function and invoke this from the idtentry_exit()
+helper for all regular exceptions and IST exceptions which hit user mode.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/entry/common.c         |   43 ++++++++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/idtentry.h |    2 +
- 2 files changed, 45 insertions(+)
+ arch/x86/entry/common.c         |   13 +++----------
+ arch/x86/entry/entry_32.S       |   25 ++++---------------------
+ arch/x86/entry/entry_64.S       |   25 ++-----------------------
+ arch/x86/include/asm/idtentry.h |    7 +++++--
+ 4 files changed, 14 insertions(+), 56 deletions(-)
 
 --- a/arch/x86/entry/common.c
 +++ b/arch/x86/entry/common.c
-@@ -480,3 +480,46 @@ static __always_inline long do_fast_sysc
- NOKPROBE_SYMBOL(do_fast_syscall_32);
+@@ -196,7 +196,7 @@ static void exit_to_usermode_loop(struct
+ }
  
- #endif /* CONFIG_X86_32 || CONFIG_IA32_EMULATION */
-+
-+/**
-+ * return_from_exception - Common code to handle return from exceptions
-+ * @regs	- Pointer to pt_regs (exception entry regs)
-+ *
-+ * Depending on the return target (kernel/user) this runs the necessary
-+ * preemption and work checks if possible and reguired and returns to
-+ * the caller with interrupts disabled and no further work pending.
-+ *
-+ * This is the last action before returning to the low level ASM code which
-+ * just needs to return to the appropriate context.
-+ *
-+ * Invoked by all exception/interrupt IDTENTRY handlers which are not
-+ * returning through the paranoid exit path (all except NMI, MCE, DF).
-+ */
-+void notrace return_from_exception(struct pt_regs *regs)
-+{
-+	/*
-+	 * Unconditionally disable interrupts as some handlers like
-+	 * the fault handler are not guaranteeing to return with
-+	 * interrupts disabled.
-+	 */
-+	local_irq_disable();
-+
-+	/* Check whether this returns to user mode */
-+	if (user_mode(regs)) {
+ /* Called with IRQs disabled. */
+-static inline void __prepare_exit_to_usermode(struct pt_regs *regs)
++static inline void prepare_exit_to_usermode(struct pt_regs *regs)
+ {
+ 	struct thread_info *ti = current_thread_info();
+ 	u32 cached_flags;
+@@ -241,13 +241,6 @@ static inline void __prepare_exit_to_use
+ 	mds_user_clear_cpu_buffers();
+ }
+ 
+-__visible inline notrace void prepare_exit_to_usermode(struct pt_regs *regs)
+-{
+-	__prepare_exit_to_usermode(regs);
+-	trace_hardirqs_on();
+-}
+-NOKPROBE_SYMBOL(prepare_exit_to_usermode);
+-
+ #define SYSCALL_EXIT_WORK_FLAGS				\
+ 	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT |	\
+ 	 _TIF_SINGLESTEP | _TIF_SYSCALL_TRACEPOINT)
+@@ -299,7 +292,7 @@ static void syscall_slow_exit_work(struc
+ 		syscall_slow_exit_work(regs, cached_flags);
+ 
+ 	local_irq_disable();
+-	__prepare_exit_to_usermode(regs);
++	prepare_exit_to_usermode(regs);
+ 	/* Return to user space enables interrupts */
+ 	trace_hardirqs_on();
+ }
+@@ -429,7 +422,7 @@ static __always_inline long do_fast_sysc
+ 		/* User code screwed up. */
+ 		local_irq_disable();
+ 		regs->ax = -EFAULT;
+-		__prepare_exit_to_usermode(regs);
 +		prepare_exit_to_usermode(regs);
-+	} else {
-+		/* Interrupts stay disabled on return? */
-+		if (!(regs->flags & X86_EFLAGS_IF))
-+			return;
-+
-+		/* Check kernel preemption, if enabled */
-+		if (IS_ENABLED(CONFIG_PREEMPTION)) {
-+			/* Check for preemption */
-+			if (!preempt_count() && need_resched())
-+				preempt_schedule_irq();
-+		}
-+	}
-+	/* Make sure the tracer knows that IRET will enable interrupts */
-+	trace_hardirqs_on();
-+}
-+NOKPROBE_SYMBOL(return_from_exception);
+ 		return 0;	/* Keep it simple: use IRET. */
+ 	}
+ 
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -862,15 +862,10 @@ SYM_CODE_START(ret_from_fork)
+ SYM_CODE_END(ret_from_fork)
+ 
+ /*
+- * Return to user mode is not as complex as all this looks,
+- * but we want the default path for a system call return to
+- * go as quickly as possible which is why some of this is
+- * less clear than it otherwise should be.
++ * C code already did all preparatory work (prepare_exit_to_usermode or
++ * kernel preemption) so this just has to select the proper return path.
+  */
+-
+-	# userspace resumption stub bypassing syscall exit tracing
+ SYM_CODE_START_LOCAL(ret_from_exception)
+-ret_from_intr:
+ #ifdef CONFIG_VM86
+ 	movl	PT_EFLAGS(%esp), %eax		# mix EFLAGS and CS
+ 	movb	PT_CS(%esp), %al
+@@ -884,9 +879,6 @@ SYM_CODE_START_LOCAL(ret_from_exception)
+ #endif
+ 	cmpl	$USER_RPL, %eax
+ 	jb	restore_all_kernel		# not returning to v8086 or userspace
+-
+-	movl	%esp, %eax
+-	call	prepare_exit_to_usermode
+ 	jmp	restore_all_switch_stack
+ SYM_CODE_END(ret_from_exception)
+ 
+@@ -1125,15 +1117,6 @@ SYM_FUNC_START(entry_INT80_32)
+ 	INTERRUPT_RETURN
+ 
+ restore_all_kernel:
+-#ifdef CONFIG_PREEMPTION
+-	cmpl	$0, PER_CPU_VAR(__preempt_count)
+-	jnz	.Lno_preempt
+-	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)	# interrupts off (exception path) ?
+-	jz	.Lno_preempt
+-	call	preempt_schedule_irq
+-.Lno_preempt:
+-#endif
+-	TRACE_IRQS_IRET
+ 	PARANOID_EXIT_TO_KERNEL_MODE
+ 	BUG_IF_WRONG_CR3
+ 	RESTORE_REGS 4
+@@ -1247,7 +1230,7 @@ SYM_CODE_START_LOCAL(asm_\cfunc)
+ 	movl	PT_ORIG_EAX(%esp), %edx		/* get the vector from stack */
+ 	movl	$-1, PT_ORIG_EAX(%esp)		/* no syscall to restart */
+ 	call	\cfunc
+-	jmp	ret_from_intr
++	jmp	ret_from_exception
+ SYM_CODE_END(asm_\cfunc)
+ .endm
+ 
+@@ -1294,7 +1277,7 @@ SYM_FUNC_START(exc_xen_hypervisor_callba
+ #ifndef CONFIG_PREEMPTION
+ 	call	xen_maybe_preempt_hcall
+ #endif
+-	jmp	ret_from_intr
++	jmp	ret_from_exception
+ SYM_FUNC_END(exc_xen_hypervisor_callback)
+ 
+ /*
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -701,10 +701,6 @@ SYM_CODE_END(\asmsym)
+ #include <asm/idtentry.h>
+ 
+ SYM_CODE_START_LOCAL(common_interrupt_return)
+-	/* Interrupt came from user space */
+-.Lretint_user:
+-	mov	%rsp,%rdi
+-	call	prepare_exit_to_usermode
+ 
+ SYM_INNER_LABEL(swapgs_restore_regs_and_return_to_usermode, SYM_L_GLOBAL)
+ #ifdef CONFIG_DEBUG_ENTRY
+@@ -746,24 +742,7 @@ SYM_INNER_LABEL(swapgs_restore_regs_and_
+ 	SWAPGS
+ 	INTERRUPT_RETURN
+ 
+-
+ /* Returning to kernel space */
+-retint_kernel:
+-#ifdef CONFIG_PREEMPTION
+-	/* Interrupts are off */
+-	/* Check if we need preemption */
+-	btl	$9, EFLAGS(%rsp)		/* were interrupts off? */
+-	jnc	1f
+-	cmpl	$0, PER_CPU_VAR(__preempt_count)
+-	jnz	1f
+-	call	preempt_schedule_irq
+-1:
+-#endif
+-	/*
+-	 * The iretq could re-enable interrupts:
+-	 */
+-	TRACE_IRQS_IRETQ
+-
+ SYM_INNER_LABEL(restore_regs_and_return_to_kernel, SYM_L_GLOBAL)
+ #ifdef CONFIG_DEBUG_ENTRY
+ 	/* Assert that pt_regs indicates kernel mode. */
+@@ -1167,8 +1146,8 @@ SYM_CODE_START_LOCAL(error_exit)
+ 	UNWIND_HINT_REGS
+ 	DEBUG_ENTRY_ASSERT_IRQS_OFF
+ 	testb	$3, CS(%rsp)
+-	jz	retint_kernel
+-	jmp	.Lretint_user
++	jz	restore_regs_and_return_to_kernel
++	jmp	swapgs_restore_regs_and_return_to_usermode
+ SYM_CODE_END(error_exit)
+ 
+ /*
 --- a/arch/x86/include/asm/idtentry.h
 +++ b/arch/x86/include/asm/idtentry.h
-@@ -19,6 +19,8 @@ static __always_inline void enter_from_u
- static __always_inline void enter_from_user_context(void) { }
- #endif
- 
-+void return_from_exception(struct pt_regs *regs);
-+
+@@ -41,11 +41,14 @@ static __always_inline void idtentry_ent
  /**
-  * idtentry_enter - Handle state tracking on idtentry
-  * @regs:	Pointer to pt_regs of interrupted context
+  * idtentry_exit - Prepare returning to low level ASM code
+  *
+- * Disables interrupts before returning
++ * Invokes return_from_exception() which disables interrupts
++ * and handles return to user mode work and kernel preemption.
++ * This function returns with interrupts disabled and the
++ * hardirq tracing state updated.
+  */
+ static __always_inline void idtentry_exit(struct pt_regs *regs)
+ {
+-	local_irq_disable();
++	return_from_exception(regs);
+ }
+ 
+ /**
 
