@@ -2,259 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4355716EF15
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:33:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4984E16EF05
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:30:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731195AbgBYTdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 14:33:50 -0500
-Received: from st43p00im-zteg10071901.me.com ([17.58.63.169]:38803 "EHLO
-        st43p00im-zteg10071901.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730080AbgBYTdr (ORCPT
+        id S1731570AbgBYTam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 14:30:42 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:51172 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728753AbgBYTam (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 14:33:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1582658904; bh=JYhtfFGF92fKyLl06DZ5So0ofsGe/qJUCAm+4hbq8HM=;
-        h=From:To:Subject:Date:Message-Id;
-        b=Rzik7Q5aEXCbvTlMaM9QTNquOSXCpAGLhFnwpmEHVqwtIRc8F7rPeNnwmEozgT3Sq
-         ECtATElUoDtsV5YaM+6Io+sV+hMVJuBUlePCt1udrgWXyKdSdedVgzGXaG+gWkmWmj
-         ASQDBxt+qAg+UxQTcPW3Wi0txb6vLMrj52FN+PQ7rRcURa7+ZJh/pMHpvLlCrR6Ubv
-         Vb78rNyLgc5DXMOObC9iaj5epCBtNnoiu8LZ5CjgXK22ColERgzYruxv2pM6mR0Ozc
-         WJksYrX+fSj4nu+e1jaysDiW15TegWAMdl8QeKBfUi/Z4MiYwaAN3qW3cjydO8SJXQ
-         kyM30lD/mKCxA==
-Received: from shwetrath.localdomain (unknown [66.199.8.131])
-        by st43p00im-zteg10071901.me.com (Postfix) with ESMTPSA id 09228D80F95;
-        Tue, 25 Feb 2020 19:28:24 +0000 (UTC)
-From:   Vijay Thakkar <vijaythakkar@me.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Vijay Thakkar <vijaythakkar@me.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kim Phillips <kim.phillips@amd.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        =?UTF-8?q?Martin=20Li=C5=A1ka?= <mliska@suse.cz>,
-        Jon Grimm <jon.grimm@amd.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: [PATCH v2 3/3] perf vendor events amd: update Zen1 events to V2
-Date:   Tue, 25 Feb 2020 14:28:15 -0500
-Message-Id: <20200225192815.50388-4-vijaythakkar@me.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200225192815.50388-1-vijaythakkar@me.com>
-References: <20200225192815.50388-1-vijaythakkar@me.com>
+        Tue, 25 Feb 2020 14:30:42 -0500
+Received: by mail-pj1-f66.google.com with SMTP id r67so149017pjb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 11:30:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=c7YvBhKYaRcug4SwCX6amT8Yl2lrmhMSeuLnOwXOQgU=;
+        b=RmxfSUoSe9xuTRu3f6VvCjX9p3RqTXhWYFzxRKDqm+y+JTdxrf832YSyahg7MZHNLX
+         xPJ2kfmZTGtuVhfDmeeI2m3eLecVz5um8uOSdxZNnifiBTLy/ZzPCVo7WiCz/lyxUok6
+         FWNVoaH1gkLXuOBrEU7qUhC+MMtTUR0yvbIhclvQTQKShrsbsa40s2xq9HGpuZsX5+tv
+         I+cIv38b4L6tdkJYnodzLG8SbLgqZz/SyCc33w4YePCS7JW64TnWRI3gPc2HmTNY+3gS
+         +esf0ZNXY+FkNEn6yHHD9N6Et03JhmWvGDVQW5olU6DN7Qh7Ryv4stkQrnZJKfjQ/jxK
+         w1Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=c7YvBhKYaRcug4SwCX6amT8Yl2lrmhMSeuLnOwXOQgU=;
+        b=ch8RVgJzm1P2Emu2A8URWtx//SDJ1XrOtIjiKJIp+Q8xce0Fw29cgQA+HyrSiP7Ibz
+         w/lLz/LErIzofZqn4p/lW4uJT9opUjYOodDP5tKD7aSH2yate7WVoQND1sT0OOXSlIYq
+         k91m2ramHP/H4IaEfVnpj60D8f+viUWeUb6z53i6opyZljjRppLCKYsMZ4wKotbNKN1Z
+         xidFPkhrOKUYpGrR4910CwKf8BHLlVXwi5tg/8YBb+OXRq44VD1Q+Qal5E1x2QqNiKOJ
+         BTvAX6X+FQmAPrmMEt/QDGcPY4oO0YtllpJaqxwL2x9CbY8qvcebYsPZ315NZchPa2Ie
+         zlEg==
+X-Gm-Message-State: APjAAAUsTflSl8fvOrAFx6fTfY2EzGkr8yCXSAs9NU9/Ot5nYBC0tBft
+        WGGaIDn50zSASK1hgvdm4H5cZ5FVQTHI7OG6DMwRtg==
+X-Google-Smtp-Source: APXvYqwIehtIWayl8Y2Zzqxv3rR2U4RBBVtCMsCkBtRJPuhdGxnRrSPGxX3OGXxqFFIKBjfFx9viR7GDqI+5iiuIcmo=
+X-Received: by 2002:a17:90a:858a:: with SMTP id m10mr587460pjn.117.1582659039680;
+ Tue, 25 Feb 2020 11:30:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-02-25_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-2002250137
+References: <20191121095350.158689-1-tali.perry1@gmail.com>
+ <20191121095350.158689-3-tali.perry1@gmail.com> <20191125151618.GE2412@kunai>
+ <CAHb3i=tGTcu2q15E5CL_od1rDgRDyx=ygoGSCu88AfBrnFn71w@mail.gmail.com> <CAHb3i=s+u1gHXwi7j7V_N-c8f8n7c1XB3QhkY8EAJuv6PA5GNw@mail.gmail.com>
+In-Reply-To: <CAHb3i=s+u1gHXwi7j7V_N-c8f8n7c1XB3QhkY8EAJuv6PA5GNw@mail.gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 25 Feb 2020 11:30:22 -0800
+Message-ID: <CAFd5g47z8Lo1usLRDLL32Pw8LB40+bpcbnJdcvW5ffoVhKM-uA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] i2c: npcm: Add Nuvoton NPCM I2C controller driver
+To:     Tali Perry <tali.perry1@gmail.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Patrick Venture <venture@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Tomer Maimon <tmaimon77@gmail.com>, syniurge@gmail.com,
+        linux-i2c@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch updates the PMCs for AMD Zen1 core based processors (Family
-17h; Models 0 through 2F) to be in accordance with PMCs as
-documented in the latest versions of the AMD Processor Programming
-Reference [1] and [2].
+On Tue, Nov 26, 2019 at 1:23 AM Tali Perry <tali.perry1@gmail.com> wrote:
+>
+> Hi Wolfram,
+>
+> Thanks for your comments.
+>
+> The NPCM7XX BMC I2C\SMB controller HW module supports both SMB and I2C.
+> It's main features are:
+> 1. Supports Fast-Mode (400 KHz clock) I2C and Fast-Mode-plus (1 MHz clock=
+) I2C
+> 2. Supports the =E2=80=98fairness=E2=80=99 arbitration protocol defined b=
+y the MCTP
+> SMBus/I2C Transport Binding Specification v1.0.0
+> 3. 32KB packets : this is an I2C spec limitation. The HW has no limit
+> on packets size. It has a 16 bytes FIFO which can be reloaded over and
+> over.
+> 4. w\o size byte (for SMB block protocol).
+> 5. Both master and slave. It can also replace modes in run time
+> (requirement for IPMB and MCTP).
+> 6. Bus timing is selected to support both specs.
+>
+> Originally the HW spec stated SMB everywhere .
 
-PMCs added:
-fpu_pipe_assignment.dual{0|1|2|3}
-fpu_pipe_assignment.total{0|1|2|3}
-ls_mab_alloc.dc_prefetcher
-ls_mab_alloc.stores
-ls_mab_alloc.loads
-bp_dyn_ind_pred
-bp_de_redirect
+Alright, so it sounds like the HW supports I2C and also has SMBus
+specific support?
 
-PMC removed:
-ex_ret_cond_misp
+> Should I rename the SMB to I2C all over the driver?
 
-Cumulative counts, fpu_pipe_assignment.total and
-fpu_pipe_assignment.dual, existed in v1, but did expose port-level
-counters.
+If the HW supports general I2C; then yes, you should use the I2C
+naming scheme. If you have SMBus specific support for some things, it
+might be helpful to tag on smb in the name for only those
+functions/data structures.
 
-ex_ret_cond_misp has been removed as it has been removed from the latest
-versions of the PPR, and when tested, always seems to sample zero as
-tested on a Ryzen 3400G system.
+Also, please don't top-post.
 
-[1]: Processor Programming Reference (PPR) for AMD Family 17h Models
-01h,08h, Revision B2 Processors, 54945 Rev 3.03 - Jun 14, 2019.
-[2]: Processor Programming Reference (PPR) for AMD Family 17h Model 18h,
-Revision B1 Processors, 55570-B1 Rev 3.14 - Sep 26, 2019.
-All of the PPRs can be found at:
-https://bugzilla.kernel.org/show_bug.cgi?id=206537
+> On Tue, Nov 26, 2019 at 8:47 AM Tali Perry <tali.perry1@gmail.com> wrote:
+> >
+> > Hi Wolfram,
+> >
+> > Thanks for your comments.
+> >
+> > The NPCM7XX BMC I2C\SMB controller HW module supports both SMB and I2C.
+> > It's main features are:
+> > 1. Supports Fast-Mode (400 KHz clock) I2C and Fast-Mode-plus (1 MHz clo=
+ck) I2C
+> > 2. Supports the =E2=80=98fairness=E2=80=99 arbitration protocol defined=
+ by the MCTP SMBus/I2C Transport Binding Specification v1.0.0
+> > 3. 32KB packets : this is an I2C spec limitation. The HW has no limit o=
+n packets size. It has a 16 bytes FIFO which can be reloaded over and over.
+> > 4. w\o size byte (for SMB block protocol).
+> > 5. Both master and slave. It can also replace modes in run time (requir=
+ement for IPMB and MCTP).
+> > 6. Bus timing is selected to support both specs.
+> >
+> > Originally the HW spec stated SMB everywhere .
+> >
+> > Should I rename the SMB to I2C all over the driver?
 
-Signed-off-by: Vijay Thakkar <vijaythakkar@me.com>
+And please don't reiterate yourself like this; it can confuse the conversat=
+ion.
 
----
-Changes in v2:
-    - Correct the UMasks for fpu_pipe_assignment.dual* by left shifting
-    all by 4 bits.
-    - Correct UMask for ls_mab_alloc.loads
-    - add bp_dyn_ind_pred (PMC0x08E)
-    - add bp_de_redirect  (PMC0x091)
- 
- .../pmu-events/arch/x86/amdzen1/branch.json   | 11 ++++
- .../pmu-events/arch/x86/amdzen1/core.json     |  5 --
- .../arch/x86/amdzen1/floating-point.json      | 56 +++++++++++++++++++
- .../pmu-events/arch/x86/amdzen1/memory.json   | 18 ++++++
- tools/perf/pmu-events/arch/x86/mapfile.csv    |  2 +-
- 5 files changed, 86 insertions(+), 6 deletions(-)
-
-diff --git a/tools/perf/pmu-events/arch/x86/amdzen1/branch.json b/tools/perf/pmu-events/arch/x86/amdzen1/branch.json
-index 93ddfd8053ca..a9943eeb8d6b 100644
---- a/tools/perf/pmu-events/arch/x86/amdzen1/branch.json
-+++ b/tools/perf/pmu-events/arch/x86/amdzen1/branch.json
-@@ -8,5 +8,16 @@
-     "EventName": "bp_l2_btb_correct",
-     "EventCode": "0x8b",
-     "BriefDescription": "L2 BTB Correction."
-+  },
-+  {
-+    "EventName": "bp_dyn_ind_pred",
-+    "EventCode": "0x8e",
-+    "BriefDescription": "Dynamic Indirect Predictions.",
-+    "PublicDescription": "Indirect Branch Prediction for potential multi-target branch (speculative)."
-+  },
-+  {
-+    "EventName": "bp_de_redirect",
-+    "EventCode": "0x91",
-+    "BriefDescription": "Decoder Overrides Existing Branch Prediction (speculative)."
-   }
- ]
-diff --git a/tools/perf/pmu-events/arch/x86/amdzen1/core.json b/tools/perf/pmu-events/arch/x86/amdzen1/core.json
-index 1079544eeed5..38994fb4b625 100644
---- a/tools/perf/pmu-events/arch/x86/amdzen1/core.json
-+++ b/tools/perf/pmu-events/arch/x86/amdzen1/core.json
-@@ -90,11 +90,6 @@
-     "EventCode": "0xd1",
-     "BriefDescription": "Retired Conditional Branch Instructions."
-   },
--  {
--    "EventName": "ex_ret_cond_misp",
--    "EventCode": "0xd2",
--    "BriefDescription": "Retired Conditional Branch Instructions Mispredicted."
--  },
-   {
-     "EventName": "ex_div_busy",
-     "EventCode": "0xd3",
-diff --git a/tools/perf/pmu-events/arch/x86/amdzen1/floating-point.json b/tools/perf/pmu-events/arch/x86/amdzen1/floating-point.json
-index ea4711983d1d..351ebf00bd21 100644
---- a/tools/perf/pmu-events/arch/x86/amdzen1/floating-point.json
-+++ b/tools/perf/pmu-events/arch/x86/amdzen1/floating-point.json
-@@ -6,6 +6,34 @@
-     "PublicDescription": "The number of operations (uOps) and dual-pipe uOps dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS. Total number multi-pipe uOps assigned to Pipe 3.",
-     "UMask": "0xf0"
-   },
-+  {
-+    "EventName": "fpu_pipe_assignment.dual3",
-+    "EventCode": "0x00",
-+    "BriefDescription": "Total number multi-pipe uOps to pipe 3.",
-+    "PublicDescription": "The number of operations (uOps) and dual-pipe uOps dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS. Total number multi-pipe uOps assigned to Pipe 3.",
-+    "UMask": "0x80"
-+  },
-+  {
-+    "EventName": "fpu_pipe_assignment.dual2",
-+    "EventCode": "0x00",
-+    "BriefDescription": "Total number multi-pipe uOps to pipe 2.",
-+    "PublicDescription": "The number of operations (uOps) and dual-pipe uOps dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS. Total number multi-pipe uOps assigned to Pipe 3.",
-+    "UMask": "0x40"
-+  },
-+  {
-+    "EventName": "fpu_pipe_assignment.dual1",
-+    "EventCode": "0x00",
-+    "BriefDescription": "Total number multi-pipe uOps to pipe 1.",
-+    "PublicDescription": "The number of operations (uOps) and dual-pipe uOps dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS. Total number multi-pipe uOps assigned to Pipe 3.",
-+    "UMask": "0x20"
-+  },
-+  {
-+    "EventName": "fpu_pipe_assignment.dual0",
-+    "EventCode": "0x00",
-+    "BriefDescription": "Total number multi-pipe uOps to pipe 0.",
-+    "PublicDescription": "The number of operations (uOps) and dual-pipe uOps dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS. Total number multi-pipe uOps assigned to Pipe 3.",
-+    "UMask": "0x10"
-+  },
-   {
-     "EventName": "fpu_pipe_assignment.total",
-     "EventCode": "0x00",
-@@ -13,6 +41,34 @@
-     "PublicDescription": "The number of operations (uOps) and dual-pipe uOps dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS. Total number uOps assigned to Pipe 3.",
-     "UMask": "0xf"
-   },
-+  {
-+    "EventName": "fpu_pipe_assignment.total3",
-+    "EventCode": "0x00",
-+    "BriefDescription": "Total number of fp uOps on pipe 3.",
-+    "PublicDescription": "The number of operations (uOps) dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS.",
-+    "UMask": "0x8"
-+  },
-+  {
-+    "EventName": "fpu_pipe_assignment.total2",
-+    "EventCode": "0x00",
-+    "BriefDescription": "Total number of fp uOps on pipe 2.",
-+    "PublicDescription": "The number of operations (uOps) dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS.",
-+    "UMask": "0x4"
-+  },
-+  {
-+    "EventName": "fpu_pipe_assignment.total1",
-+    "EventCode": "0x00",
-+    "BriefDescription": "Total number of fp uOps on pipe 1.",
-+    "PublicDescription": "The number of operations (uOps) dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS.",
-+    "UMask": "0x2"
-+  },
-+  {
-+    "EventName": "fpu_pipe_assignment.total0",
-+    "EventCode": "0x00",
-+    "BriefDescription": "Total number of fp uOps  on pipe 0.",
-+    "PublicDescription": "The number of operations (uOps) dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS.",
-+    "UMask": "0x1"
-+  },
-   {
-     "EventName": "fp_sched_empty",
-     "EventCode": "0x01",
-diff --git a/tools/perf/pmu-events/arch/x86/amdzen1/memory.json b/tools/perf/pmu-events/arch/x86/amdzen1/memory.json
-index fa2d60d4def0..9206a1a131fa 100644
---- a/tools/perf/pmu-events/arch/x86/amdzen1/memory.json
-+++ b/tools/perf/pmu-events/arch/x86/amdzen1/memory.json
-@@ -37,6 +37,24 @@
-     "EventCode": "0x40",
-     "BriefDescription": "The number of accesses to the data cache for load and store references. This may include certain microcode scratchpad accesses, although these are generally rare. Each increment represents an eight-byte access, although the instruction may only be accessing a portion of that. This event is a speculative event."
-   },
-+  {
-+    "EventName": "ls_mab_alloc.dc_prefetcher",
-+    "EventCode": "0x41",
-+    "BriefDescription": "Data cache prefetcher miss.",
-+    "UMask": "0x8"
-+  },
-+  {
-+    "EventName": "ls_mab_alloc.stores",
-+    "EventCode": "0x41",
-+    "BriefDescription": "Data cache store miss.",
-+    "UMask": "0x2"
-+  },
-+  {
-+    "EventName": "ls_mab_alloc.loads",
-+    "EventCode": "0x41",
-+    "BriefDescription": "Data cache load miss.",
-+    "UMask": "0x01"
-+  },
-   {
-     "EventName": "ls_l1_d_tlb_miss.all",
-     "EventCode": "0x45",
-diff --git a/tools/perf/pmu-events/arch/x86/mapfile.csv b/tools/perf/pmu-events/arch/x86/mapfile.csv
-index 244a36e37a3a..25b06cf98747 100644
---- a/tools/perf/pmu-events/arch/x86/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/x86/mapfile.csv
-@@ -36,5 +36,5 @@ GenuineIntel-6-55-[56789ABCDEF],v1,cascadelakex,core
- GenuineIntel-6-7D,v1,icelake,core
- GenuineIntel-6-7E,v1,icelake,core
- GenuineIntel-6-86,v1,tremontx,core
--AuthenticAMD-23-([12][0-9A-F]|[0-9A-F]),v1,amdzen1,core
-+AuthenticAMD-23-([12][0-9A-F]|[0-9A-F]),v2,amdzen1,core
- AuthenticAMD-23-[[:xdigit:]]+,v1,amdzen2,core
--- 
-2.25.1
-
+> > On Mon, Nov 25, 2019 at 5:16 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+> >>
+> >> On Thu, Nov 21, 2019 at 11:53:50AM +0200, Tali Perry wrote:
+> >> > Add Nuvoton NPCM BMC i2c controller driver.
+> >> >
+> >> > Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+> >>
+> >> Looking at all this SMB_* naming of the registers and also the quirks,
+> >> this looks more like an SMBUS controller to me?
+> >>
+> >> > +     // currently I2C slave IF only supports single byte operations=
+.
+> >> > +     // in order to utilyze the npcm HW FIFO, the driver will ask f=
+or 16bytes
+> >> > +     // at a time, pack them in buffer, and then transmit them all =
+together
+> >> > +     // to the FIFO and onward to the bus .
+> >> > +     // NACK on read will be once reached to bus->adap->quirks->max=
+_read_len
+> >> > +     // sending a NACK whever the backend requests for it is not su=
+pported.
+> >>
+> >> This for example...
+> >>
+> >> > +static const struct i2c_adapter_quirks npcm_i2c_quirks =3D {
+> >> > +     .max_read_len =3D 32768,
+> >> > +     .max_write_len =3D 32768,
+> >> > +     .max_num_msgs =3D 2,
+> >> > +     .flags =3D I2C_AQ_COMB_WRITE_THEN_READ
+> >> > +};
+> >>
+> >> ... and this. Like SMBus with the only exception of being able to send
+> >> 32K in a row. Or?
+> >>
