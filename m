@@ -2,99 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E5AE16C14C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:50:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30BDA16C156
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:50:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730086AbgBYMua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 07:50:30 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60286 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730228AbgBYMuI (ORCPT
+        id S1730395AbgBYMur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 07:50:47 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:42098 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730001AbgBYMup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 07:50:08 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j6Zf4-0005kT-AU; Tue, 25 Feb 2020 12:50:06 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        linux-pm@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v5 9/9] net: fix sysfs permssions when device changes network namespace
-Date:   Tue, 25 Feb 2020 13:49:48 +0100
-Message-Id: <20200225124948.80682-10-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200225124948.80682-1-christian.brauner@ubuntu.com>
-References: <20200225124948.80682-1-christian.brauner@ubuntu.com>
+        Tue, 25 Feb 2020 07:50:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=g+KiJZzksPAm2BNWFU7kxrgNyJwR+BQ4nqNwddviLwE=; b=tCh9n7eE375VlDUXXbMfRxeU5t
+        BODlcDvyopq6h4o8ADOabjBwl7+bM+eJDXxDiW9VvedM9hC+hhDR8qYMl1keKDi8aOxnDPSuF27NY
+        GznS6JGLmDAD4U6yc24GcNOVuHXJNnD6QVRG3qjsXUvqJRiP3rwffnHdw1Pzmw+UOL85eLw2Hq2pe
+        jUPVZNiuXo6YJF4MYXEW3LPe69DbOgp9BaXmtG4iNTEeuyj5bH06fMKY9d0McLrhyQmm6L5Kx9JLE
+        236w/SOd0/8NpFPIdNFW0/QT3n1qTaGPpIS1yhp3cfb2rJDtzjegTQdk9w1J7WO7WIuvrcpsiXzDM
+        xsLsJHvw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6ZfW-0003gq-6w; Tue, 25 Feb 2020 12:50:34 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 67198306060;
+        Tue, 25 Feb 2020 13:48:35 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2FDD82B4DAAF6; Tue, 25 Feb 2020 13:50:30 +0100 (CET)
+Date:   Tue, 25 Feb 2020 13:50:30 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk,
+        dan.j.williams@intel.com
+Subject: Re: [PATCH v5 1/2] x86: fix bitops.h warning with a moved cast
+Message-ID: <20200225125030.GL18400@hirez.programming.kicks-ass.net>
+References: <20200224225020.2212544-1-jesse.brandeburg@intel.com>
+ <20200225103050.GD10400@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200225103050.GD10400@smile.fi.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we moved all the helpers in place and make use netdev_change_owner()
-to fixup the permissions when moving network devices between network
-namespaces.
+On Tue, Feb 25, 2020 at 12:30:50PM +0200, Andy Shevchenko wrote:
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v2 */
-unchanged
+> I think it is a C standard which dictates this, compiler just follows.
 
-/* v3 */
-unchanged
+Correct, a semi readable explanation of this:
 
-/* v4 */
-unchanged
-
-/* v5 */
-unchanged
----
- net/core/dev.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/net/core/dev.c b/net/core/dev.c
-index a69e8bd7ed74..0f9c4684fcbd 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -10016,6 +10016,7 @@ EXPORT_SYMBOL(unregister_netdev);
- 
- int dev_change_net_namespace(struct net_device *dev, struct net *net, const char *pat)
- {
-+	struct net *net_old = dev_net(dev);
- 	int err, new_nsid, new_ifindex;
- 
- 	ASSERT_RTNL();
-@@ -10031,7 +10032,7 @@ int dev_change_net_namespace(struct net_device *dev, struct net *net, const char
- 
- 	/* Get out if there is nothing todo */
- 	err = 0;
--	if (net_eq(dev_net(dev), net))
-+	if (net_eq(net_old, net))
- 		goto out;
- 
- 	/* Pick the destination device name, and ensure
-@@ -10107,6 +10108,12 @@ int dev_change_net_namespace(struct net_device *dev, struct net *net, const char
- 	err = device_rename(&dev->dev, dev->name);
- 	WARN_ON(err);
- 
-+	/* Adapt owner in case owning user namespace of target network
-+	 * namespace is different from the original one.
-+	 */
-+	err = netdev_change_owner(dev, net_old, net);
-+	WARN_ON(err);
-+
- 	/* Add the device back in the hashes */
- 	list_netdevice(dev);
- 
--- 
-2.25.1
-
+  https://stackoverflow.com/questions/46073295/implicit-type-promotion-rules
