@@ -2,104 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D65516EF5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:46:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9298816EF70
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:53:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731617AbgBYTpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 14:45:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731300AbgBYTpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 14:45:53 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC38F21744;
-        Tue, 25 Feb 2020 19:45:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582659953;
-        bh=DDL4faS1bxkAcyDrK+M9cSkOpTfz2dh8PxxjcywLw3c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DesjlvNrkB46PlbhEDslYDLqwlWjwQRgYh4Z9i4LuW3xyY+rOt1N++hYEiBblykgl
-         VO2A+WmcystLoQPSJWXHIucPZOnICL2lVWD7knr8EgyETiGTZtk6JZWQ0qzHk6uQkc
-         3XhZZuN4kTH9heJnujqsIg9sHUWKbSOXHTPtC1YQ=
-Date:   Tue, 25 Feb 2020 11:45:51 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] crypto: testmgr - use generic algs making test vecs
-Message-ID: <20200225194551.GA114977@gmail.com>
-References: <20200225154834.25108-1-gilad@benyossef.com>
- <20200225154834.25108-2-gilad@benyossef.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225154834.25108-2-gilad@benyossef.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1731012AbgBYTx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 14:53:26 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:44219 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728051AbgBYTxZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 14:53:25 -0500
+Received: by mail-qt1-f195.google.com with SMTP id j23so497596qtr.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 11:53:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=J3naM9gb9grCSaWWa+1M/iL95mfUymHnR7a3z5k6V4Q=;
+        b=NrFkWA9rGIEJMWAg0A6hL55J4EEPLK8A2piMwRH3XBYsJ4Oh+ew87GSHLKENFWK93g
+         DgOYBBd6XA78gFNhO1PyPeD4IbRhUbKB1mU3+zq4cqdmLTHvp77im926+EOJii1Shc7l
+         K7laDUM7E5SF27us9tSPPSKaORprnM2bPq3nFYFQxj1tkCExz+Po8W453NNroEZUsfB7
+         hgdSpkVWeylNW+sqclAWHcWyy8vDOAdlLcgQNLhQCQV5L9ECH0vvZBLRlJZLWbJaM8nj
+         aUR3It7p2aDBeaI7sLK0SLUMtwayKS+6S+hvekwi38pTPrK/0dsfInDKSga8D2wiY/Ew
+         oBUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=J3naM9gb9grCSaWWa+1M/iL95mfUymHnR7a3z5k6V4Q=;
+        b=TpQL1lm5ih4+agGwdU1w4d/kvI4tsc4/riMWY5x8GM+uC6XSnBUP5t/FqZl+jHZ6zu
+         UTL1tXEKXiPvQyJcKH6s2rK5aipn0m3xxszAm6HXyU26WPXEWd6TT179zgMAZN58ybZK
+         wt7Xh7xNSAfUodEFpP4dBfhbIL2vufMH4n96sYVDA877ewFTjEjRTO+ZtYQ/uPzgtRkc
+         LAKT1IUNEcye8Gp2OsfV4FqqijJFySj+MzbrXXs4sGSNGK/Kh1Rg2oQWD5BAVPbNmZ8q
+         K2zoafK02U3C6AdtPFRzvAsqCxa+jTHMu7qhJQtPY8GyRTrSLKIfyJ1KjpXvzd5dqdGP
+         E6uw==
+X-Gm-Message-State: APjAAAWilwKFBnwI7W1dxQeIVE8QxXEs3XGr5w90GhH/GNVp4UzOkJIP
+        KONjuy3c4i8bIjDVomLMZCTLwg==
+X-Google-Smtp-Source: APXvYqzYUX8K2Ym17H9QdktALmz12JDdqhf3sSHdZqZh3SbaJthw84CNOXt2gx89+7gBMSuTcxESsA==
+X-Received: by 2002:aed:3e6d:: with SMTP id m42mr303755qtf.187.1582660404577;
+        Tue, 25 Feb 2020 11:53:24 -0800 (PST)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id l6sm7981936qti.10.2020.02.25.11.53.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Feb 2020 11:53:23 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     darrick.wong@oracle.com
+Cc:     hch@infradead.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH v2] xfs: fix an undefined behaviour in _da3_path_shift
+Date:   Tue, 25 Feb 2020 14:53:08 -0500
+Message-Id: <1582660388-28735-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 05:48:33PM +0200, Gilad Ben-Yossef wrote:
-> Use generic algs to produce inauthentic AEAD messages,
-> otherwise we are running the risk of using an untested
-> code to produce the test messages.
-> 
-> As this code is only used in developer only extended tests
-> any cycles/runtime costs are negligible.
-> 
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> Cc: Eric Biggers <ebiggers@kernel.org>
+xfs_da3_path_shift() could see state->path.blk[-1] because
+state->path.active == 1 is a valid state when it tries to add an entry
+to a single dir leaf block and then to shift forward to see if
+there's a sibling block that would be a better place to put the new
+entry.
 
-It's intentional to use the same implementation to generate the inauthentic AEAD
-messages, because it allows the inauthentic AEAD input tests to run even if the
-generic implementation is unavailable.
+ UBSAN: Undefined behaviour in fs/xfs/libxfs/xfs_da_btree.c:1989:14
+ index -1 is out of range for type 'xfs_da_state_blk_t [5]'
+ Call trace:
+  dump_backtrace+0x0/0x2c8
+  show_stack+0x20/0x2c
+  dump_stack+0xe8/0x150
+  __ubsan_handle_out_of_bounds+0xe4/0xfc
+  xfs_da3_path_shift+0x860/0x86c [xfs]
+  xfs_da3_node_lookup_int+0x7c8/0x934 [xfs]
+  xfs_dir2_node_addname+0x2c8/0xcd0 [xfs]
+  xfs_dir_createname+0x348/0x38c [xfs]
+  xfs_create+0x6b0/0x8b4 [xfs]
+  xfs_generic_create+0x12c/0x1f8 [xfs]
+  xfs_vn_mknod+0x3c/0x4c [xfs]
+  xfs_vn_create+0x34/0x44 [xfs]
+  do_last+0xd4c/0x10c8
+  path_openat+0xbc/0x2f4
+  do_filp_open+0x74/0xf4
+  do_sys_openat2+0x98/0x180
+  __arm64_sys_openat+0xf8/0x170
+  do_el0_svc+0x170/0x240
+  el0_sync_handler+0x150/0x250
+  el0_sync+0x164/0x180
 
-> @@ -2337,8 +2338,42 @@ static int test_aead_inauthentic_inputs(struct aead_extra_tests_ctx *ctx)
->  {
->  	unsigned int i;
->  	int err;
-> +	struct crypto_aead *tfm = ctx->tfm;
-> +	const char *algname = crypto_aead_alg(tfm)->base.cra_name;
-> +	const char *driver = ctx->driver;
-> +	const char *generic_driver = ctx->test_desc->generic_driver;
-> +	char _generic_driver[CRYPTO_MAX_ALG_NAME];
-> +	struct crypto_aead *generic_tfm = NULL;
-> +	struct aead_request *generic_req = NULL;
-> +
-> +	if (!generic_driver) {
-> +		err = build_generic_driver_name(algname, _generic_driver);
-> +		if (err)
-> +			return err;
-> +		generic_driver = _generic_driver;
-> +	}
-> +
-> +	if (!strcmp(generic_driver, driver) == 0) {
-> +		/* Already the generic impl? */
-> +
-> +		generic_tfm = crypto_alloc_aead(generic_driver, 0, 0);
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
 
-I think you meant the condition to be 'if (strcmp(generic_driver, driver) != 0)'
-and for the comment to be "Not already the generic impl?".
+v2: update the commit log thanks to Darrick.
+    simplify the code.
 
-> +		if (IS_ERR(generic_tfm)) {
-> +			err = PTR_ERR(generic_tfm);
-> +			pr_err("alg: aead: error allocating %s (generic impl of %s): %d\n",
-> +			generic_driver, algname, err);
-> +			return err;
-> +		}
+ fs/xfs/libxfs/xfs_da_btree.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-This means the test won't run if the generic implementation is unavailable.
-Is there any particular reason to impose that requirement?
+diff --git a/fs/xfs/libxfs/xfs_da_btree.c b/fs/xfs/libxfs/xfs_da_btree.c
+index 875e04f82541..e864c3d47f60 100644
+--- a/fs/xfs/libxfs/xfs_da_btree.c
++++ b/fs/xfs/libxfs/xfs_da_btree.c
+@@ -1986,7 +1986,8 @@ static inline int xfs_dabuf_nfsb(struct xfs_mount *mp, int whichfork)
+ 	ASSERT(path != NULL);
+ 	ASSERT((path->active > 0) && (path->active < XFS_DA_NODE_MAXDEPTH));
+ 	level = (path->active-1) - 1;	/* skip bottom layer in path */
+-	for (blk = &path->blk[level]; level >= 0; blk--, level--) {
++	for (; level >= 0; level--) {
++		blk = &path->blk[level];
+ 		xfs_da3_node_hdr_from_disk(dp->i_mount, &nodehdr,
+ 					   blk->bp->b_addr);
+ 
+-- 
+1.8.3.1
 
-You mentioned a concern about the implementation being "untested", but it
-actually already passed test_aead() before getting to test_aead_extra().
-
-We could also just move test_aead_inauthentic_inputs() to below
-test_aead_vs_generic_impl() so that it runs last.
-
-- Eric
