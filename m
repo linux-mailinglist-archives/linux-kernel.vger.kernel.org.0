@@ -2,208 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5DE816BB5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:56:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1729816BB41
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:51:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729695AbgBYH4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 02:56:18 -0500
-Received: from mail-eopbgr130087.outbound.protection.outlook.com ([40.107.13.87]:63090
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S1729640AbgBYHvy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 02:51:54 -0500
+Received: from mail-am6eur05on2086.outbound.protection.outlook.com ([40.107.22.86]:22172
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729124AbgBYH4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 02:56:16 -0500
+        id S1729622AbgBYHvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 02:51:53 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=URm/RvW5u9L16utnEoddLe0bUMjKja5kNiYDMDxNZIPYJVZVgfMT7LKkU92VuUx/xQXcf23MtRPt2W5smbEmamtJpt3GvLh7rZO4AkB5+6uc90ckES4elZi4X6yX7MvftDS5YNpdAQsHSKRrLB8FKSrKiyGBKrRlRrPTSeUFZujK7u8U7a8vpJwYp2Y8i1uv8FOCqjknM1earJGfUPopEbl11zolHRUNFtx7JVAidPYWwOhbPfZ3TnHngRshXJ4TgyWP0QzL5IWhXqi9rEZ0gP+kl7NNxREmp2glahl7yujFAfH6wnGb8rWkNDEROcCYOy3WdaaxP5NWHdcH0ZR0jg==
+ b=RTm91sMaC/bYGd9oqgqhzIQPLpNSqktXFUrrJabz2zuPZX4Hil8LACyGqq5Ded7rpTAqdLcxeUAUdJFa71g4thzdEsXnlpFK5N7T3t6gqaNi9EVrTcrUJTNGZU6+WUX7ErXD47/LqylkCKJqB6QONbow0+ibzDWOurkCA/X8dbjW3BkP8nSIbtB23jt8KkxQ5bDEZEj107EMdea1UeHYbBopO97zBVR56g58PlPThDTT/y2lIroZktX1Lfa8kG3Cf48qsePuEGSNb/l7khPQlbRKpWvpIm4cZX4nL1fNgjwr8s/Q8jhwiAAThmRNMOmYUy7lLiBU8w0ROmvApzZIkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MR0Pm/MzFCZu+v8or+PLgGz9NlplyJ75hzyiQWAades=;
- b=LzeKka6lwvFBbA6c/2tWw4nx94DmUQyWfelvEvyV0StuW9nBE9Sw41J0l//coJX8ou937E//T22d+hVdQxGCmj1KllsDIgugwUkgZe6KVHL7MnVXXlHID3EDrs/hLsn+dmr36sSxU/bxNwL/rr3YhSif4EiHa3dI0QpjhMK4+6ovMo2D9IVOU6oSKPnHFL5qSbyCbt1fhkLdrPanWSfUqQyPyD7zoaNFcVJChgOW8XgEj7/rn+5x5iM2mK0tELO/IWnAbc/LWifLko1/Cg9Jj1pYtZvM7bgsSaNEawO/k4dOSQCKIBFfT8un0Ycj1moupcksl1y5gN9uGdNJte2x3Q==
+ bh=3I/7T9rluMdfu/0nWQpe8F9CBoxcU4Bj4ksM+CCKumI=;
+ b=D4Hz6fJD2EzSagAlSm04XT56e6mbIaUIQGKy3DpioL/8z72VfWlRhWY4iEL2AFJNMiUvnmsYClXxmjDFV/Gb7h1OPZkuGgwhznyNHWJQLXKF1jnxGhOgbUenDdEDtttZbPZG6Qkb+Yd1HP5z7U8xkY+BHtF2hAAama5mqyGF8g+6sFhlgkWdWVZ0eG4AIG3pzm1Y7nNDtzfTEGyVu4t5tMkbnv0LSA99zrAWecWSzZcK/0bPQgRdJGI+myclHMRVJ+vavucTWPIixhKPMDyj+b4pN6p76ejsY3mQu2ONg9t/14XNDgYbMkfpOb1Lv0KbSn0BPJ7MrUZtuWFYEWQNpg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MR0Pm/MzFCZu+v8or+PLgGz9NlplyJ75hzyiQWAades=;
- b=YJeRHEDS/Kj4GvGWEv4pBUSHhqFsJwbISOBeJ+WIj0gB5xGD3vPrkZlSGzOHyFHfJfTKY1m7mphYDwDSEQr1h0SOJDqRKhl/w4XGTPaB2GaukB+YlW8AX2JnpvjwoE1M2T6vjCbDvBAaKrfyUguOqek5NKzRbTMUG3WSv8iBbyw=
+ bh=3I/7T9rluMdfu/0nWQpe8F9CBoxcU4Bj4ksM+CCKumI=;
+ b=o9pOowxrqz64ykhmYmqWfGi+a5OYgAGhSv0ph+Cbsdmj3WwYGL7UhwOXg9kjQT64w546dT62aflkeg7TgEDC/BF8JvLSC9DuNkff9PAK8B8reEAvzpaXXBLXkxsDBtVFZI50UHD48hJ7TDikTL4B3dFIzp/nttfQtw/xUlbVKKc=
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB4562.eurprd04.prod.outlook.com (52.135.148.33) with Microsoft SMTP
+ smtp.mailfrom=markz@mellanox.com; 
+Received: from AM6PR05MB4472.eurprd05.prod.outlook.com (52.135.162.157) by
+ AM6PR05MB5031.eurprd05.prod.outlook.com (20.177.35.11) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2750.21; Tue, 25 Feb 2020 07:56:10 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2750.021; Tue, 25 Feb 2020
- 07:56:10 +0000
-From:   peng.fan@nxp.com
-To:     sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        festevam@gmail.com, abel.vesa@nxp.com
-Cc:     kernel@pengutronix.de, linux-imx@nxp.com, Anson.Huang@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        leonard.crestez@nxp.com, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 3/3] clk: imx8mp: Define gates for pll1/2 fixed dividers
-Date:   Tue, 25 Feb 2020 15:49:19 +0800
-Message-Id: <1582616959-933-3-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582616959-933-1-git-send-email-peng.fan@nxp.com>
-References: <1582616959-933-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: HK0PR01CA0056.apcprd01.prod.exchangelabs.com
- (2603:1096:203:a6::20) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+ 15.20.2750.22; Tue, 25 Feb 2020 07:51:50 +0000
+Received: from AM6PR05MB4472.eurprd05.prod.outlook.com
+ ([fe80::11fc:7536:f265:7920]) by AM6PR05MB4472.eurprd05.prod.outlook.com
+ ([fe80::11fc:7536:f265:7920%3]) with mapi id 15.20.2750.021; Tue, 25 Feb 2020
+ 07:51:50 +0000
+Subject: Re: general protection fault in nldev_stat_set_doit
+To:     syzbot <syzbot+bd4af81bc51ee0283445@syzkaller.appspotmail.com>,
+        dledford@redhat.com, jgg@ziepe.ca, leon@kernel.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, parav@mellanox.com,
+        syzkaller-bugs@googlegroups.com
+References: <0000000000004aa34d059f5caedc@google.com>
+From:   Mark Zhang <markz@mellanox.com>
+Message-ID: <bff2faa7-cd95-99c2-f732-765f7b548dbd@mellanox.com>
+Date:   Tue, 25 Feb 2020 15:51:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+In-Reply-To: <0000000000004aa34d059f5caedc@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SGAP274CA0018.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::30)
+ To AM6PR05MB4472.eurprd05.prod.outlook.com (2603:10a6:209:43::29)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by HK0PR01CA0056.apcprd01.prod.exchangelabs.com (2603:1096:203:a6::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2750.18 via Frontend Transport; Tue, 25 Feb 2020 07:56:06 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
+Received: from [192.168.0.144] (115.198.50.108) by SGAP274CA0018.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18 via Frontend Transport; Tue, 25 Feb 2020 07:51:47 +0000
+X-Originating-IP: [115.198.50.108]
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 720d2a76-54de-4178-6e15-08d7b9c82d87
-X-MS-TrafficTypeDiagnostic: AM0PR04MB4562:|AM0PR04MB4562:
+X-MS-Office365-Filtering-Correlation-Id: 4c9d4b41-6923-4f4c-8d2d-08d7b9c7923e
+X-MS-TrafficTypeDiagnostic: AM6PR05MB5031:|AM6PR05MB5031:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB456231B6E6E05109EB35AE3E88ED0@AM0PR04MB4562.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:576;
+X-Microsoft-Antispam-PRVS: <AM6PR05MB5031EF25259FE2398AA3FB91CAED0@AM6PR05MB5031.eurprd05.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
 X-Forefront-PRVS: 0324C2C0E2
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(346002)(366004)(136003)(39860400002)(199004)(189003)(52116002)(2906002)(6666004)(86362001)(36756003)(478600001)(81156014)(5660300002)(8676002)(4326008)(8936002)(69590400006)(81166006)(9686003)(66556008)(316002)(66476007)(6486002)(186003)(2616005)(956004)(6506007)(16526019)(66946007)(6512007)(26005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4562;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10001)(10009020)(4636009)(366004)(199004)(189003)(6666004)(498600001)(36756003)(81166006)(45080400002)(81156014)(8676002)(52116002)(16576012)(31686004)(966005)(8936002)(5660300002)(86362001)(31696002)(53546011)(956004)(186003)(16526019)(66946007)(26005)(2616005)(6486002)(66476007)(66556008)(2906002)(99710200001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB5031;H:AM6PR05MB4472.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: mellanox.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7tKzVyjccrmV9EItbflUUG4D+Ya8qu0RHgqVUjLZb83pVlKp1SlYNebTjQaNhVfSHAoLFq168GPIhcNx9vIuTAVLxsoYVG70VQxRz26rKGR4Fqspt+muWzAxJmUC+2bqd6o2o5RlL5pitgFMSuGl8EjteqlA1/XnAukSiHT0+lBsSV1bQXT1li61q71lPFAQq3+CsDKTeNy/a1iiUxkap7K2ykbnczcxpl7orkK57uzki1Q8fUt/xfW2GcI4Fy/L7h3p+uWG1UHcJ8uoWpKdyFQmUlduBuSwxQRYUe18wuB4x7PccidRnuh+9i8qwcCCmxVlkMgAuF1a2wUMr3mJWxhcdp15/Q2+KWFPwm+VfoknMX25v8W4TaDCYk0gcSKPIzMQNxU4U6Tq+POqYLH2Jk5pt1uW7b+Dd1nUNPOUFSei0dZXHPBI60QoMZHR8CKcRVWe4dWEZfv/IPWkHEgj3oc94pNJniyhqwQwaZdY2J4QznQeZicDAUElB2HTcGA4xAWyKa4X+5gMu+gtO4NRiW67BzzDF/YmXR1jt5NK1jC6AS3pBfv1blil+p19bhIA
-X-MS-Exchange-AntiSpam-MessageData: RONf3vqBr2o8nJlGSOBm9FSv5sE5jIZ37PXDcTSSHsexzhiS4yqpbrXbv2HVE8G9uT3GTLy1Qqqg+pcR9igBhPgnWpdcoc0nE793XpT+xYeejQqSfyWydQdX4ffzE4zwlHtoDXHKSuWSpDxmaLa3qw==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 720d2a76-54de-4178-6e15-08d7b9c82d87
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2020 07:56:10.6111
+X-Microsoft-Antispam-Message-Info: 6/okN71ZAnXRjfxwZk0EH9AjHcdTFU5qq1apUHkN/nzMDCygBTtM+yrar8adiGrnA0WXAWcH6Vc3RgZeLWZ249RVPGHqsbTlBcr9sWq1ty2UbnQHb6y5pxmmcWg/mf7y8xIj1ioqRqCNsErHADylPyxaDlDPJVkPZjMeLmatxn5ZTo1g6NSTvw8x9YhyHxuLD/kFT8m2O9OixkznR3rNCt7HAj162/F4+DWzxX9en35j8mZ1sB3VjaIOKLMXaAV03xhsqyhuvJyJI0frjfr2WgS++Se3+pS8EEKlzYtZPktJWNebzE7ovmfp4eWPByCvwZUAnHh4wTZDGNYS86ureQ9Ac/KGz9n1D4+KhX1ssfkHmXL9vh3scdNz3Kpjn0/vV76AFAaJGnhSt/LiaYwhO5rWABTtdeaDz+prNW3CjHiX7LewHGsdoHt8BsKgI9ZcdgZDtS0cyE1BM/gp2l/ZXyrI+hTL/3HyxO8N/1VmvH3gTGhhY/GDPHs5PkY3rNj9aJrWo5dPDDj5inGYGTc0Mlpfhi8H5hTfbtgAeHXjG/QfIlZJHLdZ9RnmVf8PjTHEKxz7w62uqz2OHTvO1mS1On7iXWjpa+S96Wjh8BKjpv1g54du/rhB6UsyPzyHvFsMyuCRDkzQZFNY54Yrkmtg5g==
+X-MS-Exchange-AntiSpam-MessageData: ZwuUzHbUOhq74rFVX3E94JubSICvkWoaBHn25eJ8BbQ8NjiwXH56YiGkjcv5ZmUnt12k0tbrH8zQuC8uq29GtL5cMhnj6hxrgr7QyC+Rd9H8FPY/HYWgyp0mdrJBs4S/wxN4ujYb6j+UbnLhihGjNQ==
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c9d4b41-6923-4f4c-8d2d-08d7b9c7923e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2020 07:51:50.1146
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5KcE6/aacEQNrMuS9smzlA4Op9PbP+nfh4NzFJ+4OHe7sIBMw619JmxBrVXyrd3ZAeLi2ibp480O/DTU1P+GCg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4562
+X-MS-Exchange-CrossTenant-UserPrincipalName: sDrC5r4/XyA/oemxNcD6E9GDuRTGOSI5Xkpa2bCbe9N3tq+kjyORboYUz/XuTWJb+cSzdaES2Hf4t9HB0bvWpw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB5031
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On 2/25/2020 9:48 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    39f3b41a net: genetlink: return the error code when attrib..
+> git tree:       net
+> console output: https://syzkaller.appspot.com/x/log.txt?x=161be265e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3b8906eb6a7d6028
+> dashboard link: https://syzkaller.appspot.com/bug?extid=bd4af81bc51ee0283445
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=167103ede00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1710c265e00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+bd4af81bc51ee0283445@syzkaller.appspotmail.com
+> 
+> iwpm_register_pid: Unable to send a nlmsg (client = 2)
+> infiniband syz1: RDMA CMA: cma_listen_on_dev, error -98
+> general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
+> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> CPU: 0 PID: 9754 Comm: syz-executor069 Not tainted 5.6.0-rc2-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:nla_get_u32 include/net/netlink.h:1474 [inline]
+> RIP: 0010:nldev_stat_set_doit+0x63c/0xb70 drivers/infiniband/core/nldev.c:1760
+> Code: fc 01 0f 84 58 03 00 00 e8 41 83 bf fb 4c 8b a3 58 fd ff ff 48 b8 00 00 00 00 00 fc ff df 49 8d 7c 24 04 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 6d
+> RSP: 0018:ffffc900068bf350 EFLAGS: 00010247
+> RAX: dffffc0000000000 RBX: ffffc900068bf728 RCX: ffffffff85b60470
+> RDX: 0000000000000000 RSI: ffffffff85b6047f RDI: 0000000000000004
+> RBP: ffffc900068bf750 R08: ffff88808c3ee140 R09: ffff8880a25e6010
+> R10: ffffed10144bcddc R11: ffff8880a25e6ee3 R12: 0000000000000000
+> R13: ffff88809acb0000 R14: ffff888092a42c80 R15: 000000009ef2e29a
+> FS:  0000000001ff0880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f4733e34000 CR3: 00000000a9b27000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   rdma_nl_rcv_msg drivers/infiniband/core/netlink.c:195 [inline]
+>   rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+>   rdma_nl_rcv+0x5d9/0x980 drivers/infiniband/core/netlink.c:259
+>   netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
+>   netlink_unicast+0x59e/0x7e0 net/netlink/af_netlink.c:1329
+>   netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1918
+>   sock_sendmsg_nosec net/socket.c:652 [inline]
+>   sock_sendmsg+0xd7/0x130 net/socket.c:672
+>   ____sys_sendmsg+0x753/0x880 net/socket.c:2343
+>   ___sys_sendmsg+0x100/0x170 net/socket.c:2397
+>   __sys_sendmsg+0x105/0x1d0 net/socket.c:2430
+>   __do_sys_sendmsg net/socket.c:2439 [inline]
+>   __se_sys_sendmsg net/socket.c:2437 [inline]
+>   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2437
+>   do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4403d9
+> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007ffc0efbc5c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004403d9
+> RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000004
+> RBP: 00000000006ca018 R08: 0000000000000008 R09: 00000000004002c8
+> R10: 000000000000004a R11: 0000000000000246 R12: 0000000000401c60
+> R13: 0000000000401cf0 R14: 0000000000000000 R15: 0000000000000000
+> Modules linked in:
+> ---[ end trace 548745c787596b79 ]---
+> RIP: 0010:nla_get_u32 include/net/netlink.h:1474 [inline]
+> RIP: 0010:nldev_stat_set_doit+0x63c/0xb70 drivers/infiniband/core/nldev.c:1760
+> Code: fc 01 0f 84 58 03 00 00 e8 41 83 bf fb 4c 8b a3 58 fd ff ff 48 b8 00 00 00 00 00 fc ff df 49 8d 7c 24 04 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 6d
+> RSP: 0018:ffffc900068bf350 EFLAGS: 00010247
+> RAX: dffffc0000000000 RBX: ffffc900068bf728 RCX: ffffffff85b60470
+> RDX: 0000000000000000 RSI: ffffffff85b6047f RDI: 0000000000000004
+> RBP: ffffc900068bf750 R08: ffff88808c3ee140 R09: ffff8880a25e6010
+> R10: ffffed10144bcddc R11: ffff8880a25e6ee3 R12: 0000000000000000
+> R13: ffff88809acb0000 R14: ffff888092a42c80 R15: 000000009ef2e29a
+> FS:  0000000001ff0880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f4733e34000 CR3: 00000000a9b27000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
 
-Inspried from
-commit e8688fe8df7d ("clk: imx8mn: Define gates for pll1/2 fixed dividers")
+This issue happens when an "allocate a dynamic counter for a QP" netlink
+command is received, while qpn (tb[RDMA_NLDEV_ATTR_RES_LQPN]) is not
+available. Though the rdma command always set it, kernel should not
+assume that input is correct.
 
-On imx8mn there are 9 fixed-factor dividers for SYS_PLL1 and SYS_PLL2
-each with their own gate. Only one of these gates (the one "dividing" by
-one) is currently defined and it's incorrectly set as the parent of all
-the fixed-factor dividers.
+Will fix it, thank you.
 
-Add the other 8 gates to the clock tree between sys_pll1/2_bypass and
-the fixed dividers.
-
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx8mp.c             | 54 +++++++++++++++++++++-----------
- include/dt-bindings/clock/imx8mp-clock.h | 19 ++++++++++-
- 2 files changed, 54 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 77b79f61aab5..99417b9b0ee7 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -498,28 +498,46 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_GPU_PLL_OUT] = imx_clk_hw_gate("gpu_pll_out", "gpu_pll_bypass", anatop_base + 0x64, 11);
- 	hws[IMX8MP_VPU_PLL_OUT] = imx_clk_hw_gate("vpu_pll_out", "vpu_pll_bypass", anatop_base + 0x74, 11);
- 	hws[IMX8MP_ARM_PLL_OUT] = imx_clk_hw_gate("arm_pll_out", "arm_pll_bypass", anatop_base + 0x84, 11);
--	hws[IMX8MP_SYS_PLL1_OUT] = imx_clk_hw_gate("sys_pll1_out", "sys_pll1", anatop_base + 0x94, 11);
--	hws[IMX8MP_SYS_PLL2_OUT] = imx_clk_hw_gate("sys_pll2_out", "sys_pll2", anatop_base + 0x104, 11);
- 	hws[IMX8MP_SYS_PLL3_OUT] = imx_clk_hw_gate("sys_pll3_out", "sys_pll3_bypass", anatop_base + 0x114, 11);
- 
--	hws[IMX8MP_SYS_PLL1_40M] = imx_clk_hw_fixed_factor("sys_pll1_40m", "sys_pll1_out", 1, 20);
--	hws[IMX8MP_SYS_PLL1_80M] = imx_clk_hw_fixed_factor("sys_pll1_80m", "sys_pll1_out", 1, 10);
--	hws[IMX8MP_SYS_PLL1_100M] = imx_clk_hw_fixed_factor("sys_pll1_100m", "sys_pll1_out", 1, 8);
--	hws[IMX8MP_SYS_PLL1_133M] = imx_clk_hw_fixed_factor("sys_pll1_133m", "sys_pll1_out", 1, 6);
--	hws[IMX8MP_SYS_PLL1_160M] = imx_clk_hw_fixed_factor("sys_pll1_160m", "sys_pll1_out", 1, 5);
--	hws[IMX8MP_SYS_PLL1_200M] = imx_clk_hw_fixed_factor("sys_pll1_200m", "sys_pll1_out", 1, 4);
--	hws[IMX8MP_SYS_PLL1_266M] = imx_clk_hw_fixed_factor("sys_pll1_266m", "sys_pll1_out", 1, 3);
--	hws[IMX8MP_SYS_PLL1_400M] = imx_clk_hw_fixed_factor("sys_pll1_400m", "sys_pll1_out", 1, 2);
-+	hws[IMX8MP_SYS_PLL1_40M_CG] = imx_clk_hw_gate("sys_pll1_40m_cg", "sys_pll1", anatop_base + 0x94, 27);
-+	hws[IMX8MP_SYS_PLL1_80M_CG] = imx_clk_hw_gate("sys_pll1_80m_cg", "sys_pll1", anatop_base + 0x94, 25);
-+	hws[IMX8MP_SYS_PLL1_100M_CG] = imx_clk_hw_gate("sys_pll1_100m_cg", "sys_pll1", anatop_base + 0x94, 23);
-+	hws[IMX8MP_SYS_PLL1_133M_CG] = imx_clk_hw_gate("sys_pll1_133m_cg", "sys_pll1", anatop_base + 0x94, 21);
-+	hws[IMX8MP_SYS_PLL1_160M_CG] = imx_clk_hw_gate("sys_pll1_160m_cg", "sys_pll1", anatop_base + 0x94, 19);
-+	hws[IMX8MP_SYS_PLL1_200M_CG] = imx_clk_hw_gate("sys_pll1_200m_cg", "sys_pll1", anatop_base + 0x94, 17);
-+	hws[IMX8MP_SYS_PLL1_266M_CG] = imx_clk_hw_gate("sys_pll1_266m_cg", "sys_pll1", anatop_base + 0x94, 15);
-+	hws[IMX8MP_SYS_PLL1_400M_CG] = imx_clk_hw_gate("sys_pll1_400m_cg", "sys_pll1", anatop_base + 0x94, 13);
-+	hws[IMX8MP_SYS_PLL1_OUT] = imx_clk_hw_gate("sys_pll1_out", "sys_pll1", anatop_base + 0x94, 11);
-+
-+	hws[IMX8MP_SYS_PLL1_40M] = imx_clk_hw_fixed_factor("sys_pll1_40m", "sys_pll1_40m_cg", 1, 20);
-+	hws[IMX8MP_SYS_PLL1_80M] = imx_clk_hw_fixed_factor("sys_pll1_80m", "sys_pll1_80m_cg", 1, 10);
-+	hws[IMX8MP_SYS_PLL1_100M] = imx_clk_hw_fixed_factor("sys_pll1_100m", "sys_pll1_100m_cg", 1, 8);
-+	hws[IMX8MP_SYS_PLL1_133M] = imx_clk_hw_fixed_factor("sys_pll1_133m", "sys_pll1_133m_cg", 1, 6);
-+	hws[IMX8MP_SYS_PLL1_160M] = imx_clk_hw_fixed_factor("sys_pll1_160m", "sys_pll1_160m_cg", 1, 5);
-+	hws[IMX8MP_SYS_PLL1_200M] = imx_clk_hw_fixed_factor("sys_pll1_200m", "sys_pll1_200m_cg", 1, 4);
-+	hws[IMX8MP_SYS_PLL1_266M] = imx_clk_hw_fixed_factor("sys_pll1_266m", "sys_pll1_266m_cg", 1, 3);
-+	hws[IMX8MP_SYS_PLL1_400M] = imx_clk_hw_fixed_factor("sys_pll1_400m", "sys_pll1_400m_cg", 1, 2);
- 	hws[IMX8MP_SYS_PLL1_800M] = imx_clk_hw_fixed_factor("sys_pll1_800m", "sys_pll1_out", 1, 1);
- 
--	hws[IMX8MP_SYS_PLL2_50M] = imx_clk_hw_fixed_factor("sys_pll2_50m", "sys_pll2_out", 1, 20);
--	hws[IMX8MP_SYS_PLL2_100M] = imx_clk_hw_fixed_factor("sys_pll2_100m", "sys_pll2_out", 1, 10);
--	hws[IMX8MP_SYS_PLL2_125M] = imx_clk_hw_fixed_factor("sys_pll2_125m", "sys_pll2_out", 1, 8);
--	hws[IMX8MP_SYS_PLL2_166M] = imx_clk_hw_fixed_factor("sys_pll2_166m", "sys_pll2_out", 1, 6);
--	hws[IMX8MP_SYS_PLL2_200M] = imx_clk_hw_fixed_factor("sys_pll2_200m", "sys_pll2_out", 1, 5);
--	hws[IMX8MP_SYS_PLL2_250M] = imx_clk_hw_fixed_factor("sys_pll2_250m", "sys_pll2_out", 1, 4);
--	hws[IMX8MP_SYS_PLL2_333M] = imx_clk_hw_fixed_factor("sys_pll2_333m", "sys_pll2_out", 1, 3);
--	hws[IMX8MP_SYS_PLL2_500M] = imx_clk_hw_fixed_factor("sys_pll2_500m", "sys_pll2_out", 1, 2);
-+	hws[IMX8MP_SYS_PLL2_50M_CG] = imx_clk_hw_gate("sys_pll2_50m_cg", "sys_pll2", anatop_base + 0x104, 27);
-+	hws[IMX8MP_SYS_PLL2_100M_CG] = imx_clk_hw_gate("sys_pll2_100m_cg", "sys_pll2", anatop_base + 0x104, 25);
-+	hws[IMX8MP_SYS_PLL2_125M_CG] = imx_clk_hw_gate("sys_pll2_125m_cg", "sys_pll2", anatop_base + 0x104, 23);
-+	hws[IMX8MP_SYS_PLL2_166M_CG] = imx_clk_hw_gate("sys_pll2_166m_cg", "sys_pll2", anatop_base + 0x104, 21);
-+	hws[IMX8MP_SYS_PLL2_200M_CG] = imx_clk_hw_gate("sys_pll2_200m_cg", "sys_pll2", anatop_base + 0x104, 19);
-+	hws[IMX8MP_SYS_PLL2_250M_CG] = imx_clk_hw_gate("sys_pll2_250m_cg", "sys_pll2", anatop_base + 0x104, 17);
-+	hws[IMX8MP_SYS_PLL2_333M_CG] = imx_clk_hw_gate("sys_pll2_333m_cg", "sys_pll2", anatop_base + 0x104, 15);
-+	hws[IMX8MP_SYS_PLL2_500M_CG] = imx_clk_hw_gate("sys_pll2_500m_cg", "sys_pll2", anatop_base + 0x104, 13);
-+	hws[IMX8MP_SYS_PLL2_OUT] = imx_clk_hw_gate("sys_pll2_out", "sys_pll2", anatop_base + 0x104, 11);
-+
-+	hws[IMX8MP_SYS_PLL2_50M] = imx_clk_hw_fixed_factor("sys_pll2_50m", "sys_pll2_50m_cg", 1, 20);
-+	hws[IMX8MP_SYS_PLL2_100M] = imx_clk_hw_fixed_factor("sys_pll2_100m", "sys_pll2_100m_cg", 1, 10);
-+	hws[IMX8MP_SYS_PLL2_125M] = imx_clk_hw_fixed_factor("sys_pll2_125m", "sys_pll2_125m_cg", 1, 8);
-+	hws[IMX8MP_SYS_PLL2_166M] = imx_clk_hw_fixed_factor("sys_pll2_166m", "sys_pll2_166m_cg", 1, 6);
-+	hws[IMX8MP_SYS_PLL2_200M] = imx_clk_hw_fixed_factor("sys_pll2_200m", "sys_pll2_200m_cg", 1, 5);
-+	hws[IMX8MP_SYS_PLL2_250M] = imx_clk_hw_fixed_factor("sys_pll2_250m", "sys_pll2_250m_cg", 1, 4);
-+	hws[IMX8MP_SYS_PLL2_333M] = imx_clk_hw_fixed_factor("sys_pll2_333m", "sys_pll2_333m_cg", 1, 3);
-+	hws[IMX8MP_SYS_PLL2_500M] = imx_clk_hw_fixed_factor("sys_pll2_500m", "sys_pll2_500m_cg", 1, 2);
- 	hws[IMX8MP_SYS_PLL2_1000M] = imx_clk_hw_fixed_factor("sys_pll2_1000m", "sys_pll2_out", 1, 1);
- 
- 	hws[IMX8MP_CLK_A53_SRC] = imx_clk_hw_mux2("arm_a53_src", ccm_base + 0x8000, 24, 3, imx8mp_a53_sels, ARRAY_SIZE(imx8mp_a53_sels));
-diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
-index 47ab082238b4..46c69cd66c62 100644
---- a/include/dt-bindings/clock/imx8mp-clock.h
-+++ b/include/dt-bindings/clock/imx8mp-clock.h
-@@ -296,6 +296,23 @@
- #define IMX8MP_CLK_ARM				287
- #define IMX8MP_CLK_A53_CORE			288
- 
--#define IMX8MP_CLK_END				289
-+#define IMX8MP_SYS_PLL1_40M_CG			289
-+#define IMX8MP_SYS_PLL1_80M_CG			290
-+#define IMX8MP_SYS_PLL1_100M_CG			291
-+#define IMX8MP_SYS_PLL1_133M_CG			292
-+#define IMX8MP_SYS_PLL1_160M_CG			293
-+#define IMX8MP_SYS_PLL1_200M_CG			294
-+#define IMX8MP_SYS_PLL1_266M_CG			295
-+#define IMX8MP_SYS_PLL1_400M_CG			296
-+#define IMX8MP_SYS_PLL2_50M_CG			297
-+#define IMX8MP_SYS_PLL2_100M_CG			298
-+#define IMX8MP_SYS_PLL2_125M_CG			299
-+#define IMX8MP_SYS_PLL2_166M_CG			300
-+#define IMX8MP_SYS_PLL2_200M_CG			301
-+#define IMX8MP_SYS_PLL2_250M_CG			302
-+#define IMX8MP_SYS_PLL2_333M_CG			303
-+#define IMX8MP_SYS_PLL2_500M_CG			304
-+
-+#define IMX8MP_CLK_END				305
- 
- #endif
--- 
-2.16.4
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+> 
 
