@@ -2,114 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C73A316C2CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 14:55:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5820216C2DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 14:56:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730427AbgBYNzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 08:55:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49614 "EHLO mx2.suse.de"
+        id S1730449AbgBYN4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 08:56:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729680AbgBYNzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 08:55:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 5F7DBAC5C;
-        Tue, 25 Feb 2020 13:55:13 +0000 (UTC)
-Subject: Re: [PATCH bpf-next v2 5/5] selftests/bpf: Add test for "bpftool
- feature" command
-To:     Quentin Monnet <quentin@isovalent.com>, bpf@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-References: <20200221031702.25292-1-mrostecki@opensuse.org>
- <20200221031702.25292-6-mrostecki@opensuse.org>
- <d178dc6c-7696-8e58-9df9-887152104a1c@isovalent.com>
-From:   Michal Rostecki <mrostecki@opensuse.org>
-Autocrypt: addr=mrostecki@opensuse.org; keydata=
- mQINBF4whosBEADQd45MN9lBl17sx48EAAfyrc6sVtmf/qyqsQgpJnuLGQTbSdI2Nckz0w04
- YbGCGI0giMkBgJTEDB8+Or+DZtaa4MmnqMuivI9wWMJzf3IidAZOe262/blNjsTqITzoCJ48
- MLufgrv3XkEZPEaeOEEswZ/PaemQIgW3Jn1K6IYfg9mXA1+Sn42Ikj7c41r30pnCTVDlhcyS
- kMtt5Gs1u9yOkc8LFEo4w3F02SfFJ4t1ar04xY+znRwSDZh4xFVyradaP37mTDL/cAj94jEi
- 44YzL22x6fAVRwH3wYLw49YnBK3j1uvys+DPqaOFJnQwfH3AA++tmOFYnJkC1s+E4mpcSIsn
- H/jRznlv7SPttTRfsaJL0Gk9tHaIUI4o1kLkfMOV0QDJ4xBOCeOfjBQwcDAeiVQXtMnx4XkB
- tmifSwFGlOTsEa0Mti7TlWrAPWBF5xEnG5tCuKaaLnyb4vu+gbV3r0TgI+BNv3ii+2nMFYWd
- u49pV23pck61oJ43hR1WOZUWIyLvTTQveaYRzbfcG7wbR/C2NIuAtEf8wxBv1aRI/vDCZSjV
- TK8Zh1pBdk+UsgC310ny4hcVYR1uwapJts2A+Q/rUMlsC6CAJwD916zAIAhaeNLOPYmb46Mw
- 96AhRclvV5TW929X/vCe1iczDdfSyYkU41RJGTUSBfSQXMVomQARAQABtChNaWNoYWwgUm9z
- dGVja2kgPG1yb3N0ZWNraUBvcGVuc3VzZS5vcmc+iQJUBBMBCAA+FiEE/xPU917HlqMFVtFM
- 7/hds1JJaVUFAl4whosCGwMFCQHgwSUFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQ7/hd
- s1JJaVWoyRAApCxV1shTrcIwO8ejZwr0NeZ2EBODcbJULgtjZCaCZp8ABzzUAB8uZCmxCDdL
- PEDlZgWW8Pm0SkS5jyJZ4AI1OQNtX6m/gy7fFCpr1MIZoHsVuzYHswxzZhcDGbTXrkcmLygD
- dTikyLEKAeCGMU6pbGrHfhzIRGasII1PqSO43XZYEKGPC3YgEIyx/tuL8bX3z/TxPp52oOjp
- Q3bmJEIWEzz5v/46WE4Dj3s0aKTDY6zBoYGRehSuqaBRVEIR7Y7HBMtcPwK5S1VflG38B5wh
- QuwRlz7Uuy48o0vsdnSMjuJoPZ4tmg056d0cmSse2NBfN+FPVrEw1L84jdijCBqLRam6tXuU
- 4Npszr2Z6/OBu6gkn9FqSNP8nLwnvnEJ5300epRZ4kzJgtUhMz0743fE21bzNxJB4xdMcOjV
- /yucMfwbgp3dD84A3N8jPaWCsLNuRsxjoAk6OKFz+WtHxT8m8ValYI4sn9PRhzTDTtnGlC/P
- Sem/CIseMXNYxT6mJsXkjZi757/RM3JabNZ/N0gMiquVYAapxrxv2qiMDPHByZZd+yOsBk4X
- FgfWwhOwW5g2qxXZ2mtMD4gAcDLj6x4QVf6mf6k4nPWgnOyZG7yrxu96R4jKN+kO6UAQ3RC+
- FnCxz92QefeV0rYtF+DWy/5GElQowD+wVxZDUJgwki4SjVO5Ag0EXjCGiwEQAMSNQ0O2g4no
- bi5T/eOhfVN6dzwr5nestMluQy4Xab1D2+vv4WcoIcxxj48pMSicNgbzHtoFKOALQEptuKwE
- tipiOchCtCi6atpFC0hiy+eogaxC6sysvJ0MwBWk0spWXsPQRxIy/zWQaG0NLRNXOYhupgxZ
- TN3008FsriFu/V0mQnF58w+Y8ZbpfaFUEJn4KoYtJEsjezYIAdQUDtohSrUzeK7KHGeBuePf
- XyIsZZKRaMoYbAguE3WDLcqWPBLGH0ra5O+IkqoStc6FpyyvoNLAHTtJNfYfbpXpBjrl/x2n
- hQqohQrH7+t8lDe4B6EPSHdSV9qY5l0p0y17nXY3ghQs/hqH6aw6MB52KtydKs/3dl9rxW61
- 6McUUQGy6Z0H2MnV1KqiLvNx5abfOcbUGMZPwHYqPU4zoOQhbWN34q2AuK4lEY5nbmgwI92m
- PFE5S5A2YPi2pFzVxhWUWFfX1AHWQ2NMudiYljFgCsp9sJLI+UCb8fNyDWD72e5QqKzBSLf/
- z94NICpqBGX9Z4+uF0dmPZlJTilgFU3jEUuth5NiTm1qQBUqAHUAgZhGIqVWpECHFKaIMUxv
- Xj6bvOCrCR0PfWxalS3RJT7z4OsETAG7QT4yOlqOhP5uue3I6WnzaQPZU0Gp9+vyQpuCVPdl
- HbK2kx9hg5imRgmZLOKyjdhbABEBAAGJAjwEGAEIACYWIQT/E9T3XseWowVW0Uzv+F2zUklp
- VQUCXjCGiwIbDAUJAeDBJQAKCRDv+F2zUklpVaFiEACHVCJJPXenIc5C4zkuu1pn0dmouoZV
- LWEyk3zjcC7wVJ/RGr4apLKU0hAfp9O12/s4mxa3lzZ9EvaWUY7NwwYx4kCmVcsq2+a6NVNI
- nkKUqPvj8sXd9dHWk283hDwrQrL7QPysr767TrLcXQ2l8o19q02lN/D7Jte37td8JMrsErEF
- B0Q31D+HWnn1rFJCeCn5/vwHgDW8wWtYYisv/EmUf7ppP9teiNtrQinyljTUMsb1hiy2HkhL
- qEOR7Q/NVk1yDC+oyQ08Zvt9LkELo3fPoeXX8RlbCUA36zq+3HsHggI6XJNmYDSS+l7N5r9B
- GEGFgLvCFJMP6nNX16nkvpYflxIzlmAAWQUR8K/VGvW8YgfRJBVw7+AhCe7mXubIbTa9IrJs
- QR74gvfGuJWrWq0ZtOzS5cKxos0rF2VON2rig5+5lf9A1UP1ZH0nfVCx5iXuJ1O1ld6tXHpD
- qRunpTuuKg3wkHCAS4oC/ECFHV8JukpgEuR7CNvBbYyjc7BFImmOe0bGbbntFnU173ehj0A0
- hjrs3VY5x7TDedJwEr5iMKzvI4NlXNQEjDEltBN88gMvtFo6w8W/bbe6OalIEfs42DS+5KIg
- X91a5VRZRQo853ef/YjTRCZkGhUJ9A5uCLodR14o+C2Lzc3EmJ89awrqiAirZWPuZHCfud+f
- ZURUUA==
-Message-ID: <c24d2b7a-889b-9294-cd30-6938f00b645a@opensuse.org>
-Date:   Tue, 25 Feb 2020 14:55:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1729287AbgBYN4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 08:56:34 -0500
+Received: from localhost (unknown [122.167.120.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14BBC218AC;
+        Tue, 25 Feb 2020 13:56:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582638992;
+        bh=HsjJvbTH+q59fYeim5ErNffTAszwiuMCgtA22AZPS8Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HyufZEX6mJzQQ2vyo28R4iOHwTgc0pv8EAHYQTNtjGO44+qp3Nxhoa+Ku9yap4mA9
+         SQyzxEqPclvtceqUOlyz3nWTCs8/6LkNvYArUGMMe//cvZIvTHDSzYFUuP4rGm2zxD
+         tvvcHlC5eYRKSusIbkPuSzIfwIdXtSbSF1pQbaao=
+Date:   Tue, 25 Feb 2020 19:26:28 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        daniel.lezcano@linaro.org, bjorn.andersson@linaro.org,
+        sivaa@codeaurora.org, Andy Gross <agross@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: thermal: tsens: Add entry for sc7180
+ tsens to binding
+Message-ID: <20200225135628.GP2618@vkoul-mobl>
+References: <cover.1582632110.git.amit.kucheria@linaro.org>
+ <3e760279e7152825d56f8b35160a9a55a5083ce1.1582632110.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <d178dc6c-7696-8e58-9df9-887152104a1c@isovalent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3e760279e7152825d56f8b35160a9a55a5083ce1.1582632110.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/20 12:28 PM, Quentin Monnet wrote:
->> +    @default_iface
->> +    def test_feature_dev(self, iface):
->> +        expected_patterns = [
->> +            SECTION_SYSCALL_CONFIG_PATTERN,
->> +            SECTION_PROGRAM_TYPES_PATTERN,
->> +            SECTION_MAP_TYPES_PATTERN,
->> +            SECTION_HELPERS_PATTERN,
->> +            SECTION_MISC_PATTERN,
->> +        ]
+On 25-02-20, 17:38, Amit Kucheria wrote:
+> The qcom-tsens binding requires a SoC-specific and a TSENS
+> family-specific binding to be specified in the compatible string.
 > 
-> Mixed feeling on the tests with plain output, as we keep telling people
-> that plain output should not be parsed (not reliable, may change). But
-> if you want to run one or two tests with it, why not, I guess.
+> Since qcom,sc7180-tsens is not listed in the YAML binding, we see the
+> following warnings in 'make dtbs_check'. Fix them.
+> 
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c263000: compatible: ['qcom,sc7180-tsens',
+> 'qcom,tsens-v2'] is not valid under any of the given schemas (Possible
+> causes of the failure):
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c263000: compatible:0: 'qcom,sc7180-tsens' is not one of
+> ['qcom,msm8916-tsens', 'qcom,msm8974-tsens']
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c263000: compatible:0: 'qcom,sc7180-tsens' is not one of
+> ['qcom,msm8976-tsens', 'qcom,qcs404-tsens']
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c263000: compatible:0: 'qcom,sc7180-tsens' is not one of
+> ['qcom,msm8996-tsens', 'qcom,msm8998-tsens', 'qcom,sdm845-tsens']
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c263000: compatible:1: 'qcom,tsens-v0_1' was expected
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c263000: compatible:1: 'qcom,tsens-v1' was expected
+> 
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c265000: compatible: ['qcom,sc7180-tsens',
+> 'qcom,tsens-v2'] is not valid under any of the given schemas (Possible
+> causes of the failure):
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c265000: compatible:0: 'qcom,sc7180-tsens' is not one of
+> ['qcom,msm8916-tsens', 'qcom,msm8974-tsens']
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c265000: compatible:0: 'qcom,sc7180-tsens' is not one of
+> ['qcom,msm8976-tsens', 'qcom,qcs404-tsens']
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c265000: compatible:0: 'qcom,sc7180-tsens' is not one of
+> ['qcom,msm8996-tsens', 'qcom,msm8998-tsens', 'qcom,sdm845-tsens']
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c265000: compatible:1: 'qcom,tsens-v0_1' was expected
+> builds/arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml:
+> thermal-sensor@c265000: compatible:1: 'qcom,tsens-v1' was expected
 
-I thought about that and yes, testing the plain output is probably
-redundant and makes those tests less readable. However, the only plain
-output test which I would like to keep there is test_feature_macros -
-because I guess that we are not planning to change names or patterns of
-generated macros (or if so, we should test that change).
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+
+> 
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> index eef13b9446a8..13e294328932 100644
+> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> @@ -39,6 +39,7 @@ properties:
+>                - qcom,msm8996-tsens
+>                - qcom,msm8998-tsens
+>                - qcom,sdm845-tsens
+> +              - qcom,sc7180-tsens
+>            - const: qcom,tsens-v2
+>  
+>    reg:
+> -- 
+> 2.20.1
+
+-- 
+~Vinod
