@@ -2,81 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC5BF16EC24
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 18:10:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0470216EC38
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 18:12:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731230AbgBYRK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 12:10:56 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46993 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730174AbgBYRKz (ORCPT
+        id S1730790AbgBYRMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 12:12:46 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44960 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729939AbgBYRMq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 12:10:55 -0500
-Received: by mail-oi1-f193.google.com with SMTP id a22so13235335oid.13;
-        Tue, 25 Feb 2020 09:10:55 -0800 (PST)
+        Tue, 25 Feb 2020 12:12:46 -0500
+Received: by mail-pg1-f196.google.com with SMTP id a14so6792655pgb.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 09:12:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WxYxKuDCjw2ta/VcYxfG6H2pyMpZknzieLnpy09W8ak=;
-        b=JZqrBW2dcCONZpZqDyHizIPFtqY7uailyKcnNYnUjBtUv9xHwnEe1TZ5XI0809wfOW
-         cP022neZfnRW78v+30xIPdX/aMr9uJ+VTi8FPyRkbZAy5kLIY+2xgSNBAocbdyBYKu1O
-         eNJUjLCXE8y5duspEf9cGyswbU4TZfduGQIepZcqLiPOSOxS03Va4hLURdECCZ6Mpls8
-         h0uSTue36K1UH04fN3PN6JeXyNLzWeW7cHjzxGbvqsIqPPG0Y1bzKTaKM5vmO00KpN3r
-         LMF+097RDXnphB58wiluOAt1V++hUGPXBarUctz4iWaqTKtvrzie1u8wP/vGv7NKuSsj
-         fOAw==
-X-Gm-Message-State: APjAAAVvqiVuX5AC4WOtnnEeDOKa/QNeU5dI+NUWTpeEJe5dXWPGsbOv
-        imiPdjlT6XVd4Ru7Ej/ILw==
-X-Google-Smtp-Source: APXvYqyNZeSueBjr4b/f5cuT3NJLbY2PjOkM3NiotToiEr0JE4LRnFFXTwEwBP5qHj5CvNRnu0FATA==
-X-Received: by 2002:aca:c401:: with SMTP id u1mr9332oif.62.1582650654724;
-        Tue, 25 Feb 2020 09:10:54 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m18sm5830700otf.6.2020.02.25.09.10.53
+         :mime-version:content-disposition:in-reply-to;
+        bh=V/ZCIccIJ6u9bm3Rjv7+N6WTTpdrTbo3t75yfjBv9GE=;
+        b=Jh9/XqLwAHCSEtv3BrTOm67EsyR+VQXrjTZaFhnU/rNGVoa5sRufSWxu7cYSk0YhFZ
+         XS+fadTA4yyGhpppQUGLiLgmw086yhRKsgi0BWApZFwdP+5KkP6drmbwdUWTT9DjjDF4
+         PXlBKRs1qQl3qYad8xFK0AxAzt72BZYXpGQ3Bcb1llFEyt8m4CoXmb0kMl3SzbZpcauu
+         /jGSDAimQxl2IM+hxiCleW1faWJJ73iH6lEBbC+U0rSmyayTQhwfna522KtKUmTE0+Jp
+         EuBHx2oqf3GmE05xxtUsjEU24ApRC9GT8FQSs1Ix1A/e+JPcfEx5WefkUbTYqQPa1jNj
+         N1lw==
+X-Gm-Message-State: APjAAAXdgdv0QKlDYPBUyzehmT7Flq0GH7ozGBSiuwKARXkP2xLUo7Q7
+        rCooEYQ2g7xqv2stad2jNDc=
+X-Google-Smtp-Source: APXvYqyU7j++q/aWy4d7ycebGNKVGShaQbogy6Y67Mbzi+FdBqnHygHLkz6eScpouw6chPDPbNYPhg==
+X-Received: by 2002:a63:f450:: with SMTP id p16mr36265357pgk.211.1582650765382;
+        Tue, 25 Feb 2020 09:12:45 -0800 (PST)
+Received: from sultan-box.localdomain (c-71-63-179-120.hsd1.wa.comcast.net. [71.63.179.120])
+        by smtp.gmail.com with ESMTPSA id e26sm18284499pfl.59.2020.02.25.09.12.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 09:10:53 -0800 (PST)
-Received: (nullmailer pid 6373 invoked by uid 1000);
-        Tue, 25 Feb 2020 17:10:52 -0000
-Date:   Tue, 25 Feb 2020 11:10:52 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, srv_heupstream@mediatek.com,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        cawa.cheng@mediatek.com, bibby.hsieh@mediatek.com,
-        ck.hu@mediatek.com, stonea168@163.com, huijuan.xie@mediatek.com,
-        Jitao Shi <jitao.shi@mediatek.com>
-Subject: Re: [PATCH v8 2/7] dt-bindings: display: mediatek: update dpi
- supported chips
-Message-ID: <20200225171052.GA6002@bogus>
-References: <20200225094057.120144-1-jitao.shi@mediatek.com>
- <20200225094057.120144-3-jitao.shi@mediatek.com>
+        Tue, 25 Feb 2020 09:12:44 -0800 (PST)
+Date:   Tue, 25 Feb 2020 09:12:42 -0800
+From:   Sultan Alsawaf <sultan@kerneltoast.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Mel Gorman <mgorman@suse.de>, Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH] mm: Stop kswapd early when nothing's waiting for it to
+ free pages
+Message-ID: <20200225171242.GA496421@sultan-box.localdomain>
+References: <20200219194006.GA3075@sultan-book.localdomain>
+ <20200219200527.GF11847@dhcp22.suse.cz>
+ <20200219204220.GA3488@sultan-book.localdomain>
+ <20200219214513.GL3420@suse.de>
+ <20200219224231.GA5190@sultan-book.localdomain>
+ <20200220101945.GN3420@suse.de>
+ <20200221042232.GA2197@sultan-book.localdomain>
+ <20200221080737.GK20509@dhcp22.suse.cz>
+ <20200221210824.GA3605@sultan-book.localdomain>
+ <20200225090945.GJ22443@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200225094057.120144-3-jitao.shi@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200225090945.GJ22443@dhcp22.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Feb 2020 17:40:52 +0800, Jitao Shi wrote:
-> Add descriptions about supported chips, including MT2701 & MT8173 &
-> mt8183
+On Tue, Feb 25, 2020 at 10:09:45AM +0100, Michal Hocko wrote:
+> On Fri 21-02-20 13:08:24, Sultan Alsawaf wrote:
+> [...]
+> > Both of these logs are attached in a tarball.
 > 
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> ---
->  .../devicetree/bindings/display/mediatek/mediatek,dpi.txt        | 1 +
->  1 file changed, 1 insertion(+)
+> Thanks! First of all
+> $ grep pswp vmstat.1582318979
+> pswpin 0
+> pswpout 0
 > 
+> suggests that you do not have any swap storage, right?
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
+Correct. I'm not using any swap (and it should not be necessary to make Linux mm
+work of course). If I were to divide my RAM in half and use one half as swap,
+do you think the results would be different? IMO they shouldn't be.
 
-If a tag was not added on purpose, please state why and what changed.
+> The amount of anonymous memory is not really high (~560MB) but file LRU
+> is _really_ low (~3MB), unevictable list is at ~200MB. That gets us to
+> ~760M of memory which is 74% of the memory. Please note that your mem=2G
+> setup gives you only 1G of memory in fact (based on the zone_info you
+> have posted). That is not something unusual but the amount of the page
+> cache is worrying because I would expect a heavy trashing because most
+> of the executables are going to require major faults. Anonymous memory
+> is not swapped out obviously so there is no other option than to refault
+> constantly.
+
+I noticed that only 1G was available as well. Perhaps direct reclaim wasn't
+attempted due to the zone_reclaimable_pages() check, though I don't think direct
+reclaim would've been particularly helpful in this case (see below).
+
+> kswapd has some feedback mechanism to back off when the zone is hopless
+> from the reclaim point of view AFAIR but it seems it has failed in this
+> particular situation. It should have relied on the direct reclaim and
+> eventually trigger the OOM killer. Your patch has worked around this by
+> bailing out from the kswapd reclaim too early so a part of the page
+> cache required for the code to move on would stay resident and move
+> further.
+> 
+> The proper fix should, however, check the amount of reclaimable pages
+> and back off if they cannot meet the target IMO. We cannot rely on the
+> general reclaimability here because that could really be thrashing.
+
+Yes, my guess was that thrashing out pages used by the running programs was the
+cause for my freezes, but I didn't think of making kswapd back off a different
+way.
+
+Right now I don't see any such back-off mechanism in kswapd. Also, if we add
+this into kswapd, we would need to plug it into the direct reclaim path as well,
+no? I don't think direct reclaim would help with the situation I've run into;
+although it wouldn't be as bad as letting kswapd evict pages to the high
+watermark, it would still cause page thrashing that would just be capped to the
+amount of pages a direct reclaimer is looking to steal.
+
+Considering that my patch remedies this issue for me without invoking the OOM
+killer, a proper solution should produce the same or better results. I don't
+think the OOM killer should have been triggered in this case.
+
+Sultan
