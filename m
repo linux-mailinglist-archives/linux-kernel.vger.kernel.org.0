@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 347B516F335
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F23716F341
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:27:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbgBYX0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:26:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55861 "EHLO
+        id S1730696AbgBYX1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:27:21 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56039 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730254AbgBYX0c (ORCPT
+        with ESMTP id S1730530AbgBYX1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:26:32 -0500
+        Tue, 25 Feb 2020 18:27:03 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j6jag-0004v4-P6; Wed, 26 Feb 2020 00:26:15 +0100
+        id 1j6jai-0004wQ-3M; Wed, 26 Feb 2020 00:26:16 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id F028B1040AE;
-        Wed, 26 Feb 2020 00:25:45 +0100 (CET)
-Message-Id: <20200225224144.911992536@linutronix.de>
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 345E91040B2;
+        Wed, 26 Feb 2020 00:25:46 +0100 (CET)
+Message-Id: <20200225224145.020876774@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Feb 2020 23:33:29 +0100
+Date:   Tue, 25 Feb 2020 23:33:30 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [patch 08/16] x86/entry: Implement user mode C entry points for #DB and #MCE
+Subject: [patch 09/16] x86/entry: Provide IDTENTRY_DF
 References: <20200225223321.231477305@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,133 +42,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MCE entry point uses the same mechanism as the IST entry point for
-now. For #DB split the inner workings and just keep the ist_enter/exit
-magic in the IST variant. Fixup the ASM code to emit the proper
-noist_##cfunc call.
+Provide a separate macro for #DF as this needs to emit paranoid only code
+and has also a special ASM stub in 32bit.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/entry/entry_64.S      |    2 +-
- arch/x86/kernel/cpu/mce/core.c |   11 +++++++++++
- arch/x86/kernel/traps.c        |   30 ++++++++++++++++++++++--------
- 3 files changed, 34 insertions(+), 9 deletions(-)
+ arch/x86/include/asm/idtentry.h |   82 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -646,7 +646,7 @@ SYM_CODE_START(\asmsym)
+--- a/arch/x86/include/asm/idtentry.h
++++ b/arch/x86/include/asm/idtentry.h
+@@ -160,10 +160,85 @@ static __always_inline void __##func(str
+ #define DEFINE_IDTENTRY_NOIST(func)					\
+ 	DEFINE_IDTENTRY(noist_##func)
  
- 	/* Switch to the regular task stack and use the noist entry point */
- .Lfrom_usermode_switch_stack_\@:
--	idtentry_body vector \cfunc, has_error_code=0
-+	idtentry_body vector noist_\cfunc, has_error_code=0
- 
- _ASM_NOKPROBE(\asmsym)
- SYM_CODE_END(\asmsym)
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -1898,11 +1898,22 @@ static void unexpected_machine_check(str
- /* Call the installed machine check handler for this CPU setup. */
- void (*machine_check_vector)(struct pt_regs *) = unexpected_machine_check;
- 
-+/* MCE hit kernel mode */
- DEFINE_IDTENTRY_MCE(exc_machine_check)
- {
- 	machine_check_vector(regs);
- }
- 
-+#ifdef CONFIG_X86_64
-+/*
-+ * The user mode variant (same content for now).
++/**
++ * DECLARE_IDTENTRY_DF - Declare functions for double fault
++ * @vector:	Vector number (ignored for C)
++ * @func:	Function name of the entry point
++ *
++ * Maps to DECLARE_IDTENTRY_ERRORCODE
 + */
-+DEFINE_IDTENTRY_MCE_USER(exc_machine_check)
-+{
-+	machine_check_vector(regs);
-+}
-+#endif
++#define DECLARE_IDTENTRY_DF(vector, func)				\
++	DECLARE_IDTENTRY_ERRORCODE(vector, func)
 +
- /*
-  * Called for each booted CPU to set up machine checks.
-  * Must be called with preempt off:
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -739,15 +739,13 @@ static bool is_sysenter_singlestep(struc
-  *
-  * May run on IST stack.
-  */
--DEFINE_IDTENTRY_DEBUG(exc_debug)
-+static void notrace handle_debug(struct pt_regs *regs)
- {
- 	struct task_struct *tsk = current;
- 	int user_icebp = 0;
- 	unsigned long dr6;
- 	int si_code;
++/**
++ * DEFINE_IDTENTRY_DF - Emit code for double fault
++ * @func:	Function name of the entry point
++ *
++ * @func is called from ASM entry code with interrupts disabled.
++ */
++#define DEFINE_IDTENTRY_DF(func)					\
++static __always_inline void __##func(struct pt_regs *regs,		\
++				     unsigned long error_code,		\
++				     unsigned long address);		\
++									\
++__visible notrace void func(struct pt_regs *regs,			\
++			    unsigned long error_code)			\
++{									\
++	unsigned long address = read_cr2();				\
++									\
++	trace_hardirqs_off();						\
++	__##func (regs, error_code, address);				\
++}									\
++NOKPROBE_SYMBOL(func);							\
++									\
++static __always_inline void __##func(struct pt_regs *regs,		\
++				     unsigned long error_code,		\
++				     unsigned long address)
++
+ #else	/* CONFIG_X86_64 */
+ /* Maps to a regular IDTENTRY on 32bit for now */
+ # define DECLARE_IDTENTRY_IST		DECLARE_IDTENTRY
+ # define DEFINE_IDTENTRY_IST		DEFINE_IDTENTRY
++
++/**
++ * DECLARE_IDTENTRY_DF - Declare functions for double fault 32bit variant
++ * @vector:	Vector number (ignored for C)
++ * @func:	Function name of the entry point
++ *
++ * Declares three functions:
++ * - The ASM entry point: asm_##func
++ * - The C handler called from the C shim
++ */
++#define DECLARE_IDTENTRY_DF(vector, func)				\
++	asmlinkage void asm_##func(void);				\
++	__visible void func(struct pt_regs *regs,			\
++			    unsigned long error_code,			\
++			    unsigned long address)
++
++/**
++ * DEFINE_IDTENTRY_DF - Emit code for double fault on 32bit
++ * @func:	Function name of the entry point
++ *
++ * This is called through the doublefault shim which already provides
++ * cr2 in the address argument.
++ */
++#define DEFINE_IDTENTRY_DF(func)					\
++static __always_inline void __##func(struct pt_regs *regs,		\
++				     unsigned long error_code,		\
++				     unsigned long address);		\
++									\
++__visible notrace void func(struct pt_regs *regs,			\
++			    unsigned long error_code,			\
++			    unsigned long address)			\
++{									\
++	__##func (regs, error_code, address);				\
++}									\
++NOKPROBE_SYMBOL(func);							\
++									\
++static __always_inline void __##func(struct pt_regs *regs,		\
++				     unsigned long error_code,		\
++				     unsigned long address)
++
+ #endif	/* !CONFIG_X86_64 */
  
--	ist_enter(regs);
--
- 	get_debugreg(dr6, 6);
- 	/*
- 	 * The Intel SDM says:
-@@ -776,7 +774,7 @@ DEFINE_IDTENTRY_DEBUG(exc_debug)
- 		     is_sysenter_singlestep(regs))) {
- 		dr6 &= ~DR_STEP;
- 		if (!dr6)
--			goto exit;
-+			return;
- 		/*
- 		 * else we might have gotten a single-step trap and hit a
- 		 * watchpoint at the same time, in which case we should fall
-@@ -797,12 +795,12 @@ DEFINE_IDTENTRY_DEBUG(exc_debug)
+ /* C-Code mapping */
+@@ -209,12 +284,19 @@ static __always_inline void __##func(str
+ # define DECLARE_IDTENTRY_DEBUG(vector, func)			\
+ 	idtentry_mce_db vector asm_##func func
  
- #ifdef CONFIG_KPROBES
- 	if (kprobe_debug_handler(regs))
--		goto exit;
-+		return;
++# define DECLARE_IDTENTRY_DF(vector, func)			\
++	idtentry_df vector asm_##func func
++
+ #else
+ # define DECLARE_IDTENTRY_MCE(vector, func)			\
+ 	DECLARE_IDTENTRY(vector, func)
+ 
+ # define DECLARE_IDTENTRY_DEBUG(vector, func)			\
+ 	DECLARE_IDTENTRY(vector, func)
++
++/* No ASM emitted for DF as this goes through a C shim */
++# define DECLARE_IDTENTRY_DF(vector, func)
++
  #endif
  
- 	if (notify_die(DIE_DEBUG, "debug", regs, (long)&dr6, 0,
- 		       SIGTRAP) == NOTIFY_STOP)
--		goto exit;
-+		return;
- 
- 	/*
- 	 * Let others (NMI) know that the debug stack is in use
-@@ -818,7 +816,7 @@ DEFINE_IDTENTRY_DEBUG(exc_debug)
- 				 X86_TRAP_DB);
- 		cond_local_irq_disable(regs);
- 		debug_stack_usage_dec();
--		goto exit;
-+		return;
- 	}
- 
- 	if (WARN_ON_ONCE((dr6 & DR_STEP) && !user_mode(regs))) {
-@@ -837,11 +835,27 @@ DEFINE_IDTENTRY_DEBUG(exc_debug)
- 		send_sigtrap(regs, 0, si_code);
- 	cond_local_irq_disable(regs);
- 	debug_stack_usage_dec();
-+}
-+NOKPROBE_SYMBOL(handle_debug);
- 
--exit:
-+/*
-+ * IST stack entry.
-+ */
-+DEFINE_IDTENTRY_DEBUG(exc_debug)
-+{
-+	ist_enter(regs);
-+	handle_debug(regs);
- 	ist_exit(regs);
- }
- 
-+#ifdef CONFIG_X86_64
-+/* User entry, runs on regular task stack */
-+DEFINE_IDTENTRY_DEBUG_USER(exc_debug)
-+{
-+	handle_debug(regs);
-+}
-+#endif
-+
- /*
-  * Note that we play around with the 'TS' bit in an attempt to get
-  * the correct behaviour even in the presence of the asynchronous
+ /* No ASM code emitted for NMI */
 
