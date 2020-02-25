@@ -2,174 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A88E16B64D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:09:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CAF516B63F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 01:06:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbgBYAJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Feb 2020 19:09:46 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:54329 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728011AbgBYAJp (ORCPT
+        id S1728376AbgBYAGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Feb 2020 19:06:53 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.195]:14169 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726651AbgBYAGx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Feb 2020 19:09:45 -0500
-Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 899633A1961;
-        Tue, 25 Feb 2020 11:09:39 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j6Nn7-0004kt-Lc; Tue, 25 Feb 2020 11:09:37 +1100
-Date:   Tue, 25 Feb 2020 11:09:37 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
- operations state
-Message-ID: <20200225000937.GA10776@dread.disaster.area>
-References: <20200221004134.30599-1-ira.weiny@intel.com>
- <20200221004134.30599-8-ira.weiny@intel.com>
- <20200221174449.GB11378@lst.de>
- <20200221224419.GW10776@dread.disaster.area>
- <20200224175603.GE7771@lst.de>
+        Mon, 24 Feb 2020 19:06:53 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 98403333E7
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 18:06:52 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 6NkSjJ0HlSl8q6NkSjy2tK; Mon, 24 Feb 2020 18:06:52 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=W2nVCBOC3RQtFd1bJm8Y55rMfod2dkAr8hWnPOcjNNM=; b=C/ezcuvREGquXC4mgNW/H88+ug
+        TVAa6onqkKTEYBN++tieBb1vLd2PnxxGpJ99XXjMhkF3X5vm3yFh+dX31VyJS4lN0jNOp8h8BWxKO
+        q9EhUxG3KUKxBWkkCy7Q88JqK0vy8o5Q8Xxn/1qhrxnSP80grhsxxAYOBBL0I6q6NzKSGQrH8hFEA
+        0LfXdZIgDC4fV+88I9t5k0KJXM+zYMDi1GnGYqMQlJU6zPeVuqemnXl7DSfa7osY2LhJuvY5TOHP6
+        0tbshf9NfwsYuh7Ks/fAYtdqwRhI+1hm7Q63aemirVaCFA0ytK48jW68iC397zTuMZSu+VZyND0De
+        5+WkfkSg==;
+Received: from [201.166.190.177] (port=54400 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j6NkQ-002Nmd-0p; Mon, 24 Feb 2020 18:06:51 -0600
+Date:   Mon, 24 Feb 2020 18:09:39 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] net: hns: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200225000939.GA18897@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200224175603.GE7771@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=7-415B0cAAAA:8 a=Nhs22OFJWa-oc4Q03hQA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.166.190.177
+X-Source-L: No
+X-Exim-ID: 1j6NkQ-002Nmd-0p
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.166.190.177]:54400
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 21
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 06:56:03PM +0100, Christoph Hellwig wrote:
-> On Sat, Feb 22, 2020 at 09:44:19AM +1100, Dave Chinner wrote:
-> > > I am very much against this.  There is a reason why we don't support
-> > > changes of ops vectors at runtime anywhere else, because it is
-> > > horribly complicated and impossible to get right.  IFF we ever want
-> > > to change the DAX vs non-DAX mode (which I'm still not sold on) the
-> > > right way is to just add a few simple conditionals and merge the
-> > > aops, which is much easier to reason about, and less costly in overall
-> > > overhead.
-> > 
-> > *cough*
-> > 
-> > That's exactly what the original code did. And it was broken
-> > because page faults call multiple aops that are dependent on the
-> > result of the previous aop calls setting up the state correctly for
-> > the latter calls. And when S_DAX changes between those calls, shit
-> > breaks.
-> 
-> No, the original code was broken because it didn't serialize between
-> DAX and buffer access.
-> 
-> Take a step back and look where the problems are, and they are not
-> mostly with the aops.  In fact the only aop useful for DAX is
-> is ->writepages, and how it uses ->writepages is actually a bit of
-> an abuse of that interface.
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-The races are all through the fops, too, which is one of the reasons
-Darrick mentioned we should probably move this up to file ops
-level...
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-> So what we really need it just a way to prevent switching the flag
-> when a file is mapped,
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-That's not sufficient.
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-We also have to prevent the file from being mapped *while we are
-switching*. Nothing in the mmap() path actually serialises against
-filesystem operations, and the initial behavioural checks in the
-page fault path are similarly unserialised against changing the
-S_DAX flag.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-e.g. there's a race against ->mmap() with switching the the S_DAX
-flag. In xfs_file_mmap():
+This issue was found with the help of Coccinelle.
 
-        file_accessed(file);
-        vma->vm_ops = &xfs_file_vm_ops;
-        if (IS_DAX(inode))
-                vma->vm_flags |= VM_HUGEPAGE;
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-So if this runs while a switch from true to false is occurring,
-we've got a non-dax VMA with huge pages enabled, and the non-dax
-page fault path doesn't support this.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h | 2 +-
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-If we are really lucky, we'll have IS_DAX() set just long
-enough to get through this check in xfs_filemap_huge_fault():
-
-        if (!IS_DAX(file_inode(vmf->vma->vm_file)))
-                return VM_FAULT_FALLBACK;
-
-and then we'll get into __xfs_filemap_fault() and block on the
-MMAPLOCK. When we actually get that lock, S_DAX will now be false
-and we have a huge page fault running through a path (page cache IO)
-that doesn't support huge pages...
-
-This is the sort of landmine switching S_DAX without serialisation
-causes. The methods themselves look sane, but it's cross-method
-dependencies for a stable S_DAX flag that is the real problem.
-
-Yes, we can probably fix this by adding XFS_MMAPLOCK_SHARED here,
-but means every filesystem has to solve the same race conditions
-itself. That's hard to get right and easy to get wrong. If the
-VFS/mm subsystem provides the infrastructure needed to use this
-functionality safely, then that is hard for filesystem developers to
-get wrong.....
-
-> and in the normal read/write path ensure the
-> flag can't be switch while I/O is going on, which could either be
-> done by ensuring it is only switched under i_rwsem or equivalent
-> protection, or by setting the DAX flag once in the iocb similar to
-> IOCB_DIRECT.
-
-The iocb path is not the problem - that's entirely serialised
-against S_DAX changes by the i_rwsem. The problem is that we have no
-equivalent filesystem level serialisation for the entire mmap/page
-fault path, and it checks S_DAX all over the place.
-
-It's basically the same limitation that we have with mmap vs direct
-IO - we can't lock out mmap when we do direct IO, so we cannot
-guarantee coherency between the two. Similar here - we cannot
-lockout mmap in any sane way, so we cannot guarantee coherency
-between mmap and changing the S_DAX flag.
-
-That's the underlying problem we need to solve here.
-
-/me wonders if the best thing to do is to add a ->fault callout to
-tell the filesystem to lock/unlock the inode right up at the top of
-the page fault path, outside even the mmap_sem.  That means all the
-methods that the page fault calls are protected against S_DAX
-changes, and it gives us a low cost method of serialising page
-faults against DIO (e.g. via inode_dio_wait())....
-
-> And they easiest way to get all this done is as a first step to
-> just allowing switching the flag when no blocks are allocated at
-> all, similar to how the rt flag works.
-
-False equivalence - it is not similar because the RT flag changes
-and their associated state checks are *already fully serialised* by
-the XFS_ILOCK_EXCL. S_DAX accesses have no such serialisation, and
-that's the problem we need to solve...
-
-In reality, I don't really care how we solve this problem, but we've
-been down the path you are suggesting at least twice before and each
-time we've ended up in a "that doesn't work" corner and had to
-persue other solutions. I don't like going around in circles.
-
-Cheers,
-
-Dave.
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h
+index 2721f1f1ab42..0f0e16f9afc0 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.h
+@@ -92,7 +92,7 @@ struct ppe_common_cb {
+ 	u8 comm_index;   /*ppe_common index*/
+ 
+ 	u32 ppe_num;
+-	struct hns_ppe_cb ppe_cb[0];
++	struct hns_ppe_cb ppe_cb[];
+ 
+ };
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h
+index 3741befb914e..a9f805925699 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.h
+@@ -108,7 +108,7 @@ struct rcb_common_cb {
+ 	u32 ring_num;
+ 	u32 desc_num; /*  desc num per queue*/
+ 
+-	struct ring_pair_cb ring_pair_cb[0];
++	struct ring_pair_cb ring_pair_cb[];
+ };
+ 
+ int hns_rcb_buf_size2type(u32 buf_size);
 -- 
-Dave Chinner
-david@fromorbit.com
+2.25.0
+
