@@ -2,359 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B9B116BB52
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:55:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B718816BB63
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:57:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbgBYHze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 02:55:34 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40221 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbgBYHze (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 02:55:34 -0500
-Received: by mail-oi1-f195.google.com with SMTP id a142so11684126oii.7;
-        Mon, 24 Feb 2020 23:55:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vDTNmuWjuAHtvuVbjdMd3VLuF/qKiWw9E7XEtWsc/5E=;
-        b=m70wOcNTGxbblYPvO5tT6VYYHlU5Fy/HWUhb7ItZhaCTCBjaZApb/9e6oIOdnuxwzF
-         kt/tStmjYohgve5ADUmeQ+T/bVHOSPUFUia1CxHuNRTKUZRL69Bv0f/qCfACVOSKuvVS
-         IjjGAtQ80wn8d9O9jbpMcHJX5LW+dEflPmzyEZ02lIuot72DtKES5jAjZZ+EXpZzybzD
-         yN9WGAvMd2EekPscMzOx4OULdlrtZg/x6VOpWs+eBDN2o8toLcVtv+z812bwtBIP4I0U
-         0kShLU1lIabMdISrzvPtdJjVbeiVmxm4ZyuvKFUMA8Ok5IArhmRez9FsdjrjbZQgy4cr
-         qJXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vDTNmuWjuAHtvuVbjdMd3VLuF/qKiWw9E7XEtWsc/5E=;
-        b=rszsOt8LGlr80dtSDe3CVDSwSM7osIs8KiH1Zm1u2K62FIr25CH531jlBiIxstlwZM
-         ALVAMNhyds5cPS3hYcfhoTfAVQoJKj/xwvJ8xigx6ePFohBbH8oA2FmHTNsId2CZIJUN
-         tRRaycD6OiKKkmTzqKlE0aQlsP3bV2btyKB9H7vwoZ8+vEzB39ORhLtVj0amkPc13DPV
-         8fsf11HfRkSgd+NuzvGnsMF1hPHJC57ag3OoN13v7dA00A3fbGwjMeTDCtNQjL4JvnBj
-         /co910C6vxS3nWJEyRnlhNpkyJYmpglpL6PuhnHa0CKRQ+CMNqKwBMNKIhhm8orySyhu
-         CCKQ==
-X-Gm-Message-State: APjAAAVOv3is8/+0HHzzU5bDQcXWgitRpSN7gKoquqwyClut3n2nU3hd
-        XeCLdaKMQQoTSx53Qp1uX+K3O27ldY4mK6If4E+uc3ZP
-X-Google-Smtp-Source: APXvYqzj21h0ZL8pb+IscgvCYutp8SLIikMEv5yDF7wzQtTtYz0/RXLNbHjhBPxX0S+5sbh5rp1RAQpDs7mS5zG80fw=
-X-Received: by 2002:aca:44d7:: with SMTP id r206mr2474277oia.33.1582617331043;
- Mon, 24 Feb 2020 23:55:31 -0800 (PST)
+        id S1729458AbgBYH5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 02:57:48 -0500
+Received: from mout.web.de ([212.227.17.12]:38471 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729124AbgBYH5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 02:57:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1582617411;
+        bh=xNhujqjwcR+ke2DgdRSlb64vwkX2oC+/uTQeFtoyP7Q=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=WOc0LkWZvo/nxtXPWWZeumIo/TadG/TlJgyq39oGaxhcbdQ8saUDAl8h293qU/s0w
+         G21a1Sbr1j1xUJcNJlVRz5ksnXRA3+QFdp9LRZ6hkMHLJumodNj3P0a9FLEtsKfsMw
+         mgXooYvAs52u+bbpx0BTkz9WDrOnGrLuz1ggHMVs=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.131.118.181]) by smtp.web.de (mrweb103
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M5OUd-1jLPXp3jDT-00zUfl; Tue, 25
+ Feb 2020 08:56:51 +0100
+Subject: Re: [for-next][12/26] Documentation: bootconfig: Add a doc for
+ extended boot config
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tim Bird <Tim.Bird@sony.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+References: <23e371ca-5df8-3ae3-c685-b01c07b55540@web.de>
+ <20200220221340.2b66fd2051a5da74775c474b@kernel.org>
+ <5ed96b7b-7485-1ea0-16e2-d39c14ae266d@web.de>
+ <20200221191637.e9eed4268ff607a98200628c@kernel.org>
+ <5ade73b0-a3e8-e71a-3685-6485f37ac8b7@web.de>
+ <20200222131833.56a5be2d36033dc5a77a9f0b@kernel.org>
+ <370e675a-598e-71db-8213-f5494b852a71@web.de>
+ <20200223005615.79f308e2ca0717132bb2887b@kernel.org>
+ <8cc7e621-c5e3-28fa-c789-0bb7c55d77d6@web.de>
+ <20200224121302.5b730b519d550eb34da720a5@kernel.org>
+ <25dd284f-6122-c01b-ef22-901c3e0bdf37@web.de>
+ <20200225154903.f636acde809a304bfccf4995@kernel.org>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <8c99a63b-b1b9-a1ba-fa2a-38d1573f18b1@web.de>
+Date:   Tue, 25 Feb 2020 08:56:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <1582022829-27032-1-git-send-email-wanpengli@tencent.com>
-In-Reply-To: <1582022829-27032-1-git-send-email-wanpengli@tencent.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Tue, 25 Feb 2020 15:55:20 +0800
-Message-ID: <CANRm+CxyWGExs=OxD13vJcZS2NUBEXt2ppUrcLX=h0O-RpJRgg@mail.gmail.com>
-Subject: Re: [PATCH] KVM: LAPIC: Recalculate apic map in batch
-To:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200225154903.f636acde809a304bfccf4995@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:A7KqSzUgzZW7pMxZ7BCSA3XTtwwCGu4/thVVgDUqoBSfgAz8WZi
+ UjpSzUeqp6lf3J/f5pgHESTvpzMUpnuR2agK0LVtikCHLOEkic+hoTmrafSrZ0vO+s0yRo4
+ izR2CRqQAb251hk7+lWizoLsP1Zhz4UsA2xQ8f0MUF2yA/qiU/tZrYQYTl48LsAzcI5OFEg
+ G4RPb1pCH4FE/baYGc4DA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:SD54hTpdpJ0=:abow89jL0z+jLpdrnMcryo
+ Fgu/UX6W6ocL54cglFUg4P95WrcUIW1uoJE+TGgSJRwlqzFTbFodRfKC0g4RapK8E1Xh8daK5
+ +qJGKgXP65B+DzFGAHGu1D+E92wWNgLmY5WICQ6k8HwwMrRvvLvs6/amfhEhY5g7W/RdImKfi
+ jrSG2aYWhWzEJAqk4SQw6R7Y5QshLpEc1geyoHha5+2Y/o+/4HVur7Kl9yM2jRBdiWaHyYoMw
+ EFOW9cTcYfcbL+K/kVLmZnpETEh4dlrsk6HjeEJpRkruKkH9gEyCRDpOU+gRUxRUTOjbHEg08
+ Ce28G77JBSmxtdx52wkXiFZoaeU2mX/J276bTpEA1vSLg1JXuok1z1Tmfzi38cwLyRi4iP//a
+ 1L7Bqf40XcLwz2hmv7BkeqJVOW+809LcuvCwMzZreOxqW2MqK1G9z2rshOrL8CD01WmMzFuqB
+ OQz4VUw5SQifH+64LuqSxnhFMq2aqxgSC8nVSTit2zwNYqFtDbI1lQruXDGdZKTatNx7On9Lw
+ 2AKdStGvWK7/a3cddV8HwrQYGpgoV6Q+wBV/bj6EL4YcydJGh417qflg0kkg3J+CE8Pa7kggC
+ ECvt5i/6vaPwduSi1gSfQB/BKkjFYyZYIWzNYaxyg9xxZ7dl7k5A/dEsltraqN58YW1il/8+4
+ dffbpDM293rdSJFJMHGb7Cv2B8KsYcW4Vo6k28De7Od6Zb2/ZmTM6ZLCHngirxX8oqLi59uor
+ TTLJ/8M15MYwdEuwc+ouhUbOvUfdaoUjA4Uuh0Hg4RWcKHKZrg6OLIM/tXmadMs876XhbPY6B
+ qbE4WlPS8tgSLgQUtvE4dODkwTJkXJMMENH3HIevx+rZHv5YUx2Xo2u+4UIM1pil8RM5/wKNj
+ uK7KDWYYgVRlJpGDvnlQIOJCV8U01AawJm3PR1zny1AHQ8iuzleC5bFIixveOa2NDOlHtlVsr
+ ufONHZSRk3XpQZyDFjaORWmskrKCk+RiNgKc3NsyBVFRWYJRxGT5jvASMSRAdzeP16s8PEkAM
+ psjgLFwqBc17i0rEj9ZuiQkh8mSxrgWOZkw9AEIalaM6zprYZFYQeSrlYUVZHi/RI1781kbpI
+ eUe/7F7TUVAg/kh3AOtKSfcP8QpghVX8Nk5169xccjxqanI7kvvqd/r82bjF7N3lVxgsq5m+t
+ /irA6H2neVWWtsfvifuMLz0Y5YMbJUv8wRlKi/x8txVcTXkbLXP2hG0B4Jv/o1PsQu8ParvQV
+ oXZJ6f0jjyp8mdFWs
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping,
-On Tue, 18 Feb 2020 at 18:49, Wanpeng Li <kernellwp@gmail.com> wrote:
+>> How do you think about to clarify any additional software design option=
+s
+>> around involved data structures?
 >
-> From: Wanpeng Li <wanpengli@tencent.com>
->
-> In the vCPU reset and set APIC_BASE MSR path, the apic map will be recalculated
-> several times, each time it will consume 10+ us observed by ftrace in my
-> non-overcommit environment since the expensive memory allocate/mutex/rcu etc
-> operations. This patch optimizes it by recaluating apic map in batch, I hope
-> this can benefit the serverless scenario which can frequently create/destroy
-> VMs.
->
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  arch/x86/kvm/lapic.c | 74 ++++++++++++++++++++++++++++++++++------------------
->  arch/x86/kvm/lapic.h |  3 ++-
->  arch/x86/kvm/x86.c   |  3 ++-
->  3 files changed, 53 insertions(+), 27 deletions(-)
->
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index afcd30d..71f843a 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -164,7 +164,7 @@ static void kvm_apic_map_free(struct rcu_head *rcu)
->         kvfree(map);
->  }
->
-> -static void recalculate_apic_map(struct kvm *kvm)
-> +void kvm_recalculate_apic_map(struct kvm *kvm)
->  {
->         struct kvm_apic_map *new, *old = NULL;
->         struct kvm_vcpu *vcpu;
-> @@ -244,9 +244,10 @@ static void recalculate_apic_map(struct kvm *kvm)
->         kvm_make_scan_ioapic_request(kvm);
->  }
->
-> -static inline void apic_set_spiv(struct kvm_lapic *apic, u32 val)
-> +static inline bool apic_set_spiv(struct kvm_lapic *apic, u32 val)
->  {
->         bool enabled = val & APIC_SPIV_APIC_ENABLED;
-> +       bool need_recal = false;
->
->         kvm_lapic_set_reg(apic, APIC_SPIV, val);
->
-> @@ -257,20 +258,20 @@ static inline void apic_set_spiv(struct kvm_lapic *apic, u32 val)
->                 else
->                         static_key_slow_inc(&apic_sw_disabled.key);
->
-> -               recalculate_apic_map(apic->vcpu->kvm);
-> +               need_recal = true;
->         }
-> +
-> +       return need_recal;
->  }
->
->  static inline void kvm_apic_set_xapic_id(struct kvm_lapic *apic, u8 id)
->  {
->         kvm_lapic_set_reg(apic, APIC_ID, id << 24);
-> -       recalculate_apic_map(apic->vcpu->kvm);
->  }
->
->  static inline void kvm_apic_set_ldr(struct kvm_lapic *apic, u32 id)
->  {
->         kvm_lapic_set_reg(apic, APIC_LDR, id);
-> -       recalculate_apic_map(apic->vcpu->kvm);
->  }
->
->  static inline u32 kvm_apic_calc_x2apic_ldr(u32 id)
-> @@ -286,7 +287,6 @@ static inline void kvm_apic_set_x2apic_id(struct kvm_lapic *apic, u32 id)
->
->         kvm_lapic_set_reg(apic, APIC_ID, id);
->         kvm_lapic_set_reg(apic, APIC_LDR, ldr);
-> -       recalculate_apic_map(apic->vcpu->kvm);
->  }
->
->  static inline int apic_lvt_enabled(struct kvm_lapic *apic, int lvt_type)
-> @@ -1882,14 +1882,16 @@ static void apic_manage_nmi_watchdog(struct kvm_lapic *apic, u32 lvt0_val)
->  int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val)
->  {
->         int ret = 0;
-> +       bool need_recal = false;
->
->         trace_kvm_apic_write(reg, val);
->
->         switch (reg) {
->         case APIC_ID:           /* Local APIC ID */
-> -               if (!apic_x2apic_mode(apic))
-> +               if (!apic_x2apic_mode(apic)) {
->                         kvm_apic_set_xapic_id(apic, val >> 24);
-> -               else
-> +                       need_recal = true;
-> +               } else
->                         ret = 1;
->                 break;
->
-> @@ -1903,16 +1905,17 @@ int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val)
->                 break;
->
->         case APIC_LDR:
-> -               if (!apic_x2apic_mode(apic))
-> +               if (!apic_x2apic_mode(apic)) {
->                         kvm_apic_set_ldr(apic, val & APIC_LDR_MASK);
-> -               else
-> +                       need_recal = true;
-> +               } else
->                         ret = 1;
->                 break;
->
->         case APIC_DFR:
->                 if (!apic_x2apic_mode(apic)) {
->                         kvm_lapic_set_reg(apic, APIC_DFR, val | 0x0FFFFFFF);
-> -                       recalculate_apic_map(apic->vcpu->kvm);
-> +                       need_recal = true;
->                 } else
->                         ret = 1;
->                 break;
-> @@ -1921,7 +1924,8 @@ int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val)
->                 u32 mask = 0x3ff;
->                 if (kvm_lapic_get_reg(apic, APIC_LVR) & APIC_LVR_DIRECTED_EOI)
->                         mask |= APIC_SPIV_DIRECTED_EOI;
-> -               apic_set_spiv(apic, val & mask);
-> +               if (apic_set_spiv(apic, val & mask))
-> +                       need_recal = true;
->                 if (!(val & APIC_SPIV_APIC_ENABLED)) {
->                         int i;
->                         u32 lvt_val;
-> @@ -2018,6 +2022,9 @@ int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val)
->                 break;
->         }
->
-> +       if (need_recal)
-> +               kvm_recalculate_apic_map(apic->vcpu->kvm);
-> +
->         return ret;
->  }
->  EXPORT_SYMBOL_GPL(kvm_lapic_reg_write);
-> @@ -2143,10 +2150,11 @@ u64 kvm_lapic_get_cr8(struct kvm_vcpu *vcpu)
->         return (tpr & 0xf0) >> 4;
->  }
->
-> -void kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value)
-> +bool kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value)
->  {
->         u64 old_value = vcpu->arch.apic_base;
->         struct kvm_lapic *apic = vcpu->arch.apic;
-> +       bool need_recal = false;
->
->         if (!apic)
->                 value |= MSR_IA32_APICBASE_BSP;
-> @@ -2157,7 +2165,7 @@ void kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value)
->                 kvm_update_cpuid(vcpu);
->
->         if (!apic)
-> -               return;
-> +               return need_recal;
->
->         /* update jump label if enable bit changes */
->         if ((old_value ^ value) & MSR_IA32_APICBASE_ENABLE) {
-> @@ -2166,12 +2174,14 @@ void kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value)
->                         static_key_slow_dec_deferred(&apic_hw_disabled);
->                 } else {
->                         static_key_slow_inc(&apic_hw_disabled.key);
-> -                       recalculate_apic_map(vcpu->kvm);
->                 }
-> +               need_recal = true;
->         }
->
-> -       if (((old_value ^ value) & X2APIC_ENABLE) && (value & X2APIC_ENABLE))
-> +       if (((old_value ^ value) & X2APIC_ENABLE) && (value & X2APIC_ENABLE)) {
->                 kvm_apic_set_x2apic_id(apic, vcpu->vcpu_id);
-> +               need_recal = true;
-> +       }
->
->         if ((old_value ^ value) & (MSR_IA32_APICBASE_ENABLE | X2APIC_ENABLE))
->                 kvm_x86_ops->set_virtual_apic_mode(vcpu);
-> @@ -2182,6 +2192,8 @@ void kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value)
->         if ((value & MSR_IA32_APICBASE_ENABLE) &&
->              apic->base_address != APIC_DEFAULT_PHYS_BASE)
->                 pr_warn_once("APIC base relocation is unsupported by KVM");
-> +
-> +       return need_recal;
->  }
->
->  void kvm_apic_update_apicv(struct kvm_vcpu *vcpu)
-> @@ -2203,6 +2215,7 @@ void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event)
->  {
->         struct kvm_lapic *apic = vcpu->arch.apic;
->         int i;
-> +       bool need_recal = false;
->
->         if (!apic)
->                 return;
-> @@ -2214,6 +2227,7 @@ void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event)
->                 kvm_lapic_set_base(vcpu, APIC_DEFAULT_PHYS_BASE |
->                                          MSR_IA32_APICBASE_ENABLE);
->                 kvm_apic_set_xapic_id(apic, vcpu->vcpu_id);
-> +               need_recal = true;
->         }
->         kvm_apic_set_version(apic->vcpu);
->
-> @@ -2227,10 +2241,13 @@ void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event)
->         apic_manage_nmi_watchdog(apic, kvm_lapic_get_reg(apic, APIC_LVT0));
->
->         kvm_lapic_set_reg(apic, APIC_DFR, 0xffffffffU);
-> -       apic_set_spiv(apic, 0xff);
-> +       if (apic_set_spiv(apic, 0xff))
-> +               need_recal = true;
->         kvm_lapic_set_reg(apic, APIC_TASKPRI, 0);
-> -       if (!apic_x2apic_mode(apic))
-> +       if (!apic_x2apic_mode(apic)) {
->                 kvm_apic_set_ldr(apic, 0);
-> +               need_recal = true;
-> +       }
->         kvm_lapic_set_reg(apic, APIC_ESR, 0);
->         kvm_lapic_set_reg(apic, APIC_ICR, 0);
->         kvm_lapic_set_reg(apic, APIC_ICR2, 0);
-> @@ -2246,8 +2263,8 @@ void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event)
->         update_divide_count(apic);
->         atomic_set(&apic->lapic_timer.pending, 0);
->         if (kvm_vcpu_is_bsp(vcpu))
-> -               kvm_lapic_set_base(vcpu,
-> -                               vcpu->arch.apic_base | MSR_IA32_APICBASE_BSP);
-> +               need_recal = kvm_lapic_set_base(vcpu,
-> +                                       vcpu->arch.apic_base | MSR_IA32_APICBASE_BSP);
->         vcpu->arch.pv_eoi.msr_val = 0;
->         apic_update_ppr(apic);
->         if (vcpu->arch.apicv_active) {
-> @@ -2258,6 +2275,9 @@ void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event)
->
->         vcpu->arch.apic_arb_prio = 0;
->         vcpu->arch.apic_attention = 0;
-> +
-> +       if (need_recal)
-> +               kvm_recalculate_apic_map(vcpu->kvm);
->  }
->
->  /*
-> @@ -2478,18 +2498,22 @@ int kvm_apic_set_state(struct kvm_vcpu *vcpu, struct kvm_lapic_state *s)
->  {
->         struct kvm_lapic *apic = vcpu->arch.apic;
->         int r;
-> +       bool need_recal = false;
->
-> -
-> -       kvm_lapic_set_base(vcpu, vcpu->arch.apic_base);
-> +       need_recal = kvm_lapic_set_base(vcpu, vcpu->arch.apic_base);
->         /* set SPIV separately to get count of SW disabled APICs right */
-> -       apic_set_spiv(apic, *((u32 *)(s->regs + APIC_SPIV)));
-> +       if (apic_set_spiv(apic, *((u32 *)(s->regs + APIC_SPIV))))
-> +               need_recal = true;
->
->         r = kvm_apic_state_fixup(vcpu, s, true);
-> -       if (r)
-> +       if (r) {
-> +               if (need_recal)
-> +                       kvm_recalculate_apic_map(vcpu->kvm);
->                 return r;
-> +       }
->         memcpy(vcpu->arch.apic->regs, s->regs, sizeof(*s));
->
-> -       recalculate_apic_map(vcpu->kvm);
-> +       kvm_recalculate_apic_map(vcpu->kvm);
->         kvm_apic_set_version(vcpu);
->
->         apic_update_ppr(apic);
-> diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-> index ec6fbfe..58c07ad 100644
-> --- a/arch/x86/kvm/lapic.h
-> +++ b/arch/x86/kvm/lapic.h
-> @@ -76,8 +76,9 @@ void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event);
->  u64 kvm_lapic_get_cr8(struct kvm_vcpu *vcpu);
->  void kvm_lapic_set_tpr(struct kvm_vcpu *vcpu, unsigned long cr8);
->  void kvm_lapic_set_eoi(struct kvm_vcpu *vcpu);
-> -void kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value);
-> +bool kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value);
->  u64 kvm_lapic_get_base(struct kvm_vcpu *vcpu);
-> +void kvm_recalculate_apic_map(struct kvm *kvm);
->  void kvm_apic_set_version(struct kvm_vcpu *vcpu);
->  int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val);
->  int kvm_lapic_reg_read(struct kvm_lapic *apic, u32 offset, int len,
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 79bc995..e961e65 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -349,7 +349,8 @@ int kvm_set_apic_base(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->                         return 1;
->         }
->
-> -       kvm_lapic_set_base(vcpu, msr_info->data);
-> +       if (kvm_lapic_set_base(vcpu, msr_info->data))
-> +               kvm_recalculate_apic_map(vcpu->kvm);
->         return 0;
->  }
->  EXPORT_SYMBOL_GPL(kvm_set_apic_base);
-> --
-> 2.7.4
->
+> Sorry, what would you mean the "involved data structures" here?
+> Would you mean the usage of APIs or when to use bootconfig or command li=
+ne?
+
+Additional system boot parameters can be managed also by a single file.
+The file format will trigger specific parsing efforts.
+
+* Linux functions are provided for the handling of available information.
+
+* I imagine that another software library will become helpful
+  besides the file interface.
+  Will further bindings evolve for various programming languages?
+
+* How do you think about to work with a higher level file system?
+  Would you like to increase the granularity for corresponding
+  data accesses (by user-space processes)?
+
+Regards,
+Markus
