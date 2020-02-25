@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C88416F324
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:26:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 269E216F326
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 00:26:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729429AbgBYXZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 18:25:47 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55481 "EHLO
+        id S1729543AbgBYXZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 18:25:51 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55491 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729297AbgBYXZp (ORCPT
+        with ESMTP id S1729382AbgBYXZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 18:25:45 -0500
+        Tue, 25 Feb 2020 18:25:47 -0500
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1j6ja2-0004Xy-4v; Wed, 26 Feb 2020 00:25:34 +0100
+        id 1j6ja3-0004Yf-RG; Wed, 26 Feb 2020 00:25:36 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 98B13104090;
-        Wed, 26 Feb 2020 00:25:29 +0100 (CET)
-Message-Id: <20200225220217.042369808@linutronix.de>
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 25561100375;
+        Wed, 26 Feb 2020 00:25:32 +0100 (CET)
+Message-Id: <20200225220801.571835584@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Feb 2020 22:36:45 +0100
+Date:   Tue, 25 Feb 2020 23:08:01 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,10 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [patch 09/10] x86/entry/entry_32: Route int3 through common_exception
-References: <20200225213636.689276920@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [patch 0/8] x86/entry: Consolidation - Part II
 X-Linutronix-Spam-Score: -1.0
 X-Linutronix-Spam-Level: -
 X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
@@ -42,34 +39,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-int3 is not using the common_exception path for purely historical reasons,
-but there is no reason to keep it the only exception which is different.
+Hi!
 
-Make it use common_exception so the upcoming changes to autogenerate the
-entry stubs do not have to special case int3.
+This is the second batch of a 73 patches series which consolidates the x86
+entry code. The larger explanation is in the part I cover letter:
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/entry/entry_32.S |   10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ https://lore.kernel.org/r/20200225213636.689276920@linutronix.de
 
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1683,14 +1683,8 @@ SYM_CODE_END(nmi)
- SYM_CODE_START(int3)
- 	ASM_CLAC
- 	pushl	$0
--
--	SAVE_ALL switch_stacks=1
--	ENCODE_FRAME_POINTER
--	TRACE_IRQS_OFF
--	xorl	%edx, %edx			# zero error code
--	movl	%esp, %eax			# pt_regs pointer
--	call	do_int3
--	jmp	ret_from_exception
-+	pushl	$do_int3
-+	jmp	common_exception
- SYM_CODE_END(int3)
- 
- SYM_CODE_START(general_protection)
+I applies on top of part I which can be found via the above link.
+
+This part cleans up the entry code and lifts the irq tracing and entry/exit
+work into C, which is a preliminary to make especially the exit work a
+generic infrastructure.
+
+It has some rough edges as some of the ASM code is shared with
+exceptions/traps/interrupts, which will be addressed in later parts of the
+series.
+
+This applies on top of part one which is available here:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git entry-v1-part1
+
+To get both part 1 and part 2 pull from here:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git entry-v1-part2
+
+Thanks,
+
+	tglx
+
+8<---------------
+ common.c          |   82 ++++++++++++++++++++++++++++++++++++++++--------------
+ entry_32.S        |   24 ++-------------
+ entry_64.S        |    6 ---
+ entry_64_compat.S |   32 +++------------------
+ 4 files changed, 71 insertions(+), 73 deletions(-)
+
+
+
 
