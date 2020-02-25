@@ -2,62 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 057E416C115
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:41:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2174216C129
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:43:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbgBYMlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 07:41:22 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11105 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725788AbgBYMlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 07:41:21 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CA47237A79C3964632B6;
-        Tue, 25 Feb 2020 20:41:12 +0800 (CST)
-Received: from DESKTOP-8RFUVS3.china.huawei.com (10.173.222.27) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 25 Feb 2020 20:41:04 +0800
-From:   Zenghui Yu <yuzenghui@huawei.com>
-To:     <corbet@lwn.net>, <linux-doc@vger.kernel.org>
-CC:     <paulmck@kernel.org>, <tj@kernel.org>, <jiangshanlai@gmail.com>,
-        <wanghaibin.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
-        Zenghui Yu <yuzenghui@huawei.com>
-Subject: [PATCH] Documentation: kthread: Fix WQ_SYSFS workqueues path name
-Date:   Tue, 25 Feb 2020 20:40:52 +0800
-Message-ID: <20200225124052.1506-1-yuzenghui@huawei.com>
-X-Mailer: git-send-email 2.23.0.windows.1
+        id S1729765AbgBYMnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 07:43:18 -0500
+Received: from foss.arm.com ([217.140.110.172]:50270 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729181AbgBYMnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 07:43:18 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6234030E;
+        Tue, 25 Feb 2020 04:43:17 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D96393F6CF;
+        Tue, 25 Feb 2020 04:43:16 -0800 (PST)
+Date:   Tue, 25 Feb 2020 12:43:15 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Todd Kjos <tkjos@google.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 6/6] regulator: Use driver_deferred_probe_timeout for
+ regulator_init_complete_work
+Message-ID: <20200225124315.GB4633@sirena.org.uk>
+References: <20200225050828.56458-1-john.stultz@linaro.org>
+ <20200225050828.56458-7-john.stultz@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
+Content-Disposition: inline
+In-Reply-To: <20200225050828.56458-7-john.stultz@linaro.org>
+X-Cookie: Booths for two or more.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The set of WQ_SYSFS workqueues should be displayed using
-"ls /sys/devices/virtual/workqueue", add the missing '/'.
 
-Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
----
- Documentation/admin-guide/kernel-per-CPU-kthreads.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--p4qYPpj5QlsIQJ0K
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/admin-guide/kernel-per-CPU-kthreads.rst b/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
-index baeeba8762ae..21818aca4708 100644
---- a/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
-+++ b/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
-@@ -234,7 +234,7 @@ To reduce its OS jitter, do any of the following:
- 	Such a workqueue can be confined to a given subset of the
- 	CPUs using the ``/sys/devices/virtual/workqueue/*/cpumask`` sysfs
- 	files.	The set of WQ_SYSFS workqueues can be displayed using
--	"ls sys/devices/virtual/workqueue".  That said, the workqueues
-+	"ls /sys/devices/virtual/workqueue".  That said, the workqueues
- 	maintainer would like to caution people against indiscriminately
- 	sprinkling WQ_SYSFS across all the workqueues.	The reason for
- 	caution is that it is easy to add WQ_SYSFS, but because sysfs is
--- 
-2.19.1
+On Tue, Feb 25, 2020 at 05:08:28AM +0000, John Stultz wrote:
+> The regulator_init_complete_work logic defers the cleanup for an
+> arbitrary 30 seconds of time to allow modules loaded by userland
+> to start.
 
+Acked-by: Mark Brown <broonie@kernel.org>
 
+--p4qYPpj5QlsIQJ0K
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5VFmIACgkQJNaLcl1U
+h9DzrQf/faqtOS9TdPP0gkC5NRJPMYTyyP/T4QP2bdax55Uhogt8rQ1GleRuUfp+
+tkUWHP2MRfEzUkNR6wOMIDvmMIYijbn3an/laONAfMO5QRUHByFTF7tM4Vk8OuwL
+3EG9MceIYNXRvYx8rlWmyFjZQoq7H9JAcNW+0LBGLJyqgkvWCevXX/LDOzXE2gP8
+6wl8rHjqujyagDipgii40dM1287JWJKgBBGNSAqMQGkPCUIaaJkYYhPLWrf6PDy1
+YUl2ZnWGod/PsL5FQCCQiFnVlfElWkYOhKw0bMaXUAJruPai5wG3icR4WfKfRrzj
+ROwomfEBNpiaLPx9P4r2rRhZuhbmBQ==
+=sUYb
+-----END PGP SIGNATURE-----
+
+--p4qYPpj5QlsIQJ0K--
