@@ -2,103 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CC9616F269
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 23:02:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37B0916F271
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 23:07:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729170AbgBYWCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 17:02:52 -0500
-Received: from mail-pj1-f43.google.com ([209.85.216.43]:37702 "EHLO
-        mail-pj1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbgBYWCw (ORCPT
+        id S1729016AbgBYWHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 17:07:36 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:53438 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbgBYWHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 17:02:52 -0500
-Received: by mail-pj1-f43.google.com with SMTP id m13so342004pjb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 14:02:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Bvro5bqgLoB7Q+QOnUukmSXnFk4BT1NY/ZAFMUfpRmI=;
-        b=QMkbvLLyqttt8K0Za0EOq8KWcm6weijM62KcldL6NQ2fIoAXY026AK/Dgog7qX2hbG
-         S3i2NIWMVWvBd2LzrF/4EBNAgxk2GuDRyHGFUyDGtsfJ3er50UMq46NMGX0gLE2GRn7a
-         ZcKtvDacIkE97cApgIrf38ItG6/pao5IHz4cA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Bvro5bqgLoB7Q+QOnUukmSXnFk4BT1NY/ZAFMUfpRmI=;
-        b=Ld80AB6epJuSGyp1hlBFp0afSF6gvmojvQ4DniUDhQNFG/hBV1JoYOVy/7K6ZAxA5L
-         Yj36Nwqa3gvhB6/PlyzbH1QYADUdly+zJJcZ+PSiN3snaSUNCkzDwTvhaHLojwVASliN
-         JGHgnAmGs3wDqKVFYRe0o6gpFloBdP9rMc4lMACpZcY/34YOb7b4pCmn4lXvljLVpeIE
-         fVp61vkUS7W2RKgVfK7RcazeLB0p01C+b/xfxkMRYYRzpC06qSLdPPxEzvIq3x15xL4c
-         Ftf7n22HkrwuXZZ8T63aF+9ZuSUYB+BqY5pw/X0LFBR3pY3F+PIffT2+rIvXnsp4UgmT
-         7Q1Q==
-X-Gm-Message-State: APjAAAW+yk22FRHF6q3hPXPhB/RuKxuedQeVSKlDjX1w6blYibb0BjIq
-        XGC0Jt0QMRpbcgfmfjTJ5i4+Fw==
-X-Google-Smtp-Source: APXvYqyi/IdFHOhdoTujGGepz1gv+utlp506jhon2zXTaTyUOqxNnQ3SSyYbl/1S710zwjPG+xsLSA==
-X-Received: by 2002:a17:90a:cc16:: with SMTP id b22mr1268428pju.65.1582668171246;
-        Tue, 25 Feb 2020 14:02:51 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a19sm94740pju.11.2020.02.25.14.02.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 14:02:49 -0800 (PST)
-Date:   Tue, 25 Feb 2020 14:02:48 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Fangrui Song <maskray@google.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Michael Matz <matz@suse.de>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>
-Subject: Re: --orphan-handling=warn
-Message-ID: <202002251358.EDA50C11F@keescook>
-References: <20200222065521.GA11284@zn.tnic>
- <20200222070218.GA27571@ubuntu-m2-xlarge-x86>
- <20200222072144.asqaxlv364s6ezbv@google.com>
- <20200222074254.GB11284@zn.tnic>
- <20200222162225.GA3326744@rani.riverdale.lan>
- <CAKwvOdnvMS21s9gLp5nUpDAOu=c7-iWYuKTeFUq+PMhsJOKUgw@mail.gmail.com>
- <202002242122.AA4D1B8@keescook>
- <20200225182951.GA1179890@rani.riverdale.lan>
- <202002251140.4F28F0A4F@keescook>
- <CAKwvOdnkr1W4LTm8XmTKGkSDUhSBRowLbKwJwyitDMAGLh9ywg@mail.gmail.com>
+        Tue, 25 Feb 2020 17:07:35 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01PLx7eg003863;
+        Tue, 25 Feb 2020 22:07:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=B0GGCh2XIGmqORJyjBDP7KACUGN3IAIqTyDSvWyLwz8=;
+ b=PZ00HG4uYdKF4uNrW3hYCu4XCxxu+toXWHsgYoYxFDHwmbZlR6XDGv7tFPqh65lQ3sF8
+ XEX356yjIlvMH63SCNztuvi1DAhZz5nZfUSZ3IWm1zEoaScC/OOzB/9LfY88BuHKDl/1
+ dJfQWrq79j8RmqQO0cd7YtGDC2ep74xC5nB6hOcu3xIb22HTMiu3PvnvJITI8EvL2PpW
+ 53mFk4Xn2yTiVMOyc9j7N6YV4jLK/3NH0kgcXL4NTSJcY0OR3/fe3UMPzUJDrWHdewss
+ LA41vgGBHwNUsXuBbGv4Ycf02MxZVmJljCAbNd3te9YOrR86e+Jl635EBpNzeUa+smkZ yw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2yd0m1vd4s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Feb 2020 22:07:30 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01PLwdZ0035660;
+        Tue, 25 Feb 2020 22:05:29 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2yd09bmf2v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Feb 2020 22:05:29 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01PM5S0X006632;
+        Tue, 25 Feb 2020 22:05:28 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 25 Feb 2020 14:05:28 -0800
+Date:   Tue, 25 Feb 2020 14:05:27 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] xfs: fix an undefined behaviour in _da3_path_shift
+Message-ID: <20200225220527.GX6740@magnolia>
+References: <20200225214045.GA14399@infradead.org>
+ <F151ED18-55CF-482E-98BE-45A5A4D9A565@lca.pw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdnkr1W4LTm8XmTKGkSDUhSBRowLbKwJwyitDMAGLh9ywg@mail.gmail.com>
+In-Reply-To: <F151ED18-55CF-482E-98BE-45A5A4D9A565@lca.pw>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9542 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 mlxlogscore=843
+ spamscore=0 adultscore=0 malwarescore=0 bulkscore=0 suspectscore=31
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002250152
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9542 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxscore=0
+ suspectscore=31 bulkscore=0 adultscore=0 impostorscore=0 spamscore=0
+ phishscore=0 clxscore=1015 priorityscore=1501 malwarescore=0
+ mlxlogscore=892 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002250152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 12:37:26PM -0800, Nick Desaulniers wrote:
-> On Tue, Feb 25, 2020 at 11:43 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Tue, Feb 25, 2020 at 01:29:51PM -0500, Arvind Sankar wrote:
-> > > On Mon, Feb 24, 2020 at 09:35:04PM -0800, Kees Cook wrote:
-> > > > Note that cheating and doing the 1-to-1 mapping by handy with a 40,000
-> > > > entry linker script ... made ld.lld take about 15 minutes to do the
-> > > > final link. :(
-> > >
-> > > Out of curiosity, how long does ld.bfd take on that linker script :)
-> >
-> > A single CPU at 100% for 15 minutes. :)
+On Tue, Feb 25, 2020 at 04:55:56PM -0500, Qian Cai wrote:
 > 
-> I can see the implementers of linker script handling thinking "surely
-> no one would ever have >10k entries." Then we invented things like
-> -ffunction-sections, -fdata-sections, (per basic block equivalents:
-> https://reviews.llvm.org/D68049) and then finally FGKASLR. "640k ought
-> to be enough for anybody" and such.
+> 
+> > On Feb 25, 2020, at 4:40 PM, Christoph Hellwig <hch@infradead.org> wrote:
+> > 
+> > In xfs_da3_path_shift() blk can be assigned to state->path.blk[-1] if
+> > state->path.active is 1 (which is a valid state) when it tries to add an
+> > entry > to a single dir leaf block and then to shift forward to see if
+> > there's a sibling block that would be a better place to put the new
+> > entry.  This causes a KASAN warning given
+> 
+> s/KASAN/UBSAN/
+> 
+> > negative array indices are
+> > undefined behavior in C.  In practice the warning is entirely harmless
+> > given that blk is never dereference in this case, but it is still better
+> > to fix up the warning and slightly improve the code.
+> 
+> Agree. This is better.
+> 
+> Darrick, do you need me to send a v3 for it or you could squash this in?
 
-Heh, yeah. I had no expectation that it would work _well_; I just
-wanted to test if it _could_ work. And it did: FGKASLR up and running
-on Clang+LLD. I stopped there before attempting the next step:
-FGKASLR+LTO+CFI, which I assume would be hilariously slow linking.
+Please send a v3.  The code in v2 looked fine to me.
 
--- 
-Kees Cook
+--D
