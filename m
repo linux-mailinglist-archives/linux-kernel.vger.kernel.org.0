@@ -2,87 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3762B16C01D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 12:59:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41A0B16C0A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 13:20:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbgBYL7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 06:59:05 -0500
-Received: from outbound-smtp07.blacknight.com ([46.22.139.12]:45237 "EHLO
-        outbound-smtp07.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726587AbgBYL7E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 06:59:04 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp07.blacknight.com (Postfix) with ESMTPS id D06861C346A
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 11:59:02 +0000 (GMT)
-Received: (qmail 17056 invoked from network); 25 Feb 2020 11:59:02 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 25 Feb 2020 11:59:02 -0000
-Date:   Tue, 25 Feb 2020 11:59:01 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Phil Auld <pauld@redhat.com>, Hillf Danton <hdanton@sina.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/13] Reconcile NUMA balancing decisions with the load
- balancer v6
-Message-ID: <20200225115901.GB3466@techsingularity.net>
-References: <20200224095223.13361-1-mgorman@techsingularity.net>
- <20200224151641.GA24316@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20200224151641.GA24316@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729568AbgBYMU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 07:20:29 -0500
+Received: from foss.arm.com ([217.140.110.172]:50088 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729155AbgBYMU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 07:20:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 322FC1063;
+        Tue, 25 Feb 2020 03:57:46 -0800 (PST)
+Received: from e121896.warwick.arm.com (e121896.warwick.arm.com [10.32.36.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9FA803F6CF;
+        Tue, 25 Feb 2020 03:57:44 -0800 (PST)
+From:   James Clark <james.clark@arm.com>
+To:     adrian.hunter@intel.com, jolsa@redhat.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     nd@arm.com, James Clark <james.clark@arm.com>
+Subject: [PATCH v5 0/4] perf tools: Add support for some spe events and precise ip
+Date:   Tue, 25 Feb 2020 11:57:35 +0000
+Message-Id: <20200225115739.18740-1-james.clark@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <768a33f2-8694-270e-d3e8-3da4c65e96b3@intel.com>
+References: <768a33f2-8694-270e-d3e8-3da4c65e96b3@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 04:16:41PM +0100, Ingo Molnar wrote:
-> 
-> * Mel Gorman <mgorman@techsingularity.net> wrote:
-> 
-> > The only differences in V6 are due to Vincent's latest patch series.
-> > 
-> > This is V5 which includes the latest versions of Vincent's patch
-> > addressing review feedback. Patches 4-9 are Vincent's work plus one
-> > important performance fix. Vincent's patches were retested and while
-> > not presented in detail, it was mostly an improvement.
-> > 
-> > Changelog since V5:
-> > o Import Vincent's latest patch set
-> 
-> >  include/linux/sched.h        |  31 ++-
-> >  include/trace/events/sched.h |  49 ++--
-> >  kernel/sched/core.c          |  13 -
-> >  kernel/sched/debug.c         |  17 +-
-> >  kernel/sched/fair.c          | 626 ++++++++++++++++++++++++++++---------------
-> >  kernel/sched/pelt.c          |  59 ++--
-> >  kernel/sched/sched.h         |  42 ++-
-> >  7 files changed, 535 insertions(+), 302 deletions(-)
-> 
-> Applied to tip:sched/core for v5.7 inclusion, thanks Mel and Vincent!
-> 
+Hi Adrian,
 
-Thanks!
+I've added the itrace arguments to ITRACE_HELP and also added the evsel->core.attr.type == PERF_TYPE_HARDWARE
+comparison.
 
-> Please base future iterations on top of a0f03b617c3b (current 
-> sched/core).
-> 
+Thanks
+James
 
-Will do.
+Tan Xiaojun (4):
+  perf tools: Move arm-spe-pkt-decoder.h/c to the new dir
+  perf tools: Add support for "report" for some spe events
+  perf report: Add SPE options to --itrace argument
+  perf tools: Support "branch-misses:pp" on arm64
 
-However I noticed that "sched/fair: Fix find_idlest_group() to handle
-CPU affinity" did not make it to tip/sched/core. Peter seemed to think it
-was fine. Was it rejected or is it just sitting in Peter's queue somewhere?
+ tools/perf/Documentation/itrace.txt           |   5 +-
+ tools/perf/arch/arm/util/auxtrace.c           |  39 +
+ tools/perf/builtin-record.c                   |   5 +
+ tools/perf/util/Build                         |   2 +-
+ tools/perf/util/arm-spe-decoder/Build         |   1 +
+ .../util/arm-spe-decoder/arm-spe-decoder.c    | 225 ++++++
+ .../util/arm-spe-decoder/arm-spe-decoder.h    |  66 ++
+ .../arm-spe-pkt-decoder.c                     |   0
+ .../arm-spe-pkt-decoder.h                     |   2 +
+ tools/perf/util/arm-spe.c                     | 756 +++++++++++++++++-
+ tools/perf/util/arm-spe.h                     |   3 +
+ tools/perf/util/auxtrace.c                    |  13 +
+ tools/perf/util/auxtrace.h                    |  19 +-
+ 13 files changed, 1094 insertions(+), 42 deletions(-)
+ create mode 100644 tools/perf/util/arm-spe-decoder/Build
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+ rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.c (100%)
+ rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.h (96%)
 
 -- 
-Mel Gorman
-SUSE Labs
+2.17.1
+
