@@ -2,186 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CFC216EEBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:12:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7288B16EEC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 20:12:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731309AbgBYTMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 14:12:02 -0500
-Received: from mail-mw2nam12on2054.outbound.protection.outlook.com ([40.107.244.54]:46761
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728913AbgBYTMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 14:12:01 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BatMAKBtFr4SEieHwCIo9dp1aSzKIDfPDrL8u04wRmIdGAUC/ct+s5hkox6euU/lyT6+qvuqN0aESbf/KqFZUtJN4JlqUlq+UVHJz9qX+grVBkb4ga4u6JKddlNKdGOahl3m+T2uhHjtjH8YHRnE9ZjviBTi2nk8dI+lvihzZG6EC2uMYnuiCVap3I8oJ4Lhfm2kOA9X7wrRGV4GSY+ksYyZ6VmJPmolZjGt8EK8wTU5BxmcU3hcejqiPf+e6gzZyeg7dxIhQWU8zGVYRz9l4mjxqvjgXyLxb+jl6OQImlVcYOtG6pEe7kNVoYTwcB1KUbpLzHYjFOiRc1pPDfdYDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PtU6v/jCEZ2hu/8tfy4y3eHBCWQByApfdOOb+N1qRA0=;
- b=U61J+t7UP/Va8W5CS5iKgzz+uV0HTs3yTGjsmkRpprl8JpAIcN82S25u9giOf3QEuy/VL3IIN3nBlTJ7ksk7H2uBnqd9o6LZZJKCq2Ez90Rk3qcpmrGZ3bNDEzdU/ImnSZkHaMN+h0TgKAOCdA0DfhG7muGdCjbUgENhbexTxplLhLlmYFORx6QUO4JccTktaxzKZe/4+DztzqCGUeZd0R9kxhj5tXWNLV8qhqoa5vHUWvXSrMJVLdA4qRdU8gRlLqDi4TcV5OlXp9YPuotO/v0T7ZCXOCC54gfbqmvSNt3tezHsUWjVM4wldaeOF7TTHNvBO9FkKWMcz9wf1vv2ZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PtU6v/jCEZ2hu/8tfy4y3eHBCWQByApfdOOb+N1qRA0=;
- b=1PgCMWXZpbHMAscrkrML7pp7tEkap85SSbLm5SKDzIM5Ef/iEdXQ4eZgYgx1u37/NYnHcT8Lo+6Xc7jy3jrECHQHRSe6KN6kRX/Zs1V+Crr9JZPTaw1jFmTbe/wNrBcGrwj/MUWtZjuca+uzUpnmKahq+h/ReVIof4gyFWSW5O4=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com; 
-Received: from DM5PR12MB1705.namprd12.prod.outlook.com (2603:10b6:3:10c::22)
- by DM5PR12MB1593.namprd12.prod.outlook.com (2603:10b6:4:10::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.21; Tue, 25 Feb
- 2020 19:11:58 +0000
-Received: from DM5PR12MB1705.namprd12.prod.outlook.com
- ([fe80::d40e:7339:8605:bc92]) by DM5PR12MB1705.namprd12.prod.outlook.com
- ([fe80::d40e:7339:8605:bc92%11]) with mapi id 15.20.2750.021; Tue, 25 Feb
- 2020 19:11:58 +0000
-Subject: Re: [PATCH] dma-buf: Fix missing excl fence waiting
-To:     "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>
-References: <B737F1D5-292E-4FE2-89A5-6EF72CB3EED1@amd.com>
- <7a2eb42a-2dd9-4303-3947-6bbb4de7a888@amd.com>
- <20200225172355.GO2363188@phenom.ffwll.local>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <484ce316-55f2-b85e-a1e4-730db94f3fe3@amd.com>
-Date:   Tue, 25 Feb 2020 20:11:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-In-Reply-To: <20200225172355.GO2363188@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-ClientProxiedBy: AM4PR0701CA0003.eurprd07.prod.outlook.com
- (2603:10a6:200:42::13) To DM5PR12MB1705.namprd12.prod.outlook.com
- (2603:10b6:3:10c::22)
+        id S1731361AbgBYTMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 14:12:52 -0500
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:53783 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728515AbgBYTMw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 14:12:52 -0500
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 0D6353C009D;
+        Tue, 25 Feb 2020 20:12:50 +0100 (CET)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Xi8uvvwKm-pQ; Tue, 25 Feb 2020 20:12:44 +0100 (CET)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 4C76E3C005E;
+        Tue, 25 Feb 2020 20:12:44 +0100 (CET)
+Received: from lxhi-065.adit-jv.com (10.72.93.66) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 25 Feb
+ 2020 20:12:43 +0100
+Date:   Tue, 25 Feb 2020 20:12:41 +0100
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+CC:     <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        "Lee, Chiasheng" <chiasheng.lee@intel.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Hardik Gajjar <hgajjar@de.adit-jv.com>,
+        <scan-admin@coverity.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH] usb: hub: Fix unhandled return value of
+ usb_autopm_get_interface()
+Message-ID: <20200225191241.GA32410@lxhi-065.adit-jv.com>
+References: <20200225130846.20236-1-erosca@de.adit-jv.com>
+ <Pine.LNX.4.44L0.2002251028030.1485-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7] (2a02:908:1252:fb60:be8a:bd56:1f94:86e7) by AM4PR0701CA0003.eurprd07.prod.outlook.com (2603:10a6:200:42::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.13 via Frontend Transport; Tue, 25 Feb 2020 19:11:55 +0000
-X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: b69dfaa3-a790-410d-e8f1-08d7ba2695bf
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1593:|DM5PR12MB1593:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM5PR12MB1593ECA93D70861682F8B59D83ED0@DM5PR12MB1593.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
-X-Forefront-PRVS: 0324C2C0E2
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(366004)(39860400002)(346002)(376002)(189003)(199004)(8676002)(110136005)(316002)(16526019)(6666004)(5660300002)(186003)(478600001)(86362001)(66476007)(8936002)(2906002)(31696002)(66946007)(36756003)(52116002)(66574012)(2616005)(66556008)(81156014)(6486002)(31686004)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1593;H:DM5PR12MB1705.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 9O7QAB7YHVvHcpHVrF2a6vknygV3eGMwFSn28taGfUGHV1v9xN6NpCahLIRO8EneE83n3sDBqaUSS0+UlyGY7p28UMpnHVuT8sODqE7IRVVYKJUdMZhLlKTB10hG+qoknMN7q0wZlYaVFpBFdQR2jj5KZl/xV3a+fHzxuQCph2C8OvOBgcza/oQ4KDNFPrflIf//6dPCcsXh1L4zwnK8Zn7684a5n4fPePgf/ChV+3xZ4og6LT2I68rBz2OHbHiKiZxlAzqpM2OyvJQctcvI24ckVb6ACnxd7F8wY+Ovfqv9M7XeCz2XwMB6z08BaiexQPNfzqAFxdKQgk84aElDAqxuy4WXev/W5ERlQII0/QP5mSqn/YPAb/K+GY9bzMFSwttofbrP1XSLy7RHNAZVkDWy+jM3xnO6Zc2fHA1juUh/3lUMmdCg5nZjUaE1La0K
-X-MS-Exchange-AntiSpam-MessageData: PFZpdjxEOePgsBso5/Cf7XYTOHqn8C2JT/lHpdXLwRTVWnLTs+r2AvLzKovtRXHwjGe3m2s9CXc4abfIhc3x/LbJXU9O1Una8n6/nyC14G8+9wxUDta7fY2b3wLu3TRg+61gltTrwjusvThfF5ls/7gz7PqQH2JgYcZD4jX9k1XZMOjUtu7YG6deo9cIZ103r9917Qh3ykQuQzgaQE8UxA==
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b69dfaa3-a790-410d-e8f1-08d7ba2695bf
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2020 19:11:58.2519
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7j0x8XM9HYcPM6bgeimA8Q1kvFMSb7zzuaRiXLzk3Y8jDjXRL0hiWmbk2VdQLXRl
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1593
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.2002251028030.1485-100000@iolanthe.rowland.org>
+X-Originating-IP: [10.72.93.66]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 25.02.20 um 18:23 schrieb Daniel Vetter:
-> On Sun, Feb 23, 2020 at 01:04:15PM +0100, Christian König wrote:
->> Am 23.02.20 um 12:56 schrieb Pan, Xinhui:
->>> If shared fence list is not empty, even we want to test all fences, excl fence is ignored.
->>> That is abviously wrong, so fix it.
->> Yeah that is a known issue and I completely agree with you, but other
->> disagree.
->>
->> See the shared fences are meant to depend on the exclusive fence. So all
->> shared fences must finish only after the exclusive one has finished as well.
->>
->> The problem now is that for error handling this isn't necessary true. In
->> other words when a shared fence completes with an error it is perfectly
->> possible that he does this before the exclusive fence is finished.
->>
->> I'm trying to convince Daniel that this is a problem for years :)
-> I thought the consensus is that reasonable gpu schedulers and gpu reset
-> code should try to make really, really sure it only completes stuff in
-> sequence? That's at least my take away from the syncobj timeline
-> discussion, where you convinced me we shouldn't just crash&burn.
->
-> I think as long as your scheduler is competent and your gpu reset tries to
-> limit damage (i.e. kill offending ctx terminally, mark everything else
-> that didn't complete for re-running) we should end up with everything
-> completing in sequence. I guess if you do kill a lot more stuff, then
-> you'd have to push these through your scheduler as dummy jobs, i.e. they
-> still wait for their dependencies, but then all they do is set the
-> dma_fence error and complete it. Maybe something the common scheduler
-> could do.
+Hi Alan,
 
-Yes, that's exactly how we currently implement it. But I still think 
-that this is not necessary the best approach :)
+Many thanks for the prompt review.
 
-Anyway Xinhui's problem turned out to be deeper. We somehow add an old 
-stale fence to the dma_resv object sometimes and that can result in 
-quite a bunch of problems.
+On Tue, Feb 25, 2020 at 10:32:32AM -0500, Alan Stern wrote:
+> On Tue, 25 Feb 2020, Eugeniu Rosca wrote:
+> > +		int r = usb_autopm_get_interface(intf);
+> > +
+> > +		if (!r)
+> > +			hub->quirk_disable_autosuspend = 1;
+> > +		else
+> > +			dev_dbg(&intf->dev, "disable autosuspend err=%d\n", r);
+> >  	}
+> >  
+> >  	if (hub_configure(hub, &desc->endpoint[0].desc) >= 0)
+> 
+> This change is not necessary, because the resume operation cannot fail
+> at this point (interfaces are always powered-up during probe).
 
-I'm currently trying to hunt down what's going wrong here in more detail.
+Agreed to avoid unneeded complexity.
 
-Regards,
-Christian.
+> A better solution would be to call usb_autpm_get_interface_no_resume()
+> instead.
 
-> -Daniel
->
->> Regards,
->> Christian.
->>
->>> Signed-off-by: xinhui pan <xinhui.pan@amd.com>
->>> ---
->>>    drivers/dma-buf/dma-resv.c | 9 +++++----
->>>    1 file changed, 5 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/dma-buf/dma-resv.c b/drivers/dma-buf/dma-resv.c
->>> index 4264e64788c4..44dc64c547c6 100644
->>> --- a/drivers/dma-buf/dma-resv.c
->>> +++ b/drivers/dma-buf/dma-resv.c
->>> @@ -632,14 +632,14 @@ static inline int dma_resv_test_signaled_single(struct dma_fence *passed_fence)
->>>     */
->>>    bool dma_resv_test_signaled_rcu(struct dma_resv *obj, bool test_all)
->>>    {
->>> -	unsigned seq, shared_count;
->>> +	unsigned int seq, shared_count, left;
->>>    	int ret;
->>>    	rcu_read_lock();
->>>    retry:
->>>    	ret = true;
->>>    	shared_count = 0;
->>> -	seq = read_seqcount_begin(&obj->seq);
->>> +	left = seq = read_seqcount_begin(&obj->seq);
->>>    	if (test_all) {
->>>    		unsigned i;
->>> @@ -647,7 +647,7 @@ bool dma_resv_test_signaled_rcu(struct dma_resv *obj, bool test_all)
->>>    		struct dma_resv_list *fobj = rcu_dereference(obj->fence);
->>>    		if (fobj)
->>> -			shared_count = fobj->shared_count;
->>> +			left = shared_count = fobj->shared_count;
->>>    		for (i = 0; i < shared_count; ++i) {
->>>    			struct dma_fence *fence = rcu_dereference(fobj->shared[i]);
->>> @@ -657,13 +657,14 @@ bool dma_resv_test_signaled_rcu(struct dma_resv *obj, bool test_all)
->>>    				goto retry;
->>>    			else if (!ret)
->>>    				break;
->>> +			left--;
->>>    		}
->>>    		if (read_seqcount_retry(&obj->seq, seq))
->>>    			goto retry;
->>>    	}
->>> -	if (!shared_count) {
->>> +	if (!left) {
->>>    		struct dma_fence *fence_excl = rcu_dereference(obj->fence_excl);
->>>    		if (fence_excl) {
+Pushed to https://lore.kernel.org/lkml/20200225183057.31953-1-erosca@de.adit-jv.com
 
+> 
+> On the other hand, the other places that call
+> usb_autopm_get_interface() without checking should be audited.  Some of
+> them almost certainly need to be fixed.
+
+A quick 'git grep' outputs below list of auditable candidates [1].
+
+With no relevant devices at hand, I would avoid touching these drivers,
+since oftentimes even legitimate patches introduce regressions w/o
+testing.
+
+If anybody volunteers with testing, I guess it should be quick to
+either convert usb_autpm_get_interface to *_no_resume variant or
+handle the return value in place in below instances.
+
+[1] (v5.6-rc3) git grep -En "[^=]\s+usb_autopm_get_interface\("
+  drivers/input/touchscreen/usbtouchscreen.c:1788:  usb_autopm_get_interface(intf);
+  drivers/media/usb/stkwebcam/stk-webcam.c:628:     usb_autopm_get_interface(dev->interface);
+  drivers/net/usb/hso.c:1308:                       usb_autopm_get_interface(serial->parent->interface);
+  drivers/net/usb/r8152.c:5231:                     usb_autopm_get_interface(tp->intf);
+  sound/usb/usx2y/us122l.c:192:                     usb_autopm_get_interface(iface);
+
+-- 
+Best Regards
+Eugeniu Rosca
