@@ -2,150 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E4FD16BBAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 09:19:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 420A116BBB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 09:20:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729715AbgBYITP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 03:19:15 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:41259 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729633AbgBYITP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 03:19:15 -0500
-Received: by mail-il1-f198.google.com with SMTP id k9so23684889ili.8
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 00:19:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=JnIpG0/J61WLiO1q3oM1jxlRNVDltdBX+u0kfHknrM0=;
-        b=C7Zbx+bDjSg9zQ9GwWqrnYkUIfixzmZigPtJvuwg1Zfi+39nqQhN8cXHLWqGWaZxOF
-         i6V3qJk2xlf1jBzjyzSaV+bllPAeF2omdC90k1RRsZpi6NItROqFim6h+tk8palSxiqm
-         6OBGw4JkQoWpYsh7qbG5p+B+ToMvGqHx3ni0DXbOZPas85wJlPPZygsqbbluNxe7kbJH
-         hf+2FZ/SeXg7IMEzELNoxLCOQRFIMwnCEUcjpigoo7BB41i2CGs7QewAnoOqpTwy3Ffc
-         CGVhb5pTBMA7Nyh3v4cx1jnlOBBP7OCMNZO9WCLOJsEVXylI9hy4YxfzY7awx9wSRh4+
-         AQAg==
-X-Gm-Message-State: APjAAAUTOkJhmImyIog+lr3jrkDUROE/4cHuYPrFT+2TAmHF8Irvf4Vk
-        p+0lH7+gGRvvOnx8Vx0uusFiQeI/du7jTzN2GRXCJXe6G+f0
-X-Google-Smtp-Source: APXvYqwdgK4/CB1G+y2zoTGVO2dnzPpAkdWqc/vppUT1sAz5Si0TeFiOlyF2DMYMfya2tZy2jf2ZxRpyPS0GWUZbY+QD6OcnYT1N
+        id S1729769AbgBYIUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 03:20:20 -0500
+Received: from mail-bn7nam10on2117.outbound.protection.outlook.com ([40.107.92.117]:51968
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729360AbgBYIUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 03:20:20 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EpdsztXaVSXgtb26CbEEqDyVZJpZFmUlAAgPQaQD00ERwtWL4B5vn4vpZHsCUdwNTjzxwHzdv/QFaUdmMXijWD3JknAYyPB74UE2zAITCIkJCQHyHmfo187lo7dIhHIx4KwEGDWXNwox0xy8F7p7cYDLl5ChuWrfuogifhHcy+jL8MV14opGppBPK3kg/6Rn+VZu23H+T/80SlNaCMOy74CyrSUshrnmNInryFb6tPIvcBnHLLZ2zUNEhOUiilbgZnxIe021eGwVdYUbUwo7VuDBMnXq9hViLDaWtQT7r9paoz4eHZ9kck2gRS9+WHYqHGhgoesec5aA7nS9CCHIOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CjvfW3blzjYTfmXMaAj7x+nd9bqUza/aoLBG5Qz0GGQ=;
+ b=VsuhASLrVjUioo8yielM9cJGNFRwFBZ9136n6BTLseuF2OpOkxcnoFc9WeHi5K6CYuUsvodFOev8BvT83PXJMI0nSqk+AcDzI37RolQFvcHGc+Nq1KCUN93t+f6wROIpMWgw9WgNQiEFKkG7bEduVhdYvSMkgf5hWcDUGLXyKtyJkMjgcBkF6dCn38UpmqW4ilgjS56iw04PEib1rkZeL0LoyprrsInDkSOyGy0J5E7xBW5ZlTv1ORV+kGNT8VBKKgMlisrgVmmRlbJw04K9WEPLFqIRAYF8TF7bh7L+3YTzfkkwcsVJxa59wMn+TSJgdxIsRrjTI9si+6B6O+t2uw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analogixsemi.com; dmarc=pass action=none
+ header.from=analogixsemi.com; dkim=pass header.d=analogixsemi.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Analogixsemi.onmicrosoft.com; s=selector2-Analogixsemi-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CjvfW3blzjYTfmXMaAj7x+nd9bqUza/aoLBG5Qz0GGQ=;
+ b=CHHFuvMIohbtMKeXP4rrlclDUEI0QKiwo3bC8IYe7uu9KLr7NuW8iCqe+lWOlUvHZ+L7svxJ6yQZLUZCNkxcPBtaBcU7uqYnaC/XQa6nD/C/6LzPViVqlr7DO92UG+glhBIbUfjR2yBfAAB6OnncpWJCZMnEmZXVvSAhOJtu4o8=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=xji@analogixsemi.com; 
+Received: from SN6PR04MB4543.namprd04.prod.outlook.com (2603:10b6:805:a5::18)
+ by SN6PR04MB5151.namprd04.prod.outlook.com (2603:10b6:805:90::25) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.21; Tue, 25 Feb
+ 2020 08:20:17 +0000
+Received: from SN6PR04MB4543.namprd04.prod.outlook.com
+ ([fe80::9598:7ff:b397:ba56]) by SN6PR04MB4543.namprd04.prod.outlook.com
+ ([fe80::9598:7ff:b397:ba56%7]) with mapi id 15.20.2750.021; Tue, 25 Feb 2020
+ 08:20:17 +0000
+Date:   Tue, 25 Feb 2020 16:20:08 +0800
+From:   Xin Ji <xji@analogixsemi.com>
+To:     devel@driverdev.osuosl.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Sheng Pan <span@analogixsemi.com>
+Subject: [PATCH v7 0/2] Add initial support for slimport anx7625
+Message-ID: <cover.1582529411.git.xji@analogixsemi.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-ClientProxiedBy: HK2PR02CA0175.apcprd02.prod.outlook.com
+ (2603:1096:201:21::11) To SN6PR04MB4543.namprd04.prod.outlook.com
+ (2603:10b6:805:a5::18)
 MIME-Version: 1.0
-X-Received: by 2002:a92:cb8c:: with SMTP id z12mr65405884ilo.5.1582618754093;
- Tue, 25 Feb 2020 00:19:14 -0800 (PST)
-Date:   Tue, 25 Feb 2020 00:19:14 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a719a9059f62246e@google.com>
-Subject: BUG: unable to handle kernel NULL pointer dereference in cipso_v4_sock_setattr
-From:   syzbot <syzbot+f4dfece964792d80b139@syzkaller.appspotmail.com>
-To:     cpaasch@apple.com, davem@davemloft.net, dcaratti@redhat.com,
-        fw@strlen.de, kuba@kernel.org, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        matthieu.baerts@tessares.net, netdev@vger.kernel.org,
-        pabeni@redhat.com, paul@paul-moore.com,
-        peter.krystad@linux.intel.com, syzkaller-bugs@googlegroups.com,
-        yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from xin-VirtualBox (114.247.245.254) by HK2PR02CA0175.apcprd02.prod.outlook.com (2603:1096:201:21::11) with Microsoft SMTP Server (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.20.2750.18 via Frontend Transport; Tue, 25 Feb 2020 08:20:16 +0000
+X-Originating-IP: [114.247.245.254]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 07a78762-f8f8-41fd-ff58-08d7b9cb8b83
+X-MS-TrafficTypeDiagnostic: SN6PR04MB5151:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <SN6PR04MB515102109BCB3D1255C02715C7ED0@SN6PR04MB5151.namprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 0324C2C0E2
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(366004)(39840400004)(136003)(189003)(199004)(7416002)(36756003)(6666004)(52116002)(6496006)(186003)(6486002)(478600001)(4326008)(26005)(2616005)(16526019)(2906002)(956004)(8676002)(107886003)(5660300002)(54906003)(110136005)(66556008)(81156014)(66476007)(316002)(81166006)(8936002)(86362001)(66946007);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB5151;H:SN6PR04MB4543.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: analogixsemi.com does not
+ designate permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: fvIa+mQ1oraAG9dX3Q9dsFzTdYg/gkgvnupr/6yVQTxu60n+OleHsMtPf47A4sMJnEsqxElsLvt4rt0prFiGjTZhvL9x/6NoDcWQI0cF3KpWb3nxX0yE+x44xFxFz0oICNDllH6NhpYgZbeSW7dhrMZQWUnfrriKXEinfZFnLPAhGctRp+8HFYTwWBQ+bVjqfGSrQ5WNywtCN8LWuS0DiG9knOoOWDiMkmnBZuVL+G9Jf8YedLHX5ox5HOV6W/WbfaRk0/1wnw61/f8J1WnR86uQtjtPPoQd+3D4OEQgbJsjL9YbwTe+T/vGRAWyfG1qzWymWdLoJ40oUWwPog7U9TrhCoH7mn4uY0Ynvjfox40uOXhnsqx+AnCZXqy9sbKWHuuvJWc+xZpIW7lEnNMhmAtKdM68a1gg/vVtM/0+un9qTmHGfjhqyKycf1bamTqg
+X-MS-Exchange-AntiSpam-MessageData: B2A8yjS88ITzVMSSR8x5vOYD3pIcd3xwJORDUS2qn0CirfbjkpPZ18Imb29b9cCmIl9VvCsnWmKlQ1RGBdbBegmq/K3iodrh7/nDPLnwSdJAA5KbfstiHOk7UfAl8G4GN95jnjVB7NhAd5nKb3V2tA==
+X-OriginatorOrg: analogixsemi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07a78762-f8f8-41fd-ff58-08d7b9cb8b83
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2020 08:20:17.0145
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: b099b0b4-f26c-4cf5-9a0f-d5be9acab205
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zvjJAvTR+8Sr7WIfjifquJ/ISzX/2f4E3EEJVdDy9uHKfjDlEYtTAQt6H7Jn/MZQ1mFcZlafeH26pyUEocz7sw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi all,
 
-syzbot found the following crash on:
+The following series add support for the Slimport ANX7625 transmitter, a
+ultra-low power Full-HD 4K MIPI to DP transmitter designed for portable device.
 
-HEAD commit:    ca7e1fd1 Merge tag 'linux-kselftest-5.6-rc3' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=179f0931e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a61f2164c515c07f
-dashboard link: https://syzkaller.appspot.com/bug?extid=f4dfece964792d80b139
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14fdfdede00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17667de9e00000
+This is the v7 version, any mistakes, please let me know, I will fix it in
+the next series. This series fix critical timing(eg:odd hfp/hbp) in "mode_fixup"
+interface, enlarge MIPI RX tolerance by setting register MIPI_DIGITAL_ADJ_1 to
+0x3D.
 
-The bug was bisected to:
-
-commit 2303f994b3e187091fd08148066688b08f837efc
-Author: Peter Krystad <peter.krystad@linux.intel.com>
-Date:   Wed Jan 22 00:56:17 2020 +0000
-
-    mptcp: Associate MPTCP context with TCP socket
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14fbec81e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=16fbec81e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12fbec81e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f4dfece964792d80b139@syzkaller.appspotmail.com
-Fixes: 2303f994b3e1 ("mptcp: Associate MPTCP context with TCP socket")
-
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0010) - not-present page
-PGD 8e171067 P4D 8e171067 PUD 93fa2067 PMD 0 
-Oops: 0010 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8984 Comm: syz-executor066 Not tainted 5.6.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:0x0
-Code: Bad RIP value.
-RSP: 0018:ffffc900020b7b80 EFLAGS: 00010246
-RAX: 1ffff110124ba600 RBX: 0000000000000000 RCX: ffff88809fefa600
-RDX: ffff8880994cdb18 RSI: 0000000000000000 RDI: ffff8880925d3140
-RBP: ffffc900020b7bd8 R08: ffffffff870225be R09: fffffbfff140652a
-R10: fffffbfff140652a R11: 0000000000000000 R12: ffff8880925d35d0
-R13: ffff8880925d3140 R14: dffffc0000000000 R15: 1ffff110124ba6ba
-FS:  0000000001a0b880(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 00000000a6d6f000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- cipso_v4_sock_setattr+0x34b/0x470 net/ipv4/cipso_ipv4.c:1888
- netlbl_sock_setattr+0x2a7/0x310 net/netlabel/netlabel_kapi.c:989
- smack_netlabel security/smack/smack_lsm.c:2425 [inline]
- smack_inode_setsecurity+0x3da/0x4a0 security/smack/smack_lsm.c:2716
- security_inode_setsecurity+0xb2/0x140 security/security.c:1364
- __vfs_setxattr_noperm+0x16f/0x3e0 fs/xattr.c:197
- vfs_setxattr fs/xattr.c:224 [inline]
- setxattr+0x335/0x430 fs/xattr.c:451
- __do_sys_fsetxattr fs/xattr.c:506 [inline]
- __se_sys_fsetxattr+0x130/0x1b0 fs/xattr.c:495
- __x64_sys_fsetxattr+0xbf/0xd0 fs/xattr.c:495
- do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440199
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffcadc19e48 EFLAGS: 00000246 ORIG_RAX: 00000000000000be
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440199
-RDX: 0000000020000200 RSI: 00000000200001c0 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000003 R09: 00000000004002c8
-R10: 0000000000000009 R11: 0000000000000246 R12: 0000000000401a20
-R13: 0000000000401ab0 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-CR2: 0000000000000000
----[ end trace 9bbc7bb8e1061a42 ]---
-RIP: 0010:0x0
-Code: Bad RIP value.
-RSP: 0018:ffffc900020b7b80 EFLAGS: 00010246
-RAX: 1ffff110124ba600 RBX: 0000000000000000 RCX: ffff88809fefa600
-RDX: ffff8880994cdb18 RSI: 0000000000000000 RDI: ffff8880925d3140
-RBP: ffffc900020b7bd8 R08: ffffffff870225be R09: fffffbfff140652a
-R10: fffffbfff140652a R11: 0000000000000000 R12: ffff8880925d35d0
-R13: ffff8880925d3140 R14: dffffc0000000000 R15: 1ffff110124ba6ba
-FS:  0000000001a0b880(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 00000000a6d6f000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Thanks,
+Xin
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Xin Ji (2):
+  dt-bindings: drm/bridge: anx7625: MIPI to DP transmitter binding
+  drm/bridge: anx7625: Add anx7625 MIPI DSI/DPI to DP bridge driver
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+ .../bindings/display/bridge/anx7625.yaml           |   91 +
+ drivers/gpu/drm/bridge/Makefile                    |    2 +-
+ drivers/gpu/drm/bridge/analogix/Kconfig            |    6 +
+ drivers/gpu/drm/bridge/analogix/Makefile           |    1 +
+ drivers/gpu/drm/bridge/analogix/anx7625.c          | 2172 ++++++++++++++++++++
+ drivers/gpu/drm/bridge/analogix/anx7625.h          |  410 ++++
+ 6 files changed, 2681 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/anx7625.yaml
+ create mode 100644 drivers/gpu/drm/bridge/analogix/anx7625.c
+ create mode 100644 drivers/gpu/drm/bridge/analogix/anx7625.h
+
+-- 
+2.7.4
+
