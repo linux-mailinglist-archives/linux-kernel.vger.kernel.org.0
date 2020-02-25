@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6603016BA9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:30:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8537C16BA9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2020 08:30:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbgBYHaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 02:30:25 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38123 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729055AbgBYHaY (ORCPT
+        id S1729360AbgBYHak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 02:30:40 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38144 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729072AbgBYHak (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 02:30:24 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a9so1965577wmj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 23:30:22 -0800 (PST)
+        Tue, 25 Feb 2020 02:30:40 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a9so1966150wmj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2020 23:30:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=xmL5mNQIpqr9YgAUqty2jHE9112YdztqpqiF1HNMG8k=;
-        b=sFTbEFRdHpDFI1ud08kegz5D+Enas/RPbpKBq/6cj9biSm2K1GLGZsfe5Ta92hUlQk
-         sMaEttAB3EiBmEVvNRik/93kD6z4wuN6O3vMtIYada7TtBYgMKTRlaifajOPk2l+r3iE
-         H7XMdjdQ2XC+K9sxF32drNGT6uw7xLuSoxnQQOyONM512+4Jgrte+C2N//u3H45cl7IX
-         dfcy7I3HVi4X77CN22tIvT0mGZJr6/mjNYOb90t/O19UuHbpLNHH6uDG8qj0Zy3a4FDr
-         7NrnCapFsxyMkwW9/UGKQ06BazkQsTkeKpU/UZjDVZsBIr+XqoL3f0ozvM+sVyRRdnCR
-         y1tw==
-X-Gm-Message-State: APjAAAXJdyvBi0FYHk0QJLwGrBBAqfd4jkvnuZk3ofwVRE6Wzscyzqwj
-        U+akp6Kut9pXLxOXuRoTgc4=
-X-Google-Smtp-Source: APXvYqzAVGs9eZ2Lq9Vuz/XJQhEJm7JdsBNmquKOHV+/2FVqmoQ2KFVwPBY52E8QWKt/nPTvtK0bxQ==
-X-Received: by 2002:a1c:dc85:: with SMTP id t127mr3958789wmg.16.1582615821752;
-        Mon, 24 Feb 2020 23:30:21 -0800 (PST)
+        bh=TMVzsE3RY2uqwWhoAR1tWAfPxyuyXN3+ZsHSuH/Tap4=;
+        b=Y5FtYI9/EZvCPZE2zGcMTrq0VPPn3XhaiwZ2MXPqyQVkHrB3c3aZmmghsCR+g9o7aj
+         nRzgawhYSOVWVoqffCcMU016SJmzXWzPkHs6d1UYb33xawkee5/TB7N0YgTr2AACkNTt
+         gyghk1qUTONTf6YDOUKzYlHorEEHgtGYySh4gjNtXCTAgzSjQQ8JNvHEeYBzmoXlyJm5
+         ZVp2oqTc/k2nub3Wy/zBCJ+e20+SQM4EvShPR/UZSf0Ze0v2L784xodJ1rGNlmZvFNfT
+         zoEVRk+JpElnQSVdCrz8aBp0UQWngyynuQuwuwFmlGWKZl3s31dFhNzwuckhzeJOTsxx
+         G0Pg==
+X-Gm-Message-State: APjAAAUOQQdjhgstSMRMFm3vCSYiOezaedY9ZKFaFEOy5Gyu4zX4dLHA
+        JoYCkrYQI8gpinM6+uuvt9s=
+X-Google-Smtp-Source: APXvYqxM1YNwyNF6ev3eRdjx1K1OeousJyAWhJVmZWozpwLfTcu9wiOAQFA1InHUGgpXcSB+R4RhOQ==
+X-Received: by 2002:a05:600c:285:: with SMTP id 5mr3578403wmk.120.1582615837150;
+        Mon, 24 Feb 2020 23:30:37 -0800 (PST)
 Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
-        by smtp.gmail.com with ESMTPSA id t10sm1421653wru.59.2020.02.24.23.30.20
+        by smtp.gmail.com with ESMTPSA id z16sm5399300wrp.33.2020.02.24.23.30.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 23:30:20 -0800 (PST)
-Subject: Re: [PATCH v2 2/2] tty: fix compat TIOCGSERIAL checking wrong
- function ptr
+        Mon, 24 Feb 2020 23:30:36 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] tty: fix compat TIOCGSERIAL leaking uninitialized
+ memory
 To:     Eric Biggers <ebiggers@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
         Al Viro <viro@zeniv.linux.org.uk>
 References: <20200224181532.GA109047@gmail.com>
  <20200224182044.234553-1-ebiggers@kernel.org>
- <20200224182044.234553-3-ebiggers@kernel.org>
+ <20200224182044.234553-2-ebiggers@kernel.org>
 From:   Jiri Slaby <jslaby@suse.com>
 Autocrypt: addr=jslaby@suse.com; prefer-encrypt=mutual; keydata=
  mQINBE6S54YBEACzzjLwDUbU5elY4GTg/NdotjA0jyyJtYI86wdKraekbNE0bC4zV+ryvH4j
@@ -87,12 +87,12 @@ Autocrypt: addr=jslaby@suse.com; prefer-encrypt=mutual; keydata=
  ivRypCapDfcWBGGsbX5eaXpRfInaMTGaU7wmWO44Z5diHpmQgTLOrN9/MEtdkK6OVhAMVenI
  w1UnZnA+ZfaZYShi5oFTQk3vAz7/NaA5/bNHCES4PcDZw7Y/GiIh/JQR8H1JKZ99or9LjFeg
  HrC8YQ1nzkeDfsLtYM11oC3peHa5AiXLmCuSC9ammQ3LhkfET6N42xTu2A==
-Message-ID: <265c9940-e274-2598-112a-35b66ab5001e@suse.com>
-Date:   Tue, 25 Feb 2020 08:30:19 +0100
+Message-ID: <6294851f-50e5-eaaa-2182-1ad6ae7234b1@suse.com>
+Date:   Tue, 25 Feb 2020 08:30:35 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.2
 MIME-Version: 1.0
-In-Reply-To: <20200224182044.234553-3-ebiggers@kernel.org>
+In-Reply-To: <20200224182044.234553-2-ebiggers@kernel.org>
 Content-Type: text/plain; charset=iso-8859-2
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -106,13 +106,15 @@ On 24. 02. 20, 19:20, Eric Biggers wrote:
 > 
 > Commit 77654350306a ("take compat TIOC[SG]SERIAL treatment into
 > tty_compat_ioctl()") changed the compat version of TIOCGSERIAL to start
-> checking for the presence of the ->set_serial function pointer rather
-> than ->get_serial.  This appears to be a copy-and-paste error, since
-> ->get_serial is the function pointer that is called as well as the
-> pointer that is checked by the non-compat version of TIOCGSERIAL.
+> copying a whole 'serial_struct32' to userspace rather than individual
+> fields, but failed to initialize all padding and fields -- namely the
+> hole after the 'iomem_reg_shift' field, and the 'reserved' field.
 > 
-> Fix this by checking the correct function pointer.
+> Fix this by initializing the struct to zero.
 > 
+> [v2: use sizeof, and convert the adjacent line for consistency.]
+> 
+> Reported-by: syzbot+8da9175e28eadcb203ce@syzkaller.appspotmail.com
 > Fixes: 77654350306a ("take compat TIOC[SG]SERIAL treatment into tty_compat_ioctl()")
 > Cc: <stable@vger.kernel.org> # v4.20+
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
@@ -120,22 +122,24 @@ On 24. 02. 20, 19:20, Eric Biggers wrote:
 Acked-by: Jiri Slaby <jslaby@suse.cz>
 
 > ---
->  drivers/tty/tty_io.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/tty/tty_io.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-> index db4a13bc855ed6..5a6f36b391d95d 100644
+> index 1fcf7ad83dfa0a..db4a13bc855ed6 100644
 > --- a/drivers/tty/tty_io.c
 > +++ b/drivers/tty/tty_io.c
-> @@ -2734,7 +2734,7 @@ static int compat_tty_tiocgserial(struct tty_struct *tty,
->  	memset(&v, 0, sizeof(v));
->  	memset(&v32, 0, sizeof(v32));
+> @@ -2730,7 +2730,9 @@ static int compat_tty_tiocgserial(struct tty_struct *tty,
+>  	struct serial_struct32 v32;
+>  	struct serial_struct v;
+>  	int err;
+> -	memset(&v, 0, sizeof(struct serial_struct));
+> +
+> +	memset(&v, 0, sizeof(v));
+> +	memset(&v32, 0, sizeof(v32));
 >  
-> -	if (!tty->ops->set_serial)
-> +	if (!tty->ops->get_serial)
+>  	if (!tty->ops->set_serial)
 >  		return -ENOTTY;
->  	err = tty->ops->get_serial(tty, &v);
->  	if (!err) {
 > 
 
 
