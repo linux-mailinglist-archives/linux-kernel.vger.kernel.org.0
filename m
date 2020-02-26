@@ -2,163 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEBC017047F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:35:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 690E6170468
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:31:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbgBZQfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:35:42 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54549 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbgBZQfm (ORCPT
+        id S1727801AbgBZQbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:31:36 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43840 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgBZQbg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:35:42 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j6zes-0006KP-Qq; Wed, 26 Feb 2020 17:35:38 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j6zer-0001iD-NE; Wed, 26 Feb 2020 17:35:37 +0100
-Date:   Wed, 26 Feb 2020 17:35:37 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, kernel@pengutronix.de
-Subject: Re: [PATCH 3/4] pwm: omap-dmtimer: Do not disable pwm before
- changing period/duty_cycle
-Message-ID: <20200226163537.5shrqno6zy56t2l4@pengutronix.de>
-References: <20200224052135.17278-1-lokeshvutla@ti.com>
- <20200224052135.17278-4-lokeshvutla@ti.com>
- <20200224085531.zab5ewr2nfi2shem@pengutronix.de>
- <4aedb6d4-1823-ab46-b7e6-cc0b30f7747d@ti.com>
- <20200225064833.kmvaplfqqf53s3iy@pengutronix.de>
- <8e22912c-a65f-9efe-27e7-555cd144776f@ti.com>
- <20200225083846.4l4tnbjcpm6uggtl@pengutronix.de>
- <4d830367-403a-5cf5-abf0-7daccbece1ae@ti.com>
+        Wed, 26 Feb 2020 11:31:36 -0500
+Received: by mail-ed1-f65.google.com with SMTP id dc19so4482351edb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 08:31:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cumulusnetworks.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z1w+58dOrrZr3wo5mk8rJB/ZJsesTkU2LXg6fDoYot4=;
+        b=PWVHdGOKeZeBrmZqjFNWON3PpXWLD/9F+byeDjIJWy+ytRge7nUh9NGmyX86dkURx+
+         e0mLG9bX4960huPEWOL+TWR+I1cgCsC/A9WJEuvwqSBaMzaTqV0o7c4/0zm9hdj7F82H
+         URmRnPcaEgXmpKdkbmcIvzfhb5rKpkH41i0l4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z1w+58dOrrZr3wo5mk8rJB/ZJsesTkU2LXg6fDoYot4=;
+        b=CE8BDyhPoNxWQVZcvf3b4VAkktP9DTzFIi2mvd8KGS9Ezh95QBR+r2ATPEMYnRsqYs
+         YE6IfXA8d7WZA1vTihKSIqmnNs4np4CqP7QzFx+KHM9wUFnHvSESeuxHheK11INfhNxb
+         AMGdlIdZ9pPQhAgYG0Cv/JnIBHbZQvP68Efl5SPf3NXpR9zjv0CobCbnHJ7cPg6Wd8k/
+         VblcDVmm+YF7cOBOgLcQgjq9JZ7X5PpW/b5/iMcm/RLu67kA8MW3A7zyRyX2jF3Qapeg
+         5qdTHgMxPwyE3ydnev9FJFo5Wsn+hZLWzPX6iew6agt+MOADrub2AhOS5cdNrxMrdfXQ
+         IzHw==
+X-Gm-Message-State: APjAAAUt0bJjJnuc8T2+h83UhDNt8OZT8fW6rVJkaQgcRm5qiMZIxIAG
+        W0pdznB7RJ6TdUkdknlGfSztJpozLSe5rrhEc7Mb/w==
+X-Google-Smtp-Source: APXvYqzrSAOseHb5MIcTw/nawhJsW3ES0aHkvgiuyVEnigJi8uZOuBz/tTxOvsOzYVVPzvAU4zYwgIzxXALT47g6rdA=
+X-Received: by 2002:a17:906:f105:: with SMTP id gv5mr5259642ejb.135.1582734694188;
+ Wed, 26 Feb 2020 08:31:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4d830367-403a-5cf5-abf0-7daccbece1ae@ti.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20200225163025.9430-1-vadym.kochan@plvision.eu>
+In-Reply-To: <20200225163025.9430-1-vadym.kochan@plvision.eu>
+From:   Roopa Prabhu <roopa@cumulusnetworks.com>
+Date:   Wed, 26 Feb 2020 08:38:32 -0800
+Message-ID: <CAJieiUg8ycCnNtUCuHfc55nQXCQx9+f4rdw161AM+py3i2zpfg@mail.gmail.com>
+Subject: Re: [RFC net-next 0/3] net: marvell: prestera: Add Switchdev driver
+ for Prestera family ASIC device 98DX326x (AC3x)
+To:     Vadym Kochan <vadym.kochan@plvision.eu>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Oleksandr Mazur <oleksandr.mazur@plvision.eu>,
+        Taras Chornyi <taras.chornyi@plvision.eu>,
+        Serhiy Boiko <serhiy.boiko@plvision.eu>,
+        Andrii Savka <andrii.savka@plvision.eu>,
+        Volodymyr Mytnyk <volodymyr.mytnyk@plvision.eu>,
+        David Ahern <dsahern@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 04:56:02PM +0530, Lokesh Vutla wrote:
-> Hi Uwe,
-> 
-> On 25/02/20 2:08 PM, Uwe Kleine-König wrote:
-> > Hello Lokesh,
-> > 
-> > On Tue, Feb 25, 2020 at 01:29:57PM +0530, Lokesh Vutla wrote:
-> >> On 25/02/20 12:18 PM, Uwe Kleine-König wrote:
-> >>> On Tue, Feb 25, 2020 at 10:32:42AM +0530, Lokesh Vutla wrote:
-> >>>> On 24/02/20 2:25 PM, Uwe Kleine-König wrote:
-> >>>>> On Mon, Feb 24, 2020 at 10:51:34AM +0530, Lokesh Vutla wrote:
-> >>>>>>  	omap->pdata->set_load(omap->dm_timer, true, load_value);
-> >>>>>>  	omap->pdata->set_match(omap->dm_timer, true, match_value);
-> >>>>>
-> >>>>> (Without having looked into the depths of the driver I assume
-> >>>>> .set_load() sets the period of the PWM and .set_match() the duty cycle.)
-> >>>>
-> >>>> Right.
-> >>>>
-> >>>>>
-> >>>>> What happens on a running PWM if you change the period? Consider you
-> >>>>> change from duty_cycle = 1000, period = 5000 to duty_cycle = 4000,
-> >>>>> period = 10000. As you set the period first, can it happen the hardware
-> >>>>> produces a cycle with duty_cycle = 1000, period = 10000?
-> >>>>
-> >>>> No. So, the current cycle is un affected with duty_cycle = 1000 and period =
-> >>>> 5000. Starting from next cycle new settings gets reflected with duty_cycle =
-> >>>> 4000 and period = 10000.
-> >>>
-> >>> Is the reference manual for this hardware publically available?
-> >>
-> >> AM335x TRM [0] Section 20.1.3.5 Pulse-Width Modulation (Page 4445).
-> >>
-> >> [0] http://www.ti.com/lit/ug/spruh73q/spruh73q.pdf
-> > 
-> > Great. This is BTW an opportunity to increase your patch count: Create a
-> > patch that adds a reference to this document at the top of the driver.
-> > 
-> >>> So the .set_load callback just writes a shadow register and .set_match
-> >>> latches it into hardware atomically with its own register changes? A
-> >>> comment in the source code about this would be good. Also if .set_load
-> >>> doesn't work without .set_match I wonder if it is sane to put their
-> >>> logic in two different functions.
-> >>
-> >> Just to give a little bit of background:
-> > 
-> > Thanks, very appreciated.
-> > 
-> >> - The omap timer is an upward counter that can be started and stopped at any time.
-> >> - Once the timer counter overflows, it gets loaded with a predefined load
-> >> value.(Or can be configured to not re load at all).
-> >> - Timer has a configurable output pin which can be toggled in the following two
-> >> cases:
-> >> 	- When the counter overflows
-> >> 	- When the counter matches with a predefined register(match register).
-> >>
-> >> Using this o/p pin the driver tries to generate a PWM with period = (OVERFLOW -
-> >> LOAD_VALUE) and duty_cycle = (MATCH_VALUE - LOAD_VALUE).
-> >>
-> >> .set_load will configure the load value .set_match will configure the match
-> >> value. The configured values gets effected only in the next cycle of PWM.
-> > 
-> > Ah, so back to my original question: If you change from
-> > duty_cycle/period = 1000/5000 to duty_cycle/period = 4000/10000 and
-> > after you set the period but before you set the duty_cycle a period
-> > happens to end, you get indeed a cycle with mixed settings, right?
-> 
-> hmm..you are right but the mixed period happens in a bit different case. Let me
-> explain in bit more detail.
-> 
-> For omap dm timer, the load_value that gets set in the current period, will be
-> reflected only in next cycle, as timer counter has to overflow to load this
-> value. But in case of match register(which determines the duty cycle), the timer
-> counter is continuously matched to it. So below are the cases where a mixed
-> period can happen:
-> 1) When signal is high and new match value is > current timer counter. Then the
-> duty cycle gets reflected in the current cycle.(Duty_cycle for current period=
-> new match value -  previous load  value).
-> 2) When signal is high and new match value is < current timer counter. Then the
-> period and duty cycle for the current cycle gets effected as well. Because the
-> signal is pulled down only when counter matches with match register, and this
-> happens only in the next cycle(after timer counter overflows). Then:
-> 	- new Period for current cycle = (current period + new period)
-> 	- new duty cycle for current cycle =  (current period + new duty_cycle).
-> 
-> I am able to observe the above mentioned 2 behaviors on the scope using beagle
-> bone black. So the problem is with updating duty cycle when the signal is high.
-> but when signal is low, nothing gets effected to the current cycle.
-> 
-> How do you want to go about this? Should we describe this as limitation in the
-> driver as you asked?
+On Tue, Feb 25, 2020 at 8:31 AM Vadym Kochan <vadym.kochan@plvision.eu> wrote:
+>
+> Marvell Prestera 98DX326x integrates up to 24 ports of 1GbE with 8
+> ports of 10GbE uplinks or 2 ports of 40Gbps stacking for a largely
+> wireless SMB deployment.
+>
+> Prestera Switchdev is a firmware based driver which operates via PCI
+> bus. The driver is split into 2 modules:
+>
+>     - prestera_sw.ko - main generic Switchdev Prestera ASIC related logic.
+>
+>     - prestera_pci.ko - bus specific code which also implements firmware
+>                         loading and low-level messaging protocol between
+>                         firmware and the switchdev driver.
+>
+> This driver implementation includes only L1 & basic L2 support.
+>
+> The core Prestera switching logic is implemented in prestera.c, there is
+> an intermediate hw layer between core logic and firmware. It is
+> implemented in prestera_hw.c, the purpose of it is to encapsulate hw
+> related logic, in future there is a plan to support more devices with
+> different HW related configurations.
+>
+> The firmware has to be loaded each time device is reset. The driver is
+> loading it from:
+>
+>     /lib/firmware/marvell/prestera_fw_img.bin
+>
+> The firmware image version is located within internal header and consists
+> of 3 numbers - MAJOR.MINOR.PATCH. Additionally, driver has hard-coded
+> minimum supported firmware version which it can work with:
+>
+>     MAJOR - reflects the support on ABI level between driver and loaded
+>             firmware, this number should be the same for driver and
+>             loaded firmware.
+>
+>     MINOR - this is the minimal supported version between driver and the
+>             firmware.
+>
+>     PATCH - indicates only fixes, firmware ABI is not changed.
+>
+> The firmware image will be submitted to the linux-firmware after the
+> driver is accepted.
+>
+> The following Switchdev features are supported:
+>
+>     - VLAN-aware bridge offloading
+>     - VLAN-unaware bridge offloading
+>     - FDB offloading (learning, ageing)
+>     - Switchport configuration
+>
+> CPU RX/TX support will be provided in the next contribution.
+>
+> Vadym Kochan (3):
+>   net: marvell: prestera: Add Switchdev driver for Prestera family ASIC
+>     device 98DX325x (AC3x)
+>   net: marvell: prestera: Add PCI interface support
+>   dt-bindings: marvell,prestera: Add address mapping for Prestera
+>     Switchdev PCIe driver
+>
 
-OK, to sumarize: You have a counter that goes up. When it overflows it
-gets reloaded with the load value and the output goes up. When
-$counter = $match, the output goes down.
+Have not looked at the patches yet, but very excited to see another
+switchdev driver making it into the kernel!.
 
-Having this is a comment at the top of the driver would be very welcome.
-
-(I just noticed I duplicated this question about a racy update in
-another end of this thread. This pops in my head too automatically :-)
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Thanks Marvell!.
