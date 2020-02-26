@@ -2,239 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC83417043D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:23:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD478170433
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:21:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbgBZQXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:23:06 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:54444 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727301AbgBZQXC (ORCPT
+        id S1727311AbgBZQV6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:21:58 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55791 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgBZQV5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:23:02 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QFwxZp113857;
-        Wed, 26 Feb 2020 16:22:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2020-01-29;
- bh=S3UwfGiP0JixI9qfZJspHVlcFTyNQ+p0Z7ywtbB6LDE=;
- b=giHZI+ZtH7nbjWH1GuoByBPkQ4Trgwth6GNSSlOVl79blco8iS/xoi74VpDp53k0gwvL
- DNwoQS/ijVEV5kklOGFgVrp6ZQFv3PAiFGAhHOsZDnye1z7moPSPztC6YpTjnPgQQTQ2
- 1wjUIQ0JX15ZaM7tfej1adJKbtNayb5OHVmdCHBRbeBMEhd1IN+/6eYnajGg+V2pqQwC
- YlDvASzTA5rvKEe8HvcuoypIAXjnQ4dCAMbhi9PIaU9cFL9ILue06TEeo2UeYyg1oDuh
- k2iVtIUkY61uizUGS1fthOGHy7xOYmbqv4ykqXEOcmONWHkq9WKhHAjTpyFeLrXnWJJW zw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2ydct34r2n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:22:20 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QGMEtj164644;
-        Wed, 26 Feb 2020 16:22:19 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2ydcs2g53c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:22:19 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01QGM8lD028710;
-        Wed, 26 Feb 2020 16:22:08 GMT
-Received: from achartre-desktop.us.oracle.com (/10.39.232.60)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Feb 2020 08:22:08 -0800
-From:   Alexandre Chartre <alexandre.chartre@oracle.com>
-To:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
-        luto@kernel.org, peterz@infradead.org, x86@kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     pbonzini@redhat.com, konrad.wilk@oracle.com,
-        jan.setjeeilers@oracle.com, liran.alon@oracle.com,
-        junaids@google.com, graf@amazon.de, rppt@linux.vnet.ibm.com,
-        kuzuno@gmail.com, mgross@linux.intel.com,
-        alexandre.chartre@oracle.com
-Subject: [RFC PATCH v3 0/7] Kernel Address Space Isolation
+        Wed, 26 Feb 2020 11:21:57 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j6zRa-0005Au-A1; Wed, 26 Feb 2020 17:21:54 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j6zRZ-0001L4-HM; Wed, 26 Feb 2020 17:21:53 +0100
 Date:   Wed, 26 Feb 2020 17:21:53 +0100
-Message-Id: <1582734120-26757-1-git-send-email-alexandre.chartre@oracle.com>
-X-Mailer: git-send-email 1.7.1
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 phishscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002260112
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
- impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002260111
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH 4/4] pwm: omap-dmtimer: Implement .apply callback
+Message-ID: <20200226162153.4vlx2z6wurpdy4az@pengutronix.de>
+References: <20200224052135.17278-1-lokeshvutla@ti.com>
+ <20200224052135.17278-5-lokeshvutla@ti.com>
+ <20200224090706.xsujpc3yiqlmmrmm@pengutronix.de>
+ <cee31e10-17b4-1cfb-5c77-a58a142c338d@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cee31e10-17b4-1cfb-5c77-a58a142c338d@ti.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello Lokesh,
 
-This is version 3 of the "Kernel Address Space Isolation" (ASI) RFC
-[1][2]. This version focus on providing the ASI infrastructure and
-implementing PTI with ASI.
+On Tue, Feb 25, 2020 at 10:31:45AM +0530, Lokesh Vutla wrote:
+> Hi Uwe,
+> 
+> On 24/02/20 2:37 PM, Uwe Kleine-König wrote:
+> > On Mon, Feb 24, 2020 at 10:51:35AM +0530, Lokesh Vutla wrote:
+> >> Implement .apply callback and drop the legacy callbacks(enable, disable,
+> >> config, set_polarity).
+> >>
+> >> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> >> ---
+> >>  drivers/pwm/pwm-omap-dmtimer.c | 141 +++++++++++++++++++--------------
+> >>  1 file changed, 80 insertions(+), 61 deletions(-)
+> >>
+> 
+> [..snip..]
+> 
+> >> -static int pwm_omap_dmtimer_set_polarity(struct pwm_chip *chip,
+> >> -					 struct pwm_device *pwm,
+> >> -					 enum pwm_polarity polarity)
+> >> +/**
+> >> + * pwm_omap_dmtimer_apply() - Changes the state of the pwm omap dm timer.
+> >> + * @chip:	Pointer to PWM controller
+> >> + * @pwm:	Pointer to PWM channel
+> >> + * @state:	New sate to apply
+> >> + *
+> >> + * Return 0 if successfully changed the state else appropriate error.
+> >> + */
+> >> +static int pwm_omap_dmtimer_apply(struct pwm_chip *chip,
+> >> +				  struct pwm_device *pwm,
+> >> +				  const struct pwm_state *state)
+> >>  {
+> >>  	struct pwm_omap_dmtimer_chip *omap = to_pwm_omap_dmtimer_chip(chip);
+> >> +	int ret = 0;
+> >>  
+> >> -	/*
+> >> -	 * PWM core will not call set_polarity while PWM is enabled so it's
+> >> -	 * safe to reconfigure the timer here without stopping it first.
+> >> -	 */
+> >>  	mutex_lock(&omap->mutex);
+> >> -	omap->pdata->set_pwm(omap->dm_timer,
+> >> -			     polarity == PWM_POLARITY_INVERSED,
+> >> -			     true, OMAP_TIMER_TRIGGER_OVERFLOW_AND_COMPARE);
+> >> +
+> >> +	if (pwm_is_enabled(pwm) && !state->enabled) {
+> > 
+> > In my book calling PWM API functions (designed for PWM consumers) is not
+> > so nice. I would prefer you checking the hardware registers or cache the
+> > state locally instead of relying on the core here.
+> 
+> .start and .stop apis does read the hardware registers and check the state
+> before making any changes. Do you want to drop off the pwm_is_enabled(pwm) check
+> here?
 
-Compared to version 2, this RFC is much smaller with only 7 patches
-(RFCv2 has 26 patches). This is because this RFC contains patches only
-for the ASI infrastructure and for implementing PTI with ASI, but it
-doesn't contain patches for using ASI with KVM and all related changes
-regarding page-table creation and filling.
+The IMHO more natural approach would be to look into the hardware
+registers instead of asking the framework.
 
-This patchset is based on the Linux 5.5 source code.
+> > It would be great to have a general description at the top of the driver
+> > (like for example drivers/pwm/pwm-sifive.c) that answers things like:
+> > 
+> >  - Does calling .stop completes the currently running period (it
+> >    should)?
+> 
+> Existing driver implementation abruptly stops the cycle. I can make changes such
+> that it completes the currently running period.
 
-Background
-==========
-Kernel Address Space Isolation aims to use address spaces to isolate some
-parts of the kernel (for example KVM) to prevent leaking sensitive data
-between CPU hyper-threads under speculative execution attacks.
+That would be good for correctness.
 
-Over the past years, various speculative attacks (like L1TF or MDS) have
-highlighted that data can leak between CPU threads through the CPU (micro)
-architecture. In particular, a malicious virtual machine running on a CPU
-thread can target data used by a sibling CPU thread from the same CPU core.
-Thus, a malicious VM can potentially access data from another VM or from
-the host system if they are running on sibling CPU threads.
+> >  - Does changing polarity, duty_cycle and period complete the running
+> >    period?
+> 
+> - Polarity can be changed only when the pwm is not running. Ill add extra guards
+> to reflect this behavior.
+> - Changing duty_cycle and period does complete the running period and new values
+> gets reflected in next cycle.
 
-Core Scheduling [3] can prevent a malicious VM from attacking another VM
-by running the same VM on all CPU threads of a CPU core. However a
-malicious VM can still target the host system when the sibling CPU thread
-exits the VM and returns to the host.
+Is there are race with the hardware? I.e. can it happen that when a new
+cycle starts just when you configured the new period but not the
+duty_cycle yet a mixed cycle is output?
 
-Address Space Isolation can be applied to KVM to mitigate this VM-to-host
-attack by removing secrets from the kernel address space used when running
-KVM, thus preventing a malicious VM from collecting any sensitive data
-from host.
+> >  - How does the hardware behave on disable? (i.e. does it output the
+> >    state the pin is at in that moment? Does it go High-Z?)
+> 
+> Now that I am making changes to complete the current period on disable, the pin
+> goes to Low after disabling(completing the cycle).
+> 
+> Ill add all these points as you mentioned in v2.
 
-Address Space Isolation can also be used to implement Page Table Isolation
-(PTI [4]) which reduces kernel mappings present in user address spaces to
-prevent the Meltdown attack.
+Great
 
-Details
-=======
+Best regards
+Uwe
 
-ASI
----
-An ASI is created by calling asi_create() with a specified ASI type. The
-ASI type manages data common to all ASI of the same type. It is used, in
-particular, to manage per-ASI type TLB/PCID information.
-
-Then the ASI can be entered with asi_enter() and exited with asi_exit().
-When an ASI is in used, any interrupt/exception/NMI will cause the ASI to
-be interrupted (ASI_INTERRUPT) and the ASI will be resumed (ASI_RESUME)
-when the interrupt/exception/NMI returns.
-
-asi_enter()/asi_exit() and ASI_INTERRUPT/ASI_RESUME switch between the
-ASI and the full kernel page-table by updating the CR3 register.
-
-If a task using ASI is scheduled out then its ASI state is saved and it
-will be restored when the task is scheduled back.
-
-Page fault occurring while ASI is used will either cause the ASI to be
-aborted (switch back to the full kernel pagetable) or to be preserved.
-The behavior depends on the ASI type. For example, for PTI the ASI is
-preserved and the kernel page fault handler handles the fault on behalf
-of the ASI. But for KVM ASI, the ASI will be aborted and the fault will
-be retried with the full kernel page-table.
-
-PTI
----
-PTI is now implemented with ASI (user ASI) if both CONFIG_ADDRESS_SPACE_ISOLATION
-and CONFIG_PAGE_TABLE_ISOLATION are set. The behavior of PTI is unchanged
-but it is now using the ASI infrastructure. 
-
-For each user process, a user ASI is defined with the PTI pagetable. The
-user ASI is used when running userland code, and it is exited when entering
-a syscall. The user ASI is re-entered when the syscall returns to userland.
-
-KVM
----
-As already mentioned, KVM ASI is not present in this patchset. KVM ASI
-will be implemented ontop of this infrastructure. Basically, the KVM ASI
-patchset will:
-  - define a KVM ASI type (DEFINE_ASI_TYPE)
-  - create and fill a page-table to be used by the KVM ASI
-  - create a KVM ASI (asi_create_kvm())
-  - enter the KVM ASI (asi_enter()) on KVM_RUN ioctl
-  - exit the KVM ASI (asi_exit())
-
-Fault occuring when KVM ASI is in used will cause the ASI to be aborted,
-and the code will continue running with the full kernel page-table,
-until KVM ASI is explicitly reentered.
-
-Status
-======
-The code looks stable and it supports running a full kernel build and
-also ltp tests. Performance impact is expected to be limited as the new
-code only adds a small number of assembly instructions on syscall and
-interrupts. There's probably also room for reducing this number of
-instructions.
-
-Changes 
-=======
-Summary of changes compared to RFCv2:
-
-- Add ASI Type
-
-- Add generic TLB flushing mechanism for ASI. This mechanism is similar
-  to the context tracking done when switching mm.
-
-- When ASI is in used, it is interrupted on interrupt/exception/NMI and
-  resumed when the interrupt/exception/NMI returns.
-
-- If a task using ASI is scheduled in/out then save/restore the corresponding
-  ASI and update the cpu ASI session.
-
-- Implement PTI with ASI.
-
-- Remove KVM ASI from the patchset. KVM ASI will be provided in a separated
-  patchset ontop of the ASI infrastructure.
-
-- Remove functions to manage, populate and clear page-tables. These functions
-  were only used to build to the KVM ASI page-table. Also such functions should
-  be generic page-table functions and not specific to ASI. Mike Rapoport is also
-  looking at making these functions generic.
-
-
-References
-==========
-[1] ASI RFCv1 - https://lkml.org/lkml/2019/5/13/515
-[2] ASI RFCv2 - https://lore.kernel.org/lkml/1562855138-19507-1-git-send-email-alexandre.chartre@oracle.com
-[3] Core Scheduling - https://lwn.net/Articles/803652
-[4] Page Table Isolation (PTI) - https://www.kernel.org/doc/html/latest/x86/pti.html
-
----
-
-
-Alexandre Chartre (7):
-  mm/x86: Introduce kernel Address Space Isolation (ASI)
-  mm/asi: ASI entry/exit interface
-  mm/asi: Improve TLB flushing when switching to an ASI pagetable
-  mm/asi: Interrupt ASI on interrupt/exception/NMI
-  mm/asi: Switch ASI on task switch
-  mm/asi: ASI fault handler
-  mm/asi: Implement PTI with ASI
-
- arch/x86/entry/calling.h           |   31 +++-
- arch/x86/entry/common.c            |   29 +++-
- arch/x86/entry/entry_64.S          |   28 +++
- arch/x86/include/asm/asi.h         |  289 ++++++++++++++++++++++++++
- arch/x86/include/asm/asi_session.h |   24 +++
- arch/x86/include/asm/mmu_context.h |   20 ++-
- arch/x86/include/asm/tlbflush.h    |   23 ++-
- arch/x86/kernel/asm-offsets.c      |    5 +
- arch/x86/mm/Makefile               |    1 +
- arch/x86/mm/asi.c                  |  402 ++++++++++++++++++++++++++++++++++++
- arch/x86/mm/fault.c                |   20 ++
- arch/x86/mm/pti.c                  |   28 ++-
- include/linux/mm_types.h           |    5 +
- include/linux/sched.h              |    9 +
- kernel/fork.c                      |   17 ++
- kernel/sched/core.c                |    8 +
- security/Kconfig                   |   10 +
- 17 files changed, 931 insertions(+), 18 deletions(-)
- create mode 100644 arch/x86/include/asm/asi.h
- create mode 100644 arch/x86/include/asm/asi_session.h
- create mode 100644 arch/x86/mm/asi.c
-
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
