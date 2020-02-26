@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BC57170448
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:24:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7931D17043C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:23:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgBZQY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:24:57 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:57174 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbgBZQY5 (ORCPT
+        id S1726583AbgBZQXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:23:03 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:49804 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727709AbgBZQXC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:24:57 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QFwbx3093555;
-        Wed, 26 Feb 2020 16:22:30 GMT
+        Wed, 26 Feb 2020 11:23:02 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QFvg7Y033916;
+        Wed, 26 Feb 2020 16:22:34 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=L1aPaa75XgjXzwdXdIAAsdWmvjiQm2tabwyBxU+Nok4=;
- b=Q2XFeale/gcnEPTdyWSuSPLJJeQjGwtqZ7s/w0ToE4WtQmKh2Qr7Y1SB2GP4Eqjfqh9B
- NXcBqQ1G3WT56XjT3XN+r0Gh3QQij+xh6xogsqcL70HQlO7uC8hlFoElhJodIPixBPrz
- YkFIXFIUi/LHsglRKyF6w/5RZG8npycYFUeGdrW5Z0jkd9L9sqMYajJfabVpneZUwVyp
- kqBLW+ByZvcCRNCEBzR+Pj++jI/6Pxf2PJ9J6bO6eA9wZ7dkk+w464iBLELmxZh7vBoG
- JB8Ezrh3fzHUOtDRbI08XYmo9RPd1dAwGqN0p/d9+phpKljn+qgfT6/4LMfUBM5aAqIt /Q== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2ydct34r45-1
+ bh=wcR73i51xZFpjh/dpqq+xxHpso4HXMae9pYAfRpesjM=;
+ b=ajzQaEs036Fttjn6ealO6ng6AW2j8JJzN1l97faLvt3ILHyVqpbmygCm/pbyBiThm2u5
+ j8L1daZOMwpuq/N5PogrpKazZ52aYkAmsVLzeTCYoam+g2vIwJv1Ko91znOQAYRbc4Dg
+ xH9eNJSaVtIg+7TfTq2Uy+X1y5AkguS/wbmFXqvMmwmAfs1/ApzjNjUMeIAgIaDejblh
+ 2qIDoV6e0auZ1SHL4XlwWc0wdIaEa/ObARlZAKfwnlZxNNASWf8pSpwNEghrVF4zLjfu
+ KNETGqhLYJbAa1YvmQVcCUlrJYPM4FM9PX7VlKHmOpHPbLC6p++ziHSm6IABSdA/r7Vf 0A== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2ydcsrmrrd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:22:30 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QGMKLe017677;
-        Wed, 26 Feb 2020 16:22:29 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2ydcs5dgev-1
+        Wed, 26 Feb 2020 16:22:34 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QGMGaE166612;
+        Wed, 26 Feb 2020 16:22:33 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2ydcs2g5tc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:22:29 +0000
+        Wed, 26 Feb 2020 16:22:33 +0000
 Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01QGMT6m029004;
-        Wed, 26 Feb 2020 16:22:29 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01QGMWU5000833;
+        Wed, 26 Feb 2020 16:22:32 GMT
 Received: from achartre-desktop.us.oracle.com (/10.39.232.60)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Feb 2020 08:22:28 -0800
+        with ESMTP ; Wed, 26 Feb 2020 08:22:31 -0800
 From:   Alexandre Chartre <alexandre.chartre@oracle.com>
 To:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
         bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
@@ -50,21 +50,21 @@ Cc:     pbonzini@redhat.com, konrad.wilk@oracle.com,
         junaids@google.com, graf@amazon.de, rppt@linux.vnet.ibm.com,
         kuzuno@gmail.com, mgross@linux.intel.com,
         alexandre.chartre@oracle.com
-Subject: [RFC PATCH v3 6/7] mm/asi: ASI fault handler
-Date:   Wed, 26 Feb 2020 17:21:59 +0100
-Message-Id: <1582734120-26757-7-git-send-email-alexandre.chartre@oracle.com>
+Subject: [RFC PATCH v3 7/7] mm/asi: Implement PTI with ASI
+Date:   Wed, 26 Feb 2020 17:22:00 +0100
+Message-Id: <1582734120-26757-8-git-send-email-alexandre.chartre@oracle.com>
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1582734120-26757-1-git-send-email-alexandre.chartre@oracle.com>
 References: <1582734120-26757-1-git-send-email-alexandre.chartre@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 phishscore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 phishscore=0 suspectscore=2 spamscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
  definitions=main-2002260112
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
- impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 clxscore=1015
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 suspectscore=2
+ bulkscore=0 malwarescore=0 spamscore=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 phishscore=0 priorityscore=1501
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
  definitions=main-2002260111
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,274 +72,372 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an ASI fault handler and options to define the handler behavior.
-Depending on the ASI, the ASI fault handler can either abort the
-isolation and retry the faulty instruction with the full kernel
-page-table, or preserve the isolation and process the fault like
-any regular fault. If isolation is aborted then the location and
-address of the fault can be logged and optionally include a stack
-trace.
+ASI supersedes PTI. If both CONFIG_ADDRESS_SPACE_ISOLATION and
+CONFIG_PAGE_TABLE_ISOLATION are set then PTI is implemented using
+ASI. For each user process, a "user" ASI is then defined with the
+PTI pagetable. The user ASI is used when running userland code, and
+it is exited when entering a syscall. The user ASI is re-entered
+when the syscall returns to userland.
+
+As with any ASI, interrupts/exceptions/NMIs will interrupt the
+ASI, the ASI will resume when the interrupt/exception/NMI has
+completed. Faults won't abort the user ASI as user faults are
+handled by the kernel before returning to userland.
 
 Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 ---
- arch/x86/include/asm/asi.h |   42 +++++++++++++++++++-
- arch/x86/mm/asi.c          |   95 ++++++++++++++++++++++++++++++++++++++++++++
- arch/x86/mm/fault.c        |   20 +++++++++
- 3 files changed, 156 insertions(+), 1 deletions(-)
+ arch/x86/entry/calling.h        |    7 ++++++-
+ arch/x86/entry/common.c         |   29 ++++++++++++++++++++++++-----
+ arch/x86/entry/entry_64.S       |    6 ++++++
+ arch/x86/include/asm/asi.h      |    9 +++++++++
+ arch/x86/include/asm/tlbflush.h |   11 +++++++++--
+ arch/x86/mm/asi.c               |    9 +++++++++
+ arch/x86/mm/pti.c               |   28 ++++++++++++++++++++--------
+ include/linux/mm_types.h        |    5 +++++
+ kernel/fork.c                   |   17 +++++++++++++++++
+ 9 files changed, 105 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/include/asm/asi.h b/arch/x86/include/asm/asi.h
-index a0733f1..b8d7b93 100644
---- a/arch/x86/include/asm/asi.h
-+++ b/arch/x86/include/asm/asi.h
-@@ -66,6 +66,7 @@ struct asi_type {
- 	int			pcid_prefix;	/* PCID prefix */
- 	struct asi_tlb_state	*tlb_state;	/* percpu ASI TLB state */
- 	atomic64_t		last_pgtable_id; /* last id for this type */
-+	bool			fault_abort;	/* abort ASI on fault? */
- };
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index ca23b79..ce0fccd 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -176,16 +176,21 @@
+ #if defined(CONFIG_ADDRESS_SPACE_ISOLATION)
  
  /*
-@@ -75,12 +76,13 @@ struct asi_type {
-  * (asi_create_<typename>()) to easily create an ASI of the
-  * specified type.
+- * For now, ASI is not compatible with PTI.
++ * ASI supersedes the entry points used by PTI. If both
++ * CONFIG_ADDRESS_SPACE_ISOLATION and CONFIG_PAGE_TABLE_ISOLATION are
++ * set then PTI is implemented using ASI.
   */
--#define DEFINE_ASI_TYPE(name, pcid_prefix)			\
-+#define DEFINE_ASI_TYPE(name, pcid_prefix, fault_abort)		\
- 	DEFINE_PER_CPU(struct asi_tlb_state, asi_tlb_ ## name);	\
- 	struct asi_type asi_type_ ## name = {			\
- 		pcid_prefix,					\
- 		&asi_tlb_ ## name,				\
- 		ATOMIC64_INIT(1),				\
-+		fault_abort					\
- 	};							\
- 	EXPORT_SYMBOL(asi_type_ ## name)
  
-@@ -94,16 +96,49 @@ struct asi_type {
- 	return asi_create(&asi_type_ ## name);		\
+ .macro SWITCH_TO_KERNEL_CR3 scratch_reg:req
++	ASI_INTERRUPT \scratch_reg
+ .endm
+ 
+ .macro SWITCH_TO_USER_CR3_NOSTACK scratch_reg:req scratch_reg2:req
++	ASI_RESUME \scratch_reg
+ .endm
+ 
+ .macro SWITCH_TO_USER_CR3_STACK	scratch_reg:req
++	ASI_RESUME \scratch_reg
+ .endm
+ 
+ .macro SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg:req save_reg:req
+diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+index 9747876..a437de3 100644
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -34,6 +34,7 @@
+ #include <asm/fpu/api.h>
+ #include <asm/nospec-branch.h>
+ #include <asm/io_bitmap.h>
++#include <asm/asi.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/syscalls.h>
+@@ -49,6 +50,13 @@ __visible inline void enter_from_user_mode(void)
+ static inline void enter_from_user_mode(void) {}
+ #endif
+ 
++static inline void syscall_enter(void)
++{
++	/* syscall enter has interrupted ASI, now exit ASI */
++	asi_exit(current->mm->user_asi);
++	enter_from_user_mode();
++}
++
+ static void do_audit_syscall_entry(struct pt_regs *regs, u32 arch)
+ {
+ #ifdef CONFIG_X86_64
+@@ -224,6 +232,17 @@ __visible inline void prepare_exit_to_usermode(struct pt_regs *regs)
+ 	mds_user_clear_cpu_buffers();
  }
  
-+/* ASI fault log size */
-+#define ASI_FAULT_LOG_SIZE      128
++static inline void prepare_syscall_return(struct pt_regs *regs)
++{
++	prepare_exit_to_usermode(regs);
 +
-+/*
-+ * Options to specify the fault log policy when a fault occurs
-+ * while using ASI.
-+ *
-+ * When set, ASI_FAULT_LOG_KERNEL|USER log the address and location
-+ * of the fault. In addition, if ASI_FAULT_LOG_STACK is set, the stack
-+ * trace where the fault occurred is also logged.
-+ *
-+ * Faults are logged only for ASIs with a type which aborts ASI on an
-+ * ASI fault (see fault_abort in struct asi_type).
-+ */
-+#define ASI_FAULT_LOG_KERNEL	0x01	/* log kernel faults */
-+#define ASI_FAULT_LOG_USER	0x02	/* log user faults */
-+#define ASI_FAULT_LOG_STACK	0x04	/* log stack trace */
++	/*
++	 * Syscall return will resume ASI, prepare resume to enter
++	 * user ASI.
++	 */
++	asi_deferred_enter(current->mm->user_asi);
++}
 +
-+enum asi_fault_origin {
-+	ASI_FAULT_KERNEL = ASI_FAULT_LOG_KERNEL,
-+	ASI_FAULT_USER = ASI_FAULT_LOG_USER,
-+};
-+
-+struct asi_fault_log {
-+	unsigned long		address;	/* fault address */
-+	unsigned long		count;		/* fault count */
-+};
-+
- struct asi {
- 	struct asi_type		*type;		/* ASI type */
- 	pgd_t			*pagetable;	/* ASI pagetable */
- 	u64			pgtable_id;	/* ASI pagetable ID */
- 	atomic64_t		pgtable_gen;	/* ASI pagetable generation */
- 	unsigned long		base_cr3;	/* base ASI CR3 */
-+	spinlock_t		fault_lock;	/* protect fault_log_* */
-+	struct asi_fault_log	fault_log[ASI_FAULT_LOG_SIZE];
-+	int			fault_log_policy; /* fault log policy */
+ #define SYSCALL_EXIT_WORK_FLAGS				\
+ 	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT |	\
+ 	 _TIF_SINGLESTEP | _TIF_SYSCALL_TRACEPOINT)
+@@ -275,7 +294,7 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
+ 		syscall_slow_exit_work(regs, cached_flags);
+ 
+ 	local_irq_disable();
+-	prepare_exit_to_usermode(regs);
++	prepare_syscall_return(regs);
+ }
+ 
+ #ifdef CONFIG_X86_64
+@@ -283,7 +302,7 @@ __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
+ {
+ 	struct thread_info *ti;
+ 
+-	enter_from_user_mode();
++	syscall_enter();
+ 	local_irq_enable();
+ 	ti = current_thread_info();
+ 	if (READ_ONCE(ti->flags) & _TIF_WORK_SYSCALL_ENTRY)
+@@ -355,7 +374,7 @@ static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
+ /* Handles int $0x80 */
+ __visible void do_int80_syscall_32(struct pt_regs *regs)
+ {
+-	enter_from_user_mode();
++	syscall_enter();
+ 	local_irq_enable();
+ 	do_syscall_32_irqs_on(regs);
+ }
+@@ -378,7 +397,7 @@ __visible long do_fast_syscall_32(struct pt_regs *regs)
+ 	 */
+ 	regs->ip = landing_pad;
+ 
+-	enter_from_user_mode();
++	syscall_enter();
+ 
+ 	local_irq_enable();
+ 
+@@ -400,7 +419,7 @@ __visible long do_fast_syscall_32(struct pt_regs *regs)
+ 		/* User code screwed up. */
+ 		local_irq_disable();
+ 		regs->ax = -EFAULT;
+-		prepare_exit_to_usermode(regs);
++		prepare_syscall_return(regs);
+ 		return 0;	/* Keep it simple: use IRET. */
+ 	}
+ 
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index fddb820..9042ba1 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -627,6 +627,9 @@ ret_from_intr:
+ .Lretint_user:
+ 	mov	%rsp,%rdi
+ 	call	prepare_exit_to_usermode
++#ifdef CONFIG_ADDRESS_SPACE_ISOLATION
++	ASI_PREPARE_RESUME
++#endif
+ 	TRACE_IRQS_IRETQ
+ 
+ SYM_INNER_LABEL(swapgs_restore_regs_and_return_to_usermode, SYM_L_GLOBAL)
+@@ -1491,6 +1494,9 @@ SYM_CODE_START(nmi)
+ 	movq	%rsp, %rdi
+ 	movq	$-1, %rsi
+ 	call	do_nmi
++#ifdef CONFIG_ADDRESS_SPACE_ISOLATION
++	ASI_PREPARE_RESUME
++#endif
+ 
+ 	/*
+ 	 * Return back to user mode.  We must *not* do the normal exit
+diff --git a/arch/x86/include/asm/asi.h b/arch/x86/include/asm/asi.h
+index b8d7b93..ac0594d 100644
+--- a/arch/x86/include/asm/asi.h
++++ b/arch/x86/include/asm/asi.h
+@@ -62,6 +62,10 @@ struct asi_tlb_state {
+ 	struct asi_tlb_pgtable	tlb_pgtables[ASI_TLB_NR_DYN_ASIDS];
  };
  
- void asi_schedule_out(struct task_struct *task);
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++#define ASI_PCID_PREFIX_USER		0x80	/* user ASI */
++#endif
++
+ struct asi_type {
+ 	int			pcid_prefix;	/* PCID prefix */
+ 	struct asi_tlb_state	*tlb_state;	/* percpu ASI TLB state */
+@@ -139,6 +143,7 @@ struct asi {
  void asi_schedule_in(struct task_struct *task);
-+bool asi_fault(struct pt_regs *regs, unsigned long error_code,
-+	       unsigned long address, enum asi_fault_origin fault_origin);
+ bool asi_fault(struct pt_regs *regs, unsigned long error_code,
+ 	       unsigned long address, enum asi_fault_origin fault_origin);
++void asi_deferred_enter(struct asi *asi);
  
  extern struct asi *asi_create(struct asi_type *type);
  extern void asi_destroy(struct asi *asi);
-@@ -111,6 +146,11 @@ struct asi {
+@@ -146,6 +151,10 @@ bool asi_fault(struct pt_regs *regs, unsigned long error_code,
  extern int asi_enter(struct asi *asi);
  extern void asi_exit(struct asi *asi);
  
-+static inline void asi_set_log_policy(struct asi *asi, int policy)
-+{
-+	asi->fault_log_policy = policy;
-+}
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++DECLARE_ASI_TYPE(user);
++#endif
 +
- #else  /* __ASSEMBLY__ */
+ static inline void asi_set_log_policy(struct asi *asi, int policy)
+ {
+ 	asi->fault_log_policy = policy;
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 241058f..db114de 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -390,6 +390,8 @@ static inline void cr4_set_bits_and_update_boot(unsigned long mask)
+  */
+ static inline void invalidate_user_asid(u16 asid)
+ {
++	struct asi_tlb_state *tlb_state;
++
+ 	/* There is no user ASID if address space separation is off */
+ 	if (!IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION))
+ 		return;
+@@ -404,8 +406,13 @@ static inline void invalidate_user_asid(u16 asid)
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return;
  
- #include <asm/alternative-asm.h>
+-	__set_bit(kern_pcid(asid),
+-		  (unsigned long *)this_cpu_ptr(&cpu_tlbstate.user_pcid_flush_mask));
++	if (IS_ENABLED(CONFIG_ADDRESS_SPACE_ISOLATION)) {
++		tlb_state = get_cpu_ptr(asi_type_user.tlb_state);
++		tlb_state->tlb_pgtables[asid].id = 0;
++	} else {
++		__set_bit(kern_pcid(asid),
++		    (unsigned long *)this_cpu_ptr(&cpu_tlbstate.user_pcid_flush_mask));
++	}
+ }
+ 
+ /*
 diff --git a/arch/x86/mm/asi.c b/arch/x86/mm/asi.c
-index 9955eb2..6c94d29 100644
+index 6c94d29..3448413 100644
 --- a/arch/x86/mm/asi.c
 +++ b/arch/x86/mm/asi.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/mm.h>
-+#include <linux/sched/debug.h>
- #include <linux/slab.h>
- 
- #include <asm/asi.h>
-@@ -13,6 +14,97 @@
+@@ -14,6 +14,10 @@
  #include <asm/mmu_context.h>
  #include <asm/tlbflush.h>
  
-+static void asi_log_fault(struct asi *asi, struct pt_regs *regs,
-+			   unsigned long error_code, unsigned long address,
-+			   enum asi_fault_origin fault_origin)
-+{
-+	int i;
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++DEFINE_ASI_TYPE(user, ASI_PCID_PREFIX_USER, false);
++#endif
 +
-+	/*
-+	 * Log information about the fault only if this is a fault
-+	 * we don't know about yet (and the fault log is not full).
-+	 */
-+	spin_lock(&asi->fault_lock);
-+	if (!(asi->fault_log_policy & fault_origin)) {
-+		spin_unlock(&asi->fault_lock);
-+		return;
-+	}
-+	for (i = 0; i < ASI_FAULT_LOG_SIZE; i++) {
-+		if (asi->fault_log[i].address == regs->ip) {
-+			asi->fault_log[i].count++;
-+			spin_unlock(&asi->fault_lock);
-+			return;
-+		}
-+		if (!asi->fault_log[i].address) {
-+			asi->fault_log[i].address = regs->ip;
-+			asi->fault_log[i].count = 1;
-+			break;
-+		}
-+	}
-+
-+	if (i >= ASI_FAULT_LOG_SIZE) {
-+		pr_warn("ASI %p: fault log buffer is full [%d]\n",
-+			asi, i);
-+	}
-+
-+	pr_info("ASI %p: PF#%d (%ld) at %pS on %px\n", asi, i,
-+		error_code, (void *)regs->ip, (void *)address);
-+
-+	if (asi->fault_log_policy & ASI_FAULT_LOG_STACK)
-+		show_stack(NULL, (unsigned long *)regs->sp);
-+
-+	spin_unlock(&asi->fault_lock);
-+}
-+
-+bool asi_fault(struct pt_regs *regs, unsigned long error_code,
-+	       unsigned long address, enum asi_fault_origin fault_origin)
-+{
-+	struct asi_session *asi_session;
-+
-+	/*
-+	 * If address space isolation was active when the fault occurred
-+	 * then the page fault handler has interrupted the isolation
-+	 * (exception handlers interrupt isolation very early) and switched
-+	 * CR3 back to its original kernel value. So we can safely retrieved
-+	 * the CPU ASI session.
-+	 */
-+	asi_session = &get_cpu_var(cpu_asi_session);
-+
-+	/*
-+	 * If address space isolation is not active, or we have a fault
-+	 * after isolation was aborted then this was not a fault while
-+	 * using ASI and we don't handle it.
-+	 */
-+	if (!asi_session->asi || asi_session->idepth > 1)
-+		return false;
-+
-+	/*
-+	 * We have a fault while the CPU is using address space isolation.
-+	 * Depending on the ASI fault policy, either:
-+	 *
-+	 * - Abort the isolation. The ASI used when the fault occurred is
-+	 *   aborted, and the faulty instruction is immediately retried.
-+	 *   The fault is not processed by the system fault handler. The
-+	 *   fault handler will return immediately, the system will not
-+	 *   restore the ASI pagetable and will continue to run with the
-+	 *   full kernel pagetable.
-+	 *
-+	 * - Or preserve the isolation. The system fault handler will
-+	 *   process the fault like any regular fault. The ASI pagetable
-+	 *   be restored after the fault has been handled and the system
-+	 *   fault handler returns.
-+	 */
-+	if (asi_session->asi->type->fault_abort) {
-+		asi_log_fault(asi_session->asi, regs, error_code,
-+			      address, fault_origin);
-+		asi_session->asi = NULL;
-+		asi_session->idepth = 0;
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- struct asi *asi_create(struct asi_type *type)
- {
- 	struct asi *asi;
-@@ -27,6 +119,9 @@ struct asi *asi_create(struct asi_type *type)
- 	asi->type = type;
- 	asi->pgtable_id = atomic64_inc_return(&type->last_pgtable_id);
- 	atomic64_set(&asi->pgtable_gen, 0);
-+	spin_lock_init(&asi->fault_lock);
-+	/* by default, log ASI kernel faults */
-+	asi->fault_log_policy = ASI_FAULT_LOG_KERNEL;
- 
- 	return asi;
+ static void asi_log_fault(struct asi *asi, struct pt_regs *regs,
+ 			   unsigned long error_code, unsigned long address,
+ 			   enum asi_fault_origin fault_origin)
+@@ -314,6 +318,11 @@ void asi_exit(struct asi *asi)
  }
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 304d31d..d50676f 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -29,6 +29,7 @@
- #include <asm/efi.h>			/* efi_recover_from_page_fault()*/
- #include <asm/desc.h>			/* store_idt(), ...		*/
- #include <asm/cpu_entry_area.h>		/* exception stack		*/
-+#include <asm/asi.h>			/* asi_fault()			*/
+ EXPORT_SYMBOL(asi_exit);
  
- #define CREATE_TRACE_POINTS
- #include <asm/trace/exceptions.h>
-@@ -1235,6 +1236,15 @@ static int fault_in_kernel_space(unsigned long address)
- 	WARN_ON_ONCE(hw_error_code & X86_PF_PK);
++void asi_deferred_enter(struct asi *asi)
++{
++	asi_switch_to_asi_cr3(asi, ASI_SWITCH_ON_RESUME);
++}
++
+ void asi_prepare_resume(void)
+ {
+ 	struct asi_session *asi_session;
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 44a9f06..9f91a93 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -429,6 +429,18 @@ static void __init pti_clone_p4d(unsigned long addr)
+ 	*user_p4d = *kernel_p4d;
+ }
+ 
++static void __init pti_map_va(unsigned long va)
++{
++	phys_addr_t pa = per_cpu_ptr_to_phys((void *)va);
++	pte_t *target_pte;
++
++	target_pte = pti_user_pagetable_walk_pte(va);
++	if (WARN_ON(!target_pte))
++		return;
++
++	*target_pte = pfn_pte(pa >> PAGE_SHIFT, PAGE_KERNEL);
++}
++
+ /*
+  * Clone the CPU_ENTRY_AREA and associated data into the user space visible
+  * page table.
+@@ -456,15 +468,15 @@ static void __init pti_clone_user_shared(void)
+ 		 * is set up.
+ 		 */
+ 
+-		unsigned long va = (unsigned long)&per_cpu(cpu_tss_rw, cpu);
+-		phys_addr_t pa = per_cpu_ptr_to_phys((void *)va);
+-		pte_t *target_pte;
+-
+-		target_pte = pti_user_pagetable_walk_pte(va);
+-		if (WARN_ON(!target_pte))
+-			return;
++		pti_map_va((unsigned long)&per_cpu(cpu_tss_rw, cpu));
+ 
+-		*target_pte = pfn_pte(pa >> PAGE_SHIFT, PAGE_KERNEL);
++		if (IS_ENABLED(CONFIG_ADDRESS_SPACE_ISOLATION)) {
++			/*
++			 * Map the ASI session. We need to always be able
++			 * to access the ASI session.
++			 */
++			pti_map_va((unsigned long)&per_cpu(cpu_tlbstate, cpu));
++		}
+ 	}
+ }
+ 
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 270aa8f..0152f73 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -25,6 +25,7 @@
+ 
+ struct address_space;
+ struct mem_cgroup;
++struct asi;
+ 
+ /*
+  * Each physical page in the system has a struct page associated with
+@@ -524,6 +525,10 @@ struct mm_struct {
+ 		atomic_long_t hugetlb_usage;
+ #endif
+ 		struct work_struct async_put_work;
++#if defined(CONFIG_ADDRESS_SPACE_ISOLATION) && defined(CONFIG_PAGE_TABLE_ISOLATION)
++		/* ASI used for user address space */
++		struct asi *user_asi;
++#endif
+ 	} __randomize_layout;
  
  	/*
-+	 * Check if the fault occurs with ASI and if the ASI handler
-+	 * handles it.
-+	 */
-+	if (IS_ENABLED(CONFIG_ADDRESS_SPACE_ISOLATION) &&
-+	    asi_fault(regs, hw_error_code, address, ASI_FAULT_KERNEL)) {
-+		return;
-+	}
-+
-+	/*
- 	 * We can fault-in kernel-space virtual memory on-demand. The
- 	 * 'reference' page table is init_mm.pgd.
- 	 *
-@@ -1289,6 +1299,16 @@ void do_user_addr_fault(struct pt_regs *regs,
- 	vm_fault_t fault, major = 0;
- 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 0808095..d245cc0 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -101,6 +101,7 @@
+ #include <asm/mmu_context.h>
+ #include <asm/cacheflush.h>
+ #include <asm/tlbflush.h>
++#include <asm/asi.h>
  
-+
-+	/*
-+	 * Check if the fault occurs with ASI and if the ASI handler
-+	 * handles it.
-+	 */
+ #include <trace/events/sched.h>
+ 
+@@ -695,6 +696,10 @@ void __mmdrop(struct mm_struct *mm)
+ 	mmu_notifier_mm_destroy(mm);
+ 	check_mm(mm);
+ 	put_user_ns(mm->user_ns);
 +	if (IS_ENABLED(CONFIG_ADDRESS_SPACE_ISOLATION) &&
-+	    asi_fault(regs, hw_error_code, address, ASI_FAULT_USER)) {
-+		return;
++	    IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION)) {
++		asi_destroy(mm->user_asi);
++	}
+ 	free_mm(mm);
+ }
+ EXPORT_SYMBOL_GPL(__mmdrop);
+@@ -1046,6 +1051,18 @@ static void mm_init_uprobes_state(struct mm_struct *mm)
+ 	if (init_new_context(p, mm))
+ 		goto fail_nocontext;
+ 
++	if (IS_ENABLED(CONFIG_ADDRESS_SPACE_ISOLATION) &&
++	    IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION)) {
++		/*
++		 * If we have PTI and ASI then use ASI to switch between
++		 * user and kernel spaces, so create an ASI for this mm.
++		 */
++		mm->user_asi = asi_create_user();
++		if (!mm->user_asi)
++			goto fail_nocontext;
++		asi_set_pagetable(mm->user_asi, kernel_to_user_pgdp(mm->pgd));
 +	}
 +
- 	tsk = current;
- 	mm = tsk->mm;
+ 	mm->user_ns = get_user_ns(user_ns);
+ 	return mm;
  
 -- 
 1.7.1
