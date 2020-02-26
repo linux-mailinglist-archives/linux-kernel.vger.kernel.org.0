@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 852E816FA1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 10:01:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 759E416FA1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 10:01:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbgBZI70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 03:59:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49310 "EHLO mail.kernel.org"
+        id S1727259AbgBZI7g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 03:59:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725872AbgBZI7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 03:59:25 -0500
+        id S1725872AbgBZI7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 03:59:36 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0C0420732;
-        Wed, 26 Feb 2020 08:59:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F37621556;
+        Wed, 26 Feb 2020 08:59:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582707565;
-        bh=kvvOZL6viAJypBnm5PyPuhdkoWN8/vGB+eDjK93fGUI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=l81FXHMZwEMBMNxjfWYHsn/5fHpsOsUTZf4x9FmLWOveHRowRDpDBTmk10QwmS5By
-         5Bno+wrRgdA94/Tczqrc0JYkauMwzIb3V+Rm6vTRevszHUAchrKHPU5e/uwG2cOcpr
-         T/M9QOf56WZY9IXL+Ce58ZdIAZ/AsQQNtZu1QT/E=
+        s=default; t=1582707575;
+        bh=PfXVwen4hTVjQMRYwec2sWG+kkHoy5njpKLA4uQB6ls=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XJEBXZiEf8Bj7BbW64kR8UZI0Q8iDU8EBiA3xtETf0mJoVYXUknvpTPMaPsgvEnhE
+         VWHU++7YVKTXaWR5isL/r8/Ohsvp1YlRkg7YZGGQt8oGiJLQI2j+F2iAiU9N9nwhwf
+         OjdW3L22men/kF7HAkNXMTY0W0DUava/GGCwbYTw=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Anders Roxell <anders.roxell@linaro.org>, paulmck@kernel.org,
@@ -33,10 +33,12 @@ Cc:     Anders Roxell <anders.roxell@linaro.org>, paulmck@kernel.org,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH -tip V4 0/4] kprobes: Fixes and cleanups
-Date:   Wed, 26 Feb 2020 17:59:20 +0900
-Message-Id: <158270755997.18966.3544449431956918068.stgit@devnote2>
+Subject: [PATCH -tip V4 1/4] kprobes: Suppress the suspicious RCU warning on kprobes
+Date:   Wed, 26 Feb 2020 17:59:30 +0900
+Message-Id: <158270757059.18966.14260537198561848568.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <158270755997.18966.3544449431956918068.stgit@devnote2>
+References: <158270755997.18966.3544449431956918068.stgit@devnote2>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -46,32 +48,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo,
+Anders reported that the lockdep warns that suspicious
+RCU list usage in register_kprobe() (detected by
+CONFIG_PROVE_RCU_LIST.) This is because get_kprobe()
+access kprobe_table[] by hlist_for_each_entry_rcu()
+without rcu_read_lock.
 
-Here is a collection of fixes and cleanups for kprobes, which have
-been submitted previously.
+If we call get_kprobe() from the breakpoint handler context,
+it is run with preempt disabled, so this is not a problem.
+But in other cases, instead of rcu_read_lock(), we locks
+kprobe_mutex so that the kprobe_table[] is not updated.
+So, current code is safe, but still not good from the view
+point of RCU.
 
-Basically, those were not changed but ported on the top of the
-latest -tip tree. Just to distinguish it from previous posts,
-I tagged v4 (v3 was last post [1]) on this series. In this v4,
-I added 2 fixes which were posted with another RFT series [2].
+Joel suggested that we can silent that warning by passing
+lockdep_is_held() to the last argument of
+hlist_for_each_entry_rcu().
 
-[1] https://lkml.org/lkml/2020/1/14/1460
-[2] https://lkml.org/lkml/2020/1/16/571
+Add lockdep_is_held(&kprobe_mutex) at the end of the
+hlist_for_each_entry_rcu() to suppress the warning.
 
-Thank you,
-
+Reported-by: Anders Roxell <anders.roxell@linaro.org>
+Suggested-by: Joel Fernandes <joel@joelfernandes.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
+ kernel/kprobes.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Masami Hiramatsu (4):
-      kprobes: Suppress the suspicious RCU warning on kprobes
-      kprobes: Use non RCU traversal APIs on kprobe_tables if possible
-      kprobes: Fix to protect kick_kprobe_optimizer() by kprobe_mutex
-      kprobes: Remove redundant arch_disarm_kprobe() call
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 2625c241ac00..bd484392d789 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -326,7 +326,8 @@ struct kprobe *get_kprobe(void *addr)
+ 	struct kprobe *p;
+ 
+ 	head = &kprobe_table[hash_ptr(addr, KPROBE_HASH_BITS)];
+-	hlist_for_each_entry_rcu(p, head, hlist) {
++	hlist_for_each_entry_rcu(p, head, hlist,
++				 lockdep_is_held(&kprobe_mutex)) {
+ 		if (p->addr == addr)
+ 			return p;
+ 	}
 
-
- kernel/kprobes.c |   37 ++++++++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 13 deletions(-)
-
---
-Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
