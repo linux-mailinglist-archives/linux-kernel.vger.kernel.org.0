@@ -2,88 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1D3C1701B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:58:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F29661701BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:00:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbgBZO6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 09:58:14 -0500
-Received: from netrider.rowland.org ([192.131.102.5]:45985 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726926AbgBZO6N (ORCPT
+        id S1727442AbgBZPAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 10:00:14 -0500
+Received: from retiisi.org.uk ([95.216.213.190]:45628 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726345AbgBZPAO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 09:58:13 -0500
-Received: (qmail 5669 invoked by uid 500); 26 Feb 2020 09:58:12 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 26 Feb 2020 09:58:12 -0500
-Date:   Wed, 26 Feb 2020 09:58:12 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Boqun Feng <boqun.feng@gmail.com>
-cc:     linux-kernel@vger.kernel.org, <rcu@vger.kernel.org>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH] tools/memory-model: Remove lock-final checking in lock.cat
-In-Reply-To: <20200226032142.89424-1-boqun.feng@gmail.com>
-Message-ID: <Pine.LNX.4.44L0.2002260953110.3674-100000@netrider.rowland.org>
+        Wed, 26 Feb 2020 10:00:14 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 285D4634C89;
+        Wed, 26 Feb 2020 16:59:00 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1j6y9M-0002KL-P0; Wed, 26 Feb 2020 16:59:00 +0200
+Date:   Wed, 26 Feb 2020 16:59:00 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Eugen Hristev <eugen.hristev@microchip.com>
+Cc:     linux-media@vger.kernel.org, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: v4l2-core: fix entity initialization in
+ device_register_subdev
+Message-ID: <20200226145900.GL5023@valkosipuli.retiisi.org.uk>
+References: <20200226121545.19880-1-eugen.hristev@microchip.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226121545.19880-1-eugen.hristev@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Feb 2020, Boqun Feng wrote:
+Hi Eugen,
 
-> In commit 30b795df11a1 ("tools/memory-model: Improve mixed-access
-> checking in lock.cat"), we have added the checking to disallow any
-> normal memory access to lock variables, and this checking is stronger
-> than lock-final. So remove the lock-final checking as it's unnecessary
-> now.
-
-I don't understand this description.  Why do you say that the
-normal-access checking is stronger than the lock-final check?
-
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> ---
->  tools/memory-model/lock.cat | 3 ---
->  1 file changed, 3 deletions(-)
+On Wed, Feb 26, 2020 at 02:15:45PM +0200, Eugen Hristev wrote:
+> The check for parameters is done below in the function.
+> Initialize the entity variable properly, after the parameters
+> have been checked.
 > 
-> diff --git a/tools/memory-model/lock.cat b/tools/memory-model/lock.cat
-> index 6b52f365d73a..827a3646607c 100644
-> --- a/tools/memory-model/lock.cat
-> +++ b/tools/memory-model/lock.cat
-> @@ -54,9 +54,6 @@ flag ~empty LKR \ domain(lk-rmw) as unpaired-LKR
->   *)
->  empty ([LKW] ; po-loc ; [LKR]) \ (po-loc ; [UL] ; po-loc) as lock-nest
+> Fixes: 61f5db549dde ("[media] v4l: Make v4l2_subdev inherit from media_entity")
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> ---
+>  drivers/media/v4l2-core/v4l2-device.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-device.c b/drivers/media/v4l2-core/v4l2-device.c
+> index 63d6b147b21e..6e33132ebb19 100644
+> --- a/drivers/media/v4l2-core/v4l2-device.c
+> +++ b/drivers/media/v4l2-core/v4l2-device.c
+> @@ -112,7 +112,7 @@ int v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
+>  				struct v4l2_subdev *sd)
+>  {
+>  #if defined(CONFIG_MEDIA_CONTROLLER)
+> -	struct media_entity *entity = &sd->entity;
+> +	struct media_entity *entity;
+>  #endif
+>  	int err;
 >  
-> -(* The final value of a spinlock should not be tested *)
-> -flag ~empty [FW] ; loc ; [ALL-LOCKS] as lock-final
-> -
->  (*
->   * Put lock operations in their appropriate classes, but leave UL out of W
->   * until after the co relation has been generated.
+> @@ -141,6 +141,7 @@ int v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
+>  		goto error_module;
+>  
+>  #if defined(CONFIG_MEDIA_CONTROLLER)
+> +	entity = &sd->entity;
+>  	/* Register the entity. */
+>  	if (v4l2_dev->mdev) {
+>  		err = media_device_register_entity(v4l2_dev->mdev, entity);
 
-With this check removed, what will prevent people from writing litmus 
-tests like this?
+Thanks for the patch.
 
-C test
+Instead of keeping a shorthand for entity locally, I'd just refer to
+&sd->entity. It's more simple, and gets away with one pair of #if / #endif
+as well.
 
-{
-	spinlock_t s;
-}
+-- 
+Regards,
 
-...
-
-exists (s=0)
-
-Alan
-
+Sakari Ailus
