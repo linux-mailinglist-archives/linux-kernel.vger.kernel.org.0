@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC5616FFA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 14:08:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 925B116FFA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 14:08:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgBZNIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 08:08:38 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:57226 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbgBZNIg (ORCPT
+        id S1726992AbgBZNIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 08:08:36 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37190 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbgBZNIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Feb 2020 08:08:36 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01QD8KDq026097;
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01QD8KRu097208;
         Wed, 26 Feb 2020 07:08:20 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
         s=ti-com-17Q1; t=1582722500;
-        bh=d8zidl/dWA5daRtdqdUI0IcTVlC1FTBnu1YV5N+kDIM=;
+        bh=U2/8MofG7oIU/EBLKqUbVXsN2VlldAOoMRTLHW4tTgg=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=qYpHFfAEroVYTzVAolOxuarisbqOPJ4azI7FfwZsT/g1qHzBuZHgs+6AAe4rVgZN9
-         XuBecHYUEGF/cH80XWVAr8n0SMN6mqF3YR+d9usz2ArXGLWauV+UeRPVLBP8yk0lAd
-         pAFUN7u4jcHAuxl+T1wlvPUaFyLf6MEyX21QHr4c=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01QD8KbM032740
+        b=RT8Ou6ueGxFz9OE7DoSdeK399eoXe1tRq3NGVKavsPyI6d4WOEXY241aCe91/vpUi
+         3IHitAzsi0Ya5q3YZEEs+7Vpyea+bRwABZo1fKli1w2B8DgyTO27Zu8OHXBbnAYyAf
+         kp/dwk9YmImgD5HvKrVyDxsl0NIm7u3voWMwzxjI=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01QD8KKF021752
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
         Wed, 26 Feb 2020 07:08:20 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 26
- Feb 2020 07:08:19 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ Feb 2020 07:08:20 -0600
+Received: from localhost.localdomain (10.64.41.19) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 26 Feb 2020 07:08:19 -0600
+ Frontend Transport; Wed, 26 Feb 2020 07:08:20 -0600
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01QD8JdB105926;
-        Wed, 26 Feb 2020 07:08:19 -0600
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 01QD8JJN121280;
+        Wed, 26 Feb 2020 07:08:20 -0600
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
         <tiwai@suse.com>
 CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
         Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH for-next 2/3] ASoC: tas2562: Add entries for the TAS2563 audio amplifier
-Date:   Wed, 26 Feb 2020 07:03:04 -0600
-Message-ID: <20200226130305.12043-2-dmurphy@ti.com>
+Subject: [PATCH for-next 3/3] ASoC: tas2562: Fix sample rate error message
+Date:   Wed, 26 Feb 2020 07:03:05 -0600
+Message-ID: <20200226130305.12043-3-dmurphy@ti.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200226130305.12043-1-dmurphy@ti.com>
 References: <20200226130305.12043-1-dmurphy@ti.com>
@@ -57,48 +57,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TAS2563 is register compatible with the TAS2562.  The main
-difference is the TAS2563 has a programmable DSP to manage different
-audio profiles.
+Fix error message for setting the sample rate.  It says bitwidth but
+should say sample rate.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- sound/soc/codecs/tas2562.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ sound/soc/codecs/tas2562.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/codecs/tas2562.c b/sound/soc/codecs/tas2562.c
-index d5e04030a0c1..79c3c3d79766 100644
+index 79c3c3d79766..6b7f7a18da36 100644
 --- a/sound/soc/codecs/tas2562.c
 +++ b/sound/soc/codecs/tas2562.c
-@@ -55,6 +55,11 @@ struct tas2562_data {
- 	int volume_lvl;
- };
+@@ -276,7 +276,7 @@ static int tas2562_hw_params(struct snd_pcm_substream *substream,
  
-+enum tas256x_model {
-+	TAS2562,
-+	TAS2563,
-+};
-+
- static int tas2562_set_bias_level(struct snd_soc_component *component,
- 				 enum snd_soc_bias_level level)
- {
-@@ -664,13 +669,15 @@ static int tas2562_probe(struct i2c_client *client,
+ 	ret = tas2562_set_samplerate(tas2562, params_rate(params));
+ 	if (ret)
+-		dev_err(tas2562->dev, "set bitwidth failed, %d\n", ret);
++		dev_err(tas2562->dev, "set sample rate failed, %d\n", ret);
+ 
+ 	return ret;
  }
- 
- static const struct i2c_device_id tas2562_id[] = {
--	{ "tas2562", 0 },
-+	{ "tas2562", TAS2562 },
-+	{ "tas2563", TAS2563 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, tas2562_id);
- 
- static const struct of_device_id tas2562_of_match[] = {
- 	{ .compatible = "ti,tas2562", },
-+	{ .compatible = "ti,tas2563", },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, tas2562_of_match);
 -- 
 2.25.0
 
