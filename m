@@ -2,29 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D80D616F762
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:34:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08B7716F76B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:36:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbgBZFeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 00:34:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35572 "EHLO mail.kernel.org"
+        id S1727028AbgBZFfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 00:35:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725876AbgBZFeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 00:34:07 -0500
+        id S1725890AbgBZFfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 00:35:37 -0500
 Received: from [192.168.0.217] (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C444C21927;
-        Wed, 26 Feb 2020 05:34:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5517021927;
+        Wed, 26 Feb 2020 05:35:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582695247;
-        bh=fps7Q7NeX2nh5WEWBJmBKMJvcbpoOQ72FLyxQGxfMHc=;
+        s=default; t=1582695336;
+        bh=9bbcjN9SEF1PWCL8aSyZA24plSmItb3JHKjvJV3pbnE=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=n0g4yJ8a3s9BKFsvVLD50nv6/J85MJCRMtXlo2zkS4iFMzVqjb9rMbQ4MVw0HVGz8
-         7nJNe0uuqTDXxtk0fEzW7GAAA6f5zZjmgjeyFlS9vna03slKP2cYLAmQVMVBwz4+c1
-         2IirYHQFj0I8clFSXP9HU4U2EMDSODn6gjplMjqU=
-Subject: Re: [patch 08/10] x86/entry/32: Remove the 0/-1 distinction from
- exception entries
+        b=Yipxq4WVvzXDpLiKwk4sgJ+LVWGWdpHX74wtvIHGLKFQ+GUiycPySqwrNucrIq/WR
+         O38qtagPULwdJquh1kTTE0bkVjPM9HMnxKm6C2sRAV2l1gngsBO5JLX/aNbjvKFp8M
+         w9wh+sDGHGJWJ/eNni2m+eQgtG1Hh6c7o25wtYwI=
+Subject: Re: [patch 00/10] x86/entry: Consolidation - Part I
 To:     Thomas Gleixner <tglx@linutronix.de>,
         LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -33,14 +32,13 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
 References: <20200225213636.689276920@linutronix.de>
- <20200225220216.933457250@linutronix.de>
 From:   Andy Lutomirski <luto@kernel.org>
-Message-ID: <6dd020cd-e20a-be12-aba7-bfa9e1a94795@kernel.org>
-Date:   Tue, 25 Feb 2020 21:34:06 -0800
+Message-ID: <5f2b5a3d-4399-664e-12ab-5ef9a747b499@kernel.org>
+Date:   Tue, 25 Feb 2020 21:35:36 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200225220216.933457250@linutronix.de>
+In-Reply-To: <20200225213636.689276920@linutronix.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -50,21 +48,15 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 2/25/20 1:36 PM, Thomas Gleixner wrote:
-> Nothing cares about the -1 "mark as interrupt" in the errorcode anymore. Just
-> use 0 for all excpetions which do not have an errorcode consistently.
+> Hi!
+> 
+> This is the first batch of a 73 patches series which consolidates the x86
+> entry code.
+> 
 > 
 
-I sincerely wish this were the case.  But look at collect_syscall() in
-lib/syscall.c.
+In part 1, all but 08/10 are:
 
-It would be really quite nice to address this for real in some
-low-overhead way.  My suggestion would be to borrow a trick from 32-bit:
-split regs->cs into ->cs and ->__csh, and stick CS_FROM_SYSCALL into
-__csh for syscalls.  This will only add any overhead at all to the int80
-case.  Then we could adjust syscall_get_nr() to look for CS_FROM_SYSCALL.
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 
-What do you think?  An alternative would be to use the stack walking
-machinery in collect_syscall(), since the mere existence of that
-function is abomination and we may not care about performance.
-
---Andy
+I object to patch 8 as described in my reply.
