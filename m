@@ -2,153 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DD1E16F860
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 08:13:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE72B16F86F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 08:18:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbgBZHND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 02:13:03 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:32934 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbgBZHND (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 02:13:03 -0500
-Received: by mail-pj1-f67.google.com with SMTP id m7so1918352pjs.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 23:13:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=wIycLtohJzZmgbz8Z9KTZsw/kqKcbNO/JXoVgPdvu5k=;
-        b=nHBsDuatJbQdosdW7LvCk7lFzVSx5qBST4bfiBlRhLz/YLONy7ALUeY1N8NsOM3ddi
-         ccg3145g8DOq5tDD4Kk6Y2IXGjRLgkoaGgpUPBxjfYQfp9PGONg/cwaKsxTbjTq8lkfJ
-         NRJFrxTRFogiqdjs41Drldwj1fTeruCaeArsV8sNr3GeGM4aRH7QFYF/iAaYEqBvDxGE
-         vWQWG1fdS5iHFQJECDt/ivKKRqMwmljNqXW5QUs0c/vpy7uJ/rll3Z7gnOy5HDfhcRP5
-         4lAYLHe5Xc63mefpieyn7o/5F3Kwo/Xe8B1uigehlVZlvp/67qNFZDphtRp5zpsFV7h4
-         bYDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wIycLtohJzZmgbz8Z9KTZsw/kqKcbNO/JXoVgPdvu5k=;
-        b=qWzV45sopThrhFK/cGvz579Qej4zQ3Ul2CeEz39B3IKNOhSrKdKr2d2vdrwT58msY6
-         DYKW86zGjLLHck+ksdOqhXUNilrnsNPtokkRDsA9UUzii9nysU6MnUs25SW0KZNDdA5U
-         oj4DN8v2VVaBt4cW+LpGbwqd8TBY/Gg76NqwWO+apnldN7hGiLfGIdwUozIf/wW8PoOJ
-         nIGSKbGXVjpYjLFDQ9z2hesbRm2fUvUc2UX5/2h18mPlUh53q6XSNET+QHXVgEvW6lye
-         /PZIUsjqDTMIXn7woyHU4OUWCJNQ+NauHOVs6pQ0HksxtjJ9DMGMfSdH+r5cJTiyNBnq
-         blUA==
-X-Gm-Message-State: APjAAAVYgJPOg8Sf/IEzQ5yK/XKvi1iALd915Is14bM6rsW5Ujnnpgs4
-        Jf7/ckFgNuBjLE3CJtWVzZmfzg==
-X-Google-Smtp-Source: APXvYqwB2yOYMGKYdF2cDBBA/GEj2xBPMsZ8piwV6gUkwS3YmQ2LmROMVi5lnWOaX8djXcAihN1Nxg==
-X-Received: by 2002:a17:902:8688:: with SMTP id g8mr2603545plo.277.1582701182230;
-        Tue, 25 Feb 2020 23:13:02 -0800 (PST)
-Received: from localhost.localdomain ([240e:362:4c3:8800:a057:bb7f:18d7:2e])
-        by smtp.gmail.com with ESMTPSA id b24sm1400707pfo.84.2020.02.25.23.12.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Feb 2020 23:13:01 -0800 (PST)
-From:   Zhangfei Gao <zhangfei.gao@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        jonathan.cameron@huawei.com, dave.jiang@intel.com,
-        grant.likely@arm.com, jean-philippe <jean-philippe@linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
-        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
-        "haojian . zhuang" <haojian.zhuang@linaro.org>,
-        guodong.xu@linaro.org
-Cc:     linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Zhangfei Gao <zhangfei.gao@linaro.org>
-Subject: [PATCH v2] uacce: unmap remaining mmapping from user space
-Date:   Wed, 26 Feb 2020 15:12:06 +0800
-Message-Id: <1582701126-5312-1-git-send-email-zhangfei.gao@linaro.org>
+        id S1727257AbgBZHS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 02:18:58 -0500
+Received: from mail-am6eur05on2086.outbound.protection.outlook.com ([40.107.22.86]:39456
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726823AbgBZHS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 02:18:58 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mLda447KvSPNgeWzGXFTMDVzHjv67J+ntjLCEHyZ/1lmv6ajWTvzS0jzXXAxiwBnKdKmsrkHm9Z3xYCrGnJd4alsfF+PWeS8mLTPBoo5jujnfxXoy4hpwVMXwErqMlha1ADSauHDwXOlSys6mR7oy/jyWGCFhxauLnZiKUixxoSWmS8/9x35cd20LjSkp+naenh0uhacCdt26VXz49YJSOnUVvWhaa96GP4d8xf/hpKfMwfl1otF8fAuHIhlin8p9nZvgKveza9IWTWcZqqfQ+/EL/yQfTCiimpfl81oVXU16YYNdr0igfph97p6IX9eoxKKLZ/CpDWnkvOkDhjgxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nk8GoFSDbRtszFiYYHcBQ6IlTKuNv5lqKoyhWO6HQGk=;
+ b=hPnGmCDjeJQiBTz8CpM/7B3Kt6sIusuYUJ3VAnfErtJwKL7BoTRqtknTBZBPyKumJy3ZEvWLOpWisEdkqkSuA6w9GbIkvE21y/kFSv4MCwF/OgiAB4VJl0stmOerAX+wCe5nJeZDm1qJTvDZvYgVe7zEZAzm0jpK6+OA3UA0hmhr5Eioayp6wk/tdozWucm/vgfpvlWokZ933y32TXyvO8GPVoM7Tmt/V+KnLN29P0cfjJc3y08pSyu44RzcyiW8CnFmUOrfn84lqepZHBsZbYCYazjkKhCsGuYd5KV2ja2Y7ag05kAM5yQWyXtCPytRJ6xM9cndONPJ1hY2GqRilQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nk8GoFSDbRtszFiYYHcBQ6IlTKuNv5lqKoyhWO6HQGk=;
+ b=K3snKtXa78m2PxQ0npp5k7UyZTQSaaIZ5utOglItV6zEc6hb31zbU3Y8zuAYBNC3oqsEEpvJmzHruaj+l5+kRO4whD8WPYmTKZVn+L8vGHyYzdy1PR0vgsCm+0mgp2AdcktYTTvwVhBVj5XWNU+PPMYcu+vU+Wl1CXu10CLqZ+Q=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6819.eurprd04.prod.outlook.com (52.132.212.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2750.21; Wed, 26 Feb 2020 07:18:54 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2750.021; Wed, 26 Feb 2020
+ 07:18:54 +0000
+From:   peng.fan@nxp.com
+To:     sudeep.holla@arm.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        robh@kernel.org
+Cc:     viresh.kumar@linaro.org, f.fainelli@gmail.com, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, andre.przywara@arm.com,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V3 0/2] firmware: arm_scmi: add smc/hvc transports support
+Date:   Wed, 26 Feb 2020 15:12:49 +0800
+Message-Id: <1582701171-26842-1-git-send-email-peng.fan@nxp.com>
 X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0131.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::35) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR01CA0131.apcprd01.prod.exchangelabs.com (2603:1096:4:40::35) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2750.18 via Frontend Transport; Wed, 26 Feb 2020 07:18:50 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: b15bc919-5b95-4401-9900-08d7ba8c22a0
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6819:|AM0PR04MB6819:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB681997D767C5D208FA6E3C2588EA0@AM0PR04MB6819.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 0325F6C77B
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(39860400002)(376002)(136003)(366004)(199004)(189003)(186003)(2906002)(6512007)(36756003)(966005)(52116002)(6486002)(69590400006)(5660300002)(478600001)(316002)(16526019)(4326008)(9686003)(86362001)(81156014)(81166006)(66556008)(7416002)(8936002)(26005)(956004)(2616005)(6506007)(66946007)(8676002)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6819;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2GFMILwS39nRDDurBqyxC1z5DAE6bTHZWG9gtBkGZwgtDG9MOHiGnmcYrDhpEHVBXysyGpoKx8z0RhzG/dC6bw/NoG+8hqAuMy4OzsRcfDy7mffqczWthfd70OTVczy/23GsJCCPvmLz9zpHd9I+HDGju69QG5fs8KEFbGuxrRh88EDHO2TyGnB/15WADQ4LV+X1AmbzuSt2ddY/ZKyF7F081zaQomsQqzFN10OKJQ58bKobbXAJM5utlkaN/wRnFHFi90O/dCVL/9DPdS0EzXZ6bPtDcJzbuBTauOtD3Nra/9EgjO2gR5OAP+tLOpEFZbCi71XYguENhHxBhG5xH6JnHm7uvEjlShYrFdsmj9Yqw6ZAsgp9/WPXT3Xl6iRH5Jo9SDp8TPSQ4cJPQEUbr6lO5Q+8HtuPjFMSx5s9uOP642qusmd0PT4FxgnY7MW/S5HaGyL9D+/fgxU5wwiW/4WHNt+nIAmUUfsWK5BP2gVsdfWp5IyegrJDOn2Zaxa5coiMeeBCpHcQFG4MinsCT4dJS4FN3qV8V8sDRdThyVtweqvUMJjATut7qa+/qASsdv4poIYwft8+dNu4MxbACLXrgiQ/g1geBD/mjE0SaofztuVn7tdJNHB8keojQcov
+X-MS-Exchange-AntiSpam-MessageData: h2iyqcuYSyTSINsJCE5YWrbcPfexuSvWVR2uYbe3ycf2LjxfijWQ+9w+eLWTn1L3Z4yaWgv5vUV/9w00r4dWfalfH4DdvsDIzsoeuBf980WxJ8sVLxNORaTedhjnw/mg3bOP34uWb5jJHYIwk1aj9A==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b15bc919-5b95-4401-9900-08d7ba8c22a0
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2020 07:18:53.7701
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OPe6m7Nr/SJ6LQ1GVHJVNnABGEz6Svg/0ua14XZDtwfJ5FJHql25wpD8uNb4TPmrFGmEiUX/+qOJJA4xa6/1qg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6819
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When uacce parent device module is removed, user app may
-still keep the mmaped area, which can be accessed unsafely.
-When rmmod, Parent device driver will call uacce_remove,
-which unmap all remaining mapping from user space for safety.
-VM_FAULT_SIGBUS is also reported to user space accordingly.
+From: Peng Fan <peng.fan@nxp.com>
 
-Suggested-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
----
- v2: Unmap before put_queue, where memory is freed, commented from Zaibo.
+V3:
+ Add back arm,scmi-smc compatible string
+ Change smc-id to arm,smc-id
+ Directly use arm_smccc_1_1_invoke
+ Add prot_id in scmi_chan_info for per protocol shmem usage.
 
- drivers/misc/uacce/uacce.c | 16 ++++++++++++++++
- include/linux/uacce.h      |  2 ++
- 2 files changed, 18 insertions(+)
+V2:
+ patch 1/2: only add smc-id property
+ patch 2/2: Parse smc/hvc from psci node
+	    Use prot_id as 2nd arg when issue smc/hvc
+	    Differentiate tranports using mboxes or smc-id property
+https://lore.kernel.org/patchwork/cover/1193435/
 
-diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
-index ffced4d..d39307f 100644
---- a/drivers/misc/uacce/uacce.c
-+++ b/drivers/misc/uacce/uacce.c
-@@ -224,6 +224,7 @@ static int uacce_fops_open(struct inode *inode, struct file *filep)
- 
- 	init_waitqueue_head(&q->wait);
- 	filep->private_data = q;
-+	uacce->inode = inode;
- 	q->state = UACCE_Q_INIT;
- 
- 	return 0;
-@@ -253,6 +254,14 @@ static int uacce_fops_release(struct inode *inode, struct file *filep)
- 	return 0;
- }
- 
-+static vm_fault_t uacce_vma_fault(struct vm_fault *vmf)
-+{
-+	if (vmf->flags & (FAULT_FLAG_MKWRITE | FAULT_FLAG_WRITE))
-+		return VM_FAULT_SIGBUS;
-+
-+	return 0;
-+}
-+
- static void uacce_vma_close(struct vm_area_struct *vma)
- {
- 	struct uacce_queue *q = vma->vm_private_data;
-@@ -265,6 +274,7 @@ static void uacce_vma_close(struct vm_area_struct *vma)
- }
- 
- static const struct vm_operations_struct uacce_vm_ops = {
-+	.fault = uacce_vma_fault,
- 	.close = uacce_vma_close,
- };
- 
-@@ -556,6 +566,12 @@ void uacce_remove(struct uacce_device *uacce)
- 
- 	if (!uacce)
- 		return;
-+	/*
-+	 * unmap remaining mapping from user space, preventing user still
-+	 * access the mmaped area while parent device is already removed
-+	 */
-+	if (uacce->inode)
-+		unmap_mapping_range(uacce->inode->i_mapping, 0, 0, 1);
- 
- 	/* ensure no open queue remains */
- 	mutex_lock(&uacce->mm_lock);
-diff --git a/include/linux/uacce.h b/include/linux/uacce.h
-index 904a461..0e215e6 100644
---- a/include/linux/uacce.h
-+++ b/include/linux/uacce.h
-@@ -98,6 +98,7 @@ struct uacce_queue {
-  * @priv: private pointer of the uacce
-  * @mm_list: list head of uacce_mm->list
-  * @mm_lock: lock for mm_list
-+ * @inode: core vfs
-  */
- struct uacce_device {
- 	const char *algs;
-@@ -113,6 +114,7 @@ struct uacce_device {
- 	void *priv;
- 	struct list_head mm_list;
- 	struct mutex mm_lock;
-+	struct inode *inode;
- };
- 
- /**
+This is to add smc/hvc transports support, based on Viresh's v6.
+SCMI firmware could be implemented in EL3, S-EL1, NS-EL2 or other
+A core exception level. Then smc/hvc could be used. And for vendor
+specific firmware, a wrapper layer could added in EL3, S-EL1,
+NS-EL2 and etc to translate SCMI calls to vendor specific firmware calls.
+
+A new compatible string arm,scmi-smc is added. arm,scmi is still for
+mailbox transports.
+
+All protocol share same smc/hvc id, the protocol id will be take as
+2nd arg when issue smc/hvc.
+Each protocol could use its own shmem or share the same shmem
+Per smc/hvc, only Tx supported.
+
+Peng Fan (2):
+  dt-bindings: arm: arm,scmi: add smc/hvc transport
+  firmware: arm_scmi: add smc/hvc transport
+
+ Documentation/devicetree/bindings/arm/arm,scmi.txt |   3 +-
+ drivers/firmware/arm_scmi/Makefile                 |   2 +-
+ drivers/firmware/arm_scmi/common.h                 |   3 +
+ drivers/firmware/arm_scmi/driver.c                 |   2 +
+ drivers/firmware/arm_scmi/smc.c                    | 146 +++++++++++++++++++++
+ 5 files changed, 154 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/firmware/arm_scmi/smc.c
+
 -- 
-2.7.4
+2.16.4
 
