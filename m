@@ -2,101 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5978916F8D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 08:57:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D50A916F8D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 08:58:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbgBZH5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 02:57:13 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:52037 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbgBZH5N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 02:57:13 -0500
-Received: from [10.30.1.20] (lneuilly-657-1-5-103.w81-250.abo.wanadoo.fr [81.250.144.103])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 65F62200002;
-        Wed, 26 Feb 2020 07:56:54 +0000 (UTC)
-Subject: Re: [GIT PULL] RISC-V Fixes for 5.6-rc4
-To:     Palmer Dabbelt <palmerdabbelt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Paul Walmsley <paul.walmsley@sifive.com>
-References: <mhng-464e74b9-125c-42e3-9384-60c871d22cfd@palmerdabbelt-glaptop1>
-From:   Alexandre Ghiti <alex@ghiti.fr>
-Message-ID: <5226d756-e348-29d1-258d-0ab4b63c0677@ghiti.fr>
-Date:   Wed, 26 Feb 2020 08:56:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727423AbgBZH6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 02:58:31 -0500
+Received: from mail-vi1eur05on2050.outbound.protection.outlook.com ([40.107.21.50]:6190
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726587AbgBZH6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 02:58:31 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mNdQaBvaEH6o+vSRlaOm4O2/aeb11nshQiTO9h1t4/LWZBC2ysZlAo4p/8w3rqy8DjYQaFmisv/mlhiSa5toEaL0zveasr+SotEQagdVvI6sbDGc4hinI/fAVf59x7HB9fKoR6vxC57xc9GSpLDhSHHrGeAduJlwZXqVXUtGc5YcX2x6P+a7vznaCyviqsBPRAtaW5VJ+A0Dx3y9HBLWPnVNHLCVbZSrAKvVxxlgg4F1nQkb8X55SrPKs1mrwJWtDbosdXAKooNB+th+BZz2KP9vGzv+46h2MGPtfw3VlQURrRjbW9Zsh+gnjQBzVBZbcU81KCpsbFLy/g/0IRW2JA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LhFb0ud6XCDs9DHZfgRnImIeWJ/Z4iG7EsTqihKvLFc=;
+ b=OZ4zesyeF0YG+GIWkvqvTGhsSZv11O85iuBsGDc1eA9d0jPh4A9/pKcqJJvGn+7tRtVOqJ6sxqXGsHJwp/Rle0AEmoFehxE17EohqUMPst1HhmDiV5tQ4WTLpl6H301MMcTb1mjZgm32Q7AjN+lHOUUrdr7sDGoB0SHl8n3EaBzF2NvMOgXExZExV9yxM+O+GJdURUa5klvVbaKXyqilsXhi8GfQmMCIv2dOdkTioGlqAN0znIrqUPEp9ux8ZBdlaS0VpidR0ImLgIAhHc+iz+fbsNCF4StN4C7MN4aRJr8HpkHln2iYnBMhc3W9GNV4rpPL7yvD8qk+J/Z1lOKppA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LhFb0ud6XCDs9DHZfgRnImIeWJ/Z4iG7EsTqihKvLFc=;
+ b=XsgK3ZV0qZJ+YJdv6P/f8L5d0xrIaV4h2ULPBt/4IxPP2QavPfUVzhuL1apVdftdmU4v3NwU+807fcSZfYEEFlqewiHoyyVn1kphjrG9T6R4kI08mP/u+duyMtcsFT9DxirWfnubo1x9KaY/QDw7jfUXE9OMahTvWttsmvTuNdo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=laurentiu.palcu@oss.nxp.com; 
+Received: from AM6PR04MB5766.eurprd04.prod.outlook.com (20.179.2.143) by
+ AM6PR04MB4774.eurprd04.prod.outlook.com (20.177.33.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2750.22; Wed, 26 Feb 2020 07:58:26 +0000
+Received: from AM6PR04MB5766.eurprd04.prod.outlook.com
+ ([fe80::4c26:a809:e360:5864]) by AM6PR04MB5766.eurprd04.prod.outlook.com
+ ([fe80::4c26:a809:e360:5864%3]) with mapi id 15.20.2750.021; Wed, 26 Feb 2020
+ 07:58:26 +0000
+Date:   Wed, 26 Feb 2020 09:58:23 +0200
+From:   Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     Laurentiu Palcu <laurentiu.palcu@nxp.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, agx@sigxcpu.org, lukas@mntmn.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/4] dt-bindings: display: imx: add bindings for DCSS
+Message-ID: <20200226075823.rxaw75gsnpbrcalf@fsr-ub1864-141>
+References: <1575625964-27102-1-git-send-email-laurentiu.palcu@nxp.com>
+ <1575625964-27102-4-git-send-email-laurentiu.palcu@nxp.com>
+ <7716263db71ca07a52e5a562882f0ae7f35fee48.camel@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7716263db71ca07a52e5a562882f0ae7f35fee48.camel@pengutronix.de>
+User-Agent: NeoMutt/20171215
+X-ClientProxiedBy: LNXP265CA0028.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:5c::16) To AM6PR04MB5766.eurprd04.prod.outlook.com
+ (2603:10a6:20b:ab::15)
 MIME-Version: 1.0
-In-Reply-To: <mhng-464e74b9-125c-42e3-9384-60c871d22cfd@palmerdabbelt-glaptop1>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from fsr-ub1864-141 (89.37.124.34) by LNXP265CA0028.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:5c::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18 via Frontend Transport; Wed, 26 Feb 2020 07:58:25 +0000
+X-Originating-IP: [89.37.124.34]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: f4815793-2f41-4f1d-dc0e-08d7ba91a8f5
+X-MS-TrafficTypeDiagnostic: AM6PR04MB4774:|AM6PR04MB4774:
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM6PR04MB477460B2D4AE4A6E230AD024BEEA0@AM6PR04MB4774.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 0325F6C77B
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(396003)(376002)(366004)(39860400002)(199004)(189003)(54906003)(478600001)(4326008)(6916009)(316002)(81166006)(81156014)(6496006)(966005)(8676002)(52116002)(55016002)(8936002)(86362001)(186003)(9686003)(26005)(16526019)(1076003)(956004)(5660300002)(7416002)(66946007)(44832011)(33716001)(2906002)(66476007)(66556008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4774;H:AM6PR04MB5766.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+Received-SPF: None (protection.outlook.com: oss.nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: dfTmCWX5x7n7wkqGa7l6l7SaJesI1f5hCDSsaFxXlza7QJ54oeYO2Dmsu4pgHEGqUAkr6Rw7EubCjdtJXXbl1uLTQ/lY8qUqUgrit2kKS8ST0ojrVUUTRYEhmsXNtm9YmkLjLF929EeaT4sHiPAXVyZXv2AL9k3/5HoTJ2cAzuySuVvnxY7DlmaLouhOw4ub9JiTncC8co10YtD/gD16yNB1UbigW7zn235cSzEhpV9IBDKMeQaNUPrg8Sb6UoLfemjooqOdXW3qXJ/Q8PrKpc4Uf3kffLFudZa3ybzdNmMOCbjeIPxKZQyYRQQ1szJagjvkHinHR2C//Mz5aE+JRdrBCI3Uiq/O3weQwq69qhxcOoSh35Xm1b1RmTyN3W0nR8GEJdsL79ALVmLl1INXj5LoSREs14K6xdCLwKtwp14BGOdvc4ehSa8jEE4OsPvL/LoyGS6LMz3fbacs3bB2gJrHk1OINgzMaf8TchDFnErHBcWP9IxKTpgVBu1cZCH7fT1U7opaRIlsuAOCAWNPbQ==
+X-MS-Exchange-AntiSpam-MessageData: /f7SiSCnQRCaoi+jt5xBXhEKApykHk8nu//dmN5jFsy/m2Q480coUiqndwzZSMU9nGc7p2zeyaAv4J0jYpY8/1TZWieeuW+BH6nJJ9RztebunjmJjN8yEjyWYS8kXK8KiZ2L9wPWordlIqzsA8zPCQ==
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4815793-2f41-4f1d-dc0e-08d7ba91a8f5
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2020 07:58:26.5512
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: D35gpFBZz+/vpJrieUvsIgy/ijqMs7nYnhlJC0ChPkYBPr9PuSYU/Hcdr+7BZVQzyjQI7DJf1hNcnVzOB12WkA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4774
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Palmer,
+Hi Lucas,
 
-On 2/25/20 6:37 PM, Palmer Dabbelt wrote:
-> The following changes since commit 11a48a5a18c63fd7621bb050228cebf13566e4d8:
+On Mon, Feb 24, 2020 at 06:21:57PM +0100, Lucas Stach wrote:
+> On Fr, 2019-12-06 at 11:52 +0200, Laurentiu Palcu wrote:
+> > Add bindings for iMX8MQ Display Controller Subsystem.
+> > 
+> > Signed-off-by: Laurentiu Palcu <laurentiu.palcu@nxp.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../bindings/display/imx/nxp,imx8mq-dcss.yaml      | 86 ++++++++++++++++++++++
+> >  1 file changed, 86 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml b/Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
+> > new file mode 100644
+> > index 00000000..efd2494
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
+> > @@ -0,0 +1,86 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +# Copyright 2019 NXP
+> > +%YAML 1.2
+> > +---
+> > +$id: "http://devicetree.org/schemas/display/imx/nxp,imx8mq-dcss.yaml#"
+> > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > +
+> > +title: iMX8MQ Display Controller Subsystem (DCSS)
+> > +
+> > +maintainers:
+> > +  - Laurentiu Palcu <laurentiu.palcu@nxp.com>
+> > +
+> > +description:
+> > +
+> > +  The DCSS (display controller sub system) is used to source up to three
+> > +  display buffers, compose them, and drive a display using HDMI 2.0a(with HDCP
+> > +  2.2) or MIPI-DSI.
 > 
->    Linux 5.6-rc2 (2020-02-16 13:16:59 -0800)
-> 
-> are available in the Git repository at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linux-5.6-rc4
-> 
-> for you to fetch changes up to 8458ca147c204e7db124e8baa8fede219006e80d:
-> 
->    riscv: adjust the indent (2020-02-24 13:12:53 -0800)
-> 
-> ----------------------------------------------------------------
-> RISC-V Fixes for 5.6-rc4
-> 
-> This tag contains a handful of RISC-V related fixes that I've collected and
-> would like to target for 5.6-rc4:
-> 
-> * A fix to set up the PMPs on boot, which allows the kernel to access memory on
->    systems that don't set up permissive PMPs before getting to Linux.  This only
->    effects machine-mode kernels, which currently means only NOMMU kernels.
-> * A fix to avoid enabling supervisor-mode interrupts when running in
->    machine-mode, also only for NOMMU kernels.
-> * A pair of fixes to our KASAN support to avoid corrupting memory.
-> * A gitignore fix.
-> 
-> This boots on QEMU's virt board for me.
-> 
-> ----------------------------------------------------------------
-> Anup Patel (1):
->        RISC-V: Don't enable all interrupts in trap_init()
-> 
-> Damien Le Moal (1):
->        riscv: Fix gitignore
-> 
-> Greentime Hu (1):
->        riscv: set pmp configuration if kernel is running in M-mode
-> 
-> Zong Li (2):
->        riscv: allocate a complete page size for each page table
->        riscv: adjust the indent
-> 
->   arch/riscv/boot/.gitignore   |  2 ++
->   arch/riscv/include/asm/csr.h | 12 ++++++++++
->   arch/riscv/kernel/head.S     |  6 +++++
->   arch/riscv/kernel/traps.c    |  4 ++--
->   arch/riscv/mm/kasan_init.c   | 53 ++++++++++++++++++++++++++------------------
->   5 files changed, 53 insertions(+), 24 deletions(-)
-> 
+> HDMI 2.0a and MIPI_DSI are not really properties of the DCSS, but
+> rather the connected bridges. Maybe just drop them here?
 
-What about this patch https://patchwork.kernel.org/patch/11395273/ from 
-Vincent that fixes module loading problems described here:
+I'm a bit confused... Drop what here?
 
-https://lore.kernel.org/linux-riscv/d868acf5-7242-93dc-0051-f97e64dc4387@ghiti.fr/T/
+> 
+> >  The DCSS is intended to support up to 4kp60 displays. HDR10
+> > +  image processing capabilities are included to provide a solution capable of
+> > +  driving next generation high dynamic range displays.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: nxp,imx8mq-dcss
+> > +
+> > +  reg:
+> > +    maxItems: 2
+> > +
+> > +  interrupts:
+> > +    maxItems: 3
+> > +    items:
+> > +      - description: Context loader completion and error interrupt
+> > +      - description: DTG interrupt used to signal context loader trigger time
+> > +      - description: DTG interrupt for Vblank
+> > +
+> > +  interrupt-names:
+> > +    maxItems: 3
+> > +    items:
+> > +      - const: ctx_ld
+> 
+> Can we make this just "ctxld" for a bit more consistency with the name
+> below?
 
-Do you consider it for 5.6 ?
+Fair enough. Will change.
+
+> 
+> > +      - const: ctxld_kick
+> > +      - const: vblank
+> > +
+> > +  clocks:
+> > +    maxItems: 5
+> > +    items:
+> > +      - description: Display APB clock for all peripheral PIO access interfaces
+> > +      - description: Display AXI clock needed by DPR, Scaler, RTRAM_CTRL
+> > +      - description: RTRAM clock
+> > +      - description: Pixel clock, can be driver either by HDMI phy clock or MIPI
+> > +      - description: DTRC clock, needed by video decompressor
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: apb
+> > +      - const: axi
+> > +      - const: rtrm
+> > +      - const: pix
+> > +      - const: dtrc
+> > +
+> > +  port@0:
+> > +    type: object
+> > +    description: A port node pointing to a hdmi_in or mipi_in port node.
+> 
+> "A port node pointing to the input port of a HDMI/DP or MIPI display
+> bridge".
+
+Okay, your description's sounds better. I'll add it in the next revision.
 
 Thanks,
+laurentiu
 
-Alex
+> 
+> > +
+> > +examples:
+> > +  - |
+> > +    dcss: display-controller@32e00000 {
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +        compatible = "nxp,imx8mq-dcss";
+> > +        reg = <0x32e00000 0x2d000>, <0x32e2f000 0x1000>;
+> > +        interrupts = <6>, <8>, <9>;
+> > +        interrupt-names = "ctx_ld", "ctxld_kick", "vblank";
+> > +        interrupt-parent = <&irqsteer>;
+> > +        clocks = <&clk 248>, <&clk 247>, <&clk 249>,
+> > +                 <&clk 254>,<&clk 122>;
+> > +        clock-names = "apb", "axi", "rtrm", "pix", "dtrc";
+> > +        assigned-clocks = <&clk 107>, <&clk 109>, <&clk 266>;
+> > +        assigned-clock-parents = <&clk 78>, <&clk 78>, <&clk 3>;
+> > +        assigned-clock-rates = <800000000>,
+> > +                               <400000000>;
+> > +        port@0 {
+> > +            dcss_out: endpoint {
+> > +                remote-endpoint = <&hdmi_in>;
+> > +            };
+> > +        };
+> > +    };
+> > +
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Laurentiu
+NXP
