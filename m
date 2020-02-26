@@ -2,94 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7711F17035C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:57:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCA54170382
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:58:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbgBZP5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 10:57:33 -0500
-Received: from mga12.intel.com ([192.55.52.136]:20933 "EHLO mga12.intel.com"
+        id S1728976AbgBZP6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 10:58:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728590AbgBZP53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:57:29 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 07:57:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,488,1574150400"; 
-   d="scan'208";a="231443910"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga008.jf.intel.com with ESMTP; 26 Feb 2020 07:57:28 -0800
-Date:   Wed, 26 Feb 2020 07:57:28 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
- operations state
-Message-ID: <20200226155727.GA22036@iweiny-DESK2.sc.intel.com>
-References: <20200221004134.30599-1-ira.weiny@intel.com>
- <20200221004134.30599-8-ira.weiny@intel.com>
- <20200221174449.GB11378@lst.de>
- <20200221224419.GW10776@dread.disaster.area>
- <20200224175603.GE7771@lst.de>
- <20200225000937.GA10776@dread.disaster.area>
- <20200226111740.GF10728@quack2.suse.cz>
+        id S1728551AbgBZP6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 10:58:17 -0500
+Received: from localhost (unknown [171.76.87.135])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7D30222C2;
+        Wed, 26 Feb 2020 15:58:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582732696;
+        bh=S72rfz4e7ofEv8qXcE2vMF6gMBDU4uQEXEeYcNVqqV4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kWq5EKgKjQr9M7KGd8TjaGP1qxy1nmbn8wwUsuIcWNPmUQ80mNhYluJz74ZUz98+M
+         2m0SdrGy86ZG/S1gI6wZc02UzMotgkBtTN8bUtEfTf9JDmxI8OlwWGX/kNxDGGnN3y
+         vLC9nysbnEcQDEr9iRHYDUs/acr0H0X11p60dexk=
+Date:   Wed, 26 Feb 2020 21:28:08 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        daniel.lezcano@linaro.org, bjorn.andersson@linaro.org,
+        sivaa@codeaurora.org, Andy Gross <agross@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] dt-bindings: thermal: tsens: Add qcom,tsens-v2 to
+ msm8996.dtsi compatible
+Message-ID: <20200226155808.GY2618@vkoul-mobl>
+References: <cover.1582705101.git.amit.kucheria@linaro.org>
+ <4e337c4a4194bb15f9efec67821f38504de1704c.1582705101.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200226111740.GF10728@quack2.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <4e337c4a4194bb15f9efec67821f38504de1704c.1582705101.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 12:17:40PM +0100, Jan Kara wrote:
-> On Tue 25-02-20 11:09:37, Dave Chinner wrote:
-> > /me wonders if the best thing to do is to add a ->fault callout to
-> > tell the filesystem to lock/unlock the inode right up at the top of
-> > the page fault path, outside even the mmap_sem.  That means all the
-> > methods that the page fault calls are protected against S_DAX
-> > changes, and it gives us a low cost method of serialising page
-> > faults against DIO (e.g. via inode_dio_wait())....
+On 26-02-20, 15:01, Amit Kucheria wrote:
+> The qcom-tsens binding requires a SoC-specific and a TSENS
+> family-specific binding to be specified in the compatible string.
 > 
-> Well, that's going to be pretty hard. The main problem is: you cannot
-> lookup VMA until you hold mmap_sem and the inode is inside the VMA. And
-> this is a fundamental problem because until you hold mmap_sem, the address
-> space can change and thus the virtual address you are faulting can be
-> changing inode it is mapped to. So you would have to do some dance like:
+> Since them family-specific binding is not listed in the .dtsi file, we
+> see the following warnings in 'make dtbs_check'. Fix them.
 > 
-> lock mmap_sem
-> lookup vma
-> get inode reference
-> drop mmap_sem
-> tell fs about page fault
-> lock mmap_sem
-> is the vma still the same?
+> /home/amit/work/builds/build-aarch64/arch/arm64/boot/dts/qcom/msm8996-mtp.dt.yaml:
+> thermal-sensor@4a9000: compatible: ['qcom,msm8996-tsens'] is not valid
+> under any of the given schemas (Possible causes of the failure):
+> /home/amit/work/builds/build-aarch64/arch/arm64/boot/dts/qcom/msm8996-mtp.dt.yaml:
+> thermal-sensor@4a9000: compatible: ['qcom,msm8996-tsens'] is too short
+> /home/amit/work/builds/build-aarch64/arch/arm64/boot/dts/qcom/msm8996-mtp.dt.yaml:
+> thermal-sensor@4a9000: compatible:0: 'qcom,msm8996-tsens' is not one of
+> ['qcom,msm8916-tsens', 'qcom,msm8974-tsens']
+> /home/amit/work/builds/build-aarch64/arch/arm64/boot/dts/qcom/msm8996-mtp.dt.yaml:
+> thermal-sensor@4a9000: compatible:0: 'qcom,msm8996-tsens' is not one of
+> ['qcom,msm8976-tsens', 'qcom,qcs404-tsens']
 > 
-> And I'm pretty confident the overhead will be visible in page fault
-> intensive workloads...
+> /home/amit/work/builds/build-aarch64/arch/arm64/boot/dts/qcom/msm8996-mtp.dt.yaml:
+> thermal-sensor@4ad000: compatible: ['qcom,msm8996-tsens'] is not valid
+> under any of the given schemas (Possible causes of the failure):
+> /home/amit/work/builds/build-aarch64/arch/arm64/boot/dts/qcom/msm8996-mtp.dt.yaml:
+> thermal-sensor@4ad000: compatible: ['qcom,msm8996-tsens'] is too short
+> /home/amit/work/builds/build-aarch64/arch/arm64/boot/dts/qcom/msm8996-mtp.dt.yaml:
+> thermal-sensor@4ad000: compatible:0: 'qcom,msm8996-tsens' is not one of
+> ['qcom,msm8916-tsens', 'qcom,msm8974-tsens']
+> /home/amit/work/builds/build-aarch64/arch/arm64/boot/dts/qcom/msm8996-mtp.dt.yaml:
+> thermal-sensor@4ad000: compatible:0: 'qcom,msm8996-tsens' is not one of
+> ['qcom,msm8976-tsens', 'qcom,qcs404-tsens']
 
-I did not get to this level of detail...  Rather I looked at it from a high
-level perspective and thought "does the mode need to change while someone has
-the mmap?"  My thought is, that it does not make a lot of sense.  Generally the
-user has mmaped with some use case in mind (either DAX or non-DAX) and it seems
-reasonable to keep that mode consistent while the map is in place.
-
-So I punted and restricted the change.
-
-Ira
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
 > 
-> 								Honza
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 7ae082ea14ea..f157cd4f53b4 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -446,7 +446,7 @@
+>  		};
+>  
+>  		tsens0: thermal-sensor@4a9000 {
+> -			compatible = "qcom,msm8996-tsens";
+> +			compatible = "qcom,msm8996-tsens", "qcom,tsens-v2";
+>  			reg = <0x004a9000 0x1000>, /* TM */
+>  			      <0x004a8000 0x1000>; /* SROT */
+>  			#qcom,sensors = <13>;
+> @@ -457,7 +457,7 @@
+>  		};
+>  
+>  		tsens1: thermal-sensor@4ad000 {
+> -			compatible = "qcom,msm8996-tsens";
+> +			compatible = "qcom,msm8996-tsens", "qcom,tsens-v2";
+>  			reg = <0x004ad000 0x1000>, /* TM */
+>  			      <0x004ac000 0x1000>; /* SROT */
+>  			#qcom,sensors = <8>;
 > -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> 2.20.1
+
+-- 
+~Vinod
