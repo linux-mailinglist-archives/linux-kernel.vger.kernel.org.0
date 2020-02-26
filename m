@@ -2,139 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 765CD1705A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:10:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE9541705B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:13:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbgBZRKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 12:10:44 -0500
-Received: from mga12.intel.com ([192.55.52.136]:28201 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727112AbgBZRKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 12:10:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 09:10:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,488,1574150400"; 
-   d="scan'208";a="241736257"
-Received: from kcanfiel-mobl1.amr.corp.intel.com (HELO [10.251.18.127]) ([10.251.18.127])
-  by orsmga006.jf.intel.com with ESMTP; 26 Feb 2020 09:10:42 -0800
-Subject: Re: [RFC PATCH v9 04/27] x86/cet: Add control-protection fault
- handler
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, x86-patch-review@intel.com
-References: <20200205181935.3712-1-yu-cheng.yu@intel.com>
- <20200205181935.3712-5-yu-cheng.yu@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <0bc74a85-7058-0cca-62b8-949c8a881c62@intel.com>
-Date:   Wed, 26 Feb 2020 09:10:41 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726810AbgBZRND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 12:13:03 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:24024 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726671AbgBZRNC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 12:13:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582737181;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tnpfXdQjYrBFaS792nY8i0wuvTcJOpHnYH5FAirUsUY=;
+        b=ceEmj1shrEC6AdZNtMLmii/otGOKTKvKbLpCZgLaaE3CNVGykFnhrFBknjViXyBtTY9Kqw
+        uLJQbtO0KmY9OrFo/5/g4nSIRgZHxRYDiDz6R7qm2JlnQ/vtS49MNAGnXddY4fJ9/WYwZB
+        YJ5qetv6eteVv/AB4QYY0qjIOIU3uv0=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-205-nnA6nOlHPVegzN55-GauaQ-1; Wed, 26 Feb 2020 12:11:28 -0500
+X-MC-Unique: nnA6nOlHPVegzN55-GauaQ-1
+Received: by mail-wr1-f71.google.com with SMTP id z1so39174wrs.9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 09:11:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=tnpfXdQjYrBFaS792nY8i0wuvTcJOpHnYH5FAirUsUY=;
+        b=gpy0ugVZS897Dj8myndLOLwO3RHxd2zzjQke5MH/R6fF7TW0PjW2ZGCxKTuKMLBTAT
+         opTEPWWQLxa14jo+elH3qtOnXuQwC2TnDnROKDB+lpojavy7YmqqEvm2xCkbjXQqNL8e
+         Jg28zwXT92QIqm1V1guDRHpA3gmZh/mShTrjL5L3dO6o6X7iKbDsrU14I7K62FBDghNl
+         38V7ED8e9mdwCFT6rJ1h7aicW83ZrM1PlQKuNv1sE5r2OJSYKWEpfk7MqdT2lPYyapur
+         6JLFL9C6JtJjCQoeXeH/BdfTMUD9c0I8Tp77N4Rpvi2hlllNcqtqtulfO8MAPzZ4pemu
+         LEhw==
+X-Gm-Message-State: APjAAAU91C+l2lXQ/K7L4MiUegXynTzfa40rPeULaXSiRUv7wijCQQj+
+        N+xcIxrN7vxFa8oQ1//r74DA+To7tx+nmji/FXTYeoZ6Gl38vy/2VmmPlscekNCrs8jrxbqbLGz
+        XvBXgUWO26k4bdxfGRUMbWF8C
+X-Received: by 2002:adf:fc85:: with SMTP id g5mr6506225wrr.52.1582737087346;
+        Wed, 26 Feb 2020 09:11:27 -0800 (PST)
+X-Google-Smtp-Source: APXvYqw+99mQIMnTdmvz4jq3L9yXHiV5BgK+YifebeHL+ho8XsMql1sUyO5bD1gtgRpfoxojajGT4Q==
+X-Received: by 2002:adf:fc85:: with SMTP id g5mr6506204wrr.52.1582737087099;
+        Wed, 26 Feb 2020 09:11:27 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id j16sm4089259wru.68.2020.02.26.09.11.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 09:11:26 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/13] KVM: x86: Refactor emulate tracepoint to explicitly take context
+In-Reply-To: <20200218232953.5724-7-sean.j.christopherson@intel.com>
+References: <20200218232953.5724-1-sean.j.christopherson@intel.com> <20200218232953.5724-7-sean.j.christopherson@intel.com>
+Date:   Wed, 26 Feb 2020 18:11:25 +0100
+Message-ID: <8736axjmte.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200205181935.3712-5-yu-cheng.yu@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/20 10:19 AM, Yu-cheng Yu wrote:
-> diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
-> index 87ef69a72c52..8ed406f469e7 100644
-> --- a/arch/x86/kernel/idt.c
-> +++ b/arch/x86/kernel/idt.c
-> @@ -102,6 +102,10 @@ static const __initconst struct idt_data def_idts[] = {
->  #elif defined(CONFIG_X86_32)
->  	SYSG(IA32_SYSCALL_VECTOR,	entry_INT80_32),
->  #endif
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
+
+> Explicitly pass the emulation context to the emulate tracepoint in
+> preparation of dynamically allocation the emulation context.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/kvm/trace.h | 22 +++++++++++-----------
+>  arch/x86/kvm/x86.c   | 13 ++++++++-----
+>  2 files changed, 19 insertions(+), 16 deletions(-)
+>
+> diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
+> index f194dd058470..5605000ca5f6 100644
+> --- a/arch/x86/kvm/trace.h
+> +++ b/arch/x86/kvm/trace.h
+> @@ -731,8 +731,9 @@ TRACE_EVENT(kvm_skinit,
+>  	})
+>  
+>  TRACE_EVENT(kvm_emulate_insn,
+> -	TP_PROTO(struct kvm_vcpu *vcpu, __u8 failed),
+> -	TP_ARGS(vcpu, failed),
+> +	TP_PROTO(struct kvm_vcpu *vcpu, struct x86_emulate_ctxt *ctxt,
+> +		 __u8 failed),
+> +	TP_ARGS(vcpu, ctxt, failed),
+>  
+>  	TP_STRUCT__entry(
+>  		__field(    __u64, rip                       )
+> @@ -745,13 +746,10 @@ TRACE_EVENT(kvm_emulate_insn,
+>  
+>  	TP_fast_assign(
+>  		__entry->csbase = kvm_x86_ops->get_segment_base(vcpu, VCPU_SREG_CS);
+
+This seems the only usage of 'vcpu' parameter now; I checked and even
+after switching to dynamic emulation context allocation we still set
+ctxt->vcpu in alloc_emulate_ctxt(), can we get rid of 'vcpu' parameter
+here then (and use ctxt->vcpu instead)?
+
+> -		__entry->len = vcpu->arch.emulate_ctxt.fetch.ptr
+> -			       - vcpu->arch.emulate_ctxt.fetch.data;
+> -		__entry->rip = vcpu->arch.emulate_ctxt._eip - __entry->len;
+> -		memcpy(__entry->insn,
+> -		       vcpu->arch.emulate_ctxt.fetch.data,
+> -		       15);
+> -		__entry->flags = kei_decode_mode(vcpu->arch.emulate_ctxt.mode);
+> +		__entry->len = ctxt->fetch.ptr - ctxt->fetch.data;
+> +		__entry->rip = ctxt->_eip - __entry->len;
+> +		memcpy(__entry->insn, ctxt->fetch.data, 15);
+> +		__entry->flags = kei_decode_mode(ctxt->mode);
+>  		__entry->failed = failed;
+>  		),
+>  
+> @@ -764,8 +762,10 @@ TRACE_EVENT(kvm_emulate_insn,
+>  		)
+>  	);
+>  
+> -#define trace_kvm_emulate_insn_start(vcpu) trace_kvm_emulate_insn(vcpu, 0)
+> -#define trace_kvm_emulate_insn_failed(vcpu) trace_kvm_emulate_insn(vcpu, 1)
+> +#define trace_kvm_emulate_insn_start(vcpu, ctxt)	\
+> +	trace_kvm_emulate_insn(vcpu, ctxt, 0)
+> +#define trace_kvm_emulate_insn_failed(vcpu, ctxt)	\
+> +	trace_kvm_emulate_insn(vcpu, ctxt, 1)
+>  
+>  TRACE_EVENT(
+>  	vcpu_match_mmio,
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 79d1113ad6e7..69d3dd64d90c 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -6460,10 +6460,13 @@ void kvm_inject_realmode_interrupt(struct kvm_vcpu *vcpu, int irq, int inc_eip)
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_inject_realmode_interrupt);
+>  
+> -static int handle_emulation_failure(struct kvm_vcpu *vcpu, int emulation_type)
+> +static int handle_emulation_failure(struct x86_emulate_ctxt *ctxt,
+> +				    int emulation_type)
+>  {
+> +	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
 > +
-> +#ifdef CONFIG_X86_64
-> +	INTG(X86_TRAP_CP,		control_protection),
-> +#endif
->  };
+>  	++vcpu->stat.insn_emulation_fail;
+> -	trace_kvm_emulate_insn_failed(vcpu);
+> +	trace_kvm_emulate_insn_failed(vcpu, ctxt);
+>  
+>  	if (emulation_type & EMULTYPE_VMWARE_GP) {
+>  		kvm_queue_exception_e(vcpu, GP_VECTOR, 0);
+> @@ -6788,7 +6791,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+>  
+>  		r = x86_decode_insn(ctxt, insn, insn_len);
+>  
+> -		trace_kvm_emulate_insn_start(vcpu);
+> +		trace_kvm_emulate_insn_start(vcpu, ctxt);
+>  		++vcpu->stat.insn_emulation;
+>  		if (r != EMULATION_OK)  {
+>  			if ((emulation_type & EMULTYPE_TRAP_UD) ||
+> @@ -6810,7 +6813,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+>  				inject_emulated_exception(ctxt);
+>  				return 1;
+>  			}
+> -			return handle_emulation_failure(vcpu, emulation_type);
+> +			return handle_emulation_failure(ctxt, emulation_type);
+>  		}
+>  	}
+>  
+> @@ -6856,7 +6859,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+>  					emulation_type))
+>  			return 1;
+>  
+> -		return handle_emulation_failure(vcpu, emulation_type);
+> +		return handle_emulation_failure(ctxt, emulation_type);
+>  	}
+>  
+>  	if (ctxt->have_exception) {
 
-This patch in particular appears to have all of its code unconditionally
-compiled in.  That's in contrast to things that have Kconfig options, like:
+-- 
+Vitaly
 
-#ifdef CONFIG_X86_MCE
-        INTG(X86_TRAP_MC,               &machine_check),
-#endif
-
-or:
-
-#ifdef CONFIG_X86_THERMAL_VECTOR
-        INTG(THERMAL_APIC_VECTOR,       thermal_interrupt),
-#endif
-
-Is there a reason this code is always compiled in on 64-bit even when
-the config option is off?
