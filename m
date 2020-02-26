@@ -2,187 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EDD51705B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:12:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56FE01705C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:13:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbgBZRMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 12:12:43 -0500
-Received: from foss.arm.com ([217.140.110.172]:39404 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726063AbgBZRMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 12:12:43 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6014630E;
-        Wed, 26 Feb 2020 09:12:42 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53B833F881;
-        Wed, 26 Feb 2020 09:12:39 -0800 (PST)
-Subject: Re: [PATCH 3/3] EDAC: synopsys: Add edac driver support for i.MX8MP
-To:     sherry sun <sherry.sun@nxp.com>
-Cc:     bp@alien8.de, mchehab@kernel.org, tony.luck@intel.com,
-        rrichter@marvell.com, michal.simek@xilinx.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-edac@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com, frank.li@nxp.com
-References: <1582267156-20189-1-git-send-email-sherry.sun@nxp.com>
- <1582267156-20189-4-git-send-email-sherry.sun@nxp.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <23a40435-8b18-2924-a1b1-635c2a4b446b@arm.com>
-Date:   Wed, 26 Feb 2020 17:12:37 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726969AbgBZRNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 12:13:35 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:18005 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726561AbgBZRNf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 12:13:35 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e56a6ef0000>; Wed, 26 Feb 2020 09:12:16 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 26 Feb 2020 09:13:34 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 26 Feb 2020 09:13:34 -0800
+Received: from [172.16.126.1] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 26 Feb
+ 2020 17:13:32 +0000
+From:   Zi Yan <ziy@nvidia.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
+        <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH v8 07/25] mm: Rename various 'offset' parameters to
+ 'index'
+Date:   Wed, 26 Feb 2020 12:13:30 -0500
+X-Mailer: MailMate (1.13.1r5676)
+Message-ID: <0681AC00-BFA7-4C1B-9E92-6B36FA906924@nvidia.com>
+In-Reply-To: <20200225214838.30017-8-willy@infradead.org>
+References: <20200225214838.30017-1-willy@infradead.org>
+ <20200225214838.30017-8-willy@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <1582267156-20189-4-git-send-email-sherry.sun@nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: multipart/signed;
+        boundary="=_MailMate_07A99A6D-503B-4120-84DB-898871E175DC_=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582737136; bh=mg3n04aLS3/0aW0eyWChE9vpAgeCbiunpfGU7AghRnM=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:X-Mailer:Message-ID:
+         In-Reply-To:References:MIME-Version:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type;
+        b=M7uNS8WbS5inK7ffF1gDGqi6BEnQKPsrcjMLXdvezxqm0AiTFvwllSVW/w8n59f9F
+         V34n2s9nEVY/4D6//i/EKK3lz0KuHjR3/AgLEuzhAH8zTRapedCwdzvdMzLgfssxVk
+         6uuoU0/a0CeBBeWlpM+GBiX4U36tZbBkrzY2AgMOcah+bFG40dbvC3bzNBqVuiQfnn
+         7B23COHktbG67CvYwyCLEeevESVB1M0ttcUXyjDxpyKQzFZ/o14kx7Vlnjp1Vl3kYh
+         QPNIQpY+qazBjfLuQS9hBZsPPYD+/0AGowk4y/Yrv7Es5gxHxuSBtcU0OCfz4sOxIR
+         54TA+M6T9wTUg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sherry,
+--=_MailMate_07A99A6D-503B-4120-84DB-898871E175DC_=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/02/2020 06:39, sherry sun wrote:
-> From: Sherry Sun <sherry.sun@nxp.com>
-> 
-> Since i.MX8MP use synopsys ddr controller IP, so add edac support
-> for i.MX8MP based on synopsys edac driver. i.MX8MP use LPDDR4 and
-> support interrupts for corrected and uncorrected errors.
+On 25 Feb 2020, at 16:48, Matthew Wilcox wrote:
 
-> The main
-> difference between ZynqMP and i.MX8MP ddr controller is the interrupt
-> registers. So add another interrupt handler function, enable/disable
-> interrupt function to distinguish with ZynqMP.
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>
+> The word 'offset' is used ambiguously to mean 'byte offset within
+> a page', 'byte offset from the start of the file' and 'page offset
+> from the start of the file'.  Use 'index' to mean 'page offset
+> from the start of the file' throughout the readahead code.
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Same, but different! Is there any more information on how this difference comes about?
+Looks good to me.
 
-It looks like the existing users of this driver all used DDR_QOS_IRQ, but yours uses
-DDR_CE_INTR and DDR_UE_INTR. I note you didn't add a new register offset, so this must be
-a feature of the IP that i.MX8MP uses, but others don't.
+Reviewed-by: Zi Yan <ziy@nvidia.com>
 
-Is it possible to describe the feature in the DT instead of quirking based on the compatible?
+=E2=80=94
+Best Regards,
+Yan Zi
 
-Ideally someone else with the same configuration in a different SoC should be able to use
-the new parts of this driver without changing the code to quirk their platform too.
+--=_MailMate_07A99A6D-503B-4120-84DB-898871E175DC_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-> diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
-> index 2d263382d797..66c801502212 100644
-> --- a/drivers/edac/synopsys_edac.c
-> +++ b/drivers/edac/synopsys_edac.c
+iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAl5WpzoPHHppeUBudmlk
+aWEuY29tAAoJEJ2yUfNrYfqKV10P/3wdODr0Q7tZ/M8jMum6zEQU0MY220Wz5wz6
+/mYps3gNEW6eEhbFsQpnK4823yVMDfBih1WwZLdS/6HbJlXHjhTfcLtEFLdkxyPJ
+DuWVLGx0uTRwFpUI9Lafd/SpIKAYfnyNi82WlR85zfoFbD4aQSkH19hRScGERL0B
+sig3qcFbjLk9Ej7AbviIflLo7gvPaui2EgVjubLfWgUW66U0X7vnCu355fRnlkmK
+3Fa9Ipx8EoTp6CG4PWteDdp8lP8CvdJwZKfluaHj/NJjOqxpL/SUTuF9FXtr8nov
+l6pElk5cSwy4T4gvyhfmUIYSptxeU+KJSx3hA687R53i9gCQqLepFRwbhe03M87h
+2p63F1KGiqm4uzJSDTiKyRLBJOrpDQRjpZSSQ2XBQUOHd2tDHSN5l/2ADupYaF2Y
+zXvGbPgzVdHRVY0Ijsu6DqPk0aJfbvtOPZHWfZ9FEVoSj+viLH/AB/8l7OEEGS9M
+3h1dW2ghyuDEZfbTB6ow7XVEd2d1B8xxiGTlg13HU2KSuJQlkVGbEZV2Zw9Z/bQx
+sYt9io5U0tZ2Q4M8pBiuHeEK3LbKSdXf0kHj0Ovnxg+njzZlZgCfnn2mJOPSdBqs
+YksF5IfUgMM+j9I94cj8dJJIz1HyLGox6fq4DxluYIIBkOcVFfinqTqRjgr/AxX+
+P6tLcgNH
+=g1cC
+-----END PGP SIGNATURE-----
 
-> @@ -524,6 +530,54 @@ static void handle_error(struct mem_ctl_info *mci, struct synps_ecc_status *p)
-
-> +static void enable_intr_imx8mp(struct synps_edac_priv *priv)
-> +{
-> +	int regval;
-> +
-> +	regval = readl(priv->baseaddr + ECC_CLR_OFST);
-> +	regval |= (DDR_CE_INTR_EN_MASK | DDR_UE_INTR_EN_MASK);
-> +	writel(regval, priv->baseaddr + ECC_CLR_OFST);
-> +}
-
-I assume these two interrupts are combined as one line. i.e. this driver can't race with
-itself.
-
-Was this an integration choice? Could someone else use wire the DDR_CE_INTR and
-DDR_UE_INTR interrupts separately so that two CPUs take them in parallel?
-
-
-ECC_CLR_OFST looks mighty like one of these write-only 'clear pending irqs' register. I'm
-surprised you read it, then write to it to enable interrupts... but I don't have the
-documentation!
-
-
-> +/* Interrupt Handler for ECC interrupts on imx8mp platform. */
-> +static irqreturn_t intr_handler_imx8mp(int irq, void *dev_id)
-> +{
-> +	const struct synps_platform_data *p_data;
-> +	struct mem_ctl_info *mci = dev_id;
-> +	struct synps_edac_priv *priv;
-> +	int status, regval;
-> +
-> +	priv = mci->pvt_info;
-> +	p_data = priv->p_data;
-
-
-> +	regval = readl(priv->baseaddr + ECC_STAT_OFST);
-> +	if (!(regval & ECC_INTR_MASK))
-> +		return IRQ_NONE;
-
-zynqmp_get_error_info(), which you call via p_data->get_error_info() does this too, so
-this is redundant.
-
-
-> +	status = p_data->get_error_info(priv);
-> +	if (status)
-> +		return IRQ_NONE;
-> +
-> +	priv->ce_cnt += priv->stat.ce_cnt;
-> +	priv->ue_cnt += priv->stat.ue_cnt;
-> +	handle_error(mci, &priv->stat);
-> +
-> +	edac_dbg(3, "Total error count CE %d UE %d\n",
-> +		 priv->ce_cnt, priv->ue_cnt);
-
-This is the same as the existing intr_handler()...
-
-
-> +	enable_intr_imx8mp(priv);
-
-Is this because zynqmp_get_error_info() wrote 0 to ECC_CLR_OFST, so now you have to
-re-enable the interrrupts?
-
-It looks like you are hacking round the problem!
-
-
-> +
-> +	return IRQ_HANDLED;
-> +}
-
-> @@ -541,6 +595,9 @@ static irqreturn_t intr_handler(int irq, void *dev_id)
->  	priv = mci->pvt_info;
->  	p_data = priv->p_data;
->  
-> +	if (p_data->quirks & DDR_ECC_IMX8MP)
-> +		return intr_handler_imx8mp(irq, dev_id);
-> +
->  	regval = readl(priv->baseaddr + DDR_QOS_IRQ_STAT_OFST);
->  	regval &= (DDR_QOSCE_MASK | DDR_QOSUE_MASK);
->  	if (!(regval & ECC_CE_UE_INTR_MASK))
-
-As this driver has struct synps_platform_data for some function calls (that are all the
-same today), you could add this as one that differs. This would let you pass the right one
-to devm_request_irq() at setup_irq() time. If there is a third type of intr_handler, it
-avoids chaining these quirk/features in the intr_handler().
-
-
-> @@ -817,7 +874,7 @@ static void mc_init(struct mem_ctl_info *mci, struct platform_device *pdev)
->  	platform_set_drvdata(pdev, mci);
->  
->  	/* Initialize controller capabilities and configuration */
-> -	mci->mtype_cap = MEM_FLAG_DDR3 | MEM_FLAG_DDR2;
-> +	mci->mtype_cap = MEM_FLAG_LRDDR4 | MEM_FLAG_DDR3 | MEM_FLAG_DDR2;
->  	mci->edac_ctl_cap = EDAC_FLAG_NONE | EDAC_FLAG_SECDED;
->  	mci->scrub_cap = SCRUB_HW_SRC;
->  	mci->scrub_mode = SCRUB_NONE;
-
-You haven't updated zynq_get_mtype(), is it possible to use the new memory type?
-
-
-I think this would be cleaner if you moved the existing parts of the driver that aren't
-needed when using DDR_CE_INTR and DDR_UE_INTR to the platform data as a preparatory patch.
-You can then add support for these interrupts by adding the bits that are different.
-This should avoid things like trying to undo what zynq_get_error_info() did. Things like
-this are a maintenance headache.
-
-As it is, you're hooking in the differences, then working round some of the things you
-didn't want to happen. (e.g. ECC_CLR_OFST being written as zero)
-
-
-
-Thanks,
-
-James
+--=_MailMate_07A99A6D-503B-4120-84DB-898871E175DC_=--
