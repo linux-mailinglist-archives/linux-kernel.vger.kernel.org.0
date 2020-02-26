@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B584C16FD23
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:16:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9214916FD27
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:16:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbgBZLQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 06:16:18 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38274 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728260AbgBZLQN (ORCPT
+        id S1728344AbgBZLQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 06:16:23 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34330 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728294AbgBZLQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 06:16:13 -0500
-Received: by mail-pg1-f193.google.com with SMTP id d6so1155198pgn.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 03:16:11 -0800 (PST)
+        Wed, 26 Feb 2020 06:16:17 -0500
+Received: by mail-pl1-f194.google.com with SMTP id j7so1180583plt.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 03:16:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3A85FNkQVK15E41Jw/YnZSYCbOfj7OMPE9KsvpyVprI=;
-        b=n6EsLSjVofOAsY+qTD5ur3tvt3prP4xIE81hW3UMhCK6Hk6vLYUPfTjkViyHlLSx0e
-         PKq9SBkZBIKgkKw3b6iA0jU98G93dGz/e0kV3RB+SOZ9jHG0bHjc/CED2Z1L7O8Inq/Z
-         a6GKZuegrK/74Y/D7g2+3chSko2GVSugqRbc8=
+        bh=n1tFCzw75kCxqGljRqUUqQ24ppDX2CtviVmHlh9ZwXI=;
+        b=SUEP5H4If0hedHG+d1NujE25rC/qeuZmRHTrnVGnP0EIN3aaxg3mNjZGx2NZLg0L6w
+         BOjyNWvn6w5PLu3+1thwu2S39c0ZMJOEpiV0jIh63SUKGnK9wzObCjQpy3nyaVXE/y7/
+         lSqKT+KAtiRGykb+8CKaOgFHqGlbBk78g480U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3A85FNkQVK15E41Jw/YnZSYCbOfj7OMPE9KsvpyVprI=;
-        b=Y84a+Rs5QWvq1GPrwNW/gTtNC8UrxNiVIF2dzJZWzgszIHz1Hs/SGuULLLOGHLfRry
-         0iQphwUEyIKVd7RmI9EhQCgK9vTaMJI/wAdVzCbx56anYkBE0GkrYryMEhUe6Cj7sjJX
-         FZUA0T9u48hpKxRzBAcK5ygInlJ/yWZQOuXlMYB2NIs6rUJRReAHGDb6GKApjgIn3ECU
-         r5RIkwPIjEei88iRg9uEsNEEHsRLSzfOBHHOk1dp4RhfzbOx0cfL0xRaNG0HLfAIczxY
-         lZM2PeRrzn0mWLP5QSDBmGC7yQu9QSmoRJ2T9Q2bUgiJ2K/yqPY2oWB3CZJsTO7ANCUg
-         hMNg==
-X-Gm-Message-State: APjAAAXHYaB0pSTWYmHOWgowWME7d+JhzTgNBJAfg1jRD2U8o5Y6jHu3
-        cUvMnUGLi4pphh2m2u5Oy1XJ+g==
-X-Google-Smtp-Source: APXvYqx53QRjLLJVxV+EPa6syDS3795FvGUqOREY3XhchQlBTgMZD1MOJX/1R5o9fROynap/WI3GVA==
-X-Received: by 2002:aa7:85d8:: with SMTP id z24mr4029724pfn.202.1582715771062;
-        Wed, 26 Feb 2020 03:16:11 -0800 (PST)
+        bh=n1tFCzw75kCxqGljRqUUqQ24ppDX2CtviVmHlh9ZwXI=;
+        b=dBAbv8ISgS3rMMimFARV+UqCBetmMvYZcMeNwO6GpurbHrKaCU9xsIYe+EBxJSrrtF
+         ZNFhB04o1sqYpvrZjPUlXh0t8CgRyZYq7x1WbOnTw0kvkEMOmlFE8/b8BuXLHp1cSg0g
+         +XEyt3ovawfRcJWMOzA76UEc+gvc0UwmU7nV31vDIcAhnYqVE9FEMoq3NzQDa5xjqFed
+         11XPQYr37DainIsEZfD70sr1vOH0QhU5JlgRc4RhLwETu8E5bZnDmS7jT5LWc7y5wgar
+         VUijo5J5tVQfdpcWQSok9RAWul66CEycTBOMvtF+07GNPU5NSvmJVkCH/XTyeDbPxGQk
+         Dg4w==
+X-Gm-Message-State: APjAAAVEnKhd9j5+Jg+aYRZ6PjKPHqs5RCXgUYPzMfioP7o5uw7ilGPN
+        achNQSTDlQiwxotV2S6yT389uw==
+X-Google-Smtp-Source: APXvYqzyt+rpfyMZ4RL10CxYR7SLP1N/LsYvlz4aIcvuEf9JypIqMqdBTCcFIPRxhcL3Oo1KRvY9oQ==
+X-Received: by 2002:a17:90b:94c:: with SMTP id dw12mr4482184pjb.13.1582715775331;
+        Wed, 26 Feb 2020 03:16:15 -0800 (PST)
 Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id o22sm2429993pgj.58.2020.02.26.03.16.08
+        by smtp.gmail.com with ESMTPSA id o22sm2429993pgj.58.2020.02.26.03.16.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 03:16:10 -0800 (PST)
+        Wed, 26 Feb 2020 03:16:14 -0800 (PST)
 From:   Sergey Senozhatsky <senozhatsky@chromium.org>
 To:     Hans Verkuil <hans.verkuil@cisco.com>,
         Tomasz Figa <tfiga@chromium.org>
@@ -53,9 +53,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Pawel Osciak <posciak@chromium.org>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCHv3 07/11] videobuf2: do not sync caches when we are allowed not to
-Date:   Wed, 26 Feb 2020 20:15:25 +0900
-Message-Id: <20200226111529.180197-8-senozhatsky@chromium.org>
+Subject: [PATCHv3 08/11] videobuf2: check ->synced flag in prepare() and finish()
+Date:   Wed, 26 Feb 2020 20:15:26 +0900
+Message-Id: <20200226111529.180197-9-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
 In-Reply-To: <20200226111529.180197-1-senozhatsky@chromium.org>
 References: <20200226111529.180197-1-senozhatsky@chromium.org>
@@ -66,47 +66,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Skip ->prepare() or/and ->finish() cache synchronisation if
-user-space requested us to do so (or when queue dma direction
-permits us to skip cache syncs).
+This simplifies the code a tiny bit and let's us to avoid
+unneeded ->prepare()/->finish() calls.
 
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/media/common/videobuf2/videobuf2-core.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/media/common/videobuf2/videobuf2-core.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
-index c2a1eadb26cf..988e8796de4f 100644
+index 988e8796de4f..7f637e3a50ab 100644
 --- a/drivers/media/common/videobuf2/videobuf2-core.c
 +++ b/drivers/media/common/videobuf2/videobuf2-core.c
-@@ -304,8 +304,11 @@ static void __vb2_buf_mem_prepare(struct vb2_buffer *vb)
+@@ -304,6 +304,9 @@ static void __vb2_buf_mem_prepare(struct vb2_buffer *vb)
  {
  	unsigned int plane;
  
--	for (plane = 0; plane < vb->num_planes; ++plane)
--		call_void_memop(vb, prepare, vb->planes[plane].mem_priv);
-+	if (vb->need_cache_sync_on_prepare) {
-+		for (plane = 0; plane < vb->num_planes; ++plane)
-+			call_void_memop(vb, prepare,
-+					vb->planes[plane].mem_priv);
-+	}
- 	vb->synced = 1;
- }
- 
-@@ -317,8 +320,11 @@ static void __vb2_buf_mem_finish(struct vb2_buffer *vb)
++	if (vb->synced)
++		return;
++
+ 	if (vb->need_cache_sync_on_prepare) {
+ 		for (plane = 0; plane < vb->num_planes; ++plane)
+ 			call_void_memop(vb, prepare,
+@@ -320,6 +323,9 @@ static void __vb2_buf_mem_finish(struct vb2_buffer *vb)
  {
  	unsigned int plane;
  
--	for (plane = 0; plane < vb->num_planes; ++plane)
--		call_void_memop(vb, finish, vb->planes[plane].mem_priv);
-+	if (vb->need_cache_sync_on_finish) {
-+		for (plane = 0; plane < vb->num_planes; ++plane)
-+			call_void_memop(vb, finish,
-+					vb->planes[plane].mem_priv);
-+	}
- 	vb->synced = 0;
- }
++	if (!vb->synced)
++		return;
++
+ 	if (vb->need_cache_sync_on_finish) {
+ 		for (plane = 0; plane < vb->num_planes; ++plane)
+ 			call_void_memop(vb, finish,
+@@ -1991,8 +1997,7 @@ static void __vb2_queue_cancel(struct vb2_queue *q)
+ 				call_void_vb_qop(vb, buf_request_complete, vb);
+ 		}
  
+-		if (vb->synced)
+-			__vb2_buf_mem_finish(vb);
++		__vb2_buf_mem_finish(vb);
+ 
+ 		if (vb->prepared) {
+ 			call_void_vb_qop(vb, buf_finish, vb);
 -- 
 2.25.0.265.gbab2e86ba0-goog
 
