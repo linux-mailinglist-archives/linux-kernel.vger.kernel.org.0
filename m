@@ -2,84 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4390A1708E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 20:26:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 770601708E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 20:27:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbgBZT0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 14:26:09 -0500
-Received: from mga14.intel.com ([192.55.52.115]:46134 "EHLO mga14.intel.com"
+        id S1727296AbgBZT1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 14:27:35 -0500
+Received: from mail.andi.de1.cc ([85.214.55.253]:51790 "EHLO mail.andi.de1.cc"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727035AbgBZT0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 14:26:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 11:26:09 -0800
-X-IronPort-AV: E=Sophos;i="5.70,489,1574150400"; 
-   d="scan'208";a="256437340"
-Received: from kcaccard-mobl.amr.corp.intel.com (HELO kcaccard-mobl1.jf.intel.com) ([10.24.11.14])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 11:26:08 -0800
-Message-ID: <fc82a40dbc269bf1b4f9c9ca1b56e8115783edbb.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 08/11] x86: Add support for finer grained KASLR
-From:   Kristen Carlson Accardi <kristen@linux.intel.com>
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        arjan@linux.intel.com, keescook@chromium.org,
-        rick.p.edgecombe@intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Date:   Wed, 26 Feb 2020 11:26:08 -0800
-In-Reply-To: <20200225174951.GA1373392@rani.riverdale.lan>
-References: <20200205223950.1212394-1-kristen@linux.intel.com>
-         <20200205223950.1212394-9-kristen@linux.intel.com>
-         <20200225174951.GA1373392@rani.riverdale.lan>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1727035AbgBZT1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 14:27:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0GMgWUbqUzIsyE6UgLwb/MaJmJqh4t9npOvnI6kW9zM=; b=mZNw0wYxd0Cqx7/VZU5/nVtul
+        EDFoAbXlz8d0Lgyhahw4MO/o1l6itibTjxWk9T6kCGcI+gSDBDyCwXBhdC8ISWhC5IhOokeeY5Oz6
+        G/qJ0kcOL4IYqCYRwJCwgG4G4ohPYu58OrSZU5tmruwuxLP1OWpI7trKviEZ/e6aTthek=;
+Received: from p200300ccff0a4d00e2cec3fffe93fc31.dip0.t-ipconnect.de ([2003:cc:ff0a:4d00:e2ce:c3ff:fe93:fc31] helo=eeepc)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j72LA-00081x-Ag; Wed, 26 Feb 2020 20:27:28 +0100
+Received: from localhost ([::1])
+        by localhost with esmtp (Exim 4.92)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j72L9-0001iu-Jj; Wed, 26 Feb 2020 20:27:27 +0100
+Date:   Wed, 26 Feb 2020 20:27:19 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        lee.jones@linaro.org, b.galvani@gmail.com,
+        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, phh@phh.me, stefan@agner.ch,
+        letux-kernel@openphoenux.org, jic23@kernel.org
+Cc:     Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v5 2/2] iio: adc: rn5t618: Add ADC driver for
+ RN5T618/RC5T619
+Message-ID: <20200226202719.46ce9600@kemnade.info>
+In-Reply-To: <20200223131638.12130-3-andreas@kemnade.info>
+References: <20200223131638.12130-1-andreas@kemnade.info>
+        <20200223131638.12130-3-andreas@kemnade.info>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EmIe0/b1v4/JZB0O9CA8Hso"; protocol="application/pgp-signature"
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-02-25 at 12:49 -0500, Arvind Sankar wrote:
-> On Wed, Feb 05, 2020 at 02:39:47PM -0800, Kristen Carlson Accardi
-> wrote:
-> > At boot time, find all the function sections that have separate
-> > .text
-> > sections, shuffle them, and then copy them to new locations. Adjust
-> > any relocations accordingly.
-> > 
-> > Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> > ---
-> >  arch/x86/boot/compressed/Makefile        |   1 +
-> >  arch/x86/boot/compressed/fgkaslr.c       | 751
-> > +++++++++++++++++++++++
-> >  arch/x86/boot/compressed/misc.c          | 106 +++-
-> >  arch/x86/boot/compressed/misc.h          |  26 +
-> >  arch/x86/boot/compressed/vmlinux.symbols |  15 +
-> >  arch/x86/include/asm/boot.h              |  15 +-
-> >  arch/x86/include/asm/kaslr.h             |   1 +
-> >  arch/x86/lib/kaslr.c                     |  15 +
-> >  scripts/kallsyms.c                       |  14 +-
-> >  scripts/link-vmlinux.sh                  |   4 +
-> >  10 files changed, 939 insertions(+), 9 deletions(-)
-> >  create mode 100644 arch/x86/boot/compressed/fgkaslr.c
-> >  create mode 100644 arch/x86/boot/compressed/vmlinux.symbols
-> > 
-> > diff --git a/arch/x86/boot/compressed/Makefile
-> > b/arch/x86/boot/compressed/Makefile
-> > index b7e5ea757ef4..60d4c4e59c05 100644
-> > --- a/arch/x86/boot/compressed/Makefile
-> > +++ b/arch/x86/boot/compressed/Makefile
-> > @@ -122,6 +122,7 @@ OBJCOPYFLAGS_vmlinux.bin :=  -R .comment -S
-> >  
-> >  ifdef CONFIG_FG_KASLR
-> >  	RELOCS_ARGS += --fg-kaslr
-> > +	OBJCOPYFLAGS += --keep-symbols=$(obj)/vmlinux.symbols
-> 
-> I think this should be $(srctree)/$(src) rather than $(obj)? Using a
-> separate build directory fails currently.
+--Sig_/EmIe0/b1v4/JZB0O9CA8Hso
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, I'll add this to my test plan for v1.
+Hi,
+
+On Sun, 23 Feb 2020 14:16:38 +0100
+Andreas Kemnade <andreas@kemnade.info> wrote:
 
 
+> +	if (rn5t618->irq_data)
+> +		adc->irq =3D regmap_irq_get_virq(rn5t618->irq_data,
+> +					       RN5T618_IRQ_ADC);
+> +
+RN5T618_IRQ_ADC is defined in the RTC patchset mentioned as dependency,
+which adds IRQ support and I am asked to rebase it on top of plain mainline.
+Does that mean that the kernel git source does not need to be bisectable
+anymore?
+
+
+Regards,
+Andreas
+
+--Sig_/EmIe0/b1v4/JZB0O9CA8Hso
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl5WxpcACgkQl4jFM1s/
+ye+72BAAtngnAhkbZ3h2LxZObD2b5dEtNpqJf/t+DgVyTkAqIjPg0wl9gs8sErW7
+9tuqCkUsrGgp2CYh1bYIep2EPJR39LMu2eCin9+B4x2Kx2zB2uMV2CVKmqZlDo63
+8zu07unuMCv1f37MojobdmiEOmMexLKM7ol5NmA/oNkB9LfG80seNZpDRQv+oOQu
+ESvMWbNoWUvGuXiejpTRDGnmHZzKKUb87JV4+ki/dKCaVA4uMswLWQ0m9ipDLJxV
+uVrs+DvjOWbQYBDpqLoEyxre7c0Ln5R6lOYk0DoYqihIMamvgLqJJ71UMHIqKnl5
+CPmVcwoYm1YG6kCU47EwuRtAg9qwFKN9+Ch5ApEgvQnBjrjZWKkk9lTsdBmAOkWQ
+j3cDnA/4UbJ10X7J8U5JPaZXQkgR7/dXLlzXqojIatRza1LTIIGTCcOw/IL2ic12
+nunrbYMC9cIL+k/u+e/NSCMmUWGE8lGeoUioxUikNCzPUkW/y73UWFUVeWhn8SX8
+tuoXhEvUWI1gpn2OC9sRFWqEkOFDeWYGbVhtJxW9lOFrspyq3TQ+/bYlxmpClWcf
+82Zg4zKFAIVOiCNKmxlgPYt+cgTrpegdV/9ZJWdhLUo+AnYHs6F5ZUu83LqCq4td
+F3SvugDza3cOydyP7YSN8Czebmg1e5/hRCrpPMyfJBaG3u7kJ1c=
+=Erno
+-----END PGP SIGNATURE-----
+
+--Sig_/EmIe0/b1v4/JZB0O9CA8Hso--
