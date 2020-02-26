@@ -2,83 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5B0816F5A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 03:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A0C116F5A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 03:30:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730228AbgBZCby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 21:31:54 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11107 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729795AbgBZCbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 21:31:52 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 48639CE6B3828CDC0B36;
-        Wed, 26 Feb 2020 10:31:50 +0800 (CST)
-Received: from architecture4.huawei.com (10.160.196.180) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 26 Feb
- 2020 10:31:40 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>
-CC:     LKML <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
-        "Gao Xiang" <gaoxiang25@huawei.com>,
-        Lasse Collin <lasse.collin@tukaani.org>
-Subject: [PATCH 3/3] erofs: handle corrupted images whose decompressed size less than it'd be
-Date:   Wed, 26 Feb 2020 10:30:11 +0800
-Message-ID: <20200226023011.103798-3-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200226023011.103798-1-gaoxiang25@huawei.com>
-References: <20200226023011.103798-1-gaoxiang25@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.160.196.180]
-X-CFilter-Loop: Reflected
+        id S1729949AbgBZCag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 21:30:36 -0500
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:54553 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727880AbgBZCag (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 21:30:36 -0500
+Received: by mail-pg1-f201.google.com with SMTP id l17so752153pgh.21
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 18:30:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=XL1znedA4fMtEGxLGk7NjP9zj307A8lQsc4L+MICY30=;
+        b=oVBcjrQCI6WtKZf/BcZxDjvhXasLSMhheKBBVX16ir2pnUsfWSJGpJsyILGnSpvH40
+         O79uROStFMycaKQNEF8ovTfet5AeILP2OBb+nDPYveoT/IYd7QQA5sxkgyT/tumiYfF7
+         n3JUPHDP/mROnjQbiCEqc0pZ7tbei8Cp+hHQuydEQMpPWUkcj2xQ9rh/yJHVUSSg73Rn
+         IDkPRItHhmCA0ld87NoM447njTSXubyqLNfE5VWFwrcgo1jXu/hTgu4q4Lv6pDj9Qae1
+         lJNeXOBO5NhFLjQsMZywpoZZ9cFPlT9Qb7Fd0FtGhXIkKKvldour9QH+fWi4oaYpqUWt
+         qV6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=XL1znedA4fMtEGxLGk7NjP9zj307A8lQsc4L+MICY30=;
+        b=uc5R+UJ0Cn88ZTy37Fm+WB+e0CSrr6HikdUsZ3E+18wPXM3aWc73nKd+kCYLN/eAzk
+         tAuJ0sYIbrw15HEFmNMAXsgM2ngK8NVOyLHSp94qe9oeEVDzFKqR+5BJHOrFAcWsOLa8
+         RfkEmK4CK4IWpz++av62a/lOiFQaAVWxtMXN5A8FWis36v7vxKBtm9BcxNQdSeEfyqf8
+         oeb14VgG8MRFMgWJe8jI66/0eYecOoW5ztJewU7962AzNxpkCgwl/AklwezWbuPfn5OU
+         7xsX9yTGwYW7BFULi2Tvu6+gpt9et9QlOksC46QvDH9oGkoBrgBLgGvFyali4eGAQNgd
+         iGKg==
+X-Gm-Message-State: APjAAAXnVvktKVXUuIOKT4SPSuVaZmSERpQULmTcGj9HgHHrPAGGZKLt
+        E1tsG61rsPUycauwytub3tb1oRa2LQQbHKeQDG2LX79LAXmZW/xoFinUq6gy4tzHMZLGhimHXfP
+        7zSIXb9zMCmOgSLCDzgSaUjhYAeJ37XOMV++ltRasF9EMkNAZ3Dk8sRoy2SfRos5az2bHJA==
+X-Google-Smtp-Source: APXvYqzFB6MIsDKuxL/zAzn5l2w4hxfkxbbFNQEwFa7qXiGyRc9LM9brNyi70AipsMveA+7CM8sbvQy4k5U=
+X-Received: by 2002:a63:aa07:: with SMTP id e7mr1499287pgf.90.1582684233286;
+ Tue, 25 Feb 2020 18:30:33 -0800 (PST)
+Date:   Tue, 25 Feb 2020 18:30:25 -0800
+Message-Id: <20200226023027.218365-1-lrizzo@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+Subject: [PATCH 0/2] quickstats, kernel sample collector
+From:   Luigi Rizzo <lrizzo@google.com>
+To:     linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        akpm@linux-foundation.org, gregkh@linuxfoundation.org,
+        naveen.n.rao@linux.ibm.com, changbin.du@intel.com, ardb@kernel.org,
+        rizzo@iet.unipi.it, pabeni@redhat.com, toke@redhat.com,
+        hawk@kernel.org
+Cc:     Luigi Rizzo <lrizzo@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Lasse pointed out, "Looking at fs/erofs/decompress.c,
-the return value from LZ4_decompress_safe_partial is only
-checked for negative value to catch errors. ... So if
-I understood it correctly, if there is bad data whose
-uncompressed size is much less than it should be, it can
-leave part of the output buffer untouched and expose the
-previous data as the file content. "
+This patchset introduces a small library to collect per-cpu samples and
+accumulate distributions to be exported through debugfs.
 
-Let's fix it now.
+I have used this to trace the execution times of small sections of code
+(network stack functions, drivers and xdp processing, ...)
+or entire functions, or latencies (e.g. IPI dispatch, etc.) and the fine
+granularity helps identifying outliers, multimodal distributions,
+caching effects and generally help in performance analysis.
 
-Cc: Lasse Collin <lasse.collin@tukaani.org>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- fs/erofs/decompressor.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Samples are 64-bit values that are aggregated into per-cpu logarithmic buckets
+with configurable density (typical sample collectors use one buckets for
+each power of 2, powers of 2, but that is very coarse and corresponds
+to 1 significant bit per value; in quickstats one can specify the number
+of significant bits, up to 5, which is useful for finer grain
+measurements).
 
-diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
-index c77cec4327fa..be8d9adef236 100644
---- a/fs/erofs/decompressor.c
-+++ b/fs/erofs/decompressor.c
-@@ -165,14 +165,18 @@ static int z_erofs_lz4_decompress(struct z_erofs_decompress_req *rq, u8 *out)
- 		ret = LZ4_decompress_safe(src + inputmargin, out,
- 					  inlen, rq->outputsize);
- 
--	if (ret < 0) {
--		erofs_err(rq->sb, "failed to decompress, in[%u, %u] out[%u]",
--			  inlen, inputmargin, rq->outputsize);
-+	if (ret != rq->outputsize) {
-+		erofs_err(rq->sb, "failed to decompress %d in[%u, %u] out[%u]",
-+			  ret, inlen, inputmargin, rq->outputsize);
-+
- 		WARN_ON(1);
- 		print_hex_dump(KERN_DEBUG, "[ in]: ", DUMP_PREFIX_OFFSET,
- 			       16, 1, src + inputmargin, inlen, true);
- 		print_hex_dump(KERN_DEBUG, "[out]: ", DUMP_PREFIX_OFFSET,
- 			       16, 1, out, rq->outputsize, true);
-+
-+		if (ret >= 0)
-+			memset(out + ret, 0, rq->outputsize - ret);
- 		ret = -EIO;
- 	}
- 
+There are two ways to trace a block of code: manual annotations has the best
+performance at runtime and is done as follows:
+
+	// create metric and entry in debugfs
+	struct kstats *key = kstats_new("foo", frac_bits);
+
+	...
+	// instrument the code
+	u64 t0 = ktime_get_ns();        // about 20ns
+	<section of code to measure>
+	t0 = ktime_get_ns() - t0;       // about 20ns
+	kstats_record(key, t0);         // 5ns hot cache, 300ns cold
+
+This method has an accuracy of about 20-30ns (inherited from the clock)
+and an overhead with hot/cold cache as show above.
+
+Values can be read from debugfs in an easy to parse format
+
+	# cat /sys/kernel/debug/kstats/foo
+	...
+	slot 55  CPU  0    count      589 avg      480 p 0.027613
+	slot 55  CPU  1    count       18 avg      480 p 0.002572
+	slot 55  CPU  2    count       25 avg      480 p 0.003325
+	...
+	slot 55  CPUS 28   count      814 avg      480 p 0.002474
+	...
+	slot 97  CPU  13   count     1150 avg    20130 p 0.447442
+	slot 97  CPUS 28   count   152585 avg    19809 p 0.651747
+	...
+
+And write to the file STOP, START, RESET executes the corresponding action
+
+	echo RESET > /sys/kernel/debug/kstats/foo
+
+The second instrumentation mechanism uses kretrprobes or tracepoints and
+lets tracing be enabled or removed at runtime from the command line for
+any globally visible function
+
+	echo trace some_function bits 3 > /sys/kernel/debug/kstats/_control
+
+Data are exported or controlled as abube. Accuracy is worse due to the
+presence of kretprobe trampolines: 90ns with hot cache, 500ns with cold
+cache. The overhead on the traced function is 250ns hot, 1500ns cold.
+
+Hope you find this useful
+
+Luigi Rizzo (2):
+  quickstats, kernel sample collector
+  quickstats: user commands to trace execution time of code
+
+ include/linux/kstats.h |  61 ++++
+ lib/Kconfig.debug      |   7 +
+ lib/Makefile           |   1 +
+ lib/kstats.c           | 659 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 728 insertions(+)
+ create mode 100644 include/linux/kstats.h
+ create mode 100644 lib/kstats.c
+
 -- 
-2.17.1
+2.25.0.265.gbab2e86ba0-goog
 
