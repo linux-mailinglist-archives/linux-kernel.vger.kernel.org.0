@@ -2,96 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0843216FCD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:02:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B9A816FCE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:04:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbgBZLCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 06:02:16 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:35908 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbgBZLCQ (ORCPT
+        id S1728049AbgBZLEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 06:04:25 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33235 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727520AbgBZLEZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 06:02:16 -0500
-Received: by mail-il1-f194.google.com with SMTP id b15so2015230iln.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 03:02:16 -0800 (PST)
+        Wed, 26 Feb 2020 06:04:25 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m10so4298886wmc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 03:04:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=SHEmGmVdneBeBcVQ+rHkQmQQhFLo2hcyckuJzNaCIaw=;
-        b=GPUYeWqJgvjBRHkMn5WZ7vv4ioDzUaPsoK7V2A/w/4VEd1tm4+AUJTRIlM0Ar4dshk
-         CANZgyErOk57WmJ3GdEM1DulCPGzUIvA+fEo730OirwrBLINATqFElJ7r5EHJC/n4GXI
-         ZKrlPy/j71LMalwn+KYu4DWaHwpbAAD+89PrX7QM5FTdtVqWr3Jg2if5Q2/Rk0HFG+vK
-         Bvuqx7P68YBimstA+qPZw6VXqu4x+wAWmi2KYRzLi07uJzQJMRi6RYAk3JgaPViI5TOc
-         zFTtTYpYbprZPKiLmAeQXkqU7vTGxCZtVcILrRSpS4C7oXzUlFVf/fnNjjp8vZIeynJi
-         6wFQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qxSMSy0KeSHSnmfmzxCA8fCZhL5WkJv642hS2+p/iXs=;
+        b=jdMmd6p57s9T9BTkdnRuKCzYlX8V/mp9wKLj+xSR4sQ85knTGnynU+J+MWkInqs2G3
+         TuOxOkfik5PXGlBUnFPzJEE4FZQUtrvS1kQari9lhsZEx33vjY57Pv2TWD3gnunzn1uK
+         2lGKdc9aIHSaZghpF//01eQMTusQNhrQfGFDfMiQzr9u/E5eGkm+twh6I6jhMXdSnmFQ
+         UCY4tiRHf7WgClGpkoMbI9BS9fGDhLY7gU8P+9dTKlKg9FI8GPqR7SmJ+p2aq+FQtgcR
+         XqIaCN80VtwFWXsvx59xJIHqf5SQe+Kk5FmWfgddnqMWpkOy5wwrDF054l771/6qjUkc
+         XthA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=SHEmGmVdneBeBcVQ+rHkQmQQhFLo2hcyckuJzNaCIaw=;
-        b=TxI0UEdTEh+UpMbRewhd5nYhjBwUrQAistPt5+pDS+BtX3gSJVT+hjrnLCXeo4z009
-         UyJZJOdp8pUJtb3YKQVrBM/4+jP1Yvs9X/5SlFNreNf1rS/yBVtHqjtRX6v1BZj74M5l
-         r4/RKKKeJdHXRBBBeKALxJZQgrH48WkilA1/J6QkaHmfow+l8G39TRzGqE38yqyu/ZES
-         F9+nelWSjD6Vv6vzycECOvwaHefMGxgyK9yu1a3XidykUtANO6z15FSr2qygWGS2irk1
-         qxLxIjpqXIY3CINfyxq42bFI2v/QYjETzZFnPUb+66vBRay5AfrkG8TsNDD3/NcgvNok
-         Hwig==
-X-Gm-Message-State: APjAAAXRIiJp9aPYKGfZhiAilhNw3NJEFFEhGCoAuQLkxJ+28NBwrsrS
-        X9krmbOHo26Nq+8MVnhI5urZfvKUs2xiy9mx5wg=
-X-Google-Smtp-Source: APXvYqwXf3mUYYcEfGWN5tbRpmuJL17ybLm2mDjj/qtBPRyB20J10wy6PehZ+n/YzsSJdPADf8ZcbDqa7NjNQDHN0U8=
-X-Received: by 2002:a05:6e02:e07:: with SMTP id a7mr3778411ilk.94.1582714935700;
- Wed, 26 Feb 2020 03:02:15 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qxSMSy0KeSHSnmfmzxCA8fCZhL5WkJv642hS2+p/iXs=;
+        b=IGIeREJyU2asFZ89RPT1ym8nFhmZZUIjAXucHbsO5/BJB2r3YPoq+f0AwrajqIZH8B
+         DW2GEguwwis+85DQ1Gin/0SMGjcejnBwiGJNbJKDmWYvfC1t8fB1yrhCAcTJwf7NS/Ab
+         FresPoXSCCK3Hfh2N+35+QZkFdCP+paiQb2pZVNeKX12XGUnDWsYwIs1a83iIx3aZhF3
+         DBMC3iqFNhx0ECYLYJ90e6Nj9kJbG8uXl8F8+EkDzbK3iNZNfotEPsdomLkGcLzOrRyd
+         OvA6qxm8+6awfdQV93N8Gv2h0IKUWfhm4X/XWHRQuUu2SRGR6QwZDHdg4f8a5IMIj/Fp
+         3RJg==
+X-Gm-Message-State: APjAAAVqLMBzlwZK4RA2HYB2Id5pPm5cUeNrGi1ZCYrxsZyuf1x3pc/R
+        HbPVo/8pFMU2SQgeDPcHYK3P5A==
+X-Google-Smtp-Source: APXvYqzo1GIu2NTEmeUo+9/xgeAhx5xgSq3jnjXari1yIps6iOhQfLG8Hjj/EVYP231cndzzGUg9rQ==
+X-Received: by 2002:a7b:c019:: with SMTP id c25mr5070418wmb.126.1582715061914;
+        Wed, 26 Feb 2020 03:04:21 -0800 (PST)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id h205sm2448176wmf.25.2020.02.26.03.04.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 26 Feb 2020 03:04:21 -0800 (PST)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        georgi.djakov@linaro.org
+Subject: [PATCH 0/1] interconnect fix for 5.6
+Date:   Wed, 26 Feb 2020 13:04:19 +0200
+Message-Id: <20200226110420.5357-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Received: by 2002:a4f:27d7:0:0:0:0:0 with HTTP; Wed, 26 Feb 2020 03:02:15
- -0800 (PST)
-From:   paul brown <paulbrown137@gmail.com>
-Date:   Wed, 26 Feb 2020 11:02:15 +0000
-Message-ID: <CAEcNeJQPo2ydVxEpii_W20OS6RbnVB_YD6JVqc4+S8i-iKoNrg@mail.gmail.com>
-Subject: RE: US$5,000,000.00 APPROVED PART PAYMENT OF OUTSTANDING PAYMENT
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Brown
-International Monetary Fund (IMF)
-European Monetary Unit,
-London, United Kingdom
+Hi Greg,
+This is a fix for the current release. Please apply it to char-misc-linus
+when you get a chance.
 
+Thanks,
+Georgi
 
+Georgi Djakov (1):
+  interconnect: Handle memory allocation errors
 
-26th Feb, 2020
+ drivers/interconnect/core.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-
-
-
-RE: US$5,000,000.00 APPROVED PART PAYMENT OF OUTSTANDING PAYMENT
-
-
-
-I'm Paul Brown, the Auditor General, International Monetary Fund (IMF)
-European Monetary Unit, set up to fight against scam and fraudulent
-activities worldwide. The auditors is responsible for investigating
-the legitimacy of unpaid entitlement,  Inheritance and Contract claims
-by companies and individuals and instructs the correspondence paying
-Banks to make immediate payment of verified claims to the
-beneficiaries.
-
-You are being legally contacted regarding the release of your long
-awaited lawful entitlement fund. After a detailed review of your
-payment, International Monetary Fund (IMF) European Monetary Unit has
-approved and mandated that part payment sum of US$5,000,000.00 (Five
-Million Million United States Dollars Only) paid to you this first
-quarter of fiscal year of 2020
-
-I therefore wish to inform you that your payment is being processed
-and will be paid to you by Swift Wire Transfer as soon as you respond
-to this letter without delay.
-
-I await your prompt response
-
-Respectfully,
-Paul Brown
-International Monetary Fund (IMF)
-European Monetary Unit,
-London, United Kingdom
