@@ -2,87 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8DD116F667
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 05:22:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B7B916F662
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 05:18:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbgBZEWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 23:22:54 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:33014 "EHLO inva021.nxp.com"
+        id S1726386AbgBZESl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 23:18:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725788AbgBZEWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 23:22:54 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5B3F1216284;
-        Wed, 26 Feb 2020 05:22:52 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 34CF2216279;
-        Wed, 26 Feb 2020 05:22:45 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8380F40246;
-        Wed, 26 Feb 2020 12:22:36 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, allison@lohutok.net,
-        tglx@linutronix.de, andrew.smirnov@gmail.com,
-        gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
-        info@metux.net, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] ARM: imx: Remove unnecessary blank lines
-Date:   Wed, 26 Feb 2020 12:16:57 +0800
-Message-Id: <1582690617-27989-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725788AbgBZESl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 23:18:41 -0500
+Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 452A821D7E;
+        Wed, 26 Feb 2020 04:18:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582690720;
+        bh=wa0ljoR4VKK7AhtcPWEwY9ai7AZZg6kuy4bimaFCvDw=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=XFhFqlnat9Kma6j8YRzZQIF0YpG7+omQM53gZLnZfyg78icJvpZ5C+WNFlVBzMT6F
+         9rAsvD2Kg9A8fFNOxP961HwP/PVlAAMMt24Wq9nFeLo6eqqEQNV1p76pwG1DhndQf2
+         554I/BZFHVYB0HG7LWVvORTkZF08qm9zs/+9hex0=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 8586635226CF; Tue, 25 Feb 2020 20:18:39 -0800 (PST)
+Date:   Tue, 25 Feb 2020 20:18:39 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org,
+        "# 5 . 5 . x" <stable@vger.kernel.org>
+Subject: Re: [PATCH tip/core/rcu 30/30] rcu: Make rcu_barrier() account for
+ offline no-CBs CPUs
+Message-ID: <20200226041839.GA13200@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200214235536.GA13364@paulmck-ThinkPad-P72>
+ <20200214235607.13749-30-paulmck@kernel.org>
+ <20200225102436.GF110915@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+ <20200226031455.GZ2935@paulmck-ThinkPad-P72>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226031455.GZ2935@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unnecessary blank lines for cleanup.
+On Tue, Feb 25, 2020 at 07:14:55PM -0800, Paul E. McKenney wrote:
+> On Tue, Feb 25, 2020 at 06:24:36PM +0800, Boqun Feng wrote:
+> > Hi Paul,
+> > 
+> > On Fri, Feb 14, 2020 at 03:56:07PM -0800, paulmck@kernel.org wrote:
+> > > From: "Paul E. McKenney" <paulmck@kernel.org>
+> > > 
+> > > Currently, rcu_barrier() ignores offline CPUs,  However, it is possible
+> > > for an offline no-CBs CPU to have callbacks queued, and rcu_barrier()
+> > > must wait for those callbacks.  This commit therefore makes rcu_barrier()
+> > > directly invoke the rcu_barrier_func() with interrupts disabled for such
+> > > CPUs.  This requires passing the CPU number into this function so that
+> > > it can entrain the rcu_barrier() callback onto the correct CPU's callback
+> > > list, given that the code must instead execute on the current CPU.
+> > > 
+> > > While in the area, this commit fixes a bug where the first CPU's callback
+> > > might have been invoked before rcu_segcblist_entrain() returned, which
+> > > would also result in an early wakeup.
+> > > 
+> > > Fixes: 5d6742b37727 ("rcu/nocb: Use rcu_segcblist for no-CBs CPUs")
+> > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > Cc: <stable@vger.kernel.org> # 5.5.x
+> > > ---
+> > >  include/trace/events/rcu.h |  1 +
+> > >  kernel/rcu/tree.c          | 32 ++++++++++++++++++++------------
+> > >  2 files changed, 21 insertions(+), 12 deletions(-)
+> > > 
+> > > diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+> > > index 5e49b06..d56d54c 100644
+> > > --- a/include/trace/events/rcu.h
+> > > +++ b/include/trace/events/rcu.h
+> > > @@ -712,6 +712,7 @@ TRACE_EVENT_RCU(rcu_torture_read,
+> > >   *	"Begin": rcu_barrier() started.
+> > >   *	"EarlyExit": rcu_barrier() piggybacked, thus early exit.
+> > >   *	"Inc1": rcu_barrier() piggyback check counter incremented.
+> > > + *	"OfflineNoCBQ": rcu_barrier() found offline no-CBs CPU with callbacks.
+> > >   *	"OnlineQ": rcu_barrier() found online CPU with callbacks.
+> > >   *	"OnlineNQ": rcu_barrier() found online CPU, no callbacks.
+> > >   *	"IRQ": An rcu_barrier_callback() callback posted on remote CPU.
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > index d15041f..160643e 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -3098,9 +3098,10 @@ static void rcu_barrier_callback(struct rcu_head *rhp)
+> > >  /*
+> > >   * Called with preemption disabled, and from cross-cpu IRQ context.
+> > >   */
+> > > -static void rcu_barrier_func(void *unused)
+> > > +static void rcu_barrier_func(void *cpu_in)
+> > >  {
+> > > -	struct rcu_data *rdp = raw_cpu_ptr(&rcu_data);
+> > > +	uintptr_t cpu = (uintptr_t)cpu_in;
+> > > +	struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
+> > >  
+> > >  	rcu_barrier_trace(TPS("IRQ"), -1, rcu_state.barrier_sequence);
+> > >  	rdp->barrier_head.func = rcu_barrier_callback;
+> > > @@ -3127,7 +3128,7 @@ static void rcu_barrier_func(void *unused)
+> > >   */
+> > >  void rcu_barrier(void)
+> > >  {
+> > > -	int cpu;
+> > > +	uintptr_t cpu;
+> > >  	struct rcu_data *rdp;
+> > >  	unsigned long s = rcu_seq_snap(&rcu_state.barrier_sequence);
+> > >  
+> > > @@ -3150,13 +3151,14 @@ void rcu_barrier(void)
+> > >  	rcu_barrier_trace(TPS("Inc1"), -1, rcu_state.barrier_sequence);
+> > >  
+> > >  	/*
+> > > -	 * Initialize the count to one rather than to zero in order to
+> > > -	 * avoid a too-soon return to zero in case of a short grace period
+> > > -	 * (or preemption of this task).  Exclude CPU-hotplug operations
+> > > -	 * to ensure that no offline CPU has callbacks queued.
+> > > +	 * Initialize the count to two rather than to zero in order
+> > > +	 * to avoid a too-soon return to zero in case of an immediate
+> > > +	 * invocation of the just-enqueued callback (or preemption of
+> > > +	 * this task).  Exclude CPU-hotplug operations to ensure that no
+> > > +	 * offline non-offloaded CPU has callbacks queued.
+> > >  	 */
+> > >  	init_completion(&rcu_state.barrier_completion);
+> > > -	atomic_set(&rcu_state.barrier_cpu_count, 1);
+> > > +	atomic_set(&rcu_state.barrier_cpu_count, 2);
+> > >  	get_online_cpus();
+> > >  
+> > >  	/*
+> > > @@ -3166,13 +3168,19 @@ void rcu_barrier(void)
+> > >  	 */
+> > >  	for_each_possible_cpu(cpu) {
+> > >  		rdp = per_cpu_ptr(&rcu_data, cpu);
+> > > -		if (!cpu_online(cpu) &&
+> > > +		if (cpu_is_offline(cpu) &&
+> > >  		    !rcu_segcblist_is_offloaded(&rdp->cblist))
+> > >  			continue;
+> > > -		if (rcu_segcblist_n_cbs(&rdp->cblist)) {
+> > > +		if (rcu_segcblist_n_cbs(&rdp->cblist) && cpu_online(cpu)) {
+> > >  			rcu_barrier_trace(TPS("OnlineQ"), cpu,
+> > >  					  rcu_state.barrier_sequence);
+> > > -			smp_call_function_single(cpu, rcu_barrier_func, NULL, 1);
+> > > +			smp_call_function_single(cpu, rcu_barrier_func, (void *)cpu, 1);
+> > > +		} else if (cpu_is_offline(cpu)) {
+> > 
+> > I wonder whether this should be:
+> > 
+> > 		  else if (rcu_segcblist_n_cbs(&rdp->cblist) && cpu_is_offline(cpu))
+> > 
+> > ? Because I think we only want to queue the barrier call back if there
+> > are callbacks for a particular CPU. Am I missing something subtle?
+> 
+> I don't believe that you are missing anything at all!
+> 
+> Thank you very much -- this bug would not have shown up in any validation
+> setup that I am aware of.  ;-)
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/mach-imx/anatop.c      | 1 -
- arch/arm/mach-imx/gpc.c         | 1 -
- arch/arm/mach-imx/mach-imx6ul.c | 1 -
- 3 files changed, 3 deletions(-)
+And with additional adjustment to make tracing accurate.
 
-diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
-index ea4a596..d841bed 100644
---- a/arch/arm/mach-imx/anatop.c
-+++ b/arch/arm/mach-imx/anatop.c
-@@ -89,7 +89,6 @@ void imx_anatop_post_resume(void)
- 
- 	if (cpu_is_imx6sl())
- 		imx_anatop_disconnect_high_snvs(false);
--
- }
- 
- void __init imx_init_revision_from_anatop(void)
-diff --git a/arch/arm/mach-imx/gpc.c b/arch/arm/mach-imx/gpc.c
-index fb3cba8..ebc4339 100644
---- a/arch/arm/mach-imx/gpc.c
-+++ b/arch/arm/mach-imx/gpc.c
-@@ -111,7 +111,6 @@ void imx_gpc_mask_all(void)
- 		gpc_saved_imrs[i] = readl_relaxed(reg_imr1 + i * 4);
- 		writel_relaxed(~0, reg_imr1 + i * 4);
- 	}
--
- }
- 
- void imx_gpc_restore_all(void)
-diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
-index 311f5e4..3b0e16c 100644
---- a/arch/arm/mach-imx/mach-imx6ul.c
-+++ b/arch/arm/mach-imx/mach-imx6ul.c
-@@ -25,7 +25,6 @@ static void __init imx6ul_enet_clk_init(void)
- 				   IMX6UL_GPR1_ENET_CLK_OUTPUT);
- 	else
- 		pr_err("failed to find fsl,imx6ul-iomux-gpr regmap\n");
--
- }
- 
- static int ksz8081_phy_fixup(struct phy_device *dev)
--- 
-2.7.4
-
+							Thanx, Paul
