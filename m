@@ -2,118 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E83C16F427
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 01:19:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3131A16F42B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 01:20:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbgBZATa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 19:19:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40416 "EHLO mail.kernel.org"
+        id S1729685AbgBZAUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 19:20:39 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58486 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbgBZATa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 19:19:30 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C554324656;
-        Wed, 26 Feb 2020 00:19:28 +0000 (UTC)
-Date:   Tue, 25 Feb 2020 19:19:27 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>
-Subject: [GIT PULL] tracing/bootconfig: Fixes and changes to bootconfig
- before it goes live in a release
-Message-ID: <20200225191927.3cbaa0db@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728989AbgBZAUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 19:20:38 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 16:20:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,486,1574150400"; 
+   d="scan'208";a="237850102"
+Received: from wtczc53028gn.jf.intel.com (HELO skl-build) ([10.54.87.17])
+  by orsmga003.jf.intel.com with ESMTP; 25 Feb 2020 16:20:37 -0800
+Date:   Tue, 25 Feb 2020 16:20:26 -0800
+From:   "Christopher S. Hall" <christopher.s.hall@intel.com>
+To:     Richard Cochran <richardcochran@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, mingo@redhat.com,
+        x86@kernel.org, jacob.e.keller@intel.com, davem@davemloft.net,
+        sean.v.kelley@intel.com
+Subject: Re: [Intel PMC TGPIO Driver 2/5] drivers/ptp: Add PEROUT2 ioctl
+ frequency adjustment interface
+Message-ID: <20200226002026.GB32079@skl-build>
+References: <20191211214852.26317-1-christopher.s.hall@intel.com>
+ <20191211214852.26317-3-christopher.s.hall@intel.com>
+ <20200203021429.GB3516@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200203021429.GB3516@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Richard,
 
-Linus,
+On Sun, Feb 02, 2020 at 06:14:29PM -0800, Richard Cochran wrote:
+> On Wed, Dec 11, 2019 at 01:48:49PM -0800, christopher.s.hall@intel.com wrote:
+> > diff --git a/include/linux/ptp_clock_kernel.h b/include/linux/ptp_clock_kernel.h
 
-Tracing updates:
+> > +	int (*counttstamp)(struct ptp_clock_info *ptp,
+> > +			   struct ptp_event_count_tstamp *count);
+> 
+> KernelDoc missing.
 
- Change in API of bootconfig (before it comes live in a release)
-  - Have a magic value "BOOTCONFIG" in initrd to know a bootconfig exists
-  - Set CONFIG_BOOT_CONFIG to 'n' by default
-  - Show error if "bootconfig" on cmdline but not compiled in
-  - Prevent redefining the same value
-  - Have a way to append values
-  - Added a SELECT BLK_DEV_INITRD to fix a build failure
+> As tglx said, it is hard to guess what this will be used for.  I would
+> appreciate a fuller explanation of the new callback in the commit log
+> message.
 
- Synthetic event fixes:
-  - Switch to raw_smp_processor_id() for recording CPU value in preempt
-    section. (No care for what the value actually is)
-  - Fix samples always recording u64 values
-  - Fix endianess
-  - Check number of values matches number of fields
-  - Fix a printing bug
+Yes, to both of these above. More incremental patches as you point out
+below also helps here. I have replied to tglx and you in another thread.
 
- Fix of trace_printk() breaking postponed start up tests
+> In general, please introduce a specific new API with an example of how
+> it is used.  In this series you have three new APIs,
+> 
+>    [Intel PMC TGPIO Driver 2/5] drivers/ptp: Add PEROUT2 ioctl frequency adjustment interface
+>    [Intel PMC TGPIO Driver 3/5] drivers/ptp: Add user-space input polling interface
+>    [Intel PMC TGPIO Driver 4/5] x86/tsc: Add TSC support functions to support ART driven Time-Aware GPIO
+> 
+> and then a largish driver using them all.
+> 
+>    [Intel PMC TGPIO Driver 5/5] drivers/ptp: Add PMC Time-Aware GPIO Driver
+> 
+> May I suggest an ordering more like:
+> 
+> [1/5] x86/tsc: Add TSC support functions to support ART...	(with forward explanation of the use case)
+> [2/5] drivers/ptp: Add PMC Time-Aware GPIO Driver		(without new bits)
+> [3/5] drivers/ptp: Add Enhanced handling of reserve fields	(okay as is)
+> [4/5] drivers/ptp: Add PEROUT2 ioctl frequency adjustment interface
+> [5/5] implement ^^^ in the driver
+> [6/5] drivers/ptp: Add user-space input polling interface
+> [7/5] implement ^^^ in the driver
 
- Make a function static that is only used in a single file.
+This makes sense. Thanks for the detail here.
 
+> > @@ -164,10 +179,14 @@ struct ptp_pin_desc {
+> >  	 * PTP_EXTTS_REQUEST and PTP_PEROUT_REQUEST ioctls.
+> >  	 */
+> >  	unsigned int chan;
+> > +	/*
+> > +	 * Per pin capability flag
+> > +	 */
+> > +	unsigned int flags;
+> 
+> Please use 'capabilities' instead of 'flags'.
 
-Please pull the latest trace-v5.6-rc2 tree, which can be found at:
+Yes. Makes sense.
 
+> Thanks,
+> Richard
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v5.6-rc2
-
-Tag SHA1: b50d255b6c6f55384c40bbac65fd5d5d4529a8ba
-Head SHA1: 2910b5aa6f545c044173a5cab3dbb7f43e23916d
-
-
-Masami Hiramatsu (9):
-      tracing: Clear trace_state when starting trace
-      bootconfig: Set CONFIG_BOOT_CONFIG=n by default
-      bootconfig: Add bootconfig magic word for indicating bootconfig explicitly
-      tools/bootconfig: Remove unneeded error message silencer
-      bootconfig: Reject subkey and value on same parent key
-      bootconfig: Print array as multiple commands for legacy command line
-      bootconfig: Prohibit re-defining value on same key
-      bootconfig: Add append value operator support
-      bootconfig: Fix CONFIG_BOOTTIME_TRACING dependency issue
-
-Qiujun Huang (1):
-      bootconfig: Mark boot_config_checksum() static
-
-Steven Rostedt (VMware) (2):
-      tracing: Have synthetic event test use raw_smp_processor_id()
-      tracing: Disable trace_printk() on post poned tests
-
-Tom Zanussi (4):
-      tracing: Make sure synth_event_trace() example always uses u64
-      tracing: Make synth_event trace functions endian-correct
-      tracing: Check that number of vals matches number of synth event fields
-      tracing: Fix number printing bug in print_synth_event()
-
-----
- Documentation/admin-guide/bootconfig.rst     |  34 +++++++-
- include/linux/bootconfig.h                   |   3 +
- init/Kconfig                                 |   5 +-
- init/main.c                                  |  38 +++++----
- kernel/trace/Kconfig                         |   4 +-
- kernel/trace/synth_event_gen_test.c          |  44 +++++------
- kernel/trace/trace.c                         |   2 +
- kernel/trace/trace_events_hist.c             | 112 ++++++++++++++++++++++++---
- lib/bootconfig.c                             |  36 ++++++---
- tools/bootconfig/include/linux/printk.h      |   5 +-
- tools/bootconfig/main.c                      |  51 +++++++-----
- tools/bootconfig/samples/bad-mixed-kv1.bconf |   3 +
- tools/bootconfig/samples/bad-mixed-kv2.bconf |   3 +
- tools/bootconfig/samples/bad-samekey.bconf   |   6 ++
- tools/bootconfig/test-bootconfig.sh          |  18 ++++-
- 15 files changed, 272 insertions(+), 92 deletions(-)
- create mode 100644 tools/bootconfig/samples/bad-mixed-kv1.bconf
- create mode 100644 tools/bootconfig/samples/bad-mixed-kv2.bconf
- create mode 100644 tools/bootconfig/samples/bad-samekey.bconf
----------------------------
+Thanks,
+Christopher
