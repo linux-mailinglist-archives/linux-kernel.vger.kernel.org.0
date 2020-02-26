@@ -2,84 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 972B316F8F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:08:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC9316F911
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:09:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbgBZIID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 03:08:03 -0500
-Received: from outbound-smtp15.blacknight.com ([46.22.139.232]:41423 "EHLO
-        outbound-smtp15.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727276AbgBZIIC (ORCPT
+        id S1727672AbgBZIJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 03:09:10 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43067 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727327AbgBZIJK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 03:08:02 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp15.blacknight.com (Postfix) with ESMTPS id 25A4F1C4553
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 08:08:00 +0000 (GMT)
-Received: (qmail 13849 invoked from network); 26 Feb 2020 08:08:00 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 26 Feb 2020 08:07:59 -0000
-Date:   Wed, 26 Feb 2020 08:07:57 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Ivan Babrou <ivan@cloudflare.com>,
-        Rik van Riel <riel@surriel.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] mm, page_alloc: Disable watermark boosting if THP is
- disabled at boot
-Message-ID: <20200226080757.GB3818@techsingularity.net>
-References: <20200225141534.5044-1-mgorman@techsingularity.net>
- <20200225141534.5044-3-mgorman@techsingularity.net>
- <alpine.DEB.2.21.2002251728520.14021@chino.kir.corp.google.com>
+        Wed, 26 Feb 2020 03:09:10 -0500
+Received: by mail-lj1-f196.google.com with SMTP id e3so904306lja.10;
+        Wed, 26 Feb 2020 00:09:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=ZAhX4Kjo49a/2nrW9qMMuYh2FGtltiAUaTTCoWUNQzg=;
+        b=PDenjLes/GWTVzHKoE/Lf3aacAyb7nPmJALDm/LuSDhMODjG0r2EXcppKP2F/QM/0z
+         EOsPX4rHFPIva+tkHNQfmgafiP/m9pMaBqiZJRqEHEzgnILghV7jkjGO5Ks76eiC2dQc
+         X2lvX3TOqNEXw2nz832ud925hnPfmE8vnLm3EXgaNzMSBesZooJ5d7aNUB7eN4nSeZjO
+         lajp9IwdyKiDpJC4T3sY/xdKo1CUsgloppOVpBi5AX6y3h64O5f0FpKs6YZbOyj5wU58
+         i9vyZh8K8Y26SoEbugxEQLy50sMz+Bw+LbusSJLnoWx4LqoGJ3DojYmYmk5WqIF1UoZ5
+         eMVA==
+X-Gm-Message-State: APjAAAUr4cGcUEPPekMarEthiTYXyIDWBsBfgn4c0toTCFH12AnU7E4t
+        Z9h5PFW9aDVatGfnm88ZB7o=
+X-Google-Smtp-Source: APXvYqy2c9A7UaDZGtGr2NVUzZ8Jdh6Kobi7GpHvV93wWsGLiJ3jESZEAk9pFU+2KOdWibxOnvzc7g==
+X-Received: by 2002:a05:651c:2c7:: with SMTP id f7mr2072219ljo.125.1582704547829;
+        Wed, 26 Feb 2020 00:09:07 -0800 (PST)
+Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
+        by smtp.gmail.com with ESMTPSA id q24sm579459lfm.78.2020.02.26.00.09.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 00:09:06 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.92.3)
+        (envelope-from <johan@kernel.org>)
+        id 1j6rkg-0001VD-1N; Wed, 26 Feb 2020 09:09:06 +0100
+Date:   Wed, 26 Feb 2020 09:09:06 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>
+Subject: Re: [PATCH 2/2] USB: core: Fix potential memory leak in
+ usb_get_configuration()
+Message-ID: <20200226080906.GV32540@localhost>
+References: <1582697723-7274-1-git-send-email-yangtiezhu@loongson.cn>
+ <1582697723-7274-2-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2002251728520.14021@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1582697723-7274-2-git-send-email-yangtiezhu@loongson.cn>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 05:32:24PM -0800, David Rientjes wrote:
-> On Tue, 25 Feb 2020, Mel Gorman wrote:
-> 
-> > Watermark boosting is intended to increase the success rate and reduce
-> > latency of high-order allocations, particularly THP. If THP is disabled
-> > at boot, then it makes sense to disable watermark boosting as well. While
-> > there are other high-order allocations that potentially benefit, they
-> > are relatively rare.
-> > 
-> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> > ---
-> >  mm/huge_memory.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index b08b199f9a11..565bb9973ff8 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -472,6 +472,7 @@ static int __init setup_transparent_hugepage(char *str)
-> >  			  &transparent_hugepage_flags);
-> >  		clear_bit(TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG,
-> >  			  &transparent_hugepage_flags);
-> > +		disable_watermark_boosting();
-> >  		ret = 1;
-> >  	}
-> >  out:
-> 
-> Seems like watermark boosting can help prevent fragmentation so it 
-> benefits all hugepage sized allocations for the long term and that would 
-> include dynamic provisioning of hugetlb memory or hugetlb overcommit?
+On Wed, Feb 26, 2020 at 02:15:23PM +0800, Tiezhu Yang wrote:
+> Make sure to free all the allocated memory before exiting from the function
+> usb_get_configuration() when an error is encountered.
 
-Yes but it's very rare to hear of cases where hugetlb is dynamically
-provisioned or overcommitted once THP existed and stopped stalling the
-system excessively. I'm happy enough to drop this patch because I'm not
-relying on it in the context of this bug.
+There's no leak in this function as far as I can tell. Any allocated
+memory is released in usb_destroy_configuration() when the last
+reference to the struct usb_device is dropped.
 
--- 
-Mel Gorman
-SUSE Labs
+> Additionally, just initialize the variable "bigbuffer" with NULL to avoid
+> the following build warning:
+> 
+>   CC      drivers/usb/core/config.o
+> drivers/usb/core/config.c: In function ‘usb_get_configuration’:
+> drivers/usb/core/config.c:956:2: warning: ‘bigbuffer’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   kfree(bigbuffer);
+>   ^
+
+No need to mention warnings that you introduce yourself while creating
+your patch. It can give the false impression that your addressing an
+existing issue.
+
+Johan
