@@ -2,184 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F8481706C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF1A170623
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:32:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbgBZR4n convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 26 Feb 2020 12:56:43 -0500
-Received: from 11.mo1.mail-out.ovh.net ([188.165.48.29]:53561 "EHLO
-        11.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726688AbgBZR4n (ORCPT
+        id S1726872AbgBZRcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 12:32:00 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:58114 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726714AbgBZRcA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 12:56:43 -0500
-X-Greylist: delayed 4197 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Feb 2020 12:56:41 EST
-Received: from player157.ha.ovh.net (unknown [10.108.42.142])
-        by mo1.mail-out.ovh.net (Postfix) with ESMTP id E6D5E1A4165
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 15:21:35 +0100 (CET)
-Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player157.ha.ovh.net (Postfix) with ESMTPSA id 898E0FCD5725;
-        Wed, 26 Feb 2020 14:20:52 +0000 (UTC)
-Date:   Wed, 26 Feb 2020 15:20:50 +0100
-From:   Greg Kurz <groug@kaod.org>
-To:     'Baoquan He' <bhe@redhat.com>
-Cc:     Alastair D'Silva <alastair@d-silva.org>,
-        'Alastair D'Silva' <alastair@au1.ibm.com>,
-        "'Aneesh Kumar K . V'" <aneesh.kumar@linux.ibm.com>,
-        'Oliver O'Halloran' <oohall@gmail.com>,
-        'Benjamin Herrenschmidt' <benh@kernel.crashing.org>,
-        'Paul Mackerras' <paulus@samba.org>,
-        'Michael Ellerman' <mpe@ellerman.id.au>,
-        'Frederic Barrat' <fbarrat@linux.ibm.com>,
-        'Andrew Donnellan' <ajd@linux.ibm.com>,
-        'Arnd Bergmann' <arnd@arndb.de>,
-        'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>,
-        'Dan Williams' <dan.j.williams@intel.com>,
-        'Vishal Verma' <vishal.l.verma@intel.com>,
-        'Dave Jiang' <dave.jiang@intel.com>,
-        'Ira Weiny' <ira.weiny@intel.com>,
-        'Andrew Morton' <akpm@linux-foundation.org>,
-        'Mauro Carvalho Chehab' <mchehab+samsung@kernel.org>,
-        "'David S. Miller'" <davem@davemloft.net>,
-        'Rob Herring' <robh@kernel.org>,
-        'Anton Blanchard' <anton@ozlabs.org>,
-        'Krzysztof Kozlowski' <krzk@kernel.org>,
-        'Mahesh Salgaonkar' <mahesh@linux.vnet.ibm.com>,
-        'Madhavan Srinivasan' <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?B?J0PDqWRyaWM=?= Le Goater' <clg@kaod.org>,
-        'Anju T Sudhakar' <anju@linux.vnet.ibm.com>,
-        'Hari Bathini' <hbathini@linux.ibm.com>,
-        'Thomas Gleixner' <tglx@linutronix.de>,
-        'Nicholas Piggin' <npiggin@gmail.com>,
-        'Masahiro Yamada' <yamada.masahiro@socionext.com>,
-        'Alexey Kardashevskiy' <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3 04/27] ocxl: Remove unnecessary externs
-Message-ID: <20200226152050.45547219@bahia.home>
-In-Reply-To: <20200226141523.GI4937@MiWiFi-R3L-srv>
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
-        <20200221032720.33893-5-alastair@au1.ibm.com>
-        <20200226081447.GH4937@MiWiFi-R3L-srv>
-        <4d49801d5ec7e$7a3e8610$6ebb9230$@d-silva.org>
-        <20200226100102.0aab7dda@bahia.home>
-        <20200226141523.GI4937@MiWiFi-R3L-srv>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 26 Feb 2020 12:32:00 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Tr-QObo_1582738311;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Tr-QObo_1582738311)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 27 Feb 2020 01:31:54 +0800
+Subject: Re: [v2 PATCH] mm: shmem: allow split THP when truncating THP
+ partially
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1575420174-19171-1-git-send-email-yang.shi@linux.alibaba.com>
+ <CAKgT0UdHhZznoS0kMdacCqgc=sFXj1Djmpd-DbPvAmyrhJq6CA@mail.gmail.com>
+ <9b8ff9ca-75b0-c256-cf37-885ccd786de7@linux.alibaba.com>
+ <CAKgT0UfPW+DKZhze-hCL6mThak+qJjx4wb-rXn+NKnp6-9RBDQ@mail.gmail.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <9c30a891-011b-e041-2647-444d09fa7b8a@linux.alibaba.com>
+Date:   Wed, 26 Feb 2020 09:31:49 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Ovh-Tracer-Id: 9146529370105485748
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrleeggdeihecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkjghfofggtgfgsehtqheftdertdejnecuhfhrohhmpefirhgvghcumfhurhiiuceoghhrohhugheskhgrohgurdhorhhgqeenucfkpheptddrtddrtddrtddpkedvrddvheefrddvtdekrddvgeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhlrgihvghrudehjedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehgrhhouhhgsehkrghougdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+In-Reply-To: <CAKgT0UfPW+DKZhze-hCL6mThak+qJjx4wb-rXn+NKnp6-9RBDQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Feb 2020 22:15:23 +0800
-'Baoquan He' <bhe@redhat.com> wrote:
 
-> On 02/26/20 at 10:01am, Greg Kurz wrote:
-> > On Wed, 26 Feb 2020 19:26:34 +1100
-> > "Alastair D'Silva" <alastair@d-silva.org> wrote:
-> > 
-> > > > -----Original Message-----
-> > > > From: Baoquan He <bhe@redhat.com>
-> > > > Sent: Wednesday, 26 February 2020 7:15 PM
-> > > > To: Alastair D'Silva <alastair@au1.ibm.com>
-> > > > Cc: alastair@d-silva.org; Aneesh Kumar K . V
-> > > > <aneesh.kumar@linux.ibm.com>; Oliver O'Halloran <oohall@gmail.com>;
-> > > > Benjamin Herrenschmidt <benh@kernel.crashing.org>; Paul Mackerras
-> > > > <paulus@samba.org>; Michael Ellerman <mpe@ellerman.id.au>; Frederic
-> > > > Barrat <fbarrat@linux.ibm.com>; Andrew Donnellan <ajd@linux.ibm.com>;
-> > > > Arnd Bergmann <arnd@arndb.de>; Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org>; Dan Williams <dan.j.williams@intel.com>;
-> > > > Vishal Verma <vishal.l.verma@intel.com>; Dave Jiang
-> > > > <dave.jiang@intel.com>; Ira Weiny <ira.weiny@intel.com>; Andrew Morton
-> > > > <akpm@linux-foundation.org>; Mauro Carvalho Chehab
-> > > > <mchehab+samsung@kernel.org>; David S. Miller <davem@davemloft.net>;
-> > > > Rob Herring <robh@kernel.org>; Anton Blanchard <anton@ozlabs.org>;
-> > > > Krzysztof Kozlowski <krzk@kernel.org>; Mahesh Salgaonkar
-> > > > <mahesh@linux.vnet.ibm.com>; Madhavan Srinivasan
-> > > > <maddy@linux.vnet.ibm.com>; Cédric Le Goater <clg@kaod.org>; Anju T
-> > > > Sudhakar <anju@linux.vnet.ibm.com>; Hari Bathini
-> > > > <hbathini@linux.ibm.com>; Thomas Gleixner <tglx@linutronix.de>; Greg
-> > > > Kurz <groug@kaod.org>; Nicholas Piggin <npiggin@gmail.com>; Masahiro
-> > > > Yamada <yamada.masahiro@socionext.com>; Alexey Kardashevskiy
-> > > > <aik@ozlabs.ru>; linux-kernel@vger.kernel.org; linuxppc-
-> > > > dev@lists.ozlabs.org; linux-nvdimm@lists.01.org; linux-mm@kvack.org
-> > > > Subject: Re: [PATCH v3 04/27] ocxl: Remove unnecessary externs
-> > > > 
-> > > > On 02/21/20 at 02:26pm, Alastair D'Silva wrote:
-> > > > > From: Alastair D'Silva <alastair@d-silva.org>
-> > > > >
-> > > > > Function declarations don't need externs, remove the existing ones so
-> > > > > they are consistent with newer code
-> > > > >
-> > > > > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > > > > ---
-> > > > >  arch/powerpc/include/asm/pnv-ocxl.h | 32 ++++++++++++++---------------
-> > > > >  include/misc/ocxl.h                 |  6 +++---
-> > > > >  2 files changed, 18 insertions(+), 20 deletions(-)
-> > > > >
-> > > > > diff --git a/arch/powerpc/include/asm/pnv-ocxl.h
-> > > > > b/arch/powerpc/include/asm/pnv-ocxl.h
-> > > > > index 0b2a6707e555..b23c99bc0c84 100644
-> > > > > --- a/arch/powerpc/include/asm/pnv-ocxl.h
-> > > > > +++ b/arch/powerpc/include/asm/pnv-ocxl.h
-> > > > > @@ -9,29 +9,27 @@
-> > > > >  #define PNV_OCXL_TL_BITS_PER_RATE       4
-> > > > >  #define PNV_OCXL_TL_RATE_BUF_SIZE
-> > > > ((PNV_OCXL_TL_MAX_TEMPLATE+1) * PNV_OCXL_TL_BITS_PER_RATE / 8)
-> > > > >
-> > > > > -extern int pnv_ocxl_get_actag(struct pci_dev *dev, u16 *base, u16
-> > > > *enabled,
-> > > > > -			u16 *supported);
-> > > > 
-> > > > It works w or w/o extern when declare functions. Searching 'extern'
-> > > > under include can find so many functions with 'extern' adding. Do we have
-> > > a
-> > > > explicit standard if we should add or remove 'exter' in function
-> > > declaration?
-> > > > 
-> > > > I have no objection to this patch, just want to make clear so that I can
-> > > handle
-> > > > it w/o confusion.
-> > > > 
-> > > > Thanks
-> > > > Baoquan
-> > > > 
-> > > 
-> > > For the OpenCAPI driver, we have settled on not having 'extern' on
-> > > functions.
-> > > 
-> > > I don't think I've seen a standard that supports or refutes this, but it
-> > > does not value add.
-> > > 
-> > 
-> > FWIW this is a warning condition for checkpatch:
-> > 
-> > $ ./scripts/checkpatch.pl --strict -f include/misc/ocxl.h
-> 
-> Good to know, thanks.
-> 
-> I didn't know checkpatch.pl can run on header file directly. Tried to
-> check patch with '--strict -f', the below info doesn't appear. But it
 
-Hmm... -f is to check a source file, not a patch... What did you try
-exactly ?
+On 2/21/20 4:24 PM, Alexander Duyck wrote:
+> On Fri, Feb 21, 2020 at 10:24 AM Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>>
+>>
+>> On 2/20/20 10:16 AM, Alexander Duyck wrote:
+>>> On Tue, Dec 3, 2019 at 4:43 PM Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>>>> Currently when truncating shmem file, if the range is partial of THP
+>>>> (start or end is in the middle of THP), the pages actually will just get
+>>>> cleared rather than being freed unless the range cover the whole THP.
+>>>> Even though all the subpages are truncated (randomly or sequentially),
+>>>> the THP may still be kept in page cache.  This might be fine for some
+>>>> usecases which prefer preserving THP.
+>>>>
+>>>> But, when doing balloon inflation in QEMU, QEMU actually does hole punch
+>>>> or MADV_DONTNEED in base page size granulairty if hugetlbfs is not used.
+>>>> So, when using shmem THP as memory backend QEMU inflation actually doesn't
+>>>> work as expected since it doesn't free memory.  But, the inflation
+>>>> usecase really needs get the memory freed.  Anonymous THP will not get
+>>>> freed right away too but it will be freed eventually when all subpages are
+>>>> unmapped, but shmem THP would still stay in page cache.
+>>>>
+>>>> Split THP right away when doing partial hole punch, and if split fails
+>>>> just clear the page so that read to the hole punched area would return
+>>>> zero.
+>>>>
+>>>> Cc: Hugh Dickins <hughd@google.com>
+>>>> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>>>> Cc: Andrea Arcangeli <aarcange@redhat.com>
+>>>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>>> One question I would have is if this is really the desired behavior we
+>>> are looking for?
+>>>
+>>> By proactively splitting the THP you are likely going to see a
+>>> performance regression with the virtio-balloon driver enabled in QEMU.
+>>> I would suspect the response to that would be to update the QEMU code
+>>> to  identify the page size of the shared memory ramblock. At that
+>>> point I suspect it would start behaving the same as how it currently
+>>> handles anonymous memory, and the work done here would essentially
+>>> have been wasted other than triggering the desire to resolve this in
+>>> QEMU to avoid a performance regression.
+>>>
+>>> The code for inflating a the balloon in virtio-balloon in QEMU can be
+>>> found here:
+>>> https://github.com/qemu/qemu/blob/master/hw/virtio/virtio-balloon.c#L66
+>>>
+>>> If there is a way for us to just populate the value obtained via
+>>> qemu_ram_pagesize with the THP page size instead of leaving it at 4K,
+>>> which is the size I am assuming it is at since you indicated that it
+>>> is just freeing the base page size, then we could address the same
+>>> issue and likely get the desired outcome of freeing the entire THP
+>>> page when it is no longer used.
+>> If qemu could punch hole (this is how qemu free file-backed memory) in
+>> THP unit, either w/ or w/o the patch the THP won't get split since the
+>> whole THP will get truncated. But, if qemu has to free memory in sub-THP
+>> size due to whatever reason (for example, 1MB for every 2MB section),
+>> then we have to split THP otherwise no memory will be freed actually
+>> with the current code. It is not about performance, it is about really
+>> giving memory back to host.
+> I get that, but at the same time I am not sure if everyone will be
+> happy with the trade-off. That is my concern.
+>
+> You may want to change the patch description above if that is the
+> case. Based on the description above it makes it sound as if the issue
+> is that QEMU is using hole punch or MADV_DONTNEED with the wrong
+> granularity. Based on your comment here it sounds like you want to
+> have the ability to break up the larger THP page as soon as you want
+> to push out a single 4K page from it.
 
-> does give out below information when run on header file.
-> 
-> > 
-> > [...]
-> > 
-> > CHECK: extern prototypes should be avoided in .h files
-> > #176: FILE: include/misc/ocxl.h:176:
-> > +extern int ocxl_afu_irq_alloc(struct ocxl_context *ctx, int *irq_id);
-> > 
-> > [...]
-> > 
-> 
+Yes, you are right. The commit log may be confusing. What I wanted to 
+convey is QEMU has no idea if THP is used or not so it treats memory 
+with base size unless hugetlbfs is used since QEMU is aware huge page is 
+used in this case.
+This may sounds irrelevant to the problem, I would just remove that.
+
+>
+> I am not sure the description for the behavior of anonymous THP with
+> respect to QEMU makes sense either. Based on the description you made
+> it sound like it was somehow using the same process used for huge
+> pages. That isn't the case right? My understanding is that in the case
+> of an anonymous THP it is getting broken into 4K subpages and then
+> those are freed individually. That should leave you with the same
+> performance regression that I had brought up earlier.
+
+No, anonymous THP won't get split immediately and those memory also 
+won't get freed immediately if QEMU does MADV_DONTNEED on sub THP range 
+(for example, 1MB range in THP). The THP will get freed when:
+1. Host has memory pressure. The THP will get split and unmapped pages 
+will be freed.
+2. Other sub pages in the same THP are MADV_DONTNEED'ed (eventually the 
+whole THP get unmapped).
+
+The difference between shmem and anonymous page is shmem will not get 
+freed unless hole punch the whole THP, anonymous page will get freed 
+sooner or later.
+
+>
+> So if anything it sounds like what you are really wanting is feature
+> parity with anonymous THP which will split the anonymous THP page when
+> a single 4K page within the THP is hit with MADV_DONTNEED.
+>
+> - Alex
 
