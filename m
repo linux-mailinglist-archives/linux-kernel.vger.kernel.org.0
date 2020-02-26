@@ -2,87 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF4DC16FB3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 10:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89C8316FB45
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 10:48:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbgBZJql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 04:46:41 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:45547 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728008AbgBZJqj (ORCPT
+        id S1727709AbgBZJsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 04:48:31 -0500
+Received: from mail-lj1-f174.google.com ([209.85.208.174]:46906 "EHLO
+        mail-lj1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbgBZJsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 04:46:39 -0500
-From:   Luc Maranget <luc.maranget@inria.fr>
-X-IronPort-AV: E=Sophos;i="5.70,487,1574118000"; 
-   d="scan'208";a="437707730"
-Received: from yquem.paris.inria.fr (HELO yquem.inria.fr) ([128.93.101.33])
-  by mail2-relais-roc.national.inria.fr with ESMTP; 26 Feb 2020 10:46:37 +0100
-Received: by yquem.inria.fr (Postfix, from userid 18041)
-        id 9DB44E1AAB; Wed, 26 Feb 2020 10:46:37 +0100 (CET)
-Date:   Wed, 26 Feb 2020 10:46:37 +0100
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Luc Maranget <luc.maranget@inria.fr>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: More on reader-writer locks
-Message-ID: <20200226094637.rhli3jjuiim2noke@yquem.inria.fr>
-References: <20200225130102.wsz3bpyhjmcru7os@yquem.inria.fr>
- <Pine.LNX.4.44L0.2002251608290.1485-100000@iolanthe.rowland.org>
+        Wed, 26 Feb 2020 04:48:30 -0500
+Received: by mail-lj1-f174.google.com with SMTP id x14so2275744ljd.13
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 01:48:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fMqomt3au4mw3rs+cfmiekqfa2JRktsB+lFu7iDOZLo=;
+        b=SuSQnD3fwI+d+3Pl9Fe/vO8O+Orp2gdJcU9QogT2ewWvj0hA2nPoTK4QQtd4QNxYVV
+         1175e70cfa9ufg/UEU7n0D8Naz6bzHg7zpSw3PWqbWXbq/JKwT2o5qGYBOdxytdY+z1Q
+         V1uGShdASBaAA6gveyQbZoXq7Xh4XF7yvUm//v9xBM1E/f0DMjge3i4ZP3fslxAMqUwy
+         qh1RLTMqZ4DXtMNfIwo7ekbyJOW7XslwdWmzCNr/CVd88vGHots9JFze0EfZvsUHeijX
+         WnojPosrAUcAhnsw543qPlf4FLb0Tw8gXfhnOKsmKnJzSCXgRwwINSFpSNIkj21q4n/u
+         4o7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fMqomt3au4mw3rs+cfmiekqfa2JRktsB+lFu7iDOZLo=;
+        b=XEnAZAhd4/qtUYvgUe7tyiNhpm/jR28IZSnNbgwzZm6soEESGtv/BINHATHAMdITDH
+         ZXtTdfvQ+5mNF+kY5moSMFAvGlcasGX3lHLGjv3INNf7cZCzcfMpU+NeVHdqY/Xlv1yq
+         84i/YJDLnPTCpmE08p6aosiEC2EKS5b6NNOyD+oIqB5DekEERMEbrqkywwXS2RSiRjxX
+         Hv5U2VMbGG9N8qqtydwfeIvctvB/sdtHPSBAMAk4e2i70vNlpp3pK1uAvMz3oFmRrkD6
+         kz+QKJJ9oLz0FhFw8y/kkhXs2Ob3VVIqNaVltf/FyFDQeEGUBHPzPD9KqAekyp8BLnZX
+         33/g==
+X-Gm-Message-State: ANhLgQ1vICycm/FbDoxpOIx668MMt0xhkQHeZH18bJ0JSfSpsok3IbYC
+        9iKkMDKmBVpx4vxg5vepKVeTqOpeIpCIgtmoCK9xTqWS
+X-Google-Smtp-Source: APXvYqxtqmfaB85GL7bWrq5ebCXZx5SS6EurjoExEzjh7n5AUy6x0Zwy/tGRvM1zoeqC5slgqusKzwJfg28DAfbvdtU=
+X-Received: by 2002:a2e:808a:: with SMTP id i10mr2374462ljg.151.1582710508236;
+ Wed, 26 Feb 2020 01:48:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Pine.LNX.4.44L0.2002251608290.1485-100000@iolanthe.rowland.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <C7D5F99D-B8DB-462B-B665-AE268CDE90D2@vmware.com>
+In-Reply-To: <C7D5F99D-B8DB-462B-B665-AE268CDE90D2@vmware.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 26 Feb 2020 10:48:16 +0100
+Message-ID: <CAKfTPtA9275amW4wAnCZpW3bVRv0HssgMJ_YgPzZDRZ3A1rbVg@mail.gmail.com>
+Subject: Re: Performance impact in networking data path tests in Linux 5.5 Kernel
+To:     Rajender M <manir@vmware.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Hi Rajender,
 
-As far as I understand there is a contradiction between having a "platonic"
-implementation of locks (à la lock.cat) and a concrete one (for ordinary locks
-lock -> load acquire, unlock -> store release, + loop [difficult for herd]
-or filter clause).
+On Tue, 25 Feb 2020 at 06:46, Rajender M <manir@vmware.com> wrote:
+>
+> As part of VMware's performance regression testing for Linux Kernel upstr=
+eam
+>  releases, when comparing Linux 5.5 kernel against Linux 5.4 kernel, we n=
+oticed
+> 20% improvement in networking throughput performance at the cost of a 30%
+> increase in the CPU utilization.
 
-So if reader/writer locks are catified in a platonic way, we cannot
-use various atomic primitives. Instead, we give them an abstract semantics
-based upon some axiomatisation of their semantics, using cat means.
-Such an axionatisation  does not seem straightforward because,
-by constrast with locks, there is an integer count
-hiddden, and not a simple boolean as for ordinary locks
+Thanks for testing and sharing results with us. It's always
+interesting to get feedbacks from various tests cases
 
-Some idea would be first to partition reader crtical sections,
-and then for each such partition, order elements of the partition and
-writer critical section. For one such choice there are still many possible
-rf relations...
-
---Luc
-
-rf relation 
-> On Tue, 25 Feb 2020, Luc Maranget wrote:
-> 
-> > Hi,
-> > 
-> > As far as I can remember I have implemented atomic_add_unless in herd7.
-> 
-> Luc, have you considered whether we can use atomic_add_unless and
-> cmpxchg to implement reader-writer locks in the LKMM?  I don't think we
-> can handle them the same way we handle ordinary locks now.
-> 
-> Let's say that a lock variable holds 0 if it is unlocked, -1 if it is 
-> write-locked, and a positive value if it is read-locked (the value is 
-> the number of read locks currently in effect).  Then operations like 
-> write_lock, write_trylock, and so on could all be modeled using 
-> variants of atomic_add_unless, atomic_dec, and cmpxchg.
-> 
-> But will that work if the reads-from relation is computed by the cat 
-> code in lock.cat?  I suspect it won't.
-> 
-> How would you approach this problem?
-> 
-> Alan
+>
+> After performing the bisect between 5.4 and 5.5, we identified the root c=
+ause
+> of this behaviour to be a scheduling change from Vincent Guittot's
+> 2ab4092fc82d ("sched/fair: Spread out tasks evenly when not overloaded").
+>
+> The impacted testcases are TCP_STREAM SEND & RECV =E2=80=93 on both small
+> (8K socket & 256B message) & large (64K socket & 16K message) packet size=
+s.
+>
+> We backed out Vincent's commit & reran our networking tests and found tha=
+t
+> the performance were similar to 5.4 kernel - improvements in networking t=
+ests
+> were no more.
+>
+> In our current network performance testing, we use Intel 10G NIC to evalu=
+ate
+> all Linux Kernel releases. In order to confirm that the impact is also se=
+en in
+> higher bandwidth NIC, we repeated the same test cases with Intel 40G and
+> we were able to reproduce the same behaviour - 25% improvements in
+> throughput with 10% more CPU consumption.
+>
+> The overall results indicate that the new scheduler change has introduced
+> much better network throughput performance at the cost of incremental
+> CPU usage. This can be seen as expected behavior because now the
+> TCP streams are evenly spread across all the CPUs and eventually drives
+> more network packets, with additional CPU consumption.
+>
+>
+> We have also confirmed this theory by parsing the ESX stats for 5.4 and 5=
+.5
+> kernels in a 4vCPU VM running 8 TCP streams - as shown below;
+>
+> 5.4 kernel:
+>   "2132149": {"id": 2132149, "used": 94.37, "ready": 0.01, "cstp": 0.00, =
+"name": "vmx-vcpu-0:rhel7x64-0",
+>   "2132151": {"id": 2132151, "used": 0.13, "ready": 0.00, "cstp": 0.00, "=
+name": "vmx-vcpu-1:rhel7x64-0",
+>   "2132152": {"id": 2132152, "used": 9.07, "ready": 0.03, "cstp": 0.00, "=
+name": "vmx-vcpu-2:rhel7x64-0",
+>   "2132153": {"id": 2132153, "used": 34.77, "ready": 0.01, "cstp": 0.00, =
+"name": "vmx-vcpu-3:rhel7x64-0",
+>
+> 5.5 kernel:
+>   "2132041": {"id": 2132041, "used": 55.70, "ready": 0.01, "cstp": 0.00, =
+"name": "vmx-vcpu-0:rhel7x64-0",
+>   "2132043": {"id": 2132043, "used": 47.53, "ready": 0.01, "cstp": 0.00, =
+"name": "vmx-vcpu-1:rhel7x64-0",
+>   "2132044": {"id": 2132044, "used": 77.81, "ready": 0.00, "cstp": 0.00, =
+"name": "vmx-vcpu-2:rhel7x64-0",
+>   "2132045": {"id": 2132045, "used": 57.11, "ready": 0.02, "cstp": 0.00, =
+"name": "vmx-vcpu-3:rhel7x64-0",
+>
+> Note, "used %" in above stats for 5.5 kernel is evenly distributed across=
+ all vCPUs.
+>
+> On the whole, this change should be seen as a significant improvement for
+> most customers.
+>
+> Rajender M
+> Performance Engineering
+> VMware, Inc.
+>
