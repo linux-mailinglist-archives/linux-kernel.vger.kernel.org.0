@@ -2,100 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2242D16FEB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:13:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5A9116FEBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:16:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbgBZMNL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 07:13:11 -0500
-Received: from foss.arm.com ([217.140.110.172]:35052 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726806AbgBZMNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 07:13:11 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FE831FB;
-        Wed, 26 Feb 2020 04:13:10 -0800 (PST)
-Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 901653FA00;
-        Wed, 26 Feb 2020 04:13:09 -0800 (PST)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH] sched/fair: Fix unused prototype warning
-Date:   Wed, 26 Feb 2020 12:12:44 +0000
-Message-Id: <20200226121244.7524-1-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.24.0
+        id S1727260AbgBZMQq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 07:16:46 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:64434 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbgBZMQp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 07:16:45 -0500
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Eugen.Hristev@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="Eugen.Hristev@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; spf=Pass smtp.mailfrom=Eugen.Hristev@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: WLyfkTDgGneTpST693ZioNpeej+UlfBbge9U50URHNUKwyAERzwLnyW7rHR6LpQSz78F0vYgiQ
+ Djd36NLBtvVv9Tl+wxBfxq0GwSfeHHwtznV/bi51vF/3u1qLrGoRj21DkKRqO2neo9ueJT99Hb
+ nWlCbbmDHRphMJJ6VBOY5DhmiE7No6yDI2oCjbcLlATz1maJzu6xSeN21PZC8FD56yDnTtD7j2
+ HFkeYzESvJJiDdGBSc1Kex8wVAN//A7QEqft3NiVOseqBIy0HdBWcWJEo+zrEd8UwLqbef4Af8
+ es8=
+X-IronPort-AV: E=Sophos;i="5.70,488,1574146800"; 
+   d="scan'208";a="66801767"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Feb 2020 05:16:45 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 26 Feb 2020 05:16:56 -0700
+Received: from ROB-ULT-M18282.microchip.com (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Wed, 26 Feb 2020 05:16:42 -0700
+From:   Eugen Hristev <eugen.hristev@microchip.com>
+To:     <linux-media@vger.kernel.org>, <hverkuil@xs4all.nl>,
+        <laurent.pinchart@ideasonboard.com>, <linux-kernel@vger.kernel.org>
+CC:     Eugen Hristev <eugen.hristev@microchip.com>
+Subject: [PATCH] media: v4l2-core: fix entity initialization in device_register_subdev
+Date:   Wed, 26 Feb 2020 14:15:45 +0200
+Message-ID: <20200226121545.19880-1-eugen.hristev@microchip.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building against the latest tip/sched/core
+The check for parameters is done below in the function.
+Initialize the entity variable properly, after the parameters
+have been checked.
 
-  a0f03b617c3b ("sched/numa: Stop an exhastive search if a reasonable swap candidate or idle CPU is found")
-
-with the arm64 defconfig (which doesn't have CONFIG_SCHED_SMT set) leads
-to:
-
-  kernel/sched/fair.c:1525:20: warning: ‘test_idle_cores’ declared ‘static’ but never defined [-Wunused-function]
-   static inline bool test_idle_cores(int cpu, bool def);
-		      ^~~~~~~~~~~~~~~
-
-Rather than define it in its own CONFIG_SCHED_SMT #define island, bunch it
-up with test_idle_cores().
-
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+Fixes: 61f5db549dde ("[media] v4l: Make v4l2_subdev inherit from media_entity")
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
 ---
- kernel/sched/fair.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/media/v4l2-core/v4l2-device.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fcc968669aea..fa048cba6077 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1520,9 +1520,6 @@ static inline bool is_core_idle(int cpu)
- 	return true;
- }
- 
--/* Forward declarations of select_idle_sibling helpers */
--static inline bool test_idle_cores(int cpu, bool def);
--
- struct task_numa_env {
- 	struct task_struct *p;
- 
-@@ -1558,9 +1555,11 @@ numa_type numa_classify(unsigned int imbalance_pct,
- 	return node_fully_busy;
- }
- 
-+#ifdef CONFIG_SCHED_SMT
-+/* Forward declarations of select_idle_sibling helpers */
-+static inline bool test_idle_cores(int cpu, bool def);
- static inline int numa_idle_core(int idle_core, int cpu)
+diff --git a/drivers/media/v4l2-core/v4l2-device.c b/drivers/media/v4l2-core/v4l2-device.c
+index 63d6b147b21e..6e33132ebb19 100644
+--- a/drivers/media/v4l2-core/v4l2-device.c
++++ b/drivers/media/v4l2-core/v4l2-device.c
+@@ -112,7 +112,7 @@ int v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
+ 				struct v4l2_subdev *sd)
  {
--#ifdef CONFIG_SCHED_SMT
- 	if (!static_branch_likely(&sched_smt_present) ||
- 	    idle_core >= 0 || !test_idle_cores(cpu, false))
- 		return idle_core;
-@@ -1571,10 +1570,12 @@ static inline int numa_idle_core(int idle_core, int cpu)
- 	 */
- 	if (is_core_idle(cpu))
- 		idle_core = cpu;
--#endif
+ #if defined(CONFIG_MEDIA_CONTROLLER)
+-	struct media_entity *entity = &sd->entity;
++	struct media_entity *entity;
+ #endif
+ 	int err;
  
- 	return idle_core;
- }
-+#else
-+static inline int numa_idle_core(int idle_core, int cpu) { return idle_core; }
-+#endif
+@@ -141,6 +141,7 @@ int v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
+ 		goto error_module;
  
- /*
-  * Gather all necessary information to make NUMA balancing placement
+ #if defined(CONFIG_MEDIA_CONTROLLER)
++	entity = &sd->entity;
+ 	/* Register the entity. */
+ 	if (v4l2_dev->mdev) {
+ 		err = media_device_register_entity(v4l2_dev->mdev, entity);
 -- 
-2.24.0
+2.20.1
 
