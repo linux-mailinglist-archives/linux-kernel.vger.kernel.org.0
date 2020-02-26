@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E32316F937
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:11:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 973FD16F939
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:11:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbgBZIKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 03:10:49 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:32927 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727486AbgBZIKq (ORCPT
+        id S1727701AbgBZIKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 03:10:51 -0500
+Received: from mail-pg1-f171.google.com ([209.85.215.171]:43893 "EHLO
+        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727267AbgBZIKr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 03:10:46 -0500
-Received: by mail-pl1-f193.google.com with SMTP id ay11so998206plb.0;
-        Wed, 26 Feb 2020 00:10:46 -0800 (PST)
+        Wed, 26 Feb 2020 03:10:47 -0500
+Received: by mail-pg1-f171.google.com with SMTP id u12so914294pgb.10;
+        Wed, 26 Feb 2020 00:10:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vEnVySXBYfW3b1su9MemqgqPSinDbCdHAw5n+ZVHXKA=;
-        b=ZqFr2XdedoNMMzSdc2eWipJbPoWCSoIWOaxz1zsBu+w5FRw0nlJVp7B9aMcVR/ECrM
-         fWpYYrpUhtSvO1rGsvHH3i7x8JxpD2QgM4DK0weubmj2twGyNSOa9Gvtg6KWDj0oARIV
-         ossJG+QlPSs1QhoRE2faVAv1lrRd7/LwUBqX6m+LwRkGl9SmUJ5qeccTbXxGKO/jke+J
-         hejsi+GJu4wBCG1LLI2Rb9i3hLwtSZ88dY/P2BygJXrOuCX1Xh6+4AO3P044cgvoby3X
-         oVgYppEgNor2/7HskWoAIOtOe2teNJqCPhYgfnRcBTVY+U0Ce7WQEZmjOKtWi3whIYeH
-         uQBQ==
+        bh=UNDrMK3Cuph8hAawynxP4ClnMYdwocSlmGrvdp+XI7U=;
+        b=TBrP0h2wisco9iwCPRUPdbzfKPQaem8N0CCbkufM0ubNMvNGPVi7J4OrKi6XaCKbH6
+         hh3Y+bgMR/KAzZy3SJxpHSn/W55kTsTGse062SF7bXdc1s6lOwPqxkWqbnhYBTrOOQRL
+         P5UEoGPV5IsF76w8fyduRaTE03AV7RIeG3tdyzE6dWtIWMgpvpx224lpnK6HQOTLFKGx
+         8NN0VzAznR0u0zIR0NAXJZCtJ32GmXNwAp/DudApysZdxoB5XwxmgmLNpboYi0ogxMJL
+         H4NuemzoK00dffBEXYJVCaGEH3TCcpoSWqSDpn+UxmqlsA7Meikom5RyLGooaap33bAj
+         PsSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vEnVySXBYfW3b1su9MemqgqPSinDbCdHAw5n+ZVHXKA=;
-        b=KmHwCHBk99hld3fSlUuy58HxpU0gcIIwApW6mU45Jsurl1nWFKFCltChBOzWrA7hKl
-         eMf6zlllvv6Q2T1xCwChQOAwEvrzYjcuXINe808cY1T6i7LSyhqNlcndyLyHr6R4pVTh
-         5rScNPFlP2OSBM/UJQCY0OFtLtHf0swWOjA5lpxj0oNXtaJ7KGgWQe9v3jSDX/TrixSh
-         Jb+pvOc1z4QZeUJ5f7CyMPEV7Ptf3DswpXTF5bNiiwGiOfEXtRaB9rXgaaM3e5v372Sa
-         F8IKnNq81NeGqkepk60Nb55OjPFfmPx5BZfJda08xBGMpx6YCPAT2NZt0/F03ZDnOn6E
-         O87A==
-X-Gm-Message-State: APjAAAWGDeR58vza/uv2zcdMZ9/eXXnY0On6NNPJrzh6rZc1iEqC1GW7
-        6icpq/KDs62zyw6/mphO+YU=
-X-Google-Smtp-Source: APXvYqySsTMpSDO1lKEob5Z3qPaMibUnculbDtGi+2b/LHKNJPcUDEb49L+OdYHplPurgC0YCZJGNA==
-X-Received: by 2002:a17:90a:32e4:: with SMTP id l91mr3675046pjb.23.1582704645464;
-        Wed, 26 Feb 2020 00:10:45 -0800 (PST)
+        bh=UNDrMK3Cuph8hAawynxP4ClnMYdwocSlmGrvdp+XI7U=;
+        b=dIp/KxCVRW33bX72PodaeDJoLE8FwV6+sNyz/dKhN83q+fOGmKQ9rh0x7zScDM7/aD
+         nJ50i0F0qrpDMcZYoxlBQ4TPxMOQM1pfu5lGhyj6xoh+vXVWmzYV2Zy5jSFdHacRQPdr
+         XET30f4r3ylJ5rAU2KnY9D3CdEIGZ/0GAeJeWoOCcALwVzqlt9Z+WWNCXz/kU1tqA1GA
+         71dEHJPUt0X+TWAPeTPMiOXIP0jr9XlrCLRnjyUuyWgDlE7G+YPHGNz7bxLSNaWBYC0Q
+         vm6W11PDCbXgARCK+0smwOeOn3odKfEfcGnCFTOun1a1MR7ht7bKg+2BP0VPdo/DqaQK
+         CWHw==
+X-Gm-Message-State: APjAAAXki+dAGpDWHfHHcPfUw+YzdKSb155ZgO7xezBaIkhruUqVrCxT
+        O1VdOVZeFMnEaqtFOYoN8nU=
+X-Google-Smtp-Source: APXvYqx16ATSH0Ri7QydUSr5etiFpP7VXGwv2ajzCwfEDuf3Fsc6V5gruuHjTDm3C4cjgRnxu80rnQ==
+X-Received: by 2002:a63:42c2:: with SMTP id p185mr2844380pga.268.1582704646751;
+        Wed, 26 Feb 2020 00:10:46 -0800 (PST)
 Received: from anarsoul-thinkpad.lan (216-71-213-236.dyn.novuscom.net. [216.71.213.236])
-        by smtp.gmail.com with ESMTPSA id v7sm1679230pfn.61.2020.02.26.00.10.44
+        by smtp.gmail.com with ESMTPSA id v7sm1679230pfn.61.2020.02.26.00.10.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 00:10:44 -0800 (PST)
+        Wed, 26 Feb 2020 00:10:46 -0800 (PST)
 From:   Vasily Khoruzhick <anarsoul@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
@@ -67,10 +67,11 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH v2 3/6] dt-bindings: Add Guangdong Neweast Optoelectronics CO. LTD vendor prefix
-Date:   Wed, 26 Feb 2020 00:10:08 -0800
-Message-Id: <20200226081011.1347245-4-anarsoul@gmail.com>
+Cc:     Vasily Khoruzhick <anarsoul@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v2 4/6] dt-bindings: display: simple: Add NewEast Optoelectronics WJFH116008A compatible
+Date:   Wed, 26 Feb 2020 00:10:09 -0800
+Message-Id: <20200226081011.1347245-5-anarsoul@gmail.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200226081011.1347245-1-anarsoul@gmail.com>
 References: <20200226081011.1347245-1-anarsoul@gmail.com>
@@ -81,26 +82,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add vendor prefix for Guangdong Neweast Optoelectronics CO. LTD
+This commit adds compatible for NewEast Optoelectronics WJFH116008A panel
+to panel-simple binding
 
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 6456a6dfd83d..5dfbad67aa81 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -661,6 +661,8 @@ patternProperties:
-     description: Netron DY
-   "^netxeon,.*":
-     description: Shenzhen Netxeon Technology CO., LTD
-+  "^neweast,.*":
-+    description: Guangdong Neweast Optoelectronics CO., LTD
-   "^nexbox,.*":
-     description: Nexbox
-   "^nextthing,.*":
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+index 8fe60ee2531c..0e5d01ac32e1 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+@@ -39,6 +39,8 @@ properties:
+       - boe,nv140fhmn49
+         # GiantPlus GPM940B0 3.0" QVGA TFT LCD panel
+       - giantplus,gpm940b0
++        # NewEast Optoelectronics CO., LTD WJFH116008A eDP TFT LCD panel
++      - neweast,wjfh116008a
+         # Satoz SAT050AT40H12R2 5.0" WVGA TFT LCD panel
+       - satoz,sat050at40h12r2
+         # Sharp LS020B1DD01D 2.0" HQVGA TFT LCD panel
 -- 
 2.25.0
 
