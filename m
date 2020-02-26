@@ -2,120 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7841F16F93F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:11:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58BA816F949
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:12:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbgBZILI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 03:11:08 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:32927 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbgBZIKp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 03:10:45 -0500
-Received: by mail-pl1-f196.google.com with SMTP id ay11so998179plb.0;
-        Wed, 26 Feb 2020 00:10:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bV3ZvEYwFOIunmpWLGzAgCdGTlK6S+EV6uVEHB+FGxY=;
-        b=Q0cii6N45xFi8jvZk47bAoc1Nxu6hFKn2R/6gr1ZfjKbVoDJZ64PKB8Z3UWgfpC96z
-         m858biDFlV7/4mo1LjVTUmbbBHm1yKrJnJ3uLVZBlEdyOFSDznZRxrzu6B/mSXoBfdGU
-         mlGpBVLSLPU/z8ykPcedU1XFyCgTRivYgIcpSqG+QITc7/eIRdzyugFFz9Yzl27ql70w
-         8AlOefrAt/HgAlO+4L6JoXtZp+YN7BobPP6qXr0OfqH/1PLZecbnI0vC7uItRmmZkPfN
-         j7AsPd8mIOV8s5KgCaaK+xwtreytUn7QQZvq+Frfrl0pLWndKlgav8D5uWnV85pooXdR
-         SCgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bV3ZvEYwFOIunmpWLGzAgCdGTlK6S+EV6uVEHB+FGxY=;
-        b=UQ0vly5+p5p/CtZZNJNPlOQp0h5KWCGnkr6InfWVzCoVUavCO7uPVgYeAuNKxzqBz2
-         x6JX99GOENLOe2jV14TTOurmSsalEyOCO4p3Ocd+1ebigUsTuU9Amh4cHPUrBdqYKJTl
-         JNoNRSlxp+JQe83eH1OBbXUnVWQNOO+ekRLd2OLg6DTEiYtwTrKrewPPluMG0pJkYI6D
-         kpZ+VA3IK/9JpeAALPgmxEjbMSAy4ICiOApGMTugah+U7YyTas9wjwDTlyl5yee6w5EX
-         TbPNAVqZHa78VAG5/LSQ73kZplyDrg9SQ2cKxVnLqSWDPaGKkMARxjL+oKnlNHayklpc
-         PXXA==
-X-Gm-Message-State: APjAAAWWafXaVCqsgcXdVroOf90ghNGa+lKmrwn7PrLs7ZeW/Mklo+R2
-        2Z7WIAYBqXNeA8C68ruDN6U=
-X-Google-Smtp-Source: APXvYqwzmN2dNDKDPwprqjYoy3wHRxeIo1QTGdy8Nrs8WKG2CT6K8e2fuBfcpdmu4anfHjvkmdpjJQ==
-X-Received: by 2002:a17:902:6184:: with SMTP id u4mr2301682plj.216.1582704644297;
-        Wed, 26 Feb 2020 00:10:44 -0800 (PST)
-Received: from anarsoul-thinkpad.lan (216-71-213-236.dyn.novuscom.net. [216.71.213.236])
-        by smtp.gmail.com with ESMTPSA id v7sm1679230pfn.61.2020.02.26.00.10.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 00:10:43 -0800 (PST)
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Torsten Duwe <duwe@suse.de>, Icenowy Zheng <icenowy@aosc.io>,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Mark Brown <broonie@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Samuel Holland <samuel@sholland.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Vasily Khoruzhick <anarsoul@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v2 2/6] drm/bridge: anx6345: don't print error message if regulator is not ready
-Date:   Wed, 26 Feb 2020 00:10:07 -0800
-Message-Id: <20200226081011.1347245-3-anarsoul@gmail.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200226081011.1347245-1-anarsoul@gmail.com>
-References: <20200226081011.1347245-1-anarsoul@gmail.com>
+        id S1727796AbgBZILt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 03:11:49 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10694 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727341AbgBZILs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 03:11:48 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A634F2CE09A151771A07;
+        Wed, 26 Feb 2020 16:11:46 +0800 (CST)
+Received: from architecture4.huawei.com (10.160.196.180) by smtp.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 26 Feb
+ 2020 16:11:36 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>
+CC:     LKML <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        "Gao Xiang" <gaoxiang25@huawei.com>,
+        Lasse Collin <lasse.collin@tukaani.org>
+Subject: [PATCH v2 2/3] erofs: use LZ4_decompress_safe() for full decoding
+Date:   Wed, 26 Feb 2020 16:10:07 +0800
+Message-ID: <20200226081008.86348-2-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200226081008.86348-1-gaoxiang25@huawei.com>
+References: <20200226081008.86348-1-gaoxiang25@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.160.196.180]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't want to print scary message if devm_regulator_get() returns
--EPROBE_DEFER
+As Lasse pointed out, "EROFS uses LZ4_decompress_safe_partial
+for both partial and full blocks. Thus when it is decoding a
+full block, it doesn't know if the LZ4 decoder actually decoded
+all the input. The real uncompressed size could be bigger than
+the value stored in the file system metadata.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Using LZ4_decompress_safe instead of _safe_partial when
+decompressing a full block would help to detect errors."
+
+So it's reasonable to use _safe in case of potential corrupted
+images and it might have some speed gain as well although
+I didn't observe much difference.
+
+Note that legacy compressor (< 5.3, no LZ4_0PADDING) could
+encode extra data in a pcluster, which is excluded as well.
+
+Cc: Lasse Collin <lasse.collin@tukaani.org>
+Fixes: 0ffd71bcc3a0 ("staging: erofs: introduce LZ4 decompression inplace")
+[ Gao Xiang: v5.3+, I will manually backport this to stable later. ]
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/gpu/drm/bridge/analogix/analogix-anx6345.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/erofs/decompressor.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-index 0d8d083b0207..0bf81b9b5faa 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-@@ -714,14 +714,18 @@ static int anx6345_i2c_probe(struct i2c_client *client,
- 	/* 1.2V digital core power regulator  */
- 	anx6345->dvdd12 = devm_regulator_get(dev, "dvdd12");
- 	if (IS_ERR(anx6345->dvdd12)) {
--		DRM_ERROR("dvdd12-supply not found\n");
-+		if (PTR_ERR(anx6345->dvdd12) != -EPROBE_DEFER)
-+			DRM_ERROR("Failed to get dvdd12 supply (%ld)\n",
-+				  PTR_ERR(anx6345->dvdd12));
- 		return PTR_ERR(anx6345->dvdd12);
+diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
+index 5779a15c2cd6..cd978af6bdb9 100644
+--- a/fs/erofs/decompressor.c
++++ b/fs/erofs/decompressor.c
+@@ -157,9 +157,15 @@ static int z_erofs_lz4_decompress(struct z_erofs_decompress_req *rq, u8 *out)
+ 		}
  	}
  
- 	/* 2.5V digital core power regulator  */
- 	anx6345->dvdd25 = devm_regulator_get(dev, "dvdd25");
- 	if (IS_ERR(anx6345->dvdd25)) {
--		DRM_ERROR("dvdd25-supply not found\n");
-+		if (PTR_ERR(anx6345->dvdd25) != -EPROBE_DEFER)
-+			DRM_ERROR("Failed to get dvdd25 supply (%ld)\n",
-+				  PTR_ERR(anx6345->dvdd25));
- 		return PTR_ERR(anx6345->dvdd25);
- 	}
- 
+-	ret = LZ4_decompress_safe_partial(src + inputmargin, out,
+-					  inlen, rq->outputsize,
+-					  rq->outputsize);
++	/* legacy format could compress extra data in a pcluster. */
++	if (rq->partial_decoding || !support_0padding)
++		ret = LZ4_decompress_safe_partial(src + inputmargin, out,
++						  inlen, rq->outputsize,
++						  rq->outputsize);
++	else
++		ret = LZ4_decompress_safe(src + inputmargin, out,
++					  inlen, rq->outputsize);
++
+ 	if (ret < 0) {
+ 		erofs_err(rq->sb, "failed to decompress, in[%u, %u] out[%u]",
+ 			  inlen, inputmargin, rq->outputsize);
 -- 
-2.25.0
+2.17.1
 
