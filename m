@@ -2,108 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8265716F6A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 05:51:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5320416F6BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:04:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbgBZEvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 23:51:09 -0500
-Received: from mail-qv1-f51.google.com ([209.85.219.51]:39607 "EHLO
-        mail-qv1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbgBZEvJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 23:51:09 -0500
-Received: by mail-qv1-f51.google.com with SMTP id y8so757840qvk.6;
-        Tue, 25 Feb 2020 20:51:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aVk24eLY14K87OU1OB1xgRnj/7rTwtwPZpvkthfcADk=;
-        b=d3+VJ6ImQ8PNewkBm3dvALg/VYUIIY+pxIrYJwAoNyrcT52kEPGyTX4NBdE4k+YCSR
-         c0Zy3/LNfKwzOKyytGbqnInfSj+y+5fAUr/4dmLzkyYC4dZxYTFheluz26HCnrt76mr1
-         4pbNbHfgppu3jRIcZlowuZ+eaFd4Uj/IreXvWwHnVw603SEW5uD8l2djXvPE94STKtbT
-         KuGNFvS0fRTYSvsrDcF9Yq0ADcm0Z3qvpcjECwKDyk18HNgq0G/1exbTan3P653BH0DF
-         4nXtyzJrvr4KHRT17SJ988PeR0Mtf6VEp5sfuR3wEorl559E9OTVPwwT8c0dBGQNj4t0
-         TPSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aVk24eLY14K87OU1OB1xgRnj/7rTwtwPZpvkthfcADk=;
-        b=cILNXnMEbVai1CFF5DlpiJIr2Ash+ISHbFK6a6EfxyEKSC9XUUkN7XTWuVC1BwNCsA
-         VWcvPKphAQBcmNDdD7z5B659o3i17gXduPfUZPgro7Fv8rjDVCBVEJCJY14PUi7mC9Fh
-         JN95dcR0MD3nQf36bnrhVLkbyVx6cr6VP8ocXrObizVWzdHpz2eAx8DKlnsMq2+nFEkC
-         +PGcYYOLMXuFW0M1RgGAIdyABrbd+YImdzE1Yw1mxEJCTAmsnJdDdDPdFrqhmLEiffrW
-         WcB3aNfTHGTWfNfRey4Lo3aHm6kHnPS1ORTlu5e0w2mLVU1UrYVGfoWl6zja2rhH5sfz
-         IDTg==
-X-Gm-Message-State: APjAAAUXTIC7n7xnnDFF3xinAGwjIjKUbk4tb7hspvy2YlrUoHgvk2pg
-        hw224Lc7YuXU2GBbjPzi/FE=
-X-Google-Smtp-Source: APXvYqzrO/kdo5/NmFkfe4u8fWu+qQ+icG/nIF1hLBupDzs9uXXpSn8gx4XQs1XMp1SD1t6+YvByLA==
-X-Received: by 2002:a0c:cd8e:: with SMTP id v14mr3118531qvm.182.1582692667662;
-        Tue, 25 Feb 2020 20:51:07 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id q5sm501066qkf.14.2020.02.25.20.51.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 20:51:07 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Tue, 25 Feb 2020 23:51:05 -0500
-To:     Trevor Jacobs <trevor_jacobs@aol.com>
-Cc:     "Michael ." <keltoiboy@gmail.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kris Cleveland <tridentperfusion@yahoo.com>,
-        Jeff <bluerocksaddles@willitsonline.com>,
-        Morgan Klym <moklym@gmail.com>,
-        Philip Langdale <philipl@overt.org>,
-        Pierre Ossman <pierre@ossman.eu>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Subject: Re: PCI device function not being enumerated [Was: PCMCIA not
- working on Panasonic Toughbook CF-29]
-Message-ID: <20200226045104.GA2191053@rani.riverdale.lan>
-References: <20191029170250.GA43972@google.com>
- <20200222165617.GA207731@google.com>
- <CAPDyKFq_exHufHyibFCjS78PTZ7duS9ZSt3vi18CNM6+jMmwnw@mail.gmail.com>
- <20200226011310.GA2116625@rani.riverdale.lan>
- <CAFjuqNg_NW7hcssWmMTtt=ioY143qn76ooT7GRhxEEe9ZVCqeQ@mail.gmail.com>
- <6e9db1f6-60c4-872b-c7c8-96ee411aa3ca@aol.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6e9db1f6-60c4-872b-c7c8-96ee411aa3ca@aol.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726719AbgBZFEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 00:04:12 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:52277 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725789AbgBZFEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 00:04:11 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48S3cT0cX2z9ty2Q;
+        Wed, 26 Feb 2020 06:04:09 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=EZp2hEHO; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id WvuH9LdbP1UZ; Wed, 26 Feb 2020 06:04:09 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48S3cS3kKTz9tyKl;
+        Wed, 26 Feb 2020 06:04:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1582693448; bh=qvGyrJUB2UgET9i5VAoLlLv2pl3urJV01OstLvVnLRM=;
+        h=From:Subject:To:CC:In-Reply-To:Date:From;
+        b=EZp2hEHO0pdBb20cc3MdgS1Mo6rQSCJIXFnmROVUmobfowpfOaE01gJm77QHGUZm3
+         bgDroXooY+b+Hrp01223ZLuWVGSaVVG1x7H9eUsWFKICQ2MQbXE8g7AcdwqWjxZB15
+         mdHPuLUtLtll5V6SO314uk9dOcHX9PmAZMDoSMGk=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2A2748B784;
+        Wed, 26 Feb 2020 06:04:09 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id VXbsOtQ5DCG4; Wed, 26 Feb 2020 06:04:09 +0100 (CET)
+Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4BA1A8B776;
+        Wed, 26 Feb 2020 06:04:08 +0100 (CET)
+Received: by pc16570vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 0A31D653EF; Wed, 26 Feb 2020 05:04:07 +0000 (UTC)
+Message-Id: <92d936b83e47f6a65866ca2d39a0d5bfefba6279.1582693094.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC PATCH] Use IS_ENABLED() instead of #ifdefs
+To:     Jason Yan <yanaijie@huawei.com>, <mpe@ellerman.id.au>,
+        <linuxppc-dev@lists.ozlabs.org>, <diana.craciun@nxp.com>,
+        <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <npiggin@gmail.com>, <keescook@chromium.org>,
+        <kernel-hardening@lists.openwall.com>, <oss@buserror.net>
+CC:     <linux-kernel@vger.kernel.org>, <zhaohongjiang@huawei.com>
+In-Reply-To: <d3647cce-ece3-d302-f541-b02b1f2b5e9e@huawei.com>
+Date:   Wed, 26 Feb 2020 05:04:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 09:12:48PM -0600, Trevor Jacobs wrote:
-> That's correct, I tested a bunch of the old distros including slackware, 
-> and 2.6.32 is where the problem began.
-> 
-> Also, the Panasonic Toughbook CF-29s effected that we tested are the 
-> later marks, MK4 and MK5 for certain. The MK2 CF-29 worked just fine 
-> because it has different hardware supporting the PCMCIA slots. I have 
-> not tested a MK3 but suspect it would work ok as it also uses the older 
-> hardware.
-> 
-> Thanks for your help guys!
-> Trevor
-> 
+---
+This works for me. Only had to leave the #ifdef around the map_mem_in_cams()
+Also had to set linear_sz and ram for the alternative case, otherwise I get
 
-Right, the distros probably all enabled MMC_RICOH_MMC earlier than
-upstream. Can you test a custom kernel based off your distro kernel but
-just disabling that config option? That's probably the easiest fix
-currently, even though not ideal. Perhaps there should be a command line
-option to disable specific pci quirks to make this easier.
 
-An ideal fix is I feel hard, given this quirk is based on undocumented
-config registers -- it worked on Dell machines (that's where the
-original authors seem to have gotten their info from), perhaps they had
-only one Cardbus slot, but the code ends up disabling your second
-Cardbus slot instead of disabling the MMC controller.
+
+arch/powerpc/mm/nohash/kaslr_booke.c: In function 'kaslr_early_init':
+arch/powerpc/mm/nohash/kaslr_booke.c:355:33: error: 'linear_sz' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  regions.pa_end = memstart_addr + linear_sz;
+                   ~~~~~~~~~~~~~~^~~~~~~~~~~
+arch/powerpc/mm/nohash/kaslr_booke.c:315:21: note: 'linear_sz' was declared here
+  unsigned long ram, linear_sz;
+                     ^~~~~~~~~
+arch/powerpc/mm/nohash/kaslr_booke.c:187:8: error: 'ram' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  ret = parse_crashkernel(boot_command_line, size, &crash_size,
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     &crash_base);
+     ~~~~~~~~~~~~
+arch/powerpc/mm/nohash/kaslr_booke.c:315:16: note: 'ram' was declared here
+  unsigned long ram, linear_sz;
+
+---
+ arch/powerpc/mm/mmu_decl.h           |  2 +-
+ arch/powerpc/mm/nohash/kaslr_booke.c | 97 +++++++++++++++-------------
+ 2 files changed, 52 insertions(+), 47 deletions(-)
+
+diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
+index b869ea893301..3700e7c04e51 100644
+--- a/arch/powerpc/mm/mmu_decl.h
++++ b/arch/powerpc/mm/mmu_decl.h
+@@ -139,9 +139,9 @@ extern unsigned long calc_cam_sz(unsigned long ram, unsigned long virt,
+ extern void adjust_total_lowmem(void);
+ extern int switch_to_as1(void);
+ extern void restore_to_as0(int esel, int offset, void *dt_ptr, int bootcpu);
++#endif
+ void create_kaslr_tlb_entry(int entry, unsigned long virt, phys_addr_t phys);
+ extern int is_second_reloc;
+-#endif
+ 
+ void reloc_kernel_entry(void *fdt, long addr);
+ extern void loadcam_entry(unsigned int index);
+diff --git a/arch/powerpc/mm/nohash/kaslr_booke.c b/arch/powerpc/mm/nohash/kaslr_booke.c
+index c6f5c1db1394..bf69cece9b8c 100644
+--- a/arch/powerpc/mm/nohash/kaslr_booke.c
++++ b/arch/powerpc/mm/nohash/kaslr_booke.c
+@@ -267,35 +267,37 @@ static unsigned long __init kaslr_legal_offset(void *dt_ptr, unsigned long rando
+ 	unsigned long start;
+ 	unsigned long offset;
+ 
+-#ifdef CONFIG_PPC32
+-	/*
+-	 * Decide which 64M we want to start
+-	 * Only use the low 8 bits of the random seed
+-	 */
+-	unsigned long index = random & 0xFF;
+-	index %= regions.linear_sz / SZ_64M;
+-
+-	/* Decide offset inside 64M */
+-	offset = random % (SZ_64M - regions.kernel_size);
+-	offset = round_down(offset, SZ_16K);
++	if (IS_ENABLED(CONFIG_PPC32)) {
++		unsigned long index;
++
++		/*
++		 * Decide which 64M we want to start
++		 * Only use the low 8 bits of the random seed
++		 */
++		index = random & 0xFF;
++		index %= regions.linear_sz / SZ_64M;
++
++		/* Decide offset inside 64M */
++		offset = random % (SZ_64M - regions.kernel_size);
++		offset = round_down(offset, SZ_16K);
++
++		while ((long)index >= 0) {
++			offset = memstart_addr + index * SZ_64M + offset;
++			start = memstart_addr + index * SZ_64M;
++			koffset = get_usable_address(dt_ptr, start, offset);
++			if (koffset)
++				break;
++			index--;
++		}
++	} else {
++		/* Decide kernel offset inside 1G */
++		offset = random % (SZ_1G - regions.kernel_size);
++		offset = round_down(offset, SZ_64K);
+ 
+-	while ((long)index >= 0) {
+-		offset = memstart_addr + index * SZ_64M + offset;
+-		start = memstart_addr + index * SZ_64M;
++		start = memstart_addr;
++		offset = memstart_addr + offset;
+ 		koffset = get_usable_address(dt_ptr, start, offset);
+-		if (koffset)
+-			break;
+-		index--;
+ 	}
+-#else
+-	/* Decide kernel offset inside 1G */
+-	offset = random % (SZ_1G - regions.kernel_size);
+-	offset = round_down(offset, SZ_64K);
+-
+-	start = memstart_addr;
+-	offset = memstart_addr + offset;
+-	koffset = get_usable_address(dt_ptr, start, offset);
+-#endif
+ 
+ 	if (koffset != 0)
+ 		koffset -= memstart_addr;
+@@ -342,6 +344,8 @@ static unsigned long __init kaslr_choose_location(void *dt_ptr, phys_addr_t size
+ 	/* If the linear size is smaller than 64M, do not randmize */
+ 	if (linear_sz < SZ_64M)
+ 		return 0;
++#else
++	linear_sz = ram = size;
+ #endif
+ 
+ 	/* check for a reserved-memory node and record its cell sizes */
+@@ -373,17 +377,19 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
+ {
+ 	unsigned long offset;
+ 	unsigned long kernel_sz;
++	unsigned int *__kaslr_offset;
++	unsigned int *__run_at_load;
+ 
+-#ifdef CONFIG_PPC64
+-	unsigned int *__kaslr_offset = (unsigned int *)(KERNELBASE + 0x58);
+-	unsigned int *__run_at_load = (unsigned int *)(KERNELBASE + 0x5c);
++	if (IS_ENABLED(CONFIG_PPC64)) {
++		__kaslr_offset = (unsigned int *)(KERNELBASE + 0x58);
++		__run_at_load = (unsigned int *)(KERNELBASE + 0x5c);
+ 
+-	if (*__run_at_load == 1)
+-		return;
++		if (*__run_at_load == 1)
++			return;
+ 
+-	/* Setup flat device-tree pointer */
+-	initial_boot_params = dt_ptr;
+-#endif
++		/* Setup flat device-tree pointer */
++		initial_boot_params = dt_ptr;
++	}
+ 
+ 	kernel_sz = (unsigned long)_end - (unsigned long)_stext;
+ 
+@@ -394,20 +400,19 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
+ 	kernstart_virt_addr += offset;
+ 	kernstart_addr += offset;
+ 
+-#ifdef CONFIG_PPC32
+-	is_second_reloc = 1;
+-
+-	if (offset >= SZ_64M) {
+-		unsigned long tlb_virt = round_down(kernstart_virt_addr, SZ_64M);
+-		phys_addr_t tlb_phys = round_down(kernstart_addr, SZ_64M);
++	if (IS_ENABLED(CONFIG_PPC32)) {
++		is_second_reloc = 1;
++		if (offset >= SZ_64M) {
++			unsigned long tlb_virt = round_down(kernstart_virt_addr, SZ_64M);
++			phys_addr_t tlb_phys = round_down(kernstart_addr, SZ_64M);
+ 
+-		/* Create kernel map to relocate in */
+-		create_kaslr_tlb_entry(1, tlb_virt, tlb_phys);
++			/* Create kernel map to relocate in */
++			create_kaslr_tlb_entry(1, tlb_virt, tlb_phys);
++		}
++	} else {
++		*__kaslr_offset = kernstart_virt_addr - KERNELBASE;
++		*__run_at_load = 1;
+ 	}
+-#else
+-	*__kaslr_offset = kernstart_virt_addr - KERNELBASE;
+-	*__run_at_load = 1;
+-#endif
+ 
+ 	/* Copy the kernel to it's new location and run */
+ 	memcpy((void *)kernstart_virt_addr, (void *)_stext, kernel_sz);
+-- 
+2.25.0
+
