@@ -2,119 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 533DC16F92C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:10:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0630716F943
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:11:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbgBZIKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 03:10:46 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36187 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727267AbgBZIKo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 03:10:44 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 185so1064769pfv.3;
-        Wed, 26 Feb 2020 00:10:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4KM0r5uD7rljHPdtJuNxVsZCmDnwVuLvCzxfAh27Klw=;
-        b=dgRS/obec3aOByr8PTKvXVfLFPdY1OXcSqqEUuyzPCu3aykdzkVOJ72/vImDdDvwYy
-         u6HGV4iMY1+UU+6DDHioTxtUmpb4PL1lZF9mvbpeFOT35Mv2rS6loQXlTy5PFr/ULB4B
-         lWV4RthTKBuPwRIoUJkcrsrmXJSZo5zuYr9Oo1NFcrbFmqPY68uGSvIhMKxSZsO769hX
-         ujP/inLHS1BnYoTZvXdKpMKWCie+TcW+f6ic+DwM5gEVUlvh2oZnE/KN+Mq3UuB1youB
-         dUl46XZqucP07YZ37nkUhsXFZn5UiopzPt1a6mWynNd4vdD+LEgxQgd3WURCof44zIb4
-         ifRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4KM0r5uD7rljHPdtJuNxVsZCmDnwVuLvCzxfAh27Klw=;
-        b=TTo93bzGDVAvr5cr3kpM2Sx3qBBwK7G4pEbZt/KKZMetlWRXebqp/Vh979yMtHgO5q
-         wBRdUhpP//gCTCO0mNELe4SvYko4k2FfKRvKDUkQJaPWs11zzOvfd9Rhx6uc9B/1vQED
-         R0TsxlMq9CNRhB8xQOkPQgLNsatdqN+ssSCaraXLzo9knCrV5LRcTCSk+H6M2PIaOvQ/
-         5XCVM6ZqvPKHNE6M0w3TnJbmKOHxWmPMTR3WOSQZrH/MSVao+jnoujqnuTlekHbqyEuH
-         MzGxJ4K/T2HJ0ZolvhfiVfjJQXuUM9vJ+zIXf3b3k6Uu4k+XSkvvqItBWwG0pN2zX7vQ
-         gt3A==
-X-Gm-Message-State: APjAAAUJbH5qla/djmEfL6aJ7QERYfLpJWwrl5wLFB/lfwI3CzO8vlDD
-        xExlbOHw5gWD0NGej9vCEq0=
-X-Google-Smtp-Source: APXvYqyQjLc15uh0MUo/Upb22dso+icknd9LfH39mfhW5X2d4U/9EURWB7pcI9luJw0/E5sOA2wZ5Q==
-X-Received: by 2002:a62:3304:: with SMTP id z4mr2893899pfz.79.1582704643017;
-        Wed, 26 Feb 2020 00:10:43 -0800 (PST)
-Received: from anarsoul-thinkpad.lan (216-71-213-236.dyn.novuscom.net. [216.71.213.236])
-        by smtp.gmail.com with ESMTPSA id v7sm1679230pfn.61.2020.02.26.00.10.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 00:10:42 -0800 (PST)
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Torsten Duwe <duwe@suse.de>, Icenowy Zheng <icenowy@aosc.io>,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Mark Brown <broonie@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Samuel Holland <samuel@sholland.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH v2 1/6] drm/bridge: anx6345: Fix getting anx6345 regulators
-Date:   Wed, 26 Feb 2020 00:10:06 -0800
-Message-Id: <20200226081011.1347245-2-anarsoul@gmail.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200226081011.1347245-1-anarsoul@gmail.com>
-References: <20200226081011.1347245-1-anarsoul@gmail.com>
+        id S1727553AbgBZILp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 03:11:45 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58022 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727341AbgBZILp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 03:11:45 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 63636B788565C2E2F043;
+        Wed, 26 Feb 2020 16:11:41 +0800 (CST)
+Received: from architecture4.huawei.com (10.160.196.180) by smtp.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 26 Feb
+ 2020 16:11:35 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>
+CC:     LKML <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        "Gao Xiang" <gaoxiang25@huawei.com>, <stable@vger.kernel.org>
+Subject: [PATCH v2 1/3] erofs: correct the remaining shrink objects
+Date:   Wed, 26 Feb 2020 16:10:06 +0800
+Message-ID: <20200226081008.86348-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.160.196.180]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Samuel Holland <samuel@sholland.org>
+The remaining count should not include successful
+shrink attempts.
 
-We don't need to pass '-supply' suffix to devm_regulator_get()
-
-Fixes: 6aa192698089 ("drm/bridge: Add Analogix anx6345 support")
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Samuel Holland <samuel@sholland.org>
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Fixes: e7e9a307be9d ("staging: erofs: introduce workstation for decompression")
+Cc: <stable@vger.kernel.org> # 4.19+
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/gpu/drm/bridge/analogix/analogix-anx6345.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-index 56f55c53abfd..0d8d083b0207 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-@@ -712,14 +712,14 @@ static int anx6345_i2c_probe(struct i2c_client *client,
- 		DRM_DEBUG("No panel found\n");
+Changes since v1:
+ - Add "Fixes:" tags respectively suggested by Eric. I'd suggest
+   no rush to backport PATCH 2/3 and 3/3 since it's not quite
+   sure whether they behave well for normal images for now and
+   I will backport them manually later since they have no impact
+   on system stability with corrupted images;
+
+ - Fix PATCH 2/3 to exclude legacy (no decompression inplace
+   support, < v5.3) images.
+
+ fs/erofs/utils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/erofs/utils.c b/fs/erofs/utils.c
+index fddc5059c930..df42ea552a44 100644
+--- a/fs/erofs/utils.c
++++ b/fs/erofs/utils.c
+@@ -286,7 +286,7 @@ static unsigned long erofs_shrink_scan(struct shrinker *shrink,
+ 		spin_unlock(&erofs_sb_list_lock);
+ 		sbi->shrinker_run_no = run_no;
  
- 	/* 1.2V digital core power regulator  */
--	anx6345->dvdd12 = devm_regulator_get(dev, "dvdd12-supply");
-+	anx6345->dvdd12 = devm_regulator_get(dev, "dvdd12");
- 	if (IS_ERR(anx6345->dvdd12)) {
- 		DRM_ERROR("dvdd12-supply not found\n");
- 		return PTR_ERR(anx6345->dvdd12);
- 	}
+-		freed += erofs_shrink_workstation(sbi, nr);
++		freed += erofs_shrink_workstation(sbi, nr - freed);
  
- 	/* 2.5V digital core power regulator  */
--	anx6345->dvdd25 = devm_regulator_get(dev, "dvdd25-supply");
-+	anx6345->dvdd25 = devm_regulator_get(dev, "dvdd25");
- 	if (IS_ERR(anx6345->dvdd25)) {
- 		DRM_ERROR("dvdd25-supply not found\n");
- 		return PTR_ERR(anx6345->dvdd25);
+ 		spin_lock(&erofs_sb_list_lock);
+ 		/* Get the next list element before we move this one */
 -- 
-2.25.0
+2.17.1
 
