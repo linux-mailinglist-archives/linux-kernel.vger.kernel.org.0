@@ -2,61 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C28C0170417
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:16:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 817AA170438
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:22:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbgBZQQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:16:07 -0500
-Received: from muru.com ([72.249.23.125]:57718 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728734AbgBZQQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:16:06 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 08CCD8022;
-        Wed, 26 Feb 2020 16:16:49 +0000 (UTC)
-Date:   Wed, 26 Feb 2020 08:16:02 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tero Kristo <t-kristo@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Ladislav Michl <ladis@linux-mips.org>,
-        Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH] clocksource: timer-ti-dm: Drop bogus
- omap_dm_timer_of_set_source()
-Message-ID: <20200226161602.GO37466@atomide.com>
-References: <20200213053504.22638-1-s-anna@ti.com>
+        id S1727520AbgBZQW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:22:26 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:60150 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726583AbgBZQW0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 11:22:26 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01QGLgPK018385;
+        Wed, 26 Feb 2020 10:21:42 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582734102;
+        bh=tKI0zniIFIIy84y+UVu3oTcGNP+ARLuL9A2BOgDL4Y8=;
+        h=From:To:CC:Subject:Date;
+        b=hK3CSt9nobIMjiKf3k3pvI4cP8XkGWLASXnerRxjRhF/nsJyi5J58SEmFAiw6QOGz
+         dUgHxclq4Wa/QDAf0DYyqZ4NUj/9/yxMSyrgLd3i4ePFXNMwIxJRQCBb291lm0M0Ae
+         57FSE9aYu7vkI4IUP2HDcnHMbAqui56F5+Axlss8=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01QGLgv7056124
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Feb 2020 10:21:42 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 26
+ Feb 2020 10:21:42 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 26 Feb 2020 10:21:42 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01QGLg6d047010;
+        Wed, 26 Feb 2020 10:21:42 -0600
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [RESEND PATCH for-next 1/3] ASoC: tas2562: Fix sample rate error message
+Date:   Wed, 26 Feb 2020 10:16:26 -0600
+Message-ID: <20200226161628.29960-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213053504.22638-1-s-anna@ti.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Suman Anna <s-anna@ti.com> [200212 21:36]:
-> Hi Tony,
-> 
-> Do you have the history of why the 32 KHz source is set as parent during
-> prepare? One of the current side-affects of this patch is that now instead
-> of bailing out, the 32 KHz source is set, and consumers will still need
-> to select their appropriate parent. Dropping that call should actually
-> allow us to select the parents in the consumer nodes in dts files using
-> the assigned-clocks and assigned-clock-parents properties. I prefer to
-> drop it if you do not foresee any issues. For now, I do not anticipate
-> any issues with omap-pwm-dmtimer with this patch.
+Fix error message for setting the sample rate.  It says bitwidth but
+should say sample rate.
 
-Using the 32 KiHz source works better for PM. But yeah the
-machine specific source clock should be configured with
-assigned-clocks and assigned-clock-parents properites.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ sound/soc/codecs/tas2562.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Things seem to behave just fine for me with this patch for both
-pwm-leds and PM. Good to see this function gone:
+diff --git a/sound/soc/codecs/tas2562.c b/sound/soc/codecs/tas2562.c
+index d5e04030a0c1..c7a4b3b74654 100644
+--- a/sound/soc/codecs/tas2562.c
++++ b/sound/soc/codecs/tas2562.c
+@@ -271,7 +271,7 @@ static int tas2562_hw_params(struct snd_pcm_substream *substream,
+ 
+ 	ret = tas2562_set_samplerate(tas2562, params_rate(params));
+ 	if (ret)
+-		dev_err(tas2562->dev, "set bitwidth failed, %d\n", ret);
++		dev_err(tas2562->dev, "set sample rate failed, %d\n", ret);
+ 
+ 	return ret;
+ }
+-- 
+2.25.0
 
-Tested-by: Tony Lindgren <tony@atomide.com>
