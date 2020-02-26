@@ -2,110 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8E1816F6CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:08:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC62B16F6BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:04:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbgBZFIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 00:08:22 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:11428 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbgBZFIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 00:08:22 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48S3jJ1qKHz9tyKl;
-        Wed, 26 Feb 2020 06:08:20 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=KzpNUgHw; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id umtjl2sVtDY2; Wed, 26 Feb 2020 06:08:20 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48S3jJ0LVHz9ty2Q;
-        Wed, 26 Feb 2020 06:08:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1582693700; bh=P9F+TW11il3dDG/JQwLQZ9bfwJOcps3i7xL5sjC2o4k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=KzpNUgHw2EtMqKovHHARDbs08RAkwUm4n5Wu+3xK7obpFJoYeDpkkR2JrZaMBRac3
-         oDrO1U0t9a5ip9BQfSego2phz4FrMb9Aej7Oi8Bstz+rh+2re6Xrg1AHfwm0fomAkx
-         p/P+J9gHqmSzukHZeTIOx2LnEQ/8Sd+bkMU6V4VU=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C3E788B784;
-        Wed, 26 Feb 2020 06:08:20 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id g_nrwaC9d962; Wed, 26 Feb 2020 06:08:20 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E7E7D8B776;
-        Wed, 26 Feb 2020 06:08:19 +0100 (CET)
-Subject: Re: [PATCH v3 3/6] powerpc/fsl_booke/64: implement KASLR for
- fsl_booke64
-To:     Jason Yan <yanaijie@huawei.com>, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com,
-        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
-        keescook@chromium.org, kernel-hardening@lists.openwall.com,
-        oss@buserror.net
-Cc:     linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com
-References: <20200206025825.22934-1-yanaijie@huawei.com>
- <20200206025825.22934-4-yanaijie@huawei.com>
- <41b9f1ca-c6fd-291a-2c96-2a0e8a754ec4@c-s.fr>
- <dbe0b316-40a2-7da4-c26b-e59efa555400@huawei.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <046ebac6-9cab-cc3e-e535-9a50051dc25f@c-s.fr>
-Date:   Wed, 26 Feb 2020 06:08:13 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+        id S1726859AbgBZFEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 00:04:54 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:42976 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgBZFEy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 00:04:54 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01Q54jdP108863;
+        Tue, 25 Feb 2020 23:04:45 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582693485;
+        bh=lqo6WX/964Fl5gY3pdCYG1dMDaUlkKD2Xu8LIxhgs0s=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=WAIm8ZxSz+Ibq4sKWxexlByz1bt0/I3srvNikSmCtzyskb5k83CDW+wt+z1WsZ3TG
+         U48FG6kcMGrLPncbRgTqYzWlGgAuFbeCKDNW70VNBvPmJW7MuiMeyZKeKlsfael7gh
+         SQxkoLjsj2hADTMCzJjrPqlW9G7+hQvXg3dZD86w=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01Q54jP5071349;
+        Tue, 25 Feb 2020 23:04:45 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 25
+ Feb 2020 23:04:45 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 25 Feb 2020 23:04:45 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01Q54gcf045552;
+        Tue, 25 Feb 2020 23:04:43 -0600
+Subject: Re: [PATCH 1/5] PCI: endpoint: functions/pci-epf-test: Add DMA
+ support to transfer data
+To:     Alan Mikhak <alan.mikhak@sifive.com>
+CC:     <amurray@thegoodpenguin.co.uk>, <arnd@arndb.de>,
+        <bhelgaas@google.com>, <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <lorenzo.pieralisi@arm.com>
+References: <20200225091130.29467-1-kishon@ti.com>
+ <1582665067-20462-1-git-send-email-alan.mikhak@sifive.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <7e1202a3-037b-d1f3-f2bf-1b8964787ebd@ti.com>
+Date:   Wed, 26 Feb 2020 10:39:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <dbe0b316-40a2-7da4-c26b-e59efa555400@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1582665067-20462-1-git-send-email-alan.mikhak@sifive.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Alan,
 
-
-Le 26/02/2020 à 03:40, Jason Yan a écrit :
+On 26/02/20 2:41 am, Alan Mikhak wrote:
+> @@ -380,6 +572,7 @@ static void pci_epf_test_unbind(struct pci_epf *epf)
+>         int bar;
 > 
+>         cancel_delayed_work(&epf_test->cmd_handler);
+> +       pci_epf_clean_dma_chan(epf_test);
+>         pci_epc_stop(epc);
+>         for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
+>                 epf_bar = &epf->bar[bar];
+> @@ -550,6 +743,12 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+>                 }
+>         }
 > 
-> 在 2020/2/20 21:48, Christophe Leroy 写道:
->>
->>
->> Le 06/02/2020 à 03:58, Jason Yan a écrit :
->>>       /*
->>>        * Decide which 64M we want to start
->>>        * Only use the low 8 bits of the random seed
->>>        */
->>> -    index = random & 0xFF;
->>> +    unsigned long index = random & 0xFF;
->>
->> That's not good in terms of readability, index declaration should 
->> remain at the top of the function, should be possible if using 
->> IS_ENABLED() instead
+> +       epf_test->dma_supported = true;
+> +
+> +       ret = pci_epf_init_dma_chan(epf_test);
+> +       if (ret)
+> +               epf_test->dma_supported = false;
+> +
+>         if (linkup_notifier) {
+>                 epf->nb.notifier_call = pci_epf_test_notifier;
+>                 pci_epc_register_notifier(epc, &epf->nb);
 > 
-> I'm wondering how to declare a variable inside a code block such as if 
-> (IS_ENABLED(CONFIG_PPC32)) at the top of the function and use the 
-> variable in another if (IS_ENABLED(CONFIG_PPC32)). Is there any good idea?
+> Hi Kishon,
+> 
+> Looking forward to building and trying this patch series on
+> a platform I work on.
+> 
+> Would you please point me to where I can find the patches
+> which add pci_epf_init_dma_chan() and pci_epf_clean_dma_chan()
+> to Linux PCI Endpoint Framework?
 
-You declare it outside the block as usual:
+I've added these functions in pci-epf-test itself instead of adding in
+the core files. I realized adding it in core files may not be helpful if
+the endpoint function decides to use more number of DMA channels etc.,
 
-	unsigned long some_var;
-
-	if (condition) {
-		some_var = something;
-	}
-	do_many_things();
-	do_other_things();
-
-	if (condition)
-		return some_var;
-	else
-		return 0;
-
-
-Christophe
+Thanks
+Kishon
