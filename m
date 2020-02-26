@@ -2,177 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C49B16F622
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 04:35:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBC6516F61C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 04:33:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbgBZDfW convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 25 Feb 2020 22:35:22 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33295 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbgBZDfW (ORCPT
+        id S1727237AbgBZDdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 22:33:06 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34314 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726671AbgBZDdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 22:35:22 -0500
-Received: by mail-ed1-f68.google.com with SMTP id r21so2027341edq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 19:35:20 -0800 (PST)
+        Tue, 25 Feb 2020 22:33:06 -0500
+Received: by mail-ot1-f65.google.com with SMTP id j16so1698091otl.1;
+        Tue, 25 Feb 2020 19:33:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=nAuQSDRahRWvh/vYkNzOtlSh60I0RAv61gNTFTFOsjs=;
+        b=RJqqS7hkNae+vFD3w5QVk5o9bnNDLXSHHp1dt++J5YWq3q7h3yFv2pj54P3Y4whroz
+         HcyQXYoBbEPewRaT2Fv8HCA1fg8I1buEob6QCR6uo2lGtTr23YukvZ5tykoUbJYR/pX+
+         dbJ8oQSMdEm9pwu0CnwHSrHnTOp7WiB1K5Wkt56u9ihEBN758F/igzkb2srNE+GvwUdH
+         OXOm+0lfUtuWt0TYYLC0wX8/VIIunY+ydePvKsHh4EAUp5LVtRue0a5JK7LHCB4GGDYu
+         2tZlr5TApNnDS18QiUwO9TnJ2YJXwyKlUuAwdDpp0vu5gdrGWZWU7IRaDkpVxB1kH+md
+         wtrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=UXofy6EkwfdL30O9+SzmICCU7Qa0hak4F21CzXTG5yo=;
-        b=BI1nSrWF+/FFZ8+JmAkwrTwZ8uTUsT8k+xakqDm1vdUr9g4Ie6I4hDaKKnlZCNpDA9
-         VUmUjog7h0R4Hq4xpMXupUP75nYeP4S2qMNngmoAE3gjWTQnNWh/7lf8pKwwctAIKclc
-         Y/GuhSKlOk0f4Odr5CSZwNSzHXaGPdu6QYtjf520lqWkdz8yMT8QmMJp9lr4VAE0QvWt
-         Zu2ttEU3wScy1HXqytXc4bgEihS+AgQytPmE6Hv+K/nn65pexYnD8+8jtP56QLoiXM5B
-         xQ/JaWGxEVBl0OrNihdVu4h4r5339oBoKCUYgbWwVNeXKS7+oJ9J7rGx4wAfegZfPttk
-         T74w==
-X-Gm-Message-State: APjAAAUNa0WF/gb7IB9t+Bcls6N3MkcvBsNneY/t3RH1WmIzLPSS3xde
-        afwUBECc00CSVGiQxT61QYUnZcrKPFU=
-X-Google-Smtp-Source: APXvYqx4+2ePU5zGnoq/1CYaKRmOjBBiEnB4X0GTffeXg9sDRzZBLtI9rw1h3LVcUXcSLr20RFSYQw==
-X-Received: by 2002:a50:d0d2:: with SMTP id g18mr413334edf.37.1582687801348;
-        Tue, 25 Feb 2020 19:30:01 -0800 (PST)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
-        by smtp.gmail.com with ESMTPSA id e22sm24448edq.75.2020.02.25.19.30.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2020 19:30:01 -0800 (PST)
-Received: by mail-wm1-f50.google.com with SMTP id c84so1410129wme.4
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 19:30:00 -0800 (PST)
-X-Received: by 2002:a05:600c:10d2:: with SMTP id l18mr2582096wmd.122.1582687800441;
- Tue, 25 Feb 2020 19:30:00 -0800 (PST)
+        bh=nAuQSDRahRWvh/vYkNzOtlSh60I0RAv61gNTFTFOsjs=;
+        b=rpddsdwvu7sXv+9v+b67PxZbEHHfUCHXRjvI5dJBCCHrBsWwUL4k9I5FsCn7VLehCz
+         wWJ/z+vD+9zT8/9PBN43iDGWAQhsSetBh7S8CI1YcVQIxEZG7ojPSEqckD6MaPqaKDmd
+         OscWqLG9Ed0mI/ZMCCib0zJAoOtGYPXcpGZkiJ65Tj45q0awGPrvV5i2/xKMOVOurDGF
+         5+NSkxOu5rdykL8a3+uDelY5rQq64oGg86ZnfyUlMV8BBkP6TA/jcebJAgoTgNkd22TM
+         EjCHzn/cuflrDHYpkuLIUBZn5jdKFJJ5014kth4vCcRQrZTfM8a5MlVqkg0NW4K6hKlh
+         ukXA==
+X-Gm-Message-State: APjAAAWBCmToMoZ1pnA27TnT6mQvwomMRryH84uGph5Aq732n4WBDjLB
+        n3ksTVGzfhKyMJNSTWrF9Vr2eIoEPxbvGuIg74RuToC4S7POFw==
+X-Google-Smtp-Source: APXvYqzRAj4nyh2dngKFn6VI/cdgGnlu2Fv8iTw+DGtJVZcXcPPMQyvp8siup6ZVBQvXwVzKfhoplxgS2Uqtg3jWtD0=
+X-Received: by 2002:a9d:63d6:: with SMTP id e22mr1421440otl.185.1582687984972;
+ Tue, 25 Feb 2020 19:33:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20200224173901.174016-1-jernej.skrabec@siol.net>
- <20200225083448.6upblnctjjrbarje@gilmour.lan> <CAGb2v64g7Q4e+ic08pA7tbamgToOjyYzuzqP0bpqBZjRuRUrPA@mail.gmail.com>
- <12462592.uLZWGnKmhe@jernej-laptop>
-In-Reply-To: <12462592.uLZWGnKmhe@jernej-laptop>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 26 Feb 2020 11:29:48 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65=a3p1xrz3RuT7w9p+KqRbYMVqf7_GajEQHOpQnTAqnA@mail.gmail.com>
-Message-ID: <CAGb2v65=a3p1xrz3RuT7w9p+KqRbYMVqf7_GajEQHOpQnTAqnA@mail.gmail.com>
-Subject: Re: [PATCH 6/7] drm/sun4i: de2: Don't return de2_fmt_info struct
-To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime@cerno.tech>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1574306232-872-1-git-send-email-wanpengli@tencent.com>
+In-Reply-To: <1574306232-872-1-git-send-email-wanpengli@tencent.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Wed, 26 Feb 2020 11:32:53 +0800
+Message-ID: <CANRm+Cz0RnF=roCkJf-X8pEyVY5wH4ZgQKWv8o0Whu59t8_A2w@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] KVM: VMX: FIXED+PHYSICAL mode single target IPI fastpath
+To:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Liran Alon <liran.alon@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 2:50 AM Jernej Škrabec <jernej.skrabec@siol.net> wrote:
+On Thu, 21 Nov 2019 at 11:17, Wanpeng Li <kernellwp@gmail.com> wrote:
 >
-> Hi!
+> From: Wanpeng Li <wanpengli@tencent.com>
 >
-> Dne torek, 25. februar 2020 ob 09:52:18 CET je Chen-Yu Tsai napisal(a):
-> > On Tue, Feb 25, 2020 at 4:35 PM Maxime Ripard <maxime@cerno.tech> wrote:
-> > > Hi,
-> > >
-> > > On Mon, Feb 24, 2020 at 06:39:00PM +0100, Jernej Skrabec wrote:
-> > > > Now that de2_fmt_info contains only DRM <-> HW format mapping, it
-> > > > doesn't make sense to return pointer to structure when searching by DRM
-> > > > format. Rework that to return only HW format instead.
-> > > >
-> > > > This doesn't make any functional change.
-> > > >
-> > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > > ---
-> > > >
-> > > >  drivers/gpu/drm/sun4i/sun8i_mixer.c    | 15 +++++++++++----
-> > > >  drivers/gpu/drm/sun4i/sun8i_mixer.h    |  7 +------
-> > > >  drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 10 +++++-----
-> > > >  drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 12 ++++++------
-> > > >  4 files changed, 23 insertions(+), 21 deletions(-)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > > b/drivers/gpu/drm/sun4i/sun8i_mixer.c index e078ec96de2d..56cc037fd312
-> > > > 100644
-> > > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > > @@ -27,6 +27,11 @@
-> > > >
-> > > >  #include "sun8i_vi_layer.h"
-> > > >  #include "sunxi_engine.h"
-> > > >
-> > > > +struct de2_fmt_info {
-> > > > +     u32     drm_fmt;
-> > > > +     u32     de2_fmt;
-> > > > +};
-> > > > +
-> > > >
-> > > >  static const struct de2_fmt_info de2_formats[] = {
-> > > >
-> > > >       {
-> > > >
-> > > >               .drm_fmt = DRM_FORMAT_ARGB8888,
-> > > >
-> > > > @@ -230,15 +235,17 @@ static const struct de2_fmt_info de2_formats[] = {
-> > > >
-> > > >       },
-> > > >
-> > > >  };
-> > > >
-> > > > -const struct de2_fmt_info *sun8i_mixer_format_info(u32 format)
-> > > > +int sun8i_mixer_drm_format_to_hw(u32 format, u32 *hw_format)
-> > > >
-> > > >  {
-> > > >
-> > > >       unsigned int i;
-> > > >
-> > > >       for (i = 0; i < ARRAY_SIZE(de2_formats); ++i)
-> > > >
-> > > > -             if (de2_formats[i].drm_fmt == format)
-> > > > -                     return &de2_formats[i];
-> > > > +             if (de2_formats[i].drm_fmt == format) {
-> > > > +                     *hw_format = de2_formats[i].de2_fmt;
-> > > > +                     return 0;
-> > > > +             }
-> > > >
-> > > > -     return NULL;
-> > > > +     return -EINVAL;
-> > > >
-> > > >  }
-> > >
-> > > I'm not too sure about that one. It breaks the consistency with the
-> > > other functions, and I don't really see a particular benefit to it?
-> >
+> ICR and TSCDEADLINE MSRs write cause the main MSRs write vmexits in our
+> product observation, multicast IPIs are not as common as unicast IPI like
+> RESCHEDULE_VECTOR and CALL_FUNCTION_SINGLE_VECTOR etc.
 >
-> I don't have strong opinion about this patch. It can be dropped.
+> This patch introduce a mechanism to handle certain performance-critical
+> WRMSRs in a very early stage of KVM VMExit handler.
 >
-> > I guess we could just define an "invalid" value, and have the function
-> > return that if can't find a match? I'm guessing 0x0 is valid, so maybe
-> > 0xffffffff or 0xdeadbeef ?
-> >
-> > That would keep consistency with everything else all the while
-> > removing the level of indirection you wanted to.
+> This mechanism is specifically used for accelerating writes to x2APIC ICR
+> that attempt to send a virtual IPI with physical destination-mode, fixed
+> delivery-mode and single target. Which was found as one of the main cause=
+s
+> of VMExits for Linux workloads.
 >
-> I modeled this after
-> static int sun4i_backend_drm_format_to_layer(u32 format, u32 *mode);
-> from sun4i_backend.c.
+> The reason this mechanism significantly reduce the latency of such virtua=
+l
+> IPIs is by sending the physical IPI to the target vCPU in a very early st=
+age
+> of KVM VMExit handler, before host interrupts are enabled and before expe=
+nsive
+> operations such as reacquiring KVM=E2=80=99s SRCU lock.
+> Latency is reduced even more when KVM is able to use APICv posted-interru=
+pt
+> mechanism (which allows to deliver the virtual IPI directly to target vCP=
+U
+> without the need to kick it to host).
 >
-> What consistency do you have in mind?
+> Testing on Xeon Skylake server:
+>
+> The virtual IPI latency from sender send to receiver receive reduces
+> more than 200+ cpu cycles.
 
-Directly returning values (or error codes) instead of passing in a pointer
-for data to be returned. I assumed that was what Maxime was referring to.
+Testing by IPI microbenchmark(https://lkml.org/lkml/2017/12/19/141):
 
-ChenYu
+Normal IPI:           Improved 3%
+Broadcast IPI:      Improved 5%
 
-> >
-> > ChenYu
-> >
-> > > The rest of the series is
-> > > Acked-by: Maxime Ripard <mripard@kernel.org>
->
-> Thanks!
->
-> Best regards,
-> Jernej
->
-> > >
-> > > Maxime
->
->
->
->
+w/ --overcommit cpu-pm=3Don
+
+Normal IPI:           Improved 14%
+Broadcast IPI:      Improved 3.6%
+
+    Wanpeng
