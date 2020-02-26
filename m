@@ -2,65 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59C2D170732
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29D9C170735
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:09:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbgBZSJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:09:40 -0500
-Received: from foss.arm.com ([217.140.110.172]:40594 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727421AbgBZSJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:09:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E7F3106F;
-        Wed, 26 Feb 2020 10:09:36 -0800 (PST)
-Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD74F3F881;
-        Wed, 26 Feb 2020 10:09:34 -0800 (PST)
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Robert Richter <rric@kernel.org>, soc@kernel.org,
-        Jon Loeliger <jdl@jdl.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 13/13] MAINTAINERS: Update Calxeda Highbank maintainership
-Date:   Wed, 26 Feb 2020 18:09:01 +0000
-Message-Id: <20200226180901.89940-14-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200226180901.89940-1-andre.przywara@arm.com>
-References: <20200226180901.89940-1-andre.przywara@arm.com>
+        id S1727296AbgBZSJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:09:29 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42207 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727222AbgBZSJ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 13:09:27 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 66so282813otd.9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 10:09:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e/1VSrHV/eL0yjS7JzLq6CkDS40xQ5EKyFULmMfEARM=;
+        b=kyRX5Cn0P/ON9gnA/ScfZ7oJkXAhWPXVLNx+beL35VdYa4shGdzN7u2FcFsUM++b2n
+         lhoSm+twMkJopIMCGGM6P0DGpCliQXivQ8UpJyka/vhLBPkgOCPJDP/s+V9fbFyvQJE4
+         xo6pmVrTBkETwSWsQy8QMmWmUnhGOxr9bgYfeRj/XsqigRK7XQJDhsIPziELekou41N9
+         iN+TTGLkjTU4S70vyvb2VpcHy6jjx9Ds4AIgYEFIvD1CR50wVHkNf6Y2mEJ4MK+nNgCT
+         RdvdyuO737GSlyOH6abS0gvyNKu+23jdoYyLCrOrolzytxlbMhwTO1Sy6CanmAKvf9UB
+         Zcog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e/1VSrHV/eL0yjS7JzLq6CkDS40xQ5EKyFULmMfEARM=;
+        b=Xow3GD1iSGTezGJX1d8s/JL29QWsMZeMxR1Uytck56SC877/2GNIgoVzarODs67fdw
+         VTsPRc6ua2xspCYyKD7BxvJFFII6yMgHvjLfm00BN4GZhLW3BkpnoqugrW79ORhnNsT7
+         pcXkNhwwJhuMEOGx4abz5FQ/PJMwJXKm6aZ3jna4lVSpreinpD2kbUm35PZB/NBEwZyp
+         F/E1SNVcMaC3ryoXnL9QL4zrWD3KJUDC3K5JFCOzhOulXBA49o65GwBDLccmygmzcOoN
+         yhQHhczHOhIinJ5Qbmf/1BUR/8ZoH+FfpPV5gcXS9visztrkVpZxrpu3+18iVLVEe61M
+         vl9w==
+X-Gm-Message-State: APjAAAVEfNdkYZ4KUPQPuAoOAUXGCDM0hSevSFxkwBshb+wyPwu5cq+T
+        Rm9IClKmuhPWhucE8i0Rtyw8geEmCDRBrv1U0CwOWg==
+X-Google-Smtp-Source: APXvYqxexJYWBUQ0767VigneOX3hNatJ8i0pFmq0VMgMtXbecSlgtD1dW4b8q+DHv6aKK0BddyFnlOYVd5ZbJwfV+KY=
+X-Received: by 2002:a9d:7852:: with SMTP id c18mr3941574otm.247.1582740565960;
+ Wed, 26 Feb 2020 10:09:25 -0800 (PST)
+MIME-Version: 1.0
+References: <20200220043316.19668-1-bhe@redhat.com> <20200220043316.19668-2-bhe@redhat.com>
+In-Reply-To: <20200220043316.19668-2-bhe@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 26 Feb 2020 10:09:15 -0800
+Message-ID: <CAPcyv4g9Ywpz=37tjmw_1TAkKEpQ7R--yHoExdrSd4sJ0gqY3A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] mm/hotplug: fix hot remove failure in
+ SPARSEMEM|!VMEMMAP case
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Wei Yang <richardw.yang@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob sees little point in maintaining the Calxeda architecture (early ARM
-32-bit server) anymore.
-Since I have a machine sitting under my desk, change the maintainership
-to not lose support for that platform.
+On Wed, Feb 19, 2020 at 8:34 PM Baoquan He <bhe@redhat.com> wrote:
+>
+> In section_deactivate(), pfn_to_page() doesn't work any more after
+> ms->section_mem_map is resetting to NULL in SPARSEMEM|!VMEMMAP case.
+> It caused hot remove failure:
+>
+> kernel BUG at mm/page_alloc.c:4806!
+> invalid opcode: 0000 [#1] SMP PTI
+> CPU: 3 PID: 8 Comm: kworker/u16:0 Tainted: G        W         5.5.0-next-20200205+ #340
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+> Workqueue: kacpi_hotplug acpi_hotplug_work_fn
+> RIP: 0010:free_pages+0x85/0xa0
+> Call Trace:
+>  __remove_pages+0x99/0xc0
+>  arch_remove_memory+0x23/0x4d
+>  try_remove_memory+0xc8/0x130
+>  ? walk_memory_blocks+0x72/0xa0
+>  __remove_memory+0xa/0x11
+>  acpi_memory_device_remove+0x72/0x100
+>  acpi_bus_trim+0x55/0x90
+>  acpi_device_hotplug+0x2eb/0x3d0
+>  acpi_hotplug_work_fn+0x1a/0x30
+>  process_one_work+0x1a7/0x370
+>  worker_thread+0x30/0x380
+>  ? flush_rcu_work+0x30/0x30
+>  kthread+0x112/0x130
+>  ? kthread_create_on_node+0x60/0x60
+>  ret_from_fork+0x35/0x40
+>
+> Let's move the ->section_mem_map resetting after depopulate_section_memmap()
+> to fix it.
+>
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> ---
+>  mm/sparse.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index 596b2a45b100..b8e52c8fed7f 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -779,13 +779,15 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+>                         ms->usage = NULL;
+>                 }
+>                 memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
+> -               ms->section_mem_map = (unsigned long)NULL;
+>         }
+>
+>         if (section_is_early && memmap)
+>                 free_map_bootmem(memmap);
+>         else
+>                 depopulate_section_memmap(pfn, nr_pages, altmap);
+> +
+> +       if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION))
+> +               ms->section_mem_map = (unsigned long)NULL;
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks good to me:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fcd79fc38928..5354ba7460b8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1605,7 +1605,7 @@ F:	Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
- F:	Documentation/devicetree/bindings/pinctrl/bitmain,bm1880-pinctrl.txt
- 
- ARM/CALXEDA HIGHBANK ARCHITECTURE
--M:	Rob Herring <robh@kernel.org>
-+M:	Andre Przywara <andre.przywara@arm.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	arch/arm/mach-highbank/
--- 
-2.17.1
-
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
