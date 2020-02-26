@@ -2,54 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06E911700B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:03:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB1B21700C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:09:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbgBZODT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 09:03:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33630 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726151AbgBZODT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 09:03:19 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 817D2AC54;
-        Wed, 26 Feb 2020 14:03:17 +0000 (UTC)
-Subject: Re: [PATCH 3/3] mm/vma: Make is_vma_temporary_stack() available for
- general use
-To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-References: <1582692658-3294-1-git-send-email-anshuman.khandual@arm.com>
- <1582692658-3294-4-git-send-email-anshuman.khandual@arm.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <df8b59f9-ccf2-5a40-661e-2bf053b99dac@suse.cz>
-Date:   Wed, 26 Feb 2020 15:03:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727263AbgBZOJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 09:09:27 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:37238 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbgBZOJ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 09:09:26 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01QE9BV5019682;
+        Wed, 26 Feb 2020 08:09:11 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582726151;
+        bh=qUxpFXYzynf3ipW3FKuxj4cz1djFjusDhz0uClvVdSw=;
+        h=From:To:CC:Subject:Date;
+        b=jO6ErSZTVXqX9HpWFTN0w3YCqcD0P/qaduGDLTz9RTOHbcV+fzq+d9YM/dE6idNys
+         4WsJmvliPgjydWCqyx5LzLdmmmqa/zppDRlQDK66CHS63uTW6vdQmXBe7DNXShprGu
+         LHIoD7zVxL9faD3wMXCMagqtSso9Ypd5EPmuNwBY=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01QE9B3B075413;
+        Wed, 26 Feb 2020 08:09:11 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 26
+ Feb 2020 08:09:11 -0600
+Received: from localhost.localdomain (10.64.41.19) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 26 Feb 2020 08:09:11 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 01QE9BAN103623;
+        Wed, 26 Feb 2020 08:09:11 -0600
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <mkl@pengutronix.de>, <wg@grandegger.com>
+CC:     <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH can-next] can: tcan4x5x: Rename parse_config function
+Date:   Wed, 26 Feb 2020 08:03:58 -0600
+Message-ID: <20200226140358.30017-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <1582692658-3294-4-git-send-email-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/26/20 5:50 AM, Anshuman Khandual wrote:
-> Currently the declaration and definition for is_vma_temporary_stack() are
-> scattered. Lets make is_vma_temporary_stack() helper available for general
-> use and also drop the declaration from (include/linux/huge_mm.h) which is
-> no longer required. This should not cause any functional change.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Rename the tcan4x5x_parse_config function to tcan4x5x_get_gpios since
+the function retrieves the gpio configurations from the firmware.
 
-The move made it plainly visible that the is_vma_* name differs from all the
-other vma_is_* names. So this is a good chance to unify it?
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
 
-Thanks,
-Vlastimil
+API name change request - https://lore.kernel.org/patchwork/patch/1165091/
+
+ drivers/net/can/m_can/tcan4x5x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/can/m_can/tcan4x5x.c b/drivers/net/can/m_can/tcan4x5x.c
+index 9821babef55e..37d53ecc560b 100644
+--- a/drivers/net/can/m_can/tcan4x5x.c
++++ b/drivers/net/can/m_can/tcan4x5x.c
+@@ -381,7 +381,7 @@ static int tcan4x5x_disable_state(struct m_can_classdev *cdev)
+ 				  TCAN4X5X_DISABLE_INH_MSK, 0x01);
+ }
+ 
+-static int tcan4x5x_parse_config(struct m_can_classdev *cdev)
++static int tcan4x5x_get_gpios(struct m_can_classdev *cdev)
+ {
+ 	struct tcan4x5x_priv *tcan4x5x = cdev->device_data;
+ 	int ret;
+@@ -507,7 +507,7 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = tcan4x5x_parse_config(mcan_class);
++	ret = tcan4x5x_get_gpios(mcan_class);
+ 	if (ret)
+ 		goto out_power;
+ 
+-- 
+2.25.0
+
