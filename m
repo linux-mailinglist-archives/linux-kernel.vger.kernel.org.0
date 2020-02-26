@@ -2,75 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13CEF16FF1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:35:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 634BF16FF27
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:37:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbgBZMfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 07:35:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46086 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726334AbgBZMfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 07:35:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 34412AD55;
-        Wed, 26 Feb 2020 12:35:40 +0000 (UTC)
-Message-ID: <1582720533.17520.26.camel@suse.com>
-Subject: Re: [PATCH v2 5/8] usb: mausb_host: Introduce PAL processing
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Vladimir Stankovic <vladimir.stankovic@displaylink.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        mausb-host-devel <mausb-host-devel@displaylink.com>
-Date:   Wed, 26 Feb 2020 13:35:33 +0100
-In-Reply-To: <659eab4d-a995-d372-2c46-8b3d72ba13bc@displaylink.com>
-References: <659eab4d-a995-d372-2c46-8b3d72ba13bc@displaylink.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        id S1726867AbgBZMhn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 07:37:43 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:57738 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbgBZMhn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 07:37:43 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1j6vwY-0006sw-TO; Wed, 26 Feb 2020 13:37:39 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5674E1C201B;
+        Wed, 26 Feb 2020 13:37:38 +0100 (CET)
+Date:   Wed, 26 Feb 2020 12:37:38 -0000
+From:   "tip-bot2 for Anders Roxell" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/build] x86/Kconfig: Make CMDLINE_OVERRIDE depend on
+ non-empty CMDLINE
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200124114615.11577-1-anders.roxell@linaro.org>
+References: <20200124114615.11577-1-anders.roxell@linaro.org>
+MIME-Version: 1.0
+Message-ID: <158272065802.28353.14643125310636078839.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 26.02.2020, 09:58 +0000 schrieb Vladimir Stankovic
+The following commit has been merged into the x86/build branch of tip:
 
-+int mausb_enqueue_event_from_user(u8 madev_addr, u16 num_of_events,
-+                                 u16 num_of_completed)
-+{
-+       unsigned long flags;
-+       struct mausb_device *dev;
-+
-+       spin_lock_irqsave(&mss.lock, flags);
+Commit-ID:     645e64662af4dba9eb4a80bbab2663dd22018312
+Gitweb:        https://git.kernel.org/tip/645e64662af4dba9eb4a80bbab2663dd22018312
+Author:        Anders Roxell <anders.roxell@linaro.org>
+AuthorDate:    Fri, 24 Jan 2020 12:46:15 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Wed, 26 Feb 2020 13:31:46 +01:00
 
-You save the flags.
+x86/Kconfig: Make CMDLINE_OVERRIDE depend on non-empty CMDLINE
 
-+       dev = mausb_get_dev_from_addr_unsafe(madev_addr);
-+
-+       if (!dev) {
-+               spin_unlock_irqrestore(&mss.lock, flags);
-+               return -EINVAL;
-+       }
-+
-+       spin_lock_irqsave(&dev->num_of_user_events_lock, flags);
+When trying to boot an allmodconfig kernel that is built with
+KCONFIG_ALLCONFIG=$(pwd)/arch/x86/configs/x86_64_defconfig, it doesn't
+boot since CONFIG_CMDLINE_OVERRIDE gets enabled and that requires the
+user to pass the full cmdline to CONFIG_CMDLINE.
 
-You overwrite the flags.
+Change so that CONFIG_CMDLINE_OVERRIDE gets set only if CONFIG_CMDLINE
+is set to something except an empty string.
 
-+       dev->num_of_user_events += num_of_events;
-+       dev->num_of_completed_events += num_of_completed;
-+       spin_unlock_irqrestore(&dev->num_of_user_events_lock, flags);
+ [ bp: touchup. ]
 
-Your restore the flags.
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20200124114615.11577-1-anders.roxell@linaro.org
+---
+ arch/x86/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-+       queue_work(dev->workq, &dev->work);
-+       spin_unlock_irqrestore(&mss.lock, flags);
-
-You restore the overwritten flags.
-
-This cannot be right.
-
-	Regards
-		Oliver
-
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index beea770..b414192 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2418,7 +2418,7 @@ config CMDLINE
+ 
+ config CMDLINE_OVERRIDE
+ 	bool "Built-in command line overrides boot loader arguments"
+-	depends on CMDLINE_BOOL
++	depends on CMDLINE_BOOL && CMDLINE != ""
+ 	---help---
+ 	  Set this option to 'Y' to have the kernel ignore the boot loader
+ 	  command line, and use ONLY the built-in command line.
