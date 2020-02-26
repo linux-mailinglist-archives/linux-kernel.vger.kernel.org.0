@@ -2,134 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D87116FF05
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:30:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53CAA16FF0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:32:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgBZMao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 07:30:44 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:44530 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726277AbgBZMan (ORCPT
+        id S1727096AbgBZMcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 07:32:00 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44249 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbgBZMcA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 07:30:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582720242;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=USc4GZx7VeByANQXh3m8ONczXPb4tD0GznPgTK+y2dM=;
-        b=RWRHua45/+GMj/Gcv7raJZzg9N2ToVdDtjmTfU2DTMn6bMaLYBO53UXHWZvM6bsiFtmYXr
-        TkZzutg2lTjZnMj+BB0EGDslGRPi55oVQMizn36K2Bgc1PtS1tk5i5kuqObJVRWA53BVR6
-        qJwRZZs0PSQMy7t/KrDKscIdzJgbZ5Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-115-SqhY_Z7XMm61uUtse-5Haw-1; Wed, 26 Feb 2020 07:30:38 -0500
-X-MC-Unique: SqhY_Z7XMm61uUtse-5Haw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AD166107ACC7;
-        Wed, 26 Feb 2020 12:30:36 +0000 (UTC)
-Received: from localhost (ovpn-12-39.pek2.redhat.com [10.72.12.39])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BAA8F5DA60;
-        Wed, 26 Feb 2020 12:30:32 +0000 (UTC)
-Date:   Wed, 26 Feb 2020 20:30:30 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        richardw.yang@linux.intel.com, osalvador@suse.de,
-        dan.j.williams@intel.com, rppt@linux.ibm.com, robin.murphy@arm.com
-Subject: Re: [PATCH v2 0/7] mm/hotplug: Only use subsection map in VMEMMAP
- case
-Message-ID: <20200226123030.GG24216@MiWiFi-R3L-srv>
-References: <20200220043316.19668-1-bhe@redhat.com>
- <20200220103849.GG20509@dhcp22.suse.cz>
- <20200221142847.GG4937@MiWiFi-R3L-srv>
- <75b4f840-7454-d6d0-5453-f0a045c852fa@redhat.com>
- <20200225100226.GM22443@dhcp22.suse.cz>
- <20200226034236.GD24216@MiWiFi-R3L-srv>
- <20200226091421.GE3771@dhcp22.suse.cz>
+        Wed, 26 Feb 2020 07:32:00 -0500
+Received: by mail-qk1-f196.google.com with SMTP id f140so1776345qke.11;
+        Wed, 26 Feb 2020 04:31:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0MRsXhRp3E6rh2+qvZmIeFVHR93AAhtRNYB0tmbFEVY=;
+        b=Vo8zTNllfC4o6nND7kLPoDV7V03+PGLD04JqV7MNWSx0oObQWxHlaEfGIBrdyHaRvJ
+         ww2vSmC4bRv8i6hcU8VBeY2YhfMDKdaS6MfQUPq1T7fZxrXW5NTcxlG8C521XtoJJQOx
+         AlBGmyqtGt3YFgb2TnObOZnHZNWjm9XEp7X9sF25doQduHp62/V02ifg2v+zkJGjLGie
+         X240XCgFRjloBM3RFAwEtFylPsHPRhwNYVxOXI3L4Uz4qTKOe116ebQmBoaKfuWsL/+e
+         cjoSbJV9c9LPLH4pAIgZn619ZEH4FQ8oRR3Ud3Vo+NF1ywIf8ZBsAIOqEb9XriCWX05L
+         N/Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0MRsXhRp3E6rh2+qvZmIeFVHR93AAhtRNYB0tmbFEVY=;
+        b=iogNJU8fTzrdz78Xczh7Hvi/BUO1Y6/TTBfZsEO3j/Pape5YAvGSkVm8/MpmF4x6rm
+         bVk5Yh0ifKXdCseQKZsDPwE3f92f0Bqj+a0klaNfFZMzcuxReHRERwGIWzYLD5rXuSdK
+         TT4DB3UXSvs86BoScprvpQDkhTf+k8qLfCZLjwE28peZDt8FSfoWz0jmHKKQMYaegEjD
+         35NzqKjSnWEeb4Da5nSQ7syWr30Mv1jmhHX/W2cafXDJKNYSsrpm7vLzSgFgn9Emv0+D
+         /ouK14rFjc7lIwZiiVhJXUW9SocsdFR94FrYginoeKNj673oDgAaXoWWGMnt5lok4JpA
+         uEig==
+X-Gm-Message-State: APjAAAUD9vLATiCzM3AZSOvB3wEYQPkbWU225g0MaDtKiZA33UUuWR4w
+        3s7vcHLNNGhSXq+ADgjZydRuD2Egtzp6nYSD8B2/Rzso
+X-Google-Smtp-Source: APXvYqzT0QOBpKRKbC4kcg/YNxuLy3cnTrGuXc9LH9ek2oNBn/hVko38x0Hlgj0xhIw5szgawcSuZNLgT142188LFQs=
+X-Received: by 2002:a37:a8c3:: with SMTP id r186mr5306087qke.37.1582720319288;
+ Wed, 26 Feb 2020 04:31:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226091421.GE3771@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+References: <cover.1582007379.git.shengjiu.wang@nxp.com> <a02af544c73914fe3a5ab2f35eb237ef68ee29e7.1582007379.git.shengjiu.wang@nxp.com>
+ <20200219203706.GA25618@bogus>
+In-Reply-To: <20200219203706.GA25618@bogus>
+From:   Shengjiu Wang <shengjiu.wang@gmail.com>
+Date:   Wed, 26 Feb 2020 20:31:48 +0800
+Message-ID: <CAA+D8AMrHHZ3U66z+jroZqLK8pnn7xF0A9MCzxAqdqDfUHxf2A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] ASoC: dt-bindings: fsl_easrc: Add document for EASRC
+To:     Rob Herring <robh@kernel.org>
+Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/26/20 at 10:14am, Michal Hocko wrote:
-> On Wed 26-02-20 11:42:36, Baoquan He wrote:
-> > On 02/25/20 at 11:02am, Michal Hocko wrote:
-> > > On Tue 25-02-20 10:10:45, David Hildenbrand wrote:
-> > > > >>>  include/linux/mmzone.h |   2 +
-> > > > >>>  mm/sparse.c            | 178 +++++++++++++++++++++++++++++------------
-> > > > >>>  2 files changed, 127 insertions(+), 53 deletions(-)
-> > > > >>
-> > > > >> Why do we need to add so much code to remove a functionality from one
-> > > > >> memory model?
-> > > > > 
-> > > > > Hmm, Dan also asked this before.
-> > > > > 
-> > > > > The adding mainly happens in patch 2, 3, 4, including the two newly
-> > > > > added function defitions, the code comments above them, and those added
-> > > > > dummy functions for !VMEMMAP.
-> > > > 
-> > > > AFAIKS, it's mostly a bunch of newly added comments on top of functions.
-> > > > E.g., the comment for fill_subsection_map() alone spans 12 LOC in total.
-> > > > I do wonder if we have to be that verbose. We are barely that verbose on
-> > > > MM code (and usually I don't see much benefit unless it's a function
-> > > > with many users from many different places).
-> > > 
-> > > I would tend to agree here. Not that I am against kernel doc
-> > > documentation but these are internal functions and the comment doesn't
-> > > really give any better insight IMHO. I would be much more inclined if
-> > > this was the general pattern in the respective file but it just stands
-> > > out.
-> > 
-> > I saw there are internal functions which have code comments, e.g
-> > shrink_slab() in mm/vmscan.c, not only this one place, there are several
-> > places. I personally prefer to see code comment for function if
-> > possible, this can save time, e.g people can skip the bitmap operation
-> > when read code if not necessary. And here I mainly want to tell there
-> > are different returned value to note different behaviour when call them.
-> 
-> ... yet nobody really cares about different return code. It is an error
-> that is propagated up the call chain and that's all.
-> 
-> I also like when there is a kernel doc comment that helps to understand
-> the intented usage, context the function can be called from, potential
-> side effects, locking requirements and other details people need to know
+Hi
 
-Fair enough. As I have said, I didn't intend to stick to add kernel doc
-comments for these two functions. Will remove them. Thanks for
-reviewing.
+On Thu, Feb 20, 2020 at 4:38 AM Rob Herring <robh@kernel.org> wrote:
+>
+> On Tue, Feb 18, 2020 at 02:39:36PM +0800, Shengjiu Wang wrote:
+> > EASRC (Enhanced Asynchronous Sample Rate Converter) is a new
+> > IP module found on i.MX8MN.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  .../devicetree/bindings/sound/fsl,easrc.txt   | 57 +++++++++++++++++++
+> >  1 file changed, 57 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/sound/fsl,easrc.txt
+>
+> Bindings are now in DT schema format. See
+> Documentation/devicetree/writing-schema.rst.
+>
+Thanks, will switch to .yaml format.
 
-> when calling functions. But have a look at 
-> /**
->  * clear_subsection_map - Clear subsection map of one memory region
->  *
->  * @pfn - start pfn of the memory range
->  * @nr_pages - number of pfns to add in the region
->  *
->  * This is only intended for hotplug, and clear the related subsection
->  * map inside one section.
->  *
->  * Return:
->  * * -EINVAL	- Section already deactived.
->  * * 0		- Subsection map is emptied.
->  * * 1		- Subsection map is not empty.
->  */
-> 
-> the only useful information in here is that this is a hotplug stuff but
-> I would be completely lost about the intention without already knowing
-> what is this whole subsection about.
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
-
+best regards
+wang shengjiu
