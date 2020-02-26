@@ -2,107 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE1C116F996
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:28:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF0E16F99B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:32:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbgBZI2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 03:28:42 -0500
-Received: from mail-qt1-f180.google.com ([209.85.160.180]:38503 "EHLO
-        mail-qt1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727379AbgBZI2l (ORCPT
+        id S1727479AbgBZIcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 03:32:51 -0500
+Received: from ushosting.nmnhosting.com ([66.55.73.32]:35744 "EHLO
+        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbgBZIcv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 03:28:41 -0500
-Received: by mail-qt1-f180.google.com with SMTP id i23so1662787qtr.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 00:28:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=TCKiJfk1tuX6JcQsxBCHZJ/LwaPkV6Zrs8OdjgYk6a0=;
-        b=CDw0SIaWUZSx7ENi65bSwjHzQAWLf217RuK8tOjLweGrxEljFC5e2v65jurQ2QrUVk
-         +5HfROicgsDND0ECwSUtjOPXCq42smEuX7j9ckuDcTb6gLPAs7m+Pm/rnBnw8xtdpz2/
-         U1IAm27CYn2i2+TH4wS1dbs+d73vyMf4x0H6qc0vYg2V9liVP/0U/LjbWqD00lKPcaH+
-         EaqkEnYkk2TP8LSMxJOzJ9QsnzYTEQKXWZ9yJXWzmA4cNHYuroGM5BKMZdh9aICwYceV
-         pU4/8Rh+89HE2w6vX4ACzsGX/aYgrdm3Gj4rgLLttLxK5IT7M3oGhC7+VbGAH24nD01e
-         /jXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=TCKiJfk1tuX6JcQsxBCHZJ/LwaPkV6Zrs8OdjgYk6a0=;
-        b=cum1FucxH+B1chjIxh1gvxTWd2uCXdHhwUx1/9+pWn/qk+iEhJSxNaEChEZR5LuX5R
-         TbW31erdlmrNb6fGVqL+vm2xmUSMaW79JE3TVsIn7OggBdzOaxehH6JWJffXzRCurE5t
-         J4VnbDwtbSXYOHSSxLtmvKYRoW8csGRzrDot4Fda0moC8sQzdlPnOCNrlNujZyOT7MbN
-         OQVqFg5USKJ/MfMZ51YnMNf2Qzgi3lzD0vydiSp5MQf6aUu54H7z/fmhNxhhW+FoD/KD
-         XEGugfkztozj/GuqB1J0xAMOffPd5xPqF6ujcuskWFZ4z+Ui75SMZAfTloh2/vppNP5/
-         c77g==
-X-Gm-Message-State: APjAAAUm8XPDP7lb6Bj8q4V2VqgbKBqf1RZezc5gHpqjs9vhFiAEW182
-        i164oQneKADmIIOQ/dp963tYeuKxusHRpaMujwE+XgW/g9zb0Q==
-X-Google-Smtp-Source: APXvYqzIvgC0UaVeAAwn2e2tklNhtMrCKv0uUcP6KZReoNaHA+YKvaS0da2RRppS9PoApOf/RXdhr8C/6c5EUk+kF2A=
-X-Received: by 2002:ac8:7159:: with SMTP id h25mr3593895qtp.380.1582705720488;
- Wed, 26 Feb 2020 00:28:40 -0800 (PST)
+        Wed, 26 Feb 2020 03:32:51 -0500
+X-Greylist: delayed 356 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Feb 2020 03:32:50 EST
+Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
+        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 014E52DC00E4;
+        Wed, 26 Feb 2020 19:26:46 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
+        s=201810a; t=1582705607;
+        bh=80fBdwbzVEqAw+uYKkj4SQtkzUXen9bXvqaTYfSOk4E=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=DPOwD4usPhiADwX4LI+zMnTd9uY8z9YYAZjTUDt4Pk1kBy0kYipEm2MbZ9x7pzd+S
+         vKSVZd0g/6FbaM+mhA4ND9DXwPuLJQOARTy2MgpzzpNIoce5F2z1PoFzI9/G5x3T8a
+         +cZZj3w+7uGbzs4eIOF7ISrc08Rs4+FdNOMQFVZUnjpvI5QS76UdyK7gUXCjtGZNct
+         JI4Ew83JuGXQhdPeuFD3lFR68o0jsejd3QQzICIhfG/wItMM7jzvfe64YF0LQi+9Q/
+         1DsKVAmOjw4iRnSL0MdsYAsvSPDCocIH8jz3iK1EBWBLA7j8XvrWkT66tjMbsrHFHc
+         0zpVeFUiQSU/Upu5EWV9o/y34hId+fdsj0eS1lkWMfpm//es540N4o0XAUEE6rsWUO
+         vs4C2osTrvq2wEP8HzoapDqWJ6GslVFq4JcPH5HbSaifCbji1tF5h+hIbJUcPeeLAJ
+         6RpKY35T0y6KvgJkI3rVmWaZB5pYdQgCf/mvlc5YorK/OB1ATWO3r8fupn8GowdeuJ
+         /pjGI7Hxv+CFYFUA7MyhU9j4LYYbx7H4qd+LvSY8zWvGHqW6AIT8Zrw64dsqAjpFxq
+         G6HSY4vre1yuYynt+TqqVL9ZYyNyoX8loNaMKbnRQUjSOnte3r+TBEp4dEZAC4seWF
+         8ckmiALC5R6ZSO8+PgWwl8io=
+Received: from Hawking (ntp.lan [10.0.1.1])
+        (authenticated bits=0)
+        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id 01Q8QXFx062720
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 26 Feb 2020 19:26:34 +1100 (AEDT)
+        (envelope-from alastair@d-silva.org)
+From:   "Alastair D'Silva" <alastair@d-silva.org>
+To:     "'Baoquan He'" <bhe@redhat.com>,
+        "'Alastair D'Silva'" <alastair@au1.ibm.com>
+Cc:     "'Aneesh Kumar K . V'" <aneesh.kumar@linux.ibm.com>,
+        "'Oliver O'Halloran'" <oohall@gmail.com>,
+        "'Benjamin Herrenschmidt'" <benh@kernel.crashing.org>,
+        "'Paul Mackerras'" <paulus@samba.org>,
+        "'Michael Ellerman'" <mpe@ellerman.id.au>,
+        "'Frederic Barrat'" <fbarrat@linux.ibm.com>,
+        "'Andrew Donnellan'" <ajd@linux.ibm.com>,
+        "'Arnd Bergmann'" <arnd@arndb.de>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        "'Dan Williams'" <dan.j.williams@intel.com>,
+        "'Vishal Verma'" <vishal.l.verma@intel.com>,
+        "'Dave Jiang'" <dave.jiang@intel.com>,
+        "'Ira Weiny'" <ira.weiny@intel.com>,
+        "'Andrew Morton'" <akpm@linux-foundation.org>,
+        "'Mauro Carvalho Chehab'" <mchehab+samsung@kernel.org>,
+        "'David S. Miller'" <davem@davemloft.net>,
+        "'Rob Herring'" <robh@kernel.org>,
+        "'Anton Blanchard'" <anton@ozlabs.org>,
+        "'Krzysztof Kozlowski'" <krzk@kernel.org>,
+        "'Mahesh Salgaonkar'" <mahesh@linux.vnet.ibm.com>,
+        "'Madhavan Srinivasan'" <maddy@linux.vnet.ibm.com>,
+        "=?iso-8859-1?Q?'C=E9dric_Le_Goater'?=" <clg@kaod.org>,
+        "'Anju T Sudhakar'" <anju@linux.vnet.ibm.com>,
+        "'Hari Bathini'" <hbathini@linux.ibm.com>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Greg Kurz'" <groug@kaod.org>,
+        "'Nicholas Piggin'" <npiggin@gmail.com>,
+        "'Masahiro Yamada'" <yamada.masahiro@socionext.com>,
+        "'Alexey Kardashevskiy'" <aik@ozlabs.ru>,
+        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>
+References: <20200221032720.33893-1-alastair@au1.ibm.com> <20200221032720.33893-5-alastair@au1.ibm.com> <20200226081447.GH4937@MiWiFi-R3L-srv>
+In-Reply-To: <20200226081447.GH4937@MiWiFi-R3L-srv>
+Subject: RE: [PATCH v3 04/27] ocxl: Remove unnecessary externs
+Date:   Wed, 26 Feb 2020 19:26:34 +1100
+Message-ID: <4d49801d5ec7e$7a3e8610$6ebb9230$@d-silva.org>
 MIME-Version: 1.0
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 26 Feb 2020 09:28:29 +0100
-Message-ID: <CACT4Y+Yezqn1JZac9=R1dmgZ4d6N1btAsP6AHON-Cds1knTaiA@mail.gmail.com>
-Subject: public gerrit instance for kernel
-To:     workflows@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Cc:     Han-Wen Nienhuys <hanwen@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Ben Gardon <bgardon@google.com>,
-        Jonathan Nieder <jrn@google.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFvwBELB7thA+Ae3jvxFm54+bhaEQJqYraXAhSTffeo1YSXcA==
+Content-Language: en-au
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Wed, 26 Feb 2020 19:26:42 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+> -----Original Message-----
+> From: Baoquan He <bhe@redhat.com>
+> Sent: Wednesday, 26 February 2020 7:15 PM
+> To: Alastair D'Silva <alastair@au1.ibm.com>
+> Cc: alastair@d-silva.org; Aneesh Kumar K . V
+> <aneesh.kumar@linux.ibm.com>; Oliver O'Halloran <oohall@gmail.com>;
+> Benjamin Herrenschmidt <benh@kernel.crashing.org>; Paul Mackerras
+> <paulus@samba.org>; Michael Ellerman <mpe@ellerman.id.au>; Frederic
+> Barrat <fbarrat@linux.ibm.com>; Andrew Donnellan <ajd@linux.ibm.com>;
+> Arnd Bergmann <arnd@arndb.de>; Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org>; Dan Williams <dan.j.williams@intel.com>;
+> Vishal Verma <vishal.l.verma@intel.com>; Dave Jiang
+> <dave.jiang@intel.com>; Ira Weiny <ira.weiny@intel.com>; Andrew Morton
+> <akpm@linux-foundation.org>; Mauro Carvalho Chehab
+> <mchehab+samsung@kernel.org>; David S. Miller <davem@davemloft.net>;
+> Rob Herring <robh@kernel.org>; Anton Blanchard <anton@ozlabs.org>;
+> Krzysztof Kozlowski <krzk@kernel.org>; Mahesh Salgaonkar
+> <mahesh@linux.vnet.ibm.com>; Madhavan Srinivasan
+> <maddy@linux.vnet.ibm.com>; C=E9dric Le Goater <clg@kaod.org>; Anju T
+> Sudhakar <anju@linux.vnet.ibm.com>; Hari Bathini
+> <hbathini@linux.ibm.com>; Thomas Gleixner <tglx@linutronix.de>; Greg
+> Kurz <groug@kaod.org>; Nicholas Piggin <npiggin@gmail.com>; Masahiro
+> Yamada <yamada.masahiro@socionext.com>; Alexey Kardashevskiy
+> <aik@ozlabs.ru>; linux-kernel@vger.kernel.org; linuxppc-
+> dev@lists.ozlabs.org; linux-nvdimm@lists.01.org; linux-mm@kvack.org
+> Subject: Re: [PATCH v3 04/27] ocxl: Remove unnecessary externs
+>=20
+> On 02/21/20 at 02:26pm, Alastair D'Silva wrote:
+> > From: Alastair D'Silva <alastair@d-silva.org>
+> >
+> > Function declarations don't need externs, remove the existing ones =
+so
+> > they are consistent with newer code
+> >
+> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> > ---
+> >  arch/powerpc/include/asm/pnv-ocxl.h | 32 =
+++++++++++++++---------------
+> >  include/misc/ocxl.h                 |  6 +++---
+> >  2 files changed, 18 insertions(+), 20 deletions(-)
+> >
+> > diff --git a/arch/powerpc/include/asm/pnv-ocxl.h
+> > b/arch/powerpc/include/asm/pnv-ocxl.h
+> > index 0b2a6707e555..b23c99bc0c84 100644
+> > --- a/arch/powerpc/include/asm/pnv-ocxl.h
+> > +++ b/arch/powerpc/include/asm/pnv-ocxl.h
+> > @@ -9,29 +9,27 @@
+> >  #define PNV_OCXL_TL_BITS_PER_RATE       4
+> >  #define PNV_OCXL_TL_RATE_BUF_SIZE
+> ((PNV_OCXL_TL_MAX_TEMPLATE+1) * PNV_OCXL_TL_BITS_PER_RATE / 8)
+> >
+> > -extern int pnv_ocxl_get_actag(struct pci_dev *dev, u16 *base, u16
+> *enabled,
+> > -			u16 *supported);
+>=20
+> It works w or w/o extern when declare functions. Searching 'extern'
+> under include can find so many functions with 'extern' adding. Do we =
+have
+a
+> explicit standard if we should add or remove 'exter' in function
+declaration?
+>=20
+> I have no objection to this patch, just want to make clear so that I =
+can
+handle
+> it w/o confusion.
+>=20
+> Thanks
+> Baoquan
+>=20
 
-We've setup a public Gerrit instance for use with Linux kernel development:
-https://linux.googlesource.com/Documentation/#gerrit-code-reviews-for-the-l=
-inux-kernel
+For the OpenCAPI driver, we have settled on not having 'extern' on
+functions.
 
-After one-time setup changes can be pushed with a single command:
-$ git push gerrit-net HEAD:refs/for/master
+I don't think I've seen a standard that supports or refutes this, but it
+does not value add.
 
-Gerrit has several (subjective) benefits over email-based reviews:
- - full context (you can expand more context as necessary)
- - diffs between version, e.g. full change is +547 lines:
-https://linux-review.googlesource.com/c/linux/kernel/git/torvalds/linux/+/2=
-265/2
-but diff between v1 and v2 is just 2 empty lines:
-https://linux-review.googlesource.com/c/linux/kernel/git/torvalds/linux/+/2=
-265/1..2
-(no need to write that up, trust subjective write ups)
- - colored side-by-side diffs, e.g. here you can easily see that even
-that line has changed it's only slash at the end that's added:
-https://linux-review.googlesource.com/c/linux/kernel/git/torvalds/linux/+/2=
-103/1/kunit/Makefile#2
- - marking files as "reviewed", always correct base tree/revision, etc
+--=20
+Alastair D'Silva           mob: 0423 762 819
+skype: alastair_dsilva     msn: alastair@d-silva.org
+blog: http://alastair.d-silva.org    Twitter: @EvilDeece
 
-But note there is no "official" story for gerrit in the linux process.
-You may use it as you find fit. Some uses that we found useful so far:
- - upload to do self-pre-review
- - review within a team of people who agree to use gerrit
- - include a link to gerrit into the upstream patch email as FYI
-(after =E2=80=9C---=E2=80=9D line)
- - upload somebody else patch just to review with side-by-side diffs
-and full context
 
-The branches are mirrored automatically from kernel.org; you can
-upload changes for review against those branches, but submission has
-to be routed through the traditional process.
 
-If you are brave enough, you may use a gerrit-managed tree as well,
-then with ability to merge/edit change on the web, non-losing comment
-threads attached to lines of code, change status tracking, etc. But
-that will need to be setup separately.
 
-There are some improvements planned like not requiring Change-ID and
-proxying comments to/from kernel mailing lists. But that's only in
-plans now.
-
-Thanks
