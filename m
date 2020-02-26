@@ -2,75 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 570081702C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:39:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDA4F1702CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:40:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728379AbgBZPjb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 10:39:31 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41394 "EHLO
+        id S1728406AbgBZPkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 10:40:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41560 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbgBZPja (ORCPT
+        with ESMTP id S1728323AbgBZPkb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:39:30 -0500
+        Wed, 26 Feb 2020 10:40:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=WkRU+rCfqZmSiK2T/WyxuA5RO2CVcs+N/iUY+k8Bf6w=; b=VAxOAnW9pzTfuKbV+ZL+X4PvH1
-        W9K6olNaZozucBl5tM0rP97/7AIiCC2wehQYtiI/3pg0Y9j5nWbKoAjIRAAlcsKP5Al3Zx0Flmkjp
-        EPwKob8UwqDLMtoHWC1zXmmrnyoc1eWUeKk8mAvPerkADPxf2TZJOSPKuJfZZBcsra3bd3mFwTEYE
-        7x6vQBzPwzNU9Z3zR9S5lvR2X0hxQgGfSFoTgqCnBtT3gZre3ddfhBgMcKUAmih2aLnT3mQrC+3WO
-        /YC3vQ3BpKZkNLgbBr8ax0E1NRV+2nWLe87NfJqAm0qskdqxU4W93CDwBAPYtXpwC2J49SS/55Kon
-        b+JOhB2w==;
-Received: from [4.28.11.157] (helo=localhost)
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=RdfI8zcYUbYtVeFuEktgZYpmdsO2bxZo0zxF/fSi1ho=; b=QZiWhKFyhqE4wOJ4Fc2qb1NIjh
+        +aCjkUnk6fdzX+rGLHwqwjOJ+6bxSaXFwf9Kl5W13iavOwYJu15WkjT+FRP9+8j1dlpP6+w1TjFkb
+        l0KX7scOeP1gS6U0jzc4RTX9aMchaKjhHg00bVZv0j2+t9865z+c/u4otvCYk25mD576+3nVoAD53
+        8reA1R6AD5lLyP+dykIdyV9K4AcNU6zV0ID4tLfSyVLPcXzZDCcP6lj+/O18BdoN69QwxFGcxefhi
+        JsRx6aDf5Jc9A1XlpCtpHNdfuvIuJa1BXqtgkmmPgmJhscCnvmWd3X+Zm1f7o8h7o9sEd1Fut96kG
+        a5cuJNdw==;
+Received: from [2601:1c0:6280:3f0::19c2]
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j6ymY-0000Y3-7U; Wed, 26 Feb 2020 15:39:30 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     torvalds@linux-foundation.org
-Cc:     kvm@vger.kernel.org, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Revert "KVM: x86: enable -Werror"
-Date:   Wed, 26 Feb 2020 07:39:29 -0800
-Message-Id: <20200226153929.786743-1-hch@lst.de>
-X-Mailer: git-send-email 2.24.1
+        id 1j6ynR-0001q6-Qg; Wed, 26 Feb 2020 15:40:25 +0000
+Subject: Re: [PATCH v9 3/4] soc: mediatek: Move mt8173 MMSYS to platform
+ driver
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        dri-devel@lists.freedesktop.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        linux-clk@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        sean.wang@mediatek.com, frank-w@public-files.de,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Richard Fontana <rfontana@redhat.com>,
+        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <20200226105419.632771-1-enric.balletbo@collabora.com>
+ <20200226105419.632771-4-enric.balletbo@collabora.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <54b3cfed-92f3-54c8-05a1-90ef4c057e4c@infradead.org>
+Date:   Wed, 26 Feb 2020 07:40:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200226105419.632771-4-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit ead68df94d248c80fdbae220ae5425eb5af2e753.
+On 2/26/20 2:54 AM, Enric Balletbo i Serra wrote:
+> diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
+> index 2114b563478c..dcd6481a14d0 100644
+> --- a/drivers/soc/mediatek/Kconfig
+> +++ b/drivers/soc/mediatek/Kconfig
+> @@ -44,4 +44,11 @@ config MTK_SCPSYS
+>  	  Say yes here to add support for the MediaTek SCPSYS power domain
+>  	  driver.
+>  
+> +config MT8173_MMSYS
+> +	bool "MediaTek MT8173 MMSYS Support"
 
-Using the brain dead Werror flag fixes the build for me due to mostly
-harmless KASAN or similar warnings:
+Hi,
+Can this be tristate instead of bool?
 
-arch/x86/kvm/x86.c: In function ‘kvm_timer_init’:
-arch/x86/kvm/x86.c:7209:1: error: the frame size of 1112 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
- 7209 | }
+> +	depends on COMMON_CLK_MT8173
+> +	help
+> +	  Say yes here to add support for the MediaTek MT8173 Multimedia
+> +	  Subsystem (MMSYS).
+> +
+>  endmenu
 
-Feel free to add a CONFIG_WERROR if you care strong enough, but don't break
-peoples builds for absolutely no good reason.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/x86/kvm/Makefile | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
-index 4654e97a05cc..b19ef421084d 100644
---- a/arch/x86/kvm/Makefile
-+++ b/arch/x86/kvm/Makefile
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- ccflags-y += -Iarch/x86/kvm
--ccflags-y += -Werror
- 
- KVM := ../../../virt/kvm
- 
+thanks.
 -- 
-2.24.1
+~Randy
 
