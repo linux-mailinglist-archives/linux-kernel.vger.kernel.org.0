@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BEB417073E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A49117072B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:09:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbgBZSJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:09:57 -0500
-Received: from foss.arm.com ([217.140.110.172]:40504 "EHLO foss.arm.com"
+        id S1727309AbgBZSJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:09:30 -0500
+Received: from foss.arm.com ([217.140.110.172]:40518 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726787AbgBZSJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:09:24 -0500
+        id S1727262AbgBZSJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 13:09:26 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB0854B2;
-        Wed, 26 Feb 2020 10:09:23 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7074A31B;
+        Wed, 26 Feb 2020 10:09:25 -0800 (PST)
 Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 085F73F881;
-        Wed, 26 Feb 2020 10:09:21 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF2163F881;
+        Wed, 26 Feb 2020 10:09:23 -0800 (PST)
 From:   Andre Przywara <andre.przywara@arm.com>
 To:     Rob Herring <robh@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -26,11 +26,10 @@ Cc:     Robert Richter <rric@kernel.org>, soc@kernel.org,
         Mark Langsdorf <mlangsdo@redhat.com>,
         Eric Auger <eric.auger@redhat.com>,
         Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 06/13] dt-bindings: sata: Convert Calxeda SATA controller to json-schema
-Date:   Wed, 26 Feb 2020 18:08:54 +0000
-Message-Id: <20200226180901.89940-7-andre.przywara@arm.com>
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 07/13] dt-bindings: net: Convert Calxeda Ethernet binding to json-schema
+Date:   Wed, 26 Feb 2020 18:08:55 +0000
+Message-Id: <20200226180901.89940-8-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200226180901.89940-1-andre.przywara@arm.com>
 References: <20200226180901.89940-1-andre.przywara@arm.com>
@@ -39,170 +38,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the Calxeda Highbank SATA controller binding to DT schema format
+Convert the Calxeda XGMAC Ethernet device binding to DT schema format
 using json-schema.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Cc: Jens Axboe <axboe@kernel.dk>
 ---
- .../devicetree/bindings/ata/sata_highbank.txt | 44 ---------
- .../bindings/ata/sata_highbank.yaml           | 96 +++++++++++++++++++
- 2 files changed, 96 insertions(+), 44 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/ata/sata_highbank.txt
- create mode 100644 Documentation/devicetree/bindings/ata/sata_highbank.yaml
+ .../devicetree/bindings/net/calxeda-xgmac.txt | 18 -------
+ .../bindings/net/calxeda-xgmac.yaml           | 47 +++++++++++++++++++
+ 2 files changed, 47 insertions(+), 18 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/net/calxeda-xgmac.txt
+ create mode 100644 Documentation/devicetree/bindings/net/calxeda-xgmac.yaml
 
-diff --git a/Documentation/devicetree/bindings/ata/sata_highbank.txt b/Documentation/devicetree/bindings/ata/sata_highbank.txt
+diff --git a/Documentation/devicetree/bindings/net/calxeda-xgmac.txt b/Documentation/devicetree/bindings/net/calxeda-xgmac.txt
 deleted file mode 100644
-index aa83407cb7a4..000000000000
---- a/Documentation/devicetree/bindings/ata/sata_highbank.txt
+index c8ae996bd8f2..000000000000
+--- a/Documentation/devicetree/bindings/net/calxeda-xgmac.txt
 +++ /dev/null
-@@ -1,44 +0,0 @@
--* Calxeda AHCI SATA Controller
--
--SATA nodes are defined to describe on-chip Serial ATA controllers.
--The Calxeda SATA controller mostly conforms to the AHCI interface
--with some special extensions to add functionality.
--Each SATA controller should have its own node.
+@@ -1,18 +0,0 @@
+-* Calxeda Highbank 10Gb XGMAC Ethernet
 -
 -Required properties:
--- compatible        : compatible list, contains "calxeda,hb-ahci"
--- interrupts        : <interrupt mapping for SATA IRQ>
--- reg               : <registers mapping>
+-- compatible : Should be "calxeda,hb-xgmac"
+-- reg : Address and length of the register set for the device
+-- interrupts : Should contain 3 xgmac interrupts. The 1st is main interrupt.
+-  The 2nd is pwr mgt interrupt. The 3rd is low power state interrupt.
 -
 -Optional properties:
 -- dma-coherent      : Present if dma operations are coherent
--- calxeda,port-phys : phandle-combophy and lane assignment, which maps each
--			SATA port to a combophy and a lane within that
--			combophy
--- calxeda,sgpio-gpio: phandle-gpio bank, bit offset, and default on or off,
--			which indicates that the driver supports SGPIO
--			indicator lights using the indicated GPIOs
--- calxeda,led-order : a u32 array that map port numbers to offsets within the
--			SGPIO bitstream.
--- calxeda,tx-atten  : a u32 array that contains TX attenuation override
--			codes, one per port. The upper 3 bytes are always
--			0 and thus ignored.
--- calxeda,pre-clocks : a u32 that indicates the number of additional clock
--			cycles to transmit before sending an SGPIO pattern
--- calxeda,post-clocks: a u32 that indicates the number of additional clock
--			cycles to transmit after sending an SGPIO pattern
 -
 -Example:
--        sata@ffe08000 {
--		compatible = "calxeda,hb-ahci";
--		reg = <0xffe08000 0x1000>;
--		interrupts = <115>;
--		dma-coherent;
--		calxeda,port-phys = <&combophy5 0 &combophy0 0 &combophy0 1
--					&combophy0 2 &combophy0 3>;
--		calxeda,sgpio-gpio =<&gpioh 5 1 &gpioh 6 1 &gpioh 7 1>;
--		calxeda,led-order = <4 0 1 2 3>;
--		calxeda,tx-atten = <0xff 22 0xff 0xff 23>;
--		calxeda,pre-clocks = <10>;
--		calxeda,post-clocks = <0>;
--        };
-diff --git a/Documentation/devicetree/bindings/ata/sata_highbank.yaml b/Documentation/devicetree/bindings/ata/sata_highbank.yaml
+-
+-ethernet@fff50000 {
+-        compatible = "calxeda,hb-xgmac";
+-        reg = <0xfff50000 0x1000>;
+-        interrupts = <0 77 4  0 78 4  0 79 4>;
+-};
+diff --git a/Documentation/devicetree/bindings/net/calxeda-xgmac.yaml b/Documentation/devicetree/bindings/net/calxeda-xgmac.yaml
 new file mode 100644
-index 000000000000..392a3efc9833
+index 000000000000..77b8be9ebb20
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-@@ -0,0 +1,96 @@
++++ b/Documentation/devicetree/bindings/net/calxeda-xgmac.yaml
+@@ -0,0 +1,47 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/ata/sata_highbank.yaml#
++$id: http://devicetree.org/schemas/net/calxeda-xgmac.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Calxeda AHCI SATA Controller
++title: Calxeda Highbank 10Gb XGMAC Ethernet controller
 +
 +description: |
-+  The Calxeda SATA controller mostly conforms to the AHCI interface
-+  with some special extensions to add functionality, to map GPIOs for
-+  activity LEDs and for mapping the ComboPHYs.
++  The Calxeda XGMAC Ethernet controllers are directly connected to the
++  internal machine "network fabric", which is set up, initialised and
++  managed by the firmware. So there are no PHY properties in this
++  binding. Switches in the fabric take care of routing and mapping the
++  traffic to external network ports.
 +
 +maintainers:
 +  - Andre Przywara <andre.przywara@arm.com>
 +
 +properties:
 +  compatible:
-+    const: calxeda,hb-ahci
++    const: calxeda,hb-xgmac
 +
 +  reg:
 +    maxItems: 1
 +
 +  interrupts:
-+    maxItems: 1
++    description: |
++      Can point to at most 3 xgmac interrupts. The 1st one is the main
++      interrupt, the 2nd one is used for power management. The optional
++      3rd one is the low power state interrupt.
++    minItems: 2
++    maxItems: 3
 +
 +  dma-coherent: true
-+
-+  calxeda,pre-clocks:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      Indicates the number of additional clock cycles to transmit before
-+      sending an SGPIO pattern.
-+
-+  calxeda,post-clocks:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      Indicates the number of additional clock cycles to transmit after
-+      sending an SGPIO pattern.
-+
-+  calxeda,led-order:
-+    description: Maps port numbers to offsets within the SGPIO bitstream.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+      - minItems: 1
-+        maxItems: 8
-+
-+  calxeda,port-phys:
-+    description: |
-+      phandle-combophy and lane assignment, which maps each SATA port to a
-+      combophy and a lane within that combophy
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/phandle-array
-+      - minItems: 1
-+        maxItems: 8
-+
-+  calxeda,tx-atten:
-+    description: |
-+      Contains TX attenuation override codes, one per port.
-+      The upper 24 bits of each entry are always 0 and thus ignored.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+      - minItems: 1
-+        maxItems: 8
-+
-+  calxeda,sgpio-gpio:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: |
-+      phandle-gpio bank, bit offset, and default on or off, which indicates
-+      that the driver supports SGPIO indicator lights using the indicated
-+      GPIOs.
 +
 +required:
 +  - compatible
 +  - reg
 +  - interrupts
 +
-+additionalProperties: false
-+
 +examples:
 +  - |
-+    sata@ffe08000 {
-+        compatible = "calxeda,hb-ahci";
-+        reg = <0xffe08000 0x1000>;
-+        interrupts = <115>;
-+        dma-coherent;
-+        calxeda,port-phys = <&combophy5 0 &combophy0 0 &combophy0 1
-+                             &combophy0 2 &combophy0 3>;
-+        calxeda,sgpio-gpio =<&gpioh 5 1 &gpioh 6 1 &gpioh 7 1>;
-+        calxeda,led-order = <4 0 1 2 3>;
-+        calxeda,tx-atten = <0xff 22 0xff 0xff 23>;
-+        calxeda,pre-clocks = <10>;
-+        calxeda,post-clocks = <0>;
++    ethernet@fff50000 {
++        compatible = "calxeda,hb-xgmac";
++        reg = <0xfff50000 0x1000>;
++        interrupts = <0 77 4>, <0 78 4>, <0 79 4>;
 +    };
-+
-+...
 -- 
 2.17.1
 
