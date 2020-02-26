@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5A6C170B1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:03:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A764170B0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:02:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbgBZWCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 17:02:47 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:45043 "EHLO
+        id S1727932AbgBZWCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 17:02:30 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:45045 "EHLO
         esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbgBZWCZ (ORCPT
+        with ESMTP id S1727885AbgBZWC0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 17:02:25 -0500
+        Wed, 26 Feb 2020 17:02:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1582754545; x=1614290545;
+  t=1582754546; x=1614290546;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=JqXfvLC9I8btjifDyDxA+vz0y13stX9yiYKqjoJkjmU=;
-  b=UggKKzIxrQMSHQA4QAKAbus1hkfJHhj2E+YEHIZzQslMBUdeczbjJG/2
-   KLcQnnRWDIaCzovsts3rD9qtq+7HwctjnMM1+LaaP2rCSep6JZ9Dj2RDe
-   wpToRwwDNigQcyOO3nvNrItyWHxdqofwwpSH7hE/5wjLoJW6shig/5Atv
-   u58rqF/1isBQId7g1HIHFVdAWmvTPxxuRf1/OBo8zb3wgM0KU2iBh4LHg
-   35jorpr6UR8qNp3fcUgfE9VzQ5TA94UsmFq57ZLXIMefkVmpqwiHvxlxK
-   dd2NGZ7ybpCbcIeqC+EezZ+ke81fYzPf57+1j/VHCckoC+2zHLK4MPyT+
-   g==;
-IronPort-SDR: q6Zk/FjtH0+o4gCAUjGYVpN+tPAjO0ATV/INIBthNj5bEIaLidO8rDt0uDwNtxBq/F+lDeqmj2
- Sepn8QZC8cXitce0PxgjL5mluxIG3QqLATPSw4JM9298GhGWH2Omi1pNe6N1mME4IeYwCL4DlT
- qypzw/rC/n6QkPCwsVKQ8ZzZ6BwgeDq9/LVsrEzfobFXibpbpFyhc270p01CGin6CLjXoPGJNN
- pN0qlU89cVb0YxcbmY2m22SyFq/mbaaa99xeA7Rs5s6miwlFB+WDDhwDO7kO8e6qqVfUeTxWN1
- aE8=
+  bh=9Ui27SSBnDNLiTnFJyNqyp0+HmPzoBOlVS3ULCIEs7E=;
+  b=RvO9Ri2utTVq8PpCmVOBXAlZt5MbYhq2O+e1JEM89qSmn+8j3jRPILmW
+   YGPvJ5FNGFv+Di7XJSw/4L4Z0nHE7XD6rbPpyICkO2GHunOd8UpljSQi2
+   Rly7iH7Md+fpsolId9AUlVy9RHGAo1QSnfb88KFkR47V+yFfoIQsAaETB
+   pEYN152oFu3D64uhxTgXmzKkdRNvygPdWl3gxtvfaeLAZCZdrzMg91LGc
+   OHKJItm2pI+rx8CZTSklKNm7+Lb0B4qEQoDYM6RqXmhRxbykdcqmUMO4Y
+   BX6LaDSEOGqDmMQq2f0iF4zH+DFQRD2E+/7oL93t4q2SSYatLfL8K9PiF
+   Q==;
+IronPort-SDR: 5eBR5xkwsC0EtmjkWAD3G9vS7f6usCdejWoFyiFeKacD193X83IsuDRSn14I8c/ujLybeGjFlz
+ 4+i6Ia/k/xXYNPwmZd7dk0T+WwW/T4p2I0mdcUdh+ZML28pMPf64Hr0mF2hAYO6bkCvyVLF0ZL
+ S0ShLcYoB3K+Sy3uJNeHbfSBTfFY+uCzbPzSgaCjsF325Wb5OfmUGW7IQPQm4o8jKDuy302K0w
+ P44YoOWfRQ6JrzT+tF7u9Sdjk6E5vB/1j+DdvsePvkzsIv5OWKx9f9WrFTtkQewr5wFrO0kjMW
+ lz4=
 X-IronPort-AV: E=Sophos;i="5.70,489,1574092800"; 
-   d="scan'208";a="132290740"
+   d="scan'208";a="132290747"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
   by ob1.hgst.iphmx.com with ESMTP; 27 Feb 2020 06:02:25 +0800
-IronPort-SDR: MZlEgA5Y4GtXhCYvgdHfngCfD006+qwzyJpXeZ+KKrBn+YQou8obI7wgeZn4EUlJ+j7kiWJeld
- 1/u6LrdpyH0UXB1vTO2PmE6cfGuzxbsQvGjFlbC7Gfi/gdIBKZUnTuflOlO18WpO5hz7lQV0W6
- ZXHLITwTsHCML5v2aa3AaLBjRh/barRyrD53gMfwkr9LZO17rdmyMWtnTpSH1lKHxG3rf9iE1x
- 0fYA0OWn+tsoV6q3QXuW3V6r7c+GafPGF5rXZB94HvqRk00pLU5n7I0jwj1vs8FMwvy88le+qk
- gK+KC6vZWtx9P5KWwM9rr58p
+IronPort-SDR: L0aGCYIID6gmswWTl0klVUD4jzbPEUjjwdBNt+1nFg2UWsJkZqS9edWj0e4rFWC0pqp426kU8d
+ cpUPasrx5DMAJuebe9oAhzJCMovAOy4HidxrnzO9J/I7sWQ9gsJoNPE6jm2R01fuyqypEzfqZf
+ VoYQwCtmGWzvK+S56G0LpRr8URTCpKu/nctKXEz32pyGg0ghVxdB362U1SmPHVWV/pTQaC5xhx
+ 2Whs7rsH3/OCZjqsKoqgUNrZy2pPHhoHcEQDMSC4V00uIstI7qvr4fgxO6FCdgbLzTy/HEMyIK
+ +WUv3LL4iMNYCdRrhSIfkDP2
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 13:54:49 -0800
-IronPort-SDR: EVY8lUPNbgljmW6HqEuqUs1GnjnBfBSafUXNYMK1AMj6XuCsBqsRkDnNQI1K0i0CCkdrN7W9V9
- ysHazwBXnlQMwZfgMr8PTvYVU9zP8Xyi9hfVBkXLxN9hZDPt5ln0P5Jv3UJDkg2dU9+tPydUPz
- gVWO1CYmsd52gIsvas27XINqLZ+RvJPkXX6yH30hsTpy6aeRfPlD4Lvlji8UTOFG3GoB+LvUgY
- gKa7m8TeX4ssIDVdSdE9QFEJx3uLqo46bT/S/VbJtIeiqdIaAr62kQniHQwh0ZLSdesWkyhoT4
- Uq4=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 13:54:50 -0800
+IronPort-SDR: cwWbOHXlgS187vh61TxRjM6guQ7ekDTpm98OcXyDB2OGhAdfCG+xrfniT9NPggwCnklbxc0dB+
+ +exZW2EhASXPMZntYxbsWCex681LyalY5ySfsrJfMH8QKGwx8ZKJjPCsJNzeC4GEuM3PCwqtGR
+ 3lvXucSrKbzrSKMUsoSNOOVGt1tH0ohUKoTuSp56n5+fS77Zy6NEg2dlcNEdjBTYXJIuX0x/NN
+ PAfilQhS/RXAuTURdERtFBjcHBPsZnc15GBqImlUTZ5K1hupUAB6RwniAwb3PI1p/XokGe03el
+ ou8=
 WDCIronportException: Internal
 Received: from yoda.sdcorp.global.sandisk.com (HELO yoda.int.fusionio.com) ([10.196.158.80])
-  by uls-op-cesaip02.wdc.com with ESMTP; 26 Feb 2020 14:02:24 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 26 Feb 2020 14:02:25 -0800
 From:   Atish Patra <atish.patra@wdc.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Atish Patra <atish.patra@wdc.com>, Anup Patel <anup.patel@wdc.com>,
@@ -79,9 +79,9 @@ Cc:     Atish Patra <atish.patra@wdc.com>, Anup Patel <anup.patel@wdc.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Vincent Chen <vincent.chen@sifive.com>,
         Zong Li <zong.li@sifive.com>
-Subject: [PATCH v10 08/12] RISC-V: Export SBI error to linux error mapping function
-Date:   Wed, 26 Feb 2020 14:02:09 -0800
-Message-Id: <20200226220213.27423-9-atish.patra@wdc.com>
+Subject: [PATCH v10 09/12] RISC-V: Add SBI HSM extension definitions
+Date:   Wed, 26 Feb 2020 14:02:10 -0800
+Message-Id: <20200226220213.27423-10-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200226220213.27423-1-atish.patra@wdc.com>
 References: <20200226220213.27423-1-atish.patra@wdc.com>
@@ -92,52 +92,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All SBI related extensions will not be implemented in sbi.c to avoid
-bloating. Thus, sbi_err_map_linux_errno() will be used in other files
-implementing that specific extension.
+SBI specification defines HSM extension that allows to start/stop a hart
+by a supervisor anytime. The specification is available at
 
-Export the function so that it can be used later.
+https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc
+
+Add those definitions here.
 
 Signed-off-by: Atish Patra <atish.patra@wdc.com>
 Reviewed-by: Anup Patel <anup.patel@wdc.com>
 ---
- arch/riscv/include/asm/sbi.h | 1 +
- arch/riscv/kernel/sbi.c      | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ arch/riscv/include/asm/sbi.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-index 8766f6af9eb8..82ff88f06ddc 100644
+index 82ff88f06ddc..450430c15879 100644
 --- a/arch/riscv/include/asm/sbi.h
 +++ b/arch/riscv/include/asm/sbi.h
-@@ -130,6 +130,7 @@ static inline unsigned long sbi_minor_version(void)
- {
- 	return sbi_spec_version & SBI_SPEC_VERSION_MINOR_MASK;
- }
-+int sbi_err_map_linux_errno(int err);
- #else /* CONFIG_RISCV_SBI */
- /* stubs for code that is only reachable under IS_ENABLED(CONFIG_RISCV_SBI): */
- void sbi_set_timer(uint64_t stime_value);
-diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
-index 932b23272be5..3a2a5352316b 100644
---- a/arch/riscv/kernel/sbi.c
-+++ b/arch/riscv/kernel/sbi.c
-@@ -46,7 +46,7 @@ struct sbiret sbi_ecall(int ext, int fid, unsigned long arg0,
- }
- EXPORT_SYMBOL(sbi_ecall);
+@@ -26,6 +26,7 @@ enum sbi_ext_id {
+ 	SBI_EXT_TIME = 0x54494D45,
+ 	SBI_EXT_IPI = 0x735049,
+ 	SBI_EXT_RFENCE = 0x52464E43,
++	SBI_EXT_HSM = 0x48534D,
+ };
  
--static int sbi_err_map_linux_errno(int err)
-+int sbi_err_map_linux_errno(int err)
- {
- 	switch (err) {
- 	case SBI_SUCCESS:
-@@ -63,6 +63,7 @@ static int sbi_err_map_linux_errno(int err)
- 		return -ENOTSUPP;
- 	};
- }
-+EXPORT_SYMBOL(sbi_err_map_linux_errno);
+ enum sbi_ext_base_fid {
+@@ -56,6 +57,19 @@ enum sbi_ext_rfence_fid {
+ 	SBI_EXT_RFENCE_REMOTE_HFENCE_VVMA_ASID,
+ };
  
- #ifdef CONFIG_RISCV_SBI_V01
- /**
++enum sbi_ext_hsm_fid {
++	SBI_EXT_HSM_HART_START = 0,
++	SBI_EXT_HSM_HART_STOP,
++	SBI_EXT_HSM_HART_STATUS,
++};
++
++enum sbi_hsm_hart_status {
++	SBI_HSM_HART_STATUS_STARTED = 0,
++	SBI_HSM_HART_STATUS_STOPPED,
++	SBI_HSM_HART_STATUS_START_PENDING,
++	SBI_HSM_HART_STATUS_STOP_PENDING,
++};
++
+ #define SBI_SPEC_VERSION_DEFAULT	0x1
+ #define SBI_SPEC_VERSION_MAJOR_SHIFT	24
+ #define SBI_SPEC_VERSION_MAJOR_MASK	0x7f
 -- 
 2.25.0
 
