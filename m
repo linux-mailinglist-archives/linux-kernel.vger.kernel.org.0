@@ -2,98 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E477D16FA3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 10:08:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8857816FA48
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 10:10:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbgBZJI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 04:08:57 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36649 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbgBZJI5 (ORCPT
+        id S1727716AbgBZJKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 04:10:22 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45458 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbgBZJKW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 04:08:57 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p17so2128295wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 01:08:55 -0800 (PST)
+        Wed, 26 Feb 2020 04:10:22 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v2so906495wrp.12
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 01:10:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=WFEIr9nnOW1UYtZBYSkNlGUPhLd1mBP0PtrFmzLzvzo=;
-        b=dsIIfw08mIWZX+E6l9Z0eiIhYUk4rF68jdQ8JAzSgfmOgP951BEUtMLWI6Awb/bbZg
-         8JylXjmlkN1Bw7oiU9rcaX4zbEJVzEa2yu4oFG8bkZ2QvGN7Tw6HUKpHcppcjQTpqt7t
-         llq+pKQb8x0BVxBx8mL2mQqFvrUMuF5OYguMhMx4iLysj7jaC7fgW5iESsJe4jl7cDC5
-         tGRc85s/NtyxrpZuIidJOmrJuRqPFbvQp7nq86VWx0/BKZzZxTQb65B8SaIOhrHVEgti
-         wLsWbnMcWT9biawhmKDmke5AVTiBym8MecRcsHM2jBT1GeF/6CqhpwIji7Zr/8NBz39y
-         CZjg==
-X-Gm-Message-State: APjAAAURUAOCRh83Sht1rS8QlcW/0d+V3M/v6asbBSvZ8g2qVdPzG3t4
-        yJ0uqn7IA2sg8JtKZAnMWUE=
-X-Google-Smtp-Source: APXvYqznaluSdyT5HEc2CI7VtV7sDRhSBWd3vC/0MUtPYUuvnUN9CWBfBs4yohy3o2BHDi7VByo5ug==
-X-Received: by 2002:a7b:cc82:: with SMTP id p2mr4146905wma.159.1582708135122;
-        Wed, 26 Feb 2020 01:08:55 -0800 (PST)
+        bh=zezVHIKVsEy23WKIqEBxre7fTjr4AovI4tGuQWgev8E=;
+        b=Oi8uMxn8BzRjuLXyMN/vpy5czRj20jszLRzHyjgK4LwxmabaIpG4jn1L3ePC/YdHHE
+         cH9PGglleYHpCrqox+1+sCwisC4tDDuqqozRNGYbZRkLC6LcDxGRuWniDet0TRRopLM0
+         NDve0v6UmRUiB9Sr/G/3fwQjCKU5lgvw2gOBv3e6P+V0UTJlXioNaZtgi0bz0jgGOjAB
+         bbSyOWwWg7IIVATDGvoT3jHkjCfX/P+INeEsA7T7kfdm5Gfsbm8HHOJGcMwjNjfBt5ge
+         07/M6seMDRQsit1j7m3gxPBoX+aGLBDT73fGH/rh2ipTE50rtfKccnRRZNgzh7SUPgA2
+         2i+g==
+X-Gm-Message-State: APjAAAV9NgCfsukEk4e+8bUBJFvY2tFNaVQVmbQviDXVyXZ5GCwAyzVW
+        2fTV3kbQwlvYfbmESnts0go=
+X-Google-Smtp-Source: APXvYqw/czrxlpJt+0m/pwY5+5eu0JP3G4Ay0V1rlzLaOX87KhdbgdFeZv7KVTjsnC0eFISKxrILng==
+X-Received: by 2002:adf:dfcc:: with SMTP id q12mr4235815wrn.171.1582708220424;
+        Wed, 26 Feb 2020 01:10:20 -0800 (PST)
 Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id a7sm2353805wrm.29.2020.02.26.01.08.54
+        by smtp.gmail.com with ESMTPSA id x6sm2387649wrr.6.2020.02.26.01.10.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 01:08:54 -0800 (PST)
-Date:   Wed, 26 Feb 2020 10:08:53 +0100
+        Wed, 26 Feb 2020 01:10:19 -0800 (PST)
+Date:   Wed, 26 Feb 2020 10:10:18 +0100
 From:   Michal Hocko <mhocko@kernel.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Sultan Alsawaf <sultan@kerneltoast.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH] mm: Stop kswapd early when nothing's waiting for it to
- free pages
-Message-ID: <20200226090853.GC3771@dhcp22.suse.cz>
-References: <20200219200527.GF11847@dhcp22.suse.cz>
- <20200219204220.GA3488@sultan-book.localdomain>
- <20200219214513.GL3420@suse.de>
- <20200219224231.GA5190@sultan-book.localdomain>
- <20200220101945.GN3420@suse.de>
- <20200221042232.GA2197@sultan-book.localdomain>
- <20200221080737.GK20509@dhcp22.suse.cz>
- <20200221210824.GA3605@sultan-book.localdomain>
- <20200225090945.GJ22443@dhcp22.suse.cz>
- <CALvZod6MW62-+nEw-d0jKxFK9mspOY_tt2JRTDYOrOVyM9_QHw@mail.gmail.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, richardw.yang@linux.intel.com,
+        david@redhat.com, osalvador@suse.de, dan.j.williams@intel.com,
+        rppt@linux.ibm.com, robin.murphy@arm.com
+Subject: Re: [PATCH v2 4/7] mm/sparse.c: only use subsection map in VMEMMAP
+ case
+Message-ID: <20200226091018.GD3771@dhcp22.suse.cz>
+References: <20200220043316.19668-1-bhe@redhat.com>
+ <20200220043316.19668-5-bhe@redhat.com>
+ <20200225095713.GL22443@dhcp22.suse.cz>
+ <20200226035336.GF24216@MiWiFi-R3L-srv>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALvZod6MW62-+nEw-d0jKxFK9mspOY_tt2JRTDYOrOVyM9_QHw@mail.gmail.com>
+In-Reply-To: <20200226035336.GF24216@MiWiFi-R3L-srv>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 25-02-20 14:30:03, Shakeel Butt wrote:
-> On Tue, Feb 25, 2020 at 1:10 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> [snip]
-> >
-> > The proper fix should, however, check the amount of reclaimable pages
-> > and back off if they cannot meet the target IMO. We cannot rely on the
-> > general reclaimability here because that could really be thrashing.
-> >
+On Wed 26-02-20 11:53:36, Baoquan He wrote:
+> On 02/25/20 at 10:57am, Michal Hocko wrote:
+> > On Thu 20-02-20 12:33:13, Baoquan He wrote:
+> > > Currently, subsection map is used when SPARSEMEM is enabled, including
+> > > VMEMMAP case and !VMEMMAP case. However, subsection hotplug is not
+> > > supported at all in SPARSEMEM|!VMEMMAP case, subsection map is unnecessary
+> > > and misleading. Let's adjust code to only allow subsection map being
+> > > used in VMEMMAP case.
+> > 
+> > This really needs more explanation I believe. What exactly happens if
+> > somebody tries to hotremove a part of the section with !VMEMMAP? I can
+> > see that clear_subsection_map returns 0 but that is not an error code.
+> > Besides that section_deactivate doesn't propagate the error upwards.
+> > /me stares into the code
+> > 
+> > OK, I can see it now. It is relying on check_pfn_span to use the proper
+> > subsection granularity. This really begs for a comment in the code
+> > somewhere.
 > 
-> "check the amount of reclaimable pages" vs "cannot rely on the general
-> reclaimability"? Can you clarify?
+> Yes, check_pfn_span() guards it. People have no way to hot add/remove
+> on non-section aligned block with !VMEMMAP.
+> 
+> I have added extra comment to above section_activate() to note this,
+> please check patch 5/7. Let me see how to add words to reflect the
+> check_pfn_span() guard thing.
 
-kswapd targets the high watermark and if your reclaimable memory (aka
-zone_reclaimable_pages) is lower than the high wmark then it cannot
-simply satisfy that target, right? Keeping reclaim in that situations
-seems counter productive to me because you keep evicting pages that
-might be reused without any feedback mechanism on the actual usage.
-Please see my other reply.
-
-> BTW we are seeing a similar situation in our production environment.
-> We have swappiness=0, no swap from kswapd (because we don't swapout on
-> pressure, only on cold age) and too few file pages, the kswapd goes
-> crazy on shrink_slab and spends 100% cpu on it.
-
-I am not sure this is the same problem. It seems that the slab shrinkers
-are not really a bottle neck here. I would recommend you to identify
-which shrinkers are eating the cpu time in your case.
+An explicit note about check_pfn_span gating the proper alignement and
+sizing sounds sufficient to me.
 -- 
 Michal Hocko
 SUSE Labs
