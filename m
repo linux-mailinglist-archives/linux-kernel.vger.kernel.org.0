@@ -2,144 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9973517088A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 20:11:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99099170886
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 20:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbgBZTLm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 14:11:42 -0500
-Received: from mga11.intel.com ([192.55.52.93]:20002 "EHLO mga11.intel.com"
+        id S1727229AbgBZTLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 14:11:03 -0500
+Received: from mga11.intel.com ([192.55.52.93]:19956 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726996AbgBZTLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 14:11:41 -0500
+        id S1726996AbgBZTLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 14:11:02 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 11:11:40 -0800
-X-ExtLoop1: 1
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 11:11:02 -0800
 X-IronPort-AV: E=Sophos;i="5.70,489,1574150400"; 
-   d="scan'208";a="285072252"
-Received: from kmp-skylake-client-platform.sc.intel.com ([172.25.112.108])
-  by FMSMGA003.fm.intel.com with ESMTP; 26 Feb 2020 11:11:40 -0800
-From:   Kyung Min Park <kyung.min.park@intel.com>
-To:     x86@kernel.org, linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        gregkh@linuxfoundation.org, ak@linux.intel.com,
-        tony.luck@intel.com, ashok.raj@intel.com, ravi.v.shankar@intel.com,
-        fenghua.yu@intel.com
-Subject: [PATCH 2/2] x86/asm/delay: Introduce TPAUSE delay
-Date:   Wed, 26 Feb 2020 11:10:58 -0800
-Message-Id: <1582744258-42744-3-git-send-email-kyung.min.park@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582744258-42744-1-git-send-email-kyung.min.park@intel.com>
-References: <1582744258-42744-1-git-send-email-kyung.min.park@intel.com>
+   d="scan'208";a="438538080"
+Received: from unknown (HELO kcaccard-mobl1.jf.intel.com) ([10.24.11.14])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 11:11:01 -0800
+Message-ID: <16822a0460e37e7a388217c63da8882d2904d8fc.camel@linux.intel.com>
+Subject: Re: --orphan-handling=warn
+From:   Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Fangrui Song <maskray@google.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Borislav Petkov <bp@alien8.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Michael Matz <matz@suse.de>
+Date:   Wed, 26 Feb 2020 11:11:01 -0800
+In-Reply-To: <202002252103.B4BBF01091@keescook>
+References: <20200222072144.asqaxlv364s6ezbv@google.com>
+         <20200222074254.GB11284@zn.tnic>
+         <20200222162225.GA3326744@rani.riverdale.lan>
+         <CAKwvOdnvMS21s9gLp5nUpDAOu=c7-iWYuKTeFUq+PMhsJOKUgw@mail.gmail.com>
+         <202002242122.AA4D1B8@keescook>
+         <20200225182951.GA1179890@rani.riverdale.lan>
+         <202002251140.4F28F0A4F@keescook>
+         <CAKwvOdnkr1W4LTm8XmTKGkSDUhSBRowLbKwJwyitDMAGLh9ywg@mail.gmail.com>
+         <202002251358.EDA50C11F@keescook>
+         <20200226015606.ij7wn7emuj4bfkvn@google.com>
+         <202002252103.B4BBF01091@keescook>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TPAUSE instructs the processor to enter an implementation-dependent
-optimized state. The instruction execution wakes up when the time-stamp
-counter reaches or exceeds the implicit EDX:EAX 64-bit input value.
-The instruction execution also wakes up due to the expiration of
-the operating system time-limit or by an external interrupt
-or exceptions such as a debug exception or a machine check exception.
+On Tue, 2020-02-25 at 21:35 -0800, Kees Cook wrote:
+> 
+> Thanks for looking into this! It'll be really nice to have the orphan
+> section warnings working in the kernel. And getting the ground work
+> for
+> FGKASLR ready will be nice!
+> 
+> Kristen, can I convince you that FG stands for function-granular
+> instead of fine-grain? :)
+> 
 
-TPAUSE offers a choice of two lower power states:
- 1. Light-weight power/performance optimized state C0.1
- 2. Improved power/performance optimized state C0.2
-This way, it can save power with low wake-up latency in comparison to
-spinloop based delay. The selection between the two is governed by the
-input register.
+Yes, sounds good to me - that way if we ever do basic block reordering
+or some crazy thing like that we don't have to say even-finer-fine-
+grained KASLR :).
 
-TPAUSE is available on processors with X86_FEATURE_WAITPKG.
+Thanks for your help making this work.
 
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Co-developed-by: Fenghua Yu <fenghua.yu@intel.com>
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-Signed-off-by: Kyung Min Park <kyung.min.park@intel.com>
----
- arch/x86/include/asm/mwait.h | 17 +++++++++++++++++
- arch/x86/lib/delay.c         | 26 +++++++++++++++++++++++++-
- 2 files changed, 42 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
-index 9d5252c..2067501 100644
---- a/arch/x86/include/asm/mwait.h
-+++ b/arch/x86/include/asm/mwait.h
-@@ -22,6 +22,8 @@
- #define MWAITX_ECX_TIMER_ENABLE		BIT(1)
- #define MWAITX_MAX_LOOPS		((u32)-1)
- #define MWAITX_DISABLE_CSTATES		0xf0
-+#define TPAUSE_C01_STATE		1
-+#define TPAUSE_C02_STATE		0
- 
- static inline void __monitor(const void *eax, unsigned long ecx,
- 			     unsigned long edx)
-@@ -120,4 +122,19 @@ static inline void mwait_idle_with_hints(unsigned long eax, unsigned long ecx)
- 	current_clr_polling();
- }
- 
-+/*
-+ * Caller can specify whether to enter C0.1 (low latency, less
-+ * power saving) or C0.2 state (saves more power, but longer wakeup
-+ * latency). This may be overridden by the IA32_UMWAIT_CONTROL MSR
-+ * which can force requests for C0.2 to be downgraded to C0.1.
-+ */
-+static inline void __tpause(unsigned int ecx, unsigned int edx,
-+			    unsigned int eax)
-+{
-+	/* "tpause %ecx, %edx, %eax;" */
-+	asm volatile(".byte 0x66, 0x0f, 0xae, 0xf1\t\n"
-+		     :
-+		     : "c"(ecx), "d"(edx), "a"(eax));
-+}
-+
- #endif /* _ASM_X86_MWAIT_H */
-diff --git a/arch/x86/lib/delay.c b/arch/x86/lib/delay.c
-index 6be29cf..3553150 100644
---- a/arch/x86/lib/delay.c
-+++ b/arch/x86/lib/delay.c
-@@ -86,6 +86,26 @@ static void delay_tsc(unsigned long __loops)
- }
- 
- /*
-+ * On Intel the TPAUSE instruction waits until any of:
-+ * 1) the TSC counter exceeds the value provided in EAX:EDX
-+ * 2) global timeout in IA32_UMWAIT_CONTROL is exceeded
-+ * 3) an external interrupt occurs
-+ */
-+static void tpause(u64 start, u64 cycles)
-+{
-+	u64 until = start + cycles;
-+	unsigned int eax, edx;
-+
-+	eax = (unsigned int)(until & 0xffffffff);
-+	edx = (unsigned int)(until >> 32);
-+
-+	/* Hard code the deeper (C0.2) sleep state because exit latency is
-+	 * small compared to the "microseconds" that usleep() will delay.
-+	 */
-+	__tpause(TPAUSE_C02_STATE, edx, eax);
-+}
-+
-+/*
-  * On some AMD platforms, MWAITX has a configurable 32-bit timer, that
-  * counts with TSC frequency. The input value is the loop of the
-  * counter, it will exit when the timer expires.
-@@ -153,8 +173,12 @@ static void (*delay_platform)(unsigned long) = delay_loop;
- 
- void use_tsc_delay(void)
- {
--	if (delay_platform == delay_loop)
-+	if (static_cpu_has(X86_FEATURE_WAITPKG)) {
-+		wait_func = tpause;
-+		delay_platform = delay_iterate;
-+	} else if (delay_platform == delay_loop) {
- 		delay_platform = delay_tsc;
-+	}
- }
- 
- void use_mwaitx_delay(void)
--- 
-2.7.4
 
