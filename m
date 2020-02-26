@@ -2,118 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5620F16F749
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D28116F74E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:32:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbgBZFb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 00:31:29 -0500
-Received: from mail.overt.org ([157.230.92.47]:35773 "EHLO mail.overt.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbgBZFb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 00:31:29 -0500
-X-Greylist: delayed 629 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Feb 2020 00:31:29 EST
-Received: from authenticated-user (mail.overt.org [157.230.92.47])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.overt.org (Postfix) with ESMTPSA id D93143F238;
-        Tue, 25 Feb 2020 23:20:57 -0600 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=overt.org; s=mail;
-        t=1582694459; bh=C+e4OY6fqGpnhwj+M3QG7h7Pf1ust5yrvgiTKuv00PU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=oDyZJcbcIXMAl7hujRYzIBL4H6q0qjXBNlWMtFPBgoL+iz0DUd6w+AyZQydyFkLVX
-         KH/3myFgK+rukTN1Ouf70dt6iBFOfbz3NkrXM2tQaT1QUKatcJ0Oy47cYyVsXdG1lc
-         D3q01JpRSD6BsaFbmKjSKNZVRMbdJaBdEcS9auNLQPDC71mzTHAuhsRHReicBi2dzx
-         DZ1KAGe8Wcm2W5j7XiLJUE4N0a+LYUsqSTXh+scQhQ8ipVabCo6+TgoXxG+FeMEiX/
-         jsO2WKStydNbFOysvUlRExvhmSWjK9DZEb4XYpKDG7sv5psP0bBOtQ/GHEIuc2ayx6
-         8oDGiHfD5JkgA==
-Date:   Tue, 25 Feb 2020 21:20:54 -0800
-From:   Philip Langdale <philipl@overt.org>
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Trevor Jacobs <trevor_jacobs@aol.com>,
-        "Michael ." <keltoiboy@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kris Cleveland <tridentperfusion@yahoo.com>,
-        Jeff <bluerocksaddles@willitsonline.com>,
-        Morgan Klym <moklym@gmail.com>,
-        Pierre Ossman <pierre@ossman.eu>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Subject: Re: PCI device function not being enumerated [Was: PCMCIA not
- working on Panasonic Toughbook CF-29]
-Message-ID: <20200225212054.09865e0b@fido6>
-In-Reply-To: <20200226045104.GA2191053@rani.riverdale.lan>
-References: <20191029170250.GA43972@google.com>
-        <20200222165617.GA207731@google.com>
-        <CAPDyKFq_exHufHyibFCjS78PTZ7duS9ZSt3vi18CNM6+jMmwnw@mail.gmail.com>
-        <20200226011310.GA2116625@rani.riverdale.lan>
-        <CAFjuqNg_NW7hcssWmMTtt=ioY143qn76ooT7GRhxEEe9ZVCqeQ@mail.gmail.com>
-        <6e9db1f6-60c4-872b-c7c8-96ee411aa3ca@aol.com>
-        <20200226045104.GA2191053@rani.riverdale.lan>
+        id S1726954AbgBZFcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 00:32:00 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:15925 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725890AbgBZFcA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 00:32:00 -0500
+X-UUID: 7c124bf777db4e95b6cad6f47f4dd953-20200226
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=JCK+t8ISBOj7yWNmdTukq+mypW1MjFgO15pFBPhk7bk=;
+        b=TIkEoJF2SM4l0QsxZT2iazuppWT5V7ItVlo85vmM74EdGP5w4F4oqgVNqoWxhIQ/pY6mzM661VAOTQRmidgQCysQ9/DB9yA+dWulGdfEBKuen2rS6bL7gY478KuFCGDsRUr8GGhXBs1z1mjjeKGAbkaJkJ7qpyYNe3nJhqEbPxQ=;
+X-UUID: 7c124bf777db4e95b6cad6f47f4dd953-20200226
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <gtk_ruiwang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1646308909; Wed, 26 Feb 2020 13:31:46 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N1.mediatek.inc
+ (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 26 Feb
+ 2020 13:30:29 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 26 Feb 2020 13:30:22 +0800
+Message-ID: <1582695101.6276.21.camel@mhfsdcap03>
+Subject: Re: [PATCH] mediatek: move MT8173 VPU FW to subfolder
+From:   gtk_ruiwang <gtk_ruiwang@mediatek.com>
+To:     Alexandre Courbot <acourbot@chromium.org>
+CC:     <linux-firmware@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Tomasz Figa <tfiga@chromium.org>,
+        <PoChun.Lin@mediatek.com>,
+        Longfei Wang <longfei.wang@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Maoguang Meng <maoguang.meng@mediatek.com>
+Date:   Wed, 26 Feb 2020 13:31:41 +0800
+In-Reply-To: <CAPBb6MWcoSjvxj5tHvWTiQWqY5CdgTemCmyhmio0yZMEq-4VWQ@mail.gmail.com>
+References: <20200226033646.20949-1-gtk_ruiwang@mediatek.com>
+         <20200226033646.20949-2-gtk_ruiwang@mediatek.com>
+         <CAPBb6MWN6bXfYvpBJ6XyPCuvJSpdxNOf4Z9RbY0jbnB5=JX_sQ@mail.gmail.com>
+         <1582690790.6276.19.camel@mhfsdcap03>
+         <CAPBb6MWcoSjvxj5tHvWTiQWqY5CdgTemCmyhmio0yZMEq-4VWQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 9A0097486F9233037774B591F3A3B223952FD4F850E57BBE71392346B1574B372000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Feb 2020 23:51:05 -0500
-Arvind Sankar <nivedita@alum.mit.edu> wrote:
+RGVhciBBbGV4LA0KDQp3ZSBoYXZlIHN1Ym1pdCBhIG5ldyBwYXRjaCB0byBsaW51eC1maXJtd2Fy
+ZSwgYW5kIHVwZGF0ZSBXSEVOQ0UgZmlsZS4NCg0KcGxlYXNlIGtpbmRseSBoZWxwIHRvIHJldmll
+dyBpdC4NCg0KVGhhbmtzDQpCZXN0IFJlZ2FyZHMNCg0KT24gV2VkLCAyMDIwLTAyLTI2IGF0IDEz
+OjQ1ICswOTAwLCBBbGV4YW5kcmUgQ291cmJvdCB3cm90ZToNCj4gT24gV2VkLCBGZWIgMjYsIDIw
+MjAgYXQgMToyMCBQTSBndGtfcnVpd2FuZyA8Z3RrX3J1aXdhbmdAbWVkaWF0ZWsuY29tPiB3cm90
+ZToNCj4gPg0KPiA+IERlYXIgQWxleCwNCj4gPg0KPiA+IERvIHlvdSBtZWFuIHRvIGNyZWF0ZSB0
+d28gc3ltYm9saWMgbGluaz8NCj4gPg0KPiA+IGxyd3hyd3hyd3ggIDEgZ3RrX3J1aXdhbmcgZ3Rr
+X3J1aXdhbmcgICAgICAyNSBGZWIgMjYgMTE6NTIgdnB1X2QuYmluIC0+DQo+ID4gbWVkaWF0ZWsv
+bXQ4MTczL3ZwdV9kLmJpbg0KPiA+IGxyd3hyd3hyd3ggIDEgZ3RrX3J1aXdhbmcgZ3RrX3J1aXdh
+bmcgICAgICAyNSBGZWIgMjYgMTE6NTIgdnB1X3AuYmluIC0+DQo+ID4gbWVkaWF0ZWsvbXQ4MTcz
+L3ZwdV9wLmJpbg0KPiANCj4gWWVzLCBvdGhlcndpc2Ugb2xkZXIga2VybmVscyB3aWxsIGJlY29t
+ZSB1bmFibGUgdG8gdXNlIHRoZSBmaXJtd2FyZS4gSQ0KPiBkb24ndCBrbm93IHdoZXRoZXIgdGhl
+c2UgYXJlIHN1cHBvc2VkIHRvIHN0YXkgZm9yZXZlciBvciB3aGV0aGVyIHdlDQo+IGNhbiByZW1v
+dmUgdGhlbSBhZnRlciBhIHdoaWxlLi4uIHByZXN1bWFibHkgdGhlIGZvcm1lci4NCj4gDQo+IEFs
+c28gdGhlIFdIRU5DRSBmaWxlIHNob3VsZCBwcm9iYWJseSBiZSB1cGRhdGVkIHRvIGxpc3QgdGhl
+IG5ldyBmaWxlcy4NCj4gDQo+ID4NCj4gPiB3ZSBjcmVhdGUgdGhlbSBhdCB0aGUgbGludXgtZmly
+bXdhcmUgcm9vdCBmb2xkZXIuDQo+ID4NCj4gPiBUaGFua3MNCj4gPiBCZXN0IFJlZ2FyZHMNCj4g
+Pg0KPiA+IE9uIFdlZCwgMjAyMC0wMi0yNiBhdCAxMjo0MSArMDkwMCwgQWxleGFuZHJlIENvdXJi
+b3Qgd3JvdGU6DQo+ID4gPiBPbiBXZWQsIEZlYiAyNiwgMjAyMCBhdCAxMjozOCBQTSA8Z3RrX3J1
+aXdhbmdAbWVkaWF0ZWsuY29tPiB3cm90ZToNCj4gPiA+ID4NCj4gPiA+ID4gRnJvbTogZ3RrX3J1
+aXdhbmcgPGd0a19ydWl3YW5nQG1lZGlhdGVrLmNvbT4NCj4gPiA+ID4NCj4gPiA+ID4gQ3VycmVu
+dGx5IHZwdV9kLmJpbiBhbmQgdnB1X3AuYmluIGFyZSBhdCB0aGUgcm9vdCBvZg0KPiA+ID4gPiBs
+aW51eC1maXJtd2FyZSBnaXQgdHJlZSwgaXQncyBub3QgYXBwcm9wcmlhdGUgc28gd2UgbW92ZQ0K
+PiA+ID4gPiB0aGVtIHRvIHN1YmZvbGRlciBtZWRpYXRlay9tdDgxNzMNCj4gPiA+ID4NCj4gPiA+
+ID4gUmVsZWFzZSBWZXJzaW9uOiAxLjEuNA0KPiA+ID4gPg0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5
+OiBSdWkgV2FuZyA8Z3RrX3J1aXdhbmdAbWVkaWF0ZWsuY29tPg0KPiA+ID4gPiAtLS0NCj4gPiA+
+ID4gIHZwdV9kLmJpbiA9PiBtZWRpYXRlay9tdDgxNzMvdnB1X2QuYmluIHwgQmluDQo+ID4gPiA+
+ICB2cHVfcC5iaW4gPT4gbWVkaWF0ZWsvbXQ4MTczL3ZwdV9wLmJpbiB8IEJpbg0KPiA+ID4gPiAg
+MiBmaWxlcyBjaGFuZ2VkLCAwIGluc2VydGlvbnMoKyksIDAgZGVsZXRpb25zKC0pDQo+ID4gPiA+
+ICByZW5hbWUgdnB1X2QuYmluID0+IG1lZGlhdGVrL210ODE3My92cHVfZC5iaW4gKDEwMCUpDQo+
+ID4gPiA+ICByZW5hbWUgdnB1X3AuYmluID0+IG1lZGlhdGVrL210ODE3My92cHVfcC5iaW4gKDEw
+MCUpDQo+ID4gPg0KPiA+ID4gVGhpcyBpcyBuaWNlIGFzIGl0IHJlbW92ZXMgc29tZSBzdHVmZiBm
+cm9tIHRoZSByb290LCBidXQgZm9yDQo+ID4gPiBjb21wYXRpYmlsaXR5IHdpdGggb2xkZXIga2Vy
+bmVscyB0aGF0IGRvbid0IGtub3cgYWJvdXQgdGhlIG5ldyBwYXRoDQo+ID4gPiBzaG91bGRuJ3Qg
+d2UgYXQgbGVhc3QgdGVtcG9yYXJpbHkgY3JlYXRlIGEgc3ltYm9saWMgbGluayBiZXR3ZWVuIHRo
+ZQ0KPiA+ID4gb2xkIGxvY2F0aW9uIGFuZCB0aGUgbmV3IG9uZT8NCj4gPg0KDQo=
 
-> On Tue, Feb 25, 2020 at 09:12:48PM -0600, Trevor Jacobs wrote:
-> > That's correct, I tested a bunch of the old distros including
-> > slackware, and 2.6.32 is where the problem began.
-> > 
-> > Also, the Panasonic Toughbook CF-29s effected that we tested are
-> > the later marks, MK4 and MK5 for certain. The MK2 CF-29 worked just
-> > fine because it has different hardware supporting the PCMCIA slots.
-> > I have not tested a MK3 but suspect it would work ok as it also
-> > uses the older hardware.
-> > 
-> > Thanks for your help guys!
-> > Trevor
-> > 
-> 
-> Right, the distros probably all enabled MMC_RICOH_MMC earlier than
-> upstream. Can you test a custom kernel based off your distro kernel
-> but just disabling that config option? That's probably the easiest fix
-> currently, even though not ideal. Perhaps there should be a command
-> line option to disable specific pci quirks to make this easier.
-> 
-> An ideal fix is I feel hard, given this quirk is based on undocumented
-> config registers -- it worked on Dell machines (that's where the
-> original authors seem to have gotten their info from), perhaps they
-> had only one Cardbus slot, but the code ends up disabling your second
-> Cardbus slot instead of disabling the MMC controller.
-
-Keeping in mind that this was 12+ years ago, you can at least still
-read the original discussion in the archives. My original Dell laptop
-(XPS m1330) had no cardbus slots at all, and used the r5c832
-controller. There was a subsequent change that I was not involved with
-which added support for the rl5c476, which is the problematic device in
-this thread.
-
-As a hypothesis, based on the observed behaviour, the quirk (keeping in
-mind that these are magic configuration register values that are not
-documented) probably disabled function 1, regardless of what it is, and
-the original example that motivated adding the rl5c476 quirk probably
-had one cardbus slot and the card reader functions were all moved up
-one, or something along those lines.
-
-Truly making this smart would then involve having the code enumerate
-the pci functions and identify the one that is the unwanted mmc
-controller, based on function ID or class or whatever, and then
-disabling that (assuming the magic can be reverse engineered: eg, the
-current magic ORs the disable flag with 0x02 - chances are, that's the
-index of the function: 0x01 would be the 0th function, 0x04 would be
-the 2nd function, etc). Someone with access to real hardware could
-easily experiment with changing that magic value and seeing if it
-changes which function is disabled.
-
-Good luck.
-
---phil
