@@ -2,167 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93EEB170882
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 20:10:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24549170889
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 20:11:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbgBZTKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 14:10:22 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56434 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727035AbgBZTKW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 14:10:22 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01QJ9cg5118155
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 14:10:21 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ydq6whb8q-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 14:10:20 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Wed, 26 Feb 2020 19:10:18 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 26 Feb 2020 19:10:15 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01QJAEhm53674226
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 19:10:14 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0150C11C04C;
-        Wed, 26 Feb 2020 19:10:14 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 71B3111C058;
-        Wed, 26 Feb 2020 19:10:11 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.160.92.140])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 26 Feb 2020 19:10:11 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-efi@vger.kernel.org, linux-s390@vger.kernel.org
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Philipp Rudo <prudo@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, zohar@linux.ibm.com,
-        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH] ima: add a new CONFIG for loading arch-specific policies
-Date:   Wed, 26 Feb 2020 14:10:07 -0500
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 20022619-0008-0000-0000-00000356B53E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022619-0009-0000-0000-00004A77D515
-Message-Id: <1582744207-25969-1-git-send-email-nayna@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-26_07:2020-02-26,2020-02-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 spamscore=0
- mlxlogscore=999 clxscore=1011 mlxscore=0 adultscore=0 impostorscore=0
- phishscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2001150001 definitions=main-2002260119
+        id S1727257AbgBZTLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 14:11:41 -0500
+Received: from mga11.intel.com ([192.55.52.93]:20002 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726996AbgBZTLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 14:11:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 11:11:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,489,1574150400"; 
+   d="scan'208";a="285072246"
+Received: from kmp-skylake-client-platform.sc.intel.com ([172.25.112.108])
+  by FMSMGA003.fm.intel.com with ESMTP; 26 Feb 2020 11:11:40 -0800
+From:   Kyung Min Park <kyung.min.park@intel.com>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        gregkh@linuxfoundation.org, ak@linux.intel.com,
+        tony.luck@intel.com, ashok.raj@intel.com, ravi.v.shankar@intel.com,
+        fenghua.yu@intel.com
+Subject: [PATCH 0/2] x86/delay: Introduce TPAUSE instruction 
+Date:   Wed, 26 Feb 2020 11:10:56 -0800
+Message-Id: <1582744258-42744-1-git-send-email-kyung.min.park@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Every time a new architecture defines the IMA architecture specific
-functions - arch_ima_get_secureboot() and arch_ima_get_policy(), the IMA
-include file needs to be updated. To avoid this "noise", this patch
-defines a new IMA Kconfig IMA_SECURE_AND_OR_TRUSTED_BOOT option, allowing
-the different architectures to select it.
+Intel processors that support the WAITPKG feature implement
+the TPAUSE instruction that suspends execution in a lower power
+state until the TSC (Time Stamp Counter) exceeds a certain value.
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Philipp Rudo <prudo@linux.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
----
- arch/powerpc/Kconfig           | 2 +-
- arch/s390/Kconfig              | 1 +
- arch/x86/Kconfig               | 1 +
- include/linux/ima.h            | 3 +--
- security/integrity/ima/Kconfig | 9 +++++++++
- 5 files changed, 13 insertions(+), 3 deletions(-)
+Update the udelay() function to use TPAUSE on systems where it
+is available. Note that we hard code the deeper (C0.2) sleep
+state because exit latency is small compared to the "microseconds"
+that usleep() will delay.
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 497b7d0b2d7e..b8ce1b995633 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -246,6 +246,7 @@ config PPC
- 	select SYSCTL_EXCEPTION_TRACE
- 	select THREAD_INFO_IN_TASK
- 	select VIRT_TO_BUS			if !PPC64
-+	select IMA_SECURE_AND_OR_TRUSTED_BOOT	if PPC_SECURE_BOOT
- 	#
- 	# Please keep this list sorted alphabetically.
- 	#
-@@ -978,7 +979,6 @@ config PPC_SECURE_BOOT
- 	prompt "Enable secure boot support"
- 	bool
- 	depends on PPC_POWERNV
--	depends on IMA_ARCH_POLICY
- 	help
- 	  Systems with firmware secure boot enabled need to define security
- 	  policies to extend secure boot to the OS. This config allows a user
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 8abe77536d9d..90ff3633ade6 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -195,6 +195,7 @@ config S390
- 	select ARCH_HAS_FORCE_DMA_UNENCRYPTED
- 	select SWIOTLB
- 	select GENERIC_ALLOCATOR
-+	select IMA_SECURE_AND_OR_TRUSTED_BOOT
- 
- 
- config SCHED_OMIT_FRAME_POINTER
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index beea77046f9b..cafa66313fe2 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -230,6 +230,7 @@ config X86
- 	select VIRT_TO_BUS
- 	select X86_FEATURE_NAMES		if PROC_FS
- 	select PROC_PID_ARCH_STATUS		if PROC_FS
-+	select IMA_SECURE_AND_OR_TRUSTED_BOOT	if EFI
- 
- config INSTRUCTION_DECODER
- 	def_bool y
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 1659217e9b60..aefe758f4466 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -30,8 +30,7 @@ extern void ima_kexec_cmdline(const void *buf, int size);
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
- 
--#if (defined(CONFIG_X86) && defined(CONFIG_EFI)) || defined(CONFIG_S390) \
--	|| defined(CONFIG_PPC_SECURE_BOOT)
-+#ifdef CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
- extern bool arch_ima_get_secureboot(void);
- extern const char * const *arch_get_ima_policy(void);
- #else
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 3f3ee4e2eb0d..d17972aa413a 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -327,3 +327,12 @@ config IMA_QUEUE_EARLY_BOOT_KEYS
- 	depends on IMA_MEASURE_ASYMMETRIC_KEYS
- 	depends on SYSTEM_TRUSTED_KEYRING
- 	default y
-+
-+config IMA_SECURE_AND_OR_TRUSTED_BOOT
-+	bool
-+	depends on IMA
-+	depends on IMA_ARCH_POLICY
-+	default n
-+	help
-+	   This option is selected by architectures to enable secure and/or
-+	   trusted boot based on IMA runtime policies.
+Kyung Min Park (2):
+  x86/asm: Define a few helpers in delay_waitx()
+  x86/asm/delay: Introduce TPAUSE delay
+
+ arch/x86/include/asm/mwait.h | 17 +++++++++
+ arch/x86/lib/delay.c         | 82 ++++++++++++++++++++++++++++++++------------
+ 2 files changed, 78 insertions(+), 21 deletions(-)
+
 -- 
-2.18.1
+2.7.4
 
