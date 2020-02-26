@@ -2,66 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CB5A1701ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:07:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D4CD1701D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:05:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbgBZPH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 10:07:27 -0500
-Received: from outbound-smtp61.blacknight.com ([46.22.136.249]:52239 "EHLO
-        outbound-smtp61.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726990AbgBZPH1 (ORCPT
+        id S1727895AbgBZPFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 10:05:44 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:36874 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726148AbgBZPFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:07:27 -0500
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp61.blacknight.com (Postfix) with ESMTPS id 28343FA7C4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 15:07:25 +0000 (GMT)
-Received: (qmail 21281 invoked from network); 26 Feb 2020 15:07:25 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 26 Feb 2020 15:07:25 -0000
-Date:   Wed, 26 Feb 2020 15:07:23 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-Subject: Re: [PATCH] sched/fair: Fix unused prototype warning
-Message-ID: <20200226150723.GD3818@techsingularity.net>
-References: <20200226121244.7524-1-valentin.schneider@arm.com>
+        Wed, 26 Feb 2020 10:05:43 -0500
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01QEn6nc014221;
+        Wed, 26 Feb 2020 10:05:42 -0500
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ydtrwg1qd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Feb 2020 10:05:42 -0500
+Received: from ASHBMBX9.ad.analog.com (ashbmbx9.ad.analog.com [10.64.17.10])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 01QF5eOe060220
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Wed, 26 Feb 2020 10:05:40 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Wed, 26 Feb
+ 2020 10:05:40 -0500
+Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Wed, 26 Feb 2020 10:05:39 -0500
+Received: from saturn.ad.analog.com ([10.48.65.109])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01QF5c9H003536;
+        Wed, 26 Feb 2020 10:05:38 -0500
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <jic23@kernel.org>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH v2 0/7] iio: adi-axi-adc,ad9647: Add support for AD9467 ADC
+Date:   Wed, 26 Feb 2020 17:08:28 +0200
+Message-ID: <20200226150835.19649-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20200226121244.7524-1-valentin.schneider@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-26_05:2020-02-26,2020-02-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ phishscore=0 adultscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ suspectscore=2 clxscore=1015 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002260108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 12:12:44PM +0000, Valentin Schneider wrote:
-> Building against the latest tip/sched/core
-> 
->   a0f03b617c3b ("sched/numa: Stop an exhastive search if a reasonable swap candidate or idle CPU is found")
-> 
-> with the arm64 defconfig (which doesn't have CONFIG_SCHED_SMT set) leads
-> to:
-> 
->   kernel/sched/fair.c:1525:20: warning: ???test_idle_cores??? declared ???static??? but never defined [-Wunused-function]
->    static inline bool test_idle_cores(int cpu, bool def);
-> 		      ^~~~~~~~~~~~~~~
-> 
-> Rather than define it in its own CONFIG_SCHED_SMT #define island, bunch it
-> up with test_idle_cores().
-> 
-> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+This changeset adds support for the AD9467 LVDS High-Speed ADC.
+In order to support it, support for an FPGA ADI AXI ADC is added in this
+set.
+This uses the current support for IIO buffer DMAEngine.
 
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Changelog v1 -> v2:
+* first series was added a bit hastily
+* addressed  'make dt_binding_check' complaints; seems I missed a few when running the check; 
+* added missing patches to include/linux/fpga/adi-axi-common.h
+   - 'include: fpga: adi-axi-common.h: fixup whitespace tab -> space'
+   - 'include: fpga: adi-axi-common.h: add version helper macros'
+* patch 'iio: buffer-dmaengine: add dev-managed calls for buffer alloc/free'
+   - remove copy+pasted comment for 'devm_iio_dmaengine_buffer_alloc()'
+   - removed devm_iio_dmaengine_buffer_free() ; hopefully it might never be needed
+   - fix-up alignment for devm_iio_dmaengine_buffer_alloc() in header
+* patch 'iio: adc: adi-axi-adc: add support for AXI ADC IP core'
+   - renamed axi-adc.c -> adi-axi-adc.c & Kconfig symbol
+   - prefix all axi_adc -> adi_axi_adc
+   - removed switch statement in axi_adc_read_raw() & axi_adc_write_raw()
+   - remove axi_adc_chan_spec ; replaced with iio_chan_spec directly ; will think of a simpler solution for extra chan params
+   - removed left-over 'struct axi_adc_cleanup_data'
+   - moved 'devm_add_action_or_reset()' call right after 'adi_axi_adc_attach_client()'
+   - switched to using 'devm_platform_ioremap_resource()'
+* patch 'iio: adc: ad9467: add support AD9467 ADC'
+  - renamed ADI_ADC reg prefixes to AN877_ADC
+  - dropped 'info_mask_separate' field in AD9467_CHAN - will be re-added later when driver gets more features; was left-over from the initial ref driver
+  - remove .shift = 0,  in AD9467_CHAN
+  - renamed 'sample-clock' -> 'adc-clock'
+  - direct returns in ad9467_read_raw() & ad9467_write_raw() & ad9467_setup() switch statements
+  - removed blank line after devm_axi_adc_conv_register()
+  - removed ad9467_id & reworked to use ad9467_of_match
 
-Ingo, what is your preferred method for dealing with this situation
-in tip? A resubmission of "sched/numa: Stop an exhastive search if a
-reasonable swap candidate or idle CPU is found" with these folded together
-or Valentin's patch on top?
+
+Alexandru Ardelean (5):
+  include: fpga: adi-axi-common.h: fixup whitespace tab -> space
+  include: fpga: adi-axi-common.h: add version helper macros
+  iio: buffer-dmaengine: add dev-managed calls for buffer alloc
+  dt-bindings: iio: adc: add bindings doc for AXI ADC driver
+  dt-bindings: iio: adc: add bindings doc for AD9467 ADC
+
+Michael Hennerich (2):
+  iio: adc: adi-axi-adc: add support for AXI ADC IP core
+  iio: adc: ad9467: add support AD9467 ADC
+
+ .../bindings/iio/adc/adi,ad9467.yaml          |  65 ++
+ .../bindings/iio/adc/adi,axi-adc.yaml         |  69 +++
+ drivers/iio/adc/Kconfig                       |  35 ++
+ drivers/iio/adc/Makefile                      |   2 +
+ drivers/iio/adc/ad9467.c                      | 432 +++++++++++++
+ drivers/iio/adc/adi-axi-adc.c                 | 566 ++++++++++++++++++
+ .../buffer/industrialio-buffer-dmaengine.c    |  39 ++
+ include/linux/fpga/adi-axi-common.h           |   6 +-
+ include/linux/iio/adc/adi-axi-adc.h           |  63 ++
+ include/linux/iio/buffer-dmaengine.h          |   3 +
+ 10 files changed, 1279 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad9467.yaml
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
+ create mode 100644 drivers/iio/adc/ad9467.c
+ create mode 100644 drivers/iio/adc/adi-axi-adc.c
+ create mode 100644 include/linux/iio/adc/adi-axi-adc.h
 
 -- 
-Mel Gorman
-SUSE Labs
+2.20.1
+
