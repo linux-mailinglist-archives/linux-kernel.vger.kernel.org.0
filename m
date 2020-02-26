@@ -2,85 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E643B16FF3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:46:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B107716FF5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:59:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbgBZMqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 07:46:15 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33728 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbgBZMqO (ORCPT
+        id S1726838AbgBZM7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 07:59:06 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:34236 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbgBZM7G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 07:46:14 -0500
-Received: by mail-lj1-f195.google.com with SMTP id y6so2978023lji.0;
-        Wed, 26 Feb 2020 04:46:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qgJPSpfwkB4wpHwVPaSt8tJmm/cC07E5aTtE/ZGtNew=;
-        b=hJAIwt3XqcA6vdQYlW5DN1YmEqE1lXwSUL3D9lMIL4oTQ7g/Q+sMxozuu5BCwAIyXC
-         fhi9rbfJsXmquyo1vwBRXfm2gwf/M0mMzhFe9uO/CFpITOf4artAjfPx4sbGj4W8hleM
-         MJ48U6K3xxgtdkGcRBgifFExebZTmpC4sEy+2rWNtahDhyvJWx2JR8ckHSASBcef/fdi
-         yvlAoM6IgumqA7T1upMmzuC5zMxU/5VCAfVYp0MCElHeH5VHFbBh1ogjysPJtu8WqhRK
-         OOfuAwOnM7TWmV2/O6u/dLAw6LWaGj487oyJyQ/JJM8kRHSeqPQCVVO/qo8qgUtmr8Ga
-         2jNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qgJPSpfwkB4wpHwVPaSt8tJmm/cC07E5aTtE/ZGtNew=;
-        b=Oszo+MRO9mI9hAm6oa02gQ8lgjElR7otptitAh5mjEYUunlXpYuX5C9UmyoEQpUdei
-         Afg8FTP8NEBA4+VPNqvK5d32Zq/DbjeRDa6g9xevzqEBqri11aMOwi6jsucLFoEzk3OW
-         GdXSSHyr5iz4CRiDMaghjHgDovJVtdJQvFJYVkz+5B18pql1cNm15CZocMnXXLkdsOX4
-         miQwVCrcTWZ+tclp/KepX3LZOpjOr2IB7/H9rTPNE3Zc9Xx5dQIjQAXNf0F4SogTVhZN
-         6fVkOvYHCQ2Rac4MY6fCuQFM5ONL3UwHuG2QZkLdI+JMFlFN+vIJ3mVR2LvKeRiapxgX
-         h4fw==
-X-Gm-Message-State: APjAAAX+DL7o7ENslAP7yc/uMfOfTtAhKltbzmMWpQIS20SEH824I5Os
-        QOfEcoCPFke71LQNUvc3zV8PqAm/ZDvwzMPytaSxLA==
-X-Google-Smtp-Source: APXvYqzaHbc9A2c9xE2edfnUWxJTjRVKLCIJGvlkTyklIyTN06zsZhz4ISWpDA1VVtf7NNjiq/hDCBcwaUp3aSzRtyE=
-X-Received: by 2002:a2e:2e11:: with SMTP id u17mr2865444lju.117.1582721172264;
- Wed, 26 Feb 2020 04:46:12 -0800 (PST)
+        Wed, 26 Feb 2020 07:59:06 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 468F01C0411; Wed, 26 Feb 2020 13:59:04 +0100 (CET)
+Date:   Wed, 26 Feb 2020 13:59:03 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v17 00/17] Multi Color LED Framework
+Message-ID: <20200226125903.GA2800@duo.ucw.cz>
+References: <20200127150032.31350-1-dmurphy@ti.com>
+ <42d9687b-b488-22cf-0e9a-ff635b2094e3@ti.com>
+ <20200225101940.GB16252@amd>
+ <be76fdac-9d32-b9b2-c01d-3aa315b14463@gmail.com>
 MIME-Version: 1.0
-References: <20200224062917.4895-1-martin.kepplinger@puri.sm> <20200224062917.4895-5-martin.kepplinger@puri.sm>
-In-Reply-To: <20200224062917.4895-5-martin.kepplinger@puri.sm>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 26 Feb 2020 09:46:01 -0300
-Message-ID: <CAOMZO5DV9JY=7Vg3RL_T4W_8yb1DnLThmS_LWM45uWAAgeXwQA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/8] arm64: dts: librem5-devkit: add a vbus supply to usb0
-To:     Martin Kepplinger <martin.kepplinger@puri.sm>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, kernel@puri.sm,
-        Yongcai Huang <Anson.Huang@nxp.com>,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
+Content-Disposition: inline
+In-Reply-To: <be76fdac-9d32-b9b2-c01d-3aa315b14463@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
 
-On Mon, Feb 24, 2020 at 3:31 AM Martin Kepplinger
-<martin.kepplinger@puri.sm> wrote:
->
-> From: "Angus Ainslie (Purism)" <angus@akkea.ca>
->
-> Without a VBUS supply the dwc3 driver won't go into otg mode.
+--ew6BAiZeqk4r7MaW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Since this is a bug fix, it would be better to put it as the first
-patch of the series, with a Fixes tag and Cc stable, so that it could
-be backported to stable trees.
+Hi!
 
-Please rearrange the series and put all bug fixes first with Fixes tag
-and Cc stable.
+> > The fact that it changes API makes it important to get it right, and
+> > hard/impossible to fix it once it is merged... and I don't think this
+> > is the right interface (sorry).
+> >=20
+> > In particular, I don't think having directory per channel is a good
+> > idea. It makes atomic updates impossible (minor),=20
+>=20
+> It is possible via brightness file, although it will need first writing
+> intensity files, which only will cache colors, and actual write to hw
+> occurs on write to brightness file. This has been discussed dozen of
+> times throughout last year, and you even proposed the formula for
+> calculating per-color-subled brightness basing on global brightness and
+> intensity set for each color.
 
-Thanks
+You are right, it is possible to make updates atomic with right kind
+of latching (which is quite confusing).
+
+> > but will also
+> > increase memory consuption (to a point where led-per-channel might
+> > be cheaper), and will make userspace do 3x ammount of syscalls in the
+> > common case.
+> >=20
+> > And we can do better; sysfs files with arrays are okay. So I'd like to
+> > see
+>=20
+> Let's first achieve broader consensus on this statement before we
+> move forward with such design. Sysfs maintainer seems to be the best
+> person to consult at first.
+
+This is actually documented:
+
+Documentation/filesystems/sysfs.txt
+
+<quote>
+Attributes should be ASCII text files, preferably with only one value
+per file. It is noted that it may not be efficient to contain only one
+value per file, so it is socially acceptable to express an array of
+values of the same type.
+
+Mixing types, expressing multiple lines of data, and doing fancy
+formatting of data is heavily frowned upon. Doing these things may get
+you publicly humiliated and your code rewritten without notice.
+</quote>
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--ew6BAiZeqk4r7MaW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXlZrlwAKCRAw5/Bqldv6
+8n/NAKCKU9K9JzjINSNvKz3r95fZTH6YewCeJqh+JZdF1q95vjN/nmX/wyOSbhI=
+=wVDj
+-----END PGP SIGNATURE-----
+
+--ew6BAiZeqk4r7MaW--
