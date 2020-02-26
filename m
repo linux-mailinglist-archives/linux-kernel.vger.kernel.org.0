@@ -2,88 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1891C16FF35
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:43:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DF4716FF48
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:49:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgBZMnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 07:43:02 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41770 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbgBZMnB (ORCPT
+        id S1726765AbgBZMta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 07:49:30 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:35416 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbgBZMta (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 07:43:01 -0500
-Received: by mail-lj1-f193.google.com with SMTP id h23so2923646ljc.8;
-        Wed, 26 Feb 2020 04:43:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=naHmwMkEZlsq2F2BdV78t7a2n6KXkH4cArO0DzqKw9s=;
-        b=oQ1YXDo6+jB9aH9a05GU0xwO2NeTx0pZ2jpQW5sC7FObezAamb9GLR1j9y80Vd7PW4
-         5XEffKqjS2T8VLrsMUL0B2r14bi6hf7ak0FjH/qafJEHkGVUiPpOwEC2K/SotBZqNBdT
-         I+xDbdHSXNJZgX2OTKDz5Vc3iMPuXVCPpvMLeAy3NPWzFm1nmue6F3HMibuTpfGnayE+
-         SyzzsNrJ6YpQLC0V2Bkc85eHEJ8Yu/7h9Bj3XtOnkGKqumkYA9Zv2fUGZW4rRP7XZJG1
-         HxEaYpF9FFJMrft2C6sK5HsayCuwHzrqHHWgJ8KAOXTKT0rjr9T+KJL5lwtaAOtbpBc5
-         7TkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=naHmwMkEZlsq2F2BdV78t7a2n6KXkH4cArO0DzqKw9s=;
-        b=EtxSzbmchcmJjktcb4SoSENIZxGQPTQyT8gfAQt+AaA84jxHSfb4421fachBs/J2rx
-         DvKDPyKAuUb2O+tQ8t/YPm97r2A/EWsrKjX/NERI85V1omFPpzwnyatxtA0IT7dP4OEA
-         3GF2FWSFfMPJSC/cPV1ca6KwKaI6EPuTbAZAxfxJ2MWLlgVX+OuBF5o57EBKtdCgxrdt
-         xP3LDGZCgX0jnlDjnoaRvvfKehf2J5uIzW3FLjzjkKcedLdJn/rKNUdcdxU6cOLr2dAm
-         Y5IBCoe6Icq/s75vllkhDOXKrmd0Gy4pfmTRA+Ap7kd85ASVEaI1+sDNGFAyKqz32EUi
-         QgJg==
-X-Gm-Message-State: APjAAAUu7ntuq4HjmiF5nJnG5eToRTDBiGTwdDzfwsBAdL/G8IRD5Nur
-        VViM816/jg3rDqPN2LsG3BdnQVb/NSaeX5YSvwA=
-X-Google-Smtp-Source: ADFU+vtwr9qHZQRp7nOQn9p0PoE3msDjcGJRvRyC8H+RwcRzDCO3GQIm5dNAC1Bue/fML340D2kMrue/X63xSXz+WfQ=
-X-Received: by 2002:a05:651c:d4:: with SMTP id 20mr2838816ljr.269.1582720979846;
- Wed, 26 Feb 2020 04:42:59 -0800 (PST)
+        Wed, 26 Feb 2020 07:49:30 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01QCmZSG092302;
+        Wed, 26 Feb 2020 06:48:35 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582721315;
+        bh=qYQrOZJn5DkQX/MgteHrOqOgtCv5LvbVJDJqYH5KvWA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=lnuYzxX5dli5VPGe/9GbcvvVESpz8K/mX656tRgSJI7oWHR14eOmqJ62B3rymIWA3
+         QXz1tp+AicYaIK1lPI3dIEH2GVq5E/RZ2EWoWzTBmXtbw0F26C2IoDGrDzbgJ/Ac6A
+         I71s7IlJSn1NML1WhPUgXPGzblldmwVzYqwvyAr0=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01QCmZjq006680
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Feb 2020 06:48:35 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 26
+ Feb 2020 06:48:34 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 26 Feb 2020 06:48:34 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01QCmYN7040385;
+        Wed, 26 Feb 2020 06:48:34 -0600
+Subject: Re: [PATCH v3 2/2] ASoC: tlv320adcx140: Add the tlv320adcx140 codec
+ driver family
+To:     Ricard Wanderlof <ricardw@axis.com>
+CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200219125942.22013-1-dmurphy@ti.com>
+ <20200219125942.22013-3-dmurphy@ti.com>
+ <alpine.DEB.2.20.2002261138040.19469@lnxricardw1.se.axis.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <62c9be55-7ca7-eeaa-52e6-2b93783769a1@ti.com>
+Date:   Wed, 26 Feb 2020 06:43:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200224062917.4895-1-martin.kepplinger@puri.sm> <20200224062917.4895-2-martin.kepplinger@puri.sm>
-In-Reply-To: <20200224062917.4895-2-martin.kepplinger@puri.sm>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 26 Feb 2020 09:42:49 -0300
-Message-ID: <CAOMZO5BxS-+1=NVgZ4nJcneVGMr7B8sLL+gYidXfgrvPSRB0JQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] arm64: dts: librem5-devkit: enable sai2 and sai6
- audio interface
-To:     Martin Kepplinger <martin.kepplinger@puri.sm>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, kernel@puri.sm,
-        Yongcai Huang <Anson.Huang@nxp.com>,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.20.2002261138040.19469@lnxricardw1.se.axis.com>
+Content-Type: text/plain; charset="iso-8859-15"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+Richard
 
-On Mon, Feb 24, 2020 at 3:31 AM Martin Kepplinger
-<martin.kepplinger@puri.sm> wrote:
+On 2/26/20 5:18 AM, Ricard Wanderlof wrote:
+> On Wed, 19 Feb 2020, Dan Murphy wrote:
 >
-> From: "Angus Ainslie (Purism)" <angus@akkea.ca>
+>> Add the tlv320adcx140 codec driver family.
+>>
+> ...
 >
-> Add missing sai2 and sai6 audio interface and pinctrl definitions for the
-> Librem 5 devkit.
+>> +
+>> +static int adcx140_set_dai_fmt(struct snd_soc_dai *codec_dai,
+>> +                              unsigned int fmt)
+>> +{
+>> +       struct snd_soc_component *component = codec_dai->component;
+>> +       struct adcx140_priv *adcx140 =
+>> snd_soc_component_get_drvdata(component);
+>> +       u8 iface_reg1 = 0;
+>> +       u8 iface_reg2 = 0;
+>> +
+>> +       /* set master/slave audio interface */
+>> +       switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+>> +       case SND_SOC_DAIFMT_CBM_CFM:
+>> +               iface_reg2 |= ADCX140_BCLK_FSYNC_MASTER;
+> Although this sets up the codec to be I2S master, there doesn't seem to be
+> a way of actually configuring the master clock frequency in master mode,
+> as there is no .set_sysclk member in adcx140_dai_ops (and the
+> corresponding register field appears never to be touched by the driver).
+
+Thanks for the comments.  The driver was written for the device to be in 
+slave mode with auto clock configuration set.
+
+I will look into adding the master mode clock settings.
+
 >
-> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-> Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
+>> +               break;
+>> +       case SND_SOC_DAIFMT_CBS_CFS:
+>> +               break;
+>> +       case SND_SOC_DAIFMT_CBS_CFM:
+>> +       case SND_SOC_DAIFMT_CBM_CFS:
+>> +       default:
+>> +               dev_err(component->dev, "Invalid DAI master/slave interface\n");
+>> +               return -EINVAL;
+>> +       }
+> ...
+>
+>> +
+>> +static int adcx140_codec_probe(struct snd_soc_component *component)
+>> +{
+>> +       struct adcx140_priv *adcx140 =
+>> snd_soc_component_get_drvdata(component);
+>> +       int sleep_cfg_val = ADCX140_WAKE_DEV;
+>> +       u8 bias_source;
+>> +       u8 vref_source;
+>> +       int ret;
+>> +
+>> +       ret = device_property_read_u8(adcx140->dev, "ti,mic-bias-source",
+>> +                                     &bias_source);
+>> +       if (ret)
+>> +               bias_source = ADCX140_MIC_BIAS_VAL_VREF;
+>> +
+>> +       if (bias_source != ADCX140_MIC_BIAS_VAL_VREF &&
+>> +           bias_source != ADCX140_MIC_BIAS_VAL_VREF_1096 &&
+>> +           bias_source != ADCX140_MIC_BIAS_VAL_AVDD) {
+>> +               dev_err(adcx140->dev, "Mic Bias source value is invalid\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       ret = device_property_read_u8(adcx140->dev, "ti,vref-source",
+>> +                                     &vref_source);
+>> +       if (ret)
+>> +               vref_source = ADCX140_MIC_BIAS_VREF_275V;
+>> +
+>> +       if (vref_source != ADCX140_MIC_BIAS_VREF_275V &&
+>> +           vref_source != ADCX140_MIC_BIAS_VREF_25V &&
+>> +           vref_source != ADCX140_MIC_BIAS_VREF_1375V) {
+> According to the data sheet, this setting controls the ADC full scale
+> setting and has nothing to do with the mic bias voltage, hence using
+> MIC_BIAS as part of the macro name is misleaading.
+>
+These are not macros they are #defines but in any event I can change the 
+names as they are all local to the c and h files.
+>> +               dev_err(adcx140->dev, "Mic Bias source value is invalid\n");
+> Error text does not reflect the actual error, suggest "VREF value is
+> invalid".
 
-Maybe you could rearrange patches 1 and 2 like this:
+Ack
 
-Add simcom 7100 modem support
-Add sgtl5000 support
+Dan
 
-This way it is clearer where SAI2 and SAI6 ports are actually used.
+
