@@ -2,173 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1A3F16FF0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:32:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE30B16FF08
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:30:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbgBZMcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 07:32:03 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39919 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726889AbgBZMcB (ORCPT
+        id S1727262AbgBZMar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 07:30:47 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51991 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbgBZMap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 07:32:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582720319;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=Oy96HdPGzei/vv2WF2/d4Po9U0TB/qWHDxyjGV+aMNU=;
-        b=Lg7WwIPdx2Gu2ieLc8L2IKsPAqc0db5fhhDe/yo+5qy0GZNo2idcnWGWU4Gs6xOoW9YS8c
-        MAE7W5/835e9ZhUe8Bwu3J2cxyszUxC/tB3LyxEFazQsR3kgsoyo5Nko2Ai4+05uoziOds
-        HgKYQilqtOxo+3UISrqVFr81CZXxoxs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-432-hdNk-L4xM1KcFTtX2aX70Q-1; Wed, 26 Feb 2020 07:31:58 -0500
-X-MC-Unique: hdNk-L4xM1KcFTtX2aX70Q-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 656B41084433;
-        Wed, 26 Feb 2020 12:31:56 +0000 (UTC)
-Received: from [10.36.117.196] (ovpn-117-196.ams2.redhat.com [10.36.117.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 51EBE5C13D;
-        Wed, 26 Feb 2020 12:31:54 +0000 (UTC)
-Subject: Re: [PATCH v2 1/7] mm/hotplug: fix hot remove failure in
- SPARSEMEM|!VMEMMAP case
-To:     Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        richardw.yang@linux.intel.com, osalvador@suse.de,
-        dan.j.williams@intel.com, mhocko@suse.com, rppt@linux.ibm.com,
-        robin.murphy@arm.com
-References: <20200220043316.19668-1-bhe@redhat.com>
- <20200220043316.19668-2-bhe@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <93280f63-bed7-9677-a7fa-8ea2089d26d2@redhat.com>
-Date:   Wed, 26 Feb 2020 13:31:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 26 Feb 2020 07:30:45 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t23so2869694wmi.1;
+        Wed, 26 Feb 2020 04:30:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=SW3Nz/sbE0+KtIPXD7/IukM64fIQO4nr5iakHdwv+8c=;
+        b=VYvrhIlIc/nn4uIyORMlAtvbfxMOiT3mijSBmAkJOJCXlYHPKmAZWm8Qu8DjfNq69a
+         6qWc5BP6vQ6k+tbeSPHkcgwDT4gUGnl0IhvsdbC5+AhKVGl3hqF1BBB4amQzsMBu6Qu6
+         vLToXjRcqC2HC4ghB8LzPhJNF/LB1KFk85Tb5mthERwS7R7pP97Z4yy28/puGXRz5D6B
+         tbnC1k7V6psu06x6eq+MA6jTdorEwsPi6CdB/fY7TL/4FEFRo2LWLX60+wImu3QXmVHX
+         t7/EiXpONHX9WCAGF+JeAuMVT/VhBA42+KaydXVn5MtCTUuRozDX7Atn0CTUU8w0S62A
+         KPfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=SW3Nz/sbE0+KtIPXD7/IukM64fIQO4nr5iakHdwv+8c=;
+        b=F6rDIAy1TX8vJaW8W/sLLlZ6q4B1wBaj9eAbBM4FvHLIh9zUvAWOJy9IeSDqCvXigk
+         iDaNOq+MbCtk16q/HkC8j7EdxcD9G3hTnV8fB49+Tfo4PLkVdILVmRbxrNqPusevbcaY
+         0lN7aiczMn3E8IHQC2rRoHM+2JuykO/glQQuMmm+uP45S2EOTleODALNRummSZ2pxKlF
+         9OiJ9MCaU9SAovagEjWtL0Hf2BaWYkRgfxWtQaI8g2QGdNDJqDmAK/5LhSd3mp5DXQr+
+         7qyNakzPCrP7/qwEpgb/6zBp850hQlsV7fW7ZprfdSwWD3/bz555Paio7XPzrMNLgP9m
+         ZSdQ==
+X-Gm-Message-State: APjAAAUg5QlUCVTJJsCKymfd+jZiU1JFarfJqwIekBPwBPSyWinYnEbl
+        4YVuah9k5rap1nLmBe1FcMX7xH0jtzVQZiO8CI8=
+X-Google-Smtp-Source: APXvYqy8uKiowdSlomhD1NsRVW6CgtErWAKIm+QpbjJVYpi04BrtIv00ZlgOX+VPHSK95fB6a6qX2du+JM+QQ1T997A=
+X-Received: by 2002:a7b:cc69:: with SMTP id n9mr4924083wmj.163.1582720243510;
+ Wed, 26 Feb 2020 04:30:43 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200220043316.19668-2-bhe@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+References: <20200224174129.2664-1-ndesaulniers@google.com>
+ <CAK7LNASNsOmyqFWYtJHB4UcHAed5C_isWvMJ4MKHu0O=yUy=8w@mail.gmail.com>
+ <CAKwvOd=mPg79CrYnDm8=z0iJpKL0FHm9J5qZF0_A6BFXBv8Dow@mail.gmail.com> <CAK7LNAQ83rLAm1GcvrgJbinyAVPpM_SoxfO7RdOAfmXyg2tBdQ@mail.gmail.com>
+In-Reply-To: <CAK7LNAQ83rLAm1GcvrgJbinyAVPpM_SoxfO7RdOAfmXyg2tBdQ@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Wed, 26 Feb 2020 13:33:13 +0100
+Message-ID: <CA+icZUWSQkYD2MzEY_8U1NMY8LO5NzD0CCuZ8+cH+dBndJm=yQ@mail.gmail.com>
+Subject: Re: [PATCH] Documentation/llvm: add documentation on building w/ Clang/LLVM
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.02.20 05:33, Baoquan He wrote:
-> In section_deactivate(), pfn_to_page() doesn't work any more after
-> ms->section_mem_map is resetting to NULL in SPARSEMEM|!VMEMMAP case.
-> It caused hot remove failure:
-> 
-> kernel BUG at mm/page_alloc.c:4806!
-> invalid opcode: 0000 [#1] SMP PTI
-> CPU: 3 PID: 8 Comm: kworker/u16:0 Tainted: G        W         5.5.0-next-20200205+ #340
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
-> Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-> RIP: 0010:free_pages+0x85/0xa0
-> Call Trace:
->  __remove_pages+0x99/0xc0
->  arch_remove_memory+0x23/0x4d
->  try_remove_memory+0xc8/0x130
->  ? walk_memory_blocks+0x72/0xa0
->  __remove_memory+0xa/0x11
->  acpi_memory_device_remove+0x72/0x100
->  acpi_bus_trim+0x55/0x90
->  acpi_device_hotplug+0x2eb/0x3d0
->  acpi_hotplug_work_fn+0x1a/0x30
->  process_one_work+0x1a7/0x370
->  worker_thread+0x30/0x380
->  ? flush_rcu_work+0x30/0x30
->  kthread+0x112/0x130
->  ? kthread_create_on_node+0x60/0x60
->  ret_from_fork+0x35/0x40
-> 
-> Let's move the ->section_mem_map resetting after depopulate_section_memmap()
-> to fix it.
-> 
+On Wed, Feb 26, 2020 at 1:01 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> On Wed, Feb 26, 2020 at 5:52 AM Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+> >
+> > On Mon, Feb 24, 2020 at 4:34 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > >
+> > > On Tue, Feb 25, 2020 at 2:41 AM Nick Desaulniers
+> > > <ndesaulniers@google.com> wrote:
+> > > >
+> > > > Added to kbuild documentation. Provides more official info on building
+> > > > kernels with Clang and LLVM than our wiki.
+> > > >
+> > > > Suggested-by: Kees Cook <keescook@chromium.org>
+> > > > Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > > ---
+> > >
+> > >
+> > > Perhaps, is it better to explicitly add it to MAINTAINERS?
+> > >
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -4118,6 +4118,7 @@ W:        https://clangbuiltlinux.github.io/
+> > >  B:     https://github.com/ClangBuiltLinux/linux/issues
+> > >  C:     irc://chat.freenode.net/clangbuiltlinux
+> > >  S:     Supported
+> > > +F:     Documentation/kbuild/llvm.rst
+> > >  K:     \b(?i:clang|llvm)\b
+> >
+> > I'm happy to leave it to the maintainers of Documentation/.  Otherwise
+> > we have a file for which there is no MAINTAINER, which seems
+> > ambiguous.
+>
+> It is common that MAINTAINERS lists per-file (per-driver) maintainers.
+> It does not necessarily mean a person who picks up patches.
+>
+> scripts/get_maintainer.pl lists maintainers that
+> match any F:, N:, K: patterns.
+> So, both Doc and Kbuild maintainers/ML will still be listed.
+>
+> Having said that, it is up to you. Either is fine with me.
+> Another pattern 'K: \b(?i:clang|llvm)\b'  covers this file anyway.
+>
+>
+> (BTW, I am also happy to see your name as the maintainer of this entry.)
+>
 
-Fixes: Tag? Stable: Tag?
++1 (Please drop the BTW - This was suggested in the brainstorming
+session on the ClangBuiltLinux Meetup in Zurich).
 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  mm/sparse.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index 596b2a45b100..b8e52c8fed7f 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -779,13 +779,15 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
->  			ms->usage = NULL;
->  		}
->  		memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
-> -		ms->section_mem_map = (unsigned long)NULL;
->  	}
->  
->  	if (section_is_early && memmap)
->  		free_map_bootmem(memmap);
->  	else
->  		depopulate_section_memmap(pfn, nr_pages, altmap);
-> +
-> +	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION))
-> +		ms->section_mem_map = (unsigned long)NULL;
->  }
->  
->  static struct page * __meminit section_activate(int nid, unsigned long pfn,
-> 
+I suggest to add Nathan and Kees if they are willing to be responsible
+for the maintainer job.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
-
--- 
-Thanks,
-
-David / dhildenb
-
+- Sedat -
