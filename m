@@ -2,241 +2,250 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5320416F6BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:04:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF1116F6C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:06:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbgBZFEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 00:04:12 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:52277 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725789AbgBZFEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 00:04:11 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48S3cT0cX2z9ty2Q;
-        Wed, 26 Feb 2020 06:04:09 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=EZp2hEHO; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id WvuH9LdbP1UZ; Wed, 26 Feb 2020 06:04:09 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48S3cS3kKTz9tyKl;
-        Wed, 26 Feb 2020 06:04:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1582693448; bh=qvGyrJUB2UgET9i5VAoLlLv2pl3urJV01OstLvVnLRM=;
-        h=From:Subject:To:CC:In-Reply-To:Date:From;
-        b=EZp2hEHO0pdBb20cc3MdgS1Mo6rQSCJIXFnmROVUmobfowpfOaE01gJm77QHGUZm3
-         bgDroXooY+b+Hrp01223ZLuWVGSaVVG1x7H9eUsWFKICQ2MQbXE8g7AcdwqWjxZB15
-         mdHPuLUtLtll5V6SO314uk9dOcHX9PmAZMDoSMGk=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2A2748B784;
-        Wed, 26 Feb 2020 06:04:09 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id VXbsOtQ5DCG4; Wed, 26 Feb 2020 06:04:09 +0100 (CET)
-Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4BA1A8B776;
-        Wed, 26 Feb 2020 06:04:08 +0100 (CET)
-Received: by pc16570vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 0A31D653EF; Wed, 26 Feb 2020 05:04:07 +0000 (UTC)
-Message-Id: <92d936b83e47f6a65866ca2d39a0d5bfefba6279.1582693094.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC PATCH] Use IS_ENABLED() instead of #ifdefs
-To:     Jason Yan <yanaijie@huawei.com>, <mpe@ellerman.id.au>,
-        <linuxppc-dev@lists.ozlabs.org>, <diana.craciun@nxp.com>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <npiggin@gmail.com>, <keescook@chromium.org>,
-        <kernel-hardening@lists.openwall.com>, <oss@buserror.net>
-CC:     <linux-kernel@vger.kernel.org>, <zhaohongjiang@huawei.com>
-In-Reply-To: <d3647cce-ece3-d302-f541-b02b1f2b5e9e@huawei.com>
-Date:   Wed, 26 Feb 2020 05:04:07 +0000 (UTC)
+        id S1726872AbgBZFGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 00:06:15 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:46620 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgBZFGP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 00:06:15 -0500
+Received: by linux.microsoft.com (Postfix, from userid 1004)
+        id 16AAE2007682; Tue, 25 Feb 2020 21:06:13 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 16AAE2007682
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+        s=default; t=1582693573;
+        bh=hlRUdAVX3wkkEvhxQ0g5cLC1pC4DW7vjuNNBNi2C4zw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GfNSYy4QyOY61lNClJNafG0vUD1g7JYqzNK94hJX8LDmGi2TKHBs2tnGsmF1lO+7C
+         fNCMqQR1NML0SU6UXvergDI8KXfAorvJpk9PeYqYufYpSDA3P4mvJ4w3FlNlqFG/Eq
+         wBMWrL/WoQLSdBBD3ZaTGLwg8Q/z6TFXMmENEaOY=
+From:   longli@linuxonhyperv.com
+To:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Long Li <longli@microsoft.com>
+Subject: [Patch v5 1/2] PCI: hv: Decouple the func definition in hv_dr_state from VSP message
+Date:   Tue, 25 Feb 2020 21:06:07 -0800
+Message-Id: <1582693568-64759-1-git-send-email-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Long Li <longli@microsoft.com>
+
+hv_dr_state is used to find present PCI devices on the bus. The structure
+reuses struct pci_function_description from VSP message to describe a
+device.
+
+To prepare support for pci_function_description v2, decouple this
+dependence in hv_dr_state so it can work with both v1 and v2 VSP messages.
+
+There is no functionality change.
+
+Signed-off-by: Long Li <longli@microsoft.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
 ---
-This works for me. Only had to leave the #ifdef around the map_mem_in_cams()
-Also had to set linear_sz and ram for the alternative case, otherwise I get
+Changes
+v2: Changed some spaces to tabs, changed failure code to -ENOMEM
+v3: Revised comment for function hv_pci_devices_present(), reformatted patch title
+v4: Fixed spelling
+v5: Rebased to current tree
 
+ drivers/pci/controller/pci-hyperv.c | 100 +++++++++++++++++++++++++-----------
+ 1 file changed, 70 insertions(+), 30 deletions(-)
 
-
-arch/powerpc/mm/nohash/kaslr_booke.c: In function 'kaslr_early_init':
-arch/powerpc/mm/nohash/kaslr_booke.c:355:33: error: 'linear_sz' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  regions.pa_end = memstart_addr + linear_sz;
-                   ~~~~~~~~~~~~~~^~~~~~~~~~~
-arch/powerpc/mm/nohash/kaslr_booke.c:315:21: note: 'linear_sz' was declared here
-  unsigned long ram, linear_sz;
-                     ^~~~~~~~~
-arch/powerpc/mm/nohash/kaslr_booke.c:187:8: error: 'ram' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  ret = parse_crashkernel(boot_command_line, size, &crash_size,
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     &crash_base);
-     ~~~~~~~~~~~~
-arch/powerpc/mm/nohash/kaslr_booke.c:315:16: note: 'ram' was declared here
-  unsigned long ram, linear_sz;
-
----
- arch/powerpc/mm/mmu_decl.h           |  2 +-
- arch/powerpc/mm/nohash/kaslr_booke.c | 97 +++++++++++++++-------------
- 2 files changed, 52 insertions(+), 47 deletions(-)
-
-diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
-index b869ea893301..3700e7c04e51 100644
---- a/arch/powerpc/mm/mmu_decl.h
-+++ b/arch/powerpc/mm/mmu_decl.h
-@@ -139,9 +139,9 @@ extern unsigned long calc_cam_sz(unsigned long ram, unsigned long virt,
- extern void adjust_total_lowmem(void);
- extern int switch_to_as1(void);
- extern void restore_to_as0(int esel, int offset, void *dt_ptr, int bootcpu);
-+#endif
- void create_kaslr_tlb_entry(int entry, unsigned long virt, phys_addr_t phys);
- extern int is_second_reloc;
--#endif
+diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+index 15011a3..dea197f 100644
+--- a/drivers/pci/controller/pci-hyperv.c
++++ b/drivers/pci/controller/pci-hyperv.c
+@@ -505,10 +505,24 @@ struct hv_dr_work {
+ 	struct hv_pcibus_device *bus;
+ };
  
- void reloc_kernel_entry(void *fdt, long addr);
- extern void loadcam_entry(unsigned int index);
-diff --git a/arch/powerpc/mm/nohash/kaslr_booke.c b/arch/powerpc/mm/nohash/kaslr_booke.c
-index c6f5c1db1394..bf69cece9b8c 100644
---- a/arch/powerpc/mm/nohash/kaslr_booke.c
-+++ b/arch/powerpc/mm/nohash/kaslr_booke.c
-@@ -267,35 +267,37 @@ static unsigned long __init kaslr_legal_offset(void *dt_ptr, unsigned long rando
- 	unsigned long start;
- 	unsigned long offset;
- 
--#ifdef CONFIG_PPC32
--	/*
--	 * Decide which 64M we want to start
--	 * Only use the low 8 bits of the random seed
--	 */
--	unsigned long index = random & 0xFF;
--	index %= regions.linear_sz / SZ_64M;
--
--	/* Decide offset inside 64M */
--	offset = random % (SZ_64M - regions.kernel_size);
--	offset = round_down(offset, SZ_16K);
-+	if (IS_ENABLED(CONFIG_PPC32)) {
-+		unsigned long index;
++struct hv_pcidev_description {
++	u16	v_id;	/* vendor ID */
++	u16	d_id;	/* device ID */
++	u8	rev;
++	u8	prog_intf;
++	u8	subclass;
++	u8	base_class;
++	u32	subsystem_id;
++	union	win_slot_encoding win_slot;
++	u32	ser;	/* serial number */
++	u32	flags;
++	u16	virtual_numa_node;
++};
 +
-+		/*
-+		 * Decide which 64M we want to start
-+		 * Only use the low 8 bits of the random seed
-+		 */
-+		index = random & 0xFF;
-+		index %= regions.linear_sz / SZ_64M;
-+
-+		/* Decide offset inside 64M */
-+		offset = random % (SZ_64M - regions.kernel_size);
-+		offset = round_down(offset, SZ_16K);
-+
-+		while ((long)index >= 0) {
-+			offset = memstart_addr + index * SZ_64M + offset;
-+			start = memstart_addr + index * SZ_64M;
-+			koffset = get_usable_address(dt_ptr, start, offset);
-+			if (koffset)
-+				break;
-+			index--;
-+		}
-+	} else {
-+		/* Decide kernel offset inside 1G */
-+		offset = random % (SZ_1G - regions.kernel_size);
-+		offset = round_down(offset, SZ_64K);
+ struct hv_dr_state {
+ 	struct list_head list_entry;
+ 	u32 device_count;
+-	struct pci_function_description func[0];
++	struct hv_pcidev_description func[0];
+ };
  
--	while ((long)index >= 0) {
--		offset = memstart_addr + index * SZ_64M + offset;
--		start = memstart_addr + index * SZ_64M;
-+		start = memstart_addr;
-+		offset = memstart_addr + offset;
- 		koffset = get_usable_address(dt_ptr, start, offset);
--		if (koffset)
--			break;
--		index--;
- 	}
--#else
--	/* Decide kernel offset inside 1G */
--	offset = random % (SZ_1G - regions.kernel_size);
--	offset = round_down(offset, SZ_64K);
--
--	start = memstart_addr;
--	offset = memstart_addr + offset;
--	koffset = get_usable_address(dt_ptr, start, offset);
--#endif
- 
- 	if (koffset != 0)
- 		koffset -= memstart_addr;
-@@ -342,6 +344,8 @@ static unsigned long __init kaslr_choose_location(void *dt_ptr, phys_addr_t size
- 	/* If the linear size is smaller than 64M, do not randmize */
- 	if (linear_sz < SZ_64M)
- 		return 0;
-+#else
-+	linear_sz = ram = size;
- #endif
- 
- 	/* check for a reserved-memory node and record its cell sizes */
-@@ -373,17 +377,19 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
+ enum hv_pcichild_state {
+@@ -525,7 +539,7 @@ struct hv_pci_dev {
+ 	refcount_t refs;
+ 	enum hv_pcichild_state state;
+ 	struct pci_slot *pci_slot;
+-	struct pci_function_description desc;
++	struct hv_pcidev_description desc;
+ 	bool reported_missing;
+ 	struct hv_pcibus_device *hbus;
+ 	struct work_struct wrk;
+@@ -1877,7 +1891,7 @@ static void q_resource_requirements(void *context, struct pci_response *resp,
+  * Return: Pointer to the new tracking struct
+  */
+ static struct hv_pci_dev *new_pcichild_device(struct hv_pcibus_device *hbus,
+-		struct pci_function_description *desc)
++		struct hv_pcidev_description *desc)
  {
- 	unsigned long offset;
- 	unsigned long kernel_sz;
-+	unsigned int *__kaslr_offset;
-+	unsigned int *__run_at_load;
+ 	struct hv_pci_dev *hpdev;
+ 	struct pci_child_message *res_req;
+@@ -1988,7 +2002,7 @@ static void pci_devices_present_work(struct work_struct *work)
+ {
+ 	u32 child_no;
+ 	bool found;
+-	struct pci_function_description *new_desc;
++	struct hv_pcidev_description *new_desc;
+ 	struct hv_pci_dev *hpdev;
+ 	struct hv_pcibus_device *hbus;
+ 	struct list_head removed;
+@@ -2107,17 +2121,15 @@ static void pci_devices_present_work(struct work_struct *work)
+ }
  
--#ifdef CONFIG_PPC64
--	unsigned int *__kaslr_offset = (unsigned int *)(KERNELBASE + 0x58);
--	unsigned int *__run_at_load = (unsigned int *)(KERNELBASE + 0x5c);
-+	if (IS_ENABLED(CONFIG_PPC64)) {
-+		__kaslr_offset = (unsigned int *)(KERNELBASE + 0x58);
-+		__run_at_load = (unsigned int *)(KERNELBASE + 0x5c);
- 
--	if (*__run_at_load == 1)
+ /**
+- * hv_pci_devices_present() - Handles list of new children
++ * hv_pci_start_relations_work() - Queue work to start device discovery
+  * @hbus:	Root PCI bus, as understood by this driver
+- * @relations:	Packet from host listing children
++ * @dr:		The list of children returned from host
+  *
+- * This function is invoked whenever a new list of devices for
+- * this bus appears.
++ * Return:  0 on success, -errno on failure
+  */
+-static void hv_pci_devices_present(struct hv_pcibus_device *hbus,
+-				   struct pci_bus_relations *relations)
++static int hv_pci_start_relations_work(struct hv_pcibus_device *hbus,
++				       struct hv_dr_state *dr)
+ {
+-	struct hv_dr_state *dr;
+ 	struct hv_dr_work *dr_wrk;
+ 	unsigned long flags;
+ 	bool pending_dr;
+@@ -2125,29 +2137,15 @@ static void hv_pci_devices_present(struct hv_pcibus_device *hbus,
+ 	if (hbus->state == hv_pcibus_removing) {
+ 		dev_info(&hbus->hdev->device,
+ 			 "PCI VMBus BUS_RELATIONS: ignored\n");
 -		return;
-+		if (*__run_at_load == 1)
-+			return;
- 
--	/* Setup flat device-tree pointer */
--	initial_boot_params = dt_ptr;
--#endif
-+		/* Setup flat device-tree pointer */
-+		initial_boot_params = dt_ptr;
-+	}
- 
- 	kernel_sz = (unsigned long)_end - (unsigned long)_stext;
- 
-@@ -394,20 +400,19 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
- 	kernstart_virt_addr += offset;
- 	kernstart_addr += offset;
- 
--#ifdef CONFIG_PPC32
--	is_second_reloc = 1;
--
--	if (offset >= SZ_64M) {
--		unsigned long tlb_virt = round_down(kernstart_virt_addr, SZ_64M);
--		phys_addr_t tlb_phys = round_down(kernstart_addr, SZ_64M);
-+	if (IS_ENABLED(CONFIG_PPC32)) {
-+		is_second_reloc = 1;
-+		if (offset >= SZ_64M) {
-+			unsigned long tlb_virt = round_down(kernstart_virt_addr, SZ_64M);
-+			phys_addr_t tlb_phys = round_down(kernstart_addr, SZ_64M);
- 
--		/* Create kernel map to relocate in */
--		create_kaslr_tlb_entry(1, tlb_virt, tlb_phys);
-+			/* Create kernel map to relocate in */
-+			create_kaslr_tlb_entry(1, tlb_virt, tlb_phys);
-+		}
-+	} else {
-+		*__kaslr_offset = kernstart_virt_addr - KERNELBASE;
-+		*__run_at_load = 1;
++		return -ENOENT;
  	}
--#else
--	*__kaslr_offset = kernstart_virt_addr - KERNELBASE;
--	*__run_at_load = 1;
--#endif
  
- 	/* Copy the kernel to it's new location and run */
- 	memcpy((void *)kernstart_virt_addr, (void *)_stext, kernel_sz);
+ 	dr_wrk = kzalloc(sizeof(*dr_wrk), GFP_NOWAIT);
+ 	if (!dr_wrk)
+-		return;
+-
+-	dr = kzalloc(offsetof(struct hv_dr_state, func) +
+-		     (sizeof(struct pci_function_description) *
+-		      (relations->device_count)), GFP_NOWAIT);
+-	if (!dr)  {
+-		kfree(dr_wrk);
+-		return;
+-	}
++		return -ENOMEM;
+ 
+ 	INIT_WORK(&dr_wrk->wrk, pci_devices_present_work);
+ 	dr_wrk->bus = hbus;
+-	dr->device_count = relations->device_count;
+-	if (dr->device_count != 0) {
+-		memcpy(dr->func, relations->func,
+-		       sizeof(struct pci_function_description) *
+-		       dr->device_count);
+-	}
+ 
+ 	spin_lock_irqsave(&hbus->device_list_lock, flags);
+ 	/*
+@@ -2165,6 +2163,47 @@ static void hv_pci_devices_present(struct hv_pcibus_device *hbus,
+ 		get_hvpcibus(hbus);
+ 		queue_work(hbus->wq, &dr_wrk->wrk);
+ 	}
++
++	return 0;
++}
++
++/**
++ * hv_pci_devices_present() - Handle list of new children
++ * @hbus:      Root PCI bus, as understood by this driver
++ * @relations: Packet from host listing children
++ *
++ * Process a new list of devices on the bus. The list of devices is
++ * discovered by VSP and sent to us via VSP message PCI_BUS_RELATIONS,
++ * whenever a new list of devices for this bus appears.
++ */
++static void hv_pci_devices_present(struct hv_pcibus_device *hbus,
++				   struct pci_bus_relations *relations)
++{
++	struct hv_dr_state *dr;
++	int i;
++
++	dr = kzalloc(offsetof(struct hv_dr_state, func) +
++		     (sizeof(struct hv_pcidev_description) *
++		      (relations->device_count)), GFP_NOWAIT);
++
++	if (!dr)
++		return;
++
++	dr->device_count = relations->device_count;
++	for (i = 0; i < dr->device_count; i++) {
++		dr->func[i].v_id = relations->func[i].v_id;
++		dr->func[i].d_id = relations->func[i].d_id;
++		dr->func[i].rev = relations->func[i].rev;
++		dr->func[i].prog_intf = relations->func[i].prog_intf;
++		dr->func[i].subclass = relations->func[i].subclass;
++		dr->func[i].base_class = relations->func[i].base_class;
++		dr->func[i].subsystem_id = relations->func[i].subsystem_id;
++		dr->func[i].win_slot = relations->func[i].win_slot;
++		dr->func[i].ser = relations->func[i].ser;
++	}
++
++	if (hv_pci_start_relations_work(hbus, dr))
++		kfree(dr);
+ }
+ 
+ /**
+@@ -3069,7 +3108,7 @@ static int hv_pci_bus_exit(struct hv_device *hdev, bool hibernating)
+ 		struct pci_packet teardown_packet;
+ 		u8 buffer[sizeof(struct pci_message)];
+ 	} pkt;
+-	struct pci_bus_relations relations;
++	struct hv_dr_state *dr;
+ 	struct hv_pci_compl comp_pkt;
+ 	int ret;
+ 
+@@ -3082,8 +3121,9 @@ static int hv_pci_bus_exit(struct hv_device *hdev, bool hibernating)
+ 
+ 	if (!hibernating) {
+ 		/* Delete any children which might still exist. */
+-		memset(&relations, 0, sizeof(relations));
+-		hv_pci_devices_present(hbus, &relations);
++		dr = kzalloc(sizeof(*dr), GFP_KERNEL);
++		if (dr && hv_pci_start_relations_work(hbus, dr))
++			kfree(dr);
+ 	}
+ 
+ 	ret = hv_send_resources_released(hdev);
 -- 
-2.25.0
+1.8.3.1
 
