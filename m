@@ -2,103 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFDA417052F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:00:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11078170539
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:01:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbgBZRAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 12:00:46 -0500
-Received: from foss.arm.com ([217.140.110.172]:39268 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727946AbgBZRAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 12:00:46 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F7E131B;
-        Wed, 26 Feb 2020 09:00:45 -0800 (PST)
-Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D35A73F881;
-        Wed, 26 Feb 2020 09:00:44 -0800 (PST)
-Subject: Re: Proper way to check for restricted DMA addressing from device
- driver
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <2608dfa05478d995586c9e477917349dc18618ac.camel@pengutronix.de>
- <bfecf850-5bd7-3092-b9b3-c5721d7a44ee@arm.com>
- <d56cec41874ee69d0f5767b549e9bd6b3003e75a.camel@pengutronix.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <5571dfb5-0f07-dbeb-7f15-ce2708874d27@arm.com>
-Date:   Wed, 26 Feb 2020 17:00:40 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728346AbgBZRBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 12:01:11 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43089 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727922AbgBZRBL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 12:01:11 -0500
+Received: by mail-ot1-f65.google.com with SMTP id p8so50039oth.10
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 09:01:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VW6ry/recRSjstAhgd9IHAJ1qGHrxOyE270eFkPmjt8=;
+        b=TbYSTEbY9mx/BwJIJncwOFE8193J4bVFp3qh+YNX4sdKcBgDkwafsfcr8X7VOODEFc
+         9Q3yDkALDFXoJKC9xKw4SIla3ILAM2kV8T+MH+EI16bIq1jvfQGwh4cbeKvGdL1jb3CO
+         wH65vfwFskDDttPYABVm2zrRdc0vQorfws3lKOJHBqNjyzzKs2D9j0kTrqV3+Z5fHwpu
+         88L4l7ozO7v/bI8I4y8QTlSG7LoMC20cvVt/wJN9HFEKnT3su7BSulkHHFcMR9PdeGe/
+         i0V6obuHVl9Rc+9vz3E/392JlxgkVhBp3L+HjHw9zkQUdZtRnO8V8jNqn/tFrM5VdMoF
+         /MZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VW6ry/recRSjstAhgd9IHAJ1qGHrxOyE270eFkPmjt8=;
+        b=fhArWRYcRNlyw4ZfD0lgobxIdSrvlRfgsorE7LxySxOrwh87GdFJRRQJCHBucd0ArY
+         xvfcALS8JTXelitIaOzHH0eFEMB8jlTVqRPkNH+1Nfjwd6lromluT1GmmMvydwXZOZZt
+         ayYJGQLckd8m3RAu3BhPu/WP1jOW1FGq9XV5aNmL2uUrytohFeoEp5Bpn4g5uez8ENbu
+         SD1dU7vHUeS53WQEK6IfoeIRwiUSyhi/9KXkshVIcMhbMzNuvGFy/XDaKkci5Q8NSl3X
+         uaeO0J5GpyUz4bf25tyGFVu9W+WXPFUU+FG1+18eg4gj8jJ2ei6DDEK/X+GyQ1X6LNgd
+         cq2Q==
+X-Gm-Message-State: APjAAAWTkC8qUhtVVK3YMoVo/xWmUD2b7BqC2jJj4ap40zqADVslBoaA
+        93l81M0C3r4IFRlYPyhB8mhiaNVyCC+KfeRLOJ+0KUiBac8=
+X-Google-Smtp-Source: APXvYqyQ+ukFeXhC1ZBScIcKYTArHmQ2QAiHWx3w0xFtCsEyxl99sghYoMMgfj29M7ZBXEOa9SOWnnBpf1sxl2Kzmrw=
+X-Received: by 2002:a05:6830:1305:: with SMTP id p5mr3658219otq.124.1582736469964;
+ Wed, 26 Feb 2020 09:01:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <d56cec41874ee69d0f5767b549e9bd6b3003e75a.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20200219200527.GF11847@dhcp22.suse.cz> <20200219204220.GA3488@sultan-book.localdomain>
+ <20200219214513.GL3420@suse.de> <20200219224231.GA5190@sultan-book.localdomain>
+ <20200220101945.GN3420@suse.de> <20200221042232.GA2197@sultan-book.localdomain>
+ <20200221080737.GK20509@dhcp22.suse.cz> <20200221210824.GA3605@sultan-book.localdomain>
+ <20200225090945.GJ22443@dhcp22.suse.cz> <CALvZod6MW62-+nEw-d0jKxFK9mspOY_tt2JRTDYOrOVyM9_QHw@mail.gmail.com>
+ <20200226090853.GC3771@dhcp22.suse.cz>
+In-Reply-To: <20200226090853.GC3771@dhcp22.suse.cz>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 26 Feb 2020 09:00:57 -0800
+Message-ID: <CALvZod7BDcHTNY1-yc041nZnKHR2Wo0R-=QXAOYOUEPeyQG4DA@mail.gmail.com>
+Subject: Re: [PATCH] mm: Stop kswapd early when nothing's waiting for it to
+ free pages
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Sultan Alsawaf <sultan@kerneltoast.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/02/2020 4:04 pm, Lucas Stach wrote:
-> On Mi, 2020-02-26 at 15:51 +0000, Robin Murphy wrote:
->> On 26/02/2020 3:44 pm, Lucas Stach wrote:
->>> Hi all,
->>>
->>> I'm currently struggling with how to properly check for restricted DMA
->>> addressing from a device driver side. The basic issue I'm facing is
->>> that I have a embedded GPU, which isn't able to address all system
->>> memory due to interconnect being restricted to 32bit addressing. The
->>> limits are properly described in the system device-tree and thus
->>> SWIOTLB is working.
->>>
->>> However graphics buffers are large and graphics drivers really like to
->>> keep the dma mapping alive for performance reasons, which means I'm
->>> running out of SWIOTLB space pretty easily, aside from the obvious
->>> performance implications of SWIOTLB.
->>>
->>> As 3 out of the maximum 4GB system memory are located in the DMA32 zone
->>> and thus located in the GPU addressable space, I just want to avoid
->>> allocating graphics buffers outside of the DMA32 zone.
->>>
->>> To add the DMA32 restriction to my drivers allocations, I need a
->>> reliable way from the device driver side to check if the GPU is in such
->>> a restricted system. What I'm currently doing in my WIP patch is this:
->>>
->>>    /*
->>>     * If the GPU is part of a system with only 32bit bus addressing
->>>     * capabilities, request pages for our SHM backend buffers from the
->>>     * DMA32 zone to avoid performance killing SWIOTLB bounce buffering.
->>>     */
->>>    if (*gpu->dev->dma_mask < BIT_ULL(32) && !device_iommu_mapped(gpu->dev))
->>>            priv->shm_gfp_mask |= GFP_DMA32;
->>>
->>> However I'm not sure if there are edge cases where this check would
->>> fool me. Is there any better way to check for DMA addressing
->>> restrictions from the device driver side?
->>
->> dma_addressing_limited()?
-> 
-> While amdgpu and radeon do seem to use this to trigger DMA32
-> allocations, the bool return value doesn't really tell if DMA32 is
-> helpful or not. All it tells is that the system has memory outside of
-> the device dma addressing capabilities.
+On Wed, Feb 26, 2020 at 1:08 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Tue 25-02-20 14:30:03, Shakeel Butt wrote:
+> > On Tue, Feb 25, 2020 at 1:10 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > >
+> > [snip]
+> > >
+> > > The proper fix should, however, check the amount of reclaimable pages
+> > > and back off if they cannot meet the target IMO. We cannot rely on the
+> > > general reclaimability here because that could really be thrashing.
+> > >
+> >
+> > "check the amount of reclaimable pages" vs "cannot rely on the general
+> > reclaimability"? Can you clarify?
+>
+> kswapd targets the high watermark and if your reclaimable memory (aka
+> zone_reclaimable_pages) is lower than the high wmark then it cannot
+> simply satisfy that target, right? Keeping reclaim in that situations
+> seems counter productive to me because you keep evicting pages that
+> might be reused without any feedback mechanism on the actual usage.
+> Please see my other reply.
+>
 
-If the limit falls somewhere between 32 bits and "everything" then DMA32 
-is the best you can do anyway; if it's *less* than 32 bits then you'd be 
-into the realm of "serious problems" already. There is a point at which 
-it's reasonable to assume you don't have to support contrived 
-pathological cases :)
-> Is the return value of this function correct if the device is behind a
-> IOMMU? While the device might be on a bus that is address limited a
-> IOMMU further up the path to memory might allow to address all system
-> memory, no?
+I understand and agree with the argument that if reclaimable pages are
+less than high wmark then no need to reclaim. Regarding not depending
+on general reclaimability, I thought you meant that even if
+reclaimable pages are over high wmark, we might not want to continue
+the reclaim to not cause thrashing. Is that right?
 
-It should be OK - see the comment in dma_get_required_mask(). Obviously 
-it's theoretically possible to integrate a device with 32+ bits of DMA 
-capability to an IOMMU input 32+ bits wide, via an interconnect less 
-than 32 bits wide, but any designer silly enough to actually do that is 
-welcome to have their SoC never supported by Linux.
+> > BTW we are seeing a similar situation in our production environment.
+> > We have swappiness=0, no swap from kswapd (because we don't swapout on
+> > pressure, only on cold age) and too few file pages, the kswapd goes
+> > crazy on shrink_slab and spends 100% cpu on it.
+>
+> I am not sure this is the same problem. It seems that the slab shrinkers
+> are not really a bottle neck here. I would recommend you to identify
+> which shrinkers are eating the cpu time in your case.
+>
 
-Robin.
+The perf profile shows that the kswapd is spending almost all its time
+in list_lru_count_one and memcg tree traversal. So, it's not just one
+shrinker.
+
+Yes, it's not exactly the same problem but I would say it is similar.
+For Sultan's issue, even if there are many reclaimable pages, we don't
+want to thrash. In this issue, thrashing is not happening but kswapd
+is going nuts on slab shrinkers.
+
+Shakeel
