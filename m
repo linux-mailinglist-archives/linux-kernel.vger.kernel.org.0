@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 347E1170B92
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5799B170BB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:40:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbgBZW2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 17:28:39 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.38]:42890 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727757AbgBZW2j (ORCPT
+        id S1727909AbgBZWkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 17:40:11 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.82]:11041 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727761AbgBZWkL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 17:28:39 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 5550A400C42EB
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 16:28:37 -0600 (CST)
+        Wed, 26 Feb 2020 17:40:11 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 8F00715B35B
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 16:16:04 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 75ATjfpEtAGTX75ATjp5Bx; Wed, 26 Feb 2020 16:28:37 -0600
+        id 74yKjH1JjXVkQ74yKjcEAu; Wed, 26 Feb 2020 16:16:04 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,24 +25,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PtyODivJUtDP9MgCyxcSsityaCmUVDZg/RBEFKBCll0=; b=lnt9fUCwwhD2j8AXOE+QPdVwS0
-        rf4kr3sau6HQ7AUq/27TIk4qcQyE7uPX51BjsM7bdgZn0DDb7sjspoANUu7XYfS+eSDzlYragd+6G
-        KRq+/zSzjZCqbisZbLoPR/NKuLg3xt394GWv4TWUJHsgpSSgBLRsGYhzw1Atwc5SfsVkD4OSdDDVc
-        h4L2TbMYUH5hNB0Db/QqV7G9l+zjZIH3rrl2hDQMnERqZVHiNmkzm5NmiFlipNLh0PzYnOwK9RI48
-        6JhzsfVg1/DExj501hZsfpO4WGdrrLEw4fvMn1zKk30UjJkuGdAQqaFGA4sjNXVUWxJ618dF6SpCV
-        OyWMwCyQ==;
-Received: from [201.162.161.208] (port=50608 helo=embeddedor)
+        bh=iwW0dApQ5yAnOnmF+6lbbYBgyBKaN9DrJebNM5E7uxM=; b=hCADqENhZTZqCnQTP3PsmAwVNY
+        rvwOiAsyS6T8NB4XghKYvwgx3npERwE1jycy1p0TmR3J4P6jRVKafdPCCZw8osUjJMmsaH5VO/SWa
+        iaigMiSIayZ//rBks9ziwLmpnMUqDe9OxTN8Pu5bfsBdEuj7nwsPbcdhvDiWpIqEG0T7SwF2RyCFi
+        HOwM2CX8VNXISnSOVNAvWBGX4J2aUHDbgKgGFURy/8gnedh8Kv19JGpp8MzpXKsqNk5HYVD5cQpT2
+        kbtwr0utytsezkhgyNyc3STVdh+UVLwXGeLhi07MoAasUJaJ5E+1kRY0nbi+Cquth0jlvOiUJRl/j
+        aqePVpAg==;
+Received: from [201.166.157.3] (port=49744 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j75AP-001MIy-8J; Wed, 26 Feb 2020 16:28:35 -0600
-Date:   Wed, 26 Feb 2020 16:31:25 -0600
+        id 1j74xY-001FWg-98; Wed, 26 Feb 2020 16:15:23 -0600
+Date:   Wed, 26 Feb 2020 16:18:04 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        "dm-devel@redhat.comSong Liu" <song@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] mmc: Replace zero-length array with flexible-array member
-Message-ID: <20200226223125.GA20630@embeddedor>
+Subject: [PATCH][next] md: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200226221804.GA8564@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -53,15 +55,15 @@ X-AntiAbuse: Original Domain - vger.kernel.org
 X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
 X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
-X-Source-IP: 201.162.161.208
+X-Source-IP: 201.166.157.3
 X-Source-L: No
-X-Exim-ID: 1j75AP-001MIy-8J
+X-Exim-ID: 1j74xY-001FWg-98
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.161.208]:50608
+X-Source-Sender: (embeddedor) [201.166.157.3]:49744
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 29
+X-Email-Count: 4
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -99,134 +101,175 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/mmc/host/sdhci-acpi.c    | 2 +-
- drivers/mmc/host/sdhci-cadence.c | 2 +-
- drivers/mmc/host/sdhci-pci.h     | 2 +-
- drivers/mmc/host/sdhci-pltfm.h   | 2 +-
- drivers/mmc/host/sdhci.h         | 2 +-
- drivers/mmc/host/vub300.c        | 2 +-
- include/linux/mmc/host.h         | 2 +-
- include/linux/mmc/sdio_func.h    | 2 +-
- include/uapi/linux/mmc/ioctl.h   | 2 +-
- 9 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/md/dm-crypt.c                          | 2 +-
+ drivers/md/dm-integrity.c                      | 2 +-
+ drivers/md/dm-log-writes.c                     | 2 +-
+ drivers/md/dm-raid.c                           | 2 +-
+ drivers/md/dm-raid1.c                          | 2 +-
+ drivers/md/dm-stats.c                          | 2 +-
+ drivers/md/dm-stripe.c                         | 2 +-
+ drivers/md/dm-switch.c                         | 2 +-
+ drivers/md/md-linear.h                         | 2 +-
+ drivers/md/persistent-data/dm-btree-internal.h | 2 +-
+ drivers/md/raid1.h                             | 2 +-
+ drivers/md/raid10.h                            | 2 +-
+ 12 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
-index 9651dca6863e..ea0e4fda3a9e 100644
---- a/drivers/mmc/host/sdhci-acpi.c
-+++ b/drivers/mmc/host/sdhci-acpi.c
-@@ -72,7 +72,7 @@ struct sdhci_acpi_host {
- 	const struct sdhci_acpi_slot	*slot;
- 	struct platform_device		*pdev;
- 	bool				use_runtime_pm;
--	unsigned long			private[0] ____cacheline_aligned;
-+	unsigned long			private[] ____cacheline_aligned;
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 1c641efeeca7..bea260a82a2a 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -212,7 +212,7 @@ struct crypt_config {
+ 	struct mutex bio_alloc_lock;
+ 
+ 	u8 *authenc_key; /* space for keys in authenc() format (if used) */
+-	u8 key[0];
++	u8 key[];
  };
  
- static inline void *sdhci_acpi_priv(struct sdhci_acpi_host *c)
-diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
-index 5827d3751b81..9af3fe48d62f 100644
---- a/drivers/mmc/host/sdhci-cadence.c
-+++ b/drivers/mmc/host/sdhci-cadence.c
-@@ -67,7 +67,7 @@ struct sdhci_cdns_priv {
- 	void __iomem *hrs_addr;
- 	bool enhanced_strobe;
- 	unsigned int nr_phy_params;
--	struct sdhci_cdns_phy_param phy_params[0];
-+	struct sdhci_cdns_phy_param phy_params[];
+ #define MIN_IOS		64
+diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
+index b225b3e445fa..e22e6d65862a 100644
+--- a/drivers/md/dm-integrity.c
++++ b/drivers/md/dm-integrity.c
+@@ -89,7 +89,7 @@ struct journal_entry {
+ 		} s;
+ 		__u64 sector;
+ 	} u;
+-	commit_id_t last_bytes[0];
++	commit_id_t last_bytes[];
+ 	/* __u8 tag[0]; */
  };
  
- struct sdhci_cdns_phy_cfg {
-diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
-index 981bbbe63aff..42ccd123b046 100644
---- a/drivers/mmc/host/sdhci-pci.h
-+++ b/drivers/mmc/host/sdhci-pci.h
-@@ -163,7 +163,7 @@ struct sdhci_pci_slot {
- 	bool			cd_override_level;
- 
- 	void (*hw_reset)(struct sdhci_host *host);
--	unsigned long		private[0] ____cacheline_aligned;
-+	unsigned long		private[] ____cacheline_aligned;
+diff --git a/drivers/md/dm-log-writes.c b/drivers/md/dm-log-writes.c
+index 99721c76225d..9e21df5bb998 100644
+--- a/drivers/md/dm-log-writes.c
++++ b/drivers/md/dm-log-writes.c
+@@ -127,7 +127,7 @@ struct pending_block {
+ 	char *data;
+ 	u32 datalen;
+ 	struct list_head list;
+-	struct bio_vec vecs[0];
++	struct bio_vec vecs[];
  };
  
- struct sdhci_pci_chip {
-diff --git a/drivers/mmc/host/sdhci-pltfm.h b/drivers/mmc/host/sdhci-pltfm.h
-index 2af445b8c325..6301b81cf573 100644
---- a/drivers/mmc/host/sdhci-pltfm.h
-+++ b/drivers/mmc/host/sdhci-pltfm.h
-@@ -25,7 +25,7 @@ struct sdhci_pltfm_host {
- 	unsigned int clock;
- 	u16 xfer_mode_shadow;
+ struct per_bio_data {
+diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
+index 9a18bef0a5ff..10e8b2fe787b 100644
+--- a/drivers/md/dm-raid.c
++++ b/drivers/md/dm-raid.c
+@@ -254,7 +254,7 @@ struct raid_set {
+ 		int mode;
+ 	} journal_dev;
  
--	unsigned long private[0] ____cacheline_aligned;
-+	unsigned long private[] ____cacheline_aligned;
+-	struct raid_dev dev[0];
++	struct raid_dev dev[];
  };
  
- #ifdef CONFIG_MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index cac2d97782e6..249635692112 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -614,7 +614,7 @@ struct sdhci_host {
+ static void rs_config_backup(struct raid_set *rs, struct rs_layout *l)
+diff --git a/drivers/md/dm-raid1.c b/drivers/md/dm-raid1.c
+index 089aed57e083..2f655d9f4200 100644
+--- a/drivers/md/dm-raid1.c
++++ b/drivers/md/dm-raid1.c
+@@ -83,7 +83,7 @@ struct mirror_set {
+ 	struct work_struct trigger_event;
  
- 	u64			data_timeout;
- 
--	unsigned long private[0] ____cacheline_aligned;
-+	unsigned long private[] ____cacheline_aligned;
+ 	unsigned nr_mirrors;
+-	struct mirror mirror[0];
++	struct mirror mirror[];
  };
  
- struct sdhci_ops {
-diff --git a/drivers/mmc/host/vub300.c b/drivers/mmc/host/vub300.c
-index 6ced1b7f642f..a5a90d133f1f 100644
---- a/drivers/mmc/host/vub300.c
-+++ b/drivers/mmc/host/vub300.c
-@@ -95,7 +95,7 @@ struct sd_response_header {
- 	u8 port_number;
- 	u8 command_type;
- 	u8 command_index;
--	u8 command_response[0];
-+	u8 command_response[];
- } __packed;
- 
- struct sd_status_header {
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 562ed06881b0..2629329ab9f2 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -465,7 +465,7 @@ struct mmc_host {
- 	/* Host Software Queue support */
- 	bool			hsq_enabled;
- 
--	unsigned long		private[0] ____cacheline_aligned;
-+	unsigned long		private[] ____cacheline_aligned;
+ DECLARE_DM_KCOPYD_THROTTLE_WITH_MODULE_PARM(raid1_resync_throttle,
+diff --git a/drivers/md/dm-stats.c b/drivers/md/dm-stats.c
+index 71417048256a..35d368c418d0 100644
+--- a/drivers/md/dm-stats.c
++++ b/drivers/md/dm-stats.c
+@@ -56,7 +56,7 @@ struct dm_stat {
+ 	size_t percpu_alloc_size;
+ 	size_t histogram_alloc_size;
+ 	struct dm_stat_percpu *stat_percpu[NR_CPUS];
+-	struct dm_stat_shared stat_shared[0];
++	struct dm_stat_shared stat_shared[];
  };
  
- struct device_node;
-diff --git a/include/linux/mmc/sdio_func.h b/include/linux/mmc/sdio_func.h
-index 5a177f7a83c3..fa2aaab5e57a 100644
---- a/include/linux/mmc/sdio_func.h
-+++ b/include/linux/mmc/sdio_func.h
-@@ -25,7 +25,7 @@ struct sdio_func_tuple {
- 	struct sdio_func_tuple *next;
- 	unsigned char code;
- 	unsigned char size;
--	unsigned char data[0];
-+	unsigned char data[];
+ #define STAT_PRECISE_TIMESTAMPS		1
+diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
+index 63bbcc20f49a..51fbfcf8efa1 100644
+--- a/drivers/md/dm-stripe.c
++++ b/drivers/md/dm-stripe.c
+@@ -41,7 +41,7 @@ struct stripe_c {
+ 	/* Work struct used for triggering events*/
+ 	struct work_struct trigger_event;
+ 
+-	struct stripe stripe[0];
++	struct stripe stripe[];
  };
  
  /*
-diff --git a/include/uapi/linux/mmc/ioctl.h b/include/uapi/linux/mmc/ioctl.h
-index 00c08120f3ba..98e29e7f54ac 100644
---- a/include/uapi/linux/mmc/ioctl.h
-+++ b/include/uapi/linux/mmc/ioctl.h
-@@ -57,7 +57,7 @@ struct mmc_ioc_cmd {
-  */
- struct mmc_ioc_multi_cmd {
- 	__u64 num_of_cmds;
--	struct mmc_ioc_cmd cmds[0];
-+	struct mmc_ioc_cmd cmds[];
+diff --git a/drivers/md/dm-switch.c b/drivers/md/dm-switch.c
+index 8a0f057b8122..bff4c7fa1cd2 100644
+--- a/drivers/md/dm-switch.c
++++ b/drivers/md/dm-switch.c
+@@ -53,7 +53,7 @@ struct switch_ctx {
+ 	/*
+ 	 * Array of dm devices to switch between.
+ 	 */
+-	struct switch_path path_list[0];
++	struct switch_path path_list[];
  };
  
- #define MMC_IOC_CMD _IOWR(MMC_BLOCK_MAJOR, 0, struct mmc_ioc_cmd)
+ static struct switch_ctx *alloc_switch_ctx(struct dm_target *ti, unsigned nr_paths,
+diff --git a/drivers/md/md-linear.h b/drivers/md/md-linear.h
+index 8381d651d4ed..24e97db50ebb 100644
+--- a/drivers/md/md-linear.h
++++ b/drivers/md/md-linear.h
+@@ -12,6 +12,6 @@ struct linear_conf
+ 	struct rcu_head		rcu;
+ 	sector_t		array_sectors;
+ 	int			raid_disks; /* a copy of mddev->raid_disks */
+-	struct dev_info		disks[0];
++	struct dev_info		disks[];
+ };
+ #endif
+diff --git a/drivers/md/persistent-data/dm-btree-internal.h b/drivers/md/persistent-data/dm-btree-internal.h
+index a240990a7f33..f4e644dd8101 100644
+--- a/drivers/md/persistent-data/dm-btree-internal.h
++++ b/drivers/md/persistent-data/dm-btree-internal.h
+@@ -38,7 +38,7 @@ struct node_header {
+ 
+ struct btree_node {
+ 	struct node_header header;
+-	__le64 keys[0];
++	__le64 keys[];
+ } __packed;
+ 
+ 
+diff --git a/drivers/md/raid1.h b/drivers/md/raid1.h
+index e7ccad898736..b7eb09e8c025 100644
+--- a/drivers/md/raid1.h
++++ b/drivers/md/raid1.h
+@@ -180,7 +180,7 @@ struct r1bio {
+ 	 * if the IO is in WRITE direction, then multiple bios are used.
+ 	 * We choose the number when they are allocated.
+ 	 */
+-	struct bio		*bios[0];
++	struct bio		*bios[];
+ 	/* DO NOT PUT ANY NEW FIELDS HERE - bios array is contiguously alloced*/
+ };
+ 
+diff --git a/drivers/md/raid10.h b/drivers/md/raid10.h
+index d3eaaf3eb1bc..79cd2b7d3128 100644
+--- a/drivers/md/raid10.h
++++ b/drivers/md/raid10.h
+@@ -153,7 +153,7 @@ struct r10bio {
+ 		};
+ 		sector_t	addr;
+ 		int		devnum;
+-	} devs[0];
++	} devs[];
+ };
+ 
+ /* bits for r10bio.state */
 -- 
 2.25.0
 
