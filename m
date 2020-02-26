@@ -2,176 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E40E61702D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:41:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFC461702C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:40:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728442AbgBZPlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 10:41:03 -0500
-Received: from mail-pg1-f175.google.com ([209.85.215.175]:41945 "EHLO
-        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728174AbgBZPlD (ORCPT
+        id S1728381AbgBZPkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 10:40:25 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40843 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728060AbgBZPkZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:41:03 -0500
-Received: by mail-pg1-f175.google.com with SMTP id b1so1266111pgm.8;
-        Wed, 26 Feb 2020 07:41:02 -0800 (PST)
+        Wed, 26 Feb 2020 10:40:25 -0500
+Received: by mail-wm1-f65.google.com with SMTP id t14so3653892wmi.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 07:40:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=B52/TzLFaZ8ELTIpZ/2PQuvnXdlCL7Qyj/3+GDpbM98=;
+        b=aLK6sFkLCKZDv+4r78ATZHhLeXxZmMm4tfcUeHBksjhvUxB4GDL09kT6PvaIc5m3vB
+         +V8MqGfsdyk2Ggc+D0toIGzmxLfBMYQzFdrIoTZBjj8KCqJqTTSEdo/8i+J/DYJSIaEJ
+         x5dzLhZe8GfdDvYeOiHugLFp4g1rVA4A7W90tW+DqyLSHtgKfmgDdUTj7KCDuFuWM1Qn
+         h8gCtcE3l372dJ+Io2d9uEPhb89+f8r98iRCxmfE6Dn0h7E2r3f+HZ7rkpngAZG0GF+8
+         iV7t9Ndgc5uu3+bxNGjpnQtfVFEzwWRlT/7S7qzHOtOh4jCHhy4rokSTf7PgXK/sCAbf
+         g12g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to;
-        bh=E4d4isyeTN6TAq5pVSFeFaYqnhoLqeY2MfRvQ8HUnFg=;
-        b=OjuPJz2UTQd89DfOcJw6UhPft4/2pGaUszDWmN4Y2Je4IGa/nerWIySFvCntejYInt
-         A4bR0PMwbRoFJ+q6Mri8Yv+CtOuZUQDBUhUlb5yKRJXAxDizVwYy6iJ3P440S/3TZYeF
-         m1sK6augOnwXUSM8JarfnEXcdVHTGCShlNG9JVXdUzacCd+saAsY43lxP3r1M5+8fVZK
-         Zku0OebUWoZK6YisacxDTVfNmuy0lT+7WEVmr6BneGd+dn8db7gCFzXy3MCeUR72sLqL
-         FXg/IcM9xagTW3iHjHRn8FljMvwPhirULXf+8vAHnOUVlHmB/PAwfqXyewfU7xVO/F16
-         +f7A==
-X-Gm-Message-State: APjAAAV0VGY723hYYxQ2Cgg8I/8tcawJgthg4Lyr5HZN2hzGmTVXZsAd
-        YuIeBjexPMYwEGEZObDY/mxLsjOVB2/kew==
-X-Google-Smtp-Source: APXvYqw8rO1Ms7t3wVERvy0HbERBs0SWzZsFW+p76pC+WaPKVHjPiMjYWDTPl3sNjugaAHfal6oJVA==
-X-Received: by 2002:a63:f74a:: with SMTP id f10mr4375977pgk.360.1582731661428;
-        Wed, 26 Feb 2020 07:41:01 -0800 (PST)
-Received: from [192.168.43.48] (114-136-150-109.emome-ip.hinet.net. [114.136.150.109])
-        by smtp.gmail.com with ESMTPSA id b1sm3436873pgs.27.2020.02.26.07.40.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2020 07:41:00 -0800 (PST)
-Subject: Re: r8151: check disconnect status after long sleep
-To:     Prashant Malani <pmalani@chromium.org>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Hayes Wang <hayeswang@realtek.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Grant Grundler <grundler@chromium.org>,
-        You-Sheng Yang <vicamo@gmail.com>, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200224071541.117363-1-vicamo.yang@canonical.com>
- <20200224230240.GA9642@google.com>
-From:   You-Sheng Yang <vicamo.yang@canonical.com>
-Autocrypt: addr=vicamo.yang@canonical.com; keydata=
- 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
- suzL+d2CSm1cCUYQeOxX/7MpmAIm
-Message-ID: <7f20121e-46bf-9fd9-880a-e519f20afe4e@canonical.com>
-Date:   Wed, 26 Feb 2020 23:40:47 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=B52/TzLFaZ8ELTIpZ/2PQuvnXdlCL7Qyj/3+GDpbM98=;
+        b=F4Pv0WTLplbNf0jvq5TOFIBOdZtADxdArtQp+i6vVAGZYQJ97pYNIqYy6AgiwrBHjx
+         ypoPwb/WRsPSuAzdmEglKKTjFuRtxCI6Os4vZEoPQ3cS0Knagr1oAXZbYHTQ8umYMbz3
+         Z0fwrxBgz+IG7XtQIb0s2SiarZkyFJruHhSBY27hKgL/uEQsYa5hPJIn6iQK1Mrc7Ijf
+         4PkH5LPH9Vv6F4Do7xmoayjXkd9zoAg8PydinD38KK0M9IUsqG9funW/lMdmUrr9ilSn
+         M42XVD4wSYecdx4ulXdkh8DhzXx/+ZQFaJVrCeIOlCOngh1JLoD4IiB8FKFcwU5FyXfW
+         5mog==
+X-Gm-Message-State: APjAAAUiSDkFCi7Ctdhe3pjQaZGvkmMx7TSy3i6BjQRjhWdkMQumZYfJ
+        /aziBOe2r+atuWdhqQDh7PPMSw==
+X-Google-Smtp-Source: APXvYqzQb4v6YIq/tH4gM9y8z9QC4YTU4AuGr+vaNK4P35wsrvLN41M9n96t5xpMi8l9wtu8Y1AvPg==
+X-Received: by 2002:a05:600c:54e:: with SMTP id k14mr5919562wmc.115.1582731622867;
+        Wed, 26 Feb 2020 07:40:22 -0800 (PST)
+Received: from dell ([2.31.163.122])
+        by smtp.gmail.com with ESMTPSA id i2sm3259433wmb.28.2020.02.26.07.40.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 07:40:22 -0800 (PST)
+Date:   Wed, 26 Feb 2020 15:40:55 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        b.galvani@gmail.com, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        phh@phh.me, stefan@agner.ch, letux-kernel@openphoenux.org,
+        jic23@kernel.org
+Subject: Re: [PATCH v5 1/2] mfd: rn5t618: add ADC subdevice for RC5T619
+Message-ID: <20200226154055.GQ3494@dell>
+References: <20200223131638.12130-1-andreas@kemnade.info>
+ <20200223131638.12130-2-andreas@kemnade.info>
 MIME-Version: 1.0
-In-Reply-To: <20200224230240.GA9642@google.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="IbZuCOIdGHk6uGbJCfnuua7Fr3nlZqKFQ"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200223131638.12130-2-andreas@kemnade.info>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---IbZuCOIdGHk6uGbJCfnuua7Fr3nlZqKFQ
-Content-Type: multipart/mixed; boundary="p3sXBghPAIS8fNlfRngc7nj2WMAi1gWm7"
+On Sun, 23 Feb 2020, Andreas Kemnade wrote:
 
---p3sXBghPAIS8fNlfRngc7nj2WMAi1gWm7
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+> This adds a subdevice for the ADC in the RC5T619
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+> depends on:
+> https://lore.kernel.org/lkml/20191220122416.31881-1-andreas@kemnade.info/
+> 
+> Changes in v3:
+> re-added it to the series because of
+> "Oh, it looks like there was a conflict.  Could you collect any Acks
+> (including mine) rebase and resend please?"
 
-On 2020-02-25 07:02, Prashant Malani wrote:
-> nit: The commit message title tag should be "r8152", instead of "r8151"=
-=2E
+Looks like there is still a conflict.  Sure, it's not a complicated
+fix, but that's beside the point.  What tree is this set based on?
 
-Thank you for reviewing. Also updated in v2.
+>  drivers/mfd/rn5t618.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/mfd/rn5t618.c b/drivers/mfd/rn5t618.c
+> index 073de8e0e78b..321836f78120 100644
+> --- a/drivers/mfd/rn5t618.c
+> +++ b/drivers/mfd/rn5t618.c
+> @@ -24,6 +24,7 @@ static const struct mfd_cell rn5t618_cells[] = {
+>  };
+>  
+>  static const struct mfd_cell rc5t619_cells[] = {
+> +	{ .name = "rn5t618-adc" },
+>  	{ .name = "rn5t618-regulator" },
+>  	{ .name = "rc5t619-rtc" },
 
-You-Sheng Yang
+In what upstream tree is this line present?
 
+>  	{ .name = "rn5t618-wdt" },
 
---p3sXBghPAIS8fNlfRngc7nj2WMAi1gWm7--
-
---IbZuCOIdGHk6uGbJCfnuua7Fr3nlZqKFQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEVhtdp+wXuXuqVL95S6BJ+2O0nE8FAl5WkYgACgkQS6BJ+2O0
-nE8c+wf+PLcjjHbWbIXFi99rfIvpCKaYyyLdM/Y9WAOomEkDTx1QWTwCYbjl7q+q
-5B6KVXmCZoqeo4e5JhiQGorZwM1mAnLRncMs+t5TnmfSmhgX5Je3symgJSIRDA0z
-ch1kxlHvQjQi4fqiuam3ZrXXFdKjxHq1Qm1MtGyas2m6FIZnN5aDcYgVpKTftltQ
-2U7t7X51CxeoulG2KD5HOvlT8mS1gcoSAe5QiXmi8SV3eXhmOHd+nEuDg5HdP1ei
-G1U1ftfRArzf7FQSH/5hOQVY36u7sD38lTeWSw2kxGRDI86sufmAQp1zpYEEvOys
-NUHXezLK4M5LKaYkHM7T2I8PQKwuHw==
-=ZuAg
------END PGP SIGNATURE-----
-
---IbZuCOIdGHk6uGbJCfnuua7Fr3nlZqKFQ--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
