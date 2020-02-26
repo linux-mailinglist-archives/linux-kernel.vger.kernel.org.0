@@ -2,127 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 241BC16FECC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:22:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8AA316FEAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:10:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbgBZMWD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 07:22:03 -0500
-Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.132]:22321 "EHLO
-        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726996AbgBZMWD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 07:22:03 -0500
-X-Greylist: delayed 709 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Feb 2020 07:22:02 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582719721;
-        s=strato-dkim-0002; d=dsitri.de;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=vDoUQW8f00C/Wg/EJeX1UisXIv2pOpI4xutNj0UlVGo=;
-        b=KiR0lpv5XSp8+8lDVJXatTvrPlNAtFcM3yQ/BfimH6gnR+EdmTBK6v+kxF3/VdN4bw
-        LKibEP3+PHUk5kWoN89/SVqq+tKfgz6u5QynpD5TnK7+8wOKq0TqdK9zFOjvtHW33GXT
-        sjt0WeIjJ+HbQ1ahHIC/DBaW+ZwQWSpJRykwgT06jdhWXkjkWIeIz0JO+8m5kOEUD4M3
-        jXGrYWgvxWNUPJcATCXrLaKsiPSMUIoX7NXYiBD4kgy4xfrN2kVD3NgphiBFY8hABYFB
-        aGPIBYi9m9easfPOzCBPYccKvygrlXcXIIUxMjSqJwM4nkDhSuj8zOshGTB+h6Ww5P1n
-        IoYw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHmAjw43pUzk="
-X-RZG-CLASS-ID: mo05
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1QC9x4Ut
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Wed, 26 Feb 2020 13:09:59 +0100 (CET)
-Subject: Re: [PATCH v5 0/5] Add rtc support for rn5t618 mfd
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+        id S1727108AbgBZMKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 07:10:11 -0500
+Received: from foss.arm.com ([217.140.110.172]:35018 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726920AbgBZMKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 07:10:11 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 935D71FB;
+        Wed, 26 Feb 2020 04:10:10 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4486B3FA00;
+        Wed, 26 Feb 2020 04:10:09 -0800 (PST)
+Date:   Wed, 26 Feb 2020 12:10:07 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Elliot Berman <eberman@codeaurora.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Trilok Soni <tsoni@codeaurora.org>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        David Collins <collinsd@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] firmware: psci: Add support for dt-supplied
+ SYSTEM_RESET2 type
+Message-ID: <20200226121006.GB21897@lakrids.cambridge.arm.com>
+References: <1582577858-12410-1-git-send-email-eberman@codeaurora.org>
+ <1582577858-12410-3-git-send-email-eberman@codeaurora.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-From:   "H. Nikolaus Schaller" <hns@computer.org>
-In-Reply-To: <20191220122416.31881-1-andreas@kemnade.info>
-Date:   Wed, 26 Feb 2020 13:09:58 +0100
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, stefan@agner.ch, b.galvani@gmail.com,
-        phh@phh.me,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6FE7F4B7-7D81-4005-A765-2B447B757B53@computer.org>
-References: <20191220122416.31881-1-andreas@kemnade.info>
-To:     lee.jones@linaro.org
-X-Mailer: Apple Mail (2.3124)
+Content-Disposition: inline
+In-Reply-To: <1582577858-12410-3-git-send-email-eberman@codeaurora.org>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Feb 24, 2020 at 12:57:37PM -0800, Elliot Berman wrote:
+> Some implementors of PSCI may relax the requirements of the PSCI
+> architectural warm reset. In order to comply with PSCI specification, a
+> different reset_type value must be used. The alternate PSCI
+> SYSTEM_RESET2 may be used in all warm/soft reboot scenarios, replacing
+> the architectural warm reset.
 
-> Am 20.12.2019 um 13:24 schrieb Andreas Kemnade <andreas@kemnade.info>:
->=20
-> In the variant RC5T619 the mfd has an RTC. This patchset adds
-> support for it. To do so it adds the missing register defines in=20
-> rn5t618.h and general irq handling for that.
-> It seems that the irq definitions are the same except missing RTC
-> but due to missing ability to test that I do not add them here.
->=20
-> The rtc driver itself is based on=20
-> =
-https://github.com/kobolabs/Kobo-Reader/blob/master/hw/imx6sll-clara/kerne=
-l.tar.bz2
-> but heavily reworked.
->=20
-> It was tested on the Kobo Clara HD.
->=20
-> For cleaning up there is a separate off-topic patch:
-> mfd: rn5t618: cleanup i2c_device_id
->=20
-> Changes in v5:
-> - static rn5t618_irq_init
-> - PLATFORM_DEVID_NONE
-> - added some Acked-Bys
->=20
-> Changes in v4:
-> - use macros for IRQ definitions
-> - merge rn5t618-core.c and rn5t618-irq.c
->=20
-> Changes in v3:
-> - alignment cleanup
-> - output cleanup, remove useless toggling of alarm flag in rtc probe
-> - updated bindings description, so patch 1/5 becomes 2/6 and so on
->=20
-> Changes in v2:
-> - no dead code in irq code
-> - various improvements and cleanups in rtc driver itself
->=20
-> Andreas Kemnade (5):
->  dt-bindings: mfd: rn5t618: Document optional property interrupts
->  mfd: rn5t618: add IRQ support
->  mfd: rn5t618: add RTC related registers
->  mfd: rn5t618: add more subdevices
->  rtc: rc5t619: add ricoh rc5t619 RTC driver
+As with the binding patch, this sounds like a workaround for a firmware
+bug. Can you please elaborate on what exactly your firmware does in this
+case?
 
-what has happened to this series?
-It looks like something got lost so that it has not yet arrived in =
-linux-next.
+Thanks,
+Mark.
 
-BR and thanks,
-Nikolaus Schaller
-
->=20
-> Documentation/devicetree/bindings/mfd/rn5t618.txt |   4 +
-> drivers/mfd/Kconfig                               |   1 +
-> drivers/mfd/rn5t618.c                             | 109 +++++-
-> drivers/rtc/Kconfig                               |  10 +
-> drivers/rtc/Makefile                              |   1 +
-> drivers/rtc/rtc-rc5t619.c                         | 444 =
-++++++++++++++++++++++
-> include/linux/mfd/rn5t618.h                       |  26 ++
-> 7 files changed, 593 insertions(+), 2 deletions(-)
-> create mode 100644 drivers/rtc/rtc-rc5t619.c
->=20
-> --=20
-> 2.11.0
-
+> 
+> Signed-off-by: Elliot Berman <eberman@codeaurora.org>
+> ---
+>  drivers/firmware/psci/psci.c | 22 ++++++++++++++++++----
+>  include/uapi/linux/psci.h    |  2 ++
+>  2 files changed, 20 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> index 2937d44..8f4609c 100644
+> --- a/drivers/firmware/psci/psci.c
+> +++ b/drivers/firmware/psci/psci.c
+> @@ -90,6 +90,8 @@ static u32 psci_function_id[PSCI_FN_MAX];
+>  
+>  static u32 psci_cpu_suspend_feature;
+>  static bool psci_system_reset2_supported;
+> +static u32 psci_sys_reset2_reset_param =
+> +	PSCI_1_1_SYSTEM_RESET2_SYSTEM_WARM_RESET;
+>  
+>  static inline bool psci_has_ext_power_state(void)
+>  {
+> @@ -272,11 +274,10 @@ static void psci_sys_reset(enum reboot_mode reboot_mode, const char *cmd)
+>  	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
+>  	    psci_system_reset2_supported) {
+>  		/*
+> -		 * reset_type[31] = 0 (architectural)
+> -		 * reset_type[30:0] = 0 (SYSTEM_WARM_RESET)
+>  		 * cookie = 0 (ignored by the implementation)
+>  		 */
+> -		invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2), 0, 0, 0);
+> +		invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2),
+> +			       psci_sys_reset2_reset_param, 0, 0);
+>  	} else {
+>  		invoke_psci_fn(PSCI_0_2_FN_SYSTEM_RESET, 0, 0, 0);
+>  	}
+> @@ -493,6 +494,7 @@ typedef int (*psci_initcall_t)(const struct device_node *);
+>  static int __init psci_0_2_init(struct device_node *np)
+>  {
+>  	int err;
+> +	u32 param;
+>  
+>  	err = get_set_conduit_method(np);
+>  	if (err)
+> @@ -505,7 +507,19 @@ static int __init psci_0_2_init(struct device_node *np)
+>  	 * can be carried out according to the specific version reported
+>  	 * by firmware
+>  	 */
+> -	return psci_probe();
+> +	err = psci_probe();
+> +	if (err)
+> +		return err;
+> +
+> +	if (psci_system_reset2_supported &&
+> +	    !of_property_read_u32(np, "arm,psci-sys-reset2-param", &param)) {
+> +		if ((s32)param > 0)
+> +			pr_warn("%08x is an invalid architectural reset type.\n",
+> +				param);
+> +		psci_sys_reset2_reset_param = param;
+> +	}
+> +
+> +	return 0;
+>  }
+>  
+>  /*
+> diff --git a/include/uapi/linux/psci.h b/include/uapi/linux/psci.h
+> index 2fcad1d..d786ec8 100644
+> --- a/include/uapi/linux/psci.h
+> +++ b/include/uapi/linux/psci.h
+> @@ -55,6 +55,8 @@
+>  #define PSCI_1_0_FN64_SYSTEM_SUSPEND		PSCI_0_2_FN64(14)
+>  #define PSCI_1_1_FN64_SYSTEM_RESET2		PSCI_0_2_FN64(18)
+>  
+> +#define PSCI_1_1_SYSTEM_RESET2_SYSTEM_WARM_RESET	0
+> +
+>  /* PSCI v0.2 power state encoding for CPU_SUSPEND function */
+>  #define PSCI_0_2_POWER_STATE_ID_MASK		0xffff
+>  #define PSCI_0_2_POWER_STATE_ID_SHIFT		0
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
