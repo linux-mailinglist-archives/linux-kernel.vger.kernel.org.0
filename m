@@ -2,203 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7B53170077
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 14:53:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52E88170079
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 14:53:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727446AbgBZNxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 08:53:08 -0500
-Received: from mx1.tq-group.com ([62.157.118.193]:59174 "EHLO mx1.tq-group.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727253AbgBZNxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 08:53:06 -0500
-IronPort-SDR: gbVhfIABwRAaGzo5z9nA3wIaeDXV9+zgCVWCraMP7njrPIOeyo3CV0DcUalJIaQ6+j/uDL5dvK
- 1kYB9vEjSGbE7wtjR3lGQydCFoKXb3sbNrNo9QQA2q248Ncei1c8OrRtDG+eE8QJ2PFnfIZ9V6
- sRU+GOJoXxQK1BVZ81uh0GGcqV518YZn2NkpAc1ZLt5nf4gnCxWsAnOIirsFQp+HUhdIif5Qil
- jVn0YF8BqQI3vn0UKskXlfGrbzlgy6eps8XcszyosaDbXgtFDX7If6TraLqWwFnELqp6k+zNIp
- vc8=
-X-IronPort-AV: E=Sophos;i="5.70,488,1574118000"; 
-   d="scan'208";a="11120528"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 26 Feb 2020 14:53:02 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Wed, 26 Feb 2020 14:53:02 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Wed, 26 Feb 2020 14:53:02 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1582725182; x=1614261182;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=9V8+JzvNSjdZ1QyjAXX7GSR1pLWlEW6lGUK2vTELh0E=;
-  b=hQmBpSvExa/ft9maOBPMlx0kRasdrxUH6G3yIF/XizGMBWIGUJ7wFTwA
-   CxtJbXAWf/Y0M/9XuZBQa91rXARH1lG+zXhbVfUHbEdAyr40of0y7OMTe
-   YEmfYxWTOCtHAH2te8YhGh5pp5YeL0nZx8DDlY6HJp9BdPIXxEpUfzISE
-   J8RYNeVJDxUg1F64X8ffzRYNHXOe5N36GQ2lt7Mnz7NCWsA032CLxQdkJ
-   Co+F1VJaWbfGpYUE2R2TuamxE9thPIIk9NY0k7thJW/HKCyrHnLKZg2YX
-   kMbE202osMDHRxEb1ZEMb3pp8qRz6ekM2M8WzQ+xSOkNlK+D3EqhlDnRJ
-   Q==;
-IronPort-SDR: 7aNfk6zmaYUJEBGSCRKBfuBfIYdEOMYFtu9OZAqSik/P5RoqOJv1NOPDXQxxux+R6E+mzWAvEe
- m4AbMfyJ//rdegIdlNCnCblqMFJedHjL6oVIsAF6tdBoZ1q2nYtVR1uP2VoY2EsKCfPpiHrfUt
- RTVRuFZNA6ohOsseVOGfzry9xwT19MzNfWQRpq+c0BYRhPst98bIMp24pjxK0pC3ne6LehMct8
- BoJcVcI2AtkSA4XarW+VPY2Ctl/roO82eVNbdR5g5Bf8Nfmpt1x1kJrZjnsNPWYP4qWrLJ8p9+
- fjE=
-X-IronPort-AV: E=Sophos;i="5.70,488,1574118000"; 
-   d="scan'208";a="11120527"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 26 Feb 2020 14:53:02 +0100
-Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id 836D4280065;
-        Wed, 26 Feb 2020 14:53:08 +0100 (CET)
-From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To:     thierry.reding@gmail.com, u.kleine-koenig@pengutronix.de
-Cc:     linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH 4/4] pwm: pca9685: migrate config/enable/disable to apply
-Date:   Wed, 26 Feb 2020 14:52:29 +0100
-Message-Id: <20200226135229.24929-4-matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200226135229.24929-1-matthias.schiffer@ew.tq-group.com>
-References: <20200226135229.24929-1-matthias.schiffer@ew.tq-group.com>
+        id S1727520AbgBZNxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 08:53:33 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33315 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbgBZNxd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 08:53:33 -0500
+Received: by mail-wr1-f65.google.com with SMTP id u6so3166190wrt.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 05:53:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=l3cxtMG4sZ4y/Scu1ZO3icRIO3At+4PfcH7Mul3RpG0=;
+        b=zzpVCXjGnNVaBg/Rk4JA9XUtDzvNEn48i7Iszdb+rdrxketdQqCn6Eh7w91livJIDn
+         +KxvOa3eKPt/Wn044/IZFFvBcUv7KR474fr/fRUbwSlVIf6KCBM2QJbWnafPNT6FeEAw
+         +rXE7gXDNVHwC6qYtHAmOSwiyhXAWHXtMqeeJ43QmPB63KhUmwsQ2s4nbt13gTvHKNbT
+         R+fFt8e0qK1bGGIRPZwDSrKD42zZmUtfi4y9m6TzbANVQ3fmm5ep4ykVT4PSPGM9XKuh
+         kvcoAuSPF4YTup3lajgudLJ413ewI/bnuec4RqvkQfn9Rh4oY6NNYOQFPHZTO5eYcgER
+         LoqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=l3cxtMG4sZ4y/Scu1ZO3icRIO3At+4PfcH7Mul3RpG0=;
+        b=Fs7IN11R8KwlrzBebNj9ioU9H6IsnhQkF/XealqRzN3XJciMi4qcpeKuvWpFgB3CUS
+         PpSl4fYpfGt07J7KmfVp2sTYFUKYYEJkfM2CTkkCvc8rvmu5/vYd06tJeNyrffMVk8cZ
+         0yWKdLjRE0/rQ5P4QqL2PWw1hU+vLWe69FnH66seWN+ZBMPY560Xj1engQuFwrHu8gIQ
+         3KGKNsc5bjvprl1A+FdCpfWiWUoUbAqDcmhJWsE7tSdOrgBRosNnMfnRTJWBT/yL945K
+         R35YoUkyS4rVf11YKBxt/fNQJCuvFKwbvWi6zDzASRer8hRLZ2mcgvseSb5dLKV7R/zx
+         33AA==
+X-Gm-Message-State: APjAAAWFRP38cnH1gazR2TGqn2M0DBRepKXmEUp1Fru/rLjLsxjJhU7P
+        B1kHjsGjoVgl2B/Et69HXhNiyA==
+X-Google-Smtp-Source: APXvYqwId0MNOOSohhYiwMOwoBaxQal9aFkn9RfJOajEiRd99TeuRJKBFRwtdq4N/vks3d9Yq2ZzZw==
+X-Received: by 2002:adf:8294:: with SMTP id 20mr6074492wrc.175.1582725211286;
+        Wed, 26 Feb 2020 05:53:31 -0800 (PST)
+Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
+        by smtp.gmail.com with ESMTPSA id w19sm2832783wmc.22.2020.02.26.05.53.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 05:53:30 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kent Gibson <warthog618@gmail.com>
+Subject: [PATCH] gpiolib: fix bitmap operations related to line event watching
+Date:   Wed, 26 Feb 2020 14:53:23 +0100
+Message-Id: <20200226135323.1840-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For consistency with disabled state, initialize all LEDs in FULL_OFF
-state during probe.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This also fixes a broken interaction between config with 100% duty cycle
-(which would set the LED to FULL_ON) and enable (which would unset
-FULL_ON), effectively disabling the LED again when enable was called
-after config. This behaviour was observed with the leds-pwm driver when
-directly switching from 0 to maximum brightness.
+When operating on the bits of watched_lines bitmap, we're using
+desc_to_gpio() which returns the GPIO number from the global numberspace.
+This leads to all sorts of memory corruptions and invalid behavior. We
+should switch to using gpio_chip_hwgpio() instead.
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Fixes: 51c1064e82e7 ("gpiolib: add new ioctl() for monitoring changes in line info")
+Reported-by: Kent Gibson <warthog618@gmail.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/pwm/pwm-pca9685.c | 53 +++++++++++----------------------------
- 1 file changed, 14 insertions(+), 39 deletions(-)
+ drivers/gpio/gpiolib.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
-index 370691b21107..e266cbbd39bf 100644
---- a/drivers/pwm/pwm-pca9685.c
-+++ b/drivers/pwm/pwm-pca9685.c
-@@ -219,15 +219,16 @@ static void pca9685_set_sleep_mode(struct pca9685 *pca, bool enable)
- 	}
- }
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a5cd1b4abe6f..5cc80f6f79e0 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1261,7 +1261,7 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 			return -EFAULT;
  
--static int pca9685_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
--			      int duty_ns, int period_ns)
-+static int pca9685_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-+			     const struct pwm_state *state)
- {
- 	struct pca9685 *pca = to_pca(chip);
- 	unsigned long long duty;
- 	int prescale;
+ 		if (cmd == GPIO_GET_LINEINFO_WATCH_IOCTL)
+-			set_bit(desc_to_gpio(desc), priv->watched_lines);
++			set_bit(gpio_chip_hwgpio(desc), priv->watched_lines);
  
--	if (period_ns != pca->period_ns) {
--		prescale = DIV_ROUND_CLOSEST(PCA9685_OSC_CLOCK_MHZ * period_ns,
-+	if (state->period != pca->period_ns) {
-+		prescale = DIV_ROUND_CLOSEST(PCA9685_OSC_CLOCK_MHZ *
-+					     state->period,
- 					     PCA9685_COUNTER_RANGE * 1000) - 1;
+ 		return 0;
+ 	} else if (cmd == GPIO_GET_LINEHANDLE_IOCTL) {
+@@ -1276,7 +1276,7 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		if (IS_ERR(desc))
+ 			return PTR_ERR(desc);
  
- 		if (prescale >= PCA9685_PRESCALE_MIN &&
-@@ -247,7 +248,7 @@ static int pca9685_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			/* Wake the chip up */
- 			pca9685_set_sleep_mode(pca, false);
- 
--			pca->period_ns = period_ns;
-+			pca->period_ns = state->period;
- 		} else {
- 			dev_err(chip->dev,
- 				"prescaler not set: period out of bounds!\n");
-@@ -255,13 +256,13 @@ static int pca9685_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 		}
- 	}
- 
--	if (duty_ns < 1) {
-+	if (!state->enabled || state->duty_cycle < 1) {
-+		/* Set the full OFF bit */
- 		regmap_write(pca->regmap, LED_N_OFF_H(pwm->hwpwm), LED_FULL);
--
+-		clear_bit(desc_to_gpio(desc), priv->watched_lines);
++		clear_bit(gpio_chip_hwgpio(desc), priv->watched_lines);
  		return 0;
  	}
+ 	return -EINVAL;
+@@ -1304,7 +1304,7 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
+ 	struct gpio_desc *desc = data;
+ 	int ret;
  
--	if (duty_ns == period_ns) {
-+	if (state->duty_cycle == state->period) {
- 		/* Clear both OFF registers */
- 		regmap_write(pca->regmap, LED_N_OFF_L(pwm->hwpwm), 0x0);
- 		regmap_write(pca->regmap, LED_N_OFF_H(pwm->hwpwm), 0x0);
-@@ -272,8 +273,8 @@ static int pca9685_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 		return 0;
- 	}
+-	if (!test_bit(desc_to_gpio(desc), priv->watched_lines))
++	if (!test_bit(gpio_chip_hwgpio(desc), priv->watched_lines))
+ 		return NOTIFY_DONE;
  
--	duty = PCA9685_COUNTER_RANGE * (unsigned long long)duty_ns;
--	duty = DIV_ROUND_UP_ULL(duty, period_ns);
-+	duty = PCA9685_COUNTER_RANGE * (unsigned long long)state->duty_cycle;
-+	duty = DIV_ROUND_UP_ULL(duty, state->period);
- 
- 	regmap_write(pca->regmap, LED_N_OFF_L(pwm->hwpwm), (int)duty & 0xff);
- 	regmap_write(pca->regmap, LED_N_OFF_H(pwm->hwpwm),
-@@ -285,29 +286,6 @@ static int pca9685_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	return 0;
- }
- 
--static int pca9685_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
--{
--	struct pca9685 *pca = to_pca(chip);
--
--	/*
--	 * Clear the full-off bit.
--	 * It has precedence over the others and must be off.
--	 */
--	regmap_update_bits(pca->regmap, LED_N_OFF_H(pwm->hwpwm), LED_FULL, 0x0);
--
--	return 0;
--}
--
--static void pca9685_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
--{
--	struct pca9685 *pca = to_pca(chip);
--
--	regmap_write(pca->regmap, LED_N_OFF_H(pwm->hwpwm), LED_FULL);
--
--	/* Clear the LED_OFF counter. */
--	regmap_write(pca->regmap, LED_N_OFF_L(pwm->hwpwm), 0x0);
--}
--
- static int pca9685_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- {
- 	struct pca9685 *pca = to_pca(chip);
-@@ -321,14 +299,11 @@ static int pca9685_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- 
- static void pca9685_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	pca9685_pwm_disable(chip, pwm);
- 	pm_runtime_put(chip->dev);
- }
- 
- static const struct pwm_ops pca9685_pwm_ops = {
--	.enable = pca9685_pwm_enable,
--	.disable = pca9685_pwm_disable,
--	.config = pca9685_pwm_config,
-+	.apply = pca9685_pwm_apply,
- 	.request = pca9685_pwm_request,
- 	.free = pca9685_pwm_free,
- 	.owner = THIS_MODULE,
-@@ -377,9 +352,9 @@ static int pca9685_pwm_probe(struct i2c_client *client,
- 
- 	regmap_write(pca->regmap, PCA9685_MODE2, mode2);
- 
--	/* clear all "full off" bits */
-+	/* Set all LEDs full off */
- 	regmap_write(pca->regmap, PCA9685_ALL_LED_OFF_L, 0);
--	regmap_write(pca->regmap, PCA9685_ALL_LED_OFF_H, 0);
-+	regmap_write(pca->regmap, PCA9685_ALL_LED_OFF_H, LED_FULL);
- 
- 	/*
- 	 * The PWM subsystem does not support a pre-delay.
+ 	memset(&chg, 0, sizeof(chg));
 -- 
-2.17.1
+2.25.0
 
