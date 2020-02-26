@@ -2,113 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACA6A16F611
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 04:25:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C49B16F622
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 04:35:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730194AbgBZDZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 22:25:00 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39191 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727880AbgBZDZA (ORCPT
+        id S1726674AbgBZDfW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 25 Feb 2020 22:35:22 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33295 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbgBZDfW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 22:25:00 -0500
-Received: by mail-io1-f65.google.com with SMTP id c16so1733619ioh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 19:25:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IOzAwCx4zkKExWVM/1JeparZOmVnpclobVkhjd9ROHU=;
-        b=uybE7F3iZRKuDdGsl6AyNPinESePbWi00KedWrOiIi33XC+9m8T4hszY/5M8ZqDunR
-         c9cmuFEToTMIUntwmJSVt7qJ7n6vT0NsDJbG4RGdP0gv6zADb9cZek3wTGJGGX4vG2h6
-         Ba12yAInTSh6EGdarC7pCOlFji5RczzdfgF7o=
+        Tue, 25 Feb 2020 22:35:22 -0500
+Received: by mail-ed1-f68.google.com with SMTP id r21so2027341edq.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 19:35:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IOzAwCx4zkKExWVM/1JeparZOmVnpclobVkhjd9ROHU=;
-        b=M9ld1Dfty+W7gk0XlTD8mWlBhbZpWsBr8tW3UShWxwCQiOdCbbHT4yCfpW6/kfjMnV
-         F7nEcQn6y1ca+zsF/elB47Ad+9B1X/je21qXEHSrZOqWZIcEQPvmVJL+kwtwUgLomWxb
-         GR0c9fYmBzk97RAUoUN2v5diZ5Sc5DlNILgAsOVdQHWHbRwq4TwGIM7BERRvpmvPlJj1
-         hw8VvfjNkaiLIt/rd/TWThT7i59ivorCbEcoZOsO6xBzvmd4qGX65gCuVU7ESHi1h0Ra
-         hs0x0JXw+cwEjpJqttLpq7fJmx1Fu5pK+fo0MZMpVl5zAZbBLBAXprhFNXBM+F7xrX6c
-         JiiA==
-X-Gm-Message-State: APjAAAUUEh1yHYyJoEjEQvE1GUHlIrpDHswyWDodB4kIxRe0rTRaCICs
-        mf5FyO50Q1LF8XSqOBTjI8B1h3QytsdqPVLylrEYgQ==
-X-Google-Smtp-Source: APXvYqzHGFbOXP4crruGf1D013vhSDqRLdH6MZOdcklPvGslpTyDp+PnQANCeKZTWskBq50NizwHS+1Rd5rHwBdROCE=
-X-Received: by 2002:a05:6638:6ba:: with SMTP id d26mr1761220jad.23.1582687499763;
- Tue, 25 Feb 2020 19:24:59 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=UXofy6EkwfdL30O9+SzmICCU7Qa0hak4F21CzXTG5yo=;
+        b=BI1nSrWF+/FFZ8+JmAkwrTwZ8uTUsT8k+xakqDm1vdUr9g4Ie6I4hDaKKnlZCNpDA9
+         VUmUjog7h0R4Hq4xpMXupUP75nYeP4S2qMNngmoAE3gjWTQnNWh/7lf8pKwwctAIKclc
+         Y/GuhSKlOk0f4Odr5CSZwNSzHXaGPdu6QYtjf520lqWkdz8yMT8QmMJp9lr4VAE0QvWt
+         Zu2ttEU3wScy1HXqytXc4bgEihS+AgQytPmE6Hv+K/nn65pexYnD8+8jtP56QLoiXM5B
+         xQ/JaWGxEVBl0OrNihdVu4h4r5339oBoKCUYgbWwVNeXKS7+oJ9J7rGx4wAfegZfPttk
+         T74w==
+X-Gm-Message-State: APjAAAUNa0WF/gb7IB9t+Bcls6N3MkcvBsNneY/t3RH1WmIzLPSS3xde
+        afwUBECc00CSVGiQxT61QYUnZcrKPFU=
+X-Google-Smtp-Source: APXvYqx4+2ePU5zGnoq/1CYaKRmOjBBiEnB4X0GTffeXg9sDRzZBLtI9rw1h3LVcUXcSLr20RFSYQw==
+X-Received: by 2002:a50:d0d2:: with SMTP id g18mr413334edf.37.1582687801348;
+        Tue, 25 Feb 2020 19:30:01 -0800 (PST)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
+        by smtp.gmail.com with ESMTPSA id e22sm24448edq.75.2020.02.25.19.30.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2020 19:30:01 -0800 (PST)
+Received: by mail-wm1-f50.google.com with SMTP id c84so1410129wme.4
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 19:30:00 -0800 (PST)
+X-Received: by 2002:a05:600c:10d2:: with SMTP id l18mr2582096wmd.122.1582687800441;
+ Tue, 25 Feb 2020 19:30:00 -0800 (PST)
 MIME-Version: 1.0
-References: <1503467992.2999.1582234410317.JavaMail.zimbra@efficios.com>
- <20200221154923.GC194360@google.com> <1683022606.3452.1582301632640.JavaMail.zimbra@efficios.com>
-In-Reply-To: <1683022606.3452.1582301632640.JavaMail.zimbra@efficios.com>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Tue, 25 Feb 2020 22:24:48 -0500
-Message-ID: <CAEXW_YRT7AjaJs7mPyNd=J6fhBicYwGbQMK2Senwm3cBhFvWPw@mail.gmail.com>
-Subject: Re: Rseq registration: Google tcmalloc vs glibc
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Chris Kennelly <ckennelly@google.com>,
-        Paul Turner <pjt@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Carlos O'Donell" <codonell@redhat.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        paulmck <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-        Brian Geffon <bgeffon@google.com>
+References: <20200224173901.174016-1-jernej.skrabec@siol.net>
+ <20200225083448.6upblnctjjrbarje@gilmour.lan> <CAGb2v64g7Q4e+ic08pA7tbamgToOjyYzuzqP0bpqBZjRuRUrPA@mail.gmail.com>
+ <12462592.uLZWGnKmhe@jernej-laptop>
+In-Reply-To: <12462592.uLZWGnKmhe@jernej-laptop>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 26 Feb 2020 11:29:48 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65=a3p1xrz3RuT7w9p+KqRbYMVqf7_GajEQHOpQnTAqnA@mail.gmail.com>
+Message-ID: <CAGb2v65=a3p1xrz3RuT7w9p+KqRbYMVqf7_GajEQHOpQnTAqnA@mail.gmail.com>
+Subject: Re: [PATCH 6/7] drm/sun4i: de2: Don't return de2_fmt_info struct
+To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime@cerno.tech>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 11:13 AM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
+On Wed, Feb 26, 2020 at 2:50 AM Jernej Škrabec <jernej.skrabec@siol.net> wrote:
 >
-> ----- On Feb 21, 2020, at 10:49 AM, Joel Fernandes, Google joel@joelfernandes.org wrote:
+> Hi!
 >
-> [...]
-> >>
-> >> 3) Use the  __rseq_abi TLS cpu_id field to know whether Rseq has been
-> >> registered.
-> >>
-> >> - Current protocol in the most recent glibc integration patch set.
-> >> - Not supported yet by Linux kernel rseq selftests,
-> >> - Not supported yet by tcmalloc,
-> >>
-> >> Use the per-thread state to figure out whether each thread need to register
-> >> Rseq individually.
-> >>
-> >> Works for integration between a library which exists for the entire lifetime
-> >> of the executable (e.g. glibc) and other libraries. However, it does not
-> >> allow a set of libraries which are dlopen'd/dlclose'd to co-exist without
-> >> having a library like glibc handling the registration present.
+> Dne torek, 25. februar 2020 ob 09:52:18 CET je Chen-Yu Tsai napisal(a):
+> > On Tue, Feb 25, 2020 at 4:35 PM Maxime Ripard <maxime@cerno.tech> wrote:
+> > > Hi,
+> > >
+> > > On Mon, Feb 24, 2020 at 06:39:00PM +0100, Jernej Skrabec wrote:
+> > > > Now that de2_fmt_info contains only DRM <-> HW format mapping, it
+> > > > doesn't make sense to return pointer to structure when searching by DRM
+> > > > format. Rework that to return only HW format instead.
+> > > >
+> > > > This doesn't make any functional change.
+> > > >
+> > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > > ---
+> > > >
+> > > >  drivers/gpu/drm/sun4i/sun8i_mixer.c    | 15 +++++++++++----
+> > > >  drivers/gpu/drm/sun4i/sun8i_mixer.h    |  7 +------
+> > > >  drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 10 +++++-----
+> > > >  drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 12 ++++++------
+> > > >  4 files changed, 23 insertions(+), 21 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > > > b/drivers/gpu/drm/sun4i/sun8i_mixer.c index e078ec96de2d..56cc037fd312
+> > > > 100644
+> > > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > > > @@ -27,6 +27,11 @@
+> > > >
+> > > >  #include "sun8i_vi_layer.h"
+> > > >  #include "sunxi_engine.h"
+> > > >
+> > > > +struct de2_fmt_info {
+> > > > +     u32     drm_fmt;
+> > > > +     u32     de2_fmt;
+> > > > +};
+> > > > +
+> > > >
+> > > >  static const struct de2_fmt_info de2_formats[] = {
+> > > >
+> > > >       {
+> > > >
+> > > >               .drm_fmt = DRM_FORMAT_ARGB8888,
+> > > >
+> > > > @@ -230,15 +235,17 @@ static const struct de2_fmt_info de2_formats[] = {
+> > > >
+> > > >       },
+> > > >
+> > > >  };
+> > > >
+> > > > -const struct de2_fmt_info *sun8i_mixer_format_info(u32 format)
+> > > > +int sun8i_mixer_drm_format_to_hw(u32 format, u32 *hw_format)
+> > > >
+> > > >  {
+> > > >
+> > > >       unsigned int i;
+> > > >
+> > > >       for (i = 0; i < ARRAY_SIZE(de2_formats); ++i)
+> > > >
+> > > > -             if (de2_formats[i].drm_fmt == format)
+> > > > -                     return &de2_formats[i];
+> > > > +             if (de2_formats[i].drm_fmt == format) {
+> > > > +                     *hw_format = de2_formats[i].de2_fmt;
+> > > > +                     return 0;
+> > > > +             }
+> > > >
+> > > > -     return NULL;
+> > > > +     return -EINVAL;
+> > > >
+> > > >  }
+> > >
+> > > I'm not too sure about that one. It breaks the consistency with the
+> > > other functions, and I don't really see a particular benefit to it?
 > >
-> > Mathieu, could you share more details about why during dlopen/close
-> > libraries we cannot use the same __rseq_abi TLS to detect that rseq was
-> > registered?
 >
-> Sure,
+> I don't have strong opinion about this patch. It can be dropped.
 >
-> A library which is only loaded and never closed during the execution of the
-> program can let the kernel implicitly unregister rseq at thread exit. For
-> the dlopen/dlclose use-case, we need to be able to explicitly unregister
-> each thread's __rseq_abi which sit in a library which is going to be
-> dlclose'd.
+> > I guess we could just define an "invalid" value, and have the function
+> > return that if can't find a match? I'm guessing 0x0 is valid, so maybe
+> > 0xffffffff or 0xdeadbeef ?
+> >
+> > That would keep consistency with everything else all the while
+> > removing the level of indirection you wanted to.
+>
+> I modeled this after
+> static int sun4i_backend_drm_format_to_layer(u32 format, u32 *mode);
+> from sun4i_backend.c.
+>
+> What consistency do you have in mind?
 
-Mathieu, Thanks a lot for the explanation, it makes complete sense. It
-sounds from Chris's reply that tcmalloc already checks
-__rseq_abi.cpu_id and is not dlopened/closed. Considering these, it
-seems to already handle things properly - CMIIW.
+Directly returning values (or error codes) instead of passing in a pointer
+for data to be returned. I assumed that was what Maxime was referring to.
 
-Chris, Brian, is there any other concern to upgrading of tcmalloc
-version in ChromeOS? I believe there was some concern about detection
-of rseq kernel support. A quick look at tcmalloc shows it does not do
-such detection, but I can stand corrected. One more thing, currently
-tcmalloc does not use rseq on ARM. If I recall, ARM does have rseq
-support as well. So we ought to enable it for that arch as well if
-possible. Why not enable it on all arches and then dynamically detect
-at runtime if needed support is available?
+ChenYu
 
-Thanks,
-Joel
+> >
+> > ChenYu
+> >
+> > > The rest of the series is
+> > > Acked-by: Maxime Ripard <mripard@kernel.org>
+>
+> Thanks!
+>
+> Best regards,
+> Jernej
+>
+> > >
+> > > Maxime
+>
+>
+>
+>
