@@ -2,134 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDDBD170A57
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 22:23:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 981E1170A6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 22:28:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbgBZVXd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 16:23:33 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.202]:46198 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727503AbgBZVXd (ORCPT
+        id S1727591AbgBZV2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 16:28:52 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59502 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727486AbgBZV2v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 16:23:33 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 7E02954B5A
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 15:23:31 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 749TjFxwYXVkQ749TjbBCH; Wed, 26 Feb 2020 15:23:31 -0600
-X-Authority-Reason: nr=8
+        Wed, 26 Feb 2020 16:28:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=96f8kZdh7WxJBTeep/qoxEO5hEENwT7hPTi1FGgDDyQ=; b=BZl1WCjgZtTNu6aGLvvU4/iPRW
-        KLaA1o7tDonP3BUGMMHpFTH76EWmdNlvIEgVkNuMfKiiZDRQe7i00Bf5C2djTnOF+TcPoYjgNKncA
-        Rlqx5Ed5Ra7TtDi9045eAvLfhpfmdWkr6BdOj1U1j6rxT+1kY/qpWzi2R72Qh49C2R7mauhdDHCTG
-        snYO5LP6796MkyQirOLPQ+m483LtTmhx20oZlAze2cojPgR01142altotg30XfkciRi+LRxCckTCd
-        HPHeyB5uYVzEWI5qUaAsA2gTE8sOZ2IFKcI4zv9NnCa5B7N0FTXEmmOKZlauQzSKfqO/Ro6LjxnZ8
-        gzd3TRow==;
-Received: from [201.162.161.180] (port=47722 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j749R-000nRw-Iy; Wed, 26 Feb 2020 15:23:30 -0600
-Date:   Wed, 26 Feb 2020 15:26:12 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] xen: Replace zero-length array with flexible-array member
-Message-ID: <20200226212612.GA4663@embeddedor>
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=22L8bPAzmVdqd1/KzktzA8ztx8DTFzR2iF/v1VHlqz0=; b=u6Qf/0KanA1Wckx/r3ajANog91
+        t5mZB2hlR9hC2xHkmV++USC/1wp3rDkQYzFUFm2S3AS2EJX6dfnlOZUsfIw+1oRq3cNPIjuPXOLux
+        7b2bZbJzarW5uB37Hi4mqqbHwyFYRsVKnRX18yd3J0/NHuQyy+n4qkS4r4QsC5oxLy0hdqqq+12Yy
+        ZJdtVw9lBdWCJYgZzef+VkdDaLswl7mFZvX0aI/+lS85GS6VUgpfUwkaRxSWn1BvJaCYxywjlCCaJ
+        NAn1li//Sw89TsCek1PIeAymwqppl7jRajU8kgUZ5AIDFFrrtZdnh6ZEQ2Jm42vgULqfCUXzUob6Z
+        6if60eOg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j74EW-0006tG-S4; Wed, 26 Feb 2020 21:28:44 +0000
+Date:   Wed, 26 Feb 2020 13:28:44 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Eric Sandeen <sandeen@redhat.com>
+Subject: Re: [PATCH 00/11] fs/dcache: Limit # of negative dentries
+Message-ID: <20200226212844.GD24185@bombadil.infradead.org>
+References: <20200226161404.14136-1-longman@redhat.com>
+ <20200226162954.GC24185@bombadil.infradead.org>
+ <12e8d951-fc35-bce0-e96d-f93bccf2bd3a@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.161.180
-X-Source-L: No
-X-Exim-ID: 1j749R-000nRw-Iy
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.161.180]:47722
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 21
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <12e8d951-fc35-bce0-e96d-f93bccf2bd3a@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Wed, Feb 26, 2020 at 02:19:59PM -0500, Waiman Long wrote:
+> On 2/26/20 11:29 AM, Matthew Wilcox wrote:
+> > On Wed, Feb 26, 2020 at 11:13:53AM -0500, Waiman Long wrote:
+> >> A new sysctl parameter "dentry-dir-max" is introduced which accepts a
+> >> value of 0 (default) for no limit or a positive integer 256 and up. Small
+> >> dentry-dir-max numbers are forbidden to avoid excessive dentry count
+> >> checking which can impact system performance.
+> > This is always the wrong approach.  A sysctl is just a way of blaming
+> > the sysadmin for us not being very good at programming.
+> >
+> > I agree that we need a way to limit the number of negative dentries.
+> > But that limit needs to be dynamic and depend on how the system is being
+> > used, not on how some overworked sysadmin has configured it.
+> >
+> > So we need an initial estimate for the number of negative dentries that
+> > we need for good performance.  Maybe it's 1000.  It doesn't really matter;
+> > it's going to change dynamically.
+> >
+> > Then we need a metric to let us know whether it needs to be increased.
+> > Perhaps that's "number of new negative dentries created in the last
+> > second".  And we need to decide how much to increase it; maybe it's by
+> > 50% or maybe by 10%.  Perhaps somewhere between 10-100% depending on
+> > how high the recent rate of negative dentry creation has been.
+> >
+> > We also need a metric to let us know whether it needs to be decreased.
+> > I'm reluctant to say that memory pressure should be that metric because
+> > very large systems can let the number of dentries grow in an unbounded
+> > way.  Perhaps that metric is "number of hits in the negative dentry
+> > cache in the last ten seconds".  Again, we'll need to decide how much
+> > to shrink the target number by.
+> >
+> > If the number of negative dentries is at or above the target, then
+> > creating a new negative dentry means evicting an existing negative dentry.
+> > If the number of negative dentries is lower than the target, then we
+> > can just create a new one.
+> >
+> > Of course, memory pressure (and shrinking the target number) should
+> > cause negative dentries to be evicted from the old end of the LRU list.
+> > But memory pressure shouldn't cause us to change the target number;
+> > the target number is what we think we need to keep the system running
+> > smoothly.
+> >
+> Thanks for the quick response.
+> 
+> I agree that auto-tuning so that the system administrator don't have to
+> worry about it will be the best approach if it is implemented in the
+> right way. However, it is hard to do it right.
+> 
+> How about letting users specify a cap on the amount of total system
+> memory allowed for negative dentries like one of my previous patchs.
+> Internally, there is a predefined minimum and maximum for
+> dentry-dir-max. We sample the total negative dentry counts periodically
+> and adjust the dentry-dir-max accordingly.
+> 
+> Specifying a percentage of total system memory is more intuitive than
+> just specifying a hard number for dentry-dir-max. Still some user input
+> is required.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+If you want to base the whole thing on a per-directory target number,
+or a percentage of the system memory target (rather than my suggestion
+of a total # of negative dentries), that seems reasonable.  What's not
+reasonable is expecting the sysadmin to be able to either predict the
+workload, or react to a changing workload in sufficient time.  The system
+has to be self-tuning.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/xen/xen-pciback/pciback.h | 2 +-
- include/xen/interface/io/tpmif.h  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/xen/xen-pciback/pciback.h b/drivers/xen/xen-pciback/pciback.h
-index ce1077e32466..7c95516a860f 100644
---- a/drivers/xen/xen-pciback/pciback.h
-+++ b/drivers/xen/xen-pciback/pciback.h
-@@ -52,7 +52,7 @@ struct xen_pcibk_dev_data {
- 	unsigned int ack_intr:1; /* .. and ACK-ing */
- 	unsigned long handled;
- 	unsigned int irq; /* Saved in case device transitions to MSI/MSI-X */
--	char irq_name[0]; /* xen-pcibk[000:04:00.0] */
-+	char irq_name[]; /* xen-pcibk[000:04:00.0] */
- };
- 
- /* Used by XenBus and xen_pcibk_ops.c */
-diff --git a/include/xen/interface/io/tpmif.h b/include/xen/interface/io/tpmif.h
-index 28e7dcd75e82..f8aa8bac5196 100644
---- a/include/xen/interface/io/tpmif.h
-+++ b/include/xen/interface/io/tpmif.h
-@@ -46,7 +46,7 @@ struct vtpm_shared_page {
- 	uint8_t pad;
- 
- 	uint8_t nr_extra_pages;  /* extra pages for long packets; may be zero */
--	uint32_t extra_pages[0]; /* grant IDs; length in nr_extra_pages */
-+	uint32_t extra_pages[]; /* grant IDs; length in nr_extra_pages */
- };
- 
- #endif
--- 
-2.25.0
-
+Just look how long stale information stays around about how to tune your
+Linux system.  Here's an article from 2018 suggesting using the 'intr'
+option for NFS mounts:
+https://kb.netapp.com/app/answers/answer_view/a_id/1004893/~/hard-mount-vs-soft-mount-
+I made that a no-op in 2007.  Any tunable you add to Linux immediately
+becomes a cargo-cult solution to any problem people are having.
