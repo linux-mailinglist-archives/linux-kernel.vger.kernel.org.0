@@ -2,74 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53D081702B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:37:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2011B1702BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:38:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728335AbgBZPhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 10:37:38 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45827 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728014AbgBZPhi (ORCPT
+        id S1728287AbgBZPiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 10:38:25 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26114 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727855AbgBZPiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:37:38 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 59so3282550otp.12;
-        Wed, 26 Feb 2020 07:37:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6FzyO6AECYlm7QMzzyrk9pWi96fxzU1V5qZ0EPieTIk=;
-        b=NOjztxD6+tbu0i7MJz9NepMaYts6hrnhEl2klJYPTiCa+rdo33kKIu3N7ZD9lNfrB1
-         qWbaxGKZD04fa8rdr6x/aXPPurtDZ68P1M4hJcTU+FDLb20pTvsn8eYq7vSu9jk6xtee
-         RRqAP/xy+QsMtIzrzQEl8tiEGBxLLdYtL7SO83VsScpFVW43dZTzNDII+zajh81Okow5
-         VQ5chuangHVyXWuatYQZV5tnK9o078brASxGTKcaRR/pzX0gJlO7/wsaWddmDWHiotKo
-         R+pgufLD84dukBW6hhwc4wVzWsYb+qiCBgS7G4KBOD3acbDbgg8eEUqhKG8uUWLa3zv3
-         SpIw==
-X-Gm-Message-State: APjAAAVQjgKo0/2KfzTnKFZy6bRlWKikclYiAMz35tTY3+cRE9PHPLp8
-        2dIsqvuPB6fOQ9RJgZwLwg==
-X-Google-Smtp-Source: APXvYqyLgpMB7D/d5PMJHvcv2asfZGnuMiD3nzHW0Qu43FA9IBj88j6MyezXGcYeLRBnE0xJV0LiHg==
-X-Received: by 2002:a05:6830:10d7:: with SMTP id z23mr3555808oto.114.1582731456203;
-        Wed, 26 Feb 2020 07:37:36 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q9sm878846otl.53.2020.02.26.07.37.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 07:37:35 -0800 (PST)
-Received: (nullmailer pid 17418 invoked by uid 1000);
-        Wed, 26 Feb 2020 15:37:34 -0000
-Date:   Wed, 26 Feb 2020 09:37:34 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
-        Adrian Panella <ianchi74@outlook.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: add smb208 support
-Message-ID: <20200226153734.GA17365@bogus>
-References: <20200219163711.479-1-ansuelsmth@gmail.com>
+        Wed, 26 Feb 2020 10:38:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582731503;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IGr3SYhU/ark2B0WUE5hTGvmZDYDzVerzAZBntfGstU=;
+        b=FYC/CpQxbGmxC7ZBvipJmRI1F3/rKjaWWwxQjL0Lru28mKDoowMS3tsfD/ApTLrvWJBmqk
+        9/3FpZgk+xxx97ApCvy8Iy8QHDI5wf7yueFVCYwfnt5/U/xCGwUyYLw5Lwh7oBogTwQ8uP
+        3lTv0Cm0sgADq4R49hyJBtQOPkU7Ih8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-260-OkhiOzO0OK2mA3xqxBOZ-g-1; Wed, 26 Feb 2020 10:38:17 -0500
+X-MC-Unique: OkhiOzO0OK2mA3xqxBOZ-g-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9CEF797764;
+        Wed, 26 Feb 2020 15:38:14 +0000 (UTC)
+Received: from krava (unknown [10.43.17.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9409990F5B;
+        Wed, 26 Feb 2020 15:38:12 +0000 (UTC)
+Date:   Wed, 26 Feb 2020 16:38:10 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v4 2/2] perf report: Support interactive annotation of
+ code without symbols
+Message-ID: <20200226153810.GE217283@krava>
+References: <20200225051438.16253-1-yao.jin@linux.intel.com>
+ <20200225051438.16253-3-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200219163711.479-1-ansuelsmth@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200225051438.16253-3-yao.jin@linux.intel.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Feb 2020 17:37:11 +0100, Ansuel Smith wrote:
-> Smb208 regulators are used on some ipq806x soc.
-> Add support for it to make it avaiable on some routers
-> that use it.
-> 
-> Signed-off-by: Adrian Panella <ianchi74@outlook.com>
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> ---
->  Documentation/devicetree/bindings/mfd/qcom-rpm.txt | 4 ++++
->  drivers/regulator/qcom_rpm-regulator.c             | 9 +++++++++
->  2 files changed, 13 insertions(+)
-> 
+On Tue, Feb 25, 2020 at 01:14:38PM +0800, Jin Yao wrote:
+> For perf report on stripped binaries it is currently impossible to do
+> annotation. The annotation state is all tied to symbols, but there are
+> either no symbols, or symbols are not covering all the code.
+>=20
+> We should support the annotation functionality even without symbols.
+>=20
+> This patch fakes a dummy symbol and the symbol name is the string of
+> address. After that, we just follow current annotation working flow.
+>=20
+> For example,
+>=20
+> 1. perf report
+>=20
+> Overhead  Command  Shared Object     Symbol
+>   20.67%  div      libc-2.27.so      [.] __random_r
+>   17.29%  div      libc-2.27.so      [.] __random
+>   10.59%  div      div               [.] 0x0000000000000628
+>    9.25%  div      div               [.] 0x0000000000000612
+>    6.11%  div      div               [.] 0x0000000000000645
+>=20
+> 2. Select the line of "10.59%  div      div               [.] 0x0000000=
+000000628" and ENTER.
+>=20
+> Annotate 0x0000000000000628
+> Zoom into div thread
+> Zoom into div DSO (use the 'k' hotkey to zoom directly into the kernel)
+> Browse map details
+> Run scripts for samples of symbol [0x0000000000000628]
+> Run scripts for all samples
+> Switch to another data file in PWD
+> Exit
+>=20
+> 3. Select the "Annotate 0x0000000000000628" and ENTER.
+>=20
+> Percent=E2=94=82
+>        =E2=94=82
+>        =E2=94=82
+>        =E2=94=82     Disassembly of section .text:
+>        =E2=94=82
+>        =E2=94=82     0000000000000628 <.text+0x68>:
+>        =E2=94=82       divsd %xmm4,%xmm0
+>        =E2=94=82       divsd %xmm3,%xmm1
+>        =E2=94=82       movsd (%rsp),%xmm2
+>        =E2=94=82       addsd %xmm1,%xmm0
+>        =E2=94=82       addsd %xmm2,%xmm0
+>        =E2=94=82       movsd %xmm0,(%rsp)
+>=20
+> Now we can see the dump of object starting from 0x628.
+>=20
+> We can also press hotkey 'a' on address in report view.
+> For branch mode, we only support the annotation for
+> "branch to" address.
+>=20
+>  v4:
+>  ---
+>  1. Support the hotkey 'a'. When we press 'a' on address,
+>     now it supports the annotation.
 
-Acked-by: Rob Herring <robh@kernel.org>
+please move this to separate patch, AFAICS it's separate change
+and was broken before your change
+
+thanks,
+jirka
+
