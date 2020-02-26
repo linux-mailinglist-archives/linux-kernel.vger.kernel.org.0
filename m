@@ -2,103 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EEDD170437
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:22:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5654617041E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:18:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbgBZQWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:22:25 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:51372 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbgBZQWZ (ORCPT
+        id S1727213AbgBZQSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:18:03 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33575 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgBZQSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:22:25 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01QGLhUY077662;
-        Wed, 26 Feb 2020 10:21:43 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582734103;
-        bh=7PBDsbXxj4AX8n3D3XLYg0rJuiB68wdam0M5qbWaRh8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Tik595GhNchxiBpHFQRMneZll48OMlkT78PYfme5fF+OJUZsTlAQeu/JiYz2HQHSF
-         Arpaqo9e+mrjSZxLt6rA1GgzcxLy22CMo7RrVBb1RE5AobYeF15ARXhNMcxGsvC0Tv
-         umVAfPuQn04p4CIo/bgyZzGQ3v8KZrwF16SjCTuo=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01QGLhGa060397
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 26 Feb 2020 10:21:43 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 26
- Feb 2020 10:21:42 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 26 Feb 2020 10:21:42 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01QGLgpq068594;
-        Wed, 26 Feb 2020 10:21:42 -0600
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [RESEND PATCH for-next 3/3] ASoC: tas2562: Add entries for the TAS2563 audio amplifier
-Date:   Wed, 26 Feb 2020 10:16:28 -0600
-Message-ID: <20200226161628.29960-3-dmurphy@ti.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200226161628.29960-1-dmurphy@ti.com>
-References: <20200226161628.29960-1-dmurphy@ti.com>
+        Wed, 26 Feb 2020 11:18:03 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j6zNm-0004jT-CN; Wed, 26 Feb 2020 17:17:58 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j6zNl-0001DH-Qq; Wed, 26 Feb 2020 17:17:57 +0100
+Date:   Wed, 26 Feb 2020 17:17:57 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] regulator: pwm: Don't warn on probe deferral
+Message-ID: <20200226161757.idpzbs3jmayt7ya6@pengutronix.de>
+References: <20200224144048.6587-1-jonathanh@nvidia.com>
+ <20200224165859.GJ6215@sirena.org.uk>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20200224165859.GJ6215@sirena.org.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TAS2563 is register compatible with the TAS2562.  The main
-difference is the TAS2563 has a programmable DSP to manage different
-audio profiles.
+On Mon, Feb 24, 2020 at 04:58:59PM +0000, Mark Brown wrote:
+> On Mon, Feb 24, 2020 at 02:40:48PM +0000, Jon Hunter wrote:
+> > Deferred probe is an expected return value for devm_pwm_get(). Given
+> > that the driver deals with it properly, there's no need to output a
+> > warning that may potentially confuse users.
+> 
+> >  		ret = PTR_ERR(drvdata->pwm);
+> > -		dev_err(&pdev->dev, "Failed to get PWM: %d\n", ret);
+> > +		if (ret != -EPROBE_DEFER)
+> > +			dev_err(&pdev->dev, "Failed to get PWM: %d\n", ret);
+> 
+> This then means that there's no way for users to determine why the
+> driver has failed to instantiate which can be frustrating.  It'd be
+> better to at least have some dev_dbg() output when deferring so that
+> there's something for people to go on without having to instrument the
+> code.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- sound/soc/codecs/tas2562.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Not printing an error message is quite usual however. I think a generic
+approach that for example makes the list of devices that should be
+retried to probe on the next opportunity inspectable would be nice.
 
-diff --git a/sound/soc/codecs/tas2562.c b/sound/soc/codecs/tas2562.c
-index c7a4b3b74654..6b7f7a18da36 100644
---- a/sound/soc/codecs/tas2562.c
-+++ b/sound/soc/codecs/tas2562.c
-@@ -55,6 +55,11 @@ struct tas2562_data {
- 	int volume_lvl;
- };
- 
-+enum tas256x_model {
-+	TAS2562,
-+	TAS2563,
-+};
-+
- static int tas2562_set_bias_level(struct snd_soc_component *component,
- 				 enum snd_soc_bias_level level)
- {
-@@ -664,13 +669,15 @@ static int tas2562_probe(struct i2c_client *client,
- }
- 
- static const struct i2c_device_id tas2562_id[] = {
--	{ "tas2562", 0 },
-+	{ "tas2562", TAS2562 },
-+	{ "tas2563", TAS2563 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, tas2562_id);
- 
- static const struct of_device_id tas2562_of_match[] = {
- 	{ .compatible = "ti,tas2562", },
-+	{ .compatible = "ti,tas2563", },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, tas2562_of_match);
+Best regards
+Uwe
+
 -- 
-2.25.0
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
