@@ -2,71 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5340A170293
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:35:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3401317029D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:35:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728299AbgBZPfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 10:35:01 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38058 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727348AbgBZPfB (ORCPT
+        id S1728352AbgBZPfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 10:35:44 -0500
+Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:40631 "EHLO
+        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728145AbgBZPfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:35:01 -0500
-Received: by mail-oi1-f196.google.com with SMTP id r137so3437501oie.5;
-        Wed, 26 Feb 2020 07:35:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bmr+8NPwfz+6SLFnXLs13Acg+Mnt/J7K/fZ7YI8qSb0=;
-        b=YZ92gfq0at7jLbkQalEgBhxQfDvvROAVoRYYkA3IYQaAjr2l72gmHf8ZVbn/pRBdPc
-         tA/idRFJuUD8FblRY7pfRhwC+wNk76dEGLf3GAnKPArYftFDWYSgQt0zu4J8l3OjsGUi
-         GxHYvvOLkgvAZn0XKgFbZ8xajQL3skSJcrotsB+Dycv91YmR1SYZ3Td82NDOwmaRpHao
-         ltJ6Ef+dndYwfoqUby/pOgeA4GJ+QvJPGL6308yMB+PeDcE3EkkIuUWldoF9wpBuXcsp
-         WCUVA3Y2lsw0cTKncVVSQ2peF+nw5xqP1zGTeNto4NHUXn6mj6mlOakP8q1LxXtabInB
-         8X6Q==
-X-Gm-Message-State: APjAAAUYcZFzTdlEnsifqKkUjU8J/xNBr3rg3c8wLPjR3CwlxvDnvVCB
-        6vPZT2Qp+Ug/FPJTBlfHzA==
-X-Google-Smtp-Source: APXvYqyHUnpLxu/riNnSSfDyvvYs4QZHHYnlgt+uqnMpGbtPWPsEKcDtzAWDevIt0bUYTrayLJRwgw==
-X-Received: by 2002:aca:b703:: with SMTP id h3mr3596325oif.148.1582731300302;
-        Wed, 26 Feb 2020 07:35:00 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l12sm891627oth.9.2020.02.26.07.34.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 07:34:59 -0800 (PST)
-Received: (nullmailer pid 13066 invoked by uid 1000);
-        Wed, 26 Feb 2020 15:34:58 -0000
-Date:   Wed, 26 Feb 2020 09:34:58 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        michal.simek@xilinx.com, adrian.hunter@intel.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        git@xilinx.com, Manish Narani <manish.narani@xilinx.com>
-Subject: Re: [PATCH 1/2] dt-bindings: mmc: arasan: Document
- 'xlnx,versal-8.9a' controller
-Message-ID: <20200226153458.GA13010@bogus>
-References: <1582115313-115667-1-git-send-email-manish.narani@xilinx.com>
- <1582115313-115667-2-git-send-email-manish.narani@xilinx.com>
+        Wed, 26 Feb 2020 10:35:43 -0500
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+        by smtp-sh2.infomaniak.ch (8.14.4/8.14.4/Debian-8+deb8u2) with ESMTP id 01QFZ3Zc056663
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 26 Feb 2020 16:35:03 +0100
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 48SKcN1RPGzlhMhj;
+        Wed, 26 Feb 2020 16:35:00 +0100 (CET)
+Subject: Re: [RFC PATCH v14 00/10] Landlock LSM
+To:     J Freyensee <why2jjj.linux@gmail.com>, linux-kernel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+References: <20200224160215.4136-1-mic@digikod.net>
+ <6df3e6b1-ffd1-dacf-2f2d-7df8e5aca668@gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <5ec24e38-1a6f-590a-3b30-50caae177e9b@digikod.net>
+Date:   Wed, 26 Feb 2020 16:34:59 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1582115313-115667-2-git-send-email-manish.narani@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <6df3e6b1-ffd1-dacf-2f2d-7df8e5aca668@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Feb 2020 17:58:32 +0530, Manish Narani wrote:
-> Add documentation for 'xlnx,versal-8.9a' SDHCI controller followed by
-> example.
-> 
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  .../devicetree/bindings/mmc/arasan,sdhci.txt      | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On 25/02/2020 19:49, J Freyensee wrote:
+> 
+> 
+> On 2/24/20 8:02 AM, Mickaël Salaün wrote:
+> 
+>> ## Syscall
+>>
+>> Because it is only tested on x86_64, the syscall is only wired up for
+>> this architecture.  The whole x86 family (and probably all the others)
+>> will be supported in the next patch series.
+> General question for u.  What is it meant "whole x86 family will be
+> supported".  32-bit x86 will be supported?
+
+Yes, I was referring to x86_32, x86_64 and x32, but all architectures
+should be supported.
