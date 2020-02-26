@@ -2,96 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31558170A2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 22:04:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE9E4170A32
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 22:05:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbgBZVEc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 16:04:32 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33411 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727701AbgBZVE3 (ORCPT
+        id S1727758AbgBZVFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 16:05:03 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:38898 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbgBZVFC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 16:04:29 -0500
-Received: by mail-pl1-f196.google.com with SMTP id ay11so200361plb.0;
-        Wed, 26 Feb 2020 13:04:29 -0800 (PST)
+        Wed, 26 Feb 2020 16:05:02 -0500
+Received: by mail-pj1-f67.google.com with SMTP id j17so173076pjz.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 13:05:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xAl1x+LpHJ0/VGX33EY28LK5EWDI6zzFinArxJkf/Us=;
-        b=i/MIoEkIkUelCWWx6h02qcZVRrQclgV7C5pVM14h6peF/Ryl4gGu6eXes/xJT1aE6E
-         mq+oM2W8jWqREiUFdm5SsrqNGQ8hnfXOZP2MrZxKwP9bCwAMoROzYXl2H6/XHKP6PZpj
-         FsBlJyU97lfwxT0sxx+SwL0eYdtK4+ZuFrT2mBVSHAov8oi4NKrG4jwLQJmYEvLqqsdf
-         6eaJhdFFEVINUGhxVi/AkY09abXyerQ9GcwFjRUUIA1DGA110o3rqtIsvbG2O0AesPWo
-         5NClYjADavsoI9fj6GiVslYvq1mASMgXVTJIA5lT0G800a3UNXGVqOEKnq7y/Kg2XpKb
-         Wt+g==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ACUPnfRs+B0AixBhqicJFirvOfw04PSorPFO08K1XPM=;
+        b=b1h+jw5xvLfpwa+81eovYYEJi6VmH4SIolSQZvYhQZRZvv3SjNbBbraaGJCnRspqlT
+         ubFVcKmj4Whh7g1ABpck2L0sOj+vXO3iwj/pwgLpkwBzXo8W6YLDk0ulLFNDkNowBLcF
+         oPWR35l4uwxwSsfVVZW7xk5m8Ng8SO4NREIus=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=xAl1x+LpHJ0/VGX33EY28LK5EWDI6zzFinArxJkf/Us=;
-        b=OUS0nIlp1cjVKTQhZ1h7EYiI36cedIz/FKom6wt3Jk4jWuV7dpHYezvApR5dvXWFed
-         8lfE/LsrWclmtljd6hD5sp0E/RBu0ZhuZGPjiIpLZm/93wDfm414eeHCgjHkV21rGlWd
-         jpCHuW14+4AXlKGoChmyltyhbyxpX3+g6N6pqDNBO9bne8+omuu+6MjbmflkP00CH5yq
-         ma06dbZ08skoo/6qsDpQQ7aSmOM3ajMkEMXoIcl5YkWqmoga+pTmrsKL6NlRSxZmxQYP
-         cdn51FODVavVHG5oweYSGk00+XYiNVYolcecKnQaHOPd6P9qe+PLPpdrQJmdi0FdRGrP
-         nivQ==
-X-Gm-Message-State: APjAAAV2iRI3XrDkdEky/Y8ftkgQZsvulE9DXUwvWk3tnF9PqSqmz2c3
-        NWgUfGzG2590YiWt4aclPXA=
-X-Google-Smtp-Source: APXvYqzmRD/mrN418qWZD5WexJgskKTDafa05gVsZZkbQReTFmVojqc2qHVQsWNNEWytgCR8y1/gLA==
-X-Received: by 2002:a17:902:7589:: with SMTP id j9mr1169794pll.312.1582751068697;
-        Wed, 26 Feb 2020 13:04:28 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id q8sm3966221pfs.161.2020.02.26.13.04.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Feb 2020 13:04:28 -0800 (PST)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Minas Harutyunyan <hminas@synopsys.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Antti=20Sepp=C3=A4l=C3=A4?= <a.seppala@gmail.com>,
-        Boris ARZUR <boris@konbu.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ACUPnfRs+B0AixBhqicJFirvOfw04PSorPFO08K1XPM=;
+        b=dq6PVZv/zUEGV7OfyFnB6Ys/WGaem+Sz+xrla+/EKumRgPU1OA5EENuAmgdR0u7uGf
+         NcXPhAaLAltW0jrpVEESaCD2H5wyk+Ch643Yvt+q6hyBoDuyWmtYu/gPWapQqHmp1g22
+         /rH5ggqk4jEa+gLgFJfUNHgDxD+tuF0E0j8HqcVY2hJVT9EUU9BlZtqyHgbhnWkd3BXD
+         bhYGKWA8UvzJesTJ8djUBaFnJQUwxPyhj3LULzKFeUiClIOIFWfU4ztpSofF+Bfwotvj
+         2DzD5eYej/3HHvwlZfHdW9O4sQFc/tUmakFIn5CCnaFE4Hzi2uryx7DmfVEuqatHU4ax
+         rLjw==
+X-Gm-Message-State: APjAAAWuu3ufxbtaWh8Bp5Hs+jzLHs4VzAfLU0JM4Q2VRGKCTFjjE/WI
+        MwRC63+9P2HlVey5zD7QF7Zn1w==
+X-Google-Smtp-Source: APXvYqz5OZ/7iJEwlyyHRvnBC50QVZ4cl/O+psBc+djXwLFf/hH1Nx+qFYROeCDiSB4p8GzYotV3mQ==
+X-Received: by 2002:a17:902:528:: with SMTP id 37mr1205955plf.322.1582751100330;
+        Wed, 26 Feb 2020 13:05:00 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id v29sm3636477pgc.72.2020.02.26.13.04.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2020 13:04:58 -0800 (PST)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dikshita Agarwal <dikshita@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [RFT PATCH 4/4] usb: dwc2: Make "trimming xfer length" a debug message
-Date:   Wed, 26 Feb 2020 13:04:14 -0800
-Message-Id: <20200226210414.28133-5-linux@roeck-us.net>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200226210414.28133-1-linux@roeck-us.net>
-References: <20200226210414.28133-1-linux@roeck-us.net>
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v2] arm64: dts: sc7180: Move venus node to the correct position
+Date:   Wed, 26 Feb 2020 13:04:55 -0800
+Message-Id: <20200226130438.v2.1.I15e0f7eff0c67a2b49d4992f9d80fc1d2fdadf63@changeid>
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With some USB network adapters, such as DM96xx, the following message
-is seen for each maximum size receive packet.
+Per convention device nodes for SC7180 should be ordered by address.
+This is currently not the case for the venus node, move it to the
+correct position.
 
-dwc2 ff540000.usb: dwc2_update_urb_state(): trimming xfer length
-
-This happens because the packet size requested by the driver is 1522
-bytes, wMaxPacketSize is 64, the dwc2 driver configures the chip to
-receive 24*64 = 1536 bytes, and the chip does indeed send more than
-1522 bytes of data. Since the event does not indicate an error condition,
-the message is just noise. Demote it to debug level.
-
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- drivers/usb/dwc2/hcd_intr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Excuses for sending v2 so shortly after v1, it seems ok in this case
+since v1 is obviously wrong and the patch is not likely to be
+controversial otherwise.
 
-diff --git a/drivers/usb/dwc2/hcd_intr.c b/drivers/usb/dwc2/hcd_intr.c
-index 12819e019e13..d5f4ec1b73b1 100644
---- a/drivers/usb/dwc2/hcd_intr.c
-+++ b/drivers/usb/dwc2/hcd_intr.c
-@@ -500,7 +500,7 @@ static int dwc2_update_urb_state(struct dwc2_hsotg *hsotg,
- 						      &short_read);
+Changes in v2:
+- insert the venus node *after* the usb@a6f8800 node, not before
+
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 52 ++++++++++++++--------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 253274d5f04c..5f97945e16a4 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -1332,6 +1332,32 @@ system-cache-controller@9200000 {
+ 			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
  
- 	if (urb->actual_length + xfer_length > urb->length) {
--		dev_warn(hsotg->dev, "%s(): trimming xfer length\n", __func__);
-+		dev_dbg(hsotg->dev, "%s(): trimming xfer length\n", __func__);
- 		xfer_length = urb->length - urb->actual_length;
- 	}
++		venus: video-codec@aa00000 {
++			compatible = "qcom,sc7180-venus";
++			reg = <0 0x0aa00000 0 0xff000>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&videocc VENUS_GDSC>,
++					<&videocc VCODEC0_GDSC>;
++			power-domain-names = "venus", "vcodec0";
++			clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
++				 <&videocc VIDEO_CC_VENUS_AHB_CLK>,
++				 <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>,
++				 <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
++				 <&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
++			clock-names = "core", "iface", "bus",
++				      "vcodec0_core", "vcodec0_bus";
++			iommus = <&apps_smmu 0x0c00 0x60>;
++			memory-region = <&venus_mem>;
++
++			video-decoder {
++				compatible = "venus-decoder";
++			};
++
++			video-encoder {
++				compatible = "venus-encoder";
++			};
++		};
++
+ 		usb_1: usb@a6f8800 {
+ 			compatible = "qcom,sc7180-dwc3", "qcom,dwc3";
+ 			reg = <0 0x0a6f8800 0 0x400>;
+@@ -1538,32 +1564,6 @@ dispcc: clock-controller@af00000 {
+ 			#power-domain-cells = <1>;
+ 		};
  
+-		venus: video-codec@aa00000 {
+-			compatible = "qcom,sc7180-venus";
+-			reg = <0 0x0aa00000 0 0xff000>;
+-			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+-			power-domains = <&videocc VENUS_GDSC>,
+-					<&videocc VCODEC0_GDSC>;
+-			power-domain-names = "venus", "vcodec0";
+-			clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
+-				 <&videocc VIDEO_CC_VENUS_AHB_CLK>,
+-				 <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>,
+-				 <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
+-				 <&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
+-			clock-names = "core", "iface", "bus",
+-				      "vcodec0_core", "vcodec0_bus";
+-			iommus = <&apps_smmu 0x0c00 0x60>;
+-			memory-region = <&venus_mem>;
+-
+-			video-decoder {
+-				compatible = "venus-decoder";
+-			};
+-
+-			video-encoder {
+-				compatible = "venus-encoder";
+-			};
+-		};
+-
+ 		pdc: interrupt-controller@b220000 {
+ 			compatible = "qcom,sc7180-pdc", "qcom,pdc";
+ 			reg = <0 0x0b220000 0 0x30000>;
 -- 
-2.17.1
+2.25.1.481.gfbce0eb801-goog
 
