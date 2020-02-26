@@ -2,143 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C20FA1703E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:13:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 906EA1703F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbgBZQN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:13:57 -0500
-Received: from mx1.tq-group.com ([62.157.118.193]:23277 "EHLO mx1.tq-group.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727274AbgBZQN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:13:56 -0500
-IronPort-SDR: 6Qx8ssSbOkI6D56CLdH9L6PF/ODFcG48Qz0MQmTFzF32TqgxOrNIuzP7spCIEYySK4GgYkPaIF
- 9jxz9dwcwvhQH+4S6kqz3KmqzSVaeDQESV1h02KzM2u5lnwGIyoW5OHgrEVEX0MHru93ELGTw0
- yJ7M+c+3GnjWdNXdktjB9NCrZbK0TAfOb+c7OKa1kp7zsWq6lWou9k6RvtMsvwUYq5M+EmXJIg
- RPlmRzfojTcSjAXCKGNcJm7zgiv11lbMISp9e2d3Jjg1KaN50zVg2/Kn97jYHwpj11j9uk17SD
- i3I=
-X-IronPort-AV: E=Sophos;i="5.70,488,1574118000"; 
-   d="scan'208";a="11123578"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 26 Feb 2020 17:13:54 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Wed, 26 Feb 2020 17:13:54 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Wed, 26 Feb 2020 17:13:54 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1582733634; x=1614269634;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CfLkn3IyCRPRrMr7mK9ri9UAMdYkHqcrntX3zjaFVMI=;
-  b=dXreldKcntrpmpqizkyI8NSX9RS/eOWQk9H5Uk/kuYLbwBcS01uH6Ep+
-   DwqXfrC6HgExXB7XFh/6v5VOJK+wzKJj/WZJFbEaKEc8W4qt2Ju6xa790
-   qUIwS6sXWVDIFuUpoCP0u81S25L9/1Cxf9omtCj/09UV8c/HnGHYxC2sI
-   GKbhDIqxOeNdeGhZWxSL+sKZW1VqZOcy16jC2KIiNv0qI/v9P3bU9AYOt
-   nGgs//Rdn9ua+AWIQoDF6Iks6ZysgNf7lQ6VcGssbLb0KhXYYoxzdtekN
-   VO8NchDqbfkrcj5L9EE+WlGWB59YJocHsUVaeidxxPCAN4CCO+RQY6Xsi
-   g==;
-IronPort-SDR: baiqaEEcSblsfjxqPshcVv84p+dKRSeTWCyaQUpDPqo59BUfy0ze4UrWsnWHcqvGcNBcMR6Zb/
- GGhcxaGsQ0dyPvpNaJxXJwAs4/We/VuwRgJawa1w4AzoB/t5yasOJm1+URumj8wq7z2dui9hqY
- dyzBgqcPdXAWmkNT7l0qAlFTo5bSH1hdBxj+8DOqkUhFsDUOleLUYAg5JHx/otYfyp1Wx8FR3p
- 20bTJshKQ56hAqMhkn/j9tWtTCwjCN5l/Da98c3sz5wQGbvBcTnvTqklADb7vIfdDaBm6L9AZj
- icM=
-X-IronPort-AV: E=Sophos;i="5.70,488,1574118000"; 
-   d="scan'208";a="11123577"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 26 Feb 2020 17:13:54 +0100
-Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id B4DCD280065;
-        Wed, 26 Feb 2020 17:14:00 +0100 (CET)
-Message-ID: <74522773dd3e820ab6f38cd83e52c83f1288c04a.camel@ew.tq-group.com>
-Subject: Re: (EXT) Re: [PATCH 3/4] pwm: pca9685: initialize all LED
- registers during probe
-From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 26 Feb 2020 17:13:51 +0100
-In-Reply-To: <20200226150051.sbopz7uzbdhtccba@pengutronix.de>
-References: <20200226135229.24929-1-matthias.schiffer@ew.tq-group.com>
-         <20200226135229.24929-3-matthias.schiffer@ew.tq-group.com>
-         <20200226150051.sbopz7uzbdhtccba@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727854AbgBZQPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:15:10 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:23106 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727746AbgBZQPJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 11:15:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582733708;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=GFnA8Sa/wZo/6noDEkcT6+Ar1rUimsYkRyF79+pzSnM=;
+        b=hKKpA64puSbthkYg26S2DHL5/xf5LH8T/6yNVtOh65UTzmp2Qlc0X3hjk80XCIyfnsTFXP
+        cAy/TCeF6DUqd+V0kIQXuNWjm12+hXnF0ATe7q3tJMPvKQuEWwKipwxNMs6XX+H9CCYcnh
+        MwPDAIaeFLicA/c0KPP0dU2HTy/PN8c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-411-6kLbTQcGNnSdZWckjUi0gA-1; Wed, 26 Feb 2020 11:15:04 -0500
+X-MC-Unique: 6kLbTQcGNnSdZWckjUi0gA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B5C251005512;
+        Wed, 26 Feb 2020 16:15:02 +0000 (UTC)
+Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DC22160BE1;
+        Wed, 26 Feb 2020 16:14:55 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH 00/11] fs/dcache: Limit # of negative dentries
+Date:   Wed, 26 Feb 2020 11:13:53 -0500
+Message-Id: <20200226161404.14136-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-02-26 at 16:00 +0100, Uwe Kleine-König wrote:
-> On Wed, Feb 26, 2020 at 02:52:28PM +0100, Matthias Schiffer wrote:
-> > Initialize all ON delays to 0 during probe, rather than doing it in
-> > pca9685_pwm_enable.
-> > 
-> > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com
-> > >
-> > ---
-> >  drivers/pwm/pwm-pca9685.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
-> > index 393ab92aa945..370691b21107 100644
-> > --- a/drivers/pwm/pwm-pca9685.c
-> > +++ b/drivers/pwm/pwm-pca9685.c
-> > @@ -289,13 +289,6 @@ static int pca9685_pwm_enable(struct pwm_chip
-> > *chip, struct pwm_device *pwm)
-> >  {
-> >  	struct pca9685 *pca = to_pca(chip);
-> >  
-> > -	/*
-> > -	 * The PWM subsystem does not support a pre-delay.
-> > -	 * So, set the ON-timeout to 0
-> > -	 */
-> > -	regmap_write(pca->regmap, LED_N_ON_L(pwm->hwpwm), 0);
-> > -	regmap_write(pca->regmap, LED_N_ON_H(pwm->hwpwm), 0);
-> > -
-> >  	/*
-> >  	 * Clear the full-off bit.
-> >  	 * It has precedence over the others and must be off.
-> > @@ -388,6 +381,13 @@ static int pca9685_pwm_probe(struct i2c_client
-> > *client,
-> >  	regmap_write(pca->regmap, PCA9685_ALL_LED_OFF_L, 0);
-> >  	regmap_write(pca->regmap, PCA9685_ALL_LED_OFF_H, 0);
-> >  
-> > +	/*
-> > +	 * The PWM subsystem does not support a pre-delay.
-> > +	 * So, set the ON-timeout to 0
-> > +	 */
-> > +	regmap_write(pca->regmap, PCA9685_ALL_LED_ON_H, 0);
-> > +	regmap_write(pca->regmap, PCA9685_ALL_LED_ON_L, 0);
-> > +
-> 
-> What is a pre-delay: Something like:
->           _________                   ______
->     _____/         \_________________/
->     ^                           ^
-> 
-> Where ^ marks the period start and then the time between period start
-> and the rising signal is the pre-delay?
-> 
-> If so, the IMHO more right approach is to keep the pre-delay until a
-> new
-> setting is applied and in .get_state ignore the pre-delay. This way
-> you
-> don't modify the output in .probe() which sounds right.
-> 
+As there is no limit for negative dentries, it is possible that a sizeable
+portion of system memory can be tied up in dentry cache slabs. Dentry slabs
+are generally recalimable if the dentries are in the LRUs. Still having
+too much memory used up by dentries can be problematic:
 
-My approach was to get the hardware into a known state by resetting
-most registers (which is what the driver attempted to do so far). If
-getting the hardware state via get_state is preferable, I can implement
-that instead.
+ 1) When a filesystem with too many negative dentries is being unmounted,
+    the process of draining the dentries associated with the filesystem
+    can take some time. To users, the system may seem to hang for
+    a while.  The long wait may also cause unexpected timeout error or
+    other warnings.  This can happen when a long running container with
+    many negative dentries is being destroyed, for instance.
 
-Matthias
+ 2) Tying up too much memory in unused negative dentries means there
+    are less memory available for other use. Even though the kernel is
+    able to reclaim unused dentries when running out of free memory,
+    it will still introduce additional latency to the application
+    reducing its performance.
 
+There are two different approaches to limit negative dentries.
 
-> Best regards
-> Uwe
-> 
+  1) Global reclaim
+     Based on the total number of negative dentries as tracked by the
+     nr_dentry_negative percpu count, a function can be activated to
+     scan the various LRU lists to trim out excess negative dentries.
+
+  2) Local reclaim
+     By tracking the number of negative dentries under each directory,
+     we can start the reclaim process if the number exceeds a certain
+     limit.
+
+The problem with global reclaim is that there are just too many LRU lists
+present that may need to be scanned for each filesystem. Especially
+problematic is the fact that each memory cgroup can have its own LRU
+lists. As memory cgroup can come and go at any time, scanning its LRUs
+can be tricky.
+
+Local reclaim does not have this problem. So it is used as the basis
+for negative dentry reclaim for this patchset. Accurately tracking the
+number of negative dentries in each directory can be costly in term of
+performance hit. As a result, this patchset estimates the number of
+negative dentries present in a directory by looking at a newly added
+children count and an opportunistically stored positive dentry count.
+
+A new sysctl parameter "dentry-dir-max" is introduced which accepts a
+value of 0 (default) for no limit or a positive integer 256 and up. Small
+dentry-dir-max numbers are forbidden to avoid excessive dentry count
+checking which can impact system performance.
+
+The actual negative dentry reclaim is delegated to the system workqueue
+to avoid adding excessive latency to normal filesystem operation.
+
+Waiman Long (11):
+  fs/dcache: Fix incorrect accounting of negative dentries
+  fs/dcache: Simplify __dentry_kill()
+  fs/dcache: Add a counter to track number of children
+  fs/dcache: Add sysctl parameter dentry-dir-max
+  fs/dcache: Reclaim excessive negative dentries in directories
+  fs/dcache: directory opportunistically stores # of positive dentries
+  fs/dcache: Add static key negative_reclaim_enable
+  fs/dcache: Limit dentry reclaim count in negative_reclaim_workfn()
+  fs/dcache: Don't allow small values for dentry-dir-max
+  fs/dcache: Kill off dentry as last resort
+  fs/dcache: Track # of negative dentries reclaimed & killed
+
+ Documentation/admin-guide/sysctl/fs.rst |  18 +
+ fs/dcache.c                             | 428 +++++++++++++++++++++++-
+ include/linux/dcache.h                  |  18 +-
+ kernel/sysctl.c                         |  11 +
+ 4 files changed, 457 insertions(+), 18 deletions(-)
+
+-- 
+2.18.1
 
