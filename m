@@ -2,118 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99AC616FEE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:26:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1AE316FF00
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:29:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbgBZM0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 07:26:40 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37979 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726187AbgBZM0k (ORCPT
+        id S1727067AbgBZM35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 07:29:57 -0500
+Received: from mail-lj1-f173.google.com ([209.85.208.173]:36067 "EHLO
+        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbgBZM34 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 07:26:40 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a9so2838492wmj.3;
-        Wed, 26 Feb 2020 04:26:38 -0800 (PST)
+        Wed, 26 Feb 2020 07:29:56 -0500
+Received: by mail-lj1-f173.google.com with SMTP id r19so2905185ljg.3;
+        Wed, 26 Feb 2020 04:29:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=V8gMewY634WDFQZep0rl6hNrs2zu+VbqsCL1SpOtlb0=;
-        b=IHFSmI4juYhHMRYVx8UOXXzqtfXiwhzFC7fuLYcWeRdzpm1yfNt6Vj1prjQdPvMauM
-         4k9EKV+jiOb39j6DdIGSvb5pXlbn1bq8GqT3+LErN1gTmJs8y3yj7OxdMnvvAz571F+e
-         wJRAdxNkBN9viXqrDaxGkI412mWjm2FKo5DRI1FN+YjKIt4bYbCrHXQ9XqPIAyzvEXPg
-         25O6rdrR7WjAlEAnXZHOVZizS3pRFp8TKDBPWJI4dKKh2xQvpJtOYWAiqahqwUrED96U
-         LI15mWGVV6Or8+OUWgTXPnaiXE5JweGr4sygwTpyWhB4IJpzv5z3HtkgqMDIYcVH2U/F
-         Ezyg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eYRw4tH2Rs/e60d73NUbkuJbxLkTk8K47OrYj1p7M4A=;
+        b=e5rTU9hA8lMf+tk+gVuUunPWotj8HJSvkMmGE3KOwXtl4tirjK2K3T4z65fW1PoYPi
+         Iuj3oINUDtG42mwXpH9JpJdHNK0s0rmHYsGkOO2X7lomI1/D2R27634OQA9jT8O+MQVi
+         ZJmSaUA8/C5nHwBBj0kv+uQaoGBXkBiP8mK25RakFTvjaTqR7XwCz6i7YsolW4prfJrY
+         p/LL1mkTEGEqNgg/ehiug47bLAUaSYvjnqZiudDX1UOWT/GwZ1kIBXLMN1cMrvwU6RrP
+         4bGeInJTN0IdkY2eZrRtLq6n6O3Xf/Izwk+mUl2ditBFkca/23awgXWv9nhEvY+GIlc4
+         0ClQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=V8gMewY634WDFQZep0rl6hNrs2zu+VbqsCL1SpOtlb0=;
-        b=Sdi5QLS6HhoJz/5akBkwhdjlX6GIDDxrAgplSjPXKdtxAmB+Xp52/dY7U8fKRDUZja
-         D6ktpM1oUlxHJuZnBXyG9QxNEnqXGOVlCrBOtLuSTRHfDwA6Hf0ix0JHCZaecLYDR3Y0
-         27vsJKQdV14Vr3JZdTa1vRHHe89ZEZzgZ3QWLbmvPuzojUh5DRQemblZufyRJ2LgvKOW
-         1UaMG0KKYL7SlHXVB9rzKQ5aYuDZjVNmtjDJyLMNKMFbRH3nNKz52P7tUwN/yoTxy6jM
-         z+wAq6oLb8e6CD7SPwbRb0fxmbx5hb1eiytVxRsxRhYEjQ9C9kcpUiaD5LAoz+ruIAej
-         RHcQ==
-X-Gm-Message-State: APjAAAXDO+R5XDSGCvyHpNxQYNKC/Bgcbd7sFUSOLXwXbjxmMu+a/FvD
-        UgWW18HHmdyXMC0Q2EJiw4VVQ7JpOW2YzbkDQdI=
-X-Google-Smtp-Source: APXvYqwJSp6y5t6j/YDSKsw2/NttcfYRM0gx0AAnvvsYnMrceEUhwETgdXNNCRvQxdUejjKm2ZwCaS32bGDuwAKf2os=
-X-Received: by 2002:a05:600c:2285:: with SMTP id 5mr5218941wmf.64.1582719997984;
- Wed, 26 Feb 2020 04:26:37 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eYRw4tH2Rs/e60d73NUbkuJbxLkTk8K47OrYj1p7M4A=;
+        b=J60IvysmghzdAsTKjdhz8JOaZ9AuPUc7AIjYZXutL/jlGfiImX4ZVh1fmujVuScyrL
+         2QYBuvMGlNeb7DRT1blUm8E1QPl6fvaww/bt4TLJOPTCn6ebVEpmFw3J2yGPVEtmmh0J
+         BC7c8hkCpIkGJbXXYehhkZLIrUuOwngl5FtnicKbEH3e+itkpsS0G1qw9PVibpamJove
+         a4T2MtzgMKP09PJ/SN1OP/QUgNlM4fL10pakzs/fjJt0WB0chHtw8asP4dmcriR0e5K3
+         vMDJVPloZ1lWLyywlBFFeRiGO3BpMS16FknULbMWM4+MEbZBylTuhMW4mNjb01Jhjukq
+         j87w==
+X-Gm-Message-State: APjAAAV5H36P9mMAQ6xSRGZMeLVN4fwQXVqgnFbVscuVtcJ08u0ftgH1
+        8a+OlMv8jePFrmmMKQZVkAnUqdU91VXDkaDmJtyMEQ==
+X-Google-Smtp-Source: APXvYqwIy0nEZGxxB6rW+LVv5AmFFL7l6FhryvMruyD05L6OvsPvKIXc/q7r6lY5P+ia6fVHqUpCZi4u77hNg/wnfB8=
+X-Received: by 2002:a2e:2e11:: with SMTP id u17mr2825719lju.117.1582720194301;
+ Wed, 26 Feb 2020 04:29:54 -0800 (PST)
 MIME-Version: 1.0
-References: <20200224174129.2664-1-ndesaulniers@google.com>
- <20200225210250.64366-1-ndesaulniers@google.com> <CAK7LNAQJuF__26R+fEsdfYH1SAJuo3-8grGQAE4htjxzEG-nqw@mail.gmail.com>
-In-Reply-To: <CAK7LNAQJuF__26R+fEsdfYH1SAJuo3-8grGQAE4htjxzEG-nqw@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Wed, 26 Feb 2020 13:29:07 +0100
-Message-ID: <CA+icZUWcW3+9QdZcACCXP6Yun__Sm_s4+qM4rALdFf=hGBt3FQ@mail.gmail.com>
-Subject: Re: [PATCH v2] Documentation/llvm: add documentation on building w/ Clang/LLVM
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
+References: <20200213153151.GB6975@optiplex> <AM0PR04MB4211AC5AB9F6A055F36040A2801A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <20200213174225.GA11566@ripley> <AM0PR04MB42111BF00621C1949E1FBA9080150@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <20200217070429.GB7973@dragon> <VI1PR04MB42220B24B1C46756A4B9E7B180160@VI1PR04MB4222.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB42220B24B1C46756A4B9E7B180160@VI1PR04MB4222.eurprd04.prod.outlook.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 26 Feb 2020 09:29:43 -0300
+Message-ID: <CAOMZO5Dq3i5gVR-vrCeZ+g=fmL7CODchVOg0xdcEg+en8tJtLg@mail.gmail.com>
+Subject: Re: clk: imx: clock driver for imx8qm?
+To:     Aisheng Dong <aisheng.dong@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Oliver Graute <oliver.graute@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 12:31 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> Hi.
->
->
-> On Wed, Feb 26, 2020 at 6:02 AM Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
-> >
-> > Added to kbuild documentation. Provides more official info on building
-> > kernels with Clang and LLVM than our wiki.
-> >
-> > Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-> > Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> > ---
-> > Changes V1 -> V2:
-> > * s/On going/ongoing/
-> > * add Randy's Suggested-by
->
->
-> I do not understand this tag update.
->
-> As far as I saw the review process,
-> I do not think Randy deserves to have Suggested-by
-> because he just pointed out a typo (on going -> ongoing) :
-> https://patchwork.kernel.org/patch/11401189/#23179575
->
-> (or, was there off-line activity I had missed?)
->
+Hi Aisheng,
 
-Hi Masahiro,
+On Mon, Feb 17, 2020 at 4:31 AM Aisheng Dong <aisheng.dong@nxp.com> wrote:
 
-I got some credits from Nick for a review by seeing a typo - not on a
-review of the code - and H. Peter Anvin asked why.
+> I remember I addressed all Stephen's comments in the last round of review
+> which is marked in the V5 resend change log.
+> https://www.spinics.net/lists/arm-kernel/msg769365.html
+>
+> But I can double check it.
+> Should I re-send after a checking or wait for Stephen's feedback?
 
-I am not sure what is here the correct credit to give.
-Depends a "Reviewed-by" and/or "Suggested-by" on a technical review?
+I think it is a good idea to resend the series.
 
-My POV: When people take time to look over patches they should get
-credits - sort of esteem.
-
-Regards,
-- Sedat -
-
-P.S.: Tipp: Use codespell to find typos :-).
-
-[1] https://git.kernel.org/linus/0e2e160033283e20f688d8bad5b89460cc5bfcc4
-"x86/asm: Add _ASM_ARG* constants for argument registers to <asm/asm.h>"
+Thanks
