@@ -2,110 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE6C91708F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 20:31:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5A15170903
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 20:40:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbgBZTbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 14:31:16 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35707 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727221AbgBZTbP (ORCPT
+        id S1727260AbgBZTk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 14:40:29 -0500
+Received: from mail-qk1-f182.google.com ([209.85.222.182]:34657 "EHLO
+        mail-qk1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbgBZTk3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 14:31:15 -0500
-Received: by mail-ed1-f68.google.com with SMTP id c7so221698edu.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 11:31:14 -0800 (PST)
+        Wed, 26 Feb 2020 14:40:29 -0500
+Received: by mail-qk1-f182.google.com with SMTP id 11so715683qkd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 11:40:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tim9X+F9vYHdlPOoRw/qRUISublgBCciYQagSlRF/BQ=;
-        b=fk3KALdk6grE6nY7sZB/mMhkpi/EHCV27nxRPV1AsjEZqMQpBreIX+rtoBJ44sqDsI
-         vwaPGdgc9e+qyka2BcLNlAw6JmpyAGGFeMkNWbUTpaUbGv+vC490mp74n2El5r9njbus
-         ZrytAHK6bEILXuEJk7nUY94hlCx9kNrpyoUxSmX6QzGbTH6kpoiNBAln+vygx0sG3UJd
-         T5ZB/60MxFqThgIC7vlB7egYA6gXLZ+Np1G6L4KFxfD7ILoWF7nINBayxNrqJbENzIRx
-         fMd+lYihMK62FUi+kkvaPGabjSMUzGSu9NiHxhrIG9ZUif+QJLbs1918ZJMIE1F52og8
-         oTAw==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=82BmcmIVU/khlxiiYLp8kss4jd0AD0u0A2zzeUS4+kw=;
+        b=WEj7yOV9SDW39LsGpGcXtu4EXCsXQZqx+4Ofd8PWITH80J16ytU6qapFwuTqcwcLNb
+         vCXFym+WS7inLUTrgz7QI0EaJuLjT7HQRP/QAblVFLjMClW5mLBLmnxaZ4m0pQ80OcOk
+         vXFZ3mHk9v47818QjdvLM4zepljBKzCNfMrzZMI3CUlVfYAm3HRd6XY6n+2NaDTGI26g
+         +k01NPC4NLEbl7ruddjxdoJgnGvsgArEemcZ6TUGlSGiYw/dpd6q5FRUqa/mo/NvZ/C6
+         Uo/XN+iJPNnoCUwrPzn1xeDTsGfyWm2O2BGwNWyYaBVmjZp96ZEN4nEUFu2hg85iCWVS
+         kSbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tim9X+F9vYHdlPOoRw/qRUISublgBCciYQagSlRF/BQ=;
-        b=A6cGlpbumhoWFqpRAWUrWynAsVLo3Ecm5CkmgNu/XY1ZALDaI1vh3vduk+KRlV6A0q
-         ddDHxGRMwr75pTBlg/6D2/KclfnWuvaoHqhd0NP0eSB6S7WqDusBrvSwvxFA7zBpr3NK
-         zHOrxoRRzH5PmhkDf1mrTa5A5a01L/j62/mNDRK2lBw2HzPfD/z58RLC/dUoDJUTHAqO
-         Gbm9bq5Y6aX7ueJy6V4xkI0Q2wi8nKyioaiAIPwrYVRbM8D68YyMCexoixXii1munKf3
-         zqlvzm4iICBMB5eRW57J4qWKkqOef1sivVMvpzMNDOCOlREqPk706A1AK6T/JQMtBQQV
-         TMNw==
-X-Gm-Message-State: APjAAAX+366oR6lYNQykNw0eDivEBQwlIFjZ1fCDm7NLEvUEWO+QiHib
-        Z2zbCI6DgOkvfLZZW37+st+ZHr0rkRT1rz+hps35hQ==
-X-Google-Smtp-Source: APXvYqwmNhCu2uIrsQ/yh0E0Nvm1vihPuVgYoU5bhKWgxgTaUk6av22YZ6E1zy7BoNa+YEWmYIrDLkZXBKzLN79MMT8=
-X-Received: by 2002:a17:906:b7c4:: with SMTP id fy4mr284770ejb.139.1582745473140;
- Wed, 26 Feb 2020 11:31:13 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=82BmcmIVU/khlxiiYLp8kss4jd0AD0u0A2zzeUS4+kw=;
+        b=Kwseq1o/iTZs5DJy+reP8XJNNAlV79QI32RFp/WvzEGAwc6YnDas5QOuEMu7qcmhoy
+         aKAlrxzCes3ZGx5uSyxFBvovqbxeSENyKe/GJ1tgGoIrSRXzWoc290/BC+bgBCx7C+jN
+         JlnDpPJGkxIVTKkcuJdsvxFmWTJJhqg380zUIwxkokmJuHLJo1WArz6z6r3YZ8Lgda4Q
+         hPP2Ba2zAlEjQxNEN6fMh4osklr5pCk0Rf/vEhMOWQnHqcGE++HryjTMk5Z9mn9Gwhb8
+         fZ83L7C9Yy741+VQpqzREvuiUPndBXwT15AYoprqugOp6wErdW4a3xiS0MR/YtbQd3Op
+         Meww==
+X-Gm-Message-State: APjAAAXB7r+EpcKHJLsgZruQoaZ8uUCCL8LtzMyax9dLn3Q9D+g3T4JB
+        HVbGqJ8jw1z9va6nbyexwHsGLQ7ZpUs=
+X-Google-Smtp-Source: APXvYqw1Qg29Rp2e1xoil2ffgYTFbTfdMcnhwA+5u9lbxZwXh7m+OC+9QUEkTfp74CvksCMrvkukmA==
+X-Received: by 2002:ae9:e8c4:: with SMTP id a187mr759785qkg.243.1582746028036;
+        Wed, 26 Feb 2020 11:40:28 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::3:6048])
+        by smtp.gmail.com with ESMTPSA id p92sm1628907qtd.14.2020.02.26.11.40.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 11:40:26 -0800 (PST)
+Date:   Wed, 26 Feb 2020 14:40:25 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
+        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH v2 2/3] mm: memcontrol: clean up and document effective
+ low/min calculations
+Message-ID: <20200226194025.GA30206@cmpxchg.org>
+References: <20191219200718.15696-1-hannes@cmpxchg.org>
+ <20191219200718.15696-3-hannes@cmpxchg.org>
+ <20200221171024.GA23476@blackbody.suse.cz>
+ <20200225184014.GC10257@cmpxchg.org>
+ <20200226164632.GL27066@blackbody.suse.cz>
 MIME-Version: 1.0
-References: <20200226134637.31670-1-lrizzo@google.com> <20200226134637.31670-2-lrizzo@google.com>
- <20200226161941.GZ18400@hirez.programming.kicks-ass.net>
-In-Reply-To: <20200226161941.GZ18400@hirez.programming.kicks-ass.net>
-From:   Luigi Rizzo <lrizzo@google.com>
-Date:   Wed, 26 Feb 2020 11:31:01 -0800
-Message-ID: <CAMOZA0LU_mGPre9gsJSZeG19fUjLWb+6xuG8-2yv5gJRHwWzqQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] kstats: kernel metric collector
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        naveen.n.rao@linux.ibm.com, ardb@kernel.org,
-        Luigi Rizzo <rizzo@iet.unipi.it>,
-        Paolo Abeni <pabeni@redhat.com>, giuseppe.lettieri@unipi.it,
-        =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>, mingo@redhat.com,
-        acme@kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200226164632.GL27066@blackbody.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 8:19 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Wed, Feb 26, 2020 at 05:46:36AM -0800, Luigi Rizzo wrote:
-> > kstats is a helper to accumulate in-kernel metrics (timestamps, sizes,
-> > etc.) and show distributions through debugfs.
-> > Set CONFIG_KSTATS=m or y to enable it.
-> >
-> > Creating a metric takes one line of code (and one to destroy it):
-> >
-> >   struct kstats *key = kstats_new("foo", 3 /* frac_bits */);
-> >   ...
-> >   kstats_delete(key);
-> >
-> > The following line records a u64 sample:
-> >
-> >   kstats_record(key, value);
-> >
-> > kstats_record() is cheap (5ns hot cache, 250ns cold cache). Samples are
-> > accumulated in a per-cpu array with 2^frac_bits slots for each power
-> > of 2. Using frac_bits = 3 gives about 30 slots per decade.
->
-> So I think everybody + dog has written code like this, although I never
-> bothered with the log2 based buckets myself. Nor have I ever bothered
-> with doing a debugfs interface.
+On Wed, Feb 26, 2020 at 05:46:32PM +0100, Michal Koutný wrote:
+> On Tue, Feb 25, 2020 at 01:40:14PM -0500, Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > Hm, this example doesn't change with my patch because there is no
+> > "floating" protection that gets distributed among the siblings.
+> Maybe it had changed even earlier and the example obsoleted.
+> 
+> > In my testing with the above parameters, the equilibrium still comes
+> > out to roughly this distribution.
+> I'm attaching my test (10-times smaller) and I'm getting these results:
+> 
+> > /sys/fs/cgroup/test.slice/memory.current:838750208
+> > /sys/fs/cgroup/test.slice/pressure.service/memory.current:616972288
+> > /sys/fs/cgroup/test.slice/test-A.slice/memory.current:221782016
+> > /sys/fs/cgroup/test.slice/test-A.slice/B.service/memory.current:123428864
+> > /sys/fs/cgroup/test.slice/test-A.slice/C.service/memory.current:93495296
+> > /sys/fs/cgroup/test.slice/test-A.slice/D.service/memory.current:4702208
+> > /sys/fs/cgroup/test.slice/test-A.slice/E.service/memory.current:155648
+> 
+> (I'm running that on 5.6.0-rc2 + first two patches of your series.)
+> 
+> That's IMO closer to the my simulation (1.16:0.84)
+> than the example prediction (1.3:0.6)
 
-the above is perhaps one excellent argument to why it may deserve to be in:
-so that people don't need to write the measurement code time and again,
-or, as I have done myself multiple times, use some inferior hack (racy
-counter, coarse buckets) or give up measuring things and rely on guessing.
+I think you're correct about the moving points of equilibrium. I'm
+going to experiment more with your script. I had written it off as
+noise from LRU rotations, reclaim concurrency etc. but your script
+shows that these points do shift around as the input parameters
+change. This is useful, thanks.
 
-> I find it very hard to convince myself something like this deserves to
-> live upstream, vs. remaining in the local debug/hack toolbox.
->
-> Tracing has an aggregator (histogram), you can dump the raw deltas, or
-> you can hack up a custom aggregator in a few lines, or you do BPF if
-> you're so inclined.
+But AFAICS, my patches here do not change or introduce this behavior
+so it's a longer-standing issue.
 
-And this is possibly another good argument: sometimes the systems where it
-would be interesting to collect data are not accessible to the developers with
-skills to write the monitoring code and run a modified kernel.
+> > It's just to illustrate the pressure weight, not to reflect each
+> > factor that can influence the equilibrium.
+> But it's good to have some idea about the equilibrium when configuring
+> the values. 
 
-cheers
-luigi
+Agreed.
+
+> > > > @@ -6272,12 +6262,63 @@ struct cgroup_subsys memory_cgrp_subsys = {
+> > > >   * for next usage. This part is intentionally racy, but it's ok,
+> > > >   * as memory.low is a best-effort mechanism.
+> > > Although it's a different issue but since this updates the docs I'm
+> > > mentioning it -- we treat memory.min the same, i.e. it's subject to the
+> > > same race, however, it's not meant to be best effort. I didn't look into
+> > > outcomes of potential misaccounting but the comment seems to miss impact
+> > > on memory.min protection.
+> > 
+> > Yeah I think we can delete that bit.
+> Erm, which part?
+> Make the racy behavior undocumented or that it applies both memory.low
+> and memory.min?
+
+I'm honestly not sure what it's trying to say. Reclaim and charging
+can happen concurrently, so the protection enforcement, whether it's
+min or low, has always been racy. Even OOM itself is racy.
+
+Caching the parental value while iterating over a group of siblings
+shouldn't fundamentally alter that outcome. We do enough priority
+iterations and reclaim loops from the allocator that we shouldn't see
+premature OOMs or apply totally incorrect balances because of that.
+
+So IMO the statement that "this is racy, but low is best-effort
+anyway, so it's okay" is misleading. I think more accurate would be to
+say that reclaim is fundamentally racy, so a bit of additional noise
+here doesn't matter.
+
+Either way, I don't find this paragraph all that useful. If you think
+it's informative, could you please let me know which important aspect
+it communicates? Otherwise, I'm inclined to delete it.
