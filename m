@@ -2,86 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F29661701BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:00:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 491461701B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:59:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbgBZPAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 10:00:14 -0500
-Received: from retiisi.org.uk ([95.216.213.190]:45628 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726345AbgBZPAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:00:14 -0500
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 285D4634C89;
-        Wed, 26 Feb 2020 16:59:00 +0200 (EET)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1j6y9M-0002KL-P0; Wed, 26 Feb 2020 16:59:00 +0200
-Date:   Wed, 26 Feb 2020 16:59:00 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Eugen Hristev <eugen.hristev@microchip.com>
-Cc:     linux-media@vger.kernel.org, hverkuil@xs4all.nl,
-        laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: v4l2-core: fix entity initialization in
- device_register_subdev
-Message-ID: <20200226145900.GL5023@valkosipuli.retiisi.org.uk>
-References: <20200226121545.19880-1-eugen.hristev@microchip.com>
+        id S1727044AbgBZO7g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 09:59:36 -0500
+Received: from elvis.franken.de ([193.175.24.41]:38970 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726063AbgBZO7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 09:59:36 -0500
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1j6y9t-0001cq-00; Wed, 26 Feb 2020 15:59:33 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 4FF4BC0E99; Wed, 26 Feb 2020 15:59:17 +0100 (CET)
+Date:   Wed, 26 Feb 2020 15:59:17 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Paul Burton <paulburton@kernel.org>, od@zcrc.me,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] MIPS: Fix CONFIG_MIPS_CMDLINE_DTB_EXTEND handling
+Message-ID: <20200226145917.GA12722@alpha.franken.de>
+References: <20200225152810.45048-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200226121545.19880-1-eugen.hristev@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200225152810.45048-1-paul@crapouillou.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eugen,
-
-On Wed, Feb 26, 2020 at 02:15:45PM +0200, Eugen Hristev wrote:
-> The check for parameters is done below in the function.
-> Initialize the entity variable properly, after the parameters
-> have been checked.
+On Tue, Feb 25, 2020 at 12:28:09PM -0300, Paul Cercueil wrote:
+> The CONFIG_MIPS_CMDLINE_DTB_EXTEND option is used so that the kernel
+> arguments provided in the 'bootargs' property in devicetree are extended
+> with the kernel arguments provided by the bootloader.
 > 
-> Fixes: 61f5db549dde ("[media] v4l: Make v4l2_subdev inherit from media_entity")
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> The code was broken, as it didn't actually take any of the kernel
+> arguments provided in devicetree when that option was set.
+> 
+> Fixes: 7784cac69735 ("MIPS: cmdline: Clean up boot_command_line
+> initialization")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 > ---
->  drivers/media/v4l2-core/v4l2-device.c | 3 ++-
+>  arch/mips/kernel/setup.c | 3 ++-
 >  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-device.c b/drivers/media/v4l2-core/v4l2-device.c
-> index 63d6b147b21e..6e33132ebb19 100644
-> --- a/drivers/media/v4l2-core/v4l2-device.c
-> +++ b/drivers/media/v4l2-core/v4l2-device.c
-> @@ -112,7 +112,7 @@ int v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
->  				struct v4l2_subdev *sd)
->  {
->  #if defined(CONFIG_MEDIA_CONTROLLER)
-> -	struct media_entity *entity = &sd->entity;
-> +	struct media_entity *entity;
->  #endif
->  	int err;
->  
-> @@ -141,6 +141,7 @@ int v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
->  		goto error_module;
->  
->  #if defined(CONFIG_MEDIA_CONTROLLER)
-> +	entity = &sd->entity;
->  	/* Register the entity. */
->  	if (v4l2_dev->mdev) {
->  		err = media_device_register_entity(v4l2_dev->mdev, entity);
 
-Thanks for the patch.
+applied to mips-fixes.
 
-Instead of keeping a shorthand for entity locally, I'd just refer to
-&sd->entity. It's more simple, and gets away with one pair of #if / #endif
-as well.
+Thomas.
 
 -- 
-Regards,
-
-Sakari Ailus
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
