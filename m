@@ -2,136 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8558E1707FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:48:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51C94170804
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:49:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgBZSsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:48:25 -0500
-Received: from foss.arm.com ([217.140.110.172]:41414 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727308AbgBZSsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:48:23 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C752430E;
-        Wed, 26 Feb 2020 10:48:22 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E3BF3F881;
-        Wed, 26 Feb 2020 10:48:22 -0800 (PST)
-Date:   Wed, 26 Feb 2020 18:48:20 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Adrian Panella <ianchi74@outlook.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Applied "regulator: add smb208 support" to the regulator tree
-In-Reply-To:  <20200219163711.479-1-ansuelsmth@gmail.com>
-Message-Id:  <applied-20200219163711.479-1-ansuelsmth@gmail.com>
-X-Patchwork-Hint: ignore
+        id S1727328AbgBZStb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:49:31 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36834 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727105AbgBZStb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 13:49:31 -0500
+Received: by mail-pg1-f194.google.com with SMTP id d9so106756pgu.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 10:49:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=UE7SLV8s468yZbq8qcSb4sRo6dYTH3lmVINJK2pF/Rc=;
+        b=jA2Um2bnLQg3BAkezzgjpMtGTg858Rxq4CJkWx4LfvljkkqPbfDzwR3l96lR+/xhJB
+         VQkuio7/ZKPo9ZxiSc0BWA53DDAaxEC4Kig/1/MAwMPzTkxW0LsjsO9qRUWAG3+LwdxJ
+         bBcXP/Qq5cZkrwppbFNmSDm9gDmJqMY2Rb5Z0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UE7SLV8s468yZbq8qcSb4sRo6dYTH3lmVINJK2pF/Rc=;
+        b=mXSrFs8mnFWvO2cNFkaGZOpIKc9rcKzbmnZWIDn7aM6fqI4rPbSTWx5m+zstiGvS+X
+         Hbzz4OJYTpPPB6PHoktMZe3Eju+1XX+8kjZ7O2qD8DShvr5UzAFtiVQmKxVN8YFQQfwd
+         jkser9Cp1i0H8qCRudeDOMTboxmuJyRKHgxfBlmI+lEh5ublXpToQDabG6ykYDih5rzW
+         Fn+kQ1QFpObAnvet8a0figKzvK/mVy8s9Urte453EmH8gs+U7NJl172yPIv683ykoynj
+         ZZZEIdoi0Vp4b+QdKXV5NbNHcndaQ0noad/iRS3veyBQNFmuA0zUPBdF6dcMdofKz+WZ
+         rgLQ==
+X-Gm-Message-State: APjAAAWzNrMFff6WuHLiLCnHI6HAdOPCzfheegE6BHIkMLr7xMG6M3Gt
+        w58nb9eoxE67etqz5h2zksQl5A==
+X-Google-Smtp-Source: APXvYqxlTjlN/5RWPR7YFQfgZ7nC8YLL0uLCegeK1cb0d8ZefgQ7K7KigIJMn16KLKQbCje1JbcnoA==
+X-Received: by 2002:a63:cc4c:: with SMTP id q12mr198639pgi.443.1582742970078;
+        Wed, 26 Feb 2020 10:49:30 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id k63sm3578966pjb.10.2020.02.26.10.49.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 10:49:29 -0800 (PST)
+Date:   Wed, 26 Feb 2020 10:49:28 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Cristian Marussi <cristian.marussi@arm.com>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        lkft-triage@lists.linaro.org,
+        open list <linux-kernel@vger.kernel.org>, ankita@in.ibm.com,
+        Will Deacon <will@kernel.org>, ardb@kernel.org,
+        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>
+Subject: Re: selftests: Linux Kernel Dump Test Module output
+Message-ID: <202002261048.E9417B65D@keescook>
+References: <CA+G9fYu3682XJ2Kw2ZvQdUT80epKc9DWWXgDT1-D_65ajSXNTw@mail.gmail.com>
+ <fcb799d4-f316-60d6-9fd0-0bc1c174e63c@arm.com>
+ <202002251131.3216B3B50C@keescook>
+ <b485a8a9-5312-ca77-d091-3dbfac33ec5b@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b485a8a9-5312-ca77-d091-3dbfac33ec5b@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Wed, Feb 26, 2020 at 11:53:37AM +0000, Cristian Marussi wrote:
+> Sorry I lost track of this thread....tested now on v5.6rc3 on arm64 on a local
+> setup (not proper CI) with CONFIG_LKDTM=y and solves the above issue. (missing CONFIG_LKDTM?)
 
-   regulator: add smb208 support
+Great!
 
-has been applied to the regulator tree at
+> Looking at the general run though I have anyway a bunch of SKIP similar to Naresh
+> 
+> ./run_kselftest.sh 2>/dev/null | grep "SKIP"
+> not ok 1 selftests: lkdtm: PANIC.sh # SKIP
+> not ok 6 selftests: lkdtm: LOOP.sh # SKIP
+> not ok 7 selftests: lkdtm: EXHAUST_STACK.sh # SKIP
+> not ok 8 selftests: lkdtm: CORRUPT_STACK.sh # SKIP
+> not ok 9 selftests: lkdtm: CORRUPT_STACK_STRONG.sh # SKIP
+> not ok 15 selftests: lkdtm: UNSET_SMEP.sh # SKIP
+> not ok 16 selftests: lkdtm: DOUBLE_FAULT.sh # SKIP
+> not ok 18 selftests: lkdtm: OVERWRITE_ALLOCATION.sh # SKIP
+> not ok 19 selftests: lkdtm: WRITE_AFTER_FREE.sh # SKIP
+> not ok 21 selftests: lkdtm: WRITE_BUDDY_AFTER_FREE.sh # SKIP
+> not ok 26 selftests: lkdtm: SOFTLOCKUP.sh # SKIP
+> not ok 27 selftests: lkdtm: HARDLOCKUP.sh # SKIP
+> not ok 28 selftests: lkdtm: SPINLOCKUP.sh # SKIP
+> not ok 29 selftests: lkdtm: HUNG_TASK.sh # SKIP
+> not ok 59 selftests: lkdtm: REFCOUNT_TIMING.sh # SKIP
+> not ok 60 selftests: lkdtm: ATOMIC_TIMING.sh # SKIP
+> 
+> BUT, if I look at one LKDTM test script
+> (lkdtm/USERCOPY_STACK_FRAME_TO.sh):
+> 
+> ...
+> # If the test is commented out, report a skip
+> if echo "$test" | grep -q '^#' ; then
+> ...
+> 
+> and in fact:
+> 
+> root@sqwt-ubuntu:/opt/ksft# cat lkdtm/tests.txt | grep ^#
+> #PANIC
+> #LOOP Hangs the system
+> #EXHAUST_STACK Corrupts memory on failure
+> #CORRUPT_STACK Crashes entire system on success
+> #CORRUPT_STACK_STRONG Crashes entire system on success
+> #OVERWRITE_ALLOCATION Corrupts memory on failure
+> #WRITE_AFTER_FREE Corrupts memory on failure
+> #WRITE_BUDDY_AFTER_FREE Corrupts memory on failure
+> #SOFTLOCKUP Hangs the system
+> #HARDLOCKUP Hangs the system
+> #SPINLOCKUP Hangs the system
+> #HUNG_TASK Hangs the system
+> #REFCOUNT_TIMING timing only
+> #ATOMIC_TIMING timing only
+> 
+> so only two of the above tests are in fact unexpectedly skipped.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+Yup, that is operating as expected. :)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> not ok 15 selftests: lkdtm: UNSET_SMEP.sh # SKIP
+> not ok 16 selftests: lkdtm: DOUBLE_FAULT.sh # SKIP
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+These are x86-specific, so that is correct as well.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Thanks for following up!
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b5f25304aece9f2e7eaab275bbb5461c666bf38c Mon Sep 17 00:00:00 2001
-From: Ansuel Smith <ansuelsmth@gmail.com>
-Date: Wed, 19 Feb 2020 17:37:11 +0100
-Subject: [PATCH] regulator: add smb208 support
-
-Smb208 regulators are used on some ipq806x soc.
-Add support for it to make it avaiable on some routers
-that use it.
-
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-Signed-off-by: Adrian Panella <ianchi74@outlook.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Link: https://lore.kernel.org/r/20200219163711.479-1-ansuelsmth@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/mfd/qcom-rpm.txt | 4 ++++
- drivers/regulator/qcom_rpm-regulator.c             | 9 +++++++++
- 2 files changed, 13 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mfd/qcom-rpm.txt b/Documentation/devicetree/bindings/mfd/qcom-rpm.txt
-index 3c91ad430eea..b823b8625243 100644
---- a/Documentation/devicetree/bindings/mfd/qcom-rpm.txt
-+++ b/Documentation/devicetree/bindings/mfd/qcom-rpm.txt
-@@ -61,6 +61,7 @@ Regulator nodes are identified by their compatible:
- 		    "qcom,rpm-pm8901-regulators"
- 		    "qcom,rpm-pm8921-regulators"
- 		    "qcom,rpm-pm8018-regulators"
-+		    "qcom,rpm-smb208-regulators"
- 
- - vdd_l0_l1_lvs-supply:
- - vdd_l2_l11_l12-supply:
-@@ -171,6 +172,9 @@ pm8018:
- 	s1, s2, s3, s4, s5, , l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11,
- 	l12, l14, lvs1
- 
-+smb208:
-+	s1a, s1b, s2a, s2b
-+
- The content of each sub-node is defined by the standard binding for regulators -
- see regulator.txt - with additional custom properties described below:
- 
-diff --git a/drivers/regulator/qcom_rpm-regulator.c b/drivers/regulator/qcom_rpm-regulator.c
-index 7407cd5a1b74..7fc97f23fcf4 100644
---- a/drivers/regulator/qcom_rpm-regulator.c
-+++ b/drivers/regulator/qcom_rpm-regulator.c
-@@ -925,12 +925,21 @@ static const struct rpm_regulator_data rpm_pm8921_regulators[] = {
- 	{ }
- };
- 
-+static const struct rpm_regulator_data rpm_smb208_regulators[] = {
-+	{ "s1a",  QCOM_RPM_SMB208_S1a, &smb208_smps, "vin_s1a" },
-+	{ "s1b",  QCOM_RPM_SMB208_S1b, &smb208_smps, "vin_s1b" },
-+	{ "s2a",  QCOM_RPM_SMB208_S2a, &smb208_smps, "vin_s2a" },
-+	{ "s2b",  QCOM_RPM_SMB208_S2b, &smb208_smps, "vin_s2b" },
-+	{ }
-+};
-+
- static const struct of_device_id rpm_of_match[] = {
- 	{ .compatible = "qcom,rpm-pm8018-regulators",
- 		.data = &rpm_pm8018_regulators },
- 	{ .compatible = "qcom,rpm-pm8058-regulators", .data = &rpm_pm8058_regulators },
- 	{ .compatible = "qcom,rpm-pm8901-regulators", .data = &rpm_pm8901_regulators },
- 	{ .compatible = "qcom,rpm-pm8921-regulators", .data = &rpm_pm8921_regulators },
-+	{ .compatible = "qcom,rpm-smb208-regulators", .data = &rpm_smb208_regulators },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rpm_of_match);
 -- 
-2.20.1
-
+Kees Cook
