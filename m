@@ -2,63 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E089316FD2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:16:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCAE316FD21
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:16:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbgBZLQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 06:16:33 -0500
-Received: from mail-pf1-f180.google.com ([209.85.210.180]:37422 "EHLO
-        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728368AbgBZLQ3 (ORCPT
+        id S1728292AbgBZLQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 06:16:15 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:12391 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728252AbgBZLQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 06:16:29 -0500
-Received: by mail-pf1-f180.google.com with SMTP id p14so1308388pfn.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 03:16:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CxsIIu+/8DSr9yF0CIvvdp+l+R1SqYNd7xvzR+EPPKE=;
-        b=drOYBsxYOXn2Xeb56l6caTledM7axnNRIci8lv/j5g0baIJWB2DvjJbjzDaydlaz2L
-         8PMa4wUDNdoQrnRBx6edGr6JU/YzLzA7uRqCV24MS4D09M+Fp7JXOB1OalwDH0Scu9Zh
-         3Le4Sjj4Akni+tjxM0v6nRkRPGUUYyP90oACM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CxsIIu+/8DSr9yF0CIvvdp+l+R1SqYNd7xvzR+EPPKE=;
-        b=NvyD/ZrODPABvjbQqXr13KHZIFIqZI0RIuJRKIKmfITxyCCObiWFuVomS2niiMO3gN
-         wdD3kTBCqNmVNafFYTYLYHbz0ya58s5Llx1vB6GoLxXDhHLcFf2Btm+kay6svin+r7Hb
-         pfC9Q4GHzGLecTIumd9hewBcDz8oDRZEoz0Mf/fbSdzgrdMHF+JxOzJTIStxipA84KVx
-         wwFiwaLG6Hy+yKaKZ8miH7Hpg7HuaXFhIv6IwbA5Hwxz2X0lf/m6qpxNk/hbs1L2a0us
-         VYAgDocT2QxsdWukml+ULmcVvFZ/UgNISmHCBRe5lNHiPv+g2Nw809e8NNEh++bQFO1M
-         6DBA==
-X-Gm-Message-State: APjAAAWoPRg5o6gXrlWHY5VGpF13VBIYlzYDUie9Ff0/yWxL4Ba+ls/T
-        WNNuviSTbrAPmKIs54VmQPBFEg==
-X-Google-Smtp-Source: APXvYqw7geSaJHKQXNxHd+nJsVEm3hH3f9VMmmCHh3bRl9MgtjuMWJBqY01Dt28pW7thPsYChjxijA==
-X-Received: by 2002:a62:25c6:: with SMTP id l189mr3901463pfl.136.1582715788057;
-        Wed, 26 Feb 2020 03:16:28 -0800 (PST)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id o22sm2429993pgj.58.2020.02.26.03.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 03:16:27 -0800 (PST)
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCHv3 11/11] videobuf2: don't test db_attach in dma-contig prepare and finish
-Date:   Wed, 26 Feb 2020 20:15:29 +0900
-Message-Id: <20200226111529.180197-12-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
-In-Reply-To: <20200226111529.180197-1-senozhatsky@chromium.org>
-References: <20200226111529.180197-1-senozhatsky@chromium.org>
+        Wed, 26 Feb 2020 06:16:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582715769;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=6en+8D+Os1k3MMDTIZGpH+G1werye7fUM88nASmsZpA=;
+        b=P2XeAw31XknJY13M4cjllM5Y7M3dwvLMmaZWlZr5SzW7XVlH6AGsrrYJRdMoarG2cX
+        wpGiVlq/ns1Y+hCGCmCdBPgvJ5Y//pChX/TY7ODidRbMCWYebCJjs+7fw3EA3hEumbgY
+        mp4YjjOqAY1uZGAzyjCWu3Yj0xos5LN47r2BMD31kcsphMs28McSUmPQUab+kleTeOyU
+        wXXqqK9Ot8LpOeEd/pfb6Q7/SoN9biIUv6RKrZVy9s2I0w8OYffxrZqd/8z5rSmTQxf2
+        2RnRm75A5B+2d831usycu9lyTG3Ls4uA7Yya3awsIGPwENr8pz3dhmQe7qAN14BZNACq
+        qH0g==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0pAzoz/Oc2x"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id U06217w1QBG14Cb
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Wed, 26 Feb 2020 12:16:01 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com
+Subject: [PATCH v6 0/6] MIPS: CI20: Add efuse driver for Ingenic JZ4780 and attach to DM9000 for stable MAC addresses
+Date:   Wed, 26 Feb 2020 12:15:55 +0100
+Message-Id: <cover.1582715761.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,73 +64,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We moved cache management decision making to the upper layer and
-rely on buffer's need_cache_sync flags and videobuf2 core. If the
-upper layer (core) has decided to invoke ->prepare() or ->finish()
-then we must sync.
+* add dependency on CONFIG_OF and select REGMAP_MMIO (suggested by Paul Cercueil <paul@crapouillou.net>)
+* add clk_prepare_enable() (suggested by Paul Cercueil <paul@crapouillou.net>)
+* inline jz4780_efuse_read_32bytes() since it is only used once
+* remove read optimization for full block (suggested by Paul Cercueil <paul@crapouillou.net>)
+* simplify calculations for rd_adj and rd_strobe (suggested by Paul Cercueil <paul@crapouillou.net>)
+* do calculations for rd_adj and rd_strobe in local variables
+* fix overflow check (did allow for 5 bit values although register is 4 bit wide)
+* fixes for yaml (sugested by Andreas Kemnade <andreas@kemnade.info>)
 
-For DMABUF ->need_cache_sync_on_prepare and ->need_cache_sync_on_flush
-are always false so videobuf core does not call ->prepare() and
-->finish() on such buffers.
+PATCH V5 2020-02-22 11:25:35:
+* no longer RFC but PATCH
+* add yaml bindings (by Andreas Kemnade <andreas@kemnade.info>)
+* fixes to yaml (suggested by Rob Herring <robh@kernel.org>)
 
-Additionally, scratch the DMABUF comment.
+RFC V4 2020-02-17 17:55:35:
+* removed read_only for nvmem config because there is no write method
+* Kconfig: replaced depends MACH_JZ4780 with MACH_INGENIC
+* run through checkpatch and fixed issues
+* made use of devm_nvram_register() and get rid of jz4780_efuse_remove()
+  (suggested by Srinivas Kandagatla <srinivas.kandagatla@linaro.org>)
+* squashed previous patch 1/9 and 2/9 into single (regmap based) driver
 
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- drivers/media/common/videobuf2/videobuf2-dma-contig.c | 6 ++----
- drivers/media/common/videobuf2/videobuf2-dma-sg.c     | 8 --------
- 2 files changed, 2 insertions(+), 12 deletions(-)
+RFC V3 2020-02-16 20:20:59:
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-index a387260fb321..6ea0961149d7 100644
---- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-@@ -100,8 +100,7 @@ static void vb2_dc_prepare(void *buf_priv)
- 	struct vb2_dc_buf *buf = buf_priv;
- 	struct sg_table *sgt = buf->dma_sgt;
- 
--	/* DMABUF exporter will flush the cache for us */
--	if (!sgt || buf->db_attach)
-+	if (!sgt)
- 		return;
- 
- 	dma_sync_sg_for_device(buf->dev, sgt->sgl, sgt->orig_nents,
-@@ -113,8 +112,7 @@ static void vb2_dc_finish(void *buf_priv)
- 	struct vb2_dc_buf *buf = buf_priv;
- 	struct sg_table *sgt = buf->dma_sgt;
- 
--	/* DMABUF exporter will flush the cache for us */
--	if (!sgt || buf->db_attach)
-+	if (!sgt)
- 		return;
- 
- 	dma_sync_sg_for_cpu(buf->dev, sgt->sgl, sgt->orig_nents, buf->dma_dir);
-diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-index ddc67c9aaedb..2a01bc567321 100644
---- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-@@ -204,10 +204,6 @@ static void vb2_dma_sg_prepare(void *buf_priv)
- 	struct vb2_dma_sg_buf *buf = buf_priv;
- 	struct sg_table *sgt = buf->dma_sgt;
- 
--	/* DMABUF exporter will flush the cache for us */
--	if (buf->db_attach)
--		return;
--
- 	dma_sync_sg_for_device(buf->dev, sgt->sgl, sgt->orig_nents,
- 			       buf->dma_dir);
- }
-@@ -217,10 +213,6 @@ static void vb2_dma_sg_finish(void *buf_priv)
- 	struct vb2_dma_sg_buf *buf = buf_priv;
- 	struct sg_table *sgt = buf->dma_sgt;
- 
--	/* DMABUF exporter will flush the cache for us */
--	if (buf->db_attach)
--		return;
--
- 	dma_sync_sg_for_cpu(buf->dev, sgt->sgl, sgt->orig_nents, buf->dma_dir);
- }
- 
+This series is based on and a follow up for
+
+https://lore.kernel.org/patchwork/cover/868157/
+
+("[v2,0/2] Add efuse driver for Ingenic JZ4780 SoC")
+
+Original authors were
+PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Mathieu Malaterre <malat@debian.org>
+
+and there are additions / code improvements by
+H. Nikolaus Schaller <hns@goldelico.com>
+Paul Cercueil <paul@crapouillou.net>
+
+This setup works, if the dm9000 driver is compiled
+as a module.
+
+Therefore it is all RFC level. It is also not completely
+checkpatched.
+
+
+H. Nikolaus Schaller (1):
+  MIPS: DTS: CI20: make DM9000 Ethernet controller use NVMEM to find the
+    default MAC address
+
+PrasannaKumar Muralidharan (5):
+  nvmem: add driver for JZ4780 efuse
+  Bindings: nvmem: add bindings for JZ4780 efuse
+  Documentation: ABI: nvmem: add documentation for JZ4780 efuse ABI
+  nvmem: MAINTAINERS: add maintainer for JZ4780 efuse driver
+  MIPS: DTS: JZ4780: define node for JZ4780 efuse
+
+ .../ABI/testing/sysfs-driver-jz4780-efuse     |  16 ++
+ .../bindings/nvmem/ingenic,jz4780-efuse.yaml  |  50 ++++
+ MAINTAINERS                                   |   5 +
+ arch/mips/boot/dts/ingenic/ci20.dts           |   3 +
+ arch/mips/boot/dts/ingenic/jz4780.dtsi        |  17 +-
+ drivers/nvmem/Kconfig                         |  12 +
+ drivers/nvmem/Makefile                        |   2 +
+ drivers/nvmem/jz4780-efuse.c                  | 239 ++++++++++++++++++
+ 8 files changed, 343 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-jz4780-efuse
+ create mode 100644 Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
+ create mode 100644 drivers/nvmem/jz4780-efuse.c
+
 -- 
-2.25.0.265.gbab2e86ba0-goog
+2.23.0
 
