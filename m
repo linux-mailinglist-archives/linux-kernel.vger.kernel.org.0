@@ -2,84 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1798C170464
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:30:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3502170469
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:31:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbgBZQa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:30:57 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40833 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbgBZQa4 (ORCPT
+        id S1727851AbgBZQbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:31:36 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35647 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726905AbgBZQbg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:30:56 -0500
-Received: by mail-oi1-f196.google.com with SMTP id a142so79450oii.7;
-        Wed, 26 Feb 2020 08:30:56 -0800 (PST)
+        Wed, 26 Feb 2020 11:31:36 -0500
+Received: by mail-lj1-f194.google.com with SMTP id q8so3830224ljb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 08:31:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=YsK7RC3jNyUUCAI8YO0dZwG1LLhNnYXoQcGVITBKQgY=;
+        b=FqjUlrOV8kswPqn7o8fKaz4tyZlXfb7BTWpJani82vjG7UqF6G+efcPzvAeQe4zEsV
+         bGwdnsP5NukTjOJUrgVOa8huSecOxD/WvjSVeN0HOfLfHkU+WAszYS44z0hZUvwvVCFu
+         Ljg+COePTAEsA05Ictyg/e7HEPgmoU0uOADLJO+I7AEETdBdZ9yA/woOmk7nDbB0ECs+
+         IoqIhHimkBQbEvN/1jZNgvri3qT5+y3ii26QaACMzVUidNPxUko1zu7mdbzdSlmGfmyu
+         mvm23TnDjbFfB856j7Ik5jmEjsJWV6C+Nx17PEgNrJCWrxuNFZ+LDnm2NlpLW69zxVyJ
+         WgKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ACI9a0q/BgBWalLw0K2YIrmMcsUsmnK2gwfSs/vtPsM=;
-        b=a4uMtxyJ8IeuixiuhCZfXkR5LESIy/KizK7mCbkMPvJuS08MHSVWMX/OG34Ojl8FPz
-         7IaRWLRWp4kqROXlyQ6BPvgID46inDRzrlYtIKhd3yRI9/XwWsYhqNyeXWvNGglUkdGz
-         Jiotf9/+iHBMWdyu3oK/Qk6+th6Ph2fqHSjenDN3ipEwhWVwjELABY5Cs7EtXgBIn5zR
-         W513jzd9KSAvAEq1Fh6bxOfnApYezJ3srghIp644RADyhcTYBJd2lODVFfJHhE3rn/wu
-         idab83vrmCQJWz/I5vn/KmrNbZWDeYddC67xEswzOSom4E+ha95g8oF+VnSXzRWIFIU2
-         mDjQ==
-X-Gm-Message-State: APjAAAVj0hZkkrN77P4Xtw08YI0CzEstEcMkFmqSb4agMrorIjmDlrAF
-        h3dGWbmXjE107GXTOhwkfaTUpOSt7g==
-X-Google-Smtp-Source: APXvYqwK0Rc7BM7k+hjejM3j3aYFkebquxvpYKt0YbE8+SJreIg9fwmtnodQ6siCckcxVnFX0VTn2g==
-X-Received: by 2002:aca:4d06:: with SMTP id a6mr3839205oib.27.1582734655656;
-        Wed, 26 Feb 2020 08:30:55 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n19sm951525oig.57.2020.02.26.08.30.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 08:30:55 -0800 (PST)
-Received: (nullmailer pid 26591 invoked by uid 1000);
-        Wed, 26 Feb 2020 16:30:54 -0000
-Date:   Wed, 26 Feb 2020 10:30:54 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-i3c@lists.infradead.org,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [RFC PATCH 3/7] i2c: allow DT nodes without 'compatible'
-Message-ID: <20200226163054.GA26533@bogus>
-References: <20200220172403.26062-1-wsa+renesas@sang-engineering.com>
- <20200220172403.26062-4-wsa+renesas@sang-engineering.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YsK7RC3jNyUUCAI8YO0dZwG1LLhNnYXoQcGVITBKQgY=;
+        b=CXR/mQRwdNXaSDpmGWCH/mEF5P5SwOBQ+p6S0+0Eyn1nGIqZTh8qTTOcBQugeZ702x
+         ek827Gi9UvPDM8gOELzH7u+JPaw0dzyQArMh8Kp5zM6u1D4AzO15FGvRd0tsxzPzDcFF
+         x3TkGNKS+hAQupXpw2mzpIi0xeu+xzoo6gdqLI0f1qYh+U+lw2XCdJ+5kZdQrnuTtIrb
+         40i9YtbHYmpIVPzqm6bKoY8tDmV1o9CmnmFqGBNvRM1HzyfdRe3UwAzpGK6M6rjmq27s
+         pM4SYmDMxALSruQLs5374FyWnj9Q/gLSrvm7q6BH+/OUNMnrK3lbmtO1idmWYkcenhnW
+         eOQw==
+X-Gm-Message-State: APjAAAVyelXvQckRPuKfbqJLK+O7qVy9Cf85EeBOaUavmwMwkTzGMUpT
+        OZ63oaYn6J4oGayrBt0DZx9IwMs/qtFGC6F9zNk=
+X-Google-Smtp-Source: APXvYqzfUaNr53ByN0SUMx5zeay0A7sIAhFDSzMfOEZgwDjEfFmGfSA3A6lwsFJopUoYfrQri+E3zGBj+imVdqYOX34=
+X-Received: by 2002:a2e:9d89:: with SMTP id c9mr3601778ljj.212.1582734694451;
+ Wed, 26 Feb 2020 08:31:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220172403.26062-4-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200226135027.34538-1-lrizzo@google.com> <87ftexz93y.fsf@toke.dk>
+In-Reply-To: <87ftexz93y.fsf@toke.dk>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 26 Feb 2020 08:31:23 -0800
+Message-ID: <CAADnVQKYEk0yWzSoubV3_6G0Sx2ZA6KwERE+Cyg0nYKCRSEvEQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] kstats: kernel metric collector
+To:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
+Cc:     Luigi Rizzo <lrizzo@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, ardb@kernel.org,
+        rizzo@iet.unipi.it, Paolo Abeni <pabeni@redhat.com>,
+        giuseppe.lettieri@unipi.it,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Feb 2020 18:23:59 +0100, Wolfram Sang wrote:
-> Sometimes, we have unknown devices in a system and still want to block
-> their address. For that, we allow DT nodes with only a 'reg' property.
-> These devices will be bound to the "dummy" driver but with the name
-> "reserved". That way, we can distinguish them and even hand them over to
-> the "dummy" driver later when they are really requested using
-> i2c_new_ancillary_device().
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c-ocores.txt | 1 -
->  Documentation/devicetree/bindings/i2c/i2c.txt        | 4 +++-
->  drivers/i2c/i2c-core-base.c                          | 1 +
->  drivers/i2c/i2c-core-of.c                            | 8 +++-----
->  drivers/i2c/i2c-core.h                               | 1 +
->  5 files changed, 8 insertions(+), 7 deletions(-)
-> 
+On Wed, Feb 26, 2020 at 7:03 AM Toke H=C3=B8iland-J=C3=B8rgensen <toke@redh=
+at.com> wrote:
+>
+> > The tracepoint/kprobe/kretprobe solution is much more expensive --
+> > from my measurements, the hooks that invoke the various handlers take
+> > ~250ns with hot cache, 1500+ns with cold cache, and tracing an empty
+> > function this way reports 90ns with hot cache, 500ns with cold cache.
+>
+> I think it would be good if you could include an equivalent BPF-based
+> implementation of your instrumentation example so people can (a) see the
+> difference for themselves and get a better idea of how the approaches
+> differ in a concrete case and (b) quantify the difference in performance
+> between the two implementations.
 
-Acked-by: Rob Herring <robh@kernel.org>
++1
+
+kprobe/kretprobe are expensive.
+That was the reason we switched to bpf fentry/fexit based on bpf trampoline=
+.
+The overhead is close to zero. Currently it's used to collect stats for
+bpf programs themselves, but the framework is there to collect these
+stats for any kernel function. Please see:
+https://lore.kernel.org/bpf/20200213210115.1455809-1-songliubraving@fb.com/=
+T/#mae90f23e545f03bde837239e159909f4e4a1acaa
+One of the ideas that came up during discussion is to
+teach 'perf stat' to do the same.
+So the kernel has all the facilities to instrument itself.
+Only user space work left.
