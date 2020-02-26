@@ -2,104 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2AA716F73E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:27:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C63416F746
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:29:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbgBZF1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 00:27:46 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:13704 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727048AbgBZF1q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 00:27:46 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1582694865; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=Y68tsXGzPZ8q14LHS1TLD6kADG3Oa9mJKTf+M/UdsM4=; b=SU2+aO10w3w9nNQYV9oGTDomTVUTAgtoKHyP30Vx7xs+ktCNKiXCYsInaMrVsXf5lM49VTM8
- g2+FIgR0oD6YuyFbjLVJ0K3a4V7/8ZJ2DroNtrRih33bkBn4C5GjZfQgYRiLHnlW4jSuFMcy
- rGtV6/G053RVu4Eu5XiCZDIYxHs=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e5601c8.7f45e52cba40-smtp-out-n02;
- Wed, 26 Feb 2020 05:27:36 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2794CC43383; Wed, 26 Feb 2020 05:27:35 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1727154AbgBZF3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 00:29:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33542 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725890AbgBZF3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 00:29:02 -0500
+Received: from [192.168.0.217] (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BABE6C4479D;
-        Wed, 26 Feb 2020 05:27:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BABE6C4479D
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-From:   Maulik Shah <mkshah@codeaurora.org>
-To:     swboyd@chromium.org, mka@chromium.org, evgreen@chromium.org,
-        bjorn.andersson@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        agross@kernel.org, dianders@chromium.org, rnayak@codeaurora.org,
-        ilina@codeaurora.org, lsrao@codeaurora.org,
-        Maulik Shah <mkshah@codeaurora.org>
-Subject: [PATCH v7 3/3] soc: qcom: rpmh: Invoke rpmh_flush for dirty caches
-Date:   Wed, 26 Feb 2020 10:57:13 +0530
-Message-Id: <1582694833-9407-4-git-send-email-mkshah@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582694833-9407-1-git-send-email-mkshah@codeaurora.org>
-References: <1582694833-9407-1-git-send-email-mkshah@codeaurora.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 25C4C21927;
+        Wed, 26 Feb 2020 05:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582694941;
+        bh=7EZlyJmfitwu9cl72s933JiTNqw/gi+6NG4TRgo4WRE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mFeHjgEfkA7pOt7jfFCg5L8mtHjs+k/GwAC0YTe/YMbPlM6xs8nk5DwfglUYqtaBX
+         DGKrhZbXoBF5M3sOjnsPaapdshJIQsDRgIMQs2GSp/YZAvr+1DfsEehDWrZIjlYjEN
+         xQxZ2xvc/FUDtccjB03rf+4xH0yDfV5bGvG9Db3s=
+Subject: Re: [patch 02/10] x86/mce: Disable tracing and kprobes on
+ do_machine_check()
+To:     Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Brian Gerst <brgerst@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20200225213636.689276920@linutronix.de>
+ <20200225220216.315548935@linutronix.de> <20200226011349.GH9599@lenoir>
+From:   Andy Lutomirski <luto@kernel.org>
+Message-ID: <d9bde3a6-1e19-1340-1fda-bc6de2eb4f7c@kernel.org>
+Date:   Tue, 25 Feb 2020 21:29:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <20200226011349.GH9599@lenoir>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add changes to invoke rpmh flush when the data in cache is dirty.
+On 2/25/20 5:13 PM, Frederic Weisbecker wrote:
+> On Tue, Feb 25, 2020 at 10:36:38PM +0100, Thomas Gleixner wrote:
+>> From: Andy Lutomirski <luto@kernel.org>
+>>
+>> do_machine_check() can be raised in almost any context including the most
+>> fragile ones. Prevent kprobes and tracing.
+>>
+>> Signed-off-by: Andy Lutomirski <luto@kernel.org>
+>> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+>> ---
+>>  arch/x86/include/asm/traps.h   |    3 ---
+>>  arch/x86/kernel/cpu/mce/core.c |   12 ++++++++++--
+>>  2 files changed, 10 insertions(+), 5 deletions(-)
+>>
+>> --- a/arch/x86/include/asm/traps.h
+>> +++ b/arch/x86/include/asm/traps.h
+>> @@ -88,9 +88,6 @@ dotraplinkage void do_page_fault(struct
+>>  dotraplinkage void do_spurious_interrupt_bug(struct pt_regs *regs, long error_code);
+>>  dotraplinkage void do_coprocessor_error(struct pt_regs *regs, long error_code);
+>>  dotraplinkage void do_alignment_check(struct pt_regs *regs, long error_code);
+>> -#ifdef CONFIG_X86_MCE
+>> -dotraplinkage void do_machine_check(struct pt_regs *regs, long error_code);
+>> -#endif
+>>  dotraplinkage void do_simd_coprocessor_error(struct pt_regs *regs, long error_code);
+>>  #ifdef CONFIG_X86_32
+>>  dotraplinkage void do_iret_error(struct pt_regs *regs, long error_code);
+>> --- a/arch/x86/kernel/cpu/mce/core.c
+>> +++ b/arch/x86/kernel/cpu/mce/core.c
+>> @@ -1213,8 +1213,14 @@ static void __mc_scan_banks(struct mce *
+>>   * On Intel systems this is entered on all CPUs in parallel through
+>>   * MCE broadcast. However some CPUs might be broken beyond repair,
+>>   * so be always careful when synchronizing with others.
+>> + *
+>> + * Tracing and kprobes are disabled: if we interrupted a kernel context
+>> + * with IF=1, we need to minimize stack usage.  There are also recursion
+>> + * issues: if the machine check was due to a failure of the memory
+>> + * backing the user stack, tracing that reads the user stack will cause
+>> + * potentially infinite recursion.
+>>   */
+>> -void do_machine_check(struct pt_regs *regs, long error_code)
+>> +void notrace do_machine_check(struct pt_regs *regs, long error_code)
+>>  {
+>>  	DECLARE_BITMAP(valid_banks, MAX_NR_BANKS);
+>>  	DECLARE_BITMAP(toclear, MAX_NR_BANKS);
+>> @@ -1360,6 +1366,7 @@ void do_machine_check(struct pt_regs *re
+>>  	ist_exit(regs);
+>>  }
+>>  EXPORT_SYMBOL_GPL(do_machine_check);
+>> +NOKPROBE_SYMBOL(do_machine_check);
+> 
+> That won't protect all the function called by do_machine_check(), right?
+> There are lots of them.
+> 
 
-This is done only if OSI is not supported in PSCI. If OSI is supported
-rpmh_flush can get invoked when the last cpu going to power collapse
-deepest low power mode.
-
-Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-Reviewed-by: Srinivas Rao L <lsrao@codeaurora.org>
----
- drivers/soc/qcom/rpmh.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-index 83ba4e0..839af8d 100644
---- a/drivers/soc/qcom/rpmh.c
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -12,6 +12,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/psci.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-@@ -163,6 +164,9 @@ static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
- unlock:
- 	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
- 
-+	if (ctrlr->dirty && !psci_has_osi_support())
-+		return rpmh_flush(ctrlr) ? ERR_PTR(-EINVAL) : req;
-+
- 	return req;
- }
- 
-@@ -391,6 +395,8 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
- 
- 	if (state != RPMH_ACTIVE_ONLY_STATE) {
- 		cache_batch(ctrlr, req);
-+		if (!psci_has_osi_support())
-+			return rpmh_flush(ctrlr);
- 		return 0;
- 	}
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+It at least means we can survive to run actual C code in
+do_machine_check(), which lets us try to mitigate this issue further.
+PeterZ has patches for that, and maybe this series fixes it later on.
+(I'm reading in order!)
