@@ -2,193 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81F8F16F5D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 03:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32BF316F5CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 03:51:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730287AbgBZCw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 21:52:27 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:45572 "EHLO mail5.wrs.com"
+        id S1729795AbgBZCva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 21:51:30 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:47195 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729890AbgBZCw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 21:52:27 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id 01Q2nYvk014201
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 25 Feb 2020 18:49:45 -0800
-Received: from [128.224.162.175] (128.224.162.175) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 25 Feb
- 2020 18:49:24 -0800
-Subject: Re: [PATCH 2/2] perf: probe-file: Check return value of strlist__add
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-CC:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-        <jolsa@redhat.com>, <namhyung@kernel.org>,
-        <kstewart@linuxfoundation.org>, <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>
-References: <1582641703-233485-1-git-send-email-zhe.he@windriver.com>
- <1582641703-233485-2-git-send-email-zhe.he@windriver.com>
- <20200226074906.0acb08b31d01c96c475da0cb@kernel.org>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <b07f670b-6539-1590-88a8-20c58dec3a7e@windriver.com>
-Date:   Wed, 26 Feb 2020 10:49:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728989AbgBZCv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 21:51:29 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48S0gM6B71z9sRG;
+        Wed, 26 Feb 2020 13:51:27 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1582685487;
+        bh=IgJ1YOP5fDNpf2g4PqvkI6AXvNeHCE9jibzVxZ6n8ow=;
+        h=Date:From:To:Cc:Subject:From;
+        b=MPwe0oZ/f4skWUd0TbAc0hje3fN3TByrWyBQ1qeZlS/tzr2HO25PZSoNWiG9z//hu
+         IkGlMvgoiEz5CyciQ2c+ong78pVQLayFoZ90m2aB/z7ty2WgnpWsIo7ltWE3tLVmHA
+         RlQ6p2VLTTib4oIfVqhtTUhJCUVWBUAWp27yWsuseLK2Gg1AxGgZ2bsei13KTwR6Z2
+         MoRSzli1Ryh/bNWal8bNvIiayYfUiROH1yUGLjxf1rPVJrE+vh0WaUDuHcv522zdKD
+         LZ0+/Mi6n2EIQZxICbvi6hv7gfTFcA3E8VxhoIyRs6xxN+H4ZSeYCyNrMdGxmu+oIf
+         WnfUJPdY5N6mQ==
+Date:   Wed, 26 Feb 2020 13:51:27 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Naresh Kumar PBS <nareshkumar.pbs@broadcom.com>,
+        Selvin Xavier <selvin.xavier@broadcom.com>
+Subject: linux-next: build failure after merge of the rdma tree
+Message-ID: <20200226135127.31667f48@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20200226074906.0acb08b31d01c96c475da0cb@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [128.224.162.175]
+Content-Type: multipart/signed; boundary="Sig_/pr_i=riB3ZvQhbtLbWqPRK5";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/pr_i=riB3ZvQhbtLbWqPRK5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2/26/20 6:49 AM, Masami Hiramatsu wrote:
-> On Tue, 25 Feb 2020 22:41:43 +0800
-> <zhe.he@windriver.com> wrote:
->
->> From: He Zhe <zhe.he@windriver.com>
->>
->> strlist__add may fail with -ENOMEM or -EEXIST. Check it and give debugging
->> hint when necessary.
->>
->> Signed-off-by: He Zhe <zhe.he@windriver.com>
->> ---
->>  tools/perf/builtin-probe.c   | 30 ++++++++++++++++--------------
->>  tools/perf/util/probe-file.c | 26 +++++++++++++++++++++-----
->>  2 files changed, 37 insertions(+), 19 deletions(-)
->>
->> diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
->> index 26bc5923e6b5..8b4511c70fed 100644
->> --- a/tools/perf/builtin-probe.c
->> +++ b/tools/perf/builtin-probe.c
->> @@ -442,24 +442,26 @@ static int perf_del_probe_events(struct strfilter *filter)
->>  	}
->>  
->>  	ret = probe_file__get_events(kfd, filter, klist);
->> -	if (ret == 0) {
->> -		strlist__for_each_entry(ent, klist)
->> -			pr_info("Removed event: %s\n", ent->s);
->> +	if (ret < 0)
->> +		goto out;
-> No, this is ignored by design.
-> Since probe_file__get_events() returns -ENOENT when no event is matched,
-> this should be just ignored, and goto uprobe event matching.
+After merging the rdma tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Thanks for pointing it out. However when strlist__add in probe_file__get_events
-returns a -ENOMEM and we ignore that, though it happens not very likely, we
-would miss some entries. So I add checks here and in probe_file__get_events to
-give a heads-up in advance.
+drivers/infiniband/hw/bnxt_re/qplib_res.c: In function '__free_pbl':
+drivers/infiniband/hw/bnxt_re/qplib_res.c:78:2: error: implicit declaration=
+ of function 'vfree'; did you mean 'kfree'? [-Werror=3Dimplicit-function-de=
+claration]
+   78 |  vfree(pbl->pg_arr);
+      |  ^~~~~
+      |  kfree
+drivers/infiniband/hw/bnxt_re/qplib_res.c: In function '__alloc_pbl':
+drivers/infiniband/hw/bnxt_re/qplib_res.c:117:16: error: implicit declarati=
+on of function 'vmalloc'; did you mean 'kmalloc'? [-Werror=3Dimplicit-funct=
+ion-declaration]
+  117 |  pbl->pg_arr =3D vmalloc(pages * sizeof(void *));
+      |                ^~~~~~~
+      |                kmalloc
+drivers/infiniband/hw/bnxt_re/qplib_res.c:117:14: warning: assignment to 'v=
+oid **' from 'int' makes pointer from integer without a cast [-Wint-convers=
+ion]
+  117 |  pbl->pg_arr =3D vmalloc(pages * sizeof(void *));
+      |              ^
+drivers/infiniband/hw/bnxt_re/qplib_res.c:121:18: warning: assignment to 'd=
+ma_addr_t *' {aka 'long long unsigned int *'} from 'int' makes pointer from=
+ integer without a cast [-Wint-conversion]
+  121 |  pbl->pg_map_arr =3D vmalloc(pages * sizeof(dma_addr_t));
+      |                  ^
 
-And the same reason is for the checks below for probe_cache__load,
-probe_cache__add_entry and probe_cache__scan_sdt.
+Caused by commit
 
+  0c4dcd602817 ("RDMA/bnxt_re: Refactor hardware queue memory allocation")
 
-Regards,
-Zhe
+I added the following fix for today:
 
->
->>  
->> -		ret = probe_file__del_strlist(kfd, klist);
->> -		if (ret < 0)
->> -			goto error;
->> -	}
->> +	strlist__for_each_entry(ent, klist)
->> +		pr_info("Removed event: %s\n", ent->s);
->> +
->> +	ret = probe_file__del_strlist(kfd, klist);
->> +	if (ret < 0)
->> +		goto error;
->>  
->>  	ret2 = probe_file__get_events(ufd, filter, ulist);
->> -	if (ret2 == 0) {
->> -		strlist__for_each_entry(ent, ulist)
->> -			pr_info("Removed event: %s\n", ent->s);
->> +	if (ret2 < 0)
->> +		goto out;
-> Ditto.
->
-> Thank you,
->
->>  
->> -		ret2 = probe_file__del_strlist(ufd, ulist);
->> -		if (ret2 < 0)
->> -			goto error;
->> -	}
->> +	strlist__for_each_entry(ent, ulist)
->> +		pr_info("Removed event: %s\n", ent->s);
->> +
->> +	ret2 = probe_file__del_strlist(ufd, ulist);
->> +	if (ret2 < 0)
->> +		goto error;
->>  
->>  	if (ret == -ENOENT && ret2 == -ENOENT)
->>  		pr_warning("\"%s\" does not hit any event.\n", str);
->> diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
->> index cf44c05f89c1..00f086cba88f 100644
->> --- a/tools/perf/util/probe-file.c
->> +++ b/tools/perf/util/probe-file.c
->> @@ -307,10 +307,14 @@ int probe_file__get_events(int fd, struct strfilter *filter,
->>  		p = strchr(ent->s, ':');
->>  		if ((p && strfilter__compare(filter, p + 1)) ||
->>  		    strfilter__compare(filter, ent->s)) {
->> -			strlist__add(plist, ent->s);
->> -			ret = 0;
->> +			ret = strlist__add(plist, ent->s);
->> +			if (ret < 0) {
->> +				pr_debug("strlist__add failed (%d)\n", ret);
->> +				goto out;
->> +			}
->>  		}
->>  	}
->> +out:
->>  	strlist__delete(namelist);
->>  
->>  	return ret;
->> @@ -517,7 +521,11 @@ static int probe_cache__load(struct probe_cache *pcache)
->>  				ret = -EINVAL;
->>  				goto out;
->>  			}
->> -			strlist__add(entry->tevlist, buf);
->> +			ret = strlist__add(entry->tevlist, buf);
->> +			if (ret < 0) {
->> +				pr_debug("strlist__add failed (%d)\n", ret);
->> +				goto out;
->> +			}
->>  		}
->>  	}
->>  out:
->> @@ -678,7 +686,12 @@ int probe_cache__add_entry(struct probe_cache *pcache,
->>  		command = synthesize_probe_trace_command(&tevs[i]);
->>  		if (!command)
->>  			goto out_err;
->> -		strlist__add(entry->tevlist, command);
->> +		ret = strlist__add(entry->tevlist, command);
->> +		if (ret < 0) {
->> +			pr_debug("strlist__add failed (%d)\n", ret);
->> +			goto out_err;
->> +		}
->> +
->>  		free(command);
->>  	}
->>  	list_add_tail(&entry->node, &pcache->entries);
->> @@ -859,7 +872,10 @@ int probe_cache__scan_sdt(struct probe_cache *pcache, const char *pathname)
->>  			break;
->>  		}
->>  
->> -		strlist__add(entry->tevlist, buf);
->> +		ret = strlist__add(entry->tevlist, buf);
->> +		if (ret < 0)
->> +			pr_debug("strlist__add failed (%d)\n", ret);
->> +
->>  		free(buf);
->>  		entry = NULL;
->>  	}
->> -- 
->> 2.24.1
->>
->
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 26 Feb 2020 13:46:02 +1100
+Subject: [PATCH] RDMA/bnxt_re: using vmalloc requires including vmalloc.h
 
+Fixes: 0c4dcd602817 ("RDMA/bnxt_re: Refactor hardware queue memory allocati=
+on")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/infiniband/hw/bnxt_re/qplib_res.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_res.c b/drivers/infiniband=
+/hw/bnxt_re/qplib_res.c
+index 4346b95963cf..fc5909c7f2e0 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_res.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_res.c
+@@ -44,6 +44,7 @@
+ #include <linux/inetdevice.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/if_vlan.h>
++#include <linux/vmalloc.h>
+ #include "roce_hsi.h"
+ #include "qplib_res.h"
+ #include "qplib_sp.h"
+--=20
+2.25.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/pr_i=riB3ZvQhbtLbWqPRK5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5V3S8ACgkQAVBC80lX
+0Gx4awf/QWzDqlqRj+GiL3/p9a9b+E+ws8DyHibVIXP/FlgteQwBYkeAjxxetJZ/
+6nueYqCrYCwOczNjRwBYuIOE8YXFAEMdL/A98wgfkSKuHXD+3HLkneN1fv65jjMJ
+1gYiGVM0R/gclJZL7s7IxyUeRmlx1/9QuFAz/1ZF4wHOS6dlh7XuLezgxY/Z6UUp
+slPwnoQyPvAs6d/piObsrLD+Dmv3D9B5RCDGTt1DnDoD51KTXWab58VbCDiIYtuF
+KrI1JHzzvleVwV84qCR11ZPFoCWMuFTot/KQD4i0QdT8mgp3qHFZLq/Xrk7lA3FF
+2N4VOa6qrxr2JiMmKDn07VRglmHv5Q==
+=8WZc
+-----END PGP SIGNATURE-----
+
+--Sig_/pr_i=riB3ZvQhbtLbWqPRK5--
