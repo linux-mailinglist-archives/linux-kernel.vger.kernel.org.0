@@ -2,128 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 690E6170468
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1988017048A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:38:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbgBZQbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:31:36 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43840 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbgBZQbg (ORCPT
+        id S1727860AbgBZQik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:38:40 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:54332 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726905AbgBZQik (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:31:36 -0500
-Received: by mail-ed1-f65.google.com with SMTP id dc19so4482351edb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 08:31:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cumulusnetworks.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z1w+58dOrrZr3wo5mk8rJB/ZJsesTkU2LXg6fDoYot4=;
-        b=PWVHdGOKeZeBrmZqjFNWON3PpXWLD/9F+byeDjIJWy+ytRge7nUh9NGmyX86dkURx+
-         e0mLG9bX4960huPEWOL+TWR+I1cgCsC/A9WJEuvwqSBaMzaTqV0o7c4/0zm9hdj7F82H
-         URmRnPcaEgXmpKdkbmcIvzfhb5rKpkH41i0l4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z1w+58dOrrZr3wo5mk8rJB/ZJsesTkU2LXg6fDoYot4=;
-        b=CE8BDyhPoNxWQVZcvf3b4VAkktP9DTzFIi2mvd8KGS9Ezh95QBR+r2ATPEMYnRsqYs
-         YE6IfXA8d7WZA1vTihKSIqmnNs4np4CqP7QzFx+KHM9wUFnHvSESeuxHheK11INfhNxb
-         AMGdlIdZ9pPQhAgYG0Cv/JnIBHbZQvP68Efl5SPf3NXpR9zjv0CobCbnHJ7cPg6Wd8k/
-         VblcDVmm+YF7cOBOgLcQgjq9JZ7X5PpW/b5/iMcm/RLu67kA8MW3A7zyRyX2jF3Qapeg
-         5qdTHgMxPwyE3ydnev9FJFo5Wsn+hZLWzPX6iew6agt+MOADrub2AhOS5cdNrxMrdfXQ
-         IzHw==
-X-Gm-Message-State: APjAAAUt0bJjJnuc8T2+h83UhDNt8OZT8fW6rVJkaQgcRm5qiMZIxIAG
-        W0pdznB7RJ6TdUkdknlGfSztJpozLSe5rrhEc7Mb/w==
-X-Google-Smtp-Source: APXvYqzrSAOseHb5MIcTw/nawhJsW3ES0aHkvgiuyVEnigJi8uZOuBz/tTxOvsOzYVVPzvAU4zYwgIzxXALT47g6rdA=
-X-Received: by 2002:a17:906:f105:: with SMTP id gv5mr5259642ejb.135.1582734694188;
- Wed, 26 Feb 2020 08:31:34 -0800 (PST)
+        Wed, 26 Feb 2020 11:38:40 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01QGcaO5059521;
+        Wed, 26 Feb 2020 10:38:36 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582735116;
+        bh=Y3tqYQtA2KOT83i8aBDzwvA1MW/G9kqRvwSgdkDo8WY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=N40sUK5gOMDaFCdRlsHax/ZXVSpxmArREXCpUh0YIACYZSd7tY0OqSmOGtZhEerTw
+         5iax1SyAvTFQhn3hRksb7ktHFrqUsuCRQ0mc2isuI1oeduxzxbdsTGmncDCi3XJsL9
+         rMNZ5dtBtYOcd/PH15fTtPl5bFVvDvd9g49oekPU=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01QGcaAh093694
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Feb 2020 10:38:36 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 26
+ Feb 2020 10:38:36 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 26 Feb 2020 10:38:36 -0600
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01QGcaUt102323;
+        Wed, 26 Feb 2020 10:38:36 -0600
+Subject: Re: [PATCH 01/12] dt-bindings: bus: ti-sysc: Add support for PRUSS
+ SYSC type
+To:     Roger Quadros <rogerq@ti.com>, Tony Lindgren <tony@atomide.com>
+CC:     Tero Kristo <t-kristo@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20200225204649.28220-1-s-anna@ti.com>
+ <20200225204649.28220-2-s-anna@ti.com>
+ <96ec493b-3615-e84d-ba30-cabbf750c874@ti.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <b35e278d-c3dd-3356-93c3-0511d3164d7a@ti.com>
+Date:   Wed, 26 Feb 2020 10:38:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20200225163025.9430-1-vadym.kochan@plvision.eu>
-In-Reply-To: <20200225163025.9430-1-vadym.kochan@plvision.eu>
-From:   Roopa Prabhu <roopa@cumulusnetworks.com>
-Date:   Wed, 26 Feb 2020 08:38:32 -0800
-Message-ID: <CAJieiUg8ycCnNtUCuHfc55nQXCQx9+f4rdw161AM+py3i2zpfg@mail.gmail.com>
-Subject: Re: [RFC net-next 0/3] net: marvell: prestera: Add Switchdev driver
- for Prestera family ASIC device 98DX326x (AC3x)
-To:     Vadym Kochan <vadym.kochan@plvision.eu>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Oleksandr Mazur <oleksandr.mazur@plvision.eu>,
-        Taras Chornyi <taras.chornyi@plvision.eu>,
-        Serhiy Boiko <serhiy.boiko@plvision.eu>,
-        Andrii Savka <andrii.savka@plvision.eu>,
-        Volodymyr Mytnyk <volodymyr.mytnyk@plvision.eu>,
-        David Ahern <dsahern@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <96ec493b-3615-e84d-ba30-cabbf750c874@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 8:31 AM Vadym Kochan <vadym.kochan@plvision.eu> wrote:
->
-> Marvell Prestera 98DX326x integrates up to 24 ports of 1GbE with 8
-> ports of 10GbE uplinks or 2 ports of 40Gbps stacking for a largely
-> wireless SMB deployment.
->
-> Prestera Switchdev is a firmware based driver which operates via PCI
-> bus. The driver is split into 2 modules:
->
->     - prestera_sw.ko - main generic Switchdev Prestera ASIC related logic.
->
->     - prestera_pci.ko - bus specific code which also implements firmware
->                         loading and low-level messaging protocol between
->                         firmware and the switchdev driver.
->
-> This driver implementation includes only L1 & basic L2 support.
->
-> The core Prestera switching logic is implemented in prestera.c, there is
-> an intermediate hw layer between core logic and firmware. It is
-> implemented in prestera_hw.c, the purpose of it is to encapsulate hw
-> related logic, in future there is a plan to support more devices with
-> different HW related configurations.
->
-> The firmware has to be loaded each time device is reset. The driver is
-> loading it from:
->
->     /lib/firmware/marvell/prestera_fw_img.bin
->
-> The firmware image version is located within internal header and consists
-> of 3 numbers - MAJOR.MINOR.PATCH. Additionally, driver has hard-coded
-> minimum supported firmware version which it can work with:
->
->     MAJOR - reflects the support on ABI level between driver and loaded
->             firmware, this number should be the same for driver and
->             loaded firmware.
->
->     MINOR - this is the minimal supported version between driver and the
->             firmware.
->
->     PATCH - indicates only fixes, firmware ABI is not changed.
->
-> The firmware image will be submitted to the linux-firmware after the
-> driver is accepted.
->
-> The following Switchdev features are supported:
->
->     - VLAN-aware bridge offloading
->     - VLAN-unaware bridge offloading
->     - FDB offloading (learning, ageing)
->     - Switchport configuration
->
-> CPU RX/TX support will be provided in the next contribution.
->
-> Vadym Kochan (3):
->   net: marvell: prestera: Add Switchdev driver for Prestera family ASIC
->     device 98DX325x (AC3x)
->   net: marvell: prestera: Add PCI interface support
->   dt-bindings: marvell,prestera: Add address mapping for Prestera
->     Switchdev PCIe driver
->
+Hi Roger,
 
-Have not looked at the patches yet, but very excited to see another
-switchdev driver making it into the kernel!.
+On 2/26/20 2:42 AM, Roger Quadros wrote:
+> Hi Suman,
+> 
+> On 25/02/2020 22:46, Suman Anna wrote:
+>> From: Roger Quadros <rogerq@ti.com>
+>>
+>> The PRUSS module has a SYSCFG which is unique. The SYSCFG
+>> has two additional unique fields called STANDBY_INIT and
+>> SUB_MWAIT in addition to regular IDLE_MODE and STANDBY_MODE
+>> fields. Add the bindings for this new sysc type.
+>>
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>   Documentation/devicetree/bindings/bus/ti-sysc.txt | 1 +
+>>   include/dt-bindings/bus/ti-sysc.h                 | 4 ++++
+>>   2 files changed, 5 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/bus/ti-sysc.txt
+>> b/Documentation/devicetree/bindings/bus/ti-sysc.txt
+>> index 233eb8294204..c984143d08d2 100644
+>> --- a/Documentation/devicetree/bindings/bus/ti-sysc.txt
+>> +++ b/Documentation/devicetree/bindings/bus/ti-sysc.txt
+>> @@ -38,6 +38,7 @@ Required standard properties:
+>>           "ti,sysc-dra7-mcasp"
+>>           "ti,sysc-usb-host-fs"
+>>           "ti,sysc-dra7-mcan"
+>> +        "ti,sysc-pruss"
+>>     - reg        shall have register areas implemented for the
+>> interconnect
+>>           target module in question such as revision, sysc and syss
+>> diff --git a/include/dt-bindings/bus/ti-sysc.h
+>> b/include/dt-bindings/bus/ti-sysc.h
+> 
+> Did you intentionally leave this here? It should be part of 2nd patch?
 
-Thanks Marvell!.
+No, not really, include/bindings are also considered part of bindings.
+This patch alone should be enough for you to add the DT nodes.
+
+regards
+Suman
+
+> 
+>> index babd08a1d226..76b07826ed05 100644
+>> --- a/include/dt-bindings/bus/ti-sysc.h
+>> +++ b/include/dt-bindings/bus/ti-sysc.h
+>> @@ -18,6 +18,10 @@
+>>     #define SYSC_DRA7_MCAN_ENAWAKEUP    (1 << 4)
+>>   +/* PRUSS sysc found on AM33xx/AM43xx/AM57xx */
+>> +#define SYSC_PRUSS_SUB_MWAIT        (1 << 5)
+>> +#define SYSC_PRUSS_STANDBY_INIT        (1 << 4)
+>> +
+>>   /* SYSCONFIG STANDBYMODE/MIDLEMODE/SIDLEMODE supported by hardware */
+>>   #define SYSC_IDLE_FORCE            0
+>>   #define SYSC_IDLE_NO            1
+>>
+> 
+
