@@ -2,143 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8775716F869
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 08:16:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 927CD16F87A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 08:22:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbgBZHQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 02:16:32 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:32806 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbgBZHQb (ORCPT
+        id S1727243AbgBZHWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 02:22:07 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45381 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbgBZHWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 02:16:31 -0500
-Received: by mail-pl1-f196.google.com with SMTP id ay11so942897plb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 23:16:30 -0800 (PST)
+        Wed, 26 Feb 2020 02:22:07 -0500
+Received: by mail-lj1-f195.google.com with SMTP id e18so1794214ljn.12
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 23:22:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=bUll3MF+KOORxkWKae6CeWZqF5RK093f70VhPi5nTaA=;
-        b=AdvfF+DViD2Iihe2gGoCejFW6L9CR4CRCuvhd702kHXMW9aLKiXKfmFyTpucUBXYvN
-         cEZRvzdUlmSDzOLcdBFaPWO/Gqx8canJLTZTZUnf4NBrmhRAHnjLBh4VPtK3yWqwsia0
-         ED/nVdqp1ZBaUikJEfLHTuQiqHyge9lN9SdrA=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0M6EtJg4ZSjY6Oxjrmkg1KX+Te8MK2AsJq370rGDenk=;
+        b=Ov82jrDatD8bWboohqMvsOAhZba+htl2ve7n0JeExu/+R09MMPxYS8aCRiX8VMo2HH
+         1DaJDem20tq/u8lJmwbugF+0esSVoiVlaw+Sl481MfG4YVZo3DmdRQ/LvY43wAqAoaLQ
+         0FfVCi8a3XiAfJHgLv2TKiuv3kzoWwyZ3l4UgbXX71u7Y6J2uaPJS6gpVMXNTeRavdu8
+         y2cjQBVVsePfXE/TUVFTxPBoN0tiaQcveksMQ3bf6Y8WXkMCG6+EVIl96fNrkJxReWg0
+         TL0wbMgW0DZVh/pbs3FktPSDEHYqScVQONLxzLvvhrtsbpxKlt1UlmGIY8vnuVdmWUeW
+         Rc7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=bUll3MF+KOORxkWKae6CeWZqF5RK093f70VhPi5nTaA=;
-        b=ezedIkS0dtRFhXBt79qK1g76ZJN3j+gpCpJCJJwcN0orfNyTiJidNSGWAt/Uxhdc4i
-         WZsGMYPQa8fRpFXLjU/H2Nu1uf8GCVvlCHivpsx1kgGSZOi5zvEeY/UOgFXHYxV50pnB
-         yVaNkRddBKU7GixwIPZiru+xZqMrIontI8VAX4g5VfkCBClwdJ9IfLLgAEXWhIjOwXu5
-         Mm0zX/wFjZJcDIc0qogMQa1MXUVt400er02YlsiOx/PqfuSlBW6sFhgWjrx8nDGCTEX+
-         yLFrDvA+kn7bRr/UJ9lgI895CdfzpOsHhloXaMMLARpt/vLSmwfxq8UFtDuI8n1/H1Bs
-         7Tag==
-X-Gm-Message-State: APjAAAXCVDQOaGvILFAWKbIP7GKTPfg+6Z7mQc+41HTswalzdlaYSQH8
-        SEyBdjBBJlu0vGOHDvUQSfqI7Q==
-X-Google-Smtp-Source: APXvYqyTVYEdw3GG568w+1dNFzY9ZMbswpQ8Fc19s42h9JN/v4uscW8ujuBJbXp4NXq4DVrPra5Yow==
-X-Received: by 2002:a17:902:bf49:: with SMTP id u9mr2644385pls.199.1582701390378;
-        Tue, 25 Feb 2020 23:16:30 -0800 (PST)
-Received: from localhost (2001-44b8-111e-5c00-5952-947b-051c-ea5f.static.ipv6.internode.on.net. [2001:44b8:111e:5c00:5952:947b:51c:ea5f])
-        by smtp.gmail.com with ESMTPSA id p23sm1364024pgn.92.2020.02.25.23.16.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 23:16:29 -0800 (PST)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Jason Yan <yanaijie@huawei.com>, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com,
-        christophe.leroy@c-s.fr, benh@kernel.crashing.org,
-        paulus@samba.org, npiggin@gmail.com, keescook@chromium.org,
-        kernel-hardening@lists.openwall.com, oss@buserror.net
-Cc:     linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com,
-        Jason Yan <yanaijie@huawei.com>
-Subject: Re: [PATCH v3 0/6] implement KASLR for powerpc/fsl_booke/64
-In-Reply-To: <20200206025825.22934-1-yanaijie@huawei.com>
-References: <20200206025825.22934-1-yanaijie@huawei.com>
-Date:   Wed, 26 Feb 2020 18:16:26 +1100
-Message-ID: <87tv3drf79.fsf@dja-thinkpad.axtens.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0M6EtJg4ZSjY6Oxjrmkg1KX+Te8MK2AsJq370rGDenk=;
+        b=PwtKvKuaP8+QiNZW0WsfYqFhyryOtfh7eNh+SEQVqomMjEQVHv0KIZwOOFkLxXjq4M
+         I6LeoxM9/A/WuU7Ns2apGTnBKeuThuDL1XuMVGcs3xS6lyJD4LVanzpS6V0DqfCOYtOw
+         TeOgTXwM6S88g9KUKe4dNjn0eDtNLyGdQhOjRnxur4QhCrCnHSIgtyyqdD0LetTku8gS
+         A5CHv8u84eOFRttM3yd1H+ROphgrRgK4/iDMEaZS5NhqgA11TrIyFHL8q0I5AGx85IZc
+         IsZx8y+gESKkAVI2UONl7RSHide4gTHEgd7lPu8tsBOuBeG/ZDknqHoJ78jUlpMjUfPH
+         +o3Q==
+X-Gm-Message-State: APjAAAVHsu94dSrHDDd0JvdrFjxoLnAzUplkIaruHwcWus0ICId3+fn+
+        cW5uNBtflKfkDeU73yLDwHYRSwKhtx4OqVnqDss=
+X-Google-Smtp-Source: APXvYqyNJOdKgXaZXUYJZgmE/vqQKBmjsDbREcfsT7PXr3AiwDonTA+XBWndu65ROlWYY/xkFx0ZavPDc8Vi+tLTYxA=
+X-Received: by 2002:a2e:9d89:: with SMTP id c9mr2039039ljj.212.1582701724994;
+ Tue, 25 Feb 2020 23:22:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <cover.1572437285.git.vpillai@digitalocean.com>
+ <5e3cea14-28d1-bf1e-cabe-fb5b48fdeadc@linux.intel.com> <3c3c56c1-b8dc-652c-535e-74f6dcf45560@linux.intel.com>
+ <CANaguZAz+mw1Oi8ecZt+JuCWbf=g5UvKrdSvAeM82Z1c+9oWAw@mail.gmail.com>
+ <e322a252-f983-e3f3-f823-16d0c16b2867@linux.intel.com> <20200212230705.GA25315@sinkpad>
+ <29d43466-1e18-6b42-d4d0-20ccde20ff07@linux.intel.com> <CAERHkruG4y8si9FrBp7cZNEdfP7EzxbmYwvdF2EvHLf=mU1mgg@mail.gmail.com>
+ <20200225034438.GA617271@ziqianlu-desktop.localdomain> <CANaguZD205ccu1V_2W-QuMRrJA9SjJ5ng1do4NCdLy8NDKKrbA@mail.gmail.com>
+In-Reply-To: <CANaguZD205ccu1V_2W-QuMRrJA9SjJ5ng1do4NCdLy8NDKKrbA@mail.gmail.com>
+From:   Aubrey Li <aubrey.intel@gmail.com>
+Date:   Wed, 26 Feb 2020 15:21:53 +0800
+Message-ID: <CAERHkrscBs8WoHSGtnH9mVsN3thfkE0CCQYPRE=XFUWWkQooQQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 00/19] Core scheduling v4
+To:     Vineeth Remanan Pillai <vpillai@digitalocean.com>
+Cc:     Aaron Lu <aaron.lwe@gmail.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Dario Faggioli <dfaggioli@suse.com>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason,
-
-> This is a try to implement KASLR for Freescale BookE64 which is based on
-> my earlier implementation for Freescale BookE32:
-> https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=131718
+On Wed, Feb 26, 2020 at 4:51 AM Vineeth Remanan Pillai
+<vpillai@digitalocean.com> wrote:
 >
-> The implementation for Freescale BookE64 is similar as BookE32. One
-> difference is that Freescale BookE64 set up a TLB mapping of 1G during
-> booting. Another difference is that ppc64 needs the kernel to be
-> 64K-aligned. So we can randomize the kernel in this 1G mapping and make
-> it 64K-aligned. This can save some code to creat another TLB map at
-> early boot. The disadvantage is that we only have about 1G/64K = 16384
-> slots to put the kernel in.
+> I have a quick patch
+> which might fix this. The idea is that, we allow migration if p's
+> hierarchical load or estimated utilization is more than dest_rq->curr.
+> While thinking about this fix, I noticed that we are not holding the
+> dest_rq lock for any of the migration patches. Migration patches would
+> probably need a rework. Attaching my patch down, but it also does not
+> take the dest_rq lock. I have also added a case of dest_core being
+> forced_idle. I think that would be an opportunity to migrate. Ideally
+> we should check if the forced idle task has the same cookie as p.
 >
->     KERNELBASE
->
->           64K                     |--> kernel <--|
->            |                      |              |
->         +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
->         |  |  |  |....|  |  |  |  |  |  |  |  |  |....|  |  |
->         +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
->         |                         |                        1G
->         |----->   offset    <-----|
->
->                               kernstart_virt_addr
->
-> I'm not sure if the slot numbers is enough or the design has any
-> defects. If you have some better ideas, I would be happy to hear that.
->
-> Thank you all.
+> https://gist.github.com/vineethrp/887743608f42a6ce96bf7847b5b119ae
 >
 
-Are you making any attempt to hide kernel address leaks in this series?
-I've just been looking at the stackdump code just now, and it directly
-prints link registers and stack pointers, which is probably enough to
-determine the kernel base address:
+Hi Vineeth,
 
-                  SPs:               LRs:             %pS pointer
-[    0.424506] [c0000000de403970] [c000000001fc0458] dump_stack+0xfc/0x154 (unreliable)
-[    0.424593] [c0000000de4039c0] [c000000000267eec] panic+0x258/0x5ac
-[    0.424659] [c0000000de403a60] [c0000000024d7a00] mount_block_root+0x634/0x7c0
-[    0.424734] [c0000000de403be0] [c0000000024d8100] prepare_namespace+0x1ec/0x23c
-[    0.424811] [c0000000de403c60] [c0000000024d7010] kernel_init_freeable+0x804/0x880
+Thanks for the quick fix. I guess this patch should work for Aaron's case
+because it almost removed the cookie checking here. Some comments
+below:
 
-git grep \\\"REG\\\" arch/powerpc shows a few other uses like this, all
-in process.c or in xmon.
++ if (rq->core->core_forceidle)
++         return true;
 
-Maybe replacing the REG format string in KASLR mode would be sufficient?
+We check cookie match during load balance to avoid two different
+cookie tasks on the same core. If one cpu is forced idle, its sibling should
+be running a non-idle task, not sure why we can return true directly here.
+And if we need to check cookie, with this forced idle case, why it's special
+to be picked up?
 
-Regards,
-Daniel
++ if (task_h_load(p) > task_h_load(rq->curr))
++         return true;
++ if (task_util_est(p) > task_util_est(rq->curr))
++         return true;
 
+These two need to exclude rq->curr == rq->idle case?
+otherwise idle balance always return true?
 
-> v2->v3:
->   Fix build error when KASLR is disabled.
-> v1->v2:
->   Add __kaslr_offset for the secondary cpu boot up.
->
-> Jason Yan (6):
->   powerpc/fsl_booke/kaslr: refactor kaslr_legal_offset() and
->     kaslr_early_init()
->   powerpc/fsl_booke/64: introduce reloc_kernel_entry() helper
->   powerpc/fsl_booke/64: implement KASLR for fsl_booke64
->   powerpc/fsl_booke/64: do not clear the BSS for the second pass
->   powerpc/fsl_booke/64: clear the original kernel if randomized
->   powerpc/fsl_booke/kaslr: rename kaslr-booke32.rst to kaslr-booke.rst
->     and add 64bit part
->
->  .../{kaslr-booke32.rst => kaslr-booke.rst}    | 35 +++++++--
->  arch/powerpc/Kconfig                          |  2 +-
->  arch/powerpc/kernel/exceptions-64e.S          | 23 ++++++
->  arch/powerpc/kernel/head_64.S                 | 14 ++++
->  arch/powerpc/kernel/setup_64.c                |  4 +-
->  arch/powerpc/mm/mmu_decl.h                    | 19 ++---
->  arch/powerpc/mm/nohash/kaslr_booke.c          | 71 +++++++++++++------
->  7 files changed, 132 insertions(+), 36 deletions(-)
->  rename Documentation/powerpc/{kaslr-booke32.rst => kaslr-booke.rst} (59%)
->
-> -- 
-> 2.17.2
+Thanks,
+-Aubrey
