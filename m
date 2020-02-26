@@ -2,179 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C4811707AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:26:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD7AC1707B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:28:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbgBZS0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:26:40 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:35621 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726789AbgBZS0k (ORCPT
+        id S1727141AbgBZS2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:28:19 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:44230 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbgBZS2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:26:40 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 173AE632B;
-        Wed, 26 Feb 2020 13:26:39 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 26 Feb 2020 13:26:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=ZbZ/0vhYA4XlNPugmzBODvVTf7d
-        FFmG6XFvRhLGolH0=; b=yus4oUi+lbkU/lwNVE6TDX8ieDC9TVA8FpmVnBLt1P+
-        OsTic7vy/dVgroLf0b7OAAw/3lYFI0JZLxyXKu7pe7jy9a53tbxeLHS7ofYXZjSj
-        bqC6ACh/4OIDfevHP8hALpBVaOXeOodHQlJ7TtAl4R1XR+ctVYlOHUyqMQybD3km
-        2qTds6K4j9nSiE76euziI+tFHfyoTd8wnxd/g51L7zaW6GkKwDB1AHwpuUcd/AGJ
-        fbHVmvHR1YqhILxII+4SAXQx8DGJ4YWAtWZETJ6Aqfvq2nhqp4wESGt1DRyKbJpC
-        FT1FCadtbI0+s/wv69D78uhBxlYwwNMQnMdtNXNoUcw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=ZbZ/0v
-        hYA4XlNPugmzBODvVTf7dFFmG6XFvRhLGolH0=; b=DX+HCmNKsFq4u4w+m8e8a2
-        pWcir14pq4oC4O5Ka5wRR++NEUXNyD3FecpR2Sk78ACaYzQWA4prgCw1rZcfPatq
-        F+y/Ys1XbTvny6eD1G8ekbIiIMjgHc9TrywQp0IR6xmYbPnkCnF/7BeXy6rJ7vpN
-        kWnkTTqFmnetTcuPDp1jMC4gvLcGDC6N5mgRKgAGHdIU0p22r5NhgZrfQ3Z0DMSq
-        SP+WF8rW1mSXjISjNgbDOQPU0PczS78zlX5+XbAZwyYM8v+UrekV0/fJcr7pMtg/
-        kZEelN1/g+jwW9KBCXHO8vzxHspT2TnFZ4UVeRyjnFUtzy4AQriw/ECN8pz/NKmg
-        ==
-X-ME-Sender: <xms:XrhWXuygDzA1L9tYgfTFHqWYh75TPmxGRloq7x-cbEAWZ7S0uOeoKA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleeggdduudegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuffhomhgrih
-    hnpeguvghvihgtvghtrhgvvgdrohhrghenucfkphepledtrdekledrieekrdejieenucev
-    lhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvg
-    estggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:XrhWXg9eBwWqeIXp8Y3uxxVTcs-afyrSok5ktvFnYGwfFVzhpLS4RQ>
-    <xmx:XrhWXkzbJlwj-TnoOTsGG_9OEsxcbb1ul6fLXUFBP_6Yrb-VYyrE_w>
-    <xmx:XrhWXiv24Wo3K9LfBsgCj6CvBrni9YkKZ3BHJDEyK_1Oo4faKGmzRw>
-    <xmx:X7hWXpY3l0pvbtwJdS0Aa8_zxgH_ji3YUaMVf-HyXXUiCrPj7Qiaww>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 7A24E3280065;
-        Wed, 26 Feb 2020 13:26:38 -0500 (EST)
-Date:   Wed, 26 Feb 2020 19:26:37 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Robert Richter <rric@kernel.org>,
-        soc@kernel.org, Jon Loeliger <jdl@jdl.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH 08/13] dt-bindings: phy: Convert Calxeda ComboPHY binding
- to json-schema
-Message-ID: <20200226182637.npnurwcexvpgwmvo@gilmour.lan>
-References: <20200226180901.89940-1-andre.przywara@arm.com>
- <20200226180901.89940-9-andre.przywara@arm.com>
+        Wed, 26 Feb 2020 13:28:18 -0500
+Received: by mail-ua1-f67.google.com with SMTP id a33so1317481uad.11
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 10:28:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tOnWU9Af8Z1M/sr5aPcEIXOq/cdqaGi3s9UAo3FqHhE=;
+        b=JhadmEQPiPGecR6QNzOLHR/1PpT4FgW6xODKaYeG03MKADYexhyPl5jQKku1T0BCqT
+         iLAD1o4YdPFNP8Mk5W7h2AMRHBVU5LpUn3Go9CpnIg94BRMQUouN//PIx6DLXqZDUkGP
+         55D4dSr9AjLSPR5X0gBANKjy2nIDy4oeu0O77djyDbdV/SxoSDTqMyFbxowEpZfo5Dak
+         XHZqNixfU0wFEDUWWyqx5pW8lL2GIoV+MVpftVNsGXk0LvFQ/CUumU0odvzSTLTlUY0t
+         pNRs0ccIM/mxpnxmouW4wYAe/yERQ9VH5TYhTzH31lrfFDYKGenRv3Jiurrq8Fv1TNT7
+         /Xeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tOnWU9Af8Z1M/sr5aPcEIXOq/cdqaGi3s9UAo3FqHhE=;
+        b=FdOIh9J7RTBnE0C7PCx7sn1flkFnq7XSYoldaxaGVFkwp2qYUNPkhH0HuNbnxT7IhV
+         FWZVw2mDKchde8Rz8tpTmFLLBc63JOnqExHBhi0IrxBrzIr6WEPzFP/Nyz/EtgEMSasO
+         MnqcoJ4oGphsxAbcQ/MEvk+cxtorhuSSjh1IIRYR2a+BBhjCIOjZkk37FnFyw3s/2HjQ
+         s772BB/ewE1HUezypEfHM2ngg9RrEyvEUjP2V3RSU5FkUYc43gl9qmqyv/m22CAE1cNE
+         Z6wMOFzmfb3B8g3KlE/3dAEEPyoUshmY3gJ2H/HOnFOCvhAt1wFb3QTnhx0w1Fx4Gbek
+         TRBg==
+X-Gm-Message-State: APjAAAVRhE9fzYbSxIN691oDvoq1puyEfY16zr5zSAi+4X7/eRvE13Py
+        nQ97miWAJ2VusIm4t0ZxoCWOiS1CND/XpBYtz+Pw9k+iOpk=
+X-Google-Smtp-Source: APXvYqw/RNF4Z+/+JTriQGcol2XF33VI/o4ZPCriY3sKTN3fLPOI9/+puJWP3m6DcGbwEQrgC4d5wbreP5MivXH+TpA=
+X-Received: by 2002:ab0:7196:: with SMTP id l22mr266698uao.99.1582741696540;
+ Wed, 26 Feb 2020 10:28:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="le2zpoj6qhgy5u3q"
-Content-Disposition: inline
-In-Reply-To: <20200226180901.89940-9-andre.przywara@arm.com>
+References: <20200226182517.49214-1-badhri@google.com>
+In-Reply-To: <20200226182517.49214-1-badhri@google.com>
+From:   Badhri Jagan Sridharan <badhri@google.com>
+Date:   Wed, 26 Feb 2020 10:27:40 -0800
+Message-ID: <CAPTae5JYx7j=JTkihKCTr35HJCpEyEo2VDKTBpe7ozopKJT=cQ@mail.gmail.com>
+Subject: Re: [PATCH v3] usb: typec: Add sysfs node to show cc orientation
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     USB <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Puma Hsu <pumahsu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
---le2zpoj6qhgy5u3q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Following up with the initial patch from
+Puma(https://lkml.org/lkml/2019/10/15/1317) after
+addressing the comments from the previous patches.
 
-On Wed, Feb 26, 2020 at 06:08:56PM +0000, Andre Przywara wrote:
-> Convert the Calxeda ComboPHY binding to DT schema format using
-> json-schema.
-> There is no driver in the Linux kernel matching the compatible
-> string, but the nodes are parsed by the SATA driver, which links to them
-> using its port-phys property.
+Thanks & Regards,
+Badhri
+
+
+On Wed, Feb 26, 2020 at 10:25 AM Badhri Jagan Sridharan
+<badhri@google.com> wrote:
 >
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> Export Type-C orientation information when available.
+> - "normal": CC1 orientation
+> - "reverse": CC2 orientation
+> - "unknown": Orientation cannot be determined.
+>
+> Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
 > ---
->  .../bindings/phy/calxeda-combophy.txt         | 17 -------
->  .../bindings/phy/calxeda-combophy.yaml        | 47 +++++++++++++++++++
->  2 files changed, 47 insertions(+), 17 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/phy/calxeda-combophy.txt
->  create mode 100644 Documentation/devicetree/bindings/phy/calxeda-combophy.yaml
+> Version history:
+> V3:
+> - Heikki's suggestion to us .is_visible callback.
+>   unsigned int orientation_aware:1 has been introduced to
+>   make support of this attribute optional for drivers such
+>   as UCSI
+> - Guenter's suggestion to rename to "orientation".
+> - Heikki's suggestion to stick with string values instead
+>   of exposing it as integer values.
+> ---
+>  Documentation/ABI/testing/sysfs-class-typec |  9 +++++++
+>  drivers/usb/typec/class.c                   | 27 +++++++++++++++++++++
+>  drivers/usb/typec/tcpm/tcpm.c               |  1 +
+>  include/linux/usb/typec.h                   |  1 +
+>  4 files changed, 38 insertions(+)
 >
-> diff --git a/Documentation/devicetree/bindings/phy/calxeda-combophy.txt b/Documentation/devicetree/bindings/phy/calxeda-combophy.txt
-> deleted file mode 100644
-> index 6622bdb2e8bc..000000000000
-> --- a/Documentation/devicetree/bindings/phy/calxeda-combophy.txt
-> +++ /dev/null
-> @@ -1,17 +0,0 @@
-> -Calxeda Highbank Combination Phys for SATA
-> -
-> -Properties:
-> -- compatible : Should be "calxeda,hb-combophy"
-> -- #phy-cells: Should be 1.
-> -- reg : Address and size for Combination Phy registers.
-> -- phydev: device ID for programming the combophy.
-> -
-> -Example:
-> -
-> -	combophy5: combo-phy@fff5d000 {
-> -		compatible = "calxeda,hb-combophy";
-> -		#phy-cells = <1>;
-> -		reg = <0xfff5d000 0x1000>;
-> -		phydev = <31>;
-> -	};
-> -
-> diff --git a/Documentation/devicetree/bindings/phy/calxeda-combophy.yaml b/Documentation/devicetree/bindings/phy/calxeda-combophy.yaml
-> new file mode 100644
-> index 000000000000..2ef68b95fae1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/calxeda-combophy.yaml
-> @@ -0,0 +1,47 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/calxeda-combophy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
+> index 0c2eb26fdc06b..b834671522d6f 100644
+> --- a/Documentation/ABI/testing/sysfs-class-typec
+> +++ b/Documentation/ABI/testing/sysfs-class-typec
+> @@ -108,6 +108,15 @@ Contact:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>  Description:
+>                 Revision number of the supported USB Type-C specification.
+>
+> +What:          /sys/class/typec/<port>/orientation
+> +Date:          February 2020
+> +Contact:       Badhri Jagan Sridharan <badhri@google.com>
+> +Description:
+> +               Indicates the active orientation of the Type-C connector.
+> +               Valid values:
+> +               - "normal": CC1 orientation
+> +               - "reverse": CC2 orientation
+> +               - "unknown": Orientation cannot be determined.
+>
+>  USB Type-C partner devices (eg. /sys/class/typec/port0-partner/)
+>
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index 12be5bb6d32ca..2524f1571e425 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -1244,6 +1244,26 @@ static ssize_t usb_power_delivery_revision_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(usb_power_delivery_revision);
+>
+> +static ssize_t orientation_show(struct device *dev,
+> +                                  struct device_attribute *attr,
+> +                                  char *buf)
+> +{
+> +       struct typec_port *p = to_typec_port(dev);
+> +       enum typec_orientation orientation = typec_get_orientation(p);
 > +
-> +title: Calxeda Highbank Combination PHYs binding for SATA
+> +       switch (orientation) {
+> +       case TYPEC_ORIENTATION_NONE:
+> +               return sprintf(buf, "%s\n", "unknown");
+> +       case TYPEC_ORIENTATION_NORMAL:
+> +               return sprintf(buf, "%s\n", "normal");
+> +       case TYPEC_ORIENTATION_REVERSE:
+> +               return sprintf(buf, "%s\n", "reverse");
+> +       default:
+> +               return sprintf(buf, "%s\n", "unknown");
+> +       }
+> +}
+> +static DEVICE_ATTR_RO(orientation);
 > +
-> +description: |
-> +  The Calxeda Combination PHYs connect the SoC to the internal fabric
-> +  and to SATA connectors. The PHYs support multiple protocols (SATA,
-> +  SGMII, PCIe) and can be assigned to different devices (SATA or XGMAC
-> +  controller).
-> +  Programming the PHYs is typically handled by those device drivers,
-> +  not by a dedicated PHY driver.
-> +
-> +maintainers:
-> +  - Andre Przywara <andre.przywara@arm.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: calxeda,hb-combophy
-> +
-> +  '#phy-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  phydev:
-> +    description: device ID for programming the combophy.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-
-I guess you can limit the range here, or does it cover the whole u32
-range?
-
-Maxime
-
---le2zpoj6qhgy5u3q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXla4XQAKCRDj7w1vZxhR
-xcr0AP9Go6W67LY8iVw9+n5AaBx1stq75hwfJ7JhT21EiH7KngD+MDzNzsxx0KyP
-E4dL+rbvbuh34GSh5uWm0X/T3hSjoQk=
-=eJJp
------END PGP SIGNATURE-----
-
---le2zpoj6qhgy5u3q--
+>  static struct attribute *typec_attrs[] = {
+>         &dev_attr_data_role.attr,
+>         &dev_attr_power_operation_mode.attr,
+> @@ -1254,6 +1274,7 @@ static struct attribute *typec_attrs[] = {
+>         &dev_attr_usb_typec_revision.attr,
+>         &dev_attr_vconn_source.attr,
+>         &dev_attr_port_type.attr,
+> +       &dev_attr_orientation.attr,
+>         NULL,
+>  };
+>
+> @@ -1283,6 +1304,10 @@ static umode_t typec_attr_is_visible(struct kobject *kobj,
+>                         return 0;
+>                 if (port->cap->type != TYPEC_PORT_DRP)
+>                         return 0444;
+> +       } else if (attr == &dev_attr_orientation.attr) {
+> +               if (port->cap->orientation_aware)
+> +                       return 0444;
+> +               return 0;
+>         }
+>
+>         return attr->mode;
+> @@ -1493,6 +1518,8 @@ int typec_set_orientation(struct typec_port *port,
+>         }
+>
+>         port->orientation = orientation;
+> +       sysfs_notify(&port->dev.kobj, NULL, "orientation");
+> +       kobject_uevent(&port->dev.kobj, KOBJ_CHANGE);
+>
+>         return 0;
+>  }
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index 78077c234ef27..bc0032a6b9a14 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -4742,6 +4742,7 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
+>         port->typec_caps.pd_revision = 0x0300;  /* USB-PD spec release 3.0 */
+>         port->typec_caps.driver_data = port;
+>         port->typec_caps.ops = &tcpm_ops;
+> +       port->typec_caps.orientation_aware = 1;
+>
+>         port->partner_desc.identity = &port->partner_ident;
+>         port->port_type = port->typec_caps.type;
+> diff --git a/include/linux/usb/typec.h b/include/linux/usb/typec.h
+> index 44d28387ced48..b00a2642a9cd6 100644
+> --- a/include/linux/usb/typec.h
+> +++ b/include/linux/usb/typec.h
+> @@ -211,6 +211,7 @@ struct typec_capability {
+>         u16                     pd_revision; /* 0300H = "3.0" */
+>         int                     prefer_role;
+>         enum typec_accessory    accessory[TYPEC_MAX_ACCESSORY];
+> +       unsigned int            orientation_aware:1;
+>
+>         struct fwnode_handle    *fwnode;
+>         void                    *driver_data;
+> --
+> 2.25.0.265.gbab2e86ba0-goog
+>
