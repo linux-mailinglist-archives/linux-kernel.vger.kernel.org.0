@@ -2,78 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6A7A170339
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:55:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAE591702F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:45:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728626AbgBZPzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 10:55:07 -0500
-Received: from ns.iliad.fr ([212.27.33.1]:48486 "EHLO ns.iliad.fr"
+        id S1728480AbgBZPpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 10:45:35 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:35314 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728470AbgBZPzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:55:06 -0500
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id D19A620076;
-        Wed, 26 Feb 2020 16:55:04 +0100 (CET)
-Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id BF00C20025;
-        Wed, 26 Feb 2020 16:55:04 +0100 (CET)
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [RFC PATCH v4 0/2] Small devm helper for devm implementations
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Suzuki Poulose <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Message-ID: <68219a85-295d-7b7c-9658-c3045bbcbaeb@free.fr>
-Date:   Wed, 26 Feb 2020 16:44:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726148AbgBZPpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 10:45:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=3E7w4HszEsiPDzMy+hldTRLgCjGx/tQUMWCGTcQGxQk=; b=UkD16FX8hvXHmFGyhjZqRRhRH6
+        mjoU2CVba/ZujN7LKUqyesGD4xtSdK3Yx4ptzi5N4x4MjSk5J81Fbu43Y4RLaFHW8Nig2Pnkxw6kk
+        RtaOATBPgUdBCSfwyIvNkOtb+lqduriwo+u0WXqRr5+cceEl89J/pLsElx8tKQ0Pcc4o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1j6ysL-0006hw-8c; Wed, 26 Feb 2020 16:45:29 +0100
+Date:   Wed, 26 Feb 2020 16:45:29 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>
+Cc:     davem@davemloft.net, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        foss@0leil.net
+Subject: Re: [PATCH net] net: phy: mscc: fix firmware paths
+Message-ID: <20200226154529.GJ7663@lunn.ch>
+References: <20200226152650.1525515-1-antoine.tenart@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Wed Feb 26 16:55:04 2020 +0100 (CET)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226152650.1525515-1-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Feb 26, 2020 at 04:26:50PM +0100, Antoine Tenart wrote:
+> The firmware paths for the VSC8584 PHYs not not contain the leading
+> 'microchip/' directory, as used in linux-firmware, resulting in an
+> error when probing the driver. This patch fixes it.
+> 
+> Fixes: a5afc1678044 ("net: phy: mscc: add support for VSC8584 PHY")
+> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 
-Differences from v3 to v4
-x Add a bunch of kerneldoc above devm_add() [Greg KH]
-x Split patch in two [Greg KH]
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Differences from v2 to v3
-x Make devm_add() return an error-code rather than the raw data pointer
-  (in case devres_alloc ever returns an ERR_PTR) as suggested by Geert
-x Provide a variadic version devm_vadd() to work with structs as suggested
-  by Geert
-x Don't use nested ifs in clk_devm* implementations (hopefully simpler
-  code logic to follow) as suggested by Geert
-
-Marc Gonzalez (2):
-  devres: Provide new helper for devm functions
-  clk: Use devm_add in managed functions
-
- drivers/base/devres.c    |  28 +++++++++++
- drivers/clk/clk-devres.c | 101 ++++++++++++++-------------------------
- include/linux/device.h   |   3 ++
- 3 files changed, 68 insertions(+), 64 deletions(-)
-
--- 
-2.17.1
+    Andrew
