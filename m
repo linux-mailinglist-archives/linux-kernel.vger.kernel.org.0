@@ -2,121 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35E2F1707D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:40:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67ED91707D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:41:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbgBZSky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:40:54 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:44959 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbgBZSkx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:40:53 -0500
-Received: by mail-yw1-f66.google.com with SMTP id t141so368992ywc.11
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 10:40:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=oa0bZQpkEyjcs7ABeeOu5qKY4d6etbTg8GwEpE2lwx4=;
-        b=Y6R+puOiqvIIHXnZd735jQ/xLLwScxWZ0Jut/HsXE2t8J7XULFj7ngTeX2cYl/1MzI
-         1iwH2l+ji8gwwzf99sTZ0Y4Qc/9pPcfurZTWzgVdQcLup2ZYmqNy/dpkKJwQnCbxwO7d
-         r+h35wCruXGxbpi9Q/QKbLkNrLxolHzJoAxJGjPAf4UNI24kUhBAkRMC38uPtWkhQgKC
-         AXdRzu8BBq2sEFJfwOLQ5uVuarUtCSjBMdo7Y8RtI9SiXejp4OkH8tlf3S6ualKYODNP
-         pPVXnPj0WMOnN3xxkSkycUGPFqL+uUrgdhFdnuRbFZgUszcupU2872Wn46dMjKKdVNzS
-         e0iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=oa0bZQpkEyjcs7ABeeOu5qKY4d6etbTg8GwEpE2lwx4=;
-        b=RUqrlrQbd6HVaA1+JaY1kCffX10PEYB1KgGPmFRysEo3dWq8SE0ZOQLXmCGWGoX6Iq
-         JQLk6do4iNlWtiYVV4GcY3qdsUzcP1fs+ADtfvApRTqjAy07rd2SGN2dVV4ZegSvKlbN
-         07f5wl8yxzFb42F2wY/UcLxYMjj8UDoM437aoEErea4RXscX9YCe7Kx6stkhXyMmQQsK
-         rvPFpiPN9iktPA5NZ1PUFvqsj331/CdvgwTDdQB7sNZ7YydB0vHFtFWmec0dbsZ4HcEj
-         uMdPBlp3SisFipLHfQvHCbJbnjunLRMuCiozsSdtILCr4v8uW9lOILX9sLtUqcmVvmWi
-         wD2g==
-X-Gm-Message-State: APjAAAVDPYfQtZ4QsPSfDawdKTzd5IbTLGI1ifEgwJXRRhqge50xqTwc
-        EQWK2zIRuzJSVvFV6u2GttYb9o34EoQ5m8OAAgk=
-X-Google-Smtp-Source: APXvYqwFnez7brfmSU3KIVPBeaQteXxJJFdFJjYjr+0c3TSXLSAGAWX985M+vsapMbxwqpw4lCUy62xmmIyi1xyPC5I=
-X-Received: by 2002:a25:348d:: with SMTP id b135mr223597yba.337.1582742452918;
- Wed, 26 Feb 2020 10:40:52 -0800 (PST)
+        id S1727238AbgBZSlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:41:37 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:31600 "EHLO 1wt.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726878AbgBZSlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 13:41:36 -0500
+Received: (from willy@localhost)
+        by pcw.home.local (8.15.2/8.15.2/Submit) id 01QIfUxf002268;
+        Wed, 26 Feb 2020 19:41:30 +0100
+Date:   Wed, 26 Feb 2020 19:41:30 +0100
+From:   Willy Tarreau <w@1wt.eu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Denis Efremov <efremov@linux.com>, Jens Axboe <axboe@kernel.dk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>
+Subject: Re: [PATCH 00/10] floppy driver cleanups (deobfuscation)
+Message-ID: <20200226184130.GA2265@1wt.eu>
+References: <20200224212352.8640-1-w@1wt.eu>
+ <0f5effb1-b228-dd00-05bc-de5801ce4626@linux.com>
+ <CAHk-=whd_Wpi1-TGcooUTE+z-Z-f32n2vFQANszvAou_Fopvzw@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a0d:d4cd:0:0:0:0:0 with HTTP; Wed, 26 Feb 2020 10:40:52
- -0800 (PST)
-Reply-To: janvierlitse2019@gmail.com
-From:   Mr Janvier Litse <ramoud.hiwad@gmail.com>
-Date:   Wed, 26 Feb 2020 10:40:52 -0800
-Message-ID: <CAELqVueyapUTpGmiJfwvpyHYHLKhp9cq19EA=sRKybYoJC2dig@mail.gmail.com>
-Subject: URGENT RESPOND FOR MORE DETAILS!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whd_Wpi1-TGcooUTE+z-Z-f32n2vFQANszvAou_Fopvzw@mail.gmail.com>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mr Janvier Litse.
-African Development Bank
-Burkina Faso (ADB)
-Ouagadougou - Burkina Faso.
+On Wed, Feb 26, 2020 at 09:49:05AM -0800, Linus Torvalds wrote:
+> On Wed, Feb 26, 2020 at 6:57 AM Denis Efremov <efremov@linux.com> wrote:
+> >
+> > If Linus has no objections (regarding his review) I would prefer to
+> > accept 1-10 patches rather to resend them again. They seems complete
+> > to me as the first step.
+> 
+> I have no objections, and the patches 11-16 seem to have addressed all
+> my "I wish.." concerns too (except for the "we should rewrite or
+> sunset the driver entirely").
 
-Dear friend, Good Day
+Sorry if I broke your dream :-)
 
-I am writing to seek your cooperation over this business, Please due
-welcome this letter.
+> Looks fine to me.
 
-I am Mr Janvier Litse.the director of the accounts & auditing dept .at
-the African Development Bank Ouagadougou-west Africa (A D B) With due
-respect, I have decided to contact you on a business transaction that
-will be beneficial to both of us.At the bank's lastaccounts/auditing
-evaluations, my staffs came across an old account which was being
-maintained by a foreign client who we learnt was among the deceased
-passengers of motor accident on November.. 2003, the deceased was
-unable to run this account since his death. The account has remained
-dormant without the knowledge of his family since it was put in a safe
-deposit account in the bank for future investment by the client.
+Thanks!
 
-Since his demise, even the members of his family haven't applied for
-claims over this fund and it has been in the safe deposit accountuntil
-I discovered that it cannot be claimed since our client is a foreign
-national and we are sure that he has no next of kin here to file
-claims over the money. As the director of the department, this
-discovery was brought to my office so as to decide what is to be done.
-I decided to seek ways through which to transfer this money out of the
-bank and out of the country too.
-
-The total amount in the account is twenty eight  million three hundred
-thousand dollars (USD 28,300,000.00).with my positions as a staffs of
-the bank, I am handicapped because I can not operate foreign accounts
-and cannot lay bonafide claim over this money.The client was a foreign
-national and you will only be asked to act as his next of kin and I
-will supply you with all the necessary information and bank data to
-assist you in being able to transfer this money to any bank of your
-choice where this money could be transferred into.
-
-The total sum will be shared as follows: 50% for me, 50% for you and
-expenses incidental occur during the transfer will be  incured by both
-of us. The transfer is risk free on both sides hence you are going to
-follow my instruction till the fund transfer to your account.
-
-Since I work in this bank that is why you should be confident in the
-success of this transaction because you will be updated with
-information as at when desired I will wish you to keep this
-transaction secret and confidential as I am hoping to retire with my
-share of this money at the end of transaction which will be when this
-money is safety in your account. I will then come over to your country
-for sharing according to the previously agreed percentages. You might
-even have to advise me on possibilities of investment in your country
-or elsewhere of our choice. May God help you to help me to a restive
-retirement, Amen.
-
-
-Please for further information and enquires feel free to contact me
-back immediately for more explanation and better  understanding.please
-contact me through this alternative email address
-(janvierlitse2019@gmail.com)
-
-I am waiting for your urgent response!!!
-Thanks and remain blessed
- Mr Janvier Litse.
-+226 54459253
+Willy
