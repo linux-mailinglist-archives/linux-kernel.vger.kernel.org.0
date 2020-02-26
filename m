@@ -2,115 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D968D16FA41
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 10:09:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF39116FA4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 10:11:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbgBZJJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 04:09:17 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33844 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbgBZJJQ (ORCPT
+        id S1727724AbgBZJLR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 04:11:17 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27898 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727075AbgBZJLQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 04:09:16 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01Q98kPl100212;
-        Wed, 26 Feb 2020 03:08:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582708126;
-        bh=715M2fEsQcQ9pGCNA+WdZUDo8i9Ym6s9zxFMk/XbQHM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=CEG0EYD07SZfu0ZemKPihOoI30dStRLAC+bcraQqR//LNHsqF4Akstjvlb/UI5lY4
-         54RSGgkjvojx/j0Cf2rAAZ2SD0nnTwpy+54VZG5VizfndJzvMQ2MKGcdIWrbBqX6Ll
-         KlzqFMqsNnWT1ohsOhwZI4DsDIr00JJUYoGGAPHU=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01Q98kCs075706
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 26 Feb 2020 03:08:46 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 26
- Feb 2020 03:08:46 -0600
-Received: from localhost.localdomain (10.64.41.19) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 26 Feb 2020 03:08:45 -0600
-Received: from [172.24.190.4] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 01Q98fuI103976;
-        Wed, 26 Feb 2020 03:08:41 -0600
-Subject: Re: [PATCH v2 1/3] dt-bindings: m_can: Add Documentation for
- transceiver regulator
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
-        <wg@grandegger.com>, <sriram.dash@samsung.com>, <dmurphy@ti.com>
-References: <20200217142836.23702-1-faiz_abbas@ti.com>
- <20200217142836.23702-2-faiz_abbas@ti.com> <20200219203529.GA21085@bogus>
- <a987bcd7-ca1c-dfda-72f3-cd2004a87ea5@ti.com>
- <20b86553-9b98-1a9d-3757-54174aa67c62@pengutronix.de>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <72e4b1f4-e7f1-cccd-6327-0c8ab6f9f9a7@ti.com>
-Date:   Wed, 26 Feb 2020 14:40:18 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 26 Feb 2020 04:11:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582708275;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=oEqkrC4VLq8DaEUXXUlw4qM+t78tq2tEXmDFeRSdK/U=;
+        b=LYX8khLquEaMYAmpi8dZX3a+4Tcgs9mZJYjMH41sxOF7boBZdvJzapJhBKV1BVnE/L8F8/
+        ZS7/GiU4Ss5VGv1pjHMadZKd2jnrK+Fq1Qchy0tT/2t0s5RfI3MFC8/J3fBwDJT1feTUyj
+        ZrDunVqgNfN4YYsXgwirggJqlOGEjGQ=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-17-oezANsZ2PLuPBrnyGO-RXA-1; Wed, 26 Feb 2020 04:11:13 -0500
+X-MC-Unique: oezANsZ2PLuPBrnyGO-RXA-1
+Received: by mail-qv1-f71.google.com with SMTP id p3so3078623qvt.9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 01:11:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oEqkrC4VLq8DaEUXXUlw4qM+t78tq2tEXmDFeRSdK/U=;
+        b=DeKnO6ePX8iyj5TVkvlbRWbsRV6zIL2K7VI7IHwJ2CMVyWvgeMUciApzxLEzdxH7FV
+         d41XmDbPyIB7bTjMXxAvQTxQLY4rI/o2Q/rbKiksviKBVJU1K/zik0TM1EknbEIv7q3j
+         U3S+MbfcI094s74m1uCLxNmv2Rg+AiLVjCIWrZmqd7GmwRhLWmwZ98SKv9UfH6phMkwV
+         8ZKUCFwcGnM7gawg7YHzqs9Fdtr5ACwd6etreno+g1XuVPb+OLMJ8asQI2JKQQrbiX3C
+         jc7iv2p+Ojpy+LP0B4dvpF1ZDk+MlXIXDvnUNOlHWNXlyQp8UHyWR7npOYPmRmxoHsFO
+         XFKg==
+X-Gm-Message-State: APjAAAWgTgDO5HnuvKfx9lj6b/SXAjML8fi/ARPVVjqXY30ZnAP5ZV/D
+        JX3e6YRWaHvwa/Zk/3KWS7TrQ9vXrG9YN078KeFaSbgmgcwr6Z2tuqYx9h8zSnfSSa6PxZv950t
+        V8hyRw2u6kWCXccv5NdiodDdjB8PJYBRoPdEW9uzO
+X-Received: by 2002:a37:40d2:: with SMTP id n201mr4423908qka.211.1582708273449;
+        Wed, 26 Feb 2020 01:11:13 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxXjPA2Pp28AoAuqRyzeCA+TX5xe5BSYiQaT9UAKY0Cw8GAaR+YwHF7q/xXePrlEyxxI8KoSd+4S3BP8Ddn7Zw=
+X-Received: by 2002:a37:40d2:: with SMTP id n201mr4423885qka.211.1582708273224;
+ Wed, 26 Feb 2020 01:11:13 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20b86553-9b98-1a9d-3757-54174aa67c62@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+ <1582316494.3376.45.camel@HansenPartnership.com> <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
+ <1582556135.3384.4.camel@HansenPartnership.com> <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
+ <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com> <1582644535.3361.8.camel@HansenPartnership.com>
+In-Reply-To: <1582644535.3361.8.camel@HansenPartnership.com>
+From:   Miklos Szeredi <mszeredi@redhat.com>
+Date:   Wed, 26 Feb 2020 10:11:02 +0100
+Message-ID: <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On Tue, Feb 25, 2020 at 4:29 PM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
 
-On 21/02/20 2:01 pm, Marc Kleine-Budde wrote:
-> On 2/21/20 9:31 AM, Faiz Abbas wrote:
->> Hi Rob,
->>
->> On 20/02/20 2:05 am, Rob Herring wrote:
->>> On Mon, Feb 17, 2020 at 07:58:34PM +0530, Faiz Abbas wrote:
->>>> Some CAN transceivers have a standby line that needs to be asserted
->>>> before they can be used. Model this GPIO lines as an optional
->>>> fixed-regulator node. Document bindings for the same.
->>>>
->>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->>>> ---
->>>>  Documentation/devicetree/bindings/net/can/m_can.txt | 3 +++
->>>>  1 file changed, 3 insertions(+)
->>>
->>> This has moved to DT schema in my tree, so please adjust it and resend.
->>
->> Ok.
->>>
->>>> diff --git a/Documentation/devicetree/bindings/net/can/m_can.txt b/Documentation/devicetree/bindings/net/can/m_can.txt
->>>> index ed614383af9c..f17e2a5207dc 100644
->>>> --- a/Documentation/devicetree/bindings/net/can/m_can.txt
->>>> +++ b/Documentation/devicetree/bindings/net/can/m_can.txt
->>>> @@ -48,6 +48,9 @@ Optional Subnode:
->>>>  			  that can be used for CAN/CAN-FD modes. See
->>>>  			  Documentation/devicetree/bindings/net/can/can-transceiver.txt
->>>>  			  for details.
->>>> +
->>>> +- xceiver-supply: Regulator that powers the CAN transceiver.
->>>
->>> The supply for a transceiver should go in the transceiver node.
->>>
->>
->> Marc, while I have you here, do you agree with this?
-> 
-> I'll look into the details later today.
-> 
+> The other thing a file descriptor does that sysfs doesn't is that it
+> solves the information leak: if I'm in a mount namespace that has no
+> access to certain mounts, I can't fspick them and thus I can't see the
+> information.  By default, with sysfs I can.
 
-Sure. Be sure to take another look at my attempt to use the transceiver
-with a phy driver some time ago.
+That's true, but procfs/sysfs has to deal with various namespacing
+issues anyway.  If this is just about hiding a number of entries, then
+I don't think that's going to be a big deal.
 
-https://lore.kernel.org/patchwork/patch/1006238/
+The syscall API is efficient: single syscall per query instead of
+several, no parsing necessary.
+
+However, it is difficult to extend, because the ABI must be updated,
+possibly libc and util-linux also, so that scripts can also consume
+the new parameter.  With the sysfs approach only the kernel needs to
+be updated, and possibly only the filesystem code, not even the VFS.
+
+So I think the question comes down to:  do we need a highly efficient
+way to query the superblock parameters all at once, or not?
 
 Thanks,
-Faiz
+Miklos
+
