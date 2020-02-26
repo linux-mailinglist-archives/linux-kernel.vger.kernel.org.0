@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA3F8170106
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:21:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0106E1700FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:20:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbgBZOVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 09:21:01 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:57962 "EHLO
+        id S1727491AbgBZOUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 09:20:51 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:57927 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbgBZOU7 (ORCPT
+        with ESMTP id S1726278AbgBZOUv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 09:20:59 -0500
+        Wed, 26 Feb 2020 09:20:51 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1j6xYF-00080b-A7; Wed, 26 Feb 2020 15:20:39 +0100
+        id 1j6xYG-00080k-EN; Wed, 26 Feb 2020 15:20:40 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EA8CD1C2157;
-        Wed, 26 Feb 2020 15:20:38 +0100 (CET)
-Date:   Wed, 26 Feb 2020 14:20:38 -0000
-From:   "tip-bot2 for Wei Li" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 12ABF1C2156;
+        Wed, 26 Feb 2020 15:20:40 +0100 (CET)
+Date:   Wed, 26 Feb 2020 14:20:39 -0000
+From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf intel-bts: Fix endless record after being terminated
-Cc:     Wei Li <liwei391@huawei.com>, Jiri Olsa <jolsa@redhat.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>, stable@vger.kernel.org,
-        #@tip-bot2.tec.linutronix.de, 5.4+@tip-bot2.tec.linutronix.de,
-        Adrian Hunter <adrian.hunter@intel.com>,
+Subject: [tip: perf/urgent] perf bpf: Remove bpf/ subdir from bpf.h headers
+ used to build bpf events
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200214132654.20395-3-adrian.hunter@intel.com>
-References: <20200214132654.20395-3-adrian.hunter@intel.com>
+In-Reply-To: <tip-d9myswhgo8gfi3vmehdqpxa7@git.kernel.org>
+References: <tip-d9myswhgo8gfi3vmehdqpxa7@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158272683867.28353.17520525770121147020.tip-bot2@tip-bot2>
+Message-ID: <158272683976.28353.3519947924913490182.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,55 +50,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     783fed2f35e2a6771c8dc6ee29b8c4b9930783ce
-Gitweb:        https://git.kernel.org/tip/783fed2f35e2a6771c8dc6ee29b8c4b9930783ce
-Author:        Wei Li <liwei391@huawei.com>
-AuthorDate:    Fri, 14 Feb 2020 15:26:51 +02:00
+Commit-ID:     3b573bf318d894b4290e194c4d7dbcba8c1f6ead
+Gitweb:        https://git.kernel.org/tip/3b573bf318d894b4290e194c4d7dbcba8c1f6ead
+Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate:    Fri, 14 Feb 2020 16:21:40 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 18 Feb 2020 10:13:29 -03:00
+CommitterDate: Tue, 18 Feb 2020 10:13:28 -03:00
 
-perf intel-bts: Fix endless record after being terminated
+perf bpf: Remove bpf/ subdir from bpf.h headers used to build bpf events
 
-In __cmd_record(), when receiving SIGINT(ctrl + c), a 'done' flag will
-be set and the event list will be disabled by evlist__disable() once.
+The bpf.h file needed gets installed in /usr/lib/include/perf/bpf/bpf.h,
+and /usr/lib/include/perf/ is added to the include path passed to clang
+to build the eBPF bytecode, so just remove "bpf/", its directly in the
+path passed already. This was working by accident, fix it.
 
-While in auxtrace_record.read_finish(), the related events will be
-enabled again, if they are continuous, the recording seems to be
-endless.
+I.e. now this is back working:
 
-If the intel_bts event is disabled, we don't enable it again here.
+  # cat /home/acme/git/perf/tools/perf/examples/bpf/hello.c
+  #include <stdio.h>
 
-Note: This patch is NOT tested since i don't have such a machine with
-intel_bts feature, but the code seems buggy same as arm-spe and
-intel-pt.
+  int syscall_enter(openat)(void *args)
+  {
+  	puts("Hello, world\n");
+  	return 0;
+  }
 
-Signed-off-by: Wei Li <liwei391@huawei.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Tan Xiaojun <tanxiaojun@huawei.com>
-Cc: stable@vger.kernel.org # 5.4+
-Link: http://lore.kernel.org/lkml/20200214132654.20395-3-adrian.hunter@intel.com
-[ahunter: removed redundant 'else' after 'return']
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+  license(GPL);
+  # perf trace -e /home/acme/git/perf/tools/perf/examples/bpf/hello.c
+       0.000 pickup/21493 __bpf_stdout__(Hello, world)
+      56.462 sh/13539 __bpf_stdout__(Hello, world)
+      56.536 sh/13539 __bpf_stdout__(Hello, world)
+      56.673 sh/13539 __bpf_stdout__(Hello, world)
+      56.781 sh/13539 __bpf_stdout__(Hello, world)
+      56.707 perf/13182 __bpf_stdout__(Hello, world)
+      56.849 perf/13182 __bpf_stdout__(Hello, world)
+  ^C
+  #
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-d9myswhgo8gfi3vmehdqpxa7@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/x86/util/intel-bts.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/perf/include/bpf/pid_filter.h | 2 +-
+ tools/perf/include/bpf/stdio.h      | 2 +-
+ tools/perf/include/bpf/unistd.h     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
-index 27d9e21..39e3631 100644
---- a/tools/perf/arch/x86/util/intel-bts.c
-+++ b/tools/perf/arch/x86/util/intel-bts.c
-@@ -420,9 +420,12 @@ static int intel_bts_read_finish(struct auxtrace_record *itr, int idx)
- 	struct evsel *evsel;
+diff --git a/tools/perf/include/bpf/pid_filter.h b/tools/perf/include/bpf/pid_filter.h
+index 607189a..6e61c4b 100644
+--- a/tools/perf/include/bpf/pid_filter.h
++++ b/tools/perf/include/bpf/pid_filter.h
+@@ -3,7 +3,7 @@
+ #ifndef _PERF_BPF_PID_FILTER_
+ #define _PERF_BPF_PID_FILTER_
  
- 	evlist__for_each_entry(btsr->evlist, evsel) {
--		if (evsel->core.attr.type == btsr->intel_bts_pmu->type)
-+		if (evsel->core.attr.type == btsr->intel_bts_pmu->type) {
-+			if (evsel->disabled)
-+				return 0;
- 			return perf_evlist__enable_event_idx(btsr->evlist,
- 							     evsel, idx);
-+		}
- 	}
- 	return -EINVAL;
- }
+-#include <bpf/bpf.h>
++#include <bpf.h>
+ 
+ #define pid_filter(name) pid_map(name, bool)
+ 
+diff --git a/tools/perf/include/bpf/stdio.h b/tools/perf/include/bpf/stdio.h
+index 7ca6fa5..316af5b 100644
+--- a/tools/perf/include/bpf/stdio.h
++++ b/tools/perf/include/bpf/stdio.h
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+-#include <bpf/bpf.h>
++#include <bpf.h>
+ 
+ struct bpf_map SEC("maps") __bpf_stdout__ = {
+        .type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
+diff --git a/tools/perf/include/bpf/unistd.h b/tools/perf/include/bpf/unistd.h
+index d1a35b6..ca7877f 100644
+--- a/tools/perf/include/bpf/unistd.h
++++ b/tools/perf/include/bpf/unistd.h
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: LGPL-2.1
+ 
+-#include <bpf/bpf.h>
++#include <bpf.h>
+ 
+ static int (*bpf_get_current_pid_tgid)(void) = (void *)BPF_FUNC_get_current_pid_tgid;
+ 
