@@ -2,55 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EE9E17080A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D8D817080C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:50:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbgBZSuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:50:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40872 "EHLO mail.kernel.org"
+        id S1727459AbgBZSuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:50:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726970AbgBZSuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:50:11 -0500
-Subject: Re: [GIT PULL] tracing/bootconfig: Fixes and changes to bootconfig
- before it goes live in a release
+        id S1727350AbgBZSuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 13:50:12 -0500
+Subject: Re: [GIT PULL] Kselftest kunit update for Linux 5.6-rc4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582743011;
-        bh=uDAltjlUxzc15bAOw/zdVHiNALU1XSPnfMKKfcgJPh4=;
+        s=default; t=1582743012;
+        bh=tJW1oOsWNoTrZtaLgkEA4Sai3rshOgIGuK3SViztHlk=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ZFbCt+7bjWQrxEpGeFL/bQQWqAxK40JygrK/imZWSKn8EViv+ecdQxdF+2C7c37wi
-         lV04DePBsTANoa1cvu9yQKD62nX0Iu+871AZtRFcx1x4c9p/ZrbpbuDmQEBztWFiCV
-         1Cmpxm6qk7hRfift4bJk/G83fzlbVAbJFnlgEDlM=
+        b=VBYpoxFwDT5Ef3Ah25D4ToSXgufKvpWytWkfodTqhKfa9z8Lx2Uf4SQsVJQLMogUa
+         KuAVH1F/uMLOdtoO/KFmYiJN5mBF3SQtjkymBuRtX/lWIx3YakJ92pZwdahbxKkuyr
+         sCgDoVuPLsTxiezDMSboPuqaXGXtsKKD4EqYnuD4=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200225191927.3cbaa0db@gandalf.local.home>
-References: <20200225191927.3cbaa0db@gandalf.local.home>
+In-Reply-To: <728b8941-6687-d3b3-2156-1d74ee4dc3db@linuxfoundation.org>
+References: <728b8941-6687-d3b3-2156-1d74ee4dc3db@linuxfoundation.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200225191927.3cbaa0db@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
- trace-v5.6-rc2
-X-PR-Tracked-Commit-Id: 2910b5aa6f545c044173a5cab3dbb7f43e23916d
+X-PR-Tracked-Message-Id: <728b8941-6687-d3b3-2156-1d74ee4dc3db@linuxfoundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
+ tags/linux-kselftest-kunit-5.6-rc4
+X-PR-Tracked-Commit-Id: be886ba90cce2fb2f5a4dbcda8f3be3fd1b2f484
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 91ad64a84e9e63e2906ae714dfa3933dd3f64c64
-Message-Id: <158274301107.12298.17642734079886031956.pr-tracker-bot@kernel.org>
-Date:   Wed, 26 Feb 2020 18:50:11 +0000
-To:     Steven Rostedt <rostedt@goodmis.org>
+X-PR-Merge-Commit-Id: b98cce1ef5c5ecb8028531ec2305c4591c9b6ca1
+Message-Id: <158274301232.12298.14700150603953349438.pr-tracker-bot@kernel.org>
+Date:   Wed, 26 Feb 2020 18:50:12 +0000
+To:     Shuah Khan <skhan@linuxfoundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 25 Feb 2020 19:19:27 -0500:
+The pull request you sent on Tue, 25 Feb 2020 17:33:30 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git trace-v5.6-rc2
+> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-kunit-5.6-rc4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/91ad64a84e9e63e2906ae714dfa3933dd3f64c64
+https://git.kernel.org/torvalds/c/b98cce1ef5c5ecb8028531ec2305c4591c9b6ca1
 
 Thank you!
 
