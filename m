@@ -2,165 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB24E170C24
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 00:04:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB1B3170C40
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 00:06:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728105AbgBZXES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 18:04:18 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39491 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728056AbgBZXEQ (ORCPT
+        id S1727957AbgBZXGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 18:06:14 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:60769 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbgBZXGO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 18:04:16 -0500
-Received: by mail-pg1-f196.google.com with SMTP id j15so391940pgm.6;
-        Wed, 26 Feb 2020 15:04:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tCAa6W32aZ6QEKpToe4fyzvDQPNVxEnlp17UdPCzM6s=;
-        b=CNQku0uc3KAdlVn5+f/fITVzFDBSHYXMdo+LQ+8BVaz5Ht/O9aBWdkHEyNAVEACBKV
-         uICQYcmmIle6na4NfMwdwB+RIKkkOVmrN7OkS11Bji2m331jj6F3aYPwDOvGGNUHye3I
-         mGRlKp62czjkuztPiHmWW+KkfYVJlg1iQdnTVUk+C37gPgHC7ghJ58Xpj4KGjGKMqVYv
-         gDLWHwfkFWFqP7TYdRDYPDqxSTkiqnFKRFSuIwghiWJyyWL1t4ZQ7lVfpEkYKXj91wIE
-         fBqi7TVT7I9r0FamqmLRcL1Ff4vCvLqYAQGY1ns0Ka9X9xeIi/tO/w0jnj6l1bjC62wc
-         9RKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tCAa6W32aZ6QEKpToe4fyzvDQPNVxEnlp17UdPCzM6s=;
-        b=SUeWJyiQm71Luifyu3a2obcMVacaPMmCnRnVkk+pWhsHq5vQ87lHrAwr73TaDo1H3O
-         6qq159DUIKqQRhOf81d7hM+wuWOhdqmkpoq5uYpHEc1jPI2OLVKLR+HgTK3hWtlcr41/
-         CjOkNxxzbyLMvpK7lKH7k2P89/arUgSIUJQvm0sJZm/CqEYUE7tkHD2906GzbTzgjK3Q
-         ZwuBEEeR3tLWDg2KMLVFv9hcoO5xijucqCIuYCj3eR7M0F+hQEBqwZ9AF+mZRoogFIzs
-         WR3/2XIH6neTfDDLk8fTvKvIIihIPKSYohEcAor/amnLEu88KzX6WyS7LGu6IVl5kmbM
-         jL4Q==
-X-Gm-Message-State: APjAAAV8PQvkraAGR9RN53MPml9GQv0L8Kzr+Dal27bcqX1Rd0/KV/28
-        +bfeYdwJsZ5ZNmShV5InTCY=
-X-Google-Smtp-Source: APXvYqxhOPuxfNONXmDQxDXVEgm8yFWi7DxNNyLfDQf3TB7RUJQjT+qTeMMjNtBejIG2YsmlSgqcvA==
-X-Received: by 2002:aa7:9f90:: with SMTP id z16mr1025096pfr.161.1582758254295;
-        Wed, 26 Feb 2020 15:04:14 -0800 (PST)
-Received: from taoren-ubuntu-R90MNF91.thefacebook.com ([2620:10d:c090:500::7:5ebf])
-        by smtp.gmail.com with ESMTPSA id 3sm3912621pjg.27.2020.02.26.15.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 15:04:12 -0800 (PST)
-From:   rentao.bupt@gmail.com
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-        taoren@fb.com
-Cc:     Tao Ren <rentao.bupt@gmail.com>
-Subject: [PATCH v4 7/7] dt-bindings: usb: add documentation for aspeed usb-vhub
-Date:   Wed, 26 Feb 2020 15:03:46 -0800
-Message-Id: <20200226230346.672-8-rentao.bupt@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200226230346.672-1-rentao.bupt@gmail.com>
-References: <20200226230346.672-1-rentao.bupt@gmail.com>
+        Wed, 26 Feb 2020 18:06:14 -0500
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1j75kf-0008Pg-Lx; Thu, 27 Feb 2020 00:06:01 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 0D450100EA1; Thu, 27 Feb 2020 00:06:01 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Christopher S. Hall" <christopher.s.hall@intel.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, mingo@redhat.com, x86@kernel.org,
+        jacob.e.keller@intel.com, richardcochran@gmail.com,
+        davem@davemloft.net, sean.v.kelley@intel.com
+Subject: Re: [Intel PMC TGPIO Driver 0/5] Add support for Intel PMC Time GPIO Driver with PHC interface changes to support additional H/W Features
+In-Reply-To: <20200224224059.GC1508@skl-build>
+References: <20191211214852.26317-1-christopher.s.hall@intel.com> <87eevf4hnq.fsf@nanos.tec.linutronix.de> <20200224224059.GC1508@skl-build>
+Date:   Thu, 27 Feb 2020 00:06:01 +0100
+Message-ID: <87mu95ne3q.fsf@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tao Ren <rentao.bupt@gmail.com>
+Christopher,
 
-Add device tree binding documentation for aspeed usb-vhub driver.
+"Christopher S. Hall" <christopher.s.hall@intel.com> writes:
+> On Fri, Jan 31, 2020 at 07:14:49PM +0100, Thomas Gleixner wrote:
+>> christopher.s.hall@intel.com writes:
+>> >
+>> > The TGPIO hardware doesn't implement interrupts. For TGPIO input, the
+>> > output edge-timestamp API is re-used to implement a user-space polling
+>> > interface. For periodic input (e.g. PPS) this is fairly efficient,
+>> > requiring only a marginally faster poll rate than the input event
+>> > frequency.
+>> 
+>> I really have a hard time to understand why this is implemented as part
+>> of PTP while you talk about PPS at the same time.
+>
+> We primarily need support for periodic input and output uses cases.
+> Apologies for omitting the periodic output use case from the cover
+> letter. While TGPIO isn't associated with a PTP timestamp clock, the PHC
+> pin/clock interface fits the usage otherwise.
 
-Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
----
- No change in v2/v3/v4:
-   - the patch is added to the patch series since v4.
+Which usage? PTP like usage? I really have a hard time to make the
+connection. PTP is as the name says a protocol to synchronize time
+across a network.
 
- .../bindings/usb/aspeed,usb-vhub.yaml         | 71 +++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/aspeed,usb-vhub.yaml
+What you're having is a GPIO which has some magic timestamp clock which
+can be correlated back to ART/TSC, right?
 
-diff --git a/Documentation/devicetree/bindings/usb/aspeed,usb-vhub.yaml b/Documentation/devicetree/bindings/usb/aspeed,usb-vhub.yaml
-new file mode 100644
-index 000000000000..6ebae46641e5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/aspeed,usb-vhub.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# Copyright (c) 2020 Facebook Inc.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/aspeed,usb-vhub.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ASPEED USB 2.0 Virtual Hub Controller
-+
-+maintainers:
-+  - Felipe Balbi <balbi@kernel.org>
-+
-+description: |+
-+  The ASPEED USB 2.0 Virtual Hub Controller implements 1 set of USB Hub
-+  register and several sets of Device and Endpoint registers to support
-+  the Virtual Hub's downstream USB devices.
-+
-+  Supported number of devices and endpoints vary depending on hardware
-+  revisions. AST2400 and AST2500 Virtual Hub supports 5 downstream devices
-+  and 15 generic endpoints, while AST2600 Virtual Hub supports 7 downstream
-+  devices and 21 generic endpoints.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - aspeed,ast2400-usb-vhub
-+      - aspeed,ast2500-usb-vhub
-+      - aspeed,ast2600-usb-vhub
-+
-+  reg:
-+    maxItems: 1
-+    description: Common configuration registers
-+
-+  clocks:
-+    maxItems: 1
-+    description: The Virtual Hub Controller clock gate
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  aspeed,vhub-downstream-ports:
-+    description: Number of downstream ports supported by the Virtual Hub
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  aspeed,vhub-generic-endpoints:
-+    description: Number of generic endpoints supported by the Virtual Hub
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - interrupts
-+  - aspeed,vhub-downstream-ports
-+  - aspeed,vhub-generic-endpoints
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/aspeed-clock.h>
-+    vhub: usb-vhub@1e6a0000 {
-+            compatible = "aspeed,ast2500-usb-vhub";
-+            reg = <0x1e6a0000 0x300>;
-+            interrupts = <5>;
-+            clocks = <&syscon ASPEED_CLK_GATE_USBPORT1CLK>;
-+            pinctrl-names = "default";
-+            pinctrl-0 = <&pinctrl_usb2ad_default>;
-+    };
--- 
-2.17.1
+So squeezing this into PTP makes as much sense as squeezing a
+camera/video/audio interface which provides or consumes timestamps into
+it.
+
+> The PHC periodic output API is the closest fit for periodic output without
+> creating a new API.
+
+Well, you avoid creating a new API or extending one which makes sense by
+abusing the PTP interface for something which is not even remotely
+connected to PTP.
+
+> The PHC interface can also register as a PPS source. I am, however,
+> concerned in general about implementing PPS input in the driver
+> because the hardware doesn't implement interrupts - requiring polling.
+
+Really useful.
+
+>> Proper information about why this approach was chosen and what that
+>> magic device is used for would be really helpful.
+>
+> The customer requested usages are 1 kHz and 1 Hz for both input and
+> output. Some higher level use cases are:
+> - using a GPS PPS signal to sync the system clock
+
+That makes at least some sense. See below.
+
+> - auditing timesync precision for financial services, especially high
+> 	frequency trading (e.g. MiFID).
+
+A good reason to not support it at all. Aside of that I have no idea how
+that auditing is supposed to work. Just throwing a few buzzwords around
+is not giving much technical context.
+
+> Apart from clock import/export applications, timestamping single I/O
+> events are potentially valuable for industrial control applications
+> (e.g. motor position sensing vs. time). As time sync precision
+> requirements for these applications are tightened, standard GPIO
+> timing precision will not be good enough.
+
+Well, coming from that industry I really doubt that you can do anything
+useful with it, but hey it's been 25 years since I stopped working on
+motor and motion controllers :)
+
+Anyway, the device we are talking about is a GPIO device with inputs and
+outputs plus bells and whistels attached to it.
+
+On the input side this provides a timestamp taken by the hardware when
+the input level changes, i.e. hardware based time stamping instead of
+software based interrupt arrival timestamping. Looks like an obvious
+extension to the GPIO subsystem.
+
+How that timestamp is processed/converted and what an application can
+actually do with it is a secondary problem:
+
+  - PPS mode:
+
+    This can be implemented as an actual PPS driver which consumes the
+    GPIO, does timer based polling and feeds the timestamp into the PPS
+    subsystem. Might be not the most accurate solution, so I can see why
+    you want to use the PTP interface for it, which provides the raw
+    clocksource (ART/TSC) and the correlated monotonic/realtime
+    timestamps. But then again this wants to be a PTP driver consuming
+    the GPIO and the timestamp via timer based polling.
+
+  - GPIO sampling
+  
+    That's totally disconnected from PPS/PTP and just provides a
+    correlated clock monotonic timestamp to the application.
+
+    That covers your motor example :)
+
+  - Timesync validation:
+
+    -Enocluehowthatshouldworkatall
+
+And of course you can use the GPIO input just as input without bells and
+whistels :)
+
+Now you have the output side which again is a GPIO in the first
+place. But then it also has a secondary function which allows to create
+a periodic output with a magic correlation to the ART and some way to
+actually adjust the frequency. Neither of those two functions are in
+anyway relatable to PTP AFAICT.
+
+The periodic, programmable and adjustable output is pretty much a PWM of
+some form and what you want to tell it is: Output a pulse at a given
+frequency. Due to the fact that the input clock of that thing is ART you
+can do the magic transformation from ART frequency to frequency adjusted
+clock monotonic in order to tweak the parameters so they actually end up
+generating your precise output frequency.  Tell the driver which
+frequency you want and it retrieves the correlation information from the
+kernel and uses it to achieve a precise output frequency. Doesn't sound
+like rocket science and does not required new magic ioctls.
+
+I might be missing something, but you surely can fill the blanks then.
+
+Thanks,
+
+        tglx
+
+
 
