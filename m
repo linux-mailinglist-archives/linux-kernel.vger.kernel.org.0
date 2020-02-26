@@ -2,183 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D0B516FA88
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 10:20:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB0A216FA5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 10:14:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbgBZJTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 04:19:51 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:52986 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727757AbgBZJTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 04:19:50 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7523D1A7072;
-        Wed, 26 Feb 2020 10:19:47 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7B7101A711F;
-        Wed, 26 Feb 2020 10:19:41 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5EBC1402D8;
-        Wed, 26 Feb 2020 17:19:34 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     p.zabel@pengutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 4/4] reset: imx7: Add support for i.MX8MP SoC
-Date:   Wed, 26 Feb 2020 17:13:51 +0800
-Message-Id: <1582708431-14161-4-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582708431-14161-1-git-send-email-Anson.Huang@nxp.com>
-References: <1582708431-14161-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727646AbgBZJOZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 04:14:25 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34047 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbgBZJOY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 04:14:24 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z15so2019280wrl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 01:14:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=90Gaup4GBl/WZhK+7p3+YI0kruzLG0IEp7O26cMJO1E=;
+        b=OjjG5NdjjvXoXxveLrFLJgIAF8XcsBwYf/hyD9u3TR4xM0MB+6wHciuWyOu7N4fklx
+         hPU6Lf74lqeNBCNP/YCfwNrm3CD7mU+LJLlKjdID+dVWWD7SV2/mlF3yEhUuGrA9nH3G
+         RzEYCEXab0NSzdbuSRcLcn4F7Z2EaLrgJgbjE+C3Kc7+GxcXkl0PbuTYlFyDNuN47+Io
+         ow/OgMxHaMQBdUDWD3WVA6gwIKLNwLK5trjYRoHkP5KK6gtAOJToKODhQXsrglcJSQcH
+         RzE+ujJF829XIiHmp4Q6UhjpATYUo+ngPMkuNL/Shrv8GCMEVM6DOx2sCL0EzcJblkeD
+         aVDw==
+X-Gm-Message-State: APjAAAXcNdfWff/0axflgE6iZDnghLJZ2o7qkEz2fhAW/wp9BEnx8QEf
+        aIaqFpvOQQxWHLJzYHJcgNk=
+X-Google-Smtp-Source: APXvYqyU+AFLfI6C9bXoMHUATVgRno4Q4tuyNnRlEGnnnzJUedVksiuvqUK1i8VPkH85h89Js03b8g==
+X-Received: by 2002:adf:ecc2:: with SMTP id s2mr4382833wro.263.1582708462718;
+        Wed, 26 Feb 2020 01:14:22 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id o15sm2430534wra.83.2020.02.26.01.14.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 01:14:22 -0800 (PST)
+Date:   Wed, 26 Feb 2020 10:14:21 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        richardw.yang@linux.intel.com, osalvador@suse.de,
+        dan.j.williams@intel.com, rppt@linux.ibm.com, robin.murphy@arm.com
+Subject: Re: [PATCH v2 0/7] mm/hotplug: Only use subsection map in VMEMMAP
+ case
+Message-ID: <20200226091421.GE3771@dhcp22.suse.cz>
+References: <20200220043316.19668-1-bhe@redhat.com>
+ <20200220103849.GG20509@dhcp22.suse.cz>
+ <20200221142847.GG4937@MiWiFi-R3L-srv>
+ <75b4f840-7454-d6d0-5453-f0a045c852fa@redhat.com>
+ <20200225100226.GM22443@dhcp22.suse.cz>
+ <20200226034236.GD24216@MiWiFi-R3L-srv>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226034236.GD24216@MiWiFi-R3L-srv>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX8MP is a new SoC of i.MX8M family, it has same src IP
-inside but with different module layout, add support for it.
+On Wed 26-02-20 11:42:36, Baoquan He wrote:
+> On 02/25/20 at 11:02am, Michal Hocko wrote:
+> > On Tue 25-02-20 10:10:45, David Hildenbrand wrote:
+> > > >>>  include/linux/mmzone.h |   2 +
+> > > >>>  mm/sparse.c            | 178 +++++++++++++++++++++++++++++------------
+> > > >>>  2 files changed, 127 insertions(+), 53 deletions(-)
+> > > >>
+> > > >> Why do we need to add so much code to remove a functionality from one
+> > > >> memory model?
+> > > > 
+> > > > Hmm, Dan also asked this before.
+> > > > 
+> > > > The adding mainly happens in patch 2, 3, 4, including the two newly
+> > > > added function defitions, the code comments above them, and those added
+> > > > dummy functions for !VMEMMAP.
+> > > 
+> > > AFAIKS, it's mostly a bunch of newly added comments on top of functions.
+> > > E.g., the comment for fill_subsection_map() alone spans 12 LOC in total.
+> > > I do wonder if we have to be that verbose. We are barely that verbose on
+> > > MM code (and usually I don't see much benefit unless it's a function
+> > > with many users from many different places).
+> > 
+> > I would tend to agree here. Not that I am against kernel doc
+> > documentation but these are internal functions and the comment doesn't
+> > really give any better insight IMHO. I would be much more inclined if
+> > this was the general pattern in the respective file but it just stands
+> > out.
+> 
+> I saw there are internal functions which have code comments, e.g
+> shrink_slab() in mm/vmscan.c, not only this one place, there are several
+> places. I personally prefer to see code comment for function if
+> possible, this can save time, e.g people can skip the bitmap operation
+> when read code if not necessary. And here I mainly want to tell there
+> are different returned value to note different behaviour when call them.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/reset/reset-imx7.c | 101 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 101 insertions(+)
+... yet nobody really cares about different return code. It is an error
+that is propagated up the call chain and that's all.
 
-diff --git a/drivers/reset/reset-imx7.c b/drivers/reset/reset-imx7.c
-index 1443a55..d170fe6 100644
---- a/drivers/reset/reset-imx7.c
-+++ b/drivers/reset/reset-imx7.c
-@@ -15,6 +15,7 @@
- #include <linux/regmap.h>
- #include <dt-bindings/reset/imx7-reset.h>
- #include <dt-bindings/reset/imx8mq-reset.h>
-+#include <dt-bindings/reset/imx8mp-reset.h>
- 
- struct imx7_src_signal {
- 	unsigned int offset, bit;
-@@ -145,6 +146,18 @@ enum imx8mq_src_registers {
- 	SRC_DDRC2_RCR		= 0x1004,
- };
- 
-+enum imx8mp_src_registers {
-+	SRC_SUPERMIX_RCR	= 0x0018,
-+	SRC_AUDIOMIX_RCR	= 0x001c,
-+	SRC_MLMIX_RCR		= 0x0028,
-+	SRC_GPU2D_RCR		= 0x0038,
-+	SRC_GPU3D_RCR		= 0x003c,
-+	SRC_VPU_G1_RCR		= 0x0048,
-+	SRC_VPU_G2_RCR		= 0x004c,
-+	SRC_VPUVC8KE_RCR	= 0x0050,
-+	SRC_NOC_RCR		= 0x0054,
-+};
-+
- static const struct imx7_src_signal imx8mq_src_signals[IMX8MQ_RESET_NUM] = {
- 	[IMX8MQ_RESET_A53_CORE_POR_RESET0]	= { SRC_A53RCR0, BIT(0) },
- 	[IMX8MQ_RESET_A53_CORE_POR_RESET1]	= { SRC_A53RCR0, BIT(1) },
-@@ -253,6 +266,93 @@ static const struct imx7_src_variant variant_imx8mq = {
- 	},
- };
- 
-+static const struct imx7_src_signal imx8mp_src_signals[IMX8MP_RESET_NUM] = {
-+	[IMX8MP_RESET_A53_CORE_POR_RESET0]	= { SRC_A53RCR0, BIT(0) },
-+	[IMX8MP_RESET_A53_CORE_POR_RESET1]	= { SRC_A53RCR0, BIT(1) },
-+	[IMX8MP_RESET_A53_CORE_POR_RESET2]	= { SRC_A53RCR0, BIT(2) },
-+	[IMX8MP_RESET_A53_CORE_POR_RESET3]	= { SRC_A53RCR0, BIT(3) },
-+	[IMX8MP_RESET_A53_CORE_RESET0]		= { SRC_A53RCR0, BIT(4) },
-+	[IMX8MP_RESET_A53_CORE_RESET1]		= { SRC_A53RCR0, BIT(5) },
-+	[IMX8MP_RESET_A53_CORE_RESET2]		= { SRC_A53RCR0, BIT(6) },
-+	[IMX8MP_RESET_A53_CORE_RESET3]		= { SRC_A53RCR0, BIT(7) },
-+	[IMX8MP_RESET_A53_DBG_RESET0]		= { SRC_A53RCR0, BIT(8) },
-+	[IMX8MP_RESET_A53_DBG_RESET1]		= { SRC_A53RCR0, BIT(9) },
-+	[IMX8MP_RESET_A53_DBG_RESET2]		= { SRC_A53RCR0, BIT(10) },
-+	[IMX8MP_RESET_A53_DBG_RESET3]		= { SRC_A53RCR0, BIT(11) },
-+	[IMX8MP_RESET_A53_ETM_RESET0]		= { SRC_A53RCR0, BIT(12) },
-+	[IMX8MP_RESET_A53_ETM_RESET1]		= { SRC_A53RCR0, BIT(13) },
-+	[IMX8MP_RESET_A53_ETM_RESET2]		= { SRC_A53RCR0, BIT(14) },
-+	[IMX8MP_RESET_A53_ETM_RESET3]		= { SRC_A53RCR0, BIT(15) },
-+	[IMX8MP_RESET_A53_SOC_DBG_RESET]	= { SRC_A53RCR0, BIT(20) },
-+	[IMX8MP_RESET_A53_L2RESET]		= { SRC_A53RCR0, BIT(21) },
-+	[IMX8MP_RESET_SW_NON_SCLR_M7C_RST]	= { SRC_M4RCR, BIT(0) },
-+	[IMX8MP_RESET_OTG1_PHY_RESET]		= { SRC_USBOPHY1_RCR, BIT(0) },
-+	[IMX8MP_RESET_OTG2_PHY_RESET]		= { SRC_USBOPHY2_RCR, BIT(0) },
-+	[IMX8MP_RESET_SUPERMIX_RESET]		= { SRC_SUPERMIX_RCR, BIT(0) },
-+	[IMX8MP_RESET_AUDIOMIX_RESET]		= { SRC_AUDIOMIX_RCR, BIT(0) },
-+	[IMX8MP_RESET_MLMIX_RESET]		= { SRC_MLMIX_RCR, BIT(0) },
-+	[IMX8MP_RESET_PCIEPHY]			= { SRC_PCIEPHY_RCR, BIT(2) },
-+	[IMX8MP_RESET_PCIEPHY_PERST]		= { SRC_PCIEPHY_RCR, BIT(3) },
-+	[IMX8MP_RESET_PCIE_CTRL_APPS_EN]	= { SRC_PCIEPHY_RCR, BIT(6) },
-+	[IMX8MP_RESET_PCIE_CTRL_APPS_TURNOFF]	= { SRC_PCIEPHY_RCR, BIT(11) },
-+	[IMX8MP_RESET_HDMI_PHY_APB_RESET]	= { SRC_HDMI_RCR, BIT(0) },
-+	[IMX8MP_RESET_MEDIA_RESET]		= { SRC_DISP_RCR, BIT(0) },
-+	[IMX8MP_RESET_GPU2D_RESET]		= { SRC_GPU2D_RCR, BIT(0) },
-+	[IMX8MP_RESET_GPU3D_RESET]		= { SRC_GPU3D_RCR, BIT(0) },
-+	[IMX8MP_RESET_GPU_RESET]		= { SRC_GPU_RCR, BIT(0) },
-+	[IMX8MP_RESET_VPU_RESET]		= { SRC_VPU_RCR, BIT(0) },
-+	[IMX8MP_RESET_VPU_G1_RESET]		= { SRC_VPU_G1_RCR, BIT(0) },
-+	[IMX8MP_RESET_VPU_G2_RESET]		= { SRC_VPU_G2_RCR, BIT(0) },
-+	[IMX8MP_RESET_VPUVC8KE_RESET]		= { SRC_VPUVC8KE_RCR, BIT(0) },
-+	[IMX8MP_RESET_NOC_RESET]		= { SRC_NOC_RCR, BIT(0) },
-+};
-+
-+static int imx8mp_reset_set(struct reset_controller_dev *rcdev,
-+			    unsigned long id, bool assert)
-+{
-+	struct imx7_src *imx7src = to_imx7_src(rcdev);
-+	const unsigned int bit = imx7src->signals[id].bit;
-+	unsigned int value = assert ? bit : 0;
-+
-+	switch (id) {
-+	case IMX8MP_RESET_PCIEPHY:
-+		/*
-+		 * wait for more than 10us to release phy g_rst and
-+		 * btnrst
-+		 */
-+		if (!assert)
-+			udelay(10);
-+		break;
-+
-+	case IMX8MP_RESET_PCIE_CTRL_APPS_EN:
-+		value = assert ? 0 : bit;
-+		break;
-+	}
-+
-+	return imx7_reset_update(imx7src, id, value);
-+}
-+
-+static int imx8mp_reset_assert(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	return imx8mp_reset_set(rcdev, id, true);
-+}
-+
-+static int imx8mp_reset_deassert(struct reset_controller_dev *rcdev,
-+				 unsigned long id)
-+{
-+	return imx8mp_reset_set(rcdev, id, false);
-+}
-+
-+static const struct imx7_src_variant variant_imx8mp = {
-+	.signals = imx8mp_src_signals,
-+	.signals_num = ARRAY_SIZE(imx8mp_src_signals),
-+	.ops = {
-+		.assert   = imx8mp_reset_assert,
-+		.deassert = imx8mp_reset_deassert,
-+	},
-+};
-+
- static int imx7_reset_probe(struct platform_device *pdev)
- {
- 	struct imx7_src *imx7src;
-@@ -283,6 +383,7 @@ static int imx7_reset_probe(struct platform_device *pdev)
- static const struct of_device_id imx7_reset_dt_ids[] = {
- 	{ .compatible = "fsl,imx7d-src", .data = &variant_imx7 },
- 	{ .compatible = "fsl,imx8mq-src", .data = &variant_imx8mq },
-+	{ .compatible = "fsl,imx8mp-src", .data = &variant_imx8mp },
- 	{ /* sentinel */ },
- };
- 
+I also like when there is a kernel doc comment that helps to understand
+the intented usage, context the function can be called from, potential
+side effects, locking requirements and other details people need to know
+when calling functions. But have a look at 
+/**
+ * clear_subsection_map - Clear subsection map of one memory region
+ *
+ * @pfn - start pfn of the memory range
+ * @nr_pages - number of pfns to add in the region
+ *
+ * This is only intended for hotplug, and clear the related subsection
+ * map inside one section.
+ *
+ * Return:
+ * * -EINVAL	- Section already deactived.
+ * * 0		- Subsection map is emptied.
+ * * 1		- Subsection map is not empty.
+ */
+
+the only useful information in here is that this is a hotplug stuff but
+I would be completely lost about the intention without already knowing
+what is this whole subsection about.
+
 -- 
-2.7.4
-
+Michal Hocko
+SUSE Labs
