@@ -2,58 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 599D017062D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:35:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36A77170634
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:37:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbgBZRfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 12:35:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726366AbgBZRfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 12:35:34 -0500
-Received: from localhost (lfbn-ncy-1-985-231.w90-101.abo.wanadoo.fr [90.101.63.231])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 255B82467D;
-        Wed, 26 Feb 2020 17:35:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582738533;
-        bh=iIA7gnb4jhPzFqCYBQxKjl4iO0jNVn1njrEGIED4l1I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=014tAPG6E3MZXvg7Cgw96bvKrLoXL2EjI+Vq1rOU6sXY9T/09Na+W+C1OtRl8NB5Q
-         wHnqWw/E+SfJGTqYD7g4mkp36TOE6Vsfd22fw86LAz3JNQ4YO5FE8HE81DHfh5+F63
-         TEg3mn2Qbarw4w3bynQnyhoaGJtFsVOFbwfmh5Q0=
-Date:   Wed, 26 Feb 2020 18:35:31 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [patch 09/10] x86/entry/entry_32: Route int3 through
- common_exception
-Message-ID: <20200226173530.GD6075@lenoir>
-References: <20200225213636.689276920@linutronix.de>
- <20200225220217.042369808@linutronix.de>
+        id S1726956AbgBZRhF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 12:37:05 -0500
+Received: from www62.your-server.de ([213.133.104.62]:42022 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbgBZRhF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 12:37:05 -0500
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1j70c8-0002db-0I; Wed, 26 Feb 2020 18:36:52 +0100
+Received: from [2001:1620:665:0:5795:5b0a:e5d5:5944] (helo=linux-3.fritz.box)
+        by sslproxy02.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1j70c7-000Is6-Fc; Wed, 26 Feb 2020 18:36:51 +0100
+Subject: Re: [PATCH bpf-next v4 0/5] Make probes which emit dmesg warnings
+ optional
+To:     Quentin Monnet <quentin@isovalent.com>,
+        Michal Rostecki <mrostecki@opensuse.org>, bpf@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org
+References: <20200226165941.6379-1-mrostecki@opensuse.org>
+ <e4777396-dbf0-855d-beaf-ba7fd533a4fb@isovalent.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <03558a25-d07c-d4df-6840-4a171f18d893@iogearbox.net>
+Date:   Wed, 26 Feb 2020 18:36:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225220217.042369808@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <e4777396-dbf0-855d-beaf-ba7fd533a4fb@isovalent.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.102.2/25734/Tue Feb 25 15:06:17 2020)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 10:36:45PM +0100, Thomas Gleixner wrote:
-> int3 is not using the common_exception path for purely historical reasons,
-> but there is no reason to keep it the only exception which is different.
+On 2/26/20 6:22 PM, Quentin Monnet wrote:
+> 2020-02-26 17:59 UTC+0100 ~ Michal Rostecki <mrostecki@opensuse.org>
+>> Feature probes in bpftool related to bpf_probe_write_user and
+>> bpf_trace_printk helpers emit dmesg warnings which might be confusing
+>> for people running bpftool on production environments. This patch series
+>> addresses that by filtering them out by default and introducing the new
+>> positional argument "full" which enables all available probes.
+>>
+>> The main motivation behind those changes is ability the fact that some
+>> probes (for example those related to "trace" or "write_user" helpers)
+>> emit dmesg messages which might be confusing for people who are running
+>> on production environments. For details see the Cilium issue[0].
+>>
+>> v1 -> v2:
+>> - Do not expose regex filters to users, keep filtering logic internal,
+>> expose only the "full" option for including probes which emit dmesg
+>> warnings.
+>>
+>> v2 -> v3:
+>> - Do not use regex for filtering out probes, use function IDs directly.
+>> - Fix bash completion - in v2 only "prefix" was proposed after "macros",
+>>    "dev" and "kernel" were not.
+>> - Rephrase the man page paragraph, highlight helper function names.
+>> - Remove tests which parse the plain output of bpftool (except the
+>>    header/macros test), focus on testing JSON output instead.
+>> - Add test which compares the output with and without "full" option.
+>>
+>> v3 -> v4:
+>> - Use enum to check for helper functions.
+>> - Make selftests compatible with older versions of Python 3.x than 3.7.
+>>
+>> [0] https://github.com/cilium/cilium/issues/10048
+>>
+>> Michal Rostecki (5):
+>>    bpftool: Move out sections to separate functions
+>>    bpftool: Make probes which emit dmesg warnings optional
+>>    bpftool: Update documentation of "bpftool feature" command
+>>    bpftool: Update bash completion for "bpftool feature" command
+>>    selftests/bpf: Add test for "bpftool feature" command
+>>
+>>   .../bpftool/Documentation/bpftool-feature.rst |  19 +-
+>>   tools/bpf/bpftool/bash-completion/bpftool     |   3 +-
+>>   tools/bpf/bpftool/feature.c                   | 283 +++++++++++-------
+>>   tools/testing/selftests/.gitignore            |   5 +-
+>>   tools/testing/selftests/bpf/Makefile          |   3 +-
+>>   tools/testing/selftests/bpf/test_bpftool.py   | 178 +++++++++++
+>>   tools/testing/selftests/bpf/test_bpftool.sh   |   5 +
+>>   7 files changed, 373 insertions(+), 123 deletions(-)
+>>   create mode 100644 tools/testing/selftests/bpf/test_bpftool.py
+>>   create mode 100755 tools/testing/selftests/bpf/test_bpftool.sh
+>>
 > 
-> Make it use common_exception so the upcoming changes to autogenerate the
-> entry stubs do not have to special case int3.
+> Reviewed-by: Quentin Monnet <quentin@isovalent.com>
+> (Please keep tags between versions.)
 > 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Your change looks good. The tests in patch 5 still pass with Python 3.7.5 (but I have not tried to run with an older version of Python).
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Looks better now ...
+
+# ./test_bpftool.sh
+test_feature_dev_json (test_bpftool.TestBpftool) ... ok
+test_feature_kernel (test_bpftool.TestBpftool) ... ok
+test_feature_kernel_full (test_bpftool.TestBpftool) ... ok
+test_feature_kernel_full_vs_not_full (test_bpftool.TestBpftool) ... ok
+test_feature_macros (test_bpftool.TestBpftool) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.253s
+
+OK
+
+... applied, thanks!
