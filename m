@@ -2,149 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88AC0170A3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 22:13:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15A80170A48
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 22:17:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbgBZVNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 16:13:15 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.107]:45314 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727446AbgBZVNO (ORCPT
+        id S1727584AbgBZVRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 16:17:07 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46762 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727446AbgBZVRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 16:13:14 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id C69D1275E2D
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 15:13:12 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 73zUj5BcdEfyq73zUjAxRi; Wed, 26 Feb 2020 15:13:12 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=pfFaUhKSUuPWQQ+x7EmGEX71Qn52caOX7mUsVR1i56k=; b=k3TcKpX0wC75g73VOp+k8/+Zua
-        ZmtyCoIJ5MoTfpVsIiL5SQ7A4S4rNmaaWpTAz6IqbxsNckv9U34qFm5Ix0Mi9lYp5hfiiVdMca8HL
-        Cn1xFqYYFTXW72pwea3mMqvG80ROLNZ6g1Z/+UW/7CI/ikI5cjrwHt9t8Mpe3CHAepiRsgqlhsSs+
-        EW1xe2jdTe+uhX3tAFPXsvjikT9Sx1AQUI+4YKZjbzpIVaDBbWcFyV90Hx5OxpoGmT0WGauaxxE9B
-        tX/A4yChTXLHNMePpE2iTJ8yipIMoupKVQOj2kLyWwvdOUYtrC73eaiC4bH4I05UlwbMXMWo0b76i
-        5n0RpuvA==;
-Received: from [200.39.29.129] (port=47544 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j73zS-000iA7-Nm; Wed, 26 Feb 2020 15:13:11 -0600
-Date:   Wed, 26 Feb 2020 15:16:02 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     James Smart <james.smart@broadcom.com>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
-Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] nvme: Replace zero-length array with flexible-array member
-Message-ID: <20200226211602.GA18590@embeddedor>
+        Wed, 26 Feb 2020 16:17:06 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j7so529913wrp.13;
+        Wed, 26 Feb 2020 13:17:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eGG5HV/wHjXmjW594DYnRXUEMq+KVnRCi2GVnSHct24=;
+        b=GWMdC2CT7TecL5TAmiCGBNOag5B0X++Z1IY0dQWJIayMcUrrFTULSVfUlbT0TY1wA+
+         TGqh7IexTm/eF1H0hR9Lj3XFtTUWPA74MBjrXxPhFbD5JlulljnQEXzJ88AOlVT7zv20
+         R87ybBJn2VbvR4UFwp+OYTMj9wq7We6KOMUUXig0DqMGbtaAfvhe+UqbS8ftV8tRKo+n
+         ZoYHLEL5+N1p1ZRCKfLr7ixiDi4sCQBvDq09jej2U2cK946ViEn+3hYOPVi7+M0kDzYL
+         GWWs9IsvCcplqUrgG/mNaN+41I3tZN9yEYl7Gvrd32aW/hndLnr9mRdw0FLMH7pCjZTF
+         ZC6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eGG5HV/wHjXmjW594DYnRXUEMq+KVnRCi2GVnSHct24=;
+        b=CwTv1e/t7xlBB4XLpKCXpar3d3ZceP24wsIK9GBZ6VR8rhMUsPek/6rW0WZNW6cc7r
+         ZrR67UjHzPP04mn5DaTZ7AR18G3BblasGuiSz/32NGAHwQvlAXmFYXGZpN2eVG4KxCRy
+         Um/nkaKHTagG4Lk6CIFmVRtg/crJ/mby5c45A3TbrH8RBNRMidF2aSt+ux2YiME1/pgk
+         SYMkjXVrEMdyaajbONwcIJdoJf2qyXOzfBSfE+INkjxArCfWh5cQ7AwjpzYWB89UicRP
+         Vo/UXQ3jwQiKCcNUcj6q6B4NoCwkAM2u02X3TcvuwbT2c+tZFK/LGMkm7AX4yLSyVOp1
+         wGCg==
+X-Gm-Message-State: APjAAAVfF6G3UCASc15CO9Zp4+wmvVqxeGCa7+t0qm+Bx07xwUscKqsC
+        i89WMTmyaUKvorIpMGn8YkU=
+X-Google-Smtp-Source: APXvYqytANCFtOd8eL6ThzI4nOTk57R3SjvMxRHm6IAzwk+nJfSmbZzar4bJOjJ2Ks/IF5tG/MDhEA==
+X-Received: by 2002:a05:6000:1206:: with SMTP id e6mr613672wrx.410.1582751824917;
+        Wed, 26 Feb 2020 13:17:04 -0800 (PST)
+Received: from ?IPv6:2003:ea:8f29:6000:38ea:e5eb:bce2:2ee3? (p200300EA8F29600038EAE5EBBCE22EE3.dip0.t-ipconnect.de. [2003:ea:8f29:6000:38ea:e5eb:bce2:2ee3])
+        by smtp.googlemail.com with ESMTPSA id s139sm4674219wme.35.2020.02.26.13.17.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2020 13:17:04 -0800 (PST)
+Subject: Re: [RFC PATCH 1/2] net: phy: let the driver register its own IRQ
+ handler
+To:     Michael Walle <michael@walle.cc>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S . Miller" <davem@davemloft.net>,
+        Richard Cochran <richardcochran@gmail.com>
+References: <20200225230819.7325-1-michael@walle.cc>
+ <20200225230819.7325-2-michael@walle.cc>
+ <3c7e1064-845e-d193-24ad-965211bf1e9a@gmail.com>
+ <18f531a691d0c4905552794bbb1be1e5@walle.cc>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <60985489-a6e9-dc13-68af-765d98116eb8@gmail.com>
+Date:   Wed, 26 Feb 2020 22:17:00 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.39.29.129
-X-Source-L: No
-X-Exim-ID: 1j73zS-000iA7-Nm
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.39.29.129]:47544
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <18f531a691d0c4905552794bbb1be1e5@walle.cc>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On 26.02.2020 12:12, Michael Walle wrote:
+> Am 2020-02-26 08:27, schrieb Heiner Kallweit:
+>> On 26.02.2020 00:08, Michael Walle wrote:
+>>> There are more and more PHY drivers which has more than just the PHY
+>>> link change interrupts. For example, temperature thresholds or PTP
+>>> interrupts.
+>>>
+>>> At the moment it is not possible to correctly handle interrupts for PHYs
+>>> which has a clear-on-read interrupt status register. It is also likely
+>>> that the current approach of the phylib isn't working for all PHYs out
+>>> there.
+>>>
+>>> Therefore, this patch let the PHY driver register its own interrupt
+>>> handler. To notify the phylib about a link change, the interrupt handler
+>>> has to call the new function phy_drv_interrupt().
+>>>
+>>
+>> We have phy_driver callback handle_interrupt for custom interrupt
+>> handlers. Any specific reason why you can't use it for your purposes?
+> 
+> Yes, as mentioned above this wont work for PHYs which has a clear-on-read
+> status register, because you may loose interrupts between handle_interrupt()
+> and phy_clear_interrupt().
+> 
+> See also
+>  
+> https://lore.kernel.org/netdev/bd47f8e1ebc04fa98856ed8d89b91419@walle.cc/
+> 
+> And esp. Russell reply. I tried using handle_interrupt() but it won't work
+> unless you make the ack_interrupt a NOOP. but even then it won't work because
+> the ack_interrupt is also used during setup etc.
+> 
+Right, now I remember .. So far we have only one user of the handle_interrupt
+callback. Following a proposal from the quoted discussion, can you base your
+patch on the following and check?
+Note: Even though you implement handle_interrupt, you still have to implement
+ack_interrupt too.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/nvme/host/fc.c       | 2 +-
- drivers/nvme/host/lightnvm.c | 2 +-
- include/linux/nvme.h         | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/phy/mscc.c | 3 ++-
+ drivers/net/phy/phy.c  | 4 ++--
+ include/linux/phy.h    | 4 +++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-index 5a70ac395d53..6806a19707fb 100644
---- a/drivers/nvme/host/fc.c
-+++ b/drivers/nvme/host/fc.c
-@@ -96,7 +96,7 @@ struct nvme_fc_fcp_op {
- struct nvme_fcp_op_w_sgl {
- 	struct nvme_fc_fcp_op	op;
- 	struct scatterlist	sgl[NVME_INLINE_SG_CNT];
--	uint8_t			priv[0];
-+	uint8_t			priv[];
- };
+diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+index 937ac7da2..20b9d3ef5 100644
+--- a/drivers/net/phy/mscc.c
++++ b/drivers/net/phy/mscc.c
+@@ -2868,7 +2868,8 @@ static int vsc8584_handle_interrupt(struct phy_device *phydev)
+ #endif
  
- struct nvme_fc_lport {
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index ec46693f6b64..3002bf972c6b 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -171,7 +171,7 @@ struct nvme_nvm_bb_tbl {
- 	__le32	tdresv;
- 	__le32	thresv;
- 	__le32	rsvd2[8];
--	__u8	blk[0];
-+	__u8	blk[];
- };
+ 	phy_mac_interrupt(phydev);
+-	return 0;
++
++	return vsc85xx_ack_interrupt(phydev);
+ }
  
- struct nvme_nvm_id20_addrf {
-diff --git a/include/linux/nvme.h b/include/linux/nvme.h
-index 3d5189f46cb1..6ee80a44ed4f 100644
---- a/include/linux/nvme.h
-+++ b/include/linux/nvme.h
-@@ -1177,7 +1177,7 @@ struct nvmf_disc_rsp_page_hdr {
- 	__le64		numrec;
- 	__le16		recfmt;
- 	__u8		resv14[1006];
--	struct nvmf_disc_rsp_page_entry entries[0];
-+	struct nvmf_disc_rsp_page_entry entries[];
- };
+ static int vsc85xx_config_init(struct phy_device *phydev)
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index d76e038cf..de52f0e82 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -725,10 +725,10 @@ static irqreturn_t phy_interrupt(int irq, void *phy_dat)
+ 	} else {
+ 		/* reschedule state queue work to run as soon as possible */
+ 		phy_trigger_machine(phydev);
++		if (phy_clear_interrupt(phydev))
++			goto phy_err;
+ 	}
  
- enum {
+-	if (phy_clear_interrupt(phydev))
+-		goto phy_err;
+ 	return IRQ_HANDLED;
+ 
+ phy_err:
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 80f8b2158..9e2895ee4 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -560,7 +560,9 @@ struct phy_driver {
+ 	 */
+ 	int (*did_interrupt)(struct phy_device *phydev);
+ 
+-	/* Override default interrupt handling */
++	/* Override default interrupt handling. Handler has to ensure
++	 * that interrupt is ack'ed.
++	 */
+ 	int (*handle_interrupt)(struct phy_device *phydev);
+ 
+ 	/* Clears up any memory if needed */
 -- 
-2.25.0
+2.25.1
+
 
