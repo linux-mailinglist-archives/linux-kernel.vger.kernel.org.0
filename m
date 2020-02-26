@@ -2,157 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95CFF170B29
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:06:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E01E170B30
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:07:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbgBZWGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 17:06:22 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:38382 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727670AbgBZWGV (ORCPT
+        id S1727785AbgBZWHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 17:07:22 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33195 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727670AbgBZWHW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 17:06:21 -0500
-Received: by mail-pj1-f68.google.com with SMTP id j17so237159pjz.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 14:06:21 -0800 (PST)
+        Wed, 26 Feb 2020 17:07:22 -0500
+Received: by mail-ed1-f65.google.com with SMTP id r21so742062edq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 14:07:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3TNg9o0AgO40tR/XDxm1MjdggfQKR3ry5wBqaugCysw=;
-        b=HW7Kp17/GPFyTe4vflls40kHpqQXLpA18D3oNovP8FMTiAPBSkd8JQWPDfRXw3Gve5
-         //7rGmktf4LwpKYg2tfELCpQ4CkjKlKjMA5zH3aUKCTFMm3R3jY/INNhaMUkLz0qCAy9
-         ZFLXpEMjnEkwbRi64qRZS2ryjOV+lQk8kWQTg=
+         :content-disposition:in-reply-to;
+        bh=smlCNyZtkUS5wtodeApayWhfct5DN5V19mI08hkP2Xo=;
+        b=ghjQ5U1NmSHaFr6tU8IENHZwipVNP5jyCzhU6nV7h62ZPW7X/96FvJA4rm+8dx9NLp
+         Lzd5H3l47KL7iTnNZY7zVeqQ/HnDHNpQuZP7ARkYx2TTibZvYng1c2fUWKKEjHGkzxtW
+         j1PlGGs0/1wf50f7E3QadDLs3ZBZRg9/DvGaOqo/8AvBqVzwQBjqD1DQuwqCnO3lK2bT
+         rwoIV172jr0CeKH9b1pAVwxqkMxt0yqC4ZUhM2SxcG9cd9GwMlXDtdBrZARBHOHdwr41
+         VUFjM18z3YNswbBL+eHJYJPQ3udUr/0Hk8gGHg5rhle/X6/ZmXBw1ZALYJwNCy1zxr7l
+         3ZTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3TNg9o0AgO40tR/XDxm1MjdggfQKR3ry5wBqaugCysw=;
-        b=RcHfwbYJxBYsh4YMS/CWCmVAUgBpnmAS1SnR/Ey0wvmOYB8M5vAlXm+6my9HnxHBa/
-         bhDJAkad254XaoWt3p7lcbGUMuroijJtB0BKgV3lmuyNplq099DAIgxGtMo15Pjtca8e
-         zTs9da2QPSkQvY8InJ/fs/SKLgAevpig0xmTGLdHreH2GzbVXlouzg/a11BXaptZ4uaK
-         /ko8p2lcp7MBWGyc+PR8scxfEkFFmoHIkXTJprg583qJmrKfSeBqVk4bxLdOOGNUXs6/
-         8ePh9n+gEQgmIhQ5LgWGklsM/jyjC+XZgIgbPNTVuAPJL8hju3rFj3qfbQtM5gGEUWd+
-         DVIg==
-X-Gm-Message-State: APjAAAWrc/YKQdyd2vN899IlGUltEveJRJGsK2qwNeTSph9bBWwXTXxb
-        W2SVFv01JJXSGjrFSMlizaQtBify+rY=
-X-Google-Smtp-Source: APXvYqz1u/3C2eGWbNpQI9x0ZNxo1oAZ6TsJZf6r4k5t/IQsGAhNWUcdLhelHrgHR1RjLUwpaeMLFA==
-X-Received: by 2002:a17:90a:d783:: with SMTP id z3mr1231245pju.3.1582754780551;
-        Wed, 26 Feb 2020 14:06:20 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id b24sm3901071pfo.84.2020.02.26.14.06.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2020 14:06:20 -0800 (PST)
-Date:   Wed, 26 Feb 2020 14:06:19 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dikshita Agarwal <dikshita@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: sc7180: Move venus node to the correct
- position
-Message-ID: <20200226220619.GH24720@google.com>
-References: <20200226130438.v2.1.I15e0f7eff0c67a2b49d4992f9d80fc1d2fdadf63@changeid>
+         :mime-version:content-disposition:in-reply-to;
+        bh=smlCNyZtkUS5wtodeApayWhfct5DN5V19mI08hkP2Xo=;
+        b=KovPrCTmtMXCmnG5ecK5DEpKMNkIIusyVx7n3TtN6tyWc1llL+0d55gmstCS9fFRGe
+         ii0+XPgohzgmQLpHEzhmABqV0IVYGxthGoTG3W7tnZ2vJdodrzdDu0AEwARVSpvSMb8m
+         HVG8CqsmBXQzsMPJ+xk8/KusXCDX1NWf4bwcr347JmDeSmDUSs0Tj7BFpwkv6BuiYy7q
+         qiUB5TGR3p6jgWFHwaRXXltKXxZFVZRvZciHRfa34NDkralPPw/HGqJT3TMXIcVUbvGA
+         /t9yRic1o+liAK8KNcHE/KfWWJ+sNQBC5c2a6rulcKBatXiKEJX2/xJtRhgNwDA/BW4w
+         ntpg==
+X-Gm-Message-State: APjAAAVQ/0iLwDP8SxGknwMWmqeKfwcdQf1s13ajiDr4Kx+EiGUSEDnv
+        /oHVE+23hi4AbYa5gbaQhFA=
+X-Google-Smtp-Source: APXvYqydPKo4Tg7/Ss78gnfFNnIqgFyswXLCr8T6+nOwPFGDOTqqAMzZ17XdJSY95CGjyb3Ru2edmw==
+X-Received: by 2002:aa7:ca10:: with SMTP id y16mr489172eds.217.1582754840773;
+        Wed, 26 Feb 2020 14:07:20 -0800 (PST)
+Received: from smtp.gmail.com ([2001:818:e238:a000:51c6:2c09:a768:9c37])
+        by smtp.gmail.com with ESMTPSA id dd20sm167771ejb.59.2020.02.26.14.07.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 14:07:20 -0800 (PST)
+Date:   Wed, 26 Feb 2020 19:07:12 -0300
+From:   Melissa Wen <melissa.srw@gmail.com>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian Konig <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] drm/amd/display: dc_link: code clean up on
+ enable_link_dp function
+Message-ID: <990112183d2bc344bd921bb55eee2f8cc2cd8bd5.1582752490.git.melissa.srw@gmail.com>
+References: <cover.1582752490.git.melissa.srw@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200226130438.v2.1.I15e0f7eff0c67a2b49d4992f9d80fc1d2fdadf63@changeid>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <cover.1582752490.git.melissa.srw@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 01:04:55PM -0800, Matthias Kaehlcke wrote:
-> Per convention device nodes for SC7180 should be ordered by address.
-> This is currently not the case for the venus node, move it to the
-> correct position.
-> 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> Excuses for sending v2 so shortly after v1, it seems ok in this case
-> since v1 is obviously wrong and the patch is not likely to be
-> controversial otherwise.
-> 
-> Changes in v2:
-> - insert the venus node *after* the usb@a6f8800 node, not before
-> 
->  arch/arm64/boot/dts/qcom/sc7180.dtsi | 52 ++++++++++++++--------------
->  1 file changed, 26 insertions(+), 26 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> index 253274d5f04c..5f97945e16a4 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> @@ -1332,6 +1332,32 @@ system-cache-controller@9200000 {
->  			interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->  
-> +		venus: video-codec@aa00000 {
-> +			compatible = "qcom,sc7180-venus";
-> +			reg = <0 0x0aa00000 0 0xff000>;
-> +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-> +			power-domains = <&videocc VENUS_GDSC>,
-> +					<&videocc VCODEC0_GDSC>;
-> +			power-domain-names = "venus", "vcodec0";
-> +			clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
-> +				 <&videocc VIDEO_CC_VENUS_AHB_CLK>,
-> +				 <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>,
-> +				 <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
-> +				 <&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
-> +			clock-names = "core", "iface", "bus",
-> +				      "vcodec0_core", "vcodec0_bus";
-> +			iommus = <&apps_smmu 0x0c00 0x60>;
-> +			memory-region = <&venus_mem>;
-> +
-> +			video-decoder {
-> +				compatible = "venus-decoder";
-> +			};
-> +
-> +			video-encoder {
-> +				compatible = "venus-encoder";
-> +			};
-> +		};
-> +
->  		usb_1: usb@a6f8800 {
->  			compatible = "qcom,sc7180-dwc3", "qcom,dwc3";
->  			reg = <0 0x0a6f8800 0 0x400>;
-> @@ -1538,32 +1564,6 @@ dispcc: clock-controller@af00000 {
->  			#power-domain-cells = <1>;
->  		};
->  
-> -		venus: video-codec@aa00000 {
-> -			compatible = "qcom,sc7180-venus";
-> -			reg = <0 0x0aa00000 0 0xff000>;
-> -			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-> -			power-domains = <&videocc VENUS_GDSC>,
-> -					<&videocc VCODEC0_GDSC>;
-> -			power-domain-names = "venus", "vcodec0";
-> -			clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
-> -				 <&videocc VIDEO_CC_VENUS_AHB_CLK>,
-> -				 <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>,
-> -				 <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
-> -				 <&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
-> -			clock-names = "core", "iface", "bus",
-> -				      "vcodec0_core", "vcodec0_bus";
-> -			iommus = <&apps_smmu 0x0c00 0x60>;
-> -			memory-region = <&venus_mem>;
-> -
-> -			video-decoder {
-> -				compatible = "venus-decoder";
-> -			};
-> -
-> -			video-encoder {
-> -				compatible = "venus-encoder";
-> -			};
-> -		};
-> -
->  		pdc: interrupt-controller@b220000 {
->  			compatible = "qcom,sc7180-pdc", "qcom,pdc";
->  			reg = <0 0x0b220000 0 0x30000>;
+Coding style clean up on enable_link_dp function as suggested by
+checkpatch.pl:
 
-The patch has still the same problem, it would have helped to run
-'git commit -a --amend', instead of 'git commit --amend' :(
+CHECK: Lines should not end with a '('
+WARNING: line over 80 characters
+WARNING: suspect code indent for conditional statements (8, 24)
+CHECK: braces {} should be used on all arms of this statement
+ERROR: else should follow close brace '}'
+CHECK: Comparison to NULL could be written
+       "link->preferred_training_settings.fec_enable"
+
+Signed-off-by: Melissa Wen <melissa.srw@gmail.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc_link.c | 32 +++++++++----------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+index a09119c10d7c..0f28b5694144 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+@@ -1480,9 +1480,8 @@ static void enable_stream_features(struct pipe_ctx *pipe_ctx)
+ 	}
+ }
+ 
+-static enum dc_status enable_link_dp(
+-		struct dc_state *state,
+-		struct pipe_ctx *pipe_ctx)
++static enum dc_status enable_link_dp(struct dc_state *state,
++				     struct pipe_ctx *pipe_ctx)
+ {
+ 	struct dc_stream_state *stream = pipe_ctx->stream;
+ 	enum dc_status status;
+@@ -1512,27 +1511,28 @@ static enum dc_status enable_link_dp(
+ 
+ 	pipe_ctx->stream_res.pix_clk_params.requested_sym_clk =
+ 			link_settings.link_rate * LINK_RATE_REF_FREQ_IN_KHZ;
+-	if (state->clk_mgr && !apply_seamless_boot_optimization)
+-		state->clk_mgr->funcs->update_clocks(state->clk_mgr, state, false);
++	if (state->clk_mgr && !apply_seamless_boot_optimization) {
++		state->clk_mgr->funcs->update_clocks(state->clk_mgr,
++						     state, false);
++	}
+ 
+ 	skip_video_pattern = true;
+ 
+ 	if (link_settings.link_rate == LINK_RATE_LOW)
+-			skip_video_pattern = false;
+-
+-	if (perform_link_training_with_retries(
+-			&link_settings,
+-			skip_video_pattern,
+-			LINK_TRAINING_ATTEMPTS,
+-			pipe_ctx,
+-			pipe_ctx->stream->signal)) {
++		skip_video_pattern = false;
++
++	if (perform_link_training_with_retries(&link_settings,
++					       skip_video_pattern,
++					       LINK_TRAINING_ATTEMPTS,
++					       pipe_ctx,
++					       pipe_ctx->stream->signal)) {
+ 		link->cur_link_settings = link_settings;
+ 		status = DC_OK;
+-	}
+-	else
++	} else {
+ 		status = DC_FAIL_DP_LINK_TRAINING;
++	}
+ 
+-	if (link->preferred_training_settings.fec_enable != NULL)
++	if (link->preferred_training_settings.fec_enable)
+ 		fec_enable = *link->preferred_training_settings.fec_enable;
+ 	else
+ 		fec_enable = true;
+-- 
+2.25.0
+
