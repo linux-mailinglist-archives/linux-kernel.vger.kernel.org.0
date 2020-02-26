@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE0E417010D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:21:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 038C11700FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:20:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbgBZOVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 09:21:13 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:57954 "EHLO
+        id S1727459AbgBZOUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 09:20:45 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:57921 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727534AbgBZOU4 (ORCPT
+        with ESMTP id S1726278AbgBZOUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 09:20:56 -0500
+        Wed, 26 Feb 2020 09:20:44 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1j6xYF-00080e-Lm; Wed, 26 Feb 2020 15:20:39 +0100
+        id 1j6xYG-00080h-2G; Wed, 26 Feb 2020 15:20:40 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 577081C2156;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A6C181C2157;
         Wed, 26 Feb 2020 15:20:39 +0100 (CET)
 Date:   Wed, 26 Feb 2020 14:20:39 -0000
-From:   "tip-bot2 for Wei Li" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Thomas Richter" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf intel-pt: Fix endless record after being terminated
-Cc:     Wei Li <liwei391@huawei.com>, Jiri Olsa <jolsa@redhat.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>, stable@vger.kernel.org,
-        #@tip-bot2.tec.linutronix.de, 5.4+@tip-bot2.tec.linutronix.de,
-        Adrian Hunter <adrian.hunter@intel.com>,
+Subject: [tip: perf/urgent] perf test: Fix test trace+probe_vfs_getname.sh on s390
+Cc:     Thomas Richter <tmricht@linux.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200214132654.20395-2-adrian.hunter@intel.com>
-References: <20200214132654.20395-2-adrian.hunter@intel.com>
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Sumanth Korikkar <sumanthk@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200217102111.61137-1-tmricht@linux.ibm.com>
+References: <20200217102111.61137-1-tmricht@linux.ibm.com>
 MIME-Version: 1.0
-Message-ID: <158272683905.28353.4992287081120700782.tip-bot2@tip-bot2>
+Message-ID: <158272683942.28353.13346247455892179046.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,66 +51,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     2da4dd3d6973ffdfba4fa07f53240fda7ab22929
-Gitweb:        https://git.kernel.org/tip/2da4dd3d6973ffdfba4fa07f53240fda7ab22929
-Author:        Wei Li <liwei391@huawei.com>
-AuthorDate:    Fri, 14 Feb 2020 15:26:50 +02:00
+Commit-ID:     2bbc83537614517730e9f2811195004b712de207
+Gitweb:        https://git.kernel.org/tip/2bbc83537614517730e9f2811195004b712de207
+Author:        Thomas Richter <tmricht@linux.ibm.com>
+AuthorDate:    Mon, 17 Feb 2020 11:21:11 +01:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 18 Feb 2020 10:13:29 -03:00
+CommitterDate: Tue, 18 Feb 2020 10:13:28 -03:00
 
-perf intel-pt: Fix endless record after being terminated
+perf test: Fix test trace+probe_vfs_getname.sh on s390
 
-In __cmd_record(), when receiving SIGINT(ctrl + c), a 'done' flag will
-be set and the event list will be disabled by evlist__disable() once.
+This test places a kprobe to function getname_flags() in the kernel
+which has the following prototype:
 
-While in auxtrace_record.read_finish(), the related events will be
-enabled again, if they are continuous, the recording seems to be endless.
+  struct filename *getname_flags(const char __user *filename, int flags, int *empty)
 
-If the intel_pt event is disabled, we don't enable it again here.
+The 'filename' argument points to a filename located in user space memory.
 
-Before the patch:
+Looking at commit 88903c464321c ("tracing/probe: Add ustring type for
+user-space string") the kprobe should indicate that user space memory is
+accessed.
 
-  huawei@huawei-2288H-V5:~/linux-5.5-rc4/tools/perf$ ./perf record -e \
-  intel_pt//u -p 46803
-  ^C^C^C^C^C^C
+Output before:
 
-After the patch:
+   [root@m35lp76 perf]# ./perf test 66 67
+   66: Use vfs_getname probe to get syscall args filenames   : FAILED!
+   67: Check open filename arg using perf trace + vfs_getname: FAILED!
+   [root@m35lp76 perf]#
 
-  huawei@huawei-2288H-V5:~/linux-5.5-rc4/tools/perf$ ./perf record -e \
-  intel_pt//u -p 48591
-  ^C[ perf record: Woken up 0 times to write data ]
-  Warning:
-  AUX data lost 504 times out of 4816!
+Output after:
 
-  [ perf record: Captured and wrote 2024.405 MB perf.data ]
+   [root@m35lp76 perf]# ./perf test 66 67
+   66: Use vfs_getname probe to get syscall args filenames   : Ok
+   67: Check open filename arg using perf trace + vfs_getname: Ok
+   [root@m35lp76 perf]#
 
-Signed-off-by: Wei Li <liwei391@huawei.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Tan Xiaojun <tanxiaojun@huawei.com>
-Cc: stable@vger.kernel.org # 5.4+
-Link: http://lore.kernel.org/lkml/20200214132654.20395-2-adrian.hunter@intel.com
-[ ahunter: removed redundant 'else' after 'return' ]
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Comments from Masami Hiramatsu:
+
+This bug doesn't happen on x86 or other archs on which user address
+space and kernel address space is the same. On some arches (ppc64 in
+this case?) user address space is partially or completely the same as
+kernel address space.
+
+(Yes, they switch the world when running into the kernel) In this case,
+we need to use different data access functions for each space.
+
+That is why I introduced the "ustring" type for kprobe events.
+
+As far as I can see, Thomas's patch is sane. Thomas, could you show us
+your result on your test environment?
+
+Comments from Thomas Richter:
+
+Test results for s/390 included above.
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Link: http://lore.kernel.org/lkml/20200217102111.61137-1-tmricht@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/x86/util/intel-pt.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/perf/tests/shell/lib/probe_vfs_getname.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index 20df442..be07d68 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -1173,9 +1173,12 @@ static int intel_pt_read_finish(struct auxtrace_record *itr, int idx)
- 	struct evsel *evsel;
- 
- 	evlist__for_each_entry(ptr->evlist, evsel) {
--		if (evsel->core.attr.type == ptr->intel_pt_pmu->type)
-+		if (evsel->core.attr.type == ptr->intel_pt_pmu->type) {
-+			if (evsel->disabled)
-+				return 0;
- 			return perf_evlist__enable_event_idx(ptr->evlist, evsel,
- 							     idx);
-+		}
- 	}
- 	return -EINVAL;
+diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+index 7cb99b4..c2cc42d 100644
+--- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+@@ -14,7 +14,7 @@ add_probe_vfs_getname() {
+ 	if [ $had_vfs_getname -eq 1 ] ; then
+ 		line=$(perf probe -L getname_flags 2>&1 | egrep 'result.*=.*filename;' | sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/')
+ 		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
+-		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:string"
++		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
+ 	fi
  }
+ 
