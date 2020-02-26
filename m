@@ -2,230 +2,320 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA7F21706E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:01:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C30311706E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:03:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbgBZSBc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:01:32 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50655 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726787AbgBZSBc (ORCPT
+        id S1727190AbgBZSDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:03:01 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37998 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726787AbgBZSDB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:01:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582740091;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+j9PbT5QAZpP/mItAsMzoO98L8Enk3oE2QSK5MgUDSA=;
-        b=VkGBsigTDqIQhDSrUu4xKStr4EpkKnUbveXL41M3Uuuf2nVYtTeDWU/NteQ2wGuUmz2aHN
-        DhKqx2nB/kE8dVNGEKxGcrDE4MIntMWy5ZJERwYyfz4gwP9Luy4BSi9f6A/CYVGPsmIFBS
-        v0aWofD6fCThNiwzvyOVg59vrXyoz94=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-108-aKYTksPKNo-kNz1pjlmtNQ-1; Wed, 26 Feb 2020 13:01:29 -0500
-X-MC-Unique: aKYTksPKNo-kNz1pjlmtNQ-1
-Received: by mail-wm1-f71.google.com with SMTP id c5so874330wmd.8
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 10:01:29 -0800 (PST)
+        Wed, 26 Feb 2020 13:03:01 -0500
+Received: by mail-lj1-f193.google.com with SMTP id w1so86694ljh.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 10:02:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pWXKGdBdSX89CKR49e5HffMWoYSUP5rUcqDtF+HPtwU=;
+        b=ACh0SRAboVy9RI/D8WrK7VHkxi4+ta5eLMnNWoJU0tAoPcYq0HEVIC0YNpBboxDBBp
+         DpR1O8hBxPP0kZqekZjQfwjMvKF0/rceGQYMiduSe9uU33KJEqOl0XfIVgVG4Uue1oAb
+         eVgTwOVA6OYfqaxp2t5hYREjGDebc8qEbVXx/3Hr//pVlBp/Kz4ugcx8oJqathS4eVa8
+         nCNSrWLI4SKd3GV6hrw4LMIlcvCRvHjCoMFbd3fVu9zbVD8WR4i0fl4hgcTYWSXHG65x
+         P3s905idwsUc6DxrPHyDsUTFz2KjVkN9fJkwK1xGlaa0vicxuiGumwphYAMOTQyK8FGa
+         e38A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=+j9PbT5QAZpP/mItAsMzoO98L8Enk3oE2QSK5MgUDSA=;
-        b=m1UAvs2vSIneyJJmiGB3bw7hggkOY3wlkcwBPHnOWyecUHfAs8d3KCCnbcrX2xNKIt
-         o8fGrpxYQqo3WL7Jxsmnp6N5vBJC/frbvhyeFTWIpgVRbHgUwlSC/0VW6iyOxtCGXh3k
-         Jolfo2U4ImoV4YaxqQv5NMaunHvu7AmGV8ALKcM4SGPOl/HSqNCZBIy0ZcmX627bN0M2
-         p5D0W0g0d8j6YDFLMFHKBbBD0QAJmXnP3dadV9Q27HUeC4C3kQ2gEqEyQjof8CjY2+dp
-         uIkruxAy9/ysFOMx/Qa6OD5CUQaoSrW7/PSs6vyYR/nP4PxVfZs68e7pTYaxzGkFl1fb
-         +u0w==
-X-Gm-Message-State: APjAAAWuBmK65cGGcpodEXN6R0GT9k3YsYiCKghhlA/BRuxCRYixUb4I
-        2Gyu/BbMkZwfW1xhsx1G6/PcnTl1iRNikDsggkvtRxuuEU5IYW4Hk5U4QSH6etEsGhZihNb7ZRY
-        gwnoZwqxsgPy+jYO/r/ulVQf1
-X-Received: by 2002:a5d:6411:: with SMTP id z17mr7070240wru.57.1582740087721;
-        Wed, 26 Feb 2020 10:01:27 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwI/tB5gPzUUtrLtMjPQZmicXa9lh8ssIM/ynrqM2BBE3oMo3Yidd0H5ZVKOIFp8Q1j1UU+fw==
-X-Received: by 2002:a5d:6411:: with SMTP id z17mr7070191wru.57.1582740087215;
-        Wed, 26 Feb 2020 10:01:27 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id b82sm3669800wmb.16.2020.02.26.10.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 10:01:26 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 12/13] KVM: x86: Add variable to control existence of emulator
-In-Reply-To: <20200218232953.5724-13-sean.j.christopherson@intel.com>
-References: <20200218232953.5724-1-sean.j.christopherson@intel.com> <20200218232953.5724-13-sean.j.christopherson@intel.com>
-Date:   Wed, 26 Feb 2020 19:01:25 +0100
-Message-ID: <87lfopi5xm.fsf@vitty.brq.redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pWXKGdBdSX89CKR49e5HffMWoYSUP5rUcqDtF+HPtwU=;
+        b=oTek1CKJcEwjE9XiCvVXNeugXPQpT9vw2An8Jiev9olZLsNRjhjyKQqybDzVHcS4H+
+         c5cdWdqbU6R2kTsuxJZl7/BIRjgGE2udwGsyJqFy+gP76sxY5soUIFYGLePuGuIK1Ru1
+         GWqsivimbi9ve4i9rvcGKJOEHbZT8RFvpw9ylv6sCHrKPpQ2+FWLL+jNWD+znjUwz4IY
+         VdJpqxky3KDnizqCR6M6PIcIOzzjdx8WOWI1v0Q8pP7/mtsrUy7zKqj2aLctWcPK6QUF
+         /Vdx4/6Nbf9cZUUEXMEUQbLQ8weoDNDE96eufBI1bOARx8xSO6dPdjASMfbjCxKvRUMI
+         G8Lw==
+X-Gm-Message-State: ANhLgQ3cZhYL9gH4mYbqwvBWWMb5gabXx0f8b3ov0rGX95XLQBF5AkLP
+        pK/rwaLjq4MFx0PMqTKzVDiBMxguSU9f5UWi3uesXg==
+X-Google-Smtp-Source: ADFU+vuwE3qhVRbQZtrSftxYOVH0ZnrrfJe221jM9W/BJxb8Y8TG/bQuSlMQjAc3UvmpphwH1ksiK5jB59fzcMH5MEw=
+X-Received: by 2002:a05:651c:414:: with SMTP id 20mr83919lja.165.1582740178341;
+ Wed, 26 Feb 2020 10:02:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <CA+G9fYu3682XJ2Kw2ZvQdUT80epKc9DWWXgDT1-D_65ajSXNTw@mail.gmail.com>
+ <fcb799d4-f316-60d6-9fd0-0bc1c174e63c@arm.com> <202002251131.3216B3B50C@keescook>
+ <b485a8a9-5312-ca77-d091-3dbfac33ec5b@arm.com>
+In-Reply-To: <b485a8a9-5312-ca77-d091-3dbfac33ec5b@arm.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 26 Feb 2020 23:32:46 +0530
+Message-ID: <CA+G9fYuQJjf3v53HNj4TOAL2NcgDCYCrsUkfL6h93ntXO3WWwg@mail.gmail.com>
+Subject: Re: selftests: Linux Kernel Dump Test Module output
+To:     Cristian Marussi <cristian.marussi@arm.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        lkft-triage@lists.linaro.org,
+        open list <linux-kernel@vger.kernel.org>, ankita@in.ibm.com,
+        Will Deacon <will@kernel.org>, ardb@kernel.org,
+        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
-
-> Add a global variable to control whether or not the emulator is enabled,
-> and make all necessary changes to gracefully handle reaching emulation
-> paths with the emulator disabled.
+On Wed, 26 Feb 2020 at 17:23, Cristian Marussi <cristian.marussi@arm.com> wrote:
 >
-> Running with VMX's unrestricted guest disabled requires special
-> consideration due to its use of kvm_inject_realmode_interrupt().  When
-> unrestricted guest is disabled, KVM emulates interrupts and exceptions
-> when the processor is in real mode, but does so without going through
-> the standard emulator loop.  Ideally, kvm_inject_realmode_interrupt()
-> would only log the interrupt and defer actual emulation to the standard
-> run loop, but that is a non-trivial change and a waste of resources
-> given that unrestricted guest is supported on all CPUs shipped within
-> the last decade.  Similarly, dirtying up the event injection stack for
-> such a legacy feature is undesirable.  To avoid the conundrum, prevent
-> disabling both the emulator and unrestricted guest.
+> Hi Kees
 >
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  2 +-
->  arch/x86/kvm/svm.c              |  2 +-
->  arch/x86/kvm/vmx/vmx.c          |  7 ++++++-
->  arch/x86/kvm/x86.c              | 18 +++++++++++++++---
->  4 files changed, 23 insertions(+), 6 deletions(-)
+> ./run_kselftest.sh 2>/dev/null | grep "SKIP"
+> not ok 1 selftests: lkdtm: PANIC.sh # SKIP
+> not ok 6 selftests: lkdtm: LOOP.sh # SKIP
+> not ok 7 selftests: lkdtm: EXHAUST_STACK.sh # SKIP
+> not ok 8 selftests: lkdtm: CORRUPT_STACK.sh # SKIP
+> not ok 9 selftests: lkdtm: CORRUPT_STACK_STRONG.sh # SKIP
+> not ok 15 selftests: lkdtm: UNSET_SMEP.sh # SKIP
+> not ok 16 selftests: lkdtm: DOUBLE_FAULT.sh # SKIP
+> not ok 18 selftests: lkdtm: OVERWRITE_ALLOCATION.sh # SKIP
+> not ok 19 selftests: lkdtm: WRITE_AFTER_FREE.sh # SKIP
+> not ok 21 selftests: lkdtm: WRITE_BUDDY_AFTER_FREE.sh # SKIP
+> not ok 26 selftests: lkdtm: SOFTLOCKUP.sh # SKIP
+> not ok 27 selftests: lkdtm: HARDLOCKUP.sh # SKIP
+> not ok 28 selftests: lkdtm: SPINLOCKUP.sh # SKIP
+> not ok 29 selftests: lkdtm: HUNG_TASK.sh # SKIP
+> not ok 59 selftests: lkdtm: REFCOUNT_TIMING.sh # SKIP
+> not ok 60 selftests: lkdtm: ATOMIC_TIMING.sh # SKIP
 >
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 0dfe11f30d7f..c4baac32a291 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1050,7 +1050,7 @@ struct kvm_x86_ops {
->  	int (*hardware_enable)(void);
->  	void (*hardware_disable)(void);
->  	int (*check_processor_compatibility)(void);/* __init */
-> -	int (*hardware_setup)(void);               /* __init */
-> +	int (*hardware_setup)(bool enable_emulator); /* __init */
->  	void (*hardware_unsetup)(void);            /* __exit */
->  	bool (*cpu_has_accelerated_tpr)(void);
->  	bool (*has_emulated_msr)(int index);
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index ae62ea454158..810139b3bfe4 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -1350,7 +1350,7 @@ static __init void svm_adjust_mmio_mask(void)
->  	kvm_mmu_set_mmio_spte_mask(mask, mask, PT_WRITABLE_MASK | PT_USER_MASK);
->  }
->  
-> -static __init int svm_hardware_setup(void)
-> +static __init int svm_hardware_setup(bool enable_emulator)
->  {
->  	int cpu;
->  	struct page *iopm_pages;
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 09bb0d98afeb..e05d36f63b73 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -7548,7 +7548,7 @@ static bool vmx_apic_init_signal_blocked(struct kvm_vcpu *vcpu)
->  	return to_vmx(vcpu)->nested.vmxon;
->  }
->  
-> -static __init int hardware_setup(void)
-> +static __init int hardware_setup(bool enable_emulator)
->  {
->  	unsigned long host_bndcfgs;
->  	struct desc_ptr dt;
-> @@ -7595,6 +7595,11 @@ static __init int hardware_setup(void)
->  	if (!cpu_has_virtual_nmis())
->  		enable_vnmi = 0;
->  
-> +	if (!enable_emulator && !enable_unrestricted_guest) {
-> +		pr_warn("kvm: unrestricted guest disabled, emulator must be enabled\n");
-> +		return -EIO;
-> +	}
-> +
->  	/*
->  	 * set_apic_access_page_addr() is used to reload apic access
->  	 * page upon invalidation.  No need to do anything if not
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 7bffdc6f9e1b..f9134e1104c2 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -159,6 +159,8 @@ EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
->  static bool __read_mostly force_emulation_prefix = false;
->  module_param(force_emulation_prefix, bool, S_IRUGO);
->  
-> +static const bool enable_emulator = true;
-> +
->  int __read_mostly pi_inject_timer = -1;
->  module_param(pi_inject_timer, bint, S_IRUGO | S_IWUSR);
->  
-> @@ -6474,6 +6476,9 @@ void kvm_inject_realmode_interrupt(struct kvm_vcpu *vcpu, int irq, int inc_eip)
->  	struct x86_emulate_ctxt *ctxt = vcpu->arch.emulate_ctxt;
->  	int ret;
->  
-> +	if (WARN_ON_ONCE(!ctxt))
-> +		return;
-> +
->  	init_emulate_ctxt(ctxt);
->  
->  	ctxt->op_bytes = 2;
-> @@ -6791,6 +6796,9 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->  	bool writeback = true;
->  	bool write_fault_to_spt = vcpu->arch.write_fault_to_shadow_pgtable;
->  
-> +	if (!ctxt)
-> +		return internal_emulation_error(vcpu);
-> +
->  	vcpu->arch.l1tf_flush_l1d = true;
->  
->  	/*
-> @@ -8785,7 +8793,8 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
->  
->  static void __get_regs(struct kvm_vcpu *vcpu, struct kvm_regs *regs)
->  {
-> -	if (vcpu->arch.emulate_regs_need_sync_to_vcpu) {
-> +	if (vcpu->arch.emulate_regs_need_sync_to_vcpu &&
-> +	    !(WARN_ON_ONCE(!vcpu->arch.emulate_ctxt))) {
->  		/*
->  		 * We are here if userspace calls get_regs() in the middle of
->  		 * instruction emulation. Registers state needs to be copied
-> @@ -8982,6 +8991,9 @@ int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
->  	struct x86_emulate_ctxt *ctxt = vcpu->arch.emulate_ctxt;
->  	int ret;
->  
-> +	if (!ctxt)
-> +		return internal_emulation_error(vcpu);
-> +
->  	init_emulate_ctxt(ctxt);
->  
->  	ret = emulator_task_switch(ctxt, tss_selector, idt_index, reason,
-> @@ -9345,7 +9357,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
->  				GFP_KERNEL_ACCOUNT))
->  		goto fail_free_mce_banks;
->  
-> -	if (!alloc_emulate_ctxt(vcpu))
-> +	if (enable_emulator && !alloc_emulate_ctxt(vcpu))
->  		goto free_wbinvd_dirty_mask;
->  
->  	vcpu->arch.user_fpu = kmem_cache_zalloc(x86_fpu_cache,
-> @@ -9651,7 +9663,7 @@ int kvm_arch_hardware_setup(void)
->  {
->  	int r;
->  
-> -	r = kvm_x86_ops->hardware_setup();
-> +	r = kvm_x86_ops->hardware_setup(enable_emulator);
->  	if (r != 0)
->  		return r;
+> BUT, if I look at one LKDTM test script
+> (lkdtm/USERCOPY_STACK_FRAME_TO.sh):
+>
+> ...
+> # If the test is commented out, report a skip
 
-I'm not sure that emulator disablement should _only_ be a global
-varaiable, i.e. why can't we do it for some VMs and allow for others?
-(we can even run different userspaces for different needs). This,
-however, is complementary.
+Yeah i see this case at my end also.
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+my two cents,
+I have two comments,
+1) shell check
 
-(I hope we have some userspaces which are already onboard)
+2) I see the debugfs mounted and test required details are available
+in a given path.
 
--- 
-Vitaly
+1) Shell check show these warnings
+* SHELLCHECK: [FAILED]: run.sh
+* SHELLCHECK: [OUTPUT]:
 
+ In run.sh line 26:
+ test=$(basename $0 .sh)
+                 ^-- SC2086: Double quote to prevent globbing and word
+splitting.
+
+
+ In run.sh line 28:
+ line=$(egrep '^#?'"$test"'\b' tests.txt)
+        ^---^ SC2196: egrep is non-standard and deprecated. Use grep -E instead.
+
+
+ In run.sh line 34:
+ if ! egrep -q '^'"$test"'$' "$TRIGGER" ; then
+      ^---^ SC2196: egrep is non-standard and deprecated. Use grep -E instead.
+
+
+ In run.sh line 81:
+ if egrep -qi "$expect" "$LOG" ; then
+    ^---^ SC2196: egrep is non-standard and deprecated. Use grep -E instead.
+
+
+ In run.sh line 85:
+  if egrep -qi XFAIL: "$LOG" ; then
+            ^---^ SC2196: egrep is non-standard and deprecated. Use
+grep -E instead.
+
+Test output with set -x for debugging shell scripts.
+
++ ls /sys/kernel/debug/provoke-crash/DIRECT
+/sys/kernel/debug/provoke-crash/DIRECT
++ ls /sys/kernel/debug/provoke-crash/DIRECT
+/sys/kernel/debug/provoke-crash/FS_DEVRW
+/sys/kernel/debug/provoke-crash/IDE_CORE_CP
+/sys/kernel/debug/provoke-crash/INT_HARDWARE_ENTRY
+/sys/kernel/debug/provoke-crash/INT_HW_IRQ_EN
+/sys/kernel/debug/provoke-crash/INT_TASKLET_ENTRY
+/sys/kernel/debug/provoke-crash/MEM_SWAPOUT
+/sys/kernel/debug/provoke-crash/SCSI_DISPATCH_CMD
+/sys/kernel/debug/provoke-crash/TIMERADD
+/sys/kernel/debug/provoke-crash/DIRECT
+/sys/kernel/debug/provoke-crash/FS_DEVRW
+/sys/kernel/debug/provoke-crash/IDE_CORE_CP
+/sys/kernel/debug/provoke-crash/INT_HARDWARE_ENTRY
+/sys/kernel/debug/provoke-crash/INT_HW_IRQ_EN
+/sys/kernel/debug/provoke-crash/INT_TASKLET_ENTRY
+/sys/kernel/debug/provoke-crash/MEM_SWAPOUT
+/sys/kernel/debug/provoke-crash/SCSI_DISPATCH_CMD
+/sys/kernel/debug/provoke-crash/TIMERADD
++ cat /sys/kernel/debug/provoke-crash/DIRECT
+Available crash types:
+PANIC
+BUG
+WARNING
+WARNING_MESSAGE
+EXCEPTION
+LOOP
+EXHAUST_STACK
+CORRUPT_STACK
+CORRUPT_STACK_STRONG
+CORRUPT_LIST_ADD
+CORRUPT_LIST_DEL
+CORRUPT_USER_DS
+STACK_GUARD_PAGE_LEADING
+STACK_GUARD_PAGE_TRAILING
+UNSET_SMEP
+UNALIGNED_LOAD_STORE_WRITE
+OVERWRITE_ALLOCATION
+WRITE_AFTER_FREE
+READ_AFTER_FREE
+WRITE_BUDDY_AFTER_FREE
+READ_BUDDY_AFTER_FREE
+SLAB_FREE_DOUBLE
+SLAB_FREE_CROSS
+SLAB_FREE_PAGE
+SOFTLOCKUP
+HARDLOCKUP
+SPINLOCKUP
+HUNG_TASK
+EXEC_DATA
+EXEC_STACK
+EXEC_KMALLOC
+EXEC_VMALLOC
+EXEC_RODATA
+EXEC_USERSPACE
+EXEC_NULL
+ACCESS_USERSPACE
+ACCESS_NULL
+WRITE_RO
+WRITE_RO_AFTER_INIT
+WRITE_KERN
+REFCOUNT_INC_OVERFLOW
+REFCOUNT_ADD_OVERFLOW
+REFCOUNT_INC_NOT_ZERO_OVERFLOW
+REFCOUNT_ADD_NOT_ZERO_OVERFLOW
+REFCOUNT_DEC_ZERO
+REFCOUNT_DEC_NEGATIVE
+REFCOUNT_DEC_AND_TEST_NEGATIVE
+REFCOUNT_SUB_AND_TEST_NEGATIVE
+REFCOUNT_INC_ZERO
+REFCOUNT_ADD_ZERO
+REFCOUNT_INC_SATURATED
+REFCOUNT_DEC_SATURATED
+REFCOUNT_ADD_SATURATED
+REFCOUNT_INC_NOT_ZERO_SATURATED
+REFCOUNT_ADD_NOT_ZERO_SATURATED
+REFCOUNT_DEC_AND_TEST_SATURATED
+REFCOUNT_SUB_AND_TEST_SATURATED
+REFCOUNT_TIMING
+ATOMIC_TIMING
+USERCOPY_HEAP_SIZE_TO
+USERCOPY_HEAP_SIZE_FROM
+USERCOPY_HEAP_WHITELIST_TO
+USERCOPY_HEAP_WHITELIST_FROM
+USERCOPY_STACK_FRAME_TO
+USERCOPY_STACK_FRAME_FROM
+USERCOPY_STACK_BEYOND
+USERCOPY_KERNEL
+USERCOPY_KERNEL_DS
+STACKLEAK_ERASING
+CFI_FORWARD_PROTO
++ cd /opt/kselftests/default-in-kernel/lkdtm
++ sed -i '1i set -x' ACCESS_NULL.sh ACCESS_USERSPACE.sh
+ATOMIC_TIMING.sh BUG.sh CFI_FORWARD_PROTO.sh CORRUPT_LIST_ADD.sh
+CORRUPT_LIST_DEL.sh CORRUPT_STACK.sh CORRUPT_STACK_STRONG.sh
+CORRUPT_USER_DS.sh DOUBLE_FAULT.sh EXCEPTION.sh EXEC_DATA.sh
+EXEC_KMALLOC.sh EXEC_NULL.sh EXEC_RODATA.sh EXEC_STACK.sh
+EXEC_USERSPACE.sh EXEC_VMALLOC.sh EXHAUST_STACK.sh HARDLOCKUP.sh
+HUNG_TASK.sh LOOP.sh OVERWRITE_ALLOCATION.sh PANIC.sh
+READ_AFTER_FREE.sh READ_BUDDY_AFTER_FREE.sh
+REFCOUNT_ADD_NOT_ZERO_OVERFLOW.sh REFCOUNT_ADD_NOT_ZERO_SATURATED.sh
+REFCOUNT_ADD_OVERFLOW.sh REFCOUNT_ADD_SATURATED.sh
+REFCOUNT_ADD_ZERO.sh REFCOUNT_DEC_AND_TEST_NEGATIVE.sh
+REFCOUNT_DEC_AND_TEST_SATURATED.sh REFCOUNT_DEC_NEGATIVE.sh
+REFCOUNT_DEC_SATURATED.sh REFCOUNT_DEC_ZERO.sh
+REFCOUNT_INC_NOT_ZERO_OVERFLOW.sh REFCOUNT_INC_NOT_ZERO_SATURATED.sh
+REFCOUNT_INC_OVERFLOW.sh REFCOUNT_INC_SATURATED.sh
+REFCOUNT_INC_ZERO.sh REFCOUNT_SUB_AND_TEST_NEGATIVE.sh
+REFCOUNT_SUB_AND_TEST_SATURATED.sh REFCOUNT_TIMING.sh
+SLAB_FREE_CROSS.sh SLAB_FREE_DOUBLE.sh SLAB_FREE_PAGE.sh SOFTLOCKUP.sh
+SPINLOCKUP.sh STACKLEAK_ERASING.sh STACK_GUARD_PAGE_LEADING.sh
+STACK_GUARD_PAGE_TRAILING.sh UNALIGNED_LOAD_STORE_WRITE.sh
+UNSET_SMEP.sh USERCOPY_HEAP_SIZE_FROM.sh USERCOPY_HEAP_SIZE_TO.sh
+USERCOPY_HEAP_WHITELIST_FROM.sh USERCOPY_HEAP_WHITELIST_TO.sh
+USERCOPY_KERNEL.sh USERCOPY_KERNEL_DS.sh USERCOPY_STACK_BEYOND.sh
+USERCOPY_STACK_FRAME_FROM.sh USERCOPY_STACK_FRAME_TO.sh WARNING.sh
+WARNING_MESSAGE.sh WRITE_AFTER_FREE.sh WRITE_BUDDY_AFTER_FREE.sh
+WRITE_KERN.sh WRITE_RO.sh WRITE_RO_AFTER_INIT.sh
++ ./PANIC.sh
+++ set -e
+++ TRIGGER=/sys/kernel/debug/provoke-crash/DIRECT
+++ KSELFTEST_SKIP_TEST=4
+++ '[' '!' -r /sys/kernel/debug/provoke-crash/DIRECT ']'
++++ basename ./PANIC.sh .sh
+++ test=PANIC
++++ egrep '^#?PANIC\b' tests.txt
+++ line='#PANIC'
+++ '[' -z '#PANIC' ']'
+++ egrep -q '^PANIC$' /sys/kernel/debug/provoke-crash/DIRECT
++++ echo '#PANIC'
++++ cut '-d ' -f1
+++ test='#PANIC'
+++ echo '#PANIC'
+++ grep -q ' '
+++ expect=
+++ echo '#PANIC'
+++ grep -q '^#'
++++ echo '#PANIC'
++++ cut -c2-
+++ test=PANIC
+++ '[' -z '' ']'
+++ expect='crashes entire system'
+++ echo 'Skipping PANIC: crashes entire system'
+Skipping PANIC: crashes entire system
+++ exit 4
++ true
++ ./BUG.sh
+++ set -e
+++ TRIGGER=/sys/kernel/debug/provoke-crash/DIRECT
+++ KSELFTEST_SKIP_TEST=4
+++ '[' '!' -r /sys/kernel/debug/provoke-crash/DIRECT ']'
++++ basename ./BUG.sh .sh
+++ test=BUG
++++ egrep '^#?BUG\b' tests.txt
+++ line='BUG kernel BUG at'
+++ '[' -z 'BUG kernel BUG at' ']'
+++ egrep -q '^BUG$' /sys/kernel/debug/provoke-crash/DIRECT
++++ echo 'BUG kernel BUG at'
++++ cut '-d ' -f1
+++ test=BUG
+++ echo 'BUG kernel BUG at'
+++ grep -q ' '
++++ echo 'BUG kernel BUG at'
++++ cut '-d ' -f2-
+++ expect='kernel BUG at'
+++ echo BUG
+++ grep -q '^#'
+++ '[' -z 'kernel BUG at' ']'
+++ dmesg -c
++++ mktemp --tmpdir -t lkdtm-XXXXXX
+++ LOG=/tmp/lkdtm-r5yZ7K
+++ trap cleanup EXIT
+++ /bin/sh -c 'cat <(echo BUG) >/sys/kernel/debug/provoke-crash/DIRECT'
+++ true
+++ dmesg -c
+++ cat /tmp/lkdtm-r5yZ7K
+++ egrep -qi 'kernel BUG at' /tmp/lkdtm-r5yZ7K
+++ egrep -qi XFAIL: /tmp/lkdtm-r5yZ7K
+++ echo 'BUG: missing '\''kernel BUG at'\'': [FAIL]'
+BUG: missing 'kernel BUG at': [FAIL]
+...
+
+ref:
+https://lkft.validation.linaro.org/scheduler/job/1251181#L1311
