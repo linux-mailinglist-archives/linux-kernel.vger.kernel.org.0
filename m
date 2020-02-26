@@ -2,69 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5017116FEDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:25:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00F1016FEF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:27:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgBZMY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 07:24:58 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33477 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726187AbgBZMY6 (ORCPT
+        id S1727291AbgBZM1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 07:27:03 -0500
+Received: from icp-osb-irony-out7.external.iinet.net.au ([203.59.1.107]:28279
+        "EHLO icp-osb-irony-out7.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727267AbgBZM1C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 07:24:58 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m10so4460428wmc.0;
-        Wed, 26 Feb 2020 04:24:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:subject:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IvhXItdd4X1YXydMqRqD+tdcTcMEd0LYsl8PcoH++pk=;
-        b=Pm5HWF73aJ9VZcK/5Zlg1TkuMduL1Z0xp2H7Tf54k04xSGZJJXLHLvKQeMdHL+zJYr
-         pPiwRu+UndJu3ZSYNetFEJdoMpn2fyL8aufv0VPRtbL3/nvBusVWG+5yztsop2Dv+UU3
-         AoeyskahRt+cDZAxIsfHiT8TbsUPrhERZ0kK0iBKH0iWuILF0PbKXDlODXyBTmFYTH8F
-         zy/4nUoxWO0igZl95eYU2cbPiOZSSbL543ND5gG+xJo+CCZv1YY8iFW0gGJfpYzPCrnB
-         0T9KuaH6iqs9hgFnT3hqGoAy9nSzJi0M3gsFxzE3eLM2t1zv2yTU2VUgy2A2wNWWGehp
-         llGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:subject:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IvhXItdd4X1YXydMqRqD+tdcTcMEd0LYsl8PcoH++pk=;
-        b=kJjHxbc2xQhfs8n3fo+seIMK2oBJOY5kATJc/y+ALYztquS2EOOruVkKktrvpA4j1w
-         /OriLlTqgi3gH4n7TbrfKPChykewp2ecOblKFFW06HpDU8GvTfo1kCp1qFjWOCbhCQ22
-         QbJHcb3v2Eb7Uz+s/u0IBHLe07n03ILiuhLd+Fa05/E8yUvpuDlDFEIgUJvjXVamsl7P
-         O2bd6rpptsTn7mJtlxP15tNekhhNHRbCPOpOccJARqyB00CBSq1cmutBByZSRoHuY8JQ
-         BoFRKu3ogNYnxj0iLfmJK85vXEnr0W1+wFgOdmPIlNrNnrnbdvYwcK5Lxmp2fgAT/0Ji
-         MQJQ==
-X-Gm-Message-State: APjAAAXUP7Ykdq/CsKJ/J2ErADzxxK/+FVrzpbnPTZ3NYiBM+yfdcJEj
-        Ta26ChQsex/MKaXGF8F0Qcw=
-X-Google-Smtp-Source: APXvYqzyTzyUPRQdIy8Rfhx8ubVi+C6umoNFwiXeFqS0v+Ld0G8ObmhzMOrwd3BzwL6ZjxmlWPhcrg==
-X-Received: by 2002:a1c:7718:: with SMTP id t24mr5311847wmi.119.1582719896307;
-        Wed, 26 Feb 2020 04:24:56 -0800 (PST)
-Received: from [192.168.2.1] (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id g14sm3226354wrv.58.2020.02.26.04.24.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2020 04:24:55 -0800 (PST)
-To:     ezequiel@collabora.com
-Cc:     boris.brezillon@collabora.com, devicetree@vger.kernel.org,
-        heiko@sntech.de, hverkuil@xs4all.nl, jonas@kwiboo.se,
-        kernel@collabora.com, laurent.pinchart@ideasonboard.com,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, nicolas@ndufresne.ca,
-        paul.kocialkowski@bootlin.com, robh+dt@kernel.org,
-        sakari.ailus@iki.fi, tfiga@chromium.org
-References: <20200220163016.21708-7-ezequiel@collabora.com>
-Subject: Re: [PATCH v6 6/6] arm64: dts: rockchip: rk3399: Define the rockchip
- Video Decoder node
-From:   Johan Jonker <jbx6244@gmail.com>
-Message-ID: <817821e3-bc51-8037-b9b9-e429c5eeb280@gmail.com>
-Date:   Wed, 26 Feb 2020 13:24:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
+        Wed, 26 Feb 2020 07:27:02 -0500
+X-SMTP-MATCH: 0
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AUAAAXY1Ze/zXSMGcNWRsBAQEBAQE?=
+ =?us-ascii?q?BBQEBAREBAQMDAQEBgWoDAQEBCwGDZIR1j1KBN4lxkUwJAQEBAQEBAQEBNwQ?=
+ =?us-ascii?q?BAYRAAoIkNwYOAhABAQEFAQEBAQEFAwGFWIY7AQEBAQIBIxVBBQsLDQEKAgI?=
+ =?us-ascii?q?mAgJXBg0IAQGDIoJXBa1ndYEyGoUwgzeBPoEOKgGBZIpZeYEHgREngmw+gQQ?=
+ =?us-ascii?q?BhleCXgSNYol3gUOWegiCPpZfIo8fA4wMLawagXszGggoCIMoT50ckkEBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2AUAAAXY1Ze/zXSMGcNWRsBAQEBAQEBBQEBAREBAQMDA?=
+ =?us-ascii?q?QEBgWoDAQEBCwGDZIR1j1KBN4lxkUwJAQEBAQEBAQEBNwQBAYRAAoIkNwYOA?=
+ =?us-ascii?q?hABAQEFAQEBAQEFAwGFWIY7AQEBAQIBIxVBBQsLDQEKAgImAgJXBg0IAQGDI?=
+ =?us-ascii?q?oJXBa1ndYEyGoUwgzeBPoEOKgGBZIpZeYEHgREngmw+gQQBhleCXgSNYol3g?=
+ =?us-ascii?q?UOWegiCPpZfIo8fA4wMLawagXszGggoCIMoT50ckkEBAQ?=
+X-IronPort-AV: E=Sophos;i="5.70,488,1574092800"; 
+   d="scan'208";a="241459339"
+Received: from unknown (HELO [10.44.0.192]) ([103.48.210.53])
+  by icp-osb-irony-out7.iinet.net.au with ESMTP; 26 Feb 2020 20:26:58 +0800
+Subject: Re: [PATCH v2 06/18] m68k: Replace setup_irq() by request_irq()
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     afzal mohammed <afzal.mohd.ma@gmail.com>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+References: <cover.1582471508.git.afzal.mohd.ma@gmail.com>
+ <00b0bf964278dd0bb3e093283994399ff796cca5.1582471508.git.afzal.mohd.ma@gmail.com>
+ <73c3ad08-963d-fea2-91d7-b06e4ef8d3ef@linux-m68k.org>
+ <alpine.LNX.2.22.394.2002261151220.9@nippy.intranet>
+ <caa5686a-5be3-5848-fdee-36f54237ccb6@linux-m68k.org>
+ <alpine.LNX.2.22.394.2002261637400.8@nippy.intranet>
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <a682c89d-baf2-3d3c-647f-a07b2a146c9f@linux-m68k.org>
+Date:   Wed, 26 Feb 2020 22:26:55 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200220163016.21708-7-ezequiel@collabora.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <alpine.LNX.2.22.394.2002261637400.8@nippy.intranet>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,62 +55,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
 
-Dtsi nodes are sort on address.
-The vdec node is now inserted between:
-
-vdec_mmu: iommu       @ff660480
-vdec    : video-codec @ff660000
-iep_mmu : iommu       @ff670800
-
-This should be:
-
-vpu_mmu : iommu       @ff650800
-vdec    : video-codec @ff660000
-vdec_mmu: iommu       @ff660480
-
-
-
-> From: Boris Brezillon <boris.brezillon at collabora.com>
+On 26/2/20 4:39 pm, Finn Thain wrote:
+> On Wed, 26 Feb 2020, Greg Ungerer wrote:
 > 
-> RK3399 has a Video decoder, define the node in the dtsi. We also add
-> the missing power-domain in mmu node and enable the block.
+>>> That error would almost always be -EBUSY, right?
+>>
+>> I expect it will never fail this early in boot.
 > 
-> Signed-off-by: Boris Brezillon <boris.brezillon at collabora.com>
-> Signed-off-by: Ezequiel Garcia <ezequiel at collabora.com>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
+> If so, it suggests to me that tweaking the error message string is just
+> bikeshedding and that adding these error messages across the tree is just
+> bloat.
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> index 33cc21fcf4c1..a07f857df12f 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> @@ -1285,8 +1285,20 @@ vdec_mmu: iommu at ff660480 {
->  		interrupt-names = "vdec_mmu";
->  		clocks = <&cru ACLK_VDU>, <&cru HCLK_VDU>;
->  		clock-names = "aclk", "iface";
-> +		power-domains = <&power RK3399_PD_VDU>;
->  		#iommu-cells = <0>;
-> -		status = "disabled";
-> +	};
-> +
-> +	vdec: video-codec at ff660000 {
-> +		compatible = "rockchip,rk3399-vdec";
-> +		reg = <0x0 0xff660000 0x0 0x400>;
-> +		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		interrupt-names = "vdpu";
-> +		clocks = <&cru ACLK_VDU>, <&cru HCLK_VDU>,
-> +			 <&cru SCLK_VDU_CA>, <&cru SCLK_VDU_CORE>;
-> +		clock-names = "axi", "ahb", "cabac", "core";
-> +		power-domains = <&power RK3399_PD_VDU>;
-> +		iommus = <&vdec_mmu>;
->  	};
->  
->  	iep_mmu: iommu at ff670800 {
-> -- 
-> 2.25.0
+>> But how will you know if it really is EBUSY if you don't print it out?
+>>
+>>> Moreover, compare this change,
+>>>
+>>> -	setup_irq(TMR_IRQ_NUM, &m68328_timer_irq);
+>>> +	request_irq(TMR_IRQ_NUM, hw_tick, IRQF_TIMER, "timer", NULL);
+>>>
+>>> with this change,
+>>>
+>>> +	int err;
+>>>
+>>> -	setup_irq(TMR_IRQ_NUM, &m68328_timer_irq);
+>>> +	err = request_irq(TMR_IRQ_NUM, hw_tick, IRQF_TIMER, "timer", NULL);
+>>> +	if (err)
+>>> +		return err;
+>>>
+>>> Isn't the latter change the more common pattern? It prints nothing.
+>>
+>> Hmm, in my experience the much more common pattern is:
+>>
+>>> +	int err;
+>>>
+>>> -	setup_irq(TMR_IRQ_NUM, &m68328_timer_irq);
+>>> +	err = request_irq(TMR_IRQ_NUM, hw_tick, IRQF_TIMER, "timer", NULL);
+>>> +	if (err) {
+>>> +             pr_err("timer: request_irq() failed with err=%d\n", err);
+>>> +		return err;
+>>> +     }
+>>
+>> Where the pr_err() could be one of pr_err, printk, dev_err, ...
+>>
+> 
+> A rough poll using 'git grep' seems to agree with your assessment.
+> 
+> If -EBUSY means the end user has misconfigured something, printing
+> "request_irq failed" would be helpful. But does that still happen?
 
+I have seen it many times. Its not at all difficult to get interrupt
+assignments wrong, duplicated, or otherwise mistaken when creating
+device trees. Not so much m68k/coldfire platforms where they are
+most commonly hard coded.
+
+
+> Printing any error message for -ENOMEM is frowned upon, and printing -12
+> is really unhelpful. So the most popular pattern isn't that great, though
+> it is usually less verbose than the example you've given.
+> 
+> Besides, introducing local variables and altering control flow seems well
+> out-of-scope for this kind of refactoring, right?
+
+I don't agree with the local variable part. Adding a local variable to
+keep track of the error return code doesn't seem out of scope for this change.
+The patch as Afzal sent it doesn't change the control flow - and
+that is the right thing to do here.
+
+
+> Anyway, if you're going to add an error message,
+> pr_err("%s: request_irq failed", foo) is unavoidable whenever foo isn't a
+> string constant, so one can't expect to grep the source code for the
+> literal error message from the log.
+> 
+> BTW, one of the benefits of "%s: request_irq failed" is that a compilation
+> unit with multiple request_irq calls permits the compiler to coalesce all
+> duplicated format strings. Whereas, that's not possible with
+> "foo: request_irq failed" and "bar: request_irq failed".
+
+Given the wide variety of message text used with failed request_irq() calls
+it would be shear luck that this matched anything else. A quick grep shows
+that "%s: request_irq() failed\n" has no other exact matches in the current
+kernel source.
+
+Regards
+Greg
 
 
