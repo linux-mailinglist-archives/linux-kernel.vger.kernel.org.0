@@ -2,178 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BA9116F846
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 08:00:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 823E216F84D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 08:04:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbgBZHAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 02:00:14 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:33308 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726474AbgBZHAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 02:00:14 -0500
-Received: by mail-il1-f198.google.com with SMTP id i13so2512608ill.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 23:00:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=c/z5xsfniKKSLpZLHpMNU5fa7JkGhvt2XH2XB+rUEog=;
-        b=nlDcGTuS38UmzkaFvrRzTozwQKAg1KA3sThLr6smcD7oYVZfuiEH+0MQfPwa4BaVLJ
-         E6OB2fWOBc615qwNLrHmyk7tcNO6lw/tqEJTSzAezbYdorho331n2DuXJYplKR0zq79e
-         NeMslw5QtWvRIQsRGo08/SniWm9ZPBZQCaNU1/QLj/iA9C8G1qIDiIvLyNMchdo+LlfL
-         vG8AQ3MACCp3FwpzHKeDavW0JEbgUt9sEcOZBv+oqkATyWTJyrLSCQz1Mw25DvpvUEcw
-         s57IX3dvxX7qX2pEdcLPE8fwxMrTKUE/ln1CGwEQMzDa7rGXslpHRUNpq3KxugvfQFR9
-         D8yg==
-X-Gm-Message-State: APjAAAVTkXu0R4etslsqQd6xES51k4OwCzjTgem0UYMT87KCgx3HDSR6
-        nCVMuVe0pkXtRJNCznUPCc/oEaKXYYXEDlojLL7sKDxbJXLG
-X-Google-Smtp-Source: APXvYqwWuL/1JuLhG0V0aEToyB8sL6RDX/CpmmMPCuFzxXT/5tOdtCxBL3WSIP5W6PGne9CFUr4CfzGXSogvGK6t3P21q/3PQnOK
+        id S1727105AbgBZHEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 02:04:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725789AbgBZHEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 02:04:20 -0500
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C95932465D
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 07:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582700659;
+        bh=2Mn2rh2UnmkLwubpFpFIFXU5YjtRyl4XRJrdW3Zv9eg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tjIqbhWsUsTz4+iaFuaG3Q3kZPeya2RNPgdfY9noKlzPMqR70kquicHQLOlKKBWSh
+         eYRTl6fWrrUsdHkTvGZghxaIlHSgAmwwb0d/CUZ3po4ElqkuoNAYxicPT4hSPsXM3e
+         nYG0nVkZhDRwP3wJsVw62bE3cGetKKrWbXVlDqHg=
+Received: by mail-wr1-f52.google.com with SMTP id m16so1536817wrx.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 23:04:18 -0800 (PST)
+X-Gm-Message-State: APjAAAU1ByJuXbQribj9sqBiGzuI/ZjPZpi3sbc6TnYdFVNX4HP8SCio
+        075VYeXT+BXYT/q0BNoXw2gCX5Hwa14zSbvKS6DLQw==
+X-Google-Smtp-Source: APXvYqxa555rzHIoZ0rL1iFd+0wW3hZMB+8tKwX5N+47RWMS2ZNV5aiZqsLpbDwxvKr3L1l/1SoAEfvpxFPPGEc0+z4=
+X-Received: by 2002:a05:6000:110b:: with SMTP id z11mr3726058wrw.252.1582700657097;
+ Tue, 25 Feb 2020 23:04:17 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a92:d610:: with SMTP id w16mr2624725ilm.283.1582700413344;
- Tue, 25 Feb 2020 23:00:13 -0800 (PST)
-Date:   Tue, 25 Feb 2020 23:00:13 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ec635b059f752700@google.com>
-Subject: KASAN: use-after-free Read in lockref_get
-From:   syzbot <syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <20200226011037.7179-1-atish.patra@wdc.com> <20200226011037.7179-2-atish.patra@wdc.com>
+In-Reply-To: <20200226011037.7179-2-atish.patra@wdc.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Wed, 26 Feb 2020 08:04:06 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu-Dk4hOobKhOEn1Wpbc4Ta2F5anZQ4rRmjpkPfT2g1L3w@mail.gmail.com>
+Message-ID: <CAKv+Gu-Dk4hOobKhOEn1Wpbc4Ta2F5anZQ4rRmjpkPfT2g1L3w@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/5] efi: Move arm-stub to a common file
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anup Patel <Anup.Patel@wdc.com>, Arnd Bergmann <arnd@arndb.de>,
+        Borislav Petkov <bp@suse.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greentime Hu <greentime.hu@sifive.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-riscv@lists.infradead.org, Mao Han <han_mao@c-sky.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        Alexander Graf <agraf@csgraf.de>,
+        "leif@nuviainc.com" <leif@nuviainc.com>,
+        "Chang, Abner (HPS SW/FW Technologist)" <abner.chang@hpe.com>,
+        "Schaefer, Daniel (DualStudy)" <daniel.schaefer@hpe.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Atish,
 
-syzbot found the following crash on:
+On Wed, 26 Feb 2020 at 02:10, Atish Patra <atish.patra@wdc.com> wrote:
+>
+> Most of the arm-stub code is written in an architecture independent manner.
+> As a result, RISC-V can reuse most of the arm-stub code.
+>
+> Rename the arm-stub.c to efi-stub.c so that ARM, ARM64 and RISC-V can use it.
+> This patch doesn't introduce any functional changes.
+>
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> ---
+>  arch/arm/Kconfig                                     |  2 +-
+>  arch/arm64/Kconfig                                   |  2 +-
+>  drivers/firmware/efi/Kconfig                         |  6 +++---
+>  drivers/firmware/efi/libstub/Makefile                | 12 ++++++------
+>  .../firmware/efi/libstub/{arm-stub.c => efi-stub.c}  |  7 ++++++-
+>  5 files changed, 17 insertions(+), 12 deletions(-)
+>  rename drivers/firmware/efi/libstub/{arm-stub.c => efi-stub.c} (98%)
+>
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 97864aabc2a6..9931fea06076 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1955,7 +1955,7 @@ config EFI
+>         select UCS2_STRING
+>         select EFI_PARAMS_FROM_FDT
+>         select EFI_STUB
+> -       select EFI_ARMSTUB
+> +       select EFI_GENERIC_ARCH_STUB
+>         select EFI_RUNTIME_WRAPPERS
+>         ---help---
+>           This option provides support for runtime services provided
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 0b30e884e088..ae776d8ef2f9 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1720,7 +1720,7 @@ config EFI
+>         select EFI_PARAMS_FROM_FDT
+>         select EFI_RUNTIME_WRAPPERS
+>         select EFI_STUB
+> -       select EFI_ARMSTUB
+> +       select EFI_GENERIC_ARCH_STUB
+>         default y
+>         help
+>           This option provides support for runtime services provided
+> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+> index ecc83e2f032c..1bcedb7812da 100644
+> --- a/drivers/firmware/efi/Kconfig
+> +++ b/drivers/firmware/efi/Kconfig
+> @@ -106,12 +106,12 @@ config EFI_PARAMS_FROM_FDT
+>  config EFI_RUNTIME_WRAPPERS
+>         bool
+>
+> -config EFI_ARMSTUB
+> +config EFI_GENERIC_ARCH_STUB
 
-HEAD commit:    f8788d86 Linux 5.6-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17f460e3e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9833e26bab355358
-dashboard link: https://syzkaller.appspot.com/bug?extid=603294af2d01acfdd6da
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Let's call it EFI_GENERIC_STUB
 
-Unfortunately, I don't have any reproducer for this crash yet.
+>         bool
+>
+> -config EFI_ARMSTUB_DTB_LOADER
+> +config EFI_STUB_DTB_LOADER
+>         bool "Enable the DTB loader"
+> -       depends on EFI_ARMSTUB
+> +       depends on EFI_GENERIC_ARCH_STUB
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+Do you actually need the DTB loader? I feel adding this for ARM was a
+mistake, so you may want to make this depend on !RISCV while you're at
+it.
 
-==================================================================
-BUG: KASAN: use-after-free in perf_trace_lock_acquire+0x401/0x530 include/trace/events/lock.h:13
-Read of size 8 at addr ffff8880966bcef0 by task syz-executor.1/28128
+>         default y
+>         help
+>           Select this config option to add support for the dtb= command
+> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> index 4d6246c6f651..2c5b76787126 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -22,7 +22,7 @@ cflags-$(CONFIG_ARM)          := $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
+>                                    -fno-builtin -fpic \
+>                                    $(call cc-option,-mno-single-pic-base)
+>
+> -cflags-$(CONFIG_EFI_ARMSTUB)   += -I$(srctree)/scripts/dtc/libfdt
+> +cflags-$(CONFIG_EFI_GENERIC_ARCH_STUB) += -I$(srctree)/scripts/dtc/libfdt
+>
+>  KBUILD_CFLAGS                  := $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+>                                    -include $(srctree)/drivers/firmware/efi/libstub/hidden.h \
+> @@ -44,13 +44,13 @@ lib-y                               := efi-stub-helper.o gop.o secureboot.o tpm.o \
+>                                    skip_spaces.o lib-cmdline.o lib-ctype.o
+>
+>  # include the stub's generic dependencies from lib/ when building for ARM/arm64
+> -arm-deps-y := fdt_rw.c fdt_ro.c fdt_wip.c fdt.c fdt_empty_tree.c fdt_sw.c
+> +efi-deps-y := fdt_rw.c fdt_ro.c fdt_wip.c fdt.c fdt_empty_tree.c fdt_sw.c
+>
+>  $(obj)/lib-%.o: $(srctree)/lib/%.c FORCE
+>         $(call if_changed_rule,cc_o_c)
+>
+> -lib-$(CONFIG_EFI_ARMSTUB)      += arm-stub.o fdt.o string.o \
+> -                                  $(patsubst %.c,lib-%.o,$(arm-deps-y))
+> +lib-$(CONFIG_EFI_GENERIC_ARCH_STUB)            += efi-stub.o fdt.o string.o \
+> +                                  $(patsubst %.c,lib-%.o,$(efi-deps-y))
+>
+>  lib-$(CONFIG_ARM)              += arm32-stub.o
+>  lib-$(CONFIG_ARM64)            += arm64-stub.o
+> @@ -72,8 +72,8 @@ CFLAGS_arm64-stub.o           := -DTEXT_OFFSET=$(TEXT_OFFSET)
+>  # a verification pass to see if any absolute relocations exist in any of the
+>  # object files.
+>  #
+> -extra-$(CONFIG_EFI_ARMSTUB)    := $(lib-y)
+> -lib-$(CONFIG_EFI_ARMSTUB)      := $(patsubst %.o,%.stub.o,$(lib-y))
+> +extra-$(CONFIG_EFI_GENERIC_ARCH_STUB)  := $(lib-y)
+> +lib-$(CONFIG_EFI_GENERIC_ARCH_STUB)    := $(patsubst %.o,%.stub.o,$(lib-y))
+>
+>  STUBCOPY_FLAGS-$(CONFIG_ARM64) += --prefix-alloc-sections=.init \
+>                                    --prefix-symbols=__efistub_
+> diff --git a/drivers/firmware/efi/libstub/arm-stub.c b/drivers/firmware/efi/libstub/efi-stub.c
+> similarity index 98%
+> rename from drivers/firmware/efi/libstub/arm-stub.c
+> rename to drivers/firmware/efi/libstub/efi-stub.c
+> index 13559c7e6643..b87c3f70430c 100644
+> --- a/drivers/firmware/efi/libstub/arm-stub.c
+> +++ b/drivers/firmware/efi/libstub/efi-stub.c
+> @@ -15,6 +15,7 @@
+>
+>  #include "efistub.h"
+>
+> +#if IS_ENABLED(CONFIG_ARM64) || IS_ENABLED(CONFIG_ARM)
+>  /*
+>   * This is the base address at which to start allocating virtual memory ranges
+>   * for UEFI Runtime Services. This is in the low TTBR0 range so that we can use
+> @@ -27,6 +28,10 @@
+>   * entire footprint of the UEFI runtime services memory regions)
+>   */
+>  #define EFI_RT_VIRTUAL_BASE    SZ_512M
+> +#else
+> +#define EFI_RT_VIRTUAL_BASE    SZ_2G
+> +#endif
+> +
 
-CPU: 1 PID: 28128 Comm: syz-executor.1 Not tainted 5.6.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
- __kasan_report.cold+0x1b/0x32 mm/kasan/report.c:506
- kasan_report+0x12/0x20 mm/kasan/common.c:641
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
- perf_trace_lock_acquire+0x401/0x530 include/trace/events/lock.h:13
- trace_lock_acquire include/trace/events/lock.h:13 [inline]
- lock_acquire+0x2de/0x410 kernel/locking/lockdep.c:4483
- __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
- _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
- lockref_get+0x16/0x60 include/linux/spinlock.h:338
- dget include/linux/dcache.h:321 [inline]
- simple_recursive_removal+0x3e/0x720 fs/libfs.c:268
- debugfs_remove fs/debugfs/inode.c:713 [inline]
- debugfs_remove+0x5e/0x80 fs/debugfs/inode.c:707
- blk_trace_free+0x38/0x140 kernel/trace/blktrace.c:311
- do_blk_trace_setup+0x735/0xb50 kernel/trace/blktrace.c:556
- __blk_trace_setup+0xe3/0x190 kernel/trace/blktrace.c:570
- blk_trace_ioctl+0x170/0x300 kernel/trace/blktrace.c:709
- blkdev_ioctl+0xc3/0x670 block/ioctl.c:710
- block_ioctl+0xee/0x130 fs/block_dev.c:1983
- vfs_ioctl fs/ioctl.c:47 [inline]
- ksys_ioctl+0x123/0x180 fs/ioctl.c:763
- __do_sys_ioctl fs/ioctl.c:772 [inline]
- __se_sys_ioctl fs/ioctl.c:770 [inline]
- __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:770
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45c449
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f4acd2fec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f4acd2ff6d4 RCX: 000000000045c449
-RDX: 0000000020000080 RSI: 00000000c0481273 RDI: 0000000000000004
-RBP: 000000000076bfc0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000228 R14: 00000000004c40ce R15: 000000000076bfcc
+Can we drop this hunk for now? It should be part of your runtime
+services series.
 
-Allocated by task 28128:
- save_stack+0x23/0x90 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- __kasan_kmalloc mm/kasan/common.c:515 [inline]
- __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:488
- kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:523
- slab_post_alloc_hook mm/slab.h:584 [inline]
- slab_alloc mm/slab.c:3320 [inline]
- kmem_cache_alloc+0x121/0x710 mm/slab.c:3484
- __d_alloc+0x2e/0x8c0 fs/dcache.c:1690
- d_alloc+0x4d/0x280 fs/dcache.c:1769
- d_alloc_parallel+0xf4/0x1c00 fs/dcache.c:2521
- __lookup_slow+0x1ab/0x4d0 fs/namei.c:1742
- lookup_one_len+0x16d/0x1a0 fs/namei.c:2661
- start_creating+0x132/0x260 fs/debugfs/inode.c:338
- __debugfs_create_file+0x65/0x3f0 fs/debugfs/inode.c:383
- debugfs_create_file+0x5a/0x70 fs/debugfs/inode.c:440
- do_blk_trace_setup+0x361/0xb50 kernel/trace/blktrace.c:523
- __blk_trace_setup+0xe3/0x190 kernel/trace/blktrace.c:570
- blk_trace_ioctl+0x170/0x300 kernel/trace/blktrace.c:709
- blkdev_ioctl+0xc3/0x670 block/ioctl.c:710
- block_ioctl+0xee/0x130 fs/block_dev.c:1983
- vfs_ioctl fs/ioctl.c:47 [inline]
- ksys_ioctl+0x123/0x180 fs/ioctl.c:763
- __do_sys_ioctl fs/ioctl.c:772 [inline]
- __se_sys_ioctl fs/ioctl.c:770 [inline]
- __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:770
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 28134:
- save_stack+0x23/0x90 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- kasan_set_free_info mm/kasan/common.c:337 [inline]
- __kasan_slab_free+0x102/0x150 mm/kasan/common.c:476
- kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
- __cache_free mm/slab.c:3426 [inline]
- kmem_cache_free+0x86/0x320 mm/slab.c:3694
- __d_free+0x20/0x30 fs/dcache.c:271
- rcu_do_batch kernel/rcu/tree.c:2186 [inline]
- rcu_core+0x5e1/0x1390 kernel/rcu/tree.c:2410
- rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2419
- __do_softirq+0x262/0x98c kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff8880966bce40
- which belongs to the cache dentry(28:syz1) of size 288
-The buggy address is located 176 bytes inside of
- 288-byte region [ffff8880966bce40, ffff8880966bcf60)
-The buggy address belongs to the page:
-page:ffffea000259af00 refcount:1 mapcount:0 mapping:ffff888093c038c0 index:0x0
-flags: 0xfffe0000000200(slab)
-raw: 00fffe0000000200 ffffea0002594908 ffffea000234d388 ffff888093c038c0
-raw: 0000000000000000 ffff8880966bc080 000000010000000b 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8880966bcd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff8880966bce00: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
->ffff8880966bce80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                             ^
- ffff8880966bcf00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
- ffff8880966bcf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>  #define EFI_RT_VIRTUAL_SIZE    SZ_512M
+>
+>  #ifdef CONFIG_ARM64
+> @@ -243,7 +248,7 @@ efi_status_t efi_entry(efi_handle_t handle, efi_system_table_t *sys_table_arg)
+>          * 'dtb=' unless UEFI Secure Boot is disabled.  We assume that secure
+>          * boot is enabled if we can't determine its state.
+>          */
+> -       if (!IS_ENABLED(CONFIG_EFI_ARMSTUB_DTB_LOADER) ||
+> +       if (!IS_ENABLED(CONFIG_EFI_STUB_DTB_LOADER) ||
+>              secure_boot != efi_secureboot_mode_disabled) {
+>                 if (strstr(cmdline_ptr, "dtb="))
+>                         pr_efi("Ignoring DTB from command line.\n");
+> --
+> 2.24.0
+>
