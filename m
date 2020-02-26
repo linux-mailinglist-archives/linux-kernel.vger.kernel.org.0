@@ -2,67 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E7D1170BAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:39:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54518170BC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:41:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727910AbgBZWjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 17:39:24 -0500
-Received: from muru.com ([72.249.23.125]:57922 "EHLO muru.com"
+        id S1727935AbgBZWld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 17:41:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727761AbgBZWjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 17:39:24 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 1CD8A8022;
-        Wed, 26 Feb 2020 22:40:09 +0000 (UTC)
-Date:   Wed, 26 Feb 2020 14:39:21 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Roger Quadros <rogerq@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 06/12] ARM: dts: am335x-bone-common: Enable PRU-ICSS
- interconnect node
-Message-ID: <20200226223921.GB37466@atomide.com>
-References: <20200225204649.28220-1-s-anna@ti.com>
- <20200225204649.28220-7-s-anna@ti.com>
- <20200226182924.GU37466@atomide.com>
- <af3965db-54b2-3e4f-414f-d27ca4b5ced1@ti.com>
- <20200226223745.GA37466@atomide.com>
+        id S1727802AbgBZWld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 17:41:33 -0500
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45FD920658;
+        Wed, 26 Feb 2020 22:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582756892;
+        bh=pqBevC8oqZjyGa7o6s+vlciDsiHfkvXZhmYXugSWapY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=cESNznCh24xWLYynU3EJ8TrG0XW5mDj2G21MH3flMMzwnsZVmqaxHaJhTt1am/yGm
+         NaKksw/07G8HJFYA3/+Vihveu+JE1WxyOQo8kQy734smws+aihzb6v3KMwx49FFFAv
+         hoUWX5JD52xfyc3YCCyZvf28YZrDDPpZ4ohoSrYM=
+Date:   Wed, 26 Feb 2020 16:41:30 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com
+Subject: Re: [PATCH v15 4/5] PCI/DPC: Add Error Disconnect Recover (EDR)
+ support
+Message-ID: <20200226224130.GA182745@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200226223745.GA37466@atomide.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6cabd520-f974-2c33-4ecb-3cfd2dfb00a4@linux.intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [200226 22:38]:
-> * Suman Anna <s-anna@ti.com> [200226 20:35]:
-> > On 2/26/20 12:29 PM, Tony Lindgren wrote:
-> > > * Suman Anna <s-anna@ti.com> [200225 20:47]:
-> > >> The PRU-ICSS target module node was left in disabled state in the base
-> > >> am33xx-l4.dtsi file. Enable this node on all the AM335x beaglebone
-> > >> boards as they mostly use a AM3358 or a AM3359 SoC which do contain
-> > >> the PRU-ICSS IP.
-> > > 
-> > > Just get rid of the top level status = "disabled". The default
-> > > is enabled, and the device is there for sure inside the SoC.
-> > > And then there's no need for pointless status = "okay" tinkering
-> > > in the board specific dts files so no need for this patch.
+On Wed, Feb 26, 2020 at 02:11:53PM -0800, Kuppuswamy Sathyanarayanan wrote:
+> On 2/26/20 1:32 PM, Bjorn Helgaas wrote:
+> > On Wed, Feb 26, 2020 at 10:42:27AM -0800, Kuppuswamy Sathyanarayanan wrote:
+> > > On 2/25/20 5:02 PM, Bjorn Helgaas wrote:
+> > > > On Thu, Feb 13, 2020 at 10:20:16AM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> > > > > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> > > > > ...
 > > 
-> > The IP is not available on all SoCs, and there are about 40 different
-> > board files atm across AM33xx and AM437x, and am not sure what SoCs they
-> > are actually using.
+> > > Yes, we could remove it. But it might need some more changes to
+> > > dpc driver functions. I can think of two ways,
+> > > 
+> > > 1. Re-factor the DPC driver not to use dpc_dev structure and just use
+> > > pci_dev in their functions implementation. But this might lead to
+> > > re-reading following dpc_dev structure members every time we
+> > > use it in dpc driver functions.
+> > > 
+> > > (Currently in dpc driver probe they cache the following device parameters )
+> > > 
+> > >    9         u16                     cap_pos;
+> > >   10         bool                    rp_extensions;
+> > >   11         u8                      rp_log_size;
+> > >   12         u16                     ctl;
+> > >   13         u16                     cap;
+
+> > I think this is basically what I proposed with the sample patch in my
+> > response to your 3/5 patch.  But I don't see the ctl/cap part, so
+> > maybe I missed something.
+
+> if its costly to carry it in pci_dev, we can always re-read them.
+> if its ok to use pci_dev, If you want, I can extend your patch to
+> include the cap and ctl.
+
+Ah, I see, you added cap & ctl as part of your series.  But I don't
+think they're ever used after dpc_probe(), are they?  So I don't think
+they need to be saved at all.
+
+> > > Yes, ownership should be based on _OSC negotiation. I will add necessary
+> > > comments here.
+
+> > Why are we not doing this via _OSC negotiation in this series?  It
+> > would be much better if we could just do it instead of adding a
+> > comment that we *should* do it.  Nobody knows more about this than you
+> > do, so probably nobody else is going to come along and finish this
+> > up :)
+
+> Actually Alex G already proposed a patch to fix it.
 > 
-> Oh that issue again.. Maybe take a look at patch "[PATCH 2/3] bus: ti-sysc:
-> Detect display subsystem related devices" if you can add runtime
-> detection for the accelerators there similar to what I hadded for omap3.
-> acclerators.
+> https://lkml.org/lkml/2018/11/16/202
+> 
+> But that discussion never reached a conclusion. Since a proper fix
+> for it would affect some legacy hardwares which solely relies on
+> HEST tables, it did not make everyone happy. So it might take a
+> lot to convince all the stake holders to merge such patch. So its
+> better not to mix both of these patch sets together.
+> 
+> Once this patch set is done, If Alex G is no longer working on it,
+> I can work on it.
 
-Sorry I meant instead patch "[PATCH 6/7] bus: ti-sysc: Implement SoC
-revision handling".
-
-Regards,
-
-Tony
+OK, great, maybe we can make progress on that later.
