@@ -2,100 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8B4916FF70
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 14:03:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74A0D16FFAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 14:08:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbgBZNDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 08:03:03 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:34596 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbgBZNDC (ORCPT
+        id S1727152AbgBZNIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 08:08:41 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37196 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727105AbgBZNIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 08:03:02 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id CAF6A1C0370; Wed, 26 Feb 2020 14:03:00 +0100 (CET)
-Date:   Wed, 26 Feb 2020 14:03:00 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Ezra Buehler <ezra@easyb.ch>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        linux-realtek-soc@lists.infradead.org, linux-leds@vger.kernel.org,
-        linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        csd@princeton.com.tw, devicetree@vger.kernel.org, sales@fdhisi.com,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        zypeng@titanmec.com, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, Dan Murphy <dmurphy@ti.com>,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [RFC 00/25] arm64: realtek: Add Xnano X5 and implement
- TM1628/FD628/AiP1618 LED controllers
-Message-ID: <20200226130300.GB2800@duo.ucw.cz>
-References: <20191212033952.5967-1-afaerber@suse.de>
- <7110806f-ddbd-f055-e107-7a1f7e223102@arm.com>
- <c86c6bc0-b0e5-c46e-da87-9d910b95f9f3@suse.de>
- <04e7d7cd-a8bc-621b-9205-1a058521cabe@arm.com>
- <E33E27B9-D33C-4182-A5B1-C72FA40470BC@easyb.ch>
+        Wed, 26 Feb 2020 08:08:39 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01QD8K8t097198;
+        Wed, 26 Feb 2020 07:08:20 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582722500;
+        bh=0bhKPvjJa3/rmLd39zoLbOUlraMceKvkCehpXWM1XR0=;
+        h=From:To:CC:Subject:Date;
+        b=yOUwkDUujCJL8aqRNJjC4JnIZh0D94A5A/XfZyXhzpur1qQS4LUl2Tj5iGJkjwcnN
+         AocFMIz91zT+fkezXBJthtihRQ5j/yDZbbGs9zVmkY5uax2QuIRewRuub2M7HHGJYf
+         SJszsK41R3kIGo1ZE3MW0HmVWsoAcn47lHUZLjFs=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01QD8JUd032725
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Feb 2020 07:08:19 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 26
+ Feb 2020 07:08:19 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 26 Feb 2020 07:08:19 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01QD8Jwm073329;
+        Wed, 26 Feb 2020 07:08:19 -0600
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>
+Subject: [PATCH for-next 1/3] ASoC: dt-bindings: Add TAS2563 compatible to the TAS2562 binding
+Date:   Wed, 26 Feb 2020 07:03:03 -0600
+Message-ID: <20200226130305.12043-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zx4FCpZtqtKETZ7O"
-Content-Disposition: inline
-In-Reply-To: <E33E27B9-D33C-4182-A5B1-C72FA40470BC@easyb.ch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add the Texas Instruments TAS2563 audio amplifier to the TAS262
+binding.
 
---zx4FCpZtqtKETZ7O
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+CC: Rob Herring <robh@kernel.org>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ Documentation/devicetree/bindings/sound/tas2562.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi!
+diff --git a/Documentation/devicetree/bindings/sound/tas2562.txt b/Documentation/devicetree/bindings/sound/tas2562.txt
+index 658e1fb18a99..94796b547184 100644
+--- a/Documentation/devicetree/bindings/sound/tas2562.txt
++++ b/Documentation/devicetree/bindings/sound/tas2562.txt
+@@ -8,7 +8,7 @@ real time monitoring of loudspeaker behavior.
+ Required properties:
+  - #address-cells  - Should be <1>.
+  - #size-cells     - Should be <0>.
+- - compatible:	   - Should contain "ti,tas2562".
++ - compatible:	   - Should contain "ti,tas2562", "ti,tas2563".
+  - reg:		   - The i2c address. Should be 0x4c, 0x4d, 0x4e or 0x4f.
+  - ti,imon-slot-no:- TDM TX current sense time slot.
+ 
+-- 
+2.25.0
 
-> > On 13 Dec 2019, at 15:07, Robin Murphy <robin.murphy@arm.com> wrote:
-> >=20
-> > I also have one of the H96 Max boxes (which I picked up out of curiosity
-> > for the mysterious RK3318) with an FD6551, although I've not attacked
-> > that one with the logic analyser yet to see how similar it is.
->=20
-> I have a T9 (RK3328) TV box with the same chip in it. The FD6551 uses an
-> I2C-like protocol. Every digit (and the symbols) have an I2C address,
-> but, the display does not signal ACK. AFAIK the FD650 and FD655 which
-> are used in other boxes (Amlogic) are very similar.
->=20
-> So far, I have whipped up a proof-of-cocept driver that uses i2c-gpio.
-> The digits seem to be rotated by 180 degrees. So, in order to use
-> map_to_7segment.h I had to define the BIT_SEG7_* constants differently.
-> My display also has multiple symbols (WIFI, network, pause, play, USB,
-> alarm) that are controlled by writing to the same address as for the
-> colon.
->=20
-> I=E2=80=99d love to work on a driver (similar to Andreas=E2=80=99 SPI bas=
-ed driver) for
-> these I2C connected chips.
-
-Create a driver in drivers/auxdisplay for alphanumeric parts. You can
-then export any remaining symbols as LEDs if it will provide benefits.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---zx4FCpZtqtKETZ7O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXlZshAAKCRAw5/Bqldv6
-8kZqAJ0eHpZJIq9KvRkuA970vGoHRW+FxwCfUVhxIMi58/nyPvs2Fhxkk2zlRec=
-=UP4r
------END PGP SIGNATURE-----
-
---zx4FCpZtqtKETZ7O--
