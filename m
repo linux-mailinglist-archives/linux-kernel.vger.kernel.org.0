@@ -2,80 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C05616F57C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 03:11:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1557716F581
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 03:11:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbgBZCLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 21:11:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39998 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727809AbgBZCLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 21:11:03 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A4CE21744;
-        Wed, 26 Feb 2020 02:11:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582683061;
-        bh=ZEaedp/t+OQSF3UOsAPhZYZgIEc+LWUwL3y+/EEtQhA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KMWf8lCx4d8eRF5v4CGpKVE8EnPQo0CFGrnGVlu8kncXipEwtwpCsQIpjm3SDeyfh
-         Ah2b+mGlHmB6PKYzocKhQKhMaQh4tpOOlYNqsoGPseZs6xOMpS40LCsUSuhfVIziRi
-         3asgSyZdZbKMPwQoczZ0RDkU9rp/VUe/B27qFS/w=
-Date:   Tue, 25 Feb 2020 18:11:01 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     elver@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/vmscan: fix data races at kswapd_classzone_idx
-Message-Id: <20200225181101.eca053d3201a6ac68e543572@linux-foundation.org>
-In-Reply-To: <1582649726-15474-1-git-send-email-cai@lca.pw>
-References: <1582649726-15474-1-git-send-email-cai@lca.pw>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1730071AbgBZCLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 21:11:46 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34253 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730008AbgBZCLq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 21:11:46 -0500
+Received: by mail-oi1-f193.google.com with SMTP id l136so1489178oig.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2020 18:11:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4u/uS1fMpbXSukMymnz41XCHPdcIu8TO2CU/VdEdie8=;
+        b=lmu0ChZ/FgDPtQGlWK6Rbqd83+DdMZgjE5nbcUq4IGpNTsD1zkXL2dTUlxIJN5wILC
+         06IuFW1ag+mdNilLpWx4948QwaoOg+eafZlc4nYzd97PXBHBe2ccQGB9u9v9sRPg/WsS
+         JSQxqVPzW61PyEO6v9vaWT5OAzh8uOwzYvZ9u1aXXQKwq+mOW5yHe+luKixTmR3CIyHz
+         LAvVan4VZ03VO6CVX1DbeqA8Corv8uE5bncIuqrIVp4wvUEGUPZvb8/42RPdm1IWAGWL
+         d5cEok/AA0bnc9KzhZK86HIdWB7c49mruzHN1N+O6wNtDhrqrEFI9AeQzIB6SadDtIxz
+         //oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4u/uS1fMpbXSukMymnz41XCHPdcIu8TO2CU/VdEdie8=;
+        b=adp3DWzxX89fq1b4Rf5rINTsy1V5VG/upQI6gJb3aDtLzgL/fyKbg0Iia47lZAO2gw
+         yVLUaXKIvmyzaQwI2wcXmDsR2B5lr7KxvZYe/NJMZCJv8hYExEPHo71uGlIx1jM7lNIE
+         aD+O4cLACNN/KDOGnQMnkxK6jzY6ttLSzaPOjJqGQFo6xb0fi8L5zbPDCdj/nS7jLAU7
+         WktACGrXPnRtXhgqKRmxPbazhhtLTSLxCj033Hkvm6IugnQ6n+c9zqlGNTXbDrklz+Gp
+         1eCbnIRWH3xX4xjZWcD3nwJrEu27ulXKn6j0g0OI+l1zwWzuAy5mgewHEYvyyldivv0H
+         AH9w==
+X-Gm-Message-State: APjAAAVzNGJaYdTq9WDXDDxDDFhoOMghADwhnjd9V9H+iJrscUby7XRR
+        S3hV6Jhm1x4JMqMqRu1PvU7/uFQu+fSn8pQdUYp93A==
+X-Google-Smtp-Source: APXvYqzZdInnLy1DDni0f4aafChdUAgr22n+6IwChbEzWLmta8PK1dpLF7BWtYyYmXpKRVxz5b8I4y474iMM/AQarqA=
+X-Received: by 2002:aca:ea43:: with SMTP id i64mr1441788oih.30.1582683105454;
+ Tue, 25 Feb 2020 18:11:45 -0800 (PST)
+MIME-Version: 1.0
+References: <20200225050828.56458-1-john.stultz@linaro.org> <20200225050828.56458-4-john.stultz@linaro.org>
+In-Reply-To: <20200225050828.56458-4-john.stultz@linaro.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Tue, 25 Feb 2020 18:11:09 -0800
+Message-ID: <CAGETcx_x4O_M4OJvCSZNu_wroYoyog9nAW7OivS56qzEhFmnHg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/6] pinctrl: Remove use of driver_deferred_probe_check_state_continue()
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Todd Kjos <tkjos@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Feb 2020 11:55:26 -0500 Qian Cai <cai@lca.pw> wrote:
+Sending again because of accidental HTML email.
 
-> pgdat->kswapd_classzone_idx could be accessed concurrently in
-> wakeup_kswapd(). Plain writes and reads without any lock protection
-> result in data races. Fix them by adding a pair of READ|WRITE_ONCE() as
-> well as saving a branch (compilers might well optimize the original code
-> in an unintentional way anyway). The data races were reported by KCSAN,
-> 
-> ...
+On Mon, Feb 24, 2020 at 9:08 PM John Stultz <john.stultz@linaro.org> wrote:
 >
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -3961,11 +3961,10 @@ void wakeup_kswapd(struct zone *zone, gfp_t gfp_flags, int order,
->  		return;
->  	pgdat = zone->zone_pgdat;
->  
-> -	if (pgdat->kswapd_classzone_idx == MAX_NR_ZONES)
-> -		pgdat->kswapd_classzone_idx = classzone_idx;
-> -	else
-> -		pgdat->kswapd_classzone_idx = max(pgdat->kswapd_classzone_idx,
-> -						  classzone_idx);
-> +	if (READ_ONCE(pgdat->kswapd_classzone_idx) == MAX_NR_ZONES ||
-> +	    READ_ONCE(pgdat->kswapd_classzone_idx) < classzone_idx)
-> +		WRITE_ONCE(pgdat->kswapd_classzone_idx, classzone_idx);
-> +
->  	pgdat->kswapd_order = max(pgdat->kswapd_order, order);
->  	if (!waitqueue_active(&pgdat->kswapd_wait))
->  		return;
+> With the earlier sanity fixes to
+> driver_deferred_probe_check_state() it should be usable for the
+> pinctrl logic here.
+>
+> So tweak the logic to use driver_deferred_probe_check_state()
+> instead of driver_deferred_probe_check_state_continue()
+>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Saravana Kannan <saravanak@google.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-pm@vger.kernel.org
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> ---
+>  drivers/pinctrl/devicetree.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+> index 9357f7c46cf3..1ed20ac2243f 100644
+> --- a/drivers/pinctrl/devicetree.c
+> +++ b/drivers/pinctrl/devicetree.c
+> @@ -127,11 +127,12 @@ static int dt_to_map_one_config(struct pinctrl *p,
+>                 np_pctldev = of_get_next_parent(np_pctldev);
+>                 if (!np_pctldev || of_node_is_root(np_pctldev)) {
+>                         of_node_put(np_pctldev);
+> +                       ret = driver_deferred_probe_check_state(p->dev);
+>                         /* keep deferring if modules are enabled unless we've timed out */
+> -                       if (IS_ENABLED(CONFIG_MODULES) && !allow_default)
+> -                               return driver_deferred_probe_check_state_continue(p->dev);
+> -
+> -                       return driver_deferred_probe_check_state(p->dev);
+> +                       if (IS_ENABLED(CONFIG_MODULES) && !allow_default &&
 
-This is very partial, isn't it?  The above code itself is racy against
-other code which manipulates ->kswapd_classzone_idx and the
-manipulation in allow_direct_reclaim() is performed by threads other
-than kswapd and so need the READ_ONCE treatment and is still racy with
-that?
+Is this IS_ENABLED(CONFIG_MODULES) still necessary? At the end of this
+series, doesn't driver_deferred_probe_check_state() already return
+-EPROBE_DEFER if modules are enabled and timeout hasn't happened?
 
-I guess occasional races here don't really matter, but a grossly wrong
-read from load tearing might matter.  In which case shouldn't we be
-defending against them in all cases where non-kswapd threads read this
-field?
+-Saravana
+
+> +                           (ret == -ENODEV))
+> +                               ret = -EPROBE_DEFER;
+> +                       return ret;
+>                 }
+>                 /* If we're creating a hog we can use the passed pctldev */
+>                 if (hog_pctldev && (np_pctldev == p->dev->of_node)) {
+> --
+> 2.17.1
+>
