@@ -2,130 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 038C11700FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:20:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01582170114
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:23:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbgBZOUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 09:20:45 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:57921 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbgBZOUo (ORCPT
+        id S1727429AbgBZOXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 09:23:53 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45368 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbgBZOXx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 09:20:44 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j6xYG-00080h-2G; Wed, 26 Feb 2020 15:20:40 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A6C181C2157;
-        Wed, 26 Feb 2020 15:20:39 +0100 (CET)
-Date:   Wed, 26 Feb 2020 14:20:39 -0000
-From:   "tip-bot2 for Thomas Richter" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf test: Fix test trace+probe_vfs_getname.sh on s390
-Cc:     Thomas Richter <tmricht@linux.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Sumanth Korikkar <sumanthk@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200217102111.61137-1-tmricht@linux.ibm.com>
-References: <20200217102111.61137-1-tmricht@linux.ibm.com>
+        Wed, 26 Feb 2020 09:23:53 -0500
+Received: by mail-io1-f65.google.com with SMTP id w9so3475430iob.12
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 06:23:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BeNWEAdLUwurTRAu4WEqbTLswFUOMRIguNpdcSr0Tds=;
+        b=iOnngqoOYmXsacqkDSMrBkMWzxQgRV/ODDWvY2p3gD7nr+4Xfw3hmFjUut/UqTxMTD
+         rXQiXTadY/RG9GpL90SZZ+qY8nj3wgqwNuQAYLyLxX3wYPp7SyAg6Rni9lq3sEQt9e0p
+         3JIGJ1Sm4aEWANsOV88sIh5OEKrbphs4WmD3n3fhWYQGGV/rNiB3w1SB03PR3gQX9J3C
+         5N7TgwZFIBnJMpNgIjmYbtMuxfRLutuWOlq4+GFav1qAgAXmCPUkd1z0nRXTw8GHl24B
+         5UP2FGnQ4X0jFOpw2zDIOPvWMqtNor21vVnBGAjBTP26aQGKkYxoCcvvfFrS0xuV9Xqv
+         Iwlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BeNWEAdLUwurTRAu4WEqbTLswFUOMRIguNpdcSr0Tds=;
+        b=W9khRcPEAEZFQFM89o5RV4uMwj5hY1Tx8BSN/o3R9EV9lP/ho01cnRjMYrySWTW/lV
+         DOFqp22f9sNkb3L4x9wrOEbX0m6VQmZzQLDD3fpIXeb82ZHLlWweytRDx5/A5fNARn5X
+         sQx73iDOwaRYudQlh9tXNg3UCLHHiZDucdgDffBoqAaywXdJEIPNEmanpnjaDAMJY7tr
+         gQjckVEr3vLUBKpR31Kx+Kr4zJyW8iHPP0k+I/czaKdkEGgpPhRG7QktUtdbgO1bKngw
+         uKSWFGv4orGYC3lRc1zp8UbshQBvJHMAtkwtwHaA/R1qCBE90BmNRMSpoMH6mV+nGY8h
+         9suQ==
+X-Gm-Message-State: APjAAAWE5iCQJThV/7GKpF971hdge4fx5KqAwo4WiHVlqH+4PWowoM03
+        8BGGQzDOUI3qs5gKpaMII+Y726MKFikDC4xkjNA=
+X-Google-Smtp-Source: APXvYqzSiNs5ZunngLzbnJNQm/953PyIVPIh6ZpAYW26lLSU4xUyryuSUjFFWvkyh4um9jwgaLrnQ2UPO/sUFkYEEOA=
+X-Received: by 2002:a02:b615:: with SMTP id h21mr4543900jam.109.1582727032643;
+ Wed, 26 Feb 2020 06:23:52 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <158272683942.28353.13346247455892179046.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20200222144647.10120-1-laoar.shao@gmail.com> <20200224162516.GA1674@cmpxchg.org>
+In-Reply-To: <20200224162516.GA1674@cmpxchg.org>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Wed, 26 Feb 2020 22:23:16 +0800
+Message-ID: <CALOAHbBOx7moLeVNVDOkstR9QWyaKOmJXmUxtiJL0Uhyg7CDgg@mail.gmail.com>
+Subject: Re: [PATCH] psi: move PF_MEMSTALL into psi specific psi_flags
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     mingo@redhat.com, Peter Zijlstra <peterz@infradead.org>,
+        juri.lelli@redhat.com,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        dietmar.eggemann@arm.com, Steven Rostedt <rostedt@goodmis.org>,
+        Benjamin Segall <bsegall@google.com>, mgorman@suse.de,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/urgent branch of tip:
+On Tue, Feb 25, 2020 at 12:25 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+>
+> Hello Yafang,
+>
+> On Sat, Feb 22, 2020 at 09:46:47AM -0500, Yafang Shao wrote:
+> > The task->flags is a 32-bits flag, in which 31 bits have already been
+> > consumed. So it is hardly to introduce other new per process flag.
+> > As there's a psi specific flag psi_flags, we'd better move the psi specific
+> > per process flag PF_MEMSTALL into it.
+>
+> Currently, psi_flags is used only for debugging:
+>
+>         if (((task->psi_flags & set) ||
+>              (task->psi_flags & clear) != clear) &&
+>             !psi_bug) {
+>                 printk_deferred(KERN_ERR "psi: inconsistent task state! task=%d:%s cpu=%d psi_flags=%x clear=%x set=%x\n",
+>                                 task->pid, task->comm, cpu,
+>                                 task->psi_flags, clear, set);
+>                 psi_bug = 1;
+>         }
+>
+>         task->psi_flags &= ~clear;
+>         task->psi_flags |= set;
+>
+> While this has caught a few bugs while the code was new, I'm planning
+> on moving it to a CONFIG option that is only enabled in debug builds.
+>
 
-Commit-ID:     2bbc83537614517730e9f2811195004b712de207
-Gitweb:        https://git.kernel.org/tip/2bbc83537614517730e9f2811195004b712de207
-Author:        Thomas Richter <tmricht@linux.ibm.com>
-AuthorDate:    Mon, 17 Feb 2020 11:21:11 +01:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 18 Feb 2020 10:13:28 -03:00
+Got it. Many thanks for you explanation.
 
-perf test: Fix test trace+probe_vfs_getname.sh on s390
+> If you need the room in task->flags, can you please make the memstall
+> state a single bit in task_struct instead? AFAICS there is still space
+> in this section:
+>
+>         /* Force alignment to the next boundary: */
+>         unsigned                        :0;
+>
+>         /* Unserialized, strictly 'current' */
+>
+>         ...
+>
+> #ifdef CONFIG_PSI
+>         unsigned                        in_memstall:1;
+> #endif
+>
+> It would also avoid the mixed-bit masking headache:
+>
 
-This test places a kprobe to function getname_flags() in the kernel
-which has the following prototype:
+Seems that's a better solution. I will update with it.
+Thanks for your suggestion.
 
-  struct filename *getname_flags(const char __user *filename, int flags, int *empty)
+> > @@ -17,11 +17,21 @@ enum psi_task_count {
+> >       NR_PSI_TASK_COUNTS = 3,
+> >  };
+> >
+> > -/* Task state bitmasks */
+> > +/*
+> > + * Task state bitmasks:
+> > + * These flags are stored in the lower PSI_TSK_BITS bits of
+> > + * task->psi_flags, and the higher bits are set with per process flag which
+> > + * persists across sleeps.
+> > + */
+> > +#define PSI_TSK_STATE_BITS 16
+> > +#define PSI_TSK_STATE_MASK ((1 << PSI_TSK_STATE_BITS) - 1)
+> >  #define TSK_IOWAIT   (1 << NR_IOWAIT)
+> >  #define TSK_MEMSTALL (1 << NR_MEMSTALL)
+> >  #define TSK_RUNNING  (1 << NR_RUNNING)
+> >
+> > +/* Stalled due to lack of memory, that's per process flag. */
+> > +#define PSI_PF_MEMSTALL (1 << PSI_TSK_STATE_BITS)
+> > +
+> >  /* Resources that workloads could be stalled on */
+> >  enum psi_res {
+> >       PSI_IO,
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index f314790cb527..2d4c04d35d9b 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -1025,7 +1025,11 @@ struct task_struct {
+> >
+> >       struct task_io_accounting       ioac;
+> >  #ifdef CONFIG_PSI
+> > -     /* Pressure stall state */
+> > +     /*
+> > +      * Pressure stall state:
+> > +      * Bits 0 ~ PSI_TSK_STATE_BITS-1: PSI task states
+> > +      * Bits PSI_TSK_STATE_BITS ~ 31: Per process flags
+> > +      */
+> >       unsigned int                    psi_flags;
+> >  #endif
+> >  #ifdef CONFIG_TASK_XACCT
+>
+> Thanks
 
-The 'filename' argument points to a filename located in user space memory.
 
-Looking at commit 88903c464321c ("tracing/probe: Add ustring type for
-user-space string") the kprobe should indicate that user space memory is
-accessed.
 
-Output before:
-
-   [root@m35lp76 perf]# ./perf test 66 67
-   66: Use vfs_getname probe to get syscall args filenames   : FAILED!
-   67: Check open filename arg using perf trace + vfs_getname: FAILED!
-   [root@m35lp76 perf]#
-
-Output after:
-
-   [root@m35lp76 perf]# ./perf test 66 67
-   66: Use vfs_getname probe to get syscall args filenames   : Ok
-   67: Check open filename arg using perf trace + vfs_getname: Ok
-   [root@m35lp76 perf]#
-
-Comments from Masami Hiramatsu:
-
-This bug doesn't happen on x86 or other archs on which user address
-space and kernel address space is the same. On some arches (ppc64 in
-this case?) user address space is partially or completely the same as
-kernel address space.
-
-(Yes, they switch the world when running into the kernel) In this case,
-we need to use different data access functions for each space.
-
-That is why I introduced the "ustring" type for kprobe events.
-
-As far as I can see, Thomas's patch is sane. Thomas, could you show us
-your result on your test environment?
-
-Comments from Thomas Richter:
-
-Test results for s/390 included above.
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Sumanth Korikkar <sumanthk@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Link: http://lore.kernel.org/lkml/20200217102111.61137-1-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/shell/lib/probe_vfs_getname.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-index 7cb99b4..c2cc42d 100644
---- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-@@ -14,7 +14,7 @@ add_probe_vfs_getname() {
- 	if [ $had_vfs_getname -eq 1 ] ; then
- 		line=$(perf probe -L getname_flags 2>&1 | egrep 'result.*=.*filename;' | sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/')
- 		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
--		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:string"
-+		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
- 	fi
- }
- 
+-- 
+Yafang Shao
+DiDi
