@@ -2,109 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C45AE1707E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:43:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DAF61707EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:47:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbgBZSni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:43:38 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:34950 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbgBZSnh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:43:37 -0500
-Received: by mail-io1-f65.google.com with SMTP id h8so284205iob.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 10:43:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a9lte+fOFVwIvTxY0D7kbm+KY6FljHyVVBNSpRiNzyM=;
-        b=OucBm0ZhnE71Y6NLaHS+8+OxDn0OXDGuas9PRChmy3QLD0bVR75NCbyTbysiQKfv+5
-         tgnJ96uTgDVWcOMM/h7OtqLUnDPZw70AvkLeDgpR2Xdako1sEqaK0hp+ugfXxgUlO/Bg
-         D4GSs/1E98Z9r5M5JPSCCVNru12XZSg9js6PY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=a9lte+fOFVwIvTxY0D7kbm+KY6FljHyVVBNSpRiNzyM=;
-        b=BdbtIritkliIYj1vVtjAflYIM20Lr7PkJAU9xyigvgSijSZM7cuWEJF3Z1MUbQNBpY
-         a1nGom352L/ON5QP76JmqjA8d+hkSEnDOVWDwgy4B11RGgoLwzh45lu0lTsHtBodwzra
-         uI7qjNUHWkDbpX7QnRVIICerZbK3nZsCWLdvBPEaQMMOWI/dNxPD2ML8KUpgDNGRou7t
-         Xa/mc9lE0GwZFOg7sdhjJcPxaMleStZwkXdXcohmY8TV3+QP5haCVjEa56Qapjr8BKqi
-         VLTWg8zTpdkRSpF4uEvXZdnnnWw1686oyczO3far3lCc9LTj60IMsF2Hwi7OZdtJWUjc
-         xJ8g==
-X-Gm-Message-State: APjAAAXKJrL1YTXGFUcwV86QzLWqUsxhvuX5SbfOpIYfn0/0GqLbk2td
-        UPk9EMKKZFje6KLoXgMTrL2iuP3MUO4=
-X-Google-Smtp-Source: APXvYqy+pCE4nTPCtile37Mod0xvFRqxBv28FMYOV6K0DBWl5tfRZlfaid7fmF8zL+YAb6vyUG5KJw==
-X-Received: by 2002:a6b:cf0a:: with SMTP id o10mr5292089ioa.267.1582742616682;
-        Wed, 26 Feb 2020 10:43:36 -0800 (PST)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id c24sm765230iom.0.2020.02.26.10.43.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2020 10:43:36 -0800 (PST)
-Subject: Re: [GIT PULL] Kselftest update for Linux 5.6-rc4
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "skh >> Shuah Khan" <skhan@linuxfoundation.org>
-References: <94b64a48-a337-63c4-c504-7e9b0c29a7c6@linuxfoundation.org>
- <CAHk-=whGqq1XyJgYr+Mrx7Po2d2JVRvroSigxzQ+C6jCcU7uqw@mail.gmail.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <7764e4a5-1efc-2560-3766-bfce826af985@linuxfoundation.org>
-Date:   Wed, 26 Feb 2020 11:43:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=whGqq1XyJgYr+Mrx7Po2d2JVRvroSigxzQ+C6jCcU7uqw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727219AbgBZSrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:47:20 -0500
+Received: from foss.arm.com ([217.140.110.172]:41252 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726878AbgBZSrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 13:47:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 271AB30E;
+        Wed, 26 Feb 2020 10:47:19 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 91FD33F881;
+        Wed, 26 Feb 2020 10:47:18 -0800 (PST)
+Date:   Wed, 26 Feb 2020 18:47:16 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Akshu Agrawal <akshu.agrawal@amd.com>
+Cc:     akshu.agrawal@amd.com, alsa-devel@alsa-project.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: amd: Allow I2S wake event after ACP is powerd On" to the asoc tree
+In-Reply-To:  <20200226104746.208656-1-akshu.agrawal@amd.com>
+Message-Id:  <applied-20200226104746.208656-1-akshu.agrawal@amd.com>
+X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/26/20 11:14 AM, Linus Torvalds wrote:
-> On Tue, Feb 25, 2020 at 3:26 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>
->> - Declutter git status fix from Christophe Leroy
-> 
-> I've pulled this, but just for future reference (and hoping for a
-> future cleanup patch): instead of putting things in the global
-> .gitignore file, do it in the relevant local one.
-> 
-> So you could just have added
-> 
->    *.sh
->    !run.sh
-> 
-> in 'tools/testing/selftests/lkdtm/.gitignore' instead of doing
-> 
->    # Generated lkdtm tests
->    /tools/testing/selftests/lkdtm/*.sh
->    !/tools/testing/selftests/lkdtm/run.sh
-> 
-> in the top-level one.
-> 
-> That keeps things much better separated. It also incidentally means
-> that if a directory gets renamed, the gitignore file just "magically"
-> continues to work (if you rename the actual files themselves that are
-> named in gitignore, then that's obviously a different thing).
-> 
-> If you put it in the leaf directory, it also means that you don't need
-> the '/' at the beginning, because the local gitignore entries will
-> only affect that subdirectory (and any subdirectories under it).
-> 
-> So please put only "global" gitignore patterns in the top-level gitignore file.
-> 
->                Linus
-> 
+The patch
 
-Thanks. I will keep this mind as I review these kinds of patches.
+   ASoC: amd: Allow I2S wake event after ACP is powerd On
 
--- Shuah
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 911abf8b050e76591479d35c928f7e72605067ac Mon Sep 17 00:00:00 2001
+From: Akshu Agrawal <akshu.agrawal@amd.com>
+Date: Wed, 26 Feb 2020 16:17:44 +0530
+Subject: [PATCH] ASoC: amd: Allow I2S wake event after ACP is powerd On
+
+ACP_PME_EN allows wake interrupt to be generated when I2S wake
+feature is enabled. On turning ACP On, ACP_PME_EN gets cleared.
+Setting the bit back ensures that wake event can be received
+when ACP is On.
+
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+Link: https://lore.kernel.org/r/20200226104746.208656-1-akshu.agrawal@amd.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/amd/raven/pci-acp3x.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
+index da60e2ec5535..f25ce50f1a90 100644
+--- a/sound/soc/amd/raven/pci-acp3x.c
++++ b/sound/soc/amd/raven/pci-acp3x.c
+@@ -38,8 +38,13 @@ static int acp3x_power_on(void __iomem *acp3x_base)
+ 	timeout = 0;
+ 	while (++timeout < 500) {
+ 		val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
+-		if (!val)
++		if (!val) {
++			/* Set PME_EN as after ACP power On,
++			 * PME_EN gets cleared
++			 */
++			rv_writel(0x1, acp3x_base + mmACP_PME_EN);
+ 			return 0;
++		}
+ 		udelay(1);
+ 	}
+ 	return -ETIMEDOUT;
+-- 
+2.20.1
 
