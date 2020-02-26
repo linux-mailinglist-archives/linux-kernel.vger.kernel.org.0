@@ -2,498 +2,685 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C2701707EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:45:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CF701707DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:42:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbgBZSpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:45:13 -0500
-Received: from mga05.intel.com ([192.55.52.43]:15629 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726878AbgBZSpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:45:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 10:45:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,489,1574150400"; 
-   d="scan'208";a="231899635"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 26 Feb 2020 10:45:11 -0800
-Received: from [10.7.201.16] (skuppusw-desk.jf.intel.com [10.7.201.16])
-        by linux.intel.com (Postfix) with ESMTP id DF668580544;
-        Wed, 26 Feb 2020 10:45:10 -0800 (PST)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v15 4/5] PCI/DPC: Add Error Disconnect Recover (EDR)
- support
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com
-References: <20200226010231.GA238440@google.com>
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <c961e365-6a5b-01f7-091a-c374848943fe@linux.intel.com>
-Date:   Wed, 26 Feb 2020 10:42:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727255AbgBZSmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:42:49 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34299 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727189AbgBZSmt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 13:42:49 -0500
+Received: by mail-pf1-f193.google.com with SMTP id i6so226397pfc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 10:42:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3D3oLI6Nsw3BoGxl49qFVizEhIUBHTVwOueR3ykJoHo=;
+        b=Dck0JGHYCiPbmD3nM7OAPoyNJVBTC5ZDEkia2X9rWVwQis63T3CBk6OYCkvllFJLAL
+         9lBVGR96S9W9HqERU3cp+jIhXmWTV3I9eMgrrj1iaBqjoyrQePuTaO1yN44qc2q0+2xP
+         g3Zd9sxwYItE1Qf2cO0fhiZy1rwT5eTGPsb10AWfw1PQMKlC+yBhHzATBXaF5rnu8bo4
+         d1Rm9HbRclOuItADDtewdwHVOcl7rATW3+TX/DMXJIPpd+5Z7m/zf6ei2iTnSaZEGn0r
+         nvRkvHp1V3dNHFzglk8TIRFFdyGJEwwzPe2T2EFNIaRJXk/otbl2vN20f3egK3XHFGR4
+         vWDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3D3oLI6Nsw3BoGxl49qFVizEhIUBHTVwOueR3ykJoHo=;
+        b=tX9GcjHhJzJoN+VW8aT6MxE+HPLiz7nxQeey+L7OfiPaEoFVgswhOXUcQJdIux6/qz
+         JgsJ+nHZ0wb81xnnAaU6rzg9NXBMsuLkEnSxpCqRWsBb+YWv3j1IwdrPJNisXKSdYlWz
+         aSRGxKTo/afR1YiEut6yfMQZc5TGzmFEaDe7C/N811Oew+o1toiS5d9TATb0pTavFdDx
+         kprNS3g5UjkDzZuzFs4dQCzJwOhNdPMP2QyZPrF17USwEI6RD3bAO74p6zn90dqeBBgw
+         hG88DJhv9QxZXjPksrNX0iX+5wpYMJ6XYAQ0ouDO/qS2o4SLZTUeaxbJjLi9u5Wt2pGq
+         /+1w==
+X-Gm-Message-State: APjAAAU35NwJS1MWYymT7MDSSawRTbEWRCQ9J1irhH+nVLRcZj/B4rxi
+        1t2bl22+sIeVx8xaHbT6m477dXRKQOFJhjn87n0pFA==
+X-Google-Smtp-Source: APXvYqzy7hAwcYps46RHUUZgm0/EceXRBAk73qg100Wz1NGk/j/3ehCKUhtU2lQ8uH9U3GOOyo7mVPDeu5z+zUZIJEw=
+X-Received: by 2002:aa7:9629:: with SMTP id r9mr42827pfg.51.1582742566831;
+ Wed, 26 Feb 2020 10:42:46 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200226010231.GA238440@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <cover.1576170740.git.andreyknvl@google.com> <95e7a12ac909e7de584133772efc7ef982a16bbb.1576170740.git.andreyknvl@google.com>
+ <CACT4Y+aKOC83Dm=wwZT9zsxi+MAxwZnHp1wBLbF6VH9YPAWLCw@mail.gmail.com>
+In-Reply-To: <CACT4Y+aKOC83Dm=wwZT9zsxi+MAxwZnHp1wBLbF6VH9YPAWLCw@mail.gmail.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Wed, 26 Feb 2020 19:42:35 +0100
+Message-ID: <CAAeHK+yd-pzgjX07JgQoA_78S=9JPKa=pHWRXr-xjNt_UW1YXQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/2] kcov: collect coverage from interrupts
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Bjorn,
-
-Thanks for the review.
-
-On 2/25/20 5:02 PM, Bjorn Helgaas wrote:
-> On Thu, Feb 13, 2020 at 10:20:16AM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>
->> As per ACPI specification r6.3, sec 5.6.6, when firmware owns Downstream
->> Port Containment (DPC), its expected to use the "Error Disconnect
->> Recover" (EDR) notification to alert OSPM of a DPC event and if OS
->> supports EDR, its expected to handle the software state invalidation and
->> port recovery in OS, and also let firmware know the recovery status via
->> _OST ACPI call. Related _OST status codes can be found in ACPI
->> specification r6.3, sec 6.3.5.2.
->>
->> Also, as per PCI firmware specification r3.2 Downstream Port Containment
->> Related Enhancements ECN, sec 4.5.1, table 4-6, If DPC is controlled by
->> firmware (firmware first mode), firmware is responsible for
->> configuring the DPC and OS is responsible for error recovery. Also, OS
->> is allowed to modify DPC registers only during the EDR notification
->> window.
->>
->> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->> ---
->>   drivers/pci/pci-acpi.c    |   3 +
->>   drivers/pci/pcie/Kconfig  |  10 ++
->>   drivers/pci/pcie/Makefile |   1 +
->>   drivers/pci/pcie/edr.c    | 257 ++++++++++++++++++++++++++++++++++++++
->>   include/linux/pci-acpi.h  |   8 ++
->>   5 files changed, 279 insertions(+)
->>   create mode 100644 drivers/pci/pcie/edr.c
->>
->> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
->> index 0c02d500158f..6af5d6a04990 100644
->> --- a/drivers/pci/pci-acpi.c
->> +++ b/drivers/pci/pci-acpi.c
->> @@ -1258,6 +1258,7 @@ static void pci_acpi_setup(struct device *dev)
->>   
->>   	acpi_pci_wakeup(pci_dev, false);
->>   	acpi_device_power_add_dependent(adev, dev);
->> +	pci_acpi_add_edr_notifier(pci_dev);
->>   }
->>   
->>   static void pci_acpi_cleanup(struct device *dev)
->> @@ -1276,6 +1277,8 @@ static void pci_acpi_cleanup(struct device *dev)
->>   
->>   		device_set_wakeup_capable(dev, false);
->>   	}
->> +
->> +	pci_acpi_remove_edr_notifier(pci_dev);
->>   }
->>   
->>   static bool pci_acpi_bus_match(struct device *dev)
->> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
->> index 6e3c04b46fb1..772b1f4cb19e 100644
->> --- a/drivers/pci/pcie/Kconfig
->> +++ b/drivers/pci/pcie/Kconfig
->> @@ -140,3 +140,13 @@ config PCIE_BW
->>   	  This enables PCI Express Bandwidth Change Notification.  If
->>   	  you know link width or rate changes occur only to correct
->>   	  unreliable links, you may answer Y.
->> +
->> +config PCIE_EDR
->> +	bool "PCI Express Error Disconnect Recover support"
->> +	depends on PCIE_DPC && ACPI
->> +	help
->> +	  This option adds Error Disconnect Recover support as specified
->> +	  in the Downstream Port Containment Related Enhancements ECN to
->> +	  the PCI Firmware Specification r3.2.  Enable this if you want to
->> +	  support hybrid DPC model which uses both firmware and OS to
->> +	  implement DPC.
->> diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
->> index efb9d2e71e9e..68da9280ff11 100644
->> --- a/drivers/pci/pcie/Makefile
->> +++ b/drivers/pci/pcie/Makefile
->> @@ -13,3 +13,4 @@ obj-$(CONFIG_PCIE_PME)		+= pme.o
->>   obj-$(CONFIG_PCIE_DPC)		+= dpc.o
->>   obj-$(CONFIG_PCIE_PTM)		+= ptm.o
->>   obj-$(CONFIG_PCIE_BW)		+= bw_notification.o
->> +obj-$(CONFIG_PCIE_EDR)		+= edr.o
->> diff --git a/drivers/pci/pcie/edr.c b/drivers/pci/pcie/edr.c
->> new file mode 100644
->> index 000000000000..b3e9103585a1
->> --- /dev/null
->> +++ b/drivers/pci/pcie/edr.c
->> @@ -0,0 +1,257 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * PCI DPC Error Disconnect Recover support driver
->> + * Author: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->> + *
->> + * Copyright (C) 2020 Intel Corp.
->> + */
->> +
->> +#define dev_fmt(fmt) "EDR: " fmt
->> +
->> +#include <linux/pci.h>
->> +#include <linux/pci-acpi.h>
->> +
->> +#include "portdrv.h"
->> +#include "dpc.h"
->> +#include "../pci.h"
->> +
->> +#define EDR_PORT_ENABLE_DSM		0x0C
->> +#define EDR_PORT_LOCATE_DSM		0x0D
->> +#define EDR_OST_SUCCESS			0x80
->> +#define EDR_OST_FAILED			0x81
->> +
->> +/*
->> + * _DSM wrapper function to enable/disable DPC port.
->> + * @pdev   : PCI device structure.
->> + * @enable: status of DPC port (0 or 1).
-> Either line up these colons or join them with the parameter names
-> (also below).
-ok. will do it.
+On Tue, Dec 17, 2019 at 2:03 PM Dmitry Vyukov <dvyukov@google.com> wrote:
 >
->> + * returns 0 on success or errno on failure.
->> + */
->> +static int acpi_enable_dpc_port(struct pci_dev *pdev, bool enable)
-> We only call this with "true", so the "enable" parameter is pointless.
-Makes sense. I will remove it. We can add it if needed in future.
+> On Thu, Dec 12, 2019 at 6:15 PM Andrey Konovalov <andreyknvl@google.com> wrote:
+> >
+> > This change extends kcov remote coverage support to allow collecting
+> > coverage from interrupts in addition to kernel background threads.
+> >
+> > To collect coverage from code that is executed in interrupt context, a
+> > part of that code has to be annotated with kcov_remote_start/stop() in a
+> > similar way as how it is done for global kernel background threads. Then
+> > the handle used for the annotations has to be passed to the
+> > KCOV_REMOTE_ENABLE ioctl.
+> >
+> > Internally this patch adjusts the __sanitizer_cov_trace_pc() compiler
+> > inserted callback to not bail out when called from interrupt context.
+> > kcov_remote_start/stop() are updated to save/restore the current per
+> > task kcov state in a per-cpu area (in case the interrupt came when the
+> > kernel was already collecting coverage in task context). Coverage from
+> > interrupts is collected into pre-allocated per-cpu areas, whose size is
+> > controlled by the new CONFIG_KCOV_IRQ_AREA_SIZE.
+> >
+> > This patch also cleans up some of kcov debug messages.
+> >
+> > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> > ---
+> >  Documentation/dev-tools/kcov.rst   |  16 +--
+> >  drivers/usb/gadget/udc/dummy_hcd.c |   1 +
+> >  include/linux/sched.h              |   3 +
+> >  kernel/kcov.c                      | 196 +++++++++++++++++++----------
+> >  lib/Kconfig.debug                  |   9 ++
+> >  5 files changed, 154 insertions(+), 71 deletions(-)
+> >
+> > diff --git a/Documentation/dev-tools/kcov.rst b/Documentation/dev-tools/kcov.rst
+> > index 1c4e1825d769..fc2bc6883431 100644
+> > --- a/Documentation/dev-tools/kcov.rst
+> > +++ b/Documentation/dev-tools/kcov.rst
+> > @@ -217,14 +217,14 @@ This allows to collect coverage from two types of kernel background
+> >  threads: the global ones, that are spawned during kernel boot in a limited
+> >  number of instances (e.g. one USB hub_event() worker thread is spawned per
+> >  USB HCD); and the local ones, that are spawned when a user interacts with
+> > -some kernel interface (e.g. vhost workers).
+> > +some kernel interface (e.g. vhost workers); as well as from interrupts.
+> >
+> > -To enable collecting coverage from a global background thread, a unique
+> > -global handle must be assigned and passed to the corresponding
+> > -kcov_remote_start() call. Then a userspace process can pass a list of such
+> > -handles to the KCOV_REMOTE_ENABLE ioctl in the handles array field of the
+> > -kcov_remote_arg struct. This will attach the used kcov device to the code
+> > -sections, that are referenced by those handles.
+> > +To enable collecting coverage from a global background thread or from an
+> > +interrupt, a unique global handle must be assigned and passed to the
+> > +corresponding kcov_remote_start() call. Then a userspace process can pass
+> > +a list of such handles to the KCOV_REMOTE_ENABLE ioctl in the handles
+> > +array field of the kcov_remote_arg struct. This will attach the used kcov
+> > +device to the code sections, that are referenced by those handles.
+> >
+> >  Since there might be many local background threads spawned from different
+> >  userspace processes, we can't use a single global handle per annotation.
+> > @@ -242,7 +242,7 @@ handles as they don't belong to a particular subsystem. The bytes 4-7 are
+> >  currently reserved and must be zero. In the future the number of bytes
+> >  used for the subsystem or handle ids might be increased.
+> >
+> > -When a particular userspace proccess collects coverage by via a common
+> > +When a particular userspace proccess collects coverage via a common
+> >  handle, kcov will collect coverage for each code section that is annotated
+> >  to use the common handle obtained as kcov_handle from the current
+> >  task_struct. However non common handles allow to collect coverage
+> > diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/dummy_hcd.c
+> > index 4c9d1e49d5ed..faf84ada71a5 100644
+> > --- a/drivers/usb/gadget/udc/dummy_hcd.c
+> > +++ b/drivers/usb/gadget/udc/dummy_hcd.c
+> > @@ -38,6 +38,7 @@
+> >  #include <linux/usb/gadget.h>
+> >  #include <linux/usb/hcd.h>
+> >  #include <linux/scatterlist.h>
+> > +#include <linux/kcov.h>
+> >
+> >  #include <asm/byteorder.h>
+> >  #include <linux/io.h>
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index 467d26046416..47d1d556f795 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -1229,6 +1229,9 @@ struct task_struct {
+> >
+> >         /* KCOV sequence number: */
+> >         int                             kcov_sequence;
+> > +
+> > +       /* Collect coverage from interrupt context: */
+> > +       bool                            kcov_interrupt;
+> >  #endif
+> >
+> >  #ifdef CONFIG_MEMCG
+> > diff --git a/kernel/kcov.c b/kernel/kcov.c
+> > index f50354202dbe..5b48a7a5c465 100644
+> > --- a/kernel/kcov.c
+> > +++ b/kernel/kcov.c
+> > @@ -26,6 +26,7 @@
+> >  #include <asm/setup.h>
+> >
+> >  #define kcov_debug(fmt, ...) pr_debug("%s: " fmt, __func__, ##__VA_ARGS__)
+> > +#define kcov_err(fmt, ...) pr_err("%s: " fmt, __func__, ##__VA_ARGS__)
+> >
+> >  /* Number of 64-bit words written per one comparison: */
+> >  #define KCOV_WORDS_PER_CMP 4
+> > @@ -86,6 +87,17 @@ static DEFINE_SPINLOCK(kcov_remote_lock);
+> >  static DEFINE_HASHTABLE(kcov_remote_map, 4);
+> >  static struct list_head kcov_remote_areas = LIST_HEAD_INIT(kcov_remote_areas);
+> >
+> > +struct kcov_remote_irq_data {
+> > +       unsigned int            mode;
+> > +       unsigned int            size;
+> > +       void                    *area;
+> > +       struct kcov             *kcov;
+> > +       unsigned long           flags;
+> > +};
+> > +
+> > +DEFINE_PER_CPU(struct kcov_remote_irq_data, kcov_remote_irq);
+> > +DEFINE_PER_CPU(void *, kcov_irq_area);
+> > +
+> >  /* Must be called with kcov_remote_lock locked. */
+> >  static struct kcov_remote *kcov_remote_find(u64 handle)
+> >  {
+> > @@ -98,6 +110,7 @@ static struct kcov_remote *kcov_remote_find(u64 handle)
+> >         return NULL;
+> >  }
+> >
+> > +/* Must be called with kcov_remote_lock locked. */
+> >  static struct kcov_remote *kcov_remote_add(struct kcov *kcov, u64 handle)
+> >  {
+> >         struct kcov_remote *remote;
+> > @@ -119,16 +132,13 @@ static struct kcov_remote_area *kcov_remote_area_get(unsigned int size)
+> >         struct kcov_remote_area *area;
+> >         struct list_head *pos;
+> >
+> > -       kcov_debug("size = %u\n", size);
+> >         list_for_each(pos, &kcov_remote_areas) {
+> >                 area = list_entry(pos, struct kcov_remote_area, list);
+> >                 if (area->size == size) {
+> >                         list_del(&area->list);
+> > -                       kcov_debug("rv = %px\n", area);
+> >                         return area;
+> >                 }
+> >         }
+> > -       kcov_debug("rv = NULL\n");
+> >         return NULL;
+> >  }
+> >
+> > @@ -136,7 +146,6 @@ static struct kcov_remote_area *kcov_remote_area_get(unsigned int size)
+> >  static void kcov_remote_area_put(struct kcov_remote_area *area,
+> >                                         unsigned int size)
+> >  {
+> > -       kcov_debug("area = %px, size = %u\n", area, size);
+> >         INIT_LIST_HEAD(&area->list);
+> >         area->size = size;
+> >         list_add(&area->list, &kcov_remote_areas);
+> > @@ -148,9 +157,11 @@ static notrace bool check_kcov_mode(enum kcov_mode needed_mode, struct task_stru
+> >
+> >         /*
+> >          * We are interested in code coverage as a function of a syscall inputs,
+> > -        * so we ignore code executed in interrupts.
+> > +        * so we ignore code executed in interrupts, unless we are in a remote
+> > +        * coverage collection section happening in an interrupt, which is
+> > +        * indicated by the t->kcov_interrupt flag.
+> >          */
+> > -       if (!in_task())
+> > +       if (!in_task() && !t->kcov_interrupt)
+> >                 return false;
+> >         mode = READ_ONCE(t->kcov_mode);
+> >         /*
+> > @@ -331,12 +342,12 @@ static void kcov_stop(struct task_struct *t)
+> >         barrier();
+> >         t->kcov_size = 0;
+> >         t->kcov_area = NULL;
+> > +       t->kcov = NULL;
+> >  }
+> >
+> >  static void kcov_task_reset(struct task_struct *t)
+> >  {
+> >         kcov_stop(t);
+> > -       t->kcov = NULL;
+> >         t->kcov_sequence = 0;
+> >         t->kcov_handle = 0;
+> >  }
+> > @@ -361,18 +372,18 @@ static void kcov_remote_reset(struct kcov *kcov)
+> >         int bkt;
+> >         struct kcov_remote *remote;
+> >         struct hlist_node *tmp;
+> > +       unsigned long flags;
+> >
+> > -       spin_lock(&kcov_remote_lock);
+> > +       spin_lock_irqsave(&kcov_remote_lock, flags);
+> >         hash_for_each_safe(kcov_remote_map, bkt, tmp, remote, hnode) {
+> >                 if (remote->kcov != kcov)
+> >                         continue;
+> > -               kcov_debug("removing handle %llx\n", remote->handle);
+> >                 hash_del(&remote->hnode);
+> >                 kfree(remote);
+> >         }
+> >         /* Do reset before unlock to prevent races with kcov_remote_start(). */
+> >         kcov_reset(kcov);
+> > -       spin_unlock(&kcov_remote_lock);
+> > +       spin_unlock_irqrestore(&kcov_remote_lock, flags);
+> >  }
+> >
+> >  static void kcov_disable(struct task_struct *t, struct kcov *kcov)
+> > @@ -401,12 +412,13 @@ static void kcov_put(struct kcov *kcov)
+> >  void kcov_task_exit(struct task_struct *t)
+> >  {
+> >         struct kcov *kcov;
+> > +       unsigned long flags;
+> >
+> >         kcov = t->kcov;
+> >         if (kcov == NULL)
+> >                 return;
+> >
+> > -       spin_lock(&kcov->lock);
+> > +       spin_lock_irqsave(&kcov->lock, flags);
+> >         kcov_debug("t = %px, kcov->t = %px\n", t, kcov->t);
+> >         /*
+> >          * For KCOV_ENABLE devices we want to make sure that t->kcov->t == t,
+> > @@ -430,12 +442,12 @@ void kcov_task_exit(struct task_struct *t)
+> >          * By combining all three checks into one we get:
+> >          */
+> >         if (WARN_ON(kcov->t != t)) {
+> > -               spin_unlock(&kcov->lock);
+> > +               spin_unlock_irqrestore(&kcov->lock, flags);
+> >                 return;
+> >         }
+> >         /* Just to not leave dangling references behind. */
+> >         kcov_disable(t, kcov);
+> > -       spin_unlock(&kcov->lock);
+> > +       spin_unlock_irqrestore(&kcov->lock, flags);
+> >         kcov_put(kcov);
+> >  }
+> >
+> > @@ -446,12 +458,13 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
+> >         struct kcov *kcov = vma->vm_file->private_data;
+> >         unsigned long size, off;
+> >         struct page *page;
+> > +       unsigned long flags;
+> >
+> >         area = vmalloc_user(vma->vm_end - vma->vm_start);
+> >         if (!area)
+> >                 return -ENOMEM;
+> >
+> > -       spin_lock(&kcov->lock);
+> > +       spin_lock_irqsave(&kcov->lock, flags);
+> >         size = kcov->size * sizeof(unsigned long);
+> >         if (kcov->mode != KCOV_MODE_INIT || vma->vm_pgoff != 0 ||
+> >             vma->vm_end - vma->vm_start != size) {
+> > @@ -461,7 +474,7 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
+> >         if (!kcov->area) {
+> >                 kcov->area = area;
+> >                 vma->vm_flags |= VM_DONTEXPAND;
+> > -               spin_unlock(&kcov->lock);
+> > +               spin_unlock_irqrestore(&kcov->lock, flags);
+> >                 for (off = 0; off < size; off += PAGE_SIZE) {
+> >                         page = vmalloc_to_page(kcov->area + off);
+> >                         if (vm_insert_page(vma, vma->vm_start + off, page))
+> > @@ -470,7 +483,7 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
+> >                 return 0;
+> >         }
+> >  exit:
+> > -       spin_unlock(&kcov->lock);
+> > +       spin_unlock_irqrestore(&kcov->lock, flags);
+> >         vfree(area);
+> >         return res;
+> >  }
+> > @@ -550,10 +563,10 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+> >         int mode, i;
+> >         struct kcov_remote_arg *remote_arg;
+> >         struct kcov_remote *remote;
+> > +       unsigned long flags;
+> >
+> >         switch (cmd) {
+> >         case KCOV_INIT_TRACE:
+> > -               kcov_debug("KCOV_INIT_TRACE\n");
+> >                 /*
+> >                  * Enable kcov in trace mode and setup buffer size.
+> >                  * Must happen before anything else.
+> > @@ -572,7 +585,6 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+> >                 kcov->mode = KCOV_MODE_INIT;
+> >                 return 0;
+> >         case KCOV_ENABLE:
+> > -               kcov_debug("KCOV_ENABLE\n");
+> >                 /*
+> >                  * Enable coverage for the current task.
+> >                  * At this point user must have been enabled trace mode,
+> > @@ -598,7 +610,6 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+> >                 kcov_get(kcov);
+> >                 return 0;
+> >         case KCOV_DISABLE:
+> > -               kcov_debug("KCOV_DISABLE\n");
+> >                 /* Disable coverage for the current task. */
+> >                 unused = arg;
+> >                 if (unused != 0 || current->kcov != kcov)
+> > @@ -610,7 +621,6 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+> >                 kcov_put(kcov);
+> >                 return 0;
+> >         case KCOV_REMOTE_ENABLE:
+> > -               kcov_debug("KCOV_REMOTE_ENABLE\n");
+> >                 if (kcov->mode != KCOV_MODE_INIT || !kcov->area)
+> >                         return -EINVAL;
+> >                 t = current;
+> > @@ -627,41 +637,42 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+> >                 kcov->t = t;
+> >                 kcov->remote = true;
+> >                 kcov->remote_size = remote_arg->area_size;
+> > -               spin_lock(&kcov_remote_lock);
+> > +               spin_lock_irqsave(&kcov_remote_lock, flags);
+> >                 for (i = 0; i < remote_arg->num_handles; i++) {
+> > -                       kcov_debug("handle %llx\n", remote_arg->handles[i]);
+> >                         if (!kcov_check_handle(remote_arg->handles[i],
+> >                                                 false, true, false)) {
+> > -                               spin_unlock(&kcov_remote_lock);
+> > +                               spin_unlock_irqrestore(&kcov_remote_lock,
+> > +                                                       flags);
+> >                                 kcov_disable(t, kcov);
+> >                                 return -EINVAL;
+> >                         }
+> >                         remote = kcov_remote_add(kcov, remote_arg->handles[i]);
+> >                         if (IS_ERR(remote)) {
+> > -                               spin_unlock(&kcov_remote_lock);
+> > +                               spin_unlock_irqrestore(&kcov_remote_lock,
+> > +                                                       flags);
+> >                                 kcov_disable(t, kcov);
+> >                                 return PTR_ERR(remote);
+> >                         }
+> >                 }
+> >                 if (remote_arg->common_handle) {
+> > -                       kcov_debug("common handle %llx\n",
+> > -                                       remote_arg->common_handle);
+> >                         if (!kcov_check_handle(remote_arg->common_handle,
+> >                                                 true, false, false)) {
+> > -                               spin_unlock(&kcov_remote_lock);
+> > +                               spin_unlock_irqrestore(&kcov_remote_lock,
+> > +                                                       flags);
+> >                                 kcov_disable(t, kcov);
+> >                                 return -EINVAL;
+> >                         }
+> >                         remote = kcov_remote_add(kcov,
+> >                                         remote_arg->common_handle);
+> >                         if (IS_ERR(remote)) {
+> > -                               spin_unlock(&kcov_remote_lock);
+> > +                               spin_unlock_irqrestore(&kcov_remote_lock,
+> > +                                                       flags);
+> >                                 kcov_disable(t, kcov);
+> >                                 return PTR_ERR(remote);
+> >                         }
+> >                         t->kcov_handle = remote_arg->common_handle;
+> >                 }
+> > -               spin_unlock(&kcov_remote_lock);
+> > +               spin_unlock_irqrestore(&kcov_remote_lock, flags);
+> >                 /* Put either in kcov_task_exit() or in KCOV_DISABLE. */
+> >                 kcov_get(kcov);
+> >                 return 0;
+> > @@ -677,6 +688,7 @@ static long kcov_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+> >         struct kcov_remote_arg *remote_arg = NULL;
+> >         unsigned int remote_num_handles;
+> >         unsigned long remote_arg_size;
+> > +       unsigned long flags;
+> >
+> >         if (cmd == KCOV_REMOTE_ENABLE) {
+> >                 if (get_user(remote_num_handles, (unsigned __user *)(arg +
+> > @@ -697,9 +709,9 @@ static long kcov_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+> >         }
+> >
+> >         kcov = filep->private_data;
+> > -       spin_lock(&kcov->lock);
+> > +       spin_lock_irqsave(&kcov->lock, flags);
+> >         res = kcov_ioctl_locked(kcov, cmd, arg);
+> > -       spin_unlock(&kcov->lock);
+> > +       spin_unlock_irqrestore(&kcov->lock, flags);
+> >
+> >         kfree(remote_arg);
+> >
+> > @@ -716,8 +728,8 @@ static const struct file_operations kcov_fops = {
+> >
+> >  /*
+> >   * kcov_remote_start() and kcov_remote_stop() can be used to annotate a section
+> > - * of code in a kernel background thread to allow kcov to be used to collect
+> > - * coverage from that part of code.
+> > + * of code in a kernel background thread or in an interrupt to allow kcov to be
+> > + * used to collect coverage from that part of code.
+> >   *
+> >   * The handle argument of kcov_remote_start() identifies a code section that is
+> >   * used for coverage collection. A userspace process passes this handle to
+> > @@ -728,9 +740,9 @@ static const struct file_operations kcov_fops = {
+> >   * the type of the kernel thread whose code is being annotated.
+> >   *
+> >   * For global kernel threads that are spawned in a limited number of instances
+> > - * (e.g. one USB hub_event() worker thread is spawned per USB HCD), each
+> > - * instance must be assigned a unique 4-byte instance id. The instance id is
+> > - * then combined with a 1-byte subsystem id to get a handle via
+> > + * (e.g. one USB hub_event() worker thread is spawned per USB HCD) and for
+> > + * interrupts, each instance must be assigned a unique 4-byte instance id. The
+> > + * instance id is then combined with a 1-byte subsystem id to get a handle via
+> >   * kcov_remote_handle(subsystem_id, instance_id).
+> >   *
+> >   * For local kernel threads that are spawned from system calls handler when a
+> > @@ -749,13 +761,48 @@ static const struct file_operations kcov_fops = {
+> >   *
+> >   * See Documentation/dev-tools/kcov.rst for more details.
+> >   *
+> > - * Internally, this function looks up the kcov device associated with the
+> > + * Internally, kcov_remote_start() looks up the kcov device associated with the
+> >   * provided handle, allocates an area for coverage collection, and saves the
+> >   * pointers to kcov and area into the current task_struct to allow coverage to
+> >   * be collected via __sanitizer_cov_trace_pc()
+> >   * In turns kcov_remote_stop() clears those pointers from task_struct to stop
+> >   * collecting coverage and copies all collected coverage into the kcov area.
+> >   */
+> > +
+> > +void kcov_remote_swap_irq(struct task_struct *t,
+> > +                               struct kcov_remote_irq_data *irq)
+> > +{
+> > +       t->kcov = xchg(&irq->kcov, t->kcov);
+> > +       t->kcov_size = xchg(&irq->size, t->kcov_size);
+> > +       t->kcov_area = xchg(&irq->area, t->kcov_area);
+> > +       t->kcov_mode = xchg(&irq->mode, t->kcov_mode);
+> > +}
+> > +
+> > +bool kcov_remote_start_irq(struct task_struct *t)
+> > +{
+> > +       struct kcov_remote_irq_data *irq = &get_cpu_var(kcov_remote_irq);
+> > +
+> > +       if (t->kcov_interrupt) {
+> > +               /* Nested interrupt. */
+> > +               put_cpu_var(kcov_remote_irq);
+> > +               return false;
+> > +       }
+> > +       t->kcov_interrupt = true;
+> > +       kcov_remote_swap_irq(t, irq);
+> > +       put_cpu_var(kcov_remote_irq);
+> > +       return true;
+> > +}
+> > +
+> > +void kcov_remote_stop_irq(struct task_struct *t)
+> > +{
+> > +       struct kcov_remote_irq_data *irq = &get_cpu_var(kcov_remote_irq);
+> > +
+> > +       kcov_remote_swap_irq(t, irq);
+> > +       t->kcov_interrupt = false;
+> > +       local_irq_restore(irq->flags);
+> > +       put_cpu_var(kcov_remote_irq);
+> > +}
+> > +
+> >  void kcov_remote_start(u64 handle)
+> >  {
+> >         struct kcov_remote *remote;
+> > @@ -764,28 +811,32 @@ void kcov_remote_start(u64 handle)
+> >         unsigned int size;
+> >         enum kcov_mode mode;
+> >         int sequence;
+> > +       unsigned long flags;
+> >
+> >         if (WARN_ON(!kcov_check_handle(handle, true, true, true)))
+> >                 return;
+> > -       if (WARN_ON(!in_task()))
+> > +       if (WARN_ON(in_nmi()))
+> >                 return;
+> >         t = current;
+> >         /*
+> > -        * Check that kcov_remote_start is not called twice
+> > -        * nor called by user tasks (with enabled kcov).
+> > +        * Check that kcov_remote_start is not called twice in background
+> > +        * threads nor called by user tasks (with enabled kcov).
+> >          */
+> > -       if (WARN_ON(t->kcov))
+> > +       if (WARN_ON(in_task() && t->kcov))
+> >                 return;
+> >
+> > -       kcov_debug("handle = %llx\n", handle);
+> > -
+> > -       spin_lock(&kcov_remote_lock);
+> > +       spin_lock_irqsave(&kcov_remote_lock, flags);
+> >         remote = kcov_remote_find(handle);
+> >         if (!remote) {
+> > -               kcov_debug("no remote found");
+> > -               spin_unlock(&kcov_remote_lock);
+> > +               spin_unlock_irqrestore(&kcov_remote_lock, flags);
+> >                 return;
+> >         }
+> > +       if (!in_task() && !kcov_remote_start_irq(t)) {
+> > +               spin_unlock_irqrestore(&kcov_remote_lock, flags);
+> > +               return;
+> > +       }
+> > +       kcov_debug("handle = %llx, context: %s\n", handle,
+> > +                       in_task() ? "task" : "irq");
+> >         /* Put in kcov_remote_stop(). */
+> >         kcov_get(remote->kcov);
+> >         t->kcov = remote->kcov;
+> > @@ -793,11 +844,19 @@ void kcov_remote_start(u64 handle)
+> >          * Read kcov fields before unlock to prevent races with
+> >          * KCOV_DISABLE / kcov_remote_reset().
+> >          */
+> > -       size = remote->kcov->remote_size;
+> > +       size = min_t(unsigned int, remote->kcov->remote_size,
+> > +                       CONFIG_KCOV_IRQ_AREA_SIZE);
+> >         mode = remote->kcov->mode;
+> >         sequence = remote->kcov->sequence;
+> > -       area = kcov_remote_area_get(size);
+> > -       spin_unlock(&kcov_remote_lock);
+> > +       if (in_task()) {
+> > +               area = kcov_remote_area_get(size);
+> > +               spin_unlock_irqrestore(&kcov_remote_lock, flags);
+> > +       } else {
+> > +               area = *this_cpu_ptr(&kcov_irq_area);
+> > +               /* Flags are restored by kcov_remote_stop_irq(). */
+> > +               this_cpu_ptr(&kcov_remote_irq)->flags = flags;
+> > +               spin_unlock(&kcov_remote_lock);
+> > +       }
+> >
+> >         if (!area) {
+> >                 area = vmalloc(size * sizeof(unsigned long));
+> > @@ -810,8 +869,6 @@ void kcov_remote_start(u64 handle)
+> >         /* Reset coverage size. */
+> >         *(u64 *)area = 0;
+> >
+> > -       kcov_debug("area = %px, size = %u", area, size);
+> > -
+> >         kcov_start(t, size, area, mode, sequence);
+> >
+> >  }
+> > @@ -880,30 +937,30 @@ void kcov_remote_stop(void)
+> >         void *area = t->kcov_area;
+> >         unsigned int size = t->kcov_size;
+> >         int sequence = t->kcov_sequence;
+> > +       unsigned long flags;
+> >
+> > -       if (!kcov) {
+> > -               kcov_debug("no kcov found\n");
+> > +       if (!kcov)
+> >                 return;
+> > -       }
+> >
+> >         kcov_stop(t);
+> > -       t->kcov = NULL;
+> >
+> > -       spin_lock(&kcov->lock);
+> > +       spin_lock_irqsave(&kcov->lock, flags);
+> >         /*
+> >          * KCOV_DISABLE could have been called between kcov_remote_start()
+> > -        * and kcov_remote_stop(), hence the check.
+> > +        * and kcov_remote_stop(), hence the sequence check.
+> >          */
+> > -       kcov_debug("move if: %d == %d && %d\n",
+> > -               sequence, kcov->sequence, (int)kcov->remote);
+> >         if (sequence == kcov->sequence && kcov->remote)
+> >                 kcov_move_area(kcov->mode, kcov->area, kcov->size, area);
+> > -       spin_unlock(&kcov->lock);
+> > +       spin_unlock_irqrestore(&kcov->lock, flags);
+> >
+> > -       spin_lock(&kcov_remote_lock);
+> > -       kcov_remote_area_put(area, size);
+> > -       spin_unlock(&kcov_remote_lock);
+> > +       if (in_task()) {
+> > +               spin_lock_irqsave(&kcov_remote_lock, flags);
+> > +               kcov_remote_area_put(area, size);
+> > +               spin_unlock_irqrestore(&kcov_remote_lock, flags);
+> > +       } else
+> > +               kcov_remote_stop_irq(t);
+> >
+> > +       /* Get in kcov_remote_start(). */
+> >         kcov_put(kcov);
 >
->> +{
->> +	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
->> +	union acpi_object *obj, argv4, req;
->> +	int status = 0;
->> +
->> +	req.type = ACPI_TYPE_INTEGER;
->> +	req.integer.value = enable;
->> +
->> +	argv4.type = ACPI_TYPE_PACKAGE;
->> +	argv4.package.count = 1;
->> +	argv4.package.elements = &req;
->> +
->> +	/*
->> +	 * Per the Downstream Port Containment Related Enhancements ECN to
->> +	 * the PCI Firmware Specification r3.2, sec 4.6.12,
->> +	 * EDR_PORT_ENABLE_DSM is optional.  Return success if it's not
->> +	 * implemented.
->> +	 */
->> +	obj = acpi_evaluate_dsm(adev->handle, &pci_acpi_dsm_guid, 5,
->> +				EDR_PORT_ENABLE_DSM, &argv4);
->> +	if (!obj)
->> +		return 0;
->> +
->> +	if (obj->type != ACPI_TYPE_INTEGER || obj->integer.value != enable)
->> +		status = -EIO;
->> +
->> +	ACPI_FREE(obj);
->> +
->> +	return status;
->> +}
->> +
->> +/*
->> + * _DSM wrapper function to locate DPC port.
->> + * @pdev   : Device which received EDR event.
->> + *
->> + * returns pci_dev or NULL.
->> + */
->> +static struct pci_dev *acpi_locate_dpc_port(struct pci_dev *pdev)
->> +{
->> +	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
->> +	union acpi_object *obj;
->> +	u16 port;
->> +
->> +	obj = acpi_evaluate_dsm(adev->handle, &pci_acpi_dsm_guid, 5,
->> +				EDR_PORT_LOCATE_DSM, NULL);
->> +	if (!obj)
->> +		return pci_dev_get(pdev);
->> +
->> +	if (obj->type != ACPI_TYPE_INTEGER) {
-> If this happens, it's a firmware defect, isn't it?  I think maybe we
-> should warn here.  I know we warn below ("No valid port found"), but
-> that doesn't give any clue about the fact that firmware screwed up.
-I will add it in next version.
->
->> +		ACPI_FREE(obj);
->> +		return NULL;
->> +	}
->> +
->> +	/*
->> +	 * Firmware returns DPC port BDF details in following format:
->> +	 *	15:8 = bus
->> +	 *	 7:3 = device
->> +	 *	 2:0 = function
->> +	 */
->> +	port = obj->integer.value;
->> +
->> +	ACPI_FREE(obj);
->> +
->> +	return pci_get_domain_bus_and_slot(pci_domain_nr(pdev->bus),
->> +					   PCI_BUS_NUM(port), port & 0xff);
->> +}
->> +
->> +/*
->> + * _OST wrapper function to let firmware know the status of EDR event.
->> + * @pdev   : Device used to send _OST.
->> + * @edev   : Device which experienced EDR event.
->> + * @status: Status of EDR event.
->> + */
->> +static int acpi_send_edr_status(struct pci_dev *pdev, struct pci_dev *edev,
->> +				u16 status)
->> +{
->> +	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
->> +	u32 ost_status;
->> +
->> +	pci_dbg(pdev, "Sending EDR status :%#x\n", status);
->> +
->> +	ost_status =  PCI_DEVID(edev->bus->number, edev->devfn);
->> +	ost_status = (ost_status << 16) | status;
->> +
->> +	status = acpi_evaluate_ost(adev->handle,
->> +				   ACPI_NOTIFY_DISCONNECT_RECOVER,
->> +				   ost_status, NULL);
->> +	if (ACPI_FAILURE(status))
->> +		return -EINVAL;
->> +
->> +	return 0;
->> +}
->> +
->> +pci_ers_result_t edr_dpc_reset_link(void *cb_data)
->> +{
->> +	return dpc_reset_link_common(cb_data);
->> +}
->> +
->> +static void edr_handle_event(acpi_handle handle, u32 event, void *data)
->> +{
->> +	struct dpc_dev *dpc = data, ndpc;
-> There's actually very little use of struct dpc_dev in this file.  I
-> bet with a little elbow grease, we could remove it completely and just
-> use the pci_dev * or maybe an opaque pointer.
-Yes, we could remove it. But it might need some more changes to
-dpc driver functions. I can think of two ways,
+> Is it OK to call kcov_put from interrupts?
 
-1. Re-factor the DPC driver not to use dpc_dev structure and just use
-pci_dev in their functions implementation. But this might lead to
-re-reading following dpc_dev structure members every time we
-use it in dpc driver functions.
-
-(Currently in dpc driver probe they cache the following device parameters )
-
-   9         u16                     cap_pos;
-  10         bool                    rp_extensions;
-  11         u8                      rp_log_size;
-  12         u16                     ctl;
-  13         u16                     cap;
-
-2. We can create a new variant of dpc_process_err() which depends on 
-pci_dev
-structure and move the dpc_dev initialization to it. Downside is, we 
-should do this
-initialization every time we get DPC event (which should be rare).
-
-void dpc_process_error(struct pci_dev *pdev)
-{
-     struct dpc_dev dpc;
-     dpc_dev_init(pdev, &dpc);
-
-    ....
-
-}
-
-Let me know your comments.
+Yes, both kfree() and vfree() are safe to call in interrupt context
+AFAIU. I'll fix the rest in the next version. Thanks!
 
 >
->> +	struct pci_dev *pdev = dpc->pdev;
->> +	pci_ers_result_t estate = PCI_ERS_RESULT_DISCONNECT;
->> +	u16 status;
->> +
->> +	pci_info(pdev, "ACPI event %#x received\n", event);
->> +
->> +	if (event != ACPI_NOTIFY_DISCONNECT_RECOVER)
->> +		return;
->> +
->> +	/*
->> +	 * Check if _DSM(0xD) is available, and if present locate the
->> +	 * port which issued EDR event.
->> +	 */
->> +	pdev = acpi_locate_dpc_port(pdev);
-> This function name should include "get" since it's part of the
-> pci_dev_get()/pci_dev_put() sequence.
-How about acpi_dpc_port_get(pdev) ?
->
->> +	if (!pdev) {
->> +		pci_err(dpc->pdev, "No valid port found\n");
->> +		return;
->> +	}
->> +
->> +	if (pdev != dpc->pdev) {
->> +		pci_warn(pdev, "Initializing dpc again\n");
->> +		dpc_dev_init(pdev, &ndpc);
-> This seems...  I'm not sure what.  I guess it's really just reading
-> the DPC capability for use by dpc_process_error(), so maybe it's OK.
-> But it's a little strange to read.
->
-> Is this something we should be warning about?
-No this is a valid case. it will only happen if we have a non-acpi based 
-switch
-attached to root port.
->   I think the ECR says
-> it's legitimate to return a child device, doesn't it?
->
->> +		dpc= &ndpc;
-> Space before "=".
-will fix it in next version.
->
->> +	}
->> +
->> +	/*
->> +	 * If port does not support DPC, just send the OST:
->> +	 */
->> +	if (!dpc->cap_pos)
->> +		goto send_ost;
->> +
->> +	/* Check if there is a valid DPC trigger */
->> +	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_STATUS, &status);
->> +	if (!(status & PCI_EXP_DPC_STATUS_TRIGGER)) {
->> +		pci_err(pdev, "Invalid DPC trigger %#010x\n", status);
->> +		goto send_ost;
->> +	}
->> +
->> +	dpc_process_error(dpc);
->> +
->> +	/* Clear AER registers */
->> +	pci_aer_clear_err_uncor_status(pdev);
->> +	pci_aer_clear_err_fatal_status(pdev);
->> +	pci_aer_clear_err_status_regs(pdev);
->> +
->> +	/*
->> +	 * Irrespective of whether the DPC event is triggered by
->> +	 * ERR_FATAL or ERR_NONFATAL, since the link is already down,
->> +	 * use the FATAL error recovery path for both cases.
->> +	 */
->> +	estate = pcie_do_recovery_common(pdev, pci_channel_io_frozen, -1,
->> +					 edr_dpc_reset_link, dpc);
->> +send_ost:
->> +
->> +	/* Use ACPI handle of DPC event device for sending EDR status */
->> +	dpc = data;
-> I think it'd be clearer to reserve "dpc" for the device that received
-> the notification and to which we send the status, and use a different
-> "e_dpc" or something for the dpc_process_error() and related code.
-ok. will make this change in next version.
->
->> +	/*
->> +	 * If recovery is successful, send _OST(0xF, BDF << 16 | 0x80)
->> +	 * to firmware. If not successful, send _OST(0xF, BDF << 16 | 0x81).
->> +	 */
->> +	if (estate == PCI_ERS_RESULT_RECOVERED)
->> +		acpi_send_edr_status(dpc->pdev, pdev, EDR_OST_SUCCESS);
->> +	else
->> +		acpi_send_edr_status(dpc->pdev, pdev, EDR_OST_FAILED);
->> +
->> +	pci_dev_put(pdev);
->> +}
->> +
->> +int pci_acpi_add_edr_notifier(struct pci_dev *pdev)
->> +{
->> +	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
->> +	struct dpc_dev *dpc;
->> +	acpi_status astatus;
->> +	int status;
->> +
->> +	/*
->> +	 * Per the Downstream Port Containment Related Enhancements ECN to
->> +	 * the PCI Firmware Spec, r3.2, sec 4.5.1, table 4-6, EDR support
->> +	 * can only be enabled if DPC is controlled by firmware.
->> +	 *
->> +	 * TODO: Remove dependency on ACPI FIRMWARE_FIRST bit to
->> +	 * determine ownership of DPC between firmware or OS.
-> Extend the comment to say how we *should* determine ownership.
-Yes, ownership should be based on _OSC negotiation. I will add necessary
-comments here.
->
->> +	 */
->> +	if (!pcie_aer_get_firmware_first(pdev) || pcie_ports_dpc_native)
->> +		return -ENODEV;
->> +
->> +	if (!adev)
->> +		return 0;
->> +
->> +	dpc = devm_kzalloc(&pdev->dev, sizeof(*dpc), GFP_KERNEL);
-> This kzalloc should be in dpc.c, not here.
->
-> And I don't see a corresponding free.
-It will be freed when removing the pdev right ? Do you want to free it 
-explicitly in this driver ?
->
->> +	if (!dpc)
->> +		return -ENOMEM;
->> +
->> +	dpc_dev_init(pdev, dpc);
->> +
->> +	astatus = acpi_install_notify_handler(adev->handle,
->> +					      ACPI_SYSTEM_NOTIFY,
->> +					      edr_handle_event, dpc);
->> +	if (ACPI_FAILURE(astatus)) {
->> +		pci_err(pdev, "Install ACPI_SYSTEM_NOTIFY handler failed\n");
->> +		return -EBUSY;
->> +	}
->> +
->> +	status = acpi_enable_dpc_port(pdev, true);
->> +	if (status) {
->> +		pci_warn(pdev, "Enable DPC port failed\n");
->> +		acpi_remove_notify_handler(adev->handle,
->> +					   ACPI_SYSTEM_NOTIFY,
->> +					   edr_handle_event);
->> +		return status;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +void pci_acpi_remove_edr_notifier(struct pci_dev *pdev)
->> +{
->> +	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
->> +
->> +	if (!adev)
->> +		return;
->> +
->> +	acpi_remove_notify_handler(adev->handle, ACPI_SYSTEM_NOTIFY,
->> +				   edr_handle_event);
->> +}
->> diff --git a/include/linux/pci-acpi.h b/include/linux/pci-acpi.h
->> index 62b7fdcc661c..a430e5fc50f3 100644
->> --- a/include/linux/pci-acpi.h
->> +++ b/include/linux/pci-acpi.h
->> @@ -112,6 +112,14 @@ extern const guid_t pci_acpi_dsm_guid;
->>   #define RESET_DELAY_DSM			0x08
->>   #define FUNCTION_DELAY_DSM		0x09
->>   
->> +#ifdef CONFIG_PCIE_EDR
->> +int pci_acpi_add_edr_notifier(struct pci_dev *pdev);
->> +void pci_acpi_remove_edr_notifier(struct pci_dev *pdev);
->> +#else
->> +static inline int pci_acpi_add_edr_notifier(struct pci_dev *pdev) { return 0; }
->> +static inline void pci_acpi_remove_edr_notifier(struct pci_dev *pdev) { }
->> +#endif /* CONFIG_PCIE_EDR */
->> +
->>   #else	/* CONFIG_ACPI */
->>   static inline void acpi_pci_add_bus(struct pci_bus *bus) { }
->>   static inline void acpi_pci_remove_bus(struct pci_bus *bus) { }
->> -- 
->> 2.21.0
->>
--- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
-
+> >  }
+> >  EXPORT_SYMBOL(kcov_remote_stop);
+> > @@ -917,6 +974,19 @@ EXPORT_SYMBOL(kcov_common_handle);
+> >
+> >  static int __init kcov_init(void)
+> >  {
+> > +       int cpu;
+> > +
+> > +       for_each_possible_cpu(cpu) {
+> > +               void **area = per_cpu_ptr(&kcov_irq_area, cpu);
+> > +
+> > +               *area = vmalloc(CONFIG_KCOV_IRQ_AREA_SIZE *
+> > +                               sizeof(unsigned long));
+> > +               if (!*area) {
+> > +                       kcov_err("failed to allocate per-cpu area\n");
+> > +                       return -ENOMEM;
+> > +               }
+> > +       }
+> > +
+> >         /*
+> >          * The kcov debugfs file won't ever get removed and thus,
+> >          * there is no need to protect it against removal races. The
+> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> > index d1842fe756d5..03f98c463a9e 100644
+> > --- a/lib/Kconfig.debug
+> > +++ b/lib/Kconfig.debug
+> > @@ -1695,6 +1695,15 @@ config KCOV_INSTRUMENT_ALL
+> >           filesystem fuzzing with AFL) then you will want to enable coverage
+> >           for more specific subsets of files, and should say n here.
+> >
+> > +config KCOV_IRQ_AREA_SIZE
+> > +       hex "Size of interrupt coverage collection area in words"
+> > +       depends on KCOV
+> > +       default 0x40000
+> > +       help
+> > +         KCOV uses preallocated per-cpu areas to collect coverage from
+> > +         interrupts. This specifies the size of those areas in the number
+> > +         of unsigned long words.
+> > +
+> >  menuconfig RUNTIME_TESTING_MENU
+> >         bool "Runtime Testing"
+> >         def_bool y
+> > --
+> > 2.24.1.735.g03f4e72817-goog
+> >
