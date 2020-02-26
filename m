@@ -2,165 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDCF417045F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1D63170485
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:38:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbgBZQaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:30:30 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33217 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbgBZQaa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:30:30 -0500
-Received: by mail-lj1-f193.google.com with SMTP id y6so3848372lji.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 08:30:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xoGKRDRLjTha3fmwK9qaQxtRiyvigYgjt6KI1tkgp54=;
-        b=kEAZe1tpnb92IKWsvcp94kqsw2LLiNwR3oeZF8tRxMnGrM8lBDk5llI4+qmb8ISt4X
-         qOinA+BQa03i9wz3dzD7jSXPtJgXVRxvamaZUvBEjf0jALiyes4OvS8xSCmiij52b1TZ
-         Fd7O9gP7ZlL7hxUroU9SK0DDNfc3pxzd1AicD9whOQq0TZnxtwAOXpKHTy2IKysewe1+
-         qZbu1OC9PyiZV/QhRvum8B6J6p3VuE2DQ1kn0E4h5S8U45pFjPaJYGcWr+g8fyfuBAjC
-         o5dsGFOQq4UVtnK+SRpbBGCCwZJ+WbukDsEY7GwVJ2MRCHZPQK4WKdAMViqDsTZ54Loi
-         dWbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xoGKRDRLjTha3fmwK9qaQxtRiyvigYgjt6KI1tkgp54=;
-        b=eI9pSNrotzy9YiDvPXFQGWNtSRSoG6BdD60RjoiRflDZ9LH9lBlHrJJQ1Vruz2G3y3
-         5xnlriGaPyKMWJqJ6ysunqr0qzORpHqZru65QueCj0nB3W9QLr76uwpKn7mbYuaDiwZX
-         5CyPKHoKB8MfXu9Ve+/WvVF/VY/ZX9SpnaoXRdudB5C+Ai8U8OUfyQznrslELGL9dWg4
-         y6c06vBxTvwUzHWCmkDvh1OAAtZjHnVLlhEu9Ve+r/7a2wAqNhrETAGmfKZgWliOZ+Ra
-         bsCx/sOX0RX3NMIGFIlkjwyRk3UK7DPepxpDlN0SRTIhPQvaVIyccFk8+/3+FoKwniOl
-         /ydQ==
-X-Gm-Message-State: APjAAAXZchelK28HWQeUSpE1RkM6Y+tsDtAlt1RKlqnCOFRLRGWdDIgT
-        /qYPCUq4cw8KwMswKE1EiGzL6GWGbooXuQwEBmjTuQ==
-X-Google-Smtp-Source: APXvYqx+e164s8E6sLSr29OcfaSuu3PHmDXjYtYHjM8lbAVXmpX84MOnwOOwjuP4nmJWIBw8dMJMO5HUp3X21HnT3Mw=
-X-Received: by 2002:a2e:96c6:: with SMTP id d6mr3630892ljj.4.1582734626398;
- Wed, 26 Feb 2020 08:30:26 -0800 (PST)
+        id S1727442AbgBZQiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:38:05 -0500
+Received: from mga06.intel.com ([134.134.136.31]:52388 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726905AbgBZQiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 11:38:05 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 08:38:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,488,1574150400"; 
+   d="scan'208";a="410671937"
+Received: from nkaburla-mobl.amr.corp.intel.com (HELO [10.252.133.245]) ([10.252.133.245])
+  by orsmga005.jf.intel.com with ESMTP; 26 Feb 2020 08:38:01 -0800
+Subject: Re: [PATCH] soundwire: bus: provide correct return value on error
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Hui Wang <hui.wang@canonical.com>, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+References: <20200225164907.23358-1-pierre-louis.bossart@linux.intel.com>
+ <20200226080326.GU2618@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <69a06304-c869-0539-0c85-9ab154807269@linux.intel.com>
+Date:   Wed, 26 Feb 2020 08:54:37 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200214152729.6059-1-vincent.guittot@linaro.org>
- <20200214152729.6059-2-vincent.guittot@linaro.org> <ee38d205-b356-9474-785e-e514d81b7d7f@arm.com>
- <20200218132203.GB14914@hirez.programming.kicks-ass.net> <CAKfTPtB3qudK8aMq2cx==4RW8t1pz6ymz1Ti0r8oO4TefWzMRw@mail.gmail.com>
- <c18ab89e-d635-e370-6cbb-6015b404d906@arm.com> <CAKfTPtCbHb2X30gNqNp5sukrg9U-hC6rvWC0dj8d1DawNL4D3Q@mail.gmail.com>
- <274ebb9a-9328-e312-f554-34da8b183932@arm.com> <20200222152541.GA11669@geo.homenetwork>
-In-Reply-To: <20200222152541.GA11669@geo.homenetwork>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 26 Feb 2020 17:30:15 +0100
-Message-ID: <CAKfTPtAYc2JVDYPp9MDk-AnE+qgNTJoTmABFVYfv30JMvUudrw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] sched/fair: Reorder enqueue/dequeue_task_fair path
-To:     Tao Zhou <zhout@vivaldi.net>
-Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Hillf Danton <hdanton@sina.com>, "T. Zhou" <t1zhou@163.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200226080326.GU2618@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tao,
 
-On Sat, 22 Feb 2020 at 16:23, Tao Zhou <zhout@vivaldi.net> wrote:
->
-> Hi,
->
-> On Thu, Feb 20, 2020 at 02:38:59PM +0100, Dietmar Eggemann wrote:
-> > On 19/02/2020 17:26, Vincent Guittot wrote:
-> > > On Wed, 19 Feb 2020 at 12:07, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
-> > >>
-> > >> On 18/02/2020 15:15, Vincent Guittot wrote:
-> > >>> On Tue, 18 Feb 2020 at 14:22, Peter Zijlstra <peterz@infradead.org> wrote:
-> > >>>>
-> > >>>> On Tue, Feb 18, 2020 at 01:37:37PM +0100, Dietmar Eggemann wrote:
-> > >>>>> On 14/02/2020 16:27, Vincent Guittot wrote:
-> > >>>>>> The walk through the cgroup hierarchy during the enqueue/dequeue of a task
-> > >>>>>> is split in 2 distinct parts for throttled cfs_rq without any added value
-> > >>>>>> but making code less readable.
-> > >>>>>>
-> > >>>>>> Change the code ordering such that everything related to a cfs_rq
-> > >>>>>> (throttled or not) will be done in the same loop.
-> > >>>>>>
-> > >>>>>> In addition, the same steps ordering is used when updating a cfs_rq:
-> > >>>>>> - update_load_avg
-> > >>>>>> - update_cfs_group
-> > >>>>>> - update *h_nr_running
-> > >>>>>
-> > >>>>> Is this code change really necessary? You pay with two extra goto's. We
-> > >>>>> still have the two for_each_sched_entity(se)'s because of 'if
-> > >>>>> (se->on_rq); break;'.
-> > >>>>
-> > >>>> IIRC he relies on the presented ordering in patch #5 -- adding the
-> > >>>> running_avg metric.
-> > >>>
-> > >>> Yes, that's the main reason, updating load_avg before h_nr_running
-> > >>
-> > >> My hunch is you refer to the new function:
-> > >>
-> > >> static inline void se_update_runnable(struct sched_entity *se)
-> > >> {
-> > >>         if (!entity_is_task(se))
-> > >>                 se->runnable_weight = se->my_q->h_nr_running;
-> > >> }
-> > >>
-> > >> I don't see the dependency to the 'update_load_avg -> h_nr_running'
-> > >> order since it operates on se->my_q, not cfs_rq = cfs_rq_of(se), i.e.
-> > >> se->cfs_rq.
-> > >>
-> > >> What do I miss here?
-> > >
-> > > update_load_avg() updates both se and cfs_rq so if you update
-> > > cfs_rq->h_nr_running before calling update_load_avg() like in the 2nd
-> > > for_each_sched_entity, you will update cfs_rq runnable_avg for the
-> > > past time slot with the new h_nr_running value instead of the previous
-> > > value.
-> >
-> > Ah, now I see:
-> >
-> > update_load_avg()
-> >   update_cfs_rq_load_avg()
-> >     __update_load_avg_cfs_rq()
-> >        ___update_load_sum(..., cfs_rq->h_nr_running, ...)
-> >
-> >                                ^^^^^^^^^^^^^^^^^^^^
->
-> throttle/unthrottle_cfs_rq() update h_nr_running also. Maybe need
-> to consider call se_update_runnable there.
 
-yes you're right, group entity which are not enqueued/dequeued, which
-updates runnable_avg and se->runnable_weight, during the
-throttling/unthrottling are not updated. I'm going to send a fix on
-top of sched/core
+On 2/26/20 2:03 AM, Vinod Koul wrote:
+> On 25-02-20, 10:49, Pierre-Louis Bossart wrote:
+>> From: Bard Liao <yung-chuan.liao@linux.intel.com>
+>>
+>> It seems to be a typo. It makes more sense to return the return value
+>> of sdw_update() instead of the value we want to update.
+>>
+>> Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+>> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>> ---
+>>   drivers/soundwire/bus.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
+>> index 13887713f311..b8a7a84aca1c 100644
+>> --- a/drivers/soundwire/bus.c
+>> +++ b/drivers/soundwire/bus.c
+>> @@ -1070,7 +1070,7 @@ static int sdw_initialize_slave(struct sdw_slave *slave)
+>>   	if (ret < 0) {
+>>   		dev_err(slave->bus->dev,
+>>   			"SDW_DP0_INTMASK read failed:%d\n", ret);
+>> -		return val;
+>> +		return ret;
+> 
+> good catch. But can we optimize it to:
+>>   	}
+>>   
+>>   	return 0;
+> 
+> make this as below and remove the return above.
 
-> And the name update_se_runnable seems to be consistent with others.
-
-In fact, I have reused the same name as with runnable_load_avg
-
-Thanks and sorry for the late reply
-
->
-> Thanks,
-> Tao
->
-> > Not really obvious IMHO, since the code is introduced only in 4/5.
-> >
-> > Could you add a comment to this patch header?
-> >
-> > I see you mentioned this dependency already in v1 discussion
-> >
-> > https://lore.kernel.org/r/CAKfTPtAM=kgF7Fz-JKFY+s_k5KFirs-8Bub3s1Eqtq7P0NMa0w@mail.gmail.com
-> >
-> > "... But the following patches make PELT using h_nr_running ...".
-> >
-> > IMHO it would be helpful to have this explanation in the 1/5 patch
-> > header so people stop wondering why this is necessary.
+ok, will resend as v2.
