@@ -2,45 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC785170107
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:21:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC4C5170102
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:20:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbgBZOVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 09:21:04 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:57966 "EHLO
+        id S1727637AbgBZOU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 09:20:58 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:57942 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727695AbgBZOVC (ORCPT
+        with ESMTP id S1726920AbgBZOUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 09:21:02 -0500
+        Wed, 26 Feb 2020 09:20:52 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1j6xYD-00080R-PW; Wed, 26 Feb 2020 15:20:37 +0100
+        id 1j6xYE-00080Y-Ve; Wed, 26 Feb 2020 15:20:39 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6B4A31C2156;
-        Wed, 26 Feb 2020 15:20:37 +0100 (CET)
-Date:   Wed, 26 Feb 2020 14:20:37 -0000
-From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 91E261C2156;
+        Wed, 26 Feb 2020 15:20:38 +0100 (CET)
+Date:   Wed, 26 Feb 2020 14:20:38 -0000
+From:   "tip-bot2 for Wei Li" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf arch powerpc: Sync powerpc syscall.tbl with
- the kernel sources
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+Subject: [tip: perf/urgent] perf cs-etm: Fix endless record after being terminated
+Cc:     Wei Li <liwei391@huawei.com>, Leo Yan <leo.yan@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>, stable@vger.kernel.org,
+        #@tip-bot2.tec.linutronix.de, 5.4+@tip-bot2.tec.linutronix.de,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200214132654.20395-4-adrian.hunter@intel.com>
+References: <20200214132654.20395-4-adrian.hunter@intel.com>
 MIME-Version: 1.0
-Message-ID: <158272683713.28353.17729650056519190220.tip-bot2@tip-bot2>
+Message-ID: <158272683829.28353.17126182067190860760.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -56,54 +52,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     b103de53e09f20d645eb313477f52d1993347605
-Gitweb:        https://git.kernel.org/tip/b103de53e09f20d645eb313477f52d1993347605
-Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Tue, 18 Feb 2020 10:28:52 -03:00
+Commit-ID:     c9f2833cb472cf9e0a49b7bcdc210a96017a7bfd
+Gitweb:        https://git.kernel.org/tip/c9f2833cb472cf9e0a49b7bcdc210a96017a7bfd
+Author:        Wei Li <liwei391@huawei.com>
+AuthorDate:    Fri, 14 Feb 2020 15:26:52 +02:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 18 Feb 2020 13:36:57 -03:00
+CommitterDate: Tue, 18 Feb 2020 10:13:29 -03:00
 
-perf arch powerpc: Sync powerpc syscall.tbl with the kernel sources
+perf cs-etm: Fix endless record after being terminated
 
-Copy over powerpc syscall.tbl to grab changes from the below commits
+In __cmd_record(), when receiving SIGINT(ctrl + c), a 'done' flag will
+be set and the event list will be disabled by evlist__disable() once.
 
-  fddb5d430ad9 ("open: introduce openat2(2) syscall")
-  9a2cef09c801 ("arch: wire up pidfd_getfd syscall")
+While in auxtrace_record.read_finish(), the related events will be
+enabled again, if they are continuous, the recording seems to be
+endless.
 
-Now 'perf trace' on powerpc will be able to map from those syscall
-strings to the right syscall numbers, i.e.
+If the cs_etm event is disabled, we don't enable it again here.
 
-  perf trace -e pidfd*
+Note: This patch is NOT tested since i don't have such a machine with
+coresight feature, but the code seems buggy same as arm-spe and
+intel-pt.
 
-Will include 'pidfd_getfd' as well as:
+Tester notes:
 
-  perf trace open*
+Thanks for looping, Adrian.  Applied this patch and tested with
+CoreSight on juno board, it works well.
 
-Will cover all 'open' variants.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Reviewed-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Sargun Dhillon <sargun@sargun.me>
+Signed-off-by: Wei Li <liwei391@huawei.com>
+Reviewed-by: Leo Yan <leo.yan@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Tested-by: Leo Yan <leo.yan@linaro.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Tan Xiaojun <tanxiaojun@huawei.com>
+Cc: stable@vger.kernel.org # 5.4+
+Link: http://lore.kernel.org/lkml/20200214132654.20395-4-adrian.hunter@intel.com
+[ahunter: removed redundant 'else' after 'return']
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/powerpc/entry/syscalls/syscall.tbl | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/arch/arm/util/cs-etm.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl b/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
-index 43f736e..35b61bf 100644
---- a/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
-+++ b/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
-@@ -517,3 +517,5 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	nospu	clone3				ppc_clone3
-+437	common	openat2				sys_openat2
-+438	common	pidfd_getfd			sys_pidfd_getfd
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index 2898cfd..60141c3 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -865,9 +865,12 @@ static int cs_etm_read_finish(struct auxtrace_record *itr, int idx)
+ 	struct evsel *evsel;
+ 
+ 	evlist__for_each_entry(ptr->evlist, evsel) {
+-		if (evsel->core.attr.type == ptr->cs_etm_pmu->type)
++		if (evsel->core.attr.type == ptr->cs_etm_pmu->type) {
++			if (evsel->disabled)
++				return 0;
+ 			return perf_evlist__enable_event_idx(ptr->evlist,
+ 							     evsel, idx);
++		}
+ 	}
+ 
+ 	return -EINVAL;
