@@ -2,121 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B5E16FDB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:30:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9C0616FDC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:31:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbgBZLaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 06:30:52 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:38915 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728072AbgBZLav (ORCPT
+        id S1728305AbgBZLbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 06:31:49 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:29023 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727954AbgBZLbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 06:30:51 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 8168422EEB;
-        Wed, 26 Feb 2020 12:30:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1582716648;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=49vbSdUeTzuDFAZGKG9960moA+ZZ59VpBj1mcCy3Iks=;
-        b=v9g1y9D2DjSGnHgOFwe/gfIfxqbCUZnb9GGeHyk8oUoqdZ7Zd1Ya5xLA3YZuyaqscKbIEa
-        83mVa1jXsSJbWmK9rQzHcjEHHHveei0eiQU2241q6jM2xl6hiAQDnBAFU2Lr3zuww0dr2j
-        ZBPz2sx0mw5H6CAvQ/DfbVUfRWRCn9g=
+        Wed, 26 Feb 2020 06:31:49 -0500
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id 01QBVS9L020952;
+        Wed, 26 Feb 2020 20:31:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 01QBVS9L020952
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582716689;
+        bh=GDjPsWzrsBjPpbXYwVdhVCcx22MBva9/iaabNI2DfMY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VFgWW43I3nLFtzk4rxWaX8UzpfeU/fgCUgrcJJQPRjywx8t0A6yMcLoADZC/WB9dC
+         DbMyNrdls3VcjjNKpNrc8YBcDnwpjAd8bxSytbCIEIwsTjJc5W4PGQz6UesIgedv1i
+         CNXXNJd4rsk+ScbIuXMEM/gVbNY75/DNJnir10lMhlz/nk4rMF9IRikPHM//aRq8BF
+         exHraW0bd1L8uaxVXdNwXZQNM1dfTe8Ayf6zpUnKSl4TKrpWsJLL1n8swF2FPWod48
+         kBe0JFanZHz/HxnuIkX91izzXTtO2KeinHogtM2Cze2HS/zyKw2Dt65VSzmbD0ZrXH
+         aBzUw3wOxiABg==
+X-Nifty-SrcIP: [209.85.221.169]
+Received: by mail-vk1-f169.google.com with SMTP id w67so694684vkf.1;
+        Wed, 26 Feb 2020 03:31:28 -0800 (PST)
+X-Gm-Message-State: APjAAAWuUrhhRuyY9gbmQwE3TuPtI5mnA/xjN5IDtkM+u6d9DB2Hgm2n
+        dCOVxEB6AhNXkZV4P/15DOdfRycWNkwT+UdvS3Q=
+X-Google-Smtp-Source: APXvYqwTLN0fkQHFGI4QO8kowzwxB4Wi0DpAxoGD+97b78BtWFJ5UNRU1cvEoaHtK6ivUZ0XHGPj9XqC1TqApqmB1WU=
+X-Received: by 2002:a1f:6344:: with SMTP id x65mr3398079vkb.26.1582716687661;
+ Wed, 26 Feb 2020 03:31:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 26 Feb 2020 12:30:48 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Richard Cochran <richardcochran@gmail.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S . Miller" <davem@davemloft.net>
-Subject: Re: [RFC PATCH 0/2] AT8031 PHY timestamping support
-In-Reply-To: <20200226025441.GB10271@localhost>
-References: <20200225230819.7325-1-michael@walle.cc>
- <20200225235040.GF9749@lunn.ch>
- <9955C44A-8105-4087-8555-BAC5AE4AF25D@walle.cc>
- <20200226025441.GB10271@localhost>
-Message-ID: <fa823a08fa6d50c57ca03bdc58bf4921@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.10
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: 8168422EEB
-X-Spamd-Result: default: False [1.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[gmail.com];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[8];
-         NEURAL_HAM(-0.00)[-0.424];
-         FREEMAIL_TO(0.00)[gmail.com];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         FREEMAIL_CC(0.00)[lunn.ch,vger.kernel.org,gmail.com,armlinux.org.uk,davemloft.net];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+References: <20200224174129.2664-1-ndesaulniers@google.com> <20200225210250.64366-1-ndesaulniers@google.com>
+In-Reply-To: <20200225210250.64366-1-ndesaulniers@google.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 26 Feb 2020 20:30:51 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQJuF__26R+fEsdfYH1SAJuo3-8grGQAE4htjxzEG-nqw@mail.gmail.com>
+Message-ID: <CAK7LNAQJuF__26R+fEsdfYH1SAJuo3-8grGQAE4htjxzEG-nqw@mail.gmail.com>
+Subject: Re: [PATCH v2] Documentation/llvm: add documentation on building w/ Clang/LLVM
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 2020-02-26 03:54, schrieb Richard Cochran:
-> On Wed, Feb 26, 2020 at 01:07:26AM +0100, Michael Walle wrote:
->> Am 26. Februar 2020 00:50:40 MEZ schrieb Andrew Lunn <andrew@lunn.ch>:
->> >That sounds fundamentally broken.
-> 
-> Right.  It can't work unless the PHY latches the time stamp.
+Hi.
 
-To make things worse, it only has one slot for RX and one slot for TX
-timestamps.
 
->> This might be the case, but the datasheet (some older revision can
->> be found on the internet, maybe you find something) doesn't mention
->> it. Nor does the PTP "guide" (I don't know the exact name, I'd have
->> to check at work) of this PHY. Besides the timestamp there's also
->> the sequence number and the source port id which would need to be
->> read atomically together with the timestamp.
-> 
-> Maybe the part is not intended to be used at all in this way?
-> 
-> AFAICT, PHYs like this are meant to feed a "PTP frame detected" pulse
-> into the time stamping unit on the attached MAC.  The interrupt serves
-> to allow the SW to gather the matching fields from the frame.
+On Wed, Feb 26, 2020 at 6:02 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> Added to kbuild documentation. Provides more official info on building
+> kernels with Clang and LLVM than our wiki.
+>
+> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+> Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+> Changes V1 -> V2:
+> * s/On going/ongoing/
+> * add Randy's Suggested-by
 
-But then there would need to be such a hardware pin, correct? Unless
-you'd misuse the INT# for it. Also, why should the PHY then have a PHC
-which can be adjusted.
 
->> That sounds fundamentally broken. Which would be odd. Sometimes there
->> is a way to take a snapshot of the value. Reading the first word could
->> trigger this snapshot. Or the last word, or some status register. One
->> would hope the datasheet would talk about this.
-> 
-> This might be the case, but the datasheet (some older revision can
-> be found on the internet, maybe you find something) doesn't mention
-> it. Nor does the PTP "guide" (I don't know the exact name, I'd have
-> to check at work).
+I do not understand this tag update.
 
-BTW, the name of the document is "AR8031 1588v2 Precision Time Protocol,
-Application Note, 80-Y0618-15 Rev. A", which describes a use case
-where the RTC (ie PHC) is in the AR8031. I don't argue that the PHY is
-not broken, only that Atheros at least intended to have that use case.
+As far as I saw the review process,
+I do not think Randy deserves to have Suggested-by
+because he just pointed out a typo (on going -> ongoing) :
+https://patchwork.kernel.org/patch/11401189/#23179575
 
--michael
+(or, was there off-line activity I had missed?)
+
+
+> * add Nathan and Sedat's Reviewed-by
+> * Upgrade Kees' Sugguested-by to Reviewed-by
+
+We can add both
+
+Suggested-by: Kees Cook <keescook@chromium.org>
+
+and
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+
+
+I think Suggested-by and Reviewed-by should be orthogonal.
+
+
+Thanks.
+
+
+
+
+
+
+> * s/suffix/prefix/
+>
+>
+>  Documentation/kbuild/index.rst |  1 +
+>  Documentation/kbuild/llvm.rst  | 80 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 81 insertions(+)
+>  create mode 100644 Documentation/kbuild/llvm.rst
+>
+> diff --git a/Documentation/kbuild/index.rst b/Documentation/kbuild/index.rst
+> index 0f144fad99a6..3882bd5f7728 100644
+> --- a/Documentation/kbuild/index.rst
+> +++ b/Documentation/kbuild/index.rst
+> @@ -19,6 +19,7 @@ Kernel Build System
+>
+>      issues
+>      reproducible-builds
+> +    llvm
+>
+>  .. only::  subproject and html
+>
+> diff --git a/Documentation/kbuild/llvm.rst b/Documentation/kbuild/llvm.rst
+> new file mode 100644
+> index 000000000000..d6c79eb4e23e
+> --- /dev/null
+> +++ b/Documentation/kbuild/llvm.rst
+> @@ -0,0 +1,80 @@
+> +==============================
+> +Building Linux with Clang/LLVM
+> +==============================
+> +
+> +This document covers how to build the Linux kernel with Clang and LLVM
+> +utilities.
+> +
+> +About
+> +-----
+> +
+> +The Linux kernel has always traditionally been compiled with GNU toolchains
+> +such as GCC and binutils. Ongoing work has allowed for `Clang
+> +<https://clang.llvm.org/>`_ and `LLVM <https://llvm.org/>`_ utilities to be
+> +used as viable substitutes. Distributions such as `Android
+> +<https://www.android.com/>`_, `ChromeOS
+> +<https://www.chromium.org/chromium-os>`_, and `OpenMandriva
+> +<https://www.openmandriva.org/>`_ use Clang built kernels.  `LLVM is a
+> +collection of toolchain components implemented in terms of C++ objects
+> +<https://www.aosabook.org/en/llvm.html>`_. Clang is a front-end to LLVM that
+> +supports C and the GNU C extensions required by the kernel, and is pronounced
+> +"klang," not "see-lang."
+> +
+> +Clang
+> +-----
+> +
+> +The compiler used can be swapped out via `CC=` command line argument to `make`.
+> +`CC=` should be set when selecting a config and during a build.
+> +
+> +       make CC=clang defconfig
+> +
+> +       make CC=clang
+> +
+> +Cross Compiling
+> +---------------
+> +
+> +A single Clang compiler binary will typically contain all supported backends,
+> +which can help simplify cross compiling.
+> +
+> +       ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make CC=clang
+> +
+> +`CROSS_COMPILE` is not used to prefix the Clang compiler binary, instead
+> +`CROSS_COMPILE` is used to set a command line flag: `--target <triple>`. For
+> +example:
+> +
+> +       clang --target aarch64-linux-gnu foo.c
+> +
+> +LLVM Utilities
+> +--------------
+> +
+> +LLVM has substitutes for GNU binutils utilities. These can be invoked as
+> +additional parameters to `make`.
+> +
+> +       make CC=clang AS=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \\
+> +         OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump OBJSIZE=llvm-objsize \\
+> +         READELF=llvm-readelf HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar \\
+> +         HOSTLD=ld.lld
+> +
+> +Getting Help
+> +------------
+> +
+> +- `Website <https://clangbuiltlinux.github.io/>`_
+> +- `Mailing List <https://groups.google.com/forum/#!forum/clang-built-linux>`_: <clang-built-linux@googlegroups.com>
+> +- `Issue Tracker <https://github.com/ClangBuiltLinux/linux/issues>`_
+> +- IRC: #clangbuiltlinux on chat.freenode.net
+> +- `Telegram <https://t.me/ClangBuiltLinux>`_: @ClangBuiltLinux
+> +- `Wiki <https://github.com/ClangBuiltLinux/linux/wiki>`_
+> +- `Beginner Bugs <https://github.com/ClangBuiltLinux/linux/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22>`_
+> +
+> +Getting LLVM
+> +-------------
+> +
+> +- http://releases.llvm.org/download.html
+> +- https://github.com/llvm/llvm-project
+> +- https://llvm.org/docs/GettingStarted.html
+> +- https://llvm.org/docs/CMake.html
+> +- https://apt.llvm.org/
+> +- https://www.archlinux.org/packages/extra/x86_64/llvm/
+> +- https://github.com/ClangBuiltLinux/tc-build
+> +- https://github.com/ClangBuiltLinux/linux/wiki/Building-Clang-from-source
+> +- https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/
+> --
+> 2.25.0.265.gbab2e86ba0-goog
+>
+
+
+--
+Best Regards
+Masahiro Yamada
