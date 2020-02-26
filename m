@@ -2,69 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98EF81708D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 20:21:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00D781708E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 20:26:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbgBZTVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 14:21:01 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:35750 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbgBZTVB (ORCPT
+        id S1727276AbgBZT0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 14:26:16 -0500
+Received: from mail-pf1-f169.google.com ([209.85.210.169]:43480 "EHLO
+        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbgBZT0Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 14:21:01 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 01E7E20B9C02;
-        Wed, 26 Feb 2020 11:21:00 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 01E7E20B9C02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1582744860;
-        bh=W5JGlWfBcPkXP7GPkcMwkkT4Bh9pLTkThoAlCVPwyRQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=sP90uYz+6s+BSypzgsp9eYDewZcb3nzcjwkoUZPDiJcQlBfut+kdr1zeFmQHWh1/Z
-         +9CCAIkM1znTN/EcRfAb2OLHvdncSDza5XnDZ3KvVN53OHh+iPP6ONDSj9fX0B2V4E
-         ZdtGrhFm20v1aAMh41WfyHskx9YNOblByQHjRXtQ=
-Subject: Re: [PATCH] ima: add a new CONFIG for loading arch-specific policies
-To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-efi@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Philipp Rudo <prudo@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, zohar@linux.ibm.com,
-        linux-kernel@vger.kernel.org
-References: <1582744207-25969-1-git-send-email-nayna@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <94fe39a9-db9e-211d-d9b7-4cfe1a270e6f@linux.microsoft.com>
-Date:   Wed, 26 Feb 2020 11:21:28 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 26 Feb 2020 14:26:16 -0500
+Received: by mail-pf1-f169.google.com with SMTP id s1so258077pfh.10
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 11:26:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5DzNmsGKabIiqxsuQFEwzfHh7R7C4KklYepK1ybNRcI=;
+        b=JvaV8KgiqzoZBj6ydSQ9wuuSPmKsMcZlCBzIlL19/gYR0rinDPmvgQGXcIqtx1mDHc
+         vFuipNjmbQwwkwM7sTSAyvGWM+yoKuDdXDhC8yd7Aj+gtgkk17kno5FXqnhPg+UUAUxE
+         YbX/zPf26fsBftBmqKkM8PPSvOOCQ6ddOIvcLMPCHd5arVBaO/tFElf6CiY4LJ+cnWMw
+         xrd1hh8jCWfIFRgiGphyi3upMeyTQfi3R7ZI4EWrWm0sDRAeWvkN7BD8jNMs1xNchCMO
+         x0e0Y4TJYgMBYN6HA1qU1rDALtp0tPX+HlIQUUXZCFxzVEUJiyDhz2mVNfPsIWkhMNtU
+         gK5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5DzNmsGKabIiqxsuQFEwzfHh7R7C4KklYepK1ybNRcI=;
+        b=kIwdT9AAeph9soO0pYbrtsoLCmeUhZ+x+a81VymQGbT96XZq3UiWBIOFTJCm88vfcz
+         16RqnKsSRobfuZWrqI1JcJrwn47j3Toz9wOk2AlB9F7W5eHK7eDaQS23CFqeFu5zB8DC
+         DcnF3ZTjsl4KdOiLNyr8ASlwrFgPNMEQX+4F9o3N2k0YCOF7LoAnJkEXR9BbB3ygn2Ev
+         otHk3gswbeHpt/KYVXMMOL6RqHzHk90ECNwsE2AsjTC7bZtbggQDagEoWxaKYfu4kEdr
+         vDPzWAXRNll5ePxkUxZ56ZV1j7cPtHABENUhGA8Xh3LEd/pv3HhmvG7VxKXriSIKWzpz
+         kLPQ==
+X-Gm-Message-State: APjAAAUY5ChvxJcnA0e3A/DkO3crSdkpRyM5e7eRUXhmFRfDg5SSld76
+        8V5l3zEYYCtXn/ciwiWOqnBx5ulIiSvjaVWGra6RLw==
+X-Google-Smtp-Source: APXvYqzCv4FxJcU96d7Vawq5DT3fARMj+obiX5wNUed9wf7xv+ae1CrV4f6IlV+FQmKVwCj9r2U464S4CiH/TgtxTyE=
+X-Received: by 2002:a63:4e22:: with SMTP id c34mr356104pgb.263.1582745173398;
+ Wed, 26 Feb 2020 11:26:13 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1582744207-25969-1-git-send-email-nayna@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200222072144.asqaxlv364s6ezbv@google.com> <20200222074254.GB11284@zn.tnic>
+ <20200222162225.GA3326744@rani.riverdale.lan> <CAKwvOdnvMS21s9gLp5nUpDAOu=c7-iWYuKTeFUq+PMhsJOKUgw@mail.gmail.com>
+ <202002242122.AA4D1B8@keescook> <20200225182951.GA1179890@rani.riverdale.lan>
+ <202002251140.4F28F0A4F@keescook> <CAKwvOdnkr1W4LTm8XmTKGkSDUhSBRowLbKwJwyitDMAGLh9ywg@mail.gmail.com>
+ <202002251358.EDA50C11F@keescook> <20200226015606.ij7wn7emuj4bfkvn@google.com>
+ <202002252103.B4BBF01091@keescook> <16822a0460e37e7a388217c63da8882d2904d8fc.camel@linux.intel.com>
+In-Reply-To: <16822a0460e37e7a388217c63da8882d2904d8fc.camel@linux.intel.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 26 Feb 2020 11:26:02 -0800
+Message-ID: <CAKwvOdm1qoKdq=Cp3nrYPR6oXkGZ32Hmh2TPVgatKAvDHk7q4g@mail.gmail.com>
+Subject: Re: --orphan-handling=warn
+To:     Kristen Carlson Accardi <kristen@linux.intel.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Fangrui Song <maskray@google.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Borislav Petkov <bp@alien8.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Michael Matz <matz@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nayna,
+On Wed, Feb 26, 2020 at 11:11 AM Kristen Carlson Accardi
+<kristen@linux.intel.com> wrote:
+>
+> On Tue, 2020-02-25 at 21:35 -0800, Kees Cook wrote:
+> >
+> > Thanks for looking into this! It'll be really nice to have the orphan
+> > section warnings working in the kernel. And getting the ground work
+> > for
+> > FGKASLR ready will be nice!
+> >
+> > Kristen, can I convince you that FG stands for function-granular
+> > instead of fine-grain? :)
+> >
+>
+> Yes, sounds good to me - that way if we ever do basic block reordering
+> or some crazy thing like that we don't have to say even-finer-fine-
+> grained KASLR :).
 
-> +
-> +config IMA_SECURE_AND_OR_TRUSTED_BOOT
-> +	bool
-> +	depends on IMA
-> +	depends on IMA_ARCH_POLICY
-> +	default n
-> +	help
-> +	   This option is selected by architectures to enable secure and/or
-> +	   trusted boot based on IMA runtime policies.
-> 
-
-Why is the default for this new config "n"?
-Is there any reason to not turn on this config if both IMA and 
-IMA_ARCH_POLICY are set to y?
-
-thanks,
-  -lakshmi
-
+LOL (I laugh now, but "never say never.")
+-- 
+Thanks,
+~Nick Desaulniers
