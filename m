@@ -2,118 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70BD5170120
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:26:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98BA2170125
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:27:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbgBZO01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 09:26:27 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:39037 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727198AbgBZO00 (ORCPT
+        id S1727636AbgBZO1T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 09:27:19 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40895 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbgBZO1S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 09:26:26 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 64FAC6CC6;
-        Wed, 26 Feb 2020 09:26:25 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 26 Feb 2020 09:26:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=MRxRrk3jAFQyO5nNuy2nyNGNvXF
-        7vaF0qwd2iZ4I7NM=; b=jyfbAqpjnEVEF39WOTGLxBld3H6pkE40zv9I7VfyzyA
-        rH3Bf8mpFs9xpuT3a0nSpoHDCDptCSuJC7xGzEI+4O3FE6tqvVjcLqDlJh/PqOeu
-        EsRq92VzEh89hiln+yCu9enKfZ7pupaxaAGxWorRWYlogde5FjMh0cdPcguePrpf
-        Ij5HgqJXezRz9A/PnSwfKSLf5q/WuwO+OgyuXhpeUCzENH333dumdDux5hysfrkM
-        1/WAMOh9lg7xDec6w73+tpnnEUx9oblvdGw+6FyxtSiX1jcZcs8MNKhxbASIOvZa
-        NSUeIIwH1yrl0tCcB8JO1fX/uIUiHFpAkuvBpgT4rKw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=MRxRrk
-        3jAFQyO5nNuy2nyNGNvXF7vaF0qwd2iZ4I7NM=; b=wkMVVt7ddT6XYDmr48IvF5
-        wjMrg6QMLAfRfB23AaUAXgLFsTur1u7x7IKtKhT7FUiSTP9yCASM6/+H/Y/19IX+
-        FMTiZE5AT3efVJ+7nPwybgefKx0PeqIt7RQbVTO4z0dpti9rKU4y58SbVLHWFiVp
-        /vPULdvsJZoGLH4jsXchaYEeF7BdO70j5fbyqRYErc+gqt3pnA2E+gAJRl7Iz1Sn
-        berNX0y4K5ESwmrPnEqtbmldApaJsxpOCtFxSyKG6h/rSnx9RxtRdrQPnawRH/k/
-        fUi3XMRpLzIHG7G1e2srnR1mlg93KYGQjf4mfgXL3bVBd0EH6dE7YNgO670kqmcQ
-        ==
-X-ME-Sender: <xms:C4BWXl08AhnCz3J9AwIk3wJK1aWgF9CR991-_Lnbujm1w7sfBqr_Zg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleeggdeiiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
-    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:C4BWXlQXqCXPa2srKLKUOpN4x1K6oKv_oVtzCuaLgazgnjyJQZdquQ>
-    <xmx:C4BWXqKZ5AOfRiup86XyrClbh77k8qjt_3H_PPEty60hrukQPsiywQ>
-    <xmx:C4BWXon4HDfPy5xWKp70DLVgxQucm7F6L-4XKDF4Z9lUolXDXh2BYw>
-    <xmx:EYBWXjx2kKeUa6oUpawYVJHMg7iWbtZef5MbJ_HcPs9XjoMqwaaZ0A>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D1EC83280060;
-        Wed, 26 Feb 2020 09:26:18 -0500 (EST)
-Date:   Wed, 26 Feb 2020 15:26:17 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Eric Anholt <eric@anholt.net>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        Phil Elwell <phil@raspberrypi.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 10/89] clk: bcm: rpi: Remove global pllb_arm clock pointer
-Message-ID: <20200226142617.mvis6olfzakiwqcc@gilmour.lan>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
- <3876f732b3fec2059270678d464d27b7d3a0414b.1582533919.git-series.maxime@cerno.tech>
- <52aebb76952df530f93e9de539124ddf1b825876.camel@suse.de>
+        Wed, 26 Feb 2020 09:27:18 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r17so1142678wrj.7;
+        Wed, 26 Feb 2020 06:27:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qvwewPpyPisUxq2+kWUzRZ/RT7okvVOdDvyG3MamGi4=;
+        b=JGVesDeXW6AiFT+U/l0Kjfw660LX/1y2rlwGek4WQJZcYK5xgtyIeeKzm+j+RP2ETz
+         LynxD73vOUbYhJiLq3FH/Y5c5CnslDG//KThhRXtdsoJOTZB4AYBTdlt+hIhjuOqEvLS
+         bS37WXySesacExUxg5ZHRa+zpyIw2slC0Wpt2o12bujdERhz1sZq5es9+jkB4mhIwl38
+         9M54ag0ly4wMHEp6IGl6cJu9MoV5vAgf5yiN35TMmekmqXcMM4GhSCNlWEJXILE3uUhh
+         cNubN6C0BdtyWs289njzeHwuaIlUL89nEiX+Kmzv/7HgYMWV9GEa7jYqfLhOBeku1/CU
+         9x1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qvwewPpyPisUxq2+kWUzRZ/RT7okvVOdDvyG3MamGi4=;
+        b=iAz2sw+0ZrwZRO+97O+fKho52uExZikmk/nrCByFuLIXPuiHbqRTdliRHezftqitbr
+         rJXmHTRV8zbgtA9vhRVe91ueh1GttQMPK99d3/W+dZ1fiu1hvdogknrqp0iOvDtmiiyr
+         WSvWYWTHLE6GyvwLwgVABq2IVB0fEzDoZdPh9DQo/MEG8D7WwwvXAcNisSEiK29hxFnM
+         cqzCjpH8RzbGZFh5rwJ9ci110fARzr/uP2AHfJbKAKwWGeDoX1TQf3vZLY230naiR7sj
+         vqUGR0AE5fG2/e7LZHniAbEBdFJXc9cUD1tF27ryC9dHuo7c/jmqGEXRr6u5C9WBiCCC
+         G3FQ==
+X-Gm-Message-State: APjAAAVvVkpE+EnBxnpnmi15SUWTbc5uBt0WDO57m26nm/Di3zl+CvGj
+        J8ntB04/YGYaPON+5qQCsiA=
+X-Google-Smtp-Source: APXvYqzJ8CkXHOicI58J6fwxH6zLMYwspMaE5Soe+kVGDjxBkFNm6k6dbq4VBzt+A9/56qYCq4GuQw==
+X-Received: by 2002:adf:a3ca:: with SMTP id m10mr6055708wrb.148.1582727236659;
+        Wed, 26 Feb 2020 06:27:16 -0800 (PST)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id j20sm3469414wmj.46.2020.02.26.06.27.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 06:27:16 -0800 (PST)
+Date:   Wed, 26 Feb 2020 15:27:14 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Arvind Sankar <nivedita@alum.mit.edu>
+Subject: Re: [GIT PULL v2] EFI updates for v5.7
+Message-ID: <20200226142713.GB3100@gmail.com>
+References: <20200224133856.12832-1-ardb@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cfnnn2to3nsdt3mx"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <52aebb76952df530f93e9de539124ddf1b825876.camel@suse.de>
+In-Reply-To: <20200224133856.12832-1-ardb@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---cfnnn2to3nsdt3mx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+* Ard Biesheuvel <ardb@kernel.org> wrote:
 
-Hi Nicolas,
+> Hello Ingo, Thomas,
+> 
+> I am sending this as an ordinary PR again, given the size. Please let me
+> know if instead, you prefer me to send it out piecemeal as usual. Either
+> works for me, I was just reluctant to spam people unsolicited.
+> 
+> Note that EFI for RISC-V may still arrive this cycle as well. 
+> 
+> Please take special note of the GDT changes by Arvind. They were posted to
+> the list without any feedback, and they look fine to me, but I know very
+> little about these x86 CPU low level details.
+> 
+> This was all build and boot tested on various different kinds of hardware,
+> and all minor issues that were reported by the robots were fixed along the way.
+> 
+> Please pull,
+> Ard.
+> 
+> 
+> The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
+> 
+>   Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-next
+> 
+> for you to fetch changes up to dc235d62fc60a6549238eda7ff29769457fe5663:
+> 
+>   efi: Bump the Linux EFI stub major version number to #1 (2020-02-23 21:59:42 +0100)
 
-On Tue, Feb 25, 2020 at 05:13:33PM +0100, Nicolas Saenz Julienne wrote:
-> On Mon, 2020-02-24 at 10:06 +0100, Maxime Ripard wrote:
-> > The pllb_arm clk_hw pointer in the raspberry_clk structure isn't used
-> > anywhere but in the raspberrypi_register_pllb_arm.
-> >
-> > Let's remove it, this will make our lives easier in future patches.
-> >
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
->
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+>  66 files changed, 2718 insertions(+), 2638 deletions(-)
 
-I guess you meant Acked or Reviewed-by?
+Pulled this as a Git tree, thanks Ard!
 
-Maxime
+The boot-time GDT handling cleanups from Arvind look good to me too. 
+There's a couple of arguably scary commits in there, so these might be 
+'famous last words'. :-)
 
---cfnnn2to3nsdt3mx
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXlaACQAKCRDj7w1vZxhR
-xVyDAP4+q1ItaY+QWCIDmqEk2j/UzFHb+yklMprqAs4ll2R03AD9HHsS1kKWE0z3
-6RfLFxLdmyDzRvDHmoFgGzr/ntYs5wc=
-=5wL+
------END PGP SIGNATURE-----
-
---cfnnn2to3nsdt3mx--
+	Ingo
