@@ -2,152 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DD69170C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 00:27:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 045CD170C93
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 00:28:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbgBZX1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 18:27:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54114 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726413AbgBZX1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 18:27:16 -0500
-Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 798F920658;
-        Wed, 26 Feb 2020 23:27:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582759634;
-        bh=sRKFXIOdMt3uKwrueRgdk4RpTv6iY5xBSrnyJV5ot80=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=wHc72kbgn4rQ84i+w9kYe4ishVjAv196COq/bzb6sBIlV/oVJD95iJfDKF9UMY8uq
-         JklwyX/EVfC8vbzXYnhAbEKlizG22rOzXaWCuYyAocjWndGja5tUn8bpETfZY4UxDD
-         /KSnICnecF0p6mgn7deljGzUVr+eWbVW7vaRGo2I=
-Date:   Wed, 26 Feb 2020 17:27:13 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Fawad Lateef <fawadlateef@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: Help needed in understanding weird PCIe issue on imx6q (PCIe
- just goes bad)
-Message-ID: <20200226232713.GA191903@google.com>
+        id S1727984AbgBZX2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 18:28:13 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34508 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbgBZX2N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 18:28:13 -0500
+Received: by mail-oi1-f195.google.com with SMTP id l136so1417399oig.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 15:28:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RyN8wdyx5UTXqhX47LF5ataeVQFJ6brgByOTBGpOppg=;
+        b=qB1WLiJH8TfQ6K5vlsQ4FLxDhXfaz3aPlMwWOcdR1MEBtvEn7Blm7IOADUvxlBugYx
+         98bkcb8ClA2haDf+Dy9ql0psTCI4WiEWFr6SZCaVaYkV9lDtvArWRM3ZJ2zQKgZbH9rf
+         JrbUR2tnci1ZpNPVvCGP/zEnO9OOWAiYtSgIfYGqtbV2zrsJtXtNO7Kf0tCjDofMkXtk
+         AaJqDf09I/utuiEyGcbfJADmozqI88nY6AnZZzB1BtsZEf/HjxeiqhNWi/Hjum2uGBrk
+         Zdmg57gZEOFDSOZdobmkmhUsojgj1GXPOWSDXo+Ihcq9rUwWQL0oUHaTr3+3xaI37kWJ
+         Et3w==
+X-Gm-Message-State: APjAAAV2raVuEuLEPcZnKxfzjQzC+ioKQ3A0C2y6U6U7tfMiRwDM39GR
+        ElAWkw11uQVEnaAg2TvcsnE=
+X-Google-Smtp-Source: APXvYqywzEAMuKK6yzb4V86yyPuzG2G22fxxXo68hGxc4vPFA1gUkbMBOPBA/0AWAh7A8BF3/Y2ufQ==
+X-Received: by 2002:a54:468a:: with SMTP id k10mr1239874oic.3.1582759692462;
+        Wed, 26 Feb 2020 15:28:12 -0800 (PST)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id n22sm1325231otj.36.2020.02.26.15.28.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Feb 2020 15:28:11 -0800 (PST)
+Subject: Re: [PATCH v11 7/9] nvmet-passthru: Add passthru code to process
+ commands
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
+        Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Stephen Bates <sbates@raithlin.com>
+References: <20200220203652.26734-1-logang@deltatee.com>
+ <20200220203652.26734-8-logang@deltatee.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <becbf34c-e22e-3c48-41df-f23fee2da658@grimberg.me>
+Date:   Wed, 26 Feb 2020 15:28:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226232550.GA191068@google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20200220203652.26734-8-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Richard, Lucas]
 
-On Wed, Feb 26, 2020 at 05:25:52PM -0600, Bjorn Helgaas wrote:
-> On Sat, Feb 22, 2020 at 04:25:41PM +0100, Fawad Lateef wrote:
-> > Hello,
-> > 
-> > I am trying to figure-out an issue on our i.MX6Q platform based design
-> > where PCIe interface goes bad.
-> > 
-> > We have a Phytec i.MX6Q eMMC SOM, attached to our custom designed
-> > board. PCIe root-complex from i.MX6Q is attached to PLX switch
-> > (PEX8605).
-> > 
-> > Linux kernel version is 4.19.9x and also 4.14.134 (from phytec's
-> > linux-mainline repo). Kernel do not have PCIe hot-plug and PNP enabled
-> > in config.
-> > 
-> > PLX switch #PERST is attached to a GPIO pin and stays in disable state
-> > until Linux is booted. So at boot time only PCIe root-complex is
-> > initialized by kernel.
-> > 
-> > After boot if I do "lspci -v"  and see everything good from PCIe
-> > root-complex (below):
-> > 
-> > ~ # lspci -v
-> > 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00
-> > [Normal decode])
-> > Flags: bus master, fast devsel, latency 0, IRQ 295
-> > Memory at 01000000 (32-bit, non-prefetchable) [size=1M]
-> > Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
-> > I/O behind bridge: None
-> > Memory behind bridge: None
-> > Prefetchable memory behind bridge: None
-> > [virtual] Expansion ROM at 01100000 [disabled] [size=64K]
-> > Capabilities: [40] Power Management version 3
-> > Capabilities: [50] MSI: Enable+ Count=1/1 Maskable+ 64bit+
-> > Capabilities: [70] Express Root Port (Slot-), MSI 00
-> > Capabilities: [100] Advanced Error Reporting
-> > Capabilities: [140] Virtual Channel
-> > Kernel driver in use: pcieport
-> > 
-> > 
-> > Then I enable the #PERST pin of PLX switch, everything is still good
-> > (no rescan on Linux is done yet)
-> > 
-> > ~ # echo 139 > /sys/class/gpio/export
-> > ~ # echo out > /sys/class/gpio/gpio139/direction
-> > ~ # echo 1 > /sys/class/gpio/gpio139/value
-> > ~ # lspci -v
-> > 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00
-> > [Normal decode])
-> > Flags: bus master, fast devsel, latency 0, IRQ 295
-> > Memory at 01000000 (32-bit, non-prefetchable) [size=1M]
-> > Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
-> > I/O behind bridge: None
-> > Memory behind bridge: None
-> > Prefetchable memory behind bridge: None
-> > [virtual] Expansion ROM at 01100000 [disabled] [size=64K]
-> > Capabilities: [40] Power Management version 3
-> > Capabilities: [50] MSI: Enable+ Count=1/1 Maskable+ 64bit+
-> > Capabilities: [70] Express Root Port (Slot-), MSI 00
-> > Capabilities: [100] Advanced Error Reporting
-> > Capabilities: [140] Virtual Channel
-> > Kernel driver in use: pcieport
-> > 
-> > 
-> > Now just disable/put-in-reset the PLX switch (Linux don't see the
-> > switch yet, as no rescan on PCIe was done). Now "lspci -v" and
-> > root-complex goes bad.
-> > 
-> > ~ # echo 0 > /sys/class/gpio/gpio139/value
-> > ~ # lspci -v
-> > 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00
-> > [Normal decode])
-> > Flags: fast devsel, IRQ 295
-> > Memory at 01000000 (64-bit, prefetchable) [disabled] [size=1M]
-> > Bus: primary=00, secondary=00, subordinate=00, sec-latency=0
-> > I/O behind bridge: 00000000-00000fff [size=4K]
-> > Memory behind bridge: 00000000-000fffff [size=1M]
-> > Prefetchable memory behind bridge: 00000000-000fffff [size=1M]
-> > [virtual] Expansion ROM at 01100000 [disabled] [size=64K]
-> > Capabilities: [40] Power Management version 3
-> > Capabilities: [50] MSI: Enable- Count=1/1 Maskable+ 64bit+
-> > Capabilities: [70] Express Root Port (Slot-), MSI 00
-> > Capabilities: [100] Advanced Error Reporting
-> > Capabilities: [140] Virtual Channel
-> > Kernel driver in use: pcieport
-> > 
-> > ~ # uname -a
-> > Linux buildroot-2019.08-imx6 4.14.134-phy2 #1 SMP Thu Feb 20 12:13:33
-> > UTC 2020 armv7l GNU/Linux
-> > ~ #
-> > 
-> > 
-> > I am really not sure what is going wrong here. Did I am missing
-> > something basic?
+> +u16 nvmet_parse_passthru_admin_cmd(struct nvmet_req *req)
+> +{
+> +	/*
+> +	 * Passthru all vendor specific commands
+> +	 */
+> +	if (req->cmd->common.opcode >= nvme_admin_vendor_start)
+> +		return nvmet_setup_passthru_command(req);
+> +
+> +	switch (req->cmd->common.opcode) {
+> +	case nvme_admin_async_event:
+> +		req->execute = nvmet_execute_async_event;
+> +		return NVME_SC_SUCCESS;
+> +	case nvme_admin_keep_alive:
+> +		/*
+> +		 * Most PCIe ctrls don't support keep alive cmd, we route keep
+> +		 * alive to the non-passthru mode. In future please change this
+> +		 * code when PCIe ctrls with keep alive support available.
+> +		 */
+> +		req->execute = nvmet_execute_keep_alive;
+> +		return NVME_SC_SUCCESS;
+> +	case nvme_admin_set_features:
+> +		switch (le32_to_cpu(req->cmd->features.fid)) {
+> +		case NVME_FEAT_ASYNC_EVENT:
+> +		case NVME_FEAT_KATO:
+> +		case NVME_FEAT_NUM_QUEUES:
+> +			req->execute = nvmet_execute_set_features;
+> +			return NVME_SC_SUCCESS;
+> +		default:
+> +			return nvmet_setup_passthru_command(req);
+> +		}
+
+This looks questionable... There are tons of features that doesn't
+make sense here like hmb, temperature stuff, irq stuff, timestamps,
+reservations etc... passing-through these will have confusing
+semantics.. Maybe white-list what actually makes sense to passthru?
+
+> +		break;
+> +	case nvme_admin_get_features:
+> +		switch (le32_to_cpu(req->cmd->features.fid)) {
+> +		case NVME_FEAT_ASYNC_EVENT:
+> +		case NVME_FEAT_KATO:
+> +		case NVME_FEAT_NUM_QUEUES:
+> +			req->execute = nvmet_execute_get_features;
+> +			return NVME_SC_SUCCESS;
+> +		default:
+> +			return nvmet_setup_passthru_command(req);
+> +		}
+
+Same here.
+
+> +		break;
+> +	case nvme_admin_identify:
+> +		switch (req->cmd->identify.cns) {
+> +		case NVME_ID_CNS_CTRL:
+> +			req->execute = nvmet_passthru_execute_cmd;
+> +			req->p.end_req = nvmet_passthru_override_id_ctrl;
+> +			return NVME_SC_SUCCESS;
+> +		case NVME_ID_CNS_NS:
+> +			req->execute = nvmet_passthru_execute_cmd;
+> +			req->p.end_req = nvmet_passthru_override_id_ns;
+> +			return NVME_SC_SUCCESS;
+
+Aren't you missing NVME_ID_CNS_NS_DESC_LIST? and
+NVME_ID_CNS_NS_ACTIVE_LIST?
+
+> +		default:
+> +			return nvmet_setup_passthru_command(req);
+> +		}
+
+Also here, all the namespace management stuff has questionable
+semantics in my mind...
+
+> +	case nvme_admin_get_log_page:
+> +		return nvmet_setup_passthru_command(req);
+> +	default:
+> +		/* By default, blacklist all admin commands */
+> +		return NVME_SC_INVALID_OPCODE | NVME_SC_DNR;
+> +	}
+> +}
+> diff --git a/include/linux/nvme.h b/include/linux/nvme.h
+> index 3d5189f46cb1..e29f4b8145fa 100644
+> --- a/include/linux/nvme.h
+> +++ b/include/linux/nvme.h
+> @@ -858,6 +858,7 @@ enum nvme_admin_opcode {
+>   	nvme_admin_security_recv	= 0x82,
+>   	nvme_admin_sanitize_nvm		= 0x84,
+>   	nvme_admin_get_lba_status	= 0x86,
+> +	nvme_admin_vendor_start		= 0xC0,
+>   };
+>   
+>   #define nvme_admin_opcode_name(opcode)	{ opcode, #opcode }
 > 
-> I agree, it looks like something's wrong, but I really don't have any
-> ideas.
-> 
-> I would start by using "lspci -xxxx" to see the actual values we get
-> from config space.  It looks like we're reading zeros from at least
-> the bus and window registers.
-> 
-> You could also instrument the i.MX config accessors in case there's
-> something strange going on there.  Maybe try to reproduce this on a
-> current upstream kernel?
-> 
-> Bjorn
