@@ -2,158 +2,343 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C47916FEC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:17:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A74316FED4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:23:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbgBZMRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 07:17:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35856 "EHLO mx2.suse.de"
+        id S1727341AbgBZMXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 07:23:00 -0500
+Received: from mga01.intel.com ([192.55.52.88]:8655 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726334AbgBZMRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 07:17:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 66047ACE8;
-        Wed, 26 Feb 2020 12:17:11 +0000 (UTC)
-Subject: Re: [PATCH bpf-next v3 0/5] bpftool: Make probes which emit dmesg
- warnings optional
-To:     Quentin Monnet <quentin@isovalent.com>, bpf@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org
-References: <20200225194446.20651-1-mrostecki@opensuse.org>
- <e4929660-21ff-e394-37a0-d72b67a3770a@isovalent.com>
-From:   Michal Rostecki <mrostecki@opensuse.org>
-Autocrypt: addr=mrostecki@opensuse.org; keydata=
- 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
- ZURUUA==
-Message-ID: <0e46d001-a137-97bc-262c-e864cf3f90b8@opensuse.org>
-Date:   Wed, 26 Feb 2020 13:17:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727175AbgBZMXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 07:23:00 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 04:22:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,488,1574150400"; 
+   d="scan'208";a="350378972"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 26 Feb 2020 04:22:53 -0800
+Received: by lahna (sSMTP sendmail emulation); Wed, 26 Feb 2020 14:22:53 +0200
+Date:   Wed, 26 Feb 2020 14:22:53 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 18/19] platform/x86: intel_pmc_ipc: Convert to MFD
+Message-ID: <20200226122253.GP2667@lahna.fi.intel.com>
+References: <20200217131446.32818-1-mika.westerberg@linux.intel.com>
+ <20200217131446.32818-19-mika.westerberg@linux.intel.com>
+ <20200226084749.GA3494@dell>
+ <20200226103355.GO2667@lahna.fi.intel.com>
+ <20200226112324.GL3494@dell>
 MIME-Version: 1.0
-In-Reply-To: <e4929660-21ff-e394-37a0-d72b67a3770a@isovalent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226112324.GL3494@dell>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/26/20 12:17 PM, Quentin Monnet wrote:
-> 2020-02-25 20:44 UTC+0100 ~ Michal Rostecki <mrostecki@opensuse.org>
->> Feature probes in bpftool related to bpf_probe_write_user and
->> bpf_trace_printk helpers emit dmesg warnings which might be confusing
->> for people running bpftool on production environments. This patch series
->> addresses that by filtering them out by default and introducing the new
->> positional argument "full" which enables all available probes.
->>
->> The main motivation behind those changes is ability the fact that some
->> probes (for example those related to "trace" or "write_user" helpers)
->> emit dmesg messages which might be confusing for people who are running
->> on production environments. For details see the Cilium issue[0].
->>
->> v1 -> v2:
->> - Do not expose regex filters to users, keep filtering logic internal,
->> expose only the "full" option for including probes which emit dmesg
->> warnings.
->>
->> v2 -> v3:
->> - Do not use regex for filtering out probes, use function IDs directly.
->> - Fix bash completion - in v2 only "prefix" was proposed after "macros",
->>    "dev" and "kernel" were not.
->> - Rephrase the man page paragraph, highlight helper function names.
->> - Remove tests which parse the plain output of bpftool (except the
->>    header/macros test), focus on testing JSON output instead.
->> - Add test which compares the output with and without "full" option.
->>
->> [0] https://github.com/cilium/cilium/issues/10048
->>
->> Michal Rostecki (5):
->>    bpftool: Move out sections to separate functions
->>    bpftool: Make probes which emit dmesg warnings optional
->>    bpftool: Update documentation of "bpftool feature" command
->>    bpftool: Update bash completion for "bpftool feature" command
->>    selftests/bpf: Add test for "bpftool feature" command
->>
->>   .../bpftool/Documentation/bpftool-feature.rst |  19 +-
->>   tools/bpf/bpftool/bash-completion/bpftool     |   3 +-
->>   tools/bpf/bpftool/feature.c                   | 283 +++++++++++-------
->>   tools/testing/selftests/.gitignore            |   5 +-
->>   tools/testing/selftests/bpf/Makefile          |   3 +-
->>   tools/testing/selftests/bpf/test_bpftool.py   | 179 +++++++++++
->>   tools/testing/selftests/bpf/test_bpftool.sh   |   5 +
->>   7 files changed, 374 insertions(+), 123 deletions(-)
->>   create mode 100644 tools/testing/selftests/bpf/test_bpftool.py
->>   create mode 100755 tools/testing/selftests/bpf/test_bpftool.sh
->>
+On Wed, Feb 26, 2020 at 11:23:24AM +0000, Lee Jones wrote:
+> On Wed, 26 Feb 2020, Mika Westerberg wrote:
 > 
-> This version looks good to me, thanks!
+> > On Wed, Feb 26, 2020 at 08:47:49AM +0000, Lee Jones wrote:
+> > > On Mon, 17 Feb 2020, Mika Westerberg wrote:
+> > > 
+> > > > This driver only creates a bunch of platform devices sharing resources
+> > > > belonging to the PMC device. This is pretty much what MFD subsystem is
+> > > > for so move the driver there, renaming it to intel_pmc_bxt.c which
+> > > > should be more clear what it is.
+> > > > 
+> > > > MFD subsystem provides nice helper APIs for subdevice creation so
+> > > > convert the driver to use those. Unfortunately the ACPI device includes
+> > > > separate resources for most of the subdevices so we cannot simply call
+> > > > mfd_add_devices() to create all of them but instead we need to call it
+> > > > separately for each device.
+> > > > 
+> > > > The new MFD driver continues to expose two sysfs attributes that allow
+> > > > userspace to send IPC commands to the PMC/SCU to avoid breaking any
+> > > > existing applications that may use these. Generally this is bad idea so
+> > > > document this in the ABI documentation.
+> > > > 
+> > > > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > > > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > > ---
+> > > >  .../ABI/obsolete/sysfs-driver-intel_pmc_bxt   |  22 +
+> > > >  arch/x86/include/asm/intel_pmc_ipc.h          |  47 --
+> > > >  arch/x86/include/asm/intel_telemetry.h        |   1 +
+> > > >  drivers/mfd/Kconfig                           |  16 +-
+> > > >  drivers/mfd/Makefile                          |   1 +
+> > > >  drivers/mfd/intel_pmc_bxt.c                   | 489 +++++++++++++
+> > > >  drivers/platform/x86/Kconfig                  |  16 +-
+> > > >  drivers/platform/x86/Makefile                 |   1 -
+> > > >  drivers/platform/x86/intel_pmc_ipc.c          | 645 ------------------
+> > > >  .../platform/x86/intel_telemetry_debugfs.c    |  12 +-
+> > > >  drivers/platform/x86/intel_telemetry_pltdrv.c |   2 +
+> > > >  drivers/usb/typec/tcpm/Kconfig                |   2 +-
+> > > >  include/linux/mfd/intel_pmc_bxt.h             |  21 +
+> > > >  13 files changed, 565 insertions(+), 710 deletions(-)
+> > > >  create mode 100644 Documentation/ABI/obsolete/sysfs-driver-intel_pmc_bxt
+> > > >  delete mode 100644 arch/x86/include/asm/intel_pmc_ipc.h
+> > > >  create mode 100644 drivers/mfd/intel_pmc_bxt.c
+> > > >  delete mode 100644 drivers/platform/x86/intel_pmc_ipc.c
+> > > >  create mode 100644 include/linux/mfd/intel_pmc_bxt.h
+> > > 
+> > > [...]
 > 
-> Reviewed-by: Quentin Monnet <quentin@isovalent.com>
+> [...]
 > 
-> (Please keep Acked-by/Reviewed-by tags between versions if there are no
-> significant changes, here for patch 1.)
+> > > > +struct intel_pmc_dev {
+> > > > +	struct device *dev;
+> > > > +	struct intel_scu_ipc_dev *scu;
+> > > > +
+> > > > +	struct mfd_cell cells[PMC_TELEM + 1];
+> > > 
+> > > Nicer to add a "PMC_DEVICE_MAX" enum and use that.
+> > > 
+> > > Why do these even need to be in here?
+> > 
+> > They need to be here because we need to fill them in dynamically based
+> > on the resources we get from the ACPI device.
+> 
+> Why can't you do that with statically defined structs?
+> 
+> HINT: You can.
 
-Sorry, I will do that next time.
+Well if I did that then there are two issues I see. First is that if
+there will be another PMC device in the future, we could not cope with
+that because the first device that is probed will fill those cells with
+its information.
 
-> That's a lot of tests now that we don't have the regex and filtering is
-> very straightforward, but it does not hurt. I checked and they all pass
-> on my system.
+Second is that if we ignore the possibility of multiple devices then we
+still end up filling the module wide cells with the resources which does
+not seem right to me because we have a intel_pmc_dev instance
+separately.
 
-I know that those tests were necessary with the regex implementation and
-now they may seem to be an overkill. But on the other hand, I think that
-having selftests for bpftool in general is a good thing, so I didn't
-want throw them away despite the easier implementation of my patches. I
-might follow up with some more tests covering the other subcommands in
-future.
+So we can't really use the "standard" MFD way here where we have static
+const cells (module wide) that we pass to the MFD core with base address
+because the resources in the ACPI device (that the driver binds to) are
+not organized like that. The resources are pretty much arbitrary.
 
-Cheers,
-Michal
+> > > I would normally suggest creating a cell per device.
+> > 
+> > You mean 
+> > 
+> > struct intel_pmc_dev {
+> > 	...
+> > 	struct mfd_cell tco_cell;
+> > 	struct mfd_cell punit_cell;
+> > 	...
+> > 
+> > right? Sure no problem.
+> 
+> No.  We don't usually put them in device data at all.
+> 
+> I mean:
+> 
+> static struct mfd_cell tco_cell[] = {
+>         {      }
+> };
+> 
+> static struct mfd_cell tco_cell[] = {
+>         {      }
+> };
+
+OK, then my above comment hopefully explains why I can't do that.
+
+> [...]
+> 
+> > > > +static const struct mfd_cell tco = {
+> > > > +	.name = TCO_DEVICE_NAME,
+> > > 
+> > > Use proper string please.
+> > > 
+> > > > +	.ignore_resource_conflicts = true,
+> > > 
+> > > Why not add tco_pdata here?
+> > 
+> > Because we need to pass it the private PMC pointer that is filled later
+> > on. It is being used by the iTCO_wdt .update_no_reboot_bit() callback as
+> > its private data.
+> 
+> Just drop the const.
+
+But again we have the same issue here. So what we have is:
+
+  - module wide resources (the cell templates)
+  - per PMC instance resources created when the driver is probed against
+    the ACPI device.
+
+I don't think it is good idea to put the latter to the former because of
+the reasons I exlain above.
+
+If this would have something like single MMIO register that is split for
+the child-devices this would work fine but in this case it unfortunately
+does not. Well unless I'm missing something ;-)
+
+> > > > +};
+> > > > +
+> > > > +static const struct resource telem_res[] = {
+> > > > +	DEFINE_RES_MEM(TELEM_PUNIT_SSRAM_OFFSET, TELEM_SSRAM_SIZE),
+> > > > +	DEFINE_RES_MEM(TELEM_PMC_SSRAM_OFFSET, TELEM_SSRAM_SIZE),
+> > > > +};
+> > > > +
+> > > > +static const struct mfd_cell telem = {
+> > > > +	.name = TELEMETRY_DEVICE_NAME,
+> > > 
+> > > Use proper string please.
+> > 
+> > Okay.
+> > 
+> > > > +	.resources = telem_res,
+> > > > +	.num_resources = ARRAY_SIZE(telem_res),
+> > > > +};
+> > > > +
+> > > > +static int intel_pmc_get_tco_resources(struct platform_device *pdev,
+> > > > +				       struct intel_pmc_dev *pmc)
+> > > > +{
+> > > > +	struct itco_wdt_platform_data *pdata;
+> > > > +	struct resource *res, *tco_res;
+> > > > +
+> > > > +	if (acpi_has_watchdog())
+> > > > +		return 0;
+> > > > +
+> > > > +	res = platform_get_resource(pdev, IORESOURCE_IO,
+> > > > +				    PLAT_RESOURCE_ACPI_IO_INDEX);
+> > > > +	if (!res) {
+> > > > +		dev_err(&pdev->dev, "Failed to get IO resource\n");
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +
+> > > > +	tco_res = devm_kcalloc(&pdev->dev, 2, sizeof(*tco_res), GFP_KERNEL);
+> > > > +	if (!tco_res)
+> > > > +		return -ENOMEM;
+> > > > +
+> > > > +	tco_res[0].flags = IORESOURCE_IO;
+> > > > +	tco_res[0].start = res->start + TCO_BASE_OFFSET;
+> > > > +	tco_res[0].end = tco_res[0].start + TCO_REGS_SIZE - 1;
+> > > > +	tco_res[1].flags = IORESOURCE_IO;
+> > > > +	tco_res[1].start = res->start + SMI_EN_OFFSET;
+> > > > +	tco_res[1].end = tco_res[1].start + SMI_EN_SIZE - 1;
+> > > > +
+> > > > +	pmc->cells[PMC_TCO].resources = tco_res;
+> > > > +	pmc->cells[PMC_TCO].num_resources = 2;
+> > > > +
+> > > > +	pdata = devm_kmemdup(&pdev->dev, &tco_pdata, sizeof(*pdata), GFP_KERNEL);
+> > > > +	if (!pdata)
+> > > > +		return -ENOMEM;
+> > > > +
+> > > > +	pdata->no_reboot_priv = pmc;
+> > > 
+> > > This looks hacky.  What are you doing here?
+> > 
+> > So the pmc instance is created per device as you requested. This one
+> > passes it to the iTCO_wdt .update_no_reboot_bit() callback which we
+> > implemented in this driver (sane name update_no_reboot_bit()).
+> > 
+> > The iTCO_wdt platform data can be found in this header if you want to
+> > take a look: include/linux/platform_data/itco_wdt.h.
+> 
+> We usually pass these kinds of pointers via device data, rather than
+> platform data.
+
+I know but this is already existing iTCO_wdt interface that I'm using.
+Not created by this patch series.
+
+> > > > +	pmc->cells[PMC_TCO].platform_data = pdata;
+> > > > +	pmc->cells[PMC_TCO].pdata_size = sizeof(*pdata);
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static int intel_pmc_get_resources(struct platform_device *pdev,
+> > > > +				   struct intel_pmc_dev *pmc,
+> > > > +				   struct intel_scu_ipc_pdata *pdata)
+> > > > +{
+> > > > +	struct resource *res, *punit_res;
+> > > > +	struct resource gcr_res;
+> > > > +	size_t npunit_res = 0;
+> > > > +	int ret;
+> > > > +
+> > > > +	pdata->irq = platform_get_irq_optional(pdev, 0);
+> > > > +
+> > > > +	res = platform_get_resource(pdev, IORESOURCE_MEM,
+> > > > +				    PLAT_RESOURCE_IPC_INDEX);
+> > > > +	if (!res) {
+> > > > +		dev_err(&pdev->dev, "Failed to get IPC resource\n");
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +
+> > > > +	/* IPC registers */
+> > > > +	pdata->mem.flags = res->flags;
+> > > > +	pdata->mem.start = res->start;
+> > > > +	pdata->mem.end = res->start + PLAT_RESOURCE_IPC_SIZE - 1;
+> > > 
+> > > Passing register addresses through pdata also looks like a hack.
+> > > 
+> > > Why not pass via resources?
+> > 
+> > It is not actual "platform data" but just a structure that we pass for
+> > the IPC registration function that then creates the underlying device
+> > for the SCU IPC using these. Since it is plain device (not struct
+> > platform device) it does not have the concept of "resources" such as
+> > platform devices have.
+> 
+> Calling something platform data that isn't platform data is confusing.
+> 
+> Why aren't you using the standard device driver model to register this
+> device?
+
+Well I think I am. It is now registered the same way as you would
+register say, an input device (you don't really have drivers binding for
+anything you register with input_register_device()). It even registers a
+new class of devices as discussed previously.
+
+> [...]
+> 
+> > > > diff --git a/include/linux/mfd/intel_pmc_bxt.h b/include/linux/mfd/intel_pmc_bxt.h
+> > > > new file mode 100644
+> > > > index 000000000000..a5fb41910d78
+> > > > --- /dev/null
+> > > > +++ b/include/linux/mfd/intel_pmc_bxt.h
+> > > > @@ -0,0 +1,21 @@
+> > > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > > +#ifndef MFD_INTEL_PMC_BXT_H
+> > > > +#define MFD_INTEL_PMC_BXT_H
+> > > > +
+> > > > +#include <linux/types.h>
+> > > > +
+> > > > +/* GCR reg offsets from GCR base */
+> > > > +#define PMC_GCR_PMC_CFG_REG		0x08
+> > > > +#define PMC_GCR_TELEM_DEEP_S0IX_REG	0x78
+> > > > +#define PMC_GCR_TELEM_SHLW_S0IX_REG	0x80
+> > > > +
+> > > > +/*
+> > > > + * Pointer to the PMC device can be obtained by calling
+> > > > + * dev_get_drvdata() to the parent MFD device.
+> > > > + */
+> > > > +struct intel_pmc_dev;
+> > > 
+> > > Don't you have a shared header file you can put the definition in
+> > > instead?
+> > 
+> > Unfortunately no. This one is the shared header.
+> 
+> Please consider moving the definition into here then.
+
+Okay.
