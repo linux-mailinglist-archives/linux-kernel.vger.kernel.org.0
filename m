@@ -2,58 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C53417014F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:34:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16AD617015A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:38:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbgBZOez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 09:34:55 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53588 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727426AbgBZOez (ORCPT
+        id S1727775AbgBZOis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 09:38:48 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50035 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbgBZOir (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 09:34:55 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: padovan)
-        with ESMTPSA id 1DCC728F756
-From:   Gustavo Padovan <gustavo.padovan@collabora.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, Dan Lazewatsky <dlaz@chromium.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-Subject: [PATCH] usb: quirks: add NO_LPM quirk for Logitech Screen Share
-Date:   Wed, 26 Feb 2020 14:34:38 +0000
-Message-Id: <20200226143438.1445-1-gustavo.padovan@collabora.com>
-X-Mailer: git-send-email 2.11.0
+        Wed, 26 Feb 2020 09:38:47 -0500
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1j6xpb-0000a4-Cd; Wed, 26 Feb 2020 15:38:35 +0100
+Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1j6xpY-00011U-RF; Wed, 26 Feb 2020 15:38:32 +0100
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     linux-stm32@st-md-mailman.stormreply.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        linux-kernel@vger.kernel.org
+Cc:     kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH 1/3] dt-bindings: add vendor prefix for Linux Automation GmbH
+Date:   Wed, 26 Feb 2020 15:38:23 +0100
+Message-Id: <20200226143826.1146-1-a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Lazewatsky <dlaz@chromium.org>
+Linux Automation GmbH[0] was founded in 2019 in order to develop
+electronics for embedded Linux. Add its vendor prefix so it may be used
+in future board and device compatibles.
 
-LPM on the device appears to cause xHCI host controllers to claim
-that there isn't enough bandwidth to support additional devices.
+[0]: https://www.linux-automation.com
 
-Signed-off-by: Dan Lazewatsky <dlaz@chromium.org>
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+Signed-off-by: Robert Schwebel <rsc@linux-automation.com>
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
- drivers/usb/core/quirks.c | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index 2b24336a72e5..2dac3e7cdd97 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -231,6 +231,9 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	/* Logitech PTZ Pro Camera */
- 	{ USB_DEVICE(0x046d, 0x0853), .driver_info = USB_QUIRK_DELAY_INIT },
- 
-+	/* Logitech Screen Share */
-+	{ USB_DEVICE(0x046d, 0x086c), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* Logitech Quickcam Fusion */
- 	{ USB_DEVICE(0x046d, 0x08c1), .driver_info = USB_QUIRK_RESET_RESUME },
- 
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 9e67944bec9c..bef6841428a2 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -561,6 +561,8 @@ patternProperties:
+     description: LSI Corp. (LSI Logic)
+   "^lwn,.*":
+     description: Liebherr-Werk Nenzing GmbH
++  "^lxa,.*":
++    description: Linux Automation GmbH
+   "^macnica,.*":
+     description: Macnica Americas
+   "^mapleboard,.*":
 -- 
-2.11.0
+2.25.0
 
