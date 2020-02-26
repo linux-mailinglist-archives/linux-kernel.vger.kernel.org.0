@@ -2,80 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E95717092F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 21:05:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EED41170934
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 21:07:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbgBZUFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 15:05:39 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37197 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbgBZUFj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 15:05:39 -0500
-Received: by mail-ot1-f68.google.com with SMTP id b3so667829otp.4;
-        Wed, 26 Feb 2020 12:05:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rfooh7DJ/puEMePfWhIF847RRO14nrehO8VpW6u2dqc=;
-        b=saiVxvDFo8hVZnGsp9NWUNR5ptFExf6k5XWMDC4wQwUaijB/pfKbejBnCF+/PzSC4j
-         k2PYmbjwpE2Qe4YRet1jM/CGt6vVLCBhAnL8CyLgoPm51eS8zot+ondip5Tfa99Go17T
-         8EA7Dm9JMq3BgUgGbC2qDqjfeN0FTv2XvlJhN6IOyp+FqoH8xT67uYhrc8cpHArMLKaZ
-         otkXPK4e4pxh2AGNIpB2qycvnKs51kQZPG8lM6Ml+Wd2la4PNoRsO87jJCKt3R05AWCm
-         onzuY6eeIWhGzyJrsg9UhvBpKRFNwWio9T9fM1D8us7rlHwsKx2itdLTl2LvYstTbIou
-         cwTw==
-X-Gm-Message-State: APjAAAUIovUJq9nW7dsOab25PUN8SMZLdD0Y7IGHBivT1h3Im2sJZnlv
-        xMwLFX2SUJ8symUhAuLwog==
-X-Google-Smtp-Source: APXvYqwoExQts8kyL6ACiX7nqlcfseb2jryno1PV9+/zcCxooXzFpJaL6Shdc1qByEDsFjYB/p3G5A==
-X-Received: by 2002:a05:6830:1e37:: with SMTP id t23mr439632otr.16.1582747538082;
-        Wed, 26 Feb 2020 12:05:38 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n2sm1133092oia.58.2020.02.26.12.05.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 12:05:37 -0800 (PST)
-Received: (nullmailer pid 31917 invoked by uid 1000);
-        Wed, 26 Feb 2020 20:05:35 -0000
-Date:   Wed, 26 Feb 2020 14:05:35 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Maulik Shah <mkshah@codeaurora.org>
-Cc:     swboyd@chromium.org, mka@chromium.org, evgreen@chromium.org,
-        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, agross@kernel.org,
-        dianders@chromium.org, rnayak@codeaurora.org, ilina@codeaurora.org,
-        lsrao@codeaurora.org,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>,
-        devicetree@vger.kernel.org, Maulik Shah <mkshah@codeaurora.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: Introduce soc sleep stats bindings
- for Qualcomm SoCs
-Message-ID: <20200226200535.GA31824@bogus>
-References: <1582274986-17490-1-git-send-email-mkshah@codeaurora.org>
- <1582274986-17490-2-git-send-email-mkshah@codeaurora.org>
+        id S1727429AbgBZUHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 15:07:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45660 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727277AbgBZUHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 15:07:40 -0500
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47E562467B
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 20:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582747659;
+        bh=2tf+v+V/MEP5NY0l77q6mS4Qi+if4Z6bmYcsxvTFlAc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mZTOKyU+WQgw3ipa87OcIONruGF8lXSPHNfK6vxs1YiMXkFU4RSEhmo4DX3jeKSd2
+         s6Z784fQqqqdSejTvFQ5wccgKxcAzRxn95no3RRCiUKnMmKpCx2ygr5RKyu23mWBQF
+         1F9fXskzs7DqmtY26t7NV+vuVaJiac3Na8JPqJO4=
+Received: by mail-wm1-f50.google.com with SMTP id m10so5351118wmc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 12:07:39 -0800 (PST)
+X-Gm-Message-State: APjAAAWMJiEu6cihZIyoslair5Dc0wGX5qIrA8/Fmsh0O/E7arAlJc5Q
+        CUKmtO7V1uV/IRgE7/I12X7gZ28CYwHRjx7vJ1/UMQ==
+X-Google-Smtp-Source: APXvYqydt/Oh8QkTZnRNoZdpsRzIaN0b+vNS6r2LtaU+Apd2hTWAsK9m6W8ElX/YxITonykdhHJhL4iTuWZZv/5PRuQ=
+X-Received: by 2002:a05:600c:2207:: with SMTP id z7mr580415wml.138.1582747657704;
+ Wed, 26 Feb 2020 12:07:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1582274986-17490-2-git-send-email-mkshah@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200225220801.571835584@linutronix.de> <20200225221305.919875257@linutronix.de>
+ <db063edd-f1de-bbb4-3c8b-465904308aad@kernel.org> <87pne1azvt.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <87pne1azvt.fsf@nanos.tec.linutronix.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 26 Feb 2020 12:07:26 -0800
+X-Gmail-Original-Message-ID: <CALCETrV4=1X3MO+HsgxSvJo_Rjw4tr1E7XCY4xHNGA=bhvq7NA@mail.gmail.com>
+Message-ID: <CALCETrV4=1X3MO+HsgxSvJo_Rjw4tr1E7XCY4xHNGA=bhvq7NA@mail.gmail.com>
+Subject: Re: [patch 7/8] x86/entry: Move irq tracing to prepare_exit_to_user_mode()
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Brian Gerst <brgerst@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Feb 2020 14:19:43 +0530, Maulik Shah wrote:
-> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> 
-> Add device binding documentation for Qualcomm Technology Inc's (QTI)
-> SoC sleep stats driver. The driver is used for displaying SoC sleep
-> statistic maintained by Always On Processor or Resource Power Manager.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-> ---
->  .../bindings/soc/qcom/soc-sleep-stats.yaml         | 47 ++++++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/qcom/soc-sleep-stats.yaml
-> 
+On Wed, Feb 26, 2020 at 11:54 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Andy Lutomirski <luto@kernel.org> writes:
+>
+> > On 2/25/20 2:08 PM, Thomas Gleixner wrote:
+> >> which again gets it out of the ASM code.
+> >
+> > Why is this better than just sticking the tracing in
+> > __prepare_exit_from_usermode() or just not splitting it in the first
+> > place?
+>
+> The split is there because prepare_exit_from_usermode() is used from the
+> idtentry maze as well. Once that stuff is converted in the later series
+> the split goes away again.
+>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Okay.
