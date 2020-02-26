@@ -2,443 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7931D17043C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:23:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10C1F17044D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgBZQXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:23:03 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:49804 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbgBZQXC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:23:02 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QFvg7Y033916;
-        Wed, 26 Feb 2020 16:22:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=wcR73i51xZFpjh/dpqq+xxHpso4HXMae9pYAfRpesjM=;
- b=ajzQaEs036Fttjn6ealO6ng6AW2j8JJzN1l97faLvt3ILHyVqpbmygCm/pbyBiThm2u5
- j8L1daZOMwpuq/N5PogrpKazZ52aYkAmsVLzeTCYoam+g2vIwJv1Ko91znOQAYRbc4Dg
- xH9eNJSaVtIg+7TfTq2Uy+X1y5AkguS/wbmFXqvMmwmAfs1/ApzjNjUMeIAgIaDejblh
- 2qIDoV6e0auZ1SHL4XlwWc0wdIaEa/ObARlZAKfwnlZxNNASWf8pSpwNEghrVF4zLjfu
- KNETGqhLYJbAa1YvmQVcCUlrJYPM4FM9PX7VlKHmOpHPbLC6p++ziHSm6IABSdA/r7Vf 0A== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2ydcsrmrrd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:22:34 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QGMGaE166612;
-        Wed, 26 Feb 2020 16:22:33 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2ydcs2g5tc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:22:33 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01QGMWU5000833;
-        Wed, 26 Feb 2020 16:22:32 GMT
-Received: from achartre-desktop.us.oracle.com (/10.39.232.60)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Feb 2020 08:22:31 -0800
-From:   Alexandre Chartre <alexandre.chartre@oracle.com>
-To:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
-        luto@kernel.org, peterz@infradead.org, x86@kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     pbonzini@redhat.com, konrad.wilk@oracle.com,
-        jan.setjeeilers@oracle.com, liran.alon@oracle.com,
-        junaids@google.com, graf@amazon.de, rppt@linux.vnet.ibm.com,
-        kuzuno@gmail.com, mgross@linux.intel.com,
-        alexandre.chartre@oracle.com
-Subject: [RFC PATCH v3 7/7] mm/asi: Implement PTI with ASI
-Date:   Wed, 26 Feb 2020 17:22:00 +0100
-Message-Id: <1582734120-26757-8-git-send-email-alexandre.chartre@oracle.com>
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1582734120-26757-1-git-send-email-alexandre.chartre@oracle.com>
-References: <1582734120-26757-1-git-send-email-alexandre.chartre@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 phishscore=0 suspectscore=2 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002260112
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 suspectscore=2
- bulkscore=0 malwarescore=0 spamscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 mlxlogscore=999 phishscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002260111
+        id S1727198AbgBZQ1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:27:06 -0500
+Received: from mga18.intel.com ([134.134.136.126]:56029 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726148AbgBZQ1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 11:27:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 08:27:05 -0800
+X-IronPort-AV: E=Sophos;i="5.70,488,1574150400"; 
+   d="scan'208";a="226774328"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 08:27:05 -0800
+Message-ID: <85a8e60bb5fe139424ec6dcc9e827e37fbec3afe.camel@linux.intel.com>
+Subject: Re: [PATCH RFC v4 06/13] mm: Allow to offline unmovable
+ PageOffline() pages via MEM_GOING_OFFLINE
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, virtio-dev@lists.oasis-open.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Qian Cai <cai@lca.pw>, Pingfan Liu <kernelfans@gmail.com>
+Date:   Wed, 26 Feb 2020 08:27:04 -0800
+In-Reply-To: <e0892179-b14c-84c3-1284-fc789f16e1c7@redhat.com>
+References: <20191212171137.13872-1-david@redhat.com>
+         <20191212171137.13872-7-david@redhat.com>
+         <6ec496580ddcb629d22589a1cba8cd61cbd53206.camel@linux.intel.com>
+         <267ea186-aba8-1a93-bd55-ac641f78d07e@redhat.com>
+         <3d719897039273a2bb8d0fe7d12563498ebd2897.camel@linux.intel.com>
+         <e0892179-b14c-84c3-1284-fc789f16e1c7@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ASI supersedes PTI. If both CONFIG_ADDRESS_SPACE_ISOLATION and
-CONFIG_PAGE_TABLE_ISOLATION are set then PTI is implemented using
-ASI. For each user process, a "user" ASI is then defined with the
-PTI pagetable. The user ASI is used when running userland code, and
-it is exited when entering a syscall. The user ASI is re-entered
-when the syscall returns to userland.
+On Tue, 2020-02-25 at 23:19 +0100, David Hildenbrand wrote:
+> On 25.02.20 22:46, Alexander Duyck wrote:
+> > On Tue, 2020-02-25 at 19:49 +0100, David Hildenbrand wrote:
+> > > > >  /*
+> > > > >   * Scan pfn range [start,end) to find movable/migratable pages (LRU pages,
+> > > > > - * non-lru movable pages and hugepages). We scan pfn because it's much
+> > > > > - * easier than scanning over linked list. This function returns the pfn
+> > > > > - * of the first found movable page if it's found, otherwise 0.
+> > > > > + * non-lru movable pages and hugepages).
+> > > > > + *
+> > > > > + * Returns:
+> > > > > + *	0 in case a movable page is found and movable_pfn was updated.
+> > > > > + *	-ENOENT in case no movable page was found.
+> > > > > + *	-EBUSY in case a definetly unmovable page was found.
+> > > > >   */
+> > > > > -static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+> > > > > +static int scan_movable_pages(unsigned long start, unsigned long end,
+> > > > > +			      unsigned long *movable_pfn)
+> > > > >  {
+> > > > >  	unsigned long pfn;
+> > > > >  
+> > > > > @@ -1247,18 +1251,29 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+> > > > >  			continue;
+> > > > >  		page = pfn_to_page(pfn);
+> > > > >  		if (PageLRU(page))
+> > > > > -			return pfn;
+> > > > > +			goto found;
+> > > > >  		if (__PageMovable(page))
+> > > > > -			return pfn;
+> > > > > +			goto found;
+> > > > > +
+> > > > > +		/*
+> > > > > +		 * Unmovable PageOffline() pages where somebody still holds
+> > > > > +		 * a reference count (after MEM_GOING_OFFLINE) can definetly
+> > > > > +		 * not be offlined.
+> > > > > +		 */
+> > > > > +		if (PageOffline(page) && page_count(page))
+> > > > > +			return -EBUSY;
+> > > > 
+> > > > So the comment confused me a bit because technically this function isn't
+> > > > about offlining memory, it is about finding movable pages. I had to do a
+> > > > bit of digging to find the only consumer is __offline_pages, but if we are
+> > > > going to talk about "offlining" instead of "moving" in this function it
+> > > > might make sense to rename it.
+> > > 
+> > > Well, it's contained in memory_hotplug.c, and the only user of moving
+> > > pages around in there is offlining code :) And it's job is to locate
+> > > movable pages, skip over some (temporary? unmovable ones) and (now)
+> > > indicate definitely unmovable ones.
+> > > 
+> > > Any idea for a better name?
+> > > scan_movable_pages_and_stop_on_definitely_unmovable() is not so nice :)
+> > 
+> > I dunno. What I was getting at is that the wording here would make it
+> > clearer if you simply stated that these pages "can definately not be
+> > moved". Saying you cannot offline a page that is PageOffline seems kind of
+> > redundant, then again calling it an Unmovable and then saying it cannot be
+> > moves is also redundant I suppose. In the end you don't move them, but
+> 
+> So, in summary, there are
+> - PageOffline() pages that are movable (balloon compaction).
+> - PageOffline() pages that cannot be moved and cannot be offlined (e.g.,
+>   no balloon compaction enabled, XEN, HyperV, ...) . page_count(page) >=
+>   0
+> - PageOffline() pages that cannot be moved, but can be offlined.
+>   page_count(page) == 0.
+> 
+> 
+> > they can be switched to offline if the page count hits 0. When that
+> > happens you simply end up skipping over them in the code for
+> > __test_page_isolated_in_pageblock and __offline_isolated_pages.
+> 
+> Yes. The thing with the wording is that pages with (PageOffline(page) &&
+> !page_count(page)) can also not really be moved, but they can be skipped
+> when offlining. If we call that "moving them to /dev/null", then yes,
+> they can be moved to some degree :)
+> 
+> I can certainly do here e.g.,
+> 
+> /*
+>  * PageOffline() pages that are not marked __PageMovable() and have a
+>  * reference count > 0 (after MEM_GOING_OFFLINE) are definitely
+>  * unmovable. If their reference count would be 0, they could be skipped
+>  * when offlining memory sections.
+>  */
+> 
+> And maybe I'll add to the function doc, that unmovable pages that are
+> skipped in this function can include pages that can be skipped when
+> offlining (moving them to nirvana).
+> 
+> Other suggestions?
 
-As with any ASI, interrupts/exceptions/NMIs will interrupt the
-ASI, the ASI will resume when the interrupt/exception/NMI has
-completed. Faults won't abort the user ASI as user faults are
-handled by the kernel before returning to userland.
+No, this sounds good and makes it much clearer.
 
-Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
----
- arch/x86/entry/calling.h        |    7 ++++++-
- arch/x86/entry/common.c         |   29 ++++++++++++++++++++++++-----
- arch/x86/entry/entry_64.S       |    6 ++++++
- arch/x86/include/asm/asi.h      |    9 +++++++++
- arch/x86/include/asm/tlbflush.h |   11 +++++++++--
- arch/x86/mm/asi.c               |    9 +++++++++
- arch/x86/mm/pti.c               |   28 ++++++++++++++++++++--------
- include/linux/mm_types.h        |    5 +++++
- kernel/fork.c                   |   17 +++++++++++++++++
- 9 files changed, 105 insertions(+), 16 deletions(-)
+> [...]
+> 
+> > > [1] we detect a definite offlining blocker and
+> > > 
+> > > > > +		} while (!ret);
+> > > > > +
+> > > > > +		if (ret != -ENOENT) {
+> > > > > +			reason = "unmovable page";
+> > > 
+> > > [2] we abort offlining
+> > > 
+> > > > > +			goto failed_removal_isolated;
+> > > > >  		}
+> > > > >  
+> > > > >  		/*
+> > 
+> > Yeah, this is the piece I misread.  I knew the loop this was in previously
+> > was looping when returning -ENOENT so for some reason I had it in my head
+> > that you were still looping on -EBUSY.
+> 
+> Ah okay, I see. Yeah, that wouldn't make sense for the use case I have :)
+> 
+> > So the one question I would have is if at this point are we guaranteed
+> > that the balloon drivers have already taken care of the page count for all
+> > the pages they set to PageOffline? Based on the patch description I was
+> > thinking that this was going to be looping for a while waiting for the
+> > driver to clear the pages and then walking through them at the end of the
+> > loop via check_pages_isolated_cb.
+> 
+> So, e.g., the patch description states
+> 
+> "Let's allow to do that by allowing to isolate any PageOffline() page
+> when offlining. This way, we can reach the memory hotplug notifier
+> MEM_GOING_OFFLINE, where the driver can signal that he is fine with
+> offlining this page by dropping its reference count."
+> 
+> Any balloon driver that does not allow offlining (e.g., XEN, HyperV,
+> virtio-balloon), will always have a refcount of (at least) 1. Drivers
+> that want to make use of that (esp. virtio-mem, but eventually also
+> HyperV), will drop their refcount via the MEM_GOING_OFFLINE call.
+> 
+> So yes, at this point, all applicable users were notified via
+> MEM_GOING_OFFLINE and had their chance to decrement the refcount. If
+> they didn't, offlining will be aborted.
+> 
+> Thanks again!
 
-diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index ca23b79..ce0fccd 100644
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -176,16 +176,21 @@
- #if defined(CONFIG_ADDRESS_SPACE_ISOLATION)
- 
- /*
-- * For now, ASI is not compatible with PTI.
-+ * ASI supersedes the entry points used by PTI. If both
-+ * CONFIG_ADDRESS_SPACE_ISOLATION and CONFIG_PAGE_TABLE_ISOLATION are
-+ * set then PTI is implemented using ASI.
-  */
- 
- .macro SWITCH_TO_KERNEL_CR3 scratch_reg:req
-+	ASI_INTERRUPT \scratch_reg
- .endm
- 
- .macro SWITCH_TO_USER_CR3_NOSTACK scratch_reg:req scratch_reg2:req
-+	ASI_RESUME \scratch_reg
- .endm
- 
- .macro SWITCH_TO_USER_CR3_STACK	scratch_reg:req
-+	ASI_RESUME \scratch_reg
- .endm
- 
- .macro SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg:req save_reg:req
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 9747876..a437de3 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -34,6 +34,7 @@
- #include <asm/fpu/api.h>
- #include <asm/nospec-branch.h>
- #include <asm/io_bitmap.h>
-+#include <asm/asi.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/syscalls.h>
-@@ -49,6 +50,13 @@ __visible inline void enter_from_user_mode(void)
- static inline void enter_from_user_mode(void) {}
- #endif
- 
-+static inline void syscall_enter(void)
-+{
-+	/* syscall enter has interrupted ASI, now exit ASI */
-+	asi_exit(current->mm->user_asi);
-+	enter_from_user_mode();
-+}
-+
- static void do_audit_syscall_entry(struct pt_regs *regs, u32 arch)
- {
- #ifdef CONFIG_X86_64
-@@ -224,6 +232,17 @@ __visible inline void prepare_exit_to_usermode(struct pt_regs *regs)
- 	mds_user_clear_cpu_buffers();
- }
- 
-+static inline void prepare_syscall_return(struct pt_regs *regs)
-+{
-+	prepare_exit_to_usermode(regs);
-+
-+	/*
-+	 * Syscall return will resume ASI, prepare resume to enter
-+	 * user ASI.
-+	 */
-+	asi_deferred_enter(current->mm->user_asi);
-+}
-+
- #define SYSCALL_EXIT_WORK_FLAGS				\
- 	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT |	\
- 	 _TIF_SINGLESTEP | _TIF_SYSCALL_TRACEPOINT)
-@@ -275,7 +294,7 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
- 		syscall_slow_exit_work(regs, cached_flags);
- 
- 	local_irq_disable();
--	prepare_exit_to_usermode(regs);
-+	prepare_syscall_return(regs);
- }
- 
- #ifdef CONFIG_X86_64
-@@ -283,7 +302,7 @@ __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
- {
- 	struct thread_info *ti;
- 
--	enter_from_user_mode();
-+	syscall_enter();
- 	local_irq_enable();
- 	ti = current_thread_info();
- 	if (READ_ONCE(ti->flags) & _TIF_WORK_SYSCALL_ENTRY)
-@@ -355,7 +374,7 @@ static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
- /* Handles int $0x80 */
- __visible void do_int80_syscall_32(struct pt_regs *regs)
- {
--	enter_from_user_mode();
-+	syscall_enter();
- 	local_irq_enable();
- 	do_syscall_32_irqs_on(regs);
- }
-@@ -378,7 +397,7 @@ __visible long do_fast_syscall_32(struct pt_regs *regs)
- 	 */
- 	regs->ip = landing_pad;
- 
--	enter_from_user_mode();
-+	syscall_enter();
- 
- 	local_irq_enable();
- 
-@@ -400,7 +419,7 @@ __visible long do_fast_syscall_32(struct pt_regs *regs)
- 		/* User code screwed up. */
- 		local_irq_disable();
- 		regs->ax = -EFAULT;
--		prepare_exit_to_usermode(regs);
-+		prepare_syscall_return(regs);
- 		return 0;	/* Keep it simple: use IRET. */
- 	}
- 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index fddb820..9042ba1 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -627,6 +627,9 @@ ret_from_intr:
- .Lretint_user:
- 	mov	%rsp,%rdi
- 	call	prepare_exit_to_usermode
-+#ifdef CONFIG_ADDRESS_SPACE_ISOLATION
-+	ASI_PREPARE_RESUME
-+#endif
- 	TRACE_IRQS_IRETQ
- 
- SYM_INNER_LABEL(swapgs_restore_regs_and_return_to_usermode, SYM_L_GLOBAL)
-@@ -1491,6 +1494,9 @@ SYM_CODE_START(nmi)
- 	movq	%rsp, %rdi
- 	movq	$-1, %rsi
- 	call	do_nmi
-+#ifdef CONFIG_ADDRESS_SPACE_ISOLATION
-+	ASI_PREPARE_RESUME
-+#endif
- 
- 	/*
- 	 * Return back to user mode.  We must *not* do the normal exit
-diff --git a/arch/x86/include/asm/asi.h b/arch/x86/include/asm/asi.h
-index b8d7b93..ac0594d 100644
---- a/arch/x86/include/asm/asi.h
-+++ b/arch/x86/include/asm/asi.h
-@@ -62,6 +62,10 @@ struct asi_tlb_state {
- 	struct asi_tlb_pgtable	tlb_pgtables[ASI_TLB_NR_DYN_ASIDS];
- };
- 
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+#define ASI_PCID_PREFIX_USER		0x80	/* user ASI */
-+#endif
-+
- struct asi_type {
- 	int			pcid_prefix;	/* PCID prefix */
- 	struct asi_tlb_state	*tlb_state;	/* percpu ASI TLB state */
-@@ -139,6 +143,7 @@ struct asi {
- void asi_schedule_in(struct task_struct *task);
- bool asi_fault(struct pt_regs *regs, unsigned long error_code,
- 	       unsigned long address, enum asi_fault_origin fault_origin);
-+void asi_deferred_enter(struct asi *asi);
- 
- extern struct asi *asi_create(struct asi_type *type);
- extern void asi_destroy(struct asi *asi);
-@@ -146,6 +151,10 @@ bool asi_fault(struct pt_regs *regs, unsigned long error_code,
- extern int asi_enter(struct asi *asi);
- extern void asi_exit(struct asi *asi);
- 
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+DECLARE_ASI_TYPE(user);
-+#endif
-+
- static inline void asi_set_log_policy(struct asi *asi, int policy)
- {
- 	asi->fault_log_policy = policy;
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 241058f..db114de 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -390,6 +390,8 @@ static inline void cr4_set_bits_and_update_boot(unsigned long mask)
-  */
- static inline void invalidate_user_asid(u16 asid)
- {
-+	struct asi_tlb_state *tlb_state;
-+
- 	/* There is no user ASID if address space separation is off */
- 	if (!IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION))
- 		return;
-@@ -404,8 +406,13 @@ static inline void invalidate_user_asid(u16 asid)
- 	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return;
- 
--	__set_bit(kern_pcid(asid),
--		  (unsigned long *)this_cpu_ptr(&cpu_tlbstate.user_pcid_flush_mask));
-+	if (IS_ENABLED(CONFIG_ADDRESS_SPACE_ISOLATION)) {
-+		tlb_state = get_cpu_ptr(asi_type_user.tlb_state);
-+		tlb_state->tlb_pgtables[asid].id = 0;
-+	} else {
-+		__set_bit(kern_pcid(asid),
-+		    (unsigned long *)this_cpu_ptr(&cpu_tlbstate.user_pcid_flush_mask));
-+	}
- }
- 
- /*
-diff --git a/arch/x86/mm/asi.c b/arch/x86/mm/asi.c
-index 6c94d29..3448413 100644
---- a/arch/x86/mm/asi.c
-+++ b/arch/x86/mm/asi.c
-@@ -14,6 +14,10 @@
- #include <asm/mmu_context.h>
- #include <asm/tlbflush.h>
- 
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+DEFINE_ASI_TYPE(user, ASI_PCID_PREFIX_USER, false);
-+#endif
-+
- static void asi_log_fault(struct asi *asi, struct pt_regs *regs,
- 			   unsigned long error_code, unsigned long address,
- 			   enum asi_fault_origin fault_origin)
-@@ -314,6 +318,11 @@ void asi_exit(struct asi *asi)
- }
- EXPORT_SYMBOL(asi_exit);
- 
-+void asi_deferred_enter(struct asi *asi)
-+{
-+	asi_switch_to_asi_cr3(asi, ASI_SWITCH_ON_RESUME);
-+}
-+
- void asi_prepare_resume(void)
- {
- 	struct asi_session *asi_session;
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 44a9f06..9f91a93 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -429,6 +429,18 @@ static void __init pti_clone_p4d(unsigned long addr)
- 	*user_p4d = *kernel_p4d;
- }
- 
-+static void __init pti_map_va(unsigned long va)
-+{
-+	phys_addr_t pa = per_cpu_ptr_to_phys((void *)va);
-+	pte_t *target_pte;
-+
-+	target_pte = pti_user_pagetable_walk_pte(va);
-+	if (WARN_ON(!target_pte))
-+		return;
-+
-+	*target_pte = pfn_pte(pa >> PAGE_SHIFT, PAGE_KERNEL);
-+}
-+
- /*
-  * Clone the CPU_ENTRY_AREA and associated data into the user space visible
-  * page table.
-@@ -456,15 +468,15 @@ static void __init pti_clone_user_shared(void)
- 		 * is set up.
- 		 */
- 
--		unsigned long va = (unsigned long)&per_cpu(cpu_tss_rw, cpu);
--		phys_addr_t pa = per_cpu_ptr_to_phys((void *)va);
--		pte_t *target_pte;
--
--		target_pte = pti_user_pagetable_walk_pte(va);
--		if (WARN_ON(!target_pte))
--			return;
-+		pti_map_va((unsigned long)&per_cpu(cpu_tss_rw, cpu));
- 
--		*target_pte = pfn_pte(pa >> PAGE_SHIFT, PAGE_KERNEL);
-+		if (IS_ENABLED(CONFIG_ADDRESS_SPACE_ISOLATION)) {
-+			/*
-+			 * Map the ASI session. We need to always be able
-+			 * to access the ASI session.
-+			 */
-+			pti_map_va((unsigned long)&per_cpu(cpu_tlbstate, cpu));
-+		}
- 	}
- }
- 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 270aa8f..0152f73 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -25,6 +25,7 @@
- 
- struct address_space;
- struct mem_cgroup;
-+struct asi;
- 
- /*
-  * Each physical page in the system has a struct page associated with
-@@ -524,6 +525,10 @@ struct mm_struct {
- 		atomic_long_t hugetlb_usage;
- #endif
- 		struct work_struct async_put_work;
-+#if defined(CONFIG_ADDRESS_SPACE_ISOLATION) && defined(CONFIG_PAGE_TABLE_ISOLATION)
-+		/* ASI used for user address space */
-+		struct asi *user_asi;
-+#endif
- 	} __randomize_layout;
- 
- 	/*
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 0808095..d245cc0 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -101,6 +101,7 @@
- #include <asm/mmu_context.h>
- #include <asm/cacheflush.h>
- #include <asm/tlbflush.h>
-+#include <asm/asi.h>
- 
- #include <trace/events/sched.h>
- 
-@@ -695,6 +696,10 @@ void __mmdrop(struct mm_struct *mm)
- 	mmu_notifier_mm_destroy(mm);
- 	check_mm(mm);
- 	put_user_ns(mm->user_ns);
-+	if (IS_ENABLED(CONFIG_ADDRESS_SPACE_ISOLATION) &&
-+	    IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION)) {
-+		asi_destroy(mm->user_asi);
-+	}
- 	free_mm(mm);
- }
- EXPORT_SYMBOL_GPL(__mmdrop);
-@@ -1046,6 +1051,18 @@ static void mm_init_uprobes_state(struct mm_struct *mm)
- 	if (init_new_context(p, mm))
- 		goto fail_nocontext;
- 
-+	if (IS_ENABLED(CONFIG_ADDRESS_SPACE_ISOLATION) &&
-+	    IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION)) {
-+		/*
-+		 * If we have PTI and ASI then use ASI to switch between
-+		 * user and kernel spaces, so create an ASI for this mm.
-+		 */
-+		mm->user_asi = asi_create_user();
-+		if (!mm->user_asi)
-+			goto fail_nocontext;
-+		asi_set_pagetable(mm->user_asi, kernel_to_user_pgdp(mm->pgd));
-+	}
-+
- 	mm->user_ns = get_user_ns(user_ns);
- 	return mm;
- 
--- 
-1.7.1
+Thank you as well. I'm still getting up to speed on the inner workings of
+much of this and so discussions such as this usually prove to be quite
+beneficial for me.
 
