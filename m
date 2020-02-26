@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F17216F93A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:11:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89AC116F93D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:11:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbgBZIKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 03:10:52 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43653 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbgBZIKt (ORCPT
+        id S1727521AbgBZILB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 03:11:01 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39869 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727576AbgBZIKu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 03:10:49 -0500
-Received: by mail-pg1-f196.google.com with SMTP id u12so914321pgb.10;
-        Wed, 26 Feb 2020 00:10:48 -0800 (PST)
+        Wed, 26 Feb 2020 03:10:50 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 84so1058287pfy.6;
+        Wed, 26 Feb 2020 00:10:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2c6a2wUIf1607PZkN1rZk+L4ET6oyW/A+dmD8ze92gI=;
-        b=l/TW+lXATIXM17aGIZ9zrNTKWKrYbTiLzzjCckt2sYGCNOgBJIAM/09gAYIyO8Ix1n
-         UHbe88pAp1n0plvmre5V5bbjfK092LKIqAYUkzsgoJS7/2xUSMZgE5o2q6j40HA9jjre
-         FF8uZvB+fx7B6YmX6nxlrWe2JsyENeFsB23HdsKTAR2dEJOG0eVZaT0pJNwkmq0+XMJC
-         c9jFO1zsFW7hO9kM7570YJrU/mpImzvlnR4RWJMtjUx3BXAFto3xHr0udkFVc1dm8Tg0
-         Ip4cwJcKanfhov2dNsyjvshdovNKgTGIdSWpGBGikwWBexhz01R0zL94DTwVMPuTLhGV
-         /+nw==
+        bh=1/9ulr35We1VvK4OKOtO+SeDdjZAIuN626KlRGL51e8=;
+        b=Uj9USULV1YhIjRQTGet+GBQYuuhLAkRgQq5aOXkZU55ZeXZOwYCvjYC0XTbkwI02vn
+         nMqNb637FbLBsLL+0OixEVNpFP/WYWrCLF5zLIEBTSZkXEK2J8hPyn24masq/KXBnUXK
+         1WpXqTxgjbgl1eq/uxSXJMuc6aResWHy1sQuEaEYBEWdEyvPqtQts5z5Su639wYEgo9n
+         wE96FuZQY46tDJyTJqt+ZJrzDYNCNenLNiqWFwxe/zxWzBuM58iQ9ur+6Ym5ldZxRpj8
+         JJ2JlN+8/BPq8Wk9S0SAMAUumaOifHahGje65ULSbNA6Krngc4WuiBgliS4rekKjbPPq
+         Xcow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2c6a2wUIf1607PZkN1rZk+L4ET6oyW/A+dmD8ze92gI=;
-        b=YNZXHIl88Wv6NaFDu4VbpF18A7YtAaVOTC3vnTNsTZueCSC2YkGuIcosgAplu6PsW7
-         jgVOMZ4/6MGks066tWbGpsVHCjToKihmJ19OvlNb+eRVYRLR+BFr90qipg7QYxFS9RBP
-         MUHMovRea4qvZJ5FesuiEWlKqbmMTuFEQ7/vyx65Uh7l/qPOTrGzqafNM9sCQcAp5ch0
-         MrBk0Zo5k4nzR0JvNeYiF1FJcs+oRnwte4RCndMG4MFTerdh1jo94wXhDju5B71/GZJK
-         Ja1i59LVYZvfRDhNVWdl7qbHiK3mdLFShwevUbJ/qWEqAXIFZc6OxUGkPeJ5+XkX0JQ7
-         OcHA==
-X-Gm-Message-State: APjAAAWMrRzy2EGuB6iS/gz6vn1yWxTuXclwevne0qUhOGJ+BYTaNO+P
-        HnmNiRMfcxU3ZtV4LEqC6YU=
-X-Google-Smtp-Source: APXvYqy00/8d+Wer4Z0MFSOy0sPlhrq7zbo/TdsWVeXFTKfHPPar8rV+DBjhxAWH91y4lWNMO4S3Pw==
-X-Received: by 2002:a63:ec0c:: with SMTP id j12mr2609426pgh.78.1582704647920;
-        Wed, 26 Feb 2020 00:10:47 -0800 (PST)
+        bh=1/9ulr35We1VvK4OKOtO+SeDdjZAIuN626KlRGL51e8=;
+        b=FYSyEY5DB830VSGRY1uFHmk/+/dh6jT2NcyPwm/Xwb3wGKRWYGdlUUkrpUZq49x9KB
+         A15A3fGw1f7jcztTo+RO9PkdMtL6udJqTLJQEz/6azYWhr3FVjUU6EsZ8hc78rQToDKY
+         G2T94F3TWTOIUWxtMrrj0KmOZtkza7gBdFBLtHowFqeeGoxESXxdy+nDXQ0Sd8+3H8Et
+         F2LjDNMAClvClQLTIbFYV94i0AV8aE0/KUg1vN1crWqkVFX9fp6Qc8ak2QmXVHdWUGDw
+         XDYh7A7CI6cUtT5abGeav2E6Wpr+FLzMofzAuHPF1SSUZRTDli0KiTYFLBKpUId0BOmj
+         8/4g==
+X-Gm-Message-State: APjAAAWOaxOHGsq3TdbF2AOdQr9vSN5UivHkB0jp36DLnVJbdD4I+HlL
+        8xfOFAbEv2L9zlZMaTKhPQc=
+X-Google-Smtp-Source: APXvYqwdqfkaKNsVj/z20Fl00qUooa5Fc8g4w6gy6KhAC3QgiEMz+qOhI4aMxTYoHDNd7Lx/skz8fQ==
+X-Received: by 2002:a62:1883:: with SMTP id 125mr3012096pfy.166.1582704649041;
+        Wed, 26 Feb 2020 00:10:49 -0800 (PST)
 Received: from anarsoul-thinkpad.lan (216-71-213-236.dyn.novuscom.net. [216.71.213.236])
-        by smtp.gmail.com with ESMTPSA id v7sm1679230pfn.61.2020.02.26.00.10.46
+        by smtp.gmail.com with ESMTPSA id v7sm1679230pfn.61.2020.02.26.00.10.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 00:10:47 -0800 (PST)
+        Wed, 26 Feb 2020 00:10:48 -0800 (PST)
 From:   Vasily Khoruzhick <anarsoul@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
@@ -67,10 +67,11 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH v2 5/6] drm/panel: simple: Add NewEast Optoelectronics CO., LTD WJFH116008A panel support
-Date:   Wed, 26 Feb 2020 00:10:10 -0800
-Message-Id: <20200226081011.1347245-6-anarsoul@gmail.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: [PATCH v2 6/6] arm64: allwinner: a64: enable LCD-related hardware for Pinebook
+Date:   Wed, 26 Feb 2020 00:10:11 -0800
+Message-Id: <20200226081011.1347245-7-anarsoul@gmail.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200226081011.1347245-1-anarsoul@gmail.com>
 References: <20200226081011.1347245-1-anarsoul@gmail.com>
@@ -81,80 +82,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds support for the NewEast Optoelectronics CO., LTD
-WJFH116008A 11.6" 1920x1080 TFT LCD panel.
+From: Icenowy Zheng <icenowy@aosc.io>
 
+Pinebook has an ANX6345 bridge connected to the RGB666 LCD output and
+eDP panel input. The bridge is controlled via I2C that's connected to
+R_I2C bus.
+
+Enable all this hardware in device tree.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 48 ++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ .../dts/allwinner/sun50i-a64-pinebook.dts     | 61 ++++++++++++++++++-
+ 1 file changed, 60 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index e14c14ac62b5..4292e3e3a461 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -2224,6 +2224,51 @@ static const struct panel_desc netron_dy_e231732 = {
- 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+index c06c540e6c08..0033f6a43d98 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+@@ -48,6 +48,18 @@ lid_switch {
+ 		};
+ 	};
+ 
++	panel_edp: panel-edp {
++		compatible = "neweast,wjfh116008a";
++		backlight = <&backlight>;
++		power-supply = <&reg_dc1sw>;
++
++		port {
++			panel_edp_in: endpoint {
++				remote-endpoint = <&anx6345_out_edp>;
++			};
++		};
++	};
++
+ 	reg_vbklt: vbklt {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vbklt";
+@@ -109,6 +121,10 @@ &dai {
+ 	status = "okay";
  };
  
-+static const struct drm_display_mode neweast_wjfh116008a_modes[] = {
-+	{
-+		.clock = 138500,
-+		.hdisplay = 1920,
-+		.hsync_start = 1920 + 48,
-+		.hsync_end = 1920 + 48 + 32,
-+		.htotal = 1920 + 48 + 32 + 80,
-+		.vdisplay = 1080,
-+		.vsync_start = 1080 + 3,
-+		.vsync_end = 1080 + 3 + 5,
-+		.vtotal = 1080 + 3 + 5 + 23,
-+		.vrefresh = 60,
-+		.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
-+	}, {
-+		.clock = 110920,
-+		.hdisplay = 1920,
-+		.hsync_start = 1920 + 48,
-+		.hsync_end = 1920 + 48 + 32,
-+		.htotal = 1920 + 48 + 32 + 80,
-+		.vdisplay = 1080,
-+		.vsync_start = 1080 + 3,
-+		.vsync_end = 1080 + 3 + 5,
-+		.vtotal = 1080 + 3 + 5 + 23,
-+		.vrefresh = 48,
-+		.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
-+	}
++&de {
++	status = "okay";
 +};
 +
-+static const struct panel_desc neweast_wjfh116008a = {
-+	.modes = neweast_wjfh116008a_modes,
-+	.num_modes = 2,
-+	.bpc = 6,
-+	.size = {
-+		.width = 260,
-+		.height = 150,
-+	},
-+	.delay = {
-+		.prepare = 110,
-+		.enable = 20,
-+		.unprepare = 500,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
-+	.connector_type = DRM_MODE_CONNECTOR_eDP,
+ &ehci0 {
+ 	phys = <&usbphy 0>;
+ 	phy-names = "usb";
+@@ -119,6 +135,10 @@ &ehci1 {
+ 	status = "okay";
+ };
+ 
++&mixer0 {
++	status = "okay";
 +};
 +
- static const struct drm_display_mode newhaven_nhd_43_480272ef_atxl_mode = {
- 	.clock = 9000,
- 	.hdisplay = 480,
-@@ -3399,6 +3444,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "netron-dy,e231732",
- 		.data = &netron_dy_e231732,
-+	}, {
-+		.compatible = "neweast,wjfh116008a",
-+		.data = &neweast_wjfh116008a,
- 	}, {
- 		.compatible = "newhaven,nhd-4.3-480272ef-atxl",
- 		.data = &newhaven_nhd_43_480272ef_atxl,
+ &mmc0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins>;
+@@ -177,12 +197,38 @@ &pwm {
+ 	status = "okay";
+ };
+ 
+-/* The ANX6345 eDP-bridge is on r_i2c */
+ &r_i2c {
+ 	clock-frequency = <100000>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&r_i2c_pl89_pins>;
+ 	status = "okay";
++
++	anx6345: anx6345@38 {
++		compatible = "analogix,anx6345";
++		reg = <0x38>;
++		reset-gpios = <&pio 3 24 GPIO_ACTIVE_LOW>; /* PD24 */
++		dvdd25-supply = <&reg_dldo2>;
++		dvdd12-supply = <&reg_fldo1>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			anx6345_in: port@0 {
++				reg = <0>;
++				anx6345_in_tcon0: endpoint {
++					remote-endpoint = <&tcon0_out_anx6345>;
++				};
++			};
++
++			anx6345_out: port@1 {
++				reg = <1>;
++				anx6345_out_edp: endpoint {
++					remote-endpoint = <&panel_edp_in>;
++				};
++			};
++		};
++	};
+ };
+ 
+ &r_pio {
+@@ -357,6 +403,19 @@ &sound {
+ 			"MIC2", "Internal Microphone Right";
+ };
+ 
++&tcon0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&lcd_rgb666_pins>;
++
++	status = "okay";
++};
++
++&tcon0_out {
++	tcon0_out_anx6345: endpoint {
++		remote-endpoint = <&anx6345_in_tcon0>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pb_pins>;
 -- 
 2.25.0
 
