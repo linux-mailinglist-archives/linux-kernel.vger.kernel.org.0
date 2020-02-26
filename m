@@ -2,256 +2,613 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 336E216FE2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:48:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 963C016FE36
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:49:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbgBZLsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 06:48:00 -0500
-Received: from foss.arm.com ([217.140.110.172]:34730 "EHLO foss.arm.com"
+        id S1728361AbgBZLtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 06:49:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40082 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727590AbgBZLr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 06:47:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82E5B1FB;
-        Wed, 26 Feb 2020 03:47:58 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A3F43FA00;
-        Wed, 26 Feb 2020 03:47:56 -0800 (PST)
-Date:   Wed, 26 Feb 2020 11:47:47 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     longli@linuxonhyperv.com
-Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Long Li <longli@microsoft.com>
-Subject: Re: [Patch v5 1/2] PCI: hv: Decouple the func definition in
- hv_dr_state from VSP message
-Message-ID: <20200226114731.GA18289@e121166-lin.cambridge.arm.com>
-References: <1582693568-64759-1-git-send-email-longli@linuxonhyperv.com>
+        id S1726408AbgBZLtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 06:49:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 16876AC44;
+        Wed, 26 Feb 2020 11:48:57 +0000 (UTC)
+Date:   Wed, 26 Feb 2020 12:48:55 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Michael Kerrisk <mtk.manpages@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>, Zorro Lang <zlang@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-man@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] Add manpages for move_mount(2) and open_tree(2)
+Message-ID: <20200226114855.GA25595@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20200207174236.18882-1-pvorel@suse.cz>
+ <20200207174236.18882-2-pvorel@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1582693568-64759-1-git-send-email-longli@linuxonhyperv.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200207174236.18882-2-pvorel@suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 09:06:07PM -0800, longli@linuxonhyperv.com wrote:
-> From: Long Li <longli@microsoft.com>
-> 
-> hv_dr_state is used to find present PCI devices on the bus. The structure
-> reuses struct pci_function_description from VSP message to describe a
-> device.
-> 
-> To prepare support for pci_function_description v2, decouple this
-> dependence in hv_dr_state so it can work with both v1 and v2 VSP messages.
-> 
-> There is no functionality change.
-> 
-> Signed-off-by: Long Li <longli@microsoft.com>
-> Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Hi,
+
+gentle ping. Could these 2 patches be merged?
+
+Kind regards,
+Petr
+
+> From: David Howells <dhowells@redhat.com>
+
+> Add manual pages to document the move_mount and open_tree() system calls.
+
+> Reviewed-by: Petr Vorel <pvorel@suse.cz>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
 > ---
-> Changes
-> v2: Changed some spaces to tabs, changed failure code to -ENOMEM
-> v3: Revised comment for function hv_pci_devices_present(), reformatted patch title
-> v4: Fixed spelling
-> v5: Rebased to current tree
-> 
->  drivers/pci/controller/pci-hyperv.c | 100 +++++++++++++++++++++++++-----------
->  1 file changed, 70 insertions(+), 30 deletions(-)
+> Hi,
 
-Applied the series to pci/hv for v5.7.
+> * man2/move_mount.2
+> fixed MOVE_MOUNT_F_NO_AUTOMOUNT => MOVE_MOUNT_F_AUTOMOUNTS
+> and MOVE_MOUNT_T_NO_AUTOMOUNT => MOVE_MOUNT_T_AUTOMOUNTS
+> maybe mention -EPERM on !may_mount() ?
 
-Thanks,
-Lorenzo
+> * man2/open_tree.2
+> maybe mention -EPERM on (detached && !may_mount()) ?
 
-> 
-> index 15011a3..dea197f 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -505,10 +505,24 @@ struct hv_dr_work {
->  	struct hv_pcibus_device *bus;
->  };
->  
-> +struct hv_pcidev_description {
-> +	u16	v_id;	/* vendor ID */
-> +	u16	d_id;	/* device ID */
-> +	u8	rev;
-> +	u8	prog_intf;
-> +	u8	subclass;
-> +	u8	base_class;
-> +	u32	subsystem_id;
-> +	union	win_slot_encoding win_slot;
-> +	u32	ser;	/* serial number */
-> +	u32	flags;
-> +	u16	virtual_numa_node;
-> +};
+> Kind regards,
+> Petr
+
+>  man2/move_mount.2 | 271 ++++++++++++++++++++++++++++++++++++++++++++++
+>  man2/open_tree.2  | 260 ++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 531 insertions(+)
+>  create mode 100644 man2/move_mount.2
+>  create mode 100644 man2/open_tree.2
+
+> diff --git a/man2/move_mount.2 b/man2/move_mount.2
+> new file mode 100644
+> index 000000000..bca352ad3
+> --- /dev/null
+> +++ b/man2/move_mount.2
+> @@ -0,0 +1,271 @@
+> +'\" t
+> +.\" Copyright (c) 2019 David Howells <dhowells@redhat.com>
+> +.\"
+> +.\" %%%LICENSE_START(VERBATIM)
+> +.\" Permission is granted to make and distribute verbatim copies of this
+> +.\" manual provided the copyright notice and this permission notice are
+> +.\" preserved on all copies.
+> +.\"
+> +.\" Permission is granted to copy and distribute modified versions of this
+> +.\" manual under the conditions for verbatim copying, provided that the
+> +.\" entire resulting derived work is distributed under the terms of a
+> +.\" permission notice identical to this one.
+> +.\"
+> +.\" Since the Linux kernel and libraries are constantly changing, this
+> +.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+> +.\" responsibility for errors or omissions, or for damages resulting from
+> +.\" the use of the information contained herein.  The author(s) may not
+> +.\" have taken the same level of care in the production of this manual,
+> +.\" which is licensed free of charge, as they might when working
+> +.\" professionally.
+> +.\"
+> +.\" Formatted or processed versions of this manual, if unaccompanied by
+> +.\" the source, must acknowledge the copyright and authors of this work.
+> +.\" %%%LICENSE_END
+> +.\"
+> +.TH MOVE_MOUNT 2 2019-10-10 "Linux" "Linux Programmer's Manual"
+> +.SH NAME
+> +move_mount \- Move mount objects around the filesystem topology
+> +.SH SYNOPSIS
+> +.nf
+> +.B #include <sys/types.h>
+> +.br
+> +.B #include <sys/mount.h>
+> +.br
+> +.B #include <unistd.h>
+> +.br
+> +.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
+> +.PP
+> +.BI "int move_mount(int " from_dirfd ", const char *" from_pathname ","
+> +.BI "               int " to_dirfd ", const char *" to_pathname ","
+> +.BI "               unsigned int " flags );
+> +.fi
+> +.PP
+> +.IR Note :
+> +There is no glibc wrapper for this system call.
+> +.SH DESCRIPTION
+> +The
+> +.BR move_mount ()
+> +call moves a mount from one place to another; it can also be used to attach an
+> +unattached mount created by
+> +.BR fsmount "() or " open_tree "() with " OPEN_TREE_CLONE .
+> +.PP
+> +If
+> +.BR move_mount ()
+> +is called repeatedly with a file descriptor that refers to a mount object,
+> +then the object will be attached/moved the first time and then moved again and
+> +again and again, detaching it from the previous mountpoint each time.
+> +.PP
+> +To access the source mount object or the destination mountpoint, no
+> +permissions are required on the object itself, but if either pathname is
+> +supplied, execute (search) permission is required on all of the directories
+> +specified in
+> +.IR from_pathname " or " to_pathname .
+> +.PP
+> +The caller does, however, require the appropriate capabilities or permission
+> +to effect a mount.
+> +.PP
+> +.BR move_mount ()
+> +uses
+> +.IR from_pathname ", " from_dirfd " and part of " flags
+> +to locate the mount object to be moved and
+> +.IR to_pathname ", " to_dirfd " and another part of " flags
+> +to locate the destination mountpoint.  Each lookup can be done in one of a
+> +variety of ways:
+> +.TP
+> +[*] By absolute path.
+> +The pathname points to an absolute path and the dirfd is ignored.  The file is
+> +looked up by name, starting from the root of the filesystem as seen by the
+> +calling process.
+> +.TP
+> +[*] By cwd-relative path.
+> +The pathname points to a relative path and the dirfd is
+> +.IR AT_FDCWD .
+> +The file is looked up by name, starting from the current working directory.
+> +.TP
+> +[*] By dir-relative path.
+> +The pathname points to relative path and the dirfd indicates a file descriptor
+> +pointing to a directory.  The file is looked up by name, starting from the
+> +directory specified by
+> +.IR dirfd .
+> +.TP
+> +[*] By file descriptor.
+> +The pathname points to "", the dirfd points directly to the mount object to
+> +move or the destination mount point and the appropriate
+> +.B *_EMPTY_PATH
+> +flag is set.
+> +.PP
+> +.I flags
+> +can be used to influence a path-based lookup.  A value for
+> +.I flags
+> +is constructed by OR'ing together zero or more of the following constants:
+> +.TP
+> +.BR MOVE_MOUNT_F_EMPTY_PATH
+> +.\" commit 65cfc6722361570bfe255698d9cd4dccaf47570d
+> +If
+> +.I from_pathname
+> +is an empty string, operate on the file referred to by
+> +.IR from_dirfd
+> +(which may have been obtained using the
+> +.BR open (2)
+> +.B O_PATH
+> +flag or
+> +.BR open_tree ()).
+> +If
+> +.I from_dirfd
+> +is
+> +.BR AT_FDCWD ,
+> +the call operates on the current working directory.
+> +In this case,
+> +.I from_dirfd
+> +can refer to any type of file, not just a directory.
+> +This flag is Linux-specific; define
+> +.B _GNU_SOURCE
+> +.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
+> +to obtain its definition.
+> +.TP
+> +.B MOVE_MOUNT_T_EMPTY_PATH
+> +As above, but operating on
+> +.IR to_pathname " and " to_dirfd .
+> +.TP
+> +.B MOVE_MOUNT_F_AUTOMOUNTS
+> +Don't automount the terminal ("basename") component of
+> +.I from_pathname
+> +if it is a directory that is an automount point.  This allows a mount object
+> +that has an automount point at its root to be moved and prevents unintended
+> +triggering of an automount point.
+> +The
+> +.B MOVE_MOUNT_F_AUTOMOUNTS
+> +flag has no effect if the automount point has already been mounted over.
+> +.TP
+> +.B MOVE_MOUNT_T_AUTOMOUNTS
+> +As above, but operating on
+> +.IR to_pathname " and " to_dirfd .
+> +This allows an automount point to be manually mounted over.
+> +.TP
+> +.B MOVE_MOUNT_F_SYMLINKS
+> +If
+> +.I from_pathname
+> +is a symbolic link, then dereference it.  The default for
+> +.BR move_mount ()
+> +is to not follow symlinks.
+> +.TP
+> +.B MOVE_MOUNT_T_SYMLINKS
+> +As above, but operating on
+> +.IR to_pathname " and " to_dirfd .
 > +
->  struct hv_dr_state {
->  	struct list_head list_entry;
->  	u32 device_count;
-> -	struct pci_function_description func[0];
-> +	struct hv_pcidev_description func[0];
->  };
->  
->  enum hv_pcichild_state {
-> @@ -525,7 +539,7 @@ struct hv_pci_dev {
->  	refcount_t refs;
->  	enum hv_pcichild_state state;
->  	struct pci_slot *pci_slot;
-> -	struct pci_function_description desc;
-> +	struct hv_pcidev_description desc;
->  	bool reported_missing;
->  	struct hv_pcibus_device *hbus;
->  	struct work_struct wrk;
-> @@ -1877,7 +1891,7 @@ static void q_resource_requirements(void *context, struct pci_response *resp,
->   * Return: Pointer to the new tracking struct
->   */
->  static struct hv_pci_dev *new_pcichild_device(struct hv_pcibus_device *hbus,
-> -		struct pci_function_description *desc)
-> +		struct hv_pcidev_description *desc)
->  {
->  	struct hv_pci_dev *hpdev;
->  	struct pci_child_message *res_req;
-> @@ -1988,7 +2002,7 @@ static void pci_devices_present_work(struct work_struct *work)
->  {
->  	u32 child_no;
->  	bool found;
-> -	struct pci_function_description *new_desc;
-> +	struct hv_pcidev_description *new_desc;
->  	struct hv_pci_dev *hpdev;
->  	struct hv_pcibus_device *hbus;
->  	struct list_head removed;
-> @@ -2107,17 +2121,15 @@ static void pci_devices_present_work(struct work_struct *work)
->  }
->  
->  /**
-> - * hv_pci_devices_present() - Handles list of new children
-> + * hv_pci_start_relations_work() - Queue work to start device discovery
->   * @hbus:	Root PCI bus, as understood by this driver
-> - * @relations:	Packet from host listing children
-> + * @dr:		The list of children returned from host
->   *
-> - * This function is invoked whenever a new list of devices for
-> - * this bus appears.
-> + * Return:  0 on success, -errno on failure
->   */
-> -static void hv_pci_devices_present(struct hv_pcibus_device *hbus,
-> -				   struct pci_bus_relations *relations)
-> +static int hv_pci_start_relations_work(struct hv_pcibus_device *hbus,
-> +				       struct hv_dr_state *dr)
->  {
-> -	struct hv_dr_state *dr;
->  	struct hv_dr_work *dr_wrk;
->  	unsigned long flags;
->  	bool pending_dr;
-> @@ -2125,29 +2137,15 @@ static void hv_pci_devices_present(struct hv_pcibus_device *hbus,
->  	if (hbus->state == hv_pcibus_removing) {
->  		dev_info(&hbus->hdev->device,
->  			 "PCI VMBus BUS_RELATIONS: ignored\n");
-> -		return;
-> +		return -ENOENT;
->  	}
->  
->  	dr_wrk = kzalloc(sizeof(*dr_wrk), GFP_NOWAIT);
->  	if (!dr_wrk)
-> -		return;
-> -
-> -	dr = kzalloc(offsetof(struct hv_dr_state, func) +
-> -		     (sizeof(struct pci_function_description) *
-> -		      (relations->device_count)), GFP_NOWAIT);
-> -	if (!dr)  {
-> -		kfree(dr_wrk);
-> -		return;
-> -	}
-> +		return -ENOMEM;
->  
->  	INIT_WORK(&dr_wrk->wrk, pci_devices_present_work);
->  	dr_wrk->bus = hbus;
-> -	dr->device_count = relations->device_count;
-> -	if (dr->device_count != 0) {
-> -		memcpy(dr->func, relations->func,
-> -		       sizeof(struct pci_function_description) *
-> -		       dr->device_count);
-> -	}
->  
->  	spin_lock_irqsave(&hbus->device_list_lock, flags);
->  	/*
-> @@ -2165,6 +2163,47 @@ static void hv_pci_devices_present(struct hv_pcibus_device *hbus,
->  		get_hvpcibus(hbus);
->  		queue_work(hbus->wq, &dr_wrk->wrk);
->  	}
+> +.SH EXAMPLES
+> +The
+> +.BR move_mount ()
+> +function can be used like the following:
+> +.PP
+> +.RS
+> +.nf
+> +move_mount(AT_FDCWD, "/a", AT_FDCWD, "/b", 0);
+> +.fi
+> +.RE
+> +.PP
+> +This would move the object mounted on "/a" to "/b".  It can also be used in
+> +conjunction with
+> +.BR open_tree "(2) or " open "(2) with " O_PATH :
+> +.PP
+> +.RS
+> +.nf
+> +fd = open_tree(AT_FDCWD, "/mnt", 0);
+> +move_mount(fd, "", AT_FDCWD, "/mnt2", MOVE_MOUNT_F_EMPTY_PATH);
+> +move_mount(fd, "", AT_FDCWD, "/mnt3", MOVE_MOUNT_F_EMPTY_PATH);
+> +move_mount(fd, "", AT_FDCWD, "/mnt4", MOVE_MOUNT_F_EMPTY_PATH);
+> +.fi
+> +.RE
+> +.PP
+> +This would attach the path point for "/mnt" to fd, then it would move the
+> +mount to "/mnt2", then move it to "/mnt3" and finally to "/mnt4".
+> +.PP
+> +It can also be used to attach new mounts:
+> +.PP
+> +.RS
+> +.nf
+> +sfd = fsopen("ext4", FSOPEN_CLOEXEC);
+> +fsconfig(sfd, FSCONFIG_SET_STRING, "source", "/dev/sda1", 0);
+> +fsconfig(sfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
+> +fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mfd = fsmount(sfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_NODEV);
+> +move_mount(mfd, "", AT_FDCWD, "/home", MOVE_MOUNT_F_EMPTY_PATH);
+> +.fi
+> +.RE
+> +.PP
+> +Which would open the Ext4 filesystem mounted on "/dev/sda1", turn on user
+> +extended attribute support and create a mount object for it.  Finally, the new
+> +mount object would be attached with
+> +.BR move_mount ()
+> +to "/home".
 > +
-> +	return 0;
-> +}
 > +
-> +/**
-> + * hv_pci_devices_present() - Handle list of new children
-> + * @hbus:      Root PCI bus, as understood by this driver
-> + * @relations: Packet from host listing children
-> + *
-> + * Process a new list of devices on the bus. The list of devices is
-> + * discovered by VSP and sent to us via VSP message PCI_BUS_RELATIONS,
-> + * whenever a new list of devices for this bus appears.
-> + */
-> +static void hv_pci_devices_present(struct hv_pcibus_device *hbus,
-> +				   struct pci_bus_relations *relations)
-> +{
-> +	struct hv_dr_state *dr;
-> +	int i;
+> +.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+> +.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+> +.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+> +.SH RETURN VALUE
+> +On success, 0 is returned.  On error, \-1 is returned, and
+> +.I errno
+> +is set appropriately.
+> +.SH ERRORS
+> +.TP
+> +.B EACCES
+> +Search permission is denied for one of the directories
+> +in the path prefix of
+> +.IR pathname .
+> +(See also
+> +.BR path_resolution (7).)
+> +.TP
+> +.B EBADF
+> +.IR from_dirfd " or " to_dirfd
+> +is not a valid open file descriptor.
+> +.TP
+> +.B EFAULT
+> +.IR from_pathname " or " to_pathname
+> +is NULL or either one point to a location outside the process's accessible
+> +address space.
+> +.TP
+> +.B EINVAL
+> +Reserved flag specified in
+> +.IR flags .
+> +.TP
+> +.B ELOOP
+> +Too many symbolic links encountered while traversing the pathname.
+> +.TP
+> +.B ENAMETOOLONG
+> +.IR from_pathname " or " to_pathname
+> +is too long.
+> +.TP
+> +.B ENOENT
+> +A component of
+> +.IR from_pathname " or " to_pathname
+> +does not exist, or one is an empty string and the appropriate
+> +.B *_EMPTY_PATH
+> +was not specified in
+> +.IR flags .
+> +.TP
+> +.B ENOMEM
+> +Out of memory (i.e., kernel memory).
+> +.TP
+> +.B ENOTDIR
+> +A component of the path prefix of
+> +.IR from_pathname " or " to_pathname
+> +is not a directory or one or the other is relative and the appropriate
+> +.I *_dirfd
+> +is a file descriptor referring to a file other than a directory.
+> +.SH VERSIONS
+> +.BR move_mount ()
+> +was added to Linux in kernel 5.2.
+> +.SH CONFORMING TO
+> +.BR move_mount ()
+> +is Linux-specific.
+> +.SH NOTES
+> +Glibc does not (yet) provide a wrapper for the
+> +.BR move_mount ()
+> +system call; call it using
+> +.BR syscall (2).
+> +.SH SEE ALSO
+> +.BR fsmount (2),
+> +.BR fsopen (2),
+> +.BR open_tree (2)
+> diff --git a/man2/open_tree.2 b/man2/open_tree.2
+> new file mode 100644
+> index 000000000..56783898f
+> --- /dev/null
+> +++ b/man2/open_tree.2
+> @@ -0,0 +1,260 @@
+> +'\" t
+> +.\" Copyright (c) 2019 David Howells <dhowells@redhat.com>
+> +.\"
+> +.\" %%%LICENSE_START(VERBATIM)
+> +.\" Permission is granted to make and distribute verbatim copies of this
+> +.\" manual provided the copyright notice and this permission notice are
+> +.\" preserved on all copies.
+> +.\"
+> +.\" Permission is granted to copy and distribute modified versions of this
+> +.\" manual under the conditions for verbatim copying, provided that the
+> +.\" entire resulting derived work is distributed under the terms of a
+> +.\" permission notice identical to this one.
+> +.\"
+> +.\" Since the Linux kernel and libraries are constantly changing, this
+> +.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+> +.\" responsibility for errors or omissions, or for damages resulting from
+> +.\" the use of the information contained herein.  The author(s) may not
+> +.\" have taken the same level of care in the production of this manual,
+> +.\" which is licensed free of charge, as they might when working
+> +.\" professionally.
+> +.\"
+> +.\" Formatted or processed versions of this manual, if unaccompanied by
+> +.\" the source, must acknowledge the copyright and authors of this work.
+> +.\" %%%LICENSE_END
+> +.\"
+> +.TH OPEN_TREE 2 2019-10-10 "Linux" "Linux Programmer's Manual"
+> +.SH NAME
+> +open_tree \- Pick or clone mount object and attach to fd
+> +.SH SYNOPSIS
+> +.nf
+> +.B #include <sys/types.h>
+> +.br
+> +.B #include <sys/mount.h>
+> +.br
+> +.B #include <unistd.h>
+> +.br
+> +.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
+> +.PP
+> +.BI "int open_tree(int " dirfd ", const char *" pathname ", unsigned int " flags );
+> +.fi
+> +.PP
+> +.IR Note :
+> +There are no glibc wrappers for these system calls.
+> +.SH DESCRIPTION
+> +.BR open_tree ()
+> +picks the mount object specified by the pathname and attaches it to a new file
+> +descriptor or clones it and attaches the clone to the file descriptor.  The
+> +resultant file descriptor is indistinguishable from one produced by
+> +.BR open "(2) with " O_PATH .
+> +.PP
+> +In the case that the mount object is cloned, the clone will be "unmounted" and
+> +destroyed when the file descriptor is closed if it is not otherwise mounted
+> +somewhere by calling
+> +.BR move_mount (2).
+> +.PP
+> +To select a mount object, no permissions are required on the object referred
+> +to by the path, but execute (search) permission is required on all of the
+> +directories in
+> +.I pathname
+> +that lead to the object.
+> +.PP
+> +To clone an object, however, the caller must have mount capabilities and
+> +permissions.
+> +.PP
+> +.BR open_tree ()
+> +uses
+> +.IR pathname ", " dirfd " and " flags
+> +to locate the target object in one of a variety of ways:
+> +.TP
+> +[*] By absolute path.
+> +.I pathname
+> +points to an absolute path and
+> +.I dirfd
+> +is ignored.  The object is looked up by name, starting from the root of the
+> +filesystem as seen by the calling process.
+> +.TP
+> +[*] By cwd-relative path.
+> +.I pathname
+> +points to a relative path and
+> +.IR dirfd " is " AT_FDCWD .
+> +The object is looked up by name, starting from the current working directory.
+> +.TP
+> +[*] By dir-relative path.
+> +.I pathname
+> +points to relative path and
+> +.I dirfd
+> +indicates a file descriptor pointing to a directory.  The object is looked up
+> +by name, starting from the directory specified by
+> +.IR dirfd .
+> +.TP
+> +[*] By file descriptor.
+> +.I pathname
+> +is "",
+> +.I dirfd
+> +indicates a file descriptor and
+> +.B AT_EMPTY_PATH
+> +is set in
+> +.IR flags .
+> +The mount attached to the file descriptor is queried directly.  The file
+> +descriptor may point to any type of file, not just a directory.
 > +
-> +	dr = kzalloc(offsetof(struct hv_dr_state, func) +
-> +		     (sizeof(struct hv_pcidev_description) *
-> +		      (relations->device_count)), GFP_NOWAIT);
+> +.\"______________________________________________________________
+> +.PP
+> +.I flags
+> +can be used to control the operation of the function and to influence a
+> +path-based lookup.  A value for
+> +.I flags
+> +is constructed by OR'ing together zero or more of the following constants:
+> +.TP
+> +.BR AT_EMPTY_PATH
+> +.\" commit 65cfc6722361570bfe255698d9cd4dccaf47570d
+> +If
+> +.I pathname
+> +is an empty string, operate on the file referred to by
+> +.IR dirfd
+> +(which may have been obtained from
+> +.BR open "(2) with"
+> +.BR O_PATH ", from " fsmount (2)
+> +or from another
+> +.BR open_tree ()).
+> +If
+> +.I dirfd
+> +is
+> +.BR AT_FDCWD ,
+> +the call operates on the current working directory.
+> +In this case,
+> +.I dirfd
+> +can refer to any type of file, not just a directory.
+> +This flag is Linux-specific; define
+> +.B _GNU_SOURCE
+> +.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
+> +to obtain its definition.
+> +.TP
+> +.BR AT_NO_AUTOMOUNT
+> +Don't automount the terminal ("basename") component of
+> +.I pathname
+> +if it is a directory that is an automount point.  This flag allows the
+> +automount point itself to be picked up or a mount cloned that is rooted on the
+> +automount point.  The
+> +.B AT_NO_AUTOMOUNT
+> +flag has no effect if the mount point has already been mounted over.
+> +This flag is Linux-specific; define
+> +.B _GNU_SOURCE
+> +.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
+> +to obtain its definition.
+> +.TP
+> +.B AT_SYMLINK_NOFOLLOW
+> +If
+> +.I pathname
+> +is a symbolic link, do not dereference it: instead pick up or clone a mount
+> +rooted on the link itself.
+> +.TP
+> +.B OPEN_TREE_CLOEXEC
+> +Set the close-on-exec flag for the new file descriptor.  This will cause the
+> +file descriptor to be closed automatically when a process exec's.
+> +.TP
+> +.B OPEN_TREE_CLONE
+> +Rather than directly attaching the selected object to the file descriptor,
+> +clone the object, set the root of the new mount object to that point and
+> +attach the clone to the file descriptor.
+> +.TP
+> +.B AT_RECURSIVE
+> +This is only permitted in conjunction with OPEN_TREE_CLONE.  It causes the
+> +entire mount subtree rooted at the selected spot to be cloned rather than just
+> +that one mount object.
 > +
-> +	if (!dr)
-> +		return;
 > +
-> +	dr->device_count = relations->device_count;
-> +	for (i = 0; i < dr->device_count; i++) {
-> +		dr->func[i].v_id = relations->func[i].v_id;
-> +		dr->func[i].d_id = relations->func[i].d_id;
-> +		dr->func[i].rev = relations->func[i].rev;
-> +		dr->func[i].prog_intf = relations->func[i].prog_intf;
-> +		dr->func[i].subclass = relations->func[i].subclass;
-> +		dr->func[i].base_class = relations->func[i].base_class;
-> +		dr->func[i].subsystem_id = relations->func[i].subsystem_id;
-> +		dr->func[i].win_slot = relations->func[i].win_slot;
-> +		dr->func[i].ser = relations->func[i].ser;
-> +	}
+> +.SH EXAMPLE
+> +The
+> +.BR open_tree ()
+> +function can be used like the following:
+> +.PP
+> +.RS
+> +.nf
+> +fd1 = open_tree(AT_FDCWD, "/mnt", 0);
+> +fd2 = open_tree(fd1, "",
+> +                AT_EMPTY_PATH | OPEN_TREE_CLONE | AT_RECURSIVE);
+> +move_mount(fd2, "", AT_FDCWD, "/mnt2", MOVE_MOUNT_F_EMPTY_PATH);
+> +.fi
+> +.RE
+> +.PP
+> +This would attach the path point for "/mnt" to fd1, then it would copy the
+> +entire subtree at the point referred to by fd1 and attach that to fd2; lastly,
+> +it would attach the clone to "/mnt2".
 > +
-> +	if (hv_pci_start_relations_work(hbus, dr))
-> +		kfree(dr);
->  }
->  
->  /**
-> @@ -3069,7 +3108,7 @@ static int hv_pci_bus_exit(struct hv_device *hdev, bool hibernating)
->  		struct pci_packet teardown_packet;
->  		u8 buffer[sizeof(struct pci_message)];
->  	} pkt;
-> -	struct pci_bus_relations relations;
-> +	struct hv_dr_state *dr;
->  	struct hv_pci_compl comp_pkt;
->  	int ret;
->  
-> @@ -3082,8 +3121,9 @@ static int hv_pci_bus_exit(struct hv_device *hdev, bool hibernating)
->  
->  	if (!hibernating) {
->  		/* Delete any children which might still exist. */
-> -		memset(&relations, 0, sizeof(relations));
-> -		hv_pci_devices_present(hbus, &relations);
-> +		dr = kzalloc(sizeof(*dr), GFP_KERNEL);
-> +		if (dr && hv_pci_start_relations_work(hbus, dr))
-> +			kfree(dr);
->  	}
->  
->  	ret = hv_send_resources_released(hdev);
-> -- 
-> 1.8.3.1
-> 
+> +
+> +.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+> +.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+> +.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+> +.SH RETURN VALUE
+> +On success, the new file descriptor is returned.  On error, \-1 is returned,
+> +and
+> +.I errno
+> +is set appropriately.
+> +.SH ERRORS
+> +.TP
+> +.B EACCES
+> +Search permission is denied for one of the directories
+> +in the path prefix of
+> +.IR pathname .
+> +(See also
+> +.BR path_resolution (7).)
+> +.TP
+> +.B EBADF
+> +.I dirfd
+> +is not a valid open file descriptor.
+> +.TP
+> +.B EFAULT
+> +.I pathname
+> +is NULL or
+> +.IR pathname
+> +point to a location outside the process's accessible address space.
+> +.TP
+> +.B EINVAL
+> +Reserved flag specified in
+> +.IR flags .
+> +.TP
+> +.B ELOOP
+> +Too many symbolic links encountered while traversing the pathname.
+> +.TP
+> +.B ENAMETOOLONG
+> +.I pathname
+> +is too long.
+> +.TP
+> +.B ENOENT
+> +A component of
+> +.I pathname
+> +does not exist, or
+> +.I pathname
+> +is an empty string and
+> +.B AT_EMPTY_PATH
+> +was not specified in
+> +.IR flags .
+> +.TP
+> +.B ENOMEM
+> +Out of memory (i.e., kernel memory).
+> +.TP
+> +.B ENOTDIR
+> +A component of the path prefix of
+> +.I pathname
+> +is not a directory or
+> +.I pathname
+> +is relative and
+> +.I dirfd
+> +is a file descriptor referring to a file other than a directory.
+> +.SH VERSIONS
+> +.BR open_tree ()
+> +was added to Linux in kernel 5.2.
+> +.SH CONFORMING TO
+> +.BR open_tree ()
+> +is Linux-specific.
+> +.SH NOTES
+> +Glibc does not (yet) provide a wrapper for the
+> +.BR open_tree ()
+> +system call; call it using
+> +.BR syscall (2).
+> +.SH SEE ALSO
+> +.BR fsmount (2),
+> +.BR move_mount (2),
+> +.BR open (2)
