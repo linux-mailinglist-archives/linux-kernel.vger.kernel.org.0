@@ -2,38 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DC5D17051B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:00:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D762170532
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:00:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbgBZQ77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:59:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36308 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728121AbgBZQ75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:59:57 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7A6DDAEB2;
-        Wed, 26 Feb 2020 16:59:54 +0000 (UTC)
-From:   Michal Rostecki <mrostecki@opensuse.org>
-To:     bpf@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf-next v4 5/5] selftests/bpf: Add test for "bpftool feature" command
-Date:   Wed, 26 Feb 2020 17:59:39 +0100
-Message-Id: <20200226165941.6379-6-mrostecki@opensuse.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200226165941.6379-1-mrostecki@opensuse.org>
-References: <20200226165941.6379-1-mrostecki@opensuse.org>
+        id S1728315AbgBZRA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 12:00:58 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:53717 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727922AbgBZRA5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 12:00:57 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582736457; h=Content-Transfer-Encoding: MIME-Version:
+ Message-Id: Date: Subject: Cc: To: From: Sender;
+ bh=5jo8YBakptc89NRVBcpdzvqLTwGjnZnSDdzsbZa9dGA=; b=XQQjsep/A9NMpJSv+TrThrLvr2NUE7TTVfzwy7BBLjNSl4BkqlvG5x82lvDOo8/QJLyCawB6
+ p169X+bgC8nJ0G4KK+i4BQcL5gqVsc8Qjb9USFsRsViQDDyu7/5hn5hOs3OxxM0gjyX5C2q0
+ l+7Buu34Fc2RHun9gfRuvBXlizA=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e56a423.7f63ed120e30-smtp-out-n01;
+ Wed, 26 Feb 2020 17:00:19 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 00C27C4479D; Wed, 26 Feb 2020 17:00:18 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B1DCAC4479F;
+        Wed, 26 Feb 2020 17:00:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B1DCAC4479F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org,
+        robh+dt@kernel.org
+Cc:     agross@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        tsoni@codeaurora.org, vnkgutta@codeaurora.org,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v4 0/3] Introduce Protection Domain Restart (PDR) Helpers
+Date:   Wed, 26 Feb 2020 22:29:58 +0530
+Message-Id: <20200226170001.24234-1-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -41,241 +58,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Python module with tests for "bpftool feature" command, which mainly
-checks whether the "full" option is working properly.
+Qualcomm SoCs (starting with MSM8998) allow for multiple protection
+domains (PDs) to run on the same Q6 sub-system. This allows for
+services like AVS AUDIO to have their own separate address space and
+crash/recover without disrupting the other PDs running on the same Q6
+ADSP. This patch series introduces pdr helper library and adds PD
+tracking functionality for "avs/audio" allowing apr services to register
+themselves asynchronously once the dependent PDs are up.
 
-Signed-off-by: Michal Rostecki <mrostecki@opensuse.org>
----
- tools/testing/selftests/.gitignore          |   5 +-
- tools/testing/selftests/bpf/Makefile        |   3 +-
- tools/testing/selftests/bpf/test_bpftool.py | 178 ++++++++++++++++++++
- tools/testing/selftests/bpf/test_bpftool.sh |   5 +
- 4 files changed, 189 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/test_bpftool.py
- create mode 100755 tools/testing/selftests/bpf/test_bpftool.sh
+V4:
+ * Fixup dt bindings and examples. [Rob]
+ * Dropping r-b from Bjorn/Srini for the dt bindings.
+ * Privatize pdr_service/pdr_handle. [Srini/Bjorn]
+ * Introduce notifier_init_complete to deal with cases where
+   qmi_handle_net_reset is not enough to reset the port. This
+   is to deal with cases where qrtr-ns starts after the adsp.
+ * Introduce per addr per pds to deal with multiple service_paths
+   per pdr_handle.
+ * Uniformly rename servreg -> notifier, servloc -> locator. [Narendra]
+ * Drop pdr_servreg_link_create tracking the service_path tracks
+   all pds associated with it. [Bjorn]
+ * Remove safe traversal for all cases where list is left
+   unmodified. [Bjorn]
+ * Address review comments in the apr driver and add comments. [Bjorn]
+ * Other misc fixes. [Narendra/Bjorn]
 
-diff --git a/tools/testing/selftests/.gitignore b/tools/testing/selftests/.gitignore
-index 61df01cdf0b2..304fdf1a21dc 100644
---- a/tools/testing/selftests/.gitignore
-+++ b/tools/testing/selftests/.gitignore
-@@ -3,4 +3,7 @@ gpiogpio-hammer
- gpioinclude/
- gpiolsgpio
- tpm2/SpaceTest.log
--tpm2/*.pyc
-+
-+# Python bytecode and cache
-+__pycache__/
-+*.py[cod]
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 50c63c21e6fd..2d7f5df33f04 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -62,7 +62,8 @@ TEST_PROGS := test_kmod.sh \
- 	test_tc_tunnel.sh \
- 	test_tc_edt.sh \
- 	test_xdping.sh \
--	test_bpftool_build.sh
-+	test_bpftool_build.sh \
-+	test_bpftool.sh
- 
- TEST_PROGS_EXTENDED := with_addr.sh \
- 	with_tunnels.sh \
-diff --git a/tools/testing/selftests/bpf/test_bpftool.py b/tools/testing/selftests/bpf/test_bpftool.py
-new file mode 100644
-index 000000000000..4fed2dc25c0a
---- /dev/null
-+++ b/tools/testing/selftests/bpf/test_bpftool.py
-@@ -0,0 +1,178 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2020 SUSE LLC.
-+
-+import collections
-+import functools
-+import json
-+import os
-+import socket
-+import subprocess
-+import unittest
-+
-+
-+# Add the source tree of bpftool and /usr/local/sbin to PATH
-+cur_dir = os.path.dirname(os.path.realpath(__file__))
-+bpftool_dir = os.path.abspath(os.path.join(cur_dir, "..", "..", "..", "..",
-+                                           "tools", "bpf", "bpftool"))
-+os.environ["PATH"] = bpftool_dir + ":/usr/local/sbin:" + os.environ["PATH"]
-+
-+
-+class IfaceNotFoundError(Exception):
-+    pass
-+
-+
-+class UnprivilegedUserError(Exception):
-+    pass
-+
-+
-+def _bpftool(args, json=True):
-+    _args = ["bpftool"]
-+    if json:
-+        _args.append("-j")
-+    _args.extend(args)
-+
-+    return subprocess.check_output(_args)
-+
-+
-+def bpftool(args):
-+    return _bpftool(args, json=False).decode("utf-8")
-+
-+
-+def bpftool_json(args):
-+    res = _bpftool(args)
-+    return json.loads(res)
-+
-+
-+def get_default_iface():
-+    for iface in socket.if_nameindex():
-+        if iface[1] != "lo":
-+            return iface[1]
-+    raise IfaceNotFoundError("Could not find any network interface to probe")
-+
-+
-+def default_iface(f):
-+    @functools.wraps(f)
-+    def wrapper(*args, **kwargs):
-+        iface = get_default_iface()
-+        return f(*args, iface, **kwargs)
-+    return wrapper
-+
-+
-+class TestBpftool(unittest.TestCase):
-+    @classmethod
-+    def setUpClass(cls):
-+        if os.getuid() != 0:
-+            raise UnprivilegedUserError(
-+                "This test suite needs root privileges")
-+
-+    @default_iface
-+    def test_feature_dev_json(self, iface):
-+        unexpected_helpers = [
-+            "bpf_probe_write_user",
-+            "bpf_trace_printk",
-+        ]
-+        expected_keys = [
-+            "syscall_config",
-+            "program_types",
-+            "map_types",
-+            "helpers",
-+            "misc",
-+        ]
-+
-+        res = bpftool_json(["feature", "probe", "dev", iface])
-+        # Check if the result has all expected keys.
-+        self.assertCountEqual(res.keys(), expected_keys)
-+        # Check if unexpected helpers are not included in helpers probes
-+        # result.
-+        for helpers in res["helpers"].values():
-+            for unexpected_helper in unexpected_helpers:
-+                self.assertNotIn(unexpected_helper, helpers)
-+
-+    def test_feature_kernel(self):
-+        test_cases = [
-+            bpftool_json(["feature", "probe", "kernel"]),
-+            bpftool_json(["feature", "probe"]),
-+            bpftool_json(["feature"]),
-+        ]
-+        unexpected_helpers = [
-+            "bpf_probe_write_user",
-+            "bpf_trace_printk",
-+        ]
-+        expected_keys = [
-+            "syscall_config",
-+            "system_config",
-+            "program_types",
-+            "map_types",
-+            "helpers",
-+            "misc",
-+        ]
-+
-+        for tc in test_cases:
-+            # Check if the result has all expected keys.
-+            self.assertCountEqual(tc.keys(), expected_keys)
-+            # Check if unexpected helpers are not included in helpers probes
-+            # result.
-+            for helpers in tc["helpers"].values():
-+                for unexpected_helper in unexpected_helpers:
-+                    self.assertNotIn(unexpected_helper, helpers)
-+
-+    def test_feature_kernel_full(self):
-+        test_cases = [
-+            bpftool_json(["feature", "probe", "kernel", "full"]),
-+            bpftool_json(["feature", "probe", "full"]),
-+        ]
-+        expected_helpers = [
-+            "bpf_probe_write_user",
-+            "bpf_trace_printk",
-+        ]
-+
-+        for tc in test_cases:
-+            # Check if expected helpers are included at least once in any
-+            # helpers list for any program type. Unfortunately we cannot assume
-+            # that they will be included in all program types or a specific
-+            # subset of programs. It depends on the kernel version and
-+            # configuration.
-+            found_helpers = False
-+
-+            for helpers in tc["helpers"].values():
-+                if all(expected_helper in helpers
-+                       for expected_helper in expected_helpers):
-+                    found_helpers = True
-+                    break
-+
-+            self.assertTrue(found_helpers)
-+
-+    def test_feature_kernel_full_vs_not_full(self):
-+        full_res = bpftool_json(["feature", "probe", "full"])
-+        not_full_res = bpftool_json(["feature", "probe"])
-+        not_full_set = set()
-+        full_set = set()
-+
-+        for helpers in full_res["helpers"].values():
-+            for helper in helpers:
-+                full_set.add(helper)
-+
-+        for helpers in not_full_res["helpers"].values():
-+            for helper in helpers:
-+                not_full_set.add(helper)
-+
-+        self.assertCountEqual(full_set - not_full_set,
-+                                {"bpf_probe_write_user", "bpf_trace_printk"})
-+        self.assertCountEqual(not_full_set - full_set, set())
-+
-+    def test_feature_macros(self):
-+        expected_patterns = [
-+            r"/\*\*\* System call availability \*\*\*/",
-+            r"#define HAVE_BPF_SYSCALL",
-+            r"/\*\*\* eBPF program types \*\*\*/",
-+            r"#define HAVE.*PROG_TYPE",
-+            r"/\*\*\* eBPF map types \*\*\*/",
-+            r"#define HAVE.*MAP_TYPE",
-+            r"/\*\*\* eBPF helper functions \*\*\*/",
-+            r"#define HAVE.*HELPER",
-+            r"/\*\*\* eBPF misc features \*\*\*/",
-+        ]
-+
-+        res = bpftool(["feature", "probe", "macros"])
-+        for pattern in expected_patterns:
-+            self.assertRegex(res, pattern)
-diff --git a/tools/testing/selftests/bpf/test_bpftool.sh b/tools/testing/selftests/bpf/test_bpftool.sh
-new file mode 100755
-index 000000000000..66690778e36d
---- /dev/null
-+++ b/tools/testing/selftests/bpf/test_bpftool.sh
-@@ -0,0 +1,5 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2020 SUSE LLC.
-+
-+python3 -m unittest -v test_bpftool.TestBpftool
+V3:
+ * patches 2 and 3 remain unchanged.
+ * reset servloc_addr/servreg_addr.
+ * fixup the helpers to handle servloc_work/servreg_work asynchronously.
+ * fixup useage of list_lock across traversals, insertions and deletions.
+ * fixup the helpers to use a single lookup list.
+ * skip waiting for response on ind_ack send.
+ * introduce pdr_servreg_link_create to re-use existing qmi connection to
+   servreg instances. This helps tracking PDs running on the same remote
+   processor.
+ * have a per node curr_state in pdr_list_node to preserve all state
+   updates during indack_cb.
+ * introduce additional servreg_service_state values to help the client
+   distinguish between a fatal and non-fatal pdr_lookup errors.
+ * re-order pdr_handle_release sequence.
+ * fixup "!ind_msg->service_path returns true always" warning.
+ * fixup comments.
+
+V2:
+ * fixup pd_status callback to return void.
+ * return 0 from pdr_get_domain_list on success.
+ * introduce status_lock to linearize the pd_status reported back
+   to the clients.
+ * use the correct service name length across various string operations
+   performed.
+ * service locator will now schedule the pending lookups registered
+   when it comes up.
+ * other minor cleanups that Bjorn suggested.
+ * use pr_warn to indicate that the wait for service locator timed
+   out.
+ * add Bjorn/Srini's "Reviewed-by" for the dt-bindings.
+
+Sibi Sankar (3):
+  soc: qcom: Introduce Protection Domain Restart helpers
+  dt-bindings: soc: qcom: apr: Add protection domain bindings
+  soc: qcom: apr: Add avs/audio tracking functionality
+
+ .../devicetree/bindings/soc/qcom/qcom,apr.txt |  50 ++
+ drivers/soc/qcom/Kconfig                      |   6 +
+ drivers/soc/qcom/Makefile                     |   1 +
+ drivers/soc/qcom/apr.c                        | 123 ++-
+ drivers/soc/qcom/pdr_interface.c              | 768 ++++++++++++++++++
+ drivers/soc/qcom/pdr_internal.h               | 379 +++++++++
+ include/linux/soc/qcom/apr.h                  |   1 +
+ include/linux/soc/qcom/pdr.h                  |  30 +
+ include/linux/soc/qcom/qmi.h                  |   1 +
+ 9 files changed, 1350 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/soc/qcom/pdr_interface.c
+ create mode 100644 drivers/soc/qcom/pdr_internal.h
+ create mode 100644 include/linux/soc/qcom/pdr.h
+
 -- 
-2.25.1
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
