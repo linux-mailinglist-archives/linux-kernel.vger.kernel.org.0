@@ -2,198 +2,432 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E48B170B02
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:02:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 304C0170B1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:03:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbgBZWCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 17:02:08 -0500
-Received: from mga06.intel.com ([134.134.136.31]:10191 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbgBZWCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 17:02:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 14:02:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,489,1574150400"; 
-   d="scan'208";a="241822675"
-Received: from pkabrax-mobl.amr.corp.intel.com (HELO [10.251.2.6]) ([10.251.2.6])
-  by orsmga006.jf.intel.com with ESMTP; 26 Feb 2020 14:02:06 -0800
-Subject: Re: [RFC PATCH v9 10/27] x86/mm: Update pte_modify, pmd_modify, and
- _PAGE_CHG_MASK for _PAGE_DIRTY_SW
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        id S1728010AbgBZWCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 17:02:49 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:45025 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727864AbgBZWCX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 17:02:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1582754543; x=1614290543;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=b47bT/wG0NLrh0JcPFk1Y46QOIeyaTd0c1vGrbI4riw=;
+  b=RE/bfNHXHVUg5fp1gJG9syMmoLXomm+ms12AEfktNTVwxmgbPjkR3LG/
+   yfP+B6Y4AKx17cuNW6Ivf2klcZh68/A+JsOY9Xky/iTTZ9WJhlrJCkJyM
+   PxPzmZK/hk2B2QhQVyoxiSMiDVeDM28jUzlgH91exWVBzNJZ1JqGZhRTN
+   t3V8JoiVeWE84+pzBZOBkkyHOPEUvJwyqUIjr0vptblHgvFHbtS/GPkN2
+   xI7z97zp8QfkrU7/clDHCQREvwwsFb0Qr/HPBEJebBc9DKJR97iCv05lU
+   4WladrBz890iOD4tVRydp8B+AOfGNpjBuRB4HDKXIGh3boUcjvO8oxKF8
+   w==;
+IronPort-SDR: oRQ3L1V1Uw5k83y1nxmMwsScd/Th0V98112cUFEjmlLGUFcjCh52QDwlqzBM5/0zjxtA5vH9uV
+ Mj2WVntVZRxfz7tMSEMN3OQX78EkBHWymBHxj4mCZwdtSM9wPa83zK/ZtOu6bYuQP45KbrXsNh
+ OPvAojSBzk8YoReI2JRku5V/WqMN19Dxq8HClJ6PTGUMpVuNuzAlbIQnLKaQoDtDPgoalZ7QYm
+ AL80I6yZA03rO4ipK0fkgXF2idayc6RAHdygjdbSv/9m0xz6TX0I4pfq+SLbJp5KXkuJsLkpDY
+ BhE=
+X-IronPort-AV: E=Sophos;i="5.70,489,1574092800"; 
+   d="scan'208";a="132290725"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 27 Feb 2020 06:02:23 +0800
+IronPort-SDR: CKyoiHdOrUFR1J6Q28FbQ2DGPWxbf+jj/M46xugqNE3OgM1sErtbshA1+wrHWqGNygkeC2u7It
+ Z8SenaDMI5v+/QQL1eUFPM49xExjkX78ZBXEQiFr8tFiYvvAXax8ba0oMu+tz3gyocwAbJKII5
+ lIaWCZnB2ualOcyvUI0rr2saivu2VjcDxtFmySgAagZMFXrOthydHCOqpZGcQfUjWZG4EeCgWh
+ r3eZ5hLPP+50ZSQ4h6Fu587V2+sx8v1Q0+NtyDgtysnSXQTyZBpRAZbtekz5uZ++EWddJs8BFK
+ ASVXzViCPh/3D4mgrrrFcRZp
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 13:54:47 -0800
+IronPort-SDR: nFZO6kux3qFB/hhkLLJ7Me6Ys1ZlKA/gxlhM1HSKLWdb28QmPmnp4NhS29U1QRV6QW49mHtgyr
+ pHAnNF5VRRAtwl4EoL4uK+SYiqBtyovj1CW8vtARsT2gQclnQlNCz8r8vsncpK9UX+cKRVgqdL
+ 3BaPaIVjCKmHbGsNn0c/K6/YAG5Glo1D4OyQPfKeuNlQzlQIAPUGlBHjoDH5QVjEHGUSOwJo+E
+ WDWcyOiBs9pFnZ03x9u5bVga3hc6dvrVq2qadv8ChXsdQ6J9vAFTtK8kcFzXB50OvsBruk6sJt
+ Rcg=
+WDCIronportException: Internal
+Received: from yoda.sdcorp.global.sandisk.com (HELO yoda.int.fusionio.com) ([10.196.158.80])
+  by uls-op-cesaip02.wdc.com with ESMTP; 26 Feb 2020 14:02:22 -0800
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Anup Patel <anup@brainfault.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Gary Guo <gary@garyguo.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <greentime.hu@sifive.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
         Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, x86-patch-review@intel.com
-References: <20200205181935.3712-1-yu-cheng.yu@intel.com>
- <20200205181935.3712-11-yu-cheng.yu@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <c215a795-1411-9ab0-10a6-520dd4771016@intel.com>
+        linux-riscv@lists.infradead.org,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Mao Han <han_mao@c-sky.com>, Marc Zyngier <maz@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Nick Hu <nickhu@andestech.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Steven Price <steven.price@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Chen <vincent.chen@sifive.com>,
+        Zong Li <zong.li@sifive.com>
+Subject: [PATCH v10 05/12] RISC-V: Implement new SBI v0.2 extensions
 Date:   Wed, 26 Feb 2020 14:02:06 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+Message-Id: <20200226220213.27423-6-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200226220213.27423-1-atish.patra@wdc.com>
+References: <20200226220213.27423-1-atish.patra@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <20200205181935.3712-11-yu-cheng.yu@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The subject really needs work.  Could you think of a way to summarize
-the changes here in english as opposed to just listing the symbols you
-modified?
+Few v0.1 SBI calls are being replaced by new SBI calls that follows v0.2
+calling convention.
 
-I think we could probably just auto-generate subjects for patches if the
-existing one were sufficient.
+Implement the replacement extensions and few additional new SBI function calls
+that makes way for a better SBI interface in future.
 
-On 2/5/20 10:19 AM, Yu-cheng Yu wrote:
-> After the introduction of _PAGE_DIRTY_SW, pte_modify and pmd_modify need to
-> set the Dirty bit accordingly: if Shadow Stack is enabled and _PAGE_RW is
-> cleared, use _PAGE_DIRTY_SW; otherwise _PAGE_DIRTY_HW.
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+---
+ arch/riscv/include/asm/sbi.h |  14 ++
+ arch/riscv/include/asm/smp.h |   7 +
+ arch/riscv/kernel/sbi.c      | 246 ++++++++++++++++++++++++++++++++++-
+ 3 files changed, 263 insertions(+), 4 deletions(-)
 
-You've basically gone and written the code's if() statement in english
-here.  That doesn't really help me understand the patch.
-
-> Since the Dirty bit is modify by pte_modify(), remove _PAGE_DIRTY_HW from
-> PAGE_CHG_MASK.
-
-			 ^ modified
-
-This is a great example of a changelog that adds very little value.
-It's following the comments and doing what they say, but it's pretty
-obvious that the analysis stopped there.
-
-What *kinds* of bits are in _PAGE_CHG_MASK or not?  What changed about
-_PAGE_DIRTY_HW.  By this definition, shouldn't _PAGE_DIRTY_SW have
-technically been in this mask before this patch?
-
-> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-> index 62aeb118bc36..2733e7ec16b3 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -702,6 +702,14 @@ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->  	val &= _PAGE_CHG_MASK;
->  	val |= check_pgprot(newprot) & ~_PAGE_CHG_MASK;
->  	val = flip_protnone_guard(oldval, val, PTE_PFN_MASK);
-> +
-> +	if (pte_dirty(pte)) {
-> +		if (static_cpu_has(X86_FEATURE_SHSTK) && !(val & _PAGE_RW))
-> +			val |= _PAGE_DIRTY_SW;
-> +		else
-> +			val |= _PAGE_DIRTY_HW;
-> +	}
-> +
->  	return __pte(val);
->  }
-
-OK, so this is a path we use for changing bunches of PTEs to 'newprot'.
- It doesn't use the pte_*() helpers that the previous patch fixed up, so
-we need a new site.
-
-Right?
-
-Maybe that would make good changelog text.
-
-Also, couldn't we just have a pte_fixup() function or something that did
-this logic and could be shared?
-
-> @@ -712,6 +720,14 @@ static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
->  	val &= _HPAGE_CHG_MASK;
->  	val |= check_pgprot(newprot) & ~_HPAGE_CHG_MASK;
->  	val = flip_protnone_guard(oldval, val, PHYSICAL_PMD_PAGE_MASK);
-> +
-> +	if (pmd_dirty(pmd)) {
-> +		if (static_cpu_has(X86_FEATURE_SHSTK) && !(val & _PAGE_RW))
-> +			val |= _PAGE_DIRTY_SW;
-> +		else
-> +			val |= _PAGE_DIRTY_HW;
-> +	}
-> +
->  	return __pmd(val);
->  }
->  
-> diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-> index 826823df917f..e7e28bf7e919 100644
-> --- a/arch/x86/include/asm/pgtable_types.h
-> +++ b/arch/x86/include/asm/pgtable_types.h
-> @@ -150,8 +150,8 @@
->   * instance, and is *not* included in this mask since
->   * pte_modify() does modify it.
->   */
-> -#define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
-> -			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY_HW |	\
-> +#define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |	\
-> +			 _PAGE_SPECIAL | _PAGE_ACCESSED |	\
->  			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
->  #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
-
+diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+index be634be78551..8766f6af9eb8 100644
+--- a/arch/riscv/include/asm/sbi.h
++++ b/arch/riscv/include/asm/sbi.h
+@@ -96,6 +96,20 @@ void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+ 				unsigned long start,
+ 				unsigned long size,
+ 				unsigned long asid);
++int sbi_remote_hfence_gvma(const unsigned long *hart_mask,
++			   unsigned long start,
++			   unsigned long size);
++int sbi_remote_hfence_gvma_vmid(const unsigned long *hart_mask,
++				unsigned long start,
++				unsigned long size,
++				unsigned long vmid);
++int sbi_remote_hfence_vvma(const unsigned long *hart_mask,
++			   unsigned long start,
++			   unsigned long size);
++int sbi_remote_hfence_vvma_asid(const unsigned long *hart_mask,
++				unsigned long start,
++				unsigned long size,
++				unsigned long asid);
+ int sbi_probe_extension(int ext);
+ 
+ /* Check if current SBI specification version is 0.1 or not */
+diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
+index a83451d73a4e..023f74fb8b3b 100644
+--- a/arch/riscv/include/asm/smp.h
++++ b/arch/riscv/include/asm/smp.h
+@@ -61,5 +61,12 @@ static inline unsigned long cpuid_to_hartid_map(int cpu)
+ 	return boot_cpu_hartid;
+ }
+ 
++static inline void riscv_cpuid_to_hartid_mask(const struct cpumask *in,
++					      struct cpumask *out)
++{
++	cpumask_clear(out);
++	cpumask_set_cpu(boot_cpu_hartid, out);
++}
++
+ #endif /* CONFIG_SMP */
+ #endif /* _ASM_RISCV_SMP_H */
+diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
+index 599d922d4ff3..932b23272be5 100644
+--- a/arch/riscv/kernel/sbi.c
++++ b/arch/riscv/kernel/sbi.c
+@@ -8,6 +8,7 @@
+ #include <linux/init.h>
+ #include <linux/pm.h>
+ #include <asm/sbi.h>
++#include <asm/smp.h>
+ 
+ /* default SBI version is 0.1 */
+ unsigned long sbi_spec_version = SBI_SPEC_VERSION_DEFAULT;
+@@ -189,6 +190,149 @@ static int __sbi_rfence_v01(int fid, const unsigned long *hart_mask,
+ }
+ #endif /* CONFIG_RISCV_SBI_V01 */
+ 
++static void __sbi_set_timer_v02(uint64_t stime_value)
++{
++#if __riscv_xlen == 32
++	sbi_ecall(SBI_EXT_TIME, SBI_EXT_TIME_SET_TIMER, stime_value,
++			  stime_value >> 32, 0, 0, 0, 0);
++#else
++	sbi_ecall(SBI_EXT_TIME, SBI_EXT_TIME_SET_TIMER, stime_value, 0,
++		  0, 0, 0, 0);
++#endif
++}
++
++static int __sbi_send_ipi_v02(const unsigned long *hart_mask)
++{
++	unsigned long hartid, hmask_val, hbase;
++	struct cpumask tmask;
++	struct sbiret ret = {0};
++	int result;
++
++	if (!hart_mask || !(*hart_mask)) {
++		riscv_cpuid_to_hartid_mask(cpu_online_mask, &tmask);
++		hart_mask = cpumask_bits(&tmask);
++	}
++
++	hmask_val = hbase = 0;
++	for_each_set_bit(hartid, hart_mask, NR_CPUS) {
++		if (hmask_val && ((hbase + BITS_PER_LONG) <= hartid)) {
++			ret = sbi_ecall(SBI_EXT_IPI, SBI_EXT_IPI_SEND_IPI,
++					hmask_val, hbase, 0, 0, 0, 0);
++			if (ret.error)
++				goto ecall_failed;
++			hmask_val = hbase = 0;
++		}
++		if (!hmask_val)
++			hbase = hartid;
++		hmask_val |= 1UL << (hartid - hbase);
++	}
++
++	if (hmask_val) {
++		ret = sbi_ecall(SBI_EXT_IPI, SBI_EXT_IPI_SEND_IPI,
++				hmask_val, hbase, 0, 0, 0, 0);
++		if (ret.error)
++			goto ecall_failed;
++	}
++
++	return 0;
++
++ecall_failed:
++	result = sbi_err_map_linux_errno(ret.error);
++	pr_err("%s: hbase = [%lu] hmask = [0x%lx] failed (error [%d])\n",
++		__func__, hbase, hmask_val, result);
++	return result;
++}
++
++static int __sbi_rfence_v02_call(unsigned long fid, unsigned long hmask_val,
++				 unsigned long hbase, unsigned long start,
++				 unsigned long size, unsigned long arg4,
++				 unsigned long arg5)
++{
++	struct sbiret ret = {0};
++	int ext = SBI_EXT_RFENCE;
++	int result = 0;
++
++	switch (fid) {
++	case SBI_EXT_RFENCE_REMOTE_FENCE_I:
++		ret = sbi_ecall(ext, fid, hmask_val, hbase, 0, 0, 0, 0);
++		break;
++	case SBI_EXT_RFENCE_REMOTE_SFENCE_VMA:
++		ret = sbi_ecall(ext, fid, hmask_val, hbase, start,
++				size, 0, 0);
++		break;
++	case SBI_EXT_RFENCE_REMOTE_SFENCE_VMA_ASID:
++		ret = sbi_ecall(ext, fid, hmask_val, hbase, start,
++				size, arg4, 0);
++		break;
++
++	case SBI_EXT_RFENCE_REMOTE_HFENCE_GVMA:
++		ret = sbi_ecall(ext, fid, hmask_val, hbase, start,
++				size, 0, 0);
++		break;
++	case SBI_EXT_RFENCE_REMOTE_HFENCE_GVMA_VMID:
++		ret = sbi_ecall(ext, fid, hmask_val, hbase, start,
++				size, arg4, 0);
++		break;
++	case SBI_EXT_RFENCE_REMOTE_HFENCE_VVMA:
++		ret = sbi_ecall(ext, fid, hmask_val, hbase, start,
++				size, 0, 0);
++		break;
++	case SBI_EXT_RFENCE_REMOTE_HFENCE_VVMA_ASID:
++		ret = sbi_ecall(ext, fid, hmask_val, hbase, start,
++				size, arg4, 0);
++		break;
++	default:
++		pr_err("unknown function ID [%lu] for SBI extension [%d]\n",
++			fid, ext);
++		result = -EINVAL;
++	}
++
++	if (ret.error) {
++		result = sbi_err_map_linux_errno(ret.error);
++		pr_err("%s: hbase = [%lu] hmask = [0x%lx] failed (error [%d])\n",
++			__func__, hbase, hmask_val, result);
++	}
++
++	return result;
++}
++
++static int __sbi_rfence_v02(int fid, const unsigned long *hart_mask,
++			    unsigned long start, unsigned long size,
++			    unsigned long arg4, unsigned long arg5)
++{
++	unsigned long hmask_val, hartid, hbase;
++	struct cpumask tmask;
++	int result;
++
++	if (!hart_mask || !(*hart_mask)) {
++		riscv_cpuid_to_hartid_mask(cpu_online_mask, &tmask);
++		hart_mask = cpumask_bits(&tmask);
++	}
++
++	hmask_val = hbase = 0;
++	for_each_set_bit(hartid, hart_mask, NR_CPUS) {
++		if (hmask_val && ((hbase + BITS_PER_LONG) <= hartid)) {
++			result = __sbi_rfence_v02_call(fid, hmask_val, hbase,
++						       start, size, arg4, arg5);
++			if (result)
++				return result;
++			hmask_val = hbase = 0;
++		}
++		if (!hmask_val)
++			hbase = hartid;
++		hmask_val |= 1UL << (hartid - hbase);
++	}
++
++	if (hmask_val) {
++		result = __sbi_rfence_v02_call(fid, hmask_val, hbase,
++					       start, size, arg4, arg5);
++		if (result)
++			return result;
++	}
++
++	return 0;
++}
++
+ /**
+  * sbi_set_timer() - Program the timer for next timer event.
+  * @stime_value: The value after which next timer event should fire.
+@@ -265,6 +409,85 @@ void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+ }
+ EXPORT_SYMBOL(sbi_remote_sfence_vma_asid);
+ 
++/**
++ * sbi_remote_hfence_gvma() - Execute HFENCE.GVMA instructions on given remote
++ *			   harts for the specified guest physical address range.
++ * @hart_mask: A cpu mask containing all the target harts.
++ * @start: Start of the guest physical address
++ * @size: Total size of the guest physical address range.
++ *
++ * Return: None
++ */
++int sbi_remote_hfence_gvma(const unsigned long *hart_mask,
++					 unsigned long start,
++					 unsigned long size)
++{
++	return __sbi_rfence(SBI_EXT_RFENCE_REMOTE_HFENCE_GVMA,
++			    hart_mask, start, size, 0, 0);
++}
++EXPORT_SYMBOL_GPL(sbi_remote_hfence_gvma);
++
++/**
++ * sbi_remote_hfence_gvma_vmid() - Execute HFENCE.GVMA instructions on given
++ * remote harts for a guest physical address range belonging to a specific VMID.
++ *
++ * @hart_mask: A cpu mask containing all the target harts.
++ * @start: Start of the guest physical address
++ * @size: Total size of the guest physical address range.
++ * @vmid: The value of guest ID (VMID).
++ *
++ * Return: 0 if success, Error otherwise.
++ */
++int sbi_remote_hfence_gvma_vmid(const unsigned long *hart_mask,
++					      unsigned long start,
++					      unsigned long size,
++					      unsigned long vmid)
++{
++	return __sbi_rfence(SBI_EXT_RFENCE_REMOTE_HFENCE_GVMA_VMID,
++			    hart_mask, start, size, vmid, 0);
++}
++EXPORT_SYMBOL(sbi_remote_hfence_gvma_vmid);
++
++/**
++ * sbi_remote_hfence_vvma() - Execute HFENCE.VVMA instructions on given remote
++ *			     harts for the current guest virtual address range.
++ * @hart_mask: A cpu mask containing all the target harts.
++ * @start: Start of the current guest virtual address
++ * @size: Total size of the current guest virtual address range.
++ *
++ * Return: None
++ */
++int sbi_remote_hfence_vvma(const unsigned long *hart_mask,
++					 unsigned long start,
++					 unsigned long size)
++{
++	return __sbi_rfence(SBI_EXT_RFENCE_REMOTE_HFENCE_VVMA,
++			    hart_mask, start, size, 0, 0);
++}
++EXPORT_SYMBOL(sbi_remote_hfence_vvma);
++
++/**
++ * sbi_remote_hfence_vvma_asid() - Execute HFENCE.VVMA instructions on given
++ * remote harts for current guest virtual address range belonging to a specific
++ * ASID.
++ *
++ * @hart_mask: A cpu mask containing all the target harts.
++ * @start: Start of the current guest virtual address
++ * @size: Total size of the current guest virtual address range.
++ * @asid: The value of address space identifier (ASID).
++ *
++ * Return: None
++ */
++int sbi_remote_hfence_vvma_asid(const unsigned long *hart_mask,
++					      unsigned long start,
++					      unsigned long size,
++					      unsigned long asid)
++{
++	return __sbi_rfence(SBI_EXT_RFENCE_REMOTE_HFENCE_VVMA_ASID,
++			    hart_mask, start, size, asid, 0);
++}
++EXPORT_SYMBOL(sbi_remote_hfence_vvma_asid);
++
+ /**
+  * sbi_probe_extension() - Check if an SBI extension ID is supported or not.
+  * @extid: The extension ID to be probed.
+@@ -331,11 +554,26 @@ int __init sbi_init(void)
+ 	if (!sbi_spec_is_0_1()) {
+ 		pr_info("SBI implementation ID=0x%lx Version=0x%lx\n",
+ 			sbi_get_firmware_id(), sbi_get_firmware_version());
++		if (sbi_probe_extension(SBI_EXT_TIME) > 0) {
++			__sbi_set_timer = __sbi_set_timer_v02;
++			pr_info("SBI v0.2 TIME extension detected\n");
++		} else
++			__sbi_set_timer = __sbi_set_timer_v01;
++		if (sbi_probe_extension(SBI_EXT_IPI) > 0) {
++			__sbi_send_ipi	= __sbi_send_ipi_v02;
++			pr_info("SBI v0.2 IPI extension detected\n");
++		} else
++			__sbi_send_ipi	= __sbi_send_ipi_v01;
++		if (sbi_probe_extension(SBI_EXT_RFENCE) > 0) {
++			__sbi_rfence	= __sbi_rfence_v02;
++			pr_info("SBI v0.2 RFENCE extension detected\n");
++		} else
++			__sbi_rfence	= __sbi_rfence_v01;
++	} else {
++		__sbi_set_timer = __sbi_set_timer_v01;
++		__sbi_send_ipi	= __sbi_send_ipi_v01;
++		__sbi_rfence	= __sbi_rfence_v01;
+ 	}
+ 
+-	__sbi_set_timer = __sbi_set_timer_v01;
+-	__sbi_send_ipi	= __sbi_send_ipi_v01;
+-	__sbi_rfence	= __sbi_rfence_v01;
+-
+ 	return 0;
+ }
+-- 
+2.25.0
 
