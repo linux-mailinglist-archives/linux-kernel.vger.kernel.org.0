@@ -2,76 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57966170235
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:21:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5101217023B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:22:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbgBZPVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 10:21:25 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42639 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbgBZPVZ (ORCPT
+        id S1728135AbgBZPWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 10:22:20 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:46342 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728037AbgBZPWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:21:25 -0500
-Received: by mail-oi1-f194.google.com with SMTP id j132so3353538oih.9;
-        Wed, 26 Feb 2020 07:21:24 -0800 (PST)
+        Wed, 26 Feb 2020 10:22:19 -0500
+Received: by mail-vk1-f194.google.com with SMTP id u6so881596vkn.13
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 07:22:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V8nWkCMD00cXwz4vSIcrFn9i/BES9/eV0AoGbar9kSU=;
+        b=mXNFScEPEXTZ4Y03CyiK+/TjkHLqnAjQPcxs+JNs+IyUVBpbdLw2mdhfel0dmuKPLk
+         W6OvSj/o0zdvXzCB9K+9m7F8SiVe1l183/R1TUoJcArgKBRRhoXq5crK7CUujf6EiXTA
+         PsnQ/ubtPHHwkYOhMOt3/D+OFo4vIsqkU3GrZh1Flo4rA1OijEUNJkjPl9z2qKTlgJIY
+         IE2tSomRkCv2tDlzf/anAOXlsMg+7A1wtK1hh+B9hCIcDrfBTNAYKxrpI8TS0hwqSio9
+         IQm2G/+ObyhefUuHtvD2xH8EEmoVoXNzjYR+CAhxeyhSzbk4rOgw2gQu8bs0ueut8kML
+         IoaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GmR3MdaCGyVwm72nEz3XbzIqX5lVd7f4sUKQMFOYdvk=;
-        b=BoPxAAF3Ux0q/t5uOChOfYL5A2cRQSYw1SlACMRASPA6JAG7JSLzOXH5gRB/9n3kUY
-         Z35J9eJEliaj8Mkhlh0hIIlLv+BJ/annRMzdgRLNvkGodKS9VpTk0LdgYbqm+vvH+CFr
-         +B87Mp6I3YU2vFZhVdlgjXD9hmJr8mLEdI3DuI3FfnXajx46Z/2OwfnUCf2yKAayCzaN
-         MlBW0LIRpzv3EzR+LyCLLTniS10/LfwDitfQm84Izq5xQ3ee5pNCEqgoZqWovftZhetc
-         2+9GQN0hMa6Y6BTmLI5XaLSWo3CKsdJG7snJlDl0wVgtNylXUOosdDIXd+LQyIxGaaiU
-         LGsQ==
-X-Gm-Message-State: APjAAAUpYkxYxW+wE19EHVIKeOjdIOVEL70tYYQhljHrQWrlHSru6I6V
-        //tajqZRv5wklgyCkq66xw==
-X-Google-Smtp-Source: APXvYqxuEUieMlzM/vscfnnAnRm10zUyhU9fU+Moe+9Ni33jZvHACFKoPWwEWTwKsYYoFrg0KrSvoA==
-X-Received: by 2002:aca:a857:: with SMTP id r84mr3426091oie.41.1582730484600;
-        Wed, 26 Feb 2020 07:21:24 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 76sm857000otg.68.2020.02.26.07.21.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 07:21:23 -0800 (PST)
-Received: (nullmailer pid 25778 invoked by uid 1000);
-        Wed, 26 Feb 2020 15:21:23 -0000
-Date:   Wed, 26 Feb 2020 09:21:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     vkoul@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dan.j.williams@intel.com, grygorii.strashko@ti.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: dma: ti: k3-udma: Update for atype
- support (virtualization)
-Message-ID: <20200226152123.GA25719@bogus>
-References: <20200218143126.11361-1-peter.ujfalusi@ti.com>
- <20200218143126.11361-2-peter.ujfalusi@ti.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V8nWkCMD00cXwz4vSIcrFn9i/BES9/eV0AoGbar9kSU=;
+        b=GnJ/zVlAZRJwhrtfMjsg61rNpV72SqWXRnbc+/5vr+lKkmZBnU5hEnhPbYvlbdeGlf
+         77kQc9Q+/05Ey71JhSXtH84Ph41JO6gMeXzUDCCMvgb5G7cQwXFhcY789BufoURowsdn
+         rdX0zWKk5HUBw1O6+7mXO8PLJp2ngkc2dvqKsJzny1EJ3Os7llaf5vHTsxtmNhgEvOEn
+         vaS9KAN41gqOrm5yACH9MbHEyvlr73DR+DrgKcV925TUmEQESuKkXII2vju561zOuJnl
+         CXhIvAx8U5iDmHtj3oHhFQUZMgpBjZucsJRfXUw1iI2LjbhtWYVylmxF75mesdFb/ahv
+         jF5g==
+X-Gm-Message-State: APjAAAVK4r51N1FadhiqlgsCDj8TLjAXaJB15io8Bavp3LsvRra0fMw/
+        EweECjAKv0l6jOuZfPffgFljANxZervjkCk48y29eg==
+X-Google-Smtp-Source: APXvYqzF0V4RB8Y6fLHFPX/60gGn0XuOow45OeMPm8jjcH+gHUPO3SKB/DseAxYeF3stegFkmAxKJF8fZ82SZIMQzZc=
+X-Received: by 2002:a1f:914b:: with SMTP id t72mr4120155vkd.101.1582730538102;
+ Wed, 26 Feb 2020 07:22:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218143126.11361-2-peter.ujfalusi@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
+ <CAPDyKFqqhxC-pmV_j8PLY-D=AbqCAbiipAAHXLpJ4N_BiYYOFw@mail.gmail.com>
+ <CA+G9fYugQuAERqp3VXUFG-3QxXoF8bz7OSMh6WGSZcrGkbfDSQ@mail.gmail.com>
+ <CAPDyKFo-vEO7zN_F+NqcKtnKmAo_deOZx3gYNiks3yTAQAjv-Q@mail.gmail.com>
+ <a602a27a-b960-ce56-c541-3b4b95f5dce2@nvidia.com> <CAPDyKFrXQgtHa4gLaKUi_F0rs4FMBai3Y_+TcHZR_zpkb0B4QQ@mail.gmail.com>
+ <6523119a-50ac-973a-d1cd-ab1569259411@nvidia.com> <f960aa98-5508-36fd-166d-7f41c7d85154@nvidia.com>
+ <CAPDyKFokE6x0mn+v5B9=so-SyrdTn0JBU8Mrp3Zdu6kSaCie2g@mail.gmail.com> <0963b60f-15e7-4bc6-10df-6fc8003e4d42@nvidia.com>
+In-Reply-To: <0963b60f-15e7-4bc6-10df-6fc8003e4d42@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 26 Feb 2020 16:21:42 +0100
+Message-ID: <CAPDyKFq5NoeHEBK3sv3yOSD2+pm9FueH1gaTyPq0j7GLfa6vnA@mail.gmail.com>
+Subject: Re: LKFT: arm x15: mmc1: cache flush error -110
+To:     Jon Hunter <jonathanh@nvidia.com>, Faiz Abbas <faiz_abbas@ti.com>,
+        Bitan Biswas <bbiswas@nvidia.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        lkft-triage@lists.linaro.org,
+        open list <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Kishon <kishon@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Feb 2020 16:31:25 +0200, Peter Ujfalusi wrote:
-> In UDMA each channel can use different ATYPE value which tells UDMA how
-> the addresses in the descriptors should be treated:
-> 0: pointers are physical addresses (no translation)
-> 1: pointers are intermediate addresses (PVU)
-> 2: pointers are virtual addresses (SMMU)
-> 
-> When virtualized environment is used then the dma binding should use
-> additional cell to configure the desired ATYPE for the channel.
-> 
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> ---
->  .../devicetree/bindings/dma/ti/k3-udma.yaml   | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
-> 
++ Anders, Kishon
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Tue, 25 Feb 2020 at 17:24, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+>
+> On 25/02/2020 14:26, Ulf Hansson wrote:
+>
+> ...
+>
+> > However, from the core point of view, the response is still requested,
+> > only that we don't want the driver to wait for the card to stop
+> > signaling busy. Instead we want to deal with that via "polling" from
+> > the core.
+> >
+> > This is a rather worrying behaviour, as it seems like the host driver
+> > doesn't really follow this expectations from the core point of view.
+> > And mmc_flush_cache() is not the only case, as we have erase, bkops,
+> > sanitize, etc. Are all these working or not really well tested?
+>
+> I don't believe that they are well tested. We have a simple test to
+> mount an eMMC partition, create a file, check the contents, remove the
+> file and unmount. The timeouts always occur during unmounting.
+>
+> > Earlier, before my three patches, if the provided timeout_ms parameter
+> > to __mmc_switch() was zero, which was the case for
+> > mmc_mmc_flush_cache() - this lead to that __mmc_switch() simply
+> > ignored validating host->max_busy_timeout, which was wrong. In any
+> > case, this also meant that an R1B response was always used for
+> > mmc_flush_cache(), as you also indicated above. Perhaps this is the
+> > critical part where things can go wrong.
+> >
+> > BTW, have you tried erase commands for sdhci tegra driver? If those
+> > are working fine, do you have any special treatments for these?
+>
+> That I am not sure, but I will check.
+
+Great, thanks. Looking forward to your report.
+
+So, from my side, me and Anders Roxell, have been collaborating on
+testing the behaviour on a TI Beagleboard x15 (remotely with limited
+debug options), which is using the sdhci-omap variant. I am trying to
+get hold of an Nvidia jetson-TX2, but not found one yet. These are the
+conclusions from the observed behaviour on the Beagleboard for the
+CMD6 cache flush command.
+
+First, the reported host->max_busy_timeout is 2581 (ms) for the
+sdhci-omap driver in this configuration.
+
+1. As we all know by now, the cache flush command (CMD6) fails with
+-110 currently. This is when MMC_CACHE_FLUSH_TIMEOUT_MS is set to 30 *
+1000 (30s), which means __mmc_switch() drops the MMC_RSP_BUSY flag
+from the command.
+
+2. Changing the MMC_CACHE_FLUSH_TIMEOUT_MS to 2000 (2s), means that
+the MMC_RSP_BUSY flag becomes set by __mmc_switch, because of the
+timeout_ms parameter is less than max_busy_timeout (2000 <  2581).
+Then everything works fine.
+
+3. Updating the code to again use 30s as the
+MMC_CACHE_FLUSH_TIMEOUT_MS, but instead forcing the MMC_RSP_BUSY to be
+set, even when the timeout_ms becomes greater than max_busy_timeout.
+This also works fine.
+
+Clearly this indicates a problem that I think needs to be addressed in
+the sdhci driver. However, of course I can revert the three discussed
+patches to fix the problem, but that would only hide the issues and I
+am sure we would then get back to this issue, sooner or later.
+
+To fix the problem in the sdhci driver, I would appreciate if someone
+from TI and Nvidia can step in to help, as I don't have the HW on my
+desk.
+
+Comments or other ideas of how to move forward?
+
+Kind regards
+Uffe
