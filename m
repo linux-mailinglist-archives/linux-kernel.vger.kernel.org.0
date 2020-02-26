@@ -2,83 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A2281707D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:42:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C27721707DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:43:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbgBZSmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:42:43 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:60252 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726878AbgBZSmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:42:43 -0500
-Received: from zn.tnic (p200300EC2F08E3000C0800EF15AE70EC.dip0.t-ipconnect.de [IPv6:2003:ec:2f08:e300:c08:ef:15ae:70ec])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B5F311EC01D4;
-        Wed, 26 Feb 2020 19:42:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582742561;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=QOLbKvGIVeO+bnGDtjPE871jDv/Zu6peumehaSdxHyI=;
-        b=PUNAfuZ9Ok7gAisFgmN/CJ9//QKmrwEcmX8++apJPH9cVaoioOMquyHvIaq976PMUXAiCL
-        LCZrN30lSazsb23bnTSY4o3xDbSPAdeYFLsUvIilpNbZPIyZG0kJ9D6RdKPlgiT3V1bfqH
-        05lpe1sc/+ybTGPsU6t4SVGmlENaOFQ=
-Date:   Wed, 26 Feb 2020 19:42:37 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        id S1727272AbgBZSnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:43:09 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:59116 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbgBZSnJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 13:43:09 -0500
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1j71e2-0004SS-Dc; Wed, 26 Feb 2020 19:42:54 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id CA082104099; Wed, 26 Feb 2020 19:42:53 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <JGross@suse.com>,
+        Juergen Gross <jgross@suse.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [patch 02/10] x86/mce: Disable tracing and kprobes on
- do_machine_check()
-Message-ID: <20200226184237.GB16756@zn.tnic>
-References: <20200226160818.GY18400@hirez.programming.kicks-ass.net>
- <C06C32B4-BD69-4287-BC67-C3E225061A46@amacapital.net>
+Subject: Re: [patch 08/10] x86/entry/32: Remove the 0/-1 distinction from exception entries
+In-Reply-To: <6dd020cd-e20a-be12-aba7-bfa9e1a94795@kernel.org>
+References: <20200225213636.689276920@linutronix.de> <20200225220216.933457250@linutronix.de> <6dd020cd-e20a-be12-aba7-bfa9e1a94795@kernel.org>
+Date:   Wed, 26 Feb 2020 19:42:53 +0100
+Message-ID: <87blpli40i.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <C06C32B4-BD69-4287-BC67-C3E225061A46@amacapital.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 09:28:51AM -0800, Andy Lutomirski wrote:
-> > It entirely depends on what the goal is :-/ On the one hand I see why
-> > people might want function tracing / kprobes enabled, OTOH it's all
-> > mighty frigging scary. Any tracing/probing/whatever on an MCE has the
-> > potential to make a bad situation worse -- not unlike the same on #DF.
+Andy Lutomirski <luto@kernel.org> writes:
 
-FWIW, I had this at the beginning of the #MC handler in a feeble attempt
-to poke at this:
+> On 2/25/20 1:36 PM, Thomas Gleixner wrote:
+>> Nothing cares about the -1 "mark as interrupt" in the errorcode anymore. Just
+>> use 0 for all excpetions which do not have an errorcode consistently.
+>> 
+>
+> I sincerely wish this were the case.  But look at collect_syscall() in
+> lib/syscall.c.
+>
+> It would be really quite nice to address this for real in some
+> low-overhead way.  My suggestion would be to borrow a trick from 32-bit:
+> split regs->cs into ->cs and ->__csh, and stick CS_FROM_SYSCALL into
+> __csh for syscalls.  This will only add any overhead at all to the int80
+> case.  Then we could adjust syscall_get_nr() to look for CS_FROM_SYSCALL.
+>
+> What do you think?  An alternative would be to use the stack walking
+> machinery in collect_syscall(), since the mere existence of that
+> function is abomination and we may not care about performance.
 
-+       hw_breakpoint_disable();
-+       static_key_disable(&__tracepoint_read_msr.key);
-+       tracing_off();
+Looking deeper. The code in common_exception does:
 
-But then Tony noted that some recoverable errors do get reported with an
-#MC exception so we would have to look at the error severity and then
-decide whether to allow tracing or not.
+	movl	PT_ORIG_EAX(%esp), %edx		# get the error code
+	movl	$-1, PT_ORIG_EAX(%esp)		# no syscall to restart
 
-But the error severity happens all the way down in __mc_scan_banks() -
-i.e., we've executed the half handler already.
+So whatever the exception pushed on the stack the thing what
+collect_syscall finds is -1.
 
-So, frankly, I wanna say, f*ck tracing etc - there are certain handlers
-which simply don't allow it. And we'll only consider changing that when
-a really good reason for it appears...
+The pushed value is used as the error_code argument for the exception
+handler and I really can't find a single one which cares (anymore).
 
--- 
-Regards/Gruss,
-    Boris.
+But darn and I overlooked that, it's propagated to do_trap() and
+friends, but even if this causes a user visible change, I doubt that
+anything cares about it today simply because for giggles a 64bit kernel
+unconditionally pushes 0 for all exceptions which do not have a hardware
+error code on stack. So any 32bit application which excpects a
+particular error code (0/-1) in the signal would have been broken on the
+first day it ran on a x64 bit kernel.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+If someone yells regression, then that's really trivial to fix in
+C-code.
+
+Let me rephrase the changelog for this.
+
+Thanks,
+
+        tglx
