@@ -2,79 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38A1B1703EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:14:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C28C0170417
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:16:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbgBZQO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:14:26 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47467 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727274AbgBZQO0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:14:26 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j6zKH-0004DT-UH; Wed, 26 Feb 2020 17:14:21 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j6zKH-00015R-Gn; Wed, 26 Feb 2020 17:14:21 +0100
-Date:   Wed, 26 Feb 2020 17:14:21 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     thierry.reding@gmail.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH 3/3] pwm: mxs: Remove unused include of of_address.h
-Message-ID: <20200226161421.pbvv4yxjztfq7bxn@pengutronix.de>
-References: <1582271129-13589-1-git-send-email-Anson.Huang@nxp.com>
- <1582271129-13589-3-git-send-email-Anson.Huang@nxp.com>
+        id S1728794AbgBZQQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:16:07 -0500
+Received: from muru.com ([72.249.23.125]:57718 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728734AbgBZQQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 11:16:06 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 08CCD8022;
+        Wed, 26 Feb 2020 16:16:49 +0000 (UTC)
+Date:   Wed, 26 Feb 2020 08:16:02 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tero Kristo <t-kristo@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH] clocksource: timer-ti-dm: Drop bogus
+ omap_dm_timer_of_set_source()
+Message-ID: <20200226161602.GO37466@atomide.com>
+References: <20200213053504.22638-1-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1582271129-13589-3-git-send-email-Anson.Huang@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20200213053504.22638-1-s-anna@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Fri, Feb 21, 2020 at 03:45:29PM +0800, Anson Huang wrote:
-> There is nothing in use from of_address.h, remove it.
+* Suman Anna <s-anna@ti.com> [200212 21:36]:
+> Hi Tony,
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/pwm/pwm-mxs.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pwm/pwm-mxs.c b/drivers/pwm/pwm-mxs.c
-> index f2e57fc..7ce6169 100644
-> --- a/drivers/pwm/pwm-mxs.c
-> +++ b/drivers/pwm/pwm-mxs.c
-> @@ -9,7 +9,6 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_address.h>
->  #include <linux/platform_device.h>
->  #include <linux/pwm.h>
->  #include <linux/slab.h>
+> Do you have the history of why the 32 KHz source is set as parent during
+> prepare? One of the current side-affects of this patch is that now instead
+> of bailing out, the 32 KHz source is set, and consumers will still need
+> to select their appropriate parent. Dropping that call should actually
+> allow us to select the parents in the consumer nodes in dts files using
+> the assigned-clocks and assigned-clock-parents properties. I prefer to
+> drop it if you do not foresee any issues. For now, I do not anticipate
+> any issues with omap-pwm-dmtimer with this patch.
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Using the 32 KiHz source works better for PM. But yeah the
+machine specific source clock should be configured with
+assigned-clocks and assigned-clock-parents properites.
 
-Thanks
-Uwe
+Things seem to behave just fine for me with this patch for both
+pwm-leds and PM. Good to see this function gone:
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Tested-by: Tony Lindgren <tony@atomide.com>
