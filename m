@@ -2,204 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 302C5170C84
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 00:23:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63FB3170C8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 00:25:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbgBZXXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 18:23:51 -0500
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:52333 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726413AbgBZXXu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 18:23:50 -0500
-Received: by mail-pg1-f201.google.com with SMTP id h21so584159pgl.19
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 15:23:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=zMAfUHJJiNLY4kAwxfSfFqfgoKQ5jUFofqSLJDdWxPU=;
-        b=GSalGtQymTDs5BKgjs6cq8yGfJg/2aIJUeFnCf+jy83fYF69PucinQ8eanbN3ge7KQ
-         Utnklx6MpNNRLQ4eb9nPa8j5WU0IAfMJnBj888Kbfx+uGPaZYp5Qp2SPUu0QM73jxAEQ
-         SjGzgZJ9RJqIo/ovlChaiv4ThwgBNNgc9T0ZzW3k1TmvIMB6rh6VbEwaQsu+Z6fa8nJI
-         2q6bNfzpUAYKWsQtydKpeovaDWYLGgKAXSACl5BDqkBBl/NQlhq9/ZMNX2f/WDK4z6bu
-         ayPfEAeVxmSAXpzgvIAZblosUPpFK+wAvSWo4IfTglQLAZY1JsDXnUKKDZT1zpNBWhp0
-         XaHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=zMAfUHJJiNLY4kAwxfSfFqfgoKQ5jUFofqSLJDdWxPU=;
-        b=jIQpSagYlyXgPamCZ+ZHA72m34ySgpclb2HRS1ns+QXWAkt+TtULbinRfcO0/0p6kL
-         q7B0ozedDXN5WLYoRjJGzYm7xrF5LQxeH6NCn54qQSktJ4vDoilhus3w4oX011O+jcup
-         vtY1JVkCS8rFsTIPImRG0uREBAVA1LyhH6x4CDWrCcgR8Q4f7LR5NRdKgF5cnCbl6+RA
-         SQW7qX00xOwYDIUL094KGMD9H1LGFg444IDcn9/EfvS9siGFufoYR7zz3CubCuzMXmfy
-         dje0pFsUlwjNe/xWbOISf3XyNVOgu9elvMRzKy0UmKWZ828OBjcBCkHT46TJAj7swhI/
-         i9Gw==
-X-Gm-Message-State: APjAAAVpc5p/y3Dfey1+2oPaOjhFWKPyZSYdoZzBf9K2FKyXF9GldZ3g
-        5zlfSPNARqVES5H0SHbFb6TIgSMDhkN0Z3yrYzU=
-X-Google-Smtp-Source: APXvYqx7LBf15YkCrDwdvWPHxR1x7Hdivto6HOgT22kd7Osik9IknfZY8HczyWn3EEZxCJqEhdN1W3gFaII1S72k8mk=
-X-Received: by 2002:a63:d845:: with SMTP id k5mr1115560pgj.183.1582759429173;
- Wed, 26 Feb 2020 15:23:49 -0800 (PST)
-Date:   Wed, 26 Feb 2020 15:23:36 -0800
-In-Reply-To: <20200225210250.64366-1-ndesaulniers@google.com>
-Message-Id: <20200226232336.252872-1-ndesaulniers@google.com>
-Mime-Version: 1.0
-References: <20200225210250.64366-1-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
-Subject: [PATCH v3] Documentation/llvm: add documentation on building w/ Clang/LLVM
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     corbet@lwn.net, masahiroy@kernel.org
-Cc:     rdunlap@infradead.org, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727989AbgBZXZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 18:25:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53898 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727910AbgBZXZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 18:25:53 -0500
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B20E20658;
+        Wed, 26 Feb 2020 23:25:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582759552;
+        bh=B+YnP0ht2MdSiz9kP73cb0eqPBYs4iIQUvvHhmQ6PYI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=2LLu6Q1haUBXAnpuUik1DxJptPj6NnQIqGRuxyVxJOgn89kTsfgNsp2/odBBdl9S4
+         lNcdhRTZxLrXNkoVcdursDSSIvTLCPuaki6yLV8Cb1/zXQSSij06us6VlnytOQioi9
+         VIIx4L4OIthJN8Css6/CMeK3lE3klewZ421wLZqI=
+Date:   Wed, 26 Feb 2020 17:25:50 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Fawad Lateef <fawadlateef@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org
+Subject: Re: Help needed in understanding weird PCIe issue on imx6q (PCIe
+ just goes bad)
+Message-ID: <20200226232550.GA191068@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGgoGu5u7WZUUaoVYvVWS5nuNZz25PgR=uHkqvzXV5xFOC7KuA@mail.gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added to kbuild documentation. Provides more official info on building
-kernels with Clang and LLVM than our wiki.
+On Sat, Feb 22, 2020 at 04:25:41PM +0100, Fawad Lateef wrote:
+> Hello,
+> 
+> I am trying to figure-out an issue on our i.MX6Q platform based design
+> where PCIe interface goes bad.
+> 
+> We have a Phytec i.MX6Q eMMC SOM, attached to our custom designed
+> board. PCIe root-complex from i.MX6Q is attached to PLX switch
+> (PEX8605).
+> 
+> Linux kernel version is 4.19.9x and also 4.14.134 (from phytec's
+> linux-mainline repo). Kernel do not have PCIe hot-plug and PNP enabled
+> in config.
+> 
+> PLX switch #PERST is attached to a GPIO pin and stays in disable state
+> until Linux is booted. So at boot time only PCIe root-complex is
+> initialized by kernel.
+> 
+> After boot if I do "lspci -v"  and see everything good from PCIe
+> root-complex (below):
+> 
+> ~ # lspci -v
+> 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00
+> [Normal decode])
+> Flags: bus master, fast devsel, latency 0, IRQ 295
+> Memory at 01000000 (32-bit, non-prefetchable) [size=1M]
+> Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
+> I/O behind bridge: None
+> Memory behind bridge: None
+> Prefetchable memory behind bridge: None
+> [virtual] Expansion ROM at 01100000 [disabled] [size=64K]
+> Capabilities: [40] Power Management version 3
+> Capabilities: [50] MSI: Enable+ Count=1/1 Maskable+ 64bit+
+> Capabilities: [70] Express Root Port (Slot-), MSI 00
+> Capabilities: [100] Advanced Error Reporting
+> Capabilities: [140] Virtual Channel
+> Kernel driver in use: pcieport
+> 
+> 
+> Then I enable the #PERST pin of PLX switch, everything is still good
+> (no rescan on Linux is done yet)
+> 
+> ~ # echo 139 > /sys/class/gpio/export
+> ~ # echo out > /sys/class/gpio/gpio139/direction
+> ~ # echo 1 > /sys/class/gpio/gpio139/value
+> ~ # lspci -v
+> 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00
+> [Normal decode])
+> Flags: bus master, fast devsel, latency 0, IRQ 295
+> Memory at 01000000 (32-bit, non-prefetchable) [size=1M]
+> Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
+> I/O behind bridge: None
+> Memory behind bridge: None
+> Prefetchable memory behind bridge: None
+> [virtual] Expansion ROM at 01100000 [disabled] [size=64K]
+> Capabilities: [40] Power Management version 3
+> Capabilities: [50] MSI: Enable+ Count=1/1 Maskable+ 64bit+
+> Capabilities: [70] Express Root Port (Slot-), MSI 00
+> Capabilities: [100] Advanced Error Reporting
+> Capabilities: [140] Virtual Channel
+> Kernel driver in use: pcieport
+> 
+> 
+> Now just disable/put-in-reset the PLX switch (Linux don't see the
+> switch yet, as no rescan on PCIe was done). Now "lspci -v" and
+> root-complex goes bad.
+> 
+> ~ # echo 0 > /sys/class/gpio/gpio139/value
+> ~ # lspci -v
+> 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00
+> [Normal decode])
+> Flags: fast devsel, IRQ 295
+> Memory at 01000000 (64-bit, prefetchable) [disabled] [size=1M]
+> Bus: primary=00, secondary=00, subordinate=00, sec-latency=0
+> I/O behind bridge: 00000000-00000fff [size=4K]
+> Memory behind bridge: 00000000-000fffff [size=1M]
+> Prefetchable memory behind bridge: 00000000-000fffff [size=1M]
+> [virtual] Expansion ROM at 01100000 [disabled] [size=64K]
+> Capabilities: [40] Power Management version 3
+> Capabilities: [50] MSI: Enable- Count=1/1 Maskable+ 64bit+
+> Capabilities: [70] Express Root Port (Slot-), MSI 00
+> Capabilities: [100] Advanced Error Reporting
+> Capabilities: [140] Virtual Channel
+> Kernel driver in use: pcieport
+> 
+> ~ # uname -a
+> Linux buildroot-2019.08-imx6 4.14.134-phy2 #1 SMP Thu Feb 20 12:13:33
+> UTC 2020 armv7l GNU/Linux
+> ~ #
+> 
+> 
+> I am really not sure what is going wrong here. Did I am missing
+> something basic?
 
-Suggested-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
-Changes V2 -> V3:
-* Drop Randy's Suggested-by tag. Sorry Randy, I do appreciate the review
-  though.
-* Add F: line to MAINTAINERS.
+I agree, it looks like something's wrong, but I really don't have any
+ideas.
 
-Changes V1 -> V2:
-* s/On going/ongoing/
-* add Randy's Suggested-by
-* add Nathan and Sedat's Reviewed-by
-* Upgrade Kees' Sugguested-by to Reviewed-by
-* s/suffix/prefix/
+I would start by using "lspci -xxxx" to see the actual values we get
+from config space.  It looks like we're reading zeros from at least
+the bus and window registers.
 
- Documentation/kbuild/index.rst |  1 +
- Documentation/kbuild/llvm.rst  | 80 ++++++++++++++++++++++++++++++++++
- MAINTAINERS                    |  1 +
- 3 files changed, 82 insertions(+)
- create mode 100644 Documentation/kbuild/llvm.rst
+You could also instrument the i.MX config accessors in case there's
+something strange going on there.  Maybe try to reproduce this on a
+current upstream kernel?
 
-diff --git a/Documentation/kbuild/index.rst b/Documentation/kbuild/index.rst
-index 0f144fad99a6..3882bd5f7728 100644
---- a/Documentation/kbuild/index.rst
-+++ b/Documentation/kbuild/index.rst
-@@ -19,6 +19,7 @@ Kernel Build System
- 
-     issues
-     reproducible-builds
-+    llvm
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/kbuild/llvm.rst b/Documentation/kbuild/llvm.rst
-new file mode 100644
-index 000000000000..d6c79eb4e23e
---- /dev/null
-+++ b/Documentation/kbuild/llvm.rst
-@@ -0,0 +1,80 @@
-+==============================
-+Building Linux with Clang/LLVM
-+==============================
-+
-+This document covers how to build the Linux kernel with Clang and LLVM
-+utilities.
-+
-+About
-+-----
-+
-+The Linux kernel has always traditionally been compiled with GNU toolchains
-+such as GCC and binutils. Ongoing work has allowed for `Clang
-+<https://clang.llvm.org/>`_ and `LLVM <https://llvm.org/>`_ utilities to be
-+used as viable substitutes. Distributions such as `Android
-+<https://www.android.com/>`_, `ChromeOS
-+<https://www.chromium.org/chromium-os>`_, and `OpenMandriva
-+<https://www.openmandriva.org/>`_ use Clang built kernels.  `LLVM is a
-+collection of toolchain components implemented in terms of C++ objects
-+<https://www.aosabook.org/en/llvm.html>`_. Clang is a front-end to LLVM that
-+supports C and the GNU C extensions required by the kernel, and is pronounced
-+"klang," not "see-lang."
-+
-+Clang
-+-----
-+
-+The compiler used can be swapped out via `CC=` command line argument to `make`.
-+`CC=` should be set when selecting a config and during a build.
-+
-+	make CC=clang defconfig
-+
-+	make CC=clang
-+
-+Cross Compiling
-+---------------
-+
-+A single Clang compiler binary will typically contain all supported backends,
-+which can help simplify cross compiling.
-+
-+	ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make CC=clang
-+
-+`CROSS_COMPILE` is not used to prefix the Clang compiler binary, instead
-+`CROSS_COMPILE` is used to set a command line flag: `--target <triple>`. For
-+example:
-+
-+	clang --target aarch64-linux-gnu foo.c
-+
-+LLVM Utilities
-+--------------
-+
-+LLVM has substitutes for GNU binutils utilities. These can be invoked as
-+additional parameters to `make`.
-+
-+	make CC=clang AS=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \\
-+	  OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump OBJSIZE=llvm-objsize \\
-+	  READELF=llvm-readelf HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar \\
-+	  HOSTLD=ld.lld
-+
-+Getting Help
-+------------
-+
-+- `Website <https://clangbuiltlinux.github.io/>`_
-+- `Mailing List <https://groups.google.com/forum/#!forum/clang-built-linux>`_: <clang-built-linux@googlegroups.com>
-+- `Issue Tracker <https://github.com/ClangBuiltLinux/linux/issues>`_
-+- IRC: #clangbuiltlinux on chat.freenode.net
-+- `Telegram <https://t.me/ClangBuiltLinux>`_: @ClangBuiltLinux
-+- `Wiki <https://github.com/ClangBuiltLinux/linux/wiki>`_
-+- `Beginner Bugs <https://github.com/ClangBuiltLinux/linux/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22>`_
-+
-+Getting LLVM
-+-------------
-+
-+- http://releases.llvm.org/download.html
-+- https://github.com/llvm/llvm-project
-+- https://llvm.org/docs/GettingStarted.html
-+- https://llvm.org/docs/CMake.html
-+- https://apt.llvm.org/
-+- https://www.archlinux.org/packages/extra/x86_64/llvm/
-+- https://github.com/ClangBuiltLinux/tc-build
-+- https://github.com/ClangBuiltLinux/linux/wiki/Building-Clang-from-source
-+- https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8b85f22b9b69..79e1f9bfb2b6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4124,6 +4124,7 @@ B:	https://github.com/ClangBuiltLinux/linux/issues
- C:	irc://chat.freenode.net/clangbuiltlinux
- S:	Supported
- K:	\b(?i:clang|llvm)\b
-+F:	Documentation/kbuild/llvm.rst
- 
- CLEANCACHE API
- M:	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
--- 
-2.25.0.265.gbab2e86ba0-goog
-
+Bjorn
