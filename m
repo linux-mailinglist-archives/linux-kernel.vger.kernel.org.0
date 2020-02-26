@@ -2,148 +2,286 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD478170433
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:21:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EC0517043B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 17:23:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbgBZQV6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 11:21:58 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55791 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbgBZQV5 (ORCPT
+        id S1727833AbgBZQXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 11:23:02 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:54412 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726583AbgBZQXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:21:57 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j6zRa-0005Au-A1; Wed, 26 Feb 2020 17:21:54 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j6zRZ-0001L4-HM; Wed, 26 Feb 2020 17:21:53 +0100
-Date:   Wed, 26 Feb 2020 17:21:53 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH 4/4] pwm: omap-dmtimer: Implement .apply callback
-Message-ID: <20200226162153.4vlx2z6wurpdy4az@pengutronix.de>
-References: <20200224052135.17278-1-lokeshvutla@ti.com>
- <20200224052135.17278-5-lokeshvutla@ti.com>
- <20200224090706.xsujpc3yiqlmmrmm@pengutronix.de>
- <cee31e10-17b4-1cfb-5c77-a58a142c338d@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cee31e10-17b4-1cfb-5c77-a58a142c338d@ti.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 26 Feb 2020 11:23:01 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QFwciL094267;
+        Wed, 26 Feb 2020 16:22:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
+ bh=CUFUM8CWg9Bv0RK05kpxaVdpg6z7n2Fl0mmPBAi4JN8=;
+ b=m+IJVP5vCkCfS8iEKwDsGcGMvBOVxmCfgXHO95QNBoo05nAmYW1xJ/ltWvBeh/OR/c1f
+ LbL063bIpNNrulPusm38v3rGjhJhKf+7QtXLJdeVQG2w6KvAi8fY/hAjftnkISNlBPRS
+ J7urnGSEgWvWuNaRpOME+IvvE4P4BdqmkVAp/zs6sOhTl3cDhpfciw8duoQ33B2p8f36
+ hYUe/DKd5kuI7dBv2uy+HdRmKaYNdRXp0s8R9ufwtnIMS0KzONerctW+wVYMihuIZeTf
+ rZpadWUljXGKsNPuTI0khr35jemWnGS4g/fRPbctt45i2QcfUWQk1EyXh7j1GxtsnSaq eg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2ydct34r2s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Feb 2020 16:22:21 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QGMJFT016721;
+        Wed, 26 Feb 2020 16:22:20 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2ydcs5dfwf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Feb 2020 16:22:20 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01QGMBfl000498;
+        Wed, 26 Feb 2020 16:22:11 GMT
+Received: from achartre-desktop.us.oracle.com (/10.39.232.60)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 26 Feb 2020 08:22:11 -0800
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+To:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, x86@kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     pbonzini@redhat.com, konrad.wilk@oracle.com,
+        jan.setjeeilers@oracle.com, liran.alon@oracle.com,
+        junaids@google.com, graf@amazon.de, rppt@linux.vnet.ibm.com,
+        kuzuno@gmail.com, mgross@linux.intel.com,
+        alexandre.chartre@oracle.com
+Subject: [RFC PATCH v3 1/7] mm/x86: Introduce kernel Address Space Isolation (ASI)
+Date:   Wed, 26 Feb 2020 17:21:54 +0100
+Message-Id: <1582734120-26757-2-git-send-email-alexandre.chartre@oracle.com>
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1582734120-26757-1-git-send-email-alexandre.chartre@oracle.com>
+References: <1582734120-26757-1-git-send-email-alexandre.chartre@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002260112
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002260111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Lokesh,
+Introduce core functions and structures for implementing Address Space
+Isolation (ASI). Kernel address space isolation provides the ability to
+run some kernel code with a reduced kernel address space.
 
-On Tue, Feb 25, 2020 at 10:31:45AM +0530, Lokesh Vutla wrote:
-> Hi Uwe,
-> 
-> On 24/02/20 2:37 PM, Uwe Kleine-König wrote:
-> > On Mon, Feb 24, 2020 at 10:51:35AM +0530, Lokesh Vutla wrote:
-> >> Implement .apply callback and drop the legacy callbacks(enable, disable,
-> >> config, set_polarity).
-> >>
-> >> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> >> ---
-> >>  drivers/pwm/pwm-omap-dmtimer.c | 141 +++++++++++++++++++--------------
-> >>  1 file changed, 80 insertions(+), 61 deletions(-)
-> >>
-> 
-> [..snip..]
-> 
-> >> -static int pwm_omap_dmtimer_set_polarity(struct pwm_chip *chip,
-> >> -					 struct pwm_device *pwm,
-> >> -					 enum pwm_polarity polarity)
-> >> +/**
-> >> + * pwm_omap_dmtimer_apply() - Changes the state of the pwm omap dm timer.
-> >> + * @chip:	Pointer to PWM controller
-> >> + * @pwm:	Pointer to PWM channel
-> >> + * @state:	New sate to apply
-> >> + *
-> >> + * Return 0 if successfully changed the state else appropriate error.
-> >> + */
-> >> +static int pwm_omap_dmtimer_apply(struct pwm_chip *chip,
-> >> +				  struct pwm_device *pwm,
-> >> +				  const struct pwm_state *state)
-> >>  {
-> >>  	struct pwm_omap_dmtimer_chip *omap = to_pwm_omap_dmtimer_chip(chip);
-> >> +	int ret = 0;
-> >>  
-> >> -	/*
-> >> -	 * PWM core will not call set_polarity while PWM is enabled so it's
-> >> -	 * safe to reconfigure the timer here without stopping it first.
-> >> -	 */
-> >>  	mutex_lock(&omap->mutex);
-> >> -	omap->pdata->set_pwm(omap->dm_timer,
-> >> -			     polarity == PWM_POLARITY_INVERSED,
-> >> -			     true, OMAP_TIMER_TRIGGER_OVERFLOW_AND_COMPARE);
-> >> +
-> >> +	if (pwm_is_enabled(pwm) && !state->enabled) {
-> > 
-> > In my book calling PWM API functions (designed for PWM consumers) is not
-> > so nice. I would prefer you checking the hardware registers or cache the
-> > state locally instead of relying on the core here.
-> 
-> .start and .stop apis does read the hardware registers and check the state
-> before making any changes. Do you want to drop off the pwm_is_enabled(pwm) check
-> here?
+An address space isolation is defined with a struct asi structure and
+associated with an ASI type and a pagetable.
 
-The IMHO more natural approach would be to look into the hardware
-registers instead of asking the framework.
+Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+---
+ arch/x86/include/asm/asi.h |   88 ++++++++++++++++++++++++++++++++++++++++++++
+ arch/x86/mm/Makefile       |    1 +
+ arch/x86/mm/asi.c          |   60 ++++++++++++++++++++++++++++++
+ security/Kconfig           |   10 +++++
+ 4 files changed, 159 insertions(+), 0 deletions(-)
+ create mode 100644 arch/x86/include/asm/asi.h
+ create mode 100644 arch/x86/mm/asi.c
 
-> > It would be great to have a general description at the top of the driver
-> > (like for example drivers/pwm/pwm-sifive.c) that answers things like:
-> > 
-> >  - Does calling .stop completes the currently running period (it
-> >    should)?
-> 
-> Existing driver implementation abruptly stops the cycle. I can make changes such
-> that it completes the currently running period.
-
-That would be good for correctness.
-
-> >  - Does changing polarity, duty_cycle and period complete the running
-> >    period?
-> 
-> - Polarity can be changed only when the pwm is not running. Ill add extra guards
-> to reflect this behavior.
-> - Changing duty_cycle and period does complete the running period and new values
-> gets reflected in next cycle.
-
-Is there are race with the hardware? I.e. can it happen that when a new
-cycle starts just when you configured the new period but not the
-duty_cycle yet a mixed cycle is output?
-
-> >  - How does the hardware behave on disable? (i.e. does it output the
-> >    state the pin is at in that moment? Does it go High-Z?)
-> 
-> Now that I am making changes to complete the current period on disable, the pin
-> goes to Low after disabling(completing the cycle).
-> 
-> Ill add all these points as you mentioned in v2.
-
-Great
-
-Best regards
-Uwe
-
+diff --git a/arch/x86/include/asm/asi.h b/arch/x86/include/asm/asi.h
+new file mode 100644
+index 0000000..844a81f
+--- /dev/null
++++ b/arch/x86/include/asm/asi.h
+@@ -0,0 +1,88 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef ARCH_X86_MM_ASI_H
++#define ARCH_X86_MM_ASI_H
++
++#ifdef CONFIG_ADDRESS_SPACE_ISOLATION
++
++/*
++ * An Address Space Isolation (ASI) is defined with a struct asi and
++ * associated with an ASI type (struct asi_type). All ASIs of the same
++ * type reference the same ASI type.
++ *
++ * An ASI type has a unique PCID prefix (a value in the range [1, 255])
++ * which is used to define the PCID used for the ASI CR3 value. The
++ * first four bits of the ASI PCID come from the kernel PCID (a value
++ * between 1 and 6, see TLB_NR_DYN_ASIDS). The remaining 8 bits are
++ * filled with the ASI PCID prefix.
++ *
++ *   ASI PCID = (ASI Type PCID Prefix << 4) | Kernel PCID
++ *
++ * The ASI PCID is used to optimize TLB flushing when switching between
++ * the kernel and ASI pagetables. The optimization is valid only when
++ * a task switches between ASI of different types. If a task switches
++ * between different ASIs with the same type then the ASI TLB the task
++ * is switching to will always be flushed.
++ */
++
++#define ASI_PCID_PREFIX_SHIFT	4
++#define ASI_PCID_PREFIX_MASK	0xff0
++#define ASI_KERNEL_PCID_MASK	0x00f
++
++/*
++ * We use bit 12 of a pagetable pointer (and so of the CR3 value) as
++ * a way to know if a pointer/CR3 is referencing a full kernel page
++ * table or an ASI page table.
++ *
++ * A full kernel pagetable is always located on the first half of an
++ * 8K buffer, while an ASI pagetable is always located on the second
++ * half of an 8K buffer.
++ */
++#define ASI_PGTABLE_BIT		PAGE_SHIFT
++#define ASI_PGTABLE_MASK	(1 << ASI_PGTABLE_BIT)
++
++#ifndef __ASSEMBLY__
++
++#include <linux/export.h>
++
++struct asi_type {
++	int			pcid_prefix;	/* PCID prefix */
++};
++
++/*
++ * Macro to define and declare an ASI type.
++ *
++ * Declaring an ASI type will also define an inline function
++ * (asi_create_<typename>()) to easily create an ASI of the
++ * specified type.
++ */
++#define DEFINE_ASI_TYPE(name, pcid_prefix)			\
++	struct asi_type asi_type_ ## name = {			\
++		pcid_prefix,					\
++	};							\
++	EXPORT_SYMBOL(asi_type_ ## name)
++
++#define DECLARE_ASI_TYPE(name)				\
++	extern struct asi_type asi_type_ ## name;	\
++	DECLARE_ASI_CREATE(name)
++
++#define DECLARE_ASI_CREATE(name)			\
++static inline struct asi *asi_create_ ## name(void)	\
++{							\
++	return asi_create(&asi_type_ ## name);		\
++}
++
++struct asi {
++	struct asi_type		*type;		/* ASI type */
++	pgd_t			*pagetable;	/* ASI pagetable */
++	unsigned long		base_cr3;	/* base ASI CR3 */
++};
++
++extern struct asi *asi_create(struct asi_type *type);
++extern void asi_destroy(struct asi *asi);
++extern void asi_set_pagetable(struct asi *asi, pgd_t *pagetable);
++
++#endif	/* __ASSEMBLY__ */
++
++#endif	/* CONFIG_ADDRESS_SPACE_ISOLATION */
++
++#endif
+diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
+index 3b89c20..99c56ed 100644
+--- a/arch/x86/mm/Makefile
++++ b/arch/x86/mm/Makefile
+@@ -49,6 +49,7 @@ obj-$(CONFIG_X86_INTEL_MPX)			+= mpx.o
+ obj-$(CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS)	+= pkeys.o
+ obj-$(CONFIG_RANDOMIZE_MEMORY)			+= kaslr.o
+ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
++obj-$(CONFIG_ADDRESS_SPACE_ISOLATION)		+= asi.o
+ 
+ obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
+ obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
+diff --git a/arch/x86/mm/asi.c b/arch/x86/mm/asi.c
+new file mode 100644
+index 0000000..0a0ac9d
+--- /dev/null
++++ b/arch/x86/mm/asi.c
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019, 2020, Oracle and/or its affiliates.
++ *
++ * Kernel Address Space Isolation (ASI)
++ */
++
++#include <linux/mm.h>
++#include <linux/slab.h>
++
++#include <asm/asi.h>
++#include <asm/bug.h>
++
++struct asi *asi_create(struct asi_type *type)
++{
++	struct asi *asi;
++
++	if (!type)
++		return NULL;
++
++	asi = kzalloc(sizeof(*asi), GFP_KERNEL);
++	if (!asi)
++		return NULL;
++
++	asi->type = type;
++
++	return asi;
++}
++EXPORT_SYMBOL(asi_create);
++
++void asi_destroy(struct asi *asi)
++{
++	kfree(asi);
++}
++EXPORT_SYMBOL(asi_destroy);
++
++void asi_set_pagetable(struct asi *asi, pgd_t *pagetable)
++{
++	/*
++	 * Check that the specified pagetable is properly aligned to be
++	 * used as an ASI pagetable. If not, the pagetable is ignored
++	 * and entering/exiting ASI will do nothing.
++	 */
++	if (!(((unsigned long)pagetable) & ASI_PGTABLE_MASK)) {
++		WARN(1, "ASI %p: invalid ASI pagetable", asi);
++		asi->pagetable = NULL;
++		return;
++	}
++	asi->pagetable = pagetable;
++
++	/*
++	 * Initialize the invariant part of the ASI CR3 value. We will
++	 * just have to complete the PCID with the kernel PCID before
++	 * using it.
++	 */
++	asi->base_cr3 = __sme_pa(asi->pagetable) |
++		(asi->type->pcid_prefix << ASI_PCID_PREFIX_SHIFT);
++
++}
++EXPORT_SYMBOL(asi_set_pagetable);
+diff --git a/security/Kconfig b/security/Kconfig
+index 2a1a2d3..fe0515a 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -65,6 +65,16 @@ config PAGE_TABLE_ISOLATION
+ 
+ 	  See Documentation/x86/pti.rst for more details.
+ 
++config ADDRESS_SPACE_ISOLATION
++	bool "Allow code to run with a reduced kernel address space"
++	default y
++	depends on (X86_64 || X86_PAE) && !UML
++	help
++	   This feature provides the ability to run some kernel code
++	   with a reduced kernel address space. This can be used to
++	   mitigate speculative execution attacks which are able to
++	   leak data between sibling CPU hyper-threads.
++
+ config SECURITY_INFINIBAND
+ 	bool "Infiniband Security Hooks"
+ 	depends on SECURITY && INFINIBAND
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+1.7.1
+
