@@ -2,100 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F38D1701C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:00:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 002AF1701C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 16:01:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbgBZPA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 10:00:57 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28496 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727078AbgBZPA4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:00:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582729254;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XEQXtA92WxEoyYVbPjA9RQHILAt7XDfCFPviC5NGtgE=;
-        b=CFkZivHSsHlsIcB7gII0Jbr0m8dLTjN0o8b5RcoPbamHf3yiC3NU4cANvcv0rz3GH1Hadv
-        qUVDAA0zcK7x8jQN6UOEtIGLhXnUTOGsMk3hc+ls0JZvahpgXOrSmAMOVSakoKb/MytmTj
-        PynM9AkAFyVAg6xgLVy/DRHhfCLOAKs=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-316-YYj90b9yPDCd6RT60cmDAA-1; Wed, 26 Feb 2020 10:00:52 -0500
-X-MC-Unique: YYj90b9yPDCd6RT60cmDAA-1
-Received: by mail-wm1-f69.google.com with SMTP id n17so760660wmk.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 07:00:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=XEQXtA92WxEoyYVbPjA9RQHILAt7XDfCFPviC5NGtgE=;
-        b=KvU6RAiym2NFQpI8fpG051SReBi/YW7kgq9XTP0FqjF+UQNM6hbp2m8At7m/po+bDi
-         7Q986i6qULOUk6jVoLUd0yoss5F0Ixg7wqjfGtSDW91vF8WApWWVQ48SmKpvIUmrAbgC
-         J7KW/sFYYDTzBkHI4WTCy2FGJQnI2RYDbfHGpuGrNuDjMOIoDa9NDjwUlaNbSjmD+v+p
-         fny1eIengDr5L0afb7mLmtYGh+yYGmAOswFmLsm1Ps5N6DXhW9bwf2eIxDg4ZCD69Jdv
-         d4ElAZUxH6U5fmdA0tsqfiIDjjCBcXNYotVsdBDGQTtAo5DIxrAQ76x/b0n5fHMr5GOQ
-         b3NQ==
-X-Gm-Message-State: APjAAAWZi3BDwjvOfPRGsp90DI0E/S3XxF7/g8D1YysDWeHpiST0wXCc
-        R8zgH1aG3AvUzJKF1kB2FePnL6qE3dPWgFYuDA/erp2rtFAjz2Yld8AjtaR9J0Yh9+kamBfKJ42
-        /F2gHEKxJMPQj+G4jzz6gfFRk
-X-Received: by 2002:a1c:dcd5:: with SMTP id t204mr6009904wmg.34.1582729251468;
-        Wed, 26 Feb 2020 07:00:51 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwZJyq+T6M+C5aDD/qf2sTbnPq9hAnwBKqfalQuDoDtsoS99uVrPXleCjhiwjWh3hyPEEv7Cg==
-X-Received: by 2002:a1c:dcd5:: with SMTP id t204mr6009871wmg.34.1582729251234;
-        Wed, 26 Feb 2020 07:00:51 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id x10sm3320837wrv.60.2020.02.26.07.00.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 07:00:50 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id BBFCD180362; Wed, 26 Feb 2020 16:00:49 +0100 (CET)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Luigi Rizzo <lrizzo@google.com>, linux-kernel@vger.kernel.org,
-        mhiramat@kernel.org, akpm@linux-foundation.org,
-        gregkh@linuxfoundation.org, naveen.n.rao@linux.ibm.com,
-        ardb@kernel.org, rizzo@iet.unipi.it, pabeni@redhat.com,
-        giuseppe.lettieri@unipi.it, hawk@kernel.org, mingo@redhat.com,
-        acme@kernel.org, rostedt@goodmis.org, peterz@infradead.org
-Cc:     Luigi Rizzo <lrizzo@google.com>
-Subject: Re: [PATCH v3 0/2] kstats: kernel metric collector
-In-Reply-To: <20200226135027.34538-1-lrizzo@google.com>
-References: <20200226135027.34538-1-lrizzo@google.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Wed, 26 Feb 2020 16:00:49 +0100
-Message-ID: <87ftexz93y.fsf@toke.dk>
+        id S1727527AbgBZPAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 10:00:55 -0500
+Received: from mga04.intel.com ([192.55.52.120]:30051 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727468AbgBZPAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 10:00:55 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 07:00:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,488,1574150400"; 
+   d="scan'208";a="231425508"
+Received: from avgorshk-mobl.ccr.corp.intel.com (HELO localhost) ([10.252.15.208])
+  by orsmga008.jf.intel.com with ESMTP; 26 Feb 2020 07:00:51 -0800
+Date:   Wed, 26 Feb 2020 17:00:51 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, aik@ozlabs.ru,
+        david@gibson.dropbear.id.au, linux-kernel@vger.kernel.org,
+        nayna@linux.vnet.ibm.com, gcwilson@linux.ibm.com, jgg@ziepe.ca
+Subject: Re: [PATCH v2 2/4] tpm: ibmvtpm: Wait for buffer to be set before
+ proceeding
+Message-ID: <20200226150051.GA3407@linux.intel.com>
+References: <20200213202329.898607-1-stefanb@linux.vnet.ibm.com>
+ <20200213202329.898607-3-stefanb@linux.vnet.ibm.com>
+ <20200225165744.GD15662@linux.intel.com>
+ <8b61d1b4-8503-88e7-271f-da2ea0fc437f@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8b61d1b4-8503-88e7-271f-da2ea0fc437f@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Luigi Rizzo <lrizzo@google.com> writes:
+On Tue, Feb 25, 2020 at 01:14:32PM -0500, Stefan Berger wrote:
+> On 2/25/20 11:57 AM, Jarkko Sakkinen wrote:
+> > On Thu, Feb 13, 2020 at 03:23:27PM -0500, Stefan Berger wrote:
+> > > From: Stefan Berger <stefanb@linux.ibm.com>
+> > > 
+> > > Synchronize with the results from the CRQs before continuing with
+> > > the initialization. This avoids trying to send TPM commands while
+> > > the rtce buffer has not been allocated, yet.
+> > What is CRQ anyway an acronym of?
+> 
+> Command request queue.
+> 
+> 
+> > 
+> > > This patch fixes an existing race condition that may occurr if the
+> > > hypervisor does not quickly respond to the VTPM_GET_RTCE_BUFFER_SIZE
+> > > request sent during initialization and therefore the ibmvtpm->rtce_buf
+> > > has not been allocated at the time the first TPM command is sent.
+> > If it fixes a race condition, why doesn't it have a fixes tag?
+> 
+> Which commit should I mention?
 
-> This patchset introduces a small library to collect per-cpu samples and
-> accumulate distributions to be exported through debugfs.
->
-> This v3 series addresses some initial comments (mostly style fixes in the
-> code) and revises commit logs.
+The one that introduced the race condition if there is such.
 
-Could you please add a proper changelog spanning all versions of the
-patch as you iterate?
-
-As for the idea itself; picking up this argument you made on v1:
-
-> The tracepoint/kprobe/kretprobe solution is much more expensive --
-> from my measurements, the hooks that invoke the various handlers take
-> ~250ns with hot cache, 1500+ns with cold cache, and tracing an empty
-> function this way reports 90ns with hot cache, 500ns with cold cache.
-
-I think it would be good if you could include an equivalent BPF-based
-implementation of your instrumentation example so people can (a) see the
-difference for themselves and get a better idea of how the approaches
-differ in a concrete case and (b) quantify the difference in performance
-between the two implementations.
-
--Toke
-
+/Jarkko
