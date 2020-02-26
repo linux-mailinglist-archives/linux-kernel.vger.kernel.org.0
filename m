@@ -2,146 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A16316FCD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 11:58:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6195216FCD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 11:59:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728140AbgBZK6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 05:58:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46726 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727377AbgBZK6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 05:58:47 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D5F35AD8E;
-        Wed, 26 Feb 2020 10:58:44 +0000 (UTC)
-Subject: Re: [PATCH] drm/bridge: analogix-anx6345: fix set of link bandwidth
-To:     Icenowy Zheng <icenowy@aosc.io>, Torsten Duwe <duwe@lst.de>
-Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Maxime Ripard <maxime@cerno.tech>
-References: <20200221165127.813325-1-icenowy@aosc.io>
- <20200221171328.GC6928@lst.de> <1E7BDB0F-639B-42BB-A4B4-A4C8CF94EBE0@aosc.io>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- mQENBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAG0J1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPokBVAQTAQgAPhYh
- BHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEGgNwR1TC3ojR80H/jH+vYavwQ+TvO8ksXL9JQWc3IFSiGpuSVXLCdg62AmR
- irxW+qCwNncNQyb9rd30gzdectSkPWL3KSqEResBe24IbA5/jSkPweJasgXtfhuyoeCJ6PXo
- clQQGKIoFIAEv1s8l0ggPZswvCinegl1diyJXUXmdEJRTWYAtxn/atut1o6Giv6D2qmYbXN7
- mneMC5MzlLaJKUtoH7U/IjVw1sx2qtxAZGKVm4RZxPnMCp9E1MAr5t4dP5gJCIiqsdrVqI6i
- KupZstMxstPU//azmz7ZWWxT0JzgJqZSvPYx/SATeexTYBP47YFyri4jnsty2ErS91E6H8os
- Bv6pnSn7eAq5AQ0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRH
- UE9eosYbT6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgT
- RjP+qbU63Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+R
- dhgATnWWGKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zb
- ehDda8lvhFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r
- 12+lqdsAEQEAAYkBPAQYAQgAJhYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsMBQkD
- wmcAAAoJEGgNwR1TC3ojpfcIAInwP5OlcEKokTnHCiDTz4Ony4GnHRP2fXATQZCKxmu4AJY2
- h9ifw9Nf2TjCZ6AMvC3thAN0rFDj55N9l4s1CpaDo4J+0fkrHuyNacnT206CeJV1E7NYntxU
- n+LSiRrOdywn6erjxRi9EYTVLCHcDhBEjKmFZfg4AM4GZMWX1lg0+eHbd5oL1as28WvvI/uI
- aMyV8RbyXot1r/8QLlWldU3NrTF5p7TMU2y3ZH2mf5suSKHAMtbE4jKJ8ZHFOo3GhLgjVrBW
- HE9JXO08xKkgD+w6v83+nomsEuf6C6LYrqY/tsZvyEX6zN8CtirPdPWu/VXNRYAl/lat7lSI
- 3H26qrE=
-Message-ID: <f4109d23-4591-1c52-2822-0a2ba358fe1f@suse.de>
-Date:   Wed, 26 Feb 2020 11:58:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728010AbgBZK7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 05:59:38 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:36780 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbgBZK7h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 05:59:37 -0500
+Received: by mail-vk1-f195.google.com with SMTP id i4so666381vkc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 02:59:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=uzkBPRXvCt/DLxmv4J4lMqCgFgNyDxmGoOdWkPBD3nk=;
+        b=OhPuVf9z/q88Fz9gBG+rCDnXbN2wZ0M4eEr3UTUhPO4hvRcH8g9qBL5+ypRnux65R5
+         G6Xu8+pRWxDusCVGOAuicKZOhwDWSOpxfyTCqJVFjFxX8/FW6aN744pleUf1t7p/F7Ln
+         1UOtr9yRdEFC6DPC+HWzEdp2HMfQUU3hTPDcW00X0+jLrFjqeeD5fdN6aMFW9ZIjXAp5
+         iA0NJ+YVf11P05w22zju3bk7CCj78UCac87yClDCTDR+ycGl0noutuIbreiJKbeHUWKQ
+         2rPgxoRyt1Lg8+bHYP9k0JHwGwRYRqaeim3RVc9cVRYNj/lQTYv/7RAEXZVm/1GA/tHN
+         NTxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=uzkBPRXvCt/DLxmv4J4lMqCgFgNyDxmGoOdWkPBD3nk=;
+        b=YsC5c8JXHF2UdbZCsiOzFeoFoTa5p01Li7MFddS5I9SFC0DbdmG41sjkPSpX7RG5mw
+         NJHEpRbwEOeoDs2m63afEcv8fpjph6g2alLvCkWDIg+r+3eiiwcOV1XygLOKAP/G62sX
+         M93Q4MO00tOwJ9dSivyaErTpXaf/3zLzMI0r+1K40k7gbuMJgg+7pcZijJ1XGuRt5/5M
+         mpNpPBjSmv89txZ9Lugms8sIb/B6Jri9Fwixs4lpfcyMkCHbDfgyBTRbJDTuvvChgPTI
+         szcwAuajwp6IiWkd504elGVmmbclAQ1DFLQTynd4+jPk4vulVMyaj7DhB9eoab6Zf5Ga
+         YmLw==
+X-Gm-Message-State: APjAAAUbsCUVOJKzxOo675Pd1Nox2zlCzVz4aU4cNQYu39hYmExqbJEt
+        VA26xBdetsthu4Gz5adzNSwRi/U0QyeFDbbO4v0=
+X-Google-Smtp-Source: APXvYqwHaHylBru7EYGH5HtFvBmfN97/O8Zf1+rI3zZgT3X+aqpPp7ILN1phmOPKPaaxMMVaH3XPkm8dRdhI5tWkZX8=
+X-Received: by 2002:a1f:4193:: with SMTP id o141mr3363917vka.19.1582714777091;
+ Wed, 26 Feb 2020 02:59:37 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1E7BDB0F-639B-42BB-A4B4-A4C8CF94EBE0@aosc.io>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ab0:13f3:0:0:0:0:0 with HTTP; Wed, 26 Feb 2020 02:59:36
+ -0800 (PST)
+From:   alfasasi kelani <alfaksasi1960@gmail.com>
+Date:   Wed, 26 Feb 2020 10:59:36 +0000
+Message-ID: <CAHwWizcu9m2wcYHdA+aNBKXNEboQsw_gXhyZGzZLvnjfTLrkAQ@mail.gmail.com>
+Subject: hope
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Iceynow,
+Good day , i write to inform you as auditor onbehalf of ORABANK.
 
-Torsten asked me to merge your patch via drm-misc-next. I'd add the
-additional cc and fixes tags that Torsten listed. Are you OK with that?
+Transaction number 000399577OBK have been approved for release
+through VISA ELECTRON ATM Card.
 
-Best regards
-Thomas
+Note that you are required to reconfirm your complete mailing address
+for delivery.
 
-Am 22.02.20 um 03:43 schrieb Icenowy Zheng:
-> 
-> 
-> 于 2020年2月22日 GMT+08:00 上午1:13:28, Torsten Duwe <duwe@lst.de> 写到:
->> On Sat, Feb 22, 2020 at 12:51:27AM +0800, Icenowy Zheng wrote:
->>> Current code tries to store the link rate (in bps, which is a big
->>> number) in a u8, which surely overflow. Then it's converted back to
->>> bandwidth code (which is thus 0) and written to the chip.
->>>
->>> The code sometimes works because the chip will automatically fallback
->> to
->>> the lowest possible DP link rate (1.62Gbps) when get the invalid
->> value.
->>> However, on the eDP panel of Olimex TERES-I, which wants 2.7Gbps
->> link,
->>> it failed.
->>>
->>> As we had already read the link bandwidth as bandwidth code in
->> earlier
->>> code (to check whether it is supported), use it when setting
->> bandwidth,
->>> instead of converting it to link rate and then converting back.
->>>
->>> Fixes: e1cff82c1097 ("drm/bridge: fix anx6345 compilation for v5.5")
->>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> ---
->>>  drivers/gpu/drm/bridge/analogix/analogix-anx6345.c | 3 +--
->>>  1 file changed, 1 insertion(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
->> b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
->>> index 56f55c53abfd..2dfa2fd2a23b 100644
->>> --- a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
->>> +++ b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
->>> @@ -210,8 +210,7 @@ static int anx6345_dp_link_training(struct
->> anx6345 *anx6345)
->>>  	if (err)
->>>  		return err;
->>>  
->>> -	dpcd[0] = drm_dp_max_link_rate(anx6345->dpcd);
->>> -	dpcd[0] = drm_dp_link_rate_to_bw_code(dpcd[0]);
->>> +	dpcd[0] = dp_bw;
->>
->> Why do you make this assignment and not use dp_bw directly in the call?
-> 
-> Because the dpcd array is then written as a continous array
-> back to DPCD.
-> 
->>
->>>  	err = regmap_write(anx6345->map[I2C_IDX_DPTX],
->>>  			   SP_DP_MAIN_LINK_BW_SET_REG, dpcd[0]);
->>                                                       ^^^^^^
->>>  	if (err)
->>> -- 
->>> 2.24.1
->>
->> BTW, my version is only a bit more verbose:
->>
->> https://patchwork.freedesktop.org/patch/354344/
->>
->> 	Torsten
-> 
+Reconfirm code 000399577OBK to the Director Mr. Patrick Masrellet on ( (
+atm.orabank@iname.com )) for further action.
 
--- 
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-(HRB 36809, AG Nürnberg)
-Geschäftsführer: Felix Imendörffer
+Regards.
+Kelani Alfasasi( Esq)
