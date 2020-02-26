@@ -2,53 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B3A216F93B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:11:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 476A716F94B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:12:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbgBZIK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 03:10:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37296 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727709AbgBZIKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 03:10:52 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDE2A24650;
-        Wed, 26 Feb 2020 08:10:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582704651;
-        bh=b4WNO08j3CpteKtJyCgXEieJzjysEvoALEM8S6HNPII=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jAQDAQNjQtfWzSk5WI9lp4qS6LFd8fSlh4NLanUuVcD45OWhPPEXh6oht7DP7wOjR
-         XjMh7+dmN6id5qBuy0UXkBwdeXj52eqMndxpPxBM2IUCkoNBZY2/aIBRs+6ZJkDkTH
-         Tkn6q91v45WwXRAsD1xM/c0BNxNsXtM75v7vOocs=
-Date:   Wed, 26 Feb 2020 09:10:48 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Luigi Rizzo <lrizzo@google.com>
-Cc:     linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        akpm@linux-foundation.org, naveen.n.rao@linux.ibm.com,
-        changbin.du@intel.com, ardb@kernel.org, rizzo@iet.unipi.it,
-        pabeni@redhat.com, toke@redhat.com, hawk@kernel.org
-Subject: Re: [PATCH 0/2] quickstats, kernel sample collector
-Message-ID: <20200226081048.GC22801@kroah.com>
-References: <20200226023027.218365-1-lrizzo@google.com>
+        id S1727823AbgBZILz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 03:11:55 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:3030 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727591AbgBZILz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 03:11:55 -0500
+X-UUID: 2c6a18f2fbf34161a63d93c2b0500c6a-20200226
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=nmvexf8wPTTC/sBsarWrbzfbzx8vw18pW+m/9vRVm3Y=;
+        b=P0FLNMHf4yn6FR6P5s1ZeaR744SGgTubTHcQzl0GEYbpR6PO/qJTh9OTj24ZK/ruVMHWfnP5IvBrEzgmWdj2kSLdiaywyt2mnoYZtFce2toxlE5mhgaJpheM6QkyZ/jAmBi+jDc149WS7Odv/ebWMapqcdtgLhjz505Kbis4Cys=;
+X-UUID: 2c6a18f2fbf34161a63d93c2b0500c6a-20200226
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1278026201; Wed, 26 Feb 2020 16:11:49 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 26 Feb 2020 16:09:46 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 26 Feb 2020 16:11:47 +0800
+Message-ID: <1582704699.11957.0.camel@mtksdaap41>
+Subject: Re: [PATCH v9 3/5] dt-bindings: display: mediatek: dpi sample data
+ in dual edge support
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Jitao Shi <jitao.shi@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
+        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <stonea168@163.com>,
+        <huijuan.xie@mediatek.com>
+Date:   Wed, 26 Feb 2020 16:11:39 +0800
+In-Reply-To: <20200226053238.31646-4-jitao.shi@mediatek.com>
+References: <20200226053238.31646-1-jitao.shi@mediatek.com>
+         <20200226053238.31646-4-jitao.shi@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226023027.218365-1-lrizzo@google.com>
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 06:30:25PM -0800, Luigi Rizzo wrote:
-> This patchset introduces a small library to collect per-cpu samples and
-> accumulate distributions to be exported through debugfs.
+SGksIEppdGFvOg0KDQpPbiBXZWQsIDIwMjAtMDItMjYgYXQgMTM6MzIgKzA4MDAsIEppdGFvIFNo
+aSB3cm90ZToNCj4gQWRkIHByb3BlcnR5ICJwY2xrLXNhbXBsZSIgdG8gY29uZmlnIHRoZSBkcGkg
+c2FtcGxlIG9uIGZhbGxpbmcgKDApLA0KPiByaXNpbmcgKDEpLCBib3RoIGZhbGxpbmcgYW5kIHJp
+c2luZyAoMikuDQo+IA0KDQpSZXZpZXdlZC1ieTogQ0sgSHUgPGNrLmh1QG1lZGlhdGVrLmNvbT4N
+Cg0KPiBTaWduZWQtb2ZmLWJ5OiBKaXRhbyBTaGkgPGppdGFvLnNoaUBtZWRpYXRlay5jb20+DQo+
+IC0tLQ0KPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9tZWRpYXRlay9tZWRpYXRl
+ayxkcGkudHh0ICAgICAgIHwgMiArKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
+KQ0KPiANCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9k
+aXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvZGlzcGxheS9tZWRpYXRlay9tZWRpYXRlayxkcGkudHh0DQo+IGluZGV4IGE3
+YjFiOGJmYjY1ZS4uNDI5OWFhMWFkZjQ1IDEwMDY0NA0KPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9tZWRpYXRlay9tZWRpYXRlayxkcGkudHh0DQo+ICsr
+KyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21l
+ZGlhdGVrLGRwaS50eHQNCj4gQEAgLTIwLDYgKzIwLDcgQEAgUmVxdWlyZWQgcHJvcGVydGllczoN
+Cj4gIE9wdGlvbmFsIHByb3BlcnRpZXM6DQo+ICAtIHBpbmN0cmwtbmFtZXM6IENvbnRhaW4gImdw
+aW9tb2RlIiBhbmQgImRwaW1vZGUiLg0KPiAgICBwaW5jdHJsLW5hbWVzIHNlZSBEb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybHBpbmN0cmwtYmluZGluZ3MudHh0DQo+ICst
+IHBjbGstc2FtcGxlOiByZWZlciBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVk
+aWEvdmlkZW8taW50ZXJmYWNlcy50eHQuDQo+ICANCj4gIEV4YW1wbGU6DQo+ICANCj4gQEAgLTM3
+LDYgKzM4LDcgQEAgZHBpMDogZHBpQDE0MDFkMDAwIHsNCj4gIA0KPiAgCXBvcnQgew0KPiAgCQlk
+cGkwX291dDogZW5kcG9pbnQgew0KPiArCQkJcGNsay1zYW1wbGUgPSAwOw0KPiAgCQkJcmVtb3Rl
+LWVuZHBvaW50ID0gPCZoZG1pMF9pbj47DQo+ICAJCX07DQo+ICAJfTsNCg0K
 
-Shouldn't this be part of the tracing infrastructure instead of being
-"stand-alone"?
-
-thanks,
-
-greg k-h
