@@ -2,62 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D48B170C68
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 00:13:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC165170C6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 00:16:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbgBZXNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 18:13:53 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40555 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727749AbgBZXNx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 18:13:53 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a142so1349492oii.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 15:13:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=LM7pNY65/Ack5oM3mhOihMwCzx2wt+oOTbe6BoaJpYqw3XhDXJky513WFETKxO3Qhg
-         HqGR/gqwBfBRANt/ihcgxpmefnd7AKlrhQjZw0c0iLv7t2HlO+N+gWW7HVE9v1yG+av/
-         2r9bnVpYQ8dRQ+tdb+2K2LByxJBJU1ADXK4RtKfdZvPO83+T5g/yaIAfuYSxX5f1Yo+c
-         hjFRsKJGl1dWW+edpj9tHmu7xSllaX9WEE2cuQZ7jkUQiJFU0KolEgde37+mKhMqflvg
-         m7wfID42YvwK+CCDvrZOLcGfi290DwZGUeCgXHXmFC/Si3d34mSqDg2jkMm1PHDPPLTL
-         ElpQ==
-X-Gm-Message-State: APjAAAXTqHPzC91z4SzpEWuQ4ae/6kclgEnRqWiywQ7c7RtuRE3n+Odd
-        VM1UFshJNYSRxdab+mNqWyaCJ4az
-X-Google-Smtp-Source: APXvYqwAxbREtJds6jbJUTGmza2mEVUDWAADxyu2wuggfpc+mCxSvPWaw2UY3vgPNcJpSCyotDZH7g==
-X-Received: by 2002:aca:b703:: with SMTP id h3mr1155393oif.148.1582758832520;
-        Wed, 26 Feb 2020 15:13:52 -0800 (PST)
-Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
-        by smtp.gmail.com with ESMTPSA id r26sm268099otc.66.2020.02.26.15.13.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Feb 2020 15:13:51 -0800 (PST)
-Subject: Re: [PATCH v11 6/9] nvme: Export existing nvme core functions
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
-        Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>
-References: <20200220203652.26734-1-logang@deltatee.com>
- <20200220203652.26734-7-logang@deltatee.com>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <ae8b6be5-92d9-f6f0-6240-d395aada10b0@grimberg.me>
-Date:   Wed, 26 Feb 2020 15:13:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727922AbgBZXQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 18:16:19 -0500
+Received: from mga04.intel.com ([192.55.52.120]:3614 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727749AbgBZXQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 18:16:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 15:16:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,489,1574150400"; 
+   d="scan'208";a="410797453"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by orsmga005.jf.intel.com with ESMTP; 26 Feb 2020 15:16:18 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jacob Keller <jacob.e.keller@intel.com>
+Subject: [PATCH] x86/pkeys: Manually set X86_FEATURE_OSPKE to preserve existing changes
+Date:   Wed, 26 Feb 2020 15:16:15 -0800
+Message-Id: <20200226231615.13664-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20200220203652.26734-7-logang@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Explicitly set X86_FEATURE_OSPKE via set_cpu_cap() instead of calling
+get_cpu_cap() to pull the feature bit from CPUID after enabling CR4.PKE.
+Invoking get_cpu_cap() effectively wipes out any {set,clear}_cpu_cap()
+changes that were made between this_cpu->c_init() and setup_pku(), as
+all non-synthetic feature words are reinitialized from the CPU's CPUID
+values.
+
+Blasting away capability updates manifests most visibility when running
+on a VMX capable CPU, but with VMX disabled by BIOS.  To indicate that
+VMX is disabled, init_ia32_feat_ctl() clears X86_FEATURE_VMX, using
+clear_cpu_cap() instead of setup_clear_cpu_cap() so that KVM can report
+which CPU is misconfigured (KVM needs to probe every CPU anyways).
+Restoring X86_FEATURE_VMX from CPUID causes KVM to think VMX is enabled,
+ultimately leading to an unexpected #GP when KVM attempts to do VMXON.
+
+Arguably, init_ia32_feat_ctl() should use setup_clear_cpu_cap() and let
+KVM figure out a different way to report the misconfigured CPU, but VMX
+is not the only feature bit that is affected, i.e. there is precedent
+that tweaking feature bits via {set,clear}_cpu_cap() after ->c_init()
+is expected to work.  Most notably, x86_init_rdrand()'s clearing of
+X86_FEATURE_RDRAND when RDRAND malfunctions is also overwritten.
+
+Fixes: 0697694564c8 ("x86/mm/pkeys: Actually enable Memory Protection Keys in the CPU")
+Cc: stable@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Reported-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+
+I considered adding a WARN_ON check of cpuid_ecx(7) to ensure OSPKE is set
+and bail if it's not, but that seemed like useless paranoia.
+
+I don't love that using clear_cpu_cap() is a bit fragile, especially where
+init_ia32_feat_ctl() is concerned, but the existing RDRAND usage, which
+predates setup_pku(), makes a pretty strong argument that setup_pku() is
+in the wrong.
+
+The other potential issue is late microcode updates, which refreshes the
+feature bits from CPUID, but at least in that case the kernel will print a
+warning if something changed.
+
+ arch/x86/kernel/cpu/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 52c9bfbbdb2a..4cdb123ff66a 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -445,7 +445,7 @@ static __always_inline void setup_pku(struct cpuinfo_x86 *c)
+ 	 * cpuid bit to be set.  We need to ensure that we
+ 	 * update that bit in this CPU's "cpu_info".
+ 	 */
+-	get_cpu_cap(c);
++	set_cpu_cap(c, X86_FEATURE_OSPKE);
+ }
+ 
+ #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+-- 
+2.24.1
+
