@@ -2,78 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1410170CAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 00:40:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD21B170CB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 00:43:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbgBZXkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 18:40:32 -0500
-Received: from mga17.intel.com ([192.55.52.151]:38495 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbgBZXkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 18:40:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 15:40:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,489,1574150400"; 
-   d="scan'208";a="350513012"
-Received: from jekeller-mobl1.amr.corp.intel.com (HELO [134.134.177.84]) ([134.134.177.84])
-  by fmsmga001.fm.intel.com with ESMTP; 26 Feb 2020 15:40:30 -0800
-Subject: Re: [PATCH] x86/pkeys: Manually set X86_FEATURE_OSPKE to preserve
- existing changes
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>
-References: <20200226231615.13664-1-sean.j.christopherson@intel.com>
- <950b249a-f47d-0adc-80dd-68d397e4de4f@intel.com>
-From:   Jacob Keller <jacob.e.keller@intel.com>
-Organization: Intel Corporation
-Message-ID: <3d869bdf-5ca7-d2ea-cc85-eb461b37b207@intel.com>
-Date:   Wed, 26 Feb 2020 15:40:30 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727992AbgBZXn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 18:43:26 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35935 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727935AbgBZXn0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 18:43:26 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1j76Kn-0006bS-6f; Wed, 26 Feb 2020 23:43:21 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-nfs@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] NFS: check for allocation failure from mempool_alloc
+Date:   Wed, 26 Feb 2020 23:43:20 +0000
+Message-Id: <20200226234320.7722-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <950b249a-f47d-0adc-80dd-68d397e4de4f@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+It is possible for mempool_alloc to return null when using
+the GFP_KERNEL flag, so return NULL and avoid a null pointer
+dereference on the following memset of the null pointer.
 
-On 2/26/2020 3:32 PM, Dave Hansen wrote:
-> On 2/26/20 3:16 PM, Sean Christopherson wrote:
->> Explicitly set X86_FEATURE_OSPKE via set_cpu_cap() instead of calling
->> get_cpu_cap() to pull the feature bit from CPUID after enabling CR4.PKE.
-> 
-> First of all,
-> 
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-> 
-> I don't remember whether it was you or someone else inside Intel, but
-> someone was tripping over this recently.
-> 
-> I do think we need a bit more care in how we deal with dynamic CPUID
-> bits.  I think you'd agree that it's a bit haphazard.  For instance, I
-> went looking for where we set X86_FEATURE_OSXSAVE after the
-> 
->         cr4_set_bits(X86_CR4_OSXSAVE);
-> 
-> inside fpu__init_cpu_xstate() makes it appear.  I couldn't find one, not
-> that we would notice since we suppress it from /proc/cpuinfo.
-> 
+Addresses-Coverity: ("Dereference null return")
+Fixes: 2b17d725f9be ("NFS: Clean up writeback code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/nfs/write.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index c478b772cc49..7ca036660dd1 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -106,6 +106,9 @@ static struct nfs_pgio_header *nfs_writehdr_alloc(void)
+ {
+ 	struct nfs_pgio_header *p = mempool_alloc(nfs_wdata_mempool, GFP_KERNEL);
+ 
++	if (!p)
++		return NULL;
++
+ 	memset(p, 0, sizeof(*p));
+ 	p->rw_mode = FMODE_WRITE;
+ 	return p;
+-- 
+2.25.0
 
-I tripped over it. It's possible someone else has as well, but I haven't
-heard from anyone else.
-
-Thanks,
-Jake
