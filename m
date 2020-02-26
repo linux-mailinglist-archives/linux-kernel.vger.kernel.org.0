@@ -2,125 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1CB716FE9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:04:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29E4416FEA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 13:06:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbgBZMEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 07:04:40 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:33768 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726682AbgBZMEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 07:04:39 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48SDxc4p9rz9txW1;
-        Wed, 26 Feb 2020 13:04:36 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=EBCfj8g9; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id nDphmj0PYDWa; Wed, 26 Feb 2020 13:04:36 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48SDxc3Y7cz9txVB;
-        Wed, 26 Feb 2020 13:04:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1582718676; bh=iBDRtJqj8+RLwsXxk1q4sBZWsYibq9STHtiaZIrsCtU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=EBCfj8g9ufMcIT4ZxPebcV0g3e6XcAaolPUUeOeqW/yxxKiLGcaPVw6IpPU/+y6cf
-         cJ9JdkH/qMfJG05Fcc9il87lfraXy3f97IX2TpXyIBUZr/UNsqHjBs7QZapc4DjLwe
-         rM9XWNOIIUuw+J097cF6p21X6CBD94jw8TyES8Ks=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BCF8D8B844;
-        Wed, 26 Feb 2020 13:04:37 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id n5azio8iaWTP; Wed, 26 Feb 2020 13:04:37 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F2C3D8B776;
-        Wed, 26 Feb 2020 13:04:36 +0100 (CET)
-Subject: Re: [RFC PATCH v2 04/12] powerpc/ptrace: split out VSX related
- functions.
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, mikey@neuling.org
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1561735587.git.christophe.leroy@c-s.fr>
- <920fe735d5f3dd882331b36a895bb756bd415fe7.1561735587.git.christophe.leroy@c-s.fr>
- <875zfw1cmo.fsf@mpe.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <34ecb581-d7e7-c5f3-8f5e-9de91e435cea@c-s.fr>
-Date:   Wed, 26 Feb 2020 13:04:38 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726963AbgBZMGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 07:06:33 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38464 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbgBZMGd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 07:06:33 -0500
+Received: by mail-ot1-f67.google.com with SMTP id z9so2722183oth.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 04:06:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=EjX7vsVBzMdDRQ/cEhXLq9VWgouWyDLDmT9TOEGvJ5E=;
+        b=K+BIQ/VAwENm2hy7QTb4IIXAAARuwDNzrWKZF1hGOrQvvZo4T9p5q8mfz4iDKaeeUx
+         CLCbgX+Pml9F5HMnwrGDN87eMbTNBMvtd++zZ+zNkIXIqv7q1CuPAAPJdvbv8iZc4Q9r
+         YlAPBQmgLsDaAzpSqLAYFQdP29G6AiA2NARBNaCORo/T4YDNvm3TES15zi+d8Dy0N993
+         ZnWLe7+S5YlNHJ+Y+VUgaMb2KKBnDwpL+MnqgVYuOoDcxUvijlzqFEmFQkDRyqo6AP+w
+         Y20YPoFyOT+lNNL9FdR2ILsEFwSzrIOVSFDLPB03mdYtq9C0+9zDWF6XVPHMFt9sgRHO
+         FIrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=EjX7vsVBzMdDRQ/cEhXLq9VWgouWyDLDmT9TOEGvJ5E=;
+        b=JInNSnYDABk67eaA/ss+pS2cDxNDGG6P+LR09RuzObIC7zZEtl6PG+r5fFeLaUXhJb
+         RdxJ+Lg0Hw8wxS1oKsZ+S0LpRnCMXgpdhjokmMYJnUEa/+I9TIJby1PUj0Rc4IDUwvdM
+         xalGH9854kGWW4OHYmcgiJt2pQsCFXN+yQuQXot00Kx0PbPdM7X8WcHY5ZBGah2GVBeR
+         4ejtITp1PDe6l2Lm26mxztcLnLQ1P61Vi3aT9VSrHLpZqm8XYfmgO8XpC/apqGVXaegp
+         fXPL0oI/ReGF9RS9UfHt6rJBeCVmomQYLBQaj4gy2QjvI1igEmNk0Pk2tl3EUNPjcwD0
+         gTJA==
+X-Gm-Message-State: APjAAAV+GovSwbXpJkOO/OhCx9ftTlHUfPRLl7cK3D9/zmq+ssB9phDj
+        BuK/HHkRtJ3jTSUKIeRYjMhfLPNE16llRPQKGAs=
+X-Google-Smtp-Source: APXvYqwlHx3ZSDcvToq8GhoTvR+N7Y0UeYTOeueCg8L9KEwQ5iiGickx8Q16Ah34ZJqEfjvS9Y/aahPod7j0Af2jcQY=
+X-Received: by 2002:a05:6830:11:: with SMTP id c17mr2698286otp.360.1582718792265;
+ Wed, 26 Feb 2020 04:06:32 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <875zfw1cmo.fsf@mpe.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a4a:d88f:0:0:0:0:0 with HTTP; Wed, 26 Feb 2020 04:06:31
+ -0800 (PST)
+Reply-To: romericnatasha@gmail.com
+From:   NATASHA ROMERIC <micheal.dawson10@gmail.com>
+Date:   Wed, 26 Feb 2020 13:06:31 +0100
+Message-ID: <CACnR_g_X_Z2e-yRWh1h_0omnTtTNYqWsCvMDuSovZzOm3omExQ@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 24/02/2020 à 11:51, Michael Ellerman a écrit :
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> diff --git a/arch/powerpc/kernel/ptrace/ptrace-novsx.c b/arch/powerpc/kernel/ptrace/ptrace-novsx.c
->> new file mode 100644
->> index 000000000000..55fbbb4aa9d7
->> --- /dev/null
->> +++ b/arch/powerpc/kernel/ptrace/ptrace-novsx.c
->> @@ -0,0 +1,83 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/sched.h>
->> +#include <linux/mm.h>
->> +#include <linux/smp.h>
->> +#include <linux/errno.h>
->> +#include <linux/ptrace.h>
->> +#include <linux/regset.h>
->> +#include <linux/tracehook.h>
->> +#include <linux/elf.h>
->> +#include <linux/user.h>
->> +#include <linux/security.h>
->> +#include <linux/signal.h>
->> +#include <linux/seccomp.h>
->> +#include <linux/audit.h>
->> +#include <trace/syscall.h>
->> +#include <linux/hw_breakpoint.h>
->> +#include <linux/perf_event.h>
->> +#include <linux/context_tracking.h>
->> +#include <linux/nospec.h>
->> +
->> +#include <linux/uaccess.h>
->> +#include <linux/pkeys.h>
->> +#include <asm/page.h>
->> +#include <asm/pgtable.h>
->> +#include <asm/switch_to.h>
->> +#include <asm/tm.h>
->> +#include <asm/asm-prototypes.h>
->> +#include <asm/debug.h>
->> +#include <asm/hw_breakpoint.h>
-> 
-> I suspect we probably don't need all those headers anymore. But I guess
-> we'll clean them up in future, as it's very tedious work to trim the list.
-
-Ok, I did it.
-
-> 
->> +
->> +#include <kernel/ptrace/ptrace-decl.h>
-> 
-> It's preferable to use:
-> 
-> #include "ptrace-decl.h"
-> 
-
-Ok, done.
-
-Christophe
+DID YOU GOT MY MAIL???
