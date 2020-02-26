@@ -2,128 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCBC816F5C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 03:47:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F8F16F5D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 03:52:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730184AbgBZCrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Feb 2020 21:47:11 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:32996 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728989AbgBZCrL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Feb 2020 21:47:11 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 6so551358pgk.0;
-        Tue, 25 Feb 2020 18:47:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1Y1UZOFfTZ0N6C6Za7AR6jiLifnSzYiC7Rf6ZLlfNiw=;
-        b=P42MrSbUt/jDRdsuYTv73WxSBQYHL2ixhS9t3NbKGd9SNMfPqqbEfc8/ME9OkMgfdy
-         UxJQ2v//q3H1K9dDHdH/s0rmT2NorypFnBFmO/S1opc7MQSbVfW5A0dOjZIV6kMvT7uP
-         Kn47dTNifgZMlU2/BSTpjqfJgnP07NjdYPlS6Cm8Lj3vDSoERQSq+7P7OGgqKcNIc2gN
-         XxOCv1xsrSlmosu2wNYEUk1Hx/i5vAHgViV8ZB8zlBwZdaQRXuTJjmfJ3coEWzo+LSGc
-         x7etNWvB6gXGWXw21vWq/kmp6WONGtzPvkJWXBNYmBSelX5il7YJHlaZClzFl7hZ6jBD
-         20jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1Y1UZOFfTZ0N6C6Za7AR6jiLifnSzYiC7Rf6ZLlfNiw=;
-        b=YK2kJ0rd4V1U4oN5eE5cGZrg0+n097BxHEHuZgkI6nLgXgfTesUcsdqsS7honxOonP
-         zsK75+Y1HY2xWxjGO8Yp5SeZhzRYa7wYa+kqRGShA5v8MX65OQGM/amCxDXKlCNVNJ70
-         0Igq8/COktnuuU0bNBsAYqhz17yKf7xBnShqqvcqKYl0SpEERMYmRmUmHkaTrYM1N8Wd
-         RAPwAMkYSNjOFerSjvXgoNB5XYidzcIxX1NLLsLIxk+EwhHqR8HaWq7vMJIdJlAI1792
-         4shLy5QUoPMIqApMfEdplAxLX2XBKG/vIFiHUYHIhSgVjgbTagoEkq5lcpLlraXHQyc9
-         REsQ==
-X-Gm-Message-State: APjAAAWjzJy00t7wju1S21wQB5tjdE21PY9+JvbjuM4MySVY4CgI3S1/
-        l3ZzEuWusz9upm2VPyC+JTI=
-X-Google-Smtp-Source: APXvYqwAGBfDW1W1JoMhxUQofiKL5jbdmw6iHpPOI4qgkIdGrY+7eME4F8Iv+SLzWvp2tiziCUkfiA==
-X-Received: by 2002:aa7:8597:: with SMTP id w23mr1993190pfn.38.1582685229908;
-        Tue, 25 Feb 2020 18:47:09 -0800 (PST)
-Received: from localhost (c-73-241-114-122.hsd1.ca.comcast.net. [73.241.114.122])
-        by smtp.gmail.com with ESMTPSA id z30sm451033pfq.154.2020.02.25.18.47.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 18:47:09 -0800 (PST)
-Date:   Tue, 25 Feb 2020 18:47:07 -0800
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     "Christopher S. Hall" <christopher.s.hall@intel.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, mingo@redhat.com,
-        x86@kernel.org, jacob.e.keller@intel.com, davem@davemloft.net,
-        sean.v.kelley@intel.com
-Subject: Re: [Intel PMC TGPIO Driver 0/5] Add support for Intel PMC Time GPIO
- Driver with PHC interface changes to support additional H/W Features
-Message-ID: <20200226024707.GA10271@localhost>
-References: <20191211214852.26317-1-christopher.s.hall@intel.com>
- <20200203040838.GA5851@localhost>
- <20200225233707.GA32079@skl-build>
+        id S1730287AbgBZCw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Feb 2020 21:52:27 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:45572 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729890AbgBZCw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Feb 2020 21:52:27 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id 01Q2nYvk014201
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 25 Feb 2020 18:49:45 -0800
+Received: from [128.224.162.175] (128.224.162.175) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 25 Feb
+ 2020 18:49:24 -0800
+Subject: Re: [PATCH 2/2] perf: probe-file: Check return value of strlist__add
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+CC:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+        <jolsa@redhat.com>, <namhyung@kernel.org>,
+        <kstewart@linuxfoundation.org>, <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>
+References: <1582641703-233485-1-git-send-email-zhe.he@windriver.com>
+ <1582641703-233485-2-git-send-email-zhe.he@windriver.com>
+ <20200226074906.0acb08b31d01c96c475da0cb@kernel.org>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <b07f670b-6539-1590-88a8-20c58dec3a7e@windriver.com>
+Date:   Wed, 26 Feb 2020 10:49:19 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225233707.GA32079@skl-build>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200226074906.0acb08b31d01c96c475da0cb@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.175]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 03:37:07PM -0800, Christopher S. Hall wrote:
-> On Sun, Feb 02, 2020 at 08:08:38PM -0800, Richard Cochran wrote:
-> > The TGPIO input clock, the ART, is a free running counter, but you
-> > want to support frequency adjustments.  Use a timecounter cyclecounter
-> > pair.
-> 
-> I'm concerned about the complexity that the timecounter adds to
-> the driver. Specifically, the complexity of dealing with any rate mismatches
-> between the timecounter and the periodic output signal. The phase
-> error between the output and timecounter needs to be zero.
 
-If I understood correctly, the device's outputs are generated from a
-non-adjustable counter.  So, no matter what, you will have the problem
-of changing the pulse period in concert with the user changing the
-desired frequency.
 
-> My counter-proposal would be to use the real-time clock as the basis of the
-> device clock. This is fairly simple because the relation between ART and the
-> realtime clock is known. When output is enabled any phase error between
-> the realtime clock and the periodic output signal is accumulated in the
-> SYS_OFFSET result.
+On 2/26/20 6:49 AM, Masami Hiramatsu wrote:
+> On Tue, 25 Feb 2020 22:41:43 +0800
+> <zhe.he@windriver.com> wrote:
+>
+>> From: He Zhe <zhe.he@windriver.com>
+>>
+>> strlist__add may fail with -ENOMEM or -EEXIST. Check it and give debugging
+>> hint when necessary.
+>>
+>> Signed-off-by: He Zhe <zhe.he@windriver.com>
+>> ---
+>>  tools/perf/builtin-probe.c   | 30 ++++++++++++++++--------------
+>>  tools/perf/util/probe-file.c | 26 +++++++++++++++++++++-----
+>>  2 files changed, 37 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
+>> index 26bc5923e6b5..8b4511c70fed 100644
+>> --- a/tools/perf/builtin-probe.c
+>> +++ b/tools/perf/builtin-probe.c
+>> @@ -442,24 +442,26 @@ static int perf_del_probe_events(struct strfilter *filter)
+>>  	}
+>>  
+>>  	ret = probe_file__get_events(kfd, filter, klist);
+>> -	if (ret == 0) {
+>> -		strlist__for_each_entry(ent, klist)
+>> -			pr_info("Removed event: %s\n", ent->s);
+>> +	if (ret < 0)
+>> +		goto out;
+> No, this is ignored by design.
+> Since probe_file__get_events() returns -ENOENT when no event is matched,
+> this should be just ignored, and goto uprobe event matching.
 
-I don't understand how you intend to do this...
- 
-> This leaves the PHC API behavior as it is currently and uses the frequency
-> adjust API to adjust the output rate.
-> 
-> > Let the user dial a periodic output signal in the normal way.
-> > 
-> > Let the user change the frequency in the normal way, and during this
-> > call, adjust the counter values accordingly.
-> 
-> Yes to both of the above.
+Thanks for pointing it out. However when strlist__add in probe_file__get_events
+returns a -ENOMEM and we ignore that, though it happens not very likely, we
+would miss some entries. So I add checks here and in probe_file__get_events to
+give a heads-up in advance.
 
-So, why then do you need this?
+And the same reason is for the checks below for probe_cache__load,
+probe_cache__add_entry and probe_cache__scan_sdt.
 
-+#define PTP_EVENT_COUNT_TSTAMP2 \
-+       _IOWR(PTP_CLK_MAGIC, 19, struct ptp_event_count_tstamp)
 
-If you can make the device work with the existing user space API,
+Regards,
+Zhe
 
-	ioctl(fd, PTP_PEROUT_REQUEST2, ...);
-	while (1) {
-		clock_adjtimex(FD_TO_CLOCKID(fd), ...);
-	}
+>
+>>  
+>> -		ret = probe_file__del_strlist(kfd, klist);
+>> -		if (ret < 0)
+>> -			goto error;
+>> -	}
+>> +	strlist__for_each_entry(ent, klist)
+>> +		pr_info("Removed event: %s\n", ent->s);
+>> +
+>> +	ret = probe_file__del_strlist(kfd, klist);
+>> +	if (ret < 0)
+>> +		goto error;
+>>  
+>>  	ret2 = probe_file__get_events(ufd, filter, ulist);
+>> -	if (ret2 == 0) {
+>> -		strlist__for_each_entry(ent, ulist)
+>> -			pr_info("Removed event: %s\n", ent->s);
+>> +	if (ret2 < 0)
+>> +		goto out;
+> Ditto.
+>
+> Thank you,
+>
+>>  
+>> -		ret2 = probe_file__del_strlist(ufd, ulist);
+>> -		if (ret2 < 0)
+>> -			goto error;
+>> -	}
+>> +	strlist__for_each_entry(ent, ulist)
+>> +		pr_info("Removed event: %s\n", ent->s);
+>> +
+>> +	ret2 = probe_file__del_strlist(ufd, ulist);
+>> +	if (ret2 < 0)
+>> +		goto error;
+>>  
+>>  	if (ret == -ENOENT && ret2 == -ENOENT)
+>>  		pr_warning("\"%s\" does not hit any event.\n", str);
+>> diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
+>> index cf44c05f89c1..00f086cba88f 100644
+>> --- a/tools/perf/util/probe-file.c
+>> +++ b/tools/perf/util/probe-file.c
+>> @@ -307,10 +307,14 @@ int probe_file__get_events(int fd, struct strfilter *filter,
+>>  		p = strchr(ent->s, ':');
+>>  		if ((p && strfilter__compare(filter, p + 1)) ||
+>>  		    strfilter__compare(filter, ent->s)) {
+>> -			strlist__add(plist, ent->s);
+>> -			ret = 0;
+>> +			ret = strlist__add(plist, ent->s);
+>> +			if (ret < 0) {
+>> +				pr_debug("strlist__add failed (%d)\n", ret);
+>> +				goto out;
+>> +			}
+>>  		}
+>>  	}
+>> +out:
+>>  	strlist__delete(namelist);
+>>  
+>>  	return ret;
+>> @@ -517,7 +521,11 @@ static int probe_cache__load(struct probe_cache *pcache)
+>>  				ret = -EINVAL;
+>>  				goto out;
+>>  			}
+>> -			strlist__add(entry->tevlist, buf);
+>> +			ret = strlist__add(entry->tevlist, buf);
+>> +			if (ret < 0) {
+>> +				pr_debug("strlist__add failed (%d)\n", ret);
+>> +				goto out;
+>> +			}
+>>  		}
+>>  	}
+>>  out:
+>> @@ -678,7 +686,12 @@ int probe_cache__add_entry(struct probe_cache *pcache,
+>>  		command = synthesize_probe_trace_command(&tevs[i]);
+>>  		if (!command)
+>>  			goto out_err;
+>> -		strlist__add(entry->tevlist, command);
+>> +		ret = strlist__add(entry->tevlist, command);
+>> +		if (ret < 0) {
+>> +			pr_debug("strlist__add failed (%d)\n", ret);
+>> +			goto out_err;
+>> +		}
+>> +
+>>  		free(command);
+>>  	}
+>>  	list_add_tail(&entry->node, &pcache->entries);
+>> @@ -859,7 +872,10 @@ int probe_cache__scan_sdt(struct probe_cache *pcache, const char *pathname)
+>>  			break;
+>>  		}
+>>  
+>> -		strlist__add(entry->tevlist, buf);
+>> +		ret = strlist__add(entry->tevlist, buf);
+>> +		if (ret < 0)
+>> +			pr_debug("strlist__add failed (%d)\n", ret);
+>> +
+>>  		free(buf);
+>>  		entry = NULL;
+>>  	}
+>> -- 
+>> 2.24.1
+>>
+>
 
-that would be ideal.  But I will push back on anything like the
-following.
-
-	ioctl(fd, PTP_PEROUT_REQUEST2, ...);
-	while (1) {
-		clock_adjtimex(FD_TO_CLOCKID(fd), ...);
-		ioctl(fd, PTP_EVENT_COUNT_TSTAMP, ...);
-	}
-
-But maybe I misunderstood?
-
-Thanks,
-Richard
