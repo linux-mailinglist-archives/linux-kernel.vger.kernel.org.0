@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6051316F9C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:41:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7324916F9D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:41:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbgBZIkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 03:40:41 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:48523 "EHLO
+        id S1727887AbgBZIkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 03:40:53 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:30674 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727267AbgBZIkk (ORCPT
+        by vger.kernel.org with ESMTP id S1727746AbgBZIkp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 03:40:40 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01Q8ckpw015436;
+        Wed, 26 Feb 2020 03:40:45 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01Q8cp32027962;
         Wed, 26 Feb 2020 09:40:23 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=qYNCz7bGkBTTaNO03CNPss3EnrpQ6PC4YPTkV05TJOM=;
- b=Bp6LWZeUbDd9/bjJiGIWsKryeSmrlLTP2fafPjXcT7aN+tjxBggpXGZGWspFxamZ6RfQ
- m27AcW+IxkOOZNtVkOxrSAuEwpLT6MWfMYq1by0Bjz8lsFhnki+xSCo6LuruVekSUH42
- jpjl/360ynLmkp9m92Xesb9v45xZuFmosJsM+NniCidYkvAWY/6deH4Z8I6ja0xPJchg
- mqPV+6TrHaepw9Z5b+qBOT6NdoGugev5i+KaNUbgG48d8FXTxnhCeS7irPHGrlIFrVOq
- 6AZBi1THuUtTsi9XwSEo4dviPrq9OxZJ9rNXucFl60kOXXebHWegQEHpYrS147GajNkD ig== 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=R+w4zkKgQkx86Ev1R83gmrUmiciU5hv3hcn3A64Z3Ao=;
+ b=vBCvH/QRcUNFIgl6x7lPgq5mIXiYEgWmmaRpDTANZKFrlJNf/HkZ2iO1eo73YlyUC0fD
+ GWCVYjWQaytAuoDDVDl5qWhLEgAfPk3JfgttXCHWvMZT+ihzS+VGZPirzptKjjTWqdVd
+ YhNK+654tpuCT/gDYKBbT7dSjdnZQa9Exkd7QnbhIt+Owg1BRo3NZlXSZfiIv9W1uUPD
+ kLgrP/90nhlxzbeb0uRKe9/jhBdPj6+MGJc1lWUlO2VhH1Drz7diU+Anu1HBNMxLSjqp
+ 5v3WH+4sfMAwiEwYv/EY8VyUPFAmYq36RWF0vQcsBo9GqPsJBiC5U5Gg7+jveuvlM0eY 4g== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2ydcnj2h2a-1
+        by mx07-00178001.pphosted.com with ESMTP id 2ydcpgagss-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Wed, 26 Feb 2020 09:40:23 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 02F9910003B;
-        Wed, 26 Feb 2020 09:40:17 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3284010003D;
+        Wed, 26 Feb 2020 09:40:18 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E67DB2AC906;
-        Wed, 26 Feb 2020 09:40:16 +0100 (CET)
-Received: from localhost (10.75.127.45) by SFHDAG6NODE1.st.com (10.75.127.16)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 26 Feb 2020 09:40:16
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 20B212AC907;
+        Wed, 26 Feb 2020 09:40:18 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG6NODE1.st.com (10.75.127.16)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 26 Feb 2020 09:40:17
  +0100
 From:   Ludovic Barre <ludovic.barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
@@ -47,14 +48,16 @@ CC:     <srinivas.kandagatla@linaro.org>,
         <linux-mmc@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH 0/4] mmc: mmci_sdmmc: fixes and improvements
-Date:   Wed, 26 Feb 2020 09:40:10 +0100
-Message-ID: <20200226084014.5242-1-ludovic.barre@st.com>
+Subject: [PATCH 1/4] mmc: mmci_sdmmc: fix DMA API warning max segment size
+Date:   Wed, 26 Feb 2020 09:40:11 +0100
+Message-ID: <20200226084014.5242-2-ludovic.barre@st.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200226084014.5242-1-ludovic.barre@st.com>
+References: <20200226084014.5242-1-ludovic.barre@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG6NODE1.st.com
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG6NODE1.st.com
  (10.75.127.16)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-26_02:2020-02-25,2020-02-26 signatures=0
@@ -63,22 +66,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series fixes some problems:
--dma api debug warning to segment size check.
--dma_unmap_sg missing on not prepared request.
--Clear busyd0end irq flag when a R1B busy is completed.
--Initialize pwr|clk|datactrl_reg with their hardware values at probe.
+Turning on CONFIG_DMA_API_DEBUG_SG results in the following warning:
+WARNING: CPU: 1 PID: 85 at kernel/dma/debug.c:1302 debug_dma_map_sg+0x2a0/0x3cc
+mmci-pl18x 58005000.sdmmc: DMA-API: mapping sg segment longer than device claims to support [len=126976] [max=65536]
 
-Ludovic Barre (4):
-  mmc: mmci_sdmmc: fix DMA API warning max segment size
-  mmc: mmci_sdmmc: fix DMA API warning overlapping mappings
-  mmc: mmci_sdmmc: fix clear busyd0end irq flag
-  mmc: mmci: initialize pwr|clk|datactrl_reg with their hardware values
+dma api debug checks and compares the segment size to
+dma_get_max_seg_size (dev->dma_parms->max_segment_size),
+the sdmmc variant has an internal DMA and should define
+its max_segment_size constraint to avoid this warning.
 
- drivers/mmc/host/mmci.c             |  4 ++++
- drivers/mmc/host/mmci_stm32_sdmmc.c | 21 +++++++++++++--------
- 2 files changed, 17 insertions(+), 8 deletions(-)
+This Patch defines the dev->dma_parms->max_segment_size
+with the constraint already set for mmc core
+(host->mmc->max_seg_size).
 
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+---
+ drivers/mmc/host/mmci_stm32_sdmmc.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/mmc/host/mmci_stm32_sdmmc.c b/drivers/mmc/host/mmci_stm32_sdmmc.c
+index f76e82f8f12f..56d9ad7f523e 100644
+--- a/drivers/mmc/host/mmci_stm32_sdmmc.c
++++ b/drivers/mmc/host/mmci_stm32_sdmmc.c
+@@ -119,20 +119,20 @@ static void sdmmc_idma_unprep_data(struct mmci_host *host,
+ static int sdmmc_idma_setup(struct mmci_host *host)
+ {
+ 	struct sdmmc_idma *idma;
++	struct device *dev = mmc_dev(host->mmc);
+ 
+-	idma = devm_kzalloc(mmc_dev(host->mmc), sizeof(*idma), GFP_KERNEL);
+-	if (!idma)
++	idma = devm_kzalloc(dev, sizeof(*idma), GFP_KERNEL);
++	dev->dma_parms = devm_kzalloc(dev, sizeof(*dev->dma_parms), GFP_KERNEL);
++	if (!idma || !dev->dma_parms)
+ 		return -ENOMEM;
+ 
+ 	host->dma_priv = idma;
+ 
+ 	if (host->variant->dma_lli) {
+-		idma->sg_cpu = dmam_alloc_coherent(mmc_dev(host->mmc),
+-						   SDMMC_LLI_BUF_LEN,
++		idma->sg_cpu = dmam_alloc_coherent(dev, SDMMC_LLI_BUF_LEN,
+ 						   &idma->sg_dma, GFP_KERNEL);
+ 		if (!idma->sg_cpu) {
+-			dev_err(mmc_dev(host->mmc),
+-				"Failed to alloc IDMA descriptor\n");
++			dev_err(dev, "Failed to alloc IDMA descriptor\n");
+ 			return -ENOMEM;
+ 		}
+ 		host->mmc->max_segs = SDMMC_LLI_BUF_LEN /
+@@ -143,6 +143,8 @@ static int sdmmc_idma_setup(struct mmci_host *host)
+ 		host->mmc->max_seg_size = host->mmc->max_req_size;
+ 	}
+ 
++	dma_set_max_seg_size(dev, host->mmc->max_seg_size);
++
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
