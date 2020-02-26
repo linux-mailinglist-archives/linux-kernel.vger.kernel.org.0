@@ -2,192 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FDD4170791
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:24:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7DFE170797
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:25:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbgBZSYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:24:36 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:44069 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726789AbgBZSYg (ORCPT
+        id S1727125AbgBZSY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:24:58 -0500
+Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:36928 "EHLO
+        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbgBZSY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:24:36 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 935E761D8;
-        Wed, 26 Feb 2020 13:24:34 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Wed, 26 Feb 2020 13:24:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=gV1crvvxr36zMBtfehWsFeB8WGj
-        6uZV2sTGpY7aRnRQ=; b=Snb74y/dbC1RNmGdmuhKjwow+8MomytmQE9KgfEaCgr
-        DTEx6wcMLuoGUo950JpAQZk7aNoWChFmkJfb8tbwQy2J9pxWw2U3wW4oReh6Ny0c
-        0avg0AKB0oA/uR0qvAo7XW4/3KJF90gC/YRidB4j0NeySKkQcVe3K6tgxKq+3af8
-        rnkIvP26k/KdRkeEPK0XJ3WVDLg+g0gv0yAf7X/NnvwXFnTi7XUlEONPZOnvQNQV
-        xykuMf2GaRWX3qlrJxVIY9dUWho/wkMlePM/7J+np4HOj1nrC2bx9l2XQecZItsT
-        3aOede4cweZnPRo8EuchHv3ETOes+lMiMhQ4cLgVppQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=gV1crv
-        vxr36zMBtfehWsFeB8WGj6uZV2sTGpY7aRnRQ=; b=IZfzZzHIfEKvQOzjVxhv6k
-        Qwi4loNtwZZTn8bXnWCScAXmj4sbwH8nK3G2YAItTS1cdy7qtMunMvHfq5hSdKZM
-        z+h3M1QzTmDzGamuazRI306gUMTXkVajqY9jZxvqQ0Dk2UHicC+6H60MVGb/fIvu
-        kEDkk+/k8zcEg/rb5i9Hfg/bPIm+hJiyD3BPFOYQHPIoRH6Lj7Vp+xH2mA365BmX
-        JXRHVUdXHbnID6fHZVz+YlHH+awoYLsOn0AFPIsaeSIkveN5UaiJaitm2OiLdFm0
-        WqqszslwQ0Yrt/syzpApPZfaPVFDU/MpPWtX0uZtf/vK+e8mTvIZeYZmoAJvkBtw
-        ==
-X-ME-Sender: <xms:4bdWXiDs2cUGG-tf-gFQkg4d6E5I_HnsWhS5kZfPRXtXEkzTixGnjA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleeggdduudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuffhomhgrih
-    hnpeguvghvihgtvghtrhgvvgdrohhrghdpghhithhhuhgsrdgtohhmnecukfhppeeltddr
-    keelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:4bdWXj9BQCe5GnYNTRgl8K918CEqwQCHYkME02c_85ZO1fNnsIyvzA>
-    <xmx:4bdWXi9qjG3-ou-Gf481UUek3utSlsOFAXPLYLF7WtFmHNJ9UgIQNA>
-    <xmx:4bdWXqfzTVouAebt0tTNz01vnzH7u4dpgiDCCvfZ19zwqMo1s4tonA>
-    <xmx:4rdWXhRY1M7h650ph0r505zfVFyjhDWtpaJWUe0Qq0l-sSy0ZDDkQg>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 39B363060D1A;
-        Wed, 26 Feb 2020 13:24:33 -0500 (EST)
-Date:   Wed, 26 Feb 2020 19:24:31 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Robert Richter <rric@kernel.org>,
-        soc@kernel.org, Jon Loeliger <jdl@jdl.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 05/13] dt-bindings: clock: Convert Calxeda clock bindings
- to json-schema
-Message-ID: <20200226182431.xmmgbtxsa6qovnsv@gilmour.lan>
-References: <20200226180901.89940-1-andre.przywara@arm.com>
- <20200226180901.89940-6-andre.przywara@arm.com>
+        Wed, 26 Feb 2020 13:24:57 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 5038D3F99D;
+        Wed, 26 Feb 2020 19:24:55 +0100 (CET)
+Authentication-Results: pio-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=EfstPGpZ;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id motlGi_xZ2hD; Wed, 26 Feb 2020 19:24:50 +0100 (CET)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 050CC3F971;
+        Wed, 26 Feb 2020 19:24:48 +0100 (CET)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 409C8360093;
+        Wed, 26 Feb 2020 19:24:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1582741488; bh=te/8IotpQEnl0o4n3vw2nGQFI/zVy4BNRconbR+LM4o=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=EfstPGpZpHtME6/a9f1AtAN+w3pJUClLCPuMW8qkPq/xbXVzrWpilFsvjN7HBNE9g
+         gGxQfQ6pJ0wTBXqODOLs+AENYvNgFWE/sVhbRkZXw+bmTtExcAvzX0IfO+dbWsZOFZ
+         Bgn5FG1CZvdQ53+LpDE9QA513jSr16J63LLReVqo=
+Subject: Re: [PATCH v5 1/3] drm/shmem: add support for per object caching
+ flags.
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     Guillaume.Gardet@arm.com, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org, gurchetansingh@chromium.org,
+        tzimmermann@suse.de
+References: <20200226154752.24328-1-kraxel@redhat.com>
+ <20200226154752.24328-2-kraxel@redhat.com>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <f1afba4b-9c06-48a3-42c7-046695947e91@shipmail.org>
+Date:   Wed, 26 Feb 2020 19:24:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="oxpe5iexw42u333m"
-Content-Disposition: inline
-In-Reply-To: <20200226180901.89940-6-andre.przywara@arm.com>
+In-Reply-To: <20200226154752.24328-2-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Gerd,
 
---oxpe5iexw42u333m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+While looking at this patchset I came across some stuff that seems 
+strange but that was merged in a previous patchset.
 
-On Wed, Feb 26, 2020 at 06:08:53PM +0000, Andre Przywara wrote:
-> Convert the Calxeda clock bindings to DT schema format using json-schema.
+(please refer to 
+https://lists.freedesktop.org/archives/dri-devel/2018-September/190001.html. 
+Forgive me if I've missed any discussion leading up to this).
+
+
+On 2/26/20 4:47 PM, Gerd Hoffmann wrote:
+> Add map_cached bool to drm_gem_shmem_object, to request cached mappings
+> on a per-object base.  Check the flag before adding writecombine to
+> pgprot bits.
 >
-> This just covers the actual PLL and divider clock nodes. In the actual
-> DTs they are somewhat unconnected (no ranges or bus compatible) children
-> of the sregs node, but for the actual clock bindings this is not
-> relevant.
->
-> One oddity is that the addresses are relative to the parent node,
-> without that being pronounced using a ranges property.
-> But this is too late to fix now.
->
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
->
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 > ---
->  .../devicetree/bindings/clock/calxeda.txt     | 17 ----
->  .../devicetree/bindings/clock/calxeda.yaml    | 83 +++++++++++++++++++
->  2 files changed, 83 insertions(+), 17 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/calxeda.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/calxeda.yaml
+>   include/drm/drm_gem_shmem_helper.h     |  5 +++++
+>   drivers/gpu/drm/drm_gem_shmem_helper.c | 15 +++++++++++----
+>   2 files changed, 16 insertions(+), 4 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/clock/calxeda.txt b/Documentation/devicetree/bindings/clock/calxeda.txt
-> deleted file mode 100644
-> index 0a6ac1bdcda1..000000000000
-> --- a/Documentation/devicetree/bindings/clock/calxeda.txt
-> +++ /dev/null
-> @@ -1,17 +0,0 @@
-> -Device Tree Clock bindings for Calxeda highbank platform
-> -
-> -This binding uses the common clock binding[1].
-> -
-> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> -
-> -Required properties:
-> -- compatible : shall be one of the following:
-> -	"calxeda,hb-pll-clock" - for a PLL clock
-> -	"calxeda,hb-a9periph-clock" - The A9 peripheral clock divided from the
-> -		A9 clock.
-> -	"calxeda,hb-a9bus-clock" - The A9 bus clock divided from the A9 clock.
-> -	"calxeda,hb-emmc-clock" - Divided clock for MMC/SD controller.
-> -- reg : shall be the control register offset from SYSREGs base for the clock.
-> -- clocks : shall be the input parent clock phandle for the clock. This is
-> -	either an oscillator or a pll output.
-> -- #clock-cells : from common clock binding; shall be set to 0.
-> diff --git a/Documentation/devicetree/bindings/clock/calxeda.yaml b/Documentation/devicetree/bindings/clock/calxeda.yaml
-> new file mode 100644
-> index 000000000000..0ad66af0eb0c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/calxeda.yaml
-> @@ -0,0 +1,83 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/calxeda.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
+> index e34a7b7f848a..294b2931c4cc 100644
+> --- a/include/drm/drm_gem_shmem_helper.h
+> +++ b/include/drm/drm_gem_shmem_helper.h
+> @@ -96,6 +96,11 @@ struct drm_gem_shmem_object {
+>   	 * The address are un-mapped when the count reaches zero.
+>   	 */
+>   	unsigned int vmap_use_count;
 > +
-> +title: Device Tree Clock bindings for Calxeda highbank platform
+> +	/**
+> +	 * @map_cached: map object cached (instead of using writecombine).
+> +	 */
+> +	bool map_cached;
+>   };
+>   
+>   #define to_drm_gem_shmem_obj(obj) \
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> index a421a2eed48a..aad9324dcf4f 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -254,11 +254,16 @@ static void *drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem)
+>   	if (ret)
+>   		goto err_zero_use;
+>   
+> -	if (obj->import_attach)
+> +	if (obj->import_attach) {
+>   		shmem->vaddr = dma_buf_vmap(obj->import_attach->dmabuf);
+> -	else
+> +	} else {
+> +		pgprot_t prot = PAGE_KERNEL;
 > +
-> +description: |
-> +  This binding covers the Calxeda SoC internal peripheral and bus clocks
-> +  as used by peripherals. The clocks live inside the "system register"
-> +  region of the SoC, so are typically presented as children of an
-> +  "hb-sregs" node.
-> +
-> +maintainers:
-> +  - Andre Przywara <andre.przywara@arm.com>
-> +
-> +properties:
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  compatible:
-> +    enum:
-> +      - calxeda,hb-pll-clock
-> +      - calxeda,hb-a9periph-clock
-> +      - calxeda,hb-a9bus-clock
-> +      - calxeda,hb-emmc-clock
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +		if (!shmem->map_cached)
+> +			prot = pgprot_writecombine(prot);
+>   		shmem->vaddr = vmap(shmem->pages, obj->size >> PAGE_SHIFT,
+> -				    VM_MAP, pgprot_writecombine(PAGE_KERNEL));
+> +				    VM_MAP, prot)
 
-There's no need to specify the type, it's already checked by a schemas
-there:
-https://github.com/devicetree-org/dt-schema/blob/master/schemas/clock/clock.yaml
 
-Maxime
+Wouldn't a vmap with pgprot_writecombine() create conflicting mappings 
+with the linear kernel map which is not write-combined? Or do you change 
+the linear kernel map of the shmem pages somewhere? vmap bypassess at 
+least the x86 PAT core mapping consistency check and this could 
+potentially cause spuriously overwritten memory.
 
---oxpe5iexw42u333m
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> +	}
+>   
+>   	if (!shmem->vaddr) {
+>   		DRM_DEBUG_KMS("Failed to vmap pages\n");
+> @@ -540,7 +545,9 @@ int drm_gem_shmem_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+>   	}
+>   
+>   	vma->vm_flags |= VM_MIXEDMAP | VM_DONTEXPAND;
+> -	vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
+> +	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+> +	if (!shmem->map_cached)
+> +		vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXla33wAKCRDj7w1vZxhR
-xVCCAP9FAtviN9vMSzmOMnEaf0clsEnPEWJoqlOFffHEYfYkVQD+PsaFiKiidYgC
-Vj9cjeIjaMRIA5EoTsMzHLWl1v8W6A8=
-=mtDo
------END PGP SIGNATURE-----
+Same thing here. Note that vmf_insert_page() which is used by the fault 
+handler also bypasses the x86 PAT  consistency check, whereas 
+vmf_insert_mixed() doesn't.
 
---oxpe5iexw42u333m--
+>   	vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
+
+At least with SME or SEV encryption, where shmem memory has its kernel 
+map set to encrypted, creating conflicting mappings is explicitly 
+disallowed.
+BTW, why is mmap mapping decrypted while vmap isn't?
+
+>   	vma->vm_ops = &drm_gem_shmem_vm_ops;
+>   
+
+Thanks,
+Thomas
+
+
+
