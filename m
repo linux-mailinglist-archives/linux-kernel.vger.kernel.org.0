@@ -2,124 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBCD11705E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:20:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 560501705F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:22:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbgBZRUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 12:20:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44932 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726151AbgBZRUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 12:20:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 214ECAD2B;
-        Wed, 26 Feb 2020 17:20:35 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 674331E0EA2; Wed, 26 Feb 2020 18:20:34 +0100 (CET)
-Date:   Wed, 26 Feb 2020 18:20:34 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jonathan Halliday <jonathan.halliday@redhat.com>,
-        Jeff Moyer <jmoyer@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Dave Chinner <david@fromorbit.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
- operations state
-Message-ID: <20200226172034.GV10728@quack2.suse.cz>
-References: <20200221004134.30599-1-ira.weiny@intel.com>
- <20200221004134.30599-8-ira.weiny@intel.com>
- <20200221174449.GB11378@lst.de>
- <20200221224419.GW10776@dread.disaster.area>
- <20200224175603.GE7771@lst.de>
- <20200225000937.GA10776@dread.disaster.area>
- <20200225173633.GA30843@lst.de>
- <x49fteyh313.fsf@segfault.boston.devel.redhat.com>
- <a126276c-d252-6050-b6ee-4d6448d45fac@redhat.com>
- <CAPcyv4iuWpHi-0SK_HS0zmfH87=G64U47VhthhpTjDCw_BMG8A@mail.gmail.com>
+        id S1726900AbgBZRW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 12:22:26 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55228 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbgBZRWZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 12:22:25 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id CB83A295797
+Message-ID: <8b63465c795bb0c8243eb377106138c83e0dfffe.camel@collabora.com>
+Subject: Re: [PATCH v6 6/6] arm64: dts: rockchip: rk3399: Define the
+ rockchip Video Decoder node
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Heiko Stuebner <heiko@sntech.de>, Johan Jonker <jbx6244@gmail.com>
+Cc:     boris.brezillon@collabora.com, devicetree@vger.kernel.org,
+        hverkuil@xs4all.nl, jonas@kwiboo.se, kernel@collabora.com,
+        laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        nicolas@ndufresne.ca, paul.kocialkowski@bootlin.com,
+        robh+dt@kernel.org, sakari.ailus@iki.fi, tfiga@chromium.org
+Date:   Wed, 26 Feb 2020 14:22:11 -0300
+In-Reply-To: <3584403.hvncmGE4DP@phil>
+References: <20200220163016.21708-7-ezequiel@collabora.com>
+         <817821e3-bc51-8037-b9b9-e429c5eeb280@gmail.com> <3584403.hvncmGE4DP@phil>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4iuWpHi-0SK_HS0zmfH87=G64U47VhthhpTjDCw_BMG8A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 26-02-20 08:46:42, Dan Williams wrote:
-> On Wed, Feb 26, 2020 at 1:29 AM Jonathan Halliday
-> <jonathan.halliday@redhat.com> wrote:
-> >
-> >
-> > Hi All
-> >
-> > I'm a middleware developer, focused on how Java (JVM) workloads can
-> > benefit from app-direct mode pmem. Initially the target is apps that
-> > need a fast binary log for fault tolerance: the classic database WAL use
-> > case; transaction coordination systems; enterprise message bus
-> > persistence and suchlike. Critically, there are cases where we use log
-> > based storage, i.e. it's not the strict 'read rarely, only on recovery'
-> > model that a classic db may have, but more of a 'append only, read many
-> > times' event stream model.
-> >
-> > Think of the log oriented data storage as having logical segments (let's
-> > implement them as files), of which the most recent is being appended to
-> > (read_write) and the remaining N-1 older segments are full and sealed,
-> > so effectively immutable (read_only) until discarded. The tail segment
-> > needs to be in DAX mode for optimal write performance, as the size of
-> > the append may be sub-block and we don't want the overhead of the kernel
-> > call anyhow. So that's clearly a good fit for putting on a DAX fs mount
-> > and using mmap with MAP_SYNC.
-> >
-> > However, we want fast read access into the segments, to retrieve stored
-> > records. The small access index can be built in volatile RAM (assuming
-> > we're willing to take the startup overhead of a full file scan at
-> > recovery time) but the data itself is big and we don't want to move it
-> > all off pmem. Which means the requirements are now different: we want
-> > the O/S cache to pull hot data into fast volatile RAM for us, which DAX
-> > explicitly won't do. Effectively a poor man's 'memory mode' pmem, rather
-> > than app-direct mode, except here we're using the O/S rather than the
-> > hardware memory controller to do the cache management for us.
-> >
-> > Currently this requires closing the full (read_write) file, then copying
-> > it to a non-DAX device and reopening it (read_only) there. Clearly
-> > that's expensive and rather tedious. Instead, I'd like to close the
-> > MAP_SYNC mmap, then, leaving the file where it is, reopen it in a mode
-> > that will instead go via the O/S cache in the traditional manner. Bonus
-> > points if I can do it over non-overlapping ranges in a file without
-> > closing the DAX mode mmap, since then the segments are entirely logical
-> > instead of needing separate physical files.
-> 
-> Hi John,
-> 
-> IIRC we chatted about this at PIRL, right?
-> 
-> At the time it sounded more like mixed mode dax, i.e. dax writes, but
-> cached reads. To me that's an optimization to optionally use dax for
-> direct-I/O writes, with its existing set of page-cache coherence
-> warts, and not a capability to dynamically switch the dax-mode.
-> mmap+MAP_SYNC seems the wrong interface for this. This writeup
-> mentions bypassing kernel call overhead, but I don't see how a
-> dax-write syscall is cheaper than an mmap syscall plus fault. If
-> direct-I/O to a dax capable file bypasses the block layer, isn't that
-> about the maximum of kernel overhead that can be cut out of this use
-> case? Otherwise MAP_SYNC is a facility to achieve efficient sub-block
-> update-in-place writes not append writes.
+Hi Heiko, Johan,
 
-Well, even for appends you'll pay the cost only once per page (or maybe even
-once per huge page) when using MAP_SYNC. With a syscall you'll pay once per
-write. So although it would be good to check real numbers, the design isn't
-non-sensical to me.
+Thanks for pointing this out.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On Wed, 2020-02-26 at 14:21 +0100, Heiko Stuebner wrote:
+> Am Mittwoch, 26. Februar 2020, 13:24:53 CET schrieb Johan Jonker:
+> > Hi Boris,
+> > 
+> > Dtsi nodes are sort on address.
+> > The vdec node is now inserted between:
+> > 
+> > vdec_mmu: iommu       @ff660480
+> > vdec    : video-codec @ff660000
+> > iep_mmu : iommu       @ff670800
+> > 
+> > This should be:
+> > 
+> > vpu_mmu : iommu       @ff650800
+> > vdec    : video-codec @ff660000
+> > vdec_mmu: iommu       @ff660480
+> > 
+> 
+> Simple things like this I can (and do) fix when applying.
+> 
+> The interesting question would be, did patches 1-5 get applied yet?
+> As I only remember seing Hans' mail from v5, but didn't get any
+> applied mail for v6 so far.
+> 
+
+Hans sent a pull request to include rkvdec driver in v5.7:
+
+https://lore.kernel.org/linux-media/d4cc12b2-3d24-95db-102b-e5091c067e76@xs4all.nl/T/#t
+
+It doesn't include the devicetree changes though,
+which I just noticed.
+
+Would you be so kind to pick this patch and sort the node?
+
+Thanks!
+Ezequiel
+
+> 
+> Heiko
+> 
+> > > From: Boris Brezillon <boris.brezillon at collabora.com>
+> > > 
+> > > RK3399 has a Video decoder, define the node in the dtsi. We also add
+> > > the missing power-domain in mmu node and enable the block.
+> > > 
+> > > Signed-off-by: Boris Brezillon <boris.brezillon at collabora.com>
+> > > Signed-off-by: Ezequiel Garcia <ezequiel at collabora.com>
+> > > ---
+> > >  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 14 +++++++++++++-
+> > >  1 file changed, 13 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> > > index 33cc21fcf4c1..a07f857df12f 100644
+> > > --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> > > +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> > > @@ -1285,8 +1285,20 @@ vdec_mmu: iommu at ff660480 {
+> > >  		interrupt-names = "vdec_mmu";
+> > >  		clocks = <&cru ACLK_VDU>, <&cru HCLK_VDU>;
+> > >  		clock-names = "aclk", "iface";
+> > > +		power-domains = <&power RK3399_PD_VDU>;
+> > >  		#iommu-cells = <0>;
+> > > -		status = "disabled";
+> > > +	};
+> > > +
+> > > +	vdec: video-codec at ff660000 {
+> > > +		compatible = "rockchip,rk3399-vdec";
+> > > +		reg = <0x0 0xff660000 0x0 0x400>;
+> > > +		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH 0>;
+> > > +		interrupt-names = "vdpu";
+> > > +		clocks = <&cru ACLK_VDU>, <&cru HCLK_VDU>,
+> > > +			 <&cru SCLK_VDU_CA>, <&cru SCLK_VDU_CORE>;
+> > > +		clock-names = "axi", "ahb", "cabac", "core";
+> > > +		power-domains = <&power RK3399_PD_VDU>;
+> > > +		iommus = <&vdec_mmu>;
+> > >  	};
+> > >  
+> > >  	iep_mmu: iommu at ff670800 {
+> > 
+> > 
+> > 
+> 
+> 
+> 
+
+
