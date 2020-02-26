@@ -2,74 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E05E416F744
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:28:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78BD716F731
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 06:26:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbgBZF2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 00:28:05 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:42968 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbgBZF2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 00:28:05 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9E1831A695C;
-        Wed, 26 Feb 2020 06:28:03 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 40B271A693C;
-        Wed, 26 Feb 2020 06:27:59 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A32CB402AD;
-        Wed, 26 Feb 2020 13:27:53 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     srinivas.kandagatla@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] nvmem: imx-ocotp: Drop unnecessary initializations
-Date:   Wed, 26 Feb 2020 13:22:13 +0800
-Message-Id: <1582694533-18870-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726555AbgBZF0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 00:26:18 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:56195 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725890AbgBZF0S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 00:26:18 -0500
+X-UUID: 0b727d7bc378477da6077d4dd771285e-20200226
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=49qv1PxTKA63h58GMIBjrRHNQLNwM95yAfup8dmCDng=;
+        b=VgGBkqS/lhx8aHza6srnTlOWVCXAAb7gqgzRHJMqS5XGY73XeIxi/bCMdr5TIYF660EOvYMF+OB+BLUXGndf5lm7cvKx3ReY7GK/fkziBEs5prVwCB5Cr+4JwVsXdXVEWmphC7e2LQq+ZRibouGG8a4onXEHYBixO5uBlLIn+fo=;
+X-UUID: 0b727d7bc378477da6077d4dd771285e-20200226
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <gtk_ruiwang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 641813501; Wed, 26 Feb 2020 13:26:12 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 26 Feb 2020 13:25:18 +0800
+Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 26 Feb 2020 13:23:53 +0800
+From:   <gtk_ruiwang@mediatek.com>
+To:     <linux-firmware@kernel.org>
+CC:     <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>, <PoChun.Lin@mediatek.com>,
+        Longfei Wang <longfei.wang@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Maoguang Meng <maoguang.meng@mediatek.com>,
+        <gtk_ruiwang@mediatek.com>
+Subject: pull request: linux-firmware: move MT8173 VPU FW to subfolder 
+Date:   Wed, 26 Feb 2020 13:26:02 +0800
+Message-ID: <20200226052603.22768-1-gtk_ruiwang@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop unnecessary initialization of variable 'clk_rate' and 'timing'.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/nvmem/imx-ocotp.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
-index 4ba9cc8..5b6a0c9 100644
---- a/drivers/nvmem/imx-ocotp.c
-+++ b/drivers/nvmem/imx-ocotp.c
-@@ -193,9 +193,9 @@ static int imx_ocotp_read(void *context, unsigned int offset,
- 
- static void imx_ocotp_set_imx6_timing(struct ocotp_priv *priv)
- {
--	unsigned long clk_rate = 0;
-+	unsigned long clk_rate;
- 	unsigned long strobe_read, relax, strobe_prog;
--	u32 timing = 0;
-+	u32 timing;
- 
- 	/* 47.3.1.3.1
- 	 * Program HW_OCOTP_TIMING[STROBE_PROG] and HW_OCOTP_TIMING[RELAX]
-@@ -245,9 +245,9 @@ static void imx_ocotp_set_imx6_timing(struct ocotp_priv *priv)
- 
- static void imx_ocotp_set_imx7_timing(struct ocotp_priv *priv)
- {
--	unsigned long clk_rate = 0;
-+	unsigned long clk_rate;
- 	u64 fsource, strobe_prog;
--	u32 timing = 0;
-+	u32 timing;
- 
- 	/* i.MX 7Solo Applications Processor Reference Manual, Rev. 0.1
- 	 * 6.4.3.3
--- 
-2.7.4
+SGkgbGludXgtZmlybXdhcmUgbWFpbnRhaW5lcnMsDQoNClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBz
+aW5jZSBjb21taXQgZWZjZmEwM2FlNjEwMGRmZTUyM2ViZjYxMmUwM2MzYTkwZmM0Yzc5NDoNCg0K
+ICBsaW51eC1maXJtd2FyZTogVXBkYXRlIGZpcm13YXJlIGZpbGUgZm9yIEludGVsIEJsdWV0b290
+aCBBWDIwMSAoMjAyMC0wMi0yNCAwNzo0Mzo0MiAtMDUwMCkNCg0KYXJlIGF2YWlsYWJsZSBpbiB0
+aGUgR2l0IHJlcG9zaXRvcnkgYXQ6DQoNCiAgaHR0cHM6Ly9naXRodWIuY29tL3J1aXdhbmctbXRr
+L2xpbnV4X2Z3X3ZwdS5naXQNCg0KZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIGE4YTE4
+ZDFjZTU5MjBiYzBjZmNmMzIwNzQ3MTYzY2YxMzgwNmI1Njg6DQoNCiAgbWVkaWF0ZWs6IG1vdmUg
+TVQ4MTczIFZQVSBGVyB0byBzdWJmb2xkZXIgKDIwMjAtMDItMjYgMTM6MDg6MTUgKzA4MDApDQoN
+Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0NCmd0a19ydWl3YW5nICgxKToNCiAgICAgIG1lZGlhdGVrOiBtb3ZlIE1UODE3MyBW
+UFUgRlcgdG8gc3ViZm9sZGVyDQoNCiBXSEVOQ0UgICAgICAgICAgICAgICAgICAgIHwgICA2ICsr
+KystLQ0KIG1lZGlhdGVrL210ODE3My92cHVfZC5iaW4gfCBCaW4gMCAtPiAyOTc3MTg0IGJ5dGVz
+DQogbWVkaWF0ZWsvbXQ4MTczL3ZwdV9wLmJpbiB8IEJpbiAwIC0+IDEzMTE4MCBieXRlcw0KIHZw
+dV9kLmJpbiAgICAgICAgICAgICAgICAgfCBCaW4gMjk3NzE4NCAtPiAyNSBieXRlcw0KIHZwdV9w
+LmJpbiAgICAgICAgICAgICAgICAgfCBCaW4gMTMxMTgwIC0+IDI1IGJ5dGVzDQogNSBmaWxlcyBj
+aGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQogY3JlYXRlIG1vZGUgMTAw
+NjQ0IG1lZGlhdGVrL210ODE3My92cHVfZC5iaW4NCiBjcmVhdGUgbW9kZSAxMDA2NDQgbWVkaWF0
+ZWsvbXQ4MTczL3ZwdV9wLmJpbg0KIG1vZGUgY2hhbmdlIDEwMDY0NCA9PiAxMjAwMDAgdnB1X2Qu
+YmluDQogbW9kZSBjaGFuZ2UgMTAwNjQ0ID0+IDEyMDAwMCB2cHVfcC5iaW4NCg0K
 
