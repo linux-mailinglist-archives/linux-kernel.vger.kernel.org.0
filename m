@@ -2,228 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A9B417011F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:26:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F4C5170121
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 15:26:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbgBZO0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 09:26:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38884 "EHLO mail.kernel.org"
+        id S1727672AbgBZO0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 09:26:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727198AbgBZO0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 09:26:24 -0500
+        id S1727551AbgBZO01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 09:26:27 -0500
 Received: from linux-8ccs.suse.de (p5B2812F9.dip0.t-ipconnect.de [91.40.18.249])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE9872467B;
-        Wed, 26 Feb 2020 14:26:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F32924683;
+        Wed, 26 Feb 2020 14:26:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582727182;
-        bh=ytxePLeD/G96wACd0ePqTIXUsy4t44NP+Ducb61scBw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fJMMYe1qLwKI93WYdUmmFjlo1xgvL1rfmeukwTO99xkOnReuh/b9kRbMinyEkPB/x
-         uFr6KS4S3xzHVBcqu+/CvbzVm4FihrnpDtL9D8wqWhW0373kFDcXKKiUU6R9wst/MV
-         YpTlW5tA26wLFlGkMoFvfeTdXRGs2Xs28QMJkBeQ=
+        s=default; t=1582727186;
+        bh=I+02811uaLiwUb3AZQBeCUgzyvtIl/KGp1S62hAcdz0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=A3EBYdNtM+yt9wu0Rj9XNVxzsnlk7qra4+Bg1nFmv5gkcl8TPFt1XXC/LYgUraNoQ
+         u+Hb4IW+skU9X6WzHw2kWk9hteq4bjGWtZc6WeAcD37cgSDksTg4TqJkrZVOQ2xqtM
+         RTfAGUccPMdYeN9KmRXUswWi9TUCTFTaE6Q47xYI=
 From:   Jessica Yu <jeyu@kernel.org>
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Matthias Maennich <maennich@google.com>,
         Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
         Jessica Yu <jeyu@kernel.org>
-Subject: [PATCH v2 1/2] modpost: rework and consolidate logging interface
-Date:   Wed, 26 Feb 2020 15:26:07 +0100
-Message-Id: <20200226142608.19499-1-jeyu@kernel.org>
+Subject: [PATCH v2 2/2] modpost: return error if module is missing ns imports and MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n
+Date:   Wed, 26 Feb 2020 15:26:08 +0100
+Message-Id: <20200226142608.19499-2-jeyu@kernel.org>
 X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20200226142608.19499-1-jeyu@kernel.org>
+References: <20200226142608.19499-1-jeyu@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rework modpost's logging interface by consolidating merror(), warn(),
-and fatal() to use a single function, modpost_log(). Introduce different
-logging levels (WARN, ERROR, FATAL) as well as a conditional warn
-(warn_unless()). The conditional warn is useful in determining whether
-to use merror() or warn() based on a condition. This reduces code
-duplication overall.
+Currently when CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n, modpost only warns
+when a module is missing namespace imports. Under this configuration, such a module
+cannot be loaded into the kernel anyway, as the module loader would reject it.
+We might as well return a build error when a module is missing namespace imports
+under CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n, so that the build
+warning does not go ignored/unnoticed.
 
 Signed-off-by: Jessica Yu <jeyu@kernel.org>
 ---
-v2:
-  - modpost_log: initialize level to ""
-  - remove parens () from case labels
+ scripts/Makefile.modpost | 15 ++++++++-------
+ scripts/mod/modpost.c    | 14 +++++++++++---
+ 2 files changed, 19 insertions(+), 10 deletions(-)
 
- scripts/mod/modpost.c | 69 +++++++++++++++++++++++----------------------------
- scripts/mod/modpost.h | 22 +++++++++++++---
- 2 files changed, 50 insertions(+), 41 deletions(-)
-
+diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+index b4d3f2d122ac..957eed6a17a5 100644
+--- a/scripts/Makefile.modpost
++++ b/scripts/Makefile.modpost
+@@ -46,13 +46,14 @@ include scripts/Kbuild.include
+ kernelsymfile := $(objtree)/Module.symvers
+ modulesymfile := $(firstword $(KBUILD_EXTMOD))/Module.symvers
+ 
+-MODPOST = scripts/mod/modpost						\
+-	$(if $(CONFIG_MODVERSIONS),-m)					\
+-	$(if $(CONFIG_MODULE_SRCVERSION_ALL),-a)			\
+-	$(if $(KBUILD_EXTMOD),-i,-o) $(kernelsymfile)			\
+-	$(if $(KBUILD_EXTMOD),$(addprefix -e ,$(KBUILD_EXTRA_SYMBOLS)))	\
+-	$(if $(KBUILD_EXTMOD),-o $(modulesymfile))			\
+-	$(if $(CONFIG_SECTION_MISMATCH_WARN_ONLY),,-E)			\
++MODPOST = scripts/mod/modpost								\
++	$(if $(CONFIG_MODVERSIONS),-m)							\
++	$(if $(CONFIG_MODULE_SRCVERSION_ALL),-a)					\
++	$(if $(KBUILD_EXTMOD),-i,-o) $(kernelsymfile)					\
++	$(if $(KBUILD_EXTMOD),$(addprefix -e ,$(KBUILD_EXTRA_SYMBOLS)))			\
++	$(if $(KBUILD_EXTMOD),-o $(modulesymfile))					\
++	$(if $(CONFIG_SECTION_MISMATCH_WARN_ONLY),,-E)					\
++	$(if $(CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS)$(KBUILD_NSDEPS),-N) 	\
+ 	$(if $(KBUILD_MODPOST_WARN),-w)
+ 
+ ifdef MODPOST_VMLINUX
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 7edfdb2f4497..3201a2ac5cc4 100644
+index 3201a2ac5cc4..d164be63c2e3 100644
 --- a/scripts/mod/modpost.c
 +++ b/scripts/mod/modpost.c
-@@ -51,41 +51,37 @@ enum export {
+@@ -39,6 +39,8 @@ static int sec_mismatch_count = 0;
+ static int sec_mismatch_fatal = 0;
+ /* ignore missing files */
+ static int ignore_missing_files;
++/* If set to 1, only warn (instead of error) about missing ns imports */
++static int allow_missing_ns_imports = 0;
  
- #define MODULE_NAME_LEN (64 - sizeof(Elf_Addr))
+ enum export {
+ 	export_plain,      export_unused,     export_gpl,
+@@ -2209,8 +2211,11 @@ static int check_exports(struct module *mod)
  
--#define PRINTF __attribute__ ((format (printf, 1, 2)))
-+#define PRINTF __attribute__ ((format (printf, 2, 3)))
- 
--PRINTF void fatal(const char *fmt, ...)
-+PRINTF void modpost_log(enum loglevel loglevel, const char *fmt, ...)
- {
-+	char *level = "";
- 	va_list arglist;
- 
--	fprintf(stderr, "FATAL: ");
--
--	va_start(arglist, fmt);
--	vfprintf(stderr, fmt, arglist);
--	va_end(arglist);
--
--	exit(1);
--}
--
--PRINTF void warn(const char *fmt, ...)
--{
--	va_list arglist;
-+	switch(loglevel) {
-+	case LOG_WARN:
-+		level = "WARNING: ";
-+		break;
-+	case LOG_ERROR:
-+		level = "ERROR: ";
-+		break;
-+	case LOG_FATAL:
-+		level = "FATAL: ";
-+		break;
-+	default: /* invalid loglevel, ignore */
-+		break;
-+	}
- 
--	fprintf(stderr, "WARNING: ");
-+	fprintf(stderr, level);
-+	fprintf(stderr, "modpost: ");
- 
- 	va_start(arglist, fmt);
- 	vfprintf(stderr, fmt, arglist);
- 	va_end(arglist);
--}
- 
--PRINTF void merror(const char *fmt, ...)
--{
--	va_list arglist;
--
--	fprintf(stderr, "ERROR: ");
-+	if (loglevel == LOG_FATAL)
-+		exit(1);
- 
--	va_start(arglist, fmt);
--	vfprintf(stderr, fmt, arglist);
--	va_end(arglist);
- }
- 
- static inline bool strends(const char *str, const char *postfix)
-@@ -113,7 +109,7 @@ static int is_vmlinux(const char *modname)
- void *do_nofail(void *ptr, const char *expr)
- {
- 	if (!ptr)
--		fatal("modpost: Memory allocation failure: %s.\n", expr);
-+		fatal("Memory allocation failure: %s.\n", expr);
- 
- 	return ptr;
- }
-@@ -2021,7 +2017,7 @@ static void read_symbols(const char *modname)
- 
- 	license = get_modinfo(&info, "license");
- 	if (!license && !is_vmlinux(modname))
--		warn("modpost: missing MODULE_LICENSE() in %s\n"
-+		warn("missing MODULE_LICENSE() in %s\n"
- 		     "see include/linux/module.h for "
- 		     "more information\n", modname);
- 	while (license) {
-@@ -2152,15 +2148,15 @@ static void check_for_gpl_usage(enum export exp, const char *m, const char *s)
- 
- 	switch (exp) {
- 	case export_gpl:
--		fatal("modpost: GPL-incompatible module %s%s "
-+		fatal("GPL-incompatible module %s%s "
- 		      "uses GPL-only symbol '%s'\n", m, e, s);
- 		break;
- 	case export_unused_gpl:
--		fatal("modpost: GPL-incompatible module %s%s "
-+		fatal("GPL-incompatible module %s%s "
- 		      "uses GPL-only symbol marked UNUSED '%s'\n", m, e, s);
- 		break;
- 	case export_gpl_future:
--		warn("modpost: GPL-incompatible module %s%s "
-+		warn("GPL-incompatible module %s%s "
- 		      "uses future GPL-only symbol '%s'\n", m, e, s);
- 		break;
- 	case export_plain:
-@@ -2178,7 +2174,7 @@ static void check_for_unused(enum export exp, const char *m, const char *s)
- 	switch (exp) {
- 	case export_unused:
- 	case export_unused_gpl:
--		warn("modpost: module %s%s "
-+		warn("module %s%s "
- 		      "uses symbol '%s' marked UNUSED\n", m, e, s);
- 		break;
- 	default:
-@@ -2197,14 +2193,11 @@ static int check_exports(struct module *mod)
- 		exp = find_symbol(s->name);
- 		if (!exp || exp->module == mod) {
- 			if (have_vmlinux && !s->weak) {
--				if (warn_unresolved) {
--					warn("\"%s\" [%s.ko] undefined!\n",
--					     s->name, mod->name);
--				} else {
--					merror("\"%s\" [%s.ko] undefined!\n",
--					       s->name, mod->name);
-+				warn_unless(!warn_unresolved,
-+					    "\"%s\" [%s.ko] undefined!\n",
-+					    s->name, mod->name);
-+				if (!warn_unresolved)
- 					err = 1;
--				}
- 			}
- 			continue;
+ 		if (exp->namespace &&
+ 		    !module_imports_namespace(mod, exp->namespace)) {
+-			warn("module %s uses symbol %s from namespace %s, but does not import it.\n",
+-			     basename, exp->name, exp->namespace);
++			warn_unless(!allow_missing_ns_imports,
++				    "module %s uses symbol %s from namespace %s, but does not import it.\n",
++				    basename, exp->name, exp->namespace);
++			if (!allow_missing_ns_imports)
++				err = 1;
+ 			add_namespace(&mod->missing_namespaces, exp->namespace);
  		}
-@@ -2653,7 +2646,7 @@ int main(int argc, char **argv)
- 	if (dump_write)
- 		write_dump(dump_write);
- 	if (sec_mismatch_count && sec_mismatch_fatal)
--		fatal("modpost: Section mismatches detected.\n"
-+		fatal("Section mismatches detected.\n"
- 		      "Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.\n");
- 	for (n = 0; n < SYMBOL_HASH_SIZE; n++) {
- 		struct symbol *s;
-diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
-index 64a82d2d85f6..631d07714f7a 100644
---- a/scripts/mod/modpost.h
-+++ b/scripts/mod/modpost.h
-@@ -198,6 +198,22 @@ void *grab_file(const char *filename, unsigned long *size);
- char* get_next_line(unsigned long *pos, void *file, unsigned long size);
- void release_file(void *file, unsigned long size);
  
--void fatal(const char *fmt, ...);
--void warn(const char *fmt, ...);
--void merror(const char *fmt, ...);
-+enum loglevel {
-+	LOG_WARN,
-+	LOG_ERROR,
-+	LOG_FATAL
-+};
-+
-+void modpost_log(enum loglevel loglevel, const char *fmt, ...);
-+
-+#define warn(fmt, args...)	modpost_log(LOG_WARN, fmt, ##args)
-+#define merror(fmt, args...)	modpost_log(LOG_ERROR, fmt, ##args)
-+#define fatal(fmt, args...)	modpost_log(LOG_FATAL, fmt, ##args)
-+/* Warn unless condition is true, then use merror() */
-+#define warn_unless(condition, fmt, args...)	\
-+do {						\
-+	if (condition)				\
-+		merror(fmt, ##args);		\
-+	else					\
-+		warn(fmt, ##args);		\
-+} while (0)
+@@ -2553,7 +2558,7 @@ int main(int argc, char **argv)
+ 	struct ext_sym_list *extsym_iter;
+ 	struct ext_sym_list *extsym_start = NULL;
+ 
+-	while ((opt = getopt(argc, argv, "i:e:mnsT:o:awEd:")) != -1) {
++	while ((opt = getopt(argc, argv, "i:e:mnsT:o:awENd:")) != -1) {
+ 		switch (opt) {
+ 		case 'i':
+ 			kernel_read = optarg;
+@@ -2591,6 +2596,9 @@ int main(int argc, char **argv)
+ 		case 'E':
+ 			sec_mismatch_fatal = 1;
+ 			break;
++		case 'N':
++			allow_missing_ns_imports = 1;
++			break;
+ 		case 'd':
+ 			missing_namespace_deps = optarg;
+ 			break;
 -- 
 2.16.4
 
