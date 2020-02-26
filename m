@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E22170B7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:25:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 347E1170B92
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 23:28:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727917AbgBZWZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 17:25:19 -0500
-Received: from gateway20.websitewelcome.com ([192.185.45.27]:29041 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727709AbgBZWZT (ORCPT
+        id S1727877AbgBZW2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 17:28:39 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.38]:42890 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727757AbgBZW2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 17:25:19 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 1C2F3400C6FC4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 15:10:57 -0600 (CST)
+        Wed, 26 Feb 2020 17:28:39 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 5550A400C42EB
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 16:28:37 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id 757FjaAOxRP4z757FjystX; Wed, 26 Feb 2020 16:25:17 -0600
+        id 75ATjfpEtAGTX75ATjp5Bx; Wed, 26 Feb 2020 16:28:37 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,36 +25,24 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=RglIhNKe9o3UQdqr70qs4toIodilo8e4AyccNifDDhg=; b=j6tNkmTKdi+KNfcv3JQnjCHx31
-        pe6sjGT5wtfo98lm/ZAeFDxsi4cjUK0uyRCxVLwy/ZpoQ8d6a1a1vlSJUh9/CEc8KucBQd1/rk+WZ
-        zNtIGWedbmfjyUh0xyfgkQxrwgjxoO/9wHaGXAfZVJZTcVyQ6AU49O5xr/5hiuhhVgEJ3l1DOZ+zj
-        wo6LzJISuM/Aj+yYP6MqCw5rSiDSxEuLD2MUCkajNLQorl27IeDOrvRhvwhXldAMgeo9020uiXCVK
-        ioVRL6WUQLEVmmBQiqoRbib2R9a4ug8ou4/rCpsPON2Mjy5osCHcXDcu9fn0mAhjJHJmpaQ5LNpOZ
-        Eenij2DQ==;
-Received: from [200.39.29.168] (port=50390 helo=embeddedor)
+        bh=PtyODivJUtDP9MgCyxcSsityaCmUVDZg/RBEFKBCll0=; b=lnt9fUCwwhD2j8AXOE+QPdVwS0
+        rf4kr3sau6HQ7AUq/27TIk4qcQyE7uPX51BjsM7bdgZn0DDb7sjspoANUu7XYfS+eSDzlYragd+6G
+        KRq+/zSzjZCqbisZbLoPR/NKuLg3xt394GWv4TWUJHsgpSSgBLRsGYhzw1Atwc5SfsVkD4OSdDDVc
+        h4L2TbMYUH5hNB0Db/QqV7G9l+zjZIH3rrl2hDQMnERqZVHiNmkzm5NmiFlipNLh0PzYnOwK9RI48
+        6JhzsfVg1/DExj501hZsfpO4WGdrrLEw4fvMn1zKk30UjJkuGdAQqaFGA4sjNXVUWxJ618dF6SpCV
+        OyWMwCyQ==;
+Received: from [201.162.161.208] (port=50608 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1j757C-001KJu-D2; Wed, 26 Feb 2020 16:25:15 -0600
-Date:   Wed, 26 Feb 2020 16:27:22 -0600
+        id 1j75AP-001MIy-8J; Wed, 26 Feb 2020 16:28:35 -0600
+Date:   Wed, 26 Feb 2020 16:31:25 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Xiaolei Li <xiaolei.li@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] mtd: rawnand: Replace zero-length array with flexible-array
- member
-Message-ID: <20200226222722.GA18020@embeddedor>
+Subject: [PATCH] mmc: Replace zero-length array with flexible-array member
+Message-ID: <20200226223125.GA20630@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -65,15 +53,15 @@ X-AntiAbuse: Original Domain - vger.kernel.org
 X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
 X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
-X-Source-IP: 200.39.29.168
+X-Source-IP: 201.162.161.208
 X-Source-L: No
-X-Exim-ID: 1j757C-001KJu-D2
+X-Exim-ID: 1j75AP-001MIy-8J
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.39.29.168]:50390
+X-Source-Sender: (embeddedor) [201.162.161.208]:50608
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 22
+X-Email-Count: 29
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -111,92 +99,134 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/mtd/nand/raw/denali.h       | 2 +-
- drivers/mtd/nand/raw/marvell_nand.c | 2 +-
- drivers/mtd/nand/raw/meson_nand.c   | 2 +-
- drivers/mtd/nand/raw/mtk_nand.c     | 2 +-
- drivers/mtd/nand/raw/nand_hynix.c   | 2 +-
- drivers/mtd/nand/raw/sunxi_nand.c   | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/mmc/host/sdhci-acpi.c    | 2 +-
+ drivers/mmc/host/sdhci-cadence.c | 2 +-
+ drivers/mmc/host/sdhci-pci.h     | 2 +-
+ drivers/mmc/host/sdhci-pltfm.h   | 2 +-
+ drivers/mmc/host/sdhci.h         | 2 +-
+ drivers/mmc/host/vub300.c        | 2 +-
+ include/linux/mmc/host.h         | 2 +-
+ include/linux/mmc/sdio_func.h    | 2 +-
+ include/uapi/linux/mmc/ioctl.h   | 2 +-
+ 9 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/denali.h b/drivers/mtd/nand/raw/denali.h
-index e5cdcda56d14..ac46eb7956ce 100644
---- a/drivers/mtd/nand/raw/denali.h
-+++ b/drivers/mtd/nand/raw/denali.h
-@@ -328,7 +328,7 @@ struct denali_chip {
- 	struct nand_chip chip;
- 	struct list_head node;
- 	unsigned int nsels;
--	struct denali_chip_sel sels[0];
-+	struct denali_chip_sel sels[];
+diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
+index 9651dca6863e..ea0e4fda3a9e 100644
+--- a/drivers/mmc/host/sdhci-acpi.c
++++ b/drivers/mmc/host/sdhci-acpi.c
+@@ -72,7 +72,7 @@ struct sdhci_acpi_host {
+ 	const struct sdhci_acpi_slot	*slot;
+ 	struct platform_device		*pdev;
+ 	bool				use_runtime_pm;
+-	unsigned long			private[0] ____cacheline_aligned;
++	unsigned long			private[] ____cacheline_aligned;
  };
  
- /**
-diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
-index fb5abdcfb007..7082bef1c8a7 100644
---- a/drivers/mtd/nand/raw/marvell_nand.c
-+++ b/drivers/mtd/nand/raw/marvell_nand.c
-@@ -334,7 +334,7 @@ struct marvell_nand_chip {
- 	int addr_cyc;
- 	int selected_die;
- 	unsigned int nsels;
--	struct marvell_nand_chip_sel sels[0];
-+	struct marvell_nand_chip_sel sels[];
+ static inline void *sdhci_acpi_priv(struct sdhci_acpi_host *c)
+diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
+index 5827d3751b81..9af3fe48d62f 100644
+--- a/drivers/mmc/host/sdhci-cadence.c
++++ b/drivers/mmc/host/sdhci-cadence.c
+@@ -67,7 +67,7 @@ struct sdhci_cdns_priv {
+ 	void __iomem *hrs_addr;
+ 	bool enhanced_strobe;
+ 	unsigned int nr_phy_params;
+-	struct sdhci_cdns_phy_param phy_params[0];
++	struct sdhci_cdns_phy_param phy_params[];
  };
  
- static inline struct marvell_nand_chip *to_marvell_nand(struct nand_chip *chip)
-diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
-index 9f17b5b8efbf..f6fb5c0e6255 100644
---- a/drivers/mtd/nand/raw/meson_nand.c
-+++ b/drivers/mtd/nand/raw/meson_nand.c
-@@ -118,7 +118,7 @@ struct meson_nfc_nand_chip {
- 	u8 *data_buf;
- 	__le64 *info_buf;
- 	u32 nsels;
--	u8 sels[0];
-+	u8 sels[];
+ struct sdhci_cdns_phy_cfg {
+diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
+index 981bbbe63aff..42ccd123b046 100644
+--- a/drivers/mmc/host/sdhci-pci.h
++++ b/drivers/mmc/host/sdhci-pci.h
+@@ -163,7 +163,7 @@ struct sdhci_pci_slot {
+ 	bool			cd_override_level;
+ 
+ 	void (*hw_reset)(struct sdhci_host *host);
+-	unsigned long		private[0] ____cacheline_aligned;
++	unsigned long		private[] ____cacheline_aligned;
  };
  
- struct meson_nand_ecc {
-diff --git a/drivers/mtd/nand/raw/mtk_nand.c b/drivers/mtd/nand/raw/mtk_nand.c
-index b8305e39ab51..ef149e8b26d0 100644
---- a/drivers/mtd/nand/raw/mtk_nand.c
-+++ b/drivers/mtd/nand/raw/mtk_nand.c
-@@ -131,7 +131,7 @@ struct mtk_nfc_nand_chip {
- 	u32 spare_per_sector;
+ struct sdhci_pci_chip {
+diff --git a/drivers/mmc/host/sdhci-pltfm.h b/drivers/mmc/host/sdhci-pltfm.h
+index 2af445b8c325..6301b81cf573 100644
+--- a/drivers/mmc/host/sdhci-pltfm.h
++++ b/drivers/mmc/host/sdhci-pltfm.h
+@@ -25,7 +25,7 @@ struct sdhci_pltfm_host {
+ 	unsigned int clock;
+ 	u16 xfer_mode_shadow;
  
- 	int nsels;
--	u8 sels[0];
-+	u8 sels[];
- 	/* nothing after this field */
+-	unsigned long private[0] ____cacheline_aligned;
++	unsigned long private[] ____cacheline_aligned;
  };
  
-diff --git a/drivers/mtd/nand/raw/nand_hynix.c b/drivers/mtd/nand/raw/nand_hynix.c
-index 194e4227aefe..7caedaa5b9e5 100644
---- a/drivers/mtd/nand/raw/nand_hynix.c
-+++ b/drivers/mtd/nand/raw/nand_hynix.c
-@@ -26,7 +26,7 @@
- struct hynix_read_retry {
- 	int nregs;
- 	const u8 *regs;
--	u8 values[0];
-+	u8 values[];
+ #ifdef CONFIG_MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index cac2d97782e6..249635692112 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -614,7 +614,7 @@ struct sdhci_host {
+ 
+ 	u64			data_timeout;
+ 
+-	unsigned long private[0] ____cacheline_aligned;
++	unsigned long private[] ____cacheline_aligned;
  };
  
- /**
-diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sunxi_nand.c
-index 37a4ac0dd85b..6ede3934a5f4 100644
---- a/drivers/mtd/nand/raw/sunxi_nand.c
-+++ b/drivers/mtd/nand/raw/sunxi_nand.c
-@@ -195,7 +195,7 @@ struct sunxi_nand_chip {
- 	u32 timing_cfg;
- 	u32 timing_ctl;
- 	int nsels;
--	struct sunxi_nand_chip_sel sels[0];
-+	struct sunxi_nand_chip_sel sels[];
+ struct sdhci_ops {
+diff --git a/drivers/mmc/host/vub300.c b/drivers/mmc/host/vub300.c
+index 6ced1b7f642f..a5a90d133f1f 100644
+--- a/drivers/mmc/host/vub300.c
++++ b/drivers/mmc/host/vub300.c
+@@ -95,7 +95,7 @@ struct sd_response_header {
+ 	u8 port_number;
+ 	u8 command_type;
+ 	u8 command_index;
+-	u8 command_response[0];
++	u8 command_response[];
+ } __packed;
+ 
+ struct sd_status_header {
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 562ed06881b0..2629329ab9f2 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -465,7 +465,7 @@ struct mmc_host {
+ 	/* Host Software Queue support */
+ 	bool			hsq_enabled;
+ 
+-	unsigned long		private[0] ____cacheline_aligned;
++	unsigned long		private[] ____cacheline_aligned;
  };
  
- static inline struct sunxi_nand_chip *to_sunxi_nand(struct nand_chip *nand)
+ struct device_node;
+diff --git a/include/linux/mmc/sdio_func.h b/include/linux/mmc/sdio_func.h
+index 5a177f7a83c3..fa2aaab5e57a 100644
+--- a/include/linux/mmc/sdio_func.h
++++ b/include/linux/mmc/sdio_func.h
+@@ -25,7 +25,7 @@ struct sdio_func_tuple {
+ 	struct sdio_func_tuple *next;
+ 	unsigned char code;
+ 	unsigned char size;
+-	unsigned char data[0];
++	unsigned char data[];
+ };
+ 
+ /*
+diff --git a/include/uapi/linux/mmc/ioctl.h b/include/uapi/linux/mmc/ioctl.h
+index 00c08120f3ba..98e29e7f54ac 100644
+--- a/include/uapi/linux/mmc/ioctl.h
++++ b/include/uapi/linux/mmc/ioctl.h
+@@ -57,7 +57,7 @@ struct mmc_ioc_cmd {
+  */
+ struct mmc_ioc_multi_cmd {
+ 	__u64 num_of_cmds;
+-	struct mmc_ioc_cmd cmds[0];
++	struct mmc_ioc_cmd cmds[];
+ };
+ 
+ #define MMC_IOC_CMD _IOWR(MMC_BLOCK_MAJOR, 0, struct mmc_ioc_cmd)
 -- 
 2.25.0
 
