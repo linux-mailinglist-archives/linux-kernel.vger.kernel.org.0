@@ -2,91 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 747C21707D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:40:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35E2F1707D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 19:40:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbgBZSku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 13:40:50 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46638 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbgBZSkt (ORCPT
+        id S1727226AbgBZSky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 13:40:54 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:44959 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbgBZSkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:40:49 -0500
-Received: by mail-pf1-f196.google.com with SMTP id k29so191461pfp.13
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 10:40:49 -0800 (PST)
+        Wed, 26 Feb 2020 13:40:53 -0500
+Received: by mail-yw1-f66.google.com with SMTP id t141so368992ywc.11
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 10:40:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4GGF4l4U7/kbDXUUFjPa2eu/bqf5F6upzrLkHeQe7FY=;
-        b=FBK+zwVyEoLgoQ57CVtZtTPJfi9gje5UsBooroCLV59Ab/5wgZsun0pvJpO4LI9qyu
-         Vzum3mDZd+PdAkWuMNyQT3MrGeXUDFZu+ixd0Ck48CQgZLgiM8cqbMW8stDZ3vvIhP2g
-         OyI3g2oG+vvDUSlxmbnkew1X1i79ylNpdA8qc=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=oa0bZQpkEyjcs7ABeeOu5qKY4d6etbTg8GwEpE2lwx4=;
+        b=Y6R+puOiqvIIHXnZd735jQ/xLLwScxWZ0Jut/HsXE2t8J7XULFj7ngTeX2cYl/1MzI
+         1iwH2l+ji8gwwzf99sTZ0Y4Qc/9pPcfurZTWzgVdQcLup2ZYmqNy/dpkKJwQnCbxwO7d
+         r+h35wCruXGxbpi9Q/QKbLkNrLxolHzJoAxJGjPAf4UNI24kUhBAkRMC38uPtWkhQgKC
+         AXdRzu8BBq2sEFJfwOLQ5uVuarUtCSjBMdo7Y8RtI9SiXejp4OkH8tlf3S6ualKYODNP
+         pPVXnPj0WMOnN3xxkSkycUGPFqL+uUrgdhFdnuRbFZgUszcupU2872Wn46dMjKKdVNzS
+         e0iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4GGF4l4U7/kbDXUUFjPa2eu/bqf5F6upzrLkHeQe7FY=;
-        b=hMgXiuJr87yAvLRikOKorVOBo3FHaozNk09drSzu4hu8VSP9KwmvUecey08VMtvKuL
-         d2HRIYbRBvcddv1xY/qaEl3khBLcgHsA/nARbkz5F3q19iKLfHWjBF2OFrUHCYxqRjnY
-         8RS43oXz2QImaa07miV1My2rJ8lly5xDbK1gRprLodd/CCXBe4h5Y/DV4xeLtmdTCU3g
-         o5CUUhyg2U4zw93nNhHWc+5DjcuF7fxUbV1TPv1kwvIbiAdx5sPXlBeA1PosNLylfTeC
-         7fA/vjnH4fwrzOu/AyxFcLkpFdwo6KGK2EfTduu15fA1gn4M7bVRJLjP15DgiqamFU96
-         M5yQ==
-X-Gm-Message-State: APjAAAUuq6TzOTyC8GTjd2IaLF0EyuINvWf9L7E+t/eJspYaRsFZ8HLk
-        7Q9C+JiaL1eeRLuMbddWVHcqGXgK0Dg=
-X-Google-Smtp-Source: APXvYqyac2WSpXZHHTN+EGyGVsYr4PLSd3n9K6QamkLWoVUX+67zyuQFAWpx7S/5klS1jYvy9OJN0A==
-X-Received: by 2002:a65:40c8:: with SMTP id u8mr222956pgp.188.1582742448922;
-        Wed, 26 Feb 2020 10:40:48 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 7sm4003285pfc.21.2020.02.26.10.40.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 10:40:48 -0800 (PST)
-Date:   Wed, 26 Feb 2020 10:40:47 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Joel Fernandes <joelaf@google.com>
-Cc:     Vasily Averin <vvs@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH v2] pstore: pstore_ftrace_seq_next should increase
- position index
-Message-ID: <202002261040.8F21715C@keescook>
-References: <4e49830d-4c88-0171-ee24-1ee540028dad@virtuozzo.com>
- <202002251136.3816A79E@keescook>
- <CAJWu+oqZ+=Z1x0+Xm46Y90w=+dhub6dm+s=nU2-V9QeDn5AcrQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=oa0bZQpkEyjcs7ABeeOu5qKY4d6etbTg8GwEpE2lwx4=;
+        b=RUqrlrQbd6HVaA1+JaY1kCffX10PEYB1KgGPmFRysEo3dWq8SE0ZOQLXmCGWGoX6Iq
+         JQLk6do4iNlWtiYVV4GcY3qdsUzcP1fs+ADtfvApRTqjAy07rd2SGN2dVV4ZegSvKlbN
+         07f5wl8yxzFb42F2wY/UcLxYMjj8UDoM437aoEErea4RXscX9YCe7Kx6stkhXyMmQQsK
+         rvPFpiPN9iktPA5NZ1PUFvqsj331/CdvgwTDdQB7sNZ7YydB0vHFtFWmec0dbsZ4HcEj
+         uMdPBlp3SisFipLHfQvHCbJbnjunLRMuCiozsSdtILCr4v8uW9lOILX9sLtUqcmVvmWi
+         wD2g==
+X-Gm-Message-State: APjAAAVDPYfQtZ4QsPSfDawdKTzd5IbTLGI1ifEgwJXRRhqge50xqTwc
+        EQWK2zIRuzJSVvFV6u2GttYb9o34EoQ5m8OAAgk=
+X-Google-Smtp-Source: APXvYqwFnez7brfmSU3KIVPBeaQteXxJJFdFJjYjr+0c3TSXLSAGAWX985M+vsapMbxwqpw4lCUy62xmmIyi1xyPC5I=
+X-Received: by 2002:a25:348d:: with SMTP id b135mr223597yba.337.1582742452918;
+ Wed, 26 Feb 2020 10:40:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJWu+oqZ+=Z1x0+Xm46Y90w=+dhub6dm+s=nU2-V9QeDn5AcrQ@mail.gmail.com>
+Received: by 2002:a0d:d4cd:0:0:0:0:0 with HTTP; Wed, 26 Feb 2020 10:40:52
+ -0800 (PST)
+Reply-To: janvierlitse2019@gmail.com
+From:   Mr Janvier Litse <ramoud.hiwad@gmail.com>
+Date:   Wed, 26 Feb 2020 10:40:52 -0800
+Message-ID: <CAELqVueyapUTpGmiJfwvpyHYHLKhp9cq19EA=sRKybYoJC2dig@mail.gmail.com>
+Subject: URGENT RESPOND FOR MORE DETAILS!
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 01:36:45PM -0500, Joel Fernandes wrote:
-> One thing I was not sure about is, if we move "pos" forward but still
-> return NULL from next(), then does show() need to check if data is
-> NULL? As below. Otherwise the suggested patch looks sane to me.
-> 
-> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-> index 7fbe8f0582205..e3e7370b1a34d 100644
-> --- a/fs/pstore/inode.c
-> +++ b/fs/pstore/inode.c
-> @@ -101,6 +101,9 @@ static int pstore_ftrace_seq_show(struct seq_file
-> *s, void *v)
->         struct pstore_ftrace_seq_data *data = v;
->         struct pstore_ftrace_record *rec;
-> 
-> +       if (!data)
-> +               return 0;
-> +
->         rec = (struct pstore_ftrace_record *)(ps->record->buf + data->off);
-> 
->         seq_printf(s, "CPU:%d ts:%llu %08lx  %08lx  %ps <- %pS\n",
+From: Mr Janvier Litse.
+African Development Bank
+Burkina Faso (ADB)
+Ouagadougou - Burkina Faso.
 
-Ah, good point. I'm not sure, but it's worth checking I think. :)
+Dear friend, Good Day
 
--- 
-Kees Cook
+I am writing to seek your cooperation over this business, Please due
+welcome this letter.
+
+I am Mr Janvier Litse.the director of the accounts & auditing dept .at
+the African Development Bank Ouagadougou-west Africa (A D B) With due
+respect, I have decided to contact you on a business transaction that
+will be beneficial to both of us.At the bank's lastaccounts/auditing
+evaluations, my staffs came across an old account which was being
+maintained by a foreign client who we learnt was among the deceased
+passengers of motor accident on November.. 2003, the deceased was
+unable to run this account since his death. The account has remained
+dormant without the knowledge of his family since it was put in a safe
+deposit account in the bank for future investment by the client.
+
+Since his demise, even the members of his family haven't applied for
+claims over this fund and it has been in the safe deposit accountuntil
+I discovered that it cannot be claimed since our client is a foreign
+national and we are sure that he has no next of kin here to file
+claims over the money. As the director of the department, this
+discovery was brought to my office so as to decide what is to be done.
+I decided to seek ways through which to transfer this money out of the
+bank and out of the country too.
+
+The total amount in the account is twenty eight  million three hundred
+thousand dollars (USD 28,300,000.00).with my positions as a staffs of
+the bank, I am handicapped because I can not operate foreign accounts
+and cannot lay bonafide claim over this money.The client was a foreign
+national and you will only be asked to act as his next of kin and I
+will supply you with all the necessary information and bank data to
+assist you in being able to transfer this money to any bank of your
+choice where this money could be transferred into.
+
+The total sum will be shared as follows: 50% for me, 50% for you and
+expenses incidental occur during the transfer will be  incured by both
+of us. The transfer is risk free on both sides hence you are going to
+follow my instruction till the fund transfer to your account.
+
+Since I work in this bank that is why you should be confident in the
+success of this transaction because you will be updated with
+information as at when desired I will wish you to keep this
+transaction secret and confidential as I am hoping to retire with my
+share of this money at the end of transaction which will be when this
+money is safety in your account. I will then come over to your country
+for sharing according to the previously agreed percentages. You might
+even have to advise me on possibilities of investment in your country
+or elsewhere of our choice. May God help you to help me to a restive
+retirement, Amen.
+
+
+Please for further information and enquires feel free to contact me
+back immediately for more explanation and better  understanding.please
+contact me through this alternative email address
+(janvierlitse2019@gmail.com)
+
+I am waiting for your urgent response!!!
+Thanks and remain blessed
+ Mr Janvier Litse.
++226 54459253
