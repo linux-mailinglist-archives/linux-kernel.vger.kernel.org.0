@@ -2,131 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A9DD16FFA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 14:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2D1916FFB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 14:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbgBZNHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 08:07:54 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:46930 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726592AbgBZNHy (ORCPT
+        id S1726974AbgBZNLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 08:11:02 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46775 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726592AbgBZNLC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 08:07:54 -0500
+        Wed, 26 Feb 2020 08:11:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582722472;
+        s=mimecast20190719; t=1582722661;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=I9Ln/3T7qXcU74IlWJ1bBpZpKyU+byQv4hYuFlbZtOA=;
-        b=SN77YI4Ld/0Itt0O1TKNQgVYI72CgqOXM0uk6jJhG81iokiIEvGcvHKnuVqW5QsaIsbSG2
-        BPjF0ItqcUKmUzDSkLC1mF9YYPARQNcYeRsGn4LSLhMGixocDuYa84cSQ2VxX3YqhRPRSM
-        5Fq96TPHd3hzGNDycVu0pLHOfKhNoCQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-232-o9q3gO2WPR-I-5yu0RIQLQ-1; Wed, 26 Feb 2020 08:07:49 -0500
-X-MC-Unique: o9q3gO2WPR-I-5yu0RIQLQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 59C16800D48;
-        Wed, 26 Feb 2020 13:07:47 +0000 (UTC)
-Received: from localhost (ovpn-12-39.pek2.redhat.com [10.72.12.39])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A51325DA60;
-        Wed, 26 Feb 2020 13:07:43 +0000 (UTC)
-Date:   Wed, 26 Feb 2020 21:07:41 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, richardw.yang@linux.intel.com,
-        osalvador@suse.de, dan.j.williams@intel.com, mhocko@suse.com,
-        rppt@linux.ibm.com, robin.murphy@arm.com
-Subject: Re: [PATCH v2 1/7] mm/hotplug: fix hot remove failure in
- SPARSEMEM|!VMEMMAP case
-Message-ID: <20200226130741.GH24216@MiWiFi-R3L-srv>
-References: <20200220043316.19668-1-bhe@redhat.com>
- <20200220043316.19668-2-bhe@redhat.com>
- <93280f63-bed7-9677-a7fa-8ea2089d26d2@redhat.com>
+        bh=m0TtEHDHCO42Q9GTo9Ybh1BaRZcDi57GOxuE4MyXihQ=;
+        b=YhcZ/SVniwnPR0FpE/39Z05byIhdWGlwZk9h49NPknYlavhltgpfsl5bFIlZeGDu4HGDBI
+        h9E86CRus83qQGjTx9aGLOWDqYu+1F4bZizvYLsV+feU1KuR4pNIX4WjTtp8VfOUg6IWxj
+        YuHXFL692m7F1xqZ8AEQ4gb21mfhos8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-121-OfW6MSgQNuu8Xc0Wmx6lMg-1; Wed, 26 Feb 2020 08:10:59 -0500
+X-MC-Unique: OfW6MSgQNuu8Xc0Wmx6lMg-1
+Received: by mail-wm1-f70.google.com with SMTP id m4so896550wmi.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 05:10:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=m0TtEHDHCO42Q9GTo9Ybh1BaRZcDi57GOxuE4MyXihQ=;
+        b=BP4fQhLGWcA3Hl/HIG8w4pGv+2L9/FAH4DDOayIUUt4bbhm2+K+61K7u6B8Lurh2pt
+         YLbe2a2I65r/jwFqQrtg2ub9IfMIdYh/FUgIn0K69b865UisGJqEP2WwGoG3CltklVSE
+         GY6j0NweC4Iinjky6bhS26uiz/WFfFVX4fws4Jx9nHanZNqb+2ugGye4XzZxIl/HqLGo
+         asZM/LFWwKeEr7B86yA5cusZU5StDE8xT2RpfHEDmb03PN3woDaqW8a0+BnaqiKMoTPi
+         ou29hnzziygOnUk0d+3ad/ya6byhg5X0AMqNw/iibnZmgDI3rAiShBPmph+uThkBI0EG
+         MFoQ==
+X-Gm-Message-State: APjAAAUvLaxZtNBU01xK/CfKvJkmicycwQyXEID7OLL9JkDnStWrdZxE
+        uskYPtCXH1/lu6gcbuGhny+hMpIuWCH5twRoFUVNugcayr/bUHWKevAERpk9u0JhXpK/owy3YLM
+        H1TGm49eoWzFUNRdaYYTR76WN
+X-Received: by 2002:adf:ee4c:: with SMTP id w12mr5484070wro.310.1582722658321;
+        Wed, 26 Feb 2020 05:10:58 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxqfgaBcw9P54nxu0njwaxXrTFvBjiwsyYYA1AskRRYgdt+S83CzUmE04FqC5v5uQVR5VjdlA==
+X-Received: by 2002:adf:ee4c:: with SMTP id w12mr5484050wro.310.1582722658112;
+        Wed, 26 Feb 2020 05:10:58 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id z1sm2777575wmf.42.2020.02.26.05.10.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 05:10:57 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Wanpeng Li <kernellwp@gmail.com>
+Subject: Re: [PATCH RESEND v2 2/2] KVM: Pre-allocate 1 cpumask variable per cpu for both pv tlb and pv ipis
+In-Reply-To: <CAKwvOd=bDW6K3PC7S5fiG5n_kwgqhbnVsBHUSGgYaPQY-L_YmA@mail.gmail.com>
+References: <1581988104-16628-1-git-send-email-wanpengli@tencent.com> <1581988104-16628-2-git-send-email-wanpengli@tencent.com> <CANRm+CyHmdbsw572x=8=GYEOw-YQCXhz89i9+VEmROBVAu+rvg@mail.gmail.com> <CAKwvOd=bDW6K3PC7S5fiG5n_kwgqhbnVsBHUSGgYaPQY-L_YmA@mail.gmail.com>
+Date:   Wed, 26 Feb 2020 14:10:56 +0100
+Message-ID: <87mu95jxy7.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <93280f63-bed7-9677-a7fa-8ea2089d26d2@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/26/20 at 01:31pm, David Hildenbrand wrote:
-> On 20.02.20 05:33, Baoquan He wrote:
-> > In section_deactivate(), pfn_to_page() doesn't work any more after
-> > ms->section_mem_map is resetting to NULL in SPARSEMEM|!VMEMMAP case.
-> > It caused hot remove failure:
-> > 
-> > kernel BUG at mm/page_alloc.c:4806!
-> > invalid opcode: 0000 [#1] SMP PTI
-> > CPU: 3 PID: 8 Comm: kworker/u16:0 Tainted: G        W         5.5.0-next-20200205+ #340
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
-> > Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-> > RIP: 0010:free_pages+0x85/0xa0
-> > Call Trace:
-> >  __remove_pages+0x99/0xc0
-> >  arch_remove_memory+0x23/0x4d
-> >  try_remove_memory+0xc8/0x130
-> >  ? walk_memory_blocks+0x72/0xa0
-> >  __remove_memory+0xa/0x11
-> >  acpi_memory_device_remove+0x72/0x100
-> >  acpi_bus_trim+0x55/0x90
-> >  acpi_device_hotplug+0x2eb/0x3d0
-> >  acpi_hotplug_work_fn+0x1a/0x30
-> >  process_one_work+0x1a7/0x370
-> >  worker_thread+0x30/0x380
-> >  ? flush_rcu_work+0x30/0x30
-> >  kthread+0x112/0x130
-> >  ? kthread_create_on_node+0x60/0x60
-> >  ret_from_fork+0x35/0x40
-> > 
-> > Let's move the ->section_mem_map resetting after depopulate_section_memmap()
-> > to fix it.
-> > 
-> 
-> Fixes: Tag? Stable: Tag?
+Nick Desaulniers <ndesaulniers@google.com> writes:
 
-Right, should add these. Will add them. Thanks for noticing.
+> (putting Paolo in To: field, in case email filters are to blame.
+> Vitaly, maybe you could ping Paolo internally?)
+>
 
-> 
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > ---
-> >  mm/sparse.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/sparse.c b/mm/sparse.c
-> > index 596b2a45b100..b8e52c8fed7f 100644
-> > --- a/mm/sparse.c
-> > +++ b/mm/sparse.c
-> > @@ -779,13 +779,15 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
-> >  			ms->usage = NULL;
-> >  		}
-> >  		memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
-> > -		ms->section_mem_map = (unsigned long)NULL;
-> >  	}
-> >  
-> >  	if (section_is_early && memmap)
-> >  		free_map_bootmem(memmap);
-> >  	else
-> >  		depopulate_section_memmap(pfn, nr_pages, altmap);
-> > +
-> > +	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION))
-> > +		ms->section_mem_map = (unsigned long)NULL;
-> >  }
-> >  
-> >  static struct page * __meminit section_activate(int nid, unsigned long pfn,
-> > 
-> 
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> 
-> -- 
-> Thanks,
-> 
-> David / dhildenb
+I could, but the only difference from what I'm doing right now would
+proabbly be the absence of non-@redaht.com emails in To/Cc: fields of
+this email :-)
+
+Do we want this fix for one of the last 5.6 RCs or 5.7 would be fine?
+Personally, I'd say we're not in a great hurry and 5.7 is OK.
+
+-- 
+Vitaly
 
