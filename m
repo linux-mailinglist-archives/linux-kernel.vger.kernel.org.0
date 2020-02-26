@@ -2,164 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9076916FDB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:30:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDE5616FE70
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 12:58:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbgBZLak convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 26 Feb 2020 06:30:40 -0500
-Received: from 4.mo69.mail-out.ovh.net ([46.105.42.102]:38474 "EHLO
-        4.mo69.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727974AbgBZLak (ORCPT
+        id S1726810AbgBZL6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 06:58:22 -0500
+Received: from mail-pl1-f178.google.com ([209.85.214.178]:43088 "EHLO
+        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbgBZL6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 06:30:40 -0500
-X-Greylist: delayed 6593 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Feb 2020 06:30:38 EST
-Received: from player779.ha.ovh.net (unknown [10.110.103.177])
-        by mo69.mail-out.ovh.net (Postfix) with ESMTP id CFAB3868E2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 10:01:50 +0100 (CET)
-Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player779.ha.ovh.net (Postfix) with ESMTPSA id 0A2DBFBF0C51;
-        Wed, 26 Feb 2020 09:01:06 +0000 (UTC)
-Date:   Wed, 26 Feb 2020 10:01:02 +0100
-From:   Greg Kurz <groug@kaod.org>
-To:     "Alastair D'Silva" <alastair@d-silva.org>
-Cc:     "'Baoquan He'" <bhe@redhat.com>,
-        "'Alastair D'Silva'" <alastair@au1.ibm.com>,
-        "'Aneesh Kumar K . V'" <aneesh.kumar@linux.ibm.com>,
-        "'Oliver O'Halloran'" <oohall@gmail.com>,
-        "'Benjamin Herrenschmidt'" <benh@kernel.crashing.org>,
-        "'Paul Mackerras'" <paulus@samba.org>,
-        "'Michael Ellerman'" <mpe@ellerman.id.au>,
-        "'Frederic Barrat'" <fbarrat@linux.ibm.com>,
-        "'Andrew Donnellan'" <ajd@linux.ibm.com>,
-        "'Arnd Bergmann'" <arnd@arndb.de>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'Dan Williams'" <dan.j.williams@intel.com>,
-        "'Vishal Verma'" <vishal.l.verma@intel.com>,
-        "'Dave Jiang'" <dave.jiang@intel.com>,
-        "'Ira Weiny'" <ira.weiny@intel.com>,
-        "'Andrew Morton'" <akpm@linux-foundation.org>,
-        "'Mauro Carvalho Chehab'" <mchehab+samsung@kernel.org>,
-        "'David S. Miller'" <davem@davemloft.net>,
-        "'Rob Herring'" <robh@kernel.org>,
-        "'Anton Blanchard'" <anton@ozlabs.org>,
-        "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-        "'Mahesh Salgaonkar'" <mahesh@linux.vnet.ibm.com>,
-        "'Madhavan Srinivasan'" <maddy@linux.vnet.ibm.com>,
-        "=?UTF-8?B?J0PDqWRyaWM=?= Le Goater'" <clg@kaod.org>,
-        "'Anju T Sudhakar'" <anju@linux.vnet.ibm.com>,
-        "'Hari Bathini'" <hbathini@linux.ibm.com>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Nicholas Piggin'" <npiggin@gmail.com>,
-        "'Masahiro Yamada'" <yamada.masahiro@socionext.com>,
-        "'Alexey Kardashevskiy'" <aik@ozlabs.ru>,
-        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>
-Subject: Re: [PATCH v3 04/27] ocxl: Remove unnecessary externs
-Message-ID: <20200226100102.0aab7dda@bahia.home>
-In-Reply-To: <4d49801d5ec7e$7a3e8610$6ebb9230$@d-silva.org>
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
-        <20200221032720.33893-5-alastair@au1.ibm.com>
-        <20200226081447.GH4937@MiWiFi-R3L-srv>
-        <4d49801d5ec7e$7a3e8610$6ebb9230$@d-silva.org>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 26 Feb 2020 06:58:20 -0500
+Received: by mail-pl1-f178.google.com with SMTP id p11so1201212plq.10
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 03:58:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5YMRvV+08eDz1zTAqAh41qKWUj9Ta+YFrJ/4O+JaQ+E=;
+        b=XlmcE8LWadGLnbLkM6boQYBuEwDqamO2pB8rpBi9J0f4ffdx6t/8w/w0ns/yX3ZUOZ
+         v3sGKC51IA7PqAV5dJ7VY/Ni/mWLfrQTyU/O2qYXtfPSskVOJJdEDXffvi4PJL15pIHr
+         bdaK+Y/NacnkuQcgNvLWjQG97HLFnD0hnjOzoZT+TQw6rNoVmzbx9iRVos00rh7iG3iI
+         siWMsJWAzl5YlPXH1GAlM+YxKb/u2406l8BL8pBO2FqqN8Yt2WtslbJNpmGHh9RmSDxf
+         xZKUAWedusMDKR4J9+bNoj2woELORkGPJoMD/I+3xYTQYphSSo+6JZlhxroYKnueD1T4
+         8kqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5YMRvV+08eDz1zTAqAh41qKWUj9Ta+YFrJ/4O+JaQ+E=;
+        b=PHTbfylNLQ8WXo9Kr2BOerjBjmgQ4rbhyvCQ0EDulBlKrnfkCNoYFwc//Iw/s4g33w
+         iUPe1yOF54xrwq6oXxDJY/yQOVc8QABp3YSY5RAGCGB4RzUCIe+yDjfaXyOp/L9sOQj1
+         umQvWACQnyAMTNxyp1F7ZXNqa6E6bUmsVMtKTwHPON2wolBfapwlx0zALfJfAIO8aNOB
+         ges4rH4UJeSqst28LlkJzhpyGp4SvTTkB4GjQHVNUyeKkNuiJs3H2ZTNpGvdeVVX/18J
+         MnSjJ3DPNXDGMksqnJLH9SykdZxLVZXTgG+HPWUnDABnRjYVH98jy+ArRBPNPWxmJqU4
+         w7Ng==
+X-Gm-Message-State: APjAAAVSPVvm8dcDdcfNvfb/s/RDNMKWR2kS3vr7I9KfnsIxxfb8utAT
+        2INzXBX3gFxNQ5pVlV954BU/aWL3ZOM=
+X-Google-Smtp-Source: APXvYqy6SK3++pCleI5HCCFb8UN6ntnevHnMXBkL9kYIs0aj2I8qBTp78k6t6H0wMoJRCryfMW8vgA==
+X-Received: by 2002:a17:902:426:: with SMTP id 35mr3709323ple.302.1582718298449;
+        Wed, 26 Feb 2020 03:58:18 -0800 (PST)
+Received: from localhost ([2401:4900:1b38:7f42:3530:df3:7e53:a029])
+        by smtp.gmail.com with ESMTPSA id c188sm2893183pfb.151.2020.02.26.03.58.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 03:58:17 -0800 (PST)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        vkoul@kernel.org, daniel.lezcano@linaro.org,
+        bjorn.andersson@linaro.org, sivaa@codeaurora.org,
+        Andy Gross <agross@kernel.org>, Zhang Rui <rui.zhang@intel.com>
+Cc:     Amit Kucheria <amit.kucheria@verdurent.com>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH v3 0/3] Cleanup dtbs_check warnings for tsens
+Date:   Wed, 26 Feb 2020 15:01:10 +0530
+Message-Id: <cover.1582705101.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Ovh-Tracer-Id: 3746431942902978839
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrleefgdduvdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfgjfhfogggtgfesthhqredtredtjeenucfhrhhomhepifhrvghgucfmuhhriicuoehgrhhouhhgsehkrghougdrohhrgheqnecukfhppedtrddtrddtrddtpdekvddrvdehfedrvddtkedrvdegkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejjeelrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepghhrohhugheskhgrohgurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Feb 2020 19:26:34 +1100
-"Alastair D'Silva" <alastair@d-silva.org> wrote:
+Make dtbs_check pass for tsens bits. I'm working on another series to
+cleanup other DT warnings for QC platforms.
 
-> > -----Original Message-----
-> > From: Baoquan He <bhe@redhat.com>
-> > Sent: Wednesday, 26 February 2020 7:15 PM
-> > To: Alastair D'Silva <alastair@au1.ibm.com>
-> > Cc: alastair@d-silva.org; Aneesh Kumar K . V
-> > <aneesh.kumar@linux.ibm.com>; Oliver O'Halloran <oohall@gmail.com>;
-> > Benjamin Herrenschmidt <benh@kernel.crashing.org>; Paul Mackerras
-> > <paulus@samba.org>; Michael Ellerman <mpe@ellerman.id.au>; Frederic
-> > Barrat <fbarrat@linux.ibm.com>; Andrew Donnellan <ajd@linux.ibm.com>;
-> > Arnd Bergmann <arnd@arndb.de>; Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org>; Dan Williams <dan.j.williams@intel.com>;
-> > Vishal Verma <vishal.l.verma@intel.com>; Dave Jiang
-> > <dave.jiang@intel.com>; Ira Weiny <ira.weiny@intel.com>; Andrew Morton
-> > <akpm@linux-foundation.org>; Mauro Carvalho Chehab
-> > <mchehab+samsung@kernel.org>; David S. Miller <davem@davemloft.net>;
-> > Rob Herring <robh@kernel.org>; Anton Blanchard <anton@ozlabs.org>;
-> > Krzysztof Kozlowski <krzk@kernel.org>; Mahesh Salgaonkar
-> > <mahesh@linux.vnet.ibm.com>; Madhavan Srinivasan
-> > <maddy@linux.vnet.ibm.com>; Cédric Le Goater <clg@kaod.org>; Anju T
-> > Sudhakar <anju@linux.vnet.ibm.com>; Hari Bathini
-> > <hbathini@linux.ibm.com>; Thomas Gleixner <tglx@linutronix.de>; Greg
-> > Kurz <groug@kaod.org>; Nicholas Piggin <npiggin@gmail.com>; Masahiro
-> > Yamada <yamada.masahiro@socionext.com>; Alexey Kardashevskiy
-> > <aik@ozlabs.ru>; linux-kernel@vger.kernel.org; linuxppc-
-> > dev@lists.ozlabs.org; linux-nvdimm@lists.01.org; linux-mm@kvack.org
-> > Subject: Re: [PATCH v3 04/27] ocxl: Remove unnecessary externs
-> > 
-> > On 02/21/20 at 02:26pm, Alastair D'Silva wrote:
-> > > From: Alastair D'Silva <alastair@d-silva.org>
-> > >
-> > > Function declarations don't need externs, remove the existing ones so
-> > > they are consistent with newer code
-> > >
-> > > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > > ---
-> > >  arch/powerpc/include/asm/pnv-ocxl.h | 32 ++++++++++++++---------------
-> > >  include/misc/ocxl.h                 |  6 +++---
-> > >  2 files changed, 18 insertions(+), 20 deletions(-)
-> > >
-> > > diff --git a/arch/powerpc/include/asm/pnv-ocxl.h
-> > > b/arch/powerpc/include/asm/pnv-ocxl.h
-> > > index 0b2a6707e555..b23c99bc0c84 100644
-> > > --- a/arch/powerpc/include/asm/pnv-ocxl.h
-> > > +++ b/arch/powerpc/include/asm/pnv-ocxl.h
-> > > @@ -9,29 +9,27 @@
-> > >  #define PNV_OCXL_TL_BITS_PER_RATE       4
-> > >  #define PNV_OCXL_TL_RATE_BUF_SIZE
-> > ((PNV_OCXL_TL_MAX_TEMPLATE+1) * PNV_OCXL_TL_BITS_PER_RATE / 8)
-> > >
-> > > -extern int pnv_ocxl_get_actag(struct pci_dev *dev, u16 *base, u16
-> > *enabled,
-> > > -			u16 *supported);
-> > 
-> > It works w or w/o extern when declare functions. Searching 'extern'
-> > under include can find so many functions with 'extern' adding. Do we have
-> a
-> > explicit standard if we should add or remove 'exter' in function
-> declaration?
-> > 
-> > I have no objection to this patch, just want to make clear so that I can
-> handle
-> > it w/o confusion.
-> > 
-> > Thanks
-> > Baoquan
-> > 
-> 
-> For the OpenCAPI driver, we have settled on not having 'extern' on
-> functions.
-> 
-> I don't think I've seen a standard that supports or refutes this, but it
-> does not value add.
-> 
+Amit Kucheria (3):
+  dt-bindings: thermal: tsens: Add entry for sc7180 tsens to binding
+  dt-bindings: thermal: tsens: Add qcom,tsens-v0_1 to msm8916.dtsi
+    compatible
+  dt-bindings: thermal: tsens: Add qcom,tsens-v2 to msm8996.dtsi
+    compatible
 
-FWIW this is a warning condition for checkpatch:
+ Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
+ arch/arm64/boot/dts/qcom/msm8916.dtsi                     | 2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi                     | 4 ++--
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
-$ ./scripts/checkpatch.pl --strict -f include/misc/ocxl.h
+-- 
+2.20.1
 
-[...]
-
-CHECK: extern prototypes should be avoided in .h files
-#176: FILE: include/misc/ocxl.h:176:
-+extern int ocxl_afu_irq_alloc(struct ocxl_context *ctx, int *irq_id);
-
-[...]
