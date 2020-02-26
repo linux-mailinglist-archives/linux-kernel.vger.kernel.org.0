@@ -2,60 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E05017053D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55BC617054C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 18:01:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728424AbgBZRBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 12:01:21 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56034 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728388AbgBZRBT (ORCPT
+        id S1728432AbgBZRBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 12:01:54 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:32782 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728073AbgBZRBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 12:01:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=hhQ9YBl81zQvhfWadY0dEbDydMLxnfW9YM0h14jX4a0=; b=b4gRu9OmDpOpG4+91cUD2P0Fvx
-        rwIA1FZxWgyqg54ixZ2mlE7je+4s02JEfApEECCDtBJZOsOCCCQypvdX4wlnpTzyq3GzniYslygSp
-        0JLM3hJczJhHf6sPZnzEVoXaF0BjXMr7Sau/bOjj78BwbTBoLYT0As4XBg3LZA4cCSraqX2yl635x
-        P0GeGjaSAjr/yoe31Xsg5u1v6aDOjH3+k/QDvhsXylJIuy7m6nJ0VChbG4oj9ux1VoZSn++eE6CLS
-        nvwJVc8B+ap1PhLLk3dgexnb7LCihqx+unp7n6RFCEuxFFJLK99PLd8EgLQxWjGh2LTvEZCdFHFm2
-        mjT6Qmyw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j703j-0006LS-7W; Wed, 26 Feb 2020 17:01:19 +0000
-Date:   Wed, 26 Feb 2020 09:01:19 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v8 05/25] mm: Add new readahead_control API
-Message-ID: <20200226170119.GA22837@infradead.org>
-References: <20200225214838.30017-1-willy@infradead.org>
- <20200225214838.30017-6-willy@infradead.org>
+        Wed, 26 Feb 2020 12:01:52 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01QH1VWD001892;
+        Wed, 26 Feb 2020 11:01:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582736491;
+        bh=CZdphqXj3swfr3rshZA/0w1MD1hpzkcAcBfN76SapQ8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=SNNkUAvXoggAOVNecqUg9xSNEJYjzrLU6umWjXK4EPh0R4/cJ/S47rUlRWY1b9T+P
+         QDhnsksn0ISK030JdOaEcCRXcUbbV17LamWBReCcdX8mRyEN9OyLX+FQAd/jH99MMd
+         UVOujwFW11cmasY9pEYlXh6M9mCuqTTCNzmHbROg=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01QH1V69116205
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Feb 2020 11:01:31 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 26
+ Feb 2020 11:01:30 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 26 Feb 2020 11:01:31 -0600
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01QH1Ukv121969;
+        Wed, 26 Feb 2020 11:01:30 -0600
+Subject: Re: [PATCH] virtio_ring: Fix mem leak with vring_new_virtqueue()
+To:     Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+CC:     Tiwei Bie <tiwei.bie@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        <virtualization@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20200224212643.30672-1-s-anna@ti.com>
+ <b622c831-9adb-b9af-dd4a-21605bc124a8@redhat.com>
+ <0ace3a3b-cf2f-7977-5337-f74f530afbe1@ti.com>
+ <1ce2bee4-64ed-f630-2695-8e8b9b8e27c1@redhat.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <90f85329-9bec-1204-6a0d-892c92219eb1@ti.com>
+Date:   Wed, 26 Feb 2020 11:01:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225214838.30017-6-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <1ce2bee4-64ed-f630-2695-8e8b9b8e27c1@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 01:48:18PM -0800, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On 2/25/20 9:13 PM, Jason Wang wrote:
 > 
-> Filesystems which implement the upcoming ->readahead method will get
-> their pages by calling readahead_page() or readahead_page_batch().
-> These functions support large pages, even though none of the filesystems
-> to be converted do yet.
+> On 2020/2/26 上午12:51, Suman Anna wrote:
+>> Hi Jason,
+>>
+>> On 2/24/20 11:39 PM, Jason Wang wrote:
+>>> On 2020/2/25 上午5:26, Suman Anna wrote:
+>>>> The functions vring_new_virtqueue() and __vring_new_virtqueue() are
+>>>> used
+>>>> with split rings, and any allocations within these functions are
+>>>> managed
+>>>> outside of the .we_own_ring flag. The commit cbeedb72b97a
+>>>> ("virtio_ring:
+>>>> allocate desc state for split ring separately") allocates the desc
+>>>> state
+>>>> within the __vring_new_virtqueue() but frees it only when the
+>>>> .we_own_ring
+>>>> flag is set. This leads to a memory leak when freeing such allocated
+>>>> virtqueues with the vring_del_virtqueue() function.
+>>>>
+>>>> Fix this by moving the desc_state free code outside the flag and only
+>>>> for split rings. Issue was discovered during testing with remoteproc
+>>>> and virtio_rpmsg.
+>>>>
+>>>> Fixes: cbeedb72b97a ("virtio_ring: allocate desc state for split ring
+>>>> separately")
+>>>> Signed-off-by: Suman Anna<s-anna@ti.com>
+>>>> ---
+>>>>    drivers/virtio/virtio_ring.c | 4 ++--
+>>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/virtio/virtio_ring.c
+>>>> b/drivers/virtio/virtio_ring.c
+>>>> index 867c7ebd3f10..58b96baa8d48 100644
+>>>> --- a/drivers/virtio/virtio_ring.c
+>>>> +++ b/drivers/virtio/virtio_ring.c
+>>>> @@ -2203,10 +2203,10 @@ void vring_del_virtqueue(struct virtqueue *_vq)
+>>>>                         vq->split.queue_size_in_bytes,
+>>>>                         vq->split.vring.desc,
+>>>>                         vq->split.queue_dma_addr);
+>>>> -
+>>>> -            kfree(vq->split.desc_state);
+>>>>            }
+>>>>        }
+>>>> +    if (!vq->packed_ring)
+>>>> +        kfree(vq->split.desc_state);
+>>> Nitpick, it looks to me it would be more clear if we just free
+>>> desc_state unconditionally here (and remove the kfree for packed above).
+>> OK, are you sure you want that to be folded into this patch? It looks to
+>> me a separate cleanup/consolidation patch, and packed desc_state does
+>> not suffer this memleak, and need not be backported into stable kernels.
+>>
+>> regards
+>> Suman
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> 
+> Though it's just a small tweak, I'm fine for leaving it for future.
+> 
+> So
+> 
+> Acked-by: Jason Wang <jasowang@redhat.com>
 
-Looks good,
+Thanks Jason, will post a patch for the same once this is merged.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+regards
+Suman
