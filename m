@@ -2,88 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC3DB16F99A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:32:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BEAC16F99D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2020 09:33:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbgBZIce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 03:32:34 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:38050 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbgBZIce (ORCPT
+        id S1727495AbgBZIdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 03:33:22 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42022 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbgBZIdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 03:32:34 -0500
-Received: by mail-pj1-f68.google.com with SMTP id j17so973665pjz.3;
-        Wed, 26 Feb 2020 00:32:33 -0800 (PST)
+        Wed, 26 Feb 2020 03:33:22 -0500
+Received: by mail-pg1-f193.google.com with SMTP id h8so944249pgs.9;
+        Wed, 26 Feb 2020 00:33:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=HKTxLuQ5nhjrOrx+Thx+BTX7TOSnSPBtMS3eSGVhkfc=;
-        b=d3S1VY0cTXS2OKbI9CvTey2rVo473E0hs5wSs/r1y02/t+fCWs7V3EsfN26mbmQahv
-         36Qy3jmj4YAAqUO44HPvYwaMGb8EuChtKQXY2RuG76odOZMssHtE7+u2WPNujMXyo0I+
-         /vXVEThOBTyCXeYVIpgkAkc88R9AmluILKFbb1kuTlC3YnsFm01qmGTDsYkyG99rb7lT
-         cbk1PoL0AfD2/kSyW8SwxcoQOx7TJ5KMxrHAE9yZDPRFSOz1p5nX6Kpf7I1pQP/qF1Yf
-         N8pU/DEnAQXVyLLID2Sq2vrysUVAiqKMFnk24iZOAb/ZcD+ATXADs0FdTbOcqpQRw3GB
-         XC8Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XqlxF81Ri1fm02o+lsTCsP4GTUvxZgWE/G6mwZn7NMg=;
+        b=OFfWmgW/gYHRAZpBGxkDWL0DtZcua2+xHMA15CCD9P1f899OfOItFHWzBT0bVm10sv
+         nGvy+baVNbXyP/if3rC3KlukKmlFEavseT/069nLGmeHSxbJM8QVFUCnDqvhOkQADZIj
+         uVtkHadsa5YelUuxNRxDDT8u1pT3qIyBQXfstFeq8tWcQoPtIFBviho4E8cj9NlhvaXa
+         5g51dV1hHmsRrHGQr1P/cjYm04Xk7EblzsD/swLpUEqu6+nNWo/zU59m/Vu075NN3l6t
+         JHAG1eiqOAUW8WMdMAZj7TiW2OwPYkjkyFZMxxCJYwHyKpsmnDKSzmBYx4T6VXu+9389
+         AiBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HKTxLuQ5nhjrOrx+Thx+BTX7TOSnSPBtMS3eSGVhkfc=;
-        b=On/S6zNLZ93HxhJHuZnAmw1lY9KZMOWZdHPZuu9PD3Q1LVO8csxVhREbTkEU242b9U
-         JSIOukLmkLgX8EjlsRqWxzT1pQK0zQVfxrUqgBQwn+aR9Dm3xG8DlMLracg8QUJNWHoq
-         cHNHCi8KzlffLQPhHsOVZSuQqsuXfE8Fr88Nqyg5qai9+X1MMwc9K+gFjt0tnN/CDbA2
-         UhhF4WDYbLvVAUVpN8e4qbH0MHkraRP0nkin/agCRvV11IvnN4sAOIE4zc/zVVfY22Kt
-         u4olpj6FdZn6GPfYpfuoxqEg88mVa5C2cyO4+66j3IXkj+EjrYVcEy/IO0IeFokSPLS6
-         034A==
-X-Gm-Message-State: APjAAAX+CzzJyH95zhwMGG/wwpcjAL4AO+V/t2NKno+D2gATV7fthjVN
-        nwjm06avSUB9oIw4xDECQG8=
-X-Google-Smtp-Source: APXvYqygpuTaPFxu1B1czsjQ7Sq15hOZyc1nKhJ4FyNSYTbL7NwBkX7D374bnrLlaIiSbkRGXfYPFw==
-X-Received: by 2002:a17:90a:9284:: with SMTP id n4mr3756979pjo.69.1582705952985;
-        Wed, 26 Feb 2020 00:32:32 -0800 (PST)
-Received: from huyue2.ccdomain.com ([103.29.143.67])
-        by smtp.gmail.com with ESMTPSA id m18sm1649278pgd.39.2020.02.26.00.32.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Feb 2020 00:32:32 -0800 (PST)
-From:   Yue Hu <zbestahu@gmail.com>
-To:     minchan@kernel.org, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com, axboe@kernel.dk
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        huyue2@yulong.com, zbestahu@163.com
-Subject: [PATCH] drivers/block/zram/zram_drv.c: remove WARN_ON_ONCE() in free_block_bdev()
-Date:   Wed, 26 Feb 2020 16:32:17 +0800
-Message-Id: <20200226083217.5720-1-zbestahu@gmail.com>
-X-Mailer: git-send-email 2.17.1.windows.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XqlxF81Ri1fm02o+lsTCsP4GTUvxZgWE/G6mwZn7NMg=;
+        b=eKjaUDQjFowJEOw5M1OUekR1MmyNAN3jPVwmDJCZwqQ4XR3O6og86dPob12qyIlJhc
+         1qst3irNfc5yGIxc8xukOJbuNnsPkRNdSHpBAgMNrCBJaxki2H5nqr3cy34LUn3rMokO
+         X4jhRVbeaaJZEM8YM2bKuKtFFk+Hc74qPUAPntZ0DgelDzhNK8tX4cGb4pYvI2ZH7Lg/
+         R0HInPK55aKzOaUpZM0Kw7ar1Kjiyetcx3cU0BcuGYUFsrzhfRtyTNE3rY5cdwA3GEyw
+         pLzV8ZA79RqD/FiWzB640WNd2aWofeWJXLa8HNvQrbmePe4mrFZd5B2BzIZ9lfF8Pe/1
+         t5Pg==
+X-Gm-Message-State: APjAAAXEOy/BuvX3Zt1lJgJd0cyH9aX/ODGsfDzIC2JgrOYoISgCmavK
+        Bsa1oq5U0tYr34s/3APGM3dz6S5P2y3LHXSchIM=
+X-Google-Smtp-Source: APXvYqxSrK38j0pUinifgPK5b5g707sn/C8uL7DptCzOZtLnjxvEKjEPsB3FOBFYIx3TUnX4UMm3w1N77GYYH6ltC7A=
+X-Received: by 2002:a62:1a09:: with SMTP id a9mr3201886pfa.64.1582706000275;
+ Wed, 26 Feb 2020 00:33:20 -0800 (PST)
+MIME-Version: 1.0
+References: <20200220033335.106963-1-chenzhou10@huawei.com>
+ <CAHp75Vf3Bsjj+0ebkxMatZfUGDJ=upOHBFHfOs_PDOnFTnRJYQ@mail.gmail.com>
+ <BN8PR11MB362069564569B69E42C00086F2ED0@BN8PR11MB3620.namprd11.prod.outlook.com>
+ <BYAPR11MB3624FB3A1FC8F5C43D8F6DC4F2EA0@BYAPR11MB3624.namprd11.prod.outlook.com>
+In-Reply-To: <BYAPR11MB3624FB3A1FC8F5C43D8F6DC4F2EA0@BYAPR11MB3624.namprd11.prod.outlook.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 26 Feb 2020 10:33:08 +0200
+Message-ID: <CAHp75VfkZyuu8QZ-Kc+9-yZkD_OUGxzBiXQDAQQ0oKxrJ_KR_w@mail.gmail.com>
+Subject: Re: [PATCH -next] platform/x86: intel_pmc_core: fix build error
+ without CONFIG_DEBUG_FS
+To:     "Kammela, Gayatri" <gayatri.kammela@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     Chen Zhou <chenzhou10@huawei.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        "Somayaji, Vishwanath" <vishwanath.somayaji@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yue Hu <huyue2@yulong.com>
+On Wed, Feb 26, 2020 at 3:56 AM Kammela, Gayatri
+<gayatri.kammela@intel.com> wrote:
+> > -----Original Message-----
+> > From: Kammela, Gayatri
+> > Sent: Tuesday, February 25, 2020 9:11 AM
+> > To: Andy Shevchenko <andy.shevchenko@gmail.com>; Chen Zhou
+> > <chenzhou10@huawei.com>
+> > Cc: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>; Somayaji,
+> > Vishwanath <vishwanath.somayaji@intel.com>; Darren Hart
+> > <dvhart@infradead.org>; Andy Shevchenko <andy@infradead.org>;
+> > Platform Driver <platform-driver-x86@vger.kernel.org>; Linux Kernel Mailing
+> > List <linux-kernel@vger.kernel.org>
+> > Subject: RE: [PATCH -next] platform/x86: intel_pmc_core: fix build error
+> > without CONFIG_DEBUG_FS
+> >
+> > > -----Original Message-----
+> > > From: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > > Sent: Tuesday, February 25, 2020 2:13 AM
+> > > To: Chen Zhou <chenzhou10@huawei.com>; Kammela, Gayatri
+> > > <gayatri.kammela@intel.com>
+> > > Cc: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>; Somayaji,
+> > > Vishwanath <vishwanath.somayaji@intel.com>; Darren Hart
+> > > <dvhart@infradead.org>; Andy Shevchenko <andy@infradead.org>;
+> > Platform
+> > > Driver <platform-driver-x86@vger.kernel.org>; Linux Kernel Mailing
+> > > List <linux-kernel@vger.kernel.org>
+> > > Subject: Re: [PATCH -next] platform/x86: intel_pmc_core: fix build
+> > > error without CONFIG_DEBUG_FS
+> > >
+> > > On Thu, Feb 20, 2020 at 5:40 AM Chen Zhou <chenzhou10@huawei.com>
+> > > wrote:
+> > > >
+> > > > If CONFIG_DEBUG_FS is n, build fails:
+> > > >
+> > > > drivers/platform/x86/intel_pmc_core.c: In function pmc_core_resume:
+> > > > drivers/platform/x86/intel_pmc_core.c:1327:3: error: implicit
+> > > > declaration
+> > > of function pmc_core_slps0_display; did you mean
+> > > pmc_core_is_pc10_failed? [-Werror=implicit-function-declaration]
+> > > >    pmc_core_slps0_display(pmcdev, dev, NULL);
+> > > >       ^~~~~~~~~~~~~~~~~~~~~~
+> > > >
+> > > > Function pmc_core_slps0_display() is responsible for displaying
+> > > > debug registers, which is under CONFIG_DEBUG_FS.
+> > > >
+> > > > Providing the static inline stub whenever CONFIG_DEBUG_FS is
+> > > > disabled to fix this. Function pmc_core_lpm_display() is the same.
+> > >
+> > > Thank you for the patch, but I think it's not the right approach.
+> > > Basically we need to move those functions outside of #if
+> > > IS_ENABLED(CONFIG_DEBUG_FS).
+> > > (Move them upper).
+> > Agreed
+> > >
+> > > Also I have noticed another issue in pmc_core_lpm_display(). It uses
+> > > tgl_lpm_maps directly. It shouldn't.
+> > >
+> > > Cc: Gayatri.
+> > >
+> > > Gayatri, care to fix?
+> > Hi Andy, caught this bug in our internal regression too. I will send the patch
+> > shortly. Thanks!
+>
+> Update: Andy, I have 4 small fixes for the patch series merged in for-next branch.
 
-Currently, free_block_bdev() only happens after calling alloc_block_bdev()
-which will ensure blk_idx bit to be set using test_and_set_bit(). So no
-need to do WARN_ON_ONCE(!was_set) again when freeing.
+I don't see it in the mailing list.
+Please check if you send them correctly.
 
-Signed-off-by: Yue Hu <huyue2@yulong.com>
----
- drivers/block/zram/zram_drv.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+There are more bug reports coming. We must fix this ASAP.
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 1bdb579..61b10ab 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -570,10 +570,7 @@ static unsigned long alloc_block_bdev(struct zram *zram)
- 
- static void free_block_bdev(struct zram *zram, unsigned long blk_idx)
- {
--	int was_set;
--
--	was_set = test_and_clear_bit(blk_idx, zram->bitmap);
--	WARN_ON_ONCE(!was_set);
-+	clear_bit(blk_idx, zram->bitmap);
- 	atomic64_dec(&zram->stats.bd_count);
- }
- 
--- 
-1.9.1
+>  I am wondering if I should send the fixup patches or if you drop the patch series from for-next branch, I can send out the new version that includes all these fixes. Please suggest. Thanks!
+>
+> > >
+> > > > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > > > Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+> > > > ---
+> > > >  drivers/platform/x86/intel_pmc_core.c | 14 ++++++++++++++
+> > > >  1 file changed, 14 insertions(+)
+> > > >
+> > > > diff --git a/drivers/platform/x86/intel_pmc_core.c
+> > > > b/drivers/platform/x86/intel_pmc_core.c
+> > > > index f4a36fb..939f8e0 100644
+> > > > --- a/drivers/platform/x86/intel_pmc_core.c
+> > > > +++ b/drivers/platform/x86/intel_pmc_core.c
+> > > > @@ -1117,6 +1117,20 @@ static void pmc_core_dbgfs_register(struct
+> > > pmc_dev *pmcdev)
+> > > >         }
+> > > >  }
+> > > >  #else
+> > > > +static inline void pmc_core_slps0_display(struct pmc_dev *pmcdev,
+> > > > +                                          struct device *dev,
+> > > > +                                          struct seq_file *s) { }
+> > > > +
+> > > > +static inline void pmc_core_lpm_display(struct pmc_dev *pmcdev,
+> > > > +                                        struct device *dev,
+> > > > +                                        struct seq_file *s, u32 offset,
+> > > > +                                        const char *str,
+> > > > +                                        const struct pmc_bit_map
+> > > > +**maps) { }
+> > > > +
+> > > >  static inline void pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
+> > > > { }
+> > > > --
+> > > > 2.7.4
+> > > >
+> > >
+> > >
+> > > --
+> > > With Best Regards,
+> > > Andy Shevchenko
 
+
+
+--
+With Best Regards,
+Andy Shevchenko
