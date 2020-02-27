@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F08CD171C41
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:10:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C984C171D8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:22:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388572AbgB0OKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:10:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48740 "EHLO mail.kernel.org"
+        id S2389241AbgB0OQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:16:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388553AbgB0OKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:10:32 -0500
+        id S2389532AbgB0OQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:16:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE43C20801;
-        Thu, 27 Feb 2020 14:10:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83A1820801;
+        Thu, 27 Feb 2020 14:16:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812632;
-        bh=5bD7RjzDBM4Cn3X4m5cxlyQ8eVsypFN/FZmInh4myb8=;
+        s=default; t=1582812993;
+        bh=Oy04ncDpOudFb1TIC7QExOQuLz3jaGRTEN1jhP1o1ao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SemXfIDqmNqElaJK3AMaIX2sgQGOMyyu4SvG0LNiODIS6YcdZvriP50liVsvg1Q4p
-         16KgO0dSrfZB0AWAuRv51iuWqlaQBiTOYgriN/bkHV52LO+EtMm+7CpIgtZFRa++hy
-         hB6I4GP5N2Oi/4jyW1K3ZF+PuqmXHtRNkB6ilaOo=
+        b=gcd0Zcvp2QL6zyWdpgHkxvFOM+RpkWDANk2jCETxTtl1/PNbSFUCkiVAowH+o2Ww9
+         NbQZ45FWrjmtiexoQBUamDt7BtARGs3RtSViXWliBhqatSN28aDhDolL4I/y9V9D1g
+         pJvqVm4qPHL3ahCzyTu0osWMfQzD8TMUps5QO9qk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 091/135] KVM: apic: avoid calculating pending eoi from an uninitialized val
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 5.5 094/150] ext4: fix mount failure with quota configured as module
 Date:   Thu, 27 Feb 2020 14:37:11 +0100
-Message-Id: <20200227132242.970867787@linuxfoundation.org>
+Message-Id: <20200227132246.714631224@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 23520b2def95205f132e167cf5b25c609975e959 upstream.
+commit 9db176bceb5c5df4990486709da386edadc6bd1d upstream.
 
-When pv_eoi_get_user() fails, 'val' may remain uninitialized and the return
-value of pv_eoi_get_pending() becomes random. Fix the issue by initializing
-the variable.
+When CONFIG_QFMT_V2 is configured as a module, the test in
+ext4_feature_set_ok() fails and so mount of filesystems with quota or
+project features fails. Fix the test to use IS_ENABLED macro which
+works properly even for modules.
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Link: https://lore.kernel.org/r/20200221100835.9332-1-jack@suse.cz
+Fixes: d65d87a07476 ("ext4: improve explanation of a mount failure caused by a misconfigured kernel")
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/lapic.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/ext4/super.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -637,9 +637,11 @@ static inline bool pv_eoi_enabled(struct
- static bool pv_eoi_get_pending(struct kvm_vcpu *vcpu)
- {
- 	u8 val;
--	if (pv_eoi_get_user(vcpu, &val) < 0)
-+	if (pv_eoi_get_user(vcpu, &val) < 0) {
- 		printk(KERN_WARNING "Can't read EOI MSR value: 0x%llx\n",
- 			   (unsigned long long)vcpu->arch.pv_eoi.msr_val);
-+		return false;
-+	}
- 	return val & 0x1;
- }
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2989,7 +2989,7 @@ static int ext4_feature_set_ok(struct su
+ 		return 0;
+ 	}
  
+-#if !defined(CONFIG_QUOTA) || !defined(CONFIG_QFMT_V2)
++#if !IS_ENABLED(CONFIG_QUOTA) || !IS_ENABLED(CONFIG_QFMT_V2)
+ 	if (!readonly && (ext4_has_feature_quota(sb) ||
+ 			  ext4_has_feature_project(sb))) {
+ 		ext4_msg(sb, KERN_ERR,
 
 
