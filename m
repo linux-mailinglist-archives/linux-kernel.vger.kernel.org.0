@@ -2,194 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C70B170D46
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 01:35:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3110170D3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 01:31:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbgB0Af4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 19:35:56 -0500
-Received: from gateway20.websitewelcome.com ([192.185.70.14]:37637 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727987AbgB0Af4 (ORCPT
+        id S1728091AbgB0AbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 19:31:11 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37455 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727987AbgB0AbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 19:35:56 -0500
-X-Greylist: delayed 1261 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Feb 2020 19:35:55 EST
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 52DE6400CC7CB
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 17:00:33 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 76pKjcwV3vBMd76pKjYg0D; Wed, 26 Feb 2020 18:14:54 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rT7WWpbwpV4IGTwJi8+zKDNGXv/0UC4c4qJjI8DSims=; b=lwas1jZ90oaNkKFa69uzbJ6nsD
-        Dsa2eSzd57FeJ/svt+i01heuytDqQpXLgToXu1nOutwL2WRWLX+A9ZRTrzvRc0pPOcD1cjbjq8/ln
-        /LaRrTtPLevkeWR7NX4bIdMaog8FLXeYRobIQ23p8Vc/ORiqncCH3wPJhFUvpcj95gd23V21MnfY3
-        0QxUEWzUb5NEK4uOobm6ynoSoj4cIBYwV1andiT1GZY/NIbek3mPg4GgCWChr5OGTxVDXKY1dLoOu
-        Wg6Z4fD0f1mY1zp4w/ImfDP3H/9o74YrKBMaHhmyXJKQFHaL1dBD1w8KH+j4DfUuGTE732Gx1/GK4
-        eckdxPfA==;
-Received: from [201.162.161.175] (port=59980 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j76pI-002FPo-6l; Wed, 26 Feb 2020 18:14:52 -0600
-Date:   Wed, 26 Feb 2020 18:17:44 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>
-Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] bpf: Replace zero-length array with flexible-array member
-Message-ID: <20200227001744.GA3317@embeddedor>
+        Wed, 26 Feb 2020 19:31:11 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z12so492983pgl.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 16:31:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2MwKceVB/8T/fWJxXCvPWmKs+5MAIGdSRlEhKMQMaSM=;
+        b=CWajb/K7LI9FjAaB0ca4YN4TLt9eR/If8M1yvhaNyiG6fGghZi0c8rTuJyMJjpny6R
+         zlFiY3Czt/oeHzrLsGWTOz5PhcCoQF941tW9fR370DJobzH/WlSEhwCuiQNctzOtm3/n
+         8uj6wSTdA5b8qWK7CXc2dJoPQFWNADxjn5Y8pRtYfjVYwZhV4wRkAfgQbGQT8xhG1wZo
+         ge0eOtm0w49qYCGDiYbfkbBWEb8++va1VITOpE+CZSSN+XPdLgxqDk1ccXlWGKivtl6l
+         seszXaJphBaiEX+gy2tPdTHkbCVxSOUknbnD+JZg6CYIE5/1EWxeQC8gMVV1nHVD2GKg
+         77RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2MwKceVB/8T/fWJxXCvPWmKs+5MAIGdSRlEhKMQMaSM=;
+        b=iLuWTj/Npl3doa/mCtaZ8OZgc+vBYampd4QvLrozewlCvP7YIbbRupg/P2zluBEJBz
+         imKNk7+6d678srfrHrnYmgBWnLvalYWgJ/gWZg/HPXGJ8JdVuE5uxAOka3Kuf/1l99LY
+         Tw7B6JV8Ku/+F7k8EezpIsGeMCi4j1aIEHCqceienrm/iRPzvIQH1gXLnTDfW0RU+OBI
+         yljO5RtsvWMVV5I+cX2nrAHFS0hRqJ3uwX3FbN0blCLW7iLw/uM/LV7Wm69rlYDiDvGK
+         IN807OgMZjxbjwkPLImq2lWo346s7iCcZtdAIvkqSsGZc3P2w5sO6q93ww9ROkUocKKH
+         CB3Q==
+X-Gm-Message-State: APjAAAXSoLwaC3qF+1UUCU0IMMEMEtYEPvEWqd3zaH4iPYSZsA8xVrDf
+        fipDw5UJXkuUMKd4r+rboh5bZ6ZN6vk=
+X-Google-Smtp-Source: APXvYqy/7+8GLTujZKTC42dcivzJjldCPEFcGAmU/tIcSVJCbWe+v3OrlH0R3oIU05xe26KG1Ud3Qg==
+X-Received: by 2002:a63:ed01:: with SMTP id d1mr1271350pgi.95.1582763467915;
+        Wed, 26 Feb 2020 16:31:07 -0800 (PST)
+Received: from localhost (g183.222-224-185.ppp.wakwak.ne.jp. [222.224.185.183])
+        by smtp.gmail.com with ESMTPSA id x65sm4612875pfb.171.2020.02.26.16.31.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 16:31:07 -0800 (PST)
+Date:   Thu, 27 Feb 2020 09:31:05 +0900
+From:   Stafford Horne <shorne@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Openrisc <openrisc@lists.librecores.org>
+Cc:     Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Christian Brauner <christian@brauner.io>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>
+Subject: Re: [PATCH 1/3] openrisc: Convert copy_thread to copy_thread_tls
+Message-ID: <20200227003105.GF7926@lianli.shorne-pla.net>
+References: <20200226225625.28935-1-shorne@gmail.com>
+ <20200226225625.28935-2-shorne@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.161.175
-X-Source-L: No
-X-Exim-ID: 1j76pI-002FPo-6l
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.161.175]:59980
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200226225625.28935-2-shorne@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Thu, Feb 27, 2020 at 07:56:23AM +0900, Stafford Horne wrote:
+> This is required for clone3 which passes the TLS value through a
+> struct rather than a register.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+[...]
+ 
+> diff --git a/arch/openrisc/kernel/process.c b/arch/openrisc/kernel/process.c
+> index b06f84f6676f..6695f167e126 100644
+> --- a/arch/openrisc/kernel/process.c
+> +++ b/arch/openrisc/kernel/process.c
+> @@ -117,12 +117,13 @@ void release_thread(struct task_struct *dead_task)
+>  extern asmlinkage void ret_from_fork(void);
+>  
+>  /*
+> - * copy_thread
+> + * copy_thread_tls
+>   * @clone_flags: flags
+>   * @usp: user stack pointer or fn for kernel thread
+>   * @arg: arg to fn for kernel thread; always NULL for userspace thread
+>   * @p: the newly created task
+>   * @regs: CPU context to copy for userspace thread; always NULL for kthread
+> + * @tls: the Thread Local Storate pointer for the new process
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- include/linux/bpf-cgroup.h  | 2 +-
- include/linux/bpf.h         | 2 +-
- include/uapi/linux/bpf.h    | 2 +-
- kernel/bpf/bpf_struct_ops.c | 2 +-
- kernel/bpf/hashtab.c        | 2 +-
- kernel/bpf/lpm_trie.c       | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-index a11d5b7dbbf3..a7cd5c7a2509 100644
---- a/include/linux/bpf-cgroup.h
-+++ b/include/linux/bpf-cgroup.h
-@@ -36,7 +36,7 @@ struct bpf_cgroup_storage_map;
+This should be *Storage*.
  
- struct bpf_storage_buffer {
- 	struct rcu_head rcu;
--	char data[0];
-+	char data[];
- };
- 
- struct bpf_cgroup_storage {
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 1acd5bf70350..9aa33b8f3d55 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -859,7 +859,7 @@ struct bpf_prog_array_item {
- 
- struct bpf_prog_array {
- 	struct rcu_head rcu;
--	struct bpf_prog_array_item items[0];
-+	struct bpf_prog_array_item items[];
- };
- 
- struct bpf_prog_array *bpf_prog_array_alloc(u32 prog_cnt, gfp_t flags);
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index 906e9f2752db..8e98ced0963b 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -73,7 +73,7 @@ struct bpf_insn {
- /* Key of an a BPF_MAP_TYPE_LPM_TRIE entry */
- struct bpf_lpm_trie_key {
- 	__u32	prefixlen;	/* up to 32 for AF_INET, 128 for AF_INET6 */
--	__u8	data[0];	/* Arbitrary size */
-+	__u8	data[];	/* Arbitrary size */
- };
- 
- struct bpf_cgroup_storage_key {
-diff --git a/kernel/bpf/bpf_struct_ops.c b/kernel/bpf/bpf_struct_ops.c
-index 042f95534f86..c498f0fffb40 100644
---- a/kernel/bpf/bpf_struct_ops.c
-+++ b/kernel/bpf/bpf_struct_ops.c
-@@ -23,7 +23,7 @@ enum bpf_struct_ops_state {
- 
- struct bpf_struct_ops_value {
- 	BPF_STRUCT_OPS_COMMON_VALUE;
--	char data[0] ____cacheline_aligned_in_smp;
-+	char data[] ____cacheline_aligned_in_smp;
- };
- 
- struct bpf_struct_ops_map {
-diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
-index 53d9483fee10..d541c8486c95 100644
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -118,7 +118,7 @@ struct htab_elem {
- 		struct bpf_lru_node lru_node;
- 	};
- 	u32 hash;
--	char key[0] __aligned(8);
-+	char key[] __aligned(8);
- };
- 
- static inline bool htab_is_prealloc(const struct bpf_htab *htab)
-diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
-index 3b3c420bc8ed..65c236cf341e 100644
---- a/kernel/bpf/lpm_trie.c
-+++ b/kernel/bpf/lpm_trie.c
-@@ -25,7 +25,7 @@ struct lpm_trie_node {
- 	struct lpm_trie_node __rcu	*child[2];
- 	u32				prefixlen;
- 	u32				flags;
--	u8				data[0];
-+	u8				data[];
- };
- 
- struct lpm_trie {
--- 
-2.25.0
-
