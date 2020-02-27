@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D84C4171B48
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:01:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67039171DB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:22:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732850AbgB0OBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:01:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34704 "EHLO mail.kernel.org"
+        id S2389977AbgB0OWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:22:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732840AbgB0OBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:01:01 -0500
+        id S2389420AbgB0OQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:16:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E96362073D;
-        Thu, 27 Feb 2020 14:00:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F219B2468F;
+        Thu, 27 Feb 2020 14:16:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812059;
-        bh=yFgaM4qwrsNX7+GxOtKUYF7S97q6P22UNf9riz4tXng=;
+        s=default; t=1582812965;
+        bh=Hb1/AglAj2BfkkYCvaqrB7kZ5dbo0m6QXAnpIjHn07w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vX58YR1YIjJ/Wbfi4FdrG4n0r9nwW6TyE0YsNLV580VvlT0N520Fy8BDNM+KN64mI
-         PSV4VHVmdn9Xh04PH6JyMxGkKYJv1ksXMiYtpTbVUK6TWaFlh/8LbLkzR+2kS6JwQX
-         W0cTvixwubVvXNhM013bDcWlosff+m26lZv6yD8k=
+        b=POxiS6NLDeGWEe+k6HVWzKmxAd1MXRZp3BE2BNoSGY09eQzaBQJznGjoy9S2DyM8y
+         E1AiXn8E3gdqPs+RNkICCz6OoHIsD/2u8p61PM47YjU7KtszLKaL+gKYPBAu3ltVFM
+         zGsUVfKVeHDfLhOC7dwlnUlh7GQikh+LBss19a7s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
-        Kurt Kanzenbach <kurt@linutronix.de>,
-        Vikram Pandita <vikram.pandita@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 207/237] serial: 8250: Check UPF_IRQ_SHARED in advance
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 5.5 084/150] drm/i915: Wean off drm_pci_alloc/drm_pci_free
 Date:   Thu, 27 Feb 2020 14:37:01 +0100
-Message-Id: <20200227132311.465973412@linuxfoundation.org>
+Message-Id: <20200227132245.262707944@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,126 +44,257 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-[ Upstream commit 7febbcbc48fc92e3f33863b32ed715ba4aff18c4 ]
+commit aa3146193ae25d0fe4b96d815169a135db2e8f01 upstream.
 
-The commit 54e53b2e8081
-  ("tty: serial: 8250: pass IRQ shared flag to UART ports")
-nicely explained the problem:
+drm_pci_alloc and drm_pci_free are just very thin wrappers around
+dma_alloc_coherent, with a note that we should be removing them.
+Furthermore since
 
----8<---8<---
+commit de09d31dd38a50fdce106c15abd68432eebbd014
+Author: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Date:   Fri Jan 15 16:51:42 2016 -0800
 
-On some systems IRQ lines between multiple UARTs might be shared. If so, the
-irqflags have to be configured accordingly. The reason is: The 8250 port startup
-code performs IRQ tests *before* the IRQ handler for that particular port is
-registered. This is performed in serial8250_do_startup(). This function checks
-whether IRQF_SHARED is configured and only then disables the IRQ line while
-testing.
+    page-flags: define PG_reserved behavior on compound pages
 
-This test is performed upon each open() of the UART device. Imagine two UARTs
-share the same IRQ line: On is already opened and the IRQ is active. When the
-second UART is opened, the IRQ line has to be disabled while performing IRQ
-tests. Otherwise an IRQ might handler might be invoked, but the IRQ itself
-cannot be handled, because the corresponding handler isn't registered,
-yet. That's because the 8250 code uses a chain-handler and invokes the
-corresponding port's IRQ handling routines himself.
+    As far as I can see there's no users of PG_reserved on compound pages.
+    Let's use PF_NO_COMPOUND here.
 
-Unfortunately this IRQF_SHARED flag isn't configured for UARTs probed via device
-tree even if the IRQs are shared. This way, the actual and shared IRQ line isn't
-disabled while performing tests and the kernel correctly detects a spurious
-IRQ. So, adding this flag to the DT probe solves the issue.
+drm_pci_alloc has been declared broken since it mixes GFP_COMP and
+SetPageReserved. Avoid this conflict by weaning ourselves off using the
+abstraction and using the dma functions directly.
 
-Note: The UPF_SHARE_IRQ flag is configured unconditionally. Therefore, the
-IRQF_SHARED flag can be set unconditionally as well.
-
-Example stack trace by performing `echo 1 > /dev/ttyS2` on a non-patched system:
-
-|irq 85: nobody cared (try booting with the "irqpoll" option)
-| [...]
-|handlers:
-|[<ffff0000080fc628>] irq_default_primary_handler threaded [<ffff00000855fbb8>] serial8250_interrupt
-|Disabling IRQ #85
-
----8<---8<---
-
-But unfortunately didn't fix the root cause. Let's try again here by moving
-IRQ flag assignment from serial_link_irq_chain() to serial8250_do_startup().
-
-This should fix the similar issue reported for 8250_pnp case.
-
-Since this change we don't need to have custom solutions in 8250_aspeed_vuart
-and 8250_of drivers, thus, drop them.
-
-Fixes: 1c2f04937b3e ("serial: 8250: add IRQ trigger support")
-Reported-by: Li RongQing <lirongqing@baidu.com>
-Cc: Kurt Kanzenbach <kurt@linutronix.de>
-Cc: Vikram Pandita <vikram.pandita@ti.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Kurt Kanzenbach <kurt@linutronix.de>
-Link: https://lore.kernel.org/r/20200211135559.85960-1-andriy.shevchenko@linux.intel.com
+Reported-by: Taketo Kabe
+Closes: https://gitlab.freedesktop.org/drm/intel/issues/1027
+Fixes: de09d31dd38a ("page-flags: define PG_reserved behavior on compound pages")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: <stable@vger.kernel.org> # v4.5+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20200202153934.3899472-1-chris@chris-wilson.co.uk
+(cherry picked from commit c6790dc22312f592c1434577258b31c48c72d52a)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/tty/serial/8250/8250_aspeed_vuart.c | 1 -
- drivers/tty/serial/8250/8250_core.c         | 5 ++---
- drivers/tty/serial/8250/8250_port.c         | 4 ++++
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i915/display/intel_display.c     |    2 
+ drivers/gpu/drm/i915/gem/i915_gem_object_types.h |    3 
+ drivers/gpu/drm/i915/gem/i915_gem_phys.c         |   98 +++++++++++------------
+ drivers/gpu/drm/i915/i915_gem.c                  |    8 -
+ 4 files changed, 55 insertions(+), 56 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_aspeed_vuart.c b/drivers/tty/serial/8250/8250_aspeed_vuart.c
-index 33a801353114c..0a89df390f248 100644
---- a/drivers/tty/serial/8250/8250_aspeed_vuart.c
-+++ b/drivers/tty/serial/8250/8250_aspeed_vuart.c
-@@ -256,7 +256,6 @@ static int aspeed_vuart_probe(struct platform_device *pdev)
- 		port.port.line = rc;
+--- a/drivers/gpu/drm/i915/display/intel_display.c
++++ b/drivers/gpu/drm/i915/display/intel_display.c
+@@ -10731,7 +10731,7 @@ static u32 intel_cursor_base(const struc
+ 	u32 base;
  
- 	port.port.irq = irq_of_parse_and_map(np, 0);
--	port.port.irqflags = IRQF_SHARED;
- 	port.port.iotype = UPIO_MEM;
- 	port.port.type = PORT_16550A;
- 	port.port.uartclk = clk;
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index c698ebab6d3bd..5017a0f46b826 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -181,7 +181,7 @@ static int serial_link_irq_chain(struct uart_8250_port *up)
- 	struct hlist_head *h;
- 	struct hlist_node *n;
- 	struct irq_info *i;
--	int ret, irq_flags = up->port.flags & UPF_SHARE_IRQ ? IRQF_SHARED : 0;
-+	int ret;
+ 	if (INTEL_INFO(dev_priv)->display.cursor_needs_physical)
+-		base = obj->phys_handle->busaddr;
++		base = sg_dma_address(obj->mm.pages->sgl);
+ 	else
+ 		base = intel_plane_ggtt_offset(plane_state);
  
- 	mutex_lock(&hash_mutex);
+--- a/drivers/gpu/drm/i915/gem/i915_gem_object_types.h
++++ b/drivers/gpu/drm/i915/gem/i915_gem_object_types.h
+@@ -260,9 +260,6 @@ struct drm_i915_gem_object {
  
-@@ -216,9 +216,8 @@ static int serial_link_irq_chain(struct uart_8250_port *up)
- 		INIT_LIST_HEAD(&up->list);
- 		i->head = &up->list;
- 		spin_unlock_irq(&i->lock);
--		irq_flags |= up->port.irqflags;
- 		ret = request_irq(up->port.irq, serial8250_interrupt,
--				  irq_flags, up->port.name, i);
-+				  up->port.irqflags, up->port.name, i);
- 		if (ret < 0)
- 			serial_do_unlink(i, up);
- 	}
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index a73d2bc4b6852..90a93c001e169 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -2258,6 +2258,10 @@ int serial8250_do_startup(struct uart_port *port)
- 		}
- 	}
+ 		void *gvt_info;
+ 	};
+-
+-	/** for phys allocated objects */
+-	struct drm_dma_handle *phys_handle;
+ };
  
-+	/* Check if we need to have shared IRQs */
-+	if (port->irq && (up->port.flags & UPF_SHARE_IRQ))
-+		up->port.irqflags |= IRQF_SHARED;
+ static inline struct drm_i915_gem_object *
+--- a/drivers/gpu/drm/i915/gem/i915_gem_phys.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_phys.c
+@@ -22,88 +22,87 @@
+ static int i915_gem_object_get_pages_phys(struct drm_i915_gem_object *obj)
+ {
+ 	struct address_space *mapping = obj->base.filp->f_mapping;
+-	struct drm_dma_handle *phys;
+-	struct sg_table *st;
+ 	struct scatterlist *sg;
+-	char *vaddr;
++	struct sg_table *st;
++	dma_addr_t dma;
++	void *vaddr;
++	void *dst;
+ 	int i;
+-	int err;
+ 
+ 	if (WARN_ON(i915_gem_object_needs_bit17_swizzle(obj)))
+ 		return -EINVAL;
+ 
+-	/* Always aligning to the object size, allows a single allocation
++	/*
++	 * Always aligning to the object size, allows a single allocation
+ 	 * to handle all possible callers, and given typical object sizes,
+ 	 * the alignment of the buddy allocation will naturally match.
+ 	 */
+-	phys = drm_pci_alloc(obj->base.dev,
+-			     roundup_pow_of_two(obj->base.size),
+-			     roundup_pow_of_two(obj->base.size));
+-	if (!phys)
++	vaddr = dma_alloc_coherent(&obj->base.dev->pdev->dev,
++				   roundup_pow_of_two(obj->base.size),
++				   &dma, GFP_KERNEL);
++	if (!vaddr)
+ 		return -ENOMEM;
+ 
+-	vaddr = phys->vaddr;
++	st = kmalloc(sizeof(*st), GFP_KERNEL);
++	if (!st)
++		goto err_pci;
 +
- 	if (port->irq && !(up->port.flags & UPF_NO_THRE_TEST)) {
- 		unsigned char iir1;
- 		/*
--- 
-2.20.1
-
++	if (sg_alloc_table(st, 1, GFP_KERNEL))
++		goto err_st;
++
++	sg = st->sgl;
++	sg->offset = 0;
++	sg->length = obj->base.size;
++
++	sg_assign_page(sg, (struct page *)vaddr);
++	sg_dma_address(sg) = dma;
++	sg_dma_len(sg) = obj->base.size;
++
++	dst = vaddr;
+ 	for (i = 0; i < obj->base.size / PAGE_SIZE; i++) {
+ 		struct page *page;
+-		char *src;
++		void *src;
+ 
+ 		page = shmem_read_mapping_page(mapping, i);
+-		if (IS_ERR(page)) {
+-			err = PTR_ERR(page);
+-			goto err_phys;
+-		}
++		if (IS_ERR(page))
++			goto err_st;
+ 
+ 		src = kmap_atomic(page);
+-		memcpy(vaddr, src, PAGE_SIZE);
+-		drm_clflush_virt_range(vaddr, PAGE_SIZE);
++		memcpy(dst, src, PAGE_SIZE);
++		drm_clflush_virt_range(dst, PAGE_SIZE);
+ 		kunmap_atomic(src);
+ 
+ 		put_page(page);
+-		vaddr += PAGE_SIZE;
++		dst += PAGE_SIZE;
+ 	}
+ 
+ 	intel_gt_chipset_flush(&to_i915(obj->base.dev)->gt);
+ 
+-	st = kmalloc(sizeof(*st), GFP_KERNEL);
+-	if (!st) {
+-		err = -ENOMEM;
+-		goto err_phys;
+-	}
+-
+-	if (sg_alloc_table(st, 1, GFP_KERNEL)) {
+-		kfree(st);
+-		err = -ENOMEM;
+-		goto err_phys;
+-	}
+-
+-	sg = st->sgl;
+-	sg->offset = 0;
+-	sg->length = obj->base.size;
+-
+-	sg_dma_address(sg) = phys->busaddr;
+-	sg_dma_len(sg) = obj->base.size;
+-
+-	obj->phys_handle = phys;
+-
+ 	__i915_gem_object_set_pages(obj, st, sg->length);
+ 
+ 	return 0;
+ 
+-err_phys:
+-	drm_pci_free(obj->base.dev, phys);
+-
+-	return err;
++err_st:
++	kfree(st);
++err_pci:
++	dma_free_coherent(&obj->base.dev->pdev->dev,
++			  roundup_pow_of_two(obj->base.size),
++			  vaddr, dma);
++	return -ENOMEM;
+ }
+ 
+ static void
+ i915_gem_object_put_pages_phys(struct drm_i915_gem_object *obj,
+ 			       struct sg_table *pages)
+ {
++	dma_addr_t dma = sg_dma_address(pages->sgl);
++	void *vaddr = sg_page(pages->sgl);
++
+ 	__i915_gem_object_release_shmem(obj, pages, false);
+ 
+ 	if (obj->mm.dirty) {
+ 		struct address_space *mapping = obj->base.filp->f_mapping;
+-		char *vaddr = obj->phys_handle->vaddr;
++		void *src = vaddr;
+ 		int i;
+ 
+ 		for (i = 0; i < obj->base.size / PAGE_SIZE; i++) {
+@@ -115,15 +114,16 @@ i915_gem_object_put_pages_phys(struct dr
+ 				continue;
+ 
+ 			dst = kmap_atomic(page);
+-			drm_clflush_virt_range(vaddr, PAGE_SIZE);
+-			memcpy(dst, vaddr, PAGE_SIZE);
++			drm_clflush_virt_range(src, PAGE_SIZE);
++			memcpy(dst, src, PAGE_SIZE);
+ 			kunmap_atomic(dst);
+ 
+ 			set_page_dirty(page);
+ 			if (obj->mm.madv == I915_MADV_WILLNEED)
+ 				mark_page_accessed(page);
+ 			put_page(page);
+-			vaddr += PAGE_SIZE;
++
++			src += PAGE_SIZE;
+ 		}
+ 		obj->mm.dirty = false;
+ 	}
+@@ -131,7 +131,9 @@ i915_gem_object_put_pages_phys(struct dr
+ 	sg_free_table(pages);
+ 	kfree(pages);
+ 
+-	drm_pci_free(obj->base.dev, obj->phys_handle);
++	dma_free_coherent(&obj->base.dev->pdev->dev,
++			  roundup_pow_of_two(obj->base.size),
++			  vaddr, dma);
+ }
+ 
+ static void phys_release(struct drm_i915_gem_object *obj)
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -154,7 +154,7 @@ i915_gem_phys_pwrite(struct drm_i915_gem
+ 		     struct drm_i915_gem_pwrite *args,
+ 		     struct drm_file *file)
+ {
+-	void *vaddr = obj->phys_handle->vaddr + args->offset;
++	void *vaddr = sg_page(obj->mm.pages->sgl) + args->offset;
+ 	char __user *user_data = u64_to_user_ptr(args->data_ptr);
+ 
+ 	/*
+@@ -800,10 +800,10 @@ i915_gem_pwrite_ioctl(struct drm_device
+ 		ret = i915_gem_gtt_pwrite_fast(obj, args);
+ 
+ 	if (ret == -EFAULT || ret == -ENOSPC) {
+-		if (obj->phys_handle)
+-			ret = i915_gem_phys_pwrite(obj, args, file);
+-		else
++		if (i915_gem_object_has_struct_page(obj))
+ 			ret = i915_gem_shmem_pwrite(obj, args);
++		else
++			ret = i915_gem_phys_pwrite(obj, args, file);
+ 	}
+ 
+ 	i915_gem_object_unpin_pages(obj);
 
 
