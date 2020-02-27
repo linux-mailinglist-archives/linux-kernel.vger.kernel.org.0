@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BC5617216B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:49:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D24981720CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:45:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732340AbgB0Osp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:48:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37634 "EHLO mail.kernel.org"
+        id S1731414AbgB0Oox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:44:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729815AbgB0Nmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:42:36 -0500
+        id S1730226AbgB0NrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:47:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69C232468D;
-        Thu, 27 Feb 2020 13:42:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9003020578;
+        Thu, 27 Feb 2020 13:47:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810955;
-        bh=TIjHdADiwkFjXfbpjDNPlSxovxMRHrZrzwi8QVZ2//w=;
+        s=default; t=1582811240;
+        bh=NQhSwyYXRqDIefeJAhsB5HufY4DubhhD3WurtJ5yuNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qg3uXXpfP2/yVBYxI42+/Bn0AHbs24il3v9nvoXtTvOUItQNuGIPz8qbM9/GepEAd
-         ld6Ype0Ftnx9nGQY2ic/r6YjkRB+ufvlPHG+hJznIkXYNiiHN3Kk4Nc4ntoid8NkG+
-         V9wzNTQek8/RwQk3Y6bWLxqeip9zyYX9eO+ua3xE=
+        b=1iNc9/xv6cPJPX2uLGpw4OqaYyw69LMMn0xiIubpbf+R3+Bm2kTDAJMxz0bFLhpYM
+         NZQqeS4MdQCzj1X61q3f+xAXFS7gvydrfF1qGoWf/XX8kAbqCgmSmJNeoUUFtZ/izq
+         fuMD8MsJtPEAhyal1XA6wLf/GpJvVXt6U72S5lvg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Jones <michael-a1.jones@analog.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 013/113] hwmon: (pmbus/ltc2978) Fix PMBus polling of MFR_COMMON definitions.
-Date:   Thu, 27 Feb 2020 14:35:29 +0100
-Message-Id: <20200227132213.841275734@linuxfoundation.org>
+        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 057/165] orinoco: avoid assertion in case of NULL pointer
+Date:   Thu, 27 Feb 2020 14:35:31 +0100
+Message-Id: <20200227132239.764198258@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Jones <michael-a1.jones@analog.com>
+From: Aditya Pakki <pakki001@umn.edu>
 
-commit cf2b012c90e74e85d8aea7d67e48868069cfee0c upstream.
+[ Upstream commit c705f9fc6a1736dcf6ec01f8206707c108dca824 ]
 
-Change 21537dc driver PMBus polling of MFR_COMMON from bits 5/4 to
-bits 6/5. This fixs a LTC297X family bug where polling always returns
-not busy even when the part is busy. This fixes a LTC388X and
-LTM467X bug where polling used PEND and NOT_IN_TRANS, and BUSY was
-not polled, which can lead to NACKing of commands. LTC388X and
-LTM467X modules now poll BUSY and PEND, increasing reliability by
-eliminating NACKing of commands.
+In ezusb_init, if upriv is NULL, the code crashes. However, the caller
+in ezusb_probe can handle the error and print the failure message.
+The patch replaces the BUG_ON call to error return.
 
-Signed-off-by: Mike Jones <michael-a1.jones@analog.com>
-Link: https://lore.kernel.org/r/1580234400-2829-2-git-send-email-michael-a1.jones@analog.com
-Fixes: e04d1ce9bbb49 ("hwmon: (ltc2978) Add polling for chips requiring it")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/pmbus/ltc2978.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intersil/orinoco/orinoco_usb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/hwmon/pmbus/ltc2978.c
-+++ b/drivers/hwmon/pmbus/ltc2978.c
-@@ -89,8 +89,8 @@ enum chips { ltc2974, ltc2975, ltc2977,
+diff --git a/drivers/net/wireless/intersil/orinoco/orinoco_usb.c b/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
+index 8244d82629511..4e91c74fcfad9 100644
+--- a/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
++++ b/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
+@@ -1351,7 +1351,8 @@ static int ezusb_init(struct hermes *hw)
+ 	int retval;
  
- #define LTC_POLL_TIMEOUT		100	/* in milli-seconds */
+ 	BUG_ON(in_interrupt());
+-	BUG_ON(!upriv);
++	if (!upriv)
++		return -EINVAL;
  
--#define LTC_NOT_BUSY			BIT(5)
--#define LTC_NOT_PENDING			BIT(4)
-+#define LTC_NOT_BUSY			BIT(6)
-+#define LTC_NOT_PENDING			BIT(5)
- 
- /*
-  * LTC2978 clears peak data whenever the CLEAR_FAULTS command is executed, which
+ 	upriv->reply_count = 0;
+ 	/* Write the MAGIC number on the simulated registers to keep
+-- 
+2.20.1
+
 
 
