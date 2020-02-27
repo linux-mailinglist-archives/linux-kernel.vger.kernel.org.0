@@ -2,63 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A77221718C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:34:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8FE5171A93
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:55:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729187AbgB0Nel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:34:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60990 "EHLO mail.kernel.org"
+        id S1731610AbgB0NzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:55:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729076AbgB0Nel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:34:41 -0500
-Received: from localhost (lfbn-ncy-1-985-231.w90-101.abo.wanadoo.fr [90.101.63.231])
+        id S1731926AbgB0Ny5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:54:57 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 568AF24656;
-        Thu, 27 Feb 2020 13:34:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AF902084E;
+        Thu, 27 Feb 2020 13:54:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810480;
-        bh=hd1EH5Kj0MHO9MQew6AELGq5JlBOz3GHWDMW12fIy1Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p9A0+DH5dBJgKnDVpjQb91A7WXwDFyWWxlMo9svI3aYgBDaJ12zZA54pFqYcg/VOj
-         05+PE6RScxbPG/Z9EoLZWmis+g2iqcO9njxxKiHhcV82O4/rtQov/ZMPQN8BDdW7OR
-         F5vF6SQos7BU4qr1AQOzyXgO0Ly3N5bkPoskBM00=
-Date:   Thu, 27 Feb 2020 14:34:38 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        rostedt@goodmis.org, mingo@kernel.org, joel@joelfernandes.org,
-        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
-        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        luto@kernel.org, tony.luck@intel.com, dan.carpenter@oracle.com,
-        mhiramat@kernel.org, Will Deacon <will@kernel.org>,
-        Petr Mladek <pmladek@suse.com>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH v4 02/27] hardirq/nmi: Allow nested nmi_enter()
-Message-ID: <20200227133437.GB21795@lenoir>
-References: <20200221133416.777099322@infradead.org>
- <20200221134215.149193474@infradead.org>
- <20200221222129.GB28251@lenoir>
- <20200224161318.GG14897@hirez.programming.kicks-ass.net>
- <20200225030905.GB28329@lenoir>
- <20200225154111.GM18400@hirez.programming.kicks-ass.net>
- <20200225221031.GB9599@lenoir>
- <20200227091042.GG18400@hirez.programming.kicks-ass.net>
+        s=default; t=1582811696;
+        bh=9HLdkMMX77Gb8gmumIGYRs7r4xKA2witeWT225J7nKA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OpGqQmAGw8rJKsIAtT7l/d5L+GrRr3wFF0qicvv1B0IvgXF0dRnTcNgZPecm1yd5l
+         N4aogUxI0rZSDSC4zVEwzQFeNXph4PMwsPd3vryO4CrKR9o0gEL6QQJIGbX3NXQXWa
+         Ew4ZX2p5K/3qJq+mNzRa8soGTHcP+reafNvv4VY0=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Luis Henriques <luis.henriques@canonical.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 065/237] tracing: Fix very unlikely race of registering two stat tracers
+Date:   Thu, 27 Feb 2020 14:34:39 +0100
+Message-Id: <20200227132301.821694547@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227091042.GG18400@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 10:10:42AM +0100, Peter Zijlstra wrote:
-> On Tue, Feb 25, 2020 at 11:10:32PM +0100, Frederic Weisbecker wrote:
-> > So here is my previous proposal, based on a simple counter, this time
-> > with comments and a few fixes:
-> 
-> I've presumed your SoB and made this your patch.
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Ok, thanks!
+[ Upstream commit dfb6cd1e654315168e36d947471bd2a0ccd834ae ]
+
+Looking through old emails in my INBOX, I came across a patch from Luis
+Henriques that attempted to fix a race of two stat tracers registering the
+same stat trace (extremely unlikely, as this is done in the kernel, and
+probably doesn't even exist). The submitted patch wasn't quite right as it
+needed to deal with clean up a bit better (if two stat tracers were the
+same, it would have the same files).
+
+But to make the code cleaner, all we needed to do is to keep the
+all_stat_sessions_mutex held for most of the registering function.
+
+Link: http://lkml.kernel.org/r/1410299375-20068-1-git-send-email-luis.henriques@canonical.com
+
+Fixes: 002bb86d8d42f ("tracing/ftrace: separate events tracing and stats tracing engine")
+Reported-by: Luis Henriques <luis.henriques@canonical.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/trace/trace_stat.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/trace/trace_stat.c b/kernel/trace/trace_stat.c
+index bf68af63538b4..92b76f9e25edd 100644
+--- a/kernel/trace/trace_stat.c
++++ b/kernel/trace/trace_stat.c
+@@ -306,7 +306,7 @@ static int init_stat_file(struct stat_session *session)
+ int register_stat_tracer(struct tracer_stat *trace)
+ {
+ 	struct stat_session *session, *node;
+-	int ret;
++	int ret = -EINVAL;
+ 
+ 	if (!trace)
+ 		return -EINVAL;
+@@ -317,17 +317,15 @@ int register_stat_tracer(struct tracer_stat *trace)
+ 	/* Already registered? */
+ 	mutex_lock(&all_stat_sessions_mutex);
+ 	list_for_each_entry(node, &all_stat_sessions, session_list) {
+-		if (node->ts == trace) {
+-			mutex_unlock(&all_stat_sessions_mutex);
+-			return -EINVAL;
+-		}
++		if (node->ts == trace)
++			goto out;
+ 	}
+-	mutex_unlock(&all_stat_sessions_mutex);
+ 
++	ret = -ENOMEM;
+ 	/* Init the session */
+ 	session = kzalloc(sizeof(*session), GFP_KERNEL);
+ 	if (!session)
+-		return -ENOMEM;
++		goto out;
+ 
+ 	session->ts = trace;
+ 	INIT_LIST_HEAD(&session->session_list);
+@@ -336,15 +334,16 @@ int register_stat_tracer(struct tracer_stat *trace)
+ 	ret = init_stat_file(session);
+ 	if (ret) {
+ 		destroy_session(session);
+-		return ret;
++		goto out;
+ 	}
+ 
++	ret = 0;
+ 	/* Register */
+-	mutex_lock(&all_stat_sessions_mutex);
+ 	list_add_tail(&session->session_list, &all_stat_sessions);
++ out:
+ 	mutex_unlock(&all_stat_sessions_mutex);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ void unregister_stat_tracer(struct tracer_stat *trace)
+-- 
+2.20.1
+
+
+
