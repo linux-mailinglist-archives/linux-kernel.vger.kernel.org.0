@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B5D171B36
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:00:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7340C171C9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:14:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732766AbgB0OAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:00:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33816 "EHLO mail.kernel.org"
+        id S2389030AbgB0ONw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:13:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732752AbgB0OA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:00:27 -0500
+        id S2388664AbgB0ONv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:13:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F74E20578;
-        Thu, 27 Feb 2020 14:00:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 811FB24690;
+        Thu, 27 Feb 2020 14:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812026;
-        bh=j0fReE2jsNbtiJWgJbFRTOm8cy02fxQnFVLmTF8Ts1s=;
+        s=default; t=1582812831;
+        bh=vJaNTU8zSb9HaUMYb/1v/ZOoPd5jm4mXAI/E2YV4/vs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UJolh78+Kfl/Kjkyr1lYUP9HlWjWGFL62wAT8ZE3J28KEZicSjMGC6VfLaGGvkvPr
-         c6NPL9PtpEy8F4g7vi/fxnbEHy1QY1n7SUsmoaggYkf/xBT2JKJDeJRa9ogvyBKrdr
-         neCldVThIW34Q4bwiN/6u5c0abZXLTETeenX9rWI=
+        b=zR1WDja2WlW+VdfWclku/kUUopT2P6mZ9gFHnuelJtkXIr+3bxezCqSMSKVLoPW2d
+         KG6I2V2cp+O6noRPbwe62BDkJixVnkBJeqj7MY9vc2qyVtce4weNPQ59x/1hWhRB3B
+         qZwpJQhJTvyu2H3iYt7UDRoGLzSF9MaoEDB0EayA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 156/237] lib/scatterlist.c: adjust indentation in __sg_alloc_table
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 5.5 033/150] xhci: apply XHCI_PME_STUCK_QUIRK to Intel Comet Lake platforms
 Date:   Thu, 27 Feb 2020 14:36:10 +0100
-Message-Id: <20200227132308.023147258@linuxfoundation.org>
+Message-Id: <20200227132237.690635042@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-[ Upstream commit 4e456fee215677584cafa7f67298a76917e89c64 ]
+commit a3ae87dce3a5abe0b57c811bab02b2564b574106 upstream.
 
-Clang warns:
+Intel Comet Lake based platform require the XHCI_PME_STUCK_QUIRK
+quirk as well. Without this xHC can not enter D3 in runtime suspend.
 
-  ../lib/scatterlist.c:314:5: warning: misleading indentation; statement
-  is not part of the previous 'if' [-Wmisleading-indentation]
-                          return -ENOMEM;
-                          ^
-  ../lib/scatterlist.c:311:4: note: previous statement is here
-                          if (prv)
-                          ^
-  1 warning generated.
+Cc: stable@vger.kernel.org
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/20200210134553.9144-5-mathias.nyman@linux.intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This warning occurs because there is a space before the tab on this
-line.  Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
-
-Link: http://lkml.kernel.org/r/20191218033606.11942-1-natechancellor@gmail.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/830
-Fixes: edce6820a9fd ("scatterlist: prevent invalid free when alloc fails")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/scatterlist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/host/xhci-pci.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-index 11fce289d1166..834c846c5af84 100644
---- a/lib/scatterlist.c
-+++ b/lib/scatterlist.c
-@@ -317,7 +317,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
- 			if (prv)
- 				table->nents = ++table->orig_nents;
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -49,6 +49,7 @@
+ #define PCI_DEVICE_ID_INTEL_TITAN_RIDGE_4C_XHCI		0x15ec
+ #define PCI_DEVICE_ID_INTEL_TITAN_RIDGE_DD_XHCI		0x15f0
+ #define PCI_DEVICE_ID_INTEL_ICE_LAKE_XHCI		0x8a13
++#define PCI_DEVICE_ID_INTEL_CML_XHCI			0xa3af
  
-- 			return -ENOMEM;
-+			return -ENOMEM;
- 		}
- 
- 		sg_init_table(sg, alloc_size);
--- 
-2.20.1
-
+ #define PCI_DEVICE_ID_AMD_PROMONTORYA_4			0x43b9
+ #define PCI_DEVICE_ID_AMD_PROMONTORYA_3			0x43ba
+@@ -187,7 +188,8 @@ static void xhci_pci_quirks(struct devic
+ 		 pdev->device == PCI_DEVICE_ID_INTEL_BROXTON_M_XHCI ||
+ 		 pdev->device == PCI_DEVICE_ID_INTEL_BROXTON_B_XHCI ||
+ 		 pdev->device == PCI_DEVICE_ID_INTEL_APL_XHCI ||
+-		 pdev->device == PCI_DEVICE_ID_INTEL_DNV_XHCI)) {
++		 pdev->device == PCI_DEVICE_ID_INTEL_DNV_XHCI ||
++		 pdev->device == PCI_DEVICE_ID_INTEL_CML_XHCI)) {
+ 		xhci->quirks |= XHCI_PME_STUCK_QUIRK;
+ 	}
+ 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
 
 
