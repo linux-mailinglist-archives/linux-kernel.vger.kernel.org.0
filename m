@@ -2,46 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C82C171F2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:33:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13E08171EDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:31:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732875AbgB0OBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:01:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34820 "EHLO mail.kernel.org"
+        id S2387679AbgB0OFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:05:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732854AbgB0OBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:01:05 -0500
+        id S1733179AbgB0OEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:04:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F06424691;
-        Thu, 27 Feb 2020 14:01:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABAAE20578;
+        Thu, 27 Feb 2020 14:04:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812064;
-        bh=FOoqKnrn4qOTHfbpPkiMYn5/tbWYlDqVW6aM+YvjngA=;
+        s=default; t=1582812286;
+        bh=WeAnVRuT+eJ3/I9Ri+fo4SZBU5CHsbAcXpVA/xFFqgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=euyrMoB1q6b6BD4VFjdBfcb/18nwCpxlSPWCVJDckNjYGzve0drG9KUgQop7UU2YS
-         kkGb14IR7Q2lGYyb0hZmDCiCyWfosscLHcbj/HhBrQ4NvBKpQ54byHGytakDQ6zQE1
-         pghnc/jUIWFFUSUa7YFd2/c27X8qbPTRQnzC7y5g=
+        b=0huLFyY3fyGwoKjOF4N5yGUpKVp1FfCTQczdWoUiJZl5O9j++fn4uC450A54wurEE
+         UbbHho6RcZAsmP3negYi5wb6A1MYNDoIlpZeqI3IP7cYc58Z0BXlukLUwLnoknvFyq
+         FOw6VzUkhXXuRz2inNH68DqxKVYZA9cBTovYK4+Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Potapenko <glider@google.com>,
-        Walter Wu <walter-zh.wu@mediatek.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Ryan Case <ryandcase@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 209/237] lib/stackdepot.c: fix global out-of-bounds in stack_slabs
+Subject: [PATCH 4.19 55/97] tty: serial: qcom_geni_serial: Remove interrupt storm
 Date:   Thu, 27 Feb 2020 14:37:03 +0100
-Message-Id: <20200227132311.601513023@linuxfoundation.org>
+Message-Id: <20200227132223.560905310@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,59 +44,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Potapenko <glider@google.com>
+From: Ryan Case <ryandcase@chromium.org>
 
-[ Upstream commit 305e519ce48e935702c32241f07d393c3c8fed3e ]
+[ Upstream commit 64a428077758383518c258641e81d57fcd454792 ]
 
-Walter Wu has reported a potential case in which init_stack_slab() is
-called after stack_slabs[STACK_ALLOC_MAX_SLABS - 1] has already been
-initialized.  In that case init_stack_slab() will overwrite
-stack_slabs[STACK_ALLOC_MAX_SLABS], which may result in a memory
-corruption.
+Disable M_TX_FIFO_WATERMARK_EN after we've sent all data for a given
+transaction so we don't continue to receive a flurry of free space
+interrupts while waiting for the M_CMD_DONE notification. Re-enable the
+watermark when establishing the next transaction.
 
-Link: http://lkml.kernel.org/r/20200218102950.260263-1-glider@google.com
-Fixes: cd11016e5f521 ("mm, kasan: stackdepot implementation. Enable stackdepot for SLAB")
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Reported-by: Walter Wu <walter-zh.wu@mediatek.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Also clear the watermark interrupt after filling the FIFO so we do not
+receive notification again prior to actually having free space.
+
+Signed-off-by: Ryan Case <ryandcase@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Tested-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/stackdepot.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/tty/serial/qcom_geni_serial.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-index 1724cb0d6283f..54fe55b6bbc0a 100644
---- a/lib/stackdepot.c
-+++ b/lib/stackdepot.c
-@@ -92,15 +92,19 @@ static bool init_stack_slab(void **prealloc)
- 		return true;
- 	if (stack_slabs[depot_index] == NULL) {
- 		stack_slabs[depot_index] = *prealloc;
-+		*prealloc = NULL;
- 	} else {
--		stack_slabs[depot_index + 1] = *prealloc;
-+		/* If this is the last depot slab, do not touch the next one. */
-+		if (depot_index + 1 < STACK_ALLOC_MAX_SLABS) {
-+			stack_slabs[depot_index + 1] = *prealloc;
-+			*prealloc = NULL;
-+		}
- 		/*
- 		 * This smp_store_release pairs with smp_load_acquire() from
- 		 * |next_slab_inited| above and in stack_depot_save().
- 		 */
- 		smp_store_release(&next_slab_inited, 1);
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 2003dfcace5d8..743d877e7ff94 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -727,6 +727,7 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
+ 	size_t pending;
+ 	int i;
+ 	u32 status;
++	u32 irq_en;
+ 	unsigned int chunk;
+ 	int tail;
+ 
+@@ -755,6 +756,11 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
+ 	if (!port->tx_remaining) {
+ 		qcom_geni_serial_setup_tx(uport, pending);
+ 		port->tx_remaining = pending;
++
++		irq_en = readl_relaxed(uport->membase + SE_GENI_M_IRQ_EN);
++		if (!(irq_en & M_TX_FIFO_WATERMARK_EN))
++			writel_relaxed(irq_en | M_TX_FIFO_WATERMARK_EN,
++					uport->membase + SE_GENI_M_IRQ_EN);
  	}
--	*prealloc = NULL;
- 	return true;
+ 
+ 	remaining = chunk;
+@@ -778,7 +784,23 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
+ 	}
+ 
+ 	xmit->tail = tail & (UART_XMIT_SIZE - 1);
++
++	/*
++	 * The tx fifo watermark is level triggered and latched. Though we had
++	 * cleared it in qcom_geni_serial_isr it will have already reasserted
++	 * so we must clear it again here after our writes.
++	 */
++	writel_relaxed(M_TX_FIFO_WATERMARK_EN,
++			uport->membase + SE_GENI_M_IRQ_CLEAR);
++
+ out_write_wakeup:
++	if (!port->tx_remaining) {
++		irq_en = readl_relaxed(uport->membase + SE_GENI_M_IRQ_EN);
++		if (irq_en & M_TX_FIFO_WATERMARK_EN)
++			writel_relaxed(irq_en & ~M_TX_FIFO_WATERMARK_EN,
++					uport->membase + SE_GENI_M_IRQ_EN);
++	}
++
+ 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
+ 		uart_write_wakeup(uport);
  }
+@@ -814,8 +836,7 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
+ 		tty_insert_flip_char(tport, 0, TTY_OVERRUN);
+ 	}
+ 
+-	if (m_irq_status & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN) &&
+-	    m_irq_en & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN))
++	if (m_irq_status & m_irq_en & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN))
+ 		qcom_geni_serial_handle_tx(uport, m_irq_status & M_CMD_DONE_EN,
+ 					geni_status & M_GENI_CMD_ACTIVE);
  
 -- 
 2.20.1
