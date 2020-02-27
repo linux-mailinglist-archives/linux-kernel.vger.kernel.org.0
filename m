@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C49AA171ACB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:57:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C15AE171ACD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:57:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729774AbgB0N5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:57:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57648 "EHLO mail.kernel.org"
+        id S1732242AbgB0N5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:57:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731903AbgB0N45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:56:57 -0500
+        id S1729788AbgB0N5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:57:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F060D20578;
-        Thu, 27 Feb 2020 13:56:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B95D120801;
+        Thu, 27 Feb 2020 13:57:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811817;
-        bh=kLNQ+FLQ6O06uqz36zDPUY32MmO6SWt5w1ST1XEDnSM=;
+        s=default; t=1582811822;
+        bh=POQBEBmj9YQfomHR0dXXKcpPqERbDd5yZUvqqBkcoNE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PfESkFdZNxdDnJIcJ8fbOKcNdPkoTujcYlEL7VUoTv+HHELuptEdrHPpcGtpJIwEf
-         FbAJ5O9dH1a2mjwQE/wjAMFCxNbdCHMaNgBinndYwJ+ptDqbxUCe9cwd/jhaCn9gx5
-         9ouJ0xEDTRvBWWMQa2pNBVjKRk0Pzpy3xAn1zHy4=
+        b=mm0aMRC2Ucf3YOZLw4Fz54Dgoi3Jw3PylZ315ndrelTVbciEWzbfgckG/uY7IDCwZ
+         /3itAk4b0uMxiwcKhCsD3EbQ2beG6X+kAqF94aXT1nFUArm4pFGI0eGyD+SNUu6jQT
+         52kVH0pggnVA/A8GUl+Qcj1G5K6RiE9PK1198LKA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        Mao Wenan <maowenan@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
+        Paolo Pisati <p.pisati@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 075/237] NFC: port100: Convert cpu_to_le16(le16_to_cpu(E1) + E2) to use le16_add_cpu().
-Date:   Thu, 27 Feb 2020 14:34:49 +0100
-Message-Id: <20200227132302.654312095@linuxfoundation.org>
+Subject: [PATCH 4.14 076/237] arm64: dts: qcom: msm8996: Disable USB2 PHY suspend by core
+Date:   Thu, 27 Feb 2020 14:34:50 +0100
+Message-Id: <20200227132302.721710336@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -45,34 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
+From: Manu Gautam <mgautam@codeaurora.org>
 
-[ Upstream commit 718eae277e62a26e5862eb72a830b5e0fe37b04a ]
+[ Upstream commit d026c96b25b7ce5df89526aad2df988d553edb4d ]
 
-Convert cpu_to_le16(le16_to_cpu(frame->datalen) + len) to
-use le16_add_cpu(), which is more concise and does the same thing.
+QUSB2 PHY on msm8996 doesn't work well when autosuspend by
+dwc3 core using USB2PHYCFG register is enabled. One of the
+issue seen is that PHY driver reports PLL lock failure and
+fails phy_init() if dwc3 core has USB2 PHY suspend enabled.
+Fix this by using quirks to disable USB2 PHY LPM/suspend and
+dwc3 core already takes care of explicitly suspending PHY
+during suspend if quirks are specified.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
+Link: https://lore.kernel.org/r/20191209151501.26993-1-p.pisati@gmail.com
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nfc/port100.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/nfc/port100.c b/drivers/nfc/port100.c
-index 60ae382f50da9..06bb226c62ef4 100644
---- a/drivers/nfc/port100.c
-+++ b/drivers/nfc/port100.c
-@@ -574,7 +574,7 @@ static void port100_tx_update_payload_len(void *_frame, int len)
- {
- 	struct port100_frame *frame = _frame;
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 6f372ec055dd3..da2949586c7a3 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -788,6 +788,8 @@
+ 				interrupts = <0 138 0>;
+ 				phys = <&hsusb_phy2>;
+ 				phy-names = "usb2-phy";
++				snps,dis_u2_susphy_quirk;
++				snps,dis_enblslpm_quirk;
+ 			};
+ 		};
  
--	frame->datalen = cpu_to_le16(le16_to_cpu(frame->datalen) + len);
-+	le16_add_cpu(&frame->datalen, len);
- }
- 
- static bool port100_rx_frame_is_valid(void *_frame)
+@@ -817,6 +819,8 @@
+ 				interrupts = <0 131 0>;
+ 				phys = <&hsusb_phy1>, <&ssusb_phy_0>;
+ 				phy-names = "usb2-phy", "usb3-phy";
++				snps,dis_u2_susphy_quirk;
++				snps,dis_enblslpm_quirk;
+ 			};
+ 		};
+ 	};
 -- 
 2.20.1
 
