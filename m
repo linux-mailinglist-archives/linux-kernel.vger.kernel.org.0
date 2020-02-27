@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CE7C1720E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8E67171FCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730738AbgB0Opt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:45:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42120 "EHLO mail.kernel.org"
+        id S1732063AbgB0N4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:56:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729528AbgB0NqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:46:02 -0500
+        id S1730199AbgB0Nz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:55:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF09520578;
-        Thu, 27 Feb 2020 13:46:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0F902073D;
+        Thu, 27 Feb 2020 13:55:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811161;
-        bh=N4OFUR8Rjq/tz9yIJS8wJbqHyEE3LrRcBxWuos5/4N0=;
+        s=default; t=1582811757;
+        bh=fKD8wdPrLOdn12bMz4B1mbh7BH7QGRNFFPpUKkbUYic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AasUS7/q0ISZzj7hMibfNpp0wqSOJWZuLSu6YPtn0d/aTnCVyzE8nRuMFJeGi1aog
-         CsEIPd053TQuP8z8mtH4rUuvCuYiOxowz7c6blAS+65+j/evL2Ii8F8pDOqbC3LHCF
-         6IDY1o7/qYv/ndf/KoUzSKZoWKN8CammgwgbNEmo=
+        b=ir3hPrgFt2tUZOng2qv7JxfZSXNxG3CeHDbiP26bKhii+ydHtiZMETdka0bk7XD2B
+         4Qq9oMk5SFCLfEfQREyZ0cYIoRsby015B41k19tn4QTlTIJEH1OvCUdnw2PG5Z2Kl6
+         NSAztiUXIn81j9FGR/7PBPNO1zrZQkk3WnyT6vTM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 025/165] gianfar: Fix TX timestamping with a stacked DSA driver
-Date:   Thu, 27 Feb 2020 14:34:59 +0100
-Message-Id: <20200227132234.619860590@linuxfoundation.org>
+        stable@vger.kernel.org, Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 090/237] drm/mediatek: handle events when enabling/disabling crtc
+Date:   Thu, 27 Feb 2020 14:35:04 +0100
+Message-Id: <20200227132303.658480261@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,87 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <olteanv@gmail.com>
+From: Bibby Hsieh <bibby.hsieh@mediatek.com>
 
-[ Upstream commit c26a2c2ddc0115eb088873f5c309cf46b982f522 ]
+[ Upstream commit 411f5c1eacfebb1f6e40b653d29447cdfe7282aa ]
 
-The driver wrongly assumes that it is the only entity that can set the
-SKBTX_IN_PROGRESS bit of the current skb. Therefore, in the
-gfar_clean_tx_ring function, where the TX timestamp is collected if
-necessary, the aforementioned bit is used to discriminate whether or not
-the TX timestamp should be delivered to the socket's error queue.
+The driver currently handles vblank events only when updating planes on
+an already enabled CRTC. The atomic update API however allows requesting
+an event when enabling or disabling a CRTC. This currently leads to
+event objects being leaked in the kernel and to events not being sent
+out. Fix it.
 
-But a stacked driver such as a DSA switch can also set the
-SKBTX_IN_PROGRESS bit, which is actually exactly what it should do in
-order to denote that the hardware timestamping process is undergoing.
-
-Therefore, gianfar would misinterpret the "in progress" bit as being its
-own, and deliver a second skb clone in the socket's error queue,
-completely throwing off a PTP process which is not expecting to receive
-it, _even though_ TX timestamping is not enabled for gianfar.
-
-There have been discussions [0] as to whether non-MAC drivers need or
-not to set SKBTX_IN_PROGRESS at all (whose purpose is to avoid sending 2
-timestamps, a sw and a hw one, to applications which only expect one).
-But as of this patch, there are at least 2 PTP drivers that would break
-in conjunction with gianfar: the sja1105 DSA switch and the felix
-switch, by way of its ocelot core driver.
-
-So regardless of that conclusion, fix the gianfar driver to not do stuff
-based on flags set by others and not intended for it.
-
-[0]: https://www.spinics.net/lists/netdev/msg619699.html
-
-Fixes: f0ee7acfcdd4 ("gianfar: Add hardware TX timestamping support")
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
-Acked-by: Richard Cochran <richardcochran@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/gianfar.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
-index 60bd1b36df606..b665d27f8e299 100644
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -2688,13 +2688,17 @@ static void gfar_clean_tx_ring(struct gfar_priv_tx_q *tx_queue)
- 	skb_dirtytx = tx_queue->skb_dirtytx;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 658b8dd45b834..3ea311d32fa9e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -307,6 +307,7 @@ err_pm_runtime_put:
+ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ {
+ 	struct drm_device *drm = mtk_crtc->base.dev;
++	struct drm_crtc *crtc = &mtk_crtc->base;
+ 	int i;
  
- 	while ((skb = tx_queue->tx_skbuff[skb_dirtytx])) {
-+		bool do_tstamp;
+ 	DRM_DEBUG_DRIVER("%s\n", __func__);
+@@ -328,6 +329,13 @@ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ 	mtk_disp_mutex_unprepare(mtk_crtc->mutex);
+ 
+ 	pm_runtime_put(drm->dev);
 +
-+		do_tstamp = (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) &&
-+			    priv->hwts_tx_en;
++	if (crtc->state->event && !crtc->state->active) {
++		spin_lock_irq(&crtc->dev->event_lock);
++		drm_crtc_send_vblank_event(crtc, crtc->state->event);
++		crtc->state->event = NULL;
++		spin_unlock_irq(&crtc->dev->event_lock);
++	}
+ }
  
- 		frags = skb_shinfo(skb)->nr_frags;
- 
- 		/* When time stamping, one additional TxBD must be freed.
- 		 * Also, we need to dma_unmap_single() the TxPAL.
- 		 */
--		if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_IN_PROGRESS))
-+		if (unlikely(do_tstamp))
- 			nr_txbds = frags + 2;
- 		else
- 			nr_txbds = frags + 1;
-@@ -2708,7 +2712,7 @@ static void gfar_clean_tx_ring(struct gfar_priv_tx_q *tx_queue)
- 		    (lstatus & BD_LENGTH_MASK))
- 			break;
- 
--		if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_IN_PROGRESS)) {
-+		if (unlikely(do_tstamp)) {
- 			next = next_txbd(bdp, base, tx_ring_size);
- 			buflen = be16_to_cpu(next->length) +
- 				 GMAC_FCB_LEN + GMAC_TXPAL_LEN;
-@@ -2718,7 +2722,7 @@ static void gfar_clean_tx_ring(struct gfar_priv_tx_q *tx_queue)
- 		dma_unmap_single(priv->dev, be32_to_cpu(bdp->bufPtr),
- 				 buflen, DMA_TO_DEVICE);
- 
--		if (unlikely(skb_shinfo(skb)->tx_flags & SKBTX_IN_PROGRESS)) {
-+		if (unlikely(do_tstamp)) {
- 			struct skb_shared_hwtstamps shhwtstamps;
- 			u64 *ns = (u64 *)(((uintptr_t)skb->data + 0x10) &
- 					  ~0x7UL);
+ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
 -- 
 2.20.1
 
