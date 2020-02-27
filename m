@@ -2,82 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE3B6171B4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:01:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7EF7171E9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:29:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732861AbgB0OBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:01:06 -0500
-Received: from outbound-smtp14.blacknight.com ([46.22.139.231]:53101 "EHLO
-        outbound-smtp14.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732636AbgB0OBD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:01:03 -0500
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp14.blacknight.com (Postfix) with ESMTPS id 264941C3594
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 14:01:00 +0000 (GMT)
-Received: (qmail 13599 invoked from network); 27 Feb 2020 14:00:59 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 27 Feb 2020 14:00:59 -0000
-Date:   Thu, 27 Feb 2020 14:00:57 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Lukasz Luba <lukasz.luba@arm.com>
-Cc:     Valentin Schneider <valentin.schneider@arm.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com
-Subject: Re: [PATCH] sched/fair: Fix kernel build warning in
- test_idle_cores() for !SMT NUMA
-Message-ID: <20200227140057.GG3818@techsingularity.net>
-References: <20200227110053.2514-1-lukasz.luba@arm.com>
- <d2e0fe2d-5891-a2bf-a4c5-2a1f14754c1d@arm.com>
- <74d75844-e710-6df8-30a9-acd440394c2e@arm.com>
+        id S2388454AbgB0O3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:29:08 -0500
+Received: from elvis.franken.de ([193.175.24.41]:40353 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731272AbgB0O3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:29:06 -0500
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1j7K9u-0004ld-00; Thu, 27 Feb 2020 15:29:02 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 93A06C0EB2; Thu, 27 Feb 2020 15:02:11 +0100 (CET)
+Date:   Thu, 27 Feb 2020 15:02:11 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        James Hogan <jhogan@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the mips-fixes tree
+Message-ID: <20200227140211.GA17887@alpha.franken.de>
+References: <20200227071718.5aac4713@canb.auug.org.au>
+ <1582811024.3.0@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <74d75844-e710-6df8-30a9-acd440394c2e@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1582811024.3.0@crapouillou.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 12:08:46PM +0000, Lukasz Luba wrote:
-> Hi Valentin,
+On Thu, Feb 27, 2020 at 10:43:44AM -0300, Paul Cercueil wrote:
+> Le jeu., févr. 27, 2020 at 07:17, Stephen Rothwell <sfr@canb.auug.org.au> a
+> écrit :
+> >Hi all,
+> >
+> >In commit
+> >
+> >  3944dee0c6cd ("MIPS: Fix CONFIG_MIPS_CMDLINE_DTB_EXTEND handling")
+> >
+> >Fixes tag
+> >
+> >  Fixes: 7784cac69735 ("MIPS: cmdline: Clean up boot_command_line
+> >
+> >has these problem(s):
+> >
+> >  - Subject has leading but no trailing parentheses
+> >  - Subject has leading but no trailing quotes
+> >
+> >Please do not split Fixes tags over more than one line.
 > 
-> On 2/27/20 11:04 AM, Valentin Schneider wrote:
-> > Hi Lukasz,
-> > 
-> > On 2/27/20 11:00 AM, Lukasz Luba wrote:
-> > > Fix kernel build warning in kernel/sched/fair.c when CONFIG_SCHED_SMT is
-> > > not set and CONFIG_NUMA_BALANCING is set.
-> > > 
-> > > kernel/sched/fair.c:1524:20: warning: ???test_idle_cores??? declared ???static??? but never defined [-Wunused-function]
-> > > 
-> > 
-> > I've sent a similar fix yesterday at:
-> > 
-> > https://lore.kernel.org/lkml/20200226121244.7524-1-valentin.schneider@arm.com/
-> > 
-> 
-> I've missed it. You are referring in the commit message to wrong change
-> (probably HEAD of that branch), while when you try to bisect, it
-> will point you to
-> ff7db0bf24db sched/numa: Prefer using an idle CPU as a migration target
-> instead of comparing tasks
-> 
-> I think Mel can simply resend the patches with correct build if Ingo
-> is OK.
-> 
-> If Mel would decide to go with extended approach of ifdefs, then maybe
-> it's also good to put in there  numa_idle_core(), which actually uses
-> these test_idle_cores() and is_core_idle()
-> 
+> My fault, sorry. I did not know they could not be splitted.
 
-I preferred the first fix. I'll send just it on with an editted changelog
-to identify the exact patch that caused the problem. Ingo will hopefully
-let me know if he prefers to pick up the fix on top or a resend of the
-series with the fix folded in.
+I've fixed it.
+
+Thomas.
 
 -- 
-Mel Gorman
-SUSE Labs
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
