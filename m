@@ -2,95 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93957171119
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 07:41:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73B24171121
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 07:52:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbgB0Gl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 01:41:57 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:32763 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727131AbgB0Gl4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 01:41:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582785715;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3WtQm8cciAT/fjByiLCd+SwYSU+Wsh17sH8Rz+Ha9TQ=;
-        b=MODJHYQykxxNS+FBfRPvLvNT0EI5n2htEANVNDUF//+uRtyXorWZfEYPax19lWQdq6urez
-        LGz2uUhrIPXN2VI2eHoRxJdquFXGkN/Zzi9hpwbAB6WhaV+J/ly3HMdNt9PrDnhWfXz0qR
-        9XAh1BE6ZBuU2WVIN0pbKpBwwVgWCGk=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-41-x4TapFPBOY-J7VrVtPooTg-1; Thu, 27 Feb 2020 01:41:53 -0500
-X-MC-Unique: x4TapFPBOY-J7VrVtPooTg-1
-Received: by mail-wr1-f69.google.com with SMTP id o9so868323wrw.14
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 22:41:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3WtQm8cciAT/fjByiLCd+SwYSU+Wsh17sH8Rz+Ha9TQ=;
-        b=ISA8UhEydwJ//CfBSM3SaJPaL6mbR2uhMlZQfz/m/i51zhyQEtmrOHATOyYUzWda0a
-         Vx/cU7dLHX1BDk3BgKqhkzSYRLpGtblw1qGZ9JSYUZHnQ6Eg2RiNV0SVj0eK86GsRjr/
-         t0VbrpHovDj92w7e8HGjtKnq1R/MK+AzT+ocUypMe1MgrpMSa3PRcdQJIsG+6lw7yRhW
-         xsMF2wxk2hcD/rUkeeTxhJjcPD1dSlPWfsUU3RukN9MJchbndgBZrFmsWAHlW7maJMwt
-         ZycAVn/jRJw3KRNRKTtIsMIZ1n4984A5mW+viBcPB27Dn/jeMYTrseFVWl2GO8IblORV
-         h+cA==
-X-Gm-Message-State: APjAAAUR1nH+M7JPdV0UCL2EXhynL6ija1qJHccqEEbin8ZWL/FaIQVF
-        QiepuGJVU2u24LfiJfNCtIiUlKtqjT3yVJx0vcfoSBFY3gKSSATtpzxFX0R9JNkBYpDVnf/ZwmB
-        pJk5NAZKtGi/rTe0iRe+SSfJE
-X-Received: by 2002:adf:f3d1:: with SMTP id g17mr2822676wrp.378.1582785712302;
-        Wed, 26 Feb 2020 22:41:52 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyArG/FMFCYBNGHUeD0cJCcpopv6q6Q0n5+XKSdmGhLCIy+1iyQ2uDjJJoigYpVcciUwPCVQg==
-X-Received: by 2002:adf:f3d1:: with SMTP id g17mr2822649wrp.378.1582785711971;
-        Wed, 26 Feb 2020 22:41:51 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:d0d9:ea10:9775:f33f? ([2001:b07:6468:f312:d0d9:ea10:9775:f33f])
-        by smtp.gmail.com with ESMTPSA id g206sm5552090wme.46.2020.02.26.22.41.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2020 22:41:51 -0800 (PST)
-Subject: Re: [PATCH] Revert "KVM: x86: enable -Werror"
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Christoph Hellwig <hch@lst.de>, torvalds@linux-foundation.org
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200226153929.786743-1-hch@lst.de>
- <87v9ns1z79.fsf@mpe.ellerman.id.au>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <5f31e38e-2f78-7919-7c60-a1761b9abb2e@redhat.com>
-Date:   Thu, 27 Feb 2020 07:41:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728389AbgB0Gwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 01:52:35 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10702 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726575AbgB0Gwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 01:52:34 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BC019EDEFA79C8F59EC9;
+        Thu, 27 Feb 2020 14:52:30 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 27 Feb 2020 14:52:24 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] RDMA/bnxt_re: Remove set but not used variable 'dev_attr'
+Date:   Thu, 27 Feb 2020 06:45:42 +0000
+Message-ID: <20200227064542.91205-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <87v9ns1z79.fsf@mpe.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/02/20 04:33, Michael Ellerman wrote:
-> We've had -Werror enabled by default on powerpc for over 10 years, and
-> haven't had many complaints. Possibly that's just because no one builds
-> powerpc kernels ...
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-I looked for other cases of -Werror being always on in Linux before
-writing this patch.  There are both unconditional cases and others like
-PPC where it's governed by Kconfig.
+drivers/infiniband/hw/bnxt_re/ib_verbs.c: In function 'bnxt_re_create_gsi_qp':
+drivers/infiniband/hw/bnxt_re/ib_verbs.c:1283:30: warning:
+ variable 'dev_attr' set but not used [-Wunused-but-set-variable]
 
-I will add a Kconfig for now.  It probably should be made global instead
-of having a dozen different Kconfig symbols.
+commit 8dae419f9ec7 ("RDMA/bnxt_re: Refactor queue pair creation code")
+involved this, but not used, so remove it.
 
-kvm_timer_init should be fixed, though.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Paolo
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index ad3e524187e3..7e74efd15d6d 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -1280,14 +1280,12 @@ static int bnxt_re_create_shadow_gsi(struct bnxt_re_qp *qp,
+ static int bnxt_re_create_gsi_qp(struct bnxt_re_qp *qp, struct bnxt_re_pd *pd,
+ 				 struct ib_qp_init_attr *init_attr)
+ {
+-	struct bnxt_qplib_dev_attr *dev_attr;
+ 	struct bnxt_re_dev *rdev;
+ 	struct bnxt_qplib_qp *qplqp;
+ 	int rc = 0;
+ 
+ 	rdev = qp->rdev;
+ 	qplqp = &qp->qplib_qp;
+-	dev_attr = &rdev->dev_attr;
+ 
+ 	qplqp->rq_hdr_buf_size = BNXT_QPLIB_MAX_QP1_RQ_HDR_SIZE_V2;
+ 	qplqp->sq_hdr_buf_size = BNXT_QPLIB_MAX_QP1_SQ_HDR_SIZE_V2;
 
-> The key thing is that it's configurable, so if it does break the build
-> for someone they can just turn it off. It's also off by default for
-> allyes/allmod builds because the user-selectable option disables
-> -Werror, eg:
+
 
