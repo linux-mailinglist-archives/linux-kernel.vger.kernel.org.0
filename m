@@ -2,102 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 135531723C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:45:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F3251723C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:45:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbgB0QpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:45:07 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:53132 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730420AbgB0QpG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:45:06 -0500
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id 01RGitMm029840;
-        Fri, 28 Feb 2020 01:44:56 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 01RGitMm029840
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1582821896;
-        bh=QoZtAtgAqRAkKXxlxSngjsc6R6InFotjoOk35rOFKdA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MJaFBMSLTbNeFRrmfS/YdzQf4KVLPrKJbmkcoh+EDlK2wQvco7gYhJt4mIKTc13CT
-         q2b+uCV00nUrJ6UNiWZW8lA98+aWgK1Fqqjfu0Xx4HB/BkgV9l04NYr6sufeO/8uKR
-         lTvJNrJ7hV7wCVCNKR5vJEF5/BXb0QWyuA0ZFqXArTJmqcmPrGsaXufKoXTQclReO2
-         DcvItUdV2u9gV413Kfm7RTgPiPJH0F7+52JRl9xzTpG6ReUV0cXbRUfL+6VSenxRVI
-         mfJWdQPCg+0O0HydObgZ3cbdopfJA7UqxG685wIxEDGb1qYVnlXE5H/b3KlU30hO7F
-         Cxw42nC5T7X+Q==
-X-Nifty-SrcIP: [209.85.221.181]
-Received: by mail-vk1-f181.google.com with SMTP id i78so85312vke.0;
-        Thu, 27 Feb 2020 08:44:56 -0800 (PST)
-X-Gm-Message-State: ANhLgQ0j9KdjN0Snj91Lau+npr1usQ7pAijTPP/41gNPSg2bnNXrfTga
-        4QwnwDVyRLY3Wc7nzAWKU1Phpv6F+RHfdhqFjiU=
-X-Google-Smtp-Source: ADFU+vt7mju6iysoK1Pjsu+r3uD9pJPKkQz09HLKvUkZgp/B8is5NTbwLbAvviP3iFdp/vRucYRlpuyRr4k/eLVrIew=
-X-Received: by 2002:a1f:2f4c:: with SMTP id v73mr76527vkv.12.1582821894871;
- Thu, 27 Feb 2020 08:44:54 -0800 (PST)
+        id S1730418AbgB0Qo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:44:28 -0500
+Received: from foss.arm.com ([217.140.110.172]:54650 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729146AbgB0Qo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 11:44:28 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C6DD1FB;
+        Thu, 27 Feb 2020 08:44:27 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6EA63F7B4;
+        Thu, 27 Feb 2020 08:44:26 -0800 (PST)
+Date:   Thu, 27 Feb 2020 16:44:25 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Boris Brezillon <boris.brezillon@collabora.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Richard Weinberger <richard@nod.at>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Pratyush Yadav <p.yadav@ti.com>
+Subject: Re: [PATCH v2 01/11] dt-bindings: spi: allow expressing DTR
+ capability
+Message-ID: <20200227164425.GF4062@sirena.org.uk>
+References: <20200226093703.19765-1-p.yadav@ti.com>
+ <20200226093703.19765-2-p.yadav@ti.com>
+ <20200227171147.32cc6fcf@collabora.com>
+ <20200227162842.GE4062@sirena.org.uk>
+ <CAMuHMdWMCDzQm0tjpybJZyHy4imbC9NqRXP5d4C0xgxQx-Pf8g@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200218095859.9725-1-masahiroy@kernel.org>
-In-Reply-To: <20200218095859.9725-1-masahiroy@kernel.org>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Fri, 28 Feb 2020 01:44:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATVao=FodbS2y8ECqNVPQ7gdPN8f=AzpbmACyjiiVJSXQ@mail.gmail.com>
-Message-ID: <CAK7LNATVao=FodbS2y8ECqNVPQ7gdPN8f=AzpbmACyjiiVJSXQ@mail.gmail.com>
-Subject: Re: [PATCH] fixdep: remove unneeded code and comments about *.ver files
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1Ow488MNN9B9o/ov"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWMCDzQm0tjpybJZyHy4imbC9NqRXP5d4C0xgxQx-Pf8g@mail.gmail.com>
+X-Cookie: Edwin Meese made me wear CORDOVANS!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 6:59 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> This is probably stale code. In old days (~ Linux 2.5.59), Kbuild made
-> genksyms generate include/linux/modules/*.ver files.
->
-> The currenct Kbuild does not generate *.ver files at all.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
 
-Applied to linux-kbuild.
+--1Ow488MNN9B9o/ov
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->
->  scripts/basic/fixdep.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
->
-> diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
-> index 9ba47b0a47b9..ad2041817985 100644
-> --- a/scripts/basic/fixdep.c
-> +++ b/scripts/basic/fixdep.c
-> @@ -77,11 +77,6 @@
->   * dependencies on include/config/my/option.h for every
->   * CONFIG_MY_OPTION encountered in any of the prerequisites.
->   *
-> - * It will also filter out all the dependencies on *.ver. We need
-> - * to make sure that the generated version checksum are globally up
-> - * to date before even starting the recursive build, so it's too late
-> - * at this point anyway.
-> - *
->   * We don't even try to really parse the header files, but
->   * merely grep, i.e. if CONFIG_FOO is mentioned in a comment, it will
->   * be picked up as well. It's not a problem with respect to
-> @@ -299,8 +294,7 @@ static void *read_file(const char *filename)
->  static int is_ignored_file(const char *s, int len)
->  {
->         return str_ends_with(s, len, "include/generated/autoconf.h") ||
-> -              str_ends_with(s, len, "include/generated/autoksyms.h") ||
-> -              str_ends_with(s, len, ".ver");
-> +              str_ends_with(s, len, "include/generated/autoksyms.h");
->  }
->
->  /*
-> --
-> 2.17.1
->
+On Thu, Feb 27, 2020 at 05:40:31PM +0100, Geert Uytterhoeven wrote:
+> On Thu, Feb 27, 2020 at 5:28 PM Mark Brown <broonie@kernel.org> wrote:
 
+> > It's what we do for other properties, and if this is anything like the
+> > other things adding extra wiring you can't assume that the ability to
+> > use the feature for TX implies RX.
 
--- 
-Best Regards
-Masahiro Yamada
+> Double Transfer Rate uses the same wire.
+
+But is it still on either the TX or RX signals?
+
+> But as you sample at both the rising and the falling edges of the clock, this
+> makes the cpha setting meaningless for such transfers, I think ;-)
+
+Might affect what the first bit is possibly?
+
+> However, as the future may bring us QDR, perhaps this should not be a
+> boolean flag, but an integer value?
+> Cfr. spi-tx-bus-width vs. the original spi-tx-dual/spi-tx-quad proposal.
+
+> What would be a good name (as we only need one)? spi-data-phases?
+
+Sounds reasonable, apart from the increasingly vague connection with
+something that's recognizably SPI :P
+
+--1Ow488MNN9B9o/ov
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5X8egACgkQJNaLcl1U
+h9BzNQf+NjXmaGigWO8AYKixlBbcKDms48SbjmC3B/TKWN72uzEK1Ir+m0zbDH/k
+3rRhBD0UEIitRKr7B3yHGk5dJY0A3yZuSqsmXm6EW05qo65DwU2595xG4Q7lAk35
+enegdQQEG9axlL02UaRgms5zlb7znVK/DqAqzjLB6NUv4AjBs8OJVK2RCLwXhvx3
+c1W2kmWHZ5i9EXY21cCmQytqMlkJnOnHfYLoafYvVeqLFS1ddty4GNFsXdY+F14Z
+EpXoakYtdKqZyX5SFRw6ymAZUU/O6qPiyv6ipnpOfu/pFazvJ+NByzx8FDy6bUEt
+uOZ2YaN/cmD3HqhSb6dp4iTXWLLzzQ==
+=jCkC
+-----END PGP SIGNATURE-----
+
+--1Ow488MNN9B9o/ov--
