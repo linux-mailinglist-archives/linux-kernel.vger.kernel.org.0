@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31AD9171CE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:16:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 404C4171CE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:16:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388179AbgB0OQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:16:08 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:34438 "EHLO
+        id S2389458AbgB0OQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:16:13 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:34446 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389402AbgB0OQC (ORCPT
+        with ESMTP id S2389389AbgB0OQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:16:02 -0500
+        Thu, 27 Feb 2020 09:16:05 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1j7JxF-0005B5-Vk; Thu, 27 Feb 2020 15:15:58 +0100
+        id 1j7JxF-0005AY-KQ; Thu, 27 Feb 2020 15:15:57 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9D3DA1C216C;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4DAA81C2170;
         Thu, 27 Feb 2020 15:15:57 +0100 (CET)
 Date:   Thu, 27 Feb 2020 14:15:57 -0000
 From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/entry] x86/traps: Remove redundant declaration of do_double_fault()
+Subject: [tip: x86/entry] x86/irq: Remove useless return value from do_IRQ()
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Alexandre Chartre <alexandre.chartre@oracle.com>,
         Andy Lutomirski <luto@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200225220216.720335354@linutronix.de>
-References: <20200225220216.720335354@linutronix.de>
+In-Reply-To: <20200225220216.826870369@linutronix.de>
+References: <20200225220216.826870369@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <158281295739.28353.15003553494431699964.tip-bot2@tip-bot2>
+Message-ID: <158281295706.28353.9151423427467602652.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,55 +48,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/entry branch of tip:
 
-Commit-ID:     3ba4f0a633ca4bfeadb24eba19cb53ebe246eabf
-Gitweb:        https://git.kernel.org/tip/3ba4f0a633ca4bfeadb24eba19cb53ebe246eabf
+Commit-ID:     17dbedb5da184b501c5c51fc78d1071005139e48
+Gitweb:        https://git.kernel.org/tip/17dbedb5da184b501c5c51fc78d1071005139e48
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Tue, 25 Feb 2020 22:36:42 +01:00
+AuthorDate:    Tue, 25 Feb 2020 22:36:43 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Thu, 27 Feb 2020 14:48:40 +01:00
 
-x86/traps: Remove redundant declaration of do_double_fault()
+x86/irq: Remove useless return value from do_IRQ()
 
-
+Nothing is using it.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Link: https://lkml.kernel.org/r/20200225220216.720335354@linutronix.de
+Link: https://lkml.kernel.org/r/20200225220216.826870369@linutronix.de
 
 ---
- arch/x86/include/asm/traps.h | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/irq.h | 2 +-
+ arch/x86/kernel/irq.c      | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index e1c660b..c26a7e1 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -76,13 +76,6 @@ dotraplinkage void do_coprocessor_segment_overrun(struct pt_regs *regs, long err
- dotraplinkage void do_invalid_TSS(struct pt_regs *regs, long error_code);
- dotraplinkage void do_segment_not_present(struct pt_regs *regs, long error_code);
- dotraplinkage void do_stack_segment(struct pt_regs *regs, long error_code);
--#ifdef CONFIG_X86_64
--dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code, unsigned long address);
--asmlinkage __visible notrace struct pt_regs *sync_regs(struct pt_regs *eregs);
--asmlinkage __visible notrace
--struct bad_iret_stack *fixup_bad_iret(struct bad_iret_stack *s);
--void __init trap_init(void);
--#endif
- dotraplinkage void do_general_protection(struct pt_regs *regs, long error_code);
- dotraplinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code, unsigned long address);
- dotraplinkage void do_spurious_interrupt_bug(struct pt_regs *regs, long error_code);
-@@ -94,6 +87,13 @@ dotraplinkage void do_iret_error(struct pt_regs *regs, long error_code);
- #endif
- dotraplinkage void do_mce(struct pt_regs *regs, long error_code);
+diff --git a/arch/x86/include/asm/irq.h b/arch/x86/include/asm/irq.h
+index a176f61..72fba0e 100644
+--- a/arch/x86/include/asm/irq.h
++++ b/arch/x86/include/asm/irq.h
+@@ -36,7 +36,7 @@ extern void native_init_IRQ(void);
  
-+#ifdef CONFIG_X86_64
-+asmlinkage __visible notrace struct pt_regs *sync_regs(struct pt_regs *eregs);
-+asmlinkage __visible notrace
-+struct bad_iret_stack *fixup_bad_iret(struct bad_iret_stack *s);
-+void __init trap_init(void);
-+#endif
-+
- static inline int get_si_code(unsigned long condition)
+ extern void handle_irq(struct irq_desc *desc, struct pt_regs *regs);
+ 
+-extern __visible unsigned int do_IRQ(struct pt_regs *regs);
++extern __visible void do_IRQ(struct pt_regs *regs);
+ 
+ extern void init_ISA_irqs(void);
+ 
+diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
+index 21efee3..c7965ff 100644
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@ -230,7 +230,7 @@ u64 arch_irq_stat(void)
+  * SMP cross-CPU interrupts have their own specific
+  * handlers).
+  */
+-__visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
++__visible void __irq_entry do_IRQ(struct pt_regs *regs)
  {
- 	if (condition & DR_STEP)
+ 	struct pt_regs *old_regs = set_irq_regs(regs);
+ 	struct irq_desc * desc;
+@@ -263,7 +263,6 @@ __visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
+ 	exiting_irq();
+ 
+ 	set_irq_regs(old_regs);
+-	return 1;
+ }
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
