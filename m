@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61348171DD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:23:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21606171CC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389169AbgB0OOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:14:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54050 "EHLO mail.kernel.org"
+        id S2389249AbgB0OPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:15:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389160AbgB0OOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:14:40 -0500
+        id S2389226AbgB0OPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:15:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0BCC24691;
-        Thu, 27 Feb 2020 14:14:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E87F1246A0;
+        Thu, 27 Feb 2020 14:15:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812880;
-        bh=cXyWnGOXMDI/RpQ47AsYJXfqH3j09CyQ273gSjmt4ek=;
+        s=default; t=1582812906;
+        bh=ZznlblGTBFbuds+Sph5WVVJsc6irhIrrzO9HTsUYnug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KI1PEwXr55OVwEFIas5qsW+fWKpSdBUGEeqUXWa2S5sb7W3F5xaAU1MgPyFSmR9+M
-         jCHqOkx0ScUQ/MVTdyuxDCSOXT4wzH2JLfJjZj5I1k42onDRPZW6IHTjAk1o0vmab2
-         g/bbYgTwGie3t4RfCqmiKyrWU/1+EKnvzlBRgWAM=
+        b=AbvJnz1LXBS2hgxzpXxF8U70a0VJzEgo4XWxD3I1CWcnJ3bATzTzoUULyS/rfASP0
+         +VRegD6f/GwIk35TMJs1YwVRYCw+fYa/IFxVxkf7Av/0qpTxyALl+0O+9jWcpzCtPK
+         yNMYaa7GQ7KUgQZkLvRB99Hfia40ox5KvLEWNGoM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jakub Nantl <jn@forever.cz>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.5 024/150] USB: serial: ch341: fix receiver regression
-Date:   Thu, 27 Feb 2020 14:36:01 +0100
-Message-Id: <20200227132236.387789404@linuxfoundation.org>
+        stable@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>,
+        Lukas Wunner <lukas@wunner.de>
+Subject: [PATCH 5.5 025/150] vt: fix scrollback flushing on background consoles
+Date:   Thu, 27 Feb 2020 14:36:02 +0100
+Message-Id: <20200227132236.554692580@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
 References: <20200227132232.815448360@linuxfoundation.org>
@@ -43,52 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Nicolas Pitre <nico@fluxnic.net>
 
-commit 7c3d02285ad558691f27fde760bcd841baa27eab upstream.
+commit 3f4ef485be9d54040b695f32ec76d0f1ea50bbf3 upstream.
 
-While assumed not to make a difference, not using the factor-2 prescaler
-makes the receiver more susceptible to errors.
+Commit a6dbe4427559 ("vt: perform safe console erase in the right
+order") provided fixes to an earlier commit by gathering all console
+scrollback flushing operations in a function of its own. This includes
+the invocation of vc_sw->con_switch() as previously done through a
+update_screen() call. That commit failed to carry over the
+con_is_visible() conditional though, as well as cursor handling, which
+caused problems when "\e[3J" was written to a background console.
 
-Specifically, there have been reports of problems with devices that
-cannot generate a 115200 rate with a smaller error than 2.1% (e.g.
-117647 bps). But this can also be reproduced with a low-speed RS232
-tranceiver at 115200 when the input rate matches the nominal rate.
+One could argue for preserving the call to update_screen(). However
+this does far more than we need, and it is best to remove scrollback
+assumptions from it. Instead let's gather the minimum needed to actually
+perform scrollback flushing properly in that one place.
 
-So whenever possible, enable the factor-2 prescaler and halve the
-divisor in order to use settings closer to that of the previous
-algorithm.
+While at it, let's document the vc_sw->con_switch() side effect being
+relied upon.
 
-Fixes: 35714565089e ("USB: serial: ch341: reimplement line-speed handling")
-Cc: stable <stable@vger.kernel.org>	# 5.5
-Reported-by: Jakub Nantl <jn@forever.cz>
-Tested-by: Jakub Nantl <jn@forever.cz>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Nicolas Pitre <nico@fluxnic.net>
+Reported-and-tested-by: Lukas Wunner <lukas@wunner.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/nycvar.YSQ.7.76.2001281205560.1655@knanqh.ubzr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/ch341.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/tty/vt/vt.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/ch341.c
-+++ b/drivers/usb/serial/ch341.c
-@@ -205,6 +205,16 @@ static int ch341_get_divisor(speed_t spe
- 			16 * speed - 16 * CH341_CLKRATE / (clk_div * (div + 1)))
- 		div++;
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -936,10 +936,21 @@ static void flush_scrollback(struct vc_d
+ 	WARN_CONSOLE_UNLOCKED();
  
-+	/*
-+	 * Prefer lower base clock (fact = 0) if even divisor.
-+	 *
-+	 * Note that this makes the receiver more tolerant to errors.
-+	 */
-+	if (fact == 1 && div % 2 == 0) {
-+		div /= 2;
-+		fact = 0;
+ 	set_origin(vc);
+-	if (vc->vc_sw->con_flush_scrollback)
++	if (vc->vc_sw->con_flush_scrollback) {
+ 		vc->vc_sw->con_flush_scrollback(vc);
+-	else
++	} else if (con_is_visible(vc)) {
++		/*
++		 * When no con_flush_scrollback method is provided then the
++		 * legacy way for flushing the scrollback buffer is to use
++		 * a side effect of the con_switch method. We do it only on
++		 * the foreground console as background consoles have no
++		 * scrollback buffers in that case and we obviously don't
++		 * want to switch to them.
++		 */
++		hide_cursor(vc);
+ 		vc->vc_sw->con_switch(vc);
++		set_cursor(vc);
 +	}
-+
- 	return (0x100 - div) << 8 | fact << 2 | ps;
  }
  
+ /*
 
 
