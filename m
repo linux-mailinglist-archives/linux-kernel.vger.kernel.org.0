@@ -2,98 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D2B17248F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:09:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 730881724B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:11:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729649AbgB0RHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 12:07:51 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39886 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726460AbgB0RHv (ORCPT
+        id S1730124AbgB0RJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 12:09:28 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39290 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbgB0RJ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 12:07:51 -0500
-Received: by mail-ot1-f65.google.com with SMTP id x97so1000806ota.6;
-        Thu, 27 Feb 2020 09:07:50 -0800 (PST)
+        Thu, 27 Feb 2020 12:09:28 -0500
+Received: by mail-lj1-f193.google.com with SMTP id o15so40220ljg.6;
+        Thu, 27 Feb 2020 09:09:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0d2ikdqfSzyCyHKBwzyOB/NzazDViDKr5gLhXg7TE5w=;
+        b=cBmmg033uMjVyyiiZzBQ6LYyy+VgUvpGxjDYnJbqsFA5QYw4c0+iBD+yt8NL3fyA0z
+         1mhds+EI/xVyu45GOaJ12WhmGvH3xJ4r8WG8AXlPRIgvu/FZ6FEeemJCuIz+Wpwov7m2
+         AT1+Y90aYC9YIILe1wY5yqYOvyStCo09yByNLSItCx+gkhB6dGCJJQdX69wXJOpMDx5Q
+         kv5wJcBKwIUyY2qFVR8zCsY4CzWjhPtccyMk4ZvVFe5jsVGdiUnTx2fXJKMtD3jvKMqv
+         q4UExMEqTsprti7lEPu3ezmD8PS3vUPu4YT4Xbg3onwy2gaYHmDmUzyimxrwl5kgBCt1
+         KJFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=InsmB7K49IbGFoAcpPNcKRxbX33Sq72EBl8TIXI+Jks=;
-        b=ubVIOsxZhVGwaC5aCh2Y8zbS5ACaP7Lk4hrWZl73B54DotVYkiyKhGsZQJlAGFYMIS
-         hLrfJsIDlRLe7+NmhSqvBcjSH5agDCfcbWskqd/hVSWRDuHOPhdFueNn82x1665ljkQh
-         T+YcUEfGWe24ZxAwMwjrUhb2UWtCPyyZxjoXuajmSl99kUsFxyQi4RdKrYOJqWjbISpm
-         ZLHA6pCxJOfyDBb5RQ0lQO9maKgCh1AR6xKNDBHgk9qxV2N+X539+u5x6Y6V+qfXuL2w
-         +gtERQKXrVhoMVVOfw3zhOiT5BM/KS2Ukqcq+OQfIZJAmKL1hwo/yr+OuNWN2uoRg5/Q
-         t/Xw==
-X-Gm-Message-State: APjAAAVi0m+XxyRAbA3wkZe6WKb5uYZiaZLRSC7Lz4asvRzihM3/U5EP
-        1lPgqb6gLGz/kPErcanlUA==
-X-Google-Smtp-Source: APXvYqwReYFW5+9iTptEhtgAEVTUlxTpOhTN5cLvCWwPo3QD9G6weLLuawjcTBQoP7gwUOwpcHjbxw==
-X-Received: by 2002:a9d:6544:: with SMTP id q4mr535139otl.269.1582823270477;
-        Thu, 27 Feb 2020 09:07:50 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n8sm2113708otl.11.2020.02.27.09.07.48
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0d2ikdqfSzyCyHKBwzyOB/NzazDViDKr5gLhXg7TE5w=;
+        b=iKTLlkwG7+GMd6i4/bGmxIuoMa+C4pZL5Oa1KxPMWNZYqihToYsjrmE94irzvYt3e9
+         rqCw5XHcJIKEuKg7YGcQVzbp65b+6PjQSiwUno/GTncBxJ3G0P5Fu5chN56WhOIU52be
+         eDVhRXUjYgtYURFcp7A5wLY2byjomg+B8+o7i7RaHBZZNwncR/6uWWNbexQo/kNPapiw
+         UCWAzoO6zrila/m04kSwBywhIBvIrghQph6i/Y2pyamCxnBSsyW0tnC7X8c1O+q1zx5I
+         NWl/v03GKW0HC35hgUA0fbwn4msA47nGJ02P7fvw8jiAu+F2jAszHgts4wfanjwVoJlP
+         nhUw==
+X-Gm-Message-State: ANhLgQ23NwqsGVS2ZTaYQOjhbXx9DVHsQTq3cHu8sBaN8ch4WzZaP2Gx
+        FO+xb1yuQqo7dYxsHa9lAPLcqQbp
+X-Google-Smtp-Source: ADFU+vvgTDPwZpbNLylJZlslLydu4OjybK/HBSQ1vL7bDA6o+HD8DhCJKwHAJcYdOChS2Co1JE4Yaw==
+X-Received: by 2002:a2e:a58e:: with SMTP id m14mr59358ljp.68.1582823366131;
+        Thu, 27 Feb 2020 09:09:26 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id j11sm3049513lfb.58.2020.02.27.09.09.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 09:07:49 -0800 (PST)
-Received: (nullmailer pid 2184 invoked by uid 1000);
-        Thu, 27 Feb 2020 17:07:48 -0000
-Date:   Thu, 27 Feb 2020 11:07:48 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     "Ramuthevar,Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        broonie@kernel.org, vigneshr@ti.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, simon.k.r.goldschmidt@gmail.com,
-        dinguyen@kernel.org, tien.fong.chee@intel.com, marex@denx.de,
-        mark.rutland@arm.com, linux-mtd@lists.infradead.org,
-        dwmw2@infradead.org, richard@nod.at, computersforpeace@gmail.com,
-        boris.brezillon@free-electrons.com, cyrille.pitchen@atmel.com,
-        david.oberhollenzer@sigma-star.at, miquel.raynal@bootlin.com,
-        tudor.ambarus@gmail.com, cheol.yong.kim@intel.com,
-        qi-ming.wu@intel.com,
-        Ramuthevar Vadivel Murugan 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Subject: Re: [PATCH v11 1/2] dt-bindings: spi: Add schema for Cadence QSPI
- Controller driver
-Message-ID: <20200227170748.GA19661@bogus>
-References: <20200227062708.21544-1-vadivel.muruganx.ramuthevar@linux.intel.com>
- <20200227062708.21544-2-vadivel.muruganx.ramuthevar@linux.intel.com>
+        Thu, 27 Feb 2020 09:09:24 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH RE-SEND v1] PM / devfreq: Replace strncpy with strscpy
+Date:   Thu, 27 Feb 2020 20:08:54 +0300
+Message-Id: <20200227170854.9949-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227062708.21544-2-vadivel.muruganx.ramuthevar@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Feb 2020 14:27:07 +0800, "Ramuthevar,Vadivel MuruganX" wrote:
-> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
-> 
-> Add dt-bindings documentation for Cadence-QSPI controller to support
-> spi based flash memories.
-> 
-> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
-> ---
->  .../devicetree/bindings/mtd/cadence-quadspi.txt    |  67 ----------
->  .../devicetree/bindings/spi/cdns,qspi-nor.yaml     | 142 +++++++++++++++++++++
->  2 files changed, 142 insertions(+), 67 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
->  create mode 100644 Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
-> 
+GCC produces this warning when kernel compiled using `make W=1`:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+  warning: ‘strncpy’ specified bound 16 equals destination size [-Wstringop-truncation]
+  772 |  strncpy(devfreq->governor_name, governor_name, DEVFREQ_NAME_LEN);
 
-warning: no schema found in file: Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml: ignoring, error in schema: patternProperties: cdns,read-delay
-Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml: patternProperties:cdns,read-delay: {'description': 'Delay in 4 microseconds, read capture logic, in clock cycles.'} is not valid under any of the given schemas (Possible causes of the failure):
-	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml: patternProperties:cdns,read-delay: 'not' is a required property
+The strncpy doesn't take care of NULL-termination of the destination
+buffer, while the strscpy does.
 
-Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/spi/cdns,qspi-nor.example.dts' failed
-make[1]: *** [Documentation/devicetree/bindings/spi/cdns,qspi-nor.example.dts] Error 1
-Makefile:1263: recipe for target 'dt_binding_check' failed
-make: *** [dt_binding_check] Error 2
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/devfreq/devfreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-See https://patchwork.ozlabs.org/patch/1245559
-Please check and re-submit.
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 8494c5f05a73..2011f64bfa3a 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -769,7 +769,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 	devfreq->dev.release = devfreq_dev_release;
+ 	INIT_LIST_HEAD(&devfreq->node);
+ 	devfreq->profile = profile;
+-	strncpy(devfreq->governor_name, governor_name, DEVFREQ_NAME_LEN);
++	strscpy(devfreq->governor_name, governor_name, DEVFREQ_NAME_LEN);
+ 	devfreq->previous_freq = profile->initial_freq;
+ 	devfreq->last_status.current_frequency = profile->initial_freq;
+ 	devfreq->data = data;
+-- 
+2.24.0
+
