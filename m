@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82F77171A8C
+	by mail.lfdr.de (Postfix) with ESMTP id 0405A171A8B
 	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:54:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731908AbgB0Nyr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:54:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54626 "EHLO mail.kernel.org"
+        id S1731900AbgB0Nyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:54:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731693AbgB0Nyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:54:31 -0500
+        id S1731851AbgB0Nye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:54:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F6992469F;
-        Thu, 27 Feb 2020 13:54:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE63A20578;
+        Thu, 27 Feb 2020 13:54:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811670;
-        bh=+LSX5fVwNZAlJxwkEm1u1g6SEbCouV2Mcn18P/N8Qkw=;
+        s=default; t=1582811673;
+        bh=k+XzV/W9UPSf5JZG4LsaLccqrAu0LZ7Ag9WTLrAZBPE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cc8cGbpZO9bPsGr2C2KU+KkpjVbsalcsIIVA1VcohPCEe0HaxkdIiXWy1kybkJPHS
-         nVVhFYsb6Izyl7w4gUc/zcG/+HHp8fMsfHHJVrmvGJle9BdWCjR5l/DN8ry5krKofm
-         NpMqHQk/Xlquw+tbrd/PAb8MKrrHJtIeax2U7RWI=
+        b=0l8QRQEB3z2Ec1AxKNGuNCtjcvdDlnYmOATLeZYimimbkJdFLKsxeI5ibMDJ9fbbn
+         nWC4YSSJCJNKyT8NM/5U64djGANw5Zx+BbfYOuJWlc4jkMVMM/VBOWeAraqonsdLIY
+         XuDuSZgq+UBlbzBHuneFRpsVQPdB+06ywSZyX7wM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 056/237] sparc: Add .exit.data section.
-Date:   Thu, 27 Feb 2020 14:34:30 +0100
-Message-Id: <20200227132300.989646085@linuxfoundation.org>
+Subject: [PATCH 4.14 057/237] uio: fix a sleep-in-atomic-context bug in uio_dmem_genirq_irqcontrol()
+Date:   Thu, 27 Feb 2020 14:34:31 +0100
+Message-Id: <20200227132301.094280994@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -43,41 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David S. Miller <davem@davemloft.net>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 548f0b9a5f4cffa0cecf62eb12aa8db682e4eee6 ]
+[ Upstream commit b74351287d4bd90636c3f48bc188c2f53824c2d4 ]
 
-This fixes build errors of all sorts.
+The driver may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-Also, emit .exit.text unconditionally.
+kernel/irq/manage.c, 523:
+	synchronize_irq in disable_irq
+drivers/uio/uio_dmem_genirq.c, 140:
+	disable_irq in uio_dmem_genirq_irqcontrol
+drivers/uio/uio_dmem_genirq.c, 134:
+	_raw_spin_lock_irqsave in uio_dmem_genirq_irqcontrol
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
+synchronize_irq() can sleep at runtime.
+
+To fix this bug, disable_irq() is called without holding the spinlock.
+
+This bug is found by a static analysis tool STCheck written by myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Link: https://lore.kernel.org/r/20191218094405.6009-1-baijiaju1990@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sparc/kernel/vmlinux.lds.S | 6 ++++--
+ drivers/uio/uio_dmem_genirq.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/sparc/kernel/vmlinux.lds.S b/arch/sparc/kernel/vmlinux.lds.S
-index 5a2344574f39b..4323dc4ae4c7a 100644
---- a/arch/sparc/kernel/vmlinux.lds.S
-+++ b/arch/sparc/kernel/vmlinux.lds.S
-@@ -167,12 +167,14 @@ SECTIONS
+diff --git a/drivers/uio/uio_dmem_genirq.c b/drivers/uio/uio_dmem_genirq.c
+index e1134a4d97f3f..a00b4aee6c799 100644
+--- a/drivers/uio/uio_dmem_genirq.c
++++ b/drivers/uio/uio_dmem_genirq.c
+@@ -135,11 +135,13 @@ static int uio_dmem_genirq_irqcontrol(struct uio_info *dev_info, s32 irq_on)
+ 	if (irq_on) {
+ 		if (test_and_clear_bit(0, &priv->flags))
+ 			enable_irq(dev_info->irq);
++		spin_unlock_irqrestore(&priv->lock, flags);
+ 	} else {
+-		if (!test_and_set_bit(0, &priv->flags))
++		if (!test_and_set_bit(0, &priv->flags)) {
++			spin_unlock_irqrestore(&priv->lock, flags);
+ 			disable_irq(dev_info->irq);
++		}
  	}
- 	PERCPU_SECTION(SMP_CACHE_BYTES)
+-	spin_unlock_irqrestore(&priv->lock, flags);
  
--#ifdef CONFIG_JUMP_LABEL
- 	. = ALIGN(PAGE_SIZE);
- 	.exit.text : {
- 		EXIT_TEXT
- 	}
--#endif
-+
-+	.exit.data : {
-+		EXIT_DATA
-+	}
- 
- 	. = ALIGN(PAGE_SIZE);
- 	__init_end = .;
+ 	return 0;
+ }
 -- 
 2.20.1
 
