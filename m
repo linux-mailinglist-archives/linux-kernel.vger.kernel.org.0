@@ -2,86 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F3BE171854
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:13:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9864F171843
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:10:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729193AbgB0NNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:13:04 -0500
-Received: from foss.arm.com ([217.140.110.172]:50276 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729073AbgB0NND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:13:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10EA030E;
-        Thu, 27 Feb 2020 05:13:03 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B1603F703;
-        Thu, 27 Feb 2020 05:13:02 -0800 (PST)
-Date:   Thu, 27 Feb 2020 13:13:00 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu " <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 00/11] arm64: Branch Target Identification support
-Message-ID: <20200227131300.GB4062@sirena.org.uk>
-References: <20200226155714.43937-1-broonie@kernel.org>
- <202002261343.3B2ECE90@keescook>
+        id S1729136AbgB0NKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:10:18 -0500
+Received: from gateway23.websitewelcome.com ([192.185.50.108]:33515 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729088AbgB0NKR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:10:17 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 68AF78D65
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 07:10:16 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 7IvgjMAKbEfyq7IvgjRlGU; Thu, 27 Feb 2020 07:10:16 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=qzDnfPXQnwdKlHtoPz0jeIpy5o9H6yWTrMabKluFuZg=; b=RyWYqttgdcI7GrTHQ98ocNUFIL
+        G8sByhHkV+6Bx16Q8Q+Mnnnkkfy4gC0h4yS8vMWLrhHfpZ5QfyradEaQlQvF7NG5orD2PcbTlDefY
+        QjPyzb8zIFv0h3GKVYOq94Ru6eGzgpFGLyMDICkiWvXOm/6fz2ZZkfhrsYrnWaVMAQpR3dw+EfcoK
+        7QVD2EFoyNrY6dJvqgz6AiU6lCTWPbxqnjUumVicoGykBCuSKlpO07zvpWbFo6iXP92ojV2XilHBu
+        6PA9dK0CD/5QpQ5XT8QGpsdU1UiUAKkxsgfYVejIbdSl+bvJwwAsaOHCL80aqz8L0KLFVyXkv3byu
+        nMw565cA==;
+Received: from [201.162.161.188] (port=40506 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j7Ive-000s4k-OE; Thu, 27 Feb 2020 07:10:15 -0600
+Date:   Thu, 27 Feb 2020 07:13:07 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Vitor Soares <vitor.soares@synopsys.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        =?utf-8?Q?Przemys=C5=82aw?= Gaj <pgaj@cadence.com>
+Cc:     linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] i3c: master: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200227131307.GA24935@embeddedor>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rJwd6BRFiFCcLxzm"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202002261343.3B2ECE90@keescook>
-X-Cookie: Edwin Meese made me wear CORDOVANS!!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.162.161.188
+X-Source-L: No
+X-Exim-ID: 1j7Ive-000s4k-OE
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.162.161.188]:40506
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
---rJwd6BRFiFCcLxzm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-On Wed, Feb 26, 2020 at 01:44:59PM -0800, Kees Cook wrote:
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-> Looks good. I sent a few more Reviewed-bys where I could. Who is
-> expected to pick this up? Catalin? Will?
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-Thanks, I'm expecting it'll go through the arm64 tree.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
---rJwd6BRFiFCcLxzm
-Content-Type: application/pgp-signature; name="signature.asc"
+This issue was found with the help of Coccinelle.
 
------BEGIN PGP SIGNATURE-----
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5XwFwACgkQJNaLcl1U
-h9BVcAf+IT0x9Rm5Qvg7iutzvlk4f961QXDY77LCMmKkuIyjzf2qoM3UKYdN5A+s
-XCh02Tc8GwVaSWaipJplvGn2y3aPrb1oLBU8yp2zkFHk3UuDdkrIhwTqmg9EH6qO
-HMxhgu7d6bKkjgpIMZe78MrbRRJUCej3S9SHehfJjGHStqjcyN65h4a7GJZUkHkB
-8UMKB9ln6VV8BZHBWEZZa875jAojja3k2OzUTrtBmbq7WsuQIsIqjVblRGOIZXNQ
-6ok8vsW83J6iRtR6J46oSoIJqkXjfYucnbP7ulIOQDtUMvpS0O/C982bW0mtMvLB
-Qy9hBI9hA/mdTTxfXA8PF2WvD3HTHQ==
-=r3OK
------END PGP SIGNATURE-----
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/i3c/master/dw-i3c-master.c   | 2 +-
+ drivers/i3c/master/i3c-master-cdns.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---rJwd6BRFiFCcLxzm--
+diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+index bd26c3b9634e..5c5306cd50ec 100644
+--- a/drivers/i3c/master/dw-i3c-master.c
++++ b/drivers/i3c/master/dw-i3c-master.c
+@@ -221,7 +221,7 @@ struct dw_i3c_xfer {
+ 	struct completion comp;
+ 	int ret;
+ 	unsigned int ncmds;
+-	struct dw_i3c_cmd cmds[0];
++	struct dw_i3c_cmd cmds[];
+ };
+ 
+ struct dw_i3c_master {
+diff --git a/drivers/i3c/master/i3c-master-cdns.c b/drivers/i3c/master/i3c-master-cdns.c
+index 54712793709e..3fee8bd7fe20 100644
+--- a/drivers/i3c/master/i3c-master-cdns.c
++++ b/drivers/i3c/master/i3c-master-cdns.c
+@@ -388,7 +388,7 @@ struct cdns_i3c_xfer {
+ 	struct completion comp;
+ 	int ret;
+ 	unsigned int ncmds;
+-	struct cdns_i3c_cmd cmds[0];
++	struct cdns_i3c_cmd cmds[];
+ };
+ 
+ struct cdns_i3c_data {
+-- 
+2.25.0
+
