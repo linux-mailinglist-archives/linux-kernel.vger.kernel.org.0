@@ -2,94 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2F341726E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:19:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEAD21726EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:20:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730330AbgB0STT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:19:19 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:46075 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729817AbgB0STS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:19:18 -0500
-Received: by mail-vs1-f66.google.com with SMTP id m4so223647vsa.12
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 10:19:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O3+t6YZki97dJn3TmsqtMQPSzhs2LsQfL/dODOkLgZk=;
-        b=NVHhsqaJ7eLhlivtVpaS7uaXQFfxcmkuZnCtRTLYV3MYZWP6G1Y2cUurEHgtMKqGWL
-         9h9VrA3IcEElvTZxH7PagPPJstv+J/QUbn1Dien0pGx99FV3Fe6vKPiVttL0b19DSN1n
-         9EC8fsbCRcGXL2FQoLx/HsRiFdGof4zCx51nU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O3+t6YZki97dJn3TmsqtMQPSzhs2LsQfL/dODOkLgZk=;
-        b=rGh+fsHGCPc6LobtdByzLT09HvfDZCLwdzlOIatLAQ2YaZ+7jj3JtLP5+Ws4OUjRt5
-         PfzjUFe3lvHiDbJ44syllVQ6QVd8a4ANyUbETw8MuKYGpsXKCq2NbNPVKWCHI+YsBrUF
-         qSsah7qcM5bhZNPY4LrhQBtinOqhEtxhfuRZu7G7RYip+F9WFno074tBMGxN1CUpC8pN
-         /wvN+2AcE08LsH76CvVnB8FmjRGvanhi8XJpxbr1K6X5T+IjX1MLTIXn05Ydt1lLVnj6
-         j+VhHe7yQ+FnWi/tKUAFhu1KDSRGT0Pk1png7/VPFhzdj/V3X3Yi+T79ampzb8haiKm/
-         Ayww==
-X-Gm-Message-State: ANhLgQ1jZuWEXOJbZlzHTVlPjo9lKoJMUJNtsEJ8SjFqVUvvjFWcaKRD
-        iW2HpLbhWbf9ftb3JuBmBIDkZ6ElOX0=
-X-Google-Smtp-Source: ADFU+vt4c22BVRmmEoIS57441dtbMckH1s0am139cLNJ4gqNrlqtEjiI3DUbGjSGm68zlzUG57KWKw==
-X-Received: by 2002:a67:cf46:: with SMTP id f6mr347259vsm.143.1582827557415;
-        Thu, 27 Feb 2020 10:19:17 -0800 (PST)
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
-        by smtp.gmail.com with ESMTPSA id v65sm2210984vke.13.2020.02.27.10.19.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2020 10:19:17 -0800 (PST)
-Received: by mail-vk1-f172.google.com with SMTP id y201so163892vky.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 10:19:16 -0800 (PST)
-X-Received: by 2002:ac5:cdcd:: with SMTP id u13mr361384vkn.0.1582827555884;
- Thu, 27 Feb 2020 10:19:15 -0800 (PST)
+        id S1729535AbgB0SUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:20:38 -0500
+Received: from mga04.intel.com ([192.55.52.120]:17243 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729142AbgB0SUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:20:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 10:20:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,493,1574150400"; 
+   d="scan'208";a="437128240"
+Received: from unknown (HELO [134.134.177.87]) ([134.134.177.87])
+  by fmsmga005.fm.intel.com with ESMTP; 27 Feb 2020 10:20:37 -0800
+Subject: Re: [PATCH] x86/pkeys: Manually set X86_FEATURE_OSPKE to preserve
+ existing changes
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>
+References: <20200226231615.13664-1-sean.j.christopherson@intel.com>
+ <a492b4f4-4a54-5e5a-b79f-e21f9038f259@intel.com>
+ <20200227180100.GB18629@zn.tnic>
+From:   Jacob Keller <jacob.e.keller@intel.com>
+Organization: Intel Corporation
+Message-ID: <fbf2b74e-bc37-985a-11f0-03e5ae5e390c@intel.com>
+Date:   Thu, 27 Feb 2020 10:20:36 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200227092649.v3.1.I15e0f7eff0c67a2b49d4992f9d80fc1d2fdadf63@changeid>
-In-Reply-To: <20200227092649.v3.1.I15e0f7eff0c67a2b49d4992f9d80fc1d2fdadf63@changeid>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 27 Feb 2020 10:19:03 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=UuvSt0z+B4ymCW8u+c+rHQ5kGYtOQYGF8QLex__p31xQ@mail.gmail.com>
-Message-ID: <CAD=FV=UuvSt0z+B4ymCW8u+c+rHQ5kGYtOQYGF8QLex__p31xQ@mail.gmail.com>
-Subject: Re: [PATCH v3] arm64: dts: sc7180: Move venus node to the correct position
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dikshita Agarwal <dikshita@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200227180100.GB18629@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Thu, Feb 27, 2020 at 9:26 AM Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> Per convention device nodes for SC7180 should be ordered by address.
-> This is currently not the case for the venus node, move it to the
-> correct position.
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->
-> Changes in v3:
-> - actually insert the venus node after usb@a6f8800 and not just
->   pretend to do it
->
-> Changes in v2:
-> - insert the venus node *after* the usb@a6f8800 node, not before
->
->  arch/arm64/boot/dts/qcom/sc7180.dtsi | 52 ++++++++++++++--------------
->  1 file changed, 26 insertions(+), 26 deletions(-)
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+On 2/27/2020 10:01 AM, Borislav Petkov wrote:
+> On Wed, Feb 26, 2020 at 04:16:13PM -0800, Jacob Keller wrote:
+>> I tested this and it resolves my report! Thanks for a timely fix.
+> 
+> Adding your Tested-by.
+> 
+
+Yep, thanks.
+
+>> I agree with the analysis. Perhaps it would make sense in the long term
+>> to find a solution where get_cpu_cap can remember what was cleared for
+>> each CPU and restore those? It already does this using the global
+>> variables...
+> 
+> get_cpu_cap() remembers if you use setup_force_cpu_cap() but I agree
+> that that whole feature bit handling is a bit, hm, "strange". It had its
+> raisins.
+
+Right. Nothing quite equivalent to that for per-CPU changes though.
+
+> 
+> FWIW, we had started cleaning those up but then the security nightmares
+> happened so on the backburner it went...
+> 
+> Thx.
+> 
+
+Completely understandable. Especially since changes here are tricky to
+get right, this being a case in point.
+
+Thanks,
+Jake
