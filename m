@@ -2,28 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3E82171525
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 11:39:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37F75171528
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 11:40:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbgB0Kj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 05:39:56 -0500
-Received: from mail27.static.mailgun.info ([104.130.122.27]:22690 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728729AbgB0Kjz (ORCPT
+        id S1728861AbgB0KkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 05:40:08 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:14618 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728729AbgB0KkH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 05:39:55 -0500
+        Thu, 27 Feb 2020 05:40:07 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1582799995; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=ohDNCMzAy83upjfyUzJEOTExlxxIJl91j/cton1k8WU=; b=JkJhXN+Jp0KASkmCMQQkl04gvZcoDRECHZjjyAoNJ62RFiv46uju/QdhGkmiA+bMGUyR89En
- Obq3nUaqeXTbdBx/SBz5I7Hv9WpeD6rzsutKoPX8Wkh9SfOfYrs9tLxHvRGrcJqgKsYl72hO
- FYl/WLMQv5O6eJB+A0zgTQ0hfLY=
-X-Mailgun-Sending-Ip: 104.130.122.27
+ s=smtp; t=1582800007; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=18e/D4/+MM+g0dJtKJ/+1YUnc9WxGhoPmwqIBBQ28ds=; b=UH4XKGPkC4idmSSRO02AFZYaKltda/HmOVxhlzHrrnO3QkjX81vGiASY3xs++LeQfp1egLv+
+ mxo5+aoi7PqsZ4O3oKAscANxZdFQqgLpsWoTn6o9uJuosx0lSgIyRCeLtVg1dTtefhP8ujuJ
+ rk9LRgJ8sg287A0uNdumhO/L8co=
+X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e579c77.7f08f1739e68-smtp-out-n01;
- Thu, 27 Feb 2020 10:39:51 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e579c7d.7fc534ba30d8-smtp-out-n03;
+ Thu, 27 Feb 2020 10:39:57 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 42428C4479F; Thu, 27 Feb 2020 10:39:51 +0000 (UTC)
+        id C869BC4479C; Thu, 27 Feb 2020 10:39:57 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
@@ -33,9 +34,9 @@ Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualco
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: stummala)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 10D07C433A2;
-        Thu, 27 Feb 2020 10:39:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 10D07C433A2
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E41B0C4479D;
+        Thu, 27 Feb 2020 10:39:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E41B0C4479D
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
 From:   Sahitya Tummala <stummala@codeaurora.org>
@@ -43,42 +44,66 @@ To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
 Cc:     Sahitya Tummala <stummala@codeaurora.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] f2fs: Fix mount failure due to SPO after a successful online resize FS
-Date:   Thu, 27 Feb 2020 16:09:37 +0530
-Message-Id: <1582799978-22277-1-git-send-email-stummala@codeaurora.org>
+Subject: [PATCH 2/2] f2fs: Add a new CP flag to help fsck fix resize SPO issues
+Date:   Thu, 27 Feb 2020 16:09:38 +0530
+Message-Id: <1582799978-22277-2-git-send-email-stummala@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1582799978-22277-1-git-send-email-stummala@codeaurora.org>
+References: <1582799978-22277-1-git-send-email-stummala@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Even though online resize is successfully done, a SPO immediately
-after resize, still causes below error in the next mount.
+Add and set a new CP flag CP_RESIZEFS_FLAG during
+online resize FS to help fsck fix the metadata mismatch
+that may happen due to SPO during resize, where SB
+got updated but CP data couldn't be written yet.
 
-[   11.294650] F2FS-fs (sda8): Wrong user_block_count: 2233856
-[   11.300272] F2FS-fs (sda8): Failed to get valid F2FS checkpoint
-
-This is because after FS metadata is updated in update_fs_metadata()
-if the SBI_IS_DIRTY is not dirty, then CP will not be done to reflect
-the new user_block_count.
+fsck errors -
+Info: CKPT version = 6ed7bccb
+        Wrong user_block_count(2233856)
+[f2fs_do_mount:3365] Checkpoint is polluted
 
 Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 ---
- fs/f2fs/gc.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/checkpoint.c    | 8 ++++++--
+ include/linux/f2fs_fs.h | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a92fa49..a14a75f 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1577,6 +1577,7 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index fdd7f3d..0bd4cdb 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1301,10 +1301,14 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	else
+ 		__clear_ckpt_flags(ckpt, CP_ORPHAN_PRESENT_FLAG);
  
- 	update_fs_metadata(sbi, -secs);
- 	clear_sbi_flag(sbi, SBI_IS_RESIZEFS);
-+	set_sbi_flag(sbi, SBI_IS_DIRTY);
- 	err = f2fs_sync_fs(sbi->sb, 1);
- 	if (err) {
- 		update_fs_metadata(sbi, secs);
+-	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK) ||
+-		is_sbi_flag_set(sbi, SBI_IS_RESIZEFS))
++	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+ 		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
+ 
++	if (is_sbi_flag_set(sbi, SBI_IS_RESIZEFS))
++		__set_ckpt_flags(ckpt, CP_RESIZEFS_FLAG);
++	else
++		__clear_ckpt_flags(ckpt, CP_RESIZEFS_FLAG);
++
+ 	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED))
+ 		__set_ckpt_flags(ckpt, CP_DISABLED_FLAG);
+ 	else
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index ac3f488..3c383dd 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -125,6 +125,7 @@ struct f2fs_super_block {
+ /*
+  * For checkpoint
+  */
++#define CP_RESIZEFS_FLAG		0x00004000
+ #define CP_DISABLED_QUICK_FLAG		0x00002000
+ #define CP_DISABLED_FLAG		0x00001000
+ #define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
 -- 
 Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
