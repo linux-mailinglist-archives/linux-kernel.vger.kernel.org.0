@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30BE9172043
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:42:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 883D01720F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:47:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732238AbgB0Ol0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:41:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50680 "EHLO mail.kernel.org"
+        id S1729737AbgB0No4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:44:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730922AbgB0Nvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:51:32 -0500
+        id S1729734AbgB0Nos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:44:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A69C620801;
-        Thu, 27 Feb 2020 13:51:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C6C920578;
+        Thu, 27 Feb 2020 13:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811492;
-        bh=x3AlGq53+s3MUKR4bQa59r6yc1MrhmZ2wwh474+RZ8w=;
+        s=default; t=1582811086;
+        bh=YgNxD3YZR9L463gaWxBgrn2HnKTlo74U8zOuHzV+Fm0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XiLqJkWaXPnswp4ZrbPF1yRLshNlXGALle8DnR6Vfk2R3Q93KQm07M+ZMn9p0wO42
-         5PFqU7Hsq+qljVoMz8QmPP1k2WVbX7uTyQuE/2/RdDFfH0S3M1j0dYLKcDLG7NKzig
-         kyIkoXTq26IyBFiIPOfyg78lmWwDUj/NJcOY5EO4=
+        b=IPumNfixb8leI7uZ1LqG8LMinkSweqGW6h8vAM+cAwdMQWz8RoDSouTGgBngNPk+6
+         OiY35vhwRMaurYSoBQHGb98J9DP7ya7LupTavWi7VqXNy8mujgBvJUmr2dxTHwNEHu
+         u053Y3HLX7nC1h5N2a6Dg6FJ40OQGybKu1Mivlm8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 153/165] Btrfs: fix btrfs_wait_ordered_range() so that it waits for all ordered extents
-Date:   Thu, 27 Feb 2020 14:37:07 +0100
-Message-Id: <20200227132253.043548520@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+fd5e0eaa1a32999173b2@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 112/113] ALSA: seq: Fix concurrent access to queue current tick/time
+Date:   Thu, 27 Feb 2020 14:37:08 +0100
+Message-Id: <20200227132229.801318229@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +44,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit e75fd33b3f744f644061a4f9662bd63f5434f806 upstream.
+commit dc7497795e014d84699c3b8809ed6df35352dd74 upstream.
 
-In btrfs_wait_ordered_range() once we find an ordered extent that has
-finished with an error we exit the loop and don't wait for any other
-ordered extents that might be still in progress.
+snd_seq_check_queue() passes the current tick and time of the given
+queue as a pointer to snd_seq_prioq_cell_out(), but those might be
+updated concurrently by the seq timer update.
 
-All the users of btrfs_wait_ordered_range() expect that there are no more
-ordered extents in progress after that function returns. So past fixes
-such like the ones from the two following commits:
+Fix it by retrieving the current tick and time via the proper helper
+functions at first, and pass those values to snd_seq_prioq_cell_out()
+later in the loops.
 
-  ff612ba7849964 ("btrfs: fix panic during relocation after ENOSPC before
-                   writeback happens")
+snd_seq_timer_get_cur_time() takes a new argument and adjusts with the
+current system time only when it's requested so; this update isn't
+needed for snd_seq_check_queue(), as it's called either from the
+interrupt handler or right after queuing.
 
-  28aeeac1dd3080 ("Btrfs: fix panic when starting bg cache writeout after
-                   IO error")
+Also, snd_seq_timer_get_cur_tick() is changed to read the value in the
+spinlock for the concurrency, too.
 
-don't work when there are multiple ordered extents in the range.
-
-Fix that by making btrfs_wait_ordered_range() wait for all ordered extents
-even after it finds one that had an error.
-
-Link: https://github.com/kdave/btrfs-progs/issues/228#issuecomment-569777554
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Reported-by: syzbot+fd5e0eaa1a32999173b2@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/20200214111316.26939-3-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ordered-data.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ sound/core/seq/seq_clientmgr.c |    4 ++--
+ sound/core/seq/seq_queue.c     |    9 ++++++---
+ sound/core/seq/seq_timer.c     |   13 ++++++++++---
+ sound/core/seq/seq_timer.h     |    3 ++-
+ 4 files changed, 20 insertions(+), 9 deletions(-)
 
---- a/fs/btrfs/ordered-data.c
-+++ b/fs/btrfs/ordered-data.c
-@@ -837,10 +837,15 @@ int btrfs_wait_ordered_range(struct inod
- 		}
- 		btrfs_start_ordered_extent(inode, ordered, 1);
- 		end = ordered->file_offset;
-+		/*
-+		 * If the ordered extent had an error save the error but don't
-+		 * exit without waiting first for all other ordered extents in
-+		 * the range to complete.
-+		 */
- 		if (test_bit(BTRFS_ORDERED_IOERR, &ordered->flags))
- 			ret = -EIO;
- 		btrfs_put_ordered_extent(ordered);
--		if (ret || end == 0 || end == start)
-+		if (end == 0 || end == start)
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -577,7 +577,7 @@ static int update_timestamp_of_queue(str
+ 	event->queue = queue;
+ 	event->flags &= ~SNDRV_SEQ_TIME_STAMP_MASK;
+ 	if (real_time) {
+-		event->time.time = snd_seq_timer_get_cur_time(q->timer);
++		event->time.time = snd_seq_timer_get_cur_time(q->timer, true);
+ 		event->flags |= SNDRV_SEQ_TIME_STAMP_REAL;
+ 	} else {
+ 		event->time.tick = snd_seq_timer_get_cur_tick(q->timer);
+@@ -1694,7 +1694,7 @@ static int snd_seq_ioctl_get_queue_statu
+ 	tmr = queue->timer;
+ 	status.events = queue->tickq->cells + queue->timeq->cells;
+ 
+-	status.time = snd_seq_timer_get_cur_time(tmr);
++	status.time = snd_seq_timer_get_cur_time(tmr, true);
+ 	status.tick = snd_seq_timer_get_cur_tick(tmr);
+ 
+ 	status.running = tmr->running;
+--- a/sound/core/seq/seq_queue.c
++++ b/sound/core/seq/seq_queue.c
+@@ -261,6 +261,8 @@ void snd_seq_check_queue(struct snd_seq_
+ {
+ 	unsigned long flags;
+ 	struct snd_seq_event_cell *cell;
++	snd_seq_tick_time_t cur_tick;
++	snd_seq_real_time_t cur_time;
+ 
+ 	if (q == NULL)
+ 		return;
+@@ -277,17 +279,18 @@ void snd_seq_check_queue(struct snd_seq_
+ 
+       __again:
+ 	/* Process tick queue... */
++	cur_tick = snd_seq_timer_get_cur_tick(q->timer);
+ 	for (;;) {
+-		cell = snd_seq_prioq_cell_out(q->tickq,
+-					      &q->timer->tick.cur_tick);
++		cell = snd_seq_prioq_cell_out(q->tickq, &cur_tick);
+ 		if (!cell)
  			break;
- 		end--;
+ 		snd_seq_dispatch_event(cell, atomic, hop);
  	}
+ 
+ 	/* Process time queue... */
++	cur_time = snd_seq_timer_get_cur_time(q->timer, false);
+ 	for (;;) {
+-		cell = snd_seq_prioq_cell_out(q->timeq, &q->timer->cur_time);
++		cell = snd_seq_prioq_cell_out(q->timeq, &cur_time);
+ 		if (!cell)
+ 			break;
+ 		snd_seq_dispatch_event(cell, atomic, hop);
+--- a/sound/core/seq/seq_timer.c
++++ b/sound/core/seq/seq_timer.c
+@@ -436,14 +436,15 @@ int snd_seq_timer_continue(struct snd_se
+ }
+ 
+ /* return current 'real' time. use timeofday() to get better granularity. */
+-snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr)
++snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr,
++					       bool adjust_ktime)
+ {
+ 	snd_seq_real_time_t cur_time;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&tmr->lock, flags);
+ 	cur_time = tmr->cur_time;
+-	if (tmr->running) { 
++	if (adjust_ktime && tmr->running) {
+ 		struct timeval tm;
+ 		int usec;
+ 		do_gettimeofday(&tm);
+@@ -465,7 +466,13 @@ snd_seq_real_time_t snd_seq_timer_get_cu
+  high PPQ values) */
+ snd_seq_tick_time_t snd_seq_timer_get_cur_tick(struct snd_seq_timer *tmr)
+ {
+-	return tmr->tick.cur_tick;
++	snd_seq_tick_time_t cur_tick;
++	unsigned long flags;
++
++	spin_lock_irqsave(&tmr->lock, flags);
++	cur_tick = tmr->tick.cur_tick;
++	spin_unlock_irqrestore(&tmr->lock, flags);
++	return cur_tick;
+ }
+ 
+ 
+--- a/sound/core/seq/seq_timer.h
++++ b/sound/core/seq/seq_timer.h
+@@ -135,7 +135,8 @@ int snd_seq_timer_set_ppq(struct snd_seq
+ int snd_seq_timer_set_position_tick(struct snd_seq_timer *tmr, snd_seq_tick_time_t position);
+ int snd_seq_timer_set_position_time(struct snd_seq_timer *tmr, snd_seq_real_time_t position);
+ int snd_seq_timer_set_skew(struct snd_seq_timer *tmr, unsigned int skew, unsigned int base);
+-snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr);
++snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr,
++					       bool adjust_ktime);
+ snd_seq_tick_time_t snd_seq_timer_get_cur_tick(struct snd_seq_timer *tmr);
+ 
+ extern int seq_default_timer_class;
 
 
