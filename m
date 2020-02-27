@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F305171B4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:01:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB143171D89
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:22:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732654AbgB0OBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:01:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34772 "EHLO mail.kernel.org"
+        id S2389484AbgB0OQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:16:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732843AbgB0OBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:01:03 -0500
+        id S2389446AbgB0OQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:16:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B94224697;
-        Thu, 27 Feb 2020 14:01:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DF802468F;
+        Thu, 27 Feb 2020 14:16:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812062;
-        bh=cTtAzCUPbWALIG3BgIYSOQIv5rypzVCDWUfep5QZfj8=;
+        s=default; t=1582812971;
+        bh=8dJc3VjqGnWWFG3e8ysCnj4VZcKV3ZJX84/9oq8ZYP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p1zQq3ZT2XzHxqPW7sNJXWw5LN9gadIqAkZy+D8YzGjIN7LEX3Dx+DOBZSKnsSXl5
-         BlQIGhS9iKmmp35zldBErfpBHgj3xNqq6nEOowzJh80lRatJVfoBBZYgS59cKDqeJQ
-         MYHqzjE1sLx5QIA8s6Ud+Y9Umq6LOiePnMyWJ7DY=
+        b=jLuz1sE3haEaIvcnw+y+V1safsUnRWq8HGVjjlpptr/snF6IKcmHlYc98FRENsP1L
+         MKlQK4IMEXZxZmOeJKwLtKLQVZv9M6VI7Zl4Ni2NC8wNFkvhbyUZUJ0E2ZOIIldbVT
+         CxJshZJv1FeW4sKtTguP4sURl6o3XWRhoOPqcbV4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miles Chen <miles.chen@mediatek.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 208/237] lib/stackdepot: Fix outdated comments
-Date:   Thu, 27 Feb 2020 14:37:02 +0100
-Message-Id: <20200227132311.534503146@linuxfoundation.org>
+        stable@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: [PATCH 5.5 086/150] sched/psi: Fix OOB write when writing 0 bytes to PSI files
+Date:   Thu, 27 Feb 2020 14:37:03 +0100
+Message-Id: <20200227132245.564108676@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miles Chen <miles.chen@mediatek.com>
+From: Suren Baghdasaryan <surenb@google.com>
 
-[ Upstream commit ee050dc83bc326ad5ef8ee93bca344819371e7a5 ]
+commit 6fcca0fa48118e6d63733eb4644c6cd880c15b8f upstream.
 
-Replace "depot_save_stack" with "stack_depot_save" in code comments because
-depot_save_stack() was replaced in commit c0cfc337264c ("lib/stackdepot:
-Provide functions which operate on plain storage arrays") and removed in
-commit 56d8f079c51a ("lib/stackdepot: Remove obsolete functions")
+Issuing write() with count parameter set to 0 on any file under
+/proc/pressure/ will cause an OOB write because of the access to
+buf[buf_size-1] when NUL-termination is performed. Fix this by checking
+for buf_size to be non-zero.
 
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190815113246.18478-1-miles.chen@mediatek.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Link: https://lkml.kernel.org/r/20200203212216.7076-1-surenb@google.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- lib/stackdepot.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/sched/psi.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-index f87d138e96724..1724cb0d6283f 100644
---- a/lib/stackdepot.c
-+++ b/lib/stackdepot.c
-@@ -96,7 +96,7 @@ static bool init_stack_slab(void **prealloc)
- 		stack_slabs[depot_index + 1] = *prealloc;
- 		/*
- 		 * This smp_store_release pairs with smp_load_acquire() from
--		 * |next_slab_inited| above and in depot_save_stack().
-+		 * |next_slab_inited| above and in stack_depot_save().
- 		 */
- 		smp_store_release(&next_slab_inited, 1);
- 	}
-@@ -123,7 +123,7 @@ static struct stack_record *depot_alloc_stack(unsigned long *entries, int size,
- 		depot_offset = 0;
- 		/*
- 		 * smp_store_release() here pairs with smp_load_acquire() from
--		 * |next_slab_inited| in depot_save_stack() and
-+		 * |next_slab_inited| in stack_depot_save() and
- 		 * init_stack_slab().
- 		 */
- 		if (depot_index + 1 < STACK_ALLOC_MAX_SLABS)
--- 
-2.20.1
-
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -1199,6 +1199,9 @@ static ssize_t psi_write(struct file *fi
+ 	if (static_branch_likely(&psi_disabled))
+ 		return -EOPNOTSUPP;
+ 
++	if (!nbytes)
++		return -EINVAL;
++
+ 	buf_size = min(nbytes, sizeof(buf));
+ 	if (copy_from_user(buf, user_buf, buf_size))
+ 		return -EFAULT;
 
 
