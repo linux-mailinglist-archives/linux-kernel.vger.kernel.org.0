@@ -2,104 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B91417156C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 11:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3283171583
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 11:58:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728922AbgB0K5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 05:57:03 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:46241 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728897AbgB0K5D (ORCPT
+        id S1728885AbgB0K6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 05:58:11 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:35872 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728744AbgB0K6K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 05:57:03 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a22so2794645oid.13;
-        Thu, 27 Feb 2020 02:57:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uMp2Uo23EsbUKjNiwGS0nq4uhe7UZ65ytVoOukqSBrg=;
-        b=fSuqXlZh9wGb3SZIpgSCLAEHPz/kXhPRJ5MlP9k1xfoQAnfC9s/K0dHVBMCu78f2qf
-         yyXTyQFOxFHVDFIVewJOS0nF17xaXl3jp23c0aC7KFv2E+UPfTFocCYEx6BmzCDXthLO
-         ARcjZUgPNZWMLMLULAmESnwCwlO3TNyZvbtSm3+9KVmgipIKoQJsCJpq75di+2C8x/8P
-         X1Ek/5ec8HEwxyhQP9+sYtuyH6ShnJ7w3qL4nH1GI30VwIKwoBahanh7yU7UIf7bERwF
-         MVT5nAHQ8XgzXVMU04uy68r/uMwnh+7x39IsGMECCf+PAZ8Qz5nbBIjnu1jE8HCSr96C
-         4+4A==
-X-Gm-Message-State: APjAAAV1yiy0tiS/DLVT5OsHaNhP5eieE0e41rt3kIpDY+fnr5m41fKz
-        xZ/fR3Jb4OnzV9KCazobuCc3beEwrPKZLdRogKE=
-X-Google-Smtp-Source: APXvYqz9yLYkpiMr+Qpie6BSAskCXK6MRWHVOsdKOHohaGzsWHBFYIw+pNR94t+9+5X2FEbUGUc24eOvLWgg4ebfcVs=
-X-Received: by 2002:a05:6808:8e1:: with SMTP id d1mr2753277oic.68.1582801022380;
- Thu, 27 Feb 2020 02:57:02 -0800 (PST)
+        Thu, 27 Feb 2020 05:58:10 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 1F1B71C013C; Thu, 27 Feb 2020 11:58:09 +0100 (CET)
+Date:   Thu, 27 Feb 2020 11:58:08 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, Dan Murphy <dmurphy@ti.com>,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v17 00/17] Multi Color LED Framework
+Message-ID: <20200227105808.GA27003@duo.ucw.cz>
+References: <20200127150032.31350-1-dmurphy@ti.com>
+ <42d9687b-b488-22cf-0e9a-ff635b2094e3@ti.com>
+ <20200225101940.GB16252@amd>
+ <be76fdac-9d32-b9b2-c01d-3aa315b14463@gmail.com>
+ <20200226125903.GA2800@duo.ucw.cz>
+ <20f6bdd5-e899-aead-8c35-1c3a3d09145f@gmail.com>
 MIME-Version: 1.0
-References: <20200227013411.1.Ica3bb9fa898499d94e0b0a2bfa08ec46c89d84fa@changeid>
- <CAJZ5v0hX-DVLPQmjVAZkQUJy8gCBPTneJvaFHmjqqbCe66F_6w@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hX-DVLPQmjVAZkQUJy8gCBPTneJvaFHmjqqbCe66F_6w@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 27 Feb 2020 11:56:51 +0100
-Message-ID: <CAJZ5v0itu2ke-zfjMSyj=EPeqkzhnhOx=CiHnShAUCiPyOiiUw@mail.gmail.com>
-Subject: Re: [PATCH] intel_idle: Add Comet Lake support
-To:     Harry Pan <harry.pan@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Harry Pan <gs0622@gmail.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
+Content-Disposition: inline
+In-Reply-To: <20f6bdd5-e899-aead-8c35-1c3a3d09145f@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 10:47 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Wed, Feb 26, 2020 at 6:34 PM Harry Pan <harry.pan@intel.com> wrote:
-> >
-> > Add Comet Lake ID to enable intel_idle driver support.
-> > This is required for PC10 and S0ix.
->
-> That shouldn't be the case for Linux 5.6-rc as long as the ACPI tables
-> expose C10 in _CST, so have you checked that?
 
-Regardless of that (which only is about the changelog), I wouldn't
-just use idle_cpu_skl directly for CML like in the patch below.
+--gBBFr7Ir9EOA20Yy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Instead, I'd define something like
+Hi, Jacek!
 
-static const struct idle_cpu idle_cpu_cml __initconst = {
-    .state_table = skl_cstates,
-    .disable_promotion_to_c1e = true,
-    .use_acpi = true,
-};
+(and thanks for doing this).
 
-and point  to it from the CML entries in intel_idle_ids[].
+> We have here long lasting discussion related to LED multicolor class
+> sysfs interface design. We went through several iterations and worked
+> out the solution with individual file per each color sub-LED in the
+> color directory as shown below:
+>=20
+> /sys/class/leds/<led>/colors/<color>_intensity
+>=20
+> This is in line with one-value-per-file sysfs rule, that is being
+> frequently highlighted, and we even had not so long ago a patch
+> for led cpu trigger solving the problem caused by this rule not
+> being adhered to.
 
-That would allow the driver to avoid enabling the C-states that are
-not exposed in the ACPI tables by default which generally is safer
-than exposing all of them for all CML platforms unconditionally.
+Yep. One of the problems is that it is nice to change all the hardware
+channels at once to produce color (it is often on i2c -- and slow), so
+current proposals use "interesting" kind of latching.
 
-> > Signed-off-by: Harry Pan <harry.pan@intel.com>
-> >
-> > ---
-> >
-> >  drivers/idle/intel_idle.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> > index 347b08b56042..3cf292b2b7f1 100644
-> > --- a/drivers/idle/intel_idle.c
-> > +++ b/drivers/idle/intel_idle.c
-> > @@ -1086,6 +1086,8 @@ static const struct x86_cpu_id intel_idle_ids[] __initconst = {
-> >         INTEL_CPU_FAM6(KABYLAKE_L,              idle_cpu_skl),
-> >         INTEL_CPU_FAM6(KABYLAKE,                idle_cpu_skl),
-> >         INTEL_CPU_FAM6(SKYLAKE_X,               idle_cpu_skx),
-> > +       INTEL_CPU_FAM6(COMETLAKE_L,             idle_cpu_skl),
-> > +       INTEL_CPU_FAM6(COMETLAKE,               idle_cpu_skl),
+> Now we have the voice below bringing to attention another caveat
+> from sysfs documentation:
+>=20
+> "it is socially acceptable to express an array of values of the same
+> type"
+>=20
+> and proposing the interface in the form of two files:
+>=20
+> channel_intensity (file containing array of u32's)
+> channel_names (usually containing "red green blue")
 
-+       INTEL_CPU_FAM6(COMETLAKE_L,             idle_cpu_cml),
-+       INTEL_CPU_FAM6(COMETLAKE,               idle_cpu_cml),
+And thus I want to have it in one file, so it is naturaly atomic. RGB
+leds with 3 channels are common; I have not user yet, but there are
+RGBW with 4 channels (and some more exotic stuff). I don't expect to
+have more than 5 channels.
 
-> >         INTEL_CPU_FAM6(XEON_PHI_KNL,            idle_cpu_knl),
-> >         INTEL_CPU_FAM6(XEON_PHI_KNM,            idle_cpu_knl),
-> >         INTEL_CPU_FAM6(ATOM_GOLDMONT,           idle_cpu_bxt),
-> > --
-> > 2.24.1
-> >
+Best regards,
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--gBBFr7Ir9EOA20Yy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXlegwAAKCRAw5/Bqldv6
+8mskAKCOR+FzZhQ+xON7Lm1SAo0O69112ACeKN7hUuClPLCjgJWr/mFOK3vWzdc=
+=Q6Vn
+-----END PGP SIGNATURE-----
+
+--gBBFr7Ir9EOA20Yy--
