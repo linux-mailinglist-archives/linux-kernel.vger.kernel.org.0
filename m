@@ -2,159 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6942717184E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:12:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BB7171858
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:13:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729174AbgB0NMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:12:23 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36278 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729125AbgB0NMX (ORCPT
+        id S1729203AbgB0NNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:13:23 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:19292 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729032AbgB0NNX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:12:23 -0500
-Received: by mail-lj1-f194.google.com with SMTP id r19so3360938ljg.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 05:12:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hgDPuFgqNNjYp8TK2gleYVtj6m36FxOdqFNLJteFThk=;
-        b=x6GyZJy624MM4KUrgtjgaSsHLegnL3Bb7n2ZitPwN+zfj1Pg3KLtkB3ZCMl4nwFyEW
-         hhP56CT/202FsxHWk7AqyRdlC+/0aJyEKba0lajgDUDeDU/KPGUXvM1qFiPQmrV/xN4/
-         sJ74v5eZ+AYFhk8VK9bK3C++p8ZGLVcJzywmvjh+RvSSzce6LPjbMdiqnmLfmYIWQSCf
-         HIIDX4RdlkA5axhx505gaIvknMFrlKa0Vdwru1tu9XqfGzEWv0DKE3lvrjBPTfP9Y8eF
-         2aXqbguYzt3V6+F8RKmZIixVTeLcaeuwIh18hV43vaXfsaO4CBXSxnCgPt+hvrEbaNtq
-         6E7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hgDPuFgqNNjYp8TK2gleYVtj6m36FxOdqFNLJteFThk=;
-        b=C0uaIPCiVQKtAOMtyloiQuvzv/yu9ad7jp0Ecd1Irqcx9JfqNqWfVlkX+uYJURq64/
-         8O2Nfpy5LI0DHMBTkNrdkwgUSdmAle0A/xr+pp9wBScYfR3gMETPI1P1HTaFt4CXPXJ8
-         cj+BEErnT2Ftse6SzBOhb2OOOT7Abdp0V+CF7uilKbLO5cDzZOO8Re2jGGWgFA0iDU1A
-         nEBDxgYgWqjWuvt76mrRgZj0qHA2VNu8HCerYsy1u4Xh9tWF5Y1RKSmzifoTZbG78Q3v
-         LlLu9WBrJ5X2ODLKnI53Lr6/JItyERnAQqg1g1LncWQoLrcdDi0JIJDF7oZbBy3/p89h
-         fH9g==
-X-Gm-Message-State: ANhLgQ3Rv+ZABjDY+grvjaFrkDTKdL1Pf7ldWjUW9+392G0s14DTyXxX
-        +0wZ4iSL9Tn+vEys6ao6GpfR9UIxFYjLBdzRLPIhUg==
-X-Google-Smtp-Source: ADFU+vu+rgrjksiwfPL94ft7zljBUIH5zzDgAQw4cMlCo7H06NO12Dmy65wga/LRyMVB5J7uzt/sf8SLOsHISAlayiY=
-X-Received: by 2002:a2e:808a:: with SMTP id i10mr2789949ljg.151.1582809140984;
- Thu, 27 Feb 2020 05:12:20 -0800 (PST)
+        Thu, 27 Feb 2020 08:13:23 -0500
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01RDDFtN029179;
+        Thu, 27 Feb 2020 08:13:15 -0500
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ydtrx370p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Feb 2020 08:13:15 -0500
+Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 01RDD88T053299
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Thu, 27 Feb 2020 08:13:08 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Thu, 27 Feb
+ 2020 08:13:07 -0500
+Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Thu, 27 Feb 2020 08:13:07 -0500
+Received: from analog.ad.analog.com ([10.48.65.180])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01RDD2gD025942;
+        Thu, 27 Feb 2020 08:13:03 -0500
+From:   Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wpan@vger.kernel.org>, <davem@davemloft.net>,
+        <stefan@datenfreihafen.org>, <alex.aring@gmail.com>,
+        <h.morris@cascoda.com>
+CC:     Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+Subject: [PATCH] net: ieee802154: ca8210: Use new structure for SPI transfer delays
+Date:   Thu, 27 Feb 2020 15:12:45 +0200
+Message-ID: <20200227131245.30309-1-sergiu.cuciurean@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20200226181640.21664-1-vincent.guittot@linaro.org>
- <xm26r1yhtbjr.fsf@bsegall-linux.svl.corp.google.com> <CAKfTPtBm9Gt16gqQgxoErOOmpbUHit6bNf4CVLvDzf04SjWtEg@mail.gmail.com>
- <8f72ea72-f36d-2611-e026-62ddff5c3422@arm.com> <20200227131228.GA5872@geo.homenetwork>
-In-Reply-To: <20200227131228.GA5872@geo.homenetwork>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Thu, 27 Feb 2020 14:12:09 +0100
-Message-ID: <CAKfTPtBXYTORWdx9fGOBgEMYk6noa7X-4RSdSM+gKgv47nmjXw@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: fix runnable_avg for throttled cfs
-To:     Tao Zhou <zhout@vivaldi.net>
-Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Hillf Danton <hdanton@sina.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-27_03:2020-02-26,2020-02-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ malwarescore=0 impostorscore=0 clxscore=1011 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 spamscore=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002270103
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Feb 2020 at 14:10, Tao Zhou <zhout@vivaldi.net> wrote:
->
-> Hi Dietmar,
->
-> On Thu, Feb 27, 2020 at 11:20:05AM +0000, Dietmar Eggemann wrote:
-> > On 26.02.20 21:01, Vincent Guittot wrote:
-> > > On Wed, 26 Feb 2020 at 20:04, <bsegall@google.com> wrote:
-> > >>
-> > >> Vincent Guittot <vincent.guittot@linaro.org> writes:
-> > >>
-> > >>> When a cfs_rq is throttled, its group entity is dequeued and its running
-> > >>> tasks are removed. We must update runnable_avg with current h_nr_running
-> > >>> and update group_se->runnable_weight with new h_nr_running at each level
-> >
-> >                                               ^^^
-> >
-> > Shouldn't his be 'curren' rather 'new' h_nr_running for
-> > group_se->runnable_weight? IMHO, you want to cache the current value
-> > before you add/subtract task_delta.
->
-> /me think Vincent is right. h_nr_running is updated in the previous
-> level or out. The next level will use current h_nr_running to update
-> runnable_avg and use the new group cfs_rq's h_nr_running which was
-> updated in the previous level or out to update se runnable_weight.
+In a recent change to the SPI subsystem [1], a new `delay` struct was added
+to replace the `delay_usecs`. This change replaces the current
+`delay_usecs` with `delay` for this driver.
 
-Yes that's what I want to say
+The `spi_transfer_delay_exec()` function [in the SPI framework] makes sure
+that both `delay_usecs` & `delay` are used (in this order to preserve
+backwards compatibility).
 
->
-> update_h_nr_running (E.G. in enqueue_task_fair)
->
-> throttle_cfs_rq()
->   for() {
->     update_load_avg()
->       se_runnable() --> current h_nr_running
->     update_se_runnable() --> use group cfs_rq h_nr_running
->                              updated in the prev level or out
->     update_h_nr_running
->   }
->
-> Thanks,
-> Tao
->
-> > >>> of the hierarchy.
-> > >>
-> > >> You'll also need to do this for task enqueue/dequeue inside of a
-> > >> throttled hierarchy, I'm pretty sure.
-> > >
-> > > AFAICT, this is already done with patch "sched/pelt: Add a new
-> > > runnable average signal" when task is enqueued/dequeued inside a
-> > > throttled hierarchy
-> > >
-> > >>
-> > >>>
-> > >>> Fixes: 9f68395333ad ("sched/pelt: Add a new runnable average signal")
-> > >>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > >>> ---
-> > >>> This patch applies on top of tip/sched/core
-> > >>>
-> > >>>  kernel/sched/fair.c | 10 ++++++++++
-> > >>>  1 file changed, 10 insertions(+)
-> > >>>
-> > >>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > >>> index fcc968669aea..6d46974e9be7 100644
-> > >>> --- a/kernel/sched/fair.c
-> > >>> +++ b/kernel/sched/fair.c
-> > >>> @@ -4703,6 +4703,11 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
-> > >>>
-> > >>>               if (dequeue)
-> > >>>                       dequeue_entity(qcfs_rq, se, DEQUEUE_SLEEP);
-> > >>> +             else {
-> > >>> +                     update_load_avg(qcfs_rq, se, 0);
-> > >>> +                     se_update_runnable(se);
-> > >>> +             }
-> > >>> +
-> > >>>               qcfs_rq->h_nr_running -= task_delta;
-> > >>>               qcfs_rq->idle_h_nr_running -= idle_task_delta;
-> > >>>
-> > >>> @@ -4772,6 +4777,11 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
-> > >>>               cfs_rq = cfs_rq_of(se);
-> > >>>               if (enqueue)
-> > >>>                       enqueue_entity(cfs_rq, se, ENQUEUE_WAKEUP);
-> > >>> +             else {
-> > >>> +                     update_load_avg(cfs_rq, se, 0);
-> > >>
-> > >>
-> > >>> +                     se_update_runnable(se);
-> > >>> +             }
-> > >>> +
-> > >>>               cfs_rq->h_nr_running += task_delta;
-> > >>>               cfs_rq->idle_h_nr_running += idle_task_delta;
+[1] commit bebcfd272df6 ("spi: introduce `delay` field for
+`spi_transfer` + spi_transfer_delay_exec()")
+
+Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+---
+ drivers/net/ieee802154/ca8210.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
+index 430c93786153..e04c3b60cae7 100644
+--- a/drivers/net/ieee802154/ca8210.c
++++ b/drivers/net/ieee802154/ca8210.c
+@@ -946,7 +946,8 @@ static int ca8210_spi_transfer(
+ 	cas_ctl->transfer.bits_per_word = 0; /* Use device setting */
+ 	cas_ctl->transfer.tx_buf = cas_ctl->tx_buf;
+ 	cas_ctl->transfer.rx_buf = cas_ctl->tx_in_buf;
+-	cas_ctl->transfer.delay_usecs = 0;
++	cas_ctl->transfer.delay.value = 0;
++	cas_ctl->transfer.delay.unit = SPI_DELAY_UNIT_USECS;
+ 	cas_ctl->transfer.cs_change = 0;
+ 	cas_ctl->transfer.len = sizeof(struct mac_message);
+ 	cas_ctl->msg.complete = ca8210_spi_transfer_complete;
+-- 
+2.17.1
+
