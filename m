@@ -2,128 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CC561726F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:22:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F41317277E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:32:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729817AbgB0SWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:22:13 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41148 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729142AbgB0SWM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:22:12 -0500
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 20FFE29645A;
-        Thu, 27 Feb 2020 18:22:11 +0000 (GMT)
-Date:   Thu, 27 Feb 2020 19:22:09 +0100
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     shiva.linuxworks@gmail.com
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Shivamurthy Shastri <sshivamurthy@micron.com>
-Subject: Re: [PATCH v4 1/5] mtd: spinand: micron: Generalize the OOB layout
- structure and function names
-Message-ID: <20200227192209.77d637a4@collabora.com>
-In-Reply-To: <20200206202206.14770-2-sshivamurthy@micron.com>
-References: <20200206202206.14770-1-sshivamurthy@micron.com>
-        <20200206202206.14770-2-sshivamurthy@micron.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1731161AbgB0SZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:25:10 -0500
+Received: from mail.manjaro.org ([176.9.38.148]:48220 "EHLO mail.manjaro.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729393AbgB0SZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:25:08 -0500
+X-Greylist: delayed 1096 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Feb 2020 13:25:07 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.manjaro.org (Postfix) with ESMTP id 3747838C698C;
+        Thu, 27 Feb 2020 19:06:50 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at manjaro.org
+Received: from mail.manjaro.org ([127.0.0.1])
+        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id TMxKtG3EY9dS; Thu, 27 Feb 2020 19:06:47 +0100 (CET)
+From:   Tobias Schramm <t.schramm@manjaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Andy Yan <andy.yan@rock-chips.com>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Markus Reichl <m.reichl@fivetechno.de>,
+        Alexis Ballier <aballier@gentoo.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Nick Xie <nick@khadas.com>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Vivek Unune <npcomplete13@gmail.com>,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Tobias Schramm <t.schramm@manjaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        anarsoul@gmail.com
+Subject: [PATCH 0/2] Add support for the pine64 Pinebook Pro
+Date:   Thu, 27 Feb 2020 19:06:28 +0100
+Message-Id: <20200227180630.166982-1-t.schramm@manjaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  6 Feb 2020 21:22:02 +0100
-shiva.linuxworks@gmail.com wrote:
+This patchset adds an initial dts and compatible string for the rk3399
+based Pinebook Pro 14" laptop.
 
-> From: Shivamurthy Shastri <sshivamurthy@micron.com>
-> 
-> In order to add new Micron SPI NAND devices, we generalized the OOB
-> layout structure and function names.
-> 
-> Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
+Contrary to the Rockchip BSP dts proposed mid January this dts has a
+power tree reflecting the actual schematic of the device and features
+full display, audio and WiFi/Bluetooth support.
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Tobias Schramm (2):
+  dt-bindings: Add doc for pine64 Pinebook Pro
+  arm64: dts: rockchip: Add initial support for Pinebook Pro
 
-> ---
->  drivers/mtd/nand/spi/micron.c | 28 ++++++++++++++--------------
->  1 file changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-> index 7d7b1f7fcf71..c028d0d7e236 100644
-> --- a/drivers/mtd/nand/spi/micron.c
-> +++ b/drivers/mtd/nand/spi/micron.c
-> @@ -34,38 +34,38 @@ static SPINAND_OP_VARIANTS(update_cache_variants,
->  		SPINAND_PROG_LOAD_X4(false, 0, NULL, 0),
->  		SPINAND_PROG_LOAD(false, 0, NULL, 0));
->  
-> -static int mt29f2g01abagd_ooblayout_ecc(struct mtd_info *mtd, int section,
-> -					struct mtd_oob_region *region)
-> +static int micron_8_ooblayout_ecc(struct mtd_info *mtd, int section,
-> +				  struct mtd_oob_region *region)
->  {
->  	if (section)
->  		return -ERANGE;
->  
-> -	region->offset = 64;
-> -	region->length = 64;
-> +	region->offset = mtd->oobsize / 2;
-> +	region->length = mtd->oobsize / 2;
->  
->  	return 0;
->  }
->  
-> -static int mt29f2g01abagd_ooblayout_free(struct mtd_info *mtd, int section,
-> -					 struct mtd_oob_region *region)
-> +static int micron_8_ooblayout_free(struct mtd_info *mtd, int section,
-> +				   struct mtd_oob_region *region)
->  {
->  	if (section)
->  		return -ERANGE;
->  
->  	/* Reserve 2 bytes for the BBM. */
->  	region->offset = 2;
-> -	region->length = 62;
-> +	region->length = (mtd->oobsize / 2) - 2;
->  
->  	return 0;
->  }
->  
-> -static const struct mtd_ooblayout_ops mt29f2g01abagd_ooblayout = {
-> -	.ecc = mt29f2g01abagd_ooblayout_ecc,
-> -	.free = mt29f2g01abagd_ooblayout_free,
-> +static const struct mtd_ooblayout_ops micron_8_ooblayout = {
-> +	.ecc = micron_8_ooblayout_ecc,
-> +	.free = micron_8_ooblayout_free,
->  };
->  
-> -static int mt29f2g01abagd_ecc_get_status(struct spinand_device *spinand,
-> -					 u8 status)
-> +static int micron_8_ecc_get_status(struct spinand_device *spinand,
-> +				   u8 status)
->  {
->  	switch (status & MICRON_STATUS_ECC_MASK) {
->  	case STATUS_ECC_NO_BITFLIPS:
-> @@ -98,8 +98,8 @@ static const struct spinand_info micron_spinand_table[] = {
->  					      &write_cache_variants,
->  					      &update_cache_variants),
->  		     0,
-> -		     SPINAND_ECCINFO(&mt29f2g01abagd_ooblayout,
-> -				     mt29f2g01abagd_ecc_get_status)),
-> +		     SPINAND_ECCINFO(&micron_8_ooblayout,
-> +				     micron_8_ecc_get_status)),
->  };
->  
->  static int micron_spinand_detect(struct spinand_device *spinand)
+ .../devicetree/bindings/arm/rockchip.yaml     |    5 +
+ arch/arm64/boot/dts/rockchip/Makefile         |    1 +
+ .../boot/dts/rockchip/rk3399-pinebook-pro.dts | 1191 +++++++++++++++++
+ 3 files changed, 1197 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
+
+-- 
+2.24.1
 
