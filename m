@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96935171ED9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65BB117211F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:47:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733298AbgB0OE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:04:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41150 "EHLO mail.kernel.org"
+        id S1730240AbgB0Noi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:44:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387626AbgB0OEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:04:44 -0500
+        id S1730235AbgB0Noe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:44:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45DAC20578;
-        Thu, 27 Feb 2020 14:04:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F1B7222C2;
+        Thu, 27 Feb 2020 13:44:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812283;
-        bh=eNP2wRueIYsQ0UuZX2jQ1NACVIbo0uRrJkyDM2F6qGc=;
+        s=default; t=1582811073;
+        bh=xAni1UWMXYE4zuIVjCcTlK87vyWdYkYH97cNEZFhvig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YXsm6SybD1lZsswtbLk88m8p2ssq9/FQdxfKBJcXvVYZk3Jd+XRCH8fbfvxBXRbdc
-         JSffJ/UTmxu4o6+nvwwu5OIODKTkA7llbbBBD+FsxvWnmfOOJvu7RXKoezbKS1Lz4c
-         cW54XX2q5DQicvPXE7zIrE+v93AfYanH12SuqHak=
+        b=UITcKQdR5Bwq4DaqiFlF3Tq3OIwByo5I218lq8Af7bUH7DSUyGvkA2gtyA4qdVGmv
+         +wYKLWrLvvWKCFgBMuhyeeq9zaDC/ofCmMz15pGuAbyg8QULWKGTn2sc2Astn7XaoV
+         RvdDRzS5SJBVoYl4OaaIElDm4/ewtsEcztKWNe8k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ryan Case <ryandcase@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 54/97] tty: serial: qcom_geni_serial: Fix UART hang
-Date:   Thu, 27 Feb 2020 14:37:02 +0100
-Message-Id: <20200227132223.401435581@linuxfoundation.org>
+        stable@vger.kernel.org, Rahul Kundu <rahul.kundu@chelsio.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dakshaja Uppalapati <dakshaja@chelsio.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 107/113] scsi: Revert "RDMA/isert: Fix a recently introduced regression related to logout"
+Date:   Thu, 27 Feb 2020 14:37:03 +0100
+Message-Id: <20200227132228.892845198@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +47,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ryan Case <ryandcase@chromium.org>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit 663abb1a7a7ff8fea9ab0145463de7fcff823755 ]
+commit 76261ada16dcc3be610396a46d35acc3efbda682 upstream.
 
-If a serial console write occured while a UART transmit command was
-waiting for a done signal then no further data would be sent until
-something new kicked the system into gear. If there is already data
-waiting in the circular buffer we must re-enable the tx watermark so we
-receive the expected interrupts.
+Since commit 04060db41178 introduces soft lockups when toggling network
+interfaces, revert it.
 
-Signed-off-by: Ryan Case <ryandcase@chromium.org>
-Reviewed-by: Evan Green <evgreen@chromium.org>
+Link: https://marc.info/?l=target-devel&m=158157054906196
+Cc: Rahul Kundu <rahul.kundu@chelsio.com>
+Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Reported-by: Dakshaja Uppalapati <dakshaja@chelsio.com>
+Fixes: 04060db41178 ("scsi: RDMA/isert: Fix a recently introduced regression related to logout")
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/tty/serial/qcom_geni_serial.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/infiniband/ulp/isert/ib_isert.c |   12 ++++++++++++
+ drivers/target/iscsi/iscsi_target.c     |    6 +++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index b3f7d1a1e97f8..2003dfcace5d8 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -438,6 +438,7 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
- 	bool locked = true;
- 	unsigned long flags;
- 	u32 geni_status;
-+	u32 irq_en;
+--- a/drivers/infiniband/ulp/isert/ib_isert.c
++++ b/drivers/infiniband/ulp/isert/ib_isert.c
+@@ -3295,6 +3295,17 @@ isert_wait4flush(struct isert_conn *iser
+ 	wait_for_completion(&isert_conn->wait_comp_err);
+ }
  
- 	WARN_ON(co->index < 0 || co->index >= GENI_UART_CONS_PORTS);
- 
-@@ -472,6 +473,13 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
- 		 * has been sent, in which case we need to look for done first.
- 		 */
- 		qcom_geni_serial_poll_tx_done(uport);
++static void
++isert_wait4cmds(struct iscsi_conn *conn)
++{
++	isert_info("iscsi_conn %p\n", conn);
 +
-+		if (uart_circ_chars_pending(&uport->state->xmit)) {
-+			irq_en = readl_relaxed(uport->membase +
-+					SE_GENI_M_IRQ_EN);
-+			writel_relaxed(irq_en | M_TX_FIFO_WATERMARK_EN,
-+					uport->membase + SE_GENI_M_IRQ_EN);
-+		}
- 	}
++	if (conn->sess) {
++		target_sess_cmd_list_set_waiting(conn->sess->se_sess);
++		target_wait_for_sess_cmds(conn->sess->se_sess);
++	}
++}
++
+ /**
+  * isert_put_unsol_pending_cmds() - Drop commands waiting for
+  *     unsolicitate dataout
+@@ -3350,6 +3361,7 @@ static void isert_wait_conn(struct iscsi
  
- 	__qcom_geni_serial_console_write(uport, s, count);
--- 
-2.20.1
-
+ 	isert_wait4flush(isert_conn);
+ 	isert_put_unsol_pending_cmds(conn);
++	isert_wait4cmds(conn);
+ 	isert_wait4logout(isert_conn);
+ 
+ 	queue_work(isert_release_wq, &isert_conn->release_work);
+--- a/drivers/target/iscsi/iscsi_target.c
++++ b/drivers/target/iscsi/iscsi_target.c
+@@ -4309,6 +4309,9 @@ int iscsit_close_connection(
+ 	iscsit_stop_nopin_response_timer(conn);
+ 	iscsit_stop_nopin_timer(conn);
+ 
++	if (conn->conn_transport->iscsit_wait_conn)
++		conn->conn_transport->iscsit_wait_conn(conn);
++
+ 	/*
+ 	 * During Connection recovery drop unacknowledged out of order
+ 	 * commands for this connection, and prepare the other commands
+@@ -4394,9 +4397,6 @@ int iscsit_close_connection(
+ 	target_sess_cmd_list_set_waiting(sess->se_sess);
+ 	target_wait_for_sess_cmds(sess->se_sess);
+ 
+-	if (conn->conn_transport->iscsit_wait_conn)
+-		conn->conn_transport->iscsit_wait_conn(conn);
+-
+ 	if (conn->conn_rx_hash.tfm)
+ 		crypto_free_hash(conn->conn_rx_hash.tfm);
+ 	if (conn->conn_tx_hash.tfm)
 
 
