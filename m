@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D202172680
+	by mail.lfdr.de (Postfix) with ESMTP id DEE42172681
 	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:16:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730564AbgB0SPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:15:01 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34007 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730327AbgB0SO7 (ORCPT
+        id S1730619AbgB0SPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:15:02 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43345 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730466AbgB0SPA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:14:59 -0500
-Received: by mail-ot1-f67.google.com with SMTP id j16so89981otl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 10:14:58 -0800 (PST)
+        Thu, 27 Feb 2020 13:15:00 -0500
+Received: by mail-oi1-f194.google.com with SMTP id p125so110337oif.10
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 10:15:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KKHUWz0Uha+CDG15YVmtHwxSiy2XT+hJxNbxwEkR868=;
-        b=uF9Ne9LOzTJajpv69uldX3AlwwCsOG21dTH6WDxjIygZq8IYdQaVrWnpoRAHUbl9pc
-         2Wi8RK01BtA2wDp7AEz+f6DLqMim+kBabrziprkHt9My6ifj58ykYGyRyHk0f9es3E21
-         g0u14rY2qTDrLve2najzfjzWsQnswHdAi8/0gGRta6WRcXc5z61ckYfEbRHgDfNA+rau
-         5KZTIcCWvEgU0UV5SnrOTKQaCVJ55kx24ykG2YMVnJq/iCN8OfLz1tN4luydERR7G6vT
-         wJ/b89Ko0vmX8rUk4Hdg6pvjREuHMOkTE94hzyi/KIvGBF2ITAjvStgSoZnt+yD130XP
-         QgWA==
+        bh=W/fceep5tK7g/cQy1ebhtOFWEM+NoOwKfSWVqLp3Aas=;
+        b=NfPEalD3gnGcIvoGVMrqUf/THI/PvhfS1WFvlfFpZ7wwE9F9w0AnL+WK0ycy7SYPph
+         lxOjCTyMPeyt/LMS/wKBV8651zX5X9G/qTG3YRY/8ilIW9HDbuwIo+UwhheBQ8vwYiCR
+         VfVvGehkkXb5OYH0zUoKKc1m9KTRuVNJ7s9pHshsiCP9JiR2SotpegRzDEdA3+x+RxTB
+         KD8KdY8gqdDwG4Ecl++s/UxwKXVWkJKVNNG21EIUgJvLWzXtp7cd29rFNwisqJ41FFu9
+         isH6xKVfobo9lHzeBxkzu2eAN7AG2PWAeu31I3sv1hXNg1lWCmDxeOaD5YS3gSiC42ia
+         l5zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KKHUWz0Uha+CDG15YVmtHwxSiy2XT+hJxNbxwEkR868=;
-        b=twm+wVGlpQdLneODF3cFC8+/xwr6NrCRu65db1E1Ad+EUzmstLY5wbba/ExUUVO7nd
-         oSbyp6adhgRK29pVo1IZlPNArOhtjnZM5PL3GtUa7A84trMzmmlXhJ75CA5pYSVxtXMy
-         Rh5HDe31ukNasvljrtuQ6CqRyvUiKrGY6WtqnKlx9jcViV8EtyGXb3hf1YyqRQ0NllHx
-         MnMxFGqCo5ok/heRvkKEMMxlbg7hrACD4C2qI60/ncVN5yENnoWqCbWhua0MIt7kKk+U
-         TNQo6gthF53sKn95Zgho70LSOgukD6XSOc2GY16GZxF+Bl+m9+DfdUM9wxkH5C41Fg1W
-         YOmA==
-X-Gm-Message-State: APjAAAXzF8UBdW2bWZFXWY7FYN+Xq1cRIVdN89wmVz1o0QYBP+Q2XhaM
-        YOU6+byaP0wOh3RsJdwsom8=
-X-Google-Smtp-Source: APXvYqwKPwyDY58hJwakzgtIbOYkNTqQx8h99is5DUCIYu4mGGT47ZNUD2O+KGlJWl3KeKXMNTBy8w==
-X-Received: by 2002:a9d:7f98:: with SMTP id t24mr156313otp.338.1582827298541;
-        Thu, 27 Feb 2020 10:14:58 -0800 (PST)
+        bh=W/fceep5tK7g/cQy1ebhtOFWEM+NoOwKfSWVqLp3Aas=;
+        b=H8az9R6rgLI2nJZmH5YKEyWk07LR9/M28tBQiTtctqidFrhnsKyWaLEZMLH3uo1FDI
+         /YMjPk7cwqIlr/M7BzNNgIab9oy4V906EiM7aaj9+aXMTomqtb7DKCI+CrehZ1bqap2Y
+         pw+WEwFapjaM08/r8qfLjMwNoOxRHFRQ8aAIy6CcYsPYF9OjKBpZ6+GdHfhRSM7/1QXN
+         VqSPwvAhHCgZumvOzj4utyIowW2LZupMnbuJVKcpFeqvCWu6usPxNpq8v0gbjqbTLtSN
+         rkVRq+nPjXWcT45Ej6I9dSEog1VhZUxcN+c+ZLFhPSns16ltHsPFt/ta1K/py0tQkMuc
+         vHOg==
+X-Gm-Message-State: APjAAAVKC20SisoBWDDGTc1F4zljp5xPcdVombVmUt9Rd8EMmrGn+nDb
+        KYQKQvdIZ5ZwQsTTFHP3vIk=
+X-Google-Smtp-Source: APXvYqx4Ed9tiaIKgk51556LtCRi2y2AR/CnZ49Y36HioYpfhDeeaUOWsXCscaC+2pLcDKop+mfFcQ==
+X-Received: by 2002:aca:48cd:: with SMTP id v196mr269114oia.102.1582827299702;
+        Thu, 27 Feb 2020 10:14:59 -0800 (PST)
 Received: from farregard-ubuntu.kopismobile.org (c-73-177-17-21.hsd1.ms.comcast.net. [73.177.17.21])
-        by smtp.gmail.com with ESMTPSA id t203sm2205534oig.39.2020.02.27.10.14.57
+        by smtp.gmail.com with ESMTPSA id t203sm2205534oig.39.2020.02.27.10.14.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 10:14:58 -0800 (PST)
+        Thu, 27 Feb 2020 10:14:59 -0800 (PST)
 From:   George Hilliard <thirtythreeforty@gmail.com>
 To:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc:     George Hilliard <thirtythreeforty@gmail.com>,
-        Icenowy Zheng <icenowy@aosc.io>, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] musb: sunxi: add support for the suniv MUSB controller
-Date:   Thu, 27 Feb 2020 12:14:50 -0600
-Message-Id: <20200227181452.31558-4-thirtythreeforty@gmail.com>
+Cc:     Icenowy Zheng <icenowy@aosc.io>, linux-kernel@vger.kernel.org,
+        George Hilliard <thirtythreeforty@gmail.com>
+Subject: [PATCH 4/5] ARM: suniv: add USB-related device nodes
+Date:   Thu, 27 Feb 2020 12:14:51 -0600
+Message-Id: <20200227181452.31558-5-thirtythreeforty@gmail.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200227181452.31558-1-thirtythreeforty@gmail.com>
 References: <20200227181452.31558-1-thirtythreeforty@gmail.com>
@@ -63,49 +63,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The suniv SoC has a MUSB controller like the one in A33, but with a SRAM
-region to be claimed.
+From: Icenowy Zheng <icenowy@aosc.io>
 
-Add support for it.
+The suniv SoC has a USB OTG controller and a USB PHY like other
+Allwinner SoCs.
+
+Add their device tree node.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
 ---
- drivers/usb/musb/sunxi.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/suniv-f1c100s.dtsi | 29 ++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/usb/musb/sunxi.c b/drivers/usb/musb/sunxi.c
-index f3f76f2ac63f..76806b781844 100644
---- a/drivers/usb/musb/sunxi.c
-+++ b/drivers/usb/musb/sunxi.c
-@@ -714,14 +714,17 @@ static int sunxi_musb_probe(struct platform_device *pdev)
- 	INIT_WORK(&glue->work, sunxi_musb_work);
- 	glue->host_nb.notifier_call = sunxi_musb_host_notifier;
+diff --git a/arch/arm/boot/dts/suniv-f1c100s.dtsi b/arch/arm/boot/dts/suniv-f1c100s.dtsi
+index 6100d3b75f61..ec9f248ba889 100644
+--- a/arch/arm/boot/dts/suniv-f1c100s.dtsi
++++ b/arch/arm/boot/dts/suniv-f1c100s.dtsi
+@@ -4,6 +4,9 @@
+  * Copyright 2018 Mesih Kilinc <mesihkilinc@gmail.com>
+  */
  
--	if (of_device_is_compatible(np, "allwinner,sun4i-a10-musb"))
-+	if (of_device_is_compatible(np, "allwinner,sun4i-a10-musb") ||
-+	    of_device_is_compatible(np, "allwinner,suniv-f1c100s-musb")) {
- 		set_bit(SUNXI_MUSB_FL_HAS_SRAM, &glue->flags);
-+	}
- 
- 	if (of_device_is_compatible(np, "allwinner,sun6i-a31-musb"))
- 		set_bit(SUNXI_MUSB_FL_HAS_RESET, &glue->flags);
- 
- 	if (of_device_is_compatible(np, "allwinner,sun8i-a33-musb") ||
--	    of_device_is_compatible(np, "allwinner,sun8i-h3-musb")) {
-+	    of_device_is_compatible(np, "allwinner,sun8i-h3-musb") ||
-+	    of_device_is_compatible(np, "allwinner,suniv-f1c100s-musb")) {
- 		set_bit(SUNXI_MUSB_FL_HAS_RESET, &glue->flags);
- 		set_bit(SUNXI_MUSB_FL_NO_CONFIGDATA, &glue->flags);
- 	}
-@@ -814,6 +817,7 @@ static int sunxi_musb_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id sunxi_musb_match[] = {
-+	{ .compatible = "allwinner,suniv-f1c100s-musb", },
- 	{ .compatible = "allwinner,sun4i-a10-musb", },
- 	{ .compatible = "allwinner,sun6i-a31-musb", },
- 	{ .compatible = "allwinner,sun8i-a33-musb", },
++#include <dt-bindings/clock/suniv-ccu-f1c100s.h>
++#include <dt-bindings/reset/suniv-ccu-f1c100s.h>
++
+ / {
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+@@ -140,5 +143,31 @@ uart2: serial@1c25800 {
+ 			resets = <&ccu 26>;
+ 			status = "disabled";
+ 		};
++
++		usb_otg: usb@1c13000 {
++			compatible = "allwinner,suniv-f1c100s-musb";
++			reg = <0x01c13000 0x0400>;
++			clocks = <&ccu CLK_BUS_OTG>;
++			resets = <&ccu RST_BUS_OTG>;
++			interrupts = <26>;
++			interrupt-names = "mc";
++			phys = <&usbphy 0>;
++			phy-names = "usb";
++			extcon = <&usbphy 0>;
++			allwinner,sram = <&otg_sram 1>;
++			status = "disabled";
++		};
++
++		usbphy: phy@1c13400 {
++			compatible = "allwinner,suniv-f1c100s-usb-phy";
++			reg = <0x01c13400 0x10>;
++			reg-names = "phy_ctrl";
++			clocks = <&ccu CLK_USB_PHY0>;
++			clock-names = "usb0_phy";
++			resets = <&ccu RST_USB_PHY0>;
++			reset-names = "usb0_reset";
++			#phy-cells = <1>;
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
 2.25.0
 
