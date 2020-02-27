@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0132A171BDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:06:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F4CA171C6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:12:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387943AbgB0OGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:06:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43548 "EHLO mail.kernel.org"
+        id S1730862AbgB0OL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:11:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387925AbgB0OGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:06:24 -0500
+        id S2388762AbgB0OLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:11:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB1B420578;
-        Thu, 27 Feb 2020 14:06:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9680420578;
+        Thu, 27 Feb 2020 14:11:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812384;
-        bh=W4/xiG4eiTXSVrIJ6XH12CjYjNUG6YQO84OF6694ykI=;
+        s=default; t=1582812711;
+        bh=zF8WyHHyNDWJs5RpuKJQzBGkfwEfo+xK6Oui84XK6xE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ya9EyIV5W6ihSA5Il3cQa9LrD3gaX1qXzq3CTjz9PZqudt07YMHiF7EQQHpL/ZtgD
-         YHFSG4WKQDg4sf5JFDVMngZ+mE+5xygKVua2RMAdc+k4/iTcg38jADtmJd210iOuym
-         XxEDm3nRay1ND3DMWYHKZ/m/VBRKCQ5CZKwe3Pes=
+        b=mOG7zkmnA3HPPL03IqKDq0wly5nurLqX9St58rTBEnJu3vRb/oa7auxpwO7Y9rpTz
+         LrgvBLO+zCOlbHL4r17kbKqwCIX5/89B+cVRLHg9ZibDFu62g/WMi/hgx6MEGHO0WD
+         /ZF+AIzrbhNrfPq4mO8OkcquC1yWiCScwzclXkPE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        syzbot+adf6c6c2be1c3a718121@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 93/97] netfilter: xt_hashlimit: limit the max size of hashtable
-Date:   Thu, 27 Feb 2020 14:37:41 +0100
-Message-Id: <20200227132229.871748531@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+576cc007eb9f2c968200@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.4 122/135] ALSA: rawmidi: Avoid bit fields for state flags
+Date:   Thu, 27 Feb 2020 14:37:42 +0100
+Message-Id: <20200227132247.418514442@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 8d0015a7ab76b8b1e89a3e5f5710a6e5103f2dd5 upstream.
+commit dfa9a5efe8b932a84b3b319250aa3ac60c20f876 upstream.
 
-The user-specified hashtable size is unbound, this could
-easily lead to an OOM or a hung task as we hold the global
-mutex while allocating and initializing the new hashtable.
+The rawmidi state flags (opened, append, active_sensing) are stored in
+bit fields that can be potentially racy when concurrently accessed
+without any locks.  Although the current code should be fine, there is
+also no any real benefit by keeping the bitfields for this kind of
+short number of members.
 
-Add a max value to cap both cfg->size and cfg->max, as
-suggested by Florian.
+This patch changes those bit fields flags to the simple bool fields.
+There should be no size increase of the snd_rawmidi_substream by this
+change.
 
-Reported-and-tested-by: syzbot+adf6c6c2be1c3a718121@syzkaller.appspotmail.com
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Reviewed-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reported-by: syzbot+576cc007eb9f2c968200@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/20200214111316.26939-4-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/xt_hashlimit.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ include/sound/rawmidi.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/netfilter/xt_hashlimit.c
-+++ b/net/netfilter/xt_hashlimit.c
-@@ -845,6 +845,8 @@ hashlimit_mt(const struct sk_buff *skb,
- 	return hashlimit_mt_common(skb, par, hinfo, &info->cfg, 3);
- }
- 
-+#define HASHLIMIT_MAX_SIZE 1048576
-+
- static int hashlimit_mt_check_common(const struct xt_mtchk_param *par,
- 				     struct xt_hashlimit_htable **hinfo,
- 				     struct hashlimit_cfg3 *cfg,
-@@ -855,6 +857,14 @@ static int hashlimit_mt_check_common(con
- 
- 	if (cfg->gc_interval == 0 || cfg->expire == 0)
- 		return -EINVAL;
-+	if (cfg->size > HASHLIMIT_MAX_SIZE) {
-+		cfg->size = HASHLIMIT_MAX_SIZE;
-+		pr_info_ratelimited("size too large, truncated to %u\n", cfg->size);
-+	}
-+	if (cfg->max > HASHLIMIT_MAX_SIZE) {
-+		cfg->max = HASHLIMIT_MAX_SIZE;
-+		pr_info_ratelimited("max too large, truncated to %u\n", cfg->max);
-+	}
- 	if (par->family == NFPROTO_IPV4) {
- 		if (cfg->srcmask > 32 || cfg->dstmask > 32)
- 			return -EINVAL;
+--- a/include/sound/rawmidi.h
++++ b/include/sound/rawmidi.h
+@@ -77,9 +77,9 @@ struct snd_rawmidi_substream {
+ 	struct list_head list;		/* list of all substream for given stream */
+ 	int stream;			/* direction */
+ 	int number;			/* substream number */
+-	unsigned int opened: 1,		/* open flag */
+-		     append: 1,		/* append flag (merge more streams) */
+-		     active_sensing: 1; /* send active sensing when close */
++	bool opened;			/* open flag */
++	bool append;			/* append flag (merge more streams) */
++	bool active_sensing;		/* send active sensing when close */
+ 	int use_count;			/* use counter (for output) */
+ 	size_t bytes;
+ 	struct snd_rawmidi *rmidi;
 
 
