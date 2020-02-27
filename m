@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4743171F79
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:37:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50F74171F7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731942AbgB0N5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:57:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58622 "EHLO mail.kernel.org"
+        id S1731731AbgB0N5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:57:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732312AbgB0N5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:57:38 -0500
+        id S1732321AbgB0N5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:57:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74F4E2073D;
-        Thu, 27 Feb 2020 13:57:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED25020801;
+        Thu, 27 Feb 2020 13:57:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811857;
-        bh=2+cmvOTfjefLg7z9K6NEbzvp0YsZpeIAhXSEBWBCpx8=;
+        s=default; t=1582811860;
+        bh=rjrhQW09Vso9tajVY7leCL9tNge/xnc21nLf2tfe578=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NbQjEvgIkSqr/7UuLfcfW7mH7uMy+KOZeeVZ7KtUq2GlyJo51lD6RkQlGRwcKCrCF
-         TWn1WZeV/eAhtPmySEoz34AZgRIJUuJDt7Y3NHlNGto1H2FvcO9ErpeegG11B1uz32
-         P/E3zx6NqLwuiIIpHVnSUj0tijWWhaL60RuKuyKg=
+        b=MsUSRlNJTXYsXJP6xVHCH56COxVWKjyiImnRT/+khiAqsnxH+xP09w3cXMfN0fX8M
+         6Vf8YY2AT1l6yYcrwVqZ5NQW9y2deouPWfQx0gPanTb+Xtih4Zh9QsdwIakXcFmnt8
+         LqG9ypSB314skRs5MjyC1oCJnUce/eS5pjYQXESA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 129/237] cmd64x: potential buffer overflow in cmd64x_program_timings()
-Date:   Thu, 27 Feb 2020 14:35:43 +0100
-Message-Id: <20200227132306.236241168@linuxfoundation.org>
+Subject: [PATCH 4.14 130/237] ide: serverworks: potential overflow in svwks_set_pio_mode()
+Date:   Thu, 27 Feb 2020 14:35:44 +0100
+Message-Id: <20200227132306.302999900@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -46,32 +46,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 117fcc3053606d8db5cef8821dca15022ae578bb ]
+[ Upstream commit ce1f31b4c0b9551dd51874dd5364654ed4ca13ae ]
 
-The "drive->dn" value is a u8 and it is controlled by root only, but
-it could be out of bounds here so let's check.
+The "drive->dn" variable is a u8 controlled by root.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ide/cmd64x.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/ide/serverworks.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/ide/cmd64x.c b/drivers/ide/cmd64x.c
-index b127ed60c7336..9dde8390da09b 100644
---- a/drivers/ide/cmd64x.c
-+++ b/drivers/ide/cmd64x.c
-@@ -65,6 +65,9 @@ static void cmd64x_program_timings(ide_drive_t *drive, u8 mode)
- 	struct ide_timing t;
- 	u8 arttim = 0;
+diff --git a/drivers/ide/serverworks.c b/drivers/ide/serverworks.c
+index a97affca18abe..0f57d45484d1d 100644
+--- a/drivers/ide/serverworks.c
++++ b/drivers/ide/serverworks.c
+@@ -114,6 +114,9 @@ static void svwks_set_pio_mode(ide_hwif_t *hwif, ide_drive_t *drive)
+ 	struct pci_dev *dev = to_pci_dev(hwif->dev);
+ 	const u8 pio = drive->pio_mode - XFER_PIO_0;
  
-+	if (drive->dn >= ARRAY_SIZE(drwtim_regs))
++	if (drive->dn >= ARRAY_SIZE(drive_pci))
 +		return;
 +
- 	ide_timing_compute(drive, mode, &t, T, 0);
+ 	pci_write_config_byte(dev, drive_pci[drive->dn], pio_modes[pio]);
  
- 	/*
+ 	if (svwks_csb_check(dev)) {
+@@ -140,6 +143,9 @@ static void svwks_set_dma_mode(ide_hwif_t *hwif, ide_drive_t *drive)
+ 
+ 	u8 ultra_enable	 = 0, ultra_timing = 0, dma_timing = 0;
+ 
++	if (drive->dn >= ARRAY_SIZE(drive_pci2))
++		return;
++
+ 	pci_read_config_byte(dev, (0x56|hwif->channel), &ultra_timing);
+ 	pci_read_config_byte(dev, 0x54, &ultra_enable);
+ 
 -- 
 2.20.1
 
