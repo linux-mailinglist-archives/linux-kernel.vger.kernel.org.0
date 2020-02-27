@@ -2,120 +2,262 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 910CA1727E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:46:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B43C61727F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:48:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbgB0SpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:45:24 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.216]:41961 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729631AbgB0SpX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:45:23 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id AA0A055CC3B
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 12:45:19 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7O9ujyWXEvBMd7O9uju6Yi; Thu, 27 Feb 2020 12:45:19 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=uJRZdiXQDQ8vWpvOfn+fD+OCasED1rNINY7/9EAl050=; b=DsGFoQGJlsQ6EIWRhqw2AeIHKF
-        rk4i0rWM2GhgKpHOCLaAALk42x2kesw4DArmujow89wMNa3MNOnsyRUrBuQLc3rJM7qGq19IYn1S4
-        QeKCdJIjBKVuJcOhOsryidxy66ShnGyZt+oCWeDnMOXdMO1RDrtTZgHt1gTQ2DhKtatpfy6frqOZF
-        7plM2qaba8xiTOA5iKhDQI0hbqMwhainRew+//Ddak9pa33gd7eeo89rB5+ncqs+YSsjX6XJOeZgz
-        mc21DAFrWDAR+kkq5I58oJwR2E7snDHTBvIFL1ijm+5itK8iMJtbPB+E9lzjRI96/ViYlZOfAhSH4
-        51EKngyA==;
-Received: from [201.162.168.186] (port=16949 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j7O9r-0040oC-Vw; Thu, 27 Feb 2020 12:45:16 -0600
-Date:   Thu, 27 Feb 2020 12:48:08 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] char: mspec: Replace zero-length array with flexible-array
- member
-Message-ID: <20200227184808.GA1925@embeddedor>
+        id S1729913AbgB0Ssp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:48:45 -0500
+Received: from mail-eopbgr750055.outbound.protection.outlook.com ([40.107.75.55]:1598
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726805AbgB0Sso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:48:44 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XRbedbXKK7VV/dOhuywAHuO7PMDsYjf5rmAxkggoOp7yp7WcVp1qhVXPbzF0w+knqTq6KNAl5u1pxHOIqHePEqGiVT/eE/DJ79qPbn6EvFHpFZECqkb2L9VYlY82s7ezILKwF+O/13sOQi1kHUdAMqY+62JWLyBv84Lu37jRgRTauKcoDmr07ahyFoElzTRsrUaaV3zuEQereDYl66soKO4kCGjqgEBmr02l9F5KcFgs/7nSNPvAE3qGQagED1rIN8CKgUnRYs3uRM3ryO1UUzne8/fx2Fx4bcXHS0YjQnq/ZEjnC3+vtruJoIQV0I0FU3vWPI31AdbHAOBEO2E4bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AqAmKewSwjbt4PpcORodUeg5KR8XOhPiQyAVZR+Z3RY=;
+ b=NQ1JMFtLqd+B1VjSj26ppWdYUMmQxAZ0OJBniD+UfLBhAiqsofdhyJGEPURgfArWmAFw97l7Z8P+eKx9IPL92Pyq1qzYeTs6Uf6WetfjzK/VMzRQexpiQT8T7OjBZhZMVHAyuB2rI5Ur6X9FiJZGi4cBEgeEC7QGtYFLvSUo1P2VtpP6kwSTwTO+mZUKYYni+tKxVYfEdFvAZLoImLRqQORYo9UG5TjTP5K1vn+o/GRgoYYjcUetlvs7BbLpuIkhursD7PQ7dCqZG5Ckn3nhFYRhlAK/u1Wju8f5exjDqVyzUsXpEg3/IYamvVUdSJnl+o+Dsa3YUvkBSUXBov/nlQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AqAmKewSwjbt4PpcORodUeg5KR8XOhPiQyAVZR+Z3RY=;
+ b=4ESLdAcSfoPYT7IOYzyQrmVzCSBcUZQ/9KZaYbKoHoPcRb7lIZ81hL8ASx73BLyrjtO5r5HQJCOdssFxaxcOnZH23n1lUGxEJYb0V3ze1vbHvlmBPYnIaMChvGo6F9zf1sJs5szWvYiTLAfCB/X58hhFKZYBuesBN+SYbb9H7+w=
+Received: from DM5PR1201MB2554.namprd12.prod.outlook.com (2603:10b6:3:ec::14)
+ by DM5PR1201MB0268.namprd12.prod.outlook.com (2603:10b6:4:54::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14; Thu, 27 Feb
+ 2020 18:48:41 +0000
+Received: from DM5PR1201MB2554.namprd12.prod.outlook.com
+ ([fe80::c4c:bafd:5833:2b51]) by DM5PR1201MB2554.namprd12.prod.outlook.com
+ ([fe80::c4c:bafd:5833:2b51%5]) with mapi id 15.20.2750.024; Thu, 27 Feb 2020
+ 18:48:41 +0000
+From:   "Liu, Zhan" <Zhan.Liu@amd.com>
+To:     "Liu, Zhan" <Zhan.Liu@amd.com>,
+        Melissa Wen <melissa.srw@gmail.com>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+CC:     "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/2] drm/amd/display: dc_link: code clean up on detect_dp
+ function
+Thread-Topic: [PATCH 2/2] drm/amd/display: dc_link: code clean up on detect_dp
+ function
+Thread-Index: AQHV7PFJrzsxO38xA0qqdJAhaAZqgqgvYCNQgAACWBA=
+Date:   Thu, 27 Feb 2020 18:48:40 +0000
+Message-ID: <DM5PR1201MB2554FCEFFDD68D74FFE2DEDF9EEB0@DM5PR1201MB2554.namprd12.prod.outlook.com>
+References: <cover.1582752490.git.melissa.srw@gmail.com>
+ <9961afca2cf831ac688025a63b7cd35dd0908fac.1582752490.git.melissa.srw@gmail.com>
+ <DM5PR1201MB25540271F42D8034FB2611829EEB0@DM5PR1201MB2554.namprd12.prod.outlook.com>
+In-Reply-To: <DM5PR1201MB25540271F42D8034FB2611829EEB0@DM5PR1201MB2554.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Zhan.Liu@amd.com; 
+x-originating-ip: [165.204.55.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7ba8a28e-6fad-4170-c0bf-08d7bbb5a9e9
+x-ms-traffictypediagnostic: DM5PR1201MB0268:|DM5PR1201MB0268:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM5PR1201MB02685FA8E206FADF572E3F889EEB0@DM5PR1201MB0268.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3968;
+x-forefront-prvs: 03264AEA72
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(376002)(39860400002)(366004)(346002)(189003)(199004)(186003)(6506007)(26005)(478600001)(54906003)(71200400001)(53546011)(316002)(2906002)(7696005)(86362001)(110136005)(33656002)(5660300002)(8936002)(81156014)(55016002)(66446008)(76116006)(9686003)(64756008)(4326008)(2940100002)(8676002)(81166006)(66476007)(66556008)(66946007)(52536014)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR1201MB0268;H:DM5PR1201MB2554.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: iINNV0Q+VopZhRro/fEQqb47khKedVA8pG841HndeRa9AD7XA+u1jgLDkTG9e6z3DAVxvI86BMAeQz6RMKYrLdP2GkON87OZ62qOCQ6pjsxQIRG1oENa408tbHYIdx6zfDW60NE7hOmJtwqs5LhD8koZ8FZqtbvwZws2XPPCWNqncu/Q5qo4tYOD0FXLUCxFz1ileyhNVklTr0TGKcqzm3tAkBfiH49OMZvAByYXSZHhI3g3+CJWAtB/9//NkY8qjuBEQf/xwG4H9x8kIJupEjHngIar+/9Dp0cwHb3ocjEcjFmNAItEhWJqwFUOHRPk3hAvqeYiGMyio3XGNajIwQsCZalkgdIqYwQ6I3lfHQ530A5KSpnFgp2QBqdMweHWcB65ScwPWU2I8QqQBQlD5lz0tOR8Ylnjq1q9LhRVerr6N9a1zUCODlFY8FJ4RzgDSiKJ5vIA/m/8kCUY7UpALe/Sxa1sKkVjIk9E/9R+7+vmf9jwgT9i+WNf99uFzG/T
+x-ms-exchange-antispam-messagedata: 5adomc7QC6AQtvxXs9vuH+rf/MSPpCb4Faa7kCkvE7cx/6FwZYSxwOmOuen0AN3F+xNjHI5Vluf8+blsUB9N0q8xTSQTUvZpM+r0olJBYIMrcLkqsWjd44gk3IuB654J9qcuV6Q6e4CJQZ0cZR5I0w==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.168.186
-X-Source-L: No
-X-Exim-ID: 1j7O9r-0040oC-Vw
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.168.186]:16949
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ba8a28e-6fad-4170-c0bf-08d7bbb5a9e9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2020 18:48:40.8878
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: B0fO4DYjp3h9J/j75ZIXZQICPmgl+xWQn3DfiNRPDTK2kTMOg1J8LBQ+ZSU8GS+f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1201MB0268
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+> -----Original Message-----
+> From: amd-gfx <amd-gfx-bounces@lists.freedesktop.org> On Behalf Of Liu,
+> Zhan
+> Sent: 2020/February/27, Thursday 1:40 PM
+> To: Melissa Wen <melissa.srw@gmail.com>; Wentland, Harry
+> <Harry.Wentland@amd.com>; Li, Sun peng (Leo) <Sunpeng.Li@amd.com>;
+> Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian
+> <Christian.Koenig@amd.com>; Zhou, David(ChunMing)
+> <David1.Zhou@amd.com>; David Airlie <airlied@linux.ie>; Daniel Vetter
+> <daniel@ffwll.ch>; Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> Cc: amd-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; linux=
+-
+> kernel@vger.kernel.org
+> Subject: RE: [PATCH 2/2] drm/amd/display: dc_link: code clean up on
+> detect_dp function
+>=20
+>=20
+> > -----Original Message-----
+> > From: amd-gfx <amd-gfx-bounces@lists.freedesktop.org> On Behalf Of
+> > Melissa Wen
+> > Sent: 2020/February/26, Wednesday 5:08 PM
+> > To: Wentland, Harry <Harry.Wentland@amd.com>; Li, Sun peng (Leo)
+> > <Sunpeng.Li@amd.com>; Deucher, Alexander
+> <Alexander.Deucher@amd.com>;
+> > Koenig, Christian <Christian.Koenig@amd.com>; Zhou, David(ChunMing)
+> > <David1.Zhou@amd.com>; David Airlie <airlied@linux.ie>; Daniel Vetter
+> > <daniel@ffwll.ch>; Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> > Cc: dri-devel@lists.freedesktop.org; amd-gfx@lists.freedesktop.org;
+> > linux- kernel@vger.kernel.org
+> > Subject: [PATCH 2/2] drm/amd/display: dc_link: code clean up on
+> > detect_dp function
+> >
+> > Removes codestyle issues on detect_dp function as suggested by
+> > checkpatch.pl.
+> >
+> > CHECK: Lines should not end with a '('
+> > WARNING: Missing a blank line after declarations
+> > WARNING: line over 80 characters
+> > CHECK: Alignment should match open parenthesis
+> >
+> > Signed-off-by: Melissa Wen <melissa.srw@gmail.com>
+>=20
+> Thank you Melissa for your contribution! Will apply it.
+>=20
+> This patch is:
+> Reviewed-by: Zhan Liu <zhan.liu@amd.com>
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+Sorry I didn't see Rodrigo already replied your email. Please send us a V2,=
+ then we will review your V2 patch.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+And again, thank you so much for your contribution!
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+Zhan
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/char/mspec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/char/mspec.c b/drivers/char/mspec.c
-index a9d9f074fbd6..7d583222e8fa 100644
---- a/drivers/char/mspec.c
-+++ b/drivers/char/mspec.c
-@@ -75,7 +75,7 @@ struct vma_data {
- 	enum mspec_page_type type; /* Type of pages allocated. */
- 	unsigned long vm_start;	/* Original (unsplit) base. */
- 	unsigned long vm_end;	/* Original (unsplit) end. */
--	unsigned long maddr[0];	/* Array of MSPEC addresses. */
-+	unsigned long maddr[];	/* Array of MSPEC addresses. */
- };
- 
- /*
--- 
-2.25.0
+>=20
+> > ---
+> >  drivers/gpu/drm/amd/display/dc/core/dc_link.c | 35
+> > +++++++++----------
+> >  1 file changed, 16 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> > b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> > index 0f28b5694144..adb717f02c9c 100644
+> > --- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> > +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> > @@ -585,14 +585,14 @@ static void
+> > read_current_link_settings_on_detect(struct dc_link *link)
+> >  		LINK_SPREAD_05_DOWNSPREAD_30KHZ :
+> > LINK_SPREAD_DISABLED;  }
+> >
+> > -static bool detect_dp(
+> > -	struct dc_link *link,
+> > -	struct display_sink_capability *sink_caps,
+> > -	bool *converter_disable_audio,
+> > -	struct audio_support *audio_support,
+> > -	enum dc_detect_reason reason)
+> > +static bool detect_dp(struct dc_link *link,
+> > +		      struct display_sink_capability *sink_caps,
+> > +		      bool *converter_disable_audio,
+> > +		      struct audio_support *audio_support,
+> > +		      enum dc_detect_reason reason)
+> >  {
+> >  	bool boot =3D false;
+> > +
+> >  	sink_caps->signal =3D link_detect_sink(link, reason);
+> >  	sink_caps->transaction_type =3D
+> >  		get_ddc_transaction_type(sink_caps->signal);
+> > @@ -606,9 +606,8 @@ static bool detect_dp(
+> >  			sink_caps->signal =3D
+> > SIGNAL_TYPE_DISPLAY_PORT_MST;
+> >  			link->type =3D dc_connection_mst_branch;
+> >
+> > -			dal_ddc_service_set_transaction_type(
+> > -							link->ddc,
+> > -							sink_caps-
+> > >transaction_type);
+> > +			dal_ddc_service_set_transaction_type(link->ddc,
+> > +							     sink_caps-
+> > >transaction_type);
+> >
+> >  			/*
+> >  			 * This call will initiate MST topology discovery.
+> > Which @@ -637,13 +636,10 @@ static bool detect_dp(
+> >  			if (reason =3D=3D DETECT_REASON_BOOT)
+> >  				boot =3D true;
+> >
+> > -			dm_helpers_dp_update_branch_info(
+> > -				link->ctx,
+> > -				link);
+> > +			dm_helpers_dp_update_branch_info(link->ctx, link);
+> >
+> > -			if (!dm_helpers_dp_mst_start_top_mgr(
+> > -				link->ctx,
+> > -				link, boot)) {
+> > +			if (!dm_helpers_dp_mst_start_top_mgr(link->ctx,
+> > +							     link, boot)) {
+> >  				/* MST not supported */
+> >  				link->type =3D dc_connection_single;
+> >  				sink_caps->signal =3D
+> > SIGNAL_TYPE_DISPLAY_PORT; @@ -651,7 +647,7 @@ static bool
+> detect_dp(
+> >  		}
+> >
+> >  		if (link->type !=3D dc_connection_mst_branch &&
+> > -			is_dp_active_dongle(link)) {
+> > +		    is_dp_active_dongle(link)) {
+> >  			/* DP active dongles */
+> >  			link->type =3D dc_connection_active_dongle;
+> >  			if (!link->dpcd_caps.sink_count.bits.SINK_COUNT)
+> > { @@ -662,14 +658,15 @@ static bool detect_dp(
+> >  				return true;
+> >  			}
+> >
+> > -			if (link->dpcd_caps.dongle_type !=3D
+> > DISPLAY_DONGLE_DP_HDMI_CONVERTER)
+> > +			if (link->dpcd_caps.dongle_type !=3D
+> > +			    DISPLAY_DONGLE_DP_HDMI_CONVERTER)
+> >  				*converter_disable_audio =3D true;
+> >  		}
+> >  	} else {
+> >  		/* DP passive dongles */
+> >  		sink_caps->signal =3D dp_passive_dongle_detection(link->ddc,
+> > -				sink_caps,
+> > -				audio_support);
+> > +								sink_caps,
+> > +
+> > 	audio_support);
+> >  	}
+> >
+> >  	return true;
+> > --
+> > 2.25.0
+> >
+> > _______________________________________________
+> > amd-gfx mailing list
+> > amd-gfx@lists.freedesktop.org
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
 
