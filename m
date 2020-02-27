@@ -2,245 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4D03172583
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:48:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C8B2172592
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:49:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730704AbgB0Rok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1730796AbgB0RpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 12:45:00 -0500
+Received: from mga06.intel.com ([134.134.136.31]:18526 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730669AbgB0Rok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 27 Feb 2020 12:44:40 -0500
-Received: from out28-5.mail.aliyun.com ([115.124.28.5]:52317 "EHLO
-        out28-5.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730627AbgB0Roh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 12:44:37 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07441786|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.411568-0.0104174-0.578014;DS=CONTINUE|ham_regular_dialog|0.0594824-0.00168407-0.938833;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03305;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=23;RT=23;SR=0;TI=SMTPD_---.GtKZqhO_1582825466;
-Received: from 192.168.10.227(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GtKZqhO_1582825466)
-          by smtp.aliyun-inc.com(10.147.41.199);
-          Fri, 28 Feb 2020 01:44:28 +0800
-Subject: Re: [PATCH v6 5/7] dt-bindings: MIPS: Document Ingenic SoCs binding.
-To:     Paul Cercueil <paul@crapouillou.net>
-References: <1582215889-113034-1-git-send-email-zhouyanjie@wanyeetech.com>
- <1582215889-113034-7-git-send-email-zhouyanjie@wanyeetech.com>
- <20200226162907.GA13489@bogus> <1582811295.3.1@crapouillou.net>
-Cc:     Rob Herring <robh@kernel.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, tglx@linutronix.de,
-        ralf@linux-mips.org, paulburton@kernel.org,
-        jiaxun.yang@flygoat.com, chenhc@lemote.com, sboyd@kernel.org,
-        mturquette@baylibre.com, mark.rutland@arm.com,
-        daniel.lezcano@linaro.org, geert+renesas@glider.be,
-        krzk@kernel.org, ebiederm@xmission.com, miquel.raynal@bootlin.com,
-        keescook@chromium.org, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com, dongsheng.qiu@ingenic.com
-From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Message-ID: <5E57FFF9.2030804@wanyeetech.com>
-Date:   Fri, 28 Feb 2020 01:44:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.8.0
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 09:44:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,492,1574150400"; 
+   d="scan'208";a="317859094"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by orsmga001.jf.intel.com with ESMTP; 27 Feb 2020 09:44:38 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: [PATCH] KVM: nVMX: Consult only the "basic" exit reason when routing nested exit
+Date:   Thu, 27 Feb 2020 09:44:30 -0800
+Message-Id: <20200227174430.26371-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <1582811295.3.1@crapouillou.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+Consult only the basic exit reason, i.e. bits 15:0 of vmcs.EXIT_REASON,
+when determining whether a nested VM-Exit should be reflected into L1 or
+handled by KVM in L0.
 
-On 2020年02月27日 21:48, Paul Cercueil wrote:
-> Hi,
->
-> Le mer., févr. 26, 2020 at 10:29, Rob Herring <robh@kernel.org> a écrit :
->> On Fri, Feb 21, 2020 at 12:24:47AM +0800, 周琰杰 (Zhou Yanjie) wrote:
->>>  Document the available properties for the SoC root node and the
->>>  CPU nodes of the devicetree for the Ingenic XBurst SoCs.
->>>
->>>  Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
->>>  Tested-by: Paul Boddie <paul@boddie.org.uk>
->>>  Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->>>  ---
->>>
->>>  Notes:
->>>      v1->v2:
->>>      Change the two Document from txt to yaml.
->>>
->>>      v2->v3:
->>>      Fix formatting errors.
->>>
->>>      v3->v4:
->>>      Fix bugs in the two yaml files.
->>>
->>>      v4->v5:
->>>      No change.
->>>
->>>      v5->v6:
->>>      Rewrite the two yaml files.
->>>
->>>   .../bindings/mips/ingenic/ingenic,cpu.yaml         | 61 
->>> ++++++++++++++++++++++
->>>   .../bindings/mips/ingenic/ingenic,soc.yaml         | 34 ++++++++++++
->>>   2 files changed, 95 insertions(+)
->>>   create mode 100644 
->>> Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->>>   create mode 100644 
->>> Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->>>
->>>  diff --git 
->>> a/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml 
->>> b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->>>  new file mode 100644
->>>  index 00000000..ad1fd86
->>>  --- /dev/null
->>>  +++ b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->>>  @@ -0,0 +1,61 @@
->>>  +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>  +%YAML 1.2
->>>  +---
->>>  +$id: http://devicetree.org/schemas/mips/ingenic/ingenic,cpu.yaml#
->>>  +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>  +
->>>  +title: Bindings for Ingenic XBurst family CPUs
->>>  +
->>>  +maintainers:
->>>  +  - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->>
->> Blank line here.
->>
->>>  +description: |
->>
->> Drop the '|'.
->>
->>>  +  Ingenic XBurst family CPUs shall have the following properties.
->>>  +
->>>  +properties:
->>>  +  compatible:
->>>  +    oneOf:
->>>  +
->>>  +      - description: Ingenic XBurst®1 CPU Core
->>>  +        items:
->>>  +          - const: ingenic,xburst
->>>  +
->>>  +      - description: Ingenic XBurst®2 CPU Core
->>>  +        items:
->>>  +          - const: ingenic,xburst2
->>
->> enum:
->>   - ingenic,xburst  # Ingenic XBurst®1 CPU Core
->>   - ingenic,xburst2 # Ingenic XBurst®2 CPU Core
->>
->> Though I don't find the description really adds much.
->
-> About the enum values: shouldn't they be a bit more descriptive? There 
-> has been various versions of the Xburst1 chip, with slightly different 
-> instruction sets and hardware (FPU).
+For better or worse, the switch statement in nested_vmx_exit_reflected()
+currently defaults to "true", i.e. reflects any nested VM-Exit without
+dedicated logic.  Because the case statements only contain the basic
+exit reason, any VM-Exit with modifier bits set will be reflected to L1,
+even if KVM intended to handle it in L0.
 
-Sure, will change in next version.
+Practically speaking, this only affects EXIT_REASON_MCE_DURING_VMENTRY,
+i.e. a #MC that occurs on nested VM-Enter would be incorrectly routed to
+L1, as "failed VM-Entry" is the only modifier that KVM can currently
+encounter.  The SMM modifiers will never be generated as KVM doesn't
+support/employ a SMI Transfer Monitor.  Ditto for "exit from enclave",
+as KVM doesn't yet support virtualizing SGX, i.e. it's impossible to
+enter an enclave in a KVM guest (L1 or L2).
 
->
-> -Paul
->
->>>  +
->>>  +  reg:
->>>  +    description: |
->>>  +      The number of the CPU.
->>
->> Drop this.
->>
->> Add:
->>
->> maxItems: 1
->>
->>>  +
->>>  +required:
->>>  +  - device_type
->>>  +  - compatible
->>>  +  - reg
->>>  +
->>>  +examples:
->>>  +  - |
->>>  +    #include <dt-bindings/clock/jz4780-cgu.h>
->>>  +
->>>  +    cpus {
->>>  +        #address-cells = <1>;
->>>  +        #size-cells = <0>;
->>>  +
->>>  +        cpu0: cpu@0 {
->>>  +            device_type = "cpu";
->>>  +            compatible = "ingenic,xburst";
->>>  +            reg = <0>;
->>>  +
->>
->>>  +            clocks = <&cgu JZ4780_CLK_CPU>;
->>>  +            clock-names = "cpu";
->>
->> Not documented.
->>
->>>  +        };
->>>  +
->>>  +        cpu1: cpu@1 {
->>>  +            device_type = "cpu";
->>>  +            compatible = "ingenic,xburst";
->>>  +            reg = <1>;
->>>  +
->>>  +            clocks = <&cgu JZ4780_CLK_CORE1>;
->>>  +            clock-names = "cpu";
->>>  +        };
->>>  +    };
->>>  +...
->>>  diff --git 
->>> a/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml 
->>> b/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->>>  new file mode 100644
->>>  index 00000000..8943e73
->>>  --- /dev/null
->>>  +++ b/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->>>  @@ -0,0 +1,34 @@
->>>  +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>  +%YAML 1.2
->>>  +---
->>>  +$id: http://devicetree.org/schemas/mips/ingenic/ingenic,soc.yaml#
->>>  +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>  +
->>>  +title: Bindings for Ingenic SoCs with XBurst CPU inside.
->>>  +
->>>  +maintainers:
->>>  +  - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->>
->> Blank line.
->>
->>>  +description: |
->>>  +  Ingenic SoCs with XBurst CPU inside shall have the following 
->>> properties.
->>>  +
->>>  +properties:
->>>  +  $nodename:
->>>  +    const: '/'
->>>  +  compatible:
->>>  +    oneOf:
->>>  +
->>>  +      - description: Ingenic JZ47 Series Mobile Application Processor
->>>  +        items:
->>>  +          - const: ingenic,jz4740
->>>  +          - const: ingenic,jz4725b
->>>  +          - const: ingenic,jz4760
->>>  +          - const: ingenic,jz4760b
->>>  +          - const: ingenic,jz4770
->>>  +          - const: ingenic,jz4780
->>
->> This is defining the root compatible is 6 strings. You want a enum here
->> I think.
->>
->>>  +
->>>  +      - description: Ingenic X Series IoT Application Processor
->>>  +        items:
->>>  +          - const: ingenic,x1000
->>>  +          - const: ingenic,x1000e
->>>  +          - const: ingenic,x1500
->>
->> Same here.
->>
->> Did you validate your dts file with this schema using 'make dtbs_check'?
->>
->> Rob
->
+Fixes: 644d711aa0e1 ("KVM: nVMX: Deciding if L0 or L1 should handle an L2 exit")
+Cc: Jim Mattson <jmattson@google.com>
+Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/kvm/vmx/nested.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 0946122a8d3b..127065bbde2c 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -5554,7 +5554,7 @@ bool nested_vmx_exit_reflected(struct kvm_vcpu *vcpu, u32 exit_reason)
+ 				vmcs_read32(VM_EXIT_INTR_ERROR_CODE),
+ 				KVM_ISA_VMX);
+ 
+-	switch (exit_reason) {
++	switch ((u16)exit_reason) {
+ 	case EXIT_REASON_EXCEPTION_NMI:
+ 		if (is_nmi(intr_info))
+ 			return false;
+-- 
+2.24.1
 
