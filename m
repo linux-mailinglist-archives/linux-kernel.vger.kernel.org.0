@@ -2,97 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65147172528
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:34:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F8F17252F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:34:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730315AbgB0Rdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 12:33:52 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:56752 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729512AbgB0Rdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 12:33:52 -0500
-Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
-        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <logang@deltatee.com>)
-        id 1j7N2U-0003wS-Ev; Thu, 27 Feb 2020 10:33:35 -0700
-To:     Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
-        Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>
-References: <20200220203652.26734-1-logang@deltatee.com>
- <20200220203652.26734-8-logang@deltatee.com>
- <becbf34c-e22e-3c48-41df-f23fee2da658@grimberg.me>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <cc305c27-6974-929f-e90a-510312b9b964@deltatee.com>
-Date:   Thu, 27 Feb 2020 10:33:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1730447AbgB0Re0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 12:34:26 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:25824 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729678AbgB0ReZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 12:34:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582824864;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JIy4soTckrnNxIx60AnqK7b811MaH6RrRiwbpQXEFw0=;
+        b=Shxap+36t61ZN/S52XrGY27G3pOpNv6as8LVdPv84pYDh7WwZgkEZi136riQ5feq8PtB/J
+        5vVobmJNaUJa1GJIG+58DyuYSSEwWBJdj3NU8Il1RKJiXvIPe8NqMAw8w6Uy3biuSCN3Z3
+        YAIoCgjMmQoUZB8r8T20lW5+jZCRYSY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-168-IVUUXeErOcCf36RRUaAqvA-1; Thu, 27 Feb 2020 12:34:16 -0500
+X-MC-Unique: IVUUXeErOcCf36RRUaAqvA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 26AD2800D54;
+        Thu, 27 Feb 2020 17:34:15 +0000 (UTC)
+Received: from gondolin (ovpn-117-2.ams2.redhat.com [10.36.117.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BAE625C578;
+        Thu, 27 Feb 2020 17:34:10 +0000 (UTC)
+Date:   Thu, 27 Feb 2020 18:34:07 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dev@dpdk.org, mtosatti@redhat.com,
+        thomas@monjalon.net, bluca@debian.org, jerinjacobk@gmail.com,
+        bruce.richardson@intel.com
+Subject: Re: [PATCH v2 4/7] vfio: Introduce VFIO_DEVICE_FEATURE ioctl and
+ first user
+Message-ID: <20200227183407.74a5c5b4.cohuck@redhat.com>
+In-Reply-To: <158213845865.17090.13613582696110253458.stgit@gimli.home>
+References: <158213716959.17090.8399427017403507114.stgit@gimli.home>
+        <158213845865.17090.13613582696110253458.stgit@gimli.home>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <becbf34c-e22e-3c48-41df-f23fee2da658@grimberg.me>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 70.73.163.230
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, maxg@mellanox.com, Chaitanya.Kulkarni@wdc.com, axboe@fb.com, kbusch@kernel.org, hch@lst.de, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH v11 7/9] nvmet-passthru: Add passthru code to process
- commands
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the Review!
+On Wed, 19 Feb 2020 11:54:18 -0700
+Alex Williamson <alex.williamson@redhat.com> wrote:
 
-On 2020-02-26 4:28 p.m., Sagi Grimberg wrote:
-> This looks questionable... There are tons of features that doesn't
-> make sense here like hmb, temperature stuff, irq stuff, timestamps,
-> reservations etc... passing-through these will have confusing
-> semantics.. Maybe white-list what actually makes sense to passthru?
-
-Yes, I agree a white-list here probably makes sense. I'll try to come up
-with a list of features to start that whitelist, though my list might be
-a bit different from yours: I don't see why temperature or timestamps
-can't be passed through.
-
-Also note: Christoph was advocating against the whitelist for the
-commands, though, I agree with you that it is the most sensible approach.
-
->> +        break;
->> +    case nvme_admin_identify:
->> +        switch (req->cmd->identify.cns) {
->> +        case NVME_ID_CNS_CTRL:
->> +            req->execute = nvmet_passthru_execute_cmd;
->> +            req->p.end_req = nvmet_passthru_override_id_ctrl;
->> +            return NVME_SC_SUCCESS;
->> +        case NVME_ID_CNS_NS:
->> +            req->execute = nvmet_passthru_execute_cmd;
->> +            req->p.end_req = nvmet_passthru_override_id_ns;
->> +            return NVME_SC_SUCCESS;
+> The VFIO_DEVICE_FEATURE ioctl is meant to be a general purpose, device
+> agnostic ioctl for setting, retrieving, and probing device features.
+> This implementation provides a 16-bit field for specifying a feature
+> index, where the data porition of the ioctl is determined by the
+> semantics for the given feature.  Additional flag bits indicate the
+> direction and nature of the operation; SET indicates user data is
+> provided into the device feature, GET indicates the device feature is
+> written out into user data.  The PROBE flag augments determining
+> whether the given feature is supported, and if provided, whether the
+> given operation on the feature is supported.
 > 
-> Aren't you missing NVME_ID_CNS_NS_DESC_LIST? and
-> NVME_ID_CNS_NS_ACTIVE_LIST?
-
-Well no, seeing they can be passed through the default path.... But in
-the light of the comment below, yes.
-
->> +        default:
->> +            return nvmet_setup_passthru_command(req);
->> +        }
+> The first user of this ioctl is for setting the vfio-pci VF token,
+> where the user provides a shared secret key (UUID) on a SR-IOV PF
+> device, which users must provide when opening associated VF devices.
 > 
-> Also here, all the namespace management stuff has questionable
-> semantics in my mind...
+> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> ---
+>  drivers/vfio/pci/vfio_pci.c |   52 +++++++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/vfio.h   |   37 +++++++++++++++++++++++++++++++
+>  2 files changed, 89 insertions(+)
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> index 8dd6ef9543ca..e4d5d26e5e71 100644
+> --- a/drivers/vfio/pci/vfio_pci.c
+> +++ b/drivers/vfio/pci/vfio_pci.c
+> @@ -1180,6 +1180,58 @@ static long vfio_pci_ioctl(void *device_data,
+>  
+>  		return vfio_pci_ioeventfd(vdev, ioeventfd.offset,
+>  					  ioeventfd.data, count, ioeventfd.fd);
+> +	} else if (cmd == VFIO_DEVICE_FEATURE) {
+> +		struct vfio_device_feature feature;
+> +		uuid_t uuid;
+> +
+> +		minsz = offsetofend(struct vfio_device_feature, flags);
+> +
+> +		if (copy_from_user(&feature, (void __user *)arg, minsz))
+> +			return -EFAULT;
+> +
+> +		if (feature.argsz < minsz)
+> +			return -EINVAL;
+> +
+> +		if (feature.flags & ~(VFIO_DEVICE_FEATURE_MASK |
+> +				      VFIO_DEVICE_FEATURE_SET |
+> +				      VFIO_DEVICE_FEATURE_GET |
+> +				      VFIO_DEVICE_FEATURE_PROBE))
+> +			return -EINVAL;
 
-Yes, I agree with that. I'll make the change in the next revision.
+GET|SET|PROBE is well-defined, but what about GET|SET without PROBE? Do
+we want to fence this in the generic ioctl handler part? Or is there
+any sane way to implement that (read and then write back something?)
 
-Logan
+> +
+> +		switch (feature.flags & VFIO_DEVICE_FEATURE_MASK) {
+> +		case VFIO_DEVICE_FEATURE_PCI_VF_TOKEN:
+> +			if (!vdev->vf_token)
+> +				return -ENOTTY;
+> +
+> +			/*
+> +			 * We do not support GET of the VF Token UUID as this
+> +			 * could expose the token of the previous device user.
+> +			 */
+> +			if (feature.flags & VFIO_DEVICE_FEATURE_GET)
+> +				return -EINVAL;
+> +
+> +			if (feature.flags & VFIO_DEVICE_FEATURE_PROBE)
+> +				return 0;
+> +
+> +			/* Don't SET unless told to do so */
+> +			if (!(feature.flags & VFIO_DEVICE_FEATURE_SET))
+> +				return -EINVAL;
+> +
+> +			if (feature.argsz < minsz + sizeof(uuid))
+> +				return -EINVAL;
+> +
+> +			if (copy_from_user(&uuid, (void __user *)(arg + minsz),
+> +					   sizeof(uuid)))
+> +				return -EFAULT;
+> +
+> +			mutex_lock(&vdev->vf_token->lock);
+> +			uuid_copy(&vdev->vf_token->uuid, &uuid);
+> +			mutex_unlock(&vdev->vf_token->lock);
+> +
+> +			return 0;
+> +		default:
+> +			return -ENOTTY;
+> +		}
+>  	}
+>  
+>  	return -ENOTTY;
+(...)
+
