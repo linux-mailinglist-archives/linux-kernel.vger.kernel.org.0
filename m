@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EFB6171D06
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:17:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F49F171B96
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:04:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389672AbgB0ORL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:17:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57498 "EHLO mail.kernel.org"
+        id S2387478AbgB0ODt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:03:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388665AbgB0ORK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:17:10 -0500
+        id S1732716AbgB0ODe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:03:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EE302468F;
-        Thu, 27 Feb 2020 14:17:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47DB421D7E;
+        Thu, 27 Feb 2020 14:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582813029;
-        bh=jyVEhKbOvfiFnc9zwlVMqvuOOZFN6caQIquxtfzfJEk=;
+        s=default; t=1582812213;
+        bh=lAhoGRiy3sDyaLEZ+O2Zwh8Ozc/K/fZFsR8LjI3Nva0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2T6q5eAaf1Of3OXb6uZKDy+cCFNYVghB5CRXaBWT1aRiYmi0wm0D1NYLb/6Yp8IlD
-         6LusR4t3Q2ln2bL/ELkB4q9mNH+pv/9Pt/fTlefxQQs9vM+SuqC5aVzrLUiKSsXk0w
-         xbIWXpC8j3F1TnnZvT4DvBJop5KDvAJQXzhQK6Ik=
+        b=LZPB5+UYQnbwfMKdTETBcMsz9nVY1+jnfFV6lzAifnlXeiCX5G0nwt3C/0YG1OeMT
+         WnzOcWtVuiE5qNBO8s/Gw/YXHJbHC0xlcmDa+5oeKqzTkWI8QLEmGcFFWkt16h7yZ4
+         So3yNrDElTGBzTvzmBMHJDSUOeSkDXeWSzjnsNx4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Saar Amar <Saar.Amar@microsoft.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH 5.5 060/150] x86/mce/amd: Publish the bank pointer only after setup has succeeded
+        stable@vger.kernel.org, Minas Harutyunyan <hminas@synopsys.com>,
+        Jack Mitchell <ml@embed.me.uk>, Felipe Balbi <balbi@kernel.org>
+Subject: [PATCH 4.19 29/97] usb: dwc2: Fix SET/CLEAR_FEATURE and GET_STATUS flows
 Date:   Thu, 27 Feb 2020 14:36:37 +0100
-Message-Id: <20200227132241.914672261@linuxfoundation.org>
+Message-Id: <20200227132219.337793533@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,104 +43,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
 
-commit 6e5cf31fbe651bed7ba1df768f2e123531132417 upstream.
+commit 9a0d6f7c0a83844baae1d6d85482863d2bf3b7a7 upstream.
 
-threshold_create_bank() creates a bank descriptor per MCA error
-thresholding counter which can be controlled over sysfs. It publishes
-the pointer to that bank in a per-CPU variable and then goes on to
-create additional thresholding blocks if the bank has such.
+SET/CLEAR_FEATURE for Remote Wakeup allowance not handled correctly.
+GET_STATUS handling provided not correct data on DATA Stage.
+Issue seen when gadget's dr_mode set to "otg" mode and connected
+to MacOS.
+Both are fixed and tested using USBCV Ch.9 tests.
 
-However, that creation of additional blocks in
-allocate_threshold_blocks() can fail, leading to a use-after-free
-through the per-CPU pointer.
-
-Therefore, publish that pointer only after all blocks have been setup
-successfully.
-
-Fixes: 019f34fccfd5 ("x86, MCE, AMD: Move shared bank to node descriptor")
-Reported-by: Saar Amar <Saar.Amar@microsoft.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20200128140846.phctkvx5btiexvbx@kili.mountain
+Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
+Fixes: fa389a6d7726 ("usb: dwc2: gadget: Add remote_wakeup_allowed flag")
+Tested-by: Jack Mitchell <ml@embed.me.uk>
+Cc: stable@vger.kernel.org
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/mce/amd.c |   33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+ drivers/usb/dwc2/gadget.c |   28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -1196,8 +1196,9 @@ static const char *get_name(unsigned int
- 	return buf_mcatype;
- }
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -1542,6 +1542,7 @@ static int dwc2_hsotg_process_req_status
+ 	struct dwc2_hsotg_ep *ep0 = hsotg->eps_out[0];
+ 	struct dwc2_hsotg_ep *ep;
+ 	__le16 reply;
++	u16 status;
+ 	int ret;
  
--static int allocate_threshold_blocks(unsigned int cpu, unsigned int bank,
--				     unsigned int block, u32 address)
-+static int allocate_threshold_blocks(unsigned int cpu, struct threshold_bank *tb,
-+				     unsigned int bank, unsigned int block,
-+				     u32 address)
- {
- 	struct threshold_block *b = NULL;
- 	u32 low, high;
-@@ -1241,16 +1242,12 @@ static int allocate_threshold_blocks(uns
+ 	dev_dbg(hsotg->dev, "%s: USB_REQ_GET_STATUS\n", __func__);
+@@ -1553,11 +1554,10 @@ static int dwc2_hsotg_process_req_status
  
- 	INIT_LIST_HEAD(&b->miscj);
+ 	switch (ctrl->bRequestType & USB_RECIP_MASK) {
+ 	case USB_RECIP_DEVICE:
+-		/*
+-		 * bit 0 => self powered
+-		 * bit 1 => remote wakeup
+-		 */
+-		reply = cpu_to_le16(0);
++		status = 1 << USB_DEVICE_SELF_POWERED;
++		status |= hsotg->remote_wakeup_allowed <<
++			  USB_DEVICE_REMOTE_WAKEUP;
++		reply = cpu_to_le16(status);
+ 		break;
  
--	if (per_cpu(threshold_banks, cpu)[bank]->blocks) {
--		list_add(&b->miscj,
--			 &per_cpu(threshold_banks, cpu)[bank]->blocks->miscj);
--	} else {
--		per_cpu(threshold_banks, cpu)[bank]->blocks = b;
--	}
-+	if (tb->blocks)
-+		list_add(&b->miscj, &tb->blocks->miscj);
-+	else
-+		tb->blocks = b;
+ 	case USB_RECIP_INTERFACE:
+@@ -1668,7 +1668,10 @@ static int dwc2_hsotg_process_req_featur
+ 	case USB_RECIP_DEVICE:
+ 		switch (wValue) {
+ 		case USB_DEVICE_REMOTE_WAKEUP:
+-			hsotg->remote_wakeup_allowed = 1;
++			if (set)
++				hsotg->remote_wakeup_allowed = 1;
++			else
++				hsotg->remote_wakeup_allowed = 0;
+ 			break;
  
--	err = kobject_init_and_add(&b->kobj, &threshold_ktype,
--				   per_cpu(threshold_banks, cpu)[bank]->kobj,
--				   get_name(bank, b));
-+	err = kobject_init_and_add(&b->kobj, &threshold_ktype, tb->kobj, get_name(bank, b));
- 	if (err)
- 		goto out_free;
- recurse:
-@@ -1258,7 +1255,7 @@ recurse:
- 	if (!address)
- 		return 0;
+ 		case USB_DEVICE_TEST_MODE:
+@@ -1678,16 +1681,17 @@ static int dwc2_hsotg_process_req_featur
+ 				return -EINVAL;
  
--	err = allocate_threshold_blocks(cpu, bank, block, address);
-+	err = allocate_threshold_blocks(cpu, tb, bank, block, address);
- 	if (err)
- 		goto out_free;
- 
-@@ -1343,8 +1340,6 @@ static int threshold_create_bank(unsigne
- 		goto out_free;
- 	}
- 
--	per_cpu(threshold_banks, cpu)[bank] = b;
--
- 	if (is_shared_bank(bank)) {
- 		refcount_set(&b->cpus, 1);
- 
-@@ -1355,9 +1350,13 @@ static int threshold_create_bank(unsigne
+ 			hsotg->test_mode = wIndex >> 8;
+-			ret = dwc2_hsotg_send_reply(hsotg, ep0, NULL, 0);
+-			if (ret) {
+-				dev_err(hsotg->dev,
+-					"%s: failed to send reply\n", __func__);
+-				return ret;
+-			}
+ 			break;
+ 		default:
+ 			return -ENOENT;
  		}
- 	}
- 
--	err = allocate_threshold_blocks(cpu, bank, 0, msr_ops.misc(bank));
--	if (!err)
--		goto out;
-+	err = allocate_threshold_blocks(cpu, b, bank, 0, msr_ops.misc(bank));
-+	if (err)
-+		goto out_free;
 +
-+	per_cpu(threshold_banks, cpu)[bank] = b;
-+
-+	return 0;
++		ret = dwc2_hsotg_send_reply(hsotg, ep0, NULL, 0);
++		if (ret) {
++			dev_err(hsotg->dev,
++				"%s: failed to send reply\n", __func__);
++			return ret;
++		}
+ 		break;
  
-  out_free:
- 	kfree(b);
+ 	case USB_RECIP_ENDPOINT:
 
 
