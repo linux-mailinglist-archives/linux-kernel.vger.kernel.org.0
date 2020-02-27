@@ -2,191 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6DD5172C22
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 00:15:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D789F172C2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 00:23:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729984AbgB0XPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 18:15:50 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39770 "EHLO
+        id S1729802AbgB0XW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 18:22:58 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44407 "EHLO
         mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729656AbgB0XPu (ORCPT
+        with ESMTP id S1729391AbgB0XW6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 18:15:50 -0500
-Received: by mail-ot1-f66.google.com with SMTP id x97so879090ota.6;
-        Thu, 27 Feb 2020 15:15:49 -0800 (PST)
+        Thu, 27 Feb 2020 18:22:58 -0500
+Received: by mail-ot1-f66.google.com with SMTP id h9so864768otj.11;
+        Thu, 27 Feb 2020 15:22:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sLtDgKUtML63xT0GORqWvBmKtcu4lnFLu8g073y0h0c=;
-        b=AcG7ob9vUZY8VNO5fN+EaTaI1laRxF3p6J2JPE7USjVtHZc5U2kzxrTCmqF2FKpPcJ
-         US4tgYX2Rd7Ny9NSkFJzWJwZkalzRUoAVodxDsg4o0RqYJLcpBCQMNF3ioSya5KL0jDv
-         p0Xsse7F547pzFaSsJ0UUG/LVh/yzq0uW7pdexvrvtO0/Njb22W33g8PKd/wwbMVcYZx
-         uPuemICtwvO0GHL38b8b+XmqQwD/mfRd/1wJGlw8PuRpsMmusBH0920fqB8dMPMOWfyy
-         kU4PZ4Zl5IRhNRLAm43A4EBIfncoG1cLG4/gf4vAKO2Nac79kawxSKDIJ5APNkcyMiyH
-         ZD8Q==
-X-Gm-Message-State: APjAAAUzaks6eolO2dEsoYBCI9FKfti7sxURAZT5k5FxN5956AubphK3
-        DtDVE8hnzd9Q8piNpUJg5ovn67g=
-X-Google-Smtp-Source: APXvYqxIoRVB7eVVQGml6DtJc4JKdbiIQZPUrF2oRrGOzVSEVa7ooJT+zyUS2L/h0c3zJ2WbCYRNvQ==
-X-Received: by 2002:a05:6830:145:: with SMTP id j5mr1006748otp.242.1582845349443;
-        Thu, 27 Feb 2020 15:15:49 -0800 (PST)
+        bh=UkIj7Br6bPd7hbW7TV5UiV4FHsIuHQGX64PWFr24Elw=;
+        b=LDozMsfxXmeO1BiQO6QhIKiUwrhCYJRNJbGBaSS4YrE+tOAy8JMCAxDP4jEmLeAZer
+         2ak3VpM7+VUvgC5ZGwFsg5jwmqLNeCETnakCl9mU3oHd1jToKSrQkRTrnRWEGlB57CzZ
+         l6UvGTCypPphbR90zxvYf88xBEOQepNp/SGdiitzomX7jPJYVeA/lWWnQF2DQdDuTn6X
+         xyFrEwsxmhXka8DATyKj2LeFN/+n4huKOcWIqneUNiDRWITrdqLDd7XUO/v+X+a3o5f5
+         KlCETYzFLF0hfQs4nbPz8COBe4sN1QwYhPak81VWmMCKzR3Yaw9NIALhhEhxWbiVJQ6h
+         1ckA==
+X-Gm-Message-State: APjAAAUssXgeLi/3PxB6fttyvn1/EErMao5kcSIhAtAxd9lF5wagPJQe
+        a6srsyvTs3EO9O9eXeGM+w==
+X-Google-Smtp-Source: APXvYqwyoGSeOvDsr/b/4MBxlzKifGUIKH2KNXIq/Dsvt2qo0CMzRCuC3CpAFxDHEcT2vx8OeH8M/A==
+X-Received: by 2002:a9d:12a2:: with SMTP id g31mr1069694otg.283.1582845777179;
+        Thu, 27 Feb 2020 15:22:57 -0800 (PST)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c7sm2490902otn.81.2020.02.27.15.15.47
+        by smtp.gmail.com with ESMTPSA id n25sm2496905oic.6.2020.02.27.15.22.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 15:15:48 -0800 (PST)
-Received: (nullmailer pid 5803 invoked by uid 1000);
-        Thu, 27 Feb 2020 23:15:47 -0000
-Date:   Thu, 27 Feb 2020 17:15:47 -0600
+        Thu, 27 Feb 2020 15:22:55 -0800 (PST)
+Received: (nullmailer pid 15847 invoked by uid 1000);
+        Thu, 27 Feb 2020 23:22:53 -0000
+Date:   Thu, 27 Feb 2020 17:22:53 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Prashant Malani <pmalani@chromium.org>,
-        linux-kernel@vger.kernel.org, enric.balletbo@collabora.com,
-        bleung@chromium.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: Add cros-ec Type C port driver
-Message-ID: <20200227231547.GA30103@bogus>
-References: <20200220003102.204480-1-pmalani@chromium.org>
- <20200220003102.204480-2-pmalani@chromium.org>
- <20200227151216.GA18240@kuha.fi.intel.com>
+To:     Alistair Delva <adelva@google.com>
+Cc:     linux-kernel@vger.kernel.org, Kenny Root <kroot@google.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, devicetree@vger.kernel.org,
+        linux-nvdimm@lists.01.org, kernel-team@android.com
+Subject: Re: [PATCH v3 3/3] dt-bindings: pmem-region: Document memory-region
+Message-ID: <20200227232253.GA5966@bogus>
+References: <20200224021029.142701-1-adelva@google.com>
+ <20200224021029.142701-3-adelva@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200227151216.GA18240@kuha.fi.intel.com>
+In-Reply-To: <20200224021029.142701-3-adelva@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 05:12:16PM +0200, Heikki Krogerus wrote:
-> Hi,
+On Sun, Feb 23, 2020 at 06:10:29PM -0800, Alistair Delva wrote:
+> From: Kenny Root <kroot@google.com>
 > 
-> On Wed, Feb 19, 2020 at 04:30:55PM -0800, Prashant Malani wrote:
-> > Some Chrome OS devices with Embedded Controllers (EC) can read and
-> > modify Type C port state.
-> > 
-> > Add an entry in the DT Bindings documentation that lists out the logical
-> > device and describes the relevant port information, to be used by the
-> > corresponding driver.
-> > 
-> > Signed-off-by: Prashant Malani <pmalani@chromium.org>
-> > ---
-> > 
-> > Changes in v3:
-> > - Fixed license identifier.
-> > - Renamed "port" to "connector".
-> > - Made "connector" be a "usb-c-connector" compatible property.
-> > - Updated port-number description to explain min and max values,
-> >   and removed $ref which was causing dt_binding_check errors.
-> > - Fixed power-role, data-role and try-power-role details to make
-> >   dt_binding_check pass.
-> > - Fixed example to include parent EC SPI DT Node.
-> > 
-> > Changes in v2:
-> > - No changes. Patch first introduced in v2 of series.
-> > 
-> >  .../bindings/chrome/google,cros-ec-typec.yaml | 86 +++++++++++++++++++
-> >  1 file changed, 86 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> > new file mode 100644
-> > index 00000000000000..97fd982612f120
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> > @@ -0,0 +1,86 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/chrome/google,cros-ec-typec.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Google Chrome OS EC(Embedded Controller) Type C port driver.
-> > +
-> > +maintainers:
-> > +  - Benson Leung <bleung@chromium.org>
-> > +  - Prashant Malani <pmalani@chromium.org>
-> > +
-> > +description:
-> > +  Chrome OS devices have an Embedded Controller(EC) which has access to
-> > +  Type C port state. This node is intended to allow the host to read and
-> > +  control the Type C ports. The node for this device should be under a
-> > +  cros-ec node like google,cros-ec-spi.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: google,cros-ec-typec
-> > +
-> > +  connector:
-> > +    description: A node that represents a physical Type C connector port
-> > +      on the device.
-> > +    type: object
-> > +    properties:
-> > +      compatible:
-> > +        const: usb-c-connector
-> > +      port-number:
-> > +        description: The number used by the Chrome OS EC to identify
-> > +          this type C port. Valid values are 0 - (EC_USB_PD_MAX_PORTS - 1).
-> > +      power-role:
-> > +        description: Determines the power role that the Type C port will
-> > +          adopt.
-> > +        maxItems: 1
-> > +        contains:
-> > +          enum:
-> > +            - sink
-> > +            - source
-> > +            - dual
-> > +      data-role:
-> > +        description: Determines the data role that the Type C port will
-> > +          adopt.
-> > +        maxItems: 1
-> > +        contains:
-> > +          enum:
-> > +            - host
-> > +            - device
-> > +            - dual
-> > +      try-power-role:
-> > +        description: Determines the preferred power role of the Type C port.
-> > +        maxItems: 1
-> > +        contains:
-> > +          enum:
-> > +            - sink
-> > +            - source
-> > +            - dual
-> > +
-> > +    required:
-> > +      - port-number
-> > +      - power-role
-> > +      - data-role
-> > +      - try-power-role
+> Add documentation and example for memory-region in pmem.
 > 
-> Do you really need to redefine those?
-
-No.
-
+> Signed-off-by: Kenny Root <kroot@google.com>
+> Signed-off-by: Alistair Delva <adelva@google.com>
+> Cc: "Oliver O'Halloran" <oohall@gmail.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-nvdimm@lists.01.org
+> Cc: kernel-team@android.com
+> ---
+> [v3: adelva: remove duplicate "From:"]
+>  .../devicetree/bindings/pmem/pmem-region.txt  | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
 > 
-> I think you just need to mention that there is a required sub-node
-> "connector", and the place where it's described. So something
-> like this:
+> diff --git a/Documentation/devicetree/bindings/pmem/pmem-region.txt b/Documentation/devicetree/bindings/pmem/pmem-region.txt
+> index 5cfa4f016a00..0ec87bd034e0 100644
+> --- a/Documentation/devicetree/bindings/pmem/pmem-region.txt
+> +++ b/Documentation/devicetree/bindings/pmem/pmem-region.txt
+> @@ -29,6 +29,18 @@ Required properties:
+>  		in a separate device node. Having multiple address ranges in a
+>  		node implies no special relationship between the two ranges.
+>  
+> +		This property may be replaced or supplemented with a
+> +		memory-region property. Only one of reg or memory-region
+> +		properties is required.
+> +
+> +	- memory-region:
+> +		Reference to the reserved memory node. The reserved memory
+> +		node should be defined as per the bindings in
+> +		reserved-memory.txt
+
+Though we've never enforced it, but /reserved-memory should be within 
+the bounds of /memory node(s). Is that the intent here? If so, how does 
+that work? Wouldn't all the memory be persistent then? Or some other 
+system processor is preserving the contents?
+
+> +
+> +		This property may be replaced or supplemented with a reg
+> +		property. Only one of reg or memory-region is required.
+> +
+>  Optional properties:
+>  	- Any relevant NUMA assocativity properties for the target platform.
+>  
+> @@ -63,3 +75,20 @@ Examples:
+>  		volatile;
+>  	};
+>  
+> +
+> +	/*
+> +	 * This example uses a reserved-memory entry instead of
+> +	 * specifying the memory region directly in the node.
+> +	 */
+> +
+> +	reserved-memory {
+> +		pmem_1: pmem@5000 {
+> +			no-map;
+
+Just add 'compatible = "pmem-region";' here and be done with it. Why add 
+a layer of indirection?
+
+> +			reg = <0x00005000 0x00001000>;
+> +		};
+> +	};
+> +
+> +	pmem@1 {
+
+No 'reg', so shouldn't have a unit-address here.
+
+> +		compatible = "pmem-region";
+> +		memory-region = <&pmem_1>;
+> +	};
+> -- 
+> 2.25.0.265.gbab2e86ba0-goog
 > 
->         Required sub-node:
->         - connector : The "usb-c-connector". The bindings of the
->           connector node are specified in:
-> 
->                 Documentation/devicetree/bindings/connector/usb-connector.txt
-
-Ideally, we'd convert this to schema first and then here just have:
-
-connector:
-  $ref: /schemas/connector/usb-connector.yaml#
-
-> 
-> 
-> Then you just need to define the Chrome OS EC specific properties, so
-> I guess just the "port-number".
-
-'reg' as Stephen suggested.
-
-Rob
