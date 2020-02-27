@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25831171B55
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FA08171BE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:06:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732938AbgB0OBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:01:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35504 "EHLO mail.kernel.org"
+        id S2387445AbgB0OGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:06:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732912AbgB0OB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:01:28 -0500
+        id S1733107AbgB0OGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:06:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 896C520578;
-        Thu, 27 Feb 2020 14:01:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3627E2468D;
+        Thu, 27 Feb 2020 14:06:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812088;
-        bh=85ksYen93kYh5gsGA7RMKMbAp/e0XnVYQSR6Nw4DHvI=;
+        s=default; t=1582812396;
+        bh=PkpBb69cdA9vS0C48xa1KZ92FS2urtOs7EHAfGBXYpM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wMBVpsDyN6KSLNlOUrXGvorEKA61/JKFzdQ6yySaheeoN9iUNtO9D+4hnMpuqFDtz
-         rSfQPwxHShvkn4OlEu/dpmA6JkYM41tqoRcoZRb8O10PFxnKf8NJ2LeRh6hBRG0mbl
-         q0/ZLh8XsyDw+iifQN++PS/uvDe66XIPtYvg/B7s=
+        b=d1D8+zjXT/ZPsagWjIHBoxJfbNC30p5OALbkcpeL0cltrX2G1QgC7iUrTCVq4FSBB
+         Lp5QGJRakXPc62hpLMGPQpHmfCY2kGNB8/x8UNBMRra2G5DipAqBSwD9/l1YEMl1FZ
+         8OYnbvC8hjBKKkcAITAoQRv2Kl3J4q0j4fuYo28I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Upton <oupton@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 217/237] KVM: nVMX: Check IO instruction VM-exit conditions
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.19 63/97] ext4: fix a data race in EXT4_I(inode)->i_disksize
 Date:   Thu, 27 Feb 2020 14:37:11 +0100
-Message-Id: <20200227132312.136414700@linuxfoundation.org>
+Message-Id: <20200227132224.806676288@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,110 +43,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Upton <oupton@google.com>
+From: Qian Cai <cai@lca.pw>
 
-commit 35a571346a94fb93b5b3b6a599675ef3384bc75c upstream.
+commit 35df4299a6487f323b0aca120ea3f485dfee2ae3 upstream.
 
-Consult the 'unconditional IO exiting' and 'use IO bitmaps' VM-execution
-controls when checking instruction interception. If the 'use IO bitmaps'
-VM-execution control is 1, check the instruction access against the IO
-bitmaps to determine if the instruction causes a VM-exit.
+EXT4_I(inode)->i_disksize could be accessed concurrently as noticed by
+KCSAN,
 
-Signed-off-by: Oliver Upton <oupton@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+ BUG: KCSAN: data-race in ext4_write_end [ext4] / ext4_writepages [ext4]
+
+ write to 0xffff91c6713b00f8 of 8 bytes by task 49268 on cpu 127:
+  ext4_write_end+0x4e3/0x750 [ext4]
+  ext4_update_i_disksize at fs/ext4/ext4.h:3032
+  (inlined by) ext4_update_inode_size at fs/ext4/ext4.h:3046
+  (inlined by) ext4_write_end at fs/ext4/inode.c:1287
+  generic_perform_write+0x208/0x2a0
+  ext4_buffered_write_iter+0x11f/0x210 [ext4]
+  ext4_file_write_iter+0xce/0x9e0 [ext4]
+  new_sync_write+0x29c/0x3b0
+  __vfs_write+0x92/0xa0
+  vfs_write+0x103/0x260
+  ksys_write+0x9d/0x130
+  __x64_sys_write+0x4c/0x60
+  do_syscall_64+0x91/0xb47
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+ read to 0xffff91c6713b00f8 of 8 bytes by task 24872 on cpu 37:
+  ext4_writepages+0x10ac/0x1d00 [ext4]
+  mpage_map_and_submit_extent at fs/ext4/inode.c:2468
+  (inlined by) ext4_writepages at fs/ext4/inode.c:2772
+  do_writepages+0x5e/0x130
+  __writeback_single_inode+0xeb/0xb20
+  writeback_sb_inodes+0x429/0x900
+  __writeback_inodes_wb+0xc4/0x150
+  wb_writeback+0x4bd/0x870
+  wb_workfn+0x6b4/0x960
+  process_one_work+0x54c/0xbe0
+  worker_thread+0x80/0x650
+  kthread+0x1e0/0x200
+  ret_from_fork+0x27/0x50
+
+ Reported by Kernel Concurrency Sanitizer on:
+ CPU: 37 PID: 24872 Comm: kworker/u261:2 Tainted: G        W  O L 5.5.0-next-20200204+ #5
+ Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40 07/10/2019
+ Workqueue: writeback wb_workfn (flush-7:0)
+
+Since only the read is operating as lockless (outside of the
+"i_data_sem"), load tearing could introduce a logic bug. Fix it by
+adding READ_ONCE() for the read and WRITE_ONCE() for the write.
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+Link: https://lore.kernel.org/r/1581085751-31793-1-git-send-email-cai@lca.pw
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |   59 ++++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 52 insertions(+), 7 deletions(-)
+ fs/ext4/ext4.h  |    2 +-
+ fs/ext4/inode.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -4997,7 +4997,7 @@ static bool nested_vmx_exit_handled_io(s
- 				       struct vmcs12 *vmcs12)
- {
- 	unsigned long exit_qualification;
--	unsigned int port;
-+	unsigned short port;
- 	int size;
- 
- 	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
-@@ -12335,6 +12335,39 @@ static void nested_vmx_entry_failure(str
- 		to_vmx(vcpu)->nested.sync_shadow_vmcs = true;
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2867,7 +2867,7 @@ static inline void ext4_update_i_disksiz
+ 		     !inode_is_locked(inode));
+ 	down_write(&EXT4_I(inode)->i_data_sem);
+ 	if (newsize > EXT4_I(inode)->i_disksize)
+-		EXT4_I(inode)->i_disksize = newsize;
++		WRITE_ONCE(EXT4_I(inode)->i_disksize, newsize);
+ 	up_write(&EXT4_I(inode)->i_data_sem);
  }
  
-+static int vmx_check_intercept_io(struct kvm_vcpu *vcpu,
-+				  struct x86_instruction_info *info)
-+{
-+	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
-+	unsigned short port;
-+	bool intercept;
-+	int size;
-+
-+	if (info->intercept == x86_intercept_in ||
-+	    info->intercept == x86_intercept_ins) {
-+		port = info->src_val;
-+		size = info->dst_bytes;
-+	} else {
-+		port = info->dst_val;
-+		size = info->src_bytes;
-+	}
-+
-+	/*
-+	 * If the 'use IO bitmaps' VM-execution control is 0, IO instruction
-+	 * VM-exits depend on the 'unconditional IO exiting' VM-execution
-+	 * control.
-+	 *
-+	 * Otherwise, IO instruction VM-exits are controlled by the IO bitmaps.
-+	 */
-+	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
-+		intercept = nested_cpu_has(vmcs12,
-+					   CPU_BASED_UNCOND_IO_EXITING);
-+	else
-+		intercept = nested_vmx_check_io_bitmaps(vcpu, port, size);
-+
-+	return intercept ? X86EMUL_UNHANDLEABLE : X86EMUL_CONTINUE;
-+}
-+
- static int vmx_check_intercept(struct kvm_vcpu *vcpu,
- 			       struct x86_instruction_info *info,
- 			       enum x86_intercept_stage stage)
-@@ -12342,18 +12375,30 @@ static int vmx_check_intercept(struct kv
- 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
- 	struct x86_emulate_ctxt *ctxt = &vcpu->arch.emulate_ctxt;
- 
-+	switch (info->intercept) {
- 	/*
- 	 * RDPID causes #UD if disabled through secondary execution controls.
- 	 * Because it is marked as EmulateOnUD, we need to intercept it here.
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -2569,7 +2569,7 @@ update_disksize:
+ 	 * truncate are avoided by checking i_size under i_data_sem.
  	 */
--	if (info->intercept == x86_intercept_rdtscp &&
--	    !nested_cpu_has2(vmcs12, SECONDARY_EXEC_RDTSCP)) {
--		ctxt->exception.vector = UD_VECTOR;
--		ctxt->exception.error_code_valid = false;
--		return X86EMUL_PROPAGATE_FAULT;
--	}
-+	case x86_intercept_rdtscp:
-+		if (!nested_cpu_has2(vmcs12, SECONDARY_EXEC_RDTSCP)) {
-+			ctxt->exception.vector = UD_VECTOR;
-+			ctxt->exception.error_code_valid = false;
-+			return X86EMUL_PROPAGATE_FAULT;
-+		}
-+		break;
-+
-+	case x86_intercept_in:
-+	case x86_intercept_ins:
-+	case x86_intercept_out:
-+	case x86_intercept_outs:
-+		return vmx_check_intercept_io(vcpu, info);
- 
- 	/* TODO: check more intercepts... */
-+	default:
-+		break;
-+	}
-+
- 	return X86EMUL_UNHANDLEABLE;
- }
+ 	disksize = ((loff_t)mpd->first_page) << PAGE_SHIFT;
+-	if (disksize > EXT4_I(inode)->i_disksize) {
++	if (disksize > READ_ONCE(EXT4_I(inode)->i_disksize)) {
+ 		int err2;
+ 		loff_t i_size;
  
 
 
