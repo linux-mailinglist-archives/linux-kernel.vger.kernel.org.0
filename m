@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0861171F4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:34:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9664B17215F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:49:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732371AbgB0N77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:59:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33208 "EHLO mail.kernel.org"
+        id S1731599AbgB0OsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:48:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732649AbgB0N74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:59:56 -0500
+        id S1729964AbgB0Nn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:43:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D3DB2073D;
-        Thu, 27 Feb 2020 13:59:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 481B9222C2;
+        Thu, 27 Feb 2020 13:43:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811995;
-        bh=r/WO0FWrJOIHowHvre3XJ/A+4DkPoib0/MhKznOeLk0=;
+        s=default; t=1582811006;
+        bh=efPlRvP3BDmjGZsC5qocUrqTpzq37N32vCI719Nqkx0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tSHdibh1kUHhuDhOyyJokZc+BWnGo4kEvUE76ShJOo+07nVITMUp3A2wcre4KEwR6
-         3ImfLiT58yqqR9MYO5ZDyGtDtZA8ejDg1VhBoiRFN69FE7Nuj2mL5gi+4a1/UFxdiX
-         01YD7g1jdUfbH7fFPFZW4AvnrGoICUQ1Qhn72Vd8=
+        b=y3jUB2rfp0Knab9+VyKjFMGpC4Tsyz1De50nI+HgdmcZgpcyj7ns3hwYXg2i0s6LQ
+         izllezjb+/iSMr1Uv/VrXVxlkw6csz/20q9fKrr40XghQHauUKABhFmFMJfHHwWOQT
+         maOwzgI3DfeJI634v47WIYsayXb6fa474hrjDwrE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 181/237] xhci: fix runtime pm enabling for quirky Intel hosts
-Date:   Thu, 27 Feb 2020 14:36:35 +0100
-Message-Id: <20200227132309.682521132@linuxfoundation.org>
+        stable@vger.kernel.org, Zenghui Yu <yuzenghui@huawei.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 080/113] irqchip/gic-v3-its: Reference to its_invall_cmd descriptor when building INVALL
+Date:   Thu, 27 Feb 2020 14:36:36 +0100
+Message-Id: <20200227132224.598723054@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,55 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Zenghui Yu <yuzenghui@huawei.com>
 
-commit 024d411e9c5d49eb96c825af52a3ce2682895676 upstream.
+[ Upstream commit 107945227ac5d4c37911c7841b27c64b489ce9a9 ]
 
-Intel hosts that need the XHCI_PME_STUCK_QUIRK flag should enable
-runtime pm by calling xhci_pme_acpi_rtd3_enable() before
-usb_hcd_pci_probe() calls pci_dev_run_wake().
-Otherwise usage count for the device won't be decreased, and runtime
-suspend is prevented.
+It looks like an obvious mistake to use its_mapc_cmd descriptor when
+building the INVALL command block. It so far worked by luck because
+both its_mapc_cmd.col and its_invall_cmd.col sit at the same offset of
+the ITS command descriptor, but we should not rely on it.
 
-usb_hcd_pci_probe() only decreases the usage count if device can
-generate run-time wake-up events, i.e. when pci_dev_run_wake()
-returns true.
-
-This issue was exposed by pci_dev_run_wake() change in
-commit 8feaec33b986 ("PCI / PM: Always check PME wakeup capability for
-runtime wakeup support")
-and should be backported to kernels with that change
-
-Cc: <stable@vger.kernel.org> # 4.13+
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20200210134553.9144-4-mathias.nyman@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: cc2d3216f53c ("irqchip: GICv3: ITS command queue")
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20191202071021.1251-1-yuzenghui@huawei.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-pci.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -284,6 +284,9 @@ static int xhci_pci_setup(struct usb_hcd
- 	if (!usb_hcd_is_primary_hcd(hcd))
- 		return 0;
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index cf11d43ce2416..d4ae43f71e723 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -352,7 +352,7 @@ static struct its_collection *its_build_invall_cmd(struct its_cmd_block *cmd,
+ 						   struct its_cmd_desc *desc)
+ {
+ 	its_encode_cmd(cmd, GITS_CMD_INVALL);
+-	its_encode_collection(cmd, desc->its_mapc_cmd.col->col_id);
++	its_encode_collection(cmd, desc->its_invall_cmd.col->col_id);
  
-+	if (xhci->quirks & XHCI_PME_STUCK_QUIRK)
-+		xhci_pme_acpi_rtd3_enable(pdev);
-+
- 	xhci_dbg(xhci, "Got SBRN %u\n", (unsigned int) xhci->sbrn);
+ 	its_fixup_cmd(cmd);
  
- 	/* Find any debug ports */
-@@ -344,9 +347,6 @@ static int xhci_pci_probe(struct pci_dev
- 			HCC_MAX_PSA(xhci->hcc_params) >= 4)
- 		xhci->shared_hcd->can_do_streams = 1;
- 
--	if (xhci->quirks & XHCI_PME_STUCK_QUIRK)
--		xhci_pme_acpi_rtd3_enable(dev);
--
- 	/* USB-2 and USB-3 roothubs initialized, allow runtime pm suspend */
- 	pm_runtime_put_noidle(&dev->dev);
- 
+-- 
+2.20.1
+
 
 
