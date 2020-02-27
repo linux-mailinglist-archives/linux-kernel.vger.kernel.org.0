@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98FAA171995
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:46:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC63171AA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:56:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730466AbgB0NqH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:46:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42204 "EHLO mail.kernel.org"
+        id S1732039AbgB0Nzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:55:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730446AbgB0NqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:46:05 -0500
+        id S1732029AbgB0Nzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:55:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27C6F246A1;
-        Thu, 27 Feb 2020 13:46:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88985246B6;
+        Thu, 27 Feb 2020 13:55:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811163;
-        bh=ZXhnpMrj5CaWrpKLVqIdetget1X44xH0z5FU1tXfW64=;
+        s=default; t=1582811749;
+        bh=QQNSVRbe7PnoIGUfrKBf5d6NawvI+UWMX4n3ovQOjMA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wWZQQYIEZo4N2nbcZhsigKbr2iBv/vEdyWeZmpGvc/kx0WEBkh2glqk/J1ZOZysLh
-         jrWGEFklyXgee7ZfJhrIOj1OjISQkgnp91zIDQbIrwBcCKePTpAn+4wb75z3cJ5o0t
-         nd6qHWRt9DEtgc7OLuxQMSDsnWLsLQEK7m3v6K5w=
+        b=06Mdlu9HivLitHmC/xKlkN0Y49FvDNXewQMccqXxlEw+NTe1+c5/LcqIdA0v3DYcH
+         9GQ5X82mQUUO+LnPLKl6ROuOQge/y9pTIzEKk77mjMyDu8NpcjvvgRJMbUy0+wUvJI
+         tMWnfYWja3jdd5FzWNhDqXYVbO3zUWbZH+qUy/D4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        stable@vger.kernel.org, Elia Geretto <elia.f.geretto@gmail.com>,
+        Bob Moore <robert.moore@intel.com>,
+        Erik Kaneda <erik.kaneda@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 026/165] pinctrl: sh-pfc: sh7264: Fix CAN function GPIOs
-Date:   Thu, 27 Feb 2020 14:35:00 +0100
-Message-Id: <20200227132234.762079436@linuxfoundation.org>
+Subject: [PATCH 4.14 087/237] ACPICA: Disassembler: create buffer fields in ACPI_PARSE_LOAD_PASS1
+Date:   Thu, 27 Feb 2020 14:35:01 +0100
+Message-Id: <20200227132303.453824430@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +46,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Erik Kaneda <erik.kaneda@intel.com>
 
-[ Upstream commit 55b1cb1f03ad5eea39897d0c74035e02deddcff2 ]
+[ Upstream commit 5ddbd77181dfca61b16d2e2222382ea65637f1b9 ]
 
-pinmux_func_gpios[] contains a hole due to the missing function GPIO
-definition for the "CTX0&CTX1" signal, which is the logical "AND" of the
-two CAN outputs.
+ACPICA commit 29cc8dbc5463a93625bed87d7550a8bed8913bf4
 
-Fix this by:
-  - Renaming CRX0_CRX1_MARK to CTX0_CTX1_MARK, as PJ2MD[2:0]=010
-    configures the combined "CTX0&CTX1" output signal,
-  - Renaming CRX0X1_MARK to CRX0_CRX1_MARK, as PJ3MD[1:0]=10 configures
-    the shared "CRX0/CRX1" input signal, which is fed to both CAN
-    inputs,
-  - Adding the missing function GPIO definition for "CTX0&CTX1" to
-    pinmux_func_gpios[],
-  - Moving all CAN enums next to each other.
+create_buffer_field is a deferred op that is typically processed in
+load pass 2. However, disassembly of control method contents walk the
+parse tree with ACPI_PARSE_LOAD_PASS1 and AML_CREATE operators are
+processed in a later walk. This is a problem when there is a control
+method that has the same name as the AML_CREATE object. In this case,
+any use of the name segment will be detected as a method call rather
+than a reference to a buffer field. If this is detected as a method
+call, it can result in a mal-formed parse tree if the control methods
+have parameters.
 
-See SH7262 Group, SH7264 Group User's Manual: Hardware, Rev. 4.00:
-  [1] Figure 1.2 (3) (Pin Assignment for the SH7264 Group (1-Mbyte
-      Version),
-  [2] Figure 1.2 (4) Pin Assignment for the SH7264 Group (640-Kbyte
-      Version,
-  [3] Table 1.4 List of Pins,
-  [4] Figure 20.29 Connection Example when Using This Module as 1-Channel
-      Module (64 Mailboxes x 1 Channel),
-  [5] Table 32.10 Multiplexed Pins (Port J),
-  [6] Section 32.2.30 (3) Port J Control Register 0 (PJCR0).
+This change in processing AML_CREATE ops earlier solves this issue by
+inserting the named object in the ACPI namespace so that references
+to this name would be detected as a name string rather than a method
+call.
 
-Note that the last 2 disagree about PJ2MD[2:0], which is probably the
-root cause of this bug.  But considering [4], "CTx0&CTx1" in [5] must
-be correct, and "CRx0&CRx1" in [6] must be wrong.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20191218194812.12741-4-geert+renesas@glider.be
+Link: https://github.com/acpica/acpica/commit/29cc8dbc
+Reported-by: Elia Geretto <elia.f.geretto@gmail.com>
+Tested-by: Elia Geretto <elia.f.geretto@gmail.com>
+Signed-off-by: Bob Moore <robert.moore@intel.com>
+Signed-off-by: Erik Kaneda <erik.kaneda@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-sh7264.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/acpi/acpica/dsfield.c |  2 +-
+ drivers/acpi/acpica/dswload.c | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7264.c b/drivers/pinctrl/sh-pfc/pfc-sh7264.c
-index e1c34e19222ee..3ddb9565ed804 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7264.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7264.c
-@@ -500,17 +500,15 @@ enum {
- 	SD_WP_MARK, SD_CLK_MARK, SD_CMD_MARK,
- 	CRX0_MARK, CRX1_MARK,
- 	CTX0_MARK, CTX1_MARK,
-+	CRX0_CRX1_MARK, CTX0_CTX1_MARK,
+diff --git a/drivers/acpi/acpica/dsfield.c b/drivers/acpi/acpica/dsfield.c
+index 7bcf5f5ea0297..8df4a49a99a6b 100644
+--- a/drivers/acpi/acpica/dsfield.c
++++ b/drivers/acpi/acpica/dsfield.c
+@@ -273,7 +273,7 @@ cleanup:
+  * FUNCTION:    acpi_ds_get_field_names
+  *
+  * PARAMETERS:  info            - create_field info structure
+- *  `           walk_state      - Current method state
++ *              walk_state      - Current method state
+  *              arg             - First parser arg for the field name list
+  *
+  * RETURN:      Status
+diff --git a/drivers/acpi/acpica/dswload.c b/drivers/acpi/acpica/dswload.c
+index eaa859a89702a..1d82e1419397e 100644
+--- a/drivers/acpi/acpica/dswload.c
++++ b/drivers/acpi/acpica/dswload.c
+@@ -444,6 +444,27 @@ acpi_status acpi_ds_load1_end_op(struct acpi_walk_state *walk_state)
+ 	ACPI_DEBUG_PRINT((ACPI_DB_DISPATCH, "Op=%p State=%p\n", op,
+ 			  walk_state));
  
- 	PWM1A_MARK, PWM1B_MARK, PWM1C_MARK, PWM1D_MARK,
- 	PWM1E_MARK, PWM1F_MARK, PWM1G_MARK, PWM1H_MARK,
- 	PWM2A_MARK, PWM2B_MARK, PWM2C_MARK, PWM2D_MARK,
- 	PWM2E_MARK, PWM2F_MARK, PWM2G_MARK, PWM2H_MARK,
- 	IERXD_MARK, IETXD_MARK,
--	CRX0_CRX1_MARK,
- 	WDTOVF_MARK,
++	/*
++	 * Disassembler: handle create field operators here.
++	 *
++	 * create_buffer_field is a deferred op that is typically processed in load
++	 * pass 2. However, disassembly of control method contents walk the parse
++	 * tree with ACPI_PARSE_LOAD_PASS1 and AML_CREATE operators are processed
++	 * in a later walk. This is a problem when there is a control method that
++	 * has the same name as the AML_CREATE object. In this case, any use of the
++	 * name segment will be detected as a method call rather than a reference
++	 * to a buffer field.
++	 *
++	 * This earlier creation during disassembly solves this issue by inserting
++	 * the named object in the ACPI namespace so that references to this name
++	 * would be a name string rather than a method call.
++	 */
++	if ((walk_state->parse_flags & ACPI_PARSE_DISASSEMBLE) &&
++	    (walk_state->op_info->flags & AML_CREATE)) {
++		status = acpi_ds_create_buffer_field(op, walk_state);
++		return_ACPI_STATUS(status);
++	}
++
+ 	/* We are only interested in opcodes that have an associated name */
  
--	CRX0X1_MARK,
--
- 	/* DMAC */
- 	TEND0_MARK, DACK0_MARK, DREQ0_MARK,
- 	TEND1_MARK, DACK1_MARK, DREQ1_MARK,
-@@ -998,12 +996,12 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_DATA(PJ3_DATA, PJ3MD_00),
- 	PINMUX_DATA(CRX1_MARK, PJ3MD_01),
--	PINMUX_DATA(CRX0X1_MARK, PJ3MD_10),
-+	PINMUX_DATA(CRX0_CRX1_MARK, PJ3MD_10),
- 	PINMUX_DATA(IRQ1_PJ_MARK, PJ3MD_11),
- 
- 	PINMUX_DATA(PJ2_DATA, PJ2MD_000),
- 	PINMUX_DATA(CTX1_MARK, PJ2MD_001),
--	PINMUX_DATA(CRX0_CRX1_MARK, PJ2MD_010),
-+	PINMUX_DATA(CTX0_CTX1_MARK, PJ2MD_010),
- 	PINMUX_DATA(CS2_MARK, PJ2MD_011),
- 	PINMUX_DATA(SCK0_MARK, PJ2MD_100),
- 	PINMUX_DATA(LCD_M_DISP_MARK, PJ2MD_101),
-@@ -1248,6 +1246,7 @@ static const struct pinmux_func pinmux_func_gpios[] = {
- 	GPIO_FN(CTX1),
- 	GPIO_FN(CRX1),
- 	GPIO_FN(CTX0),
-+	GPIO_FN(CTX0_CTX1),
- 	GPIO_FN(CRX0),
- 	GPIO_FN(CRX0_CRX1),
- 
+ 	if (!(walk_state->op_info->flags & (AML_NAMED | AML_FIELD))) {
 -- 
 2.20.1
 
