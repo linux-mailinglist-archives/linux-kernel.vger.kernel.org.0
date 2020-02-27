@@ -2,86 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5613B171EF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:31:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA67D171EE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:31:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732952AbgB0Ob3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:31:29 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:33327 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733051AbgB0ODs (ORCPT
+        id S2388073AbgB0Oa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:30:57 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:53058 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387493AbgB0Oaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:03:48 -0500
-Received: by mail-qk1-f193.google.com with SMTP id h4so3222447qkm.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:03:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+wVRmzW/JoYh4wj1/OxvIDIfvZg3+bbPF4TGllHByeo=;
-        b=ucS4vl7NZ6uxuuYw5KrBHw8V40FjjznI3n8m8vTE6ErhwUcNpXpvE4mEGhhJfJsn6G
-         bZExUUsoO/XZJwHwR/wJVOSWw0IJsJHUUWW89mEwKHWEvxsurD+sTHaoaQM/hBzZKaZH
-         kVYbMi0dp2tXVr9gLivoIz08txFzckPldqbm/MnAFAipWWCfzQB1BI8i/r3vifE1jEyq
-         TO4WgrUufYjaQRw50jh7A0oJyqb2U3eBWE3LXyA9s9/kedPvi4NjcAyt8td/1aI66nx1
-         S3a67qACzLvP30LZVBWbCsEEvG42R4E1tqctIgpnsndNq1QEilWBAZW3xXWTNlPlKI89
-         P+6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+wVRmzW/JoYh4wj1/OxvIDIfvZg3+bbPF4TGllHByeo=;
-        b=jUjvqYM4wG5ahuOImD/c7lJOikvRq4uZ9TWIHrVzaUD3ozNgdEfTxRZ5HUVJvRAI8R
-         yc30qGE0pg94hrI2DqveABdMSZJZrBqKNUA7XqoxjUB7f9s7v7Hy5ZGfjtIEuf4MKYQD
-         yLNvqXAZkiYRjh5l1MGAsLwfLMDx/qIfTET02nPp9pBvNTtFvlqXp68eQROROV5fagRB
-         jnqcOxs/nTo2bch79Kwe5ch8Z9I6MAxJNZtBSmXuQZ0Vr/7qyw2SpZ2CB+RY6njEpven
-         akDerfsRQrxUaxl3bv8Qw8hHbEILWyOraOnBGubGicUgELwxbTMDle6zIwRZv4OQsp3b
-         v+fw==
-X-Gm-Message-State: APjAAAVLehTtfIqBVJn/l7gF+B/tl3F7SHF6/oBNACRxAcjSHe7ETebA
-        Dn9AIcDHg6lAe8vTT7IM0qg=
-X-Google-Smtp-Source: APXvYqxZJIo+DrVch1xOfdaPRvoZ7Z0gYMGV11K2Vzp3ohBK/+8b3wAuN4lPglvyD6dt0y2cNnZMYw==
-X-Received: by 2002:a37:aca:: with SMTP id 193mr5597981qkk.424.1582812225029;
-        Thu, 27 Feb 2020 06:03:45 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id h34sm3254712qtc.62.2020.02.27.06.03.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 06:03:44 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id BCC22403AD; Thu, 27 Feb 2020 11:03:41 -0300 (-03)
-Date:   Thu, 27 Feb 2020 11:03:41 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     zhe.he@windriver.com, peterz@infradead.org, mingo@redhat.com,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, mhiramat@kernel.org,
-        kstewart@linuxfoundation.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf: probe-file: Check return value of strlist__add
- for -ENOMEM
-Message-ID: <20200227140341.GE10761@kernel.org>
-References: <1582727404-180095-1-git-send-email-zhe.he@windriver.com>
- <20200226153153.GC217283@krava>
+        Thu, 27 Feb 2020 09:30:55 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582813854; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=31Jyd0ydGwDjWftSsYoT2QGP7wSU/YQyP0VpNOmwFCQ=; b=h80anpqjnboxOhJdpNtCCU1xClXOBQAbTaHHypw9GXKfAQA3cfyPTLVD6G9iB6wrutr9rRnW
+ ceAvP/yA5pLN0Tn4UL/iRb+1OX4nFLUuo+ro4bgrMx60GhCmvmt3Kp5aEGpEp+VtWhu8WnRb
+ ZEk100oD251aVrp30IYTXWPSPX4=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e57d292.7fb093b93e30-smtp-out-n03;
+ Thu, 27 Feb 2020 14:30:42 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 3CA76C4479D; Thu, 27 Feb 2020 14:30:41 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [10.206.25.140] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vbadigan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 35321C433A2;
+        Thu, 27 Feb 2020 14:30:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 35321C433A2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+Subject: Re: [PATCH V4] mmc: sdhci-msm: Update system suspend/resume callbacks
+ of sdhci-msm platform driver
+To:     Shaik Sajida Bhanu <sbhanu@codeaurora.org>,
+        adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        robh+dt@kernel.org, mka@chromium.org
+Cc:     asutoshd@codeaurora.org, swboyd@chromium.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org,
+        cang@codeaurora.org, rampraka@codeaurora.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        agross@kernel.org, bjorn.andersson@linaro.org
+References: <1582181100-29914-1-git-send-email-sbhanu@codeaurora.org>
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Message-ID: <d6c10b49-a12c-d17e-1ff9-90f12e98f624@codeaurora.org>
+Date:   Thu, 27 Feb 2020 20:00:32 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226153153.GC217283@krava>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <1582181100-29914-1-git-send-email-sbhanu@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Feb 26, 2020 at 04:31:53PM +0100, Jiri Olsa escreveu:
-> On Wed, Feb 26, 2020 at 10:30:04PM +0800, zhe.he@windriver.com wrote:
-> > From: He Zhe <zhe.he@windriver.com>
-> > 
-> > strlist__add may fail with -ENOMEM. Check it and give debugging hint in
-> > advance.
-> > 
-> > Signed-off-by: He Zhe <zhe.he@windriver.com>
-> 
-> Acked-by: Jiri Olsa <jolsa@redhat.com>
+Hi Sajida,
 
-Thanks, applied,
+On 2/20/2020 12:15 PM, Shaik Sajida Bhanu wrote:
 
-- Arnaldo
+> The existing suspend/resume callbacks of sdhci-msm driver are just
+> gating/un-gating the clocks. During suspend cycle more can be done
+> like disabling controller, disabling card detection, enabling wake-up events.
+>
+> So updating the system pm callbacks for performing these extra
+> actions besides controlling the clocks.
+>
+> Signed-off-by: Shaik Sajida Bhanu <sbhanu@codeaurora.org>
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+> Changes since V3:
+>      Invoking sdhci & cqhci resume if sdhci_host_suspend fails.
+>      Removed condition check before invoking cqhci_resume since its a dummy function.
+>
+> Changes since V2:
+>      Removed disabling/enabling pwr-irq from system pm ops.
+>
+> Changes since V1:
+>      Invoking pm_runtime_force_suspend/resume instead of
+>      sdhci_msm_runtime_suepend/resume.
+> ---
+>   drivers/mmc/host/sdhci-msm.c | 47 ++++++++++++++++++++++++++++++++++++++++++--
+>   1 file changed, 45 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index 3955fa5d..3559b50 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -2159,9 +2159,52 @@ static __maybe_unused int sdhci_msm_runtime_resume(struct device *dev)
+>   	return 0;
+>   }
+>   
+> +static int sdhci_msm_suspend(struct device *dev)
+> +{
+> +	struct sdhci_host *host = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	if (host->mmc->caps2 & MMC_CAP2_CQE) {
+> +		ret = cqhci_suspend(host->mmc);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = sdhci_suspend_host(host);
+> +	if (ret)
+> +		goto resume_cqhci;
+> +
+> +	ret = pm_runtime_force_suspend(dev);
+> +	if (!ret)
+> +		return ret;
+> +
+> +	sdhci_resume_host(host);
+> +
+> +resume_cqhci:
+> +	cqhci_resume(host->mmc);
+> +	return ret;
+> +}
+> +
+> +static int sdhci_msm_resume(struct device *dev)
+> +{
+> +	struct sdhci_host *host = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = pm_runtime_force_resume(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = sdhci_resume_host(host);
+
+I'm observing an issue with this change.
+
+After this step, i find interrupt enable register is zero (even though 
+it's getting set in sdhci_resume_host()) and
+
+resulting in request timeout for very first command in resume path.
+
+Until its root caused, please hold back this change.
+
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = cqhci_resume(host->mmc);
+> +	return ret;
+> +}
+> +
+>   static const struct dev_pm_ops sdhci_msm_pm_ops = {
+> -	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> -				pm_runtime_force_resume)
+> +	SET_SYSTEM_SLEEP_PM_OPS(sdhci_msm_suspend,
+> +				sdhci_msm_resume)
+>   	SET_RUNTIME_PM_OPS(sdhci_msm_runtime_suspend,
+>   			   sdhci_msm_runtime_resume,
+>   			   NULL)
