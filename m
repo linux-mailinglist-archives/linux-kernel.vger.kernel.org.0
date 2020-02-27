@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FC8F171CC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28D96171DC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389210AbgB0OO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:14:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54316 "EHLO mail.kernel.org"
+        id S2389220AbgB0OO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:14:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389201AbgB0OOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:14:53 -0500
+        id S2389213AbgB0OO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:14:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0189C24691;
-        Thu, 27 Feb 2020 14:14:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A3C520801;
+        Thu, 27 Feb 2020 14:14:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812893;
-        bh=cX2MjCzWKPYkIQ0+jMchJDpZqpV5ZTe8WmRQ/EV9tLs=;
+        s=default; t=1582812896;
+        bh=lqpYNNcrPhcEJCoVEm5zSXwt3P8XbK0+uztpjf3ftmk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VGQbJ7qkcpHJxAGnE46104ZT/WKrA0CgKtubrpDvZHieODFIhPjwjj7eALKUFGiZJ
-         bOhLKWQNc1+M/qNvvD9XRPTpoPCyJbl1SQCNuiNkIdTglo/q6oltf4XIpaOa77Nciz
-         O0rR5dvQPQWHaq/SnOEzVeCUAMBujygIxftN9F8c=
+        b=RF+R/LW5iD0KvWYtjNTN04RcafeBZ8yVIxmgQijbKlWxyD20MIZ2wDWC43AoaZBuH
+         dfL4nByHbcZWsaFev37t3XMeATgj0I2KdbrEPH+LOcoLFNOf7VQX2gl/zZcDqwzYKw
+         EBM6iZe0nVrKk7dqTrCKtyTy8qjmecDzPfJcLaNo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.5 055/150] powerpc/hugetlb: Fix 512k hugepages on 8xx with 16k page size
-Date:   Thu, 27 Feb 2020 14:36:32 +0100
-Message-Id: <20200227132241.220199600@linuxfoundation.org>
+Subject: [PATCH 5.5 056/150] powerpc/hugetlb: Fix 8M hugepages on 8xx
+Date:   Thu, 27 Feb 2020 14:36:33 +0100
+Message-Id: <20200227132241.367939382@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
 References: <20200227132232.815448360@linuxfoundation.org>
@@ -45,99 +45,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit f2b67ef90b0d5eca0f2255e02cf2f620bc0ddcdb upstream.
+commit 50a175dd18de7a647e72aca7daf4744e3a5a81e3 upstream.
 
-Commit 55c8fc3f4930 ("powerpc/8xx: reintroduce 16K pages with HW
-assistance") redefined pte_t as a struct of 4 pte_basic_t, because
-in 16K pages mode there are four identical entries in the
-page table. But the size of hugepage tables is calculated based
-of the size of (void *). Therefore, we end up with page tables
-of size 1k instead of 4k for 512k pages.
+With HW assistance all page tables must be 4k aligned, the 8xx drops
+the last 12 bits during the walk.
 
-As 512k hugepage tables are the same size as standard page tables,
-ie 4k, use the standard page tables instead of PGT_CACHE tables.
+Redefine HUGEPD_SHIFT_MASK to mask last 12 bits out. HUGEPD_SHIFT_MASK
+is used to for alignment of page table cache.
 
-Fixes: 3fb69c6a1a13 ("powerpc/8xx: Enable 512k hugepage support with HW assistance")
+Fixes: 22569b881d37 ("powerpc/8xx: Enable 8M hugepage support with HW assistance")
 Cc: stable@vger.kernel.org # v5.0+
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/90ec56a2315be602494619ed0223bba3b0b8d619.1580997007.git.christophe.leroy@c-s.fr
+Link: https://lore.kernel.org/r/778b1a248c4c7ca79640eeff7740044da6a220a0.1581264115.git.christophe.leroy@c-s.fr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/mm/hugetlbpage.c |   29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+ arch/powerpc/include/asm/page.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/powerpc/mm/hugetlbpage.c
-+++ b/arch/powerpc/mm/hugetlbpage.c
-@@ -53,20 +53,24 @@ static int __hugepte_alloc(struct mm_str
- 	if (pshift >= pdshift) {
- 		cachep = PGT_CACHE(PTE_T_ORDER);
- 		num_hugepd = 1 << (pshift - pdshift);
-+		new = NULL;
- 	} else if (IS_ENABLED(CONFIG_PPC_8xx)) {
--		cachep = PGT_CACHE(PTE_INDEX_SIZE);
-+		cachep = NULL;
- 		num_hugepd = 1;
-+		new = pte_alloc_one(mm);
- 	} else {
- 		cachep = PGT_CACHE(pdshift - pshift);
- 		num_hugepd = 1;
-+		new = NULL;
- 	}
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -295,8 +295,13 @@ static inline bool pfn_valid(unsigned lo
+ /*
+  * Some number of bits at the level of the page table that points to
+  * a hugepte are used to encode the size.  This masks those bits.
++ * On 8xx, HW assistance requires 4k alignment for the hugepte.
+  */
++#ifdef CONFIG_PPC_8xx
++#define HUGEPD_SHIFT_MASK     0xfff
++#else
+ #define HUGEPD_SHIFT_MASK     0x3f
++#endif
  
--	if (!cachep) {
-+	if (!cachep && !new) {
- 		WARN_ONCE(1, "No page table cache created for hugetlb tables");
- 		return -ENOMEM;
- 	}
+ #ifndef __ASSEMBLY__
  
--	new = kmem_cache_alloc(cachep, pgtable_gfp_flags(mm, GFP_KERNEL));
-+	if (cachep)
-+		new = kmem_cache_alloc(cachep, pgtable_gfp_flags(mm, GFP_KERNEL));
- 
- 	BUG_ON(pshift > HUGEPD_SHIFT_MASK);
- 	BUG_ON((unsigned long)new & HUGEPD_SHIFT_MASK);
-@@ -97,7 +101,10 @@ static int __hugepte_alloc(struct mm_str
- 	if (i < num_hugepd) {
- 		for (i = i - 1 ; i >= 0; i--, hpdp--)
- 			*hpdp = __hugepd(0);
--		kmem_cache_free(cachep, new);
-+		if (cachep)
-+			kmem_cache_free(cachep, new);
-+		else
-+			pte_free(mm, new);
- 	} else {
- 		kmemleak_ignore(new);
- 	}
-@@ -324,8 +331,7 @@ static void free_hugepd_range(struct mmu
- 	if (shift >= pdshift)
- 		hugepd_free(tlb, hugepte);
- 	else if (IS_ENABLED(CONFIG_PPC_8xx))
--		pgtable_free_tlb(tlb, hugepte,
--				 get_hugepd_cache_index(PTE_INDEX_SIZE));
-+		pgtable_free_tlb(tlb, hugepte, 0);
- 	else
- 		pgtable_free_tlb(tlb, hugepte,
- 				 get_hugepd_cache_index(pdshift - shift));
-@@ -639,12 +645,13 @@ static int __init hugetlbpage_init(void)
- 		 * if we have pdshift and shift value same, we don't
- 		 * use pgt cache for hugepd.
- 		 */
--		if (pdshift > shift && IS_ENABLED(CONFIG_PPC_8xx))
--			pgtable_cache_add(PTE_INDEX_SIZE);
--		else if (pdshift > shift)
--			pgtable_cache_add(pdshift - shift);
--		else if (IS_ENABLED(CONFIG_PPC_FSL_BOOK3E) || IS_ENABLED(CONFIG_PPC_8xx))
-+		if (pdshift > shift) {
-+			if (!IS_ENABLED(CONFIG_PPC_8xx))
-+				pgtable_cache_add(pdshift - shift);
-+		} else if (IS_ENABLED(CONFIG_PPC_FSL_BOOK3E) ||
-+			   IS_ENABLED(CONFIG_PPC_8xx)) {
- 			pgtable_cache_add(PTE_T_ORDER);
-+		}
- 
- 		configured = true;
- 	}
 
 
