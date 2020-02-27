@@ -2,189 +2,293 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E782F1726DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:19:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4947B1726E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:19:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729776AbgB0STQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:19:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57368 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729306AbgB0STP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:19:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B4501B26B;
-        Thu, 27 Feb 2020 18:19:07 +0000 (UTC)
-Subject: Re: [PATCH v10 2/5] dt-bindings: mediatek: Update mmsys binding to
- reflect it is a system controller
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
-        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
-        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>, rdunlap@infradead.org,
-        dri-devel@lists.freedesktop.org, Weiyi Lu <weiyi.lu@mediatek.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        linux-clk@vger.kernel.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        sean.wang@mediatek.com, frank-w@public-files.de,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
-        linux-arm-kernel@lists.infradead.org,
-        Richard Fontana <rfontana@redhat.com>,
-        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
-        Daniel Vetter <daniel@ffwll.ch>
-References: <20200227180858.1514157-1-enric.balletbo@collabora.com>
- <20200227180858.1514157-3-enric.balletbo@collabora.com>
-From:   Matthias Brugger <mbrugger@suse.com>
-Autocrypt: addr=mbrugger@suse.com; prefer-encrypt=mutual; keydata=
- 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
- HxUCQ9Y1Y/Ct
-Message-ID: <ad069116-7649-33b2-33e6-dc647474d87f@suse.com>
-Date:   Thu, 27 Feb 2020 19:18:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1730558AbgB0STc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:19:32 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:38158 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729536AbgB0STc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:19:32 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01RIHidk030820;
+        Thu, 27 Feb 2020 18:19:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2020-01-29;
+ bh=UCOWi6xTqALc4+GIlAcZUMnpHO1zAlGEODpt199CDEI=;
+ b=EIK/Yfk3NWvfeVVaLcaUlOQyRZ0wRdOlGNwuBvx0LKRkxf6xqdTYSR9sU9V6Bflh7hOv
+ AIo3uU/eNlZIhpja9lC2kD8NtmxoDb4pVtDJuVCcElKfaBtnf+fBjUtgu627r3g40K74
+ m7otV3OKXyjEZ2gclad25UJx/tY+ZHlIz/o6WKSttBIhLB2hXisashEdHrbcMqJYVUAt
+ p6O9fD6w0sUs/pARBy/P0OIPjXUHDJCiRPSOJQKvJngVjvUo2X6+2mVFja/Yl3IYkObm
+ 1rigG1ttxY8QGyhZsquPLip2Nln+dakLu/NBvqENj2dgkQS9990+I78zYvMvJcfeNrxK rw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2yehxrrcgq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Feb 2020 18:19:04 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01RIIT8A068806;
+        Thu, 27 Feb 2020 18:19:03 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2ydcsa3u0e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Feb 2020 18:19:03 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01RIJ0Du009775;
+        Thu, 27 Feb 2020 18:19:01 GMT
+Received: from vbusired-dt (/10.154.159.233)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 27 Feb 2020 10:19:00 -0800
+Date:   Thu, 27 Feb 2020 12:18:58 -0600
+From:   Venu Busireddy <venu.busireddy@oracle.com>
+To:     Ashish Kalra <Ashish.Kalra@amd.com>
+Cc:     pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, rkrcmar@redhat.com, joro@8bytes.org, bp@suse.de,
+        thomas.lendacky@amd.com, rientjes@google.com, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] KVM: x86: Introduce KVM_GET_PAGE_ENC_BITMAP ioctl
+Message-ID: <20200227181858.GA268538@vbusired-dt>
+References: <cover.1581555616.git.ashish.kalra@amd.com>
+ <efe6a4d829af0b2ed9fe1b58fd2dfb343f5b8de0.1581555616.git.ashish.kalra@amd.com>
+ <20200227175748.GA268253@vbusired-dt>
 MIME-Version: 1.0
-In-Reply-To: <20200227180858.1514157-3-enric.balletbo@collabora.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200227175748.GA268253@vbusired-dt>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 spamscore=0 suspectscore=2 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002270130
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
+ bulkscore=0 phishscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
+ adultscore=0 mlxlogscore=999 mlxscore=0 suspectscore=2 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002270130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2020-02-27 11:57:50 -0600, Venu Busireddy wrote:
+> On 2020-02-13 01:17:45 +0000, Ashish Kalra wrote:
+> > From: Brijesh Singh <brijesh.singh@amd.com>
+> > 
+> > The ioctl can be used to retrieve page encryption bitmap for a given
+> > gfn range.
+> > 
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+> > Cc: Joerg Roedel <joro@8bytes.org>
+> > Cc: Borislav Petkov <bp@suse.de>
+> > Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> > Cc: x86@kernel.org
+> > Cc: kvm@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
+> > Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> 
+> This patch does not apply to upstream Linux version 5.5.6.
+> 
+>   <snip>
+>   Applying: KVM: x86: Introduce KVM_GET_PAGE_ENC_BITMAP ioctl
+>   error: patch failed: Documentation/virt/kvm/api.txt:4213
+>   error: Documentation/virt/kvm/api.txt: patch does not apply
+>   error: patch failed: include/uapi/linux/kvm.h:1478
+>   error: include/uapi/linux/kvm.h: patch does not apply
+>   Patch failed at 0009 KVM: x86: Introduce KVM_GET_PAGE_ENC_BITMAP ioctl
+>   <snip>
+> 
+> Which kernel version does this patch series apply to, cleanly?
 
+Tried git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git.
+With that, patch 08/12 fails with the top of that tree, as well as
+tag v5.6-rc3.
 
-On 27/02/2020 19:08, Enric Balletbo i Serra wrote:
-> The mmsys system controller is not only a pure clock controller, so
-> update the binding documentation to reflect that apart from providing
-> clocks, it also provides routing and miscellaneous control registers.
+> Thanks,
 > 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> ---
+> Venu
 > 
-> Changes in v10:
-> - Update the binding documentation for the mmsys system controller.
-> 
-> Changes in v9: None
-> Changes in v8: None
-> Changes in v7: None
-> 
->  .../devicetree/bindings/arm/mediatek/mediatek,mmsys.txt    | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> index 301eefbe1618..8d6a9d98e7a6 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> @@ -1,7 +1,8 @@
->  Mediatek mmsys controller
->  ============================
->  
-> -The Mediatek mmsys controller provides various clocks to the system.
-> +The Mediatek mmsys system controller provides clock control, routing control,
-> +and miscellaneous control in mmsys partition.
->  
->  Required Properties:
->  
-> @@ -15,13 +16,13 @@ Required Properties:
->  	- "mediatek,mt8183-mmsys", "syscon"
->  - #clock-cells: Must be 1
->  
-> -The mmsys controller uses the common clk binding from
-> +For the clock control, the mmsys controller uses the common clk binding from
->  Documentation/devicetree/bindings/clock/clock-bindings.txt
->  The available clocks are defined in dt-bindings/clock/mt*-clk.h.
->  
->  Example:
->  
-> -mmsys: clock-controller@14000000 {
-> +mmsys: syscon@14000000 {
->  	compatible = "mediatek,mt8173-mmsys", "syscon";
->  	reg = <0 0x14000000 0 0x1000>;
->  	#clock-cells = <1>;
-> 
+> > ---
+> >  Documentation/virt/kvm/api.txt  | 27 +++++++++++++++++++++
+> >  arch/x86/include/asm/kvm_host.h |  2 ++
+> >  arch/x86/kvm/svm.c              | 43 +++++++++++++++++++++++++++++++++
+> >  arch/x86/kvm/x86.c              | 12 +++++++++
+> >  include/uapi/linux/kvm.h        | 12 +++++++++
+> >  5 files changed, 96 insertions(+)
+> > 
+> > diff --git a/Documentation/virt/kvm/api.txt b/Documentation/virt/kvm/api.txt
+> > index c6e1ce5d40de..053aecfabe74 100644
+> > --- a/Documentation/virt/kvm/api.txt
+> > +++ b/Documentation/virt/kvm/api.txt
+> > @@ -4213,6 +4213,33 @@ the clear cpu reset definition in the POP. However, the cpu is not put
+> >  into ESA mode. This reset is a superset of the initial reset.
+> >  
+> >  
+> > +4.120 KVM_GET_PAGE_ENC_BITMAP (vm ioctl)
+> > +
+> > +Capability: basic
+> > +Architectures: x86
+> > +Type: vm ioctl
+> > +Parameters: struct kvm_page_enc_bitmap (in/out)
+> > +Returns: 0 on success, -1 on error
+> > +
+> > +/* for KVM_GET_PAGE_ENC_BITMAP */
+> > +struct kvm_page_enc_bitmap {
+> > +	__u64 start_gfn;
+> > +	__u64 num_pages;
+> > +	union {
+> > +		void __user *enc_bitmap; /* one bit per page */
+> > +		__u64 padding2;
+> > +	};
+> > +};
+> > +
+> > +The encrypted VMs have concept of private and shared pages. The private
+> > +page is encrypted with the guest-specific key, while shared page may
+> > +be encrypted with the hypervisor key. The KVM_GET_PAGE_ENC_BITMAP can
+> > +be used to get the bitmap indicating whether the guest page is private
+> > +or shared. The bitmap can be used during the guest migration, if the page
+> > +is private then userspace need to use SEV migration commands to transmit
+> > +the page.
+> > +
+> > +
+> >  5. The kvm_run structure
+> >  ------------------------
+> >  
+> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> > index 4ae7293033b2..a6882c5214b4 100644
+> > --- a/arch/x86/include/asm/kvm_host.h
+> > +++ b/arch/x86/include/asm/kvm_host.h
+> > @@ -1258,6 +1258,8 @@ struct kvm_x86_ops {
+> >  	int (*enable_direct_tlbflush)(struct kvm_vcpu *vcpu);
+> >  	int (*page_enc_status_hc)(struct kvm *kvm, unsigned long gpa,
+> >  				  unsigned long sz, unsigned long mode);
+> > +	int (*get_page_enc_bitmap)(struct kvm *kvm,
+> > +				struct kvm_page_enc_bitmap *bmap);
+> >  };
+> >  
+> >  struct kvm_arch_async_pf {
+> > diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> > index f09791109075..f1c8806a97c6 100644
+> > --- a/arch/x86/kvm/svm.c
+> > +++ b/arch/x86/kvm/svm.c
+> > @@ -7673,6 +7673,48 @@ static int svm_page_enc_status_hc(struct kvm *kvm, unsigned long gpa,
+> >  	return ret;
+> >  }
+> >  
+> > +static int svm_get_page_enc_bitmap(struct kvm *kvm,
+> > +				   struct kvm_page_enc_bitmap *bmap)
+> > +{
+> > +	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
+> > +	unsigned long gfn_start, gfn_end;
+> > +	unsigned long *bitmap;
+> > +	unsigned long sz, i;
+> > +	int ret;
+> > +
+> > +	if (!sev_guest(kvm))
+> > +		return -ENOTTY;
+> > +
+> > +	gfn_start = bmap->start_gfn;
+> > +	gfn_end = gfn_start + bmap->num_pages;
+> > +
+> > +	sz = ALIGN(bmap->num_pages, BITS_PER_LONG) / 8;
+> > +	bitmap = kmalloc(sz, GFP_KERNEL);
+> > +	if (!bitmap)
+> > +		return -ENOMEM;
+> > +
+> > +	/* by default all pages are marked encrypted */
+> > +	memset(bitmap, 0xff, sz);
+> > +
+> > +	mutex_lock(&kvm->lock);
+> > +	if (sev->page_enc_bmap) {
+> > +		i = gfn_start;
+> > +		for_each_clear_bit_from(i, sev->page_enc_bmap,
+> > +				      min(sev->page_enc_bmap_size, gfn_end))
+> > +			clear_bit(i - gfn_start, bitmap);
+> > +	}
+> > +	mutex_unlock(&kvm->lock);
+> > +
+> > +	ret = -EFAULT;
+> > +	if (copy_to_user(bmap->enc_bitmap, bitmap, sz))
+> > +		goto out;
+> > +
+> > +	ret = 0;
+> > +out:
+> > +	kfree(bitmap);
+> > +	return ret;
+> > +}
+> > +
+> >  static int svm_mem_enc_op(struct kvm *kvm, void __user *argp)
+> >  {
+> >  	struct kvm_sev_cmd sev_cmd;
+> > @@ -8066,6 +8108,7 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
+> >  	.apic_init_signal_blocked = svm_apic_init_signal_blocked,
+> >  
+> >  	.page_enc_status_hc = svm_page_enc_status_hc,
+> > +	.get_page_enc_bitmap = svm_get_page_enc_bitmap,
+> >  };
+> >  
+> >  static int __init svm_init(void)
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index 298627fa3d39..e955f886ee17 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -5213,6 +5213,18 @@ long kvm_arch_vm_ioctl(struct file *filp,
+> >  	case KVM_SET_PMU_EVENT_FILTER:
+> >  		r = kvm_vm_ioctl_set_pmu_event_filter(kvm, argp);
+> >  		break;
+> > +	case KVM_GET_PAGE_ENC_BITMAP: {
+> > +		struct kvm_page_enc_bitmap bitmap;
+> > +
+> > +		r = -EFAULT;
+> > +		if (copy_from_user(&bitmap, argp, sizeof(bitmap)))
+> > +			goto out;
+> > +
+> > +		r = -ENOTTY;
+> > +		if (kvm_x86_ops->get_page_enc_bitmap)
+> > +			r = kvm_x86_ops->get_page_enc_bitmap(kvm, &bitmap);
+> > +		break;
+> > +	}
+> >  	default:
+> >  		r = -ENOTTY;
+> >  	}
+> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> > index 4e80c57a3182..9377b26c5f4e 100644
+> > --- a/include/uapi/linux/kvm.h
+> > +++ b/include/uapi/linux/kvm.h
+> > @@ -500,6 +500,16 @@ struct kvm_dirty_log {
+> >  	};
+> >  };
+> >  
+> > +/* for KVM_GET_PAGE_ENC_BITMAP */
+> > +struct kvm_page_enc_bitmap {
+> > +	__u64 start_gfn;
+> > +	__u64 num_pages;
+> > +	union {
+> > +		void __user *enc_bitmap; /* one bit per page */
+> > +		__u64 padding2;
+> > +	};
+> > +};
+> > +
+> >  /* for KVM_CLEAR_DIRTY_LOG */
+> >  struct kvm_clear_dirty_log {
+> >  	__u32 slot;
+> > @@ -1478,6 +1488,8 @@ struct kvm_enc_region {
+> >  #define KVM_S390_NORMAL_RESET	_IO(KVMIO,   0xc3)
+> >  #define KVM_S390_CLEAR_RESET	_IO(KVMIO,   0xc4)
+> >  
+> > +#define KVM_GET_PAGE_ENC_BITMAP	_IOW(KVMIO, 0xc2, struct kvm_page_enc_bitmap)
+> > +
+> >  /* Secure Encrypted Virtualization command */
+> >  enum sev_cmd_id {
+> >  	/* Guest initialization commands */
+> > -- 
+> > 2.17.1
+> > 
