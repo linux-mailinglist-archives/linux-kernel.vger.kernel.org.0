@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0E0C171951
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:43:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F3B7171954
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:44:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbgB0Nnv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:43:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39082 "EHLO mail.kernel.org"
+        id S1730059AbgB0Nnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:43:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729665AbgB0Nnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:43:46 -0500
+        id S1730035AbgB0Nnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:43:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A7FF21D7E;
-        Thu, 27 Feb 2020 13:43:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86F5B20726;
+        Thu, 27 Feb 2020 13:43:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811026;
-        bh=+kkzp84M6mJly3Y67Aw1uWhHGyOpcrJp5kz1o7GqXyU=;
+        s=default; t=1582811029;
+        bh=PM8QjGQZ2ZJUFP66loWBfd2IIb6HmzMMvFumoNXypcY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dTvpBwIte0ycKdSdNBKyrgcObqshou882ZVdAshEtW7AZAhW4JRP9idikmzu+Chr0
-         J6rQwnm6+SR3gjjarRTvLpAWiTXO26bN/PkCL1vesNbXjLYNTmGadfFIUUUbvASzRB
-         jNUZhAI5Rz0QD7pdHtABVIpJArGKdjwTDOp9qjpg=
+        b=vKFRfA/IjGit7f0iORwFTbJ4pdmY7upfCiCf2zXerVrrGB1I6B2v/Xxb7ipY55FzU
+         K9XvGTzFGYJO0ukBn/vgiuNxiNCOuAse3tEg6H7NaQo+rYCZ+N+nTFtRQz0PcrHlfV
+         +KSe8SzMcPzTv/dfGq/Wy1AkQHqXpqyYLMHnEYi0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 4.4 087/113] staging: vt6656: fix sign of rx_dbm to bb_pre_ed_rssi.
-Date:   Thu, 27 Feb 2020 14:36:43 +0100
-Message-Id: <20200227132225.687784502@linuxfoundation.org>
+        stable@vger.kernel.org, EJ Hsu <ejh@nvidia.com>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.4 088/113] usb: uas: fix a plug & unplug racing
+Date:   Thu, 27 Feb 2020 14:36:44 +0100
+Message-Id: <20200227132225.839694024@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
 References: <20200227132211.791484803@linuxfoundation.org>
@@ -42,36 +43,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: EJ Hsu <ejh@nvidia.com>
 
-commit 93134df520f23f4e9998c425b8987edca7016817 upstream.
+commit 3e99862c05a9caa5a27969f41566b428696f5a9a upstream.
 
-bb_pre_ed_rssi is an u8 rx_dm always returns negative signed
-values add minus operator to always yield positive.
+When a uas disk is plugged into an external hub, uas_probe()
+will be called by the hub thread to do the probe. It will
+first create a SCSI host and then do the scan for this host.
+During the scan, it will probe the LUN using SCSI INQUERY command
+which will be packed in the URB and submitted to uas disk.
 
-fixes issue where rx sensitivity is always set to maximum because
-the unsigned numbers were always greater then 100.
+There might be a chance that this external hub with uas disk
+attached is unplugged during the scan. In this case, uas driver
+will fail to submit the URB (due to the NOTATTACHED state of uas
+device) and try to put this SCSI command back to request queue
+waiting for next chance to run.
 
-Fixes: 63b9907f58f1 ("staging: vt6656: mac80211 conversion: create rx function.")
+In normal case, this cycle will terminate when hub thread gets
+disconnection event and calls into uas_disconnect() accordingly.
+But in this case, uas_disconnect() will not be called because
+hub thread of external hub gets stuck waiting for the completion
+of this SCSI command. A deadlock happened.
+
+In this fix, uas will call scsi_scan_host() asynchronously to
+avoid the blocking of hub thread.
+
+Signed-off-by: EJ Hsu <ejh@nvidia.com>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/aceac98c-6e69-3ce1-dfec-2bf27b980221@gmail.com
+Link: https://lore.kernel.org/r/20200130092506.102760-1-ejh@nvidia.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/vt6656/dpc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/storage/uas.c |   23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/vt6656/dpc.c
-+++ b/drivers/staging/vt6656/dpc.c
-@@ -144,7 +144,7 @@ int vnt_rx_data(struct vnt_private *priv
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -46,6 +46,7 @@ struct uas_dev_info {
+ 	struct scsi_cmnd *cmnd[MAX_CMNDS];
+ 	spinlock_t lock;
+ 	struct work_struct work;
++	struct work_struct scan_work;      /* for async scanning */
+ };
  
- 	vnt_rf_rssi_to_dbm(priv, *rssi, &rx_dbm);
+ enum {
+@@ -115,6 +116,17 @@ out:
+ 	spin_unlock_irqrestore(&devinfo->lock, flags);
+ }
  
--	priv->bb_pre_ed_rssi = (u8)rx_dbm + 1;
-+	priv->bb_pre_ed_rssi = (u8)-rx_dbm + 1;
- 	priv->current_rssi = priv->bb_pre_ed_rssi;
++static void uas_scan_work(struct work_struct *work)
++{
++	struct uas_dev_info *devinfo =
++		container_of(work, struct uas_dev_info, scan_work);
++	struct Scsi_Host *shost = usb_get_intfdata(devinfo->intf);
++
++	dev_dbg(&devinfo->intf->dev, "starting scan\n");
++	scsi_scan_host(shost);
++	dev_dbg(&devinfo->intf->dev, "scan complete\n");
++}
++
+ static void uas_add_work(struct uas_cmd_info *cmdinfo)
+ {
+ 	struct scsi_pointer *scp = (void *)cmdinfo;
+@@ -929,6 +941,7 @@ static int uas_probe(struct usb_interfac
+ 	init_usb_anchor(&devinfo->data_urbs);
+ 	spin_lock_init(&devinfo->lock);
+ 	INIT_WORK(&devinfo->work, uas_do_work);
++	INIT_WORK(&devinfo->scan_work, uas_scan_work);
  
- 	frame = skb_data + 8;
+ 	result = uas_configure_endpoints(devinfo);
+ 	if (result)
+@@ -945,7 +958,9 @@ static int uas_probe(struct usb_interfac
+ 	if (result)
+ 		goto free_streams;
+ 
+-	scsi_scan_host(shost);
++	/* Submit the delayed_work for SCSI-device scanning */
++	schedule_work(&devinfo->scan_work);
++
+ 	return result;
+ 
+ free_streams:
+@@ -1113,6 +1128,12 @@ static void uas_disconnect(struct usb_in
+ 	usb_kill_anchored_urbs(&devinfo->data_urbs);
+ 	uas_zap_pending(devinfo, DID_NO_CONNECT);
+ 
++	/*
++	 * Prevent SCSI scanning (if it hasn't started yet)
++	 * or wait for the SCSI-scanning routine to stop.
++	 */
++	cancel_work_sync(&devinfo->scan_work);
++
+ 	scsi_remove_host(shost);
+ 	uas_free_streams(devinfo);
+ 	scsi_host_put(shost);
 
 
