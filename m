@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D98D1171938
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:43:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E947E171B1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:59:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729881AbgB0NnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:43:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37982 "EHLO mail.kernel.org"
+        id S1732626AbgB0N7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:59:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729580AbgB0Nmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:42:54 -0500
+        id S1732611AbgB0N7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:59:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D58020578;
-        Thu, 27 Feb 2020 13:42:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92C912084E;
+        Thu, 27 Feb 2020 13:59:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810974;
-        bh=kBPtiyZuYdViQk6zQW+C2NQ8z2X1HtoqbcMgtHohCss=;
+        s=default; t=1582811972;
+        bh=pxjce3r46L/EQbcrQrcK0UOGjI+bXzSAe2pNJJEVYtQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vh+WQTIVgUg+tdA6K4Mi7h5AwH30RzCjqw2XI8lx8953DPYA4a1IRoHX4iAcl+GRw
-         wOZYlbblrjTL82p8YoK+Vy6xnNYUr+p4P8kzUwNg+pi3qtoisFg/pi8XutE0RtuMP9
-         j+Qb9Gs7Ql2GQgNR/wRWzCigryufHfH9IJEEXJdg=
+        b=PZ2gwio0SNzJkmZNZJUV0GdW8IAnpUJDv8qP7WBTV1rOWGiF4xx70neXaeXcpjqgJ
+         O36RZB6q48uvuRE438w/OFxIJoCZ3ElYKr/cdmjwQPBJbwzrfkBR6e3NJxwd68WwGf
+         P7mflFzLV+BOdyj4rIQ/bGEYSwLcCjq8O6DlWXTE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
-        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 069/113] jbd2: switch to use jbd2_journal_abort() when failed to submit the commit record
-Date:   Thu, 27 Feb 2020 14:36:25 +0100
-Message-Id: <20200227132222.818441725@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 4.14 172/237] thunderbolt: Prevent crash if non-active NVMem file is read
+Date:   Thu, 27 Feb 2020 14:36:26 +0100
+Message-Id: <20200227132309.084489003@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhangyi (F) <yi.zhang@huawei.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit d0a186e0d3e7ac05cc77da7c157dae5aa59f95d9 ]
+commit 03cd45d2e219301880cabc357e3cf478a500080f upstream.
 
-We invoke jbd2_journal_abort() to abort the journal and record errno
-in the jbd2 superblock when committing journal transaction besides the
-failure on submitting the commit record. But there is no need for the
-case and we can also invoke jbd2_journal_abort() instead of
-__jbd2_journal_abort_hard().
+The driver does not populate .reg_read callback for the non-active NVMem
+because the file is supposed to be write-only. However, it turns out
+NVMem subsystem does not yet support this and expects that the .reg_read
+callback is provided. If user reads the binary attribute it triggers
+NULL pointer dereference like this one:
 
-Fixes: 818d276ceb83a ("ext4: Add the journal checksum feature")
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/20191204124614.45424-2-yi.zhang@huawei.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  BUG: kernel NULL pointer dereference, address: 0000000000000000
+  ...
+  Call Trace:
+   bin_attr_nvmem_read+0x64/0x80
+   kernfs_fop_read+0xa7/0x180
+   vfs_read+0xbd/0x170
+   ksys_read+0x5a/0xd0
+   do_syscall_64+0x43/0x150
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fix this in the driver by providing .reg_read callback that always
+returns an error.
+
+Reported-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Fixes: e6b245ccd524 ("thunderbolt: Add support for host and device NVM firmware upgrade")
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20200213095604.1074-1-mika.westerberg@linux.intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/jbd2/commit.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/thunderbolt/switch.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-index 7fe61edb1bb9e..a7d12dd6d56e8 100644
---- a/fs/jbd2/commit.c
-+++ b/fs/jbd2/commit.c
-@@ -797,7 +797,7 @@ start_journal_io:
- 		err = journal_submit_commit_record(journal, commit_transaction,
- 						 &cbh, crc32_sum);
- 		if (err)
--			__jbd2_journal_abort_hard(journal);
-+			jbd2_journal_abort(journal, err);
- 	}
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -240,6 +240,12 @@ static int tb_switch_nvm_read(void *priv
+ 	return dma_port_flash_read(sw->dma_port, offset, val, bytes);
+ }
  
- 	blk_finish_plug(&plug);
-@@ -890,7 +890,7 @@ start_journal_io:
- 		err = journal_submit_commit_record(journal, commit_transaction,
- 						&cbh, crc32_sum);
- 		if (err)
--			__jbd2_journal_abort_hard(journal);
-+			jbd2_journal_abort(journal, err);
++static int tb_switch_nvm_no_read(void *priv, unsigned int offset, void *val,
++				 size_t bytes)
++{
++	return -EPERM;
++}
++
+ static int tb_switch_nvm_write(void *priv, unsigned int offset, void *val,
+ 			       size_t bytes)
+ {
+@@ -285,6 +291,7 @@ static struct nvmem_device *register_nvm
+ 		config.read_only = true;
+ 	} else {
+ 		config.name = "nvm_non_active";
++		config.reg_read = tb_switch_nvm_no_read;
+ 		config.reg_write = tb_switch_nvm_write;
+ 		config.root_only = true;
  	}
- 	if (cbh)
- 		err = journal_wait_on_commit_record(journal, cbh);
--- 
-2.20.1
-
 
 
