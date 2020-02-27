@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0D1B171936
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:43:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE45171A03
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:50:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729855AbgB0Nmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:42:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37958 "EHLO mail.kernel.org"
+        id S1731123AbgB0Ntz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:49:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729076AbgB0Nmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:42:51 -0500
+        id S1731073AbgB0Ntk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:49:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F35EE21D7E;
-        Thu, 27 Feb 2020 13:42:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C07120578;
+        Thu, 27 Feb 2020 13:49:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810971;
-        bh=iKESaSe8KqutxIY0wXUL7WNxpaQHoif996AI3uvbYa4=;
+        s=default; t=1582811380;
+        bh=L0qBFLCFG7F+X1YVyHV7rV+F3j/WY/ygzye+NRM0wI0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Dare2aCaqkvEFH6Vb8AZWZoXX9iL022+x0Ng5jaLpkC7NQS2NJpLWhI02++bOdR1
-         /3dDS/GXysUvUx0Ln2cePSK9TI0xTHLoTTyhWDhQ793QWwi0T3BlYR5fOdjS+5LBv5
-         eQhLwCjvpbZedYxhLL1Xzqul++SJZZXHizBAKByk=
+        b=WpMKm/CMqVdpa15m+19THKe3+xLQfS4YDY55zdH/eVQRzWjRpXFyP5PN8FwdoC1qC
+         zhdVetDbGDS3Jv+pe4M75VrZKuYbHKjfIGppJkQIjIOK49kPZosqd5ABz04CzQFrRc
+         tqVum72Vj06Jd2X3tM/D7zNw97/1CoY1Gcvig6zM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Peter=20Gro=C3=9Fe?= <pegro@friiks.de>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 068/113] ALSA: hda - Add docking station support for Lenovo Thinkpad T420s
+        stable@vger.kernel.org, Zenghui Yu <yuzenghui@huawei.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 110/165] irqchip/gic-v3-its: Reference to its_invall_cmd descriptor when building INVALL
 Date:   Thu, 27 Feb 2020 14:36:24 +0100
-Message-Id: <20200227132222.676765370@linuxfoundation.org>
+Message-Id: <20200227132247.201942498@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Große <pegro@friiks.de>
+From: Zenghui Yu <yuzenghui@huawei.com>
 
-[ Upstream commit ef7d84caa5928b40b1c93a26dbe5a3f12737c6ab ]
+[ Upstream commit 107945227ac5d4c37911c7841b27c64b489ce9a9 ]
 
-Lenovo Thinkpad T420s uses the same codec as T420, so apply the
-same quirk to enable audio output on a docking station.
+It looks like an obvious mistake to use its_mapc_cmd descriptor when
+building the INVALL command block. It so far worked by luck because
+both its_mapc_cmd.col and its_invall_cmd.col sit at the same offset of
+the ITS command descriptor, but we should not rely on it.
 
-Signed-off-by: Peter Große <pegro@friiks.de>
-Link: https://lore.kernel.org/r/20200122180106.9351-1-pegro@friiks.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: cc2d3216f53c ("irqchip: GICv3: ITS command queue")
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20191202071021.1251-1-yuzenghui@huawei.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_conexant.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/irqchip/irq-gic-v3-its.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
-index 05e745e2f4271..3150ddfbdb25e 100644
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -866,6 +866,7 @@ static const struct snd_pci_quirk cxt5066_fixups[] = {
- 	SND_PCI_QUIRK(0x17aa, 0x215f, "Lenovo T510", CXT_PINCFG_LENOVO_TP410),
- 	SND_PCI_QUIRK(0x17aa, 0x21ce, "Lenovo T420", CXT_PINCFG_LENOVO_TP410),
- 	SND_PCI_QUIRK(0x17aa, 0x21cf, "Lenovo T520", CXT_PINCFG_LENOVO_TP410),
-+	SND_PCI_QUIRK(0x17aa, 0x21d2, "Lenovo T420s", CXT_PINCFG_LENOVO_TP410),
- 	SND_PCI_QUIRK(0x17aa, 0x21da, "Lenovo X220", CXT_PINCFG_LENOVO_TP410),
- 	SND_PCI_QUIRK(0x17aa, 0x21db, "Lenovo X220-tablet", CXT_PINCFG_LENOVO_TP410),
- 	SND_PCI_QUIRK(0x17aa, 0x38af, "Lenovo IdeaPad Z560", CXT_FIXUP_MUTE_LED_EAPD),
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 0c0cd2768d6e9..d1efbb8dadc53 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -365,7 +365,7 @@ static struct its_collection *its_build_invall_cmd(struct its_cmd_block *cmd,
+ 						   struct its_cmd_desc *desc)
+ {
+ 	its_encode_cmd(cmd, GITS_CMD_INVALL);
+-	its_encode_collection(cmd, desc->its_mapc_cmd.col->col_id);
++	its_encode_collection(cmd, desc->its_invall_cmd.col->col_id);
+ 
+ 	its_fixup_cmd(cmd);
+ 
 -- 
 2.20.1
 
