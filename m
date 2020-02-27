@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A69FE171CF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:17:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C71F171B59
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389574AbgB0OQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:16:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56876 "EHLO mail.kernel.org"
+        id S1732725AbgB0OBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:01:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388234AbgB0OQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:16:42 -0500
+        id S1732948AbgB0OBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:01:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9A2D20801;
-        Thu, 27 Feb 2020 14:16:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE8BC246AC;
+        Thu, 27 Feb 2020 14:01:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582813001;
-        bh=7XIUv84UbB7VH9ebwHuIaexfvi5HnxtjcT0srAFmVeA=;
+        s=default; t=1582812095;
+        bh=Io3aWZEz1UDH7fTg9uqpgdeXUzXUiI6+7VhBZmy2uDo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dEdLq2rbXCOMWgX1fWh/JtjtS2GctCOKj8hViQZtsPKTX1An5kQR3e5MB2Fk4YY6y
-         p+d2Vt/juaFWtg4Kb2JMOZoRogap9f85Me8wmgGdfkNQbJejUHET8TLCJZgVb46xJ+
-         piPrIFf0nYPhWjBc5M2hm1aNjNv45w9F2iO2HMB4=
+        b=H6pOZM3CRQpEWau2IsAfEaMG0UkEtsV9jNVGbycmyxYkybMQ0CDvVTbjVLx9vYXYW
+         BcxMjMeh2UVcYYmVQnm9+oWRM8kE98N7Jt2/00gVIK9peRq8NE7Ep7PXuyOB12PiWj
+         gQ6wXS9iF3DwaMWYpUm5zg+ME2Vtkob2M3MF4xxc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 5.5 097/150] drm/i915/execlists: Always force a context reload when rewinding RING_TAIL
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 220/237] btrfs: fix bytes_may_use underflow in prealloc error condtition
 Date:   Thu, 27 Feb 2020 14:37:14 +0100
-Message-Id: <20200227132247.180032170@linuxfoundation.org>
+Message-Id: <20200227132312.338856956@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,141 +44,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit b1339ecac661e1cf3e1dc78ac56bff3aeeaeb92c upstream.
+commit b778cf962d71a0e737923d55d0432f3bd287258e upstream.
 
-If we rewind the RING_TAIL on a context, due to a preemption event, we
-must force the context restore for the RING_TAIL update to be properly
-handled. Rather than note which preemption events may cause us to rewind
-the tail, compare the new request's tail with the previously submitted
-RING_TAIL, as it turns out that timeslicing was causing unexpected
-rewinds.
+I hit the following warning while running my error injection stress
+testing:
 
-   <idle>-0       0d.s2 1280851190us : __execlists_submission_tasklet: 0000:00:02.0 rcs0: expired last=130:4698, prio=3, hint=3
-   <idle>-0       0d.s2 1280851192us : __i915_request_unsubmit: 0000:00:02.0 rcs0: fence 66:119966, current 119964
-   <idle>-0       0d.s2 1280851195us : __i915_request_unsubmit: 0000:00:02.0 rcs0: fence 130:4698, current 4695
-   <idle>-0       0d.s2 1280851198us : __i915_request_unsubmit: 0000:00:02.0 rcs0: fence 130:4696, current 4695
-^----  Note we unwind 2 requests from the same context
+  WARNING: CPU: 3 PID: 1453 at fs/btrfs/space-info.h:108 btrfs_free_reserved_data_space_noquota+0xfd/0x160 [btrfs]
+  RIP: 0010:btrfs_free_reserved_data_space_noquota+0xfd/0x160 [btrfs]
+  Call Trace:
+  btrfs_free_reserved_data_space+0x4f/0x70 [btrfs]
+  __btrfs_prealloc_file_range+0x378/0x470 [btrfs]
+  elfcorehdr_read+0x40/0x40
+  ? elfcorehdr_read+0x40/0x40
+  ? btrfs_commit_transaction+0xca/0xa50 [btrfs]
+  ? dput+0xb4/0x2a0
+  ? btrfs_log_dentry_safe+0x55/0x70 [btrfs]
+  ? btrfs_sync_file+0x30e/0x420 [btrfs]
+  ? do_fsync+0x38/0x70
+  ? __x64_sys_fdatasync+0x13/0x20
+  ? do_syscall_64+0x5b/0x1b0
+  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-   <idle>-0       0d.s2 1280851208us : __i915_request_submit: 0000:00:02.0 rcs0: fence 130:4696, current 4695
-   <idle>-0       0d.s2 1280851213us : __i915_request_submit: 0000:00:02.0 rcs0: fence 134:1508, current 1506
-^---- But to apply the new timeslice, we have to replay the first request
-      before the new client can start -- the unexpected RING_TAIL rewind
+This happens if we fail to insert our reserved file extent.  At this
+point we've already converted our reservation from ->bytes_may_use to
+->bytes_reserved.  However once we break we will attempt to free
+everything from [cur_offset, end] from ->bytes_may_use, but our extent
+reservation will overlap part of this.
 
-   <idle>-0       0d.s2 1280851219us : trace_ports: 0000:00:02.0 rcs0: submit { 130:4696*, 134:1508 }
- synmark2-5425    2..s. 1280851239us : process_csb: 0000:00:02.0 rcs0: cs-irq head=5, tail=0
- synmark2-5425    2..s. 1280851240us : process_csb: 0000:00:02.0 rcs0: csb[0]: status=0x00008002:0x00000000
-^---- Preemption event for the ELSP update; note the lite-restore
+Fix this problem by adding ins.offset (our extent allocation size) to
+cur_offset so we remove the actual remaining part from ->bytes_may_use.
 
- synmark2-5425    2..s. 1280851243us : trace_ports: 0000:00:02.0 rcs0: preempted { 130:4698, 66:119966 }
- synmark2-5425    2..s. 1280851246us : trace_ports: 0000:00:02.0 rcs0: promote { 130:4696*, 134:1508 }
- synmark2-5425    2.... 1280851462us : __i915_request_commit: 0000:00:02.0 rcs0: fence 130:4700, current 4695
- synmark2-5425    2.... 1280852111us : __i915_request_commit: 0000:00:02.0 rcs0: fence 130:4702, current 4695
- synmark2-5425    2.Ns1 1280852296us : process_csb: 0000:00:02.0 rcs0: cs-irq head=0, tail=2
- synmark2-5425    2.Ns1 1280852297us : process_csb: 0000:00:02.0 rcs0: csb[1]: status=0x00000814:0x00000000
- synmark2-5425    2.Ns1 1280852299us : trace_ports: 0000:00:02.0 rcs0: completed { 130:4696!, 134:1508 }
- synmark2-5425    2.Ns1 1280852301us : process_csb: 0000:00:02.0 rcs0: csb[2]: status=0x00000818:0x00000040
- synmark2-5425    2.Ns1 1280852302us : trace_ports: 0000:00:02.0 rcs0: completed { 134:1508, 0:0 }
- synmark2-5425    2.Ns1 1280852313us : process_csb: process_csb:2336 GEM_BUG_ON(!i915_request_completed(*execlists->active) && !reset_in_progress(execlists))
+I validated this fix using my inject-error.py script
 
-Fixes: 8ee36e048c98 ("drm/i915/execlists: Minimalistic timeslicing")
-Referenecs: 82c69bf58650 ("drm/i915/gt: Detect if we miss WaIdleLiteRestore")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Reviewed-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Cc: <stable@vger.kernel.org> # v5.4+
-Link: https://patchwork.freedesktop.org/patch/msgid/20200207211452.2860634-1-chris@chris-wilson.co.uk
-(cherry picked from commit 5ba32c7be81e53ea8a27190b0f6be98e6c6779af)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+python inject-error.py -o should_fail_bio -t cache_save_setup -t \
+	__btrfs_prealloc_file_range \
+	-t insert_reserved_file_extent.constprop.0 \
+	-r "-5" ./run-fsstress.sh
+
+where run-fsstress.sh simply mounts and runs fsstress on a disk.
+
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/gt/intel_lrc.c        |   18 ++++++++----------
- drivers/gpu/drm/i915/gt/intel_ring.c       |    1 +
- drivers/gpu/drm/i915/gt/intel_ring.h       |    8 ++++++++
- drivers/gpu/drm/i915/gt/intel_ring_types.h |    1 +
- 4 files changed, 18 insertions(+), 10 deletions(-)
+ fs/btrfs/inode.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/i915/gt/intel_lrc.c
-+++ b/drivers/gpu/drm/i915/gt/intel_lrc.c
-@@ -1157,7 +1157,7 @@ static u64 execlists_update_context(stru
- {
- 	struct intel_context *ce = rq->hw_context;
- 	u64 desc = ce->lrc_desc;
--	u32 tail;
-+	u32 tail, prev;
- 
- 	/*
- 	 * WaIdleLiteRestore:bdw,skl
-@@ -1170,9 +1170,15 @@ static u64 execlists_update_context(stru
- 	 * subsequent resubmissions (for lite restore). Should that fail us,
- 	 * and we try and submit the same tail again, force the context
- 	 * reload.
-+	 *
-+	 * If we need to return to a preempted context, we need to skip the
-+	 * lite-restore and force it to reload the RING_TAIL. Otherwise, the
-+	 * HW has a tendency to ignore us rewinding the TAIL to the end of
-+	 * an earlier request.
- 	 */
- 	tail = intel_ring_set_tail(rq->ring, rq->tail);
--	if (unlikely(ce->lrc_reg_state[CTX_RING_TAIL] == tail))
-+	prev = ce->lrc_reg_state[CTX_RING_TAIL];
-+	if (unlikely(intel_ring_direction(rq->ring, tail, prev) <= 0))
- 		desc |= CTX_DESC_FORCE_RESTORE;
- 	ce->lrc_reg_state[CTX_RING_TAIL] = tail;
- 	rq->tail = rq->wa_tail;
-@@ -1651,14 +1657,6 @@ static void execlists_dequeue(struct int
- 			 */
- 			__unwind_incomplete_requests(engine);
- 
--			/*
--			 * If we need to return to the preempted context, we
--			 * need to skip the lite-restore and force it to
--			 * reload the RING_TAIL. Otherwise, the HW has a
--			 * tendency to ignore us rewinding the TAIL to the
--			 * end of an earlier request.
--			 */
--			last->hw_context->lrc_desc |= CTX_DESC_FORCE_RESTORE;
- 			last = NULL;
- 		} else if (need_timeslice(engine, last) &&
- 			   timer_expired(&engine->execlists.timer)) {
---- a/drivers/gpu/drm/i915/gt/intel_ring.c
-+++ b/drivers/gpu/drm/i915/gt/intel_ring.c
-@@ -145,6 +145,7 @@ intel_engine_create_ring(struct intel_en
- 
- 	kref_init(&ring->ref);
- 	ring->size = size;
-+	ring->wrap = BITS_PER_TYPE(ring->size) - ilog2(size);
- 
- 	/*
- 	 * Workaround an erratum on the i830 which causes a hang if
---- a/drivers/gpu/drm/i915/gt/intel_ring.h
-+++ b/drivers/gpu/drm/i915/gt/intel_ring.h
-@@ -56,6 +56,14 @@ static inline u32 intel_ring_wrap(const
- 	return pos & (ring->size - 1);
- }
- 
-+static inline int intel_ring_direction(const struct intel_ring *ring,
-+				       u32 next, u32 prev)
-+{
-+	typecheck(typeof(ring->size), next);
-+	typecheck(typeof(ring->size), prev);
-+	return (next - prev) << ring->wrap;
-+}
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -10639,6 +10639,7 @@ static int __btrfs_prealloc_file_range(s
+ 	struct btrfs_root *root = BTRFS_I(inode)->root;
+ 	struct btrfs_key ins;
+ 	u64 cur_offset = start;
++	u64 clear_offset = start;
+ 	u64 i_size;
+ 	u64 cur_bytes;
+ 	u64 last_alloc = (u64)-1;
+@@ -10673,6 +10674,15 @@ static int __btrfs_prealloc_file_range(s
+ 				btrfs_end_transaction(trans);
+ 			break;
+ 		}
 +
- static inline bool
- intel_ring_offset_valid(const struct intel_ring *ring,
- 			unsigned int pos)
---- a/drivers/gpu/drm/i915/gt/intel_ring_types.h
-+++ b/drivers/gpu/drm/i915/gt/intel_ring_types.h
-@@ -45,6 +45,7 @@ struct intel_ring {
++		/*
++		 * We've reserved this space, and thus converted it from
++		 * ->bytes_may_use to ->bytes_reserved.  Any error that happens
++		 * from here on out we will only need to clear our reservation
++		 * for the remaining unreserved area, so advance our
++		 * clear_offset by our extent size.
++		 */
++		clear_offset += ins.offset;
+ 		btrfs_dec_block_group_reservations(fs_info, ins.objectid);
  
- 	u32 space;
- 	u32 size;
-+	u32 wrap;
- 	u32 effective_size;
- };
+ 		last_alloc = ins.offset;
+@@ -10753,9 +10763,9 @@ next:
+ 		if (own_trans)
+ 			btrfs_end_transaction(trans);
+ 	}
+-	if (cur_offset < end)
+-		btrfs_free_reserved_data_space(inode, NULL, cur_offset,
+-			end - cur_offset + 1);
++	if (clear_offset < end)
++		btrfs_free_reserved_data_space(inode, NULL, clear_offset,
++			end - clear_offset + 1);
+ 	return ret;
+ }
  
 
 
