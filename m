@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8FE5171A93
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:55:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B65171A94
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:55:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731610AbgB0NzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:55:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55122 "EHLO mail.kernel.org"
+        id S1731634AbgB0NzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:55:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731926AbgB0Ny5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:54:57 -0500
+        id S1731488AbgB0NzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:55:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AF902084E;
-        Thu, 27 Feb 2020 13:54:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 179262469D;
+        Thu, 27 Feb 2020 13:55:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811696;
-        bh=9HLdkMMX77Gb8gmumIGYRs7r4xKA2witeWT225J7nKA=;
+        s=default; t=1582811701;
+        bh=/cgqfmp8nwk5RY90ggAflTwKCmubantpkDVWc3yF89U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OpGqQmAGw8rJKsIAtT7l/d5L+GrRr3wFF0qicvv1B0IvgXF0dRnTcNgZPecm1yd5l
-         N4aogUxI0rZSDSC4zVEwzQFeNXph4PMwsPd3vryO4CrKR9o0gEL6QQJIGbX3NXQXWa
-         Ew4ZX2p5K/3qJq+mNzRa8soGTHcP+reafNvv4VY0=
+        b=tAlwyptMBKYwB5gqr+U6s6B7f8GkaQGZShVsagr3uvNl8FfQL1mC2GKiXlYSwvaGn
+         djNO2BdT3L+0hjbQJDbZC8+TY0p7Y5EOOylHOrJz8ke4tm7OKTu3dc5On0QS48P+Th
+         pxsdwKgfpMTINF77nx/jWk6Sd7uhedRzrNLm3ruI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Luis Henriques <luis.henriques@canonical.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 065/237] tracing: Fix very unlikely race of registering two stat tracers
-Date:   Thu, 27 Feb 2020 14:34:39 +0100
-Message-Id: <20200227132301.821694547@linuxfoundation.org>
+        stable@vger.kernel.org, Sun Ke <sunke32@huawei.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 067/237] nbd: add a flush_workqueue in nbd_start_device
+Date:   Thu, 27 Feb 2020 14:34:41 +0100
+Message-Id: <20200227132302.000021274@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -45,85 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Sun Ke <sunke32@huawei.com>
 
-[ Upstream commit dfb6cd1e654315168e36d947471bd2a0ccd834ae ]
+[ Upstream commit 5c0dd228b5fc30a3b732c7ae2657e0161ec7ed80 ]
 
-Looking through old emails in my INBOX, I came across a patch from Luis
-Henriques that attempted to fix a race of two stat tracers registering the
-same stat trace (extremely unlikely, as this is done in the kernel, and
-probably doesn't even exist). The submitted patch wasn't quite right as it
-needed to deal with clean up a bit better (if two stat tracers were the
-same, it would have the same files).
+When kzalloc fail, may cause trying to destroy the
+workqueue from inside the workqueue.
 
-But to make the code cleaner, all we needed to do is to keep the
-all_stat_sessions_mutex held for most of the registering function.
+If num_connections is m (2 < m), and NO.1 ~ NO.n
+(1 < n < m) kzalloc are successful. The NO.(n + 1)
+failed. Then, nbd_start_device will return ENOMEM
+to nbd_start_device_ioctl, and nbd_start_device_ioctl
+will return immediately without running flush_workqueue.
+However, we still have n recv threads. If nbd_release
+run first, recv threads may have to drop the last
+config_refs and try to destroy the workqueue from
+inside the workqueue.
 
-Link: http://lkml.kernel.org/r/1410299375-20068-1-git-send-email-luis.henriques@canonical.com
+To fix it, add a flush_workqueue in nbd_start_device.
 
-Fixes: 002bb86d8d42f ("tracing/ftrace: separate events tracing and stats tracing engine")
-Reported-by: Luis Henriques <luis.henriques@canonical.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
+Signed-off-by: Sun Ke <sunke32@huawei.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace_stat.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ drivers/block/nbd.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/kernel/trace/trace_stat.c b/kernel/trace/trace_stat.c
-index bf68af63538b4..92b76f9e25edd 100644
---- a/kernel/trace/trace_stat.c
-+++ b/kernel/trace/trace_stat.c
-@@ -306,7 +306,7 @@ static int init_stat_file(struct stat_session *session)
- int register_stat_tracer(struct tracer_stat *trace)
- {
- 	struct stat_session *session, *node;
--	int ret;
-+	int ret = -EINVAL;
- 
- 	if (!trace)
- 		return -EINVAL;
-@@ -317,17 +317,15 @@ int register_stat_tracer(struct tracer_stat *trace)
- 	/* Already registered? */
- 	mutex_lock(&all_stat_sessions_mutex);
- 	list_for_each_entry(node, &all_stat_sessions, session_list) {
--		if (node->ts == trace) {
--			mutex_unlock(&all_stat_sessions_mutex);
--			return -EINVAL;
--		}
-+		if (node->ts == trace)
-+			goto out;
- 	}
--	mutex_unlock(&all_stat_sessions_mutex);
- 
-+	ret = -ENOMEM;
- 	/* Init the session */
- 	session = kzalloc(sizeof(*session), GFP_KERNEL);
- 	if (!session)
--		return -ENOMEM;
-+		goto out;
- 
- 	session->ts = trace;
- 	INIT_LIST_HEAD(&session->session_list);
-@@ -336,15 +334,16 @@ int register_stat_tracer(struct tracer_stat *trace)
- 	ret = init_stat_file(session);
- 	if (ret) {
- 		destroy_session(session);
--		return ret;
-+		goto out;
- 	}
- 
-+	ret = 0;
- 	/* Register */
--	mutex_lock(&all_stat_sessions_mutex);
- 	list_add_tail(&session->session_list, &all_stat_sessions);
-+ out:
- 	mutex_unlock(&all_stat_sessions_mutex);
- 
--	return 0;
-+	return ret;
- }
- 
- void unregister_stat_tracer(struct tracer_stat *trace)
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index 4c661ad91e7d3..8f56e6b2f114f 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -1203,6 +1203,16 @@ static int nbd_start_device(struct nbd_device *nbd)
+ 		args = kzalloc(sizeof(*args), GFP_KERNEL);
+ 		if (!args) {
+ 			sock_shutdown(nbd);
++			/*
++			 * If num_connections is m (2 < m),
++			 * and NO.1 ~ NO.n(1 < n < m) kzallocs are successful.
++			 * But NO.(n + 1) failed. We still have n recv threads.
++			 * So, add flush_workqueue here to prevent recv threads
++			 * dropping the last config_refs and trying to destroy
++			 * the workqueue from inside the workqueue.
++			 */
++			if (i)
++				flush_workqueue(nbd->recv_workq);
+ 			return -ENOMEM;
+ 		}
+ 		sk_set_memalloc(config->socks[i]->sock->sk);
 -- 
 2.20.1
 
