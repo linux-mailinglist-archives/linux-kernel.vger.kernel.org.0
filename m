@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1490E172061
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:43:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C068A171F69
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:35:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731163AbgB0NuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:50:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47616 "EHLO mail.kernel.org"
+        id S1732641AbgB0N7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:59:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731118AbgB0Nty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:49:54 -0500
+        id S1732633AbgB0N7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:59:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34A1E20578;
-        Thu, 27 Feb 2020 13:49:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DB4B20578;
+        Thu, 27 Feb 2020 13:59:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811393;
-        bh=03m/YZuxHUtpmwUPg60w1w/fNkSrmXYJ/3/BRkmRcWw=;
+        s=default; t=1582811982;
+        bh=S0yGJG0Id9N1yY6MyKdC5gdWa6cxWpV1/yYUVgykXEg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NAZZZdUPBNIEPH5wcm2I6IsLt5k9hGg18blSizc40nwseChJOEt+sCRnMBHMt0s/l
-         GXoWbIWU8z6GUM2yuikdGBimGLJWS+wx6BTPrC1X+EZCHC5Pobgo+vTNxh6ISWAZIA
-         kHRZg0Ylc1agr4Yja2rgfa0vs08iK6yXk26gIrks=
+        b=V0ydJYk59tHvBowLVopOmnkmiJbX/haxgz205dzK6dZZPJI2WJ0Ebqkk0RhuO4WXR
+         cBxEyIMW+iPeC1HvoSIsbwWCMpcxjmFSxjabKTL7dBIiJRLQnWssaHil4rKDh/SBSo
+         xqoRsgjdEfTZ6oIC7567Op7wh2MxvpGCWTHr2qHQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 114/165] help_next should increase position index
-Date:   Thu, 27 Feb 2020 14:36:28 +0100
-Message-Id: <20200227132247.738535996@linuxfoundation.org>
+        stable@vger.kernel.org, Jordy Zomer <jordy@simplyhacker.com>,
+        Willy Tarreau <w@1wt.eu>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 176/237] floppy: check FDC index for errors before assigning it
+Date:   Thu, 27 Feb 2020 14:36:30 +0100
+Message-Id: <20200227132309.349166224@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +45,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 9f198a2ac543eaaf47be275531ad5cbd50db3edf ]
+commit 2e90ca68b0d2f5548804f22f0dd61145516171e3 upstream.
 
-if seq_file .next fuction does not change position index,
-read after some lseek can generate unexpected output.
+Jordy Zomer reported a KASAN out-of-bounds read in the floppy driver in
+wait_til_ready().
 
-https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Mike Marshall <hubcap@omnibond.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Which on the face of it can't happen, since as Willy Tarreau points out,
+the function does no particular memory access.  Except through the FDCS
+macro, which just indexes a static allocation through teh current fdc,
+which is always checked against N_FDC.
+
+Except the checking happens after we've already assigned the value.
+
+The floppy driver is a disgrace (a lot of it going back to my original
+horrd "design"), and has no real maintainer.  Nobody has the hardware,
+and nobody really cares.  But it still gets used in virtual environment
+because it's one of those things that everybody supports.
+
+The whole thing should be re-written, or at least parts of it should be
+seriously cleaned up.  The 'current fdc' index, which is used by the
+FDCS macro, and which is often shadowed by a local 'fdc' variable, is a
+prime example of how not to write code.
+
+But because nobody has the hardware or the motivation, let's just fix up
+the immediate problem with a nasty band-aid: test the fdc index before
+actually assigning it to the static 'fdc' variable.
+
+Reported-by: Jordy Zomer <jordy@simplyhacker.com>
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/orangefs/orangefs-debugfs.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/block/floppy.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
-index 0748a26598fca..7d7df003f9d8d 100644
---- a/fs/orangefs/orangefs-debugfs.c
-+++ b/fs/orangefs/orangefs-debugfs.c
-@@ -304,6 +304,7 @@ static void *help_start(struct seq_file *m, loff_t *pos)
- 
- static void *help_next(struct seq_file *m, void *v, loff_t *pos)
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -848,14 +848,17 @@ static void reset_fdc_info(int mode)
+ /* selects the fdc and drive, and enables the fdc's input/dma. */
+ static void set_fdc(int drive)
  {
-+	(*pos)++;
- 	gossip_debug(GOSSIP_DEBUGFS_DEBUG, "help_next: start\n");
- 
- 	return NULL;
--- 
-2.20.1
-
++	unsigned int new_fdc = fdc;
++
+ 	if (drive >= 0 && drive < N_DRIVE) {
+-		fdc = FDC(drive);
++		new_fdc = FDC(drive);
+ 		current_drive = drive;
+ 	}
+-	if (fdc != 1 && fdc != 0) {
++	if (new_fdc >= N_FDC) {
+ 		pr_info("bad fdc value\n");
+ 		return;
+ 	}
++	fdc = new_fdc;
+ 	set_dor(fdc, ~0, 8);
+ #if N_FDC > 1
+ 	set_dor(1 - fdc, ~8, 0);
 
 
