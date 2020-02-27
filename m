@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DF3017160B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 12:31:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CE9F171604
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 12:31:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbgB0Lbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 06:31:32 -0500
-Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:40720 "EHLO
+        id S1728903AbgB0Lb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 06:31:29 -0500
+Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:55890 "EHLO
         smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728856AbgB0Lbb (ORCPT
+        by vger.kernel.org with ESMTP id S1728850AbgB0Lb3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 06:31:31 -0500
+        Thu, 27 Feb 2020 06:31:29 -0500
 Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 5B4D6C0AD1;
-        Thu, 27 Feb 2020 11:31:30 +0000 (UTC)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 58A8C43B5E;
+        Thu, 27 Feb 2020 11:31:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1582803090; bh=nnsAv9kQ8j3lGYt/imLE7LxPTTFBc+oOVMrkSeC4fMI=;
+        t=1582803088; bh=0syuIutiUjjVU8By23MObQ0rqTkTVnHNZjjdVWTlCqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=URetjbdaQJuKFWZwAWWsxk24JtycNe7lMt715a7o3mbnSwc7B0prMJMUMYx6bRO8N
-         3JMS6WkgBFd8HrhMN62qbuoBGZvtEkJ153KZbv/5r83GkH37mmFV42PFv+EZLMHvq7
-         YKc/NLbH8W42KDLTlJGtQozymUwYjaMX3jwr68dC7N0FPTcEeFe0uZlN/ND91Deodr
-         9x47ohEDpCwCrn5AlmXsJOJIdC5tXKVpmrxlOfnIKGXjnlH+SuBLVBcYxxXkaSJlaV
-         K0EKjMwi1ST8KdL8cj+X9mdzf48YhzxIRFBTOXwETSNj3REybPbhUlxvnrczm5yBC/
-         XuNHZg1UEc7Iw==
+        b=lAnsoNzvlDmMDq0uoorCMIboX8tc9QBfiOgezLXHISO68H7eBIyVjG9X7p58hnkHp
+         A8wz6YpeeGHrKO2Z2KlDK1dHG07dlWBcMtWfQihxne9AmTcVc/SYVPQ0WFAULDjiCB
+         PtZQVoHyc0GUxso8Q2Xh7WJ7QcHcAPmugXRC6EsbhpLgLnAIFEZcXkRWi/ImLBkc0s
+         VeUj6mjHqz9Gy8p8KFJW7fRuz78AsLYRduTR74sR7Wmf7u1xumv8Ni4GNun1i2tPDf
+         cdz2oEoKFmj9Z18y2xZZV1OzPQlaOKqiZQzE1czLOh/nrL7plvmEoNvRqPyIGE8d3N
+         EoJPEglN+nIGQ==
 Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 817A5A005C;
+        by mailhost.synopsys.com (Postfix) with ESMTP id 94C1BA005F;
         Thu, 27 Feb 2020 11:31:26 +0000 (UTC)
 Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 6FBB83E9E7;
+        by de02.synopsys.com (Postfix) with ESMTP id 7EF5D3E9EB;
         Thu, 27 Feb 2020 12:31:26 +0100 (CET)
 From:   Vitor Soares <Vitor.Soares@synopsys.com>
 To:     pgaj@cadence.com, bbrezillon@kernel.org,
@@ -39,9 +39,9 @@ To:     pgaj@cadence.com, bbrezillon@kernel.org,
 Cc:     linux-kernel@vger.kernel.org,
         Boris Brezillon <boris.brezillon@collabora.com>,
         Vitor Soares <Vitor.Soares@synopsys.com>
-Subject: [PATCH v2 3/4] i3c: Generate aliases for i3c modules
-Date:   Thu, 27 Feb 2020 12:31:08 +0100
-Message-Id: <79687073b915182e06fccfb18adcedfd0fadbc99.1582796652.git.vitor.soares@synopsys.com>
+Subject: [PATCH v2 4/4] i3c: Simplify i3c_device_match_id()
+Date:   Thu, 27 Feb 2020 12:31:09 +0100
+Message-Id: <8c5d6523e1c161783db834a3447954f7fd6267e6.1582796652.git.vitor.soares@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1582796652.git.vitor.soares@synopsys.com>
 References: <cover.1582796652.git.vitor.soares@synopsys.com>
@@ -54,71 +54,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Boris Brezillon <boris.brezillon@collabora.com>
 
-This part was missing, thus preventing user space from loading modules
-automatically when MODALIAS uevents are received.
+Simply match against ->match_flags instead of trying to be smart and
+fix drivers inconsistent ID tables.
 
 Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
 Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
 ---
- scripts/mod/devicetable-offsets.c |  7 +++++++
- scripts/mod/file2alias.c          | 19 +++++++++++++++++++
- 2 files changed, 26 insertions(+)
+ drivers/i3c/device.c | 50 ++++++++++++++++++++++----------------------------
+ 1 file changed, 22 insertions(+), 28 deletions(-)
 
-diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
-index 054405b..d3c237b 100644
---- a/scripts/mod/devicetable-offsets.c
-+++ b/scripts/mod/devicetable-offsets.c
-@@ -145,6 +145,13 @@ int main(void)
- 	DEVID(i2c_device_id);
- 	DEVID_FIELD(i2c_device_id, name);
+diff --git a/drivers/i3c/device.c b/drivers/i3c/device.c
+index 9e2e140..bb8e60d 100644
+--- a/drivers/i3c/device.c
++++ b/drivers/i3c/device.c
+@@ -213,40 +213,34 @@ i3c_device_match_id(struct i3c_device *i3cdev,
+ {
+ 	struct i3c_device_info devinfo;
+ 	const struct i3c_device_id *id;
++	u16 manuf, part, ext_info;
++	bool rndpid;
  
-+	DEVID(i3c_device_id);
-+	DEVID_FIELD(i3c_device_id, match_flags);
-+	DEVID_FIELD(i3c_device_id, dcr);
-+	DEVID_FIELD(i3c_device_id, manuf_id);
-+	DEVID_FIELD(i3c_device_id, part_id);
-+	DEVID_FIELD(i3c_device_id, extra_info);
-+
- 	DEVID(spi_device_id);
- 	DEVID_FIELD(spi_device_id, name);
+ 	i3c_device_get_info(i3cdev, &devinfo);
  
-diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-index c91eba7..f81cbe0 100644
---- a/scripts/mod/file2alias.c
-+++ b/scripts/mod/file2alias.c
-@@ -919,6 +919,24 @@ static int do_i2c_entry(const char *filename, void *symval,
- 	return 1;
- }
+-	/*
+-	 * The lower 32bits of the provisional ID is just filled with a random
+-	 * value, try to match using DCR info.
+-	 */
+-	if (!I3C_PID_RND_LOWER_32BITS(devinfo.pid)) {
+-		u16 manuf = I3C_PID_MANUF_ID(devinfo.pid);
+-		u16 part = I3C_PID_PART_ID(devinfo.pid);
+-		u16 ext_info = I3C_PID_EXTRA_INFO(devinfo.pid);
+-
+-		/* First try to match by manufacturer/part ID. */
+-		for (id = id_table; id->match_flags != 0; id++) {
+-			if ((id->match_flags & I3C_MATCH_MANUF_AND_PART) !=
+-			    I3C_MATCH_MANUF_AND_PART)
+-				continue;
+-
+-			if (manuf != id->manuf_id || part != id->part_id)
+-				continue;
+-
+-			if ((id->match_flags & I3C_MATCH_EXTRA_INFO) &&
+-			    ext_info != id->extra_info)
+-				continue;
+-
+-			return id;
+-		}
+-	}
++	manuf = I3C_PID_MANUF_ID(devinfo.pid);
++	part = I3C_PID_PART_ID(devinfo.pid);
++	ext_info = I3C_PID_EXTRA_INFO(devinfo.pid);
++	rndpid = I3C_PID_RND_LOWER_32BITS(devinfo.pid);
  
-+static int do_i3c_entry(const char *filename, void *symval,
-+			char *alias)
-+{
-+	DEF_FIELD(symval, i3c_device_id, match_flags);
-+	DEF_FIELD(symval, i3c_device_id, dcr);
-+	DEF_FIELD(symval, i3c_device_id, manuf_id);
-+	DEF_FIELD(symval, i3c_device_id, part_id);
-+	DEF_FIELD(symval, i3c_device_id, extra_info);
+-	/* Fallback to DCR match. */
+ 	for (id = id_table; id->match_flags != 0; id++) {
+ 		if ((id->match_flags & I3C_MATCH_DCR) &&
+-		    id->dcr == devinfo.dcr)
+-			return id;
++		    id->dcr != devinfo.dcr)
++			continue;
 +
-+	strcpy(alias, "i3c:");
-+	ADD(alias, "dcr", match_flags & I3C_MATCH_DCR, dcr);
-+	ADD(alias, "manuf", match_flags & I3C_MATCH_MANUF, manuf_id);
-+	ADD(alias, "part", match_flags & I3C_MATCH_PART, part_id);
-+	ADD(alias, "ext", match_flags & I3C_MATCH_EXTRA_INFO, extra_info);
++		if ((id->match_flags & I3C_MATCH_MANUF) &&
++		    id->manuf_id != manuf)
++			continue;
 +
-+	return 1;
-+}
++		if ((id->match_flags & I3C_MATCH_PART) &&
++		    (rndpid || id->part_id != part))
++			continue;
 +
- /* Looks like: spi:S */
- static int do_spi_entry(const char *filename, void *symval,
- 			char *alias)
-@@ -1386,6 +1404,7 @@ static const struct devtable devtable[] = {
- 	{"vmbus", SIZE_hv_vmbus_device_id, do_vmbus_entry},
- 	{"rpmsg", SIZE_rpmsg_device_id, do_rpmsg_entry},
- 	{"i2c", SIZE_i2c_device_id, do_i2c_entry},
-+	{"i3c", SIZE_i3c_device_id, do_i3c_entry},
- 	{"spi", SIZE_spi_device_id, do_spi_entry},
- 	{"dmi", SIZE_dmi_system_id, do_dmi_entry},
- 	{"platform", SIZE_platform_device_id, do_platform_entry},
++		if ((id->match_flags & I3C_MATCH_EXTRA_INFO) &&
++		    (rndpid || id->extra_info != ext_info))
++			continue;
++
++		return id;
+ 	}
+ 
+ 	return NULL;
 -- 
 2.7.4
 
