@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D208171FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0FA8171FB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387977AbgB0OiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:38:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57282 "EHLO mail.kernel.org"
+        id S2387967AbgB0OiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:38:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731876AbgB0N4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:56:41 -0500
+        id S1732207AbgB0N4t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:56:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 111162073D;
-        Thu, 27 Feb 2020 13:56:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7128C20578;
+        Thu, 27 Feb 2020 13:56:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811801;
-        bh=ofwbgNjBWpSvnTCV96oBhMiWdtYCquSy3RtoQ52qE2E=;
+        s=default; t=1582811808;
+        bh=NTq86b0DCPvXQOu5B4YCHjoybaZyE1rhW4Q21+e191c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QLYmFZBw9WCR1+hQ1PW0LUEcEiQ6efn9tktTGETuvQN54N7eVOg/Yc3/MnuNa6z9v
-         IDuFGWVPUi0kABvreBSxYdPBfK4742iFDiaH6aP/krWGCbBRa4kY/FTnJOlVCGxyYi
-         uWl9/J+t3L01KBQIHkpQ0A1jQGdijv8a57/YDzow=
+        b=lCfR+2HdJMr0fZRf3+hNECqTsHbK/OET5IxqAI511qyqj67mmJffSEfITa+ye83Mq
+         or8ecu0Sp7v9itSt+8+ApIQNn/sk8tr93VXuhqfx12rWHynYCj8FOOI2FVZQn1fG1M
+         maL0vWzGioOZ9k2B9LTMG3L5n67PurqwQbE1pSn4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 105/237] soc/tegra: fuse: Correct straps address for older Tegra124 device trees
-Date:   Thu, 27 Feb 2020 14:35:19 +0100
-Message-Id: <20200227132304.653095793@linuxfoundation.org>
+Subject: [PATCH 4.14 108/237] Input: edt-ft5x06 - work around first register access error
+Date:   Thu, 27 Feb 2020 14:35:22 +0100
+Message-Id: <20200227132304.849850280@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -44,35 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
 
-[ Upstream commit 2d9ea1934f8ef0dfb862d103389562cc28b4fc03 ]
+[ Upstream commit e112324cc0422c046f1cf54c56f333d34fa20885 ]
 
-Trying to read out Chip ID before APBMISC registers are mapped won't
-succeed, in a result Tegra124 gets a wrong address for the HW straps
-register if machine uses an old outdated device tree.
+The EP0700MLP1 returns bogus data on the first register read access
+(reading the threshold parameter from register 0x00):
 
-Fixes: 297c4f3dcbff ("soc/tegra: fuse: Restrict legacy code to 32-bit ARM")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+    edt_ft5x06 2-0038: crc error: 0xfc expected, got 0x40
+
+It ignores writes until then. This patch adds a dummy read after which
+the number of sensors and parameter read/writes work correctly.
+
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/touchscreen/edt-ft5x06.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index 5b18f6ffa45c7..cd61c883c19f5 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -134,7 +134,7 @@ void __init tegra_init_apbmisc(void)
- 			apbmisc.flags = IORESOURCE_MEM;
+diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+index 5bf63f76dddac..4eff5b44640cf 100644
+--- a/drivers/input/touchscreen/edt-ft5x06.c
++++ b/drivers/input/touchscreen/edt-ft5x06.c
+@@ -888,6 +888,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+ {
+ 	const struct edt_i2c_chip_data *chip_data;
+ 	struct edt_ft5x06_ts_data *tsdata;
++	u8 buf[2] = { 0xfc, 0x00 };
+ 	struct input_dev *input;
+ 	unsigned long irq_flags;
+ 	int error;
+@@ -957,6 +958,12 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+ 		return error;
+ 	}
  
- 			/* strapping options */
--			if (tegra_get_chip_id() == TEGRA124) {
-+			if (of_machine_is_compatible("nvidia,tegra124")) {
- 				straps.start = 0x7000e864;
- 				straps.end = 0x7000e867;
- 			} else {
++	/*
++	 * Dummy read access. EP0700MLP1 returns bogus data on the first
++	 * register read access and ignores writes.
++	 */
++	edt_ft5x06_ts_readwrite(tsdata->client, 2, buf, 2, buf);
++
+ 	edt_ft5x06_ts_set_regs(tsdata);
+ 	edt_ft5x06_ts_get_defaults(&client->dev, tsdata);
+ 	edt_ft5x06_ts_get_parameters(tsdata);
 -- 
 2.20.1
 
