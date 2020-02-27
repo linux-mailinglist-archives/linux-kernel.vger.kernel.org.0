@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C246171C81
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:13:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF013171BD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:06:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388898AbgB0OMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:12:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51442 "EHLO mail.kernel.org"
+        id S2387869AbgB0OGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:06:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388892AbgB0OMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:12:43 -0500
+        id S2387854AbgB0OF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:05:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7EF620578;
-        Thu, 27 Feb 2020 14:12:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 328C320578;
+        Thu, 27 Feb 2020 14:05:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812762;
-        bh=7QqwOjNJtbd9xkAn4TsVI4GpOYlFQLC1fz7u+pjqbpg=;
+        s=default; t=1582812357;
+        bh=apxBqNn1wa0p78dndwZBig5FR8gtA63mS3EE8s4/EVE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZnOSBXZP0foTSTDbbFFFM/a0wxiGucrbO/CdvOXL+N+b+cUEuvg1esYfnGT1Ijmxg
-         C7NVfJsIcn1q6XmNKisGnaCR4EI6CgF13E5IicgOOYuF0IEa8sfNRh6tsR7osMHQeC
-         7+VgEqilSwGF8aNorMSd95/JzdNoNy5WR/7K6szs=
+        b=k7OngbH0vI5OMddruJHrIplNCvCdl379N9kaEtqZ/8LaOjal2C94Ad+K3F26VKmfy
+         GJnZWJg+jhspuREPKcxIZHaGYCCh5EsmMI8yNEx6i791nEUT0EUN46nIK+u1d5IZIv
+         C+dNSxQPhTSK1xWrNj6Zm/7uYfJ3wJdUpzkTZNY8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 5.4 111/135] staging: rtl8723bs: fix copy of overlapping memory
-Date:   Thu, 27 Feb 2020 14:37:31 +0100
-Message-Id: <20200227132245.885884356@linuxfoundation.org>
+Subject: [PATCH 4.19 84/97] staging: rtl8723bs: fix copy of overlapping memory
+Date:   Thu, 27 Feb 2020 14:37:32 +0100
+Message-Id: <20200227132228.322272705@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -66,7 +66,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
 +++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
-@@ -476,14 +476,13 @@ int rtl8723bs_xmit_thread(void *context)
+@@ -478,14 +478,13 @@ int rtl8723bs_xmit_thread(void *context)
  	s32 ret;
  	struct adapter *padapter;
  	struct xmit_priv *pxmitpriv;
