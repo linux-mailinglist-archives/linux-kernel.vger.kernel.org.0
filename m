@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFCFF171F4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDB83172069
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:43:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733128AbgB0Ody (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:33:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33184 "EHLO mail.kernel.org"
+        id S1731664AbgB0Om2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:42:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732342AbgB0N7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:59:53 -0500
+        id S1730345AbgB0NuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:50:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2CB32073D;
-        Thu, 27 Feb 2020 13:59:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE4B420801;
+        Thu, 27 Feb 2020 13:50:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811993;
-        bh=k8+6jZgtHrB1l9uG8FhMc7iIb5mLOWTquHRjGWQk6g4=;
+        s=default; t=1582811412;
+        bh=vh0Pl3uYsKhFf81+Nx6OWzPWN5O/ewVSWvOjId28dbg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EJ5lF1EZuXT8plQ1o2r2c8dIKcSE5LaKTUg2ZB33gTLbjDnkLsINOGq0KFBnEUrta
-         f4RoV8L2nOPETF2glfz++E8NIf4Z0HP7Q2tM+Ot2MZv/XyJ5T8TDBUfDkXn7pJmIbQ
-         rfIbs7CkXmWEfWRorl5TmlpAJikIxLXRsf8kREuY=
+        b=Nn35pNFN8zgQN+76PnMZiLUSX+HRowa8ZzJj9F40PXrWrfK+30DAZz3v1HE7kXAtz
+         bUbZVU2ZFSEQq0eXSOZUycWMyeC/t8qISEQmHnQWY/tsfiZ6A/ZOdjITvePs7nM2b6
+         EbAJ6Y2XvKv/3yBhmipqADx6i+qyJmolIB/tr/5M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rene D Obermueller <cmdrrdo@gmail.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 180/237] xhci: Force Maximum Packet size for Full-speed bulk devices to valid range.
-Date:   Thu, 27 Feb 2020 14:36:34 +0100
-Message-Id: <20200227132309.614166600@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Todd Kjos <tkjos@google.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: [PATCH 4.9 121/165] staging: android: ashmem: Disallow ashmem memory from being remapped
+Date:   Thu, 27 Feb 2020 14:36:35 +0100
+Message-Id: <20200227132248.789349166@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Suren Baghdasaryan <surenb@google.com>
 
-commit f148b9f402ef002b57bcff3964d45abc8ffb6c3f upstream.
+commit 6d67b0290b4b84c477e6a2fc6e005e174d3c7786 upstream.
 
-A Full-speed bulk USB audio device (DJ-Tech CTRL) with a invalid Maximum
-Packet Size of 4 causes a xHC "Parameter Error" at enumeration.
+When ashmem file is mmapped, the resulting vma->vm_file points to the
+backing shmem file with the generic fops that do not check ashmem
+permissions like fops of ashmem do. If an mremap is done on the ashmem
+region, then the permission checks will be skipped. Fix that by disallowing
+mapping operation on the backing shmem file.
 
-This is because valid Maximum packet sizes for Full-speed bulk endpoints
-are 8, 16, 32 and 64 bytes. Hosts are not required to support other values
-than these. See usb 2 specs section 5.8.3 for details.
-
-The device starts working after forcing the maximum packet size to 8.
-This is most likely the case with other devices as well, so force the
-maximum packet size to a valid range.
-
-Cc: stable@vger.kernel.org
-Reported-by: Rene D Obermueller <cmdrrdo@gmail.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20200210134553.9144-2-mathias.nyman@linux.intel.com
+Reported-by: Jann Horn <jannh@google.com>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Cc: stable <stable@vger.kernel.org> # 4.4,4.9,4.14,4.18,5.4
+Signed-off-by: Todd Kjos <tkjos@google.com>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Link: https://lore.kernel.org/r/20200127235616.48920-1-tkjos@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-mem.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/staging/android/ashmem.c |   28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -1479,9 +1479,15 @@ int xhci_endpoint_init(struct xhci_hcd *
- 	/* Allow 3 retries for everything but isoc, set CErr = 3 */
- 	if (!usb_endpoint_xfer_isoc(&ep->desc))
- 		err_count = 3;
--	/* Some devices get this wrong */
--	if (usb_endpoint_xfer_bulk(&ep->desc) && udev->speed == USB_SPEED_HIGH)
--		max_packet = 512;
-+	/* HS bulk max packet should be 512, FS bulk supports 8, 16, 32 or 64 */
-+	if (usb_endpoint_xfer_bulk(&ep->desc)) {
-+		if (udev->speed == USB_SPEED_HIGH)
-+			max_packet = 512;
-+		if (udev->speed == USB_SPEED_FULL) {
-+			max_packet = rounddown_pow_of_two(max_packet);
-+			max_packet = clamp_val(max_packet, 8, 64);
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -370,8 +370,23 @@ static inline vm_flags_t calc_vm_may_fla
+ 	       _calc_vm_trans(prot, PROT_EXEC,  VM_MAYEXEC);
+ }
+ 
++static int ashmem_vmfile_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	/* do not allow to mmap ashmem backing shmem file directly */
++	return -EPERM;
++}
++
++static unsigned long
++ashmem_vmfile_get_unmapped_area(struct file *file, unsigned long addr,
++				unsigned long len, unsigned long pgoff,
++				unsigned long flags)
++{
++	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
++}
++
+ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
+ {
++	static struct file_operations vmfile_fops;
+ 	struct ashmem_area *asma = file->private_data;
+ 	int ret = 0;
+ 
+@@ -412,6 +427,19 @@ static int ashmem_mmap(struct file *file
+ 		}
+ 		vmfile->f_mode |= FMODE_LSEEK;
+ 		asma->file = vmfile;
++		/*
++		 * override mmap operation of the vmfile so that it can't be
++		 * remapped which would lead to creation of a new vma with no
++		 * asma permission checks. Have to override get_unmapped_area
++		 * as well to prevent VM_BUG_ON check for f_ops modification.
++		 */
++		if (!vmfile_fops.mmap) {
++			vmfile_fops = *vmfile->f_op;
++			vmfile_fops.mmap = ashmem_vmfile_mmap;
++			vmfile_fops.get_unmapped_area =
++					ashmem_vmfile_get_unmapped_area;
 +		}
-+	}
- 	/* xHCI 1.0 and 1.1 indicates that ctrl ep avg TRB Length should be 8 */
- 	if (usb_endpoint_xfer_control(&ep->desc) && xhci->hci_version >= 0x100)
- 		avg_trb_len = 8;
++		vmfile->f_op = &vmfile_fops;
+ 	}
+ 	get_file(asma->file);
+ 
 
 
