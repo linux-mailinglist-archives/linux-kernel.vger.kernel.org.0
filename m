@@ -2,155 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B38711721B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:58:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 072501721B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:58:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732870AbgB0O6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:58:17 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40366 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729983AbgB0O6Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:58:16 -0500
-Received: by mail-lf1-f68.google.com with SMTP id c23so2305523lfi.7
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:58:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aTf53l+ERC5tzgGssL0BoGJrw05AN4ObqwUxsfjBbYg=;
-        b=WgRm/FMpgAMUYeUo5G+W95Ep9TyZ3+12iwn9yu2TbN0mbhqC8/C8NdAhKm9pc1LnfT
-         lBDciFBrXY7o2vRVi5f6Jz3/xNrPlJ8I8YoP+uI4i0T4ru3G4MCSBwmQ73muYHNmr3f8
-         RzExTPNy+JDdxh6TOv7NetqK2RWzCkl8QyT4Ehp9g1kikwZSFoZF5Qqo0mbgqYxsFuCh
-         rtBwTwDo8X6BvROUEYaWN9Hpm4vlXFYKewVhyMUycqer3QPIrXaVZNykXcsf2UKR7wc3
-         4+SuPu5j/zfgBL6eqWL0Em1u8HGUpjcNwbEcai8t58ThkjcoVM9OsOjAQVVy5tHJVFtE
-         3NAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aTf53l+ERC5tzgGssL0BoGJrw05AN4ObqwUxsfjBbYg=;
-        b=Vxvz2HOydu/RHargaiULmK1EN7N4aGLBOaF/7MsNN7Bywq3skEKORdMPlA4nqZX5ba
-         pLuxcmykBhW3cT9njDpTq70vQiCOgzdmbZ2xygDT+3FsG7XxHaDui0fOr4SLYSEqculo
-         Rumbbo0UmtEmvw1Y5gcGdi7Ft/RlKH71hSp7KNbwF1zhDqwGoGkbQcOvOVzFA5OsmZrX
-         z6TsjXY0GnfPsbu92mfwkrMfUP7ICpithGLTgg7W3qvytWT+GQndCQDaeZ4FP1E0vWku
-         iVagy4Q0RyztHVHPZdRuyhm08VbAO2tSiuwqwFJ31mKSveKqB5vJbarmI5U28ynAehQ0
-         hyew==
-X-Gm-Message-State: ANhLgQ2nBTHUvkBczIVZA0pyWrotHawdRETbY3Rbnu3DzznVZW0/WiBX
-        AkXrkfGrC8mGnhWBrLEjPYx2FyRVTruo5hm6wnrbsw==
-X-Google-Smtp-Source: ADFU+vuvFgIeyOpTemZqCZN3AmVSSSHqtxc3oIx/4jV9DCXe1IbFO14Gg3vhvScB5v4QZqGBZqJDCVoJxosiWBTbhe8=
-X-Received: by 2002:a19:6903:: with SMTP id e3mr6662lfc.25.1582815493879; Thu,
- 27 Feb 2020 06:58:13 -0800 (PST)
+        id S2387794AbgB0O6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:58:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59432 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729983AbgB0O6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:58:46 -0500
+Received: from paulmck-ThinkPad-P72.home (199-192-87-166.static.wiline.com [199.192.87.166])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 470CD2468A;
+        Thu, 27 Feb 2020 14:58:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582815525;
+        bh=P/U2Bu3ajfX45ROuq/sc+nFZoVQM4+gBCl98sod0OQI=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=Yhk/1XEHmrfr9DyXUZfulIk/GVCgIpz8kPUNYqB59yadSzjWii0raaMQwHva9LM0Z
+         C/4OApJSeChAWGHn24L0dB6EJGB+amerqqrpWfUI8CvBBLr7syb/Yvtc/MCnx06tTP
+         qnw/Rwhxc8EPP5rl8YzvLcHfLpQd9+Etem4g1L6g=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id E5FF53521A4D; Thu, 27 Feb 2020 06:58:44 -0800 (PST)
+Date:   Thu, 27 Feb 2020 06:58:44 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Marco Elver <elver@google.com>
+Cc:     andreyknvl@google.com, glider@google.com, dvyukov@google.com,
+        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kcsan: Add current->state to implicitly atomic accesses
+Message-ID: <20200227145844.GH2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200225143258.97949-1-elver@google.com>
 MIME-Version: 1.0
-References: <20200226181640.21664-1-vincent.guittot@linaro.org>
- <xm26r1yhtbjr.fsf@bsegall-linux.svl.corp.google.com> <CAKfTPtBm9Gt16gqQgxoErOOmpbUHit6bNf4CVLvDzf04SjWtEg@mail.gmail.com>
- <8f72ea72-f36d-2611-e026-62ddff5c3422@arm.com> <CAKfTPtC9bkMQJsWw6Z2QD0RrV=qN7yMFviVnSeTpDp=-vLBL0g@mail.gmail.com>
-In-Reply-To: <CAKfTPtC9bkMQJsWw6Z2QD0RrV=qN7yMFviVnSeTpDp=-vLBL0g@mail.gmail.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Thu, 27 Feb 2020 15:58:02 +0100
-Message-ID: <CAKfTPtD4iVQmxWgNDDVhKPbu+rYEf=_1xKoPVOy343qo51pD_A@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: fix runnable_avg for throttled cfs
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Ben Segall <bsegall@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Hillf Danton <hdanton@sina.com>, zhout@vivaldi.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200225143258.97949-1-elver@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Feb 2020 at 14:10, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> On Thu, 27 Feb 2020 at 12:20, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
-> >
-> > On 26.02.20 21:01, Vincent Guittot wrote:
-> > > On Wed, 26 Feb 2020 at 20:04, <bsegall@google.com> wrote:
-> > >>
-> > >> Vincent Guittot <vincent.guittot@linaro.org> writes:
-> > >>
-> > >>> When a cfs_rq is throttled, its group entity is dequeued and its running
-> > >>> tasks are removed. We must update runnable_avg with current h_nr_running
-> > >>> and update group_se->runnable_weight with new h_nr_running at each level
-> >
-> >                                               ^^^
-> >
-> > Shouldn't this be 'current' rather 'new' h_nr_running for
-> > group_se->runnable_weight? IMHO, you want to cache the current value
-> > before you add/subtract task_delta.
->
-> hmm... it can't be current in both places. In my explanation,
-> "current" means the current situation when we started to throttle cfs
-> and "new" means the new situation after we finished to throttle the
-> cfs. I should probably use old and new to prevent any
-> misunderstanding.
+On Tue, Feb 25, 2020 at 03:32:58PM +0100, Marco Elver wrote:
+> Add volatile current->state to list of implicitly atomic accesses. This
+> is in preparation to eventually enable KCSAN on kernel/sched (which
+> currently still has KCSAN_SANITIZE := n).
+> 
+> Since accesses that match the special check in atomic.h are rare, it
+> makes more sense to move this check to the slow-path, avoiding the
+> additional compare in the fast-path. With the microbenchmark, a speedup
+> of ~6% is measured.
+> 
+> Signed-off-by: Marco Elver <elver@google.com>
 
-I'm about to send a new version to fix some minor changes: The if
-statement should have some  { }   as there are some on the else part
+Queued for review and testing, thank you!
 
-Would it be better for you if i use old and new instead of current and
-new in the commit message ?
+							Thanx, Paul
 
->
-> That being said, we need to update runnable_avg with the old
-> h_nr_running: the one before we started to throttle the cfs which is
-> the value saved in group_se->runnable_weight. Once we have updated
-> runnable_avg, we save the new h_nr_running in
-> group_se->runnable_weight that will be used for next updates.
->
-> >
-> > >>> of the hierarchy.
-> > >>
-> > >> You'll also need to do this for task enqueue/dequeue inside of a
-> > >> throttled hierarchy, I'm pretty sure.
-> > >
-> > > AFAICT, this is already done with patch "sched/pelt: Add a new
-> > > runnable average signal" when task is enqueued/dequeued inside a
-> > > throttled hierarchy
-> > >
-> > >>
-> > >>>
-> > >>> Fixes: 9f68395333ad ("sched/pelt: Add a new runnable average signal")
-> > >>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > >>> ---
-> > >>> This patch applies on top of tip/sched/core
-> > >>>
-> > >>>  kernel/sched/fair.c | 10 ++++++++++
-> > >>>  1 file changed, 10 insertions(+)
-> > >>>
-> > >>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > >>> index fcc968669aea..6d46974e9be7 100644
-> > >>> --- a/kernel/sched/fair.c
-> > >>> +++ b/kernel/sched/fair.c
-> > >>> @@ -4703,6 +4703,11 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
-> > >>>
-> > >>>               if (dequeue)
-> > >>>                       dequeue_entity(qcfs_rq, se, DEQUEUE_SLEEP);
-> > >>> +             else {
-> > >>> +                     update_load_avg(qcfs_rq, se, 0);
-> > >>> +                     se_update_runnable(se);
-> > >>> +             }
-> > >>> +
-> > >>>               qcfs_rq->h_nr_running -= task_delta;
-> > >>>               qcfs_rq->idle_h_nr_running -= idle_task_delta;
-> > >>>
-> > >>> @@ -4772,6 +4777,11 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
-> > >>>               cfs_rq = cfs_rq_of(se);
-> > >>>               if (enqueue)
-> > >>>                       enqueue_entity(cfs_rq, se, ENQUEUE_WAKEUP);
-> > >>> +             else {
-> > >>> +                     update_load_avg(cfs_rq, se, 0);
-> > >>
-> > >>
-> > >>> +                     se_update_runnable(se);
-> > >>> +             }
-> > >>> +
-> > >>>               cfs_rq->h_nr_running += task_delta;
-> > >>>               cfs_rq->idle_h_nr_running += idle_task_delta;
+> ---
+> 
+> Example data race that was reported with KCSAN enabled on kernel/sched:
+> 
+> write to 0xffff9e42c4400050 of 8 bytes by task 311 on cpu 7:
+>  ttwu_do_wakeup.isra.0+0x48/0x1f0 kernel/sched/core.c:2222
+>  ttwu_remote kernel/sched/core.c:2286 [inline]
+>  try_to_wake_up+0x9f8/0xbe0 kernel/sched/core.c:2585
+>  wake_up_process+0x1e/0x30 kernel/sched/core.c:2669
+>  __up.isra.0+0xb5/0xe0 kernel/locking/semaphore.c:261
+>  ...
+> 
+> read to 0xffff9e42c4400050 of 8 bytes by task 310 on cpu 0:
+>  sched_submit_work kernel/sched/core.c:4109 [inline]  <--- current->state read
+>  schedule+0x3a/0x1a0 kernel/sched/core.c:4153
+>  schedule_timeout+0x202/0x250 kernel/time/timer.c:1872
+>  ...
+> ---
+>  kernel/kcsan/atomic.h  | 21 +++++++--------------
+>  kernel/kcsan/core.c    | 22 +++++++++++++++-------
+>  kernel/kcsan/debugfs.c | 27 ++++++++++++++++++---------
+>  3 files changed, 40 insertions(+), 30 deletions(-)
+> 
+> diff --git a/kernel/kcsan/atomic.h b/kernel/kcsan/atomic.h
+> index a9c1930534914..be9e625227f3b 100644
+> --- a/kernel/kcsan/atomic.h
+> +++ b/kernel/kcsan/atomic.h
+> @@ -4,24 +4,17 @@
+>  #define _KERNEL_KCSAN_ATOMIC_H
+>  
+>  #include <linux/jiffies.h>
+> +#include <linux/sched.h>
+>  
+>  /*
+> - * Helper that returns true if access to @ptr should be considered an atomic
+> - * access, even though it is not explicitly atomic.
+> - *
+> - * List all volatile globals that have been observed in races, to suppress
+> - * data race reports between accesses to these variables.
+> - *
+> - * For now, we assume that volatile accesses of globals are as strong as atomic
+> - * accesses (READ_ONCE, WRITE_ONCE cast to volatile). The situation is still not
+> - * entirely clear, as on some architectures (Alpha) READ_ONCE/WRITE_ONCE do more
+> - * than cast to volatile. Eventually, we hope to be able to remove this
+> - * function.
+> + * Special rules for certain memory where concurrent conflicting accesses are
+> + * common, however, the current convention is to not mark them; returns true if
+> + * access to @ptr should be considered atomic. Called from slow-path.
+>   */
+> -static __always_inline bool kcsan_is_atomic(const volatile void *ptr)
+> +static bool kcsan_is_atomic_special(const volatile void *ptr)
+>  {
+> -	/* only jiffies for now */
+> -	return ptr == &jiffies;
+> +	/* volatile globals that have been observed in data races. */
+> +	return ptr == &jiffies || ptr == &current->state;
+>  }
+>  
+>  #endif /* _KERNEL_KCSAN_ATOMIC_H */
+> diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
+> index 065615df88eaa..eb30ecdc8c009 100644
+> --- a/kernel/kcsan/core.c
+> +++ b/kernel/kcsan/core.c
+> @@ -188,12 +188,13 @@ static __always_inline struct kcsan_ctx *get_ctx(void)
+>  	return in_task() ? &current->kcsan_ctx : raw_cpu_ptr(&kcsan_cpu_ctx);
+>  }
+>  
+> +/* Rules for generic atomic accesses. Called from fast-path. */
+>  static __always_inline bool
+>  is_atomic(const volatile void *ptr, size_t size, int type)
+>  {
+>  	struct kcsan_ctx *ctx;
+>  
+> -	if ((type & KCSAN_ACCESS_ATOMIC) != 0)
+> +	if (type & KCSAN_ACCESS_ATOMIC)
+>  		return true;
+>  
+>  	/*
+> @@ -201,16 +202,16 @@ is_atomic(const volatile void *ptr, size_t size, int type)
+>  	 * as atomic. This allows using them also in atomic regions, such as
+>  	 * seqlocks, without implicitly changing their semantics.
+>  	 */
+> -	if ((type & KCSAN_ACCESS_ASSERT) != 0)
+> +	if (type & KCSAN_ACCESS_ASSERT)
+>  		return false;
+>  
+>  	if (IS_ENABLED(CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC) &&
+> -	    (type & KCSAN_ACCESS_WRITE) != 0 && size <= sizeof(long) &&
+> +	    (type & KCSAN_ACCESS_WRITE) && size <= sizeof(long) &&
+>  	    IS_ALIGNED((unsigned long)ptr, size))
+>  		return true; /* Assume aligned writes up to word size are atomic. */
+>  
+>  	ctx = get_ctx();
+> -	if (unlikely(ctx->atomic_next > 0)) {
+> +	if (ctx->atomic_next > 0) {
+>  		/*
+>  		 * Because we do not have separate contexts for nested
+>  		 * interrupts, in case atomic_next is set, we simply assume that
+> @@ -224,10 +225,8 @@ is_atomic(const volatile void *ptr, size_t size, int type)
+>  			--ctx->atomic_next; /* in task, or outer interrupt */
+>  		return true;
+>  	}
+> -	if (unlikely(ctx->atomic_nest_count > 0 || ctx->in_flat_atomic))
+> -		return true;
+>  
+> -	return kcsan_is_atomic(ptr);
+> +	return ctx->atomic_nest_count > 0 || ctx->in_flat_atomic;
+>  }
+>  
+>  static __always_inline bool
+> @@ -367,6 +366,15 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
+>  	if (!kcsan_is_enabled())
+>  		goto out;
+>  
+> +	/*
+> +	 * Special atomic rules: unlikely to be true, so we check them here in
+> +	 * the slow-path, and not in the fast-path in is_atomic(). Call after
+> +	 * kcsan_is_enabled(), as we may access memory that is not yet
+> +	 * initialized during early boot.
+> +	 */
+> +	if (!is_assert && kcsan_is_atomic_special(ptr))
+> +		goto out;
+> +
+>  	if (!check_encodable((unsigned long)ptr, size)) {
+>  		kcsan_counter_inc(KCSAN_COUNTER_UNENCODABLE_ACCESSES);
+>  		goto out;
+> diff --git a/kernel/kcsan/debugfs.c b/kernel/kcsan/debugfs.c
+> index 2ff1961239778..72ee188ebc54a 100644
+> --- a/kernel/kcsan/debugfs.c
+> +++ b/kernel/kcsan/debugfs.c
+> @@ -74,25 +74,34 @@ void kcsan_counter_dec(enum kcsan_counter_id id)
+>   */
+>  static noinline void microbenchmark(unsigned long iters)
+>  {
+> +	const struct kcsan_ctx ctx_save = current->kcsan_ctx;
+> +	const bool was_enabled = READ_ONCE(kcsan_enabled);
+>  	cycles_t cycles;
+>  
+> +	/* We may have been called from an atomic region; reset context. */
+> +	memset(&current->kcsan_ctx, 0, sizeof(current->kcsan_ctx));
+> +	/*
+> +	 * Disable to benchmark fast-path for all accesses, and (expected
+> +	 * negligible) call into slow-path, but never set up watchpoints.
+> +	 */
+> +	WRITE_ONCE(kcsan_enabled, false);
+> +
+>  	pr_info("KCSAN: %s begin | iters: %lu\n", __func__, iters);
+>  
+>  	cycles = get_cycles();
+>  	while (iters--) {
+> -		/*
+> -		 * We can run this benchmark from multiple tasks; this address
+> -		 * calculation increases likelyhood of some accesses
+> -		 * overlapping. Make the access type an atomic read, to never
+> -		 * set up watchpoints and test the fast-path only.
+> -		 */
+> -		unsigned long addr =
+> -			iters % (CONFIG_KCSAN_NUM_WATCHPOINTS * PAGE_SIZE);
+> -		__kcsan_check_access((void *)addr, sizeof(long), KCSAN_ACCESS_ATOMIC);
+> +		unsigned long addr = iters & ((PAGE_SIZE << 8) - 1);
+> +		int type = !(iters & 0x7f) ? KCSAN_ACCESS_ATOMIC :
+> +				(!(iters & 0xf) ? KCSAN_ACCESS_WRITE : 0);
+> +		__kcsan_check_access((void *)addr, sizeof(long), type);
+>  	}
+>  	cycles = get_cycles() - cycles;
+>  
+>  	pr_info("KCSAN: %s end   | cycles: %llu\n", __func__, cycles);
+> +
+> +	WRITE_ONCE(kcsan_enabled, was_enabled);
+> +	/* restore context */
+> +	current->kcsan_ctx = ctx_save;
+>  }
+>  
+>  /*
+> -- 
+> 2.25.0.265.gbab2e86ba0-goog
+> 
