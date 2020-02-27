@@ -2,117 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7193171C5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 759D7171DA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:22:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388686AbgB0OLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:11:22 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:45996 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388676AbgB0OLP (ORCPT
+        id S2389938AbgB0OWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:22:15 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:34459 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389020AbgB0OQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:11:15 -0500
-Received: by mail-qv1-f66.google.com with SMTP id l14so1558220qvu.12
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:11:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=oLr0ZAwrO1mv1uzfnhw0tAaDfT0XQ1i/nVn5S42DxGA=;
-        b=nOvxEUD+oAOLn9Sm/1KnVy17oeAhV/GzYfJ5fTgj/DwHvgL8OD1QaPwDS1TV5cp8q9
-         IKjr49ROwLGj8GZWRMANPRLD6DuzMGvoKhvjv4Jf7+5S1ulG+1I2/MwoXuAOLLTwVMeO
-         2vJ+q6voNgjE3xMsDDAxRJ79JoclIaMyn6g4EN8hqjljc/Dg4NkLmSOag/RWEuBFdIIs
-         tPXvmYqIn0ycczi5RoSaj9jMzFiCnMk7VkdlfQDcVMYqNQkXjzBeU0NW/jFugpkQ3Cxq
-         limHqCevatoynv24lvMPruyE4lFf8YXd8O+KIwWWaQMUsgOTRCwK0njYnsvn/sPYzzlh
-         zahQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oLr0ZAwrO1mv1uzfnhw0tAaDfT0XQ1i/nVn5S42DxGA=;
-        b=ctiYVHTWmTsK0zre9cWUyre/rOGrf1G8xe0Wk9i5lE+zLWpkAPBtkh8Ydwl+fD/FnK
-         clBEGhSt5+dmAfvV8jd5EkfyjOSESJN1u3dr5LlF3Rsyxsx5CAdj6XpRy43eWhjGWj77
-         LCyhBjdUmKQZN1O88AUa/aCqxP+gjLMdGG8gnXHKvbfga5LwLlvKmSaeB2xv9QmNknP2
-         UdQKcQlJa51eDjsOHy+EKjJGe9vxxEd7138N6FUdgxCx8GJk1Pc8YesP8VkpYd9mEWV7
-         SOo72X3/7YsHGj6yaS/XVeAKI/yBAWbGpGnIOgILwxnlDCcGyInWFWYWUbCnxG75IRAY
-         vGIg==
-X-Gm-Message-State: APjAAAX6tgfdq4+9IOifNAqtGvO6woG/OursMTJ1OzTWlIv9NYnkMrdj
-        fweYSyoXLoqC4F0ICVQ7jfE=
-X-Google-Smtp-Source: APXvYqwBStL+b0Z0v+Q1EI4wHJ/9f9/po04jkKPFbG5MD2yI7XTyGuAhQ0CgZ4TeZZf37ekbw+dTAg==
-X-Received: by 2002:ad4:4511:: with SMTP id k17mr4866897qvu.135.1582812673342;
-        Thu, 27 Feb 2020 06:11:13 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id n32sm3225222qtk.66.2020.02.27.06.11.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 06:11:12 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 697C4403AD; Thu, 27 Feb 2020 11:11:10 -0300 (-03)
-Date:   Thu, 27 Feb 2020 11:11:10 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, namhyung@kernel.org,
-        irogers@google.com, songliubraving@fb.com, yao.jin@linux.intel.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] perf annotate: Misc fixes / improvements
-Message-ID: <20200227141110.GF10761@kernel.org>
-References: <20200204045233.474937-1-ravi.bangoria@linux.ibm.com>
- <20200206190412.GD1669706@krava>
+        Thu, 27 Feb 2020 09:16:10 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1j7JxF-0005AW-Cp; Thu, 27 Feb 2020 15:15:57 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 014FF1C216F;
+        Thu, 27 Feb 2020 15:15:57 +0100 (CET)
+Date:   Thu, 27 Feb 2020 14:15:56 -0000
+From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/entry] x86/entry/entry_32: Route int3 through common_exception
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200225220217.042369808@linutronix.de>
+References: <20200225220217.042369808@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200206190412.GD1669706@krava>
-X-Url:  http://acmel.wordpress.com
+Message-ID: <158281295675.28353.17857855711857005767.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Feb 06, 2020 at 08:04:12PM +0100, Jiri Olsa escreveu:
-> On Tue, Feb 04, 2020 at 10:22:27AM +0530, Ravi Bangoria wrote:
-> > Few fixes / improvements related to perf annotate.
-> > 
-> > v2: https://lore.kernel.org/r/20200124080432.8065-1-ravi.bangoria@linux.ibm.com
-> > 
-> > v2->v3:
-> >  - [PATCH v3 2/6] New function annotation_line__exit() to clear
-> >    annotation_line objects.
-> 
-> Acked-by: Jiri Olsa <jolsa@redhat.com>
+The following commit has been merged into the x86/entry branch of tip:
 
-Thanks applied the series to perf/urgent as it contains a fix.
+Commit-ID:     ac3607f92f70c762e24d0ae731168f7584de51ec
+Gitweb:        https://git.kernel.org/tip/ac3607f92f70c762e24d0ae731168f7584de51ec
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Tue, 25 Feb 2020 22:36:45 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 27 Feb 2020 14:48:41 +01:00
 
-- Arnaldo
+x86/entry/entry_32: Route int3 through common_exception
+
+int3 is not using the common_exception path for purely historical reasons,
+but there is no reason to keep it the only exception which is different.
+
+Make it use common_exception so the upcoming changes to autogenerate the
+entry stubs do not have to special case int3.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Link: https://lkml.kernel.org/r/20200225220217.042369808@linutronix.de
+
+---
+ arch/x86/entry/entry_32.S | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index a8b4438..0753f48 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -1683,14 +1683,8 @@ SYM_CODE_END(nmi)
+ SYM_CODE_START(int3)
+ 	ASM_CLAC
+ 	pushl	$-1				# mark this as an int
+-
+-	SAVE_ALL switch_stacks=1
+-	ENCODE_FRAME_POINTER
+-	TRACE_IRQS_OFF
+-	xorl	%edx, %edx			# zero error code
+-	movl	%esp, %eax			# pt_regs pointer
+-	call	do_int3
+-	jmp	ret_from_exception
++	pushl	$do_int3
++	jmp	common_exception
+ SYM_CODE_END(int3)
  
-> thanks,
-> jirka
-> 
-> > 
-> > v1: http://lore.kernel.org/r/20200117092612.30874-1-ravi.bangoria@linux.ibm.com
-> > 
-> > v1->v2:
-> >  - Split [PATCH v1 1/3] into two patches.
-> >  - Patch 5 and patch 6 are new.
-> > 
-> > Ravi Bangoria (6):
-> >   perf annotate: Remove privsize from symbol__annotate() args
-> >   perf annotate: Simplify disasm_line allocation and freeing code
-> >   perf annotate: Align struct annotate_args
-> >   perf annotate: Fix segfault with source toggle
-> >   perf annotate: Make few functions static
-> >   perf annotate: Get rid of annotation->nr_jumps
-> > 
-> >  tools/perf/builtin-top.c     |   2 +-
-> >  tools/perf/ui/gtk/annotate.c |   2 +-
-> >  tools/perf/util/annotate.c   | 115 ++++++++++++++---------------------
-> >  tools/perf/util/annotate.h   |   8 +--
-> >  4 files changed, 49 insertions(+), 78 deletions(-)
-> > 
-> > -- 
-> > 2.24.1
-> > 
-> 
-
--- 
-
-- Arnaldo
+ SYM_CODE_START(general_protection)
