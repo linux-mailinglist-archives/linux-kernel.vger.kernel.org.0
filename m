@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B76171DBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:23:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AFFE171B6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:03:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389577AbgB0OWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:22:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55364 "EHLO mail.kernel.org"
+        id S1732863AbgB0OCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:02:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730850AbgB0OPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:15:43 -0500
+        id S1733021AbgB0OCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:02:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECCF324690;
-        Thu, 27 Feb 2020 14:15:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C01A20801;
+        Thu, 27 Feb 2020 14:02:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812942;
-        bh=BnFFlCjxFODBuIwr4bKs002NfcGhLol1Mq0p8Agwisk=;
+        s=default; t=1582812141;
+        bh=Z3pvmBN7mNjqmSDn5pdU0b5YHXmvF7MhrUa1o1JzbtA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fIRtQbkge3Apwm1hlRVw7rmPqQbgQm6caHVR2c9dhdX5e2X2nn0lbKz75AfB4XyXR
-         AwjlBejC3S32yrEEA9AYHu5Oew1ANRppG5fbIp5Tew1/jwzgi6i8n4BTU84jqkPHYJ
-         /hA8K26dEd3SiAXBtS94F4Y+nFlKy2WmgjPLZXkA=
+        b=SPvDLbkZKyj0Z/t0yHd7pvbI+lSdR8mATbhbXgOZcRWaZfel/+V7PfpPV098lFhj9
+         4meIBqjKngYdA1l2DXVTXpuMwdNeB/KLTB0y8NULjDPRhkQbSDAROIPhPagtsfCYI+
+         XYUucC9Ai05HldaS1cDZY3lOiVY+9AJztaXZ0u/o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gavin Shan <gshan@redhat.com>,
-        Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.5 076/150] mm/vmscan.c: dont round up scan size for online memory cgroup
+        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.14 199/237] drm/amdgpu/soc15: fix xclk for raven
 Date:   Thu, 27 Feb 2020 14:36:53 +0100
-Message-Id: <20200227132244.069877038@linuxfoundation.org>
+Message-Id: <20200227132310.929274709@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,86 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gavin Shan <gshan@redhat.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 76073c646f5f4999d763f471df9e38a5a912d70d upstream.
+commit c657b936ea98630ef5ba4f130ab1ad5c534d0165 upstream.
 
-Commit 68600f623d69 ("mm: don't miss the last page because of round-off
-error") makes the scan size round up to @denominator regardless of the
-memory cgroup's state, online or offline.  This affects the overall
-reclaiming behavior: the corresponding LRU list is eligible for
-reclaiming only when its size logically right shifted by @sc->priority
-is bigger than zero in the former formula.
+It's 25 Mhz (refclk / 4).  This fixes the interpretation
+of the rlc clock counter.
 
-For example, the inactive anonymous LRU list should have at least 0x4000
-pages to be eligible for reclaiming when we have 60/12 for
-swappiness/priority and without taking scan/rotation ratio into account.
-
-After the roundup is applied, the inactive anonymous LRU list becomes
-eligible for reclaiming when its size is bigger than or equal to 0x1000
-in the same condition.
-
-    (0x4000 >> 12) * 60 / (60 + 140 + 1) = 1
-    ((0x1000 >> 12) * 60) + 200) / (60 + 140 + 1) = 1
-
-aarch64 has 512MB huge page size when the base page size is 64KB.  The
-memory cgroup that has a huge page is always eligible for reclaiming in
-that case.
-
-The reclaiming is likely to stop after the huge page is reclaimed,
-meaing the further iteration on @sc->priority and the silbing and child
-memory cgroups will be skipped.  The overall behaviour has been changed.
-This fixes the issue by applying the roundup to offlined memory cgroups
-only, to give more preference to reclaim memory from offlined memory
-cgroup.  It sounds reasonable as those memory is unlikedly to be used by
-anyone.
-
-The issue was found by starting up 8 VMs on a Ampere Mustang machine,
-which has 8 CPUs and 16 GB memory.  Each VM is given with 2 vCPUs and
-2GB memory.  It took 264 seconds for all VMs to be completely up and
-784MB swap is consumed after that.  With this patch applied, it took 236
-seconds and 60MB swap to do same thing.  So there is 10% performance
-improvement for my case.  Note that KSM is disable while THP is enabled
-in the testing.
-
-         total     used    free   shared  buff/cache   available
-   Mem:  16196    10065    2049       16        4081        3749
-   Swap:  8175      784    7391
-         total     used    free   shared  buff/cache   available
-   Mem:  16196    11324    3656       24        1215        2936
-   Swap:  8175       60    8115
-
-Link: http://lkml.kernel.org/r/20200211024514.8730-1-gshan@redhat.com
-Fixes: 68600f623d69 ("mm: don't miss the last page because of round-off error")
-Signed-off-by: Gavin Shan <gshan@redhat.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Cc: <stable@vger.kernel.org>	[4.20+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: Evan Quan <evan.quan@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmscan.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/soc15.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2429,10 +2429,13 @@ out:
- 			/*
- 			 * Scan types proportional to swappiness and
- 			 * their relative recent reclaim efficiency.
--			 * Make sure we don't miss the last page
--			 * because of a round-off error.
-+			 * Make sure we don't miss the last page on
-+			 * the offlined memory cgroups because of a
-+			 * round-off error.
- 			 */
--			scan = DIV64_U64_ROUND_UP(scan * fraction[file],
-+			scan = mem_cgroup_online(memcg) ?
-+			       div64_u64(scan * fraction[file], denominator) :
-+			       DIV64_U64_ROUND_UP(scan * fraction[file],
- 						  denominator);
- 			break;
- 		case SCAN_FILE:
+--- a/drivers/gpu/drm/amd/amdgpu/soc15.c
++++ b/drivers/gpu/drm/amd/amdgpu/soc15.c
+@@ -279,7 +279,12 @@ static void soc15_init_golden_registers(
+ }
+ static u32 soc15_get_xclk(struct amdgpu_device *adev)
+ {
+-	return adev->clock.spll.reference_freq;
++	u32 reference_clock = adev->clock.spll.reference_freq;
++
++	if (adev->asic_type == CHIP_RAVEN)
++		return reference_clock / 4;
++
++	return reference_clock;
+ }
+ 
+ 
 
 
