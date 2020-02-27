@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD13171C5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:11:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2D42171CD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:15:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388189AbgB0OLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:11:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49670 "EHLO mail.kernel.org"
+        id S2388953AbgB0OPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:15:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387700AbgB0OLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:11:14 -0500
+        id S2389331AbgB0OPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:15:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F3C724690;
-        Thu, 27 Feb 2020 14:11:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AC2620801;
+        Thu, 27 Feb 2020 14:15:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812673;
-        bh=d1CsbyC5DPHcjIo5nhvHs7dMO7hhLX9tMGISW3Hv+Fo=;
+        s=default; t=1582812937;
+        bh=mmKkonB3meZvyLP6wBrCBJsxOiYU/8KU2KXu+HT6wPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FFnA/1JYC13rmH5KkIjT5XQRqZK8LGZps06r49p4z1TOFnh+3fMuHis7VlJ+d2Hcs
-         v3tf8KlYcQiiI9fgJUusHzZbx/4EPNtlAL9AEahpUoReQHaTicCR+c3jkYh9Pfpbyr
-         vPruKHQ2aXaI5cG0xRnDb4fgDPNNODOc5HqVeQvU=
+        b=MSDXUNSh38HPYkiOKHGWiV011xhyDdGfRd2XQLV6vtyXx96UkkOHc9l2pw7jQDzFU
+         k819sj9wxUx1ak4RbEwTo7YRGMhZOvDJ9A0G51PgHSXAy4ysnB+mrdvRB4j+T68gzw
+         cvgOiXx/pnv18cpF0UtvcSjl779cBWj8GpiDMZPI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 5.4 070/135] drm/amdgpu/soc15: fix xclk for raven
-Date:   Thu, 27 Feb 2020 14:36:50 +0100
-Message-Id: <20200227132239.861300879@linuxfoundation.org>
+        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
+        Christoph Hellwig <hch@lst.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Keith Busch <kbusch@kernel.org>
+Subject: [PATCH 5.5 074/150] nvme-multipath: Fix memory leak with ana_log_buf
+Date:   Thu, 27 Feb 2020 14:36:51 +0100
+Message-Id: <20200227132243.793020482@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Logan Gunthorpe <logang@deltatee.com>
 
-commit c657b936ea98630ef5ba4f130ab1ad5c534d0165 upstream.
+commit 3b7830904e17202524bad1974505a9bfc718d31f upstream.
 
-It's 25 Mhz (refclk / 4).  This fixes the interpretation
-of the rlc clock counter.
+kmemleak reports a memory leak with the ana_log_buf allocated by
+nvme_mpath_init():
 
-Acked-by: Evan Quan <evan.quan@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+unreferenced object 0xffff888120e94000 (size 8208):
+  comm "nvme", pid 6884, jiffies 4295020435 (age 78786.312s)
+    hex dump (first 32 bytes):
+      00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+      01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00  ................
+    backtrace:
+      [<00000000e2360188>] kmalloc_order+0x97/0xc0
+      [<0000000079b18dd4>] kmalloc_order_trace+0x24/0x100
+      [<00000000f50c0406>] __kmalloc+0x24c/0x2d0
+      [<00000000f31a10b9>] nvme_mpath_init+0x23c/0x2b0
+      [<000000005802589e>] nvme_init_identify+0x75f/0x1600
+      [<0000000058ef911b>] nvme_loop_configure_admin_queue+0x26d/0x280
+      [<00000000673774b9>] nvme_loop_create_ctrl+0x2a7/0x710
+      [<00000000f1c7a233>] nvmf_dev_write+0xc66/0x10b9
+      [<000000004199f8d0>] __vfs_write+0x50/0xa0
+      [<0000000065466fef>] vfs_write+0xf3/0x280
+      [<00000000b0db9a8b>] ksys_write+0xc6/0x160
+      [<0000000082156b91>] __x64_sys_write+0x43/0x50
+      [<00000000c34fbb6d>] do_syscall_64+0x77/0x2f0
+      [<00000000bbc574c9>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+nvme_mpath_init() is called by nvme_init_identify() which is called in
+multiple places (nvme_reset_work(), nvme_passthru_end(), etc). This
+means nvme_mpath_init() may be called multiple times before
+nvme_mpath_uninit() (which is only called on nvme_free_ctrl()).
+
+When nvme_mpath_init() is called multiple times, it overwrites the
+ana_log_buf pointer with a new allocation, thus leaking the previous
+allocation.
+
+To fix this, free ana_log_buf before allocating a new one.
+
+Fixes: 0d0b660f214dc490 ("nvme: add ANA support")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/soc15.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/nvme/host/multipath.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/amd/amdgpu/soc15.c
-+++ b/drivers/gpu/drm/amd/amdgpu/soc15.c
-@@ -267,7 +267,12 @@ static u32 soc15_get_config_memsize(stru
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -715,6 +715,7 @@ int nvme_mpath_init(struct nvme_ctrl *ct
+ 	}
  
- static u32 soc15_get_xclk(struct amdgpu_device *adev)
- {
--	return adev->clock.spll.reference_freq;
-+	u32 reference_clock = adev->clock.spll.reference_freq;
-+
-+	if (adev->asic_type == CHIP_RAVEN)
-+		return reference_clock / 4;
-+
-+	return reference_clock;
- }
- 
- 
+ 	INIT_WORK(&ctrl->ana_work, nvme_ana_work);
++	kfree(ctrl->ana_log_buf);
+ 	ctrl->ana_log_buf = kmalloc(ctrl->ana_log_size, GFP_KERNEL);
+ 	if (!ctrl->ana_log_buf) {
+ 		error = -ENOMEM;
 
 
