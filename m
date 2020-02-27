@@ -2,94 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AD8E172A7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 22:53:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAE31172A79
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 22:52:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730123AbgB0VxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 16:53:13 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44693 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729843AbgB0VxN (ORCPT
+        id S1730037AbgB0Vwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 16:52:43 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45829 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726791AbgB0Vwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 16:53:13 -0500
-Received: by mail-lf1-f68.google.com with SMTP id 7so529190lfz.11
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 13:53:12 -0800 (PST)
+        Thu, 27 Feb 2020 16:52:42 -0500
+Received: by mail-pf1-f195.google.com with SMTP id 2so517334pfg.12
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 13:52:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OBxG5p3NtRm8vJZ9SrWGbyvBMMrZfbcd6sEkh872Wpk=;
-        b=J2HlgJvotRvArCBanF+nmCfWdRF8pDW66BdmQms7zfNgyS7lRauYT3bDS5OboDi2DM
-         ifdOo7gJ8d+ZZyQcHW2Fg38xWkUDpHzNNzVJKJHCx5P3h/fPWvAmbJsxP/jGHk9JHs8h
-         efR20upDTYOd5dbP0XxRZK/5y/3u0AYyvc+eQ=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=a8tz7pn6WYS1zSkKOSE65k1PsuDxpcFOThMRyfGsXzE=;
+        b=Nu/xJQJcfGP5wjtq6rtG/YhcMWcwj5otv44cx4FAAyishIVQiJQUHZjthXqMGPt5mx
+         q3ZItdbyNqwOLeJLnUgK7Ij7Xz6qHMF8gxezXja59kyh659wtD/c5NTCYvpI+N/feY7n
+         zJynnhsSZEQvADPTbT7WzlnuziaDLdClsJDtRzZKzVGSZ6ioBrHzl0Ow/2N5dnIxDwyY
+         9YvVLFUhSv6Qld1wjqqIcFdYhanLQItBzbmIXkZWjk92iQPuWJbeSrBKk9Hu7M3RwsDg
+         R5oJGClkDbCW5J5gP35HFIkaV7DyO9w8adVx4dA7AvU1PlUG49dEnAi8TDjSV0rKmRxD
+         uqmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OBxG5p3NtRm8vJZ9SrWGbyvBMMrZfbcd6sEkh872Wpk=;
-        b=GiVdyTh1zZGyE62bd/cXzL+lvSLyN3RFgl902nI4otZ81j8D+V6B7Pqvgp0nYaNUub
-         TVDGxeWw3lkohscn1y1D56i0G34bTU5XZvmshWPwrH/oja9osW7+egMhGa9aTNInmajz
-         isZc2xMbKYxtDf46fjT7uWupyshQ04mthcRIkHy+ET4kYhSOt+vuwhnJ69MYVST4WNux
-         By1EF0v87i4vEKIUABpj/Pm2N1cj/OB0+cqIhKCRA7yCOwVm1SpjcgMNqwaDBHLvAIvS
-         jyydRvbh6Kb9dW3UYy7/Tp9fS2HAoYAFN+iX6Sxz6sUI3Z7q1tumW7zDeiqt0mc98zCe
-         pOcA==
-X-Gm-Message-State: ANhLgQ1oH6IsRqO/4r/uzic6ip68mqBwMt+6UssKyWo8bfSCWSL03iaq
-        HLXTHZPjZ4IvlifJoNopAWMXzh0x/RQ=
-X-Google-Smtp-Source: ADFU+vt/ZRbFjJuwrqqNkM8fAOCdCD8xNYrAVM9ucXdffUNV72nm1IknYISwaEslMTdyRWnzedYOvw==
-X-Received: by 2002:a19:3f4f:: with SMTP id m76mr792555lfa.63.1582840391185;
-        Thu, 27 Feb 2020 13:53:11 -0800 (PST)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id i67sm3586634lfd.38.2020.02.27.13.53.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2020 13:53:10 -0800 (PST)
-Received: by mail-lf1-f41.google.com with SMTP id c23so550603lfi.7
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 13:53:10 -0800 (PST)
-X-Received: by 2002:ac2:5226:: with SMTP id i6mr725638lfl.99.1582840389628;
- Thu, 27 Feb 2020 13:53:09 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a8tz7pn6WYS1zSkKOSE65k1PsuDxpcFOThMRyfGsXzE=;
+        b=BuVV9mXJBbmkOs2BvAMVEAB7ISiBPjfgCa1Fp0ItkkrR+HxU46D//UD0tcw/qyoibo
+         42xcH3vvglxlOV30E/xtEUWQw67bxBkFRWPkBphGyr4eRZo6cA/SijI1Bc44UHF/4b5i
+         OzdIM3m4VKiYaqsngVtWCba1O66r8ALcYwOt8UE+szJ7rx/FkD/4WjUHA9uesKMMjXbm
+         1Bt30C++Cqi9SO4/XqQqu6hlsJ4vrjAjTUz0gRcco3tmOAQl2UT4zmcdmL9DOHsxhIUH
+         9GcMJp/UtUTfDCKYRb3pUx44mh0QpqtyTEtJSDxlTo6aOkXhcNAot/Muij/n4rk6BgPO
+         5+zQ==
+X-Gm-Message-State: APjAAAWjxGfiMOiXfMatjikwcXTvmGkrspaWkCCsjo8aY5WDmay4AULV
+        1wJbD5MH5KSyb5QoZvEN1+w=
+X-Google-Smtp-Source: APXvYqwMWOfBtYQa9aLe/LcC/6wxpuCKtnPAnSxFoNQzxZ7DvSIHHrLoB+J3JktcFJ99CvsUTlYRhQ==
+X-Received: by 2002:a63:36cd:: with SMTP id d196mr1396472pga.280.1582840361366;
+        Thu, 27 Feb 2020 13:52:41 -0800 (PST)
+Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
+        by smtp.gmail.com with ESMTPSA id w25sm8060951pfi.106.2020.02.27.13.52.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 13:52:37 -0800 (PST)
+Date:   Thu, 27 Feb 2020 13:52:35 -0800
+From:   Minchan Kim <minchan@kernel.org>
+To:     Jules Irenge <jbi.octave@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, boqun.feng@gmail.com,
+        Nitin Gupta <ngupta@vflare.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:ZSMALLOC COMPRESSED SLAB MEMORY ALLOCATOR" 
+        <linux-mm@kvack.org>
+Subject: Re: [PATCH 10/30] mm/zsmalloc: Add missing annotation for
+ migrate_read_lock()
+Message-ID: <20200227215235.GB215068@google.com>
+References: <0/30>
+ <20200214204741.94112-1-jbi.octave@gmail.com>
+ <20200214204741.94112-11-jbi.octave@gmail.com>
 MIME-Version: 1.0
-References: <20200209183411.17195-1-sibis@codeaurora.org> <20200209183411.17195-5-sibis@codeaurora.org>
-In-Reply-To: <20200209183411.17195-5-sibis@codeaurora.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Thu, 27 Feb 2020 13:52:33 -0800
-X-Gmail-Original-Message-ID: <CAE=gft5OOQVKe9ow2ApbEAjmgqRc05hHVxUi4os+4-gvpMh4Yg@mail.gmail.com>
-Message-ID: <CAE=gft5OOQVKe9ow2ApbEAjmgqRc05hHVxUi4os+4-gvpMh4Yg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] interconnect: qcom: Consolidate interconnect RPMh support
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Dai <daidavid1@codeaurora.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>, linux-pm@vger.kernel.org,
-        Odelu Kukatla <okukatla@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214204741.94112-11-jbi.octave@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 9, 2020 at 10:34 AM Sibi Sankar <sibis@codeaurora.org> wrote:
->
-> From: David Dai <daidavid1@codeaurora.org>
->
-> Add bcm voter driver and add support for RPMh specific interconnect
-> providers which implements the set and aggregate functionalities that
-> translates bandwidth requests into RPMh messages. These modules provide
-> a common set of functionalities for all Qualcomm RPMh based interconnect
-> providers and should help reduce code duplication when adding new
-> providers.
->
-> Signed-off-by: David Dai <daidavid1@codeaurora.org>
-> Signed-off-by: Odelu Kukatla <okukatla@codeaurora.org>
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-
-Assuming Georgi's comments get addressed:
-
-Reviewed-by: Evan Green <evgreen@chromium.org>
+On Fri, Feb 14, 2020 at 08:47:21PM +0000, Jules Irenge wrote:
+> Sparse reports a warning at migrate_read_lock()()
+> 
+>  warning: context imbalance in migrate_read_lock() - wrong count at exit
+> 
+> The root cause is the missing annotation at migrate_read_lock()
+> Add the missing __acquires(&zspage->lock) annotation
+> 
+> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+Acked-by: Minchan Kim <minchan@kernel.org>
