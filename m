@@ -2,100 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86464171E00
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:24:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FF2C171E1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:25:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389350AbgB0OYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:24:46 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:34485 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730366AbgB0OYn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:24:43 -0500
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j7K5W-0005uK-CM; Thu, 27 Feb 2020 15:24:30 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 7766A1040A9; Thu, 27 Feb 2020 15:24:29 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [patch V2 08/10] x86/entry/32: Remove the 0/-1 distinction from exception entries
-In-Reply-To: <87y2spb1nr.fsf@nanos.tec.linutronix.de>
-References: <20200225213636.689276920@linutronix.de> <20200225220216.933457250@linutronix.de> <6dd020cd-e20a-be12-aba7-bfa9e1a94795@kernel.org> <87blpli40i.fsf@nanos.tec.linutronix.de> <CALCETrXbNQJyvDEkfi0f0P3r+zrz8h7cPMaWB0PM_eTkFEAF0w@mail.gmail.com> <87y2spb1nr.fsf@nanos.tec.linutronix.de>
-Date:   Thu, 27 Feb 2020 15:24:29 +0100
-Message-ID: <87mu94m7ky.fsf@nanos.tec.linutronix.de>
+        id S2389165AbgB0OZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:25:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730260AbgB0OZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:25:21 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70CB124656;
+        Thu, 27 Feb 2020 14:25:20 +0000 (UTC)
+Date:   Thu, 27 Feb 2020 09:25:18 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bootconfig: Fix CONFIG_BOOTTIME_TRACING dependency
+ issue
+Message-ID: <20200227092518.2096344e@gandalf.local.home>
+In-Reply-To: <CAMuHMdW+JECxNPX8yDswARq+fLXig7VAo0oosCPAkZhtc_XR0g@mail.gmail.com>
+References: <20200225220551.d9a409bc04b77cdf48eae3ea@kernel.org>
+        <158264140162.23842.11237423518607465535.stgit@devnote2>
+        <CAMuHMdW+JECxNPX8yDswARq+fLXig7VAo0oosCPAkZhtc_XR0g@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nothing cares about the -1 "mark as interrupt" in the errorcode of
-exception entries. It's only used to fill the error code when a signal
-is delivered, but this is already inconsistent vs. 64 bit as there all
-exceptions which do not have an error code set it to 0. So if 32bit
-applications would care about this, then they would have noticed more
-than a decade ago.
+On Thu, 27 Feb 2020 10:18:08 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Just use 0 for all excpetions which do not have an errorcode consistently.
+> Hi Hiramatsu-san,
+> 
+> On Tue, Feb 25, 2020 at 4:47 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > Since commit d8a953ddde5e ("bootconfig: Set CONFIG_BOOT_CONFIG=n by
+> > default") also changed the CONFIG_BOOTTIME_TRACING to select
+> > CONFIG_BOOT_CONFIG to show the boot-time tracing on the menu,
+> > it introduced wrong dependencies with BLK_DEV_INITRD as below.
+> >
+> > WARNING: unmet direct dependencies detected for BOOT_CONFIG
+> >   Depends on [n]: BLK_DEV_INITRD [=n]
+> >   Selected by [y]:
+> >   - BOOTTIME_TRACING [=y] && TRACING_SUPPORT [=y] && FTRACE [=y] && TRACING [=y]
+> >
+> > This makes the CONFIG_BOOT_CONFIG selects CONFIG_BLK_DEV_INITRD to
+> > fix this error and make CONFIG_BOOTTIME_TRACING=n by default, so
+> > that both boot-time tracing and boot configuration off but those
+> > appear on the menu list.
+> >
+> > Fixes: d8a953ddde5e ("bootconfig: Set CONFIG_BOOT_CONFIG=n by default")
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  init/Kconfig         |    2 +-
+> >  kernel/trace/Kconfig |    1 -
+> >  2 files changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/init/Kconfig b/init/Kconfig
+> > index a84e7aa89a29..8b4c3e8c05ea 100644
+> > --- a/init/Kconfig
+> > +++ b/init/Kconfig
+> > @@ -1217,7 +1217,7 @@ endif
+> >
+> >  config BOOT_CONFIG
+> >         bool "Boot config support"
+> > -       depends on BLK_DEV_INITRD
+> > +       select BLK_DEV_INITRD
+> >         help
+> >           Extra boot config allows system admin to pass a config file as
+> >           complemental extension of kernel cmdline when booting.
+> > diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+> > index 795c3e02d3f1..402eef84c859 100644
+> > --- a/kernel/trace/Kconfig
+> > +++ b/kernel/trace/Kconfig
+> > @@ -145,7 +145,6 @@ config BOOTTIME_TRACING
+> >         bool "Boot-time Tracing support"
+> >         depends on TRACING  
+> 
+> Why not "depends on BLK_DEV_INITRD?" here?
+> 
+> /me tries to contain the bloat introduced by the bootconfig stuff.
 
-This does neither break /proc/$PID/syscall because this interface
-examines the error code / syscall number which is on the stack and that
-is set to -1 (no syscall) in common_exception unconditionally for all
-exceptions. The push in the entry stub is just there to fill the
-hardware error code slot on the stack for consistency of the stack
-layout.
+Because people like me will be scratching my head trying to figure out why
+I don't see Boot-time Tracing support ;-)
 
-A transient observation of 0 is possible, but that's true for the other
-exceptions which use 0 already as well and that interface is an unreliable
-snapshot of dubious correctness anyway.
+-- Steve
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
----
-V2: Amend changelog. Rebased on top of tip x86/entry 
----
- arch/x86/entry/entry_32.S |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1290,7 +1290,7 @@ SYM_CODE_END(simd_coprocessor_error)
- 
- SYM_CODE_START(device_not_available)
- 	ASM_CLAC
--	pushl	$-1				# mark this as an int
-+	pushl	$0
- 	pushl	$do_device_not_available
- 	jmp	common_exception
- SYM_CODE_END(device_not_available)
-@@ -1531,7 +1531,7 @@ SYM_CODE_START(debug)
- 	 * Entry from sysenter is now handled in common_exception
- 	 */
- 	ASM_CLAC
--	pushl	$-1				# mark this as an int
-+	pushl	$0
- 	pushl	$do_debug
- 	jmp	common_exception
- SYM_CODE_END(debug)
-@@ -1682,7 +1682,7 @@ SYM_CODE_END(nmi)
- 
- SYM_CODE_START(int3)
- 	ASM_CLAC
--	pushl	$-1				# mark this as an int
-+	pushl	$0
- 	pushl	$do_int3
- 	jmp	common_exception
- SYM_CODE_END(int3)
+> 
+> >         select BOOT_CONFIG
+> > -       default y
+> >         help
+> >           Enable developer to setup ftrace subsystem via supplemental
+> >           kernel cmdline at boot time for debugging (tracing) driver  
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+
