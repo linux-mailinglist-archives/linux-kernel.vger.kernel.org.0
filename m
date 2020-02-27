@@ -2,124 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9925172273
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:44:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA2B172275
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:44:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729590AbgB0PoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 10:44:11 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46860 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727592AbgB0PoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 10:44:11 -0500
-Received: from zn.tnic (p200300EC2F0E0F009D97C1AC9E342137.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:f00:9d97:c1ac:9e34:2137])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A1FF21EC0CDB;
-        Thu, 27 Feb 2020 16:44:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582818249;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=LevINb4patPPnz2zV7f1azNIu6xmQ62ZYofkI7mfbgI=;
-        b=rEHJruPvNkluYhm19GFjRGyP3vfZ7Y5GRqyE20MNL1j+IG4bfq/LDIXTLJV9d/Xp6aNMnq
-        EQ5sXqkNbo7INrFrcOp6JiH7s92yyHGfidIahtkBAESNIXhLqNsw/zz20mDj+/XQ67t+89
-        AKy2DV56lHLroEJnrjZVo3TkKMjarn8=
-Date:   Thu, 27 Feb 2020 16:44:00 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sherry Sun <sherry.sun@nxp.com>,
-        Manish Narani <manish.narani@xilinx.com>
-Cc:     james.morse@arm.com, mchehab@kernel.org, tony.luck@intel.com,
-        rrichter@marvell.com, michal.simek@xilinx.com,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com, frank.li@nxp.com
-Subject: Re: [PATCH V2] EDAC: synopsys: Fix back to back snprintf() messages
- for CE/UE
-Message-ID: <20200227154400.GA18629@zn.tnic>
-References: <1582792452-32575-1-git-send-email-sherry.sun@nxp.com>
+        id S1729598AbgB0Poz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 10:44:55 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45698 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729110AbgB0Poy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 10:44:54 -0500
+Received: by mail-pf1-f195.google.com with SMTP id 2so1829392pfg.12
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 07:44:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P0GQUcx7HmmpSamBc03kK+HfbtO6GCBFhRm2/Ltpz3o=;
+        b=awYccJOYe/nKqPHYEdR/Z1vvmgTeIaNQ79AwkS+qmUanO7zNSUoG5ewFMViLs1ZVCO
+         tUSVnaU29rIfc8MwCUF2wN+qZwio/rDuM3erfdMiHZ2owajdE28PcrbRi6KOcZkCN0kz
+         kOMUYiveAwn8aflOoclqKdc0NHaBa/nZWX1opOBXVZm/MvdioyWA5/qKcGrb4LQQuAa9
+         M9GsZzhlajAhzNOR5X89F1W6Jo3vmx1+ltkhUjwFW00dlaIImoIczSdUMjD+MbuTYXuy
+         2fDtxHLBOUzzciTPorKOsAyZ0y2veZwbCITTqnL91zNpQs96dhCs5a/rIfTzjRg4vISE
+         vgdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P0GQUcx7HmmpSamBc03kK+HfbtO6GCBFhRm2/Ltpz3o=;
+        b=E8SekuX740ItD0bXuVIfE/p+yrPbB5s1Dct45F4rnJAcIZJcPNSxLhSdRWgEZDlvsd
+         IgnbxUMCIajq6BT7w6E7j2NSiO9whuxc4ueTQXDcE0203PwV63WoBEK2BLYFm+AAY6mm
+         d4/BaOeHm9bVuqBXBgupxOE24lfNm6WwL/4tpWeRRIUh1LSSsS1sBgXsfyIkDjPYQ/ff
+         DYfYK2h1erBlV8iqb6pzO/aSyLXAZs5j2ouJkiXLak//1s5GIpBXQbe+vnuu/sKeUKjG
+         /i4+mFvRNgp2YgYvoV9iiESjEz8tuv/3HgKHiVuo8VHEj50PWtJUeH/kCb/xtxtUT1rr
+         mrQg==
+X-Gm-Message-State: APjAAAV9UjircHB5m6jM/SNNhpUqkmiPTf6FShu8lHz98V9ZVwDhFqb6
+        Msfk6dUVfjnbSl+CfLDKMb4no9gW9IJtk3njliTgBA==
+X-Google-Smtp-Source: APXvYqwDl+EtYrX963G/yoja7CkMwn3y35cv/p/HJEJInwXICsTEgLfY6ay3a91oC2F/lKgWco/Sz1cPwi/b5lZas+I=
+X-Received: by 2002:aa7:9629:: with SMTP id r9mr4726368pfg.51.1582818293330;
+ Thu, 27 Feb 2020 07:44:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1582792452-32575-1-git-send-email-sherry.sun@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1582742673.git.andreyknvl@google.com> <20200226174141.d1c938e7962a4fc09060eba9@linux-foundation.org>
+In-Reply-To: <20200226174141.d1c938e7962a4fc09060eba9@linux-foundation.org>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Thu, 27 Feb 2020 16:44:42 +0100
+Message-ID: <CAAeHK+wKO1_VhtEZptgXyqgPLHT9w47Z+-77QfDD4fKDPRS+Gg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] kcov: collect coverage from usb soft interrupts
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        USB list <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 04:34:12PM +0800, Sherry Sun wrote:
-> The current way which call snprintf() function two or three times to
-> output message for CE/UE is incorrect, because it won't output all the
-> message needed, instead it will only output the last message in
-> snprintf(). So the simplest and most effective way to fix this problem
-> is combining all the snprintf() message needed for CE/UE into one
-> snprintf() function.
-> 
-> Fixes: b500b4a029d57 ("EDAC, synopsys: Add ECC support for ZynqMP DDR controller")
-> Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
-> Reviewed-by: James Morse <james.morse@arm.com>
-> ---
-> Changes in V2:
-> - Separated this patch from the original patchset.
-> - Change the subject to be more concise and clear.
-> 
-> ---
->  drivers/edac/synopsys_edac.c | 22 +++++++---------------
->  1 file changed, 7 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
-> index 2d263382d797..880ffd833718 100644
-> --- a/drivers/edac/synopsys_edac.c
-> +++ b/drivers/edac/synopsys_edac.c
-> @@ -479,20 +479,14 @@ static void handle_error(struct mem_ctl_info *mci, struct synps_ecc_status *p)
->  		pinf = &p->ceinfo;
->  		if (!priv->p_data->quirks) {
->  			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
-> -				 "DDR ECC error type:%s Row %d Bank %d Col %d ",
-> -				  "CE", pinf->row, pinf->bank, pinf->col);
-> -			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
-> -				 "Bit Position: %d Data: 0x%08x\n",
-> +				 "DDR ECC error type:%s Row %d Bank %d Col %d Bit Position: %d Data: 0x%08x",
-> +				 "CE", pinf->row, pinf->bank, pinf->col,
->  				 pinf->bitpos, pinf->data);
->  		} else {
->  			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
-> -				 "DDR ECC error type:%s Row %d Bank %d Col %d ",
-> -				  "CE", pinf->row, pinf->bank, pinf->col);
-> -			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
-> -				 "BankGroup Number %d Block Number %d ",
-> -				 pinf->bankgrpnr, pinf->blknr);
-> -			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
-> -				 "Bit Position: %d Data: 0x%08x\n",
-> +				 "DDR ECC error type:%s Row %d Bank %d Col %d BankGroup Number %d Block Number %d Bit Position: %d Data: 0x%08x",
-> +				 "CE", pinf->row, pinf->bank, pinf->col,
-> +				 pinf->bankgrpnr, pinf->blknr,
->  				 pinf->bitpos, pinf->data);
->  		}
->  
-> @@ -509,10 +503,8 @@ static void handle_error(struct mem_ctl_info *mci, struct synps_ecc_status *p)
->  				"UE", pinf->row, pinf->bank, pinf->col);
->  		} else {
->  			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
-> -				 "DDR ECC error type :%s Row %d Bank %d Col %d ",
-> -				 "UE", pinf->row, pinf->bank, pinf->col);
-> -			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
-> -				 "BankGroup Number %d Block Number %d",
-> +				 "DDR ECC error type :%s Row %d Bank %d Col %d BankGroup Number %d Block Number %d",
-> +				 "UE", pinf->row, pinf->bank, pinf->col,
->  				 pinf->bankgrpnr, pinf->blknr);
->  		}
->  
-> -- 
+On Thu, Feb 27, 2020 at 2:41 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Wed, 26 Feb 2020 19:48:06 +0100 Andrey Konovalov <andreyknvl@google.com> wrote:
+>
+> > This patchset extends kcov to allow collecting coverage from soft
+> > interrupts and then uses the new functionality to collect coverage from
+> > USB code.
+> >
+> > This has allowed to find at least one new HID bug [1], which was recently
+> > fixed by Alan [2].
+>
+> I might have asked this before, but I don't see this obvious question
+> addressed in the changelogs so maybe I didn't...
 
-I'm wondering how Manish did not see this in testing? CCed.
+You've asked this for the previous patchset about collecting coverage
+from background threads :)
 
-Anyway, queueing for urgent.
+> Will this only ever be useful for USB?  Or is it anticipated that other
+> subsystems will use this?  If the latter, which ones?
 
-Thx.
+Any subsystem that uses softirqs (e.g. timers) can make use of this.
+Looking at the recent syzbot reports, an obvious candidate is the
+networking subsystem [1, 2, 3 and many more]. I'll add this info into
+the cover letter in the next version.
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks!
 
-https://people.kernel.org/tglx/notes-about-netiquette
+[1] https://syzkaller.appspot.com/bug?extid=522ab502c69badc66ab7
+[2] https://syzkaller.appspot.com/bug?extid=57f89d05946c53dbbb31
+[3] https://syzkaller.appspot.com/bug?extid=df358e65d9c1b9d3f5f4
