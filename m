@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F64171DA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:22:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 127DB171D9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389954AbgB0OWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:22:19 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:34454 "EHLO
+        id S2389918AbgB0OWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:22:07 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:34462 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389428AbgB0OQI (ORCPT
+        with ESMTP id S2389445AbgB0OQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:16:08 -0500
+        Thu, 27 Feb 2020 09:16:13 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1j7JxH-0005Cc-FG; Thu, 27 Feb 2020 15:15:59 +0100
+        id 1j7JxG-0005Bu-PZ; Thu, 27 Feb 2020 15:15:59 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2743F1C216F;
-        Thu, 27 Feb 2020 15:15:59 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 69E1D1C2170;
+        Thu, 27 Feb 2020 15:15:58 +0100 (CET)
 Date:   Thu, 27 Feb 2020 14:15:58 -0000
-From:   "tip-bot2 for Andy Lutomirski" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/entry] x86/mce: Disable tracing and kprobes on do_machine_check()
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
+Subject: [tip: x86/entry] x86/traps: Remove pointless irq enable from
+ do_spurious_interrupt_bug()
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
         Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200225220216.315548935@linutronix.de>
-References: <20200225220216.315548935@linutronix.de>
+In-Reply-To: <20191023123117.871608831@linutronix.de>
+References: <20191023123117.871608831@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <158281295888.28353.15787585336529193970.tip-bot2@tip-bot2>
+Message-ID: <158281295805.28353.16374560066347927254.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,82 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/entry branch of tip:
 
-Commit-ID:     55ba18d6ed37a28cf8b8ca79e9aef4cf98183bb7
-Gitweb:        https://git.kernel.org/tip/55ba18d6ed37a28cf8b8ca79e9aef4cf98183bb7
-Author:        Andy Lutomirski <luto@kernel.org>
-AuthorDate:    Tue, 25 Feb 2020 22:36:38 +01:00
+Commit-ID:     e039dd815941e785203142261397da6ec64d20cc
+Gitweb:        https://git.kernel.org/tip/e039dd815941e785203142261397da6ec64d20cc
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Tue, 25 Feb 2020 22:36:40 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Thu, 27 Feb 2020 14:48:39 +01:00
 
-x86/mce: Disable tracing and kprobes on do_machine_check()
+x86/traps: Remove pointless irq enable from do_spurious_interrupt_bug()
 
-do_machine_check() can be raised in almost any context including the most
-fragile ones. Prevent kprobes and tracing.
+That function returns immediately after conditionally reenabling interrupts which
+is more than pointless and requires the ASM code to disable interrupts again.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Link: https://lkml.kernel.org/r/20200225220216.315548935@linutronix.de
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20191023123117.871608831@linutronix.de
+Link: https://lkml.kernel.org/r/20200225220216.518575042@linutronix.de
+
 
 ---
- arch/x86/include/asm/traps.h   |  3 ---
- arch/x86/kernel/cpu/mce/core.c | 12 ++++++++++--
- 2 files changed, 10 insertions(+), 5 deletions(-)
+ arch/x86/kernel/traps.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index ffa0dc8..e1c660b 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -88,9 +88,6 @@ dotraplinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code,
- dotraplinkage void do_spurious_interrupt_bug(struct pt_regs *regs, long error_code);
- dotraplinkage void do_coprocessor_error(struct pt_regs *regs, long error_code);
- dotraplinkage void do_alignment_check(struct pt_regs *regs, long error_code);
--#ifdef CONFIG_X86_MCE
--dotraplinkage void do_machine_check(struct pt_regs *regs, long error_code);
--#endif
- dotraplinkage void do_simd_coprocessor_error(struct pt_regs *regs, long error_code);
- #ifdef CONFIG_X86_32
- dotraplinkage void do_iret_error(struct pt_regs *regs, long error_code);
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 2c4f949..32ecc59 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -1213,8 +1213,14 @@ static void __mc_scan_banks(struct mce *m, struct mce *final,
-  * On Intel systems this is entered on all CPUs in parallel through
-  * MCE broadcast. However some CPUs might be broken beyond repair,
-  * so be always careful when synchronizing with others.
-+ *
-+ * Tracing and kprobes are disabled: if we interrupted a kernel context
-+ * with IF=1, we need to minimize stack usage.  There are also recursion
-+ * issues: if the machine check was due to a failure of the memory
-+ * backing the user stack, tracing that reads the user stack will cause
-+ * potentially infinite recursion.
-  */
--void do_machine_check(struct pt_regs *regs, long error_code)
-+void notrace do_machine_check(struct pt_regs *regs, long error_code)
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 6ef00eb..474b8cb 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -862,7 +862,6 @@ do_simd_coprocessor_error(struct pt_regs *regs, long error_code)
+ dotraplinkage void
+ do_spurious_interrupt_bug(struct pt_regs *regs, long error_code)
  {
- 	DECLARE_BITMAP(valid_banks, MAX_NR_BANKS);
- 	DECLARE_BITMAP(toclear, MAX_NR_BANKS);
-@@ -1360,6 +1366,7 @@ out_ist:
- 	ist_exit(regs);
+-	cond_local_irq_enable(regs);
  }
- EXPORT_SYMBOL_GPL(do_machine_check);
-+NOKPROBE_SYMBOL(do_machine_check);
  
- #ifndef CONFIG_MEMORY_FAILURE
- int memory_failure(unsigned long pfn, int flags)
-@@ -1892,10 +1899,11 @@ static void unexpected_machine_check(struct pt_regs *regs, long error_code)
- void (*machine_check_vector)(struct pt_regs *, long error_code) =
- 						unexpected_machine_check;
- 
--dotraplinkage void do_mce(struct pt_regs *regs, long error_code)
-+dotraplinkage notrace void do_mce(struct pt_regs *regs, long error_code)
- {
- 	machine_check_vector(regs, error_code);
- }
-+NOKPROBE_SYMBOL(do_mce);
- 
- /*
-  * Called for each booted CPU to set up machine checks.
+ dotraplinkage void
