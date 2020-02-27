@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01FC2171DEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:24:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB51171E8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:29:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388956AbgB0ONP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:13:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52024 "EHLO mail.kernel.org"
+        id S2388045AbgB0OHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:07:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730803AbgB0ONK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:13:10 -0500
+        id S2388037AbgB0OHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:07:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA94624690;
-        Thu, 27 Feb 2020 14:13:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E64920801;
+        Thu, 27 Feb 2020 14:07:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812788;
-        bh=vgHyGpEbgkvdFyWPBhyjtuKYzDwd/vBivZUC26r7QHk=;
+        s=default; t=1582812430;
+        bh=Wz6bUIagI7E52vNvqGZt2+l4o9kfdPMamH19p7nZsq8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aMJSGqT2/w+FUkOE+MvymPjZBetuksln9pDn/zznDLRCdxvvCDjnWYyZtIh/26jmR
-         kIg1NdYFiaDhb7DfPcgFrgcs5w+nuAom1QzL+8/ne2vjvMSN6SAZyRcTbfwWdZbccR
-         H5nWHUgLOmz4ii2f+zaYymZiNrO9CRw8O6XT2D6w=
+        b=ck7DJQ2msuOBMQbLnURn/vQZ7B/MbyKAXx4b+EwMMr7dpGLV4FtZuCJiD+kJ8kJJw
+         zZX9LlhAeNeKIwEzkmTE0w9E+9Ih1kK7dQfHAB8YH3SuSh8INNhKJx5isenWMFV4t5
+         x5p7eCHFUMoRiNi1uJ5vWfGwAkYZcNPoR9s9TIZ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Jones <davej@codemonkey.org.uk>,
-        Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.5 017/150] btrfs: dont set path->leave_spinning for truncate
-Date:   Thu, 27 Feb 2020 14:35:54 +0100
-Message-Id: <20200227132235.183018429@linuxfoundation.org>
+        stable@vger.kernel.org, Morumuri Srivalli <smorumu1@in.ibm.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        David Dai <zdai@linux.vnet.ibm.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH 5.4 015/135] e1000e: Use rtnl_lock to prevent race conditions between net and pci/pm
+Date:   Thu, 27 Feb 2020 14:35:55 +0100
+Message-Id: <20200227132231.457798739@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,79 +46,168 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-commit 52e29e331070cd7d52a64cbf1b0958212a340e28 upstream.
+commit a7023819404ac9bd2bb311a4fafd38515cfa71ec upstream.
 
-The only time we actually leave the path spinning is if we're truncating
-a small amount and don't actually free an extent, which is not a common
-occurrence.  We have to set the path blocking in order to add the
-delayed ref anyway, so the first extent we find we set the path to
-blocking and stay blocking for the duration of the operation.  With the
-upcoming file extent map stuff there will be another case that we have
-to have the path blocking, so just swap to blocking always.
+This patch is meant to address possible race conditions that can exist
+between network configuration and power management. A similar issue was
+fixed for igb in commit 9474933caf21 ("igb: close/suspend race in
+netif_device_detach").
 
-Note: this patch also fixes a warning after 28553fa992cb ("Btrfs: fix
-race between shrinking truncate and fiemap") got merged that inserts
-extent locks around truncation so the path must not leave spinning locks
-after btrfs_search_slot.
+In addition it consolidates the code so that the PCI error handling code
+will essentially perform the power management freeze on the device prior to
+attempting a reset, and will thaw the device afterwards if that is what it
+is planning to do. Otherwise when we call close on the interface it should
+see it is detached and not attempt to call the logic to down the interface
+and free the IRQs again.
 
-  [70.794783] BUG: sleeping function called from invalid context at mm/slab.h:565
-  [70.794834] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 1141, name: rsync
-  [70.794863] 5 locks held by rsync/1141:
-  [70.794876]  #0: ffff888417b9c408 (sb_writers#17){.+.+}, at: mnt_want_write+0x20/0x50
-  [70.795030]  #1: ffff888428de28e8 (&type->i_mutex_dir_key#13/1){+.+.}, at: lock_rename+0xf1/0x100
-  [70.795051]  #2: ffff888417b9c608 (sb_internal#2){.+.+}, at: start_transaction+0x394/0x560
-  [70.795124]  #3: ffff888403081768 (btrfs-fs-01){++++}, at: btrfs_try_tree_write_lock+0x2f/0x160
-  [70.795203]  #4: ffff888403086568 (btrfs-fs-00){++++}, at: btrfs_try_tree_write_lock+0x2f/0x160
-  [70.795222] CPU: 5 PID: 1141 Comm: rsync Not tainted 5.6.0-rc2-backup+ #2
-  [70.795362] Call Trace:
-  [70.795374]  dump_stack+0x71/0xa0
-  [70.795445]  ___might_sleep.part.96.cold.106+0xa6/0xb6
-  [70.795459]  kmem_cache_alloc+0x1d3/0x290
-  [70.795471]  alloc_extent_state+0x22/0x1c0
-  [70.795544]  __clear_extent_bit+0x3ba/0x580
-  [70.795557]  ? _raw_spin_unlock_irq+0x24/0x30
-  [70.795569]  btrfs_truncate_inode_items+0x339/0xe50
-  [70.795647]  btrfs_evict_inode+0x269/0x540
-  [70.795659]  ? dput.part.38+0x29/0x460
-  [70.795671]  evict+0xcd/0x190
-  [70.795682]  __dentry_kill+0xd6/0x180
-  [70.795754]  dput.part.38+0x2ad/0x460
-  [70.795765]  do_renameat2+0x3cb/0x540
-  [70.795777]  __x64_sys_rename+0x1c/0x20
+>From what I can tell the check that was adding the check for __E1000_DOWN
+in e1000e_close was added when runtime power management was added. However
+it should not be relevant for us as we perform a call to
+pm_runtime_get_sync before we call e1000_down/free_irq so it should always
+be back up before we call into this anyway.
 
-Reported-by: Dave Jones <davej@codemonkey.org.uk>
-Fixes: 28553fa992cb ("Btrfs: fix race between shrinking truncate and fiemap")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ add note ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+Reported-by: Morumuri Srivalli <smorumu1@in.ibm.com>
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Tested-by: David Dai <zdai@linux.vnet.ibm.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/ethernet/intel/e1000e/netdev.c |   68 ++++++++++++++---------------
+ 1 file changed, 35 insertions(+), 33 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -4814,7 +4814,6 @@ search_again:
- 		goto out;
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -4713,12 +4713,12 @@ int e1000e_close(struct net_device *netd
+ 
+ 	pm_runtime_get_sync(&pdev->dev);
+ 
+-	if (!test_bit(__E1000_DOWN, &adapter->state)) {
++	if (netif_device_present(netdev)) {
+ 		e1000e_down(adapter, true);
+ 		e1000_free_irq(adapter);
+ 
+ 		/* Link status message must follow this format */
+-		pr_info("%s NIC Link is Down\n", adapter->netdev->name);
++		pr_info("%s NIC Link is Down\n", netdev->name);
  	}
  
--	path->leave_spinning = 1;
- 	ret = btrfs_search_slot(trans, root, &key, path, -1, 1);
- 	if (ret < 0)
- 		goto out;
-@@ -4966,7 +4965,6 @@ delete:
- 		     root == fs_info->tree_root)) {
- 			struct btrfs_ref ref = { 0 };
+ 	napi_disable(&adapter->napi);
+@@ -6309,10 +6309,14 @@ static int e1000e_pm_freeze(struct devic
+ {
+ 	struct net_device *netdev = dev_get_drvdata(dev);
+ 	struct e1000_adapter *adapter = netdev_priv(netdev);
++	bool present;
  
--			btrfs_set_path_blocking(path);
- 			bytes_deleted += extent_num_bytes;
++	rtnl_lock();
++
++	present = netif_device_present(netdev);
+ 	netif_device_detach(netdev);
  
- 			btrfs_init_generic_ref(&ref, BTRFS_DROP_DELAYED_REF,
+-	if (netif_running(netdev)) {
++	if (present && netif_running(netdev)) {
+ 		int count = E1000_CHECK_RESET_COUNT;
+ 
+ 		while (test_bit(__E1000_RESETTING, &adapter->state) && count--)
+@@ -6324,6 +6328,8 @@ static int e1000e_pm_freeze(struct devic
+ 		e1000e_down(adapter, false);
+ 		e1000_free_irq(adapter);
+ 	}
++	rtnl_unlock();
++
+ 	e1000e_reset_interrupt_capability(adapter);
+ 
+ 	/* Allow time for pending master requests to run */
+@@ -6571,6 +6577,30 @@ static void e1000e_disable_aspm_locked(s
+ 	__e1000e_disable_aspm(pdev, state, 1);
+ }
+ 
++static int e1000e_pm_thaw(struct device *dev)
++{
++	struct net_device *netdev = dev_get_drvdata(dev);
++	struct e1000_adapter *adapter = netdev_priv(netdev);
++	int rc = 0;
++
++	e1000e_set_interrupt_capability(adapter);
++
++	rtnl_lock();
++	if (netif_running(netdev)) {
++		rc = e1000_request_irq(adapter);
++		if (rc)
++			goto err_irq;
++
++		e1000e_up(adapter);
++	}
++
++	netif_device_attach(netdev);
++err_irq:
++	rtnl_unlock();
++
++	return rc;
++}
++
+ #ifdef CONFIG_PM
+ static int __e1000_resume(struct pci_dev *pdev)
+ {
+@@ -6638,26 +6668,6 @@ static int __e1000_resume(struct pci_dev
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+-static int e1000e_pm_thaw(struct device *dev)
+-{
+-	struct net_device *netdev = dev_get_drvdata(dev);
+-	struct e1000_adapter *adapter = netdev_priv(netdev);
+-
+-	e1000e_set_interrupt_capability(adapter);
+-	if (netif_running(netdev)) {
+-		u32 err = e1000_request_irq(adapter);
+-
+-		if (err)
+-			return err;
+-
+-		e1000e_up(adapter);
+-	}
+-
+-	netif_device_attach(netdev);
+-
+-	return 0;
+-}
+-
+ static int e1000e_pm_suspend(struct device *dev)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev);
+@@ -6829,16 +6839,11 @@ static void e1000_netpoll(struct net_dev
+ static pci_ers_result_t e1000_io_error_detected(struct pci_dev *pdev,
+ 						pci_channel_state_t state)
+ {
+-	struct net_device *netdev = pci_get_drvdata(pdev);
+-	struct e1000_adapter *adapter = netdev_priv(netdev);
+-
+-	netif_device_detach(netdev);
++	e1000e_pm_freeze(&pdev->dev);
+ 
+ 	if (state == pci_channel_io_perm_failure)
+ 		return PCI_ERS_RESULT_DISCONNECT;
+ 
+-	if (netif_running(netdev))
+-		e1000e_down(adapter, true);
+ 	pci_disable_device(pdev);
+ 
+ 	/* Request a slot slot reset. */
+@@ -6904,10 +6909,7 @@ static void e1000_io_resume(struct pci_d
+ 
+ 	e1000_init_manageability_pt(adapter);
+ 
+-	if (netif_running(netdev))
+-		e1000e_up(adapter);
+-
+-	netif_device_attach(netdev);
++	e1000e_pm_thaw(&pdev->dev);
+ 
+ 	/* If the controller has AMT, do not set DRV_LOAD until the interface
+ 	 * is up.  For all other cases, let the f/w know that the h/w is now
 
 
