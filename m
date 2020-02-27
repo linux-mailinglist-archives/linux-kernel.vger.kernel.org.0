@@ -2,157 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C32471710C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 06:57:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C55D1710BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 06:56:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbgB0F4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 00:56:34 -0500
-Received: from foss.arm.com ([217.140.110.172]:46058 "EHLO foss.arm.com"
+        id S1728413AbgB0F43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 00:56:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728434AbgB0F4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 00:56:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02BB430E;
-        Wed, 26 Feb 2020 21:56:32 -0800 (PST)
-Received: from p8cg001049571a15.arm.com (unknown [10.163.1.119])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0DF7F3F73B;
-        Wed, 26 Feb 2020 21:56:29 -0800 (PST)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-mm@kvack.org
-Cc:     vbabka@suse.cz, Anshuman Khandual <anshuman.khandual@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V2 3/3] mm/vma: Make is_vma_temporary_stack() available for general use
-Date:   Thu, 27 Feb 2020 11:26:05 +0530
-Message-Id: <1582782965-3274-4-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582782965-3274-1-git-send-email-anshuman.khandual@arm.com>
-References: <1582782965-3274-1-git-send-email-anshuman.khandual@arm.com>
+        id S1725805AbgB0F41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 00:56:27 -0500
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2612B24672;
+        Thu, 27 Feb 2020 05:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582782987;
+        bh=R9VEd0NDGHG23l9/8f5bs/P9pgnOwscgs82TKBNxFEs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=O0AdVHRQx3VDctsBvC4N0ZihEthjvsr47cIp4X2kbDDo0TpIBiIJYkWRRyTETJfm4
+         WBnTiFWPOEu7ubiL5KG7koSy3y1RoaqAcmRXw/1c7Ww7wJeHptWKYWJxQt10pargoD
+         w5Sr27uxuvChFnoxAAAnC/XoMCPptP/Cd4rnMq4o=
+Received: by mail-lf1-f52.google.com with SMTP id c23so1119976lfi.7;
+        Wed, 26 Feb 2020 21:56:27 -0800 (PST)
+X-Gm-Message-State: ANhLgQ3hGWWRy1Rn6jZMmpyWGwLOQeQYXJK06gofew1DP6d1MSGQpQVq
+        1ru7R1sS3HIMqDA8fPTAq34jVxrn2URFg2A6lL0=
+X-Google-Smtp-Source: ADFU+vtg0fGzcYoaye5t1/UsBTkwUsvyGZXKcDkqdmLZOhJ19DxxGVywxm78hjafHzS5LYzWchS/gfPFmj7IZ0Oq6Nc=
+X-Received: by 2002:a19:4a0f:: with SMTP id x15mr1096322lfa.172.1582782985300;
+ Wed, 26 Feb 2020 21:56:25 -0800 (PST)
+MIME-Version: 1.0
+References: <20200227001744.GA3317@embeddedor>
+In-Reply-To: <20200227001744.GA3317@embeddedor>
+From:   Song Liu <song@kernel.org>
+Date:   Wed, 26 Feb 2020 21:56:13 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW6EWnMWL6QeJaXDwsT4_aFmCAc_aEFGrvKwJsTFg_B2Cg@mail.gmail.com>
+Message-ID: <CAPhsuW6EWnMWL6QeJaXDwsT4_aFmCAc_aEFGrvKwJsTFg_B2Cg@mail.gmail.com>
+Subject: Re: [PATCH] bpf: Replace zero-length array with flexible-array member
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the declaration and definition for is_vma_temporary_stack() are
-scattered. Lets make is_vma_temporary_stack() helper available for general
-use and also drop the declaration from (include/linux/huge_mm.h) which is
-no longer required. While at this, rename this as vma_is_temporary_stack()
-in line with existing helpers. This should not cause any functional change.
+On Wed, Feb 26, 2020 at 4:16 PM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+>
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
+>
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
+>
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+>
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+>
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+>
+> This issue was found with the help of Coccinelle.
+>
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- include/linux/huge_mm.h |  4 +---
- include/linux/mm.h      | 14 ++++++++++++++
- mm/khugepaged.c         |  2 +-
- mm/mremap.c             |  2 +-
- mm/rmap.c               | 16 +---------------
- 5 files changed, 18 insertions(+), 20 deletions(-)
-
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 5aca3d1bdb32..31c39f4a5518 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -87,8 +87,6 @@ extern struct kobj_attribute shmem_enabled_attr;
- #define HPAGE_PUD_SIZE	((1UL) << HPAGE_PUD_SHIFT)
- #define HPAGE_PUD_MASK	(~(HPAGE_PUD_SIZE - 1))
- 
--extern bool is_vma_temporary_stack(struct vm_area_struct *vma);
--
- extern unsigned long transparent_hugepage_flags;
- 
- /*
-@@ -100,7 +98,7 @@ static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
- 	if (vma->vm_flags & VM_NOHUGEPAGE)
- 		return false;
- 
--	if (is_vma_temporary_stack(vma))
-+	if (vma_is_temporary_stack(vma))
- 		return false;
- 
- 	if (test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c5d2fd889bdf..2b7e201eb12a 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -544,6 +544,20 @@ static inline bool vma_is_anonymous(struct vm_area_struct *vma)
- 	return !vma->vm_ops;
- }
- 
-+static inline bool vma_is_temporary_stack(struct vm_area_struct *vma)
-+{
-+	int maybe_stack = vma->vm_flags & (VM_GROWSDOWN | VM_GROWSUP);
-+
-+	if (!maybe_stack)
-+		return false;
-+
-+	if ((vma->vm_flags & VM_STACK_INCOMPLETE_SETUP) ==
-+						VM_STACK_INCOMPLETE_SETUP)
-+		return true;
-+
-+	return false;
-+}
-+
- static inline bool vma_is_foreign(struct vm_area_struct *vma)
- {
- 	if (!current->mm)
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 494443628850..c659c68728bc 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -421,7 +421,7 @@ static bool hugepage_vma_check(struct vm_area_struct *vma,
- 	}
- 	if (!vma->anon_vma || vma->vm_ops)
- 		return false;
--	if (is_vma_temporary_stack(vma))
-+	if (vma_is_temporary_stack(vma))
- 		return false;
- 	return !(vm_flags & VM_NO_KHUGEPAGED);
- }
-diff --git a/mm/mremap.c b/mm/mremap.c
-index af363063ea23..9438c8568f34 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -133,7 +133,7 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
- 	 * such races:
- 	 *
- 	 * - During exec() shift_arg_pages(), we use a specially tagged vma
--	 *   which rmap call sites look for using is_vma_temporary_stack().
-+	 *   which rmap call sites look for using vma_is_temporary_stack().
- 	 *
- 	 * - During mremap(), new_vma is often known to be placed after vma
- 	 *   in rmap traversal order. This ensures rmap will always observe
-diff --git a/mm/rmap.c b/mm/rmap.c
-index b3e381919835..b2acbe31b625 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1696,23 +1696,9 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 	return ret;
- }
- 
--bool is_vma_temporary_stack(struct vm_area_struct *vma)
--{
--	int maybe_stack = vma->vm_flags & (VM_GROWSDOWN | VM_GROWSUP);
--
--	if (!maybe_stack)
--		return false;
--
--	if ((vma->vm_flags & VM_STACK_INCOMPLETE_SETUP) ==
--						VM_STACK_INCOMPLETE_SETUP)
--		return true;
--
--	return false;
--}
--
- static bool invalid_migration_vma(struct vm_area_struct *vma, void *arg)
- {
--	return is_vma_temporary_stack(vma);
-+	return vma_is_temporary_stack(vma);
- }
- 
- static int page_mapcount_is_zero(struct page *page)
--- 
-2.20.1
-
+Acked-by: Song Liu <songliubraving@fb.com>
