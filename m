@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 199F7171E33
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9EAD171BBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:05:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388543AbgB0OKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:10:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48544 "EHLO mail.kernel.org"
+        id S2387754AbgB0OFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:05:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388515AbgB0OKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:10:23 -0500
+        id S2387721AbgB0OFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:05:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6BE324656;
-        Thu, 27 Feb 2020 14:10:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F0FD21D7E;
+        Thu, 27 Feb 2020 14:05:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812622;
-        bh=UtbNHMfivaE4luTQYXgsVskieXTbGxyFGjSorfKG0HM=;
+        s=default; t=1582812314;
+        bh=mABAXKpoGeiMojiRINknGF4bDYTJblHbCObSYDzQYyY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mCYEVzNuVwUqFGqilIPOKuzOrEi/LAQwE1BRIsOikAtdLRmAzqL3MVQk55MwQKtyB
-         2foB+inxkwWIL3ztm5+oSmZqO593Pe5vH47TCpg3E5+AWLvaRl5jYqX42FR3EQ1j6e
-         oI3fUpoFChkcu/wR0FMy38yLT4Z3420Yl4Od3s9U=
+        b=qlzWoWjFHflb65ZOjA3NV8Pw+LP9KNmzVhBgYL3J8YPi+Fe/dXI3p0Dh1J3BmDd5W
+         G4HKj4MJJXXScTv7Bw7va4tZ/ZYr5/noZ6+bXp1pphSkH9+eKqxOG0HBez8ORl7VN3
+         oRI8fs4msK9rRvADkh5mGLf2jHruWPlulS2if898=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Upton <oupton@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 088/135] KVM: nVMX: Check IO instruction VM-exit conditions
+        stable@vger.kernel.org, Miles Chen <miles.chen@mediatek.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 60/97] lib/stackdepot: Fix outdated comments
 Date:   Thu, 27 Feb 2020 14:37:08 +0100
-Message-Id: <20200227132242.560559525@linuxfoundation.org>
+Message-Id: <20200227132224.337663006@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,113 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Upton <oupton@google.com>
+From: Miles Chen <miles.chen@mediatek.com>
 
-commit 35a571346a94fb93b5b3b6a599675ef3384bc75c upstream.
+[ Upstream commit ee050dc83bc326ad5ef8ee93bca344819371e7a5 ]
 
-Consult the 'unconditional IO exiting' and 'use IO bitmaps' VM-execution
-controls when checking instruction interception. If the 'use IO bitmaps'
-VM-execution control is 1, check the instruction access against the IO
-bitmaps to determine if the instruction causes a VM-exit.
+Replace "depot_save_stack" with "stack_depot_save" in code comments because
+depot_save_stack() was replaced in commit c0cfc337264c ("lib/stackdepot:
+Provide functions which operate on plain storage arrays") and removed in
+commit 56d8f079c51a ("lib/stackdepot: Remove obsolete functions")
 
-Signed-off-by: Oliver Upton <oupton@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190815113246.18478-1-miles.chen@mediatek.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx/nested.c |    2 -
- arch/x86/kvm/vmx/vmx.c    |   57 +++++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 52 insertions(+), 7 deletions(-)
+ lib/stackdepot.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -5173,7 +5173,7 @@ static bool nested_vmx_exit_handled_io(s
- 				       struct vmcs12 *vmcs12)
- {
- 	unsigned long exit_qualification;
--	unsigned int port;
-+	unsigned short port;
- 	int size;
- 
- 	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7132,6 +7132,39 @@ static void vmx_request_immediate_exit(s
- 	to_vmx(vcpu)->req_immediate_exit = true;
- }
- 
-+static int vmx_check_intercept_io(struct kvm_vcpu *vcpu,
-+				  struct x86_instruction_info *info)
-+{
-+	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
-+	unsigned short port;
-+	bool intercept;
-+	int size;
-+
-+	if (info->intercept == x86_intercept_in ||
-+	    info->intercept == x86_intercept_ins) {
-+		port = info->src_val;
-+		size = info->dst_bytes;
-+	} else {
-+		port = info->dst_val;
-+		size = info->src_bytes;
-+	}
-+
-+	/*
-+	 * If the 'use IO bitmaps' VM-execution control is 0, IO instruction
-+	 * VM-exits depend on the 'unconditional IO exiting' VM-execution
-+	 * control.
-+	 *
-+	 * Otherwise, IO instruction VM-exits are controlled by the IO bitmaps.
-+	 */
-+	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
-+		intercept = nested_cpu_has(vmcs12,
-+					   CPU_BASED_UNCOND_IO_EXITING);
-+	else
-+		intercept = nested_vmx_check_io_bitmaps(vcpu, port, size);
-+
-+	return intercept ? X86EMUL_UNHANDLEABLE : X86EMUL_CONTINUE;
-+}
-+
- static int vmx_check_intercept(struct kvm_vcpu *vcpu,
- 			       struct x86_instruction_info *info,
- 			       enum x86_intercept_stage stage)
-@@ -7139,18 +7172,30 @@ static int vmx_check_intercept(struct kv
- 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
- 	struct x86_emulate_ctxt *ctxt = &vcpu->arch.emulate_ctxt;
- 
-+	switch (info->intercept) {
- 	/*
- 	 * RDPID causes #UD if disabled through secondary execution controls.
- 	 * Because it is marked as EmulateOnUD, we need to intercept it here.
- 	 */
--	if (info->intercept == x86_intercept_rdtscp &&
--	    !nested_cpu_has2(vmcs12, SECONDARY_EXEC_RDTSCP)) {
--		ctxt->exception.vector = UD_VECTOR;
--		ctxt->exception.error_code_valid = false;
--		return X86EMUL_PROPAGATE_FAULT;
--	}
-+	case x86_intercept_rdtscp:
-+		if (!nested_cpu_has2(vmcs12, SECONDARY_EXEC_RDTSCP)) {
-+			ctxt->exception.vector = UD_VECTOR;
-+			ctxt->exception.error_code_valid = false;
-+			return X86EMUL_PROPAGATE_FAULT;
-+		}
-+		break;
-+
-+	case x86_intercept_in:
-+	case x86_intercept_ins:
-+	case x86_intercept_out:
-+	case x86_intercept_outs:
-+		return vmx_check_intercept_io(vcpu, info);
- 
- 	/* TODO: check more intercepts... */
-+	default:
-+		break;
-+	}
-+
- 	return X86EMUL_UNHANDLEABLE;
- }
- 
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index e513459a5601a..c5e06c43228f9 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -96,7 +96,7 @@ static bool init_stack_slab(void **prealloc)
+ 		stack_slabs[depot_index + 1] = *prealloc;
+ 		/*
+ 		 * This smp_store_release pairs with smp_load_acquire() from
+-		 * |next_slab_inited| above and in depot_save_stack().
++		 * |next_slab_inited| above and in stack_depot_save().
+ 		 */
+ 		smp_store_release(&next_slab_inited, 1);
+ 	}
+@@ -123,7 +123,7 @@ static struct stack_record *depot_alloc_stack(unsigned long *entries, int size,
+ 		depot_offset = 0;
+ 		/*
+ 		 * smp_store_release() here pairs with smp_load_acquire() from
+-		 * |next_slab_inited| in depot_save_stack() and
++		 * |next_slab_inited| in stack_depot_save() and
+ 		 * init_stack_slab().
+ 		 */
+ 		if (depot_index + 1 < STACK_ALLOC_MAX_SLABS)
+-- 
+2.20.1
+
 
 
