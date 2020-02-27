@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CA5F171A25
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 282C3171B31
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:00:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731354AbgB0NvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:51:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49992 "EHLO mail.kernel.org"
+        id S1732464AbgB0OAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:00:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731082AbgB0NvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:51:09 -0500
+        id S1732713AbgB0OAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:00:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A00E8246AF;
-        Thu, 27 Feb 2020 13:51:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C0EC24691;
+        Thu, 27 Feb 2020 14:00:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811469;
-        bh=QIxfv9IqXqjEULyp9k88AQixp8pBPBBWvgWwqIt/4mo=;
+        s=default; t=1582812015;
+        bh=RZ4sZQnU/cHEVTj6PZ7/lt+uTsueIQ45+x1PBUD6DLk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HQf1pYc2W0P25Uyse8ZuS287tNXmX8sX/TkyyX8k+Bm3K6NFxQ8eA96VS//ngxD+n
-         PPL3bKPGSDRZD6MmktCkiaab+87RxCRTTpQBR6XuVOdwNnPn6m1YfL6z7NlyIlu4BD
-         yZlU/w+/DQQ/MHE/AhTR8UF8I65eCQZmMAJ/rntQ=
+        b=Lq0hH58oW9NZYjylD/2E1/0+Q3s0WqiHp/V48pS9/IW7WFHtbV6HA4yIxMPEPrIzp
+         h7Yr6kYaCJFtJ5lFqzAMNjSfRQHd/zUr4rrrQxnzDIZ4ikuMZr2bYn8+OrF9Hr1Brr
+         InBjsfWjZ3dhQWXhJXEVpV8ssQpTHiid7j12uCgo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Pietro Oliva <pietroliva@gmail.com>,
         Larry Finger <Larry.Finger@lwfinger.net>
-Subject: [PATCH 4.9 127/165] staging: rtl8188eu: Fix potential security hole
-Date:   Thu, 27 Feb 2020 14:36:41 +0100
-Message-Id: <20200227132249.642490750@linuxfoundation.org>
+Subject: [PATCH 4.14 188/237] staging: rtl8188eu: Fix potential overuse of kernel memory
+Date:   Thu, 27 Feb 2020 14:36:42 +0100
+Message-Id: <20200227132310.165912808@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,22 +45,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit 499c405b2b80bb3a04425ba3541d20305e014d3e upstream.
+commit 4ddf8ab8d15ddbc52eefb44eb64e38466ce1f70f upstream.
 
-In routine rtw_hostapd_ioctl(), the user-controlled p->length is assumed
-to be at least the size of struct ieee_param size, but this assumption is
-never checked. This could result in out-of-bounds read/write on kernel
-heap in case a p->length less than the size of struct ieee_param is
-specified by the user. If p->length is allowed to be greater than the size
-of the struct, then a malicious user could be wasting kernel memory.
+In routine wpa_supplicant_ioctl(), the user-controlled p->length is
+checked to be at least the size of struct ieee_param size, but the code
+does not detect the case where p->length is greater than the size
+of the struct, thus a malicious user could be wasting kernel memory.
 Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
 
 Reported by: Pietro Oliva <pietroliva@gmail.com>
 Cc: Pietro Oliva <pietroliva@gmail.com>
 Cc: Stable <stable@vger.kernel.org>
-Fixes: a2c60d42d97c ("staging: r8188eu: Add files for new driver - part 16")
+Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
 Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Link: https://lore.kernel.org/r/20200210180235.21691-2-Larry.Finger@lwfinger.net
+Link: https://lore.kernel.org/r/20200210180235.21691-4-Larry.Finger@lwfinger.net
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
@@ -69,11 +67,11 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
 +++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-@@ -2859,7 +2859,7 @@ static int rtw_hostapd_ioctl(struct net_
- 		goto out;
- 	}
+@@ -2051,7 +2051,7 @@ static int wpa_supplicant_ioctl(struct n
+ 	struct ieee_param *param;
+ 	uint ret = 0;
  
--	if (!p->pointer) {
+-	if (p->length < sizeof(struct ieee_param) || !p->pointer) {
 +	if (!p->pointer || p->length != sizeof(struct ieee_param)) {
  		ret = -EINVAL;
  		goto out;
