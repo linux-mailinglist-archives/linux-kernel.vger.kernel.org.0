@@ -2,495 +2,737 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5900717272E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 766DE17275B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730756AbgB0SWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:22:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59840 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730659AbgB0SW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:22:28 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7B4FAB239;
-        Thu, 27 Feb 2020 18:22:24 +0000 (UTC)
-Subject: Re: [PATCH v10 3/5] soc: mediatek: Move mt8173 MMSYS to platform
- driver
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
-        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
-        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>, rdunlap@infradead.org,
-        dri-devel@lists.freedesktop.org, Weiyi Lu <weiyi.lu@mediatek.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        linux-clk@vger.kernel.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        sean.wang@mediatek.com, frank-w@public-files.de,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
-        linux-arm-kernel@lists.infradead.org,
-        Richard Fontana <rfontana@redhat.com>,
-        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
-        Daniel Vetter <daniel@ffwll.ch>
-References: <20200227180858.1514157-1-enric.balletbo@collabora.com>
- <20200227180858.1514157-4-enric.balletbo@collabora.com>
- <72d0e155-83f3-05c3-8f3f-e46f3860453d@suse.com>
-From:   Matthias Brugger <mbrugger@suse.com>
-Autocrypt: addr=mbrugger@suse.com; prefer-encrypt=mutual; keydata=
- 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
- HxUCQ9Y1Y/Ct
-Message-ID: <ed2722ab-8339-359b-8698-14c0b36d1f92@suse.com>
+        id S1730633AbgB0SXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:23:39 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59127 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730972AbgB0SWt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:22:49 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200227182247euoutp025b5aa9c90a32a9e11e2b19a06be40e33~3VXfX4jj_0671406714euoutp02v
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 18:22:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200227182247euoutp025b5aa9c90a32a9e11e2b19a06be40e33~3VXfX4jj_0671406714euoutp02v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1582827767;
+        bh=2m+0huAyRAJf93ceG9tsDdKgcj+NZ1URSP0Xqd0zBEg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cas+xu6taMtyB+3FuCXMPqqVnziQF+wQepzlbVbL5CgjtH0otaeYfbXTSrO+LKmru
+         r07kdPDCiroiT9P5BTktDBHAMadYCLkGPgo4fgx65/pUeHbDf3dY8mSiJ1ZSfaLIXu
+         C5WJvKwjpFdt9sZOT3Sq0w9GPCC5t7Y751DvUx2c=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200227182246eucas1p1bd54c571cd10d58aeb905cd2ab83b3d9~3VXe7u2yS0494604946eucas1p1H;
+        Thu, 27 Feb 2020 18:22:46 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 35.5F.61286.6F8085E5; Thu, 27
+        Feb 2020 18:22:46 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200227182246eucas1p1d189bdc4d74efcd0c08193ce81b7acd7~3VXesz-qI1934219342eucas1p1x;
+        Thu, 27 Feb 2020 18:22:46 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200227182246eusmtrp2f556be4a782ddd8bdb9cb5abffafa3a4~3VXesS2nH1813218132eusmtrp2r;
+        Thu, 27 Feb 2020 18:22:46 +0000 (GMT)
+X-AuditID: cbfec7f2-f0bff7000001ef66-67-5e5808f609fa
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 41.C1.08375.6F8085E5; Thu, 27
+        Feb 2020 18:22:46 +0000 (GMT)
+Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200227182246eusmtip22946a2f39ef55f7e3395fc5ac17245c0~3VXeQ7J-20595905959eusmtip2n;
+        Thu, 27 Feb 2020 18:22:46 +0000 (GMT)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com
+Subject: [PATCH v3 16/27] ata: start separating SATA specific code from
+ libata-core.c
 Date:   Thu, 27 Feb 2020 19:22:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+Message-Id: <20200227182226.19188-17-b.zolnierkie@samsung.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200227182226.19188-1-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <72d0e155-83f3-05c3-8f3f-e46f3860453d@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djPc7rfOCLiDJ5+0LFYfbefzWLjjPWs
+        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
+        eOy+2cDm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBkv331hKeiYw1jx/dU9tgbGSzVdjJwc
+        EgImEic2XWfpYuTiEBJYwSgx82cfK4TzhVHi0okj7BDOZ0aJ6Zt/MsK0LJg6B8wWEljOKPG9
+        2Q2uY8PhD8wgCTYBK4mJ7avAikQEFCR6fq9kAyliFnjPKLFi0l4WkISwQLhE78PVQCs4OFgE
+        VCWWTw0HCfMK2ElMXvmCGWKZvMTWb59YQWxOoPiNvu1sEDWCEidnPgEbwwxU07x1NjPIfAmB
+        VewS7Xf6WUBmSgi4SBzeygIxR1ji1fEt7BC2jMT/nfOZIOrXMUr87XgB1bydUWL55H9sEFXW
+        EnfO/WIDGcQsoCmxfpc+RNhR4v+kM6wQ8/kkbrwVhLiBT2LStunMEGFeiY42IYhqNYkNyzaw
+        wazt2rkS6i0PiY5p3xgnMCrOQvLNLCTfzELYu4CReRWjeGppcW56arFhXmq5XnFibnFpXrpe
+        cn7uJkZgIjr97/inHYxfLyUdYhTgYFTi4V2wIzxOiDWxrLgy9xCjBAezkgjvxq+hcUK8KYmV
+        ValF+fFFpTmpxYcYpTlYlMR5jRe9jBUSSE8sSc1OTS1ILYLJMnFwSjUwSvceX6sW/Dh5q0r0
+        lW1PK/1W/b2w/Wbpza4T1T4HvTcyrWr/smunxKq006oeCpvvOsduYV2l/u7OfoF4EcNH/2u+
+        P7g6p/BO9ORom4xl82/fepVczDjd8+K39rppPEce61xf/2vp4iVnH3lumHb6yvaQjB89TssV
+        nSdJL67a4P6D10TPWrZBjV+JpTgj0VCLuag4EQB/qSZBQAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xe7rfOCLiDPqWyFmsvtvPZrFxxnpW
+        i2e39jJZrFx9lMni2I5HTBaXd81hs1j+ZC2zxdzW6ewOHB47Z91l97h8ttTj0OEORo+Trd9Y
+        PHbfbGDz6NuyitHj8ya5APYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9
+        O5uU1JzMstQifbsEvYyX776wFHTMYaz4/uoeWwPjpZouRk4OCQETiQVT5zB2MXJxCAksZZQ4
+        s3gTWxcjB1BCRuL4+jKIGmGJP9e62CBqPjFKHLu/hRUkwSZgJTGxfRUjiC0ioCDR83slWBGz
+        wFdGiaWTuplBEsICoRKbrv1jBRnKIqAqsXxqOEiYV8BOYvLKF8wQC+Qltn77BDaTEyh+o287
+        G4gtJGAr0dXxlBGiXlDi5MwnLCA2M1B989bZzBMYBWYhSc1CklrAyLSKUSS1tDg3PbfYUK84
+        Mbe4NC9dLzk/dxMjMGK2Hfu5eQfjpY3BhxgFOBiVeHgX7AiPE2JNLCuuzD3EKMHBrCTCu/Fr
+        aJwQb0piZVVqUX58UWlOavEhRlOgHyYyS4km5wOjOa8k3tDU0NzC0tDc2NzYzEJJnLdD4GCM
+        kEB6YklqdmpqQWoRTB8TB6dUA2PItH+rTYP819loPJWcymfPFtWuYdk1S2blLFU2Y/5FOTek
+        3WyFi159L0jcL3XxV1SFdkXi/OAlKlo35/uf37H8Wb8js+dngdv/NvAyb4i3Mpm8mPtRpdWm
+        pVcrnqi0cy1I7ciw2s7QH+uutrt/0+vYi15MX+/cjvX26TZ9NYHfR/4K66LABCWW4oxEQy3m
+        ouJEAKhzhQeuAgAA
+X-CMS-MailID: 20200227182246eucas1p1d189bdc4d74efcd0c08193ce81b7acd7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200227182246eucas1p1d189bdc4d74efcd0c08193ce81b7acd7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200227182246eucas1p1d189bdc4d74efcd0c08193ce81b7acd7
+References: <20200227182226.19188-1-b.zolnierkie@samsung.com>
+        <CGME20200227182246eucas1p1d189bdc4d74efcd0c08193ce81b7acd7@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Start separating SATA specific code from libata-core.c:
 
+* move following functions to libata-sata.c:
+  - ata_tf_to_fis()
+  - ata_tf_from_fis()
+  - sata_link_scr_lpm()
+  - ata_slave_link_init()
+  - sata_lpm_ignore_phy_events()
 
-On 27/02/2020 19:21, Matthias Brugger wrote:
-> 
-> 
-> On 27/02/2020 19:08, Enric Balletbo i Serra wrote:
->> From: Matthias Brugger <mbrugger@suse.com>
->>
->> There is no strong reason for this to use CLK_OF_DECLARE instead of
->> being a platform driver. Plus, this driver provides clocks but also
->> a shared register space for the mediatek-drm and the mediatek-mdp
->> driver. So move to drivers/soc/mediatek as a platform driver.
->>
->> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
-> 
-> regarding the merge strategy, I propose that CK takes it through his tree and
-> provides a stable branch in case I'll need to put some patches on top of the
-> drivers/soc part.
-> 
+* group above functions together in <linux/libata.h>
 
-Sorry, that was meant for 4/5 not this patch.
+* include libata-sata.c in the build when CONFIG_SATA_HOST=y
 
-> Makes sense?
-> 
-> Regards,
-> Matthias
-> 
->>
->> Changes in v10:
->> - Renamed to be generic mtk-mmsys
->> - Add driver data support to be able to support diferent SoCs
->>
->> Changes in v9:
->> - Move mmsys to drivers/soc/mediatek (CK)
->>
->> Changes in v8:
->> - Be a builtin_platform_driver like other mediatek mmsys drivers.
->>
->> Changes in v7:
->> - Free clk_data->clks as well
->> - Get rid of private data structure
->>
->>  drivers/clk/mediatek/clk-mt8173.c | 104 --------------------
->>  drivers/soc/mediatek/Kconfig      |   7 ++
->>  drivers/soc/mediatek/Makefile     |   1 +
->>  drivers/soc/mediatek/mtk-mmsys.c  | 154 ++++++++++++++++++++++++++++++
->>  4 files changed, 162 insertions(+), 104 deletions(-)
->>  create mode 100644 drivers/soc/mediatek/mtk-mmsys.c
->>
->> diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
->> index 537a7f49b0f7..8f898ac476c0 100644
->> --- a/drivers/clk/mediatek/clk-mt8173.c
->> +++ b/drivers/clk/mediatek/clk-mt8173.c
->> @@ -753,93 +753,6 @@ static const struct mtk_gate img_clks[] __initconst = {
->>  	GATE_IMG(CLK_IMG_FD, "img_fd", "mm_sel", 11),
->>  };
->>  
->> -static const struct mtk_gate_regs mm0_cg_regs __initconst = {
->> -	.set_ofs = 0x0104,
->> -	.clr_ofs = 0x0108,
->> -	.sta_ofs = 0x0100,
->> -};
->> -
->> -static const struct mtk_gate_regs mm1_cg_regs __initconst = {
->> -	.set_ofs = 0x0114,
->> -	.clr_ofs = 0x0118,
->> -	.sta_ofs = 0x0110,
->> -};
->> -
->> -#define GATE_MM0(_id, _name, _parent, _shift) {			\
->> -		.id = _id,					\
->> -		.name = _name,					\
->> -		.parent_name = _parent,				\
->> -		.regs = &mm0_cg_regs,				\
->> -		.shift = _shift,				\
->> -		.ops = &mtk_clk_gate_ops_setclr,		\
->> -	}
->> -
->> -#define GATE_MM1(_id, _name, _parent, _shift) {			\
->> -		.id = _id,					\
->> -		.name = _name,					\
->> -		.parent_name = _parent,				\
->> -		.regs = &mm1_cg_regs,				\
->> -		.shift = _shift,				\
->> -		.ops = &mtk_clk_gate_ops_setclr,		\
->> -	}
->> -
->> -static const struct mtk_gate mm_clks[] __initconst = {
->> -	/* MM0 */
->> -	GATE_MM0(CLK_MM_SMI_COMMON, "mm_smi_common", "mm_sel", 0),
->> -	GATE_MM0(CLK_MM_SMI_LARB0, "mm_smi_larb0", "mm_sel", 1),
->> -	GATE_MM0(CLK_MM_CAM_MDP, "mm_cam_mdp", "mm_sel", 2),
->> -	GATE_MM0(CLK_MM_MDP_RDMA0, "mm_mdp_rdma0", "mm_sel", 3),
->> -	GATE_MM0(CLK_MM_MDP_RDMA1, "mm_mdp_rdma1", "mm_sel", 4),
->> -	GATE_MM0(CLK_MM_MDP_RSZ0, "mm_mdp_rsz0", "mm_sel", 5),
->> -	GATE_MM0(CLK_MM_MDP_RSZ1, "mm_mdp_rsz1", "mm_sel", 6),
->> -	GATE_MM0(CLK_MM_MDP_RSZ2, "mm_mdp_rsz2", "mm_sel", 7),
->> -	GATE_MM0(CLK_MM_MDP_TDSHP0, "mm_mdp_tdshp0", "mm_sel", 8),
->> -	GATE_MM0(CLK_MM_MDP_TDSHP1, "mm_mdp_tdshp1", "mm_sel", 9),
->> -	GATE_MM0(CLK_MM_MDP_WDMA, "mm_mdp_wdma", "mm_sel", 11),
->> -	GATE_MM0(CLK_MM_MDP_WROT0, "mm_mdp_wrot0", "mm_sel", 12),
->> -	GATE_MM0(CLK_MM_MDP_WROT1, "mm_mdp_wrot1", "mm_sel", 13),
->> -	GATE_MM0(CLK_MM_FAKE_ENG, "mm_fake_eng", "mm_sel", 14),
->> -	GATE_MM0(CLK_MM_MUTEX_32K, "mm_mutex_32k", "rtc_sel", 15),
->> -	GATE_MM0(CLK_MM_DISP_OVL0, "mm_disp_ovl0", "mm_sel", 16),
->> -	GATE_MM0(CLK_MM_DISP_OVL1, "mm_disp_ovl1", "mm_sel", 17),
->> -	GATE_MM0(CLK_MM_DISP_RDMA0, "mm_disp_rdma0", "mm_sel", 18),
->> -	GATE_MM0(CLK_MM_DISP_RDMA1, "mm_disp_rdma1", "mm_sel", 19),
->> -	GATE_MM0(CLK_MM_DISP_RDMA2, "mm_disp_rdma2", "mm_sel", 20),
->> -	GATE_MM0(CLK_MM_DISP_WDMA0, "mm_disp_wdma0", "mm_sel", 21),
->> -	GATE_MM0(CLK_MM_DISP_WDMA1, "mm_disp_wdma1", "mm_sel", 22),
->> -	GATE_MM0(CLK_MM_DISP_COLOR0, "mm_disp_color0", "mm_sel", 23),
->> -	GATE_MM0(CLK_MM_DISP_COLOR1, "mm_disp_color1", "mm_sel", 24),
->> -	GATE_MM0(CLK_MM_DISP_AAL, "mm_disp_aal", "mm_sel", 25),
->> -	GATE_MM0(CLK_MM_DISP_GAMMA, "mm_disp_gamma", "mm_sel", 26),
->> -	GATE_MM0(CLK_MM_DISP_UFOE, "mm_disp_ufoe", "mm_sel", 27),
->> -	GATE_MM0(CLK_MM_DISP_SPLIT0, "mm_disp_split0", "mm_sel", 28),
->> -	GATE_MM0(CLK_MM_DISP_SPLIT1, "mm_disp_split1", "mm_sel", 29),
->> -	GATE_MM0(CLK_MM_DISP_MERGE, "mm_disp_merge", "mm_sel", 30),
->> -	GATE_MM0(CLK_MM_DISP_OD, "mm_disp_od", "mm_sel", 31),
->> -	/* MM1 */
->> -	GATE_MM1(CLK_MM_DISP_PWM0MM, "mm_disp_pwm0mm", "mm_sel", 0),
->> -	GATE_MM1(CLK_MM_DISP_PWM026M, "mm_disp_pwm026m", "pwm_sel", 1),
->> -	GATE_MM1(CLK_MM_DISP_PWM1MM, "mm_disp_pwm1mm", "mm_sel", 2),
->> -	GATE_MM1(CLK_MM_DISP_PWM126M, "mm_disp_pwm126m", "pwm_sel", 3),
->> -	GATE_MM1(CLK_MM_DSI0_ENGINE, "mm_dsi0_engine", "mm_sel", 4),
->> -	GATE_MM1(CLK_MM_DSI0_DIGITAL, "mm_dsi0_digital", "dsi0_dig", 5),
->> -	GATE_MM1(CLK_MM_DSI1_ENGINE, "mm_dsi1_engine", "mm_sel", 6),
->> -	GATE_MM1(CLK_MM_DSI1_DIGITAL, "mm_dsi1_digital", "dsi1_dig", 7),
->> -	GATE_MM1(CLK_MM_DPI_PIXEL, "mm_dpi_pixel", "dpi0_sel", 8),
->> -	GATE_MM1(CLK_MM_DPI_ENGINE, "mm_dpi_engine", "mm_sel", 9),
->> -	GATE_MM1(CLK_MM_DPI1_PIXEL, "mm_dpi1_pixel", "lvds_pxl", 10),
->> -	GATE_MM1(CLK_MM_DPI1_ENGINE, "mm_dpi1_engine", "mm_sel", 11),
->> -	GATE_MM1(CLK_MM_HDMI_PIXEL, "mm_hdmi_pixel", "dpi0_sel", 12),
->> -	GATE_MM1(CLK_MM_HDMI_PLLCK, "mm_hdmi_pllck", "hdmi_sel", 13),
->> -	GATE_MM1(CLK_MM_HDMI_AUDIO, "mm_hdmi_audio", "apll1", 14),
->> -	GATE_MM1(CLK_MM_HDMI_SPDIF, "mm_hdmi_spdif", "apll2", 15),
->> -	GATE_MM1(CLK_MM_LVDS_PIXEL, "mm_lvds_pixel", "lvds_pxl", 16),
->> -	GATE_MM1(CLK_MM_LVDS_CTS, "mm_lvds_cts", "lvds_cts", 17),
->> -	GATE_MM1(CLK_MM_SMI_LARB4, "mm_smi_larb4", "mm_sel", 18),
->> -	GATE_MM1(CLK_MM_HDMI_HDCP, "mm_hdmi_hdcp", "hdcp_sel", 19),
->> -	GATE_MM1(CLK_MM_HDMI_HDCP24M, "mm_hdmi_hdcp24m", "hdcp_24m_sel", 20),
->> -};
->> -
->>  static const struct mtk_gate_regs vdec0_cg_regs __initconst = {
->>  	.set_ofs = 0x0000,
->>  	.clr_ofs = 0x0004,
->> @@ -1144,23 +1057,6 @@ static void __init mtk_imgsys_init(struct device_node *node)
->>  }
->>  CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt8173-imgsys", mtk_imgsys_init);
->>  
->> -static void __init mtk_mmsys_init(struct device_node *node)
->> -{
->> -	struct clk_onecell_data *clk_data;
->> -	int r;
->> -
->> -	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
->> -
->> -	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
->> -						clk_data);
->> -
->> -	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
->> -	if (r)
->> -		pr_err("%s(): could not register clock provider: %d\n",
->> -			__func__, r);
->> -}
->> -CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt8173-mmsys", mtk_mmsys_init);
->> -
->>  static void __init mtk_vdecsys_init(struct device_node *node)
->>  {
->>  	struct clk_onecell_data *clk_data;
->> diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
->> index 2114b563478c..7a156944d50e 100644
->> --- a/drivers/soc/mediatek/Kconfig
->> +++ b/drivers/soc/mediatek/Kconfig
->> @@ -44,4 +44,11 @@ config MTK_SCPSYS
->>  	  Say yes here to add support for the MediaTek SCPSYS power domain
->>  	  driver.
->>  
->> +config MTK_MMSYS
->> +	bool "MediaTek MMSYS Support"
->> +	depends on COMMON_CLK_MT8173
->> +	help
->> +	  Say yes here to add support for the MediaTek Multimedia
->> +	  Subsystem (MMSYS).
->> +
->>  endmenu
->> diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
->> index b01733074ad6..01f9f873634a 100644
->> --- a/drivers/soc/mediatek/Makefile
->> +++ b/drivers/soc/mediatek/Makefile
->> @@ -3,3 +3,4 @@ obj-$(CONFIG_MTK_CMDQ) += mtk-cmdq-helper.o
->>  obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o
->>  obj-$(CONFIG_MTK_PMIC_WRAP) += mtk-pmic-wrap.o
->>  obj-$(CONFIG_MTK_SCPSYS) += mtk-scpsys.o
->> +obj-$(CONFIG_MTK_MMSYS) += mtk-mmsys.o
->> diff --git a/drivers/soc/mediatek/mtk-mmsys.c b/drivers/soc/mediatek/mtk-mmsys.c
->> new file mode 100644
->> index 000000000000..473cdf732fb5
->> --- /dev/null
->> +++ b/drivers/soc/mediatek/mtk-mmsys.c
->> @@ -0,0 +1,154 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2014 MediaTek Inc.
->> + * Author: James Liao <jamesjj.liao@mediatek.com>
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +
->> +#include "../../clk/mediatek/clk-gate.h"
->> +#include "../../clk/mediatek/clk-mtk.h"
->> +
->> +#include <dt-bindings/clock/mt8173-clk.h>
->> +
->> +static const struct mtk_gate_regs mm0_cg_regs = {
->> +	.set_ofs = 0x0104,
->> +	.clr_ofs = 0x0108,
->> +	.sta_ofs = 0x0100,
->> +};
->> +
->> +static const struct mtk_gate_regs mm1_cg_regs = {
->> +	.set_ofs = 0x0114,
->> +	.clr_ofs = 0x0118,
->> +	.sta_ofs = 0x0110,
->> +};
->> +
->> +#define GATE_MM0(_id, _name, _parent, _shift) {			\
->> +		.id = _id,					\
->> +		.name = _name,					\
->> +		.parent_name = _parent,				\
->> +		.regs = &mm0_cg_regs,				\
->> +		.shift = _shift,				\
->> +		.ops = &mtk_clk_gate_ops_setclr,		\
->> +	}
->> +
->> +#define GATE_MM1(_id, _name, _parent, _shift) {			\
->> +		.id = _id,					\
->> +		.name = _name,					\
->> +		.parent_name = _parent,				\
->> +		.regs = &mm1_cg_regs,				\
->> +		.shift = _shift,				\
->> +		.ops = &mtk_clk_gate_ops_setclr,		\
->> +	}
->> +
->> +static const struct mtk_gate mt8173_mm_clks[] = {
->> +	/* MM0 */
->> +	GATE_MM0(CLK_MM_SMI_COMMON, "mm_smi_common", "mm_sel", 0),
->> +	GATE_MM0(CLK_MM_SMI_LARB0, "mm_smi_larb0", "mm_sel", 1),
->> +	GATE_MM0(CLK_MM_CAM_MDP, "mm_cam_mdp", "mm_sel", 2),
->> +	GATE_MM0(CLK_MM_MDP_RDMA0, "mm_mdp_rdma0", "mm_sel", 3),
->> +	GATE_MM0(CLK_MM_MDP_RDMA1, "mm_mdp_rdma1", "mm_sel", 4),
->> +	GATE_MM0(CLK_MM_MDP_RSZ0, "mm_mdp_rsz0", "mm_sel", 5),
->> +	GATE_MM0(CLK_MM_MDP_RSZ1, "mm_mdp_rsz1", "mm_sel", 6),
->> +	GATE_MM0(CLK_MM_MDP_RSZ2, "mm_mdp_rsz2", "mm_sel", 7),
->> +	GATE_MM0(CLK_MM_MDP_TDSHP0, "mm_mdp_tdshp0", "mm_sel", 8),
->> +	GATE_MM0(CLK_MM_MDP_TDSHP1, "mm_mdp_tdshp1", "mm_sel", 9),
->> +	GATE_MM0(CLK_MM_MDP_WDMA, "mm_mdp_wdma", "mm_sel", 11),
->> +	GATE_MM0(CLK_MM_MDP_WROT0, "mm_mdp_wrot0", "mm_sel", 12),
->> +	GATE_MM0(CLK_MM_MDP_WROT1, "mm_mdp_wrot1", "mm_sel", 13),
->> +	GATE_MM0(CLK_MM_FAKE_ENG, "mm_fake_eng", "mm_sel", 14),
->> +	GATE_MM0(CLK_MM_MUTEX_32K, "mm_mutex_32k", "rtc_sel", 15),
->> +	GATE_MM0(CLK_MM_DISP_OVL0, "mm_disp_ovl0", "mm_sel", 16),
->> +	GATE_MM0(CLK_MM_DISP_OVL1, "mm_disp_ovl1", "mm_sel", 17),
->> +	GATE_MM0(CLK_MM_DISP_RDMA0, "mm_disp_rdma0", "mm_sel", 18),
->> +	GATE_MM0(CLK_MM_DISP_RDMA1, "mm_disp_rdma1", "mm_sel", 19),
->> +	GATE_MM0(CLK_MM_DISP_RDMA2, "mm_disp_rdma2", "mm_sel", 20),
->> +	GATE_MM0(CLK_MM_DISP_WDMA0, "mm_disp_wdma0", "mm_sel", 21),
->> +	GATE_MM0(CLK_MM_DISP_WDMA1, "mm_disp_wdma1", "mm_sel", 22),
->> +	GATE_MM0(CLK_MM_DISP_COLOR0, "mm_disp_color0", "mm_sel", 23),
->> +	GATE_MM0(CLK_MM_DISP_COLOR1, "mm_disp_color1", "mm_sel", 24),
->> +	GATE_MM0(CLK_MM_DISP_AAL, "mm_disp_aal", "mm_sel", 25),
->> +	GATE_MM0(CLK_MM_DISP_GAMMA, "mm_disp_gamma", "mm_sel", 26),
->> +	GATE_MM0(CLK_MM_DISP_UFOE, "mm_disp_ufoe", "mm_sel", 27),
->> +	GATE_MM0(CLK_MM_DISP_SPLIT0, "mm_disp_split0", "mm_sel", 28),
->> +	GATE_MM0(CLK_MM_DISP_SPLIT1, "mm_disp_split1", "mm_sel", 29),
->> +	GATE_MM0(CLK_MM_DISP_MERGE, "mm_disp_merge", "mm_sel", 30),
->> +	GATE_MM0(CLK_MM_DISP_OD, "mm_disp_od", "mm_sel", 31),
->> +	/* MM1 */
->> +	GATE_MM1(CLK_MM_DISP_PWM0MM, "mm_disp_pwm0mm", "mm_sel", 0),
->> +	GATE_MM1(CLK_MM_DISP_PWM026M, "mm_disp_pwm026m", "pwm_sel", 1),
->> +	GATE_MM1(CLK_MM_DISP_PWM1MM, "mm_disp_pwm1mm", "mm_sel", 2),
->> +	GATE_MM1(CLK_MM_DISP_PWM126M, "mm_disp_pwm126m", "pwm_sel", 3),
->> +	GATE_MM1(CLK_MM_DSI0_ENGINE, "mm_dsi0_engine", "mm_sel", 4),
->> +	GATE_MM1(CLK_MM_DSI0_DIGITAL, "mm_dsi0_digital", "dsi0_dig", 5),
->> +	GATE_MM1(CLK_MM_DSI1_ENGINE, "mm_dsi1_engine", "mm_sel", 6),
->> +	GATE_MM1(CLK_MM_DSI1_DIGITAL, "mm_dsi1_digital", "dsi1_dig", 7),
->> +	GATE_MM1(CLK_MM_DPI_PIXEL, "mm_dpi_pixel", "dpi0_sel", 8),
->> +	GATE_MM1(CLK_MM_DPI_ENGINE, "mm_dpi_engine", "mm_sel", 9),
->> +	GATE_MM1(CLK_MM_DPI1_PIXEL, "mm_dpi1_pixel", "lvds_pxl", 10),
->> +	GATE_MM1(CLK_MM_DPI1_ENGINE, "mm_dpi1_engine", "mm_sel", 11),
->> +	GATE_MM1(CLK_MM_HDMI_PIXEL, "mm_hdmi_pixel", "dpi0_sel", 12),
->> +	GATE_MM1(CLK_MM_HDMI_PLLCK, "mm_hdmi_pllck", "hdmi_sel", 13),
->> +	GATE_MM1(CLK_MM_HDMI_AUDIO, "mm_hdmi_audio", "apll1", 14),
->> +	GATE_MM1(CLK_MM_HDMI_SPDIF, "mm_hdmi_spdif", "apll2", 15),
->> +	GATE_MM1(CLK_MM_LVDS_PIXEL, "mm_lvds_pixel", "lvds_pxl", 16),
->> +	GATE_MM1(CLK_MM_LVDS_CTS, "mm_lvds_cts", "lvds_cts", 17),
->> +	GATE_MM1(CLK_MM_SMI_LARB4, "mm_smi_larb4", "mm_sel", 18),
->> +	GATE_MM1(CLK_MM_HDMI_HDCP, "mm_hdmi_hdcp", "hdcp_sel", 19),
->> +	GATE_MM1(CLK_MM_HDMI_HDCP24M, "mm_hdmi_hdcp24m", "hdcp_24m_sel", 20),
->> +};
->> +
->> +struct mtk_mmsys_driver_data {
->> +	const struct mtk_gate *gates_clk;
->> +	int gates_num;
->> +};
->> +
->> +static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
->> +	.gates_clk = mt8173_mm_clks,
->> +	.gates_num = ARRAY_SIZE(mt8173_mm_clks),
->> +};
->> +
->> +static int mtk_mmsys_probe(struct platform_device *pdev)
->> +{
->> +	struct device_node *node = pdev->dev.of_node;
->> +	const struct mtk_mmsys_driver_data *data;
->> +	struct clk_onecell_data *clk_data;
->> +	int ret;
->> +
->> +	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
->> +	if (!clk_data)
->> +		return -ENOMEM;
->> +
->> +	data = of_device_get_match_data(&pdev->dev);
->> +
->> +	ret = mtk_clk_register_gates(node, data->gates_clk, data->gates_num,
->> +				     clk_data);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct of_device_id of_match_mtk_mmsys[] = {
->> +	{
->> +		.compatible = "mediatek,mt8173-mmsys",
->> +		.data = &mt8173_mmsys_driver_data,
->> +	},
->> +	{ }
->> +};
->> +
->> +static struct platform_driver mtk_mmsys_drv = {
->> +	.driver = {
->> +		.name = "mtk-mmsys",
->> +		.of_match_table = of_match_mtk_mmsys,
->> +	},
->> +	.probe = mtk_mmsys_probe,
->> +};
->> +
->> +builtin_platform_driver(mtk_mmsys_drv);
->>
+Code size savings on m68k arch using (modified) atari_defconfig:
+
+   text    data     bss     dec     hex filename
+before:
+  37582     572      40   38194    9532 drivers/ata/libata-core.o
+after:
+  36762     572      40   37374    91fe drivers/ata/libata-core.o
+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/ata/Makefile      |   1 +
+ drivers/ata/libata-core.c | 245 ------------------------------------
+ drivers/ata/libata-sata.c | 258 ++++++++++++++++++++++++++++++++++++++
+ include/linux/libata.h    |  16 ++-
+ 4 files changed, 269 insertions(+), 251 deletions(-)
+ create mode 100644 drivers/ata/libata-sata.c
+
+diff --git a/drivers/ata/Makefile b/drivers/ata/Makefile
+index cdaf965fed25..b8aebfb14e82 100644
+--- a/drivers/ata/Makefile
++++ b/drivers/ata/Makefile
+@@ -123,6 +123,7 @@ obj-$(CONFIG_PATA_LEGACY)	+= pata_legacy.o
+ 
+ libata-y	:= libata-core.o libata-scsi.o libata-eh.o \
+ 	libata-transport.o libata-trace.o
++libata-$(CONFIG_SATA_HOST)	+= libata-sata.o
+ libata-$(CONFIG_ATA_SFF)	+= libata-sff.o
+ libata-$(CONFIG_SATA_PMP)	+= libata-pmp.o
+ libata-$(CONFIG_ATA_ACPI)	+= libata-acpi.o
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index dcdb7fb46dbd..b4a952dce7ab 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -531,81 +531,6 @@ int atapi_cmd_type(u8 opcode)
+ }
+ EXPORT_SYMBOL_GPL(atapi_cmd_type);
+ 
+-/**
+- *	ata_tf_to_fis - Convert ATA taskfile to SATA FIS structure
+- *	@tf: Taskfile to convert
+- *	@pmp: Port multiplier port
+- *	@is_cmd: This FIS is for command
+- *	@fis: Buffer into which data will output
+- *
+- *	Converts a standard ATA taskfile to a Serial ATA
+- *	FIS structure (Register - Host to Device).
+- *
+- *	LOCKING:
+- *	Inherited from caller.
+- */
+-void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
+-{
+-	fis[0] = 0x27;			/* Register - Host to Device FIS */
+-	fis[1] = pmp & 0xf;		/* Port multiplier number*/
+-	if (is_cmd)
+-		fis[1] |= (1 << 7);	/* bit 7 indicates Command FIS */
+-
+-	fis[2] = tf->command;
+-	fis[3] = tf->feature;
+-
+-	fis[4] = tf->lbal;
+-	fis[5] = tf->lbam;
+-	fis[6] = tf->lbah;
+-	fis[7] = tf->device;
+-
+-	fis[8] = tf->hob_lbal;
+-	fis[9] = tf->hob_lbam;
+-	fis[10] = tf->hob_lbah;
+-	fis[11] = tf->hob_feature;
+-
+-	fis[12] = tf->nsect;
+-	fis[13] = tf->hob_nsect;
+-	fis[14] = 0;
+-	fis[15] = tf->ctl;
+-
+-	fis[16] = tf->auxiliary & 0xff;
+-	fis[17] = (tf->auxiliary >> 8) & 0xff;
+-	fis[18] = (tf->auxiliary >> 16) & 0xff;
+-	fis[19] = (tf->auxiliary >> 24) & 0xff;
+-}
+-EXPORT_SYMBOL_GPL(ata_tf_to_fis);
+-
+-/**
+- *	ata_tf_from_fis - Convert SATA FIS to ATA taskfile
+- *	@fis: Buffer from which data will be input
+- *	@tf: Taskfile to output
+- *
+- *	Converts a serial ATA FIS structure to a standard ATA taskfile.
+- *
+- *	LOCKING:
+- *	Inherited from caller.
+- */
+-
+-void ata_tf_from_fis(const u8 *fis, struct ata_taskfile *tf)
+-{
+-	tf->command	= fis[2];	/* status */
+-	tf->feature	= fis[3];	/* error */
+-
+-	tf->lbal	= fis[4];
+-	tf->lbam	= fis[5];
+-	tf->lbah	= fis[6];
+-	tf->device	= fis[7];
+-
+-	tf->hob_lbal	= fis[8];
+-	tf->hob_lbam	= fis[9];
+-	tf->hob_lbah	= fis[10];
+-
+-	tf->nsect	= fis[12];
+-	tf->hob_nsect	= fis[13];
+-}
+-EXPORT_SYMBOL_GPL(ata_tf_from_fis);
+-
+ static const u8 ata_rw_cmds[] = {
+ 	/* pio multi */
+ 	ATA_CMD_READ_MULTI,
+@@ -3779,81 +3704,6 @@ int sata_link_resume(struct ata_link *link, const unsigned long *params,
+ }
+ EXPORT_SYMBOL_GPL(sata_link_resume);
+ 
+-/**
+- *	sata_link_scr_lpm - manipulate SControl IPM and SPM fields
+- *	@link: ATA link to manipulate SControl for
+- *	@policy: LPM policy to configure
+- *	@spm_wakeup: initiate LPM transition to active state
+- *
+- *	Manipulate the IPM field of the SControl register of @link
+- *	according to @policy.  If @policy is ATA_LPM_MAX_POWER and
+- *	@spm_wakeup is %true, the SPM field is manipulated to wake up
+- *	the link.  This function also clears PHYRDY_CHG before
+- *	returning.
+- *
+- *	LOCKING:
+- *	EH context.
+- *
+- *	RETURNS:
+- *	0 on success, -errno otherwise.
+- */
+-int sata_link_scr_lpm(struct ata_link *link, enum ata_lpm_policy policy,
+-		      bool spm_wakeup)
+-{
+-	struct ata_eh_context *ehc = &link->eh_context;
+-	bool woken_up = false;
+-	u32 scontrol;
+-	int rc;
+-
+-	rc = sata_scr_read(link, SCR_CONTROL, &scontrol);
+-	if (rc)
+-		return rc;
+-
+-	switch (policy) {
+-	case ATA_LPM_MAX_POWER:
+-		/* disable all LPM transitions */
+-		scontrol |= (0x7 << 8);
+-		/* initiate transition to active state */
+-		if (spm_wakeup) {
+-			scontrol |= (0x4 << 12);
+-			woken_up = true;
+-		}
+-		break;
+-	case ATA_LPM_MED_POWER:
+-		/* allow LPM to PARTIAL */
+-		scontrol &= ~(0x1 << 8);
+-		scontrol |= (0x6 << 8);
+-		break;
+-	case ATA_LPM_MED_POWER_WITH_DIPM:
+-	case ATA_LPM_MIN_POWER_WITH_PARTIAL:
+-	case ATA_LPM_MIN_POWER:
+-		if (ata_link_nr_enabled(link) > 0)
+-			/* no restrictions on LPM transitions */
+-			scontrol &= ~(0x7 << 8);
+-		else {
+-			/* empty port, power off */
+-			scontrol &= ~0xf;
+-			scontrol |= (0x1 << 2);
+-		}
+-		break;
+-	default:
+-		WARN_ON(1);
+-	}
+-
+-	rc = sata_scr_write(link, SCR_CONTROL, scontrol);
+-	if (rc)
+-		return rc;
+-
+-	/* give the link time to transit out of LPM state */
+-	if (woken_up)
+-		msleep(10);
+-
+-	/* clear PHYRDY_CHG from SError */
+-	ehc->i.serror &= ~SERR_PHYRDY_CHG;
+-	return sata_scr_write(link, SCR_ERROR, SERR_PHYRDY_CHG);
+-}
+-EXPORT_SYMBOL_GPL(sata_link_scr_lpm);
+-
+ /**
+  *	ata_std_prereset - prepare for reset
+  *	@link: ATA link to be reset
+@@ -6118,69 +5968,6 @@ struct ata_host *ata_host_alloc_pinfo(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(ata_host_alloc_pinfo);
+ 
+-/**
+- *	ata_slave_link_init - initialize slave link
+- *	@ap: port to initialize slave link for
+- *
+- *	Create and initialize slave link for @ap.  This enables slave
+- *	link handling on the port.
+- *
+- *	In libata, a port contains links and a link contains devices.
+- *	There is single host link but if a PMP is attached to it,
+- *	there can be multiple fan-out links.  On SATA, there's usually
+- *	a single device connected to a link but PATA and SATA
+- *	controllers emulating TF based interface can have two - master
+- *	and slave.
+- *
+- *	However, there are a few controllers which don't fit into this
+- *	abstraction too well - SATA controllers which emulate TF
+- *	interface with both master and slave devices but also have
+- *	separate SCR register sets for each device.  These controllers
+- *	need separate links for physical link handling
+- *	(e.g. onlineness, link speed) but should be treated like a
+- *	traditional M/S controller for everything else (e.g. command
+- *	issue, softreset).
+- *
+- *	slave_link is libata's way of handling this class of
+- *	controllers without impacting core layer too much.  For
+- *	anything other than physical link handling, the default host
+- *	link is used for both master and slave.  For physical link
+- *	handling, separate @ap->slave_link is used.  All dirty details
+- *	are implemented inside libata core layer.  From LLD's POV, the
+- *	only difference is that prereset, hardreset and postreset are
+- *	called once more for the slave link, so the reset sequence
+- *	looks like the following.
+- *
+- *	prereset(M) -> prereset(S) -> hardreset(M) -> hardreset(S) ->
+- *	softreset(M) -> postreset(M) -> postreset(S)
+- *
+- *	Note that softreset is called only for the master.  Softreset
+- *	resets both M/S by definition, so SRST on master should handle
+- *	both (the standard method will work just fine).
+- *
+- *	LOCKING:
+- *	Should be called before host is registered.
+- *
+- *	RETURNS:
+- *	0 on success, -errno on failure.
+- */
+-int ata_slave_link_init(struct ata_port *ap)
+-{
+-	struct ata_link *link;
+-
+-	WARN_ON(ap->slave_link);
+-	WARN_ON(ap->flags & ATA_FLAG_PMP);
+-
+-	link = kzalloc(sizeof(*link), GFP_KERNEL);
+-	if (!link)
+-		return -ENOMEM;
+-
+-	ata_link_init(ap, link, 1);
+-	ap->slave_link = link;
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(ata_slave_link_init);
+-
+ static void ata_host_stop(struct device *gendev, void *res)
+ {
+ 	struct ata_host *host = dev_get_drvdata(gendev);
+@@ -7106,38 +6893,6 @@ u32 ata_wait_register(struct ata_port *ap, void __iomem *reg, u32 mask, u32 val,
+ }
+ EXPORT_SYMBOL_GPL(ata_wait_register);
+ 
+-/**
+- *	sata_lpm_ignore_phy_events - test if PHY event should be ignored
+- *	@link: Link receiving the event
+- *
+- *	Test whether the received PHY event has to be ignored or not.
+- *
+- *	LOCKING:
+- *	None:
+- *
+- *	RETURNS:
+- *	True if the event has to be ignored.
+- */
+-bool sata_lpm_ignore_phy_events(struct ata_link *link)
+-{
+-	unsigned long lpm_timeout = link->last_lpm_change +
+-				    msecs_to_jiffies(ATA_TMOUT_SPURIOUS_PHY);
+-
+-	/* if LPM is enabled, PHYRDY doesn't mean anything */
+-	if (link->lpm_policy > ATA_LPM_MAX_POWER)
+-		return true;
+-
+-	/* ignore the first PHY event after the LPM policy changed
+-	 * as it is might be spurious
+-	 */
+-	if ((link->flags & ATA_LFLAG_CHANGED) &&
+-	    time_before(jiffies, lpm_timeout))
+-		return true;
+-
+-	return false;
+-}
+-EXPORT_SYMBOL_GPL(sata_lpm_ignore_phy_events);
+-
+ /*
+  * Dummy port_ops
+  */
+diff --git a/drivers/ata/libata-sata.c b/drivers/ata/libata-sata.c
+new file mode 100644
+index 000000000000..04f1ecaf414c
+--- /dev/null
++++ b/drivers/ata/libata-sata.c
+@@ -0,0 +1,258 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ *  SATA specific part of ATA helper library
++ *
++ *  Copyright 2003-2004 Red Hat, Inc.  All rights reserved.
++ *  Copyright 2003-2004 Jeff Garzik
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/libata.h>
++
++#include "libata.h"
++
++/**
++ *	ata_tf_to_fis - Convert ATA taskfile to SATA FIS structure
++ *	@tf: Taskfile to convert
++ *	@pmp: Port multiplier port
++ *	@is_cmd: This FIS is for command
++ *	@fis: Buffer into which data will output
++ *
++ *	Converts a standard ATA taskfile to a Serial ATA
++ *	FIS structure (Register - Host to Device).
++ *
++ *	LOCKING:
++ *	Inherited from caller.
++ */
++void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
++{
++	fis[0] = 0x27;			/* Register - Host to Device FIS */
++	fis[1] = pmp & 0xf;		/* Port multiplier number*/
++	if (is_cmd)
++		fis[1] |= (1 << 7);	/* bit 7 indicates Command FIS */
++
++	fis[2] = tf->command;
++	fis[3] = tf->feature;
++
++	fis[4] = tf->lbal;
++	fis[5] = tf->lbam;
++	fis[6] = tf->lbah;
++	fis[7] = tf->device;
++
++	fis[8] = tf->hob_lbal;
++	fis[9] = tf->hob_lbam;
++	fis[10] = tf->hob_lbah;
++	fis[11] = tf->hob_feature;
++
++	fis[12] = tf->nsect;
++	fis[13] = tf->hob_nsect;
++	fis[14] = 0;
++	fis[15] = tf->ctl;
++
++	fis[16] = tf->auxiliary & 0xff;
++	fis[17] = (tf->auxiliary >> 8) & 0xff;
++	fis[18] = (tf->auxiliary >> 16) & 0xff;
++	fis[19] = (tf->auxiliary >> 24) & 0xff;
++}
++EXPORT_SYMBOL_GPL(ata_tf_to_fis);
++
++/**
++ *	ata_tf_from_fis - Convert SATA FIS to ATA taskfile
++ *	@fis: Buffer from which data will be input
++ *	@tf: Taskfile to output
++ *
++ *	Converts a serial ATA FIS structure to a standard ATA taskfile.
++ *
++ *	LOCKING:
++ *	Inherited from caller.
++ */
++
++void ata_tf_from_fis(const u8 *fis, struct ata_taskfile *tf)
++{
++	tf->command	= fis[2];	/* status */
++	tf->feature	= fis[3];	/* error */
++
++	tf->lbal	= fis[4];
++	tf->lbam	= fis[5];
++	tf->lbah	= fis[6];
++	tf->device	= fis[7];
++
++	tf->hob_lbal	= fis[8];
++	tf->hob_lbam	= fis[9];
++	tf->hob_lbah	= fis[10];
++
++	tf->nsect	= fis[12];
++	tf->hob_nsect	= fis[13];
++}
++EXPORT_SYMBOL_GPL(ata_tf_from_fis);
++
++/**
++ *	sata_link_scr_lpm - manipulate SControl IPM and SPM fields
++ *	@link: ATA link to manipulate SControl for
++ *	@policy: LPM policy to configure
++ *	@spm_wakeup: initiate LPM transition to active state
++ *
++ *	Manipulate the IPM field of the SControl register of @link
++ *	according to @policy.  If @policy is ATA_LPM_MAX_POWER and
++ *	@spm_wakeup is %true, the SPM field is manipulated to wake up
++ *	the link.  This function also clears PHYRDY_CHG before
++ *	returning.
++ *
++ *	LOCKING:
++ *	EH context.
++ *
++ *	RETURNS:
++ *	0 on success, -errno otherwise.
++ */
++int sata_link_scr_lpm(struct ata_link *link, enum ata_lpm_policy policy,
++		      bool spm_wakeup)
++{
++	struct ata_eh_context *ehc = &link->eh_context;
++	bool woken_up = false;
++	u32 scontrol;
++	int rc;
++
++	rc = sata_scr_read(link, SCR_CONTROL, &scontrol);
++	if (rc)
++		return rc;
++
++	switch (policy) {
++	case ATA_LPM_MAX_POWER:
++		/* disable all LPM transitions */
++		scontrol |= (0x7 << 8);
++		/* initiate transition to active state */
++		if (spm_wakeup) {
++			scontrol |= (0x4 << 12);
++			woken_up = true;
++		}
++		break;
++	case ATA_LPM_MED_POWER:
++		/* allow LPM to PARTIAL */
++		scontrol &= ~(0x1 << 8);
++		scontrol |= (0x6 << 8);
++		break;
++	case ATA_LPM_MED_POWER_WITH_DIPM:
++	case ATA_LPM_MIN_POWER_WITH_PARTIAL:
++	case ATA_LPM_MIN_POWER:
++		if (ata_link_nr_enabled(link) > 0)
++			/* no restrictions on LPM transitions */
++			scontrol &= ~(0x7 << 8);
++		else {
++			/* empty port, power off */
++			scontrol &= ~0xf;
++			scontrol |= (0x1 << 2);
++		}
++		break;
++	default:
++		WARN_ON(1);
++	}
++
++	rc = sata_scr_write(link, SCR_CONTROL, scontrol);
++	if (rc)
++		return rc;
++
++	/* give the link time to transit out of LPM state */
++	if (woken_up)
++		msleep(10);
++
++	/* clear PHYRDY_CHG from SError */
++	ehc->i.serror &= ~SERR_PHYRDY_CHG;
++	return sata_scr_write(link, SCR_ERROR, SERR_PHYRDY_CHG);
++}
++EXPORT_SYMBOL_GPL(sata_link_scr_lpm);
++
++/**
++ *	ata_slave_link_init - initialize slave link
++ *	@ap: port to initialize slave link for
++ *
++ *	Create and initialize slave link for @ap.  This enables slave
++ *	link handling on the port.
++ *
++ *	In libata, a port contains links and a link contains devices.
++ *	There is single host link but if a PMP is attached to it,
++ *	there can be multiple fan-out links.  On SATA, there's usually
++ *	a single device connected to a link but PATA and SATA
++ *	controllers emulating TF based interface can have two - master
++ *	and slave.
++ *
++ *	However, there are a few controllers which don't fit into this
++ *	abstraction too well - SATA controllers which emulate TF
++ *	interface with both master and slave devices but also have
++ *	separate SCR register sets for each device.  These controllers
++ *	need separate links for physical link handling
++ *	(e.g. onlineness, link speed) but should be treated like a
++ *	traditional M/S controller for everything else (e.g. command
++ *	issue, softreset).
++ *
++ *	slave_link is libata's way of handling this class of
++ *	controllers without impacting core layer too much.  For
++ *	anything other than physical link handling, the default host
++ *	link is used for both master and slave.  For physical link
++ *	handling, separate @ap->slave_link is used.  All dirty details
++ *	are implemented inside libata core layer.  From LLD's POV, the
++ *	only difference is that prereset, hardreset and postreset are
++ *	called once more for the slave link, so the reset sequence
++ *	looks like the following.
++ *
++ *	prereset(M) -> prereset(S) -> hardreset(M) -> hardreset(S) ->
++ *	softreset(M) -> postreset(M) -> postreset(S)
++ *
++ *	Note that softreset is called only for the master.  Softreset
++ *	resets both M/S by definition, so SRST on master should handle
++ *	both (the standard method will work just fine).
++ *
++ *	LOCKING:
++ *	Should be called before host is registered.
++ *
++ *	RETURNS:
++ *	0 on success, -errno on failure.
++ */
++int ata_slave_link_init(struct ata_port *ap)
++{
++	struct ata_link *link;
++
++	WARN_ON(ap->slave_link);
++	WARN_ON(ap->flags & ATA_FLAG_PMP);
++
++	link = kzalloc(sizeof(*link), GFP_KERNEL);
++	if (!link)
++		return -ENOMEM;
++
++	ata_link_init(ap, link, 1);
++	ap->slave_link = link;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(ata_slave_link_init);
++
++/**
++ *	sata_lpm_ignore_phy_events - test if PHY event should be ignored
++ *	@link: Link receiving the event
++ *
++ *	Test whether the received PHY event has to be ignored or not.
++ *
++ *	LOCKING:
++ *	None:
++ *
++ *	RETURNS:
++ *	True if the event has to be ignored.
++ */
++bool sata_lpm_ignore_phy_events(struct ata_link *link)
++{
++	unsigned long lpm_timeout = link->last_lpm_change +
++				    msecs_to_jiffies(ATA_TMOUT_SPURIOUS_PHY);
++
++	/* if LPM is enabled, PHYRDY doesn't mean anything */
++	if (link->lpm_policy > ATA_LPM_MAX_POWER)
++		return true;
++
++	/* ignore the first PHY event after the LPM policy changed
++	 * as it is might be spurious
++	 */
++	if ((link->flags & ATA_LFLAG_CHANGED) &&
++	    time_before(jiffies, lpm_timeout))
++		return true;
++
++	return false;
++}
++EXPORT_SYMBOL_GPL(sata_lpm_ignore_phy_events);
+diff --git a/include/linux/libata.h b/include/linux/libata.h
+index ce361b15559b..5d76eab000e9 100644
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -1084,8 +1084,6 @@ extern int sata_link_debounce(struct ata_link *link,
+ 			const unsigned long *params, unsigned long deadline);
+ extern int sata_link_resume(struct ata_link *link, const unsigned long *params,
+ 			    unsigned long deadline);
+-extern int sata_link_scr_lpm(struct ata_link *link, enum ata_lpm_policy policy,
+-			     bool spm_wakeup);
+ extern int sata_link_hardreset(struct ata_link *link,
+ 			const unsigned long *timing, unsigned long deadline,
+ 			bool *online, int (*check_ready)(struct ata_link *));
+@@ -1096,7 +1094,6 @@ extern void ata_std_postreset(struct ata_link *link, unsigned int *classes);
+ extern struct ata_host *ata_host_alloc(struct device *dev, int max_ports);
+ extern struct ata_host *ata_host_alloc_pinfo(struct device *dev,
+ 			const struct ata_port_info * const * ppi, int n_ports);
+-extern int ata_slave_link_init(struct ata_port *ap);
+ extern void ata_host_get(struct ata_host *host);
+ extern void ata_host_put(struct ata_host *host);
+ extern int ata_host_start(struct ata_host *host);
+@@ -1154,9 +1151,6 @@ extern void ata_msleep(struct ata_port *ap, unsigned int msecs);
+ extern u32 ata_wait_register(struct ata_port *ap, void __iomem *reg, u32 mask,
+ 			u32 val, unsigned long interval, unsigned long timeout);
+ extern int atapi_cmd_type(u8 opcode);
+-extern void ata_tf_to_fis(const struct ata_taskfile *tf,
+-			  u8 pmp, int is_cmd, u8 *fis);
+-extern void ata_tf_from_fis(const u8 *fis, struct ata_taskfile *tf);
+ extern unsigned long ata_pack_xfermask(unsigned long pio_mask,
+ 			unsigned long mwdma_mask, unsigned long udma_mask);
+ extern void ata_unpack_xfermask(unsigned long xfer_mask,
+@@ -1197,6 +1191,16 @@ extern struct ata_device *ata_dev_pair(struct ata_device *adev);
+ extern int ata_do_set_mode(struct ata_link *link, struct ata_device **r_failed_dev);
+ extern void ata_scsi_port_error_handler(struct Scsi_Host *host, struct ata_port *ap);
+ extern void ata_scsi_cmd_error_handler(struct Scsi_Host *host, struct ata_port *ap, struct list_head *eh_q);
++
++/*
++ * SATA specific code - drivers/ata/libata-sata.c
++ */
++extern int sata_link_scr_lpm(struct ata_link *link, enum ata_lpm_policy policy,
++			     bool spm_wakeup);
++extern int ata_slave_link_init(struct ata_port *ap);
++extern void ata_tf_to_fis(const struct ata_taskfile *tf,
++			  u8 pmp, int is_cmd, u8 *fis);
++extern void ata_tf_from_fis(const u8 *fis, struct ata_taskfile *tf);
+ extern bool sata_lpm_ignore_phy_events(struct ata_link *link);
+ 
+ extern int ata_cable_40wire(struct ata_port *ap);
+-- 
+2.24.1
+
