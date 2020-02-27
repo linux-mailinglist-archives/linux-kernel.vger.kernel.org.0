@@ -2,220 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79052171C1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:09:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6EED171E5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:27:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388332AbgB0OJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:09:05 -0500
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:39800 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388301AbgB0OIy (ORCPT
+        id S2388793AbgB0O1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:27:08 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:33735 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388354AbgB0OJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:08:54 -0500
-Received: by mail-qv1-f67.google.com with SMTP id y8so1569944qvk.6
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:08:53 -0800 (PST)
+        Thu, 27 Feb 2020 09:09:12 -0500
+Received: by mail-qt1-f193.google.com with SMTP id d5so2364430qto.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:09:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bgYGSebMxipVx2p56pZyeVa4iTP2c2xGHpkLoDJFNy8=;
-        b=WLmgqS5KhZmrbH0v82WS4EF7PbKONStLYOAaQ8PDF+YdyNRXlySssFTp+11S08p4g5
-         T16A4ua1a3eq/nPeJv8TQ7dz53YHwUqrg5WGZPRKGJ75UffhZdoao6tBvKRJy1foyCzt
-         0377kqJOVr8WS7Z7xlFEl7M1D+2gAkywDCz/c=
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=9sHNYCMRsxADkGSjVbCT6b025lDyO8Q/yZNoNrxhi5s=;
+        b=RSuMg1/H+0UdYXCSPMsmAGiOUBV3MXkGthzkVQDTWgjVxl6YN6fCSIV0V2nB+fxBa+
+         gNyiQwi8HCsVh/0m6Gx0LcxFLfQFhkgTJ2wX9DF5maw1UoV8073jWnbmvOEeVrWDvp+D
+         Vipno+VAnEz6xE2CFFzymN7AmRns2MQNnOIN6hv/bLOtVSH83Gw2ROeOujhiSbLcoxJ9
+         Dm/Z1M1oien6Td7ZJdHUFAzctD4veB7FPAUgEhLV5UceqpFE/H8jh1Pb9sfuNtrptlGQ
+         kXyNsTi4IIr1ja92yWrwpcN4QEVxbHJQK6BoCXZC5cXbbcqpzUDk9zz+zpjLQcZkQJ4n
+         9pdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bgYGSebMxipVx2p56pZyeVa4iTP2c2xGHpkLoDJFNy8=;
-        b=htkJqw+L6QileYJHnZi+6snUkwfgeb25o2oG1u9+ZtxXbUan5JPYFWjRNJp+hq6Uuo
-         X2M445b6dUZgMGLIiODxw8yFXz59mis9XrDHGuLLMfY77nYFcbz0z19BNNYVqdqENvR6
-         jKXMaA+3LFe7zA8SMae0voc48skoOMyjJ2da+drg7QqGwrAIeJiKNxZgApYpcpXFXioJ
-         ykCrTa6W/F5v1nzyIE4yOtNmMiiWZuZPFYDr+iMOK/c206DTXhEpojfLF2CfcZ79yFro
-         K0ghhWt8jQuNUpTFsnI1n15m6oTuIu7rvjrOSy7AidC0nwvlelRC8Hi/6jjzDg7TgYRr
-         VlKg==
-X-Gm-Message-State: APjAAAXlwZusFHj3RF9sTVftX75wdVBbRuJ99c3RJfyzdRhd6wWrNSln
-        LcqX7PPwemaRwtw80rvaTKzZEA==
-X-Google-Smtp-Source: APXvYqzRjNd30JGdGxDUbfztgm57+tSyCKGF1HpTW7BrtrDfkTqOOUgy+7UM4C9+FtGOReNknateFQ==
-X-Received: by 2002:ad4:488b:: with SMTP id bv11mr4742945qvb.154.1582812532259;
-        Thu, 27 Feb 2020 06:08:52 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id 133sm3181880qkh.109.2020.02.27.06.08.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 06:08:51 -0800 (PST)
-Date:   Thu, 27 Feb 2020 09:08:51 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Suraj Jitindar Singh <surajjs@amazon.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC] ext4: fix potential race between online resizing and
- write operations
-Message-ID: <20200227140851.GD161459@google.com>
-References: <20200221202250.GK2935@paulmck-ThinkPad-P72>
- <20200222222415.GC191380@google.com>
- <20200223011018.GB2935@paulmck-ThinkPad-P72>
- <20200224174030.GA22138@pc636>
- <20200225020705.GA253171@google.com>
- <20200225185400.GA27919@pc636>
- <20200225224745.GX2935@paulmck-ThinkPad-P72>
- <20200226130440.GA30008@pc636>
- <20200226150656.GB2935@paulmck-ThinkPad-P72>
- <20200226155347.GA31097@pc636>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226155347.GA31097@pc636>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=9sHNYCMRsxADkGSjVbCT6b025lDyO8Q/yZNoNrxhi5s=;
+        b=k9SF/JNeYu0PrBG558U6l5nQxEfgj0YYshkecz93aICdnUaey4Sq592STXR+N0rtSh
+         CUAUI0c+Ky/fMdQmI7dW4UyL7fv7fDdE2GCrcmKiPOhpCaEXsVJ7DzlLTQOdCCbx6Qbh
+         HD6NQzGVbhDaEsb4yroGIZLheL4PQ4WgetWHOqWcBB2XBT9vN9NvoEqYTZunvhuvIxBx
+         ZzFCUqQ61LW9WugnXJEq0+NY3p8w7xLUjHAPnenrlUmh+EfgmNrwY4zRFbWy6Dezx6uo
+         KUpcNm7rRqfY4cYkCeOVqY580PvWyjgejiYrPHgJTavsC1LpntswaIr2+m+U9KUGz3eM
+         t72A==
+X-Gm-Message-State: APjAAAUVT+w4f1z5pvSpP/GksCxxstZJ31s57i2Ri0tFFczFtKcZ/2i+
+        Zaeu6lFSEQFhEh21nh12xVO0vw==
+X-Google-Smtp-Source: APXvYqzJ2WDpJLg/LNaEQZaws5TC4ARi8PN3PrWC1qFv6jc2HU+mK8qoVwcw4ZyA/4FP4BLENeA08g==
+X-Received: by 2002:ac8:4b6f:: with SMTP id g15mr5462709qts.196.1582812550856;
+        Thu, 27 Feb 2020 06:09:10 -0800 (PST)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id p92sm3106904qtd.14.2020.02.27.06.09.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Feb 2020 06:09:10 -0800 (PST)
+Message-ID: <1582812549.7365.134.camel@lca.pw>
+Subject: suspicious RCU due to "Prefer using an idle CPU as a migration
+ target instead of comparing tasks"
+From:   Qian Cai <cai@lca.pw>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        paulmck@kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 27 Feb 2020 09:09:09 -0500
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 04:53:47PM +0100, Uladzislau Rezki wrote:
-> On Wed, Feb 26, 2020 at 07:06:56AM -0800, Paul E. McKenney wrote:
-> > On Wed, Feb 26, 2020 at 02:04:40PM +0100, Uladzislau Rezki wrote:
-> > > On Tue, Feb 25, 2020 at 02:47:45PM -0800, Paul E. McKenney wrote:
-> > > > On Tue, Feb 25, 2020 at 07:54:00PM +0100, Uladzislau Rezki wrote:
-> > > > > > > > > I was thinking a 2 fold approach (just thinking out loud..):
-> > > > > > > > > 
-> > > > > > > > > If kfree_call_rcu() is called in atomic context or in any rcu reader, then
-> > > > > > > > > use GFP_ATOMIC to grow an rcu_head wrapper on the atomic memory pool and
-> > > > > > > > > queue that.
-> > > > > > > > > 
-> > > > > > > I am not sure if that is acceptable, i mean what to do when GFP_ATOMIC
-> > > > > > > gets failed in atomic context? Or we can just consider it as out of
-> > > > > > > memory and another variant is to say that headless object can be called
-> > > > > > > from preemptible context only.
-> > > > > > 
-> > > > > > Yes that makes sense, and we can always put disclaimer in the API's comments
-> > > > > > saying if this object is expected to be freed a lot, then don't use the
-> > > > > > headless-API to be extra safe.
-> > > > > > 
-> > > > > Agree.
-> > > > > 
-> > > > > > BTW, GFP_ATOMIC the documentation says if GFP_ATOMIC reserves are depleted,
-> > > > > > the kernel can even panic some times, so if GFP_ATOMIC allocation fails, then
-> > > > > > there seems to be bigger problems in the system any way. I would say let us
-> > > > > > write a patch to allocate there and see what the -mm guys think.
-> > > > > > 
-> > > > > OK. It might be that they can offer something if they do not like our
-> > > > > approach. I will try to compose something and send the patch to see.
-> > > > > The tree.c implementation is almost done, whereas tiny one is on hold.
-> > > > > 
-> > > > > I think we should support batching as well as bulk interface there.
-> > > > > Another way is to workaround head-less object, just to attach the head
-> > > > > dynamically using kmalloc() and then call_rcu() but then it will not be
-> > > > > a fair headless support :)
-> > > > > 
-> > > > > What is your view?
-> > > > > 
-> > > > > > > > > Otherwise, grow an rcu_head on the stack of kfree_call_rcu() and call
-> > > > > > > > > synchronize_rcu() inline with it.
-> > > > > > > > > 
-> > > > > > > > >
-> > > > > > > What do you mean here, Joel? "grow an rcu_head on the stack"?
-> > > > > > 
-> > > > > > By "grow on the stack", use the compiler-allocated rcu_head on the
-> > > > > > kfree_rcu() caller's stack.
-> > > > > > 
-> > > > > > I meant here to say, if we are not in atomic context, then we use regular
-> > > > > > GFP_KERNEL allocation, and if that fails, then we just use the stack's
-> > > > > > rcu_head and call synchronize_rcu() or even synchronize_rcu_expedited since
-> > > > > > the allocation failure would mean the need for RCU to free some memory is
-> > > > > > probably great.
-> > > > > > 
-> > > > > Ah, i got it. I thought you meant something like recursion and then
-> > > > > unwinding the stack back somehow :)
-> > > > > 
-> > > > > > > > > Use preemptible() andr task_struct's rcu_read_lock_nesting to differentiate
-> > > > > > > > > between the 2 cases.
-> > > > > > > > > 
-> > > > > > > If the current context is preemptable then we can inline synchronize_rcu()
-> > > > > > > together with freeing to handle such corner case, i mean when we are run
-> > > > > > > out of memory.
-> > > > > > 
-> > > > > > Ah yes, exactly what I mean.
-> > > > > > 
-> > > > > OK.
-> > > > > 
-> > > > > > > As for "task_struct's rcu_read_lock_nesting". Will it be enough just
-> > > > > > > have a look at preempt_count of current process? If we have for example
-> > > > > > > nested rcu_read_locks:
-> > > > > > > 
-> > > > > > > <snip>
-> > > > > > > rcu_read_lock()
-> > > > > > >     rcu_read_lock()
-> > > > > > >         rcu_read_lock()
-> > > > > > > <snip>
-> > > > > > > 
-> > > > > > > the counter would be 3.
-> > > > > > 
-> > > > > > No, because preempt_count is not incremented during rcu_read_lock(). RCU
-> > > > > > reader sections can be preempted, they just cannot goto sleep in a reader
-> > > > > > section (unless the kernel is RT).
-> > > > > > 
-> > > > > So in CONFIG_PREEMPT kernel we can identify if we are in atomic or not by
-> > > > > using rcu_preempt_depth() and in_atomic(). When it comes to !CONFIG_PREEMPT
-> > > > > then we skip it and consider as atomic. Something like:
-> > > > > 
-> > > > > <snip>
-> > > > > static bool is_current_in_atomic()
-> > > > > {
-> > > > > #ifdef CONFIG_PREEMPT_RCU
-> > > > 
-> > > > If possible: if (IS_ENABLED(CONFIG_PREEMPT_RCU))
-> > > > 
-> > > > Much nicer than #ifdef, and I -think- it should work in this case.
-> > > > 
-> > > OK. Thank you, Paul!
-> > > 
-> > > There is one point i would like to highlight it is about making caller
-> > > instead to be responsible for atomic or not decision. Like how kmalloc()
-> > > works, it does not really know the context it runs on, so it is up to
-> > > caller to inform.
-> > > 
-> > > The same way:
-> > > 
-> > > kvfree_rcu(p, atomic = true/false);
-> > > 
-> > > in this case we could cover !CONFIG_PREEMPT case also.
-> > 
-> > Understood, but couldn't we instead use IS_ENABLED() to work out the
-> > actual situation at runtime and relieve the caller of this burden?
-> > Or am I missing a corner case?
-> > 
-> Yes we can do it in run-time, i mean to detect context type, atomic or not.
-> But only for CONFIG_PREEMPT kernel. In case of !CONFIG_PREEMPT configuration 
-> i do not see a straight forward way how to detect it. For example when caller 
-> holds "spinlock". Therefore for such configuration we can just consider it
-> as atomic. But in reality it could be not in atomic.
-> 
-> We need it for emergency/corner case and head-less objects. When we are run
-> of memory. So in this case we should attach the rcu_head dynamically and
-> queue the freed object to be processed later on, after GP.
-> 
-> If atomic context use GFP_ATOMIC flag if not use GFP_KERNEL. It is better 
-> to allocate with GFP_KERNEL flag(if possible) because it has much less
-> restrictions then GFP_ATOMIC one, i.e. GFP_KERNEL can sleep and wait until
-> the memory is reclaimed.
-> 
-> But that is a corner case and i agree that it would be good to avoid of
-> such passing of extra info by the caller.
-> 
-> Anyway i just share some extra info :)
+The linux-next commit ff7db0bf24db ("sched/numa: Prefer using an idle CPU as a
+migration target instead of comparing tasks") introduced a boot warning,
 
-Hmm, I can't see at the moment how you can use GFP_KERNEL here for
-!CONFIG_PREEMPT kernels since that sleeps and you can't detect easily if you
-are in an RCU reader on !CONFIG_PREEMPT unless lockdep is turned on (in which
-case you could have checked lockdep's map).
-
-How about for !PREEMPT using first: GFP_NOWAIT and second GFP_ATOMIC if
-(NOWAIT fails)?  And for PREEMPT, use GFP_KERNEL, then GFP_ATOMIC (if
-GFP_KERNEL fails).  Thoughts?
-
-thanks,
-
- - Joel
-
+[   86.520534][    T1] WARNING: suspicious RCU usage
+[   86.520540][    T1] 5.6.0-rc3-next-20200227 #7 Not tainted
+[   86.520545][    T1] -----------------------------
+[   86.520551][    T1] kernel/sched/fair.c:5914 suspicious
+rcu_dereference_check() usage!
+[   86.520555][    T1] 
+[   86.520555][    T1] other info that might help us debug this:
+[   86.520555][    T1] 
+[   86.520561][    T1] 
+[   86.520561][    T1] rcu_scheduler_active = 2, debug_locks = 1
+[   86.520567][    T1] 1 lock held by systemd/1:
+[   86.520571][    T1]  #0: ffff8887f4b14848 (&mm->mmap_sem#2){++++}, at:
+do_page_fault+0x1d2/0x998
+[   86.520594][    T1] 
+[   86.520594][    T1] stack backtrace:
+[   86.520602][    T1] CPU: 1 PID: 1 Comm: systemd Not tainted 5.6.0-rc3-next-
+20200227 #7
+[   86.520607][    T1] Hardware name: HP ProLiant XL450 Gen9 Server/ProLiant
+XL450 Gen9 Server, BIOS U21 05/05/2016
+[   86.520612][    T1] Call Trace:
+[   86.520623][    T1]  dump_stack+0xa0/0xea
+[   86.520634][    T1]  lockdep_rcu_suspicious+0x102/0x10b
+lockdep_rcu_suspicious at kernel/locking/lockdep.c:5648
+[   86.520641][    T1]  update_numa_stats+0x577/0x710
+test_idle_cores at kernel/sched/fair.c:5914
+(inlined by) numa_idle_core at kernel/sched/fair.c:1565
+(inlined by) update_numa_stats at kernel/sched/fair.c:1610
+[   86.520649][    T1]  ? rcu_read_lock_held+0xac/0xc0
+[   86.520657][    T1]  task_numa_migrate+0x4aa/0xdb0
+[   86.520664][    T1]  ? task_numa_find_cpu+0x1010/0x1010
+[   86.520677][    T1]  ? migrate_pages+0x29c/0x17c0
+[   86.520683][    T1]  task_numa_fault+0x607/0xd90
+[   86.520691][    T1]  ? task_numa_free+0x230/0x230
+[   86.520698][    T1]  ? __kasan_check_read+0x11/0x20
+[   86.520704][    T1]  ? do_raw_spin_unlock+0xa8/0x140
+[   86.520712][    T1]  do_numa_page+0x33f/0x450
+[   86.520720][    T1]  __handle_mm_fault+0xb81/0xb90
+[   86.520727][    T1]  ? copy_page_range+0x420/0x420
+[   86.520736][    T1]  handle_mm_fault+0xdc/0x2e0
+[   86.520742][    T1]  do_page_fault+0x2c7/0x998
+[   86.520752][    T1]  page_fault+0x34/0x40
+[   86.520758][    T1] RIP: 0033:0x7f95faf63c53
+[   86.520766][    T1] Code: 00 41 00 3d 00 00 41 00 74 3d 48 8d 05 d6 5a 2d 00
+8b 00 85 c0 75 61 b8 01 01 00 00 0f 05 48 3d 00 f0 ff ff 0f 87 a5 00 00 00 <48>
+8b 4c 24 38 64 48 33 0c 25 28 00 00 00 0f 85 ba 00 00 00 48 83
+[   86.520771][    T1] RSP: 002b:00007ffdda737790 EFLAGS: 00010207
+[   86.520778][    T1] RAX: 0000000000000024 RBX: 0000562a594b9fd0 RCX:
+00007f95faf63c47
+[   86.520783][    T1] RDX: 00000000002a0000 RSI: 0000562a594b9fd1 RDI:
+0000000000000023
+[   86.520788][    T1] RBP: 00007ffdda7379c0 R08: 00007f95fc734e30 R09:
+00007ffdda737d60
+[   86.520793][    T1] R10: 0000000000000000 R11: 0000000000000246 R12:
+0000562a59459fb4
+[   86.520798][    T1] R13: 0000000000000000 R14: 0000000000000001 R15:
+0000000000000000
