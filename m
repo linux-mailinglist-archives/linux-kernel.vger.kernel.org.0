@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7443A171E8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:29:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42F4A171C8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:13:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388021AbgB0OHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:07:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44284 "EHLO mail.kernel.org"
+        id S2388568AbgB0ONH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:13:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388001AbgB0OG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:06:57 -0500
+        id S1729545AbgB0ONA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:13:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7CC820578;
-        Thu, 27 Feb 2020 14:06:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE3FD24690;
+        Thu, 27 Feb 2020 14:12:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812417;
-        bh=/iuYmGxKkhEQ8WmsH4Hhfvfu+Oar/Tmm+cjOuYZFPVA=;
+        s=default; t=1582812780;
+        bh=+Xbv5ReAxFmQEW1jkTzzswaOV3iBkq7ZlaBz9xuXs4Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c0ccpi+NGETd9Am6rUzVxgBsgwf3QGeon+eRL+y5iB3G07N3YmsvlVHjOJ7qcS7GG
-         0jWmuiAeAODFrbc+4VgOX7cFfqR4FUOebuEVI9PpAkF4SEy8okW72mqq2sEYWwfhjE
-         UUEsA+6BDQB9NirmnvEUUhrN9Dt+sYjGRp48HJxc=
+        b=ZvXsIEiGEf4hrEFT2il7GK+GcTRFkxlZdiPzk1z/PZmlqbqAQtRcjlFkPpLCP5UXW
+         u0KyNGGKc/6bRdWQKhd1vD44iE04PnjX5jFkmndZ471/7SHyde17wSKUoVVkcQJZe3
+         34IxhU2ygx+oZp8SO+8EVJUyy5tF7xn6Xse1pc4U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Nikolay Borisov <nborisov@suse.com>, Qu Wenruo <wqu@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 010/135] btrfs: handle logged extent failure properly
-Date:   Thu, 27 Feb 2020 14:35:50 +0100
-Message-Id: <20200227132230.586544434@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Tyler Hicks <tyhicks@canonical.com>
+Subject: [PATCH 5.5 014/150] ecryptfs: fix a memory leak bug in parse_tag_1_packet()
+Date:   Thu, 27 Feb 2020 14:35:51 +0100
+Message-Id: <20200227132234.778031974@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,43 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-commit bd727173e4432fe6cb70ba108dc1f3602c5409d7 upstream.
+commit fe2e082f5da5b4a0a92ae32978f81507ef37ec66 upstream.
 
-If we're allocating a logged extent we attempt to insert an extent
-record for the file extent directly.  We increase
-space_info->bytes_reserved, because the extent entry addition will call
-btrfs_update_block_group(), which will convert the ->bytes_reserved to
-->bytes_used.  However if we fail at any point while inserting the
-extent entry we will bail and leave space on ->bytes_reserved, which
-will trigger a WARN_ON() on umount.  Fix this by pinning the space if we
-fail to insert, which is what happens in every other failure case that
-involves adding the extent entry.
+In parse_tag_1_packet(), if tag 1 packet contains a key larger than
+ECRYPTFS_MAX_ENCRYPTED_KEY_BYTES, no cleanup is executed, leading to a
+memory leak on the allocated 'auth_tok_list_item'. To fix this issue, go to
+the label 'out_free' to perform the cleanup work.
 
-CC: stable@vger.kernel.org # 5.4+
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: stable@vger.kernel.org
+Fixes: dddfa461fc89 ("[PATCH] eCryptfs: Public key; packet management")
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/ecryptfs/keystore.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -4411,6 +4411,8 @@ int btrfs_alloc_logged_file_extent(struc
- 
- 	ret = alloc_reserved_file_extent(trans, 0, root_objectid, 0, owner,
- 					 offset, ins, 1);
-+	if (ret)
-+		btrfs_pin_extent(fs_info, ins->objectid, ins->offset, 1);
- 	btrfs_put_block_group(block_group);
- 	return ret;
- }
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@ -1304,7 +1304,7 @@ parse_tag_1_packet(struct ecryptfs_crypt
+ 		printk(KERN_WARNING "Tag 1 packet contains key larger "
+ 		       "than ECRYPTFS_MAX_ENCRYPTED_KEY_BYTES\n");
+ 		rc = -EINVAL;
+-		goto out;
++		goto out_free;
+ 	}
+ 	memcpy((*new_auth_tok)->session_key.encrypted_key,
+ 	       &data[(*packet_size)], (body_size - (ECRYPTFS_SIG_SIZE + 2)));
 
 
