@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D882171D58
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:20:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47D93171D54
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:20:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389889AbgB0OSd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:18:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58994 "EHLO mail.kernel.org"
+        id S2389897AbgB0OSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:18:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389861AbgB0OSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:18:24 -0500
+        id S2389878AbgB0OS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:18:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F21F20801;
-        Thu, 27 Feb 2020 14:18:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9275B2468F;
+        Thu, 27 Feb 2020 14:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582813103;
-        bh=zF8WyHHyNDWJs5RpuKJQzBGkfwEfo+xK6Oui84XK6xE=;
+        s=default; t=1582813106;
+        bh=VHH1pgBpBfoQ9NtBvtNG+mjfNiBMiLbkZq/twEG0pP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GiF3QRhnUvYZaYV+Wqb8p/KO2gfVtbwRCEW3rb092KZRzNM/3AkK1uHUx70sBqBUi
-         UAISOJvRgJaL1wu9UckQmTV9xpMrNQ0/TIcefjIU6mFS/7TfuUoknnQSPEdxzKVoCR
-         gk6A3qPQwWzA2olmLrrTnfywWZSm30ch8RzOFwYk=
+        b=izphOVEg2SozRqrwHxxZnIJgMC7qxv2eZkLJjqNqEeushPuNbHMKyLnNNbIhzBV7i
+         R8V4Oi55K8ybu4pINnoJuAbAVcVKmmEw15wqhba5JCbccOwhIiDK5TihiCrl2385tl
+         yEi0a4e4jGfRWbOmUnwgdJt3FTkxIqkflbErvWqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+576cc007eb9f2c968200@syzkaller.appspotmail.com,
+        syzbot+65c6c92d04304d0a8efc@syzkaller.appspotmail.com,
+        syzbot+e60ddfa48717579799dd@syzkaller.appspotmail.com,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.5 137/150] ALSA: rawmidi: Avoid bit fields for state flags
-Date:   Thu, 27 Feb 2020 14:37:54 +0100
-Message-Id: <20200227132252.547255332@linuxfoundation.org>
+Subject: [PATCH 5.5 138/150] ALSA: seq: Avoid concurrent access to queue flags
+Date:   Thu, 27 Feb 2020 14:37:55 +0100
+Message-Id: <20200227132252.673442358@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
 References: <20200227132232.815448360@linuxfoundation.org>
@@ -46,41 +47,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit dfa9a5efe8b932a84b3b319250aa3ac60c20f876 upstream.
+commit bb51e669fa49feb5904f452b2991b240ef31bc97 upstream.
 
-The rawmidi state flags (opened, append, active_sensing) are stored in
-bit fields that can be potentially racy when concurrently accessed
-without any locks.  Although the current code should be fine, there is
-also no any real benefit by keeping the bitfields for this kind of
-short number of members.
+The queue flags are represented in bit fields and the concurrent
+access may result in unexpected results.  Although the current code
+should be mostly OK as it's only reading a field while writing other
+fields as KCSAN reported, it's safer to cover both with a proper
+spinlock protection.
 
-This patch changes those bit fields flags to the simple bool fields.
-There should be no size increase of the snd_rawmidi_substream by this
-change.
+This patch fixes the possible concurrent read by protecting with
+q->owner_lock.  Also the queue owner field is protected as well since
+it's the field to be protected by the lock itself.
 
-Reported-by: syzbot+576cc007eb9f2c968200@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/r/20200214111316.26939-4-tiwai@suse.de
+Reported-by: syzbot+65c6c92d04304d0a8efc@syzkaller.appspotmail.com
+Reported-by: syzbot+e60ddfa48717579799dd@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/20200214111316.26939-2-tiwai@suse.de
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/sound/rawmidi.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/core/seq/seq_queue.c |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
---- a/include/sound/rawmidi.h
-+++ b/include/sound/rawmidi.h
-@@ -77,9 +77,9 @@ struct snd_rawmidi_substream {
- 	struct list_head list;		/* list of all substream for given stream */
- 	int stream;			/* direction */
- 	int number;			/* substream number */
--	unsigned int opened: 1,		/* open flag */
--		     append: 1,		/* append flag (merge more streams) */
--		     active_sensing: 1; /* send active sensing when close */
-+	bool opened;			/* open flag */
-+	bool append;			/* append flag (merge more streams) */
-+	bool active_sensing;		/* send active sensing when close */
- 	int use_count;			/* use counter (for output) */
- 	size_t bytes;
- 	struct snd_rawmidi *rmidi;
+--- a/sound/core/seq/seq_queue.c
++++ b/sound/core/seq/seq_queue.c
+@@ -392,6 +392,7 @@ int snd_seq_queue_check_access(int queue
+ int snd_seq_queue_set_owner(int queueid, int client, int locked)
+ {
+ 	struct snd_seq_queue *q = queueptr(queueid);
++	unsigned long flags;
+ 
+ 	if (q == NULL)
+ 		return -EINVAL;
+@@ -401,8 +402,10 @@ int snd_seq_queue_set_owner(int queueid,
+ 		return -EPERM;
+ 	}
+ 
++	spin_lock_irqsave(&q->owner_lock, flags);
+ 	q->locked = locked ? 1 : 0;
+ 	q->owner = client;
++	spin_unlock_irqrestore(&q->owner_lock, flags);
+ 	queue_access_unlock(q);
+ 	queuefree(q);
+ 
+@@ -539,15 +542,17 @@ void snd_seq_queue_client_termination(in
+ 	unsigned long flags;
+ 	int i;
+ 	struct snd_seq_queue *q;
++	bool matched;
+ 
+ 	for (i = 0; i < SNDRV_SEQ_MAX_QUEUES; i++) {
+ 		if ((q = queueptr(i)) == NULL)
+ 			continue;
+ 		spin_lock_irqsave(&q->owner_lock, flags);
+-		if (q->owner == client)
++		matched = (q->owner == client);
++		if (matched)
+ 			q->klocked = 1;
+ 		spin_unlock_irqrestore(&q->owner_lock, flags);
+-		if (q->owner == client) {
++		if (matched) {
+ 			if (q->timer->running)
+ 				snd_seq_timer_stop(q->timer);
+ 			snd_seq_timer_reset(q->timer);
+@@ -739,6 +744,8 @@ void snd_seq_info_queues_read(struct snd
+ 	int i, bpm;
+ 	struct snd_seq_queue *q;
+ 	struct snd_seq_timer *tmr;
++	bool locked;
++	int owner;
+ 
+ 	for (i = 0; i < SNDRV_SEQ_MAX_QUEUES; i++) {
+ 		if ((q = queueptr(i)) == NULL)
+@@ -750,9 +757,14 @@ void snd_seq_info_queues_read(struct snd
+ 		else
+ 			bpm = 0;
+ 
++		spin_lock_irq(&q->owner_lock);
++		locked = q->locked;
++		owner = q->owner;
++		spin_unlock_irq(&q->owner_lock);
++
+ 		snd_iprintf(buffer, "queue %d: [%s]\n", q->queue, q->name);
+-		snd_iprintf(buffer, "owned by client    : %d\n", q->owner);
+-		snd_iprintf(buffer, "lock status        : %s\n", q->locked ? "Locked" : "Free");
++		snd_iprintf(buffer, "owned by client    : %d\n", owner);
++		snd_iprintf(buffer, "lock status        : %s\n", locked ? "Locked" : "Free");
+ 		snd_iprintf(buffer, "queued time events : %d\n", snd_seq_prioq_avail(q->timeq));
+ 		snd_iprintf(buffer, "queued tick events : %d\n", snd_seq_prioq_avail(q->tickq));
+ 		snd_iprintf(buffer, "timer state        : %s\n", tmr->running ? "Running" : "Stopped");
 
 
