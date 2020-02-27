@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 917DD171D17
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:18:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74252171B64
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389756AbgB0ORm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:17:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58130 "EHLO mail.kernel.org"
+        id S1733044AbgB0OCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:02:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389748AbgB0ORl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:17:41 -0500
+        id S1733021AbgB0OB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:01:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28C2A2468F;
-        Thu, 27 Feb 2020 14:17:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D3B421556;
+        Thu, 27 Feb 2020 14:01:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582813059;
-        bh=NpPQdfyc5L+GRHg5wPDXDM8+oXQBfP++pwzaH75mJkA=;
+        s=default; t=1582812116;
+        bh=7+8IUUNeENPExRxQnZqF/iU4d7nSWfX3uixTtff8G+Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J1/H601MRsHDvf+1PFMd6ojsqcwD1vLYqwC8gxYHcMxX3V+BWtrK6wqygtulsYIRm
-         MbAHmf6rgJE/TFOJa4kIyaV5Tl3qknsAnEO5cDeuphCZX424m40V3934K0VD/q3DsL
-         tQzyQKBmGTfENT1H4lV4hRryWfC8BvKOe9zd2Z88=
+        b=JXm0ubdweHms+3cZc47w2UovpBZ4pOh74tBGhp4rdaQ3NboiKF84CMyWW3J+AeJaH
+         XpDU7qHZbSohUGDan/zyQNig51aqEmgfCzCOvqP+/0SKxPtuggjEy1W12fg7VMTpld
+         Q+rHeVUHWdsUjvjD870lk9lyF/QN78MK105R0HEk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Jeff Mahoney <jeffm@suse.com>, Qu Wenruo <wqu@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.5 104/150] btrfs: destroy qgroup extent records on transaction abort
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vaibhav Agarwal <vaibhav.sr@gmail.com>
+Subject: [PATCH 4.14 227/237] staging: greybus: use after free in gb_audio_manager_remove_all()
 Date:   Thu, 27 Feb 2020 14:37:21 +0100
-Message-Id: <20200227132248.117693088@linuxfoundation.org>
+Message-Id: <20200227132312.823713763@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,82 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Mahoney <jeffm@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 81f7eb00ff5bb8326e82503a32809421d14abb8a upstream.
+commit b7db58105b80fa9232719c8329b995b3addfab55 upstream.
 
-We clean up the delayed references when we abort a transaction but we
-leave the pending qgroup extent records behind, leaking memory.
+When we call kobject_put() and it's the last reference to the kobject
+then it calls gb_audio_module_release() and frees module.  We dereference
+"module" on the next line which is a use after free.
 
-This patch destroys the extent records when we destroy the delayed refs
-and makes sure ensure they're gone before releasing the transaction.
-
-Fixes: 3368d001ba5d ("btrfs: qgroup: Record possible quota-related extent for qgroup.")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-[ Rebased to latest upstream, remove to_qgroup() helper, use
-  rbtree_postorder_for_each_entry_safe() wrapper ]
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: c77f85bbc91a ("greybus: audio: Fix incorrect counting of 'ida'")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Vaibhav Agarwal <vaibhav.sr@gmail.com>
+Link: https://lore.kernel.org/r/20200205123217.jreendkyxulqsool@kili.mountain
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/disk-io.c     |    1 +
- fs/btrfs/qgroup.c      |   13 +++++++++++++
- fs/btrfs/qgroup.h      |    1 +
- fs/btrfs/transaction.c |    2 ++
- 4 files changed, 17 insertions(+)
+ drivers/staging/greybus/audio_manager.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -4272,6 +4272,7 @@ static int btrfs_destroy_delayed_refs(st
- 		cond_resched();
- 		spin_lock(&delayed_refs->lock);
+--- a/drivers/staging/greybus/audio_manager.c
++++ b/drivers/staging/greybus/audio_manager.c
+@@ -90,8 +90,8 @@ void gb_audio_manager_remove_all(void)
+ 
+ 	list_for_each_entry_safe(module, next, &modules_list, list) {
+ 		list_del(&module->list);
+-		kobject_put(&module->kobj);
+ 		ida_simple_remove(&module_id, module->id);
++		kobject_put(&module->kobj);
  	}
-+	btrfs_qgroup_destroy_extent_records(trans);
  
- 	spin_unlock(&delayed_refs->lock);
- 
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -4016,3 +4016,16 @@ out:
- 	}
- 	return ret;
- }
-+
-+void btrfs_qgroup_destroy_extent_records(struct btrfs_transaction *trans)
-+{
-+	struct btrfs_qgroup_extent_record *entry;
-+	struct btrfs_qgroup_extent_record *next;
-+	struct rb_root *root;
-+
-+	root = &trans->delayed_refs.dirty_extent_root;
-+	rbtree_postorder_for_each_entry_safe(entry, next, root, node) {
-+		ulist_free(entry->old_roots);
-+		kfree(entry);
-+	}
-+}
---- a/fs/btrfs/qgroup.h
-+++ b/fs/btrfs/qgroup.h
-@@ -414,5 +414,6 @@ int btrfs_qgroup_add_swapped_blocks(stru
- 		u64 last_snapshot);
- int btrfs_qgroup_trace_subtree_after_cow(struct btrfs_trans_handle *trans,
- 		struct btrfs_root *root, struct extent_buffer *eb);
-+void btrfs_qgroup_destroy_extent_records(struct btrfs_transaction *trans);
- 
- #endif
---- a/fs/btrfs/transaction.c
-+++ b/fs/btrfs/transaction.c
-@@ -121,6 +121,8 @@ void btrfs_put_transaction(struct btrfs_
- 		BUG_ON(!list_empty(&transaction->list));
- 		WARN_ON(!RB_EMPTY_ROOT(
- 				&transaction->delayed_refs.href_root.rb_root));
-+		WARN_ON(!RB_EMPTY_ROOT(
-+				&transaction->delayed_refs.dirty_extent_root));
- 		if (transaction->delayed_refs.pending_csums)
- 			btrfs_err(transaction->fs_info,
- 				  "pending csums is %llu",
+ 	is_empty = list_empty(&modules_list);
 
 
