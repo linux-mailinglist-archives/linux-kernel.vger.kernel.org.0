@@ -2,100 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4111E1727E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:46:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DE4F1727E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:46:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730121AbgB0Sof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:44:35 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46911 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729280AbgB0Soe (ORCPT
+        id S1729735AbgB0Spp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:45:45 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:59069 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729172AbgB0Spo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:44:34 -0500
-Received: by mail-pl1-f193.google.com with SMTP id y8so135165pll.13;
-        Thu, 27 Feb 2020 10:44:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=3EzoEiKTJsev6TY3rRthQ7y6X2EMBZONbWFfknQ3mOI=;
-        b=LGTAxQmcY0aBGwm7kjMXVg0YtKiXVE+gXJn4OYJMFT053JxA8AzQtOEk6LSbtAwy1h
-         JD+vQqaLzyjK/3Pg3GDRrZpy2hBUln2bxU/m83bQDATfzeBFHRFmzJLZrjTYRPELvxAX
-         5M4xU/Mtk351EpzyEabHl8uqQukwdZZPd7IaSm0/3IEyk0h7O/koE/imeStf3Wfwca4Z
-         +QtHTkPTyVmcMAyhVydCROwipY1wtFFlaOLz9cHyiORMY+zRvX4eKW0FfPU7hK3iqv6+
-         +j9znRwnLRdYnQdnzhtIkWRABq25g0PdVrptwZQyaTRycLytXKOt/i/vWrM3OQEC5Pbe
-         5mng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=3EzoEiKTJsev6TY3rRthQ7y6X2EMBZONbWFfknQ3mOI=;
-        b=IeRig19/v1pTj1MDW9fDZ8qgz5xbSSoKVVnefNJrlreSF4vi7RaKuOMzMmSgtPusL8
-         roPPAz7agkbdfdYGJSkGbJHp4RyuOyWa1jYFEoje7h1HzY948I/SNtQ30baSniiP2W1x
-         D4G3tI3wUwl9NZcXAPM1TMhHVzlbh2dFmTqtyB69Vt9JRUJOuZAgX14swNGN41dklr9A
-         JbOc8oCsvKtiFJBQ8lE9j/iHptpg1GrleoklJ0pK3rYutHoKPXhSfFpz3TD3EU5HAROr
-         6bGe69ZoxL6mePlHoad4iFLyA9D85IDD06eYDb89CjgmMoQpXCII2LIZdTUnRT/51zVt
-         pLHA==
-X-Gm-Message-State: APjAAAX8FlEH5wrnR8ok8GUNo/Pmv0K+VCLrilLmh2RAM0eBrv+W33+t
-        ksXQoBL/r6ZFtCS9HgPSDUw=
-X-Google-Smtp-Source: APXvYqxNOLK7wXEg+ZMzunWOfKON/mH+l4nPeDMX7WHQm6G3DJM6gPdUDWLxzcwKbMwgD5hDzQDxHQ==
-X-Received: by 2002:a17:902:b583:: with SMTP id a3mr159988pls.180.1582829073345;
-        Thu, 27 Feb 2020 10:44:33 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id x6sm7822006pfi.83.2020.02.27.10.44.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Feb 2020 10:44:32 -0800 (PST)
-Date:   Thu, 27 Feb 2020 10:44:31 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 000/165] 4.9.215-stable review
-Message-ID: <20200227184431.GA15944@roeck-us.net>
-References: <20200227132230.840899170@linuxfoundation.org>
+        Thu, 27 Feb 2020 13:45:44 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582829144; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=U/EDQ0pr75hfPnWX/OCbb8FxwwnZ09FdliYUIRis9EI=; b=JT4YLk/S1fdLfsclMxzTkNr1cNa7A44XidYUQCQxQLImtMfc6Najx3Po/z9fRFD7wM9bYoM4
+ IKyyaAq81OPDXfiB+2GQBL6eQCH9N37p02euHo8o+QUmN58iIgcG6tRJQPQ+N08ycQ7WWdlI
+ 3/y1lfxTQSYBn3dQgtxBb7CPX8s=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e580e55.7f4acfb21308-smtp-out-n01;
+ Thu, 27 Feb 2020 18:45:41 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 7E811C447AB; Thu, 27 Feb 2020 18:45:41 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 83C15C433A2;
+        Thu, 27 Feb 2020 18:45:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83C15C433A2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Thu, 27 Feb 2020 11:45:34 -0700
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     iommu@lists.linux-foundation.org
+Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Wen Yang <wen.yang99@zte.com.cn>, will@kernel.org,
+        Joerg Roedel <joro@8bytes.org>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Wambui Karuga <wambui.karugax@gmail.com>,
+        freedreno@lists.freedesktop.org,
+        Fritz Koenig <frkoenig@google.com>,
+        linux-arm-msm@vger.kernel.org,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sean Paul <sean@poorly.run>,
+        Allison Randal <allison@lohutok.net>,
+        Enrico Weigelt <info@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, zhengbin <zhengbin13@huawei.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Drew Davenport <ddavenport@chromium.org>,
+        Brian Masney <masneyb@onstation.org>, robin.murphy@arm.com,
+        Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [Freedreno] [PATCH v5 0/5] iommu/arm-smmu: Split pagetable
+ support for arm-smmu-v2
+Message-ID: <20200227184534.GA25772@jcrouse1-lnx.qualcomm.com>
+Mail-Followup-To: iommu@lists.linux-foundation.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Wen Yang <wen.yang99@zte.com.cn>,
+        will@kernel.org, Joerg Roedel <joro@8bytes.org>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Wambui Karuga <wambui.karugax@gmail.com>,
+        freedreno@lists.freedesktop.org, Fritz Koenig <frkoenig@google.com>,
+        linux-arm-msm@vger.kernel.org,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Sean Paul <sean@poorly.run>,
+        Allison Randal <allison@lohutok.net>,
+        Enrico Weigelt <info@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, zhengbin <zhengbin13@huawei.com>,
+        Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Drew Davenport <ddavenport@chromium.org>,
+        Brian Masney <masneyb@onstation.org>, robin.murphy@arm.com,
+        Georgi Djakov <georgi.djakov@linaro.org>
+References: <1580248819-12644-1-git-send-email-jcrouse@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1580248819-12644-1-git-send-email-jcrouse@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 02:34:34PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.215 release.
-> There are 165 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Jan 28, 2020 at 03:00:14PM -0700, Jordan Crouse wrote:
+> This is another iteration for the split pagetable support based on the
+> suggestions from Robin and Will [1].
 > 
-> Responses should be made by Sat, 29 Feb 2020 13:21:24 +0000.
-> Anything received after that time might be too late.
+> Background: In order to support per-context pagetables the GPU needs to enable
+> split tables so that we can store global buffers in the TTBR1 space leaving the
+> GPU free to program the TTBR0 register with the address of a context specific
+> pagetable.
 > 
+> If the DOMAIN_ATTR_SPLIT_TABLES attribute is set on the domain before attaching,
+> the context bank assigned to the domain will be programmed to allow translations
+> in the TTBR1 space. Translations in the TTBR0 region will be disallowed because,
+> as Robin pointe out, having a un-programmed TTBR0 register is dangerous.
+> 
+> The driver can determine if TTBR1 was successfully programmed by querying
+> DOMAIN_ATTR_SPLIT_TABLES after attaching. The domain geometry will also be
+> updated to reflect the virtual address space for the TTBR1 range.
+> 
+> Upcoming changes will allow auxiliary domains to be attached to the device which
+> will enable and program TTBR0.
+> 
+> This patchset is based on top of linux-next-20200127.
 
-Building powerpc:defconfig ... failed
---------------
-Error log:
-In file included from include/linux/bug.h:4:0,
-                 from include/linux/thread_info.h:11,
-                 from include/asm-generic/preempt.h:4,
-                 from ./arch/powerpc/include/generated/asm/preempt.h:1,
-                 from include/linux/preempt.h:59,
-                 from include/linux/spinlock.h:50,
-                 from include/linux/seqlock.h:35,
-                 from include/linux/time.h:5,
-                 from include/uapi/linux/timex.h:56,
-                 from include/linux/timex.h:56,
-                 from include/linux/sched.h:19,
-                 from arch/powerpc/kernel/signal_32.c:20:
-arch/powerpc/kernel/signal_32.c: In function ‘save_tm_user_regs’:
-arch/powerpc/kernel/signal_32.c:521:10: error: ‘tm_suspend_disabled’ undeclared
+Quick ping for feedback so I can respin for (maybe?) 5.6.
 
-Also affects v4.14.y.
+Thanks,
+Jordan
 
-Guenter
+> Change log:
+> 
+> v4: Only program TTBR1 when split pagetables are requested. TTBR0 will be
+> enabled later when an auxiliary domain is attached
+> v3: Remove the implementation specific and make split pagetable support
+> part of the generic configuration
+> 
+> [1] https://lists.linuxfoundation.org/pipermail/iommu/2020-January/041373.html
+> 
+> Jordan Crouse (5):
+>   iommu: Add DOMAIN_ATTR_SPLIT_TABLES
+>   iommu/arm-smmu: Add support for TTBR1
+>   drm/msm: Attach the IOMMU device during initialization
+>   drm/msm: Refactor address space initialization
+>   drm/msm/a6xx: Support split pagetables
+> 
+>  drivers/gpu/drm/msm/adreno/a2xx_gpu.c    | 16 ++++++++++
+>  drivers/gpu/drm/msm/adreno/a3xx_gpu.c    |  1 +
+>  drivers/gpu/drm/msm/adreno/a4xx_gpu.c    |  1 +
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c    |  1 +
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c    | 51 ++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c  | 23 ++++++++++----
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h  |  8 +++++
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c  | 18 ++++-------
+>  drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c | 18 +++++------
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c |  4 ---
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 18 +++++------
+>  drivers/gpu/drm/msm/msm_drv.h            |  8 ++---
+>  drivers/gpu/drm/msm/msm_gem_vma.c        | 36 ++++------------------
+>  drivers/gpu/drm/msm/msm_gpu.c            | 49 ++----------------------------
+>  drivers/gpu/drm/msm/msm_gpu.h            |  4 +--
+>  drivers/gpu/drm/msm/msm_gpummu.c         |  6 ----
+>  drivers/gpu/drm/msm/msm_iommu.c          | 18 ++++++-----
+>  drivers/gpu/drm/msm/msm_mmu.h            |  1 -
+>  drivers/iommu/arm-smmu.c                 | 48 +++++++++++++++++++++++++-----
+>  drivers/iommu/arm-smmu.h                 | 22 ++++++++++----
+>  include/linux/iommu.h                    |  2 ++
+>  21 files changed, 198 insertions(+), 155 deletions(-)
+> 
+> -- 
+> 2.7.4
+> _______________________________________________
+> Freedreno mailing list
+> Freedreno@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/freedreno
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
