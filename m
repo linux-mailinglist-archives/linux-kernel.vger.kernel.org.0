@@ -2,423 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F36E917118E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 08:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF1017117C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 08:31:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbgB0Hff convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Feb 2020 02:35:35 -0500
-Received: from mx3.uni-regensburg.de ([194.94.157.148]:50210 "EHLO
-        mx3.uni-regensburg.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726999AbgB0Hff (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 02:35:35 -0500
-X-Greylist: delayed 462 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Feb 2020 02:35:32 EST
-Received: from mx3.uni-regensburg.de (localhost [127.0.0.1])
-        by localhost (Postfix) with SMTP id BD6BF6000052
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 08:27:48 +0100 (CET)
-Received: from gwsmtp.uni-regensburg.de (gwsmtp1.uni-regensburg.de [132.199.5.51])
-        by mx3.uni-regensburg.de (Postfix) with ESMTP id 12538600004D
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 08:27:46 +0100 (CET)
-Received: from uni-regensburg-smtp1-MTA by gwsmtp.uni-regensburg.de
-        with Novell_GroupWise; Thu, 27 Feb 2020 08:27:45 +0100
-Message-Id: <5E576F6F020000A1000373E1@gwsmtp.uni-regensburg.de>
-X-Mailer: Novell GroupWise Internet Agent 18.2.0 
-Date:   Thu, 27 Feb 2020 08:27:43 +0100
-From:   "Ulrich Windl" <Ulrich.Windl@rz.uni-regensburg.de>
-To:     "Lee Duncan" <lduncan@suse.com>
-Cc:     "open-iscsi" <open-iscsi@googlegroups.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Antw: [EXT] [PATCH] scsi: Replace zero-length array with
- flexible-array member
-References: <32123_1582744382_5E56C33B_32123_188_1_20200224161406.GA21454@embeddedor>
-In-Reply-To: <32123_1582744382_5E56C33B_32123_188_1_20200224161406.GA21454@embeddedor>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+        id S1728407AbgB0Hbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 02:31:55 -0500
+Received: from mail-dm6nam12on2064.outbound.protection.outlook.com ([40.107.243.64]:4011
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726999AbgB0Hby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 02:31:54 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Hej/yRbStgttwYJvp1RvbWsDPH5fqLlrbYEwIuePVGRlQmVs47L74rFlXkPxYgZJg2LynWukAoAg+ZCv840eHqSIYjeJXXsBjNlTTt6bjbg2OI2rDl6d+oCfFolsznm2cvZfCV0O3WY/IuvqYJsI0058//co1lB7MfRrQzkeZt+kQavdwfNCOPmnhFxeV+M6n3ImHP03UIDOB94vdbWkXWv76WR0VvGaMUNYzjjXF1WU0fy2EP7kH2x+Wlyu2SBb9vWFTt4vhgru35MVWJ6ZLMDfpBhDhg61ZiwS3xjEfb3idNawtO3dI73i7aUjigrQuQ9YXlMBmPLbuggkfa0HoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=boyzg3ulGMaTj4eIyYG94pZEm4BUpZ2kxBq+r7J6Sjc=;
+ b=kBWyk+8BIYKbljMyf+5pUYtw9+YCynofIhqextfriE6skENrPfjwtF0m27YpNLE53Hl5iecMJ0EtGXiER402x7XMC7X2BBZVePdp5uNJQNoo/Mn7Mwiiq2ZPQBIoE3ez399KzWhOYu4Nh7DSV7l31VletPQW+W59Zc+KDELRZl6DMsBLuNe70ge4mu8bb8kuZwbk3mmSJsNZbNA5Pmzh7GTKe/JB3qIdWuyDsqqfehvkN0aUQBJ+mN8Kv1G2tZ9XSDUOdVEDzajKwWUnckiTvfC49/8+WWUpK4ThH2tRcVQUjAiU8RZqQe/g0Yo/TAz51VgPkg28v2Lh9tXwfgedow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=kvack.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=boyzg3ulGMaTj4eIyYG94pZEm4BUpZ2kxBq+r7J6Sjc=;
+ b=caFvwT5h929jRKj1cpw67RlEYeUXNi3REfP66YZiAB1um7LiOTq5RwHK4BRo4w5c/r7r1mG/BR1hV9jpcg5WDzguKCVktkHyQF+Fqp7wAFocQN5SDJgN7E2Q412JDMoTNlQd1GCwA8InTqjStlvvqwQotATODoHrCOLktyy2mNo=
+Received: from BL0PR05CA0028.namprd05.prod.outlook.com (2603:10b6:208:91::38)
+ by CH2PR02MB6663.namprd02.prod.outlook.com (2603:10b6:610:7e::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14; Thu, 27 Feb
+ 2020 07:31:52 +0000
+Received: from BL2NAM02FT055.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:208:91:cafe::6b) by BL0PR05CA0028.outlook.office365.com
+ (2603:10b6:208:91::38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.5 via Frontend
+ Transport; Thu, 27 Feb 2020 07:31:51 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; kvack.org; dkim=none (message not signed)
+ header.d=none;kvack.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ BL2NAM02FT055.mail.protection.outlook.com (10.152.77.126) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2772.15
+ via Frontend Transport; Thu, 27 Feb 2020 07:31:51 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1j7DeA-0005FI-Qe; Wed, 26 Feb 2020 23:31:50 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1j7De5-0000m0-NQ; Wed, 26 Feb 2020 23:31:45 -0800
+Received: from [172.30.17.108]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1j7Ddx-0000kP-1c; Wed, 26 Feb 2020 23:31:37 -0800
+Subject: Re: [PATCH 00/10] Hi,
+To:     Rob Herring <robh@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>, git <git@xilinx.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Borislav Petkov <bp@suse.de>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mubin Sayyed <mubinusm@xilinx.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Siva Durga Prasad Paladugu <siva.durga.paladugu@xilinx.com>,
+        Stefan Asserhall <stefan.asserhall@xilinx.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Will Deacon <will@kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>, linux-mm@kvack.org,
+        Bharat Kumar Gogada <bharatku@xilinx.com>
+References: <cover.1581497860.git.michal.simek@xilinx.com>
+ <CAL_JsqJeXJ6zWvEUi=gyOV0eCcXsvNmkK9EstC9hg9AKfMXnKw@mail.gmail.com>
+ <0f8140c1-da6f-ef04-0809-252d6de6a5d7@xilinx.com>
+ <CAL_JsqLf2e3z+m14264WFcsQgiwKR35Rs9Rw0c_MgoFvKwO2Xg@mail.gmail.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <5dfa98df-8955-59fd-1d65-c0a988190acb@xilinx.com>
+Date:   Thu, 27 Feb 2020 08:31:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <CAL_JsqLf2e3z+m14264WFcsQgiwKR35Rs9Rw0c_MgoFvKwO2Xg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(39850400004)(136003)(396003)(189003)(199004)(31696002)(26005)(186003)(2906002)(36756003)(356004)(54906003)(478600001)(31686004)(6666004)(53546011)(70586007)(70206006)(7416002)(8676002)(44832011)(336012)(81166006)(81156014)(9786002)(110136005)(107886003)(426003)(8936002)(4326008)(5660300002)(316002)(2616005)(106390200001);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6663;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0d522991-1843-4460-55ba-08d7bb571cdb
+X-MS-TrafficTypeDiagnostic: CH2PR02MB6663:
+X-LD-Processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+X-Microsoft-Antispam-PRVS: <CH2PR02MB66635A0EAE40D44ECFFF5444C6EB0@CH2PR02MB6663.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 03264AEA72
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: XfFS4NOVHqoJB9QxLTXkbjeflvUdISgd7pir/gudeGpUA9ZEMdSpelZ61xRbu6CBiL1KZdHQCJKRVhlmnvwYRYEDQDAPK94bFVwrxDhOgnfUmsLxzkJwVFffiC3YoMtnfSM82OLLfonQSfgE5QOairDmXQLf498p91YokjwA0/zpWan0zill4Sv4j9H38BR5Yh+y19sFhJ8L9wFimos65k8y8Hig5uAJTS1F+cFRl0oX6LalKPggG1sfo9WPXDJ0WTX71kvFS8BpAWK1Kl84UAFpuf7+fkpjY0+IpZ918+QDqecoPOO1GBbdohX/axh7dQH4IzuTSRW2L+ZPwM1SeZ6JDw0ptn/6pTBwHi+4Imgq+eZNRcSYIn6KaJEeGDFaq0d8Y0hCxA9I2s54H86r2Qwmx5/wW9gwzkppXOO2MwfgK2AM5z5Qv1LQqBKh9acrbnYRy7cE3XiWl5koTCiQHE7Ibh10EyN+zHgcthDw+f10uvNYI7sekj/hRLkQn4Ei
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2020 07:31:51.4517
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d522991-1843-4460-55ba-08d7bb571cdb
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6663
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+On 25. 02. 20 17:32, Rob Herring wrote:
+> On Mon, Feb 17, 2020 at 8:28 AM Michal Simek <michal.simek@xilinx.com> wrote:
+>>
+>> Hi Rob,
+>>
+>> On 14. 02. 20 0:47, Rob Herring wrote:
+>>> On Wed, Feb 12, 2020 at 2:58 AM Michal Simek <michal.simek@xilinx.com> wrote:
+>>>>
+>>>>
+>>>> I am sending this series as before SMP support.
+>>>> Most of these patches are clean ups and should be easy to review them. I
+>>>> expect there will be more discussions about SMP support.
+>>>
+>>> While not really related to adding SMP, any chance you or someone
+>>> could look at moving microblaze PCI support to drivers/pci/? I suspect
+>>> much of the code should drop out as we have common helpers for much of
+>>> it now. That would leave only powerpc and mips for DT+PCI platforms.
+>>
+>> can you please suggest changes which could be done?
+>> I have CC Bharat and he could look at it.
+> 
+> Look at the host controller drivers in drivers/pci/controller/.
+> pci-host-{generic,common}.c is a good template to start with as that's
+> a controller with standard config space accesses and no h/w setup
+> needed. Essentially you need to call devm_pci_alloc_host_bridge(),
+> pci_parse_request_of_pci_ranges() and pci_host_probe() with whatever
+> h/w setup you need in between those calls.
+> 
+> Looking at the microblaze PCI code, looks like you may need custom
+> config space accessors which is quite common. Probably all the
+> resource and device scanning can be removed. If you look at arm64, all
+> the arch PCI code is just for ACPI.
 
-Personally I think variable-sized structures are a bad thing, independent of the syntax being used.
-30 years ago saving one indirection would have been an argument for such structures, but nowadays?
+Thanks Rob.
 
-Regards,
-Ulrich
+Bharat: Can you please take a look?
 
->>> "Gustavo A. R. Silva" <gustavo@embeddedor.com> schrieb am 24.02.2020 um 17:14
-in Nachricht
-<32123_1582744382_5E56C33B_32123_188_1_20200224161406.GA21454@embeddedor>:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html 
-> [2] https://github.com/KSPP/linux/issues/21 
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/scsi/fnic/vnic_devcmd.h      |  2 +-
->  drivers/scsi/ipr.h                   |  6 +++---
->  drivers/scsi/isci/sas.h              |  2 +-
->  drivers/scsi/mpt3sas/mpt3sas_scsih.c |  2 +-
->  drivers/scsi/mvsas/mv_sas.h          |  2 +-
->  drivers/scsi/mvumi.h                 |  4 ++--
->  drivers/scsi/pmcraid.h               |  2 +-
->  drivers/scsi/snic/vnic_devcmd.h      |  2 +-
->  drivers/scsi/stex.c                  |  2 +-
->  include/scsi/iscsi_if.h              | 10 +++++-----
->  include/scsi/scsi_bsg_iscsi.h        |  2 +-
->  include/scsi/scsi_device.h           |  4 ++--
->  include/scsi/scsi_host.h             |  2 +-
->  include/scsi/scsi_ioctl.h            |  2 +-
->  include/scsi/srp.h                   |  8 ++++----
->  include/uapi/scsi/scsi_bsg_fc.h      |  2 +-
->  16 files changed, 27 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/scsi/fnic/vnic_devcmd.h 
-> b/drivers/scsi/fnic/vnic_devcmd.h
-> index c5dde556dc7c..c20d30e36dfc 100644
-> --- a/drivers/scsi/fnic/vnic_devcmd.h
-> +++ b/drivers/scsi/fnic/vnic_devcmd.h
-> @@ -442,7 +442,7 @@ struct vnic_devcmd_notify {
->  struct vnic_devcmd_provinfo {
->  	u8 oui[3];
->  	u8 type;
-> -	u8 data[0];
-> +	u8 data[];
->  };
->  
->  /*
-> diff --git a/drivers/scsi/ipr.h b/drivers/scsi/ipr.h
-> index a67baeb36d1f..fd3929a19ab5 100644
-> --- a/drivers/scsi/ipr.h
-> +++ b/drivers/scsi/ipr.h
-> @@ -451,12 +451,12 @@ struct ipr_config_table_hdr64 {
->  
->  struct ipr_config_table {
->  	struct ipr_config_table_hdr hdr;
-> -	struct ipr_config_table_entry dev[0];
-> +	struct ipr_config_table_entry dev[];
->  }__attribute__((packed, aligned (4)));
->  
->  struct ipr_config_table64 {
->  	struct ipr_config_table_hdr64 hdr64;
-> -	struct ipr_config_table_entry64 dev[0];
-> +	struct ipr_config_table_entry64 dev[];
->  }__attribute__((packed, aligned (8)));
->  
->  struct ipr_config_table_entry_wrapper {
-> @@ -792,7 +792,7 @@ struct ipr_mode_page28 {
->  	struct ipr_mode_page_hdr hdr;
->  	u8 num_entries;
->  	u8 entry_length;
-> -	struct ipr_dev_bus_entry bus[0];
-> +	struct ipr_dev_bus_entry bus[];
->  }__attribute__((packed));
->  
->  struct ipr_mode_page24 {
-> diff --git a/drivers/scsi/isci/sas.h b/drivers/scsi/isci/sas.h
-> index dc26b4aea99e..15d8f3631ab7 100644
-> --- a/drivers/scsi/isci/sas.h
-> +++ b/drivers/scsi/isci/sas.h
-> @@ -201,7 +201,7 @@ struct smp_req {
->  	u8 func;		/* byte 1 */
->  	u8 alloc_resp_len;	/* byte 2 */
->  	u8 req_len;		/* byte 3 */
-> -	u8 req_data[0];
-> +	u8 req_data[];
->  }  __packed;
->  
->  /*
-> diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c 
-> b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-> index c597d544eb39..778d5e6ce385 100644
-> --- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-> +++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-> @@ -207,7 +207,7 @@ struct fw_event_work {
->  	u8			ignore;
->  	u16			event;
->  	struct kref		refcount;
-> -	char			event_data[0] __aligned(4);
-> +	char			event_data[] __aligned(4);
->  };
->  
->  static void fw_event_work_free(struct kref *r)
-> diff --git a/drivers/scsi/mvsas/mv_sas.h b/drivers/scsi/mvsas/mv_sas.h
-> index 519edc796691..327fdd5ee962 100644
-> --- a/drivers/scsi/mvsas/mv_sas.h
-> +++ b/drivers/scsi/mvsas/mv_sas.h
-> @@ -394,7 +394,7 @@ struct mvs_info {
->  	dma_addr_t bulk_buffer_dma1;
->  #define TRASH_BUCKET_SIZE    	0x20000
->  	void *dma_pool;
-> -	struct mvs_slot_info slot_info[0];
-> +	struct mvs_slot_info slot_info[];
->  };
->  
->  struct mvs_prv_info{
-> diff --git a/drivers/scsi/mvumi.h b/drivers/scsi/mvumi.h
-> index ec8cc2207536..60d5691fc4ab 100644
-> --- a/drivers/scsi/mvumi.h
-> +++ b/drivers/scsi/mvumi.h
-> @@ -130,7 +130,7 @@ enum {
->  struct mvumi_hotplug_event {
->  	u16 size;
->  	u8 dummy[2];
-> -	u8 bitmap[0];
-> +	u8 bitmap[];
->  };
->  
->  struct mvumi_driver_event {
-> @@ -290,7 +290,7 @@ struct mvumi_rsp_frame {
->  
->  struct mvumi_ob_data {
->  	struct list_head list;
-> -	unsigned char data[0];
-> +	unsigned char data[];
->  };
->  
->  struct version_info {
-> diff --git a/drivers/scsi/pmcraid.h b/drivers/scsi/pmcraid.h
-> index a4f7eb8f50a3..15c962108075 100644
-> --- a/drivers/scsi/pmcraid.h
-> +++ b/drivers/scsi/pmcraid.h
-> @@ -623,7 +623,7 @@ struct pmcraid_aen_msg {
->  	u32 hostno;
->  	u32 length;
->  	u8  reserved[8];
-> -	u8  data[0];
-> +	u8  data[];
->  };
->  
->  /* Controller state event message type */
-> diff --git a/drivers/scsi/snic/vnic_devcmd.h 
-> b/drivers/scsi/snic/vnic_devcmd.h
-> index d81b4f0ceaaa..0e0fa38f8d90 100644
-> --- a/drivers/scsi/snic/vnic_devcmd.h
-> +++ b/drivers/scsi/snic/vnic_devcmd.h
-> @@ -208,7 +208,7 @@ struct vnic_devcmd_notify {
->  struct vnic_devcmd_provinfo {
->  	u8 oui[3];
->  	u8 type;
-> -	u8 data[0];
-> +	u8 data[];
->  };
->  
->  /*
-> diff --git a/drivers/scsi/stex.c b/drivers/scsi/stex.c
-> index 33287b6bdf0e..d4f10c0d813c 100644
-> --- a/drivers/scsi/stex.c
-> +++ b/drivers/scsi/stex.c
-> @@ -236,7 +236,7 @@ struct req_msg {
->  	u8 data_dir;
->  	u8 payload_sz;		/* payload size in 4-byte, not used */
->  	u8 cdb[STEX_CDB_LENGTH];
-> -	u32 variable[0];
-> +	u32 variable[];
->  };
->  
->  struct status_msg {
-> diff --git a/include/scsi/iscsi_if.h b/include/scsi/iscsi_if.h
-> index 92b11c7e0b4f..b0e240b10bf9 100644
-> --- a/include/scsi/iscsi_if.h
-> +++ b/include/scsi/iscsi_if.h
-> @@ -311,7 +311,7 @@ enum iscsi_param_type {
->  struct iscsi_param_info {
->  	uint32_t len;		/* Actual length of the param value */
->  	uint16_t param;		/* iscsi param */
-> -	uint8_t value[0];	/* length sized value follows */
-> +	uint8_t value[];	/* length sized value follows */
->  } __packed;
->  
->  struct iscsi_iface_param_info {
-> @@ -320,7 +320,7 @@ struct iscsi_iface_param_info {
->  	uint16_t param;		/* iscsi param value */
->  	uint8_t iface_type;	/* IPv4 or IPv6 */
->  	uint8_t param_type;	/* iscsi_param_type */
-> -	uint8_t value[0];	/* length sized value follows */
-> +	uint8_t value[];	/* length sized value follows */
->  } __packed;
->  
->  /*
-> @@ -697,7 +697,7 @@ enum iscsi_flashnode_param {
->  struct iscsi_flashnode_param_info {
->  	uint32_t len;		/* Actual length of the param */
->  	uint16_t param;		/* iscsi param value */
-> -	uint8_t value[0];	/* length sized value follows */
-> +	uint8_t value[];	/* length sized value follows */
->  } __packed;
->  
->  enum iscsi_discovery_parent_type {
-> @@ -815,7 +815,7 @@ struct iscsi_stats {
->  	 * up to ISCSI_STATS_CUSTOM_MAX
->  	 */
->  	uint32_t custom_length;
-> -	struct iscsi_stats_custom custom[0]
-> +	struct iscsi_stats_custom custom[]
->  		__attribute__ ((aligned (sizeof(uint64_t))));
->  };
->  
-> @@ -946,7 +946,7 @@ struct iscsi_offload_host_stats {
->  	 * up to ISCSI_HOST_STATS_CUSTOM_MAX
->  	 */
->  	uint32_t custom_length;
-> -	struct iscsi_host_stats_custom custom[0]
-> +	struct iscsi_host_stats_custom custom[]
->  		__aligned(sizeof(uint64_t));
->  };
->  
-> diff --git a/include/scsi/scsi_bsg_iscsi.h b/include/scsi/scsi_bsg_iscsi.h
-> index fa0c820a1663..6b8128005af8 100644
-> --- a/include/scsi/scsi_bsg_iscsi.h
-> +++ b/include/scsi/scsi_bsg_iscsi.h
-> @@ -52,7 +52,7 @@ struct iscsi_bsg_host_vendor {
->  	uint64_t vendor_id;
->  
->  	/* start of vendor command area */
-> -	uint32_t vendor_cmd[0];
-> +	uint32_t vendor_cmd[];
->  };
->  
->  /* Response:
-> diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
-> index f8312a3e5b42..4dc158cf09b8 100644
-> --- a/include/scsi/scsi_device.h
-> +++ b/include/scsi/scsi_device.h
-> @@ -231,7 +231,7 @@ struct scsi_device {
->  	struct mutex		state_mutex;
->  	enum scsi_device_state sdev_state;
->  	struct task_struct	*quiesced_by;
-> -	unsigned long		sdev_data[0];
-> +	unsigned long		sdev_data[];
->  } __attribute__((aligned(sizeof(unsigned long))));
->  
->  #define	to_scsi_device(d)	\
-> @@ -315,7 +315,7 @@ struct scsi_target {
->  	char			scsi_level;
->  	enum scsi_target_state	state;
->  	void 			*hostdata; /* available to low-level driver */
-> -	unsigned long		starget_data[0]; /* for the transport */
-> +	unsigned long		starget_data[]; /* for the transport */
->  	/* starget_data must be the last element!!!! */
->  } __attribute__((aligned(sizeof(unsigned long))));
->  
-> diff --git a/include/scsi/scsi_host.h b/include/scsi/scsi_host.h
-> index 7a97fb8104cf..e6811ea8f984 100644
-> --- a/include/scsi/scsi_host.h
-> +++ b/include/scsi/scsi_host.h
-> @@ -682,7 +682,7 @@ struct Scsi_Host {
->  	 * and also because some compilers (m68k) don't automatically force
->  	 * alignment to a long boundary.
->  	 */
-> -	unsigned long hostdata[0]  /* Used for storage of host specific stuff */
-> +	unsigned long hostdata[]  /* Used for storage of host specific stuff */
->  		__attribute__ ((aligned (sizeof(unsigned long))));
->  };
->  
-> diff --git a/include/scsi/scsi_ioctl.h b/include/scsi/scsi_ioctl.h
-> index 4fe69d863b5d..b465799f4d2d 100644
-> --- a/include/scsi/scsi_ioctl.h
-> +++ b/include/scsi/scsi_ioctl.h
-> @@ -27,7 +27,7 @@ struct scsi_device;
->  typedef struct scsi_ioctl_command {
->  	unsigned int inlen;
->  	unsigned int outlen;
-> -	unsigned char data[0];
-> +	unsigned char data[];
->  } Scsi_Ioctl_Command;
->  
->  typedef struct scsi_idlun {
-> diff --git a/include/scsi/srp.h b/include/scsi/srp.h
-> index 9220758d5087..177d8026e96f 100644
-> --- a/include/scsi/srp.h
-> +++ b/include/scsi/srp.h
-> @@ -109,7 +109,7 @@ struct srp_direct_buf {
->  struct srp_indirect_buf {
->  	struct srp_direct_buf	table_desc;
->  	__be32			len;
-> -	struct srp_direct_buf	desc_list[0];
-> +	struct srp_direct_buf	desc_list[];
->  } __attribute__((packed));
->  
->  /* Immediate data buffer descriptor as defined in SRP2. */
-> @@ -244,7 +244,7 @@ struct srp_cmd {
->  	u8	reserved4;
->  	u8	add_cdb_len;
->  	u8	cdb[16];
-> -	u8	add_data[0];
-> +	u8	add_data[];
->  };
->  
->  enum {
-> @@ -274,7 +274,7 @@ struct srp_rsp {
->  	__be32	data_in_res_cnt;
->  	__be32	sense_data_len;
->  	__be32	resp_data_len;
-> -	u8	data[0];
-> +	u8	data[];
->  } __attribute__((packed));
->  
->  struct srp_cred_req {
-> @@ -306,7 +306,7 @@ struct srp_aer_req {
->  	struct scsi_lun	lun;
->  	__be32	sense_data_len;
->  	u32	reserved3;
-> -	u8	sense_data[0];
-> +	u8	sense_data[];
->  } __attribute__((packed));
->  
->  struct srp_aer_rsp {
-> diff --git a/include/uapi/scsi/scsi_bsg_fc.h 
-> b/include/uapi/scsi/scsi_bsg_fc.h
-> index 3ae65e93235c..7f5930801f72 100644
-> --- a/include/uapi/scsi/scsi_bsg_fc.h
-> +++ b/include/uapi/scsi/scsi_bsg_fc.h
-> @@ -209,7 +209,7 @@ struct fc_bsg_host_vendor {
->  	__u64 vendor_id;
->  
->  	/* start of vendor command area */
-> -	__u32 vendor_cmd[0];
-> +	__u32 vendor_cmd[];
->  };
->  
->  /* Response:
-> -- 
-> 2.25.0
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups 
-> "open-iscsi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an 
-> email to open-iscsi+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit 
-> https://groups.google.com/d/msgid/open-iscsi/20200224161406.GA21454%40embedde 
-> dor.
-
-
+Thanks,
+Michal
 
