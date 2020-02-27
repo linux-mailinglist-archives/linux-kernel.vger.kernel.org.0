@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B3DD17190B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D20A171AEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:58:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729612AbgB0Nle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:41:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36166 "EHLO mail.kernel.org"
+        id S1732427AbgB0N6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:58:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729179AbgB0Nl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:41:29 -0500
+        id S1732407AbgB0N6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:58:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C15CF20726;
-        Thu, 27 Feb 2020 13:41:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6287D2084E;
+        Thu, 27 Feb 2020 13:58:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810889;
-        bh=Wy5Y3bFv3lNObAMJ+SCk+cfbupAnQ2FsFM+1ga9hGkE=;
+        s=default; t=1582811885;
+        bh=6roczsr85O4bGNPNmBWGic6WqcmqGolhTZaK/baNNnI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X80vf89KaURVUTMYdjmRpI5hKj1GPNtarJz2DD/sIUVu8vYyAvjfZOpTqblK/WOzD
-         wom/mDVxUH3BMKWh/fWgP1VDjabUehBrFwaoamYjfg6XGjGVIte5Bey5Swi676p63G
-         SZvlYAIEGHmaLVWuCtYZ5qoT9nY92zaVEzGUemBg=
+        b=AQ0UozuZh6PpG7Jdd9BEyMygE4J3qpkzag/BfAwfVfGJE1sslvmOznTPHOqOY1CYo
+         h9pnZIRr2v0BmjsFbsmxbKA5PQ9/g8B6sAoF2FiNmrn4AFnr2jKzTripO/3K4yzSNL
+         dthLHLMohMx2BponN5XBcN6cogihnKeJ0eYGNilQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Sven Schnelle <sven.schnelle@ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 036/113] regulator: rk808: Lower log level on optional GPIOs being not available
-Date:   Thu, 27 Feb 2020 14:35:52 +0100
-Message-Id: <20200227132217.487791419@linuxfoundation.org>
+Subject: [PATCH 4.14 139/237] s390/ftrace: generate traced function stack frame
+Date:   Thu, 27 Feb 2020 14:35:53 +0100
+Message-Id: <20200227132306.899468816@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miquel Raynal <miquel.raynal@bootlin.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit b8a039d37792067c1a380dc710361905724b9b2f ]
+[ Upstream commit 45f7a0da600d3c409b5ad8d5ddddacd98ddc8840 ]
 
-RK808 can leverage a couple of GPIOs to tweak the ramp rate during DVS
-(Dynamic Voltage Scaling). These GPIOs are entirely optional but a
-dev_warn() appeared when cleaning this driver to use a more up-to-date
-gpiod API. At least reduce the log level to 'info' as it is totally
-fine to not populate these GPIO on a hardware design.
+Currently backtrace from ftraced function does not contain ftraced
+function itself. e.g. for "path_openat":
 
-This change is trivial but it is worth not polluting the logs during
-bringup phase by having real warnings and errors sorted out
-correctly.
+arch_stack_walk+0x15c/0x2d8
+stack_trace_save+0x50/0x68
+stack_trace_call+0x15e/0x3d8
+ftrace_graph_caller+0x0/0x1c <-- ftrace code
+do_filp_open+0x7c/0xe8 <-- ftraced function caller
+do_open_execat+0x76/0x1b8
+open_exec+0x52/0x78
+load_elf_binary+0x180/0x1160
+search_binary_handler+0x8e/0x288
+load_script+0x2a8/0x2b8
+search_binary_handler+0x8e/0x288
+__do_execve_file.isra.39+0x6fa/0xb40
+__s390x_sys_execve+0x56/0x68
+system_call+0xdc/0x2d8
 
-Fixes: a13eaf02e2d6 ("regulator: rk808: make better use of the gpiod API")
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Link: https://lore.kernel.org/r/20191203164709.11127-1-miquel.raynal@bootlin.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Ftraced function is expected in the backtrace by ftrace kselftests, which
+are now failing. It would also be nice to have it for clarity reasons.
+
+"ftrace_caller" itself is called without stack frame allocated for it
+and does not store its caller (ftraced function). Instead it simply
+allocates a stack frame for "ftrace_trace_function" and sets backchain
+to point to ftraced function stack frame (which contains ftraced function
+caller in saved r14).
+
+To fix this issue make "ftrace_caller" allocate a stack frame
+for itself just to store ftraced function for the stack unwinder.
+As a result backtrace looks like the following:
+
+arch_stack_walk+0x15c/0x2d8
+stack_trace_save+0x50/0x68
+stack_trace_call+0x15e/0x3d8
+ftrace_graph_caller+0x0/0x1c <-- ftrace code
+path_openat+0x6/0xd60  <-- ftraced function
+do_filp_open+0x7c/0xe8 <-- ftraced function caller
+do_open_execat+0x76/0x1b8
+open_exec+0x52/0x78
+load_elf_binary+0x180/0x1160
+search_binary_handler+0x8e/0x288
+load_script+0x2a8/0x2b8
+search_binary_handler+0x8e/0x288
+__do_execve_file.isra.39+0x6fa/0xb40
+__s390x_sys_execve+0x56/0x68
+system_call+0xdc/0x2d8
+
+Reported-by: Sven Schnelle <sven.schnelle@ibm.com>
+Tested-by: Sven Schnelle <sven.schnelle@ibm.com>
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/rk808-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/kernel/mcount.S | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
-index d86a3dcd61e24..b96d50a03022c 100644
---- a/drivers/regulator/rk808-regulator.c
-+++ b/drivers/regulator/rk808-regulator.c
-@@ -551,7 +551,7 @@ static int rk808_regulator_dt_parse_pdata(struct device *dev,
- 		}
+diff --git a/arch/s390/kernel/mcount.S b/arch/s390/kernel/mcount.S
+index 27110f3294edc..0cfd5a83a1daa 100644
+--- a/arch/s390/kernel/mcount.S
++++ b/arch/s390/kernel/mcount.S
+@@ -25,6 +25,12 @@ ENTRY(ftrace_stub)
+ #define STACK_PTREGS	  (STACK_FRAME_OVERHEAD)
+ #define STACK_PTREGS_GPRS (STACK_PTREGS + __PT_GPRS)
+ #define STACK_PTREGS_PSW  (STACK_PTREGS + __PT_PSW)
++#ifdef __PACK_STACK
++/* allocate just enough for r14, r15 and backchain */
++#define TRACED_FUNC_FRAME_SIZE	24
++#else
++#define TRACED_FUNC_FRAME_SIZE	STACK_FRAME_OVERHEAD
++#endif
  
- 		if (!pdata->dvs_gpio[i]) {
--			dev_warn(dev, "there is no dvs%d gpio\n", i);
-+			dev_info(dev, "there is no dvs%d gpio\n", i);
- 			continue;
- 		}
- 
+ ENTRY(_mcount)
+ 	BR_EX	%r14
+@@ -38,9 +44,16 @@ ENTRY(ftrace_caller)
+ #ifndef CC_USING_HOTPATCH
+ 	aghi	%r0,MCOUNT_RETURN_FIXUP
+ #endif
+-	aghi	%r15,-STACK_FRAME_SIZE
++	# allocate stack frame for ftrace_caller to contain traced function
++	aghi	%r15,-TRACED_FUNC_FRAME_SIZE
+ 	stg	%r1,__SF_BACKCHAIN(%r15)
++	stg	%r0,(__SF_GPRS+8*8)(%r15)
++	stg	%r15,(__SF_GPRS+9*8)(%r15)
++	# allocate pt_regs and stack frame for ftrace_trace_function
++	aghi	%r15,-STACK_FRAME_SIZE
+ 	stg	%r1,(STACK_PTREGS_GPRS+15*8)(%r15)
++	aghi	%r1,-TRACED_FUNC_FRAME_SIZE
++	stg	%r1,__SF_BACKCHAIN(%r15)
+ 	stg	%r0,(STACK_PTREGS_PSW+8)(%r15)
+ 	stmg	%r2,%r14,(STACK_PTREGS_GPRS+2*8)(%r15)
+ #ifdef CONFIG_HAVE_MARCH_Z196_FEATURES
 -- 
 2.20.1
 
