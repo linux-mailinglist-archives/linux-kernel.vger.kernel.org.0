@@ -2,85 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 356A0172AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 23:20:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D144172B0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 23:25:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729982AbgB0WUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 17:20:11 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:32996 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729728AbgB0WUK (ORCPT
+        id S1730266AbgB0WZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 17:25:26 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:44163 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729735AbgB0WZW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 17:20:10 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id C9BB02A160;
-        Thu, 27 Feb 2020 17:20:07 -0500 (EST)
-Date:   Fri, 28 Feb 2020 09:19:29 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Greg Ungerer <gerg@linux-m68k.org>
-cc:     afzal mohammed <afzal.mohd.ma@gmail.com>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 06/18] m68k: Replace setup_irq() by request_irq()
-In-Reply-To: <1a16c680-2bbe-eb24-6ea3-4b50d0c3e377@linux-m68k.org>
-Message-ID: <alpine.LNX.2.22.394.2002280902070.8@nippy.intranet>
-References: <cover.1582471508.git.afzal.mohd.ma@gmail.com> <00b0bf964278dd0bb3e093283994399ff796cca5.1582471508.git.afzal.mohd.ma@gmail.com> <73c3ad08-963d-fea2-91d7-b06e4ef8d3ef@linux-m68k.org> <alpine.LNX.2.22.394.2002261151220.9@nippy.intranet>
- <caa5686a-5be3-5848-fdee-36f54237ccb6@linux-m68k.org> <alpine.LNX.2.22.394.2002261637400.8@nippy.intranet> <a682c89d-baf2-3d3c-647f-a07b2a146c9f@linux-m68k.org> <alpine.LNX.2.22.394.2002270908380.8@nippy.intranet>
- <1a16c680-2bbe-eb24-6ea3-4b50d0c3e377@linux-m68k.org>
+        Thu, 27 Feb 2020 17:25:22 -0500
+Received: from 79.184.237.30.ipv4.supernova.orange.pl (79.184.237.30) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id c5af9dd566d2263a; Thu, 27 Feb 2020 23:25:20 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux ACPI <linux-acpi@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Drake <drake@endlessm.com>
+Subject: [PATCH 1/6] ACPI: EC: Avoid printing confusing messages in  acpi_ec_setup()
+Date:   Thu, 27 Feb 2020 23:21:18 +0100
+Message-ID: <2905294.VeAyQmVl7x@kreacher>
+In-Reply-To: <2094703.CetWLLyMuz@kreacher>
+References: <2094703.CetWLLyMuz@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Feb 2020, Greg Ungerer wrote:
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-> On 27/2/20 8:31 am, Finn Thain wrote:
-> 
-> >>>
-> >>> BTW, one of the benefits of "%s: request_irq failed" is that a 
-> >>> compilation unit with multiple request_irq calls permits the 
-> >>> compiler to coalesce all duplicated format strings. Whereas, that's 
-> >>> not possible with "foo: request_irq failed" and "bar: request_irq 
-> >>> failed".
-> >>
-> >> Given the wide variety of message text used with failed request_irq() 
-> >> calls it would be shear luck that this matched anything else. A quick 
-> >> grep shows that "%s: request_irq() failed\n" has no other exact 
-> >> matches in the current kernel source.
-> > 
-> > You are overlooking the patches in this series that produce multiple 
-> > identical format strings.
-> 
-> No I didn't :-)  None of these will end up compiled in at the same time. 
-> The various ColdFire SoC parts have a single timer hardware module - and 
-> only the required one will be compiled in, not all of them.
-> 
+It doesn't really make sense to pass ec->handle of the ECDT EC to
+acpi_handle_info(), because it is set to ACPI_ROOT_OBJECT in
+acpi_ec_ecdt_probe(), so rework acpi_ec_setup() to avoid using
+acpi_handle_info() for printing messages.
 
-I was referring to e.g. [PATCH v2 08/18] MIPS: Replace setup_irq() by 
-request_irq(), in which you can find this:
+First, notice that the "Used as first EC" message is not really
+useful, because it is immediately followed by a more meaningful one
+from either acpi_ec_ecdt_probe() or acpi_ec_dsdt_probe() (the latter
+also includes the EC object path), so drop it altogether.
 
-@@ -116,8 +110,16 @@ static void __init ar7_irq_init(int base)
-                                                 handle_level_irq);
-        }
+Second, use pr_info() for printing the EC configuration information.
+
+While at it, make the code in question avoid printing invalid GPE or
+IRQ numbers and make it print the GPE/IRQ information only when the
+driver is ready to handle events.
+
+Fixes: 72c77b7ea9ce ("ACPI / EC: Cleanup first_ec/boot_ec code")
+Fixes: 406857f773b0 ("ACPI: EC: add support for hardware-reduced systems")
+Cc: 5.5+ <stable@vger.kernel.org> # 5.5+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/ec.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
+index d1f1cf5d4bf0..2dc7cf2aeb21 100644
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -1584,14 +1584,19 @@ static int acpi_ec_setup(struct acpi_ec *ec, struct acpi_device *device,
+ 		return ret;
  
--       setup_irq(2, &ar7_cascade_action);
--       setup_irq(ar7_irq_base, &ar7_cascade_action);
-+       if (request_irq(2, no_action, IRQF_NO_THREAD, "AR7 cascade interrupt",
-+                       NULL)) {
-+               pr_err("%s: request_irq() failed\n",
-+                      "AR7 cascade interrupt");
-+       }
-+       if (request_irq(ar7_irq_base, no_action, IRQF_NO_THREAD,
-+                       "AR7 cascade interrupt", NULL)) {
-+               pr_err("%s: request_irq() failed\n",
-+                      "AR7 cascade interrupt");
-+       }
-        set_c0_status(IE_IRQ0);
+ 	/* First EC capable of handling transactions */
+-	if (!first_ec) {
++	if (!first_ec)
+ 		first_ec = ec;
+-		acpi_handle_info(first_ec->handle, "Used as first EC\n");
++
++	pr_info("EC_CMD/EC_SC=0x%lx, EC_DATA=0x%lx\n", ec->command_addr,
++		ec->data_addr);
++
++	if (test_bit(EC_FLAGS_EVENT_HANDLER_INSTALLED, &ec->flags)) {
++		if (ec->gpe >= 0)
++			pr_info("GPE=0x%x\n", ec->gpe);
++		else
++			pr_info("IRQ=%d\n", ec->irq);
+ 	}
+ 
+-	acpi_handle_info(ec->handle,
+-			 "GPE=0x%x, IRQ=%d, EC_CMD/EC_SC=0x%lx, EC_DATA=0x%lx\n",
+-			 ec->gpe, ec->irq, ec->command_addr, ec->data_addr);
+ 	return ret;
  }
  
-BTW, I think that deduplication of string constants can happen during LTO, 
-so the benefit of consistency need not be confined to a compilation unit. 
-I don't think this is relevant to kernel builds.
+-- 
+2.16.4
+
+
+
+
+
