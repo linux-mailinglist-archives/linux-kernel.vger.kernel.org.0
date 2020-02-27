@@ -2,59 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82EDD170CF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 01:08:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2B56170D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 01:11:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbgB0AIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 19:08:09 -0500
-Received: from foss.arm.com ([217.140.110.172]:43934 "EHLO foss.arm.com"
+        id S1728105AbgB0ALT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 19:11:19 -0500
+Received: from mga02.intel.com ([134.134.136.20]:62235 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728012AbgB0AII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 19:08:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 663A61FB;
-        Wed, 26 Feb 2020 16:08:08 -0800 (PST)
-Received: from [192.168.0.129] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF9483F73B;
-        Wed, 26 Feb 2020 16:08:06 -0800 (PST)
-Subject: Re: [PATCH 3/3] mm/vma: Make is_vma_temporary_stack() available for
- general use
-To:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-References: <1582692658-3294-1-git-send-email-anshuman.khandual@arm.com>
- <1582692658-3294-4-git-send-email-anshuman.khandual@arm.com>
- <df8b59f9-ccf2-5a40-661e-2bf053b99dac@suse.cz>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <8f65781d-1ef0-8314-2baf-586b57a42e9c@arm.com>
-Date:   Thu, 27 Feb 2020 05:38:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727987AbgB0ALS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 19:11:18 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 16:11:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,490,1574150400"; 
+   d="scan'208";a="271951474"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga002.fm.intel.com with ESMTP; 26 Feb 2020 16:11:17 -0800
+Date:   Wed, 26 Feb 2020 16:11:17 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Xiaoyao Li <xiaoyao.li@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@amacapital.net>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Laight <David.Laight@aculab.com>
+Subject: Re: [PATCH v2 3/6] kvm: x86: Emulate split-lock access as a write
+Message-ID: <20200227001117.GX9940@linux.intel.com>
+References: <20200203151608.28053-1-xiaoyao.li@intel.com>
+ <20200203151608.28053-4-xiaoyao.li@intel.com>
+ <95d29a81-62d5-f5b6-0eb6-9d002c0bba23@redhat.com>
+ <878sl945tj.fsf@nanos.tec.linutronix.de>
+ <d690c2e3-e9ef-a504-ede3-d0059ec1e0f6@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <df8b59f9-ccf2-5a40-661e-2bf053b99dac@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d690c2e3-e9ef-a504-ede3-d0059ec1e0f6@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 02/26/2020 07:33 PM, Vlastimil Babka wrote:
-> On 2/26/20 5:50 AM, Anshuman Khandual wrote:
->> Currently the declaration and definition for is_vma_temporary_stack() are
->> scattered. Lets make is_vma_temporary_stack() helper available for general
->> use and also drop the declaration from (include/linux/huge_mm.h) which is
->> no longer required. This should not cause any functional change.
->>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-mm@kvack.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+On Tue, Feb 11, 2020 at 02:34:18PM +0100, Paolo Bonzini wrote:
+> On 11/02/20 14:22, Thomas Gleixner wrote:
+> > Paolo Bonzini <pbonzini@redhat.com> writes:
+> >> On 03/02/20 16:16, Xiaoyao Li wrote:
+> >>> A sane guest should never tigger emulation on a split-lock access, but
+> >>> it cannot prevent malicous guest from doing this. So just emulating the
+> >>> access as a write if it's a split-lock access to avoid malicous guest
+> >>> polluting the kernel log.
+> >>
+> >> Saying that anything doing a split lock access is malicious makes little
+> >> sense.
+> > 
+> > Correct, but we also have to accept, that split lock access can be used
+> > in a malicious way, aka. DoS.
 > 
-> The move made it plainly visible that the is_vma_* name differs from all the
-> other vma_is_* names. So this is a good chance to unify it?
+> Indeed, a more accurate emulation such as temporarily disabling
+> split-lock detection in the emulator would allow the guest to use split
+> lock access as a vehicle for DoS, but that's not what the commit message
+> says.  If it were only about polluting the kernel log, there's
+> printk_ratelimited for that.  (In fact, if we went for incorrect
+> emulation as in this patch, a rate-limited pr_warn would be a good idea).
+> 
+> It is much more convincing to say that since this is pretty much a
+> theoretical case, we can assume that it is only done with the purpose of
+> DoS-ing the host or something like that, and therefore we kill the guest.
 
-Yes, we can unify it while moving. Will change.
+The problem with "kill the guest", and the reason I'd prefer to emulate the
+split-lock as a write, is that killing the guest in this case is annoyingly
+difficult.
+
+Returning X86EMUL_UNHANDLEABLE / EMULATION_FAILED gets KVM to
+handle_emulation_failure(), but handle_emulation_failure() will only "kill"
+the guest if emulation failed in L1 CPL==0.  For all other modes, it will
+inject a #UD and resume the guest.  KVM also injects a #UD for L1 CPL==0,
+but that's the least annoying thing.
+
+Adding a new emulation type isn't an option because this code can be
+triggered through normal emulation.  A new return type could be added for
+split-lock, but that's code I'd really not add, both from an Intel
+perspective and a KVM maintenance perspective.  And, we'd still have the
+conundrum of what to do if/when split-lock #AC is exposed to L1, e.g. in
+that case, KVM should inject an #AC into L1, not kill the guest.  Again,
+totally doable, but ugly and IMO an unnecessary maintenance burden.
+
+I completely agree that poorly emulating the instruction from the (likely)
+malicious guest is a hack, but it's a simple and easy to maintain hack.
+
+> >> Split lock detection is essentially a debugging feature, there's a
+> >> reason why the MSR is called "TEST_CTL".  So you don't want to make the
+> > 
+> > The fact that it ended up in MSR_TEST_CTL does not say anything. That's
+> > where they it ended up to be as it was hastily cobbled together for
+> > whatever reason.
+> 
+> Or perhaps it was there all the time in test silicon or something like
+> that...  That would be a very plausible reason for all the quirks behind it.
+> 
+> Paolo
+> 
