@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC002171B40
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:01:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C9CF171B8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:03:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732808AbgB0OAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:00:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34234 "EHLO mail.kernel.org"
+        id S2387420AbgB0ODY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:03:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732597AbgB0OAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:00:42 -0500
+        id S2387408AbgB0ODV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:03:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA0AC20578;
-        Thu, 27 Feb 2020 14:00:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C89A421556;
+        Thu, 27 Feb 2020 14:03:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812041;
-        bh=bsY2Ez2fjYKqL4INXHo6t0AnfkI2oIAHfv+cfuoZhC0=;
+        s=default; t=1582812201;
+        bh=WfR1glQBxu8YOajsf+RKgWMV+PrcXt72mpGHCBNKBu4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HWQuV4/r8v/t7vAoUgQQ1EncKzd13uoQbA44E3GOojmeRK5HSDrNKZNVi6ssWWNNF
-         99Vx9DGNJ+kGZ2Gtw8SrKlQprpRg/fFW80mWVNaDm8Ns74dS0BbX8g0Iq3Ebhv1MgE
-         mVRk9jlk6tTHjQNrvEq4DSvMMvZy6D1Mso3qtkls=
+        b=U26e6XvbRrvsgikOIaf/YGvPRiX8vtolKMkGff1dbq4vc4M0z2jBCN0M5zuL7554O
+         7Db1t0as13HqhAYpRFcscyQX4JEQgrn2aDVuCnF+UhKUwQsgEY1a6g7ww6agzF6BhF
+         iXgmLBvKtXKCMrV/VPF0A7+IqFOEZd8lqjagSwfo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 161/237] microblaze: Prevent the overflow of the start
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Tyler Hicks <tyhicks@canonical.com>
+Subject: [PATCH 4.19 07/97] ecryptfs: fix a memory leak bug in ecryptfs_init_messaging()
 Date:   Thu, 27 Feb 2020 14:36:15 +0100
-Message-Id: <20200227132308.352010934@linuxfoundation.org>
+Message-Id: <20200227132215.770740002@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit 061d2c1d593076424c910cb1b64ecdb5c9a6923f ]
+commit b4a81b87a4cfe2bb26a4a943b748d96a43ef20e8 upstream.
 
-In case the start + cache size is more than the max int the
-start overflows.
-Prevent the same.
+In ecryptfs_init_messaging(), if the allocation for 'ecryptfs_msg_ctx_arr'
+fails, the previously allocated 'ecryptfs_daemon_hash' is not deallocated,
+leading to a memory leak bug. To fix this issue, free
+'ecryptfs_daemon_hash' before returning the error.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 88b4a07e6610 ("[PATCH] eCryptfs: Public key transport mechanism")
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/microblaze/kernel/cpu/cache.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/ecryptfs/messaging.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/microblaze/kernel/cpu/cache.c b/arch/microblaze/kernel/cpu/cache.c
-index 0bde47e4fa694..dcba53803fa5f 100644
---- a/arch/microblaze/kernel/cpu/cache.c
-+++ b/arch/microblaze/kernel/cpu/cache.c
-@@ -92,7 +92,8 @@ static inline void __disable_dcache_nomsr(void)
- #define CACHE_LOOP_LIMITS(start, end, cache_line_length, cache_size)	\
- do {									\
- 	int align = ~(cache_line_length - 1);				\
--	end = min(start + cache_size, end);				\
-+	if (start <  UINT_MAX - cache_size)				\
-+		end = min(start + cache_size, end);			\
- 	start &= align;							\
- } while (0)
- 
--- 
-2.20.1
-
+--- a/fs/ecryptfs/messaging.c
++++ b/fs/ecryptfs/messaging.c
+@@ -392,6 +392,7 @@ int __init ecryptfs_init_messaging(void)
+ 					* ecryptfs_message_buf_len),
+ 				       GFP_KERNEL);
+ 	if (!ecryptfs_msg_ctx_arr) {
++		kfree(ecryptfs_daemon_hash);
+ 		rc = -ENOMEM;
+ 		goto out;
+ 	}
 
 
