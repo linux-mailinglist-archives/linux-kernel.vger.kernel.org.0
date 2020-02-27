@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28B7E17207D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A5E1171F99
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731063AbgB0Nti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:49:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46982 "EHLO mail.kernel.org"
+        id S1732270AbgB0N7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:59:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730648AbgB0Nte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:49:34 -0500
+        id S1732422AbgB0N7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:59:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2267B24656;
-        Thu, 27 Feb 2020 13:49:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CD3E24656;
+        Thu, 27 Feb 2020 13:59:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811372;
-        bh=ZuyCav726QAW4wkyACC8DfsuCQ/gIOxRELipMzd9PM8=;
+        s=default; t=1582811958;
+        bh=AZscq8XeHW3FWrGVDBy12fTxu1hh2A8Mmnm4Zl5o8jE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pz2Iiok9teKQkeBmmtv/04cB20yRQYUPWmTRHYxMPqhv7E2/+mRbwLAM8cIcUO+Zi
-         cZf6wxnfDgUu0MqvWlFpb1STSm82NzmAJcXsIvkeltMjvL58ME8hz28MUhdj9+RVc/
-         EaLUVcLlS+8RPlyrd5EQ1ApnIV0yA+EN4OUDK2TM=
+        b=Yv9su0/oIviQuHDT+626+oCuKZ73M3H3jFhJCwkL2ft95wvjgSsXdAHdFjry6+q/4
+         Hon/1PhblavzHb00eItj1EGctOCaKc9B8u7r42/H+cHwXcCPKzaUOibLgzvsXfsPyR
+         3x20BM/Abz+c4vKon7fUR+NTA5qcVDPs3dtlhJWU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 107/165] lib/scatterlist.c: adjust indentation in __sg_alloc_table
-Date:   Thu, 27 Feb 2020 14:36:21 +0100
-Message-Id: <20200227132246.783933823@linuxfoundation.org>
+        stable@vger.kernel.org, Per Forlin <perfn@axis.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 168/237] net: dsa: tag_qca: Make sure there is headroom for tag
+Date:   Thu, 27 Feb 2020 14:36:22 +0100
+Message-Id: <20200227132308.817526332@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Per Forlin <per.forlin@axis.com>
 
-[ Upstream commit 4e456fee215677584cafa7f67298a76917e89c64 ]
+[ Upstream commit 04fb91243a853dbde216d829c79d9632e52aa8d9 ]
 
-Clang warns:
+Passing tag size to skb_cow_head will make sure
+there is enough headroom for the tag data.
+This change does not introduce any overhead in case there
+is already available headroom for tag.
 
-  ../lib/scatterlist.c:314:5: warning: misleading indentation; statement
-  is not part of the previous 'if' [-Wmisleading-indentation]
-                          return -ENOMEM;
-                          ^
-  ../lib/scatterlist.c:311:4: note: previous statement is here
-                          if (prv)
-                          ^
-  1 warning generated.
-
-This warning occurs because there is a space before the tab on this
-line.  Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
-
-Link: http://lkml.kernel.org/r/20191218033606.11942-1-natechancellor@gmail.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/830
-Fixes: edce6820a9fd ("scatterlist: prevent invalid free when alloc fails")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Per Forlin <perfn@axis.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- lib/scatterlist.c | 2 +-
+ net/dsa/tag_qca.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-index a854cc39f084f..ef8c14a56d0a7 100644
---- a/lib/scatterlist.c
-+++ b/lib/scatterlist.c
-@@ -317,7 +317,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
- 			if (prv)
- 				table->nents = ++table->orig_nents;
+--- a/net/dsa/tag_qca.c
++++ b/net/dsa/tag_qca.c
+@@ -41,7 +41,7 @@ static struct sk_buff *qca_tag_xmit(stru
+ 	struct dsa_slave_priv *p = netdev_priv(dev);
+ 	u16 *phdr, hdr;
  
-- 			return -ENOMEM;
-+			return -ENOMEM;
- 		}
+-	if (skb_cow_head(skb, 0) < 0)
++	if (skb_cow_head(skb, QCA_HDR_LEN) < 0)
+ 		return NULL;
  
- 		sg_init_table(sg, alloc_size);
--- 
-2.20.1
-
+ 	skb_push(skb, QCA_HDR_LEN);
 
 
