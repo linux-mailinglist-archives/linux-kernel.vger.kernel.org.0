@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64097171A2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A85017196D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:45:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731010AbgB0Nv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:51:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50504 "EHLO mail.kernel.org"
+        id S1730258AbgB0Nop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:44:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731388AbgB0NvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:51:25 -0500
+        id S1730242AbgB0Noj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:44:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6774320578;
-        Thu, 27 Feb 2020 13:51:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3740320578;
+        Thu, 27 Feb 2020 13:44:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811484;
-        bh=qKFy04UVA0hQ8RqCiIV53fUBqu0Lw5p+r2CcnRmTglg=;
+        s=default; t=1582811078;
+        bh=GjFCPIWSETAiRzEcsvJZH/6gWSVnJu8obNs73hbz/xs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FiiMPYNH8QlyKqXpp5cnC2VFZ+KDwRAscARHo0N6lVnZfOeuv4ACfesbvQD7ppm/3
-         bHxR8IuUN5U0vXVCarZZ9/cLT91ro1lFvm5G8nknpzxj6zYwgDJUTaoRMYEyFPQ3Tm
-         4OA4l/Q59rA+5xBqgwPO7cpYCz4ib9P1d2FoTGeE=
+        b=brLxcqdu3L6BpX9LJ/z7/OVv4OQXzhJWBNBMQNBerP6YHq8q85WrJvR34QCvNsb8G
+         yQt/PySp0YU+PVrsnO/iDNzenSUYrcRcRA81h0pUHxVqHgJffRUni4V9QxRSCQjc/I
+         rHlMORBHD6CtBgrZdI/Bn+ntGysjtSfQ2kfjqbMY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Upton <oupton@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 150/165] KVM: nVMX: Refactor IO bitmap checks into helper function
-Date:   Thu, 27 Feb 2020 14:37:04 +0100
-Message-Id: <20200227132252.652394439@linuxfoundation.org>
+        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Tyler Hicks <code@tyhicks.com>
+Subject: [PATCH 4.4 109/113] ecryptfs: replace BUG_ON with error handling code
+Date:   Thu, 27 Feb 2020 14:37:05 +0100
+Message-Id: <20200227132229.244579940@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,82 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Upton <oupton@google.com>
+From: Aditya Pakki <pakki001@umn.edu>
 
-commit e71237d3ff1abf9f3388337cfebf53b96df2020d upstream.
+commit 2c2a7552dd6465e8fde6bc9cccf8d66ed1c1eb72 upstream.
 
-Checks against the IO bitmap are useful for both instruction emulation
-and VM-exit reflection. Refactor the IO bitmap checks into a helper
-function.
+In crypt_scatterlist, if the crypt_stat argument is not set up
+correctly, the kernel crashes. Instead, by returning an error code
+upstream, the error is handled safely.
 
-Signed-off-by: Oliver Upton <oupton@google.com>
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+The issue is detected via a static analysis tool written by us.
+
+Fixes: 237fead619984 (ecryptfs: fs/Makefile and fs/Kconfig)
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Signed-off-by: Tyler Hicks <code@tyhicks.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |   40 +++++++++++++++++++++++++++-------------
- 1 file changed, 27 insertions(+), 13 deletions(-)
+ fs/ecryptfs/crypto.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -4641,6 +4641,26 @@ static bool cs_ss_rpl_check(struct kvm_v
- 		 (ss.selector & SEGMENT_RPL_MASK));
- }
+--- a/fs/ecryptfs/crypto.c
++++ b/fs/ecryptfs/crypto.c
+@@ -346,8 +346,10 @@ static int crypt_scatterlist(struct ecry
+ 	struct extent_crypt_result ecr;
+ 	int rc = 0;
  
-+static bool nested_vmx_check_io_bitmaps(struct kvm_vcpu *vcpu,
-+					unsigned int port, int size);
-+static bool nested_vmx_exit_handled_io(struct kvm_vcpu *vcpu,
-+				       struct vmcs12 *vmcs12)
-+{
-+	unsigned long exit_qualification;
-+	unsigned int port;
-+	int size;
+-	BUG_ON(!crypt_stat || !crypt_stat->tfm
+-	       || !(crypt_stat->flags & ECRYPTFS_STRUCT_INITIALIZED));
++	if (!crypt_stat || !crypt_stat->tfm
++	       || !(crypt_stat->flags & ECRYPTFS_STRUCT_INITIALIZED))
++		return -EINVAL;
 +
-+	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
-+		return nested_cpu_has(vmcs12, CPU_BASED_UNCOND_IO_EXITING);
-+
-+	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
-+
-+	port = exit_qualification >> 16;
-+	size = (exit_qualification & 7) + 1;
-+
-+	return nested_vmx_check_io_bitmaps(vcpu, port, size);
-+}
-+
- /*
-  * Check if guest state is valid. Returns true if valid, false if
-  * not.
-@@ -8026,23 +8046,17 @@ static int (*const kvm_vmx_exit_handlers
- static const int kvm_vmx_max_exit_handlers =
- 	ARRAY_SIZE(kvm_vmx_exit_handlers);
- 
--static bool nested_vmx_exit_handled_io(struct kvm_vcpu *vcpu,
--				       struct vmcs12 *vmcs12)
-+/*
-+ * Return true if an IO instruction with the specified port and size should cause
-+ * a VM-exit into L1.
-+ */
-+bool nested_vmx_check_io_bitmaps(struct kvm_vcpu *vcpu, unsigned int port,
-+				 int size)
- {
--	unsigned long exit_qualification;
-+	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
- 	gpa_t bitmap, last_bitmap;
--	unsigned int port;
--	int size;
- 	u8 b;
- 
--	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
--		return nested_cpu_has(vmcs12, CPU_BASED_UNCOND_IO_EXITING);
--
--	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
--
--	port = exit_qualification >> 16;
--	size = (exit_qualification & 7) + 1;
--
- 	last_bitmap = (gpa_t)-1;
- 	b = -1;
- 
+ 	if (unlikely(ecryptfs_verbosity > 0)) {
+ 		ecryptfs_printk(KERN_DEBUG, "Key size [%zd]; key:\n",
+ 				crypt_stat->key_size);
 
 
