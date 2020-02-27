@@ -2,109 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD5C5171298
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:33:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4C201712B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:40:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbgB0Ic6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Feb 2020 03:32:58 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:32881 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728440AbgB0Ic6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 03:32:58 -0500
-Received: by mail-ot1-f68.google.com with SMTP id w6so2186515otk.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 00:32:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OeGtTXktVcqacz7cYnWdrEZYsOucMfq/ZWYQMhH1UAI=;
-        b=Vg1yt3ftDzobeDLlbheHZBnRkwGlD2gpWJjHqM5Qs/TKNaPBqhYgNGOk1o7bzXZbnO
-         jU4db5dj9/7aZ1GMtUKq/1ah3stww9AFEOzIpAuhkljZ5vR9pdaFqHi8nGf4gwbiUw2g
-         vHvZEpAp4PVjWmyQ9dCmM2XPhd5VMYiLUeqFYUSSE4/Pt/mfiW3u8H+EpPmjt/dzR8pa
-         dMUbRYT/hVH9WuwJFUA/2W4KKNDAjCOG/TfNT4TMb/D8JKJy3khRJZyr3gJDvW7piv7B
-         kebLbrzyCEQqPQFqkCKC5Oqct/b+qZVl8MPJbXPZC+/+2PTgy+aQEMhZcN8cuSN9YAXi
-         b24Q==
-X-Gm-Message-State: APjAAAXwzB4vu8rZTLmSYIxEBZvrNkgv7crtPdDpQTYyEdlJaJn+CSSi
-        7pUD8RNFsokxGJrMFBdY9cHdV3zXHWUcHJgd4nM=
-X-Google-Smtp-Source: APXvYqzdoCVOtrlrzUXT8HEP1lYZ4KzJVPdQN1Q3Woonf40gMgnK+NC4wo5cm8aEXvQipTsQHhdVLVpRzTFU+2KkZBw=
-X-Received: by 2002:a05:6830:10e:: with SMTP id i14mr2360889otp.39.1582792377824;
- Thu, 27 Feb 2020 00:32:57 -0800 (PST)
-MIME-Version: 1.0
-References: <alpine.LNX.2.22.394.2002270908380.8@nippy.intranet>
- <a682c89d-baf2-3d3c-647f-a07b2a146c9f@linux-m68k.org> <alpine.LNX.2.22.394.2002261637400.8@nippy.intranet>
- <caa5686a-5be3-5848-fdee-36f54237ccb6@linux-m68k.org> <alpine.LNX.2.22.394.2002261151220.9@nippy.intranet>
- <73c3ad08-963d-fea2-91d7-b06e4ef8d3ef@linux-m68k.org> <20200227081805.GA5746@afzalpc>
-In-Reply-To: <20200227081805.GA5746@afzalpc>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 27 Feb 2020 09:32:46 +0100
-Message-ID: <CAMuHMdWVVWaoHA1Tie5APYBq3Pa3s4BAoWN1jAACAZZS65UA7w@mail.gmail.com>
-Subject: Re: [PATCH v2 06/18] m68k: Replace setup_irq() by request_irq()
-To:     afzal mohammed <afzal.mohd.ma@gmail.com>
-Cc:     Greg Ungerer <gerg@linux-m68k.org>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        id S1728713AbgB0Ikj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 03:40:39 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:48058 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728440AbgB0Ikj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 03:40:39 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C4C111A27AF;
+        Thu, 27 Feb 2020 09:40:36 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7DDEF1A2896;
+        Thu, 27 Feb 2020 09:40:31 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5C6BA402C4;
+        Thu, 27 Feb 2020 16:40:25 +0800 (SGT)
+From:   Sherry Sun <sherry.sun@nxp.com>
+To:     james.morse@arm.com, bp@alien8.de, mchehab@kernel.org,
+        tony.luck@intel.com, rrichter@marvell.com, michal.simek@xilinx.com
+Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, frank.li@nxp.com
+Subject: [PATCH V2] EDAC: synopsys: Fix back to back snprintf() messages for CE/UE
+Date:   Thu, 27 Feb 2020 16:34:12 +0800
+Message-Id: <1582792452-32575-1-git-send-email-sherry.sun@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Afzal,
+The current way which call snprintf() function two or three times to
+output message for CE/UE is incorrect, because it won't output all the
+message needed, instead it will only output the last message in
+snprintf(). So the simplest and most effective way to fix this problem
+is combining all the snprintf() message needed for CE/UE into one
+snprintf() function.
 
-On Thu, Feb 27, 2020 at 9:18 AM afzal mohammed <afzal.mohd.ma@gmail.com> wrote:
-> On Wed, Feb 26, 2020 at 10:42:00AM +1000, Greg Ungerer wrote:
-> > > -   setup_irq(TMR_IRQ_NUM, &m68328_timer_irq);
-> > > +   if (request_irq(TMR_IRQ_NUM, hw_tick, IRQF_TIMER, "timer", NULL))
-> > > +           pr_err("%s: request_irq() failed\n", "timer");
-> >
-> > Why not just:
-> >
-> >                 pr_err("timer: request_irq() failed\n");
->
-> The reason to use %s was that it could be automated by cocci script &
-> the o/p didn't look bad. Second arg to pr_err is what cocci
-> presents me & there is wide variation in the name across the tree as
-> Finn noted.
->
-> Excerpts from v1 cover letter [1],
->
-> - setup_irq(E1,&act);
-> + if (request_irq(E1,f_handler,f_flags,f_name,f_dev_id))
-> +       pr_err("request_irq() on %s failed\n", f_name);
->
-> [ don't get mislead by string contents used, this was for v1, just to
->  show how the result was obtained. To take care of Finn's suggesstion,
->  instead of modifying cocci & then making changes other changes over
->  that (i could not fully automate w/ cocci, and Julia said my script
->  is fine as is), it was easier to run sed over the v1  patches ]
->
-> > And maybe would it be useful to print out the error return code from a
-> > failed request_irq()?
->
-> Since most of the existing setup_irq() didn't even check & handle
-> error return, my first thought was just s/setup_irq/request_irq, it
-> was easier from scripting pointing of view. i felt uncomfortable doing
-> nothing in case of error. Also noted that request_irq() definition has
-> a "__much_check", so decided to add it.
+Fixes: b500b4a029d57 ("EDAC, synopsys: Add ECC support for ZynqMP DDR controller")
+Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
+Reviewed-by: James Morse <james.morse@arm.com>
+---
+Changes in V2:
+- Separated this patch from the original patchset.
+- Change the subject to be more concise and clear.
 
-Most (all?) of the code calling setup_irq() is very old, and most of the calls
-happen very early, so any such failures are hard failures that prevent the
-system from booting at all.  Hence printing a message may be futile, as it
-may happen before the console has been initialized (modulo early-printk).
+---
+ drivers/edac/synopsys_edac.c | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
 
-Just my 2 €c.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
+index 2d263382d797..880ffd833718 100644
+--- a/drivers/edac/synopsys_edac.c
++++ b/drivers/edac/synopsys_edac.c
+@@ -479,20 +479,14 @@ static void handle_error(struct mem_ctl_info *mci, struct synps_ecc_status *p)
+ 		pinf = &p->ceinfo;
+ 		if (!priv->p_data->quirks) {
+ 			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "DDR ECC error type:%s Row %d Bank %d Col %d ",
+-				  "CE", pinf->row, pinf->bank, pinf->col);
+-			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "Bit Position: %d Data: 0x%08x\n",
++				 "DDR ECC error type:%s Row %d Bank %d Col %d Bit Position: %d Data: 0x%08x",
++				 "CE", pinf->row, pinf->bank, pinf->col,
+ 				 pinf->bitpos, pinf->data);
+ 		} else {
+ 			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "DDR ECC error type:%s Row %d Bank %d Col %d ",
+-				  "CE", pinf->row, pinf->bank, pinf->col);
+-			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "BankGroup Number %d Block Number %d ",
+-				 pinf->bankgrpnr, pinf->blknr);
+-			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "Bit Position: %d Data: 0x%08x\n",
++				 "DDR ECC error type:%s Row %d Bank %d Col %d BankGroup Number %d Block Number %d Bit Position: %d Data: 0x%08x",
++				 "CE", pinf->row, pinf->bank, pinf->col,
++				 pinf->bankgrpnr, pinf->blknr,
+ 				 pinf->bitpos, pinf->data);
+ 		}
+ 
+@@ -509,10 +503,8 @@ static void handle_error(struct mem_ctl_info *mci, struct synps_ecc_status *p)
+ 				"UE", pinf->row, pinf->bank, pinf->col);
+ 		} else {
+ 			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "DDR ECC error type :%s Row %d Bank %d Col %d ",
+-				 "UE", pinf->row, pinf->bank, pinf->col);
+-			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "BankGroup Number %d Block Number %d",
++				 "DDR ECC error type :%s Row %d Bank %d Col %d BankGroup Number %d Block Number %d",
++				 "UE", pinf->row, pinf->bank, pinf->col,
+ 				 pinf->bankgrpnr, pinf->blknr);
+ 		}
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
