@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90F4D171B5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7088D171D87
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:21:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732998AbgB0OBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:01:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36016 "EHLO mail.kernel.org"
+        id S2389615AbgB0OQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:16:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732975AbgB0OBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:01:46 -0500
+        id S1730613AbgB0OQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:16:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C3D8246B6;
-        Thu, 27 Feb 2020 14:01:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B149924690;
+        Thu, 27 Feb 2020 14:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812105;
-        bh=M83zeuXPIyGAsJRQmuwMwjHxCkaP2k8wUuH3bxW+5Ew=;
+        s=default; t=1582813011;
+        bh=6rtZdF1SeULZYxwj2H9J0XwCav1OQG+4YKAjNUCzEa0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wIRndZCTgZX5GMXB4QNERK8fYltNYgFq3bEB8qh6zw7IuV36cJiNIOBx4uoIvBoGr
-         Ot6lFV8rkaSWsVXD3K4qDjs+BcMCH7NCwRewGjRQslaipaxGv2fafi5VKvXzZKAz8K
-         Z5r9aqkpqiYX8LBaA/bR4ONiBbyxNx0lzJ692/v0=
+        b=Cs/Z//yse3gHnhR2KGGJLB+hqeaKA9LZx3FrWRgjbN5jr0BU0zK37VqykjsSSj75P
+         CbQCQ5qbteJXh3jdLySwUWMycHWQMaK7Dl2Kn2QhGSr0qDD7vpUsce7+R532YCwPkA
+         K4jwo6arUMdDEtYJ4RTjucpIAur8r24tTcPDD+cc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rahul Kundu <rahul.kundu@chelsio.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dakshaja Uppalapati <dakshaja@chelsio.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 223/237] scsi: Revert "RDMA/isert: Fix a recently introduced regression related to logout"
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.5 100/150] KVM: nVMX: clear PIN_BASED_POSTED_INTR from nested pinbased_ctls only when apicv is globally disabled
 Date:   Thu, 27 Feb 2020 14:37:17 +0100
-Message-Id: <20200227132312.550900088@linuxfoundation.org>
+Message-Id: <20200227132247.569065230@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,77 +43,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit 76261ada16dcc3be610396a46d35acc3efbda682 upstream.
+commit a4443267800af240072280c44521caab61924e55 upstream.
 
-Since commit 04060db41178 introduces soft lockups when toggling network
-interfaces, revert it.
+When apicv is disabled on a vCPU (e.g. by enabling KVM_CAP_HYPERV_SYNIC*),
+nothing happens to VMX MSRs on the already existing vCPUs, however, all new
+ones are created with PIN_BASED_POSTED_INTR filtered out. This is very
+confusing and results in the following picture inside the guest:
 
-Link: https://marc.info/?l=target-devel&m=158157054906196
-Cc: Rahul Kundu <rahul.kundu@chelsio.com>
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Reported-by: Dakshaja Uppalapati <dakshaja@chelsio.com>
-Fixes: 04060db41178 ("scsi: RDMA/isert: Fix a recently introduced regression related to logout")
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+$ rdmsr -ax 0x48d
+ff00000016
+7f00000016
+7f00000016
+7f00000016
+
+This is observed with QEMU and 4-vCPU guest: QEMU creates vCPU0, does
+KVM_CAP_HYPERV_SYNIC2 and then creates the remaining three.
+
+L1 hypervisor may only check CPU0's controls to find out what features
+are available and it will be very confused later. Switch to setting
+PIN_BASED_POSTED_INTR control based on global 'enable_apicv' setting.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/isert/ib_isert.c |   12 ++++++++++++
- drivers/target/iscsi/iscsi_target.c     |    6 +++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ arch/x86/kvm/vmx/capabilities.h |    1 +
+ arch/x86/kvm/vmx/nested.c       |    5 ++---
+ arch/x86/kvm/vmx/nested.h       |    3 +--
+ arch/x86/kvm/vmx/vmx.c          |   10 ++++------
+ 4 files changed, 8 insertions(+), 11 deletions(-)
 
---- a/drivers/infiniband/ulp/isert/ib_isert.c
-+++ b/drivers/infiniband/ulp/isert/ib_isert.c
-@@ -2582,6 +2582,17 @@ isert_wait4logout(struct isert_conn *ise
- 	}
- }
+--- a/arch/x86/kvm/vmx/capabilities.h
++++ b/arch/x86/kvm/vmx/capabilities.h
+@@ -12,6 +12,7 @@ extern bool __read_mostly enable_ept;
+ extern bool __read_mostly enable_unrestricted_guest;
+ extern bool __read_mostly enable_ept_ad_bits;
+ extern bool __read_mostly enable_pml;
++extern bool __read_mostly enable_apicv;
+ extern int __read_mostly pt_mode;
  
-+static void
-+isert_wait4cmds(struct iscsi_conn *conn)
-+{
-+	isert_info("iscsi_conn %p\n", conn);
-+
-+	if (conn->sess) {
-+		target_sess_cmd_list_set_waiting(conn->sess->se_sess);
-+		target_wait_for_sess_cmds(conn->sess->se_sess);
-+	}
-+}
-+
- /**
-  * isert_put_unsol_pending_cmds() - Drop commands waiting for
-  *     unsolicitate dataout
-@@ -2629,6 +2640,7 @@ static void isert_wait_conn(struct iscsi
- 
- 	ib_drain_qp(isert_conn->qp);
- 	isert_put_unsol_pending_cmds(conn);
-+	isert_wait4cmds(conn);
- 	isert_wait4logout(isert_conn);
- 
- 	queue_work(isert_release_wq, &isert_conn->release_work);
---- a/drivers/target/iscsi/iscsi_target.c
-+++ b/drivers/target/iscsi/iscsi_target.c
-@@ -4155,6 +4155,9 @@ int iscsit_close_connection(
- 	iscsit_stop_nopin_response_timer(conn);
- 	iscsit_stop_nopin_timer(conn);
- 
-+	if (conn->conn_transport->iscsit_wait_conn)
-+		conn->conn_transport->iscsit_wait_conn(conn);
-+
+ #define PT_MODE_SYSTEM		0
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -5979,8 +5979,7 @@ void nested_vmx_set_vmcs_shadowing_bitma
+  * bit in the high half is on if the corresponding bit in the control field
+  * may be on. See also vmx_control_verify().
+  */
+-void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps,
+-				bool apicv)
++void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps)
+ {
  	/*
- 	 * During Connection recovery drop unacknowledged out of order
- 	 * commands for this connection, and prepare the other commands
-@@ -4240,9 +4243,6 @@ int iscsit_close_connection(
- 	target_sess_cmd_list_set_waiting(sess->se_sess);
- 	target_wait_for_sess_cmds(sess->se_sess);
+ 	 * Note that as a general rule, the high half of the MSRs (bits in
+@@ -6007,7 +6006,7 @@ void nested_vmx_setup_ctls_msrs(struct n
+ 		PIN_BASED_EXT_INTR_MASK |
+ 		PIN_BASED_NMI_EXITING |
+ 		PIN_BASED_VIRTUAL_NMIS |
+-		(apicv ? PIN_BASED_POSTED_INTR : 0);
++		(enable_apicv ? PIN_BASED_POSTED_INTR : 0);
+ 	msrs->pinbased_ctls_high |=
+ 		PIN_BASED_ALWAYSON_WITHOUT_TRUE_MSR |
+ 		PIN_BASED_VMX_PREEMPTION_TIMER;
+--- a/arch/x86/kvm/vmx/nested.h
++++ b/arch/x86/kvm/vmx/nested.h
+@@ -17,8 +17,7 @@ enum nvmx_vmentry_status {
+ };
  
--	if (conn->conn_transport->iscsit_wait_conn)
--		conn->conn_transport->iscsit_wait_conn(conn);
--
- 	ahash_request_free(conn->conn_tx_hash);
- 	if (conn->conn_rx_hash) {
- 		struct crypto_ahash *tfm;
+ void vmx_leave_nested(struct kvm_vcpu *vcpu);
+-void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps,
+-				bool apicv);
++void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps);
+ void nested_vmx_hardware_unsetup(void);
+ __init int nested_vmx_hardware_setup(int (*exit_handlers[])(struct kvm_vcpu *));
+ void nested_vmx_set_vmcs_shadowing_bitmap(void);
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -95,7 +95,7 @@ module_param(emulate_invalid_guest_state
+ static bool __read_mostly fasteoi = 1;
+ module_param(fasteoi, bool, S_IRUGO);
+ 
+-static bool __read_mostly enable_apicv = 1;
++bool __read_mostly enable_apicv = 1;
+ module_param(enable_apicv, bool, S_IRUGO);
+ 
+ /*
+@@ -6803,8 +6803,7 @@ static struct kvm_vcpu *vmx_create_vcpu(
+ 
+ 	if (nested)
+ 		nested_vmx_setup_ctls_msrs(&vmx->nested.msrs,
+-					   vmx_capability.ept,
+-					   kvm_vcpu_apicv_active(&vmx->vcpu));
++					   vmx_capability.ept);
+ 	else
+ 		memset(&vmx->nested.msrs, 0, sizeof(vmx->nested.msrs));
+ 
+@@ -6884,8 +6883,7 @@ static int __init vmx_check_processor_co
+ 	if (setup_vmcs_config(&vmcs_conf, &vmx_cap) < 0)
+ 		return -EIO;
+ 	if (nested)
+-		nested_vmx_setup_ctls_msrs(&vmcs_conf.nested, vmx_cap.ept,
+-					   enable_apicv);
++		nested_vmx_setup_ctls_msrs(&vmcs_conf.nested, vmx_cap.ept);
+ 	if (memcmp(&vmcs_config, &vmcs_conf, sizeof(struct vmcs_config)) != 0) {
+ 		printk(KERN_ERR "kvm: CPU %d feature inconsistency!\n",
+ 				smp_processor_id());
+@@ -7792,7 +7790,7 @@ static __init int hardware_setup(void)
+ 
+ 	if (nested) {
+ 		nested_vmx_setup_ctls_msrs(&vmcs_config.nested,
+-					   vmx_capability.ept, enable_apicv);
++					   vmx_capability.ept);
+ 
+ 		r = nested_vmx_hardware_setup(kvm_vmx_exit_handlers);
+ 		if (r)
 
 
