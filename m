@@ -2,75 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF679172C55
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 00:33:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F793172C42
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 00:30:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730214AbgB0Xd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 18:33:26 -0500
-Received: from mga12.intel.com ([192.55.52.136]:32153 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730160AbgB0XdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 18:33:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 15:33:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,493,1574150400"; 
-   d="scan'208";a="261672777"
-Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.171])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Feb 2020 15:33:23 -0800
-From:   Gayatri Kammela <gayatri.kammela@intel.com>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, vishwanath.somayaji@intel.com,
-        dvhart@infradead.org, mika.westerberg@intel.com,
-        peterz@infradead.org, charles.d.prestopine@intel.com,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Chen Zhou <chenzhou10@huawei.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "David E . Box" <david.e.box@intel.com>
-Subject: [PATCH v2 4/4] platform/x86: intel_pmc_core: fix: Add slp_s0_offset attribute back to tgl_reg_map
-Date:   Thu, 27 Feb 2020 15:29:16 -0800
-Message-Id: <e2a2e6f48ffadf3caf9bfd77679424d1a4238fa0.1582845395.git.gayatri.kammela@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1582845395.git.gayatri.kammela@intel.com>
-References: <cover.1582845395.git.gayatri.kammela@intel.com>
-In-Reply-To: <cover.1582845395.git.gayatri.kammela@intel.com>
-References: <cover.1582845395.git.gayatri.kammela@intel.com>
+        id S1730022AbgB0Xay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 18:30:54 -0500
+Received: from kernel.crashing.org ([76.164.61.194]:37124 "EHLO
+        kernel.crashing.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729838AbgB0Xay (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 18:30:54 -0500
+Received: from localhost (gate.crashing.org [63.228.1.57])
+        (authenticated bits=0)
+        by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 01RNU3sQ030322
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 27 Feb 2020 17:30:06 -0600
+Message-ID: <3150424b9e9f5856c747a0fbf44647919f49209d.camel@kernel.crashing.org>
+Subject: Re: [PATCH v5 7/7] dt-bindings: usb: add documentation for aspeed
+ usb-vhub
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     rentao.bupt@gmail.com, Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+        taoren@fb.com
+Date:   Fri, 28 Feb 2020 10:30:02 +1100
+In-Reply-To: <20200227230507.8682-8-rentao.bupt@gmail.com>
+References: <20200227230507.8682-1-rentao.bupt@gmail.com>
+         <20200227230507.8682-8-rentao.bupt@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If platforms such as Tiger Lake has sub-states of S0ix, then attributes
-such as slps0_dbg_offset become invalid. But slp_s0_offset is still
-valid as it is used to get the pmcdev_base_addr.
+On Thu, 2020-02-27 at 15:05 -0800, rentao.bupt@gmail.com wrote:
 
-Hence, add back slp_s0_offset and remove slps0_dbg_offset attributes.
+ .../...
 
-Cc: Chen Zhou <chenzhou10@huawei.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: David E. Box <david.e.box@intel.com>
-Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
----
- drivers/platform/x86/intel_pmc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You haven't fixed the problem spotted by Rob which is that the example
+is now out of sync, it's missing the required properties.
 
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index f6cc80987257..364a3c4e1c89 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -557,9 +557,9 @@ static const struct pmc_bit_map *tgl_lpm_maps[] = {
- 
- static const struct pmc_reg_map tgl_reg_map = {
- 	.pfear_sts = ext_tgl_pfear_map,
-+	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
- 	.ltr_show_sts = cnp_ltr_show_map,
- 	.msr_sts = msr_map,
--	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
- 	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
- 	.regmap_length = CNP_PMC_MMIO_REG_LEN,
- 	.ppfear0_offset = CNP_PMC_HOST_PPFEAR0A,
--- 
-2.17.1
+Also long run I think best is going to have a child node per downstream
+port, so we create a matching linux struct device. This will make it
+easier to deal with the other device-controller in the ast2600 which is
+basically one of these without a vhub above it.
+
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - interrupts
+> +  - aspeed,vhub-downstream-ports
+> +  - aspeed,vhub-generic-endpoints
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/aspeed-clock.h>
+> +    vhub: usb-vhub@1e6a0000 {
+> +            compatible = "aspeed,ast2500-usb-vhub";
+> +            reg = <0x1e6a0000 0x300>;
+> +            interrupts = <5>;
+> +            clocks = <&syscon ASPEED_CLK_GATE_USBPORT1CLK>;
+> +            pinctrl-names = "default";
+> +            pinctrl-0 = <&pinctrl_usb2ad_default>;
+> +    };
+> -- 
 
