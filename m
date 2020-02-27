@@ -2,89 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EFE2171E50
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:27:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFA6F171E67
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:27:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388852AbgB0O0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:26:52 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35106 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388212AbgB0O0r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:26:47 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g6so1223669plt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:26:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ycQ4OM0GuiKa4B6agMtr6e0DcA3u66okRRNHJak9QaQ=;
-        b=iOIpUz8yFMYlcEm1UZYDNFzSJAykarKnN0dZBkN7DkYhUOowyXt7D4TMvTw2xJBRnq
-         +GzAaKP+Tk45ZozBwVSlKcS0zXDyEyp786dqV2wzOsdEM96Lw7SFVDoJmyEWOa6UnHI8
-         7912HltfPziYci9i1f5q1G0kAO9lOWY4p5SUCOmUFv+RUOIMfWcvfeNf5eIfnxfyo4YA
-         fL17rHV1YKvr8N4y3K8n7Re0ZU1oriE+W4pDB1flp+zLgqx1z3H/bf0UlqPh3i1SE/uQ
-         OPUUPdNZgfyeq9KTx/wySfgA0Nfqqe2cRiRmPur0TB66Xpdsg3G5qha/Kqr1rSDVZSFa
-         2SDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ycQ4OM0GuiKa4B6agMtr6e0DcA3u66okRRNHJak9QaQ=;
-        b=UpJrP43trXMDefkO2Wb0fxdzMk+e7wiH8qV035Ope3hURDDhTHOP/mrjjI6ChHiZpB
-         hdiUsR2sMeM12pp415oK4pF7ChAEORxlVFszokd9jKoJY5/ortt9Ffa90MtoSdQ40NPC
-         iraKMEHr75g1tJN7SMjPslMHR9RX523QfJ29GXHnBXVygC4xpAcBq8WMuyD4aGs2vzE1
-         iz3JLU0YdlcD9ZaCjW0Y2kXbWA6hfU9CUbFRljhOt7JoIamNU2lQqrFopv+cx1cm1zbp
-         T+Tfti3k8gYYIdm0tysBY8J3b6WJqYsrTqvQ6FKxKpSuHmnDjHvK8RzLeFfkS3aaRHLV
-         Dpww==
-X-Gm-Message-State: APjAAAVWu+aKONtieVvfuA/z92i5zfOr1rIx3SKqr0o4TjeHmD9+0sea
-        o5YNu6Qkk3y2uKd2Jq08HVM=
-X-Google-Smtp-Source: APXvYqxolMZqMWoY5TQziUPfnPR+KyZmZpb4dquHkMYZpkch3u5nJuNvgMtX3kN+YRhF59rVGoOL+g==
-X-Received: by 2002:a17:902:7283:: with SMTP id d3mr20329pll.118.1582813606112;
-        Thu, 27 Feb 2020 06:26:46 -0800 (PST)
-Received: from localhost ([106.51.232.35])
-        by smtp.gmail.com with ESMTPSA id u1sm7303392pfn.133.2020.02.27.06.26.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Feb 2020 06:26:45 -0800 (PST)
-Date:   Thu, 27 Feb 2020 19:56:43 +0530
-From:   afzal mohammed <afzal.mohd.ma@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Juergen Gross <jgross@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+        id S2388489AbgB0O1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:27:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39326 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387751AbgB0O1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:27:35 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00655246AD;
+        Thu, 27 Feb 2020 14:27:33 +0000 (UTC)
+Date:   Thu, 27 Feb 2020 09:27:32 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 14/18] x86: Replace setup_irq() by request_irq()
-Message-ID: <20200227142643.GA5610@afzalpc>
-References: <cover.1581478323.git.afzal.mohd.ma@gmail.com>
- <a3116b3b1a03a943cd89efd57d2db32284c3a574.1581478324.git.afzal.mohd.ma@gmail.com>
- <87v9nsmhjj.fsf@nanos.tec.linutronix.de>
- <20200227113648.GA5760@afzalpc>
- <87sgiwma3x.fsf@nanos.tec.linutronix.de>
+Subject: Re: [PATCH v2 1/8] bootconfig: Set CONFIG_BOOT_CONFIG=n by default
+Message-ID: <20200227092732.6a22a71a@gandalf.local.home>
+In-Reply-To: <CAMuHMdWEoBrFRhmLEByhDCasuMrbGS4PreRivYRApdsME7x2AA@mail.gmail.com>
+References: <158220110257.26565.4812934676257459744.stgit@devnote2>
+        <158220111291.26565.9036889083940367969.stgit@devnote2>
+        <CAMuHMdWEoBrFRhmLEByhDCasuMrbGS4PreRivYRApdsME7x2AA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sgiwma3x.fsf@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Thu, 27 Feb 2020 10:22:00 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-On Thu, Feb 27, 2020 at 02:29:54PM +0100, Thomas Gleixner wrote:
-
-> Using scripting to find the spots and automatically convert them to
-> something which is functionally and semantically correct is perfectly
-> fine. But scripts neither have taste nor common sense.
+> > +
+> > +static int __init warn_bootconfig(char *str)
+> > +{
+> > +       pr_warn("WARNING: 'bootconfig' found on the kernel command line but CONFIG_BOOTCONFIG is not set.\n");
+> > +       return 0;
+> > +}
+> > +early_param("bootconfig", warn_bootconfig);  
 > 
-> So going over a scripted conversion and fixing non-sensical stuff up
-> manually is a good thing.
+> Yeah, let's increases kernel size for the people who don't want to jump
+> on the bootconfig wagon :-(
+> 
+> Is this really needed?
 
-> The easy route is fine for the initial step. See above.
+Yes, because if someone adds bootconfig to the command line they would be
+expecting their bootconfig to be read. If not, we should not fail silently.
 
-Sure, i will do the changes as per your suggestion.
+Are you really concerned about a tiny __init function that gets freed after
+boot up?
 
-Regards
-afzal
+-- Steve
