@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76336171C33
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:10:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E41A171E47
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:26:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388434AbgB0OJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:09:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47888 "EHLO mail.kernel.org"
+        id S2388181AbgB0O0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:26:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388181AbgB0OJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:09:51 -0500
+        id S2388426AbgB0OJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:09:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F325C21D7E;
-        Thu, 27 Feb 2020 14:09:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E307D20578;
+        Thu, 27 Feb 2020 14:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812590;
-        bh=nAIOlk6T/CG6odHWpg4tcELEnsZORFZp2EmQ2pWIWeA=;
+        s=default; t=1582812593;
+        bh=OplUeZx0IXYjIbcexHEFD7xTQr5eyEdeBJJSWhU1C1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ci3QGV7OWiKvHZxmL5Qy8buNctaOkiNxY00NlEyj7jPbn56rs2plw50dCn8nUFzCR
-         u9wktbK8xW54MrGNpHbUJiLr73OSa2Y14qtOQRq9h2HdZ/hQ2cIwNTZwN/7LlsYVnR
-         YIiaRr5yo8xdOlFy29Nq8ls3FNzFf5kG3SQIwpFA=
+        b=TjsDwMOAB4p0XSSLmAlCcWd2PcALDjhPkL3pd1q8eRFzyRfWoNzvl/zcYOgOrxoQM
+         NKUlNy9umhbQksTz7qnBVNNKcQDSulQPDURF/F7KBqQu1zFeU/bDUm/fKBhTavMFbA
+         0oDASzS+hfmBJu5246xtXevY49t1F7lSQoHFuEjg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Upton <oupton@google.com>,
+        stable@vger.kernel.org, Miaohe Lin <linmiaohe@huawei.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 077/135] KVM: nVMX: Dont emulate instructions in guest mode
-Date:   Thu, 27 Feb 2020 14:36:57 +0100
-Message-Id: <20200227132240.979853469@linuxfoundation.org>
+Subject: [PATCH 5.4 078/135] KVM: x86: dont notify userspace IOAPIC on edge-triggered interrupt EOI
+Date:   Thu, 27 Feb 2020 14:36:58 +0100
+Message-Id: <20200227132241.142358474@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
 References: <20200227132228.710492098@linuxfoundation.org>
@@ -43,34 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
 
-commit 07721feee46b4b248402133228235318199b05ec upstream.
+commit 7455a8327674e1a7c9a1f5dd1b0743ab6713f6d1 upstream.
 
-vmx_check_intercept is not yet fully implemented. To avoid emulating
-instructions disallowed by the L1 hypervisor, refuse to emulate
-instructions by default.
+Commit 13db77347db1 ("KVM: x86: don't notify userspace IOAPIC on edge
+EOI") said, edge-triggered interrupts don't set a bit in TMR, which means
+that IOAPIC isn't notified on EOI. And var level indicates level-triggered
+interrupt.
+But commit 3159d36ad799 ("KVM: x86: use generic function for MSI parsing")
+replace var level with irq.level by mistake. Fix it by changing irq.level
+to irq.trig_mode.
 
 Cc: stable@vger.kernel.org
-[Made commit, added commit msg - Oliver]
-Signed-off-by: Oliver Upton <oupton@google.com>
+Fixes: 3159d36ad799 ("KVM: x86: use generic function for MSI parsing")
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx/vmx.c |    2 +-
+ arch/x86/kvm/irq_comm.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7151,7 +7151,7 @@ static int vmx_check_intercept(struct kv
- 	}
+--- a/arch/x86/kvm/irq_comm.c
++++ b/arch/x86/kvm/irq_comm.c
+@@ -416,7 +416,7 @@ void kvm_scan_ioapic_routes(struct kvm_v
  
- 	/* TODO: check more intercepts... */
--	return X86EMUL_CONTINUE;
-+	return X86EMUL_UNHANDLEABLE;
- }
+ 			kvm_set_msi_irq(vcpu->kvm, entry, &irq);
  
- #ifdef CONFIG_X86_64
+-			if (irq.level && kvm_apic_match_dest(vcpu, NULL, 0,
++			if (irq.trig_mode && kvm_apic_match_dest(vcpu, NULL, 0,
+ 						irq.dest_id, irq.dest_mode))
+ 				__set_bit(irq.vector, ioapic_handled_vectors);
+ 		}
 
 
