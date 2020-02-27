@@ -2,136 +2,327 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8032170D7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 01:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2C4C170D84
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 01:56:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbgB0AvF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 19:51:05 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.202]:41105 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727987AbgB0AvE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 19:51:04 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id B1D946372E
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 18:51:03 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 77OHjESB5Sl8q77OHjssum; Wed, 26 Feb 2020 18:51:03 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=CxvRwi9ERvjqza3ONz0t3g7iTuq5cMATTfcSYBFnsBo=; b=uHQcXKIq7CcMbICKYg4TJX2gjD
-        3hjamqfDiEmxsZYgqGDUzonP1gnJWS7PJV09AjdP+XUn3NK908uPjci9ftXkEaJOhDKeTO2D8y92x
-        3UefhjyU2s9udMIYKNnVVhG9cd0mo00ho+Ru80N/kPZ6/0e/U07yJQJZe2rv8jBLUahdOzx7DSdyf
-        g4HXAa/ZxtLmrQkOIYPwDmm4r1pe5WZaG8buI0YWSPLBhC77Rm+IDhQDT9PQyGXc9CIA5zFHvNMU5
-        oplL6z+Cgx7qxnZ6Np6PSg1Qr8s8gayqkETnijTJLY1GHn+S+LSQbl/AYAUip8H7x/YIvwj4Ojax/
-        0XWpbinA==;
-Received: from [201.162.161.221] (port=49846 helo=[192.168.43.132])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j77OH-002Vj3-71; Wed, 26 Feb 2020 18:51:01 -0600
-Subject: Re: [PATCH][next] net: cisco: Replace zero-length array with
- flexible-array member
-To:     David Miller <davem@davemloft.net>
-Cc:     benve@cisco.com, _govind@gmx.com, pkaustub@cisco.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200225001826.GA22765@embeddedor>
- <20200226.164642.670797289411682529.davem@davemloft.net>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <7067653c-bcfd-ffce-115e-0e42411c7056@embeddedor.com>
-Date:   Wed, 26 Feb 2020 18:53:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728095AbgB0A4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 19:56:01 -0500
+Received: from mga12.intel.com ([192.55.52.136]:62985 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727967AbgB0A4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 19:56:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 16:55:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,490,1574150400"; 
+   d="scan'208";a="241865337"
+Received: from pkabrax-mobl.amr.corp.intel.com (HELO [10.251.2.6]) ([10.251.2.6])
+  by orsmga006.jf.intel.com with ESMTP; 26 Feb 2020 16:55:57 -0800
+Subject: Re: [RFC PATCH v9 17/27] x86/cet/shstk: User-mode Shadow Stack
+ support
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, x86-patch-review@intel.com
+References: <20200205181935.3712-1-yu-cheng.yu@intel.com>
+ <20200205181935.3712-18-yu-cheng.yu@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <9847845a-749d-47a3-2a1d-bcc7c35f1bdd@intel.com>
+Date:   Wed, 26 Feb 2020 16:55:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200226.164642.670797289411682529.davem@davemloft.net>
+In-Reply-To: <20200205181935.3712-18-yu-cheng.yu@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.161.221
-X-Source-L: No
-X-Exim-ID: 1j77OH-002Vj3-71
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.132]) [201.162.161.221]:49846
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/26/20 18:46, David Miller wrote:
-
->>
->> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->> [2] https://github.com/KSPP/linux/issues/21
->> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On 2/5/20 10:19 AM, Yu-cheng Yu wrote:
+> This patch adds basic Shadow Stack (SHSTK) enabling/disabling routines.
+> A task's SHSTK is allocated from memory with VM_SHSTK flag and read-only
+> protection.  It has a fixed size of RLIMIT_STACK.
 > 
-> Applied.
+> v9:
+> - Change cpu_feature_enabled() to static_cpu_has().
+> - Merge cet_disable_shstk to cet_disable_free_shstk.
+> - Remove the empty slot at the top of the SHSTK, as it is not needed.
+> - Move do_mmap_locked() to alloc_shstk(), which is a static function.
 > 
+> v6:
+> - Create a function do_mmap_locked() for SHSTK allocation.
+> 
+> v2:
+> - Change noshstk to no_cet_shstk.
+> 
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> ---
+>  arch/x86/include/asm/cet.h                    |  31 +++++
+>  arch/x86/include/asm/disabled-features.h      |   8 +-
+>  arch/x86/include/asm/processor.h              |   5 +
+>  arch/x86/kernel/Makefile                      |   2 +
+>  arch/x86/kernel/cet.c                         | 121 ++++++++++++++++++
+>  arch/x86/kernel/cpu/common.c                  |  25 ++++
+>  arch/x86/kernel/process.c                     |   1 +
+>  .../arch/x86/include/asm/disabled-features.h  |   8 +-
+>  8 files changed, 199 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/x86/include/asm/cet.h
+>  create mode 100644 arch/x86/kernel/cet.c
+> 
+> diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
+> new file mode 100644
+> index 000000000000..c44c991ca91f
+> --- /dev/null
+> +++ b/arch/x86/include/asm/cet.h
+> @@ -0,0 +1,31 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _ASM_X86_CET_H
+> +#define _ASM_X86_CET_H
+> +
+> +#ifndef __ASSEMBLY__
+> +#include <linux/types.h>
+> +
+> +struct task_struct;
+> +/*
+> + * Per-thread CET status
+> + */
+> +struct cet_status {
+> +	unsigned long	shstk_base;
+> +	unsigned long	shstk_size;
+> +	unsigned int	shstk_enabled:1;
+> +};
 
-Thanks, Dave.
---
-Gustavo
+Just out of curiosity, what's the theoretical size limit of shadow
+stacks?  Is there one?
+
+Also, not to nitpick too much, but you could pretty easily save the
+storage of shstk_enabled by using 0 for the size.
+
+> +#ifdef CONFIG_X86_INTEL_CET
+> +int cet_setup_shstk(void);
+> +void cet_disable_free_shstk(struct task_struct *p);
+> +#else
+> +static inline void cet_disable_free_shstk(struct task_struct *p) {}
+> +#endif
+> +
+> +#define cpu_x86_cet_enabled() \
+> +	(static_cpu_has(X86_FEATURE_SHSTK) || \
+> +	 static_cpu_has(X86_FEATURE_IBT))
+> +
+> +#endif /* __ASSEMBLY__ */
+
+You don't need the #ifdef if you stick the X86_FEATUREs in
+disabled-features.h properly.
+
+> diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+> new file mode 100644
+> index 000000000000..b4c7d88e9a8f
+> --- /dev/null
+> +++ b/arch/x86/kernel/cet.c
+> @@ -0,0 +1,121 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * cet.c - Control-flow Enforcement (CET)
+> + *
+> + * Copyright (c) 2019, Intel Corporation.
+> + * Yu-cheng Yu <yu-cheng.yu@intel.com>
+> + */
+> +
+> +#include <linux/types.h>
+> +#include <linux/mm.h>
+> +#include <linux/mman.h>
+> +#include <linux/slab.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/sched/signal.h>
+> +#include <linux/compat.h>
+> +#include <asm/msr.h>
+> +#include <asm/user.h>
+> +#include <asm/fpu/internal.h>
+> +#include <asm/fpu/xstate.h>
+> +#include <asm/fpu/types.h>
+> +#include <asm/cet.h>
+> +
+> +static void start_update_msrs(void)
+> +{
+> +	fpregs_lock();
+> +	if (test_thread_flag(TIF_NEED_FPU_LOAD))
+> +		__fpregs_load_activate();
+> +}
+> +
+> +static void end_update_msrs(void)
+> +{
+> +	fpregs_unlock();
+> +}
+> +
+> +static unsigned long cet_get_shstk_addr(void)
+> +{
+> +	struct fpu *fpu = &current->thread.fpu;
+> +	unsigned long ssp = 0;
+> +
+> +	fpregs_lock();
+> +
+> +	if (fpregs_state_valid(fpu, smp_processor_id())) {
+> +		rdmsrl(MSR_IA32_PL3_SSP, ssp);
+> +	} else {
+> +		struct cet_user_state *p;
+> +
+> +		p = get_xsave_addr(&fpu->state.xsave, XFEATURE_CET_USER);
+> +		if (p)
+> +			ssp = p->user_ssp;
+> +	}
+> +
+> +	fpregs_unlock();
+> +	return ssp;
+> +}
+> +
+> +static unsigned long alloc_shstk(unsigned long size)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +	unsigned long addr, populate;
+> +
+> +	down_write(&mm->mmap_sem);
+> +	addr = do_mmap(NULL, 0, size, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE,
+> +		       VM_SHSTK, 0, &populate, NULL);
+> +	up_write(&mm->mmap_sem);
+> +
+> +	if (populate)
+> +		mm_populate(addr, populate);
+> +
+> +	return addr;
+> +}
+> +
+> +int cet_setup_shstk(void)
+> +{
+> +	unsigned long addr, size;
+> +	struct cet_status *cet = &current->thread.cet;
+> +
+> +	if (!static_cpu_has(X86_FEATURE_SHSTK))
+> +		return -EOPNOTSUPP;
+> +
+> +	size = rlimit(RLIMIT_STACK);
+
+This doesn't seem right.  In general, I thought you could have disabled
+rlimits, which would mean a size of -1:
+	
+	#define RLIM64_INFINITY         (~0ULL)
+
+Or is there something special about stacks that I'm missing?
+
+Also, does size need to be page aligned?
+
+> +	addr = alloc_shstk(size);
+> +
+> +	if (IS_ERR((void *)addr))
+> +		return PTR_ERR((void *)addr);
+> +
+> +	cet->shstk_base = addr;
+> +	cet->shstk_size = size;
+> +	cet->shstk_enabled = 1;
+> +
+> +	start_update_msrs();
+> +	wrmsrl(MSR_IA32_PL3_SSP, addr + size);
+> +	wrmsrl(MSR_IA32_U_CET, MSR_IA32_CET_SHSTK_EN);
+
+Doesn't MSR_IA32_U_CET have lots of bits?  Won't this blow away other bits?
+
+> +	end_update_msrs();
+> +	return 0;
+> +}
+> +
+> +void cet_disable_free_shstk(struct task_struct *tsk)
+> +{
+> +	struct cet_status *cet = &tsk->thread.cet;
+> +
+> +	if (!static_cpu_has(X86_FEATURE_SHSTK) ||
+> +	    !cet->shstk_enabled || !cet->shstk_base)
+> +		return;
+
+This seems to indicate that you can have ->shstk_base set without it
+being enabled.  But I don't see any spots in the code that do that.
+Confused.
+
+> +	if (!tsk->mm || (tsk->mm != current->mm))
+> +		return;
+> +
+> +	if (tsk == current) {
+> +		u64 msr_val;
+> +
+> +		start_update_msrs();
+> +		rdmsrl(MSR_IA32_U_CET, msr_val);
+> +		wrmsrl(MSR_IA32_U_CET, msr_val & ~MSR_IA32_CET_SHSTK_EN);
+> +		end_update_msrs();
+> +	}
+> +
+> +	vm_munmap(cet->shstk_base, cet->shstk_size);
+
+What about vm_munmap() failure?
