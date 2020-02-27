@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1B6B171CA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D840D171C08
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389059AbgB0OOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:14:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53022 "EHLO mail.kernel.org"
+        id S2388185AbgB0OH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:07:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389043AbgB0ON7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:13:59 -0500
+        id S2388177AbgB0OH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:07:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EC7E2469D;
-        Thu, 27 Feb 2020 14:13:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E9F921D7E;
+        Thu, 27 Feb 2020 14:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812838;
-        bh=eXF2rV6X3gjuGXC82hTXXdpx13WqeW4mL0pDL5T2YyQ=;
+        s=default; t=1582812476;
+        bh=1DX1NESB9uCLiSTmV5cjBcrmXUB7/J48HiDJfR/aAMQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CRdCxlVwtdjpD+U2qM7jxa+K2ODzmLyWzhUQ+4OT5v3kIJOzp26gOEIqmp+0SUGvi
-         GCszdODUPHXTcKkiJ9zxHVjNqBnGAMpnLPXkK0ufiuaNhtN8EM+94DbNPLRjIVfVVv
-         bGTvKbc6zM3exZJ0Ok4ItfOF33OyzPN/9Vr1e/vQ=
+        b=1Yfg/2Yn62cT+mh6rAEuN8HTDri9tlPyMVQ8JZYiG+//CYmQv/5711eNOoPqrteuP
+         hwcoJqwx9aON7TzyGJHIA/8Wb6hgccmbYhj6cpG5+QTkViSSvFb/KSPbNDb/hG5DJw
+         oOZ+mKJM9rgogSEtEBRLkeXPZWas6/h2AmnC9Jjw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, edes <edes@gmx.net>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.5 036/150] USB: quirks: blacklist duplicate ep on Sound Devices USBPre2
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Hardik Gajjar <hgajjar@de.adit-jv.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: [PATCH 5.4 033/135] USB: hub: Fix the broken detection of USB3 device in SMSC hub
 Date:   Thu, 27 Feb 2020 14:36:13 +0100
-Message-Id: <20200227132238.093589920@linuxfoundation.org>
+Message-Id: <20200227132234.007724232@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,146 +44,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Hardik Gajjar <hgajjar@de.adit-jv.com>
 
-commit bdd1b147b8026df0e4260b387026b251d888ed01 upstream.
+commit 1208f9e1d758c991b0a46a1bd60c616b906bbe27 upstream.
 
-This device has a broken vendor-specific altsetting for interface 1,
-where endpoint 0x85 is declared as an isochronous endpoint despite being
-used by interface 2 for audio capture.
+Renesas R-Car H3ULCB + Kingfisher Infotainment Board is either not able
+to detect the USB3.0 mass storage devices or is detecting those as
+USB2.0 high speed devices.
 
-Device Descriptor:
-  bLength                18
-  bDescriptorType         1
-  bcdUSB               2.00
-  bDeviceClass          239 Miscellaneous Device
-  bDeviceSubClass         2
-  bDeviceProtocol         1 Interface Association
-  bMaxPacketSize0        64
-  idVendor           0x0926
-  idProduct          0x0202
-  bcdDevice            1.00
-  iManufacturer           1 Sound Devices
-  iProduct                2 USBPre2
-  iSerial                 3 [...]
-  bNumConfigurations      1
+The explanation given by Renesas is that, due to a HW issue, the XHCI
+driver does not wake up after going to sleep on connecting a USB3.0
+device.
 
-[...]
+In order to mitigate that, disable the auto-suspend feature
+specifically for SMSC hubs from hub_probe() function, as a quirk.
 
-    Interface Descriptor:
-      bLength                 9
-      bDescriptorType         4
-      bInterfaceNumber        1
-      bAlternateSetting       3
-      bNumEndpoints           2
-      bInterfaceClass       255 Vendor Specific Class
-      bInterfaceSubClass      0
-      bInterfaceProtocol      0
-      iInterface              0
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x85  EP 5 IN
-        bmAttributes            5
-          Transfer Type            Isochronous
-          Synch Type               Asynchronous
-          Usage Type               Data
-        wMaxPacketSize     0x0126  1x 294 bytes
-        bInterval               1
+Renesas Kingfisher Infotainment Board has two USB3.0 ports (CN2) which
+are connected via USB5534B 4-port SuperSpeed/Hi-Speed, low-power,
+configurable hub controller.
 
-[...]
+[1] SanDisk USB 3.0 device detected as USB-2.0 before the patch
+ [   74.036390] usb 5-1.1: new high-speed USB device number 4 using xhci-hcd
+ [   74.061598] usb 5-1.1: New USB device found, idVendor=0781, idProduct=5581, bcdDevice= 1.00
+ [   74.069976] usb 5-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+ [   74.077303] usb 5-1.1: Product: Ultra
+ [   74.080980] usb 5-1.1: Manufacturer: SanDisk
+ [   74.085263] usb 5-1.1: SerialNumber: 4C530001110208116550
 
-    Interface Descriptor:
-      bLength                 9
-      bDescriptorType         4
-      bInterfaceNumber        2
-      bAlternateSetting       1
-      bNumEndpoints           1
-      bInterfaceClass         1 Audio
-      bInterfaceSubClass      2 Streaming
-      bInterfaceProtocol      0
-      iInterface              0
-      AudioStreaming Interface Descriptor:
-        bLength                 7
-        bDescriptorType        36
-        bDescriptorSubtype      1 (AS_GENERAL)
-        bTerminalLink           4
-        bDelay                  1 frames
-        wFormatTag         0x0001 PCM
-      AudioStreaming Interface Descriptor:
-        bLength                26
-        bDescriptorType        36
-        bDescriptorSubtype      2 (FORMAT_TYPE)
-        bFormatType             1 (FORMAT_TYPE_I)
-        bNrChannels             2
-        bSubframeSize           2
-        bBitResolution         16
-        bSamFreqType            6 Discrete
-        tSamFreq[ 0]         8000
-        tSamFreq[ 1]        16000
-        tSamFreq[ 2]        24000
-        tSamFreq[ 3]        32000
-        tSamFreq[ 4]        44100
-        tSamFreq[ 5]        48000
-      Endpoint Descriptor:
-        bLength                 9
-        bDescriptorType         5
-        bEndpointAddress     0x85  EP 5 IN
-        bmAttributes            5
-          Transfer Type            Isochronous
-          Synch Type               Asynchronous
-          Usage Type               Data
-        wMaxPacketSize     0x0126  1x 294 bytes
-        bInterval               4
-        bRefresh                0
-        bSynchAddress           0
-        AudioStreaming Endpoint Descriptor:
-          bLength                 7
-          bDescriptorType        37
-          bDescriptorSubtype      1 (EP_GENERAL)
-          bmAttributes         0x01
-            Sampling Frequency
-          bLockDelayUnits         2 Decoded PCM samples
-          wLockDelay         0x0000
+[2] SanDisk USB 3.0 device detected as USB-3.0 after the patch
+ [   34.565078] usb 6-1.1: new SuperSpeed Gen 1 USB device number 3 using xhci-hcd
+ [   34.588719] usb 6-1.1: New USB device found, idVendor=0781, idProduct=5581, bcdDevice= 1.00
+ [   34.597098] usb 6-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+ [   34.604430] usb 6-1.1: Product: Ultra
+ [   34.608110] usb 6-1.1: Manufacturer: SanDisk
+ [   34.612397] usb 6-1.1: SerialNumber: 4C530001110208116550
 
-Since commit 3e4f8e21c4f2 ("USB: core: fix check for duplicate
-endpoints") USB core ignores any duplicate endpoints found during
-descriptor parsing, but in this case we need to ignore the first
-instance in order to avoid breaking the audio capture interface.
-
-Fixes: 3e4f8e21c4f2 ("USB: core: fix check for duplicate endpoints")
+Suggested-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Hardik Gajjar <hgajjar@de.adit-jv.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 Cc: stable <stable@vger.kernel.org>
-Reported-by: edes <edes@gmx.net>
-Tested-by: edes <edes@gmx.net>
-Link: https://lore.kernel.org/r/20200201105829.5682c887@acme7.acmenet
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20200203153830.26394-3-johan@kernel.org
+Link: https://lore.kernel.org/r/1580989763-32291-1-git-send-email-hgajjar@de.adit-jv.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/usb/core/hub.c |   15 +++++++++++++++
+ drivers/usb/core/hub.h |    1 +
+ 2 files changed, 16 insertions(+)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -354,6 +354,10 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x0904, 0x6103), .driver_info =
- 			USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL },
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -37,7 +37,9 @@
+ #include "otg_whitelist.h"
  
-+	/* Sound Devices USBPre2 */
-+	{ USB_DEVICE(0x0926, 0x0202), .driver_info =
-+			USB_QUIRK_ENDPOINT_BLACKLIST },
+ #define USB_VENDOR_GENESYS_LOGIC		0x05e3
++#define USB_VENDOR_SMSC				0x0424
+ #define HUB_QUIRK_CHECK_PORT_AUTOSUSPEND	0x01
++#define HUB_QUIRK_DISABLE_AUTOSUSPEND		0x02
+ 
+ #define USB_TP_TRANSMISSION_DELAY	40	/* ns */
+ #define USB_TP_TRANSMISSION_DELAY_MAX	65535	/* ns */
+@@ -1725,6 +1727,10 @@ static void hub_disconnect(struct usb_in
+ 	kfree(hub->buffer);
+ 
+ 	pm_suspend_ignore_children(&intf->dev, false);
 +
- 	/* Keytouch QWERTY Panel keyboard */
- 	{ USB_DEVICE(0x0926, 0x3333), .driver_info =
- 			USB_QUIRK_CONFIG_INTF_STRINGS },
-@@ -479,6 +483,7 @@ static const struct usb_device_id usb_am
-  * Matched for devices with USB_QUIRK_ENDPOINT_BLACKLIST.
-  */
- static const struct usb_device_id usb_endpoint_blacklist[] = {
-+	{ USB_DEVICE_INTERFACE_NUMBER(0x0926, 0x0202, 1), .driver_info = 0x85 },
- 	{ }
- };
++	if (hub->quirk_disable_autosuspend)
++		usb_autopm_put_interface(intf);
++
+ 	kref_put(&hub->kref, hub_release);
+ }
+ 
+@@ -1857,6 +1863,11 @@ static int hub_probe(struct usb_interfac
+ 	if (id->driver_info & HUB_QUIRK_CHECK_PORT_AUTOSUSPEND)
+ 		hub->quirk_check_port_auto_suspend = 1;
+ 
++	if (id->driver_info & HUB_QUIRK_DISABLE_AUTOSUSPEND) {
++		hub->quirk_disable_autosuspend = 1;
++		usb_autopm_get_interface(intf);
++	}
++
+ 	if (hub_configure(hub, &desc->endpoint[0].desc) >= 0)
+ 		return 0;
+ 
+@@ -5479,6 +5490,10 @@ out_hdev_lock:
+ }
+ 
+ static const struct usb_device_id hub_id_table[] = {
++    { .match_flags = USB_DEVICE_ID_MATCH_VENDOR | USB_DEVICE_ID_MATCH_INT_CLASS,
++      .idVendor = USB_VENDOR_SMSC,
++      .bInterfaceClass = USB_CLASS_HUB,
++      .driver_info = HUB_QUIRK_DISABLE_AUTOSUSPEND},
+     { .match_flags = USB_DEVICE_ID_MATCH_VENDOR
+ 			| USB_DEVICE_ID_MATCH_INT_CLASS,
+       .idVendor = USB_VENDOR_GENESYS_LOGIC,
+--- a/drivers/usb/core/hub.h
++++ b/drivers/usb/core/hub.h
+@@ -61,6 +61,7 @@ struct usb_hub {
+ 	unsigned		quiescing:1;
+ 	unsigned		disconnected:1;
+ 	unsigned		in_reset:1;
++	unsigned		quirk_disable_autosuspend:1;
+ 
+ 	unsigned		quirk_check_port_auto_suspend:1;
  
 
 
