@@ -2,122 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63CDA17197D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:45:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A77221718C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:34:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729502AbgB0NpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:45:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41238 "EHLO mail.kernel.org"
+        id S1729187AbgB0Nel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:34:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730361AbgB0NpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:45:21 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1729076AbgB0Nel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:34:41 -0500
+Received: from localhost (lfbn-ncy-1-985-231.w90-101.abo.wanadoo.fr [90.101.63.231])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0E4121D7E;
-        Thu, 27 Feb 2020 13:45:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 568AF24656;
+        Thu, 27 Feb 2020 13:34:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811120;
-        bh=uOFMmKogUdcEg/YD9HLbQnK54nR8CSKUebSZkQF+56E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=10RWAOzgo0aUnSV9CrmupI7pnCnqGgrszeI2bada+gfQWVedNdkAB4XX6CkQzlz9x
-         JKtrOplmKrg0cRvJhkosQbrQF9Cwk+DllZp3EnlgBAtnZjXgSeZeDTF2R2ECdxbhc7
-         nj2Pu/v8T+aRokVIcTXSi25A3zTxauw5wNoHG8ZQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 003/165] ALSA: hda: Use scnprintf() for printing texts for sysfs/procfs
-Date:   Thu, 27 Feb 2020 14:34:37 +0100
-Message-Id: <20200227132231.535111958@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
-User-Agent: quilt/0.66
+        s=default; t=1582810480;
+        bh=hd1EH5Kj0MHO9MQew6AELGq5JlBOz3GHWDMW12fIy1Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=p9A0+DH5dBJgKnDVpjQb91A7WXwDFyWWxlMo9svI3aYgBDaJ12zZA54pFqYcg/VOj
+         05+PE6RScxbPG/Z9EoLZWmis+g2iqcO9njxxKiHhcV82O4/rtQov/ZMPQN8BDdW7OR
+         F5vF6SQos7BU4qr1AQOzyXgO0Ly3N5bkPoskBM00=
+Date:   Thu, 27 Feb 2020 14:34:38 +0100
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        rostedt@goodmis.org, mingo@kernel.org, joel@joelfernandes.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        luto@kernel.org, tony.luck@intel.com, dan.carpenter@oracle.com,
+        mhiramat@kernel.org, Will Deacon <will@kernel.org>,
+        Petr Mladek <pmladek@suse.com>, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v4 02/27] hardirq/nmi: Allow nested nmi_enter()
+Message-ID: <20200227133437.GB21795@lenoir>
+References: <20200221133416.777099322@infradead.org>
+ <20200221134215.149193474@infradead.org>
+ <20200221222129.GB28251@lenoir>
+ <20200224161318.GG14897@hirez.programming.kicks-ass.net>
+ <20200225030905.GB28329@lenoir>
+ <20200225154111.GM18400@hirez.programming.kicks-ass.net>
+ <20200225221031.GB9599@lenoir>
+ <20200227091042.GG18400@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200227091042.GG18400@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+On Thu, Feb 27, 2020 at 10:10:42AM +0100, Peter Zijlstra wrote:
+> On Tue, Feb 25, 2020 at 11:10:32PM +0100, Frederic Weisbecker wrote:
+> > So here is my previous proposal, based on a simple counter, this time
+> > with comments and a few fixes:
+> 
+> I've presumed your SoB and made this your patch.
 
-commit 44eeb081b8630bb3ad3cd381d1ae1831463e48bb upstream.
-
-Some code in HD-audio driver calls snprintf() in a loop and still
-expects that the return value were actually written size, while
-snprintf() returns the expected would-be length instead.  When the
-given buffer limit were small, this leads to a buffer overflow.
-
-Use scnprintf() for addressing those issues.  It returns the actually
-written size unlike snprintf().
-
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200218091409.27162-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- sound/hda/hdmi_chmap.c    |    2 +-
- sound/pci/hda/hda_codec.c |    2 +-
- sound/pci/hda/hda_eld.c   |    2 +-
- sound/pci/hda/hda_sysfs.c |    4 ++--
- 4 files changed, 5 insertions(+), 5 deletions(-)
-
---- a/sound/hda/hdmi_chmap.c
-+++ b/sound/hda/hdmi_chmap.c
-@@ -249,7 +249,7 @@ void snd_hdac_print_channel_allocation(i
- 
- 	for (i = 0, j = 0; i < ARRAY_SIZE(cea_speaker_allocation_names); i++) {
- 		if (spk_alloc & (1 << i))
--			j += snprintf(buf + j, buflen - j,  " %s",
-+			j += scnprintf(buf + j, buflen - j,  " %s",
- 					cea_speaker_allocation_names[i]);
- 	}
- 	buf[j] = '\0';	/* necessary when j == 0 */
---- a/sound/pci/hda/hda_codec.c
-+++ b/sound/pci/hda/hda_codec.c
-@@ -4104,7 +4104,7 @@ void snd_print_pcm_bits(int pcm, char *b
- 
- 	for (i = 0, j = 0; i < ARRAY_SIZE(bits); i++)
- 		if (pcm & (AC_SUPPCM_BITS_8 << i))
--			j += snprintf(buf + j, buflen - j,  " %d", bits[i]);
-+			j += scnprintf(buf + j, buflen - j,  " %d", bits[i]);
- 
- 	buf[j] = '\0'; /* necessary when j == 0 */
- }
---- a/sound/pci/hda/hda_eld.c
-+++ b/sound/pci/hda/hda_eld.c
-@@ -373,7 +373,7 @@ static void hdmi_print_pcm_rates(int pcm
- 
- 	for (i = 0, j = 0; i < ARRAY_SIZE(alsa_rates); i++)
- 		if (pcm & (1 << i))
--			j += snprintf(buf + j, buflen - j,  " %d",
-+			j += scnprintf(buf + j, buflen - j,  " %d",
- 				alsa_rates[i]);
- 
- 	buf[j] = '\0'; /* necessary when j == 0 */
---- a/sound/pci/hda/hda_sysfs.c
-+++ b/sound/pci/hda/hda_sysfs.c
-@@ -221,7 +221,7 @@ static ssize_t init_verbs_show(struct de
- 	mutex_lock(&codec->user_mutex);
- 	for (i = 0; i < codec->init_verbs.used; i++) {
- 		struct hda_verb *v = snd_array_elem(&codec->init_verbs, i);
--		len += snprintf(buf + len, PAGE_SIZE - len,
-+		len += scnprintf(buf + len, PAGE_SIZE - len,
- 				"0x%02x 0x%03x 0x%04x\n",
- 				v->nid, v->verb, v->param);
- 	}
-@@ -271,7 +271,7 @@ static ssize_t hints_show(struct device
- 	mutex_lock(&codec->user_mutex);
- 	for (i = 0; i < codec->hints.used; i++) {
- 		struct hda_hint *hint = snd_array_elem(&codec->hints, i);
--		len += snprintf(buf + len, PAGE_SIZE - len,
-+		len += scnprintf(buf + len, PAGE_SIZE - len,
- 				"%s = %s\n", hint->key, hint->val);
- 	}
- 	mutex_unlock(&codec->user_mutex);
-
-
+Ok, thanks!
