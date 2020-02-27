@@ -2,167 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E54A1721E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:12:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19BF81721F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:13:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731334AbgB0PMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 10:12:22 -0500
-Received: from mga06.intel.com ([134.134.136.31]:7443 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729584AbgB0PMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 10:12:22 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 07:12:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,492,1574150400"; 
-   d="scan'208";a="350704878"
-Received: from kuha.fi.intel.com ([10.237.72.53])
-  by fmsmga001.fm.intel.com with SMTP; 27 Feb 2020 07:12:17 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 27 Feb 2020 17:12:16 +0200
-Date:   Thu, 27 Feb 2020 17:12:16 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Prashant Malani <pmalani@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, enric.balletbo@collabora.com,
-        bleung@chromium.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: Add cros-ec Type C port driver
-Message-ID: <20200227151216.GA18240@kuha.fi.intel.com>
-References: <20200220003102.204480-1-pmalani@chromium.org>
- <20200220003102.204480-2-pmalani@chromium.org>
+        id S1730445AbgB0PNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 10:13:43 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:40146 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729819AbgB0PNl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 10:13:41 -0500
+Received: by mail-il1-f196.google.com with SMTP id i7so2719422ilr.7
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 07:13:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m+kylmRZdQ7kHJRK9lKNLqwlSVhHwyYol2gsDgRlfLA=;
+        b=G2r3t7rraJO/jHNvyP5CFwnplNk9lJtpT9K3gnayhn4rcbOA3gSXoz8oCLeE81E/Wt
+         no0Zh7DuWczVpOtO+5F+bZ/zXJJtqem4r07fo5SkxDWfHb9mDBp6nKik1l4JDM8KN/al
+         qqemDCNP9bkaEgHme33rJac7E7n0rUJSoO+8E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m+kylmRZdQ7kHJRK9lKNLqwlSVhHwyYol2gsDgRlfLA=;
+        b=PttHz4C34jh8IuHMYZWkqeXRR6cRoCzvAUbvoFNFv3GDGM6p01w0eAZQAHKY4VFjkt
+         fxsZKuLm/sssnzhFlaAbQxQzKlVyvIJlH1HqTFMcbQAmqYWr1mwm+PLghfg375SjXenq
+         UIjAa25SrU5+BYXrBLvNJMPTLxcDwOXK39tE+hqy/y5YZqWCaOy+EEPS9E7NcDyGNt7R
+         mYEKGEWw4iCSzBaSxgMpOQ8ZEX1S+qtJpoksUpzyu4g2plt+zDPXtCvXvF/bENam6Q0l
+         qjJsA9cT22HwUKuTP4PHpTvIVCVUQ/Qon4Ro+1m9bx1bw4I4iuz03ihiz/6HgEm9/Bv+
+         Ecyw==
+X-Gm-Message-State: APjAAAVSw7djtD8Ou3+i/Vlx1Ic8c/DCxJFAHRY9u4wZZzYRJXR3x/IY
+        6ACXSV0J1E+j+5Ynb3p+EqwWhv9kV80ME9/gwR/k4w==
+X-Google-Smtp-Source: APXvYqx6ZTgm/JnuJem8YlsSHDER8b5Wil6I0Af4SkhwFk++vp7lU3TdAvSta4JoAfspzedl//Jug2AVYKDt3UXKMdc=
+X-Received: by 2002:a92:d610:: with SMTP id w16mr5875950ilm.283.1582816420405;
+ Thu, 27 Feb 2020 07:13:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220003102.204480-2-pmalani@chromium.org>
+References: <20200225172437.106679-1-hsinyi@chromium.org> <6986e879-cf35-13a5-baae-9ab09ba1a0d7@xs4all.nl>
+In-Reply-To: <6986e879-cf35-13a5-baae-9ab09ba1a0d7@xs4all.nl>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Thu, 27 Feb 2020 23:13:14 +0800
+Message-ID: <CAJMQK-hFQ8ZMAH=C9suud81gwXQaG_=4mx69qeQP=eCFgAXhTQ@mail.gmail.com>
+Subject: Re: [PATCH v3] media: mtk-vpu: avoid unaligned access to DTCM buffer.
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Feb 27, 2020 at 5:50 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+>
+> On 2/25/20 6:24 PM, Hsin-Yi Wang wrote:
+> > struct vpu_run *run in vpu_init_ipi_handler() is an ioremapped DTCM (Data
+> > Tightly Coupled Memory) buffer shared with AP.  It's not able to do
+> > unaligned access. Otherwise kernel would crash due to unable to handle
+> > kernel paging request.
+> >
+> > struct vpu_run {
+> >       u32 signaled;
+> >       char fw_ver[VPU_FW_VER_LEN];
+> >       unsigned int    dec_capability;
+> >       unsigned int    enc_capability;
+> >       wait_queue_head_t wq;
+> > };
+> >
+> > fw_ver starts at 4 byte boundary. If system enables
+> > CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS, strscpy() will do
+> > read_word_at_a_time(), which tries to read 8-byte: *(unsigned long *)addr
+> >
+> > Copy the string by memcpy_fromio() for this buffer to avoid unaligned
+> > access.
+> >
+> > Fixes: 85709cbf1524 ("media: replace strncpy() by strscpy()")
+> > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> > ---
+> > Change in v3:
+> > - fix sparse warnings.
+> > Change in v2:
+> > - fix sparse warnings.
+> > ---
+> >  drivers/media/platform/mtk-vpu/mtk_vpu.c | 14 ++++++++------
+> >  1 file changed, 8 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/mtk-vpu/mtk_vpu.c b/drivers/media/platform/mtk-vpu/mtk_vpu.c
+> > index a768707abb94..e3fd2d1814f3 100644
+> > --- a/drivers/media/platform/mtk-vpu/mtk_vpu.c
+> > +++ b/drivers/media/platform/mtk-vpu/mtk_vpu.c
+> > @@ -603,12 +603,14 @@ EXPORT_SYMBOL_GPL(vpu_load_firmware);
+> >  static void vpu_init_ipi_handler(void *data, unsigned int len, void *priv)
+> >  {
+> >       struct mtk_vpu *vpu = (struct mtk_vpu *)priv;
+> > -     struct vpu_run *run = (struct vpu_run *)data;
+> > -
+> > -     vpu->run.signaled = run->signaled;
+> > -     strscpy(vpu->run.fw_ver, run->fw_ver, sizeof(vpu->run.fw_ver));
+> > -     vpu->run.dec_capability = run->dec_capability;
+> > -     vpu->run.enc_capability = run->enc_capability;
+> > +     struct vpu_run __iomem *run = (struct vpu_run __iomem __force *)data;
+>
+> The use of __force is generally a bad sign. Shouldn't the 'void *data' be a
+> 'void __iomem *data'? And vpu->recv_buf should be 'struct share_obj __iomem *recv_buf;'.
+> Probably send_buf as well.
+>
+> In other words, the __iomem attribute should be wired up correctly throughout the
+> driver code, and not forcibly applied in one place. That is asking for trouble in
+> the future. Also, sparse only works well in detecting problems if such attributes
+> are applied at the right level.
+>
+> Regards,
+>
+>         Hans
+>
+Thanks for your comments. I should check the whole code more
+thoroughly. I do see that vpu->recv_buf is forced cast from void
+__iomem *tcm:
+vpu->recv_buf = (__force struct share_obj *)(vpu->reg.tcm +VPU_DTCM_OFFSET);
+I'll use struct share_obj __iomem *recv_buf; as you suggested. Thanks
 
-On Wed, Feb 19, 2020 at 04:30:55PM -0800, Prashant Malani wrote:
-> Some Chrome OS devices with Embedded Controllers (EC) can read and
-> modify Type C port state.
-> 
-> Add an entry in the DT Bindings documentation that lists out the logical
-> device and describes the relevant port information, to be used by the
-> corresponding driver.
-> 
-> Signed-off-by: Prashant Malani <pmalani@chromium.org>
-> ---
-> 
-> Changes in v3:
-> - Fixed license identifier.
-> - Renamed "port" to "connector".
-> - Made "connector" be a "usb-c-connector" compatible property.
-> - Updated port-number description to explain min and max values,
->   and removed $ref which was causing dt_binding_check errors.
-> - Fixed power-role, data-role and try-power-role details to make
->   dt_binding_check pass.
-> - Fixed example to include parent EC SPI DT Node.
-> 
-> Changes in v2:
-> - No changes. Patch first introduced in v2 of series.
-> 
->  .../bindings/chrome/google,cros-ec-typec.yaml | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> new file mode 100644
-> index 00000000000000..97fd982612f120
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> @@ -0,0 +1,86 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/chrome/google,cros-ec-typec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google Chrome OS EC(Embedded Controller) Type C port driver.
-> +
-> +maintainers:
-> +  - Benson Leung <bleung@chromium.org>
-> +  - Prashant Malani <pmalani@chromium.org>
-> +
-> +description:
-> +  Chrome OS devices have an Embedded Controller(EC) which has access to
-> +  Type C port state. This node is intended to allow the host to read and
-> +  control the Type C ports. The node for this device should be under a
-> +  cros-ec node like google,cros-ec-spi.
-> +
-> +properties:
-> +  compatible:
-> +    const: google,cros-ec-typec
-> +
-> +  connector:
-> +    description: A node that represents a physical Type C connector port
-> +      on the device.
-> +    type: object
-> +    properties:
-> +      compatible:
-> +        const: usb-c-connector
-> +      port-number:
-> +        description: The number used by the Chrome OS EC to identify
-> +          this type C port. Valid values are 0 - (EC_USB_PD_MAX_PORTS - 1).
-> +      power-role:
-> +        description: Determines the power role that the Type C port will
-> +          adopt.
-> +        maxItems: 1
-> +        contains:
-> +          enum:
-> +            - sink
-> +            - source
-> +            - dual
-> +      data-role:
-> +        description: Determines the data role that the Type C port will
-> +          adopt.
-> +        maxItems: 1
-> +        contains:
-> +          enum:
-> +            - host
-> +            - device
-> +            - dual
-> +      try-power-role:
-> +        description: Determines the preferred power role of the Type C port.
-> +        maxItems: 1
-> +        contains:
-> +          enum:
-> +            - sink
-> +            - source
-> +            - dual
-> +
-> +    required:
-> +      - port-number
-> +      - power-role
-> +      - data-role
-> +      - try-power-role
+Since all handlers (vpu_init_ipi_handler, vpu_enc_ipi_handler,
+vpu_dec_ipi_handler, and mtk_mdp_vpu_ipi_handler) only do read access
+to this buffer, I think we can also change 'void *data' as 'const void
+*data', and pass another buffer copied from vpu->recv_buf->share_buf
+to handler. In this way we don't have to change to use iomem APIs in
+those handlers.
 
-Do you really need to redefine those?
-
-I think you just need to mention that there is a required sub-node
-"connector", and the place where it's described. So something
-like this:
-
-        Required sub-node:
-        - connector : The "usb-c-connector". The bindings of the
-          connector node are specified in:
-
-                Documentation/devicetree/bindings/connector/usb-connector.txt
-
-
-Then you just need to define the Chrome OS EC specific properties, so
-I guess just the "port-number".
-
-
-thanks,
-
--- 
-heikki
+ static void vpu_ipi_handler(struct mtk_vpu *vpu)
+ {
+-       struct share_obj *rcv_obj = vpu->recv_buf;
++       struct share_obj __iomem *rcv_obj = vpu->recv_buf;
+        struct vpu_ipi_desc *ipi_desc = vpu->ipi_desc;
+-
+-       if (rcv_obj->id < IPI_MAX && ipi_desc[rcv_obj->id].handler) {
+-               ipi_desc[rcv_obj->id].handler(rcv_obj->share_buf,...
+...
++       unsigned char data[SHARE_BUF_SIZE];
++       s32 id = readl(&rcv_obj->id);
++
++       memcpy_fromio(data, rcv_obj->share_buf, sizeof(data));
++       if (id < IPI_MAX && ipi_desc[id].handler) {
++               ipi_desc[id].handler(data, readl(&rcv_obj->len), ...
+...
