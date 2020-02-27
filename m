@@ -2,146 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE565172157
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:49:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F21A172158
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:49:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730912AbgB0Oru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:47:50 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46307 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730021AbgB0Orr (ORCPT
+        id S1730825AbgB0Or7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:47:59 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36408 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729703AbgB0Or5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:47:47 -0500
-Received: by mail-qk1-f193.google.com with SMTP id u124so3284562qkh.13
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:47:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zhqtzi/UsQ+Kabj9geEXwZi4h5VMx6dCe1mfKXvTrM8=;
-        b=NjPkNW86o3xQ+Ej2l0NtIwryDFrygqw5hU7ZHKTlvplTpg7blfRjw0k6SNrSWhMQrO
-         tKIIWQ2ayUKmP19R5XxBetNxTCZFx9yIiqrN69ICHe+bD13p29LeJA3/U/a3dfYBZlaT
-         JjWJp+L7+AQIM1uWPDq5y6jJHeIrIaiY18wS+idfeiFjnRQfgio0I9gXxzp59WTGoePz
-         nMB149FEVb+1ImG39UVG2fmwhhTH+AAygvxDVtfizUPTGrx6i68N7M/tTijA727rcZbf
-         qitO48xaZIMbzymL4MgDtS1vlD25CZKybAKk0GZSWXbCzCp/0XhQS5u6VUXwpNYEMzuH
-         DmHQ==
+        Thu, 27 Feb 2020 09:47:57 -0500
+Received: by mail-ot1-f66.google.com with SMTP id j20so3156708otq.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:47:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zhqtzi/UsQ+Kabj9geEXwZi4h5VMx6dCe1mfKXvTrM8=;
-        b=B9A/vhvOtOylbg1dc0AahGTySeSpMCeL6/+bDY32Xq7D2kI/4z0dv9JbO821sza9lk
-         oVUwwxBv3vlkUmrUO3P9NTxdgLz/v4cf8HzVPzCdhZ5cTpsM+i/9kzXm2DiqnTNFv8w8
-         OVubl7jm0d0h2jNa4kWi82cQMG+TeZfVFFYRY1pjVW94yBJFKt7A3tz30PJRsZmkLQPi
-         0rYrlEx3eqpYVVsaPl8D9PjWsJQ8D6aBZ+QgOB7opVDYFbjKPRFdfqA7GMex08FwGZ7o
-         QI0vJ8WgrhcXT00fHHnWqPmevJvLPgo+lkjwlNm76xA6SS1Etw8jX7KUnD0YUjG2MBcS
-         XTJA==
-X-Gm-Message-State: APjAAAXx4HWuqNeWbl8uIAKbZoMnFSo8484Tc8H7Ys2Jt2PuU6Lroqgn
-        efQXXzEXvQFBGhZchxG4md+TvQ==
-X-Google-Smtp-Source: APXvYqwSvJ2ITk5aaaJGrAFwvrfQSnzqTnrKAFs8KAEdIG3bEtPQ30NnHe1wn/PsRVBGhb1ip3uO4A==
-X-Received: by 2002:a37:9a8b:: with SMTP id c133mr5516622qke.132.1582814864835;
-        Thu, 27 Feb 2020 06:47:44 -0800 (PST)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id n23sm3178957qtr.87.2020.02.27.06.47.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Feb 2020 06:47:44 -0800 (PST)
-Message-ID: <1582814862.7365.135.camel@lca.pw>
-Subject: Re: suspicious RCU due to "Prefer using an idle CPU as a migration
- target instead of comparing tasks"
-From:   Qian Cai <cai@lca.pw>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        paulmck@kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 27 Feb 2020 09:47:42 -0500
-In-Reply-To: <1582812549.7365.134.camel@lca.pw>
-References: <1582812549.7365.134.camel@lca.pw>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Hx07xUVtiLNFuA+1PzPYK/9ENx9jNADnJPX/dLICnC8=;
+        b=lXot71ha2urcEDRxHPtBHaefBgmRMzntRzxE6l5Ds6md0rzSUqRI/6H/ApNFmifuSN
+         9lC498PqgOIiGEueKbDq8ac1v4jKA4ac9RkZzN5I1+AfmDOEtOo5DZE+ohNHSL+Xou5B
+         m5V74FIWg/uGXpKMvhhtGMoa4MQjZmv38HetA93dLq8lpfB5WG7dZvziCwiF4N2chTxa
+         yKLoCajNkQq/Q9j7kS20LJvOM2yYZOe7SLZhn58CYYqQau/fiY/zpYiA/6YMIBatLzhl
+         zATALbuG9fu095hQ+sIuuFm3Lp5Rs98Pz0IQUsfzW+3H35gAojENvm98gI7B+VVM4Py7
+         9eWw==
+X-Gm-Message-State: APjAAAXFW4zHzRIVg/oZc9f2zbg4Uj8YTVH6gP23vXOxPjs2jeAjc7Ly
+        yzO3Kx93Bh4m/GpovjcmPHrLZGcWfwMhN6F2KTD30V8b
+X-Google-Smtp-Source: APXvYqx+Tk3BPXn2pbxAQxVRNK/Sn8CkdmxpB1+lGOWCIYJv6w3mZHrwCku0J5SBCbXVXhZykFOzpHDF1EFnW2116wg=
+X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr3602134otk.145.1582814876431;
+ Thu, 27 Feb 2020 06:47:56 -0800 (PST)
+MIME-Version: 1.0
+References: <158220110257.26565.4812934676257459744.stgit@devnote2>
+ <158220111291.26565.9036889083940367969.stgit@devnote2> <CAMuHMdWEoBrFRhmLEByhDCasuMrbGS4PreRivYRApdsME7x2AA@mail.gmail.com>
+ <20200227092732.6a22a71a@gandalf.local.home>
+In-Reply-To: <20200227092732.6a22a71a@gandalf.local.home>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 27 Feb 2020 15:47:45 +0100
+Message-ID: <CAMuHMdX6RpEDpkKcmLeNh4T2o+_HpV3XpYCAWYk0uWYt_bkztw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] bootconfig: Set CONFIG_BOOT_CONFIG=n by default
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-02-27 at 09:09 -0500, Qian Cai wrote:
-> The linux-next commit ff7db0bf24db ("sched/numa: Prefer using an idle CPU as a
-> migration target instead of comparing tasks") introduced a boot warning,
+Hi Steven,
 
-This?
+On Thu, Feb 27, 2020 at 3:27 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Thu, 27 Feb 2020 10:22:00 +0100
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > +static int __init warn_bootconfig(char *str)
+> > > +{
+> > > +       pr_warn("WARNING: 'bootconfig' found on the kernel command line but CONFIG_BOOTCONFIG is not set.\n");
+> > > +       return 0;
+> > > +}
+> > > +early_param("bootconfig", warn_bootconfig);
+> >
+> > Yeah, let's increases kernel size for the people who don't want to jump
+> > on the bootconfig wagon :-(
+> >
+> > Is this really needed?
+>
+> Yes, because if someone adds bootconfig to the command line they would be
+> expecting their bootconfig to be read. If not, we should not fail silently.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a61d83ea2930..ca780cd1eae2 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1607,7 +1607,9 @@ static void update_numa_stats(struct task_numa_env *env,
-                        if (ns->idle_cpu == -1)
-                                ns->idle_cpu = cpu;
- 
-+                       rcu_read_lock();
-                        idle_core = numa_idle_core(idle_core, cpu);
-+                       rcu_read_unlock();
-                }
-        }
+If someone adds "ip=on" to the command line, they expect DHCP to work.
+Woops, you need CONFIG_IP_PNP for that.
+If someone adds "nfsroot=..." to the command line, they expect the NFS
+root fielsystem to be mounted.
+Guess how many options need to be enabled for that?
 
-> 
-> [   86.520534][    T1] WARNING: suspicious RCU usage
-> [   86.520540][    T1] 5.6.0-rc3-next-20200227 #7 Not tainted
-> [   86.520545][    T1] -----------------------------
-> [   86.520551][    T1] kernel/sched/fair.c:5914 suspicious
-> rcu_dereference_check() usage!
-> [   86.520555][    T1] 
-> [   86.520555][    T1] other info that might help us debug this:
-> [   86.520555][    T1] 
-> [   86.520561][    T1] 
-> [   86.520561][    T1] rcu_scheduler_active = 2, debug_locks = 1
-> [   86.520567][    T1] 1 lock held by systemd/1:
-> [   86.520571][    T1]  #0: ffff8887f4b14848 (&mm->mmap_sem#2){++++}, at:
-> do_page_fault+0x1d2/0x998
-> [   86.520594][    T1] 
-> [   86.520594][    T1] stack backtrace:
-> [   86.520602][    T1] CPU: 1 PID: 1 Comm: systemd Not tainted 5.6.0-rc3-next-
-> 20200227 #7
-> [   86.520607][    T1] Hardware name: HP ProLiant XL450 Gen9 Server/ProLiant
-> XL450 Gen9 Server, BIOS U21 05/05/2016
-> [   86.520612][    T1] Call Trace:
-> [   86.520623][    T1]  dump_stack+0xa0/0xea
-> [   86.520634][    T1]  lockdep_rcu_suspicious+0x102/0x10b
-> lockdep_rcu_suspicious at kernel/locking/lockdep.c:5648
-> [   86.520641][    T1]  update_numa_stats+0x577/0x710
-> test_idle_cores at kernel/sched/fair.c:5914
-> (inlined by) numa_idle_core at kernel/sched/fair.c:1565
-> (inlined by) update_numa_stats at kernel/sched/fair.c:1610
-> [   86.520649][    T1]  ? rcu_read_lock_held+0xac/0xc0
-> [   86.520657][    T1]  task_numa_migrate+0x4aa/0xdb0
-> [   86.520664][    T1]  ? task_numa_find_cpu+0x1010/0x1010
-> [   86.520677][    T1]  ? migrate_pages+0x29c/0x17c0
-> [   86.520683][    T1]  task_numa_fault+0x607/0xd90
-> [   86.520691][    T1]  ? task_numa_free+0x230/0x230
-> [   86.520698][    T1]  ? __kasan_check_read+0x11/0x20
-> [   86.520704][    T1]  ? do_raw_spin_unlock+0xa8/0x140
-> [   86.520712][    T1]  do_numa_page+0x33f/0x450
-> [   86.520720][    T1]  __handle_mm_fault+0xb81/0xb90
-> [   86.520727][    T1]  ? copy_page_range+0x420/0x420
-> [   86.520736][    T1]  handle_mm_fault+0xdc/0x2e0
-> [   86.520742][    T1]  do_page_fault+0x2c7/0x998
-> [   86.520752][    T1]  page_fault+0x34/0x40
-> [   86.520758][    T1] RIP: 0033:0x7f95faf63c53
-> [   86.520766][    T1] Code: 00 41 00 3d 00 00 41 00 74 3d 48 8d 05 d6 5a 2d 00
-> 8b 00 85 c0 75 61 b8 01 01 00 00 0f 05 48 3d 00 f0 ff ff 0f 87 a5 00 00 00 <48>
-> 8b 4c 24 38 64 48 33 0c 25 28 00 00 00 0f 85 ba 00 00 00 48 83
-> [   86.520771][    T1] RSP: 002b:00007ffdda737790 EFLAGS: 00010207
-> [   86.520778][    T1] RAX: 0000000000000024 RBX: 0000562a594b9fd0 RCX:
-> 00007f95faf63c47
-> [   86.520783][    T1] RDX: 00000000002a0000 RSI: 0000562a594b9fd1 RDI:
-> 0000000000000023
-> [   86.520788][    T1] RBP: 00007ffdda7379c0 R08: 00007f95fc734e30 R09:
-> 00007ffdda737d60
-> [   86.520793][    T1] R10: 0000000000000000 R11: 0000000000000246 R12:
-> 0000562a59459fb4
-> [   86.520798][    T1] R13: 0000000000000000 R14: 0000000000000001 R15:
-> 0000000000000000
+Perhaps we need CONFIG_COMMAND_NOT_FOUND?
+
+    Kernel panic - not syncing: option "inspecial" not found.
+    Did you mean:
+
+        option "imspecial" from section "mine"
+        option "urspecial" from section "yours"
+
+    Try enabling it with "make xconfig".
+
+> Are you really concerned about a tiny __init function that gets freed after
+> boot up?
+
+It's still part of the initial kernel image, and thus subject to boot loader and
+platform limitations.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
