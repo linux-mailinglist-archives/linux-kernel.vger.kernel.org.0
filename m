@@ -2,168 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C4E1717D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 13:51:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 530041717E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 13:55:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729097AbgB0MvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 07:51:06 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.72]:17388 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728977AbgB0MvF (ORCPT
+        id S1729076AbgB0Mzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 07:55:49 -0500
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:46403 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729036AbgB0Mzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 07:51:05 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 193F115D88D
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:51:04 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7Id6jLduJEfyq7Id6jRF5C; Thu, 27 Feb 2020 06:51:04 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=1f92XC34FHn3ZjYdpwfdtBDEt7FiLvN/exTOBVNLQ0E=; b=vmFgRO8B5BleEJTspNeQz5ixWq
-        J2AAIfJtKnHrPPgUOtlXhMbQoaqnbqejvjt/F5J1gp5hW7hbs6vN6Lw7xdLbJZCqMS0pc28Q5DT9F
-        26p4DcVgzcGoYHqwUJ21HqCC1QDNw2MaDYOmkAKnxA9UzhcMVbxYhCtjY1KtAbEi4rrpyxqdiGeov
-        fi2rKYlBZjak4pP5SA+SjAhk8rgT9ZPxBqojRUSYJ2PN/g35mQVJFqM0sGIImYQY0yQO4F4tNOUPT
-        GqQEG+inpEyFITmjZ6pHWOkEWrSC4oWCGU4gsUBGSsBe3TBEknnb+DwLZYtAAj5cOW23NUXIyMVvN
-        75uCJy2g==;
-Received: from [200.76.83.19] (port=55990 helo=[192.168.43.132])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j7Id1-000czK-Vl; Thu, 27 Feb 2020 06:51:02 -0600
-Subject: Re: [PATCH] apparmor: Replace zero-length array with flexible-array
- member
-To:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200211210427.GA28952@embeddedor>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <4c8bf961-1d0d-9a63-3b1b-3aa6acb55179@embeddedor.com>
-Date:   Thu, 27 Feb 2020 06:53:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 27 Feb 2020 07:55:49 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 60636220C7;
+        Thu, 27 Feb 2020 07:55:48 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 27 Feb 2020 07:55:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=EsLh1ElVWcPMN6QEUKEjRZC4EEK
+        YwHmgnVppcHj4F4c=; b=nLEb1dECBO6hZMBDokjWOh2E3TgBmY1oxWqwFTdNXq+
+        d/NWy/0BXqO/W/rfadUWUBVpmdAr4K4Z0PN0z31KtrMAvs1HVa9sacge1dh11o4y
+        dLLIDNCDGNXaNzsGl1Cxnkykk1aXsEfuXQY+2p2gnA0BNbalrQTxfviLREQddWRF
+        +oBJCmKYVIhGp1/rPvd6uxdZ6NdfFvHwTnbXYz6/cnh73Xs4WD17u2UHU4EsxVAj
+        N5kSymrK0qDd8yDPOPBHnDuJDxXA1rBzX/gFLAjRYKDcvD1GaTnosqPQ2OWDhYbo
+        n1B/r5RiZQXJtpaDqnjWf9EHl94NMKk28kLPiorOsjQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=EsLh1E
+        lVWcPMN6QEUKEjRZC4EEKYwHmgnVppcHj4F4c=; b=VLX6OF3r+dVjSenAdqsozN
+        efj26IFFopT/I/Uv+dPH1+trEebkWT44ed32Lz35dh8P1DEr5P8YOpp5c/Q4u27X
+        08jZ+FVtXBCvPcyeukNO6CHA4DHoGEjZ+gxGtuvdmYHEBkL3ZEqWimnUZmJMyeRT
+        7kXC0uawYbYEzGiWItsMLaok2/H+UA1xM6B3xuuNKrSbloFsjyXdotwuCxwDopUx
+        zXYMr9unYTdFx2cEZHU1VMyuEXPMeQhyT8VVh3Kcm+5d7tEA2DhQtkJ9C0CPsCab
+        HNtnA6QWFq/JPhtc53DynzW3MRXOLxXtLpqyeg4ny3H461dYHNUc4rwo/FWoRIyg
+        ==
+X-ME-Sender: <xms:UrxXXvS-QYkKD4c-XkJKc8O-fBZ5wbBV2-2kiV2HV-XD87sQ97dWQA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleeigdegiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
+    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:UrxXXqV9S4DI_kFbZFkDKHzoZU9sTkM1-rjWpSmJPWznUSypm1p1AQ>
+    <xmx:UrxXXgSgrzqsbgRMjYjjhJqIPLy0PaL9BRaTahhDiIriBMNOlfR6Kw>
+    <xmx:UrxXXtv6m8GJrPrBqxFBQMz5kJ-eAkLqjORwfFCXl44kriaspXHbLQ>
+    <xmx:VLxXXvmzBMa2NVri2yVvR2_19kBX13niJkMQCzPeS5JFUmoY4mC3JQ>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id AB4EF3060FD3;
+        Thu, 27 Feb 2020 07:55:46 -0500 (EST)
+Date:   Thu, 27 Feb 2020 13:55:45 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mans Rullgard <mans@mansr.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: sunxi: h3/h5: add r_pwm node
+Message-ID: <20200227125545.ynzmwcbs6gqqm4ys@gilmour.lan>
+References: <20200227115526.28075-1-mans@mansr.com>
 MIME-Version: 1.0
-In-Reply-To: <20200211210427.GA28952@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.76.83.19
-X-Source-L: No
-X-Exim-ID: 1j7Id1-000czK-Vl
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.132]) [200.76.83.19]:55990
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7rb5t2q5bd2tfoz6"
+Content-Disposition: inline
+In-Reply-To: <20200227115526.28075-1-mans@mansr.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
 
-Friendly ping: Who can take this?
+--7rb5t2q5bd2tfoz6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks
---
-Gustavo
+On Thu, Feb 27, 2020 at 11:55:26AM +0000, Mans Rullgard wrote:
+> There is a second PWM unit available in the PL I/O block.
+> Add a node and pinmux definition for it.
+>
+> Signed-off-by: Mans Rullgard <mans@mansr.com>
 
-On 2/11/20 15:04, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertenly introduced[3] to the codebase from now on.
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  security/apparmor/apparmorfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index fefee040bf79..cc81080efb63 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -804,7 +804,7 @@ static ssize_t query_label(char *buf, size_t buf_len,
->  struct multi_transaction {
->  	struct kref count;
->  	ssize_t size;
-> -	char data[0];
-> +	char data[];
->  };
->  
->  #define MULTI_TRANSACTION_LIMIT (PAGE_SIZE - sizeof(struct multi_transaction))
-> 
+Applied, thanks!
+Maxime
+
+--7rb5t2q5bd2tfoz6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXle8UAAKCRDj7w1vZxhR
+xcTXAQDy5uVx/AsVCJdyv0LVkS82AGvP61hYpI7z6iB/82Ar4gD+PmcwHsBHmKWW
+INLYhHsvJkK7fO13YhEWs9ZcqYlRdg8=
+=01S8
+-----END PGP SIGNATURE-----
+
+--7rb5t2q5bd2tfoz6--
