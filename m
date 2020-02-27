@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64320171C5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:11:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B14EC171D0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:17:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388695AbgB0OL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:11:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49858 "EHLO mail.kernel.org"
+        id S2389710AbgB0OR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:17:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388688AbgB0OLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:11:23 -0500
+        id S2389688AbgB0ORX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:17:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FEEC20578;
-        Thu, 27 Feb 2020 14:11:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E559B246AD;
+        Thu, 27 Feb 2020 14:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812682;
-        bh=/tyTvlOefgejlw1qNqg4s5MKur21O+cVuaR95mSgyx0=;
+        s=default; t=1582813042;
+        bh=MGK1Qur0NJz7SAyjMCCjz28nH5j++Jd4iAwKVDhsT+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ISqdRjUqDog3n7cZUX9IP5BcrMs50Ofv4DAO+GqvHwagB65M58xNgqjoxeh0rNdEC
-         ov/qExun0rqSJRH19y76roCGE4xHEi7hgoP6KI2JDnbyCNP56quqioAtmgDHJtLiTR
-         G2fsJ3yilDrkSuD+7tHJuATf1BjinEuGBfPqwu30=
+        b=put39t7SukgZ5l4XLbhYtOrdGiWVZ53aPIRvJdf1YYCmKgHCSiQ0NTmRAS9PMtEk6
+         DG3CZeynuU1Jh/zbFKCLfMsCG5M8vO3SePwccIXRCfMZf1hR71Yizj2xEbL5oPezBq
+         Oi1Zn949WIinMc4u5CTJAP/x3CguXqkmlTk3jDEw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vaibhav Agarwal <vaibhav.sr@gmail.com>
-Subject: [PATCH 5.4 112/135] staging: greybus: use after free in gb_audio_manager_remove_all()
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Jon Bloomfield <jon.bloomfield@intel.com>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 5.5 115/150] drm/i915/gem: Require per-engine reset support for non-persistent contexts
 Date:   Thu, 27 Feb 2020 14:37:32 +0100
-Message-Id: <20200227132246.031633069@linuxfoundation.org>
+Message-Id: <20200227132249.678010614@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit b7db58105b80fa9232719c8329b995b3addfab55 upstream.
+commit dea8d5ce46d7e7f7270b9804df7d1174f88bfd99 upstream.
 
-When we call kobject_put() and it's the last reference to the kobject
-then it calls gb_audio_module_release() and frees module.  We dereference
-"module" on the next line which is a use after free.
+To enable non-persistent contexts, we require a means of cancelling any
+inflight work from that context. This is first done "gracefully" by
+using preemption to kick the active context off the engine, and then
+forcefully by resetting the engine if it is active. If we are unable to
+reset the engine to remove hostile userspace, we should not allow
+userspace to opt into using non-persistent contexts.
 
-Fixes: c77f85bbc91a ("greybus: audio: Fix incorrect counting of 'ida'")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Vaibhav Agarwal <vaibhav.sr@gmail.com>
-Link: https://lore.kernel.org/r/20200205123217.jreendkyxulqsool@kili.mountain
+If the per-engine reset fails, we still do a full GPU reset, but that is
+rare and usually indicative of much deeper issues. The damage is already
+done. However, the goal of the interface to allow long running compute
+jobs without causing collateral damage elsewhere, and if we are unable
+to support that we should make that known by not providing the
+interface (and falsely pretending we can).
+
+Fixes: a0e047156cde ("drm/i915/gem: Make context persistence optional")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Jon Bloomfield <jon.bloomfield@intel.com>
+Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20200130164553.1937718-1-chris@chris-wilson.co.uk
+(cherry picked from commit d1b9b5f127bc3797fc274cfa4f363e039f045c3a)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/greybus/audio_manager.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/i915/gem/i915_gem_context.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/drivers/staging/greybus/audio_manager.c
-+++ b/drivers/staging/greybus/audio_manager.c
-@@ -92,8 +92,8 @@ void gb_audio_manager_remove_all(void)
+--- a/drivers/gpu/drm/i915/gem/i915_gem_context.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_context.c
+@@ -484,6 +484,22 @@ static int __context_set_persistence(str
+ 		if (!(ctx->i915->caps.scheduler & I915_SCHEDULER_CAP_PREEMPTION))
+ 			return -ENODEV;
  
- 	list_for_each_entry_safe(module, next, &modules_list, list) {
- 		list_del(&module->list);
--		kobject_put(&module->kobj);
- 		ida_simple_remove(&module_id, module->id);
-+		kobject_put(&module->kobj);
++		/*
++		 * If the cancel fails, we then need to reset, cleanly!
++		 *
++		 * If the per-engine reset fails, all hope is lost! We resort
++		 * to a full GPU reset in that unlikely case, but realistically
++		 * if the engine could not reset, the full reset does not fare
++		 * much better. The damage has been done.
++		 *
++		 * However, if we cannot reset an engine by itself, we cannot
++		 * cleanup a hanging persistent context without causing
++		 * colateral damage, and we should not pretend we can by
++		 * exposing the interface.
++		 */
++		if (!intel_has_reset_engine(&ctx->i915->gt))
++			return -ENODEV;
++
+ 		i915_gem_context_clear_persistence(ctx);
  	}
  
- 	is_empty = list_empty(&modules_list);
 
 
