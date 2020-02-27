@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35B65171A94
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:55:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A07E1719A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:47:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731634AbgB0NzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:55:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55240 "EHLO mail.kernel.org"
+        id S1730603AbgB0Nqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:46:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731488AbgB0NzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:55:02 -0500
+        id S1730589AbgB0Nqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:46:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 179262469D;
-        Thu, 27 Feb 2020 13:55:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E1762469F;
+        Thu, 27 Feb 2020 13:46:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811701;
-        bh=/cgqfmp8nwk5RY90ggAflTwKCmubantpkDVWc3yF89U=;
+        s=default; t=1582811209;
+        bh=Swyng6d+9CposMWyIsWX6EsBuZZ282uigPpLCyS1LsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tAlwyptMBKYwB5gqr+U6s6B7f8GkaQGZShVsagr3uvNl8FfQL1mC2GKiXlYSwvaGn
-         djNO2BdT3L+0hjbQJDbZC8+TY0p7Y5EOOylHOrJz8ke4tm7OKTu3dc5On0QS48P+Th
-         pxsdwKgfpMTINF77nx/jWk6Sd7uhedRzrNLm3ruI=
+        b=EnAZutLKfXmC9mYyYZkgIxCMr8ElELic3EC77d+0NZFdb1BH7d7Bepn2NwmMztM9F
+         fZ8ZGhILGkYC0yIbyAD6QIrCI2EIW0NBxkEC9+FU4wc6iu0NZaT2i+7apclmfDX4hB
+         wtJU6HI3/36gxHnjlKqLJB6SEgfKtGH/1Lru7Tl4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sun Ke <sunke32@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 067/237] nbd: add a flush_workqueue in nbd_start_device
+        stable@vger.kernel.org, Andreas Dilger <adilger@dilger.ca>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.9 007/165] ext4: dont assume that mmp_nodename/bdevname have NUL
 Date:   Thu, 27 Feb 2020 14:34:41 +0100
-Message-Id: <20200227132302.000021274@linuxfoundation.org>
+Message-Id: <20200227132232.204573341@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,56 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sun Ke <sunke32@huawei.com>
+From: Andreas Dilger <adilger@dilger.ca>
 
-[ Upstream commit 5c0dd228b5fc30a3b732c7ae2657e0161ec7ed80 ]
+commit 14c9ca0583eee8df285d68a0e6ec71053efd2228 upstream.
 
-When kzalloc fail, may cause trying to destroy the
-workqueue from inside the workqueue.
+Don't assume that the mmp_nodename and mmp_bdevname strings are NUL
+terminated, since they are filled in by snprintf(), which is not
+guaranteed to do so.
 
-If num_connections is m (2 < m), and NO.1 ~ NO.n
-(1 < n < m) kzalloc are successful. The NO.(n + 1)
-failed. Then, nbd_start_device will return ENOMEM
-to nbd_start_device_ioctl, and nbd_start_device_ioctl
-will return immediately without running flush_workqueue.
-However, we still have n recv threads. If nbd_release
-run first, recv threads may have to drop the last
-config_refs and try to destroy the workqueue from
-inside the workqueue.
+Link: https://lore.kernel.org/r/1580076215-1048-1-git-send-email-adilger@dilger.ca
+Signed-off-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-To fix it, add a flush_workqueue in nbd_start_device.
-
-Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
-Signed-off-by: Sun Ke <sunke32@huawei.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/nbd.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/ext4/mmp.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 4c661ad91e7d3..8f56e6b2f114f 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1203,6 +1203,16 @@ static int nbd_start_device(struct nbd_device *nbd)
- 		args = kzalloc(sizeof(*args), GFP_KERNEL);
- 		if (!args) {
- 			sock_shutdown(nbd);
-+			/*
-+			 * If num_connections is m (2 < m),
-+			 * and NO.1 ~ NO.n(1 < n < m) kzallocs are successful.
-+			 * But NO.(n + 1) failed. We still have n recv threads.
-+			 * So, add flush_workqueue here to prevent recv threads
-+			 * dropping the last config_refs and trying to destroy
-+			 * the workqueue from inside the workqueue.
-+			 */
-+			if (i)
-+				flush_workqueue(nbd->recv_workq);
- 			return -ENOMEM;
- 		}
- 		sk_set_memalloc(config->socks[i]->sock->sk);
--- 
-2.20.1
-
+--- a/fs/ext4/mmp.c
++++ b/fs/ext4/mmp.c
+@@ -119,10 +119,10 @@ void __dump_mmp_msg(struct super_block *
+ {
+ 	__ext4_warning(sb, function, line, "%s", msg);
+ 	__ext4_warning(sb, function, line,
+-		       "MMP failure info: last update time: %llu, last update "
+-		       "node: %s, last update device: %s",
+-		       (long long unsigned int) le64_to_cpu(mmp->mmp_time),
+-		       mmp->mmp_nodename, mmp->mmp_bdevname);
++		       "MMP failure info: last update time: %llu, last update node: %.*s, last update device: %.*s",
++		       (unsigned long long)le64_to_cpu(mmp->mmp_time),
++		       (int)sizeof(mmp->mmp_nodename), mmp->mmp_nodename,
++		       (int)sizeof(mmp->mmp_bdevname), mmp->mmp_bdevname);
+ }
+ 
+ /*
+@@ -153,6 +153,7 @@ static int kmmpd(void *data)
+ 	mmp_check_interval = max(EXT4_MMP_CHECK_MULT * mmp_update_interval,
+ 				 EXT4_MMP_MIN_CHECK_INTERVAL);
+ 	mmp->mmp_check_interval = cpu_to_le16(mmp_check_interval);
++	BUILD_BUG_ON(sizeof(mmp->mmp_bdevname) < BDEVNAME_SIZE);
+ 	bdevname(bh->b_bdev, mmp->mmp_bdevname);
+ 
+ 	memcpy(mmp->mmp_nodename, init_utsname()->nodename,
+@@ -377,7 +378,8 @@ skip:
+ 	/*
+ 	 * Start a kernel thread to update the MMP block periodically.
+ 	 */
+-	EXT4_SB(sb)->s_mmp_tsk = kthread_run(kmmpd, mmpd_data, "kmmpd-%s",
++	EXT4_SB(sb)->s_mmp_tsk = kthread_run(kmmpd, mmpd_data, "kmmpd-%.*s",
++					     (int)sizeof(mmp->mmp_bdevname),
+ 					     bdevname(bh->b_bdev,
+ 						      mmp->mmp_bdevname));
+ 	if (IS_ERR(EXT4_SB(sb)->s_mmp_tsk)) {
 
 
