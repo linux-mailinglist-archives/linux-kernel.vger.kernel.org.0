@@ -2,38 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BE35171C40
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:10:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5092B171BC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:05:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388536AbgB0OK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:10:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48610 "EHLO mail.kernel.org"
+        id S2387815AbgB0OFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:05:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388531AbgB0OKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:10:25 -0500
+        id S2387805AbgB0OFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:05:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FEF720801;
-        Thu, 27 Feb 2020 14:10:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37EA924656;
+        Thu, 27 Feb 2020 14:05:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812624;
-        bh=99iTE+moXDOBvVocvUMuf92PR+/jrXuVSLoXxuCMsds=;
+        s=default; t=1582812342;
+        bh=zFUipiL2o9uiiZVWHpaGxnGzMKwZINUr0CoOeUtV38I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VoZGxCoQlOoSRvS82zgFHtMdulM8Pe9lq/7kQmHnt0781QDtE6C799PKWXKCa63ld
-         xmCV17q4975eJGQefr5eXr3bSckNM+7AHOcGpOTf5w1BVY0qT2T212AVnc89BwbOB5
-         9w+fSaOpO5+r9xmGUdPSpfuGmd7zWZm4PqMNW0Vc=
+        b=Aawczdl5cSNErrfX3cQr3F/7VqlJU5x5e2jq1G9r3IJWAQ4/FvcoNX0Mw8RBGJZQd
+         GPZRGH8QjEgZK0Tcw/xgeegakPTzCFFe66vzgCa9dSmiTpjP9bgnG3PLAH7DklX7lz
+         bVqUDXn2Jh3PoPRH2Nq7kLU51uKKQ8im2ZGyGAWI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 089/135] KVM: nVMX: clear PIN_BASED_POSTED_INTR from nested pinbased_ctls only when apicv is globally disabled
+        stable@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+        Walter Wu <walter-zh.wu@mediatek.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 61/97] lib/stackdepot.c: fix global out-of-bounds in stack_slabs
 Date:   Thu, 27 Feb 2020 14:37:09 +0100
-Message-Id: <20200227132242.680993411@linuxfoundation.org>
+Message-Id: <20200227132224.502820681@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,122 +51,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Alexander Potapenko <glider@google.com>
 
-commit a4443267800af240072280c44521caab61924e55 upstream.
+[ Upstream commit 305e519ce48e935702c32241f07d393c3c8fed3e ]
 
-When apicv is disabled on a vCPU (e.g. by enabling KVM_CAP_HYPERV_SYNIC*),
-nothing happens to VMX MSRs on the already existing vCPUs, however, all new
-ones are created with PIN_BASED_POSTED_INTR filtered out. This is very
-confusing and results in the following picture inside the guest:
+Walter Wu has reported a potential case in which init_stack_slab() is
+called after stack_slabs[STACK_ALLOC_MAX_SLABS - 1] has already been
+initialized.  In that case init_stack_slab() will overwrite
+stack_slabs[STACK_ALLOC_MAX_SLABS], which may result in a memory
+corruption.
 
-$ rdmsr -ax 0x48d
-ff00000016
-7f00000016
-7f00000016
-7f00000016
-
-This is observed with QEMU and 4-vCPU guest: QEMU creates vCPU0, does
-KVM_CAP_HYPERV_SYNIC2 and then creates the remaining three.
-
-L1 hypervisor may only check CPU0's controls to find out what features
-are available and it will be very confused later. Switch to setting
-PIN_BASED_POSTED_INTR control based on global 'enable_apicv' setting.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: http://lkml.kernel.org/r/20200218102950.260263-1-glider@google.com
+Fixes: cd11016e5f521 ("mm, kasan: stackdepot implementation. Enable stackdepot for SLAB")
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Reported-by: Walter Wu <walter-zh.wu@mediatek.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx/capabilities.h |    1 +
- arch/x86/kvm/vmx/nested.c       |    5 ++---
- arch/x86/kvm/vmx/nested.h       |    3 +--
- arch/x86/kvm/vmx/vmx.c          |   10 ++++------
- 4 files changed, 8 insertions(+), 11 deletions(-)
+ lib/stackdepot.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx/capabilities.h
-+++ b/arch/x86/kvm/vmx/capabilities.h
-@@ -12,6 +12,7 @@ extern bool __read_mostly enable_ept;
- extern bool __read_mostly enable_unrestricted_guest;
- extern bool __read_mostly enable_ept_ad_bits;
- extern bool __read_mostly enable_pml;
-+extern bool __read_mostly enable_apicv;
- extern int __read_mostly pt_mode;
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index c5e06c43228f9..34c71973932e0 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -92,15 +92,19 @@ static bool init_stack_slab(void **prealloc)
+ 		return true;
+ 	if (stack_slabs[depot_index] == NULL) {
+ 		stack_slabs[depot_index] = *prealloc;
++		*prealloc = NULL;
+ 	} else {
+-		stack_slabs[depot_index + 1] = *prealloc;
++		/* If this is the last depot slab, do not touch the next one. */
++		if (depot_index + 1 < STACK_ALLOC_MAX_SLABS) {
++			stack_slabs[depot_index + 1] = *prealloc;
++			*prealloc = NULL;
++		}
+ 		/*
+ 		 * This smp_store_release pairs with smp_load_acquire() from
+ 		 * |next_slab_inited| above and in stack_depot_save().
+ 		 */
+ 		smp_store_release(&next_slab_inited, 1);
+ 	}
+-	*prealloc = NULL;
+ 	return true;
+ }
  
- #define PT_MODE_SYSTEM		0
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -5807,8 +5807,7 @@ void nested_vmx_vcpu_setup(void)
-  * bit in the high half is on if the corresponding bit in the control field
-  * may be on. See also vmx_control_verify().
-  */
--void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps,
--				bool apicv)
-+void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps)
- {
- 	/*
- 	 * Note that as a general rule, the high half of the MSRs (bits in
-@@ -5835,7 +5834,7 @@ void nested_vmx_setup_ctls_msrs(struct n
- 		PIN_BASED_EXT_INTR_MASK |
- 		PIN_BASED_NMI_EXITING |
- 		PIN_BASED_VIRTUAL_NMIS |
--		(apicv ? PIN_BASED_POSTED_INTR : 0);
-+		(enable_apicv ? PIN_BASED_POSTED_INTR : 0);
- 	msrs->pinbased_ctls_high |=
- 		PIN_BASED_ALWAYSON_WITHOUT_TRUE_MSR |
- 		PIN_BASED_VMX_PREEMPTION_TIMER;
---- a/arch/x86/kvm/vmx/nested.h
-+++ b/arch/x86/kvm/vmx/nested.h
-@@ -17,8 +17,7 @@ enum nvmx_vmentry_status {
- };
- 
- void vmx_leave_nested(struct kvm_vcpu *vcpu);
--void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps,
--				bool apicv);
-+void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps);
- void nested_vmx_hardware_unsetup(void);
- __init int nested_vmx_hardware_setup(int (*exit_handlers[])(struct kvm_vcpu *));
- void nested_vmx_vcpu_setup(void);
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -95,7 +95,7 @@ module_param(emulate_invalid_guest_state
- static bool __read_mostly fasteoi = 1;
- module_param(fasteoi, bool, S_IRUGO);
- 
--static bool __read_mostly enable_apicv = 1;
-+bool __read_mostly enable_apicv = 1;
- module_param(enable_apicv, bool, S_IRUGO);
- 
- /*
-@@ -6802,8 +6802,7 @@ static struct kvm_vcpu *vmx_create_vcpu(
- 
- 	if (nested)
- 		nested_vmx_setup_ctls_msrs(&vmx->nested.msrs,
--					   vmx_capability.ept,
--					   kvm_vcpu_apicv_active(&vmx->vcpu));
-+					   vmx_capability.ept);
- 	else
- 		memset(&vmx->nested.msrs, 0, sizeof(vmx->nested.msrs));
- 
-@@ -6885,8 +6884,7 @@ static int __init vmx_check_processor_co
- 	if (setup_vmcs_config(&vmcs_conf, &vmx_cap) < 0)
- 		return -EIO;
- 	if (nested)
--		nested_vmx_setup_ctls_msrs(&vmcs_conf.nested, vmx_cap.ept,
--					   enable_apicv);
-+		nested_vmx_setup_ctls_msrs(&vmcs_conf.nested, vmx_cap.ept);
- 	if (memcmp(&vmcs_config, &vmcs_conf, sizeof(struct vmcs_config)) != 0) {
- 		printk(KERN_ERR "kvm: CPU %d feature inconsistency!\n",
- 				smp_processor_id());
-@@ -7781,7 +7779,7 @@ static __init int hardware_setup(void)
- 
- 	if (nested) {
- 		nested_vmx_setup_ctls_msrs(&vmcs_config.nested,
--					   vmx_capability.ept, enable_apicv);
-+					   vmx_capability.ept);
- 
- 		r = nested_vmx_hardware_setup(kvm_vmx_exit_handlers);
- 		if (r)
+-- 
+2.20.1
+
 
 
