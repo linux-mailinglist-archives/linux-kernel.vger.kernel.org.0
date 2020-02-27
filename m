@@ -2,134 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 158F4172070
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:43:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2386C172036
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:41:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731559AbgB0Omy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:42:54 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:21242 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730678AbgB0Ntq (ORCPT
+        id S1731868AbgB0Okk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:40:40 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:38854 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731448AbgB0Nwx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:49:46 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01RDlDgK003925;
-        Thu, 27 Feb 2020 08:49:45 -0500
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2ydtrwka63-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Feb 2020 08:49:44 -0500
-Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 01RDnhdM017499
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Thu, 27 Feb 2020 08:49:43 -0500
-Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Thu, 27 Feb
- 2020 05:49:41 -0800
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX10.ad.analog.com
- (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Thu, 27 Feb 2020 05:49:41 -0800
-Received: from saturn.ad.analog.com ([10.48.65.109])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01RDnVop027892;
-        Thu, 27 Feb 2020 08:49:39 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH 8/8] iio: buffer: drop devm_iio_kfifo_free() API call
-Date:   Thu, 27 Feb 2020 15:52:27 +0200
-Message-ID: <20200227135227.12433-8-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200227135227.12433-1-alexandru.ardelean@analog.com>
-References: <20200227135227.12433-1-alexandru.ardelean@analog.com>
+        Thu, 27 Feb 2020 08:52:53 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01RDqCX8026476;
+        Thu, 27 Feb 2020 07:52:44 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=cslc29hczETAlQa0X23hPQTj91TBsgGjB1S2qq30ylY=;
+ b=M/B+wVKT5KIY+EntGHNNSZmwep7JogzZUSHR9y5Lu1mtdz+qaXHl6WUBeazJOMmcPMZn
+ V2ADsuQHEMe0IwJtbsDkeyvi7RfXBX4LGQBtDllcAp47SjURfr3/ygBwfxwgRELGeHM7
+ BHbxihSv89oKLzzc8RkbfKVrcJiA4YSY8Iidxia9rgTvnPDIIp2n5j9i1SlrmE4LrI/0
+ agCe7zQUga4ocNJiHd6oCmdcuyq8mEQrzcZDsrcAHnSBjBb4kGknLwUUPU8OHZ8Rdqwd
+ mAm6TRMjIeKcI6ipuEC5/bD+iUrsfA3hI6B3ZXELjrxl9d+1g/SX/M8uZY8QSyfUStnP RQ== 
+Authentication-Results: ppops.net;
+        spf=pass smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex01.ad.cirrus.com ([5.172.152.52])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2ydcmbbkgp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 27 Feb 2020 07:52:44 -0600
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 27 Feb
+ 2020 13:52:43 +0000
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Thu, 27 Feb 2020 13:52:43 +0000
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 0E48645D;
+        Thu, 27 Feb 2020 13:52:43 +0000 (UTC)
+Date:   Thu, 27 Feb 2020 13:52:43 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 1/2] mfd: wm8994: Fix driver operation if loaded as
+ modules
+Message-ID: <20200227135243.GI108283@ediswmail.ad.cirrus.com>
+References: <CGME20200226100814eucas1p1ef5e4d5eb763f37bcd4eceffc798792d@eucas1p1.samsung.com>
+ <20200226100802.16384-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-27_04:2020-02-26,2020-02-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- phishscore=0 adultscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- suspectscore=2 clxscore=1015 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002270109
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200226100802.16384-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ ip4:5.172.152.52 -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
+ bulkscore=0 malwarescore=0 clxscore=1011 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002270110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's unused so far, so it can't be removed. Also makes sense to remove it
-to discourage weird uses of this call during review.
+On Wed, Feb 26, 2020 at 11:08:01AM +0100, Marek Szyprowski wrote:
+> WM8994 chip has built-in regulators, which might be used for chip
+> operation. They are controlled by a separate wm8994-regulator driver,
+> which should be loaded before this driver calls regulator_get(), because
+> that driver also provides consumer-supply mapping for the them. If that
+> driver is not yet loaded, regulator core substitute them with dummy
+> regulator, what breaks chip operation, because the built-in regulators are
+> never enabled. Fix this by annotating this driver with MODULE_SOFTDEP()
+> "pre" dependency to "wm8994_regulator" module.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- .../driver-api/driver-model/devres.rst        |  1 -
- drivers/iio/buffer/kfifo_buf.c                | 22 -------------------
- include/linux/iio/kfifo_buf.h                 |  1 -
- 3 files changed, 24 deletions(-)
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
-index 10ccebe9f7c1..91b0b8e5556c 100644
---- a/Documentation/driver-api/driver-model/devres.rst
-+++ b/Documentation/driver-api/driver-model/devres.rst
-@@ -286,7 +286,6 @@ IIO
-   devm_iio_device_alloc()
-   devm_iio_device_register()
-   devm_iio_kfifo_allocate()
--  devm_iio_kfifo_free()
-   devm_iio_triggered_buffer_setup()
-   devm_iio_trigger_alloc()
-   devm_iio_trigger_register()
-diff --git a/drivers/iio/buffer/kfifo_buf.c b/drivers/iio/buffer/kfifo_buf.c
-index 3150f8ab984b..1359abed3b31 100644
---- a/drivers/iio/buffer/kfifo_buf.c
-+++ b/drivers/iio/buffer/kfifo_buf.c
-@@ -179,16 +179,6 @@ static void devm_iio_kfifo_release(struct device *dev, void *res)
- 	iio_kfifo_free(*(struct iio_buffer **)res);
- }
- 
--static int devm_iio_kfifo_match(struct device *dev, void *res, void *data)
--{
--	struct iio_buffer **r = res;
--
--	if (WARN_ON(!r || !*r))
--		return 0;
--
--	return *r == data;
--}
--
- /**
-  * devm_iio_fifo_allocate - Resource-managed iio_kfifo_allocate()
-  * @dev:		Device to allocate kfifo buffer for
-@@ -216,16 +206,4 @@ struct iio_buffer *devm_iio_kfifo_allocate(struct device *dev)
- }
- EXPORT_SYMBOL(devm_iio_kfifo_allocate);
- 
--/**
-- * devm_iio_fifo_free - Resource-managed iio_kfifo_free()
-- * @dev:		Device the buffer belongs to
-- * @r:			The buffer associated with the device
-- */
--void devm_iio_kfifo_free(struct device *dev, struct iio_buffer *r)
--{
--	WARN_ON(devres_release(dev, devm_iio_kfifo_release,
--			       devm_iio_kfifo_match, r));
--}
--EXPORT_SYMBOL(devm_iio_kfifo_free);
--
- MODULE_LICENSE("GPL");
-diff --git a/include/linux/iio/kfifo_buf.h b/include/linux/iio/kfifo_buf.h
-index 764659e01b68..1fc1efa7799d 100644
---- a/include/linux/iio/kfifo_buf.h
-+++ b/include/linux/iio/kfifo_buf.h
-@@ -9,6 +9,5 @@ struct iio_buffer *iio_kfifo_allocate(void);
- void iio_kfifo_free(struct iio_buffer *r);
- 
- struct iio_buffer *devm_iio_kfifo_allocate(struct device *dev);
--void devm_iio_kfifo_free(struct device *dev, struct iio_buffer *r);
- 
- #endif
--- 
-2.20.1
+Be good to ensure patches@opensource.cirrus.com is CCed on
+patches for the old Wolfson CODECs.
 
+Thanks,
+Charles
