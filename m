@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DEED172167
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:49:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 517FA171F9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731911AbgB0Osc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:48:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38110 "EHLO mail.kernel.org"
+        id S2387834AbgB0OgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:36:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729873AbgB0Nm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:42:59 -0500
+        id S1732463AbgB0N7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:59:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09AC421D7E;
-        Thu, 27 Feb 2020 13:42:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7358B20578;
+        Thu, 27 Feb 2020 13:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810979;
-        bh=gUM2bLXqfzQKZ+c5hKz9WG1J6s0LEcOPNaGjFh9flRc=;
+        s=default; t=1582811976;
+        bh=i6x5Qh8hMlaagzIr8Q9WVmUCG+H+9lNY3RPagOVKOHc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=znEQOmQ5YCsMA1xqo2I8nyrPqwJNq+h74Q/wzQMCGFrHDtfJ+ze3F6WG1ItWb+QB2
-         i3xKzywBr3JxmZh116XZ824cQf8O2Vg7j+IsHKoXevIHpl0HtHpayOteKIeAjDaibS
-         dPE3dm+EQmoiLadVxStqj4L0zcnVGtzflHigPgmo=
+        b=RILeiyty255WzpCa6M/CuI1slU2EgQIsAXtM30YAoBYZ1Oo2/oUNjB84s1Wp0wS+u
+         mxEqN18GhWzUv4L6SEQHIzC8tqePJiTdqmeDGvCqyWfuUgqh6lzj4vJW5xRGDtQoob
+         3/o49VQqtbIzgyJMNMPZbadjVCcOMjDytfDT6ayc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 071/113] hostap: Adjust indentation in prism2_hostapd_add_sta
-Date:   Thu, 27 Feb 2020 14:36:27 +0100
-Message-Id: <20200227132223.135548395@linuxfoundation.org>
+        stable@vger.kernel.org, Christoph Jung <jung@codemercs.com>
+Subject: [PATCH 4.14 174/237] USB: misc: iowarrior: add support for the 28 and 28L devices
+Date:   Thu, 27 Feb 2020 14:36:28 +0100
+Message-Id: <20200227132309.217146827@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,52 +42,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-[ Upstream commit b61156fba74f659d0bc2de8f2dbf5bad9f4b8faf ]
+commit 5f6f8da2d7b5a431d3f391d0d73ace8edfb42af7 upstream.
 
-Clang warns:
+Add new device ids for the 28 and 28L devices.  These have 4 interfaces
+instead of 2, but the driver binds the same, so the driver changes are
+minimal.
 
-../drivers/net/wireless/intersil/hostap/hostap_ap.c:2511:3: warning:
-misleading indentation; statement is not part of the previous 'if'
-[-Wmisleading-indentation]
-        if (sta->tx_supp_rates & WLAN_RATE_5M5)
-        ^
-../drivers/net/wireless/intersil/hostap/hostap_ap.c:2509:2: note:
-previous statement is here
-        if (sta->tx_supp_rates & WLAN_RATE_2M)
-        ^
-1 warning generated.
+Cc: Christoph Jung <jung@codemercs.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200212040422.2991-2-gregkh@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This warning occurs because there is a space before the tab on this
-line. Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
-
-Fixes: ff1d2767d5a4 ("Add HostAP wireless driver.")
-Link: https://github.com/ClangBuiltLinux/linux/issues/813
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/hostap/hostap_ap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/misc/iowarrior.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/hostap/hostap_ap.c b/drivers/net/wireless/hostap/hostap_ap.c
-index c995ace153ee6..30171d4c47187 100644
---- a/drivers/net/wireless/hostap/hostap_ap.c
-+++ b/drivers/net/wireless/hostap/hostap_ap.c
-@@ -2570,7 +2570,7 @@ static int prism2_hostapd_add_sta(struct ap_data *ap,
- 		sta->supported_rates[0] = 2;
- 	if (sta->tx_supp_rates & WLAN_RATE_2M)
- 		sta->supported_rates[1] = 4;
-- 	if (sta->tx_supp_rates & WLAN_RATE_5M5)
-+	if (sta->tx_supp_rates & WLAN_RATE_5M5)
- 		sta->supported_rates[2] = 11;
- 	if (sta->tx_supp_rates & WLAN_RATE_11M)
- 		sta->supported_rates[3] = 22;
--- 
-2.20.1
-
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -32,6 +32,9 @@
+ #define USB_DEVICE_ID_CODEMERCS_IOWPV2	0x1512
+ /* full speed iowarrior */
+ #define USB_DEVICE_ID_CODEMERCS_IOW56	0x1503
++/* fuller speed iowarrior */
++#define USB_DEVICE_ID_CODEMERCS_IOW28	0x1504
++#define USB_DEVICE_ID_CODEMERCS_IOW28L	0x1505
+ 
+ /* OEMed devices */
+ #define USB_DEVICE_ID_CODEMERCS_IOW24SAG	0x158a
+@@ -143,6 +146,8 @@ static const struct usb_device_id iowarr
+ 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW56)},
+ 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW24SAG)},
+ 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW56AM)},
++	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW28)},
++	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW28L)},
+ 	{}			/* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(usb, iowarrior_ids);
+@@ -386,6 +391,8 @@ static ssize_t iowarrior_write(struct fi
+ 		break;
+ 	case USB_DEVICE_ID_CODEMERCS_IOW56:
+ 	case USB_DEVICE_ID_CODEMERCS_IOW56AM:
++	case USB_DEVICE_ID_CODEMERCS_IOW28:
++	case USB_DEVICE_ID_CODEMERCS_IOW28L:
+ 		/* The IOW56 uses asynchronous IO and more urbs */
+ 		if (atomic_read(&dev->write_busy) == MAX_WRITES_IN_FLIGHT) {
+ 			/* Wait until we are below the limit for submitted urbs */
+@@ -796,7 +803,9 @@ static int iowarrior_probe(struct usb_in
+ 	}
+ 
+ 	if ((dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56) ||
+-	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM)) {
++	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM) ||
++	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28) ||
++	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28L)) {
+ 		res = usb_find_last_int_out_endpoint(iface_desc,
+ 				&dev->int_out_endpoint);
+ 		if (res) {
+@@ -810,7 +819,9 @@ static int iowarrior_probe(struct usb_in
+ 	dev->report_size = usb_endpoint_maxp(dev->int_in_endpoint);
+ 	if ((dev->interface->cur_altsetting->desc.bInterfaceNumber == 0) &&
+ 	    ((dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56) ||
+-	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM)))
++	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM) ||
++	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28) ||
++	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28L)))
+ 		/* IOWarrior56 has wMaxPacketSize different from report size */
+ 		dev->report_size = 7;
+ 
 
 
