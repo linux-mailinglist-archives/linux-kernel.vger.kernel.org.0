@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AD67171E7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:28:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4428C171C0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388214AbgB0O2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:28:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45764 "EHLO mail.kernel.org"
+        id S1732800AbgB0OIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:08:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388195AbgB0OIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:08:05 -0500
+        id S1730186AbgB0OIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:08:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D7C520578;
-        Thu, 27 Feb 2020 14:08:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0E9B20801;
+        Thu, 27 Feb 2020 14:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812484;
-        bh=ImgNB/z+9lNWbrJyxI5t4XZKpkhiRLRHF/MHapmegAw=;
+        s=default; t=1582812487;
+        bh=IzUhqFyqkl3dMF0O/IH/ZJ6MJuwVTQ07z70oJ/G8tEs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U3WdK5RagMUWb0NuqpxrUUmYheJf6BtRZF/Yax8LJUvG4xvbqSHcMzzYnQGo2TEJw
-         GN0gsN45X62hZDlk9A02/025uR8NYmATowpdeGvJx5FSe3qZmQMFWkjlHERTIrYedT
-         GXD3aO9wwaBQXVWqnSaAlecp9r1y7g/DWzHFwzK8=
+        b=OqqTWe+u/kUDgJq66/x7uOsXGuT3v4rYUyaVppEqi4D3mQ5BtQLx35nUCATilhug7
+         x0YmNaYTNyJ8thxvZq8dOaPC7H2XdY/d0KlkW9WIbJQrMhwVrDfnhV73ivozGvdjjw
+         LfCcZJuklsdKHhwFPutUgc5U32/RGbyya2LeYZps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 5.4 036/135] usb: dwc3: debug: fix string position formatting mixup with ret and len
-Date:   Thu, 27 Feb 2020 14:36:16 +0100
-Message-Id: <20200227132234.392432944@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Pavel Zakharov <pavel.zakharov@delphix.com>,
+        Mike Christie <mchristi@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 5.4 037/135] scsi: Revert "target/core: Inline transport_lun_remove_cmd()"
+Date:   Thu, 27 Feb 2020 14:36:17 +0100
+Message-Id: <20200227132234.513109266@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
 References: <20200227132228.710492098@linuxfoundation.org>
@@ -43,132 +46,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit b32196e35bd7bbc8038db1aba1fbf022dc469b6a upstream.
+commit c14335ebb92a98646ddbf447e6cacc66de5269ad upstream.
 
-Currently the string formatting is mixing up the offset of ret and
-len. Re-work the code to use just len, remove ret and use scnprintf
-instead of snprintf and len position accumulation where required.
-Remove the -ve return check since scnprintf never returns a failure
--ve size. Also break overly long lines to clean up checkpatch
-warnings.
+Commit 83f85b8ec305 postponed the percpu_ref_put(&se_cmd->se_lun->lun_ref)
+call from command completion to the time when the final command reference
+is dropped. That approach is not compatible with the iSCSI target driver
+because the iSCSI target driver keeps the command with the highest stat_sn
+after it has completed until the next command is received (see also
+iscsit_ack_from_expstatsn()). Fix this regression by reverting commit
+83f85b8ec305.
 
-Addresses-Coverity: ("Unused value")
-Fixes: 1381a5113caf ("usb: dwc3: debug: purge usage of strcat")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200210095139.328711-1-colin.king@canonical.com
+Fixes: 83f85b8ec305 ("scsi: target/core: Inline transport_lun_remove_cmd()")
+Cc: Pavel Zakharov <pavel.zakharov@delphix.com>
+Cc: Mike Christie <mchristi@redhat.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200210051202.12934-1-bvanassche@acm.org
+Reported-by: Pavel Zakharov <pavel.zakharov@delphix.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/debug.h |   39 +++++++++++++++------------------------
- 1 file changed, 15 insertions(+), 24 deletions(-)
+ drivers/target/target_core_transport.c |   31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/dwc3/debug.h
-+++ b/drivers/usb/dwc3/debug.h
-@@ -256,86 +256,77 @@ static inline const char *dwc3_ep_event_
- 	u8 epnum = event->endpoint_number;
- 	size_t len;
- 	int status;
--	int ret;
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -666,6 +666,11 @@ static int transport_cmd_check_stop_to_f
  
--	ret = snprintf(str, size, "ep%d%s: ", epnum >> 1,
-+	len = scnprintf(str, size, "ep%d%s: ", epnum >> 1,
- 			(epnum & 1) ? "in" : "out");
--	if (ret < 0)
--		return "UNKNOWN";
+ 	target_remove_from_state_list(cmd);
  
- 	status = event->status;
++	/*
++	 * Clear struct se_cmd->se_lun before the handoff to FE.
++	 */
++	cmd->se_lun = NULL;
++
+ 	spin_lock_irqsave(&cmd->t_state_lock, flags);
+ 	/*
+ 	 * Determine if frontend context caller is requesting the stopping of
+@@ -693,6 +698,17 @@ static int transport_cmd_check_stop_to_f
+ 	return cmd->se_tfo->check_stop_free(cmd);
+ }
  
- 	switch (event->endpoint_event) {
- 	case DWC3_DEPEVT_XFERCOMPLETE:
--		len = strlen(str);
--		snprintf(str + len, size - len, "Transfer Complete (%c%c%c)",
-+		len += scnprintf(str + len, size - len,
-+				"Transfer Complete (%c%c%c)",
- 				status & DEPEVT_STATUS_SHORT ? 'S' : 's',
- 				status & DEPEVT_STATUS_IOC ? 'I' : 'i',
- 				status & DEPEVT_STATUS_LST ? 'L' : 'l');
++static void transport_lun_remove_cmd(struct se_cmd *cmd)
++{
++	struct se_lun *lun = cmd->se_lun;
++
++	if (!lun)
++		return;
++
++	if (cmpxchg(&cmd->lun_ref_active, true, false))
++		percpu_ref_put(&lun->lun_ref);
++}
++
+ static void target_complete_failure_work(struct work_struct *work)
+ {
+ 	struct se_cmd *cmd = container_of(work, struct se_cmd, work);
+@@ -783,6 +799,8 @@ static void target_handle_abort(struct s
  
--		len = strlen(str);
--
- 		if (epnum <= 1)
--			snprintf(str + len, size - len, " [%s]",
-+			scnprintf(str + len, size - len, " [%s]",
- 					dwc3_ep0_state_string(ep0state));
- 		break;
- 	case DWC3_DEPEVT_XFERINPROGRESS:
--		len = strlen(str);
--
--		snprintf(str + len, size - len, "Transfer In Progress [%d] (%c%c%c)",
-+		scnprintf(str + len, size - len,
-+				"Transfer In Progress [%d] (%c%c%c)",
- 				event->parameters,
- 				status & DEPEVT_STATUS_SHORT ? 'S' : 's',
- 				status & DEPEVT_STATUS_IOC ? 'I' : 'i',
- 				status & DEPEVT_STATUS_LST ? 'M' : 'm');
- 		break;
- 	case DWC3_DEPEVT_XFERNOTREADY:
--		len = strlen(str);
--
--		snprintf(str + len, size - len, "Transfer Not Ready [%d]%s",
-+		len += scnprintf(str + len, size - len,
-+				"Transfer Not Ready [%d]%s",
- 				event->parameters,
- 				status & DEPEVT_STATUS_TRANSFER_ACTIVE ?
- 				" (Active)" : " (Not Active)");
+ 	WARN_ON_ONCE(kref_read(&cmd->cmd_kref) == 0);
  
--		len = strlen(str);
--
- 		/* Control Endpoints */
- 		if (epnum <= 1) {
- 			int phase = DEPEVT_STATUS_CONTROL_PHASE(event->status);
++	transport_lun_remove_cmd(cmd);
++
+ 	transport_cmd_check_stop_to_fabric(cmd);
+ }
  
- 			switch (phase) {
- 			case DEPEVT_STATUS_CONTROL_DATA:
--				snprintf(str + ret, size - ret,
-+				scnprintf(str + len, size - len,
- 						" [Data Phase]");
- 				break;
- 			case DEPEVT_STATUS_CONTROL_STATUS:
--				snprintf(str + ret, size - ret,
-+				scnprintf(str + len, size - len,
- 						" [Status Phase]");
- 			}
+@@ -1695,6 +1713,7 @@ static void target_complete_tmr_failure(
+ 	se_cmd->se_tmr_req->response = TMR_LUN_DOES_NOT_EXIST;
+ 	se_cmd->se_tfo->queue_tm_rsp(se_cmd);
+ 
++	transport_lun_remove_cmd(se_cmd);
+ 	transport_cmd_check_stop_to_fabric(se_cmd);
+ }
+ 
+@@ -1885,6 +1904,7 @@ void transport_generic_request_failure(s
+ 		goto queue_full;
+ 
+ check_stop:
++	transport_lun_remove_cmd(cmd);
+ 	transport_cmd_check_stop_to_fabric(cmd);
+ 	return;
+ 
+@@ -2182,6 +2202,7 @@ queue_status:
+ 		transport_handle_queue_full(cmd, cmd->se_dev, ret, false);
+ 		return;
+ 	}
++	transport_lun_remove_cmd(cmd);
+ 	transport_cmd_check_stop_to_fabric(cmd);
+ }
+ 
+@@ -2276,6 +2297,7 @@ static void target_complete_ok_work(stru
+ 		if (ret)
+ 			goto queue_full;
+ 
++		transport_lun_remove_cmd(cmd);
+ 		transport_cmd_check_stop_to_fabric(cmd);
+ 		return;
+ 	}
+@@ -2301,6 +2323,7 @@ static void target_complete_ok_work(stru
+ 			if (ret)
+ 				goto queue_full;
+ 
++			transport_lun_remove_cmd(cmd);
+ 			transport_cmd_check_stop_to_fabric(cmd);
+ 			return;
  		}
- 		break;
- 	case DWC3_DEPEVT_RXTXFIFOEVT:
--		snprintf(str + ret, size - ret, "FIFO");
-+		scnprintf(str + len, size - len, "FIFO");
- 		break;
- 	case DWC3_DEPEVT_STREAMEVT:
- 		status = event->status;
+@@ -2336,6 +2359,7 @@ queue_rsp:
+ 			if (ret)
+ 				goto queue_full;
  
- 		switch (status) {
- 		case DEPEVT_STREAMEVT_FOUND:
--			snprintf(str + ret, size - ret, " Stream %d Found",
-+			scnprintf(str + len, size - len, " Stream %d Found",
- 					event->parameters);
- 			break;
- 		case DEPEVT_STREAMEVT_NOTFOUND:
- 		default:
--			snprintf(str + ret, size - ret, " Stream Not Found");
-+			scnprintf(str + len, size - len, " Stream Not Found");
- 			break;
++			transport_lun_remove_cmd(cmd);
+ 			transport_cmd_check_stop_to_fabric(cmd);
+ 			return;
  		}
- 
+@@ -2371,6 +2395,7 @@ queue_status:
  		break;
- 	case DWC3_DEPEVT_EPCMDCMPLT:
--		snprintf(str + ret, size - ret, "Endpoint Command Complete");
-+		scnprintf(str + len, size - len, "Endpoint Command Complete");
- 		break;
- 	default:
--		snprintf(str, size, "UNKNOWN");
-+		scnprintf(str + len, size - len, "UNKNOWN");
  	}
  
- 	return str;
++	transport_lun_remove_cmd(cmd);
+ 	transport_cmd_check_stop_to_fabric(cmd);
+ 	return;
+ 
+@@ -2697,6 +2722,9 @@ int transport_generic_free_cmd(struct se
+ 		 */
+ 		if (cmd->state_active)
+ 			target_remove_from_state_list(cmd);
++
++		if (cmd->se_lun)
++			transport_lun_remove_cmd(cmd);
+ 	}
+ 	if (aborted)
+ 		cmd->free_compl = &compl;
+@@ -2768,9 +2796,6 @@ static void target_release_cmd_kref(stru
+ 	struct completion *abrt_compl = se_cmd->abrt_compl;
+ 	unsigned long flags;
+ 
+-	if (se_cmd->lun_ref_active)
+-		percpu_ref_put(&se_cmd->se_lun->lun_ref);
+-
+ 	if (se_sess) {
+ 		spin_lock_irqsave(&se_sess->sess_cmd_lock, flags);
+ 		list_del_init(&se_cmd->se_cmd_list);
 
 
