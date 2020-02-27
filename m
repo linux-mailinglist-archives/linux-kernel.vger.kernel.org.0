@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A33DD171B54
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA00D171EB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:29:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732928AbgB0OB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:01:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35468 "EHLO mail.kernel.org"
+        id S2388162AbgB0O3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:29:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732912AbgB0OB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:01:26 -0500
+        id S1732812AbgB0OGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:06:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C6B524656;
-        Thu, 27 Feb 2020 14:01:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2BAE246A0;
+        Thu, 27 Feb 2020 14:06:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812085;
-        bh=eqTpx2ymV4Xda6QZ0MulQd3E23Bcsb+LDGDNlLUsj+0=;
+        s=default; t=1582812370;
+        bh=ebcdWWoidKGN2vbQWUqb4ne5B3dw2J5I8wTEd6ulNAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=liwJaeyp/C9V0EXgtoS9RVOvPetl+Qj+qY15fZoTGFGtJEU4upXMj1K6rBzTvB5h8
-         FRE97uHCEro9ViYxu8xTg5Apinqwlu8UkcSfuO0smXq81R/ui7Ns8d8c9zZP3mcab3
-         u9H/kIe4ebAZ0bFRBsipXF5HljfdIYeb+1u2fr2w=
+        b=1VCLArRUiX1a0G5IT16hLlCogAJd9vIAvIfmgwNjxibif89ncA3/fH2AFAJvvXGuZ
+         UaTOe2+nr1NiMJzTEJJ47hbT5DeLPnrRBq44tiDPunU4QY5y9fX7mp7h+4TTkF3For
+         8amibqHDf6gLXda8GwKH+OuJha21En2JtkoNtSxI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Upton <oupton@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 216/237] KVM: nVMX: Refactor IO bitmap checks into helper function
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 62/97] drm/nouveau/kms/gv100-: Re-set LUT after clearing for modesets
 Date:   Thu, 27 Feb 2020 14:37:10 +0100
-Message-Id: <20200227132312.065506678@linuxfoundation.org>
+Message-Id: <20200227132224.657296061@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,82 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Upton <oupton@google.com>
+From: Lyude Paul <lyude@redhat.com>
 
-commit e71237d3ff1abf9f3388337cfebf53b96df2020d upstream.
+[ Upstream commit f287d3d19769b1d22cba4e51fa0487f2697713c9 ]
 
-Checks against the IO bitmap are useful for both instruction emulation
-and VM-exit reflection. Refactor the IO bitmap checks into a helper
-function.
+While certain modeset operations on gv100+ need us to temporarily
+disable the LUT, we make the mistake of sometimes neglecting to
+reprogram the LUT after such modesets. In particular, moving a head from
+one encoder to another seems to trigger this quite often. GV100+ is very
+picky about having a LUT in most scenarios, so this causes the display
+engine to hang with the following error code:
 
-Signed-off-by: Oliver Upton <oupton@google.com>
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+disp: chid 1 stat 00005080 reason 5 [INVALID_STATE] mthd 0200 data
+00000001 code 0000002d)
 
+So, fix this by always re-programming the LUT if we're clearing it in a
+state where the wndw is still visible, and has a XLUT handle programmed.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Fixes: facaed62b4cb ("drm/nouveau/kms/gv100: initial support")
+Cc: <stable@vger.kernel.org> # v4.18+
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx.c |   40 +++++++++++++++++++++++++++-------------
- 1 file changed, 27 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/nouveau/dispnv50/wndw.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -4991,6 +4991,26 @@ static bool cs_ss_rpl_check(struct kvm_v
- 		 (ss.selector & SEGMENT_RPL_MASK));
- }
- 
-+static bool nested_vmx_check_io_bitmaps(struct kvm_vcpu *vcpu,
-+					unsigned int port, int size);
-+static bool nested_vmx_exit_handled_io(struct kvm_vcpu *vcpu,
-+				       struct vmcs12 *vmcs12)
-+{
-+	unsigned long exit_qualification;
-+	unsigned int port;
-+	int size;
-+
-+	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
-+		return nested_cpu_has(vmcs12, CPU_BASED_UNCOND_IO_EXITING);
-+
-+	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
-+
-+	port = exit_qualification >> 16;
-+	size = (exit_qualification & 7) + 1;
-+
-+	return nested_vmx_check_io_bitmaps(vcpu, port, size);
-+}
-+
- /*
-  * Check if guest state is valid. Returns true if valid, false if
-  * not.
-@@ -8521,23 +8541,17 @@ static int (*const kvm_vmx_exit_handlers
- static const int kvm_vmx_max_exit_handlers =
- 	ARRAY_SIZE(kvm_vmx_exit_handlers);
- 
--static bool nested_vmx_exit_handled_io(struct kvm_vcpu *vcpu,
--				       struct vmcs12 *vmcs12)
-+/*
-+ * Return true if an IO instruction with the specified port and size should cause
-+ * a VM-exit into L1.
-+ */
-+bool nested_vmx_check_io_bitmaps(struct kvm_vcpu *vcpu, unsigned int port,
-+				 int size)
- {
--	unsigned long exit_qualification;
-+	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
- 	gpa_t bitmap, last_bitmap;
--	unsigned int port;
--	int size;
- 	u8 b;
- 
--	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
--		return nested_cpu_has(vmcs12, CPU_BASED_UNCOND_IO_EXITING);
--
--	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
--
--	port = exit_qualification >> 16;
--	size = (exit_qualification & 7) + 1;
--
- 	last_bitmap = (gpa_t)-1;
- 	b = -1;
- 
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/wndw.c b/drivers/gpu/drm/nouveau/dispnv50/wndw.c
+index b3db4553098d5..d343ae66c64fe 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/wndw.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/wndw.c
+@@ -405,6 +405,8 @@ nv50_wndw_atomic_check(struct drm_plane *plane, struct drm_plane_state *state)
+ 		asyw->clr.ntfy = armw->ntfy.handle != 0;
+ 		asyw->clr.sema = armw->sema.handle != 0;
+ 		asyw->clr.xlut = armw->xlut.handle != 0;
++		if (asyw->clr.xlut && asyw->visible)
++			asyw->set.xlut = asyw->xlut.handle != 0;
+ 		if (wndw->func->image_clr)
+ 			asyw->clr.image = armw->image.handle[0] != 0;
+ 	}
+-- 
+2.20.1
+
 
 
