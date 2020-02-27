@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91878171B5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DA86171C49
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:10:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732594AbgB0OBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:01:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35796 "EHLO mail.kernel.org"
+        id S2388587AbgB0OKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:10:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732650AbgB0OBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:01:38 -0500
+        id S2388577AbgB0OKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:10:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD3A120578;
-        Thu, 27 Feb 2020 14:01:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3C4C20578;
+        Thu, 27 Feb 2020 14:10:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812098;
-        bh=84P7LOnb432KwSHWPvfHLK1I2ZqwuRIAfRl+Rq2As2s=;
+        s=default; t=1582812643;
+        bh=S8kkFcnazwWVF8uP0OHba4L9Z36wgeNNzJnd4ccx7ew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zh9oU3eBpQfDKeIrWOjYwWx3YIdjkfnMP/hWLSPrhmefB0043P6gYW/mCqwOoZfTp
-         NJysi2SfPQSXgP4rGilE8aanKlOq4cyFAbJDF0k5vFSjtg4ZEEkBPaCiofV4qN+nQI
-         hqar1LkMFlw8MDHfcoGaQLdyDz4McEHHTM2Lr85M=
+        b=qVWn9CSs9JVe9t59ixbnWEUnMk3c1Z6fippAOqgLpEEsgYdbSqYOl+cdtcQ3nJqNR
+         LBoJFl7xdpme2N3x5Kqx3uNBNFi/8B8Mlbrf3BmtLNEYGvt9w7ZBJkB+vidS8XZTMj
+         gEDUrL8OriR7i2uKQLYQ+EsvYIotW6/EcWQIjgjE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nikolay Borisov <nborisov@suse.com>, Qu Wenruo <wqu@suse.com>,
         Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 221/237] btrfs: do not check delayed items are empty for single transaction cleanup
+Subject: [PATCH 5.4 095/135] btrfs: do not check delayed items are empty for single transaction cleanup
 Date:   Thu, 27 Feb 2020 14:37:15 +0100
-Message-Id: <20200227132312.407218187@linuxfoundation.org>
+Message-Id: <20200227132243.527366487@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -74,7 +74,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/btrfs/disk-io.c
 +++ b/fs/btrfs/disk-io.c
-@@ -4394,7 +4394,6 @@ void btrfs_cleanup_one_transaction(struc
+@@ -4520,7 +4520,6 @@ void btrfs_cleanup_one_transaction(struc
  	wake_up(&fs_info->transaction_wait);
  
  	btrfs_destroy_delayed_inodes(fs_info);
