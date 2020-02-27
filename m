@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C37A17210C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:47:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F9FB172048
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:42:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731244AbgB0Oqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:46:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41070 "EHLO mail.kernel.org"
+        id S1732020AbgB0Olq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:41:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730352AbgB0NpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:45:13 -0500
+        id S1731315AbgB0Nu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:50:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B9D920578;
-        Thu, 27 Feb 2020 13:45:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 065162468D;
+        Thu, 27 Feb 2020 13:50:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811113;
-        bh=VZCbdRHh1xdJ7mhVlCNjQ3Y0StJMFvdCOVCneXwVA84=;
+        s=default; t=1582811458;
+        bh=cTtAzCUPbWALIG3BgIYSOQIv5rypzVCDWUfep5QZfj8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dFfUgxqVBGIeAPvPLyJqvJc5LKfgFrIrvz1qYUqEjzqL6CVM+RJedMfFXVtYkn08c
-         SVAA5FGLvzJ4LdpaurHXgUoDIb3yPwf1nSciz5p5I+aJ3WudpPhs7v1lktG7/VNJZ9
-         UdE5AKrmY8rJlukk7/JWH0e1FrBzSUJS8QwDcqjU=
+        b=exTkS0X4ut5bu7Rg8pPRHY/cVwqohKLewo+v27Bbj3If5R6PutTracrKUnFHf3EyK
+         DPdGDwcZ6VBMav1ygM4G8G39SCTYWZXoIBDKZecZmWnDSNz61xJJ1ErAfUqOeRNy8Q
+         W3URVbZJ5+GBHVUE8A/qLkaGFXnHwDntrP2arLj4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.4 096/113] xhci: apply XHCI_PME_STUCK_QUIRK to Intel Comet Lake platforms
-Date:   Thu, 27 Feb 2020 14:36:52 +0100
-Message-Id: <20200227132227.100936780@linuxfoundation.org>
+        stable@vger.kernel.org, Miles Chen <miles.chen@mediatek.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 141/165] lib/stackdepot: Fix outdated comments
+Date:   Thu, 27 Feb 2020 14:36:55 +0100
+Message-Id: <20200227132251.585864029@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,41 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Miles Chen <miles.chen@mediatek.com>
 
-commit a3ae87dce3a5abe0b57c811bab02b2564b574106 upstream.
+[ Upstream commit ee050dc83bc326ad5ef8ee93bca344819371e7a5 ]
 
-Intel Comet Lake based platform require the XHCI_PME_STUCK_QUIRK
-quirk as well. Without this xHC can not enter D3 in runtime suspend.
+Replace "depot_save_stack" with "stack_depot_save" in code comments because
+depot_save_stack() was replaced in commit c0cfc337264c ("lib/stackdepot:
+Provide functions which operate on plain storage arrays") and removed in
+commit 56d8f079c51a ("lib/stackdepot: Remove obsolete functions")
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20200210134553.9144-5-mathias.nyman@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190815113246.18478-1-miles.chen@mediatek.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-pci.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ lib/stackdepot.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -53,6 +53,7 @@
- #define PCI_DEVICE_ID_INTEL_BROXTON_B_XHCI		0x1aa8
- #define PCI_DEVICE_ID_INTEL_APL_XHCI			0x5aa8
- #define PCI_DEVICE_ID_INTEL_DNV_XHCI			0x19d0
-+#define PCI_DEVICE_ID_INTEL_CML_XHCI			0xa3af
- 
- static const char hcd_name[] = "xhci_hcd";
- 
-@@ -169,7 +170,8 @@ static void xhci_pci_quirks(struct devic
- 		 pdev->device == PCI_DEVICE_ID_INTEL_BROXTON_M_XHCI ||
- 		 pdev->device == PCI_DEVICE_ID_INTEL_BROXTON_B_XHCI ||
- 		 pdev->device == PCI_DEVICE_ID_INTEL_APL_XHCI ||
--		 pdev->device == PCI_DEVICE_ID_INTEL_DNV_XHCI)) {
-+		 pdev->device == PCI_DEVICE_ID_INTEL_DNV_XHCI ||
-+		 pdev->device == PCI_DEVICE_ID_INTEL_CML_XHCI)) {
- 		xhci->quirks |= XHCI_PME_STUCK_QUIRK;
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index f87d138e96724..1724cb0d6283f 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -96,7 +96,7 @@ static bool init_stack_slab(void **prealloc)
+ 		stack_slabs[depot_index + 1] = *prealloc;
+ 		/*
+ 		 * This smp_store_release pairs with smp_load_acquire() from
+-		 * |next_slab_inited| above and in depot_save_stack().
++		 * |next_slab_inited| above and in stack_depot_save().
+ 		 */
+ 		smp_store_release(&next_slab_inited, 1);
  	}
- 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
+@@ -123,7 +123,7 @@ static struct stack_record *depot_alloc_stack(unsigned long *entries, int size,
+ 		depot_offset = 0;
+ 		/*
+ 		 * smp_store_release() here pairs with smp_load_acquire() from
+-		 * |next_slab_inited| in depot_save_stack() and
++		 * |next_slab_inited| in stack_depot_save() and
+ 		 * init_stack_slab().
+ 		 */
+ 		if (depot_index + 1 < STACK_ALLOC_MAX_SLABS)
+-- 
+2.20.1
+
 
 
