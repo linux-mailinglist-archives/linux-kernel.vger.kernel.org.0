@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 720C2171D2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:18:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38763171C79
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:12:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389610AbgB0OS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:18:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58944 "EHLO mail.kernel.org"
+        id S2388844AbgB0OM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:12:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730483AbgB0OSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:18:21 -0500
+        id S2388841AbgB0OMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:12:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABB512468F;
-        Thu, 27 Feb 2020 14:18:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAB4120578;
+        Thu, 27 Feb 2020 14:12:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582813101;
-        bh=FMY56qzvCJharns2+c9TUhuElzCBrCqVJxbMDnAG4Go=;
+        s=default; t=1582812744;
+        bh=4Q9zxIWr3nzH1lCkmXbXCZriRxQ09zVPUbdUTtpjbjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IcISWmWBEshhxiyl6El/h+gyWtyUvdOzYEYSxU+WiH5MjWxnPVOViQ6BdxqfrCSEq
-         6olGBN/TxG+mYbX0OS7J/xuE3degwEG7aakpkK217RE60I3DemMH9Sn3jJKDFJAZL7
-         t5NgQJ+Efgsyw9wweme/msoBVeLo+5EHWDdibTzc=
+        b=UPgr5yIrbWe1RpqRxCrqX18MIS/QQYpaY3pTTzZxC9mLNyxMAUzFKxsgGUM7aQwOn
+         jr4ar2Mwf9tfYdXFfid0Um4Yevkcj6AjWfHacOtemjfeQWxbgsiF7GvQvvfRcSbhXP
+         xTpxNOKhEd1c6gZR35UZRx+L3NvjuaC0ISpR6XAM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 5.5 136/150] dma-direct: relax addressability checks in dma_direct_supported
-Date:   Thu, 27 Feb 2020 14:37:53 +0100
-Message-Id: <20200227132252.430410586@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 5.4 134/135] s390/mm: Explicitly compare PAGE_DEFAULT_KEY against zero in storage_key_init_range
+Date:   Thu, 27 Feb 2020 14:37:54 +0100
+Message-Id: <20200227132249.162136009@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,76 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 91ef26f914171cf753330f13724fd9142b5b1640 upstream.
+commit 380324734956c64cd060e1db4304f3117ac15809 upstream.
 
-dma_direct_supported tries to find the minimum addressable bitmask
-based on the end pfn and optional magic that architectures can use
-to communicate the size of the magic ZONE_DMA that can be used
-for bounce buffering.  But between the DMA offsets that can change
-per device (or sometimes even region), the fact the ZONE_DMA isn't
-even guaranteed to be the lowest addresses and failure of having
-proper interfaces to the MM code this fails at least for one
-arm subarchitecture.
+Clang warns:
 
-As all the legacy DMA implementations have supported 32-bit DMA
-masks, and 32-bit masks are guranteed to always work by the API
-contract (using bounce buffers if needed), we can short cut the
-complicated check and always return true without breaking existing
-assumptions.  Hopefully we can properly clean up the interaction
-with the arch defined zones and the bootmem allocator eventually.
+ In file included from ../arch/s390/purgatory/purgatory.c:10:
+ In file included from ../include/linux/kexec.h:18:
+ In file included from ../include/linux/crash_core.h:6:
+ In file included from ../include/linux/elfcore.h:5:
+ In file included from ../include/linux/user.h:1:
+ In file included from ../arch/s390/include/asm/user.h:11:
+ ../arch/s390/include/asm/page.h:45:6: warning: converting the result of
+ '<<' to a boolean always evaluates to false
+ [-Wtautological-constant-compare]
+         if (PAGE_DEFAULT_KEY)
+            ^
+ ../arch/s390/include/asm/page.h:23:44: note: expanded from macro
+ 'PAGE_DEFAULT_KEY'
+ #define PAGE_DEFAULT_KEY        (PAGE_DEFAULT_ACC << 4)
+                                                  ^
+ 1 warning generated.
 
-Fixes: ad3c7b18c5b3 ("arm: use swiotlb for bounce buffering on LPAE configs")
-Reported-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Tested-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Explicitly compare this against zero to silence the warning as it is
+intended to be used in a boolean context.
+
+Fixes: de3fa841e429 ("s390/mm: fix compile for PAGE_DEFAULT_KEY != 0")
+Link: https://github.com/ClangBuiltLinux/linux/issues/860
+Link: https://lkml.kernel.org/r/20200214064207.10381-1-natechancellor@gmail.com
+Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/dma/direct.c |   24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ arch/s390/include/asm/page.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -472,28 +472,26 @@ int dma_direct_mmap(struct device *dev,
- }
- #endif /* CONFIG_MMU */
+--- a/arch/s390/include/asm/page.h
++++ b/arch/s390/include/asm/page.h
+@@ -42,7 +42,7 @@ void __storage_key_init_range(unsigned l
  
--/*
-- * Because 32-bit DMA masks are so common we expect every architecture to be
-- * able to satisfy them - either by not supporting more physical memory, or by
-- * providing a ZONE_DMA32.  If neither is the case, the architecture needs to
-- * use an IOMMU instead of the direct mapping.
-- */
- int dma_direct_supported(struct device *dev, u64 mask)
+ static inline void storage_key_init_range(unsigned long start, unsigned long end)
  {
--	u64 min_mask;
-+	u64 min_mask = (max_pfn - 1) << PAGE_SHIFT;
- 
--	if (IS_ENABLED(CONFIG_ZONE_DMA))
--		min_mask = DMA_BIT_MASK(zone_dma_bits);
--	else
--		min_mask = DMA_BIT_MASK(32);
--
--	min_mask = min_t(u64, min_mask, (max_pfn - 1) << PAGE_SHIFT);
-+	/*
-+	 * Because 32-bit DMA masks are so common we expect every architecture
-+	 * to be able to satisfy them - either by not supporting more physical
-+	 * memory, or by providing a ZONE_DMA32.  If neither is the case, the
-+	 * architecture needs to use an IOMMU instead of the direct mapping.
-+	 */
-+	if (mask >= DMA_BIT_MASK(32))
-+		return 1;
- 
- 	/*
- 	 * This check needs to be against the actual bit mask value, so
- 	 * use __phys_to_dma() here so that the SME encryption mask isn't
- 	 * part of the check.
- 	 */
-+	if (IS_ENABLED(CONFIG_ZONE_DMA))
-+		min_mask = min_t(u64, min_mask, DMA_BIT_MASK(zone_dma_bits));
- 	return mask >= __phys_to_dma(dev, min_mask);
+-	if (PAGE_DEFAULT_KEY)
++	if (PAGE_DEFAULT_KEY != 0)
+ 		__storage_key_init_range(start, end);
  }
  
 
