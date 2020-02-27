@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D82A5171B08
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:58:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B39011719B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:47:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732550AbgB0N65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:58:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60152 "EHLO mail.kernel.org"
+        id S1730710AbgB0Nrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:47:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732540AbgB0N6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:58:54 -0500
+        id S1730696AbgB0Nr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:47:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D192A20578;
-        Thu, 27 Feb 2020 13:58:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F70C2468D;
+        Thu, 27 Feb 2020 13:47:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811933;
-        bh=rGHg/pgQkYQYY1T4HLJEp++QGMMYzcGnKf67BfVOhOU=;
+        s=default; t=1582811248;
+        bh=F7DUeTsW+cyMC4RzsgEMADb2jrUEX1Fy6u0Pl9fIC64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OipenKzD4yZsWWRtaMXLVdMXQLaygJ09PSJR8/96LoEQ78+xD0Q6hC6MTm550zTfd
-         F63qtj8f4N6mfIO0DmP8rdj5HSQ8C50d1CIpYDODU2cqLwXkMbJbX/38dOmkqu39RZ
-         YhdQO5j+DV8l9CQhNuTegYlsD0nIeXEyRkapfdec=
+        b=Pq+VkjozPWo7bojjWggpqbMOkfPYR3p89mfWQC4UEu58a7wEIZTWP1qMTv0/RtYtH
+         g9Jqt/ZM3G2cwzE4mt4K0eCnCO68eZNq6LjQdtD8erfLk4Tq2hQ148wA6FqBOA2Okt
+         9BerFygrGpuuGCR1FMDZvczdHaF8Hb+hYO6QYc+k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Tony Lindgren <tony@atomide.com>, Bin Liu <b-liu@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 120/237] usb: musb: omap2430: Get rid of musb .set_vbus for omap2430 glue
+        stable@vger.kernel.org, Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 060/165] drm/mediatek: handle events when enabling/disabling crtc
 Date:   Thu, 27 Feb 2020 14:35:34 +0100
-Message-Id: <20200227132305.643686239@linuxfoundation.org>
+Message-Id: <20200227132240.248172642@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Bibby Hsieh <bibby.hsieh@mediatek.com>
 
-[ Upstream commit 91b6dec32e5c25fbdbb564d1e5af23764ec17ef1 ]
+[ Upstream commit 411f5c1eacfebb1f6e40b653d29447cdfe7282aa ]
 
-We currently have musb_set_vbus() called from two different paths. Mostly
-it gets called from the USB PHY via omap_musb_set_mailbox(), but in some
-cases it can get also called from musb_stage0_irq() rather via .set_vbus:
+The driver currently handles vblank events only when updating planes on
+an already enabled CRTC. The atomic update API however allows requesting
+an event when enabling or disabling a CRTC. This currently leads to
+event objects being leaked in the kernel and to events not being sent
+out. Fix it.
 
-(musb_set_host [musb_hdrc])
-(omap2430_musb_set_vbus [omap2430])
-(musb_stage0_irq [musb_hdrc])
-(musb_interrupt [musb_hdrc])
-(omap2430_musb_interrupt [omap2430])
-
-This is racy and will not work with introducing generic helper functions
-for musb_set_host() and musb_set_peripheral(). We want to get rid of the
-busy loops in favor of usleep_range().
-
-Let's just get rid of .set_vbus for omap2430 glue layer and let the PHY
-code handle VBUS with musb_set_vbus(). Note that in the follow-up patch
-we can completely remove omap2430_musb_set_vbus(), but let's do it in a
-separate patch as this change may actually turn out to be needed as a
-fix.
-
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Link: https://lore.kernel.org/r/20200115132547.364-5-b-liu@ti.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/musb/omap2430.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/usb/musb/omap2430.c b/drivers/usb/musb/omap2430.c
-index 456f3e6ecf034..26e69c2766f56 100644
---- a/drivers/usb/musb/omap2430.c
-+++ b/drivers/usb/musb/omap2430.c
-@@ -388,8 +388,6 @@ static const struct musb_platform_ops omap2430_ops = {
- 	.init		= omap2430_musb_init,
- 	.exit		= omap2430_musb_exit,
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 01a21dd835b57..1ed60da76a0ce 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -306,6 +306,7 @@ err_pm_runtime_put:
+ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ {
+ 	struct drm_device *drm = mtk_crtc->base.dev;
++	struct drm_crtc *crtc = &mtk_crtc->base;
+ 	int i;
  
--	.set_vbus	= omap2430_musb_set_vbus,
--
- 	.enable		= omap2430_musb_enable,
- 	.disable	= omap2430_musb_disable,
+ 	DRM_DEBUG_DRIVER("%s\n", __func__);
+@@ -327,6 +328,13 @@ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+ 	mtk_disp_mutex_unprepare(mtk_crtc->mutex);
  
+ 	pm_runtime_put(drm->dev);
++
++	if (crtc->state->event && !crtc->state->active) {
++		spin_lock_irq(&crtc->dev->event_lock);
++		drm_crtc_send_vblank_event(crtc, crtc->state->event);
++		crtc->state->event = NULL;
++		spin_unlock_irq(&crtc->dev->event_lock);
++	}
+ }
+ 
+ static void mtk_drm_crtc_enable(struct drm_crtc *crtc)
 -- 
 2.20.1
 
