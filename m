@@ -2,147 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 079CD1717E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 13:55:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D6951717F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 13:58:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbgB0Mzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 07:55:55 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.202]:39003 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729036AbgB0Mzz (ORCPT
+        id S1729117AbgB0M6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 07:58:54 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:55444 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729019AbgB0M6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 07:55:55 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 2FB7E1E35C
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:55:53 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7IhljQuWaSl8q7Ihlj5COg; Thu, 27 Feb 2020 06:55:53 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=4zTfqHtNR+JOFw1AL/0V9Tg2bWk099xhAe7F5IWAr+A=; b=odm+PZjBgpSmbCka5oSybjWmj2
-        TDatQyzhvlKp3qcc8uuPHnf2AD33gqeg49yXELgZeBhZ2x1es6HcFQrsef7lCeVKA3J+7neryuzhS
-        SqkY26fKqf36icZ8VgkCxFnUPTkhPXqC7Fh9FleYq9pZTqXoWlDGvUZAdq60rr+CWSUu1fK27gkwT
-        pL0ewQDQmbhgqxQrhrt8e4MAzozEeyig2V7xgCvAa+bu+VB5VzJiHjiayhXVngkup4zBe0pNPyCTt
-        CPjgMXIOkloq3w7pI4GjG7odckJ2B0DnZhS7Q4FjYPgKxJp9VKyAJKDcHz6M38ilzvkuTbyl+Ne00
-        kEFCS15Q==;
-Received: from [201.166.157.75] (port=39906 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j7Ihh-000gWF-C4; Thu, 27 Feb 2020 06:55:50 -0600
-Date:   Thu, 27 Feb 2020 06:58:41 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] security: integrity: Replace zero-length array with
- flexible-array member
-Message-ID: <20200227125841.GA23703@embeddedor>
+        Thu, 27 Feb 2020 07:58:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582808333;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Om0SRg+/XzRunM3fL3lF2XHexrWaTr/sxkRp+GX1RwY=;
+        b=W/sVBBNhp1QXWVCIbgmqXakPPFGBwcU2ohR9Pf1WB/M1YWFAn/6bvwl2qhV4qalVR4vvWL
+        qfoiK6PF2lDwYUFddtVuxYU6T+9oR9oKNbTmJIqzyylFkYBiQXbzq/WjQIU42GaV0+hS07
+        1oydJahhUNkWWjfFlHH2EJkc2VEMr28=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-90-baq8B8pwORaWBaP8aGs9Wg-1; Thu, 27 Feb 2020 07:58:47 -0500
+X-MC-Unique: baq8B8pwORaWBaP8aGs9Wg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 69288477;
+        Thu, 27 Feb 2020 12:58:45 +0000 (UTC)
+Received: from prarit.bos.redhat.com (prarit-guest.7a2m.lab.eng.bos.redhat.com [10.16.222.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B9C0E19C58;
+        Thu, 27 Feb 2020 12:58:43 +0000 (UTC)
+Subject: Re: [PATCH] x86/tsc: Add kernel options to disable CPUID and MSR
+ calibrations
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Patrick Geary <patrickg@supermicro.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Daniel Drake <drake@endlessm.com>,
+        Michael Zhivich <mzhivich@akamai.com>,
+        linux-doc@vger.kernel.org
+References: <20200226164308.14468-1-prarit@redhat.com>
+ <20200226165407.GB18400@hirez.programming.kicks-ass.net>
+ <87k149nd4p.fsf@nanos.tec.linutronix.de>
+From:   Prarit Bhargava <prarit@redhat.com>
+Message-ID: <64e49d3f-ac4c-84ca-e663-92f87aae1362@redhat.com>
+Date:   Thu, 27 Feb 2020 07:58:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.157.75
-X-Source-L: No
-X-Exim-ID: 1j7Ihh-000gWF-C4
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.157.75]:39906
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <87k149nd4p.fsf@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+On 2/26/20 6:27 PM, Thomas Gleixner wrote:
+> Peter Zijlstra <peterz@infradead.org> writes:
+>> On Wed, Feb 26, 2020 at 11:43:08AM -0500, Prarit Bhargava wrote:
+>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>>> index dbc22d684627..0316aadfff08 100644
+>>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>>> @@ -4942,7 +4942,7 @@
+>>>  			See Documentation/admin-guide/mm/transhuge.rst
+>>>  			for more details.
+>>>  
+>>> -	tsc=		Disable clocksource stability checks for TSC.
+>>> +	tsc=option[,option...]	Various TSC options.
+>>>  			Format: <string>
+>>>  			[x86] reliable: mark tsc clocksource as reliable, this
+>>>  			disables clocksource verification at runtime, as well
+>>> @@ -4960,6 +4960,12 @@
+>>>  			in situations with strict latency requirements (where
+>>>  			interruptions from clocksource watchdog are not
+>>>  			acceptable).
+>>> +			[x86] no_cpuid_calibration: Disable the CPUID TSC
+>>> +			calibration.  Used in situations where the CPUID
+>>> +			TSC khz does not match the actual CPU TSC khz
+>>> +			[x86] no_msr_calibration: Disable the MSR TSC
+>>> +			calibration.  Used in situations where the MSR
+>>> +			TSC khz does not match the actual CPU TSC khz.
+>>
+>> Do we want to mention that these situations are mostly broken firmware?
+>> Also do mention that if you disable these you might not boot due to not
+>> having a PIT/HPET at all?
+> 
+> Right. Same discussion as before.
+> 
+> Also why do we want no_cpuid_calibration and no_msr_calibration? How
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+> should Joe User figure out which one to use? This does not make
+> sense. The point is that the BIOS/Firmware supplied value in system
+> registers is bogus. So something like "skip_firmware_calibration" might
+> be better suitable.
 
-This issue was found with the help of Coccinelle.
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+no_cpuid_calibration was required for Patrick's case where the CPU was
+overclocked and therefore the CPUID khz value was invalid, but the MSR value is
+good.  I had to skip both to get to the PIT calibration because I had broken FW.
+ I don't see how a single skip_firmware_calibration covers these cases.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- security/integrity/ima/ima.h   | 2 +-
- security/integrity/integrity.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> Aside of that this really wants to be combined with the ability to
+> supply the actual frequency on the command line as I suggested in the
+> other thread to cope with machines which do not expose PIT/HPET or have
+> broken variants of them.
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 64317d95363e..da4246ee7e35 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -95,7 +95,7 @@ struct ima_template_entry {
- 	u8 digest[TPM_DIGEST_SIZE];	/* sha1 or md5 measurement hash */
- 	struct ima_template_desc *template_desc; /* template descriptor */
- 	u32 template_data_len;
--	struct ima_field_data template_data[0];	/* template related data */
-+	struct ima_field_data template_data[];	/* template related data */
- };
- 
- struct ima_queue_entry {
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 543d277c7e48..3c7e8b902256 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -103,7 +103,7 @@ struct ima_digest_data {
- 		} ng;
- 		u8 data[2];
- 	} xattr;
--	u8 digest[0];
-+	u8 digest[];
- } __packed;
- 
- /*
-@@ -115,7 +115,7 @@ struct signature_v2_hdr {
- 	uint8_t	hash_algo;	/* Digest algorithm [enum hash_algo] */
- 	__be32 keyid;		/* IMA key identifier - not X509/PGP specific */
- 	__be16 sig_size;	/* signature size */
--	uint8_t sig[0];		/* signature payload */
-+	uint8_t sig[];		/* signature payload */
- } __packed;
- 
- /* integrity data associated with an inode */
--- 
-2.25.0
+tglx, can you give a lore link to the thread?
+
+Thanks,
+
+P.
+> 
+> Thanks,
+> 
+>         tglx
+> 
+> 
 
