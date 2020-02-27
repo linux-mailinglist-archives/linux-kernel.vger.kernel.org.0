@@ -2,83 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8085B172A78
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 22:52:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AD8E172A7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 22:53:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729984AbgB0Vwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 16:52:41 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36583 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729535AbgB0Vwk (ORCPT
+        id S1730123AbgB0VxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 16:53:13 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44693 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729843AbgB0VxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 16:52:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582840359;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UXkdCtTkO49ytr+egfYOWUQHFCGfaWE6lMIRwlJTVOE=;
-        b=PfZO1glI+Xxg6MnP0YjLFyV7KsMu49az6GEro0Gb68q08TmPoz45e1CqkUhZcu3pKdSDT9
-        GosKo8susoNutoSIaPKESq+9TFu8yYxEX+RRM4XMgXRChcBx/lThs5Tuw9mTcLXY0Ismj+
-        g69zeut4erEmzyAkt2tRvsiiyo10bGc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-57-SOFEDrlRNbWXKgxjkOOMeg-1; Thu, 27 Feb 2020 16:52:31 -0500
-X-MC-Unique: SOFEDrlRNbWXKgxjkOOMeg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D3444800D5E;
-        Thu, 27 Feb 2020 21:52:28 +0000 (UTC)
-Received: from treble (ovpn-121-128.rdu2.redhat.com [10.10.121.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 91E1460BE0;
-        Thu, 27 Feb 2020 21:52:26 +0000 (UTC)
-Date:   Thu, 27 Feb 2020 15:52:24 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: mmotm 2020-02-24-19-53 uploaded (objtool warning)
-Message-ID: <20200227215224.5q7slx2eikkxwhwi@treble>
-References: <20200225035348.xf9KRK471%akpm@linux-foundation.org>
- <c15a7c7e-df7c-8a30-0bb1-03f8b04b7be5@infradead.org>
+        Thu, 27 Feb 2020 16:53:13 -0500
+Received: by mail-lf1-f68.google.com with SMTP id 7so529190lfz.11
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 13:53:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OBxG5p3NtRm8vJZ9SrWGbyvBMMrZfbcd6sEkh872Wpk=;
+        b=J2HlgJvotRvArCBanF+nmCfWdRF8pDW66BdmQms7zfNgyS7lRauYT3bDS5OboDi2DM
+         ifdOo7gJ8d+ZZyQcHW2Fg38xWkUDpHzNNzVJKJHCx5P3h/fPWvAmbJsxP/jGHk9JHs8h
+         efR20upDTYOd5dbP0XxRZK/5y/3u0AYyvc+eQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OBxG5p3NtRm8vJZ9SrWGbyvBMMrZfbcd6sEkh872Wpk=;
+        b=GiVdyTh1zZGyE62bd/cXzL+lvSLyN3RFgl902nI4otZ81j8D+V6B7Pqvgp0nYaNUub
+         TVDGxeWw3lkohscn1y1D56i0G34bTU5XZvmshWPwrH/oja9osW7+egMhGa9aTNInmajz
+         isZc2xMbKYxtDf46fjT7uWupyshQ04mthcRIkHy+ET4kYhSOt+vuwhnJ69MYVST4WNux
+         By1EF0v87i4vEKIUABpj/Pm2N1cj/OB0+cqIhKCRA7yCOwVm1SpjcgMNqwaDBHLvAIvS
+         jyydRvbh6Kb9dW3UYy7/Tp9fS2HAoYAFN+iX6Sxz6sUI3Z7q1tumW7zDeiqt0mc98zCe
+         pOcA==
+X-Gm-Message-State: ANhLgQ1oH6IsRqO/4r/uzic6ip68mqBwMt+6UssKyWo8bfSCWSL03iaq
+        HLXTHZPjZ4IvlifJoNopAWMXzh0x/RQ=
+X-Google-Smtp-Source: ADFU+vt/ZRbFjJuwrqqNkM8fAOCdCD8xNYrAVM9ucXdffUNV72nm1IknYISwaEslMTdyRWnzedYOvw==
+X-Received: by 2002:a19:3f4f:: with SMTP id m76mr792555lfa.63.1582840391185;
+        Thu, 27 Feb 2020 13:53:11 -0800 (PST)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id i67sm3586634lfd.38.2020.02.27.13.53.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2020 13:53:10 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id c23so550603lfi.7
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 13:53:10 -0800 (PST)
+X-Received: by 2002:ac2:5226:: with SMTP id i6mr725638lfl.99.1582840389628;
+ Thu, 27 Feb 2020 13:53:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c15a7c7e-df7c-8a30-0bb1-03f8b04b7be5@infradead.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <20200209183411.17195-1-sibis@codeaurora.org> <20200209183411.17195-5-sibis@codeaurora.org>
+In-Reply-To: <20200209183411.17195-5-sibis@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Thu, 27 Feb 2020 13:52:33 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5OOQVKe9ow2ApbEAjmgqRc05hHVxUi4os+4-gvpMh4Yg@mail.gmail.com>
+Message-ID: <CAE=gft5OOQVKe9ow2ApbEAjmgqRc05hHVxUi4os+4-gvpMh4Yg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] interconnect: qcom: Consolidate interconnect RPMh support
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Dai <daidavid1@codeaurora.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>, linux-pm@vger.kernel.org,
+        Odelu Kukatla <okukatla@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 09:01:54AM -0800, Randy Dunlap wrote:
-> On 2/24/20 7:53 PM, Andrew Morton wrote:
-> > The mm-of-the-moment snapshot 2020-02-24-19-53 has been uploaded to
-> > 
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > mmotm-readme.txt says
-> > 
-> > README for mm-of-the-moment:
-> > 
-> > http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> > 
-> 
-> Still seeing this one:
-> 
-> on x86_64:
-> 
-> drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: i915_gem_execbuffer2_ioctl()+0x5b7: call to gen8_canonical_addr() with UACCESS enabled
+On Sun, Feb 9, 2020 at 10:34 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+>
+> From: David Dai <daidavid1@codeaurora.org>
+>
+> Add bcm voter driver and add support for RPMh specific interconnect
+> providers which implements the set and aggregate functionalities that
+> translates bandwidth requests into RPMh messages. These modules provide
+> a common set of functionalities for all Qualcomm RPMh based interconnect
+> providers and should help reduce code duplication when adding new
+> providers.
+>
+> Signed-off-by: David Dai <daidavid1@codeaurora.org>
+> Signed-off-by: Odelu Kukatla <okukatla@codeaurora.org>
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 
-Forgot I had a patch for this.  Posting shortly.
+Assuming Georgi's comments get addressed:
 
--- 
-Josh
-
+Reviewed-by: Evan Green <evgreen@chromium.org>
