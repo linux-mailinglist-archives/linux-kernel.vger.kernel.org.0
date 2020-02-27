@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EB1C171E0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:25:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34625171D23
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:18:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388797AbgB0OML (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:12:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50720 "EHLO mail.kernel.org"
+        id S2389843AbgB0OSN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:18:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387743AbgB0OME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:12:04 -0500
+        id S2389813AbgB0OSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:18:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87B3120578;
-        Thu, 27 Feb 2020 14:12:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 872AE20801;
+        Thu, 27 Feb 2020 14:18:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812724;
-        bh=hzIUODltB8CaaldLAxlIk6S4sMoGiLxfeP47cHNFmO4=;
+        s=default; t=1582813085;
+        bh=z19uYR+QfCZ8E4oYV9c3VMN4H6XEwgmRfaD1iFIPAIg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0/SFMx1m/0sdcti6gDBEWb3rPVoyf9vLFLU2cWajpvnKiTKm4ARXxWuIhzVQceGqn
-         nb4oCZt8YZkP3krG6sGXAGAXhVbSjR41A+1Y14cNPTNcDeOymoQfLFWDXxfJRiFIsL
-         +YytcUUAzw6tmMJXH/TpVrDH2t6HRZc31SI1quYA=
+        b=pzFnECZmFZdUYW8BLHbKabPxKSd+Hn8OYR+nD91nAkHgxpJmzSs4VNqaI3okD/0tY
+         1TogXfKPK+cfpq4JvxFFOWUvhnzx7dgHw2/yskwGMGn+QZQQSFXVho57FIm2Qcznfh
+         nw2eZokgOMf7WBVbj268kXA4wwBOFCPi8CmG0gn0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.4 127/135] io_uring: prevent sq_thread from spinning when it should stop
-Date:   Thu, 27 Feb 2020 14:37:47 +0100
-Message-Id: <20200227132248.126675153@linuxfoundation.org>
+        stable@vger.kernel.org, Johannes Krude <johannes@krude.de>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Subject: [PATCH 5.5 131/150] bpf, offload: Replace bitwise AND by logical AND in bpf_prog_offload_info_fill
+Date:   Thu, 27 Feb 2020 14:37:48 +0100
+Message-Id: <20200227132251.857001787@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,65 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefano Garzarella <sgarzare@redhat.com>
+From: Johannes Krude <johannes@krude.de>
 
-commit 7143b5ac5750f404ff3a594b34fdf3fc2f99f828 upstream.
+commit e20d3a055a457a10a4c748ce5b7c2ed3173a1324 upstream.
 
-This patch drops 'cur_mm' before calling cond_resched(), to prevent
-the sq_thread from spinning even when the user process is finished.
+This if guards whether user-space wants a copy of the offload-jited
+bytecode and whether this bytecode exists. By erroneously doing a bitwise
+AND instead of a logical AND on user- and kernel-space buffer-size can lead
+to no data being copied to user-space especially when user-space size is a
+power of two and bigger then the kernel-space buffer.
 
-Before this patch, if the user process ended without closing the
-io_uring fd, the sq_thread continues to spin until the
-'sq_thread_idle' timeout ends.
-
-In the worst case where the 'sq_thread_idle' parameter is bigger than
-INT_MAX, the sq_thread will spin forever.
-
-Fixes: 6c271ce2f1d5 ("io_uring: add submission polling")
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: fcfb126defda ("bpf: add new jited info fields in bpf_dev_offload and bpf_prog_info")
+Signed-off-by: Johannes Krude <johannes@krude.de>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Jakub Kicinski <kuba@kernel.org>
+Link: https://lore.kernel.org/bpf/20200212193227.GA3769@phlox.h.transitiv.net
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- fs/io_uring.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ kernel/bpf/offload.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2732,16 +2732,6 @@ static int io_sq_thread(void *data)
- 		to_submit = io_sqring_entries(ctx);
- 		if (!to_submit) {
- 			/*
--			 * We're polling. If we're within the defined idle
--			 * period, then let us spin without work before going
--			 * to sleep.
--			 */
--			if (inflight || !time_after(jiffies, timeout)) {
--				cond_resched();
--				continue;
--			}
--
--			/*
- 			 * Drop cur_mm before scheduling, we can't hold it for
- 			 * long periods (or over schedule()). Do this before
- 			 * adding ourselves to the waitqueue, as the unuse/drop
-@@ -2753,6 +2743,16 @@ static int io_sq_thread(void *data)
- 				cur_mm = NULL;
- 			}
+--- a/kernel/bpf/offload.c
++++ b/kernel/bpf/offload.c
+@@ -321,7 +321,7 @@ int bpf_prog_offload_info_fill(struct bp
  
-+			/*
-+			 * We're polling. If we're within the defined idle
-+			 * period, then let us spin without work before going
-+			 * to sleep.
-+			 */
-+			if (inflight || !time_after(jiffies, timeout)) {
-+				cond_resched();
-+				continue;
-+			}
-+
- 			prepare_to_wait(&ctx->sqo_wait, &wait,
- 						TASK_INTERRUPTIBLE);
- 
+ 	ulen = info->jited_prog_len;
+ 	info->jited_prog_len = aux->offload->jited_len;
+-	if (info->jited_prog_len & ulen) {
++	if (info->jited_prog_len && ulen) {
+ 		uinsns = u64_to_user_ptr(info->jited_prog_insns);
+ 		ulen = min_t(u32, info->jited_prog_len, ulen);
+ 		if (copy_to_user(uinsns, aux->offload->jited_image, ulen)) {
 
 
