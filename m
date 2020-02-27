@@ -2,138 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E4181711E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:05:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 760451711EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:07:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbgB0IE6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 03:04:58 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59021 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726999AbgB0IE6 (ORCPT
+        id S1728480AbgB0IHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 03:07:10 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:37965 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726999AbgB0IHK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 03:04:58 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j7EA7-0003ca-9X; Thu, 27 Feb 2020 09:04:51 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1j7EA6-0004yp-Ki; Thu, 27 Feb 2020 09:04:50 +0100
-Date:   Thu, 27 Feb 2020 09:04:50 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Sam Shih <sam.shih@mediatek.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        John Crispin <john@phrozen.org>, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/1] pwm: mediatek: add longer period support
-Message-ID: <20200227080450.rkvwfjx6vikn5ls3@pengutronix.de>
-References: <1582789610-23133-1-git-send-email-sam.shih@mediatek.com>
- <1582789610-23133-2-git-send-email-sam.shih@mediatek.com>
+        Thu, 27 Feb 2020 03:07:10 -0500
+Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4E1BE3A340D;
+        Thu, 27 Feb 2020 19:07:04 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j7ECF-0007tA-Ly; Thu, 27 Feb 2020 19:07:03 +1100
+Date:   Thu, 27 Feb 2020 19:07:03 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andreas Dilger <adilger@dilger.ca>,
+        Waiman Long <longman@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Eric Sandeen <sandeen@redhat.com>
+Subject: Re: [PATCH 00/11] fs/dcache: Limit # of negative dentries
+Message-ID: <20200227080703.GK10737@dread.disaster.area>
+References: <20200226161404.14136-1-longman@redhat.com>
+ <20200226162954.GC24185@bombadil.infradead.org>
+ <2EDB6FFC-C649-4C80-999B-945678F5CE87@dilger.ca>
+ <20200226214507.GE24185@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1582789610-23133-2-git-send-email-sam.shih@mediatek.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20200226214507.GE24185@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
+        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=7-415B0cAAAA:8 a=tZu0WVHQ-7pqTbS7xfgA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 03:46:50PM +0800, Sam Shih wrote:
-> The pwm clock source could be divided by 1625 with PWM_CON
-> BIT(3) setting in mediatek hardware.
-> 
-> This patch add support for longer pwm period configuration,
-> which allowing blinking LEDs via pwm interface.
-> 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> ---
->  drivers/pwm/pwm-mediatek.c | 21 +++++++++++++++++----
->  1 file changed, 17 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
-> index b94e0d09c300..9af309bea01a 100644
-> --- a/drivers/pwm/pwm-mediatek.c
-> +++ b/drivers/pwm/pwm-mediatek.c
-> @@ -121,8 +121,8 @@ static int pwm_mediatek_config(struct pwm_chip *chip, struct pwm_device *pwm,
->  			       int duty_ns, int period_ns)
->  {
->  	struct pwm_mediatek_chip *pc = to_pwm_mediatek_chip(chip);
-> -	u32 clkdiv = 0, cnt_period, cnt_duty, reg_width = PWMDWIDTH,
-> -	    reg_thres = PWMTHRES;
-> +	u32 clkdiv = 0, clksel = 0, cnt_period, cnt_duty,
-> +	    reg_width = PWMDWIDTH, reg_thres = PWMTHRES;
->  	u64 resolution;
->  	int ret;
->  
-Adding some more context:
+On Wed, Feb 26, 2020 at 01:45:07PM -0800, Matthew Wilcox wrote:
+> had twice as many entries in it, would that significantly reduce the
+> thrash of new entries being created".  In the page cache, we end up
+> with a double LRU where once-used entries fall off the list quickly
+> but twice-or-more used entries get to stay around for a bit longer.
+> Maybe we could do something like that; keep a victim cache for recently
+> evicted dentries, and if we get a large hit rate in the victim cache,
+> expand the size of the primary cache.
 
-> @@ -139,11 +139,20 @@ static int pwm_mediatek_config(struct pwm_chip *chip, struct pwm_device *pwm,
-> 	while (cnt_period > 8191) {
->  		resolution *= 2;
->  		clkdiv++;
->  		cnt_period = DIV_ROUND_CLOSEST_ULL((u64)period_ns * 1000,
->  						   resolution);
-> +		if (clkdiv > PWM_CLK_DIV_MAX && !clksel) {
-> +			clksel = 1;
-> +			clkdiv = 0;
-> +			resolution = (u64)NSEC_PER_SEC * 1000 * 1625;
-> +			do_div(resolution,
-> +				clk_get_rate(pc->clk_pwms[pwm->hwpwm]));
-> +			cnt_period = DIV_ROUND_CLOSEST_ULL(
-> +					(u64)period_ns * 1000, resolution);
+You know, I've been saying exactly the same thing about the inode
+LRU in response to people trying to hack behaviour out of the
+shrinker that is triggered by the working set getting trashed by
+excessive creation of single use inodes (i.e. large scale directory
+traversal).
 
-The assignment is a repetition from just above the if. Maybe just put it
-once after this if block?
+IOWs, both have the same problem with working set retention in the
+face of excessive growth pressure.
 
-> +		}
->  	}
->  
-> -	if (clkdiv > PWM_CLK_DIV_MAX) {
-> +	if (clkdiv > PWM_CLK_DIV_MAX && clksel) {
+So, you know, perhaps two caches with the same problem, that use the
+same LRU implementation, could solve the same problem by enhancing
+the generic LRU code they use to an active/inactive style clocking
+LRU like the page LRUs?
 
-Is this change actually relevant? If the while loop that starts at line
-139 is never run (because cnt_period is <= 8191) clkdiv is zero and so
-the condition is false with and without "&& clksel". If however the
-while loop is entered and clkdiv becomes bigger than PWM_CLK_DIV_MAX
-clksel is 1 and the "&& clksel" doesn't make a difference, too.
+Cheers,
 
-The code is hard to follow, I wonder if this could be cleaned up with
-some comments added that explain the hardware details enough to be able
-to actually understand the code without having the hardware reference
-manual handy.
-
->  		pwm_mediatek_clk_disable(chip, pwm);
->  		dev_err(chip->dev, "period %d not supported\n", period_ns);
->  		return -EINVAL;
-> @@ -159,7 +168,11 @@ static int pwm_mediatek_config(struct pwm_chip *chip, struct pwm_device *pwm,
->  	}
->  
->  	cnt_duty = DIV_ROUND_CLOSEST_ULL((u64)duty_ns * 1000, resolution);
-> -	pwm_mediatek_writel(pc, pwm->hwpwm, PWMCON, BIT(15) | clkdiv);
-> +	if (clksel)
-> +		pwm_mediatek_writel(pc, pwm->hwpwm, PWMCON, BIT(15) | BIT(3) |
-> +				    clkdiv);
-> +	else
-> +		pwm_mediatek_writel(pc, pwm->hwpwm, PWMCON, BIT(15) | clkdiv);
->  	pwm_mediatek_writel(pc, pwm->hwpwm, reg_width, cnt_period);
->  	pwm_mediatek_writel(pc, pwm->hwpwm, reg_thres, cnt_duty);
->  
-> -- 
-> 2.17.1
-
-Best regards
-Uwe
-
+Dave.
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Dave Chinner
+david@fromorbit.com
