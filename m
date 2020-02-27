@@ -2,140 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B286E171446
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 10:43:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27350171456
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 10:50:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbgB0Jn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 04:43:26 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:47094 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728606AbgB0Jn0 (ORCPT
+        id S1728723AbgB0Juq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 04:50:46 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44505 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728706AbgB0Juq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 04:43:26 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y8so899864pll.13;
-        Thu, 27 Feb 2020 01:43:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PS1fdE4OWrB2AkicxBBGpwBY93VCzMfCd/vvRM7GyAk=;
-        b=oFusVLMiMD7bn94C3X0+16pfZ6f0JZxPmR7fxKb9j+awruyEQrahxlhOemwW+hQzIr
-         opF3bnkw7xoPozKiBlNEwOFdekITaG45Rx5BgojGPVHXjHnv6d7yiftVeZtVKi9VTGOz
-         TygRkhGDPoqYvNJBxY0nDEW/PAXOLBrEXUxwE+C/7LsgKFWdKrnhu+tY+e4tfZK6YXop
-         InZNn/cwyytsTh3nBgaHCAhk/ExSp3seO6pJObGFhrv+LkesQgR0paxs8qMPfDRhZBMH
-         z/dD3uDkGs2X53+mMKoK28afw+b1fQAyWXTjnniX0B9O+ME4r/321AQ0FA3ADcamE4jG
-         /igg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PS1fdE4OWrB2AkicxBBGpwBY93VCzMfCd/vvRM7GyAk=;
-        b=Pv1D2s9YFHAYmmV36VFAqwXMpAqJT/8yEeUNBCSMvU8hdmhVOog5m0n+wdCEXAiwCe
-         VrTcWkB5lLfpgKegE5G/Ik5AU5UyLKBpzpBKE/z31aLHl1TW+B3KsCqUvYbHqrBQV+fC
-         Q9cFZCqmOcgK/DhWo5Hc8qFBpzfI/GJM2AxpHUZr69BONySrYCCEDbwv4u8nwc6nakr5
-         IETqK6gFyL4JsFoL1JszQP8UsN9cQmo58kJtSxuwLqUwID2KoQy0uG5Pt4Ca7/kJjxfS
-         yRtskpjnwuDaSo1unqe8+aOpLer3ew6B64KS2ATMcw8X6bbAjkBk9m6PEsD4exbsIlGk
-         73nw==
-X-Gm-Message-State: APjAAAVj4TcOMJr7OMSxrc5bNgnpLgmGf19a/BfBpMr5PA9bNjMA6ba4
-        np9WS5InsYzUxz5Y0dgWcYCV2+odCVD47BhnlgE=
-X-Google-Smtp-Source: APXvYqzAgYaiT8ekNCP8XrmAwQ07X5LfLH/zISjybm2/aCfZtVIlqXQeFsK+KBgmsLpSlkESUJdMB/a9EwuPtG/rNek=
-X-Received: by 2002:a17:902:8d92:: with SMTP id v18mr3835223plo.18.1582796604992;
- Thu, 27 Feb 2020 01:43:24 -0800 (PST)
+        Thu, 27 Feb 2020 04:50:46 -0500
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1j7Foa-0006ms-Av; Thu, 27 Feb 2020 10:50:44 +0100
+Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1j7FoZ-0001JB-N2; Thu, 27 Feb 2020 10:50:43 +0100
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     kernel@pengutronix.de, ceggers@arri.de,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] nvmem: core: don't consider subnodes not matching binding
+Date:   Thu, 27 Feb 2020 10:47:29 +0100
+Message-Id: <20200227094728.3950-1-a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-References: <cover.1582709320.git.eswara.kota@linux.intel.com>
- <48dbbe705a1f22fb9e088827ca0be149e8fbcd85.1582709320.git.eswara.kota@linux.intel.com>
- <20200226144147.GQ10400@smile.fi.intel.com> <371e50f1-cab6-56f4-d12d-371d1b1f9c67@linux.intel.com>
-In-Reply-To: <371e50f1-cab6-56f4-d12d-371d1b1f9c67@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 27 Feb 2020 11:43:17 +0200
-Message-ID: <CAHp75VfJHvtLBueHJnU6xEuSrehiXH4Pvj880TqpyDBBnx1RuQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] phy: intel: Add driver support for Combophy
-To:     Dilip Kota <eswara.kota@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh@kernel.org>, cheol.yong.kim@intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        yixin.zhu@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 9:54 AM Dilip Kota <eswara.kota@linux.intel.com> wrote:
-> Thanks Andy for reviewing and giving the inputs.
-> I will update them as per your comments, but for couple of cases of i
-> have a different opinion. Please check and give your inputs.
+The nvmem cell binding applies to objects which match "^.*@[0-9a-f]+$",
+but so far the driver has matched all objects and failed if they didn't
+have the expected properties.
 
-...
+The driver's behavior in this regard precludes future extension of
+EEPROMs by child nodes other than nvmem and clashes with the barebox
+bootloader binding that extends the fixed-partitions MTD binding to
+EEPROMs as it tries to interpret the "fixed-partitions"-compatible
+partitions node as a nvmem cell.
 
-> >> +enum {
-> >> +    PHY_0,
-> >> +    PHY_1,
-> >> +    PHY_MAX_NUM,
-> > But here we don't need it since it's a terminator line.
-> > Ditto for the rest of enumerators with a terminator / max entry.
->
-> Sure i will remove them.
->
-> To be meaningful, i will remove the max entry for the enums representing
-> the value of register bitfields.
+Solve this issue by skipping all subnodes that don't contain an @.
 
-It will work.
+This still allows for cell names like `partitions@0,0', but this
+is much less likely to cause future collisions.
 
-...
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+Hello,
 
-> >> +static int intel_cbphy_iphy_dt_parse(struct intel_combo_phy *cbphy,
-> > dt -> fwnode
-> > Ditto for other similar function names.
-> Sure, it looks appropriate for intel_cbphy_iphy_dt_parse() ->
-> intel_cbphy_iphy_fwnode_parse().
-> Whereas for intel_cbphy_dt_parse() i will keep it unchanged, because it
-> is calling devm_*, devm_platform_*, fwnode_* APIs to traverse dt node.
+I am open to other suggestions on how to restrict nvmem from claiming
+specific subnodes. I would have preferred a cells { } container, like the
+partitons { } container used for MTD partitions, but as we have to stay
+backward-compatible anyway, a solution is needed for the current binding
+as well.
 
-How do you know that it will be DT node?
-I can't say it from the function parameters: Is any of them takes of_node?
+Cheers,
+Ahmad
+---
+ drivers/nvmem/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> >> +                                 struct fwnode_handle *fwnode, int idx)
-
-...
-
-> >> +    struct fwnode_reference_args ref;
-> >> +    struct device *dev = cbphy->dev;
-> >> +    struct fwnode_handle *fwnode;
-> >> +    struct platform_device *pdev;
-> >> +    int i, ret;
-> >> +    u32 prop;
-> > I guess the following would be better:
-> In the v2 patch, for int i = 0 you mentioned to do initialization at the
-> user, instead of doing at declaration.
-
-> So i followed the same for "pdev" and "fwnode" which are being used
-> after few lines of the code . It looked good in the perspective of code
-> readability.
-
-No, it is different. For the loop counter is better to have closer to
-the loop, for the more global thingy like platform device it makes it
-actually harder to find.
-When you do assignments you have to think about the variable meaning
-and scope. Scope is different for loop counter versus the mentioned
-rest.
-
-> >       struct device *dev = cbphy->dev;
-> >       struct platform_device *pdev = to_platform_device(dev);
-> >       struct fwnode_handle *fwnode = dev_fwnode(dev);
-> >       struct fwnode_reference_args ref;
-> >       int i, ret;
-> >       u32 prop;
-> >
-> >> +    pdev = to_platform_device(dev);
-> > See above.
-> >
-> >> +    fwnode = dev_fwnode(dev);
-> > See above.
-
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 1e4a798dce6e..1688287a765f 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -271,6 +271,8 @@ static int nvmem_add_cells_from_of(struct nvmem_device *nvmem)
+ 	parent = dev->of_node;
+ 
+ 	for_each_child_of_node(parent, child) {
++		if (!strchr(child->name, '@'))
++			continue;
+ 		addr = of_get_property(child, "reg", &len);
+ 		if (!addr || (len < 2 * sizeof(u32))) {
+ 			dev_err(dev, "nvmem: invalid reg on %pOF\n", child);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.25.0
+
