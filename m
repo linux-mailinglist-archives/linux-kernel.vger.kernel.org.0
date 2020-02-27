@@ -2,837 +2,972 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E488171D01
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:17:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 167E7171D4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:19:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389624AbgB0ORA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:17:00 -0500
-Received: from mail-bgr052103193092.outbound.protection.outlook.com ([52.103.193.92]:24422
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389583AbgB0OQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:16:56 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NIMJkxQ6KgA/OIB291azyOor6jbx6EspYkcELspgFFc9Nnlx4kMz66rreFz3ySwDILmm/9FNl8TSbiBljH+ahG4setfS1mH2tG1PwQ05TDe1zexMJY2TwTrG4V+lWH4I5UsPhoSjyqaAOynd+w5uy9sIerIm2cvGeJIYHlYlzID5vdkg0eLX7krwNR3IL853s0CLuIw6Xa1eSn3fgoSnrqdV0Y0Aeq+zfvWb9qCH7GU4TH/3SbgWmTUlYOX3CcQgZUu4FsehnlBUk4LRPJEN5+bxjzDyvuleCgqcPuWvf3o2tdxoDBcvWbFpHZYu3WCxcEwwVyIM9UTS/neZ1E1m3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xsm9bpDebIopFARQDOq1l6M+j8I+d1K+0HBXt3MZSjQ=;
- b=F0Wr6IDsUGye3Zcy+94qOMU6CWQg2UMlARkn6lqZD9GS00skJ3jwChOSGp+4fCOcbyIbxKIJ3CzuiisGcpYZ1osJSV+ApYWA9YOKLQjv3RZd3I6R12Xm3hlDTMpC0w46sQQAof9TKFHzgoIRy47nvQyRegBxdPSGbGBGUjo9uIcKBD0tBWY55Z5vfkYYcmjwCzomvOkbaKCPlyRzo9uAD8YScyz2t8XSDQmUm6Zqh3/n4L2uZEcnW/X4hcRM0uLfiU9SNF2TFV1Wd2G2VYvA6pJSoTH2tm06YzDg+rDR+mD6gSJixS/dIU0ztPXb4KQyEOSA68qJawvRYSk2Omyrtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=teo-en-ming-corp.com; dmarc=pass action=none
- header.from=teo-en-ming-corp.com; dkim=pass header.d=teo-en-ming-corp.com;
- arc=none
+        id S2389941AbgB0OTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:19:41 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:37878 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389561AbgB0OTi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:19:38 -0500
+Received: by mail-qv1-f66.google.com with SMTP id ci20so1598797qvb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:19:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=teoenmingcorp.onmicrosoft.com; s=selector2-teoenmingcorp-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xsm9bpDebIopFARQDOq1l6M+j8I+d1K+0HBXt3MZSjQ=;
- b=JDeYKeruMCC5vElgBWwvf3Z5G+O+WX/ZIAobOazFe8mI+I9hOmPePgCfn6PElkzy+uq4w8kzsN6uji3k/omOWAtjoXQCermzHhR220WvPbYaQCPw/twxbV81ls9nBK9SqEjqYssAX6c9sLYKDkQAUG2jcdw0bWPRBKxJBH1CDco=
-Received: from SG2PR01MB2141.apcprd01.prod.exchangelabs.com (10.170.143.19) by
- SG2PR01MB3096.apcprd01.prod.exchangelabs.com (20.178.134.81) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2750.17; Thu, 27 Feb 2020 14:16:48 +0000
-Received: from SG2PR01MB2141.apcprd01.prod.exchangelabs.com
- ([fe80::684a:9e0b:7e12:18bd]) by SG2PR01MB2141.apcprd01.prod.exchangelabs.com
- ([fe80::684a:9e0b:7e12:18bd%4]) with mapi id 15.20.2772.012; Thu, 27 Feb 2020
- 14:16:48 +0000
-From:   Turritopsis Dohrnii Teo En Ming <ceo@teo-en-ming-corp.com>
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-CC:     Turritopsis Dohrnii Teo En Ming <ceo@teo-en-ming-corp.com>
-Subject: Re-configuring BIND DNS Servers for CentOS Web Panel Web Hosting
- Control Panel on Amazon AWS Cloud
-Thread-Topic: Re-configuring BIND DNS Servers for CentOS Web Panel Web Hosting
- Control Panel on Amazon AWS Cloud
-Thread-Index: AQHV7Xh1XpuVCWO+y0GjRnukMZa3zQ==
-Date:   Thu, 27 Feb 2020 14:16:48 +0000
-Message-ID: <SG2PR01MB2141E38AF32C506180AC391C87EB0@SG2PR01MB2141.apcprd01.prod.exchangelabs.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ceo@teo-en-ming-corp.com; 
-x-originating-ip: [2401:7400:c802:de67:b9d6:368a:abe6:e44b]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ef34b124-a9be-4d51-b12c-08d7bb8faf09
-x-ms-traffictypediagnostic: SG2PR01MB3096:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SG2PR01MB30961A7FB1CB3234D21A434487EB0@SG2PR01MB3096.apcprd01.prod.exchangelabs.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5516;
-x-forefront-prvs: 03264AEA72
-x-forefront-antispam-report: SFV:SPM;SFS:(10001)(10009020)(6019001)(396003)(136003)(366004)(376002)(39830400003)(346002)(47630400002)(269900001)(279900001)(199004)(189003)(4326008)(6506007)(186003)(66946007)(64756008)(66446008)(76116006)(66476007)(66556008)(316002)(2906002)(966005)(508600001)(55016002)(9686003)(33656002)(6916009)(107886003)(86362001)(16799955002)(30864003)(5660300002)(52536014)(71200400001)(7696005)(81166006)(8936002)(8676002)(15188155005)(15974865002)(81156014)(416054008)(19623455009)(47845001);DIR:OUT;SFP:1501;SCL:5;SRVR:SG2PR01MB3096;H:SG2PR01MB2141.apcprd01.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: teo-en-ming-corp.com does not
- designate permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Xso9c4wV/jeP7Tdq+ibAf+kWL5ZmxRmFIYw9GPxMDAUpiXavI+lUCnlp2h+GaHJoz9oG+YzVTtDsC9nPB3KV3vRvlT2ah29mGKZAx6WpSoMb5mf5vLhn82ACUSfMRHtriqtz/aCUKjN1NurTSs1fBNIaVDnE688B1Rq55QPY/A+pUjdxAy6aQIer1vV/tGOXobKpStQlPSyhCKBT2/gIpQqByzPKY+GHtaY/aqg3K7raoPs7wcAvrUvS21FkqBI+5MdQaFemYUC49rhfzEzMh6deO0GLq6A3TQxXya+5c64N65QHs9iJ8wZ4nqlE/VSDHUcKdI59n9TngOZAwUjwRS+/bQkZMm96IgFQ9nwfRgDXl/IjtT9Mcx3lAiwEr9XaPJJUQdZrmB4LPelN2KehbVSv/HDX9Y1HuoRhFKgWgTpsXWoEG3/qQHExVCT+eNpOaelmQEYODqBGiCaECpUkIDqeTemDEttqSpzJZY8e6LnZOCgE5tPyxYOAJflIks/EtAcDvLAcx7fxajqaugsFv10eAV4en4upD99uSFevUXTFk/mI3ZkhWMW0s8GB/I0yTLHUIYwG0AFxFuBECyvfXDw/i7LcgT0ZLPzns+hNg2nOBjWvJT6fLSfqvBkNw+jU3W8S9UUH3snAQyWs02tZTqYJ9en2tCOq5mG0mJ6q45A6ix4vwX62H4iAj8BziWfKply9qfFJorP3fYcw3+rTXMHYpLtFJcVf264JzP1s88fAeYzhB3WHriS8mXHeBl16F2boySKQ+yTeEd8XBlCDQF0VCZU8qe90oycXtJYa8XZg8ns9tc6dL0TvraIeHMEciTXKi7SJLcYiPl8e9BojZ4TE7woh2tHA0FL01riy0a1AO1wZOcpzf0gAtCg99Q0a
-x-ms-exchange-antispam-messagedata: Ggyg1NaRi3GDzYlGYG6adf3sipmPIiHPUKG9gMMcwi0WKuR4y2IiIEmafMtY2KA9Ip7qt3xCzRiHYxirpq2K1GK4+8/W6IDxE2yUFxQ5+kXg76uY8cTS0Ry+BOV40hGZy6ryGO8lsmGe+EEa7iCIP5RBChFgshyEe8MS3i5weSEYyAxP7aSW1jys+FrnblFvRlZ1mhMr3XK9uifcIeqvsQ==
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bKLgWE8g0xV/N18tYpmVBS56HF0TogVDWNcIbg8xK6c=;
+        b=as2dYBPXmgPeAJI1tbfp3eHkefI/oZIQ1aydQx2b8K1SsCFms7QNJL5/Jbmo0fGkYU
+         03F/jQDJ7QXcMLcYrWrS9HQFOvu7hpmytwWZ8hSqDXm08teb+8NZA0zbf7h45KaXq9vj
+         p/olJbZz4Hua5/zGni3Q658pbtm4EmNM1mDnwaeKPooDc957GAgwSAIi63finA1XDOvE
+         oGP5OBdVWq02AySt/qOMX3mkvkruP8xZ1ld8TPBhHDtvhx+FgkQZsEfDX8Dtx7qjS8Up
+         Wm2lQAcLmev80AlugkohkxN0+StWHdHTKz3iZ82D4eTZBEQr8ckbvMVcRrH+1nxegm/q
+         dzsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bKLgWE8g0xV/N18tYpmVBS56HF0TogVDWNcIbg8xK6c=;
+        b=DbL6sxE1C17IjGEtfyLXFQzSEUYgjJPpTw9rPdUhjJYSCmdZAxxbAmnfBA3+w56ZeH
+         Y9cYmbSjjO6FHXW+DJq4ZsO8MPZMPvxMHAuDTtkvSVTiYI9Xllgk9lF1ZSRnKpc5Qdh2
+         ApHCSdPBN1t4fLkuKTdGvcmT3r0o/GyRgPlGHzQetdFCHCUB5j9hZuryN5z/hgb369uN
+         CEUqRwJ8ifO6cmFe9fel0QPSzCtTgcq2tfE7XNw4h7jWdd1SkLWg6D+X/8uy50Zqtt+u
+         EefrdQd4VbLauhTTsmGvoCdVx1sLJlcAU69zFo3D5Co6eUUFAZAYbIJpwqGRW6S8MH46
+         YXjQ==
+X-Gm-Message-State: APjAAAXJ/MgrW7dXMLfJ0kXn7q8Z50hZJUPtYrHg7d62lI//ZiKb+uPm
+        i8dO1W3Rm0HwepX6vKzeybG9EAoZbiJp+O91AQx6+g==
+X-Google-Smtp-Source: APXvYqzrl972avb0sa1bafrBLi8jmkszsvRM+cJhQxJuMiX82XUo+WJOPkpfe7vw9qjxLobJOFM0IKrTS/U69F3RloA=
+X-Received: by 2002:ad4:4e50:: with SMTP id eb16mr5383451qvb.34.1582813176458;
+ Thu, 27 Feb 2020 06:19:36 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: teo-en-ming-corp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef34b124-a9be-4d51-b12c-08d7bb8faf09
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2020 14:16:48.5261
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 23b3f6ae-c453-4b93-aec9-f17508e5885c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xcjJnYomA3/H7od7J7axflcqWreFIkBl4DZMGrfKIZROm3OZBJ1zEuLjPYYOTbElHPIu/loz2X7VDEwupAvgc3UWCdKl+T+oc4ZN93C9Kug=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR01MB3096
+References: <20200227024301.217042-1-trishalfonso@google.com>
+In-Reply-To: <20200227024301.217042-1-trishalfonso@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 27 Feb 2020 15:19:24 +0100
+Message-ID: <CACT4Y+Z_fGz2zVpco4kuGOVeCK=jv4zH0q9Uj5Hv5TAFxY3yRg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] Port KASAN Tests to KUnit
+To:     Patricia Alfonso <trishalfonso@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        David Gow <davidgow@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>, vincent.guittot@linaro.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, kunit-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Subject: Re-configuring BIND DNS Servers for CentOS Web Panel Web Hosting C=
-ontrol Panel on Amazon AWS Cloud=0A=
-=0A=
-Author: Mr. Turritopsis Dohrnii Teo En Ming, Singapore=0A=
-Date: 27 Feb 2020 Thursday=0A=
-=0A=
-Rationale for Re-configuration of BIND DNS Servers for CentOS Web Panel=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-I have originally followed the approach for cPanel where there are 2 DNS-ON=
-LY servers and one or more cPanel webservers. However, CentOS Web Panel =0A=
-implements DNS Clusters differently. Hence I have to re-configure BIND DNS =
-Servers for CentOS Web Panel web hosting control panel.=0A=
-=0A=
-PREREQUISITES=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-Part 1 of the series: Mr. Teo En Ming's Guide to Deploying CentOS Web Panel=
- (CWP) Web Hosting Control Panel on Amazon AWS Cloud=0A=
-=0A=
-Redundant Blogger and Wordpress blog links:=0A=
-=0A=
-[1] https://tdtemcerts.blogspot.com/2020/02/mr-teo-en-mings-guide-to-deploy=
-ing.html=0A=
-=0A=
-[2] https://tdtemcerts.wordpress.com/2020/02/23/mr-teo-en-mings-guide-to-de=
-ploying-centos-web-panel-cwp-web-hosting-control-panel-on-amazon-aws-cloud/=
-=0A=
-=0A=
-Part 2 of the series: Setting Up Mail Server Operation for CentOS Web Panel=
- Web Hosting Control Panel on Amazon AWS Cloud=0A=
-=0A=
-Redundant Blogger and Wordpress blog links:=0A=
-=0A=
-[1] https://tdtemcerts.blogspot.com/2020/02/setting-up-mail-server-operatio=
-n-for.html=0A=
-=0A=
-[2] https://tdtemcerts.wordpress.com/2020/02/25/setting-up-mail-server-oper=
-ation-for-centos-web-panel-web-hosting-control-panel-on-amazon-aws-cloud/=
-=0A=
-=0A=
-THIS guide is Part 3 of the series.=0A=
-=0A=
-EXTREMELY DETAILED INSTRUCTIONS OF TEO EN MING'S GUIDE=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=0A=
-=0A=
-Login to Amazon AWS Console.=0A=
-=0A=
-Setting Up Secondary/Slave DNS Server=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-On the EC2 Dashboard, click Instances.=0A=
-=0A=
-Click Launch Instance.=0A=
-=0A=
-Search for centos in the AWS Markpetplace.=0A=
-=0A=
-Select CentOS 7 (x86_64) - with Updates HVM (free tier eligible).=0A=
-=0A=
-Click Continue.=0A=
-=0A=
-Select t2.micro (free tier eligible).=0A=
-=0A=
-Click Next: Configure Instance Details.=0A=
-=0A=
-Network: Teo En Ming VPC=0A=
-=0A=
-Subnet: Public subnet | us-east-2a=0A=
-=0A=
-Click Protect against accidental termination.=0A=
-=0A=
-Click Next: Add Storage=0A=
-=0A=
-Size (GiB): 8=0A=
-=0A=
-Click Next: Add Tags=0A=
-=0A=
-Key =3D Name=0A=
-=0A=
-Value =3D slave=0A=
-=0A=
-Click Next: Configure Security Group=0A=
-=0A=
-Click Select an existing security group=0A=
-=0A=
-Select NameServers=0A=
-=0A=
-Click Review and Launch.=0A=
-=0A=
-Click Launch.=0A=
-=0A=
-Select Choose an existing key pair.=0A=
-=0A=
-Key pair name: cwp=0A=
-=0A=
-Click Launch Instances.=0A=
-=0A=
-Click Instances.=0A=
-=0A=
-Select slave, right click and select Networking > Manage IP Addresses.=0A=
-=0A=
-Click Allocate an elastic IP to this instance.=0A=
-=0A=
-Click Allocate.=0A=
-=0A=
-Click Associate this Elastic IP Address.=0A=
-=0A=
-Instance: slave=0A=
-=0A=
-Click Associate.=0A=
-=0A=
-IPv4 address of Secondary/Slave DNS server is 3.12.224.179=0A=
-=0A=
-$ ssh -i cwp.pem centos@3.12.224.179=0A=
-=0A=
-$ sudo passwd=0A=
-=0A=
-$ su -=0A=
-=0A=
-# yum -y update && yum -y install wget=0A=
-=0A=
-# hostnamectl set-hostname ns2.teo-en-ming.com=0A=
-=0A=
-# cd /usr/local/src && wget http://centos-webpanel.com/cwp-el7-latest && sh=
- cwp-el7-latest=0A=
-=0A=
-Started installing CentOS Web Panel at 9:00 PM on 26 Feb 2020 Wed.=0A=
-=0A=
-Completed installing CentOS Web Panel at 9:05 PM on 26 Feb 2020 Wed.=0A=
-=0A=
-Total duration: 5 mins.=0A=
-=0A=
-#############################=0A=
-# =A0 =A0 =A0CWP Installed =A0 =A0 =A0 =A0#=0A=
-#############################=0A=
-=0A=
-Go to CentOS WebPanel Admin GUI at http://SERVER_IP:2030/=0A=
-=0A=
-http://3.12.224.179:2030=0A=
-SSL: https://3.12.224.179:2031=0A=
----------------------=0A=
-Username: root=0A=
-Password: ssh server root password=0A=
-MySQL root Password: =0A=
-=0A=
-#########################################################=0A=
-=A0 =A0 =A0 =A0 =A0 CentOS Web Panel MailServer Installer =A0 =A0 =A0 =A0 =
-=A0=0A=
-#########################################################=0A=
-SSL Cert name (hostname): ns2.teo-en-ming.com=0A=
-SSL Cert file location /etc/pki/tls/ private|certs=0A=
-#########################################################=0A=
-=0A=
-Visit for help: www.centos-webpanel.com=0A=
-Write down login details and press ENTER for server reboot!=0A=
-Please reboot the server!=0A=
-Reboot command: shutdown -r now=0A=
-=0A=
-# reboot=0A=
-=0A=
-REFERENCE=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-Guide: Slave DNS Server & Manager - DNS Cluster=0A=
-=0A=
-Link: https://wiki.centos-webpanel.com/slave-dns-server-manager-dns-cluster=
-=0A=
-=0A=
-REFERENCE=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-Guide: Slave DNS Server & Manager download version=0A=
-=0A=
-Link: https://wiki.centos-webpanel.com/slave-dns-server-manager-download-ve=
-rsion=0A=
-=0A=
-Login to the CentOS Web Panel Admin Panel on the Slave.=0A=
-=0A=
-From the left menu, click on CWP Settings, then select Edit Settings.=0A=
-=0A=
-Admin Email: ceo@teo-en-ming-corp.com=0A=
-=0A=
-Check Activate NAT-ed network configuration.=0A=
-=0A=
-Click Save Changes.=0A=
-=0A=
-Create a New Account on the Secondary/Slave DNS Server=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=0A=
-=0A=
-From the left menu, click User Accounts, then click New Account.=0A=
-=0A=
-Domain name: teo-en-ming.com=0A=
-=0A=
-Username: slave=0A=
-=0A=
-Package: default=0A=
-=0A=
-Click Create.=0A=
-=0A=
-Download Slave DNS Manager and upload it to public_html folder on the Secon=
-dary/Slave DNS Server=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-ssh -i cwp.pem centos@3.12.224.179=0A=
-=0A=
-su -=0A=
-=0A=
-cd /home/slave/public_html=0A=
-=0A=
-wget http://dl1.centos-webpanel.com/files/cwp/addons/cwp-slave_dns.zip=0A=
-=0A=
-unzip cwp-slave_dns.zip=0A=
-=0A=
-mv slave_dns/* .=0A=
-=0A=
-rm -f index.html=0A=
-=0A=
-Fix file permissions on the Slave DNS Server=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-chown -R slave.slave /home/slave/public_html/*=0A=
-=0A=
-MySQL: Create User and Database on the Slave DNS Server=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=0A=
-=0A=
-From the left menu, click SQL Services, then click MySQL Manager.=0A=
-=0A=
-Click Create Database and User.=0A=
-=0A=
-New Database for user: slave=0A=
-=0A=
-Database Name: slave=0A=
-=0A=
-Click Create Database.=0A=
-=0A=
-Edit file /home/slave/public_html/inc/db_conn.php.sample and enter your dat=
-abase connection details=0A=
-=0A=
-# nano /home/slave/public_html/inc/db_conn.php.sample=0A=
-=0A=
-# mv inc/db_conn.php.sample inc/db_conn.php=0A=
-=0A=
-# mysql slave_slave < sql/slave_dns.sql=0A=
-=0A=
-# nano /etc/sudoers.d/slave=0A=
-=0A=
-slave =A0ALL=3D NOPASSWD: /bin/systemctl start named=0A=
-slave =A0ALL=3D NOPASSWD: /bin/systemctl stop named=0A=
-slave =A0ALL=3D NOPASSWD: /bin/systemctl restart named=0A=
-slave =A0ALL=3D NOPASSWD: /bin/systemctl reload named=0A=
-slave =A0ALL=3D NOPASSWD: /bin/systemctl status named=0A=
-slave =A0ALL=3D NOPASSWD: /bin/systemctl is-active named=0A=
-=0A=
-=0A=
-# touch /etc/named/slave.conf=0A=
-=0A=
-# chmod 771 /etc/named=0A=
-=0A=
-# usermod -a -G named slave=0A=
-=0A=
-# chown slave.named /etc/named/slave.conf=0A=
-=0A=
-# mkdir /var/named/slave=0A=
-=0A=
-# chown named.named /var/named/slave=0A=
-=0A=
-Edit File: /etc/named.conf and add this in options section before closing }=
-=0A=
-=0A=
-masterfile-format text;=0A=
-=0A=
-Add after options{} where other include lines are specifed=0A=
-=0A=
-//Slave dns configuration=0A=
-include "/etc/named/slave.conf";=0A=
-=0A=
-Now you can login to Slave DNS Manager GUI by using a domain link of the ac=
-count you have created.=0A=
-=0A=
-Go to http://3.12.224.179/~slave/index.php?login=0A=
-=0A=
-Default login for Slave DNS Manager GUI admin/root=0A=
-Username: root=0A=
-Password: FX8QKxvQ=0A=
-* Please change the default password after the first login=0A=
-=0A=
-Adding WebServers to Slave DNS Manager=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-- On Slave DNS manager GUI create a new user for each server or use a singl=
-e for all webservers if you plan to transfer accounts from one to another w=
-ebserver.=0A=
-=0A=
-Click Add New User.=0A=
-=0A=
-Username:=0A=
-=0A=
-Password:=0A=
-=0A=
-Email:=0A=
-=0A=
-API Key:=0A=
-=0A=
-API Secret:=0A=
-=0A=
-Domain Limit: 1000000=0A=
-=0A=
-Click Save.=0A=
-=0A=
-- On Master CentOS Web Panel WebServer go to DNS Functions -> Slave DNS Man=
-ager=0A=
-=0A=
-Buy CWPPro license first. It is only USD$1.49 compared to USD$20 for the li=
-cense of cPanel. I can't afford to buy the license for cPanel, hence =0A=
-I have to settle for CentOS Web Panel.=0A=
-=0A=
-Then ssh into your Master CentOS Web Panel Webserver.=0A=
-=0A=
-# sh /scripts/update_cwp=0A=
-=0A=
-You have successfully upgraded to CWPpro.=0A=
-=0A=
-On the Master CentOS Web Panel, Go to DNS Functions -> Slave DNS Manager=0A=
-=0A=
-API Key:=0A=
-=0A=
-Secret Key:=0A=
-=0A=
-Base URL: http://3.12.224.179/~slave=0A=
-=0A=
-Master Server IP's: 3.21.30.127=0A=
-=0A=
-Click Submit.=0A=
-=0A=
-Master CentOS Web Panel WebServer configuration=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-Edit File: /etc/named.conf and add this in options section before closing }=
-=0A=
-=0A=
-//Slave dns configuration=0A=
-allow-transfer {3.12.224.179;};=0A=
-allow-recursion {3.12.224.179;};=0A=
-also-notify {3.12.224.179;};=0A=
-masterfile-format text;=0A=
-=0A=
-# named-checkconf=0A=
-=0A=
-# systemctl restart named=0A=
-=0A=
-REFERENCE=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-Guide: How to setup DNS cluster on CWP 1 =96 Install DNS Manager=0A=
-=0A=
-Link: https://opentechy.com/how-to-setup-dns-cluster-on-cwp/=0A=
-=0A=
-REFERENCE=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-Guide: How to setup DNS cluster on CWP 2 =96 Add webservers to DNS cluster=
-=0A=
-=0A=
-Link: https://opentechy.com/how-to-setup-dns-cluster-on-cwp-2-add-webserver=
-s-to-dns-cluster/=0A=
-=0A=
-CONFIGURING CUSTOM NAME SERVERS AT YOUR DOMAIN REGISTRAR=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-Go to Advanced Features > Hostnames=0A=
-=0A=
-Host: ns1 	IP Addresses: 3.21.30.127=0A=
-Host: ns2	IP Addresses: 3.12.224.179=0A=
-=0A=
-Nameservers: Using custom nameservers=0A=
-=0A=
-ns1.teo-en-ming.com=0A=
-=0A=
-ns2.teo-en-ming.com=0A=
-=0A=
-CONFIGURING NAME SERVERS ON THE MASTER CENTOS WEB PANEL WEBSERVER=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-From the left menu, click DNS Functions, then click Edit Nameservers IPs.=
-=0A=
-=0A=
-Name Server 1: ns1.teo-en-ming.com	3.21.30.127=0A=
-=0A=
-Name Server 2: ns2.teo-en-ming.com	3.12.224.179=0A=
-=0A=
-Click Save changes.=0A=
-=0A=
-# systemctl restart named=0A=
-=0A=
-BIND DNS CONFIGURATION ON THE MASTER CENTOS WEB PANEL WEBSERVER=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-File /etc/named.conf:=0A=
-=0A=
-//=0A=
-// named.conf=0A=
-//=0A=
-// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS=
-=0A=
-// server as a caching only nameserver (as a any DNS resolver only).=0A=
-//=0A=
-// See /usr/share/doc/bind*/sample/ for example named configuration files.=
-=0A=
-//=0A=
-// See the BIND Administrator's Reference Manual (ARM) for details about th=
-e=0A=
-// configuration located in /usr/share/doc/bind-{version}/Bv9ARM.html=0A=
-=0A=
-options {=0A=
-	listen-on port 53 { any; };=0A=
-	listen-on-v6 port 53 { ::1; };=0A=
-	directory 	"/var/named";=0A=
-	dump-file 	"/var/named/data/cache_dump.db";=0A=
-	statistics-file "/var/named/data/named_stats.txt";=0A=
-	memstatistics-file "/var/named/data/named_mem_stats.txt";=0A=
-	recursing-file =A0"/var/named/data/named.recursing";=0A=
-	secroots-file =A0 "/var/named/data/named.secroots";=0A=
-	allow-query =A0 =A0 { any; };=0A=
-=0A=
-	/* =0A=
-	 - If you are building an AUTHORITATIVE DNS server, do NOT enable recursio=
-n.=0A=
-	 - If you are building a RECURSIVE (caching) DNS server, you need to enabl=
-e =0A=
-	 =A0 recursion. =0A=
-	 - If your recursive DNS server has a public IP address, you MUST enable a=
-ccess =0A=
-	 =A0 control to limit queries to your legitimate users. Failing to do so w=
-ill=0A=
-	 =A0 cause your server to become part of large scale DNS amplification =0A=
-	 =A0 attacks. Implementing BCP38 within your network would greatly=0A=
-	 =A0 reduce such attack surface =0A=
-	*/=0A=
-//	recursion no;=0A=
-=0A=
-	dnssec-enable yes;=0A=
-	dnssec-validation yes;=0A=
-=0A=
-	/* Path to ISC DLV key */=0A=
-	bindkeys-file "/etc/named.root.key";=0A=
-=0A=
-	managed-keys-directory "/var/named/dynamic";=0A=
-=0A=
-	pid-file "/run/named/named.pid";=0A=
-	session-keyfile "/run/named/session.key";=0A=
-=0A=
-//Slave dns configuration=0A=
-allow-transfer {3.12.224.179;};=0A=
-allow-recursion {3.12.224.179;};=0A=
-also-notify {3.12.224.179;};=0A=
-masterfile-format text;=0A=
-};=0A=
-=0A=
-logging {=0A=
-=A0 =A0 =A0 =A0 channel default_debug {=0A=
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 file "data/named.run";=0A=
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 severity dynamic;=0A=
-=A0 =A0 =A0 =A0 };=0A=
-};=0A=
-=0A=
-zone "." IN {=0A=
-	type hint;=0A=
-	file "named.ca";=0A=
-};=0A=
-=0A=
-include "/etc/named.rfc1912.zones";=0A=
-include "/etc/named.root.key";=0A=
-=0A=
-=0A=
-zone "ns1.teo-en-ming.com" {type master;file "/var/named/ns1.teo-en-ming.co=
-m.db";};=0A=
-zone "ns2.teo-en-ming.com" {type master;file "/var/named/ns2.teo-en-ming.co=
-m.db";};=0A=
-=0A=
-// zone teo-en-ming.com=0A=
-zone "teo-en-ming.com" {type master; file "/var/named/teo-en-ming.com.db";}=
-;=0A=
-// zone_end teo-en-ming.com=0A=
-=0A=
-File /var/named/ns1.teo-en-ming.com.db:=0A=
-=0A=
-=0A=
-; Panel %version%=0A=
-; Zone file for ns1.teo-en-ming.com=0A=
-$TTL 14400=0A=
-ns1.teo-en-ming.com. =A0 =A0 =A086400 =A0 =A0 =A0IN =A0 =A0 =A0SOA =A0 =A0 =
-=A0ns1.teo-en-ming.com. =A0 =A0 =A0info.centos-webpanel.com. =A0 =A0 =A0(=
-=0A=
-=A0 =A0 =A0 				2013071600 ;serial, todays date+todays=0A=
-=A0 =A0 =A0 				86400 ;refresh, seconds=0A=
-=A0 =A0 =A0 				7200 ;retry, seconds=0A=
-=A0 =A0 =A0 				3600000 ;expire, seconds=0A=
-=A0 =A0 =A0 				86400 ;minimum, seconds=0A=
-=A0 =A0 =A0 )=0A=
-ns1.teo-en-ming.com. 86400 IN NS ns1.teo-en-ming.com.=0A=
-ns1.teo-en-ming.com. 86400 IN NS ns2.teo-en-ming.com.=0A=
-ns1.teo-en-ming.com. 14400 IN A 3.21.30.127=0A=
-=0A=
-File /var/named/ns2.teo-en-ming.com.db:=0A=
-=0A=
-=0A=
-; Panel %version%=0A=
-; Zone file for ns2.teo-en-ming.com=0A=
-$TTL 14400=0A=
-ns2.teo-en-ming.com. =A0 =A0 =A086400 =A0 =A0 =A0IN =A0 =A0 =A0SOA =A0 =A0 =
-=A0ns1.teo-en-ming.com. =A0 =A0 =A0info.centos-webpanel.com. =A0 =A0 =A0(=
-=0A=
-=A0 =A0 =A0 				2013071600 ;serial, todays date+todays=0A=
-=A0 =A0 =A0 				86400 ;refresh, seconds=0A=
-=A0 =A0 =A0 				7200 ;retry, seconds=0A=
-=A0 =A0 =A0 				3600000 ;expire, seconds=0A=
-=A0 =A0 =A0 				86400 ;minimum, seconds=0A=
-=A0 =A0 =A0 )=0A=
-ns2.teo-en-ming.com. 86400 IN NS ns1.teo-en-ming.com.=0A=
-ns2.teo-en-ming.com. 86400 IN NS ns2.teo-en-ming.com.=0A=
-ns2.teo-en-ming.com. 14400 IN A 3.12.224.179=0A=
-=0A=
-File /var/named/teo-en-ming.com.db:=0A=
-=0A=
-; Generated by CWP=0A=
-; Zone file for teo-en-ming.com=0A=
-$TTL 14400=0A=
-@ =A0 =A086400 =A0 =A0 =A0 =A0IN =A0 =A0 =A0SOA =A0 =A0 ns1.teo-en-ming.com=
-. ceo.teo-en-ming-corp.com. (=0A=
-				2020022453 =A0 =A0 =A0; serial, todays date+todays=0A=
-				3600 =A0 =A0 =A0 =A0 =A0 =A0; refresh, seconds=0A=
-				7200 =A0 =A0 =A0 =A0 =A0 =A0; retry, seconds=0A=
-				1209600 =A0 =A0 =A0 =A0 ; expire, seconds=0A=
-				86400 ) =A0 =A0 =A0 =A0 ; minimum, seconds=0A=
-@	86400	IN	NS		ns1.teo-en-ming.com.=0A=
-@	86400	IN	NS		ns2.teo-en-ming.com.=0A=
-@ IN A 3.21.30.127=0A=
-localhost.teo-en-ming.com. IN A 127.0.0.1=0A=
-@ IN MX 0 teo-en-ming.com.=0A=
-mail 14400 IN CNAME teo-en-ming.com.=0A=
-smtp 14400 IN CNAME teo-en-ming.com.=0A=
-pop =A014400 IN CNAME teo-en-ming.com.=0A=
-pop3 14400 IN CNAME teo-en-ming.com.=0A=
-imap 14400 IN CNAME teo-en-ming.com.=0A=
-webmail 14400 IN A 3.21.30.127=0A=
-cpanel 14400 IN A 3.21.30.127=0A=
-cwp 14400 IN A 3.21.30.127=0A=
-www 14400 IN CNAME teo-en-ming.com.=0A=
-ftp 14400 IN CNAME teo-en-ming.com.=0A=
-_dmarc	14400	IN	TXT	"v=3DDMARC1; p=3Dnone"=0A=
-@	14400	IN	TXT	"v=3Dspf1 +a +mx +ip4:3.21.30.127 ~all"=0A=
-ns1.teo-en-ming.com. 14400 IN A 3.21.30.127=0A=
-ns2.teo-en-ming.com. 14400 IN A 3.12.224.179=0A=
-default._domainkey 14400 IN TXT "v=3DDKIM1; k=3Drsa; p=3DMIGfMA0GCSqGSIb3DQ=
-EBAQUAA4GNADCBiQKBgQDEXk5wQIfKJPjTkkj0yHGX8yIJOOrsOsvAqbqVaEBFBWhRlF7YxyGzc=
-haAdWEVQkozcsWPIL5DgJ7vWBoJIGqfNOT7vO/lStqNcXC+2hYVIF7MTB8i6tBW1/UDEuL8oamm=
-KWDq8P9Fpduk6JppV7rtKXeFzrYj35ydIhDIKUABcwIDAQAB"=0A=
-=0A=
-BIND DNS CONFIGURATION ON THE SLAVE DNS MANAGER=0A=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
-=0A=
-File /etc/named.conf:=0A=
-=0A=
-//=0A=
-// named.conf=0A=
-//=0A=
-// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS=
-=0A=
-// server as a caching only nameserver (as a any DNS resolver only).=0A=
-//=0A=
-// See /usr/share/doc/bind*/sample/ for example named configuration files.=
-=0A=
-//=0A=
-// See the BIND Administrator's Reference Manual (ARM) for details about th=
-e=0A=
-// configuration located in /usr/share/doc/bind-{version}/Bv9ARM.html=0A=
-=0A=
-options {=0A=
-	listen-on port 53 { any; };=0A=
-	listen-on-v6 port 53 { ::1; };=0A=
-	directory 	"/var/named";=0A=
-	dump-file 	"/var/named/data/cache_dump.db";=0A=
-	statistics-file "/var/named/data/named_stats.txt";=0A=
-	memstatistics-file "/var/named/data/named_mem_stats.txt";=0A=
-	recursing-file =A0"/var/named/data/named.recursing";=0A=
-	secroots-file =A0 "/var/named/data/named.secroots";=0A=
-	allow-query =A0 =A0 { any; };=0A=
-=0A=
-	/* =0A=
-	 - If you are building an AUTHORITATIVE DNS server, do NOT enable recursio=
-n.=0A=
-	 - If you are building a RECURSIVE (caching) DNS server, you need to enabl=
-e =0A=
-	 =A0 recursion. =0A=
-	 - If your recursive DNS server has a public IP address, you MUST enable a=
-ccess =0A=
-	 =A0 control to limit queries to your legitimate users. Failing to do so w=
-ill=0A=
-	 =A0 cause your server to become part of large scale DNS amplification =0A=
-	 =A0 attacks. Implementing BCP38 within your network would greatly=0A=
-	 =A0 reduce such attack surface =0A=
-	*/=0A=
-	recursion no;=0A=
-=0A=
-	dnssec-enable yes;=0A=
-	dnssec-validation yes;=0A=
-=0A=
-	/* Path to ISC DLV key */=0A=
-	bindkeys-file "/etc/named.root.key";=0A=
-=0A=
-	managed-keys-directory "/var/named/dynamic";=0A=
-=0A=
-	pid-file "/run/named/named.pid";=0A=
-	session-keyfile "/run/named/session.key";=0A=
-	=0A=
-	masterfile-format text;=0A=
-};=0A=
-=0A=
-logging {=0A=
-=A0 =A0 =A0 =A0 channel default_debug {=0A=
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 file "data/named.run";=0A=
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 severity dynamic;=0A=
-=A0 =A0 =A0 =A0 };=0A=
-};=0A=
-=0A=
-zone "." IN {=0A=
-	type hint;=0A=
-	file "named.ca";=0A=
-};=0A=
-=0A=
-include "/etc/named.rfc1912.zones";=0A=
-include "/etc/named.root.key";=0A=
-=0A=
-=0A=
-// zone teo-en-ming.com=0A=
-// zone "teo-en-ming.com" {type master; file "/var/named/teo-en-ming.com.db=
-";};=0A=
-// zone_end teo-en-ming.com=0A=
-=0A=
-//Slave dns configuration=0A=
-include "/etc/named/slave.conf";=0A=
-=0A=
-File /var/named/teo-en-ming.com.db (WRONG, DON'T USE):=0A=
-=0A=
-; Generated by CWP=0A=
-; Zone file for teo-en-ming.com=0A=
-$TTL 14400=0A=
-@ =A0 =A086400 =A0 =A0 =A0 =A0IN =A0 =A0 =A0SOA =A0 =A0 ns1.centos-webpanel=
-.com. ceo.teo-en-ming-corp.com. (=0A=
-				2020022660 =A0 =A0 =A0; serial, todays date+todays=0A=
-				3600 =A0 =A0 =A0 =A0 =A0 =A0; refresh, seconds=0A=
-				7200 =A0 =A0 =A0 =A0 =A0 =A0; retry, seconds=0A=
-				1209600 =A0 =A0 =A0 =A0 ; expire, seconds=0A=
-				86400 ) =A0 =A0 =A0 =A0 ; minimum, seconds=0A=
-@	86400	IN	NS		ns1.centos-webpanel.com.=0A=
-@	86400	IN	NS		ns2.centos-webpanel.com.=0A=
-@ IN A 3.12.224.179=0A=
-localhost.teo-en-ming.com. IN A 127.0.0.1=0A=
-@ IN MX 0 teo-en-ming.com.=0A=
-mail 14400 IN CNAME teo-en-ming.com.=0A=
-smtp 14400 IN CNAME teo-en-ming.com.=0A=
-pop =A014400 IN CNAME teo-en-ming.com.=0A=
-pop3 14400 IN CNAME teo-en-ming.com.=0A=
-imap 14400 IN CNAME teo-en-ming.com.=0A=
-webmail 14400 IN A 3.12.224.179=0A=
-cpanel 14400 IN A 3.12.224.179=0A=
-cwp 14400 IN A 3.12.224.179=0A=
-www 14400 IN CNAME teo-en-ming.com.=0A=
-ftp 14400 IN CNAME teo-en-ming.com.=0A=
-_dmarc	14400	IN	TXT	"v=3DDMARC1; p=3Dnone"=0A=
-@	14400	IN	TXT	"v=3Dspf1 +a +mx +ip4:3.12.224.179 ~all"=0A=
-default._domainkey 14400 IN TXT "v=3DDKIM1; k=3Drsa; p=3DMIGfMA0GCSqGSIb3DQ=
-EBAQUAA4GNADCBiQKBgQCktDYpEtFO7dyJeErMbjHvyfJYU8RqDeS7WVqQnjH4fP42JSqPmxEFX=
-+QytFTlGqd6ndlz9Tjqi1iZsD0ajB/+0Pkwq/KtL6NVo2TIqnXj8VebV9+FEcx+FGvLA/b5zz+H=
-fn0Bf+w/2T2bSwUm+tJoHilmANCFGlcGmpO9/lXvAwIDAQAB"=0A=
-=0A=
-File /etc/named/slave.conf:=0A=
-=0A=
-zone "teo-en-ming.com" { type slave; file "slave/db.teo-en-ming.com"; maste=
-rs { 3.21.30.127; };}; //username:enming=0A=
-=0A=
-That's all folks!=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
-=0A=
------BEGIN EMAIL SIGNATURE-----=0A=
-=0A=
-The Gospel for all Targeted Individuals (TIs):=0A=
-=0A=
-[The New York Times] Microwave Weapons Are Prime Suspect in Ills of=0A=
-U.S. Embassy Workers=0A=
-=0A=
-Link: https://www.nytimes.com/2018/09/01/science/sonic-attack-cuba-microwav=
-e.html=0A=
-=0A=
-***************************************************************************=
-*****************=0A=
-=0A=
-=0A=
-=0A=
-Singaporean Mr. Turritopsis Dohrnii Teo En Ming's Academic=0A=
-Qualifications as at 14 Feb 2019 and refugee seeking attempts at the United=
- Nations Refugee Agency Bangkok (21 Mar 2017), in Taiwan (5 Aug 2019) and A=
-ustralia (25 Dec 2019 to 9 Jan 2020):=0A=
-=0A=
-=0A=
-[1] https://tdtemcerts.wordpress.com/=0A=
-=0A=
-[2] https://tdtemcerts.blogspot.sg/=0A=
-=0A=
-[3] https://www.scribd.com/user/270125049/Teo-En-Ming=0A=
-=0A=
------END EMAIL SIGNATURE-----=0A=
-=0A=
-=0A=
-=0A=
+.On Thu, Feb 27, 2020 at 3:44 AM Patricia Alfonso
+<trishalfonso@google.com> wrote:
+>
+> Transfer all previous tests for KASAN to KUnit so they can be run
+> more easily. With proper KASAN integration into KUnit, developers can
+> run these tests with their other KUnit tests and see "pass" or "fail"
+> with the appropriate KASAN report instead of needing to parse each KASAN
+> report to test KASAN functionalities.
+>
+> Stack tests do not work in UML so those tests are protected inside an
+> "#if (CONFIG_KASAN_STACK == 1)" so this only runs if stack
+> instrumentation is enabled.
+>
+> Signed-off-by: Patricia Alfonso <trishalfonso@google.com>
+> ---
+> The KUnit version of these tests could be in addition to the existing
+> tests if that is preferred.
+>
+>  lib/Kconfig.kasan |   2 +-
+>  lib/test_kasan.c  | 352 +++++++++++++++++++++-------------------------
+>  2 files changed, 161 insertions(+), 193 deletions(-)
+>
+> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+> index 5b54f3c9a741..f8cc9ed60677 100644
+> --- a/lib/Kconfig.kasan
+> +++ b/lib/Kconfig.kasan
+> @@ -160,7 +160,7 @@ config KASAN_VMALLOC
+>
+>  config TEST_KASAN
+>         tristate "Module for testing KASAN for bug detection"
+> -       depends on m && KASAN
+> +       depends on KASAN && KUNIT
+>         help
+>           This is a test module doing various nasty things like
+>           out of bounds accesses, use after free. It is useful for testing
+> diff --git a/lib/test_kasan.c b/lib/test_kasan.c
+> index 3872d250ed2c..988650387a2a 100644
+> --- a/lib/test_kasan.c
+> +++ b/lib/test_kasan.c
+> @@ -23,17 +23,18 @@
+>
+>  #include <asm/page.h>
+>
+> +#include <kunit/test.h>
+> +
+>  /*
+>   * Note: test functions are marked noinline so that their names appear in
+>   * reports.
+>   */
+>
+> -static noinline void __init kmalloc_oob_right(void)
+> +static noinline void kmalloc_oob_right(void)
+>  {
+>         char *ptr;
+>         size_t size = 123;
+>
+> -       pr_info("out-of-bounds to right\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -44,12 +45,11 @@ static noinline void __init kmalloc_oob_right(void)
+>         kfree(ptr);
+>  }
+>
+> -static noinline void __init kmalloc_oob_left(void)
+> +static noinline void kmalloc_oob_left(void)
+>  {
+>         char *ptr;
+>         size_t size = 15;
+>
+> -       pr_info("out-of-bounds to left\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -60,12 +60,11 @@ static noinline void __init kmalloc_oob_left(void)
+>         kfree(ptr);
+>  }
+>
+> -static noinline void __init kmalloc_node_oob_right(void)
+> +static noinline void kmalloc_node_oob_right(void)
+>  {
+>         char *ptr;
+>         size_t size = 4096;
+>
+> -       pr_info("kmalloc_node(): out-of-bounds to right\n");
+>         ptr = kmalloc_node(size, GFP_KERNEL, 0);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -77,7 +76,7 @@ static noinline void __init kmalloc_node_oob_right(void)
+>  }
+>
+>  #ifdef CONFIG_SLUB
+> -static noinline void __init kmalloc_pagealloc_oob_right(void)
+> +static noinline void kmalloc_pagealloc_oob_right(void)
+>  {
+>         char *ptr;
+>         size_t size = KMALLOC_MAX_CACHE_SIZE + 10;
+> @@ -85,7 +84,6 @@ static noinline void __init kmalloc_pagealloc_oob_right(void)
+>         /* Allocate a chunk that does not fit into a SLUB cache to trigger
+>          * the page allocator fallback.
+>          */
+> -       pr_info("kmalloc pagealloc allocation: out-of-bounds to right\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -96,12 +94,11 @@ static noinline void __init kmalloc_pagealloc_oob_right(void)
+>         kfree(ptr);
+>  }
+>
+> -static noinline void __init kmalloc_pagealloc_uaf(void)
+> +static noinline void kmalloc_pagealloc_uaf(void)
+>  {
+>         char *ptr;
+>         size_t size = KMALLOC_MAX_CACHE_SIZE + 10;
+>
+> -       pr_info("kmalloc pagealloc allocation: use-after-free\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -112,12 +109,11 @@ static noinline void __init kmalloc_pagealloc_uaf(void)
+>         ptr[0] = 0;
+>  }
+>
+> -static noinline void __init kmalloc_pagealloc_invalid_free(void)
+> +static noinline void kmalloc_pagealloc_invalid_free(void)
+>  {
+>         char *ptr;
+>         size_t size = KMALLOC_MAX_CACHE_SIZE + 10;
+>
+> -       pr_info("kmalloc pagealloc allocation: invalid-free\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -128,14 +124,13 @@ static noinline void __init kmalloc_pagealloc_invalid_free(void)
+>  }
+>  #endif
+>
+> -static noinline void __init kmalloc_large_oob_right(void)
+> +static noinline void kmalloc_large_oob_right(void)
+>  {
+>         char *ptr;
+>         size_t size = KMALLOC_MAX_CACHE_SIZE - 256;
+>         /* Allocate a chunk that is large enough, but still fits into a slab
+>          * and does not trigger the page allocator fallback in SLUB.
+>          */
+> -       pr_info("kmalloc large allocation: out-of-bounds to right\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -146,13 +141,12 @@ static noinline void __init kmalloc_large_oob_right(void)
+>         kfree(ptr);
+>  }
+>
+> -static noinline void __init kmalloc_oob_krealloc_more(void)
+> +static noinline void kmalloc_oob_krealloc_more(void)
+>  {
+>         char *ptr1, *ptr2;
+>         size_t size1 = 17;
+>         size_t size2 = 19;
+>
+> -       pr_info("out-of-bounds after krealloc more\n");
+>         ptr1 = kmalloc(size1, GFP_KERNEL);
+>         ptr2 = krealloc(ptr1, size2, GFP_KERNEL);
+>         if (!ptr1 || !ptr2) {
+> @@ -166,13 +160,12 @@ static noinline void __init kmalloc_oob_krealloc_more(void)
+>         kfree(ptr2);
+>  }
+>
+> -static noinline void __init kmalloc_oob_krealloc_less(void)
+> +static noinline void kmalloc_oob_krealloc_less(void)
+>  {
+>         char *ptr1, *ptr2;
+>         size_t size1 = 17;
+>         size_t size2 = 15;
+>
+> -       pr_info("out-of-bounds after krealloc less\n");
+>         ptr1 = kmalloc(size1, GFP_KERNEL);
+>         ptr2 = krealloc(ptr1, size2, GFP_KERNEL);
+>         if (!ptr1 || !ptr2) {
+> @@ -184,13 +177,12 @@ static noinline void __init kmalloc_oob_krealloc_less(void)
+>         kfree(ptr2);
+>  }
+>
+> -static noinline void __init kmalloc_oob_16(void)
+> +static noinline void kmalloc_oob_16(void)
+>  {
+>         struct {
+>                 u64 words[2];
+>         } *ptr1, *ptr2;
+>
+> -       pr_info("kmalloc out-of-bounds for 16-bytes access\n");
+>         ptr1 = kmalloc(sizeof(*ptr1) - 3, GFP_KERNEL);
+>         ptr2 = kmalloc(sizeof(*ptr2), GFP_KERNEL);
+>         if (!ptr1 || !ptr2) {
+> @@ -204,12 +196,11 @@ static noinline void __init kmalloc_oob_16(void)
+>         kfree(ptr2);
+>  }
+>
+> -static noinline void __init kmalloc_oob_memset_2(void)
+> +static noinline void kmalloc_oob_memset_2(void)
+>  {
+>         char *ptr;
+>         size_t size = 8;
+>
+> -       pr_info("out-of-bounds in memset2\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -220,12 +211,11 @@ static noinline void __init kmalloc_oob_memset_2(void)
+>         kfree(ptr);
+>  }
+>
+> -static noinline void __init kmalloc_oob_memset_4(void)
+> +static noinline void kmalloc_oob_memset_4(void)
+>  {
+>         char *ptr;
+>         size_t size = 8;
+>
+> -       pr_info("out-of-bounds in memset4\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -237,12 +227,11 @@ static noinline void __init kmalloc_oob_memset_4(void)
+>  }
+>
+>
+> -static noinline void __init kmalloc_oob_memset_8(void)
+> +static noinline void kmalloc_oob_memset_8(void)
+>  {
+>         char *ptr;
+>         size_t size = 8;
+>
+> -       pr_info("out-of-bounds in memset8\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -253,12 +242,11 @@ static noinline void __init kmalloc_oob_memset_8(void)
+>         kfree(ptr);
+>  }
+>
+> -static noinline void __init kmalloc_oob_memset_16(void)
+> +static noinline void kmalloc_oob_memset_16(void)
+>  {
+>         char *ptr;
+>         size_t size = 16;
+>
+> -       pr_info("out-of-bounds in memset16\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -269,12 +257,11 @@ static noinline void __init kmalloc_oob_memset_16(void)
+>         kfree(ptr);
+>  }
+>
+> -static noinline void __init kmalloc_oob_in_memset(void)
+> +static noinline void kmalloc_oob_in_memset(void)
+>  {
+>         char *ptr;
+>         size_t size = 666;
+>
+> -       pr_info("out-of-bounds in memset\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -285,12 +272,11 @@ static noinline void __init kmalloc_oob_in_memset(void)
+>         kfree(ptr);
+>  }
+>
+> -static noinline void __init kmalloc_uaf(void)
+> +static noinline void kmalloc_uaf(void)
+>  {
+>         char *ptr;
+>         size_t size = 10;
+>
+> -       pr_info("use-after-free\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -301,12 +287,11 @@ static noinline void __init kmalloc_uaf(void)
+>         *(ptr + 8) = 'x';
+>  }
+>
+> -static noinline void __init kmalloc_uaf_memset(void)
+> +static noinline void kmalloc_uaf_memset(void)
+>  {
+>         char *ptr;
+>         size_t size = 33;
+>
+> -       pr_info("use-after-free in memset\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -317,12 +302,11 @@ static noinline void __init kmalloc_uaf_memset(void)
+>         memset(ptr, 0, size);
+>  }
+>
+> -static noinline void __init kmalloc_uaf2(void)
+> +static noinline void kmalloc_uaf2(void)
+>  {
+>         char *ptr1, *ptr2;
+>         size_t size = 43;
+>
+> -       pr_info("use-after-free after another kmalloc\n");
+>         ptr1 = kmalloc(size, GFP_KERNEL);
+>         if (!ptr1) {
+>                 pr_err("Allocation failed\n");
+> @@ -342,14 +326,13 @@ static noinline void __init kmalloc_uaf2(void)
+>         kfree(ptr2);
+>  }
+>
+> -static noinline void __init kfree_via_page(void)
+> +static noinline void kfree_via_page(void)
+>  {
+>         char *ptr;
+>         size_t size = 8;
+>         struct page *page;
+>         unsigned long offset;
+>
+> -       pr_info("invalid-free false positive (via page)\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -361,13 +344,12 @@ static noinline void __init kfree_via_page(void)
+>         kfree(page_address(page) + offset);
+>  }
+>
+> -static noinline void __init kfree_via_phys(void)
+> +static noinline void kfree_via_phys(void)
+>  {
+>         char *ptr;
+>         size_t size = 8;
+>         phys_addr_t phys;
+>
+> -       pr_info("invalid-free false positive (via phys)\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -378,7 +360,7 @@ static noinline void __init kfree_via_phys(void)
+>         kfree(phys_to_virt(phys));
+>  }
+>
+> -static noinline void __init kmem_cache_oob(void)
+> +static noinline void kmem_cache_oob(void)
+>  {
+>         char *p;
+>         size_t size = 200;
+> @@ -389,7 +371,6 @@ static noinline void __init kmem_cache_oob(void)
+>                 pr_err("Cache allocation failed\n");
+>                 return;
+>         }
+> -       pr_info("out-of-bounds in kmem_cache_alloc\n");
+>         p = kmem_cache_alloc(cache, GFP_KERNEL);
+>         if (!p) {
+>                 pr_err("Allocation failed\n");
+> @@ -402,7 +383,7 @@ static noinline void __init kmem_cache_oob(void)
+>         kmem_cache_destroy(cache);
+>  }
+>
+> -static noinline void __init memcg_accounted_kmem_cache(void)
+> +static noinline void memcg_accounted_kmem_cache(void)
+>  {
+>         int i;
+>         char *p;
+> @@ -415,7 +396,6 @@ static noinline void __init memcg_accounted_kmem_cache(void)
+>                 return;
+>         }
+>
+> -       pr_info("allocate memcg accounted object\n");
+>         /*
+>          * Several allocations with a delay to allow for lazy per memcg kmem
+>          * cache creation.
+> @@ -435,31 +415,19 @@ static noinline void __init memcg_accounted_kmem_cache(void)
+>
+>  static char global_array[10];
+>
+> -static noinline void __init kasan_global_oob(void)
+> +static noinline void kasan_global_oob(void)
+>  {
+>         volatile int i = 3;
+>         char *p = &global_array[ARRAY_SIZE(global_array) + i];
+>
+> -       pr_info("out-of-bounds global variable\n");
+> -       *(volatile char *)p;
+> -}
+> -
+> -static noinline void __init kasan_stack_oob(void)
+
+Let's keep it but also make dependent on CONFIG_KASAN_STACK
+
+> -{
+> -       char stack_array[10];
+> -       volatile int i = 0;
+> -       char *p = &stack_array[ARRAY_SIZE(stack_array) + i];
+> -
+> -       pr_info("out-of-bounds on stack\n");
+>         *(volatile char *)p;
+>  }
+>
+> -static noinline void __init ksize_unpoisons_memory(void)
+> +static noinline void ksize_unpoisons_memory(void)
+>  {
+>         char *ptr;
+>         size_t size = 123, real_size;
+>
+> -       pr_info("ksize() unpoisons the whole allocated chunk\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -473,72 +441,36 @@ static noinline void __init ksize_unpoisons_memory(void)
+>         kfree(ptr);
+>  }
+>
+> -static noinline void __init copy_user_test(void)
+> +#if (CONFIG_KASAN_STACK == 1)
+
+The more common syntax for this is:
+
+#ifdef CONFIG_KASAN_STACK
+
+but it would even better to do:
+
+if (IS_ENABLED(CONFIG_KASAN_STACK))
+
+and return early. This way we at least test compilation (e.g.
+CONFIG_KASAN_STACK is not supported on your arch, you change tests and
+build break them because they were not even compiled).
+
+
+> +static noinline void kasan_stack_oob(void)
+>  {
+> -       char *kmem;
+> -       char __user *usermem;
+> -       size_t size = 10;
+> -       int unused;
+> -
+> -       kmem = kmalloc(size, GFP_KERNEL);
+> -       if (!kmem)
+> -               return;
+> -
+> -       usermem = (char __user *)vm_mmap(NULL, 0, PAGE_SIZE,
+> -                           PROT_READ | PROT_WRITE | PROT_EXEC,
+> -                           MAP_ANONYMOUS | MAP_PRIVATE, 0);
+> -       if (IS_ERR(usermem)) {
+> -               pr_err("Failed to allocate user memory\n");
+> -               kfree(kmem);
+> -               return;
+> -       }
+> -
+> -       pr_info("out-of-bounds in copy_from_user()\n");
+> -       unused = copy_from_user(kmem, usermem, size + 1);
+
+Why is all of this removed?
+Most of these tests are hard earned and test some special corner cases.
+
+> -
+> -       pr_info("out-of-bounds in copy_to_user()\n");
+> -       unused = copy_to_user(usermem, kmem, size + 1);
+> -
+> -       pr_info("out-of-bounds in __copy_from_user()\n");
+> -       unused = __copy_from_user(kmem, usermem, size + 1);
+> -
+> -       pr_info("out-of-bounds in __copy_to_user()\n");
+> -       unused = __copy_to_user(usermem, kmem, size + 1);
+> -
+> -       pr_info("out-of-bounds in __copy_from_user_inatomic()\n");
+> -       unused = __copy_from_user_inatomic(kmem, usermem, size + 1);
+> -
+> -       pr_info("out-of-bounds in __copy_to_user_inatomic()\n");
+> -       unused = __copy_to_user_inatomic(usermem, kmem, size + 1);
+> -
+> -       pr_info("out-of-bounds in strncpy_from_user()\n");
+> -       unused = strncpy_from_user(kmem, usermem, size + 1);
+> +       char stack_array[10];
+> +       volatile int i = 0;
+> +       char *p = &stack_array[ARRAY_SIZE(stack_array) + i];
+>
+> -       vm_munmap((unsigned long)usermem, PAGE_SIZE);
+> -       kfree(kmem);
+> +       *(volatile char *)p;
+>  }
+>
+> -static noinline void __init kasan_alloca_oob_left(void)
+> +static noinline void kasan_alloca_oob_left(void)
+>  {
+>         volatile int i = 10;
+>         char alloca_array[i];
+>         char *p = alloca_array - 1;
+>
+> -       pr_info("out-of-bounds to left on alloca\n");
+>         *(volatile char *)p;
+>  }
+>
+> -static noinline void __init kasan_alloca_oob_right(void)
+> +static noinline void kasan_alloca_oob_right(void)
+>  {
+>         volatile int i = 10;
+>         char alloca_array[i];
+>         char *p = alloca_array + i;
+>
+> -       pr_info("out-of-bounds to right on alloca\n");
+>         *(volatile char *)p;
+>  }
+> +#endif /* CONFIG_KASAN_STACK */
+>
+> -static noinline void __init kmem_cache_double_free(void)
+> +static noinline void kmem_cache_double_free(void)
+>  {
+>         char *p;
+>         size_t size = 200;
+> @@ -549,7 +481,6 @@ static noinline void __init kmem_cache_double_free(void)
+>                 pr_err("Cache allocation failed\n");
+>                 return;
+>         }
+> -       pr_info("double-free on heap object\n");
+>         p = kmem_cache_alloc(cache, GFP_KERNEL);
+>         if (!p) {
+>                 pr_err("Allocation failed\n");
+> @@ -562,7 +493,7 @@ static noinline void __init kmem_cache_double_free(void)
+>         kmem_cache_destroy(cache);
+>  }
+>
+> -static noinline void __init kmem_cache_invalid_free(void)
+> +static noinline void kmem_cache_invalid_free(void)
+>  {
+>         char *p;
+>         size_t size = 200;
+> @@ -574,7 +505,6 @@ static noinline void __init kmem_cache_invalid_free(void)
+>                 pr_err("Cache allocation failed\n");
+>                 return;
+>         }
+> -       pr_info("invalid-free of heap object\n");
+>         p = kmem_cache_alloc(cache, GFP_KERNEL);
+>         if (!p) {
+>                 pr_err("Allocation failed\n");
+> @@ -594,12 +524,11 @@ static noinline void __init kmem_cache_invalid_free(void)
+>         kmem_cache_destroy(cache);
+>  }
+>
+> -static noinline void __init kasan_memchr(void)
+> +static noinline void kasan_memchr(void)
+>  {
+>         char *ptr;
+>         size_t size = 24;
+>
+> -       pr_info("out-of-bounds in memchr\n");
+>         ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
+>         if (!ptr)
+>                 return;
+> @@ -608,13 +537,12 @@ static noinline void __init kasan_memchr(void)
+>         kfree(ptr);
+>  }
+>
+> -static noinline void __init kasan_memcmp(void)
+> +static noinline void kasan_memcmp(void)
+>  {
+>         char *ptr;
+>         size_t size = 24;
+>         int arr[9];
+>
+> -       pr_info("out-of-bounds in memcmp\n");
+>         ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
+>         if (!ptr)
+>                 return;
+> @@ -624,12 +552,11 @@ static noinline void __init kasan_memcmp(void)
+>         kfree(ptr);
+>  }
+>
+> -static noinline void __init kasan_strings(void)
+> +static noinline void kasan_strings(void)
+>  {
+>         char *ptr;
+>         size_t size = 24;
+>
+> -       pr_info("use-after-free in strchr\n");
+>         ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
+>         if (!ptr)
+>                 return;
+> @@ -645,23 +572,18 @@ static noinline void __init kasan_strings(void)
+>         ptr += 16;
+>         strchr(ptr, '1');
+>
+> -       pr_info("use-after-free in strrchr\n");
+>         strrchr(ptr, '1');
+>
+> -       pr_info("use-after-free in strcmp\n");
+>         strcmp(ptr, "2");
+
+Such tests now need to be split into multiple tests, one error per
+test. Otherwise they don't test what they are supposed to test (each
+of these produces an error).
+Well, I mean, currently they don't test anything at all, but with
+kunit we actually can test this, so it would be good to actually test
+what this test was supposed to test :)
+This applies to other tests as well.
+
+
+> -       pr_info("use-after-free in strncmp\n");
+>         strncmp(ptr, "2", 1);
+>
+> -       pr_info("use-after-free in strlen\n");
+>         strlen(ptr);
+>
+> -       pr_info("use-after-free in strnlen\n");
+>         strnlen(ptr, 1);
+>  }
+>
+> -static noinline void __init kasan_bitops(void)
+> +static noinline void kasan_bitops(void)
+>  {
+>         /*
+>          * Allocate 1 more byte, which causes kzalloc to round up to 16-bytes;
+> @@ -676,70 +598,52 @@ static noinline void __init kasan_bitops(void)
+>          * below accesses are still out-of-bounds, since bitops are defined to
+>          * operate on the whole long the bit is in.
+>          */
+> -       pr_info("out-of-bounds in set_bit\n");
+>         set_bit(BITS_PER_LONG, bits);
+>
+> -       pr_info("out-of-bounds in __set_bit\n");
+>         __set_bit(BITS_PER_LONG, bits);
+>
+> -       pr_info("out-of-bounds in clear_bit\n");
+>         clear_bit(BITS_PER_LONG, bits);
+>
+> -       pr_info("out-of-bounds in __clear_bit\n");
+>         __clear_bit(BITS_PER_LONG, bits);
+>
+> -       pr_info("out-of-bounds in clear_bit_unlock\n");
+>         clear_bit_unlock(BITS_PER_LONG, bits);
+>
+> -       pr_info("out-of-bounds in __clear_bit_unlock\n");
+>         __clear_bit_unlock(BITS_PER_LONG, bits);
+>
+> -       pr_info("out-of-bounds in change_bit\n");
+>         change_bit(BITS_PER_LONG, bits);
+>
+> -       pr_info("out-of-bounds in __change_bit\n");
+>         __change_bit(BITS_PER_LONG, bits);
+>
+>         /*
+>          * Below calls try to access bit beyond allocated memory.
+>          */
+> -       pr_info("out-of-bounds in test_and_set_bit\n");
+>         test_and_set_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
+>
+> -       pr_info("out-of-bounds in __test_and_set_bit\n");
+>         __test_and_set_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
+>
+> -       pr_info("out-of-bounds in test_and_set_bit_lock\n");
+>         test_and_set_bit_lock(BITS_PER_LONG + BITS_PER_BYTE, bits);
+>
+> -       pr_info("out-of-bounds in test_and_clear_bit\n");
+>         test_and_clear_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
+>
+> -       pr_info("out-of-bounds in __test_and_clear_bit\n");
+>         __test_and_clear_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
+>
+> -       pr_info("out-of-bounds in test_and_change_bit\n");
+>         test_and_change_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
+>
+> -       pr_info("out-of-bounds in __test_and_change_bit\n");
+>         __test_and_change_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
+>
+> -       pr_info("out-of-bounds in test_bit\n");
+>         (void)test_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
+>
+>  #if defined(clear_bit_unlock_is_negative_byte)
+> -       pr_info("out-of-bounds in clear_bit_unlock_is_negative_byte\n");
+>         clear_bit_unlock_is_negative_byte(BITS_PER_LONG + BITS_PER_BYTE, bits);
+>  #endif
+>         kfree(bits);
+>  }
+>
+> -static noinline void __init kmalloc_double_kzfree(void)
+> +static noinline void kmalloc_double_kzfree(void)
+
+Since it seems we will need v2, it will help if you move these
+mechanical diffs to a separate patch. I mean removal of __init and
+pr_info. These produce lots of changes and it's hard to separate out
+more meaningful changes from this mechanical noise.
+
+>  {
+>         char *ptr;
+>         size_t size = 16;
+>
+> -       pr_info("double-free (kzfree)\n");
+>         ptr = kmalloc(size, GFP_KERNEL);
+>         if (!ptr) {
+>                 pr_err("Allocation failed\n");
+> @@ -750,29 +654,130 @@ static noinline void __init kmalloc_double_kzfree(void)
+>         kzfree(ptr);
+>  }
+>
+> -#ifdef CONFIG_KASAN_VMALLOC
+> -static noinline void __init vmalloc_oob(void)
+> +static void kunit_test_oob(struct kunit *test)
+> +{
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_oob_right());
+
+I think the 2 patches need to be reordered. This
+KUNIT_EXPECT_KASAN_FAIL is introduced only in the next patch. This
+will break build during bisections.
+
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_oob_left());
+
+I am wondering if it makes sense to have the "KASAN_FAIL" part be part
+of the test itself. It will make the test and assertion local to each
+other. I hope later we will add some negative tests as well (without
+kasan errors), then people will start copy-pasting these macros and
+it's possible I copy-paste macro that checks that the test does not
+produce kasan error for my test, which I actually want the macro that
+checks for report. Then if my test does not fail, it will be
+unnoticed. I may be good to have assertion local to the test itself.
+Thoughts?
+
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_node_oob_right());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_large_oob_right());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_oob_krealloc_more());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_oob_krealloc_less());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_oob_16());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_oob_in_memset());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_oob_memset_2());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_oob_memset_4());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_oob_memset_8());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_oob_memset_16());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmem_cache_oob());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kasan_global_oob());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, ksize_unpoisons_memory());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kasan_memchr());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kasan_memcmp());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kasan_strings());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kasan_bitops());
+> +#ifdef CONFIG_SLUB
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_pagealloc_oob_right());
+> +#endif /* CONFIG_SLUB */
+> +
+> +#if (CONFIG_KASAN_STACK == 1)
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kasan_stack_oob());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kasan_alloca_oob_right());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kasan_alloca_oob_left());
+> +#endif /*CONFIG_KASAN_STACK*/
+> +}
+> +
+> +static void kunit_test_uaf(struct kunit *test)
+> +{
+> +#ifdef CONFIG_SLUB
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_pagealloc_uaf());
+> +#endif
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_uaf());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_uaf_memset());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_uaf2());
+> +}
+> +
+> +static void kunit_test_invalid_free(struct kunit *test)
+>  {
+> -       void *area;
+> +#ifdef CONFIG_SLUB
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_pagealloc_invalid_free());
+> +#endif
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmem_cache_invalid_free());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmem_cache_double_free());
+> +       KUNIT_EXPECT_KASAN_FAIL(test, kmalloc_double_kzfree());
+> +}
+>
+> -       pr_info("vmalloc out-of-bounds\n");
+> +static void kunit_test_false_positives(struct kunit *test)
+> +{
+> +       kfree_via_page();
+> +       kfree_via_phys();
+> +}
+>
+> -       /*
+> -        * We have to be careful not to hit the guard page.
+> -        * The MMU will catch that and crash us.
+> -        */
+> -       area = vmalloc(3000);
+> -       if (!area) {
+> -               pr_err("Allocation failed\n");
+> +static void kunit_test_memcg(struct kunit *test)
+> +{
+> +       memcg_accounted_kmem_cache();
+> +}
+> +
+> +static struct kunit_case kasan_kunit_test_cases[] = {
+> +       KUNIT_CASE(kunit_test_oob),
+> +       KUNIT_CASE(kunit_test_uaf),
+> +       KUNIT_CASE(kunit_test_invalid_free),
+> +       KUNIT_CASE(kunit_test_false_positives),
+> +       KUNIT_CASE(kunit_test_memcg),
+> +       {}
+> +};
+> +
+> +static struct kunit_suite kasan_kunit_test_suite = {
+> +       .name = "kasan_kunit_test",
+> +       .test_cases = kasan_kunit_test_cases,
+> +};
+> +
+> +kunit_test_suite(kasan_kunit_test_suite);
+> +
+> +#if IS_MODULE(CONFIG_TEST_KASAN)
+> +static noinline void __init copy_user_test(void)
+> +{
+> +       char *kmem;
+> +       char __user *usermem;
+> +       size_t size = 10;
+> +       int unused;
+> +
+> +       kmem = kmalloc(size, GFP_KERNEL);
+> +       if (!kmem)
+> +               return;
+> +
+> +       usermem = (char __user *)vm_mmap(NULL, 0, PAGE_SIZE,
+> +                           PROT_READ | PROT_WRITE | PROT_EXEC,
+> +                           MAP_ANONYMOUS | MAP_PRIVATE, 0);
+> +       if (IS_ERR(usermem)) {
+> +               pr_err("Failed to allocate user memory\n");
+> +               kfree(kmem);
+>                 return;
+>         }
+>
+> -       ((volatile char *)area)[3100];
+> -       vfree(area);
+> +       pr_info("out-of-bounds in copy_from_user()\n");
+> +       unused = copy_from_user(kmem, usermem, size + 1);
+> +
+> +       pr_info("out-of-bounds in copy_to_user()\n");
+> +       unused = copy_to_user(usermem, kmem, size + 1);
+> +
+> +       pr_info("out-of-bounds in __copy_from_user()\n");
+> +       unused = __copy_from_user(kmem, usermem, size + 1);
+> +
+> +       pr_info("out-of-bounds in __copy_to_user()\n");
+> +       unused = __copy_to_user(usermem, kmem, size + 1);
+> +
+> +       pr_info("out-of-bounds in __copy_from_user_inatomic()\n");
+> +       unused = __copy_from_user_inatomic(kmem, usermem, size + 1);
+> +
+> +       pr_info("out-of-bounds in __copy_to_user_inatomic()\n");
+> +       unused = __copy_to_user_inatomic(usermem, kmem, size + 1);
+> +
+> +       pr_info("out-of-bounds in strncpy_from_user()\n");
+> +       unused = strncpy_from_user(kmem, usermem, size + 1);
+> +
+> +       vm_munmap((unsigned long)usermem, PAGE_SIZE);
+> +       kfree(kmem);
+>  }
+> -#else
+> -static void __init vmalloc_oob(void) {}
+> -#endif
+>
+>  static int __init kmalloc_tests_init(void)
+>  {
+> @@ -782,44 +787,7 @@ static int __init kmalloc_tests_init(void)
+>          */
+>         bool multishot = kasan_save_enable_multi_shot();
+>
+> -       kmalloc_oob_right();
+> -       kmalloc_oob_left();
+> -       kmalloc_node_oob_right();
+> -#ifdef CONFIG_SLUB
+> -       kmalloc_pagealloc_oob_right();
+> -       kmalloc_pagealloc_uaf();
+> -       kmalloc_pagealloc_invalid_free();
+> -#endif
+> -       kmalloc_large_oob_right();
+> -       kmalloc_oob_krealloc_more();
+> -       kmalloc_oob_krealloc_less();
+> -       kmalloc_oob_16();
+> -       kmalloc_oob_in_memset();
+> -       kmalloc_oob_memset_2();
+> -       kmalloc_oob_memset_4();
+> -       kmalloc_oob_memset_8();
+> -       kmalloc_oob_memset_16();
+> -       kmalloc_uaf();
+> -       kmalloc_uaf_memset();
+> -       kmalloc_uaf2();
+> -       kfree_via_page();
+> -       kfree_via_phys();
+> -       kmem_cache_oob();
+> -       memcg_accounted_kmem_cache();
+> -       kasan_stack_oob();
+> -       kasan_global_oob();
+> -       kasan_alloca_oob_left();
+> -       kasan_alloca_oob_right();
+> -       ksize_unpoisons_memory();
+>         copy_user_test();
+> -       kmem_cache_double_free();
+> -       kmem_cache_invalid_free();
+> -       kasan_memchr();
+> -       kasan_memcmp();
+> -       kasan_strings();
+> -       kasan_bitops();
+> -       kmalloc_double_kzfree();
+> -       vmalloc_oob();
+>
+>         kasan_restore_multi_shot(multishot);
+>
+> @@ -827,4 +795,4 @@ static int __init kmalloc_tests_init(void)
+>  }
+>
+>  module_init(kmalloc_tests_init);
+> -MODULE_LICENSE("GPL");
+> +#endif /* IS_MODULE(CONFIG_TEST_KASAN) */
+> --
+> 2.25.0.265.gbab2e86ba0-goog
+>
