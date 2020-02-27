@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B97A172105
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:47:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6059A171FB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731582AbgB0OqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:46:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41452 "EHLO mail.kernel.org"
+        id S2387844AbgB0Ohu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:37:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730382AbgB0Npb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:45:31 -0500
+        id S1729397AbgB0N5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:57:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 276BA21D7E;
-        Thu, 27 Feb 2020 13:45:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6197020578;
+        Thu, 27 Feb 2020 13:57:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811130;
-        bh=kuJqm9lVHTgSkHtET51GQHu9pcWS6zXH9KVddYyPlhI=;
+        s=default; t=1582811824;
+        bh=MAyEDk49P2Uh6U18iHPC9skH7iaZ47xAh4eHPg1oWV0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uFh0Z5ALQNnIO/IrXOEVfeka36NkuqW2KR1EJ1FMce1hFgGuqLc88LkwhN7Bi3+Gb
-         CTbQn6ZNBaIkssu2kY6XuSaDlqqW3BXqmW8468eZNjg0cYK1DjRVSyJMEFXo8asEyd
-         BXl2E0ifoSIpVDe2yz9iNzmhLec8N3L19gbV38Jk=
+        b=yOY4DWdjbIskVQM1rI9of4ZXi1rozQREdgGmuvWCi5KJxeOt5s67s7J0QoFNuuVlb
+         PAMB62UNgjjLJDEcLEPxXwacsOjdqXO8hjBusloFYoJ0LkV+EB2V2YxlXmd8OPY79A
+         eShVhMEMOsRUymA12GVsCBTY4poiuFFwONg1NI5o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 015/165] perf/x86/intel: Fix inaccurate period in context switch for auto-reload
-Date:   Thu, 27 Feb 2020 14:34:49 +0100
-Message-Id: <20200227132233.229300857@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 077/237] ARM: dts: imx6: rdu2: Disable WP for USDHC2 and USDHC3
+Date:   Thu, 27 Feb 2020 14:34:51 +0100
+Message-Id: <20200227132302.789337600@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,87 +48,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-commit f861854e1b435b27197417f6f90d87188003cb24 upstream.
+[ Upstream commit cd58a174e58649426fb43d7456e5f7d7eab58af1 ]
 
-Perf doesn't take the left period into account when auto-reload is
-enabled with fixed period sampling mode in context switch.
+RDU2 production units come with resistor connecting WP pin to
+correpsonding GPIO DNPed for both SD card slots. Drop any WP related
+configuration and mark both slots with "disable-wp".
 
-Here is the MSR trace of the perf command as below.
-(The MSR trace is simplified from a ftrace log.)
-
-    #perf record -e cycles:p -c 2000000 -- ./triad_loop
-
-      //The MSR trace of task schedule out
-      //perf disable all counters, disable PEBS, disable GP counter 0,
-      //read GP counter 0, and re-enable all counters.
-      //The counter 0 stops at 0xfffffff82840
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
-      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 0
-      write_msr: MSR_P6_EVNTSEL0(186), value 40003003c
-      rdpmc: 0, value fffffff82840
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
-
-      //The MSR trace of the same task schedule in again
-      //perf disable all counters, enable and set GP counter 0,
-      //enable PEBS, and re-enable all counters.
-      //0xffffffe17b80 (-2000000) is written to GP counter 0.
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
-      write_msr: MSR_IA32_PMC0(4c1), value ffffffe17b80
-      write_msr: MSR_P6_EVNTSEL0(186), value 40043003c
-      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 1
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
-
-When the same task schedule in again, the counter should starts from
-previous left. However, it starts from the fixed period -2000000 again.
-
-A special variant of intel_pmu_save_and_restart() is used for
-auto-reload, which doesn't update the hwc->period_left.
-When the monitored task schedules in again, perf doesn't know the left
-period. The fixed period is used, which is inaccurate.
-
-With auto-reload, the counter always has a negative counter value. So
-the left period is -value. Update the period_left in
-intel_pmu_save_and_restart_reload().
-
-With the patch:
-
-      //The MSR trace of task schedule out
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
-      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 0
-      write_msr: MSR_P6_EVNTSEL0(186), value 40003003c
-      rdpmc: 0, value ffffffe25cbc
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
-
-      //The MSR trace of the same task schedule in again
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
-      write_msr: MSR_IA32_PMC0(4c1), value ffffffe25cbc
-      write_msr: MSR_P6_EVNTSEL0(186), value 40043003c
-      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 1
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
-
-Fixes: d31fc13fdcb2 ("perf/x86/intel: Fix event update for auto-reload")
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lkml.kernel.org/r/20200121190125.3389-1-kan.liang@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: Chris Healy <cphealy@gmail.com>
+Reviewed-by: Chris Healy <cphealy@gmail.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/ds.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1326,6 +1326,8 @@ intel_pmu_save_and_restart_reload(struct
- 	old = ((s64)(prev_raw_count << shift) >> shift);
- 	local64_add(new - old + count * period, &event->count);
+diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+index 849eb3443cde2..719e63092c2ea 100644
+--- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+@@ -587,7 +587,7 @@
+ 	pinctrl-0 = <&pinctrl_usdhc2>;
+ 	bus-width = <4>;
+ 	cd-gpios = <&gpio2 2 GPIO_ACTIVE_LOW>;
+-	wp-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
++	disable-wp;
+ 	vmmc-supply = <&reg_3p3v_sd>;
+ 	vqmmc-supply = <&reg_3p3v>;
+ 	status = "okay";
+@@ -598,7 +598,7 @@
+ 	pinctrl-0 = <&pinctrl_usdhc3>;
+ 	bus-width = <4>;
+ 	cd-gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
+-	wp-gpios = <&gpio2 1 GPIO_ACTIVE_HIGH>;
++	disable-wp;
+ 	vmmc-supply = <&reg_3p3v_sd>;
+ 	vqmmc-supply = <&reg_3p3v>;
+ 	status = "okay";
+@@ -1001,7 +1001,6 @@
+ 			MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
+ 			MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
+ 			MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
+-			MX6QDL_PAD_NANDF_D3__GPIO2_IO03		0x40010040
+ 			MX6QDL_PAD_NANDF_D2__GPIO2_IO02		0x40010040
+ 		>;
+ 	};
+@@ -1014,7 +1013,6 @@
+ 			MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
+ 			MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
+ 			MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
+-			MX6QDL_PAD_NANDF_D1__GPIO2_IO01		0x40010040
+ 			MX6QDL_PAD_NANDF_D0__GPIO2_IO00		0x40010040
  
-+	local64_set(&hwc->period_left, -new);
-+
- 	perf_event_update_userpage(event);
- 
- 	return 0;
+ 		>;
+-- 
+2.20.1
+
 
 
