@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0D84171B21
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:59:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6097171B23
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:59:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732008AbgB0N7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:59:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33040 "EHLO mail.kernel.org"
+        id S1732661AbgB0N7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:59:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732646AbgB0N7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:59:48 -0500
+        id S1732649AbgB0N7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:59:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 272FF2073D;
-        Thu, 27 Feb 2020 13:59:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33A13246B5;
+        Thu, 27 Feb 2020 13:59:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811987;
-        bh=00kPkQo5+SpTsNZSdVwpSBf7venKRqfAdLZWy608xyY=;
+        s=default; t=1582811990;
+        bh=VG8bprn6FtRu7UbsBisMvMt6H54Pw6Et/zMJ75c5l9E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eadsVzuiL+VIUgnj0srxNChkIejlrbhH61Og9qolllJSjKb41AZNE0vrFMSW0RGDX
-         FKAdBk4xc5yO/FlYWFpOwlVkfVLgrB3pSmvkyh416d7KDUedpcyotrGZI6ilMb4C+R
-         J3lES0KTpXDXLlieMS39PCpd9L+2aRrY0UdhKnsY=
+        b=Gm/nEKLThXhFuuuA/ZsdKKuNzOt6eCFx2d6M+Vab/lYxKul7aEVkwozd5rd+eDUQU
+         bwlTpS3neXPT4H+cdalPJN5Wjsx3fmZDZxLLRUt/OQG5rgML6/ZZEB8lOSALC6ibG3
+         /zBFuY1wV75aTKDKbUi3NpAqF7rSIhPhJ/wprVoc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Todd Kjos <tkjos@google.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: [PATCH 4.14 178/237] staging: android: ashmem: Disallow ashmem memory from being remapped
-Date:   Thu, 27 Feb 2020 14:36:32 +0100
-Message-Id: <20200227132309.479948108@linuxfoundation.org>
+        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
+Subject: [PATCH 4.14 179/237] staging: vt6656: fix sign of rx_dbm to bb_pre_ed_rssi.
+Date:   Thu, 27 Feb 2020 14:36:33 +0100
+Message-Id: <20200227132309.546279036@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -45,73 +42,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suren Baghdasaryan <surenb@google.com>
+From: Malcolm Priestley <tvboxspy@gmail.com>
 
-commit 6d67b0290b4b84c477e6a2fc6e005e174d3c7786 upstream.
+commit 93134df520f23f4e9998c425b8987edca7016817 upstream.
 
-When ashmem file is mmapped, the resulting vma->vm_file points to the
-backing shmem file with the generic fops that do not check ashmem
-permissions like fops of ashmem do. If an mremap is done on the ashmem
-region, then the permission checks will be skipped. Fix that by disallowing
-mapping operation on the backing shmem file.
+bb_pre_ed_rssi is an u8 rx_dm always returns negative signed
+values add minus operator to always yield positive.
 
-Reported-by: Jann Horn <jannh@google.com>
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-Cc: stable <stable@vger.kernel.org> # 4.4,4.9,4.14,4.18,5.4
-Signed-off-by: Todd Kjos <tkjos@google.com>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Link: https://lore.kernel.org/r/20200127235616.48920-1-tkjos@google.com
+fixes issue where rx sensitivity is always set to maximum because
+the unsigned numbers were always greater then 100.
+
+Fixes: 63b9907f58f1 ("staging: vt6656: mac80211 conversion: create rx function.")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
+Link: https://lore.kernel.org/r/aceac98c-6e69-3ce1-dfec-2bf27b980221@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/android/ashmem.c |   28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/staging/vt6656/dpc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/android/ashmem.c
-+++ b/drivers/staging/android/ashmem.c
-@@ -361,8 +361,23 @@ static inline vm_flags_t calc_vm_may_fla
- 	       _calc_vm_trans(prot, PROT_EXEC,  VM_MAYEXEC);
- }
+--- a/drivers/staging/vt6656/dpc.c
++++ b/drivers/staging/vt6656/dpc.c
+@@ -140,7 +140,7 @@ int vnt_rx_data(struct vnt_private *priv
  
-+static int ashmem_vmfile_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	/* do not allow to mmap ashmem backing shmem file directly */
-+	return -EPERM;
-+}
-+
-+static unsigned long
-+ashmem_vmfile_get_unmapped_area(struct file *file, unsigned long addr,
-+				unsigned long len, unsigned long pgoff,
-+				unsigned long flags)
-+{
-+	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
-+}
-+
- static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
- {
-+	static struct file_operations vmfile_fops;
- 	struct ashmem_area *asma = file->private_data;
- 	int ret = 0;
+ 	vnt_rf_rssi_to_dbm(priv, *rssi, &rx_dbm);
  
-@@ -403,6 +418,19 @@ static int ashmem_mmap(struct file *file
- 		}
- 		vmfile->f_mode |= FMODE_LSEEK;
- 		asma->file = vmfile;
-+		/*
-+		 * override mmap operation of the vmfile so that it can't be
-+		 * remapped which would lead to creation of a new vma with no
-+		 * asma permission checks. Have to override get_unmapped_area
-+		 * as well to prevent VM_BUG_ON check for f_ops modification.
-+		 */
-+		if (!vmfile_fops.mmap) {
-+			vmfile_fops = *vmfile->f_op;
-+			vmfile_fops.mmap = ashmem_vmfile_mmap;
-+			vmfile_fops.get_unmapped_area =
-+					ashmem_vmfile_get_unmapped_area;
-+		}
-+		vmfile->f_op = &vmfile_fops;
- 	}
- 	get_file(asma->file);
+-	priv->bb_pre_ed_rssi = (u8)rx_dbm + 1;
++	priv->bb_pre_ed_rssi = (u8)-rx_dbm + 1;
+ 	priv->current_rssi = priv->bb_pre_ed_rssi;
  
+ 	frame = skb_data + 8;
 
 
