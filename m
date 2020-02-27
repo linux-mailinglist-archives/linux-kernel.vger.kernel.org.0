@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB8BF171C4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:10:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F4D171B5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388607AbgB0OKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:10:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49000 "EHLO mail.kernel.org"
+        id S1732998AbgB0OBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:01:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388578AbgB0OKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:10:46 -0500
+        id S1732975AbgB0OBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:01:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D7DD246B7;
-        Thu, 27 Feb 2020 14:10:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C3D8246B6;
+        Thu, 27 Feb 2020 14:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812645;
-        bh=G9EA7YhuBsmASAXGxVxqTr+Br1dwP2PxxDW6Vo/Q3W0=;
+        s=default; t=1582812105;
+        bh=M83zeuXPIyGAsJRQmuwMwjHxCkaP2k8wUuH3bxW+5Ew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b4W4aITwEF15l02Yi4lP6a7MaTmeJ6mVkYrOpHVTdiPHNoX2WC+hBokiXkIqJiv+5
-         P6wJ2KNNkcqFp43/XEiCYKzgW56MQK75CQt24hPUZEwqhjEvvwto/HaUKaIRC8THwr
-         1mz5E9HfXvej4uEGa6BDZvrbBvj0vZcwTgRg/DJ0=
+        b=wIRndZCTgZX5GMXB4QNERK8fYltNYgFq3bEB8qh6zw7IuV36cJiNIOBx4uoIvBoGr
+         Ot6lFV8rkaSWsVXD3K4qDjs+BcMCH7NCwRewGjRQslaipaxGv2fafi5VKvXzZKAz8K
+         Z5r9aqkpqiYX8LBaA/bR4ONiBbyxNx0lzJ692/v0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 096/135] Btrfs: fix btrfs_wait_ordered_range() so that it waits for all ordered extents
-Date:   Thu, 27 Feb 2020 14:37:16 +0100
-Message-Id: <20200227132243.658339077@linuxfoundation.org>
+        stable@vger.kernel.org, Rahul Kundu <rahul.kundu@chelsio.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dakshaja Uppalapati <dakshaja@chelsio.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 223/237] scsi: Revert "RDMA/isert: Fix a recently introduced regression related to logout"
+Date:   Thu, 27 Feb 2020 14:37:17 +0100
+Message-Id: <20200227132312.550900088@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +47,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit e75fd33b3f744f644061a4f9662bd63f5434f806 upstream.
+commit 76261ada16dcc3be610396a46d35acc3efbda682 upstream.
 
-In btrfs_wait_ordered_range() once we find an ordered extent that has
-finished with an error we exit the loop and don't wait for any other
-ordered extents that might be still in progress.
+Since commit 04060db41178 introduces soft lockups when toggling network
+interfaces, revert it.
 
-All the users of btrfs_wait_ordered_range() expect that there are no more
-ordered extents in progress after that function returns. So past fixes
-such like the ones from the two following commits:
-
-  ff612ba7849964 ("btrfs: fix panic during relocation after ENOSPC before
-                   writeback happens")
-
-  28aeeac1dd3080 ("Btrfs: fix panic when starting bg cache writeout after
-                   IO error")
-
-don't work when there are multiple ordered extents in the range.
-
-Fix that by making btrfs_wait_ordered_range() wait for all ordered extents
-even after it finds one that had an error.
-
-Link: https://github.com/kdave/btrfs-progs/issues/228#issuecomment-569777554
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Link: https://marc.info/?l=target-devel&m=158157054906196
+Cc: Rahul Kundu <rahul.kundu@chelsio.com>
+Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Reported-by: Dakshaja Uppalapati <dakshaja@chelsio.com>
+Fixes: 04060db41178 ("scsi: RDMA/isert: Fix a recently introduced regression related to logout")
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ordered-data.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/infiniband/ulp/isert/ib_isert.c |   12 ++++++++++++
+ drivers/target/iscsi/iscsi_target.c     |    6 +++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/ordered-data.c
-+++ b/fs/btrfs/ordered-data.c
-@@ -690,10 +690,15 @@ int btrfs_wait_ordered_range(struct inod
- 		}
- 		btrfs_start_ordered_extent(inode, ordered, 1);
- 		end = ordered->file_offset;
-+		/*
-+		 * If the ordered extent had an error save the error but don't
-+		 * exit without waiting first for all other ordered extents in
-+		 * the range to complete.
-+		 */
- 		if (test_bit(BTRFS_ORDERED_IOERR, &ordered->flags))
- 			ret = -EIO;
- 		btrfs_put_ordered_extent(ordered);
--		if (ret || end == 0 || end == start)
-+		if (end == 0 || end == start)
- 			break;
- 		end--;
+--- a/drivers/infiniband/ulp/isert/ib_isert.c
++++ b/drivers/infiniband/ulp/isert/ib_isert.c
+@@ -2582,6 +2582,17 @@ isert_wait4logout(struct isert_conn *ise
  	}
+ }
+ 
++static void
++isert_wait4cmds(struct iscsi_conn *conn)
++{
++	isert_info("iscsi_conn %p\n", conn);
++
++	if (conn->sess) {
++		target_sess_cmd_list_set_waiting(conn->sess->se_sess);
++		target_wait_for_sess_cmds(conn->sess->se_sess);
++	}
++}
++
+ /**
+  * isert_put_unsol_pending_cmds() - Drop commands waiting for
+  *     unsolicitate dataout
+@@ -2629,6 +2640,7 @@ static void isert_wait_conn(struct iscsi
+ 
+ 	ib_drain_qp(isert_conn->qp);
+ 	isert_put_unsol_pending_cmds(conn);
++	isert_wait4cmds(conn);
+ 	isert_wait4logout(isert_conn);
+ 
+ 	queue_work(isert_release_wq, &isert_conn->release_work);
+--- a/drivers/target/iscsi/iscsi_target.c
++++ b/drivers/target/iscsi/iscsi_target.c
+@@ -4155,6 +4155,9 @@ int iscsit_close_connection(
+ 	iscsit_stop_nopin_response_timer(conn);
+ 	iscsit_stop_nopin_timer(conn);
+ 
++	if (conn->conn_transport->iscsit_wait_conn)
++		conn->conn_transport->iscsit_wait_conn(conn);
++
+ 	/*
+ 	 * During Connection recovery drop unacknowledged out of order
+ 	 * commands for this connection, and prepare the other commands
+@@ -4240,9 +4243,6 @@ int iscsit_close_connection(
+ 	target_sess_cmd_list_set_waiting(sess->se_sess);
+ 	target_wait_for_sess_cmds(sess->se_sess);
+ 
+-	if (conn->conn_transport->iscsit_wait_conn)
+-		conn->conn_transport->iscsit_wait_conn(conn);
+-
+ 	ahash_request_free(conn->conn_tx_hash);
+ 	if (conn->conn_rx_hash) {
+ 		struct crypto_ahash *tfm;
 
 
