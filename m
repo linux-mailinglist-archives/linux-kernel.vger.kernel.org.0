@@ -2,143 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32684170F3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 04:58:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E2AB170F47
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 05:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbgB0D6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 22:58:22 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61132 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728273AbgB0D6V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 22:58:21 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01R3nmvp005369
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 22:58:20 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ydqf84te3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 22:58:20 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Thu, 27 Feb 2020 03:58:18 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 27 Feb 2020 03:58:11 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01R3wALj52625594
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Feb 2020 03:58:10 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 077E311C04C;
-        Thu, 27 Feb 2020 03:58:10 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9FA8611C04A;
-        Thu, 27 Feb 2020 03:58:09 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Feb 2020 03:58:09 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id E04FFA01C0;
-        Thu, 27 Feb 2020 14:58:04 +1100 (AEDT)
-Subject: Re: [PATCH v3 13/27] powerpc/powernv/pmem: Read the capability
- registers & wait for device ready
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     Andrew Donnellan <ajd@linux.ibm.com>
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
+        id S1728321AbgB0EAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 23:00:41 -0500
+Received: from foss.arm.com ([217.140.110.172]:45290 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728276AbgB0EAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 23:00:41 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C328130E;
+        Wed, 26 Feb 2020 20:00:40 -0800 (PST)
+Received: from p8cg001049571a15.arm.com (unknown [10.163.1.119])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C76033F73B;
+        Wed, 26 Feb 2020 20:00:38 -0800 (PST)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Date:   Thu, 27 Feb 2020 14:58:08 +1100
-In-Reply-To: <c6ce554a-62b4-2675-9ec3-1ded8eaacfc4@linux.ibm.com>
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
-         <20200221032720.33893-14-alastair@au1.ibm.com>
-         <c6ce554a-62b4-2675-9ec3-1ded8eaacfc4@linux.ibm.com>
-Organization: IBM Australia
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20022703-0008-0000-0000-00000356CCA2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022703-0009-0000-0000-00004A77ED75
-Message-Id: <e411d83af90e776a817f7638871f2257cacffcd0.camel@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-26_09:2020-02-26,2020-02-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- mlxlogscore=999 bulkscore=0 priorityscore=1501 impostorscore=0
- phishscore=0 malwarescore=0 adultscore=0 clxscore=1015 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002270025
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/debug: Replace __pa() with __pa_symbol() in debug_vm_pgtable()
+Date:   Thu, 27 Feb 2020 09:30:31 +0530
+Message-Id: <1582776031-30344-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-02-27 at 14:54 +1100, Andrew Donnellan wrote:
-> On 21/2/20 2:27 pm, Alastair D'Silva wrote:
-> > +/**
-> > + * read_device_metadata() - Retrieve config information from the
-> > AFU and save it for future use
-> > + * @ocxlpmem: the device metadata
-> > + * Return: 0 on success, negative on failure
-> > + */
-> > +static int read_device_metadata(struct ocxlpmem *ocxlpmem)
-> > +{
-> > +	u64 val;
-> > +	int rc;
-> > +
-> > +	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
-> > GLOBAL_MMIO_CCAP0,
-> > +				     OCXL_LITTLE_ENDIAN, &val);
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	ocxlpmem->scm_revision = val & 0xFFFF;
-> > +	ocxlpmem->read_latency = (val >> 32) & 0xFF;
-> 
-> This field is 16 bits in the spec, so the mask should be 0xFFFF I
-> think?
-> 
+Replace __pa() with __pa_symbol() in debug_vm_pgtable() while accessing the
+physical address for 'start_kernel' which is a kernel text symbol, else it
+might trigger the following warning on some platforms when DEBUG_VIRTUAL is
+enabled.
 
-You're right, I'll fix it.
+[   23.123852] ------------[ cut here ]------------
+[   23.124486] virt_to_phys used for non-linear address: (____ptrval____) (start_kernel+0x0/0x424)
+[   23.125663] WARNING: CPU: 11 PID: 1 at arch/arm64/mm/physaddr.c:15 __virt_to_phys+0x60/0x98
+[   23.126877] Modules linked in:
+[   23.127390] CPU: 11 PID: 1 Comm: swapper/0 Tainted: G        W 5.6.0-rc3-next-20200226-00001-g306225cc6ffd #163
+[   23.129139] Hardware name: linux,dummy-virt (DT)
+[   23.129898] pstate: 60400005 (nZCv daif +PAN -UAO)
+[   23.130693] pc : __virt_to_phys+0x60/0x98
+[   23.131359] lr : __virt_to_phys+0x60/0x98
+[   23.132022] sp : ffff800011e6be10
+[   23.132575] x29: ffff800011e6be10 x28: 0000000000000000
+[   23.133447] x27: 0000000000000000 x26: 0000000000000000
+[   23.134319] x25: 0000000000000000 x24: 0020000000000fd3
+[   23.135197] x23: fffffe000bd27700 x22: ffff0002fcae8000
+[   23.136069] x21: ffff800011a47000 x20: 0000000000000001
+[   23.136941] x19: ffff800011350a14 x18: 0000000000000010
+[   23.137815] x17: 000000006bb8910e x16: 00000000a1fdc699
+[   23.138693] x15: ffffffffffffffff x14: 6c656e72656b5f74
+[   23.139567] x13: 726174732820295f x12: 5f5f5f6c61767274
+[   23.140441] x11: 705f5f5f5f28203a x10: 7373657264646120
+[   23.141314] x9 : 7261656e696c2d6e x8 : ffff8000106b4e70
+[   23.142189] x7 : 00000000000002a1 x6 : ffff800011a58bba
+[   23.143067] x5 : 001fffffffffffff x4 : 0000000000000000
+[   23.143939] x3 : 00000000ffffffff x2 : ffff800011881bf8
+[   23.144810] x1 : 16ee3f9cb03efc00 x0 : 0000000000000000
+[   23.145682] Call trace:
+[   23.146097]  __virt_to_phys+0x60/0x98
+[   23.146710]  debug_vm_pgtable+0xd0/0x440
+[   23.147362]  kernel_init+0x18/0x100
+[   23.147944]  ret_from_fork+0x10/0x18
+[   23.148539] ---[ end trace fc4ccb3cb35ff225 ]---
 
-> Maybe we should generalise the EXTRACT_BITS macro we use in ocxl :)
-> 
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org
+Reported-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+This applies on linux-next (next-20200226). Tested on arm64 and x86
+platforms. Build tested on several others.
+
+ mm/debug_vm_pgtable.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+index cdfab040c1f6..9d1c8570fa00 100644
+--- a/mm/debug_vm_pgtable.c
++++ b/mm/debug_vm_pgtable.c
+@@ -585,7 +585,7 @@ void __init debug_vm_pgtable(void)
+ 	 * helps avoid large memory block allocations to be used for mapping
+ 	 * at higher page table levels.
+ 	 */
+-	paddr = __pa(&start_kernel);
++	paddr = __pa_symbol(&start_kernel);
+ 
+ 	pte_aligned = (paddr & PAGE_MASK) >> PAGE_SHIFT;
+ 	pmd_aligned = (paddr & PMD_MASK) >> PAGE_SHIFT;
 -- 
-Alastair D'Silva
-Open Source Developer
-Linux Technology Centre, IBM Australia
-mob: 0423 762 819
+2.20.1
 
