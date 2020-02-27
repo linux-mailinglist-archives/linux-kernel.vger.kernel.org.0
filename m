@@ -2,245 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61A8D1723B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:41:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE95A1723BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:43:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbgB0Qly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:41:54 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51945 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729146AbgB0Qlx (ORCPT
+        id S1730399AbgB0Qmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:42:39 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:46973 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729146AbgB0Qmj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:41:53 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1j7MEM-0005Cg-1u; Thu, 27 Feb 2020 17:41:46 +0100
-Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1j7MEI-0005z9-Df; Thu, 27 Feb 2020 17:41:42 +0100
-Date:   Thu, 27 Feb 2020 17:41:42 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     gregkh@linuxfoundation.org, Thinh.Nguyen@synopsys.com,
-        harry.pan@intel.com, nobuta.keiya@fujitsu.com, malat@debian.org,
-        kai.heng.feng@canonical.com, chiasheng.lee@intel.com,
-        andreyknvl@google.com, heinzelmann.david@gmail.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de, kbuild test robot <lkp@intel.com>
-Subject: Re: [RFC PATCH v2] USB: hub: fix port suspend/resume
-Message-ID: <20200227164142.dsnbrxtk747tnvma@pengutronix.de>
-References: <20200227135631.13983-1-m.felsch@pengutronix.de>
- <Pine.LNX.4.44L0.2002271100000.1730-100000@iolanthe.rowland.org>
+        Thu, 27 Feb 2020 11:42:39 -0500
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id 01RGgSNn032144;
+        Fri, 28 Feb 2020 01:42:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 01RGgSNn032144
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582821749;
+        bh=Kl3TN2eh546ny6xXnVBhUNVM+StMJOTg1j6RbqQc4Yw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PM+jqTkZpUpTAOB6lgGVTHx6Fj9Bf+fM3Wlci2ZRT67lowavsmzO+OyCxjDdIfL78
+         a0nLBrm0jbwjxNpxAbLuE9NzkDoylexss5kMITAEEQTCINS0QPEmFRb7aiwXkcXfnG
+         ySpp+QiTxZkxgrmvOnt2kaIHugLDWoWPt8vx41+TEtnLlh0zBNSUOWvCfFbbJggvai
+         PaH8TWUXAez2LvtdsJ6c3MRpnbWYQ1zWOtDxlX0FcPiftt4EumvTDPj33EDai8sjiA
+         Yuk7Eg13x6738iXrFfSiTlTKI6g8XzwgMqcauqtP3WUyoY9mhdxPm+tLNGSV+t+ixG
+         QsyM4NOY9LtdA==
+X-Nifty-SrcIP: [209.85.217.54]
+Received: by mail-vs1-f54.google.com with SMTP id x18so37498vsq.4;
+        Thu, 27 Feb 2020 08:42:28 -0800 (PST)
+X-Gm-Message-State: ANhLgQ2bDfFPoLdb6Ce/vLifzLOR4fqy1bkCmz5gcXJSJpymmgLEQJuM
+        B1VlxMzuMz+ZJfclpoUrCa3M7LIbB+YS9VhtqH0=
+X-Google-Smtp-Source: ADFU+vsh4q8lDg7PVdz5KXpCZ22dWRT4Tb9aCU4TMqhfIxWdgL6cfnwmrm2xUTX+dIexC1qWCc52X5DuKMIq2GNBOC8=
+X-Received: by 2002:a05:6102:190:: with SMTP id r16mr46746vsq.215.1582821747593;
+ Thu, 27 Feb 2020 08:42:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.2002271100000.1730-100000@iolanthe.rowland.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 17:25:52 up 104 days,  7:44, 121 users,  load average: 0.09, 0.08,
- 0.09
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20200218094139.78835-1-qperret@google.com> <20200218094139.78835-3-qperret@google.com>
+In-Reply-To: <20200218094139.78835-3-qperret@google.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 28 Feb 2020 01:41:50 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS0D_1k8FUJ+Bre1jrtGvHu28psU_xCa=K24iD7BkcJeA@mail.gmail.com>
+Message-ID: <CAK7LNAS0D_1k8FUJ+Bre1jrtGvHu28psU_xCa=K24iD7BkcJeA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] kbuild: split adjust_autoksyms.sh in two parts
+To:     Quentin Perret <qperret@google.com>
+Cc:     Nicolas Pitre <nico@fluxnic.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Matthias Maennich <maennich@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-02-27 11:18, Alan Stern wrote:
-> On Thu, 27 Feb 2020, Marco Felsch wrote:
-> 
-> > At the momemnt the usb-port driver has only runime_pm hooks.
-> > Suspending the port and turn off the VBUS supply should be triggered by
-> > the hub device suspend callback usb_port_suspend() which calls the
-> 
-> Strictly speaking it's just a routine, not a callback.  That is, it 
-> doesn't get invoked through a function pointer.
+Hi.
 
-Damn, you right it gets called from the generic_suspend callback.
+On Tue, Feb 18, 2020 at 6:41 PM Quentin Perret <qperret@google.com> wrote:
+>
+> In order to prepare the ground for a build-time optimization, split
+> adjust_autoksyms.sh into two scripts: one that generates autoksyms.h
+> based on all currently available information (whitelist, and .mod
+> files), and the other to inspect the diff between two versions of
+> autoksyms.h and trigger appropriate rebuilds.
+>
+> Acked-by: Nicolas Pitre <nico@fluxnic.net>
+> Tested-by: Matthias Maennich <maennich@google.com>
+> Reviewed-by: Matthias Maennich <maennich@google.com>
+> Signed-off-by: Quentin Perret <qperret@google.com>
+> ---
+>  scripts/adjust_autoksyms.sh | 36 +++-----------------------
+>  scripts/gen_autoksyms.sh    | 51 +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 55 insertions(+), 32 deletions(-)
+>  create mode 100755 scripts/gen_autoksyms.sh
+>
+> diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
+> index ff46996525d3..2b366d945ccb 100755
+> --- a/scripts/adjust_autoksyms.sh
+> +++ b/scripts/adjust_autoksyms.sh
+> @@ -1,14 +1,13 @@
+>  #!/bin/sh
+>  # SPDX-License-Identifier: GPL-2.0-only
+>
+> -# Script to create/update include/generated/autoksyms.h and dependency files
+> +# Script to update include/generated/autoksyms.h and dependency files
+>  #
+>  # Copyright:   (C) 2016  Linaro Limited
+>  # Created by:  Nicolas Pitre, January 2016
+>  #
+>
+> -# Create/update the include/generated/autoksyms.h file from the list
+> -# of all module's needed symbols as recorded on the second line of *.mod files.
+> +# Update the include/generated/autoksyms.h file.
+>  #
+>  # For each symbol being added or removed, the corresponding dependency
+>  # file's timestamp is updated to force a rebuild of the affected source
+> @@ -38,35 +37,8 @@ esac
+>  # We need access to CONFIG_ symbols
+>  . include/config/auto.conf
+>
+> -ksym_wl=/dev/null
+> -if [ -n "$CONFIG_UNUSED_KSYMS_WHITELIST" ]; then
+> -       # Use 'eval' to expand the whitelist path and check if it is relative
+> -       eval ksym_wl="$CONFIG_UNUSED_KSYMS_WHITELIST"
+> -       [ "${ksym_wl}" != "${ksym_wl#/}" ] || ksym_wl="$abs_srctree/$ksym_wl"
+> -       if [ ! -f "$ksym_wl" ]; then
 
-> > pm_runtime_put_sync() if all pre-conditions are meet. This mechanism
-> > don't work correctly due to the global PM behaviour, for more information
-> > see [1]. According [1] I added the suspend/resume callbacks for the port
-> > device to fix this.
-> > 
-> > [1] https://www.spinics.net/lists/linux-usb/msg190537.html
-> 
-> Please put at least a short description of the problem here; don't 
-> force people to go look up some random web page just to find out what's 
-> really going on.
 
-Okay, I will do that.
+Just a Nit.
 
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> > Hi,
-> > 
-> > this v2 contains the fixes
-> > 
-> > Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> Everything below the "---" line, except the patch itself, gets ignored.  
-> You need to move this Reported-by: up higher.
+Maybe, is testing  -r better ?
 
-I know, I put it here because the patch isn't part of the kernel. IMHO a
+'cat - "$ksym_wl"' is piped, so its error code is not checked.
 
-Signed-off-by:
-Reported-by: 
+So, checking the read permission here is robust, I think.
 
-looks a bit strange.
 
-> > Regards,
-> >   Marco
-> > 
-> > Changes:
-> > - init retval to zero
-> > - keep CONFIG_PM due to do_remote_wakeup availability
-> > - adapt commit message
-> > 
-> >  drivers/usb/core/hub.c  | 13 -------------
-> >  drivers/usb/core/port.c | 35 ++++++++++++++++++++++++++++++-----
-> >  2 files changed, 30 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> > index 3405b146edc9..c294484e478d 100644
-> > --- a/drivers/usb/core/hub.c
-> > +++ b/drivers/usb/core/hub.c
-> > @@ -3323,10 +3323,6 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
-> >  		usb_set_device_state(udev, USB_STATE_SUSPENDED);
-> >  	}
-> >  
-> > -	if (status == 0 && !udev->do_remote_wakeup && udev->persist_enabled
-> > -			&& test_and_clear_bit(port1, hub->child_usage_bits))
-> > -		pm_runtime_put_sync(&port_dev->dev);
-> > -
-> >  	usb_mark_last_busy(hub->hdev);
-> >  
-> >  	usb_unlock_port(port_dev);
-> > @@ -3514,15 +3510,6 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
-> >  	int		status;
-> >  	u16		portchange, portstatus;
-> >  
-> > -	if (!test_and_set_bit(port1, hub->child_usage_bits)) {
-> > -		status = pm_runtime_get_sync(&port_dev->dev);
-> > -		if (status < 0) {
-> > -			dev_dbg(&udev->dev, "can't resume usb port, status %d\n",
-> > -					status);
-> > -			return status;
-> > -		}
-> > -	}
-> > -
-> 
-> Why do you get rid of these two sections of code?  Won't that cause
-> runtime PM to stop working properly?
 
-Both runtime_pm calls are part of the suspend/resume logic so this code
-isn't called during runtime PM. As far as I understood it correctly the
-purpose of those section was to trigger port poweroff if the device
-supports it upon a system-suspend. Therefore I came up with my question:
-https://www.spinics.net/lists/linux-usb/msg190537.html.
 
-> >  	usb_lock_port(port_dev);
-> >  
-> >  	/* Skip the initial Clear-Suspend step for a remote wakeup */
-> > diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
-> > index bbbb35fa639f..13f130b67efe 100644
-> > --- a/drivers/usb/core/port.c
-> > +++ b/drivers/usb/core/port.c
-> > @@ -283,7 +283,34 @@ static int usb_port_runtime_suspend(struct device *dev)
-> >  
-> >  	return retval;
-> >  }
-> > -#endif
-> > +
-> > +static int __maybe_unused _usb_port_suspend(struct device *dev)
-> 
-> Don't say _maybe_unused.  Instead, protect these two routines with 
-> #ifdef CONFIG_PM_SLEEP.  That way they won't be compiled on systems 
-> that can't use them.
+> -               echo "ERROR: '$ksym_wl' whitelist file not found" >&2
+> -               exit 1
+> -       fi
+> -fi
+> -
+> -# Generate a new ksym list file with symbols needed by the current
+> -# set of modules.
+> -cat > "$new_ksyms_file" << EOT
+> -/*
+> - * Automatically generated file; DO NOT EDIT.
+> - */
+> -
+> -EOT
+> -sed 's/ko$/mod/' modules.order |
+> -xargs -n1 sed -n -e '2{s/ /\n/g;/^$/!p;}' -- |
+> -cat - "$ksym_wl" |
+> -sort -u |
+> -sed -e 's/\(.*\)/#define __KSYM_\1 1/' >> "$new_ksyms_file"
+> -
+> -# Special case for modversions (see modpost.c)
+> -if [ -n "$CONFIG_MODVERSIONS" ]; then
+> -       echo "#define __KSYM_module_layout 1" >> "$new_ksyms_file"
+> -fi
+> +# Generate a new symbol list file
+> +$CONFIG_SHELL $srctree/scripts/gen_autoksyms.sh "$new_ksyms_file"
+>
+>  # Extract changes between old and new list and touch corresponding
+>  # dependency files.
+> diff --git a/scripts/gen_autoksyms.sh b/scripts/gen_autoksyms.sh
+> new file mode 100755
+> index 000000000000..6c625f52118f
+> --- /dev/null
+> +++ b/scripts/gen_autoksyms.sh
+> @@ -0,0 +1,51 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +# Create an autoksyms.h header file from the list of all module's needed symbols
+> +# as recorded on the second line of *.mod files and the user-provided symbol
+> +# whitelist.
+> +
+> +set -e
+> +
+> +output_file="$1"
+> +
+> +# Use "make V=1" to debug this script.
+> +case "$KBUILD_VERBOSE" in
+> +*1*)
+> +       set -x
+> +       ;;
+> +esac
+> +
+> +# We need access to CONFIG_ symbols
+> +. include/config/auto.conf
+> +
+> +ksym_wl=/dev/null
+> +if [ -n "$CONFIG_UNUSED_KSYMS_WHITELIST" ]; then
+> +       # Use 'eval' to expand the whitelist path and check if it is relative
+> +       eval ksym_wl="$CONFIG_UNUSED_KSYMS_WHITELIST"
+> +       [ "${ksym_wl}" != "${ksym_wl#/}" ] || ksym_wl="$abs_srctree/$ksym_wl"
+> +       if [ ! -f "$ksym_wl" ]; then
+> +               echo "ERROR: '$ksym_wl' whitelist file not found" >&2
+> +               exit 1
+> +       fi
+> +fi
+> +
+> +# Generate a new ksym list file with symbols needed by the current
+> +# set of modules.
+> +cat > "$output_file" << EOT
+> +/*
+> + * Automatically generated file; DO NOT EDIT.
+> + */
+> +
+> +EOT
+> +
+> +sed 's/ko$/mod/' modules.order |
+> +xargs -n1 sed -n -e '2{s/ /\n/g;/^$/!p;}' -- |
+> +cat - "$ksym_wl" |
+> +sort -u |
+> +sed -e 's/\(.*\)/#define __KSYM_\1 1/' >> "$output_file"
+> +
+> +# Special case for modversions (see modpost.c)
+> +if [ -n "$CONFIG_MODVERSIONS" ]; then
+> +       echo "#define __KSYM_module_layout 1" >> "$output_file"
+> +fi
+> --
+> 2.25.0.265.gbab2e86ba0-goog
+>
 
-Okay, as you like. I find the __maybe_unused better than #ifdefs.
-
-> Also, try to find better names.  Maybe usb_port_sleep and 
-> usb_port_wake, or usb_port_system_suspend and usb_port_system_resume.
-
-IMHO usb_port_suspend/resume should be the best ;)
-
-> > +{
-> > +	struct usb_port *port_dev = to_usb_port(dev);
-> > +	struct usb_device *udev = port_dev->child;
-> > +	int retval = 0;
-> > +
-> > +	if (!udev->do_remote_wakeup && udev->persist_enabled)
-> > +		retval = usb_port_runtime_suspend(dev);
-> > +
-> > +	/* Do not force the user to enable the power-off feature */
-> > +	if (retval && retval != -EAGAIN)
-> > +		return retval;
-> > +
-> > +	return 0;
-> 
-> IMO it would be a lot more understandable if you wrote
-> 
-> 	if (retval == -EAGAIN)
-> 		retval = 0;
-
-As you like.
-
-> Also, the relation between this code and the preceding comment is not
-> obvious.  The comment should say something more like: If the
-> PM_QOS_FLAG setting prevents us from powering off the port, it's not an
-> error.
-
-Okay I will change that.
-
-Regards,
-  Marco
-
-> Alan Stern
-> 
-> > +}
-> > +
-> > +static int __maybe_unused _usb_port_resume(struct device *dev)
-> > +{
-> > +	struct usb_port *port_dev = to_usb_port(dev);
-> > +	struct usb_device *udev = port_dev->child;
-> > +
-> > +	if (!udev->do_remote_wakeup && udev->persist_enabled)
-> > +		return usb_port_runtime_resume(dev);
-> > +
-> > +	return 0;
-> > +}
-> > +#endif /* CONFIG_PM */
-> >  
-> >  static void usb_port_shutdown(struct device *dev)
-> >  {
-> > @@ -294,10 +321,8 @@ static void usb_port_shutdown(struct device *dev)
-> >  }
-> >  
-> >  static const struct dev_pm_ops usb_port_pm_ops = {
-> > -#ifdef CONFIG_PM
-> > -	.runtime_suspend =	usb_port_runtime_suspend,
-> > -	.runtime_resume =	usb_port_runtime_resume,
-> > -#endif
-> > +	SET_SYSTEM_SLEEP_PM_OPS(_usb_port_suspend, _usb_port_resume)
-> > +	SET_RUNTIME_PM_OPS(usb_port_runtime_suspend, usb_port_runtime_resume, NULL)
-> >  };
-> >  
-> >  struct device_type usb_port_device_type = {
-> > 
-> 
-> 
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Best Regards
+Masahiro Yamada
