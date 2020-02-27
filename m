@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C068A171F69
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:35:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 906F4172062
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:43:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732641AbgB0N7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:59:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32916 "EHLO mail.kernel.org"
+        id S1730508AbgB0NuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:50:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732633AbgB0N7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:59:42 -0500
+        id S1731130AbgB0Nt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:49:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DB4B20578;
-        Thu, 27 Feb 2020 13:59:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F7F320578;
+        Thu, 27 Feb 2020 13:49:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811982;
-        bh=S0yGJG0Id9N1yY6MyKdC5gdWa6cxWpV1/yYUVgykXEg=;
+        s=default; t=1582811398;
+        bh=ibY1iA5KxW8FauE0CVu3Or9H6w/lThuoa5wqbXo0y2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V0ydJYk59tHvBowLVopOmnkmiJbX/haxgz205dzK6dZZPJI2WJ0Ebqkk0RhuO4WXR
-         cBxEyIMW+iPeC1HvoSIsbwWCMpcxjmFSxjabKTL7dBIiJRLQnWssaHil4rKDh/SBSo
-         xqoRsgjdEfTZ6oIC7567Op7wh2MxvpGCWTHr2qHQ=
+        b=Ng8DM80PbMgbWml6N/JUmQS8VA7wzbxGY+/ewwHQHOcbhkMvO4qakiBFpXYZpGFfQ
+         b1lf2qz7uV7i87AT/b9vqk8T0Ifbvxtdwh/e8LZozNiZdlHyd39J2b/AHt/imhqX5f
+         i+f+eLORvHUXTrHXezODoqzBPIMhcCh8TTgOOg+Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jordy Zomer <jordy@simplyhacker.com>,
-        Willy Tarreau <w@1wt.eu>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 176/237] floppy: check FDC index for errors before assigning it
+        stable@vger.kernel.org, Firo Yang <firo.yang@suse.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 116/165] enic: prevent waking up stopped tx queues over watchdog reset
 Date:   Thu, 27 Feb 2020 14:36:30 +0100
-Message-Id: <20200227132309.349166224@linuxfoundation.org>
+Message-Id: <20200227132248.014843769@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,65 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Firo Yang <firo.yang@suse.com>
 
-commit 2e90ca68b0d2f5548804f22f0dd61145516171e3 upstream.
+[ Upstream commit 0f90522591fd09dd201065c53ebefdfe3c6b55cb ]
 
-Jordy Zomer reported a KASAN out-of-bounds read in the floppy driver in
-wait_til_ready().
+Recent months, our customer reported several kernel crashes all
+preceding with following message:
+NETDEV WATCHDOG: eth2 (enic): transmit queue 0 timed out
+Error message of one of those crashes:
+BUG: unable to handle kernel paging request at ffffffffa007e090
 
-Which on the face of it can't happen, since as Willy Tarreau points out,
-the function does no particular memory access.  Except through the FDCS
-macro, which just indexes a static allocation through teh current fdc,
-which is always checked against N_FDC.
+After analyzing severl vmcores, I found that most of crashes are
+caused by memory corruption. And all the corrupted memory areas
+are overwritten by data of network packets. Moreover, I also found
+that the tx queues were enabled over watchdog reset.
 
-Except the checking happens after we've already assigned the value.
+After going through the source code, I found that in enic_stop(),
+the tx queues stopped by netif_tx_disable() could be woken up over
+a small time window between netif_tx_disable() and the
+napi_disable() by the following code path:
+napi_poll->
+  enic_poll_msix_wq->
+     vnic_cq_service->
+        enic_wq_service->
+           netif_wake_subqueue(enic->netdev, q_number)->
+              test_and_clear_bit(__QUEUE_STATE_DRV_XOFF, &txq->state)
+In turn, upper netowrk stack could queue skb to ENIC NIC though
+enic_hard_start_xmit(). And this might introduce some race condition.
 
-The floppy driver is a disgrace (a lot of it going back to my original
-horrd "design"), and has no real maintainer.  Nobody has the hardware,
-and nobody really cares.  But it still gets used in virtual environment
-because it's one of those things that everybody supports.
+Our customer comfirmed that this kind of kernel crash doesn't occur over
+90 days since they applied this patch.
 
-The whole thing should be re-written, or at least parts of it should be
-seriously cleaned up.  The 'current fdc' index, which is used by the
-FDCS macro, and which is often shadowed by a local 'fdc' variable, is a
-prime example of how not to write code.
-
-But because nobody has the hardware or the motivation, let's just fix up
-the immediate problem with a nasty band-aid: test the fdc index before
-actually assigning it to the static 'fdc' variable.
-
-Reported-by: Jordy Zomer <jordy@simplyhacker.com>
-Cc: Willy Tarreau <w@1wt.eu>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Firo Yang <firo.yang@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/block/floppy.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/cisco/enic/enic_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -848,14 +848,17 @@ static void reset_fdc_info(int mode)
- /* selects the fdc and drive, and enables the fdc's input/dma. */
- static void set_fdc(int drive)
- {
-+	unsigned int new_fdc = fdc;
-+
- 	if (drive >= 0 && drive < N_DRIVE) {
--		fdc = FDC(drive);
-+		new_fdc = FDC(drive);
- 		current_drive = drive;
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -1806,10 +1806,10 @@ static int enic_stop(struct net_device *
  	}
--	if (fdc != 1 && fdc != 0) {
-+	if (new_fdc >= N_FDC) {
- 		pr_info("bad fdc value\n");
- 		return;
- 	}
-+	fdc = new_fdc;
- 	set_dor(fdc, ~0, 8);
- #if N_FDC > 1
- 	set_dor(1 - fdc, ~8, 0);
+ 
+ 	netif_carrier_off(netdev);
+-	netif_tx_disable(netdev);
+ 	if (vnic_dev_get_intr_mode(enic->vdev) == VNIC_DEV_INTR_MODE_MSIX)
+ 		for (i = 0; i < enic->wq_count; i++)
+ 			napi_disable(&enic->napi[enic_cq_wq(enic, i)]);
++	netif_tx_disable(netdev);
+ 
+ 	if (!enic_is_dynamic(enic) && !enic_is_sriov_vf(enic))
+ 		enic_dev_del_station_addr(enic);
 
 
