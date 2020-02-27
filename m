@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20520171A64
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:53:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E29171A66
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:53:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731660AbgB0NxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:53:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52974 "EHLO mail.kernel.org"
+        id S1731670AbgB0NxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:53:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730848AbgB0NxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:53:13 -0500
+        id S1731657AbgB0NxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:53:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A96F21D7E;
-        Thu, 27 Feb 2020 13:53:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9ACD624656;
+        Thu, 27 Feb 2020 13:53:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811592;
-        bh=WJTTeYFlJE9QSkAJVQ5AUme3l7PlwYgX7y3eaAQpA3M=;
+        s=default; t=1582811595;
+        bh=4AjuisLq/Q618j1pGEwedVKONd7Arpt8wzmOlrKxZqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ffd09K57IOKb8NM7kETCAXUeYTekhBoCcKR3wRJfYxevJNcnxprZxiRsCcpIT+g4p
-         y3/0mA2C2CoCcLdykiCA21ZBj77y585BoZul4Js3xnyAMOA0DReMshJxBilubcw45O
-         2jjFKw9CCa3FFrRlobWuM912WMXwo87W7OfDisUE=
+        b=nqhjfmgyetNU6sEBcQjrgEtIAQ6lovE7suVMZGSO4kQkYNnAKEMjrnzcJ7sOZQuTK
+         RY0mijj1Yr82VP7rjS2DNy68R/1p38oU3Z3Rut1CAif76jTnmT3daicAjSEVBUKS6g
+         iheYJUu7gZMHrf2UXr3jeH6/O1GRlr47O2d61QMc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
+        <u.kleine-koenig@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
         Frieder Schrempf <frieder.schrempf@kontron.de>
-Subject: [PATCH 4.14 026/237] serial: imx: ensure that RX irqs are off if RX is off
-Date:   Thu, 27 Feb 2020 14:34:00 +0100
-Message-Id: <20200227132258.304552782@linuxfoundation.org>
+Subject: [PATCH 4.14 027/237] serial: imx: Only handle irqs that are actually enabled
+Date:   Thu, 27 Feb 2020 14:34:01 +0100
+Message-Id: <20200227132258.427992937@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -47,245 +47,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-commit 76821e222c189b81d553b855ee7054340607eb46 upstream.
+commit 437768962f754d9501e5ba4d98b1f2a89dc62028 upstream.
 
-Make sure that UCR1.RXDMAEN and UCR1.ATDMAEN (for the DMA case) and
-UCR1.RRDYEN (for the PIO case) are off iff UCR1.RXEN is disabled. This
-ensures that the fifo isn't read with RX disabled which results in an
-exception.
+Handling an irq that isn't enabled can have some undesired side effects.
+Some of these are mentioned in the newly introduced code comment. Some
+of the irq sources already had their handling right, some don't. Handle
+them all in the same consistent way.
+
+The change for USR1_RRDY and USR1_AGTIM drops the check for
+dma_is_enabled. This is correct as UCR1_RRDYEN and UCR2_ATEN are always
+off if dma is enabled.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Reviewed-by: Shawn Guo <shawnguo@kernel.org>
 [Backport to v4.14]
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/imx.c |  116 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 78 insertions(+), 38 deletions(-)
+ drivers/tty/serial/imx.c |   53 ++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 39 insertions(+), 14 deletions(-)
 
 --- a/drivers/tty/serial/imx.c
 +++ b/drivers/tty/serial/imx.c
-@@ -80,7 +80,7 @@
- #define UCR1_IDEN	(1<<12) /* Idle condition interrupt */
- #define UCR1_ICD_REG(x) (((x) & 3) << 10) /* idle condition detect */
- #define UCR1_RRDYEN	(1<<9)	/* Recv ready interrupt enable */
--#define UCR1_RDMAEN	(1<<8)	/* Recv ready DMA enable */
-+#define UCR1_RXDMAEN	(1<<8)	/* Recv ready DMA enable */
- #define UCR1_IREN	(1<<7)	/* Infrared interface enable */
- #define UCR1_TXMPTYEN	(1<<6)	/* Transimitter empty interrupt enable */
- #define UCR1_RTSDEN	(1<<5)	/* RTS delta interrupt enable */
-@@ -355,6 +355,30 @@ static void imx_port_rts_auto(struct imx
- /*
-  * interrupts disabled on entry
-  */
-+static void imx_start_rx(struct uart_port *port)
-+{
-+	struct imx_port *sport = (struct imx_port *)port;
-+	unsigned int ucr1, ucr2;
-+
-+	ucr1 = readl(port->membase + UCR1);
-+	ucr2 = readl(port->membase + UCR2);
-+
-+	ucr2 |= UCR2_RXEN;
-+
-+	if (sport->dma_is_enabled) {
-+		ucr1 |= UCR1_RXDMAEN | UCR1_ATDMAEN;
-+	} else {
-+		ucr1 |= UCR1_RRDYEN;
-+	}
-+
-+	/* Write UCR2 first as it includes RXEN */
-+	writel(ucr2, port->membase + UCR2);
-+	writel(ucr1, port->membase + UCR1);
-+}
-+
-+/*
-+ * interrupts disabled on entry
-+ */
- static void imx_stop_tx(struct uart_port *port)
+@@ -843,14 +843,42 @@ static void imx_mctrl_check(struct imx_p
+ static irqreturn_t imx_int(int irq, void *dev_id)
  {
- 	struct imx_port *sport = (struct imx_port *)port;
-@@ -378,9 +402,10 @@ static void imx_stop_tx(struct uart_port
- 			imx_port_rts_active(sport, &temp);
- 		else
- 			imx_port_rts_inactive(sport, &temp);
--		temp |= UCR2_RXEN;
- 		writel(temp, port->membase + UCR2);
+ 	struct imx_port *sport = dev_id;
+-	unsigned int sts;
+-	unsigned int sts2;
++	unsigned int usr1, usr2, ucr1, ucr2, ucr3, ucr4;
+ 	irqreturn_t ret = IRQ_NONE;
  
-+		imx_start_rx(port);
-+
- 		temp = readl(port->membase + UCR4);
- 		temp &= ~UCR4_TCEN;
- 		writel(temp, port->membase + UCR4);
-@@ -393,7 +418,7 @@ static void imx_stop_tx(struct uart_port
- static void imx_stop_rx(struct uart_port *port)
- {
- 	struct imx_port *sport = (struct imx_port *)port;
--	unsigned long temp;
-+	unsigned long ucr1, ucr2;
- 
- 	if (sport->dma_is_enabled && sport->dma_is_rxing) {
- 		if (sport->port.suspended) {
-@@ -404,12 +429,18 @@ static void imx_stop_rx(struct uart_port
- 		}
- 	}
- 
--	temp = readl(sport->port.membase + UCR2);
--	writel(temp & ~UCR2_RXEN, sport->port.membase + UCR2);
+-	sts = readl(sport->port.membase + USR1);
+-	sts2 = readl(sport->port.membase + USR2);
++	usr1 = readl(sport->port.membase + USR1);
++	usr2 = readl(sport->port.membase + USR2);
 +	ucr1 = readl(sport->port.membase + UCR1);
 +	ucr2 = readl(sport->port.membase + UCR2);
- 
--	/* disable the `Receiver Ready Interrrupt` */
--	temp = readl(sport->port.membase + UCR1);
--	writel(temp & ~UCR1_RRDYEN, sport->port.membase + UCR1);
-+	if (sport->dma_is_enabled) {
-+		ucr1 &= ~(UCR1_RXDMAEN | UCR1_ATDMAEN);
-+	} else {
-+		ucr1 &= ~UCR1_RRDYEN;
-+	}
-+	writel(ucr1, port->membase + UCR1);
++	ucr3 = readl(sport->port.membase + UCR3);
++	ucr4 = readl(sport->port.membase + UCR4);
 +
-+	ucr2 &= ~UCR2_RXEN;
-+	writel(ucr2, port->membase + UCR2);
- }
++	/*
++	 * Even if a condition is true that can trigger an irq only handle it if
++	 * the respective irq source is enabled. This prevents some undesired
++	 * actions, for example if a character that sits in the RX FIFO and that
++	 * should be fetched via DMA is tried to be fetched using PIO. Or the
++	 * receiver is currently off and so reading from URXD0 results in an
++	 * exception. So just mask the (raw) status bits for disabled irqs.
++	 */
++	if ((ucr1 & UCR1_RRDYEN) == 0)
++		usr1 &= ~USR1_RRDY;
++	if ((ucr2 & UCR2_ATEN) == 0)
++		usr1 &= ~USR1_AGTIM;
++	if ((ucr1 & UCR1_TXMPTYEN) == 0)
++		usr1 &= ~USR1_TRDY;
++	if ((ucr4 & UCR4_TCEN) == 0)
++		usr2 &= ~USR2_TXDC;
++	if ((ucr3 & UCR3_DTRDEN) == 0)
++		usr1 &= ~USR1_DTRD;
++	if ((ucr1 & UCR1_RTSDEN) == 0)
++		usr1 &= ~USR1_RTSD;
++	if ((ucr3 & UCR3_AWAKEN) == 0)
++		usr1 &= ~USR1_AWAKE;
++	if ((ucr4 & UCR4_OREN) == 0)
++		usr2 &= ~USR2_ORE;
  
- /*
-@@ -581,10 +612,11 @@ static void imx_start_tx(struct uart_por
- 			imx_port_rts_active(sport, &temp);
+-	if (sts & (USR1_RRDY | USR1_AGTIM)) {
++	if (usr1 & (USR1_RRDY | USR1_AGTIM)) {
+ 		if (sport->dma_is_enabled)
+ 			imx_dma_rxint(sport);
  		else
- 			imx_port_rts_inactive(sport, &temp);
--		if (!(port->rs485.flags & SER_RS485_RX_DURING_TX))
--			temp &= ~UCR2_RXEN;
- 		writel(temp, port->membase + UCR2);
- 
-+		if (!(port->rs485.flags & SER_RS485_RX_DURING_TX))
-+			imx_stop_rx(port);
-+
- 		/* enable transmitter and shifter empty irq */
- 		temp = readl(port->membase + UCR4);
- 		temp |= UCR4_TCEN;
-@@ -1206,7 +1238,7 @@ static void imx_enable_dma(struct imx_po
- 
- 	/* set UCR1 */
- 	temp = readl(sport->port.membase + UCR1);
--	temp |= UCR1_RDMAEN | UCR1_TDMAEN | UCR1_ATDMAEN;
-+	temp |= UCR1_RXDMAEN | UCR1_TDMAEN | UCR1_ATDMAEN;
- 	writel(temp, sport->port.membase + UCR1);
- 
- 	temp = readl(sport->port.membase + UCR2);
-@@ -1224,7 +1256,7 @@ static void imx_disable_dma(struct imx_p
- 
- 	/* clear UCR1 */
- 	temp = readl(sport->port.membase + UCR1);
--	temp &= ~(UCR1_RDMAEN | UCR1_TDMAEN | UCR1_ATDMAEN);
-+	temp &= ~(UCR1_RXDMAEN | UCR1_TDMAEN | UCR1_ATDMAEN);
- 	writel(temp, sport->port.membase + UCR1);
- 
- 	/* clear UCR2 */
-@@ -1289,11 +1321,9 @@ static int imx_startup(struct uart_port
- 	writel(USR1_RTSD | USR1_DTRD, sport->port.membase + USR1);
- 	writel(USR2_ORE, sport->port.membase + USR2);
- 
--	if (sport->dma_is_inited && !sport->dma_is_enabled)
--		imx_enable_dma(sport);
--
- 	temp = readl(sport->port.membase + UCR1);
--	temp |= UCR1_RRDYEN | UCR1_UARTEN;
-+	temp &= ~UCR1_RRDYEN;
-+	temp |= UCR1_UARTEN;
- 	if (sport->have_rtscts)
- 			temp |= UCR1_RTSDEN;
- 
-@@ -1332,14 +1362,13 @@ static int imx_startup(struct uart_port
- 	 */
- 	imx_enable_ms(&sport->port);
- 
--	/*
--	 * Start RX DMA immediately instead of waiting for RX FIFO interrupts.
--	 * In our iMX53 the average delay for the first reception dropped from
--	 * approximately 35000 microseconds to 1000 microseconds.
--	 */
--	if (sport->dma_is_enabled) {
--		imx_disable_rx_int(sport);
-+	if (sport->dma_is_inited) {
-+		imx_enable_dma(sport);
- 		start_rx_dma(sport);
-+	} else {
-+		temp = readl(sport->port.membase + UCR1);
-+		temp |= UCR1_RRDYEN;
-+		writel(temp, sport->port.membase + UCR1);
+@@ -858,18 +886,15 @@ static irqreturn_t imx_int(int irq, void
+ 		ret = IRQ_HANDLED;
  	}
  
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
-@@ -1386,7 +1415,8 @@ static void imx_shutdown(struct uart_por
+-	if ((sts & USR1_TRDY &&
+-	     readl(sport->port.membase + UCR1) & UCR1_TXMPTYEN) ||
+-	    (sts2 & USR2_TXDC &&
+-	     readl(sport->port.membase + UCR4) & UCR4_TCEN)) {
++	if ((usr1 & USR1_TRDY) || (usr2 & USR2_TXDC)) {
+ 		imx_txint(irq, dev_id);
+ 		ret = IRQ_HANDLED;
+ 	}
  
- 	spin_lock_irqsave(&sport->port.lock, flags);
- 	temp = readl(sport->port.membase + UCR1);
--	temp &= ~(UCR1_TXMPTYEN | UCR1_RRDYEN | UCR1_RTSDEN | UCR1_UARTEN);
-+	temp &= ~(UCR1_TXMPTYEN | UCR1_RRDYEN | UCR1_RTSDEN | UCR1_UARTEN |
-+		  UCR1_RXDMAEN | UCR1_ATDMAEN);
+-	if (sts & USR1_DTRD) {
++	if (usr1 & USR1_DTRD) {
+ 		unsigned long flags;
  
- 	writel(temp, sport->port.membase + UCR1);
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
-@@ -1659,7 +1689,7 @@ static int imx_poll_init(struct uart_por
- {
- 	struct imx_port *sport = (struct imx_port *)port;
- 	unsigned long flags;
--	unsigned long temp;
-+	unsigned long ucr1, ucr2;
- 	int retval;
+-		if (sts & USR1_DTRD)
++		if (usr1 & USR1_DTRD)
+ 			writel(USR1_DTRD, sport->port.membase + USR1);
  
- 	retval = clk_prepare_enable(sport->clk_ipg);
-@@ -1673,16 +1703,29 @@ static int imx_poll_init(struct uart_por
+ 		spin_lock_irqsave(&sport->port.lock, flags);
+@@ -879,17 +904,17 @@ static irqreturn_t imx_int(int irq, void
+ 		ret = IRQ_HANDLED;
+ 	}
  
- 	spin_lock_irqsave(&sport->port.lock, flags);
+-	if (sts & USR1_RTSD) {
++	if (usr1 & USR1_RTSD) {
+ 		imx_rtsint(irq, dev_id);
+ 		ret = IRQ_HANDLED;
+ 	}
  
--	temp = readl(sport->port.membase + UCR1);
-+	/*
-+	 * Be careful about the order of enabling bits here. First enable the
-+	 * receiver (UARTEN + RXEN) and only then the corresponding irqs.
-+	 * This prevents that a character that already sits in the RX fifo is
-+	 * triggering an irq but the try to fetch it from there results in an
-+	 * exception because UARTEN or RXEN is still off.
-+	 */
-+	ucr1 = readl(port->membase + UCR1);
-+	ucr2 = readl(port->membase + UCR2);
-+
- 	if (is_imx1_uart(sport))
--		temp |= IMX1_UCR1_UARTCLKEN;
--	temp |= UCR1_UARTEN | UCR1_RRDYEN;
--	temp &= ~(UCR1_TXMPTYEN | UCR1_RTSDEN);
--	writel(temp, sport->port.membase + UCR1);
-+		ucr1 |= IMX1_UCR1_UARTCLKEN;
+-	if (sts & USR1_AWAKE) {
++	if (usr1 & USR1_AWAKE) {
+ 		writel(USR1_AWAKE, sport->port.membase + USR1);
+ 		ret = IRQ_HANDLED;
+ 	}
  
--	temp = readl(sport->port.membase + UCR2);
--	temp |= UCR2_RXEN;
--	writel(temp, sport->port.membase + UCR2);
-+	ucr1 |= UCR1_UARTEN;
-+	ucr1 &= ~(UCR1_TXMPTYEN | UCR1_RTSDEN | UCR1_RRDYEN);
-+
-+	ucr2 |= UCR2_RXEN;
-+
-+	writel(ucr1, sport->port.membase + UCR1);
-+	writel(ucr2, sport->port.membase + UCR2);
-+
-+	/* now enable irqs */
-+	writel(ucr1 | UCR1_RRDYEN, sport->port.membase + UCR1);
- 
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
- 
-@@ -1742,11 +1785,8 @@ static int imx_rs485_config(struct uart_
- 
- 	/* Make sure Rx is enabled in case Tx is active with Rx disabled */
- 	if (!(rs485conf->flags & SER_RS485_ENABLED) ||
--	    rs485conf->flags & SER_RS485_RX_DURING_TX) {
--		temp = readl(sport->port.membase + UCR2);
--		temp |= UCR2_RXEN;
--		writel(temp, sport->port.membase + UCR2);
--	}
-+	    rs485conf->flags & SER_RS485_RX_DURING_TX)
-+		imx_start_rx(port);
- 
- 	port->rs485 = *rs485conf;
- 
+-	if (sts2 & USR2_ORE) {
++	if (usr2 & USR2_ORE) {
+ 		sport->port.icount.overrun++;
+ 		writel(USR2_ORE, sport->port.membase + USR2);
+ 		ret = IRQ_HANDLED;
 
 
