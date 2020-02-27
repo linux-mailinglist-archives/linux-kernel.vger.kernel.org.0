@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC65171CAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:14:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1C72171C0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389097AbgB0OOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:14:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53262 "EHLO mail.kernel.org"
+        id S1733131AbgB0OIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:08:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730942AbgB0OOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:14:10 -0500
+        id S2388210AbgB0OIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:08:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C53C420578;
-        Thu, 27 Feb 2020 14:14:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 163EB20578;
+        Thu, 27 Feb 2020 14:08:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812849;
-        bh=9va24nQcUnztpfTBbAc1NT0YuuUGrt7nm98NPeeF0k0=;
+        s=default; t=1582812489;
+        bh=Ck4RiXd9LtXXu/LTSaJIPrI7nme6mxSXS0dsiQUxxuk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=etEzOyWoAhpiGa2LG4cJIOgT1qfST0tWGgVGHZEp+swndVCCznrjReWoHJ2mNuzaY
-         uKbzSQSM+Wf+tKN6tYA4wRc7MfUJH+zJ9eBYz+f38Fo19aSUvTHG4JPJcbmmSa/ywB
-         F4EPqlqqf3yjb3SiyogTKimDCBpL8emowqipb9z8=
+        b=Gr1PogZdABjtiZe9vBn0mAiE0oPPUtpG8KsFxJ72M0j656fXHW9Qz/x+oxqSCM6aT
+         TWAQ4DFLF0//HWpgJHs8Exh4TZbNqJleNYJ76TsRXtTgu8SaaT9nc/Pj6/TYZK0Tfv
+         Ev4tuir8pe761Vp7BcsVmW+nYH+i14YZe0rY8dy8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Hardik Gajjar <hgajjar@de.adit-jv.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: [PATCH 5.5 040/150] USB: hub: Fix the broken detection of USB3 device in SMSC hub
-Date:   Thu, 27 Feb 2020 14:36:17 +0100
-Message-Id: <20200227132238.759227845@linuxfoundation.org>
+        stable@vger.kernel.org, Pietro Oliva <pietroliva@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: [PATCH 5.4 038/135] staging: rtl8188eu: Fix potential security hole
+Date:   Thu, 27 Feb 2020 14:36:18 +0100
+Message-Id: <20200227132234.650810669@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,109 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hardik Gajjar <hgajjar@de.adit-jv.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit 1208f9e1d758c991b0a46a1bd60c616b906bbe27 upstream.
+commit 499c405b2b80bb3a04425ba3541d20305e014d3e upstream.
 
-Renesas R-Car H3ULCB + Kingfisher Infotainment Board is either not able
-to detect the USB3.0 mass storage devices or is detecting those as
-USB2.0 high speed devices.
+In routine rtw_hostapd_ioctl(), the user-controlled p->length is assumed
+to be at least the size of struct ieee_param size, but this assumption is
+never checked. This could result in out-of-bounds read/write on kernel
+heap in case a p->length less than the size of struct ieee_param is
+specified by the user. If p->length is allowed to be greater than the size
+of the struct, then a malicious user could be wasting kernel memory.
+Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
 
-The explanation given by Renesas is that, due to a HW issue, the XHCI
-driver does not wake up after going to sleep on connecting a USB3.0
-device.
-
-In order to mitigate that, disable the auto-suspend feature
-specifically for SMSC hubs from hub_probe() function, as a quirk.
-
-Renesas Kingfisher Infotainment Board has two USB3.0 ports (CN2) which
-are connected via USB5534B 4-port SuperSpeed/Hi-Speed, low-power,
-configurable hub controller.
-
-[1] SanDisk USB 3.0 device detected as USB-2.0 before the patch
- [   74.036390] usb 5-1.1: new high-speed USB device number 4 using xhci-hcd
- [   74.061598] usb 5-1.1: New USB device found, idVendor=0781, idProduct=5581, bcdDevice= 1.00
- [   74.069976] usb 5-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
- [   74.077303] usb 5-1.1: Product: Ultra
- [   74.080980] usb 5-1.1: Manufacturer: SanDisk
- [   74.085263] usb 5-1.1: SerialNumber: 4C530001110208116550
-
-[2] SanDisk USB 3.0 device detected as USB-3.0 after the patch
- [   34.565078] usb 6-1.1: new SuperSpeed Gen 1 USB device number 3 using xhci-hcd
- [   34.588719] usb 6-1.1: New USB device found, idVendor=0781, idProduct=5581, bcdDevice= 1.00
- [   34.597098] usb 6-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
- [   34.604430] usb 6-1.1: Product: Ultra
- [   34.608110] usb 6-1.1: Manufacturer: SanDisk
- [   34.612397] usb 6-1.1: SerialNumber: 4C530001110208116550
-
-Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Hardik Gajjar <hgajjar@de.adit-jv.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/1580989763-32291-1-git-send-email-hgajjar@de.adit-jv.com
+Reported by: Pietro Oliva <pietroliva@gmail.com>
+Cc: Pietro Oliva <pietroliva@gmail.com>
+Cc: Stable <stable@vger.kernel.org>
+Fixes: a2c60d42d97c ("staging: r8188eu: Add files for new driver - part 16")
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Link: https://lore.kernel.org/r/20200210180235.21691-2-Larry.Finger@lwfinger.net
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/hub.c |   15 +++++++++++++++
- drivers/usb/core/hub.h |    1 +
- 2 files changed, 16 insertions(+)
+ drivers/staging/rtl8188eu/os_dep/ioctl_linux.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -38,7 +38,9 @@
- #include "otg_whitelist.h"
+--- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+@@ -2812,7 +2812,7 @@ static int rtw_hostapd_ioctl(struct net_
+ 		goto out;
+ 	}
  
- #define USB_VENDOR_GENESYS_LOGIC		0x05e3
-+#define USB_VENDOR_SMSC				0x0424
- #define HUB_QUIRK_CHECK_PORT_AUTOSUSPEND	0x01
-+#define HUB_QUIRK_DISABLE_AUTOSUSPEND		0x02
- 
- #define USB_TP_TRANSMISSION_DELAY	40	/* ns */
- #define USB_TP_TRANSMISSION_DELAY_MAX	65535	/* ns */
-@@ -1726,6 +1728,10 @@ static void hub_disconnect(struct usb_in
- 	kfree(hub->buffer);
- 
- 	pm_suspend_ignore_children(&intf->dev, false);
-+
-+	if (hub->quirk_disable_autosuspend)
-+		usb_autopm_put_interface(intf);
-+
- 	kref_put(&hub->kref, hub_release);
- }
- 
-@@ -1858,6 +1864,11 @@ static int hub_probe(struct usb_interfac
- 	if (id->driver_info & HUB_QUIRK_CHECK_PORT_AUTOSUSPEND)
- 		hub->quirk_check_port_auto_suspend = 1;
- 
-+	if (id->driver_info & HUB_QUIRK_DISABLE_AUTOSUSPEND) {
-+		hub->quirk_disable_autosuspend = 1;
-+		usb_autopm_get_interface(intf);
-+	}
-+
- 	if (hub_configure(hub, &desc->endpoint[0].desc) >= 0)
- 		return 0;
- 
-@@ -5594,6 +5605,10 @@ out_hdev_lock:
- }
- 
- static const struct usb_device_id hub_id_table[] = {
-+    { .match_flags = USB_DEVICE_ID_MATCH_VENDOR | USB_DEVICE_ID_MATCH_INT_CLASS,
-+      .idVendor = USB_VENDOR_SMSC,
-+      .bInterfaceClass = USB_CLASS_HUB,
-+      .driver_info = HUB_QUIRK_DISABLE_AUTOSUSPEND},
-     { .match_flags = USB_DEVICE_ID_MATCH_VENDOR
- 			| USB_DEVICE_ID_MATCH_INT_CLASS,
-       .idVendor = USB_VENDOR_GENESYS_LOGIC,
---- a/drivers/usb/core/hub.h
-+++ b/drivers/usb/core/hub.h
-@@ -61,6 +61,7 @@ struct usb_hub {
- 	unsigned		quiescing:1;
- 	unsigned		disconnected:1;
- 	unsigned		in_reset:1;
-+	unsigned		quirk_disable_autosuspend:1;
- 
- 	unsigned		quirk_check_port_auto_suspend:1;
- 
+-	if (!p->pointer) {
++	if (!p->pointer || p->length != sizeof(struct ieee_param)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
 
 
