@@ -2,70 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8271723C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:45:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 879651723CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:46:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730422AbgB0QpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:45:05 -0500
-Received: from foss.arm.com ([217.140.110.172]:54668 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729146AbgB0QpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:45:04 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 026B41FB;
-        Thu, 27 Feb 2020 08:45:04 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6DE113F7B4;
-        Thu, 27 Feb 2020 08:45:03 -0800 (PST)
-Date:   Thu, 27 Feb 2020 16:45:01 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2] dt-bindings: bd718x7: Yamlify and add BD71850
-Message-ID: <20200227164501.GG4062@sirena.org.uk>
-References: <20200226114740.GA17426@localhost.localdomain>
+        id S1730464AbgB0QpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:45:25 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34110 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730303AbgB0QpY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 11:45:24 -0500
+Received: by mail-io1-f67.google.com with SMTP id z190so200727iof.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 08:45:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rS6KqBFssX9ZUdW6+MPkG1KvIc6wVLI2emiU+QF0qwg=;
+        b=XaBoABkOukH7Nu7mt4lsMgCefNzcJQuXa2aVFVbkfZpp6Tb5s+73tbFVKvoyGjA/de
+         rmZCbRd35i75iH1YaR3+beQ0/MRPNMdEGj3CTigZMKUY3xL+M1uKsj1ZAx7tdcdtuV87
+         YOAZpAJF4zquagazdIfTcwOMiCpDIc/iUts64=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rS6KqBFssX9ZUdW6+MPkG1KvIc6wVLI2emiU+QF0qwg=;
+        b=UTpd3rFqij24pv0TBIZqpF/8rIk39Ovc4HGBurccOyAy1SL9MAVsCLpkRK8WV5Rya9
+         IM3hZMAswujtHf4EtDMPtwm7E9MjfF8/Y0x5K8u8skMJ7hFEKEaApyGFy+SDkfK4l+HL
+         NGP0/ciIYTNxod0fvsQZmlNVKeQpj/RIo7CXaBGZ3n6RUfW3sZGU1YRJ3oF/izy0Qw/g
+         xlOXM0pXAzxQ/geeMqlgMYFiEQO/Q69isaUOdNwYGc5R1WRJI23XxwjzsoQsoDcNv0cH
+         sqNKaI9M5RDLak5mi8MdU4PpzHghxQkb3mFKJzHr8iUplH638RYv2s4Rth19zEIWYLF+
+         Nnjw==
+X-Gm-Message-State: APjAAAU5L/CksgSLF0tWWBqCAxfhI+z1xpodgNo60Xktr4CJ40U3mpgA
+        Vl3i1/USqvpcNcAjKpabzQfXFw==
+X-Google-Smtp-Source: APXvYqx/a5Dli7aKEcWZrJspfguzTO9DfNqargT1han0HSOgIYlEsoiSlvvxXv/MLc1HIIpISgSXpg==
+X-Received: by 2002:a6b:700e:: with SMTP id l14mr187328ioc.170.1582821924223;
+        Thu, 27 Feb 2020 08:45:24 -0800 (PST)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id i16sm1978584ils.41.2020.02.27.08.45.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2020 08:45:23 -0800 (PST)
+Subject: Re: [PATCH] selftest/lkdtm: Use local .gitignore
+To:     Kees Cook <keescook@chromium.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <e4ba4f716599d1d66c8bc60489f4b05764ea8470.1582812034.git.christophe.leroy@c-s.fr>
+ <202002270817.1C32C98@keescook>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <f804d7bc-134d-27f8-daa5-6bbf9f28b54d@linuxfoundation.org>
+Date:   Thu, 27 Feb 2020 09:45:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="1XWsVB21DFCvn2e8"
-Content-Disposition: inline
-In-Reply-To: <20200226114740.GA17426@localhost.localdomain>
-X-Cookie: Edwin Meese made me wear CORDOVANS!!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <202002270817.1C32C98@keescook>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2/27/20 9:17 AM, Kees Cook wrote:
+> On Thu, Feb 27, 2020 at 02:07:10PM +0000, Christophe Leroy wrote:
+>> Commit 68ca0fd272da ("selftest/lkdtm: Don't pollute 'git status'")
+>> introduced patterns for git to ignore files generated in
+>> tools/testing/selftests/lkdtm/
+>>
+>> Use local .gitignore file instead of using the root one.
+>>
+>> Fixes: 68ca0fd272da ("selftest/lkdtm: Don't pollute 'git status'")
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> 
+> Yeah, that's better. Thanks!
+> 
+> Acked-by: Kees Cook <keescook@chromium.org>
+> 
 
---1XWsVB21DFCvn2e8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I will apply it for next rc.
 
-On Wed, Feb 26, 2020 at 01:47:40PM +0200, Matti Vaittinen wrote:
-> Convert ROHM bd71837 and bd71847 PMIC binding text docs to yaml. Split
-> the binding document to two separate documents (own documents for BD71837
-> and BD71847) as they have different amount of regulators. This way we can
-> better enforce the node name check for regulators. ROHM is also providing
+Thanks. I should have noticed the problem in the previous version.
+It slipped by me. :(
 
-Acked-by: Mark Brown <broonie@kernel.org>
+thanks,
+-- Shuah
 
---1XWsVB21DFCvn2e8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5X8gwACgkQJNaLcl1U
-h9BQxQf/dkMJywfZLpENv0wkVka+E4/0fGjbXabjur2aSCNXYju7kX0AAI+s+pjR
-frhd0Sw1k/PMwGXvsO9ZiQs7631hRzA5a12/1/1wtw4L6A7IxKN866VJwlpMXmj4
-EeFFOqyzhlL661aHZB6runAuvQb/oC6fnoiT2HRyt+Srkj3pFF72d09TrieV/MV1
-nYc8bIbgpz0Tgk6cACNdT8lgC8I5fGBl7pPZw7AY2r4brDqw3Y2WvwYNrXXGBZxx
-lsatLhbzaCfYTwiKkbAra67tfhnYZlnIndD+cEbx9u8Xrz/eUeDxY5rPLM5ivXEX
-HwijcbyrVpBgUhXxZhJgjS6AhMuc+Q==
-=8Hrz
------END PGP SIGNATURE-----
-
---1XWsVB21DFCvn2e8--
