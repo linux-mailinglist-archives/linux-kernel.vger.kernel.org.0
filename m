@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B8FC171D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:20:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE889171C75
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:12:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389769AbgB0OUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:20:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58700 "EHLO mail.kernel.org"
+        id S2387621AbgB0OMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:12:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389828AbgB0OSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:18:10 -0500
+        id S2388802AbgB0OMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:12:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 621732469D;
-        Thu, 27 Feb 2020 14:18:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B7AC20801;
+        Thu, 27 Feb 2020 14:12:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582813089;
-        bh=/mCFG9XO4hu6TS2zQyZ1++jfPLwvNRIBluqoYAVDOUM=;
+        s=default; t=1582812731;
+        bh=nJeZuZcKAtnsHvbePQOrHa+KH6ul+TtayZmIdNWPwYk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uJDn9Spvv6G4H5IZ2ILuJsm0cQkQKqxn18rCgEy1SK+OTrlxRpBS4fvMI9Nss3izY
-         tsmj8uM17JfCWU+0EbAnCpWiiCqNjfWuat/SO2avK4a2BwQC2GBZx+KpXN9ls0glae
-         kY9BdPbeMPE6VPa0LNxUPM8H6Jp8sW9AjgOldKQ4=
+        b=R6TmXeun5S80npBTG5srdfb9f0Mi597BYjBsnQUqp6cS9Com7+4egVd0Eg15St2dn
+         Ou1Rp7UqJUKHzT6zR+RbyukH3kIIN0l5bYnFbhRrdLZu27JoA458+80bVLoQskQuUe
+         nAibVOFpALPntMG2qvOwWGSbUQ7rUcEcx9gHSUu8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>
-Subject: [PATCH 5.5 132/150] arm64: lse: Fix LSE atomics with LLVM
-Date:   Thu, 27 Feb 2020 14:37:49 +0100
-Message-Id: <20200227132251.962200508@linuxfoundation.org>
+        stable@vger.kernel.org, Aya Levin <ayal@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 5.4 130/135] net/mlx5e: Reset RQ doorbell counter before moving RQ state from RST to RDY
+Date:   Thu, 27 Feb 2020 14:37:50 +0100
+Message-Id: <20200227132248.585999852@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,60 +44,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+From: Aya Levin <ayal@mellanox.com>
 
-commit dd1f6308b28edf0452dd5dc7877992903ec61e69 upstream.
+commit 5ee090ed0da649b1febae2b7c285ac77d1e55a0c upstream.
 
-Commit e0d5896bd356 ("arm64: lse: fix LSE atomics with LLVM's integrated
-assembler") broke the build when clang is used in connjunction with the
-binutils assembler ("-no-integrated-as"). This happens because
-__LSE_PREAMBLE is defined as ".arch armv8-a+lse", which overrides the
-version of the CPU architecture passed via the "-march" paramter to gas:
+Initialize RQ doorbell counters to zero prior to moving an RQ from RST
+to RDY state. Per HW spec, when RQ is back to RDY state, the descriptor
+ID on the completion is reset. The doorbell record must comply.
 
-$ aarch64-none-linux-gnu-as -EL -I ./arch/arm64/include
-                                -I ./arch/arm64/include/generated
-                                -I ./include -I ./include
-                                -I ./arch/arm64/include/uapi
-                                -I ./arch/arm64/include/generated/uapi
-                                -I ./include/uapi -I ./include/generated/uapi
-                                -I ./init -I ./init
-                                -march=armv8.3-a -o init/do_mounts.o
-                                /tmp/do_mounts-d7992a.s
-/tmp/do_mounts-d7992a.s: Assembler messages:
-/tmp/do_mounts-d7992a.s:1959: Error: selected processor does not support `autiasp'
-/tmp/do_mounts-d7992a.s:2021: Error: selected processor does not support `paciasp'
-/tmp/do_mounts-d7992a.s:2157: Error: selected processor does not support `autiasp'
-/tmp/do_mounts-d7992a.s:2175: Error: selected processor does not support `paciasp'
-/tmp/do_mounts-d7992a.s:2494: Error: selected processor does not support `autiasp'
-
-Fix the issue by replacing ".arch armv8-a+lse" with ".arch_extension lse".
-Sami confirms that the clang integrated assembler does now support the
-'.arch_extension' directive, so this change will be fine even for LTO
-builds in future.
-
-Fixes: e0d5896bd356cd ("arm64: lse: fix LSE atomics with LLVM's integrated assembler")
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Reported-by: Amit Kachhap <Amit.Kachhap@arm.com>
-Tested-by: Sami Tolvanen <samitolvanen@google.com>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+Fixes: 8276ea1353a4 ("net/mlx5e: Report and recover from CQE with error on RQ")
+Signed-off-by: Aya Levin <ayal@mellanox.com>
+Reported-by: Tariq Toukan <tariqt@mellanox.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/include/asm/lse.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en/txrx.h |    8 ++++
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |    3 +
+ drivers/net/ethernet/mellanox/mlx5/core/wq.c      |   39 ++++++++++++++++------
+ drivers/net/ethernet/mellanox/mlx5/core/wq.h      |    2 +
+ 4 files changed, 43 insertions(+), 9 deletions(-)
 
---- a/arch/arm64/include/asm/lse.h
-+++ b/arch/arm64/include/asm/lse.h
-@@ -6,7 +6,7 @@
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en/txrx.h
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en/txrx.h
+@@ -179,6 +179,14 @@ mlx5e_tx_dma_unmap(struct device *pdev,
+ 	}
+ }
  
- #if defined(CONFIG_AS_LSE) && defined(CONFIG_ARM64_LSE_ATOMICS)
++static inline void mlx5e_rqwq_reset(struct mlx5e_rq *rq)
++{
++	if (rq->wq_type == MLX5_WQ_TYPE_LINKED_LIST_STRIDING_RQ)
++		mlx5_wq_ll_reset(&rq->mpwqe.wq);
++	else
++		mlx5_wq_cyc_reset(&rq->wqe.wq);
++}
++
+ /* SW parser related functions */
  
--#define __LSE_PREAMBLE	".arch armv8-a+lse\n"
-+#define __LSE_PREAMBLE	".arch_extension lse\n"
+ struct mlx5e_swp_spec {
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -723,6 +723,9 @@ int mlx5e_modify_rq_state(struct mlx5e_r
+ 	if (!in)
+ 		return -ENOMEM;
  
- #include <linux/compiler_types.h>
- #include <linux/export.h>
++	if (curr_state == MLX5_RQC_STATE_RST && next_state == MLX5_RQC_STATE_RDY)
++		mlx5e_rqwq_reset(rq);
++
+ 	rqc = MLX5_ADDR_OF(modify_rq_in, in, ctx);
+ 
+ 	MLX5_SET(modify_rq_in, in, rq_state, curr_state);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/wq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/wq.c
+@@ -96,6 +96,13 @@ err_db_free:
+ 	return err;
+ }
+ 
++void mlx5_wq_cyc_reset(struct mlx5_wq_cyc *wq)
++{
++	wq->wqe_ctr = 0;
++	wq->cur_sz = 0;
++	mlx5_wq_cyc_update_db_record(wq);
++}
++
+ int mlx5_wq_qp_create(struct mlx5_core_dev *mdev, struct mlx5_wq_param *param,
+ 		      void *qpc, struct mlx5_wq_qp *wq,
+ 		      struct mlx5_wq_ctrl *wq_ctrl)
+@@ -194,6 +201,19 @@ err_db_free:
+ 	return err;
+ }
+ 
++static void mlx5_wq_ll_init_list(struct mlx5_wq_ll *wq)
++{
++	struct mlx5_wqe_srq_next_seg *next_seg;
++	int i;
++
++	for (i = 0; i < wq->fbc.sz_m1; i++) {
++		next_seg = mlx5_wq_ll_get_wqe(wq, i);
++		next_seg->next_wqe_index = cpu_to_be16(i + 1);
++	}
++	next_seg = mlx5_wq_ll_get_wqe(wq, i);
++	wq->tail_next = &next_seg->next_wqe_index;
++}
++
+ int mlx5_wq_ll_create(struct mlx5_core_dev *mdev, struct mlx5_wq_param *param,
+ 		      void *wqc, struct mlx5_wq_ll *wq,
+ 		      struct mlx5_wq_ctrl *wq_ctrl)
+@@ -201,9 +221,7 @@ int mlx5_wq_ll_create(struct mlx5_core_d
+ 	u8 log_wq_stride = MLX5_GET(wq, wqc, log_wq_stride);
+ 	u8 log_wq_sz     = MLX5_GET(wq, wqc, log_wq_sz);
+ 	struct mlx5_frag_buf_ctrl *fbc = &wq->fbc;
+-	struct mlx5_wqe_srq_next_seg *next_seg;
+ 	int err;
+-	int i;
+ 
+ 	err = mlx5_db_alloc_node(mdev, &wq_ctrl->db, param->db_numa_node);
+ 	if (err) {
+@@ -222,13 +240,7 @@ int mlx5_wq_ll_create(struct mlx5_core_d
+ 
+ 	mlx5_init_fbc(wq_ctrl->buf.frags, log_wq_stride, log_wq_sz, fbc);
+ 
+-	for (i = 0; i < fbc->sz_m1; i++) {
+-		next_seg = mlx5_wq_ll_get_wqe(wq, i);
+-		next_seg->next_wqe_index = cpu_to_be16(i + 1);
+-	}
+-	next_seg = mlx5_wq_ll_get_wqe(wq, i);
+-	wq->tail_next = &next_seg->next_wqe_index;
+-
++	mlx5_wq_ll_init_list(wq);
+ 	wq_ctrl->mdev = mdev;
+ 
+ 	return 0;
+@@ -239,6 +251,15 @@ err_db_free:
+ 	return err;
+ }
+ 
++void mlx5_wq_ll_reset(struct mlx5_wq_ll *wq)
++{
++	wq->head = 0;
++	wq->wqe_ctr = 0;
++	wq->cur_sz = 0;
++	mlx5_wq_ll_init_list(wq);
++	mlx5_wq_ll_update_db_record(wq);
++}
++
+ void mlx5_wq_destroy(struct mlx5_wq_ctrl *wq_ctrl)
+ {
+ 	mlx5_frag_buf_free(wq_ctrl->mdev, &wq_ctrl->buf);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/wq.h
++++ b/drivers/net/ethernet/mellanox/mlx5/core/wq.h
+@@ -80,10 +80,12 @@ int mlx5_wq_cyc_create(struct mlx5_core_
+ 		       void *wqc, struct mlx5_wq_cyc *wq,
+ 		       struct mlx5_wq_ctrl *wq_ctrl);
+ u32 mlx5_wq_cyc_get_size(struct mlx5_wq_cyc *wq);
++void mlx5_wq_cyc_reset(struct mlx5_wq_cyc *wq);
+ 
+ int mlx5_wq_qp_create(struct mlx5_core_dev *mdev, struct mlx5_wq_param *param,
+ 		      void *qpc, struct mlx5_wq_qp *wq,
+ 		      struct mlx5_wq_ctrl *wq_ctrl);
++void mlx5_wq_ll_reset(struct mlx5_wq_ll *wq);
+ 
+ int mlx5_cqwq_create(struct mlx5_core_dev *mdev, struct mlx5_wq_param *param,
+ 		     void *cqc, struct mlx5_cqwq *wq,
 
 
