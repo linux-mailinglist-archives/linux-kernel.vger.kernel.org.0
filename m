@@ -2,75 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B022170EA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 03:47:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F1ED170E93
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 03:44:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbgB0Crk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 21:47:40 -0500
-Received: from mga05.intel.com ([192.55.52.43]:47772 "EHLO mga05.intel.com"
+        id S1728273AbgB0Cn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 21:43:59 -0500
+Received: from mga03.intel.com ([134.134.136.65]:57388 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728235AbgB0Crd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 21:47:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1728094AbgB0Cn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 21:43:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 18:47:32 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 18:43:56 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,490,1574150400"; 
-   d="scan'208";a="438670612"
-Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.171])
-  by fmsmga006.fm.intel.com with ESMTP; 26 Feb 2020 18:47:32 -0800
-From:   Gayatri Kammela <gayatri.kammela@intel.com>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, vishwanath.somayaji@intel.com,
-        dvhart@infradead.org, mika.westerberg@intel.com,
-        peterz@infradead.org, charles.d.prestopine@intel.com,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Chen Zhou <chenzhou10@huawei.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "David E . Box" <david.e.box@intel.com>
-Subject: [PATCH v1 4/4] platform/x86: intel_pmc_core: fix: Add slp_s0_offset attribute back to tgl_reg_map
-Date:   Wed, 26 Feb 2020 18:43:30 -0800
-Message-Id: <8a3ba27589afd8d66545618f863e0c860ddd1944.1582770011.git.gayatri.kammela@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1582770011.git.gayatri.kammela@intel.com>
-References: <cover.1582770011.git.gayatri.kammela@intel.com>
-In-Reply-To: <cover.1582770011.git.gayatri.kammela@intel.com>
-References: <cover.1582770011.git.gayatri.kammela@intel.com>
+   d="scan'208";a="436874427"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga005.fm.intel.com with ESMTP; 26 Feb 2020 18:43:56 -0800
+Date:   Wed, 26 Feb 2020 18:43:56 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V4 00/13] Enable per-file/per-directory DAX operations V4
+Message-ID: <20200227024356.GB28721@iweiny-DESK2.sc.intel.com>
+References: <20200221004134.30599-1-ira.weiny@intel.com>
+ <x49pne13qyh.fsf@segfault.boston.devel.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <x49pne13qyh.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If platforms such as Tiger Lake has sub-states of S0ix, then attributes
-such as slps0_dbg_offset become invalid. But slp_s0_offset is still
-valid as it is used to get the pmcdev_base_addr.
+On Wed, Feb 26, 2020 at 05:48:38PM -0500, Jeff Moyer wrote:
+> Hi, Ira,
+> 
+> ira.weiny@intel.com writes:
+> 
+> > From: Ira Weiny <ira.weiny@intel.com>
+> >
+> > https://github.com/weiny2/linux-kernel/pull/new/dax-file-state-change-v4
+> >
+> > Changes from V3: 
+> > https://lore.kernel.org/lkml/20200208193445.27421-1-ira.weiny@intel.com/
+> >
+> > 	* Remove global locking...  :-D
+> > 	* put back per inode locking and remove pre-mature optimizations
+> > 	* Fix issues with Directories having IS_DAX() set
+> > 	* Fix kernel crash issues reported by Jeff
+> > 	* Add some clean up patches
+> > 	* Consolidate diflags to iflags functions
+> > 	* Update/add documentation
+> > 	* Reorder/rename patches quite a bit
+> 
+> I left out patches 1 and 2, but applied the rest and tested.  This
+> passes xfs tests in the following configurations:
+> 1) MKFS_OPTIONS="-m reflink=0" MOUNT_OPTIONS="-o dax"
+> 2) MKFS_OPTIONS="-m reflink=0"
+>    but with the added configuration step of setting the dax attribute on
+>    the mounted test directory.
+> 
+> I also tested to ensure that reflink fails when a file has the dax
+> attribute set.  I've got more testing to do, but figured I'd at least
+> let you know I've been looking at it.
 
-Hence, add back slp_s0_offset and remove slps0_dbg_offset attributes.
+Thank you!
 
-Cc: Chen Zhou <chenzhou10@huawei.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: David E. Box <david.e.box@intel.com>
-Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
----
- drivers/platform/x86/intel_pmc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I need to update my xfstest which is specific to this as well...  I'll get to
+that tomorrow and send an updated patch...
 
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index bbd3805f36e1..87a6aa4f43fa 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -556,9 +556,9 @@ static const struct pmc_bit_map *tgl_lpm_maps[] = {
- 
- static const struct pmc_reg_map tgl_reg_map = {
- 	.pfear_sts = ext_tgl_pfear_map,
-+	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
- 	.ltr_show_sts = cnp_ltr_show_map,
- 	.msr_sts = msr_map,
--	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
- 	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
- 	.regmap_length = CNP_PMC_MMIO_REG_LEN,
- 	.ppfear0_offset = CNP_PMC_HOST_PPFEAR0A,
--- 
-2.17.1
+Thanks!
+Ira
 
+> 
+> Thanks!
+> Jeff
+> 
