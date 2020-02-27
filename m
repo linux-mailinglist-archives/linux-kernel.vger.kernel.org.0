@@ -2,152 +2,315 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 842D31712AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:40:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 329AF1712B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:41:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728684AbgB0IkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 03:40:04 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53897 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728578AbgB0IkD (ORCPT
+        id S1728680AbgB0IlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 03:41:16 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:51361 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728440AbgB0IlQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 03:40:03 -0500
-Received: by mail-wm1-f67.google.com with SMTP id f15so2478413wml.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 00:40:01 -0800 (PST)
+        Thu, 27 Feb 2020 03:41:16 -0500
+Received: by mail-pj1-f66.google.com with SMTP id fa20so838689pjb.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 00:41:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=E7ws5WO0KMp0fqGB3noyWkRUOQzotEzifx1gDvZb8ks=;
-        b=s7LY80Sh5/BYJBHuZPLdAaXJ3ELVKNE6JCtlMI0Yw4cStQHSW6KpnOFQ6NHgJoM7Lf
-         SdWJDIHlKERdEwlxc1zzplCh1bxBON9a2FwQcqcf/CFyVSKQKpTJSLA+IRStj9F/pGyl
-         uwokkU49Tua5rs8asZVhb7wj01pVbrtYwK03YckUymckvRCr7LErgp0d0TgVQBrhkojY
-         8kWC5Ql9iawnVjQAyjPibwsWYbnZ8dJ9ofB/hxjUCc6EeJuLXZnXjau5wNBPv2jHKslf
-         +v5zJBVyHzdfqVq6GK1AKQIxm19KwccLfkyzsogYqPPH82Ah9of9ssXAKnN88kOBwR3/
-         I16A==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=Afd+MLvDplTwBwSna/EVUGN2UMhtqB+M1tf64vivxQ0=;
+        b=GOcmXDtHK6x5imPHf36gVCdj1C0whSvvQ3d9iB2ylXzQwirR8/8TXXAR7tAeyy2F5x
+         cOCueeFM6EjiXAI6+8tW0Kk7NFibH8C8A/Ocu82A6CqQgJSyEgW3FTz20l83xzK+IE3s
+         nevtKPeH6JP5CQ7AVuHx7HWEhUh1NzohjMpUc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=E7ws5WO0KMp0fqGB3noyWkRUOQzotEzifx1gDvZb8ks=;
-        b=ZdV4In65CxYuJm2XogTeCoLx4W9XVN+e0Gi9/PHjg0Fmn4EvrBgy13T6jziunpLUHi
-         oqPqvyvyfYYX+Lho/QR5uAd6tdFUwsg1DwgLmg+H7ativ4wj3LHt/CVJ6M9nVZCljHWh
-         NNp6FlcswEpXdnEQQOaLzevNA3iO0AfZ6waPGLadGWl5zi2FPnDbLJnnJpcMqbktNOcp
-         VvkjDBQUNZvI4HJbk+DxlwpB5sxhiGl0SOk4GpIvIprvke4peNQzK23q0S2Z7TOZomPz
-         BxfUtse1DmmuJkrnTPxe6ncC+FEDxhoSWgZwu6KTgF5nPAwxL4fGuTL438K8tC0oM6xW
-         WezQ==
-X-Gm-Message-State: APjAAAW/Dz9Uz9tGH0kIRLBuZDwOZ8xhcHaC14fjUNPrLG1vhjxEEE87
-        HeEr8C0vzVq1sfqhbwAEqb33sTL5IxQ=
-X-Google-Smtp-Source: APXvYqwolbSJSPS5sGIBQOzlkBTG/8SDvJkstmh2Mvx8OlLj4/2ojSNkx/skyNgLFnwQCb6Va/cTGQ==
-X-Received: by 2002:a7b:c341:: with SMTP id l1mr3382230wmj.146.1582792801057;
-        Thu, 27 Feb 2020 00:40:01 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:d916:1723:c1c1:22d? ([2a01:e34:ed2f:f020:d916:1723:c1c1:22d])
-        by smtp.googlemail.com with ESMTPSA id e8sm7045734wru.7.2020.02.27.00.39.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2020 00:40:00 -0800 (PST)
-Subject: Re: [PATCH v5] clocksource: Add driver for the Ingenic JZ47xx OST
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     od@zcrc.me, linux-kernel@vger.kernel.org,
-        Zhou Yanjie <zhouyanjie@wanyeetech.com>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Artur Rojek <contact@artur-rojek.eu>
-References: <20200212180408.30872-1-paul@crapouillou.net>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <57db436b-527d-afda-6020-04c1339a384f@linaro.org>
-Date:   Thu, 27 Feb 2020 09:39:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=Afd+MLvDplTwBwSna/EVUGN2UMhtqB+M1tf64vivxQ0=;
+        b=V2zCJzT/RzJ5jXLRnwgMZKpnaO0LF5QTbtdIO1/NRux1hrKSDRUGtnSU9sw2Q4XX48
+         OyHxkdgVnktbOODtgGf85WMOuks2aXU9mvf1Com1lkYogSB1cKNpzeLEC357fwcD5tkC
+         VFMZnYFectjphgnx0LbPrLNrvqgVvOB5fm5B2JCPvNNrH12VAlqvRjiDtR6GsxHVZywk
+         eD0HFHUI7UHYilAaqPnYXil0P4AOlKYIRmiBu3qFov5e6ciqoqON6vaGqL442sGy4YwH
+         i7TINzuJIACJ8aGxKxCQIkkVvQh/RIwLZkgLxVG9pAC+n6Q2cSoIFgYu9jsCeUoQLcZA
+         R4bg==
+X-Gm-Message-State: APjAAAVBCuFdDS2Kv0Yzh6QS48/syEUqM/8pQwkd92sO/gDdvQHb4IYe
+        N46RKx8nXEt2UDKGMIFfjnxJZg==
+X-Google-Smtp-Source: APXvYqyhpBXPC6ndBBst5Cm9v9oUJ2DimOJeFcJjFWTEHd/fqj144NkFQbKzUIRGGz+i33odUNvfkw==
+X-Received: by 2002:a17:90a:f496:: with SMTP id bx22mr3761595pjb.115.1582792874540;
+        Thu, 27 Feb 2020 00:41:14 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id u12sm5634137pgr.3.2020.02.27.00.41.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 00:41:14 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20200212180408.30872-1-paul@crapouillou.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200220003102.204480-2-pmalani@chromium.org>
+References: <20200220003102.204480-1-pmalani@chromium.org> <20200220003102.204480-2-pmalani@chromium.org>
+Subject: Re: [PATCH v3 1/4] dt-bindings: Add cros-ec Type C port driver
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     heikki.krogerus@intel.com, enric.balletbo@collabora.com,
+        bleung@chromium.org, Prashant Malani <pmalani@chromium.org>,
+        devicetree@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+To:     Prashant Malani <pmalani@chromium.org>,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 27 Feb 2020 00:41:13 -0800
+Message-ID: <158279287307.177367.4599344664477592900@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/02/2020 19:04, Paul Cercueil wrote:
-> From: Maarten ter Huurne <maarten@treewalker.org>
-> 
-> OST is the OS Timer, a 64-bit timer/counter with buffered reading.
-> 
-> SoCs before the JZ4770 had (if any) a 32-bit OST; the JZ4770 and
-> JZ4780 have a 64-bit OST.
-> 
-> This driver will register both a clocksource and a sched_clock to the
-> system.
-> 
-> Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Tested-by: Mathieu Malaterre <malat@debian.org>
-> Tested-by: Artur Rojek <contact@artur-rojek.eu>
+Don't know what happened but my MUA can't seem to thread these patches.
+I wonder if something got messed up during send?
+
+Quoting Prashant Malani (2020-02-19 16:30:55)
+> Some Chrome OS devices with Embedded Controllers (EC) can read and
+> modify Type C port state.
+>=20
+> Add an entry in the DT Bindings documentation that lists out the logical
+> device and describes the relevant port information, to be used by the
+> corresponding driver.
+>=20
+> Signed-off-by: Prashant Malani <pmalani@chromium.org>
 > ---
+>=20
+> Changes in v3:
+> - Fixed license identifier.
+> - Renamed "port" to "connector".
+> - Made "connector" be a "usb-c-connector" compatible property.
+> - Updated port-number description to explain min and max values,
+>   and removed $ref which was causing dt_binding_check errors.
+> - Fixed power-role, data-role and try-power-role details to make
+>   dt_binding_check pass.
+> - Fixed example to include parent EC SPI DT Node.
+>=20
+> Changes in v2:
+> - No changes. Patch first introduced in v2 of series.
+>=20
+>  .../bindings/chrome/google,cros-ec-typec.yaml | 86 +++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-=
+ec-typec.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/chrome/google,cros-ec-type=
+c.yaml b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
+> new file mode 100644
+> index 00000000000000..97fd982612f120
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
+> @@ -0,0 +1,86 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
 
-Applied, thanks
+Can it be GPL or BSD 2 clause?
 
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/chrome/google,cros-ec-typec.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Google Chrome OS EC(Embedded Controller) Type C port driver.
+> +
+> +maintainers:
+> +  - Benson Leung <bleung@chromium.org>
+> +  - Prashant Malani <pmalani@chromium.org>
+> +
+> +description:
+> +  Chrome OS devices have an Embedded Controller(EC) which has access to
+> +  Type C port state. This node is intended to allow the host to read and
+> +  control the Type C ports. The node for this device should be under a
+> +  cros-ec node like google,cros-ec-spi.
+> +
+> +properties:
+> +  compatible:
+> +    const: google,cros-ec-typec
+> +
+> +  connector:
+> +    description: A node that represents a physical Type C connector port
+> +      on the device.
+> +    type: object
+> +    properties:
+> +      compatible:
+> +        const: usb-c-connector
+> +      port-number:
+> +        description: The number used by the Chrome OS EC to identify
+> +          this type C port. Valid values are 0 - (EC_USB_PD_MAX_PORTS - =
+1).
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+What is EC_USB_PD_MAX_PORTS? Can this be done through a reg property
+instead?
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> +      power-role:
+> +        description: Determines the power role that the Type C port will
+> +          adopt.
+> +        maxItems: 1
 
+I don't think this is necessary with enum below. schema can figure out
+that max is 1.
+
+> +        contains:
+> +          enum:
+> +            - sink
+> +            - source
+> +            - dual
+
+Other bindings have newlines between properties. Can you please add them
+to improve readability?
+
+> +      data-role:
+> +        description: Determines the data role that the Type C port will
+> +          adopt.
+> +        maxItems: 1
+> +        contains:
+> +          enum:
+> +            - host
+> +            - device
+> +            - dual
+> +      try-power-role:
+> +        description: Determines the preferred power role of the Type C p=
+ort.
+
+How does this interact with power-role above? Is it different?
+
+> +        maxItems: 1
+> +        contains:
+> +          enum:
+> +            - sink
+> +            - source
+> +            - dual
+> +
+> +    required:
+> +      - port-number
+> +      - power-role
+> +      - data-role
+> +      - try-power-role
+> +
+> +required:
+> +  - compatible
+> +  - connector
+> +
+> +examples:
+> +  - |+
+> +    cros_ec: ec@0 {
+> +      compatible =3D "google,cros-ec-spi";
+> +
+> +      typec {
+> +        compatible =3D "google,cros-ec-typec";
+> +
+> +        usb_con: connector {
+> +          compatible =3D "usb-c-connector";
+> +          port-number =3D <0>;
+> +          power-role =3D "dual";
+> +          data-role =3D "dual";
+> +          try-power-role =3D "source";
+> +        };
+
+I thought that perhaps this would be done with the OF graph APIs instead
+of being a child of the ec node. I don't see how the usb connector is
+anything besides a child of the top-level root node because it's
+typically on the board. We put board level components at the root.
+
+Yes, the connector is intimately involved with the EC here, but I would
+think that we would have an OF graph connection from the USB controller
+on the SoC to the USB connector, traversing through anything that may be
+in that path, such as a USB hub. Maybe the connector node itself can
+point to the EC type-c controller with some property like
+
+	connector {
+		...
+		type-c-manager =3D <&phandle_to_typec_manager>
+	};
+
+So in the end it would look like this (note that the ec doesn't have a sub-=
+node
+to make a driver probe):
+
+	/ {
+		connector@0 {
+			compatible =3D "usb-c-connector";
+			label =3D "left";
+			reg =3D <0>;
+			power-role =3D "dual";
+			type-c-manager =3D <&cros_ec>;
+			...
+
+			ports {=20
+				#address-cells =3D <1>;
+				#size-cells =3D <0>;
+
+				port@0 {
+					reg =3D <0>;
+					left_ufp: endpoint {
+						remote-endpoint =3D <&usb_controller0>;
+					};
+				};
+			};
+		};
+
+		connector@1 {
+			compatible =3D "usb-c-connector";
+			label =3D "right";
+			reg =3D <1>;
+			power-role =3D "dual";
+			type-c-manager =3D <&cros_ec>;
+			...
+
+			ports {=20
+				#address-cells =3D <1>;
+				#size-cells =3D <0>;
+
+				port@0 {
+					reg =3D <0>;
+					right_ufp: endpoint {
+						remote-endpoint =3D <&usb_controller1>;
+					};
+				};
+			};
+		};
+
+		soc@0 {
+			#address-cells =3D <1>;
+			#size-cells =3D <0>;
+
+			spi@a000000 {
+				compatible =3D "soc,spi-controller";
+				reg =3D <0xa000000 0x1000>;
+				cros_ec: ec@0 {
+					compatible =3D "google,cros-ec-spi";
+					reg =3D <0>;
+				};
+			};
+
+			usb@ca00000 {
+				compatible =3D "soc,dwc3-controller";
+				reg =3D <0xca00000 0x1000>;
+
+				ports {
+					port@0 {
+						reg =3D <0>;
+						usb_controller0: endpoint {
+							remote-endpoint =3D <&left_ufp>;
+						};
+					};
+				};
+			};
+
+			usb@ea00000 {
+				compatible =3D "soc,dwc3-controller";
+				reg =3D <0xea00000 0x1000>;
+
+				ports {
+					port@0 {
+						reg =3D <0>;
+						usb_controller1: endpoint {
+							remote-endpoint =3D <&right_ufp>;
+						};
+					};
+				};
+			};
+		};
+	};
