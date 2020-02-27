@@ -2,60 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 584EE172227
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:22:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64388172226
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:21:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730394AbgB0PWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 10:22:08 -0500
-Received: from smtprelay0085.hostedemail.com ([216.40.44.85]:39259 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729471AbgB0PWI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 10:22:08 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id F3FBA181F9334;
-        Thu, 27 Feb 2020 15:22:06 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1560:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3867:4321:5007:6642:7576:7653:10004:10400:10848:11232:11658:11914:12043:12297:12438:12555:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:21080:21451:21611:21627:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: coal17_868b39358c95e
-X-Filterd-Recvd-Size: 1511
-Received: from XPS-9350 (47-209-22-207.mmlkcmtc01.res.dyn.suddenlink.net [47.209.22.207])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 27 Feb 2020 15:22:04 +0000 (UTC)
-Message-ID: <dd96f64a5fd44278e48a1f7ee9269c485278d183.camel@perches.com>
-Subject: Re: [PATCH 5.5 133/150] scripts/get_maintainer.pl: deprioritize old
- Fixes: addresses
-From:   Joe Perches <joe@perches.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 27 Feb 2020 07:20:32 -0800
-In-Reply-To: <20200227132252.076691216@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
-         <20200227132252.076691216@linuxfoundation.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1729750AbgB0PVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 10:21:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729471AbgB0PVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 10:21:48 -0500
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9BFA246A1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 15:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582816907;
+        bh=T9dOLKG0py6qkERLpwlSZyviHQ5P0/AANhjFWasQW80=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=DNFTwP3XbjZEMxBVDzd/quWeQ2/givNf4BqjbJUoBPmedhklbXBelhZr8GpvLHpCE
+         SDoAFGlNWK/md5syoNfAGLlhELV6qjO70qCIiIDrLn0GuT8lh91ANWgt+HCVgwq4Fw
+         T4DZ6SqgsMZW6AdxaIywRMs8s2xuTpeuZboaNmT0=
+Received: by mail-wr1-f45.google.com with SMTP id y17so3841308wrn.6
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 07:21:46 -0800 (PST)
+X-Gm-Message-State: APjAAAW0z2PUxSOlR7I3lieV29m7EMYxN9+KAiVpU6TsMnYy0zxq0pI0
+        DYsayUT/gcTR2inMhVyjP8p1n5Tn6yZL2+rt7ASjtw==
+X-Google-Smtp-Source: APXvYqxanNBk76hCAYyAT9ZByxKRvOJ/0QhmbBw3XoLcW0zeZ9Vcwb64GM5wP5AGcQ76Ff4K58RhcGEecK09PohqN3A=
+X-Received: by 2002:a05:6000:110b:: with SMTP id z11mr5530464wrw.252.1582816905187;
+ Thu, 27 Feb 2020 07:21:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20200226204515.2752095-1-nivedita@alum.mit.edu>
+ <20200226230031.3011645-2-nivedita@alum.mit.edu> <20200227081229.GA29411@gmail.com>
+ <20200227151643.GA3498170@rani.riverdale.lan>
+In-Reply-To: <20200227151643.GA3498170@rani.riverdale.lan>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Thu, 27 Feb 2020 16:21:32 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu8BiW6P6Xv3EAPUEmbS3GQMJW=eRr-yygRbForaGDQyyw@mail.gmail.com>
+Message-ID: <CAKv+Gu8BiW6P6Xv3EAPUEmbS3GQMJW=eRr-yygRbForaGDQyyw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] x86/boot/compressed: Fix reloading of GDTR post-relocation
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-02-27 at 14:37 +0100, Greg Kroah-Hartman wrote:
-> From: Douglas Anderson <dianders@chromium.org>
-> 
-> commit 0ef82fcefb99300ede6f4d38a8100845b2dc8e30 upstream.
+On Thu, 27 Feb 2020 at 16:16, Arvind Sankar <nivedita@alum.mit.edu> wrote:
+>
+> On Thu, Feb 27, 2020 at 09:12:29AM +0100, Ingo Molnar wrote:
+> >
+> > * Arvind Sankar <nivedita@alum.mit.edu> wrote:
+> >
+> > > Commit ef5a7b5eb13e ("efi/x86: Remove GDT setup from efi_main")
+> > > introduced GDT setup into the 32-bit kernel's startup_32, and reloads
+> > > the GDTR after relocating the kernel for paranoia's sake.
+> > >
+> > > Commit 32d009137a56 ("x86/boot: Reload GDTR after copying to the end of
+> > > the buffer") introduced a similar GDTR reload in the 64-bit kernel.
+> > >
+> > > The GDTR is adjusted by init_size - _end, however this may not be the
+> > > correct offset to apply if the kernel was loaded at a misaligned address
+> > > or below LOAD_PHYSICAL_ADDR, as in that case the decompression buffer
+> > > has an additional offset from the original load address.
+> > >
+> > > This should never happen for a conformant bootloader, but we're being
+> > > paranoid anyway, so just store the new GDT address in there instead of
+> > > adding any offsets, which is simpler as well.
+> > >
+> > > Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+> > > Fixes: ef5a7b5eb13e ("efi/x86: Remove GDT setup from efi_main")
+> > > Fixes: 32d009137a56 ("x86/boot: Reload GDTR after copying to the end of the buffer")
+> >
+> > Have you or anyone else observed this condition practice, or have a
+> > suspicion that this could happen - or is this a mostly theoretical
+> > concern?
+> >
+> > Thanks,
+> >
+> >       Ingo
+>
+> Right now it's a theoretical concern.
+>
+> I'm working on another patch, to tell the EFI firmware PE loader what
+> the kernel's preferred address is, so that we can avoid having to
+> relocate the kernel in the EFI stub in most cases (ie if the PE loader
+> manages to load us at that address). With those changes, the required
+> adjustment won't be init_size - _end any more, and while fixing it up
+> there, I noticed that it could already be the case that the required
+> adjustment is different.
+>
 
-I think adding just about any checkpatch patch to stable a bit silly.
-Including patches to checkpatch.
-
-
+Do you mean setting the image address in the PE/COFF header to the
+preferred address?
