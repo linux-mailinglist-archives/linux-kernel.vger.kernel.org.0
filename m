@@ -2,56 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A964172346
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:25:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 893C2172380
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:36:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730127AbgB0QZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:25:11 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:37192 "EHLO vps0.lunn.ch"
+        id S1730316AbgB0QfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:35:14 -0500
+Received: from smtp-out.xnet.cz ([178.217.244.18]:22715 "EHLO smtp-out.xnet.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729263AbgB0QZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:25:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=myK1TSi18MdPxmOQZpDiX3sYSnyZ25KLFXk55FWunf4=; b=X5NOBosuXvExNlJSbVImpgBJGs
-        tDGCWPSZ2beY8QTPnQYFBM3qzW57GqVUJoyEwRO9pbJDm0CXlmElPMEpJACZOhTynfPPSIJMEtFEm
-        njf7hh6vQB+q/fRGQly3KXs7Hd0Q0dPVaotLl8BEwaR/u1KR+IGaUp1cWpIvR+mr9w1g=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1j7LyE-0006AU-Iq; Thu, 27 Feb 2020 17:25:06 +0100
-Date:   Thu, 27 Feb 2020 17:25:06 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Quentin Schulz <foss@0leil.net>
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        f.fainelli@gmail.com, hkallweit1@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/3] net: phy: mscc: implement RGMII skew delay
- configuration
-Message-ID: <20200227162506.GD5245@lunn.ch>
-References: <20200227152859.1687119-1-antoine.tenart@bootlin.com>
- <20200227152859.1687119-4-antoine.tenart@bootlin.com>
- <1f267571ddd9d1caf3e95afe31e47e30@0leil.net>
+        id S1730295AbgB0QfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 11:35:14 -0500
+X-Greylist: delayed 447 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Feb 2020 11:35:12 EST
+Received: from meh.true.cz (meh.true.cz [108.61.167.218])
+        (Authenticated sender: petr@true.cz)
+        by smtp-out.xnet.cz (Postfix) with ESMTPSA id 2E4B43D9E;
+        Thu, 27 Feb 2020 17:27:44 +0100 (CET)
+Received: by meh.true.cz (OpenSMTPD) with ESMTP id 3bf5d2ef;
+        Thu, 27 Feb 2020 17:27:30 +0100 (CET)
+From:   =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Tomasz Duszynski <tduszyns@gmail.com>
+Cc:     =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
+        stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: chemical: sps30: fix missing triggered buffer dependency
+Date:   Thu, 27 Feb 2020 17:27:34 +0100
+Message-Id: <20200227162734.604-1-ynezz@true.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f267571ddd9d1caf3e95afe31e47e30@0leil.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Also, do we actually need to write that register only when skews are defined
-> in the DT? Can't we just write to it anyway (I guess the fact that 0_2 skew
-> is actually 0 in value should put me on the right path but I prefer to ask).
+SPS30 uses triggered buffer, but the dependency is not specified in the
+Kconfig file.  Fix this by selecting IIO_BUFFER and IIO_TRIGGERED_BUFFER
+config symbols.
 
-Hi Quentin
+Cc: stable@vger.kernel.org
+Fixes: 232e0f6ddeae ("iio: chemical: add support for Sensirion SPS30 sensor")
+Signed-off-by: Petr Štetiar <ynezz@true.cz>
+---
+ drivers/iio/chemical/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Ideally, you don't want to rely on the boot loader doing some
-magic. So i would prefer the skew is set to 0 if the properties are
-not present.
-
-    Andrew
+diff --git a/drivers/iio/chemical/Kconfig b/drivers/iio/chemical/Kconfig
+index 0b91de4df8f4..a7e65a59bf42 100644
+--- a/drivers/iio/chemical/Kconfig
++++ b/drivers/iio/chemical/Kconfig
+@@ -91,6 +91,8 @@ config SPS30
+ 	tristate "SPS30 particulate matter sensor"
+ 	depends on I2C
+ 	select CRC8
++	select IIO_BUFFER
++	select IIO_TRIGGERED_BUFFER
+ 	help
+ 	  Say Y here to build support for the Sensirion SPS30 particulate
+ 	  matter sensor.
