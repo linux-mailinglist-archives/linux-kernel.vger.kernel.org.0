@@ -2,42 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56233171A8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB03617197C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:45:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731917AbgB0Nyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:54:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54930 "EHLO mail.kernel.org"
+        id S1730363AbgB0NpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:45:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731909AbgB0Nyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:54:47 -0500
+        id S1729995AbgB0NpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:45:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52E4620578;
-        Thu, 27 Feb 2020 13:54:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDB2320578;
+        Thu, 27 Feb 2020 13:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811686;
-        bh=HSfHtUdMFWc6CS5XaUONf1lMrkLQkHO5y1TvGHsvi9A=;
+        s=default; t=1582811115;
+        bh=3rdEB6lUQ6pPyyCbptbrR7bjgdT1cCzygJYV84n2H3Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cy3CLy8KxkuNZQw6XV2QnLbl9CQZ35zA85/nJmLXQT34FT9/IpYSaPYcF2DCcFCcY
-         DlJ6NW3kluVgKF/XWm88W8evN/4/xQ0lSPV28JGzyEirkSmylA3bG3MKk1KCoOSod5
-         j7YvEe2pxtjo+2QvSSV5ukVkflrLpnV4uhlei47s=
+        b=uKZjZAT2yNqeqyHhZAhHYZzf0f785LvLAnbtkVawSnsJtQqoV0vlDXvKTSmE9K7x3
+         ig0xzCn6xh9jJUD3gQffg4vim/HG/D2JoxksVU4/4UTEggXFEUymqy6d4n6CKAosmo
+         MxskEvvZQYxRiLRpPhN2kUbnCWnUECRw67qzLI2s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Siddhesh Poyarekar <siddhesh@gotplt.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Tim Bird <tim.bird@sony.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 061/237] kselftest: Minimise dependency of get_size on C library interfaces
+        stable@vger.kernel.org, Megha Dey <megha.dey@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 001/165] x86/vdso: Use RDPID in preference to LSL when available
 Date:   Thu, 27 Feb 2020 14:34:35 +0100
-Message-Id: <20200227132301.452139286@linuxfoundation.org>
+Message-Id: <20200227132231.080872298@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,113 +54,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Siddhesh Poyarekar <siddhesh@gotplt.org>
+From: Andy Lutomirski <luto@kernel.org>
 
-[ Upstream commit 6b64a650f0b2ae3940698f401732988699eecf7a ]
+commit a582c540ac1b10f0a7d37415e04c4af42409fd08 upstream.
 
-It was observed[1] on arm64 that __builtin_strlen led to an infinite
-loop in the get_size selftest.  This is because __builtin_strlen (and
-other builtins) may sometimes result in a call to the C library
-function.  The C library implementation of strlen uses an IFUNC
-resolver to load the most efficient strlen implementation for the
-underlying machine and hence has a PLT indirection even for static
-binaries.  Because this binary avoids the C library startup routines,
-the PLT initialization never happens and hence the program gets stuck
-in an infinite loop.
+RDPID is a new instruction that reads MSR_TSC_AUX quickly.  This
+should be considerably faster than reading the GDT.  Add a
+cpufeature for it and use it from __vdso_getcpu() when available.
 
-On x86_64 the __builtin_strlen just happens to expand inline and avoid
-the call but that is not always guaranteed.
+Tested-by: Megha Dey <megha.dey@intel.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/4f6c3a22012d10f1c65b9ca15800e01b42c7d39d.1479320367.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Further, while testing on x86_64 (Fedora 31), it was observed that the
-test also failed with a segfault inside write() because the generated
-code for the write function in glibc seems to access TLS before the
-syscall (probably due to the cancellation point check) and fails
-because TLS is not initialised.
-
-To mitigate these problems, this patch reduces the interface with the
-C library to just the syscall function.  The syscall function still
-sets errno on failure, which is undesirable but for now it only
-affects cases where syscalls fail.
-
-[1] https://bugs.linaro.org/show_bug.cgi?id=5479
-
-Signed-off-by: Siddhesh Poyarekar <siddhesh@gotplt.org>
-Reported-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
-Tested-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
-Reviewed-by: Tim Bird <tim.bird@sony.com>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/size/get_size.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/cpufeatures.h |    1 +
+ arch/x86/include/asm/vgtod.h       |    7 ++++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/size/get_size.c b/tools/testing/selftests/size/get_size.c
-index d4b59ab979a09..f55943b6d1e2a 100644
---- a/tools/testing/selftests/size/get_size.c
-+++ b/tools/testing/selftests/size/get_size.c
-@@ -12,23 +12,35 @@
-  * own execution.  It also attempts to have as few dependencies
-  * on kernel features as possible.
-  *
-- * It should be statically linked, with startup libs avoided.
-- * It uses no library calls, and only the following 3 syscalls:
-+ * It should be statically linked, with startup libs avoided.  It uses
-+ * no library calls except the syscall() function for the following 3
-+ * syscalls:
-  *   sysinfo(), write(), and _exit()
-  *
-  * For output, it avoids printf (which in some C libraries
-  * has large external dependencies) by  implementing it's own
-  * number output and print routines, and using __builtin_strlen()
-+ *
-+ * The test may crash if any of the above syscalls fails because in some
-+ * libc implementations (e.g. the GNU C Library) errno is saved in
-+ * thread-local storage, which does not get initialized due to avoiding
-+ * startup libs.
-  */
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -305,6 +305,7 @@
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (ecx), word 16 */
+ #define X86_FEATURE_PKU		(16*32+ 3) /* Protection Keys for Userspace */
+ #define X86_FEATURE_OSPKE	(16*32+ 4) /* OS Protection Keys Enable */
++#define X86_FEATURE_RDPID	(16*32+ 22) /* RDPID instruction */
  
- #include <sys/sysinfo.h>
- #include <unistd.h>
-+#include <sys/syscall.h>
+ /* AMD-defined CPU features, CPUID level 0x80000007 (ebx), word 17 */
+ #define X86_FEATURE_OVERFLOW_RECOV (17*32+0) /* MCA overflow recovery support */
+--- a/arch/x86/include/asm/vgtod.h
++++ b/arch/x86/include/asm/vgtod.h
+@@ -89,8 +89,13 @@ static inline unsigned int __getcpu(void
+ 	 * works on all CPUs.  This is volatile so that it orders
+ 	 * correctly wrt barrier() and to keep gcc from cleverly
+ 	 * hoisting it out of the calling function.
++	 *
++	 * If RDPID is available, use it.
+ 	 */
+-	asm volatile ("lsl %1,%0" : "=r" (p) : "r" (__PER_CPU_SEG));
++	alternative_io ("lsl %[p],%[seg]",
++			".byte 0xf3,0x0f,0xc7,0xf8", /* RDPID %eax/rax */
++			X86_FEATURE_RDPID,
++			[p] "=a" (p), [seg] "r" (__PER_CPU_SEG));
  
- #define STDOUT_FILENO 1
- 
- static int print(const char *s)
- {
--	return write(STDOUT_FILENO, s, __builtin_strlen(s));
-+	size_t len = 0;
-+
-+	while (s[len] != '\0')
-+		len++;
-+
-+	return syscall(SYS_write, STDOUT_FILENO, s, len);
+ 	return p;
  }
- 
- static inline char *num_to_str(unsigned long num, char *buf, int len)
-@@ -80,12 +92,12 @@ void _start(void)
- 	print("TAP version 13\n");
- 	print("# Testing system size.\n");
- 
--	ccode = sysinfo(&info);
-+	ccode = syscall(SYS_sysinfo, &info);
- 	if (ccode < 0) {
- 		print("not ok 1");
- 		print(test_name);
- 		print(" ---\n reason: \"could not get sysinfo\"\n ...\n");
--		_exit(ccode);
-+		syscall(SYS_exit, ccode);
- 	}
- 	print("ok 1");
- 	print(test_name);
-@@ -101,5 +113,5 @@ void _start(void)
- 	print(" ...\n");
- 	print("1..1\n");
- 
--	_exit(0);
-+	syscall(SYS_exit, 0);
- }
--- 
-2.20.1
-
 
 
