@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C153171B78
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:03:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 637C5171CAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:14:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733203AbgB0OCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:02:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37540 "EHLO mail.kernel.org"
+        id S2389117AbgB0OOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:14:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733188AbgB0OCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:02:45 -0500
+        id S2389100AbgB0OOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:14:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D08221556;
-        Thu, 27 Feb 2020 14:02:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 895A224691;
+        Thu, 27 Feb 2020 14:14:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812164;
-        bh=SE3ZIrQ6TFTBLuugNMM70YTNIDDZ0MjWbN4LcPCJ7as=;
+        s=default; t=1582812855;
+        bh=RypRGmCPXhCJfp6qrYOlZPi7TCGuoDNfunyBhUdEIxc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZQt+T61Di2m6TGEgv6i1KtDwzEqSeBXirWao3BG3kHYp1ZfD/p3w4ksuZ5D2d9hgj
-         Iz+OkQa5N11+1AS6fGQB+cF7C9OvWPAZi0mhnJfVGRutjplzXSqSWbYbuAf09ICBPk
-         UVi/p1A3reiEOR6fw4D3K8mceKwXyIYRErlPn1Ww=
+        b=R23Iz2o/nczIBsdoGlHrwf9OsDrzF9K4CRCFZLhlPhwd3BXL1LV21+loQ/SoysLc3
+         KwU1GCySRJ7jup6aCzvxLbLufGmF/c8VvA0M1t9GxLmnXdrGjW5EefKweUrpSEKMBR
+         pzxhKZ7RRpSiBJDcn/XwfoKB8qS9sxmQGkWjruhs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Jung <jung@codemercs.com>
-Subject: [PATCH 4.19 10/97] USB: misc: iowarrior: add support for the 28 and 28L devices
+        stable@vger.kernel.org, Minas Harutyunyan <hminas@synopsys.com>,
+        Jack Mitchell <ml@embed.me.uk>, Felipe Balbi <balbi@kernel.org>
+Subject: [PATCH 5.5 041/150] usb: dwc2: Fix SET/CLEAR_FEATURE and GET_STATUS flows
 Date:   Thu, 27 Feb 2020 14:36:18 +0100
-Message-Id: <20200227132216.257444795@linuxfoundation.org>
+Message-Id: <20200227132238.924337285@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,74 +43,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
 
-commit 5f6f8da2d7b5a431d3f391d0d73ace8edfb42af7 upstream.
+commit 9a0d6f7c0a83844baae1d6d85482863d2bf3b7a7 upstream.
 
-Add new device ids for the 28 and 28L devices.  These have 4 interfaces
-instead of 2, but the driver binds the same, so the driver changes are
-minimal.
+SET/CLEAR_FEATURE for Remote Wakeup allowance not handled correctly.
+GET_STATUS handling provided not correct data on DATA Stage.
+Issue seen when gadget's dr_mode set to "otg" mode and connected
+to MacOS.
+Both are fixed and tested using USBCV Ch.9 tests.
 
-Cc: Christoph Jung <jung@codemercs.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200212040422.2991-2-gregkh@linuxfoundation.org
+Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
+Fixes: fa389a6d7726 ("usb: dwc2: gadget: Add remote_wakeup_allowed flag")
+Tested-by: Jack Mitchell <ml@embed.me.uk>
+Cc: stable@vger.kernel.org
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/iowarrior.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/usb/dwc2/gadget.c |   28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -33,6 +33,9 @@
- #define USB_DEVICE_ID_CODEMERCS_IOWPV2	0x1512
- /* full speed iowarrior */
- #define USB_DEVICE_ID_CODEMERCS_IOW56	0x1503
-+/* fuller speed iowarrior */
-+#define USB_DEVICE_ID_CODEMERCS_IOW28	0x1504
-+#define USB_DEVICE_ID_CODEMERCS_IOW28L	0x1505
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -1632,6 +1632,7 @@ static int dwc2_hsotg_process_req_status
+ 	struct dwc2_hsotg_ep *ep0 = hsotg->eps_out[0];
+ 	struct dwc2_hsotg_ep *ep;
+ 	__le16 reply;
++	u16 status;
+ 	int ret;
  
- /* OEMed devices */
- #define USB_DEVICE_ID_CODEMERCS_IOW24SAG	0x158a
-@@ -143,6 +146,8 @@ static const struct usb_device_id iowarr
- 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW56)},
- 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW24SAG)},
- 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW56AM)},
-+	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW28)},
-+	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW28L)},
- 	{}			/* Terminating entry */
- };
- MODULE_DEVICE_TABLE(usb, iowarrior_ids);
-@@ -383,6 +388,8 @@ static ssize_t iowarrior_write(struct fi
+ 	dev_dbg(hsotg->dev, "%s: USB_REQ_GET_STATUS\n", __func__);
+@@ -1643,11 +1644,10 @@ static int dwc2_hsotg_process_req_status
+ 
+ 	switch (ctrl->bRequestType & USB_RECIP_MASK) {
+ 	case USB_RECIP_DEVICE:
+-		/*
+-		 * bit 0 => self powered
+-		 * bit 1 => remote wakeup
+-		 */
+-		reply = cpu_to_le16(0);
++		status = 1 << USB_DEVICE_SELF_POWERED;
++		status |= hsotg->remote_wakeup_allowed <<
++			  USB_DEVICE_REMOTE_WAKEUP;
++		reply = cpu_to_le16(status);
  		break;
- 	case USB_DEVICE_ID_CODEMERCS_IOW56:
- 	case USB_DEVICE_ID_CODEMERCS_IOW56AM:
-+	case USB_DEVICE_ID_CODEMERCS_IOW28:
-+	case USB_DEVICE_ID_CODEMERCS_IOW28L:
- 		/* The IOW56 uses asynchronous IO and more urbs */
- 		if (atomic_read(&dev->write_busy) == MAX_WRITES_IN_FLIGHT) {
- 			/* Wait until we are below the limit for submitted urbs */
-@@ -792,7 +799,9 @@ static int iowarrior_probe(struct usb_in
- 	}
  
- 	if ((dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56) ||
--	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM)) {
-+	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM) ||
-+	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28) ||
-+	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28L)) {
- 		res = usb_find_last_int_out_endpoint(iface_desc,
- 				&dev->int_out_endpoint);
- 		if (res) {
-@@ -806,7 +815,9 @@ static int iowarrior_probe(struct usb_in
- 	dev->report_size = usb_endpoint_maxp(dev->int_in_endpoint);
- 	if ((dev->interface->cur_altsetting->desc.bInterfaceNumber == 0) &&
- 	    ((dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56) ||
--	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM)))
-+	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM) ||
-+	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28) ||
-+	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28L)))
- 		/* IOWarrior56 has wMaxPacketSize different from report size */
- 		dev->report_size = 7;
+ 	case USB_RECIP_INTERFACE:
+@@ -1758,7 +1758,10 @@ static int dwc2_hsotg_process_req_featur
+ 	case USB_RECIP_DEVICE:
+ 		switch (wValue) {
+ 		case USB_DEVICE_REMOTE_WAKEUP:
+-			hsotg->remote_wakeup_allowed = 1;
++			if (set)
++				hsotg->remote_wakeup_allowed = 1;
++			else
++				hsotg->remote_wakeup_allowed = 0;
+ 			break;
  
+ 		case USB_DEVICE_TEST_MODE:
+@@ -1768,16 +1771,17 @@ static int dwc2_hsotg_process_req_featur
+ 				return -EINVAL;
+ 
+ 			hsotg->test_mode = wIndex >> 8;
+-			ret = dwc2_hsotg_send_reply(hsotg, ep0, NULL, 0);
+-			if (ret) {
+-				dev_err(hsotg->dev,
+-					"%s: failed to send reply\n", __func__);
+-				return ret;
+-			}
+ 			break;
+ 		default:
+ 			return -ENOENT;
+ 		}
++
++		ret = dwc2_hsotg_send_reply(hsotg, ep0, NULL, 0);
++		if (ret) {
++			dev_err(hsotg->dev,
++				"%s: failed to send reply\n", __func__);
++			return ret;
++		}
+ 		break;
+ 
+ 	case USB_RECIP_ENDPOINT:
 
 
