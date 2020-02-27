@@ -2,55 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09CA0172C08
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 00:11:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DE27172C0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 00:13:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729849AbgB0XL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 18:11:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35476 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729656AbgB0XL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 18:11:29 -0500
-Received: from localhost (lfbn-ncy-1-985-231.w90-101.abo.wanadoo.fr [90.101.63.231])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EE93246A3;
-        Thu, 27 Feb 2020 23:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582845089;
-        bh=NMVxdRyW7430xx8OHb0SuyAUzMc3aQvGxEHsdnsMvHE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Otg+LgVIC0ee/E0n2q2JTpD0TCn0ZBBbTB7xGNA5tn30fBbuub2gdCOGjY1tHxloJ
-         hk8KIxX0cy76gnhh3Bg3gIUnWtks1dKRR0Nt5nqyYo/4lAu9qMudQloIrxDkQNt5RZ
-         depdOCCEnLf6C5Z90wM9X7iAc8kM/zGQDdUJhuFc=
-Date:   Fri, 28 Feb 2020 00:11:26 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [patch 4/8] x86/entry: Move irq tracing on syscall entry to
- C-code
-Message-ID: <20200227231125.GE21795@lenoir>
-References: <20200225220801.571835584@linutronix.de>
- <20200225221305.605144982@linutronix.de>
+        id S1729966AbgB0XNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 18:13:14 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:37946 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729656AbgB0XNO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 18:13:14 -0500
+Received: by mail-oi1-f194.google.com with SMTP id 2so1028226oiz.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 15:13:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vuP2i555x9rQeLyB1v3KlAfJsd5dT+gQKeEPZLvbG7U=;
+        b=MZnzQCh/KHh1q6YatutvUIKjISYoDqGQhcbCP4OkDL95tcIUM1zAdp6/tduCCh8RVH
+         kFUwZp/wR5WXL2+r55G3iUvlen4pWvRLUovoM7LdewKpo0gebbaIUBRWoO+jCool/Hr4
+         i6xyKiDjaBtKfpctvdOfbRO2SopVOUTSXHq/3Kv3bQmkYyFhRIDqRbyajegLa+e6bdZc
+         MRy8pq1m5JBwdhvxQ1T/d9ZhkY0U6WHbiqWmDN6LL6Y+o6zz9L1NRA4XI9K+Z+UmPYXS
+         5xtYFtj6RAsLsU5Hchoyj3fsSohDlnq8qT5oHv6162fkIjaJ6KrLk5aZyq+bvjja4hej
+         vJJQ==
+X-Gm-Message-State: APjAAAXbegV8WFOZAkUQK9Pu5+Shd8F9ojrdVoNlD191MCgEgrwVeg1F
+        +mcC1/ACNTmPyLFolz5lSZg=
+X-Google-Smtp-Source: APXvYqzigNcduadD51SnQ3RWu/qpj0QrIQNpNPc0NMbtWNTDLeraVQfc5Y6jSTpgNetyyTPyGtkGng==
+X-Received: by 2002:aca:c646:: with SMTP id w67mr1011516oif.171.1582845192170;
+        Thu, 27 Feb 2020 15:13:12 -0800 (PST)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id t23sm2479235oic.28.2020.02.27.15.13.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Feb 2020 15:13:11 -0800 (PST)
+Subject: Re: [PATCH v11 8/9] nvmet-passthru: Add enable/disable helpers
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
+        Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Stephen Bates <sbates@raithlin.com>
+References: <20200220203652.26734-1-logang@deltatee.com>
+ <20200220203652.26734-9-logang@deltatee.com>
+ <96234649-fbc1-fb56-54d8-2f73dc455ffd@grimberg.me>
+ <9c6355d8-cf4e-9932-1cef-0a7140f0fa7e@deltatee.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <283c563a-06a9-9c12-bd4e-d15e790fad57@grimberg.me>
+Date:   Thu, 27 Feb 2020 15:13:07 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225221305.605144982@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <9c6355d8-cf4e-9932-1cef-0a7140f0fa7e@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 11:08:05PM +0100, Thomas Gleixner wrote:
-> Now that the C entry points are safe, move the irq flags tracing code into
-> the entry helper.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+>>> +    if (subsys->ver < NVME_VS(1, 2, 1)) {
+>>> +        pr_warn("nvme controller version is too old: %d.%d.%d,
+>>> advertising 1.2.1\n",
+>>> +            (int)NVME_MAJOR(subsys->ver),
+>>> +            (int)NVME_MINOR(subsys->ver),
+>>> +            (int)NVME_TERTIARY(subsys->ver));
+>>> +        subsys->ver = NVME_VS(1, 2, 1);
+>>
+>> Umm.. is this OK? do we implement the mandatory 1.2.1 features on behalf
+>> of the passthru device?
+> 
+> This was the approach that Christoph suggested. It seemed sensible to
+> me. However, it would also *probably* be ok to just reject these
+> devices. Unless you feel strongly about this, I'll probably leave it the
+> way it is.
+
+Sounds ok to me.
+
+>>> +    }
+>>> +
+>>> +    mutex_unlock(&subsys->lock);
+>>> +    return 0;
+>>> +
+>>> +out_put_ctrl:
+>>> +    nvme_put_ctrl(ctrl);
+>>> +out_unlock:
+>>> +    mutex_unlock(&subsys->lock);
+>>> +    return ret;
+>>> +}
+>>> +
+>>> +static void __nvmet_passthru_ctrl_disable(struct nvmet_subsys *subsys)
+>>> +{
+>>> +    if (subsys->passthru_ctrl) {
+>>> +        xa_erase(&passthru_subsystems, subsys->passthru_ctrl->cntlid);
+>>> +        nvme_put_ctrl(subsys->passthru_ctrl);
+>>> +    }
+>>> +    subsys->passthru_ctrl = NULL;
+>>> +    subsys->ver = NVMET_DEFAULT_VS;
+>>> +}
+>>
+>> Isn't it strange that a subsystem changes its version in its lifetime?
+> 
+> It does seem strange. However, it's not at all unprecedented. See
+> nvmet_subsys_attr_version_store() which gives the user direct control of
+> the version through configfs.
+
+You're right.
