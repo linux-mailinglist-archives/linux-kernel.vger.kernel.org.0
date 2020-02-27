@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 167D8171F8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2FC2172172
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:49:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732482AbgB0N6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:58:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59734 "EHLO mail.kernel.org"
+        id S1732596AbgB0OtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:49:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732472AbgB0N6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:58:33 -0500
+        id S1729272AbgB0NmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:42:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50A8820801;
-        Thu, 27 Feb 2020 13:58:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0BD320726;
+        Thu, 27 Feb 2020 13:41:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811912;
-        bh=R2pN4Djw7Hf+vxMaEYlVNvZnSL03bd+Tff0IkCl14nU=;
+        s=default; t=1582810920;
+        bh=U1hQYGmbYZuTgXI+foOvWiI4DWlD9KQ+H4SpRNWnz5A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pFCnxU1xAJeXF0iCaTZYSSftdAR0jpwVtkcZ+O9WcPnJ1E23f3d1JFygvNyZoRv3Q
-         cUsIcoPwA3WQPezcyshoR5MsWC9ctduzkmYhu1dAwrhPimOpuWC2bNI/Bu8xW+TnNi
-         XB/SGfG20G0M/dcojITZvleRCj/ALyMfGD2ZSsYs=
+        b=MJOPpoq4/iGgRrFMRQsQyPGuWnWzKw76rwG/8M+YU3adekbd0+9ZY+tDNLyG+WeAf
+         xIMUyDdmLQc8EP9bkjfTdzZBlMlWjfGlVDUxF33ypC44jIhXiHOp4yEoVUh1wPUlcL
+         RjHbzfhgeIpi4ERpBTRHU23VYRBaWqxUeyCQOJho=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 148/237] cifs: fix NULL dereference in match_prepath
-Date:   Thu, 27 Feb 2020 14:36:02 +0100
-Message-Id: <20200227132307.496317994@linuxfoundation.org>
+Subject: [PATCH 4.4 047/113] ARM: dts: r8a7779: Add device node for ARM global timer
+Date:   Thu, 27 Feb 2020 14:36:03 +0100
+Message-Id: <20200227132219.272417587@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit fe1292686333d1dadaf84091f585ee903b9ddb84 ]
+[ Upstream commit 8443ffd1bbd5be74e9b12db234746d12e8ea93e2 ]
 
-RHBZ: 1760879
+Add a device node for the global timer, which is part of the Cortex-A9
+MPCore.
 
-Fix an oops in match_prepath() by making sure that the prepath string is not
-NULL before we pass it into strcmp().
+The global timer can serve as an accurate (4 ns) clock source for
+scheduling and delay loops.
 
-This is similar to other checks we make for example in cifs_root_iget()
-
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191211135222.26770-4-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/connect.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index f0b1279a7de66..6e5ecf70996a0 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -3047,8 +3047,10 @@ match_prepath(struct super_block *sb, struct cifs_mnt_data *mnt_data)
- {
- 	struct cifs_sb_info *old = CIFS_SB(sb);
- 	struct cifs_sb_info *new = mnt_data->cifs_sb;
--	bool old_set = old->mnt_cifs_flags & CIFS_MOUNT_USE_PREFIX_PATH;
--	bool new_set = new->mnt_cifs_flags & CIFS_MOUNT_USE_PREFIX_PATH;
-+	bool old_set = (old->mnt_cifs_flags & CIFS_MOUNT_USE_PREFIX_PATH) &&
-+		old->prepath;
-+	bool new_set = (new->mnt_cifs_flags & CIFS_MOUNT_USE_PREFIX_PATH) &&
-+		new->prepath;
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 6afa909865b52..8636e2321ab71 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -63,6 +63,14 @@
+ 		      <0xf0000100 0x100>;
+ 	};
  
- 	if (old_set && new_set && !strcmp(new->prepath, old->prepath))
- 		return 1;
++	timer@f0000200 {
++		compatible = "arm,cortex-a9-global-timer";
++		reg = <0xf0000200 0x100>;
++		interrupts = <GIC_PPI 11
++			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
++		clocks = <&cpg_clocks R8A7779_CLK_ZS>;
++	};
++
+ 	timer@f0000600 {
+ 		compatible = "arm,cortex-a9-twd-timer";
+ 		reg = <0xf0000600 0x20>;
 -- 
 2.20.1
 
