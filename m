@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10C4E171BE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:06:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B9EF171B56
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387655AbgB0OGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:06:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43942 "EHLO mail.kernel.org"
+        id S1732947AbgB0OBc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:01:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387969AbgB0OGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:06:39 -0500
+        id S1732939AbgB0OBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:01:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABE8B20578;
-        Thu, 27 Feb 2020 14:06:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 015C221556;
+        Thu, 27 Feb 2020 14:01:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812399;
-        bh=w1YCDDfKSqipDH023dOMRWlT5ElOZLdWM2T6svc3yhs=;
+        s=default; t=1582812090;
+        bh=NLZDNgH+JCzASQdqmltQXuwK1A91CMeMs19qt5lj1TY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2FYJ6GXWn7IyofPgscG68Z6OD/CpmxmCZpvWp7eWKEw1lb0PbgeycB5/CymowEoUA
-         6/v5i1FEM0DwxGieY4z+DC5y7ov3T6ePMEmO+5iKU/21bDWHBvVDPXaP5O6gpecLZP
-         XpPHaI9AZLi+KoWF08mgahsQqxW3hxx0U7MOliyM=
+        b=JH3xYOSRr1O49EugPFyAhn307oi2ybhOp7c5lWESLDqkdaps1RlWh5wN+dWIggBVG
+         QQV3fUxn7D0IBkbjslafWR2vAtEBNNbXxEkz34Dcn4XOTz8CmegzbGSXusOyYAtmPT
+         jb7I+hKYLbsY6smNlUF+K9irLqQLIjkQZHo5ihJM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shijie Luo <luoshijie1@huawei.com>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        stable@kernel.org
-Subject: [PATCH 4.19 64/97] ext4: add cond_resched() to __ext4_find_entry()
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH 4.14 218/237] KVM: nVMX: handle nested posted interrupts when apicv is disabled for L1
 Date:   Thu, 27 Feb 2020 14:37:12 +0100
-Message-Id: <20200227132224.958571291@linuxfoundation.org>
+Message-Id: <20200227132312.203908410@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,71 +43,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shijie Luo <luoshijie1@huawei.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit 9424ef56e13a1f14c57ea161eed3ecfdc7b2770e upstream.
+commit 91a5f413af596ad01097e59bf487eb07cb3f1331 upstream.
 
-We tested a soft lockup problem in linux 4.19 which could also
-be found in linux 5.x.
+Even when APICv is disabled for L1 it can (and, actually, is) still
+available for L2, this means we need to always call
+vmx_deliver_nested_posted_interrupt() when attempting an interrupt
+delivery.
 
-When dir inode takes up a large number of blocks, and if the
-directory is growing when we are searching, it's possible the
-restart branch could be called many times, and the do while loop
-could hold cpu a long time.
-
-Here is the call trace in linux 4.19.
-
-[  473.756186] Call trace:
-[  473.756196]  dump_backtrace+0x0/0x198
-[  473.756199]  show_stack+0x24/0x30
-[  473.756205]  dump_stack+0xa4/0xcc
-[  473.756210]  watchdog_timer_fn+0x300/0x3e8
-[  473.756215]  __hrtimer_run_queues+0x114/0x358
-[  473.756217]  hrtimer_interrupt+0x104/0x2d8
-[  473.756222]  arch_timer_handler_virt+0x38/0x58
-[  473.756226]  handle_percpu_devid_irq+0x90/0x248
-[  473.756231]  generic_handle_irq+0x34/0x50
-[  473.756234]  __handle_domain_irq+0x68/0xc0
-[  473.756236]  gic_handle_irq+0x6c/0x150
-[  473.756238]  el1_irq+0xb8/0x140
-[  473.756286]  ext4_es_lookup_extent+0xdc/0x258 [ext4]
-[  473.756310]  ext4_map_blocks+0x64/0x5c0 [ext4]
-[  473.756333]  ext4_getblk+0x6c/0x1d0 [ext4]
-[  473.756356]  ext4_bread_batch+0x7c/0x1f8 [ext4]
-[  473.756379]  ext4_find_entry+0x124/0x3f8 [ext4]
-[  473.756402]  ext4_lookup+0x8c/0x258 [ext4]
-[  473.756407]  __lookup_hash+0x8c/0xe8
-[  473.756411]  filename_create+0xa0/0x170
-[  473.756413]  do_mkdirat+0x6c/0x140
-[  473.756415]  __arm64_sys_mkdirat+0x28/0x38
-[  473.756419]  el0_svc_common+0x78/0x130
-[  473.756421]  el0_svc_handler+0x38/0x78
-[  473.756423]  el0_svc+0x8/0xc
-[  485.755156] watchdog: BUG: soft lockup - CPU#2 stuck for 22s! [tmp:5149]
-
-Add cond_resched() to avoid soft lockup and to provide a better
-system responding.
-
-Link: https://lore.kernel.org/r/20200215080206.13293-1-luoshijie1@huawei.com
-Signed-off-by: Shijie Luo <luoshijie1@huawei.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: stable@kernel.org
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/namei.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/kvm_host.h |    2 +-
+ arch/x86/kvm/lapic.c            |    5 +----
+ arch/x86/kvm/svm.c              |    7 ++++++-
+ arch/x86/kvm/vmx.c              |   13 +++++++++----
+ 4 files changed, 17 insertions(+), 10 deletions(-)
 
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1431,6 +1431,7 @@ restart:
- 		/*
- 		 * We deal with the read-ahead logic here.
- 		 */
-+		cond_resched();
- 		if (ra_ptr >= ra_max) {
- 			/* Refill the readahead buffer */
- 			ra_ptr = 0;
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1006,7 +1006,7 @@ struct kvm_x86_ops {
+ 	void (*load_eoi_exitmap)(struct kvm_vcpu *vcpu, u64 *eoi_exit_bitmap);
+ 	void (*set_virtual_apic_mode)(struct kvm_vcpu *vcpu);
+ 	void (*set_apic_access_page_addr)(struct kvm_vcpu *vcpu, hpa_t hpa);
+-	void (*deliver_posted_interrupt)(struct kvm_vcpu *vcpu, int vector);
++	int (*deliver_posted_interrupt)(struct kvm_vcpu *vcpu, int vector);
+ 	int (*sync_pir_to_irr)(struct kvm_vcpu *vcpu);
+ 	int (*set_tss_addr)(struct kvm *kvm, unsigned int addr);
+ 	int (*get_tdp_level)(struct kvm_vcpu *vcpu);
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -993,11 +993,8 @@ static int __apic_accept_irq(struct kvm_
+ 				apic_clear_vector(vector, apic->regs + APIC_TMR);
+ 		}
+ 
+-		if (vcpu->arch.apicv_active)
+-			kvm_x86_ops->deliver_posted_interrupt(vcpu, vector);
+-		else {
++		if (kvm_x86_ops->deliver_posted_interrupt(vcpu, vector)) {
+ 			kvm_lapic_set_irr(vector, apic);
+-
+ 			kvm_make_request(KVM_REQ_EVENT, vcpu);
+ 			kvm_vcpu_kick(vcpu);
+ 		}
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -4631,8 +4631,11 @@ static void svm_load_eoi_exitmap(struct
+ 	return;
+ }
+ 
+-static void svm_deliver_avic_intr(struct kvm_vcpu *vcpu, int vec)
++static int svm_deliver_avic_intr(struct kvm_vcpu *vcpu, int vec)
+ {
++	if (!vcpu->arch.apicv_active)
++		return -1;
++
+ 	kvm_lapic_set_irr(vec, vcpu->arch.apic);
+ 	smp_mb__after_atomic();
+ 
+@@ -4641,6 +4644,8 @@ static void svm_deliver_avic_intr(struct
+ 		       kvm_cpu_get_apicid(vcpu->cpu));
+ 	else
+ 		kvm_vcpu_wake_up(vcpu);
++
++	return 0;
+ }
+ 
+ static bool svm_dy_apicv_has_pending_interrupt(struct kvm_vcpu *vcpu)
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -5541,24 +5541,29 @@ static int vmx_deliver_nested_posted_int
+  * 2. If target vcpu isn't running(root mode), kick it to pick up the
+  * interrupt from PIR in next vmentry.
+  */
+-static void vmx_deliver_posted_interrupt(struct kvm_vcpu *vcpu, int vector)
++static int vmx_deliver_posted_interrupt(struct kvm_vcpu *vcpu, int vector)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	int r;
+ 
+ 	r = vmx_deliver_nested_posted_interrupt(vcpu, vector);
+ 	if (!r)
+-		return;
++		return 0;
++
++	if (!vcpu->arch.apicv_active)
++		return -1;
+ 
+ 	if (pi_test_and_set_pir(vector, &vmx->pi_desc))
+-		return;
++		return 0;
+ 
+ 	/* If a previous notification has sent the IPI, nothing to do.  */
+ 	if (pi_test_and_set_on(&vmx->pi_desc))
+-		return;
++		return 0;
+ 
+ 	if (!kvm_vcpu_trigger_posted_interrupt(vcpu, false))
+ 		kvm_vcpu_kick(vcpu);
++
++	return 0;
+ }
+ 
+ /*
 
 
