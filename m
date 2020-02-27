@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CC39171C86
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B551171C00
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:07:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388923AbgB0OMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:12:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51606 "EHLO mail.kernel.org"
+        id S2388135AbgB0OHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:07:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388904AbgB0OMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:12:51 -0500
+        id S2388129AbgB0OHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:07:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D357524691;
-        Thu, 27 Feb 2020 14:12:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 519E521D7E;
+        Thu, 27 Feb 2020 14:07:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812770;
-        bh=DSFBM7BNuOdb259OtWqXqz7MxqSG3Bzku8QvVO0rB9s=;
+        s=default; t=1582812458;
+        bh=+Xbv5ReAxFmQEW1jkTzzswaOV3iBkq7ZlaBz9xuXs4Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1BnQeGsi5htjETFa1XC3Hwnd+fb7R0HbLvy8K8j/AnKyRkw6NEoM6d3YTLp8o+FWq
-         9WVHaFn0sbOCoe6vfcTxxi6U+0a3japMtXBEb68rxsNQtiFsLCxY8oaU+U4RQ/s/l7
-         K46ke6wqw/3bcXxcKEGXyu+K4Ty5eZF6wqf4h7qU=
+        b=XSUX1zLARV0N3GvRyvreaheRIrRQjYsi/RifDFCEZNPlGiNKcd+6QcDi06J8OrjA0
+         eNG0vLiJTO7Ho6AiRajAtUCbLBc1SZsQ9bxRmoVJDS3NTMOtr+LOdw4KvDRHL10gFe
+         LH2ftwe0Tobcs6wumQwkeF7HO6AIx9spd/lqMW6w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Samuel Holland <samuel@sholland.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.5 010/150] ASoC: codec2codec: avoid invalid/double-free of pcm runtime
-Date:   Thu, 27 Feb 2020 14:35:47 +0100
-Message-Id: <20200227132234.226756912@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Tyler Hicks <tyhicks@canonical.com>
+Subject: [PATCH 5.4 008/135] ecryptfs: fix a memory leak bug in parse_tag_1_packet()
+Date:   Thu, 27 Feb 2020 14:35:48 +0100
+Message-Id: <20200227132230.265593353@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Samuel Holland <samuel@sholland.org>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-commit b6570fdb96edf45bcf71884bd2644bd73d348d1a upstream.
+commit fe2e082f5da5b4a0a92ae32978f81507ef37ec66 upstream.
 
-The PCM runtime was freed during PMU in the case that the event hook
-encountered an error. However, it is also unconditionally freed during
-PMD. Avoid a double-free by dropping the call to kfree in the PMU hook.
+In parse_tag_1_packet(), if tag 1 packet contains a key larger than
+ECRYPTFS_MAX_ENCRYPTED_KEY_BYTES, no cleanup is executed, leading to a
+memory leak on the allocated 'auth_tok_list_item'. To fix this issue, go to
+the label 'out_free' to perform the cleanup work.
 
-Fixes: a72706ed8208 ("ASoC: codec2codec: remove ephemeral variables")
 Cc: stable@vger.kernel.org
-Signed-off-by: Samuel Holland <samuel@sholland.org>
-Link: https://lore.kernel.org/r/20200213061147.29386-2-samuel@sholland.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: dddfa461fc89 ("[PATCH] eCryptfs: Public key; packet management")
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/soc-dapm.c |    3 ---
- 1 file changed, 3 deletions(-)
+ fs/ecryptfs/keystore.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -3888,9 +3888,6 @@ snd_soc_dai_link_event_pre_pmu(struct sn
- 	runtime->rate = params_rate(params);
- 
- out:
--	if (ret < 0)
--		kfree(runtime);
--
- 	kfree(params);
- 	return ret;
- }
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@ -1304,7 +1304,7 @@ parse_tag_1_packet(struct ecryptfs_crypt
+ 		printk(KERN_WARNING "Tag 1 packet contains key larger "
+ 		       "than ECRYPTFS_MAX_ENCRYPTED_KEY_BYTES\n");
+ 		rc = -EINVAL;
+-		goto out;
++		goto out_free;
+ 	}
+ 	memcpy((*new_auth_tok)->session_key.encrypted_key,
+ 	       &data[(*packet_size)], (body_size - (ECRYPTFS_SIG_SIZE + 2)));
 
 
