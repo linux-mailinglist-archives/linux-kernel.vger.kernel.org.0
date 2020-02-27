@@ -2,27 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF89B171F50
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:34:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40E48171F6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:36:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387601AbgB0OeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:34:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44866 "EHLO mail.kernel.org"
+        id S2389073AbgB0Ofu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:35:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732342AbgB0Od4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:33:56 -0500
+        id S1733156AbgB0Od5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:33:57 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3210724656;
-        Thu, 27 Feb 2020 14:33:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 269F624697;
+        Thu, 27 Feb 2020 14:33:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582814035;
-        bh=VcOF4R4aZL9840G5UM/Sd0oFwcPEt8T2Y3lsp5JJoBg=;
-        h=From:To:Subject:Date:From;
-        b=RS27MqVp/rkxbsbuHD8/nWHm60qB2jmrZc13+FZsghuiRNJspMWMEUD3/3FEX7Byc
-         jRAnHt5VVxcoB4rSmWrXovDZkPxu4ce1XV9zN2sVF11wMgrpHRaV422YW/RjiKTDj+
-         ZTldBFalv5XDHuGs925Y5s0y76+aMDdpuxZ/A1ak=
+        s=default; t=1582814036;
+        bh=rXX4baJBpVmsrJ1apwr5q2LcKvq7w9ypzd3klZbEYG4=;
+        h=From:To:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=VrPHTq5P1qoilg+HMyyH0zcQXSYfoYZ9ddHf/82/nI2n89Ux8RHTPipPS0YvC/AMW
+         Ah8MmoemZDf0hzFJ/IWwNQ1OQGF9XW7LPJoX/Hy92nSbaXp9aNI28ZnS2TIRCSLVTn
+         tVmmxr03qDzYs6nMbkx58oNMQ2LaUkBCNlBBdpww=
 From:   zanussi@kernel.org
 To:     LKML <linux-kernel@vger.kernel.org>,
         linux-rt-users <linux-rt-users@vger.kernel.org>,
@@ -33,126 +34,97 @@ To:     LKML <linux-kernel@vger.kernel.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Daniel Wagner <wagi@monom.org>,
         Tom Zanussi <zanussi@kernel.org>
-Subject: [PATCH RT 00/23] Linux v4.14.170-rt75-rc2
-Date:   Thu, 27 Feb 2020 08:33:11 -0600
-Message-Id: <cover.1582814004.git.zanussi@kernel.org>
+Subject: [PATCH RT 01/23] Fix wrong-variable use in irq_set_affinity_notifier
+Date:   Thu, 27 Feb 2020 08:33:12 -0600
+Message-Id: <3e96d7fce5c890b243bd194810f1675bbcadf253.1582814004.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1582814004.git.zanussi@kernel.org>
+References: <cover.1582814004.git.zanussi@kernel.org>
+In-Reply-To: <cover.1582814004.git.zanussi@kernel.org>
+References: <cover.1582814004.git.zanussi@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <zanussi@kernel.org>
+From: Joe Korty <joe.korty@concurrent-rt.com>
 
-Dear RT Folks,
+v4.14.170-rt75-rc2 stable review patch.
+If anyone has any objections, please let me know.
 
-This is the RT stable review cycle of patch 4.14.170-rt75-rc2.
-
-Please scream at me if I messed something up. Please test the patches
-too.
-
-The -rc release will be uploaded to kernel.org and will be deleted
-when the final release is out. This is just a review release (or
-release candidate).
-
-The pre-releases will not be pushed to the git repository, only the
-final release is.
-
-If all goes well, this patch will be converted to the next main
-release on 2020-03-05.
-
-To build 4.14.170-rt75-rc2 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.14.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.14.170.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/4.14/patch-4.14.170-rt75-rc2.patch.xz
-
-You can also build from 4.14.170-rt74 by applying the incremental patch:
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/4.14/incr/patch-4.14.170-rt74-rt75-rc2.patch.xz
+-----------
 
 
-Enjoy,
+[ Fixes upstream commit 3e4242082f0384311f15ab9c93e2620268c6257f,
+  which erroneously switched old_notify->work to notify->work when
+  fixing a merge conflict ]
 
--- Tom
+4.14-rt: Fix wrong-variable use in irq_set_affinity_notifier.
 
+The bug was introduced in the 4.14-rt patch
 
-Daniel Wagner (1):
-  lib/smp_processor_id: Adjust check_preemption_disabled()
+   0461-genirq-Handle-missing-work_struct-in-irq_set_affinit.patch
 
-Joe Korty (1):
-  Fix wrong-variable use in irq_set_affinity_notifier
+The symptom is a NULL pointer panic in the i40e driver on
+system shutdown.
 
-Julien Grall (1):
-  lib/ubsan: Don't seralize UBSAN report
+    Rebooting.
+    BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
+    IP: __kthread_cancel_work_sync+0x12/0xa0
+    CPU: 15 PID: 6274 Comm: reboot Not tainted 4.14.155-rt70-RedHawk-8.0.2-prt-trace #1
+    task: ffff9ef0d1a58000 task.stack: ffffbe540c038000
+    RIP: 0010:__kthread_cancel_work_sync+0x12/0xa0
+    RSP: 0018:ffffbe540c03bbd8 EFLAGS: 00010296
+    RAX: 0000084000000020 RBX: 0000000000000000 RCX: 0000000000000034
+    RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000008
+    RBP: ffffbe540c03bc00 R08: ffff9ee8ccdc3800 R09: ffff9ef0d8c0c000
+    R10: ffff9ef0d8c0c028 R11: 0000000000000040 R12: ffff9ee8ccdc3800
+    R13: 0000000000000000 R14: ffff9ee8ccdc3960 R15: 0000000000000074
+    FS:  00007ffff7fcf380(0000) GS:ffff9ef0ffdc0000(0000) knlGS:0000000000000000
+    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+    CR2: 0000000000000020 CR3: 000000104b428003 CR4: 00000000005606e0
+    DR0: 00000000006040e0 DR1: 00000000006040e8 DR2: 00000000006040f0
+    DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+    PKRU: 55555554
 
-Juri Lelli (1):
-  sched/deadline: Ensure inactive_timer runs in hardirq context
+    Call Trace:
+     kthread_cancel_work_sync+0xb/0x10
+     irq_set_affinity_notifier+0x8e/0xc0
+     i40e_vsi_free_irq+0xbc/0x230 [i40e]
+     i40e_vsi_close+0x24/0xa0 [i40e]
+     i40e_close+0x10/0x20 [i40e]
+     i40e_quiesce_vsi.part.40+0x30/0x40 [i40e]
+     i40e_pf_quiesce_all_vsi.isra.41+0x34/0x50 [i40e]
+     i40e_prep_for_reset+0x67/0x110 [i40e]
+     i40e_shutdown+0x39/0x220 [i40e]
+     pci_device_shutdown+0x2b/0x50
+     device_shutdown+0x147/0x1f0
+     kernel_restart_prepare+0x71/0x74
+     kernel_restart+0xd/0x4e
+     SyS_reboot.cold.1+0x9/0x34
+     do_syscall_64+0x7c/0x150
 
-Liu Haitao (1):
-  kmemleak: Change the lock of kmemleak_object to raw_spinlock_t
+4.19-rt and above do not have this problem due to a refactoring.
 
-Peter Zijlstra (1):
-  locking/rtmutex: Clean ->pi_blocked_on in the error case
+Signed-off-by: Joe Korty <Joe.Korty@concurrent-rt.com>
+Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+---
+ kernel/irq/manage.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Scott Wood (7):
-  sched: migrate_dis/enable: Use sleeping_lock…() to annotate sleeping
-    points
-  sched: __set_cpus_allowed_ptr: Check cpus_mask, not cpus_ptr
-  sched: Remove dead __migrate_disabled() check
-  sched: migrate disable: Protect cpus_ptr with lock
-  sched: migrate_enable: Use select_fallback_rq()
-  sched: Lazy migrate_disable processing
-  sched: migrate_enable: Use stop_one_cpu_nowait()
-
-Sebastian Andrzej Siewior (8):
-  i2c: exynos5: Remove IRQF_ONESHOT
-  i2c: hix5hd2: Remove IRQF_ONESHOT
-  x86: preempt: Check preemption level before looking at lazy-preempt
-  futex: Make the futex_hash_bucket spinlock_t again and bring back its
-    old state
-  Revert "ARM: Initialize split page table locks for vector page"
-  locking: Make spinlock_t and rwlock_t a RCU section on RT
-  sched/core: migrate_enable() must access takedown_cpu_task on
-    !HOTPLUG_CPU
-  sched: migrate_enable: Busy loop until the migration request is
-    completed
-
-Tom Zanussi (1):
-  Linux 4.14.170-rt75-rc2
-
-Waiman Long (1):
-  lib/smp_processor_id: Don't use cpumask_equal()
-
- arch/arm/kernel/process.c        |  24 ----
- arch/x86/include/asm/preempt.h   |   2 +
- drivers/i2c/busses/i2c-exynos5.c |   4 +-
- drivers/i2c/busses/i2c-hix5hd2.c |   3 +-
- include/linux/cpu.h              |   4 -
- include/linux/init_task.h        |   9 ++
- include/linux/sched.h            |  11 +-
- include/linux/stop_machine.h     |   2 +
- kernel/cpu.c                     | 103 +++++++----------
- kernel/futex.c                   | 231 ++++++++++++++++++++++-----------------
- kernel/irq/manage.c              |   2 +-
- kernel/locking/rtmutex.c         | 114 +++++++++++++++----
- kernel/locking/rtmutex_common.h  |   3 +
- kernel/locking/rwlock-rt.c       |   6 +
- kernel/sched/core.c              | 211 +++++++++++++++--------------------
- kernel/sched/deadline.c          |   4 +-
- kernel/sched/sched.h             |   4 +
- kernel/stop_machine.c            |   7 +-
- lib/smp_processor_id.c           |   7 +-
- lib/ubsan.c                      |  76 +++++--------
- localversion-rt                  |   2 +-
- mm/kmemleak.c                    |  72 ++++++------
- 22 files changed, 461 insertions(+), 440 deletions(-)
-
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 071691963f7b..12702d48aaa3 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -353,7 +353,7 @@ irq_set_affinity_notifier(unsigned int irq, struct irq_affinity_notify *notify)
+ 
+ 	if (old_notify) {
+ #ifdef CONFIG_PREEMPT_RT_BASE
+-		kthread_cancel_work_sync(&notify->work);
++		kthread_cancel_work_sync(&old_notify->work);
+ #else
+ 		cancel_work_sync(&old_notify->work);
+ #endif
 -- 
 2.14.1
 
