@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00FFF171911
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:41:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4257E171AF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbgB0Nls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:41:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36466 "EHLO mail.kernel.org"
+        id S1732468AbgB0N6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:58:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729644AbgB0Nlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:41:45 -0500
+        id S1732452AbgB0N6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:58:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C2C220578;
-        Thu, 27 Feb 2020 13:41:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 824AB20801;
+        Thu, 27 Feb 2020 13:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810904;
-        bh=Su6IFIGirrLOUgdlL/sRKT0JfpP+Dg+DC1+yPwb5HTk=;
+        s=default; t=1582811904;
+        bh=drBJqvVXhGgm+j/1747y+LCDb/VVWIamCFsugPT2Xrw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OeG5BizY2thSYFzDZcUwsZtUAnX7WROJBKXgqQQ4XO5TizDN8fu4OWURPgKYTWfWf
-         Lo+X2wA1ehlgMZ/rIrgdYn21TPbPl9X1NqXEpvwowtxp6EZpQwBwQKiso/JiwDz3iJ
-         Xg5JWuMjio4IVCfjCZzc2GdarexPQDzBgJuG0JXU=
+        b=K8qfubBFZJL2NYH63ReNTKjb2zmVpZoE+d4pMSeNybVznKfHK5d74F8RwcwZ/H4jo
+         Ur4MsODuK9hNzeC3/YzCM1mq+C9ChA9SNVSIgm5zC+KIB5jQwe4dUjepPn/3oCUPzC
+         HtI4A4o1lcFDu0fiV76IRK0I5hOl9G3uvnPmU+2Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phong Tran <tranmanphong@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 042/113] iwlegacy: Fix -Wcast-function-type
-Date:   Thu, 27 Feb 2020 14:35:58 +0100
-Message-Id: <20200227132218.459470270@linuxfoundation.org>
+Subject: [PATCH 4.14 145/237] ARM: 8951/1: Fix Kexec compilation issue.
+Date:   Thu, 27 Feb 2020 14:35:59 +0100
+Message-Id: <20200227132307.295999828@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,70 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phong Tran <tranmanphong@gmail.com>
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
-[ Upstream commit da5e57e8a6a3e69dac2937ba63fa86355628fbb2 ]
+[ Upstream commit 76950f7162cad51d2200ebd22c620c14af38f718 ]
 
-correct usage prototype of callback in tasklet_init().
-Report by https://github.com/KSPP/linux/issues/20
+To perform the reserve_crashkernel() operation kexec uses SECTION_SIZE to
+find a memblock in a range.
+SECTION_SIZE is not defined for nommu systems. Trying to compile kexec in
+these conditions results in a build error:
 
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+  linux/arch/arm/kernel/setup.c: In function ‘reserve_crashkernel’:
+  linux/arch/arm/kernel/setup.c:1016:25: error: ‘SECTION_SIZE’ undeclared
+     (first use in this function); did you mean ‘SECTIONS_WIDTH’?
+             crash_size, SECTION_SIZE);
+                         ^~~~~~~~~~~~
+                         SECTIONS_WIDTH
+  linux/arch/arm/kernel/setup.c:1016:25: note: each undeclared identifier
+     is reported only once for each function it appears in
+  linux/scripts/Makefile.build:265: recipe for target 'arch/arm/kernel/setup.o'
+     failed
+
+Make KEXEC depend on MMU to fix the compilation issue.
+
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/iwlegacy/3945-mac.c | 5 +++--
- drivers/net/wireless/iwlegacy/4965-mac.c | 5 +++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ arch/arm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/iwlegacy/3945-mac.c b/drivers/net/wireless/iwlegacy/3945-mac.c
-index af1b3e6839fa6..775f5e7791d48 100644
---- a/drivers/net/wireless/iwlegacy/3945-mac.c
-+++ b/drivers/net/wireless/iwlegacy/3945-mac.c
-@@ -1399,8 +1399,9 @@ il3945_dump_nic_error_log(struct il_priv *il)
- }
- 
- static void
--il3945_irq_tasklet(struct il_priv *il)
-+il3945_irq_tasklet(unsigned long data)
- {
-+	struct il_priv *il = (struct il_priv *)data;
- 	u32 inta, handled = 0;
- 	u32 inta_fh;
- 	unsigned long flags;
-@@ -3432,7 +3433,7 @@ il3945_setup_deferred_work(struct il_priv *il)
- 	setup_timer(&il->watchdog, il_bg_watchdog, (unsigned long)il);
- 
- 	tasklet_init(&il->irq_tasklet,
--		     (void (*)(unsigned long))il3945_irq_tasklet,
-+		     il3945_irq_tasklet,
- 		     (unsigned long)il);
- }
- 
-diff --git a/drivers/net/wireless/iwlegacy/4965-mac.c b/drivers/net/wireless/iwlegacy/4965-mac.c
-index 04b0349a6ad9f..b1925bdb11718 100644
---- a/drivers/net/wireless/iwlegacy/4965-mac.c
-+++ b/drivers/net/wireless/iwlegacy/4965-mac.c
-@@ -4361,8 +4361,9 @@ il4965_synchronize_irq(struct il_priv *il)
- }
- 
- static void
--il4965_irq_tasklet(struct il_priv *il)
-+il4965_irq_tasklet(unsigned long data)
- {
-+	struct il_priv *il = (struct il_priv *)data;
- 	u32 inta, handled = 0;
- 	u32 inta_fh;
- 	unsigned long flags;
-@@ -6257,7 +6258,7 @@ il4965_setup_deferred_work(struct il_priv *il)
- 	setup_timer(&il->watchdog, il_bg_watchdog, (unsigned long)il);
- 
- 	tasklet_init(&il->irq_tasklet,
--		     (void (*)(unsigned long))il4965_irq_tasklet,
-+		     il4965_irq_tasklet,
- 		     (unsigned long)il);
- }
- 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index ba9325fc75b85..7a8fbe9a077bb 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -2005,7 +2005,7 @@ config XIP_PHYS_ADDR
+ config KEXEC
+ 	bool "Kexec system call (EXPERIMENTAL)"
+ 	depends on (!SMP || PM_SLEEP_SMP)
+-	depends on !CPU_V7M
++	depends on MMU
+ 	select KEXEC_CORE
+ 	help
+ 	  kexec is a system call that implements the ability to shutdown your
 -- 
 2.20.1
 
