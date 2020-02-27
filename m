@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 637C5171CAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:14:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68969171C0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389117AbgB0OOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:14:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53402 "EHLO mail.kernel.org"
+        id S2388220AbgB0OIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:08:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389100AbgB0OOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:14:15 -0500
+        id S2387937AbgB0OIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:08:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 895A224691;
-        Thu, 27 Feb 2020 14:14:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B686821D7E;
+        Thu, 27 Feb 2020 14:08:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812855;
-        bh=RypRGmCPXhCJfp6qrYOlZPi7TCGuoDNfunyBhUdEIxc=;
+        s=default; t=1582812492;
+        bh=CmkjkhLeHHiNAXym8hLvSfXzXCM12YtwRWTN1awRdlM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R23Iz2o/nczIBsdoGlHrwf9OsDrzF9K4CRCFZLhlPhwd3BXL1LV21+loQ/SoysLc3
-         KwU1GCySRJ7jup6aCzvxLbLufGmF/c8VvA0M1t9GxLmnXdrGjW5EefKweUrpSEKMBR
-         pzxhKZ7RRpSiBJDcn/XwfoKB8qS9sxmQGkWjruhs=
+        b=0x9nxOVfJ3efzPEHkQ2gLVR2F76hWrewTud3ioEl5A9q77U7T+HZO+wffQnxO/KE0
+         TpzwuAovyPgFDt9lNTe2E1z+IJE5fZ75AZOLnTVoR95oy930sF4CwaDGoj8lJAeb58
+         INhl1QaDbsVdfqxBgfsVFkKiAWlboUgZkQBlhksM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Minas Harutyunyan <hminas@synopsys.com>,
-        Jack Mitchell <ml@embed.me.uk>, Felipe Balbi <balbi@kernel.org>
-Subject: [PATCH 5.5 041/150] usb: dwc2: Fix SET/CLEAR_FEATURE and GET_STATUS flows
-Date:   Thu, 27 Feb 2020 14:36:18 +0100
-Message-Id: <20200227132238.924337285@linuxfoundation.org>
+        stable@vger.kernel.org, Pietro Oliva <pietroliva@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: [PATCH 5.4 039/135] staging: rtl8188eu: Fix potential overuse of kernel memory
+Date:   Thu, 27 Feb 2020 14:36:19 +0100
+Message-Id: <20200227132234.810642676@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,88 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit 9a0d6f7c0a83844baae1d6d85482863d2bf3b7a7 upstream.
+commit 4ddf8ab8d15ddbc52eefb44eb64e38466ce1f70f upstream.
 
-SET/CLEAR_FEATURE for Remote Wakeup allowance not handled correctly.
-GET_STATUS handling provided not correct data on DATA Stage.
-Issue seen when gadget's dr_mode set to "otg" mode and connected
-to MacOS.
-Both are fixed and tested using USBCV Ch.9 tests.
+In routine wpa_supplicant_ioctl(), the user-controlled p->length is
+checked to be at least the size of struct ieee_param size, but the code
+does not detect the case where p->length is greater than the size
+of the struct, thus a malicious user could be wasting kernel memory.
+Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
 
-Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
-Fixes: fa389a6d7726 ("usb: dwc2: gadget: Add remote_wakeup_allowed flag")
-Tested-by: Jack Mitchell <ml@embed.me.uk>
-Cc: stable@vger.kernel.org
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Reported by: Pietro Oliva <pietroliva@gmail.com>
+Cc: Pietro Oliva <pietroliva@gmail.com>
+Cc: Stable <stable@vger.kernel.org>
+Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Link: https://lore.kernel.org/r/20200210180235.21691-4-Larry.Finger@lwfinger.net
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc2/gadget.c |   28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ drivers/staging/rtl8188eu/os_dep/ioctl_linux.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -1632,6 +1632,7 @@ static int dwc2_hsotg_process_req_status
- 	struct dwc2_hsotg_ep *ep0 = hsotg->eps_out[0];
- 	struct dwc2_hsotg_ep *ep;
- 	__le16 reply;
-+	u16 status;
- 	int ret;
+--- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+@@ -2025,7 +2025,7 @@ static int wpa_supplicant_ioctl(struct n
+ 	struct ieee_param *param;
+ 	uint ret = 0;
  
- 	dev_dbg(hsotg->dev, "%s: USB_REQ_GET_STATUS\n", __func__);
-@@ -1643,11 +1644,10 @@ static int dwc2_hsotg_process_req_status
- 
- 	switch (ctrl->bRequestType & USB_RECIP_MASK) {
- 	case USB_RECIP_DEVICE:
--		/*
--		 * bit 0 => self powered
--		 * bit 1 => remote wakeup
--		 */
--		reply = cpu_to_le16(0);
-+		status = 1 << USB_DEVICE_SELF_POWERED;
-+		status |= hsotg->remote_wakeup_allowed <<
-+			  USB_DEVICE_REMOTE_WAKEUP;
-+		reply = cpu_to_le16(status);
- 		break;
- 
- 	case USB_RECIP_INTERFACE:
-@@ -1758,7 +1758,10 @@ static int dwc2_hsotg_process_req_featur
- 	case USB_RECIP_DEVICE:
- 		switch (wValue) {
- 		case USB_DEVICE_REMOTE_WAKEUP:
--			hsotg->remote_wakeup_allowed = 1;
-+			if (set)
-+				hsotg->remote_wakeup_allowed = 1;
-+			else
-+				hsotg->remote_wakeup_allowed = 0;
- 			break;
- 
- 		case USB_DEVICE_TEST_MODE:
-@@ -1768,16 +1771,17 @@ static int dwc2_hsotg_process_req_featur
- 				return -EINVAL;
- 
- 			hsotg->test_mode = wIndex >> 8;
--			ret = dwc2_hsotg_send_reply(hsotg, ep0, NULL, 0);
--			if (ret) {
--				dev_err(hsotg->dev,
--					"%s: failed to send reply\n", __func__);
--				return ret;
--			}
- 			break;
- 		default:
- 			return -ENOENT;
- 		}
-+
-+		ret = dwc2_hsotg_send_reply(hsotg, ep0, NULL, 0);
-+		if (ret) {
-+			dev_err(hsotg->dev,
-+				"%s: failed to send reply\n", __func__);
-+			return ret;
-+		}
- 		break;
- 
- 	case USB_RECIP_ENDPOINT:
+-	if (p->length < sizeof(struct ieee_param) || !p->pointer) {
++	if (!p->pointer || p->length != sizeof(struct ieee_param)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
 
 
