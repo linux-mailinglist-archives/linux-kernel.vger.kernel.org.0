@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8DC4171BD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:06:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F9F6171E14
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387527AbgB0OGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:06:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43120 "EHLO mail.kernel.org"
+        id S2388715AbgB0OLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:11:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387881AbgB0OGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:06:06 -0500
+        id S2388028AbgB0OLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:11:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C79820578;
-        Thu, 27 Feb 2020 14:06:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FC6120801;
+        Thu, 27 Feb 2020 14:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812365;
-        bh=01jRytznLKB9NL/cMXLTYI82segSPQc/GI+tj9vZssA=;
+        s=default; t=1582812692;
+        bh=xvG7Q9c1TnSbn9EvpuDSAZA0zsykoYXqY9kglk0SCtU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=haug1XZx5QidwRXW9adS9hA3qUJQHC3kmx3ykZJJaO/JcInjITSyJZ0E8UGJoJiId
-         fbmNuKqzGZuvQ3+ldcQe96AEwuANWgTET17XjmbWdtle2C3odC+UhFYsJCJ9UhkynE
-         j4iSJdIV73og75Esz/oKNBGpvJi0SfyG5zgrvNKs=
+        b=Kyfv8Y95kQ1YyEcMw4RJ2g2PlN9/+GCvJAjFpqoFnHKGpnnW+hA8OtxWQ+bhwyCZ4
+         vMkn8sWw6yoD74yG6kA8TMPLcWPrcD+8UPWrKDSoZ9ayRutz23m9ahf6rIHnmroOvs
+         KbjSa/iIEYf672jSYqBmWOTClQHZaWTMQgQyAIS8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.19 87/97] iommu/vt-d: Fix compile warning from intel-svm.h
-Date:   Thu, 27 Feb 2020 14:37:35 +0100
-Message-Id: <20200227132228.792681478@linuxfoundation.org>
+Subject: [PATCH 5.4 116/135] iommu/vt-d: Fix compile warning from intel-svm.h
+Date:   Thu, 27 Feb 2020 14:37:36 +0100
+Message-Id: <20200227132246.594078093@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -67,7 +67,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/include/linux/intel-svm.h
 +++ b/include/linux/intel-svm.h
-@@ -130,7 +130,7 @@ static inline int intel_svm_unbind_mm(st
+@@ -122,7 +122,7 @@ static inline int intel_svm_unbind_mm(st
  	BUG();
  }
  
