@@ -2,96 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D144172B0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 23:25:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A955F172AFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 23:21:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730266AbgB0WZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 17:25:26 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:44163 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729735AbgB0WZW (ORCPT
+        id S1730022AbgB0WVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 17:21:48 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42063 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729434AbgB0WVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 17:25:22 -0500
-Received: from 79.184.237.30.ipv4.supernova.orange.pl (79.184.237.30) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
- id c5af9dd566d2263a; Thu, 27 Feb 2020 23:25:20 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux ACPI <linux-acpi@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Drake <drake@endlessm.com>
-Subject: [PATCH 1/6] ACPI: EC: Avoid printing confusing messages in  acpi_ec_setup()
-Date:   Thu, 27 Feb 2020 23:21:18 +0100
-Message-ID: <2905294.VeAyQmVl7x@kreacher>
-In-Reply-To: <2094703.CetWLLyMuz@kreacher>
-References: <2094703.CetWLLyMuz@kreacher>
+        Thu, 27 Feb 2020 17:21:47 -0500
+Received: by mail-oi1-f194.google.com with SMTP id l12so868982oil.9;
+        Thu, 27 Feb 2020 14:21:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=du04IHx+HutirdW4IRyHgf7LAWxcnOztVFIEX1SqbB8=;
+        b=AZhUDwD07uw22lDCsg0y1t0G9jW/UNdcLwykDwF97xRkcigG03CiboGdtTTlXV7s4J
+         2OWiZcnQRgkrgecFZYdeQ/2rIlw2d7EZy2Eyx9tf5U2ECTje4i1MbMLZmwlBpIxrNWfW
+         FYoV9h3uThyzQuE2SgZhmzSfvh6Htd9fhMSgukOSF9ltnJxLB7EIk54prACtdH9+KNFZ
+         Pa2KvxuFU5UYUbXGF+GUc2kjdVOAvxrt33HJVFs4/p82SJqBEh1f6YKq6RRp3LxW7Uzc
+         9ffTYFyQ/+VYMIsELN64oZQxb2tkPI7W9k3evEIXPLBo+mW90+cfxCrCjloqfvcBaS5B
+         uOyw==
+X-Gm-Message-State: APjAAAUIn1/ZDHMXjR4luf5d7E4lsRWhybH2+gGUUvMAg5fRq6zjmaGM
+        KhwbOBndbFJ0Hb2QfFD8on8oFKA=
+X-Google-Smtp-Source: APXvYqyEkDcaG0j8dAL0P9PQF1fWf4H41MVvV6Cb5ceuV0GzrQuoqmkuHkhHkuOq7dxd45/LCQIhtw==
+X-Received: by 2002:a54:4106:: with SMTP id l6mr956240oic.76.1582842106769;
+        Thu, 27 Feb 2020 14:21:46 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id j5sm2383610otl.71.2020.02.27.14.21.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 14:21:46 -0800 (PST)
+Received: (nullmailer pid 24260 invoked by uid 1000);
+        Thu, 27 Feb 2020 22:21:45 -0000
+Date:   Thu, 27 Feb 2020 16:21:45 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
+        Robert Richter <rric@kernel.org>, soc@kernel.org,
+        Jon Loeliger <jdl@jdl.com>,
+        Mark Langsdorf <mlangsdo@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Corey Minyard <minyard@acm.org>,
+        openipmi-developer@lists.sourceforge.net
+Subject: Re: [PATCH v2 11/13] dt-bindings: ipmi: Convert IPMI-SMIC bindings
+ to json-schema
+Message-ID: <20200227222145.GF26010@bogus>
+References: <20200227182210.89512-1-andre.przywara@arm.com>
+ <20200227182210.89512-12-andre.przywara@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200227182210.89512-12-andre.przywara@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+On Thu, Feb 27, 2020 at 06:22:08PM +0000, Andre Przywara wrote:
+> Convert the generic IPMI controller bindings to DT schema format
+> using json-schema.
+> 
+> I removed the formerly mandatory device-type property, since this
+> is deprecated in the DT spec, except for the legacy CPU and memory
+> nodes.
 
-It doesn't really make sense to pass ec->handle of the ECDT EC to
-acpi_handle_info(), because it is set to ACPI_ROOT_OBJECT in
-acpi_ec_ecdt_probe(), so rework acpi_ec_setup() to avoid using
-acpi_handle_info() for printing messages.
+Yes, but it is still used by the ipmi driver to match on, so we should 
+keep it.
 
-First, notice that the "Used as first EC" message is not really
-useful, because it is immediately followed by a more meaningful one
-from either acpi_ec_ecdt_probe() or acpi_ec_dsdt_probe() (the latter
-also includes the EC object path), so drop it altogether.
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> Cc: Corey Minyard <minyard@acm.org>
+> Cc: openipmi-developer@lists.sourceforge.net
+> ---
+>  .../devicetree/bindings/ipmi/ipmi-smic.txt    | 25 ---------
+>  .../devicetree/bindings/ipmi/ipmi-smic.yaml   | 56 +++++++++++++++++++
+>  2 files changed, 56 insertions(+), 25 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/ipmi/ipmi-smic.txt
+>  create mode 100644 Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/ipmi/ipmi-smic.txt b/Documentation/devicetree/bindings/ipmi/ipmi-smic.txt
+> deleted file mode 100644
+> index d5f1a877ed3e..000000000000
+> --- a/Documentation/devicetree/bindings/ipmi/ipmi-smic.txt
+> +++ /dev/null
+> @@ -1,25 +0,0 @@
+> -IPMI device
+> -
+> -Required properties:
+> -- compatible: should be one of ipmi-kcs, ipmi-smic, or ipmi-bt
+> -- device_type: should be ipmi
+> -- reg: Address and length of the register set for the device
+> -
+> -Optional properties:
+> -- interrupts: The interrupt for the device.  Without this the interface
+> -	is polled.
+> -- reg-size - The size of the register.  Defaults to 1
+> -- reg-spacing - The number of bytes between register starts.  Defaults to 1
+> -- reg-shift - The amount to shift the registers to the right to get the data
+> -	into bit zero.
+> -
+> -Example:
+> -
+> -smic@fff3a000 {
+> -	compatible = "ipmi-smic";
+> -	device_type = "ipmi";
+> -	reg = <0xfff3a000 0x1000>;
+> -	interrupts = <0 24 4>;
+> -	reg-size = <4>;
+> -	reg-spacing = <4>;
+> -};
+> diff --git a/Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml b/Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml
+> new file mode 100644
+> index 000000000000..c859e0e959b9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml
+> @@ -0,0 +1,56 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-Second, use pr_info() for printing the EC configuration information.
+Anything I wrote which should be most of the series, you can relicense 
+to:
 
-While at it, make the code in question avoid printing invalid GPE or
-IRQ numbers and make it print the GPE/IRQ information only when the
-driver is ready to handle events.
+(GPL-2.0-only OR BSD-2-Clause)
 
-Fixes: 72c77b7ea9ce ("ACPI / EC: Cleanup first_ec/boot_ec code")
-Fixes: 406857f773b0 ("ACPI: EC: add support for hardware-reduced systems")
-Cc: 5.5+ <stable@vger.kernel.org> # 5.5+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/ec.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/ipmi/ipmi-smic.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: IPMI device bindings
+> +
+> +description: IPMI device bindings
+> +
+> +maintainers:
+> +  - Corey Minyard <cminyard@mvista.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ipmi-kcs
+> +      - ipmi-smic
+> +      - ipmi-bt
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description: Interface is polled if this property is omitted.
+> +    maxItems: 1
+> +
+> +  reg-size:
+> +    description: The access width of the register in bytes. Defaults to 1.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - enum: [1, 2, 4, 8]
 
-diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
-index d1f1cf5d4bf0..2dc7cf2aeb21 100644
---- a/drivers/acpi/ec.c
-+++ b/drivers/acpi/ec.c
-@@ -1584,14 +1584,19 @@ static int acpi_ec_setup(struct acpi_ec *ec, struct acpi_device *device,
- 		return ret;
- 
- 	/* First EC capable of handling transactions */
--	if (!first_ec) {
-+	if (!first_ec)
- 		first_ec = ec;
--		acpi_handle_info(first_ec->handle, "Used as first EC\n");
-+
-+	pr_info("EC_CMD/EC_SC=0x%lx, EC_DATA=0x%lx\n", ec->command_addr,
-+		ec->data_addr);
-+
-+	if (test_bit(EC_FLAGS_EVENT_HANDLER_INSTALLED, &ec->flags)) {
-+		if (ec->gpe >= 0)
-+			pr_info("GPE=0x%x\n", ec->gpe);
-+		else
-+			pr_info("IRQ=%d\n", ec->irq);
- 	}
- 
--	acpi_handle_info(ec->handle,
--			 "GPE=0x%x, IRQ=%d, EC_CMD/EC_SC=0x%lx, EC_DATA=0x%lx\n",
--			 ec->gpe, ec->irq, ec->command_addr, ec->data_addr);
- 	return ret;
- }
- 
--- 
-2.16.4
+Does 8 really work?
 
+> +
+> +  reg-spacing:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: The number of bytes between register starts. Defaults to 1.
+> +
+> +  reg-shift:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      The amount of bits to shift the register content to the right to get
+> +      the data into bit zero.
 
+either 24 or 56 would be the max, right?
 
-
-
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    smic@fff3a000 {
+> +        compatible = "ipmi-smic";
+> +        reg = <0xfff3a000 0x1000>;
+> +        interrupts = <0 24 4>;
+> +        reg-size = <4>;
+> +        reg-spacing = <4>;
+> +    };
+> -- 
+> 2.17.1
+> 
