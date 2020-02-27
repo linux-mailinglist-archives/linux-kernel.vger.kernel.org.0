@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB23171BBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:05:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C33D4171C1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387707AbgB0OFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:05:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41412 "EHLO mail.kernel.org"
+        id S2388299AbgB0OIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:08:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387661AbgB0OE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:04:56 -0500
+        id S2388293AbgB0OIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:08:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70CDD21556;
-        Thu, 27 Feb 2020 14:04:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1599A24690;
+        Thu, 27 Feb 2020 14:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812295;
-        bh=E0vW91EnFjMbWvi7ObLwZDH0vrqlLgBnMuIIRvTeiF8=;
+        s=default; t=1582812528;
+        bh=hTb/1GuHF2M2JOtCgLljW2B8Dk7zHQrkGnfDwohYq90=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T9v/8N+LT6le8IM/ciMy4QijDghpxV8xjZxEF8hghllOafhRiAo05lVd/Rj1IRnPo
-         EeAJ9bqv2AsCY1XsPj5A4BKLtVlN2HMmm+LHczt2cKtb0JFNq0MUdYNdhWG4aMH9vh
-         1ni8BEbjlo1YjF7Vf2jsPvG8zcARG2OkyfUPvftg=
+        b=xgVtXGww0CSFgopSuB/ms12sp2ZdHl6ZUtUkIefMR2JJCVvom7MY2tvtZcfcwUZKZ
+         nfdAd74IkDbnR2GvaTKcFrx7lSQqlLpB6O1xZkOir8TfLcBVrWLWdg002T9sm5BJzR
+         ZlIqX+dX36s4ZxkvTHVq4KlmdIq1c5DtMj72FJWQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, edes <edes@gmx.net>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 23/97] USB: core: add endpoint-blacklist quirk
+        stable@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH 5.4 051/135] x86/ima: use correct identifier for SetupMode variable
 Date:   Thu, 27 Feb 2020 14:36:31 +0100
-Message-Id: <20200227132218.414191520@linuxfoundation.org>
+Message-Id: <20200227132236.833158415@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,122 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
 
-commit 73f8bda9b5dc1c69df2bc55c0cbb24461a6391a9 upstream.
+commit ff5ac61ee83c13f516544d29847d28be093a40ee upstream.
 
-Add a new device quirk that can be used to blacklist endpoints.
+The IMA arch code attempts to inspect the "SetupMode" EFI variable
+by populating a variable called efi_SetupMode_name with the string
+"SecureBoot" and passing that to the EFI GetVariable service, which
+obviously does not yield the expected result.
 
-Since commit 3e4f8e21c4f2 ("USB: core: fix check for duplicate
-endpoints") USB core ignores any duplicate endpoints found during
-descriptor parsing.
+Given that the string is only referenced a single time, let's get
+rid of the intermediate variable, and pass the correct string as
+an immediate argument. While at it, do the same for "SecureBoot".
 
-In order to handle devices where the first interfaces with duplicate
-endpoints are the ones that should have their endpoints ignored, we need
-to add a blacklist.
-
-Tested-by: edes <edes@gmx.net>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20200203153830.26394-2-johan@kernel.org
+Fixes: 399574c64eaf ("x86/ima: retry detecting secure boot mode")
+Fixes: 980ef4d22a95 ("x86/ima: check EFI SetupMode too")
+Cc: Matthew Garrett <mjg59@google.com>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Cc: stable@vger.kernel.org # v5.3
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/config.c  |   11 +++++++++++
- drivers/usb/core/quirks.c  |   32 ++++++++++++++++++++++++++++++++
- drivers/usb/core/usb.h     |    3 +++
- include/linux/usb/quirks.h |    3 +++
- 4 files changed, 49 insertions(+)
+ arch/x86/kernel/ima_arch.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/core/config.c
-+++ b/drivers/usb/core/config.c
-@@ -256,6 +256,7 @@ static int usb_parse_endpoint(struct dev
- 		struct usb_host_interface *ifp, int num_ep,
- 		unsigned char *buffer, int size)
+--- a/arch/x86/kernel/ima_arch.c
++++ b/arch/x86/kernel/ima_arch.c
+@@ -10,8 +10,6 @@ extern struct boot_params boot_params;
+ 
+ static enum efi_secureboot_mode get_sb_mode(void)
  {
-+	struct usb_device *udev = to_usb_device(ddev);
- 	unsigned char *buffer0 = buffer;
- 	struct usb_endpoint_descriptor *d;
- 	struct usb_host_endpoint *endpoint;
-@@ -297,6 +298,16 @@ static int usb_parse_endpoint(struct dev
- 		goto skip_to_next_endpoint_or_interface_descriptor;
+-	efi_char16_t efi_SecureBoot_name[] = L"SecureBoot";
+-	efi_char16_t efi_SetupMode_name[] = L"SecureBoot";
+ 	efi_guid_t efi_variable_guid = EFI_GLOBAL_VARIABLE_GUID;
+ 	efi_status_t status;
+ 	unsigned long size;
+@@ -25,7 +23,7 @@ static enum efi_secureboot_mode get_sb_m
  	}
  
-+	/* Ignore blacklisted endpoints */
-+	if (udev->quirks & USB_QUIRK_ENDPOINT_BLACKLIST) {
-+		if (usb_endpoint_is_blacklisted(udev, ifp, d)) {
-+			dev_warn(ddev, "config %d interface %d altsetting %d has a blacklisted endpoint with address 0x%X, skipping\n",
-+					cfgno, inum, asnum,
-+					d->bEndpointAddress);
-+			goto skip_to_next_endpoint_or_interface_descriptor;
-+		}
-+	}
-+
- 	endpoint = &ifp->endpoint[ifp->desc.bNumEndpoints];
- 	++ifp->desc.bNumEndpoints;
+ 	/* Get variable contents into buffer */
+-	status = efi.get_variable(efi_SecureBoot_name, &efi_variable_guid,
++	status = efi.get_variable(L"SecureBoot", &efi_variable_guid,
+ 				  NULL, &size, &secboot);
+ 	if (status == EFI_NOT_FOUND) {
+ 		pr_info("ima: secureboot mode disabled\n");
+@@ -38,7 +36,7 @@ static enum efi_secureboot_mode get_sb_m
+ 	}
  
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -472,6 +472,38 @@ static const struct usb_device_id usb_am
- 	{ }  /* terminating entry must be last */
- };
+ 	size = sizeof(setupmode);
+-	status = efi.get_variable(efi_SetupMode_name, &efi_variable_guid,
++	status = efi.get_variable(L"SetupMode", &efi_variable_guid,
+ 				  NULL, &size, &setupmode);
  
-+/*
-+ * Entries for blacklisted endpoints that should be ignored when parsing
-+ * configuration descriptors.
-+ *
-+ * Matched for devices with USB_QUIRK_ENDPOINT_BLACKLIST.
-+ */
-+static const struct usb_device_id usb_endpoint_blacklist[] = {
-+	{ }
-+};
-+
-+bool usb_endpoint_is_blacklisted(struct usb_device *udev,
-+		struct usb_host_interface *intf,
-+		struct usb_endpoint_descriptor *epd)
-+{
-+	const struct usb_device_id *id;
-+	unsigned int address;
-+
-+	for (id = usb_endpoint_blacklist; id->match_flags; ++id) {
-+		if (!usb_match_device(udev, id))
-+			continue;
-+
-+		if (!usb_match_one_id_intf(udev, intf, id))
-+			continue;
-+
-+		address = id->driver_info;
-+		if (address == epd->bEndpointAddress)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- static bool usb_match_any_interface(struct usb_device *udev,
- 				    const struct usb_device_id *id)
- {
---- a/drivers/usb/core/usb.h
-+++ b/drivers/usb/core/usb.h
-@@ -37,6 +37,9 @@ extern void usb_authorize_interface(stru
- extern void usb_detect_quirks(struct usb_device *udev);
- extern void usb_detect_interface_quirks(struct usb_device *udev);
- extern void usb_release_quirk_list(void);
-+extern bool usb_endpoint_is_blacklisted(struct usb_device *udev,
-+		struct usb_host_interface *intf,
-+		struct usb_endpoint_descriptor *epd);
- extern int usb_remove_device(struct usb_device *udev);
- 
- extern int usb_get_device_descriptor(struct usb_device *dev,
---- a/include/linux/usb/quirks.h
-+++ b/include/linux/usb/quirks.h
-@@ -69,4 +69,7 @@
- /* Hub needs extra delay after resetting its port. */
- #define USB_QUIRK_HUB_SLOW_RESET		BIT(14)
- 
-+/* device has blacklisted endpoints */
-+#define USB_QUIRK_ENDPOINT_BLACKLIST		BIT(15)
-+
- #endif /* __LINUX_USB_QUIRKS_H */
+ 	if (status != EFI_SUCCESS)	/* ignore unknown SetupMode */
 
 
