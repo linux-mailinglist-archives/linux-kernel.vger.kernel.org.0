@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2987171B46
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9D4E171E3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:26:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732842AbgB0OBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:01:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34634 "EHLO mail.kernel.org"
+        id S2388452AbgB0OKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:10:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732636AbgB0OA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:00:57 -0500
+        id S1730257AbgB0OJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:09:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 757D824697;
-        Thu, 27 Feb 2020 14:00:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B5E720578;
+        Thu, 27 Feb 2020 14:09:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812056;
-        bh=gzcpVSsdVdpj/mjyZvp/iQ5YxCF9AwqZ/AbxbNX2ax8=;
+        s=default; t=1582812598;
+        bh=mcWs5hysCJ0vA6NTA/QZOnkdCPZ7v6LU7HoQobOuHYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zArNZLKqdXg97CPzM8BDWX5K43RjmQEGBOV+nnn1PsFcWMtnnDwaGx9qNwX2FHzIf
-         cxfeJssMlu61jt4m/L0WQrpaqx1DdrCKQEymG5GFy6hHKV6s177dDOggqWkR3DKLo6
-         NGHz160FvcujzuequfoWidGTgsNoYz87EIymz628=
+        b=OdeK/dTW5YZFcn4oA+tnT8G+MoDDOOwJaQV5zNUbvtfuJ+AnKMpi3syliHIAeF81y
+         +CGPJK7agK28rBJXik8DBvsqoMNuQcK0dg4YKg4W6oJfJ1ZY94QkIfTqnBtS49XP8c
+         MDZhv5wisFEXt7PUOEKoM8tnpnCc3WoCjN+dI4KI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 206/237] powerpc/tm: Fix clearing MSR[TS] in current when reclaiming on signal delivery
+        stable@vger.kernel.org, Shijie Luo <luoshijie1@huawei.com>,
+        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        stable@kernel.org
+Subject: [PATCH 5.4 080/135] ext4: add cond_resched() to __ext4_find_entry()
 Date:   Thu, 27 Feb 2020 14:37:00 +0100
-Message-Id: <20200227132311.400343912@linuxfoundation.org>
+Message-Id: <20200227132241.411971542@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,290 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo Luiz Duarte <gustavold@linux.ibm.com>
+From: Shijie Luo <luoshijie1@huawei.com>
 
-[ Upstream commit 2464cc4c345699adea52c7aef75707207cb8a2f6 ]
+commit 9424ef56e13a1f14c57ea161eed3ecfdc7b2770e upstream.
 
-After a treclaim, we expect to be in non-transactional state. If we
-don't clear the current thread's MSR[TS] before we get preempted, then
-tm_recheckpoint_new_task() will recheckpoint and we get rescheduled in
-suspended transaction state.
+We tested a soft lockup problem in linux 4.19 which could also
+be found in linux 5.x.
 
-When handling a signal caught in transactional state,
-handle_rt_signal64() calls get_tm_stackpointer() that treclaims the
-transaction using tm_reclaim_current() but without clearing the
-thread's MSR[TS]. This can cause the TM Bad Thing exception below if
-later we pagefault and get preempted trying to access the user's
-sigframe, using __put_user(). Afterwards, when we are rescheduled back
-into do_page_fault() (but now in suspended state since the thread's
-MSR[TS] was not cleared), upon executing 'rfid' after completion of
-the page fault handling, the exception is raised because a transition
-from suspended to non-transactional state is invalid.
+When dir inode takes up a large number of blocks, and if the
+directory is growing when we are searching, it's possible the
+restart branch could be called many times, and the do while loop
+could hold cpu a long time.
 
-  Unexpected TM Bad Thing exception at c00000000000de44 (msr 0x8000000302a03031) tm_scratch=800000010280b033
-  Oops: Unrecoverable exception, sig: 6 [#1]
-  LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=2048 NUMA pSeries
-  CPU: 25 PID: 15547 Comm: a.out Not tainted 5.4.0-rc2 #32
-  NIP:  c00000000000de44 LR: c000000000034728 CTR: 0000000000000000
-  REGS: c00000003fe7bd70 TRAP: 0700   Not tainted  (5.4.0-rc2)
-  MSR:  8000000302a03031 <SF,VEC,VSX,FP,ME,IR,DR,LE,TM[SE]>  CR: 44000884  XER: 00000000
-  CFAR: c00000000000dda4 IRQMASK: 0
-  PACATMSCRATCH: 800000010280b033
-  GPR00: c000000000034728 c000000f65a17c80 c000000001662800 00007fffacf3fd78
-  GPR04: 0000000000001000 0000000000001000 0000000000000000 c000000f611f8af0
-  GPR08: 0000000000000000 0000000078006001 0000000000000000 000c000000000000
-  GPR12: c000000f611f84b0 c00000003ffcb200 0000000000000000 0000000000000000
-  GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-  GPR20: 0000000000000000 0000000000000000 0000000000000000 c000000f611f8140
-  GPR24: 0000000000000000 00007fffacf3fd68 c000000f65a17d90 c000000f611f7800
-  GPR28: c000000f65a17e90 c000000f65a17e90 c000000001685e18 00007fffacf3f000
-  NIP [c00000000000de44] fast_exception_return+0xf4/0x1b0
-  LR [c000000000034728] handle_rt_signal64+0x78/0xc50
-  Call Trace:
-  [c000000f65a17c80] [c000000000034710] handle_rt_signal64+0x60/0xc50 (unreliable)
-  [c000000f65a17d30] [c000000000023640] do_notify_resume+0x330/0x460
-  [c000000f65a17e20] [c00000000000dcc4] ret_from_except_lite+0x70/0x74
-  Instruction dump:
-  7c4ff120 e8410170 7c5a03a6 38400000 f8410060 e8010070 e8410080 e8610088
-  60000000 60000000 e8810090 e8210078 <4c000024> 48000000 e8610178 88ed0989
-  ---[ end trace 93094aa44b442f87 ]---
+Here is the call trace in linux 4.19.
 
-The simplified sequence of events that triggers the above exception is:
+[  473.756186] Call trace:
+[  473.756196]  dump_backtrace+0x0/0x198
+[  473.756199]  show_stack+0x24/0x30
+[  473.756205]  dump_stack+0xa4/0xcc
+[  473.756210]  watchdog_timer_fn+0x300/0x3e8
+[  473.756215]  __hrtimer_run_queues+0x114/0x358
+[  473.756217]  hrtimer_interrupt+0x104/0x2d8
+[  473.756222]  arch_timer_handler_virt+0x38/0x58
+[  473.756226]  handle_percpu_devid_irq+0x90/0x248
+[  473.756231]  generic_handle_irq+0x34/0x50
+[  473.756234]  __handle_domain_irq+0x68/0xc0
+[  473.756236]  gic_handle_irq+0x6c/0x150
+[  473.756238]  el1_irq+0xb8/0x140
+[  473.756286]  ext4_es_lookup_extent+0xdc/0x258 [ext4]
+[  473.756310]  ext4_map_blocks+0x64/0x5c0 [ext4]
+[  473.756333]  ext4_getblk+0x6c/0x1d0 [ext4]
+[  473.756356]  ext4_bread_batch+0x7c/0x1f8 [ext4]
+[  473.756379]  ext4_find_entry+0x124/0x3f8 [ext4]
+[  473.756402]  ext4_lookup+0x8c/0x258 [ext4]
+[  473.756407]  __lookup_hash+0x8c/0xe8
+[  473.756411]  filename_create+0xa0/0x170
+[  473.756413]  do_mkdirat+0x6c/0x140
+[  473.756415]  __arm64_sys_mkdirat+0x28/0x38
+[  473.756419]  el0_svc_common+0x78/0x130
+[  473.756421]  el0_svc_handler+0x38/0x78
+[  473.756423]  el0_svc+0x8/0xc
+[  485.755156] watchdog: BUG: soft lockup - CPU#2 stuck for 22s! [tmp:5149]
 
-  ...				# userspace in NON-TRANSACTIONAL state
-  tbegin			# userspace in TRANSACTIONAL state
-  signal delivery		# kernelspace in SUSPENDED state
-  handle_rt_signal64()
-    get_tm_stackpointer()
-      treclaim			# kernelspace in NON-TRANSACTIONAL state
-    __put_user()
-      page fault happens. We will never get back here because of the TM Bad Thing exception.
+Add cond_resched() to avoid soft lockup and to provide a better
+system responding.
 
-  page fault handling kicks in and we voluntarily preempt ourselves
-  do_page_fault()
-    __schedule()
-      __switch_to(other_task)
+Link: https://lore.kernel.org/r/20200215080206.13293-1-luoshijie1@huawei.com
+Signed-off-by: Shijie Luo <luoshijie1@huawei.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: stable@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-  our task is rescheduled and we recheckpoint because the thread's MSR[TS] was not cleared
-  __switch_to(our_task)
-    switch_to_tm()
-      tm_recheckpoint_new_task()
-        trechkpt			# kernelspace in SUSPENDED state
-
-  The page fault handling resumes, but now we are in suspended transaction state
-  do_page_fault()    completes
-  rfid     <----- trying to get back where the page fault happened (we were non-transactional back then)
-  TM Bad Thing			# illegal transition from suspended to non-transactional
-
-This patch fixes that issue by clearing the current thread's MSR[TS]
-just after treclaim in get_tm_stackpointer() so that we stay in
-non-transactional state in case we are preempted. In order to make
-treclaim and clearing the thread's MSR[TS] atomic from a preemption
-perspective when CONFIG_PREEMPT is set, preempt_disable/enable() is
-used. It's also necessary to save the previous value of the thread's
-MSR before get_tm_stackpointer() is called so that it can be exposed
-to the signal handler later in setup_tm_sigcontexts() to inform the
-userspace MSR at the moment of the signal delivery.
-
-Found with tm-signal-context-force-tm kernel selftest.
-
-Fixes: 2b0a576d15e0 ("powerpc: Add new transactional memory state to the signal context")
-Cc: stable@vger.kernel.org # v3.9
-Signed-off-by: Gustavo Luiz Duarte <gustavold@linux.ibm.com>
-Acked-by: Michael Neuling <mikey@neuling.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20200211033831.11165-1-gustavold@linux.ibm.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/signal.c    | 17 +++++++++++++++--
- arch/powerpc/kernel/signal_32.c | 28 ++++++++++++++--------------
- arch/powerpc/kernel/signal_64.c | 22 ++++++++++------------
- 3 files changed, 39 insertions(+), 28 deletions(-)
+ fs/ext4/namei.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
-index 3d7539b90010c..4cb92022315a4 100644
---- a/arch/powerpc/kernel/signal.c
-+++ b/arch/powerpc/kernel/signal.c
-@@ -193,14 +193,27 @@ unsigned long get_tm_stackpointer(struct task_struct *tsk)
- 	 * normal/non-checkpointed stack pointer.
- 	 */
- 
-+	unsigned long ret = tsk->thread.regs->gpr[1];
-+
- #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
- 	BUG_ON(tsk != current);
- 
- 	if (MSR_TM_ACTIVE(tsk->thread.regs->msr)) {
-+		preempt_disable();
- 		tm_reclaim_current(TM_CAUSE_SIGNAL);
- 		if (MSR_TM_TRANSACTIONAL(tsk->thread.regs->msr))
--			return tsk->thread.ckpt_regs.gpr[1];
-+			ret = tsk->thread.ckpt_regs.gpr[1];
-+
-+		/*
-+		 * If we treclaim, we must clear the current thread's TM bits
-+		 * before re-enabling preemption. Otherwise we might be
-+		 * preempted and have the live MSR[TS] changed behind our back
-+		 * (tm_recheckpoint_new_task() would recheckpoint). Besides, we
-+		 * enter the signal handler in non-transactional state.
-+		 */
-+		tsk->thread.regs->msr &= ~MSR_TS_MASK;
-+		preempt_enable();
- 	}
- #endif
--	return tsk->thread.regs->gpr[1];
-+	return ret;
- }
-diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
-index 7157cb6951512..123299fbb33e4 100644
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -515,19 +515,11 @@ static int save_user_regs(struct pt_regs *regs, struct mcontext __user *frame,
-  */
- static int save_tm_user_regs(struct pt_regs *regs,
- 			     struct mcontext __user *frame,
--			     struct mcontext __user *tm_frame, int sigret)
-+			     struct mcontext __user *tm_frame, int sigret,
-+			     unsigned long msr)
- {
--	unsigned long msr = regs->msr;
--
- 	WARN_ON(tm_suspend_disabled);
- 
--	/* Remove TM bits from thread's MSR.  The MSR in the sigcontext
--	 * just indicates to userland that we were doing a transaction, but we
--	 * don't want to return in transactional state.  This also ensures
--	 * that flush_fp_to_thread won't set TIF_RESTORE_TM again.
--	 */
--	regs->msr &= ~MSR_TS_MASK;
--
- 	/* Save both sets of general registers */
- 	if (save_general_regs(&current->thread.ckpt_regs, frame)
- 	    || save_general_regs(regs, tm_frame))
-@@ -1004,6 +996,10 @@ int handle_rt_signal32(struct ksignal *ksig, sigset_t *oldset,
- 	int sigret;
- 	unsigned long tramp;
- 	struct pt_regs *regs = tsk->thread.regs;
-+#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
-+	/* Save the thread's msr before get_tm_stackpointer() changes it */
-+	unsigned long msr = regs->msr;
-+#endif
- 
- 	BUG_ON(tsk != current);
- 
-@@ -1036,13 +1032,13 @@ int handle_rt_signal32(struct ksignal *ksig, sigset_t *oldset,
- 
- #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
- 	tm_frame = &rt_sf->uc_transact.uc_mcontext;
--	if (MSR_TM_ACTIVE(regs->msr)) {
-+	if (MSR_TM_ACTIVE(msr)) {
- 		if (__put_user((unsigned long)&rt_sf->uc_transact,
- 			       &rt_sf->uc.uc_link) ||
- 		    __put_user((unsigned long)tm_frame,
- 			       &rt_sf->uc_transact.uc_regs))
- 			goto badframe;
--		if (save_tm_user_regs(regs, frame, tm_frame, sigret))
-+		if (save_tm_user_regs(regs, frame, tm_frame, sigret, msr))
- 			goto badframe;
- 	}
- 	else
-@@ -1449,6 +1445,10 @@ int handle_signal32(struct ksignal *ksig, sigset_t *oldset,
- 	int sigret;
- 	unsigned long tramp;
- 	struct pt_regs *regs = tsk->thread.regs;
-+#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
-+	/* Save the thread's msr before get_tm_stackpointer() changes it */
-+	unsigned long msr = regs->msr;
-+#endif
- 
- 	BUG_ON(tsk != current);
- 
-@@ -1482,9 +1482,9 @@ int handle_signal32(struct ksignal *ksig, sigset_t *oldset,
- 
- #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
- 	tm_mctx = &frame->mctx_transact;
--	if (MSR_TM_ACTIVE(regs->msr)) {
-+	if (MSR_TM_ACTIVE(msr)) {
- 		if (save_tm_user_regs(regs, &frame->mctx, &frame->mctx_transact,
--				      sigret))
-+				      sigret, msr))
- 			goto badframe;
- 	}
- 	else
-diff --git a/arch/powerpc/kernel/signal_64.c b/arch/powerpc/kernel/signal_64.c
-index b203c16d46d4e..71785574aeafb 100644
---- a/arch/powerpc/kernel/signal_64.c
-+++ b/arch/powerpc/kernel/signal_64.c
-@@ -192,7 +192,8 @@ static long setup_sigcontext(struct sigcontext __user *sc,
- static long setup_tm_sigcontexts(struct sigcontext __user *sc,
- 				 struct sigcontext __user *tm_sc,
- 				 struct task_struct *tsk,
--				 int signr, sigset_t *set, unsigned long handler)
-+				 int signr, sigset_t *set, unsigned long handler,
-+				 unsigned long msr)
- {
- 	/* When CONFIG_ALTIVEC is set, we _always_ setup v_regs even if the
- 	 * process never used altivec yet (MSR_VEC is zero in pt_regs of
-@@ -207,12 +208,11 @@ static long setup_tm_sigcontexts(struct sigcontext __user *sc,
- 	elf_vrreg_t __user *tm_v_regs = sigcontext_vmx_regs(tm_sc);
- #endif
- 	struct pt_regs *regs = tsk->thread.regs;
--	unsigned long msr = tsk->thread.regs->msr;
- 	long err = 0;
- 
- 	BUG_ON(tsk != current);
- 
--	BUG_ON(!MSR_TM_ACTIVE(regs->msr));
-+	BUG_ON(!MSR_TM_ACTIVE(msr));
- 
- 	WARN_ON(tm_suspend_disabled);
- 
-@@ -222,13 +222,6 @@ static long setup_tm_sigcontexts(struct sigcontext __user *sc,
- 	 */
- 	msr |= tsk->thread.ckpt_regs.msr & (MSR_FP | MSR_VEC | MSR_VSX);
- 
--	/* Remove TM bits from thread's MSR.  The MSR in the sigcontext
--	 * just indicates to userland that we were doing a transaction, but we
--	 * don't want to return in transactional state.  This also ensures
--	 * that flush_fp_to_thread won't set TIF_RESTORE_TM again.
--	 */
--	regs->msr &= ~MSR_TS_MASK;
--
- #ifdef CONFIG_ALTIVEC
- 	err |= __put_user(v_regs, &sc->v_regs);
- 	err |= __put_user(tm_v_regs, &tm_sc->v_regs);
-@@ -805,6 +798,10 @@ int handle_rt_signal64(struct ksignal *ksig, sigset_t *set,
- 	unsigned long newsp = 0;
- 	long err = 0;
- 	struct pt_regs *regs = tsk->thread.regs;
-+#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
-+	/* Save the thread's msr before get_tm_stackpointer() changes it */
-+	unsigned long msr = regs->msr;
-+#endif
- 
- 	BUG_ON(tsk != current);
- 
-@@ -822,7 +819,7 @@ int handle_rt_signal64(struct ksignal *ksig, sigset_t *set,
- 	err |= __put_user(0, &frame->uc.uc_flags);
- 	err |= __save_altstack(&frame->uc.uc_stack, regs->gpr[1]);
- #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
--	if (MSR_TM_ACTIVE(regs->msr)) {
-+	if (MSR_TM_ACTIVE(msr)) {
- 		/* The ucontext_t passed to userland points to the second
- 		 * ucontext_t (for transactional state) with its uc_link ptr.
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1507,6 +1507,7 @@ restart:
+ 		/*
+ 		 * We deal with the read-ahead logic here.
  		 */
-@@ -830,7 +827,8 @@ int handle_rt_signal64(struct ksignal *ksig, sigset_t *set,
- 		err |= setup_tm_sigcontexts(&frame->uc.uc_mcontext,
- 					    &frame->uc_transact.uc_mcontext,
- 					    tsk, ksig->sig, NULL,
--					    (unsigned long)ksig->ka.sa.sa_handler);
-+					    (unsigned long)ksig->ka.sa.sa_handler,
-+					    msr);
- 	} else
- #endif
- 	{
--- 
-2.20.1
-
++		cond_resched();
+ 		if (ra_ptr >= ra_max) {
+ 			/* Refill the readahead buffer */
+ 			ra_ptr = 0;
 
 
