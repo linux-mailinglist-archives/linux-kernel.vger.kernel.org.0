@@ -2,152 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C1E0171439
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 10:39:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B286E171446
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 10:43:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbgB0Jjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 04:39:35 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35496 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728555AbgB0Jjf (ORCPT
+        id S1728653AbgB0Jn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 04:43:26 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:47094 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728606AbgB0Jn0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 04:39:35 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r7so147622wro.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 01:39:34 -0800 (PST)
+        Thu, 27 Feb 2020 04:43:26 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y8so899864pll.13;
+        Thu, 27 Feb 2020 01:43:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=TEQSjnIQxM1VtgQo9ixFuHUcsHPXNxUSWJy38z7yyCk=;
-        b=fLazak1ceSbh9cl2KSW8RUZXXlnNgA7sMBzwXBpDHLH0ku1kK6pT4Mk0hocAJAd2W7
-         tbQpHVo30+YP4Nq6OnPFVu60l8U1iHOj7fvUL/fZm83UrHWE7j/ViVqzzM5rDD21/GOj
-         ttOyYnJg5xDnE/OLXU5O+b0q9gpDa22/11FhY7qMzDW1Jv/DS06NPOLy0nnEGTuBzZnU
-         BTZoL5jmChUs1fNL/nrCgbFDGCoOPKw+H4RrLXNdvDG8EHVzlYfyJpDBA7Vnbas05s+2
-         j1i12eaEY4b5cf55efbBdcoFmluOMrkvCVPEITtrQ36jwCK0kU3cZSrqJ3KJjQ7bWZmU
-         sWog==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PS1fdE4OWrB2AkicxBBGpwBY93VCzMfCd/vvRM7GyAk=;
+        b=oFusVLMiMD7bn94C3X0+16pfZ6f0JZxPmR7fxKb9j+awruyEQrahxlhOemwW+hQzIr
+         opF3bnkw7xoPozKiBlNEwOFdekITaG45Rx5BgojGPVHXjHnv6d7yiftVeZtVKi9VTGOz
+         TygRkhGDPoqYvNJBxY0nDEW/PAXOLBrEXUxwE+C/7LsgKFWdKrnhu+tY+e4tfZK6YXop
+         InZNn/cwyytsTh3nBgaHCAhk/ExSp3seO6pJObGFhrv+LkesQgR0paxs8qMPfDRhZBMH
+         z/dD3uDkGs2X53+mMKoK28afw+b1fQAyWXTjnniX0B9O+ME4r/321AQ0FA3ADcamE4jG
+         /igg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=TEQSjnIQxM1VtgQo9ixFuHUcsHPXNxUSWJy38z7yyCk=;
-        b=bGiJL/0zLKh+6gbtFRUAlroLM8Dp2H9tqLUxrsZiIdOTCYpbCPoGbq+ZT2wm7QPHDR
-         XW4Lo0JHGz15USirnaVzVX8JUpqHJIOeIzXiSNtaRrng4tyoGDxN8Chj2MdvMRcq4/kT
-         3vMZKHE9HBp1qVKroMd+vSiOEgtKlZ/4nu7CZLLaEbmSyXuMNr60naSoYLydTH451+RD
-         UdUX/rrB8vyc6AVo/b2yBkXd+ahl2J7dwTPtQIov2kMljqnMeye5Zz+VamLBwA2eb9m9
-         0J1pHfcbaPIBP0u4QJsKt6/VUDKaGcLcE7dGTnY2fkIvtLhDbWIotl3IlcXeoQQuPVOX
-         pbfg==
-X-Gm-Message-State: APjAAAVBbVfyY4cLd1JNXf3dV1wPoNVdxqv8fzRDYy0RtjEVLv/KUNPr
-        EY3VBvGKFvd3H6jHANM20+9CAnomLC0=
-X-Google-Smtp-Source: APXvYqwyo9YBUm97LulROFQKlNIsaZHsT++CMBKTQZorQHur+Ruk+7la2C7a4CNxjFmCXhbUllE01A==
-X-Received: by 2002:adf:f588:: with SMTP id f8mr3949793wro.188.1582796373705;
-        Thu, 27 Feb 2020 01:39:33 -0800 (PST)
-Received: from dell ([2.31.163.122])
-        by smtp.gmail.com with ESMTPSA id t133sm7065652wmf.31.2020.02.27.01.39.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 01:39:32 -0800 (PST)
-Date:   Thu, 27 Feb 2020 09:40:06 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        b.galvani@gmail.com, linus.walleij@linaro.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        phh@phh.me, stefan@agner.ch, letux-kernel@openphoenux.org,
-        jic23@kernel.org
-Subject: Re: [PATCH v5 1/2] mfd: rn5t618: add ADC subdevice for RC5T619
-Message-ID: <20200227094006.GV3494@dell>
-References: <20200223131638.12130-1-andreas@kemnade.info>
- <20200223131638.12130-2-andreas@kemnade.info>
- <20200226154055.GQ3494@dell>
- <20200226174914.047667d5@kemnade.info>
- <20200226174640.GR3494@dell>
- <20200226190028.0de5c095@kemnade.info>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PS1fdE4OWrB2AkicxBBGpwBY93VCzMfCd/vvRM7GyAk=;
+        b=Pv1D2s9YFHAYmmV36VFAqwXMpAqJT/8yEeUNBCSMvU8hdmhVOog5m0n+wdCEXAiwCe
+         VrTcWkB5lLfpgKegE5G/Ik5AU5UyLKBpzpBKE/z31aLHl1TW+B3KsCqUvYbHqrBQV+fC
+         Q9cFZCqmOcgK/DhWo5Hc8qFBpzfI/GJM2AxpHUZr69BONySrYCCEDbwv4u8nwc6nakr5
+         IETqK6gFyL4JsFoL1JszQP8UsN9cQmo58kJtSxuwLqUwID2KoQy0uG5Pt4Ca7/kJjxfS
+         yRtskpjnwuDaSo1unqe8+aOpLer3ew6B64KS2ATMcw8X6bbAjkBk9m6PEsD4exbsIlGk
+         73nw==
+X-Gm-Message-State: APjAAAVj4TcOMJr7OMSxrc5bNgnpLgmGf19a/BfBpMr5PA9bNjMA6ba4
+        np9WS5InsYzUxz5Y0dgWcYCV2+odCVD47BhnlgE=
+X-Google-Smtp-Source: APXvYqzAgYaiT8ekNCP8XrmAwQ07X5LfLH/zISjybm2/aCfZtVIlqXQeFsK+KBgmsLpSlkESUJdMB/a9EwuPtG/rNek=
+X-Received: by 2002:a17:902:8d92:: with SMTP id v18mr3835223plo.18.1582796604992;
+ Thu, 27 Feb 2020 01:43:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200226190028.0de5c095@kemnade.info>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1582709320.git.eswara.kota@linux.intel.com>
+ <48dbbe705a1f22fb9e088827ca0be149e8fbcd85.1582709320.git.eswara.kota@linux.intel.com>
+ <20200226144147.GQ10400@smile.fi.intel.com> <371e50f1-cab6-56f4-d12d-371d1b1f9c67@linux.intel.com>
+In-Reply-To: <371e50f1-cab6-56f4-d12d-371d1b1f9c67@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 27 Feb 2020 11:43:17 +0200
+Message-ID: <CAHp75VfJHvtLBueHJnU6xEuSrehiXH4Pvj880TqpyDBBnx1RuQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] phy: intel: Add driver support for Combophy
+To:     Dilip Kota <eswara.kota@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh@kernel.org>, cheol.yong.kim@intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+        yixin.zhu@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Feb 2020, Andreas Kemnade wrote:
+On Thu, Feb 27, 2020 at 9:54 AM Dilip Kota <eswara.kota@linux.intel.com> wrote:
+> Thanks Andy for reviewing and giving the inputs.
+> I will update them as per your comments, but for couple of cases of i
+> have a different opinion. Please check and give your inputs.
 
-> On Wed, 26 Feb 2020 17:46:40 +0000
-> Lee Jones <lee.jones@linaro.org> wrote:
-> 
-> > On Wed, 26 Feb 2020, Andreas Kemnade wrote:
-> > 
-> > > On Wed, 26 Feb 2020 15:40:55 +0000
-> > > Lee Jones <lee.jones@linaro.org> wrote:
-> > >   
-> > > > On Sun, 23 Feb 2020, Andreas Kemnade wrote:
-> > > >   
-> > > > > This adds a subdevice for the ADC in the RC5T619
-> > > > > 
-> > > > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > > > > ---
-> > > > > depends on:
-> > > > > https://lore.kernel.org/lkml/20191220122416.31881-1-andreas@kemnade.info/
-> > > > > 
-> > > > > Changes in v3:
-> > > > > re-added it to the series because of
-> > > > > "Oh, it looks like there was a conflict.  Could you collect any Acks
-> > > > > (including mine) rebase and resend please?"    
-> > > > 
-> > > > Looks like there is still a conflict.  Sure, it's not a complicated
-> > > > fix, but that's beside the point.  What tree is this set based on?
-> > > >   
-> > > It must be applied on top of my rc5t619 rtc series here:
-> > > https://lore.kernel.org/lkml/20191220122416.31881-1-andreas@kemnade.info/
-> > > 
-> > > I expected it to make it into 5.6 and when I first sent the RTC series
-> > >  (in October) I had no idea when I will continue with other stuff.
-> > > 
-> > > That is why I sent this ADC series separately, also to give the IIO
-> > > maintainer plenty of time to review.   
-> > 
-> > If a patch-set can or should be applied on its own, you should send it
-> > based on an upstream commit, or else things like this happen.
-> > 
-> It cannot without breaking bisectability. The RTC series adds IRQ support in
-> the PMIC which is used here.
+...
 
-Then Kconfig should reflect that.
+> >> +enum {
+> >> +    PHY_0,
+> >> +    PHY_1,
+> >> +    PHY_MAX_NUM,
+> > But here we don't need it since it's a terminator line.
+> > Ditto for the rest of enumerators with a terminator / max entry.
+>
+> Sure i will remove them.
+>
+> To be meaningful, i will remove the max entry for the enums representing
+> the value of register bitfields.
 
-Or, if that's not possible, then you should not break-up and submit
-sets which cannot be applied by themselves.  Either submit the whole
-set together, or submit them piece by piece, not submitting the next
-part until it's predecessor has been applied.
+It will work.
 
-> > My advice would be to maintain topic branches, each based on an
-> > upstream release, which you can merge together into an integration
-> > branch for full coverage testing.
-> > 
-> > > Do you want me to resend all that pending stuff together in one series?
-> > > I have little experience with this multi-subdevice process.  
-> > 
-> > It makes more sense to rebase this set onto the latest full release
-> > and resubmit this set on its own.
-> > 
-> So, I resend the RC5T619 RTC series mentioned above as you answered
-> upont Nikolaus question and wait with this series until review is
-> through.
-> Ok, so wait and rebase it onto 5.7-rc1 or 5.8-rc1 or whatever release
-> the RTC stuff will appear.
-> So you are not going to create an ib-mfd-rtc-iio branch.
+...
 
-As above.
+> >> +static int intel_cbphy_iphy_dt_parse(struct intel_combo_phy *cbphy,
+> > dt -> fwnode
+> > Ditto for other similar function names.
+> Sure, it looks appropriate for intel_cbphy_iphy_dt_parse() ->
+> intel_cbphy_iphy_fwnode_parse().
+> Whereas for intel_cbphy_dt_parse() i will keep it unchanged, because it
+> is calling devm_*, devm_platform_*, fwnode_* APIs to traverse dt node.
 
-If you go the whole-patch-set route, yes, either myself or someone
-else would have to create an immutable pull-request, but you don't
-have to concern yourself with that.
+How do you know that it will be DT node?
+I can't say it from the function parameters: Is any of them takes of_node?
+
+> >> +                                 struct fwnode_handle *fwnode, int idx)
+
+...
+
+> >> +    struct fwnode_reference_args ref;
+> >> +    struct device *dev = cbphy->dev;
+> >> +    struct fwnode_handle *fwnode;
+> >> +    struct platform_device *pdev;
+> >> +    int i, ret;
+> >> +    u32 prop;
+> > I guess the following would be better:
+> In the v2 patch, for int i = 0 you mentioned to do initialization at the
+> user, instead of doing at declaration.
+
+> So i followed the same for "pdev" and "fwnode" which are being used
+> after few lines of the code . It looked good in the perspective of code
+> readability.
+
+No, it is different. For the loop counter is better to have closer to
+the loop, for the more global thingy like platform device it makes it
+actually harder to find.
+When you do assignments you have to think about the variable meaning
+and scope. Scope is different for loop counter versus the mentioned
+rest.
+
+> >       struct device *dev = cbphy->dev;
+> >       struct platform_device *pdev = to_platform_device(dev);
+> >       struct fwnode_handle *fwnode = dev_fwnode(dev);
+> >       struct fwnode_reference_args ref;
+> >       int i, ret;
+> >       u32 prop;
+> >
+> >> +    pdev = to_platform_device(dev);
+> > See above.
+> >
+> >> +    fwnode = dev_fwnode(dev);
+> > See above.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+With Best Regards,
+Andy Shevchenko
