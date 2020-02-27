@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24629171D03
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:17:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A09C171B9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389156AbgB0ORC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:17:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57266 "EHLO mail.kernel.org"
+        id S2387500AbgB0OD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:03:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389601AbgB0OQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:16:57 -0500
+        id S1732932AbgB0ODr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:03:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20FEE246A0;
-        Thu, 27 Feb 2020 14:16:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 039B020578;
+        Thu, 27 Feb 2020 14:03:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582813016;
-        bh=bYKAWCj7wZo3bsAIb6e0JlxfyLzbRVASan1lMyEV94I=;
+        s=default; t=1582812226;
+        bh=GSpyMVRSKvNT+TovwQWnwPGQjtKpZkZ1onJqbZV2Q0Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K6BHbgZnyoMrdCPy5CQQfz6BvJ3JQUWb+z7m9WtpTgcByyjBwSqxMqiQC2f3JUPcM
-         cQmbqd9cFccX1dA4fbg7EeqC11cQGGEu7tfqRWT8Ko7cOVLstabaD0smiRO7fuj3my
-         Wsrw11Yt2eTP854rNC5v5hGb/16FUNx/graP03Ls=
+        b=kw5aPjOpyo1+oqdxRy7K91sGox+imUHZUA+0er9g5TCLlcNH1GHkjt/W9MxaHp6oh
+         KubLREb/rcLYTX8PFAD0j3wvFR3weqsvKrBGiJ7AB89VpsZeyfECLR9ypVMJDxbEVo
+         HQVonAXmMEelXn0oZrb0w6TQBIalN84l0/ZNLWxU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH 5.5 065/150] tty/serial: atmel: manage shutdown in case of RS485 or ISO7816 mode
+        stable@vger.kernel.org, Pietro Oliva <pietroliva@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: [PATCH 4.19 34/97] staging: rtl8723bs: Fix potential overuse of kernel memory
 Date:   Thu, 27 Feb 2020 14:36:42 +0100
-Message-Id: <20200227132242.600717549@linuxfoundation.org>
+Message-Id: <20200227132220.151023016@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,36 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit 04b5bfe3dc94e64d0590c54045815cb5183fb095 upstream.
+commit 23954cb078febfc63a755301fe77e06bccdb4d2a upstream.
 
-In atmel_shutdown() we call atmel_stop_rx() and atmel_stop_tx() functions.
-Prevent the rx restart that is implemented in RS485 or ISO7816 modes when
-calling atmel_stop_tx() by using the atomic information tasklet_shutdown
-that is already in place for this purpose.
+In routine wpa_supplicant_ioctl(), the user-controlled p->length is
+checked to be at least the size of struct ieee_param size, but the code
+does not detect the case where p->length is greater than the size
+of the struct, thus a malicious user could be wasting kernel memory.
+Fixes commit 554c0a3abf216 ("staging: Add rtl8723bs sdio wifi driver").
 
-Fixes: 98f2082c3ac4 ("tty/serial: atmel: enforce tasklet init and termination sequences")
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200210152053.8289-1-nicolas.ferre@microchip.com
+Reported by: Pietro Oliva <pietroliva@gmail.com>
+Cc: Pietro Oliva <pietroliva@gmail.com>
+Cc: Stable <stable@vger.kernel.org>
+Fixes: 554c0a3abf216 ("staging: Add rtl8723bs sdio wifi driver").
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Link: https://lore.kernel.org/r/20200210180235.21691-5-Larry.Finger@lwfinger.net
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/atmel_serial.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -574,7 +574,8 @@ static void atmel_stop_tx(struct uart_po
- 	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+@@ -3400,7 +3400,7 @@ static int wpa_supplicant_ioctl(struct n
  
- 	if (atmel_uart_is_half_duplex(port))
--		atmel_start_rx(port);
-+		if (!atomic_read(&atmel_port->tasklet_shutdown))
-+			atmel_start_rx(port);
+ 	/* down(&ieee->wx_sem); */
  
- }
- 
+-	if (p->length < sizeof(struct ieee_param) || !p->pointer) {
++	if (!p->pointer || p->length != sizeof(struct ieee_param)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
 
 
