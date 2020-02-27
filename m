@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 448D41719B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:47:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AC9B1718F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730683AbgB0NrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:47:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43732 "EHLO mail.kernel.org"
+        id S1729425AbgB0Nkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:40:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730348AbgB0NrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:47:18 -0500
+        id S1729411AbgB0Nkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:40:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B3A920578;
-        Thu, 27 Feb 2020 13:47:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 699D920726;
+        Thu, 27 Feb 2020 13:40:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811237;
-        bh=NIrM7BfuNSEny7YRm6JIMrDLMQQVbW6fopKZ/JMJ/88=;
+        s=default; t=1582810849;
+        bh=bIsDn9IpMhwpBc5Jn8jbIXIVTDU9V1t/LXgrXYFrgv8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BOg9oAY/C9AsFET3gZGSLOc0MfYCSspI62FD1FdQ8zsjG2szdDPHGs5bHZo7bFjaU
-         uVNKAY2tmxeN6Y+SIiWYV1jhK8e103z/FxTlsFZmfjKl6+Vu1knaoON3UbfWdqWJLF
-         UGODkYIJBczW6SpHe3iBaeZ3oEbFM8K0B6fTPnsg=
+        b=Ezq4+szEwksghMCTWgZl9zqGt2o42Il8PPpti0Fl6Pat3qF7xA/ayWC//wzLnb0y/
+         NbMxAoZMDGZWj8OC+lz4EC/qo5AQ64HMp+CpN/dI3GCN6tWtT2QzFXq/S7L3KbW06M
+         3dfS21WYhH/GCw/iBdnQQx/8zBS3Cf1wGzY5lUOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phong Tran <tranmanphong@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 056/165] rtlwifi: rtl_pci: Fix -Wcast-function-type
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        "zhangyi (F)" <yi.zhang@huawei.com>, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 014/113] jbd2: move the clearing of b_modified flag to the journal_unmap_buffer()
 Date:   Thu, 27 Feb 2020 14:35:30 +0100
-Message-Id: <20200227132239.574306684@linuxfoundation.org>
+Message-Id: <20200227132214.017840601@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +44,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phong Tran <tranmanphong@gmail.com>
+From: zhangyi (F) <yi.zhang@huawei.com>
 
-[ Upstream commit cb775c88da5d48a85d99d95219f637b6fad2e0e9 ]
+[ Upstream commit 6a66a7ded12baa6ebbb2e3e82f8cb91382814839 ]
 
-correct usage prototype of callback in tasklet_init().
-Report by https://github.com/KSPP/linux/issues/20
+There is no need to delay the clearing of b_modified flag to the
+transaction committing time when unmapping the journalled buffer, so
+just move it to the journal_unmap_buffer().
 
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Link: https://lore.kernel.org/r/20200213063821.30455-2-yi.zhang@huawei.com
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/realtek/rtlwifi/pci.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ fs/jbd2/commit.c      | 43 +++++++++++++++----------------------------
+ fs/jbd2/transaction.c | 10 ++++++----
+ 2 files changed, 21 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/pci.c b/drivers/net/wireless/realtek/rtlwifi/pci.c
-index e15b462d096bf..21b7cb845bf40 100644
---- a/drivers/net/wireless/realtek/rtlwifi/pci.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
-@@ -1095,13 +1095,15 @@ done:
- 	return ret;
- }
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index ebbd7d054cabd..3bf86d912b76f 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -987,34 +987,21 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+ 		 * it. */
  
--static void _rtl_pci_irq_tasklet(struct ieee80211_hw *hw)
-+static void _rtl_pci_irq_tasklet(unsigned long data)
- {
-+	struct ieee80211_hw *hw = (struct ieee80211_hw *)data;
- 	_rtl_pci_tx_chk_waitq(hw);
- }
+ 		/*
+-		* A buffer which has been freed while still being journaled by
+-		* a previous transaction.
+-		*/
+-		if (buffer_freed(bh)) {
+-			/*
+-			 * If the running transaction is the one containing
+-			 * "add to orphan" operation (b_next_transaction !=
+-			 * NULL), we have to wait for that transaction to
+-			 * commit before we can really get rid of the buffer.
+-			 * So just clear b_modified to not confuse transaction
+-			 * credit accounting and refile the buffer to
+-			 * BJ_Forget of the running transaction. If the just
+-			 * committed transaction contains "add to orphan"
+-			 * operation, we can completely invalidate the buffer
+-			 * now. We are rather through in that since the
+-			 * buffer may be still accessible when blocksize <
+-			 * pagesize and it is attached to the last partial
+-			 * page.
+-			 */
+-			jh->b_modified = 0;
+-			if (!jh->b_next_transaction) {
+-				clear_buffer_freed(bh);
+-				clear_buffer_jbddirty(bh);
+-				clear_buffer_mapped(bh);
+-				clear_buffer_new(bh);
+-				clear_buffer_req(bh);
+-				bh->b_bdev = NULL;
+-			}
++		 * A buffer which has been freed while still being journaled
++		 * by a previous transaction, refile the buffer to BJ_Forget of
++		 * the running transaction. If the just committed transaction
++		 * contains "add to orphan" operation, we can completely
++		 * invalidate the buffer now. We are rather through in that
++		 * since the buffer may be still accessible when blocksize <
++		 * pagesize and it is attached to the last partial page.
++		 */
++		if (buffer_freed(bh) && !jh->b_next_transaction) {
++			clear_buffer_freed(bh);
++			clear_buffer_jbddirty(bh);
++			clear_buffer_mapped(bh);
++			clear_buffer_new(bh);
++			clear_buffer_req(bh);
++			bh->b_bdev = NULL;
+ 		}
  
--static void _rtl_pci_prepare_bcn_tasklet(struct ieee80211_hw *hw)
-+static void _rtl_pci_prepare_bcn_tasklet(unsigned long data)
- {
-+	struct ieee80211_hw *hw = (struct ieee80211_hw *)data;
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
- 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
- 	struct rtl_mac *mac = rtl_mac(rtl_priv(hw));
-@@ -1223,10 +1225,10 @@ static void _rtl_pci_init_struct(struct ieee80211_hw *hw,
- 
- 	/*task */
- 	tasklet_init(&rtlpriv->works.irq_tasklet,
--		     (void (*)(unsigned long))_rtl_pci_irq_tasklet,
-+		     _rtl_pci_irq_tasklet,
- 		     (unsigned long)hw);
- 	tasklet_init(&rtlpriv->works.irq_prepare_bcn_tasklet,
--		     (void (*)(unsigned long))_rtl_pci_prepare_bcn_tasklet,
-+		     _rtl_pci_prepare_bcn_tasklet,
- 		     (unsigned long)hw);
- 	INIT_WORK(&rtlpriv->works.lps_change_work,
- 		  rtl_lps_change_work_callback);
+ 		if (buffer_jbddirty(bh)) {
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index c34433432d471..6457023d8fac1 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -2223,14 +2223,16 @@ static int journal_unmap_buffer(journal_t *journal, struct buffer_head *bh,
+ 			return -EBUSY;
+ 		}
+ 		/*
+-		 * OK, buffer won't be reachable after truncate. We just set
+-		 * j_next_transaction to the running transaction (if there is
+-		 * one) and mark buffer as freed so that commit code knows it
+-		 * should clear dirty bits when it is done with the buffer.
++		 * OK, buffer won't be reachable after truncate. We just clear
++		 * b_modified to not confuse transaction credit accounting, and
++		 * set j_next_transaction to the running transaction (if there
++		 * is one) and mark buffer as freed so that commit code knows
++		 * it should clear dirty bits when it is done with the buffer.
+ 		 */
+ 		set_buffer_freed(bh);
+ 		if (journal->j_running_transaction && buffer_jbddirty(bh))
+ 			jh->b_next_transaction = journal->j_running_transaction;
++		jh->b_modified = 0;
+ 		jbd2_journal_put_journal_head(jh);
+ 		spin_unlock(&journal->j_list_lock);
+ 		jbd_unlock_bh_state(bh);
 -- 
 2.20.1
 
