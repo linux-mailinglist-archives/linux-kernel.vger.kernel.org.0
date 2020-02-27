@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EEFE1720D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:45:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E37A3171FF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:40:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731424AbgB0OpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:45:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43112 "EHLO mail.kernel.org"
+        id S1732424AbgB0OjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:39:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730573AbgB0Nqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:46:46 -0500
+        id S1731954AbgB0NzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:55:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D7E62469F;
-        Thu, 27 Feb 2020 13:46:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B53162469D;
+        Thu, 27 Feb 2020 13:55:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811206;
-        bh=aK/+aFJ9B9J3nmmat7es9bxcZ0UzUzf+c9vF/+cqZ+k=;
+        s=default; t=1582811712;
+        bh=KOCqnSRue2jZuqWvcRXRfvOeXREYntooj2FRF/DbVq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gh4MhBmROwQeXQBcZ0x1qNZLnVHGhsAWtbhhtwfy4JAT8mTYEGYFwov+LhPXfp3qd
-         wrObf4eIB/0nuiPLUP6BlRBVBZsgKkbBFz30TD+JJbB7jclgI9VHQFjdKsgtZxeBJX
-         kzRxBI5chjhHvx6I0xuhVzw/diKBnwZ1ssMPkw38=
+        b=F0EX/OnYNj0DPpjeVZuUCBQKYJqrgG4UcUY5olzvCYPY0gmQjCDVpORTNYaUyUPQo
+         u4zcltKZSwtwdOSf4VYWxOtJLLHhQn5xER11KYqdO9+mQ0VLQ2ESIK3LBIYLimwdpc
+         zWXwDt1Dp/BSWN/D3C0E9GZDRKVkRFFgGX+/KTGE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arvind Sankar <nivedita@alum.mit.edu>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 006/165] ALSA: usb-audio: Apply sample rate quirk for Audioengine D1
-Date:   Thu, 27 Feb 2020 14:34:40 +0100
-Message-Id: <20200227132232.048294039@linuxfoundation.org>
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 070/237] clk: qcom: rcg2: Dont crash if our parent cant be found; return an error
+Date:   Thu, 27 Feb 2020 14:34:44 +0100
+Message-Id: <20200227132302.287706643@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arvind Sankar <nivedita@alum.mit.edu>
+From: Douglas Anderson <dianders@chromium.org>
 
-commit 93f9d1a4ac5930654c17412e3911b46ece73755a upstream.
+[ Upstream commit 908b050114d8fefdddc57ec9fbc213c3690e7f5f ]
 
-The Audioengine D1 (0x2912:0x30c8) does support reading the sample rate,
-but it returns the rate in byte-reversed order.
+When I got my clock parenting slightly wrong I ended up with a crash
+that looked like this:
 
-When setting sampling rate, the driver produces these warning messages:
-[168840.944226] usb 3-2.2: current rate 4500480 is different from the runtime rate 44100
-[168854.930414] usb 3-2.2: current rate 8436480 is different from the runtime rate 48000
-[168905.185825] usb 3-2.1.2: current rate 30465 is different from the runtime rate 96000
+  Unable to handle kernel NULL pointer dereference at virtual
+  address 0000000000000000
+  ...
+  pc : clk_hw_get_rate+0x14/0x44
+  ...
+  Call trace:
+   clk_hw_get_rate+0x14/0x44
+   _freq_tbl_determine_rate+0x94/0xfc
+   clk_rcg2_determine_rate+0x2c/0x38
+   clk_core_determine_round_nolock+0x4c/0x88
+   clk_core_round_rate_nolock+0x6c/0xa8
+   clk_core_round_rate_nolock+0x9c/0xa8
+   clk_core_set_rate_nolock+0x70/0x180
+   clk_set_rate+0x3c/0x6c
+   of_clk_set_defaults+0x254/0x360
+   platform_drv_probe+0x28/0xb0
+   really_probe+0x120/0x2dc
+   driver_probe_device+0x64/0xfc
+   device_driver_attach+0x4c/0x6c
+   __driver_attach+0xac/0xc0
+   bus_for_each_dev+0x84/0xcc
+   driver_attach+0x2c/0x38
+   bus_add_driver+0xfc/0x1d0
+   driver_register+0x64/0xf8
+   __platform_driver_register+0x4c/0x58
+   msm_drm_register+0x5c/0x60
+   ...
 
-As can be seen from the hexadecimal conversion, the current rate read
-back is byte-reversed from the rate that was set.
+It turned out that clk_hw_get_parent_by_index() was returning NULL and
+we weren't checking.  Let's check it so that we don't crash.
 
-44100 == 0x00ac44, 4500480 == 0x44ac00
-48000 == 0x00bb80, 8436480 == 0x80bb00
-96000 == 0x017700,   30465 == 0x007701
-
-Rather than implementing a new quirk to reverse the order, just skip
-checking the rate to avoid spamming the log.
-
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200211162235.1639889-1-nivedita@alum.mit.edu
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: ac269395cdd8 ("clk: qcom: Convert to clk_hw based provider APIs")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Link: https://lkml.kernel.org/r/20200203103049.v4.1.I7487325fe8e701a68a07d3be8a6a4b571eca9cfa@changeid
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/quirks.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/qcom/clk-rcg2.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -1149,6 +1149,7 @@ bool snd_usb_get_sample_rate_quirk(struc
- 	case USB_ID(0x1de7, 0x0014): /* Phoenix Audio TMX320 */
- 	case USB_ID(0x1de7, 0x0114): /* Phoenix Audio MT202pcs */
- 	case USB_ID(0x21B4, 0x0081): /* AudioQuest DragonFly */
-+	case USB_ID(0x2912, 0x30c8): /* Audioengine D1 */
- 		return true;
- 	}
- 	return false;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index a93439242565d..d3953ea69fda4 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -210,6 +210,9 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+ 
+ 	clk_flags = clk_hw_get_flags(hw);
+ 	p = clk_hw_get_parent_by_index(hw, index);
++	if (!p)
++		return -EINVAL;
++
+ 	if (clk_flags & CLK_SET_RATE_PARENT) {
+ 		if (f->pre_div) {
+ 			if (!rate)
+-- 
+2.20.1
+
 
 
