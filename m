@@ -2,110 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84BEC172C3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 00:29:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F6C1172C4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 00:33:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729891AbgB0X3r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 18:29:47 -0500
-Received: from ozlabs.org ([203.11.71.1]:48847 "EHLO ozlabs.org"
+        id S1730037AbgB0XdS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 18:33:18 -0500
+Received: from mga12.intel.com ([192.55.52.136]:32153 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729391AbgB0X3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 18:29:47 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48T85h46BWz9sPk;
-        Fri, 28 Feb 2020 10:29:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1582846185;
-        bh=AimF7zFnDLGiRjkIKIYbj4qkmOdhvGUC2m3nzv39Agk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=mrN83AWcJ6/btlCRyg5pW8NkyQhOA/1Ts8Pf/WhimzGfcGLOi/vg3PO9gZgU0WvKE
-         LJcGxzRvNM8aCmAxWkMgWLyKD7pIqr8qwnQ0fIP+caPEg2XDd2m9hgJ66OpWacYYb8
-         2LvS9ZJU2oDDz93KP6GU7bv5T9XIGi/JKpwCuNt2j0Mec1yprm0ClAQz42hpdoVtNc
-         3mTW02Wb6NoBeTY5evNOjET3Crr7+PLbEmIhwmydRfs6f3eNYVEgqR607aftAlQhmv
-         AYBSIjf05qy/qylLpFrX5mfQtN/oaALjwMy5t4QbdYx4FGpOaLWvzaCkhbDbbemsuD
-         mDGgStFbndM4w==
-Date:   Fri, 28 Feb 2020 10:29:42 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        Karsten Graul <kgraul@linux.ibm.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20200228102942.54a6fb76@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/C.hgIVj1Jct2d93PVo6HLu3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1726758AbgB0XdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 18:33:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 15:33:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,493,1574150400"; 
+   d="scan'208";a="261672735"
+Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.171])
+  by fmsmga004.fm.intel.com with ESMTP; 27 Feb 2020 15:33:18 -0800
+From:   Gayatri Kammela <gayatri.kammela@intel.com>
+To:     platform-driver-x86@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, vishwanath.somayaji@intel.com,
+        dvhart@infradead.org, mika.westerberg@intel.com,
+        peterz@infradead.org, charles.d.prestopine@intel.com,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Chen Zhou <chenzhou10@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        David Box <david.e.box@intel.com>
+Subject: [PATCH v2 0/4] platform/x86: intel_pmc_core: Add bug fixes or code
+Date:   Thu, 27 Feb 2020 15:29:12 -0800
+Message-Id: <cover.1582845395.git.gayatri.kammela@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/C.hgIVj1Jct2d93PVo6HLu3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+This patch series consists of bug fixes and code optimization for the
+series https://patchwork.kernel.org/patch/11365325/
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Patch 1: Relocate both pmc_core_slps0_display() and pmc_core_lpm_display()
+Patch 2: Make pmc_core_lpm_display() generic
+Patch 3: Remove the duplicate if() condition to create debugfs entry
+Patch 4: Add back slp_s0_offset attribute back to tgl_reg_map
 
-  net/smc/smc_core.h
+Changes since v1:
+1) Changed the order of the patches i.e., patch 2 in v1 is made first in
+   the order for v2.
+2) Fixed the warnings reported by kbuild test robot.
 
-between commit:
+Gayatri Kammela (4):
+  platform/x86: intel_pmc_core: fix: Relocate pmc_core_slps0_display()
+    and pmc_core_lpm_display() to outside of CONFIG_DEBUG_FS
+  platform/x86: intel_pmc_core: fix: Make pmc_core_lpm_display() generic
+    for platforms that support sub-states
+  platform/x86: intel_pmc_core: fix: Remove the duplicate if() to create
+    debugfs entry for substate_live_status_registers
+  platform/x86: intel_pmc_core: fix: Add slp_s0_offset attribute back to
+    tgl_reg_map
 
-  51e3dfa8906a ("net/smc: fix cleanup for linkgroup setup failures")
+ drivers/platform/x86/intel_pmc_core.c | 140 ++++++++++++++------------
+ 1 file changed, 75 insertions(+), 65 deletions(-)
 
-from the net tree and commits:
+base-commit: 7adb1e8aeeb5d4d88012568b2049599c1a247cf2
 
-  ba9520604209 ("net/smc: remove unused parameter of smc_lgr_terminate()")
-  5f78fe968d76 ("net/smc: simplify normal link termination")
+Cc: Chen Zhou <chenzhou10@huawei.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: David Box <david.e.box@intel.com>
+-- 
+2.17.1
 
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/smc/smc_core.h
-index 234ae25f0025,5695c7bc639e..000000000000
---- a/net/smc/smc_core.h
-+++ b/net/smc/smc_core.h
-@@@ -296,8 -290,7 +290,8 @@@ struct smc_clc_msg_accept_confirm
-  struct smc_clc_msg_local;
- =20
-  void smc_lgr_forget(struct smc_link_group *lgr);
- +void smc_lgr_cleanup_early(struct smc_connection *conn);
-- void smc_lgr_terminate(struct smc_link_group *lgr, bool soft);
-+ void smc_lgr_terminate_sched(struct smc_link_group *lgr);
-  void smc_port_terminate(struct smc_ib_device *smcibdev, u8 ibport);
-  void smc_smcd_terminate(struct smcd_dev *dev, u64 peer_gid,
-  			unsigned short vlan);
-
---Sig_/C.hgIVj1Jct2d93PVo6HLu3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5YUOYACgkQAVBC80lX
-0Gy+7QgAh4GZUYZETO9wUtc7CK12z39t2M8I09br8zGCJrR2eo4d2t+u3Dk3hvzK
-EEedxJRjP779+WliOim3TStCh6yIn68CvLfhuNF131QnAsXdRAPJxgPbJ6l6qf2b
-bs46pY4M10F7Ba8ekRO5J698uxM35cvC2qMn3TUplgX8XbS0CR+fWsVgjVF+iK9X
-O9JafPF6l/vvF0YuJp5SSF67ICsPQovJkYe42Fe6YHLZ8nb3oshV29b2TTC+xh7W
-Dy5T2WBtvgdXmzBn4Ix4fWonav7pOG+pWgGAR9JXk1vOCQRdyW+P8NIfOA0ZDMwT
-4/iOD+ZiC03a3mCoohvwKoNtbUQF2g==
-=QsW9
------END PGP SIGNATURE-----
-
---Sig_/C.hgIVj1Jct2d93PVo6HLu3--
