@@ -2,162 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 555331727D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:42:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D50B01727DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:46:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729761AbgB0SmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:42:22 -0500
-Received: from wind.enjellic.com ([76.10.64.91]:58478 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726805AbgB0SmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:42:22 -0500
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 01RIf1sj026858;
-        Thu, 27 Feb 2020 12:41:01 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 01RIewJG026857;
-        Thu, 27 Feb 2020 12:40:58 -0600
-Date:   Thu, 27 Feb 2020 12:40:58 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: Re: [PATCH bpf-next v4 0/8] MAC and Audit policy using eBPF (KRSI)
-Message-ID: <20200227184058.GA25392@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20200220175250.10795-1-kpsingh@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220175250.10795-1-kpsingh@chromium.org>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 27 Feb 2020 12:41:01 -0600 (CST)
+        id S1729986AbgB0SoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:44:19 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35238 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729280AbgB0SoT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:44:19 -0500
+Received: by mail-qk1-f196.google.com with SMTP id 145so417350qkl.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 10:44:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qzBo3P132jiUrbgs3PbRa9YhmehrjD7gSw2/B87JkWQ=;
+        b=G4apIYCJ06kCdOWAiN9AqLr5Kqk+JwVRWTpigT0qp66Yk3DnhE/aEQJtj7nZJngk/B
+         ShOmBai7Yd5rRsFUucLz1kJAzy+TYyDcIYX1p8J3J+gdpEdiMvoslaugFnQpH6HczYV1
+         XZa0etCvY+6PzJ77I0Y5LNDRoiuByoWM6sZHw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qzBo3P132jiUrbgs3PbRa9YhmehrjD7gSw2/B87JkWQ=;
+        b=rzQiObNcz6QhB9SRWITl8AWSj6I+q/oEjgwiiAB0/2FpkaDn8UGsnFP4mlLwsKQt9a
+         YRnfKPo1dW/TN9qqYeg87yi79UvmwsjSDWTbs5tHJyyUizFo6KSmmwvuF2bKvVve4Xqy
+         k93RIuF+N68E06P4C9BpEr0Bbzp2jQ8dVrFuRRiwNVdV0lFZCqQdaKq9aWnfgArZQQz+
+         cmHq41hR62owRBSxPmbmzj7ycGG/rQREBQqIw6RDz/I106VbP2BYHIf0oHekesmjdE4p
+         s3bZqVUVuDRgFrvusRbbnf2PAqLp3lvE2LAF4qttb6rdgmMHXsdp+cee22my/VqGqoY7
+         SKVg==
+X-Gm-Message-State: APjAAAX97By/KE3tO8r3Irt3fVsvrViy8maIT3XBN/mNeOEgmNEY0mcW
+        BQWPNTkaRLlR+GRJvNne2utYBZ+sBf2GVg==
+X-Google-Smtp-Source: APXvYqx5vuSHSGirEr5t7M2ITb6qrulHybXQRsGA+qNc1oo7zpNJz0BOsecREGgHEZi/E/tMt3MVVg==
+X-Received: by 2002:a05:620a:1326:: with SMTP id p6mr802574qkj.50.1582829057771;
+        Thu, 27 Feb 2020 10:44:17 -0800 (PST)
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com. [209.85.222.176])
+        by smtp.gmail.com with ESMTPSA id 89sm3568673qth.3.2020.02.27.10.44.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2020 10:44:16 -0800 (PST)
+Received: by mail-qk1-f176.google.com with SMTP id z12so347610qkg.12
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 10:44:16 -0800 (PST)
+X-Received: by 2002:ae9:f301:: with SMTP id p1mr716972qkg.422.1582829055732;
+ Thu, 27 Feb 2020 10:44:15 -0800 (PST)
+MIME-Version: 1.0
+References: <1582766000-23023-1-git-send-email-johnny.chuang.emc@gmail.com>
+In-Reply-To: <1582766000-23023-1-git-send-email-johnny.chuang.emc@gmail.com>
+From:   Harry Cutts <hcutts@chromium.org>
+Date:   Thu, 27 Feb 2020 10:44:04 -0800
+X-Gmail-Original-Message-ID: <CA+jURcsvxP4gVBkt_sfCOfQ3+g2G+ZznUi4Zy2ydUSpPT3XWbA@mail.gmail.com>
+Message-ID: <CA+jURcsvxP4gVBkt_sfCOfQ3+g2G+ZznUi4Zy2ydUSpPT3XWbA@mail.gmail.com>
+Subject: Re: [PATCH] Input: elants_i2c - Report resolution information for
+ touch major
+To:     Johnny Chuang <johnny.chuang.emc@gmail.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>,
+        Johnny Chuang <johnny.chuang@emc.com.tw>,
+        Jennifer Tsai <jennifer.tsai@emc.com.tw>,
+        James Chen <james.chen@emc.com.tw>,
+        Paul Liang <paul.liang@emc.com.tw>,
+        Jeff Chuang <jeff.chuang@emc.com.tw>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 06:52:42PM +0100, KP Singh wrote:
+On Wed, 26 Feb 2020 at 17:13, Johnny Chuang <johnny.chuang.emc@gmail.com> wrote:
+>
+> From: Johnny Chuang <johnny.chuang@emc.com.tw>
+>
+> This patch supports reporting resolution for ABS_MT_TOUCH_MAJOR event.
+> This information is needed in showing pressure/width radius.
+>
+> Signed-off-by: Johnny Chuang <johnny.chuang@emc.com.tw>
+> ---
+>  drivers/input/touchscreen/elants_i2c.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Good morning, I hope the week is going well for everyone.
+Reviewed-by: Harry Cutts <hcutts@chromium.org>
 
-Apologies for being somewhat late with these comments, I've been
-recovering from travel.
-
-> # Motivation
-> 
-> Google does analysis of rich runtime security data to detect and thwart
-> threats in real-time. Currently, this is done in custom kernel modules
-> but we would like to replace this with something that's upstream and
-> useful to others.
-> 
-> The current kernel infrastructure for providing telemetry (Audit, Perf
-> etc.) is disjoint from access enforcement (i.e. LSMs).  Augmenting the
-> information provided by audit requires kernel changes to audit, its
-> policy language and user-space components. Furthermore, building a MAC
-> policy based on the newly added telemetry data requires changes to
-> various LSMs and their respective policy languages.
-> 
-> This patchset allows BPF programs to be attached to LSM hooks This
-> facilitates a unified and dynamic (not requiring re-compilation of the
-> kernel) audit and MAC policy.
-> 
-> # Why an LSM?
-> 
-> Linux Security Modules target security behaviours rather than the
-> kernel's API. For example, it's easy to miss out a newly added system
-> call for executing processes (eg. execve, execveat etc.) but the LSM
-> framework ensures that all process executions trigger the relevant hooks
-> irrespective of how the process was executed.
-> 
-> Allowing users to implement LSM hooks at runtime also benefits the LSM
-> eco-system by enabling a quick feedback loop from the security community
-> about the kind of behaviours that the LSM Framework should be targeting.
-
-On the remote possibility that our practical experiences are relevant
-to this, I thought I would pitch these comments in, since I see that
-LWN is covering the issues and sensitivities surrounding BPF based
-'intelligent' LSM hooks, if I can take the liberty of referring to
-them as that.
-
-We namespaced a modified version of the Linux IMA implementation in
-order to provide a mechanism for deterministic system modeling, in
-order to support autonomously self defensive platforms for
-IOT/INED/SCADA type applications.  Big picture, the objective was to
-provide 'dynamic intelligence' for LSM decisions, presumably an
-objective similar to the KRSI initiative.
-
-Our IMA implementation, if you can still call it that, pushes
-actor/subject interaction identities up into an SGX enclave that runs
-a modeling engine that makes decisions on whether or not a process is
-engaging in activity inconsistent with a behavioral map defined by the
-platform or container developer.  If the behavior is extra-dimensional
-(untrusted), the enclave, via an OCALL, sets the value of a 'bad
-actor' variable in the task control structure that is used to indicate
-that the context of execution has questionable trust status.
-
-We paired this with a very simple LSM that has each hook check a bit
-position in the bad actor variable/bitfield to determine whether or
-not the hook should operate on the requested action.  Separate LSM
-infrastructure is provided that specifies whether or not the behavior
-should be EPERM'ed or logged.  An LSM using this infrastructure also
-has the ability, if triggered by the trust status of the context of
-execution, to make further assessments based on what information is
-supplied via the hook itself.
-
-Our field experience and testing has suggested that this architecture
-has considerable utility.
-
-In this model, numerous and disparate sections of the kernel can have
-input into the trust status of a context of execution.  This
-methodology would seem to be consistent with having multiple eBPF tap
-points in the kernel that can make decisions on what they perceive to
-be security relevant issues and if and how the behavior should be
-acted upon by the LSM.
-
-At the LSM level the costs are minimal, essentially a conditional
-check for non-zero status.  Performance costs will be with the eBPF
-code installed at introspection points.  At the end of the
-day. security costs money, if no one is willing to pay the bill we
-simply won't have secure systems, the fundamental tenant of the
-inherent economic barrier to security.
-
-Food for thought if anyone is interested.
-
-Best wishes for a productive remainder of the week.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker
-IDfusion, LLC               SGX secured infrastructure and
-4206 N. 19th Ave.           autonomously self-defensive platforms.
-Fargo, ND  58102
-PH: 701-281-1686            EMAIL: greg@idfusion.net
-------------------------------------------------------------------------------
-"We have to grow some roots before we can even think about having
- any blossoms."
-                                -- Terrance George Wieland
-                                   Resurrection.
+Harry Cutts
+Chrome OS Touch/Input team
