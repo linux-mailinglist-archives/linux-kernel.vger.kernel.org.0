@@ -2,108 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6A66171F0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:32:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5613B171EF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:31:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733144AbgB0OCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:02:33 -0500
-Received: from outbound-smtp47.blacknight.com ([46.22.136.64]:37069 "EHLO
-        outbound-smtp47.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733117AbgB0OC1 (ORCPT
+        id S1732952AbgB0Ob3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:31:29 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:33327 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733051AbgB0ODs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:02:27 -0500
-Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
-        by outbound-smtp47.blacknight.com (Postfix) with ESMTPS id C9D13FA874
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 14:02:25 +0000 (GMT)
-Received: (qmail 3656 invoked from network); 27 Feb 2020 14:02:25 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 27 Feb 2020 14:02:25 -0000
-Date:   Thu, 27 Feb 2020 14:02:23 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Phil Auld <pauld@redhat.com>, Hillf Danton <hdanton@sina.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>
-Subject: [PATCH] sched/fair: Fix kernel build warning in test_idle_cores()
- for !SMT NUMA
-Message-ID: <20200227140222.GH3818@techsingularity.net>
+        Thu, 27 Feb 2020 09:03:48 -0500
+Received: by mail-qk1-f193.google.com with SMTP id h4so3222447qkm.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:03:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+wVRmzW/JoYh4wj1/OxvIDIfvZg3+bbPF4TGllHByeo=;
+        b=ucS4vl7NZ6uxuuYw5KrBHw8V40FjjznI3n8m8vTE6ErhwUcNpXpvE4mEGhhJfJsn6G
+         bZExUUsoO/XZJwHwR/wJVOSWw0IJsJHUUWW89mEwKHWEvxsurD+sTHaoaQM/hBzZKaZH
+         kVYbMi0dp2tXVr9gLivoIz08txFzckPldqbm/MnAFAipWWCfzQB1BI8i/r3vifE1jEyq
+         TO4WgrUufYjaQRw50jh7A0oJyqb2U3eBWE3LXyA9s9/kedPvi4NjcAyt8td/1aI66nx1
+         S3a67qACzLvP30LZVBWbCsEEvG42R4E1tqctIgpnsndNq1QEilWBAZW3xXWTNlPlKI89
+         P+6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+wVRmzW/JoYh4wj1/OxvIDIfvZg3+bbPF4TGllHByeo=;
+        b=jUjvqYM4wG5ahuOImD/c7lJOikvRq4uZ9TWIHrVzaUD3ozNgdEfTxRZ5HUVJvRAI8R
+         yc30qGE0pg94hrI2DqveABdMSZJZrBqKNUA7XqoxjUB7f9s7v7Hy5ZGfjtIEuf4MKYQD
+         yLNvqXAZkiYRjh5l1MGAsLwfLMDx/qIfTET02nPp9pBvNTtFvlqXp68eQROROV5fagRB
+         jnqcOxs/nTo2bch79Kwe5ch8Z9I6MAxJNZtBSmXuQZ0Vr/7qyw2SpZ2CB+RY6njEpven
+         akDerfsRQrxUaxl3bv8Qw8hHbEILWyOraOnBGubGicUgELwxbTMDle6zIwRZv4OQsp3b
+         v+fw==
+X-Gm-Message-State: APjAAAVLehTtfIqBVJn/l7gF+B/tl3F7SHF6/oBNACRxAcjSHe7ETebA
+        Dn9AIcDHg6lAe8vTT7IM0qg=
+X-Google-Smtp-Source: APXvYqxZJIo+DrVch1xOfdaPRvoZ7Z0gYMGV11K2Vzp3ohBK/+8b3wAuN4lPglvyD6dt0y2cNnZMYw==
+X-Received: by 2002:a37:aca:: with SMTP id 193mr5597981qkk.424.1582812225029;
+        Thu, 27 Feb 2020 06:03:45 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id h34sm3254712qtc.62.2020.02.27.06.03.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 06:03:44 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id BCC22403AD; Thu, 27 Feb 2020 11:03:41 -0300 (-03)
+Date:   Thu, 27 Feb 2020 11:03:41 -0300
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     zhe.he@windriver.com, peterz@infradead.org, mingo@redhat.com,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, mhiramat@kernel.org,
+        kstewart@linuxfoundation.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf: probe-file: Check return value of strlist__add
+ for -ENOMEM
+Message-ID: <20200227140341.GE10761@kernel.org>
+References: <1582727404-180095-1-git-send-email-zhe.he@windriver.com>
+ <20200226153153.GC217283@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200226153153.GC217283@krava>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building against tip/sched/core as of as ff7db0bf24db ("sched/numa: Prefer
-using an idle CPU as a migration target instead of comparing tasks") with
-the arm64 defconfig (which doesn't have CONFIG_SCHED_SMT set) leads to:
+Em Wed, Feb 26, 2020 at 04:31:53PM +0100, Jiri Olsa escreveu:
+> On Wed, Feb 26, 2020 at 10:30:04PM +0800, zhe.he@windriver.com wrote:
+> > From: He Zhe <zhe.he@windriver.com>
+> > 
+> > strlist__add may fail with -ENOMEM. Check it and give debugging hint in
+> > advance.
+> > 
+> > Signed-off-by: He Zhe <zhe.he@windriver.com>
+> 
+> Acked-by: Jiri Olsa <jolsa@redhat.com>
 
-  kernel/sched/fair.c:1525:20: warning: ‘test_idle_cores’ declared ‘static’ but never defined [-Wunused-function]
-   static inline bool test_idle_cores(int cpu, bool def);
-		      ^~~~~~~~~~~~~~~
+Thanks, applied,
 
-Rather than define it in its own CONFIG_SCHED_SMT #define island, bunch it
-up with test_idle_cores().
-
-Fixes: ff7db0bf24db ("sched/numa: Prefer using an idle CPU as a migration target instead of comparing tasks")
-[mgorman@techsingularity.net: Edit changelog, minor style change]
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- kernel/sched/fair.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fcc968669aea..10f9e6729fcf 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1520,9 +1520,6 @@ static inline bool is_core_idle(int cpu)
- 	return true;
- }
- 
--/* Forward declarations of select_idle_sibling helpers */
--static inline bool test_idle_cores(int cpu, bool def);
--
- struct task_numa_env {
- 	struct task_struct *p;
- 
-@@ -1558,9 +1555,11 @@ numa_type numa_classify(unsigned int imbalance_pct,
- 	return node_fully_busy;
- }
- 
-+#ifdef CONFIG_SCHED_SMT
-+/* Forward declarations of select_idle_sibling helpers */
-+static inline bool test_idle_cores(int cpu, bool def);
- static inline int numa_idle_core(int idle_core, int cpu)
- {
--#ifdef CONFIG_SCHED_SMT
- 	if (!static_branch_likely(&sched_smt_present) ||
- 	    idle_core >= 0 || !test_idle_cores(cpu, false))
- 		return idle_core;
-@@ -1571,10 +1570,15 @@ static inline int numa_idle_core(int idle_core, int cpu)
- 	 */
- 	if (is_core_idle(cpu))
- 		idle_core = cpu;
--#endif
- 
- 	return idle_core;
- }
-+#else
-+static inline int numa_idle_core(int idle_core, int cpu)
-+{
-+	return idle_core;
-+}
-+#endif
- 
- /*
-  * Gather all necessary information to make NUMA balancing placement
+- Arnaldo
