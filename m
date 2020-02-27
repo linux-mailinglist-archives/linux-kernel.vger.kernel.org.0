@@ -2,72 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD71E172830
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:57:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0E64172835
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:57:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730233AbgB0Sz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:55:29 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:53003 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729564AbgB0Sz2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:55:28 -0500
-X-Originating-IP: 90.76.143.236
-Received: from localhost (lfbn-tou-1-1075-236.w90-76.abo.wanadoo.fr [90.76.143.236])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id C27771C0003;
-        Thu, 27 Feb 2020 18:55:26 +0000 (UTC)
-Date:   Thu, 27 Feb 2020 19:55:26 +0100
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     Quentin Schulz <foss@0leil.net>
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/3] net: phy: mscc: implement RGMII skew delay
- configuration
-Message-ID: <20200227185526.GE1686232@kwain>
-References: <20200227152859.1687119-1-antoine.tenart@bootlin.com>
- <20200227152859.1687119-4-antoine.tenart@bootlin.com>
- <1f267571ddd9d1caf3e95afe31e47e30@0leil.net>
+        id S1730450AbgB0S4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:56:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39996 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729564AbgB0S4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:56:08 -0500
+Received: from paulmck-ThinkPad-P72.home (unknown [163.114.132.128])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8EE1246A0;
+        Thu, 27 Feb 2020 18:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582829767;
+        bh=LQ0WXpCM8stTZwuekeWBvrZIpMZ4vMG09DgE+tW0alM=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=Zj1TBHwtCe6lsfbnWxvbU9UjcbNrn6iznIUA8E4IBU6un3v8UopUr252wzDqsvqYG
+         R8NM6i01gs9TCU5zwnIk75Ynfz90tuKlgqKEhjXhIywHyp0SuA7SWWhNKGbdFQsO9m
+         IzmVAUtIBpUu4kzLBqeU6PR9HQl1GkjXBsq1oD80=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 16BCD35211EA; Thu, 27 Feb 2020 10:56:07 -0800 (PST)
+Date:   Thu, 27 Feb 2020 10:56:07 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Qian Cai <cai@lca.pw>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: suspicious RCU due to "Prefer using an idle CPU as a migration
+ target instead of comparing tasks"
+Message-ID: <20200227185607.GK2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <1582812549.7365.134.camel@lca.pw>
+ <1582814862.7365.135.camel@lca.pw>
+ <jhjimjsvyoe.mognet@arm.com>
+ <1582821327.7365.137.camel@lca.pw>
+ <1582822024.7365.139.camel@lca.pw>
+ <20200227171934.GI3818@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1f267571ddd9d1caf3e95afe31e47e30@0leil.net>
+In-Reply-To: <20200227171934.GI3818@techsingularity.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Quentin,
-
-On Thu, Feb 27, 2020 at 05:21:58PM +0100, Quentin Schulz wrote:
-> On 2020-02-27 16:28, Antoine Tenart wrote:
+On Thu, Feb 27, 2020 at 05:19:34PM +0000, Mel Gorman wrote:
+> On Thu, Feb 27, 2020 at 11:47:04AM -0500, Qian Cai wrote:
+> > On Thu, 2020-02-27 at 11:35 -0500, Qian Cai wrote:
+> > > On Thu, 2020-02-27 at 15:26 +0000, Valentin Schneider wrote:
+> > > > On Thu, Feb 27 2020, Qian Cai wrote:
+> > > > 
+> > > > > On Thu, 2020-02-27 at 09:09 -0500, Qian Cai wrote:
+> > > > > > The linux-next commit ff7db0bf24db ("sched/numa: Prefer using an idle CPU as a
+> > > > > > migration target instead of comparing tasks") introduced a boot warning,
+> > > > > 
+> > > > > This?
+> > > > > 
+> > > > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > > > index a61d83ea2930..ca780cd1eae2 100644
+> > > > > --- a/kernel/sched/fair.c
+> > > > > +++ b/kernel/sched/fair.c
+> > > > > @@ -1607,7 +1607,9 @@ static void update_numa_stats(struct task_numa_env *env,
+> > > > > if (ns->idle_cpu == -1)
+> > > > > ns->idle_cpu = cpu;
+> > > > > 
+> > > > > +rcu_read_lock();
+> > > > > idle_core = numa_idle_core(idle_core, cpu);
+> > > > > +rcu_read_unlock();
+> > > > > }
+> > > > > }
+> > > > > 
+> > > > 
+> > > > 
+> > > > Hmph right, we have
+> > > > numa_idle_core()->test_idle_cores()->rcu_dereference().
+> > > > 
+> > > > Dunno if it's preferable to wrap the entirety of update_numa_stats() or
+> > > > if that fine-grained read-side section is ok.
+> > > 
+> > > I could not come up with a better fine-grained one than this.
 > > 
-> > +	if (of_find_property(dev->of_node, "vsc8584,rgmii-skew-rx", NULL) ||
-> > +	    of_find_property(dev->of_node, "vsc8584,rgmii-skew-tx", NULL)) {
-> > +		of_property_read_u32(dev->of_node, "vsc8584,rgmii-skew-rx",
-> > &skew_rx);
-> > +		of_property_read_u32(dev->of_node, "vsc8584,rgmii-skew-tx",
-> > &skew_tx);
-> > +
+> > Correction -- this one,
+> > 
 > 
-> Reading the code, I think **!**of_property_read_u32 could directly replace
-> of_find_property in your condition and spare you two calls to that function.
+> Thanks for reporting this!
+> 
+> The proposed fix would be a lot of rcu locks and unlocks. While they are
+> cheap, they're not free and it's a fairly standard pattern to acquire
+> the rcu lock when scanning CPUs during a domain search (load balancing,
+> nohz balance, idle balance etc). While in this context the lock is only
+> needed for SMT, I do not think it's worthwhile fine-graining this or
+> conditionally acquiring the rcu lock so will we keep it simple?
 
-Sure.
+Indeed, scanning CPUs within a single RCU read-side critical section
+should be OK.  As long as each CPU isn't burning too much time.  ;-)
 
-> Final nitpick: I would see a check of the skew_rx/tx from DT before you put
-> them in the following line, they could be drastically different from 0-8
-> value set that you expect considering you're reading a u32 (pass them
-> through a GENMASK at least?)
+						Thanx, Paul
 
-That makes sense, I can add a check.
-
-Thanks,
-Antoine
-
--- 
-Antoine Ténart, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 11cdba201425..d34ac4ea5cee 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -1592,6 +1592,7 @@ static void update_numa_stats(struct task_numa_env *env,
+>  	memset(ns, 0, sizeof(*ns));
+>  	ns->idle_cpu = -1;
+>  
+> +	rcu_read_lock();
+>  	for_each_cpu(cpu, cpumask_of_node(nid)) {
+>  		struct rq *rq = cpu_rq(cpu);
+>  
+> @@ -1611,6 +1612,7 @@ static void update_numa_stats(struct task_numa_env *env,
+>  			idle_core = numa_idle_core(idle_core, cpu);
+>  		}
+>  	}
+> +	rcu_read_unlock();
+>  
+>  	ns->weight = cpumask_weight(cpumask_of_node(nid));
+>  
