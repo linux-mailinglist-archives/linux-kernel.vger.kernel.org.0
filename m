@@ -2,122 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA135170E82
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 03:36:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4DFF170EAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 03:48:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbgB0Cgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 21:36:47 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35964 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728211AbgB0Cgr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 21:36:47 -0500
-Received: by mail-oi1-f194.google.com with SMTP id c16so1799794oic.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 18:36:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FgDRP53fhRc849hJWqV/+PwhPD91i+668jgIHMCfsLU=;
-        b=NxVZZMPHkldyISQkt/j9q46fqdC/fTHYg2D8rxmu3JQ5FQTpEWAnsrfAW1INOGxpeL
-         7h/DwX4EseSXzq8DPxsx7tT89LiU3NA/LHAN4Sx7xeCJY7jLlWu2wlI7PxFLojwfUju3
-         XCXCv0GNC9Xz5gwwW7M6ZQvAHCRuijZey00McNQxQ9NVe7aC2WLqdpYWQ76fRU+M2TSD
-         fCSLoyGAnvdSsxpdtTUIC1FBt0jEnZJWNiN/eJ1V1HI2R4d3LlFZziKBBFNxThGx34jE
-         FKNM7vbPt25+yqO0LpSs/FWkruIUFSvFAow7Xv2uEwRevRGyVVEdbZ3TS4R6adpOe9Q4
-         7e2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FgDRP53fhRc849hJWqV/+PwhPD91i+668jgIHMCfsLU=;
-        b=n3eR2ESyBVjr+x9eU5eepm0FRqJLkUUw0IWScuKqLjd/bxVDyRuyBczAnQpxQAU8U+
-         zRKwBaJMTwSK14RnmPKukECX82eezAu3l4xZ9lvmxWPp1I0sztpZIvV6E5aOBX+78IPH
-         4zYDPwTy2/RCRDMqT5VrUPUmQwmRnGe1SulPgAOAFNVKSpmzE3oWxY2MW5ssILYyeepk
-         gYGxcev5npQE4/sKkBQxT+w6HECjZ4lu/U0OpKSQhS4wN9312o9L5YOrEENKBAEgT52d
-         36I6VInHv6h6+98bfNyafHgIuaBlvK5rdeNRlwHjiuTXIAyRW+CWdB8umjfo/4NhAOH/
-         +HMw==
-X-Gm-Message-State: APjAAAWJQ1SvjRyN9TE3YojqaGB4+FaTF00hO8X3egS47F4mKwdUTrmt
-        MYZyaKh0F8bVyzljqoYRcrQZNAVLcJJKgp5sHyBmb1W6
-X-Google-Smtp-Source: APXvYqxSTajCLv39pHIuIJCvAXLQ9cYdJjHOg6fBj1Fml1OToHYqpXa6HgimPFRGsX9+cCOOLCiKuAaOHamSjyEnxZA=
-X-Received: by 2002:a05:6808:30d:: with SMTP id i13mr1610873oie.144.1582771005560;
- Wed, 26 Feb 2020 18:36:45 -0800 (PST)
-MIME-Version: 1.0
-References: <20200219181219.54356-1-hannes@cmpxchg.org> <CALvZod7fya+o8mO+qo=FXjk3WgNje=2P=sxM5StgdBoGNeXRMg@mail.gmail.com>
- <1bfd6ea4-f012-5778-64c6-36731e69b5ba@linux.alibaba.com>
-In-Reply-To: <1bfd6ea4-f012-5778-64c6-36731e69b5ba@linux.alibaba.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 26 Feb 2020 18:36:34 -0800
-Message-ID: <CALvZod7kFNV7_+3pWiG7=bo0nFai8Qi+Hr5Cqa94nwUCPpWgJg@mail.gmail.com>
-Subject: Re: [PATCH] mm: memcontrol: asynchronous reclaim for memory.high
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Tejun Heo <tj@kernel.org>,
-        Roman Gushchin <guro@fb.com>, Linux MM <linux-mm@kvack.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728326AbgB0CsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 21:48:03 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:44290 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728173AbgB0CsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 21:48:02 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 21D861A017C;
+        Thu, 27 Feb 2020 03:48:01 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EF8DE1A15E1;
+        Thu, 27 Feb 2020 03:47:53 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0C964402AD;
+        Thu, 27 Feb 2020 10:47:44 +0800 (SGT)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
+        festevam@gmail.com, broonie@kernel.org,
+        alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
+        tiwai@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] ASoC: Add new module driver for new ASRC
+Date:   Thu, 27 Feb 2020 10:41:54 +0800
+Message-Id: <cover.1582770784.git.shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 3:59 PM Yang Shi <yang.shi@linux.alibaba.com> wrote:
->
->
->
-> On 2/26/20 12:25 PM, Shakeel Butt wrote:
-> > On Wed, Feb 19, 2020 at 10:12 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> >> We have received regression reports from users whose workloads moved
-> >> into containers and subsequently encountered new latencies. For some
-> >> users these were a nuisance, but for some it meant missing their SLA
-> >> response times. We tracked those delays down to cgroup limits, which
-> >> inject direct reclaim stalls into the workload where previously all
-> >> reclaim was handled my kswapd.
-> >>
-> >> This patch adds asynchronous reclaim to the memory.high cgroup limit
-> >> while keeping direct reclaim as a fallback. In our testing, this
-> >> eliminated all direct reclaim from the affected workload.
-> >>
-> >> memory.high has a grace buffer of about 4% between when it becomes
-> >> exceeded and when allocating threads get throttled. We can use the
-> >> same buffer for the async reclaimer to operate in. If the worker
-> >> cannot keep up and the grace buffer is exceeded, allocating threads
-> >> will fall back to direct reclaim before getting throttled.
-> >>
-> >> For irq-context, there's already async memory.high enforcement. Re-use
-> >> that work item for all allocating contexts, but switch it to the
-> >> unbound workqueue so reclaim work doesn't compete with the workload.
-> >> The work item is per cgroup, which means the workqueue infrastructure
-> >> will create at maximum one worker thread per reclaiming cgroup.
-> >>
-> >> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> >> ---
-> >>   mm/memcontrol.c | 60 +++++++++++++++++++++++++++++++++++++------------
-> >>   mm/vmscan.c     | 10 +++++++--
-> > This reminds me of the per-memcg kswapd proposal from LSFMM 2018
-> > (https://lwn.net/Articles/753162/).
->
-> Thanks for bringing this up.
->
-> >
-> > If I understand this correctly, the use-case is that the job instead
-> > of direct reclaiming (potentially in latency sensitive tasks), prefers
-> > a background non-latency sensitive task to do the reclaim. I am
-> > wondering if we can use the memory.high notification along with a new
-> > memcg interface (like memory.try_to_free_pages) to implement a user
-> > space background reclaimer. That would resolve the cpu accounting
-> > concerns as the user space background reclaimer can share the cpu cost
-> > with the task.
->
-> Actually I'm interested how you implement userspace reclaimer. Via a new
-> syscall or a variant of existing syscall?
->
+Add new module driver for new ASRC in i.MX8MN
 
-We have a per-memcg interface memory.try_to_free_pages on which user
-space can echo two numbers i.e. number of bytes to reclaim and a byte
-representing flags (I/O allowed or just reclaim zombies e.t.c).
-However nowadays we are just using it for zombie cleanup.
+Shengjiu Wang (4):
+  ASoC: fsl_asrc: Change asrc_width to asrc_format
+  ASoC: fsl_asrc: Move common definition to fsl_asrc_common
+  ASoC: dt-bindings: fsl_easrc: Add document for EASRC
+  ASoC: fsl_easrc: Add EASRC ASoC CPU DAI and platform drivers
 
-Shakeel
+changes in v3
+- add new commit "ASoC: fsl_asrc: Change asrc_width to asrc_format"
+- modify binding doc to yaml format
+- remove fsl_easrc_dma.c, make fsl_asrc_dma.c useable for easrc.
+
+changes in v2
+- change i.MX815 to i.MX8MN
+- Add changes in Kconfig and Makefile
+
+ .../devicetree/bindings/sound/fsl,easrc.yaml  |   96 +
+ sound/soc/fsl/Kconfig                         |   11 +
+ sound/soc/fsl/Makefile                        |    2 +
+ sound/soc/fsl/fsl_asrc.c                      |  104 +-
+ sound/soc/fsl/fsl_asrc.h                      |   74 +-
+ sound/soc/fsl/fsl_asrc_common.h               |  105 +
+ sound/soc/fsl/fsl_asrc_dma.c                  |   27 +-
+ sound/soc/fsl/fsl_easrc.c                     | 2119 +++++++++++++++++
+ sound/soc/fsl/fsl_easrc.h                     |  651 +++++
+ 9 files changed, 3067 insertions(+), 122 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/fsl,easrc.yaml
+ create mode 100644 sound/soc/fsl/fsl_asrc_common.h
+ create mode 100644 sound/soc/fsl/fsl_easrc.c
+ create mode 100644 sound/soc/fsl/fsl_easrc.h
+
+-- 
+2.21.0
+
