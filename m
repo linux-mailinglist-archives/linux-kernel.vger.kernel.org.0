@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8CC7171A2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C98F9171970
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:45:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731190AbgB0Nvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:51:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50628 "EHLO mail.kernel.org"
+        id S1730276AbgB0Now (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:44:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731162AbgB0Nva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:51:30 -0500
+        id S1730254AbgB0Noo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:44:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42EC220578;
-        Thu, 27 Feb 2020 13:51:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D60F420578;
+        Thu, 27 Feb 2020 13:44:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811489;
-        bh=gYdai52U37RmyPM0NQABvNslU8zWV5vhBd978yIcdmA=;
+        s=default; t=1582811084;
+        bh=Zqa2Lb07ENrV+14mEoLnG9RRpmguim7blZ99C4OTWqM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rWRiJVZM0Vr9ActhuC0rhLYnEKdcuMEeMPs0HZcsXKAbjmmEG3TIQRLu3RQZlUrMk
-         Gor+IaWXMhZ3b8Z6sqYor7CZphW1HgWxFuEVcDErR4c+cKmN+j0q5IDnwB9Gob2lSC
-         0mcWH6BTrqPK1HDQQLrmdSICjoTYZMx5cmEFZsNw=
+        b=aMMreT4GlsvxINut1CshsbYSudXjb9gfuzNBlCTbkQxAjo2l2qk7aIrgEt0npYH+3
+         hQnTrsfkmWWeXXOE/5D6gc0Kp1gVPd5/krOy0WTAxfK+0MydIQKmV9GOSIyWTg7Ln9
+         tzx6TUaXl08I3vns9UATpGhH1fPjFu7QlZ4BnNoQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 152/165] KVM: apic: avoid calculating pending eoi from an uninitialized val
-Date:   Thu, 27 Feb 2020 14:37:06 +0100
-Message-Id: <20200227132252.910073462@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+65c6c92d04304d0a8efc@syzkaller.appspotmail.com,
+        syzbot+e60ddfa48717579799dd@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 111/113] ALSA: seq: Avoid concurrent access to queue flags
+Date:   Thu, 27 Feb 2020 14:37:07 +0100
+Message-Id: <20200227132229.592257081@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +45,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 23520b2def95205f132e167cf5b25c609975e959 upstream.
+commit bb51e669fa49feb5904f452b2991b240ef31bc97 upstream.
 
-When pv_eoi_get_user() fails, 'val' may remain uninitialized and the return
-value of pv_eoi_get_pending() becomes random. Fix the issue by initializing
-the variable.
+The queue flags are represented in bit fields and the concurrent
+access may result in unexpected results.  Although the current code
+should be mostly OK as it's only reading a field while writing other
+fields as KCSAN reported, it's safer to cover both with a proper
+spinlock protection.
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+This patch fixes the possible concurrent read by protecting with
+q->owner_lock.  Also the queue owner field is protected as well since
+it's the field to be protected by the lock itself.
+
+Reported-by: syzbot+65c6c92d04304d0a8efc@syzkaller.appspotmail.com
+Reported-by: syzbot+e60ddfa48717579799dd@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/20200214111316.26939-2-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/lapic.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/core/seq/seq_queue.c |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -532,9 +532,11 @@ static inline bool pv_eoi_enabled(struct
- static bool pv_eoi_get_pending(struct kvm_vcpu *vcpu)
+--- a/sound/core/seq/seq_queue.c
++++ b/sound/core/seq/seq_queue.c
+@@ -415,6 +415,7 @@ int snd_seq_queue_check_access(int queue
+ int snd_seq_queue_set_owner(int queueid, int client, int locked)
  {
- 	u8 val;
--	if (pv_eoi_get_user(vcpu, &val) < 0)
-+	if (pv_eoi_get_user(vcpu, &val) < 0) {
- 		apic_debug("Can't read EOI MSR value: 0x%llx\n",
- 			   (unsigned long long)vcpu->arch.pv_eoi.msr_val);
-+		return false;
-+	}
- 	return val & 0x1;
- }
+ 	struct snd_seq_queue *q = queueptr(queueid);
++	unsigned long flags;
  
+ 	if (q == NULL)
+ 		return -EINVAL;
+@@ -424,8 +425,10 @@ int snd_seq_queue_set_owner(int queueid,
+ 		return -EPERM;
+ 	}
+ 
++	spin_lock_irqsave(&q->owner_lock, flags);
+ 	q->locked = locked ? 1 : 0;
+ 	q->owner = client;
++	spin_unlock_irqrestore(&q->owner_lock, flags);
+ 	queue_access_unlock(q);
+ 	queuefree(q);
+ 
+@@ -564,15 +567,17 @@ void snd_seq_queue_client_termination(in
+ 	unsigned long flags;
+ 	int i;
+ 	struct snd_seq_queue *q;
++	bool matched;
+ 
+ 	for (i = 0; i < SNDRV_SEQ_MAX_QUEUES; i++) {
+ 		if ((q = queueptr(i)) == NULL)
+ 			continue;
+ 		spin_lock_irqsave(&q->owner_lock, flags);
+-		if (q->owner == client)
++		matched = (q->owner == client);
++		if (matched)
+ 			q->klocked = 1;
+ 		spin_unlock_irqrestore(&q->owner_lock, flags);
+-		if (q->owner == client) {
++		if (matched) {
+ 			if (q->timer->running)
+ 				snd_seq_timer_stop(q->timer);
+ 			snd_seq_timer_reset(q->timer);
+@@ -764,6 +769,8 @@ void snd_seq_info_queues_read(struct snd
+ 	int i, bpm;
+ 	struct snd_seq_queue *q;
+ 	struct snd_seq_timer *tmr;
++	bool locked;
++	int owner;
+ 
+ 	for (i = 0; i < SNDRV_SEQ_MAX_QUEUES; i++) {
+ 		if ((q = queueptr(i)) == NULL)
+@@ -775,9 +782,14 @@ void snd_seq_info_queues_read(struct snd
+ 		else
+ 			bpm = 0;
+ 
++		spin_lock_irq(&q->owner_lock);
++		locked = q->locked;
++		owner = q->owner;
++		spin_unlock_irq(&q->owner_lock);
++
+ 		snd_iprintf(buffer, "queue %d: [%s]\n", q->queue, q->name);
+-		snd_iprintf(buffer, "owned by client    : %d\n", q->owner);
+-		snd_iprintf(buffer, "lock status        : %s\n", q->locked ? "Locked" : "Free");
++		snd_iprintf(buffer, "owned by client    : %d\n", owner);
++		snd_iprintf(buffer, "lock status        : %s\n", locked ? "Locked" : "Free");
+ 		snd_iprintf(buffer, "queued time events : %d\n", snd_seq_prioq_avail(q->timeq));
+ 		snd_iprintf(buffer, "queued tick events : %d\n", snd_seq_prioq_avail(q->tickq));
+ 		snd_iprintf(buffer, "timer state        : %s\n", tmr->running ? "Running" : "Stopped");
 
 
