@@ -2,224 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 422BF1722F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:14:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDB2D172336
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:25:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729919AbgB0QOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:14:06 -0500
-Received: from out28-100.mail.aliyun.com ([115.124.28.100]:48667 "EHLO
-        out28-100.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728059AbgB0QOG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:14:06 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07442147|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.342885-0.0140584-0.643056;DS=CONTINUE|ham_regular_dialog|0.0309896-0.00151637-0.967494;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03295;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=23;RT=23;SR=0;TI=SMTPD_---.GtIG5Hb_1582820033;
-Received: from 192.168.10.227(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GtIG5Hb_1582820033)
-          by smtp.aliyun-inc.com(10.147.43.95);
-          Fri, 28 Feb 2020 00:13:54 +0800
-Subject: Re: [PATCH v6 5/7] dt-bindings: MIPS: Document Ingenic SoCs binding.
-To:     Rob Herring <robh@kernel.org>
-References: <1582215889-113034-1-git-send-email-zhouyanjie@wanyeetech.com>
- <1582215889-113034-7-git-send-email-zhouyanjie@wanyeetech.com>
- <20200226162907.GA13489@bogus>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        tglx@linutronix.de, ralf@linux-mips.org, paulburton@kernel.org,
-        jiaxun.yang@flygoat.com, chenhc@lemote.com, sboyd@kernel.org,
-        mturquette@baylibre.com, mark.rutland@arm.com,
-        daniel.lezcano@linaro.org, paul@crapouillou.net,
-        geert+renesas@glider.be, krzk@kernel.org, ebiederm@xmission.com,
-        miquel.raynal@bootlin.com, keescook@chromium.org,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com,
-        dongsheng.qiu@ingenic.com
-From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Message-ID: <5E57EAC0.8040806@wanyeetech.com>
-Date:   Fri, 28 Feb 2020 00:13:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.8.0
+        id S1730198AbgB0QXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:23:04 -0500
+Received: from cmta17.telus.net ([209.171.16.90]:51125 "EHLO cmta17.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729854AbgB0QXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 11:23:03 -0500
+X-Greylist: delayed 487 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Feb 2020 11:23:03 EST
+Received: from dougxps ([173.180.45.4])
+        by cmsmtp with SMTP
+        id 7LoIj0r2W8J587LoKj8Wbc; Thu, 27 Feb 2020 09:14:54 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
+        t=1582820094; bh=ZC3zJhTmdVTP1C9nevNvq9j43Pk1T2WbFXhYeqpuxHw=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date;
+        b=wJAreRVN+25+kQJ9FKt2AZoHr5Fbpb5X95eDxiF9nfDgTFT6tQln3avn6613KJyYm
+         8EOV0E+qfU4mZuFYrwpzYllwVOQ5Y6dkBNz08SsdwwCjVJQQN1yJN5cQh6yGGp5XVQ
+         HW1d5YogNyhugYkgF5jps3ziG4Xe9bYtRjr7mBMIBiFBo11vzFn0qtwVyU7JPt/aFt
+         jmt9s0xrxznbW5UmP9TFPibFam4KSs4Ln5ewPiXaZ+eiPPVas9UADyQnaTiD/UUQV5
+         bDWtgUaeVSmnDAykhXlc79sk67puiduMZqcq0btF2AWNSI8iiqoGcvhWF9dWt4JVqD
+         gKugYrCnBHVHw==
+X-Telus-Authed: none
+X-Authority-Analysis: v=2.3 cv=FN5lONgs c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19
+ a=kj9zAlcOel0A:10 a=MnG76wI25wRpZeYXPywA:9 a=CjuIK1q_8ugA:10
+From:   "Doug Smythies" <dsmythies@telus.net>
+To:     <ego@linux.vnet.ibm.com>,
+        "'Pratik Rajesh Sampat'" <psampat@linux.ibm.com>
+Cc:     <linux-kernel@vger.kernel.org>, <rafael.j.wysocki@intel.com>,
+        <peterz@infradead.org>, <daniel.lezcano@linaro.org>,
+        <svaidy@linux.ibm.com>, <pratik.sampat@in.ibm.com>,
+        <pratik.r.sampat@gmail.com>
+References: <20200222070002.12897-1-psampat@linux.ibm.com> <20200225051306.GG12846@in.ibm.com>
+In-Reply-To: <20200225051306.GG12846@in.ibm.com>
+Subject: RE: [RFC 0/1] Weighted approach to gather and use history in TEO governor
+Date:   Thu, 27 Feb 2020 08:14:49 -0800
+Message-ID: <000001d5ed89$0b711340$225339c0$@net>
 MIME-Version: 1.0
-In-Reply-To: <20200226162907.GA13489@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Content-Language: en-ca
+Thread-Index: AdXrmkakMiSHE641SeKupowM12f2bgB6Kizg
+X-CMAE-Envelope: MS4wfMmfb5/ZngCXiI31Z1tX/Z0FU5WOm+rfzFUApn367J+61c0WssiDiVFtuaacfnVHSXDyqfcKLoLIQpV4BdIbU8NhtCsKRObAIHg8BLsMjq7S+wYCUg7v
+ yffjKTzj9Rvc68vgb58yaiDK3Yw2+2CP/d6gWVZaM6HlNfpWKPLxDYXkA0uiZmInuyVMuuiTx07cNPyDn+ZUxQwfH2z71wMQbYxS/cFMTB/ZpriFUtxCJTSI
+ DfcGzFQVIiewy0D/YBniAe0SPeAPO9Qe7eLwWCLdlm32UXdQ+D6AlVB5/jRcnprnifw+YuLzqc0WJmRuXQLaSGFzbgIr2xc/XkCFuqu3N8Gnn8XAQUZjZTCH
+ Ib3q7kN6jXMDrfCa0Z81f9Px9g+S6mUDZOOqfCIpcohCZhO6oJ2KXvOd/cRe8sGWP/JyqqknW+or9KwpFIs5dhgXYO6hLM/e1NXNDeKQOO846tG1oPY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On 2020.02.24 21:13 Gautham R Shenoy wrote:
 
-On 2020年02月27日 00:29, Rob Herring wrote:
-> On Fri, Feb 21, 2020 at 12:24:47AM +0800, 周琰杰 (Zhou Yanjie) wrote:
->> Document the available properties for the SoC root node and the
->> CPU nodes of the devicetree for the Ingenic XBurst SoCs.
->>
->> Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
->> Tested-by: Paul Boddie <paul@boddie.org.uk>
->> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->> ---
->>
->> Notes:
->>      v1->v2:
->>      Change the two Document from txt to yaml.
->>      
->>      v2->v3:
->>      Fix formatting errors.
->>      
->>      v3->v4:
->>      Fix bugs in the two yaml files.
->>      
->>      v4->v5:
->>      No change.
->>      
->>      v5->v6:
->>      Rewrite the two yaml files.
->>
->>   .../bindings/mips/ingenic/ingenic,cpu.yaml         | 61 ++++++++++++++++++++++
->>   .../bindings/mips/ingenic/ingenic,soc.yaml         | 34 ++++++++++++
->>   2 files changed, 95 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->>   create mode 100644 Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->> new file mode 100644
->> index 00000000..ad1fd86
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->> @@ -0,0 +1,61 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mips/ingenic/ingenic,cpu.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Bindings for Ingenic XBurst family CPUs
->> +
->> +maintainers:
->> +  - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-> Blank line here.
->
->> +description: |
-> Drop the '|'.
->
->> +  Ingenic XBurst family CPUs shall have the following properties.
->> +
->> +properties:
->> +  compatible:
->> +    oneOf:
->> +
->> +      - description: Ingenic XBurst®1 CPU Core
->> +        items:
->> +          - const: ingenic,xburst
->> +
->> +      - description: Ingenic XBurst®2 CPU Core
->> +        items:
->> +          - const: ingenic,xburst2
-> enum:
->    - ingenic,xburst  # Ingenic XBurst®1 CPU Core
->    - ingenic,xburst2 # Ingenic XBurst®2 CPU Core
->
-> Though I don't find the description really adds much.
->
->> +
->> +  reg:
->> +    description: |
->> +      The number of the CPU.
-> Drop this.
->
-> Add:
->
-> maxItems: 1
->
->> +
->> +required:
->> +  - device_type
->> +  - compatible
->> +  - reg
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/jz4780-cgu.h>
->> +
->> +    cpus {
->> +    	#address-cells = <1>;
->> +    	#size-cells = <0>;
->> +
->> +    	cpu0: cpu@0 {
->> +    		device_type = "cpu";
->> +    		compatible = "ingenic,xburst";
->> +    		reg = <0>;
->> +
->> +    		clocks = <&cgu JZ4780_CLK_CPU>;
->> +    		clock-names = "cpu";
-> Not documented.
->
->> +    	};
->> +
->> +    	cpu1: cpu@1 {
->> +    		device_type = "cpu";
->> +    		compatible = "ingenic,xburst";
->> +    		reg = <1>;
->> +
->> +    		clocks = <&cgu JZ4780_CLK_CORE1>;
->> +    		clock-names = "cpu";
->> +    	};
->> +    };
->> +...
->> diff --git a/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml b/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->> new file mode 100644
->> index 00000000..8943e73
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->> @@ -0,0 +1,34 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mips/ingenic/ingenic,soc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Bindings for Ingenic SoCs with XBurst CPU inside.
->> +
->> +maintainers:
->> +  - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-> Blank line.
->
->> +description: |
->> +  Ingenic SoCs with XBurst CPU inside shall have the following properties.
->> +
->> +properties:
->> +  $nodename:
->> +    const: '/'
->> +  compatible:
->> +    oneOf:
->> +
->> +      - description: Ingenic JZ47 Series Mobile Application Processor
->> +        items:
->> +          - const: ingenic,jz4740
->> +          - const: ingenic,jz4725b
->> +          - const: ingenic,jz4760
->> +          - const: ingenic,jz4760b
->> +          - const: ingenic,jz4770
->> +          - const: ingenic,jz4780
-> This is defining the root compatible is 6 strings. You want a enum here
-> I think.
->
->> +
->> +      - description: Ingenic X Series IoT Application Processor
->> +        items:
->> +          - const: ingenic,x1000
->> +          - const: ingenic,x1000e
->> +          - const: ingenic,x1500
-> Same here.
->
-> Did you validate your dts file with this schema using 'make dtbs_check'?
+...
 
-I am very sorry, to be honest, because I was not familiar with yaml before,
-the previous versions have not been verified, but when v6, I have set up
-the environment and checked it with "make dt_binding_check", but I
-don't know why the problems you pointed out above were not prompted
-during the check. I will fix these problems in the next version.
+> Could you also provide power measurements for the duration when the
+> system is completely idle for each of the variants of TEO governor ?
+> Is it the case that the benefits that we are seeing above are only due
+> to Wt. TEO being more conservative than TEO governor by always
+> choosing a shallower state ?
 
-Thanks and best regards!
+For what it's worth:
 
->
-> Rob
+CPU: Intel: i7-2600K  
+Kernel: 5.6-rc2 (teo) and + this patch set (wtteo)
+Note: in general, "idle" on this system is considerably more "idle" than most systems.
+Sample period: 5 minutes.
+CPU scaling driver: intel_cpufreq
+Governor: performance
+Deepest idle state: 4 (C6)
+
+teo:
+Test duration 740 minutes (12.33 hours).
+Average processor package power: 3.84 watts
+Idle state 0:    4.19 / minute
+Idle state 1:   29.26 / minute
+Idle state 2:   46.71 / minute
+Idle state 3:    7.42 / minute
+Idle state 4: 1124.55 / minute
+Total: 2.525 idle entries per cpu per second
+
+wtteo:
+Test duration 1095 minutes (18.25 hours).
+Average processor package power: 3.84 watts
+Idle state 0:    7.98 / minute
+Idle state 1:   30.49 / minute
+Idle state 2:   52.51 / minute
+Idle state 3:    8.65 / minute
+Idle state 4: 1125.33 / minute
+Total: 2.552 idle entries per cpu per second
+
+The above/below data for this test is incomplete because my program
+doesn't process it if there are not enough state entries per sample period.
+(I need to fix that for this type of test.)
+
+I have done a couple of other tests with this patch set,
+but nothing to report yet, as the differences have been minor so far.
+
+... Doug
+
 
