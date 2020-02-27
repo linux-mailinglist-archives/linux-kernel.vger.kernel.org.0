@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C9BD1720F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30BE9172043
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:42:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730268AbgB0Not (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:44:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40202 "EHLO mail.kernel.org"
+        id S1732238AbgB0Ol0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:41:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730249AbgB0Nol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:44:41 -0500
+        id S1730922AbgB0Nvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:51:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9ED7220578;
-        Thu, 27 Feb 2020 13:44:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A69C620801;
+        Thu, 27 Feb 2020 13:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811081;
-        bh=KQwUHAoHkKcrkxEfYWpKsiCRMt+TCx0PRmOlYP6sgUs=;
+        s=default; t=1582811492;
+        bh=x3AlGq53+s3MUKR4bQa59r6yc1MrhmZ2wwh474+RZ8w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MuM6bx50NhEENTAlYAXMoO233ukSqASS9mkth0hS0SeueTi6Yvhgd9OBgup4W7ZUM
-         507uW4MK+8joZBMufW8h4Qck4w3x5f/vE/Fvoqh8dDQzYacH3sQNwmf2yq8O2uKxNI
-         rbaoXKGpi+s3XXkDQf8VvrpgkRszo+KdNhFKC3k0=
+        b=XiLqJkWaXPnswp4ZrbPF1yRLshNlXGALle8DnR6Vfk2R3Q93KQm07M+ZMn9p0wO42
+         5PFqU7Hsq+qljVoMz8QmPP1k2WVbX7uTyQuE/2/RdDFfH0S3M1j0dYLKcDLG7NKzig
+         kyIkoXTq26IyBFiIPOfyg78lmWwDUj/NJcOY5EO4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+576cc007eb9f2c968200@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 110/113] ALSA: rawmidi: Avoid bit fields for state flags
-Date:   Thu, 27 Feb 2020 14:37:06 +0100
-Message-Id: <20200227132229.406937993@linuxfoundation.org>
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 153/165] Btrfs: fix btrfs_wait_ordered_range() so that it waits for all ordered extents
+Date:   Thu, 27 Feb 2020 14:37:07 +0100
+Message-Id: <20200227132253.043548520@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit dfa9a5efe8b932a84b3b319250aa3ac60c20f876 upstream.
+commit e75fd33b3f744f644061a4f9662bd63f5434f806 upstream.
 
-The rawmidi state flags (opened, append, active_sensing) are stored in
-bit fields that can be potentially racy when concurrently accessed
-without any locks.  Although the current code should be fine, there is
-also no any real benefit by keeping the bitfields for this kind of
-short number of members.
+In btrfs_wait_ordered_range() once we find an ordered extent that has
+finished with an error we exit the loop and don't wait for any other
+ordered extents that might be still in progress.
 
-This patch changes those bit fields flags to the simple bool fields.
-There should be no size increase of the snd_rawmidi_substream by this
-change.
+All the users of btrfs_wait_ordered_range() expect that there are no more
+ordered extents in progress after that function returns. So past fixes
+such like the ones from the two following commits:
 
-Reported-by: syzbot+576cc007eb9f2c968200@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/r/20200214111316.26939-4-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+  ff612ba7849964 ("btrfs: fix panic during relocation after ENOSPC before
+                   writeback happens")
+
+  28aeeac1dd3080 ("Btrfs: fix panic when starting bg cache writeout after
+                   IO error")
+
+don't work when there are multiple ordered extents in the range.
+
+Fix that by making btrfs_wait_ordered_range() wait for all ordered extents
+even after it finds one that had an error.
+
+Link: https://github.com/kdave/btrfs-progs/issues/228#issuecomment-569777554
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/sound/rawmidi.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/btrfs/ordered-data.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/include/sound/rawmidi.h
-+++ b/include/sound/rawmidi.h
-@@ -92,9 +92,9 @@ struct snd_rawmidi_substream {
- 	struct list_head list;		/* list of all substream for given stream */
- 	int stream;			/* direction */
- 	int number;			/* substream number */
--	unsigned int opened: 1,		/* open flag */
--		     append: 1,		/* append flag (merge more streams) */
--		     active_sensing: 1; /* send active sensing when close */
-+	bool opened;			/* open flag */
-+	bool append;			/* append flag (merge more streams) */
-+	bool active_sensing;		/* send active sensing when close */
- 	int use_count;			/* use counter (for output) */
- 	size_t bytes;
- 	struct snd_rawmidi *rmidi;
+--- a/fs/btrfs/ordered-data.c
++++ b/fs/btrfs/ordered-data.c
+@@ -837,10 +837,15 @@ int btrfs_wait_ordered_range(struct inod
+ 		}
+ 		btrfs_start_ordered_extent(inode, ordered, 1);
+ 		end = ordered->file_offset;
++		/*
++		 * If the ordered extent had an error save the error but don't
++		 * exit without waiting first for all other ordered extents in
++		 * the range to complete.
++		 */
+ 		if (test_bit(BTRFS_ORDERED_IOERR, &ordered->flags))
+ 			ret = -EIO;
+ 		btrfs_put_ordered_extent(ordered);
+-		if (ret || end == 0 || end == start)
++		if (end == 0 || end == start)
+ 			break;
+ 		end--;
+ 	}
 
 
