@@ -2,89 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE7FB1723E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:48:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E1661723EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:49:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730484AbgB0Qs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:48:57 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44808 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730194AbgB0Qs5 (ORCPT
+        id S1730511AbgB0QtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:49:05 -0500
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:29038 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730194AbgB0QtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:48:57 -0500
-Received: by mail-ed1-f68.google.com with SMTP id g19so4010299eds.11;
-        Thu, 27 Feb 2020 08:48:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=eyvg065g0/euNZVm3LdEpqtwEZkQRrm2w5Fpig4SXd4=;
-        b=Mr9HQW5NJWNHat6l1myE6wZLLZoDTDoOq8YyZclRM9kwFT4rVbP3k7sLI6QISjU3G4
-         4dBZDFPEkNhiOEBBrRxZ0EiGRtNfkaWJjaKkm+Y/7A9k0hqRybWrbBxQimdOhuOvPAmQ
-         fjUB7THLlrA7gdfOzfGw1lO8OW4wRV57zGg84DkX0rE80eb+Kip/7znycCuPEalEkx4B
-         XDJIiWy4S+sQKVHaa2oF3uddMdwHMHfzaSHZwQP9w18sy5LiJQiDUVx3VY3JLIlnn7xx
-         Lkoo6YMCsvQAL8BLTYUYyCtCwCFxGx5yIDBCptsnM31rlqEyDLEC+gq9ra2CeewiFR4N
-         BCqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eyvg065g0/euNZVm3LdEpqtwEZkQRrm2w5Fpig4SXd4=;
-        b=kLuumIRA40eFmodw1NkDzd1OYwQs3LhdifO4GUKmFYYnrkQGZBuwvKjIJJYiajWm6J
-         YgyfjkGVw05D0PeUS3spmmHwl8Iaw7rwHH//7MFNkUSMBA5ysmUK+Om5jZgwNN+FtW7D
-         8ACV+5PMakmkQpIfMu6m93tvc1QkM5/AKZDUObqzt/1pDeLas4zM4vT3Sd82afrGltwO
-         2Y1UMJD2eR+CdOG2iVxbgMpYlo2F+EitCCkZPE+fE1GsanpGuZkGRf/iDOXreIGloq4v
-         FMmiGk/9HGkJnI10WD70VzsTmbfevqSN6N8D6qyHennb+arz7u6lQ+HMmfXyaGWZa1tV
-         GDWA==
-X-Gm-Message-State: APjAAAVC9MWT4aLewbasS2jm5VtQ80cXf6dQ7s6Pi3gdwbD5SwKi1JOO
-        P0e8ZcKb6nQX3Khbz29rYGZ/bBDfMCkzTw==
-X-Google-Smtp-Source: APXvYqzLLozlNz92t5BtswquB9rtniU6OhbYmfbX3YxneKTC3x1oqZdBOiYukUAl1LYuCO5rwHGalg==
-X-Received: by 2002:a17:906:5208:: with SMTP id g8mr21431ejm.104.1582822135185;
-        Thu, 27 Feb 2020 08:48:55 -0800 (PST)
-Received: from localhost.localdomain ([5.2.67.190])
-        by smtp.googlemail.com with ESMTPSA id d2sm107455edr.97.2020.02.27.08.48.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 08:48:54 -0800 (PST)
-From:   Tomasz Maciej Nowak <tmn505@gmail.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com,
-        gregory.clement@bootlin.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: marvell: build ESPRESSObin variants
-Date:   Thu, 27 Feb 2020 17:48:42 +0100
-Message-Id: <20200227164842.11116-2-tmn505@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227164842.11116-1-tmn505@gmail.com>
-References: <20200227164842.11116-1-tmn505@gmail.com>
+        Thu, 27 Feb 2020 11:49:04 -0500
+From:   Luc Maranget <luc.maranget@inria.fr>
+X-IronPort-AV: E=Sophos;i="5.70,492,1574118000"; 
+   d="scan'208";a="437938070"
+Received: from yquem.paris.inria.fr (HELO yquem.inria.fr) ([128.93.101.33])
+  by mail2-relais-roc.national.inria.fr with ESMTP; 27 Feb 2020 17:49:02 +0100
+Received: by yquem.inria.fr (Postfix, from userid 18041)
+        id 065F9E1AAB; Thu, 27 Feb 2020 17:49:02 +0100 (CET)
+Date:   Thu, 27 Feb 2020 17:49:02 +0100
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] tools/memory-model: Add an exception for
+ limitations on _unless() family
+Message-ID: <20200227164901.jxwk26ey3i2n2yhu@yquem.inria.fr>
+References: <20200227004049.6853-2-boqun.feng@gmail.com>
+ <Pine.LNX.4.44L0.2002271129370.1730-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.2002271129370.1730-100000@iolanthe.rowland.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit adding ESPRESSObin variants didn't include those in Makefile to
-be built.
+> On Thu, 27 Feb 2020, Boqun Feng wrote:
+> 
+> > According to Luc, atomic_add_unless() is directly provided by herd7,
+> > therefore it can be used in litmus tests. So change the limitation
+> > section in README to unlimit the use of atomic_add_unless().
+> 
+> Is this really true?  Why does herd treat atomic_add_unless() different
+> from all the other atomic RMS ops?  All the other ones we support do
+> have entries in linux-kernel.def.
 
-Fixes: 447b878935 ("arm64: dts: marvell: add ESPRESSObin variants")
-Signed-off-by: Tomasz Maciej Nowak <tmn505@gmail.com>
----
- arch/arm64/boot/dts/marvell/Makefile | 3 +++
- 1 file changed, 3 insertions(+)
+I think this to be true :)
 
-diff --git a/arch/arm64/boot/dts/marvell/Makefile b/arch/arm64/boot/dts/marvell/Makefile
-index f1b5127f0b89..3e5f2e7a040c 100644
---- a/arch/arm64/boot/dts/marvell/Makefile
-+++ b/arch/arm64/boot/dts/marvell/Makefile
-@@ -2,6 +2,9 @@
- # Mvebu SoC Family
- dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-db.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-espressobin.dtb
-+dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-espressobin-emmc.dtb
-+dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-espressobin-v7.dtb
-+dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-espressobin-v7-emmc.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-turris-mox.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-uDPU.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += armada-7040-db.dtb
--- 
-2.25.1
+As far as I remember atomic_add_unless is quite different fron other atomic
+RMW ops and called for a specific all-OCaml implementation, without an
+entry in linux-kernel.def. As to  atomic_long_add_unless, I was not aware
+of its existence.
 
+--Luc
+
+> 
+> Alan
+> 
+> PS: It seems strange to support atomic_add_unless but not 
+> atomic_long_add_unless.  The difference between the two is trivial.
+> 
+> > 
+> > Cc: Luc Maranget <luc.maranget@inria.fr>
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > ---
+> >  tools/memory-model/README | 10 +++++++---
+> >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/tools/memory-model/README b/tools/memory-model/README
+> > index fc07b52f2028..409211b1c544 100644
+> > --- a/tools/memory-model/README
+> > +++ b/tools/memory-model/README
+> > @@ -207,11 +207,15 @@ The Linux-kernel memory model (LKMM) has the following limitations:
+> >  		case as a store release.
+> >  
+> >  	b.	The "unless" RMW operations are not currently modeled:
+> > -		atomic_long_add_unless(), atomic_add_unless(),
+> > -		atomic_inc_unless_negative(), and
+> > -		atomic_dec_unless_positive().  These can be emulated
+> > +		atomic_long_add_unless(), atomic_inc_unless_negative(),
+> > +		and atomic_dec_unless_positive().  These can be emulated
+> >  		in litmus tests, for example, by using atomic_cmpxchg().
+> >  
+> > +		One exception of this limitation is atomic_add_unless(),
+> > +		which is provided directly by herd7 (so no corresponding
+> > +		definition in linux-kernel.def). atomic_add_unless() is
+> > +		modeled by herd7 therefore it can be used in litmus tests.
+> > +
+> >  	c.	The call_rcu() function is not modeled.  It can be
+> >  		emulated in litmus tests by adding another process that
+> >  		invokes synchronize_rcu() and the body of the callback
+> > 
