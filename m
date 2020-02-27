@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC180171DCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F1E9171C12
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388952AbgB0OOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:14:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53674 "EHLO mail.kernel.org"
+        id S1730583AbgB0OI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:08:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388761AbgB0OOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:14:25 -0500
+        id S2387773AbgB0OIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:08:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4ED6224691;
-        Thu, 27 Feb 2020 14:14:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DD8120578;
+        Thu, 27 Feb 2020 14:08:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812864;
-        bh=JdRXDqZBkHKSRUEHPHeTiZ0rgHvb/ZVX7aWHKNc0Dks=;
+        s=default; t=1582812502;
+        bh=+aqyWWYn7K1Jqt2esBmrsHiElG8yI/T2Tl7qzGvNYJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q8RDeS0V69H5w1lqjRNWPrLq35jziXb/x+UDnn/C76XwlpJzdetbxSEPm/C8tzkl9
-         bnPP9xTYemaRoROKcMCb3G45bkR2q803QMCyEx5H0idg8rFOjr27WAqN/BCERHR1q5
-         YWJE3tFe2rIygTuxvH+DkiEhZLKGCDO+411hR2h0=
+        b=mamFFWmeiPuPkU7t3cBlL0SbjHbZoJykcfvgxStt2qzk2xjImgkgXRXW0mDVCOi/h
+         ZZj7HEya/FLYb4RnSEGtZMyIInrRzCSwkme0wzKDXYVpD4u6NvrjwqpN7kBbKowvRs
+         ACQlQtfrfR+7fK5m7hmePlCv81CHwkkXIB24iClA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pietro Oliva <pietroliva@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Subject: [PATCH 5.5 045/150] staging: rtl8188eu: Fix potential security hole
+        stable@vger.kernel.org,
+        Antonio Caggiano <antonio.caggiano@collabora.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Steven Price <steven.price@arm.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 5.4 042/135] drm/panfrost: perfcnt: Reserve/use the AS attached to the perfcnt MMU context
 Date:   Thu, 27 Feb 2020 14:36:22 +0100
-Message-Id: <20200227132239.646778367@linuxfoundation.org>
+Message-Id: <20200227132235.242964214@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +46,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Boris Brezillon <boris.brezillon@collabora.com>
 
-commit 499c405b2b80bb3a04425ba3541d20305e014d3e upstream.
+commit dde2bb2da01e96c17f0a44b4a3cf72a30e66e3ef upstream.
 
-In routine rtw_hostapd_ioctl(), the user-controlled p->length is assumed
-to be at least the size of struct ieee_param size, but this assumption is
-never checked. This could result in out-of-bounds read/write on kernel
-heap in case a p->length less than the size of struct ieee_param is
-specified by the user. If p->length is allowed to be greater than the size
-of the struct, then a malicious user could be wasting kernel memory.
-Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
+We need to use the AS attached to the opened FD when dumping counters.
 
-Reported by: Pietro Oliva <pietroliva@gmail.com>
-Cc: Pietro Oliva <pietroliva@gmail.com>
-Cc: Stable <stable@vger.kernel.org>
-Fixes: a2c60d42d97c ("staging: r8188eu: Add files for new driver - part 16")
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Link: https://lore.kernel.org/r/20200210180235.21691-2-Larry.Finger@lwfinger.net
+Reported-by: Antonio Caggiano <antonio.caggiano@collabora.com>
+Fixes: 7282f7645d06 ("drm/panfrost: Implement per FD address spaces")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+Reviewed-by: Steven Price <steven.price@arm.com>
+Tested-by: Antonio Caggiano <antonio.caggiano@collabora.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20200206141327.446127-1-boris.brezillon@collabora.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rtl8188eu/os_dep/ioctl_linux.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/panfrost/panfrost_mmu.c     |    7 ++++++-
+ drivers/gpu/drm/panfrost/panfrost_perfcnt.c |   11 ++++-------
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
---- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-@@ -2798,7 +2798,7 @@ static int rtw_hostapd_ioctl(struct net_
- 		goto out;
- 	}
+--- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
++++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+@@ -151,7 +151,12 @@ u32 panfrost_mmu_as_get(struct panfrost_
+ 	as = mmu->as;
+ 	if (as >= 0) {
+ 		int en = atomic_inc_return(&mmu->as_count);
+-		WARN_ON(en >= NUM_JOB_SLOTS);
++
++		/*
++		 * AS can be retained by active jobs or a perfcnt context,
++		 * hence the '+ 1' here.
++		 */
++		WARN_ON(en >= (NUM_JOB_SLOTS + 1));
  
--	if (!p->pointer) {
-+	if (!p->pointer || p->length != sizeof(struct ieee_param)) {
- 		ret = -EINVAL;
+ 		list_move(&mmu->list, &pfdev->as_lru_list);
  		goto out;
- 	}
+--- a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
++++ b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+@@ -73,7 +73,7 @@ static int panfrost_perfcnt_enable_locke
+ 	struct panfrost_file_priv *user = file_priv->driver_priv;
+ 	struct panfrost_perfcnt *perfcnt = pfdev->perfcnt;
+ 	struct drm_gem_shmem_object *bo;
+-	u32 cfg;
++	u32 cfg, as;
+ 	int ret;
+ 
+ 	if (user == perfcnt->user)
+@@ -126,12 +126,8 @@ static int panfrost_perfcnt_enable_locke
+ 
+ 	perfcnt->user = user;
+ 
+-	/*
+-	 * Always use address space 0 for now.
+-	 * FIXME: this needs to be updated when we start using different
+-	 * address space.
+-	 */
+-	cfg = GPU_PERFCNT_CFG_AS(0) |
++	as = panfrost_mmu_as_get(pfdev, perfcnt->mapping->mmu);
++	cfg = GPU_PERFCNT_CFG_AS(as) |
+ 	      GPU_PERFCNT_CFG_MODE(GPU_PERFCNT_CFG_MODE_MANUAL);
+ 
+ 	/*
+@@ -195,6 +191,7 @@ static int panfrost_perfcnt_disable_lock
+ 	drm_gem_shmem_vunmap(&perfcnt->mapping->obj->base.base, perfcnt->buf);
+ 	perfcnt->buf = NULL;
+ 	panfrost_gem_close(&perfcnt->mapping->obj->base.base, file_priv);
++	panfrost_mmu_as_put(pfdev, perfcnt->mapping->mmu);
+ 	panfrost_gem_mapping_put(perfcnt->mapping);
+ 	perfcnt->mapping = NULL;
+ 	pm_runtime_mark_last_busy(pfdev->dev);
 
 
