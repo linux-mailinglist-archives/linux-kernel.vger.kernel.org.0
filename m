@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8686171926
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:42:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59139171B07
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:58:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729759AbgB0NmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:42:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37220 "EHLO mail.kernel.org"
+        id S1732538AbgB0N6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:58:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729745AbgB0NmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:42:16 -0500
+        id S1732026AbgB0N6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:58:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C24A20578;
-        Thu, 27 Feb 2020 13:42:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68A182084E;
+        Thu, 27 Feb 2020 13:58:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810935;
-        bh=ngaZZQBiQNpS7ZnpG1OvrrWn13ouAk3LaZijKgYhraM=;
+        s=default; t=1582811930;
+        bh=0yK99yL8zKpPcOVGxgHL+LeT9F8hHMH66h3KyuMSC2o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QmJXWEuwnCgTmd6fJc9ou04cNHiVCjzWcPXNllECiCzsrwPeKMsz/2zM1K8sseWFp
-         47FAqe6qvQLg4kv2jYVyYjkpsbKdcOeJJawLQc6NF0hpfsgxgBkbuU4a9DFWdyKlg/
-         LLWKbPdR22GU+0hCw/YhSFUr55htOkRmdCpuGygY=
+        b=eGladwvypEXq5SymvP8oRfJVz9b/szS4qGWFshGAn+IleKnt74f1ILKnzjYaowM/r
+         855r7a+3INJMX1Co2eq9smQa3ZNdqTSX5hu9a+/tfCOkBp/lO0xQUUXdo8GDwxazSI
+         M1td8qLqg07KNlD+6USUU2cejiTFwqlzErOSbzVM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Allen Pais <allen.pais@oracle.com>,
-        Martin Wilck <mwilck@suse.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Ajay Kaher <akaher@vmware.com>
-Subject: [PATCH 4.4 017/113] scsi: qla2xxx: fix a potential NULL pointer dereference
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 119/237] drm/vmwgfx: prevent memory leak in vmw_cmdbuf_res_add
 Date:   Thu, 27 Feb 2020 14:35:33 +0100
-Message-Id: <20200227132214.467764627@linuxfoundation.org>
+Message-Id: <20200227132305.578646199@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,76 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Allen Pais <allen.pais@oracle.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit 35a79a63517981a8aea395497c548776347deda8 upstream.
+[ Upstream commit 40efb09a7f53125719e49864da008495e39aaa1e ]
 
-alloc_workqueue is not checked for errors and as a result a potential
-NULL dereference could occur.
+In vmw_cmdbuf_res_add if drm_ht_insert_item fails the allocated memory
+for cres should be released.
 
-Link: https://lore.kernel.org/r/1568824618-4366-1-git-send-email-allen.pais@oracle.com
-Signed-off-by: Allen Pais <allen.pais@oracle.com>
-Reviewed-by: Martin Wilck <mwilck@suse.com>
-Acked-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[Ajay: Rewrote this patch for v4.4.y, as 4.4.y codebase is different from mainline]
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 18e4a4669c50 ("drm/vmwgfx: Fix compat shader namespace")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_os.c |   19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -429,6 +429,12 @@ static int qla25xx_setup_mode(struct scs
- 		goto fail;
- 	}
- 	if (ql2xmultique_tag) {
-+		ha->wq = alloc_workqueue("qla2xxx_wq", WQ_MEM_RECLAIM, 1);
-+		if (unlikely(!ha->wq)) {
-+			ql_log(ql_log_warn, vha, 0x01e0,
-+			    "Failed to alloc workqueue.\n");
-+			goto fail;
-+		}
- 		/* create a request queue for IO */
- 		options |= BIT_7;
- 		req = qla25xx_create_req_que(ha, options, 0, 0, -1,
-@@ -436,9 +442,8 @@ static int qla25xx_setup_mode(struct scs
- 		if (!req) {
- 			ql_log(ql_log_warn, vha, 0x00e0,
- 			    "Failed to create request queue.\n");
--			goto fail;
-+			goto fail2;
- 		}
--		ha->wq = alloc_workqueue("qla2xxx_wq", WQ_MEM_RECLAIM, 1);
- 		vha->req = ha->req_q_map[req];
- 		options |= BIT_1;
- 		for (ques = 1; ques < ha->max_rsp_queues; ques++) {
-@@ -446,7 +451,7 @@ static int qla25xx_setup_mode(struct scs
- 			if (!ret) {
- 				ql_log(ql_log_warn, vha, 0x00e8,
- 				    "Failed to create response queue.\n");
--				goto fail2;
-+				goto fail3;
- 			}
- 		}
- 		ha->flags.cpu_affinity_enabled = 1;
-@@ -460,11 +465,13 @@ static int qla25xx_setup_mode(struct scs
- 		    ha->max_rsp_queues, ha->max_req_queues);
- 	}
- 	return 0;
--fail2:
-+
-+fail3:
- 	qla25xx_delete_queues(vha);
--	destroy_workqueue(ha->wq);
--	ha->wq = NULL;
- 	vha->req = ha->req_q_map[0];
-+fail2:
-+        destroy_workqueue(ha->wq);
-+        ha->wq = NULL;
- fail:
- 	ha->mqenable = 0;
- 	kfree(ha->req_q_map);
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
+index 36c7b6c839c0d..738ad2fc79a25 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf_res.c
+@@ -210,8 +210,10 @@ int vmw_cmdbuf_res_add(struct vmw_cmdbuf_res_manager *man,
+ 
+ 	cres->hash.key = user_key | (res_type << 24);
+ 	ret = drm_ht_insert_item(&man->resources, &cres->hash);
+-	if (unlikely(ret != 0))
++	if (unlikely(ret != 0)) {
++		kfree(cres);
+ 		goto out_invalid_key;
++	}
+ 
+ 	cres->state = VMW_CMDBUF_RES_ADD;
+ 	cres->res = vmw_resource_reference(res);
+-- 
+2.20.1
+
 
 
