@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E947E171B1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACAB8171A05
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:50:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732626AbgB0N7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:59:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60942 "EHLO mail.kernel.org"
+        id S1731153AbgB0NuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:50:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732611AbgB0N7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:59:32 -0500
+        id S1731104AbgB0Ntt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:49:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92C912084E;
-        Thu, 27 Feb 2020 13:59:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 543AE20578;
+        Thu, 27 Feb 2020 13:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811972;
-        bh=pxjce3r46L/EQbcrQrcK0UOGjI+bXzSAe2pNJJEVYtQ=;
+        s=default; t=1582811388;
+        bh=HmgcdBfpLCYwWs0WNfXH3KGRuc+or5T24nV7akRuSHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PZ2gwio0SNzJkmZNZJUV0GdW8IAnpUJDv8qP7WBTV1rOWGiF4xx70neXaeXcpjqgJ
-         O36RZB6q48uvuRE438w/OFxIJoCZ3ElYKr/cdmjwQPBJbwzrfkBR6e3NJxwd68WwGf
-         P7mflFzLV+BOdyj4rIQ/bGEYSwLcCjq8O6DlWXTE=
+        b=gkT6DucKl3B7UZ5EXeAcLUntGqfpLtoiwg7EoQPnPKai+r2N5RvtWGATyIkMaJnu3
+         StFY/o4UqWk7culgeOKLsduhDdOAfflbl03r5O+K5RTRdWg2+9MdfJM+H9JyDWFcDd
+         6yKOHf6eolvCbVi0/3qRgiWwYurEfq2Fz+42dTF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 4.14 172/237] thunderbolt: Prevent crash if non-active NVMem file is read
-Date:   Thu, 27 Feb 2020 14:36:26 +0100
-Message-Id: <20200227132309.084489003@linuxfoundation.org>
+        stable@vger.kernel.org, Zhiqiang Liu <liuzhiqiang26@huawei.com>,
+        Bob Liu <bob.liu@oracle.com>, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 113/165] brd: check and limit max_part par
+Date:   Thu, 27 Feb 2020 14:36:27 +0100
+Message-Id: <20200227132247.603365667@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,63 +44,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Zhiqiang Liu <liuzhiqiang26@huawei.com>
 
-commit 03cd45d2e219301880cabc357e3cf478a500080f upstream.
+[ Upstream commit c8ab422553c81a0eb070329c63725df1cd1425bc ]
 
-The driver does not populate .reg_read callback for the non-active NVMem
-because the file is supposed to be write-only. However, it turns out
-NVMem subsystem does not yet support this and expects that the .reg_read
-callback is provided. If user reads the binary attribute it triggers
-NULL pointer dereference like this one:
+In brd_init func, rd_nr num of brd_device are firstly allocated
+and add in brd_devices, then brd_devices are traversed to add each
+brd_device by calling add_disk func. When allocating brd_device,
+the disk->first_minor is set to i * max_part, if rd_nr * max_part
+is larger than MINORMASK, two different brd_device may have the same
+devt, then only one of them can be successfully added.
+when rmmod brd.ko, it will cause oops when calling brd_exit.
 
-  BUG: kernel NULL pointer dereference, address: 0000000000000000
-  ...
-  Call Trace:
-   bin_attr_nvmem_read+0x64/0x80
-   kernfs_fop_read+0xa7/0x180
-   vfs_read+0xbd/0x170
-   ksys_read+0x5a/0xd0
-   do_syscall_64+0x43/0x150
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Follow those steps:
+  # modprobe brd rd_nr=3 rd_size=102400 max_part=1048576
+  # rmmod brd
+then, the oops will appear.
 
-Fix this in the driver by providing .reg_read callback that always
-returns an error.
+Oops log:
+[  726.613722] Call trace:
+[  726.614175]  kernfs_find_ns+0x24/0x130
+[  726.614852]  kernfs_find_and_get_ns+0x44/0x68
+[  726.615749]  sysfs_remove_group+0x38/0xb0
+[  726.616520]  blk_trace_remove_sysfs+0x1c/0x28
+[  726.617320]  blk_unregister_queue+0x98/0x100
+[  726.618105]  del_gendisk+0x144/0x2b8
+[  726.618759]  brd_exit+0x68/0x560 [brd]
+[  726.619501]  __arm64_sys_delete_module+0x19c/0x2a0
+[  726.620384]  el0_svc_common+0x78/0x130
+[  726.621057]  el0_svc_handler+0x38/0x78
+[  726.621738]  el0_svc+0x8/0xc
+[  726.622259] Code: aa0203f6 aa0103f7 aa1e03e0 d503201f (7940e260)
 
-Reported-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-Fixes: e6b245ccd524 ("thunderbolt: Add support for host and device NVM firmware upgrade")
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200213095604.1074-1-mika.westerberg@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Here, we add brd_check_and_reset_par func to check and limit max_part par.
 
+--
+V5->V6:
+ - remove useless code
+
+V4->V5:(suggested by Ming Lei)
+ - make sure max_part is not larger than DISK_MAX_PARTS
+
+V3->V4:(suggested by Ming Lei)
+ - remove useless change
+ - add one limit of max_part
+
+V2->V3: (suggested by Ming Lei)
+ - clear .minors when running out of consecutive minor space in brd_alloc
+ - remove limit of rd_nr
+
+V1->V2:
+ - add more checks in brd_check_par_valid as suggested by Ming Lei.
+
+Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Reviewed-by: Bob Liu <bob.liu@oracle.com>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thunderbolt/switch.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/block/brd.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -240,6 +240,12 @@ static int tb_switch_nvm_read(void *priv
- 	return dma_port_flash_read(sw->dma_port, offset, val, bytes);
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index 0c76d4016eebe..7e35574a17dfc 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -581,6 +581,25 @@ static struct kobject *brd_probe(dev_t dev, int *part, void *data)
+ 	return kobj;
  }
  
-+static int tb_switch_nvm_no_read(void *priv, unsigned int offset, void *val,
-+				 size_t bytes)
++static inline void brd_check_and_reset_par(void)
 +{
-+	return -EPERM;
++	if (unlikely(!max_part))
++		max_part = 1;
++
++	/*
++	 * make sure 'max_part' can be divided exactly by (1U << MINORBITS),
++	 * otherwise, it is possiable to get same dev_t when adding partitions.
++	 */
++	if ((1U << MINORBITS) % max_part != 0)
++		max_part = 1UL << fls(max_part);
++
++	if (max_part > DISK_MAX_PARTS) {
++		pr_info("brd: max_part can't be larger than %d, reset max_part = %d.\n",
++			DISK_MAX_PARTS, DISK_MAX_PARTS);
++		max_part = DISK_MAX_PARTS;
++	}
 +}
 +
- static int tb_switch_nvm_write(void *priv, unsigned int offset, void *val,
- 			       size_t bytes)
+ static int __init brd_init(void)
  {
-@@ -285,6 +291,7 @@ static struct nvmem_device *register_nvm
- 		config.read_only = true;
- 	} else {
- 		config.name = "nvm_non_active";
-+		config.reg_read = tb_switch_nvm_no_read;
- 		config.reg_write = tb_switch_nvm_write;
- 		config.root_only = true;
- 	}
+ 	struct brd_device *brd, *next;
+@@ -604,8 +623,7 @@ static int __init brd_init(void)
+ 	if (register_blkdev(RAMDISK_MAJOR, "ramdisk"))
+ 		return -EIO;
+ 
+-	if (unlikely(!max_part))
+-		max_part = 1;
++	brd_check_and_reset_par();
+ 
+ 	for (i = 0; i < rd_nr; i++) {
+ 		brd = brd_alloc(i);
+-- 
+2.20.1
+
 
 
