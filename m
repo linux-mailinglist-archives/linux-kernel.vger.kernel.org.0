@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B017171C43
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:10:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EA4C171B9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:04:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388563AbgB0OKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:10:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48686 "EHLO mail.kernel.org"
+        id S1729198AbgB0OEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:04:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388302AbgB0OKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:10:30 -0500
+        id S2387488AbgB0ODy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:03:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3019120714;
-        Thu, 27 Feb 2020 14:10:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B1B121D7E;
+        Thu, 27 Feb 2020 14:03:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812629;
-        bh=jmPtdgeeqMMt7a7698ToRbbA8kl/TlVulUpJZ7oGaa0=;
+        s=default; t=1582812231;
+        bh=rTu3ti0humYpTRCyT6NSAHqRBBdiLqCelW4lGYzZI9A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xgvyFQmM3lWHswnkfBtlpIZPPmqAsmu5zob/f8rr+gLC/2T93aHncK6IC5Kd1efGH
-         1imBq0PScaJsqc6sNkXF95MDI6hW9GhVhWGlkPajFOimVrmZ3emZxJvfxJDOeDtsNe
-         96VerU63tF8DrLtcTJ4EJpDU1DrHJv33Y//+zz3E=
+        b=Llo+ugUhJGcX/7vzbwBGSfgk0UTu1kYWn6NYL5NFywSKgezoWuEvun4QS7C53eb0s
+         vUJdKUthL30o+NWFIsd76LjKnrhe5n18jeDuwR5KehdRLUZxWM7Wsmx83BhvZJYKeS
+         xTmnDUW4Z8F+8yQQ2XmgF3uachgLTJVO8X5uWSXM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
-        Christoph Hellwig <hch@lst.de>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Keith Busch <kbusch@kernel.org>
-Subject: [PATCH 5.4 064/135] nvme-multipath: Fix memory leak with ana_log_buf
+        stable@vger.kernel.org, Yan Wang <wangyan122@huawei.com>,
+        Theodore Tso <tytso@mit.edu>, Jun Piao <piaojun@huawei.com>,
+        Jan Kara <jack@suse.cz>, stable@kernel.org
+Subject: [PATCH 4.19 36/97] jbd2: fix ocfs2 corrupt when clearing block group bits
 Date:   Thu, 27 Feb 2020 14:36:44 +0100
-Message-Id: <20200227132238.788230946@linuxfoundation.org>
+Message-Id: <20200227132220.464633325@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,66 +44,180 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: wangyan <wangyan122@huawei.com>
 
-commit 3b7830904e17202524bad1974505a9bfc718d31f upstream.
+commit 8eedabfd66b68a4623beec0789eac54b8c9d0fb6 upstream.
 
-kmemleak reports a memory leak with the ana_log_buf allocated by
-nvme_mpath_init():
+I found a NULL pointer dereference in ocfs2_block_group_clear_bits().
+The running environment:
+	kernel version: 4.19
+	A cluster with two nodes, 5 luns mounted on two nodes, and do some
+	file operations like dd/fallocate/truncate/rm on every lun with storage
+	network disconnection.
 
-unreferenced object 0xffff888120e94000 (size 8208):
-  comm "nvme", pid 6884, jiffies 4295020435 (age 78786.312s)
-    hex dump (first 32 bytes):
-      00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
-      01 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00  ................
-    backtrace:
-      [<00000000e2360188>] kmalloc_order+0x97/0xc0
-      [<0000000079b18dd4>] kmalloc_order_trace+0x24/0x100
-      [<00000000f50c0406>] __kmalloc+0x24c/0x2d0
-      [<00000000f31a10b9>] nvme_mpath_init+0x23c/0x2b0
-      [<000000005802589e>] nvme_init_identify+0x75f/0x1600
-      [<0000000058ef911b>] nvme_loop_configure_admin_queue+0x26d/0x280
-      [<00000000673774b9>] nvme_loop_create_ctrl+0x2a7/0x710
-      [<00000000f1c7a233>] nvmf_dev_write+0xc66/0x10b9
-      [<000000004199f8d0>] __vfs_write+0x50/0xa0
-      [<0000000065466fef>] vfs_write+0xf3/0x280
-      [<00000000b0db9a8b>] ksys_write+0xc6/0x160
-      [<0000000082156b91>] __x64_sys_write+0x43/0x50
-      [<00000000c34fbb6d>] do_syscall_64+0x77/0x2f0
-      [<00000000bbc574c9>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+The fallocate operation on dm-23-45 caused an null pointer dereference.
 
-nvme_mpath_init() is called by nvme_init_identify() which is called in
-multiple places (nvme_reset_work(), nvme_passthru_end(), etc). This
-means nvme_mpath_init() may be called multiple times before
-nvme_mpath_uninit() (which is only called on nvme_free_ctrl()).
+The information of NULL pointer dereference as follows:
+	[577992.878282] JBD2: Error -5 detected when updating journal superblock for dm-23-45.
+	[577992.878290] Aborting journal on device dm-23-45.
+	...
+	[577992.890778] JBD2: Error -5 detected when updating journal superblock for dm-24-46.
+	[577992.890908] __journal_remove_journal_head: freeing b_committed_data
+	[577992.890916] (fallocate,88392,52):ocfs2_extend_trans:474 ERROR: status = -30
+	[577992.890918] __journal_remove_journal_head: freeing b_committed_data
+	[577992.890920] (fallocate,88392,52):ocfs2_rotate_tree_right:2500 ERROR: status = -30
+	[577992.890922] __journal_remove_journal_head: freeing b_committed_data
+	[577992.890924] (fallocate,88392,52):ocfs2_do_insert_extent:4382 ERROR: status = -30
+	[577992.890928] (fallocate,88392,52):ocfs2_insert_extent:4842 ERROR: status = -30
+	[577992.890928] __journal_remove_journal_head: freeing b_committed_data
+	[577992.890930] (fallocate,88392,52):ocfs2_add_clusters_in_btree:4947 ERROR: status = -30
+	[577992.890933] __journal_remove_journal_head: freeing b_committed_data
+	[577992.890939] __journal_remove_journal_head: freeing b_committed_data
+	[577992.890949] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
+	[577992.890950] Mem abort info:
+	[577992.890951]   ESR = 0x96000004
+	[577992.890952]   Exception class = DABT (current EL), IL = 32 bits
+	[577992.890952]   SET = 0, FnV = 0
+	[577992.890953]   EA = 0, S1PTW = 0
+	[577992.890954] Data abort info:
+	[577992.890955]   ISV = 0, ISS = 0x00000004
+	[577992.890956]   CM = 0, WnR = 0
+	[577992.890958] user pgtable: 4k pages, 48-bit VAs, pgdp = 00000000f8da07a9
+	[577992.890960] [0000000000000020] pgd=0000000000000000
+	[577992.890964] Internal error: Oops: 96000004 [#1] SMP
+	[577992.890965] Process fallocate (pid: 88392, stack limit = 0x00000000013db2fd)
+	[577992.890968] CPU: 52 PID: 88392 Comm: fallocate Kdump: loaded Tainted: G        W  OE     4.19.36 #1
+	[577992.890969] Hardware name: Huawei TaiShan 2280 V2/BC82AMDD, BIOS 0.98 08/25/2019
+	[577992.890971] pstate: 60400009 (nZCv daif +PAN -UAO)
+	[577992.891054] pc : _ocfs2_free_suballoc_bits+0x63c/0x968 [ocfs2]
+	[577992.891082] lr : _ocfs2_free_suballoc_bits+0x618/0x968 [ocfs2]
+	[577992.891084] sp : ffff0000c8e2b810
+	[577992.891085] x29: ffff0000c8e2b820 x28: 0000000000000000
+	[577992.891087] x27: 00000000000006f3 x26: ffffa07957b02e70
+	[577992.891089] x25: ffff807c59d50000 x24: 00000000000006f2
+	[577992.891091] x23: 0000000000000001 x22: ffff807bd39abc30
+	[577992.891093] x21: ffff0000811d9000 x20: ffffa07535d6a000
+	[577992.891097] x19: ffff000001681638 x18: ffffffffffffffff
+	[577992.891098] x17: 0000000000000000 x16: ffff000080a03df0
+	[577992.891100] x15: ffff0000811d9708 x14: 203d207375746174
+	[577992.891101] x13: 73203a524f525245 x12: 20373439343a6565
+	[577992.891103] x11: 0000000000000038 x10: 0101010101010101
+	[577992.891106] x9 : ffffa07c68a85d70 x8 : 7f7f7f7f7f7f7f7f
+	[577992.891109] x7 : 0000000000000000 x6 : 0000000000000080
+	[577992.891110] x5 : 0000000000000000 x4 : 0000000000000002
+	[577992.891112] x3 : ffff000001713390 x2 : 2ff90f88b1c22f00
+	[577992.891114] x1 : ffff807bd39abc30 x0 : 0000000000000000
+	[577992.891116] Call trace:
+	[577992.891139]  _ocfs2_free_suballoc_bits+0x63c/0x968 [ocfs2]
+	[577992.891162]  _ocfs2_free_clusters+0x100/0x290 [ocfs2]
+	[577992.891185]  ocfs2_free_clusters+0x50/0x68 [ocfs2]
+	[577992.891206]  ocfs2_add_clusters_in_btree+0x198/0x5e0 [ocfs2]
+	[577992.891227]  ocfs2_add_inode_data+0x94/0xc8 [ocfs2]
+	[577992.891248]  ocfs2_extend_allocation+0x1bc/0x7a8 [ocfs2]
+	[577992.891269]  ocfs2_allocate_extents+0x14c/0x338 [ocfs2]
+	[577992.891290]  __ocfs2_change_file_space+0x3f8/0x610 [ocfs2]
+	[577992.891309]  ocfs2_fallocate+0xe4/0x128 [ocfs2]
+	[577992.891316]  vfs_fallocate+0x11c/0x250
+	[577992.891317]  ksys_fallocate+0x54/0x88
+	[577992.891319]  __arm64_sys_fallocate+0x28/0x38
+	[577992.891323]  el0_svc_common+0x78/0x130
+	[577992.891325]  el0_svc_handler+0x38/0x78
+	[577992.891327]  el0_svc+0x8/0xc
 
-When nvme_mpath_init() is called multiple times, it overwrites the
-ana_log_buf pointer with a new allocation, thus leaking the previous
-allocation.
+My analysis process as follows:
+ocfs2_fallocate
+  __ocfs2_change_file_space
+    ocfs2_allocate_extents
+      ocfs2_extend_allocation
+        ocfs2_add_inode_data
+          ocfs2_add_clusters_in_btree
+            ocfs2_insert_extent
+              ocfs2_do_insert_extent
+                ocfs2_rotate_tree_right
+                  ocfs2_extend_rotate_transaction
+                    ocfs2_extend_trans
+                      jbd2_journal_restart
+                        jbd2__journal_restart
+                          /* handle->h_transaction is NULL,
+                           * is_handle_aborted(handle) is true
+                           */
+                          handle->h_transaction = NULL;
+                          start_this_handle
+                            return -EROFS;
+            ocfs2_free_clusters
+              _ocfs2_free_clusters
+                _ocfs2_free_suballoc_bits
+                  ocfs2_block_group_clear_bits
+                    ocfs2_journal_access_gd
+                      __ocfs2_journal_access
+                        jbd2_journal_get_undo_access
+                          /* I think jbd2_write_access_granted() will
+                           * return true, because do_get_write_access()
+                           * will return -EROFS.
+                           */
+                          if (jbd2_write_access_granted(...)) return 0;
+                          do_get_write_access
+                            /* handle->h_transaction is NULL, it will
+                             * return -EROFS here, so do_get_write_access()
+                             * was not called.
+                             */
+                            if (is_handle_aborted(handle)) return -EROFS;
+                    /* bh2jh(group_bh) is NULL, caused NULL
+                       pointer dereference */
+                    undo_bg = (struct ocfs2_group_desc *)
+                                bh2jh(group_bh)->b_committed_data;
 
-To fix this, free ana_log_buf before allocating a new one.
+If handle->h_transaction == NULL, then jbd2_write_access_granted()
+does not really guarantee that journal_head will stay around,
+not even speaking of its b_committed_data. The bh2jh(group_bh)
+can be removed after ocfs2_journal_access_gd() and before call
+"bh2jh(group_bh)->b_committed_data". So, we should move
+is_handle_aborted() check from do_get_write_access() into
+jbd2_journal_get_undo_access() and jbd2_journal_get_write_access()
+before the call to jbd2_write_access_granted().
 
-Fixes: 0d0b660f214dc490 ("nvme: add ANA support")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
+Link: https://lore.kernel.org/r/f72a623f-b3f1-381a-d91d-d22a1c83a336@huawei.com
+Signed-off-by: Yan Wang <wangyan122@huawei.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jun Piao <piaojun@huawei.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvme/host/multipath.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/jbd2/transaction.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -711,6 +711,7 @@ int nvme_mpath_init(struct nvme_ctrl *ct
- 	}
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -831,8 +831,6 @@ do_get_write_access(handle_t *handle, st
+ 	char *frozen_buffer = NULL;
+ 	unsigned long start_lock, time_lock;
  
- 	INIT_WORK(&ctrl->ana_work, nvme_ana_work);
-+	kfree(ctrl->ana_log_buf);
- 	ctrl->ana_log_buf = kmalloc(ctrl->ana_log_size, GFP_KERNEL);
- 	if (!ctrl->ana_log_buf) {
- 		error = -ENOMEM;
+-	if (is_handle_aborted(handle))
+-		return -EROFS;
+ 	journal = transaction->t_journal;
+ 
+ 	jbd_debug(5, "journal_head %p, force_copy %d\n", jh, force_copy);
+@@ -1084,6 +1082,9 @@ int jbd2_journal_get_write_access(handle
+ 	struct journal_head *jh;
+ 	int rc;
+ 
++	if (is_handle_aborted(handle))
++		return -EROFS;
++
+ 	if (jbd2_write_access_granted(handle, bh, false))
+ 		return 0;
+ 
+@@ -1221,6 +1222,9 @@ int jbd2_journal_get_undo_access(handle_
+ 	struct journal_head *jh;
+ 	char *committed_data = NULL;
+ 
++	if (is_handle_aborted(handle))
++		return -EROFS;
++
+ 	if (jbd2_write_access_granted(handle, bh, true))
+ 		return 0;
+ 
 
 
