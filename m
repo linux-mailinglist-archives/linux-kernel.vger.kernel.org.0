@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E0C171F42
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:33:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72C6E17214E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:49:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732710AbgB0OAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:00:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33530 "EHLO mail.kernel.org"
+        id S1729534AbgB0Nno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:43:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732706AbgB0OAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:00:12 -0500
+        id S1729696AbgB0Nnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:43:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CEF020578;
-        Thu, 27 Feb 2020 14:00:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1833E20578;
+        Thu, 27 Feb 2020 13:43:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812011;
-        bh=I71bFMVkIS7ceq415PaCeA1YHheX0pdWEGyBcryD1ew=;
+        s=default; t=1582811021;
+        bh=S0yGJG0Id9N1yY6MyKdC5gdWa6cxWpV1/yYUVgykXEg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vIEsVrGuWx4NTZoGYvYxSL31NJozuwfm2L7aEyYLna3+3j6CK6hqrsSP84cf1KSzi
-         M3TpQFhZSC7o/VYqR0j3tfWdSgogSHoCunhrAAkBcxJYaTf7siLheyrbT0Uezrka5b
-         Ek9HUv8LebpUAoVgQixUHY/d517NvWzQZN/bDltQ=
+        b=UuSUrETkLBtiVLzDl32tIPBVmz0sYW2yQYs8nuDhofMR87TqZ9oROsenh7RsyztIh
+         l1Vb1iLAzw39bASdH3dpLolAwvL+66A62uCtbSUADNpJpEcJifihDC1F3KKaMK+4Vj
+         xQ61xlKHOVzmFqZSAFYjEJTmcaF+MLsLpBQSGoVE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Hardik Gajjar <hgajjar@de.adit-jv.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: [PATCH 4.14 186/237] USB: hub: Fix the broken detection of USB3 device in SMSC hub
-Date:   Thu, 27 Feb 2020 14:36:40 +0100
-Message-Id: <20200227132310.030905976@linuxfoundation.org>
+        stable@vger.kernel.org, Jordy Zomer <jordy@simplyhacker.com>,
+        Willy Tarreau <w@1wt.eu>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 085/113] floppy: check FDC index for errors before assigning it
+Date:   Thu, 27 Feb 2020 14:36:41 +0100
+Message-Id: <20200227132225.362545078@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,109 +45,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hardik Gajjar <hgajjar@de.adit-jv.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 1208f9e1d758c991b0a46a1bd60c616b906bbe27 upstream.
+commit 2e90ca68b0d2f5548804f22f0dd61145516171e3 upstream.
 
-Renesas R-Car H3ULCB + Kingfisher Infotainment Board is either not able
-to detect the USB3.0 mass storage devices or is detecting those as
-USB2.0 high speed devices.
+Jordy Zomer reported a KASAN out-of-bounds read in the floppy driver in
+wait_til_ready().
 
-The explanation given by Renesas is that, due to a HW issue, the XHCI
-driver does not wake up after going to sleep on connecting a USB3.0
-device.
+Which on the face of it can't happen, since as Willy Tarreau points out,
+the function does no particular memory access.  Except through the FDCS
+macro, which just indexes a static allocation through teh current fdc,
+which is always checked against N_FDC.
 
-In order to mitigate that, disable the auto-suspend feature
-specifically for SMSC hubs from hub_probe() function, as a quirk.
+Except the checking happens after we've already assigned the value.
 
-Renesas Kingfisher Infotainment Board has two USB3.0 ports (CN2) which
-are connected via USB5534B 4-port SuperSpeed/Hi-Speed, low-power,
-configurable hub controller.
+The floppy driver is a disgrace (a lot of it going back to my original
+horrd "design"), and has no real maintainer.  Nobody has the hardware,
+and nobody really cares.  But it still gets used in virtual environment
+because it's one of those things that everybody supports.
 
-[1] SanDisk USB 3.0 device detected as USB-2.0 before the patch
- [   74.036390] usb 5-1.1: new high-speed USB device number 4 using xhci-hcd
- [   74.061598] usb 5-1.1: New USB device found, idVendor=0781, idProduct=5581, bcdDevice= 1.00
- [   74.069976] usb 5-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
- [   74.077303] usb 5-1.1: Product: Ultra
- [   74.080980] usb 5-1.1: Manufacturer: SanDisk
- [   74.085263] usb 5-1.1: SerialNumber: 4C530001110208116550
+The whole thing should be re-written, or at least parts of it should be
+seriously cleaned up.  The 'current fdc' index, which is used by the
+FDCS macro, and which is often shadowed by a local 'fdc' variable, is a
+prime example of how not to write code.
 
-[2] SanDisk USB 3.0 device detected as USB-3.0 after the patch
- [   34.565078] usb 6-1.1: new SuperSpeed Gen 1 USB device number 3 using xhci-hcd
- [   34.588719] usb 6-1.1: New USB device found, idVendor=0781, idProduct=5581, bcdDevice= 1.00
- [   34.597098] usb 6-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
- [   34.604430] usb 6-1.1: Product: Ultra
- [   34.608110] usb 6-1.1: Manufacturer: SanDisk
- [   34.612397] usb 6-1.1: SerialNumber: 4C530001110208116550
+But because nobody has the hardware or the motivation, let's just fix up
+the immediate problem with a nasty band-aid: test the fdc index before
+actually assigning it to the static 'fdc' variable.
 
-Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Hardik Gajjar <hgajjar@de.adit-jv.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/1580989763-32291-1-git-send-email-hgajjar@de.adit-jv.com
+Reported-by: Jordy Zomer <jordy@simplyhacker.com>
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/hub.c |   15 +++++++++++++++
- drivers/usb/core/hub.h |    1 +
- 2 files changed, 16 insertions(+)
+ drivers/block/floppy.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -36,7 +36,9 @@
- #include "otg_whitelist.h"
- 
- #define USB_VENDOR_GENESYS_LOGIC		0x05e3
-+#define USB_VENDOR_SMSC				0x0424
- #define HUB_QUIRK_CHECK_PORT_AUTOSUSPEND	0x01
-+#define HUB_QUIRK_DISABLE_AUTOSUSPEND		0x02
- 
- /* Protect struct usb_device->state and ->children members
-  * Note: Both are also protected by ->dev.sem, except that ->state can
-@@ -1680,6 +1682,10 @@ static void hub_disconnect(struct usb_in
- 	kfree(hub->buffer);
- 
- 	pm_suspend_ignore_children(&intf->dev, false);
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -848,14 +848,17 @@ static void reset_fdc_info(int mode)
+ /* selects the fdc and drive, and enables the fdc's input/dma. */
+ static void set_fdc(int drive)
+ {
++	unsigned int new_fdc = fdc;
 +
-+	if (hub->quirk_disable_autosuspend)
-+		usb_autopm_put_interface(intf);
-+
- 	kref_put(&hub->kref, hub_release);
- }
- 
-@@ -1810,6 +1816,11 @@ static int hub_probe(struct usb_interfac
- 	if (id->driver_info & HUB_QUIRK_CHECK_PORT_AUTOSUSPEND)
- 		hub->quirk_check_port_auto_suspend = 1;
- 
-+	if (id->driver_info & HUB_QUIRK_DISABLE_AUTOSUSPEND) {
-+		hub->quirk_disable_autosuspend = 1;
-+		usb_autopm_get_interface(intf);
-+	}
-+
- 	if (hub_configure(hub, &desc->endpoint[0].desc) >= 0)
- 		return 0;
- 
-@@ -5288,6 +5299,10 @@ out_hdev_lock:
- }
- 
- static const struct usb_device_id hub_id_table[] = {
-+    { .match_flags = USB_DEVICE_ID_MATCH_VENDOR | USB_DEVICE_ID_MATCH_INT_CLASS,
-+      .idVendor = USB_VENDOR_SMSC,
-+      .bInterfaceClass = USB_CLASS_HUB,
-+      .driver_info = HUB_QUIRK_DISABLE_AUTOSUSPEND},
-     { .match_flags = USB_DEVICE_ID_MATCH_VENDOR
- 			| USB_DEVICE_ID_MATCH_INT_CLASS,
-       .idVendor = USB_VENDOR_GENESYS_LOGIC,
---- a/drivers/usb/core/hub.h
-+++ b/drivers/usb/core/hub.h
-@@ -69,6 +69,7 @@ struct usb_hub {
- 	unsigned		quiescing:1;
- 	unsigned		disconnected:1;
- 	unsigned		in_reset:1;
-+	unsigned		quirk_disable_autosuspend:1;
- 
- 	unsigned		quirk_check_port_auto_suspend:1;
- 
+ 	if (drive >= 0 && drive < N_DRIVE) {
+-		fdc = FDC(drive);
++		new_fdc = FDC(drive);
+ 		current_drive = drive;
+ 	}
+-	if (fdc != 1 && fdc != 0) {
++	if (new_fdc >= N_FDC) {
+ 		pr_info("bad fdc value\n");
+ 		return;
+ 	}
++	fdc = new_fdc;
+ 	set_dor(fdc, ~0, 8);
+ #if N_FDC > 1
+ 	set_dor(1 - fdc, ~8, 0);
 
 
