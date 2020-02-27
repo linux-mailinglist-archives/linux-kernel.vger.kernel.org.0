@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8426171977
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:45:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC57D171A27
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730346AbgB0NpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:45:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40846 "EHLO mail.kernel.org"
+        id S1731372AbgB0NvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:51:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730314AbgB0NpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:45:03 -0500
+        id S1731353AbgB0NvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:51:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9BE620578;
-        Thu, 27 Feb 2020 13:45:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 857E420578;
+        Thu, 27 Feb 2020 13:51:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811102;
-        bh=X0N4qAhIcSGQX/+onXxgznseKCjCioKEWftFRkvE8Gc=;
+        s=default; t=1582811474;
+        bh=Z0QB+7rbGiC2m9djwmXluZUo1zPDh54RPm/F68tzhII=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dN9SSTpq2PAmTn7uLJnEXsCQts+G0hePMAkJMGy1brdwrmft5ZsEvTCGf3Eb6v1zN
-         1KF1SDESDYKeUodIL7CIXkT7eHzsfJcgUNV8IiHuYIy4nccw5tUBv8VpzuvLE9kCGG
-         eQ6FPB3+A8w5sPtd89CSCiuxbvhDgYdN7qy47JNk=
+        b=CQVhge7BRA6RhDEPR5NSOfezOGl8HNKSVr/TFTTVKVkIV+hFsiuZDpN/Lx7KUsLoq
+         0xHm2VbGqJSr6fzoWmQjXBPbsYZOV4fV28BeVQKFTe5vQczesFfYZTn0mxvHr+9I3v
+         4QtWK5XO63hQoFJjY1Xmp2q08tI0jdUhK0FH6iQM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Shijie Luo <luoshijie1@huawei.com>,
         Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         stable@kernel.org
-Subject: [PATCH 4.4 102/113] ext4: add cond_resched() to __ext4_find_entry()
-Date:   Thu, 27 Feb 2020 14:36:58 +0100
-Message-Id: <20200227132228.098577351@linuxfoundation.org>
+Subject: [PATCH 4.9 146/165] ext4: add cond_resched() to __ext4_find_entry()
+Date:   Thu, 27 Feb 2020 14:37:00 +0100
+Message-Id: <20200227132252.150786910@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -102,7 +102,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/ext4/namei.c
 +++ b/fs/ext4/namei.c
-@@ -1418,6 +1418,7 @@ restart:
+@@ -1445,6 +1445,7 @@ restart:
  		/*
  		 * We deal with the read-ahead logic here.
  		 */
