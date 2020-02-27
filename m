@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57152171CF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:16:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10C4E171BE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:06:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389558AbgB0OQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:16:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56786 "EHLO mail.kernel.org"
+        id S2387655AbgB0OGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:06:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389513AbgB0OQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:16:35 -0500
+        id S2387969AbgB0OGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:06:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED0C320801;
-        Thu, 27 Feb 2020 14:16:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABE8B20578;
+        Thu, 27 Feb 2020 14:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812995;
-        bh=2JMkD/HWo90XFdZlBpJPpG2NNB3Mc1ED70yWqMKB/ck=;
+        s=default; t=1582812399;
+        bh=w1YCDDfKSqipDH023dOMRWlT5ElOZLdWM2T6svc3yhs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CV9Js69xyEnTmlgjVVpLj1AJrhL3HfdEMIRtp38ljeDTq79dX8W8G+wk03S8RYMPC
-         M8tJT8auae70AJ5HFqtIf6dGr0xwzupthZz5bwHPEJFGVrg6bUHoVkFElAeuUCfzKC
-         eAqJoFHOAt6Qa3Uo6brE9hYd9XLi0uVjn6IxiaXg=
+        b=2FYJ6GXWn7IyofPgscG68Z6OD/CpmxmCZpvWp7eWKEw1lb0PbgeycB5/CymowEoUA
+         6/v5i1FEM0DwxGieY4z+DC5y7ov3T6ePMEmO+5iKU/21bDWHBvVDPXaP5O6gpecLZP
+         XpPHaI9AZLi+KoWF08mgahsQqxW3hxx0U7MOliyM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        stable@vger.kernel.org, Shijie Luo <luoshijie1@huawei.com>,
         Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         stable@kernel.org
-Subject: [PATCH 5.5 095/150] ext4: rename s_journal_flag_rwsem to s_writepages_rwsem
+Subject: [PATCH 4.19 64/97] ext4: add cond_resched() to __ext4_find_entry()
 Date:   Thu, 27 Feb 2020 14:37:12 +0100
-Message-Id: <20200227132246.874239534@linuxfoundation.org>
+Message-Id: <20200227132224.958571291@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,130 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Shijie Luo <luoshijie1@huawei.com>
 
-commit bbd55937de8f2754adc5792b0f8e5ff7d9c0420e upstream.
+commit 9424ef56e13a1f14c57ea161eed3ecfdc7b2770e upstream.
 
-In preparation for making s_journal_flag_rwsem synchronize
-ext4_writepages() with changes to both the EXTENTS and JOURNAL_DATA
-flags (rather than just JOURNAL_DATA as it does currently), rename it to
-s_writepages_rwsem.
+We tested a soft lockup problem in linux 4.19 which could also
+be found in linux 5.x.
 
-Link: https://lore.kernel.org/r/20200219183047.47417-2-ebiggers@kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+When dir inode takes up a large number of blocks, and if the
+directory is growing when we are searching, it's possible the
+restart branch could be called many times, and the do while loop
+could hold cpu a long time.
+
+Here is the call trace in linux 4.19.
+
+[  473.756186] Call trace:
+[  473.756196]  dump_backtrace+0x0/0x198
+[  473.756199]  show_stack+0x24/0x30
+[  473.756205]  dump_stack+0xa4/0xcc
+[  473.756210]  watchdog_timer_fn+0x300/0x3e8
+[  473.756215]  __hrtimer_run_queues+0x114/0x358
+[  473.756217]  hrtimer_interrupt+0x104/0x2d8
+[  473.756222]  arch_timer_handler_virt+0x38/0x58
+[  473.756226]  handle_percpu_devid_irq+0x90/0x248
+[  473.756231]  generic_handle_irq+0x34/0x50
+[  473.756234]  __handle_domain_irq+0x68/0xc0
+[  473.756236]  gic_handle_irq+0x6c/0x150
+[  473.756238]  el1_irq+0xb8/0x140
+[  473.756286]  ext4_es_lookup_extent+0xdc/0x258 [ext4]
+[  473.756310]  ext4_map_blocks+0x64/0x5c0 [ext4]
+[  473.756333]  ext4_getblk+0x6c/0x1d0 [ext4]
+[  473.756356]  ext4_bread_batch+0x7c/0x1f8 [ext4]
+[  473.756379]  ext4_find_entry+0x124/0x3f8 [ext4]
+[  473.756402]  ext4_lookup+0x8c/0x258 [ext4]
+[  473.756407]  __lookup_hash+0x8c/0xe8
+[  473.756411]  filename_create+0xa0/0x170
+[  473.756413]  do_mkdirat+0x6c/0x140
+[  473.756415]  __arm64_sys_mkdirat+0x28/0x38
+[  473.756419]  el0_svc_common+0x78/0x130
+[  473.756421]  el0_svc_handler+0x38/0x78
+[  473.756423]  el0_svc+0x8/0xc
+[  485.755156] watchdog: BUG: soft lockup - CPU#2 stuck for 22s! [tmp:5149]
+
+Add cond_resched() to avoid soft lockup and to provide a better
+system responding.
+
+Link: https://lore.kernel.org/r/20200215080206.13293-1-luoshijie1@huawei.com
+Signed-off-by: Shijie Luo <luoshijie1@huawei.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ext4.h  |    2 +-
- fs/ext4/inode.c |   14 +++++++-------
- fs/ext4/super.c |    6 +++---
- 3 files changed, 11 insertions(+), 11 deletions(-)
+ fs/ext4/namei.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1554,7 +1554,7 @@ struct ext4_sb_info {
- 	struct ratelimit_state s_msg_ratelimit_state;
- 
- 	/* Barrier between changing inodes' journal flags and writepages ops. */
--	struct percpu_rw_semaphore s_journal_flag_rwsem;
-+	struct percpu_rw_semaphore s_writepages_rwsem;
- 	struct dax_device *s_daxdev;
- };
- 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -2627,7 +2627,7 @@ static int ext4_writepages(struct addres
- 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
- 		return -EIO;
- 
--	percpu_down_read(&sbi->s_journal_flag_rwsem);
-+	percpu_down_read(&sbi->s_writepages_rwsem);
- 	trace_ext4_writepages(inode, wbc);
- 
- 	/*
-@@ -2848,7 +2848,7 @@ unplug:
- out_writepages:
- 	trace_ext4_writepages_result(inode, wbc, ret,
- 				     nr_to_write - wbc->nr_to_write);
--	percpu_up_read(&sbi->s_journal_flag_rwsem);
-+	percpu_up_read(&sbi->s_writepages_rwsem);
- 	return ret;
- }
- 
-@@ -2863,13 +2863,13 @@ static int ext4_dax_writepages(struct ad
- 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
- 		return -EIO;
- 
--	percpu_down_read(&sbi->s_journal_flag_rwsem);
-+	percpu_down_read(&sbi->s_writepages_rwsem);
- 	trace_ext4_writepages(inode, wbc);
- 
- 	ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
- 	trace_ext4_writepages_result(inode, wbc, ret,
- 				     nr_to_write - wbc->nr_to_write);
--	percpu_up_read(&sbi->s_journal_flag_rwsem);
-+	percpu_up_read(&sbi->s_writepages_rwsem);
- 	return ret;
- }
- 
-@@ -5830,7 +5830,7 @@ int ext4_change_inode_journal_flag(struc
- 		}
- 	}
- 
--	percpu_down_write(&sbi->s_journal_flag_rwsem);
-+	percpu_down_write(&sbi->s_writepages_rwsem);
- 	jbd2_journal_lock_updates(journal);
- 
- 	/*
-@@ -5847,7 +5847,7 @@ int ext4_change_inode_journal_flag(struc
- 		err = jbd2_journal_flush(journal);
- 		if (err < 0) {
- 			jbd2_journal_unlock_updates(journal);
--			percpu_up_write(&sbi->s_journal_flag_rwsem);
-+			percpu_up_write(&sbi->s_writepages_rwsem);
- 			return err;
- 		}
- 		ext4_clear_inode_flag(inode, EXT4_INODE_JOURNAL_DATA);
-@@ -5855,7 +5855,7 @@ int ext4_change_inode_journal_flag(struc
- 	ext4_set_aops(inode);
- 
- 	jbd2_journal_unlock_updates(journal);
--	percpu_up_write(&sbi->s_journal_flag_rwsem);
-+	percpu_up_write(&sbi->s_writepages_rwsem);
- 
- 	if (val)
- 		up_write(&EXT4_I(inode)->i_mmap_sem);
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1018,7 +1018,7 @@ static void ext4_put_super(struct super_
- 	percpu_counter_destroy(&sbi->s_freeinodes_counter);
- 	percpu_counter_destroy(&sbi->s_dirs_counter);
- 	percpu_counter_destroy(&sbi->s_dirtyclusters_counter);
--	percpu_free_rwsem(&sbi->s_journal_flag_rwsem);
-+	percpu_free_rwsem(&sbi->s_writepages_rwsem);
- #ifdef CONFIG_QUOTA
- 	for (i = 0; i < EXT4_MAXQUOTAS; i++)
- 		kfree(get_qf_name(sb, sbi, i));
-@@ -4581,7 +4581,7 @@ no_journal:
- 		err = percpu_counter_init(&sbi->s_dirtyclusters_counter, 0,
- 					  GFP_KERNEL);
- 	if (!err)
--		err = percpu_init_rwsem(&sbi->s_journal_flag_rwsem);
-+		err = percpu_init_rwsem(&sbi->s_writepages_rwsem);
- 
- 	if (err) {
- 		ext4_msg(sb, KERN_ERR, "insufficient memory");
-@@ -4681,7 +4681,7 @@ failed_mount6:
- 	percpu_counter_destroy(&sbi->s_freeinodes_counter);
- 	percpu_counter_destroy(&sbi->s_dirs_counter);
- 	percpu_counter_destroy(&sbi->s_dirtyclusters_counter);
--	percpu_free_rwsem(&sbi->s_journal_flag_rwsem);
-+	percpu_free_rwsem(&sbi->s_writepages_rwsem);
- failed_mount5:
- 	ext4_ext_release(sb);
- 	ext4_release_system_zone(sb);
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1431,6 +1431,7 @@ restart:
+ 		/*
+ 		 * We deal with the read-ahead logic here.
+ 		 */
++		cond_resched();
+ 		if (ra_ptr >= ra_max) {
+ 			/* Refill the readahead buffer */
+ 			ra_ptr = 0;
 
 
