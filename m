@@ -2,81 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C306117282E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:57:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD71E172830
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:57:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729820AbgB0SzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:55:10 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32790 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729269AbgB0SzK (ORCPT
+        id S1730233AbgB0Sz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:55:29 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:53003 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729564AbgB0Sz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:55:10 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x7so132526wrr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 10:55:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/V85YaAe8XR5oTJ96oXQ+ABPr+snDJtWcbgtmR0Qea4=;
-        b=tvcOJ69LptQiNyIzqDTnQbb+0cH7+bJsKcKVrNn1ocnZu1vLfyskMvmxRkGO+mGr6u
-         f2Ykbd9OTXcEGdrbFghUU1KgIrUIZeOT43FiPQgbZRlL5KpRxgL7wWg0AAtfFXJ0iWYR
-         rpZj5k8cq/Fp+cVgo7T3U3PhCnOqckMoOQvYGsdHsn6A2+2q/7ejTDo3ypiwxgF5OwVe
-         F2QO4IFnWh9b1iHODVBOjreYygP/18KqrjJpFhKp5RCQZWJ7p8R3/puyepM9lHxSvtFr
-         QoX+v1NzdKAwqdlfF/td6PRIx8bVx/j3EGSJjuLCOzduvVqHMmIQ6DkYAG7ppOvqtkdR
-         wIzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/V85YaAe8XR5oTJ96oXQ+ABPr+snDJtWcbgtmR0Qea4=;
-        b=CZcE7D8OBsFHFiFPIs8w+eInCOOHqycS2u64TIEMzPUNMtoAhHP8ZYaekIKxzhjNF2
-         qyzQ2cHv/xZIcG7MbVy394NGeJfQadryCZGdlFW2JTs6/wf4eIqLpNqQuXrJNBOa32Zw
-         Jha4p9F0FkJQCvnNOZL43LMFJyNcIH1d+6g10BD458VQV4NJp4lT9edtAwTKnrPKelBk
-         F74WcF32fYJNfTwC5B504feVtHvkoHJbu60K+wAWzrj1DbJfrmv4kzzxKlO5IdZ6fuom
-         GvPB+hUnCNwlDCIO9GbUVgrXnM8FRI4/QkjpUTgxScFE+8DBDNItY0uZjfLhoC7XnRCw
-         if9g==
-X-Gm-Message-State: APjAAAUpZMc7LPXUvMk5XPn2O8wiiRg2101aHWT1t2klKw6ul5GUNDO8
-        iN4pLrp6TT1KrUFyn6dZe/bYqXgTBVH8mjPOLBf0ig==
-X-Google-Smtp-Source: APXvYqxqsioMAn9f18ckX2JCivtKIQRNEzVlRJ7K9EUTjk60nx17Q4stuJaYzodA9hVo7BuMRtl7HCJdy9LJNH66dxI=
-X-Received: by 2002:adf:ef4c:: with SMTP id c12mr248687wrp.203.1582829708486;
- Thu, 27 Feb 2020 10:55:08 -0800 (PST)
+        Thu, 27 Feb 2020 13:55:28 -0500
+X-Originating-IP: 90.76.143.236
+Received: from localhost (lfbn-tou-1-1075-236.w90-76.abo.wanadoo.fr [90.76.143.236])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id C27771C0003;
+        Thu, 27 Feb 2020 18:55:26 +0000 (UTC)
+Date:   Thu, 27 Feb 2020 19:55:26 +0100
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Quentin Schulz <foss@0leil.net>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/3] net: phy: mscc: implement RGMII skew delay
+ configuration
+Message-ID: <20200227185526.GE1686232@kwain>
+References: <20200227152859.1687119-1-antoine.tenart@bootlin.com>
+ <20200227152859.1687119-4-antoine.tenart@bootlin.com>
+ <1f267571ddd9d1caf3e95afe31e47e30@0leil.net>
 MIME-Version: 1.0
-References: <20200227063134.261636-1-gthelen@google.com>
-In-Reply-To: <20200227063134.261636-1-gthelen@google.com>
-From:   David Gow <davidgow@google.com>
-Date:   Thu, 27 Feb 2020 10:54:56 -0800
-Message-ID: <CABVgOSkdphVaWhL1bBpC-vBgJ5pS144wD_g588o2_xxHXd=Ngg@mail.gmail.com>
-Subject: Re: [PATCH] kunit: add --make_options
-To:     Greg Thelen <gthelen@google.com>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1f267571ddd9d1caf3e95afe31e47e30@0leil.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 10:31 PM 'Greg Thelen' via KUnit Development
-<kunit-dev@googlegroups.com> wrote:
->
-> The kunit.py utility builds an ARCH=um kernel and then runs it.  Add
-> optional --make_options flag to kunit.py allowing for the operator to
-> specify extra build options.
->
-> This allows use of the clang compiler for kunit:
->   tools/testing/kunit/kunit.py run --defconfig \
->     --make_options CC=clang --make_options HOSTCC=clang
->
-> Signed-off-by: Greg Thelen <gthelen@google.com>
+Hi Quentin,
 
-Tested-by: David Gow <davidgow@google.com>
+On Thu, Feb 27, 2020 at 05:21:58PM +0100, Quentin Schulz wrote:
+> On 2020-02-27 16:28, Antoine Tenart wrote:
+> > 
+> > +	if (of_find_property(dev->of_node, "vsc8584,rgmii-skew-rx", NULL) ||
+> > +	    of_find_property(dev->of_node, "vsc8584,rgmii-skew-tx", NULL)) {
+> > +		of_property_read_u32(dev->of_node, "vsc8584,rgmii-skew-rx",
+> > &skew_rx);
+> > +		of_property_read_u32(dev->of_node, "vsc8584,rgmii-skew-tx",
+> > &skew_tx);
+> > +
+> 
+> Reading the code, I think **!**of_property_read_u32 could directly replace
+> of_find_property in your condition and spare you two calls to that function.
 
-Nice! This worked for me with all of the options I tried (and it's
-great to see KUnit working on clang builds!)
+Sure.
 
--- David
+> Final nitpick: I would see a check of the skew_rx/tx from DT before you put
+> them in the following line, they could be drastically different from 0-8
+> value set that you expect considering you're reading a u32 (pass them
+> through a GENMASK at least?)
+
+That makes sense, I can add a check.
+
+Thanks,
+Antoine
+
+-- 
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
