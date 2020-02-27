@@ -2,79 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6E2F1724C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:15:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E57B41724D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:17:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729849AbgB0RPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 12:15:40 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:43727 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728413AbgB0RPj (ORCPT
+        id S1729930AbgB0RRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 12:17:50 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:27297 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729430AbgB0RRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 12:15:39 -0500
-Received: by mail-oi1-f193.google.com with SMTP id p125so4023013oif.10;
-        Thu, 27 Feb 2020 09:15:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E2s4W1sTyFGQwdK13Lex3fESSAYc6q6IIVmN459eOYE=;
-        b=oZVECPMtVgCSnQ+V1WcBQR1Iu9T9nQ2rMlSWt4qGKNVQX2RDMXSJFEpVxCqoajoF3U
-         UFQWthP89RWgAdmP3D5SgRQvwL+1uKWjEEmXwFs/TQ/tvjTVeOvYsXe4w3BRHw1BHmJg
-         DNau5Q5w1/muK1J3yspT6pGEsfNd9LxZONlNdp1tVoLwLs8QBrn+pv3zRbTzBBwLLb6M
-         yQzYRli6F0ct4yULiaSEZq/uzpAuQ4nuUSkM77qygXULhfxu25FryTrndP4LbiLx6d1C
-         IKz/BpLMVU1dokedaYOf+6wAMz1UWkCgbHcYAY5yRfja/pRYGBjbZrcXDyaC4V9lx4Fk
-         n/4w==
-X-Gm-Message-State: APjAAAWsQzQx7m65dg9ptN3YQd+p7ZBx5XwOpzxdWa4gxjC71ZdW+8eZ
-        lJBuAn450vRbQ/53hwRDAQ==
-X-Google-Smtp-Source: APXvYqzPY/x9+leT8mGPZrSZwA6cJInd+YOsSLBRuvxwItyWmhZNQAKo6BVOMNji/xfmQgysRVoyAQ==
-X-Received: by 2002:aca:b9c2:: with SMTP id j185mr59225oif.112.1582823739377;
-        Thu, 27 Feb 2020 09:15:39 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t9sm2108218otm.76.2020.02.27.09.15.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 09:15:37 -0800 (PST)
-Received: (nullmailer pid 14499 invoked by uid 1000);
-        Thu, 27 Feb 2020 17:15:36 -0000
-Date:   Thu, 27 Feb 2020 11:15:36 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, srv_heupstream@mediatek.com,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        cawa.cheng@mediatek.com, bibby.hsieh@mediatek.com,
-        ck.hu@mediatek.com, stonea168@163.com, huijuan.xie@mediatek.com,
-        Jitao Shi <jitao.shi@mediatek.com>
-Subject: Re: [PATCH v9 1/5] dt-bindings: media: add pclk-sample dual edge
- property
-Message-ID: <20200227171536.GA14418@bogus>
-References: <20200226053238.31646-1-jitao.shi@mediatek.com>
- <20200226053238.31646-2-jitao.shi@mediatek.com>
+        Thu, 27 Feb 2020 12:17:50 -0500
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 01RHHYix032552;
+        Fri, 28 Feb 2020 02:17:34 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 01RHHYix032552
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582823855;
+        bh=hshphCwI9hlBaEv/EA7m0UL3MjbTptk/dX4jdB/N3zo=;
+        h=From:Date:Subject:To:Cc:From;
+        b=Nc5bCj+kuNzNVfc5EfU6LUTx5nBvC/a5sO37DXECEzJP5UpgO1SnLWuecp4Ba2TJN
+         +mRFGKLWFabTjWChAvByMdzB+88Z6mOzQXe++KOOjm7EheAQb6YedB5OLvWYq9Q4S3
+         lNa7W5GkUXXYeJoW8XwDGBHO8t3aKE+hnq0wQZN+p9JDAOiJRI8Y8QBSiVPNDp8sH5
+         fM9F0itHxafY0lt2r41+loIFxa/KZMX2AgwhUHT1OEtTsYmjpqEXDgIJJT7vqRv8Ux
+         BWpBBc+9CxDRqndPaifL4CrIVfXilgCHC2P8i1wj7z3NYGJL2/z+b1ddnLYBo++A0n
+         sbG3UTWkPa3ZA==
+X-Nifty-SrcIP: [209.85.222.41]
+Received: by mail-ua1-f41.google.com with SMTP id c7so1237460uaf.5;
+        Thu, 27 Feb 2020 09:17:34 -0800 (PST)
+X-Gm-Message-State: APjAAAWVHfH0+NJY0KCqfTsk7z1PPrVaUcRylBACedlZ1p3nWWhlpLdd
+        wSyAQ0zirZJca5QNkDo/mmXklwofbBD5JyUzmEI=
+X-Google-Smtp-Source: APXvYqydl8esFpucwUoItXP6yoV9ufMtub38hFn1IFr/D1DHXbSbZGqn5FTEXUWg/LpmrNeEF1EhUGGSLyd78y3FINU=
+X-Received: by 2002:ab0:3485:: with SMTP id c5mr2874123uar.109.1582823853252;
+ Thu, 27 Feb 2020 09:17:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226053238.31646-2-jitao.shi@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 28 Feb 2020 02:16:57 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASDV1hBV_4U6wHHMFfxsxctFhVpk4gUQ+pYMay1i4Memw@mail.gmail.com>
+Message-ID: <CAK7LNASDV1hBV_4U6wHHMFfxsxctFhVpk4gUQ+pYMay1i4Memw@mail.gmail.com>
+Subject: [GIT PULL] Kbuild fixes for v5.6-rc4
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Feb 2020 13:32:34 +0800, Jitao Shi wrote:
-> Some chips's sample mode are rising, falling and dual edge (both
-> falling and rising edge).
-> Extern the pclk-sample property to support dual edge.
-> 
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/media/video-interfaces.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+Hi Linus,
 
-Acked-by: Rob Herring <robh@kernel.org>
+Please pull some more Kbuild fixes.
+Thanks!
+
+
+The following changes since commit f8788d86ab28f61f7b46eb6be375f8a726783636:
+
+  Linux 5.6-rc3 (2020-02-23 16:17:42 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-fixes-v5.6-2
+
+for you to fetch changes up to eabc8bcb292fb9a5757b0c8ab7751f41b0a104f8:
+
+  kbuild: get rid of trailing slash from subdir- example (2020-02-27
+10:03:27 +0900)
+
+----------------------------------------------------------------
+Kbuild fixes for v5.6 (2nd)
+
+ - fix missed rebuild of DT schema check
+
+ - add some phony targets to PHONY
+
+ - fix comments and documents
+
+----------------------------------------------------------------
+Masahiro Yamada (6):
+      kbuild: remove wrong documentation about mandatory-y
+      kbuild: fix DT binding schema rule to detect command line changes
+      kbuild: remove unneeded semicolon at the end of cmd_dtb_check
+      kbuild: add dtbs_check to PHONY
+      kbuild: add dt_binding_check to PHONY in a correct place
+      kbuild: get rid of trailing slash from subdir- example
+
+Randy Dunlap (1):
+      kbuild: add comment for V=2 mode
+
+ Documentation/kbuild/makefiles.rst | 5 +----
+ Makefile                           | 4 +++-
+ scripts/Makefile.lib               | 6 +++---
+ 3 files changed, 7 insertions(+), 8 deletions(-)
+
+
+-- 
+Best Regards
+Masahiro Yamada
