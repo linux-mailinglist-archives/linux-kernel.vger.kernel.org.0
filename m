@@ -2,113 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC57D171A27
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95DA31718D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:37:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731372AbgB0NvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:51:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50246 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731353AbgB0NvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:51:14 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 857E420578;
-        Thu, 27 Feb 2020 13:51:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811474;
-        bh=Z0QB+7rbGiC2m9djwmXluZUo1zPDh54RPm/F68tzhII=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CQVhge7BRA6RhDEPR5NSOfezOGl8HNKSVr/TFTTVKVkIV+hFsiuZDpN/Lx7KUsLoq
-         0xHm2VbGqJSr6fzoWmQjXBPbsYZOV4fV28BeVQKFTe5vQczesFfYZTn0mxvHr+9I3v
-         4QtWK5XO63hQoFJjY1Xmp2q08tI0jdUhK0FH6iQM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shijie Luo <luoshijie1@huawei.com>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        stable@kernel.org
-Subject: [PATCH 4.9 146/165] ext4: add cond_resched() to __ext4_find_entry()
-Date:   Thu, 27 Feb 2020 14:37:00 +0100
-Message-Id: <20200227132252.150786910@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1729235AbgB0NhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:37:03 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:41344 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729124AbgB0NhD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:37:03 -0500
+Received: by mail-qt1-f193.google.com with SMTP id l21so2237060qtr.8
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 05:37:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qmWHrBJcN7ejSVHixLEQF5uOon7zKqN3Pq0dKTOIOQA=;
+        b=gD5vZAG+DtDI6uMe7e6gbKLoJzGc2b1JzVCqh3ZCuKklMl9+mMaBsC2uvDhNJY4QjQ
+         IJaO20Go8KeqL/nlH2dHYBVUfhu7h2hxlsVrq/WfdQfAXBmFPnQIi6D/eY1/4r4UhVSK
+         tHXY6/fbJlg9NUptWERv9NHNOJzVxeFnvx/kM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qmWHrBJcN7ejSVHixLEQF5uOon7zKqN3Pq0dKTOIOQA=;
+        b=Z4wnvh/ayFhpi83tiM8Anc6g+gv6mcPfW46tB8HmvustJ6pwRTbYb3CnAT5bpyKMQk
+         mHuLXHN2y+SyNngJ2lP/vwYmsUgk1lvhxuzl9FaB9TbtFloY3Ufc/NpFb9eS2tDgqcUK
+         BUroKZLkYnOULZ7oe4DCFI6STR9YZINa/j04f+SvSb1aGkFxQVtsIKk4XVJk4RAnTbTn
+         hTSk1K1jeY3S7UrZ7JYAxJTm3D8sJn301mC2Y1XXSI0Hq37hCzUdAozCSJMYnKM9uDSZ
+         Vg89z2PmOr+T5EWWgPLiY36wgAYykH7AD1LB7vLd8WtcxS3RetSyP+S2mkYYZXmxlYIP
+         xsgg==
+X-Gm-Message-State: APjAAAW/mbllDsf5sFJgWINiGF38OooTUOzzpNLZYXm63KFsvcpuTXhG
+        3hzgeeH5c4+vrWz8A94r6xwWJw==
+X-Google-Smtp-Source: APXvYqwp18AbEZK2wRg/VcPpscOhe2m0EPo8Ss8nMji7xGvcuPlLImoWJj9VBdpsGs1q/H+5AZYlKA==
+X-Received: by 2002:ac8:7b9b:: with SMTP id p27mr5255681qtu.2.1582810621803;
+        Thu, 27 Feb 2020 05:37:01 -0800 (PST)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id 17sm600594qks.0.2020.02.27.05.37.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 05:37:01 -0800 (PST)
+Date:   Thu, 27 Feb 2020 08:37:00 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Suraj Jitindar Singh <surajjs@amazon.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC] ext4: fix potential race between online resizing and
+ write operations
+Message-ID: <20200227133700.GC161459@google.com>
+References: <20200218170857.GA28774@pc636>
+ <20200220045233.GC476845@mit.edu>
+ <20200221003035.GC2935@paulmck-ThinkPad-P72>
+ <20200221131455.GA4904@pc636>
+ <20200221202250.GK2935@paulmck-ThinkPad-P72>
+ <20200222222415.GC191380@google.com>
+ <20200223011018.GB2935@paulmck-ThinkPad-P72>
+ <20200224174030.GA22138@pc636>
+ <20200225020705.GA253171@google.com>
+ <20200225185400.GA27919@pc636>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200225185400.GA27919@pc636>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shijie Luo <luoshijie1@huawei.com>
+Sorry for slightly late reply.
 
-commit 9424ef56e13a1f14c57ea161eed3ecfdc7b2770e upstream.
+On Tue, Feb 25, 2020 at 07:54:00PM +0100, Uladzislau Rezki wrote:
+> > > > > I was thinking a 2 fold approach (just thinking out loud..):
+> > > > > 
+> > > > > If kfree_call_rcu() is called in atomic context or in any rcu reader, then
+> > > > > use GFP_ATOMIC to grow an rcu_head wrapper on the atomic memory pool and
+> > > > > queue that.
+> > > > > 
+> > > I am not sure if that is acceptable, i mean what to do when GFP_ATOMIC
+> > > gets failed in atomic context? Or we can just consider it as out of
+> > > memory and another variant is to say that headless object can be called
+> > > from preemptible context only.
+> > 
+> > Yes that makes sense, and we can always put disclaimer in the API's comments
+> > saying if this object is expected to be freed a lot, then don't use the
+> > headless-API to be extra safe.
+> > 
+> Agree.
+> 
+> > BTW, GFP_ATOMIC the documentation says if GFP_ATOMIC reserves are depleted,
+> > the kernel can even panic some times, so if GFP_ATOMIC allocation fails, then
+> > there seems to be bigger problems in the system any way. I would say let us
+> > write a patch to allocate there and see what the -mm guys think.
+> > 
+> OK. It might be that they can offer something if they do not like our
+> approach. I will try to compose something and send the patch to see.
+> The tree.c implementation is almost done, whereas tiny one is on hold.
+> 
+> I think we should support batching as well as bulk interface there.
+> Another way is to workaround head-less object, just to attach the head
+> dynamically using kmalloc() and then call_rcu() but then it will not be
+> a fair headless support :)
+> 
+> What is your view?
 
-We tested a soft lockup problem in linux 4.19 which could also
-be found in linux 5.x.
+This kind of "head" will require backpointers to the original object as well
+right? And still wouldn't solve the "what if we run out of GFP_ATOMIC
+reserves". But let me know in a code snippet if possible about what you mean.
 
-When dir inode takes up a large number of blocks, and if the
-directory is growing when we are searching, it's possible the
-restart branch could be called many times, and the do while loop
-could hold cpu a long time.
+> > > > > Otherwise, grow an rcu_head on the stack of kfree_call_rcu() and call
+> > > > > synchronize_rcu() inline with it.
+> > > > > 
+> > > > >
+> > > What do you mean here, Joel? "grow an rcu_head on the stack"?
+> > 
+> > By "grow on the stack", use the compiler-allocated rcu_head on the
+> > kfree_rcu() caller's stack.
+> > 
+> > I meant here to say, if we are not in atomic context, then we use regular
+> > GFP_KERNEL allocation, and if that fails, then we just use the stack's
+> > rcu_head and call synchronize_rcu() or even synchronize_rcu_expedited since
+> > the allocation failure would mean the need for RCU to free some memory is
+> > probably great.
+> > 
+> Ah, i got it. I thought you meant something like recursion and then
+> unwinding the stack back somehow :)
 
-Here is the call trace in linux 4.19.
+Yeah something like that :) Use the compiler allocated space which you
+wouldn't run out of unless stack overflows.
 
-[  473.756186] Call trace:
-[  473.756196]  dump_backtrace+0x0/0x198
-[  473.756199]  show_stack+0x24/0x30
-[  473.756205]  dump_stack+0xa4/0xcc
-[  473.756210]  watchdog_timer_fn+0x300/0x3e8
-[  473.756215]  __hrtimer_run_queues+0x114/0x358
-[  473.756217]  hrtimer_interrupt+0x104/0x2d8
-[  473.756222]  arch_timer_handler_virt+0x38/0x58
-[  473.756226]  handle_percpu_devid_irq+0x90/0x248
-[  473.756231]  generic_handle_irq+0x34/0x50
-[  473.756234]  __handle_domain_irq+0x68/0xc0
-[  473.756236]  gic_handle_irq+0x6c/0x150
-[  473.756238]  el1_irq+0xb8/0x140
-[  473.756286]  ext4_es_lookup_extent+0xdc/0x258 [ext4]
-[  473.756310]  ext4_map_blocks+0x64/0x5c0 [ext4]
-[  473.756333]  ext4_getblk+0x6c/0x1d0 [ext4]
-[  473.756356]  ext4_bread_batch+0x7c/0x1f8 [ext4]
-[  473.756379]  ext4_find_entry+0x124/0x3f8 [ext4]
-[  473.756402]  ext4_lookup+0x8c/0x258 [ext4]
-[  473.756407]  __lookup_hash+0x8c/0xe8
-[  473.756411]  filename_create+0xa0/0x170
-[  473.756413]  do_mkdirat+0x6c/0x140
-[  473.756415]  __arm64_sys_mkdirat+0x28/0x38
-[  473.756419]  el0_svc_common+0x78/0x130
-[  473.756421]  el0_svc_handler+0x38/0x78
-[  473.756423]  el0_svc+0x8/0xc
-[  485.755156] watchdog: BUG: soft lockup - CPU#2 stuck for 22s! [tmp:5149]
+> > > As for "task_struct's rcu_read_lock_nesting". Will it be enough just
+> > > have a look at preempt_count of current process? If we have for example
+> > > nested rcu_read_locks:
+> > > 
+> > > <snip>
+> > > rcu_read_lock()
+> > >     rcu_read_lock()
+> > >         rcu_read_lock()
+> > > <snip>
+> > > 
+> > > the counter would be 3.
+> > 
+> > No, because preempt_count is not incremented during rcu_read_lock(). RCU
+> > reader sections can be preempted, they just cannot goto sleep in a reader
+> > section (unless the kernel is RT).
+> > 
+> So in CONFIG_PREEMPT kernel we can identify if we are in atomic or not by
+> using rcu_preempt_depth() and in_atomic(). When it comes to !CONFIG_PREEMPT
+> then we skip it and consider as atomic. Something like:
+> 
+> <snip>
+> static bool is_current_in_atomic()
 
-Add cond_resched() to avoid soft lockup and to provide a better
-system responding.
+Would be good to change this to is_current_in_rcu_reader() since
+rcu_preempt_depth() does not imply atomicity.
 
-Link: https://lore.kernel.org/r/20200215080206.13293-1-luoshijie1@huawei.com
-Signed-off-by: Shijie Luo <luoshijie1@huawei.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: stable@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> {
+> #ifdef CONFIG_PREEMPT_RCU
+>     if (!rcu_preempt_depth() && !in_atomic())
+>         return false;
 
----
- fs/ext4/namei.c |    1 +
- 1 file changed, 1 insertion(+)
+I think use if (!rcu_preempt_depth() && preemptible()) here.
 
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1445,6 +1445,7 @@ restart:
- 		/*
- 		 * We deal with the read-ahead logic here.
- 		 */
-+		cond_resched();
- 		if (ra_ptr >= ra_max) {
- 			/* Refill the readahead buffer */
- 			ra_ptr = 0;
+preemptible() checks for IRQ disabled section as well.
 
+> #endif
+> 
+>     return true;
+
+Otherwise LGTM.
+
+thanks!
+
+ - Joel
+
+> }
+> <snip>
 
