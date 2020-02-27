@@ -2,38 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BF37171CCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:15:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF76171B95
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:04:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389308AbgB0OP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:15:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55000 "EHLO mail.kernel.org"
+        id S2387468AbgB0ODp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:03:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389055AbgB0OPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:15:25 -0500
+        id S1732995AbgB0ODh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:03:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23A0120801;
-        Thu, 27 Feb 2020 14:15:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3383B2469B;
+        Thu, 27 Feb 2020 14:03:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812924;
-        bh=EbQDuUGt0WEfjAtVVoBBJSO/K69KsAREfIwf2SmiYVY=;
+        s=default; t=1582812216;
+        bh=VOdujmpR/Y7+yCEJKg2C2pz0Nbpaw3BSbaFvsqkw/VU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AXJ+spW0UupP1HR2LiC27GZ95VY8rcZ6E0ZhaJneQ9P7cT5AoPzcbDe5CxphVUWUc
-         kiQ33LFbqaPGhNYO3+Rb4WEXXv8HqeUyFlkBPPDFxeN5F2FOVX+3Gio9PpIofo7Uy0
-         QEZ5BudxlSis6HFCw++8IXQL5MEx9LS9tlo6erDk=
+        b=HxPBtVpkTJTF/UYwfdNvmAOQtE5D8Pd1baFVuc9LXtp9PSMn+eFg8m8y2+WCZbu+6
+         pHPMnuzo5iORAUGke0Mlre30zKKzSshKQZEvJycn9+VMZkI6igGJDSIgM3aHpfML8a
+         LBBmo7kJQRFZIYj38e8tyl7OqBqG4x5RqhYV+Ytc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH 5.5 061/150] x86/mce/amd: Fix kobject lifetime
+        stable@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Yang Fei <fei.yang@intel.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Jack Pham <jackp@codeaurora.org>, Todd Kjos <tkjos@google.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH 4.19 30/97] usb: dwc3: gadget: Check for IOC/LST bit in TRB->ctrl fields
 Date:   Thu, 27 Feb 2020 14:36:38 +0100
-Message-Id: <20200227132242.058180562@linuxfoundation.org>
+Message-Id: <20200227132219.513967393@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,87 +50,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
 
-commit 51dede9c05df2b78acd6dcf6a17d21f0877d2d7b upstream.
+commit 5ee858975b13a9b40db00f456989a689fdbb296c upstream.
 
-Accessing the MCA thresholding controls in sysfs concurrently with CPU
-hotplug can lead to a couple of KASAN-reported issues:
+The current code in dwc3_gadget_ep_reclaim_completed_trb() will
+check for IOC/LST bit in the event->status and returns if
+IOC/LST bit is set. This logic doesn't work if multiple TRBs
+are queued per request and the IOC/LST bit is set on the last
+TRB of that request.
 
-  BUG: KASAN: use-after-free in sysfs_file_ops+0x155/0x180
-  Read of size 8 at addr ffff888367578940 by task grep/4019
+Consider an example where a queued request has multiple queued
+TRBs and IOC/LST bit is set only for the last TRB. In this case,
+the core generates XferComplete/XferInProgress events only for
+the last TRB (since IOC/LST are set only for the last TRB). As
+per the logic in dwc3_gadget_ep_reclaim_completed_trb()
+event->status is checked for IOC/LST bit and returns on the
+first TRB. This leaves the remaining TRBs left unhandled.
 
-and
+Similarly, if the gadget function enqueues an unaligned request
+with sglist already in it, it should fail the same way, since we
+will append another TRB to something that already uses more than
+one TRB.
 
-  BUG: KASAN: use-after-free in show_error_count+0x15c/0x180
-  Read of size 2 at addr ffff888368a05514 by task grep/4454
+To aviod this, this patch changes the code to check for IOC/LST
+bits in TRB->ctrl instead.
 
-for example. Both result from the fact that the threshold block
-creation/teardown code frees the descriptor memory itself instead of
-defining proper ->release function and leaving it to the driver core to
-take care of that, after all sysfs accesses have completed.
+At a practical level, this patch resolves USB transfer stalls seen
+with adb on dwc3 based HiKey960 after functionfs gadget added
+scatter-gather support around v4.20.
 
-Do that and get rid of the custom freeing code, fixing the above UAFs in
-the process.
-
-  [ bp: write commit message. ]
-
-Fixes: 95268664390b ("[PATCH] x86_64: mce_amd support for family 0x10 processors")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20200214082801.13836-1-bp@alien8.de
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Yang Fei <fei.yang@intel.com>
+Cc: Thinh Nguyen <thinhn@synopsys.com>
+Cc: Tejas Joglekar <tejas.joglekar@synopsys.com>
+Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: Jack Pham <jackp@codeaurora.org>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linux USB List <linux-usb@vger.kernel.org>
+Cc: stable <stable@vger.kernel.org>
+Tested-by: Tejas Joglekar <tejas.joglekar@synopsys.com>
+Reviewed-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+[jstultz: forward ported to mainline, reworded commit log, reworked
+ to only check trb->ctrl as suggested by Felipe]
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/mce/amd.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/usb/dwc3/gadget.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -1161,9 +1161,12 @@ static const struct sysfs_ops threshold_
- 	.store			= store,
- };
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2224,7 +2224,8 @@ static int dwc3_gadget_ep_reclaim_comple
+ 	if (event->status & DEPEVT_STATUS_SHORT && !chain)
+ 		return 1;
  
-+static void threshold_block_release(struct kobject *kobj);
-+
- static struct kobj_type threshold_ktype = {
- 	.sysfs_ops		= &threshold_ops,
- 	.default_attrs		= default_attrs,
-+	.release		= threshold_block_release,
- };
+-	if (event->status & DEPEVT_STATUS_IOC)
++	if ((trb->ctrl & DWC3_TRB_CTRL_IOC) ||
++	    (trb->ctrl & DWC3_TRB_CTRL_LST))
+ 		return 1;
  
- static const char *get_name(unsigned int bank, struct threshold_block *b)
-@@ -1365,8 +1368,12 @@ static int threshold_create_bank(unsigne
- 	return err;
- }
- 
--static void deallocate_threshold_block(unsigned int cpu,
--						 unsigned int bank)
-+static void threshold_block_release(struct kobject *kobj)
-+{
-+	kfree(to_block(kobj));
-+}
-+
-+static void deallocate_threshold_block(unsigned int cpu, unsigned int bank)
- {
- 	struct threshold_block *pos = NULL;
- 	struct threshold_block *tmp = NULL;
-@@ -1376,13 +1383,11 @@ static void deallocate_threshold_block(u
- 		return;
- 
- 	list_for_each_entry_safe(pos, tmp, &head->blocks->miscj, miscj) {
--		kobject_put(&pos->kobj);
- 		list_del(&pos->miscj);
--		kfree(pos);
-+		kobject_put(&pos->kobj);
- 	}
- 
--	kfree(per_cpu(threshold_banks, cpu)[bank]->blocks);
--	per_cpu(threshold_banks, cpu)[bank]->blocks = NULL;
-+	kobject_put(&head->blocks->kobj);
- }
- 
- static void __threshold_remove_blocks(struct threshold_bank *b)
+ 	return 0;
 
 
