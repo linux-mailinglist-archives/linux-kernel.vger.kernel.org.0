@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FF0F171AAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:56:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9010E171999
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:46:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732054AbgB0Nz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:55:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56300 "EHLO mail.kernel.org"
+        id S1730500AbgB0NqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:46:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732038AbgB0Nzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:55:55 -0500
+        id S1730167AbgB0NqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:46:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 366DC20578;
-        Thu, 27 Feb 2020 13:55:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96AA120578;
+        Thu, 27 Feb 2020 13:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811754;
-        bh=oLbUzD+4xeNv+rMD+6MlRuma9jx0gAq0UukvmXmctKw=;
+        s=default; t=1582811174;
+        bh=EJCV+PHusrPDBvv0wSIgAo83qYaeUgJOuXs5GXpqagc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TYevGLbYBluKxCBCaPipbC8gR0+vSa5EHpAceA39V9kSFGspLEPuryWHzxNxYSpAQ
-         AKa8vcxAg4vyJLsUs/XZEQijZVZ/dkHRts4/tZgU0v39eYPB3OvRgiJbz/tSe1DsM0
-         ky18yxuy/fhBX6HpD4BQBDk8fPfkJEdhBWFYhk3Y=
+        b=0oGEBZP7eS2R3iM++Y7HqVdaqO3gDIEHcgz0cgL8RbJIDNNPKaXmnOEqrKInCJk4W
+         Q4oBHVL7lRdXenQCteCwBeEF/EsMPfTDMdDOQJ/Xj/g5YzaF8xIj4OnoWc4kDwpn0m
+         R3dG8pSIyIVkCNAXhRvY2jy5R9zuo2hAvlrR02/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 089/237] scsi: aic7xxx: Adjust indentation in ahc_find_syncrate
-Date:   Thu, 27 Feb 2020 14:35:03 +0100
-Message-Id: <20200227132303.593204276@linuxfoundation.org>
+Subject: [PATCH 4.9 030/165] gpio: gpio-grgpio: fix possible sleep-in-atomic-context bugs in grgpio_irq_map/unmap()
+Date:   Thu, 27 Feb 2020 14:35:04 +0100
+Message-Id: <20200227132235.398284790@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 4dbc96ad65c45cdd4e895ed7ae4c151b780790c5 ]
+[ Upstream commit e36eaf94be8f7bc4e686246eed3cf92d845e2ef8 ]
 
-Clang warns:
+The driver may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-../drivers/scsi/aic7xxx/aic7xxx_core.c:2317:5: warning: misleading
-indentation; statement is not part of the previous 'if'
-[-Wmisleading-indentation]
-                        if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
-                        ^
-../drivers/scsi/aic7xxx/aic7xxx_core.c:2310:4: note: previous statement
-is here
-                        if (syncrate == &ahc_syncrates[maxsync])
-                        ^
-1 warning generated.
+drivers/gpio/gpio-grgpio.c, 261:
+	request_irq in grgpio_irq_map
+drivers/gpio/gpio-grgpio.c, 255:
+	_raw_spin_lock_irqsave in grgpio_irq_map
 
-This warning occurs because there is a space amongst the tabs on this
-line. Remove it so that the indentation is consistent with the Linux kernel
-coding style and clang no longer warns.
+drivers/gpio/gpio-grgpio.c, 318:
+	free_irq in grgpio_irq_unmap
+drivers/gpio/gpio-grgpio.c, 299:
+	_raw_spin_lock_irqsave in grgpio_irq_unmap
 
-This has been a problem since the beginning of git history hence no fixes
-tag.
+request_irq() and free_irq() can sleep at runtime.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/817
-Link: https://lore.kernel.org/r/20191218014220.52746-1-natechancellor@gmail.com
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+To fix these bugs, request_irq() and free_irq() are called without
+holding the spinlock.
+
+These bugs are found by a static analysis tool STCheck written by myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Link: https://lore.kernel.org/r/20191218132605.10594-1-baijiaju1990@gmail.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/aic7xxx/aic7xxx_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-grgpio.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
-index 3818461640031..fdbb0a3dc9b4f 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_core.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
-@@ -2321,7 +2321,7 @@ ahc_find_syncrate(struct ahc_softc *ahc, u_int *period,
- 			 * At some speeds, we only support
- 			 * ST transfers.
- 			 */
--		 	if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
-+			if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
- 				*ppr_options &= ~MSG_EXT_PPR_DT_REQ;
- 			break;
+diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
+index 7847dd34f86fc..036a78b704270 100644
+--- a/drivers/gpio/gpio-grgpio.c
++++ b/drivers/gpio/gpio-grgpio.c
+@@ -259,17 +259,16 @@ static int grgpio_irq_map(struct irq_domain *d, unsigned int irq,
+ 	lirq->irq = irq;
+ 	uirq = &priv->uirqs[lirq->index];
+ 	if (uirq->refcnt == 0) {
++		spin_unlock_irqrestore(&priv->gc.bgpio_lock, flags);
+ 		ret = request_irq(uirq->uirq, grgpio_irq_handler, 0,
+ 				  dev_name(priv->dev), priv);
+ 		if (ret) {
+ 			dev_err(priv->dev,
+ 				"Could not request underlying irq %d\n",
+ 				uirq->uirq);
+-
+-			spin_unlock_irqrestore(&priv->gc.bgpio_lock, flags);
+-
+ 			return ret;
  		}
++		spin_lock_irqsave(&priv->gc.bgpio_lock, flags);
+ 	}
+ 	uirq->refcnt++;
+ 
+@@ -315,8 +314,11 @@ static void grgpio_irq_unmap(struct irq_domain *d, unsigned int irq)
+ 	if (index >= 0) {
+ 		uirq = &priv->uirqs[lirq->index];
+ 		uirq->refcnt--;
+-		if (uirq->refcnt == 0)
++		if (uirq->refcnt == 0) {
++			spin_unlock_irqrestore(&priv->gc.bgpio_lock, flags);
+ 			free_irq(uirq->uirq, priv);
++			return;
++		}
+ 	}
+ 
+ 	spin_unlock_irqrestore(&priv->gc.bgpio_lock, flags);
 -- 
 2.20.1
 
