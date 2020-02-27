@@ -2,91 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63ADB17224A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:30:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7BC6172244
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:29:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731019AbgB0PaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 10:30:19 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:39053 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728205AbgB0PaS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 10:30:18 -0500
-X-Originating-IP: 90.89.41.158
-Received: from localhost (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id E0AB61C000F;
-        Thu, 27 Feb 2020 15:30:15 +0000 (UTC)
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
-        hkallweit1@gmail.com
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        foss@0leil.net
-Subject: [PATCH net-next 3/3] net: phy: mscc: implement RGMII skew delay configuration
-Date:   Thu, 27 Feb 2020 16:28:59 +0100
-Message-Id: <20200227152859.1687119-4-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200227152859.1687119-1-antoine.tenart@bootlin.com>
-References: <20200227152859.1687119-1-antoine.tenart@bootlin.com>
+        id S1730454AbgB0P3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 10:29:09 -0500
+Received: from foss.arm.com ([217.140.110.172]:53696 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729166AbgB0P3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 10:29:09 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA1AD30E;
+        Thu, 27 Feb 2020 07:29:08 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5FF083F7B4;
+        Thu, 27 Feb 2020 07:29:08 -0800 (PST)
+Date:   Thu, 27 Feb 2020 15:29:06 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, kdasu.kdev@gmail.com
+Subject: Re: [PATCH] spi: spi-bcm-qspi: Use new structure for SPI transfer
+ delays
+Message-ID: <20200227152906.GD4062@sirena.org.uk>
+References: <20200227141050.10969-1-sergiu.cuciurean@analog.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="DrWhICOqskFTAXiy"
+Content-Disposition: inline
+In-Reply-To: <20200227141050.10969-1-sergiu.cuciurean@analog.com>
+X-Cookie: Edwin Meese made me wear CORDOVANS!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for configuring the RGMII skews in Rx and Tx
-thanks to properties defined in the device tree.
 
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
----
- drivers/net/phy/mscc.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+--DrWhICOqskFTAXiy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index ecb45c43e5ed..56d6a45a90c2 100644
---- a/drivers/net/phy/mscc.c
-+++ b/drivers/net/phy/mscc.c
-@@ -192,6 +192,10 @@ enum macsec_bank {
- /* Extended Page 2 Registers */
- #define MSCC_PHY_CU_PMD_TX_CNTL		  16
- 
-+#define MSCC_PHY_RGMII_SETTINGS		  18
-+#define RGMII_SKEW_RX_POS		  1
-+#define RGMII_SKEW_TX_POS		  4
-+
- #define MSCC_PHY_RGMII_CNTL		  20
- #define RGMII_RX_CLK_DELAY_MASK		  0x0070
- #define RGMII_RX_CLK_DELAY_POS		  4
-@@ -2682,6 +2686,7 @@ static bool vsc8584_is_pkg_init(struct phy_device *phydev, bool reversed)
- 
- static int vsc8584_config_init(struct phy_device *phydev)
- {
-+	u32 skew_rx = VSC8584_RGMII_SKEW_0_2, skew_tx = VSC8584_RGMII_SKEW_0_2;
- 	struct vsc8531_private *vsc8531 = phydev->priv;
- 	u16 addr, val;
- 	int ret, i;
-@@ -2830,6 +2835,19 @@ static int vsc8584_config_init(struct phy_device *phydev)
- 	if (ret)
- 		return ret;
- 
-+	if (of_find_property(dev->of_node, "vsc8584,rgmii-skew-rx", NULL) ||
-+	    of_find_property(dev->of_node, "vsc8584,rgmii-skew-tx", NULL)) {
-+		of_property_read_u32(dev->of_node, "vsc8584,rgmii-skew-rx", &skew_rx);
-+		of_property_read_u32(dev->of_node, "vsc8584,rgmii-skew-tx", &skew_tx);
-+
-+		phy_modify_paged(phydev, MSCC_PHY_PAGE_EXTENDED_2,
-+				 MSCC_PHY_RGMII_SETTINGS,
-+				 (0x7 << RGMII_SKEW_RX_POS) |
-+				 (0x7 << RGMII_SKEW_TX_POS),
-+				 (skew_rx << RGMII_SKEW_RX_POS) |
-+				 (skew_tx << RGMII_SKEW_TX_POS));
-+	}
-+
- 	for (i = 0; i < vsc8531->nleds; i++) {
- 		ret = vsc85xx_led_cntl_set(phydev, i, vsc8531->leds_mode[i]);
- 		if (ret)
--- 
-2.24.1
+On Thu, Feb 27, 2020 at 04:10:50PM +0200, Sergiu Cuciurean wrote:
 
+>  	if (qt->byte >= qt->trans->len) {
+>  		/* we're at the end of the spi_transfer */
+>  		/* in TX mode, need to pause for a delay or CS change */
+> -		if (qt->trans->delay_usecs &&
+> +		if (qt->trans->delay.value &&
+> +		    (qt->trans->delay.unit == SPI_DELAY_UNIT_USECS) &&
+
+It doesn't seem ideal that if the delay ends up specified in a unit over
+microseconds that we end up just ignoring the delay entirely.  This
+probably needs fixing in the core though, for example allowing the
+driver to say what range of delays it can actually implement.
+
+--DrWhICOqskFTAXiy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5X4EEACgkQJNaLcl1U
+h9AuKQf/VwDsH35+efmI58edDRHc3b1P9SXWdUTz+6yZOMfKofhGJlhnhkoHheqt
+kfVUG2SxvNDzDpmoZLW5KscTW0WcY3Le/15dLQoXpbRyshvNOiP7y4K/GJrlHCr/
+fic/79xluk+5b+abPXyARC/wjaVN2lNgl1dPVuvXvIN7Regl45EbWX53gFPybxiF
+lIQkR0ZA64jgUsDMF+ogiqW05kE6/rWo4OkMgqKKvkIAHeFoxSFmpxUxQYXDencr
+w8tCW4F86F5FifuAhHOmXv95ZvuIaG8Lyu9MCOOI+EBUj062yM3D0FXbWkdy+umU
+qKF0F3Y/cCMHZdzA4LIri/M8lk23VA==
+=qSJi
+-----END PGP SIGNATURE-----
+
+--DrWhICOqskFTAXiy--
