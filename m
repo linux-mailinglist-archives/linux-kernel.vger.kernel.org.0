@@ -2,160 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2287F17105C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 06:33:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CD17171085
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 06:35:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbgB0FdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 00:33:06 -0500
-Received: from mail27.static.mailgun.info ([104.130.122.27]:14781 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728522AbgB0FdE (ORCPT
+        id S1726460AbgB0FfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 00:35:14 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47142 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbgB0FfO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 00:33:04 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1582781583; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=z5QCR+5CQZXJeKsaK1cOJr/DwfcXkvDbVqkcSQPZeS0=; b=dTZZPicrsXfQx0LtihyTIpnlHtEWoqFTkRP1prDVrKhHV90kqVDxDKcB7xdpfBBNHmEML5XO
- t6VDN65CA4TruDhNkkzKRJXsPxjRekf7l3aYL0N3pa+vBrBf6tXmO3J8lk93wKN1lJrokOUn
- zZ4X+Tp+okHkJ5TY5/5cvVopfjA=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e57547a.7f45e60cea08-smtp-out-n02;
- Thu, 27 Feb 2020 05:32:42 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 1C20FC4479F; Thu, 27 Feb 2020 05:32:41 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [10.206.13.37] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5888BC43383;
-        Thu, 27 Feb 2020 05:32:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5888BC43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-Subject: Re: [PATCH v7 2/3] soc: qcom: rpmh: Update dirty flag only when data
- changes
-To:     Stephen Boyd <swboyd@chromium.org>, bjorn.andersson@linaro.org,
-        evgreen@chromium.org, mka@chromium.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        agross@kernel.org, dianders@chromium.org, rnayak@codeaurora.org,
-        ilina@codeaurora.org, lsrao@codeaurora.org
-References: <1582694833-9407-1-git-send-email-mkshah@codeaurora.org>
- <1582694833-9407-3-git-send-email-mkshah@codeaurora.org>
- <158275700389.177367.5843608826404724304@swboyd.mtv.corp.google.com>
-From:   Maulik Shah <mkshah@codeaurora.org>
-Message-ID: <3f7c689b-700a-1d76-505e-76446c62439f@codeaurora.org>
-Date:   Thu, 27 Feb 2020 11:02:34 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Thu, 27 Feb 2020 00:35:14 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01R5Z9nq009722;
+        Wed, 26 Feb 2020 23:35:09 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582781709;
+        bh=W6a8xjdmdk6xg15QL1s3y6dekJ7l96jr9e8pSwH3q0E=;
+        h=From:To:CC:Subject:Date;
+        b=rmtsiL1HmQ71s9YKQNYsl5WFRhepg6ktXQ5L5+MjW8BP3wwbrg1D7iOCGVPQAsobw
+         myUIvlxF3PY+hUazeUZegFWF53o8cjkhuzMA01/h5wLzBGa4T4F3/rSuwlBFVTVPjy
+         6maSyuJcKyTwNpHMgHglBNRPJ8+6migD4MOrKqow=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01R5Z9mT020205
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Feb 2020 23:35:09 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 26
+ Feb 2020 23:35:09 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 26 Feb 2020 23:35:09 -0600
+Received: from a0132425.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01R5Z6ee022834;
+        Wed, 26 Feb 2020 23:35:06 -0600
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH v4 0/2]  clk: keystone: Add new driver to handle ehrpwm tbclk
+Date:   Thu, 27 Feb 2020 11:05:27 +0530
+Message-ID: <20200227053529.16479-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <158275700389.177367.5843608826404724304@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On TI's AM654 and J721e SoCs, certain clocks can be gated/ungated by setting a
+single bit in SoC's System Control registers. Sometime more than
+one clock control can be in the same register. But these registers might
+also have bits to control other SoC functionalities.
+For example, Time Base clock(TBclk) enable bits for various EPWM IPs are
+all in EPWM_CTRL Syscon registers on K2G SoC.
 
-On 2/27/2020 4:13 AM, Stephen Boyd wrote:
-> Quoting Maulik Shah (2020-02-25 21:27:12)
->> Currently rpmh ctrlr dirty flag is set for all cases regardless
->> of data is really changed or not. Add changes to update it when
->> data is updated to newer values.
->>
->> Also move dirty flag updates to happen from within cache_lock.
->>
->> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
->> Reviewed-by: Srinivas Rao L <lsrao@codeaurora.org>
-> Probably worth adding a Fixes tag here? Doesn't make sense to mark
-> something dirty when it isn't changed.
-Done. will update in v8.
->> ---
->>   drivers/soc/qcom/rpmh.c | 21 ++++++++++++++++-----
->>   1 file changed, 16 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
->> index eb0ded0..83ba4e0 100644
->> --- a/drivers/soc/qcom/rpmh.c
->> +++ b/drivers/soc/qcom/rpmh.c
->> @@ -139,20 +139,27 @@ static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
->>   existing:
->>          switch (state) {
->>          case RPMH_ACTIVE_ONLY_STATE:
->> -               if (req->sleep_val != UINT_MAX)
->> +               if (req->sleep_val != UINT_MAX) {
->>                          req->wake_val = cmd->data;
->> +                       ctrlr->dirty = true;
->> +               }
->>                  break;
->>          case RPMH_WAKE_ONLY_STATE:
->> -               req->wake_val = cmd->data;
->> +               if (req->wake_val != cmd->data) {
->> +                       req->wake_val = cmd->data;
->> +                       ctrlr->dirty = true;
->> +               }
->>                  break;
->>          case RPMH_SLEEP_STATE:
->> -               req->sleep_val = cmd->data;
->> +               if (req->sleep_val != cmd->data) {
->> +                       req->sleep_val = cmd->data;
->> +                       ctrlr->dirty = true;
->> +               }
->>                  break;
->>          default:
->>                  break;
-> Please remove the default case. There are only three states in the enum. The
-> compiler will warn if a switch statement doesn't cover all cases and
-> we'll know to add something here if another enum value is added in the
-> future.
-Done.
->>          }
->>   
->> -       ctrlr->dirty = true;
->>   unlock:
->>          spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
->>   
->> @@ -323,6 +331,7 @@ static void invalidate_batch(struct rpmh_ctrlr *ctrlr)
->>          list_for_each_entry_safe(req, tmp, &ctrlr->batch_cache, list)
->>                  kfree(req);
->>          INIT_LIST_HEAD(&ctrlr->batch_cache);
->> +       ctrlr->dirty = true;
->>          spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
->>   }
->>   
->> @@ -456,6 +465,7 @@ static int send_single(struct rpmh_ctrlr *ctrlr, enum rpmh_state state,
->>   int rpmh_flush(struct rpmh_ctrlr *ctrlr)
->>   {
->>          struct cache_req *p;
->> +       unsigned long flags;
->>          int ret;
->>   
->>          if (!ctrlr->dirty) {
->> @@ -488,7 +498,9 @@ int rpmh_flush(struct rpmh_ctrlr *ctrlr)
->>                          return ret;
->>          }
->>   
->> +       spin_lock_irqsave(&ctrlr->cache_lock, flags);
->>          ctrlr->dirty = false;
->> +       spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-> So we take the spinlock to update it here. But we don't hold the
-> spinlock to test for !dirty up above. Seems like either rpmh_flush() can
-> only be called sequentially, or the lock added here needs to be held
-> during the whole flush. Which way is it?
+This series adds a new clk driver to support controlling tbclk. Registers
+which control clocks will be grouped into a syscon DT node, thus
+enabling sharing of register across clk drivers and other drivers.
 
-Thanks, i will remove !ctrlr->dirty check within rpmh_flush() as 
-currently we invoke it only when caches are dirty.
+v4:
+Fix up the title of YAML bindings file to drop reference to driver
 
-Last cpu going down can first check dirty flag outside rpmh_flush() and 
-decide to invoke it accoringly.
+v3:
+Register syscon node as clk provider
+
+v2:
+Simplify driver to have only one clock node per group of syscon
+controller registers instead of one per clock instance.
+
+v1: https://patchwork.kernel.org/cover/10848783/
+
+Vignesh Raghavendra (2):
+  dt-bindings: clock: Add binding documentation for TI EHRPWM TBCLK
+  clk: keystone: Add new driver to handle syscon based clocks
+
+ .../bindings/clock/ti,am654-ehrpwm-tbclk.yaml |  35 ++++
+ drivers/clk/keystone/Kconfig                  |   8 +
+ drivers/clk/keystone/Makefile                 |   1 +
+ drivers/clk/keystone/syscon-clk.c             | 172 ++++++++++++++++++
+ 4 files changed, 216 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
+ create mode 100644 drivers/clk/keystone/syscon-clk.c
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.25.1
+
