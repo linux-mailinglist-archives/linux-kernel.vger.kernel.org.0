@@ -2,64 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 893C2172380
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:36:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F65172361
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:30:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730316AbgB0QfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:35:14 -0500
-Received: from smtp-out.xnet.cz ([178.217.244.18]:22715 "EHLO smtp-out.xnet.cz"
+        id S1730028AbgB0Q2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:28:05 -0500
+Received: from foss.arm.com ([217.140.110.172]:54360 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730295AbgB0QfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:35:14 -0500
-X-Greylist: delayed 447 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Feb 2020 11:35:12 EST
-Received: from meh.true.cz (meh.true.cz [108.61.167.218])
-        (Authenticated sender: petr@true.cz)
-        by smtp-out.xnet.cz (Postfix) with ESMTPSA id 2E4B43D9E;
-        Thu, 27 Feb 2020 17:27:44 +0100 (CET)
-Received: by meh.true.cz (OpenSMTPD) with ESMTP id 3bf5d2ef;
-        Thu, 27 Feb 2020 17:27:30 +0100 (CET)
-From:   =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Tomasz Duszynski <tduszyns@gmail.com>
-Cc:     =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
-        stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: chemical: sps30: fix missing triggered buffer dependency
-Date:   Thu, 27 Feb 2020 17:27:34 +0100
-Message-Id: <20200227162734.604-1-ynezz@true.cz>
+        id S1729263AbgB0Q2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 11:28:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2DCD61FB;
+        Thu, 27 Feb 2020 08:28:04 -0800 (PST)
+Received: from [10.0.8.126] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C6DF3F7B4;
+        Thu, 27 Feb 2020 08:28:02 -0800 (PST)
+Subject: Re: [PATCH 1/2] sched/topology: Don't enable EAS on SMT systems
+To:     Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        morten.rasmussen@arm.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, kernel-team@android.com
+References: <20200226164118.6405-1-valentin.schneider@arm.com>
+ <20200226164118.6405-2-valentin.schneider@arm.com>
+ <20200227130001.GA107011@google.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <7ce12aa2-1925-f991-a85f-5bd81ba668fb@arm.com>
+Date:   Thu, 27 Feb 2020 16:28:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200227130001.GA107011@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SPS30 uses triggered buffer, but the dependency is not specified in the
-Kconfig file.  Fix this by selecting IIO_BUFFER and IIO_TRIGGERED_BUFFER
-config symbols.
+On 27.02.20 13:00, Quentin Perret wrote:
+> On Wednesday 26 Feb 2020 at 16:41:17 (+0000), Valentin Schneider wrote:
+>> EAS already requires asymmetric CPU capacities to be enabled, and mixing
+>> this with SMT is an aberration, but better be safe than sorry.
+>>
+>> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+> 
+> Acked-by: Quentin Perret <qperret@google.com>
+> 
+> Thanks,
+> Quentin
+> 
+>> ---
+>>  kernel/sched/topology.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+>> index 00911884b7e7..76cd0a370b9a 100644
+>> --- a/kernel/sched/topology.c
+>> +++ b/kernel/sched/topology.c
+>> @@ -360,6 +360,10 @@ static bool build_perf_domains(const struct cpumask *cpu_map)
+>>  		goto free;
+>>  	}
+>>  
+>> +	/* EAS definitely does *not* handle SMT */
+>> +	if (sched_smt_active())
 
-Cc: stable@vger.kernel.org
-Fixes: 232e0f6ddeae ("iio: chemical: add support for Sensirion SPS30 sensor")
-Signed-off-by: Petr Štetiar <ynezz@true.cz>
----
- drivers/iio/chemical/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Can you add a pr_warn() and use the current comment as the warning
+message? Since we have one for !Asym CPU capacity and !schedutil.
 
-diff --git a/drivers/iio/chemical/Kconfig b/drivers/iio/chemical/Kconfig
-index 0b91de4df8f4..a7e65a59bf42 100644
---- a/drivers/iio/chemical/Kconfig
-+++ b/drivers/iio/chemical/Kconfig
-@@ -91,6 +91,8 @@ config SPS30
- 	tristate "SPS30 particulate matter sensor"
- 	depends on I2C
- 	select CRC8
-+	select IIO_BUFFER
-+	select IIO_TRIGGERED_BUFFER
- 	help
- 	  Say Y here to build support for the Sensirion SPS30 particulate
- 	  matter sensor.
+>> +		goto free;
+>> +
+
+[...]
+
+There is this 'EAS can be used ...' list of currently 4 items in the
+build_perf_domains() function header. You could include 'X. No SMT
+support' there.
+ ;-)
