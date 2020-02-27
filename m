@@ -2,107 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F21A172158
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:49:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD9CB172170
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:49:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730825AbgB0Or7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:47:59 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36408 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729703AbgB0Or5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:47:57 -0500
-Received: by mail-ot1-f66.google.com with SMTP id j20so3156708otq.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:47:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hx07xUVtiLNFuA+1PzPYK/9ENx9jNADnJPX/dLICnC8=;
-        b=lXot71ha2urcEDRxHPtBHaefBgmRMzntRzxE6l5Ds6md0rzSUqRI/6H/ApNFmifuSN
-         9lC498PqgOIiGEueKbDq8ac1v4jKA4ac9RkZzN5I1+AfmDOEtOo5DZE+ohNHSL+Xou5B
-         m5V74FIWg/uGXpKMvhhtGMoa4MQjZmv38HetA93dLq8lpfB5WG7dZvziCwiF4N2chTxa
-         yKLoCajNkQq/Q9j7kS20LJvOM2yYZOe7SLZhn58CYYqQau/fiY/zpYiA/6YMIBatLzhl
-         zATALbuG9fu095hQ+sIuuFm3Lp5Rs98Pz0IQUsfzW+3H35gAojENvm98gI7B+VVM4Py7
-         9eWw==
-X-Gm-Message-State: APjAAAXFW4zHzRIVg/oZc9f2zbg4Uj8YTVH6gP23vXOxPjs2jeAjc7Ly
-        yzO3Kx93Bh4m/GpovjcmPHrLZGcWfwMhN6F2KTD30V8b
-X-Google-Smtp-Source: APXvYqx+Tk3BPXn2pbxAQxVRNK/Sn8CkdmxpB1+lGOWCIYJv6w3mZHrwCku0J5SBCbXVXhZykFOzpHDF1EFnW2116wg=
-X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr3602134otk.145.1582814876431;
- Thu, 27 Feb 2020 06:47:56 -0800 (PST)
+        id S1731589AbgB0OtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:49:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57028 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732378AbgB0Osz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:48:55 -0500
+Received: from [192.168.1.35] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF23324691;
+        Thu, 27 Feb 2020 14:48:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582814935;
+        bh=PNCBIOi/hahvPP1VI/V1VFVsBO0p2aUToANjq/00tqM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FURy0hYiwPiyiSgpP/kFmywaXfXIFQUKlI62mOeVgtwAvA/fELE4qQ6ttsxh7yXnr
+         00b8w+xZg1215E0BM79towH3e3+Zh71oBbJwzcMro2knivYde6gl1Z1xPl/Ohddvg0
+         ZCDWoK0WyuUAUPJYBN88mLT8uKTNJ8TyzcCpxTj8=
+Subject: Re: [PATCH] arm64: dts: socfpga: agilex: Fix gmac compatible
+To:     Ley Foon Tan <ley.foon.tan@intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Chin Liang See <chin.liang.see@intel.com>,
+        lftan.linux@gmail.com
+References: <20200226183518.64673-1-ley.foon.tan@intel.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ xsFNBFEnvWwBEAC44OQqJjuetSRuOpBMIk3HojL8dY1krl8T8GJjfgc/Gh97CfVbrqhV5yQ3
+ Sk/MW9mxO9KNvQCbZtthfn62YHmroNwipjZ6wKOMfKdtJR4+8JW/ShIJYnrMfwN8Wki6O+5a
+ yPNNCeENHleV0FLVXw3aACxOcjEzGJHYmg4UC+56rfoxPEhKF6aGBTV5aGKMtQy77ywuqt12
+ c+hlRXHODmXdIeT2V4/u/AsFNAq6UFUEvHrVj+dMIyv2VhjRvkcESIGnG12ifPdU7v/+wom/
+ smtfOAGojgTCqpwd0Ay2xFzgGnSCIFRHp0I/OJqhUcwAYEAdgHSBVwiyTQx2jP+eDu3Q0jI3
+ K/x5qrhZ7lj8MmJPJWQOSYC4fYSse2oVO+2msoMTvMi3+Jy8k+QNH8LhB6agq7wTgF2jodwO
+ yij5BRRIKttp4U62yUgfwbQtEUvatkaBQlG3qSerOzcdjSb4nhRPxasRqNbgkBfs7kqH02qU
+ LOAXJf+y9Y1o6Nk9YCqb5EprDcKCqg2c8hUya8BYqo7y+0NkBU30mpzhaJXncbCMz3CQZYgV
+ 1TR0qEzMv/QtoVuuPtWH9RCC83J5IYw1uFUG4RaoL7Z03fJhxGiXx3/r5Kr/hC9eMl2he6vH
+ 8rrEpGGDm/mwZOEoG5D758WQHLGH4dTAATg0+ZzFHWBbSnNaSQARAQABzSFEaW5oIE5ndXll
+ biA8ZGluZ3V5ZW5Aa2VybmVsLm9yZz7CwXgEEwECACIFAlbG5oQCGwMGCwkIBwMCBhUIAgkK
+ CwQWAgMBAh4BAheAAAoJEBmUBAuBoyj0fIgQAICrZ2ceRWpkZv1UPM/6hBkWwOo3YkzSQwL+
+ AH15hf9xx0D5mvzEtZ97ZoD0sAuB+aVIFwolet+nw49Q8HA3E/3j0DT7sIAqJpcPx3za+kKT
+ twuQ4NkQTTi4q5WCpA5b6e2qzIynB50b3FA6bCjJinN06PxhdOixJGv1qDDmJ01fq2lA7/PL
+ cny/1PIo6PVMWo9nf77L6iXVy8sK/d30pa1pjhMivfenIleIPYhWN1ZdRAkH39ReDxdqjQXN
+ NHanNtsnoCPFsqeCLmuUwcG+XSTo/gEM6l2sdoMF4qSkD4DdrVf5rsOyN4KJAY9Uqytn4781
+ n6l1NAQSRr0LPT5r6xdQ3YXIbwUfrBWh2nDPm0tihuHoH0CfyJMrFupSmjrKXF84F3cq0DzC
+ yasTWUKyW/YURbWeGMpQH3ioDLvBn0H3AlVoSloaRzPudQ6mP4O8mY0DZQASGf6leM82V3t0
+ Gw8MxY9tIiowY7Yl2bHqXCorPlcEYXjzBP32UOxIK7y7AQ1JQkcv6pZ0/6lX6hMshzi9Ydw0
+ m8USfFRZb48gsp039gODbSMCQ2NfxBEyUPw1O9nertCMbIO/0bHKkP9aiHwg3BPwm3YL1UvM
+ ngbze/8cyjg9pW3Eu1QAzMQHYkT1iiEjJ8fTssqDLjgJyp/I3YHYUuAf3i8SlcZTusIwSqnD
+ zsFNBFEnvWwBEADZqma4LI+vMqJYe15fxnX8ANw+ZuDeYHy17VXqQ7dA7n8E827ndnoXoBKB
+ 0n7smz1C0I9StarHQPYTUciMLsaUpedEfpYgqLa7eRLFPvk/cVXxmY8Pk+aO8zHafr8yrFB1
+ cYHO3Ld8d/DvF2DuC3iqzmgXzaRQhvQZvJ513nveCa2zTPPCj5w4f/Qkq8OgCz9fOrf/CseM
+ xcP3Jssyf8qTZ4CTt1L6McRZPA/oFNTTgS/KA22PMMP9i8E6dF0Nsj0MN0R7261161PqfA9h
+ 5c+BBzKZ6IHvmfwY+Fb0AgbqegOV8H/wQYCltPJHeA5y1kc/rqplw5I5d8Q6B29p0xxXSfaP
+ UQ/qmXUkNQPNhsMnlL3wRoCol60IADiEyDJHVZRIl6U2K54LyYE1vkf14JM670FsUH608Hmk
+ 30FG8bxax9i+8Muda9ok/KR4Z/QPQukmHIN9jVP1r1C/aAEvjQ2PK9aqrlXCKKenQzZ8qbeC
+ rOTXSuJgWmWnPWzDrMxyEyy+e84bm+3/uPhZjjrNiaTzHHSRnF2ffJigu9fDKAwSof6SwbeH
+ eZcIM4a9Dy+Ue0REaAqFacktlfELeu1LVzMRvpIfPua8izTUmACTgz2kltTaeSxAXZwIziwY
+ prPU3cfnAjqxFHO2TwEpaQOMf8SH9BSAaCXArjfurOF+Pi3lKwARAQABwsFfBBgBAgAJBQJR
+ J71sAhsMAAoJEBmUBAuBoyj0MnIQAI+bcNsfTNltf5AbMJptDgzISZJrYCXuzOgv4+d1CubD
+ 83s0k6VJgsiCIEpvELQJsr58xB6l+o3yTBZRo/LViNLk0jF4CmCdXWjTyaQAIceEdlaeeTGH
+ d5GqAud9rv9q1ERHTcvmoEX6pwv3m66ANK/dHdBV97vXacl+BjQ71aRiAiAFySbJXnqj+hZQ
+ K8TCI/6TOtWJ9aicgiKpmh/sGmdeJCwZ90nxISvkxDXLEmJ1prvbGc74FGNVNTW4mmuNqj/p
+ oNr0iHan8hjPNXwoyLNCtj3I5tBmiHZcOiHDUufHDyKQcsKsKI8kqW3pJlDSACeNpKkrjrib
+ 3KLQHSEhTQCt3ZUDf5xNPnFHOnBjQuGkumlmhkgD5RVguki39AP2BQYp/mdk1NCRQxz5PR1B
+ 2w0QaTgPY24chY9PICcMw+VeEgHZJAhuARKglxiYj9szirPd2kv4CFu2w6a5HNMdVT+i5Hov
+ cJEJNezizexE0dVclt9OS2U9Xwb3VOjs1ITMEYUf8T1j83iiCCFuXqH4U3Eji0nDEiEN5Ac0
+ Jn/EGOBG2qGyKZ4uOec9j5ABF7J6hyO7H6LJaX5bLtp0Z7wUbyVaR4UIGdIOchNgNQk4stfm
+ JiyuXyoFl/1ihREfvUG/e7+VAAoOBnMjitE5/qUERDoEkkuQkMcAHyEyd+XZMyXY
+Message-ID: <b2747826-8685-37ab-4a12-939d3ea7ee94@kernel.org>
+Date:   Thu, 27 Feb 2020 08:48:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <158220110257.26565.4812934676257459744.stgit@devnote2>
- <158220111291.26565.9036889083940367969.stgit@devnote2> <CAMuHMdWEoBrFRhmLEByhDCasuMrbGS4PreRivYRApdsME7x2AA@mail.gmail.com>
- <20200227092732.6a22a71a@gandalf.local.home>
-In-Reply-To: <20200227092732.6a22a71a@gandalf.local.home>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 27 Feb 2020 15:47:45 +0100
-Message-ID: <CAMuHMdX6RpEDpkKcmLeNh4T2o+_HpV3XpYCAWYk0uWYt_bkztw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] bootconfig: Set CONFIG_BOOT_CONFIG=n by default
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200226183518.64673-1-ley.foon.tan@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven,
+Hi Ley Foon,
 
-On Thu, Feb 27, 2020 at 3:27 PM Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Thu, 27 Feb 2020 10:22:00 +0100
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > +static int __init warn_bootconfig(char *str)
-> > > +{
-> > > +       pr_warn("WARNING: 'bootconfig' found on the kernel command line but CONFIG_BOOTCONFIG is not set.\n");
-> > > +       return 0;
-> > > +}
-> > > +early_param("bootconfig", warn_bootconfig);
-> >
-> > Yeah, let's increases kernel size for the people who don't want to jump
-> > on the bootconfig wagon :-(
-> >
-> > Is this really needed?
->
-> Yes, because if someone adds bootconfig to the command line they would be
-> expecting their bootconfig to be read. If not, we should not fail silently.
+Thanks for catching this. Can you resend with the Fixes tag and cc the
+stable mailing list to get this backported to the stable kernels.
 
-If someone adds "ip=on" to the command line, they expect DHCP to work.
-Woops, you need CONFIG_IP_PNP for that.
-If someone adds "nfsroot=..." to the command line, they expect the NFS
-root fielsystem to be mounted.
-Guess how many options need to be enabled for that?
+Thanks,
+Dinh
 
-Perhaps we need CONFIG_COMMAND_NOT_FOUND?
-
-    Kernel panic - not syncing: option "inspecial" not found.
-    Did you mean:
-
-        option "imspecial" from section "mine"
-        option "urspecial" from section "yours"
-
-    Try enabling it with "make xconfig".
-
-> Are you really concerned about a tiny __init function that gets freed after
-> boot up?
-
-It's still part of the initial kernel image, and thus subject to boot loader and
-platform limitations.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+On 2/26/20 12:35 PM, Ley Foon Tan wrote:
+> Fix gmac compatible string to "altr,socfpga-stmmac-a10-s10". Gmac for
+> Agilex should use same compatible as Stratix 10.
+> 
+> Signed-off-by: Ley Foon Tan <ley.foon.tan@intel.com>
+> ---
+>  arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> index e1d357eaad7c..d8c44d3ca15a 100644
+> --- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> @@ -102,7 +102,7 @@
+>  		};
+>  
+>  		gmac0: ethernet@ff800000 {
+> -			compatible = "altr,socfpga-stmmac", "snps,dwmac-3.74a", "snps,dwmac";
+> +			compatible = "altr,socfpga-stmmac-a10-s10", "snps,dwmac-3.74a", "snps,dwmac";
+>  			reg = <0xff800000 0x2000>;
+>  			interrupts = <0 90 4>;
+>  			interrupt-names = "macirq";
+> @@ -118,7 +118,7 @@
+>  		};
+>  
+>  		gmac1: ethernet@ff802000 {
+> -			compatible = "altr,socfpga-stmmac", "snps,dwmac-3.74a", "snps,dwmac";
+> +			compatible = "altr,socfpga-stmmac-a10-s10", "snps,dwmac-3.74a", "snps,dwmac";
+>  			reg = <0xff802000 0x2000>;
+>  			interrupts = <0 91 4>;
+>  			interrupt-names = "macirq";
+> @@ -134,7 +134,7 @@
+>  		};
+>  
+>  		gmac2: ethernet@ff804000 {
+> -			compatible = "altr,socfpga-stmmac", "snps,dwmac-3.74a", "snps,dwmac";
+> +			compatible = "altr,socfpga-stmmac-a10-s10", "snps,dwmac-3.74a", "snps,dwmac";
+>  			reg = <0xff804000 0x2000>;
+>  			interrupts = <0 92 4>;
+>  			interrupt-names = "macirq";
+> 
