@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74252171B64
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F460171BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:05:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733044AbgB0OCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:02:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36248 "EHLO mail.kernel.org"
+        id S2387780AbgB0OFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:05:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733021AbgB0OB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:01:56 -0500
+        id S2387769AbgB0OF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:05:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D3B421556;
-        Thu, 27 Feb 2020 14:01:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32C9F24691;
+        Thu, 27 Feb 2020 14:05:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812116;
-        bh=7+8IUUNeENPExRxQnZqF/iU4d7nSWfX3uixTtff8G+Q=;
+        s=default; t=1582812327;
+        bh=hVmMPzbNUFh4d8/1PFfZVOKJRZ7c2slJRQmWFYW7Hjw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JXm0ubdweHms+3cZc47w2UovpBZ4pOh74tBGhp4rdaQ3NboiKF84CMyWW3J+AeJaH
-         XpDU7qHZbSohUGDan/zyQNig51aqEmgfCzCOvqP+/0SKxPtuggjEy1W12fg7VMTpld
-         Q+rHeVUHWdsUjvjD870lk9lyF/QN78MK105R0HEk=
+        b=Z7owrUYlMq4jiNsIVYaBe0eCEFT9emhEWKJQlQJjHkqKbPn8jwT1eMOEzWgGXeRYU
+         FC8hq1t2W4tgjbd4o5/rx/aZU/WRs4uguqjWQhlHDe2aSkGBaxqOu24K4oq2xpeAcG
+         FXGD81WYYn1aSWgn1Rb8MvxsKRSSh7g8jmyu59UQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vaibhav Agarwal <vaibhav.sr@gmail.com>
-Subject: [PATCH 4.14 227/237] staging: greybus: use after free in gb_audio_manager_remove_all()
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH 4.19 73/97] KVM: nVMX: handle nested posted interrupts when apicv is disabled for L1
 Date:   Thu, 27 Feb 2020 14:37:21 +0100
-Message-Id: <20200227132312.823713763@linuxfoundation.org>
+Message-Id: <20200227132226.392852498@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +43,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit b7db58105b80fa9232719c8329b995b3addfab55 upstream.
+commit 91a5f413af596ad01097e59bf487eb07cb3f1331 upstream.
 
-When we call kobject_put() and it's the last reference to the kobject
-then it calls gb_audio_module_release() and frees module.  We dereference
-"module" on the next line which is a use after free.
+Even when APICv is disabled for L1 it can (and, actually, is) still
+available for L2, this means we need to always call
+vmx_deliver_nested_posted_interrupt() when attempting an interrupt
+delivery.
 
-Fixes: c77f85bbc91a ("greybus: audio: Fix incorrect counting of 'ida'")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Vaibhav Agarwal <vaibhav.sr@gmail.com>
-Link: https://lore.kernel.org/r/20200205123217.jreendkyxulqsool@kili.mountain
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/greybus/audio_manager.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/kvm_host.h |    2 +-
+ arch/x86/kvm/lapic.c            |    5 +----
+ arch/x86/kvm/svm.c              |    7 ++++++-
+ arch/x86/kvm/vmx.c              |   13 +++++++++----
+ 4 files changed, 17 insertions(+), 10 deletions(-)
 
---- a/drivers/staging/greybus/audio_manager.c
-+++ b/drivers/staging/greybus/audio_manager.c
-@@ -90,8 +90,8 @@ void gb_audio_manager_remove_all(void)
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1040,7 +1040,7 @@ struct kvm_x86_ops {
+ 	void (*load_eoi_exitmap)(struct kvm_vcpu *vcpu, u64 *eoi_exit_bitmap);
+ 	void (*set_virtual_apic_mode)(struct kvm_vcpu *vcpu);
+ 	void (*set_apic_access_page_addr)(struct kvm_vcpu *vcpu, hpa_t hpa);
+-	void (*deliver_posted_interrupt)(struct kvm_vcpu *vcpu, int vector);
++	int (*deliver_posted_interrupt)(struct kvm_vcpu *vcpu, int vector);
+ 	int (*sync_pir_to_irr)(struct kvm_vcpu *vcpu);
+ 	int (*set_tss_addr)(struct kvm *kvm, unsigned int addr);
+ 	int (*set_identity_map_addr)(struct kvm *kvm, u64 ident_addr);
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -1060,11 +1060,8 @@ static int __apic_accept_irq(struct kvm_
+ 				apic_clear_vector(vector, apic->regs + APIC_TMR);
+ 		}
  
- 	list_for_each_entry_safe(module, next, &modules_list, list) {
- 		list_del(&module->list);
--		kobject_put(&module->kobj);
- 		ida_simple_remove(&module_id, module->id);
-+		kobject_put(&module->kobj);
- 	}
+-		if (vcpu->arch.apicv_active)
+-			kvm_x86_ops->deliver_posted_interrupt(vcpu, vector);
+-		else {
++		if (kvm_x86_ops->deliver_posted_interrupt(vcpu, vector)) {
+ 			kvm_lapic_set_irr(vector, apic);
+-
+ 			kvm_make_request(KVM_REQ_EVENT, vcpu);
+ 			kvm_vcpu_kick(vcpu);
+ 		}
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -5140,8 +5140,11 @@ static void svm_load_eoi_exitmap(struct
+ 	return;
+ }
  
- 	is_empty = list_empty(&modules_list);
+-static void svm_deliver_avic_intr(struct kvm_vcpu *vcpu, int vec)
++static int svm_deliver_avic_intr(struct kvm_vcpu *vcpu, int vec)
+ {
++	if (!vcpu->arch.apicv_active)
++		return -1;
++
+ 	kvm_lapic_set_irr(vec, vcpu->arch.apic);
+ 	smp_mb__after_atomic();
+ 
+@@ -5150,6 +5153,8 @@ static void svm_deliver_avic_intr(struct
+ 		       kvm_cpu_get_apicid(vcpu->cpu));
+ 	else
+ 		kvm_vcpu_wake_up(vcpu);
++
++	return 0;
+ }
+ 
+ static bool svm_dy_apicv_has_pending_interrupt(struct kvm_vcpu *vcpu)
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -6284,24 +6284,29 @@ static int vmx_deliver_nested_posted_int
+  * 2. If target vcpu isn't running(root mode), kick it to pick up the
+  * interrupt from PIR in next vmentry.
+  */
+-static void vmx_deliver_posted_interrupt(struct kvm_vcpu *vcpu, int vector)
++static int vmx_deliver_posted_interrupt(struct kvm_vcpu *vcpu, int vector)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	int r;
+ 
+ 	r = vmx_deliver_nested_posted_interrupt(vcpu, vector);
+ 	if (!r)
+-		return;
++		return 0;
++
++	if (!vcpu->arch.apicv_active)
++		return -1;
+ 
+ 	if (pi_test_and_set_pir(vector, &vmx->pi_desc))
+-		return;
++		return 0;
+ 
+ 	/* If a previous notification has sent the IPI, nothing to do.  */
+ 	if (pi_test_and_set_on(&vmx->pi_desc))
+-		return;
++		return 0;
+ 
+ 	if (!kvm_vcpu_trigger_posted_interrupt(vcpu, false))
+ 		kvm_vcpu_kick(vcpu);
++
++	return 0;
+ }
+ 
+ /*
 
 
