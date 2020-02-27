@@ -2,38 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC20E171BA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:04:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 212E3171C54
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:11:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387540AbgB0OEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:04:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39756 "EHLO mail.kernel.org"
+        id S2387893AbgB0OLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:11:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730232AbgB0OD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:03:57 -0500
+        id S2388646AbgB0OLH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:11:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2F8B21D7E;
-        Thu, 27 Feb 2020 14:03:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43A0720578;
+        Thu, 27 Feb 2020 14:11:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812237;
-        bh=+TFOXBk75S8bLqdzidN0IZTgL72Fo3EFA7peJq32h5s=;
+        s=default; t=1582812666;
+        bh=iPUDlsPFH+FwV8NLJMv8GkVXfyIZWc1Sf8LGJLRKhek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JUaJG7ejud+R5ir549L1Ep6jtBQvOIy5knAN+VSJBBDCXlJqsK/o7ElrahqV2SDAx
-         6SxpwV1BAR8NRcUGw/lAAgZ0/ZrAZHRISD+mlSaoPveFylt4Oe9Wx832TOR/4evcsZ
-         b3sRFkJGVlbEq5UR8jVsjii+JlCTe+y+W+1+YGvA=
+        b=DPzQEq3rXiDAuu5tnVCC8/uwH8waJlQ3VCwvpFtyf3LQJQOT8YMXhrGrU3iF12WjN
+         F2RCDhbwd8XnQ5tE1l//HyMHJ573EQTvvM3zi3/u/HK9q0wgeuPfU6/bR7ZZ2hFxBz
+         gku+Ah9nd4FhF2jW7BoSOvznZLALEu9XSieKMT7c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH 4.19 38/97] x86/mce/amd: Fix kobject lifetime
-Date:   Thu, 27 Feb 2020 14:36:46 +0100
-Message-Id: <20200227132220.767800679@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Yang <richardw.yang@linux.intel.com>,
+        Baoquan He <bhe@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.4 067/135] mm/sparsemem: pfn_to_page is not valid yet on SPARSEMEM
+Date:   Thu, 27 Feb 2020 14:36:47 +0100
+Message-Id: <20200227132239.331589181@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,87 +50,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Wei Yang <richardw.yang@linux.intel.com>
 
-commit 51dede9c05df2b78acd6dcf6a17d21f0877d2d7b upstream.
+commit 18e19f195cd888f65643a77a0c6aee8f5be6439a upstream.
 
-Accessing the MCA thresholding controls in sysfs concurrently with CPU
-hotplug can lead to a couple of KASAN-reported issues:
+When we use SPARSEMEM instead of SPARSEMEM_VMEMMAP, pfn_to_page()
+doesn't work before sparse_init_one_section() is called.
 
-  BUG: KASAN: use-after-free in sysfs_file_ops+0x155/0x180
-  Read of size 8 at addr ffff888367578940 by task grep/4019
+This leads to a crash when hotplug memory:
 
-and
+    BUG: unable to handle page fault for address: 0000000006400000
+    #PF: supervisor write access in kernel mode
+    #PF: error_code(0x0002) - not-present page
+    PGD 0 P4D 0
+    Oops: 0002 [#1] SMP PTI
+    CPU: 3 PID: 221 Comm: kworker/u16:1 Tainted: G        W         5.5.0-next-20200205+ #343
+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+    Workqueue: kacpi_hotplug acpi_hotplug_work_fn
+    RIP: 0010:__memset+0x24/0x30
+    Code: cc cc cc cc cc cc 0f 1f 44 00 00 49 89 f9 48 89 d1 83 e2 07 48 c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 <f3> 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 f3
+    RSP: 0018:ffffb43ac0373c80 EFLAGS: 00010a87
+    RAX: ffffffffffffffff RBX: ffff8a1518800000 RCX: 0000000000050000
+    RDX: 0000000000000000 RSI: 00000000000000ff RDI: 0000000006400000
+    RBP: 0000000000140000 R08: 0000000000100000 R09: 0000000006400000
+    R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
+    R13: 0000000000000028 R14: 0000000000000000 R15: ffff8a153ffd9280
+    FS:  0000000000000000(0000) GS:ffff8a153ab00000(0000) knlGS:0000000000000000
+    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+    CR2: 0000000006400000 CR3: 0000000136fca000 CR4: 00000000000006e0
+    DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+    DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+    Call Trace:
+     sparse_add_section+0x1c9/0x26a
+     __add_pages+0xbf/0x150
+     add_pages+0x12/0x60
+     add_memory_resource+0xc8/0x210
+     __add_memory+0x62/0xb0
+     acpi_memory_device_add+0x13f/0x300
+     acpi_bus_attach+0xf6/0x200
+     acpi_bus_scan+0x43/0x90
+     acpi_device_hotplug+0x275/0x3d0
+     acpi_hotplug_work_fn+0x1a/0x30
+     process_one_work+0x1a7/0x370
+     worker_thread+0x30/0x380
+     kthread+0x112/0x130
+     ret_from_fork+0x35/0x40
 
-  BUG: KASAN: use-after-free in show_error_count+0x15c/0x180
-  Read of size 2 at addr ffff888368a05514 by task grep/4454
+We should use memmap as it did.
 
-for example. Both result from the fact that the threshold block
-creation/teardown code frees the descriptor memory itself instead of
-defining proper ->release function and leaving it to the driver core to
-take care of that, after all sysfs accesses have completed.
+On x86 the impact is limited to x86_32 builds, or x86_64 configurations
+that override the default setting for SPARSEMEM_VMEMMAP.
 
-Do that and get rid of the custom freeing code, fixing the above UAFs in
-the process.
+Other memory hotplug archs (arm64, ia64, and ppc) also default to
+SPARSEMEM_VMEMMAP=y.
 
-  [ bp: write commit message. ]
-
-Fixes: 95268664390b ("[PATCH] x86_64: mce_amd support for family 0x10 processors")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
+[dan.j.williams@intel.com: changelog update]
+{rppt@linux.ibm.com: changelog update]
+Link: http://lkml.kernel.org/r/20200219030454.4844-1-bhe@redhat.com
+Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Baoquan He <bhe@redhat.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Oscar Salvador <osalvador@suse.de>
 Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20200214082801.13836-1-bp@alien8.de
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/mcheck/mce_amd.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ mm/sparse.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -1117,9 +1117,12 @@ static const struct sysfs_ops threshold_
- 	.store			= store,
- };
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -884,7 +884,7 @@ int __meminit sparse_add_section(int nid
+ 	 * Poison uninitialized struct pages in order to catch invalid flags
+ 	 * combinations.
+ 	 */
+-	page_init_poison(pfn_to_page(start_pfn), sizeof(struct page) * nr_pages);
++	page_init_poison(memmap, sizeof(struct page) * nr_pages);
  
-+static void threshold_block_release(struct kobject *kobj);
-+
- static struct kobj_type threshold_ktype = {
- 	.sysfs_ops		= &threshold_ops,
- 	.default_attrs		= default_attrs,
-+	.release		= threshold_block_release,
- };
- 
- static const char *get_name(unsigned int bank, struct threshold_block *b)
-@@ -1321,8 +1324,12 @@ static int threshold_create_bank(unsigne
- 	return err;
- }
- 
--static void deallocate_threshold_block(unsigned int cpu,
--						 unsigned int bank)
-+static void threshold_block_release(struct kobject *kobj)
-+{
-+	kfree(to_block(kobj));
-+}
-+
-+static void deallocate_threshold_block(unsigned int cpu, unsigned int bank)
- {
- 	struct threshold_block *pos = NULL;
- 	struct threshold_block *tmp = NULL;
-@@ -1332,13 +1339,11 @@ static void deallocate_threshold_block(u
- 		return;
- 
- 	list_for_each_entry_safe(pos, tmp, &head->blocks->miscj, miscj) {
--		kobject_put(&pos->kobj);
- 		list_del(&pos->miscj);
--		kfree(pos);
-+		kobject_put(&pos->kobj);
- 	}
- 
--	kfree(per_cpu(threshold_banks, cpu)[bank]->blocks);
--	per_cpu(threshold_banks, cpu)[bank]->blocks = NULL;
-+	kobject_put(&head->blocks->kobj);
- }
- 
- static void __threshold_remove_blocks(struct threshold_bank *b)
+ 	ms = __nr_to_section(section_nr);
+ 	set_section_nid(section_nr, nid);
 
 
