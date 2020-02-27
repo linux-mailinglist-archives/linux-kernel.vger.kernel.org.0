@@ -2,219 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60137170D54
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 01:41:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 436C9170D65
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 01:44:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbgB0AlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 19:41:18 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33975 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728160AbgB0AlM (ORCPT
+        id S1728090AbgB0AoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 19:44:05 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:28750 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727987AbgB0AoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 19:41:12 -0500
-Received: by mail-qk1-f195.google.com with SMTP id 11so1555594qkd.1;
-        Wed, 26 Feb 2020 16:41:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=N3HEBkdj4Q66EXmD0o3ypRhrbhQ6fBEZAkU7EgqNosg=;
-        b=RakaVhNzgtHMPpokLjqKcfDVurEggH0qrsV8wfwIBVs9U162kFOjdZ9ekNAGC9tDo1
-         TUwFdQA73K51P5P+lyJU7hvY63wnpUelc3S+gOVSyPOlpdjd0o2a+p53/hxesbEjcfg9
-         ONLYiRw4QeVOLPsqaUzEqh55qJl0iffRLoZYTkqP6uA+rjn6Wb4O6bxNdHAHJvfGP/Gc
-         yeeC65TzfOgJKa65c6ToAO/xzRsRiBvr21vDYN7NZvYcJF3U83RWqkP06bxuDrDC0PMk
-         2Qu78Ce3VfBKLwspagi8KLKZGVd49tIalnT0JyRnHEgU9ZgJKJtrQjy2ehEEdrPW1aoT
-         MMIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=N3HEBkdj4Q66EXmD0o3ypRhrbhQ6fBEZAkU7EgqNosg=;
-        b=kLHLIQOxNo2Z3SSArmFT2/V0E7yCE6JUF7xXoW687Me8gggHC4dlcKh/pacn2hQNwp
-         6C8uN0HETJRqDrxRWsoF+g++YrMRm/izvxpDY0fgatC0ycI+/CHCjZflkyxg2/GnnZP5
-         yC21FBI6Jh0w36Gi1vi3d1h1j6FWXy9GSWq0degoMV+mr2myTDQM0mTnlNrHyUoT8X33
-         KpmAmDoFcmEUEqgNQUlrH2CWpZhjkdAFqXuLO/REVY93OlYEAi5FVARIny8BJkw9welb
-         lLikB6zpnFytN9Rtb4MKp2v9UNYDeU/kzrIrQv/kHYyvClRt38gF0O8n7q6g6/ZFIStQ
-         8DzA==
-X-Gm-Message-State: APjAAAVKMiCCmoDSN6xPSuGcrvhr+dCkpQyzjQTE+b6jaLbSO9U0rI/N
-        a4wlA4cBZsSmTjhmZFckZls=
-X-Google-Smtp-Source: APXvYqwTTmlkFACCr8vHN1s/N5ZBb9BGDnZblhRg9JKyox1p153Fhbk36g0ReVVDWKYswgCiQQCnLw==
-X-Received: by 2002:a05:620a:146c:: with SMTP id j12mr2393530qkl.373.1582764071450;
-        Wed, 26 Feb 2020 16:41:11 -0800 (PST)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id p126sm2123428qkd.108.2020.02.26.16.41.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Feb 2020 16:41:10 -0800 (PST)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 0C11E21F82;
-        Wed, 26 Feb 2020 19:41:10 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Wed, 26 Feb 2020 19:41:10 -0500
-X-ME-Sender: <xms:JRBXXh5DyWiPoMuCUn6EwUm-a0h3iP6wKDm98j33ip_s37vYTflHRA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleehgddvjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucfkphephedvrd
-    duheehrdduuddurdejudenucevlhhushhtvghrufhiiigvpeefnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqd
-    eiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhl
-    rdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:JRBXXvceNw-SMc0sno7XAyYxIV7jlrBsFd9qK2taxfY_dmfV2rQchQ>
-    <xmx:JRBXXpon2xG-kz4rqH7OeBSzYSk4lsY0kHHJ8KmVjPhlfc-YlKzQXg>
-    <xmx:JRBXXj1NFWrKTW41mwpGaxXl1SevgIZKOHN-fmsEAw7PTMVpCqXKiw>
-    <xmx:JhBXXgyVOFMzGJqDZa1ulpUqLK8E12hMjYaOW2PX-l3m49yafdx6TbshTPM>
-Received: from localhost (unknown [52.155.111.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 7EC5730610DB;
-        Wed, 26 Feb 2020 19:41:09 -0500 (EST)
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH v3 5/5] Documentation/locking/atomic: Add a litmus test smp_mb__after_atomic()
-Date:   Thu, 27 Feb 2020 08:40:49 +0800
-Message-Id: <20200227004049.6853-6-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200227004049.6853-1-boqun.feng@gmail.com>
-References: <20200227004049.6853-1-boqun.feng@gmail.com>
+        Wed, 26 Feb 2020 19:44:05 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582764244; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=JcRs9mZiMthRLxtoA2Yryvm9oBuTfwKq6aDUtbfP5vU=; b=cQhq+Y20UPdm4b7lUIjF2oz6+UdlUxxdVEOnfmown9cXLJCydlbnu0J4n7XodOBNnbXA3zbC
+ YbPs/UpKKydDTxc+Ui3y0n0m6pQyGko400ECZ9z0eN646jG17EtUKhUAa+K64W6E8rpB9MBt
+ 0oe3rvcqGryG3zqG44rFFwzdzC4=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e5710d2.7f2ecfabded8-smtp-out-n02;
+ Thu, 27 Feb 2020 00:44:02 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 950B4C4479D; Thu, 27 Feb 2020 00:44:02 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [10.134.65.5] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: eberman)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5982CC43383;
+        Thu, 27 Feb 2020 00:44:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5982CC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=eberman@codeaurora.org
+Subject: Re: [PATCH v2 1/3] dt: psci: Add arm,psci-sys-reset2-type property
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Trilok Soni <tsoni@codeaurora.org>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        David Collins <collinsd@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1582577858-12410-1-git-send-email-eberman@codeaurora.org>
+ <1582577858-12410-2-git-send-email-eberman@codeaurora.org>
+ <20200226120918.GA21897@lakrids.cambridge.arm.com>
+From:   Elliot Berman <eberman@codeaurora.org>
+Message-ID: <edcf310c-8808-f210-1044-cfd2191e9e3d@codeaurora.org>
+Date:   Wed, 26 Feb 2020 16:44:00 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200226120918.GA21897@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We already use a litmus test in atomic_t.txt to describe atomic RMW +
-smp_mb__after_atomic() is stronger than acquire (both the read and the
-write parts are ordered). So make it a litmus test in atomic-tests
-directory, so that people can access the litmus easily.
+On 2/26/2020 4:09 AM, Mark Rutland wrote:
+> On Mon, Feb 24, 2020 at 12:57:36PM -0800, Elliot Berman wrote:
+>> Some implementors of PSCI may relax the requirements of the PSCI
+>> architectural warm reset. In order to comply with PSCI specification, a
+>> different reset_type value must be used.
+> 
+> This reads as-if you're saying the firmware isn't spec compliant, and
+> this is a workaround in order to get the expected behaviour.
+> 
+> Can you please elaborate on what you mean by "relax the requirements"
+> here? What's your firmware doing or not doing that you want to avoid?
+> 
+>> The alternate PSCI SYSTEM_RESET2 may be used in all warm/soft reboot
+>> scenarios, replacing the architectural warm reset.
+> 
+> I assume you mean SYSTEM_REET2's SYSTEM_WARM_RESET reset? Please call
+> that out explicitly by name -- it makes this easier to look up, and
+> if/when more architectural resets are added the commit message won't
+> become ambiguous.
 
-Additionally, change the processor numbers "P1, P2" to "P0, P1" in
-atomic_t.txt for the consistency with the processor numbers in the
-litmus test, which herd can handle.
+I can reword to:
 
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
----
- ...ter_atomic-is-stronger-than-acquire.litmus | 32 +++++++++++++++++++
- Documentation/atomic-tests/README             |  5 +++
- Documentation/atomic_t.txt                    | 10 +++---
- 3 files changed, 42 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/atomic-tests/Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.litmus
+Some implementors of PSCI may wish to generally use a different reset type
+than SYSTEM_WARM_RESET. For instance, Qualcomm SoCs support an alternate
+reset_type which may be used in more warm reboot scenarios than
+SYSTEM_WARM_RESET permits (e.g. to reboot into recovery mode).
 
-diff --git a/Documentation/atomic-tests/Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.litmus b/Documentation/atomic-tests/Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.litmus
-new file mode 100644
-index 000000000000..9a8e31a44b28
---- /dev/null
-+++ b/Documentation/atomic-tests/Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.litmus
-@@ -0,0 +1,32 @@
-+C Atomic-RMW+mb__after_atomic-is-stronger-than-acquire
-+
-+(*
-+ * Result: Never
-+ *
-+ * Test that an atomic RMW followed by a smp_mb__after_atomic() is
-+ * stronger than a normal acquire: both the read and write parts of
-+ * the RMW are ordered before the subsequential memory accesses.
-+ *)
-+
-+{
-+}
-+
-+P0(int *x, atomic_t *y)
-+{
-+	int r0;
-+	int r1;
-+
-+	r0 = READ_ONCE(*x);
-+	smp_rmb();
-+	r1 = atomic_read(y);
-+}
-+
-+P1(int *x, atomic_t *y)
-+{
-+	atomic_inc(y);
-+	smp_mb__after_atomic();
-+	WRITE_ONCE(*x, 1);
-+}
-+
-+exists
-+(0:r0=1 /\ 0:r1=0)
-diff --git a/Documentation/atomic-tests/README b/Documentation/atomic-tests/README
-index a1b72410b539..714cf93816ea 100644
---- a/Documentation/atomic-tests/README
-+++ b/Documentation/atomic-tests/README
-@@ -7,5 +7,10 @@ tools/memory-model/README.
- LITMUS TESTS
- ============
- 
-+Atomic-RMW+mb__after_atomic-is-stronger-than-acquire
-+	Test that an atomic RMW followed by a smp_mb__after_atomic() is
-+	stronger than a normal acquire: both the read and write parts of
-+	the RMW are ordered before the subsequential memory accesses.
-+
- Atomic-RMW-ops-are-atomic-WRT-atomic_set.litmus
- 	Test that atomic_set() cannot break the atomicity of atomic RMWs.
-diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
-index 67d1d99f8589..0f1fdedf36bb 100644
---- a/Documentation/atomic_t.txt
-+++ b/Documentation/atomic_t.txt
-@@ -233,19 +233,19 @@ as well. Similarly, something like:
- is an ACQUIRE pattern (though very much not typical), but again the barrier is
- strictly stronger than ACQUIRE. As illustrated:
- 
--  C strong-acquire
-+  C Atomic-RMW+mb__after_atomic-is-stronger-than-acquire
- 
-   {
-   }
- 
--  P1(int *x, atomic_t *y)
-+  P0(int *x, atomic_t *y)
-   {
-     r0 = READ_ONCE(*x);
-     smp_rmb();
-     r1 = atomic_read(y);
-   }
- 
--  P2(int *x, atomic_t *y)
-+  P1(int *x, atomic_t *y)
-   {
-     atomic_inc(y);
-     smp_mb__after_atomic();
-@@ -253,14 +253,14 @@ strictly stronger than ACQUIRE. As illustrated:
-   }
- 
-   exists
--  (r0=1 /\ r1=0)
-+  (0:r0=1 /\ 0:r1=0)
- 
- This should not happen; but a hypothetical atomic_inc_acquire() --
- (void)atomic_fetch_inc_acquire() for instance -- would allow the outcome,
- because it would not order the W part of the RMW against the following
- WRITE_ONCE.  Thus:
- 
--  P1			P2
-+  P0			P1
- 
- 			t = LL.acq *y (0)
- 			t++;
+> 
+>>
+>> Signed-off-by: Elliot Berman <eberman@codeaurora.org>
+>> ---
+>>  Documentation/devicetree/bindings/arm/psci.yaml | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/psci.yaml b/Documentation/devicetree/bindings/arm/psci.yaml
+>> index 8ef8542..469256a2 100644
+>> --- a/Documentation/devicetree/bindings/arm/psci.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/psci.yaml
+>> @@ -102,6 +102,11 @@ properties:
+>>        [1] Kernel documentation - ARM idle states bindings
+>>          Documentation/devicetree/bindings/arm/idle-states.txt
+>>  
+>> +  arm,psci-sys-reset2-param:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description: |
+>> +        reset_param value to use during a warm or soft reboot.
+> 
+> A "soft" reboot isn't a PSCI concept, so I'm worried this is just
+> hooking up magic values for Linux internals.> 
+> I'd like to better understand what you're trying to achieve here.
+
+In Qualcomm use cases, we do not always want to preserve memory to caller's
+(i.e. Linux) exception level. For instance, crash recovery mode runs in
+higher exception level and would not continue booting into Linux except
+through a hard reset. Also, this early firmware doesn't have the ability to
+understand device tree or ACPI tables to know what memory to preserve.
+
+Per discussion with Sudeep and Charles, this use case violates PSCI
+specification for SYSTEM_WARM_RESET reset type, but would be appropriate
+for a vendor-specific reset type. Thus, Qualcomm firmware supports a
+vendor-specific reset type which does not have the requirement to preserve
+memory to caller's EL or to describe what memory is to be preserved in DT
+or ACPI. If this vendor-specific reset type is used, then firmware checks
+various registers (e.g. download mode [1]) to alter the restart flow (e.g.
+to enter recovery mode). If no alternate flow is requested, then firmware
+would boot back into Linux, preserving memory.
+
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/firmware/qcom_scm.c?h=v5.6-rc3#n1120
+
+Thanks,
+Elliot
+
 -- 
-2.25.0
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
