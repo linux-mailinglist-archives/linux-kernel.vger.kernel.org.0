@@ -2,131 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FE271723DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 035B61723E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:49:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730411AbgB0QrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:47:08 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:34411 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729186AbgB0QrH (ORCPT
+        id S1730438AbgB0Qs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:48:57 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38492 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730046AbgB0Qs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:47:07 -0500
-Received: by mail-qk1-f194.google.com with SMTP id 11so3810301qkd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 08:47:07 -0800 (PST)
+        Thu, 27 Feb 2020 11:48:56 -0500
+Received: by mail-ed1-f67.google.com with SMTP id e25so1126880edq.5;
+        Thu, 27 Feb 2020 08:48:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PFn2dzdS2FONUrtgtAocmy3qKEh+mb3t1Wul9aBP/fI=;
-        b=WDmJP96EQVcL8LJyJE/a41VStf4qspaoE7H9+nZSkzGvEdwLYyWqSFvURaHwIr4Z8u
-         kDTi5ACa/pcbMhYy81M/9X16jSHKvj6fQXoZYGAv8owgSfKB3mlKkxsYhaQfdyhwBRZV
-         CuVcWB6aINNTCnPWOjO9R/MPqfeXsMNPKh+y4FnUKTsF5zl6+DNYY59sd2nBwlMCWBg/
-         5Alua+1+6UMRenkyzIlTSEhAp4heYuSfgqsmrdbiPLuSuJkrYlKVwSG1S9U5nNgl5+pV
-         0EUPlw/Vkjt2CqApD7Ri391p5px1467YRubBcNzpQrnF6CSnHVvbRbKw62x87zxCuXyy
-         PLzw==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mrSFqnVMYjr5LH7KLuZAMohOnpAE5KeOvpkhkgiQ7nk=;
+        b=JVDpoWt82ZNIs+/qqmvzZDPiSMTl2h5jbMFhbT1lvA78u6JgDo/dQmrK2puPjwAwP3
+         RkS1yzIAobGC6Zmksp/FkI13KFDvx6rOhLJsTEiOznd8okEEwbLrZ7TKOeC4AVlI/85A
+         4YgEkMOOO9f0eqv2mPa20WMIhlM/T87kvHqFMejwMofu95Ny3EX/T74fOQw/4OLBT8a9
+         oYrjVBmeSXAAKZR9mhpmORge6MUQ5UmmbuKjESPvb1u2vy4qhU7P4Z7o1p2PQHkdH7eZ
+         SLqG8wqClsOh5gDJT/djL0FcL86FlywE8Lz7YsfAXqZCNDdHij8Xp87Bm7boS91gJsfb
+         Buyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PFn2dzdS2FONUrtgtAocmy3qKEh+mb3t1Wul9aBP/fI=;
-        b=XjWN6qLvaxT+6aDuuw6RsBTyt8bQEyA8MwNqArEvB190pRnsN+zfj9H3ZvHehZjuWu
-         YlyxZNJh0zVGlL/RqS1MwDAJHKsKmdt/Os0/0Sy8DHx9kWbYN2wiau/cvgraNe+0ehz9
-         4ijXh275Nqa/wy9+3mveqIsTGT/w/9zHpZv6CyqbRThiMp6PTAIKWDF+XxxXKwjDUwDB
-         sVry3XmvC25F/T/DXRmGR7QVhJ1/Ubg9PncKMWv17iwTR8Hh2QmAXxmZHhqfeXg+EIVb
-         FWLtlrDm+eYN9Z/pjmoZjUQgO8nQsmDyXsprhlOrRTYwJ3uZZE8bJRgfxNXW7gj7tE8b
-         6ldw==
-X-Gm-Message-State: APjAAAURc1MV8uaR1vfgEVwrrg6h40+2bNDcBl4wqLWzBBsc2i3SI/Ch
-        nShp7PNzZa32Vi1scYmKuMFdSQ==
-X-Google-Smtp-Source: APXvYqz74THGToU1Rx7EshKvZFEUw5h9FBVUg06LD9Pjv8JkbrqoOplHjRQgxrVLeL9YYUMKKO6MBw==
-X-Received: by 2002:a05:620a:2282:: with SMTP id o2mr116001qkh.304.1582822026494;
-        Thu, 27 Feb 2020 08:47:06 -0800 (PST)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id h9sm3380125qtq.61.2020.02.27.08.47.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Feb 2020 08:47:05 -0800 (PST)
-Message-ID: <1582822024.7365.139.camel@lca.pw>
-Subject: Re: suspicious RCU due to "Prefer using an idle CPU as a migration
- target instead of comparing tasks"
-From:   Qian Cai <cai@lca.pw>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>, paulmck@kernel.org,
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mrSFqnVMYjr5LH7KLuZAMohOnpAE5KeOvpkhkgiQ7nk=;
+        b=AvTACVWtv1CLFIoa+v7Ox+dgYP9l83Z+E0NYawcenN8yuLbxpIHmuMzgjMtLreEsXD
+         XufaNmqTIA311HUsjfKqsH2b/k5p/Vhlg7B1C4wenu2HLfhQ2WVdZS1+srVAps+qUVWl
+         r5QLjtSIvZEM8TJRhnVbWN5dpqlcxicsT+qE+gJM/toNCenCe2LQNJOm09Ic8JgIeGt2
+         gcYw6wFhSFgqWNpQ/mbMyqK28YyvnNyhV/rGl37EHndZivfpC1tUsvfqGnXWYUBio/+P
+         N0vbRB6pq6JgqZ8Cd5kaL9GPfDryHE79U1waUzybHSJvzYE/D0Ngr6Paw+nNCZQ4kFVJ
+         d/Xw==
+X-Gm-Message-State: APjAAAU5ZX6izZ/HnCWkEavG6gt2NojUUyvgLRbQpT8ccj9+YTe1AB46
+        Ek4EYRSS/YQB260mdFDibKuDxz6n7LX1lA==
+X-Google-Smtp-Source: APXvYqwhUtkanpw68kBptPOsgl3fviBP3Wz8rAaJ0/w5+G9818Imde3cJkzN/sfPQtfcBSu8wsDZ5A==
+X-Received: by 2002:a17:906:2acb:: with SMTP id m11mr13469eje.180.1582822133530;
+        Thu, 27 Feb 2020 08:48:53 -0800 (PST)
+Received: from localhost.localdomain ([5.2.67.190])
+        by smtp.googlemail.com with ESMTPSA id d2sm107455edr.97.2020.02.27.08.48.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 08:48:52 -0800 (PST)
+From:   Tomasz Maciej Nowak <tmn505@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com,
+        gregory.clement@bootlin.com, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Thu, 27 Feb 2020 11:47:04 -0500
-In-Reply-To: <1582821327.7365.137.camel@lca.pw>
-References: <1582812549.7365.134.camel@lca.pw>
-         <1582814862.7365.135.camel@lca.pw> <jhjimjsvyoe.mognet@arm.com>
-         <1582821327.7365.137.camel@lca.pw>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
+Subject: [PATCH 1/2] arm64: dts: marvell: espressobin: indicate dts version
+Date:   Thu, 27 Feb 2020 17:48:41 +0100
+Message-Id: <20200227164842.11116-1-tmn505@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-02-27 at 11:35 -0500, Qian Cai wrote:
-> On Thu, 2020-02-27 at 15:26 +0000, Valentin Schneider wrote:
-> > On Thu, Feb 27 2020, Qian Cai wrote:
-> > 
-> > > On Thu, 2020-02-27 at 09:09 -0500, Qian Cai wrote:
-> > > > The linux-next commit ff7db0bf24db ("sched/numa: Prefer using an idle CPU as a
-> > > > migration target instead of comparing tasks") introduced a boot warning,
-> > > 
-> > > This?
-> > > 
-> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > index a61d83ea2930..ca780cd1eae2 100644
-> > > --- a/kernel/sched/fair.c
-> > > +++ b/kernel/sched/fair.c
-> > > @@ -1607,7 +1607,9 @@ static void update_numa_stats(struct task_numa_env *env,
-> > > if (ns->idle_cpu == -1)
-> > > ns->idle_cpu = cpu;
-> > > 
-> > > +rcu_read_lock();
-> > > idle_core = numa_idle_core(idle_core, cpu);
-> > > +rcu_read_unlock();
-> > > }
-> > > }
-> > > 
-> > 
-> > 
-> > Hmph right, we have
-> > numa_idle_core()->test_idle_cores()->rcu_dereference().
-> > 
-> > Dunno if it's preferable to wrap the entirety of update_numa_stats() or
-> > if that fine-grained read-side section is ok.
-> 
-> I could not come up with a better fine-grained one than this.
+The commit introducing ESPRESSObin variants didn't specify dts version,
+and because of that they are treated by dtc as legacy ones. Fix that by
+properly specifying version in each dts.
 
-Correction -- this one,
+Fixes: 447b878935 ("arm64: dts: marvell: add ESPRESSObin variants")
+Signed-off-by: Tomasz Maciej Nowak <tmn505@gmail.com>
+---
+ arch/arm64/boot/dts/marvell/armada-3720-espressobin-emmc.dts    | 2 ++
+ arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7-emmc.dts | 2 ++
+ arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7.dts      | 2 ++
+ arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi        | 2 --
+ 4 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a61d83ea2930..580d56f9c10b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1561,10 +1561,18 @@ numa_type numa_classify(unsigned int imbalance_pct,
- static inline int numa_idle_core(int idle_core, int cpu)
- {
- #ifdef CONFIG_SCHED_SMT
-+	bool idle;
+diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin-emmc.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-emmc.dts
+index bd9ed9dc9c3e..ec72a11ed80f 100644
+--- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin-emmc.dts
++++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-emmc.dts
+@@ -11,6 +11,8 @@
+  * Schematic available at http://espressobin.net/wp-content/uploads/2017/08/ESPRESSObin_V5_Schematics.pdf
+  */
+ 
++/dts-v1/;
 +
- 	if (!static_branch_likely(&sched_smt_present) ||
--	    idle_core >= 0 || !test_idle_cores(cpu, false))
-+	    idle_core >= 0)
- 		return idle_core;
- 
-+	rcu_read_lock();
-+	idle = test_idle_cores(cpu, false);
-+	rcu_read_unlock();
+ #include "armada-3720-espressobin.dtsi"
+ 
+ / {
+diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7-emmc.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7-emmc.dts
+index 6e876a6d9532..03733fd92732 100644
+--- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7-emmc.dts
++++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7-emmc.dts
+@@ -11,6 +11,8 @@
+  * Schematic available at http://wiki.espressobin.net/tiki-download_file.php?fileId=200
+  */
+ 
++/dts-v1/;
 +
-+	if (!idle)
-+		return idle_core;
- 	/*
- 	 * Prefer cores instead of packing HT siblings
- 	 * and triggering future load balancing.
+ #include "armada-3720-espressobin.dtsi"
+ 
+ / {
+diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7.dts
+index 0f8405d085fd..8570c5f47d7d 100644
+--- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7.dts
++++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7.dts
+@@ -11,6 +11,8 @@
+  * Schematic available at http://wiki.espressobin.net/tiki-download_file.php?fileId=200
+  */
+ 
++/dts-v1/;
++
+ #include "armada-3720-espressobin.dtsi"
+ 
+ / {
+diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi
+index 53b8ac55a7f3..c8e2e993c69c 100644
+--- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi
+@@ -7,8 +7,6 @@
+  *
+  */
+ 
+-/dts-v1/;
+-
+ #include <dt-bindings/gpio/gpio.h>
+ #include "armada-372x.dtsi"
+ 
+-- 
+2.25.1
+
