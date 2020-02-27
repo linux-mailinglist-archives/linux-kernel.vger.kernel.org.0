@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9341171ADF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCA0A1719C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:48:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732325AbgB0N5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:57:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58570 "EHLO mail.kernel.org"
+        id S1730782AbgB0Nry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:47:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732309AbgB0N5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:57:36 -0500
+        id S1730461AbgB0Nrv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:47:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 048DD24691;
-        Thu, 27 Feb 2020 13:57:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3237D24656;
+        Thu, 27 Feb 2020 13:47:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811855;
-        bh=OjlB9AVcPer6GvN/IsZeDID4gRoeRc0i8+HUSWT00wc=;
+        s=default; t=1582811270;
+        bh=AHEsC+E3W2xJQbzUvuMY92P8qdh5Jea/uQfL/fYkVJo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IBF8JpZFmZezeG8+axgaVGDQaNbjCgULBM9sa+/h5CqQXXwSUvwKKyBjwqWc+TV6O
-         KOuXNZVvFEdxD6+mAPAXvtQtQFtVNftGJ6sCd47tYmi3aV60V5N6jd+1n9yzPDgbEK
-         YA7BqSn+KPHcaebLHQzG2SIJAtU3kTiDa3YTfcMs=
+        b=jKMAVZsIDHJS7xNEUgvPwAyby4ahzVfl3fuPt1NQ/+e6jrIPXDY73zAlTAj+qEBKc
+         X6HKpC10b0vVUlxDDQPDunddD2Lg3Q+1PvxRyn7VwodvbweTTIMS3FHud61sWaCoo7
+         i0+rP5TasWMMsK1fkoP8x9EsMh7WutmCiMOXRWds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        stable@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 128/237] pwm: omap-dmtimer: Remove PWM chip in .remove before making it unfunctional
+Subject: [PATCH 4.9 068/165] usbip: Fix unsafe unaligned pointer usage
 Date:   Thu, 27 Feb 2020 14:35:42 +0100
-Message-Id: <20200227132306.170895552@linuxfoundation.org>
+Message-Id: <20200227132241.372922373@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +43,151 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Shuah Khan <skhan@linuxfoundation.org>
 
-[ Upstream commit 43efdc8f0e6d7088ec61bd55a73bf853f002d043 ]
+[ Upstream commit 585c91f40d201bc564d4e76b83c05b3b5363fe7e ]
 
-In the old code (e.g.) mutex_destroy() was called before
-pwmchip_remove(). Between these two calls it is possible that a PWM
-callback is used which tries to grab the mutex.
+Fix unsafe unaligned pointer usage in usbip network interfaces. usbip tool
+build fails with new gcc -Werror=address-of-packed-member checks.
 
-Fixes: 6604c6556db9 ("pwm: Add PWM driver for OMAP using dual-mode timers")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+usbip_network.c: In function ‘usbip_net_pack_usb_device’:
+usbip_network.c:79:32: error: taking address of packed member of ‘struct usbip_usb_device’ may result in an unaligned pointer value [-Werror=address-of-packed-member]
+   79 |  usbip_net_pack_uint32_t(pack, &udev->busnum);
+
+Fix with minor changes to pass by value instead of by address.
+
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Link: https://lore.kernel.org/r/20200109012416.2875-1-skhan@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pwm/pwm-omap-dmtimer.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ tools/usb/usbip/src/usbip_network.c | 40 +++++++++++++++++------------
+ tools/usb/usbip/src/usbip_network.h | 12 +++------
+ 2 files changed, 27 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
-index 5ad42f33e70c1..2e15acf13893d 100644
---- a/drivers/pwm/pwm-omap-dmtimer.c
-+++ b/drivers/pwm/pwm-omap-dmtimer.c
-@@ -337,6 +337,11 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
- static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
- {
- 	struct pwm_omap_dmtimer_chip *omap = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	ret = pwmchip_remove(&omap->chip);
-+	if (ret)
-+		return ret;
- 
- 	if (pm_runtime_active(&omap->dm_timer_pdev->dev))
- 		omap->pdata->stop(omap->dm_timer);
-@@ -345,7 +350,7 @@ static int pwm_omap_dmtimer_remove(struct platform_device *pdev)
- 
- 	mutex_destroy(&omap->mutex);
- 
--	return pwmchip_remove(&omap->chip);
-+	return 0;
+diff --git a/tools/usb/usbip/src/usbip_network.c b/tools/usb/usbip/src/usbip_network.c
+index b4c37e76a6e08..187dfaa67d0a2 100644
+--- a/tools/usb/usbip/src/usbip_network.c
++++ b/tools/usb/usbip/src/usbip_network.c
+@@ -62,39 +62,39 @@ void usbip_setup_port_number(char *arg)
+ 	info("using port %d (\"%s\")", usbip_port, usbip_port_string);
  }
  
- static const struct of_device_id pwm_omap_dmtimer_of_match[] = {
+-void usbip_net_pack_uint32_t(int pack, uint32_t *num)
++uint32_t usbip_net_pack_uint32_t(int pack, uint32_t num)
+ {
+ 	uint32_t i;
+ 
+ 	if (pack)
+-		i = htonl(*num);
++		i = htonl(num);
+ 	else
+-		i = ntohl(*num);
++		i = ntohl(num);
+ 
+-	*num = i;
++	return i;
+ }
+ 
+-void usbip_net_pack_uint16_t(int pack, uint16_t *num)
++uint16_t usbip_net_pack_uint16_t(int pack, uint16_t num)
+ {
+ 	uint16_t i;
+ 
+ 	if (pack)
+-		i = htons(*num);
++		i = htons(num);
+ 	else
+-		i = ntohs(*num);
++		i = ntohs(num);
+ 
+-	*num = i;
++	return i;
+ }
+ 
+ void usbip_net_pack_usb_device(int pack, struct usbip_usb_device *udev)
+ {
+-	usbip_net_pack_uint32_t(pack, &udev->busnum);
+-	usbip_net_pack_uint32_t(pack, &udev->devnum);
+-	usbip_net_pack_uint32_t(pack, &udev->speed);
++	udev->busnum = usbip_net_pack_uint32_t(pack, udev->busnum);
++	udev->devnum = usbip_net_pack_uint32_t(pack, udev->devnum);
++	udev->speed = usbip_net_pack_uint32_t(pack, udev->speed);
+ 
+-	usbip_net_pack_uint16_t(pack, &udev->idVendor);
+-	usbip_net_pack_uint16_t(pack, &udev->idProduct);
+-	usbip_net_pack_uint16_t(pack, &udev->bcdDevice);
++	udev->idVendor = usbip_net_pack_uint16_t(pack, udev->idVendor);
++	udev->idProduct = usbip_net_pack_uint16_t(pack, udev->idProduct);
++	udev->bcdDevice = usbip_net_pack_uint16_t(pack, udev->bcdDevice);
+ }
+ 
+ void usbip_net_pack_usb_interface(int pack __attribute__((unused)),
+@@ -141,6 +141,14 @@ ssize_t usbip_net_send(int sockfd, void *buff, size_t bufflen)
+ 	return usbip_net_xmit(sockfd, buff, bufflen, 1);
+ }
+ 
++static inline void usbip_net_pack_op_common(int pack,
++					    struct op_common *op_common)
++{
++	op_common->version = usbip_net_pack_uint16_t(pack, op_common->version);
++	op_common->code = usbip_net_pack_uint16_t(pack, op_common->code);
++	op_common->status = usbip_net_pack_uint32_t(pack, op_common->status);
++}
++
+ int usbip_net_send_op_common(int sockfd, uint32_t code, uint32_t status)
+ {
+ 	struct op_common op_common;
+@@ -152,7 +160,7 @@ int usbip_net_send_op_common(int sockfd, uint32_t code, uint32_t status)
+ 	op_common.code    = code;
+ 	op_common.status  = status;
+ 
+-	PACK_OP_COMMON(1, &op_common);
++	usbip_net_pack_op_common(1, &op_common);
+ 
+ 	rc = usbip_net_send(sockfd, &op_common, sizeof(op_common));
+ 	if (rc < 0) {
+@@ -176,7 +184,7 @@ int usbip_net_recv_op_common(int sockfd, uint16_t *code)
+ 		goto err;
+ 	}
+ 
+-	PACK_OP_COMMON(0, &op_common);
++	usbip_net_pack_op_common(0, &op_common);
+ 
+ 	if (op_common.version != USBIP_VERSION) {
+ 		dbg("version mismatch: %d %d", op_common.version,
+diff --git a/tools/usb/usbip/src/usbip_network.h b/tools/usb/usbip/src/usbip_network.h
+index c1e875cf1078c..573fa839b66b7 100644
+--- a/tools/usb/usbip/src/usbip_network.h
++++ b/tools/usb/usbip/src/usbip_network.h
+@@ -33,12 +33,6 @@ struct op_common {
+ 
+ } __attribute__((packed));
+ 
+-#define PACK_OP_COMMON(pack, op_common)  do {\
+-	usbip_net_pack_uint16_t(pack, &(op_common)->version);\
+-	usbip_net_pack_uint16_t(pack, &(op_common)->code);\
+-	usbip_net_pack_uint32_t(pack, &(op_common)->status);\
+-} while (0)
+-
+ /* ---------------------------------------------------------------------- */
+ /* Dummy Code */
+ #define OP_UNSPEC	0x00
+@@ -164,11 +158,11 @@ struct op_devlist_reply_extra {
+ } while (0)
+ 
+ #define PACK_OP_DEVLIST_REPLY(pack, reply)  do {\
+-	usbip_net_pack_uint32_t(pack, &(reply)->ndev);\
++	(reply)->ndev = usbip_net_pack_uint32_t(pack, (reply)->ndev);\
+ } while (0)
+ 
+-void usbip_net_pack_uint32_t(int pack, uint32_t *num);
+-void usbip_net_pack_uint16_t(int pack, uint16_t *num);
++uint32_t usbip_net_pack_uint32_t(int pack, uint32_t num);
++uint16_t usbip_net_pack_uint16_t(int pack, uint16_t num);
+ void usbip_net_pack_usb_device(int pack, struct usbip_usb_device *udev);
+ void usbip_net_pack_usb_interface(int pack, struct usbip_usb_interface *uinf);
+ 
 -- 
 2.20.1
 
