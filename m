@@ -2,149 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EE83171207
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:12:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82DF2171204
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:11:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbgB0IMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 03:12:38 -0500
-Received: from smtprelay0070.hostedemail.com ([216.40.44.70]:52977 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726999AbgB0IMi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 03:12:38 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 40496A8D1;
-        Thu, 27 Feb 2020 08:12:36 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:968:973:978:988:989:1042:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1981:2194:2198:2199:2200:2393:2559:2562:2731:2828:2899:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:5007:6119:6742:7514:7576:7653:7903:7904:8603:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12555:12740:12760:12895:13141:13230:13439:14181:14659:14721:21080:21433:21451:21611:21627:21740:21772:21795:21939:30029:30051:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: air39_164c43472a863
-X-Filterd-Recvd-Size: 3870
-Received: from XPS-9350 (47-209-22-207.mmlkcmtc01.res.dyn.suddenlink.net [47.209.22.207])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 27 Feb 2020 08:12:33 +0000 (UTC)
-Message-ID: <3ec7521233aed6e1c2d27f387b7b2d2b55694e84.camel@perches.com>
-Subject: Re: [V1,1/1] Input/misc: add support for Advantech software defined
- button
-From:   Joe Perches <joe@perches.com>
-To:     ycho1399@gmail.com, linux-input@vger.kernel.org
-Cc:     voyandrea@gmail.com, andrea.ho@advantech.com.tw,
-        oakley.ding@advantech.com.tw,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Luca Weiss <luca@z3ntu.xyz>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org
-Date:   Thu, 27 Feb 2020 00:11:02 -0800
-In-Reply-To: <20200227031721.17703-1-Andrea.Ho@advantech.com.tw>
-References: <20200227031721.17703-1-Andrea.Ho@advantech.com.tw>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1728536AbgB0ILw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 03:11:52 -0500
+Received: from mga14.intel.com ([192.55.52.115]:30551 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728442AbgB0ILw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 03:11:52 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 00:11:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,491,1574150400"; 
+   d="scan'208";a="350623243"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 27 Feb 2020 00:11:49 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 27 Feb 2020 10:11:48 +0200
+Date:   Thu, 27 Feb 2020 10:11:48 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Badhri Jagan Sridharan <badhri@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pumahsu@google.com
+Subject: Re: [PATCH v4] usb: typec: Add sysfs node to show cc orientation
+Message-ID: <20200227081148.GA10532@kuha.fi.intel.com>
+References: <20200226195758.150477-1-badhri@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226195758.150477-1-badhri@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-02-27 at 03:15 +0000, ycho1399@gmail.com wrote:
-> From: "Andrea.Ho" <Andrea.Ho@advantech.com.tw>
+On Wed, Feb 26, 2020 at 11:57:58AM -0800, Badhri Jagan Sridharan wrote:
+> Export Type-C orientation information when available.
+> - "normal": CC1 orientation
+> - "reverse": CC2 orientation
+> - "unknown": Orientation cannot be determined.
 > 
-> Advantech sw_button is a ACPI event trigger button.
-> 
-> With this driver, we can report KEY_EVENTs on the
-> Advantech Tabletop Network Appliances products and it has been
-> tested in FWA1112VC.
-> 
-> Add the software define button support to report KEY_EVENTs by
-> different acts of pressing button (like double-click, long pressed
-> and tick) that cloud be get on user interface and trigger the
-> customized actions.
-[]
-> diff --git a/drivers/input/misc/adv_swbutton.c b/drivers/input/misc/adv_swbutton.c
-> new file mode 100644
+> Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
 
-mostly trivia:
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-> +/*
-> + * Switch two elements in array.
-> + *
-> + * @param xp, yp The array elements need to swap.
-> + */
-> +void array_swap(unsigned int *xp, unsigned int *yp)
+> ---
+> Version history:
+> V4:
+> - Greg's suggestion of Minor refractor to handle
+>   TYPEC_ORIENTATION_NONE and default in the same case.
+> V3:
+> - Heikki's suggestion to us .is_visible callback.
+>   unsigned int orientation_aware:1 has been introduced to
+>   make support of this attribute optional for drivers such
+>   as UCSI
+> - Guenter's suggestion to rename to "orientation".
+> - Heikki's suggestion to stick with string values instead
+>   of exposing it as integer values.
+> ---
+>  Documentation/ABI/testing/sysfs-class-typec |  9 +++++++
+>  drivers/usb/typec/class.c                   | 26 +++++++++++++++++++++
+>  drivers/usb/typec/tcpm/tcpm.c               |  1 +
+>  include/linux/usb/typec.h                   |  1 +
+>  4 files changed, 37 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
+> index 0c2eb26fdc06b..b834671522d6f 100644
+> --- a/Documentation/ABI/testing/sysfs-class-typec
+> +++ b/Documentation/ABI/testing/sysfs-class-typec
+> @@ -108,6 +108,15 @@ Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>  Description:
+>  		Revision number of the supported USB Type-C specification.
+>  
+> +What:		/sys/class/typec/<port>/orientation
+> +Date:		February 2020
+> +Contact:	Badhri Jagan Sridharan <badhri@google.com>
+> +Description:
+> +		Indicates the active orientation of the Type-C connector.
+> +		Valid values:
+> +		- "normal": CC1 orientation
+> +		- "reverse": CC2 orientation
+> +		- "unknown": Orientation cannot be determined.
+>  
+>  USB Type-C partner devices (eg. /sys/class/typec/port0-partner/)
+>  
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index 12be5bb6d32ca..bf97c31d0bba1 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -1244,6 +1244,25 @@ static ssize_t usb_power_delivery_revision_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(usb_power_delivery_revision);
+>  
+> +static ssize_t orientation_show(struct device *dev,
+> +				   struct device_attribute *attr,
+> +				   char *buf)
 > +{
-> +	int temp = *xp;
-> +	*xp = *yp;
-> +	*yp = temp;
-> +}
-
-kernel.h has swap
-
-> +/*
-> + * Sorting an array in ascending order
-> + *
-> + * @param arr The array for sorting.
-> + * @param n The array size
-> + */
-> +void sort_asc(unsigned int arr[], int n)
-> +{
-> +	int i, j, min_idx;
+> +	struct typec_port *p = to_typec_port(dev);
+> +	enum typec_orientation orientation = typec_get_orientation(p);
 > +
-> +	for (i = 0; i < n - 1; i++) {
-> +		min_idx = i;
-> +		for (j = i + 1; j < n; j++)
-> +			if (arr[j] < arr[min_idx])
-> +				min_idx = j;
-> +
-> +		array_swap(&arr[min_idx], &arr[i]);
+> +	switch (orientation) {
+> +	case TYPEC_ORIENTATION_NORMAL:
+> +		return sprintf(buf, "%s\n", "normal");
+> +	case TYPEC_ORIENTATION_REVERSE:
+> +		return sprintf(buf, "%s\n", "reverse");
+> +	case TYPEC_ORIENTATION_NONE:
+> +	default:
+> +		return sprintf(buf, "%s\n", "unknown");
 > +	}
 > +}
-
-sort.h has a generic sort too
-
+> +static DEVICE_ATTR_RO(orientation);
 > +
-> +/*
-> + * initial software button timer to check tick or double click
-> + *
-> + * @param btn Struct of acpi_button that should be required.
-> + */ 
-> +static void swbtn_init_timer(struct acpi_button *btn)
-> +{
-> +	pr_info(PREFIX "swbtn timer start\n");
+>  static struct attribute *typec_attrs[] = {
+>  	&dev_attr_data_role.attr,
+>  	&dev_attr_power_operation_mode.attr,
+> @@ -1254,6 +1273,7 @@ static struct attribute *typec_attrs[] = {
+>  	&dev_attr_usb_typec_revision.attr,
+>  	&dev_attr_vconn_source.attr,
+>  	&dev_attr_port_type.attr,
+> +	&dev_attr_orientation.attr,
+>  	NULL,
+>  };
+>  
+> @@ -1283,6 +1303,10 @@ static umode_t typec_attr_is_visible(struct kobject *kobj,
+>  			return 0;
+>  		if (port->cap->type != TYPEC_PORT_DRP)
+>  			return 0444;
+> +	} else if (attr == &dev_attr_orientation.attr) {
+> +		if (port->cap->orientation_aware)
+> +			return 0444;
+> +		return 0;
+>  	}
+>  
+>  	return attr->mode;
+> @@ -1493,6 +1517,8 @@ int typec_set_orientation(struct typec_port *port,
+>  	}
+>  
+>  	port->orientation = orientation;
+> +	sysfs_notify(&port->dev.kobj, NULL, "orientation");
+> +	kobject_uevent(&port->dev.kobj, KOBJ_CHANGE);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index 78077c234ef27..bc0032a6b9a14 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -4742,6 +4742,7 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
+>  	port->typec_caps.pd_revision = 0x0300;	/* USB-PD spec release 3.0 */
+>  	port->typec_caps.driver_data = port;
+>  	port->typec_caps.ops = &tcpm_ops;
+> +	port->typec_caps.orientation_aware = 1;
+>  
+>  	port->partner_desc.identity = &port->partner_ident;
+>  	port->port_type = port->typec_caps.type;
+> diff --git a/include/linux/usb/typec.h b/include/linux/usb/typec.h
+> index 44d28387ced48..b00a2642a9cd6 100644
+> --- a/include/linux/usb/typec.h
+> +++ b/include/linux/usb/typec.h
+> @@ -211,6 +211,7 @@ struct typec_capability {
+>  	u16			pd_revision; /* 0300H = "3.0" */
+>  	int			prefer_role;
+>  	enum typec_accessory	accessory[TYPEC_MAX_ACCESSORY];
+> +	unsigned int		orientation_aware:1;
+>  
+>  	struct fwnode_handle	*fwnode;
+>  	void			*driver_data;
+> -- 
+> 2.25.0.265.gbab2e86ba0-goog
 
-Many of these printks should be removed and ftrace used
-when necessary.
+thanks,
 
-> +static int acpi_button_add(struct acpi_device *device)
-> +{
-> +	struct acpi_button *button;
-> +	struct input_dev *input;
-> +	const char *hid = acpi_device_hid(device);
-> +	char *name, *class;
-> +	int error, i;
-> +
-> +	pr_info(PREFIX "%s\n",  __func__);
-> +	button = kzalloc(sizeof(*button), GFP_KERNEL);
-> +	if (!button) {
-> +		pr_err(PREFIX "alloc acpi_button failed\n");
-
-alloc failure messages aren't really necessary
-as a dump_stack() is already done on failure.
-
-[]
-
-> +		for (i = (!swbtn_cfg.dclick_enabled);
-> +		     i < (swbtn_cfg.lkey_number + 2); i++) {
-> +			pr_info(PREFIX "%d. Enabled keycode[0x%x]\n",
-> +				i, swbtn_keycodes[i]);
-
-Is it really useful to print all enabled keycodes?
-
-
+-- 
+heikki
