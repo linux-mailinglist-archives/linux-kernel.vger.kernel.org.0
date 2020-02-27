@@ -2,96 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4A7C1722B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:02:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EEE71722BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:03:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbgB0QCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:02:42 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41142 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729153AbgB0QCm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:02:42 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t14so1316037plr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 08:02:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9WYvJWXMZ+rcEfofeSJpHlDz/l6UP/pgxaBPI0bVL+I=;
-        b=Qsxn4Hk1uahykr+QWbXHItx2AejCBY1osUAbIGB78L1sCo7B6Il4l6DND0mh7bGD0P
-         VEphLT6LKCT7GeIYw8JhWS4IdRBHN9OjLD6OTWcRutDRZdUgwuaqV/hwpz3zxaBidUgO
-         ggRjZ0IGbj3DcO3j9UNLtGA9Bagw1dMPj4wqU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9WYvJWXMZ+rcEfofeSJpHlDz/l6UP/pgxaBPI0bVL+I=;
-        b=LslSGSHdpyydQ1EtqJh6TYL7HhL98mQtD9yGeSZFzl9AsPQWpqRsVj6ycwso1HMBeu
-         NHD6ZHgJZU0S0EgDgNN1R0ueVhJdiwnspH7/Rjdj/EKBIRMfr+AeouKaPKy8QGTnyj3n
-         80ems3oj91BZI/kDlNkLN6j9czSnv6xf8N1lWh7o91Bo4LCqMiHExK1NoGNqNt9hr8t/
-         tGY+UqQTlaGYEjJepTUSWPrnGVFjTAbHcGWNi5VhxQTYQVnRdOSN4w2zHt8G2W9EWvHo
-         ama6ljrR7zRLR7pC05rCEgYvjlUfdYkhGFhyKYZHJeMttMkZRpLZfVBcbFztcxKPcUl5
-         MYYw==
-X-Gm-Message-State: APjAAAWFKaH4Hjgv5fdeGhhT4OuvnDx3xJBFOvYZtkklURooyO68nQxq
-        U3THs7GHpmCOEx0OgAVzBJdqWw==
-X-Google-Smtp-Source: APXvYqwuoISNzfA3MpWinuXHZq6onkj6FotCRgoAwXWcPcaWOvayXN9eZRYUoFiSP4YFJQB9lCtKzA==
-X-Received: by 2002:a17:902:265:: with SMTP id 92mr402833plc.292.1582819359541;
-        Thu, 27 Feb 2020 08:02:39 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 5sm7682612pfx.163.2020.02.27.08.02.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 08:02:38 -0800 (PST)
-Date:   Thu, 27 Feb 2020 08:02:37 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
-        dyoung@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, arjan@linux.intel.com,
-        rick.p.edgecombe@intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        kexec@lists.infradead.org
-Subject: Re: [RFC PATCH 09/11] kallsyms: hide layout and expose seed
-Message-ID: <202002270802.1CA8B32AC@keescook>
-References: <20200205223950.1212394-1-kristen@linux.intel.com>
- <20200205223950.1212394-10-kristen@linux.intel.com>
- <202002060428.08B14F1@keescook>
- <a915e1eb131551aa766fde4c14de5a3e825af667.camel@linux.intel.com>
- <20200227024253.GA5707@MiWiFi-R3L-srv>
+        id S1729907AbgB0QDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:03:24 -0500
+Received: from mga07.intel.com ([134.134.136.100]:61415 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729153AbgB0QDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 11:03:24 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 08:02:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,492,1574150400"; 
+   d="scan'208";a="385198407"
+Received: from asliwa-mobl.ger.corp.intel.com (HELO localhost) ([10.252.26.84])
+  by orsmga004.jf.intel.com with ESMTP; 27 Feb 2020 08:02:51 -0800
+Date:   Thu, 27 Feb 2020 18:02:50 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, aik@ozlabs.ru,
+        david@gibson.dropbear.id.au, linux-kernel@vger.kernel.org,
+        nayna@linux.vnet.ibm.com, gcwilson@linux.ibm.com, jgg@ziepe.ca,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v3 3/4] tpm: Implement tpm2_init_commands to use in
+ non-auto startup case
+Message-ID: <20200227160250.GB5140@linux.intel.com>
+References: <20200227002654.7536-1-stefanb@linux.vnet.ibm.com>
+ <20200227002654.7536-4-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200227024253.GA5707@MiWiFi-R3L-srv>
+In-Reply-To: <20200227002654.7536-4-stefanb@linux.vnet.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 10:42:53AM +0800, Baoquan He wrote:
-> On 02/06/20 at 09:51am, Kristen Carlson Accardi wrote:
-> > On Thu, 2020-02-06 at 04:32 -0800, Kees Cook wrote:
+On Wed, Feb 26, 2020 at 07:26:53PM -0500, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
 > 
-> > > In the past, making kallsyms entirely unreadable seemed to break
-> > > weird
-> > > stuff in userspace. How about having an alternative view that just
-> > > contains a alphanumeric sort of the symbol names (and they will
-> > > continue
-> > > to have zeroed addresses for unprivileged users)?
-> > > 
-> > > Or perhaps we wait to hear about this causing a problem, and deal
-> > > with
-> > > it then? :)
-> > > 
-> > 
-> > Yeah - I don't know what people want here. Clearly, we can't leave
-> > kallsyms the way it is. Removing it entirely is a pretty fast way to
-> > figure out how people use it though :).
+> The IBM vTPM device driver will not use TPM_OPS_AUTO_STARTUP since we
+> assume the firmware has initialized the TPM 2 and TPM2_Startup() need
+> not be sent. Therefore, tpm2_auto_startup() will not be called. To cover
+> the tpm_chip's initialization of timeouts, command durations, and
+> command attributes we implement tpm2_init_commands() function that will
+> be called instead of tpm2_auto_startup().
 > 
-> Kexec-tools and makedumpfile are the users of /proc/kallsyms currently. 
-> We use kallsyms to get page_offset_base and _stext.
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c |  5 ++++-
+>  drivers/char/tpm/tpm.h           |  1 +
+>  drivers/char/tpm/tpm2-cmd.c      | 14 ++++++++++++++
+>  3 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index a438b1206fcb..30d80b94db33 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -371,8 +371,11 @@ int tpm_auto_startup(struct tpm_chip *chip)
+>  {
+>  	int rc;
+>  
+> -	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP))
+> +	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP)) {
+> +		if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> +			return tpm2_init_commands(chip);
+>  		return 0;
+> +	}
+>  
+>  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+>  		rc = tpm2_auto_startup(chip);
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 5620747da0cf..30da942d714a 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -222,6 +222,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
+>  			u32 *value, const char *desc);
+>  
+>  ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
+> +int tpm2_init_commands(struct tpm_chip *chip);
+>  int tpm2_auto_startup(struct tpm_chip *chip);
+>  void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type);
+>  unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 13696deceae8..2d0c5a3b65c0 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -709,6 +709,20 @@ static int tpm2_startup(struct tpm_chip *chip)
+>  	return rc;
+>  }
+>  
+> +/**
+> + * tpm2_init_commands - Get timeouts, durations and command code attributes
+> + *                      in case tpm2_auto_startup is not used.
+> + * @chip: TPM chip to use
+> + *
+> + * Return 0 on success, < 0 in case of fatal error.
+> + */
+> +int tpm2_init_commands(struct tpm_chip *chip)
+> +{
+> +	tpm2_get_timeouts(chip);
+> +
+> +	return tpm2_get_cc_attrs_tbl(chip);
 
-AIUI, those run as root so they'd be able to consume the uncensored
-output.
+Call * locally in vtpm instead of adding quirks to the TPM driver.
 
--- 
-Kees Cook
+/Jarkko
