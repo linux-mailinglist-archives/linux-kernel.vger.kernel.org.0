@@ -2,207 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A10172733
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3433F172740
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730800AbgB0SWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:22:34 -0500
-Received: from foss.arm.com ([217.140.110.172]:56678 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730763AbgB0SWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:22:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B79DB30E;
-        Thu, 27 Feb 2020 10:22:31 -0800 (PST)
-Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F24703F73B;
-        Thu, 27 Feb 2020 10:22:29 -0800 (PST)
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Robert Richter <rric@kernel.org>, soc@kernel.org,
-        Jon Loeliger <jdl@jdl.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v2 06/13] dt-bindings: sata: Convert Calxeda SATA controller to json-schema
-Date:   Thu, 27 Feb 2020 18:22:03 +0000
-Message-Id: <20200227182210.89512-7-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200227182210.89512-1-andre.przywara@arm.com>
-References: <20200227182210.89512-1-andre.przywara@arm.com>
+        id S1730946AbgB0SWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:22:46 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59047 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730875AbgB0SWn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:22:43 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200227182241euoutp02c198e573fce8464c406d134464c5f437~3VXZwfjnL0671406714euoutp02p
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 18:22:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200227182241euoutp02c198e573fce8464c406d134464c5f437~3VXZwfjnL0671406714euoutp02p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1582827761;
+        bh=SD29ru+XPRj8/MpkvAn2nNtxS7lNQ61UJF7W2WDfjqI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ks1ZGpw+lgJDqyK+IQwC+zvEiBAkWi8NkoAVyszZOtZOcJ5YG0+6wzwOmQkFYaJA8
+         OZs2ZAJuvKsPpI73mt5JJXzC4SQHZKkQrfR/XhM7OUsVHgB6+XuT1PSDts7a+q62TQ
+         sBAnrQzfQc90v3qiElfSEv9KuPxFT+8xLGQsoqbw=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200227182240eucas1p1016739a86fa86f0213df0574c648fda5~3VXZh6xf40931609316eucas1p1_;
+        Thu, 27 Feb 2020 18:22:40 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id D2.5F.61286.0F8085E5; Thu, 27
+        Feb 2020 18:22:40 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200227182240eucas1p272bac5df6668bbb7fee7638b4022a7b1~3VXZPXMzJ3194731947eucas1p2E;
+        Thu, 27 Feb 2020 18:22:40 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200227182240eusmtrp24ca19a2ef3fc04694fdbb80b4039de39~3VXZO2_aG1813218132eusmtrp2i;
+        Thu, 27 Feb 2020 18:22:40 +0000 (GMT)
+X-AuditID: cbfec7f2-ef1ff7000001ef66-5c-5e5808f082c0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 8C.B1.08375.0F8085E5; Thu, 27
+        Feb 2020 18:22:40 +0000 (GMT)
+Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200227182240eusmtip27751114e671c0a6097b397184342df9d~3VXYzf5Ze0595905959eusmtip2j;
+        Thu, 27 Feb 2020 18:22:40 +0000 (GMT)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com
+Subject: [PATCH v3 04/27] sata_promise: use ata_cable_sata()
+Date:   Thu, 27 Feb 2020 19:22:03 +0100
+Message-Id: <20200227182226.19188-5-b.zolnierkie@samsung.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200227182226.19188-1-b.zolnierkie@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djPc7ofOCLiDKZvtbJYfbefzWLjjPWs
+        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
+        eOy+2cDm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBlNn3YwF2zkrpjx5zB7A+Nhzi5GTg4J
+        AROJ+ZeOsXYxcnEICaxglNh35Dg7hPOFUWLyp8tMEM5nRomeWeuYYVoWf+phhEgsZ5RYsXov
+        E1zLuRenWUCq2ASsJCa2r2IEsUUEFCR6fq9kAyliFngP1DFpL1iRsICNxP/+ZUwgNouAqsS3
+        m9fBGngFbCWurz8KtU5eYuu3T6wgNqeAncSNvu1sEDWCEidnPgGbwwxU07x1NjPIAgmBVewS
+        X7f/AxrEAeS4SJy4LQ0xR1ji1fEt7BC2jMT/nfOZIOrXMUr87XgB1bydUWL55H9sEFXWEnfO
+        /WIDGcQsoCmxfpc+RNhR4t7aaWwQ8/kkbrwVhLiBT2LStunMEGFeiY42IYhqNYkNyzawwazt
+        2rkS6i0PifanL5knMCrOQvLNLCTfzELYu4CReRWjeGppcW56arFhXmq5XnFibnFpXrpecn7u
+        JkZgKjr97/inHYxfLyUdYhTgYFTi4V2wIzxOiDWxrLgy9xCjBAezkgjvxq+hcUK8KYmVValF
+        +fFFpTmpxYcYpTlYlMR5jRe9jBUSSE8sSc1OTS1ILYLJMnFwSjUwZpct8mk8N0WHn7nXemZ3
+        kmzEQqco5s2b478JuE7W/ytqOGnvmvss7zZG6tyYsnfFJY5rjI0fHArvFr0PvLPM+efzorNF
+        DI+F/cpfHtVfeNBIOawiWf3Yhh0SNx4Lnlln9O6gjciC02tndxbcntJi8+7VF/OsDpeq2X6b
+        vj7fVdMs3s378Ck/nxJLcUaioRZzUXEiAB5rRzdBAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xe7ofOCLiDK4fULNYfbefzWLjjPWs
+        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
+        eOy+2cDm0bdlFaPH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6
+        djYpqTmZZalF+nYJehlNn3YwF2zkrpjx5zB7A+Nhzi5GTg4JAROJxZ96GLsYuTiEBJYySlxf
+        tJapi5EDKCEjcXx9GUSNsMSfa11sEDWfGCWWbPrHBJJgE7CSmNi+ihHEFhFQkOj5vRKsiFng
+        K6PE0kndzCAJYQEbif/9y8AaWARUJb7dvA7WwCtgK3F9/VFmiA3yElu/fWIFsTkF7CRu9G1n
+        A7GFgGq6Op5C1QtKnJz5hAXEZgaqb946m3kCo8AsJKlZSFILGJlWMYqklhbnpucWG+oVJ+YW
+        l+al6yXn525iBEbMtmM/N+9gvLQx+BCjAAejEg/vgh3hcUKsiWXFlbmHGCU4mJVEeDd+DY0T
+        4k1JrKxKLcqPLyrNSS0+xGgK9MREZinR5HxgNOeVxBuaGppbWBqaG5sbm1koifN2CByMERJI
+        TyxJzU5NLUgtgulj4uCUamC031RtL/tHnu/0nowVUVc+aCz+1OfmVrQr36L1vH2RTGJXx0HN
+        F0V3922+yFkjeDY67sKt8B+rT/9refWjvERiht2GmQePZG+S/KU6+e7epXWKsss1mRuzDquq
+        HDA7mRZTVK0V75sjeOEho42J9rYJ2+N+nZBKl3ZTX8i22enX7UNP70T/75+kxFKckWioxVxU
+        nAgA9EzTaK4CAAA=
+X-CMS-MailID: 20200227182240eucas1p272bac5df6668bbb7fee7638b4022a7b1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200227182240eucas1p272bac5df6668bbb7fee7638b4022a7b1
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200227182240eucas1p272bac5df6668bbb7fee7638b4022a7b1
+References: <20200227182226.19188-1-b.zolnierkie@samsung.com>
+        <CGME20200227182240eucas1p272bac5df6668bbb7fee7638b4022a7b1@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the Calxeda Highbank SATA controller binding to DT schema format
-using json-schema.
+Use core helper instead of open-coding it.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- .../devicetree/bindings/ata/sata_highbank.txt | 44 ---------
- .../bindings/ata/sata_highbank.yaml           | 95 +++++++++++++++++++
- 2 files changed, 95 insertions(+), 44 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/ata/sata_highbank.txt
- create mode 100644 Documentation/devicetree/bindings/ata/sata_highbank.yaml
+ drivers/ata/sata_promise.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/ata/sata_highbank.txt b/Documentation/devicetree/bindings/ata/sata_highbank.txt
-deleted file mode 100644
-index aa83407cb7a4..000000000000
---- a/Documentation/devicetree/bindings/ata/sata_highbank.txt
-+++ /dev/null
-@@ -1,44 +0,0 @@
--* Calxeda AHCI SATA Controller
+diff --git a/drivers/ata/sata_promise.c b/drivers/ata/sata_promise.c
+index c451d7d1c817..8729f78cef5f 100644
+--- a/drivers/ata/sata_promise.c
++++ b/drivers/ata/sata_promise.c
+@@ -157,7 +157,6 @@ static int pdc_sata_hardreset(struct ata_link *link, unsigned int *class,
+ static void pdc_error_handler(struct ata_port *ap);
+ static void pdc_post_internal_cmd(struct ata_queued_cmd *qc);
+ static int pdc_pata_cable_detect(struct ata_port *ap);
+-static int pdc_sata_cable_detect(struct ata_port *ap);
+ 
+ static struct scsi_host_template pdc_ata_sht = {
+ 	ATA_BASE_SHT(DRV_NAME),
+@@ -183,7 +182,7 @@ static const struct ata_port_operations pdc_common_ops = {
+ 
+ static struct ata_port_operations pdc_sata_ops = {
+ 	.inherits		= &pdc_common_ops,
+-	.cable_detect		= pdc_sata_cable_detect,
++	.cable_detect		= ata_cable_sata,
+ 	.freeze			= pdc_sata_freeze,
+ 	.thaw			= pdc_sata_thaw,
+ 	.scr_read		= pdc_sata_scr_read,
+@@ -459,11 +458,6 @@ static int pdc_pata_cable_detect(struct ata_port *ap)
+ 	return ATA_CBL_PATA80;
+ }
+ 
+-static int pdc_sata_cable_detect(struct ata_port *ap)
+-{
+-	return ATA_CBL_SATA;
+-}
 -
--SATA nodes are defined to describe on-chip Serial ATA controllers.
--The Calxeda SATA controller mostly conforms to the AHCI interface
--with some special extensions to add functionality.
--Each SATA controller should have its own node.
--
--Required properties:
--- compatible        : compatible list, contains "calxeda,hb-ahci"
--- interrupts        : <interrupt mapping for SATA IRQ>
--- reg               : <registers mapping>
--
--Optional properties:
--- dma-coherent      : Present if dma operations are coherent
--- calxeda,port-phys : phandle-combophy and lane assignment, which maps each
--			SATA port to a combophy and a lane within that
--			combophy
--- calxeda,sgpio-gpio: phandle-gpio bank, bit offset, and default on or off,
--			which indicates that the driver supports SGPIO
--			indicator lights using the indicated GPIOs
--- calxeda,led-order : a u32 array that map port numbers to offsets within the
--			SGPIO bitstream.
--- calxeda,tx-atten  : a u32 array that contains TX attenuation override
--			codes, one per port. The upper 3 bytes are always
--			0 and thus ignored.
--- calxeda,pre-clocks : a u32 that indicates the number of additional clock
--			cycles to transmit before sending an SGPIO pattern
--- calxeda,post-clocks: a u32 that indicates the number of additional clock
--			cycles to transmit after sending an SGPIO pattern
--
--Example:
--        sata@ffe08000 {
--		compatible = "calxeda,hb-ahci";
--		reg = <0xffe08000 0x1000>;
--		interrupts = <115>;
--		dma-coherent;
--		calxeda,port-phys = <&combophy5 0 &combophy0 0 &combophy0 1
--					&combophy0 2 &combophy0 3>;
--		calxeda,sgpio-gpio =<&gpioh 5 1 &gpioh 6 1 &gpioh 7 1>;
--		calxeda,led-order = <4 0 1 2 3>;
--		calxeda,tx-atten = <0xff 22 0xff 0xff 23>;
--		calxeda,pre-clocks = <10>;
--		calxeda,post-clocks = <0>;
--        };
-diff --git a/Documentation/devicetree/bindings/ata/sata_highbank.yaml b/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-new file mode 100644
-index 000000000000..6dcf91e1bac0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-@@ -0,0 +1,95 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/ata/sata_highbank.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Calxeda AHCI SATA Controller
-+
-+description: |
-+  The Calxeda SATA controller mostly conforms to the AHCI interface
-+  with some special extensions to add functionality, to map GPIOs for
-+  activity LEDs and for mapping the ComboPHYs.
-+
-+maintainers:
-+  - Andre Przywara <andre.przywara@arm.com>
-+
-+properties:
-+  compatible:
-+    const: calxeda,hb-ahci
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  dma-coherent: true
-+
-+  calxeda,pre-clocks:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      Indicates the number of additional clock cycles to transmit before
-+      sending an SGPIO pattern.
-+
-+  calxeda,post-clocks:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      Indicates the number of additional clock cycles to transmit after
-+      sending an SGPIO pattern.
-+
-+  calxeda,led-order:
-+    description: Maps port numbers to offsets within the SGPIO bitstream.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+      - minItems: 1
-+        maxItems: 8
-+
-+  calxeda,port-phys:
-+    description: |
-+      phandle-combophy and lane assignment, which maps each SATA port to a
-+      combophy and a lane within that combophy
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/phandle-array
-+      - minItems: 1
-+        maxItems: 8
-+
-+  calxeda,tx-atten:
-+    description: |
-+      Contains TX attenuation override codes, one per port.
-+      The upper 24 bits of each entry are always 0 and thus ignored.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+      - minItems: 1
-+        maxItems: 8
-+
-+  calxeda,sgpio-gpio:
-+    description: |
-+      phandle-gpio bank, bit offset, and default on or off, which indicates
-+      that the driver supports SGPIO indicator lights using the indicated
-+      GPIOs.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    sata@ffe08000 {
-+        compatible = "calxeda,hb-ahci";
-+        reg = <0xffe08000 0x1000>;
-+        interrupts = <115>;
-+        dma-coherent;
-+        calxeda,port-phys = <&combophy5 0 &combophy0 0 &combophy0 1
-+                             &combophy0 2 &combophy0 3>;
-+        calxeda,sgpio-gpio =<&gpioh 5 1 &gpioh 6 1 &gpioh 7 1>;
-+        calxeda,led-order = <4 0 1 2 3>;
-+        calxeda,tx-atten = <0xff 22 0xff 0xff 23>;
-+        calxeda,pre-clocks = <10>;
-+        calxeda,post-clocks = <0>;
-+    };
-+
-+...
+ static int pdc_sata_scr_read(struct ata_link *link,
+ 			     unsigned int sc_reg, u32 *val)
+ {
 -- 
-2.17.1
+2.24.1
 
