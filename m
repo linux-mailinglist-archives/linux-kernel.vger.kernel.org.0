@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 461EB171A57
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:52:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F55C171A59
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:53:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731543AbgB0Nwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:52:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52228 "EHLO mail.kernel.org"
+        id S1731585AbgB0Nwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:52:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731552AbgB0Nwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:52:40 -0500
+        id S1731101AbgB0Nwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:52:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EFC620801;
-        Thu, 27 Feb 2020 13:52:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6486920801;
+        Thu, 27 Feb 2020 13:52:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811559;
-        bh=ls25hE66DjZelebJqm1MeTUUK7jvn8rQPhsFYAW5Ouk=;
+        s=default; t=1582811566;
+        bh=RNLN69BGm8fANgSoBTtbZd9/AhSz5a+ERLa+TyBFI1c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iuiDThZixS3rfw5jW1Ii7gGbprU3bEpZATyFR0944yxkMxPuTvuqspVvEX0q7mUxA
-         vjS66MAC2ji+7kTQ5DIGSdcNnu0zD0JE5STKy7A5T0vpirqLhbbrbDh+zmnRFezVPz
-         SQIuWnN1bjFnfd69O0uHAykodexs1qcaoikjGVJM=
+        b=KC93wqKsllWw50dMh+umJyy5yeZ1nVpNn4iOoqtn49ItEegoSrcLbd83oKGC1ndBT
+         JRS0YGS/hJYsG4oocUqEXy5RpTUMP8um3Hi88OhcPkVJ7buidojEHOxpmLEwl906eT
+         OC5WM6svSl38GsTypadC5/1AAz/8pzDjPsYoDBEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Nicolas Pitre <nico@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 014/237] ARM: 8723/2: always assume the "unified" syntax for assembly code
-Date:   Thu, 27 Feb 2020 14:33:48 +0100
-Message-Id: <20200227132257.072862824@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Dilger <adilger@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org
+Subject: [PATCH 4.14 017/237] ext4: fix checksum errors with indexed dirs
+Date:   Thu, 27 Feb 2020 14:33:51 +0100
+Message-Id: <20200227132257.356800487@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -45,188 +44,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit 75fea300d73ae5b18957949a53ec770daaeb6fc2 ]
+commit 48a34311953d921235f4d7bbd2111690d2e469cf upstream.
 
-The GNU assembler has implemented the "unified syntax" parsing since
-2005. This "unified" syntax is required when the kernel is built in
-Thumb2 mode. However the "unified" syntax is a mixed bag of features,
-including not requiring a `#' prefix with immediate operands. This leads
-to situations where some code builds just fine in Thumb2 mode and fails
-to build in ARM mode if that prefix is missing. This behavior
-discrepancy makes build tests less valuable, forcing both ARM and Thumb2
-builds for proper coverage.
+DIR_INDEX has been introduced as a compat ext4 feature. That means that
+even kernels / tools that don't understand the feature may modify the
+filesystem. This works because for kernels not understanding indexed dir
+format, internal htree nodes appear just as empty directory entries.
+Index dir aware kernels then check the htree structure is still
+consistent before using the data. This all worked reasonably well until
+metadata checksums were introduced. The problem is that these
+effectively made DIR_INDEX only ro-compatible because internal htree
+nodes store checksums in a different place than normal directory blocks.
+Thus any modification ignorant to DIR_INDEX (or just clearing
+EXT4_INDEX_FL from the inode) will effectively cause checksum mismatch
+and trigger kernel errors. So we have to be more careful when dealing
+with indexed directories on filesystems with checksumming enabled.
 
-Let's "fix" this issue by always using the "unified" syntax for both ARM
-and Thumb2 mode. Given that the documented minimum binutils version that
-properly builds the kernel is version 2.20 released in 2010, we can
-assume that any toolchain capable of building the latest kernel is also
-"unified syntax" capable.
+1) We just disallow loading any directory inodes with EXT4_INDEX_FL when
+DIR_INDEX is not enabled. This is harsh but it should be very rare (it
+means someone disabled DIR_INDEX on existing filesystem and didn't run
+e2fsck), e2fsck can fix the problem, and we don't want to answer the
+difficult question: "Should we rather corrupt the directory more or
+should we ignore that DIR_INDEX feature is not set?"
 
-Whith this, a bunch of macros used to mask some differences between both
-syntaxes can be removed, with the side effect of making LTO easier.
+2) When we find out htree structure is corrupted (but the filesystem and
+the directory should in support htrees), we continue just ignoring htree
+information for reading but we refuse to add new entries to the
+directory to avoid corrupting it more.
 
-Suggested-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Link: https://lore.kernel.org/r/20200210144316.22081-1-jack@suse.cz
+Fixes: dbe89444042a ("ext4: Calculate and verify checksums for htree nodes")
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/Kconfig               |  7 +---
- arch/arm/Makefile              |  6 ++-
- arch/arm/include/asm/unified.h | 77 ++--------------------------------
- 3 files changed, 8 insertions(+), 82 deletions(-)
+ fs/ext4/dir.c   |   14 ++++++++------
+ fs/ext4/ext4.h  |    5 ++++-
+ fs/ext4/inode.c |   12 ++++++++++++
+ fs/ext4/namei.c |    7 +++++++
+ 4 files changed, 31 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index cf69aab648fbd..ba9325fc75b85 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1533,12 +1533,10 @@ config THUMB2_KERNEL
- 	bool "Compile the kernel in Thumb-2 mode" if !CPU_THUMBONLY
- 	depends on (CPU_V7 || CPU_V7M) && !CPU_V6 && !CPU_V6K
- 	default y if CPU_THUMBONLY
--	select ARM_ASM_UNIFIED
- 	select ARM_UNWIND
- 	help
- 	  By enabling this option, the kernel will be compiled in
--	  Thumb-2 mode. A compiler/assembler that understand the unified
--	  ARM-Thumb syntax is needed.
-+	  Thumb-2 mode.
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -125,12 +125,14 @@ static int ext4_readdir(struct file *fil
+ 		if (err != ERR_BAD_DX_DIR) {
+ 			return err;
+ 		}
+-		/*
+-		 * We don't set the inode dirty flag since it's not
+-		 * critical that it get flushed back to the disk.
+-		 */
+-		ext4_clear_inode_flag(file_inode(file),
+-				      EXT4_INODE_INDEX);
++		/* Can we just clear INDEX flag to ignore htree information? */
++		if (!ext4_has_metadata_csum(sb)) {
++			/*
++			 * We don't set the inode dirty flag since it's not
++			 * critical that it gets flushed back to the disk.
++			 */
++			ext4_clear_inode_flag(inode, EXT4_INODE_INDEX);
++		}
+ 	}
  
- 	  If unsure, say N.
- 
-@@ -1573,9 +1571,6 @@ config THUMB2_AVOID_R_ARM_THM_JUMP11
- 
- 	  Unless you are sure your tools don't have this problem, say Y.
- 
--config ARM_ASM_UNIFIED
--	bool
--
- config ARM_PATCH_IDIV
- 	bool "Runtime patch udiv/sdiv instructions into __aeabi_{u}idiv()"
- 	depends on CPU_32v7 && !XIP_KERNEL
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 17e80f4832816..234ee43b44384 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -115,9 +115,11 @@ ifeq ($(CONFIG_ARM_UNWIND),y)
- CFLAGS_ABI	+=-funwind-tables
- endif
- 
-+# Accept old syntax despite ".syntax unified"
-+AFLAGS_NOWARN	:=$(call as-option,-Wa$(comma)-mno-warn-deprecated,-Wa$(comma)-W)
-+
- ifeq ($(CONFIG_THUMB2_KERNEL),y)
- AFLAGS_AUTOIT	:=$(call as-option,-Wa$(comma)-mimplicit-it=always,-Wa$(comma)-mauto-it)
--AFLAGS_NOWARN	:=$(call as-option,-Wa$(comma)-mno-warn-deprecated,-Wa$(comma)-W)
- CFLAGS_ISA	:=-mthumb $(AFLAGS_AUTOIT) $(AFLAGS_NOWARN)
- AFLAGS_ISA	:=$(CFLAGS_ISA) -Wa$(comma)-mthumb
- # Work around buggy relocation from gas if requested:
-@@ -125,7 +127,7 @@ ifeq ($(CONFIG_THUMB2_AVOID_R_ARM_THM_JUMP11),y)
- CFLAGS_MODULE	+=-fno-optimize-sibling-calls
- endif
- else
--CFLAGS_ISA	:=$(call cc-option,-marm,)
-+CFLAGS_ISA	:=$(call cc-option,-marm,) $(AFLAGS_NOWARN)
- AFLAGS_ISA	:=$(CFLAGS_ISA)
- endif
- 
-diff --git a/arch/arm/include/asm/unified.h b/arch/arm/include/asm/unified.h
-index a91ae499614cb..2c3b952be63eb 100644
---- a/arch/arm/include/asm/unified.h
-+++ b/arch/arm/include/asm/unified.h
-@@ -20,8 +20,10 @@
- #ifndef __ASM_UNIFIED_H
- #define __ASM_UNIFIED_H
- 
--#if defined(__ASSEMBLY__) && defined(CONFIG_ARM_ASM_UNIFIED)
-+#if defined(__ASSEMBLY__)
- 	.syntax unified
-+#else
-+__asm__(".syntax unified");
- #endif
- 
- #ifdef CONFIG_CPU_V7M
-@@ -64,77 +66,4 @@
- 
- #endif	/* CONFIG_THUMB2_KERNEL */
- 
--#ifndef CONFIG_ARM_ASM_UNIFIED
--
--/*
-- * If the unified assembly syntax isn't used (in ARM mode), these
-- * macros expand to an empty string
-- */
--#ifdef __ASSEMBLY__
--	.macro	it, cond
--	.endm
--	.macro	itt, cond
--	.endm
--	.macro	ite, cond
--	.endm
--	.macro	ittt, cond
--	.endm
--	.macro	itte, cond
--	.endm
--	.macro	itet, cond
--	.endm
--	.macro	itee, cond
--	.endm
--	.macro	itttt, cond
--	.endm
--	.macro	ittte, cond
--	.endm
--	.macro	ittet, cond
--	.endm
--	.macro	ittee, cond
--	.endm
--	.macro	itett, cond
--	.endm
--	.macro	itete, cond
--	.endm
--	.macro	iteet, cond
--	.endm
--	.macro	iteee, cond
--	.endm
--#else	/* !__ASSEMBLY__ */
--__asm__(
--"	.macro	it, cond\n"
--"	.endm\n"
--"	.macro	itt, cond\n"
--"	.endm\n"
--"	.macro	ite, cond\n"
--"	.endm\n"
--"	.macro	ittt, cond\n"
--"	.endm\n"
--"	.macro	itte, cond\n"
--"	.endm\n"
--"	.macro	itet, cond\n"
--"	.endm\n"
--"	.macro	itee, cond\n"
--"	.endm\n"
--"	.macro	itttt, cond\n"
--"	.endm\n"
--"	.macro	ittte, cond\n"
--"	.endm\n"
--"	.macro	ittet, cond\n"
--"	.endm\n"
--"	.macro	ittee, cond\n"
--"	.endm\n"
--"	.macro	itett, cond\n"
--"	.endm\n"
--"	.macro	itete, cond\n"
--"	.endm\n"
--"	.macro	iteet, cond\n"
--"	.endm\n"
--"	.macro	iteee, cond\n"
--"	.endm\n");
--#endif	/* __ASSEMBLY__ */
--
--#endif	/* CONFIG_ARM_ASM_UNIFIED */
--
- #endif	/* !__ASM_UNIFIED_H */
--- 
-2.20.1
-
+ 	if (ext4_has_inline_data(inode)) {
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2386,8 +2386,11 @@ void ext4_insert_dentry(struct inode *in
+ 			struct ext4_filename *fname);
+ static inline void ext4_update_dx_flag(struct inode *inode)
+ {
+-	if (!ext4_has_feature_dir_index(inode->i_sb))
++	if (!ext4_has_feature_dir_index(inode->i_sb)) {
++		/* ext4_iget() should have caught this... */
++		WARN_ON_ONCE(ext4_has_feature_metadata_csum(inode->i_sb));
+ 		ext4_clear_inode_flag(inode, EXT4_INODE_INDEX);
++	}
+ }
+ static const unsigned char ext4_filetype_table[] = {
+ 	DT_UNKNOWN, DT_REG, DT_DIR, DT_CHR, DT_BLK, DT_FIFO, DT_SOCK, DT_LNK
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4817,6 +4817,18 @@ struct inode *ext4_iget(struct super_blo
+ 		ret = -EFSCORRUPTED;
+ 		goto bad_inode;
+ 	}
++	/*
++	 * If dir_index is not enabled but there's dir with INDEX flag set,
++	 * we'd normally treat htree data as empty space. But with metadata
++	 * checksumming that corrupts checksums so forbid that.
++	 */
++	if (!ext4_has_feature_dir_index(sb) && ext4_has_metadata_csum(sb) &&
++	    ext4_test_inode_flag(inode, EXT4_INODE_INDEX)) {
++		EXT4_ERROR_INODE(inode,
++				 "iget: Dir with htree data on filesystem without dir_index feature.");
++		ret = -EFSCORRUPTED;
++		goto bad_inode;
++	}
+ 	ei->i_disksize = inode->i_size;
+ #ifdef CONFIG_QUOTA
+ 	ei->i_reserved_quota = 0;
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2094,6 +2094,13 @@ static int ext4_add_entry(handle_t *hand
+ 		retval = ext4_dx_add_entry(handle, &fname, dir, inode);
+ 		if (!retval || (retval != ERR_BAD_DX_DIR))
+ 			goto out;
++		/* Can we just ignore htree data? */
++		if (ext4_has_metadata_csum(sb)) {
++			EXT4_ERROR_INODE(dir,
++				"Directory has corrupted htree index.");
++			retval = -EFSCORRUPTED;
++			goto out;
++		}
+ 		ext4_clear_inode_flag(dir, EXT4_INODE_INDEX);
+ 		dx_fallback++;
+ 		ext4_mark_inode_dirty(handle, dir);
 
 
