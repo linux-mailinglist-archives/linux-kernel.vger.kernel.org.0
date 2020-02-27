@@ -2,116 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6772A171A0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:50:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A35D61719FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:49:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731236AbgB0Nu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:50:28 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33545 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730527AbgB0Nu0 (ORCPT
-        <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:50:26 -0500
-Received: by mail-qk1-f195.google.com with SMTP id h4so3176286qkm.0
-        for <Linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 05:50:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=8ZtJYarfQ4PUER8bNBbaBiuSEQmdlVvpEQQaAlVS/lE=;
-        b=cO+c2hi+XjV0sk2B/DcuqXeYLyiIWTbO6dvLpso8eixlvu++TdGtBCtVYCOWBMkaO+
-         8+pkUMnYObjk1u6Oy80/RVAfWhWbm/6UHFbt44yejGgyl+hAen19HbFF7PjhU+rEQvpV
-         YmF3upgICQyLbOqRFxm8WSiHu5LqBliz1lAjCW4/A4fyb2be/dOYutJjP3I5Qbs4jC9B
-         FVMNBsqx7GJ8nwsrn0WC52nWyfqXBKfyxlK9Q1q4JTd7KfUCYUXRM9BM4SFMZeLOpLcs
-         lAf4rq/NWCE3bF/ORlvqOH/IM3iECjTEF2G1zBQPpYihzHUUmPH5Pyijlfx1EB19HeDo
-         zzSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8ZtJYarfQ4PUER8bNBbaBiuSEQmdlVvpEQQaAlVS/lE=;
-        b=n424h3Q1sf4hJbOpYk6gd3QpgaDn0AlubC1i6QFzVWQUV7VxP/8tL1fLddeNSSjz98
-         JIZXYQHyhqKOD9dWrQgAy8SlQnWLsw3+VLZ4WDjQqFpoCKXr9nlpBlierJ2UeMKB7Q4m
-         C5oJljexHSdlhLS4nNCtVZoUiAlcrwn4EVWTYEUbeNIWmGMvaOt7z21A93hlUtWMr0dZ
-         GkvAelj52WEVvRtkCAWPqxuQv7flWT5wkVjsgykv2XvGqDvA0LTj7VMiy5M3dgeXafnx
-         AmebNmmF5ahCa93nET+Z4JblOqwieHnS0wlnZ8+ibMcryUbb7RzfEgJ7/nj6yZmzby1M
-         m2/w==
-X-Gm-Message-State: APjAAAWbXEQMaaDTcoXLZM2NrTvzwpvUgNLhHxheAtVVIAHsH36Q9sKt
-        C1BC9s1MqTsI2qLTikSIU+s=
-X-Google-Smtp-Source: APXvYqwIGdwF+x6VN9ZzGaR7ucIPL5ke/J64C3tdTG/fu1R+si4XJwN8SpXUiGTHHvvFb7rV/AuyIQ==
-X-Received: by 2002:a05:620a:7ee:: with SMTP id k14mr5656030qkk.170.1582811426059;
-        Thu, 27 Feb 2020 05:50:26 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id j22sm3071847qkk.45.2020.02.27.05.50.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 05:50:25 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 558B8403AD; Thu, 27 Feb 2020 10:50:23 -0300 (-03)
-Date:   Thu, 27 Feb 2020 10:50:23 -0300
-To:     Jin Yao <yao.jin@linux.intel.com>
-Cc:     jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v3 0/2] perf report: Support annotation of code without
- symbols
-Message-ID: <20200227135023.GD10761@kernel.org>
-References: <20200224022225.30264-1-yao.jin@linux.intel.com>
+        id S1731105AbgB0Ntt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:49:49 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:11858 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731058AbgB0Nti (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:49:38 -0500
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01RDlNvm009712;
+        Thu, 27 Feb 2020 08:49:36 -0500
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ydtrwka5m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Feb 2020 08:49:36 -0500
+Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 01RDnYPK017467
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Thu, 27 Feb 2020 08:49:34 -0500
+Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Thu, 27 Feb
+ 2020 05:49:33 -0800
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX10.ad.analog.com
+ (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Thu, 27 Feb 2020 05:49:33 -0800
+Received: from saturn.ad.analog.com ([10.48.65.109])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01RDnVoi027892;
+        Thu, 27 Feb 2020 08:49:31 -0500
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <jic23@kernel.org>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH 1/8] iio: core: drop devm_iio_device_unregister() API call
+Date:   Thu, 27 Feb 2020 15:52:20 +0200
+Message-ID: <20200227135227.12433-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224022225.30264-1-yao.jin@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-27_04:2020-02-26,2020-02-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ phishscore=0 adultscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ suspectscore=2 clxscore=1015 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002270109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Feb 24, 2020 at 10:22:23AM +0800, Jin Yao escreveu:
-> For perf report on stripped binaries it is currently impossible to do
-> annotation. The annotation state is all tied to symbols, but there are
-> either no symbols, or symbols are not covering all the code.
-> 
-> We should support the annotation functionality even without symbols.
-> 
-> The first patch uses al_addr to print because it's easy to dump
-> the instructions from this address in binary for branch mode.
-> 
-> The second patch supports the annotation on stripped binary.
+It's unused so far, so it can't be removed. Also makes sense to remove it
+to discourage weird uses of this call during review.
 
-I'm considering this a new feature, so I'll leave this for perf/core,
-i.e. for the next release, ok?
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+ .../driver-api/driver-model/devres.rst          |  1 -
+ drivers/iio/industrialio-core.c                 | 17 -----------------
+ include/linux/iio/iio.h                         |  4 ----
+ 3 files changed, 22 deletions(-)
 
-I'm now going thru the pure fixes that should go to perf/urgent, please
-holler if something you think should go in now is not in my perf/urgent
-branch.
-
-- Arnaldo
+diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
+index 46c13780994c..0580c64ebdfd 100644
+--- a/Documentation/driver-api/driver-model/devres.rst
++++ b/Documentation/driver-api/driver-model/devres.rst
+@@ -286,7 +286,6 @@ IIO
+   devm_iio_device_alloc()
+   devm_iio_device_free()
+   devm_iio_device_register()
+-  devm_iio_device_unregister()
+   devm_iio_kfifo_allocate()
+   devm_iio_kfifo_free()
+   devm_iio_triggered_buffer_setup()
+diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+index 0b14666dff09..e4011f8431f9 100644
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -1823,23 +1823,6 @@ int __devm_iio_device_register(struct device *dev, struct iio_dev *indio_dev,
+ }
+ EXPORT_SYMBOL_GPL(__devm_iio_device_register);
  
->  v3:
->  ---
->  Keep just the ANNOTATION_DUMMY_LEN, and remove the
->  opts->annotate_dummy_len since it's the "maybe in future
->  we will provide" feature.
-> 
->  v2:
->  ---
->  Fix a crash issue when annotating an address in "unknown" object.
-> 
-> Jin Yao (2):
->   perf util: Print al_addr when symbol is not found
->   Support interactive annotation of code without symbols
-> 
->  tools/perf/ui/browsers/hists.c | 43 +++++++++++++++++++++++++++++-----
->  tools/perf/util/annotate.h     |  1 +
->  tools/perf/util/sort.c         |  6 +++--
->  3 files changed, 42 insertions(+), 8 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
-
+-/**
+- * devm_iio_device_unregister - Resource-managed iio_device_unregister()
+- * @dev:	Device this iio_dev belongs to
+- * @indio_dev:	the iio_dev associated with the device
+- *
+- * Unregister iio_dev registered with devm_iio_device_register().
+- */
+-void devm_iio_device_unregister(struct device *dev, struct iio_dev *indio_dev)
+-{
+-	int rc;
+-
+-	rc = devres_release(dev, devm_iio_device_unreg,
+-			    devm_iio_device_match, indio_dev);
+-	WARN_ON(rc);
+-}
+-EXPORT_SYMBOL_GPL(devm_iio_device_unregister);
+-
+ /**
+  * iio_device_claim_direct_mode - Keep device in direct mode
+  * @indio_dev:	the iio_dev associated with the device
+diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+index 862ce0019eba..0eb9e8d7ec68 100644
+--- a/include/linux/iio/iio.h
++++ b/include/linux/iio/iio.h
+@@ -591,9 +591,6 @@ void iio_device_unregister(struct iio_dev *indio_dev);
+  * calls iio_device_register() internally. Refer to that function for more
+  * information.
+  *
+- * If an iio_dev registered with this function needs to be unregistered
+- * separately, devm_iio_device_unregister() must be used.
+- *
+  * RETURNS:
+  * 0 on success, negative error number on failure.
+  */
+@@ -601,7 +598,6 @@ void iio_device_unregister(struct iio_dev *indio_dev);
+ 	__devm_iio_device_register((dev), (indio_dev), THIS_MODULE);
+ int __devm_iio_device_register(struct device *dev, struct iio_dev *indio_dev,
+ 			       struct module *this_mod);
+-void devm_iio_device_unregister(struct device *dev, struct iio_dev *indio_dev);
+ int iio_push_event(struct iio_dev *indio_dev, u64 ev_code, s64 timestamp);
+ int iio_device_claim_direct_mode(struct iio_dev *indio_dev);
+ void iio_device_release_direct_mode(struct iio_dev *indio_dev);
 -- 
+2.20.1
 
-- Arnaldo
