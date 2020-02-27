@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 710C5171BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:05:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E32B5171E2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:26:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387761AbgB0OFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:05:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41914 "EHLO mail.kernel.org"
+        id S2388534AbgB0OZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:25:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387734AbgB0OFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:05:17 -0500
+        id S2388594AbgB0OKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:10:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B9E020801;
-        Thu, 27 Feb 2020 14:05:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9123E24697;
+        Thu, 27 Feb 2020 14:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812316;
-        bh=U0GxQ/StVdrq3IAdMSnRpyea2jabzGv+n2eoSD3uqs8=;
+        s=default; t=1582812648;
+        bh=7C14fBJVfL8ckx4LyvL4nrA4ekCR7lDWGPs6KCsLP6I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vW2yornHtMocrqlpwIhy3zVM+1emqbnZ+jPNSrAqcQ1GeM1lNffDRvuU/yjesSS+c
-         o9EApER1NC5tXP1wFR0WN6qOSRylgpMY0sYk+ctm+3qxRWX/hQtI/7AilbZ7Q0RIxv
-         yfPIjxYcP6y/faI1Wmq4P0EdjlXpwGzRvUKLBb7I=
+        b=u7vfL+V/ksTDOHCOI+lgec7bfJGeAECtCjds1r2FvntmKhup1QdaTI68CQAnCzI4N
+         OT6rT2In6H+nfqMnmtF2eixy0iRQD3+KZvEX9peFJxCrVZdyJJX0k8OVuyrk2CE4mX
+         RExqbjkBXNR80QlIf+K0hcCn1fJPOhMZd1wztA/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        stable@kernel.org
-Subject: [PATCH 4.19 69/97] ext4: rename s_journal_flag_rwsem to s_writepages_rwsem
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.4 097/135] Btrfs: fix race between shrinking truncate and fiemap
 Date:   Thu, 27 Feb 2020 14:37:17 +0100
-Message-Id: <20200227132225.748009552@linuxfoundation.org>
+Message-Id: <20200227132243.804135072@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,130 +44,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit bbd55937de8f2754adc5792b0f8e5ff7d9c0420e upstream.
+commit 28553fa992cb28be6a65566681aac6cafabb4f2d upstream.
 
-In preparation for making s_journal_flag_rwsem synchronize
-ext4_writepages() with changes to both the EXTENTS and JOURNAL_DATA
-flags (rather than just JOURNAL_DATA as it does currently), rename it to
-s_writepages_rwsem.
+When there is a fiemap executing in parallel with a shrinking truncate
+we can end up in a situation where we have extent maps for which we no
+longer have corresponding file extent items. This is generally harmless
+and at the moment the only consequences are missing file extent items
+representing holes after we expand the file size again after the
+truncate operation removed the prealloc extent items, and stale
+information for future fiemap calls (reporting extents that no longer
+exist or may have been reallocated to other files for example).
 
-Link: https://lore.kernel.org/r/20200219183047.47417-2-ebiggers@kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: stable@kernel.org
+Consider the following example:
+
+1) Our inode has a size of 128KiB, one 128KiB extent at file offset 0
+   and a 1MiB prealloc extent at file offset 128KiB;
+
+2) Task A starts doing a shrinking truncate of our inode to reduce it to
+   a size of 64KiB. Before it searches the subvolume tree for file
+   extent items to delete, it drops all the extent maps in the range
+   from 64KiB to (u64)-1 by calling btrfs_drop_extent_cache();
+
+3) Task B starts doing a fiemap against our inode. When looking up for
+   the inode's extent maps in the range from 128KiB to (u64)-1, it
+   doesn't find any in the inode's extent map tree, since they were
+   removed by task A.  Because it didn't find any in the extent map
+   tree, it scans the inode's subvolume tree for file extent items, and
+   it finds the 1MiB prealloc extent at file offset 128KiB, then it
+   creates an extent map based on that file extent item and adds it to
+   inode's extent map tree (this ends up being done by
+   btrfs_get_extent() <- btrfs_get_extent_fiemap() <-
+   get_extent_skip_holes());
+
+4) Task A then drops the prealloc extent at file offset 128KiB and
+   shrinks the 128KiB extent file offset 0 to a length of 64KiB. The
+   truncation operation finishes and we end up with an extent map
+   representing a 1MiB prealloc extent at file offset 128KiB, despite we
+   don't have any more that extent;
+
+After this the two types of problems we have are:
+
+1) Future calls to fiemap always report that a 1MiB prealloc extent
+   exists at file offset 128KiB. This is stale information, no longer
+   correct;
+
+2) If the size of the file is increased, by a truncate operation that
+   increases the file size or by a write into a file offset > 64KiB for
+   example, we end up not inserting file extent items to represent holes
+   for any range between 128KiB and 128KiB + 1MiB, since the hole
+   expansion function, btrfs_cont_expand() will skip hole insertion for
+   any range for which an extent map exists that represents a prealloc
+   extent. This causes fsck to complain about missing file extent items
+   when not using the NO_HOLES feature.
+
+The second issue could be often triggered by test case generic/561 from
+fstests, which runs fsstress and duperemove in parallel, and duperemove
+does frequent fiemap calls.
+
+Essentially the problems happens because fiemap does not acquire the
+inode's lock while truncate does, and fiemap locks the file range in the
+inode's iotree while truncate does not. So fix the issue by making
+btrfs_truncate_inode_items() lock the file range from the new file size
+to (u64)-1, so that it serializes with fiemap.
+
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ext4.h  |    2 +-
- fs/ext4/inode.c |   14 +++++++-------
- fs/ext4/super.c |    6 +++---
- 3 files changed, 11 insertions(+), 11 deletions(-)
+ fs/btrfs/inode.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1521,7 +1521,7 @@ struct ext4_sb_info {
- 	struct ratelimit_state s_msg_ratelimit_state;
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -4734,6 +4734,8 @@ int btrfs_truncate_inode_items(struct bt
+ 	u64 bytes_deleted = 0;
+ 	bool be_nice = false;
+ 	bool should_throttle = false;
++	const u64 lock_start = ALIGN_DOWN(new_size, fs_info->sectorsize);
++	struct extent_state *cached_state = NULL;
  
- 	/* Barrier between changing inodes' journal flags and writepages ops. */
--	struct percpu_rw_semaphore s_journal_flag_rwsem;
-+	struct percpu_rw_semaphore s_writepages_rwsem;
- 	struct dax_device *s_daxdev;
- };
+ 	BUG_ON(new_size > 0 && min_type != BTRFS_EXTENT_DATA_KEY);
  
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -2730,7 +2730,7 @@ static int ext4_writepages(struct addres
- 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
- 		return -EIO;
+@@ -4750,6 +4752,9 @@ int btrfs_truncate_inode_items(struct bt
+ 		return -ENOMEM;
+ 	path->reada = READA_BACK;
  
--	percpu_down_read(&sbi->s_journal_flag_rwsem);
-+	percpu_down_read(&sbi->s_writepages_rwsem);
- 	trace_ext4_writepages(inode, wbc);
- 
++	lock_extent_bits(&BTRFS_I(inode)->io_tree, lock_start, (u64)-1,
++			 &cached_state);
++
  	/*
-@@ -2950,7 +2950,7 @@ unplug:
- out_writepages:
- 	trace_ext4_writepages_result(inode, wbc, ret,
- 				     nr_to_write - wbc->nr_to_write);
--	percpu_up_read(&sbi->s_journal_flag_rwsem);
-+	percpu_up_read(&sbi->s_writepages_rwsem);
- 	return ret;
- }
- 
-@@ -2965,13 +2965,13 @@ static int ext4_dax_writepages(struct ad
- 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
- 		return -EIO;
- 
--	percpu_down_read(&sbi->s_journal_flag_rwsem);
-+	percpu_down_read(&sbi->s_writepages_rwsem);
- 	trace_ext4_writepages(inode, wbc);
- 
- 	ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
- 	trace_ext4_writepages_result(inode, wbc, ret,
- 				     nr_to_write - wbc->nr_to_write);
--	percpu_up_read(&sbi->s_journal_flag_rwsem);
-+	percpu_up_read(&sbi->s_writepages_rwsem);
- 	return ret;
- }
- 
-@@ -6207,7 +6207,7 @@ int ext4_change_inode_journal_flag(struc
- 		}
+ 	 * We want to drop from the next block forward in case this new size is
+ 	 * not block aligned since we will be keeping the last block of the
+@@ -5016,6 +5021,9 @@ out:
+ 		btrfs_ordered_update_i_size(inode, last_size, NULL);
  	}
  
--	percpu_down_write(&sbi->s_journal_flag_rwsem);
-+	percpu_down_write(&sbi->s_writepages_rwsem);
- 	jbd2_journal_lock_updates(journal);
- 
- 	/*
-@@ -6224,7 +6224,7 @@ int ext4_change_inode_journal_flag(struc
- 		err = jbd2_journal_flush(journal);
- 		if (err < 0) {
- 			jbd2_journal_unlock_updates(journal);
--			percpu_up_write(&sbi->s_journal_flag_rwsem);
-+			percpu_up_write(&sbi->s_writepages_rwsem);
- 			return err;
- 		}
- 		ext4_clear_inode_flag(inode, EXT4_INODE_JOURNAL_DATA);
-@@ -6232,7 +6232,7 @@ int ext4_change_inode_journal_flag(struc
- 	ext4_set_aops(inode);
- 
- 	jbd2_journal_unlock_updates(journal);
--	percpu_up_write(&sbi->s_journal_flag_rwsem);
-+	percpu_up_write(&sbi->s_writepages_rwsem);
- 
- 	if (val)
- 		up_write(&EXT4_I(inode)->i_mmap_sem);
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1017,7 +1017,7 @@ static void ext4_put_super(struct super_
- 	percpu_counter_destroy(&sbi->s_freeinodes_counter);
- 	percpu_counter_destroy(&sbi->s_dirs_counter);
- 	percpu_counter_destroy(&sbi->s_dirtyclusters_counter);
--	percpu_free_rwsem(&sbi->s_journal_flag_rwsem);
-+	percpu_free_rwsem(&sbi->s_writepages_rwsem);
- #ifdef CONFIG_QUOTA
- 	for (i = 0; i < EXT4_MAXQUOTAS; i++)
- 		kfree(get_qf_name(sb, sbi, i));
-@@ -4495,7 +4495,7 @@ no_journal:
- 		err = percpu_counter_init(&sbi->s_dirtyclusters_counter, 0,
- 					  GFP_KERNEL);
- 	if (!err)
--		err = percpu_init_rwsem(&sbi->s_journal_flag_rwsem);
-+		err = percpu_init_rwsem(&sbi->s_writepages_rwsem);
- 
- 	if (err) {
- 		ext4_msg(sb, KERN_ERR, "insufficient memory");
-@@ -4595,7 +4595,7 @@ failed_mount6:
- 	percpu_counter_destroy(&sbi->s_freeinodes_counter);
- 	percpu_counter_destroy(&sbi->s_dirs_counter);
- 	percpu_counter_destroy(&sbi->s_dirtyclusters_counter);
--	percpu_free_rwsem(&sbi->s_journal_flag_rwsem);
-+	percpu_free_rwsem(&sbi->s_writepages_rwsem);
- failed_mount5:
- 	ext4_ext_release(sb);
- 	ext4_release_system_zone(sb);
++	unlock_extent_cached(&BTRFS_I(inode)->io_tree, lock_start, (u64)-1,
++			     &cached_state);
++
+ 	btrfs_free_path(path);
+ 	return ret;
+ }
 
 
