@@ -2,78 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADACD17138E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 10:00:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 321631712EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:47:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728631AbgB0JAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 04:00:24 -0500
-Received: from mga14.intel.com ([192.55.52.115]:34218 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728536AbgB0JAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 04:00:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 01:00:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,491,1574150400"; 
-   d="scan'208";a="272104451"
-Received: from unknown (HELO lftan) ([10.226.248.148])
-  by fmsmga002.fm.intel.com with SMTP; 27 Feb 2020 01:00:21 -0800
-Received: by lftan (sSMTP sendmail emulation); Thu, 27 Feb 2020 02:35:20 +0800
-From:   Ley Foon Tan <ley.foon.tan@intel.com>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Chin Liang See <chin.liang.see@intel.com>,
-        lftan.linux@gmail.com, Ley Foon Tan <ley.foon.tan@intel.com>
-Subject: [PATCH] arm64: dts: socfpga: agilex: Fix gmac compatible
-Date:   Thu, 27 Feb 2020 02:35:18 +0800
-Message-Id: <20200226183518.64673-1-ley.foon.tan@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728865AbgB0Ir3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 03:47:29 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:48967 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728856AbgB0Ir3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 03:47:29 -0500
+Received: from [109.168.11.45] (port=43056 helo=[192.168.101.73])
+        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1j7EGN-009anX-4W; Thu, 27 Feb 2020 09:11:20 +0100
+Subject: Re: [PATCH v2] of: overlay: log the error cause on resolver failure
+To:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20200225164540.4520-1-luca@lucaceresoli.net>
+ <f9565679-5892-bcf0-f751-bfcac87670a8@gmail.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <40fdf0f2-85a4-9f84-6994-a59b7b56cec4@lucaceresoli.net>
+Date:   Thu, 27 Feb 2020 09:11:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <f9565679-5892-bcf0-f751-bfcac87670a8@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix gmac compatible string to "altr,socfpga-stmmac-a10-s10". Gmac for
-Agilex should use same compatible as Stratix 10.
+Hi Frank,
 
-Signed-off-by: Ley Foon Tan <ley.foon.tan@intel.com>
----
- arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On 26/02/20 04:53, Frank Rowand wrote:
+> On 2/25/20 10:45 AM, Luca Ceresoli wrote:
+>> For some of its error paths, of_resolve_phandles() only logs a very generic
+>> error which does not help much in finding the origin of the problem:
+>>
+>>   OF: resolver: overlay phandle fixup failed: -22
+>>
+>> Add error messages for all the error paths that don't have one. Now a
+>> specific message is always emitted, thus also remove the generic catch-all
+>> message emitted before returning.
+>>
+>> For example, in case a DT overlay has a fixup node that is not present in
+>> the base DT __symbols__, this error is now logged:
+>>
+>>   OF: resolver: node gpio9 not found in base DT, fixup failed
+>>
+>> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+>> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+>> ---
+>>
+>> I don't know in detail the meaning of the adjust_local_phandle_references()
+>> and update_usages_of_a_phandle_reference() error paths, thus I have put
+>> pretty generic messages. Any suggestion on better wording would be welcome.
+> 
+> If you have not read the code to understand what the meaning of
+> the errors are, you should not be suggesting changes to the error
+> messages.
+> 
+> Only one of the issues detected as errors can possibly be something
+> other than an error either in the resolver.c code or the dtc
+> compiler -- a missing symbol in the live devicetree.  This may
+> be because of failing to compile the base devicetree without
+> symbols, depending on a symbol from another overlay where the
+> other overlay has not been applied, or depending on a symbol
+> from another overlay where the other overlay is applied but
+> the overlay was not compiled with symbols.  (Not meant to be
+> an exhaustive list, but it might be.)  Thus the missing
+> symbol problem might be fixable without a fix to kernel
+> code.  The error message philosophy for overlay related
+> errors is to minimize error messages that help diagnose
+> the precise cause of a kernel code bug, with the intent
+> of keeping the code more compact and readable.  When a
+> bug occurs, debugging messages can be added for the
+> debug session.
 
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-index e1d357eaad7c..d8c44d3ca15a 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-@@ -102,7 +102,7 @@
- 		};
- 
- 		gmac0: ethernet@ff800000 {
--			compatible = "altr,socfpga-stmmac", "snps,dwmac-3.74a", "snps,dwmac";
-+			compatible = "altr,socfpga-stmmac-a10-s10", "snps,dwmac-3.74a", "snps,dwmac";
- 			reg = <0xff800000 0x2000>;
- 			interrupts = <0 90 4>;
- 			interrupt-names = "macirq";
-@@ -118,7 +118,7 @@
- 		};
- 
- 		gmac1: ethernet@ff802000 {
--			compatible = "altr,socfpga-stmmac", "snps,dwmac-3.74a", "snps,dwmac";
-+			compatible = "altr,socfpga-stmmac-a10-s10", "snps,dwmac-3.74a", "snps,dwmac";
- 			reg = <0xff802000 0x2000>;
- 			interrupts = <0 91 4>;
- 			interrupt-names = "macirq";
-@@ -134,7 +134,7 @@
- 		};
- 
- 		gmac2: ethernet@ff804000 {
--			compatible = "altr,socfpga-stmmac", "snps,dwmac-3.74a", "snps,dwmac";
-+			compatible = "altr,socfpga-stmmac-a10-s10", "snps,dwmac-3.74a", "snps,dwmac";
- 			reg = <0xff804000 0x2000>;
- 			interrupts = <0 92 4>;
- 			interrupt-names = "macirq";
+Got it, sorry about that.
+
+> Following this philosophy, only the message in the second
+> patch chunk is ok.
+
+Then I think you can apply the v1 patch which only contains the message
+about the problem I experienced, and which was caused by an incorrect DTO:
+
+https://patchwork.ozlabs.org/patch/1243987/
+
+Just ignore the note saying the patch is not for mainline, it's wrong.
+
 -- 
-2.19.0
-
+Luca
