@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A0BF171B66
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA69D171E05
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:24:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733066AbgB0OCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:02:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36492 "EHLO mail.kernel.org"
+        id S1730876AbgB0OMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:12:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733021AbgB0OCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:02:04 -0500
+        id S2388821AbgB0OMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:12:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5FFC2469D;
-        Thu, 27 Feb 2020 14:02:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F40FC2469F;
+        Thu, 27 Feb 2020 14:12:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812123;
-        bh=O0GJgcJWu92u4YYPi5EwWb37LHLfxa4LhHB3LFC3roY=;
+        s=default; t=1582812736;
+        bh=VQuzfHeXYRygrAZizt4UQ3EGKshFx6FRdbYz4znsVfA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=URqmty1VlfQAvc9p7IGKw12CVxzVnSncvYFFbVBpmd03+tk+XBcZ76t1BCNZt0aQt
-         okMygAUPj09n1kYbwQTn2HKBF0S5DRQ2+ReeuSC6ajjJ614O28nqPUsJ7n21MW6+B5
-         SN9IymSwdXmY7eTN7QVT7HsQlBQveyYjv1/Iklvk=
+        b=Vf+0CwfsLbeiLOTOUnsnGdr7Tdsa2stH1teJLV87BRhHvuHkJeK/Q6Yup5UooFdJY
+         VXhD+DIrKOM6RNxTrCedMmmVVwJad7fDTbWgP/WPMX7hWVD5RgWKqKyUFqpXrHu5Wq
+         EEA9vtEKzl4kOMPD/oAkDu/KNxeMChOM1sO3pAps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 230/237] genirq/proc: Reject invalid affinity masks (again)
-Date:   Thu, 27 Feb 2020 14:37:24 +0100
-Message-Id: <20200227132313.025857606@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 5.4 105/135] drm/i915/gt: Protect defer_request() from new waiters
+Date:   Thu, 27 Feb 2020 14:37:25 +0100
+Message-Id: <20200227132245.012072463@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,128 +44,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit cba6437a1854fde5934098ec3bd0ee83af3129f5 upstream.
+commit 19b5f3b419a61808ff2713f1f30b8a88fe14ac9b upstream.
 
-Qian Cai reported that the WARN_ON() in the x86/msi affinity setting code,
-which catches cases where the affinity setting is not done on the CPU which
-is the current target of the interrupt, triggers during CPU hotplug stress
-testing.
+Mika spotted
 
-It turns out that the warning which was added with the commit addressing
-the MSI affinity race unearthed yet another long standing bug.
+<4>[17436.705441] general protection fault: 0000 [#1] PREEMPT SMP PTI
+<4>[17436.705447] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 5.5.0+ #1
+<4>[17436.705449] Hardware name: System manufacturer System Product Name/Z170M-PLUS, BIOS 3805 05/16/2018
+<4>[17436.705512] RIP: 0010:__execlists_submission_tasklet+0xc4d/0x16e0 [i915]
+<4>[17436.705516] Code: c5 4c 8d 60 e0 75 17 e9 8c 07 00 00 49 8b 44 24 20 49 39 c5 4c 8d 60 e0 0f 84 7a 07 00 00 49 8b 5c 24 08 49 8b 87 80 00 00 00 <48> 39 83 d8 fe ff ff 75 d9 48 8b 83 88 fe ff ff a8 01 0f 84 b6 05
+<4>[17436.705518] RSP: 0018:ffffc9000012ce80 EFLAGS: 00010083
+<4>[17436.705521] RAX: ffff88822ae42000 RBX: 5a5a5a5a5a5a5a5a RCX: dead000000000122
+<4>[17436.705523] RDX: ffff88822ae42588 RSI: ffff8881e32a7908 RDI: ffff8881c429fd48
+<4>[17436.705525] RBP: ffffc9000012cf00 R08: ffff88822ae42588 R09: 00000000fffffffe
+<4>[17436.705527] R10: ffff8881c429fb80 R11: 00000000a677cf08 R12: ffff8881c42a0aa8
+<4>[17436.705529] R13: ffff8881c429fd38 R14: ffff88822ae42588 R15: ffff8881c429fb80
+<4>[17436.705532] FS:  0000000000000000(0000) GS:ffff88822ed00000(0000) knlGS:0000000000000000
+<4>[17436.705534] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[17436.705536] CR2: 00007f858c76d000 CR3: 0000000005610003 CR4: 00000000003606e0
+<4>[17436.705538] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+<4>[17436.705540] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+<4>[17436.705542] Call Trace:
+<4>[17436.705545]  <IRQ>
+<4>[17436.705603]  execlists_submission_tasklet+0xc0/0x130 [i915]
 
-If user space writes a bogus affinity mask, i.e. it contains no online CPUs,
-then it calls irq_select_affinity_usr(). This was introduced for ALPHA in
+which is us consuming a partially initialised new waiter in
+defer_requests(). We can prevent this by initialising the i915_dependency
+prior to making it visible, and since we are using a concurrent
+list_add/iterator mark them up to the compiler.
 
-  eee45269b0f5 ("[PATCH] Alpha: convert to generic irq framework (generic part)")
-
-and subsequently made available for all architectures in
-
-  18404756765c ("genirq: Expose default irq affinity mask (take 3)")
-
-which introduced the circumvention of the affinity setting restrictions for
-interrupt which cannot be moved in process context.
-
-The whole exercise is bogus in various aspects:
-
-  1) If the interrupt is already started up then there is absolutely
-     no point to honour a bogus interrupt affinity setting from user
-     space. The interrupt is already assigned to an online CPU and it
-     does not make any sense to reassign it to some other randomly
-     chosen online CPU.
-
-  2) If the interupt is not yet started up then there is no point
-     either. A subsequent startup of the interrupt will invoke
-     irq_setup_affinity() anyway which will chose a valid target CPU.
-
-So the only correct solution is to just return -EINVAL in case user space
-wrote an affinity mask which does not contain any online CPUs, except for
-ALPHA which has it's own magic sauce for this.
-
-Fixes: 18404756765c ("genirq: Expose default irq affinity mask (take 3)")
-Reported-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Qian Cai <cai@lca.pw>
-Link: https://lkml.kernel.org/r/878sl8xdbm.fsf@nanos.tec.linutronix.de
+Fixes: 8ee36e048c98 ("drm/i915/execlists: Minimalistic timeslicing")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>
+Reviewed-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20200206204915.2636606-2-chris@chris-wilson.co.uk
+(cherry picked from commit f14f27b1663269a81ed62d3961fe70250a1a0623)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/irq/internals.h |    2 --
- kernel/irq/manage.c    |   18 ++----------------
- kernel/irq/proc.c      |   22 ++++++++++++++++++++++
- 3 files changed, 24 insertions(+), 18 deletions(-)
+ drivers/gpu/drm/i915/gt/intel_lrc.c   |    7 ++++++-
+ drivers/gpu/drm/i915/i915_scheduler.c |    6 ++++--
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -119,8 +119,6 @@ static inline void unregister_handler_pr
+--- a/drivers/gpu/drm/i915/gt/intel_lrc.c
++++ b/drivers/gpu/drm/i915/gt/intel_lrc.c
+@@ -933,6 +933,11 @@ last_active(const struct intel_engine_ex
+ 	return *last;
+ }
  
- extern bool irq_can_set_affinity_usr(unsigned int irq);
- 
--extern int irq_select_affinity_usr(unsigned int irq);
--
- extern void irq_set_thread_affinity(struct irq_desc *desc);
- 
- extern int irq_do_set_affinity(struct irq_data *data,
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -382,23 +382,9 @@ int irq_setup_affinity(struct irq_desc *
++#define for_each_waiter(p__, rq__) \
++	list_for_each_entry_lockless(p__, \
++				     &(rq__)->sched.waiters_list, \
++				     wait_link)
++
+ static void defer_request(struct i915_request *rq, struct list_head * const pl)
  {
- 	return irq_select_affinity(irq_desc_get_irq(desc));
- }
--#endif
-+#endif /* CONFIG_AUTO_IRQ_AFFINITY */
-+#endif /* CONFIG_SMP */
+ 	LIST_HEAD(list);
+@@ -950,7 +955,7 @@ static void defer_request(struct i915_re
+ 		GEM_BUG_ON(i915_request_is_active(rq));
+ 		list_move_tail(&rq->sched.link, pl);
  
--/*
-- * Called when a bogus affinity is set via /proc/irq
-- */
--int irq_select_affinity_usr(unsigned int irq)
--{
--	struct irq_desc *desc = irq_to_desc(irq);
--	unsigned long flags;
--	int ret;
--
--	raw_spin_lock_irqsave(&desc->lock, flags);
--	ret = irq_setup_affinity(desc);
--	raw_spin_unlock_irqrestore(&desc->lock, flags);
--	return ret;
--}
--#endif
+-		list_for_each_entry(p, &rq->sched.waiters_list, wait_link) {
++		for_each_waiter(p, rq) {
+ 			struct i915_request *w =
+ 				container_of(p->waiter, typeof(*w), sched);
  
- /**
-  *	irq_set_vcpu_affinity - Set vcpu affinity for the interrupt
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -117,6 +117,28 @@ static int irq_affinity_list_proc_show(s
- 	return show_irq_affinity(AFFINITY_LIST, m);
- }
+--- a/drivers/gpu/drm/i915/i915_scheduler.c
++++ b/drivers/gpu/drm/i915/i915_scheduler.c
+@@ -418,8 +418,6 @@ bool __i915_sched_node_add_dependency(st
  
-+#ifndef CONFIG_AUTO_IRQ_AFFINITY
-+static inline int irq_select_affinity_usr(unsigned int irq)
-+{
-+	/*
-+	 * If the interrupt is started up already then this fails. The
-+	 * interrupt is assigned to an online CPU already. There is no
-+	 * point to move it around randomly. Tell user space that the
-+	 * selected mask is bogus.
-+	 *
-+	 * If not then any change to the affinity is pointless because the
-+	 * startup code invokes irq_setup_affinity() which will select
-+	 * a online CPU anyway.
-+	 */
-+	return -EINVAL;
-+}
-+#else
-+/* ALPHA magic affinity auto selector. Keep it for historical reasons. */
-+static inline int irq_select_affinity_usr(unsigned int irq)
-+{
-+	return irq_select_affinity(irq);
-+}
-+#endif
+ 	if (!node_signaled(signal)) {
+ 		INIT_LIST_HEAD(&dep->dfs_link);
+-		list_add(&dep->wait_link, &signal->waiters_list);
+-		list_add(&dep->signal_link, &node->signalers_list);
+ 		dep->signaler = signal;
+ 		dep->waiter = node;
+ 		dep->flags = flags;
+@@ -429,6 +427,10 @@ bool __i915_sched_node_add_dependency(st
+ 		    !node_started(signal))
+ 			node->flags |= I915_SCHED_HAS_SEMAPHORE_CHAIN;
  
- static ssize_t write_irq_affinity(int type, struct file *file,
- 		const char __user *buffer, size_t count, loff_t *pos)
++		/* All set, now publish. Beware the lockless walkers. */
++		list_add(&dep->signal_link, &node->signalers_list);
++		list_add_rcu(&dep->wait_link, &signal->waiters_list);
++
+ 		/*
+ 		 * As we do not allow WAIT to preempt inflight requests,
+ 		 * once we have executed a request, along with triggering
 
 
