@@ -2,105 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AF0C17131B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:49:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C416F171347
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:50:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbgB0Itg convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Feb 2020 03:49:36 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:51115 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728467AbgB0Itg (ORCPT
+        id S1728933AbgB0Iu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 03:50:26 -0500
+Received: from eu-smtp-delivery-167.mimecast.com ([207.82.80.167]:30470 "EHLO
+        eu-smtp-delivery-167.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728741AbgB0IuZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 03:49:36 -0500
-Received: from mail-pf1-f197.google.com ([209.85.210.197])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1j7ErO-0006X2-2A
-        for linux-kernel@vger.kernel.org; Thu, 27 Feb 2020 08:49:34 +0000
-Received: by mail-pf1-f197.google.com with SMTP id d127so1597075pfa.7
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 00:49:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=yuo2Bfz0FnDnLaB5WH/eEhmv3YLgZdUk0gQwtfu9d3g=;
-        b=VpwZob0uGfvw+AtFaLmW9OszyFDvAwPlSpxlzkAM0nFfrLdZtkNVCm2Sx+prR8wCa5
-         c2odTxYPlFloZcDxzNVHAlviL6Xh2ZpVhjzZnewNTNX0UX4eYql06Xav09nlXs7Z5Alj
-         7ux+5vczVNeaSx8tjj3PVjdd5rXsu5T9h0c0Ks4wwMmAiUKo0mdhbWf5HPGdmba2t0ln
-         Hi9ezsqZEHs2BU9h8oVfBdnVUIxi+Vm9WXLdxEVLHdbHpFyDFn7+532ka5KbThnrrw/X
-         gU5doz2QHGUtg9Hqr4jWwZjKqzJAi2r98L4vI/9vyZ0IB8HhBdyk5gRRixZTAbqYOof8
-         Y4Gg==
-X-Gm-Message-State: APjAAAWkzDjv4YgqwpjcigbrFWD3MZmhawyLtaeCuqJqYP6lOpaEjBTo
-        nfHV3IhKyPbprQArD3yITYVsWC9ifY+G6v33AOPPIyDrL+aycKoHGnZ5DcAUxKOZ/e3LqgVL4yq
-        6MbSzCCS7GLY1WqBsPDnGT5JBwLzIwggoRSTbZO64jA==
-X-Received: by 2002:a17:90b:14a:: with SMTP id em10mr3765902pjb.4.1582793372751;
-        Thu, 27 Feb 2020 00:49:32 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwPxvvV8ywaszpVzifTAV8XbWtdxoYItNFUu7k/B5/ayjIFnd4TKFAsokDu1IEjAQLGJ/q09A==
-X-Received: by 2002:a17:90b:14a:: with SMTP id em10mr3765879pjb.4.1582793372445;
-        Thu, 27 Feb 2020 00:49:32 -0800 (PST)
-Received: from 2001-b011-380f-3214-6497-1af0-2c80-300f.dynamic-ip6.hinet.net (2001-b011-380f-3214-6497-1af0-2c80-300f.dynamic-ip6.hinet.net. [2001:b011:380f:3214:6497:1af0:2c80:300f])
-        by smtp.gmail.com with ESMTPSA id t63sm6176198pfb.70.2020.02.27.00.49.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Feb 2020 00:49:31 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: SFP+ support for 8168fp/8117
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <9AAC75D4-B04F-49CD-BBB9-11AE3382E4D8@canonical.com>
-Date:   Thu, 27 Feb 2020 16:49:29 +0800
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        Jason Yen <jason.yen@canonical.com>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <5A21808E-C9DA-44BF-952B-4A5077B52E9B@canonical.com>
-References: <2D8F5FFE-3EC3-480B-9D15-23CACE5556DF@canonical.com>
- <20200102152143.GB1397@lunn.ch>
- <DC28A43E-4F1A-40B6-84B0-3E79215527C9@canonical.com>
- <c148fefc-fd56-26a8-9f9b-fbefbaf25050@gmail.com>
- <02F7CBDE-B877-481C-A5AF-2F4CBF830A2C@canonical.com>
- <80E9C881-91C8-4F29-B9CE-652F9EE0B018@canonical.com>
- <995bddbc4f9d48cbb3a289a7e9799f15@realtek.com>
- <12EA7285-06D7-44D3-B033-4F52A06123CC@canonical.com>
- <cae39cfbb5174c8884328887cdfb5a89@realtek.com>
- <9AAC75D4-B04F-49CD-BBB9-11AE3382E4D8@canonical.com>
-To:     Hau <hau@realtek.com>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        Thu, 27 Feb 2020 03:50:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=displaylink.com;
+        s=mimecast20151025; t=1582793422;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=06YWNsTMoau3wb3JOJ5G4nFJSZUaD3KCKOvRYzVk6LE=;
+        b=okkoAKSqAH/pq925NJhNB8qCaMAqwq5KxNcFgYv1QGU2GDaNj0LLQZoj0Uhus/0AEwTOu3
+        +lv9UvE4LCkn6Nu3Itc3Hp2zB2ISyCduoOciTVmqcqnKAzdXpi/Kn2MsY1uptRjiW+4fej
+        9J9rPb39G1jkD4J5KniW2uxSfEThvyI=
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com
+ (mail-db8eur05lp2107.outbound.protection.outlook.com [104.47.17.107])
+ (Using TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-256-4Jkb65eAPCWrAR7HqZ-4Ow-1; Thu, 27 Feb 2020 08:50:21 +0000
+X-MC-Unique: 4Jkb65eAPCWrAR7HqZ-4Ow-1
+Received: from VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM (52.134.27.157) by
+ VI1PR10MB2510.EURPRD10.PROD.OUTLOOK.COM (20.177.59.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2750.21; Thu, 27 Feb 2020 08:50:19 +0000
+Received: from VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::7cc2:599e:25ce:49b2]) by VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::7cc2:599e:25ce:49b2%6]) with mapi id 15.20.2750.024; Thu, 27 Feb 2020
+ 08:50:19 +0000
+Received: from [172.17.183.132] (80.93.235.40) by LO2P123CA0039.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.18 via Frontend Transport; Thu, 27 Feb 2020 08:50:17 +0000
+From:   Vladimir Stankovic <vladimir.stankovic@displaylink.com>
+To:     Oliver Neukum <oneukum@suse.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+CC:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-usb <linux-usb@vger.kernel.org>,
+        mausb-host-devel <mausb-host-devel@displaylink.com>
+Subject: Re: [External] Re: [PATCH v2 5/8] usb: mausb_host: Introduce PAL
+ processing
+Thread-Topic: [External] Re: [PATCH v2 5/8] usb: mausb_host: Introduce PAL
+ processing
+Thread-Index: AQHV7ItbzvqingZIeEeVfzReVaM/AagtaWKAgAFTXwA=
+Date:   Thu, 27 Feb 2020 08:50:18 +0000
+Message-ID: <55d0673a-fd13-4afe-6dca-a98f058656c3@displaylink.com>
+References: <659eab4d-a995-d372-2c46-8b3d72ba13bc@displaylink.com>
+ <1582720533.17520.26.camel@suse.com>
+In-Reply-To: <1582720533.17520.26.camel@suse.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P123CA0039.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::27)
+ To VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:37::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [80.93.235.40]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7945bf5d-a2cb-4ab4-bb6a-08d7bb62125f
+x-ms-traffictypediagnostic: VI1PR10MB2510:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR10MB251025B1AE4FAF0284657E0C91EB0@VI1PR10MB2510.EURPRD10.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:1002;
+x-forefront-prvs: 03264AEA72
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39830400003)(346002)(376002)(366004)(136003)(396003)(189003)(199004)(44832011)(956004)(6486002)(52116002)(2906002)(316002)(5660300002)(2616005)(107886003)(54906003)(16576012)(110136005)(36756003)(4326008)(66476007)(16526019)(31686004)(64756008)(66556008)(66446008)(8936002)(8676002)(81166006)(26005)(81156014)(66946007)(71200400001)(31696002)(86362001)(186003)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR10MB2510;H:VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: zZGBJ773/TvCwDCbNXsqibDohcWjUmLYVmqXypdz6F5ZxDZt1Iaos0Q3fYTOsUdxooV+jWHEC8FNWJHXaJXlAedmJ6L1MdbehLeElNKZb+ZOG7jLOkomNMTVHcZXpuTcDNyPwBG0o4DnzzQKh0Mw+4fJShivHiSFrHOn+3pr97dtNS7HpSpkhjdGgkWgvnSVqN23WURsYxsEMqqFH8iJIepF1RBXJd4bOh6OAdv8T7wiPxzmnBydY50EjhMkBQL+O94KkkAgfgeHEWRCtyicEmJujI21HJjbEO1FRIXdLVE/9zFSkNfWcQfaNT/awVutyAlhv7ctKwWpe4sqA0aQXWxBaXFhqYoN2z6wxQCT6eG8gRT/u7f9CueeEm7Rvu0HrBGSOZ2I38d5Iw0tiubS1LlbgH56+/VrBSv13t04MRibHzXySL82JYVqfvXScFei
+x-ms-exchange-antispam-messagedata: kxmXHBIBxGxLzr97Q73NWlctx+Mbviqm5uSAhjubAkDuiW5v4ogGgxUtLisqXtdMfkoBQyN4ssnw466c8r01mSiDmZfwzkrSCVHEhCXCDZ7e+sOw3PeH7gl36tC1JZGHVi3nkDjReiA/VMhh3LtdwA==
+Content-ID: <3318E076C76DE74CB8F76332E6676FF6@EURPRD10.PROD.OUTLOOK.COM>
+MIME-Version: 1.0
+X-OriginatorOrg: displaylink.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7945bf5d-a2cb-4ab4-bb6a-08d7bb62125f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2020 08:50:18.9595
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a4bda75a-b444-4312-9c90-44a7c4b2c91a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: W5dHA4XTfV1mjd+njKbyATzB/mZ5t2+KaBswSGuFNvabueo12C6GCCUQEVi1gTJO3Gpb7qws1avPFereXunUttTTmcZQZsm1H1aBkiz7WS0NKr3SLLC0uU2GU2UElj3D
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB2510
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: displaylink.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hau,
-
-> On Feb 19, 2020, at 22:48, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
-> 
-> Hi Hau,
-> 
->> On Feb 19, 2020, at 22:22, Hau <hau@realtek.com> wrote:
-> 
-> [snipped]
-> 
->> 
->> Hi Kai-Heng,
->> 
->> Attached file is r8168 that I have add SFP+ support for rtl8168fp. If possible, please give it a try.
-> 
-> I've already tested r8168 and it does support SFP+.
-> 
-> What we are discussing here is to support this chip properly in mainline kernel.
-> 
-> This is what we've discussed so far:
-> https://lore.kernel.org/lkml/2D8F5FFE-3EC3-480B-9D15-23CACE5556DF@canonical.com/
-
-Is there anything you can share so we can support this chip properly in upstream?
-
-Kai-Heng
-
-> 
-> Kai-Heng
+T24gMjYuMi4yMC4gMTM6MzUsIE9saXZlciBOZXVrdW0gd3JvdGU6DQo+IEFtIE1pdHR3b2NoLCBk
+ZW4gMjYuMDIuMjAyMCwgMDk6NTggKzAwMDAgc2NocmllYiBWbGFkaW1pciBTdGFua292aWMNCj4g
+DQo+ICtpbnQgbWF1c2JfZW5xdWV1ZV9ldmVudF9mcm9tX3VzZXIodTggbWFkZXZfYWRkciwgdTE2
+IG51bV9vZl9ldmVudHMsDQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1MTYg
+bnVtX29mX2NvbXBsZXRlZCkNCj4gK3sNCj4gKyAgICAgICB1bnNpZ25lZCBsb25nIGZsYWdzOw0K
+PiArICAgICAgIHN0cnVjdCBtYXVzYl9kZXZpY2UgKmRldjsNCj4gKw0KPiArICAgICAgIHNwaW5f
+bG9ja19pcnFzYXZlKCZtc3MubG9jaywgZmxhZ3MpOw0KPiANCj4gWW91IHNhdmUgdGhlIGZsYWdz
+Lg0KPiANCj4gKyAgICAgICBkZXYgPSBtYXVzYl9nZXRfZGV2X2Zyb21fYWRkcl91bnNhZmUobWFk
+ZXZfYWRkcik7DQo+ICsNCj4gKyAgICAgICBpZiAoIWRldikgew0KPiArICAgICAgICAgICAgICAg
+c3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmbXNzLmxvY2ssIGZsYWdzKTsNCj4gKyAgICAgICAgICAg
+ICAgIHJldHVybiAtRUlOVkFMOw0KPiArICAgICAgIH0NCj4gKw0KPiArICAgICAgIHNwaW5fbG9j
+a19pcnFzYXZlKCZkZXYtPm51bV9vZl91c2VyX2V2ZW50c19sb2NrLCBmbGFncyk7DQo+IA0KPiBZ
+b3Ugb3ZlcndyaXRlIHRoZSBmbGFncy4NCj4gDQo+ICsgICAgICAgZGV2LT5udW1fb2ZfdXNlcl9l
+dmVudHMgKz0gbnVtX29mX2V2ZW50czsNCj4gKyAgICAgICBkZXYtPm51bV9vZl9jb21wbGV0ZWRf
+ZXZlbnRzICs9IG51bV9vZl9jb21wbGV0ZWQ7DQo+ICsgICAgICAgc3Bpbl91bmxvY2tfaXJxcmVz
+dG9yZSgmZGV2LT5udW1fb2ZfdXNlcl9ldmVudHNfbG9jaywgZmxhZ3MpOw0KPiANCj4gWW91ciBy
+ZXN0b3JlIHRoZSBmbGFncy4NCj4gDQo+ICsgICAgICAgcXVldWVfd29yayhkZXYtPndvcmtxLCAm
+ZGV2LT53b3JrKTsNCj4gKyAgICAgICBzcGluX3VubG9ja19pcnFyZXN0b3JlKCZtc3MubG9jaywg
+ZmxhZ3MpOw0KPiANCj4gWW91IHJlc3RvcmUgdGhlIG92ZXJ3cml0dGVuIGZsYWdzLg0KPiANCj4g
+VGhpcyBjYW5ub3QgYmUgcmlnaHQuDQo+IA0KPiAJUmVnYXJkcw0KPiAJCU9saXZlcg0KPiANCllv
+dSdyZSByaWdodC4gV2UnbGwgYWRkcmVzcyB0aGlzIGlzc3VlLg0KDQotLSANClJlZ2FyZHMsDQpW
+bGFkaW1pci4NCg==
 
