@@ -2,98 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E7C217194E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:43:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D30FF1718D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:36:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730027AbgB0Nnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:43:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729665AbgB0Nnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:43:39 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A78EB246A0;
-        Thu, 27 Feb 2020 13:43:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811019;
-        bh=pYTPpiRlLZj3+LW9dQADPi9/avxbdWhkf8xP0cKuG4c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LmUbYs+8Mff7sWasDXVoiwNANXAzC6FZ9KidAQ9YytfXa6OXJ3QKPJKPsowv7lhY3
-         l5SVYCqp15ZMvplwD9d8l0MftqZQYSryP2LVzmK/P9y8Pb/gLgaAQfgu1X33CpnGJM
-         mrtfDH+oA7JPXwxxA+1S5GkiP0JgkFVgBCa0Uq3w=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Firo Yang <firo.yang@suse.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 084/113] enic: prevent waking up stopped tx queues over watchdog reset
+        id S1729214AbgB0Ngp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:36:45 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:49365 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729124AbgB0Ngo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:36:44 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1j7JLF-0007aW-Ts; Thu, 27 Feb 2020 14:36:41 +0100
+Message-ID: <a965d97ddf99d4a335582732dfac7b0948258632.camel@pengutronix.de>
+Subject: Re: [PATCH 08/21] drm/etnaviv: remove check for return value of
+ drm_debugfs function
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Wambui Karuga <wambui.karugax@gmail.com>, daniel@ffwll.ch,
+        airlied@linux.ie, Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Date:   Thu, 27 Feb 2020 14:36:40 +0100
-Message-Id: <20200227132225.209127114@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
-User-Agent: quilt/0.66
+In-Reply-To: <20200227120232.19413-9-wambui.karugax@gmail.com>
+References: <20200227120232.19413-1-wambui.karugax@gmail.com>
+         <20200227120232.19413-9-wambui.karugax@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Firo Yang <firo.yang@suse.com>
+On Do, 2020-02-27 at 15:02 +0300, Wambui Karuga wrote:
+> Since commit 987d65d01356 (drm: debugfs: make
+> drm_debugfs_create_files() never fail), drm_debugfs_create_file only
+> returns 0, and there is no need to check the return value.
+> This change therefore removes the check and error handling in
+> etnaviv_debugfs_init() and also makes the function return void.
+> 
+> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
 
-[ Upstream commit 0f90522591fd09dd201065c53ebefdfe3c6b55cb ]
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-Recent months, our customer reported several kernel crashes all
-preceding with following message:
-NETDEV WATCHDOG: eth2 (enic): transmit queue 0 timed out
-Error message of one of those crashes:
-BUG: unable to handle kernel paging request at ffffffffa007e090
-
-After analyzing severl vmcores, I found that most of crashes are
-caused by memory corruption. And all the corrupted memory areas
-are overwritten by data of network packets. Moreover, I also found
-that the tx queues were enabled over watchdog reset.
-
-After going through the source code, I found that in enic_stop(),
-the tx queues stopped by netif_tx_disable() could be woken up over
-a small time window between netif_tx_disable() and the
-napi_disable() by the following code path:
-napi_poll->
-  enic_poll_msix_wq->
-     vnic_cq_service->
-        enic_wq_service->
-           netif_wake_subqueue(enic->netdev, q_number)->
-              test_and_clear_bit(__QUEUE_STATE_DRV_XOFF, &txq->state)
-In turn, upper netowrk stack could queue skb to ENIC NIC though
-enic_hard_start_xmit(). And this might introduce some race condition.
-
-Our customer comfirmed that this kind of kernel crash doesn't occur over
-90 days since they applied this patch.
-
-Signed-off-by: Firo Yang <firo.yang@suse.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/cisco/enic/enic_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/net/ethernet/cisco/enic/enic_main.c
-+++ b/drivers/net/ethernet/cisco/enic/enic_main.c
-@@ -1807,10 +1807,10 @@ static int enic_stop(struct net_device *
- 	}
- 
- 	netif_carrier_off(netdev);
--	netif_tx_disable(netdev);
- 	if (vnic_dev_get_intr_mode(enic->vdev) == VNIC_DEV_INTR_MODE_MSIX)
- 		for (i = 0; i < enic->wq_count; i++)
- 			napi_disable(&enic->napi[enic_cq_wq(enic, i)]);
-+	netif_tx_disable(netdev);
- 
- 	if (!enic_is_dynamic(enic) && !enic_is_sriov_vf(enic))
- 		enic_dev_del_station_addr(enic);
-
+> ---
+>  drivers/gpu/drm/etnaviv/etnaviv_drv.c | 18 ++++--------------
+>  1 file changed, 4 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> index 6b43c1c94e8f..a39735316ca5 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> @@ -231,21 +231,11 @@ static struct drm_info_list etnaviv_debugfs_list[] = {
+>  		{"ring", show_each_gpu, 0, etnaviv_ring_show},
+>  };
+>  
+> -static int etnaviv_debugfs_init(struct drm_minor *minor)
+> +static void etnaviv_debugfs_init(struct drm_minor *minor)
+>  {
+> -	struct drm_device *dev = minor->dev;
+> -	int ret;
+> -
+> -	ret = drm_debugfs_create_files(etnaviv_debugfs_list,
+> -			ARRAY_SIZE(etnaviv_debugfs_list),
+> -			minor->debugfs_root, minor);
+> -
+> -	if (ret) {
+> -		dev_err(dev->dev, "could not install etnaviv_debugfs_list\n");
+> -		return ret;
+> -	}
+> -
+> -	return ret;
+> +	drm_debugfs_create_files(etnaviv_debugfs_list,
+> +				 ARRAY_SIZE(etnaviv_debugfs_list),
+> +				 minor->debugfs_root, minor);
+>  }
+>  #endif
+>  
 
