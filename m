@@ -2,191 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6F0A172304
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:19:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01FF4172317
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:20:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729984AbgB0QSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:18:42 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:38682 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729670AbgB0QSm (ORCPT
+        id S1730004AbgB0QUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:20:18 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:58070 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728963AbgB0QUR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:18:42 -0500
-Received: (qmail 2704 invoked by uid 2102); 27 Feb 2020 11:18:41 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 27 Feb 2020 11:18:41 -0500
-Date:   Thu, 27 Feb 2020 11:18:41 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Marco Felsch <m.felsch@pengutronix.de>
-cc:     gregkh@linuxfoundation.org, <Thinh.Nguyen@synopsys.com>,
-        <harry.pan@intel.com>, <nobuta.keiya@fujitsu.com>,
-        <malat@debian.org>, <kai.heng.feng@canonical.com>,
-        <chiasheng.lee@intel.com>, <andreyknvl@google.com>,
-        <heinzelmann.david@gmail.com>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@pengutronix.de>,
-        kbuild test robot <lkp@intel.com>
-Subject: Re: [RFC PATCH v2] USB: hub: fix port suspend/resume
-In-Reply-To: <20200227135631.13983-1-m.felsch@pengutronix.de>
-Message-ID: <Pine.LNX.4.44L0.2002271100000.1730-100000@iolanthe.rowland.org>
+        Thu, 27 Feb 2020 11:20:17 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01RG37SU156213;
+        Thu, 27 Feb 2020 16:20:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=9Vt3KmBfr6qss9HnVAOBJ8DCQFUsK5SMylKYJ5xw3ls=;
+ b=RA8/G5uto6hIJfj+y9n8MFIekWCdaK73Sk6oayt71fVvIze9BewmVMxGa+Cqbw8GFYA6
+ hpshoPsE9XbPRjfr/ubQW1v0h34BmCGEBi9Yk1I3TiarP8lFVa6NcNGNg8ZN5c/aDlVO
+ myxne9vbVYMZG9xCGmDF2yI3/5ZVXNI3u+mqRmtDjk8zb0faluGKJzgCxhDd0rcQ2kJ6
+ TpiuyIqTwJwCSkSL3fd/Pbh62IUgxmbmK640yoE0TnIzW83N2fgw0B0P4Q7i/PZL6Gcz
+ xkgV6ILZBr0PmcFd4KPK3e4Bbg7draVywr5nbW7GY/yCdu9/H2CpXucxZmDb7YFAQy6A aA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2ydct3c1d6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Feb 2020 16:20:06 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01RGERW8186981;
+        Thu, 27 Feb 2020 16:20:06 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2ydcs5kst7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Feb 2020 16:20:06 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01RGK3Gx002382;
+        Thu, 27 Feb 2020 16:20:03 GMT
+Received: from kili.mountain (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 27 Feb 2020 08:20:03 -0800
+Date:   Thu, 27 Feb 2020 19:19:54 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jens Wiklander <jens.wiklander@linaro.org>,
+        Rijo Thomas <Rijo-john.Thomas@amd.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
+        tee-dev@lists.linaro.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] tee: amdtee: out of bounds read in find_session()
+Message-ID: <20200227161954.fo7pbbgomdjkraxq@kili.mountain>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 phishscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002270124
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002270124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Feb 2020, Marco Felsch wrote:
+The "index" is a user provided value from 0-USHRT_MAX.  If it's over
+TEE_NUM_SESSIONS (31) then it results in an out of bounds read when we
+call test_bit(index, sess->sess_mask).
 
-> At the momemnt the usb-port driver has only runime_pm hooks.
-> Suspending the port and turn off the VBUS supply should be triggered by
-> the hub device suspend callback usb_port_suspend() which calls the
+Fixes: 757cc3e9ff1d ("tee: add AMD-TEE driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/tee/amdtee/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Strictly speaking it's just a routine, not a callback.  That is, it 
-doesn't get invoked through a function pointer.
-
-> pm_runtime_put_sync() if all pre-conditions are meet. This mechanism
-> don't work correctly due to the global PM behaviour, for more information
-> see [1]. According [1] I added the suspend/resume callbacks for the port
-> device to fix this.
-> 
-> [1] https://www.spinics.net/lists/linux-usb/msg190537.html
-
-Please put at least a short description of the problem here; don't 
-force people to go look up some random web page just to find out what's 
-really going on.
-
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> ---
-> Hi,
-> 
-> this v2 contains the fixes
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-
-Everything below the "---" line, except the patch itself, gets ignored.  
-You need to move this Reported-by: up higher.
-
-> Regards,
->   Marco
-> 
-> Changes:
-> - init retval to zero
-> - keep CONFIG_PM due to do_remote_wakeup availability
-> - adapt commit message
-> 
->  drivers/usb/core/hub.c  | 13 -------------
->  drivers/usb/core/port.c | 35 ++++++++++++++++++++++++++++++-----
->  2 files changed, 30 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index 3405b146edc9..c294484e478d 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -3323,10 +3323,6 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
->  		usb_set_device_state(udev, USB_STATE_SUSPENDED);
->  	}
->  
-> -	if (status == 0 && !udev->do_remote_wakeup && udev->persist_enabled
-> -			&& test_and_clear_bit(port1, hub->child_usage_bits))
-> -		pm_runtime_put_sync(&port_dev->dev);
-> -
->  	usb_mark_last_busy(hub->hdev);
->  
->  	usb_unlock_port(port_dev);
-> @@ -3514,15 +3510,6 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
->  	int		status;
->  	u16		portchange, portstatus;
->  
-> -	if (!test_and_set_bit(port1, hub->child_usage_bits)) {
-> -		status = pm_runtime_get_sync(&port_dev->dev);
-> -		if (status < 0) {
-> -			dev_dbg(&udev->dev, "can't resume usb port, status %d\n",
-> -					status);
-> -			return status;
-> -		}
-> -	}
-> -
-
-Why do you get rid of these two sections of code?  Won't that cause
-runtime PM to stop working properly?
-
->  	usb_lock_port(port_dev);
->  
->  	/* Skip the initial Clear-Suspend step for a remote wakeup */
-> diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
-> index bbbb35fa639f..13f130b67efe 100644
-> --- a/drivers/usb/core/port.c
-> +++ b/drivers/usb/core/port.c
-> @@ -283,7 +283,34 @@ static int usb_port_runtime_suspend(struct device *dev)
->  
->  	return retval;
->  }
-> -#endif
-> +
-> +static int __maybe_unused _usb_port_suspend(struct device *dev)
-
-Don't say _maybe_unused.  Instead, protect these two routines with 
-#ifdef CONFIG_PM_SLEEP.  That way they won't be compiled on systems 
-that can't use them.
-
-Also, try to find better names.  Maybe usb_port_sleep and 
-usb_port_wake, or usb_port_system_suspend and usb_port_system_resume.
-
-> +{
-> +	struct usb_port *port_dev = to_usb_port(dev);
-> +	struct usb_device *udev = port_dev->child;
-> +	int retval = 0;
-> +
-> +	if (!udev->do_remote_wakeup && udev->persist_enabled)
-> +		retval = usb_port_runtime_suspend(dev);
-> +
-> +	/* Do not force the user to enable the power-off feature */
-> +	if (retval && retval != -EAGAIN)
-> +		return retval;
-> +
-> +	return 0;
-
-IMO it would be a lot more understandable if you wrote
-
-	if (retval == -EAGAIN)
-		retval = 0;
-
-Also, the relation between this code and the preceding comment is not
-obvious.  The comment should say something more like: If the
-PM_QOS_FLAG setting prevents us from powering off the port, it's not an
-error.
-
-Alan Stern
-
-> +}
-> +
-> +static int __maybe_unused _usb_port_resume(struct device *dev)
-> +{
-> +	struct usb_port *port_dev = to_usb_port(dev);
-> +	struct usb_device *udev = port_dev->child;
-> +
-> +	if (!udev->do_remote_wakeup && udev->persist_enabled)
-> +		return usb_port_runtime_resume(dev);
-> +
-> +	return 0;
-> +}
-> +#endif /* CONFIG_PM */
->  
->  static void usb_port_shutdown(struct device *dev)
->  {
-> @@ -294,10 +321,8 @@ static void usb_port_shutdown(struct device *dev)
->  }
->  
->  static const struct dev_pm_ops usb_port_pm_ops = {
-> -#ifdef CONFIG_PM
-> -	.runtime_suspend =	usb_port_runtime_suspend,
-> -	.runtime_resume =	usb_port_runtime_resume,
-> -#endif
-> +	SET_SYSTEM_SLEEP_PM_OPS(_usb_port_suspend, _usb_port_resume)
-> +	SET_RUNTIME_PM_OPS(usb_port_runtime_suspend, usb_port_runtime_resume, NULL)
->  };
->  
->  struct device_type usb_port_device_type = {
-> 
+diff --git a/drivers/tee/amdtee/core.c b/drivers/tee/amdtee/core.c
+index 6370bb55f512..dbc238c7c263 100644
+--- a/drivers/tee/amdtee/core.c
++++ b/drivers/tee/amdtee/core.c
+@@ -139,6 +139,9 @@ static struct amdtee_session *find_session(struct amdtee_context_data *ctxdata,
+ 	u32 index = get_session_index(session);
+ 	struct amdtee_session *sess;
+ 
++	if (index >= TEE_NUM_SESSIONS)
++		return NULL;
++
+ 	list_for_each_entry(sess, &ctxdata->sess_list, list_node)
+ 		if (ta_handle == sess->ta_handle &&
+ 		    test_bit(index, sess->sess_mask))
+-- 
+2.11.0
 
