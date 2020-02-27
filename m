@@ -2,92 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F1ED170E93
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 03:44:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F0CC170ECE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 04:03:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbgB0Cn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 21:43:59 -0500
-Received: from mga03.intel.com ([134.134.136.65]:57388 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728094AbgB0Cn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 21:43:58 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 18:43:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,490,1574150400"; 
-   d="scan'208";a="436874427"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga005.fm.intel.com with ESMTP; 26 Feb 2020 18:43:56 -0800
-Date:   Wed, 26 Feb 2020 18:43:56 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 00/13] Enable per-file/per-directory DAX operations V4
-Message-ID: <20200227024356.GB28721@iweiny-DESK2.sc.intel.com>
-References: <20200221004134.30599-1-ira.weiny@intel.com>
- <x49pne13qyh.fsf@segfault.boston.devel.redhat.com>
+        id S1728260AbgB0DDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 22:03:19 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42088 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728206AbgB0DDT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 22:03:19 -0500
+Received: by mail-ed1-f66.google.com with SMTP id n18so1146483edw.9;
+        Wed, 26 Feb 2020 19:03:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gtHlgLRX0Ly1dpjJoNOMTYupoReKd7p9hU8mplQI2J0=;
+        b=qi18pXu48vllfmTBWnTOCPZo+giTSnhbm1MGlL0cuqhQ7aCeMdwiSBGNvmGANFYrEJ
+         0XdZUbK+EjS2KgPqA9tfWcKMqmDrOjjUKZQ5umMqKjhlHpRoPE9GjS3CJ9yPkC+xd/K9
+         g1jps5kaxT++v4UjkPeVQyoi9R7oAmWMz4Z/Rl44tgWEjOsXWjrphyE8SmugPD8hwwq0
+         KxGTKS8LYlHe4tdG9ivE6PhG71Tnr+GEVdkva6+Gk9RXdO26zapoQE9ILdDLHpQF2ze7
+         rr7Nnhii92lGCwlw7xwSkp6sReEJ4xaFdwOUbm2O3MxDKXjQPT8iG03Fw+79JbX34SvV
+         zMrQ==
+X-Gm-Message-State: APjAAAVOnqhS4MFnR7lKGlAAmkrGRp2kGi+457rfzBJEHHkVphZ+gRQ4
+        aJbW+yhr89l336cNNNnsE7BsV6G/J8A=
+X-Google-Smtp-Source: APXvYqygS8G5dz941BGVWuH7JsFwgF/ReSktIoQ/UJnzU7GZneQ4K5DFx/7iOvzPyRGrErFL1602Lg==
+X-Received: by 2002:aa7:c6c5:: with SMTP id b5mr1467529eds.281.1582772595491;
+        Wed, 26 Feb 2020 19:03:15 -0800 (PST)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
+        by smtp.gmail.com with ESMTPSA id q18sm268936eds.7.2020.02.26.19.03.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2020 19:03:15 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id z3so1490865wru.3;
+        Wed, 26 Feb 2020 19:03:14 -0800 (PST)
+X-Received: by 2002:a5d:4a04:: with SMTP id m4mr2035871wrq.104.1582772594580;
+ Wed, 26 Feb 2020 19:03:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <x49pne13qyh.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20200226183316.26159-1-mans@mansr.com>
+In-Reply-To: <20200226183316.26159-1-mans@mansr.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 27 Feb 2020 11:03:02 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67ka=7n0BHw_UDY4AH+PmvEJDTrr8JZUB2e5jCXdgSq3Q@mail.gmail.com>
+Message-ID: <CAGb2v67ka=7n0BHw_UDY4AH+PmvEJDTrr8JZUB2e5jCXdgSq3Q@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: sunxi: h3/h5: add r_pwm node
+To:     Mans Rullgard <mans@mansr.com>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 05:48:38PM -0500, Jeff Moyer wrote:
-> Hi, Ira,
-> 
-> ira.weiny@intel.com writes:
-> 
-> > From: Ira Weiny <ira.weiny@intel.com>
-> >
-> > https://github.com/weiny2/linux-kernel/pull/new/dax-file-state-change-v4
-> >
-> > Changes from V3: 
-> > https://lore.kernel.org/lkml/20200208193445.27421-1-ira.weiny@intel.com/
-> >
-> > 	* Remove global locking...  :-D
-> > 	* put back per inode locking and remove pre-mature optimizations
-> > 	* Fix issues with Directories having IS_DAX() set
-> > 	* Fix kernel crash issues reported by Jeff
-> > 	* Add some clean up patches
-> > 	* Consolidate diflags to iflags functions
-> > 	* Update/add documentation
-> > 	* Reorder/rename patches quite a bit
-> 
-> I left out patches 1 and 2, but applied the rest and tested.  This
-> passes xfs tests in the following configurations:
-> 1) MKFS_OPTIONS="-m reflink=0" MOUNT_OPTIONS="-o dax"
-> 2) MKFS_OPTIONS="-m reflink=0"
->    but with the added configuration step of setting the dax attribute on
->    the mounted test directory.
-> 
-> I also tested to ensure that reflink fails when a file has the dax
-> attribute set.  I've got more testing to do, but figured I'd at least
-> let you know I've been looking at it.
+On Thu, Feb 27, 2020 at 2:33 AM Mans Rullgard <mans@mansr.com> wrote:
+>
+> There is a second PWM unit available in the PL I/O block.
+> Add a node and pinmux definition for it.
+>
+> Signed-off-by: Mans Rullgard <mans@mansr.com>
+> ---
+>  arch/arm/boot/dts/sunxi-h3-h5.dtsi | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+> index 107eeafad20a..1842c9f12c36 100644
+> --- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+> +++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+> @@ -871,6 +871,19 @@
+>                                 pins = "PL0", "PL1";
+>                                 function = "s_i2c";
+>                         };
+> +
+> +                       r_pwm_pins: r-pwm-pins {
 
-Thank you!
+Since it's just one pin, you could use the singular form instead.
+And also set it as the default.
 
-I need to update my xfstest which is specific to this as well...  I'll get to
-that tomorrow and send an updated patch...
+With that,
 
-Thanks!
-Ira
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
-> 
-> Thanks!
-> Jeff
-> 
+> +                               pins = "PL10";
+> +                               function = "s_pwm";
+> +                       };
+> +               };
+> +
+> +               r_pwm: pwm@1f03800 {
+> +                       compatible = "allwinner,sun8i-h3-pwm";
+> +                       reg = <0x01f03800 0x8>;
+> +                       clocks = <&osc24M>;
+> +                       #pwm-cells = <3>;
+> +                       status = "disabled";
+>                 };
+>         };
+>  };
+> --
+> 2.25.0
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
