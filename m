@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53F3417203F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:42:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D69F317203E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:42:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732125AbgB0OlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:41:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51098 "EHLO mail.kernel.org"
+        id S1732067AbgB0OlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:41:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730778AbgB0Nvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:51:48 -0500
+        id S1731167AbgB0NwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:52:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9128824656;
-        Thu, 27 Feb 2020 13:51:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 775D321D7E;
+        Thu, 27 Feb 2020 13:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811508;
-        bh=fgE+TdDt7YBkekHm++IJhKrdcd8VIaBr7KT4k0f+Da4=;
+        s=default; t=1582811520;
+        bh=gMLkhhm2ORc1+pkyo2hcKD6ekkOPWTcfiK1a0rBGddA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UDd2bzDCcjKopQs18knQG/4gnyf/wwJrgMVbLzUMcddWFdi/K9ozAaIzp85MQCw9P
-         GOol2SX5FlyryCbZU8oTTTHLS+0XwTI5Pub4+IaHrTRB06Tg4TqvdbUMawFVIdBXX1
-         A4WcREvvKfbxRAn2jIjsvf3iyLSHhmWYGF71u3a8=
+        b=jwl53AukjGD9/E8OMIXF/CfGErB9iDDhH5FovuG/BuccKCyfz38tlaDPyz1V4Nyuv
+         eqvYGA0K92Qg15UNwa4nwY6rcW7pTsnVDoME72LG4Lpo0kIJN+iZWdOT7z2nhGCMkB
+         kjkdBgFCXFHonPBIi8UGuHUsMasHrRHkVTHtzx9k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
-        Tyler Hicks <code@tyhicks.com>
-Subject: [PATCH 4.9 158/165] ecryptfs: replace BUG_ON with error handling code
-Date:   Thu, 27 Feb 2020 14:37:12 +0100
-Message-Id: <20200227132253.815790370@linuxfoundation.org>
+        stable@vger.kernel.org, Prabhakar Kushwaha <pkushwaha@marvell.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 163/165] ata: ahci: Add shutdown to freeze hardware resources of ahci
+Date:   Thu, 27 Feb 2020 14:37:17 +0100
+Message-Id: <20200227132254.521283774@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
 References: <20200227132230.840899170@linuxfoundation.org>
@@ -43,39 +43,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aditya Pakki <pakki001@umn.edu>
+From: Prabhakar Kushwaha <pkushwaha@marvell.com>
 
-commit 2c2a7552dd6465e8fde6bc9cccf8d66ed1c1eb72 upstream.
+commit 10a663a1b15134a5a714aa515e11425a44d4fdf7 upstream.
 
-In crypt_scatterlist, if the crypt_stat argument is not set up
-correctly, the kernel crashes. Instead, by returning an error code
-upstream, the error is handled safely.
+device_shutdown() called from reboot or power_shutdown expect
+all devices to be shutdown. Same is true for even ahci pci driver.
+As no ahci shutdown function is implemented, the ata subsystem
+always remains alive with DMA & interrupt support. File system
+related calls should not be honored after device_shutdown().
 
-The issue is detected via a static analysis tool written by us.
+So defining ahci pci driver shutdown to freeze hardware (mask
+interrupt, stop DMA engine and free DMA resources).
 
-Fixes: 237fead619984 (ecryptfs: fs/Makefile and fs/Kconfig)
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-Signed-off-by: Tyler Hicks <code@tyhicks.com>
+Signed-off-by: Prabhakar Kushwaha <pkushwaha@marvell.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ecryptfs/crypto.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/ata/ahci.c        |    7 +++++++
+ drivers/ata/libata-core.c |   21 +++++++++++++++++++++
+ include/linux/libata.h    |    1 +
+ 3 files changed, 29 insertions(+)
 
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -339,8 +339,10 @@ static int crypt_scatterlist(struct ecry
- 	struct extent_crypt_result ecr;
- 	int rc = 0;
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -86,6 +86,7 @@ enum board_ids {
  
--	BUG_ON(!crypt_stat || !crypt_stat->tfm
--	       || !(crypt_stat->flags & ECRYPTFS_STRUCT_INITIALIZED));
-+	if (!crypt_stat || !crypt_stat->tfm
-+	       || !(crypt_stat->flags & ECRYPTFS_STRUCT_INITIALIZED))
-+		return -EINVAL;
+ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent);
+ static void ahci_remove_one(struct pci_dev *dev);
++static void ahci_shutdown_one(struct pci_dev *dev);
+ static int ahci_vt8251_hardreset(struct ata_link *link, unsigned int *class,
+ 				 unsigned long deadline);
+ static int ahci_avn_hardreset(struct ata_link *link, unsigned int *class,
+@@ -582,6 +583,7 @@ static struct pci_driver ahci_pci_driver
+ 	.id_table		= ahci_pci_tbl,
+ 	.probe			= ahci_init_one,
+ 	.remove			= ahci_remove_one,
++	.shutdown		= ahci_shutdown_one,
+ 	.driver = {
+ 		.pm		= &ahci_pci_pm_ops,
+ 	},
+@@ -1775,6 +1777,11 @@ static int ahci_init_one(struct pci_dev
+ 	return 0;
+ }
+ 
++static void ahci_shutdown_one(struct pci_dev *pdev)
++{
++	ata_pci_shutdown_one(pdev);
++}
 +
- 	if (unlikely(ecryptfs_verbosity > 0)) {
- 		ecryptfs_printk(KERN_DEBUG, "Key size [%zd]; key:\n",
- 				crypt_stat->key_size);
+ static void ahci_remove_one(struct pci_dev *pdev)
+ {
+ 	pm_runtime_get_noresume(&pdev->dev);
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -6580,6 +6580,26 @@ void ata_pci_remove_one(struct pci_dev *
+ 	ata_host_detach(host);
+ }
+ 
++void ata_pci_shutdown_one(struct pci_dev *pdev)
++{
++	struct ata_host *host = pci_get_drvdata(pdev);
++	int i;
++
++	for (i = 0; i < host->n_ports; i++) {
++		struct ata_port *ap = host->ports[i];
++
++		ap->pflags |= ATA_PFLAG_FROZEN;
++
++		/* Disable port interrupts */
++		if (ap->ops->freeze)
++			ap->ops->freeze(ap);
++
++		/* Stop the port DMA engines */
++		if (ap->ops->port_stop)
++			ap->ops->port_stop(ap);
++	}
++}
++
+ /* move to PCI subsystem */
+ int pci_test_config_bits(struct pci_dev *pdev, const struct pci_bits *bits)
+ {
+@@ -7200,6 +7220,7 @@ EXPORT_SYMBOL_GPL(ata_timing_cycle2mode)
+ 
+ #ifdef CONFIG_PCI
+ EXPORT_SYMBOL_GPL(pci_test_config_bits);
++EXPORT_SYMBOL_GPL(ata_pci_shutdown_one);
+ EXPORT_SYMBOL_GPL(ata_pci_remove_one);
+ #ifdef CONFIG_PM
+ EXPORT_SYMBOL_GPL(ata_pci_device_do_suspend);
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -1222,6 +1222,7 @@ struct pci_bits {
+ };
+ 
+ extern int pci_test_config_bits(struct pci_dev *pdev, const struct pci_bits *bits);
++extern void ata_pci_shutdown_one(struct pci_dev *pdev);
+ extern void ata_pci_remove_one(struct pci_dev *pdev);
+ 
+ #ifdef CONFIG_PM
 
 
