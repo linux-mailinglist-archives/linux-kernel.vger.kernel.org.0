@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA8E171A1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56664171963
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:44:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731317AbgB0Nu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:50:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49418 "EHLO mail.kernel.org"
+        id S1730233AbgB0Noa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:44:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731301AbgB0Nuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:50:54 -0500
+        id S1730218AbgB0No3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:44:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E142B20578;
-        Thu, 27 Feb 2020 13:50:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4600920578;
+        Thu, 27 Feb 2020 13:44:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811453;
-        bh=NWoqqcRvkARgzo8Ue2Hk3NscqpAjN0tb33dOjcd04nI=;
+        s=default; t=1582811068;
+        bh=2j9IIT2JYjYm4/5MWQQiDIMrm9oM+yuL54XZpkKfbyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sleT6nu4cZMPsvuk32UHU8fRb1QP33UCl5mJsdOp3tYxt/eHTsGb78CkWA6cLRX5N
-         H2NAzXFPmuAmQSmORZcBFAOALk3S4g0pMcda3B3HN4ytjYWz8JVmtVJ0dbWlCrNJfE
-         LwenpLS9T3n3MDFnVXchVKKU9q2z4OCc2syXjzOI=
+        b=0c4saDxlxmpw5M1LDZBxqL1TwtqNVaj3d+lWPkvL1rgwJOWUWsQumGVHDh0n1ExoX
+         kgY64kUsZDQhIsS9BGV3BsfkwYc97YaBqfKrRBdajDcd2IJ7HGBV4jMR1ZVmSEGcB7
+         Y8YISYhXdTqt39HJPDVDQQeaVgDIagOjoB/rbp+s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Gustavo Romero <gromero@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 139/165] powerpc/tm: Fix endianness flip on trap
+Subject: [PATCH 4.4 097/113] VT_RESIZEX: get rid of field-by-field copyin
 Date:   Thu, 27 Feb 2020 14:36:53 +0100
-Message-Id: <20200227132251.358799007@linuxfoundation.org>
+Message-Id: <20200227132227.248273302@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,83 +43,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo Romero <gromero@linux.vnet.ibm.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 1c200e63d055ec0125e44a5e386b9b78aada7eb3 ]
+[ Upstream commit 1b3bce4d6bf839304a90951b4b25a5863533bf2a ]
 
-Currently it's possible that a thread on PPC64 LE has its endianness
-flipped inadvertently to Big-Endian resulting in a crash once the process
-is back from the signal handler.
-
-If giveup_all() is called when regs->msr has the bits MSR.FP and MSR.VEC
-disabled (and hence MSR.VSX disabled too) it returns without calling
-check_if_tm_restore_required() which copies regs->msr to ckpt_regs->msr if
-the process caught a signal whilst in transactional mode. Then once in
-setup_tm_sigcontexts() MSR from ckpt_regs.msr is used, but since
-check_if_tm_restore_required() was not called previuosly, gp_regs[PT_MSR]
-gets a copy of invalid MSR bits as MSR in ckpt_regs was not updated from
-regs->msr and so is zeroed. Later when leaving the signal handler once in
-sys_rt_sigreturn() the TS bits of gp_regs[PT_MSR] are checked to determine
-if restore_tm_sigcontexts() must be called to pull in the correct MSR state
-into the user context. Because TS bits are zeroed
-restore_tm_sigcontexts() is never called and MSR restored from the user
-context on returning from the signal handler has the MSR.LE (the endianness
-bit) forced to zero (Big-Endian). That leads, for instance, to 'nop' being
-treated as an illegal instruction in the following sequence:
-
-	tbegin.
-	beq	1f
-	trap
-	tend.
-1:	nop
-
-on PPC64 LE machines and the process dies just after returning from the
-signal handler.
-
-PPC64 BE is also affected but in a subtle way since forcing Big-Endian on
-a BE machine does not change the endianness.
-
-This commit fixes the issue described above by ensuring that once in
-setup_tm_sigcontexts() the MSR used is from regs->msr instead of from
-ckpt_regs->msr and by ensuring that we pull in only the MSR.FP, MSR.VEC,
-and MSR.VSX bits from ckpt_regs->msr.
-
-The fix was tested both on LE and BE machines and no regression regarding
-the powerpc/tm selftests was observed.
-
-Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/signal_64.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/tty/vt/vt_ioctl.c | 68 ++++++++++++++++-----------------------
+ 1 file changed, 27 insertions(+), 41 deletions(-)
 
-diff --git a/arch/powerpc/kernel/signal_64.c b/arch/powerpc/kernel/signal_64.c
-index 9d8fd0c74b314..459c4adf47841 100644
---- a/arch/powerpc/kernel/signal_64.c
-+++ b/arch/powerpc/kernel/signal_64.c
-@@ -207,7 +207,7 @@ static long setup_tm_sigcontexts(struct sigcontext __user *sc,
- 	elf_vrreg_t __user *tm_v_regs = sigcontext_vmx_regs(tm_sc);
- #endif
- 	struct pt_regs *regs = tsk->thread.regs;
--	unsigned long msr = tsk->thread.ckpt_regs.msr;
-+	unsigned long msr = tsk->thread.regs->msr;
- 	long err = 0;
+diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
+index a86bc7afb3b28..a1e5c408c931b 100644
+--- a/drivers/tty/vt/vt_ioctl.c
++++ b/drivers/tty/vt/vt_ioctl.c
+@@ -850,58 +850,44 @@ int vt_ioctl(struct tty_struct *tty,
  
- 	BUG_ON(tsk != current);
-@@ -216,6 +216,12 @@ static long setup_tm_sigcontexts(struct sigcontext __user *sc,
+ 	case VT_RESIZEX:
+ 	{
+-		struct vt_consize __user *vtconsize = up;
+-		ushort ll,cc,vlin,clin,vcol,ccol;
++		struct vt_consize v;
+ 		if (!perm)
+ 			return -EPERM;
+-		if (!access_ok(VERIFY_READ, vtconsize,
+-				sizeof(struct vt_consize))) {
+-			ret = -EFAULT;
+-			break;
+-		}
++		if (copy_from_user(&v, up, sizeof(struct vt_consize)))
++			return -EFAULT;
+ 		/* FIXME: Should check the copies properly */
+-		__get_user(ll, &vtconsize->v_rows);
+-		__get_user(cc, &vtconsize->v_cols);
+-		__get_user(vlin, &vtconsize->v_vlin);
+-		__get_user(clin, &vtconsize->v_clin);
+-		__get_user(vcol, &vtconsize->v_vcol);
+-		__get_user(ccol, &vtconsize->v_ccol);
+-		vlin = vlin ? vlin : vc->vc_scan_lines;
+-		if (clin) {
+-			if (ll) {
+-				if (ll != vlin/clin) {
+-					/* Parameters don't add up */
+-					ret = -EINVAL;
+-					break;
+-				}
+-			} else 
+-				ll = vlin/clin;
++		if (!v.v_vlin)
++			v.v_vlin = vc->vc_scan_lines;
++		if (v.v_clin) {
++			int rows = v.v_vlin/v.v_clin;
++			if (v.v_rows != rows) {
++				if (v.v_rows) /* Parameters don't add up */
++					return -EINVAL;
++				v.v_rows = rows;
++			}
+ 		}
+-		if (vcol && ccol) {
+-			if (cc) {
+-				if (cc != vcol/ccol) {
+-					ret = -EINVAL;
+-					break;
+-				}
+-			} else
+-				cc = vcol/ccol;
++		if (v.v_vcol && v.v_ccol) {
++			int cols = v.v_vcol/v.v_ccol;
++			if (v.v_cols != cols) {
++				if (v.v_cols)
++					return -EINVAL;
++				v.v_cols = cols;
++			}
+ 		}
  
- 	WARN_ON(tm_suspend_disabled);
- 
-+	/* Restore checkpointed FP, VEC, and VSX bits from ckpt_regs as
-+	 * it contains the correct FP, VEC, VSX state after we treclaimed
-+	 * the transaction and giveup_all() was called on reclaiming.
-+	 */
-+	msr |= tsk->thread.ckpt_regs.msr & (MSR_FP | MSR_VEC | MSR_VSX);
+-		if (clin > 32) {
+-			ret =  -EINVAL;
+-			break;
+-		}
+-		    
++		if (v.v_clin > 32)
++			return -EINVAL;
 +
- 	/* Remove TM bits from thread's MSR.  The MSR in the sigcontext
- 	 * just indicates to userland that we were doing a transaction, but we
- 	 * don't want to return in transactional state.  This also ensures
+ 		for (i = 0; i < MAX_NR_CONSOLES; i++) {
+ 			if (!vc_cons[i].d)
+ 				continue;
+ 			console_lock();
+-			if (vlin)
+-				vc_cons[i].d->vc_scan_lines = vlin;
+-			if (clin)
+-				vc_cons[i].d->vc_font.height = clin;
++			if (v.v_vlin)
++				vc_cons[i].d->vc_scan_lines = v.v_vlin;
++			if (v.v_clin)
++				vc_cons[i].d->vc_font.height = v.v_clin;
+ 			vc_cons[i].d->vc_resize_user = 1;
+-			vc_resize(vc_cons[i].d, cc, ll);
++			vc_resize(vc_cons[i].d, v.v_cols, v.v_rows);
+ 			console_unlock();
+ 		}
+ 		break;
 -- 
 2.20.1
 
