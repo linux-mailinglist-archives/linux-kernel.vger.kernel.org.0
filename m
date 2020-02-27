@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B20F6171B50
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:01:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 071C6171C3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:10:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729462AbgB0OBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:01:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35152 "EHLO mail.kernel.org"
+        id S2388530AbgB0OKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:10:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730145AbgB0OBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:01:17 -0500
+        id S2388523AbgB0OKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:10:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99CFD20801;
-        Thu, 27 Feb 2020 14:01:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B5FF21D7E;
+        Thu, 27 Feb 2020 14:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812077;
-        bh=S2G3RQS8rPVyEvc07P+NXUBOvGLgf4j2OJIAGb85Uco=;
+        s=default; t=1582812619;
+        bh=rarZuacrQ87h+BDFpV3uxEL/GXdcoEaVM/G5A4T/eM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L4CmGh39HXjMiQp/7YBvgOL3V/uejY9XtHxX9axZMHLmJTPmPSE845qLxTvKu2F7B
-         jdz28XQliU6WC2/lfp1MKkEnJCD8TgxjlhDpOeBXa0ACss5fTQ6tHLTEQMWC0UUXVk
-         DKSNNZQahJ66a0jL0kvBUgaerjz2hcHIW9oei7B8=
+        b=qMAPtyHR7Tuna1DCLUlu7RfZx0s94SOGCeQqY+0e5FvsE8o/j497YlqRvGpp9eSBB
+         zh9OXiu1/7LSXw02sWHjdIPQnykC3gfQSx+DBCGKOp/8mftbPzKQoDG0+lzeahhHpk
+         I6yPmi7QmcWWkc8fJRuIhfmyvPCyAxfYL3fWHXRA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.14 213/237] ext4: fix mount failure with quota configured as module
+        stable@vger.kernel.org, Oliver Upton <oupton@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.4 087/135] KVM: nVMX: Refactor IO bitmap checks into helper function
 Date:   Thu, 27 Feb 2020 14:37:07 +0100
-Message-Id: <20200227132311.865389955@linuxfoundation.org>
+Message-Id: <20200227132242.405969204@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +44,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Oliver Upton <oupton@google.com>
 
-commit 9db176bceb5c5df4990486709da386edadc6bd1d upstream.
+commit e71237d3ff1abf9f3388337cfebf53b96df2020d upstream.
 
-When CONFIG_QFMT_V2 is configured as a module, the test in
-ext4_feature_set_ok() fails and so mount of filesystems with quota or
-project features fails. Fix the test to use IS_ENABLED macro which
-works properly even for modules.
+Checks against the IO bitmap are useful for both instruction emulation
+and VM-exit reflection. Refactor the IO bitmap checks into a helper
+function.
 
-Link: https://lore.kernel.org/r/20200221100835.9332-1-jack@suse.cz
-Fixes: d65d87a07476 ("ext4: improve explanation of a mount failure caused by a misconfigured kernel")
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Signed-off-by: Oliver Upton <oupton@google.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/vmx/nested.c |   39 +++++++++++++++++++++++++--------------
+ arch/x86/kvm/vmx/nested.h |    2 ++
+ 2 files changed, 27 insertions(+), 14 deletions(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2863,7 +2863,7 @@ static int ext4_feature_set_ok(struct su
- 		return 0;
- 	}
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -5132,24 +5132,17 @@ fail:
+ 	return 1;
+ }
  
--#if !defined(CONFIG_QUOTA) || !defined(CONFIG_QFMT_V2)
-+#if !IS_ENABLED(CONFIG_QUOTA) || !IS_ENABLED(CONFIG_QFMT_V2)
- 	if (!readonly && (ext4_has_feature_quota(sb) ||
- 			  ext4_has_feature_project(sb))) {
- 		ext4_msg(sb, KERN_ERR,
+-
+-static bool nested_vmx_exit_handled_io(struct kvm_vcpu *vcpu,
+-				       struct vmcs12 *vmcs12)
++/*
++ * Return true if an IO instruction with the specified port and size should cause
++ * a VM-exit into L1.
++ */
++bool nested_vmx_check_io_bitmaps(struct kvm_vcpu *vcpu, unsigned int port,
++				 int size)
+ {
+-	unsigned long exit_qualification;
++	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+ 	gpa_t bitmap, last_bitmap;
+-	unsigned int port;
+-	int size;
+ 	u8 b;
+ 
+-	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
+-		return nested_cpu_has(vmcs12, CPU_BASED_UNCOND_IO_EXITING);
+-
+-	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
+-
+-	port = exit_qualification >> 16;
+-	size = (exit_qualification & 7) + 1;
+-
+ 	last_bitmap = (gpa_t)-1;
+ 	b = -1;
+ 
+@@ -5176,6 +5169,24 @@ static bool nested_vmx_exit_handled_io(s
+ 	return false;
+ }
+ 
++static bool nested_vmx_exit_handled_io(struct kvm_vcpu *vcpu,
++				       struct vmcs12 *vmcs12)
++{
++	unsigned long exit_qualification;
++	unsigned int port;
++	int size;
++
++	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
++		return nested_cpu_has(vmcs12, CPU_BASED_UNCOND_IO_EXITING);
++
++	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
++
++	port = exit_qualification >> 16;
++	size = (exit_qualification & 7) + 1;
++
++	return nested_vmx_check_io_bitmaps(vcpu, port, size);
++}
++
+ /*
+  * Return 1 if we should exit from L2 to L1 to handle an MSR access access,
+  * rather than handle it ourselves in L0. I.e., check whether L1 expressed
+--- a/arch/x86/kvm/vmx/nested.h
++++ b/arch/x86/kvm/vmx/nested.h
+@@ -33,6 +33,8 @@ int vmx_set_vmx_msr(struct kvm_vcpu *vcp
+ int vmx_get_vmx_msr(struct nested_vmx_msrs *msrs, u32 msr_index, u64 *pdata);
+ int get_vmx_mem_address(struct kvm_vcpu *vcpu, unsigned long exit_qualification,
+ 			u32 vmx_instruction_info, bool wr, int len, gva_t *ret);
++bool nested_vmx_check_io_bitmaps(struct kvm_vcpu *vcpu, unsigned int port,
++				 int size);
+ 
+ static inline struct vmcs12 *get_vmcs12(struct kvm_vcpu *vcpu)
+ {
 
 
