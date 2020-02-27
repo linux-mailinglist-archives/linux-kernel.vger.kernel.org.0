@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22DBA171F45
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:33:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4470D171EFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:31:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732696AbgB0OAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:00:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33440 "EHLO mail.kernel.org"
+        id S2388466AbgB0Obc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:31:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732676AbgB0OAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:00:06 -0500
+        id S2387459AbgB0ODn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:03:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D9C42084E;
-        Thu, 27 Feb 2020 14:00:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 183D02469B;
+        Thu, 27 Feb 2020 14:03:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812005;
-        bh=Z1DU4+Um6gFHn8qnTTuXqBgAJpwCBlWICAXSJKZeCko=;
+        s=default; t=1582812221;
+        bh=IoWa7QZLuZ0KwOhlazEhElkEOpT1YG2XzFoWSCwIMzE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xtDti9Zi9OnpKMJI9QFPJtUAu6ge5cp1F4McXiOFOkNuMPbp0T3uzpTTDs1cNHlM8
-         El4YODj5W/ZKMtPuKOOFxFu7F4HWAdg+KEaeEA5t9yFZbilhxYcTW9mBonJcePwvwS
-         4Upo1Xhl4d6QbALnwn6NdIUfAbjGq4fY+p7+F8zk=
+        b=mJabvefVqjIGmPdd5DfD0Oa/tShAE91se9MwsExwcJMOhc2fZPTnct/kOSSwq8dor
+         6D6OASIryuuLJZfgutoa/Ckf2zcglnkN5a36hh1cAKcWnJXmA4i7IBatnK5oVFgSe/
+         EoiUtJlYznW4WhKNLWpOILMWerih5BFr8izq7zWA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Dodd <richard.o.dodd@gmail.com>
-Subject: [PATCH 4.14 184/237] USB: Fix novation SourceControl XL after suspend
-Date:   Thu, 27 Feb 2020 14:36:38 +0100
-Message-Id: <20200227132309.893790856@linuxfoundation.org>
+        stable@vger.kernel.org, Pietro Oliva <pietroliva@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: [PATCH 4.19 32/97] staging: rtl8188eu: Fix potential overuse of kernel memory
+Date:   Thu, 27 Feb 2020 14:36:40 +0100
+Message-Id: <20200227132219.849129077@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,33 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Dodd <richard.o.dodd@gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit b692056db8ecc7f452b934f016c17348282b7699 upstream.
+commit 4ddf8ab8d15ddbc52eefb44eb64e38466ce1f70f upstream.
 
-Currently, the SourceControl will stay in power-down mode after resuming
-from suspend. This patch resets the device after suspend to power it up.
+In routine wpa_supplicant_ioctl(), the user-controlled p->length is
+checked to be at least the size of struct ieee_param size, but the code
+does not detect the case where p->length is greater than the size
+of the struct, thus a malicious user could be wasting kernel memory.
+Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
 
-Signed-off-by: Richard Dodd <richard.o.dodd@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200212142220.36892-1-richard.o.dodd@gmail.com
+Reported by: Pietro Oliva <pietroliva@gmail.com>
+Cc: Pietro Oliva <pietroliva@gmail.com>
+Cc: Stable <stable@vger.kernel.org>
+Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Link: https://lore.kernel.org/r/20200210180235.21691-4-Larry.Finger@lwfinger.net
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/staging/rtl8188eu/os_dep/ioctl_linux.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -291,6 +291,9 @@ static const struct usb_device_id usb_qu
- 	/* INTEL VALUE SSD */
- 	{ USB_DEVICE(0x8086, 0xf1a5), .driver_info = USB_QUIRK_RESET_RESUME },
+--- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+@@ -2026,7 +2026,7 @@ static int wpa_supplicant_ioctl(struct n
+ 	struct ieee_param *param;
+ 	uint ret = 0;
  
-+	/* novation SoundControl XL */
-+	{ USB_DEVICE(0x1235, 0x0061), .driver_info = USB_QUIRK_RESET_RESUME },
-+
- 	{ }  /* terminating entry must be last */
- };
- 
+-	if (p->length < sizeof(struct ieee_param) || !p->pointer) {
++	if (!p->pointer || p->length != sizeof(struct ieee_param)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
 
 
