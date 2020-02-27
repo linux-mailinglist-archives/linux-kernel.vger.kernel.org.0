@@ -2,82 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9BA417220F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:17:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94D01172220
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:19:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729230AbgB0PRY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 10:17:24 -0500
-Received: from foss.arm.com ([217.140.110.172]:53530 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729279AbgB0PRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 10:17:23 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1966B30E;
-        Thu, 27 Feb 2020 07:17:23 -0800 (PST)
-Received: from [10.0.8.126] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F7CB3F7B4;
-        Thu, 27 Feb 2020 07:17:21 -0800 (PST)
-Subject: Re: [PATCH] sched/fair: fix runnable_avg for throttled cfs
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ben Segall <bsegall@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Hillf Danton <hdanton@sina.com>, zhout@vivaldi.net
-References: <20200226181640.21664-1-vincent.guittot@linaro.org>
- <xm26r1yhtbjr.fsf@bsegall-linux.svl.corp.google.com>
- <CAKfTPtBm9Gt16gqQgxoErOOmpbUHit6bNf4CVLvDzf04SjWtEg@mail.gmail.com>
- <8f72ea72-f36d-2611-e026-62ddff5c3422@arm.com>
- <CAKfTPtC9bkMQJsWw6Z2QD0RrV=qN7yMFviVnSeTpDp=-vLBL0g@mail.gmail.com>
- <CAKfTPtD4iVQmxWgNDDVhKPbu+rYEf=_1xKoPVOy343qo51pD_A@mail.gmail.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <cf26f6c8-0e09-4c8c-b7e8-f010f4a4488c@arm.com>
-Date:   Thu, 27 Feb 2020 15:17:20 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1730905AbgB0PTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 10:19:18 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:33007 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729439AbgB0PTR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 10:19:17 -0500
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Eugen.Hristev@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="Eugen.Hristev@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Eugen.Hristev@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: IsuR96Cb9xvLmy2wbVUHg6Eb0y08j7S6svkniz+pMtYiaNsaxqkTJJcDL3ALFi1P61F9uohEdr
+ 0pWekaEntO1lrZUAksk9O+KcQ6lM6iopr2uN49yJTgOVmkaOqpDqCordmlsT9RwQrz0yv33/On
+ 7KHMTXeFygZZJ0EJPEMFylPxSOURNQDJCXwcBqFKNMy0gXawYRFzGVHBLXqb+VRWFJiEfTEjsT
+ lsNHUFKzreqz0pXDMg6dbsKOXl5BgO1O/ptc7YieoJKrAvSu7Tt1ezgeEQPMjGoBbjwwSQdfet
+ j+M=
+X-IronPort-AV: E=Sophos;i="5.70,492,1574146800"; 
+   d="scan'208";a="68206434"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Feb 2020 08:19:16 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 27 Feb 2020 08:19:16 -0700
+Received: from ROB-ULT-M18282.microchip.com (10.10.115.15) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 27 Feb 2020 08:19:14 -0700
+From:   Eugen Hristev <eugen.hristev@microchip.com>
+To:     <dave.stevenson@raspberrypi.com>, <andrey.konovalov@linaro.org>,
+        <sakari.ailus@iki.fi>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Eugen Hristev <eugen.hristev@microchip.com>
+Subject: [PATCH] media: i2c: imx219: add support for enum frame interval
+Date:   Thu, 27 Feb 2020 17:17:52 +0200
+Message-ID: <20200227151752.21985-1-eugen.hristev@microchip.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtD4iVQmxWgNDDVhKPbu+rYEf=_1xKoPVOy343qo51pD_A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27.02.20 14:58, Vincent Guittot wrote:
-> On Thu, 27 Feb 2020 at 14:10, Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
->>
->> On Thu, 27 Feb 2020 at 12:20, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->>>
->>> On 26.02.20 21:01, Vincent Guittot wrote:
->>>> On Wed, 26 Feb 2020 at 20:04, <bsegall@google.com> wrote:
->>>>>
->>>>> Vincent Guittot <vincent.guittot@linaro.org> writes:
+Add support for enum frame intervals IOCTL.
+The current supported framerates are only available as comments inside
+the code.
+Add support for VIDIOC_ENUM_FRAMEINTERVALS as the enum_frame_interval
+callback as pad ops.
 
-[...]
+ # v4l2-ctl --list-frameintervals width=1920,height=1080,pixelformat=RG10
+ ioctl: VIDIOC_ENUM_FRAMEINTERVALS
+        Interval: Discrete 0.067s (15.000 fps)
+        Interval: Discrete 0.033s (30.000 fps)
+        Interval: Discrete 0.033s (30.000 fps)
 
->>> Shouldn't this be 'current' rather 'new' h_nr_running for
->>> group_se->runnable_weight? IMHO, you want to cache the current value
->>> before you add/subtract task_delta.
->>
->> hmm... it can't be current in both places. In my explanation,
->> "current" means the current situation when we started to throttle cfs
->> and "new" means the new situation after we finished to throttle the
->> cfs. I should probably use old and new to prevent any
->> misunderstanding.
-> 
-> I'm about to send a new version to fix some minor changes: The if
-> statement should have some  { }   as there are some on the else part
-> 
-> Would it be better for you if i use old and new instead of current and
-> new in the commit message ?
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+---
 
-Personally yes, but now I understand the other wording as well. Thanks.
+Hello,
 
-[...]
+This is on top of Sakari's tree in linuxtv.org
+
+Thanks
+Eugen
+
+ drivers/media/i2c/imx219.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+index f1effb5a5f66..17fcedd4edb6 100644
+--- a/drivers/media/i2c/imx219.c
++++ b/drivers/media/i2c/imx219.c
+@@ -127,6 +127,8 @@ struct imx219_mode {
+ 	unsigned int width;
+ 	/* Frame height */
+ 	unsigned int height;
++	/* Frame rate */
++	u8 fps;
+ 
+ 	/* V-timing */
+ 	unsigned int vts_def;
+@@ -381,6 +383,7 @@ static const struct imx219_mode supported_modes[] = {
+ 		/* 8MPix 15fps mode */
+ 		.width = 3280,
+ 		.height = 2464,
++		.fps = 15,
+ 		.vts_def = IMX219_VTS_15FPS,
+ 		.reg_list = {
+ 			.num_of_regs = ARRAY_SIZE(mode_3280x2464_regs),
+@@ -391,6 +394,7 @@ static const struct imx219_mode supported_modes[] = {
+ 		/* 1080P 30fps cropped */
+ 		.width = 1920,
+ 		.height = 1080,
++		.fps = 30,
+ 		.vts_def = IMX219_VTS_30FPS_1080P,
+ 		.reg_list = {
+ 			.num_of_regs = ARRAY_SIZE(mode_1920_1080_regs),
+@@ -401,6 +405,7 @@ static const struct imx219_mode supported_modes[] = {
+ 		/* 2x2 binned 30fps mode */
+ 		.width = 1640,
+ 		.height = 1232,
++		.fps = 30,
+ 		.vts_def = IMX219_VTS_30FPS_BINNED,
+ 		.reg_list = {
+ 			.num_of_regs = ARRAY_SIZE(mode_1640_1232_regs),
+@@ -680,6 +685,27 @@ static int imx219_enum_frame_size(struct v4l2_subdev *sd,
+ 	return 0;
+ }
+ 
++static int imx219_enum_frame_interval(struct v4l2_subdev *sd,
++				      struct v4l2_subdev_pad_config *cfg,
++				      struct v4l2_subdev_frame_interval_enum *fie)
++{
++	struct imx219 *imx219 = to_imx219(sd);
++
++	if (fie->index >= ARRAY_SIZE(supported_modes))
++		return -EINVAL;
++
++	if (fie->code != imx219_get_format_code(imx219))
++		return -EINVAL;
++
++	if (fie->pad)
++		return -EINVAL;
++
++	fie->interval.numerator = 1;
++	fie->interval.denominator = supported_modes[fie->index].fps;
++
++	return 0;
++}
++
+ static void imx219_reset_colorspace(struct v4l2_mbus_framefmt *fmt)
+ {
+ 	fmt->colorspace = V4L2_COLORSPACE_SRGB;
+@@ -1004,6 +1030,7 @@ static const struct v4l2_subdev_pad_ops imx219_pad_ops = {
+ 	.get_fmt = imx219_get_pad_format,
+ 	.set_fmt = imx219_set_pad_format,
+ 	.enum_frame_size = imx219_enum_frame_size,
++	.enum_frame_interval = imx219_enum_frame_interval,
+ };
+ 
+ static const struct v4l2_subdev_ops imx219_subdev_ops = {
+-- 
+2.20.1
+
