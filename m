@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B08DB171A5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:53:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1BB9171A5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:53:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbgB0Nww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:52:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52478 "EHLO mail.kernel.org"
+        id S1731616AbgB0Nw7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:52:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731448AbgB0Nwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:52:49 -0500
+        id S1731597AbgB0Nw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:52:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCF4B2084E;
-        Thu, 27 Feb 2020 13:52:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B54D21D7E;
+        Thu, 27 Feb 2020 13:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811569;
-        bh=cUNs4BAM2uQGrUxQUfSZY/GPkkgLrq4ubfrALEjXvT8=;
+        s=default; t=1582811576;
+        bh=b5rEC33m1hhUbs5bRijRXrNHiMu2UCHhoEVVOLBKnXY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=meK1o/f2Ibi+E/txgWEoEsGzn6ztl+R/7/u1+VKDCDsP87iPIzh1QVry2HM7NGTBy
-         C4yfcnoxyHZ11DdULXi6ET7vORrc9REAO8qRlBSZlFif/XEuX/ENUjomgr/js/Bxi+
-         0ETTIozm2iWxoR4AVDTVixQI0AWY26EgGQIYEnfo=
+        b=GGlQQvbj5EuI2J/rzyX1gdU3tKkL2oe0NcUJaB00S0hFNoz+MmqPyYepGJQeZ4CaO
+         dLmFWDheDu6QDAS5Z4sTaR2mzhVF73fcuU5fyivjd0+f4te0hX1UiDsY06fbl+GAoD
+         1zfulqlVDhaboLNAIIDQ2awfS11GI0DZwSjBVU+w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.14 018/237] ext4: improve explanation of a mount failure caused by a misconfigured kernel
-Date:   Thu, 27 Feb 2020 14:33:52 +0100
-Message-Id: <20200227132257.439071280@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Murphy <lists@colorremedies.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 020/237] btrfs: print message when tree-log replay starts
+Date:   Thu, 27 Feb 2020 14:33:54 +0100
+Message-Id: <20200227132257.629105494@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -43,55 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: David Sterba <dsterba@suse.com>
 
-commit d65d87a07476aa17df2dcb3ad18c22c154315bec upstream.
+commit e8294f2f6aa6208ed0923aa6d70cea3be178309a upstream.
 
-If CONFIG_QFMT_V2 is not enabled, but CONFIG_QUOTA is enabled, when a
-user tries to mount a file system with the quota or project quota
-enabled, the kernel will emit a very confusing messsage:
+There's no logged information about tree-log replay although this is
+something that points to previous unclean unmount. Other filesystems
+report that as well.
 
-    EXT4-fs warning (device vdc): ext4_enable_quotas:5914: Failed to enable quota tracking (type=0, err=-3). Please run e2fsck to fix.
-    EXT4-fs (vdc): mount failed
-
-We will now report an explanatory message indicating which kernel
-configuration options have to be enabled, to avoid customer/sysadmin
-confusion.
-
-Link: https://lore.kernel.org/r/20200215012738.565735-1-tytso@mit.edu
-Google-Bug-Id: 149093531
-Fixes: 7c319d328505b778 ("ext4: make quota as first class supported feature")
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Suggested-by: Chris Murphy <lists@colorremedies.com>
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |   14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ fs/btrfs/disk-io.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2863,17 +2863,11 @@ static int ext4_feature_set_ok(struct su
- 		return 0;
- 	}
- 
--#ifndef CONFIG_QUOTA
--	if (ext4_has_feature_quota(sb) && !readonly) {
-+#if !defined(CONFIG_QUOTA) || !defined(CONFIG_QFMT_V2)
-+	if (!readonly && (ext4_has_feature_quota(sb) ||
-+			  ext4_has_feature_project(sb))) {
- 		ext4_msg(sb, KERN_ERR,
--			 "Filesystem with quota feature cannot be mounted RDWR "
--			 "without CONFIG_QUOTA");
--		return 0;
--	}
--	if (ext4_has_feature_project(sb) && !readonly) {
--		ext4_msg(sb, KERN_ERR,
--			 "Filesystem with project quota feature cannot be mounted RDWR "
--			 "without CONFIG_QUOTA");
-+			 "The kernel was not built with CONFIG_QUOTA and CONFIG_QFMT_V2");
- 		return 0;
- 	}
- #endif  /* CONFIG_QUOTA */
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -2913,6 +2913,7 @@ retry_root_backup:
+ 	/* do not make disk changes in broken FS or nologreplay is given */
+ 	if (btrfs_super_log_root(disk_super) != 0 &&
+ 	    !btrfs_test_opt(fs_info, NOLOGREPLAY)) {
++		btrfs_info(fs_info, "start tree-log replay");
+ 		ret = btrfs_replay_log(fs_info, fs_devices);
+ 		if (ret) {
+ 			err = ret;
 
 
