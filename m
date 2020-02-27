@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F48B171C22
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:09:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A8FF171B94
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:04:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388132AbgB0OJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:09:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47000 "EHLO mail.kernel.org"
+        id S2387457AbgB0ODm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:03:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388335AbgB0OJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:09:07 -0500
+        id S1732738AbgB0ODj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:03:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B43E24656;
-        Thu, 27 Feb 2020 14:09:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A36DC20578;
+        Thu, 27 Feb 2020 14:03:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812546;
-        bh=/N/Zzy75PVs3te+xDvgGtvNhWvS2dss1xvvFHApiltc=;
+        s=default; t=1582812219;
+        bh=yljGhkhRq4nXZdwCxwo6gP36mgnl7HYuxDNXTLxi0cw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2hZDGHv4pzmmqiCj/wvICjQ2cB+YKE3z3HdqRV+e6cfZdqfET90XZzyB4T8YzGcVv
-         SikLVyaoDJcjo0XAKzBsWHKA/to4rJrJ5ke7Cd8cAhBbpoDKdq0eGuAZhJ4P10XUhl
-         M0JBX2w6WizQyIkPIt2fd20F4E1Dz4RZomDEE7J0=
+        b=CMs6sfWRM0yETAH7d6Qf/r1TZgNfeKgv+MXBPKJm6PmeDhfxucZCCG+jByMc7AHnp
+         vHabGUINk5rqLKZN48gKVY49wb26yhvM/3YrBem+H4NexPIssRhORUNKRIlg8rAg1C
+         aP4KUXPnPkWo/nXmpQOzdQidJ+BgitPRUcb8skqk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, satya priya <skakit@codeaurora.org>
-Subject: [PATCH 5.4 058/135] tty: serial: qcom_geni_serial: Fix RX cancel command failure
-Date:   Thu, 27 Feb 2020 14:36:38 +0100
-Message-Id: <20200227132237.768120779@linuxfoundation.org>
+        stable@vger.kernel.org, Pietro Oliva <pietroliva@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: [PATCH 4.19 31/97] staging: rtl8188eu: Fix potential security hole
+Date:   Thu, 27 Feb 2020 14:36:39 +0100
+Message-Id: <20200227132219.693650313@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,68 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: satya priya <skakit@codeaurora.org>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit 679aac5ead2f18d223554a52b543e1195e181811 upstream.
+commit 499c405b2b80bb3a04425ba3541d20305e014d3e upstream.
 
-RX cancel command fails when BT is switched on and off multiple times.
+In routine rtw_hostapd_ioctl(), the user-controlled p->length is assumed
+to be at least the size of struct ieee_param size, but this assumption is
+never checked. This could result in out-of-bounds read/write on kernel
+heap in case a p->length less than the size of struct ieee_param is
+specified by the user. If p->length is allowed to be greater than the size
+of the struct, then a malicious user could be wasting kernel memory.
+Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
 
-To handle this, poll for the cancel bit in SE_GENI_S_IRQ_STATUS register
-instead of SE_GENI_S_CMD_CTRL_REG.
-
-As per the HPG update, handle the RX last bit after cancel command
-and flush out the RX FIFO buffer.
-
-Signed-off-by: satya priya <skakit@codeaurora.org>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/1581415982-8793-1-git-send-email-skakit@codeaurora.org
+Reported by: Pietro Oliva <pietroliva@gmail.com>
+Cc: Pietro Oliva <pietroliva@gmail.com>
+Cc: Stable <stable@vger.kernel.org>
+Fixes: a2c60d42d97c ("staging: r8188eu: Add files for new driver - part 16")
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Link: https://lore.kernel.org/r/20200210180235.21691-2-Larry.Finger@lwfinger.net
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/qcom_geni_serial.c |   18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/staging/rtl8188eu/os_dep/ioctl_linux.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -125,6 +125,7 @@ static int handle_rx_console(struct uart
- static int handle_rx_uart(struct uart_port *uport, u32 bytes, bool drop);
- static unsigned int qcom_geni_serial_tx_empty(struct uart_port *port);
- static void qcom_geni_serial_stop_rx(struct uart_port *uport);
-+static void qcom_geni_serial_handle_rx(struct uart_port *uport, bool drop);
+--- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+@@ -2819,7 +2819,7 @@ static int rtw_hostapd_ioctl(struct net_
+ 		goto out;
+ 	}
  
- static const unsigned long root_freq[] = {7372800, 14745600, 19200000, 29491200,
- 					32000000, 48000000, 64000000, 80000000,
-@@ -615,7 +616,7 @@ static void qcom_geni_serial_stop_rx(str
- 	u32 irq_en;
- 	u32 status;
- 	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
--	u32 irq_clear = S_CMD_DONE_EN;
-+	u32 s_irq_status;
- 
- 	irq_en = readl(uport->membase + SE_GENI_S_IRQ_EN);
- 	irq_en &= ~(S_RX_FIFO_WATERMARK_EN | S_RX_FIFO_LAST_EN);
-@@ -631,10 +632,19 @@ static void qcom_geni_serial_stop_rx(str
- 		return;
- 
- 	geni_se_cancel_s_cmd(&port->se);
--	qcom_geni_serial_poll_bit(uport, SE_GENI_S_CMD_CTRL_REG,
--					S_GENI_CMD_CANCEL, false);
-+	qcom_geni_serial_poll_bit(uport, SE_GENI_S_IRQ_STATUS,
-+					S_CMD_CANCEL_EN, true);
-+	/*
-+	 * If timeout occurs secondary engine remains active
-+	 * and Abort sequence is executed.
-+	 */
-+	s_irq_status = readl(uport->membase + SE_GENI_S_IRQ_STATUS);
-+	/* Flush the Rx buffer */
-+	if (s_irq_status & S_RX_FIFO_LAST_EN)
-+		qcom_geni_serial_handle_rx(uport, true);
-+	writel(s_irq_status, uport->membase + SE_GENI_S_IRQ_CLEAR);
-+
- 	status = readl(uport->membase + SE_GENI_STATUS);
--	writel(irq_clear, uport->membase + SE_GENI_S_IRQ_CLEAR);
- 	if (status & S_GENI_CMD_ACTIVE)
- 		qcom_geni_serial_abort_rx(uport);
- }
+-	if (!p->pointer) {
++	if (!p->pointer || p->length != sizeof(struct ieee_param)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
 
 
