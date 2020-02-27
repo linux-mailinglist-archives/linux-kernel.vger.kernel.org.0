@@ -2,166 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94D01172220
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:19:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB5FF172218
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:18:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730905AbgB0PTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 10:19:18 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:33007 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729439AbgB0PTR (ORCPT
+        id S1730746AbgB0PSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 10:18:17 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:45356 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730413AbgB0PSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 10:19:17 -0500
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Eugen.Hristev@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Eugen.Hristev@microchip.com";
-  x-sender="Eugen.Hristev@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Eugen.Hristev@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Eugen.Hristev@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: IsuR96Cb9xvLmy2wbVUHg6Eb0y08j7S6svkniz+pMtYiaNsaxqkTJJcDL3ALFi1P61F9uohEdr
- 0pWekaEntO1lrZUAksk9O+KcQ6lM6iopr2uN49yJTgOVmkaOqpDqCordmlsT9RwQrz0yv33/On
- 7KHMTXeFygZZJ0EJPEMFylPxSOURNQDJCXwcBqFKNMy0gXawYRFzGVHBLXqb+VRWFJiEfTEjsT
- lsNHUFKzreqz0pXDMg6dbsKOXl5BgO1O/ptc7YieoJKrAvSu7Tt1ezgeEQPMjGoBbjwwSQdfet
- j+M=
-X-IronPort-AV: E=Sophos;i="5.70,492,1574146800"; 
-   d="scan'208";a="68206434"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Feb 2020 08:19:16 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 27 Feb 2020 08:19:16 -0700
-Received: from ROB-ULT-M18282.microchip.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Thu, 27 Feb 2020 08:19:14 -0700
-From:   Eugen Hristev <eugen.hristev@microchip.com>
-To:     <dave.stevenson@raspberrypi.com>, <andrey.konovalov@linaro.org>,
-        <sakari.ailus@iki.fi>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Eugen Hristev <eugen.hristev@microchip.com>
-Subject: [PATCH] media: i2c: imx219: add support for enum frame interval
-Date:   Thu, 27 Feb 2020 17:17:52 +0200
-Message-ID: <20200227151752.21985-1-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 27 Feb 2020 10:18:17 -0500
+Received: by mail-vs1-f66.google.com with SMTP id m4so2035145vsa.12
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 07:18:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FE9YlwPCylw4bc5huhKNNCWtGjQT2jR1xXhEcwAql+c=;
+        b=Sut+2ak8Mv+vayB+HbdLvSIcnwFFJMBzHgirvH66v+6Br77Lbl/4SxBwinK+bfEORy
+         KQ5K1Mbv5yaOHdlKTzLUdTUUhZV6hr1sPf+UGQPbdt96i7fvZHDFAOrayy2+V+i4ksAo
+         6QaJNImWXrC4TGUvNVs/B+fEwNUf1hQAe0KTqj1JEeelSbczr0CWEvXHITo8aexG+rjd
+         8xZipEnxAciGpbNAEeRoYeiih7H0AJwHbFWkhquccA4sjl+/0jlNCtgsceK84yfuVUGf
+         h3LKbzuDoDUi7zFP1yCYRQ7A0JHRh2XABAIv1U+lO/QnHnfXYraENOxLHHFqv523I3hT
+         MNuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FE9YlwPCylw4bc5huhKNNCWtGjQT2jR1xXhEcwAql+c=;
+        b=SlMdsKwbyv53nAxBmtTFFmamZapQWowK7PIqOGnpoZpLefXpG0Xf5Ywnbhlo2q33rN
+         bQL2wcew4gXHyLRP3eSZe3sPWqiuRENyK6S7VqASWAhSCuR64MQqdZLAQxrrOjbnIQT1
+         QKKqO43XIadckvyePsUH8M5eZHeFerdBhWJTGrXBe7iRLJ+OA9hJFh/Y2RrSAnpGFyNe
+         flyoiXvPgnIIwH+1ar8KP6phQ+3CVVeYxnDaxLY79fbHko+uUHPdv46WE0QWNwY8ltYV
+         utXAnfxl/Ie5xjriDWK6HA+66uoOZGqUjwolB4Aq6SWahWEyCyKl2hi0fPJ65pvwmN/g
+         4g7Q==
+X-Gm-Message-State: APjAAAXT6Z8hqzlemNc1DgLNyFXTzpSgY5IR+qdoSo3ImrBdwujI1ZSX
+        rWw1e0Wwmp8F0TaWftFeabBbLiDGBAtBaFzvV9rEQw==
+X-Google-Smtp-Source: APXvYqzEB8eUMArq/U0KUS5PJA8nccEaL08bwTgxMEoRDx9khUaRXx7qH5jym/bnPJLKAeBLgAwjaS+1JRqsFWkGO2A=
+X-Received: by 2002:a05:6102:90:: with SMTP id t16mr2849491vsp.140.1582816694984;
+ Thu, 27 Feb 2020 07:18:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+References: <000000000000c0bffa0586795098@google.com> <0000000000005edcd0059503b4aa@google.com>
+ <20191016100134.GA20076@architecture4>
+In-Reply-To: <20191016100134.GA20076@architecture4>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 27 Feb 2020 16:18:04 +0100
+Message-ID: <CACT4Y+bG+DyGuj__tTaVqzr3D7jxEaxL=vbtcsfhnAS2iSWvTQ@mail.gmail.com>
+Subject: Re: WARNING: bad unlock balance in rcu_core
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     syzbot <syzbot+36baa6c2180e959e19b1@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Jan Kara <jack@suse.cz>,
+        Miao Xie <miaoxie@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for enum frame intervals IOCTL.
-The current supported framerates are only available as comments inside
-the code.
-Add support for VIDIOC_ENUM_FRAMEINTERVALS as the enum_frame_interval
-callback as pad ops.
+On Wed, Oct 16, 2019 at 11:58 AM Gao Xiang <gaoxiang25@huawei.com> wrote:
+>
+> Hi,
+>
+> On Wed, Oct 16, 2019 at 02:27:07AM -0700, syzbot wrote:
+> > syzbot has found a reproducer for the following crash on:
+> >
+> > HEAD commit:    0e9d28bc Add linux-next specific files for 20191015
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=11745608e00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3d84ca04228b0bf4
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=36baa6c2180e959e19b1
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159d297f600000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16289b30e00000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+36baa6c2180e959e19b1@syzkaller.appspotmail.com
+> >
+> > =====================================
+> > WARNING: bad unlock balance detected!
+> > 5.4.0-rc3-next-20191015 #0 Not tainted
+> > -------------------------------------
+> > syz-executor276/8897 is trying to release lock (rcu_callback) at:
+> > [<ffffffff8160e7a4>] __write_once_size include/linux/compiler.h:226 [inline]
+> > [<ffffffff8160e7a4>] __rcu_reclaim kernel/rcu/rcu.h:221 [inline]
+> > [<ffffffff8160e7a4>] rcu_do_batch kernel/rcu/tree.c:2157 [inline]
+> > [<ffffffff8160e7a4>] rcu_core+0x574/0x1560 kernel/rcu/tree.c:2377
+> > but there are no more locks to release!
+> >
+> > other info that might help us debug this:
+> > 1 lock held by syz-executor276/8897:
+> >  #0: ffff88809a3cc0d8 (&type->s_umount_key#40/1){+.+.}, at:
+> > alloc_super+0x158/0x910 fs/super.c:229
+> >
+> > stack backtrace:
+> > CPU: 0 PID: 8897 Comm: syz-executor276 Not tainted 5.4.0-rc3-next-20191015
+> > #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >  <IRQ>
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+> >  print_unlock_imbalance_bug kernel/locking/lockdep.c:4008 [inline]
+> >  print_unlock_imbalance_bug.cold+0x114/0x123 kernel/locking/lockdep.c:3984
+> >  __lock_release kernel/locking/lockdep.c:4244 [inline]
+> >  lock_release+0x5f2/0x960 kernel/locking/lockdep.c:4505
+> >  rcu_lock_release include/linux/rcupdate.h:213 [inline]
+> >  __rcu_reclaim kernel/rcu/rcu.h:223 [inline]
+>
+> I have little knowledge about this kind of stuff, but after seeing
+> the dashboard https://syzkaller.appspot.com/bug?extid=36baa6c2180e959e19b1
+>
+> I guess this is highly related with ntfs, and in ntfs_fill_super, it
+> has lockdep_off() in ntfs_fill_super...
+>
+> In detail, commit 90c1cba2b3b3 ("locking/lockdep: Zap lock classes even
+> with lock debugging disabled") [1], and free_zapped_rcu....
+>
+> static void free_zapped_rcu(struct rcu_head *ch)
+> {
+>         struct pending_free *pf;
+>         unsigned long flags;
+>
+>         if (WARN_ON_ONCE(ch != &delayed_free.rcu_head))
+>                 return;
+>
+>         raw_local_irq_save(flags);
+>         arch_spin_lock(&lockdep_lock);
+>         current->lockdep_recursion = 1;   <--- here
+>
+>         /* closed head */
+>         pf = delayed_free.pf + (delayed_free.index ^ 1);
+>         __free_zapped_classes(pf);
+>         delayed_free.scheduled = false;
+>
+>         /*
+>          * If there's anything on the open list, close and start a new callback.
+>          */
+>         call_rcu_zapped(delayed_free.pf + delayed_free.index);
+>
+>         current->lockdep_recursion = 0;
+>         arch_spin_unlock(&lockdep_lock);
+>         raw_local_irq_restore(flags);
+> }
+>
+> Completely guess and untest since I am not familar with that,
+> but in case of that, Cc related people...
+> If I'm wrong, ignore my comments and unintentional noise....
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=90c1cba2b3b3851c151229f61801919b2904d437
+>
+> Thanks,
+> Gao Xiang
 
- # v4l2-ctl --list-frameintervals width=1920,height=1080,pixelformat=RG10
- ioctl: VIDIOC_ENUM_FRAMEINTERVALS
-        Interval: Discrete 0.067s (15.000 fps)
-        Interval: Discrete 0.033s (30.000 fps)
-        Interval: Discrete 0.033s (30.000 fps)
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
----
+Still happens a lot for the past 10 months:
+https://syzkaller.appspot.com/bug?id=0d5bdaf028e4283ad7404609d17e5077f48ff26d
 
-Hello,
 
-This is on top of Sakari's tree in linuxtv.org
-
-Thanks
-Eugen
-
- drivers/media/i2c/imx219.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-index f1effb5a5f66..17fcedd4edb6 100644
---- a/drivers/media/i2c/imx219.c
-+++ b/drivers/media/i2c/imx219.c
-@@ -127,6 +127,8 @@ struct imx219_mode {
- 	unsigned int width;
- 	/* Frame height */
- 	unsigned int height;
-+	/* Frame rate */
-+	u8 fps;
- 
- 	/* V-timing */
- 	unsigned int vts_def;
-@@ -381,6 +383,7 @@ static const struct imx219_mode supported_modes[] = {
- 		/* 8MPix 15fps mode */
- 		.width = 3280,
- 		.height = 2464,
-+		.fps = 15,
- 		.vts_def = IMX219_VTS_15FPS,
- 		.reg_list = {
- 			.num_of_regs = ARRAY_SIZE(mode_3280x2464_regs),
-@@ -391,6 +394,7 @@ static const struct imx219_mode supported_modes[] = {
- 		/* 1080P 30fps cropped */
- 		.width = 1920,
- 		.height = 1080,
-+		.fps = 30,
- 		.vts_def = IMX219_VTS_30FPS_1080P,
- 		.reg_list = {
- 			.num_of_regs = ARRAY_SIZE(mode_1920_1080_regs),
-@@ -401,6 +405,7 @@ static const struct imx219_mode supported_modes[] = {
- 		/* 2x2 binned 30fps mode */
- 		.width = 1640,
- 		.height = 1232,
-+		.fps = 30,
- 		.vts_def = IMX219_VTS_30FPS_BINNED,
- 		.reg_list = {
- 			.num_of_regs = ARRAY_SIZE(mode_1640_1232_regs),
-@@ -680,6 +685,27 @@ static int imx219_enum_frame_size(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
-+static int imx219_enum_frame_interval(struct v4l2_subdev *sd,
-+				      struct v4l2_subdev_pad_config *cfg,
-+				      struct v4l2_subdev_frame_interval_enum *fie)
-+{
-+	struct imx219 *imx219 = to_imx219(sd);
-+
-+	if (fie->index >= ARRAY_SIZE(supported_modes))
-+		return -EINVAL;
-+
-+	if (fie->code != imx219_get_format_code(imx219))
-+		return -EINVAL;
-+
-+	if (fie->pad)
-+		return -EINVAL;
-+
-+	fie->interval.numerator = 1;
-+	fie->interval.denominator = supported_modes[fie->index].fps;
-+
-+	return 0;
-+}
-+
- static void imx219_reset_colorspace(struct v4l2_mbus_framefmt *fmt)
- {
- 	fmt->colorspace = V4L2_COLORSPACE_SRGB;
-@@ -1004,6 +1030,7 @@ static const struct v4l2_subdev_pad_ops imx219_pad_ops = {
- 	.get_fmt = imx219_get_pad_format,
- 	.set_fmt = imx219_set_pad_format,
- 	.enum_frame_size = imx219_enum_frame_size,
-+	.enum_frame_interval = imx219_enum_frame_interval,
- };
- 
- static const struct v4l2_subdev_ops imx219_subdev_ops = {
--- 
-2.20.1
-
+> >  rcu_do_batch kernel/rcu/tree.c:2157 [inline]
+> >  rcu_core+0x594/0x1560 kernel/rcu/tree.c:2377
+> >  rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2386
+> >  __do_softirq+0x262/0x98c kernel/softirq.c:292
+> >  invoke_softirq kernel/softirq.c:373 [inline]
+> >  irq_exit+0x19b/0x1e0 kernel/softirq.c:413
+> >  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+> >  smp_apic_timer_interrupt+0x1a3/0x610 arch/x86/kernel/apic/apic.c:1137
+> >  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
+> >  </IRQ>
+> > RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:756
+> > [inline]
+> > RIP: 0010:console_unlock+0xbb8/0xf00 kernel/printk/printk.c:2481
+> > Code: f3 88 48 c1 e8 03 42 80 3c 30 00 0f 85 e4 02 00 00 48 83 3d 99 9c 96
+> > 07 00 0f 84 91 01 00 00 e8 be c4 16 00 48 8b 7d 98 57 9d <0f> 1f 44 00 00 e9
+> > 6d ff ff ff e8 a9 c4 16 00 48 8b 7d 08 c7 05 eb
+> > RSP: 0018:ffff88809fd7f8f0 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+> > RAX: ffff8880a8bee540 RBX: 0000000000000200 RCX: 1ffffffff138eea6
+> > RDX: 0000000000000000 RSI: ffffffff815c8592 RDI: 0000000000000293
+> > RBP: ffff88809fd7f978 R08: ffff8880a8bee540 R09: fffffbfff11f4119
+> > R10: fffffbfff11f4118 R11: 0000000000000001 R12: 0000000000000000
+> > R13: ffffffff843f8ca0 R14: dffffc0000000000 R15: ffffffff895e1130
+> >  vprintk_emit+0x2a0/0x700 kernel/printk/printk.c:1996
+> >  vprintk_default+0x28/0x30 kernel/printk/printk.c:2023
+> >  vprintk_func+0x7e/0x189 kernel/printk/printk_safe.c:386
+> >  printk+0xba/0xed kernel/printk/printk.c:2056
+> >  __ntfs_error.cold+0x91/0xc7 fs/ntfs/debug.c:89
+> >  read_ntfs_boot_sector fs/ntfs/super.c:682 [inline]
+> >  ntfs_fill_super+0x1ad3/0x3160 fs/ntfs/super.c:2784
+> >  mount_bdev+0x304/0x3c0 fs/super.c:1415
+> >  ntfs_mount+0x35/0x40 fs/ntfs/super.c:3051
+> >  legacy_get_tree+0x108/0x220 fs/fs_context.c:647
+> >  vfs_get_tree+0x8e/0x300 fs/super.c:1545
+> >  do_new_mount fs/namespace.c:2823 [inline]
+> >  do_mount+0x142e/0x1cf0 fs/namespace.c:3143
+> >  ksys_mount+0xdb/0x150 fs/namespace.c:3352
+> >  __do_sys_mount fs/namespace.c:3366 [inline]
+> >  __se_sys_mount fs/namespace.c:3363 [inline]
+> >  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3363
+> >  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x4411a9
+> > Code: e8 fc ab 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> > 0f 83 9b 09 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007ffffff57cf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> > RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004411a9
+> > RDX: 0000000020000140 RSI: 0000000020000280 RDI: 00000000200004c0
+> > RBP: 00000000000114e0 R08: 0000000000000000 R09: 00000000004002c8
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401fd0
+> > R13: 0000000000402060 R14: 0000000000000000 R15: 0000000000000000
+> >
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20191016100134.GA20076%40architecture4.
