@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DA601720A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:44:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29E8B171F88
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731321AbgB0OoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:44:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45428 "EHLO mail.kernel.org"
+        id S1732458AbgB0N62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:58:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730893AbgB0Nsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:48:36 -0500
+        id S1732438AbgB0N6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:58:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4037E21D7E;
-        Thu, 27 Feb 2020 13:48:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7834D2469B;
+        Thu, 27 Feb 2020 13:58:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811315;
-        bh=q9B2fCZrysqb+v5XGLZAltzC00DdcE0gKtCJ9/GgzYQ=;
+        s=default; t=1582811898;
+        bh=09fWut8wwww9Ma4jgmxIHwcrfTP9ABN6cLUu+7gBQSc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DDGsOIpZVrvMn87++eo1wcF/yTl+gBZxlvrMOeJ4qTcyX9+hJSkdl+R7onykWm/kz
-         ZsSqAO3ARb4g2cIsmfBONqtmv2/rrqqGrUQlKOkH1mk9mbkD7uGFQ2NJzHxPowyyuq
-         Z5Y4eFXjRT+C4EC0k6NZWJI/mUulAsg8ncmvYcxA=
+        b=09j1tSkfXfsuTvc+OACPxNb8OJqfEyCpK57FUYAdCZ3bepMmiGhf3L6NXwhtF9nrD
+         U2j835sqJZgz8pnEnaMVpDMJkd/0/Iz9g/Kpf+aQYLEuuxdOJa8zpUu7YfWWXiVbz0
+         c1b/1Z1lcGR8jn9q8G2731zvkWC7N3asaxc/5AOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Tony Lindgren <tony@atomide.com>, Bin Liu <b-liu@ti.com>,
+        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
+        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 083/165] usb: musb: omap2430: Get rid of musb .set_vbus for omap2430 glue
+Subject: [PATCH 4.14 143/237] jbd2: switch to use jbd2_journal_abort() when failed to submit the commit record
 Date:   Thu, 27 Feb 2020 14:35:57 +0100
-Message-Id: <20200227132243.442948410@linuxfoundation.org>
+Message-Id: <20200227132307.164420108@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: zhangyi (F) <yi.zhang@huawei.com>
 
-[ Upstream commit 91b6dec32e5c25fbdbb564d1e5af23764ec17ef1 ]
+[ Upstream commit d0a186e0d3e7ac05cc77da7c157dae5aa59f95d9 ]
 
-We currently have musb_set_vbus() called from two different paths. Mostly
-it gets called from the USB PHY via omap_musb_set_mailbox(), but in some
-cases it can get also called from musb_stage0_irq() rather via .set_vbus:
+We invoke jbd2_journal_abort() to abort the journal and record errno
+in the jbd2 superblock when committing journal transaction besides the
+failure on submitting the commit record. But there is no need for the
+case and we can also invoke jbd2_journal_abort() instead of
+__jbd2_journal_abort_hard().
 
-(musb_set_host [musb_hdrc])
-(omap2430_musb_set_vbus [omap2430])
-(musb_stage0_irq [musb_hdrc])
-(musb_interrupt [musb_hdrc])
-(omap2430_musb_interrupt [omap2430])
-
-This is racy and will not work with introducing generic helper functions
-for musb_set_host() and musb_set_peripheral(). We want to get rid of the
-busy loops in favor of usleep_range().
-
-Let's just get rid of .set_vbus for omap2430 glue layer and let the PHY
-code handle VBUS with musb_set_vbus(). Note that in the follow-up patch
-we can completely remove omap2430_musb_set_vbus(), but let's do it in a
-separate patch as this change may actually turn out to be needed as a
-fix.
-
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Link: https://lore.kernel.org/r/20200115132547.364-5-b-liu@ti.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 818d276ceb83a ("ext4: Add the journal checksum feature")
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Link: https://lore.kernel.org/r/20191204124614.45424-2-yi.zhang@huawei.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/musb/omap2430.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/jbd2/commit.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/musb/omap2430.c b/drivers/usb/musb/omap2430.c
-index e8be8e39ab8fb..457ad33f4caa8 100644
---- a/drivers/usb/musb/omap2430.c
-+++ b/drivers/usb/musb/omap2430.c
-@@ -388,8 +388,6 @@ static const struct musb_platform_ops omap2430_ops = {
- 	.init		= omap2430_musb_init,
- 	.exit		= omap2430_musb_exit,
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index cb0da3d4adc04..1a4bd8d9636e8 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -783,7 +783,7 @@ start_journal_io:
+ 		err = journal_submit_commit_record(journal, commit_transaction,
+ 						 &cbh, crc32_sum);
+ 		if (err)
+-			__jbd2_journal_abort_hard(journal);
++			jbd2_journal_abort(journal, err);
+ 	}
  
--	.set_vbus	= omap2430_musb_set_vbus,
--
- 	.enable		= omap2430_musb_enable,
- 	.disable	= omap2430_musb_disable,
- 
+ 	blk_finish_plug(&plug);
+@@ -876,7 +876,7 @@ start_journal_io:
+ 		err = journal_submit_commit_record(journal, commit_transaction,
+ 						&cbh, crc32_sum);
+ 		if (err)
+-			__jbd2_journal_abort_hard(journal);
++			jbd2_journal_abort(journal, err);
+ 	}
+ 	if (cbh)
+ 		err = journal_wait_on_commit_record(journal, cbh);
 -- 
 2.20.1
 
