@@ -2,177 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED4CF1718DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:37:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 306561718C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:34:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729269AbgB0Nhd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:37:33 -0500
-Received: from gateway36.websitewelcome.com ([192.185.187.5]:17311 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729124AbgB0Nhc (ORCPT
+        id S1729171AbgB0Nel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:34:41 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:56496 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729056AbgB0Nel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:37:32 -0500
-X-Greylist: delayed 1495 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Feb 2020 08:37:31 EST
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 15F7C404B66F8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:27:27 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7IxujMF3FEfyq7IxujRpxg; Thu, 27 Feb 2020 07:12:34 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=IoLddeJ6IArEsrKKaZSjMF0GRMnGCiOIluL+k8B2lqw=; b=JZZ7gJZbvA02AykOVuISfPfJQM
-        l06e6+aH8UVA/HzXCJaeGUjecnqYdM2spSevb/fIWqg/EE8dJL9fq3uMP9PLn/2gOIELkWusOcvhK
-        PtoihG33LPRqhxYa6ilX4Th9mbUsHKaHaYqJgoqurO0ce5cP/WEihSxL7K7KdLUMLPT/UqFc06sbi
-        xM7Kc2bPNmMZ4KRcD6jlQgFrITmwrhgctBTdIhWwL74rN/bQZoSiXj5s1+Fz9uK0VbjxFFNwJXQ88
-        oU8r6IDdAy48i6ohdHdBAJyd83qIc67HK3gQEB0r+7eYM5lSYjctRUPWK+1GJ4CbOyZ37Xlb+JY+d
-        pHdb/64Q==;
-Received: from [201.162.161.137] (port=56782 helo=[192.168.43.132])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j7Ixt-000tHc-TK; Thu, 27 Feb 2020 07:12:34 -0600
-Subject: Re: [PATCH] stm class: Replace zero-length array with flexible-array
- member
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Cc:     linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20200212235443.GA18334@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <deed275f-49bf-b432-8c91-e00b9969e3b8@embeddedor.com>
-Date:   Thu, 27 Feb 2020 07:15:25 -0600
+        Thu, 27 Feb 2020 08:34:41 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01RDYaqZ074222;
+        Thu, 27 Feb 2020 07:34:36 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582810476;
+        bh=FW5GmNYAapO5oyOkSjoIqeKPvH9KeeTBzFhDoHz5tsg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=E1ExY1mNZQrNXQxf2o2LrStoQEtR2GymftqZEmOSwKkRW0dh12a+zIG5S/FwDpzJF
+         eMZbLU5ZKt3/QB638zs+mee4ro7g+XoINC2HtLWDMoYZCCNTrgGtDYCaTi0dlwcruj
+         wB6PfJqBq6SQaEBnYh2xJnTRVA4qHJGVoWVHXibg=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01RDYaG8062925
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Feb 2020 07:34:36 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 27
+ Feb 2020 07:34:36 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 27 Feb 2020 07:34:36 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01RDYa1Q068024;
+        Thu, 27 Feb 2020 07:34:36 -0600
+Subject: Re: [RESEND PATCH v17 00/17] Multi Color LED Framework
+To:     Pavel Machek <pavel@denx.de>, <dmurphy@ti.com>
+CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200127150032.31350-1-dmurphy@ti.com>
+ <42d9687b-b488-22cf-0e9a-ff635b2094e3@ti.com> <20200225101940.GB16252@amd>
+ <be76fdac-9d32-b9b2-c01d-3aa315b14463@gmail.com>
+ <20200226125903.GA2800@duo.ucw.cz>
+ <20f6bdd5-e899-aead-8c35-1c3a3d09145f@gmail.com>
+ <20200227105808.GA27003@duo.ucw.cz> <20200227124329.GA994747@kroah.com>
+ <4c273c06-5024-b2d4-c656-b165015090be@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <53a0af43-abaf-5936-9e23-3c7e71c3e10a@ti.com>
+Date:   Thu, 27 Feb 2020 07:29:22 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200212235443.GA18334@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <4c273c06-5024-b2d4-c656-b165015090be@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.161.137
-X-Source-L: No
-X-Exim-ID: 1j7Ixt-000tHc-TK
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.132]) [201.162.161.137]:56782
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Removing GKH
 
-Friendly ping: Who can take this?
+On 2/27/20 7:07 AM, Dan Murphy wrote:
+> Pavel
+>
+> On 2/27/20 6:43 AM, Greg KH wrote:
+>> On Thu, Feb 27, 2020 at 11:58:08AM +0100, Pavel Machek wrote:
+>>> Hi, Jacek!
+>>>
+>>> (and thanks for doing this).
+>>>
+>>>> We have here long lasting discussion related to LED multicolor class
+>>>> sysfs interface design. We went through several iterations and worked
+>>>> out the solution with individual file per each color sub-LED in the
+>>>> color directory as shown below:
+>>>>
+>>>> /sys/class/leds/<led>/colors/<color>_intensity
+>>>>
+>>>> This is in line with one-value-per-file sysfs rule, that is being
+>>>> frequently highlighted, and we even had not so long ago a patch
+>>>> for led cpu trigger solving the problem caused by this rule not
+>>>> being adhered to.
+>>> Yep. One of the problems is that it is nice to change all the hardware
+>>> channels at once to produce color (it is often on i2c -- and slow), so
+>>> current proposals use "interesting" kind of latching.
+>>>
+>>>> Now we have the voice below bringing to attention another caveat
+>>>> from sysfs documentation:
+>>>>
+>>>> "it is socially acceptable to express an array of values of the same
+>>>> type"
+>>>>
+>>>> and proposing the interface in the form of two files:
+>>>>
+>>>> channel_intensity (file containing array of u32's)
+>>>> channel_names (usually containing "red green blue")
+>>> And thus I want to have it in one file, so it is naturaly atomic. RGB
+>>> leds with 3 channels are common; I have not user yet, but there are
+>>> RGBW with 4 channels (and some more exotic stuff). I don't expect to
+>>> have more than 5 channels.
+>
+> This is not an accurate statement.  Right now a user can have up to 8 
+> channels to cover all the LEDs defined in the LED core
+>
+> And if the led_colors array expands then this array can expand.
+>
+> We have no control on how many entries the user will put in their DT 
+> so again this number is completely arbitrary.
+>
+> Dan
+>
+The more I think about my above statement it is actually worse to do the 
+arrays.  What checks will we have to implement that the DT won't define 
+an array like this
 
-Thanks
---
-Gustavo
+[red green blue white red green white IR blue yellow]
 
-On 2/12/20 17:54, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/hwtracing/stm/policy.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwtracing/stm/policy.c b/drivers/hwtracing/stm/policy.c
-> index 4f932a419752..603b4a9969d3 100644
-> --- a/drivers/hwtracing/stm/policy.c
-> +++ b/drivers/hwtracing/stm/policy.c
-> @@ -34,7 +34,7 @@ struct stp_policy_node {
->  	unsigned int		first_channel;
->  	unsigned int		last_channel;
->  	/* this is the one that's exposed to the attributes */
-> -	unsigned char		priv[0];
-> +	unsigned char		priv[];
->  };
->  
->  void *stp_policy_node_priv(struct stp_policy_node *pn)
-> 
+This array is unbounded at this point.  The sysfs framework will not 
+allow creating files under the directory with the same name so we can 
+bound this to 1 LED color to a file and there will be no duplicates.
+
+Sure we can NACK DT's that do create unbounded color arrays but that 
+means we would have to review every DT file that would add a LED node.
+
+What is expected and what is exposed as capability are two different things.
+
+We don't expect developers to have more then 5 channels but if given the 
+capabilities of doing it eventually it will be done and the framework 
+will break.
+
+Dan
+
