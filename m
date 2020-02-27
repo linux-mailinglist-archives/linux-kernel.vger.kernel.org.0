@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B7BB171B83
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:03:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0682171E6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:27:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733255AbgB0ODE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:03:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38038 "EHLO mail.kernel.org"
+        id S1733236AbgB0OIc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:08:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733243AbgB0ODB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:03:01 -0500
+        id S2388249AbgB0OI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:08:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A6CB20801;
-        Thu, 27 Feb 2020 14:02:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A32821D7E;
+        Thu, 27 Feb 2020 14:08:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812180;
-        bh=3YCO4uAhKW5WB1BmMc7ir2iC2XygsWoz0wg8AB9GHNc=;
+        s=default; t=1582812507;
+        bh=dG1J/I8WKVAUK14Lul6+PWveA9+GuP9eZlvwnpNFn9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i5c5SbcZk3zwXw1eD34J3zNzzMmcJ0TdKVMTcq6Ew1jtXDv38fxS3lUifvD/HpxGw
-         dJPc3W6vRWyvxQBXyJl4KkBuIytZbqmxug4bj6iguTGRm/vVdrgYl9MYlKF0Q8/bU9
-         m7VffAsP9cIKyUbaiqD0W8tNqgq3agGFoKra424E=
+        b=RYFeipOa7loet1hNKl21Aucqw8LMSZ/UBIQ1VfxnvRLGKI4lZjrOGhIjOy1eJb+bg
+         GDmNVQnwzmZ/ydMbYmsamFsi+Ai+PaO5x9qXMuGmMOMPNycAd8V0MH5Hm+9Lfe1sQw
+         NDnOB93/qZExvm8Cx8659CLH2dOODHNrkpn9mMXw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>
-Subject: [PATCH 4.19 16/97] vt: vt_ioctl: fix race in VT_RESIZEX
+        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.4 044/135] powerpc/eeh: Fix deadlock handling dead PHB
 Date:   Thu, 27 Feb 2020 14:36:24 +0100
-Message-Id: <20200227132217.272192215@linuxfoundation.org>
+Message-Id: <20200227132235.604446318@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,102 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-commit 6cd1ed50efd88261298577cd92a14f2768eddeeb upstream.
+commit d4f194ed9eb9841a8f978710e4d24296f791a85b upstream.
 
-We need to make sure vc_cons[i].d is not NULL after grabbing
-console_lock(), or risk a crash.
+Recovering a dead PHB can currently cause a deadlock as the PCI
+rescan/remove lock is taken twice.
 
-general protection fault, probably for non-canonical address 0xdffffc0000000068: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000340-0x0000000000000347]
-CPU: 1 PID: 19462 Comm: syz-executor.5 Not tainted 5.5.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:vt_ioctl+0x1f96/0x26d0 drivers/tty/vt/vt_ioctl.c:883
-Code: 74 41 e8 bd a6 84 fd 48 89 d8 48 c1 e8 03 42 80 3c 28 00 0f 85 e4 04 00 00 48 8b 03 48 8d b8 40 03 00 00 48 89 fa 48 c1 ea 03 <42> 0f b6 14 2a 84 d2 74 09 80 fa 03 0f 8e b1 05 00 00 44 89 b8 40
-RSP: 0018:ffffc900086d7bb0 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffffffff8c34ee88 RCX: ffffc9001415c000
-RDX: 0000000000000068 RSI: ffffffff83f0e6e3 RDI: 0000000000000340
-RBP: ffffc900086d7cd0 R08: ffff888054ce0100 R09: fffffbfff16a2f6d
-R10: ffff888054ce0998 R11: ffff888054ce0100 R12: 000000000000001d
-R13: dffffc0000000000 R14: 1ffff920010daf79 R15: 000000000000ff7f
-FS:  00007f7d13c12700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd477e3c38 CR3: 0000000095d0a000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- tty_ioctl+0xa37/0x14f0 drivers/tty/tty_io.c:2660
- vfs_ioctl fs/ioctl.c:47 [inline]
- ksys_ioctl+0x123/0x180 fs/ioctl.c:763
- __do_sys_ioctl fs/ioctl.c:772 [inline]
- __se_sys_ioctl fs/ioctl.c:770 [inline]
- __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:770
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45b399
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f7d13c11c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f7d13c126d4 RCX: 000000000045b399
-RDX: 0000000020000080 RSI: 000000000000560a RDI: 0000000000000003
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000666 R14: 00000000004c7f04 R15: 000000000075bf2c
-Modules linked in:
----[ end trace 80970faf7a67eb77 ]---
-RIP: 0010:vt_ioctl+0x1f96/0x26d0 drivers/tty/vt/vt_ioctl.c:883
-Code: 74 41 e8 bd a6 84 fd 48 89 d8 48 c1 e8 03 42 80 3c 28 00 0f 85 e4 04 00 00 48 8b 03 48 8d b8 40 03 00 00 48 89 fa 48 c1 ea 03 <42> 0f b6 14 2a 84 d2 74 09 80 fa 03 0f 8e b1 05 00 00 44 89 b8 40
-RSP: 0018:ffffc900086d7bb0 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffffffff8c34ee88 RCX: ffffc9001415c000
-RDX: 0000000000000068 RSI: ffffffff83f0e6e3 RDI: 0000000000000340
-RBP: ffffc900086d7cd0 R08: ffff888054ce0100 R09: fffffbfff16a2f6d
-R10: ffff888054ce0998 R11: ffff888054ce0100 R12: 000000000000001d
-R13: dffffc0000000000 R14: 1ffff920010daf79 R15: 000000000000ff7f
-FS:  00007f7d13c12700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd477e3c38 CR3: 0000000095d0a000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+This is caused as part of an existing bug in
+eeh_handle_special_event(). The pe is processed while traversing the
+PHBs even though the pe is unrelated to the loop. This causes the pe
+to be, incorrectly, processed more than once.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: stable <stable@vger.kernel.org>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Link: https://lore.kernel.org/r/20200210190721.200418-1-edumazet@google.com
+Untangling this section can move the pe processing out of the loop and
+also outside the locked section, correcting both problems.
+
+Fixes: 2e25505147b8 ("powerpc/eeh: Fix crash when edev->pdev changes")
+Cc: stable@vger.kernel.org # 5.4+
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Reviewed-by: Frederic Barrat <fbarrat@linux.ibm.com>
+Tested-by: Frederic Barrat <fbarrat@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/0547e82dbf90ee0729a2979a8cac5c91665c621f.1581051445.git.sbobroff@linux.ibm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt_ioctl.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ arch/powerpc/kernel/eeh_driver.c |   21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -876,15 +876,20 @@ int vt_ioctl(struct tty_struct *tty,
- 			return -EINVAL;
- 
- 		for (i = 0; i < MAX_NR_CONSOLES; i++) {
-+			struct vc_data *vcp;
+--- a/arch/powerpc/kernel/eeh_driver.c
++++ b/arch/powerpc/kernel/eeh_driver.c
+@@ -1200,6 +1200,17 @@ void eeh_handle_special_event(void)
+ 			eeh_pe_state_mark(pe, EEH_PE_RECOVERING);
+ 			eeh_handle_normal_event(pe);
+ 		} else {
++			eeh_for_each_pe(pe, tmp_pe)
++				eeh_pe_for_each_dev(tmp_pe, edev, tmp_edev)
++					edev->mode &= ~EEH_DEV_NO_HANDLER;
 +
- 			if (!vc_cons[i].d)
- 				continue;
- 			console_lock();
--			if (v.v_vlin)
--				vc_cons[i].d->vc_scan_lines = v.v_vlin;
--			if (v.v_clin)
--				vc_cons[i].d->vc_font.height = v.v_clin;
--			vc_cons[i].d->vc_resize_user = 1;
--			vc_resize(vc_cons[i].d, v.v_cols, v.v_rows);
-+			vcp = vc_cons[i].d;
-+			if (vcp) {
-+				if (v.v_vlin)
-+					vcp->vc_scan_lines = v.v_vlin;
-+				if (v.v_clin)
-+					vcp->vc_font.height = v.v_clin;
-+				vcp->vc_resize_user = 1;
-+				vc_resize(vcp, v.v_cols, v.v_rows);
-+			}
- 			console_unlock();
- 		}
- 		break;
++			/* Notify all devices to be down */
++			eeh_pe_state_clear(pe, EEH_PE_PRI_BUS, true);
++			eeh_set_channel_state(pe, pci_channel_io_perm_failure);
++			eeh_pe_report(
++				"error_detected(permanent failure)", pe,
++				eeh_report_failure, NULL);
++
+ 			pci_lock_rescan_remove();
+ 			list_for_each_entry(hose, &hose_list, list_node) {
+ 				phb_pe = eeh_phb_pe_get(hose);
+@@ -1208,16 +1219,6 @@ void eeh_handle_special_event(void)
+ 				    (phb_pe->state & EEH_PE_RECOVERING))
+ 					continue;
+ 
+-				eeh_for_each_pe(pe, tmp_pe)
+-					eeh_pe_for_each_dev(tmp_pe, edev, tmp_edev)
+-						edev->mode &= ~EEH_DEV_NO_HANDLER;
+-
+-				/* Notify all devices to be down */
+-				eeh_pe_state_clear(pe, EEH_PE_PRI_BUS, true);
+-				eeh_set_channel_state(pe, pci_channel_io_perm_failure);
+-				eeh_pe_report(
+-					"error_detected(permanent failure)", pe,
+-					eeh_report_failure, NULL);
+ 				bus = eeh_pe_bus_get(phb_pe);
+ 				if (!bus) {
+ 					pr_err("%s: Cannot find PCI bus for "
 
 
