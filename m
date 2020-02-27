@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E41A171E47
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:26:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C73B6171BB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:05:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388181AbgB0O0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:26:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47970 "EHLO mail.kernel.org"
+        id S1733279AbgB0OEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:04:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388426AbgB0OJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:09:54 -0500
+        id S2387608AbgB0OEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:04:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E307D20578;
-        Thu, 27 Feb 2020 14:09:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02D6224656;
+        Thu, 27 Feb 2020 14:04:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812593;
-        bh=OplUeZx0IXYjIbcexHEFD7xTQr5eyEdeBJJSWhU1C1k=;
+        s=default; t=1582812273;
+        bh=rOI0t9RzGir2DjflE4Nm04I1/feyMEd+TxAH4NnWaNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TjsDwMOAB4p0XSSLmAlCcWd2PcALDjhPkL3pd1q8eRFzyRfWoNzvl/zcYOgOrxoQM
-         NKUlNy9umhbQksTz7qnBVNNKcQDSulQPDURF/F7KBqQu1zFeU/bDUm/fKBhTavMFbA
-         0oDASzS+hfmBJu5246xtXevY49t1F7lSQoHFuEjg=
+        b=tICRW15WVEXcRv5qwgLXoTd+CAwPBRW/ogvg7uw8ArwzOEQ3lZ7zxEU7DHRQoWWz8
+         3lJAJ2LJB+re2Syhr22fLni2FzyURf7XhvxhlKw0IEfMR0hEu2BvjnldoXVZ9T6KSv
+         wwyoY/92cnrFfpXsmOezn8+Gcn6i6WfPPwAJsS8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miaohe Lin <linmiaohe@huawei.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.4 078/135] KVM: x86: dont notify userspace IOAPIC on edge-triggered interrupt EOI
+        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.19 50/97] drm/amdgpu/soc15: fix xclk for raven
 Date:   Thu, 27 Feb 2020 14:36:58 +0100
-Message-Id: <20200227132241.142358474@linuxfoundation.org>
+Message-Id: <20200227132222.796136919@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 7455a8327674e1a7c9a1f5dd1b0743ab6713f6d1 upstream.
+commit c657b936ea98630ef5ba4f130ab1ad5c534d0165 upstream.
 
-Commit 13db77347db1 ("KVM: x86: don't notify userspace IOAPIC on edge
-EOI") said, edge-triggered interrupts don't set a bit in TMR, which means
-that IOAPIC isn't notified on EOI. And var level indicates level-triggered
-interrupt.
-But commit 3159d36ad799 ("KVM: x86: use generic function for MSI parsing")
-replace var level with irq.level by mistake. Fix it by changing irq.level
-to irq.trig_mode.
+It's 25 Mhz (refclk / 4).  This fixes the interpretation
+of the rlc clock counter.
 
+Acked-by: Evan Quan <evan.quan@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
-Fixes: 3159d36ad799 ("KVM: x86: use generic function for MSI parsing")
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/irq_comm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/soc15.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kvm/irq_comm.c
-+++ b/arch/x86/kvm/irq_comm.c
-@@ -416,7 +416,7 @@ void kvm_scan_ioapic_routes(struct kvm_v
+--- a/drivers/gpu/drm/amd/amdgpu/soc15.c
++++ b/drivers/gpu/drm/amd/amdgpu/soc15.c
+@@ -205,7 +205,12 @@ static u32 soc15_get_config_memsize(stru
  
- 			kvm_set_msi_irq(vcpu->kvm, entry, &irq);
+ static u32 soc15_get_xclk(struct amdgpu_device *adev)
+ {
+-	return adev->clock.spll.reference_freq;
++	u32 reference_clock = adev->clock.spll.reference_freq;
++
++	if (adev->asic_type == CHIP_RAVEN)
++		return reference_clock / 4;
++
++	return reference_clock;
+ }
  
--			if (irq.level && kvm_apic_match_dest(vcpu, NULL, 0,
-+			if (irq.trig_mode && kvm_apic_match_dest(vcpu, NULL, 0,
- 						irq.dest_id, irq.dest_mode))
- 				__set_bit(irq.vector, ioapic_handled_vectors);
- 		}
+ 
 
 
