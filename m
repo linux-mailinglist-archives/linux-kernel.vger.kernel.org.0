@@ -2,116 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5868172C27
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 00:17:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C57172C0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 00:12:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbgB0XRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 18:17:06 -0500
-Received: from 17.mo5.mail-out.ovh.net ([46.105.56.132]:46086 "EHLO
-        17.mo5.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729656AbgB0XRG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 18:17:06 -0500
-Received: from player789.ha.ovh.net (unknown [10.110.115.188])
-        by mo5.mail-out.ovh.net (Postfix) with ESMTP id A72E9270979
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 22:59:06 +0100 (CET)
-Received: from sk2.org (37-164-65-132.coucou-networks.fr [37.164.65.132])
-        (Authenticated sender: steve@sk2.org)
-        by player789.ha.ovh.net (Postfix) with ESMTPSA id CCCB8FE2C9FC;
-        Thu, 27 Feb 2020 21:58:59 +0000 (UTC)
-Date:   Thu, 27 Feb 2020 22:58:57 +0100
-From:   Stephen Kitt <steve@sk2.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] docs: add a script to check sysctl docs
-Message-ID: <20200227225857.2339e365@heffalump.sk2.org>
-In-Reply-To: <20200225033710.312450f6@lwn.net>
-References: <20200219153442.10205-1-steve@sk2.org>
-        <20200225033710.312450f6@lwn.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729930AbgB0XMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 18:12:49 -0500
+Received: from mga07.intel.com ([134.134.136.100]:26298 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729656AbgB0XMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 18:12:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 15:12:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,493,1574150400"; 
+   d="scan'208";a="317948278"
+Received: from yyu32-desk.sc.intel.com ([143.183.136.146])
+  by orsmga001.jf.intel.com with ESMTP; 27 Feb 2020 15:12:47 -0800
+Message-ID: <77f3841a92df5d0c819699ee3612118d566b7445.camel@intel.com>
+Subject: Re: [PATCH v2 8/8] x86/fpu/xstate: Restore supervisor xstates for
+ __fpu__restore_sig()
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Thu, 27 Feb 2020 14:52:12 -0800
+In-Reply-To: <20200221175859.GL25747@zn.tnic>
+References: <20200121201843.12047-1-yu-cheng.yu@intel.com>
+         <20200121201843.12047-9-yu-cheng.yu@intel.com>
+         <20200221175859.GL25747@zn.tnic>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/iabzgcEpPE08BniDcQO5cOd"; protocol="application/pgp-signature"
-X-Ovh-Tracer-Id: 4299248798125149573
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrleeigdduheegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfgjfhfogggtsehgtderreertdejnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucfkpheptddrtddrtddrtddpfeejrdduieegrdeihedrudefvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejkeelrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/iabzgcEpPE08BniDcQO5cOd
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Fri, 2020-02-21 at 18:58 +0100, Borislav Petkov wrote:
+> On Tue, Jan 21, 2020 at 12:18:43PM -0800, Yu-cheng Yu wrote:
+> > [...]
+> >  arch/x86/kernel/fpu/signal.c | 26 +++++++++++++++++++++-----
+> >  1 file changed, 21 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+> > index e3781a4a52a8..0d3e06a772b0 100644
+> > --- a/arch/x86/kernel/fpu/signal.c
+> > +++ b/arch/x86/kernel/fpu/signal.c
+> > @@ -327,14 +327,22 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+> >  	}
+> >  
+> >  	/*
+> > -	 * The current state of the FPU registers does not matter. By setting
+> > -	 * TIF_NEED_FPU_LOAD unconditionally it is ensured that the our xstate
+> > -	 * is not modified on context switch and that the xstate is considered
+> > +	 * Supervisor xstates are not modified by user space input, and
+> > +	 * need to be saved and restored.  Save the whole because doing
+> > +	 * partial XSAVES changes xcomp_bv.
+> > +	 * By setting TIF_NEED_FPU_LOAD it is ensured that our xstate is
+> > +	 * not modified on context switch and that the xstate is considered
+> 
+> Reflow those comments to 80 cols. There's room to the right.
+> 
+> >  	 * to be loaded again on return to userland (overriding last_cpu avoids
+> >  	 * the optimisation).
+> >  	 */
+> > -	set_thread_flag(TIF_NEED_FPU_LOAD);
+> > +	fpregs_lock();
+> > +	if (!test_thread_flag(TIF_NEED_FPU_LOAD)) {
+> > +		if (xfeatures_mask_supervisor())
+> > +			copy_xregs_to_kernel(&fpu->state.xsave);
+> > +		set_thread_flag(TIF_NEED_FPU_LOAD);
+> 
+> So the code sets TIF_NEED_FPU_LOAD unconditionally, why are you changing
+> this?
+> 
+> Why don't you simply do:
+> 
+> 		set_thread_flag(TIF_NEED_FPU_LOAD);
+> 		fpregs_lock();
+> 		if (xfeatures_mask_supervisor())
+> 			copy_xregs_to_kernel(&fpu->state.xsave);
+> 		fpregs_unlock();
 
-On Tue, 25 Feb 2020 03:37:10 -0700, Jonathan Corbet <corbet@lwn.net> wrote:
+If TIF_NEED_FPU_LOAD is set, then xstates are already in the xsave buffer. 
+We can skip saving them again.
 
-> On Wed, 19 Feb 2020 16:34:42 +0100
-> Stephen Kitt <steve@sk2.org> wrote:
->=20
-> > This script allows sysctl documentation to be checked against the
-> > kernel source code, to identify missing or obsolete entries. Running
-> > it against 5.5 shows for example that sysctl/kernel.rst has two
-> > obsolete entries and is missing 52 entries.
-> >=20
-> > Signed-off-by: Stephen Kitt <steve@sk2.org>
-> > ---
-> > Changes since v2:
-> > * drop UTF-8 characters
-> > * fix license identifier
-> > * fix example invocation to include path as well as table
-> >=20
-> > v2 was the initial submission (in v2 of the sysctl/kernel.rst patch
-> > set). =20
->=20
-> This seems like a useful thing to have, so I've applied it.  It would be
-> rather more useful, though, with a bit of ... wait for it ...
-> documentation.  Even just an example command line in the header comments
-> would be a good place to start.  Care to send a followup? :)
+Yu-cheng
 
-The committed script has this:
-
-+# Example invocation:
-+#	scripts/check-sysctl-docs -vtable=3D"kernel" \
-+#		Documentation/admin-guide/sysctl/kernel.rst \
-+#		$(git grep -l register_sysctl_)
-+#
-+# Specify -vdebug=3D1 to see debugging information
-
-but I agree that it needs more documentation ;-). In particular, I need to
-explain what the script expects in terms of document layout...
-
-Where would be the best place? In admin-guide/sysctl/index.rst, as a =E2=80=
-=9Chow to
-maintain these files=E2=80=9D section, or in a separate document, or in the=
- script
-headers?
-
-Regards,
-
-Stephen
-
---Sig_/iabzgcEpPE08BniDcQO5cOd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl5YO6EACgkQgNMC9Yht
-g5zFMw//T2PrZ+7J7+bTixO0z9YWeVi3Gnw7mAmtku0aQIZBGmuwnEn6xmF5E2fQ
-AGNXCyi04TgHQ7LqjYEcO2v6PM3pLXC5iaJnMOQ1xcls2lPd+BQtHcs/bP6lMwuC
-GX745J5Bi7R9iLqbEmU/UMYc7wUW6ZqZpfqWXxUpyOuTlQ7sw98cbi3ud/NqhH/t
-UsAQ8sVg7wfuksXMRZgU0RKHyJTHJ53Snvj3N79FRZbwqHyyFnfGNTtLC+/IdsNs
-zl+qOVZ7bDq53PSuTC+Rlht491ZhFhA1t2s7R3iE1bPhSJX2d8xoXZNhM8BYART2
-su4Ur7GVGxInKoSHi9gttD63fqBWZH/TOZLsUnsBvV3BAXSv6HNXxJeuqTmRZl5I
-a6N6ozk6jjGh1dP/v863rG0n7J4Q6ggpkiSf0zFh2ertHvQBOlJNGnOmB9qiMxNx
-sktNIMerSh49dojPnXng4Tm0t6pO3dQp+YNNXd71wzr2Vt9vpU16RN7aTXI2/z8J
-nOL4q61dXkMHc3K9lU7TjeNyczICHkwbdjsarOPZHDDdXtaf2l+KApSnhtDzGLMh
-j4N0LvakNJybShCiLciQfhNjGs0CGWkljUyfQs7IS94pnZW8SCUVrby9RG0aMbdD
-2SzIAvZhkSAdHMz1lYxZ0a4IOYZshqeGxpec7qjY+JBsYdDuknw=
-=ebj0
------END PGP SIGNATURE-----
-
---Sig_/iabzgcEpPE08BniDcQO5cOd--
