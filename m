@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A70D8171E1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:25:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A061171D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:17:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388660AbgB0OLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:11:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49398 "EHLO mail.kernel.org"
+        id S2389027AbgB0ORJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:17:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388620AbgB0OLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:11:05 -0500
+        id S2389648AbgB0ORH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:17:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D20C6246A9;
-        Thu, 27 Feb 2020 14:11:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 236D220801;
+        Thu, 27 Feb 2020 14:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812664;
-        bh=x0dEELmNZAG8RaLNGfeiqpBGNqG0RcdRf9EJzV0JgyI=;
+        s=default; t=1582813026;
+        bh=yGOqHW49aaIvOwdpSFdv6CE12GjUys7mWEUjce85NcQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Va+4TQ+ecCME0HWSBV9Xi5NDkOic2GflZxXW+RSBHE5n7XxzctCzlVxZbgCJimXy6
-         +5nvzUZdYBO+sbTQL4PhKzjxuof6bWWnobD/D6jHl4Bwyo7zwUq0k6LaIIbqOl/Q8x
-         H0J1A+/M9RonP4Uy/2PsI87r2W0Bg0xlp6RiVgfc=
+        b=IyxKLb9c6XLbZSf1ZYtZ3T+R+uLYalpfl2Th75TgDrXkaIjjROUvfv37S+TamGW/C
+         +119nFs0JLiD7ywhhr/02MMcEl8ltNm0X/UMxz/oSpzJpmBk+DOu5vFWEAmDyvOeaQ
+         tnHztcFjUFGXbaMbcM6pdiPD+gTLdk/iQIqzL3as=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gavin Shan <gshan@redhat.com>,
-        Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.4 066/135] mm/vmscan.c: dont round up scan size for online memory cgroup
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 5.5 069/150] MAINTAINERS: Update drm/i915 bug filing URL
 Date:   Thu, 27 Feb 2020 14:36:46 +0100
-Message-Id: <20200227132239.142582271@linuxfoundation.org>
+Message-Id: <20200227132243.142173018@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,86 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gavin Shan <gshan@redhat.com>
+From: Jani Nikula <jani.nikula@intel.com>
 
-commit 76073c646f5f4999d763f471df9e38a5a912d70d upstream.
+commit 96228b7df33f8eb9006f8ae96949400aed9bd303 upstream.
 
-Commit 68600f623d69 ("mm: don't miss the last page because of round-off
-error") makes the scan size round up to @denominator regardless of the
-memory cgroup's state, online or offline.  This affects the overall
-reclaiming behavior: the corresponding LRU list is eligible for
-reclaiming only when its size logically right shifted by @sc->priority
-is bigger than zero in the former formula.
+We've moved from bugzilla to gitlab.
 
-For example, the inactive anonymous LRU list should have at least 0x4000
-pages to be eligible for reclaiming when we have 60/12 for
-swappiness/priority and without taking scan/rotation ratio into account.
-
-After the roundup is applied, the inactive anonymous LRU list becomes
-eligible for reclaiming when its size is bigger than or equal to 0x1000
-in the same condition.
-
-    (0x4000 >> 12) * 60 / (60 + 140 + 1) = 1
-    ((0x1000 >> 12) * 60) + 200) / (60 + 140 + 1) = 1
-
-aarch64 has 512MB huge page size when the base page size is 64KB.  The
-memory cgroup that has a huge page is always eligible for reclaiming in
-that case.
-
-The reclaiming is likely to stop after the huge page is reclaimed,
-meaing the further iteration on @sc->priority and the silbing and child
-memory cgroups will be skipped.  The overall behaviour has been changed.
-This fixes the issue by applying the roundup to offlined memory cgroups
-only, to give more preference to reclaim memory from offlined memory
-cgroup.  It sounds reasonable as those memory is unlikedly to be used by
-anyone.
-
-The issue was found by starting up 8 VMs on a Ampere Mustang machine,
-which has 8 CPUs and 16 GB memory.  Each VM is given with 2 vCPUs and
-2GB memory.  It took 264 seconds for all VMs to be completely up and
-784MB swap is consumed after that.  With this patch applied, it took 236
-seconds and 60MB swap to do same thing.  So there is 10% performance
-improvement for my case.  Note that KSM is disable while THP is enabled
-in the testing.
-
-         total     used    free   shared  buff/cache   available
-   Mem:  16196    10065    2049       16        4081        3749
-   Swap:  8175      784    7391
-         total     used    free   shared  buff/cache   available
-   Mem:  16196    11324    3656       24        1215        2936
-   Swap:  8175       60    8115
-
-Link: http://lkml.kernel.org/r/20200211024514.8730-1-gshan@redhat.com
-Fixes: 68600f623d69 ("mm: don't miss the last page because of round-off error")
-Signed-off-by: Gavin Shan <gshan@redhat.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Cc: <stable@vger.kernel.org>	[4.20+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20200212160434.6437-1-jani.nikula@intel.com
+(cherry picked from commit 3a6a4f0810c8ade6f1ff63c34aa9834176b9d88b)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmscan.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ MAINTAINERS |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2530,10 +2530,13 @@ out:
- 			/*
- 			 * Scan types proportional to swappiness and
- 			 * their relative recent reclaim efficiency.
--			 * Make sure we don't miss the last page
--			 * because of a round-off error.
-+			 * Make sure we don't miss the last page on
-+			 * the offlined memory cgroups because of a
-+			 * round-off error.
- 			 */
--			scan = DIV64_U64_ROUND_UP(scan * fraction[file],
-+			scan = mem_cgroup_online(memcg) ?
-+			       div64_u64(scan * fraction[file], denominator) :
-+			       DIV64_U64_ROUND_UP(scan * fraction[file],
- 						  denominator);
- 			break;
- 		case SCAN_FILE:
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8302,7 +8302,7 @@ M:	Joonas Lahtinen <joonas.lahtinen@linu
+ M:	Rodrigo Vivi <rodrigo.vivi@intel.com>
+ L:	intel-gfx@lists.freedesktop.org
+ W:	https://01.org/linuxgraphics/
+-B:	https://01.org/linuxgraphics/documentation/how-report-bugs
++B:	https://gitlab.freedesktop.org/drm/intel/-/wikis/How-to-file-i915-bugs
+ C:	irc://chat.freenode.net/intel-gfx
+ Q:	http://patchwork.freedesktop.org/project/intel-gfx/
+ T:	git git://anongit.freedesktop.org/drm-intel
 
 
