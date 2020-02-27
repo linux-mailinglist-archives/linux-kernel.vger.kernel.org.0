@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFDAA171BC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:05:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF24B171B67
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387810AbgB0OFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:05:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42436 "EHLO mail.kernel.org"
+        id S1733072AbgB0OCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:02:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387798AbgB0OFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:05:40 -0500
+        id S1732656AbgB0OCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:02:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B02720578;
-        Thu, 27 Feb 2020 14:05:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B708320801;
+        Thu, 27 Feb 2020 14:02:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812339;
-        bh=qpo+XMyyKLIxMT/BdGw0TqsKggEost62VlexUf7Rc0o=;
+        s=default; t=1582812128;
+        bh=Zqa2Lb07ENrV+14mEoLnG9RRpmguim7blZ99C4OTWqM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=is+E26KGS639ffM51QOXe238W/R7++lwi2G2r7zdsc9YLUM12LW3oANjBhF1RwEcR
-         xWI8ammLYjGx9a9yigkpaFrWu315Qgu4sGtTYqbqfE5pdd+oxbWaeL6zHaghhIxX+x
-         SgsSrIO2EeYifMuWH+zuXijxUTLBWeOGX0USET38=
+        b=H8XhkzNECVGaH0zJCuM+ePjwz/TsCb7ad6CwcVHpYh99rCTxyc1PIkEcPzzqS/v+9
+         kiw9qYdLXr/ARMQKSr2epLHqs8Tnv8M8cUZb2CaB3lx19tTEYFYUDviDT/SRMvHAAj
+         3EKqV9+uSp+awkR5APwpdTix4pLZosgMLDsLfY7E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 78/97] Btrfs: fix btrfs_wait_ordered_range() so that it waits for all ordered extents
+        stable@vger.kernel.org,
+        syzbot+65c6c92d04304d0a8efc@syzkaller.appspotmail.com,
+        syzbot+e60ddfa48717579799dd@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 232/237] ALSA: seq: Avoid concurrent access to queue flags
 Date:   Thu, 27 Feb 2020 14:37:26 +0100
-Message-Id: <20200227132227.200104132@linuxfoundation.org>
+Message-Id: <20200227132313.159526563@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +45,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit e75fd33b3f744f644061a4f9662bd63f5434f806 upstream.
+commit bb51e669fa49feb5904f452b2991b240ef31bc97 upstream.
 
-In btrfs_wait_ordered_range() once we find an ordered extent that has
-finished with an error we exit the loop and don't wait for any other
-ordered extents that might be still in progress.
+The queue flags are represented in bit fields and the concurrent
+access may result in unexpected results.  Although the current code
+should be mostly OK as it's only reading a field while writing other
+fields as KCSAN reported, it's safer to cover both with a proper
+spinlock protection.
 
-All the users of btrfs_wait_ordered_range() expect that there are no more
-ordered extents in progress after that function returns. So past fixes
-such like the ones from the two following commits:
+This patch fixes the possible concurrent read by protecting with
+q->owner_lock.  Also the queue owner field is protected as well since
+it's the field to be protected by the lock itself.
 
-  ff612ba7849964 ("btrfs: fix panic during relocation after ENOSPC before
-                   writeback happens")
-
-  28aeeac1dd3080 ("Btrfs: fix panic when starting bg cache writeout after
-                   IO error")
-
-don't work when there are multiple ordered extents in the range.
-
-Fix that by making btrfs_wait_ordered_range() wait for all ordered extents
-even after it finds one that had an error.
-
-Link: https://github.com/kdave/btrfs-progs/issues/228#issuecomment-569777554
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Reported-by: syzbot+65c6c92d04304d0a8efc@syzkaller.appspotmail.com
+Reported-by: syzbot+e60ddfa48717579799dd@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/20200214111316.26939-2-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ordered-data.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ sound/core/seq/seq_queue.c |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
---- a/fs/btrfs/ordered-data.c
-+++ b/fs/btrfs/ordered-data.c
-@@ -712,10 +712,15 @@ int btrfs_wait_ordered_range(struct inod
- 		}
- 		btrfs_start_ordered_extent(inode, ordered, 1);
- 		end = ordered->file_offset;
-+		/*
-+		 * If the ordered extent had an error save the error but don't
-+		 * exit without waiting first for all other ordered extents in
-+		 * the range to complete.
-+		 */
- 		if (test_bit(BTRFS_ORDERED_IOERR, &ordered->flags))
- 			ret = -EIO;
- 		btrfs_put_ordered_extent(ordered);
--		if (ret || end == 0 || end == start)
-+		if (end == 0 || end == start)
- 			break;
- 		end--;
+--- a/sound/core/seq/seq_queue.c
++++ b/sound/core/seq/seq_queue.c
+@@ -415,6 +415,7 @@ int snd_seq_queue_check_access(int queue
+ int snd_seq_queue_set_owner(int queueid, int client, int locked)
+ {
+ 	struct snd_seq_queue *q = queueptr(queueid);
++	unsigned long flags;
+ 
+ 	if (q == NULL)
+ 		return -EINVAL;
+@@ -424,8 +425,10 @@ int snd_seq_queue_set_owner(int queueid,
+ 		return -EPERM;
  	}
+ 
++	spin_lock_irqsave(&q->owner_lock, flags);
+ 	q->locked = locked ? 1 : 0;
+ 	q->owner = client;
++	spin_unlock_irqrestore(&q->owner_lock, flags);
+ 	queue_access_unlock(q);
+ 	queuefree(q);
+ 
+@@ -564,15 +567,17 @@ void snd_seq_queue_client_termination(in
+ 	unsigned long flags;
+ 	int i;
+ 	struct snd_seq_queue *q;
++	bool matched;
+ 
+ 	for (i = 0; i < SNDRV_SEQ_MAX_QUEUES; i++) {
+ 		if ((q = queueptr(i)) == NULL)
+ 			continue;
+ 		spin_lock_irqsave(&q->owner_lock, flags);
+-		if (q->owner == client)
++		matched = (q->owner == client);
++		if (matched)
+ 			q->klocked = 1;
+ 		spin_unlock_irqrestore(&q->owner_lock, flags);
+-		if (q->owner == client) {
++		if (matched) {
+ 			if (q->timer->running)
+ 				snd_seq_timer_stop(q->timer);
+ 			snd_seq_timer_reset(q->timer);
+@@ -764,6 +769,8 @@ void snd_seq_info_queues_read(struct snd
+ 	int i, bpm;
+ 	struct snd_seq_queue *q;
+ 	struct snd_seq_timer *tmr;
++	bool locked;
++	int owner;
+ 
+ 	for (i = 0; i < SNDRV_SEQ_MAX_QUEUES; i++) {
+ 		if ((q = queueptr(i)) == NULL)
+@@ -775,9 +782,14 @@ void snd_seq_info_queues_read(struct snd
+ 		else
+ 			bpm = 0;
+ 
++		spin_lock_irq(&q->owner_lock);
++		locked = q->locked;
++		owner = q->owner;
++		spin_unlock_irq(&q->owner_lock);
++
+ 		snd_iprintf(buffer, "queue %d: [%s]\n", q->queue, q->name);
+-		snd_iprintf(buffer, "owned by client    : %d\n", q->owner);
+-		snd_iprintf(buffer, "lock status        : %s\n", q->locked ? "Locked" : "Free");
++		snd_iprintf(buffer, "owned by client    : %d\n", owner);
++		snd_iprintf(buffer, "lock status        : %s\n", locked ? "Locked" : "Free");
+ 		snd_iprintf(buffer, "queued time events : %d\n", snd_seq_prioq_avail(q->timeq));
+ 		snd_iprintf(buffer, "queued tick events : %d\n", snd_seq_prioq_avail(q->tickq));
+ 		snd_iprintf(buffer, "timer state        : %s\n", tmr->running ? "Running" : "Stopped");
 
 
