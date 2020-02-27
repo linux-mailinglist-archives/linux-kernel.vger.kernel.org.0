@@ -2,135 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9143172741
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA8C6172779
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730987AbgB0SWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:22:48 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:59078 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730908AbgB0SWo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:22:44 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200227182243euoutp0226c9082fb641ecea7dffe6327565714e~3VXbsgGTk0821508215euoutp02R
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 18:22:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200227182243euoutp0226c9082fb641ecea7dffe6327565714e~3VXbsgGTk0821508215euoutp02R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1582827763;
-        bh=tJ48AKGMQVayKWamKJWofb7IDsnosx3gaFQoe9qHSTg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X5ATL1j5WpMj4Z6zAS9m0eX200kXNhYw5VBiBlRmbChfGLcFAQezTM5vumGdOrRaN
-         Tqp0ADBbR2WR90S9x6rZGT8Qrr0hwWZbYwbL2xqP5p6CrS/SvU0JVPp9hvff3OaNPL
-         Dv0MmKgoQsqoZ9USP0lxyG5hoJ7aebx1CNe5ugM8=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200227182242eucas1p22ff7adcedfec82fa2593ea1806add861~3VXbVFnl-3197531975eucas1p2D;
-        Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 37.05.60698.2F8085E5; Thu, 27
-        Feb 2020 18:22:42 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200227182242eucas1p1c1de818156ec670f4744725618375303~3VXbDrl6h0931609316eucas1p1B;
-        Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200227182242eusmtrp280560724e53da90bf2955bf47e82724e~3VXbDHNoG1813218132eusmtrp2l;
-        Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-fb-5e5808f206c0
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2E.B1.08375.2F8085E5; Thu, 27
-        Feb 2020 18:22:42 +0000 (GMT)
-Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200227182242eusmtip28529938d920fb2ef180a2ce721bcf571~3VXalDIyp3109031090eusmtip2q;
-        Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com
-Subject: [PATCH v3 08/27] ata: optimize ata_scsi_rbuf[] size
-Date:   Thu, 27 Feb 2020 19:22:07 +0100
-Message-Id: <20200227182226.19188-9-b.zolnierkie@samsung.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200227182226.19188-1-b.zolnierkie@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djPc7qfOCLiDE7eN7ZYfbefzWLjjPWs
-        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
-        eOy+2cDm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBmrN11hKvjAXrHm3H/WBsaNbF2MnBwS
-        AiYSjTv/sXcxcnEICaxglNizaA4rhPOFUeLq8h1QzmdGiaVzDjJ3MXKAtXxf5g0RX84ocfL/
-        Ria4juZda9hB5rIJWElMbF/FCGKLCChI9PxeyQZSxCzwnlFixaS9LCAJYQEbie5p78GKWARU
-        JTZ+28EGsoFXwFbi9S0jiPvkJbZ++8QKYnMK2Enc6NsOdjevgKDEyZlPwMYwA9U0b53NDDJf
-        QmAVu8THvmYWiGYXiWunVrBD2MISr45vgbJlJP7vnM8E0bCOUeJvxwuo7u2MEssn/4MGjbXE
-        nXO/wC5iFtCUWL9LHyLsKDFj3QZGSFDwSdx4KwhxBJ/EpG3ToSHEK9HRJgRRrSaxYdkGNpi1
-        XTtXMkPYHhKTdj9hncCoOAvJO7OQvDMLYe8CRuZVjOKppcW56anFxnmp5XrFibnFpXnpesn5
-        uZsYgYno9L/jX3cw7vuTdIhRgINRiYd3wY7wOCHWxLLiytxDjBIczEoivBu/hsYJ8aYkVlal
-        FuXHF5XmpBYfYpTmYFES5zVe9DJWSCA9sSQ1OzW1ILUIJsvEwSnVwLgtdrOqr3DSpPPKll/n
-        r+5fnsKyY6qsVrhxw+M0tidzXeVMNu2Ou8/+XDH1/aZJ8u4Nu65nJz7Rf810WHE7r4/aRb+f
-        y7gcH6xhS988MfmKSKfRRp4QnR2qLw8GH9RaNXFT4ia5h8Ibv/Nr2RTb8JjpJcUuzzjFtel3
-        JUvw0z+hwS8S34vrGCuxFGckGmoxFxUnAgDZLkwMQAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsVy+t/xe7qfOCLiDO5tU7ZYfbefzWLjjPWs
-        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
-        eOy+2cDm0bdlFaPH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6
-        djYpqTmZZalF+nYJehmrN11hKvjAXrHm3H/WBsaNbF2MHBwSAiYS35d5dzFycQgJLGWU+LVp
-        ARNEXEbi+PqyLkZOIFNY4s+1LjaImk+MEh3bb7CBJNgErCQmtq9iBLFFBBQken6vBCtiFvjK
-        KLF0UjczSEJYwEaie9p7sCIWAVWJjd92gC3mFbCVeH3LCGKBvMTWb59YQWxOATuJG33bweYL
-        AZV0dTwFa+UVEJQ4OfMJC4jNDFTfvHU28wRGgVlIUrOQpBYwMq1iFEktLc5Nzy021CtOzC0u
-        zUvXS87P3cQIjJZtx35u3sF4aWPwIUYBDkYlHt4FO8LjhFgTy4orcw8xSnAwK4nwbvwaGifE
-        m5JYWZValB9fVJqTWnyI0RToh4nMUqLJ+cBIziuJNzQ1NLewNDQ3Njc2s1AS5+0QOBgjJJCe
-        WJKanZpakFoE08fEwSnVwChyLXeZQ7rw2WXiy1xYrKdW/4npeXx7ss0X7XKp64I7Ts95wqPT
-        rHlm2r5DRfrtSw3ara38zTwtMzgUUqO9zXds/3GOTfSQz5dU9nL73zWfr2fPMrnKJG7VfF3Q
-        OOCwUKrt+eM3TmvER79vfXngzumLHz3sW+ekr5h8JmLan/iLizr/J2h0uSixFGckGmoxFxUn
-        AgAbjPDGrAIAAA==
-X-CMS-MailID: 20200227182242eucas1p1c1de818156ec670f4744725618375303
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200227182242eucas1p1c1de818156ec670f4744725618375303
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200227182242eucas1p1c1de818156ec670f4744725618375303
-References: <20200227182226.19188-1-b.zolnierkie@samsung.com>
-        <CGME20200227182242eucas1p1c1de818156ec670f4744725618375303@eucas1p1.samsung.com>
+        id S1731304AbgB0SYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:24:44 -0500
+Received: from foss.arm.com ([217.140.110.172]:56734 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730861AbgB0SWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:22:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4ABD91FB;
+        Thu, 27 Feb 2020 10:22:41 -0800 (PST)
+Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B5D83F73B;
+        Thu, 27 Feb 2020 10:22:39 -0800 (PST)
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Robert Richter <rric@kernel.org>, soc@kernel.org,
+        Jon Loeliger <jdl@jdl.com>,
+        Mark Langsdorf <mlangsdo@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Corey Minyard <minyard@acm.org>,
+        openipmi-developer@lists.sourceforge.net
+Subject: [PATCH v2 11/13] dt-bindings: ipmi: Convert IPMI-SMIC bindings to json-schema
+Date:   Thu, 27 Feb 2020 18:22:08 +0000
+Message-Id: <20200227182210.89512-12-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200227182210.89512-1-andre.przywara@arm.com>
+References: <20200227182210.89512-1-andre.przywara@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the maximum required size of the ata_scsi_rbuf[] is
-576 bytes in ata_scsiop_inq_89() so modify ATA_SCSI_RBUF_SIZE
-define accordingly.
+Convert the generic IPMI controller bindings to DT schema format
+using json-schema.
 
-Code size savings on m68k arch using (modified) atari_defconfig:
+I removed the formerly mandatory device-type property, since this
+is deprecated in the DT spec, except for the legacy CPU and memory
+nodes.
 
-   text    data     bss     dec     hex filename
-before:
-  20782     105    4096   24983    6197 drivers/ata/libata-scsi.o
-after:
-  20782     105     576   21463    53d7 drivers/ata/libata-scsi.o
-
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Cc: Corey Minyard <minyard@acm.org>
+Cc: openipmi-developer@lists.sourceforge.net
 ---
- drivers/ata/libata-scsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/ipmi/ipmi-smic.txt    | 25 ---------
+ .../devicetree/bindings/ipmi/ipmi-smic.yaml   | 56 +++++++++++++++++++
+ 2 files changed, 56 insertions(+), 25 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/ipmi/ipmi-smic.txt
+ create mode 100644 Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml
 
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index cc8ba49275e7..b64b0b0dfb21 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -36,7 +36,7 @@
- #include "libata.h"
- #include "libata-transport.h"
- 
--#define ATA_SCSI_RBUF_SIZE	4096
-+#define ATA_SCSI_RBUF_SIZE	576
- 
- static DEFINE_SPINLOCK(ata_scsi_rbuf_lock);
- static u8 ata_scsi_rbuf[ATA_SCSI_RBUF_SIZE];
+diff --git a/Documentation/devicetree/bindings/ipmi/ipmi-smic.txt b/Documentation/devicetree/bindings/ipmi/ipmi-smic.txt
+deleted file mode 100644
+index d5f1a877ed3e..000000000000
+--- a/Documentation/devicetree/bindings/ipmi/ipmi-smic.txt
++++ /dev/null
+@@ -1,25 +0,0 @@
+-IPMI device
+-
+-Required properties:
+-- compatible: should be one of ipmi-kcs, ipmi-smic, or ipmi-bt
+-- device_type: should be ipmi
+-- reg: Address and length of the register set for the device
+-
+-Optional properties:
+-- interrupts: The interrupt for the device.  Without this the interface
+-	is polled.
+-- reg-size - The size of the register.  Defaults to 1
+-- reg-spacing - The number of bytes between register starts.  Defaults to 1
+-- reg-shift - The amount to shift the registers to the right to get the data
+-	into bit zero.
+-
+-Example:
+-
+-smic@fff3a000 {
+-	compatible = "ipmi-smic";
+-	device_type = "ipmi";
+-	reg = <0xfff3a000 0x1000>;
+-	interrupts = <0 24 4>;
+-	reg-size = <4>;
+-	reg-spacing = <4>;
+-};
+diff --git a/Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml b/Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml
+new file mode 100644
+index 000000000000..c859e0e959b9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/ipmi/ipmi-smic.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/ipmi/ipmi-smic.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: IPMI device bindings
++
++description: IPMI device bindings
++
++maintainers:
++  - Corey Minyard <cminyard@mvista.com>
++
++properties:
++  compatible:
++    enum:
++      - ipmi-kcs
++      - ipmi-smic
++      - ipmi-bt
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    description: Interface is polled if this property is omitted.
++    maxItems: 1
++
++  reg-size:
++    description: The access width of the register in bytes. Defaults to 1.
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++      - enum: [1, 2, 4, 8]
++
++  reg-spacing:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: The number of bytes between register starts. Defaults to 1.
++
++  reg-shift:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      The amount of bits to shift the register content to the right to get
++      the data into bit zero.
++
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    smic@fff3a000 {
++        compatible = "ipmi-smic";
++        reg = <0xfff3a000 0x1000>;
++        interrupts = <0 24 4>;
++        reg-size = <4>;
++        reg-spacing = <4>;
++    };
 -- 
-2.24.1
+2.17.1
 
