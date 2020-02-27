@@ -2,73 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 650501725D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:01:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E4411725DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:03:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730222AbgB0SBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:01:09 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:41542 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729162AbgB0SBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:01:09 -0500
-Received: from zn.tnic (p200300EC2F0E0F005C616343C404DD6B.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:f00:5c61:6343:c404:dd6b])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1B7B81EC0CDD;
-        Thu, 27 Feb 2020 19:01:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1582826468;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=C0ocNCl0BvV6Iv70Wd4elUhmzpKLGyoPGx9MZ3ic7rg=;
-        b=pbwifbynEjeq04eVHBEaQ4ua8gvBNpa63SFtiJ/8A3bnWuAHapUaa7ybToyYZpCyj/PfVV
-        V922BdHVBoL7turZyP2MYEsidOwC6HsgsX/VHR7cjQgTMDGgbbIOYmiqRMV+4MX6ncj4Ge
-        hsGCGATkLHBl76oj69SLwmpEgogzoTw=
-Date:   Thu, 27 Feb 2020 19:01:00 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jacob Keller <jacob.e.keller@intel.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        id S1729946AbgB0SDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:03:09 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:34257 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726805AbgB0SDJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:03:09 -0500
+Received: by mail-qv1-f68.google.com with SMTP id o18so14104qvf.1;
+        Thu, 27 Feb 2020 10:03:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LUivbxZvkhrhksfrufImP5WxVz+Lup/2YGlGavTZRzU=;
+        b=FECqC/GLqU4wsSzEi4rPTFDzOXiJO4CXOuMOJtQhjaXNpmtMCYY/O6CxZd8c5QeaFJ
+         w2nhwZq6DTmOU6dV+/ZPcUSED9y9g0GDkBA3S0rrjNXBxc2YBVthEbkRr30uXl8vLvrk
+         RuHejyJlqwMvxy/BOKLS43wSWaqT+byxSShnrrst4a/1zIbiC9g8E5redGQYliesOW5k
+         OwgIcES80s3l2Y+WAE3FmaKIVeKUWimW19fXFqnhy4gON87OrMWgI+Zcm6Ru3e+7a+au
+         1/W8PlDJ/ogtz3TZ8au57Mkkcs2D83jdIzSG+IiYYSau1Iy39Fyr9QgcF8KBVgDO4MWd
+         fztQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LUivbxZvkhrhksfrufImP5WxVz+Lup/2YGlGavTZRzU=;
+        b=etze2xXSgzQdkjymxx4W0KDHQ2uvI+cXWLNdWIwqluSWUU53fMftpEaUVNbPFDvmXp
+         RINUkkePBLmQF8lI1CWQ5fJVn9RukOJplgKk1HSoCxnkPm3oW8vXAogvdpeFtc9v1GCe
+         3mQoQ5yTp8OIv0OuqJW3AGhSWD6+/RlGSmNQpFSOo/XvyYjwrdj6iDvY4BMVeZMn8hXE
+         BkvG9vNLd7YnX6D6GrQnoKezRfytHo8Og7vKJACisQRdcmsdoDjjiPEzm3MmyaRyperz
+         J0aw0ajQCjxuD8Ib0br1Kcf8IlgLkeRF2NYDEbZPWiKevR+WKIEukfwxiWX7ADU0UGc8
+         F7Og==
+X-Gm-Message-State: APjAAAWz1odKqF/kWf2859XDB7xE6WT3e2cJ2ktEbMN1bL87rYSnhoHJ
+        5ePnfqd6Zj0tJ4Yj1/16L/jGUxVL1G8=
+X-Google-Smtp-Source: APXvYqyOmOSD5Jm9Upwu1WHPMaefpd6RANzksD5mm3iBpbX9WBw1KKWWevGspvflnOKhG9RICeYjCA==
+X-Received: by 2002:a0c:c24f:: with SMTP id w15mr75014qvh.66.1582826588320;
+        Thu, 27 Feb 2020 10:03:08 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id m11sm521291qkh.31.2020.02.27.10.03.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 10:03:07 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Thu, 27 Feb 2020 13:03:06 -0500
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH] x86/pkeys: Manually set X86_FEATURE_OSPKE to preserve
- existing changes
-Message-ID: <20200227180100.GB18629@zn.tnic>
-References: <20200226231615.13664-1-sean.j.christopherson@intel.com>
- <a492b4f4-4a54-5e5a-b79f-e21f9038f259@intel.com>
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH v2 1/1] x86/boot/compressed: Fix reloading of GDTR
+ post-relocation
+Message-ID: <20200227180305.GA3598722@rani.riverdale.lan>
+References: <20200226204515.2752095-1-nivedita@alum.mit.edu>
+ <20200226230031.3011645-2-nivedita@alum.mit.edu>
+ <20200227081229.GA29411@gmail.com>
+ <20200227151643.GA3498170@rani.riverdale.lan>
+ <CAKv+Gu8BiW6P6Xv3EAPUEmbS3GQMJW=eRr-yygRbForaGDQyyw@mail.gmail.com>
+ <20200227155421.GA3507597@rani.riverdale.lan>
+ <CAKv+Gu-k0c8GzKysv4Z9tYzEvfhJUzuiKx5nfwD0JU8ys=LZdg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a492b4f4-4a54-5e5a-b79f-e21f9038f259@intel.com>
+In-Reply-To: <CAKv+Gu-k0c8GzKysv4Z9tYzEvfhJUzuiKx5nfwD0JU8ys=LZdg@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 04:16:13PM -0800, Jacob Keller wrote:
-> I tested this and it resolves my report! Thanks for a timely fix.
+On Thu, Feb 27, 2020 at 06:47:55PM +0100, Ard Biesheuvel wrote:
+> 
+> Interesting. I am going to rip most of the EFI handover protocol stuff
+> out of OVMF, since it is mostly unnecessary, and having the PE/COFF
+> loader put the image in the correct place right away is a nice
+> complimentary improvement to that. (Note that the OVMF implementation
+> of the EFI handover protocol does not currently honor the preferred
+> address from the setup header anyway)
 
-Adding your Tested-by.
-
-> I agree with the analysis. Perhaps it would make sense in the long term
-> to find a solution where get_cpu_cap can remember what was cleared for
-> each CPU and restore those? It already does this using the global
-> variables...
-
-get_cpu_cap() remembers if you use setup_force_cpu_cap() but I agree
-that that whole feature bit handling is a bit, hm, "strange". It had its
-raisins.
-
-FWIW, we had started cleaning those up but then the security nightmares
-happened so on the backburner it went...
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Yeah, for my testing I'm running the image from the EFI shell, which
+enters via PE entry point and honors the pref address.
