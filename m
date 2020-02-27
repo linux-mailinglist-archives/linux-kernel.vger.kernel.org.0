@@ -2,38 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68969171C0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69E5A171CB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:14:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388220AbgB0OIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:08:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45938 "EHLO mail.kernel.org"
+        id S2388932AbgB0OOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:14:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387937AbgB0OIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:08:12 -0500
+        id S2389105AbgB0OOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:14:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B686821D7E;
-        Thu, 27 Feb 2020 14:08:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D740B24697;
+        Thu, 27 Feb 2020 14:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812492;
-        bh=CmkjkhLeHHiNAXym8hLvSfXzXCM12YtwRWTN1awRdlM=;
+        s=default; t=1582812857;
+        bh=Dqe8peYwQwuHYE4wE7HzqKcEV4TelEPWey30f3hiVvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0x9nxOVfJ3efzPEHkQ2gLVR2F76hWrewTud3ioEl5A9q77U7T+HZO+wffQnxO/KE0
-         TpzwuAovyPgFDt9lNTe2E1z+IJE5fZ75AZOLnTVoR95oy930sF4CwaDGoj8lJAeb58
-         INhl1QaDbsVdfqxBgfsVFkKiAWlboUgZkQBlhksM=
+        b=VaYxrrnUVztyfLYJ/Dhq4e7af7CMcAnaCqrHofBQmf5YokhRNO1SHDERZ9kQgwzyK
+         o8YYHlt0x+ztB4jTQQ3R+ZwCE/jdJxSqSGABOKb6SXjBz7egLUVzM/BbAiPNcrR8vx
+         9bc+7D0JlMDJIQMlYSQiSunSVkxeyBjk9eWoeteQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pietro Oliva <pietroliva@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Subject: [PATCH 5.4 039/135] staging: rtl8188eu: Fix potential overuse of kernel memory
+        stable@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Yang Fei <fei.yang@intel.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Jack Pham <jackp@codeaurora.org>, Todd Kjos <tkjos@google.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH 5.5 042/150] usb: dwc3: gadget: Check for IOC/LST bit in TRB->ctrl fields
 Date:   Thu, 27 Feb 2020 14:36:19 +0100
-Message-Id: <20200227132234.810642676@linuxfoundation.org>
+Message-Id: <20200227132239.087998024@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +50,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
 
-commit 4ddf8ab8d15ddbc52eefb44eb64e38466ce1f70f upstream.
+commit 5ee858975b13a9b40db00f456989a689fdbb296c upstream.
 
-In routine wpa_supplicant_ioctl(), the user-controlled p->length is
-checked to be at least the size of struct ieee_param size, but the code
-does not detect the case where p->length is greater than the size
-of the struct, thus a malicious user could be wasting kernel memory.
-Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
+The current code in dwc3_gadget_ep_reclaim_completed_trb() will
+check for IOC/LST bit in the event->status and returns if
+IOC/LST bit is set. This logic doesn't work if multiple TRBs
+are queued per request and the IOC/LST bit is set on the last
+TRB of that request.
 
-Reported by: Pietro Oliva <pietroliva@gmail.com>
-Cc: Pietro Oliva <pietroliva@gmail.com>
-Cc: Stable <stable@vger.kernel.org>
-Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Link: https://lore.kernel.org/r/20200210180235.21691-4-Larry.Finger@lwfinger.net
+Consider an example where a queued request has multiple queued
+TRBs and IOC/LST bit is set only for the last TRB. In this case,
+the core generates XferComplete/XferInProgress events only for
+the last TRB (since IOC/LST are set only for the last TRB). As
+per the logic in dwc3_gadget_ep_reclaim_completed_trb()
+event->status is checked for IOC/LST bit and returns on the
+first TRB. This leaves the remaining TRBs left unhandled.
+
+Similarly, if the gadget function enqueues an unaligned request
+with sglist already in it, it should fail the same way, since we
+will append another TRB to something that already uses more than
+one TRB.
+
+To aviod this, this patch changes the code to check for IOC/LST
+bits in TRB->ctrl instead.
+
+At a practical level, this patch resolves USB transfer stalls seen
+with adb on dwc3 based HiKey960 after functionfs gadget added
+scatter-gather support around v4.20.
+
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Yang Fei <fei.yang@intel.com>
+Cc: Thinh Nguyen <thinhn@synopsys.com>
+Cc: Tejas Joglekar <tejas.joglekar@synopsys.com>
+Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: Jack Pham <jackp@codeaurora.org>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linux USB List <linux-usb@vger.kernel.org>
+Cc: stable <stable@vger.kernel.org>
+Tested-by: Tejas Joglekar <tejas.joglekar@synopsys.com>
+Reviewed-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+[jstultz: forward ported to mainline, reworded commit log, reworked
+ to only check trb->ctrl as suggested by Felipe]
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rtl8188eu/os_dep/ioctl_linux.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/dwc3/gadget.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-@@ -2025,7 +2025,7 @@ static int wpa_supplicant_ioctl(struct n
- 	struct ieee_param *param;
- 	uint ret = 0;
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2426,7 +2426,8 @@ static int dwc3_gadget_ep_reclaim_comple
+ 	if (event->status & DEPEVT_STATUS_SHORT && !chain)
+ 		return 1;
  
--	if (p->length < sizeof(struct ieee_param) || !p->pointer) {
-+	if (!p->pointer || p->length != sizeof(struct ieee_param)) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
+-	if (event->status & DEPEVT_STATUS_IOC)
++	if ((trb->ctrl & DWC3_TRB_CTRL_IOC) ||
++	    (trb->ctrl & DWC3_TRB_CTRL_LST))
+ 		return 1;
+ 
+ 	return 0;
 
 
