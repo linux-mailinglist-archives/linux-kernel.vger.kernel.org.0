@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1048171A91
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:55:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63CDA17197D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:45:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729233AbgB0Ny5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:54:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55028 "EHLO mail.kernel.org"
+        id S1729502AbgB0NpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:45:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731919AbgB0Nyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:54:52 -0500
+        id S1730361AbgB0NpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:45:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4330B20578;
-        Thu, 27 Feb 2020 13:54:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0E4121D7E;
+        Thu, 27 Feb 2020 13:45:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811691;
-        bh=gAkfpv4ncOrLT6/j6G/W8e8xXZzuNMbpqDoVeHHi7gw=;
+        s=default; t=1582811120;
+        bh=uOFMmKogUdcEg/YD9HLbQnK54nR8CSKUebSZkQF+56E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QttkLMyjbAYDh6QnwWD8Om3jrBg+wQfe6TCOmS55GlK0pxbjEplQ8oEWWVFXuCQmD
-         b96ic67PUnXftpoLW06XQTsmJBieTyRVNexA/NJAxdjTUSPMyo7dUIbP9m+0Wr0ObR
-         jCqXiY4FX7sIHgSooUXniozMYg9ddyi33iHns/P4=
+        b=10RWAOzgo0aUnSV9CrmupI7pnCnqGgrszeI2bada+gfQWVedNdkAB4XX6CkQzlz9x
+         JKtrOplmKrg0cRvJhkosQbrQF9Cwk+DllZp3EnlgBAtnZjXgSeZeDTF2R2ECdxbhc7
+         nj2Pu/v8T+aRokVIcTXSi25A3zTxauw5wNoHG8ZQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christopher Head <chead@chead.ca>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Borislav Petkov <bp@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 063/237] x86/sysfb: Fix check for bad VRAM size
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 003/165] ALSA: hda: Use scnprintf() for printing texts for sysfs/procfs
 Date:   Thu, 27 Feb 2020 14:34:37 +0100
-Message-Id: <20200227132301.643019415@linuxfoundation.org>
+Message-Id: <20200227132231.535111958@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +42,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arvind Sankar <nivedita@alum.mit.edu>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit dacc9092336be20b01642afe1a51720b31f60369 ]
+commit 44eeb081b8630bb3ad3cd381d1ae1831463e48bb upstream.
 
-When checking whether the reported lfb_size makes sense, the height
-* stride result is page-aligned before seeing whether it exceeds the
-reported size.
+Some code in HD-audio driver calls snprintf() in a loop and still
+expects that the return value were actually written size, while
+snprintf() returns the expected would-be length instead.  When the
+given buffer limit were small, this leads to a buffer overflow.
 
-This doesn't work if height * stride is not an exact number of pages.
-For example, as reported in the kernel bugzilla below, an 800x600x32 EFI
-framebuffer gets skipped because of this.
+Use scnprintf() for addressing those issues.  It returns the actually
+written size unlike snprintf().
 
-Move the PAGE_ALIGN to after the check vs size.
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200218091409.27162-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: Christopher Head <chead@chead.ca>
-Tested-by: Christopher Head <chead@chead.ca>
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206051
-Link: https://lkml.kernel.org/r/20200107230410.2291947-1-nivedita@alum.mit.edu
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/sysfb_simplefb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/hda/hdmi_chmap.c    |    2 +-
+ sound/pci/hda/hda_codec.c |    2 +-
+ sound/pci/hda/hda_eld.c   |    2 +-
+ sound/pci/hda/hda_sysfs.c |    4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/sysfb_simplefb.c b/arch/x86/kernel/sysfb_simplefb.c
-index 85195d447a922..f3215346e47fd 100644
---- a/arch/x86/kernel/sysfb_simplefb.c
-+++ b/arch/x86/kernel/sysfb_simplefb.c
-@@ -94,11 +94,11 @@ __init int create_simplefb(const struct screen_info *si,
- 	if (si->orig_video_isVGA == VIDEO_TYPE_VLFB)
- 		size <<= 16;
- 	length = mode->height * mode->stride;
--	length = PAGE_ALIGN(length);
- 	if (length > size) {
- 		printk(KERN_WARNING "sysfb: VRAM smaller than advertised\n");
- 		return -EINVAL;
- 	}
-+	length = PAGE_ALIGN(length);
+--- a/sound/hda/hdmi_chmap.c
++++ b/sound/hda/hdmi_chmap.c
+@@ -249,7 +249,7 @@ void snd_hdac_print_channel_allocation(i
  
- 	/* setup IORESOURCE_MEM as framebuffer memory */
- 	memset(&res, 0, sizeof(res));
--- 
-2.20.1
-
+ 	for (i = 0, j = 0; i < ARRAY_SIZE(cea_speaker_allocation_names); i++) {
+ 		if (spk_alloc & (1 << i))
+-			j += snprintf(buf + j, buflen - j,  " %s",
++			j += scnprintf(buf + j, buflen - j,  " %s",
+ 					cea_speaker_allocation_names[i]);
+ 	}
+ 	buf[j] = '\0';	/* necessary when j == 0 */
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -4104,7 +4104,7 @@ void snd_print_pcm_bits(int pcm, char *b
+ 
+ 	for (i = 0, j = 0; i < ARRAY_SIZE(bits); i++)
+ 		if (pcm & (AC_SUPPCM_BITS_8 << i))
+-			j += snprintf(buf + j, buflen - j,  " %d", bits[i]);
++			j += scnprintf(buf + j, buflen - j,  " %d", bits[i]);
+ 
+ 	buf[j] = '\0'; /* necessary when j == 0 */
+ }
+--- a/sound/pci/hda/hda_eld.c
++++ b/sound/pci/hda/hda_eld.c
+@@ -373,7 +373,7 @@ static void hdmi_print_pcm_rates(int pcm
+ 
+ 	for (i = 0, j = 0; i < ARRAY_SIZE(alsa_rates); i++)
+ 		if (pcm & (1 << i))
+-			j += snprintf(buf + j, buflen - j,  " %d",
++			j += scnprintf(buf + j, buflen - j,  " %d",
+ 				alsa_rates[i]);
+ 
+ 	buf[j] = '\0'; /* necessary when j == 0 */
+--- a/sound/pci/hda/hda_sysfs.c
++++ b/sound/pci/hda/hda_sysfs.c
+@@ -221,7 +221,7 @@ static ssize_t init_verbs_show(struct de
+ 	mutex_lock(&codec->user_mutex);
+ 	for (i = 0; i < codec->init_verbs.used; i++) {
+ 		struct hda_verb *v = snd_array_elem(&codec->init_verbs, i);
+-		len += snprintf(buf + len, PAGE_SIZE - len,
++		len += scnprintf(buf + len, PAGE_SIZE - len,
+ 				"0x%02x 0x%03x 0x%04x\n",
+ 				v->nid, v->verb, v->param);
+ 	}
+@@ -271,7 +271,7 @@ static ssize_t hints_show(struct device
+ 	mutex_lock(&codec->user_mutex);
+ 	for (i = 0; i < codec->hints.used; i++) {
+ 		struct hda_hint *hint = snd_array_elem(&codec->hints, i);
+-		len += snprintf(buf + len, PAGE_SIZE - len,
++		len += scnprintf(buf + len, PAGE_SIZE - len,
+ 				"%s = %s\n", hint->key, hint->val);
+ 	}
+ 	mutex_unlock(&codec->user_mutex);
 
 
