@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC747171C4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:11:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08CBE171B61
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:02:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388625AbgB0OLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:11:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49224 "EHLO mail.kernel.org"
+        id S1733028AbgB0OB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:01:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388278AbgB0OK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:10:56 -0500
+        id S1733011AbgB0OBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:01:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AEEA20714;
-        Thu, 27 Feb 2020 14:10:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABF2D20801;
+        Thu, 27 Feb 2020 14:01:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812655;
-        bh=RxtQpwXVCZ8kuPzuL7XmZtmGwiwVZKSh7yis6FrdueQ=;
+        s=default; t=1582812113;
+        bh=fIQ9dRT5falEOKAiEhOmoWhkW76BUdeoKlh3hMghr8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D+gZfRGBdEjcD5VhGQqgcEs+uFh6yycdWOcG0HzBQIIPGJheh+47Y1TtmlhQHvuTu
-         XGo/W97CWRTT5wU1rntGBh5RrJ9SIkiVqOPeNcsd1ht3AFg1lzavLyxO+DkV3OQZ8K
-         HUCkvmY8W/K/yg4I190Tmm+PKVPgIYm4Ptl3wr64=
+        b=YCc59oIcl+5Nd5zfQCfSH32ksUdIGJr3XB5UqvLe5j5CLGK8VpKKWDm9XIljADc16
+         AYrRsAnjApw6s9gUcJ9o3Uai1jvEsSYqec4Zv7cA201rp3NTLEz+M+zFjID6tZOEGq
+         NQiPRtaHakCG3NpTR4btRQbtYfAwzPPg5NuWL5eI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Tobler <andreas.tobler@onway.ch>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Robin Gong <yibin.gong@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 100/135] Revert "dmaengine: imx-sdma: Fix memory leak"
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH 4.14 226/237] staging: rtl8723bs: fix copy of overlapping memory
 Date:   Thu, 27 Feb 2020 14:37:20 +0100
-Message-Id: <20200227132244.250294381@linuxfoundation.org>
+Message-Id: <20200227132312.756569432@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,70 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-This reverts commit 8a7aa4feeaeabc12181e1997a298eb73d2ed2d65 which is
-commit 02939cd167095f16328a1bd5cab5a90b550606df upstream.
+commit 8ae9a588ca35eb9c32dc03299c5e1f4a1e9a9617 upstream.
 
-Andreas writes:
-	This patch breaks our imx6 board with the attached trace.
-	Reverting the patch makes it boot again.
+Currently the rtw_sprintf prints the contents of thread_name
+onto thread_name and this can lead to a potential copy of a
+string over itself. Avoid this by printing the literal string RTWHALXT
+instread of the contents of thread_name.
 
-Reported-by: Andreas Tobler <andreas.tobler@onway.ch>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Robin Gong <yibin.gong@nxp.com>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: Sasha Levin <sashal@kernel.org>
+Addresses-Coverity: ("copy of overlapping memory")
+Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://lore.kernel.org/r/20200126220549.9849-1-colin.king@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/dma/imx-sdma.c |   19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -760,8 +760,12 @@ static void sdma_start_desc(struct sdma_
- 		return;
- 	}
- 	sdmac->desc = desc = to_sdma_desc(&vd->tx);
+---
+ drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+--- a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
+@@ -486,14 +486,13 @@ int rtl8723bs_xmit_thread(void *context)
+ 	s32 ret;
+ 	struct adapter *padapter;
+ 	struct xmit_priv *pxmitpriv;
+-	u8 thread_name[20] = "RTWHALXT";
 -
--	list_del(&vd->node);
-+	/*
-+	 * Do not delete the node in desc_issued list in cyclic mode, otherwise
-+	 * the desc allocated will never be freed in vchan_dma_desc_free_list
-+	 */
-+	if (!(sdmac->flags & IMX_DMA_SG_LOOP))
-+		list_del(&vd->node);
++	u8 thread_name[20];
  
- 	sdma->channel_control[channel].base_bd_ptr = desc->bd_phys;
- 	sdma->channel_control[channel].current_bd_ptr = desc->bd_phys;
-@@ -1067,6 +1071,7 @@ static void sdma_channel_terminate_work(
+ 	ret = _SUCCESS;
+ 	padapter = context;
+ 	pxmitpriv = &padapter->xmitpriv;
  
- 	spin_lock_irqsave(&sdmac->vc.lock, flags);
- 	vchan_get_all_descriptors(&sdmac->vc, &head);
-+	sdmac->desc = NULL;
- 	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
- 	vchan_dma_desc_free_list(&sdmac->vc, &head);
- 	sdmac->context_loaded = false;
-@@ -1075,19 +1080,11 @@ static void sdma_channel_terminate_work(
- static int sdma_disable_channel_async(struct dma_chan *chan)
- {
- 	struct sdma_channel *sdmac = to_sdma_chan(chan);
--	unsigned long flags;
--
--	spin_lock_irqsave(&sdmac->vc.lock, flags);
+-	rtw_sprintf(thread_name, 20, "%s-"ADPT_FMT, thread_name, ADPT_ARG(padapter));
++	rtw_sprintf(thread_name, 20, "RTWHALXT-" ADPT_FMT, ADPT_ARG(padapter));
+ 	thread_enter(thread_name);
  
- 	sdma_disable_channel(chan);
- 
--	if (sdmac->desc) {
--		vchan_terminate_vdesc(&sdmac->desc->vd);
--		sdmac->desc = NULL;
-+	if (sdmac->desc)
- 		schedule_work(&sdmac->terminate_worker);
--	}
--
--	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
- 
- 	return 0;
- }
+ 	DBG_871X("start "FUNC_ADPT_FMT"\n", FUNC_ADPT_ARG(padapter));
 
 
