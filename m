@@ -2,127 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F25F17273B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9143172741
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730877AbgB0SWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:22:42 -0500
-Received: from foss.arm.com ([217.140.110.172]:56720 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730842AbgB0SWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:22:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 36C2730E;
-        Thu, 27 Feb 2020 10:22:39 -0800 (PST)
-Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C2B13F73B;
-        Thu, 27 Feb 2020 10:22:37 -0800 (PST)
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Robert Richter <rric@kernel.org>, soc@kernel.org,
-        Jon Loeliger <jdl@jdl.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH v2 10/13] dt-bindings: memory-controllers: Convert Calxeda DDR to json-schema
-Date:   Thu, 27 Feb 2020 18:22:07 +0000
-Message-Id: <20200227182210.89512-11-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200227182210.89512-1-andre.przywara@arm.com>
-References: <20200227182210.89512-1-andre.przywara@arm.com>
+        id S1730987AbgB0SWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:22:48 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59078 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730908AbgB0SWo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:22:44 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200227182243euoutp0226c9082fb641ecea7dffe6327565714e~3VXbsgGTk0821508215euoutp02R
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 18:22:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200227182243euoutp0226c9082fb641ecea7dffe6327565714e~3VXbsgGTk0821508215euoutp02R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1582827763;
+        bh=tJ48AKGMQVayKWamKJWofb7IDsnosx3gaFQoe9qHSTg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=X5ATL1j5WpMj4Z6zAS9m0eX200kXNhYw5VBiBlRmbChfGLcFAQezTM5vumGdOrRaN
+         Tqp0ADBbR2WR90S9x6rZGT8Qrr0hwWZbYwbL2xqP5p6CrS/SvU0JVPp9hvff3OaNPL
+         Dv0MmKgoQsqoZ9USP0lxyG5hoJ7aebx1CNe5ugM8=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200227182242eucas1p22ff7adcedfec82fa2593ea1806add861~3VXbVFnl-3197531975eucas1p2D;
+        Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 37.05.60698.2F8085E5; Thu, 27
+        Feb 2020 18:22:42 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200227182242eucas1p1c1de818156ec670f4744725618375303~3VXbDrl6h0931609316eucas1p1B;
+        Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200227182242eusmtrp280560724e53da90bf2955bf47e82724e~3VXbDHNoG1813218132eusmtrp2l;
+        Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
+X-AuditID: cbfec7f5-a29ff7000001ed1a-fb-5e5808f206c0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2E.B1.08375.2F8085E5; Thu, 27
+        Feb 2020 18:22:42 +0000 (GMT)
+Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200227182242eusmtip28529938d920fb2ef180a2ce721bcf571~3VXalDIyp3109031090eusmtip2q;
+        Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com
+Subject: [PATCH v3 08/27] ata: optimize ata_scsi_rbuf[] size
+Date:   Thu, 27 Feb 2020 19:22:07 +0100
+Message-Id: <20200227182226.19188-9-b.zolnierkie@samsung.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200227182226.19188-1-b.zolnierkie@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djPc7qfOCLiDE7eN7ZYfbefzWLjjPWs
+        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
+        eOy+2cDm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBmrN11hKvjAXrHm3H/WBsaNbF2MnBwS
+        AiYSjTv/sXcxcnEICaxglNizaA4rhPOFUeLq8h1QzmdGiaVzDjJ3MXKAtXxf5g0RX84ocfL/
+        Ria4juZda9hB5rIJWElMbF/FCGKLCChI9PxeyQZSxCzwnlFixaS9LCAJYQEbie5p78GKWARU
+        JTZ+28EGsoFXwFbi9S0jiPvkJbZ++8QKYnMK2Enc6NsOdjevgKDEyZlPwMYwA9U0b53NDDJf
+        QmAVu8THvmYWiGYXiWunVrBD2MISr45vgbJlJP7vnM8E0bCOUeJvxwuo7u2MEssn/4MGjbXE
+        nXO/wC5iFtCUWL9LHyLsKDFj3QZGSFDwSdx4KwhxBJ/EpG3ToSHEK9HRJgRRrSaxYdkGNpi1
+        XTtXMkPYHhKTdj9hncCoOAvJO7OQvDMLYe8CRuZVjOKppcW56anFxnmp5XrFibnFpXnpesn5
+        uZsYgYno9L/jX3cw7vuTdIhRgINRiYd3wY7wOCHWxLLiytxDjBIczEoivBu/hsYJ8aYkVlal
+        FuXHF5XmpBYfYpTmYFES5zVe9DJWSCA9sSQ1OzW1ILUIJsvEwSnVwLgtdrOqr3DSpPPKll/n
+        r+5fnsKyY6qsVrhxw+M0tidzXeVMNu2Ou8/+XDH1/aZJ8u4Nu65nJz7Rf810WHE7r4/aRb+f
+        y7gcH6xhS988MfmKSKfRRp4QnR2qLw8GH9RaNXFT4ia5h8Ibv/Nr2RTb8JjpJcUuzzjFtel3
+        JUvw0z+hwS8S34vrGCuxFGckGmoxFxUnAgDZLkwMQAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsVy+t/xe7qfOCLiDO5tU7ZYfbefzWLjjPWs
+        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
+        eOy+2cDm0bdlFaPH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6
+        djYpqTmZZalF+nYJehmrN11hKvjAXrHm3H/WBsaNbF2MHBwSAiYS35d5dzFycQgJLGWU+LVp
+        ARNEXEbi+PqyLkZOIFNY4s+1LjaImk+MEh3bb7CBJNgErCQmtq9iBLFFBBQken6vBCtiFvjK
+        KLF0UjczSEJYwEaie9p7sCIWAVWJjd92gC3mFbCVeH3LCGKBvMTWb59YQWxOATuJG33bweYL
+        AZV0dTwFa+UVEJQ4OfMJC4jNDFTfvHU28wRGgVlIUrOQpBYwMq1iFEktLc5Nzy021CtOzC0u
+        zUvXS87P3cQIjJZtx35u3sF4aWPwIUYBDkYlHt4FO8LjhFgTy4orcw8xSnAwK4nwbvwaGifE
+        m5JYWZValB9fVJqTWnyI0RToh4nMUqLJ+cBIziuJNzQ1NLewNDQ3Njc2s1AS5+0QOBgjJJCe
+        WJKanZpakFoE08fEwSnVwChyLXeZQ7rw2WXiy1xYrKdW/4npeXx7ss0X7XKp64I7Ts95wqPT
+        rHlm2r5DRfrtSw3ara38zTwtMzgUUqO9zXds/3GOTfSQz5dU9nL73zWfr2fPMrnKJG7VfF3Q
+        OOCwUKrt+eM3TmvER79vfXngzumLHz3sW+ekr5h8JmLan/iLizr/J2h0uSixFGckGmoxFxUn
+        AgAbjPDGrAIAAA==
+X-CMS-MailID: 20200227182242eucas1p1c1de818156ec670f4744725618375303
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200227182242eucas1p1c1de818156ec670f4744725618375303
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200227182242eucas1p1c1de818156ec670f4744725618375303
+References: <20200227182226.19188-1-b.zolnierkie@samsung.com>
+        <CGME20200227182242eucas1p1c1de818156ec670f4744725618375303@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the Calxeda DDR memory controller binding to DT schema format
-using json-schema.
-Although this technically covers the whole DRAM controller, the
-intention to use it only for error reporting and mapping fault addresses
-to DRAM chips.
+Currently the maximum required size of the ata_scsi_rbuf[] is
+576 bytes in ata_scsiop_inq_89() so modify ATA_SCSI_RBUF_SIZE
+define accordingly.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Code size savings on m68k arch using (modified) atari_defconfig:
+
+   text    data     bss     dec     hex filename
+before:
+  20782     105    4096   24983    6197 drivers/ata/libata-scsi.o
+after:
+  20782     105     576   21463    53d7 drivers/ata/libata-scsi.o
+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- .../memory-controllers/calxeda-ddr-ctrlr.txt  | 16 -------
- .../memory-controllers/calxeda-ddr-ctrlr.yaml | 42 +++++++++++++++++++
- 2 files changed, 42 insertions(+), 16 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/memory-controllers/calxeda-ddr-ctrlr.txt
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/calxeda-ddr-ctrlr.yaml
+ drivers/ata/libata-scsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/calxeda-ddr-ctrlr.txt b/Documentation/devicetree/bindings/memory-controllers/calxeda-ddr-ctrlr.txt
-deleted file mode 100644
-index 049675944b78..000000000000
---- a/Documentation/devicetree/bindings/memory-controllers/calxeda-ddr-ctrlr.txt
-+++ /dev/null
-@@ -1,16 +0,0 @@
--Calxeda DDR memory controller
--
--Properties:
--- compatible : Should be:
--  - "calxeda,hb-ddr-ctrl" for ECX-1000
--  - "calxeda,ecx-2000-ddr-ctrl" for ECX-2000
--- reg : Address and size for DDR controller registers.
--- interrupts : Interrupt for DDR controller.
--
--Example:
--
--	memory-controller@fff00000 {
--		compatible = "calxeda,hb-ddr-ctrl";
--		reg = <0xfff00000 0x1000>;
--		interrupts = <0 91 4>;
--	};
-diff --git a/Documentation/devicetree/bindings/memory-controllers/calxeda-ddr-ctrlr.yaml b/Documentation/devicetree/bindings/memory-controllers/calxeda-ddr-ctrlr.yaml
-new file mode 100644
-index 000000000000..d9739501d61d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/memory-controllers/calxeda-ddr-ctrlr.yaml
-@@ -0,0 +1,42 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/memory-controllers/calxeda-ddr-ctrlr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Calxeda DDR memory controller binding
-+
-+description: |
-+  The Calxeda DDR memory controller is initialised and programmed by the
-+  firmware, but an OS might want to read its registers for error reporting
-+  purposes and to learn about the DRAM topology.
-+
-+maintainers:
-+  - Andre Przywara <andre.przywara@arm.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - calxeda,hb-ddr-ctrl
-+      - calxeda,ecx-2000-ddr-ctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    memory-controller@fff00000 {
-+        compatible = "calxeda,hb-ddr-ctrl";
-+        reg = <0xfff00000 0x1000>;
-+        interrupts = <0 91 4>;
-+    };
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index cc8ba49275e7..b64b0b0dfb21 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -36,7 +36,7 @@
+ #include "libata.h"
+ #include "libata-transport.h"
+ 
+-#define ATA_SCSI_RBUF_SIZE	4096
++#define ATA_SCSI_RBUF_SIZE	576
+ 
+ static DEFINE_SPINLOCK(ata_scsi_rbuf_lock);
+ static u8 ata_scsi_rbuf[ATA_SCSI_RBUF_SIZE];
 -- 
-2.17.1
+2.24.1
 
