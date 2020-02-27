@@ -2,177 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8BF4171EF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:31:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF89B171F50
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:34:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388256AbgB0ObX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:31:23 -0500
-Received: from antares.kleine-koenig.org ([94.130.110.236]:41044 "EHLO
-        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387668AbgB0ObU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:31:20 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by antares.kleine-koenig.org (Postfix) with ESMTP id EBBB991CA1A;
-        Thu, 27 Feb 2020 15:31:17 +0100 (CET)
-Received: from antares.kleine-koenig.org ([127.0.0.1])
-        by localhost (antares.kleine-koenig.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id LcGdnC_537OI; Thu, 27 Feb 2020 15:31:16 +0100 (CET)
-Received: from taurus.defre.kleine-koenig.org (unknown [IPv6:2a02:8071:b5ad:20fc:dcaf:fc88:2737:d4ae])
-        by antares.kleine-koenig.org (Postfix) with ESMTPSA;
-        Thu, 27 Feb 2020 15:31:16 +0100 (CET)
-Subject: Re: [PATCH 1/3] lib/test_printf: Clean up test of hashed pointers
-To:     Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Tobin C . Harding" <me@tobin.cc>
-References: <20200227130123.32442-1-pmladek@suse.com>
- <20200227130123.32442-2-pmladek@suse.com>
-From:   =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
-Autocrypt: addr=uwe@kleine-koenig.org; prefer-encrypt=mutual; keydata=
- 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
- 6uMoO1VgFtcQHWHTtbSYLQ8YHVFZMQ==
-Message-ID: <bdb7d995-f16f-335c-c06a-b6732dcbbfa2@kleine-koenig.org>
-Date:   Thu, 27 Feb 2020 15:30:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S2387601AbgB0OeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:34:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732342AbgB0Od4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:33:56 -0500
+Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3210724656;
+        Thu, 27 Feb 2020 14:33:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582814035;
+        bh=VcOF4R4aZL9840G5UM/Sd0oFwcPEt8T2Y3lsp5JJoBg=;
+        h=From:To:Subject:Date:From;
+        b=RS27MqVp/rkxbsbuHD8/nWHm60qB2jmrZc13+FZsghuiRNJspMWMEUD3/3FEX7Byc
+         jRAnHt5VVxcoB4rSmWrXovDZkPxu4ce1XV9zN2sVF11wMgrpHRaV422YW/RjiKTDj+
+         ZTldBFalv5XDHuGs925Y5s0y76+aMDdpuxZ/A1ak=
+From:   zanussi@kernel.org
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Daniel Wagner <wagi@monom.org>,
+        Tom Zanussi <zanussi@kernel.org>
+Subject: [PATCH RT 00/23] Linux v4.14.170-rt75-rc2
+Date:   Thu, 27 Feb 2020 08:33:11 -0600
+Message-Id: <cover.1582814004.git.zanussi@kernel.org>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-In-Reply-To: <20200227130123.32442-2-pmladek@suse.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="hqSDMiKsd8o5YzHaXusAbuclKGGNjTjfM"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---hqSDMiKsd8o5YzHaXusAbuclKGGNjTjfM
-Content-Type: multipart/mixed; boundary="I0VyUx4H1cFryB8nUb4I59EwMx3eAsZbz";
- protected-headers="v1"
-From: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
-To: Petr Mladek <pmladek@suse.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
- linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
- Kees Cook <keescook@chromium.org>, "Tobin C . Harding" <me@tobin.cc>
-Message-ID: <bdb7d995-f16f-335c-c06a-b6732dcbbfa2@kleine-koenig.org>
-Subject: Re: [PATCH 1/3] lib/test_printf: Clean up test of hashed pointers
-References: <20200227130123.32442-1-pmladek@suse.com>
- <20200227130123.32442-2-pmladek@suse.com>
-In-Reply-To: <20200227130123.32442-2-pmladek@suse.com>
+From: Tom Zanussi <zanussi@kernel.org>
 
---I0VyUx4H1cFryB8nUb4I59EwMx3eAsZbz
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Dear RT Folks,
 
-Hello Petr,
+This is the RT stable review cycle of patch 4.14.170-rt75-rc2.
 
-On 2/27/20 2:01 PM, Petr Mladek wrote:
-> The commit ad67b74d2469d9b82a ("printk: hash addresses printed with %p"=
-)
-> helps to prevent leaking kernel addresses.
->=20
-> The testing of this functionality is a bit problematic because the outp=
-ut
-> depends on a random key that is generated during boot. Though, it is
-> still possible to check some aspects:
->=20
->   + output string length
->   + hash differs from the original pointer value
->   + top half bits are zeroed on 64-bit systems
+Please scream at me if I messed something up. Please test the patches
+too.
 
-Is "hash differs from the original pointer value" a valid check?
-Depending on the random value and the actual pointer I can imagine a
-valid match. Such a match is unlikely but not necessarily bogus, is it?
+The -rc release will be uploaded to kernel.org and will be deleted
+when the final release is out. This is just a review release (or
+release candidate).
 
-Best regards
-Uwe
+The pre-releases will not be pushed to the git repository, only the
+final release is.
+
+If all goes well, this patch will be converted to the next main
+release on 2020-03-05.
+
+To build 4.14.170-rt75-rc2 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.14.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.14.170.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/4.14/patch-4.14.170-rt75-rc2.patch.xz
+
+You can also build from 4.14.170-rt74 by applying the incremental patch:
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/4.14/incr/patch-4.14.170-rt74-rt75-rc2.patch.xz
 
 
---I0VyUx4H1cFryB8nUb4I59EwMx3eAsZbz--
+Enjoy,
 
---hqSDMiKsd8o5YzHaXusAbuclKGGNjTjfM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+-- Tom
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl5X0qgACgkQwfwUeK3K
-7Am7Zwf/QFJPockuSqgbcRyQUGHjcZY28uGxdP3pAqN/YBVAm3baFOgnjy4GeTWm
-3xGi7C3/VQKM+MyJq312hQYVHqIOfm5bGJMH2GffFV0OJQc8HdAZUequpMbYLmVE
-jDd5wQJko8g5ELWX+nywC9pobceqxTFa1fgiDCO8zQMx8fV994SSc/kkt3TL88k7
-1IJZj9BI6Hy3sAp/4S+jPU0zG7/95en6vEwpDAgfxguCtqGv7Os65CVj46itYht6
-QSK4p6qUv1t9nA7yiuwN6RQph8gpoZGRtXmya+4UF2L2W4qzA8gDTRUZ8MgDBw6t
-P5xEk/N3jcwu1J27DfYPmFu7ryPEhA==
-=GhfM
------END PGP SIGNATURE-----
+Daniel Wagner (1):
+  lib/smp_processor_id: Adjust check_preemption_disabled()
 
---hqSDMiKsd8o5YzHaXusAbuclKGGNjTjfM--
+Joe Korty (1):
+  Fix wrong-variable use in irq_set_affinity_notifier
+
+Julien Grall (1):
+  lib/ubsan: Don't seralize UBSAN report
+
+Juri Lelli (1):
+  sched/deadline: Ensure inactive_timer runs in hardirq context
+
+Liu Haitao (1):
+  kmemleak: Change the lock of kmemleak_object to raw_spinlock_t
+
+Peter Zijlstra (1):
+  locking/rtmutex: Clean ->pi_blocked_on in the error case
+
+Scott Wood (7):
+  sched: migrate_dis/enable: Use sleeping_lock…() to annotate sleeping
+    points
+  sched: __set_cpus_allowed_ptr: Check cpus_mask, not cpus_ptr
+  sched: Remove dead __migrate_disabled() check
+  sched: migrate disable: Protect cpus_ptr with lock
+  sched: migrate_enable: Use select_fallback_rq()
+  sched: Lazy migrate_disable processing
+  sched: migrate_enable: Use stop_one_cpu_nowait()
+
+Sebastian Andrzej Siewior (8):
+  i2c: exynos5: Remove IRQF_ONESHOT
+  i2c: hix5hd2: Remove IRQF_ONESHOT
+  x86: preempt: Check preemption level before looking at lazy-preempt
+  futex: Make the futex_hash_bucket spinlock_t again and bring back its
+    old state
+  Revert "ARM: Initialize split page table locks for vector page"
+  locking: Make spinlock_t and rwlock_t a RCU section on RT
+  sched/core: migrate_enable() must access takedown_cpu_task on
+    !HOTPLUG_CPU
+  sched: migrate_enable: Busy loop until the migration request is
+    completed
+
+Tom Zanussi (1):
+  Linux 4.14.170-rt75-rc2
+
+Waiman Long (1):
+  lib/smp_processor_id: Don't use cpumask_equal()
+
+ arch/arm/kernel/process.c        |  24 ----
+ arch/x86/include/asm/preempt.h   |   2 +
+ drivers/i2c/busses/i2c-exynos5.c |   4 +-
+ drivers/i2c/busses/i2c-hix5hd2.c |   3 +-
+ include/linux/cpu.h              |   4 -
+ include/linux/init_task.h        |   9 ++
+ include/linux/sched.h            |  11 +-
+ include/linux/stop_machine.h     |   2 +
+ kernel/cpu.c                     | 103 +++++++----------
+ kernel/futex.c                   | 231 ++++++++++++++++++++++-----------------
+ kernel/irq/manage.c              |   2 +-
+ kernel/locking/rtmutex.c         | 114 +++++++++++++++----
+ kernel/locking/rtmutex_common.h  |   3 +
+ kernel/locking/rwlock-rt.c       |   6 +
+ kernel/sched/core.c              | 211 +++++++++++++++--------------------
+ kernel/sched/deadline.c          |   4 +-
+ kernel/sched/sched.h             |   4 +
+ kernel/stop_machine.c            |   7 +-
+ lib/smp_processor_id.c           |   7 +-
+ lib/ubsan.c                      |  76 +++++--------
+ localversion-rt                  |   2 +-
+ mm/kmemleak.c                    |  72 ++++++------
+ 22 files changed, 461 insertions(+), 440 deletions(-)
+
+-- 
+2.14.1
+
