@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 791A1171A88
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:54:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82F77171A8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:54:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731722AbgB0Nyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:54:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54564 "EHLO mail.kernel.org"
+        id S1731908AbgB0Nyr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:54:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731851AbgB0Ny2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:54:28 -0500
+        id S1731693AbgB0Nyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:54:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7CB52469D;
-        Thu, 27 Feb 2020 13:54:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F6992469F;
+        Thu, 27 Feb 2020 13:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811668;
-        bh=KNL8q96VW054YfXBZfeHGlfLCZJ5LleWzR+KoB/9j4w=;
+        s=default; t=1582811670;
+        bh=+LSX5fVwNZAlJxwkEm1u1g6SEbCouV2Mcn18P/N8Qkw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bFxhHv0quYoHEaLY5V8FFJAvY3Y8FO4rFszpTH/cJQXCObt8c03bwAkn/XmCZw6o7
-         qrYFaPPsN+KGxl86NX4yBMArisgUI0Cb10fy2yoAMved8eHuBF3O/8HdQdSzWhRXvG
-         /wHcNoPLlwM/3kJJNsM7naglh2PvNlX2g+mS7/rQ=
+        b=cc8cGbpZO9bPsGr2C2KU+KkpjVbsalcsIIVA1VcohPCEe0HaxkdIiXWy1kybkJPHS
+         nVVhFYsb6Izyl7w4gUc/zcG/+HHp8fMsfHHJVrmvGJle9BdWCjR5l/DN8ry5krKofm
+         NpMqHQk/Xlquw+tbrd/PAb8MKrrHJtIeax2U7RWI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        linux-mips@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 055/237] MIPS: Loongson: Fix potential NULL dereference in loongson3_platform_init()
-Date:   Thu, 27 Feb 2020 14:34:29 +0100
-Message-Id: <20200227132300.901186917@linuxfoundation.org>
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 056/237] sparc: Add .exit.data section.
+Date:   Thu, 27 Feb 2020 14:34:30 +0100
+Message-Id: <20200227132300.989646085@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -47,40 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
+From: David S. Miller <davem@davemloft.net>
 
-[ Upstream commit 72d052e28d1d2363f9107be63ef3a3afdea6143c ]
+[ Upstream commit 548f0b9a5f4cffa0cecf62eb12aa8db682e4eee6 ]
 
-If kzalloc fails, it should return -ENOMEM, otherwise may trigger a NULL
-pointer dereference.
+This fixes build errors of all sorts.
 
-Fixes: 3adeb2566b9b ("MIPS: Loongson: Improve LEFI firmware interface")
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Huacai Chen <chenhc@lemote.com>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Also, emit .exit.text unconditionally.
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/loongson64/loongson-3/platform.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/sparc/kernel/vmlinux.lds.S | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/loongson64/loongson-3/platform.c b/arch/mips/loongson64/loongson-3/platform.c
-index 25a97cc0ee336..0db4cc3196ebd 100644
---- a/arch/mips/loongson64/loongson-3/platform.c
-+++ b/arch/mips/loongson64/loongson-3/platform.c
-@@ -31,6 +31,9 @@ static int __init loongson3_platform_init(void)
- 			continue;
+diff --git a/arch/sparc/kernel/vmlinux.lds.S b/arch/sparc/kernel/vmlinux.lds.S
+index 5a2344574f39b..4323dc4ae4c7a 100644
+--- a/arch/sparc/kernel/vmlinux.lds.S
++++ b/arch/sparc/kernel/vmlinux.lds.S
+@@ -167,12 +167,14 @@ SECTIONS
+ 	}
+ 	PERCPU_SECTION(SMP_CACHE_BYTES)
  
- 		pdev = kzalloc(sizeof(struct platform_device), GFP_KERNEL);
-+		if (!pdev)
-+			return -ENOMEM;
+-#ifdef CONFIG_JUMP_LABEL
+ 	. = ALIGN(PAGE_SIZE);
+ 	.exit.text : {
+ 		EXIT_TEXT
+ 	}
+-#endif
 +
- 		pdev->name = loongson_sysconf.sensors[i].name;
- 		pdev->id = loongson_sysconf.sensors[i].id;
- 		pdev->dev.platform_data = &loongson_sysconf.sensors[i];
++	.exit.data : {
++		EXIT_DATA
++	}
+ 
+ 	. = ALIGN(PAGE_SIZE);
+ 	__init_end = .;
 -- 
 2.20.1
 
