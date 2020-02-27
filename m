@@ -2,62 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0B92170DFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 02:41:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BC7F170DFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 02:47:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbgB0Bln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 20:41:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727964AbgB0Blm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 20:41:42 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED623208E4;
-        Thu, 27 Feb 2020 01:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582767702;
-        bh=zlU+Mz8nl1wZykQwoywF5NYDM925aYXitUfhUJEFdWU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Pz5oD86KPZttD/NpbHpThtTRB2GMFbr5zWEIct45dfm69sKvsQiXBEx9SUMUmVrfK
-         HK7HH28LBrhShehywrBdC5uLBkB06JNGMe91rnjwoVbz32CG2UZeHHONzPRIP2JRML
-         1foQ4EmW6m7KPl2YBaC8/vzHStmyrtq6fW4bPgRY=
-Date:   Wed, 26 Feb 2020 17:41:41 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>
-Subject: Re: [PATCH v1 0/3] kcov: collect coverage from usb soft interrupts
-Message-Id: <20200226174141.d1c938e7962a4fc09060eba9@linux-foundation.org>
-In-Reply-To: <cover.1582742673.git.andreyknvl@google.com>
-References: <cover.1582742673.git.andreyknvl@google.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728229AbgB0BrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 20:47:18 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:59202 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728091AbgB0BrS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 20:47:18 -0500
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id 01R1kxMJ021932;
+        Thu, 27 Feb 2020 10:47:00 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 01R1kxMJ021932
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582768020;
+        bh=gka4nv6hoOzbwfb7j4YlBZPR1X9FHcvBUbW+Bllno6o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Rng4mTvuC3n3GOagnxVc5mUyTu39YpuSpd23P+VVp4+Hk20cofBKVJFKUOOQv5Y3G
+         K+qS0GK60XrSZNlmEARCRT5qTrKZgDAuo5ngBom4Ob88b13IBA4xoxKoAWDMQCR9v8
+         yxtTRzXTz8IE3qN0WdrSZi2xSiSeJMtIcxlB5vpqpxAdBic9qLZItkcLes/fIyC7vL
+         C8G+HU5MMiUbpuELUlSJWUJFkfQoTWKM+Al5yzcwuzvjY4MM4z/vPN1CQBEEqwJwau
+         GOwGdkcxAVSEWr9l1crmT/z6GFNg/l2zS9f+iYA0theiV5LbHgXrQQXHKCmzEXuJnS
+         xKMugWpiyRAPg==
+X-Nifty-SrcIP: [209.85.217.41]
+Received: by mail-vs1-f41.google.com with SMTP id p14so802503vsq.6;
+        Wed, 26 Feb 2020 17:47:00 -0800 (PST)
+X-Gm-Message-State: APjAAAX0RHM/+CsF3Mi4SSJYejY13j/sLrkTfRY9vGEfrHHpkcbsjBr9
+        pQZmyZITs0+3b4DPYY7NtTdpLsvJ6bTAQDNgsWU=
+X-Google-Smtp-Source: APXvYqz2gMdIqZp6jmEWo6V6bYnkSsv9Pt66yn+koMjv2AHfNxu7UVya7JTzAMd1ZsC9wZAXV3G/f2BuvBQMLkd3Qw4=
+X-Received: by 2002:a05:6102:3102:: with SMTP id e2mr1167903vsh.179.1582768019168;
+ Wed, 26 Feb 2020 17:46:59 -0800 (PST)
+MIME-Version: 1.0
+References: <20200222110435.18772-1-yamada.masahiro@socionext.com> <20200226221325.GA19817@bogus>
+In-Reply-To: <20200226221325.GA19817@bogus>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Thu, 27 Feb 2020 10:46:23 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATQGQu8bWR5ybcfdWckZ_TsXKBqi3kxtO4=9=WDm4BMuQ@mail.gmail.com>
+Message-ID: <CAK7LNATQGQu8bWR5ybcfdWckZ_TsXKBqi3kxtO4=9=WDm4BMuQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: interrupt-controller: Convert UniPhier
+ AIDET to json-schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Feb 2020 19:48:06 +0100 Andrey Konovalov <andreyknvl@google.com> wrote:
+Hi Rob,
 
-> This patchset extends kcov to allow collecting coverage from soft
-> interrupts and then uses the new functionality to collect coverage from
-> USB code.
-> 
-> This has allowed to find at least one new HID bug [1], which was recently
-> fixed by Alan [2].
+On Thu, Feb 27, 2020 at 7:13 AM Rob Herring <robh@kernel.org> wrote:
 
-I might have asked this before, but I don't see this obvious question
-addressed in the changelogs so maybe I didn't...
+<snip>
 
-Will this only ever be useful for USB?  Or is it anticipated that other
-subsystems will use this?  If the latter, which ones?
+>
+> It all looks fine, so I'll drop the questions and apply.
+>
+> Rob
 
-Thanks.
+Thanks for your answer!
+
+Yes, please drop the questions.
+
+I just want to put them below '---' marker.
+(You can see some questions in my patches)
+
+I use a tool that automates this, but I made a mistake
+in scripting for this one.
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
