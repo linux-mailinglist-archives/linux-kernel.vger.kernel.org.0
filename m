@@ -2,138 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C97D172B01
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 23:22:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82443172B0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 23:25:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730107AbgB0WWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 17:22:43 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:43471 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729434AbgB0WWm (ORCPT
+        id S1730314AbgB0WZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 17:25:36 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:52916 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729831AbgB0WZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 17:22:42 -0500
-Received: by mail-ot1-f65.google.com with SMTP id p8so730361oth.10;
-        Thu, 27 Feb 2020 14:22:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Twand65sZdOLPd8mLMV5yo/gk50yR6BORm4y7JCU1Fs=;
-        b=hEzqBN6Mvj9KfgNlEKt9y8RJ6vQiLq0I9dOO5mn1uQgd4V3U9fxwAc/XodE9n439o9
-         gimQWAV+Gec6+PMph5xwuNfv2sfd3C2/3RQk/oatUzyzHNVwD7Lfax03IiD7oqBDfjeo
-         tosQ9Umx67gLIdhE+h9khbddjRR8k4LP0aXT9WmYjC2FdswndPh/v5UbkSI2OT/qGtk+
-         Yx3N+6EjbF16r3saggOOm3HCEjtnxfI28qFM9jqFNHpkGuNtqqOxW08GGRV0OI9jomRa
-         eOZCaRdWa17RiOxZccVkgAu9FsGF3SQG7AJzQD1puTNBQMzFmQtUi97aIt+EnNiBK760
-         05VQ==
-X-Gm-Message-State: APjAAAXdKaM0FNXGIEnSF3PVFgMCatPrk2lXV4yPBs6QdHwdtwLvIbN1
-        ALSnZfyRDYufTEOQWSPDrg==
-X-Google-Smtp-Source: APXvYqz5B7zZblz4z3k+XJtWJQ8eJGRpmeq7mhbk1IJZq3BK1sqHfVfQ2pt+9lrRhZUpnAzW5mSOdg==
-X-Received: by 2002:a9d:5e9:: with SMTP id 96mr871219otd.307.1582842161560;
-        Thu, 27 Feb 2020 14:22:41 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i6sm2396457oto.62.2020.02.27.14.22.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 14:22:41 -0800 (PST)
-Received: (nullmailer pid 25505 invoked by uid 1000);
-        Thu, 27 Feb 2020 22:22:40 -0000
-Date:   Thu, 27 Feb 2020 16:22:40 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
-        Robert Richter <rric@kernel.org>, soc@kernel.org,
-        Jon Loeliger <jdl@jdl.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v2 12/13] dt-bindings: arm: Add Calxeda system registers
- json-schema binding
-Message-ID: <20200227222240.GG26010@bogus>
-References: <20200227182210.89512-1-andre.przywara@arm.com>
- <20200227182210.89512-13-andre.przywara@arm.com>
+        Thu, 27 Feb 2020 17:25:20 -0500
+Received: from 79.184.237.30.ipv4.supernova.orange.pl (79.184.237.30) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id a8470c93d78cdccb; Thu, 27 Feb 2020 23:25:18 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux ACPI <linux-acpi@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Drake <drake@endlessm.com>
+Subject: [PATCH 4/6] ACPI: EC: Unify handling of event handler installation failures
+Date:   Thu, 27 Feb 2020 23:23:10 +0100
+Message-ID: <1896616.ZZjdNj2dPd@kreacher>
+In-Reply-To: <2094703.CetWLLyMuz@kreacher>
+References: <2094703.CetWLLyMuz@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227182210.89512-13-andre.przywara@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 06:22:09PM +0000, Andre Przywara wrote:
-> The Calxeda system registers are a collection of MMIO register
-> controlling several more general aspects of the SoC.
-> Beside for some power management tasks this node is also somewhat
-> abused as the container for the clock nodes.
-> 
-> Add a binding in DT schema format using json-schema.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  .../bindings/arm/calxeda/hb-sregs.yaml        | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/calxeda/hb-sregs.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/calxeda/hb-sregs.yaml b/Documentation/devicetree/bindings/arm/calxeda/hb-sregs.yaml
-> new file mode 100644
-> index 000000000000..4753e8dc5873
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/calxeda/hb-sregs.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: GPL-2.0
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-Dual license please.
+Commit 406857f773b0 ("ACPI: EC: add support for hardware-reduced
+systems") made ec_install_handlers() return an error on failures
+to configure a GPIO IRQ for the EC, but that is inconsistent with
+the handling of the GPE event handler installation failures even
+though it is exactly the same issue and the driver can respond to
+it in the same way in both cases (the EC can be actively polled
+for events through its registers if the event handler installation
+fails).
 
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/calxeda/hb-sregs.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Calxeda Highbank system registers
-> +
-> +description: |
-> +  The Calxeda Highbank system has a block of MMIO registers controlling
-> +  several generic system aspects. Those can be used to control some power
-> +  management, they also contain some gate and PLL clocks.
-> +
-> +maintainers:
-> +  - Andre Przywara <andre.przywara@arm.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: calxeda,hb-sregs
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    type: object
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    sregs@fff3c000 {
-> +        compatible = "calxeda,hb-sregs";
-> +        reg = <0xfff3c000 0x1000>;
-> +
-> +        clocks {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            osc: oscillator {
-> +                #clock-cells = <0>;
-> +                compatible = "fixed-clock";
-> +                clock-frequency = <33333000>;
-> +            };
-> +        };
-> +    };
-> -- 
-> 2.17.1
-> 
+Moreover, it requires acpi_ec_add() to take that special case into
+account and disagrees with the ec_install_handlers() header comment.
+
+For this reason, consolidate the handling of event handler
+installation failures in ec_install_handlers() so that they do not
+prevent the EC from being used in any case.  On top of that, reduce
+code duplication between install_gpe_event_handler() and
+install_gpio_irq_event_handler() by moving some code from there
+into ec_install_handlers() and simplify the error code path in
+acpi_ec_add().
+
+While at it, turn the ec_install_handlers() header comment into
+a proper kerneldoc one and add some general control flow information
+to it.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/ec.c | 96 +++++++++++++++++++++++++++----------------------------
+ 1 file changed, 48 insertions(+), 48 deletions(-)
+
+diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
+index 6f501d552e6e..3f6127e919ab 100644
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -1427,54 +1427,53 @@ ec_parse_device(acpi_handle handle, u32 Level, void *context, void **retval)
+ 	return AE_CTRL_TERMINATE;
+ }
+ 
+-static void install_gpe_event_handler(struct acpi_ec *ec)
+-{
+-	acpi_status status =
+-		acpi_install_gpe_raw_handler(NULL, ec->gpe,
+-					     ACPI_GPE_EDGE_TRIGGERED,
+-					     &acpi_ec_gpe_handler,
+-					     ec);
+-	if (ACPI_SUCCESS(status)) {
+-		/* This is not fatal as we can poll EC events */
+-		set_bit(EC_FLAGS_EVENT_HANDLER_INSTALLED, &ec->flags);
+-		acpi_ec_leave_noirq(ec);
+-		if (test_bit(EC_FLAGS_STARTED, &ec->flags) &&
+-		    ec->reference_count >= 1)
+-			acpi_ec_enable_gpe(ec, true);
+-	}
++static bool install_gpe_event_handler(struct acpi_ec *ec)
++{
++	acpi_status status;
++
++	status = acpi_install_gpe_raw_handler(NULL, ec->gpe,
++					      ACPI_GPE_EDGE_TRIGGERED,
++					      &acpi_ec_gpe_handler, ec);
++	if (ACPI_FAILURE(status))
++		return false;
++
++	if (test_bit(EC_FLAGS_STARTED, &ec->flags) && ec->reference_count >= 1)
++		acpi_ec_enable_gpe(ec, true);
++
++	return true;
+ }
+ 
+-/* ACPI reduced hardware platforms use a GpioInt specified in _CRS. */
+-static int install_gpio_irq_event_handler(struct acpi_ec *ec,
+-					  struct acpi_device *device)
++static bool install_gpio_irq_event_handler(struct acpi_ec *ec,
++					   struct acpi_device *device)
+ {
+-	int irq = acpi_dev_gpio_irq_get(device, 0);
+-	int ret;
++	int irq, ret;
+ 
++	/* ACPI reduced hardware platforms use a GpioInt specified in _CRS. */
++	irq = acpi_dev_gpio_irq_get(device, 0);
+ 	if (irq < 0)
+-		return irq;
+-
+-	ret = request_irq(irq, acpi_ec_irq_handler, IRQF_SHARED,
+-			  "ACPI EC", ec);
++		return false;
+ 
+-	/*
+-	 * Unlike the GPE case, we treat errors here as fatal, we'll only
+-	 * implement GPIO polling if we find a case that needs it.
+-	 */
++	ret = request_irq(irq, acpi_ec_irq_handler, IRQF_SHARED, "ACPI EC", ec);
+ 	if (ret < 0)
+-		return ret;
++		return false;
+ 
+ 	ec->irq = irq;
+-	set_bit(EC_FLAGS_EVENT_HANDLER_INSTALLED, &ec->flags);
+-	acpi_ec_leave_noirq(ec);
+ 
+-	return 0;
++	return true;
+ }
+ 
+-/*
+- * Note: This function returns an error code only when the address space
+- *       handler is not installed, which means "not able to handle
+- *       transactions".
++/**
++ * ec_install_handlers - Install service callbacks and register query methods.
++ * @ec: Target EC.
++ * @device: ACPI device object corresponding to @ec.
++ *
++ * Install a handler for the EC address space type unless it has been installed
++ * already.  If @device is not NULL, also look for EC query methods in the
++ * namespace and register them, and install an event (either GPE or GPIO IRQ)
++ * handler for the EC, if possible.
++ *
++ * Return -ENODEV if the address space handler cannot be installed, which means
++ * "unable to handle transactions", or 0 (success) otherwise.
+  */
+ static int ec_install_handlers(struct acpi_ec *ec, struct acpi_device *device)
+ {
+@@ -1506,13 +1505,17 @@ static int ec_install_handlers(struct acpi_ec *ec, struct acpi_device *device)
+ 		set_bit(EC_FLAGS_QUERY_METHODS_INSTALLED, &ec->flags);
+ 	}
+ 	if (!test_bit(EC_FLAGS_EVENT_HANDLER_INSTALLED, &ec->flags)) {
+-		if (ec->gpe >= 0) {
+-			install_gpe_event_handler(ec);
+-		} else {
+-			int ret = install_gpio_irq_event_handler(ec, device);
+-			if (ret)
+-				return ret;
++		bool ready = ec->gpe >= 0 ?
++				install_gpe_event_handler(ec) :
++				install_gpio_irq_event_handler(ec, device);
++		if (ready) {
++			set_bit(EC_FLAGS_EVENT_HANDLER_INSTALLED, &ec->flags);
++			acpi_ec_leave_noirq(ec);
+ 		}
++		/*
++		 * Failures to install an event handler are not fatal, because
++		 * the EC can be polled for events.
++		 */
+ 	}
+ 	/* EC is fully operational, allow queries */
+ 	acpi_ec_enable_event(ec);
+@@ -1625,7 +1628,7 @@ static int acpi_ec_add(struct acpi_device *device)
+ 		status = ec_parse_device(device->handle, 0, ec, NULL);
+ 		if (status != AE_CTRL_TERMINATE) {
+ 			ret = -EINVAL;
+-			goto err_alloc;
++			goto err;
+ 		}
+ 
+ 		if (boot_ec && ec->command_addr == boot_ec->command_addr &&
+@@ -1646,7 +1649,7 @@ static int acpi_ec_add(struct acpi_device *device)
+ 
+ 	ret = acpi_ec_setup(ec, device);
+ 	if (ret)
+-		goto err_query;
++		goto err;
+ 
+ 	if (ec == boot_ec)
+ 		acpi_handle_info(boot_ec->handle,
+@@ -1667,10 +1670,7 @@ static int acpi_ec_add(struct acpi_device *device)
+ 	acpi_handle_debug(ec->handle, "enumerated.\n");
+ 	return 0;
+ 
+-err_query:
+-	if (ec != boot_ec)
+-		acpi_ec_remove_query_handlers(ec, true, 0);
+-err_alloc:
++err:
+ 	if (ec != boot_ec)
+ 		acpi_ec_free(ec);
+ 	return ret;
+-- 
+2.16.4
+
+
+
+
+
