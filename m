@@ -2,259 +2,423 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DCF1171175
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 08:28:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F36E917118E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 08:35:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbgB0H2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 02:28:02 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46125 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726999AbgB0H2B (ORCPT
+        id S1728427AbgB0Hff convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Feb 2020 02:35:35 -0500
+Received: from mx3.uni-regensburg.de ([194.94.157.148]:50210 "EHLO
+        mx3.uni-regensburg.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726999AbgB0Hff (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 02:28:01 -0500
-Received: by mail-pl1-f193.google.com with SMTP id y8so763178pll.13;
-        Wed, 26 Feb 2020 23:28:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version;
-        bh=+zGRKeshGQVlukDljqkxIhhlnNK1OHi6NOTC6bZRBxo=;
-        b=JP8igOlvXFF2xXwFwX+mRVJiEE0HmlLHlKW8JEb9cytUu7VTngW2naempp5+JdSg0/
-         NjVVpHCqKlKD9XRnPH04dKw7Rzx8T10ltZuOwIQU4cMSrpt56cFsG4nut+YmSFjqRzuj
-         to0SWE+umdk+sKkiz8UdoaoAHTN3UtOxJ3pA/jfs7cYCmGvHWVaVlJ+BEsGiQGiZjTPw
-         ITQ7CnoyhlplFgcqebyXAA4r8invMgaA1YyfHxTWQPiXw9J9k9DRiAl5jWUX/NQUqIwO
-         WLk+hW0TNe9r8d3Lg3lPn5G/jJd+U1REbyNLmps1sX6+jn6qrt6Zd9pKt5p8UrLi7eMN
-         4ceA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:message-id:subject:from:to:cc:date
-         :in-reply-to:references:user-agent:mime-version;
-        bh=+zGRKeshGQVlukDljqkxIhhlnNK1OHi6NOTC6bZRBxo=;
-        b=JxalxasN6xAJ0YXpl9/PxUDmQPMnDuoFP4IFzVeSwfaRI2YKwK1JznSoXtZJz+283u
-         wOKKRE3k5MtV5nB5DuwNuTSLFpdzjt2KPYTMBOEfUDVQV7UfpBSz02h/G+UiFGdeRy+1
-         WoHWb2JPupOwKLCP6bTt5+Da1HLRhpL89hKxW56RAb4/hjgCa5zUwB3LHBqXOBqmt9cq
-         YJ+Co0Qkx3qdC+foxOuE847P79YdBiykzkyliTvhxFG4ffm7aqivQIdM+QLrk1hHq1lv
-         VGA4reIO6z8EN92LysjUVJ7Plt3RJIZS7rkB0Z0iwSu8HbSu4qEtioo/BhutiI6FOpTL
-         1pLQ==
-X-Gm-Message-State: APjAAAU13nZZujZ0VGSKfUh/XiNBT3t1/uQTI6iTSNr8I2EFJcqH44AD
-        xX4uLfGBwSo8t0kDNCVhhOUSplYGHKA=
-X-Google-Smtp-Source: APXvYqy8C3dfbOK2+toq1qT1z8gRW1E2cC05j1CEnvqbG5oF1+ox2Uh17JXJtOjvITXurKlGPn5r7w==
-X-Received: by 2002:a17:902:8204:: with SMTP id x4mr3147029pln.225.1582788479986;
-        Wed, 26 Feb 2020 23:27:59 -0800 (PST)
-Received: from xps ([103.125.232.133])
-        by smtp.gmail.com with ESMTPSA id r66sm6061240pfc.74.2020.02.26.23.27.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 23:27:59 -0800 (PST)
-Message-ID: <cf946303ac8e2e79ea560ae6d2edeec7e4622946.camel@debian.org>
-Subject: Re: [PATCH v3] binfmt_misc: pass binfmt_misc flags to the
- interpreter
-From:   YunQiang Su <syq@debian.org>
-To:     Laurent Vivier <laurent@vivier.eu>, linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        libc-alpha@sourceware.org
-Date:   Thu, 27 Feb 2020 15:27:43 +0800
-In-Reply-To: <20200128132539.782286-1-laurent@vivier.eu>
-References: <20200128132539.782286-1-laurent@vivier.eu>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-zE24wshRpe0xR3T9LNGS"
-User-Agent: Evolution 3.34.1-4 
-MIME-Version: 1.0
+        Thu, 27 Feb 2020 02:35:35 -0500
+X-Greylist: delayed 462 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Feb 2020 02:35:32 EST
+Received: from mx3.uni-regensburg.de (localhost [127.0.0.1])
+        by localhost (Postfix) with SMTP id BD6BF6000052
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 08:27:48 +0100 (CET)
+Received: from gwsmtp.uni-regensburg.de (gwsmtp1.uni-regensburg.de [132.199.5.51])
+        by mx3.uni-regensburg.de (Postfix) with ESMTP id 12538600004D
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 08:27:46 +0100 (CET)
+Received: from uni-regensburg-smtp1-MTA by gwsmtp.uni-regensburg.de
+        with Novell_GroupWise; Thu, 27 Feb 2020 08:27:45 +0100
+Message-Id: <5E576F6F020000A1000373E1@gwsmtp.uni-regensburg.de>
+X-Mailer: Novell GroupWise Internet Agent 18.2.0 
+Date:   Thu, 27 Feb 2020 08:27:43 +0100
+From:   "Ulrich Windl" <Ulrich.Windl@rz.uni-regensburg.de>
+To:     "Lee Duncan" <lduncan@suse.com>
+Cc:     "open-iscsi" <open-iscsi@googlegroups.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Antw: [EXT] [PATCH] scsi: Replace zero-length array with
+ flexible-array member
+References: <32123_1582744382_5E56C33B_32123_188_1_20200224161406.GA21454@embeddedor>
+In-Reply-To: <32123_1582744382_5E56C33B_32123_188_1_20200224161406.GA21454@embeddedor>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi!
 
---=-zE24wshRpe0xR3T9LNGS
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Personally I think variable-sized structures are a bad thing, independent of the syntax being used.
+30 years ago saving one indirection would have been an argument for such structures, but nowadays?
 
-=E5=9C=A8 2020-01-28=E4=BA=8C=E7=9A=84 14:25 +0100=EF=BC=8CLaurent Vivier=
-=E5=86=99=E9=81=93=EF=BC=9A
-> It can be useful to the interpreter to know which flags are in use.
->=20
-> For instance, knowing if the preserve-argv[0] is in use would
-> allow to skip the pathname argument.
->=20
-> This patch uses an unused auxiliary vector, AT_FLAGS, to add a
-> flag to inform interpreter if the preserve-argv[0] is enabled.
+Regards,
+Ulrich
 
-CC: libc-alpha.
-I guess we need some review from libc people.
-
->=20
-> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+>>> "Gustavo A. R. Silva" <gustavo@embeddedor.com> schrieb am 24.02.2020 um 17:14
+in Nachricht
+<32123_1582744382_5E56C33B_32123_188_1_20200224161406.GA21454@embeddedor>:
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
+> 
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
+> 
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+> 
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+> 
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+> 
+> This issue was found with the help of Coccinelle.
+> 
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html 
+> [2] https://github.com/KSPP/linux/issues/21 
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->=20
-> Notes:
->     This can be tested with QEMU from my branch:
->    =20
->       https://github.com/vivier/qemu/commits/binfmt-argv0
->    =20
->     With something like:
->    =20
->       # cp ..../qemu-ppc /chroot/powerpc/jessie
->    =20
->       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential
-> yes \
->                             --persistent no --preserve-argv0 yes
->       # systemctl restart systemd-binfmt.service
->       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
->       enabled
->       interpreter //qemu-ppc
->       flags: POC
->       offset 0
->       magic 7f454c4601020100000000000000000000020014
->       mask ffffffffffffff00fffffffffffffffffffeffff
->       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
->       sh
->    =20
->       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential
-> yes \
->                             --persistent no --preserve-argv0 no
->       # systemctl restart systemd-binfmt.service
->       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
->       enabled
->       interpreter //qemu-ppc
->       flags: OC
->       offset 0
->       magic 7f454c4601020100000000000000000000020014
->       mask ffffffffffffff00fffffffffffffffffffeffff
->       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
->       /bin/sh
->    =20
->     v3: mix my patch with one from YunQiang Su and my comments on it
->         introduce a new flag in the uabi for the AT_FLAGS
->     v2: only pass special flags (remove Magic and Enabled flags)
->=20
->  fs/binfmt_elf.c              | 5 ++++-
->  fs/binfmt_elf_fdpic.c        | 5 ++++-
->  fs/binfmt_misc.c             | 4 +++-
->  include/linux/binfmts.h      | 4 ++++
->  include/uapi/linux/binfmts.h | 4 ++++
->  5 files changed, 19 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index ecd8d2698515..ff918042ceed 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -176,6 +176,7 @@ create_elf_tables(struct linux_binprm *bprm,
-> struct elfhdr *exec,
->  	unsigned char k_rand_bytes[16];
->  	int items;
->  	elf_addr_t *elf_info;
-> +	elf_addr_t flags =3D 0;
->  	int ei_index =3D 0;
->  	const struct cred *cred =3D current_cred();
->  	struct vm_area_struct *vma;
-> @@ -250,7 +251,9 @@ create_elf_tables(struct linux_binprm *bprm,
-> struct elfhdr *exec,
->  	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
->  	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
->  	NEW_AUX_ENT(AT_BASE, interp_load_addr);
-> -	NEW_AUX_ENT(AT_FLAGS, 0);
-> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
-> +		flags |=3D AT_FLAGS_PRESERVE_ARGV0;
-> +	NEW_AUX_ENT(AT_FLAGS, flags);
->  	NEW_AUX_ENT(AT_ENTRY, exec->e_entry);
->  	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred-
-> >uid));
->  	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred-
-> >euid));
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index 240f66663543..abb90d82aa58 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -507,6 +507,7 @@ static int create_elf_fdpic_tables(struct
-> linux_binprm *bprm,
->  	char __user *u_platform, *u_base_platform, *p;
->  	int loop;
->  	int nr;	/* reset for each csp adjustment */
-> +	unsigned long flags =3D 0;
-> =20
->  #ifdef CONFIG_MMU
->  	/* In some cases (e.g. Hyper-Threading), we want to avoid L1
-> evictions
-> @@ -647,7 +648,9 @@ static int create_elf_fdpic_tables(struct
-> linux_binprm *bprm,
->  	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
->  	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
->  	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
-> -	NEW_AUX_ENT(AT_FLAGS,	0);
-> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
-> +		flags |=3D AT_FLAGS_PRESERVE_ARGV0;
-> +	NEW_AUX_ENT(AT_FLAGS,	flags);
->  	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
->  	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred-
-> >user_ns, cred->uid));
->  	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred-
-> >user_ns, cred->euid));
-> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-> index cdb45829354d..b9acdd26a654 100644
-> --- a/fs/binfmt_misc.c
-> +++ b/fs/binfmt_misc.c
-> @@ -154,7 +154,9 @@ static int load_misc_binary(struct linux_binprm
-> *bprm)
->  	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
->  		goto ret;
-> =20
-> -	if (!(fmt->flags & MISC_FMT_PRESERVE_ARGV0)) {
-> +	if (fmt->flags & MISC_FMT_PRESERVE_ARGV0) {
-> +		bprm->interp_flags |=3D BINPRM_FLAGS_PRESERVE_ARGV0;
-> +	} else {
->  		retval =3D remove_arg_zero(bprm);
->  		if (retval)
->  			goto ret;
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index b40fc633f3be..265b80d5fd6f 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -78,6 +78,10 @@ struct linux_binprm {
->  #define BINPRM_FLAGS_PATH_INACCESSIBLE_BIT 2
->  #define BINPRM_FLAGS_PATH_INACCESSIBLE (1 <<
-> BINPRM_FLAGS_PATH_INACCESSIBLE_BIT)
-> =20
-> +/* if preserve the argv0 for the interpreter  */
-> +#define BINPRM_FLAGS_PRESERVE_ARGV0_BIT 3
-> +#define BINPRM_FLAGS_PRESERVE_ARGV0 (1 <<
-> BINPRM_FLAGS_PRESERVE_ARGV0_BIT)
-> +
->  /* Function parameter for binfmt->coredump */
->  struct coredump_params {
->  	const kernel_siginfo_t *siginfo;
-> diff --git a/include/uapi/linux/binfmts.h
-> b/include/uapi/linux/binfmts.h
-> index 689025d9c185..a70747416130 100644
-> --- a/include/uapi/linux/binfmts.h
-> +++ b/include/uapi/linux/binfmts.h
-> @@ -18,4 +18,8 @@ struct pt_regs;
->  /* sizeof(linux_binprm->buf) */
->  #define BINPRM_BUF_SIZE 256
-> =20
-> +/* if preserve the argv0 for the interpreter  */
-> +#define AT_FLAGS_PRESERVE_ARGV0_BIT 0
-> +#define AT_FLAGS_PRESERVE_ARGV0 (1 << AT_FLAGS_PRESERVE_ARGV0_BIT)
-> +
->  #endif /* _UAPI_LINUX_BINFMTS_H */
+>  drivers/scsi/fnic/vnic_devcmd.h      |  2 +-
+>  drivers/scsi/ipr.h                   |  6 +++---
+>  drivers/scsi/isci/sas.h              |  2 +-
+>  drivers/scsi/mpt3sas/mpt3sas_scsih.c |  2 +-
+>  drivers/scsi/mvsas/mv_sas.h          |  2 +-
+>  drivers/scsi/mvumi.h                 |  4 ++--
+>  drivers/scsi/pmcraid.h               |  2 +-
+>  drivers/scsi/snic/vnic_devcmd.h      |  2 +-
+>  drivers/scsi/stex.c                  |  2 +-
+>  include/scsi/iscsi_if.h              | 10 +++++-----
+>  include/scsi/scsi_bsg_iscsi.h        |  2 +-
+>  include/scsi/scsi_device.h           |  4 ++--
+>  include/scsi/scsi_host.h             |  2 +-
+>  include/scsi/scsi_ioctl.h            |  2 +-
+>  include/scsi/srp.h                   |  8 ++++----
+>  include/uapi/scsi/scsi_bsg_fc.h      |  2 +-
+>  16 files changed, 27 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/scsi/fnic/vnic_devcmd.h 
+> b/drivers/scsi/fnic/vnic_devcmd.h
+> index c5dde556dc7c..c20d30e36dfc 100644
+> --- a/drivers/scsi/fnic/vnic_devcmd.h
+> +++ b/drivers/scsi/fnic/vnic_devcmd.h
+> @@ -442,7 +442,7 @@ struct vnic_devcmd_notify {
+>  struct vnic_devcmd_provinfo {
+>  	u8 oui[3];
+>  	u8 type;
+> -	u8 data[0];
+> +	u8 data[];
+>  };
+>  
+>  /*
+> diff --git a/drivers/scsi/ipr.h b/drivers/scsi/ipr.h
+> index a67baeb36d1f..fd3929a19ab5 100644
+> --- a/drivers/scsi/ipr.h
+> +++ b/drivers/scsi/ipr.h
+> @@ -451,12 +451,12 @@ struct ipr_config_table_hdr64 {
+>  
+>  struct ipr_config_table {
+>  	struct ipr_config_table_hdr hdr;
+> -	struct ipr_config_table_entry dev[0];
+> +	struct ipr_config_table_entry dev[];
+>  }__attribute__((packed, aligned (4)));
+>  
+>  struct ipr_config_table64 {
+>  	struct ipr_config_table_hdr64 hdr64;
+> -	struct ipr_config_table_entry64 dev[0];
+> +	struct ipr_config_table_entry64 dev[];
+>  }__attribute__((packed, aligned (8)));
+>  
+>  struct ipr_config_table_entry_wrapper {
+> @@ -792,7 +792,7 @@ struct ipr_mode_page28 {
+>  	struct ipr_mode_page_hdr hdr;
+>  	u8 num_entries;
+>  	u8 entry_length;
+> -	struct ipr_dev_bus_entry bus[0];
+> +	struct ipr_dev_bus_entry bus[];
+>  }__attribute__((packed));
+>  
+>  struct ipr_mode_page24 {
+> diff --git a/drivers/scsi/isci/sas.h b/drivers/scsi/isci/sas.h
+> index dc26b4aea99e..15d8f3631ab7 100644
+> --- a/drivers/scsi/isci/sas.h
+> +++ b/drivers/scsi/isci/sas.h
+> @@ -201,7 +201,7 @@ struct smp_req {
+>  	u8 func;		/* byte 1 */
+>  	u8 alloc_resp_len;	/* byte 2 */
+>  	u8 req_len;		/* byte 3 */
+> -	u8 req_data[0];
+> +	u8 req_data[];
+>  }  __packed;
+>  
+>  /*
+> diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c 
+> b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+> index c597d544eb39..778d5e6ce385 100644
+> --- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+> +++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+> @@ -207,7 +207,7 @@ struct fw_event_work {
+>  	u8			ignore;
+>  	u16			event;
+>  	struct kref		refcount;
+> -	char			event_data[0] __aligned(4);
+> +	char			event_data[] __aligned(4);
+>  };
+>  
+>  static void fw_event_work_free(struct kref *r)
+> diff --git a/drivers/scsi/mvsas/mv_sas.h b/drivers/scsi/mvsas/mv_sas.h
+> index 519edc796691..327fdd5ee962 100644
+> --- a/drivers/scsi/mvsas/mv_sas.h
+> +++ b/drivers/scsi/mvsas/mv_sas.h
+> @@ -394,7 +394,7 @@ struct mvs_info {
+>  	dma_addr_t bulk_buffer_dma1;
+>  #define TRASH_BUCKET_SIZE    	0x20000
+>  	void *dma_pool;
+> -	struct mvs_slot_info slot_info[0];
+> +	struct mvs_slot_info slot_info[];
+>  };
+>  
+>  struct mvs_prv_info{
+> diff --git a/drivers/scsi/mvumi.h b/drivers/scsi/mvumi.h
+> index ec8cc2207536..60d5691fc4ab 100644
+> --- a/drivers/scsi/mvumi.h
+> +++ b/drivers/scsi/mvumi.h
+> @@ -130,7 +130,7 @@ enum {
+>  struct mvumi_hotplug_event {
+>  	u16 size;
+>  	u8 dummy[2];
+> -	u8 bitmap[0];
+> +	u8 bitmap[];
+>  };
+>  
+>  struct mvumi_driver_event {
+> @@ -290,7 +290,7 @@ struct mvumi_rsp_frame {
+>  
+>  struct mvumi_ob_data {
+>  	struct list_head list;
+> -	unsigned char data[0];
+> +	unsigned char data[];
+>  };
+>  
+>  struct version_info {
+> diff --git a/drivers/scsi/pmcraid.h b/drivers/scsi/pmcraid.h
+> index a4f7eb8f50a3..15c962108075 100644
+> --- a/drivers/scsi/pmcraid.h
+> +++ b/drivers/scsi/pmcraid.h
+> @@ -623,7 +623,7 @@ struct pmcraid_aen_msg {
+>  	u32 hostno;
+>  	u32 length;
+>  	u8  reserved[8];
+> -	u8  data[0];
+> +	u8  data[];
+>  };
+>  
+>  /* Controller state event message type */
+> diff --git a/drivers/scsi/snic/vnic_devcmd.h 
+> b/drivers/scsi/snic/vnic_devcmd.h
+> index d81b4f0ceaaa..0e0fa38f8d90 100644
+> --- a/drivers/scsi/snic/vnic_devcmd.h
+> +++ b/drivers/scsi/snic/vnic_devcmd.h
+> @@ -208,7 +208,7 @@ struct vnic_devcmd_notify {
+>  struct vnic_devcmd_provinfo {
+>  	u8 oui[3];
+>  	u8 type;
+> -	u8 data[0];
+> +	u8 data[];
+>  };
+>  
+>  /*
+> diff --git a/drivers/scsi/stex.c b/drivers/scsi/stex.c
+> index 33287b6bdf0e..d4f10c0d813c 100644
+> --- a/drivers/scsi/stex.c
+> +++ b/drivers/scsi/stex.c
+> @@ -236,7 +236,7 @@ struct req_msg {
+>  	u8 data_dir;
+>  	u8 payload_sz;		/* payload size in 4-byte, not used */
+>  	u8 cdb[STEX_CDB_LENGTH];
+> -	u32 variable[0];
+> +	u32 variable[];
+>  };
+>  
+>  struct status_msg {
+> diff --git a/include/scsi/iscsi_if.h b/include/scsi/iscsi_if.h
+> index 92b11c7e0b4f..b0e240b10bf9 100644
+> --- a/include/scsi/iscsi_if.h
+> +++ b/include/scsi/iscsi_if.h
+> @@ -311,7 +311,7 @@ enum iscsi_param_type {
+>  struct iscsi_param_info {
+>  	uint32_t len;		/* Actual length of the param value */
+>  	uint16_t param;		/* iscsi param */
+> -	uint8_t value[0];	/* length sized value follows */
+> +	uint8_t value[];	/* length sized value follows */
+>  } __packed;
+>  
+>  struct iscsi_iface_param_info {
+> @@ -320,7 +320,7 @@ struct iscsi_iface_param_info {
+>  	uint16_t param;		/* iscsi param value */
+>  	uint8_t iface_type;	/* IPv4 or IPv6 */
+>  	uint8_t param_type;	/* iscsi_param_type */
+> -	uint8_t value[0];	/* length sized value follows */
+> +	uint8_t value[];	/* length sized value follows */
+>  } __packed;
+>  
+>  /*
+> @@ -697,7 +697,7 @@ enum iscsi_flashnode_param {
+>  struct iscsi_flashnode_param_info {
+>  	uint32_t len;		/* Actual length of the param */
+>  	uint16_t param;		/* iscsi param value */
+> -	uint8_t value[0];	/* length sized value follows */
+> +	uint8_t value[];	/* length sized value follows */
+>  } __packed;
+>  
+>  enum iscsi_discovery_parent_type {
+> @@ -815,7 +815,7 @@ struct iscsi_stats {
+>  	 * up to ISCSI_STATS_CUSTOM_MAX
+>  	 */
+>  	uint32_t custom_length;
+> -	struct iscsi_stats_custom custom[0]
+> +	struct iscsi_stats_custom custom[]
+>  		__attribute__ ((aligned (sizeof(uint64_t))));
+>  };
+>  
+> @@ -946,7 +946,7 @@ struct iscsi_offload_host_stats {
+>  	 * up to ISCSI_HOST_STATS_CUSTOM_MAX
+>  	 */
+>  	uint32_t custom_length;
+> -	struct iscsi_host_stats_custom custom[0]
+> +	struct iscsi_host_stats_custom custom[]
+>  		__aligned(sizeof(uint64_t));
+>  };
+>  
+> diff --git a/include/scsi/scsi_bsg_iscsi.h b/include/scsi/scsi_bsg_iscsi.h
+> index fa0c820a1663..6b8128005af8 100644
+> --- a/include/scsi/scsi_bsg_iscsi.h
+> +++ b/include/scsi/scsi_bsg_iscsi.h
+> @@ -52,7 +52,7 @@ struct iscsi_bsg_host_vendor {
+>  	uint64_t vendor_id;
+>  
+>  	/* start of vendor command area */
+> -	uint32_t vendor_cmd[0];
+> +	uint32_t vendor_cmd[];
+>  };
+>  
+>  /* Response:
+> diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+> index f8312a3e5b42..4dc158cf09b8 100644
+> --- a/include/scsi/scsi_device.h
+> +++ b/include/scsi/scsi_device.h
+> @@ -231,7 +231,7 @@ struct scsi_device {
+>  	struct mutex		state_mutex;
+>  	enum scsi_device_state sdev_state;
+>  	struct task_struct	*quiesced_by;
+> -	unsigned long		sdev_data[0];
+> +	unsigned long		sdev_data[];
+>  } __attribute__((aligned(sizeof(unsigned long))));
+>  
+>  #define	to_scsi_device(d)	\
+> @@ -315,7 +315,7 @@ struct scsi_target {
+>  	char			scsi_level;
+>  	enum scsi_target_state	state;
+>  	void 			*hostdata; /* available to low-level driver */
+> -	unsigned long		starget_data[0]; /* for the transport */
+> +	unsigned long		starget_data[]; /* for the transport */
+>  	/* starget_data must be the last element!!!! */
+>  } __attribute__((aligned(sizeof(unsigned long))));
+>  
+> diff --git a/include/scsi/scsi_host.h b/include/scsi/scsi_host.h
+> index 7a97fb8104cf..e6811ea8f984 100644
+> --- a/include/scsi/scsi_host.h
+> +++ b/include/scsi/scsi_host.h
+> @@ -682,7 +682,7 @@ struct Scsi_Host {
+>  	 * and also because some compilers (m68k) don't automatically force
+>  	 * alignment to a long boundary.
+>  	 */
+> -	unsigned long hostdata[0]  /* Used for storage of host specific stuff */
+> +	unsigned long hostdata[]  /* Used for storage of host specific stuff */
+>  		__attribute__ ((aligned (sizeof(unsigned long))));
+>  };
+>  
+> diff --git a/include/scsi/scsi_ioctl.h b/include/scsi/scsi_ioctl.h
+> index 4fe69d863b5d..b465799f4d2d 100644
+> --- a/include/scsi/scsi_ioctl.h
+> +++ b/include/scsi/scsi_ioctl.h
+> @@ -27,7 +27,7 @@ struct scsi_device;
+>  typedef struct scsi_ioctl_command {
+>  	unsigned int inlen;
+>  	unsigned int outlen;
+> -	unsigned char data[0];
+> +	unsigned char data[];
+>  } Scsi_Ioctl_Command;
+>  
+>  typedef struct scsi_idlun {
+> diff --git a/include/scsi/srp.h b/include/scsi/srp.h
+> index 9220758d5087..177d8026e96f 100644
+> --- a/include/scsi/srp.h
+> +++ b/include/scsi/srp.h
+> @@ -109,7 +109,7 @@ struct srp_direct_buf {
+>  struct srp_indirect_buf {
+>  	struct srp_direct_buf	table_desc;
+>  	__be32			len;
+> -	struct srp_direct_buf	desc_list[0];
+> +	struct srp_direct_buf	desc_list[];
+>  } __attribute__((packed));
+>  
+>  /* Immediate data buffer descriptor as defined in SRP2. */
+> @@ -244,7 +244,7 @@ struct srp_cmd {
+>  	u8	reserved4;
+>  	u8	add_cdb_len;
+>  	u8	cdb[16];
+> -	u8	add_data[0];
+> +	u8	add_data[];
+>  };
+>  
+>  enum {
+> @@ -274,7 +274,7 @@ struct srp_rsp {
+>  	__be32	data_in_res_cnt;
+>  	__be32	sense_data_len;
+>  	__be32	resp_data_len;
+> -	u8	data[0];
+> +	u8	data[];
+>  } __attribute__((packed));
+>  
+>  struct srp_cred_req {
+> @@ -306,7 +306,7 @@ struct srp_aer_req {
+>  	struct scsi_lun	lun;
+>  	__be32	sense_data_len;
+>  	u32	reserved3;
+> -	u8	sense_data[0];
+> +	u8	sense_data[];
+>  } __attribute__((packed));
+>  
+>  struct srp_aer_rsp {
+> diff --git a/include/uapi/scsi/scsi_bsg_fc.h 
+> b/include/uapi/scsi/scsi_bsg_fc.h
+> index 3ae65e93235c..7f5930801f72 100644
+> --- a/include/uapi/scsi/scsi_bsg_fc.h
+> +++ b/include/uapi/scsi/scsi_bsg_fc.h
+> @@ -209,7 +209,7 @@ struct fc_bsg_host_vendor {
+>  	__u64 vendor_id;
+>  
+>  	/* start of vendor command area */
+> -	__u32 vendor_cmd[0];
+> +	__u32 vendor_cmd[];
+>  };
+>  
+>  /* Response:
+> -- 
+> 2.25.0
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups 
+> "open-iscsi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an 
+> email to open-iscsi+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit 
+> https://groups.google.com/d/msgid/open-iscsi/20200224161406.GA21454%40embedde 
+> dor.
 
---=-zE24wshRpe0xR3T9LNGS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEET3MbhxKET+7/a6zdW0gHVdEZ6o4FAl5Xb28ACgkQW0gHVdEZ
-6o5PCgf+IhNRA4aou8ifw13gYlx/VqRW+7x1bIxFdRzNhhpSKkCGMvzKrZdq5rUA
-S+9PUa+MHBGrMwO8n+izBDF9Sj9G1p/9rJp7MoYbBHceZxeXWdFrDNMQ+dXIWiJQ
-IN8EGIOhRco+Gzf59zZZhB9WjHRBK7R23sk9h57esS6+KQiomREc3UoeioXSmYoZ
-sYDt+ooTDFl2QlmJC7CKzXNk7EPIQYnzGrO1DpN1icCcSSvMNYzCfG2+AIfmyJOc
-Lz+GVXAWne/T6yJKFa3wzsqwkkJ0qg6792vLP9ieMkbQMjD/T/eTGPfhFHqIbQUA
-uQhaIxAErGmi2/1KFAVTYiEerUG9Sw==
-=qjWv
------END PGP SIGNATURE-----
-
---=-zE24wshRpe0xR3T9LNGS--
 
