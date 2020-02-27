@@ -2,115 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27B00170F09
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 04:39:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 784DB170F2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 04:43:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbgB0Djp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 22:39:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728255AbgB0Djp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 22:39:45 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA2532467A;
-        Thu, 27 Feb 2020 03:39:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582774784;
-        bh=9Cffmdd0qW73kmajGjKfvODv6L7Gr3tpz2QX3jQxlFs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XMatfAjFIhOlMtWJ/mHdt/ligz0Nban01KEtDur859vkq2xBkAVBxgCqyxRgurghc
-         qWN2kXNPGUGVbqF4SBHpkPnkRN8ekg8/vcVgXlc/MdtfDwrbGSY9661RsbOCF32fee
-         4yuJmjNrIfmxWSaggM2O2YPHlsfAZKOc4ihVFE6E=
-Date:   Wed, 26 Feb 2020 19:39:42 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     js1304@gmail.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: Re: [PATCH v2 0/9] workingset protection/detection on the anonymous
- LRU list
-Message-Id: <20200226193942.30049da9c090b466bdc5ec23@linux-foundation.org>
-In-Reply-To: <1582175513-22601-1-git-send-email-iamjoonsoo.kim@lge.com>
-References: <1582175513-22601-1-git-send-email-iamjoonsoo.kim@lge.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728434AbgB0DlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 22:41:25 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44412 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728273AbgB0DlZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 22:41:25 -0500
+Received: by mail-pl1-f193.google.com with SMTP id d9so546524plo.11;
+        Wed, 26 Feb 2020 19:41:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VUxAWoyzRwTi4XcElESOl4e7XyRqkwqcDDvJbUZpLIg=;
+        b=gmPw2xDsx9eKdgHlZEL2xC7Li/8YBXlNbCA+spXw9KKfoPRWYY0KhEEeVo4KC2o1UN
+         YrNfxZD2lybH9mVLDj+vW/MJcIbegJHj1PeRAO04tnf28Bv/GJDG5lEc0zPKDTubtW6+
+         N7IuMJPmP3mVcy8XVAlTdaqT1E2JxhEK5v/xdHjeyy807augrdOuYwNg+xDbcKfjDq9v
+         jHAcRGuwNzIN3Yw/yuXMpKSZYqA5MZXi+2ZxZzj23cJPP3h3/A246g+LJnfnF+zURjDt
+         uuHLQb7zdWVZ7jWWWGre5ezDmXMZasplcYWQ8/KYy346t8KZDjAG1MAvSBaQZYpcfvF7
+         BXIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VUxAWoyzRwTi4XcElESOl4e7XyRqkwqcDDvJbUZpLIg=;
+        b=Z537Q/JEEc3PjDQ0cEKF36+g/h6AMbgQXux1TS0qE+iWz+B44iHkSOBELS8VW3oNgy
+         6mEEi/qfMxVmCUSPugm3wPGQdJEXA9oiQVgL3JpsUhCrN6bdPEX3La8nTpqnwYLjRL3O
+         D4z9d6Hv6V4aY/7m3laSqU69UxNVFJgdj6aWbbcNKVdVxhtU1FJqV2tiI9looFJr6iQP
+         SHFCFYbCvmTqMjMYso3VMFKhUL2lqT4NeHF0mfNC/xAXHGDX91naeOu/cZfK3ipym0Yt
+         A8nnD5lyDjm4S+n3i44UHd38ZQ5odr0gu2iFObqL9pOrlxw8MkfG0ZosSUjTnAYF92so
+         RojA==
+X-Gm-Message-State: APjAAAXUngrtG4rjSGwN1Q6VsFzs6DUXERz/1bEnOmixz8FwXhxk0Ukx
+        f0DwmYqHzU824zuLBF1Bsb8=
+X-Google-Smtp-Source: APXvYqwu67NFja14RMtsEQ5nHb9nwgFD7snOj2gBrL1Jp1A8X2Zh72CwRRaPQ6P9a1KCWadgsyQGaQ==
+X-Received: by 2002:a17:902:7b94:: with SMTP id w20mr2521900pll.257.1582774883581;
+        Wed, 26 Feb 2020 19:41:23 -0800 (PST)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id e1sm4658282pff.188.2020.02.26.19.41.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Feb 2020 19:41:23 -0800 (PST)
+Date:   Wed, 26 Feb 2020 19:41:21 -0800
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     timur@kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
+        broonie@kernel.org, alsa-devel@alsa-project.org,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] ASoC: fsl_asrc: Change asrc_width to asrc_format
+Message-ID: <20200227034121.GA20540@Asurada-Nvidia.nvidia.com>
+References: <cover.1582770784.git.shengjiu.wang@nxp.com>
+ <ffd5ff2fd0e8ad03a97f6a640630cff767d73fa7.1582770784.git.shengjiu.wang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ffd5ff2fd0e8ad03a97f6a640630cff767d73fa7.1582770784.git.shengjiu.wang@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Feb 2020 14:11:44 +0900 js1304@gmail.com wrote:
+On Thu, Feb 27, 2020 at 10:41:55AM +0800, Shengjiu Wang wrote:
+> asrc_format is more inteligent variable, which is align
+> with the alsa definition snd_pcm_format_t.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  sound/soc/fsl/fsl_asrc.c     | 23 +++++++++++------------
+>  sound/soc/fsl/fsl_asrc.h     |  4 ++--
+>  sound/soc/fsl/fsl_asrc_dma.c |  2 +-
+>  3 files changed, 14 insertions(+), 15 deletions(-)
+> 
+> diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
+> index 0dcebc24c312..2b6a1643573c 100644
+> --- a/sound/soc/fsl/fsl_asrc.c
+> +++ b/sound/soc/fsl/fsl_asrc.c
 
-> From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> 
-> Hello,
-> 
-> This patchset implements workingset protection and detection on
-> the anonymous LRU list.
+> @@ -600,11 +599,6 @@ static int fsl_asrc_dai_hw_params(struct snd_pcm_substream *substream,
+>  
+>  	pair->config = &config;
+>  
+> -	if (asrc_priv->asrc_width == 16)
+> -		format = SNDRV_PCM_FORMAT_S16_LE;
+> -	else
+> -		format = SNDRV_PCM_FORMAT_S24_LE;
 
-The test robot measurement got my attention!
+It feels better to me that we have format settings in hw_params().
 
-http://lkml.kernel.org/r/20200227022905.GH6548@shao2-debian
-
-> * Changes on v2
-> - fix a critical bug that uses out of index lru list in
-> workingset_refault()
-> - fix a bug that reuses the rotate value for previous page
-> 
-> * SUBJECT
-> workingset protection
-> 
-> * PROBLEM
-> In current implementation, newly created or swap-in anonymous page is
-> started on the active list. Growing the active list results in rebalancing
-> active/inactive list so old pages on the active list are demoted to the
-> inactive list. Hence, hot page on the active list isn't protected at all.
-> 
-> Following is an example of this situation.
-> 
-> Assume that 50 hot pages on active list and system can contain total
-> 100 pages. Numbers denote the number of pages on active/inactive
-> list (active | inactive). (h) stands for hot pages and (uo) stands for
-> used-once pages.
-> 
-> 1. 50 hot pages on active list
-> 50(h) | 0
-> 
-> 2. workload: 50 newly created (used-once) pages
-> 50(uo) | 50(h)
-> 
-> 3. workload: another 50 newly created (used-once) pages
-> 50(uo) | 50(uo), swap-out 50(h)
-> 
-> As we can see, hot pages are swapped-out and it would cause swap-in later.
-> 
-> * SOLUTION
-> Since this is what we want to avoid, this patchset implements workingset
-> protection. Like as the file LRU list, newly created or swap-in anonymous
-> page is started on the inactive list. Also, like as the file LRU list,
-> if enough reference happens, the page will be promoted. This simple
-> modification changes the above example as following.
-
-One wonders why on earth we weren't doing these things in the first
-place?
-
-> * SUBJECT
-> workingset detection
-
-It sounds like the above simple aging changes provide most of the
-improvement, and that the workingset changes are less beneficial and a
-bit more risky/speculative?
-
-If so, would it be best for us to concentrate on the aging changes
-first, let that settle in and spread out and then turn attention to the
-workingset changes?
-
+Why not let fsl_easrc align with this? Any reason that I'm missing?
