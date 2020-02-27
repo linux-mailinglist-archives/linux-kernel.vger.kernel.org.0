@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 134BF171B8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:03:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C06171B3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:00:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733310AbgB0ODS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:03:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38390 "EHLO mail.kernel.org"
+        id S1732796AbgB0OAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:00:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732977AbgB0ODQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:03:16 -0500
+        id S1732598AbgB0OAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:00:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A81020801;
-        Thu, 27 Feb 2020 14:03:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA9F72084E;
+        Thu, 27 Feb 2020 14:00:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812195;
-        bh=z57J7PEizy77KM3xdAe4s3IQIQNXSoGZGe440Wy2BQk=;
+        s=default; t=1582812036;
+        bh=GdSWoQomrdKNr8DZ+H6Ho15kRD6+s3YVagtmPJN4Xkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WMxW1cCgYlLnfwmINJnrlSkYyQHXWSLGXaisVLr83eZvdaNAHDfz2zCWUEwFTwgqS
-         0yCiOZHOxiVcqRmQENEic/dIUaxDESliCiJv/QjS5AZIt8Xfh5Tkoslk1LEgR5DWAC
-         YV8XDvA1KvTRku7WTb2DD/KXRTUq5Z+/fy4bAEuw=
+        b=QpCmp83er3AMZb0JW1gIrQYm8C0pa6ulF+h0GXr0Mh4JaMTSnLh76Iop9X12rIn19
+         e9ScJaW3q9lSNXFWVw7iH5s5tZyr9lmhxnAGcflAKIaoyrvEMTUAfQ/2ftB9A8hIdW
+         OOCJeuW9cf6izWp2L/ZhCWY+REp8h7O0vsvmgkHk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Samuel Holland <samuel@sholland.org>,
-        Chen-Yu Tsai <wens@csie.org>, stable@kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.19 05/97] ASoC: sun8i-codec: Fix setting DAI data format
+        stable@vger.kernel.org, Zenghui Yu <yuzenghui@huawei.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 159/237] irqchip/gic-v3-its: Reference to its_invall_cmd descriptor when building INVALL
 Date:   Thu, 27 Feb 2020 14:36:13 +0100
-Message-Id: <20200227132215.467861082@linuxfoundation.org>
+Message-Id: <20200227132308.220023750@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Samuel Holland <samuel@sholland.org>
+From: Zenghui Yu <yuzenghui@huawei.com>
 
-commit 96781fd941b39e1f78098009344ebcd7af861c67 upstream.
+[ Upstream commit 107945227ac5d4c37911c7841b27c64b489ce9a9 ]
 
-Use the correct mask for this two-bit field. This fixes setting the DAI
-data format to RIGHT_J or DSP_A.
+It looks like an obvious mistake to use its_mapc_cmd descriptor when
+building the INVALL command block. It so far worked by luck because
+both its_mapc_cmd.col and its_invall_cmd.col sit at the same offset of
+the ITS command descriptor, but we should not rely on it.
 
-Fixes: 36c684936fae ("ASoC: Add sun8i digital audio codec")
-Signed-off-by: Samuel Holland <samuel@sholland.org>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Cc: stable@kernel.org
-Link: https://lore.kernel.org/r/20200217064250.15516-7-samuel@sholland.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: cc2d3216f53c ("irqchip: GICv3: ITS command queue")
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20191202071021.1251-1-yuzenghui@huawei.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sunxi/sun8i-codec.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-gic-v3-its.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/sunxi/sun8i-codec.c
-+++ b/sound/soc/sunxi/sun8i-codec.c
-@@ -89,6 +89,7 @@
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 52238e6bed392..799df1e598db3 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -527,7 +527,7 @@ static struct its_collection *its_build_invall_cmd(struct its_cmd_block *cmd,
+ 						   struct its_cmd_desc *desc)
+ {
+ 	its_encode_cmd(cmd, GITS_CMD_INVALL);
+-	its_encode_collection(cmd, desc->its_mapc_cmd.col->col_id);
++	its_encode_collection(cmd, desc->its_invall_cmd.col->col_id);
  
- #define SUN8I_SYS_SR_CTRL_AIF1_FS_MASK		GENMASK(15, 12)
- #define SUN8I_SYS_SR_CTRL_AIF2_FS_MASK		GENMASK(11, 8)
-+#define SUN8I_AIF1CLK_CTRL_AIF1_DATA_FMT_MASK	GENMASK(3, 2)
- #define SUN8I_AIF1CLK_CTRL_AIF1_WORD_SIZ_MASK	GENMASK(5, 4)
- #define SUN8I_AIF1CLK_CTRL_AIF1_LRCK_DIV_MASK	GENMASK(8, 6)
- #define SUN8I_AIF1CLK_CTRL_AIF1_BCLK_DIV_MASK	GENMASK(12, 9)
-@@ -250,7 +251,7 @@ static int sun8i_set_fmt(struct snd_soc_
- 		return -EINVAL;
- 	}
- 	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
--			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_DATA_FMT),
-+			   SUN8I_AIF1CLK_CTRL_AIF1_DATA_FMT_MASK,
- 			   value << SUN8I_AIF1CLK_CTRL_AIF1_DATA_FMT);
+ 	its_fixup_cmd(cmd);
  
- 	return 0;
+-- 
+2.20.1
+
 
 
