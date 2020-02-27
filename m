@@ -2,139 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 951351718DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:37:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 154D5171A3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:52:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729262AbgB0NhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:37:17 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:44863 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbgB0NhQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:37:16 -0500
-Received: by mail-io1-f70.google.com with SMTP id i15so3540864ioe.11
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 05:37:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=91gKwAo30RdFaoLYbTACNeuWe8Uq9JMFGOgZLkn6DM0=;
-        b=iB0WmxqlavRtizhA6p9nhKk46bKU5gMMUadg/slgoQlGbmBgRlZ9eLd0wPMJkISMn4
-         DRQgAJJA5kBEq4OcjZEuGwFGTq7YYWTDdgavFFpG6bLhPf/NG1BFBMJkirmydCrqZL+p
-         u34Vgc0rUnVkJOYz58F9ORRdQhGSz/z0qftZakISE1EKYil9G5TOmG22ET0uIYzAdx77
-         ceLw/Fpj1C9Yr2gs7Hy6lEmPw7rZJVP/wch5/GaB0vvRds4CfreH0j0EIacgNTuRVydX
-         8Son96OVIgxNdJpqMxwVQHAIoh/aLmWonyUbvprcPLW4tnjsm7w+kfmC6Gd3g0oys6B1
-         yXVA==
-X-Gm-Message-State: APjAAAWtfUEevl5YabtfKVmNT7aVKfY9DudZFkqquOEJ/QA6hb5lF9Sg
-        MTgRR/d6yPW35MYAs21r9YAHB1ihDNZhJUHIt6jSLRBWBUK4
-X-Google-Smtp-Source: APXvYqywGKnMFJjs3rWZe5+hj65axWzzB3kF4VtBPQi5BXaiJgAILiOuOj0JukUfrY/DGKVti4s28K4XgJrVV2ZrQrQZRCY6QLH9
+        id S1731477AbgB0Nv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:51:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730836AbgB0Nv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:51:56 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA65C2084E;
+        Thu, 27 Feb 2020 13:51:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582811515;
+        bh=lot9hp8M9ZmQ4SErYioRkTfv2/FgtyO+wcAr43RWXLg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uY40Znbw1G4hQz9DENUHX0kLpDP/M2L0JvcWMDWQqM+ySqdwNCxP683OPnIpeucu5
+         dA0bLmhf2YS+GC3lT8pYmTU3bfLleNX724BLtK/SPK800jMmfIHHW7LOvBb7GUxpsT
+         jH609dSMGgJPzywaI7ey0zTxoU7HKInulgCNH4oc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+fd5e0eaa1a32999173b2@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 161/165] ALSA: seq: Fix concurrent access to queue current tick/time
+Date:   Thu, 27 Feb 2020 14:37:15 +0100
+Message-Id: <20200227132254.238907793@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-X-Received: by 2002:a5e:8c0d:: with SMTP id n13mr4788017ioj.138.1582810634019;
- Thu, 27 Feb 2020 05:37:14 -0800 (PST)
-Date:   Thu, 27 Feb 2020 05:37:14 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000966862059f8ed1c8@google.com>
-Subject: general protection fault in alb_fasten_mac_swap
-From:   syzbot <syzbot+d54e40cf758e447e088e@syzkaller.appspotmail.com>
-To:     andy@greyhouse.net, davem@davemloft.net, j.vosburgh@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, vfalico@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Takashi Iwai <tiwai@suse.de>
 
-syzbot found the following crash on:
+commit dc7497795e014d84699c3b8809ed6df35352dd74 upstream.
 
-HEAD commit:    54dedb5b Merge tag 'for-linus-5.6-rc3-tag' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15d7da7ee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3e57a6b450fb9883
-dashboard link: https://syzkaller.appspot.com/bug?extid=d54e40cf758e447e088e
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+snd_seq_check_queue() passes the current tick and time of the given
+queue as a pointer to snd_seq_prioq_cell_out(), but those might be
+updated concurrently by the seq timer update.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Fix it by retrieving the current tick and time via the proper helper
+functions at first, and pass those values to snd_seq_prioq_cell_out()
+later in the loops.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d54e40cf758e447e088e@syzkaller.appspotmail.com
+snd_seq_timer_get_cur_time() takes a new argument and adjusts with the
+current system time only when it's requested so; this update isn't
+needed for snd_seq_check_queue(), as it's called either from the
+interrupt handler or right after queuing.
 
-bond189: (slave bridge130): making interface the new active one
-device bridge130 entered promiscuous mode
-general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
-CPU: 0 PID: 2313 Comm: syz-executor.3 Not tainted 5.6.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:rlb_req_update_slave_clients drivers/net/bonding/bond_alb.c:505 [inline]
-RIP: 0010:alb_fasten_mac_swap+0x67c/0xda0 drivers/net/bonding/bond_alb.c:1063
-Code: f7 48 8b 45 98 42 80 3c 30 00 74 08 48 89 df e8 6a bd e4 fc 4c 8b 33 45 89 e4 49 c1 e4 06 4b 8d 5c 26 30 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 45 bd e4 fc 48 8b 45 90 48 39 03
-RSP: 0018:ffffc90004edee40 EFLAGS: 00010206
-RAX: 0000000000000006 RBX: 0000000000000030 RCX: 0000000000000002
-RDX: 0000000000000001 RSI: 0000000000000000 RDI: 00000000ffffffff
-RBP: ffffc90004edeeb0 R08: ffffffff84cf74ca R09: fffff520009dbdbc
-R10: fffff520009dbdbc R11: 0000000000000000 R12: 0000000000000000
-R13: ffff888044db0b80 R14: 0000000000000000 R15: dffffc0000000000
-FS:  00007fcb902f3700(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000071a158 CR3: 00000000a816b000 CR4: 00000000001426f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- bond_alb_handle_active_change+0x147f/0x1ba0 drivers/net/bonding/bond_alb.c:1750
- bond_change_active_slave+0x8c0/0x2b20 drivers/net/bonding/bond_main.c:910
- bond_select_active_slave+0x584/0xa80 drivers/net/bonding/bond_main.c:986
- bond_enslave+0x42af/0x59c0 drivers/net/bonding/bond_main.c:1823
- do_set_master net/core/rtnetlink.c:2468 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3346 [inline]
- rtnl_newlink+0x182f/0x1c00 net/core/rtnetlink.c:3377
- rtnetlink_rcv_msg+0x889/0xd40 net/core/rtnetlink.c:5436
- netlink_rcv_skb+0x19e/0x3e0 net/netlink/af_netlink.c:2478
- rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:5454
- netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
- netlink_unicast+0x766/0x920 net/netlink/af_netlink.c:1329
- netlink_sendmsg+0xa2b/0xd40 net/netlink/af_netlink.c:1918
- sock_sendmsg_nosec net/socket.c:652 [inline]
- sock_sendmsg net/socket.c:672 [inline]
- ____sys_sendmsg+0x4f7/0x7f0 net/socket.c:2343
- ___sys_sendmsg net/socket.c:2397 [inline]
- __sys_sendmsg+0x1ed/0x290 net/socket.c:2430
- __do_sys_sendmsg net/socket.c:2439 [inline]
- __se_sys_sendmsg net/socket.c:2437 [inline]
- __x64_sys_sendmsg+0x7f/0x90 net/socket.c:2437
- do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45c429
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fcb902f2c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fcb902f36d4 RCX: 000000000045c429
-RDX: 0000000006000000 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 000000000076bfc0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000009f9 R14: 00000000004cc6da R15: 000000000076bfcc
-Modules linked in:
----[ end trace 360aa5d46d32c48b ]---
-RIP: 0010:rlb_req_update_slave_clients drivers/net/bonding/bond_alb.c:505 [inline]
-RIP: 0010:alb_fasten_mac_swap+0x67c/0xda0 drivers/net/bonding/bond_alb.c:1063
-Code: f7 48 8b 45 98 42 80 3c 30 00 74 08 48 89 df e8 6a bd e4 fc 4c 8b 33 45 89 e4 49 c1 e4 06 4b 8d 5c 26 30 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 45 bd e4 fc 48 8b 45 90 48 39 03
-RSP: 0018:ffffc90004edee40 EFLAGS: 00010206
-RAX: 0000000000000006 RBX: 0000000000000030 RCX: 0000000000000002
-RDX: 0000000000000001 RSI: 0000000000000000 RDI: 00000000ffffffff
-RBP: ffffc90004edeeb0 R08: ffffffff84cf74ca R09: fffff520009dbdbc
-R10: fffff520009dbdbc R11: 0000000000000000 R12: 0000000000000000
-R13: ffff888044db0b80 R14: 0000000000000000 R15: dffffc0000000000
-FS:  00007fcb902f3700(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000071a158 CR3: 00000000a816b000 CR4: 00000000001426f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Also, snd_seq_timer_get_cur_tick() is changed to read the value in the
+spinlock for the concurrency, too.
 
+Reported-by: syzbot+fd5e0eaa1a32999173b2@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/20200214111316.26939-3-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ sound/core/seq/seq_clientmgr.c |    4 ++--
+ sound/core/seq/seq_queue.c     |    9 ++++++---
+ sound/core/seq/seq_timer.c     |   13 ++++++++++---
+ sound/core/seq/seq_timer.h     |    3 ++-
+ 4 files changed, 20 insertions(+), 9 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -564,7 +564,7 @@ static int update_timestamp_of_queue(str
+ 	event->queue = queue;
+ 	event->flags &= ~SNDRV_SEQ_TIME_STAMP_MASK;
+ 	if (real_time) {
+-		event->time.time = snd_seq_timer_get_cur_time(q->timer);
++		event->time.time = snd_seq_timer_get_cur_time(q->timer, true);
+ 		event->flags |= SNDRV_SEQ_TIME_STAMP_REAL;
+ 	} else {
+ 		event->time.tick = snd_seq_timer_get_cur_tick(q->timer);
+@@ -1639,7 +1639,7 @@ static int snd_seq_ioctl_get_queue_statu
+ 	tmr = queue->timer;
+ 	status->events = queue->tickq->cells + queue->timeq->cells;
+ 
+-	status->time = snd_seq_timer_get_cur_time(tmr);
++	status->time = snd_seq_timer_get_cur_time(tmr, true);
+ 	status->tick = snd_seq_timer_get_cur_tick(tmr);
+ 
+ 	status->running = tmr->running;
+--- a/sound/core/seq/seq_queue.c
++++ b/sound/core/seq/seq_queue.c
+@@ -261,6 +261,8 @@ void snd_seq_check_queue(struct snd_seq_
+ {
+ 	unsigned long flags;
+ 	struct snd_seq_event_cell *cell;
++	snd_seq_tick_time_t cur_tick;
++	snd_seq_real_time_t cur_time;
+ 
+ 	if (q == NULL)
+ 		return;
+@@ -277,17 +279,18 @@ void snd_seq_check_queue(struct snd_seq_
+ 
+       __again:
+ 	/* Process tick queue... */
++	cur_tick = snd_seq_timer_get_cur_tick(q->timer);
+ 	for (;;) {
+-		cell = snd_seq_prioq_cell_out(q->tickq,
+-					      &q->timer->tick.cur_tick);
++		cell = snd_seq_prioq_cell_out(q->tickq, &cur_tick);
+ 		if (!cell)
+ 			break;
+ 		snd_seq_dispatch_event(cell, atomic, hop);
+ 	}
+ 
+ 	/* Process time queue... */
++	cur_time = snd_seq_timer_get_cur_time(q->timer, false);
+ 	for (;;) {
+-		cell = snd_seq_prioq_cell_out(q->timeq, &q->timer->cur_time);
++		cell = snd_seq_prioq_cell_out(q->timeq, &cur_time);
+ 		if (!cell)
+ 			break;
+ 		snd_seq_dispatch_event(cell, atomic, hop);
+--- a/sound/core/seq/seq_timer.c
++++ b/sound/core/seq/seq_timer.c
+@@ -436,14 +436,15 @@ int snd_seq_timer_continue(struct snd_se
+ }
+ 
+ /* return current 'real' time. use timeofday() to get better granularity. */
+-snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr)
++snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr,
++					       bool adjust_ktime)
+ {
+ 	snd_seq_real_time_t cur_time;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&tmr->lock, flags);
+ 	cur_time = tmr->cur_time;
+-	if (tmr->running) { 
++	if (adjust_ktime && tmr->running) {
+ 		struct timespec64 tm;
+ 
+ 		ktime_get_ts64(&tm);
+@@ -460,7 +461,13 @@ snd_seq_real_time_t snd_seq_timer_get_cu
+  high PPQ values) */
+ snd_seq_tick_time_t snd_seq_timer_get_cur_tick(struct snd_seq_timer *tmr)
+ {
+-	return tmr->tick.cur_tick;
++	snd_seq_tick_time_t cur_tick;
++	unsigned long flags;
++
++	spin_lock_irqsave(&tmr->lock, flags);
++	cur_tick = tmr->tick.cur_tick;
++	spin_unlock_irqrestore(&tmr->lock, flags);
++	return cur_tick;
+ }
+ 
+ 
+--- a/sound/core/seq/seq_timer.h
++++ b/sound/core/seq/seq_timer.h
+@@ -135,7 +135,8 @@ int snd_seq_timer_set_ppq(struct snd_seq
+ int snd_seq_timer_set_position_tick(struct snd_seq_timer *tmr, snd_seq_tick_time_t position);
+ int snd_seq_timer_set_position_time(struct snd_seq_timer *tmr, snd_seq_real_time_t position);
+ int snd_seq_timer_set_skew(struct snd_seq_timer *tmr, unsigned int skew, unsigned int base);
+-snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr);
++snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr,
++					       bool adjust_ktime);
+ snd_seq_tick_time_t snd_seq_timer_get_cur_tick(struct snd_seq_timer *tmr);
+ 
+ extern int seq_default_timer_class;
+
+
