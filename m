@@ -2,43 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DBCF171E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:26:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF6AD171D86
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:21:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388472AbgB0OKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:10:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48160 "EHLO mail.kernel.org"
+        id S2389856AbgB0OVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:21:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388455AbgB0OKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:10:01 -0500
+        id S2389631AbgB0ORC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:17:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2B4121D7E;
-        Thu, 27 Feb 2020 14:10:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45B352468F;
+        Thu, 27 Feb 2020 14:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812601;
-        bh=gXEv9AwRo9KfG6wELhy75P1nWv/0fTeMF95Dm0lXkyQ=;
+        s=default; t=1582813021;
+        bh=4i914oy72634ngbPTasVtJ9HokkeB25gdGfM/Zoz6Oo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ei6/ogCpbXdgs7KpqDMQeC80q7v064ihgih766vPlolATwG4lhabqjK84N1OJnLAJ
-         FS8aAoq7YieSDnkZuRD90m3LLcfpH+3Ege9YMAOjE8e36qpK7WPMPOJr7L9AEbQ/V9
-         kXa4n0/yIPrPUNscP83LbyVNVYJ9sqEkJkgJXlY0=
+        b=hW2EYL637uSftS7gaoeLygNik62A8qP7oCo5POnYJbmJ6DbK5tOyw05yb+HkAohfO
+         ysGkuCACCKNNgkQS1HON4rkTun/Lz2spal+3T01fzXw4pOoR5xuxAkPjsyU8xNlmmA
+         FANqNEexIJtLWvQ6wGJ6ABwi6gz07PtKQ9FzsTtk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.4 063/135] mm/memcontrol.c: lost css_put in memcg_expand_shrinker_maps()
-Date:   Thu, 27 Feb 2020 14:36:43 +0100
-Message-Id: <20200227132238.614620688@linuxfoundation.org>
+        stable@vger.kernel.org, satya priya <skakit@codeaurora.org>
+Subject: [PATCH 5.5 067/150] tty: serial: qcom_geni_serial: Fix RX cancel command failure
+Date:   Thu, 27 Feb 2020 14:36:44 +0100
+Message-Id: <20200227132242.865884014@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,43 +42,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: satya priya <skakit@codeaurora.org>
 
-commit 75866af62b439859d5146b7093ceb6b482852683 upstream.
+commit 679aac5ead2f18d223554a52b543e1195e181811 upstream.
 
-for_each_mem_cgroup() increases css reference counter for memory cgroup
-and requires to use mem_cgroup_iter_break() if the walk is cancelled.
+RX cancel command fails when BT is switched on and off multiple times.
 
-Link: http://lkml.kernel.org/r/c98414fb-7e1f-da0f-867a-9340ec4bd30b@virtuozzo.com
-Fixes: 0a4465d34028 ("mm, memcg: assign memcg-aware shrinkers bitmap to memcg")
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Roman Gushchin <guro@fb.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+To handle this, poll for the cancel bit in SE_GENI_S_IRQ_STATUS register
+instead of SE_GENI_S_CMD_CTRL_REG.
+
+As per the HPG update, handle the RX last bit after cancel command
+and flush out the RX FIFO buffer.
+
+Signed-off-by: satya priya <skakit@codeaurora.org>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/1581415982-8793-1-git-send-email-skakit@codeaurora.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memcontrol.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/tty/serial/qcom_geni_serial.c |   18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -418,8 +418,10 @@ int memcg_expand_shrinker_maps(int new_i
- 		if (mem_cgroup_is_root(memcg))
- 			continue;
- 		ret = memcg_expand_one_shrinker_map(memcg, size, old_size);
--		if (ret)
-+		if (ret) {
-+			mem_cgroup_iter_break(NULL, memcg);
- 			goto unlock;
-+		}
- 	}
- unlock:
- 	if (!ret)
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -128,6 +128,7 @@ static int handle_rx_console(struct uart
+ static int handle_rx_uart(struct uart_port *uport, u32 bytes, bool drop);
+ static unsigned int qcom_geni_serial_tx_empty(struct uart_port *port);
+ static void qcom_geni_serial_stop_rx(struct uart_port *uport);
++static void qcom_geni_serial_handle_rx(struct uart_port *uport, bool drop);
+ 
+ static const unsigned long root_freq[] = {7372800, 14745600, 19200000, 29491200,
+ 					32000000, 48000000, 64000000, 80000000,
+@@ -618,7 +619,7 @@ static void qcom_geni_serial_stop_rx(str
+ 	u32 irq_en;
+ 	u32 status;
+ 	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
+-	u32 irq_clear = S_CMD_DONE_EN;
++	u32 s_irq_status;
+ 
+ 	irq_en = readl(uport->membase + SE_GENI_S_IRQ_EN);
+ 	irq_en &= ~(S_RX_FIFO_WATERMARK_EN | S_RX_FIFO_LAST_EN);
+@@ -634,10 +635,19 @@ static void qcom_geni_serial_stop_rx(str
+ 		return;
+ 
+ 	geni_se_cancel_s_cmd(&port->se);
+-	qcom_geni_serial_poll_bit(uport, SE_GENI_S_CMD_CTRL_REG,
+-					S_GENI_CMD_CANCEL, false);
++	qcom_geni_serial_poll_bit(uport, SE_GENI_S_IRQ_STATUS,
++					S_CMD_CANCEL_EN, true);
++	/*
++	 * If timeout occurs secondary engine remains active
++	 * and Abort sequence is executed.
++	 */
++	s_irq_status = readl(uport->membase + SE_GENI_S_IRQ_STATUS);
++	/* Flush the Rx buffer */
++	if (s_irq_status & S_RX_FIFO_LAST_EN)
++		qcom_geni_serial_handle_rx(uport, true);
++	writel(s_irq_status, uport->membase + SE_GENI_S_IRQ_CLEAR);
++
+ 	status = readl(uport->membase + SE_GENI_STATUS);
+-	writel(irq_clear, uport->membase + SE_GENI_S_IRQ_CLEAR);
+ 	if (status & S_GENI_CMD_ACTIVE)
+ 		qcom_geni_serial_abort_rx(uport);
+ }
 
 
