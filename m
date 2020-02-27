@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ED33171BDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:06:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83F3C171BDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:06:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387924AbgB0OGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:06:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43434 "EHLO mail.kernel.org"
+        id S1730271AbgB0OG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:06:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387494AbgB0OGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:06:19 -0500
+        id S1733158AbgB0OGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:06:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 432CF20801;
-        Thu, 27 Feb 2020 14:06:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF69920801;
+        Thu, 27 Feb 2020 14:06:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812378;
-        bh=Te41+tNcup87PSvefJ0qm3+DY+RRnetH1azne1ZP7LE=;
+        s=default; t=1582812381;
+        bh=ImBUYfIXlByX4Bay7zppSKcJuVBXJnLoQapwNMAD02c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jxqj7RQzEqhLNZpTiQyyycq5hzxtqUiNTKs7aMqya3IdrWFbeejx4/mpMPVMvnYNB
-         6mT7ctxvxjto0lkWp6kisluq7piI7A5nb6i40L7fhKXE4GKziMZF/MbOGB7Vhsmptf
-         bywJHycP5c+HBgrvSw7+5eY2dxE2dmEtD+3nBlv4=
+        b=QenCw+OdbdB5HYPw77tIagLgfFFKDCtXmLGJ1uvSzsBrpoS3TIAfXrSJoVQNFfx6Z
+         xLsYpgwff2EfkjAIafwFzzzCNe8AtBBAJQ1BCVz0Xs/t3GD47iejz8BopxxdRlMAGP
+         ChUKnAgaNkV2SDUdr2xAbojcLmTLrHsfrLolMFQM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+65c6c92d04304d0a8efc@syzkaller.appspotmail.com,
-        syzbot+e60ddfa48717579799dd@syzkaller.appspotmail.com,
+        syzbot+fd5e0eaa1a32999173b2@syzkaller.appspotmail.com,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 91/97] ALSA: seq: Avoid concurrent access to queue flags
-Date:   Thu, 27 Feb 2020 14:37:39 +0100
-Message-Id: <20200227132229.500706144@linuxfoundation.org>
+Subject: [PATCH 4.19 92/97] ALSA: seq: Fix concurrent access to queue current tick/time
+Date:   Thu, 27 Feb 2020 14:37:40 +0100
+Message-Id: <20200227132229.664963417@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
 References: <20200227132214.553656188@linuxfoundation.org>
@@ -47,94 +46,135 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit bb51e669fa49feb5904f452b2991b240ef31bc97 upstream.
+commit dc7497795e014d84699c3b8809ed6df35352dd74 upstream.
 
-The queue flags are represented in bit fields and the concurrent
-access may result in unexpected results.  Although the current code
-should be mostly OK as it's only reading a field while writing other
-fields as KCSAN reported, it's safer to cover both with a proper
-spinlock protection.
+snd_seq_check_queue() passes the current tick and time of the given
+queue as a pointer to snd_seq_prioq_cell_out(), but those might be
+updated concurrently by the seq timer update.
 
-This patch fixes the possible concurrent read by protecting with
-q->owner_lock.  Also the queue owner field is protected as well since
-it's the field to be protected by the lock itself.
+Fix it by retrieving the current tick and time via the proper helper
+functions at first, and pass those values to snd_seq_prioq_cell_out()
+later in the loops.
 
-Reported-by: syzbot+65c6c92d04304d0a8efc@syzkaller.appspotmail.com
-Reported-by: syzbot+e60ddfa48717579799dd@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/r/20200214111316.26939-2-tiwai@suse.de
+snd_seq_timer_get_cur_time() takes a new argument and adjusts with the
+current system time only when it's requested so; this update isn't
+needed for snd_seq_check_queue(), as it's called either from the
+interrupt handler or right after queuing.
+
+Also, snd_seq_timer_get_cur_tick() is changed to read the value in the
+spinlock for the concurrency, too.
+
+Reported-by: syzbot+fd5e0eaa1a32999173b2@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/20200214111316.26939-3-tiwai@suse.de
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/seq_queue.c |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ sound/core/seq/seq_clientmgr.c |    4 ++--
+ sound/core/seq/seq_queue.c     |    9 ++++++---
+ sound/core/seq/seq_timer.c     |   13 ++++++++++---
+ sound/core/seq/seq_timer.h     |    3 ++-
+ 4 files changed, 20 insertions(+), 9 deletions(-)
 
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -563,7 +563,7 @@ static int update_timestamp_of_queue(str
+ 	event->queue = queue;
+ 	event->flags &= ~SNDRV_SEQ_TIME_STAMP_MASK;
+ 	if (real_time) {
+-		event->time.time = snd_seq_timer_get_cur_time(q->timer);
++		event->time.time = snd_seq_timer_get_cur_time(q->timer, true);
+ 		event->flags |= SNDRV_SEQ_TIME_STAMP_REAL;
+ 	} else {
+ 		event->time.tick = snd_seq_timer_get_cur_tick(q->timer);
+@@ -1642,7 +1642,7 @@ static int snd_seq_ioctl_get_queue_statu
+ 	tmr = queue->timer;
+ 	status->events = queue->tickq->cells + queue->timeq->cells;
+ 
+-	status->time = snd_seq_timer_get_cur_time(tmr);
++	status->time = snd_seq_timer_get_cur_time(tmr, true);
+ 	status->tick = snd_seq_timer_get_cur_tick(tmr);
+ 
+ 	status->running = tmr->running;
 --- a/sound/core/seq/seq_queue.c
 +++ b/sound/core/seq/seq_queue.c
-@@ -405,6 +405,7 @@ int snd_seq_queue_check_access(int queue
- int snd_seq_queue_set_owner(int queueid, int client, int locked)
+@@ -251,6 +251,8 @@ void snd_seq_check_queue(struct snd_seq_
  {
- 	struct snd_seq_queue *q = queueptr(queueid);
-+	unsigned long flags;
+ 	unsigned long flags;
+ 	struct snd_seq_event_cell *cell;
++	snd_seq_tick_time_t cur_tick;
++	snd_seq_real_time_t cur_time;
  
  	if (q == NULL)
- 		return -EINVAL;
-@@ -414,8 +415,10 @@ int snd_seq_queue_set_owner(int queueid,
- 		return -EPERM;
+ 		return;
+@@ -267,17 +269,18 @@ void snd_seq_check_queue(struct snd_seq_
+ 
+       __again:
+ 	/* Process tick queue... */
++	cur_tick = snd_seq_timer_get_cur_tick(q->timer);
+ 	for (;;) {
+-		cell = snd_seq_prioq_cell_out(q->tickq,
+-					      &q->timer->tick.cur_tick);
++		cell = snd_seq_prioq_cell_out(q->tickq, &cur_tick);
+ 		if (!cell)
+ 			break;
+ 		snd_seq_dispatch_event(cell, atomic, hop);
  	}
  
-+	spin_lock_irqsave(&q->owner_lock, flags);
- 	q->locked = locked ? 1 : 0;
- 	q->owner = client;
-+	spin_unlock_irqrestore(&q->owner_lock, flags);
- 	queue_access_unlock(q);
- 	queuefree(q);
+ 	/* Process time queue... */
++	cur_time = snd_seq_timer_get_cur_time(q->timer, false);
+ 	for (;;) {
+-		cell = snd_seq_prioq_cell_out(q->timeq, &q->timer->cur_time);
++		cell = snd_seq_prioq_cell_out(q->timeq, &cur_time);
+ 		if (!cell)
+ 			break;
+ 		snd_seq_dispatch_event(cell, atomic, hop);
+--- a/sound/core/seq/seq_timer.c
++++ b/sound/core/seq/seq_timer.c
+@@ -437,14 +437,15 @@ int snd_seq_timer_continue(struct snd_se
+ }
  
-@@ -552,15 +555,17 @@ void snd_seq_queue_client_termination(in
+ /* return current 'real' time. use timeofday() to get better granularity. */
+-snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr)
++snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr,
++					       bool adjust_ktime)
+ {
+ 	snd_seq_real_time_t cur_time;
  	unsigned long flags;
- 	int i;
- 	struct snd_seq_queue *q;
-+	bool matched;
  
- 	for (i = 0; i < SNDRV_SEQ_MAX_QUEUES; i++) {
- 		if ((q = queueptr(i)) == NULL)
- 			continue;
- 		spin_lock_irqsave(&q->owner_lock, flags);
--		if (q->owner == client)
-+		matched = (q->owner == client);
-+		if (matched)
- 			q->klocked = 1;
- 		spin_unlock_irqrestore(&q->owner_lock, flags);
--		if (q->owner == client) {
-+		if (matched) {
- 			if (q->timer->running)
- 				snd_seq_timer_stop(q->timer);
- 			snd_seq_timer_reset(q->timer);
-@@ -752,6 +757,8 @@ void snd_seq_info_queues_read(struct snd
- 	int i, bpm;
- 	struct snd_seq_queue *q;
- 	struct snd_seq_timer *tmr;
-+	bool locked;
-+	int owner;
+ 	spin_lock_irqsave(&tmr->lock, flags);
+ 	cur_time = tmr->cur_time;
+-	if (tmr->running) { 
++	if (adjust_ktime && tmr->running) {
+ 		struct timespec64 tm;
  
- 	for (i = 0; i < SNDRV_SEQ_MAX_QUEUES; i++) {
- 		if ((q = queueptr(i)) == NULL)
-@@ -763,9 +770,14 @@ void snd_seq_info_queues_read(struct snd
- 		else
- 			bpm = 0;
- 
-+		spin_lock_irq(&q->owner_lock);
-+		locked = q->locked;
-+		owner = q->owner;
-+		spin_unlock_irq(&q->owner_lock);
+ 		ktime_get_ts64(&tm);
+@@ -461,7 +462,13 @@ snd_seq_real_time_t snd_seq_timer_get_cu
+  high PPQ values) */
+ snd_seq_tick_time_t snd_seq_timer_get_cur_tick(struct snd_seq_timer *tmr)
+ {
+-	return tmr->tick.cur_tick;
++	snd_seq_tick_time_t cur_tick;
++	unsigned long flags;
 +
- 		snd_iprintf(buffer, "queue %d: [%s]\n", q->queue, q->name);
--		snd_iprintf(buffer, "owned by client    : %d\n", q->owner);
--		snd_iprintf(buffer, "lock status        : %s\n", q->locked ? "Locked" : "Free");
-+		snd_iprintf(buffer, "owned by client    : %d\n", owner);
-+		snd_iprintf(buffer, "lock status        : %s\n", locked ? "Locked" : "Free");
- 		snd_iprintf(buffer, "queued time events : %d\n", snd_seq_prioq_avail(q->timeq));
- 		snd_iprintf(buffer, "queued tick events : %d\n", snd_seq_prioq_avail(q->tickq));
- 		snd_iprintf(buffer, "timer state        : %s\n", tmr->running ? "Running" : "Stopped");
++	spin_lock_irqsave(&tmr->lock, flags);
++	cur_tick = tmr->tick.cur_tick;
++	spin_unlock_irqrestore(&tmr->lock, flags);
++	return cur_tick;
+ }
+ 
+ 
+--- a/sound/core/seq/seq_timer.h
++++ b/sound/core/seq/seq_timer.h
+@@ -135,7 +135,8 @@ int snd_seq_timer_set_tempo_ppq(struct s
+ int snd_seq_timer_set_position_tick(struct snd_seq_timer *tmr, snd_seq_tick_time_t position);
+ int snd_seq_timer_set_position_time(struct snd_seq_timer *tmr, snd_seq_real_time_t position);
+ int snd_seq_timer_set_skew(struct snd_seq_timer *tmr, unsigned int skew, unsigned int base);
+-snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr);
++snd_seq_real_time_t snd_seq_timer_get_cur_time(struct snd_seq_timer *tmr,
++					       bool adjust_ktime);
+ snd_seq_tick_time_t snd_seq_timer_get_cur_tick(struct snd_seq_timer *tmr);
+ 
+ extern int seq_default_timer_class;
 
 
