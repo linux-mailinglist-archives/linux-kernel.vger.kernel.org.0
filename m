@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86D77171C39
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F305171B4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:01:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388492AbgB0OKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:10:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48242 "EHLO mail.kernel.org"
+        id S1732654AbgB0OBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:01:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387775AbgB0OKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:10:07 -0500
+        id S1732843AbgB0OBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:01:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC5E920578;
-        Thu, 27 Feb 2020 14:10:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B94224697;
+        Thu, 27 Feb 2020 14:01:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812606;
-        bh=XOvhWRgJnQAEKdt5II4Cu+xEPtvcVor2+V8/X1t/yts=;
+        s=default; t=1582812062;
+        bh=cTtAzCUPbWALIG3BgIYSOQIv5rypzVCDWUfep5QZfj8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LkGQJvm/tKFaxlhY7FI4WwTsG9h2BNBIKd3BWUnJAqE16tHwxTsfR1Ysb2xipsL01
-         IyU3RFhzSUUcgvwc5ePFd1SyTjFHg2x3afBKKyMX0BskJ22f1CQ+7rvTIkB1B0KCTS
-         VxLcRsuZDepsaGQPGVTn8a6q62rYok77X9h9mSKs=
+        b=p1zQq3ZT2XzHxqPW7sNJXWw5LN9gadIqAkZy+D8YzGjIN7LEX3Dx+DOBZSKnsSXl5
+         BlQIGhS9iKmmp35zldBErfpBHgj3xNqq6nEOowzJh80lRatJVfoBBZYgS59cKDqeJQ
+         MYHqzjE1sLx5QIA8s6Ud+Y9Umq6LOiePnMyWJ7DY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suraj Jitindar Singh <surajjs@amazon.com>,
-        Theodore Tso <tytso@mit.edu>, Balbir Singh <sblbir@amazon.com>,
-        stable@kernel.org
-Subject: [PATCH 5.4 082/135] ext4: fix potential race between s_group_info online resizing and access
+        stable@vger.kernel.org, Miles Chen <miles.chen@mediatek.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 208/237] lib/stackdepot: Fix outdated comments
 Date:   Thu, 27 Feb 2020 14:37:02 +0100
-Message-Id: <20200227132241.697597251@linuxfoundation.org>
+Message-Id: <20200227132311.534503146@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,180 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suraj Jitindar Singh <surajjs@amazon.com>
+From: Miles Chen <miles.chen@mediatek.com>
 
-commit df3da4ea5a0fc5d115c90d5aa6caa4dd433750a7 upstream.
+[ Upstream commit ee050dc83bc326ad5ef8ee93bca344819371e7a5 ]
 
-During an online resize an array of pointers to s_group_info gets replaced
-so it can get enlarged. If there is a concurrent access to the array in
-ext4_get_group_info() and this memory has been reused then this can lead to
-an invalid memory access.
+Replace "depot_save_stack" with "stack_depot_save" in code comments because
+depot_save_stack() was replaced in commit c0cfc337264c ("lib/stackdepot:
+Provide functions which operate on plain storage arrays") and removed in
+commit 56d8f079c51a ("lib/stackdepot: Remove obsolete functions")
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206443
-Link: https://lore.kernel.org/r/20200221053458.730016-3-tytso@mit.edu
-Signed-off-by: Suraj Jitindar Singh <surajjs@amazon.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Balbir Singh <sblbir@amazon.com>
-Cc: stable@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190815113246.18478-1-miles.chen@mediatek.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/ext4.h    |    8 ++++----
- fs/ext4/mballoc.c |   52 +++++++++++++++++++++++++++++++++++-----------------
- 2 files changed, 39 insertions(+), 21 deletions(-)
+ lib/stackdepot.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1458,7 +1458,7 @@ struct ext4_sb_info {
- #endif
- 
- 	/* for buddy allocator */
--	struct ext4_group_info ***s_group_info;
-+	struct ext4_group_info ** __rcu *s_group_info;
- 	struct inode *s_buddy_cache;
- 	spinlock_t s_md_lock;
- 	unsigned short *s_mb_offsets;
-@@ -2931,13 +2931,13 @@ static inline
- struct ext4_group_info *ext4_get_group_info(struct super_block *sb,
- 					    ext4_group_t group)
- {
--	 struct ext4_group_info ***grp_info;
-+	 struct ext4_group_info **grp_info;
- 	 long indexv, indexh;
- 	 BUG_ON(group >= EXT4_SB(sb)->s_groups_count);
--	 grp_info = EXT4_SB(sb)->s_group_info;
- 	 indexv = group >> (EXT4_DESC_PER_BLOCK_BITS(sb));
- 	 indexh = group & ((EXT4_DESC_PER_BLOCK(sb)) - 1);
--	 return grp_info[indexv][indexh];
-+	 grp_info = sbi_array_rcu_deref(EXT4_SB(sb), s_group_info, indexv);
-+	 return grp_info[indexh];
- }
- 
- /*
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -2356,7 +2356,7 @@ int ext4_mb_alloc_groupinfo(struct super
- {
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	unsigned size;
--	struct ext4_group_info ***new_groupinfo;
-+	struct ext4_group_info ***old_groupinfo, ***new_groupinfo;
- 
- 	size = (ngroups + EXT4_DESC_PER_BLOCK(sb) - 1) >>
- 		EXT4_DESC_PER_BLOCK_BITS(sb);
-@@ -2369,13 +2369,16 @@ int ext4_mb_alloc_groupinfo(struct super
- 		ext4_msg(sb, KERN_ERR, "can't allocate buddy meta group");
- 		return -ENOMEM;
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index f87d138e96724..1724cb0d6283f 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -96,7 +96,7 @@ static bool init_stack_slab(void **prealloc)
+ 		stack_slabs[depot_index + 1] = *prealloc;
+ 		/*
+ 		 * This smp_store_release pairs with smp_load_acquire() from
+-		 * |next_slab_inited| above and in depot_save_stack().
++		 * |next_slab_inited| above and in stack_depot_save().
+ 		 */
+ 		smp_store_release(&next_slab_inited, 1);
  	}
--	if (sbi->s_group_info) {
--		memcpy(new_groupinfo, sbi->s_group_info,
-+	rcu_read_lock();
-+	old_groupinfo = rcu_dereference(sbi->s_group_info);
-+	if (old_groupinfo)
-+		memcpy(new_groupinfo, old_groupinfo,
- 		       sbi->s_group_info_size * sizeof(*sbi->s_group_info));
--		kvfree(sbi->s_group_info);
--	}
--	sbi->s_group_info = new_groupinfo;
-+	rcu_read_unlock();
-+	rcu_assign_pointer(sbi->s_group_info, new_groupinfo);
- 	sbi->s_group_info_size = size / sizeof(*sbi->s_group_info);
-+	if (old_groupinfo)
-+		ext4_kvfree_array_rcu(old_groupinfo);
- 	ext4_debug("allocated s_groupinfo array for %d meta_bg's\n", 
- 		   sbi->s_group_info_size);
- 	return 0;
-@@ -2387,6 +2390,7 @@ int ext4_mb_add_groupinfo(struct super_b
- {
- 	int i;
- 	int metalen = 0;
-+	int idx = group >> EXT4_DESC_PER_BLOCK_BITS(sb);
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct ext4_group_info **meta_group_info;
- 	struct kmem_cache *cachep = get_groupinfo_cache(sb->s_blocksize_bits);
-@@ -2405,12 +2409,12 @@ int ext4_mb_add_groupinfo(struct super_b
- 				 "for a buddy group");
- 			goto exit_meta_group_info;
- 		}
--		sbi->s_group_info[group >> EXT4_DESC_PER_BLOCK_BITS(sb)] =
--			meta_group_info;
-+		rcu_read_lock();
-+		rcu_dereference(sbi->s_group_info)[idx] = meta_group_info;
-+		rcu_read_unlock();
- 	}
- 
--	meta_group_info =
--		sbi->s_group_info[group >> EXT4_DESC_PER_BLOCK_BITS(sb)];
-+	meta_group_info = sbi_array_rcu_deref(sbi, s_group_info, idx);
- 	i = group & (EXT4_DESC_PER_BLOCK(sb) - 1);
- 
- 	meta_group_info[i] = kmem_cache_zalloc(cachep, GFP_NOFS);
-@@ -2458,8 +2462,13 @@ int ext4_mb_add_groupinfo(struct super_b
- exit_group_info:
- 	/* If a meta_group_info table has been allocated, release it now */
- 	if (group % EXT4_DESC_PER_BLOCK(sb) == 0) {
--		kfree(sbi->s_group_info[group >> EXT4_DESC_PER_BLOCK_BITS(sb)]);
--		sbi->s_group_info[group >> EXT4_DESC_PER_BLOCK_BITS(sb)] = NULL;
-+		struct ext4_group_info ***group_info;
-+
-+		rcu_read_lock();
-+		group_info = rcu_dereference(sbi->s_group_info);
-+		kfree(group_info[idx]);
-+		group_info[idx] = NULL;
-+		rcu_read_unlock();
- 	}
- exit_meta_group_info:
- 	return -ENOMEM;
-@@ -2472,6 +2481,7 @@ static int ext4_mb_init_backend(struct s
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	int err;
- 	struct ext4_group_desc *desc;
-+	struct ext4_group_info ***group_info;
- 	struct kmem_cache *cachep;
- 
- 	err = ext4_mb_alloc_groupinfo(sb, ngroups);
-@@ -2507,11 +2517,16 @@ err_freebuddy:
- 	while (i-- > 0)
- 		kmem_cache_free(cachep, ext4_get_group_info(sb, i));
- 	i = sbi->s_group_info_size;
-+	rcu_read_lock();
-+	group_info = rcu_dereference(sbi->s_group_info);
- 	while (i-- > 0)
--		kfree(sbi->s_group_info[i]);
-+		kfree(group_info[i]);
-+	rcu_read_unlock();
- 	iput(sbi->s_buddy_cache);
- err_freesgi:
--	kvfree(sbi->s_group_info);
-+	rcu_read_lock();
-+	kvfree(rcu_dereference(sbi->s_group_info));
-+	rcu_read_unlock();
- 	return -ENOMEM;
- }
- 
-@@ -2700,7 +2715,7 @@ int ext4_mb_release(struct super_block *
- 	ext4_group_t ngroups = ext4_get_groups_count(sb);
- 	ext4_group_t i;
- 	int num_meta_group_infos;
--	struct ext4_group_info *grinfo;
-+	struct ext4_group_info *grinfo, ***group_info;
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct kmem_cache *cachep = get_groupinfo_cache(sb->s_blocksize_bits);
- 
-@@ -2719,9 +2734,12 @@ int ext4_mb_release(struct super_block *
- 		num_meta_group_infos = (ngroups +
- 				EXT4_DESC_PER_BLOCK(sb) - 1) >>
- 			EXT4_DESC_PER_BLOCK_BITS(sb);
-+		rcu_read_lock();
-+		group_info = rcu_dereference(sbi->s_group_info);
- 		for (i = 0; i < num_meta_group_infos; i++)
--			kfree(sbi->s_group_info[i]);
--		kvfree(sbi->s_group_info);
-+			kfree(group_info[i]);
-+		kvfree(group_info);
-+		rcu_read_unlock();
- 	}
- 	kfree(sbi->s_mb_offsets);
- 	kfree(sbi->s_mb_maxs);
+@@ -123,7 +123,7 @@ static struct stack_record *depot_alloc_stack(unsigned long *entries, int size,
+ 		depot_offset = 0;
+ 		/*
+ 		 * smp_store_release() here pairs with smp_load_acquire() from
+-		 * |next_slab_inited| in depot_save_stack() and
++		 * |next_slab_inited| in stack_depot_save() and
+ 		 * init_stack_slab().
+ 		 */
+ 		if (depot_index + 1 < STACK_ALLOC_MAX_SLABS)
+-- 
+2.20.1
+
 
 
