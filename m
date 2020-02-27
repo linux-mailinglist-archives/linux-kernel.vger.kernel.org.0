@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2C77171C18
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51DC6171C19
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388287AbgB0OIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:08:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46498 "EHLO mail.kernel.org"
+        id S1733169AbgB0OIt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:08:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387925AbgB0OIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:08:38 -0500
+        id S2388283AbgB0OIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:08:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEFDE20714;
-        Thu, 27 Feb 2020 14:08:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB75224656;
+        Thu, 27 Feb 2020 14:08:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812518;
-        bh=lqpYNNcrPhcEJCoVEm5zSXwt3P8XbK0+uztpjf3ftmk=;
+        s=default; t=1582812521;
+        bh=SQVAAP2kvL9u7b94qtrIiV64wIKilRpYbocpTnql3gE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gVOpT1+6cqofYMssT2C+t+YtR/rnxf+ZVWGm143EaeR8RSURTCqNB+N1ixQUVSa1H
-         JYTeovN/NBAUCtWLGYj00s0uLyoa9JlITqur27EmUVtFVoNt+zVncvXSoS9fed2n7p
-         FxDBZ5ZG7qZ4lVPRHumQsRxucn+oZ7DWamk6aW98=
+        b=bEcj03dYUFjdiyWExTTap45tC3mYHOTQjHBydb2b8KdpDcWhZPCuv1KscD/KxRIjQ
+         XdI9h++IiX+ZEBuY0OFvy0v/kyGZHZ6fyYJcphCYxIFkAkNh9lMD/P7iQVRnkFOKU/
+         lpiahKcpZ1uQvr9/6/28+IEwjzhzurcQ68rh+/sU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.4 048/135] powerpc/hugetlb: Fix 8M hugepages on 8xx
-Date:   Thu, 27 Feb 2020 14:36:28 +0100
-Message-Id: <20200227132236.315442234@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 5.4 049/135] arm64: memory: Add missing brackets to untagged_addr() macro
+Date:   Thu, 27 Feb 2020 14:36:29 +0100
+Message-Id: <20200227132236.508445029@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
 References: <20200227132228.710492098@linuxfoundation.org>
@@ -43,42 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Will Deacon <will@kernel.org>
 
-commit 50a175dd18de7a647e72aca7daf4744e3a5a81e3 upstream.
+commit d0022c0ef29b78bcbe8a5c5894bd2307143afce1 upstream.
 
-With HW assistance all page tables must be 4k aligned, the 8xx drops
-the last 12 bits during the walk.
+Add brackets around the evaluation of the 'addr' parameter to the
+untagged_addr() macro so that the cast to 'u64' applies to the result
+of the expression.
 
-Redefine HUGEPD_SHIFT_MASK to mask last 12 bits out. HUGEPD_SHIFT_MASK
-is used to for alignment of page table cache.
-
-Fixes: 22569b881d37 ("powerpc/8xx: Enable 8M hugepage support with HW assistance")
-Cc: stable@vger.kernel.org # v5.0+
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/778b1a248c4c7ca79640eeff7740044da6a220a0.1581264115.git.christophe.leroy@c-s.fr
+Cc: <stable@vger.kernel.org>
+Fixes: 597399d0cb91 ("arm64: tags: Preserve tags for addresses translated via TTBR1")
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/page.h |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/include/asm/memory.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/include/asm/page.h
-+++ b/arch/powerpc/include/asm/page.h
-@@ -295,8 +295,13 @@ static inline bool pfn_valid(unsigned lo
- /*
-  * Some number of bits at the level of the page table that points to
-  * a hugepte are used to encode the size.  This masks those bits.
-+ * On 8xx, HW assistance requires 4k alignment for the hugepte.
-  */
-+#ifdef CONFIG_PPC_8xx
-+#define HUGEPD_SHIFT_MASK     0xfff
-+#else
- #define HUGEPD_SHIFT_MASK     0x3f
-+#endif
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -219,7 +219,7 @@ static inline unsigned long kaslr_offset
+ 	((__force __typeof__(addr))sign_extend64((__force u64)(addr), 55))
  
- #ifndef __ASSEMBLY__
- 
+ #define untagged_addr(addr)	({					\
+-	u64 __addr = (__force u64)addr;					\
++	u64 __addr = (__force u64)(addr);					\
+ 	__addr &= __untagged_addr(__addr);				\
+ 	(__force __typeof__(addr))__addr;				\
+ })
 
 
