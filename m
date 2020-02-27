@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEDA8171F3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:33:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE99717212A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:47:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387459AbgB0Od0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:33:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33962 "EHLO mail.kernel.org"
+        id S1729766AbgB0NoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:44:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732752AbgB0OAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:00:32 -0500
+        id S1730139AbgB0NoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:44:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D6222073D;
-        Thu, 27 Feb 2020 14:00:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B516120578;
+        Thu, 27 Feb 2020 13:44:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812031;
-        bh=LbvWt1qaaoHgw126FlvXqbzf1tcad1g/Bm2OGES6oUk=;
+        s=default; t=1582811045;
+        bh=VbA5W/1MQw39uQmgUFgE7TT+W50DNHyHc3w7JLP4rPg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pjokvk3eZi/wpL1Nwn1f/i4/2T5nCHZwhjGNsYHu/dfLsiDofWCaDG1V3MbNxvZ8g
-         4iG/lbymjRWqdfJ9sHsq8UJ9LZW3S0wSNe7OoduJird8V/+36g1gmEtew6ykXIsjuw
-         v/29TpTJtTmOWaQipFncCI+CW0ToD2zs7tj0wugQ=
+        b=ypLKyzXNwgSCRa9rHkRsGPvdOfK7fwFDAiNSLvsGaVGrRcbBPGIFOL0L13TrUkLoA
+         a8wLJnfLlzmjWHitOsqMHkgla6t/5SrT2zskA5mzdo0sVTCVI+SYPn+evxTaqi0bLF
+         Nxgo83QIqGaFks3czV2LZqEYV7nCzbv6+Uqu/STE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunfeng Ye <yeyunfeng@huawei.com>,
-        zhengbin <zhengbin13@huawei.com>,
-        Hu Shiyuan <hushiyuan@huawei.com>,
-        Feilong Lin <linfeilong@huawei.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Kit Chow <kchow@gigaio.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 157/237] reiserfs: prevent NULL pointer dereference in reiserfs_insert_item()
-Date:   Thu, 27 Feb 2020 14:36:11 +0100
-Message-Id: <20200227132308.089075940@linuxfoundation.org>
+Subject: [PATCH 4.4 058/113] PCI: Dont disable bridge BARs when assigning bus resources
+Date:   Thu, 27 Feb 2020 14:36:14 +0100
+Message-Id: <20200227132221.014026556@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,42 +45,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunfeng Ye <yeyunfeng@huawei.com>
+From: Logan Gunthorpe <logang@deltatee.com>
 
-[ Upstream commit aacee5446a2a1aa35d0a49dab289552578657fb4 ]
+[ Upstream commit 9db8dc6d0785225c42a37be7b44d1b07b31b8957 ]
 
-The variable inode may be NULL in reiserfs_insert_item(), but there is
-no check before accessing the member of inode.
+Some PCI bridges implement BARs in addition to bridge windows.  For
+example, here's a PLX switch:
 
-Fix this by adding NULL pointer check before calling reiserfs_debug().
+  04:00.0 PCI bridge: PLX Technology, Inc. PEX 8724 24-Lane, 6-Port PCI
+            Express Gen 3 (8 GT/s) Switch, 19 x 19mm FCBGA (rev ca)
+	    (prog-if 00 [Normal decode])
+      Flags: bus master, fast devsel, latency 0, IRQ 30, NUMA node 0
+      Memory at 90a00000 (32-bit, non-prefetchable) [size=256K]
+      Bus: primary=04, secondary=05, subordinate=0a, sec-latency=0
+      I/O behind bridge: 00002000-00003fff
+      Memory behind bridge: 90000000-909fffff
+      Prefetchable memory behind bridge: 0000380000800000-0000380000bfffff
 
-Link: http://lkml.kernel.org/r/79c5135d-ff25-1cc9-4e99-9f572b88cc00@huawei.com
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Cc: zhengbin <zhengbin13@huawei.com>
-Cc: Hu Shiyuan <hushiyuan@huawei.com>
-Cc: Feilong Lin <linfeilong@huawei.com>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Previously, when the kernel assigned resource addresses (with the
+pci=realloc command line parameter, for example) it could clear the struct
+resource corresponding to the BAR.  When this happened, lspci would report
+this BAR as "ignored":
+
+   Region 0: Memory at <ignored> (32-bit, non-prefetchable) [size=256K]
+
+This is because the kernel reports a zero start address and zero flags
+in the corresponding sysfs resource file and in /proc/bus/pci/devices.
+Investigation with 'lspci -x', however, shows the BIOS-assigned address
+will still be programmed in the device's BAR registers.
+
+It's clearly a bug that the kernel lost track of the BAR value, but in most
+cases, this still won't result in a visible issue because nothing uses the
+memory, so nothing is affected.  However, when an IOMMU is in use, it will
+not reserve this space in the IOVA because the kernel no longer thinks the
+range is valid.  (See dmar_init_reserved_ranges() for the Intel
+implementation of this.)
+
+Without the proper reserved range, a DMA mapping may allocate an IOVA that
+matches a bridge BAR, which results in DMA accesses going to the BAR
+instead of the intended RAM.
+
+The problem was in pci_assign_unassigned_root_bus_resources().  When any
+resource from a bridge device fails to get assigned, the code set the
+resource's flags to zero.  This makes sense for bridge windows, as they
+will be re-enabled later, but for regular BARs, it makes the kernel
+permanently lose track of the fact that they decode address space.
+
+Change pci_assign_unassigned_root_bus_resources() and
+pci_assign_unassigned_bridge_resources() so they only clear "res->flags"
+for bridge *windows*, not bridge BARs.
+
+Fixes: da7822e5ad71 ("PCI: update bridge resources to get more big ranges when allocating space (again)")
+Link: https://lore.kernel.org/r/20200108213208.4612-1-logang@deltatee.com
+[bhelgaas: commit log, check for pci_is_bridge()]
+Reported-by: Kit Chow <kchow@gigaio.com>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/reiserfs/stree.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/setup-bus.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index 0037aea97d39a..2946713cb00d6 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -2250,7 +2250,8 @@ error_out:
- 	/* also releases the path */
- 	unfix_nodes(&s_ins_balance);
- #ifdef REISERQUOTA_DEBUG
--	reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
-+	if (inode)
-+		reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
- 		       "reiserquota insert_item(): freeing %u id=%u type=%c",
- 		       quota_bytes, inode->i_uid, head2type(ih));
- #endif
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 1723ac1b30e10..fe2865a0da395 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -1760,12 +1760,18 @@ again:
+ 	/* restore size and flags */
+ 	list_for_each_entry(fail_res, &fail_head, list) {
+ 		struct resource *res = fail_res->res;
++		int idx;
+ 
+ 		res->start = fail_res->start;
+ 		res->end = fail_res->end;
+ 		res->flags = fail_res->flags;
+-		if (fail_res->dev->subordinate)
+-			res->flags = 0;
++
++		if (pci_is_bridge(fail_res->dev)) {
++			idx = res - &fail_res->dev->resource[0];
++			if (idx >= PCI_BRIDGE_RESOURCES &&
++			    idx <= PCI_BRIDGE_RESOURCE_END)
++				res->flags = 0;
++		}
+ 	}
+ 	free_list(&fail_head);
+ 
+@@ -1826,12 +1832,18 @@ again:
+ 	/* restore size and flags */
+ 	list_for_each_entry(fail_res, &fail_head, list) {
+ 		struct resource *res = fail_res->res;
++		int idx;
+ 
+ 		res->start = fail_res->start;
+ 		res->end = fail_res->end;
+ 		res->flags = fail_res->flags;
+-		if (fail_res->dev->subordinate)
+-			res->flags = 0;
++
++		if (pci_is_bridge(fail_res->dev)) {
++			idx = res - &fail_res->dev->resource[0];
++			if (idx >= PCI_BRIDGE_RESOURCES &&
++			    idx <= PCI_BRIDGE_RESOURCE_END)
++				res->flags = 0;
++		}
+ 	}
+ 	free_list(&fail_head);
+ 
 -- 
 2.20.1
 
