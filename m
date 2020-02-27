@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03AA9171989
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:46:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0104C171AD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:57:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730422AbgB0Npp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:45:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41708 "EHLO mail.kernel.org"
+        id S1732265AbgB0N5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:57:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729652AbgB0Npl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:45:41 -0500
+        id S1732251AbgB0N5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:57:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4323222C2;
-        Thu, 27 Feb 2020 13:45:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDABC20578;
+        Thu, 27 Feb 2020 13:57:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811141;
-        bh=wocrEF5e4Hh9pV3gsmFyQHA4RbYVhMgNWgZlk3YP/ks=;
+        s=default; t=1582811832;
+        bh=C/wdEos4wA2xfQpgeNBE4p1Xv5QaOA7GnM1ypr2cjgE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jNpkHmYcZGayZg6LPapxo3uR0LvbEVDi0+aZHZHAVVGQbOzbOKYJa0QF7RM9xxJgI
-         fcueQlDnBfdEtAL/Bqu5gC3ft/fMMYPWub3Q75vBCsja41XjDFCFSPezs4vk6iL+va
-         +RkYy36fReQSg6LASkgGOq7iOfKI27h93otafcNg=
+        b=ZmeMW1o8LRQUKZTVPiON0Qt1sdrXLTxeRUWoXYHKCfMMJC5/lReQXliBWbzjjDEFP
+         Uic4za9E2QP14t5opmErB2ibuOgujfWi8zqKJHZehgT7I7Lkvi7j3R6aQsGZtPqsN8
+         nMrC4KqBAVgg7hZyP059N1cjODkkyf/93oh9wHfY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Murphy <lists@colorremedies.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 019/165] btrfs: print message when tree-log replay starts
-Date:   Thu, 27 Feb 2020 14:34:53 +0100
-Message-Id: <20200227132233.814709912@linuxfoundation.org>
+Subject: [PATCH 4.14 080/237] fore200e: Fix incorrect checks of NULL pointer dereference
+Date:   Thu, 27 Feb 2020 14:34:54 +0100
+Message-Id: <20200227132302.988629389@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,36 +44,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Sterba <dsterba@suse.com>
+From: Aditya Pakki <pakki001@umn.edu>
 
-[ Upstream commit e8294f2f6aa6208ed0923aa6d70cea3be178309a ]
+[ Upstream commit bbd20c939c8aa3f27fa30e86691af250bf92973a ]
 
-There's no logged information about tree-log replay although this is
-something that points to previous unclean unmount. Other filesystems
-report that as well.
+In fore200e_send and fore200e_close, the pointers from the arguments
+are dereferenced in the variable declaration block and then checked
+for NULL. The patch fixes these issues by avoiding NULL pointer
+dereferences.
 
-Suggested-by: Chris Murphy <lists@colorremedies.com>
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/disk-io.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/atm/fore200e.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index e3524ecce3d77..390053557d4d2 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -2979,6 +2979,7 @@ int open_ctree(struct super_block *sb,
- 	/* do not make disk changes in broken FS or nologreplay is given */
- 	if (btrfs_super_log_root(disk_super) != 0 &&
- 	    !btrfs_test_opt(tree_root->fs_info, NOLOGREPLAY)) {
-+		btrfs_info(fs_info, "start tree-log replay");
- 		ret = btrfs_replay_log(fs_info, fs_devices);
- 		if (ret) {
- 			err = ret;
+diff --git a/drivers/atm/fore200e.c b/drivers/atm/fore200e.c
+index f8b7e86907cc2..0a1ad1a1d34fb 100644
+--- a/drivers/atm/fore200e.c
++++ b/drivers/atm/fore200e.c
+@@ -1496,12 +1496,14 @@ fore200e_open(struct atm_vcc *vcc)
+ static void
+ fore200e_close(struct atm_vcc* vcc)
+ {
+-    struct fore200e*        fore200e = FORE200E_DEV(vcc->dev);
+     struct fore200e_vcc*    fore200e_vcc;
++    struct fore200e*        fore200e;
+     struct fore200e_vc_map* vc_map;
+     unsigned long           flags;
+ 
+     ASSERT(vcc);
++    fore200e = FORE200E_DEV(vcc->dev);
++
+     ASSERT((vcc->vpi >= 0) && (vcc->vpi < 1<<FORE200E_VPI_BITS));
+     ASSERT((vcc->vci >= 0) && (vcc->vci < 1<<FORE200E_VCI_BITS));
+ 
+@@ -1546,10 +1548,10 @@ fore200e_close(struct atm_vcc* vcc)
+ static int
+ fore200e_send(struct atm_vcc *vcc, struct sk_buff *skb)
+ {
+-    struct fore200e*        fore200e     = FORE200E_DEV(vcc->dev);
+-    struct fore200e_vcc*    fore200e_vcc = FORE200E_VCC(vcc);
++    struct fore200e*        fore200e;
++    struct fore200e_vcc*    fore200e_vcc;
+     struct fore200e_vc_map* vc_map;
+-    struct host_txq*        txq          = &fore200e->host_txq;
++    struct host_txq*        txq;
+     struct host_txq_entry*  entry;
+     struct tpd*             tpd;
+     struct tpd_haddr        tpd_haddr;
+@@ -1562,9 +1564,18 @@ fore200e_send(struct atm_vcc *vcc, struct sk_buff *skb)
+     unsigned char*          data;
+     unsigned long           flags;
+ 
+-    ASSERT(vcc);
+-    ASSERT(fore200e);
+-    ASSERT(fore200e_vcc);
++    if (!vcc)
++        return -EINVAL;
++
++    fore200e = FORE200E_DEV(vcc->dev);
++    fore200e_vcc = FORE200E_VCC(vcc);
++
++    if (!fore200e)
++        return -EINVAL;
++
++    txq = &fore200e->host_txq;
++    if (!fore200e_vcc)
++        return -EINVAL;
+ 
+     if (!test_bit(ATM_VF_READY, &vcc->flags)) {
+ 	DPRINTK(1, "VC %d.%d.%d not ready for tx\n", vcc->itf, vcc->vpi, vcc->vpi);
 -- 
 2.20.1
 
