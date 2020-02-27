@@ -2,35 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5584D171C09
+	by mail.lfdr.de (Postfix) with ESMTP id C72DE171C0A
 	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387444AbgB0OID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:08:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45642 "EHLO mail.kernel.org"
+        id S2388202AbgB0OIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:08:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387787AbgB0OIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:08:00 -0500
+        id S1732780AbgB0OID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:08:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60E7521D7E;
-        Thu, 27 Feb 2020 14:07:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B67F124656;
+        Thu, 27 Feb 2020 14:08:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812479;
-        bh=RypRGmCPXhCJfp6qrYOlZPi7TCGuoDNfunyBhUdEIxc=;
+        s=default; t=1582812482;
+        bh=Dqe8peYwQwuHYE4wE7HzqKcEV4TelEPWey30f3hiVvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WhCltI3bqpiJljPo+eKiFjGHh8bpiKcIXZ+FxVjmNlDHVVhAIHqptm3mfY38qYRrY
-         PSiKmoJRT4ohmTZn296a576J3de8qI3cYzsdJSSZvPL0cTiw1wXcCzQp2AK2lweQXG
-         +IrGfqpBcaRa3E7vZXbJDpgjrNcT0Q8grM8I2+2g=
+        b=piNiDJA5MISFO0L1gl3TMJ8mgk9F6BB2k1+TEVWFoGK4Atkv54dCEnST2MfiFJ4pE
+         fWcSQnkom840wGyCKxrtXaOzIRQ0qwSMgqHCcBoAw1RCJHRhTnmobyPMK4dT17cVKV
+         879c9fYr8DnrtDKxvgyehKbV70VW1MQloZWR+IB0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Minas Harutyunyan <hminas@synopsys.com>,
-        Jack Mitchell <ml@embed.me.uk>, Felipe Balbi <balbi@kernel.org>
-Subject: [PATCH 5.4 034/135] usb: dwc2: Fix SET/CLEAR_FEATURE and GET_STATUS flows
-Date:   Thu, 27 Feb 2020 14:36:14 +0100
-Message-Id: <20200227132234.138725629@linuxfoundation.org>
+        stable@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Yang Fei <fei.yang@intel.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Jack Pham <jackp@codeaurora.org>, Todd Kjos <tkjos@google.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH 5.4 035/135] usb: dwc3: gadget: Check for IOC/LST bit in TRB->ctrl fields
+Date:   Thu, 27 Feb 2020 14:36:15 +0100
+Message-Id: <20200227132234.268741998@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
 References: <20200227132228.710492098@linuxfoundation.org>
@@ -43,88 +50,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+From: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
 
-commit 9a0d6f7c0a83844baae1d6d85482863d2bf3b7a7 upstream.
+commit 5ee858975b13a9b40db00f456989a689fdbb296c upstream.
 
-SET/CLEAR_FEATURE for Remote Wakeup allowance not handled correctly.
-GET_STATUS handling provided not correct data on DATA Stage.
-Issue seen when gadget's dr_mode set to "otg" mode and connected
-to MacOS.
-Both are fixed and tested using USBCV Ch.9 tests.
+The current code in dwc3_gadget_ep_reclaim_completed_trb() will
+check for IOC/LST bit in the event->status and returns if
+IOC/LST bit is set. This logic doesn't work if multiple TRBs
+are queued per request and the IOC/LST bit is set on the last
+TRB of that request.
 
-Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
-Fixes: fa389a6d7726 ("usb: dwc2: gadget: Add remote_wakeup_allowed flag")
-Tested-by: Jack Mitchell <ml@embed.me.uk>
-Cc: stable@vger.kernel.org
+Consider an example where a queued request has multiple queued
+TRBs and IOC/LST bit is set only for the last TRB. In this case,
+the core generates XferComplete/XferInProgress events only for
+the last TRB (since IOC/LST are set only for the last TRB). As
+per the logic in dwc3_gadget_ep_reclaim_completed_trb()
+event->status is checked for IOC/LST bit and returns on the
+first TRB. This leaves the remaining TRBs left unhandled.
+
+Similarly, if the gadget function enqueues an unaligned request
+with sglist already in it, it should fail the same way, since we
+will append another TRB to something that already uses more than
+one TRB.
+
+To aviod this, this patch changes the code to check for IOC/LST
+bits in TRB->ctrl instead.
+
+At a practical level, this patch resolves USB transfer stalls seen
+with adb on dwc3 based HiKey960 after functionfs gadget added
+scatter-gather support around v4.20.
+
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Yang Fei <fei.yang@intel.com>
+Cc: Thinh Nguyen <thinhn@synopsys.com>
+Cc: Tejas Joglekar <tejas.joglekar@synopsys.com>
+Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: Jack Pham <jackp@codeaurora.org>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linux USB List <linux-usb@vger.kernel.org>
+Cc: stable <stable@vger.kernel.org>
+Tested-by: Tejas Joglekar <tejas.joglekar@synopsys.com>
+Reviewed-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+[jstultz: forward ported to mainline, reworded commit log, reworked
+ to only check trb->ctrl as suggested by Felipe]
+Signed-off-by: John Stultz <john.stultz@linaro.org>
 Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc2/gadget.c |   28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ drivers/usb/dwc3/gadget.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -1632,6 +1632,7 @@ static int dwc2_hsotg_process_req_status
- 	struct dwc2_hsotg_ep *ep0 = hsotg->eps_out[0];
- 	struct dwc2_hsotg_ep *ep;
- 	__le16 reply;
-+	u16 status;
- 	int ret;
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2426,7 +2426,8 @@ static int dwc3_gadget_ep_reclaim_comple
+ 	if (event->status & DEPEVT_STATUS_SHORT && !chain)
+ 		return 1;
  
- 	dev_dbg(hsotg->dev, "%s: USB_REQ_GET_STATUS\n", __func__);
-@@ -1643,11 +1644,10 @@ static int dwc2_hsotg_process_req_status
+-	if (event->status & DEPEVT_STATUS_IOC)
++	if ((trb->ctrl & DWC3_TRB_CTRL_IOC) ||
++	    (trb->ctrl & DWC3_TRB_CTRL_LST))
+ 		return 1;
  
- 	switch (ctrl->bRequestType & USB_RECIP_MASK) {
- 	case USB_RECIP_DEVICE:
--		/*
--		 * bit 0 => self powered
--		 * bit 1 => remote wakeup
--		 */
--		reply = cpu_to_le16(0);
-+		status = 1 << USB_DEVICE_SELF_POWERED;
-+		status |= hsotg->remote_wakeup_allowed <<
-+			  USB_DEVICE_REMOTE_WAKEUP;
-+		reply = cpu_to_le16(status);
- 		break;
- 
- 	case USB_RECIP_INTERFACE:
-@@ -1758,7 +1758,10 @@ static int dwc2_hsotg_process_req_featur
- 	case USB_RECIP_DEVICE:
- 		switch (wValue) {
- 		case USB_DEVICE_REMOTE_WAKEUP:
--			hsotg->remote_wakeup_allowed = 1;
-+			if (set)
-+				hsotg->remote_wakeup_allowed = 1;
-+			else
-+				hsotg->remote_wakeup_allowed = 0;
- 			break;
- 
- 		case USB_DEVICE_TEST_MODE:
-@@ -1768,16 +1771,17 @@ static int dwc2_hsotg_process_req_featur
- 				return -EINVAL;
- 
- 			hsotg->test_mode = wIndex >> 8;
--			ret = dwc2_hsotg_send_reply(hsotg, ep0, NULL, 0);
--			if (ret) {
--				dev_err(hsotg->dev,
--					"%s: failed to send reply\n", __func__);
--				return ret;
--			}
- 			break;
- 		default:
- 			return -ENOENT;
- 		}
-+
-+		ret = dwc2_hsotg_send_reply(hsotg, ep0, NULL, 0);
-+		if (ret) {
-+			dev_err(hsotg->dev,
-+				"%s: failed to send reply\n", __func__);
-+			return ret;
-+		}
- 		break;
- 
- 	case USB_RECIP_ENDPOINT:
+ 	return 0;
 
 
