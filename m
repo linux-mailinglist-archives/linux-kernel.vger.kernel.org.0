@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1C72171C0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C153171B78
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:03:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733131AbgB0OIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:08:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45856 "EHLO mail.kernel.org"
+        id S1733203AbgB0OCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:02:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388210AbgB0OIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:08:09 -0500
+        id S1733188AbgB0OCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:02:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 163EB20578;
-        Thu, 27 Feb 2020 14:08:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D08221556;
+        Thu, 27 Feb 2020 14:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812489;
-        bh=Ck4RiXd9LtXXu/LTSaJIPrI7nme6mxSXS0dsiQUxxuk=;
+        s=default; t=1582812164;
+        bh=SE3ZIrQ6TFTBLuugNMM70YTNIDDZ0MjWbN4LcPCJ7as=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gr1PogZdABjtiZe9vBn0mAiE0oPPUtpG8KsFxJ72M0j656fXHW9Qz/x+oxqSCM6aT
-         TWAQ4DFLF0//HWpgJHs8Exh4TZbNqJleNYJ76TsRXtTgu8SaaT9nc/Pj6/TYZK0Tfv
-         Ev4tuir8pe761Vp7BcsVmW+nYH+i14YZe0rY8dy8=
+        b=ZQt+T61Di2m6TGEgv6i1KtDwzEqSeBXirWao3BG3kHYp1ZfD/p3w4ksuZ5D2d9hgj
+         Iz+OkQa5N11+1AS6fGQB+cF7C9OvWPAZi0mhnJfVGRutjplzXSqSWbYbuAf09ICBPk
+         UVi/p1A3reiEOR6fw4D3K8mceKwXyIYRErlPn1Ww=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pietro Oliva <pietroliva@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Subject: [PATCH 5.4 038/135] staging: rtl8188eu: Fix potential security hole
+        stable@vger.kernel.org, Christoph Jung <jung@codemercs.com>
+Subject: [PATCH 4.19 10/97] USB: misc: iowarrior: add support for the 28 and 28L devices
 Date:   Thu, 27 Feb 2020 14:36:18 +0100
-Message-Id: <20200227132234.650810669@linuxfoundation.org>
+Message-Id: <20200227132216.257444795@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +42,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 499c405b2b80bb3a04425ba3541d20305e014d3e upstream.
+commit 5f6f8da2d7b5a431d3f391d0d73ace8edfb42af7 upstream.
 
-In routine rtw_hostapd_ioctl(), the user-controlled p->length is assumed
-to be at least the size of struct ieee_param size, but this assumption is
-never checked. This could result in out-of-bounds read/write on kernel
-heap in case a p->length less than the size of struct ieee_param is
-specified by the user. If p->length is allowed to be greater than the size
-of the struct, then a malicious user could be wasting kernel memory.
-Fixes commit a2c60d42d97c ("Add files for new driver - part 16").
+Add new device ids for the 28 and 28L devices.  These have 4 interfaces
+instead of 2, but the driver binds the same, so the driver changes are
+minimal.
 
-Reported by: Pietro Oliva <pietroliva@gmail.com>
-Cc: Pietro Oliva <pietroliva@gmail.com>
-Cc: Stable <stable@vger.kernel.org>
-Fixes: a2c60d42d97c ("staging: r8188eu: Add files for new driver - part 16")
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Link: https://lore.kernel.org/r/20200210180235.21691-2-Larry.Finger@lwfinger.net
+Cc: Christoph Jung <jung@codemercs.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200212040422.2991-2-gregkh@linuxfoundation.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rtl8188eu/os_dep/ioctl_linux.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/misc/iowarrior.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-@@ -2812,7 +2812,7 @@ static int rtw_hostapd_ioctl(struct net_
- 		goto out;
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -33,6 +33,9 @@
+ #define USB_DEVICE_ID_CODEMERCS_IOWPV2	0x1512
+ /* full speed iowarrior */
+ #define USB_DEVICE_ID_CODEMERCS_IOW56	0x1503
++/* fuller speed iowarrior */
++#define USB_DEVICE_ID_CODEMERCS_IOW28	0x1504
++#define USB_DEVICE_ID_CODEMERCS_IOW28L	0x1505
+ 
+ /* OEMed devices */
+ #define USB_DEVICE_ID_CODEMERCS_IOW24SAG	0x158a
+@@ -143,6 +146,8 @@ static const struct usb_device_id iowarr
+ 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW56)},
+ 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW24SAG)},
+ 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW56AM)},
++	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW28)},
++	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW28L)},
+ 	{}			/* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(usb, iowarrior_ids);
+@@ -383,6 +388,8 @@ static ssize_t iowarrior_write(struct fi
+ 		break;
+ 	case USB_DEVICE_ID_CODEMERCS_IOW56:
+ 	case USB_DEVICE_ID_CODEMERCS_IOW56AM:
++	case USB_DEVICE_ID_CODEMERCS_IOW28:
++	case USB_DEVICE_ID_CODEMERCS_IOW28L:
+ 		/* The IOW56 uses asynchronous IO and more urbs */
+ 		if (atomic_read(&dev->write_busy) == MAX_WRITES_IN_FLIGHT) {
+ 			/* Wait until we are below the limit for submitted urbs */
+@@ -792,7 +799,9 @@ static int iowarrior_probe(struct usb_in
  	}
  
--	if (!p->pointer) {
-+	if (!p->pointer || p->length != sizeof(struct ieee_param)) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
+ 	if ((dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56) ||
+-	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM)) {
++	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM) ||
++	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28) ||
++	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28L)) {
+ 		res = usb_find_last_int_out_endpoint(iface_desc,
+ 				&dev->int_out_endpoint);
+ 		if (res) {
+@@ -806,7 +815,9 @@ static int iowarrior_probe(struct usb_in
+ 	dev->report_size = usb_endpoint_maxp(dev->int_in_endpoint);
+ 	if ((dev->interface->cur_altsetting->desc.bInterfaceNumber == 0) &&
+ 	    ((dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56) ||
+-	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM)))
++	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM) ||
++	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28) ||
++	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW28L)))
+ 		/* IOWarrior56 has wMaxPacketSize different from report size */
+ 		dev->report_size = 7;
+ 
 
 
