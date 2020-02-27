@@ -2,164 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DDB7172776
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C347F172731
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731298AbgB0SYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:24:37 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:59035 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730866AbgB0SWm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:22:42 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200227182240euoutp025064c4845a86b41158a47cf34b3db7e1~3VXZgEvXg0821508215euoutp02M
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 18:22:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200227182240euoutp025064c4845a86b41158a47cf34b3db7e1~3VXZgEvXg0821508215euoutp02M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1582827760;
-        bh=IdmCUBxgFlf//TBu/Br//NY1ssaROzxlh9KlCCrWTcA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jaB5UAr6DMZ7FbWSEPTUuEXwDKnU/TM/6yfELobnoif8Q5PfXcS/4dsy5tDoHVAFP
-         3Xbqo6P2WJJ/YVbDi+ZPWb9w+dK95MhjrQFaeEA0c7V6IScbF0QWn1TXaykxApptAO
-         /DLoLEWOtlJRIfmGKg5/4gsh3fGUKuuMTmWVau4E=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200227182240eucas1p2bde1c559fc03fbe46dba86a909cbdb71~3VXZJdJqp2012220122eucas1p2a;
-        Thu, 27 Feb 2020 18:22:40 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 42.5F.61286.0F8085E5; Thu, 27
-        Feb 2020 18:22:40 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200227182239eucas1p2fe76dcb686bea8f0a527461807b9292e~3VXYX-46p3194731947eucas1p2B;
-        Thu, 27 Feb 2020 18:22:39 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200227182239eusmtrp23f318807369de237dd6f81a56feb9368~3VXYTPAUx1813218132eusmtrp2g;
-        Thu, 27 Feb 2020 18:22:39 +0000 (GMT)
-X-AuditID: cbfec7f2-ef1ff7000001ef66-5a-5e5808f00413
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id DB.B1.08375.FE8085E5; Thu, 27
-        Feb 2020 18:22:39 +0000 (GMT)
-Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200227182239eusmtip29abd9271ce91f4f82a4c8f9841b5152c~3VXX2ah3a0595905959eusmtip2i;
-        Thu, 27 Feb 2020 18:22:39 +0000 (GMT)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com
-Subject: [PATCH v3 02/27] ata: expose ncq_enable_prio sysfs attribute only
- on NCQ capable hosts
-Date:   Thu, 27 Feb 2020 19:22:01 +0100
-Message-Id: <20200227182226.19188-3-b.zolnierkie@samsung.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200227182226.19188-1-b.zolnierkie@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djPc7ofOCLiDH418VisvtvPZrFxxnpW
-        i2e39jJZrFx9lMni2I5HTBaXd81hs1j+ZC2zxdzW6ewOHB47Z91l97h8ttTj0OEORo+Trd9Y
-        PHbfbGDz6NuyitHj8ya5APYoLpuU1JzMstQifbsErozmvv0sBT/4K5Y1f2JuYDzE28XIySEh
-        YCLx7dBEti5GLg4hgRWMEvf/XYVyvjBKrNm2hgnC+cwo8fTZKSaYljWP70ElljNKvLw3nQWu
-        pXF1B1gVm4CVxMT2VYwgtoiAgkTP75Vgc5kF3jNKrJi0lwUkISyQKHH6yg2gBAcHi4CqxPFF
-        6iBhXgFbidkvzrBBbJOX2PrtEyuIzSlgJ3GjbzsbRI2gxMmZT8DGMAPVNG+dzQwyX0JgFbvE
-        o/dzoJpdJB7deMAKYQtLvDq+hR3ClpH4v3M+E0TDOkaJvx0voLq3M0osn/wPqtta4s65X2DX
-        MQtoSqzfpQ8RdpSY8GUDWFhCgE/ixltBiCP4JCZtm84MEeaV6GgTgqhWk9iwbAMbzNqunSuZ
-        IWwPidu9l9kmMCrOQvLOLCTvzELYu4CReRWjeGppcW56arFhXmq5XnFibnFpXrpecn7uJkZg
-        Kjr97/inHYxfLyUdYhTgYFTi4V2wIzxOiDWxrLgy9xCjBAezkgjvxq+hcUK8KYmVValF+fFF
-        pTmpxYcYpTlYlMR5jRe9jBUSSE8sSc1OTS1ILYLJMnFwSjUwRs2y0N28Ytve8p6zPd6L/Xbn
-        Z97TbrN9YBc5edIVbtOEE/0vdilv/Oe0T+bSgYq23xz3GFU5ZoZpVbrpceQc/N3dsP7k9Iai
-        N1+szwiYKkmd2iOzu/zjn/NVTqd7PgXrPOmxYzn3c+quGWfupYtai9hYHghXndFRXcmifUCF
-        N4H13a6XfjvqlViKMxINtZiLihMBo43BB0EDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsVy+t/xe7rvOSLiDO5+UbFYfbefzWLjjPWs
-        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
-        eOy+2cDm0bdlFaPH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6
-        djYpqTmZZalF+nYJehnNfftZCn7wVyxr/sTcwHiIt4uRk0NCwERizeN7TF2MXBxCAksZJfoX
-        vmHuYuQASshIHF9fBlEjLPHnWhcbRM0nRoldy+YzgyTYBKwkJravYgSxRQQUJHp+rwQrYhb4
-        yiixdFI32CBhgXiJMzPiQEwWAVWJ44vUQcp5BWwlZr84wwYxX15i67dPrCA2p4CdxI2+7WBx
-        IaCaro6njBD1ghInZz5hAbGZgeqbt85mnsAoMAtJahaS1AJGplWMIqmlxbnpucWGesWJucWl
-        eel6yfm5mxiB0bLt2M/NOxgvbQw+xCjAwajEw7tgR3icEGtiWXFl7iFGCQ5mJRHejV9D44R4
-        UxIrq1KL8uOLSnNSiw8xmgL9MJFZSjQ5HxjJeSXxhqaG5haWhubG5sZmFkrivB0CB2OEBNIT
-        S1KzU1MLUotg+pg4OKUaGJsvekwKq3r26IHqowmPmnTkrHNEFkmeNHN4c/eSzDL7Ox6ldjKp
-        r9Wv3D8x59vqylbDLZ+1zk7/urc9sl0gwGVW08ULwonNEoaL1LSSHq4z0UpO0z8esnX/fPPY
-        xMq5E/Zt+t/Ic9dK6etlQZMkUfmPm9qfL5gl1fh+04ZtV16fmr5jnvCGmt1KLMUZiYZazEXF
-        iQAjtKByrAIAAA==
-X-CMS-MailID: 20200227182239eucas1p2fe76dcb686bea8f0a527461807b9292e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200227182239eucas1p2fe76dcb686bea8f0a527461807b9292e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200227182239eucas1p2fe76dcb686bea8f0a527461807b9292e
-References: <20200227182226.19188-1-b.zolnierkie@samsung.com>
-        <CGME20200227182239eucas1p2fe76dcb686bea8f0a527461807b9292e@eucas1p2.samsung.com>
+        id S1730780AbgB0SWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:22:32 -0500
+Received: from foss.arm.com ([217.140.110.172]:56668 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730743AbgB0SWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:22:30 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDE251FB;
+        Thu, 27 Feb 2020 10:22:29 -0800 (PST)
+Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C4B553F73B;
+        Thu, 27 Feb 2020 10:22:27 -0800 (PST)
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Robert Richter <rric@kernel.org>, soc@kernel.org,
+        Jon Loeliger <jdl@jdl.com>,
+        Mark Langsdorf <mlangsdo@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v2 05/13] dt-bindings: clock: Convert Calxeda clock bindings to json-schema
+Date:   Thu, 27 Feb 2020 18:22:02 +0000
+Message-Id: <20200227182210.89512-6-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200227182210.89512-1-andre.przywara@arm.com>
+References: <20200227182210.89512-1-andre.przywara@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no point in exposing ncq_enable_prio sysfs attribute for
-devices on PATA and non-NCQ capable SATA hosts so:
+Convert the Calxeda clock bindings to DT schema format using json-schema.
 
-* remove dev_attr_ncq_prio_enable from ata_common_sdev_attrs[]
+This just covers the actual PLL and divider clock nodes. In the actual
+DTs they are somewhat unconnected (no ranges or bus compatible) children
+of the sregs node, but for the actual clock bindings this is not
+relevant.
 
-* add ata_ncq_sdev_attrs[]
+One oddity is that the addresses are relative to the parent node,
+without that being pronounced using a ranges property.
+But this is too late to fix now.
 
-* update ATA_NCQ_SHT() macro to use ata_ncq_sdev_attrs[]
-
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
 ---
- drivers/ata/libata-scsi.c | 8 +++++++-
- include/linux/libata.h    | 2 ++
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/clock/calxeda.txt     | 17 ----
+ .../devicetree/bindings/clock/calxeda.yaml    | 82 +++++++++++++++++++
+ 2 files changed, 82 insertions(+), 17 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/calxeda.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/calxeda.yaml
 
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index 11eb25b6e2cd..161e5d84bd82 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -462,11 +462,17 @@ EXPORT_SYMBOL_GPL(dev_attr_sw_activity);
- 
- struct device_attribute *ata_common_sdev_attrs[] = {
- 	&dev_attr_unload_heads,
--	&dev_attr_ncq_prio_enable,
- 	NULL
- };
- EXPORT_SYMBOL_GPL(ata_common_sdev_attrs);
- 
-+struct device_attribute *ata_ncq_sdev_attrs[] = {
-+	&dev_attr_unload_heads,
-+	&dev_attr_ncq_prio_enable,
-+	NULL
-+};
-+EXPORT_SYMBOL_GPL(ata_ncq_sdev_attrs);
+diff --git a/Documentation/devicetree/bindings/clock/calxeda.txt b/Documentation/devicetree/bindings/clock/calxeda.txt
+deleted file mode 100644
+index 0a6ac1bdcda1..000000000000
+--- a/Documentation/devicetree/bindings/clock/calxeda.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-Device Tree Clock bindings for Calxeda highbank platform
+-
+-This binding uses the common clock binding[1].
+-
+-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-Required properties:
+-- compatible : shall be one of the following:
+-	"calxeda,hb-pll-clock" - for a PLL clock
+-	"calxeda,hb-a9periph-clock" - The A9 peripheral clock divided from the
+-		A9 clock.
+-	"calxeda,hb-a9bus-clock" - The A9 bus clock divided from the A9 clock.
+-	"calxeda,hb-emmc-clock" - Divided clock for MMC/SD controller.
+-- reg : shall be the control register offset from SYSREGs base for the clock.
+-- clocks : shall be the input parent clock phandle for the clock. This is
+-	either an oscillator or a pll output.
+-- #clock-cells : from common clock binding; shall be set to 0.
+diff --git a/Documentation/devicetree/bindings/clock/calxeda.yaml b/Documentation/devicetree/bindings/clock/calxeda.yaml
+new file mode 100644
+index 000000000000..39c8bf646205
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/calxeda.yaml
+@@ -0,0 +1,82 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/calxeda.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- /**
-  *	ata_std_bios_param - generic bios head/sector/cylinder calculator used by sd.
-  *	@sdev: SCSI device for which BIOS geometry is to be determined
-diff --git a/include/linux/libata.h b/include/linux/libata.h
-index 2ca9b7056a82..df8f20a2a305 100644
---- a/include/linux/libata.h
-+++ b/include/linux/libata.h
-@@ -1336,6 +1336,7 @@ extern int ata_link_nr_enabled(struct ata_link *link);
- extern const struct ata_port_operations ata_base_port_ops;
- extern const struct ata_port_operations sata_port_ops;
- extern struct device_attribute *ata_common_sdev_attrs[];
-+extern struct device_attribute *ata_ncq_sdev_attrs[];
- 
- /*
-  * All sht initializers (BASE, PIO, BMDMA, NCQ) must be instantiated
-@@ -1362,6 +1363,7 @@ extern struct device_attribute *ata_common_sdev_attrs[];
- 
- #define ATA_NCQ_SHT(drv_name)					\
- 	ATA_BASE_SHT(drv_name),					\
-+	.sdev_attrs		= ata_ncq_sdev_attrs,		\
- 	.change_queue_depth	= ata_scsi_change_queue_depth
- 
- /*
++title: Device Tree Clock bindings for Calxeda highbank platform
++
++description: |
++  This binding covers the Calxeda SoC internal peripheral and bus clocks
++  as used by peripherals. The clocks live inside the "system register"
++  region of the SoC, so are typically presented as children of an
++  "hb-sregs" node.
++
++maintainers:
++  - Andre Przywara <andre.przywara@arm.com>
++
++properties:
++  "#clock-cells":
++    const: 0
++
++  compatible:
++    enum:
++      - calxeda,hb-pll-clock
++      - calxeda,hb-a9periph-clock
++      - calxeda,hb-a9bus-clock
++      - calxeda,hb-emmc-clock
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - "#clock-cells"
++  - compatible
++  - clocks
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    sregs@3fffc000 {
++        compatible = "calxeda,hb-sregs";
++        reg = <0x3fffc000 0x1000>;
++
++        clocks {
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            osc: oscillator {
++                #clock-cells = <0>;
++                compatible = "fixed-clock";
++                clock-frequency = <33333000>;
++            };
++
++            ddrpll: ddrpll {
++                #clock-cells = <0>;
++                compatible = "calxeda,hb-pll-clock";
++                clocks = <&osc>;
++                reg = <0x108>;
++            };
++
++            a9pll: a9pll {
++                #clock-cells = <0>;
++                compatible = "calxeda,hb-pll-clock";
++                clocks = <&osc>;
++                reg = <0x100>;
++            };
++
++            a9periphclk: a9periphclk {
++                #clock-cells = <0>;
++                compatible = "calxeda,hb-a9periph-clock";
++                clocks = <&a9pll>;
++                reg = <0x104>;
++            };
++        };
++    };
++
++...
 -- 
-2.24.1
+2.17.1
 
