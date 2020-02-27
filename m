@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6914E171C17
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86511171B87
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:03:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388275AbgB0OIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:08:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46378 "EHLO mail.kernel.org"
+        id S1732706AbgB0ODK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:03:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388252AbgB0OId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:08:33 -0500
+        id S1733258AbgB0ODF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:03:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34FCF21D7E;
-        Thu, 27 Feb 2020 14:08:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E05DF20801;
+        Thu, 27 Feb 2020 14:03:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812512;
-        bh=7oJbFU+bhBED6CuMJZtavCeSHxcTQ/IBOQ85mSsX9oY=;
+        s=default; t=1582812185;
+        bh=M+3C6Vfw8tIQOCDP4th63PzilReHvAapp2Moe3ZV2mg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xHY8iYb3b3qBVXPBDQ0KCz2whBX+ZHnzvVs2kVedbsJxhmkvph8PJAmRDEPHBwNKC
-         5yxEMD8fzf7OybR0CrNiOLnHR1LNU59BhZ/iaNPu2VUGPYpABrFWAkb7Z5PPZQ3HV7
-         17FDmH0b/kN/WeBX8ct3WY8/73RvZug7iKxgadmc=
+        b=imvHzz6m/mgbikRVcIYFrnJ0oKlVfNMR4sJZ78hoEUeYHLtHopakrMRHy4IGdF81P
+         /495zF0dWKtdoNbYIYIn5cYZwJvtpO8t9GAce73wxDYEYJDZVpFuqRlArm/smt86OV
+         adB8Bc4yEGfQBfesZFERoytQmzhxzqcu6Aci8wf8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.4 046/135] powerpc/entry: Fix an #if which should be an #ifdef in entry_32.S
+        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
+Subject: [PATCH 4.19 18/97] staging: vt6656: fix sign of rx_dbm to bb_pre_ed_rssi.
 Date:   Thu, 27 Feb 2020 14:36:26 +0100
-Message-Id: <20200227132235.935587437@linuxfoundation.org>
+Message-Id: <20200227132217.607436469@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +42,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Malcolm Priestley <tvboxspy@gmail.com>
 
-commit 9eb425b2e04e0e3006adffea5bf5f227a896f128 upstream.
+commit 93134df520f23f4e9998c425b8987edca7016817 upstream.
 
-Fixes: 12c3f1fd87bf ("powerpc/32s: get rid of CPU_FTR_601 feature")
-Cc: stable@vger.kernel.org # v5.4+
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/a99fc0ad65b87a1ba51cfa3e0e9034ee294c3e07.1582034961.git.christophe.leroy@c-s.fr
+bb_pre_ed_rssi is an u8 rx_dm always returns negative signed
+values add minus operator to always yield positive.
+
+fixes issue where rx sensitivity is always set to maximum because
+the unsigned numbers were always greater then 100.
+
+Fixes: 63b9907f58f1 ("staging: vt6656: mac80211 conversion: create rx function.")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
+Link: https://lore.kernel.org/r/aceac98c-6e69-3ce1-dfec-2bf27b980221@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/entry_32.S |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/vt6656/dpc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/entry_32.S
-+++ b/arch/powerpc/kernel/entry_32.S
-@@ -778,7 +778,7 @@ fast_exception_return:
- 1:	lis	r3,exc_exit_restart_end@ha
- 	addi	r3,r3,exc_exit_restart_end@l
- 	cmplw	r12,r3
--#if CONFIG_PPC_BOOK3S_601
-+#ifdef CONFIG_PPC_BOOK3S_601
- 	bge	2b
- #else
- 	bge	3f
-@@ -786,7 +786,7 @@ fast_exception_return:
- 	lis	r4,exc_exit_restart@ha
- 	addi	r4,r4,exc_exit_restart@l
- 	cmplw	r12,r4
--#if CONFIG_PPC_BOOK3S_601
-+#ifdef CONFIG_PPC_BOOK3S_601
- 	blt	2b
- #else
- 	blt	3f
+--- a/drivers/staging/vt6656/dpc.c
++++ b/drivers/staging/vt6656/dpc.c
+@@ -130,7 +130,7 @@ int vnt_rx_data(struct vnt_private *priv
+ 
+ 	vnt_rf_rssi_to_dbm(priv, *rssi, &rx_dbm);
+ 
+-	priv->bb_pre_ed_rssi = (u8)rx_dbm + 1;
++	priv->bb_pre_ed_rssi = (u8)-rx_dbm + 1;
+ 	priv->current_rssi = priv->bb_pre_ed_rssi;
+ 
+ 	skb_pull(skb, 8);
 
 
