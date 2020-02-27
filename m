@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F22C1172050
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:42:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E8DD171FA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732058AbgB0OmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:42:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48976 "EHLO mail.kernel.org"
+        id S1733059AbgB0Ogs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:36:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731263AbgB0Nui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:50:38 -0500
+        id S1732455AbgB0N62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:58:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C822320578;
-        Thu, 27 Feb 2020 13:50:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6A1D2469D;
+        Thu, 27 Feb 2020 13:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811438;
-        bh=zg6Uq7ArT0C+WyG4FP67wrVc7ANAPFZHEsRcL6m0R6U=;
+        s=default; t=1582811907;
+        bh=cOC9Nsj09tLFpckuFZxqt7bE5XPufJsAsVuPtG2dnfc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JcrkpU55RYEectaCmVnVG4akGxGpTe5JbbjN0RMrm5DWygRzRkMF6kefnL2rA7kdZ
-         4IOqwegY7iZR/Cdd0sCYT1nbrZkkFiOy0KcZin8Vek6aApJft/HihM5arBttmzjZ6U
-         Cb+SrhHXa0wNLXbk4fcEVCsn8Ujr57K7O9IV11rc=
+        b=umjxiwyFpARipbMcqBOrfzKTk6xZSLHLJchqzS5QiLbscMIAInZlswb9BgzGKcI5Z
+         An0go/UyQm6SikJ2RvNSFyepOV5BEzlbdYvyQxUiFDI/44RU/tIM5B7jzEKX8cEQgs
+         1U6IoENzLaaprTefJIhiDukcu7yfrKxppuNAK4kE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 084/165] iommu/arm-smmu-v3: Use WRITE_ONCE() when changing validity of an STE
-Date:   Thu, 27 Feb 2020 14:35:58 +0100
-Message-Id: <20200227132243.580983212@linuxfoundation.org>
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 146/237] hostap: Adjust indentation in prism2_hostapd_add_sta
+Date:   Thu, 27 Feb 2020 14:36:00 +0100
+Message-Id: <20200227132307.362209460@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will@kernel.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit d71e01716b3606a6648df7e5646ae12c75babde4 ]
+[ Upstream commit b61156fba74f659d0bc2de8f2dbf5bad9f4b8faf ]
 
-If, for some bizarre reason, the compiler decided to split up the write
-of STE DWORD 0, we could end up making a partial structure valid.
+Clang warns:
 
-Although this probably won't happen, follow the example of the
-context-descriptor code and use WRITE_ONCE() to ensure atomicity of the
-write.
+../drivers/net/wireless/intersil/hostap/hostap_ap.c:2511:3: warning:
+misleading indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+        if (sta->tx_supp_rates & WLAN_RATE_5M5)
+        ^
+../drivers/net/wireless/intersil/hostap/hostap_ap.c:2509:2: note:
+previous statement is here
+        if (sta->tx_supp_rates & WLAN_RATE_2M)
+        ^
+1 warning generated.
 
-Reported-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
-Signed-off-by: Will Deacon <will@kernel.org>
+This warning occurs because there is a space before the tab on this
+line. Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
+
+Fixes: ff1d2767d5a4 ("Add HostAP wireless driver.")
+Link: https://github.com/ClangBuiltLinux/linux/issues/813
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu-v3.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intersil/hostap/hostap_ap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 7bd98585d78d2..48d3820087881 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -1103,7 +1103,8 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
- 	}
- 
- 	arm_smmu_sync_ste_for_sid(smmu, sid);
--	dst[0] = cpu_to_le64(val);
-+	/* See comment in arm_smmu_write_ctx_desc() */
-+	WRITE_ONCE(dst[0], cpu_to_le64(val));
- 	arm_smmu_sync_ste_for_sid(smmu, sid);
- 
- 	/* It's likely that we'll want to use the new STE soon */
+diff --git a/drivers/net/wireless/intersil/hostap/hostap_ap.c b/drivers/net/wireless/intersil/hostap/hostap_ap.c
+index 1a8d8db80b054..486ca1ee306ed 100644
+--- a/drivers/net/wireless/intersil/hostap/hostap_ap.c
++++ b/drivers/net/wireless/intersil/hostap/hostap_ap.c
+@@ -2568,7 +2568,7 @@ static int prism2_hostapd_add_sta(struct ap_data *ap,
+ 		sta->supported_rates[0] = 2;
+ 	if (sta->tx_supp_rates & WLAN_RATE_2M)
+ 		sta->supported_rates[1] = 4;
+- 	if (sta->tx_supp_rates & WLAN_RATE_5M5)
++	if (sta->tx_supp_rates & WLAN_RATE_5M5)
+ 		sta->supported_rates[2] = 11;
+ 	if (sta->tx_supp_rates & WLAN_RATE_11M)
+ 		sta->supported_rates[3] = 22;
 -- 
 2.20.1
 
