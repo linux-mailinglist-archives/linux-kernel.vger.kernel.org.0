@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E0811719AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:47:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81222171A99
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:55:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730618AbgB0NrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:47:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43260 "EHLO mail.kernel.org"
+        id S1731654AbgB0NzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:55:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730244AbgB0Nq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:46:56 -0500
+        id S1731951AbgB0NzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:55:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E88062469F;
-        Thu, 27 Feb 2020 13:46:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 497972469B;
+        Thu, 27 Feb 2020 13:55:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811215;
-        bh=MXXrokOjUI6fldjQTvPfgDimBBeXh8U36Bp/rLg6hYk=;
+        s=default; t=1582811709;
+        bh=6EtQis6mQeE6kHIL6mvjafifQGOLz1qYtzxe86M3JsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BGreC+lKZ/HM4Es1ANw/qbedH1saGIsKfQbmy9cbQEiGoVwQRLIUOmvBqbFgvrgGz
-         s3lQI92t94tLdLXFcHNI8is05xJVGPAgOmqS66RH0jkSX2AFGXiXZP5jvixATACELy
-         rY9jfjNh0CuAnGjj7X7nyUH1u+BHX5z+7CjIFbys=
+        b=MHFt2wluUr3K0O/IjnVgxvjUQKVSUfccHJFVSRjyvLZHrX1WzQrf4Q2OdWRcFauUc
+         zRXERts+OO7THd5tPTWObZbh0vKexvqaA+aCxc/tYrUsRVqustEKa9gH7yiL6fb1y2
+         VdSdDujvstYG3qqK3Y8gBgTcbmIKwLgM1xs/LxOw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.9 009/165] ext4: improve explanation of a mount failure caused by a misconfigured kernel
+        stable@vger.kernel.org,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 069/237] kconfig: fix broken dependency in randconfig-generated .config
 Date:   Thu, 27 Feb 2020 14:34:43 +0100
-Message-Id: <20200227132232.476517249@linuxfoundation.org>
+Message-Id: <20200227132302.186328629@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,55 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Masahiro Yamada <masahiroy@kernel.org>
 
-commit d65d87a07476aa17df2dcb3ad18c22c154315bec upstream.
+[ Upstream commit c8fb7d7e48d11520ad24808cfce7afb7b9c9f798 ]
 
-If CONFIG_QFMT_V2 is not enabled, but CONFIG_QUOTA is enabled, when a
-user tries to mount a file system with the quota or project quota
-enabled, the kernel will emit a very confusing messsage:
+Running randconfig on arm64 using KCONFIG_SEED=0x40C5E904 (e.g. on v5.5)
+produces the .config with CONFIG_EFI=y and CONFIG_CPU_BIG_ENDIAN=y,
+which does not meet the !CONFIG_CPU_BIG_ENDIAN dependency.
 
-    EXT4-fs warning (device vdc): ext4_enable_quotas:5914: Failed to enable quota tracking (type=0, err=-3). Please run e2fsck to fix.
-    EXT4-fs (vdc): mount failed
+This is because the user choice for CONFIG_CPU_LITTLE_ENDIAN vs
+CONFIG_CPU_BIG_ENDIAN is set by randomize_choice_values() after the
+value of CONFIG_EFI is calculated.
 
-We will now report an explanatory message indicating which kernel
-configuration options have to be enabled, to avoid customer/sysadmin
-confusion.
+When this happens, the has_changed flag should be set.
 
-Link: https://lore.kernel.org/r/20200215012738.565735-1-tytso@mit.edu
-Google-Bug-Id: 149093531
-Fixes: 7c319d328505b778 ("ext4: make quota as first class supported feature")
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Currently, it takes the result from the last iteration. It should
+accumulate all the results of the loop.
 
+Fixes: 3b9a19e08960 ("kconfig: loop as long as we changed some symbols in randconfig")
+Reported-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/super.c |   14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ scripts/kconfig/confdata.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2743,17 +2743,11 @@ static int ext4_feature_set_ok(struct su
- 		return 0;
- 	}
+diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+index 27aac273205ba..fa423fcd1a928 100644
+--- a/scripts/kconfig/confdata.c
++++ b/scripts/kconfig/confdata.c
+@@ -1238,7 +1238,7 @@ bool conf_set_all_new_symbols(enum conf_def_mode mode)
  
--#ifndef CONFIG_QUOTA
--	if (ext4_has_feature_quota(sb) && !readonly) {
-+#if !defined(CONFIG_QUOTA) || !defined(CONFIG_QFMT_V2)
-+	if (!readonly && (ext4_has_feature_quota(sb) ||
-+			  ext4_has_feature_project(sb))) {
- 		ext4_msg(sb, KERN_ERR,
--			 "Filesystem with quota feature cannot be mounted RDWR "
--			 "without CONFIG_QUOTA");
--		return 0;
--	}
--	if (ext4_has_feature_project(sb) && !readonly) {
--		ext4_msg(sb, KERN_ERR,
--			 "Filesystem with project quota feature cannot be mounted RDWR "
--			 "without CONFIG_QUOTA");
-+			 "The kernel was not built with CONFIG_QUOTA and CONFIG_QFMT_V2");
- 		return 0;
- 	}
- #endif  /* CONFIG_QUOTA */
+ 		sym_calc_value(csym);
+ 		if (mode == def_random)
+-			has_changed = randomize_choice_values(csym);
++			has_changed |= randomize_choice_values(csym);
+ 		else {
+ 			set_all_choice_values(csym);
+ 			has_changed = true;
+-- 
+2.20.1
+
 
 
