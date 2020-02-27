@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 678E9171A78
+	by mail.lfdr.de (Postfix) with ESMTP id D8C6E171A79
 	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:54:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731287AbgB0NyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:54:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53960 "EHLO mail.kernel.org"
+        id S1731823AbgB0NyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:54:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731323AbgB0Nx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:53:57 -0500
+        id S1731323AbgB0NyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:54:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6804720578;
-        Thu, 27 Feb 2020 13:53:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD9B22084E;
+        Thu, 27 Feb 2020 13:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811636;
-        bh=8aHHGS6tkGBLeGkwk9FMJYUq4EvcCZ+0UidKSNcAdGs=;
+        s=default; t=1582811642;
+        bh=ZXhnpMrj5CaWrpKLVqIdetget1X44xH0z5FU1tXfW64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y3nqtDXCCJEmbYz9XQ1cwINVfqKg1Ra/6gdf3N1QPp9x7z6Wfu9GYdT60s6+xjCJG
-         b5t2y9EjOAXcoja576Rb7IxM95z1k7Pgg2MLtjf/WMC99cwbbD4SB5Y+EROjJytPLj
-         bcfKQd4ikY88lUyF/9hb0DLIvHafbrjTEyfO7udY=
+        b=mS071CY2ZnlxnQlFeZhFwvqOpLUk2NHoLM5Ya9a+qZiPXv66lL1NPvkhuq3i+ut4E
+         Lf/2LHmQfaFPuLEXcWNXCii7zMk1iBa677McgfciSllPaf/ySCDdWjSkGimdJIjN+u
+         +Lzy7CNVluAnOHMa4vm9q4iVXWOx6Y+xwwwEk9bQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 044/237] ALSA: ctl: allow TLV read operation for callback type of element in locked case
-Date:   Thu, 27 Feb 2020 14:34:18 +0100
-Message-Id: <20200227132259.949334732@linuxfoundation.org>
+Subject: [PATCH 4.14 046/237] pinctrl: sh-pfc: sh7264: Fix CAN function GPIOs
+Date:   Thu, 27 Feb 2020 14:34:20 +0100
+Message-Id: <20200227132300.092640687@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -44,58 +44,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit d61fe22c2ae42d9fd76c34ef4224064cca4b04b0 ]
+[ Upstream commit 55b1cb1f03ad5eea39897d0c74035e02deddcff2 ]
 
-A design of ALSA control core allows applications to execute three
-operations for TLV feature; read, write and command. Furthermore, it
-allows driver developers to process the operations by two ways; allocated
-array or callback function. In the former, read operation is just allowed,
-thus developers uses the latter when device driver supports variety of
-models or the target model is expected to dynamically change information
-stored in TLV container.
+pinmux_func_gpios[] contains a hole due to the missing function GPIO
+definition for the "CTX0&CTX1" signal, which is the logical "AND" of the
+two CAN outputs.
 
-The core also allows applications to lock any element so that the other
-applications can't perform write operation to the element for element
-value and TLV information. When the element is locked, write and command
-operation for TLV information are prohibited as well as element value.
-Any read operation should be allowed in the case.
+Fix this by:
+  - Renaming CRX0_CRX1_MARK to CTX0_CTX1_MARK, as PJ2MD[2:0]=010
+    configures the combined "CTX0&CTX1" output signal,
+  - Renaming CRX0X1_MARK to CRX0_CRX1_MARK, as PJ3MD[1:0]=10 configures
+    the shared "CRX0/CRX1" input signal, which is fed to both CAN
+    inputs,
+  - Adding the missing function GPIO definition for "CTX0&CTX1" to
+    pinmux_func_gpios[],
+  - Moving all CAN enums next to each other.
 
-At present, when an element has callback function for TLV information,
-TLV read operation returns EPERM if the element is locked. On the
-other hand, the read operation is success when an element has allocated
-array for TLV information. In both cases, read operation is success for
-element value expectedly.
+See SH7262 Group, SH7264 Group User's Manual: Hardware, Rev. 4.00:
+  [1] Figure 1.2 (3) (Pin Assignment for the SH7264 Group (1-Mbyte
+      Version),
+  [2] Figure 1.2 (4) Pin Assignment for the SH7264 Group (640-Kbyte
+      Version,
+  [3] Table 1.4 List of Pins,
+  [4] Figure 20.29 Connection Example when Using This Module as 1-Channel
+      Module (64 Mailboxes x 1 Channel),
+  [5] Table 32.10 Multiplexed Pins (Port J),
+  [6] Section 32.2.30 (3) Port J Control Register 0 (PJCR0).
 
-This commit fixes the bug. This change can be backported to v4.14
-kernel or later.
+Note that the last 2 disagree about PJ2MD[2:0], which is probably the
+root cause of this bug.  But considering [4], "CTx0&CTx1" in [5] must
+be correct, and "CRx0&CRx1" in [6] must be wrong.
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Reviewed-by: Jaroslav Kysela <perex@perex.cz>
-Link: https://lore.kernel.org/r/20191223093347.15279-1-o-takashi@sakamocchi.jp
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191218194812.12741-4-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/control.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-sh7264.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/sound/core/control.c b/sound/core/control.c
-index 36571cd49be33..a0ce22164957c 100644
---- a/sound/core/control.c
-+++ b/sound/core/control.c
-@@ -1467,8 +1467,9 @@ static int call_tlv_handler(struct snd_ctl_file *file, int op_flag,
- 	if (kctl->tlv.c == NULL)
- 		return -ENXIO;
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7264.c b/drivers/pinctrl/sh-pfc/pfc-sh7264.c
+index e1c34e19222ee..3ddb9565ed804 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7264.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7264.c
+@@ -500,17 +500,15 @@ enum {
+ 	SD_WP_MARK, SD_CLK_MARK, SD_CMD_MARK,
+ 	CRX0_MARK, CRX1_MARK,
+ 	CTX0_MARK, CTX1_MARK,
++	CRX0_CRX1_MARK, CTX0_CTX1_MARK,
  
--	/* When locked, this is unavailable. */
--	if (vd->owner != NULL && vd->owner != file)
-+	/* Write and command operations are not allowed for locked element. */
-+	if (op_flag != SNDRV_CTL_TLV_OP_READ &&
-+	    vd->owner != NULL && vd->owner != file)
- 		return -EPERM;
+ 	PWM1A_MARK, PWM1B_MARK, PWM1C_MARK, PWM1D_MARK,
+ 	PWM1E_MARK, PWM1F_MARK, PWM1G_MARK, PWM1H_MARK,
+ 	PWM2A_MARK, PWM2B_MARK, PWM2C_MARK, PWM2D_MARK,
+ 	PWM2E_MARK, PWM2F_MARK, PWM2G_MARK, PWM2H_MARK,
+ 	IERXD_MARK, IETXD_MARK,
+-	CRX0_CRX1_MARK,
+ 	WDTOVF_MARK,
  
- 	return kctl->tlv.c(kctl, op_flag, size, buf);
+-	CRX0X1_MARK,
+-
+ 	/* DMAC */
+ 	TEND0_MARK, DACK0_MARK, DREQ0_MARK,
+ 	TEND1_MARK, DACK1_MARK, DREQ1_MARK,
+@@ -998,12 +996,12 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_DATA(PJ3_DATA, PJ3MD_00),
+ 	PINMUX_DATA(CRX1_MARK, PJ3MD_01),
+-	PINMUX_DATA(CRX0X1_MARK, PJ3MD_10),
++	PINMUX_DATA(CRX0_CRX1_MARK, PJ3MD_10),
+ 	PINMUX_DATA(IRQ1_PJ_MARK, PJ3MD_11),
+ 
+ 	PINMUX_DATA(PJ2_DATA, PJ2MD_000),
+ 	PINMUX_DATA(CTX1_MARK, PJ2MD_001),
+-	PINMUX_DATA(CRX0_CRX1_MARK, PJ2MD_010),
++	PINMUX_DATA(CTX0_CTX1_MARK, PJ2MD_010),
+ 	PINMUX_DATA(CS2_MARK, PJ2MD_011),
+ 	PINMUX_DATA(SCK0_MARK, PJ2MD_100),
+ 	PINMUX_DATA(LCD_M_DISP_MARK, PJ2MD_101),
+@@ -1248,6 +1246,7 @@ static const struct pinmux_func pinmux_func_gpios[] = {
+ 	GPIO_FN(CTX1),
+ 	GPIO_FN(CRX1),
+ 	GPIO_FN(CTX0),
++	GPIO_FN(CTX0_CTX1),
+ 	GPIO_FN(CRX0),
+ 	GPIO_FN(CRX0_CRX1),
+ 
 -- 
 2.20.1
 
