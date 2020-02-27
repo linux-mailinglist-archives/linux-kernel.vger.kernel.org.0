@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAAD8171F6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:36:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77C82172165
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:49:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731322AbgB0Of5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:35:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33006 "EHLO mail.kernel.org"
+        id S1732291AbgB0OsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:48:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732637AbgB0N7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:59:45 -0500
+        id S1729939AbgB0NnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:43:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADAB624656;
-        Thu, 27 Feb 2020 13:59:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC72F21D7E;
+        Thu, 27 Feb 2020 13:43:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811985;
-        bh=jAlQ1VjaME95hBJJoVaPUKO1LJfFCsEkZPLL46+G1lM=;
+        s=default; t=1582810998;
+        bh=UcX1KRWMAwqV7+3ramiGds4rqxADxTFIV7lKuDR3NbY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Ez1/8Cz8x/Yw59IZ12Vv/+ZCMqXdUeE+djjq3+sgb9ixve+ykeIky+DfhQuEWxQ6
-         VILLvEiFntclquGVibwrSRxDOedSqiX9C8NdI7879iRBLdoMSfRsmF0PjD1J4aZ0oO
-         3DNDOnfLZ+Nqq6ra0REcsfiWrPnf4NnwOGyxkEfY=
+        b=2DqCPUrJDKf0P86LkhF595mjAMEotpncLrMdAExlW+D13uGYiATnGfTUGNnpcF0pY
+         DSwST1opW7M8x0ue3RTVbEnIVf61YfDj1M23EVA6VqeC81wzwgSOr9eo3zQGUTxBTn
+         7uHVoecGz4/K8XfUEj/2umqMCIJrofmav8FOeGpU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 4.14 177/237] vt: selection, handle pending signals in paste_selection
-Date:   Thu, 27 Feb 2020 14:36:31 +0100
-Message-Id: <20200227132309.414248234@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 077/113] lib/scatterlist.c: adjust indentation in __sg_alloc_table
+Date:   Thu, 27 Feb 2020 14:36:33 +0100
+Message-Id: <20200227132224.101407733@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,72 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 687bff0cd08f790d540cfb7b2349f0d876cdddec upstream.
+[ Upstream commit 4e456fee215677584cafa7f67298a76917e89c64 ]
 
-When pasting a selection to a vt, the task is set as INTERRUPTIBLE while
-waiting for a tty to unthrottle. But signals are not handled at all.
-Normally, this is not a problem as tty_ldisc_receive_buf receives all
-the goods and a user has no reason to interrupt the task.
+Clang warns:
 
-There are two scenarios where this matters:
-1) when the tty is throttled and a signal is sent to the process, it
-   spins on a CPU until the tty is unthrottled. schedule() does not
-   really echedule, but returns immediately, of course.
-2) when the sel_buffer becomes invalid, KASAN prevents any reads from it
-   and the loop simply does not proceed and spins forever (causing the
-   tty to throttle, but the code never sleeps, the same as above). This
-   sometimes happens as there is a race in the sel_buffer handling code.
+  ../lib/scatterlist.c:314:5: warning: misleading indentation; statement
+  is not part of the previous 'if' [-Wmisleading-indentation]
+                          return -ENOMEM;
+                          ^
+  ../lib/scatterlist.c:311:4: note: previous statement is here
+                          if (prv)
+                          ^
+  1 warning generated.
 
-So add signal handling to this ioctl (TIOCL_PASTESEL) and return -EINTR
-in case a signal is pending.
+This warning occurs because there is a space before the tab on this
+line.  Remove it so that the indentation is consistent with the Linux
+kernel coding style and clang no longer warns.
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200210081131.23572-1-jslaby@suse.cz
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: http://lkml.kernel.org/r/20191218033606.11942-1-natechancellor@gmail.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/830
+Fixes: edce6820a9fd ("scatterlist: prevent invalid free when alloc fails")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/vt/selection.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ lib/scatterlist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/vt/selection.c
-+++ b/drivers/tty/vt/selection.c
-@@ -27,6 +27,8 @@
- #include <linux/console.h>
- #include <linux/tty_flip.h>
+diff --git a/lib/scatterlist.c b/lib/scatterlist.c
+index 0b86b7992f931..1875c09eede91 100644
+--- a/lib/scatterlist.c
++++ b/lib/scatterlist.c
+@@ -317,7 +317,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
+ 			if (prv)
+ 				table->nents = ++table->orig_nents;
  
-+#include <linux/sched/signal.h>
-+
- /* Don't take this from <ctype.h>: 011-015 on the screen aren't spaces */
- #define isspace(c)	((c) == ' ')
+- 			return -ENOMEM;
++			return -ENOMEM;
+ 		}
  
-@@ -338,6 +340,7 @@ int paste_selection(struct tty_struct *t
- 	unsigned int count;
- 	struct  tty_ldisc *ld;
- 	DECLARE_WAITQUEUE(wait, current);
-+	int ret = 0;
- 
- 	console_lock();
- 	poke_blanked_console();
-@@ -351,6 +354,10 @@ int paste_selection(struct tty_struct *t
- 	add_wait_queue(&vc->paste_wait, &wait);
- 	while (sel_buffer && sel_buffer_lth > pasted) {
- 		set_current_state(TASK_INTERRUPTIBLE);
-+		if (signal_pending(current)) {
-+			ret = -EINTR;
-+			break;
-+		}
- 		if (tty_throttled(tty)) {
- 			schedule();
- 			continue;
-@@ -366,5 +373,5 @@ int paste_selection(struct tty_struct *t
- 
- 	tty_buffer_unlock_exclusive(&vc->port);
- 	tty_ldisc_deref(ld);
--	return 0;
-+	return ret;
- }
+ 		sg_init_table(sg, alloc_size);
+-- 
+2.20.1
+
 
 
