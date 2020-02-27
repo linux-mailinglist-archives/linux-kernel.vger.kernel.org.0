@@ -2,95 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3C9C1723A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:40:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D01C31723B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730269AbgB0Qko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:40:44 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:42357 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729146AbgB0Qkn (ORCPT
+        id S1730357AbgB0Ql7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:41:59 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:7780 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730235AbgB0Ql7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:40:43 -0500
-Received: by mail-oi1-f196.google.com with SMTP id l12so2595022oil.9;
-        Thu, 27 Feb 2020 08:40:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PCYsGMCW0SwZkIyBJuFeCwKSJseDitgI487QueGROLA=;
-        b=Gf9/qRg5YVJ95kp1jBd5ls2HFfW/I/pX+q9rJGHWaPe4DgYhjxL1hJyeF2ohiDM4wB
-         Ju8465+NYrjs5t5qnXgWQuZ7lkO9bhmR13dQoBWoc/2kNVPkPGuLlLJyeiPx0B5zuVjB
-         4jv4ebLpWXUH5MsRO/qlZkMJOmhAg7GgZ95M7rmtRHv0BAR+luy/8eMd3BlUcRIDBE0o
-         5Tx1KmXVSGyGVXOu+IQ6Yo0I1bTlWc11FsZ61pA+TL3VnP2bfsIoSAhPIMj3Aa0JMF7D
-         ejYK29AFOH6GsLhr/+dMTJOmalOBbpFQSdRUXZWKRDiY/djbWxTEXzTH6MbfjeCRLcIQ
-         wWew==
-X-Gm-Message-State: APjAAAXDu+X4Z30GNTy8w0mehXZ5Cobf/iL3CZxAcP3g8uoLmr8Vdwr2
-        +N6/3mDIvG+qdbONwNESUxPa+LNFXXYmzE5bkrY=
-X-Google-Smtp-Source: APXvYqxi2lBXElKfDVk3UZlxPINmCFgsVAPQF8DUTRsAPVQr2KdIUt1ieiiCMdPs4JqAaaMjFiUborT+0iUnPUYglQs=
-X-Received: by 2002:aca:b4c3:: with SMTP id d186mr3967588oif.131.1582821642630;
- Thu, 27 Feb 2020 08:40:42 -0800 (PST)
+        Thu, 27 Feb 2020 11:41:59 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01RGd10M050806;
+        Thu, 27 Feb 2020 11:40:56 -0500
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ye7120n9b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Feb 2020 11:40:55 -0500
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01RGebP3030539;
+        Thu, 27 Feb 2020 16:40:53 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma01dal.us.ibm.com with ESMTP id 2ydcmm2dux-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Feb 2020 16:40:53 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01RGepGs50069896
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Feb 2020 16:40:51 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 70C88BE053;
+        Thu, 27 Feb 2020 16:40:51 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 29C17BE051;
+        Thu, 27 Feb 2020 16:40:51 +0000 (GMT)
+Received: from t440p.yottatech.com (unknown [9.85.132.1])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Thu, 27 Feb 2020 16:40:50 +0000 (GMT)
+Received: (from gcwilson@localhost)
+        by t440p.yottatech.com (8.15.2/8.15.2/Submit) id 01RGekDr003315;
+        Thu, 27 Feb 2020 10:40:46 -0600
+X-Authentication-Warning: t440p.yottatech.com: gcwilson set sender to gcwilson@linux.ibm.com using -f
+Date:   Thu, 27 Feb 2020 10:40:46 -0600
+From:   George Wilson <gcwilson@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
+        Linh Pham <phaml@us.ibm.com>
+Subject: Re: [PATCH] tpm: ibmvtpm: retry on H_CLOSED in tpm_ibmvtpm_send()
+Message-ID: <20200227164046.GA1936@us.ibm.com>
+References: <20200227155003.592321-1-gcwilson@linux.ibm.com>
+ <20200227162339.GF5140@linux.intel.com>
 MIME-Version: 1.0
-References: <20200226093703.19765-1-p.yadav@ti.com> <20200226093703.19765-2-p.yadav@ti.com>
- <20200227171147.32cc6fcf@collabora.com> <20200227162842.GE4062@sirena.org.uk>
-In-Reply-To: <20200227162842.GE4062@sirena.org.uk>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 27 Feb 2020 17:40:31 +0100
-Message-ID: <CAMuHMdWMCDzQm0tjpybJZyHy4imbC9NqRXP5d4C0xgxQx-Pf8g@mail.gmail.com>
-Subject: Re: [PATCH v2 01/11] dt-bindings: spi: allow expressing DTR capability
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Boris Brezillon <boris.brezillon@collabora.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Richard Weinberger <richard@nod.at>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Pratyush Yadav <p.yadav@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200227162339.GF5140@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-27_05:2020-02-26,2020-02-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ clxscore=1015 mlxlogscore=797 adultscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002270125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+On Thu, Feb 27, 2020 at 06:23:39PM +0200, Jarkko Sakkinen wrote:
+> On Thu, Feb 27, 2020 at 10:50:03AM -0500, George Wilson wrote:
+> > tpm_ibmvtpm_send() can fail during LPM resume with an H_CLOSED return
+> > from ibmvtpm_send_crq().  The PAPR says, 'The “partner partition
+> > suspended” transport event disables the associated CRQ such that any
+> > H_SEND_CRQ hcall() to the associated CRQ returns H_Closed until the CRQ
+> > has been explicitly enabled using the H_ENABLE_CRQ hcall.' This patch
+> > adds a check in tpm_ibmvtpm_send() for an H_CLOSED return from
+> > ibmvtpm_send_crq() and in that case calls tpm_ibmvtpm_resume() and
+> > retries the ibmvtpm_send_crq() once.
+> > 
+> > Reported-by: Linh Pham <phaml@us.ibm.com>
+> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> > Signed-off-by: George Wilson <gcwilson@linux.ibm.com>
+> 
+> What is LPM anyway?
 
-On Thu, Feb 27, 2020 at 5:28 PM Mark Brown <broonie@kernel.org> wrote:
-> On Thu, Feb 27, 2020 at 05:11:47PM +0100, Boris Brezillon wrote:
-> > Pratyush Yadav <p.yadav@ti.com> wrote:
->
-> > > Allow spi devices to express DTR receive and transmit capabilities via
-> > > the properties "spi-rx-dtr" and "spi-tx-dtr".
->
-> > Is the RX/TX granularity really useful?
->
-> It's what we do for other properties, and if this is anything like the
-> other things adding extra wiring you can't assume that the ability to
-> use the feature for TX implies RX.
+It's PowerVM Live Partition Mobility.
 
-Double Transfer Rate uses the same wire.
-But as you sample at both the rising and the falling edges of the clock, this
-makes the cpha setting meaningless for such transfers, I think ;-)
+> 
+> /Jarkko
 
-However, as the future may bring us QDR, perhaps this should not be a
-boolean flag, but an integer value?
-Cfr. spi-tx-bus-width vs. the original spi-tx-dual/spi-tx-quad proposal.
-
-What would be a good name (as we only need one)? spi-data-phases?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+George Wilson
+IBM Linux Technology Center
+Security Development
