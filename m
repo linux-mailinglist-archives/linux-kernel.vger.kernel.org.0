@@ -2,37 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6097171B23
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:59:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8CE3171942
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:43:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732661AbgB0N7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:59:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33118 "EHLO mail.kernel.org"
+        id S1729958AbgB0NnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:43:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732649AbgB0N7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:59:51 -0500
+        id S1729655AbgB0NnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:43:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33A13246B5;
-        Thu, 27 Feb 2020 13:59:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5A4621D7E;
+        Thu, 27 Feb 2020 13:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811990;
-        bh=VG8bprn6FtRu7UbsBisMvMt6H54Pw6Et/zMJ75c5l9E=;
+        s=default; t=1582811001;
+        bh=63sz3Thyttw1FbNhqZLo79IV/ZETdQw4X+tidP6GY9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gm/nEKLThXhFuuuA/ZsdKKuNzOt6eCFx2d6M+Vab/lYxKul7aEVkwozd5rd+eDUQU
-         bwlTpS3neXPT4H+cdalPJN5Wjsx3fmZDZxLLRUt/OQG5rgML6/ZZEB8lOSALC6ibG3
-         /zBFuY1wV75aTKDKbUi3NpAqF7rSIhPhJ/wprVoc=
+        b=rchZ+6Fkutdx+EhZCH3zZb6hESfWWBM1z1logVEYph8U9lhBMd4mSjx2vv9OO1PSJ
+         ccEvm785WRkUORq8EVifkWBxuxZQf6vuQhmSjxah/hF1eNJUtTXTaWATHSBE0O5Ggo
+         GGgABsz+Wso3ZcvQcoPTZBS9ikBLNK8wttK4VvHI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 4.14 179/237] staging: vt6656: fix sign of rx_dbm to bb_pre_ed_rssi.
-Date:   Thu, 27 Feb 2020 14:36:33 +0100
-Message-Id: <20200227132309.546279036@linuxfoundation.org>
+        stable@vger.kernel.org, Yunfeng Ye <yeyunfeng@huawei.com>,
+        zhengbin <zhengbin13@huawei.com>,
+        Hu Shiyuan <hushiyuan@huawei.com>,
+        Feilong Lin <linfeilong@huawei.com>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 078/113] reiserfs: prevent NULL pointer dereference in reiserfs_insert_item()
+Date:   Thu, 27 Feb 2020 14:36:34 +0100
+Message-Id: <20200227132224.254475491@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,36 +48,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
 
-commit 93134df520f23f4e9998c425b8987edca7016817 upstream.
+[ Upstream commit aacee5446a2a1aa35d0a49dab289552578657fb4 ]
 
-bb_pre_ed_rssi is an u8 rx_dm always returns negative signed
-values add minus operator to always yield positive.
+The variable inode may be NULL in reiserfs_insert_item(), but there is
+no check before accessing the member of inode.
 
-fixes issue where rx sensitivity is always set to maximum because
-the unsigned numbers were always greater then 100.
+Fix this by adding NULL pointer check before calling reiserfs_debug().
 
-Fixes: 63b9907f58f1 ("staging: vt6656: mac80211 conversion: create rx function.")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/aceac98c-6e69-3ce1-dfec-2bf27b980221@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: http://lkml.kernel.org/r/79c5135d-ff25-1cc9-4e99-9f572b88cc00@huawei.com
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Cc: zhengbin <zhengbin13@huawei.com>
+Cc: Hu Shiyuan <hushiyuan@huawei.com>
+Cc: Feilong Lin <linfeilong@huawei.com>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/vt6656/dpc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/reiserfs/stree.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/vt6656/dpc.c
-+++ b/drivers/staging/vt6656/dpc.c
-@@ -140,7 +140,7 @@ int vnt_rx_data(struct vnt_private *priv
- 
- 	vnt_rf_rssi_to_dbm(priv, *rssi, &rx_dbm);
- 
--	priv->bb_pre_ed_rssi = (u8)rx_dbm + 1;
-+	priv->bb_pre_ed_rssi = (u8)-rx_dbm + 1;
- 	priv->current_rssi = priv->bb_pre_ed_rssi;
- 
- 	frame = skb_data + 8;
+diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
+index 24cbe013240fa..e3a4cbad9620c 100644
+--- a/fs/reiserfs/stree.c
++++ b/fs/reiserfs/stree.c
+@@ -2249,7 +2249,8 @@ error_out:
+ 	/* also releases the path */
+ 	unfix_nodes(&s_ins_balance);
+ #ifdef REISERQUOTA_DEBUG
+-	reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
++	if (inode)
++		reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
+ 		       "reiserquota insert_item(): freeing %u id=%u type=%c",
+ 		       quota_bytes, inode->i_uid, head2type(ih));
+ #endif
+-- 
+2.20.1
+
 
 
