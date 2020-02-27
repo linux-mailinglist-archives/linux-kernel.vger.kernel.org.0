@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81824171A09
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:50:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BF3F17193F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:43:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731186AbgB0NuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:50:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47750 "EHLO mail.kernel.org"
+        id S1729491AbgB0NnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:43:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731146AbgB0NuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:50:02 -0500
+        id S1729918AbgB0NnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:43:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CDE320578;
-        Thu, 27 Feb 2020 13:50:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 715E221D7E;
+        Thu, 27 Feb 2020 13:43:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811401;
-        bh=hePArWvNd0YntJvOJGHNGpd2fPqBYIzBU74YRz3DtHI=;
+        s=default; t=1582810991;
+        bh=Z/z9KrA/jRSOEQL6efHh/teWvDlAoQZQmTd9LPyxAbs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kaYH78eppYZNvWm8j0oU3FPw6NYg3YhKUJK4J9bL3IlioVnSn3X1GAPy5NsFIm/Po
-         rA6C+5SK71Ly/ddn/LmztHWQbwbf0fiAqesi/38QDmj96p1kboaxqgoQleSaEjB7Zo
-         tsK5s+xFKYVH01znxTj8t7M7jg3CxU/8slYn35tA=
+        b=eX/SBByCXmcBUX0q4c4Ss4unXLd+8NRl9cn9/waTI48yu+4EFQbzIzwyx3OrEXI1U
+         VD7kHf8QTldqjVMM9sKMYTCSjo6jfWMLe5Mh5bX9WDIWW4p8rX2Z7GLENZbB3sfooz
+         8vk8XUZbE/S5SEXKiJvy6A/X5FCgKcDCeCD/ztNk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 117/165] net/sched: matchall: add missing validation of TCA_MATCHALL_FLAGS
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 075/113] radeon: insert 10ms sleep in dce5_crtc_load_lut
 Date:   Thu, 27 Feb 2020 14:36:31 +0100
-Message-Id: <20200227132248.184302027@linuxfoundation.org>
+Message-Id: <20200227132223.781550709@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-[ Upstream commit 1afa3cc90f8fb745c777884d79eaa1001d6927a6 ]
+[ Upstream commit ec3d65082d7dabad6fa8f66a8ef166f2d522d6b2 ]
 
-unlike other classifiers that can be offloaded (i.e. users can set flags
-like 'skip_hw' and 'skip_sw'), 'cls_matchall' doesn't validate the size
-of netlink attribute 'TCA_MATCHALL_FLAGS' provided by user: add a proper
-entry to mall_policy.
+Per at least one tester this is enough magic to recover the regression
+introduced for some people (but not all) in
 
-Fixes: b87f7936a932 ("net/sched: Add match-all classifier hw offloading.")
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+commit b8e2b0199cc377617dc238f5106352c06dcd3fa2
+Author: Peter Rosin <peda@axentia.se>
+Date:   Tue Jul 4 12:36:57 2017 +0200
+
+    drm/fb-helper: factor out pseudo-palette
+
+which for radeon had the side-effect of refactoring out a seemingly
+redudant writing of the color palette.
+
+10ms in a fairly slow modeset path feels like an acceptable form of
+duct-tape, so maybe worth a shot and see what sticks.
+
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sched/cls_matchall.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/radeon/radeon_display.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/sched/cls_matchall.c
-+++ b/net/sched/cls_matchall.c
-@@ -111,6 +111,7 @@ static unsigned long mall_get(struct tcf
- static const struct nla_policy mall_policy[TCA_MATCHALL_MAX + 1] = {
- 	[TCA_MATCHALL_UNSPEC]		= { .type = NLA_UNSPEC },
- 	[TCA_MATCHALL_CLASSID]		= { .type = NLA_U32 },
-+	[TCA_MATCHALL_FLAGS]		= { .type = NLA_U32 },
- };
+diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
+index 446d990623069..4572bfba017c5 100644
+--- a/drivers/gpu/drm/radeon/radeon_display.c
++++ b/drivers/gpu/drm/radeon/radeon_display.c
+@@ -110,6 +110,8 @@ static void dce5_crtc_load_lut(struct drm_crtc *crtc)
  
- static int mall_set_parms(struct net *net, struct tcf_proto *tp,
+ 	DRM_DEBUG_KMS("%d\n", radeon_crtc->crtc_id);
+ 
++	msleep(10);
++
+ 	WREG32(NI_INPUT_CSC_CONTROL + radeon_crtc->crtc_offset,
+ 	       (NI_INPUT_CSC_GRPH_MODE(NI_INPUT_CSC_BYPASS) |
+ 		NI_INPUT_CSC_OVL_MODE(NI_INPUT_CSC_BYPASS)));
+-- 
+2.20.1
+
 
 
