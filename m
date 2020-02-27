@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 363FF171B1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:59:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 608F7171939
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:43:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732497AbgB0N7l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:59:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60970 "EHLO mail.kernel.org"
+        id S1729608AbgB0NnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:43:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732136AbgB0N7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:59:35 -0500
+        id S1729580AbgB0NnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:43:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E73920801;
-        Thu, 27 Feb 2020 13:59:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 757F320578;
+        Thu, 27 Feb 2020 13:43:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811974;
-        bh=lWkynrj0Gr/70px+CsO3TZpEUaIDq8yPdN6Pjb49AGM=;
+        s=default; t=1582810981;
+        bh=kPczogWiXOSiS49EYVauMu0X+s/wJe9Q8hPGsbMerHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mFEu9xHrpOxPLIRuU+JSNNhDdXnlVoG+5s4VYVcD5UyRmRWK46FPjq9j7z5MizFdw
-         Qt00gARUFnzKNKgaGDDtcbpnu/Gv4WHtgVAJGTSfaoDEM8/2hvfVAzfCMpZkrgCO08
-         ohUlZ+Y7v9AWGgPz0As9Km6OY7S4jxbaMH3ptLFY=
+        b=md4rov3naB0J861uvrcftcgWJWZaBwpVZYQlP82/A9GJ2ej8GgBSKKBZxZDwtHREh
+         NfsUOh7TDgAI9vPIaSZ8hXPtoZ8QseNfGrDyEFQTuq1mrTXFhA6frI3Pubv1wCKGJA
+         S+/6Ff5bnxfpprPYOAulHW+3/sIpt7xTrfBHb/tY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Jung <jung@codemercs.com>
-Subject: [PATCH 4.14 173/237] USB: misc: iowarrior: add support for 2 OEMed devices
-Date:   Thu, 27 Feb 2020 14:36:27 +0100
-Message-Id: <20200227132309.151534544@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Stanislaw Gruszka <stf_xl@wp.pl>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 072/113] iwlegacy: ensure loop counter addr does not wrap and cause an infinite loop
+Date:   Thu, 27 Feb 2020 14:36:28 +0100
+Message-Id: <20200227132223.297849844@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,87 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 461d8deb26a7d70254bc0391feb4fd8a95e674e8 upstream.
+[ Upstream commit c2f9a4e4a5abfc84c01b738496b3fd2d471e0b18 ]
 
-Add support for two OEM devices that are identical to existing
-IO-Warrior devices, except for the USB device id.
+The loop counter addr is a u16 where as the upper limit of the loop
+is an int. In the unlikely event that the il->cfg->eeprom_size is
+greater than 64K then we end up with an infinite loop since addr will
+wrap around an never reach upper loop limit. Fix this by making addr
+an int.
 
-Cc: Christoph Jung <jung@codemercs.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200212040422.2991-1-gregkh@linuxfoundation.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Addresses-Coverity: ("Infinite loop")
+Fixes: be663ab67077 ("iwlwifi: split the drivers for agn and legacy devices 3945/4965")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/misc/iowarrior.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/net/wireless/iwlegacy/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -33,6 +33,10 @@
- /* full speed iowarrior */
- #define USB_DEVICE_ID_CODEMERCS_IOW56	0x1503
+diff --git a/drivers/net/wireless/iwlegacy/common.c b/drivers/net/wireless/iwlegacy/common.c
+index 887114582583b..544ab3750ea6e 100644
+--- a/drivers/net/wireless/iwlegacy/common.c
++++ b/drivers/net/wireless/iwlegacy/common.c
+@@ -717,7 +717,7 @@ il_eeprom_init(struct il_priv *il)
+ 	u32 gp = _il_rd(il, CSR_EEPROM_GP);
+ 	int sz;
+ 	int ret;
+-	u16 addr;
++	int addr;
  
-+/* OEMed devices */
-+#define USB_DEVICE_ID_CODEMERCS_IOW24SAG	0x158a
-+#define USB_DEVICE_ID_CODEMERCS_IOW56AM		0x158b
-+
- /* Get a minor range for your devices from the usb maintainer */
- #ifdef CONFIG_USB_DYNAMIC_MINORS
- #define IOWARRIOR_MINOR_BASE	0
-@@ -137,6 +141,8 @@ static const struct usb_device_id iowarr
- 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOWPV1)},
- 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOWPV2)},
- 	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW56)},
-+	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW24SAG)},
-+	{USB_DEVICE(USB_VENDOR_ID_CODEMERCS, USB_DEVICE_ID_CODEMERCS_IOW56AM)},
- 	{}			/* Terminating entry */
- };
- MODULE_DEVICE_TABLE(usb, iowarrior_ids);
-@@ -364,6 +370,7 @@ static ssize_t iowarrior_write(struct fi
- 	}
- 	switch (dev->product_id) {
- 	case USB_DEVICE_ID_CODEMERCS_IOW24:
-+	case USB_DEVICE_ID_CODEMERCS_IOW24SAG:
- 	case USB_DEVICE_ID_CODEMERCS_IOWPV1:
- 	case USB_DEVICE_ID_CODEMERCS_IOWPV2:
- 	case USB_DEVICE_ID_CODEMERCS_IOW40:
-@@ -378,6 +385,7 @@ static ssize_t iowarrior_write(struct fi
- 		goto exit;
- 		break;
- 	case USB_DEVICE_ID_CODEMERCS_IOW56:
-+	case USB_DEVICE_ID_CODEMERCS_IOW56AM:
- 		/* The IOW56 uses asynchronous IO and more urbs */
- 		if (atomic_read(&dev->write_busy) == MAX_WRITES_IN_FLIGHT) {
- 			/* Wait until we are below the limit for submitted urbs */
-@@ -502,6 +510,7 @@ static long iowarrior_ioctl(struct file
- 	switch (cmd) {
- 	case IOW_WRITE:
- 		if (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW24 ||
-+		    dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW24SAG ||
- 		    dev->product_id == USB_DEVICE_ID_CODEMERCS_IOWPV1 ||
- 		    dev->product_id == USB_DEVICE_ID_CODEMERCS_IOWPV2 ||
- 		    dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW40) {
-@@ -786,7 +795,8 @@ static int iowarrior_probe(struct usb_in
- 		goto error;
- 	}
- 
--	if (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56) {
-+	if ((dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56) ||
-+	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM)) {
- 		res = usb_find_last_int_out_endpoint(iface_desc,
- 				&dev->int_out_endpoint);
- 		if (res) {
-@@ -799,7 +809,8 @@ static int iowarrior_probe(struct usb_in
- 	/* we have to check the report_size often, so remember it in the endianness suitable for our machine */
- 	dev->report_size = usb_endpoint_maxp(dev->int_in_endpoint);
- 	if ((dev->interface->cur_altsetting->desc.bInterfaceNumber == 0) &&
--	    (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56))
-+	    ((dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56) ||
-+	     (dev->product_id == USB_DEVICE_ID_CODEMERCS_IOW56AM)))
- 		/* IOWarrior56 has wMaxPacketSize different from report size */
- 		dev->report_size = 7;
- 
+ 	/* allocate eeprom */
+ 	sz = il->cfg->eeprom_size;
+-- 
+2.20.1
+
 
 
