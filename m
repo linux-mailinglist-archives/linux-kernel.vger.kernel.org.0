@@ -2,124 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EF3C171E2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:25:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35C79171E1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:25:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388599AbgB0OKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:10:50 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:20411 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387824AbgB0OKo (ORCPT
+        id S2388649AbgB0OLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:11:07 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:45464 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388637AbgB0OLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:10:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582812644;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=LZ0QiDJEaGm3PH4IWVMaXUJcPr6Lbv7azjZX9tPipaU=;
-        b=Wi/3efLtaofX9s922Hn4KoM/K+mAWbFTi2VeBEudsGaeamTWvVIM824Sro3g03ab2/Vkw5
-        F0uqnzOuwqARr6SygCTAh3eIm7EJp5sI1W8FO9DdMHAPm5fbN+eOzTHakCGuo2vMASouZp
-        2KjXCUIdaDBr5BrzGuPVkkoyxnJJQIk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-32-DAFCO7fUNf6Gky0461lJOQ-1; Thu, 27 Feb 2020 09:10:41 -0500
-X-MC-Unique: DAFCO7fUNf6Gky0461lJOQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B3021800D54;
-        Thu, 27 Feb 2020 14:10:37 +0000 (UTC)
-Received: from pauld.bos.csb (dhcp-17-51.bos.redhat.com [10.18.17.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B5708C090;
-        Thu, 27 Feb 2020 14:10:35 +0000 (UTC)
-Date:   Thu, 27 Feb 2020 09:10:33 -0500
-From:   Phil Auld <pauld@redhat.com>
-To:     Aaron Lu <aaron.lwe@gmail.com>
-Cc:     Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Dario Faggioli <dfaggioli@suse.com>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v4 00/19] Core scheduling v4
-Message-ID: <20200227141032.GA30178@pauld.bos.csb>
-References: <5e3cea14-28d1-bf1e-cabe-fb5b48fdeadc@linux.intel.com>
- <3c3c56c1-b8dc-652c-535e-74f6dcf45560@linux.intel.com>
- <CANaguZAz+mw1Oi8ecZt+JuCWbf=g5UvKrdSvAeM82Z1c+9oWAw@mail.gmail.com>
- <e322a252-f983-e3f3-f823-16d0c16b2867@linux.intel.com>
- <20200212230705.GA25315@sinkpad>
- <29d43466-1e18-6b42-d4d0-20ccde20ff07@linux.intel.com>
- <CAERHkruG4y8si9FrBp7cZNEdfP7EzxbmYwvdF2EvHLf=mU1mgg@mail.gmail.com>
- <20200225034438.GA617271@ziqianlu-desktop.localdomain>
- <CANaguZD205ccu1V_2W-QuMRrJA9SjJ5ng1do4NCdLy8NDKKrbA@mail.gmail.com>
- <20200227020432.GA628749@ziqianlu-desktop.localdomain>
+        Thu, 27 Feb 2020 09:11:05 -0500
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01RE7JBZ023167;
+        Thu, 27 Feb 2020 09:11:00 -0500
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ydtrwkcba-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Feb 2020 09:11:00 -0500
+Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 01REAxWW022942
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Thu, 27 Feb 2020 09:10:59 -0500
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Thu, 27 Feb 2020 09:10:58 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Thu, 27 Feb 2020 09:10:56 -0500
+Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Thu, 27 Feb 2020 09:10:56 -0500
+Received: from analog.ad.analog.com ([10.48.65.180])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01REAsGU029747;
+        Thu, 27 Feb 2020 09:10:54 -0500
+From:   Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <broonie@kernel.org>, <bcm-kernel-feedback-list@broadcom.com>,
+        <kdasu.kdev@gmail.com>
+CC:     Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+Subject: [PATCH] spi: spi-bcm-qspi: Use new structure for SPI transfer delays
+Date:   Thu, 27 Feb 2020 16:10:50 +0200
+Message-ID: <20200227141050.10969-1-sergiu.cuciurean@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227020432.GA628749@ziqianlu-desktop.localdomain>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-27_04:2020-02-26,2020-02-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ phishscore=0 adultscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ suspectscore=0 clxscore=1011 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002270112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Aaron,
+In a recent change to the SPI subsystem [1], a new `delay` struct was added
+to replace the `delay_usecs`. This change replaces the current
+`delay_usecs` with `delay` for this driver.
 
-On Thu, Feb 27, 2020 at 10:04:32AM +0800 Aaron Lu wrote:
-> On Tue, Feb 25, 2020 at 03:51:37PM -0500, Vineeth Remanan Pillai wrote:
-> > On a 2sockets/16cores/32threads VM, I grouped 8 sysbench(cpu mode)
-> > > threads into one cgroup(cgA) and another 16 sysbench(cpu mode) threads
-> > > into another cgroup(cgB). cgA and cgB's cpusets are set to the same
-> > > socket's 8 cores/16 CPUs and cgA's cpu.shares is set to 10240 while cgB's
-> > > cpu.shares is set to 2(so consider cgB as noise workload and cgA as
-> > > the real workload).
-> > >
-> > > I had expected cgA to occupy 8 cpus(with each cpu on a different core)
-> > 
-> > The expected behaviour could also be that 8 processes share 4 cores and
-> > 8 hw threads right? This is what we are seeing mostly
-> 
-> I expect the 8 cgA tasks to spread on each core, instead of occupying
-> 4 cores/8 hw threads. If they stay on 4 cores/8 hw threads, than on the
-> core level, these cores' load would be much higher than other cores
-> which are running cgB's tasks, this doesn't look right to me.
-> 
+The `spi_transfer_delay_exec()` function [in the SPI framework] makes sure
+that both `delay_usecs` & `delay` are used (in this order to preserve
+backwards compatibility).
 
-I don't think that's a valid assumption, at least since the load balancer rework.
+[1] commit bebcfd272df6 ("spi: introduce `delay` field for
+`spi_transfer` + spi_transfer_delay_exec()")
 
-The scheduler will be looking much more at the number of running task versus
-the group weight. So in this case 2 running tasks, 2 siblings at the core level
-will look fine. There will be no reason to migrate. 
+Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+---
+ drivers/spi/spi-bcm-qspi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> I think the end result should be: each core has two tasks queued, one
-> cgA task and one cgB task(to maintain load balance on the core level).
-> The two tasks are queued on different hw thread, with cgA's task runs
-> most of the time on one thread and cgB's task being forced idle most
-> of the time on the other thread.
-> 
-
-With the core scheduler that does not seem to be a desired outcome. I think
-grouping the 8 cgA tasks on the 8 cpus of 4 cores seems right. 
-
-
-
-Cheers,
-Phil
-
+diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
+index 23d295f36c80..8cac843e7b31 100644
+--- a/drivers/spi/spi-bcm-qspi.c
++++ b/drivers/spi/spi-bcm-qspi.c
+@@ -606,7 +606,8 @@ static int update_qspi_trans_byte_count(struct bcm_qspi *qspi,
+ 	if (qt->byte >= qt->trans->len) {
+ 		/* we're at the end of the spi_transfer */
+ 		/* in TX mode, need to pause for a delay or CS change */
+-		if (qt->trans->delay_usecs &&
++		if (qt->trans->delay.value &&
++		    (qt->trans->delay.unit == SPI_DELAY_UNIT_USECS) &&
+ 		    (flags & TRANS_STATUS_BREAK_DELAY))
+ 			ret |= TRANS_STATUS_BREAK_DELAY;
+ 		if (qt->trans->cs_change &&
 -- 
+2.17.1
 
