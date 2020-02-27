@@ -2,125 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 158101725AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:53:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 969A91725B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:55:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730435AbgB0Rww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 12:52:52 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34906 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbgB0Rwv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 12:52:51 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m3so359744wmi.0;
-        Thu, 27 Feb 2020 09:52:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oJzOQyGUdiyuY3HBRX4a1v3LKWNPTj5lhD17LyMZ2gU=;
-        b=rszqU/q6TjoEHSZvLU3SjjNtlZUhdmojbgbag/J2EiP37I/+eMwD5f/30vb9DmCDUY
-         eilL7t0XZevD+Fv6+5Eock2xfk+JJx7wwZgoCQtnfa/i3aothEYuzNCx0fjEgMOYiv+L
-         PE3qisnuQrNZNZjNXWp4pe8OJjaYTBFWNzuHbpVUkmXuWBRLIVQPfbZCKYRzEbk2q+Ff
-         Uqj5EgEQG8hE54jE/IubEcN7NPHdGdMug78Pd9XOK6U6Hch19txBjO9/JOq9zawM4jHb
-         NATB7p0wZ/tshoGalieBmEQNNW9sOqCNfKiqEEkrURvRwOzYJssZ0r2zib17lPKZPTEj
-         X60g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oJzOQyGUdiyuY3HBRX4a1v3LKWNPTj5lhD17LyMZ2gU=;
-        b=BXC5OnZ7syPU7nnlqXcSeaV6F9rOBN4T6zp9mgW6FMHUyN+PsqRPe1BetrleKnH9DQ
-         Dc4WoWQZ6ErINqAfJyeDNWh1LiwfCh2Fqr2QN1ecqbx3C71ullFEJH5X0c+tz+NEBqwd
-         C0buXV89l9K3eSV85mhRWJNmBYtMBgPvZNnYN7t4xJjVd1mPhvyW0J/gZCimboG42Ztw
-         Jm5xcWXrljv9ELS7Plvc/EPzPxjf0jfXSnjjoVuGMiuKVDr9eZEV5giCiQjfXbqmNEZn
-         y961w5SQlfffRbUVXCJejZBycCiYJISQKYGaGmIwX9HDe5EFjjNpG7Z0qkU1LZPshn9E
-         lJ7g==
-X-Gm-Message-State: APjAAAUnWg+DQOrsf4KrQi3PV+DyDpIWER8xokO6QiyjTgSvA8GFWCCB
-        NO78jLdaCwUWD55wtk1gTU8=
-X-Google-Smtp-Source: APXvYqxT+Z+0UBIpflHvqZ0pgfzA3CLtgsKUXQb+gdNtOOaStPTtxk+2QEj6M+dWRhmjbTPIuFIPNg==
-X-Received: by 2002:a1c:cc06:: with SMTP id h6mr720524wmb.118.1582825967439;
-        Thu, 27 Feb 2020 09:52:47 -0800 (PST)
-Received: from andrea (ip-213-220-200-127.net.upcbroadband.cz. [213.220.200.127])
-        by smtp.gmail.com with ESMTPSA id y7sm12885124wmd.1.2020.02.27.09.52.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 09:52:46 -0800 (PST)
-Date:   Thu, 27 Feb 2020 18:52:40 +0100
-From:   Andrea Parri <parri.andrea@gmail.com>
-To:     Boqun Feng <boqun.feng@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
+        id S1730375AbgB0RzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 12:55:13 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:57282 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726877AbgB0RzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 12:55:12 -0500
+Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
+        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <logang@deltatee.com>)
+        id 1j7NMx-0004I6-PN; Thu, 27 Feb 2020 10:54:45 -0700
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-mm@kvack.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] tools/memory-model: Add an exception for
- limitations on _unless() family
-Message-ID: <20200227175240.GA12046@andrea>
-References: <20200227004049.6853-1-boqun.feng@gmail.com>
- <20200227004049.6853-2-boqun.feng@gmail.com>
+        Eric Badger <ebadger@gigaio.com>
+References: <20200221182503.28317-1-logang@deltatee.com>
+ <20200227171704.GK31668@ziepe.ca>
+ <e8781f85-3fc7-b9ce-c751-606803cbdc77@deltatee.com>
+ <20200227174311.GL31668@ziepe.ca>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <7e573498-81c1-7f00-c1ff-ed16e12a5b96@deltatee.com>
+Date:   Thu, 27 Feb 2020 10:54:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227004049.6853-2-boqun.feng@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200227174311.GL31668@ziepe.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.73.163.230
+X-SA-Exim-Rcpt-To: ebadger@gigaio.com, peterz@infradead.org, luto@kernel.org, dave.hansen@linux.intel.com, bp@alien8.de, mingo@redhat.com, tglx@linutronix.de, benh@kernel.crashing.org, will@kernel.org, catalin.marinas@arm.com, hch@lst.de, akpm@linux-foundation.org, david@redhat.com, mhocko@kernel.org, dan.j.williams@intel.com, linux-mm@kvack.org, platform-driver-x86@vger.kernel.org, linux-sh@vger.kernel.org, linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-ia64@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, jgg@ziepe.ca
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v3 0/7] Allow setting caching mode in arch_add_memory()
+ for P2PDMA
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 08:40:45AM +0800, Boqun Feng wrote:
-> According to Luc, atomic_add_unless() is directly provided by herd7,
-> therefore it can be used in litmus tests. So change the limitation
-> section in README to unlimit the use of atomic_add_unless().
+
+
+On 2020-02-27 10:43 a.m., Jason Gunthorpe wrote:
+> Hm, AFAIK WC memory is not compatible with the spinlocks/mutexs/etc in
+> Linux, so while it is true the memory has no side effects, there would
+> be surprising concurrency risks if anything in the kernel tried to
+> write to it.
 > 
-> Cc: Luc Maranget <luc.maranget@inria.fr>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> ---
->  tools/memory-model/README | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
+> Not compatible means the locks don't contain stores to WC memory the
+> way you would expect. AFAIK on many CPUs extra barriers are required
+> to keep WC stores ordered, the same way ARM already has extra barriers
+> to keep UC stores ordered with locking..
 > 
-> diff --git a/tools/memory-model/README b/tools/memory-model/README
-> index fc07b52f2028..409211b1c544 100644
-> --- a/tools/memory-model/README
-> +++ b/tools/memory-model/README
-> @@ -207,11 +207,15 @@ The Linux-kernel memory model (LKMM) has the following limitations:
->  		case as a store release.
->  
->  	b.	The "unless" RMW operations are not currently modeled:
-> -		atomic_long_add_unless(), atomic_add_unless(),
-> -		atomic_inc_unless_negative(), and
-> -		atomic_dec_unless_positive().  These can be emulated
-> +		atomic_long_add_unless(), atomic_inc_unless_negative(),
-> +		and atomic_dec_unless_positive().  These can be emulated
->  		in litmus tests, for example, by using atomic_cmpxchg().
->  
-> +		One exception of this limitation is atomic_add_unless(),
-> +		which is provided directly by herd7 (so no corresponding
-> +		definition in linux-kernel.def). atomic_add_unless() is
-
-Nit: Two spaces after period?
-
-  Andrea
-
-
-> +		modeled by herd7 therefore it can be used in litmus tests.
-> +
->  	c.	The call_rcu() function is not modeled.  It can be
->  		emulated in litmus tests by adding another process that
->  		invokes synchronize_rcu() and the body of the callback
-> -- 
-> 2.25.0
+> The spinlocks are defined to contain UC stores though.
 > 
+> If there is no actual need today for WC I would suggest using UC as
+> the default.
+
+Ok, that sounds sensible. I'll do that in the next revision.
+
+Thanks,
+
+Logan
