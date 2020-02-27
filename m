@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FD7F171A90
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:55:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E0111719AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:47:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731638AbgB0Nyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:54:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54986 "EHLO mail.kernel.org"
+        id S1730638AbgB0NrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:47:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731904AbgB0Nyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:54:50 -0500
+        id S1730272AbgB0NrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:47:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEFD32084E;
-        Thu, 27 Feb 2020 13:54:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FFC32469F;
+        Thu, 27 Feb 2020 13:47:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811689;
-        bh=y20f20EyVym5ZJBttPilPcZuoK1w1Z50nYChb4w15uA=;
+        s=default; t=1582811222;
+        bh=SijR0ap5VoY1ReucFVQbmejp9vdmf//LQ0PpeMhKZgQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oDunBWMGMn9u11ILnT2HxNDhVpBfpn9Zs63x8vwKC7c3HY1ygDsIjYJnHqffVEA82
-         8aMSUDd642t+B24/emhXl+4PkEZkfew9CziiL3m/B40Jv963ozlsKk22Om/IFwZKgf
-         6L4O0IefPYrKXDwM3B8NlqOACC3hLEDNzM7gWakg=
+        b=sYdu0zHA21naTgb+sjAgWLW8kUYK+v/9S6RszxQWBRniyIivJYpvGZpdVFLL1Ug2B
+         yTICHcRgnBpmMZmsSaNTbU0nVbqO92uw7wEXqZzPkW8MMD06xfK0TDc10p1G3TVp0j
+         lrHIGJdDDIlorb9zixI0UVF3Ji34ytNoh2PwSies=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kai Li <li.kai4@h3c.com>,
-        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 062/237] jbd2: clear JBD2_ABORT flag before journal_reset to update log tail info when load journal
+        stable@vger.kernel.org, Wanpeng Li <wanpeng.li@hotmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 002/165] KVM: x86: emulate RDPID
 Date:   Thu, 27 Feb 2020 14:34:36 +0100
-Message-Id: <20200227132301.556194589@linuxfoundation.org>
+Message-Id: <20200227132231.300837680@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,55 +43,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai Li <li.kai4@h3c.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-[ Upstream commit a09decff5c32060639a685581c380f51b14e1fc2 ]
+commit fb6d4d340e0532032c808a9933eaaa7b8de435ab upstream.
 
-If the journal is dirty when the filesystem is mounted, jbd2 will replay
-the journal but the journal superblock will not be updated by
-journal_reset() because JBD2_ABORT flag is still set (it was set in
-journal_init_common()). This is problematic because when a new transaction
-is then committed, it will be recorded in block 1 (journal->j_tail was set
-to 1 in journal_reset()). If unclean shutdown happens again before the
-journal superblock is updated, the new recorded transaction will not be
-replayed during the next mount (because of stale sb->s_start and
-sb->s_sequence values) which can lead to filesystem corruption.
+This is encoded as F3 0F C7 /7 with a register argument.  The register
+argument is the second array in the group9 GroupDual, while F3 is the
+fourth element of a Prefix.
 
-Fixes: 85e0c4e89c1b ("jbd2: if the journal is aborted then don't allow update of the log tail")
-Signed-off-by: Kai Li <li.kai4@h3c.com>
-Link: https://lore.kernel.org/r/20200111022542.5008-1-li.kai4@h3c.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/jbd2/journal.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/x86/kvm/cpuid.c   |    7 ++++++-
+ arch/x86/kvm/emulate.c |   22 +++++++++++++++++++++-
+ arch/x86/kvm/vmx.c     |   15 +++++++++++++++
+ 3 files changed, 42 insertions(+), 2 deletions(-)
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index d3cce5c86fd90..b72be822f04f2 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1687,6 +1687,11 @@ int jbd2_journal_load(journal_t *journal)
- 		       journal->j_devname);
- 		return -EFSCORRUPTED;
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -279,13 +279,18 @@ static int __do_cpuid_ent_emulated(struc
+ {
+ 	switch (func) {
+ 	case 0:
+-		entry->eax = 1;		/* only one leaf currently */
++		entry->eax = 7;
+ 		++*nent;
+ 		break;
+ 	case 1:
+ 		entry->ecx = F(MOVBE);
+ 		++*nent;
+ 		break;
++	case 7:
++		entry->flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
++		if (index == 0)
++			entry->ecx = F(RDPID);
++		++*nent;
+ 	default:
+ 		break;
  	}
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -3531,6 +3531,16 @@ static int em_cwd(struct x86_emulate_ctx
+ 	return X86EMUL_CONTINUE;
+ }
+ 
++static int em_rdpid(struct x86_emulate_ctxt *ctxt)
++{
++	u64 tsc_aux = 0;
++
++	if (ctxt->ops->get_msr(ctxt, MSR_TSC_AUX, &tsc_aux))
++		return emulate_gp(ctxt, 0);
++	ctxt->dst.val = tsc_aux;
++	return X86EMUL_CONTINUE;
++}
++
+ static int em_rdtsc(struct x86_emulate_ctxt *ctxt)
+ {
+ 	u64 tsc = 0;
+@@ -4391,10 +4401,20 @@ static const struct opcode group8[] = {
+ 	F(DstMem | SrcImmByte | Lock | PageTable,	em_btc),
+ };
+ 
++/*
++ * The "memory" destination is actually always a register, since we come
++ * from the register case of group9.
++ */
++static const struct gprefix pfx_0f_c7_7 = {
++	N, N, N, II(DstMem | ModRM | Op3264 | EmulateOnUD, em_rdpid, rdtscp),
++};
++
++
+ static const struct group_dual group9 = { {
+ 	N, I(DstMem64 | Lock | PageTable, em_cmpxchg8b), N, N, N, N, N, N,
+ }, {
+-	N, N, N, N, N, N, N, N,
++	N, N, N, N, N, N, N,
++	GP(0, &pfx_0f_c7_7),
+ } };
+ 
+ static const struct opcode group11[] = {
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11339,6 +11339,21 @@ static int vmx_check_intercept(struct kv
+ 			       struct x86_instruction_info *info,
+ 			       enum x86_intercept_stage stage)
+ {
++	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
++	struct x86_emulate_ctxt *ctxt = &vcpu->arch.emulate_ctxt;
++
 +	/*
-+	 * clear JBD2_ABORT flag initialized in journal_init_common
-+	 * here to update log tail information with the newest seq.
++	 * RDPID causes #UD if disabled through secondary execution controls.
++	 * Because it is marked as EmulateOnUD, we need to intercept it here.
 +	 */
-+	journal->j_flags &= ~JBD2_ABORT;
++	if (info->intercept == x86_intercept_rdtscp &&
++	    !nested_cpu_has2(vmcs12, SECONDARY_EXEC_RDTSCP)) {
++		ctxt->exception.vector = UD_VECTOR;
++		ctxt->exception.error_code_valid = false;
++		return X86EMUL_PROPAGATE_FAULT;
++	}
++
++	/* TODO: check more intercepts... */
+ 	return X86EMUL_CONTINUE;
+ }
  
- 	/* OK, we've finished with the dynamic journal bits:
- 	 * reinitialise the dynamic contents of the superblock in memory
-@@ -1694,7 +1699,6 @@ int jbd2_journal_load(journal_t *journal)
- 	if (journal_reset(journal))
- 		goto recovery_error;
- 
--	journal->j_flags &= ~JBD2_ABORT;
- 	journal->j_flags |= JBD2_LOADED;
- 	return 0;
- 
--- 
-2.20.1
-
 
 
