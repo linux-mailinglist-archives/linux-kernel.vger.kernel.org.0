@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E949B171AC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:56:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAFE31718EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:40:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732184AbgB0N4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:56:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57194 "EHLO mail.kernel.org"
+        id S1729297AbgB0Nkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:40:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731731AbgB0N4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:56:39 -0500
+        id S1729237AbgB0Nk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:40:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91CB320578;
-        Thu, 27 Feb 2020 13:56:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A11324656;
+        Thu, 27 Feb 2020 13:40:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811799;
-        bh=e/sQeZh+8BceHlQSU/UwtQr85a7ZNGnSTX6Lu/vMDlI=;
+        s=default; t=1582810826;
+        bh=JMBDWlIt6p0SZLCg1I64eKlJbM43wmlLwo0qS8j1FlM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qOJbWSQihkZPXN7njJFqc2esJN04LAUHn25AjgW36kuseP9yYBGrtaSPeKDhB3UZC
-         3qR1OU3fVALp2mEITH34KYrCnjMGwAL23AEuaYqsMxyDzGpgM7JQ6W+pyadK/ENYgs
-         ZnZ/0sl79Xd6GHFOe2oQ5uKRXrVfe3RtJksCC8Tw=
+        b=181jZlBBPuqa+IFAHmPlFlX1c9Mxdyl8Zx8D6wk30fc9Dpl7WGa+D283CFvz6z+og
+         s+C//fD4uz8JlXNbY0nDNuB5ZV0a7hYBitUU1JyOEKrtvAPPdbvn8tJHCHujWFad5O
+         hehb/XHcwksXReqO0xmILpU3rXFhuyegzlqpAVUs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kaike Wan <kaike.wan@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 104/237] IB/hfi1: Add software counter for ctxt0 seq drop
+        stable@vger.kernel.org, Wanpeng Li <wanpeng.li@hotmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.4 002/113] KVM: x86: emulate RDPID
 Date:   Thu, 27 Feb 2020 14:35:18 +0100
-Message-Id: <20200227132304.586129219@linuxfoundation.org>
+Message-Id: <20200227132212.222051066@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,95 +43,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Marciniszyn <mike.marciniszyn@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-[ Upstream commit 5ffd048698ea5139743acd45e8ab388a683642b8 ]
+commit fb6d4d340e0532032c808a9933eaaa7b8de435ab upstream.
 
-All other code paths increment some form of drop counter.
+This is encoded as F3 0F C7 /7 with a register argument.  The register
+argument is the second array in the group9 GroupDual, while F3 is the
+fourth element of a Prefix.
 
-This was missed in the original implementation.
+Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: 82c2611daaf0 ("staging/rdma/hfi1: Handle packets with invalid RHF on context 0")
-Link: https://lore.kernel.org/r/20200106134228.119356.96828.stgit@awfm-01.aw.intel.com
-Reviewed-by: Kaike Wan <kaike.wan@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/chip.c   | 10 ++++++++++
- drivers/infiniband/hw/hfi1/chip.h   |  1 +
- drivers/infiniband/hw/hfi1/driver.c |  1 +
- drivers/infiniband/hw/hfi1/hfi.h    |  2 ++
- 4 files changed, 14 insertions(+)
+ arch/x86/kvm/cpuid.c   |    7 ++++++-
+ arch/x86/kvm/emulate.c |   22 +++++++++++++++++++++-
+ arch/x86/kvm/vmx.c     |   15 +++++++++++++++
+ 3 files changed, 42 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/chip.c b/drivers/infiniband/hw/hfi1/chip.c
-index 4a0b7c0034771..cb5785dda524e 100644
---- a/drivers/infiniband/hw/hfi1/chip.c
-+++ b/drivers/infiniband/hw/hfi1/chip.c
-@@ -1686,6 +1686,14 @@ static u64 access_sw_pio_drain(const struct cntr_entry *entry,
- 	return dd->verbs_dev.n_piodrain;
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -267,13 +267,18 @@ static int __do_cpuid_ent_emulated(struc
+ {
+ 	switch (func) {
+ 	case 0:
+-		entry->eax = 1;		/* only one leaf currently */
++		entry->eax = 7;
+ 		++*nent;
+ 		break;
+ 	case 1:
+ 		entry->ecx = F(MOVBE);
+ 		++*nent;
+ 		break;
++	case 7:
++		entry->flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
++		if (index == 0)
++			entry->ecx = F(RDPID);
++		++*nent;
+ 	default:
+ 		break;
+ 	}
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -3519,6 +3519,16 @@ static int em_cwd(struct x86_emulate_ctx
+ 	return X86EMUL_CONTINUE;
  }
  
-+static u64 access_sw_ctx0_seq_drop(const struct cntr_entry *entry,
-+				   void *context, int vl, int mode, u64 data)
++static int em_rdpid(struct x86_emulate_ctxt *ctxt)
 +{
-+	struct hfi1_devdata *dd = context;
++	u64 tsc_aux = 0;
 +
-+	return dd->ctx0_seq_drop;
++	if (ctxt->ops->get_msr(ctxt, MSR_TSC_AUX, &tsc_aux))
++		return emulate_gp(ctxt, 0);
++	ctxt->dst.val = tsc_aux;
++	return X86EMUL_CONTINUE;
 +}
 +
- static u64 access_sw_vtx_wait(const struct cntr_entry *entry,
- 			      void *context, int vl, int mode, u64 data)
+ static int em_rdtsc(struct x86_emulate_ctxt *ctxt)
  {
-@@ -4246,6 +4254,8 @@ static struct cntr_entry dev_cntrs[DEV_CNTR_LAST] = {
- 			    access_sw_cpu_intr),
- [C_SW_CPU_RCV_LIM] = CNTR_ELEM("RcvLimit", 0, 0, CNTR_NORMAL,
- 			    access_sw_cpu_rcv_limit),
-+[C_SW_CTX0_SEQ_DROP] = CNTR_ELEM("SeqDrop0", 0, 0, CNTR_NORMAL,
-+			    access_sw_ctx0_seq_drop),
- [C_SW_VTX_WAIT] = CNTR_ELEM("vTxWait", 0, 0, CNTR_NORMAL,
- 			    access_sw_vtx_wait),
- [C_SW_PIO_WAIT] = CNTR_ELEM("PioWait", 0, 0, CNTR_NORMAL,
-diff --git a/drivers/infiniband/hw/hfi1/chip.h b/drivers/infiniband/hw/hfi1/chip.h
-index 50b8645d0b876..a88ef2433cea2 100644
---- a/drivers/infiniband/hw/hfi1/chip.h
-+++ b/drivers/infiniband/hw/hfi1/chip.h
-@@ -864,6 +864,7 @@ enum {
- 	C_DC_PG_STS_TX_MBE_CNT,
- 	C_SW_CPU_INTR,
- 	C_SW_CPU_RCV_LIM,
-+	C_SW_CTX0_SEQ_DROP,
- 	C_SW_VTX_WAIT,
- 	C_SW_PIO_WAIT,
- 	C_SW_PIO_DRAIN,
-diff --git a/drivers/infiniband/hw/hfi1/driver.c b/drivers/infiniband/hw/hfi1/driver.c
-index 72c836b826ca8..7aa1aabb7a43c 100644
---- a/drivers/infiniband/hw/hfi1/driver.c
-+++ b/drivers/infiniband/hw/hfi1/driver.c
-@@ -710,6 +710,7 @@ static noinline int skip_rcv_packet(struct hfi1_packet *packet, int thread)
- {
- 	int ret;
+ 	u64 tsc = 0;
+@@ -4379,10 +4389,20 @@ static const struct opcode group8[] = {
+ 	F(DstMem | SrcImmByte | Lock | PageTable,	em_btc),
+ };
  
-+	packet->rcd->dd->ctx0_seq_drop++;
- 	/* Set up for the next packet */
- 	packet->rhqoff += packet->rsize;
- 	if (packet->rhqoff >= packet->maxcnt)
-diff --git a/drivers/infiniband/hw/hfi1/hfi.h b/drivers/infiniband/hw/hfi1/hfi.h
-index 810ef5114772c..cf9bc95d80396 100644
---- a/drivers/infiniband/hw/hfi1/hfi.h
-+++ b/drivers/infiniband/hw/hfi1/hfi.h
-@@ -1043,6 +1043,8 @@ struct hfi1_devdata {
- 
- 	char *boardname; /* human readable board info */
- 
-+	u64 ctx0_seq_drop;
++/*
++ * The "memory" destination is actually always a register, since we come
++ * from the register case of group9.
++ */
++static const struct gprefix pfx_0f_c7_7 = {
++	N, N, N, II(DstMem | ModRM | Op3264 | EmulateOnUD, em_rdpid, rdtscp),
++};
 +
- 	/* reset value */
- 	u64 z_int_counter;
- 	u64 z_rcv_limit;
--- 
-2.20.1
-
++
+ static const struct group_dual group9 = { {
+ 	N, I(DstMem64 | Lock | PageTable, em_cmpxchg8b), N, N, N, N, N, N,
+ }, {
+-	N, N, N, N, N, N, N, N,
++	N, N, N, N, N, N, N,
++	GP(0, &pfx_0f_c7_7),
+ } };
+ 
+ static const struct opcode group11[] = {
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -10744,6 +10744,21 @@ static int vmx_check_intercept(struct kv
+ 			       struct x86_instruction_info *info,
+ 			       enum x86_intercept_stage stage)
+ {
++	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
++	struct x86_emulate_ctxt *ctxt = &vcpu->arch.emulate_ctxt;
++
++	/*
++	 * RDPID causes #UD if disabled through secondary execution controls.
++	 * Because it is marked as EmulateOnUD, we need to intercept it here.
++	 */
++	if (info->intercept == x86_intercept_rdtscp &&
++	    !nested_cpu_has2(vmcs12, SECONDARY_EXEC_RDTSCP)) {
++		ctxt->exception.vector = UD_VECTOR;
++		ctxt->exception.error_code_valid = false;
++		return X86EMUL_PROPAGATE_FAULT;
++	}
++
++	/* TODO: check more intercepts... */
+ 	return X86EMUL_CONTINUE;
+ }
+ 
 
 
