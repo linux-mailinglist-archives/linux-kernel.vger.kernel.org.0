@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4592171C0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56619171CC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:15:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388229AbgB0OIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:08:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46004 "EHLO mail.kernel.org"
+        id S2389259AbgB0OPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:15:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388217AbgB0OIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:08:15 -0500
+        id S2389245AbgB0OPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:15:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3218320578;
-        Thu, 27 Feb 2020 14:08:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D88F20801;
+        Thu, 27 Feb 2020 14:15:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812494;
-        bh=M+3C6Vfw8tIQOCDP4th63PzilReHvAapp2Moe3ZV2mg=;
+        s=default; t=1582812909;
+        bh=NjFPG8xSrKgimw87UF2CW1b5ud1z43xOcu4dU/Mnkqc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w/7NjiD4IhDanO6sKwErFoFTrHVfaaj3TozEdA08aKvmKcO13XrGmdADwNdpLCUks
-         lKq4XD7V2KNx1Ef1W3PM4iaoxvsINQz9YwXeDqsEILms5njuNswZ0GfS2et3nCLJRz
-         +I0gMYLK0NeErwOuqQ4A2q8cCdwNc18DAglhambA=
+        b=eKMNgZwuDb+fyJ/AxJ6ujoO1NT7iKn8Ux+4LHgq9ihfDwtTaWIRBmW1+jnk5OjT1E
+         juN0dbpw6DKx2iWqJBOyhvWmTOiEI+NJXvMTKLueO7edPnXwuYkReazLlf5y0/Wue7
+         xrGnmDtFapX6Gz7bSH8oIrxZDTesIZXg8MZOLcOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 5.4 022/135] staging: vt6656: fix sign of rx_dbm to bb_pre_ed_rssi.
-Date:   Thu, 27 Feb 2020 14:36:02 +0100
-Message-Id: <20200227132232.581719361@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 5.5 026/150] vt: selection, handle pending signals in paste_selection
+Date:   Thu, 27 Feb 2020 14:36:03 +0100
+Message-Id: <20200227132236.708097011@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,36 +42,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Jiri Slaby <jslaby@suse.cz>
 
-commit 93134df520f23f4e9998c425b8987edca7016817 upstream.
+commit 687bff0cd08f790d540cfb7b2349f0d876cdddec upstream.
 
-bb_pre_ed_rssi is an u8 rx_dm always returns negative signed
-values add minus operator to always yield positive.
+When pasting a selection to a vt, the task is set as INTERRUPTIBLE while
+waiting for a tty to unthrottle. But signals are not handled at all.
+Normally, this is not a problem as tty_ldisc_receive_buf receives all
+the goods and a user has no reason to interrupt the task.
 
-fixes issue where rx sensitivity is always set to maximum because
-the unsigned numbers were always greater then 100.
+There are two scenarios where this matters:
+1) when the tty is throttled and a signal is sent to the process, it
+   spins on a CPU until the tty is unthrottled. schedule() does not
+   really echedule, but returns immediately, of course.
+2) when the sel_buffer becomes invalid, KASAN prevents any reads from it
+   and the loop simply does not proceed and spins forever (causing the
+   tty to throttle, but the code never sleeps, the same as above). This
+   sometimes happens as there is a race in the sel_buffer handling code.
 
-Fixes: 63b9907f58f1 ("staging: vt6656: mac80211 conversion: create rx function.")
+So add signal handling to this ioctl (TIOCL_PASTESEL) and return -EINTR
+in case a signal is pending.
+
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/aceac98c-6e69-3ce1-dfec-2bf27b980221@gmail.com
+Link: https://lore.kernel.org/r/20200210081131.23572-1-jslaby@suse.cz
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/vt6656/dpc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/vt/selection.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/vt6656/dpc.c
-+++ b/drivers/staging/vt6656/dpc.c
-@@ -130,7 +130,7 @@ int vnt_rx_data(struct vnt_private *priv
+--- a/drivers/tty/vt/selection.c
++++ b/drivers/tty/vt/selection.c
+@@ -29,6 +29,8 @@
+ #include <linux/console.h>
+ #include <linux/tty_flip.h>
  
- 	vnt_rf_rssi_to_dbm(priv, *rssi, &rx_dbm);
++#include <linux/sched/signal.h>
++
+ /* Don't take this from <ctype.h>: 011-015 on the screen aren't spaces */
+ #define isspace(c)	((c) == ' ')
  
--	priv->bb_pre_ed_rssi = (u8)rx_dbm + 1;
-+	priv->bb_pre_ed_rssi = (u8)-rx_dbm + 1;
- 	priv->current_rssi = priv->bb_pre_ed_rssi;
+@@ -350,6 +352,7 @@ int paste_selection(struct tty_struct *t
+ 	unsigned int count;
+ 	struct  tty_ldisc *ld;
+ 	DECLARE_WAITQUEUE(wait, current);
++	int ret = 0;
  
- 	skb_pull(skb, 8);
+ 	console_lock();
+ 	poke_blanked_console();
+@@ -363,6 +366,10 @@ int paste_selection(struct tty_struct *t
+ 	add_wait_queue(&vc->paste_wait, &wait);
+ 	while (sel_buffer && sel_buffer_lth > pasted) {
+ 		set_current_state(TASK_INTERRUPTIBLE);
++		if (signal_pending(current)) {
++			ret = -EINTR;
++			break;
++		}
+ 		if (tty_throttled(tty)) {
+ 			schedule();
+ 			continue;
+@@ -378,6 +385,6 @@ int paste_selection(struct tty_struct *t
+ 
+ 	tty_buffer_unlock_exclusive(&vc->port);
+ 	tty_ldisc_deref(ld);
+-	return 0;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(paste_selection);
 
 
