@@ -2,37 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74365171C5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0392171C2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:09:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730405AbgB0OLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:11:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49726 "EHLO mail.kernel.org"
+        id S2388409AbgB0OJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:09:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387700AbgB0OLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:11:17 -0500
+        id S2388402AbgB0OJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:09:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 410E020578;
-        Thu, 27 Feb 2020 14:11:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B28D620578;
+        Thu, 27 Feb 2020 14:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812676;
-        bh=6m5yAkCc6qhKl2XMWMT+cmdhEAjqz01gM1imA/uQZcs=;
+        s=default; t=1582812572;
+        bh=ogiLIxHaBbWPMNutkARWHFbhFYk5LmlqhuZUM2LEdtI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v6cyU+sVVeLCuP24T8LukehL4YlaMDkpF5UM9FiEmqXn8T4g4juiHaoMV/YT+GqKt
-         OC6MOXLGZO1SoYT+XOt+Ph57HpXiI4sGFsZaCLCJ9g8SuwZkKAAFVGawS7xygX+yt5
-         jid17ZREG4FiA1t70TmbG/PYw8Uy3IT0lseeVL0w=
+        b=ITgffcRT7auOfZ+8k64zYOTswVCEXNZTKbK7/lcjjvc4tDdgsDcZuEr3OyMnsymKl
+         ci6JEVBO1FTj7fPog438k/7DDyczZ2YEI0PAYMqMkh/DQw1P/KRpfn9JFYRqcn8qcK
+         2OhSA0sU7KhH5fxSTDg7v6cEeUcu6LOXgwLjK9wc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: [PATCH 5.4 061/135] ACPI: PM: s2idle: Check fixed wakeup events in acpi_s2idle_wake()
-Date:   Thu, 27 Feb 2020 14:36:41 +0100
-Message-Id: <20200227132238.234067828@linuxfoundation.org>
+        Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        "Herton R. Krzesinski" <herton@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>, malat@debian.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Jay Vosburgh <jay.vosburgh@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.4 062/135] Revert "ipc,sem: remove uneeded sem_undo_list lock usage in exit_sem()"
+Date:   Thu, 27 Feb 2020 14:36:42 +0100
+Message-Id: <20200227132238.401222506@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
 References: <20200227132228.710492098@linuxfoundation.org>
@@ -45,109 +52,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
 
-commit 63fb9623427fbb44e3782233b6e4714057b76ff2 upstream.
+commit edf28f4061afe4c2d9eb1c3323d90e882c1d6800 upstream.
 
-Commit fdde0ff8590b ("ACPI: PM: s2idle: Prevent spurious SCIs from
-waking up the system") overlooked the fact that fixed events can wake
-up the system too and broke RTC wakeup from suspend-to-idle as a
-result.
+This reverts commit a97955844807e327df11aa33869009d14d6b7de0.
 
-Fix this issue by checking the fixed events in acpi_s2idle_wake() in
-addition to checking wakeup GPEs and break out of the suspend-to-idle
-loop if the status bits of any enabled fixed events are set then.
+Commit a97955844807 ("ipc,sem: remove uneeded sem_undo_list lock usage
+in exit_sem()") removes a lock that is needed.  This leads to a process
+looping infinitely in exit_sem() and can also lead to a crash.  There is
+a reproducer available in [1] and with the commit reverted the issue
+does not reproduce anymore.
 
-Fixes: fdde0ff8590b ("ACPI: PM: s2idle: Prevent spurious SCIs from waking up the system")
-Reported-and-tested-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: 5.4+ <stable@vger.kernel.org> # 5.4+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Using the reproducer found in [1] is fairly easy to reach a point where
+one of the child processes is looping infinitely in exit_sem between
+for(;;) and if (semid == -1) block, while it's trying to free its last
+sem_undo structure which has already been freed by freeary().
+
+Each sem_undo struct is on two lists: one per semaphore set (list_id)
+and one per process (list_proc).  The list_id list tracks undos by
+semaphore set, and the list_proc by process.
+
+Undo structures are removed either by freeary() or by exit_sem().  The
+freeary function is invoked when the user invokes a syscall to remove a
+semaphore set.  During this operation freeary() traverses the list_id
+associated with the semaphore set and removes the undo structures from
+both the list_id and list_proc lists.
+
+For this case, exit_sem() is called at process exit.  Each process
+contains a struct sem_undo_list (referred to as "ulp") which contains
+the head for the list_proc list.  When the process exits, exit_sem()
+traverses this list to remove each sem_undo struct.  As in freeary(),
+whenever a sem_undo struct is removed from list_proc, it is also removed
+from the list_id list.
+
+Removing elements from list_id is safe for both exit_sem() and freeary()
+due to sem_lock().  Removing elements from list_proc is not safe;
+freeary() locks &un->ulp->lock when it performs
+list_del_rcu(&un->list_proc) but exit_sem() does not (locking was
+removed by commit a97955844807 ("ipc,sem: remove uneeded sem_undo_list
+lock usage in exit_sem()").
+
+This can result in the following situation while executing the
+reproducer [1] : Consider a child process in exit_sem() and the parent
+in freeary() (because of semctl(sid[i], NSEM, IPC_RMID)).
+
+ - The list_proc for the child contains the last two undo structs A and
+   B (the rest have been removed either by exit_sem() or freeary()).
+
+ - The semid for A is 1 and semid for B is 2.
+
+ - exit_sem() removes A and at the same time freeary() removes B.
+
+ - Since A and B have different semid sem_lock() will acquire different
+   locks for each process and both can proceed.
+
+The bug is that they remove A and B from the same list_proc at the same
+time because only freeary() acquires the ulp lock. When exit_sem()
+removes A it makes ulp->list_proc.next to point at B and at the same
+time freeary() removes B setting B->semid=-1.
+
+At the next iteration of for(;;) loop exit_sem() will try to remove B.
+
+The only way to break from for(;;) is for (&un->list_proc ==
+&ulp->list_proc) to be true which is not. Then exit_sem() will check if
+B->semid=-1 which is and will continue looping in for(;;) until the
+memory for B is reallocated and the value at B->semid is changed.
+
+At that point, exit_sem() will crash attempting to unlink B from the
+lists (this can be easily triggered by running the reproducer [1] a
+second time).
+
+To prove this scenario instrumentation was added to keep information
+about each sem_undo (un) struct that is removed per process and per
+semaphore set (sma).
+
+          CPU0                                CPU1
+  [caller holds sem_lock(sma for A)]      ...
+  freeary()                               exit_sem()
+  ...                                     ...
+  ...                                     sem_lock(sma for B)
+  spin_lock(A->ulp->lock)                 ...
+  list_del_rcu(un_A->list_proc)           list_del_rcu(un_B->list_proc)
+
+Undo structures A and B have different semid and sem_lock() operations
+proceed.  However they belong to the same list_proc list and they are
+removed at the same time.  This results into ulp->list_proc.next
+pointing to the address of B which is already removed.
+
+After reverting commit a97955844807 ("ipc,sem: remove uneeded
+sem_undo_list lock usage in exit_sem()") the issue was no longer
+reproducible.
+
+[1] https://bugzilla.redhat.com/show_bug.cgi?id=1694779
+
+Link: http://lkml.kernel.org/r/20191211191318.11860-1-ioanna-maria.alifieraki@canonical.com
+Fixes: a97955844807 ("ipc,sem: remove uneeded sem_undo_list lock usage in exit_sem()")
+Signed-off-by: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
+Acked-by: Manfred Spraul <manfred@colorfullife.com>
+Acked-by: Herton R. Krzesinski <herton@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: <malat@debian.org>
+Cc: Joel Fernandes (Google) <joel@joelfernandes.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Jay Vosburgh <jay.vosburgh@canonical.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpica/evevent.c |   45 ++++++++++++++++++++++++++++++++++++++++++
- drivers/acpi/sleep.c          |    7 ++++++
- include/acpi/acpixf.h         |    1 
- 3 files changed, 53 insertions(+)
+ ipc/sem.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/acpi/acpica/evevent.c
-+++ b/drivers/acpi/acpica/evevent.c
-@@ -265,4 +265,49 @@ static u32 acpi_ev_fixed_event_dispatch(
- 		 handler) (acpi_gbl_fixed_event_handlers[event].context));
- }
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -2368,11 +2368,9 @@ void exit_sem(struct task_struct *tsk)
+ 		ipc_assert_locked_object(&sma->sem_perm);
+ 		list_del(&un->list_id);
  
-+/*******************************************************************************
-+ *
-+ * FUNCTION:    acpi_any_fixed_event_status_set
-+ *
-+ * PARAMETERS:  None
-+ *
-+ * RETURN:      TRUE or FALSE
-+ *
-+ * DESCRIPTION: Checks the PM status register for active fixed events
-+ *
-+ ******************************************************************************/
-+
-+u32 acpi_any_fixed_event_status_set(void)
-+{
-+	acpi_status status;
-+	u32 in_status;
-+	u32 in_enable;
-+	u32 i;
-+
-+	status = acpi_hw_register_read(ACPI_REGISTER_PM1_ENABLE, &in_enable);
-+	if (ACPI_FAILURE(status)) {
-+		return (FALSE);
-+	}
-+
-+	status = acpi_hw_register_read(ACPI_REGISTER_PM1_STATUS, &in_status);
-+	if (ACPI_FAILURE(status)) {
-+		return (FALSE);
-+	}
-+
-+	/*
-+	 * Check for all possible Fixed Events and dispatch those that are active
-+	 */
-+	for (i = 0; i < ACPI_NUM_FIXED_EVENTS; i++) {
-+
-+		/* Both the status and enable bits must be on for this event */
-+
-+		if ((in_status & acpi_gbl_fixed_event_info[i].status_bit_mask) &&
-+		    (in_enable & acpi_gbl_fixed_event_info[i].enable_bit_mask)) {
-+			return (TRUE);
-+		}
-+	}
-+
-+	return (FALSE);
-+}
-+
- #endif				/* !ACPI_REDUCED_HARDWARE */
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -993,6 +993,13 @@ static bool acpi_s2idle_wake(void)
- 			return true;
+-		/* we are the last process using this ulp, acquiring ulp->lock
+-		 * isn't required. Besides that, we are also protected against
+-		 * IPC_RMID as we hold sma->sem_perm lock now
+-		 */
++		spin_lock(&ulp->lock);
+ 		list_del_rcu(&un->list_proc);
++		spin_unlock(&ulp->lock);
  
- 		/*
-+		 * If the status bit of any enabled fixed event is set, the
-+		 * wakeup is regarded as valid.
-+		 */
-+		if (acpi_any_fixed_event_status_set())
-+			return true;
-+
-+		/*
- 		 * If there are no EC events to process and at least one of the
- 		 * other enabled GPEs is active, the wakeup is regarded as a
- 		 * genuine one.
---- a/include/acpi/acpixf.h
-+++ b/include/acpi/acpixf.h
-@@ -749,6 +749,7 @@ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_sta
- ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_enable_all_runtime_gpes(void))
- ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_enable_all_wakeup_gpes(void))
- ACPI_HW_DEPENDENT_RETURN_UINT32(u32 acpi_any_gpe_status_set(void))
-+ACPI_HW_DEPENDENT_RETURN_UINT32(u32 acpi_any_fixed_event_status_set(void))
- 
- ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status
- 				acpi_get_gpe_device(u32 gpe_index,
+ 		/* perform adjustments registered in un */
+ 		for (i = 0; i < sma->sem_nsems; i++) {
 
 
