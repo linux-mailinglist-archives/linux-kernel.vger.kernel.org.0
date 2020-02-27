@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A116017191C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:42:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92CBA171A0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:50:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729708AbgB0NmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:42:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36726 "EHLO mail.kernel.org"
+        id S1730550AbgB0NuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:50:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729305AbgB0Nl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:41:58 -0500
+        id S1731200AbgB0NuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:50:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D03A20578;
-        Thu, 27 Feb 2020 13:41:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 366FB20801;
+        Thu, 27 Feb 2020 13:50:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810917;
-        bh=BAiSBRFdJMN3ZHL/w78o+PZyV1AC1701XX/Z2jnkgC0=;
+        s=default; t=1582811419;
+        bh=2+cmvOTfjefLg7z9K6NEbzvp0YsZpeIAhXSEBWBCpx8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2nOnm2tGnnSQsQKMSbllNiwdh52HQoRdYuRi3nhW6hZCmvz8eE3JM4RHEOzmppwQX
-         hlRCCuz5me4fQtp+ynACQwoeKV7GkD0Mq2mucPfzKjPxqvYO/8rmeXbSy3+DO9sq7C
-         xqJ10MCATnKGGnEQl/v9Sg/p+/f60M6zGHs4EcOY=
+        b=lBuPTi5IqjD4rPyG5Di02l8pmbfvb+erf6/AbJlRX/3pSvT44zYBhxeEtrN4iJBAN
+         C5oC5cu5J/e8nh7TQhceXSzjXXzonkqkDLmyml+On0jdGxcvcyDoydc2nEmSfKUjgV
+         hnqzqQtbYBppNJiIBxQeGvH1Rri07xPz2H1WwmoU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 046/113] scsi: aic7xxx: Adjust indentation in ahc_find_syncrate
+Subject: [PATCH 4.9 088/165] cmd64x: potential buffer overflow in cmd64x_program_timings()
 Date:   Thu, 27 Feb 2020 14:36:02 +0100
-Message-Id: <20200227132219.106958971@linuxfoundation.org>
+Message-Id: <20200227132244.156509654@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 4dbc96ad65c45cdd4e895ed7ae4c151b780790c5 ]
+[ Upstream commit 117fcc3053606d8db5cef8821dca15022ae578bb ]
 
-Clang warns:
+The "drive->dn" value is a u8 and it is controlled by root only, but
+it could be out of bounds here so let's check.
 
-../drivers/scsi/aic7xxx/aic7xxx_core.c:2317:5: warning: misleading
-indentation; statement is not part of the previous 'if'
-[-Wmisleading-indentation]
-                        if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
-                        ^
-../drivers/scsi/aic7xxx/aic7xxx_core.c:2310:4: note: previous statement
-is here
-                        if (syncrate == &ahc_syncrates[maxsync])
-                        ^
-1 warning generated.
-
-This warning occurs because there is a space amongst the tabs on this
-line. Remove it so that the indentation is consistent with the Linux kernel
-coding style and clang no longer warns.
-
-This has been a problem since the beginning of git history hence no fixes
-tag.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/817
-Link: https://lore.kernel.org/r/20191218014220.52746-1-natechancellor@gmail.com
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/aic7xxx/aic7xxx_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ide/cmd64x.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
-index 64ab9eaec428c..def3208dd2905 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_core.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
-@@ -2321,7 +2321,7 @@ ahc_find_syncrate(struct ahc_softc *ahc, u_int *period,
- 			 * At some speeds, we only support
- 			 * ST transfers.
- 			 */
--		 	if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
-+			if ((syncrate->sxfr_u2 & ST_SXFR) != 0)
- 				*ppr_options &= ~MSG_EXT_PPR_DT_REQ;
- 			break;
- 		}
+diff --git a/drivers/ide/cmd64x.c b/drivers/ide/cmd64x.c
+index b127ed60c7336..9dde8390da09b 100644
+--- a/drivers/ide/cmd64x.c
++++ b/drivers/ide/cmd64x.c
+@@ -65,6 +65,9 @@ static void cmd64x_program_timings(ide_drive_t *drive, u8 mode)
+ 	struct ide_timing t;
+ 	u8 arttim = 0;
+ 
++	if (drive->dn >= ARRAY_SIZE(drwtim_regs))
++		return;
++
+ 	ide_timing_compute(drive, mode, &t, T, 0);
+ 
+ 	/*
 -- 
 2.20.1
 
