@@ -2,97 +2,272 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8A1617248A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:07:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30FD8172491
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 18:09:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbgB0RHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 12:07:39 -0500
-Received: from mout.gmx.net ([212.227.15.19]:50063 "EHLO mout.gmx.net"
+        id S1729708AbgB0RHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 12:07:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729382AbgB0RHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 12:07:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1582823252;
-        bh=Zb0cpGY5979XVir3SW4/XvgaLWpiRVc0awjhmaXpE38=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=QR4MXkAemQqcaKG57/JmvWW5uqe8rp2HgSaaPb1MpKx9CDf0IljrCRVkK0ZfA5ud2
-         ocoMXyDYrHyMUw6dAP/ETnhEe3xEkTFSAfl2em05LmGceS3CAiagcqOv8+kFCxzye7
-         UEuJ1Ltvgddl5QVADZG51WpdTjs6kpil6RTjr90U=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([5.146.195.162]) by mail.gmx.com (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Md6Qr-1jfb3X2zAp-00aGpS; Thu, 27
- Feb 2020 18:07:32 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     devicetree@vger.kernel.org
-Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: mfd: Fix typo in file name of twl-familly.txt
-Date:   Thu, 27 Feb 2020 18:07:01 +0100
-Message-Id: <20200227170702.4582-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
+        id S1729274AbgB0RHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 12:07:52 -0500
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08947246A5;
+        Thu, 27 Feb 2020 17:07:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582823271;
+        bh=DNqh6L9QvC79SAvYrsHQjJHxar3H8RKUkOoW0usqUyQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KssC0RY0wDcFK4NJrupa76eISYl81dF/3XcEksDI38Kgi1TODcqCH89Ql9XI5alZl
+         tej9/O3aty3romAaVdCxyYBXk1CI80GaO/fBAkusNAiAqTSKfas0wLp/BrQiRHYFyy
+         0eQU1mvgvhtwMVdM2oHbrIRWTlYCZgrmPm59qJVc=
+Received: by mail-qk1-f169.google.com with SMTP id 11so63785qkd.1;
+        Thu, 27 Feb 2020 09:07:50 -0800 (PST)
+X-Gm-Message-State: APjAAAVw2n5+uYL5CbwZ2CKbrsiYLejNvpnR2WKtbu33WETDe6AjHnNH
+        hJGlspDM5JqQipzXCwEluJMcSxmMbvjZnSzFMA==
+X-Google-Smtp-Source: APXvYqwnZOcWOJuMDm0YTNO3aplwTY/+GlYlhK6mewr/OqMGIi0NWVXpGav6XctEP5HzJU4yxoQK/jP7qeeWht1L4Oo=
+X-Received: by 2002:a05:620a:1237:: with SMTP id v23mr184684qkj.223.1582823270046;
+ Thu, 27 Feb 2020 09:07:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:tIcRwH00gj+4vKzcC1Ct9adpzROq1V35GkFIucElVSbqgod5Mqe
- 0+1GjTfQQR8VG+YH8a79ByQEsstpHDdrkPQv++D4SqKlb8LgGyRl0gBbXuq4C0gKyzUo88C
- et/M8/5TGvgqb1W6tTCThLNRguFIJiwuQMvoj+lL9rigd6QGvklsPqk9Vbdz6MUI5bXm933
- /wVx7EwSe/8WMCho5GvbA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:7i6SF/cOIBk=:yTQ2KJ8n+TE2ntZtfO97t1
- JN3eSKl8ljhj8iKnheTkUY5iMHxLl952hEQnU139MxPFMBNktOyOa5Pl/caDffmBBM4upmSWd
- waZRalC9phCIVu704YtdYuQaWlbt9/kbiTmbvp+g3tnWfeXUZMgaibZH79vhVtQDbbnrxLHDh
- thBoiWqOl2+WQeEvmFu1QcAXdo+Dw4PqDLs3CjWEtBlhed+uPb641YEZ23qY5K//6XzMdhgQR
- dbKdLfaZ7kZen0TBJwNe4tizu72wKQWkBsEkpwxU87VkKIjL49M3FMUqC+qh728QiHDM9xSD+
- F8ZCfnUY8RnWG+Se4XzalejWbacFums1OA5hMyrjyXx32HdGW+gDBwjcB982hpIkZo+7QmbVz
- EUP0cKpipaX5po7aibWhtvTKXOAJdqpinK6leO5OH/poxide73ezZOfFaQa1eTJxyMa8HBK9E
- Wnm3sNBIym9GKVdeW6DszMSnsWHUGGGJmj5F/ZTBseYORg7PvriWvr1JdymrnP120fM5dGzf5
- sDRucq6ywKWZC0gRO4q4ppP5nbwKiqrC4Ky9DRMdayLJ7k8Qu+iuizGtDTr19I5ThXg4coBFZ
- uQB5Vi50Uol5Av0wvmju7IyZVUByTRhinmkE6ZXmyRh40rIJGggsWhkB6lcTR84jqV9UPNLdQ
- fdH4+Iy9KmA+G5shyAVYV9RGIHP2iSnFhJYfbUmstd5NhbO0Z5atyHne2ga6uXtiF1nhgMWba
- DUG1Kg3OxikyZLserKaCVAz6EmDZqXgEd1ckmuy/07hxaI5xiCBkKh9lDzqlgnDUqDZFFA2HU
- Qc1kDaXuUWXtwsjpQyRc1ZTg/mm6POqyDnX7enXzVJAHrbhQ+8eMADFBKcddUmcsgpw0HWLcW
- Y6QlthymNSHgUYj/gDa50nc4dCKLbn0f66/6XAtsJMOeVsyxg+nh4ILMPjxe2zszX1iNYx2ju
- vDBY3RxCA44uGONloGdY9mAZISVn8m3HyTkkDpFoUGxI0jJ3DkKpahHyH4snW/A6DJqti4Quc
- nDdraBUzgpXFjhH9RQCv1j1jmUFIJwOYddHtm18pQZScmOoROzT496KSVgmTKZYG0+UuFTpT2
- 7nGgTEoCA4TwRExZWDFPQ9f4M7HWDAvE2JdEyoYaQkwRn20MFnqZrRYzUypAXtfTaMBK+pOiq
- 1gkkDeMJ9GJJrAD3aae4FlaoiVCJz4Fjhs107C1YUXypWbEZ76dZiNHcS6oYEsxvnmnqSmKHx
- 8E+air0/Z/PjdfHf0
+References: <20200227062708.21544-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20200227062708.21544-2-vadivel.muruganx.ramuthevar@linux.intel.com>
+In-Reply-To: <20200227062708.21544-2-vadivel.muruganx.ramuthevar@linux.intel.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 27 Feb 2020 11:07:39 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJno0gmUnGnsWFYdHY_3CHNijtksAmRhuEudimip0aK4w@mail.gmail.com>
+Message-ID: <CAL_JsqJno0gmUnGnsWFYdHY_3CHNijtksAmRhuEudimip0aK4w@mail.gmail.com>
+Subject: Re: [PATCH v11 1/2] dt-bindings: spi: Add schema for Cadence QSPI
+ Controller driver
+To:     "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>, Vignesh R <vigneshr@ti.com>,
+        devicetree@vger.kernel.org, simon.k.r.goldschmidt@gmail.com,
+        Dinh Nguyen <dinguyen@kernel.org>, tien.fong.chee@intel.com,
+        =?UTF-8?B?TWFyZWsgVmHFoXV0?= <marex@denx.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+        david.oberhollenzer@sigma-star.at,
+        =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        tudor.ambarus@gmail.com, cheol.yong.kim@intel.com,
+        qi-ming.wu@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
- Documentation/devicetree/bindings/input/twl4030-pwrbutton.txt   | 2 +-
- .../devicetree/bindings/mfd/{twl-familly.txt =3D> twl-family.txt} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename Documentation/devicetree/bindings/mfd/{twl-familly.txt =3D> twl-fa=
-mily.txt} (100%)
+On Thu, Feb 27, 2020 at 12:27 AM Ramuthevar,Vadivel MuruganX
+<vadivel.muruganx.ramuthevar@linux.intel.com> wrote:
+>
+> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>
+> Add dt-bindings documentation for Cadence-QSPI controller to support
+> spi based flash memories.
 
-diff --git a/Documentation/devicetree/bindings/input/twl4030-pwrbutton.txt=
- b/Documentation/devicetree/bindings/input/twl4030-pwrbutton.txt
-index c864a46cddcf..f5021214edec 100644
-=2D-- a/Documentation/devicetree/bindings/input/twl4030-pwrbutton.txt
-+++ b/Documentation/devicetree/bindings/input/twl4030-pwrbutton.txt
-@@ -1,7 +1,7 @@
- Texas Instruments TWL family (twl4030) pwrbutton module
+You need to run 'make dt_binding_check' because this doesn't pass.
 
- This module is part of the TWL4030. For more details about the whole
--chip see Documentation/devicetree/bindings/mfd/twl-familly.txt.
-+chip see Documentation/devicetree/bindings/mfd/twl-family.txt.
+>
+> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+> ---
+>  .../devicetree/bindings/mtd/cadence-quadspi.txt    |  67 ----------
+>  .../devicetree/bindings/spi/cdns,qspi-nor.yaml     | 142 +++++++++++++++++++++
+>  2 files changed, 142 insertions(+), 67 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
+>  create mode 100644 Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
 
- This module provides a simple power button event via an Interrupt.
 
-diff --git a/Documentation/devicetree/bindings/mfd/twl-familly.txt b/Docum=
-entation/devicetree/bindings/mfd/twl-family.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/mfd/twl-familly.txt
-rename to Documentation/devicetree/bindings/mfd/twl-family.txt
-=2D-
-2.20.1
+> diff --git a/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml b/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
+> new file mode 100644
+> index 000000000000..3ad2850c412e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
+> @@ -0,0 +1,142 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/spi/cdns,qspi-nor.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Cadence QSPI Flash Controller support
+> +
+> +maintainers:
+> +  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+> +
+> +allOf:
+> +  - $ref: "spi-controller.yaml#"
+> +
+> +description: |
+> +  Binding Documentation for Cadence QSPI controller,This controller is
+> +  present in the Intel LGM, Altera SoCFPGA and TI SoCs and this driver
+> +  has been tested On Intel's LGM SoC.
+> +
 
+> +  - compatible : should be one of the following:
+> +        Generic default - "cdns,qspi-nor".
+> +        For TI 66AK2G SoC - "ti,k2g-qspi", "cdns,qspi-nor".
+> +        For TI AM654 SoC  - "ti,am654-ospi", "cdns,qspi-nor".
+> +        For Intel LGM SoC - "intel,lgm-qspi", "cdns,qspi-nor".
+
+The schema below says all this, so drop this part.
+
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +        - enum:
+> +           - ti,k2g-qspi
+> +        - const: cdns,qspi-nor
+> +
+> +      - items:
+> +        - enum:
+> +           - ti,am654-ospi
+> +        - const: cdns,qspi-nor
+> +
+> +      - items:
+> +        - enum:
+> +           - intel,lgm-qspi
+> +        - const: cdns,qspi-nor
+
+These 3 items can be 1 entry (combine the enums).
+
+> +
+> +      - items:
+> +        - const: cdns,qspi-nor
+> +
+> +  reg:
+> +    maxItems: 2
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  cdns,fifo-depth:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      128 or 256 bytes size of the data FIFO in words.
+
+Sounds like constraints. Make them a schema.
+
+> +
+> +  cdns,fifo-width:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      4 byte bus width of the data FIFO in bytes.
+
+That's not very clear. It should be schema constraints anyways:
+
+enum: [ 4, 8, 12, 16, ...??? ]
+
+or:
+
+multipleOf: 4
+minimum: 4
+maximum: ?
+
+> +
+> +  cdns,trigger-address:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      32-bit indirect AHB trigger address.
+> +
+> +  cdns,rclk-en:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+
+Wrong type if this is a 'flag' aka boolean.
+
+> +    description: |
+> +      Flag to indicate that QSPI return clock is used to latch the read data
+> +      rather than the QSPI clock. Make sure that QSPI return clock is populated
+> +      on the board before using this property.
+> +
+> +# subnode's properties
+> +patternProperties:
+> +  "^.*@[0-9a-fA-F]+$":
+> +    type: object
+> +    description:
+> +      flash device uses the subnodes below defined properties.
+> +
+> +  cdns,read-delay:
+> +    description:
+> +      Delay in 4 microseconds, read capture logic, in clock cycles.
+
+Huh? Is it in time or clocks?
+
+No unit suffix here, so this needs a type ref. That's what 'make
+dt_binding_check' fails on.
+
+> +
+> +  cdns,tshsl-ns:
+> +    description: |
+> +      Delay in 50 nanoseconds, for the length that the master mode chip select
+> +      outputs are de-asserted between transactions.
+
+multipleOf: 50
+
+And so on for the rest.
+
+> +
+> +  cdns,tsd2d-ns:
+> +    description: |
+> +      Delay in 50 nanoseconds, between one chip select being de-activated
+> +      and the activation of another.
+> +
+> +  cdns,tchsh-ns:
+> +    description: |
+> +      Delay in 4 nanoseconds, between last bit of current transaction and
+> +      deasserting the device chip select (qspi_n_ss_out).
+> +
+> +  cdns,tslch-ns:
+> +    description: |
+> +      Delay in 4 nanoseconds, between setting qspi_n_ss_out low and
+> +      first bit transfer.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - cdns,fifo-depth
+> +  - cdns,fifo-width
+> +  - cdns,trigger-address
+> +
+> +examples:
+> +  - |
+> +    qspi: spi@ff705000 {
+> +          compatible = "cdns,qspi-nor";
+> +          #address-cells = <1>;
+> +          #size-cells = <0>;
+> +          reg = <0xff705000 0x1000>,
+> +                <0xffa00000 0x1000>;
+> +          interrupts = <0 151 4>;
+> +          clocks = <&qspi_clk>;
+> +          cdns,fifo-depth = <128>;
+> +          cdns,fifo-width = <4>;
+> +          cdns,trigger-address = <0x00000000>;
+> +
+> +          flash0: n25q00@0 {
+> +              compatible = "jedec,spi-nor";
+> +              reg = <0x0>;
+> +              cdns,read-delay = <4>;
+> +              cdns,tshsl-ns = <50>;
+> +              cdns,tsd2d-ns = <50>;
+> +              cdns,tchsh-ns = <4>;
+> +              cdns,tslch-ns = <4>;
+> +          };
+> +    };
+> +
+> --
+> 2.11.0
+>
