@@ -2,132 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A42B1712DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:47:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0EEF1712CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 09:46:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728762AbgB0Iq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 03:46:58 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:40293 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728719AbgB0Iqz (ORCPT
+        id S1728634AbgB0Iqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 03:46:32 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38443 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728440AbgB0Iqc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 03:46:55 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 793B6891AE;
-        Thu, 27 Feb 2020 21:46:52 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1582793212;
-        bh=7ES6tEyEz8XnCzXTzvkZrM7yYWWqjmJ6wjX0UjtGUNo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=UYQM+VkgT40nWUTOK56c3OPmdy3/3eNIkjCExJgaJJAg1Y8xboPo5QXITBC4whZdx
-         ZkvJcMuRonwPWu4l5dNkvf+zOIq6IR5dl8cfI1GAsTzKsADT8ewSYguM3zUsTsOtQw
-         UVbXC9v1JJOdhjFL6GdeudfQ3u3yKw8UY4UtQOafVfjz1aTEYj6cTa+WlG723FlYO1
-         stK/R0GBvixN6w4ipNWwzSCM28e+BZcNAcsqBEVZOhMTZI1hOjmlhpqtebCa8EvidO
-         uNbvo5N8x+aZGncym8w8VLn+/7ED5vUMeHOoD6pki/WO3Nog6NdEGOaSpszkjmzhV5
-         XV21vfKa8+UkQ==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5e5781fb0005>; Thu, 27 Feb 2020 21:46:51 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
-        by smtp (Postfix) with ESMTP id 810C913EECD;
-        Thu, 27 Feb 2020 21:46:51 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 4713C280072; Thu, 27 Feb 2020 21:46:52 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     logan.shaw@alliedtelesis.co.nz, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v5 5/5] hwmon: (adt7475) Add support for inverting pwm output
-Date:   Thu, 27 Feb 2020 21:46:42 +1300
-Message-Id: <20200227084642.7057-6-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227084642.7057-1-chris.packham@alliedtelesis.co.nz>
-References: <20200227084642.7057-1-chris.packham@alliedtelesis.co.nz>
+        Thu, 27 Feb 2020 03:46:32 -0500
+Received: by mail-lf1-f68.google.com with SMTP id r14so1458520lfm.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 00:46:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rcCJN5mZnlo1jzA5HXBQb+gnAxrgqgh8cu4CBU1C/98=;
+        b=IE+UfxL9scYb16xPi0I/AOr/2TtKR0nozlNtgQh4cx2xCoiAd0ujgGEJhkJ7EncvZV
+         paYwzPs4FKAQ3ePUzOQPLsOi80T7pln7WLZuxDS//nBcmfylFayePwrNt7pum3/6EjJM
+         brxDn2VSDSDUdCTDeF5flE6yfrboYPyjKDf8XWpYnKEXqPHWh08sKnjfOJE+sBu6sNyI
+         9UgjIQy4yu4PwlTQ0rzrtfjZNJGxMKyKWB3ix/GDk57rGWAg4CQC4Wtq8uML069GMXif
+         SOxCNlS/p1ZZZWhyMdZUooNG2MZR86WuZMO7js4OQE3g301NaCWWOLSA/Fxebe/XpF/0
+         OsEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rcCJN5mZnlo1jzA5HXBQb+gnAxrgqgh8cu4CBU1C/98=;
+        b=q6+f8RxZ+hmr1qViW/8Dyz2649KCwUv/NQWZQBMYsYjmZ8G/6hj0s43DFdWpYExm6j
+         z5Fgdy4xoDVxmgf+3eXTsBhU6f8DFk3i/V/gZy6X3mZXPy1t0Hrt1ySYZy0gjx+Jsxap
+         66bFRRuWQTqSL20tEun7duQURNVgHV7qYjCbJKIu1KkZJSfPEw60Tp79TJDNwNZKJBuW
+         i8cN6bMlPw89XmHOPSuATw88pm7kDssrztVad8jQrP0JLRx6JiaiOZyDHxSF2ARDddVy
+         4Ixb+0J5QWL4lyT2Ken8AxaxTiI7uhDy1ivfeNpl0Zh2+vJMMuPxjrxBQt1i5C68QqWq
+         rrZg==
+X-Gm-Message-State: ANhLgQ0OyR5vegUpBKKn6lDEg3S/LjR1I+7jbjTurgeN7jWl3o9krsYf
+        ansYOlV8kM9g6L7ucalEE/jBUQ==
+X-Google-Smtp-Source: ADFU+vtPpEh9w/nvwwTfoY3wx4BOMs7yoJlGAzfVaRxJs2/QaScv0S9uwx77oi/Udc9lxVmqk/2lIA==
+X-Received: by 2002:a05:6512:10c2:: with SMTP id k2mr1636432lfg.0.1582793188498;
+        Thu, 27 Feb 2020 00:46:28 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id g18sm1098924ljn.32.2020.02.27.00.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 00:46:27 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id B8C60100FC1; Thu, 27 Feb 2020 11:47:04 +0300 (+03)
+Date:   Thu, 27 Feb 2020 11:47:04 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] huge tmpfs: try to split_huge_page() when punching hole
+Message-ID: <20200227084704.aolem5nktpricrzo@box>
+References: <alpine.LSU.2.11.2002261959020.10801@eggly.anvils>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.11.2002261959020.10801@eggly.anvils>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a "adi,pwm-active-state" device-tree property to allow hardware
-designs to use inverted logic on the PWM output.
+On Wed, Feb 26, 2020 at 08:06:33PM -0800, Hugh Dickins wrote:
+> Yang Shi writes:
+> 
+> Currently, when truncating a shmem file, if the range is partly in a THP
+> (start or end is in the middle of THP), the pages actually will just get
+> cleared rather than being freed, unless the range covers the whole THP.
+> Even though all the subpages are truncated (randomly or sequentially),
+> the THP may still be kept in page cache.
+> 
+> This might be fine for some usecases which prefer preserving THP, but
+> balloon inflation is handled in base page size.  So when using shmem THP
+> as memory backend, QEMU inflation actually doesn't work as expected since
+> it doesn't free memory.  But the inflation usecase really needs to get
+> the memory freed.  (Anonymous THP will also not get freed right away,
+> but will be freed eventually when all subpages are unmapped: whereas
+> shmem THP still stays in page cache.)
+> 
+> Split THP right away when doing partial hole punch, and if split fails
+> just clear the page so that read of the punched area will return zeroes.
+> 
+> Hugh Dickins adds:
+> 
+> Our earlier "team of pages" huge tmpfs implementation worked in the way
+> that Yang Shi proposes; and we have been using this patch to continue to
+> split the huge page when hole-punched or truncated, since converting over
+> to the compound page implementation.  Although huge tmpfs gives out huge
+> pages when available, if the user specifically asks to truncate or punch
+> a hole (perhaps to free memory, perhaps to reduce the memcg charge), then
+> the filesystem should do so as best it can, splitting the huge page.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
+I'm still uncomfortable with proposition to use truncate or punch a hole
+operations to manage memory footprint. These operations are about managing
+storage footprint, not memory. This happens to be the same for tmpfs.
 
-Notes:
-    Changes in v5:
-    - change to adi,pwm-active-state
-    - uint32 array
-   =20
-    Changes in v4:
-    - use vendor prefix for new property
-   =20
-    Changes in v3:
-    - New
+I wounder if we should consider limiting the behaviour to the operation
+that explicitly combines memory and storage managing: MADV_REMOVE. This
+way we can avoid future misunderstandings with THP backed by a real
+filesystem.
 
- drivers/hwmon/adt7475.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+>  }
+>  
+>  /*
+> + * Check whether a hole-punch or truncation needs to split a huge page,
+> + * returning true if no split was required, or the split has been successful.
+> + *
+> + * Eviction (or truncation to 0 size) should never need to split a huge page;
+> + * but in rare cases might do so, if shmem_undo_range() failed to trylock on
+> + * head, and then succeeded to trylock on tail.
+> + *
+> + * A split can only succeed when there are no additional references on the
+> + * huge page: so the split below relies upon find_get_entries() having stopped
+> + * when it found a subpage of the huge page, without getting further references.
+> + */
+> +static bool shmem_punch_compound(struct page *page, pgoff_t start, pgoff_t end)
+> +{
+> +	if (!PageTransCompound(page))
+> +		return true;
+> +
+> +	/* Just proceed to delete a huge page wholly within the range punched */
+> +	if (PageHead(page) &&
+> +	    page->index >= start && page->index + HPAGE_PMD_NR <= end)
+> +		return true;
+> +
+> +	/* Try to split huge page, so we can truly punch the hole or truncate */
+> +	return split_huge_page(page) >= 0;
+> +}
 
-diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
-index 3649b18359dc..142a4fec688b 100644
---- a/drivers/hwmon/adt7475.c
-+++ b/drivers/hwmon/adt7475.c
-@@ -1509,6 +1509,36 @@ static int load_attenuators(const struct i2c_clien=
-t *client, int chip,
- 	return 0;
- }
-=20
-+static int adt7475_set_pwm_polarity(struct i2c_client *client)
-+{
-+	u32 states[ADT7475_PWM_COUNT];
-+	int ret, i;
-+	u8 val;
-+
-+	ret =3D of_property_read_u32_array(client->dev.of_node,
-+					 "adi,pwm-active-state", states,
-+					 ARRAY_SIZE(states));
-+	if (ret)
-+		return ret;
-+
-+	for (i =3D 0; i < ADT7475_PWM_COUNT; i++) {
-+		ret =3D adt7475_read(PWM_CONFIG_REG(i));
-+		if (ret < 0)
-+			return ret;
-+		val =3D ret;
-+		if (states[i])
-+			val &=3D ~BIT(4);
-+		else
-+			val |=3D BIT(4);
-+
-+		ret =3D i2c_smbus_write_byte_data(client, PWM_CONFIG_REG(i), val);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int adt7475_probe(struct i2c_client *client,
- 			 const struct i2c_device_id *id)
- {
-@@ -1617,6 +1647,10 @@ static int adt7475_probe(struct i2c_client *client=
-,
- 	for (i =3D 0; i < ADT7475_PWM_COUNT; i++)
- 		adt7475_read_pwm(client, i);
-=20
-+	ret =3D adt7475_set_pwm_polarity(client);
-+	if (ret && ret !=3D -EINVAL)
-+		dev_err(&client->dev, "Error configuring pwm polarity\n");
-+
- 	/* Start monitoring */
- 	switch (chip) {
- 	case adt7475:
---=20
-2.25.1
+I wanted to recommend taking into account khugepaged_max_ptes_none here,
+but it will nullify usefulness of the feature for ballooning. Oh, well...
 
+-- 
+ Kirill A. Shutemov
