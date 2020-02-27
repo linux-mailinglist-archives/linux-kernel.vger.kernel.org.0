@@ -2,85 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D7C8172B0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 23:25:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C97D172B01
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 23:22:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbgB0WZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 17:25:23 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:61730 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729434AbgB0WZV (ORCPT
+        id S1730107AbgB0WWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 17:22:43 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43471 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729434AbgB0WWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 17:25:21 -0500
-Received: from 79.184.237.30.ipv4.supernova.orange.pl (79.184.237.30) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
- id af15a1c3c8096ed7; Thu, 27 Feb 2020 23:25:19 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux ACPI <linux-acpi@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Drake <drake@endlessm.com>
-Subject: [PATCH 3/6] ACPI: EC: Drop AE_NOT_FOUND special case from ec_install_handlers()
-Date:   Thu, 27 Feb 2020 23:22:33 +0100
-Message-ID: <3205130.aMxiE8xfpn@kreacher>
-In-Reply-To: <2094703.CetWLLyMuz@kreacher>
-References: <2094703.CetWLLyMuz@kreacher>
+        Thu, 27 Feb 2020 17:22:42 -0500
+Received: by mail-ot1-f65.google.com with SMTP id p8so730361oth.10;
+        Thu, 27 Feb 2020 14:22:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Twand65sZdOLPd8mLMV5yo/gk50yR6BORm4y7JCU1Fs=;
+        b=hEzqBN6Mvj9KfgNlEKt9y8RJ6vQiLq0I9dOO5mn1uQgd4V3U9fxwAc/XodE9n439o9
+         gimQWAV+Gec6+PMph5xwuNfv2sfd3C2/3RQk/oatUzyzHNVwD7Lfax03IiD7oqBDfjeo
+         tosQ9Umx67gLIdhE+h9khbddjRR8k4LP0aXT9WmYjC2FdswndPh/v5UbkSI2OT/qGtk+
+         Yx3N+6EjbF16r3saggOOm3HCEjtnxfI28qFM9jqFNHpkGuNtqqOxW08GGRV0OI9jomRa
+         eOZCaRdWa17RiOxZccVkgAu9FsGF3SQG7AJzQD1puTNBQMzFmQtUi97aIt+EnNiBK760
+         05VQ==
+X-Gm-Message-State: APjAAAXdKaM0FNXGIEnSF3PVFgMCatPrk2lXV4yPBs6QdHwdtwLvIbN1
+        ALSnZfyRDYufTEOQWSPDrg==
+X-Google-Smtp-Source: APXvYqz5B7zZblz4z3k+XJtWJQ8eJGRpmeq7mhbk1IJZq3BK1sqHfVfQ2pt+9lrRhZUpnAzW5mSOdg==
+X-Received: by 2002:a9d:5e9:: with SMTP id 96mr871219otd.307.1582842161560;
+        Thu, 27 Feb 2020 14:22:41 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id i6sm2396457oto.62.2020.02.27.14.22.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 14:22:41 -0800 (PST)
+Received: (nullmailer pid 25505 invoked by uid 1000);
+        Thu, 27 Feb 2020 22:22:40 -0000
+Date:   Thu, 27 Feb 2020 16:22:40 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
+        Robert Richter <rric@kernel.org>, soc@kernel.org,
+        Jon Loeliger <jdl@jdl.com>,
+        Mark Langsdorf <mlangsdo@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH v2 12/13] dt-bindings: arm: Add Calxeda system registers
+ json-schema binding
+Message-ID: <20200227222240.GG26010@bogus>
+References: <20200227182210.89512-1-andre.przywara@arm.com>
+ <20200227182210.89512-13-andre.przywara@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200227182210.89512-13-andre.przywara@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+On Thu, Feb 27, 2020 at 06:22:09PM +0000, Andre Przywara wrote:
+> The Calxeda system registers are a collection of MMIO register
+> controlling several more general aspects of the SoC.
+> Beside for some power management tasks this node is also somewhat
+> abused as the container for the clock nodes.
+> 
+> Add a binding in DT schema format using json-schema.
+> 
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+>  .../bindings/arm/calxeda/hb-sregs.yaml        | 49 +++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/calxeda/hb-sregs.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/calxeda/hb-sregs.yaml b/Documentation/devicetree/bindings/arm/calxeda/hb-sregs.yaml
+> new file mode 100644
+> index 000000000000..4753e8dc5873
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/calxeda/hb-sregs.yaml
+> @@ -0,0 +1,49 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-If the status value returned by acpi_install_address_space_handler()
-in ec_install_handlers() is AE_NOT_FOUND, it is treated in a special
-way, apparently because it might mean a _REG method evaluation
-failure (at least that is the case according to the comment in
-there), but acpi_install_address_space_handler() does not take
-_REG evaluation errors into account at all, so the AE_NOT_FOUND
-special handling is confusing at best.
+Dual license please.
 
-For this reason, change ec_install_handlers() to stop the EC and
-return -ENODEV on all acpi_install_address_space_handler() errors.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/ec.c | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
-index 3153e7684053..6f501d552e6e 100644
---- a/drivers/acpi/ec.c
-+++ b/drivers/acpi/ec.c
-@@ -1489,19 +1489,8 @@ static int ec_install_handlers(struct acpi_ec *ec, struct acpi_device *device)
- 							    &acpi_ec_space_handler,
- 							    NULL, ec);
- 		if (ACPI_FAILURE(status)) {
--			if (status == AE_NOT_FOUND) {
--				/*
--				 * Maybe OS fails in evaluating the _REG
--				 * object. The AE_NOT_FOUND error will be
--				 * ignored and OS * continue to initialize
--				 * EC.
--				 */
--				pr_err("Fail in evaluating the _REG object"
--					" of EC device. Broken bios is suspected.\n");
--			} else {
--				acpi_ec_stop(ec, false);
--				return -ENODEV;
--			}
-+			acpi_ec_stop(ec, false);
-+			return -ENODEV;
- 		}
- 		set_bit(EC_FLAGS_EC_HANDLER_INSTALLED, &ec->flags);
- 	}
--- 
-2.16.4
-
-
-
-
-
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/calxeda/hb-sregs.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Calxeda Highbank system registers
+> +
+> +description: |
+> +  The Calxeda Highbank system has a block of MMIO registers controlling
+> +  several generic system aspects. Those can be used to control some power
+> +  management, they also contain some gate and PLL clocks.
+> +
+> +maintainers:
+> +  - Andre Przywara <andre.przywara@arm.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: calxeda,hb-sregs
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    type: object
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    sregs@fff3c000 {
+> +        compatible = "calxeda,hb-sregs";
+> +        reg = <0xfff3c000 0x1000>;
+> +
+> +        clocks {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            osc: oscillator {
+> +                #clock-cells = <0>;
+> +                compatible = "fixed-clock";
+> +                clock-frequency = <33333000>;
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.17.1
+> 
