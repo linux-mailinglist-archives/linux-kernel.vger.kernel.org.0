@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50341171A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:53:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81345171A97
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:55:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731754AbgB0Nxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:53:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53574 "EHLO mail.kernel.org"
+        id S1731826AbgB0NzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:55:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730589AbgB0Nxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:53:42 -0500
+        id S1731944AbgB0NzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:55:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E9B82084E;
-        Thu, 27 Feb 2020 13:53:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5111246A0;
+        Thu, 27 Feb 2020 13:55:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811621;
-        bh=AQXNCwSq4Z50V5yHlLV51EKDB3lSCNe9jOBAJff5fh4=;
+        s=default; t=1582811707;
+        bh=9loN91LzLqv3kU3rzAlsVgkm9DxvKaVuV8jhC5wp+P4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dvNnlx3MSoyknP9UyAxda5QBrYkoQ3zVobmz+A+xyOd4vVk0F+/G1TygBwi0hga9+
-         2QVDfdqgsVX90N5GdiGLV8oS11lFJsKogQ3oMigEofquLdjA1EJmVjHAvfM5YYf7/c
-         891XBFOOY5ZODR1oRVlgUytHD+LEWAWikr7EOZXg=
+        b=TLINN8TKA4RQNkzWHylx0L9vU1ba8g2e0P4DJyYWLvexT1kCHZLoFSU9af14sHvQL
+         8jOu2kLgb//CuiKnc+JWIJKfBY2mtrfkoxwUcoy0pAwwdh1FBvZ+YtBxaxtOctNsCI
+         YdxFKGllQFvaX9EJ1mt3is95f+qZjZgvVWcCfAb4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 4.14 030/237] s390/time: Fix clk type in get_tod_clock
-Date:   Thu, 27 Feb 2020 14:34:04 +0100
-Message-Id: <20200227132258.786516802@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        "zhangyi (F)" <yi.zhang@huawei.com>, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 033/237] jbd2: move the clearing of b_modified flag to the journal_unmap_buffer()
+Date:   Thu, 27 Feb 2020 14:34:07 +0100
+Message-Id: <20200227132259.158942633@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -44,54 +44,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: zhangyi (F) <yi.zhang@huawei.com>
 
-commit 0f8a206df7c920150d2aa45574fba0ab7ff6be4f upstream.
+[ Upstream commit 6a66a7ded12baa6ebbb2e3e82f8cb91382814839 ]
 
-Clang warns:
+There is no need to delay the clearing of b_modified flag to the
+transaction committing time when unmapping the journalled buffer, so
+just move it to the journal_unmap_buffer().
 
-In file included from ../arch/s390/boot/startup.c:3:
-In file included from ../include/linux/elf.h:5:
-In file included from ../arch/s390/include/asm/elf.h:132:
-In file included from ../include/linux/compat.h:10:
-In file included from ../include/linux/time.h:74:
-In file included from ../include/linux/time32.h:13:
-In file included from ../include/linux/timex.h:65:
-../arch/s390/include/asm/timex.h:160:20: warning: passing 'unsigned char
-[16]' to parameter of type 'char *' converts between pointers to integer
-types with different sign [-Wpointer-sign]
-        get_tod_clock_ext(clk);
-                          ^~~
-../arch/s390/include/asm/timex.h:149:44: note: passing argument to
-parameter 'clk' here
-static inline void get_tod_clock_ext(char *clk)
-                                           ^
-
-Change clk's type to just be char so that it matches what happens in
-get_tod_clock_ext.
-
-Fixes: 57b28f66316d ("[S390] s390_hypfs: Add new attributes")
-Link: https://github.com/ClangBuiltLinux/linux/issues/861
-Link: http://lkml.kernel.org/r/20200208140858.47970-1-natechancellor@gmail.com
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: https://lore.kernel.org/r/20200213063821.30455-2-yi.zhang@huawei.com
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/include/asm/timex.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/jbd2/commit.c      | 43 +++++++++++++++----------------------------
+ fs/jbd2/transaction.c | 10 ++++++----
+ 2 files changed, 21 insertions(+), 32 deletions(-)
 
---- a/arch/s390/include/asm/timex.h
-+++ b/arch/s390/include/asm/timex.h
-@@ -155,7 +155,7 @@ static inline void get_tod_clock_ext(cha
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index 7dd6133925921..89cbf45a1dcda 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -973,34 +973,21 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+ 		 * it. */
  
- static inline unsigned long long get_tod_clock(void)
- {
--	unsigned char clk[STORE_CLOCK_EXT_SIZE];
-+	char clk[STORE_CLOCK_EXT_SIZE];
+ 		/*
+-		* A buffer which has been freed while still being journaled by
+-		* a previous transaction.
+-		*/
+-		if (buffer_freed(bh)) {
+-			/*
+-			 * If the running transaction is the one containing
+-			 * "add to orphan" operation (b_next_transaction !=
+-			 * NULL), we have to wait for that transaction to
+-			 * commit before we can really get rid of the buffer.
+-			 * So just clear b_modified to not confuse transaction
+-			 * credit accounting and refile the buffer to
+-			 * BJ_Forget of the running transaction. If the just
+-			 * committed transaction contains "add to orphan"
+-			 * operation, we can completely invalidate the buffer
+-			 * now. We are rather through in that since the
+-			 * buffer may be still accessible when blocksize <
+-			 * pagesize and it is attached to the last partial
+-			 * page.
+-			 */
+-			jh->b_modified = 0;
+-			if (!jh->b_next_transaction) {
+-				clear_buffer_freed(bh);
+-				clear_buffer_jbddirty(bh);
+-				clear_buffer_mapped(bh);
+-				clear_buffer_new(bh);
+-				clear_buffer_req(bh);
+-				bh->b_bdev = NULL;
+-			}
++		 * A buffer which has been freed while still being journaled
++		 * by a previous transaction, refile the buffer to BJ_Forget of
++		 * the running transaction. If the just committed transaction
++		 * contains "add to orphan" operation, we can completely
++		 * invalidate the buffer now. We are rather through in that
++		 * since the buffer may be still accessible when blocksize <
++		 * pagesize and it is attached to the last partial page.
++		 */
++		if (buffer_freed(bh) && !jh->b_next_transaction) {
++			clear_buffer_freed(bh);
++			clear_buffer_jbddirty(bh);
++			clear_buffer_mapped(bh);
++			clear_buffer_new(bh);
++			clear_buffer_req(bh);
++			bh->b_bdev = NULL;
+ 		}
  
- 	get_tod_clock_ext(clk);
- 	return *((unsigned long long *)&clk[1]);
+ 		if (buffer_jbddirty(bh)) {
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index 7fe422eced89b..f2ff141a4479e 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -2231,14 +2231,16 @@ static int journal_unmap_buffer(journal_t *journal, struct buffer_head *bh,
+ 			return -EBUSY;
+ 		}
+ 		/*
+-		 * OK, buffer won't be reachable after truncate. We just set
+-		 * j_next_transaction to the running transaction (if there is
+-		 * one) and mark buffer as freed so that commit code knows it
+-		 * should clear dirty bits when it is done with the buffer.
++		 * OK, buffer won't be reachable after truncate. We just clear
++		 * b_modified to not confuse transaction credit accounting, and
++		 * set j_next_transaction to the running transaction (if there
++		 * is one) and mark buffer as freed so that commit code knows
++		 * it should clear dirty bits when it is done with the buffer.
+ 		 */
+ 		set_buffer_freed(bh);
+ 		if (journal->j_running_transaction && buffer_jbddirty(bh))
+ 			jh->b_next_transaction = journal->j_running_transaction;
++		jh->b_modified = 0;
+ 		jbd2_journal_put_journal_head(jh);
+ 		spin_unlock(&journal->j_list_lock);
+ 		jbd_unlock_bh_state(bh);
+-- 
+2.20.1
+
 
 
