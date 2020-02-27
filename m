@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0020D172A7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 22:53:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 972E2172A87
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 22:53:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730085AbgB0VxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 16:53:03 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:35902 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729661AbgB0VxD (ORCPT
+        id S1730207AbgB0Vxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 16:53:40 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36928 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729991AbgB0Vxi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 16:53:03 -0500
-Received: by mail-pj1-f66.google.com with SMTP id gv17so364788pjb.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 13:53:02 -0800 (PST)
+        Thu, 27 Feb 2020 16:53:38 -0500
+Received: by mail-pf1-f196.google.com with SMTP id p14so537760pfn.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 13:53:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=a8tz7pn6WYS1zSkKOSE65k1PsuDxpcFOThMRyfGsXzE=;
-        b=MfQRdUQKcxxCrSC/WgIvIRxxrgpxV4pEVJPD3KSrjnKCyYy1DtH9YuIfwvrtkZ0rkk
-         e4esIL0/td3cexwfwTcB+MjGYmUdyP2PENKFZHJXLbZ8P5sU2fQUWPMaAQNctsOmX/dn
-         AGGGt2bWXaZ764Yldgf2q8QPMh3XvoJ+g+TgeVups/3GdaMKbXMo0HgCmxzqY1FTvObw
-         ZS21j2nQUsw3IBJ/8oLQ0Ft4UE0vlIXUbL8hA6mFMLKAUbJi+Q1PvnSb6F7+9CIIG1yA
-         n6d796AOcxL/rwXWH4RzSJPusTkXOFxW3IfwCAkvkkeZes83mGpiJDZkhS5JoMG+7JAG
-         GIzg==
+        bh=kC1Xoh5We8HW6QYhWDydXI61P1j3Hdueu4SIi8W2Ufs=;
+        b=p9M/TOc0o3The2WYnf221ywfa6k7xOY1mIPKc1L5s6zfgau1Qi+PEvy4EjCT08fHST
+         f47H8FwNUcqbBDCRKgEdus0eh3pTBHGUWQDTwR7rSXN39i41cOOKxsL2qjQkrDtambcM
+         h+eCff3n1DSR6UAMf8VUUJrTwY7sY4aJCLVVUmVge1g0VpRAV2ohuZwKWx13k2g9oapt
+         eCrDQZ+dXwP3iysq5TFRpgTQBHGk+fFtxvTpPnud1SMy4AGEVBSBDI7F/aPraxwFGSmR
+         rtdM0ZpTb4AxYOoUpOncbLLxdNnsVj62J17te/jLf5zEc3DT761ZFGKyyC8klncRGezj
+         prtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a8tz7pn6WYS1zSkKOSE65k1PsuDxpcFOThMRyfGsXzE=;
-        b=rZ7qtIAwYBMTWyB3wE1zBPEazhnEkkeoOETMymv3TmGvLU3aBX4OVrG1oaHKxxEwx8
-         VlNmci7FKfYa4zEw35U7+tfs2ROA/0iUqyZeAhDXQJbtMzijlSUA44EgvB/7WmDNXEVx
-         i4r8BdK/0mJbKpWsHN3//d/9wQP25inTPOk0l4ZRQFNxRmQcsakDffsEb072e9tbu5aU
-         NqAynBKn9t4Oneohzdq1z5W+QedSzC9W0D1TqT0WGLNU2tbHQBg+T8EC8/6cSMnPUTZJ
-         1apJkIPvHkyvuM+vujRVYgC+dOaKFajsa7B0vjHrLsx89PUkSIYfuNgMdt0Ay01IgkKS
-         yRrw==
-X-Gm-Message-State: APjAAAWin7lT/HT0/sCUuHcB9ygafI+dMvv35IRJ1qQcdCzYRQrsNULc
-        VRCDVqcZ2l+IwIrlH8qPEMc=
-X-Google-Smtp-Source: APXvYqyBBSbhpwNl/y+B0CAz1QiXE9Xx9EaqVrkHv47pjZ+aPpztqa7IRVjA8W5qXes4DslEDVWfpw==
-X-Received: by 2002:a17:902:b718:: with SMTP id d24mr896192pls.80.1582840382216;
-        Thu, 27 Feb 2020 13:53:02 -0800 (PST)
+        bh=kC1Xoh5We8HW6QYhWDydXI61P1j3Hdueu4SIi8W2Ufs=;
+        b=fNkacmEx5AMsV4g1LY+SEx3+tkSCMAmWwJzmEDG25bIlAHWVl6CFvbJ4dgrs3K5eS7
+         OdIcmSF/RQclVRsO3qCm0ktYTbNmhzK1eVOkRA91q+3NH1e/x8+j1vDMIyU0LxfQ6qrY
+         OuiJWjRfAzDMs30bShmeXi3jATuwLRTZOEV4mHf+7jLSAaRod2M2w3rczkyYaHAIszfh
+         HyUc0zUsS+BgYAPNroYB7VoUNJrp1pojLBzJQXIrsWYQaXphZhVKd67jVnCzfG/z5G44
+         3DcaVRQfcUboZcgx0WsjTzXrRRdeOHkHrHHwM/q8oUHa/6GljuSxB9HQ2WHadOBDmL8z
+         du5A==
+X-Gm-Message-State: APjAAAV8KyTMSFKSkMlFt6HYVq65utMyNk+ictwqiVpG5KyCrKZqXhsS
+        XFl5yZqi+jp82In+s5SbON8=
+X-Google-Smtp-Source: APXvYqw+Q6jXwMaLoCpk0a9L4HlEF/CXRHuyZuHxR4f3O+ZrtJMfhRLEUWpmbJo2JWI+nsY0qsJkCw==
+X-Received: by 2002:a63:f302:: with SMTP id l2mr1361641pgh.294.1582840418096;
+        Thu, 27 Feb 2020 13:53:38 -0800 (PST)
 Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
-        by smtp.gmail.com with ESMTPSA id d4sm7399843pjg.19.2020.02.27.13.53.01
+        by smtp.gmail.com with ESMTPSA id 190sm7673311pga.85.2020.02.27.13.53.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 13:53:01 -0800 (PST)
-Date:   Thu, 27 Feb 2020 13:52:59 -0800
+        Thu, 27 Feb 2020 13:53:37 -0800 (PST)
+Date:   Thu, 27 Feb 2020 13:53:35 -0800
 From:   Minchan Kim <minchan@kernel.org>
 To:     Jules Irenge <jbi.octave@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, boqun.feng@gmail.com,
@@ -54,29 +54,28 @@ Cc:     linux-kernel@vger.kernel.org, boqun.feng@gmail.com,
         Andrew Morton <akpm@linux-foundation.org>,
         "open list:ZSMALLOC COMPRESSED SLAB MEMORY ALLOCATOR" 
         <linux-mm@kvack.org>
-Subject: Re: [PATCH 10/30] mm/zsmalloc: Add missing annotation for
- migrate_read_lock()
-Message-ID: <20200227215259.GC215068@google.com>
+Subject: Re: [PATCH 12/30] mm/zsmalloc: Add missing annotation for pin_tag()
+Message-ID: <20200227215335.GD215068@google.com>
 References: <0/30>
  <20200214204741.94112-1-jbi.octave@gmail.com>
- <20200214204741.94112-11-jbi.octave@gmail.com>
+ <20200214204741.94112-13-jbi.octave@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200214204741.94112-11-jbi.octave@gmail.com>
+In-Reply-To: <20200214204741.94112-13-jbi.octave@gmail.com>
 User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 08:47:21PM +0000, Jules Irenge wrote:
-> Sparse reports a warning at migrate_read_lock()()
+On Fri, Feb 14, 2020 at 08:47:23PM +0000, Jules Irenge wrote:
+> Sparse reports a warning at pin_tag()()
 > 
->  warning: context imbalance in migrate_read_lock() - wrong count at exit
+> warning: context imbalance in pin_tag() - wrong count at exit
 > 
-> The root cause is the missing annotation at migrate_read_lock()
-> Add the missing __acquires(&zspage->lock) annotation
+> The root cause is the missing annotation at pin_tag()
+> Add the missing __acquires(bitlock) annotation
 > 
 > Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 Acked-by: Minchan Kim <minchan@kernel.org>
