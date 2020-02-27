@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8596D171A6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:53:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83D0B171A51
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:52:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731742AbgB0Nxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:53:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53450 "EHLO mail.kernel.org"
+        id S1731107AbgB0Nwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:52:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730589AbgB0Nxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:53:37 -0500
+        id S1730455AbgB0Nw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:52:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BBA52084E;
-        Thu, 27 Feb 2020 13:53:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E570E20578;
+        Thu, 27 Feb 2020 13:52:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811616;
-        bh=9ywhAYA701m1EHwH2msV5Pz/2sBLkQudXHocBsn18Ew=;
+        s=default; t=1582811548;
+        bh=j5gtom/5IeYiStN19TQ9vC/vOdafBVAjH6Eh3hoKgVg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S5NLEsSWhUjz9fmsOhuPqbkE7e1/STii5Qt6cwoWTQXXEA87UrBPZV+k41Mt752gP
-         yhLFsG35NOc87ixh26j26JJbpZ73LSHK0GNFU5sMCUe5V0kk+TCq03c05L1u3nzwxG
-         0MJmnyEQdMM5cHoCnBx7nZnGyHf9fyWztDUVx+cs=
+        b=sM5e+CIkqbSFe4V51K947wWAYz/XwNwg0uCf0gh2aJJ50JqrdGn4FS+y+3w9Q/Uzu
+         iUkSqcaDoW6crsf4d/RroAvWyJY4Dh9SPVI2gBpKABNzxz+J5kD0/PsPwnwebN/lR3
+         M0gWEaRUYH6DyNc4LBrc7vEtR/hJIikNI6568Oh4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 009/237] Input: synaptics - remove the LEN0049 dmi id from topbuttonpad list
-Date:   Thu, 27 Feb 2020 14:33:43 +0100
-Message-Id: <20200227132256.566614184@linuxfoundation.org>
+        stable@vger.kernel.org, Arvind Sankar <nivedita@alum.mit.edu>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 010/237] ALSA: usb-audio: Apply sample rate quirk for Audioengine D1
+Date:   Thu, 27 Feb 2020 14:33:44 +0100
+Message-Id: <20200227132256.677883462@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -44,44 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+From: Arvind Sankar <nivedita@alum.mit.edu>
 
-commit 5179a9dfa9440c1781816e2c9a183d1d2512dc61 upstream.
+commit 93f9d1a4ac5930654c17412e3911b46ece73755a upstream.
 
-The Yoga 11e is using LEN0049, but it doesn't have a trackstick.
+The Audioengine D1 (0x2912:0x30c8) does support reading the sample rate,
+but it returns the rate in byte-reversed order.
 
-Thus, there is no need to create a software top buttons row.
+When setting sampling rate, the driver produces these warning messages:
+[168840.944226] usb 3-2.2: current rate 4500480 is different from the runtime rate 44100
+[168854.930414] usb 3-2.2: current rate 8436480 is different from the runtime rate 48000
+[168905.185825] usb 3-2.1.2: current rate 30465 is different from the runtime rate 96000
 
-However, it seems that the device works under SMBus, so keep it as part
-of the smbus_pnp_ids.
+As can be seen from the hexadecimal conversion, the current rate read
+back is byte-reversed from the rate that was set.
 
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200115013023.9710-1-benjamin.tissoires@redhat.com
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+44100 == 0x00ac44, 4500480 == 0x44ac00
+48000 == 0x00bb80, 8436480 == 0x80bb00
+96000 == 0x017700,   30465 == 0x007701
+
+Rather than implementing a new quirk to reverse the order, just skip
+checking the rate to avoid spamming the log.
+
+Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200211162235.1639889-1-nivedita@alum.mit.edu
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/synaptics.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/usb/quirks.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -149,7 +149,6 @@ static const char * const topbuttonpad_p
- 	"LEN0042", /* Yoga */
- 	"LEN0045",
- 	"LEN0047",
--	"LEN0049",
- 	"LEN2000", /* S540 */
- 	"LEN2001", /* Edge E431 */
- 	"LEN2002", /* Edge E531 */
-@@ -169,6 +168,7 @@ static const char * const smbus_pnp_ids[
- 	/* all of the topbuttonpad_pnp_ids are valid, we just add some extras */
- 	"LEN0048", /* X1 Carbon 3 */
- 	"LEN0046", /* X250 */
-+	"LEN0049", /* Yoga 11e */
- 	"LEN004a", /* W541 */
- 	"LEN005b", /* P50 */
- 	"LEN005e", /* T560 */
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1151,6 +1151,7 @@ bool snd_usb_get_sample_rate_quirk(struc
+ 	case USB_ID(0x1de7, 0x0014): /* Phoenix Audio TMX320 */
+ 	case USB_ID(0x1de7, 0x0114): /* Phoenix Audio MT202pcs */
+ 	case USB_ID(0x21B4, 0x0081): /* AudioQuest DragonFly */
++	case USB_ID(0x2912, 0x30c8): /* Audioengine D1 */
+ 		return true;
+ 	}
+ 	return false;
 
 
