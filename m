@@ -2,142 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 048201720BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:45:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F2761720A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:44:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730538AbgB0Nqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:46:35 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40814 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730514AbgB0Nq3 (ORCPT
+        id S1731149AbgB0OoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:44:19 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:36443 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730817AbgB0NsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:46:29 -0500
-Received: by mail-qk1-f196.google.com with SMTP id m2so3114348qka.7
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 05:46:28 -0800 (PST)
+        Thu, 27 Feb 2020 08:48:10 -0500
+Received: by mail-qk1-f193.google.com with SMTP id f3so3147308qkh.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 05:48:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=MNKG4+F+LTFwpzpyT4+p3VzII4Y7Yin7L8vMm6TuNbw=;
-        b=maOSf5TOiNL1jUWavOPbZlor+ttx5R8cCBG00EGM+fvyjeh/hhhD+/1DSlj/eYNsWK
-         WVpUc8Gnhyw9KLH0S4KS9NQTS574W5iLNgyBfk5UeMQxVUntv8VpJIljeIKxrhDC69K6
-         VMzj+fJiWy4OPLtTIEBUqxTp18PMMgiceIjIIh1PBdlsse8e6tipJqBeFpt6064bFygX
-         C5GeFgq+8rTsbexcZHFXb8O/OBND9+di5yo/8NQukf2628xEuipl5eI/ARRBBAYZbc7p
-         tG0deKD8A594XAYjujjDIqN3ULVWJkvsEt+jsJxuoiXtYDQAgZHE0nPUTFJbvtGn9h9I
-         KE1Q==
+        bh=gd7SzCH0Y53mfN+8nDt/akmk+wPgbeU2gPKEM6406QE=;
+        b=l8/0wecZUrPy4qn64vPqTvmCnSFsytJpDahlldno9sHr7Vzm/KRgoiXjlCSqL0zKRH
+         iDs1opn7lLwsMSJr5nQxpGmolXWzegiYkknBGHkkMqF4gvHvmW0VtNX3ke5pPpGPDAoL
+         FUO//W6bmL1+8OlsQxqmUjMu2ppsdAC26B1KP48zFlxPEh6njwAiIiZjjFfqtsiyt4QO
+         ha7gaAcGCgJOjl2nNLb0fluFBOpFd+440yHwY3/uz1yNg07YFz1/Oc63eqJzJG6LqmBV
+         VFmxjTJssdgspc30YR8CaQYtLb/MnYo0rtEhratYPp1oipGj0tpDsBm5t67y/1U+XuBn
+         yHwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=MNKG4+F+LTFwpzpyT4+p3VzII4Y7Yin7L8vMm6TuNbw=;
-        b=I/WFSYVTQiGuiar5LEMI0g5CW3qCS1fxY6cUM2jLsei5M/rhdhUEdvyv2ASadkrLl3
-         IzXFfsdTG1tdE/wd2LN+pRIrN/lp8DA3qcRA5TdT6PAPbJ1glRpIm0zzk0JVKH5sMY8C
-         L3N9UUq6j0QFbFNlwlRttjHsBstP5eNO1sCKMG0gTaxf1C1ptODwnlssJm4mKp9zblux
-         XWy/QcHJFc4P7YCVgFXvwwpMQrJgXtJaoJo7k1X4kBWfAWpowMdjf+BUo1bAxdhHwyUd
-         7DAklAeL1/0VNA6+rUcCylRvs3/iq/BmcG1QsmUyFLU+x6FDswVJEG1ZILlUalzqN5/3
-         FayA==
-X-Gm-Message-State: APjAAAVl5K+jjy1jqMZexOvcmb6g0M2oaJAo8wULCUSGEOyOCTA7h9Uu
-        fP3Ba5FjMujAuMnstSkiLKz6wMrI0vg=
-X-Google-Smtp-Source: APXvYqwTXYO/dGTkYStT+f8k8DCyX8/tZWe8TV+b8BPI+P1ZHK+GNkivO4qRMgToUEjiu63WEqhEXg==
-X-Received: by 2002:a37:6c9:: with SMTP id 192mr5356300qkg.25.1582811188307;
-        Thu, 27 Feb 2020 05:46:28 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id v82sm3129067qka.51.2020.02.27.05.46.27
+        bh=gd7SzCH0Y53mfN+8nDt/akmk+wPgbeU2gPKEM6406QE=;
+        b=QMLIXZEU2Zq4NOq0G7FzH14EH2BuzX0emkHrP4eRp03ejYG2qwym/szZmvVl+KdfYT
+         vTzux83HRCMf2AgdjI6g0tRk+lHWusTEzr+jGiby0QRLTlUXQ0SLGzxKqDeaoazExXWF
+         nfI0RZrFFyg6a9VPXhOoWMiUYWSmkrYw2KOrmxSbGOigfZ8oFMLz9zguMsRp8Mbt6tan
+         4YknJcf2tboe24swHSSFFQkLhI51I6GuIe9hwkpaH/37h+pl/OOM+wCdCCRMQ5RHlwWv
+         WCu0edE+Z319UTd/1vJ95MvZObgi8DG9IDAwXw4lWLmu38Nyydh6pX/+5eDjo5KlVxqH
+         MsUg==
+X-Gm-Message-State: APjAAAVovKTX6v1HLsABjznUV77zsRqkNuEkKlMfLz0RF7HNv9tenUQR
+        NNTvMycpGaqau8FgPdLJymZngg==
+X-Google-Smtp-Source: APXvYqxEInE9QJTJeApSvrQy8nbO2rR2GV3M51/1s9gxI8qF3u18H/D/oDUoV2CDkRZGOsiQRosyBg==
+X-Received: by 2002:ae9:d887:: with SMTP id u129mr5666875qkf.357.1582811288534;
+        Thu, 27 Feb 2020 05:48:08 -0800 (PST)
+Received: from localhost (pool-108-27-252-85.nycmny.fios.verizon.net. [108.27.252.85])
+        by smtp.gmail.com with ESMTPSA id t37sm3264299qth.0.2020.02.27.05.48.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 05:46:27 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id B8485403AD; Thu, 27 Feb 2020 10:46:25 -0300 (-03)
-Date:   Thu, 27 Feb 2020 10:46:25 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kajol Jain <kjain@linux.ibm.com>,
-        John Garry <john.garry@huawei.com>
-Subject: Re: [PATCHv2 0/5] perf expr: Add flex scanner
-Message-ID: <20200227134625.GC10761@kernel.org>
-References: <20200224082918.58489-1-jolsa@kernel.org>
- <20200227121000.GE34774@krava>
+        Thu, 27 Feb 2020 05:48:07 -0800 (PST)
+Date:   Thu, 27 Feb 2020 08:48:06 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     js1304@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Subject: Re: [PATCH v2 0/9] workingset protection/detection on the anonymous
+ LRU list
+Message-ID: <20200227134806.GC39625@cmpxchg.org>
+References: <1582175513-22601-1-git-send-email-iamjoonsoo.kim@lge.com>
+ <20200226193942.30049da9c090b466bdc5ec23@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200227121000.GE34774@krava>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <20200226193942.30049da9c090b466bdc5ec23@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Feb 27, 2020 at 01:10:00PM +0100, Jiri Olsa escreveu:
-> On Mon, Feb 24, 2020 at 09:29:13AM +0100, Jiri Olsa wrote:
-> > hi,
-> > while preparing changes for user defined metric expressions
-> > I also moved the expression manual parser to flex.
-> > 
-> > The reason is to have an easy and reasonable way to support
-> > and parse multiple user-defined metric expressions from
-> > command line or file.
-> > 
-> > I was posponing the change, but I just saw another update to
-> > the expr manual scanner (from Kajol Jain), so cherry picked
-> > just the expr flex code changes to get it out.
-> > 
-> > Kajol Jain,
-> > I think it should ease up your change for unknown values marked
-> > by '?'. Would you consider rebasing your changes on top of this?
-> > 
-> > 
+On Wed, Feb 26, 2020 at 07:39:42PM -0800, Andrew Morton wrote:
+> On Thu, 20 Feb 2020 14:11:44 +0900 js1304@gmail.com wrote:
 > 
-> kajoljain found and issue in this one, I'll send v3 as
-> soon as he confirms the fix
-
-Ok, I'll hold off processing those patches then, thanks!
-
-- Arnaldo
- 
-> jirka
+> > From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> > 
+> > Hello,
+> > 
+> > This patchset implements workingset protection and detection on
+> > the anonymous LRU list.
 > 
+> The test robot measurement got my attention!
 > 
-> > v2 changes:
-> >   - handle special chars properly
-> >   - fix return value for expr__parse
-> > 
-> > Available also in:
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
-> >   perf/metric_flex
-> > 
-> > thanks,
-> > jirka
-> > 
-> > 
-> > ---
-> > Jiri Olsa (5):
-> >       perf expr: Add expr.c object
-> >       perf expr: Move expr lexer to flex
-> >       perf expr: Increase EXPR_MAX_OTHER
-> >       perf expr: Straighten expr__parse/expr__find_other interface
-> >       perf expr: Make expr__parse return -1 on error
-> > 
-> >  tools/perf/tests/expr.c       |  10 +++---
-> >  tools/perf/util/Build         |  11 ++++++-
-> >  tools/perf/util/expr.c        | 112 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  tools/perf/util/expr.h        |   8 ++---
-> >  tools/perf/util/expr.l        |  87 +++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  tools/perf/util/expr.y        | 208 ++++++++++++++++++++++++++++++++-----------------------------------------------------------------------------------------
-> >  tools/perf/util/stat-shadow.c |   4 +--
-> >  7 files changed, 272 insertions(+), 168 deletions(-)
-> >  create mode 100644 tools/perf/util/expr.c
-> >  create mode 100644 tools/perf/util/expr.l
-> > 
+> http://lkml.kernel.org/r/20200227022905.GH6548@shao2-debian
 > 
+> > * Changes on v2
+> > - fix a critical bug that uses out of index lru list in
+> > workingset_refault()
+> > - fix a bug that reuses the rotate value for previous page
+> > 
+> > * SUBJECT
+> > workingset protection
+> > 
+> > * PROBLEM
+> > In current implementation, newly created or swap-in anonymous page is
+> > started on the active list. Growing the active list results in rebalancing
+> > active/inactive list so old pages on the active list are demoted to the
+> > inactive list. Hence, hot page on the active list isn't protected at all.
+> > 
+> > Following is an example of this situation.
+> > 
+> > Assume that 50 hot pages on active list and system can contain total
+> > 100 pages. Numbers denote the number of pages on active/inactive
+> > list (active | inactive). (h) stands for hot pages and (uo) stands for
+> > used-once pages.
+> > 
+> > 1. 50 hot pages on active list
+> > 50(h) | 0
+> > 
+> > 2. workload: 50 newly created (used-once) pages
+> > 50(uo) | 50(h)
+> > 
+> > 3. workload: another 50 newly created (used-once) pages
+> > 50(uo) | 50(uo), swap-out 50(h)
+> > 
+> > As we can see, hot pages are swapped-out and it would cause swap-in later.
+> > 
+> > * SOLUTION
+> > Since this is what we want to avoid, this patchset implements workingset
+> > protection. Like as the file LRU list, newly created or swap-in anonymous
+> > page is started on the inactive list. Also, like as the file LRU list,
+> > if enough reference happens, the page will be promoted. This simple
+> > modification changes the above example as following.
+> 
+> One wonders why on earth we weren't doing these things in the first
+> place?
+>
+> > * SUBJECT
+> > workingset detection
+> 
+> It sounds like the above simple aging changes provide most of the
+> improvement, and that the workingset changes are less beneficial and a
+> bit more risky/speculative?
+> 
+> If so, would it be best for us to concentrate on the aging changes
+> first, let that settle in and spread out and then turn attention to the
+> workingset changes?
 
--- 
+Those two patches work well for some workloads (like the benchmark),
+but not for others. The full patchset makes sure both types work well.
 
-- Arnaldo
+Specifically, the existing aging strategy for anon assumes that most
+anon pages allocated are hot. That's why they all start active and we
+then do second-chance with the small inactive LRU to filter out the
+few cold ones to swap out. This is true for many common workloads.
+
+The benchmark creates a larger-than-memory set of anon pages with a
+flat access profile - to the VM a flood of one-off pages. Joonsoo's
+first two patches allow the VM to usher those pages in and out of
+memory very quickly, which explains the throughput boost. But it comes
+at the cost of reducing space available to hot anon pages, which will
+regress others.
+
+Joonsoo's full patchset makes the VM support both types of workloads
+well: by putting everything on the inactive list first, one-off pages
+can move through the system without disturbing the hot pages. And by
+supplementing the inactive list with non-resident information, he can
+keep it tiny without the risk of one-off pages drowning out new hot
+pages. He can retain today's level of active page protection and
+detection, while allowing one-off pages to move through quickly.
