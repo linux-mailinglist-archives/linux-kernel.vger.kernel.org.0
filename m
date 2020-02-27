@@ -2,47 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F8CF17195D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:44:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA8E171A1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729753AbgB0NoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:44:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39604 "EHLO mail.kernel.org"
+        id S1731317AbgB0Nu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:50:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729207AbgB0NoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:44:11 -0500
+        id S1731301AbgB0Nuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:50:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4AA120578;
-        Thu, 27 Feb 2020 13:44:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E142B20578;
+        Thu, 27 Feb 2020 13:50:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811050;
-        bh=5LpiuVQR4boJBXcfrHIAnyU+ztcPJ+Wm0GQPtVjfVXg=;
+        s=default; t=1582811453;
+        bh=NWoqqcRvkARgzo8Ue2Hk3NscqpAjN0tb33dOjcd04nI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cjoSby5lJ2SMGXYB8yMNaXNPDmMhpJTs77fO1NGMAz1/VTvr71asTBQ7IV4bykLCs
-         lx0OpjIqmE0GBYjIoMFK3Kzkw7IbRIcFokGDoBqjYuDVMs8cj5JUi3seOljYBDOgpq
-         GJHAPSekBhvTehh3gDx5/LsGzTGqbKiemWQKp4vc=
+        b=sleT6nu4cZMPsvuk32UHU8fRb1QP33UCl5mJsdOp3tYxt/eHTsGb78CkWA6cLRX5N
+         H2NAzXFPmuAmQSmORZcBFAOALk3S4g0pMcda3B3HN4ytjYWz8JVmtVJ0dbWlCrNJfE
+         LwenpLS9T3n3MDFnVXchVKKU9q2z4OCc2syXjzOI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        "Herton R. Krzesinski" <herton@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>, malat@debian.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 095/113] Revert "ipc,sem: remove uneeded sem_undo_list lock usage in exit_sem()"
-Date:   Thu, 27 Feb 2020 14:36:51 +0100
-Message-Id: <20200227132226.936465375@linuxfoundation.org>
+        Gustavo Romero <gromero@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 139/165] powerpc/tm: Fix endianness flip on trap
+Date:   Thu, 27 Feb 2020 14:36:53 +0100
+Message-Id: <20200227132251.358799007@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,135 +45,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
+From: Gustavo Romero <gromero@linux.vnet.ibm.com>
 
-commit edf28f4061afe4c2d9eb1c3323d90e882c1d6800 upstream.
+[ Upstream commit 1c200e63d055ec0125e44a5e386b9b78aada7eb3 ]
 
-This reverts commit a97955844807e327df11aa33869009d14d6b7de0.
+Currently it's possible that a thread on PPC64 LE has its endianness
+flipped inadvertently to Big-Endian resulting in a crash once the process
+is back from the signal handler.
 
-Commit a97955844807 ("ipc,sem: remove uneeded sem_undo_list lock usage
-in exit_sem()") removes a lock that is needed.  This leads to a process
-looping infinitely in exit_sem() and can also lead to a crash.  There is
-a reproducer available in [1] and with the commit reverted the issue
-does not reproduce anymore.
+If giveup_all() is called when regs->msr has the bits MSR.FP and MSR.VEC
+disabled (and hence MSR.VSX disabled too) it returns without calling
+check_if_tm_restore_required() which copies regs->msr to ckpt_regs->msr if
+the process caught a signal whilst in transactional mode. Then once in
+setup_tm_sigcontexts() MSR from ckpt_regs.msr is used, but since
+check_if_tm_restore_required() was not called previuosly, gp_regs[PT_MSR]
+gets a copy of invalid MSR bits as MSR in ckpt_regs was not updated from
+regs->msr and so is zeroed. Later when leaving the signal handler once in
+sys_rt_sigreturn() the TS bits of gp_regs[PT_MSR] are checked to determine
+if restore_tm_sigcontexts() must be called to pull in the correct MSR state
+into the user context. Because TS bits are zeroed
+restore_tm_sigcontexts() is never called and MSR restored from the user
+context on returning from the signal handler has the MSR.LE (the endianness
+bit) forced to zero (Big-Endian). That leads, for instance, to 'nop' being
+treated as an illegal instruction in the following sequence:
 
-Using the reproducer found in [1] is fairly easy to reach a point where
-one of the child processes is looping infinitely in exit_sem between
-for(;;) and if (semid == -1) block, while it's trying to free its last
-sem_undo structure which has already been freed by freeary().
+	tbegin.
+	beq	1f
+	trap
+	tend.
+1:	nop
 
-Each sem_undo struct is on two lists: one per semaphore set (list_id)
-and one per process (list_proc).  The list_id list tracks undos by
-semaphore set, and the list_proc by process.
+on PPC64 LE machines and the process dies just after returning from the
+signal handler.
 
-Undo structures are removed either by freeary() or by exit_sem().  The
-freeary function is invoked when the user invokes a syscall to remove a
-semaphore set.  During this operation freeary() traverses the list_id
-associated with the semaphore set and removes the undo structures from
-both the list_id and list_proc lists.
+PPC64 BE is also affected but in a subtle way since forcing Big-Endian on
+a BE machine does not change the endianness.
 
-For this case, exit_sem() is called at process exit.  Each process
-contains a struct sem_undo_list (referred to as "ulp") which contains
-the head for the list_proc list.  When the process exits, exit_sem()
-traverses this list to remove each sem_undo struct.  As in freeary(),
-whenever a sem_undo struct is removed from list_proc, it is also removed
-from the list_id list.
+This commit fixes the issue described above by ensuring that once in
+setup_tm_sigcontexts() the MSR used is from regs->msr instead of from
+ckpt_regs->msr and by ensuring that we pull in only the MSR.FP, MSR.VEC,
+and MSR.VSX bits from ckpt_regs->msr.
 
-Removing elements from list_id is safe for both exit_sem() and freeary()
-due to sem_lock().  Removing elements from list_proc is not safe;
-freeary() locks &un->ulp->lock when it performs
-list_del_rcu(&un->list_proc) but exit_sem() does not (locking was
-removed by commit a97955844807 ("ipc,sem: remove uneeded sem_undo_list
-lock usage in exit_sem()").
+The fix was tested both on LE and BE machines and no regression regarding
+the powerpc/tm selftests was observed.
 
-This can result in the following situation while executing the
-reproducer [1] : Consider a child process in exit_sem() and the parent
-in freeary() (because of semctl(sid[i], NSEM, IPC_RMID)).
-
- - The list_proc for the child contains the last two undo structs A and
-   B (the rest have been removed either by exit_sem() or freeary()).
-
- - The semid for A is 1 and semid for B is 2.
-
- - exit_sem() removes A and at the same time freeary() removes B.
-
- - Since A and B have different semid sem_lock() will acquire different
-   locks for each process and both can proceed.
-
-The bug is that they remove A and B from the same list_proc at the same
-time because only freeary() acquires the ulp lock. When exit_sem()
-removes A it makes ulp->list_proc.next to point at B and at the same
-time freeary() removes B setting B->semid=-1.
-
-At the next iteration of for(;;) loop exit_sem() will try to remove B.
-
-The only way to break from for(;;) is for (&un->list_proc ==
-&ulp->list_proc) to be true which is not. Then exit_sem() will check if
-B->semid=-1 which is and will continue looping in for(;;) until the
-memory for B is reallocated and the value at B->semid is changed.
-
-At that point, exit_sem() will crash attempting to unlink B from the
-lists (this can be easily triggered by running the reproducer [1] a
-second time).
-
-To prove this scenario instrumentation was added to keep information
-about each sem_undo (un) struct that is removed per process and per
-semaphore set (sma).
-
-          CPU0                                CPU1
-  [caller holds sem_lock(sma for A)]      ...
-  freeary()                               exit_sem()
-  ...                                     ...
-  ...                                     sem_lock(sma for B)
-  spin_lock(A->ulp->lock)                 ...
-  list_del_rcu(un_A->list_proc)           list_del_rcu(un_B->list_proc)
-
-Undo structures A and B have different semid and sem_lock() operations
-proceed.  However they belong to the same list_proc list and they are
-removed at the same time.  This results into ulp->list_proc.next
-pointing to the address of B which is already removed.
-
-After reverting commit a97955844807 ("ipc,sem: remove uneeded
-sem_undo_list lock usage in exit_sem()") the issue was no longer
-reproducible.
-
-[1] https://bugzilla.redhat.com/show_bug.cgi?id=1694779
-
-Link: http://lkml.kernel.org/r/20191211191318.11860-1-ioanna-maria.alifieraki@canonical.com
-Fixes: a97955844807 ("ipc,sem: remove uneeded sem_undo_list lock usage in exit_sem()")
-Signed-off-by: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
-Acked-by: Manfred Spraul <manfred@colorfullife.com>
-Acked-by: Herton R. Krzesinski <herton@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: <malat@debian.org>
-Cc: Joel Fernandes (Google) <joel@joelfernandes.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Jay Vosburgh <jay.vosburgh@canonical.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- ipc/sem.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/powerpc/kernel/signal_64.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -2151,11 +2151,9 @@ void exit_sem(struct task_struct *tsk)
- 		ipc_assert_locked_object(&sma->sem_perm);
- 		list_del(&un->list_id);
+diff --git a/arch/powerpc/kernel/signal_64.c b/arch/powerpc/kernel/signal_64.c
+index 9d8fd0c74b314..459c4adf47841 100644
+--- a/arch/powerpc/kernel/signal_64.c
++++ b/arch/powerpc/kernel/signal_64.c
+@@ -207,7 +207,7 @@ static long setup_tm_sigcontexts(struct sigcontext __user *sc,
+ 	elf_vrreg_t __user *tm_v_regs = sigcontext_vmx_regs(tm_sc);
+ #endif
+ 	struct pt_regs *regs = tsk->thread.regs;
+-	unsigned long msr = tsk->thread.ckpt_regs.msr;
++	unsigned long msr = tsk->thread.regs->msr;
+ 	long err = 0;
  
--		/* we are the last process using this ulp, acquiring ulp->lock
--		 * isn't required. Besides that, we are also protected against
--		 * IPC_RMID as we hold sma->sem_perm lock now
--		 */
-+		spin_lock(&ulp->lock);
- 		list_del_rcu(&un->list_proc);
-+		spin_unlock(&ulp->lock);
+ 	BUG_ON(tsk != current);
+@@ -216,6 +216,12 @@ static long setup_tm_sigcontexts(struct sigcontext __user *sc,
  
- 		/* perform adjustments registered in un */
- 		for (i = 0; i < sma->sem_nsems; i++) {
+ 	WARN_ON(tm_suspend_disabled);
+ 
++	/* Restore checkpointed FP, VEC, and VSX bits from ckpt_regs as
++	 * it contains the correct FP, VEC, VSX state after we treclaimed
++	 * the transaction and giveup_all() was called on reclaiming.
++	 */
++	msr |= tsk->thread.ckpt_regs.msr & (MSR_FP | MSR_VEC | MSR_VSX);
++
+ 	/* Remove TM bits from thread's MSR.  The MSR in the sigcontext
+ 	 * just indicates to userland that we were doing a transaction, but we
+ 	 * don't want to return in transactional state.  This also ensures
+-- 
+2.20.1
+
 
 
