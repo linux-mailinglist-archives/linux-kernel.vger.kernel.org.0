@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CC6317196A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:45:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64097171A2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbgB0Nol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:44:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40140 "EHLO mail.kernel.org"
+        id S1731010AbgB0Nv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:51:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729436AbgB0Nog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:44:36 -0500
+        id S1731388AbgB0NvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:51:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89161246A9;
-        Thu, 27 Feb 2020 13:44:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6774320578;
+        Thu, 27 Feb 2020 13:51:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811076;
-        bh=QfhNG+2Bqggo8/TPGsYpzPuD4HNyMRGUQS3IdG4mdnQ=;
+        s=default; t=1582811484;
+        bh=qKFy04UVA0hQ8RqCiIV53fUBqu0Lw5p+r2CcnRmTglg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cgPTQ8Ry7GbJucrcUUzWD5HMB7ggNwRyunvX7oqvv/yvYwPV6doPTvStCCQgaIlum
-         7Srpdv1GXZDYSsbnRyjtXuT9X3gT2snUrUL/jvLL6fVVcs67ToBuiFkkzD4j4bxXa4
-         eWE/G3FnG6Py/Z4bNKZU73Fz9kLUUSnmcQCs/QrI=
+        b=FiiMPYNH8QlyKqXpp5cnC2VFZ+KDwRAscARHo0N6lVnZfOeuv4ACfesbvQD7ppm/3
+         bHxR8IuUN5U0vXVCarZZ9/cLT91ro1lFvm5G8nknpzxj6zYwgDJUTaoRMYEyFPQ3Tm
+         4OA4l/Q59rA+5xBqgwPO7cpYCz4ib9P1d2FoTGeE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rahul Kundu <rahul.kundu@chelsio.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dakshaja Uppalapati <dakshaja@chelsio.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 108/113] scsi: Revert "target: iscsi: Wait for all commands to finish before freeing a session"
+        stable@vger.kernel.org, Oliver Upton <oupton@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 150/165] KVM: nVMX: Refactor IO bitmap checks into helper function
 Date:   Thu, 27 Feb 2020 14:37:04 +0100
-Message-Id: <20200227132229.067564398@linuxfoundation.org>
+Message-Id: <20200227132252.652394439@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,70 +44,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Oliver Upton <oupton@google.com>
 
-commit 807b9515b7d044cf77df31f1af9d842a76ecd5cb upstream.
+commit e71237d3ff1abf9f3388337cfebf53b96df2020d upstream.
 
-Since commit e9d3009cb936 introduced a regression and since the fix for
-that regression was not perfect, revert this commit.
+Checks against the IO bitmap are useful for both instruction emulation
+and VM-exit reflection. Refactor the IO bitmap checks into a helper
+function.
 
-Link: https://marc.info/?l=target-devel&m=158157054906195
-Cc: Rahul Kundu <rahul.kundu@chelsio.com>
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Reported-by: Dakshaja Uppalapati <dakshaja@chelsio.com>
-Fixes: e9d3009cb936 ("scsi: target: iscsi: Wait for all commands to finish before freeing a session")
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Oliver Upton <oupton@google.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/target/iscsi/iscsi_target.c |   10 ++--------
- include/scsi/iscsi_proto.h          |    1 -
- 2 files changed, 2 insertions(+), 9 deletions(-)
+ arch/x86/kvm/vmx.c |   40 +++++++++++++++++++++++++++-------------
+ 1 file changed, 27 insertions(+), 13 deletions(-)
 
---- a/drivers/target/iscsi/iscsi_target.c
-+++ b/drivers/target/iscsi/iscsi_target.c
-@@ -993,9 +993,7 @@ int iscsit_setup_scsi_cmd(struct iscsi_c
- 		hdr->cmdsn, be32_to_cpu(hdr->data_length), payload_length,
- 		conn->cid);
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -4641,6 +4641,26 @@ static bool cs_ss_rpl_check(struct kvm_v
+ 		 (ss.selector & SEGMENT_RPL_MASK));
+ }
  
--	if (target_get_sess_cmd(&cmd->se_cmd, true) < 0)
--		return iscsit_add_reject_cmd(cmd,
--				ISCSI_REASON_WAITING_FOR_LOGOUT, buf);
-+	target_get_sess_cmd(&cmd->se_cmd, true);
++static bool nested_vmx_check_io_bitmaps(struct kvm_vcpu *vcpu,
++					unsigned int port, int size);
++static bool nested_vmx_exit_handled_io(struct kvm_vcpu *vcpu,
++				       struct vmcs12 *vmcs12)
++{
++	unsigned long exit_qualification;
++	unsigned int port;
++	int size;
++
++	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
++		return nested_cpu_has(vmcs12, CPU_BASED_UNCOND_IO_EXITING);
++
++	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
++
++	port = exit_qualification >> 16;
++	size = (exit_qualification & 7) + 1;
++
++	return nested_vmx_check_io_bitmaps(vcpu, port, size);
++}
++
+ /*
+  * Check if guest state is valid. Returns true if valid, false if
+  * not.
+@@ -8026,23 +8046,17 @@ static int (*const kvm_vmx_exit_handlers
+ static const int kvm_vmx_max_exit_handlers =
+ 	ARRAY_SIZE(kvm_vmx_exit_handlers);
  
- 	cmd->sense_reason = transport_lookup_cmd_lun(&cmd->se_cmd,
- 						     scsilun_to_int(&hdr->lun));
-@@ -1806,9 +1804,7 @@ iscsit_handle_task_mgt_cmd(struct iscsi_
- 			      conn->sess->se_sess, 0, DMA_NONE,
- 			      TCM_SIMPLE_TAG, cmd->sense_buffer + 2);
+-static bool nested_vmx_exit_handled_io(struct kvm_vcpu *vcpu,
+-				       struct vmcs12 *vmcs12)
++/*
++ * Return true if an IO instruction with the specified port and size should cause
++ * a VM-exit into L1.
++ */
++bool nested_vmx_check_io_bitmaps(struct kvm_vcpu *vcpu, unsigned int port,
++				 int size)
+ {
+-	unsigned long exit_qualification;
++	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+ 	gpa_t bitmap, last_bitmap;
+-	unsigned int port;
+-	int size;
+ 	u8 b;
  
--	if (target_get_sess_cmd(&cmd->se_cmd, true) < 0)
--		return iscsit_add_reject_cmd(cmd,
--				ISCSI_REASON_WAITING_FOR_LOGOUT, buf);
-+	target_get_sess_cmd(&cmd->se_cmd, true);
+-	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
+-		return nested_cpu_has(vmcs12, CPU_BASED_UNCOND_IO_EXITING);
+-
+-	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
+-
+-	port = exit_qualification >> 16;
+-	size = (exit_qualification & 7) + 1;
+-
+ 	last_bitmap = (gpa_t)-1;
+ 	b = -1;
  
- 	/*
- 	 * TASK_REASSIGN for ERL=2 / connection stays inside of
-@@ -4394,8 +4390,6 @@ int iscsit_close_connection(
- 	 * must wait until they have completed.
- 	 */
- 	iscsit_check_conn_usage_count(conn);
--	target_sess_cmd_list_set_waiting(sess->se_sess);
--	target_wait_for_sess_cmds(sess->se_sess);
- 
- 	if (conn->conn_rx_hash.tfm)
- 		crypto_free_hash(conn->conn_rx_hash.tfm);
---- a/include/scsi/iscsi_proto.h
-+++ b/include/scsi/iscsi_proto.h
-@@ -638,7 +638,6 @@ struct iscsi_reject {
- #define ISCSI_REASON_BOOKMARK_INVALID	9
- #define ISCSI_REASON_BOOKMARK_NO_RESOURCES	10
- #define ISCSI_REASON_NEGOTIATION_RESET	11
--#define ISCSI_REASON_WAITING_FOR_LOGOUT	12
- 
- /* Max. number of Key=Value pairs in a text message */
- #define MAX_KEY_VALUE_PAIRS	8192
 
 
