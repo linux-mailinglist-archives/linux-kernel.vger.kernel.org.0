@@ -2,135 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 161091722E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:11:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4E541722EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:12:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729966AbgB0QLO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:11:14 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:20440 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729443AbgB0QLN (ORCPT
+        id S1730071AbgB0QMQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:12:16 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:27262 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729703AbgB0QMP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:11:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582819873;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=baOVStFi/SNG29sbg/ucY09+VCW+eczt7xzz7SmVLS4=;
-        b=D5/70dFjBGR1x6K5TCDK/j+zZ1AHpRfnyzfwVsjw4koT2Za7Z2dlwBeyu5IYwYL6u3eMhE
-        mGXNts2lo5+M9Dfggmhgwa9Cq1r0/LNhrftIcbLugkbF38AdcKqE6zl+va2KiYD3nPB552
-        mx49TdHmEfqKhRUPRoZl4E59Z39Xh5k=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-225-5nDBex09N9-vClpZCVygwA-1; Thu, 27 Feb 2020 11:11:08 -0500
-X-MC-Unique: 5nDBex09N9-vClpZCVygwA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6D43FDB68;
-        Thu, 27 Feb 2020 16:11:05 +0000 (UTC)
-Received: from localhost (ovpn-117-38.ams2.redhat.com [10.36.117.38])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2EE2760C63;
-        Thu, 27 Feb 2020 16:11:03 +0000 (UTC)
-Date:   Thu, 27 Feb 2020 16:11:02 +0000
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     davem@davemloft.net, Dexuan Cui <decui@microsoft.com>,
-        Hillf Danton <hdanton@sina.com>,
-        virtualization@lists.linux-foundation.org,
-        "K. Y. Srinivasan" <kys@microsoft.com>, kvm@vger.kernel.org,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        syzbot+731710996d79d0d58fbc@syzkaller.appspotmail.com,
-        netdev@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
-        Sunil Muthuswamy <sunilmut@microsoft.com>,
-        linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        Jakub Kicinski <kuba@kernel.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Jorgen Hansen <jhansen@vmware.com>
-Subject: Re: [PATCH net] vsock: fix potential deadlock in transport->release()
-Message-ID: <20200227161102.GC315098@stefanha-x1.localdomain>
-References: <20200226105818.36055-1-sgarzare@redhat.com>
+        Thu, 27 Feb 2020 11:12:15 -0500
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id 01RGCADP000978;
+        Fri, 28 Feb 2020 01:12:11 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 01RGCADP000978
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582819932;
+        bh=dCIdExQy8zrf9NhMRaOGJJL9zPcIodXfI3s7oSAI5p4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wxYIJFReNxomo24FiCsLd7MDQNSnegeTFXAKLRpKXGC5R+vv2aK/gnANaXgiqyzIZ
+         9V0SLRbj99uCt6mtS38dAqm495QbctDI4FsAtyRjNaEql7f7q53pCkTv0BdUEiJ4sW
+         ZRDf/Jd0Dh5ZTde+NFym86EoIAGG6axZM1HxtC9fHDRTtrkMavKGVN/24g3ApdAy3x
+         hWTPHaQ//w0xD0AkxhLvHuLOSLBBIu3i2inwdRRhxW8hLntCblzURnnKDHtcV6BH4a
+         /p6Q/t6pnikPEvNKurgEar1l3kg/ny2j/NUOOPkLLbVP9SClGoZg7NvOlutEYoMxCG
+         VYOABtvMQvwXg==
+X-Nifty-SrcIP: [209.85.217.43]
+Received: by mail-vs1-f43.google.com with SMTP id m4so2168337vsa.12;
+        Thu, 27 Feb 2020 08:12:11 -0800 (PST)
+X-Gm-Message-State: APjAAAWjuKwuCK1sxNJXxZk60s12kjS37KBr2Azwdu3MIjyr6JOjM1JQ
+        9zNVn2jI146wuT2dA1k12nlWZ9ULi6TcykiGJYk=
+X-Google-Smtp-Source: APXvYqzHtClR5DvEw/exWEpLpyKt9uSNp2+MkFTTUmkcTIr4mHc+49cy/+C4LfpTHnqPQl1ib4adA7gBbtNt83b8m+w=
+X-Received: by 2002:a05:6102:48b:: with SMTP id n11mr3071450vsa.181.1582819930147;
+ Thu, 27 Feb 2020 08:12:10 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200226105818.36055-1-sgarzare@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="DIOMP1UsTsWJauNi"
-Content-Disposition: inline
+References: <20200225210250.64366-1-ndesaulniers@google.com> <20200226232336.252872-1-ndesaulniers@google.com>
+In-Reply-To: <20200226232336.252872-1-ndesaulniers@google.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 28 Feb 2020 01:11:32 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT=O9+VMEy1j9Un9rznnb_qaxtC-C_xO1DLwiZAhCxZ0g@mail.gmail.com>
+Message-ID: <CAK7LNAT=O9+VMEy1j9Un9rznnb_qaxtC-C_xO1DLwiZAhCxZ0g@mail.gmail.com>
+Subject: Re: [PATCH v3] Documentation/llvm: add documentation on building w/ Clang/LLVM
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---DIOMP1UsTsWJauNi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Feb 26, 2020 at 11:58:18AM +0100, Stefano Garzarella wrote:
-> Some transports (hyperv, virtio) acquire the sock lock during the
-> .release() callback.
->=20
-> In the vsock_stream_connect() we call vsock_assign_transport(); if
-> the socket was previously assigned to another transport, the
-> vsk->transport->release() is called, but the sock lock is already
-> held in the vsock_stream_connect(), causing a deadlock reported by
-> syzbot:
->=20
->     INFO: task syz-executor280:9768 blocked for more than 143 seconds.
->       Not tainted 5.6.0-rc1-syzkaller #0
->     "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this mess=
-age.
->     syz-executor280 D27912  9768   9766 0x00000000
->     Call Trace:
->      context_switch kernel/sched/core.c:3386 [inline]
->      __schedule+0x934/0x1f90 kernel/sched/core.c:4082
->      schedule+0xdc/0x2b0 kernel/sched/core.c:4156
->      __lock_sock+0x165/0x290 net/core/sock.c:2413
->      lock_sock_nested+0xfe/0x120 net/core/sock.c:2938
->      virtio_transport_release+0xc4/0xd60 net/vmw_vsock/virtio_transport_c=
-ommon.c:832
->      vsock_assign_transport+0xf3/0x3b0 net/vmw_vsock/af_vsock.c:454
->      vsock_stream_connect+0x2b3/0xc70 net/vmw_vsock/af_vsock.c:1288
->      __sys_connect_file+0x161/0x1c0 net/socket.c:1857
->      __sys_connect+0x174/0x1b0 net/socket.c:1874
->      __do_sys_connect net/socket.c:1885 [inline]
->      __se_sys_connect net/socket.c:1882 [inline]
->      __x64_sys_connect+0x73/0xb0 net/socket.c:1882
->      do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
->      entry_SYSCALL_64_after_hwframe+0x49/0xbe
->=20
-> To avoid this issue, this patch remove the lock acquiring in the
-> .release() callback of hyperv and virtio transports, and it holds
-> the lock when we call vsk->transport->release() in the vsock core.
->=20
-> Reported-by: syzbot+731710996d79d0d58fbc@syzkaller.appspotmail.com
-> Fixes: 408624af4c89 ("vsock: use local transport when it is loaded")
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+On Thu, Feb 27, 2020 at 8:23 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> Added to kbuild documentation. Provides more official info on building
+> kernels with Clang and LLVM than our wiki.
+>
+> Suggested-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+> Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 > ---
->  net/vmw_vsock/af_vsock.c                | 20 ++++++++++++--------
->  net/vmw_vsock/hyperv_transport.c        |  3 ---
->  net/vmw_vsock/virtio_transport_common.c |  2 --
->  3 files changed, 12 insertions(+), 13 deletions(-)
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Applied to linux-kbuild.
 
---DIOMP1UsTsWJauNi
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl5X6hYACgkQnKSrs4Gr
-c8hIwwf/VpB7q37vIv4l2+NFuq3CWGZbLfSSG7A9u4sXSo+VhcEltqh8jdz8xEfS
-k9JaAaCosM43HAtz+LPmfHG6eL761HjpUQ9KnLgU53aWhJwFuIv000o2w+OA3X4O
-cr1aWzcWJzFpkU1xQb41J1FR8FUymgWSqQPitEF3ElEnmbfFGSrEgrVOc9Ou2Qhb
-57r4rlPuiZNNshiWMjCalPewQeJETnrEnB9cxsjc0gMu/xn1KRE7g6i4yG1smtjm
-YSgZmV1NgDWrAKr//amiOCqTvKH2DUYYgvUwnx27G0iRrWO47TQYbE+/jDd+FUol
-u2jPzVcR0q/qq1CJsyPqKx+7pdCqUg==
-=t+mC
------END PGP SIGNATURE-----
+> Changes V2 -> V3:
+> * Drop Randy's Suggested-by tag. Sorry Randy, I do appreciate the review
+>   though.
+> * Add F: line to MAINTAINERS.
+>
+> Changes V1 -> V2:
+> * s/On going/ongoing/
+> * add Randy's Suggested-by
+> * add Nathan and Sedat's Reviewed-by
+> * Upgrade Kees' Sugguested-by to Reviewed-by
+> * s/suffix/prefix/
+>
+>  Documentation/kbuild/index.rst |  1 +
+>  Documentation/kbuild/llvm.rst  | 80 ++++++++++++++++++++++++++++++++++
+>  MAINTAINERS                    |  1 +
+>  3 files changed, 82 insertions(+)
+>  create mode 100644 Documentation/kbuild/llvm.rst
+>
+> diff --git a/Documentation/kbuild/index.rst b/Documentation/kbuild/index.rst
+> index 0f144fad99a6..3882bd5f7728 100644
+> --- a/Documentation/kbuild/index.rst
+> +++ b/Documentation/kbuild/index.rst
+> @@ -19,6 +19,7 @@ Kernel Build System
+>
+>      issues
+>      reproducible-builds
+> +    llvm
+>
+>  .. only::  subproject and html
+>
+> diff --git a/Documentation/kbuild/llvm.rst b/Documentation/kbuild/llvm.rst
+> new file mode 100644
+> index 000000000000..d6c79eb4e23e
+> --- /dev/null
+> +++ b/Documentation/kbuild/llvm.rst
+> @@ -0,0 +1,80 @@
+> +==============================
+> +Building Linux with Clang/LLVM
+> +==============================
+> +
+> +This document covers how to build the Linux kernel with Clang and LLVM
+> +utilities.
+> +
+> +About
+> +-----
+> +
+> +The Linux kernel has always traditionally been compiled with GNU toolchains
+> +such as GCC and binutils. Ongoing work has allowed for `Clang
+> +<https://clang.llvm.org/>`_ and `LLVM <https://llvm.org/>`_ utilities to be
+> +used as viable substitutes. Distributions such as `Android
+> +<https://www.android.com/>`_, `ChromeOS
+> +<https://www.chromium.org/chromium-os>`_, and `OpenMandriva
+> +<https://www.openmandriva.org/>`_ use Clang built kernels.  `LLVM is a
+> +collection of toolchain components implemented in terms of C++ objects
+> +<https://www.aosabook.org/en/llvm.html>`_. Clang is a front-end to LLVM that
+> +supports C and the GNU C extensions required by the kernel, and is pronounced
+> +"klang," not "see-lang."
+> +
+> +Clang
+> +-----
+> +
+> +The compiler used can be swapped out via `CC=` command line argument to `make`.
+> +`CC=` should be set when selecting a config and during a build.
+> +
+> +       make CC=clang defconfig
+> +
+> +       make CC=clang
+> +
+> +Cross Compiling
+> +---------------
+> +
+> +A single Clang compiler binary will typically contain all supported backends,
+> +which can help simplify cross compiling.
+> +
+> +       ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make CC=clang
+> +
+> +`CROSS_COMPILE` is not used to prefix the Clang compiler binary, instead
+> +`CROSS_COMPILE` is used to set a command line flag: `--target <triple>`. For
+> +example:
+> +
+> +       clang --target aarch64-linux-gnu foo.c
+> +
+> +LLVM Utilities
+> +--------------
+> +
+> +LLVM has substitutes for GNU binutils utilities. These can be invoked as
+> +additional parameters to `make`.
+> +
+> +       make CC=clang AS=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \\
+> +         OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump OBJSIZE=llvm-objsize \\
+> +         READELF=llvm-readelf HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar \\
+> +         HOSTLD=ld.lld
+> +
+> +Getting Help
+> +------------
+> +
+> +- `Website <https://clangbuiltlinux.github.io/>`_
+> +- `Mailing List <https://groups.google.com/forum/#!forum/clang-built-linux>`_: <clang-built-linux@googlegroups.com>
+> +- `Issue Tracker <https://github.com/ClangBuiltLinux/linux/issues>`_
+> +- IRC: #clangbuiltlinux on chat.freenode.net
+> +- `Telegram <https://t.me/ClangBuiltLinux>`_: @ClangBuiltLinux
+> +- `Wiki <https://github.com/ClangBuiltLinux/linux/wiki>`_
+> +- `Beginner Bugs <https://github.com/ClangBuiltLinux/linux/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22>`_
+> +
+> +Getting LLVM
+> +-------------
+> +
+> +- http://releases.llvm.org/download.html
+> +- https://github.com/llvm/llvm-project
+> +- https://llvm.org/docs/GettingStarted.html
+> +- https://llvm.org/docs/CMake.html
+> +- https://apt.llvm.org/
+> +- https://www.archlinux.org/packages/extra/x86_64/llvm/
+> +- https://github.com/ClangBuiltLinux/tc-build
+> +- https://github.com/ClangBuiltLinux/linux/wiki/Building-Clang-from-source
+> +- https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8b85f22b9b69..79e1f9bfb2b6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4124,6 +4124,7 @@ B:        https://github.com/ClangBuiltLinux/linux/issues
+>  C:     irc://chat.freenode.net/clangbuiltlinux
+>  S:     Supported
+>  K:     \b(?i:clang|llvm)\b
+> +F:     Documentation/kbuild/llvm.rst
+>
+>  CLEANCACHE API
+>  M:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> --
+> 2.25.0.265.gbab2e86ba0-goog
+>
 
---DIOMP1UsTsWJauNi--
 
+-- 
+Best Regards
+Masahiro Yamada
