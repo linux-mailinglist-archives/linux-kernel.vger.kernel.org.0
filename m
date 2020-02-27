@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68219172774
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1190517276D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731291AbgB0SY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:24:28 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:59063 "EHLO
+        id S1731269AbgB0SYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:24:19 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59070 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730889AbgB0SWn (ORCPT
+        with ESMTP id S1730898AbgB0SWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:22:43 -0500
+        Thu, 27 Feb 2020 13:22:44 -0500
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200227182242euoutp02aa1d9413d1eec221e129e5bf0deee00e~3VXalW94C0671406714euoutp02q
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200227182242euoutp02aa1d9413d1eec221e129e5bf0deee00e~3VXalW94C0671406714euoutp02q
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200227182243euoutp029a4f07623a185a824f75f434e6c9ba2e~3VXba-hMo0821508215euoutp02Q
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 18:22:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200227182243euoutp029a4f07623a185a824f75f434e6c9ba2e~3VXba-hMo0821508215euoutp02Q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1582827762;
-        bh=uB5REbM6qvTdR0z875YicVsRld+jLQkopqUIKDFj8Ic=;
+        s=mail20170921; t=1582827763;
+        bh=hw7yWEtngGsf1GND9qtwEFtzy5ehaWqDsy40s9VOM9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rm4ZZpbCLtiv8nV4Y4hcEWxjZSZTB6xv0+MPGNBp2bb4Bpp4EfX+v4HgMNOWAem00
-         zKihWseg8iYIU/ifBOT/Hq9sENTOXNbnmajzLA96nskXkomyyVn5luHJJIYqk6hOI5
-         AA6u9TUy35bdAAUIu0DiU+zJkj15tPXaq3Yx0s1s=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        b=Z9ymWR9/E+3IJvu0Evnc+Q9sPtBz1qfmrzYC5ZjHpKPZzz9NstSA0+m+x5fE84MSJ
+         twx+6dBCTLMarNbIc89uqWZ6mIUARZR99+ShG7cjjObAqsjigyhamBgSr3XLbpiyEE
+         +kq+wg9gkcsL3zWQX1lVyeYsTgRa8drJLVsjU080=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200227182241eucas1p1b0eb9b8dd3c20c00b44b42f124adc09f~3VXaZi9Tn1935419354eucas1p1s;
-        Thu, 27 Feb 2020 18:22:41 +0000 (GMT)
+        20200227182242eucas1p1ff4692e0d59d52547b9ccb69f47bf9ba~3VXbNQ6ux1933419334eucas1p1s;
+        Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id A6.05.60698.1F8085E5; Thu, 27
-        Feb 2020 18:22:41 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 63.5F.61286.2F8085E5; Thu, 27
+        Feb 2020 18:22:42 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200227182241eucas1p12ef86c45356afb2230871d84dab04431~3VXaLBd7_0494604946eucas1p1E;
-        Thu, 27 Feb 2020 18:22:41 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200227182241eusmtrp2d961943d6d4c976d9b59643739a53861~3VXaKe6rO1813218132eusmtrp2k;
-        Thu, 27 Feb 2020 18:22:41 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-f8-5e5808f193be
+        20200227182242eucas1p16f2af7ee2771f11f21f35c7f80636723~3VXapI1ci0494604946eucas1p1F;
+        Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200227182242eusmtrp163faba525ed7b263b3f1c5fe2c8c46c5~3VXaoe3xY0185901859eusmtrp1f;
+        Thu, 27 Feb 2020 18:22:42 +0000 (GMT)
+X-AuditID: cbfec7f2-f0bff7000001ef66-5f-5e5808f23e4c
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 9D.B1.08375.1F8085E5; Thu, 27
-        Feb 2020 18:22:41 +0000 (GMT)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E2.61.07950.2F8085E5; Thu, 27
+        Feb 2020 18:22:42 +0000 (GMT)
 Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200227182241eusmtip2420239d8521ab9102f55c9103b7b9a45~3VXZrovrl1203512035eusmtip2N;
+        20200227182241eusmtip24ab2d24f498bf53929072b0779bd3d28~3VXaHpNT52149421494eusmtip2H;
         Thu, 27 Feb 2020 18:22:41 +0000 (GMT)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To:     Jens Axboe <axboe@kernel.dk>
@@ -53,98 +53,105 @@ Cc:     Michael Schmitz <schmitzmic@gmail.com>,
         Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH v3 06/27] ata: use COMMAND_LINE_SIZE for
- ata_force_param_buf[] size
-Date:   Thu, 27 Feb 2020 19:22:05 +0100
-Message-Id: <20200227182226.19188-7-b.zolnierkie@samsung.com>
+Subject: [PATCH v3 07/27] ata: optimize struct ata_force_param size
+Date:   Thu, 27 Feb 2020 19:22:06 +0100
+Message-Id: <20200227182226.19188-8-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200227182226.19188-1-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djPc7ofOSLiDK78N7VYfbefzWLjjPWs
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djPc7qfOCLiDKbt0bJYfbefzWLjjPWs
         Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
-        eOy+2cDm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBk7GpazFjzgrTjYE9PAuI+7i5GTQ0LA
-        RKL3+if2LkYuDiGBFYwSnc/OM0E4Xxgldt26xwLhfGaUeLt1ITtMS+eFt8wQieWMEvc272WG
-        a3nx4QojSBWbgJXExPZVYLaIgIJEz++VbCBFzALvGSVWTNrLApIQFgiVaHx+FcxmEVCV+NkP
-        0cArYCtx4fwmJoh18hJbv31iBbE5BewkbvRtZ4OoEZQ4OfMJWC8zUE3z1tlgV0gILGOXOPB9
-        ARtEs4vErO2LGCFsYYlXx7dA/SAj8X/nfCaIhnWMEn87XkB1b2eUWD75H1S3tcSdc7+AbA6g
-        FZoS63fpQ4QdJX6cuMgOEpYQ4JO48VYQ4gg+iUnbpjNDhHklOtqEIKrVJDYs28AGs7Zr50pm
-        CNtDYvn1G8wTGBVnIXlnFpJ3ZiHsXcDIvIpRPLW0ODc9tdg4L7Vcrzgxt7g0L10vOT93EyMw
-        FZ3+d/zrDsZ9f5IOMQpwMCrx8C7YER4nxJpYVlyZe4hRgoNZSYR349fQOCHelMTKqtSi/Pii
-        0pzU4kOM0hwsSuK8xotexgoJpCeWpGanphakFsFkmTg4pRoYbRY+Nv6s+q35tmHA54oQ0Uk3
-        FHJYeVLmHxYRVFN4JVdu+lr6Z+vNxZ92vixY9rLB7uxcdl6+ip8PmPb63rg++6SPZOkewTUF
-        PuVnWSOWfJD77Wsvsvct1/rO2IMfDyybdW5nb8Zhoc0VPf4rgzfs21A49UKLiYdLfehRVq4f
-        T3aFaPJuurLtnBJLcUaioRZzUXEiACwAzK9BAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsVy+t/xe7ofOSLiDKY9V7ZYfbefzWLjjPWs
-        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
-        eOy+2cDm0bdlFaPH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6
-        djYpqTmZZalF+nYJehk7GpazFjzgrTjYE9PAuI+7i5GTQ0LARKLzwlvmLkYuDiGBpYwSzx88
-        AHI4gBIyEsfXl0HUCEv8udbFBmILCXxilGj9rwpiswlYSUxsX8UIYosIKEj0/F7JBjKHWeAr
-        o8TSSd3MIAlhgWCJqTP+ghWxCKhK/OyHaOAVsJW4cH4TE8QCeYmt3z6xgticAnYSN/q2Qy2z
-        lejqeApVLyhxcuYTFhCbGai+eets5gmMArOQpGYhSS1gZFrFKJJaWpybnltsqFecmFtcmpeu
-        l5yfu4kRGC3bjv3cvIPx0sbgQ4wCHIxKPLwLdoTHCbEmlhVX5h5ilOBgVhLh3fg1NE6INyWx
-        siq1KD++qDQntfgQoynQExOZpUST84GRnFcSb2hqaG5haWhubG5sZqEkztshcDBGSCA9sSQ1
-        OzW1ILUIpo+Jg1OqgdFguczfC2VGskGP/gVrJHTuPFNww68gTize50nSat3EbyktyZlR7TkM
-        V2bW592Pcr7rMkNtSsRH1i1Pw71mttwM2MeldiLS9aiAgnLDp8SPdyVsZzw783ryrpvPpp04
-        vSbhCGssi3OGqlnY1ublIcK7Nl41z4me3y8mcmN2kHL6zryTDwvumSmxFGckGmoxFxUnAgCg
-        +iEsrAIAAA==
-X-CMS-MailID: 20200227182241eucas1p12ef86c45356afb2230871d84dab04431
+        eOy+2cDm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBnv7u5kKfjPU/G98TlrA+Niri5GTg4J
+        AROJpjNrmboYuTiEBFYwSty+3AzlfGGUeH94JjuE85lRYt2zvawwLQtPboWqWs4o8fRyNwtI
+        Aqzl7GQtEJtNwEpiYvsqRhBbREBBouf3SjaQBmaB94wSKybtBWsQFnCWeNXyHGwqi4CqxIZ/
+        Z8AaeAVsJY52PWeC2CYvsfXbJ7AaTgE7iRt929kgagQlTs58AjaHGaimeetsZpAFEgKr2CUW
+        t+9khGh2kfg6sxFqkLDEq+Nb2CFsGYnTk3tYIBrWMUr87XgB1b2dUWL55H9sEFXWEnfO/QKy
+        OYBWaEqs36UPYkoIOEqseqkGYfJJ3HgrCHEDn8SkbdOZIcK8Eh1tQhAz1CQ2LNvABrO1a+dK
+        ZgjbQ+Ly3ItMExgVZyH5ZhaSb2YhrF3AyLyKUTy1tDg3PbXYMC+1XK84Mbe4NC9dLzk/dxMj
+        MBGd/nf80w7Gr5eSDjEKcDAq8fAu2BEeJ8SaWFZcmXuIUYKDWUmEd+PX0Dgh3pTEyqrUovz4
+        otKc1OJDjNIcLErivMaLXsYKCaQnlqRmp6YWpBbBZJk4OKUaGHdmnXXjuNEp+WQhU3vCKTfu
+        9Sei+WdZ8ZXPnbv31L+Y9r6J0303HZGWVz1+YBPDlESezMl9n2qCrv15IMAo9WR9/aqPD/6s
+        35pxXurHV7F9iZuzHm/la4iRfPItO9o0VzMpuZHtg+fCbRln1LRVs18KJXTyVvWZrIua+cFi
+        6v9VS0x5w3QvvVJiKc5INNRiLipOBACds3B0QAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xe7qfOCLiDPa1slisvtvPZrFxxnpW
+        i2e39jJZrFx9lMni2I5HTBaXd81hs1j+ZC2zxdzW6ewOHB47Z91l97h8ttTj0OEORo+Trd9Y
+        PHbfbGDz6NuyitHj8ya5APYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9
+        O5uU1JzMstQifbsEvYx3d3eyFPznqfje+Jy1gXExVxcjJ4eEgInEwpNbmboYuTiEBJYySnx5
+        cJOti5EDKCEjcXx9GUSNsMSfa11sEDWfGCWmX7rLApJgE7CSmNi+ihHEFhFQkOj5vRKsiFng
+        K6PE0kndzCAJYQFniVctz1lBbBYBVYkN/86ANfAK2Eoc7XrOBLFBXmLrt09gNZwCdhI3+raz
+        gdhCQDVdHU+h6gUlTs58AraYGai+eets5gmMArOQpGYhSS1gZFrFKJJaWpybnltspFecmFtc
+        mpeul5yfu4kRGDHbjv3csoOx613wIUYBDkYlHl6PbeFxQqyJZcWVuYcYJTiYlUR4N34NjRPi
+        TUmsrEotyo8vKs1JLT7EaAr0xERmKdHkfGA055XEG5oamltYGpobmxubWSiJ83YIHIwREkhP
+        LEnNTk0tSC2C6WPi4JRqYGz7+zraSTP2qe21wH+P+vI7J/3K2WH7pLyjP+DFvMsMvXPmWgol
+        N24xiQhhZzT/nH4rI2R+cKbJpqnX90yaOld6kb/C9Eutj9h+zVY6FPhMf/ZqQTbVyT0TK+8t
+        enrcdD6zalTAroTjLK2PBWZXfL70WZ9Pd0FmQ8Jum6prX9yddonunfftnY8SS3FGoqEWc1Fx
+        IgCDEm5GrgIAAA==
+X-CMS-MailID: 20200227182242eucas1p16f2af7ee2771f11f21f35c7f80636723
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200227182241eucas1p12ef86c45356afb2230871d84dab04431
+X-RootMTR: 20200227182242eucas1p16f2af7ee2771f11f21f35c7f80636723
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200227182241eucas1p12ef86c45356afb2230871d84dab04431
+X-CMS-RootMailID: 20200227182242eucas1p16f2af7ee2771f11f21f35c7f80636723
 References: <20200227182226.19188-1-b.zolnierkie@samsung.com>
-        <CGME20200227182241eucas1p12ef86c45356afb2230871d84dab04431@eucas1p1.samsung.com>
+        <CGME20200227182242eucas1p16f2af7ee2771f11f21f35c7f80636723@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use COMMAND_LINE_SIZE instead PAGE_SIZE for ata_force_param_buf[]
-size as libata parameters buffer doesn't need to be bigger than
-the command line buffer.
-
-For many architectures this results in decreased libata-core.o
-size (COMMAND_LINE_SIZE varies from 256 to 4096 while the minimum
-PAGE_SIZE is 4096).
+Optimize struct ata_force_param size by:
+- using u8 for cbl and spd_limit fields
+- using u16 for lflags field
 
 Code size savings on m68k arch using (modified) atari_defconfig:
 
    text    data     bss     dec     hex filename
 before:
-  41064    4413      40   45517    b1cd drivers/ata/libata-core.o
-after:
   41064     573      40   41677    a2cd drivers/ata/libata-core.o
+after:
+  40654     573      40   41267    a133 drivers/ata/libata-core.o
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/ata/libata-core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/ata/libata-core.c | 6 +++---
+ include/linux/libata.h    | 1 +
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 4991f9d5def8..a9a8762448aa 100644
+index a9a8762448aa..a835d2bf243e 100644
 --- a/drivers/ata/libata-core.c
 +++ b/drivers/ata/libata-core.c
-@@ -52,6 +52,7 @@
- #include <linux/leds.h>
- #include <linux/pm_runtime.h>
- #include <linux/platform_device.h>
-+#include <asm/setup.h>
+@@ -90,12 +90,12 @@ atomic_t ata_print_id = ATOMIC_INIT(0);
  
- #define CREATE_TRACE_POINTS
- #include <trace/events/libata.h>
-@@ -106,7 +107,7 @@ struct ata_force_ent {
- static struct ata_force_ent *ata_force_tbl;
- static int ata_force_tbl_size;
+ struct ata_force_param {
+ 	const char	*name;
+-	unsigned int	cbl;
+-	int		spd_limit;
++	u8		cbl;
++	u8		spd_limit;
+ 	unsigned long	xfer_mask;
+ 	unsigned int	horkage_on;
+ 	unsigned int	horkage_off;
+-	unsigned int	lflags;
++	u16		lflags;
+ };
  
--static char ata_force_param_buf[PAGE_SIZE] __initdata;
-+static char ata_force_param_buf[COMMAND_LINE_SIZE] __initdata;
- /* param_buf is thrown away after initialization, disallow read */
- module_param_string(force, ata_force_param_buf, sizeof(ata_force_param_buf), 0);
- MODULE_PARM_DESC(force, "Force ATA configurations including cable type, link speed and transfer mode (see Documentation/admin-guide/kernel-parameters.rst for details)");
+ struct ata_force_ent {
+diff --git a/include/linux/libata.h b/include/linux/libata.h
+index df8f20a2a305..df7c1b538bb1 100644
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -176,6 +176,7 @@ enum {
+ 	ATA_DEV_NONE		= 11,	/* no device */
+ 
+ 	/* struct ata_link flags */
++	/* NOTE: struct ata_force_param currently stores lflags in u16 */
+ 	ATA_LFLAG_NO_HRST	= (1 << 1), /* avoid hardreset */
+ 	ATA_LFLAG_NO_SRST	= (1 << 2), /* avoid softreset */
+ 	ATA_LFLAG_ASSUME_ATA	= (1 << 3), /* assume ATA class */
 -- 
 2.24.1
 
