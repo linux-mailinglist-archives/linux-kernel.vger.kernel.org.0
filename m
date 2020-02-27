@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2FEB171922
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:42:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D8E171A13
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:50:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbgB0NmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:42:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37010 "EHLO mail.kernel.org"
+        id S1731020AbgB0Nuk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:50:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729335AbgB0NmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:42:08 -0500
+        id S1731238AbgB0Nue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:50:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C576F222C2;
-        Thu, 27 Feb 2020 13:42:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8A8924688;
+        Thu, 27 Feb 2020 13:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810928;
-        bh=gG8HGprrQBBywmF5eY3kLdDk0um/SI/w5sXTZx28iH8=;
+        s=default; t=1582811433;
+        bh=Y3pyy1a91dcT2uOGt0m1i2q0UP8gkIqP0mq2PHR0szo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k9rR1lfj9K2GmErS+f4oMHVjqQVPHDGKC6tOaHSx5u+E4wVtBrYyBVfRf6KuRYMOy
-         EsPR3Art/j54zcPrCDreUdPNYiiu7xGe/J/vyRtjhoPqpucm2G3tGxjN2qN7oB423m
-         TICcTEpPqbHWcXh6PSdZkIrGQuGecLj0HWy8FKrw=
+        b=o3iJw2QuVqgLyB9Lj162mRNzveMeuGO/KOMSPrmTcBWY2Bhfh8lbW7J/UKfJu2Nkt
+         DrvNVazAtBUoAH1aOli2OqISklXWPqppYrfTcu+VXOtGMub4u58Jy7GTDgmnuZXvrT
+         ix8K54PfL8QVUurJe9YrAOGthXKg6Qs+acJ/5riA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Sven Schnelle <sven.schnelle@ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 050/113] ALSA: sh: Fix compile warning wrt const
+Subject: [PATCH 4.9 092/165] s390/ftrace: generate traced function stack frame
 Date:   Thu, 27 Feb 2020 14:36:06 +0100
-Message-Id: <20200227132219.757796699@linuxfoundation.org>
+Message-Id: <20200227132244.751100837@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +45,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit f1dd4795b1523fbca7ab4344dd5a8bb439cc770d ]
+[ Upstream commit 45f7a0da600d3c409b5ad8d5ddddacd98ddc8840 ]
 
-A long-standing compile warning was seen during build test:
-  sound/sh/aica.c: In function 'load_aica_firmware':
-  sound/sh/aica.c:521:25: warning: passing argument 2 of 'spu_memload' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+Currently backtrace from ftraced function does not contain ftraced
+function itself. e.g. for "path_openat":
 
-Fixes: 198de43d758c ("[ALSA] Add ALSA support for the SEGA Dreamcast PCM device")
-Link: https://lore.kernel.org/r/20200105144823.29547-69-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+arch_stack_walk+0x15c/0x2d8
+stack_trace_save+0x50/0x68
+stack_trace_call+0x15e/0x3d8
+ftrace_graph_caller+0x0/0x1c <-- ftrace code
+do_filp_open+0x7c/0xe8 <-- ftraced function caller
+do_open_execat+0x76/0x1b8
+open_exec+0x52/0x78
+load_elf_binary+0x180/0x1160
+search_binary_handler+0x8e/0x288
+load_script+0x2a8/0x2b8
+search_binary_handler+0x8e/0x288
+__do_execve_file.isra.39+0x6fa/0xb40
+__s390x_sys_execve+0x56/0x68
+system_call+0xdc/0x2d8
+
+Ftraced function is expected in the backtrace by ftrace kselftests, which
+are now failing. It would also be nice to have it for clarity reasons.
+
+"ftrace_caller" itself is called without stack frame allocated for it
+and does not store its caller (ftraced function). Instead it simply
+allocates a stack frame for "ftrace_trace_function" and sets backchain
+to point to ftraced function stack frame (which contains ftraced function
+caller in saved r14).
+
+To fix this issue make "ftrace_caller" allocate a stack frame
+for itself just to store ftraced function for the stack unwinder.
+As a result backtrace looks like the following:
+
+arch_stack_walk+0x15c/0x2d8
+stack_trace_save+0x50/0x68
+stack_trace_call+0x15e/0x3d8
+ftrace_graph_caller+0x0/0x1c <-- ftrace code
+path_openat+0x6/0xd60  <-- ftraced function
+do_filp_open+0x7c/0xe8 <-- ftraced function caller
+do_open_execat+0x76/0x1b8
+open_exec+0x52/0x78
+load_elf_binary+0x180/0x1160
+search_binary_handler+0x8e/0x288
+load_script+0x2a8/0x2b8
+search_binary_handler+0x8e/0x288
+__do_execve_file.isra.39+0x6fa/0xb40
+__s390x_sys_execve+0x56/0x68
+system_call+0xdc/0x2d8
+
+Reported-by: Sven Schnelle <sven.schnelle@ibm.com>
+Tested-by: Sven Schnelle <sven.schnelle@ibm.com>
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/sh/aica.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/s390/kernel/mcount.S | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/sound/sh/aica.c b/sound/sh/aica.c
-index ad3d9ae380349..dd601b39f69ef 100644
---- a/sound/sh/aica.c
-+++ b/sound/sh/aica.c
-@@ -120,10 +120,10 @@ static void spu_memset(u32 toi, u32 what, int length)
- }
+diff --git a/arch/s390/kernel/mcount.S b/arch/s390/kernel/mcount.S
+index be75e8e49e43d..802a4ded9a626 100644
+--- a/arch/s390/kernel/mcount.S
++++ b/arch/s390/kernel/mcount.S
+@@ -24,6 +24,12 @@ ENTRY(ftrace_stub)
+ #define STACK_PTREGS	  (STACK_FRAME_OVERHEAD)
+ #define STACK_PTREGS_GPRS (STACK_PTREGS + __PT_GPRS)
+ #define STACK_PTREGS_PSW  (STACK_PTREGS + __PT_PSW)
++#ifdef __PACK_STACK
++/* allocate just enough for r14, r15 and backchain */
++#define TRACED_FUNC_FRAME_SIZE	24
++#else
++#define TRACED_FUNC_FRAME_SIZE	STACK_FRAME_OVERHEAD
++#endif
  
- /* spu_memload - write to SPU address space */
--static void spu_memload(u32 toi, void *from, int length)
-+static void spu_memload(u32 toi, const void *from, int length)
- {
- 	unsigned long flags;
--	u32 *froml = from;
-+	const u32 *froml = from;
- 	u32 __iomem *to = (u32 __iomem *) (SPU_MEMORY_BASE + toi);
- 	int i;
- 	u32 val;
+ ENTRY(_mcount)
+ 	BR_EX	%r14
+@@ -37,9 +43,16 @@ ENTRY(ftrace_caller)
+ #ifndef CC_USING_HOTPATCH
+ 	aghi	%r0,MCOUNT_RETURN_FIXUP
+ #endif
+-	aghi	%r15,-STACK_FRAME_SIZE
++	# allocate stack frame for ftrace_caller to contain traced function
++	aghi	%r15,-TRACED_FUNC_FRAME_SIZE
+ 	stg	%r1,__SF_BACKCHAIN(%r15)
++	stg	%r0,(__SF_GPRS+8*8)(%r15)
++	stg	%r15,(__SF_GPRS+9*8)(%r15)
++	# allocate pt_regs and stack frame for ftrace_trace_function
++	aghi	%r15,-STACK_FRAME_SIZE
+ 	stg	%r1,(STACK_PTREGS_GPRS+15*8)(%r15)
++	aghi	%r1,-TRACED_FUNC_FRAME_SIZE
++	stg	%r1,__SF_BACKCHAIN(%r15)
+ 	stg	%r0,(STACK_PTREGS_PSW+8)(%r15)
+ 	stmg	%r2,%r14,(STACK_PTREGS_GPRS+2*8)(%r15)
+ #ifdef CONFIG_HAVE_MARCH_Z196_FEATURES
 -- 
 2.20.1
 
