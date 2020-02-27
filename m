@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 929C9171B8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:03:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5584D171C09
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:08:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387410AbgB0ODV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:03:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38458 "EHLO mail.kernel.org"
+        id S2387444AbgB0OID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:08:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733312AbgB0ODT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:03:19 -0500
+        id S2387787AbgB0OIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:08:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5377A20801;
-        Thu, 27 Feb 2020 14:03:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60E7521D7E;
+        Thu, 27 Feb 2020 14:07:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812198;
-        bh=hothXiVroBMjSQtLbfartgEN01sSBKIrotloJ+pKrb0=;
+        s=default; t=1582812479;
+        bh=RypRGmCPXhCJfp6qrYOlZPi7TCGuoDNfunyBhUdEIxc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t9tAuHoYqXVMbqIL6QEzt3yc2S7nyCLk7QjgaIBinq4W36bXGVpLxlVpUPWS2BmNl
-         5waowKYm8EpHtg7KXJ1vZBcK5qs31+pLijciKeeKiCsEEbsk/YJneIf7Ogl9U3V9Qb
-         J3s79bmrHEZ2b8h5lYYLKrIrNnrdMo9yEeGz7CNM=
+        b=WhCltI3bqpiJljPo+eKiFjGHh8bpiKcIXZ+FxVjmNlDHVVhAIHqptm3mfY38qYRrY
+         PSiKmoJRT4ohmTZn296a576J3de8qI3cYzsdJSSZvPL0cTiw1wXcCzQp2AK2lweQXG
+         +IrGfqpBcaRa3E7vZXbJDpgjrNcT0Q8grM8I2+2g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Tyler Hicks <tyhicks@canonical.com>
-Subject: [PATCH 4.19 06/97] ecryptfs: fix a memory leak bug in parse_tag_1_packet()
+        stable@vger.kernel.org, Minas Harutyunyan <hminas@synopsys.com>,
+        Jack Mitchell <ml@embed.me.uk>, Felipe Balbi <balbi@kernel.org>
+Subject: [PATCH 5.4 034/135] usb: dwc2: Fix SET/CLEAR_FEATURE and GET_STATUS flows
 Date:   Thu, 27 Feb 2020 14:36:14 +0100
-Message-Id: <20200227132215.620415637@linuxfoundation.org>
+Message-Id: <20200227132234.138725629@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +43,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
 
-commit fe2e082f5da5b4a0a92ae32978f81507ef37ec66 upstream.
+commit 9a0d6f7c0a83844baae1d6d85482863d2bf3b7a7 upstream.
 
-In parse_tag_1_packet(), if tag 1 packet contains a key larger than
-ECRYPTFS_MAX_ENCRYPTED_KEY_BYTES, no cleanup is executed, leading to a
-memory leak on the allocated 'auth_tok_list_item'. To fix this issue, go to
-the label 'out_free' to perform the cleanup work.
+SET/CLEAR_FEATURE for Remote Wakeup allowance not handled correctly.
+GET_STATUS handling provided not correct data on DATA Stage.
+Issue seen when gadget's dr_mode set to "otg" mode and connected
+to MacOS.
+Both are fixed and tested using USBCV Ch.9 tests.
 
+Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
+Fixes: fa389a6d7726 ("usb: dwc2: gadget: Add remote_wakeup_allowed flag")
+Tested-by: Jack Mitchell <ml@embed.me.uk>
 Cc: stable@vger.kernel.org
-Fixes: dddfa461fc89 ("[PATCH] eCryptfs: Public key; packet management")
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ecryptfs/keystore.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/dwc2/gadget.c |   28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
---- a/fs/ecryptfs/keystore.c
-+++ b/fs/ecryptfs/keystore.c
-@@ -1318,7 +1318,7 @@ parse_tag_1_packet(struct ecryptfs_crypt
- 		printk(KERN_WARNING "Tag 1 packet contains key larger "
- 		       "than ECRYPTFS_MAX_ENCRYPTED_KEY_BYTES\n");
- 		rc = -EINVAL;
--		goto out;
-+		goto out_free;
- 	}
- 	memcpy((*new_auth_tok)->session_key.encrypted_key,
- 	       &data[(*packet_size)], (body_size - (ECRYPTFS_SIG_SIZE + 2)));
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -1632,6 +1632,7 @@ static int dwc2_hsotg_process_req_status
+ 	struct dwc2_hsotg_ep *ep0 = hsotg->eps_out[0];
+ 	struct dwc2_hsotg_ep *ep;
+ 	__le16 reply;
++	u16 status;
+ 	int ret;
+ 
+ 	dev_dbg(hsotg->dev, "%s: USB_REQ_GET_STATUS\n", __func__);
+@@ -1643,11 +1644,10 @@ static int dwc2_hsotg_process_req_status
+ 
+ 	switch (ctrl->bRequestType & USB_RECIP_MASK) {
+ 	case USB_RECIP_DEVICE:
+-		/*
+-		 * bit 0 => self powered
+-		 * bit 1 => remote wakeup
+-		 */
+-		reply = cpu_to_le16(0);
++		status = 1 << USB_DEVICE_SELF_POWERED;
++		status |= hsotg->remote_wakeup_allowed <<
++			  USB_DEVICE_REMOTE_WAKEUP;
++		reply = cpu_to_le16(status);
+ 		break;
+ 
+ 	case USB_RECIP_INTERFACE:
+@@ -1758,7 +1758,10 @@ static int dwc2_hsotg_process_req_featur
+ 	case USB_RECIP_DEVICE:
+ 		switch (wValue) {
+ 		case USB_DEVICE_REMOTE_WAKEUP:
+-			hsotg->remote_wakeup_allowed = 1;
++			if (set)
++				hsotg->remote_wakeup_allowed = 1;
++			else
++				hsotg->remote_wakeup_allowed = 0;
+ 			break;
+ 
+ 		case USB_DEVICE_TEST_MODE:
+@@ -1768,16 +1771,17 @@ static int dwc2_hsotg_process_req_featur
+ 				return -EINVAL;
+ 
+ 			hsotg->test_mode = wIndex >> 8;
+-			ret = dwc2_hsotg_send_reply(hsotg, ep0, NULL, 0);
+-			if (ret) {
+-				dev_err(hsotg->dev,
+-					"%s: failed to send reply\n", __func__);
+-				return ret;
+-			}
+ 			break;
+ 		default:
+ 			return -ENOENT;
+ 		}
++
++		ret = dwc2_hsotg_send_reply(hsotg, ep0, NULL, 0);
++		if (ret) {
++			dev_err(hsotg->dev,
++				"%s: failed to send reply\n", __func__);
++			return ret;
++		}
+ 		break;
+ 
+ 	case USB_RECIP_ENDPOINT:
 
 
