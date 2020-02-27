@@ -2,93 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D6491717F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 13:58:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 079CD1717E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 13:55:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729084AbgB0M61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 07:58:27 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60108 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729019AbgB0M60 (ORCPT
+        id S1729101AbgB0Mzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 07:55:55 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.202]:39003 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729036AbgB0Mzz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 07:58:26 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01RCpArV112229;
-        Thu, 27 Feb 2020 07:58:15 -0500
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ydq6j6v2n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Feb 2020 07:58:14 -0500
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01RCuSkm029318;
-        Thu, 27 Feb 2020 12:58:13 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma03dal.us.ibm.com with ESMTP id 2ydcmm0kwr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Feb 2020 12:58:13 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01RCwD5H46793156
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Feb 2020 12:58:13 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1044A28058;
-        Thu, 27 Feb 2020 12:58:13 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AB3DC2805A;
-        Thu, 27 Feb 2020 12:58:10 +0000 (GMT)
-Received: from skywalker.ibmuc.com (unknown [9.102.3.113])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Feb 2020 12:58:10 +0000 (GMT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH v2] x86/pkeys: Return correctly on a pkey error
-Date:   Thu, 27 Feb 2020 18:27:59 +0530
-Message-Id: <20200227125759.63111-1-aneesh.kumar@linux.ibm.com>
-X-Mailer: git-send-email 2.24.1
+        Thu, 27 Feb 2020 07:55:55 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 2FB7E1E35C
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:55:53 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 7IhljQuWaSl8q7Ihlj5COg; Thu, 27 Feb 2020 06:55:53 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=4zTfqHtNR+JOFw1AL/0V9Tg2bWk099xhAe7F5IWAr+A=; b=odm+PZjBgpSmbCka5oSybjWmj2
+        TDatQyzhvlKp3qcc8uuPHnf2AD33gqeg49yXELgZeBhZ2x1es6HcFQrsef7lCeVKA3J+7neryuzhS
+        SqkY26fKqf36icZ8VgkCxFnUPTkhPXqC7Fh9FleYq9pZTqXoWlDGvUZAdq60rr+CWSUu1fK27gkwT
+        pL0ewQDQmbhgqxQrhrt8e4MAzozEeyig2V7xgCvAa+bu+VB5VzJiHjiayhXVngkup4zBe0pNPyCTt
+        CPjgMXIOkloq3w7pI4GjG7odckJ2B0DnZhS7Q4FjYPgKxJp9VKyAJKDcHz6M38ilzvkuTbyl+Ne00
+        kEFCS15Q==;
+Received: from [201.166.157.75] (port=39906 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j7Ihh-000gWF-C4; Thu, 27 Feb 2020 06:55:50 -0600
+Date:   Thu, 27 Feb 2020 06:58:41 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] security: integrity: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200227125841.GA23703@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-27_03:2020-02-26,2020-02-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- spamscore=0 impostorscore=0 suspectscore=1 bulkscore=0 mlxlogscore=945
- clxscore=1011 priorityscore=1501 malwarescore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002270102
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.166.157.75
+X-Source-L: No
+X-Exim-ID: 1j7Ihh-000gWF-C4
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.166.157.75]:39906
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This was found by code review
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Fixes: 9db812dbb29d ("signal/x86: Call force_sig_pkuerr from __bad_area_nosemaphore")
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+struct foo {
+        int stuff;
+        struct boo array[];
+};
+
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
+
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
-Changes from V1:
-* update commit message
+ security/integrity/ima/ima.h   | 2 +-
+ security/integrity/integrity.h | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
- arch/x86/mm/fault.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index fa4ea09593ab..f80a7ad010dc 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -899,8 +899,10 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 64317d95363e..da4246ee7e35 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -95,7 +95,7 @@ struct ima_template_entry {
+ 	u8 digest[TPM_DIGEST_SIZE];	/* sha1 or md5 measurement hash */
+ 	struct ima_template_desc *template_desc; /* template descriptor */
+ 	u32 template_data_len;
+-	struct ima_field_data template_data[0];	/* template related data */
++	struct ima_field_data template_data[];	/* template related data */
+ };
  
- 		set_signal_archinfo(address, error_code);
+ struct ima_queue_entry {
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 543d277c7e48..3c7e8b902256 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -103,7 +103,7 @@ struct ima_digest_data {
+ 		} ng;
+ 		u8 data[2];
+ 	} xattr;
+-	u8 digest[0];
++	u8 digest[];
+ } __packed;
  
--		if (si_code == SEGV_PKUERR)
-+		if (si_code == SEGV_PKUERR) {
- 			force_sig_pkuerr((void __user *)address, pkey);
-+			return;
-+		}
+ /*
+@@ -115,7 +115,7 @@ struct signature_v2_hdr {
+ 	uint8_t	hash_algo;	/* Digest algorithm [enum hash_algo] */
+ 	__be32 keyid;		/* IMA key identifier - not X509/PGP specific */
+ 	__be16 sig_size;	/* signature size */
+-	uint8_t sig[0];		/* signature payload */
++	uint8_t sig[];		/* signature payload */
+ } __packed;
  
- 		force_sig_fault(SIGSEGV, si_code, (void __user *)address);
- 
+ /* integrity data associated with an inode */
 -- 
-2.24.1
+2.25.0
 
