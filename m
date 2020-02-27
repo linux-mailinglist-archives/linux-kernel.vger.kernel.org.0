@@ -2,130 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75146171FAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29EAF171FFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:40:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387677AbgB0Ohh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:37:37 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41185 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387432AbgB0Ohe (ORCPT
+        id S1732072AbgB0Ojp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:39:45 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:61500 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731544AbgB0Ojn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:37:34 -0500
-Received: by mail-lf1-f67.google.com with SMTP id y17so2250862lfe.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:37:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RcYL8SCs4mY/P4RQdp+0RxyVx6nbM+UHppPJThzz0ak=;
-        b=RpqIqnJz/hzb5sr/fE5lKqIxanX/QvNCaDDuyFXtqcMVjdJmqfAIsXUSQQwkCYrY/J
-         FNSedxYoVKXzx0UlYS/StW2w9ICZ2mOLJB68NaR9xRZBfMu8gaeVUR2GcDDOmqcXRtFB
-         k9jm2fQtwets6TkXYU9iQBlog0FBQhN4TGvjuwu+QaEQn52hK37CdRNI+wM/M+zNIud4
-         lUSSYVuy00iLlo10Snm/MkRLdEbSWTcTjwYzdwCZf+zRO5AHzjLpsC0XDEoXPvuPhVXh
-         NiDeopd7QdvzhvfdoF1Y0DcPtzyguWdzqJSiQnLBw2XYvnssYVz3U7Aql/1YHV2j9jf3
-         mMMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RcYL8SCs4mY/P4RQdp+0RxyVx6nbM+UHppPJThzz0ak=;
-        b=ncmhA8fATjn4+zBSSWT6keId1zLOZK2jIGnyvCYwvXujCTWr5oshieRsdK+Fq1xYtY
-         V6wd6ia+HsHJ6uhjnF0QaPJ5cYDocvQkAdNQAWaVEW6lFKNLAIzyji4XSIGRB8veKgxD
-         QLLlnzj3ALE8Gb7Vo97u5GNRGVvn2Ot6FQpMwUkAkhBtqa0JheTssXxYlAAZuvXe2dLg
-         FUdFLVJ+PPNdYa5jqTIO5bel7GmFxZx3ysnpiTmXkoxVVPYvYdtS4QbgbRSAXJ+AkRjx
-         iTuZyvQiuPpQI0GoCvvTe8XsXoqU35sOXCrZYP7mPwuugedwbbWH/r93/4hf8uN7iXKU
-         iw2g==
-X-Gm-Message-State: ANhLgQ3UvCQ4onfWGklTDbtkz75RkqfLHjq0h4JDBrDs17OiwYla3dDZ
-        ceUqGU0ISyh/UlUgCY96tMSpGryxH0ZG0ST+eTw=
-X-Google-Smtp-Source: ADFU+vuC3XzlRWFGpQwtS8g++F+CcBuYTPCc87hQgBEaxqKTAdOuHFeoURTMjbZnBKllPt5O1u3PZNDkA2G6uu5pTnA=
-X-Received: by 2002:a05:6512:31c2:: with SMTP id j2mr1848583lfe.23.1582814252239;
- Thu, 27 Feb 2020 06:37:32 -0800 (PST)
+        Thu, 27 Feb 2020 09:39:43 -0500
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01REbHvm009184;
+        Thu, 27 Feb 2020 09:39:41 -0500
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ydtrwkewr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Feb 2020 09:39:41 -0500
+Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 01REdd3f005544
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Thu, 27 Feb 2020 09:39:40 -0500
+Received: from SCSQCASHYB7.ad.analog.com (10.77.17.133) by
+ SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Thu, 27 Feb 2020 06:39:38 -0800
+Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
+ SCSQCASHYB7.ad.analog.com (10.77.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Thu, 27 Feb 2020 06:39:38 -0800
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Thu, 27 Feb 2020 06:39:38 -0800
+Received: from analog.ad.analog.com ([10.48.65.180])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01REdZr5031327;
+        Thu, 27 Feb 2020 09:39:36 -0500
+From:   Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+To:     <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+Subject: [PATCH v2] spi: spi-mpc52xx: Use new structure for SPI transfer delays
+Date:   Thu, 27 Feb 2020 16:39:31 +0200
+Message-ID: <20200227143931.20688-1-sergiu.cuciurean@analog.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200227142131.14940-1-sergiu.cuciurean@analog.com>
+References: <20200227142131.14940-1-sergiu.cuciurean@analog.com>
 MIME-Version: 1.0
-References: <5e3cea14-28d1-bf1e-cabe-fb5b48fdeadc@linux.intel.com>
- <3c3c56c1-b8dc-652c-535e-74f6dcf45560@linux.intel.com> <CANaguZAz+mw1Oi8ecZt+JuCWbf=g5UvKrdSvAeM82Z1c+9oWAw@mail.gmail.com>
- <e322a252-f983-e3f3-f823-16d0c16b2867@linux.intel.com> <20200212230705.GA25315@sinkpad>
- <29d43466-1e18-6b42-d4d0-20ccde20ff07@linux.intel.com> <CAERHkruG4y8si9FrBp7cZNEdfP7EzxbmYwvdF2EvHLf=mU1mgg@mail.gmail.com>
- <20200225034438.GA617271@ziqianlu-desktop.localdomain> <CANaguZD205ccu1V_2W-QuMRrJA9SjJ5ng1do4NCdLy8NDKKrbA@mail.gmail.com>
- <20200227020432.GA628749@ziqianlu-desktop.localdomain> <20200227141032.GA30178@pauld.bos.csb>
-In-Reply-To: <20200227141032.GA30178@pauld.bos.csb>
-From:   Aubrey Li <aubrey.intel@gmail.com>
-Date:   Thu, 27 Feb 2020 22:37:20 +0800
-Message-ID: <CAERHkrtyAaEQqqMpV6HMKyHa47HNFwxs5peq4LQJem2z=DO1hg@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 00/19] Core scheduling v4
-To:     Phil Auld <pauld@redhat.com>
-Cc:     Aaron Lu <aaron.lwe@gmail.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Dario Faggioli <dfaggioli@suse.com>,
-        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-27_04:2020-02-26,2020-02-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ phishscore=0 adultscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ suspectscore=0 clxscore=1015 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002270116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 10:10 PM Phil Auld <pauld@redhat.com> wrote:
->
-> Hi Aaron,
->
-> On Thu, Feb 27, 2020 at 10:04:32AM +0800 Aaron Lu wrote:
-> > On Tue, Feb 25, 2020 at 03:51:37PM -0500, Vineeth Remanan Pillai wrote:
-> > > On a 2sockets/16cores/32threads VM, I grouped 8 sysbench(cpu mode)
-> > > > threads into one cgroup(cgA) and another 16 sysbench(cpu mode) threads
-> > > > into another cgroup(cgB). cgA and cgB's cpusets are set to the same
-> > > > socket's 8 cores/16 CPUs and cgA's cpu.shares is set to 10240 while cgB's
-> > > > cpu.shares is set to 2(so consider cgB as noise workload and cgA as
-> > > > the real workload).
-> > > >
-> > > > I had expected cgA to occupy 8 cpus(with each cpu on a different core)
-> > >
-> > > The expected behaviour could also be that 8 processes share 4 cores and
-> > > 8 hw threads right? This is what we are seeing mostly
-> >
-> > I expect the 8 cgA tasks to spread on each core, instead of occupying
-> > 4 cores/8 hw threads. If they stay on 4 cores/8 hw threads, than on the
-> > core level, these cores' load would be much higher than other cores
-> > which are running cgB's tasks, this doesn't look right to me.
-> >
->
-> I don't think that's a valid assumption, at least since the load balancer rework.
->
-> The scheduler will be looking much more at the number of running task versus
-> the group weight. So in this case 2 running tasks, 2 siblings at the core level
-> will look fine. There will be no reason to migrate.
+In a recent change to the SPI subsystem [1], a new `delay` struct was added
+to replace the `delay_usecs`. This change replaces the current
+`delay_usecs` with `delay` for this driver.
 
-Can this be replicated?
+The `spi_transfer_delay_exec()` function [in the SPI framework] makes sure
+that both `delay_usecs` & `delay` are used (in this order to preserve
+backwards compatibility).
 
->
-> > I think the end result should be: each core has two tasks queued, one
-> > cgA task and one cgB task(to maintain load balance on the core level).
-> > The two tasks are queued on different hw thread, with cgA's task runs
-> > most of the time on one thread and cgB's task being forced idle most
-> > of the time on the other thread.
-> >
->
-> With the core scheduler that does not seem to be a desired outcome. I think
-> grouping the 8 cgA tasks on the 8 cpus of 4 cores seems right.
->
-Especially, if the load of cgA task + cgB task > cpu capacity, grouping cgA
-tasks can avoid forced idle completely. Maintaining core level balance seems
-not the best result. I guess that's why with core scheduler enabled we saw
-10-20% improvement in some cases against the default core scheduler disabled.
+[1] commit bebcfd272df6 ("spi: introduce `delay` field for
+`spi_transfer` + spi_transfer_delay_exec()")
+Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+---
 
-Thanks,
--Aubrey
+Changelog v1->v2:
+*Increment the timestamp only if the delay unit is microseconds
+
+ drivers/spi/spi-mpc52xx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-mpc52xx.c b/drivers/spi/spi-mpc52xx.c
+index ef2f24420460..36f941500676 100644
+--- a/drivers/spi/spi-mpc52xx.c
++++ b/drivers/spi/spi-mpc52xx.c
+@@ -248,7 +248,9 @@ static int mpc52xx_spi_fsmstate_transfer(int irq, struct mpc52xx_spi *ms,
+ 	ms->len--;
+ 	if (ms->len == 0) {
+ 		ms->timestamp = get_tbl();
+-		ms->timestamp += ms->transfer->delay_usecs * tb_ticks_per_usec;
++		if (ms->transfer->delay.unit == SPI_DELAY_UNIT_USECS)
++			ms->timestamp += ms->transfer->delay.value *
++					 tb_ticks_per_usec;
+ 		ms->state = mpc52xx_spi_fsmstate_wait;
+ 		return FSM_CONTINUE;
+ 	}
+-- 
+2.17.1
+
