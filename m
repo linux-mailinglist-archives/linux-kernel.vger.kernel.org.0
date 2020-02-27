@@ -2,115 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EEE71722BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:03:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19C591722C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:05:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729907AbgB0QDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:03:24 -0500
-Received: from mga07.intel.com ([134.134.136.100]:61415 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729153AbgB0QDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:03:24 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 08:02:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,492,1574150400"; 
-   d="scan'208";a="385198407"
-Received: from asliwa-mobl.ger.corp.intel.com (HELO localhost) ([10.252.26.84])
-  by orsmga004.jf.intel.com with ESMTP; 27 Feb 2020 08:02:51 -0800
-Date:   Thu, 27 Feb 2020 18:02:50 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, aik@ozlabs.ru,
-        david@gibson.dropbear.id.au, linux-kernel@vger.kernel.org,
-        nayna@linux.vnet.ibm.com, gcwilson@linux.ibm.com, jgg@ziepe.ca,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v3 3/4] tpm: Implement tpm2_init_commands to use in
- non-auto startup case
-Message-ID: <20200227160250.GB5140@linux.intel.com>
-References: <20200227002654.7536-1-stefanb@linux.vnet.ibm.com>
- <20200227002654.7536-4-stefanb@linux.vnet.ibm.com>
+        id S1729751AbgB0QFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:05:12 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:38944 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729134AbgB0QFM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 11:05:12 -0500
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Eugen.Hristev@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="Eugen.Hristev@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Eugen.Hristev@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: FjceEtYSB+UnStdLVlMcw4Vf7NArZkglw6A4SBlhuQQeh0UyiNgfpLej9+QyV9E/ek62q7k7zd
+ Wn4BsHcn+N+BToTFz6ki32sIjVbAROPqtoVfomhdu670oRIaCRd6DkVXLSwS/Dt7sMbUzfDGn6
+ PY0EBOG9tGaNMT37f3BfQ9I812NdFVzxApaJzAh1REPUqIMmyOivNp27ojt6u3KPv2bIyv4krF
+ 2Wr8GEaUKiwvCCtH0eiPlLugGwhimAzLs8P4Ey6IoLFHz+WcdQGINbalxpUl1GcJavhz005dKe
+ BM0=
+X-IronPort-AV: E=Sophos;i="5.70,492,1574146800"; 
+   d="scan'208";a="68213347"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Feb 2020 09:05:10 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 27 Feb 2020 09:05:10 -0700
+Received: from ROB-ULT-M18282.microchip.com (10.10.115.15) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 27 Feb 2020 09:05:21 -0700
+From:   Eugen Hristev <eugen.hristev@microchip.com>
+To:     <dave.stevenson@raspberrypi.com>, <andrey.konovalov@linaro.org>,
+        <sakari.ailus@iki.fi>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Eugen Hristev <eugen.hristev@microchip.com>
+Subject: [PATCH v2] media: i2c: imx219: add support for enum frame interval
+Date:   Thu, 27 Feb 2020 18:03:43 +0200
+Message-ID: <20200227160343.2833-1-eugen.hristev@microchip.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227002654.7536-4-stefanb@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 07:26:53PM -0500, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> The IBM vTPM device driver will not use TPM_OPS_AUTO_STARTUP since we
-> assume the firmware has initialized the TPM 2 and TPM2_Startup() need
-> not be sent. Therefore, tpm2_auto_startup() will not be called. To cover
-> the tpm_chip's initialization of timeouts, command durations, and
-> command attributes we implement tpm2_init_commands() function that will
-> be called instead of tpm2_auto_startup().
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
->  drivers/char/tpm/tpm-interface.c |  5 ++++-
->  drivers/char/tpm/tpm.h           |  1 +
->  drivers/char/tpm/tpm2-cmd.c      | 14 ++++++++++++++
->  3 files changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index a438b1206fcb..30d80b94db33 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -371,8 +371,11 @@ int tpm_auto_startup(struct tpm_chip *chip)
->  {
->  	int rc;
->  
-> -	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP))
-> +	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP)) {
-> +		if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> +			return tpm2_init_commands(chip);
->  		return 0;
-> +	}
->  
->  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
->  		rc = tpm2_auto_startup(chip);
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 5620747da0cf..30da942d714a 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -222,6 +222,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
->  			u32 *value, const char *desc);
->  
->  ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
-> +int tpm2_init_commands(struct tpm_chip *chip);
->  int tpm2_auto_startup(struct tpm_chip *chip);
->  void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type);
->  unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 13696deceae8..2d0c5a3b65c0 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -709,6 +709,20 @@ static int tpm2_startup(struct tpm_chip *chip)
->  	return rc;
->  }
->  
-> +/**
-> + * tpm2_init_commands - Get timeouts, durations and command code attributes
-> + *                      in case tpm2_auto_startup is not used.
-> + * @chip: TPM chip to use
-> + *
-> + * Return 0 on success, < 0 in case of fatal error.
-> + */
-> +int tpm2_init_commands(struct tpm_chip *chip)
-> +{
-> +	tpm2_get_timeouts(chip);
-> +
-> +	return tpm2_get_cc_attrs_tbl(chip);
+Add support for enum frame intervals IOCTL.
+The current supported framerates are only available as comments inside
+the code.
+Add support for VIDIOC_ENUM_FRAMEINTERVALS as the enum_frame_interval
+callback as pad ops.
 
-Call * locally in vtpm instead of adding quirks to the TPM driver.
+ # v4l2-ctl --list-frameintervals width=1920,height=1080,pixelformat=RG10
+ ioctl: VIDIOC_ENUM_FRAMEINTERVALS
+        Interval: Discrete 0.067s (15.000 fps)
+        Interval: Discrete 0.033s (30.000 fps)
+        Interval: Discrete 0.033s (30.000 fps)
 
-/Jarkko
+test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+---
+
+Changes in v2:
+
+v4l2-compliance was failing on setting another resolution:
+
+fail: v4l2-test-formats.cpp(126): found frame intervals for invalid size 3281x2464
+
+So fixed now by checking size:
+
+test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+
+
+ drivers/media/i2c/imx219.c | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+
+diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+index f1effb5a5f66..2bdcaef0c89f 100644
+--- a/drivers/media/i2c/imx219.c
++++ b/drivers/media/i2c/imx219.c
+@@ -127,6 +127,8 @@ struct imx219_mode {
+ 	unsigned int width;
+ 	/* Frame height */
+ 	unsigned int height;
++	/* Frame rate */
++	u8 fps;
+ 
+ 	/* V-timing */
+ 	unsigned int vts_def;
+@@ -381,6 +383,7 @@ static const struct imx219_mode supported_modes[] = {
+ 		/* 8MPix 15fps mode */
+ 		.width = 3280,
+ 		.height = 2464,
++		.fps = 15,
+ 		.vts_def = IMX219_VTS_15FPS,
+ 		.reg_list = {
+ 			.num_of_regs = ARRAY_SIZE(mode_3280x2464_regs),
+@@ -391,6 +394,7 @@ static const struct imx219_mode supported_modes[] = {
+ 		/* 1080P 30fps cropped */
+ 		.width = 1920,
+ 		.height = 1080,
++		.fps = 30,
+ 		.vts_def = IMX219_VTS_30FPS_1080P,
+ 		.reg_list = {
+ 			.num_of_regs = ARRAY_SIZE(mode_1920_1080_regs),
+@@ -401,6 +405,7 @@ static const struct imx219_mode supported_modes[] = {
+ 		/* 2x2 binned 30fps mode */
+ 		.width = 1640,
+ 		.height = 1232,
++		.fps = 30,
+ 		.vts_def = IMX219_VTS_30FPS_BINNED,
+ 		.reg_list = {
+ 			.num_of_regs = ARRAY_SIZE(mode_1640_1232_regs),
+@@ -680,6 +685,36 @@ static int imx219_enum_frame_size(struct v4l2_subdev *sd,
+ 	return 0;
+ }
+ 
++static int imx219_enum_frame_interval(struct v4l2_subdev *sd,
++				      struct v4l2_subdev_pad_config *cfg,
++				      struct v4l2_subdev_frame_interval_enum *fie)
++{
++	struct imx219 *imx219 = to_imx219(sd);
++	const struct imx219_mode *mode;
++
++	if (fie->index >= ARRAY_SIZE(supported_modes))
++		return -EINVAL;
++
++	if (fie->code != imx219_get_format_code(imx219))
++		return -EINVAL;
++
++	if (fie->pad)
++		return -EINVAL;
++
++	mode = v4l2_find_nearest_size(supported_modes,
++				      ARRAY_SIZE(supported_modes),
++				      width, height,
++				      fie->width, fie->height);
++
++	if (mode->width != fie->width || mode->height != fie->height)
++		return -EINVAL;
++
++	fie->interval.numerator = 1;
++	fie->interval.denominator = supported_modes[fie->index].fps;
++
++	return 0;
++}
++
+ static void imx219_reset_colorspace(struct v4l2_mbus_framefmt *fmt)
+ {
+ 	fmt->colorspace = V4L2_COLORSPACE_SRGB;
+@@ -1004,6 +1039,7 @@ static const struct v4l2_subdev_pad_ops imx219_pad_ops = {
+ 	.get_fmt = imx219_get_pad_format,
+ 	.set_fmt = imx219_set_pad_format,
+ 	.enum_frame_size = imx219_enum_frame_size,
++	.enum_frame_interval = imx219_enum_frame_interval,
+ };
+ 
+ static const struct v4l2_subdev_ops imx219_subdev_ops = {
+-- 
+2.20.1
+
