@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B23B1171EC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD7B0171CBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:14:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388314AbgB0OaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:30:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41820 "EHLO mail.kernel.org"
+        id S2389178AbgB0OOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:14:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387713AbgB0OFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:05:12 -0500
+        id S2389168AbgB0OOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:14:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25EFD20801;
-        Thu, 27 Feb 2020 14:05:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4740720578;
+        Thu, 27 Feb 2020 14:14:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812311;
-        bh=IAbXsdKThfWp5kflFnf+H5CpkjsYJ220+iv2NJURT2I=;
+        s=default; t=1582812882;
+        bh=M8nOWdSwyIN9dVnGbyJzR9EvWHZSSK8dqPkYJyjx+JA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N4lr0BJE9XiJlvkta5RjsVc3KQLKxa9uCM3AR8euAavaAYt5LGONU5Q8toyRODWw1
-         5q+P03hHX+1yOm/FLhBpHfdtU271PO90M+BLsIIssPHCtRK/88lrk1mR0dOsafMEit
-         33DnhhgcI48Q8Z7VgJ2K1D1hdx98cHTEJrK6srUI=
+        b=g+UFvF4eX6zXGnThP78Vl455CZjrbStOVM6cHwvQU67rgY/Wx+q4RTgUxwSsXwrh7
+         CBP9CndtW6u6lXPlyM/1nUF4B/OAOmgcbRv9LdXWFL1ofa9dWCyoyYjds/Cogcyi51
+         QFnehi4sQd2ar+2gemjzTkJBe3HgU4w5QTmje2as=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rene D Obermueller <cmdrrdo@gmail.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.19 19/97] xhci: Force Maximum Packet size for Full-speed bulk devices to valid range.
-Date:   Thu, 27 Feb 2020 14:36:27 +0100
-Message-Id: <20200227132217.754364763@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Leonardo Bras <leonardo@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.5 051/150] powerpc/8xx: Fix clearing of bits 20-23 in ITLB miss
+Date:   Thu, 27 Feb 2020 14:36:28 +0100
+Message-Id: <20200227132240.597551138@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
-References: <20200227132214.553656188@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit f148b9f402ef002b57bcff3964d45abc8ffb6c3f upstream.
+commit a4031afb9d10d97f4d0285844abbc0ab04245304 upstream.
 
-A Full-speed bulk USB audio device (DJ-Tech CTRL) with a invalid Maximum
-Packet Size of 4 causes a xHC "Parameter Error" at enumeration.
+In ITLB miss handled the line supposed to clear bits 20-23 on the L2
+ITLB entry is buggy and does indeed nothing, leading to undefined
+value which could allow execution when it shouldn't.
 
-This is because valid Maximum packet sizes for Full-speed bulk endpoints
-are 8, 16, 32 and 64 bytes. Hosts are not required to support other values
-than these. See usb 2 specs section 5.8.3 for details.
+Properly do the clearing with the relevant instruction.
 
-The device starts working after forcing the maximum packet size to 8.
-This is most likely the case with other devices as well, so force the
-maximum packet size to a valid range.
-
-Cc: stable@vger.kernel.org
-Reported-by: Rene D Obermueller <cmdrrdo@gmail.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20200210134553.9144-2-mathias.nyman@linux.intel.com
+Fixes: 74fabcadfd43 ("powerpc/8xx: don't use r12/SPRN_SPRG_SCRATCH2 in TLB Miss handlers")
+Cc: stable@vger.kernel.org # v5.0+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Reviewed-by: Leonardo Bras <leonardo@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/4f70c2778163affce8508a210f65d140e84524b4.1581272050.git.christophe.leroy@c-s.fr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-mem.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/head_8xx.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -1475,9 +1475,15 @@ int xhci_endpoint_init(struct xhci_hcd *
- 	/* Allow 3 retries for everything but isoc, set CErr = 3 */
- 	if (!usb_endpoint_xfer_isoc(&ep->desc))
- 		err_count = 3;
--	/* Some devices get this wrong */
--	if (usb_endpoint_xfer_bulk(&ep->desc) && udev->speed == USB_SPEED_HIGH)
--		max_packet = 512;
-+	/* HS bulk max packet should be 512, FS bulk supports 8, 16, 32 or 64 */
-+	if (usb_endpoint_xfer_bulk(&ep->desc)) {
-+		if (udev->speed == USB_SPEED_HIGH)
-+			max_packet = 512;
-+		if (udev->speed == USB_SPEED_FULL) {
-+			max_packet = rounddown_pow_of_two(max_packet);
-+			max_packet = clamp_val(max_packet, 8, 64);
-+		}
-+	}
- 	/* xHCI 1.0 and 1.1 indicates that ctrl ep avg TRB Length should be 8 */
- 	if (usb_endpoint_xfer_control(&ep->desc) && xhci->hci_version >= 0x100)
- 		avg_trb_len = 8;
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -289,7 +289,7 @@ InstructionTLBMiss:
+ 	 * set.  All other Linux PTE bits control the behavior
+ 	 * of the MMU.
+ 	 */
+-	rlwimi	r10, r10, 0, 0x0f00	/* Clear bits 20-23 */
++	rlwinm	r10, r10, 0, ~0x0f00	/* Clear bits 20-23 */
+ 	rlwimi	r10, r10, 4, 0x0400	/* Copy _PAGE_EXEC into bit 21 */
+ 	ori	r10, r10, RPN_PATTERN | 0x200 /* Set 22 and 24-27 */
+ 	mtspr	SPRN_MI_RPN, r10	/* Update TLB entry */
 
 
