@@ -2,111 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F10C171733
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 13:29:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03DE2171738
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 13:30:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbgB0M36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 07:29:58 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37562 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728928AbgB0M35 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 07:29:57 -0500
-Received: by mail-wr1-f67.google.com with SMTP id l5so3127665wrx.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 04:29:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=IIQDA+tILyCgis3eGzX3uwCoD2bNMsa23VuAcEl8vLQ=;
-        b=IWNRCmtZSP+sggBUUbz53Z2M+bpKk3376XLiYXyv0u72WIo8rBHn9cJONARUJl7uVs
-         BVGFpIwGzLrFU3gyIP+zQQvrRNq2ntDoYTTeC0FzikpHL6JPxA8Bl9VktQfS7Gs0GL3J
-         kSZ4FRLsRFYdwexVnHs7IwqZn6j4vhBY5xonCKvObHwmbXG1uP6DM08oBvd5AQueVPU2
-         iAykxZ4iO3SoxDZspxY71Nh2/99TUiGF1o6mPFEhvqvkR2tpfRsUZ0+9LYuO/0UwTvRO
-         KHbj5LvL250mnk3SswK/lfrAq53zoNSLmhnp971X1kVwLyTg/AwTXoTtHQuSkcnSYt0D
-         AFYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=IIQDA+tILyCgis3eGzX3uwCoD2bNMsa23VuAcEl8vLQ=;
-        b=VAX9s9TZsXd1YAV+oqkZ2UkvoxXAdBClOn3WEgnw+uGQI7Ff3H4fwzwcJ0FvVcuQQq
-         df0NbD9IsMuNOYdndRq2J3vEiKq0gFD4yJ+SU7ytaoJbUKkUv4boi5FYy9VdDIswe13s
-         nPEx4bcR00D+5k5AgZy3v8lrf5o5OZ89dh1K5KVC/f92y682lxHEAV2TAWPS7ZGuD22Z
-         lwzvcPZR+NFU/fzyLJ03FV3HHLngHmMDjduW6vkDyhd8T+j6qMiro0yDv3+oPed4UNRF
-         bdJBSBm5r2rsNELT5A+RMo0RVdLD4lzohB2gyxWTapZBQMJgbxAFhmMX85Qx1pJ/rleM
-         immw==
-X-Gm-Message-State: APjAAAXm1CbCWNGtlWo2V5xDTSgFXW3/BXRHJFGX2QzAcoWbmezm3XrM
-        LgbSrU2gcfkHK2NWBDCWOxU=
-X-Google-Smtp-Source: APXvYqwPHNF+JPCOcRmhlLQ2ZlGa0G7cxgWqv/b8nuMluNPecxiyGd4RGvqDNxh21bQ+cyf5VKkhgg==
-X-Received: by 2002:a5d:65cd:: with SMTP id e13mr4561077wrw.193.1582806594536;
-        Thu, 27 Feb 2020 04:29:54 -0800 (PST)
-Received: from wambui.local ([197.237.61.225])
-        by smtp.googlemail.com with ESMTPSA id f11sm7611144wml.3.2020.02.27.04.29.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 04:29:54 -0800 (PST)
-From:   Wambui Karuga <wambui.karugax@gmail.com>
-X-Google-Original-From: Wambui Karuga <wambui@wambui>
-Date:   Thu, 27 Feb 2020 15:29:46 +0300 (EAT)
-To:     Greg KH <gregkh@linuxfoundation.org>
-cc:     Wambui Karuga <wambui.karugax@gmail.com>, daniel@ffwll.ch,
-        airlied@linux.ie, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 02/21] drm: convert the drm_driver.debugfs_init() hook
- to return void.
-In-Reply-To: <20200227122313.GB896418@kroah.com>
-Message-ID: <alpine.LNX.2.21.99999.375.2002271528310.19554@wambui>
-References: <20200227120232.19413-1-wambui.karugax@gmail.com> <20200227120232.19413-3-wambui.karugax@gmail.com> <20200227122313.GB896418@kroah.com>
-User-Agent: Alpine 2.21.99999 (LNX 375 2019-10-29)
+        id S1729076AbgB0Mab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 07:30:31 -0500
+Received: from foss.arm.com ([217.140.110.172]:49606 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728856AbgB0Mab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 07:30:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0AD951FB;
+        Thu, 27 Feb 2020 04:30:31 -0800 (PST)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7FF473F73B;
+        Thu, 27 Feb 2020 04:30:29 -0800 (PST)
+Date:   Thu, 27 Feb 2020 12:30:24 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>
+Subject: Re: [PATCH] pci: brcmstb: Fix build on 32bit ARM platforms with
+ older compilers
+Message-ID: <20200227123024.GA12798@e121166-lin.cambridge.arm.com>
+References: <CGME20200227115151eucas1p22ff7409009d917addcc7e20f523c9051@eucas1p2.samsung.com>
+ <20200227115146.24515-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200227115146.24515-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Subject should be:
 
+PCI: brcmstb: Fix build on 32bit ARM platforms with older compilers
 
-On Thu, 27 Feb 2020, Greg KH wrote:
+On Thu, Feb 27, 2020 at 12:51:46PM +0100, Marek Szyprowski wrote:
+> Some older compilers have no implementation for the helper for 64-bit
+> unsigned division/modulo, so linking pcie-brcmstb driver causes the
+> "undefined reference to `__aeabi_uldivmod'" error.
+> 
+> *rc_bar2_size is always a power of two, because it is calculated as:
+> "1ULL << fls64(entry->res->end - entry->res->start)", so the modulo
+> operation in the subsequent check can be replaced by a simple logical
+> AND with a proper mask.
+> 
 
-> On Thu, Feb 27, 2020 at 03:02:13PM +0300, Wambui Karuga wrote:
->> As a result of commit 987d65d01356 (drm: debugfs: make
->> drm_debugfs_create_files() never fail) and changes to various debugfs
->> functions in drm/core and across various drivers, there is no need for
->> the drm_driver.debugfs_init() hook to have a return value. Therefore,
->> declare it as void.
->>
->> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
->> ---
->>  include/drm/drm_drv.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
->> index 97109df5beac..c6ae888c672b 100644
->> --- a/include/drm/drm_drv.h
->> +++ b/include/drm/drm_drv.h
->> @@ -323,7 +323,7 @@ struct drm_driver {
->>  	 *
->>  	 * Allows drivers to create driver-specific debugfs files.
->>  	 */
->> -	int (*debugfs_init)(struct drm_minor *minor);
->> +	void (*debugfs_init)(struct drm_minor *minor);
->
->
-> Doesn't this patch break the build, or at least, cause lots of build
-> warnings to happen?
->
-> Fixing it all up later is good, but I don't think you want to break
-> things at this point in the series.
->
-So, should it come last in the series? All functions that use this hook 
-have been converted to void in the patchset.
+Add a Fixes: tag please.
 
-thanks,
-wambui karuga
+Fixes: c0452137034b ("PCI: brcmstb: Add Broadcom STB PCIe host controller driver")
 
-> thanks,
->
-> greg k-h
->
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Hi Bjorn,
+
+I think this should be merged in one of the upcoming -rc, given that
+it fixes v5.6 material.
+
+Here is my ACK to that end, if you prefer postponing it to v5.7
+please let me know.
+
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index d20aabc26273..3a10e678c7f4 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -670,7 +670,7 @@ static inline int brcm_pcie_get_rc_bar2_size_and_offset(struct brcm_pcie *pcie,
+>  	 *   outbound memory @ 3GB). So instead it will  start at the 1x
+>  	 *   multiple of its size
+>  	 */
+> -	if (!*rc_bar2_size || *rc_bar2_offset % *rc_bar2_size ||
+> +	if (!*rc_bar2_size || (*rc_bar2_offset & (*rc_bar2_size - 1)) ||
+>  	    (*rc_bar2_offset < SZ_4G && *rc_bar2_offset > SZ_2G)) {
+>  		dev_err(dev, "Invalid rc_bar2_offset/size: size 0x%llx, off 0x%llx\n",
+>  			*rc_bar2_size, *rc_bar2_offset);
+> -- 
+> 2.17.1
+> 
