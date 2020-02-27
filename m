@@ -2,93 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B08871723FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:52:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86AF7172404
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:52:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730475AbgB0QwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:52:10 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39151 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729165AbgB0QwK (ORCPT
+        id S1730580AbgB0Qw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:52:29 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43797 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730343AbgB0Qw2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:52:10 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n30so2608761lfh.6
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 08:52:09 -0800 (PST)
+        Thu, 27 Feb 2020 11:52:28 -0500
+Received: by mail-pf1-f195.google.com with SMTP id s1so92557pfh.10
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 08:52:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=4kXB7FgTmsEGGbvV7uWwCTMrQxdsKT8tnVYNGq8AnCA=;
-        b=F6FcKlKKFxpwyeXYMTixXUSJtDtGrVwip31cUGRv9wwTcq0ataMnomX0ntj7BD3cS5
-         peBIyQSJxbzuqyk8q7OE4XLGFwlTxOBAIOtl0hmEbYnYnW/879Djtt0UnsRLg2lLiey/
-         WMRaYAq6xRshNGqqQZUfqXEMez+ojtVtRKDBCghhusYpq32C5KZ2KH38xzhaYx/ahFpz
-         i1S9ppCLWvJ+hOj5mPjAfqNYFc3s8tWPuenSVyOcoRMbXT5bd+i8+Zf0aT0V9wAh8Jsn
-         lFOvfqWmT4kk/2ifrHOGlvJ7XLgxeXxFNxOgJW377B7fH0a8ABO1f9gnB4iQgFqBjGtO
-         7mWQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=jKuXW28lW9AH6MJSzQGV9UYY4yuB4lYRJ5J1zMaBeWg=;
+        b=Uwjv1NwaKf76fG5FRij7JXauaQPfpbqstkQhD/y5gCIJM6+3Cw2YhM+OrFS3ynXgxr
+         WspiJo1JoinDIE6Au8mqyzdu8VXgUHtqtuTHNlwTCGljExacZRMykTw1nwOpw6R2XOHs
+         oKFHWKiAOovd3i38eULme3pkRf5JSULidWYjg3VoPXqKzAOsop2n68cuhH1WEdhjzGv/
+         s4/gFcdyiyzNBtKoZ3AgsB6300ZKv5+HfyMngVZvwbVyDES/1Ved72HBw7CZfls8mWWF
+         pXQMFjw/JnnOKYKVFt6wVF93c8P0aUyM+NsA0pAqJsbN4Pp0IosMvNDRvDHXXIulZ6/D
+         LV0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=4kXB7FgTmsEGGbvV7uWwCTMrQxdsKT8tnVYNGq8AnCA=;
-        b=OTGqPl++yVFWGQ8pmXCz3BwbDvzwYvWg5qedCrBuqW6XF0pdjT2akdT0fPd193HoRs
-         xpQF2JAQ8EBatqNTYQ74EZmnFbZCoAkLKXem2DK7458mKHHZUoMAYgSQSPGDvPZubOYy
-         Lwy2kCs3iosDRgoDRqXjUXKQJgxNTB1Vq+3VxWh0PNhDFw/IJN2RlgMh44Z4My0RThZl
-         eGVzopoUTELtELR2r7s91Pzdb0LrMnLuNEi0DVzwPDMyD4B2oEi2As2m5xOgmHWzwW0r
-         c+KHzMI1Tt4bBKguU2Y6NYffkXoC7JVRKtBtN67LQFyuc5mDbJUl5xBelO2SwQiGhyMr
-         ZOsQ==
-X-Gm-Message-State: ANhLgQ1bTsYx5S+YK8nkMN4ICQ1qEnI+4JDJIussCtRyrp73H/M+xYxS
-        GPX5lIsrg/6Nu7KIA29SG3yGoA==
-X-Google-Smtp-Source: ADFU+vsgBkVQD0dLBecTfEbF03CrLYtLtKVzW7GOc6eWIzGL7RcvC5sthhgOlU9YtJ3O57BeRs1mGw==
-X-Received: by 2002:a05:6512:692:: with SMTP id t18mr170820lfe.212.1582822328230;
-        Thu, 27 Feb 2020 08:52:08 -0800 (PST)
-Received: from jade (h-249-223.A175.priv.bahnhof.se. [98.128.249.223])
-        by smtp.gmail.com with ESMTPSA id m14sm3129755lfk.7.2020.02.27.08.52.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 08:52:07 -0800 (PST)
-Date:   Thu, 27 Feb 2020 17:52:05 +0100
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-To:     arm@kernel.org, soc@kernel.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        tee-dev@lists.linaro.org, Rijo Thomas <Rijo-john.Thomas@amd.com>
-Subject: [GIT PULL] amdtee driver fix for v5.6
-Message-ID: <20200227165205.GA7926@jade>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jKuXW28lW9AH6MJSzQGV9UYY4yuB4lYRJ5J1zMaBeWg=;
+        b=LNczg4d492pOb5enw25xJaCUzQDf/Snu9PCLUz4yZAEBVuNHG5WxXPNibYWSuUB78Y
+         VxmaykgFgGggp0MlVOWpqq7m/O6n9ym61twKr8pS8EAjS8MQFjy8KS9fFBU96J15Y9bJ
+         jGgvGVM98szdHCFPHamAmcKPgXAODsMT5BAUPmZEOIFkSsD1uEag/xsblEmjg7hdtTrj
+         BVF/h9RZ6LMwYGjN9IVzS7iDUDfVPEhxz6/YCkhs7E8xxBZ/WlhBJ8vzIRR83ubONF3+
+         yQU7vGqFADLhPeJO889YYQ1p6hpFHfFIQILFWtqW10H3UfCBwyLf9BhMAZnspbr7/rXH
+         qlgg==
+X-Gm-Message-State: APjAAAVDci7FTrVHCxMguXzqcQRWRcRA/SdAhmw7uiZCLDeYZ8RRPnr6
+        0wzUTzzMUcO9kBrbGLWgGi0=
+X-Google-Smtp-Source: APXvYqzp79FySyqRZxGCCbLGFXVfMt6BS37hDZ0bUxPVRWjZiXDe0YNQLFU6f3/Z9wL5KtrtDhihjw==
+X-Received: by 2002:a63:4a19:: with SMTP id x25mr273591pga.167.1582822347390;
+        Thu, 27 Feb 2020 08:52:27 -0800 (PST)
+Received: from VM_0_35_centos.localdomain ([150.109.62.251])
+        by smtp.gmail.com with ESMTPSA id 28sm7247498pgl.42.2020.02.27.08.52.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Feb 2020 08:52:26 -0800 (PST)
+From:   Qiujun Huang <hqjagain@gmail.com>
+To:     elver@google.com
+Cc:     dvyukov@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Qiujun Huang <hqjagain@gmail.com>
+Subject: [PATCH] kcsan: Fix a typo in a comment
+Date:   Fri, 28 Feb 2020 00:52:22 +0800
+Message-Id: <1582822342-26871-1-git-send-email-hqjagain@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello arm-soc maintainers,
+Might clean it up.
 
-Please pull this AMDTEE driver fix for a memory leak in one of the error
-paths of amdtee_open_session()
+Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+---
+ kernel/kcsan/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Jens
+diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
+index 065615d..4b8b846 100644
+--- a/kernel/kcsan/core.c
++++ b/kernel/kcsan/core.c
+@@ -45,7 +45,7 @@ static DEFINE_PER_CPU(struct kcsan_ctx, kcsan_cpu_ctx) = {
+ };
+ 
+ /*
+- * Helper macros to index into adjacent slots slots, starting from address slot
++ * Helper macros to index into adjacent slots, starting from address slot
+  * itself, followed by the right and left slots.
+  *
+  * The purpose is 2-fold:
+-- 
+1.8.3.1
 
-
-The following changes since commit 11a48a5a18c63fd7621bb050228cebf13566e4d8:
-
-  Linux 5.6-rc2 (2020-02-16 13:16:59 -0800)
-
-are available in the Git repository at:
-
-  https://git.linaro.org/people/jens.wiklander/linux-tee.git tags/tee-amdtee-fix-for-5.6
-
-for you to fetch changes up to b83685bceedbeed33a6adc2d0579a011708d2b18:
-
-  tee: amdtee: fix memory leak in amdtee_open_session() (2020-02-27 16:22:05 +0100)
-
-----------------------------------------------------------------
-Fix AMDTEE memory leak in amdtee_open_session()
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      tee: amdtee: fix memory leak in amdtee_open_session()
-
- drivers/tee/amdtee/core.c | 48 +++++++++++++++++++++++------------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
