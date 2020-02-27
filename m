@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05C80171D1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:18:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EB5A171E13
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:25:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389787AbgB0ORz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:17:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58340 "EHLO mail.kernel.org"
+        id S2389295AbgB0OZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:25:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389773AbgB0ORu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:17:50 -0500
+        id S2388311AbgB0OLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:11:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C525D20801;
-        Thu, 27 Feb 2020 14:17:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05EC520578;
+        Thu, 27 Feb 2020 14:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582813070;
-        bh=wLfKhXxpa14kf4mWcdqPTEGTf+Z9dEcu+jrqE4IYkmY=;
+        s=default; t=1582812713;
+        bh=VHH1pgBpBfoQ9NtBvtNG+mjfNiBMiLbkZq/twEG0pP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t4Wy04dP2skvIW8LpenFncxfa4AX5sYUYIUrZ5rcWxgI5E7/8C3NQlptUh4OzYrmB
-         My2HXm3L6xlKAO3FYtjIDgK5HokD26A3Ry/H5T/lkgDZ1gmfEYII+OOP+6C6K3vwAA
-         f4DZ58hujU+rTicyctP48qsRGHVjPA/ghtH0BjsE=
+        b=rfzJJT3GimQbqFhgn6RZFWoOeHo5G7tAzaU8VBFHB2D8saeyE64Y2/SCNHNRhMIEp
+         FQghX7HxLf9tt8XKI+fyzybLt1ukkvHp0z5hzwnABOxWQTa9WDc8k5BMTvvxRx5Tb0
+         Lk/Np9bANsJ3D00GAKncU8LS32SMtaTSMjuwysHE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.5 125/150] ASoC: atmel: fix atmel_ssc_set_audio link failure
-Date:   Thu, 27 Feb 2020 14:37:42 +0100
-Message-Id: <20200227132251.120455947@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+65c6c92d04304d0a8efc@syzkaller.appspotmail.com,
+        syzbot+e60ddfa48717579799dd@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.4 123/135] ALSA: seq: Avoid concurrent access to queue flags
+Date:   Thu, 27 Feb 2020 14:37:43 +0100
+Message-Id: <20200227132247.559799553@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
-References: <20200227132232.815448360@linuxfoundation.org>
+In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
+References: <20200227132228.710492098@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,68 +45,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 9437bfda00f3b26eb5f475737ddaaf4dc07fee4f upstream.
+commit bb51e669fa49feb5904f452b2991b240ef31bc97 upstream.
 
-The ssc audio driver can call into both pdc and dma backends.  With the
-latest rework, the logic to do this in a safe way avoiding link errors
-was removed, bringing back link errors that were fixed long ago in commit
-061981ff8cc8 ("ASoC: atmel: properly select dma driver state") such as
+The queue flags are represented in bit fields and the concurrent
+access may result in unexpected results.  Although the current code
+should be mostly OK as it's only reading a field while writing other
+fields as KCSAN reported, it's safer to cover both with a proper
+spinlock protection.
 
-sound/soc/atmel/atmel_ssc_dai.o: In function `atmel_ssc_set_audio':
-atmel_ssc_dai.c:(.text+0xac): undefined reference to `atmel_pcm_pdc_platform_register'
+This patch fixes the possible concurrent read by protecting with
+q->owner_lock.  Also the queue owner field is protected as well since
+it's the field to be protected by the lock itself.
 
-Fix it this time using Makefile hacks and a comment to prevent this
-from accidentally getting removed again rather than Kconfig hacks.
-
-Fixes: 18291410557f ("ASoC: atmel: enable SOC_SSC_PDC and SOC_SSC_DMA in Kconfig")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Link: https://lore.kernel.org/r/20200130130545.31148-1-codrin.ciubotariu@microchip.com
-Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: syzbot+65c6c92d04304d0a8efc@syzkaller.appspotmail.com
+Reported-by: syzbot+e60ddfa48717579799dd@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/20200214111316.26939-2-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/atmel/Kconfig  |    4 ++--
- sound/soc/atmel/Makefile |   10 ++++++++--
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ sound/core/seq/seq_queue.c |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
---- a/sound/soc/atmel/Kconfig
-+++ b/sound/soc/atmel/Kconfig
-@@ -10,11 +10,11 @@ config SND_ATMEL_SOC
- if SND_ATMEL_SOC
+--- a/sound/core/seq/seq_queue.c
++++ b/sound/core/seq/seq_queue.c
+@@ -392,6 +392,7 @@ int snd_seq_queue_check_access(int queue
+ int snd_seq_queue_set_owner(int queueid, int client, int locked)
+ {
+ 	struct snd_seq_queue *q = queueptr(queueid);
++	unsigned long flags;
  
- config SND_ATMEL_SOC_PDC
--	tristate
-+	bool
- 	depends on HAS_DMA
+ 	if (q == NULL)
+ 		return -EINVAL;
+@@ -401,8 +402,10 @@ int snd_seq_queue_set_owner(int queueid,
+ 		return -EPERM;
+ 	}
  
- config SND_ATMEL_SOC_DMA
--	tristate
-+	bool
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
++	spin_lock_irqsave(&q->owner_lock, flags);
+ 	q->locked = locked ? 1 : 0;
+ 	q->owner = client;
++	spin_unlock_irqrestore(&q->owner_lock, flags);
+ 	queue_access_unlock(q);
+ 	queuefree(q);
  
- config SND_ATMEL_SOC_SSC
---- a/sound/soc/atmel/Makefile
-+++ b/sound/soc/atmel/Makefile
-@@ -6,8 +6,14 @@ snd-soc-atmel_ssc_dai-objs := atmel_ssc_
- snd-soc-atmel-i2s-objs := atmel-i2s.o
- snd-soc-mchp-i2s-mcc-objs := mchp-i2s-mcc.o
+@@ -539,15 +542,17 @@ void snd_seq_queue_client_termination(in
+ 	unsigned long flags;
+ 	int i;
+ 	struct snd_seq_queue *q;
++	bool matched;
  
--obj-$(CONFIG_SND_ATMEL_SOC_PDC) += snd-soc-atmel-pcm-pdc.o
--obj-$(CONFIG_SND_ATMEL_SOC_DMA) += snd-soc-atmel-pcm-dma.o
-+# pdc and dma need to both be built-in if any user of
-+# ssc is built-in.
-+ifdef CONFIG_SND_ATMEL_SOC_PDC
-+obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel-pcm-pdc.o
-+endif
-+ifdef CONFIG_SND_ATMEL_SOC_DMA
-+obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel-pcm-dma.o
-+endif
- obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel_ssc_dai.o
- obj-$(CONFIG_SND_ATMEL_SOC_I2S) += snd-soc-atmel-i2s.o
- obj-$(CONFIG_SND_MCHP_SOC_I2S_MCC) += snd-soc-mchp-i2s-mcc.o
+ 	for (i = 0; i < SNDRV_SEQ_MAX_QUEUES; i++) {
+ 		if ((q = queueptr(i)) == NULL)
+ 			continue;
+ 		spin_lock_irqsave(&q->owner_lock, flags);
+-		if (q->owner == client)
++		matched = (q->owner == client);
++		if (matched)
+ 			q->klocked = 1;
+ 		spin_unlock_irqrestore(&q->owner_lock, flags);
+-		if (q->owner == client) {
++		if (matched) {
+ 			if (q->timer->running)
+ 				snd_seq_timer_stop(q->timer);
+ 			snd_seq_timer_reset(q->timer);
+@@ -739,6 +744,8 @@ void snd_seq_info_queues_read(struct snd
+ 	int i, bpm;
+ 	struct snd_seq_queue *q;
+ 	struct snd_seq_timer *tmr;
++	bool locked;
++	int owner;
+ 
+ 	for (i = 0; i < SNDRV_SEQ_MAX_QUEUES; i++) {
+ 		if ((q = queueptr(i)) == NULL)
+@@ -750,9 +757,14 @@ void snd_seq_info_queues_read(struct snd
+ 		else
+ 			bpm = 0;
+ 
++		spin_lock_irq(&q->owner_lock);
++		locked = q->locked;
++		owner = q->owner;
++		spin_unlock_irq(&q->owner_lock);
++
+ 		snd_iprintf(buffer, "queue %d: [%s]\n", q->queue, q->name);
+-		snd_iprintf(buffer, "owned by client    : %d\n", q->owner);
+-		snd_iprintf(buffer, "lock status        : %s\n", q->locked ? "Locked" : "Free");
++		snd_iprintf(buffer, "owned by client    : %d\n", owner);
++		snd_iprintf(buffer, "lock status        : %s\n", locked ? "Locked" : "Free");
+ 		snd_iprintf(buffer, "queued time events : %d\n", snd_seq_prioq_avail(q->timeq));
+ 		snd_iprintf(buffer, "queued tick events : %d\n", snd_seq_prioq_avail(q->tickq));
+ 		snd_iprintf(buffer, "timer state        : %s\n", tmr->running ? "Running" : "Stopped");
 
 
