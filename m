@@ -2,122 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 404F4171F4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:34:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75146171FAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387460AbgB0Od7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:33:59 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39022 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733150AbgB0Od4 (ORCPT
+        id S2387677AbgB0Ohh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:37:37 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41185 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387432AbgB0Ohe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:33:56 -0500
-Received: by mail-oi1-f193.google.com with SMTP id r16so1821169oie.6;
-        Thu, 27 Feb 2020 06:33:56 -0800 (PST)
+        Thu, 27 Feb 2020 09:37:34 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y17so2250862lfe.8
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:37:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RcYL8SCs4mY/P4RQdp+0RxyVx6nbM+UHppPJThzz0ak=;
+        b=RpqIqnJz/hzb5sr/fE5lKqIxanX/QvNCaDDuyFXtqcMVjdJmqfAIsXUSQQwkCYrY/J
+         FNSedxYoVKXzx0UlYS/StW2w9ICZ2mOLJB68NaR9xRZBfMu8gaeVUR2GcDDOmqcXRtFB
+         k9jm2fQtwets6TkXYU9iQBlog0FBQhN4TGvjuwu+QaEQn52hK37CdRNI+wM/M+zNIud4
+         lUSSYVuy00iLlo10Snm/MkRLdEbSWTcTjwYzdwCZf+zRO5AHzjLpsC0XDEoXPvuPhVXh
+         NiDeopd7QdvzhvfdoF1Y0DcPtzyguWdzqJSiQnLBw2XYvnssYVz3U7Aql/1YHV2j9jf3
+         mMMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=iazGFV0/AdGMbS8cIoxIj45xiJT6uT7qxe6QWrKdivk=;
-        b=m8C5X+/LiWiC9LavLEDvnnkvcph+a6hDEMC6ZvzHIKt9/nVkSfFX6NR+fEkDS673ur
-         +REMX4arHza/sAVlygHoUnsGjWWNmss9vLUScWAkY0LcAZbgqE85nakp5q8DJcUrU+P8
-         QLC0JiCB7644WqR49JzwH4SZkPVT6gSaXaQFEBiHcrq6a+qlYG5vREDeSrRytZ6CQVYU
-         HRgp1TQ0AZ9G6elL9cVnulq9QSQ8Rz4g/B13hPKKYZxS6GHxipUkTXhYYu/Dz62sLkdl
-         zsL8TfIRZai59M37gC7JSyKAheXy4lC3vqG8seQO6oIt3HGIOhVDPeTZWduvgx1L1TEx
-         rDpg==
-X-Gm-Message-State: APjAAAXLWQq3RUIvOy6Hqd3h1Tw3gjekV/5mI4xhskEVXisU57KfHoFF
-        ekSjji2XHAfc1CrmYMGtvch+hkccmqP2XrykpUg=
-X-Google-Smtp-Source: APXvYqy5IFVSWV6b6wQFhhGt1TR8aI1RVsmZ9SM+888Y8GkOYCeG4Jn33omesaC3db4cUJaAC9F6faMRciwO4h/uRI8=
-X-Received: by 2002:aca:cdd1:: with SMTP id d200mr2932212oig.153.1582814035925;
- Thu, 27 Feb 2020 06:33:55 -0800 (PST)
+        bh=RcYL8SCs4mY/P4RQdp+0RxyVx6nbM+UHppPJThzz0ak=;
+        b=ncmhA8fATjn4+zBSSWT6keId1zLOZK2jIGnyvCYwvXujCTWr5oshieRsdK+Fq1xYtY
+         V6wd6ia+HsHJ6uhjnF0QaPJ5cYDocvQkAdNQAWaVEW6lFKNLAIzyji4XSIGRB8veKgxD
+         QLLlnzj3ALE8Gb7Vo97u5GNRGVvn2Ot6FQpMwUkAkhBtqa0JheTssXxYlAAZuvXe2dLg
+         FUdFLVJ+PPNdYa5jqTIO5bel7GmFxZx3ysnpiTmXkoxVVPYvYdtS4QbgbRSAXJ+AkRjx
+         iTuZyvQiuPpQI0GoCvvTe8XsXoqU35sOXCrZYP7mPwuugedwbbWH/r93/4hf8uN7iXKU
+         iw2g==
+X-Gm-Message-State: ANhLgQ3UvCQ4onfWGklTDbtkz75RkqfLHjq0h4JDBrDs17OiwYla3dDZ
+        ceUqGU0ISyh/UlUgCY96tMSpGryxH0ZG0ST+eTw=
+X-Google-Smtp-Source: ADFU+vuC3XzlRWFGpQwtS8g++F+CcBuYTPCc87hQgBEaxqKTAdOuHFeoURTMjbZnBKllPt5O1u3PZNDkA2G6uu5pTnA=
+X-Received: by 2002:a05:6512:31c2:: with SMTP id j2mr1848583lfe.23.1582814252239;
+ Thu, 27 Feb 2020 06:37:32 -0800 (PST)
 MIME-Version: 1.0
-References: <20200225220551.d9a409bc04b77cdf48eae3ea@kernel.org>
- <158264140162.23842.11237423518607465535.stgit@devnote2> <CAMuHMdW+JECxNPX8yDswARq+fLXig7VAo0oosCPAkZhtc_XR0g@mail.gmail.com>
- <20200227092518.2096344e@gandalf.local.home>
-In-Reply-To: <20200227092518.2096344e@gandalf.local.home>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 27 Feb 2020 15:33:44 +0100
-Message-ID: <CAMuHMdUXqH6yE17Us+k7T4VnhyiWdRuEexWXMyc9x5yuT_41vg@mail.gmail.com>
-Subject: Re: [PATCH] bootconfig: Fix CONFIG_BOOTTIME_TRACING dependency issue
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <5e3cea14-28d1-bf1e-cabe-fb5b48fdeadc@linux.intel.com>
+ <3c3c56c1-b8dc-652c-535e-74f6dcf45560@linux.intel.com> <CANaguZAz+mw1Oi8ecZt+JuCWbf=g5UvKrdSvAeM82Z1c+9oWAw@mail.gmail.com>
+ <e322a252-f983-e3f3-f823-16d0c16b2867@linux.intel.com> <20200212230705.GA25315@sinkpad>
+ <29d43466-1e18-6b42-d4d0-20ccde20ff07@linux.intel.com> <CAERHkruG4y8si9FrBp7cZNEdfP7EzxbmYwvdF2EvHLf=mU1mgg@mail.gmail.com>
+ <20200225034438.GA617271@ziqianlu-desktop.localdomain> <CANaguZD205ccu1V_2W-QuMRrJA9SjJ5ng1do4NCdLy8NDKKrbA@mail.gmail.com>
+ <20200227020432.GA628749@ziqianlu-desktop.localdomain> <20200227141032.GA30178@pauld.bos.csb>
+In-Reply-To: <20200227141032.GA30178@pauld.bos.csb>
+From:   Aubrey Li <aubrey.intel@gmail.com>
+Date:   Thu, 27 Feb 2020 22:37:20 +0800
+Message-ID: <CAERHkrtyAaEQqqMpV6HMKyHa47HNFwxs5peq4LQJem2z=DO1hg@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 00/19] Core scheduling v4
+To:     Phil Auld <pauld@redhat.com>
+Cc:     Aaron Lu <aaron.lwe@gmail.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Dario Faggioli <dfaggioli@suse.com>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven,
-
-On Thu, Feb 27, 2020 at 3:25 PM Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Thu, 27 Feb 2020 10:18:08 +0100
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Tue, Feb 25, 2020 at 4:47 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > > Since commit d8a953ddde5e ("bootconfig: Set CONFIG_BOOT_CONFIG=n by
-> > > default") also changed the CONFIG_BOOTTIME_TRACING to select
-> > > CONFIG_BOOT_CONFIG to show the boot-time tracing on the menu,
-> > > it introduced wrong dependencies with BLK_DEV_INITRD as below.
-> > >
-> > > WARNING: unmet direct dependencies detected for BOOT_CONFIG
-> > >   Depends on [n]: BLK_DEV_INITRD [=n]
-> > >   Selected by [y]:
-> > >   - BOOTTIME_TRACING [=y] && TRACING_SUPPORT [=y] && FTRACE [=y] && TRACING [=y]
-> > >
-> > > This makes the CONFIG_BOOT_CONFIG selects CONFIG_BLK_DEV_INITRD to
-> > > fix this error and make CONFIG_BOOTTIME_TRACING=n by default, so
-> > > that both boot-time tracing and boot configuration off but those
-> > > appear on the menu list.
-> > >
-> > > Fixes: d8a953ddde5e ("bootconfig: Set CONFIG_BOOT_CONFIG=n by default")
-> > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > > ---
-> > >  init/Kconfig         |    2 +-
-> > >  kernel/trace/Kconfig |    1 -
-> > >  2 files changed, 1 insertion(+), 2 deletions(-)
-> > >
-> > > diff --git a/init/Kconfig b/init/Kconfig
-> > > index a84e7aa89a29..8b4c3e8c05ea 100644
-> > > --- a/init/Kconfig
-> > > +++ b/init/Kconfig
-> > > @@ -1217,7 +1217,7 @@ endif
-> > >
-> > >  config BOOT_CONFIG
-> > >         bool "Boot config support"
-> > > -       depends on BLK_DEV_INITRD
-> > > +       select BLK_DEV_INITRD
-> > >         help
-> > >           Extra boot config allows system admin to pass a config file as
-> > >           complemental extension of kernel cmdline when booting.
-> > > diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> > > index 795c3e02d3f1..402eef84c859 100644
-> > > --- a/kernel/trace/Kconfig
-> > > +++ b/kernel/trace/Kconfig
-> > > @@ -145,7 +145,6 @@ config BOOTTIME_TRACING
-> > >         bool "Boot-time Tracing support"
-> > >         depends on TRACING
-> >
-> > Why not "depends on BLK_DEV_INITRD?" here?
-> >
-> > /me tries to contain the bloat introduced by the bootconfig stuff.
+On Thu, Feb 27, 2020 at 10:10 PM Phil Auld <pauld@redhat.com> wrote:
 >
-> Because people like me will be scratching my head trying to figure out why
-> I don't see Boot-time Tracing support ;-)
+> Hi Aaron,
+>
+> On Thu, Feb 27, 2020 at 10:04:32AM +0800 Aaron Lu wrote:
+> > On Tue, Feb 25, 2020 at 03:51:37PM -0500, Vineeth Remanan Pillai wrote:
+> > > On a 2sockets/16cores/32threads VM, I grouped 8 sysbench(cpu mode)
+> > > > threads into one cgroup(cgA) and another 16 sysbench(cpu mode) threads
+> > > > into another cgroup(cgB). cgA and cgB's cpusets are set to the same
+> > > > socket's 8 cores/16 CPUs and cgA's cpu.shares is set to 10240 while cgB's
+> > > > cpu.shares is set to 2(so consider cgB as noise workload and cgA as
+> > > > the real workload).
+> > > >
+> > > > I had expected cgA to occupy 8 cpus(with each cpu on a different core)
+> > >
+> > > The expected behaviour could also be that 8 processes share 4 cores and
+> > > 8 hw threads right? This is what we are seeing mostly
+> >
+> > I expect the 8 cgA tasks to spread on each core, instead of occupying
+> > 4 cores/8 hw threads. If they stay on 4 cores/8 hw threads, than on the
+> > core level, these cores' load would be much higher than other cores
+> > which are running cgB's tasks, this doesn't look right to me.
+> >
+>
+> I don't think that's a valid assumption, at least since the load balancer rework.
+>
+> The scheduler will be looking much more at the number of running task versus
+> the group weight. So in this case 2 running tasks, 2 siblings at the core level
+> will look fine. There will be no reason to migrate.
 
-AFAIUI, without using an initrd, your fancy bootconfig cannot be appended
-anywhere anyway?
+Can this be replicated?
 
-Gr{oetje,eeting}s,
+>
+> > I think the end result should be: each core has two tasks queued, one
+> > cgA task and one cgB task(to maintain load balance on the core level).
+> > The two tasks are queued on different hw thread, with cgA's task runs
+> > most of the time on one thread and cgB's task being forced idle most
+> > of the time on the other thread.
+> >
+>
+> With the core scheduler that does not seem to be a desired outcome. I think
+> grouping the 8 cgA tasks on the 8 cpus of 4 cores seems right.
+>
+Especially, if the load of cgA task + cgB task > cpu capacity, grouping cgA
+tasks can avoid forced idle completely. Maintaining core level balance seems
+not the best result. I guess that's why with core scheduler enabled we saw
+10-20% improvement in some cases against the default core scheduler disabled.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+-Aubrey
