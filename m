@@ -2,88 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 250371722D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:08:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36EED1722D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:10:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729809AbgB0QIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:08:07 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:59758 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729134AbgB0QIG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:08:06 -0500
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id 01RG82o5014642;
-        Fri, 28 Feb 2020 01:08:03 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 01RG82o5014642
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1582819683;
-        bh=2GBQ3T84PygQ3hlQ0Zt65wpjsaJMk5y7xuzfjqDlX/M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ge9qk1kFaz/KlqoC2TlfSvoOP6YzKF6Z5gkfDFCqM79PJJhRudUMEOMEEXkqiHlBQ
-         K0vK0fCa6fZr5xNfbMoPZh65Mj5iuYDxOTunwbWk4lfXMvNrq7FsPmz809LmHl+V68
-         s5Xtkj+UQWhflps8Hp7pvWn51d4q3VafiKaiVb1WW8s5lyL1Fkk/45TIUH6mSIwwa7
-         aFLYOGlEzEgiRtgFeSm517Wl5h472Oao5NdfAaAyhrQO27/XOp6WdHJKHsZjX5J2nR
-         EHhwVUBF7Se0BgwLWe4JNrRrMws0e8fwa3iR689Cgp+8Cdy8yD6yzVi+oy6KoDinsM
-         PaV34L8QJaE3Q==
-X-Nifty-SrcIP: [209.85.217.50]
-Received: by mail-vs1-f50.google.com with SMTP id m4so2158421vsa.12;
-        Thu, 27 Feb 2020 08:08:03 -0800 (PST)
-X-Gm-Message-State: APjAAAXrHx6wxt14EOxODXod9Fc1MdXr2MXCHP6Uj1HbqmMsDEZqPwth
-        28u3HWMbpIVjJO04QRUZvGGtxUgAeAQs1UYjbck=
-X-Google-Smtp-Source: APXvYqwBz+7kDkeD1Oj7Hgy9GOm3HydsOLY9fK6t7GjMF2R1tPJCKmNMjHGBRTNEE6xgIz1rmc9IezBxoMsoXrCtR64=
-X-Received: by 2002:a05:6102:48b:: with SMTP id n11mr3058742vsa.181.1582819681690;
- Thu, 27 Feb 2020 08:08:01 -0800 (PST)
+        id S1729947AbgB0QIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:08:44 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:54829 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729134AbgB0QIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 11:08:43 -0500
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 1074B4B2DD;
+        Thu, 27 Feb 2020 16:08:30 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bastien Nocera <hadess@hadess.net>,
+        Ondrej Jirman <megous@megous.com>
+Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 0/3] Add support for Goodix GT917S touch controller
+Date:   Fri, 28 Feb 2020 00:07:59 +0800
+Message-Id: <20200227160802.7043-1-icenowy@aosc.io>
 MIME-Version: 1.0
-References: <20200226174458.8115-1-masahiroy@kernel.org>
-In-Reply-To: <20200226174458.8115-1-masahiroy@kernel.org>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Fri, 28 Feb 2020 01:07:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQxD6FkYRoz+Cn=SVFr8So-m0=Qf0rASFxM_-01FC1_-A@mail.gmail.com>
-Message-ID: <CAK7LNAQxD6FkYRoz+Cn=SVFr8So-m0=Qf0rASFxM_-01FC1_-A@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: get rid of trailing slash from subdir- example
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aosc.io; s=dkim;
+        t=1582819721;
+        h=from:subject:date:message-id:to:cc:mime-version:content-transfer-encoding;
+        bh=FpRj0r9YXZ520UOqR7tl+VuCJUkCeKC7tvRB0u7eAwI=;
+        b=KvjohEZ1c4KgUwjgW1MUuLW66Wbg+BMWwEXG7FCHrhtM+IqbBIotsPCuEtEyfSbCkE2Mfs
+        4rY25BOhxEf5g//KkUSpixfjR7WKwBxig16gqcRh7l8aifYUys5WZYcehuoxpBqJxYAgFz
+        tpI/C8uUgz9u/C9aa+8oW8p/kyq1f1Y=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 2:45 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> obj-* needs a trailing slash for a directory, but subdir-* does not.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
+This patchset introduces support for Goodix GT917S touch controller.
 
-Applied to linux-kbuild.
+The major difference with other touch controllers from Goodix is that
+the ID string is no longer number-only (it contains a 'S'), so an
+additional patch is introduced for migrating the ID to a string.
 
+Icenowy Zheng (3):
+  dt-bindings: input: touchscreen: add compatible string for Goodix
+    GT917S
+  Input: goodix - use string-based chip ID
+  Input: goodix - Add support for Goodix GT917S
 
->  Documentation/kbuild/makefiles.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/kbuild/makefiles.rst b/Documentation/kbuild/makefiles.rst
-> index 0e0eb2c8da7d..c9adfa1f9e21 100644
-> --- a/Documentation/kbuild/makefiles.rst
-> +++ b/Documentation/kbuild/makefiles.rst
-> @@ -765,7 +765,7 @@ is not sufficient this sometimes needs to be explicit.
->         Example::
->
->                 #arch/x86/boot/Makefile
-> -               subdir- := compressed/
-> +               subdir- := compressed
->
->  The above assignment instructs kbuild to descend down in the
->  directory compressed/ when "make clean" is executed.
-> --
-> 2.17.1
->
-
+ .../bindings/input/touchscreen/goodix.yaml    |  1 +
+ drivers/input/touchscreen/goodix.c            | 63 +++++++++++--------
+ 2 files changed, 38 insertions(+), 26 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.24.1
+
