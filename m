@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 274BF1728B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 20:35:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CC371728B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 20:35:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730409AbgB0Tf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 14:35:26 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35158 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727268AbgB0TfZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730248AbgB0TfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 27 Feb 2020 14:35:25 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g6so213076plt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 11:35:24 -0800 (PST)
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38955 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729418AbgB0TfY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 14:35:24 -0500
+Received: by mail-pl1-f196.google.com with SMTP id g6so204826plp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 11:35:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ouVhJC1LzbMtIjBpkBkXzJDLKbzWPj7ADPmF+3aq9S8=;
-        b=eKbq1uyxj9sdlKd8KWlneIzqahwkro68DRX4rRBijPFKNce5ok5QxzJT6Ig9AabiKE
-         6wTImMPfJk6hvjOiqFoNJIrRNWOqk/eMQzD3Sn8a3wtYnD8lTY/23SEpWi1CDHEb78B+
-         UP8RTZTWnKxekxqZDolSm+CIiKJsffOwIQXck=
+        bh=TZN5E5934TvMDmRyA6YbiUZA3oVW+HYGx9jzlGs1fas=;
+        b=fhU4ZWtsMwSX2mupe2qPd38EZqvMNduMdASxFGXOeV4vpARzuW/YSPVaTMFGN08Hhc
+         XliIaYkwUiNY8jqwNeYkG4jQoqhhnqvlU2l4wKiF6qSNMzXt1xWnxElExOLM5ZL41m7y
+         Z7z1AWZH5EHP1O9W7xlNQcsJwhj4eFUdEyy5Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ouVhJC1LzbMtIjBpkBkXzJDLKbzWPj7ADPmF+3aq9S8=;
-        b=jffS8rnbkSJT3Nb7pFLZpuxd1899nIrKYrwOfisN4Z0Kkqoc/sWfQAkODXXU4diahf
-         g/kgcWLrQWwiN3J9fBclwVTuh85foahh1Fc7T+5UXb4iAs1Ayuh3tzIVWbhQj7SOwtFM
-         YMW/SkRM3sKWTU2HXhppAZtztDoY0+Byon9qYmiNhbVUDjJAFROb/O8VgvzPQDxDpjZN
-         DqBdQCO4nTvP4CtpJFXYX6+s0MAYgsTVWjJ3Ej9lM2mR7uH5V6ZC860K5uSG4jQkYZf2
-         xDElm/2uqJtGp4FsRmYRwrRdk1s/TlWWKfTcqL1TJIpuzQCOre60dIw3hQSK9Jd60hhR
-         uEPA==
-X-Gm-Message-State: APjAAAVlChVP9mcICpG8k4GeGTmoi1CfT3XXjqbXON/zzNsBKxo4lYW8
-        yHrKDuf70eINusDghgQDXCbqQQ==
-X-Google-Smtp-Source: APXvYqxTwZu2muMNOSE/MnDg7HrxUrqj2WJlHpWI6A4QY/3Gzc92Hs6WuLhx1gx2liU6bGiSGd3vuA==
-X-Received: by 2002:a17:902:ba8a:: with SMTP id k10mr312829pls.333.1582832123523;
-        Thu, 27 Feb 2020 11:35:23 -0800 (PST)
+        bh=TZN5E5934TvMDmRyA6YbiUZA3oVW+HYGx9jzlGs1fas=;
+        b=kWWRg8wlfTSpBimExfpSz2vCGisRh0iqyqkFbc8bFdl1OswOCny+8tgxjVrkTPPTq7
+         2RnWFrcy86a1TcPrlHBgelEJqGpZptTvMWSPFR9DGLHyDL15orocnRxQ17zWdkJJbnjq
+         6xE0gkStfEns53RwPJF4HF+gBM5J0J4Vary/aLOpdppWGhCdT4d1bAeEu/riQttVz7Y7
+         2YIxA4UsurOGsClUIVGuP9Tn+Vx1O/xXuEs3TWt3eQFVQ0sXTfVueTLaYM0K4o4FUpny
+         66iN/2fawMXkMpXfmuX+A1gf1M7KCOGty+h+Z4z45HK4ZkXPBEy12oPSFKBiEC95sUYt
+         ecSQ==
+X-Gm-Message-State: APjAAAVJGpjO7Xn6Jc8eqsd9tH+zUI7nonYMz4KH0BhkI2QPYMoQ6ucK
+        8OeOQVaBgRqt0lxvoZWizAfUiw==
+X-Google-Smtp-Source: APXvYqy8bVQH818HJGFZc2ql+d1GQcz5CnyZ/Lu/Mb9ddeqTtnjcaB2N07vWUnQwqSXTy5cLxuMyQA==
+X-Received: by 2002:a17:902:7048:: with SMTP id h8mr383251plt.64.1582832122570;
+        Thu, 27 Feb 2020 11:35:22 -0800 (PST)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id v22sm4018043pfe.49.2020.02.27.11.35.20
+        by smtp.gmail.com with ESMTPSA id x7sm4244205pgp.0.2020.02.27.11.35.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 27 Feb 2020 11:35:20 -0800 (PST)
 From:   Kees Cook <keescook@chromium.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Kees Cook <keescook@chromium.org>,
         Elena Petrova <lenaptr@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
         Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
         Andrey Konovalov <andreyknvl@google.com>,
         Alexander Potapenko <glider@google.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
@@ -57,9 +57,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         kasan-dev@googlegroups.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
         syzkaller@googlegroups.com
-Subject: [PATCH v5 1/6] ubsan: Add trap instrumentation option
-Date:   Thu, 27 Feb 2020 11:35:11 -0800
-Message-Id: <20200227193516.32566-2-keescook@chromium.org>
+Subject: [PATCH v5 2/6] ubsan: Split "bounds" checker from other options
+Date:   Thu, 27 Feb 2020 11:35:12 -0800
+Message-Id: <20200227193516.32566-3-keescook@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200227193516.32566-1-keescook@chromium.org>
 References: <20200227193516.32566-1-keescook@chromium.org>
@@ -70,113 +70,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Undefined Behavior Sanitizer can operate in two modes: warning
-reporting mode via lib/ubsan.c handler calls, or trap mode, which uses
-__builtin_trap() as the handler. Using lib/ubsan.c means the kernel
-image is about 5% larger (due to all the debugging text and reporting
-structures to capture details about the warning conditions). Using the
-trap mode, the image size changes are much smaller, though at the loss
-of the "warning only" mode.
+In order to do kernel builds with the bounds checker individually
+available, introduce CONFIG_UBSAN_BOUNDS, with the remaining options
+under CONFIG_UBSAN_MISC.
 
-In order to give greater flexibility to system builders that want
-minimal changes to image size and are prepared to deal with kernel code
-being aborted and potentially destabilizing the system, this introduces
-CONFIG_UBSAN_TRAP. The resulting image sizes comparison:
+For example, using this, we can start to expand the coverage syzkaller is
+providing. Right now, all of UBSan is disabled for syzbot builds because
+taken as a whole, it is too noisy. This will let us focus on one feature
+at a time.
 
-   text    data     bss       dec       hex     filename
-19533663   6183037  18554956  44271656  2a38828 vmlinux.stock
-19991849   7618513  18874448  46484810  2c54d4a vmlinux.ubsan
-19712181   6284181  18366540  44362902  2a4ec96 vmlinux.ubsan-trap
+For the bounds checker specifically, this provides a mechanism to
+eliminate an entire class of array overflows with close to zero
+performance overhead (I cannot measure a difference). In my (mostly)
+defconfig, enabling bounds checking adds ~4200 checks to the kernel.
+Performance changes are in the noise, likely due to the branch predictors
+optimizing for the non-fail path.
 
-CONFIG_UBSAN=y:      image +4.8% (text +2.3%, data +18.9%)
-CONFIG_UBSAN_TRAP=y: image +0.2% (text +0.9%, data +1.6%)
+Some notes on the bounds checker:
 
-Additionally adjusts the CONFIG_UBSAN Kconfig help for clarity and
-removes the mention of non-existing boot param "ubsan_handle".
+- it does not instrument {mem,str}*()-family functions, it only
+  instruments direct indexed accesses (e.g. "foo[i]"). Dealing with
+  the {mem,str}*()-family functions is a work-in-progress around
+  CONFIG_FORTIFY_SOURCE[1].
+
+- it ignores flexible array members, including the very old single
+  byte (e.g. "int foo[1];") declarations. (Note that GCC's
+  implementation appears to ignore _all_ trailing arrays, but Clang only
+  ignores empty, 0, and 1 byte arrays[2].)
+
+[1] https://github.com/KSPP/linux/issues/6
+[2] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92589
 
 Suggested-by: Elena Petrova <lenaptr@google.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Acked-by: Dmitry Vyukov <dvyukov@google.com>
 ---
- lib/Kconfig.ubsan      | 22 ++++++++++++++++++----
- lib/Makefile           |  2 ++
- scripts/Makefile.ubsan |  9 +++++++--
- 3 files changed, 27 insertions(+), 6 deletions(-)
+ lib/Kconfig.ubsan      | 29 ++++++++++++++++++++++++-----
+ scripts/Makefile.ubsan |  7 ++++++-
+ 2 files changed, 30 insertions(+), 6 deletions(-)
 
 diff --git a/lib/Kconfig.ubsan b/lib/Kconfig.ubsan
-index 0e04fcb3ab3d..9deb655838b0 100644
+index 9deb655838b0..48469c95d78e 100644
 --- a/lib/Kconfig.ubsan
 +++ b/lib/Kconfig.ubsan
-@@ -5,11 +5,25 @@ config ARCH_HAS_UBSAN_SANITIZE_ALL
- config UBSAN
+@@ -2,7 +2,7 @@
+ config ARCH_HAS_UBSAN_SANITIZE_ALL
+ 	bool
+ 
+-config UBSAN
++menuconfig UBSAN
  	bool "Undefined behaviour sanity checker"
  	help
--	  This option enables undefined behaviour sanity checker
-+	  This option enables the Undefined Behaviour sanity checker.
- 	  Compile-time instrumentation is used to detect various undefined
--	  behaviours in runtime. Various types of checks may be enabled
--	  via boot parameter ubsan_handle
--	  (see: Documentation/dev-tools/ubsan.rst).
-+	  behaviours at runtime. For more details, see:
-+	  Documentation/dev-tools/ubsan.rst
-+
-+config UBSAN_TRAP
-+	bool "On Sanitizer warnings, abort the running kernel code"
-+	depends on UBSAN
-+	depends on $(cc-option, -fsanitize-undefined-trap-on-error)
-+	help
-+	  Building kernels with Sanitizer features enabled tends to grow
-+	  the kernel size by around 5%, due to adding all the debugging
-+	  text on failure paths. To avoid this, Sanitizer instrumentation
-+	  can just issue a trap. This reduces the kernel size overhead but
-+	  turns all warnings (including potentially harmless conditions)
-+	  into full exceptions that abort the running kernel code
-+	  (regardless of context, locks held, etc), which may destabilize
-+	  the system. For some system builders this is an acceptable
-+	  trade-off.
+ 	  This option enables the Undefined Behaviour sanity checker.
+@@ -10,9 +10,10 @@ config UBSAN
+ 	  behaviours at runtime. For more details, see:
+ 	  Documentation/dev-tools/ubsan.rst
  
++if UBSAN
++
+ config UBSAN_TRAP
+ 	bool "On Sanitizer warnings, abort the running kernel code"
+-	depends on UBSAN
+ 	depends on $(cc-option, -fsanitize-undefined-trap-on-error)
+ 	help
+ 	  Building kernels with Sanitizer features enabled tends to grow
+@@ -25,9 +26,26 @@ config UBSAN_TRAP
+ 	  the system. For some system builders this is an acceptable
+ 	  trade-off.
+ 
++config UBSAN_BOUNDS
++	bool "Perform array index bounds checking"
++	default UBSAN
++	help
++	  This option enables detection of directly indexed out of bounds
++	  array accesses, where the array size is known at compile time.
++	  Note that this does not protect array overflows via bad calls
++	  to the {str,mem}*cpy() family of functions (that is addressed
++	  by CONFIG_FORTIFY_SOURCE).
++
++config UBSAN_MISC
++	bool "Enable all other Undefined Behavior sanity checks"
++	default UBSAN
++	help
++	  This option enables all sanity checks that don't have their
++	  own Kconfig options. Disable this if you only want to have
++	  individually selected checks.
++
  config UBSAN_SANITIZE_ALL
  	bool "Enable instrumentation for the entire kernel"
-diff --git a/lib/Makefile b/lib/Makefile
-index 611872c06926..55cc8d73cd43 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -279,7 +279,9 @@ quiet_cmd_build_OID_registry = GEN     $@
- clean-files	+= oid_registry_data.c
+-	depends on UBSAN
+ 	depends on ARCH_HAS_UBSAN_SANITIZE_ALL
  
- obj-$(CONFIG_UCS2_STRING) += ucs2_string.o
-+ifneq ($(CONFIG_UBSAN_TRAP),y)
- obj-$(CONFIG_UBSAN) += ubsan.o
-+endif
+ 	# We build with -Wno-maybe-uninitilzed, but we still want to
+@@ -44,7 +62,6 @@ config UBSAN_SANITIZE_ALL
  
- UBSAN_SANITIZE_ubsan.o := n
- KASAN_SANITIZE_ubsan.o := n
+ config UBSAN_NO_ALIGNMENT
+ 	bool "Disable checking of pointers alignment"
+-	depends on UBSAN
+ 	default y if HAVE_EFFICIENT_UNALIGNED_ACCESS
+ 	help
+ 	  This option disables the check of unaligned memory accesses.
+@@ -57,7 +74,9 @@ config UBSAN_ALIGNMENT
+ 
+ config TEST_UBSAN
+ 	tristate "Module for testing for undefined behavior detection"
+-	depends on m && UBSAN
++	depends on m
+ 	help
+ 	  This is a test module for UBSAN.
+ 	  It triggers various undefined behavior, and detect it.
++
++endif	# if UBSAN
 diff --git a/scripts/Makefile.ubsan b/scripts/Makefile.ubsan
-index 019771b845c5..668a91510bfe 100644
+index 668a91510bfe..5b15bc425ec9 100644
 --- a/scripts/Makefile.ubsan
 +++ b/scripts/Makefile.ubsan
-@@ -1,5 +1,10 @@
- # SPDX-License-Identifier: GPL-2.0
- ifdef CONFIG_UBSAN
-+
-+ifdef CONFIG_UBSAN_ALIGNMENT
-+      CFLAGS_UBSAN += $(call cc-option, -fsanitize=alignment)
+@@ -5,14 +5,19 @@ ifdef CONFIG_UBSAN_ALIGNMENT
+       CFLAGS_UBSAN += $(call cc-option, -fsanitize=alignment)
+ endif
+ 
++ifdef CONFIG_UBSAN_BOUNDS
++      CFLAGS_UBSAN += $(call cc-option, -fsanitize=bounds)
 +endif
 +
++ifdef CONFIG_UBSAN_MISC
        CFLAGS_UBSAN += $(call cc-option, -fsanitize=shift)
        CFLAGS_UBSAN += $(call cc-option, -fsanitize=integer-divide-by-zero)
        CFLAGS_UBSAN += $(call cc-option, -fsanitize=unreachable)
-@@ -9,8 +14,8 @@ ifdef CONFIG_UBSAN
+       CFLAGS_UBSAN += $(call cc-option, -fsanitize=signed-integer-overflow)
+-      CFLAGS_UBSAN += $(call cc-option, -fsanitize=bounds)
+       CFLAGS_UBSAN += $(call cc-option, -fsanitize=object-size)
        CFLAGS_UBSAN += $(call cc-option, -fsanitize=bool)
        CFLAGS_UBSAN += $(call cc-option, -fsanitize=enum)
++endif
  
--ifdef CONFIG_UBSAN_ALIGNMENT
--      CFLAGS_UBSAN += $(call cc-option, -fsanitize=alignment)
-+ifdef CONFIG_UBSAN_TRAP
-+      CFLAGS_UBSAN += $(call cc-option, -fsanitize-undefined-trap-on-error)
- endif
- 
-       # -fsanitize=* options makes GCC less smart than usual and
+ ifdef CONFIG_UBSAN_TRAP
+       CFLAGS_UBSAN += $(call cc-option, -fsanitize-undefined-trap-on-error)
 -- 
 2.20.1
 
