@@ -2,76 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78537172805
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:49:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7736C172807
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:49:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730022AbgB0St1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:49:27 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37363 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726805AbgB0St0 (ORCPT
+        id S1730245AbgB0Stc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:49:32 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42145 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730027AbgB0St3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:49:26 -0500
-Received: by mail-pf1-f194.google.com with SMTP id p14so286144pfn.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 10:49:25 -0800 (PST)
+        Thu, 27 Feb 2020 13:49:29 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 15so275082pfo.9
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 10:49:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sGeaLHlnGkG2EKVANYEasocr4XU2jYAIuDOZRJsT7Oo=;
-        b=XyXxJgvedHV34V4WJqX+Hr1W3blvQ9Hasu/MLokQnm07W62Yj4XxYbDLBD+Oub9RHL
-         LL1VgVjONRaR6ahJdPhB2b02mAwIwDg/WoQbB1E16zQJR9KVxb5Ap9cDaN80E1YWkkAG
-         XMR45E0mtgatAGy5A/oijIwby9+b7QygKEBYrjZw6eRmifq6pJr+8YZrOZMz8yE1RKDT
-         JmyvlF7U3P/vmhWuJ56dadoFI1e0Z2fibqXWNajTLAD8CpQm79ErQMfaAn/GHKT7OX+6
-         8MB/26+0SzXiBTIZLUOylD6Fe31YzRhW2c6HGUjMrJr8f0CLEWIa1bmvfmteoHDMFg7g
-         RpEw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uio9MFsHXugpSMEN2c2VbCCKbgwswLA7MQ9KMJphrpM=;
+        b=M2bJFwGRUurTAq2OXqUC83zEYHOro2pmObSwZO6Bo+WiLoXHkYK1zpCQs6116+4JSv
+         uGBJpDdGelG5RJ4fgFLQViDWAnSVRj/IlZJnNp11SqCTTBtNIN/T9W+56EdwZbVGngSB
+         VI85KVSzpvpJNyvsflH49hczSrHzddFNtjqT8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sGeaLHlnGkG2EKVANYEasocr4XU2jYAIuDOZRJsT7Oo=;
-        b=q+VakSg0b06T9pa8eMsxejg2A7yZR1nmj+XwTCzJAvgSYKN5TBeJ0QpaMgaf3cQU8i
-         OUgvMyxpykFP0UTVLVfIutnIM5PfcZ1WoB+T3oTryvqGkKhaCetaSUpLGea+mmig2Xr8
-         FeGFrOmWLWEOlwkcdellnUSNZk2/NnvKSPyQMJmtt+kwskTOgclxbn7PGX5LTA9rqhRD
-         mcAW4Cc2SjSOob2p4bRXijmw8JjLEY8UZHrcoHJSyhLR+Zm5A78TQ9S3hlFj2XIX03OJ
-         9/+nD9CI1TysPvI09zm9IeUGHC8p0QY/wIMFTIE7tRQY6MFiheAV5uwbq7QrI8rG+A8H
-         0jog==
-X-Gm-Message-State: APjAAAWH8g6RxZniXwMUQN5xZtkX5Z4zfT6sHcXzZ97XHuxijXMdXOHt
-        ycq4ZVa9XtKyafzEO0geY/T3s38Fzhl+9fe02LoPMQ==
-X-Google-Smtp-Source: APXvYqymmOgdXa7CniObsx9VEGVRv2HX0Gml6mbnSA0rHlXFD0LPmOU7h+ebHH3tu2QnqHoViA3n/JuGoldtb3q0fdE=
-X-Received: by 2002:a63:fd17:: with SMTP id d23mr711822pgh.159.1582829364378;
- Thu, 27 Feb 2020 10:49:24 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uio9MFsHXugpSMEN2c2VbCCKbgwswLA7MQ9KMJphrpM=;
+        b=eLF4OdfAqK6z/b3XGzYgYkx3vQPeX7BG6DejGR0rSxJCQNsXR6VvvqgkEFFfSaN5hJ
+         HRfJcU5VOgZZoyVuVlbqhW2PNv4Zd1gTjtbzIS38whu8nDJMrJuJOIjfvbJFEza5y8F7
+         qeyQRy9gdBeLTmPhYWxlFHnjG4nzpDhwi8JvdwVZxZTCSljQPaBP1tstvfMb0/zjH6p9
+         qg4BokkCDnS28ueje9xDDv+7qjdQSbcCGltK34W38WUSZ++PdxcPxhIEuH12dY5D845J
+         Ovx7TftF9mjb8IwlLiN0wzxKbMglMqbr3xcdMpWybKN2V5piI43yLGrEhjoJJq+WaRMb
+         TyGQ==
+X-Gm-Message-State: APjAAAWj6KBqehOOuuhKOhPF8nIzNDmWGvR9HkDou2zEYA1iLImQDg0I
+        dL8nMDcMhQmgYfZc6MTXGBoltQ==
+X-Google-Smtp-Source: APXvYqzjFLlBwzUnS9Buay5SU6EClRdGPy50Ngz3GJVvxZkvUCu0e9OzvgVYH7vICIR7BSm10X7QoA==
+X-Received: by 2002:a62:e414:: with SMTP id r20mr371760pfh.154.1582829368003;
+        Thu, 27 Feb 2020 10:49:28 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id h3sm8314321pfr.15.2020.02.27.10.49.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 10:49:26 -0800 (PST)
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Elena Petrova <lenaptr@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        syzkaller@googlegroups.com
+Subject: [PATCH v4 0/6] ubsan: Split out bounds checker
+Date:   Thu, 27 Feb 2020 10:49:15 -0800
+Message-Id: <20200227184921.30215-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200227063134.261636-1-gthelen@google.com>
-In-Reply-To: <20200227063134.261636-1-gthelen@google.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 27 Feb 2020 10:49:13 -0800
-Message-ID: <CAFd5g45X_jW6=8XZ8JY3iMgO1wc92wec4WsKCqJvDmjss5d=5A@mail.gmail.com>
-Subject: Re: [PATCH] kunit: add --make_options
-To:     Greg Thelen <gthelen@google.com>
-Cc:     "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 10:31 PM Greg Thelen <gthelen@google.com> wrote:
->
-> The kunit.py utility builds an ARCH=um kernel and then runs it.  Add
-> optional --make_options flag to kunit.py allowing for the operator to
-> specify extra build options.
->
-> This allows use of the clang compiler for kunit:
->   tools/testing/kunit/kunit.py run --defconfig \
->     --make_options CC=clang --make_options HOSTCC=clang
->
-> Signed-off-by: Greg Thelen <gthelen@google.com>
+This splits out the bounds checker so it can be individually used. This
+is enabled in Android and hopefully for syzbot. Includes LKDTM tests for
+behavioral corner-cases (beyond just the bounds checker), and adjusts
+ubsan and kasan slightly for correct panic handling.
 
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+-Kees
 
-Thanks! This is something we have been meaning to do for a while!
+v4:
+ - use hyphenated bug class names (andreyknvl)
+ - add Acks
+v3: https://lore.kernel.org/lkml/20200116012321.26254-1-keescook@chromium.org
+v2: https://lore.kernel.org/lkml/20191121181519.28637-1-keescook@chromium.org
+v1: https://lore.kernel.org/lkml/20191120010636.27368-1-keescook@chromium.org
+
+
+Kees Cook (6):
+  ubsan: Add trap instrumentation option
+  ubsan: Split "bounds" checker from other options
+  lkdtm/bugs: Add arithmetic overflow and array bounds checks
+  ubsan: Check panic_on_warn
+  kasan: Unset panic_on_warn before calling panic()
+  ubsan: Include bug type in report header
+
+ drivers/misc/lkdtm/bugs.c  | 75 ++++++++++++++++++++++++++++++++++++++
+ drivers/misc/lkdtm/core.c  |  3 ++
+ drivers/misc/lkdtm/lkdtm.h |  3 ++
+ lib/Kconfig.ubsan          | 49 +++++++++++++++++++++----
+ lib/Makefile               |  2 +
+ lib/ubsan.c                | 47 +++++++++++++-----------
+ mm/kasan/report.c          | 10 ++++-
+ scripts/Makefile.ubsan     | 16 ++++++--
+ 8 files changed, 172 insertions(+), 33 deletions(-)
+
+-- 
+2.20.1
+
