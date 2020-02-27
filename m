@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FBB7172000
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:40:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DA54171FFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:40:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387739AbgB0Ojv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:39:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54470 "EHLO mail.kernel.org"
+        id S2387432AbgB0Oje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:39:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731863AbgB0NyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:54:23 -0500
+        id S1731726AbgB0Nym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:54:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E93992469F;
-        Thu, 27 Feb 2020 13:54:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C84FF20578;
+        Thu, 27 Feb 2020 13:54:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811663;
-        bh=SpY9AsGdg7XlSt1I/aCb8556rHUzr0sSJiiICFBDHVI=;
+        s=default; t=1582811681;
+        bh=08Lj0q5MBAug7J7RApZE4cdTfd5AwhADXQ6MMkcy2rA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vWa8cTXM2exAdpckCzEF8KmkyCwfY+iCVZAXeImCCr0NZsmyscTUi8fkJ/qsoa3jc
-         aijD1tkvLj+QDlIbPf36+YJYCQOw2witPpDFQr7Fk2kSiaStvQdcg2KABneOQRM4e8
-         KZZjzJg2ScyxCHaAJLQX4VTs27C2CqJWHBAfFn3Q=
+        b=u4RoafLZQCUPFet67DqJCqoVuafRcL84NYwdCEgLXsB1bzm3H9ElTbsTlzh9XeOco
+         Ine7Dq0wIsL5ieT6cR6y5VEyxYIfGJc/L0xkMHBIv8p2gT1jVq6MdAqmsxDx34Yf6u
+         Cu5q5FyBfR8RNikOow2kAniRZ2kp9/E9cgFHiE20=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Minas Harutyunyan <hminas@synopsys.com>,
+        John Keeping <john@metanate.com>,
+        Felipe Balbi <balbi@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 053/237] pinctrl: baytrail: Do not clear IRQ flags on direct-irq enabled pins
-Date:   Thu, 27 Feb 2020 14:34:27 +0100
-Message-Id: <20200227132300.699040454@linuxfoundation.org>
+Subject: [PATCH 4.14 059/237] usb: dwc2: Fix IN FIFO allocation
+Date:   Thu, 27 Feb 2020 14:34:33 +0100
+Message-Id: <20200227132301.272981071@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
 References: <20200227132255.285644406@linuxfoundation.org>
@@ -46,58 +45,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: John Keeping <john@metanate.com>
 
-[ Upstream commit a23680594da7a9e2696dbcf4f023e9273e2fa40b ]
+[ Upstream commit 644139f8b64d818f6345351455f14471510879a5 ]
 
-Suspending Goodix touchscreens requires changing the interrupt pin to
-output before sending them a power-down command. Followed by wiggling
-the interrupt pin to wake the device up, after which it is put back
-in input mode.
+On chips with fewer FIFOs than endpoints (for example RK3288 which has 9
+endpoints, but only 6 which are cabable of input), the DPTXFSIZN
+registers above the FIFO count may return invalid values.
 
-On Bay Trail devices with a Goodix touchscreen direct-irq mode is used
-in combination with listing the pin as a normal GpioIo resource.
+With logging added on startup, I see:
 
-This works fine, until the goodix driver gets rmmod-ed and then insmod-ed
-again. In this case byt_gpio_disable_free() calls
-byt_gpio_clear_triggering() which clears the IRQ flags and after that the
-(direct) IRQ no longer triggers.
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=1 sz=256
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=2 sz=128
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=3 sz=128
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=4 sz=64
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=5 sz=64
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=6 sz=32
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=7 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=8 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=9 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=10 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=11 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=12 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=13 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=14 sz=0
+	dwc2 ff580000.usb: dwc2_hsotg_init_fifo: ep=15 sz=0
 
-This commit fixes this by adding a check for the BYT_DIRECT_IRQ_EN flag
-to byt_gpio_clear_triggering().
+but:
 
-Note that byt_gpio_clear_triggering() only gets called from
-byt_gpio_disable_free() for direct-irq enabled pins, as these are excluded
-from the irq_valid mask by byt_init_irq_valid_mask().
+	# cat /sys/kernel/debug/ff580000.usb/fifo
+	Non-periodic FIFOs:
+	RXFIFO: Size 275
+	NPTXFIFO: Size 16, Start 0x00000113
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+	Periodic TXFIFOs:
+		DPTXFIFO 1: Size 256, Start 0x00000123
+		DPTXFIFO 2: Size 128, Start 0x00000223
+		DPTXFIFO 3: Size 128, Start 0x000002a3
+		DPTXFIFO 4: Size 64, Start 0x00000323
+		DPTXFIFO 5: Size 64, Start 0x00000363
+		DPTXFIFO 6: Size 32, Start 0x000003a3
+		DPTXFIFO 7: Size 0, Start 0x000003e3
+		DPTXFIFO 8: Size 0, Start 0x000003a3
+		DPTXFIFO 9: Size 256, Start 0x00000123
+
+so it seems that FIFO 9 is mirroring FIFO 1.
+
+Fix the allocation by using the FIFO count instead of the endpoint count
+when selecting a FIFO for an endpoint.
+
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: John Keeping <john@metanate.com>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/intel/pinctrl-baytrail.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/usb/dwc2/gadget.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 9df5d29d708da..4fb3e44f91331 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -958,7 +958,13 @@ static void byt_gpio_clear_triggering(struct byt_gpio *vg, unsigned int offset)
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index 4af9a1c652edb..aeb6f7c84ea0a 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -3933,11 +3933,12 @@ static int dwc2_hsotg_ep_enable(struct usb_ep *ep,
+ 	 * a unique tx-fifo even if it is non-periodic.
+ 	 */
+ 	if (dir_in && hsotg->dedicated_fifos) {
++		unsigned fifo_count = dwc2_hsotg_tx_fifo_count(hsotg);
+ 		u32 fifo_index = 0;
+ 		u32 fifo_size = UINT_MAX;
  
- 	raw_spin_lock_irqsave(&byt_lock, flags);
- 	value = readl(reg);
--	value &= ~(BYT_TRIG_POS | BYT_TRIG_NEG | BYT_TRIG_LVL);
-+
-+	/* Do not clear direct-irq enabled IRQs (from gpio_disable_free) */
-+	if (value & BYT_DIRECT_IRQ_EN)
-+		/* nothing to do */ ;
-+	else
-+		value &= ~(BYT_TRIG_POS | BYT_TRIG_NEG | BYT_TRIG_LVL);
-+
- 	writel(value, reg);
- 	raw_spin_unlock_irqrestore(&byt_lock, flags);
- }
+ 		size = hs_ep->ep.maxpacket * hs_ep->mc;
+-		for (i = 1; i < hsotg->num_of_eps; ++i) {
++		for (i = 1; i <= fifo_count; ++i) {
+ 			if (hsotg->fifo_map & (1 << i))
+ 				continue;
+ 			val = dwc2_readl(hsotg->regs + DPTXFSIZN(i));
 -- 
 2.20.1
 
