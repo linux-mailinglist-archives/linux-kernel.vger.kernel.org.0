@@ -2,180 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59A041729C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 21:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B5061729D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 22:01:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729828AbgB0Uz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 15:55:56 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.35]:30209 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728059AbgB0Uzz (ORCPT
+        id S1729802AbgB0VBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 16:01:24 -0500
+Received: from gateway23.websitewelcome.com ([192.185.47.80]:22855 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726758AbgB0VBX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 15:55:55 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 3BDC2281E4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 14:55:54 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
+        Thu, 27 Feb 2020 16:01:23 -0500
+X-Greylist: delayed 1500 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Feb 2020 16:01:23 EST
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 7AD965F25
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 14:16:19 -0600 (CST)
+Received: from br164.hostgator.com.br ([192.185.176.180])
         by cmsmtp with SMTP
-        id 7QCIjcS9OSl8q7QCIjGeQB; Thu, 27 Feb 2020 14:55:54 -0600
+        id 7PZzj0erKvBMd7PZzjwE8c; Thu, 27 Feb 2020 14:16:19 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        d=castello.eng.br; s=default; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=MJVDWhNS0EA1OFOvhs7NhRz+ei3OwBXs0MRwTBoRDU4=; b=Oh64htQAJlmzOqavF6aI+lLuQJ
-        yi2B+nKcpQZfFWrZv5idvV/Q/+hXpQZTxNa9KjVtZ+NVIcSPHAkQPeVPoJzgaNpOn8oOBRl/yJpNI
-        6IXWFhyg0UV2A9SKm3l/FfvLLH5moAfzOnMjkeSkASwzKcWnB2p+LA/n8As+H3cSDp58G1mR6l2tW
-        Y9JPYyCFF8pdl/rM3LkT94GzUsj7XzMd9ecaG/iPC7nK8ZQNZUyhjfKjAnjlGJeeG1AYUgM95vQav
-        Hhiq7LtryQNNXCR0mb0Q1t5pki/ZLmSF6etUd0tNwjKghmm8r5Se+qW+y3X9RO7RsrbBTrlsSNIQ7
-        C9UM2cNg==;
-Received: from [201.162.169.69] (port=8222 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j7QCF-000kyF-UD; Thu, 27 Feb 2020 14:55:52 -0600
-Date:   Thu, 27 Feb 2020 14:58:44 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] net: sched: Replace zero-length array with
- flexible-array member
-Message-ID: <20200227205844.GA18578@embeddedor>
+        bh=O9Ta8jqoR7xvtXnW35tk+UGBKOY48qRRa7KgNc+IA7U=; b=lRMc9TaOZ2BZQfzftZUL7wYbgf
+        bQJNrdeBEpvAO1rb9obaKegi8YN/JE6ibWNYlZVFkMAwEVlz60Hyrlpf4QI1neiB7DdfP6nywori7
+        KeFc/a3b9kF3q9LFLQZivNdh5arO13LnoIil4AdUh5NLwR+E/8r8cVCpYatPqAkEj2XzIt4NCYami
+        1drpAQGejnROIkhnuxTozzTorSka/VEWWjRVcUL7qJVW2FAJ5DzpO5tYyVUVvjxxh/87KeBfmvbrN
+        5KeyOTgqiUWsQqoAy7LOQCv6lLxypH3OnVgWBksHBfhFm6hwG5AVTAqHpRusEQTatVbcNASTDg3TD
+        AaAn+mjw==;
+Received: from [191.31.195.84] (port=40030 helo=castello.castello)
+        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <matheus@castello.eng.br>)
+        id 1j7PZy-002xJo-Fk; Thu, 27 Feb 2020 17:16:18 -0300
+From:   Matheus Castello <matheus@castello.eng.br>
+To:     afaerber@suse.de, manivannan.sadhasivam@linaro.org,
+        mark.rutland@arm.com, robh+dt@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Matheus Castello <matheus@castello.eng.br>
+Subject: [PATCH v1 0/2] Add Caninos Loucos Labrador SoM and Base Board Device Tree
+Date:   Thu, 27 Feb 2020 17:15:55 -0300
+Message-Id: <20200227201557.368533-1-matheus@castello.eng.br>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
 X-AntiAbuse: Original Domain - vger.kernel.org
 X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-AntiAbuse: Sender Address Domain - castello.eng.br
 X-BWhitelist: no
-X-Source-IP: 201.162.169.69
+X-Source-IP: 191.31.195.84
 X-Source-L: No
-X-Exim-ID: 1j7QCF-000kyF-UD
+X-Exim-ID: 1j7PZy-002xJo-Fk
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.169.69]:8222
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 19
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Source-Sender: (castello.castello) [191.31.195.84]:40030
+X-Source-Auth: matheus@castello.eng.br
+X-Email-Count: 2
+X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+Caninos Loucos Labrador is a Brazilian project of open System on Modules and
+Base Boards based on Lemaker Guitar. Is an initiative of LSI-TEC a non-profit
+organization.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+The Labrador SoM v2 is based on Actions Semi S500 processor with 16GB eMMC and
+2GB RAM.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+This series adds the initial work for device tree files and also adds the
+vendor-prefix for the Caninos program. The work was based on the Andreas Färber
+device trees for Lemaker Guitar, thanks Andreas.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+Tested on my Caninos Labrador v2, only earlycon serial output is available for
+now, using the fake clock. I have already worked on something here to add the
+clocks and pinctrl nodes to owl-s500.dtsi, but I would like to first add the
+initial device tree files and then work on the other patches calmly.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+BR,
+Matheus Castello
 
-This issue was found with the help of Coccinelle.
+Matheus Castello (2):
+  dt-bindings: arm: actions: Document Caninos Loucos Labrador
+  ARM: dts: Add Caninos Loucos Labrador
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+ .../devicetree/bindings/arm/actions.yaml      |  5 +++
+ .../devicetree/bindings/vendor-prefixes.yaml  |  2 ++
+ arch/arm/boot/dts/Makefile                    |  3 +-
+ arch/arm/boot/dts/owl-s500-labrador-bb.dts    | 33 +++++++++++++++++++
+ arch/arm/boot/dts/owl-s500-labrador-v2.dtsi   | 21 ++++++++++++
+ 5 files changed, 63 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/owl-s500-labrador-bb.dts
+ create mode 100644 arch/arm/boot/dts/owl-s500-labrador-v2.dtsi
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- include/net/pkt_sched.h | 2 +-
- net/sched/em_ipt.c      | 2 +-
- net/sched/em_nbyte.c    | 2 +-
- net/sched/sch_atm.c     | 2 +-
- net/sched/sch_netem.c   | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/include/net/pkt_sched.h b/include/net/pkt_sched.h
-index 6a70845bd9ab..20d2c6419612 100644
---- a/include/net/pkt_sched.h
-+++ b/include/net/pkt_sched.h
-@@ -181,7 +181,7 @@ struct tc_taprio_qopt_offload {
- 	u64 cycle_time_extension;
- 
- 	size_t num_entries;
--	struct tc_taprio_sched_entry entries[0];
-+	struct tc_taprio_sched_entry entries[];
- };
- 
- /* Reference counting */
-diff --git a/net/sched/em_ipt.c b/net/sched/em_ipt.c
-index 9fff6480acc6..eecfe072c508 100644
---- a/net/sched/em_ipt.c
-+++ b/net/sched/em_ipt.c
-@@ -22,7 +22,7 @@ struct em_ipt_match {
- 	const struct xt_match *match;
- 	u32 hook;
- 	u8 nfproto;
--	u8 match_data[0] __aligned(8);
-+	u8 match_data[] __aligned(8);
- };
- 
- struct em_ipt_xt_match {
-diff --git a/net/sched/em_nbyte.c b/net/sched/em_nbyte.c
-index 88c7ce42df7e..2c1192a2ee5e 100644
---- a/net/sched/em_nbyte.c
-+++ b/net/sched/em_nbyte.c
-@@ -16,7 +16,7 @@
- 
- struct nbyte_data {
- 	struct tcf_em_nbyte	hdr;
--	char			pattern[0];
-+	char			pattern[];
- };
- 
- static int em_nbyte_change(struct net *net, void *data, int data_len,
-diff --git a/net/sched/sch_atm.c b/net/sched/sch_atm.c
-index f4f9b8cdbffb..ee12ca9f55b4 100644
---- a/net/sched/sch_atm.c
-+++ b/net/sched/sch_atm.c
-@@ -58,7 +58,7 @@ struct atm_flow_data {
- 	struct atm_flow_data	*excess;	/* flow for excess traffic;
- 						   NULL to set CLP instead */
- 	int			hdr_len;
--	unsigned char		hdr[0];		/* header data; MUST BE LAST */
-+	unsigned char		hdr[];		/* header data; MUST BE LAST */
- };
- 
- struct atm_qdisc_data {
-diff --git a/net/sched/sch_netem.c b/net/sched/sch_netem.c
-index 42e557d48e4e..84f82771cdf5 100644
---- a/net/sched/sch_netem.c
-+++ b/net/sched/sch_netem.c
-@@ -66,7 +66,7 @@
- 
- struct disttable {
- 	u32  size;
--	s16 table[0];
-+	s16 table[];
- };
- 
- struct netem_sched_data {
--- 
+--
 2.25.0
 
