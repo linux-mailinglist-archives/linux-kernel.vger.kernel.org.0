@@ -2,116 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 630821721B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:57:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24A341721B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:58:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732823AbgB0O5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:57:48 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45155 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730338AbgB0O5r (ORCPT
+        id S1733286AbgB0O6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:58:19 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:43690 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730000AbgB0O6R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:57:47 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v2so3683227wrp.12
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:57:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=c8UJCHjiQkoyahVk3JVpGT7p90RFMuXW7y1DGNJVn3I=;
-        b=byT2rBhaJ3NpZXKQ3xNyKgwH/jTsZDf0x3JScBZse8RZ9ksFtO/1/rzbmUu0CFRSmu
-         UdjxqFPEVzG5/nlQN1mO3unL4TpB2ZWZqMmJ1QFXtg0gtHTDJmuH5Mr9BHs1Z27Lz8kL
-         uNlFPb6j5UW2b9rOFGC2vB0UPG4BqkPa/9nbKFUK4OLlUK/pY6kMcaGVXtUMgczw0Kp6
-         oAm41AQENKBtmKvcKzZCOGkW797Vm6p0Mh+Z9k7y+u3Fd4p0Ai6LFLrNKSdom9zxuj/A
-         QU7eFBjQf0U6mgt31hcNhrgdDBHWHjTyZwkPPZmLd1Qrq5BEShppzQjd8edcXAQXb6PS
-         SaYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=c8UJCHjiQkoyahVk3JVpGT7p90RFMuXW7y1DGNJVn3I=;
-        b=JGCqSL/r68umICggsKkOzmPIV1JyhYAd5LywlI9rj9gqAhLTBBvZZKPJEAPKtmyGWw
-         w3DjvhAOc4PQHLVGOCiubc7FhCTmSou+y+lfKQa8F7suokDrdCwQ/5KrRfjhkEPNSJ8U
-         8bxa0FzMGxZmeMl20v8NTYJLXxCLnjVVA4GzP4Hasr7lovPR4KiCXeYcq5OOnIGPJQgW
-         d0EPBj9Wo+pwbB31eR3Rp/5eYOJJxTQkL+lBAZO+HVVhn7pV9qFO6QBigZrQWSKMAPRV
-         KFz9n3evx2I7+Ksf892Mx31HR5cjYCx2Gx9Too5Bv3DR+nuP3FGHQW0gi5KDz+ao6FbV
-         0DFg==
-X-Gm-Message-State: APjAAAWgHiaSab+NwaK0jAsHlN+vcrzGItTBAYvT+KXO/jU4boGEHqkf
-        A8+T9NvOIVhcYAMAF1FiNHM0cA==
-X-Google-Smtp-Source: APXvYqyyrixRf/9E0uAEum8ogR5+reOoYYP6OuOAEbkyXb2Dh9c2XHojBOJxbwOJHAKTPtAucIdiBw==
-X-Received: by 2002:adf:f892:: with SMTP id u18mr5040913wrp.328.1582815463904;
-        Thu, 27 Feb 2020 06:57:43 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id h15sm1262654wrr.73.2020.02.27.06.57.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 06:57:43 -0800 (PST)
-Date:   Thu, 27 Feb 2020 14:57:41 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Gyungoh Yoo <jack.yoo@skyworksinc.com>,
-        Bryan Wu <cooloney@gmail.com>, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][V2] backlight: sky81452: insure while loop does not
- allow negative array indexing
-Message-ID: <20200227145741.v3r4qzkfsrwpy33h@holly.lan>
-References: <20200226195826.6567-1-colin.king@canonical.com>
- <20200227114623.vaevrdwiduxa2mqs@holly.lan>
+        Thu, 27 Feb 2020 09:58:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1582815495; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pGG3QA/MuTy/BE1KaedN0lIF6lHb9h2nDV465fY0RG8=;
+        b=md6NOEcH7wtfylojV61kM1Up4IZ1tc8mCF17PXGNsMNFm4cc/2TFk2TYRpWiqLey9bsH2K
+        LeqVHH9fdOIs6zI40UTIJAf+MvBQm4IEIGfn4wD/n3InleORa0ptOVWvJ/ZHAl2Yw+ZTei
+        CEzWkuRP23LE5odTDjn2JKspv+3W1hU=
+Date:   Thu, 27 Feb 2020 11:57:52 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v6 5/6] MIPS: DTS: JZ4780: define node for JZ4780 efuse
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Mathieu Malaterre <malat@debian.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com
+Message-Id: <1582815472.3.4@crapouillou.net>
+In-Reply-To: <c6177ff663b6f8e16dc41169a76ba5dac091e7bd.1582715761.git.hns@goldelico.com>
+References: <cover.1582715761.git.hns@goldelico.com>
+        <c6177ff663b6f8e16dc41169a76ba5dac091e7bd.1582715761.git.hns@goldelico.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227114623.vaevrdwiduxa2mqs@holly.lan>
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 11:46:23AM +0000, Daniel Thompson wrote:
-> On Wed, Feb 26, 2020 at 07:58:26PM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > In the unlikely event that num_entry is zero, the while loop
-> > pre-decrements num_entry to cause negative array indexing into the
-> > array sources. Fix this by iterating only if num_entry >= 0.
-> > 
-> > Addresses-Coverity: ("Out-of-bounds read")
-> > Fixes: f705806c9f35 ("backlight: Add support Skyworks SKY81452 backlight driver")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> > 
-> > V2: fix typo in commit subject line
-> 
-> Isn't the correct spelling "ensure"?
-> 
-> 
-> > ---
-> >  drivers/video/backlight/sky81452-backlight.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/video/backlight/sky81452-backlight.c b/drivers/video/backlight/sky81452-backlight.c
-> > index 2355f00f5773..f456930ce78e 100644
-> > --- a/drivers/video/backlight/sky81452-backlight.c
-> > +++ b/drivers/video/backlight/sky81452-backlight.c
-> > @@ -200,7 +200,7 @@ static struct sky81452_bl_platform_data *sky81452_bl_parse_dt(
-> >  		}
-> >  
-> >  		pdata->enable = 0;
-> > -		while (--num_entry)
-> > +		while (--num_entry >= 0)
-> >  			pdata->enable |= (1 << sources[num_entry]);
-> 
-> This look still looks buggy to me (so I'd second Walter's request to
-> change it to a for loop). If the code genuinely does not contain a
-> bug then it probably needs a prominent comment explaining why it is
-> correct not to honour sources[0]!
-
-Ignore the "still looks buggy". A mental mis-step when switching
-contexts...
-
-I think my English is still correct though ;-)
+Hi Nikolaus,
 
 
-Daniel.
+Le mer., f=E9vr. 26, 2020 at 12:16, H. Nikolaus Schaller=20
+<hns@goldelico.com> a =E9crit :
+> From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+>=20
+> This patch brings support for the JZ4780 efuse. Currently it only=20
+> exposes
+> a read only access to the entire 8K bits efuse memory and the
+> ethernet mac address for the davicom dm9000 chip on the CI20 board.
+>=20
+> It also changes the nemc reg range to avoid overlap.
+>=20
+> Tested-by: Mathieu Malaterre <malat@debian.org>
+> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> ---
+>  arch/mips/boot/dts/ingenic/jz4780.dtsi | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi=20
+> b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+> index f928329b034b..1e266be28096 100644
+> --- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+> @@ -358,7 +358,7 @@
+>=20
+>  	nemc: nemc@13410000 {
+>  		compatible =3D "ingenic,jz4780-nemc";
+> -		reg =3D <0x13410000 0x10000>;
+> +		reg =3D <0x13410000 0x4c>;
+
+This is wrong, the real size of the register area is 1x15c.
+
+>  		#address-cells =3D <2>;
+>  		#size-cells =3D <1>;
+>  		ranges =3D <1 0 0x1b000000 0x1000000
+> @@ -373,6 +373,21 @@
+>  		status =3D "disabled";
+>  	};
+>=20
+> +	efuse: efuse@134100d0 {
+> +		compatible =3D "ingenic,jz4780-efuse";
+> +		reg =3D <0x134100d0 0x2c>;
+> +
+> +		clocks =3D <&cgu JZ4780_CLK_AHB2>;
+> +		clock-names =3D "ahb2";
+
+As explained in my response to the other patch, 'clock-names' can go=20
+away.
+
+Cheers,
+-Paul
+
+> +
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <1>;
+> +
+> +		eth0_addr: eth-mac-addr@0x22 {
+> +			reg =3D <0x22 0x6>;
+> +		};
+> +	};
+> +
+>  	dma: dma@13420000 {
+>  		compatible =3D "ingenic,jz4780-dma";
+>  		reg =3D <0x13420000 0x400
+> --
+> 2.23.0
+>=20
+
+=
+
