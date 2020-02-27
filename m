@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A604D171A32
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28B4A171A36
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731421AbgB0Nvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:51:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50768 "EHLO mail.kernel.org"
+        id S1729711AbgB0Nvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:51:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731409AbgB0Nvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:51:35 -0500
+        id S1731425AbgB0Nvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:51:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A16A24656;
-        Thu, 27 Feb 2020 13:51:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AC7620801;
+        Thu, 27 Feb 2020 13:51:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811494;
-        bh=6M4aIEWU6U6B/YmKFklZqlHWhah71sTfS9qFha5y9HY=;
+        s=default; t=1582811499;
+        bh=tlqMKDrP/fE09dXg47QoERlIiy1VqqALdS7rgKIW6CM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U/+79RZQVOeqV4xWh9Ap5qF+dTRmW0jJ2v4/B5VTY+pyhu9qPLa3IV07/kLVp7pCl
-         lKtCeMLRHd5sgNU+h2EA5BjLIpSOp0c3L2niAngJRO8y+Pknb1QAaGh6TiTVasnD7N
-         lQNyvqN9CveyM8YocaQBQjlu08yb0JfvqRIjP2QM=
+        b=Rojd2w/FLR8OXOwHLsJFGoSL1UmP4sQCmtxdrcr0mD8DzeB32KnXhK4nqliL/XS36
+         6F5VZllpmR46aALvHTqL8k25UR1O4MtCmzmfSVFnmZb/6pJzhxF/bEENAyZPAYL29l
+         0RyCbu0GYEjY/MrDWuGYlDgDFTFUGjJB69a5T4g4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -32,9 +32,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dakshaja Uppalapati <dakshaja@chelsio.com>,
         Bart Van Assche <bvanassche@acm.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 154/165] scsi: Revert "RDMA/isert: Fix a recently introduced regression related to logout"
-Date:   Thu, 27 Feb 2020 14:37:08 +0100
-Message-Id: <20200227132253.184446972@linuxfoundation.org>
+Subject: [PATCH 4.9 155/165] scsi: Revert "target: iscsi: Wait for all commands to finish before freeing a session"
+Date:   Thu, 27 Feb 2020 14:37:09 +0100
+Message-Id: <20200227132253.328715191@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
 References: <20200227132230.840899170@linuxfoundation.org>
@@ -49,75 +49,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bart Van Assche <bvanassche@acm.org>
 
-commit 76261ada16dcc3be610396a46d35acc3efbda682 upstream.
+commit 807b9515b7d044cf77df31f1af9d842a76ecd5cb upstream.
 
-Since commit 04060db41178 introduces soft lockups when toggling network
-interfaces, revert it.
+Since commit e9d3009cb936 introduced a regression and since the fix for
+that regression was not perfect, revert this commit.
 
-Link: https://marc.info/?l=target-devel&m=158157054906196
+Link: https://marc.info/?l=target-devel&m=158157054906195
 Cc: Rahul Kundu <rahul.kundu@chelsio.com>
 Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
 Cc: Sagi Grimberg <sagi@grimberg.me>
 Reported-by: Dakshaja Uppalapati <dakshaja@chelsio.com>
-Fixes: 04060db41178 ("scsi: RDMA/isert: Fix a recently introduced regression related to logout")
+Fixes: e9d3009cb936 ("scsi: target: iscsi: Wait for all commands to finish before freeing a session")
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/isert/ib_isert.c |   12 ++++++++++++
- drivers/target/iscsi/iscsi_target.c     |    6 +++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ drivers/target/iscsi/iscsi_target.c |   10 ++--------
+ include/scsi/iscsi_proto.h          |    1 -
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
---- a/drivers/infiniband/ulp/isert/ib_isert.c
-+++ b/drivers/infiniband/ulp/isert/ib_isert.c
-@@ -2555,6 +2555,17 @@ isert_wait4logout(struct isert_conn *ise
- 	}
- }
- 
-+static void
-+isert_wait4cmds(struct iscsi_conn *conn)
-+{
-+	isert_info("iscsi_conn %p\n", conn);
-+
-+	if (conn->sess) {
-+		target_sess_cmd_list_set_waiting(conn->sess->se_sess);
-+		target_wait_for_sess_cmds(conn->sess->se_sess);
-+	}
-+}
-+
- /**
-  * isert_put_unsol_pending_cmds() - Drop commands waiting for
-  *     unsolicitate dataout
-@@ -2602,6 +2613,7 @@ static void isert_wait_conn(struct iscsi
- 
- 	ib_drain_qp(isert_conn->qp);
- 	isert_put_unsol_pending_cmds(conn);
-+	isert_wait4cmds(conn);
- 	isert_wait4logout(isert_conn);
- 
- 	queue_work(isert_release_wq, &isert_conn->release_work);
 --- a/drivers/target/iscsi/iscsi_target.c
 +++ b/drivers/target/iscsi/iscsi_target.c
-@@ -4162,6 +4162,9 @@ int iscsit_close_connection(
- 	iscsit_stop_nopin_response_timer(conn);
- 	iscsit_stop_nopin_timer(conn);
+@@ -1168,9 +1168,7 @@ int iscsit_setup_scsi_cmd(struct iscsi_c
+ 		hdr->cmdsn, be32_to_cpu(hdr->data_length), payload_length,
+ 		conn->cid);
  
-+	if (conn->conn_transport->iscsit_wait_conn)
-+		conn->conn_transport->iscsit_wait_conn(conn);
-+
+-	if (target_get_sess_cmd(&cmd->se_cmd, true) < 0)
+-		return iscsit_add_reject_cmd(cmd,
+-				ISCSI_REASON_WAITING_FOR_LOGOUT, buf);
++	target_get_sess_cmd(&cmd->se_cmd, true);
+ 
+ 	cmd->sense_reason = transport_lookup_cmd_lun(&cmd->se_cmd,
+ 						     scsilun_to_int(&hdr->lun));
+@@ -1988,9 +1986,7 @@ iscsit_handle_task_mgt_cmd(struct iscsi_
+ 			      conn->sess->se_sess, 0, DMA_NONE,
+ 			      TCM_SIMPLE_TAG, cmd->sense_buffer + 2);
+ 
+-	if (target_get_sess_cmd(&cmd->se_cmd, true) < 0)
+-		return iscsit_add_reject_cmd(cmd,
+-				ISCSI_REASON_WAITING_FOR_LOGOUT, buf);
++	target_get_sess_cmd(&cmd->se_cmd, true);
+ 
  	/*
- 	 * During Connection recovery drop unacknowledged out of order
- 	 * commands for this connection, and prepare the other commands
-@@ -4247,9 +4250,6 @@ int iscsit_close_connection(
- 	target_sess_cmd_list_set_waiting(sess->se_sess);
- 	target_wait_for_sess_cmds(sess->se_sess);
+ 	 * TASK_REASSIGN for ERL=2 / connection stays inside of
+@@ -4247,8 +4243,6 @@ int iscsit_close_connection(
+ 	 * must wait until they have completed.
+ 	 */
+ 	iscsit_check_conn_usage_count(conn);
+-	target_sess_cmd_list_set_waiting(sess->se_sess);
+-	target_wait_for_sess_cmds(sess->se_sess);
  
--	if (conn->conn_transport->iscsit_wait_conn)
--		conn->conn_transport->iscsit_wait_conn(conn);
--
  	ahash_request_free(conn->conn_tx_hash);
  	if (conn->conn_rx_hash) {
- 		struct crypto_ahash *tfm;
+--- a/include/scsi/iscsi_proto.h
++++ b/include/scsi/iscsi_proto.h
+@@ -638,7 +638,6 @@ struct iscsi_reject {
+ #define ISCSI_REASON_BOOKMARK_INVALID	9
+ #define ISCSI_REASON_BOOKMARK_NO_RESOURCES	10
+ #define ISCSI_REASON_NEGOTIATION_RESET	11
+-#define ISCSI_REASON_WAITING_FOR_LOGOUT	12
+ 
+ /* Max. number of Key=Value pairs in a text message */
+ #define MAX_KEY_VALUE_PAIRS	8192
 
 
