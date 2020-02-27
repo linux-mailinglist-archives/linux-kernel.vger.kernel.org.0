@@ -2,84 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A06C1722B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:01:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08ACB1722B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:03:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729765AbgB0QBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:01:20 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41734 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729673AbgB0QBT (ORCPT
+        id S1729828AbgB0QDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:03:04 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:36777 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729153AbgB0QDE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:01:19 -0500
-Received: by mail-lf1-f67.google.com with SMTP id y17so2469846lfe.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 08:01:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UETZuQYi2wrMYHp0QoHC7GN8cqT8lvt+bieyv66QGUU=;
-        b=Bl8A94EdEQ1ElnCEHMc4osN3MaMMJ+G1cm5ILYH3PZyQbtUor0vyFkL6txmeXuh3cC
-         aaM7OzJq8fpPHeWu7rbOaHAxTTeL8q49pKyZqsRmjxpWGPse6eGaHSdYTfdCXnZNNKFi
-         qgBYAlDE0pAyH+3UlG6/GCmOUEcIlK+IAKIAM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UETZuQYi2wrMYHp0QoHC7GN8cqT8lvt+bieyv66QGUU=;
-        b=aS1tF+ox6Oz+isF70eATdTkbricFlTQeiSXaf1bxg5IqAtzBwIHKEtvvhfCwdfTj99
-         sn48RUne0iFlT8QRW99un1PyrKDX3NTNuer3GTIeXNk3xVnue9kqkeMvhozLtmf7NFi1
-         GGEFFGH/7Qvm0OqX6wL3cANiJ07LRcEh6R/Zw8pgbXz8uYzkNz8P+Hhy5cLNzbUpV3uN
-         pSsp6OiIbTm9QpR/avIWsDrHMW/CFfx2XhxgaAQd1kiQPo73COFmlHSugh4AflOeIzwp
-         G2yUJYMj5Cw7jTEe/F4gWZRM1EQvcegYr0+7+4AiqoCHi4CHpot7+DYxQKBM0ho6ygMf
-         H65g==
-X-Gm-Message-State: ANhLgQ0yY/4CmbHZGJJAg6IyFG2smePzbjt/5+Ahq7F4TXxX8YkfX1uG
-        ioJu3EW0tRnttZaWuS6f6ruuLA==
-X-Google-Smtp-Source: ADFU+vvnKHhEw6e4/4kuTUBAcAha0hKfQTm6h2D4dhw2dabCO3syQJYUlM+7leNeBjMbliqri5tqrQ==
-X-Received: by 2002:a19:6144:: with SMTP id m4mr55051lfk.192.1582819277516;
-        Thu, 27 Feb 2020 08:01:17 -0800 (PST)
-Received: from [192.168.1.149] (ip-5-186-115-35.cgn.fibianet.dk. [5.186.115.35])
-        by smtp.gmail.com with ESMTPSA id b1sm4019165ljp.72.2020.02.27.08.01.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2020 08:01:16 -0800 (PST)
-Subject: Re: [PATCH v1] lib/vsprintf: update comment about simple_strto<foo>()
- functions
-To:     Petr Mladek <pmladek@suse.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-References: <20200221085723.42469-1-andriy.shevchenko@linux.intel.com>
- <20200221145141.pchim24oht7nxfir@pengutronix.de>
- <CAHp75VfR+X6Mw8ywKNW5mTomzmuHSM8ecQUhxtM=LUkWaSe9CA@mail.gmail.com>
- <20200221163334.w7pocmbbw4ymimlc@pengutronix.de>
- <d6c3b369-9777-9986-f41f-3f3a4f85d64c@rasmusvillemoes.dk>
- <20200227131428.5nhvslwdmocv6fkb@pathway.suse.cz>
-From:   Rasmus Villemoes <mail@rasmusvillemoes.dk>
-Message-ID: <7c43342d-bae7-8f52-d856-694264a87a69@rasmusvillemoes.dk>
-Date:   Thu, 27 Feb 2020 17:01:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 27 Feb 2020 11:03:04 -0500
+Received: from localhost (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id BE9BF100002;
+        Thu, 27 Feb 2020 16:01:49 +0000 (UTC)
+Date:   Thu, 27 Feb 2020 17:01:49 +0100
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        f.fainelli@gmail.com, hkallweit1@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, foss@0leil.net
+Subject: Re: [PATCH net-next 3/3] net: phy: mscc: implement RGMII skew delay
+ configuration
+Message-ID: <20200227160149.GB1686232@kwain>
+References: <20200227152859.1687119-1-antoine.tenart@bootlin.com>
+ <20200227152859.1687119-4-antoine.tenart@bootlin.com>
+ <20200227155128.GB5245@lunn.ch>
 MIME-Version: 1.0
-In-Reply-To: <20200227131428.5nhvslwdmocv6fkb@pathway.suse.cz>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200227155128.GB5245@lunn.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/02/2020 14.14, Petr Mladek wrote:
+Hello Andrew,
+
+On Thu, Feb 27, 2020 at 04:51:28PM +0100, Andrew Lunn wrote:
+> On Thu, Feb 27, 2020 at 04:28:59PM +0100, Antoine Tenart wrote:
+> > This patch adds support for configuring the RGMII skews in Rx and Tx
+> > thanks to properties defined in the device tree.
 > 
-> Is still anyone against the original patch updating the comments in
-> vsprintf.c. Otherwise, I would queue it for 5.7.
+> Hi Antoine
+> 
+> What you are not handling here in this patchset is the four RGMII
+> modes, and what they mean in terms of delay:
+> 
+>         PHY_INTERFACE_MODE_RGMII,
+>         PHY_INTERFACE_MODE_RGMII_ID,
+>         PHY_INTERFACE_MODE_RGMII_RXID,
+>         PHY_INTERFACE_MODE_RGMII_TXID,
+> 
+> The PHY driver should be adding delays based on these
+> values. Generally, that is enough to make the link work. You only need
+> additional skew in DT when you need finer grain control than what
+> these provide.
 
-Please do.
+Oh, that's right. I'll fix the series and resubmit.
 
-Rasmus
+Thanks!
+Antoine
+
+-- 
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
