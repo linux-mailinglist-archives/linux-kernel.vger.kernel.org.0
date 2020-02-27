@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46737171A23
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8426171977
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:45:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731345AbgB0NvK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:51:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49866 "EHLO mail.kernel.org"
+        id S1730346AbgB0NpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:45:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731341AbgB0NvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:51:07 -0500
+        id S1730314AbgB0NpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:45:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3206120578;
-        Thu, 27 Feb 2020 13:51:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9BE620578;
+        Thu, 27 Feb 2020 13:45:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811466;
-        bh=NhUQGsnafUe+C5Bx0IIl7hrgX87gytrWYkGTQoNos+0=;
+        s=default; t=1582811102;
+        bh=X0N4qAhIcSGQX/+onXxgznseKCjCioKEWftFRkvE8Gc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r0RQYjKtuu00TunCAeT3YW/rPtIs13QYZqmLjpY1NboHFMsSmUTCsyeaCExdfjSib
-         XPU7j5CE1yoIaqfSKJSWEbiVKa1U3Gtly9N+gv0tf7sHFbUrONaXeTfht3mg7AdQs8
-         xOIT6KBVNxKXf4ts7p78MZ738imHPcmQwGz0lZJk=
+        b=dN9SSTpq2PAmTn7uLJnEXsCQts+G0hePMAkJMGy1brdwrmft5ZsEvTCGf3Eb6v1zN
+         1KF1SDESDYKeUodIL7CIXkT7eHzsfJcgUNV8IiHuYIy4nccw5tUBv8VpzuvLE9kCGG
+         eQ6FPB3+A8w5sPtd89CSCiuxbvhDgYdN7qy47JNk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Zubin Mithra <zsm@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 144/165] netfilter: xt_bpf: add overflow checks
+        stable@vger.kernel.org, Shijie Luo <luoshijie1@huawei.com>,
+        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        stable@kernel.org
+Subject: [PATCH 4.4 102/113] ext4: add cond_resched() to __ext4_find_entry()
 Date:   Thu, 27 Feb 2020 14:36:58 +0100
-Message-Id: <20200227132251.928547530@linuxfoundation.org>
+Message-Id: <20200227132228.098577351@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,75 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Shijie Luo <luoshijie1@huawei.com>
 
-[ Upstream commit 6ab405114b0b229151ef06f4e31c7834dd09d0c0 ]
+commit 9424ef56e13a1f14c57ea161eed3ecfdc7b2770e upstream.
 
-Check whether inputs from userspace are too long (explicit length field too
-big or string not null-terminated) to avoid out-of-bounds reads.
+We tested a soft lockup problem in linux 4.19 which could also
+be found in linux 5.x.
 
-As far as I can tell, this can at worst lead to very limited kernel heap
-memory disclosure or oopses.
+When dir inode takes up a large number of blocks, and if the
+directory is growing when we are searching, it's possible the
+restart branch could be called many times, and the do while loop
+could hold cpu a long time.
 
-This bug can be triggered by an unprivileged user even if the xt_bpf module
-is not loaded: iptables is available in network namespaces, and the xt_bpf
-module can be autoloaded.
+Here is the call trace in linux 4.19.
 
-Triggering the bug with a classic BPF filter with fake length 0x1000 causes
-the following KASAN report:
+[  473.756186] Call trace:
+[  473.756196]  dump_backtrace+0x0/0x198
+[  473.756199]  show_stack+0x24/0x30
+[  473.756205]  dump_stack+0xa4/0xcc
+[  473.756210]  watchdog_timer_fn+0x300/0x3e8
+[  473.756215]  __hrtimer_run_queues+0x114/0x358
+[  473.756217]  hrtimer_interrupt+0x104/0x2d8
+[  473.756222]  arch_timer_handler_virt+0x38/0x58
+[  473.756226]  handle_percpu_devid_irq+0x90/0x248
+[  473.756231]  generic_handle_irq+0x34/0x50
+[  473.756234]  __handle_domain_irq+0x68/0xc0
+[  473.756236]  gic_handle_irq+0x6c/0x150
+[  473.756238]  el1_irq+0xb8/0x140
+[  473.756286]  ext4_es_lookup_extent+0xdc/0x258 [ext4]
+[  473.756310]  ext4_map_blocks+0x64/0x5c0 [ext4]
+[  473.756333]  ext4_getblk+0x6c/0x1d0 [ext4]
+[  473.756356]  ext4_bread_batch+0x7c/0x1f8 [ext4]
+[  473.756379]  ext4_find_entry+0x124/0x3f8 [ext4]
+[  473.756402]  ext4_lookup+0x8c/0x258 [ext4]
+[  473.756407]  __lookup_hash+0x8c/0xe8
+[  473.756411]  filename_create+0xa0/0x170
+[  473.756413]  do_mkdirat+0x6c/0x140
+[  473.756415]  __arm64_sys_mkdirat+0x28/0x38
+[  473.756419]  el0_svc_common+0x78/0x130
+[  473.756421]  el0_svc_handler+0x38/0x78
+[  473.756423]  el0_svc+0x8/0xc
+[  485.755156] watchdog: BUG: soft lockup - CPU#2 stuck for 22s! [tmp:5149]
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in bpf_prog_create+0x84/0xf0
-Read of size 32768 at addr ffff8801eff2c494 by task test/4627
+Add cond_resched() to avoid soft lockup and to provide a better
+system responding.
 
-CPU: 0 PID: 4627 Comm: test Not tainted 4.15.0-rc1+ #1
-[...]
-Call Trace:
- dump_stack+0x5c/0x85
- print_address_description+0x6a/0x260
- kasan_report+0x254/0x370
- ? bpf_prog_create+0x84/0xf0
- memcpy+0x1f/0x50
- bpf_prog_create+0x84/0xf0
- bpf_mt_check+0x90/0xd6 [xt_bpf]
-[...]
-Allocated by task 4627:
- kasan_kmalloc+0xa0/0xd0
- __kmalloc_node+0x47/0x60
- xt_alloc_table_info+0x41/0x70 [x_tables]
-[...]
-The buggy address belongs to the object at ffff8801eff2c3c0
-                which belongs to the cache kmalloc-2048 of size 2048
-The buggy address is located 212 bytes inside of
-                2048-byte region [ffff8801eff2c3c0, ffff8801eff2cbc0)
-[...]
-==================================================================
+Link: https://lore.kernel.org/r/20200215080206.13293-1-luoshijie1@huawei.com
+Signed-off-by: Shijie Luo <luoshijie1@huawei.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: stable@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: e6f30c731718 ("netfilter: x_tables: add xt_bpf match")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Zubin Mithra <zsm@chromium.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/xt_bpf.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/ext4/namei.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/netfilter/xt_bpf.c b/net/netfilter/xt_bpf.c
-index dffee9d47ec4b..7b993f25aab92 100644
---- a/net/netfilter/xt_bpf.c
-+++ b/net/netfilter/xt_bpf.c
-@@ -25,6 +25,9 @@ static int bpf_mt_check(const struct xt_mtchk_param *par)
- 	struct xt_bpf_info *info = par->matchinfo;
- 	struct sock_fprog_kern program;
- 
-+	if (info->bpf_program_num_elem > XT_BPF_MAX_NUM_INSTR)
-+		return -EINVAL;
-+
- 	program.len = info->bpf_program_num_elem;
- 	program.filter = info->bpf_program;
- 
--- 
-2.20.1
-
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1418,6 +1418,7 @@ restart:
+ 		/*
+ 		 * We deal with the read-ahead logic here.
+ 		 */
++		cond_resched();
+ 		if (ra_ptr >= ra_max) {
+ 			/* Refill the readahead buffer */
+ 			ra_ptr = 0;
 
 
