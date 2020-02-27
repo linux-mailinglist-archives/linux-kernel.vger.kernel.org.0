@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B09171DF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:24:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EAA3171C98
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:13:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389135AbgB0OYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:24:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52414 "EHLO mail.kernel.org"
+        id S2388419AbgB0ONe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:13:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388973AbgB0ON1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:13:27 -0500
+        id S2388978AbgB0ONa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:13:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9340320801;
-        Thu, 27 Feb 2020 14:13:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A76020578;
+        Thu, 27 Feb 2020 14:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812807;
-        bh=FhDWb/RYnGRiiU8odP5whwWF/muNFYva5uLwSwHCnZg=;
+        s=default; t=1582812809;
+        bh=BB3EQz5ds2kVFQlWAdweL64uZIpe+5Yq2WWqihSQq/M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kB0vgMprnzJMw8oUjuIAY8tf49be6iFKjWBPJwthcnSEFxiJ6chCWvkGvG4s+dgdq
-         dB2gZfK7WLvBTKtXrvkVR5ZeBRPtS4JX0vEwoB6d+65aVXZE/3nRYWD5rWYu82KzHc
-         hh5k82kdzryD4jNttvkKRPgO3Q9fFzA5ZNT84q6A=
+        b=18tq+d5y5p/75GtuRSVPoQiPVa/0DJDbYL4wxJZnjRHpljDKT7TmvU2q57vOCmSYX
+         mXuNTKGBgBhLNSujeG8+dII1M7g11MSFnB7PF1DN02lv4t+XrfeXwwtSWd5skpGYhb
+         YIQP1ds+CsmpgGrNP15JzJQel+s3mJPVATO014nM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jerry Snitselaar <jsnitsel@redhat.com>,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 5.5 005/150] iommu/vt-d: Remove deferred_attach_domain()
-Date:   Thu, 27 Feb 2020 14:35:42 +0100
-Message-Id: <20200227132233.517585617@linuxfoundation.org>
+Subject: [PATCH 5.5 006/150] iommu/vt-d: Simplify check in identity_mapping()
+Date:   Thu, 27 Feb 2020 14:35:43 +0100
+Message-Id: <20200227132233.680392585@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
 References: <20200227132232.815448360@linuxfoundation.org>
@@ -46,10 +46,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-commit 96d170f3b1a607612caf3618c534d5c64fc2d61b upstream.
+commit 1ddb32da4a629fa7f87873d0b6836c2e1feb7518 upstream.
 
-The function is now only a wrapper around find_domain(). Remove the
-function and call find_domain() directly at the call-sites.
+The function only has one call-site and there it is never called with
+dummy or deferred devices. Simplify the check in the function to
+account for that.
 
 Fixes: 1ee0186b9a12 ("iommu/vt-d: Refactor find_domain() helper")
 Cc: stable@vger.kernel.org # v5.5
@@ -59,49 +60,19 @@ Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel-iommu.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/iommu/intel-iommu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -2450,11 +2450,6 @@ static void do_deferred_attach(struct de
- 		intel_iommu_attach_device(domain, dev);
- }
+@@ -2799,7 +2799,7 @@ static int identity_mapping(struct devic
+ 	struct device_domain_info *info;
  
--static struct dmar_domain *deferred_attach_domain(struct device *dev)
--{
--	return find_domain(dev);
--}
--
- static inline struct device_domain_info *
- dmar_search_domain_by_dev_info(int segment, int bus, int devfn)
- {
-@@ -3526,7 +3521,7 @@ static dma_addr_t __intel_map_single(str
+ 	info = dev->archdata.iommu;
+-	if (info && info != DUMMY_DEVICE_DOMAIN_INFO && info != DEFER_DEVICE_DOMAIN_INFO)
++	if (info)
+ 		return (info->domain == si_domain);
  
- 	BUG_ON(dir == DMA_NONE);
- 
--	domain = deferred_attach_domain(dev);
-+	domain = find_domain(dev);
- 	if (!domain)
- 		return DMA_MAPPING_ERROR;
- 
-@@ -3746,7 +3741,7 @@ static int intel_map_sg(struct device *d
- 	if (!iommu_need_mapping(dev))
- 		return dma_direct_map_sg(dev, sglist, nelems, dir, attrs);
- 
--	domain = deferred_attach_domain(dev);
-+	domain = find_domain(dev);
- 	if (!domain)
- 		return 0;
- 
-@@ -3844,7 +3839,7 @@ bounce_map_single(struct device *dev, ph
- 	if (unlikely(attach_deferred(dev)))
- 		do_deferred_attach(dev);
- 
--	domain = deferred_attach_domain(dev);
-+	domain = find_domain(dev);
- 
- 	if (WARN_ON(dir == DMA_NONE || !domain))
- 		return DMA_MAPPING_ERROR;
+ 	return 0;
 
 
