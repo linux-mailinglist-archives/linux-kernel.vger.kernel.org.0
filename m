@@ -2,100 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84E5A1721E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:13:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27E7C1721FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 16:14:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbgB0PNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 10:13:32 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:34597 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729153AbgB0PNb (ORCPT
+        id S1730675AbgB0POi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 10:14:38 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29089 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730383AbgB0POi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 10:13:31 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j7Kqk-00086w-Tr; Thu, 27 Feb 2020 16:13:19 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 85C001C2170;
-        Thu, 27 Feb 2020 16:13:18 +0100 (CET)
-Date:   Thu, 27 Feb 2020 15:13:18 -0000
-From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/nohz] x86/entry: Remove _TIF_NOHZ from _TIF_WORK_SYSCALL_ENTRY
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+        Thu, 27 Feb 2020 10:14:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582816477;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KsXD7OC/j5gaz+S/O9WvlSstDKGTM7c7shTcNdfT6SA=;
+        b=dRoiOdVVzPUlgTOstGMQllOMu/E1P9qioktA0cvF4owXeTcFrkEv7vHe/noK8UZiNcjCD+
+        8ofHZhNxlwRcqK42YdNZLJwkeeNwbaZJmR13z3QQxuvySEOjUp193EAow80Hj5W5hOT6NA
+        TuDaBIov2EO0MgJ12QUShlSCh+GEBEw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-354-WDNOwscoO72aO4dxQsI4uw-1; Thu, 27 Feb 2020 10:14:30 -0500
+X-MC-Unique: WDNOwscoO72aO4dxQsI4uw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 693DD1005514;
+        Thu, 27 Feb 2020 15:14:28 +0000 (UTC)
+Received: from ws.net.home (ovpn-204-202.brq.redhat.com [10.40.204.202])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 807061036B25;
+        Thu, 27 Feb 2020 15:14:23 +0000 (UTC)
+Date:   Thu, 27 Feb 2020 16:14:21 +0100
+From:   Karel Zak <kzak@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Ian Kent <raven@themaw.net>, Miklos Szeredi <mszeredi@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Lennart Poettering <lennart@poettering.net>,
+        Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+        util-linux@vger.kernel.org
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
+ #17]
+Message-ID: <20200227151421.3u74ijhqt6ekbiss@ws.net.home>
+References: <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
+ <1582556135.3384.4.camel@HansenPartnership.com>
+ <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
+ <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
+ <1582644535.3361.8.camel@HansenPartnership.com>
+ <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
+ <1c8db4e2b707f958316941d8edd2073ee7e7b22c.camel@themaw.net>
+ <CAJfpegtRoXnPm5_sMYPL2L6FCZU52Tn8wk7NcW-dm4_2x=dD3Q@mail.gmail.com>
+ <3e656465c427487e4ea14151b77d391d52cd6bad.camel@themaw.net>
+ <CAJfpegu5xLcR=QbAOnUrL49QTem6X6ok7nPU+kLFnNHdPXSh1A@mail.gmail.com>
 MIME-Version: 1.0
-Message-ID: <158281639829.28353.14112883202818177824.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegu5xLcR=QbAOnUrL49QTem6X6ok7nPU+kLFnNHdPXSh1A@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/nohz branch of tip:
+On Thu, Feb 27, 2020 at 02:45:27PM +0100, Miklos Szeredi wrote:
+> > So the problem I want to see fixed is the effect of very large
+> > mount tables on other user space applications, particularly the
+> > effect when a large number of mounts or umounts are performed.
 
-Commit-ID:     7c805795307b40af50a45b7db44dd09ac1700947
-Gitweb:        https://git.kernel.org/tip/7c805795307b40af50a45b7db44dd09ac1700947
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 23 Oct 2019 14:27:14 +02:00
-Committer:     Frederic Weisbecker <frederic@kernel.org>
-CommitterDate: Fri, 14 Feb 2020 16:04:35 +01:00
+Yes, now you have to generate (in kernel) and parse (in
+userspace) all mount table to get information about just 
+one mount table entry. This is typical for umount or systemd.
 
-x86/entry: Remove _TIF_NOHZ from _TIF_WORK_SYSCALL_ENTRY
+> > >  - add a notification mechanism   - lookup a mount based on path
+> > >  - and a way to selectively query mount/superblock information
+> > based on path ...
 
-Evaluating _TIF_NOHZ to decide whether to use the slow syscall entry path
-is not only pointless, it's actually counterproductive:
+For umount-like use-cases we need mountpoint/ to mount entry
+conversion; I guess something like open(mountpoint/) + fsinfo() 
+should be good enough.
 
- 1) Context tracking code is invoked unconditionally before that flag is
-    evaluated.
+For systemd we need the same, but triggered by notification. The ideal
+solution is to get mount entry ID or FD from notification and later use this
+ID or FD to ask for details about the mount entry (probably again fsinfo()).
+The notification has to be usable with in epoll() set.
 
- 2) If the flag is set the slow path is invoked for nothing due to #1
+This solves 99% of our performance issues I guess.
 
-Remove it.
+> > So that means mount table info. needs to be maintained, whether that
+> > can be achieved using sysfs I don't know. Creating and maintaining
+> > the sysfs tree would be a big challenge I think.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- arch/x86/include/asm/thread_info.h | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+It will be still necessary to get complete mount table sometimes, but 
+not in performance sensitive scenarios.
 
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index cf43279..6cb9d1b 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -133,14 +133,10 @@ struct thread_info {
- #define _TIF_X32		(1 << TIF_X32)
- #define _TIF_FSCHECK		(1 << TIF_FSCHECK)
- 
--/*
-- * work to do in syscall_trace_enter().  Also includes TIF_NOHZ for
-- * enter_from_user_mode()
-- */
-+/* Work to do before invoking the actual syscall. */
- #define _TIF_WORK_SYSCALL_ENTRY	\
- 	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_EMU | _TIF_SYSCALL_AUDIT |	\
--	 _TIF_SECCOMP | _TIF_SYSCALL_TRACEPOINT |	\
--	 _TIF_NOHZ)
-+	 _TIF_SECCOMP | _TIF_SYSCALL_TRACEPOINT)
- 
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW_BASE					\
+I'm not sure about sysfs/, you need somehow resolve namespaces, order
+of the mount entries (which one is the last one), etc. IMHO translate
+mountpoint path to sysfs/ path will be complicated.
+
+> > But before trying to work out how to use a notification mechanism
+> > just having a way to get the info provided by the proc tables using
+> > a path alone should give initial immediate improvement in libmount.
+> 
+> Adding Karel, Lennart, Zbigniew and util-linux@vger...
+> 
+> At a quick glance at libmount and systemd code, it appears that just
+> switching out the implementation in libmount will not be enough:
+> systemd is calling functions like mnt_table_parse_*() when it receives
+> a notification that the mount table changed.
+
+We're ready to change this stuff in systemd if there will be something
+better (something per-mount-entry).
+
+My plan is add new API to libmount to query information about one
+mount entry (but I had no time to play with fsinfo yet).
+
+> What is the end purpose of parsing the mount tables?  Can systemd guys
+> comment on that?
+
+If mount/umount is triggered by systemd than it need verification
+about success and final version of the mount options. It also reads
+information from libmount to get userspace mount options (.e.g.
+_netdev -- libmount uses mount source, target and fsroot to join
+kernel and userpace stuff).
+
+And don't forget that mount units are part of systemd dependencies, so
+umount/mount is important event for systemd and it need details about
+the changes (what, where, ... etc.)
+
+    Karel
+
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
