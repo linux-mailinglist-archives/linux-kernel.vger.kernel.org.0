@@ -2,91 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 879651723CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:46:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87D4F1723D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:47:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730464AbgB0QpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:45:25 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34110 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730303AbgB0QpY (ORCPT
+        id S1730492AbgB0Qpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:45:51 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42593 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729970AbgB0Qpu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:45:24 -0500
-Received: by mail-io1-f67.google.com with SMTP id z190so200727iof.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 08:45:24 -0800 (PST)
+        Thu, 27 Feb 2020 11:45:50 -0500
+Received: by mail-lj1-f193.google.com with SMTP id d10so4207730ljl.9;
+        Thu, 27 Feb 2020 08:45:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
+        d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rS6KqBFssX9ZUdW6+MPkG1KvIc6wVLI2emiU+QF0qwg=;
-        b=XaBoABkOukH7Nu7mt4lsMgCefNzcJQuXa2aVFVbkfZpp6Tb5s+73tbFVKvoyGjA/de
-         rmZCbRd35i75iH1YaR3+beQ0/MRPNMdEGj3CTigZMKUY3xL+M1uKsj1ZAx7tdcdtuV87
-         YOAZpAJF4zquagazdIfTcwOMiCpDIc/iUts64=
+        bh=wVNFcIlBUE9RxinpT2V+KF01085Ap+cWrCWblxB3kzo=;
+        b=lo+lBayS6a01ISYJ7chK3YPXl8VJlAX+zC+JyxsrdKlxc54e7G9/IVxdFy+dbNJrLd
+         OjLppMBG9NAHXXqywhlJ6crXvV57lsMwk9f6YN+b3mddVt5a5aNY8Y4aUMm0AJSiepIg
+         WMr7TYua2I9JZSbtcwql76J/cLWQ61GLC2jwFcAMWkJyUjKKeoQiQmIR24yQMVyzWzdX
+         SLpcuFSIHDt2eZs5LmkqsPI3iItsXFxe9ZhqPK8Msk5Zz2Nvd0S6dRrO5NO8jzUx5ZHz
+         4rhRREC+MuW+JozkTC3Bu32df/mn5QSzr515Hv5K/GRgRnW/xhASukYfq3Ox4WuW/7Vv
+         v46g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=rS6KqBFssX9ZUdW6+MPkG1KvIc6wVLI2emiU+QF0qwg=;
-        b=UTpd3rFqij24pv0TBIZqpF/8rIk39Ovc4HGBurccOyAy1SL9MAVsCLpkRK8WV5Rya9
-         IM3hZMAswujtHf4EtDMPtwm7E9MjfF8/Y0x5K8u8skMJ7hFEKEaApyGFy+SDkfK4l+HL
-         NGP0/ciIYTNxod0fvsQZmlNVKeQpj/RIo7CXaBGZ3n6RUfW3sZGU1YRJ3oF/izy0Qw/g
-         xlOXM0pXAzxQ/geeMqlgMYFiEQO/Q69isaUOdNwYGc5R1WRJI23XxwjzsoQsoDcNv0cH
-         sqNKaI9M5RDLak5mi8MdU4PpzHghxQkb3mFKJzHr8iUplH638RYv2s4Rth19zEIWYLF+
-         Nnjw==
-X-Gm-Message-State: APjAAAU5L/CksgSLF0tWWBqCAxfhI+z1xpodgNo60Xktr4CJ40U3mpgA
-        Vl3i1/USqvpcNcAjKpabzQfXFw==
-X-Google-Smtp-Source: APXvYqx/a5Dli7aKEcWZrJspfguzTO9DfNqargT1han0HSOgIYlEsoiSlvvxXv/MLc1HIIpISgSXpg==
-X-Received: by 2002:a6b:700e:: with SMTP id l14mr187328ioc.170.1582821924223;
-        Thu, 27 Feb 2020 08:45:24 -0800 (PST)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id i16sm1978584ils.41.2020.02.27.08.45.23
+        bh=wVNFcIlBUE9RxinpT2V+KF01085Ap+cWrCWblxB3kzo=;
+        b=GmZl1y+/grp2km6qcJ728ALIkXD5b3+jOxitgKzW0NsgxyFHtGE27QZozL12tlwBRq
+         GgsH63BrW0BAi6mAiwCMAOkJq17Z5vYnhlPy0siRlOeGN0MDbcusOnHZk+nIe4Rofkw0
+         rPWb24sdqetTKfyDvZ3Csn9yt0WrclBpheC3W2wprSBuTDtLCZqjvn2m++YqS/3W3sZE
+         BhcTEFN7puyTI/39BUDFr8fxkG6+xsJ50zEiXk92G1KRxVcoteO/BqmZz3lplCYpkeZD
+         JqTqKZgz2NS89boyh41MHeBX8rGrXnwMVmvaJVFTWlyy2AOGkd/Oij8RUUN6ETROeKVR
+         BrLQ==
+X-Gm-Message-State: ANhLgQ1GBI7BJv//aT8KZxsHD5zBbGSJE/DTJ0tZ9nI/OMn9l/13Qvg/
+        q4bCPrL+CigTI64MbrnZtmFChxlS
+X-Google-Smtp-Source: ADFU+vvl7Ppl4IgVJKzIc35yc7GsPEAc4o9RTr0Yf+7YCzTiSIFWHuhjs8G6wF6GCth9q9RI5/y+4g==
+X-Received: by 2002:a2e:9e19:: with SMTP id e25mr233139ljk.179.1582821947568;
+        Thu, 27 Feb 2020 08:45:47 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id i1sm3637987lji.71.2020.02.27.08.45.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2020 08:45:23 -0800 (PST)
-Subject: Re: [PATCH] selftest/lkdtm: Use local .gitignore
-To:     Kees Cook <keescook@chromium.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <e4ba4f716599d1d66c8bc60489f4b05764ea8470.1582812034.git.christophe.leroy@c-s.fr>
- <202002270817.1C32C98@keescook>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <f804d7bc-134d-27f8-daa5-6bbf9f28b54d@linuxfoundation.org>
-Date:   Thu, 27 Feb 2020 09:45:22 -0700
+        Thu, 27 Feb 2020 08:45:46 -0800 (PST)
+Subject: Re: [PATCH v11 14/17] cpuidle: tegra: Squash Tegra114 driver into the
+ common driver
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Jasper Korten <jja2000@gmail.com>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200224224057.21877-1-digetx@gmail.com>
+ <20200224224057.21877-15-digetx@gmail.com>
+ <dcf45352-8ea3-6273-b4e8-0142f5d5e9f2@linaro.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <4f452e32-10c4-b906-7d22-dc8977962666@gmail.com>
+Date:   Thu, 27 Feb 2020 19:45:45 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <202002270817.1C32C98@keescook>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <dcf45352-8ea3-6273-b4e8-0142f5d5e9f2@linaro.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/27/20 9:17 AM, Kees Cook wrote:
-> On Thu, Feb 27, 2020 at 02:07:10PM +0000, Christophe Leroy wrote:
->> Commit 68ca0fd272da ("selftest/lkdtm: Don't pollute 'git status'")
->> introduced patterns for git to ignore files generated in
->> tools/testing/selftests/lkdtm/
+27.02.2020 12:21, Daniel Lezcano пишет:
+> On 24/02/2020 23:40, Dmitry Osipenko wrote:
+>> Tegra20/30/114/124 SoCs have common idling states, thus there is no much
+>> point in having separate drivers for a similar hardware. This patch moves
+>> Tegra114/124 arch/ drivers into the common driver without any functional
+>> changes. The CC6 state is kept disabled on Tegra114/124 because the core
+>> Tegra PM code needs some more work in order to support that state.
 >>
->> Use local .gitignore file instead of using the root one.
->>
->> Fixes: 68ca0fd272da ("selftest/lkdtm: Don't pollute 'git status'")
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
 > 
-> Yeah, that's better. Thanks!
-> 
-> Acked-by: Kees Cook <keescook@chromium.org>
-> 
+> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-I will apply it for next rc.
+Awesome, thank you :)
 
-Thanks. I should have noticed the problem in the previous version.
-It slipped by me. :(
-
-thanks,
--- Shuah
-
+@Thierry, could you please pick up the updated patches for linux-next +
+pick up the cpufreq series? Thanks in advance!
