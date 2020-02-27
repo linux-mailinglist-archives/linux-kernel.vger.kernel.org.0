@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E7F171A21
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46737171A23
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:51:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731340AbgB0NvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:51:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49724 "EHLO mail.kernel.org"
+        id S1731345AbgB0NvK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:51:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730883AbgB0NvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:51:04 -0500
+        id S1731341AbgB0NvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:51:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 376F02469F;
-        Thu, 27 Feb 2020 13:51:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3206120578;
+        Thu, 27 Feb 2020 13:51:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811463;
-        bh=LPARPR7VR2ulVbDbpMAudNuf9UmJAfhMGdKZiL9gBGs=;
+        s=default; t=1582811466;
+        bh=NhUQGsnafUe+C5Bx0IIl7hrgX87gytrWYkGTQoNos+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c5SIAMD4XGjkl+sa4jTqRULAE3isSuZTSsBBoIP4it3kSqQ/PhFbRaHHPkueJvp/Z
-         lbuOi1NafeqC+7P90HDfgXfA9SjwWO+vdL9T/CUVI5QUR8JW/PNPFfeqBHtsWz5ygF
-         u6/5rC/PgVOt1xWL8hnUg0tfEwKXHuRkjXpw1FxY=
+        b=r0RQYjKtuu00TunCAeT3YW/rPtIs13QYZqmLjpY1NboHFMsSmUTCsyeaCExdfjSib
+         XPU7j5CE1yoIaqfSKJSWEbiVKa1U3Gtly9N+gv0tf7sHFbUrONaXeTfht3mg7AdQs8
+         xOIT6KBVNxKXf4ts7p78MZ738imHPcmQwGz0lZJk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Upton <oupton@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Zubin Mithra <zsm@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 143/165] KVM: nVMX: Dont emulate instructions in guest mode
-Date:   Thu, 27 Feb 2020 14:36:57 +0100
-Message-Id: <20200227132251.823667554@linuxfoundation.org>
+Subject: [PATCH 4.9 144/165] netfilter: xt_bpf: add overflow checks
+Date:   Thu, 27 Feb 2020 14:36:58 +0100
+Message-Id: <20200227132251.928547530@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
 References: <20200227132230.840899170@linuxfoundation.org>
@@ -44,33 +45,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit 07721feee46b4b248402133228235318199b05ec ]
+[ Upstream commit 6ab405114b0b229151ef06f4e31c7834dd09d0c0 ]
 
-vmx_check_intercept is not yet fully implemented. To avoid emulating
-instructions disallowed by the L1 hypervisor, refuse to emulate
-instructions by default.
+Check whether inputs from userspace are too long (explicit length field too
+big or string not null-terminated) to avoid out-of-bounds reads.
 
-Cc: stable@vger.kernel.org
-[Made commit, added commit msg - Oliver]
-Signed-off-by: Oliver Upton <oupton@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+As far as I can tell, this can at worst lead to very limited kernel heap
+memory disclosure or oopses.
+
+This bug can be triggered by an unprivileged user even if the xt_bpf module
+is not loaded: iptables is available in network namespaces, and the xt_bpf
+module can be autoloaded.
+
+Triggering the bug with a classic BPF filter with fake length 0x1000 causes
+the following KASAN report:
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in bpf_prog_create+0x84/0xf0
+Read of size 32768 at addr ffff8801eff2c494 by task test/4627
+
+CPU: 0 PID: 4627 Comm: test Not tainted 4.15.0-rc1+ #1
+[...]
+Call Trace:
+ dump_stack+0x5c/0x85
+ print_address_description+0x6a/0x260
+ kasan_report+0x254/0x370
+ ? bpf_prog_create+0x84/0xf0
+ memcpy+0x1f/0x50
+ bpf_prog_create+0x84/0xf0
+ bpf_mt_check+0x90/0xd6 [xt_bpf]
+[...]
+Allocated by task 4627:
+ kasan_kmalloc+0xa0/0xd0
+ __kmalloc_node+0x47/0x60
+ xt_alloc_table_info+0x41/0x70 [x_tables]
+[...]
+The buggy address belongs to the object at ffff8801eff2c3c0
+                which belongs to the cache kmalloc-2048 of size 2048
+The buggy address is located 212 bytes inside of
+                2048-byte region [ffff8801eff2c3c0, ffff8801eff2cbc0)
+[...]
+==================================================================
+
+Fixes: e6f30c731718 ("netfilter: x_tables: add xt_bpf match")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Zubin Mithra <zsm@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/xt_bpf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -11354,7 +11354,7 @@ static int vmx_check_intercept(struct kv
- 	}
+diff --git a/net/netfilter/xt_bpf.c b/net/netfilter/xt_bpf.c
+index dffee9d47ec4b..7b993f25aab92 100644
+--- a/net/netfilter/xt_bpf.c
++++ b/net/netfilter/xt_bpf.c
+@@ -25,6 +25,9 @@ static int bpf_mt_check(const struct xt_mtchk_param *par)
+ 	struct xt_bpf_info *info = par->matchinfo;
+ 	struct sock_fprog_kern program;
  
- 	/* TODO: check more intercepts... */
--	return X86EMUL_CONTINUE;
-+	return X86EMUL_UNHANDLEABLE;
- }
++	if (info->bpf_program_num_elem > XT_BPF_MAX_NUM_INSTR)
++		return -EINVAL;
++
+ 	program.len = info->bpf_program_num_elem;
+ 	program.filter = info->bpf_program;
  
- #ifdef CONFIG_X86_64
+-- 
+2.20.1
+
 
 
