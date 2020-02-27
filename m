@@ -2,99 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E71E17157F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 11:58:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C16E171567
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 11:57:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729000AbgB0K5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 05:57:36 -0500
-Received: from mail27.static.mailgun.info ([104.130.122.27]:52864 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728854AbgB0K5f (ORCPT
+        id S1728895AbgB0K4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 05:56:54 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56222 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728876AbgB0K4y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 05:57:35 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1582801055; h=Content-Transfer-Encoding: MIME-Version:
- References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=sM+W2Nc7DPEL6NoqIWgydj9LZlnUkC9GPD/SJlw3K2k=; b=v3/xtEfpypudOdC+9boxbhKfp4E6EsWxIWQkTHpHmlARyZqtsgsUXfN1hiTc0t+9BMMdVvLL
- gn0CiPC/lzJi+VPIgxQkQ85bv4PSWwHq/ZdpXLEDvaAPVo98zlePBCSsU08KmUOHo57QkE1g
- V4aBqaljdS1/aAPTbTjJ2Z1K1vs=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e57a091.7f8e7c2eea40-smtp-out-n02;
- Thu, 27 Feb 2020 10:57:21 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id F1259C447AB; Thu, 27 Feb 2020 10:57:19 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Thu, 27 Feb 2020 05:56:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582801013;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DYpy6RJTXglkEu2oTovR+MB3265JeXuBkFoSO+vFOFs=;
+        b=FNNkRHSBPyxwq5Ll7qEgjvrdTfohJOvFZxl9s1TlF2y2NRSrue2G+hs9JerYEHQq21DkIQ
+        2KRBVe2xdtRUEFY3/eWqA4ypxSE27TeOChxRM5v0j4Xfs4iHoVKs/xU+twW9X8PrBbHo0j
+        XRKprR69Kno55mL3jpqR/kPFlZi9I4k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-243-EQVjFHmoPeexcX8WUqiLWQ-1; Thu, 27 Feb 2020 05:56:49 -0500
+X-MC-Unique: EQVjFHmoPeexcX8WUqiLWQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4D0B5C447A6;
-        Thu, 27 Feb 2020 10:57:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D0B5C447A6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     robh+dt@kernel.org, georgi.djakov@linaro.org, evgreen@chromium.org
-Cc:     bjorn.andersson@linaro.org, agross@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, mark.rutland@arm.com,
-        saravanak@google.com, viresh.kumar@linaro.org,
-        okukatla@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v5 7/7] arm64: dts: qcom: sc7180: Add OSM L3 interconnect provider
-Date:   Thu, 27 Feb 2020 16:26:31 +0530
-Message-Id: <20200227105632.15041-8-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200227105632.15041-1-sibis@codeaurora.org>
-References: <20200227105632.15041-1-sibis@codeaurora.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1E7E9107ACC7;
+        Thu, 27 Feb 2020 10:56:45 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-150.ams2.redhat.com [10.36.116.150])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 999838D540;
+        Thu, 27 Feb 2020 10:56:44 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id C6B561744A; Thu, 27 Feb 2020 11:56:43 +0100 (CET)
+Date:   Thu, 27 Feb 2020 11:56:43 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Thomas =?utf-8?Q?Hellstr=C3=B6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Cc:     dri-devel@lists.freedesktop.org, Guillaume.Gardet@arm.com,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org, gurchetansingh@chromium.org,
+        tzimmermann@suse.de
+Subject: Re: [PATCH v5 1/3] drm/shmem: add support for per object caching
+ flags.
+Message-ID: <20200227105643.h4klc3ybhpwv2l3x@sirius.home.kraxel.org>
+References: <20200226154752.24328-1-kraxel@redhat.com>
+ <20200226154752.24328-2-kraxel@redhat.com>
+ <f1afba4b-9c06-48a3-42c7-046695947e91@shipmail.org>
+ <20200227075321.ki74hfjpnsqv2yx2@sirius.home.kraxel.org>
+ <41ca197c-136a-75d8-b269-801db44d4cba@shipmail.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41ca197c-136a-75d8-b269-801db44d4cba@shipmail.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Operation State Manager (OSM) L3 interconnect provider on SC7180 SoCs.
+  Hi,
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> I think it might be safe for some integrated graphics where the driver
+> maintainers can guarantee that it's safe on all particular processors used
+> with that driver, but then IMO it should be moved out to those drivers.
+> 
+> Other drivers needing write-combine shouldn't really use shmem.
+> 
+> So again, to fix the regression, could we revert 0be895893607f ("drm/shmem:
+> switch shmem helper to &drm_gem_object_funcs.mmap") or does that have other
+> implications?
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index 3e28f340fa3e6..6997467608107 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -7,6 +7,7 @@
- 
- #include <dt-bindings/clock/qcom,gcc-sc7180.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
-+#include <dt-bindings/interconnect/qcom,osm-l3.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/phy/phy-qcom-qusb2.h>
- #include <dt-bindings/power/qcom-aoss-qmp.h>
-@@ -1578,6 +1579,16 @@ apps_bcm_voter: bcm_voter {
- 			};
- 		};
- 
-+		osm_l3: interconnect@18321000 {
-+			compatible = "qcom,sc7180-osm-l3";
-+			reg = <0 0x18321000 0 0x1400>;
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GPLL0>;
-+			clock-names = "xo", "alternate";
-+
-+			#interconnect-cells = <1>;
-+		};
-+
- 		cpufreq_hw: cpufreq@18323000 {
- 			compatible = "qcom,cpufreq-hw";
- 			reg = <0 0x18323000 0 0x1400>, <0 0x18325800 0 0x1400>;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+This patch isn't a regression.  The old code path has the
+pgprot_writecombine() call in drm_gem_mmap_obj(), so the behavior
+is the same before and afterwards.
+
+But with the patch in place we can easily have shmem helpers do their
+own thing instead of depending on whatever drm_gem_mmap_obj() is doing.
+Just using cached mappings unconditionally would be perfectly fine for
+virtio-gpu.
+
+Not sure about the other users though.  I'd like to fix the virtio-gpu
+regression (coming from ttm -> shmem switch) asap, and I don't feel like
+changing the behavior for other drivers in 5.6-rc is a good idea.
+
+So I'd like to push patches 1+2 to -fixes and sort everything else later
+in -next.  OK?
+
+cheers,
+  Gerd
+
