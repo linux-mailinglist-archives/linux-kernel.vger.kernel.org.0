@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DA86171C49
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:10:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E4F9171CFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:17:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388587AbgB0OKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:10:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48928 "EHLO mail.kernel.org"
+        id S2389054AbgB0OQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:16:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388577AbgB0OKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:10:43 -0500
+        id S2389583AbgB0OQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:16:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3C4C20578;
-        Thu, 27 Feb 2020 14:10:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAC3F246A0;
+        Thu, 27 Feb 2020 14:16:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812643;
-        bh=S8kkFcnazwWVF8uP0OHba4L9Z36wgeNNzJnd4ccx7ew=;
+        s=default; t=1582813006;
+        bh=eOcxFwmWkQk9XmOZttVQ3mxnYSn1M7VLVjF42WBJrTY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qVWn9CSs9JVe9t59ixbnWEUnMk3c1Z6fippAOqgLpEEsgYdbSqYOl+cdtcQ3nJqNR
-         LBoJFl7xdpme2N3x5Kqx3uNBNFi/8B8Mlbrf3BmtLNEYGvt9w7ZBJkB+vidS8XZTMj
-         gEDUrL8OriR7i2uKQLYQ+EsvYIotW6/EcWQIjgjE=
+        b=GtfdA5yK9uuoSJfa1MEiBDGCuqE10nff+PaQ18xnC15lhjcwc3BZe+fMU8JF9sYRK
+         vrnLQU1U6CdTtjaX9JDccz12lBBnAcjGbSJ9ZT3DdhJ1rnwxjqEdImCFZs4t917T5O
+         H/RGPFcCeOWysj3KPReeYY1V1MIg6dVNeq4IyRTs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Nikolay Borisov <nborisov@suse.com>, Qu Wenruo <wqu@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 095/135] btrfs: do not check delayed items are empty for single transaction cleanup
-Date:   Thu, 27 Feb 2020 14:37:15 +0100
-Message-Id: <20200227132243.527366487@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Upton <oupton@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.5 099/150] KVM: nVMX: Check IO instruction VM-exit conditions
+Date:   Thu, 27 Feb 2020 14:37:16 +0100
+Message-Id: <20200227132247.434364874@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132228.710492098@linuxfoundation.org>
-References: <20200227132228.710492098@linuxfoundation.org>
+In-Reply-To: <20200227132232.815448360@linuxfoundation.org>
+References: <20200227132232.815448360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,41 +43,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Oliver Upton <oupton@google.com>
 
-commit 1e90315149f3fe148e114a5de86f0196d1c21fa5 upstream.
+commit 35a571346a94fb93b5b3b6a599675ef3384bc75c upstream.
 
-btrfs_assert_delayed_root_empty() will check if the delayed root is
-completely empty, but this is a filesystem-wide check.  On cleanup we
-may have allowed other transactions to begin, for whatever reason, and
-thus the delayed root is not empty.
+Consult the 'unconditional IO exiting' and 'use IO bitmaps' VM-execution
+controls when checking instruction interception. If the 'use IO bitmaps'
+VM-execution control is 1, check the instruction access against the IO
+bitmaps to determine if the instruction causes a VM-exit.
 
-So remove this check from cleanup_one_transation().  This however can
-stay in btrfs_cleanup_transaction(), because it checks only after all of
-the transactions have been properly cleaned up, and thus is valid.
-
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Oliver Upton <oupton@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/disk-io.c |    1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/kvm/vmx/nested.c |    2 -
+ arch/x86/kvm/vmx/vmx.c    |   57 +++++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 52 insertions(+), 7 deletions(-)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -4520,7 +4520,6 @@ void btrfs_cleanup_one_transaction(struc
- 	wake_up(&fs_info->transaction_wait);
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -5345,7 +5345,7 @@ static bool nested_vmx_exit_handled_io(s
+ 				       struct vmcs12 *vmcs12)
+ {
+ 	unsigned long exit_qualification;
+-	unsigned int port;
++	unsigned short port;
+ 	int size;
  
- 	btrfs_destroy_delayed_inodes(fs_info);
--	btrfs_assert_delayed_root_empty(fs_info);
+ 	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -7146,6 +7146,39 @@ static void vmx_request_immediate_exit(s
+ 	to_vmx(vcpu)->req_immediate_exit = true;
+ }
  
- 	btrfs_destroy_marked_extents(fs_info, &cur_trans->dirty_pages,
- 				     EXTENT_DIRTY);
++static int vmx_check_intercept_io(struct kvm_vcpu *vcpu,
++				  struct x86_instruction_info *info)
++{
++	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
++	unsigned short port;
++	bool intercept;
++	int size;
++
++	if (info->intercept == x86_intercept_in ||
++	    info->intercept == x86_intercept_ins) {
++		port = info->src_val;
++		size = info->dst_bytes;
++	} else {
++		port = info->dst_val;
++		size = info->src_bytes;
++	}
++
++	/*
++	 * If the 'use IO bitmaps' VM-execution control is 0, IO instruction
++	 * VM-exits depend on the 'unconditional IO exiting' VM-execution
++	 * control.
++	 *
++	 * Otherwise, IO instruction VM-exits are controlled by the IO bitmaps.
++	 */
++	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_IO_BITMAPS))
++		intercept = nested_cpu_has(vmcs12,
++					   CPU_BASED_UNCOND_IO_EXITING);
++	else
++		intercept = nested_vmx_check_io_bitmaps(vcpu, port, size);
++
++	return intercept ? X86EMUL_UNHANDLEABLE : X86EMUL_CONTINUE;
++}
++
+ static int vmx_check_intercept(struct kvm_vcpu *vcpu,
+ 			       struct x86_instruction_info *info,
+ 			       enum x86_intercept_stage stage)
+@@ -7153,18 +7186,30 @@ static int vmx_check_intercept(struct kv
+ 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+ 	struct x86_emulate_ctxt *ctxt = &vcpu->arch.emulate_ctxt;
+ 
++	switch (info->intercept) {
+ 	/*
+ 	 * RDPID causes #UD if disabled through secondary execution controls.
+ 	 * Because it is marked as EmulateOnUD, we need to intercept it here.
+ 	 */
+-	if (info->intercept == x86_intercept_rdtscp &&
+-	    !nested_cpu_has2(vmcs12, SECONDARY_EXEC_RDTSCP)) {
+-		ctxt->exception.vector = UD_VECTOR;
+-		ctxt->exception.error_code_valid = false;
+-		return X86EMUL_PROPAGATE_FAULT;
+-	}
++	case x86_intercept_rdtscp:
++		if (!nested_cpu_has2(vmcs12, SECONDARY_EXEC_RDTSCP)) {
++			ctxt->exception.vector = UD_VECTOR;
++			ctxt->exception.error_code_valid = false;
++			return X86EMUL_PROPAGATE_FAULT;
++		}
++		break;
++
++	case x86_intercept_in:
++	case x86_intercept_ins:
++	case x86_intercept_out:
++	case x86_intercept_outs:
++		return vmx_check_intercept_io(vcpu, info);
+ 
+ 	/* TODO: check more intercepts... */
++	default:
++		break;
++	}
++
+ 	return X86EMUL_UNHANDLEABLE;
+ }
+ 
 
 
