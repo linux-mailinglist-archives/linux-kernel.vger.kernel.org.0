@@ -2,126 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6EED171E5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:27:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0E5F171E4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:27:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388793AbgB0O1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:27:08 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33735 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388354AbgB0OJM (ORCPT
+        id S2388629AbgB0O0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:26:46 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:26320 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388212AbgB0OJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:09:12 -0500
-Received: by mail-qt1-f193.google.com with SMTP id d5so2364430qto.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 06:09:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:mime-version
-         :content-transfer-encoding;
-        bh=9sHNYCMRsxADkGSjVbCT6b025lDyO8Q/yZNoNrxhi5s=;
-        b=RSuMg1/H+0UdYXCSPMsmAGiOUBV3MXkGthzkVQDTWgjVxl6YN6fCSIV0V2nB+fxBa+
-         gNyiQwi8HCsVh/0m6Gx0LcxFLfQFhkgTJ2wX9DF5maw1UoV8073jWnbmvOEeVrWDvp+D
-         Vipno+VAnEz6xE2CFFzymN7AmRns2MQNnOIN6hv/bLOtVSH83Gw2ROeOujhiSbLcoxJ9
-         Dm/Z1M1oien6Td7ZJdHUFAzctD4veB7FPAUgEhLV5UceqpFE/H8jh1Pb9sfuNtrptlGQ
-         kXyNsTi4IIr1ja92yWrwpcN4QEVxbHJQK6BoCXZC5cXbbcqpzUDk9zz+zpjLQcZkQJ4n
-         9pdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:mime-version
-         :content-transfer-encoding;
-        bh=9sHNYCMRsxADkGSjVbCT6b025lDyO8Q/yZNoNrxhi5s=;
-        b=k9SF/JNeYu0PrBG558U6l5nQxEfgj0YYshkecz93aICdnUaey4Sq592STXR+N0rtSh
-         CUAUI0c+Ky/fMdQmI7dW4UyL7fv7fDdE2GCrcmKiPOhpCaEXsVJ7DzlLTQOdCCbx6Qbh
-         HD6NQzGVbhDaEsb4yroGIZLheL4PQ4WgetWHOqWcBB2XBT9vN9NvoEqYTZunvhuvIxBx
-         ZzFCUqQ61LW9WugnXJEq0+NY3p8w7xLUjHAPnenrlUmh+EfgmNrwY4zRFbWy6Dezx6uo
-         KUpcNm7rRqfY4cYkCeOVqY580PvWyjgejiYrPHgJTavsC1LpntswaIr2+m+U9KUGz3eM
-         t72A==
-X-Gm-Message-State: APjAAAUVT+w4f1z5pvSpP/GksCxxstZJ31s57i2Ri0tFFczFtKcZ/2i+
-        Zaeu6lFSEQFhEh21nh12xVO0vw==
-X-Google-Smtp-Source: APXvYqzJ2WDpJLg/LNaEQZaws5TC4ARi8PN3PrWC1qFv6jc2HU+mK8qoVwcw4ZyA/4FP4BLENeA08g==
-X-Received: by 2002:ac8:4b6f:: with SMTP id g15mr5462709qts.196.1582812550856;
-        Thu, 27 Feb 2020 06:09:10 -0800 (PST)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id p92sm3106904qtd.14.2020.02.27.06.09.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Feb 2020 06:09:10 -0800 (PST)
-Message-ID: <1582812549.7365.134.camel@lca.pw>
-Subject: suspicious RCU due to "Prefer using an idle CPU as a migration
- target instead of comparing tasks"
-From:   Qian Cai <cai@lca.pw>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        paulmck@kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 27 Feb 2020 09:09:09 -0500
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 27 Feb 2020 09:09:35 -0500
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01RE56BE019795;
+        Thu, 27 Feb 2020 09:09:32 -0500
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ydtrx3c1x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Feb 2020 09:09:31 -0500
+Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 01RE9UrK022376
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Thu, 27 Feb 2020 09:09:30 -0500
+Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Thu, 27 Feb
+ 2020 06:09:29 -0800
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX10.ad.analog.com
+ (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Thu, 27 Feb 2020 06:09:28 -0800
+Received: from analog.ad.analog.com ([10.48.65.180])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01RE9PWg029677;
+        Thu, 27 Feb 2020 09:09:25 -0500
+From:   Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+To:     <linux-kernel@vger.kernel.org>, <groeck@chromium.org>,
+        <enric.balletbo@collabora.com>, <bleung@chromium.org>
+CC:     Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+Subject: [PATCH] platform: chrome: cros_ec_spi: Use new structure for SPI transfer delays
+Date:   Thu, 27 Feb 2020 16:09:17 +0200
+Message-ID: <20200227140917.10131-1-sergiu.cuciurean@analog.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-27_04:2020-02-26,2020-02-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ malwarescore=0 impostorscore=0 clxscore=1011 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 spamscore=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002270112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The linux-next commit ff7db0bf24db ("sched/numa: Prefer using an idle CPU as a
-migration target instead of comparing tasks") introduced a boot warning,
+In a recent change to the SPI subsystem [1], a new `delay` struct was added
+to replace the `delay_usecs`. This change replaces the current
+`delay_usecs` with `delay` for this driver.
 
-[   86.520534][    T1] WARNING: suspicious RCU usage
-[   86.520540][    T1] 5.6.0-rc3-next-20200227 #7 Not tainted
-[   86.520545][    T1] -----------------------------
-[   86.520551][    T1] kernel/sched/fair.c:5914 suspicious
-rcu_dereference_check() usage!
-[   86.520555][    T1] 
-[   86.520555][    T1] other info that might help us debug this:
-[   86.520555][    T1] 
-[   86.520561][    T1] 
-[   86.520561][    T1] rcu_scheduler_active = 2, debug_locks = 1
-[   86.520567][    T1] 1 lock held by systemd/1:
-[   86.520571][    T1]  #0: ffff8887f4b14848 (&mm->mmap_sem#2){++++}, at:
-do_page_fault+0x1d2/0x998
-[   86.520594][    T1] 
-[   86.520594][    T1] stack backtrace:
-[   86.520602][    T1] CPU: 1 PID: 1 Comm: systemd Not tainted 5.6.0-rc3-next-
-20200227 #7
-[   86.520607][    T1] Hardware name: HP ProLiant XL450 Gen9 Server/ProLiant
-XL450 Gen9 Server, BIOS U21 05/05/2016
-[   86.520612][    T1] Call Trace:
-[   86.520623][    T1]  dump_stack+0xa0/0xea
-[   86.520634][    T1]  lockdep_rcu_suspicious+0x102/0x10b
-lockdep_rcu_suspicious at kernel/locking/lockdep.c:5648
-[   86.520641][    T1]  update_numa_stats+0x577/0x710
-test_idle_cores at kernel/sched/fair.c:5914
-(inlined by) numa_idle_core at kernel/sched/fair.c:1565
-(inlined by) update_numa_stats at kernel/sched/fair.c:1610
-[   86.520649][    T1]  ? rcu_read_lock_held+0xac/0xc0
-[   86.520657][    T1]  task_numa_migrate+0x4aa/0xdb0
-[   86.520664][    T1]  ? task_numa_find_cpu+0x1010/0x1010
-[   86.520677][    T1]  ? migrate_pages+0x29c/0x17c0
-[   86.520683][    T1]  task_numa_fault+0x607/0xd90
-[   86.520691][    T1]  ? task_numa_free+0x230/0x230
-[   86.520698][    T1]  ? __kasan_check_read+0x11/0x20
-[   86.520704][    T1]  ? do_raw_spin_unlock+0xa8/0x140
-[   86.520712][    T1]  do_numa_page+0x33f/0x450
-[   86.520720][    T1]  __handle_mm_fault+0xb81/0xb90
-[   86.520727][    T1]  ? copy_page_range+0x420/0x420
-[   86.520736][    T1]  handle_mm_fault+0xdc/0x2e0
-[   86.520742][    T1]  do_page_fault+0x2c7/0x998
-[   86.520752][    T1]  page_fault+0x34/0x40
-[   86.520758][    T1] RIP: 0033:0x7f95faf63c53
-[   86.520766][    T1] Code: 00 41 00 3d 00 00 41 00 74 3d 48 8d 05 d6 5a 2d 00
-8b 00 85 c0 75 61 b8 01 01 00 00 0f 05 48 3d 00 f0 ff ff 0f 87 a5 00 00 00 <48>
-8b 4c 24 38 64 48 33 0c 25 28 00 00 00 0f 85 ba 00 00 00 48 83
-[   86.520771][    T1] RSP: 002b:00007ffdda737790 EFLAGS: 00010207
-[   86.520778][    T1] RAX: 0000000000000024 RBX: 0000562a594b9fd0 RCX:
-00007f95faf63c47
-[   86.520783][    T1] RDX: 00000000002a0000 RSI: 0000562a594b9fd1 RDI:
-0000000000000023
-[   86.520788][    T1] RBP: 00007ffdda7379c0 R08: 00007f95fc734e30 R09:
-00007ffdda737d60
-[   86.520793][    T1] R10: 0000000000000000 R11: 0000000000000246 R12:
-0000562a59459fb4
-[   86.520798][    T1] R13: 0000000000000000 R14: 0000000000000001 R15:
-0000000000000000
+The `spi_transfer_delay_exec()` function [in the SPI framework] makes sure
+that both `delay_usecs` & `delay` are used (in this order to preserve
+backwards compatibility).
+
+[1] commit bebcfd272df6 ("spi: introduce `delay` field for
+`spi_transfer` + spi_transfer_delay_exec()")
+
+Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+---
+ drivers/platform/chrome/cros_ec_spi.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
+index 46786d2d679a..665ab154bb4f 100644
+--- a/drivers/platform/chrome/cros_ec_spi.c
++++ b/drivers/platform/chrome/cros_ec_spi.c
+@@ -127,7 +127,8 @@ static int terminate_request(struct cros_ec_device *ec_dev)
+ 	 */
+ 	spi_message_init(&msg);
+ 	memset(&trans, 0, sizeof(trans));
+-	trans.delay_usecs = ec_spi->end_of_msg_delay;
++	trans.delay.value = ec_spi->end_of_msg_delay;
++	trans.delay.unit = SPI_DELAY_UNIT_NSECS;
+ 	spi_message_add_tail(&trans, &msg);
+ 
+ 	ret = spi_sync_locked(ec_spi->spi, &msg);
+@@ -416,7 +417,8 @@ static int do_cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
+ 	spi_message_init(&msg);
+ 	if (ec_spi->start_of_msg_delay) {
+ 		memset(&trans_delay, 0, sizeof(trans_delay));
+-		trans_delay.delay_usecs = ec_spi->start_of_msg_delay;
++		trans_delay.delay.value = ec_spi->start_of_msg_delay;
++		trans_delay.delay.unit = SPI_DELAY_UNIT_USECS;
+ 		spi_message_add_tail(&trans_delay, &msg);
+ 	}
+ 
+-- 
+2.17.1
+
