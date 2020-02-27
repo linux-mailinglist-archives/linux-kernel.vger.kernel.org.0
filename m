@@ -2,53 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 489301722D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:10:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 205B41722DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 17:10:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729932AbgB0QIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 11:08:24 -0500
-Received: from muru.com ([72.249.23.125]:58058 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729134AbgB0QIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 11:08:24 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 4F0E980C0;
-        Thu, 27 Feb 2020 16:09:08 +0000 (UTC)
-Date:   Thu, 27 Feb 2020 08:08:20 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        Arthur Demchenkov <spinal.by@gmail.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH 2/2] Input: omap4-keypad - check state again for lost
- key-up interrupts
-Message-ID: <20200227160820.GF37466@atomide.com>
-References: <20200227020407.17276-1-tony@atomide.com>
- <20200227020407.17276-2-tony@atomide.com>
+        id S1730025AbgB0QJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 11:09:29 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:39317 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729134AbgB0QJ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 11:09:29 -0500
+Received: from webmail.gandi.net (webmail18.sd4.0x35.net [10.200.201.18])
+        (Authenticated sender: foss@0leil.net)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPA id 0774160003;
+        Thu, 27 Feb 2020 16:09:25 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227020407.17276-2-tony@atomide.com>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Thu, 27 Feb 2020 17:09:25 +0100
+From:   Quentin Schulz <foss@0leil.net>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>
+Cc:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
+        hkallweit1@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] net: phy: mscc: add support for RGMII MAC
+ mode
+In-Reply-To: <20200227152859.1687119-2-antoine.tenart@bootlin.com>
+References: <20200227152859.1687119-1-antoine.tenart@bootlin.com>
+ <20200227152859.1687119-2-antoine.tenart@bootlin.com>
+Message-ID: <55c4a6d121868a083b1d8ca78c65cd37@0leil.net>
+X-Sender: foss@0leil.net
+User-Agent: Roundcube Webmail/1.3.8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [200227 02:05]:
-> +		/* Check once after debounce time when no more keys down */
-> +		if (!new_keys_pressed) {
-> +			usleep_range(OMAP4_DEBOUNCE_MS * 1000 * 2,
-> +				     OMAP4_DEBOUNCE_MS * 1000 * 3);
-> +			new_keys_pressed = omap4_keypad_scan_keys(keypad_data);
-> +		}
+Hi Antoine,
 
-So this can be outside the loop. And we actually need to clear
-the state looks like.
+I guess I slipped through in your Cc list but now that it's too late to 
+undo it, I'll give my 2¢ :)
 
-I'll send out v2 series of these after some more debugging.
+On 2020-02-27 16:28, Antoine Tenart wrote:
+> This patch adds support for connecting VSC8584 PHYs to the MAC using
+> RGMII.
+> 
+> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> ---
+>  drivers/net/phy/mscc.c | 33 +++++++++++++++++++++------------
+>  1 file changed, 21 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+> index d24577de0775..ecb45c43e5ed 100644
+> --- a/drivers/net/phy/mscc.c
+> +++ b/drivers/net/phy/mscc.c
+> @@ -272,6 +272,7 @@ enum macsec_bank {
+>  #define MAC_CFG_MASK			  0xc000
+>  #define MAC_CFG_SGMII			  0x0000
+>  #define MAC_CFG_QSGMII			  0x4000
+> +#define MAC_CFG_RGMII			  0x8000
+> 
+>  /* Test page Registers */
+>  #define MSCC_PHY_TEST_PAGE_5		  5
+> @@ -2751,27 +2752,35 @@ static int vsc8584_config_init(struct
+> phy_device *phydev)
+> 
+>  	val = phy_base_read(phydev, MSCC_PHY_MAC_CFG_FASTLINK);
+>  	val &= ~MAC_CFG_MASK;
+> -	if (phydev->interface == PHY_INTERFACE_MODE_QSGMII)
+> +	if (phydev->interface == PHY_INTERFACE_MODE_QSGMII) {
+>  		val |= MAC_CFG_QSGMII;
+> -	else
+> +	} else if (phydev->interface == PHY_INTERFACE_MODE_SGMII) {
+>  		val |= MAC_CFG_SGMII;
+> +	} else if (phy_interface_mode_is_rgmii(phydev->interface)) {
 
-Regards,
+Nitpick:
+I don't know much the difference between that one and 
+phy_interface_is_rgmii wrt when one should be used and not the other, 
+but seeing the implementation 
+(https://elixir.bootlin.com/linux/latest/source/include/linux/phy.h#L999)... 
+we should be safe :) Since you already have a phydev in hands at that 
+time, maybe using phy_interface_is_rgmii would be cleaner? (shorter).
 
-Tony
+> +		val |= MAC_CFG_RGMII;
+> +	} else {
+> +		ret = -EINVAL;
+> +		goto err;
+> +	}
+> 
+>  	ret = phy_base_write(phydev, MSCC_PHY_MAC_CFG_FASTLINK, val);
+>  	if (ret)
+>  		goto err;
+> 
+> -	val = PROC_CMD_MCB_ACCESS_MAC_CONF | PROC_CMD_RST_CONF_PORT |
+> -		PROC_CMD_READ_MOD_WRITE_PORT;
+> -	if (phydev->interface == PHY_INTERFACE_MODE_QSGMII)
+> -		val |= PROC_CMD_QSGMII_MAC;
+> -	else
+> -		val |= PROC_CMD_SGMII_MAC;
+> +	if (!phy_interface_mode_is_rgmii(phydev->interface)) {
+
+Ditto.
+
+Thanks,
+Quentin
