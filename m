@@ -2,50 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9883A1718E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:40:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E949B171AC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729171AbgB0NkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:40:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34486 "EHLO mail.kernel.org"
+        id S1732184AbgB0N4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:56:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729030AbgB0NkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:40:17 -0500
+        id S1731731AbgB0N4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:56:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0336424656;
-        Thu, 27 Feb 2020 13:40:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91CB320578;
+        Thu, 27 Feb 2020 13:56:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810816;
-        bh=7FgmVAvrtnM/nr8UJUSPDq0BSCewXoaDW9k0WBFW4Nw=;
+        s=default; t=1582811799;
+        bh=e/sQeZh+8BceHlQSU/UwtQr85a7ZNGnSTX6Lu/vMDlI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kbo4m9uOHocsBE9Bn6ot2QmEu4nUvreKafBllzXwx2umv6zC9Rs5h1XIMiGfZy4Ul
-         sAJ3RACn1Cc7wqjOp8/weSf7iu+9OLU8ptaT/j+RhubgjOSXTE6jbSDrVD3NF/5YPK
-         Dq9qwD8/1q1+/aJ9hs/MqGfDI9DOX8cbtYqJ7688=
+        b=qOJbWSQihkZPXN7njJFqc2esJN04LAUHn25AjgW36kuseP9yYBGrtaSPeKDhB3UZC
+         3qR1OU3fVALp2mEITH34KYrCnjMGwAL23AEuaYqsMxyDzGpgM7JQ6W+pyadK/ENYgs
+         ZnZ/0sl79Xd6GHFOe2oQ5uKRXrVfe3RtJksCC8Tw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Megha Dey <megha.dey@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 001/113] x86/vdso: Use RDPID in preference to LSL when available
-Date:   Thu, 27 Feb 2020 14:35:17 +0100
-Message-Id: <20200227132212.078257488@linuxfoundation.org>
+        stable@vger.kernel.org, Kaike Wan <kaike.wan@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 104/237] IB/hfi1: Add software counter for ctxt0 seq drop
+Date:   Thu, 27 Feb 2020 14:35:18 +0100
+Message-Id: <20200227132304.586129219@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
+References: <20200227132255.285644406@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -54,59 +46,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-commit a582c540ac1b10f0a7d37415e04c4af42409fd08 upstream.
+[ Upstream commit 5ffd048698ea5139743acd45e8ab388a683642b8 ]
 
-RDPID is a new instruction that reads MSR_TSC_AUX quickly.  This
-should be considerably faster than reading the GDT.  Add a
-cpufeature for it and use it from __vdso_getcpu() when available.
+All other code paths increment some form of drop counter.
 
-Tested-by: Megha Dey <megha.dey@intel.com>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/4f6c3a22012d10f1c65b9ca15800e01b42c7d39d.1479320367.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This was missed in the original implementation.
 
+Fixes: 82c2611daaf0 ("staging/rdma/hfi1: Handle packets with invalid RHF on context 0")
+Link: https://lore.kernel.org/r/20200106134228.119356.96828.stgit@awfm-01.aw.intel.com
+Reviewed-by: Kaike Wan <kaike.wan@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    1 +
- arch/x86/include/asm/vgtod.h       |    7 ++++++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/chip.c   | 10 ++++++++++
+ drivers/infiniband/hw/hfi1/chip.h   |  1 +
+ drivers/infiniband/hw/hfi1/driver.c |  1 +
+ drivers/infiniband/hw/hfi1/hfi.h    |  2 ++
+ 4 files changed, 14 insertions(+)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -301,6 +301,7 @@
- /* Intel-defined CPU features, CPUID level 0x00000007:0 (ecx), word 16 */
- #define X86_FEATURE_PKU		(16*32+ 3) /* Protection Keys for Userspace */
- #define X86_FEATURE_OSPKE	(16*32+ 4) /* OS Protection Keys Enable */
-+#define X86_FEATURE_RDPID	(16*32+ 22) /* RDPID instruction */
- 
- /* AMD-defined CPU features, CPUID level 0x80000007 (ebx), word 17 */
- #define X86_FEATURE_OVERFLOW_RECOV (17*32+0) /* MCA overflow recovery support */
---- a/arch/x86/include/asm/vgtod.h
-+++ b/arch/x86/include/asm/vgtod.h
-@@ -83,8 +83,13 @@ static inline unsigned int __getcpu(void
- 	 * works on all CPUs.  This is volatile so that it orders
- 	 * correctly wrt barrier() and to keep gcc from cleverly
- 	 * hoisting it out of the calling function.
-+	 *
-+	 * If RDPID is available, use it.
- 	 */
--	asm volatile ("lsl %1,%0" : "=r" (p) : "r" (__PER_CPU_SEG));
-+	alternative_io ("lsl %[p],%[seg]",
-+			".byte 0xf3,0x0f,0xc7,0xf8", /* RDPID %eax/rax */
-+			X86_FEATURE_RDPID,
-+			[p] "=a" (p), [seg] "r" (__PER_CPU_SEG));
- 
- 	return p;
+diff --git a/drivers/infiniband/hw/hfi1/chip.c b/drivers/infiniband/hw/hfi1/chip.c
+index 4a0b7c0034771..cb5785dda524e 100644
+--- a/drivers/infiniband/hw/hfi1/chip.c
++++ b/drivers/infiniband/hw/hfi1/chip.c
+@@ -1686,6 +1686,14 @@ static u64 access_sw_pio_drain(const struct cntr_entry *entry,
+ 	return dd->verbs_dev.n_piodrain;
  }
+ 
++static u64 access_sw_ctx0_seq_drop(const struct cntr_entry *entry,
++				   void *context, int vl, int mode, u64 data)
++{
++	struct hfi1_devdata *dd = context;
++
++	return dd->ctx0_seq_drop;
++}
++
+ static u64 access_sw_vtx_wait(const struct cntr_entry *entry,
+ 			      void *context, int vl, int mode, u64 data)
+ {
+@@ -4246,6 +4254,8 @@ static struct cntr_entry dev_cntrs[DEV_CNTR_LAST] = {
+ 			    access_sw_cpu_intr),
+ [C_SW_CPU_RCV_LIM] = CNTR_ELEM("RcvLimit", 0, 0, CNTR_NORMAL,
+ 			    access_sw_cpu_rcv_limit),
++[C_SW_CTX0_SEQ_DROP] = CNTR_ELEM("SeqDrop0", 0, 0, CNTR_NORMAL,
++			    access_sw_ctx0_seq_drop),
+ [C_SW_VTX_WAIT] = CNTR_ELEM("vTxWait", 0, 0, CNTR_NORMAL,
+ 			    access_sw_vtx_wait),
+ [C_SW_PIO_WAIT] = CNTR_ELEM("PioWait", 0, 0, CNTR_NORMAL,
+diff --git a/drivers/infiniband/hw/hfi1/chip.h b/drivers/infiniband/hw/hfi1/chip.h
+index 50b8645d0b876..a88ef2433cea2 100644
+--- a/drivers/infiniband/hw/hfi1/chip.h
++++ b/drivers/infiniband/hw/hfi1/chip.h
+@@ -864,6 +864,7 @@ enum {
+ 	C_DC_PG_STS_TX_MBE_CNT,
+ 	C_SW_CPU_INTR,
+ 	C_SW_CPU_RCV_LIM,
++	C_SW_CTX0_SEQ_DROP,
+ 	C_SW_VTX_WAIT,
+ 	C_SW_PIO_WAIT,
+ 	C_SW_PIO_DRAIN,
+diff --git a/drivers/infiniband/hw/hfi1/driver.c b/drivers/infiniband/hw/hfi1/driver.c
+index 72c836b826ca8..7aa1aabb7a43c 100644
+--- a/drivers/infiniband/hw/hfi1/driver.c
++++ b/drivers/infiniband/hw/hfi1/driver.c
+@@ -710,6 +710,7 @@ static noinline int skip_rcv_packet(struct hfi1_packet *packet, int thread)
+ {
+ 	int ret;
+ 
++	packet->rcd->dd->ctx0_seq_drop++;
+ 	/* Set up for the next packet */
+ 	packet->rhqoff += packet->rsize;
+ 	if (packet->rhqoff >= packet->maxcnt)
+diff --git a/drivers/infiniband/hw/hfi1/hfi.h b/drivers/infiniband/hw/hfi1/hfi.h
+index 810ef5114772c..cf9bc95d80396 100644
+--- a/drivers/infiniband/hw/hfi1/hfi.h
++++ b/drivers/infiniband/hw/hfi1/hfi.h
+@@ -1043,6 +1043,8 @@ struct hfi1_devdata {
+ 
+ 	char *boardname; /* human readable board info */
+ 
++	u64 ctx0_seq_drop;
++
+ 	/* reset value */
+ 	u64 z_int_counter;
+ 	u64 z_rcv_limit;
+-- 
+2.20.1
+
 
 
