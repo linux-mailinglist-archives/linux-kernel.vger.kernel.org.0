@@ -2,91 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C132171FB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B16B171F7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732629AbgB0Oh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:37:59 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:11808 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732209AbgB0N4u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:56:50 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01RDuC7d029248;
-        Thu, 27 Feb 2020 07:56:42 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=amPxsDfm7SqjfykuCL5pbWIfRVa+H79NoUbKNKQcYwo=;
- b=dR3lnFyhMbd0Qb1zP/ziQMoQOlw4VTMPRg5csSA5OMHH/lGbcAo8Bfzxgoc7VSXhId08
- J0uqRFweXWSmZ5PvpXZ9NjaG+fSRENUZmKKocRd8FRpoxObE+Xbs8WiMDmkBWmrtaY7m
- jrMGoDuVajPXLPU7bFwBJK//Ip53b7/AFi+Hqm0NjfKxrHK1ktF63vCHOR2a13liDilt
- 2n59FAzSSiwN5esy/1zFaxkAZXETnDKONOu0mdTEX9g0x7UfI4ScPHszBCBvGI2/5Npl
- fu9+/AxD0eYYOSgpnq7UXamQ7SPPV3ZSfhS55nFzcHMcKjafzn35f1Anq/sCXPMJjk2P Jg== 
-Authentication-Results: ppops.net;
-        spf=pass smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex01.ad.cirrus.com ([5.172.152.52])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2ydcmbbkp2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 27 Feb 2020 07:56:42 -0600
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 27 Feb
- 2020 13:56:41 +0000
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Thu, 27 Feb 2020 13:56:41 +0000
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 0F33445D;
-        Thu, 27 Feb 2020 13:56:41 +0000 (UTC)
-Date:   Thu, 27 Feb 2020 13:56:41 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2 2/2] mfd: wm8994: Fix unbalanced calls to
- regulator_bulk_disable()
-Message-ID: <20200227135641.GJ108283@ediswmail.ad.cirrus.com>
-References: <20200226100802.16384-1-m.szyprowski@samsung.com>
- <CGME20200226100815eucas1p2f4448e3dea078bfc58a8acdc70340c11@eucas1p2.samsung.com>
- <20200226100802.16384-2-m.szyprowski@samsung.com>
+        id S1732359AbgB0N5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:57:52 -0500
+Received: from foss.arm.com ([217.140.110.172]:51144 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732199AbgB0N5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:57:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 210A030E;
+        Thu, 27 Feb 2020 05:57:50 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.71])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5674D3F881;
+        Thu, 27 Feb 2020 05:57:49 -0800 (PST)
+Date:   Thu, 27 Feb 2020 13:57:47 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will@kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: fix NUMA Kconfig typos
+Message-ID: <20200227135747.GF3281767@arrakis.emea.arm.com>
+References: <2c69f4d8-03a1-20a6-e8ef-a4518a7c6d07@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200226100802.16384-2-m.szyprowski@samsung.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- ip4:5.172.152.52 -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
- bulkscore=0 malwarescore=0 clxscore=1015 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 mlxlogscore=556 suspectscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002270111
+In-Reply-To: <2c69f4d8-03a1-20a6-e8ef-a4518a7c6d07@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 11:08:02AM +0100, Marek Szyprowski wrote:
-> When runtime PM is enabled, regulators are being controlled by the
-> driver's suspend and resume callbacks. They are also unconditionally
-> enabled at driver's probe(), and disabled in remove() functions. Add
-> more calls to runtime PM framework to ensure that the device's runtime
-> PM state matches the regulators state:
-> 1. at the end of probe() function: set runtime PM state to active, so
-> there will be no spurious call to resume();
-> 2. in remove(), ensure that resume() is called before disabling runtime PM
-> management and unconditionally disabling the regulators.
+On Fri, Jan 31, 2020 at 05:51:06PM -0800, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
+> Fix typos in arch/arm64/Kconfig:
+> 
+> - spell Numa as NUMA
+> - add hyphenation to Non-Uniform
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Queued for 5.7. Thanks.
 
-Thanks,
-Charles
+-- 
+Catalin
