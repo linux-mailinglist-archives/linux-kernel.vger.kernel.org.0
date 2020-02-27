@@ -2,340 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33FDA17285F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 20:13:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96746172844
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 20:01:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729722AbgB0TM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 14:12:59 -0500
-Received: from mail.z3ntu.xyz ([128.199.32.197]:49908 "EHLO mail.z3ntu.xyz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729120AbgB0TM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 14:12:59 -0500
-Received: from localhost.localdomain (80-110-126-226.cgn.dynamic.surfer.at [80.110.126.226])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 4C186C2E6A;
-        Thu, 27 Feb 2020 19:12:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1582830775; bh=Y/pmKEy6mbtQ9MTu4C5WRO85Y36YOBMP53cw8i6LEMw=;
-        h=From:To:Cc:Subject:Date;
-        b=AAE2+wUxPm7bqokJXZtsH3ivLMlJvxVtUMR3pTaMn/472pkS24BDjnuINAJsbo5fx
-         5mE/yaMC9dtIfBOfTD6a5HZdDRQZCR01qK26UQgzQNKh/olOTJWOwtksJPN98qOflD
-         UddF9PdCWrJjaDBx65wuOLy846W1QBTz2trqtqlE=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     linux-leds@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, Luca Weiss <luca@z3ntu.xyz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] leds: add sgm3140 driver
-Date:   Thu, 27 Feb 2020 19:50:15 +0100
-Message-Id: <20200227185015.212479-1-luca@z3ntu.xyz>
-X-Mailer: git-send-email 2.25.1
+        id S1729994AbgB0TBp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 14:01:45 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:25678 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729170AbgB0TBp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 14:01:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582830104;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+JGruyus+zzmL4BgjL6ah3OjgOQ1bfPqt6JzzXGlf80=;
+        b=g7/WDSV9sNQMZ+fXXn0kBO9QZmrUQXjgC8RHjo7pA2Kjorr8eU2GLGIQ5yzjoDEARuBPnw
+        DQK2h6FmfeD+GMwZ4D8p7BZVX7VOTqGN3hmMAQyA8zHbMwi+LaPSwrLxtpy16oobPXxmcm
+        0sVFliniq7BZ2D4g6ieFLDdUaR/9sXM=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-305-m01AMzW7PJWRGdquqv5A3A-1; Thu, 27 Feb 2020 14:01:28 -0500
+X-MC-Unique: m01AMzW7PJWRGdquqv5A3A-1
+Received: by mail-wm1-f72.google.com with SMTP id z7so145956wmi.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 11:01:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+JGruyus+zzmL4BgjL6ah3OjgOQ1bfPqt6JzzXGlf80=;
+        b=nbgplJfzDdqLVOQg0Vp9pyPl08T+oU83pIiKn7AhD1fgQHh8uvn6gq8ts2WvZEIyST
+         Lu8ZLtVXqGeXvzQlVLs3cOsAfnYAB5X3apkEDJ3Xx8ZvU0PG6qL4/G9lo2LSNTCVDQIE
+         QuYvEw5OOEThoKJY5oswJsGB+Y3vPX9ECaeVFFiXYTHM4S/y/zloRnjHkxkjdZUc3jeo
+         Sp0lq59SUkRJiZd0nrANq0gzMXgPginrfiRtYKsfkgc/81M1uDTVVD7bi7nOWVqTIvQ0
+         Cl/IEI4k4jP5tPUYnVVBW7ho1XpD/+aGksvtF7s73yRk64N58IhBtIVWohD1OkHHeEQi
+         PIuA==
+X-Gm-Message-State: APjAAAUczl5gQkZ+OErGDXPVfKIV0dheI1Vu9cypS1gvAas0Wh6nV9GU
+        t59/boTcC46pE1UmICT3m/29JHjKQsPXbnIiicrzcDdG5GQm0yr6Zi9G8b6Bhd7BqHPHP9/jizT
+        03IiQSUtrnwZdOd9bZxEnE5r5
+X-Received: by 2002:adf:90e1:: with SMTP id i88mr287829wri.95.1582830087064;
+        Thu, 27 Feb 2020 11:01:27 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx2rl9n2Z1Mt6ymZ4mzBXqCXk9u948IIcM8fsQq5WrgonWtq/eObeNUK776U7L3634OT1I8Vw==
+X-Received: by 2002:adf:90e1:: with SMTP id i88mr287799wri.95.1582830086800;
+        Thu, 27 Feb 2020 11:01:26 -0800 (PST)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
+        by smtp.gmail.com with ESMTPSA id l6sm9497307wrb.75.2020.02.27.11.01.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2020 11:01:26 -0800 (PST)
+Subject: Re: [PATCH] platform/x86: i2c-multi-instantiate: Replace zero-length
+ array with flexible-array member
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200213005525.GA11420@embeddedor.com>
+ <f8281f16-b47e-41d6-f67b-1300bc5affff@embeddedor.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <582c09ec-a6aa-72fe-7566-7fb70c156c4d@redhat.com>
+Date:   Thu, 27 Feb 2020 20:01:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <f8281f16-b47e-41d6-f67b-1300bc5affff@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for the SGMICRO SGM3140 Buck/Boost Charge Pump LED driver.
+Hi,
 
-This device is controller by two GPIO lines, one for enabling the LED
-and the second one for switching between torch and flash mode.
 
-The device will automatically switch to torch mode after being in flash
-mode for about 250-300ms, so after that time the driver will turn the
-LED off again automatically.
+On 2/27/20 8:03 PM, Gustavo A. R. Silva wrote:
+> Hi all,
+> 
+> Friendly ping: who can take this?
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
----
-Hi, this driver is controllable via sysfs and v4l2 APIs (as documented
-in Documentation/leds/leds-class-flash.rst).
+FWIW, the patch looks good to me:
 
-The following is possible:
-
-# Torch on
-echo 1 > /sys/class/leds/white\:flash/brightness
-# Torch off
-echo 0 > /sys/class/leds/white\:flash/brightness
-# Activate flash
-echo 1 > /sys/class/leds/white\:flash/flash_strobe
-
-# Torch on
-v4l2-ctl -d /dev/video1 -c led_mode=2
-# Torch off
-v4l2-ctl -d /dev/video1 -c led_mode=0
-# Activate flash
-v4l2-ctl -d /dev/video1 -c strobe=1
-
-Unfortunately the last command (enabling the 'flash' via v4l2 results in
-the following being printed and nothing happening:
-
-  VIDIOC_S_EXT_CTRLS: failed: Resource busy
-  strobe: Resource busy
-
-Unfortunately I couldn't figure out the reason so I'm hoping to get some
-guidance for this. iirc it worked at some point but then stopped.
-
-I will also write dt bindings for the driver once I have "strobe"
-working.
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
 Regards,
-Luca
 
- drivers/leds/Kconfig        |   9 ++
- drivers/leds/Makefile       |   1 +
- drivers/leds/leds-sgm3140.c | 210 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 220 insertions(+)
- create mode 100644 drivers/leds/leds-sgm3140.c
+Hans
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 4b68520ac251..7c391af8b380 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -836,6 +836,15 @@ config LEDS_LM36274
- 	  Say Y to enable the LM36274 LED driver for TI LMU devices.
- 	  This supports the LED device LM36274.
- 
-+config LEDS_SGM3140
-+	tristate "LED support for the SGM3140"
-+	depends on LEDS_CLASS_FLASH
-+	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
-+	depends on OF
-+	help
-+	  This option enables support for the SGM3140 500mA Buck/Boost Charge
-+	  Pump LED Driver. It has supports flash and torch mode.
-+
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
- 
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 2da39e896ce8..38d57dd53e4b 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -85,6 +85,7 @@ obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
- obj-$(CONFIG_LEDS_TI_LMU_COMMON)	+= leds-ti-lmu-common.o
- obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
- obj-$(CONFIG_LEDS_LM36274)		+= leds-lm36274.o
-+obj-$(CONFIG_LEDS_SGM3140)		+= leds-sgm3140.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
-diff --git a/drivers/leds/leds-sgm3140.c b/drivers/leds/leds-sgm3140.c
-new file mode 100644
-index 000000000000..9e91392f0343
---- /dev/null
-+++ b/drivers/leds/leds-sgm3140.c
-@@ -0,0 +1,210 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2020 Luca Weiss <luca@z3ntu.xyz>
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/led-class-flash.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include <media/v4l2-flash-led-class.h>
-+
-+#define SGM3140_NAME "sgm3140"
-+
-+struct sgm3140 {
-+	struct gpio_desc *flash_gpio;
-+	struct gpio_desc *enable_gpio;
-+
-+	struct led_classdev_flash fled_cdev;
-+	struct v4l2_flash *v4l2_flash;
-+
-+	struct timer_list powerdown_timer;
-+};
-+
-+static struct sgm3140 *flcdev_to_sgm3140(struct led_classdev_flash *flcdev)
-+{
-+	return container_of(flcdev, struct sgm3140, fled_cdev);
-+}
-+
-+int sgm3140_strobe_set(struct led_classdev_flash *fled_cdev, bool state)
-+{
-+	struct sgm3140 *priv = flcdev_to_sgm3140(fled_cdev);
-+
-+	if (state) {
-+		gpiod_set_value_cansleep(priv->flash_gpio, 1);
-+		gpiod_set_value_cansleep(priv->enable_gpio, 1);
-+		mod_timer(&priv->powerdown_timer,
-+			  jiffies + msecs_to_jiffies(250));
-+	} else {
-+		gpiod_set_value_cansleep(priv->enable_gpio, 0);
-+		gpiod_set_value_cansleep(priv->flash_gpio, 0);
-+		del_timer_sync(&priv->powerdown_timer);
-+	}
-+
-+	return 0;
-+}
-+
-+struct led_flash_ops sgm3140_flash_ops = {
-+	.strobe_set = sgm3140_strobe_set,
-+};
-+
-+int sgm3140_brightness_set(struct led_classdev *led_cdev,
-+			   enum led_brightness brightness)
-+{
-+	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
-+	struct sgm3140 *priv = flcdev_to_sgm3140(fled_cdev);
-+
-+	if (brightness == LED_OFF)
-+		gpiod_set_value_cansleep(priv->enable_gpio, 0);
-+	else
-+		gpiod_set_value_cansleep(priv->enable_gpio, 1);
-+
-+	return 0;
-+}
-+
-+static void sgm3140_powerdown_timer(struct timer_list *t)
-+{
-+	struct sgm3140 *priv = from_timer(priv, t, powerdown_timer);
-+
-+	gpiod_set_value_cansleep(priv->enable_gpio, 0);
-+	gpiod_set_value_cansleep(priv->flash_gpio, 0);
-+}
-+
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+static void sgm3140_init_v4l2_flash_config(struct sgm3140 *priv,
-+					   struct v4l2_flash_config *v4l2_sd_cfg)
-+{
-+	struct led_classdev *led_cdev = &priv->fled_cdev.led_cdev;
-+	struct led_flash_setting *s;
-+
-+	strlcpy(v4l2_sd_cfg->dev_name, led_cdev->dev->kobj.name,
-+		sizeof(v4l2_sd_cfg->dev_name));
-+
-+	s = &v4l2_sd_cfg->intensity;
-+	s->min = 0;
-+	s->max = 1;
-+	s->step = 1;
-+	s->val = 1;
-+}
-+
-+#else
-+static void sgm3140_init_v4l2_flash_config(struct sgm3140 *priv,
-+					   struct v4l2_flash_config *v4l2_sd_cfg)
-+{
-+}
-+#endif
-+
-+static int sgm3140_probe(struct platform_device *pdev)
-+{
-+	struct sgm3140 *priv;
-+	struct led_classdev *led_cdev;
-+	struct led_classdev_flash *fled_cdev;
-+	struct led_init_data init_data = {};
-+	struct device_node *child_node;
-+	struct v4l2_flash_config v4l2_sd_cfg;
-+	int ret;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->flash_gpio = devm_gpiod_get(&pdev->dev, "flash", GPIOD_OUT_LOW);
-+	ret = PTR_ERR_OR_ZERO(priv->flash_gpio);
-+	if (ret) {
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "Failed to request flash gpio: %d\n",
-+				ret);
-+		return ret;
-+	}
-+
-+	priv->enable_gpio = devm_gpiod_get(&pdev->dev, "enable", GPIOD_OUT_LOW);
-+	ret = PTR_ERR_OR_ZERO(priv->enable_gpio);
-+	if (ret) {
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "Failed to request enable gpio: %d\n",
-+				ret);
-+		return ret;
-+	}
-+
-+	child_node = of_get_next_available_child(pdev->dev.of_node, NULL);
-+	if (!child_node) {
-+		dev_err(&pdev->dev, "No DT child node found for connected LED.\n");
-+		return -EINVAL;
-+	}
-+
-+	timer_setup(&priv->powerdown_timer, sgm3140_powerdown_timer, 0);
-+
-+	fled_cdev = &priv->fled_cdev;
-+	led_cdev = &fled_cdev->led_cdev;
-+
-+	fled_cdev->ops = &sgm3140_flash_ops;
-+
-+	led_cdev->brightness_set_blocking = sgm3140_brightness_set;
-+	led_cdev->max_brightness = LED_ON;
-+	led_cdev->flags |= LED_DEV_CAP_FLASH;
-+
-+	init_data.fwnode = of_fwnode_handle(child_node);
-+	init_data.devicename = SGM3140_NAME;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	/* Register in the LED subsystem */
-+	ret = led_classdev_flash_register_ext(&pdev->dev, fled_cdev, &init_data);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to register flash device: %d\n",
-+			ret);
-+		goto err_flash_register;
-+	}
-+
-+	sgm3140_init_v4l2_flash_config(priv, &v4l2_sd_cfg);
-+
-+	/* Create V4L2 Flash subdev */
-+	priv->v4l2_flash = v4l2_flash_init(&pdev->dev, of_fwnode_handle(child_node),
-+					   fled_cdev, NULL,
-+					   &v4l2_sd_cfg);
-+	if (IS_ERR(priv->v4l2_flash)) {
-+		ret = PTR_ERR(priv->v4l2_flash);
-+		goto err_v4l2_flash_init;
-+	}
-+
-+	return 0;
-+
-+err_v4l2_flash_init:
-+	led_classdev_flash_unregister(fled_cdev);
-+err_flash_register:
-+	of_node_put(child_node);
-+	return ret;
-+}
-+
-+static int sgm3140_remove(struct platform_device *pdev)
-+{
-+	struct sgm3140 *priv = platform_get_drvdata(pdev);
-+
-+	del_timer_sync(&priv->powerdown_timer);
-+
-+	v4l2_flash_release(priv->v4l2_flash);
-+	led_classdev_flash_unregister(&priv->fled_cdev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id sgm3140_dt_match[] = {
-+	{ .compatible = "sgmicro,sgm3140" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, sgm3140_dt_match);
-+
-+static struct platform_driver sgm3140_driver = {
-+	.probe	= sgm3140_probe,
-+	.remove	= sgm3140_remove,
-+	.driver	= {
-+		.name	= "sgm3140",
-+		.of_match_table = sgm3140_dt_match,
-+	},
-+};
-+
-+module_platform_driver(sgm3140_driver);
-+
-+MODULE_AUTHOR("Luca Weiss <luca@z3ntu.xyz>");
-+MODULE_DESCRIPTION("SG Micro SGM3140 charge pump led driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.25.1
+
+
+> On 2/12/20 18:55, Gustavo A. R. Silva wrote:
+>> The current codebase makes use of the zero-length array language
+>> extension to the C90 standard, but the preferred mechanism to declare
+>> variable-length types such as these ones is a flexible array member[1][2],
+>> introduced in C99:
+>>
+>> struct foo {
+>>          int stuff;
+>>          struct boo array[];
+>> };
+>>
+>> By making use of the mechanism above, we will get a compiler warning
+>> in case the flexible array does not occur last in the structure, which
+>> will help us prevent some kind of undefined behavior bugs from being
+>> inadvertently introduced[3] to the codebase from now on.
+>>
+>> Also, notice that, dynamic memory allocations won't be affected by
+>> this change:
+>>
+>> "Flexible array members have incomplete type, and so the sizeof operator
+>> may not be applied. As a quirk of the original implementation of
+>> zero-length arrays, sizeof evaluates to zero."[1]
+>>
+>> This issue was found with the help of Coccinelle.
+>>
+>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+>> [2] https://github.com/KSPP/linux/issues/21
+>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   drivers/platform/x86/i2c-multi-instantiate.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/platform/x86/i2c-multi-instantiate.c b/drivers/platform/x86/i2c-multi-instantiate.c
+>> index ffb8d5d1eb5f..6acc8457866e 100644
+>> --- a/drivers/platform/x86/i2c-multi-instantiate.c
+>> +++ b/drivers/platform/x86/i2c-multi-instantiate.c
+>> @@ -28,7 +28,7 @@ struct i2c_inst_data {
+>>   
+>>   struct i2c_multi_inst_data {
+>>   	int num_clients;
+>> -	struct i2c_client *clients[0];
+>> +	struct i2c_client *clients[];
+>>   };
+>>   
+>>   static int i2c_multi_inst_count(struct acpi_resource *ares, void *data)
+>>
+> 
 
