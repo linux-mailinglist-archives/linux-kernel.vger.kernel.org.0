@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09DC6171FA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:38:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C99117208B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:44:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732933AbgB0OhP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:37:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58830 "EHLO mail.kernel.org"
+        id S1730823AbgB0NsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:48:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732349AbgB0N5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:57:48 -0500
+        id S1730512AbgB0NsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:48:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB3C92084E;
-        Thu, 27 Feb 2020 13:57:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 486E02468D;
+        Thu, 27 Feb 2020 13:48:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811868;
-        bh=JrqyDo3x/1o+v5c62+1zKO0XnJlzXMNnrtph6kSO1Tc=;
+        s=default; t=1582811287;
+        bh=wVAFLn1OyiGv+jbPEipLto9iRXEUfr6/MkA/lc67GIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DPqF235rwKp8fDNj0fJWeXyJWSBvzhDaS7wkoge+bZdrqMUI4+y2C+byPVLmyOns3
-         OSgI0YsPsoZZXoL5MtxWnzwk13tJ07pKr2lXVfL+XFXEJrPUV0bVAfSoEDl4MrwV/W
-         rYjSuS+G61ijUo6WBRt02RqrIT9VdwUiWUZvSifY=
+        b=kHvwrl3nJ0i097TZXKDQQXBdxAo4JECS2vnAKTgN6+ewZMfy6qaLK+aCyPXy4ppTu
+         aBscLqlUnRrDJJjHpxHDboN5Ge1xtp+hRIhOobhYBhgOx9HzQevF5Z8Yj4GZeclHyg
+         oxpEK3P2acjAh5yckSQdtYb2NjR6ls1v/ZdwlizY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jakub Kicinski <kuba@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 132/237] btrfs: fix possible NULL-pointer dereference in integrity checks
-Date:   Thu, 27 Feb 2020 14:35:46 +0100
-Message-Id: <20200227132306.434413161@linuxfoundation.org>
+Subject: [PATCH 4.9 073/165] wan: ixp4xx_hss: fix compile-testing on 64-bit
+Date:   Thu, 27 Feb 2020 14:35:47 +0100
+Message-Id: <20200227132242.095402458@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Thumshirn <jth@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 3dbd351df42109902fbcebf27104149226a4fcd9 ]
+[ Upstream commit 504c28c853ec5c626900b914b5833daf0581a344 ]
 
-A user reports a possible NULL-pointer dereference in
-btrfsic_process_superblock(). We are assigning state->fs_info to a local
-fs_info variable and afterwards checking for the presence of state.
+Change the driver to use portable integer types to avoid
+warnings during compile testing:
 
-While we would BUG_ON() a NULL state anyways, we can also just remove
-the local fs_info copy, as fs_info is only used once as the first
-argument for btrfs_num_copies(). There we can just pass in
-state->fs_info as well.
+drivers/net/wan/ixp4xx_hss.c:863:21: error: cast to 'u32 *' (aka 'unsigned int *') from smaller integer type 'int' [-Werror,-Wint-to-pointer-cast]
+        memcpy_swab32(mem, (u32 *)((int)skb->data & ~3), bytes / 4);
+                           ^
+drivers/net/wan/ixp4xx_hss.c:979:12: error: incompatible pointer types passing 'u32 *' (aka 'unsigned int *') to parameter of type 'dma_addr_t *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
+                                              &port->desc_tab_phys)))
+                                              ^~~~~~~~~~~~~~~~~~~~
+include/linux/dmapool.h:27:20: note: passing argument to parameter 'handle' here
+                     dma_addr_t *handle);
+                                 ^
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=205003
-Signed-off-by: Johannes Thumshirn <jth@kernel.org>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/check-integrity.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/wan/ixp4xx_hss.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/check-integrity.c b/fs/btrfs/check-integrity.c
-index 7d5a9b51f0d7a..4be07cf31d74c 100644
---- a/fs/btrfs/check-integrity.c
-+++ b/fs/btrfs/check-integrity.c
-@@ -642,7 +642,6 @@ static struct btrfsic_dev_state *btrfsic_dev_state_hashtable_lookup(dev_t dev,
- static int btrfsic_process_superblock(struct btrfsic_state *state,
- 				      struct btrfs_fs_devices *fs_devices)
- {
--	struct btrfs_fs_info *fs_info = state->fs_info;
- 	struct btrfs_super_block *selected_super;
- 	struct list_head *dev_head = &fs_devices->devices;
- 	struct btrfs_device *device;
-@@ -713,7 +712,7 @@ static int btrfsic_process_superblock(struct btrfsic_state *state,
- 			break;
- 		}
+diff --git a/drivers/net/wan/ixp4xx_hss.c b/drivers/net/wan/ixp4xx_hss.c
+index e7bbdb7af53ac..97968e6a6a4eb 100644
+--- a/drivers/net/wan/ixp4xx_hss.c
++++ b/drivers/net/wan/ixp4xx_hss.c
+@@ -261,7 +261,7 @@ struct port {
+ 	struct hss_plat_info *plat;
+ 	buffer_t *rx_buff_tab[RX_DESCS], *tx_buff_tab[TX_DESCS];
+ 	struct desc *desc_tab;	/* coherent */
+-	u32 desc_tab_phys;
++	dma_addr_t desc_tab_phys;
+ 	unsigned int id;
+ 	unsigned int clock_type, clock_rate, loopback;
+ 	unsigned int initialized, carrier;
+@@ -861,7 +861,7 @@ static int hss_hdlc_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		dev->stats.tx_dropped++;
+ 		return NETDEV_TX_OK;
+ 	}
+-	memcpy_swab32(mem, (u32 *)((int)skb->data & ~3), bytes / 4);
++	memcpy_swab32(mem, (u32 *)((uintptr_t)skb->data & ~3), bytes / 4);
+ 	dev_kfree_skb(skb);
+ #endif
  
--		num_copies = btrfs_num_copies(fs_info, next_bytenr,
-+		num_copies = btrfs_num_copies(state->fs_info, next_bytenr,
- 					      state->metablock_size);
- 		if (state->print_mask & BTRFSIC_PRINT_MASK_NUM_COPIES)
- 			pr_info("num_copies(log_bytenr=%llu) = %d\n",
 -- 
 2.20.1
 
