@@ -2,104 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78D4D170EE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 04:17:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFD88170EEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 04:19:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbgB0DRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Feb 2020 22:17:37 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35571 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728221AbgB0DRg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Feb 2020 22:17:36 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m3so1737841wmi.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2020 19:17:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
-        b=ihcZFD3BM82Nodw/U9GNhSUm+JXeZGU3lSIVkeWU9q2iegtVf4XY8r0oismBDChX7i
-         VfJlLpZlQVHdSSeweV1eyS6vefZXU8ueNnoJXBUmL69T2B7XEW/ekTfErjxxKkzHNnMN
-         XLhgYHlW0WiTrXN8saPiAVtSfZuyMbpZS07YGoMEkaTRjmeEnO3hr1r+iIKEPCKcNgfe
-         nEJjASqGGrwHpeGbqEakjQmNhk8sZ9KWxRxpA1UfOlJW6TlroVX+vNju4hpcf/J6GStE
-         uy1kXtPDSQsbbp9XRcMRXnGgMV45E3UZ6oMzqMBBAU/7I55m8/4GXJ3s+xTbkc+7SfxT
-         Cl/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
-        b=rlIUkpK7kT5m/UVirC6NSvzzdt14KTrcWCTBSxnotNiIOC+zcIC79yLZi/r8mIDsDN
-         iXpFU0yR7pyWsrVYjW7DMt/bA2pn1EdorbB8S97I7Q1AXa43DQO1PDiIqRJ4woZCG87x
-         6tfy6Wim8JSc0pB5oIaKnH0+j4DXQfkBpLGpSeZY84GhOGJDdzA3y8aeC8bdlRteaIHW
-         +swiu3k/CeY+gUMnsYioHF1IFxYTDrGKNsb2cvP2TnXSxliHH1REpGDg68PFDAv1T0sa
-         sv/8n9A015nZogQ2VDrbftZW/49c12WHmvMYi2qL1OMdPxBa13V0jhei1Is9W/RVyOT1
-         vpOg==
-X-Gm-Message-State: APjAAAX+4ZVPIfgEbyDeIZoYFqLp2SIQrGjRtMnCSunMp3o++VvnUUmg
-        VSmGqx8kamzr2fl3HngfDTwtU8lVghoxYShK4f0=
-X-Google-Smtp-Source: APXvYqwP43r8O2ePpYxco9pkQ8LPorHP3seAZwmx4YpCuLUFiasuIwkMZodXHupXZxwP8ez21BycGEssivrj9NbSNnc=
-X-Received: by 2002:a7b:c204:: with SMTP id x4mr2359538wmi.20.1582773453543;
- Wed, 26 Feb 2020 19:17:33 -0800 (PST)
+        id S1728292AbgB0DTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Feb 2020 22:19:39 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40744 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728220AbgB0DTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Feb 2020 22:19:38 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 66B70344DEC26ED07C0F;
+        Thu, 27 Feb 2020 11:19:35 +0800 (CST)
+Received: from huawei.com (10.175.105.18) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 27 Feb 2020
+ 11:19:25 +0800
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
+        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
+        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>
+CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+Subject: [PATCH v2] KVM: Fix some obsolete comments
+Date:   Thu, 27 Feb 2020 11:20:54 +0800
+Message-ID: <1582773654-4911-1-git-send-email-linmiaohe@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Reply-To: mrsanna.h.bruun119@gmail.com
-Received: by 2002:a05:600c:149:0:0:0:0 with HTTP; Wed, 26 Feb 2020 19:17:32
- -0800 (PST)
-From:   "Mrs. Anna H. Bruun" <mrsanna.h.bruun119@gmail.com>
-Date:   Wed, 26 Feb 2020 19:17:32 -0800
-X-Google-Sender-Auth: xSKv3xW_wS3HxM1qd6Oqp_mGDnA
-Message-ID: <CAD3OtNpobt8wahDp-PO=a56WERZ9=T_qoaEdi-Y-fuOUoHRnOQ@mail.gmail.com>
-Subject: My Greetings
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.175.105.18]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Dear
+From: Miaohe Lin <linmiaohe@huawei.com>
 
-My Name is Mrs. Anna H. Bruun, from Norway. I know that this message
-will be a surprise to you. Firstly, I am married to Mr. Patrick Bruun,
-A gold merchant who owns a small gold Mine in Burkina Faso; He died of
-Cardiovascular Disease in mid-March 2011. During his life time he
-deposited the sum of =E2=82=AC 8.5 Million Euro) Eight million, Five hundre=
-d
-thousand Euros in a bank in Ouagadougou the capital city of Burkina
-Faso. The deposited money was from the sale of the shares, death
-benefits payment and entitlements of my deceased husband by his
-company.
+Remove some obsolete comments, fix wrong function name and description.
 
-I am sending this message to you praying that it will reach you in
-good health, since I am not in good health condition in which I sleep
-every night without knowing if I may be alive to see the next day. I
-am suffering from long time cancer and presently i am partially
-suffering from a stroke illness which has become almost impossible for
-me to move around. I am married to my late husband for over 4 years
-before he died and is unfortunately that we don't have a child, my
-doctor confided in me that i have less chance to live. Having known my
-health condition, I decided to contact you to claim the fund since I
-don't have any relation I grew up from the orphanage home,
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+---
+v1->v2:
+Use Oxford comma
+Collect Vitaly's R-b
+---
+ arch/x86/kvm/vmx/nested.c | 4 ++--
+ arch/x86/kvm/vmx/vmx.c    | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-I have decided to donate what I have to you for the support of helping
-Motherless babies/Less privileged/Widows' because I am dying and
-diagnosed of cancer for about 2 years ago. I have been touched by God
-Almighty to donate from what I have inherited from my late husband to
-you for good work of God Almighty. I have asked Almighty God to
-forgive me and believe he has, because He is a Merciful God I will be
-going in for an operation surgery soon
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 0946122a8d3b..966a5c394c06 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -2960,7 +2960,7 @@ static int nested_vmx_check_vmentry_hw(struct kvm_vcpu *vcpu)
+ 	/*
+ 	 * Induce a consistency check VMExit by clearing bit 1 in GUEST_RFLAGS,
+ 	 * which is reserved to '1' by hardware.  GUEST_RFLAGS is guaranteed to
+-	 * be written (by preparve_vmcs02()) before the "real" VMEnter, i.e.
++	 * be written (by prepare_vmcs02()) before the "real" VMEnter, i.e.
+ 	 * there is no need to preserve other bits or save/restore the field.
+ 	 */
+ 	vmcs_writel(GUEST_RFLAGS, 0);
+@@ -4382,7 +4382,7 @@ void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
+  * Decode the memory-address operand of a vmx instruction, as recorded on an
+  * exit caused by such an instruction (run by a guest hypervisor).
+  * On success, returns 0. When the operand is invalid, returns 1 and throws
+- * #UD or #GP.
++ * #UD, #GP, or #SS.
+  */
+ int get_vmx_mem_address(struct kvm_vcpu *vcpu, unsigned long exit_qualification,
+ 			u32 vmx_instruction_info, bool wr, int len, gva_t *ret)
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index a04017bdae05..efc509a7945a 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -808,7 +808,7 @@ void update_exception_bitmap(struct kvm_vcpu *vcpu)
+ 	if (to_vmx(vcpu)->rmode.vm86_active)
+ 		eb = ~0;
+ 	if (enable_ept)
+-		eb &= ~(1u << PF_VECTOR); /* bypass_guest_pf = 0 */
++		eb &= ~(1u << PF_VECTOR);
+ 
+ 	/* When we are running a nested L2 guest and L1 specified for it a
+ 	 * certain exception bitmap, we must trap the same exceptions and pass
+-- 
+2.19.1
 
-This is the reason i need your services to stand as my next of kin or
-an executor to claim the funds for charity purposes. If this money
-remains unclaimed after my death, the bank executives or the
-government will take the money as unclaimed fund and maybe use it for
-selfish and worthless ventures, I need a very honest person who can
-claim this money and use it for Charity works, for orphanages, widows
-and also build schools for less privilege that will be named after my
-late husband and my name; I need your urgent answer to know if you
-will be able to execute this project, and I will give you more
-Information on how the fund will be transferred to your bank account.
-
-Thanks
-Mrs. Anna H.
