@@ -2,197 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65E4F171453
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 10:49:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C11C171457
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 10:50:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728704AbgB0Jt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 04:49:57 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4240 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728632AbgB0Jt5 (ORCPT
+        id S1728741AbgB0Jur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 04:50:47 -0500
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:39633 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728666AbgB0Juq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 04:49:57 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01R9igYs046184
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 04:49:56 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ydq6x876r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 04:49:56 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Thu, 27 Feb 2020 09:49:54 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 27 Feb 2020 09:49:51 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01R9nnXP61276208
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Feb 2020 09:49:49 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B66A8A404D;
-        Thu, 27 Feb 2020 09:49:49 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 74033A4057;
-        Thu, 27 Feb 2020 09:49:49 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.219])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Feb 2020 09:49:49 +0000 (GMT)
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- kvms390 tree
-To:     David Hildenbrand <david@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Janosch Frank <frankja@linux.ibm.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-References: <20200227141148.05d7d502@canb.auug.org.au>
- <1217420e-42e4-9179-883f-125cf278caec@nvidia.com>
- <adf233cd-9c7a-1c2e-82bc-83bc8572faa2@redhat.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
-Date:   Thu, 27 Feb 2020 10:49:49 +0100
+        Thu, 27 Feb 2020 04:50:46 -0500
+Received: from [IPv6:2001:420:44c1:2577:f10e:c7d:8cc0:4dc1]
+ ([IPv6:2001:420:44c1:2577:f10e:c7d:8cc0:4dc1])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id 7FoQjCsjZjmHT7FoTjhgWE; Thu, 27 Feb 2020 10:50:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1582797044; bh=ByJVUEPLZ7tIhy2q8vr9cuIU5zHaJVyikWn1UOZGCH0=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=jAldvDjUP+2sch8FAjl3tRgQbtP30TxMccHRfBTx0AG7qcuIATR+YS9Nz2VyI7z6b
+         2bdvHiX6Z/L6mJI7b4nv54bKnRliMEVQM7ySwyQNAkoDNchfxN8t4CYHzfevXfB9f8
+         LybufA3No+1VRB5FQcWflrscC6WbERot2gpInO67/M0n6IFDADfiZx2PIF3g4pSwHx
+         z/7p8fhwJ085la0RM6nw3Uw2TbL/on46LEYh1L4i8LFEemmBCgZg8m8lvoTBW42kTb
+         lmP1Ema0sJ4YMTnvpQQV7+hlWMN1SEz349s++ZvojelgkPLdmfbl7iI+GBcwETKL68
+         d1DrVrZF7v6fw==
+Subject: Re: [PATCH v3] media: mtk-vpu: avoid unaligned access to DTCM buffer.
+To:     Hsin-Yi Wang <hsinyi@chromium.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20200225172437.106679-1-hsinyi@chromium.org>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <6986e879-cf35-13a5-baae-9ab09ba1a0d7@xs4all.nl>
+Date:   Thu, 27 Feb 2020 10:50:34 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <adf233cd-9c7a-1c2e-82bc-83bc8572faa2@redhat.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20200225172437.106679-1-hsinyi@chromium.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20022709-0020-0000-0000-000003AE0C72
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022709-0021-0000-0000-000022062AF5
-Message-Id: <cd971e35-538a-13c1-e05a-1a7dd8ceda9f@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-27_02:2020-02-26,2020-02-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 spamscore=0
- mlxlogscore=999 clxscore=1015 mlxscore=0 adultscore=0 impostorscore=0
- phishscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2001150001 definitions=main-2002270078
+X-CMAE-Envelope: MS4wfEmWyewWtYOmHee0wLG9KVhzvdC+vZ2Yn3M5QK7toJOjegKaoNuwTebMFlNUkX4g5ubItYRWYyIhs9fGxCf8cD1rUEnuEdF4lkw2Txy5JZSTdCcXpB5B
+ pzO5NkIdXaxs9P+pVHBrmJIkOsU5Eroa9DV8ZTMnglUWubr8LP9y9m4lrANhiZiELvr2vgtUaNnUrH/z4wjpIQouugabPCkx5QqnrCnfi2V6tgsdVHr8zOA8
+ mskhshBV7XjDMTd5xLYZ0Sm9OpE9a0gr0ElTGRjFT+FJQNuLIVgUwDTN961nhIssd25SFvemCatJXt34OY1tWo5jOU+tteyyXulpyXgchGIMPBQTTaJL4Ji/
+ BDZeOQ+aZfeJoA0ppicA6MUd7/lCyKg6hL1KWvDnx/ZLDMY6VT1KNZ9+CVD6Y4XoIfaYgurc68lAMRXyukwMzOUhuDJ/fXoZyVy7cakzf2yVCHIFr1MQkom2
+ 6uXVTJbJJ2ntKSdMcuzDzxxLVI/BioY4HHz9HrFB0kvsXSZ85OlEwY/El9R2R4b62kVs1vAMd79qJR06ewzsBO5vcefSk/KCV3UTXq0dtsHArbHy35bC8iLR
+ Rah4L33UxuNXea6VawerW38hGGj3VKbG0GGWnNC73+Jstfp45IVOhkAtbTCX7EpKdn0ZIfFxhHTwpxpDIZAvShcQMHLyEncijo0icB4e/D51NB9J3TYHYJbP
+ PGwtJwvHsA+s8xkxnt2oMOeUDgII1xG2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2/25/20 6:24 PM, Hsin-Yi Wang wrote:
+> struct vpu_run *run in vpu_init_ipi_handler() is an ioremapped DTCM (Data
+> Tightly Coupled Memory) buffer shared with AP.  It's not able to do
+> unaligned access. Otherwise kernel would crash due to unable to handle
+> kernel paging request.
+> 
+> struct vpu_run {
+> 	u32 signaled;
+> 	char fw_ver[VPU_FW_VER_LEN];
+> 	unsigned int	dec_capability;
+> 	unsigned int	enc_capability;
+> 	wait_queue_head_t wq;
+> };
+> 
+> fw_ver starts at 4 byte boundary. If system enables
+> CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS, strscpy() will do
+> read_word_at_a_time(), which tries to read 8-byte: *(unsigned long *)addr
+> 
+> Copy the string by memcpy_fromio() for this buffer to avoid unaligned
+> access.
+> 
+> Fixes: 85709cbf1524 ("media: replace strncpy() by strscpy()")
+> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> ---
+> Change in v3:
+> - fix sparse warnings.
+> Change in v2:
+> - fix sparse warnings.
+> ---
+>  drivers/media/platform/mtk-vpu/mtk_vpu.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/mtk-vpu/mtk_vpu.c b/drivers/media/platform/mtk-vpu/mtk_vpu.c
+> index a768707abb94..e3fd2d1814f3 100644
+> --- a/drivers/media/platform/mtk-vpu/mtk_vpu.c
+> +++ b/drivers/media/platform/mtk-vpu/mtk_vpu.c
+> @@ -603,12 +603,14 @@ EXPORT_SYMBOL_GPL(vpu_load_firmware);
+>  static void vpu_init_ipi_handler(void *data, unsigned int len, void *priv)
+>  {
+>  	struct mtk_vpu *vpu = (struct mtk_vpu *)priv;
+> -	struct vpu_run *run = (struct vpu_run *)data;
+> -
+> -	vpu->run.signaled = run->signaled;
+> -	strscpy(vpu->run.fw_ver, run->fw_ver, sizeof(vpu->run.fw_ver));
+> -	vpu->run.dec_capability = run->dec_capability;
+> -	vpu->run.enc_capability = run->enc_capability;
+> +	struct vpu_run __iomem *run = (struct vpu_run __iomem __force *)data;
 
+The use of __force is generally a bad sign. Shouldn't the 'void *data' be a
+'void __iomem *data'? And vpu->recv_buf should be 'struct share_obj __iomem *recv_buf;'.
+Probably send_buf as well.
 
-On 27.02.20 10:20, David Hildenbrand wrote:
->> Yes. Changes to mm/gup.c really should normally go through linux-mm and 
->> Andrew's tree, if at all possible. This would have been caught, and figured out
->> on linux-mm, had that been done--instead of leaving the linux-next maintainer
->> trying to guess at how to resolve the conflict.
->>
->> +Cc David Hildenbrand, who I see looked at the kvms390 proposed patch a bit.
->> Maybe he has some opinions, especially about my questions below.
-> 
-> I'll leave figuring out the details to Christian/Claudio (-EBUSY) :)
-> 
->>
->> The fix-up below may (or may not) need some changes:
->>
->>
->> diff --cc mm/gup.c
->> index 354bcfbd844b,f589299b0d4a..000000000000
->> --- a/mm/gup.c
->> +++ b/mm/gup.c
->> @@@ -269,18 -470,11 +468,19 @@@ retry
->>   		goto retry;
->>   	}
->>   
->> + 	/* try_grab_page() does nothing unless FOLL_GET or FOLL_PIN is set. */
->> + 	if (unlikely(!try_grab_page(page, flags))) {
->> + 		page = ERR_PTR(-ENOMEM);
->> + 		goto out;
->> + 	}
->>  +	if (flags & FOLL_GET) {
->>
->>
->> If I'm reading the diff correctly, I believe that line should *maybe* be changed to:
->>
->> 	if (flags & (FOLL_GET | FOLL_PIN)) {
->>
->> ...because each of those flags has a similar effect: pinned pages for DMA or RDMA
->> use. So either flag will require a call to arch_make_page_accessible()...except that
->> I'm not sure that's what you want. Would the absence of a call to 
->> arch_make_page_accessible() cause things like pin_user_pages() to not work correctly?
->> Seems like it would, to me.
-> 
-> Yes, it's required. From the commit message "enable paging, file backing
-> etc, it is also necessary to protect the host against a malicious user
-> space. For example a bad QEMU could simply start direct I/O on such
-> protected memory.". So we really want to convert the page from
-> unencrypted/inaccessible to encrypted/accessible at this point (iow,
-> make it definitely accessible, and make sure it stays accessible).
-> 
->>
->> (I'm pretty unhappy that we have to ask this at the linux-next level.)
-> 
-> Yeah, I *think* this fell through the cracks (on linux-mm, but also in
-> Andrew's inbox) because the series has a big fat "KVM: s390:" as prefix.
-> Christian decided to pull it in to give it some churn yesterday (I think
-> he originally wanted to have this patch and the other KVM protvirt
-> patches in 5.7 [2] ... but not sure what will happen due to this conflict).
+In other words, the __iomem attribute should be wired up correctly throughout the
+driver code, and not forcibly applied in one place. That is asking for trouble in
+the future. Also, sparse only works well in detecting problems if such attributes
+are applied at the right level.
 
-Yes, I would like to have this patch in 5.7. Depending on the schedule of the
-FOLL_PIN patches that means:
-1. Claudios callback patch _before_ the FOLL_PIN patches + Claudio will provide a fixup.
-2. Claudios callback patch on top of the FOLL_PIN patches (Claudio will provide a
-version that combines the first patch + fixup)
+Regards,
 
+	Hans
 
-> 
-> At least now this patch has attention ... although it would have been
-> better if linux-next admins wouldn't have to mess with this :)
-> 
-> [1] https://lkml.kernel.org/r/20200224114107.4646-2-borntraeger@de.ibm.com
-> [2] https://lkml.kernel.org/r/20200224114107.4646-1-borntraeger@de.ibm.com
+> +
+> +	vpu->run.signaled = readl(&run->signaled);
+> +	memcpy_fromio(vpu->run.fw_ver, run->fw_ver, sizeof(vpu->run.fw_ver));
+> +	/* Make sure the string is NUL-terminated */
+> +	vpu->run.fw_ver[sizeof(vpu->run.fw_ver) - 1] = '\0';
+> +	vpu->run.dec_capability = readl(&run->dec_capability);
+> +	vpu->run.enc_capability = readl(&run->enc_capability);
+>  	wake_up_interruptible(&vpu->run.wq);
+>  }
+>  
 > 
 
