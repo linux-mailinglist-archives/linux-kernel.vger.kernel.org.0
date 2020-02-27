@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61AA01718FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:41:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D282C1719C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:48:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729486AbgB0NlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:41:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35512 "EHLO mail.kernel.org"
+        id S1730786AbgB0Nr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:47:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729444AbgB0NlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:41:02 -0500
+        id S1730779AbgB0Nry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:47:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1815020726;
-        Thu, 27 Feb 2020 13:40:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D42F224656;
+        Thu, 27 Feb 2020 13:47:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582810860;
-        bh=KNL8q96VW054YfXBZfeHGlfLCZJ5LleWzR+KoB/9j4w=;
+        s=default; t=1582811273;
+        bh=tGdP8o+5wmH2dix7IVUCYODW9Z+SAHSKNrxu6lyRy8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ecb7Et4znBkjlITfrqQHob5uz25j4mxvxVb/EHnKKch7soRJKo6pIlrOfMQXubvuM
-         wRVHiqF/39O4CWgV0mczi7q1saognB/DTMGGyxfAW0F8qjj7n6QkwlNpW3bl6HQ07Y
-         39BY1zAsBsezmPOvt7bUPD+7ICE8mCQSQXL9o4mc=
+        b=wmzGtkB1rS5K7o8WOiZ+WLTb4S8l0Lslk8eTq951WoEGg6BM66amZp9RLuUCRXl3K
+         36SbNxREI3gI0UVaL2KxCr1zntqhsCRIIE97C3LX3TNu9mTzYlZU2nn7ue8Avbk4nW
+         hrPeAaDdQG9XcTKx0p/3/RkQKm0ytEmPd9ckLKPM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        linux-mips@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 026/113] MIPS: Loongson: Fix potential NULL dereference in loongson3_platform_init()
-Date:   Thu, 27 Feb 2020 14:35:42 +0100
-Message-Id: <20200227132215.859062761@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 069/165] udf: Fix free space reporting for metadata and virtual partitions
+Date:   Thu, 27 Feb 2020 14:35:43 +0100
+Message-Id: <20200227132241.499535651@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
-References: <20200227132211.791484803@linuxfoundation.org>
+In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
+References: <20200227132230.840899170@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,40 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit 72d052e28d1d2363f9107be63ef3a3afdea6143c ]
+[ Upstream commit a4a8b99ec819ca60b49dc582a4287ef03411f117 ]
 
-If kzalloc fails, it should return -ENOMEM, otherwise may trigger a NULL
-pointer dereference.
+Free space on filesystems with metadata or virtual partition maps
+currently gets misreported. This is because these partitions are just
+remapped onto underlying real partitions from which keep track of free
+blocks. Take this remapping into account when counting free blocks as
+well.
 
-Fixes: 3adeb2566b9b ("MIPS: Loongson: Improve LEFI firmware interface")
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Huacai Chen <chenhc@lemote.com>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
+Reported-by: Pali Rohár <pali.rohar@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/loongson64/loongson-3/platform.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/udf/super.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/arch/mips/loongson64/loongson-3/platform.c b/arch/mips/loongson64/loongson-3/platform.c
-index 25a97cc0ee336..0db4cc3196ebd 100644
---- a/arch/mips/loongson64/loongson-3/platform.c
-+++ b/arch/mips/loongson64/loongson-3/platform.c
-@@ -31,6 +31,9 @@ static int __init loongson3_platform_init(void)
- 			continue;
- 
- 		pdev = kzalloc(sizeof(struct platform_device), GFP_KERNEL);
-+		if (!pdev)
-+			return -ENOMEM;
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index 03369a89600e0..4abdba453885e 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -2460,17 +2460,29 @@ static unsigned int udf_count_free_table(struct super_block *sb,
+ static unsigned int udf_count_free(struct super_block *sb)
+ {
+ 	unsigned int accum = 0;
+-	struct udf_sb_info *sbi;
++	struct udf_sb_info *sbi = UDF_SB(sb);
+ 	struct udf_part_map *map;
++	unsigned int part = sbi->s_partition;
++	int ptype = sbi->s_partmaps[part].s_partition_type;
 +
- 		pdev->name = loongson_sysconf.sensors[i].name;
- 		pdev->id = loongson_sysconf.sensors[i].id;
- 		pdev->dev.platform_data = &loongson_sysconf.sensors[i];
++	if (ptype == UDF_METADATA_MAP25) {
++		part = sbi->s_partmaps[part].s_type_specific.s_metadata.
++							s_phys_partition_ref;
++	} else if (ptype == UDF_VIRTUAL_MAP15 || ptype == UDF_VIRTUAL_MAP20) {
++		/*
++		 * Filesystems with VAT are append-only and we cannot write to
++ 		 * them. Let's just report 0 here.
++		 */
++		return 0;
++	}
+ 
+-	sbi = UDF_SB(sb);
+ 	if (sbi->s_lvid_bh) {
+ 		struct logicalVolIntegrityDesc *lvid =
+ 			(struct logicalVolIntegrityDesc *)
+ 			sbi->s_lvid_bh->b_data;
+-		if (le32_to_cpu(lvid->numOfPartitions) > sbi->s_partition) {
++		if (le32_to_cpu(lvid->numOfPartitions) > part) {
+ 			accum = le32_to_cpu(
+-					lvid->freeSpaceTable[sbi->s_partition]);
++					lvid->freeSpaceTable[part]);
+ 			if (accum == 0xFFFFFFFF)
+ 				accum = 0;
+ 		}
+@@ -2479,7 +2491,7 @@ static unsigned int udf_count_free(struct super_block *sb)
+ 	if (accum)
+ 		return accum;
+ 
+-	map = &sbi->s_partmaps[sbi->s_partition];
++	map = &sbi->s_partmaps[part];
+ 	if (map->s_partition_flags & UDF_PART_FLAG_UNALLOC_BITMAP) {
+ 		accum += udf_count_free_bitmap(sb,
+ 					       map->s_uspace.s_bitmap);
 -- 
 2.20.1
 
