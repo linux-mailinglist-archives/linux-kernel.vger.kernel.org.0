@@ -2,260 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 441F8172792
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:32:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2086172797
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:32:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730111AbgB0Say (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:30:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49302 "EHLO mail.kernel.org"
+        id S1730698AbgB0Sbr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:31:47 -0500
+Received: from mail.andi.de1.cc ([85.214.55.253]:51280 "EHLO mail.andi.de1.cc"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729258AbgB0Say (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:30:54 -0500
-Received: from localhost (unknown [104.132.1.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1544D2084E;
-        Thu, 27 Feb 2020 18:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582828253;
-        bh=1uGS0WGGx36bTiFt/zxMMDJzlLSFFaOGU36jwiBX6Lg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S+Q4BGnvn7GuQ7dmGCLrsJdtLpl4WJrk2xSPdKjHgyBI7r++6COJGWMbPhbENHUIZ
-         4dupMlrn6V9GBJ6gLT8D925XVX57nMAZyrYmWJ6h/vPxGBwfY/K/YYlYet10zkuLvg
-         oVJOfFotEZpTx3VL3eJRt5SDSwsZ3DK10H6+21IQ=
-Date:   Thu, 27 Feb 2020 10:30:52 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, chao@kernel.org
-Subject: Re: [PATCH v2] f2fs: introduce F2FS_IOC_RELEASE_COMPRESS_BLOCKS
-Message-ID: <20200227183052.GA55284@google.com>
-References: <20200227112621.126505-1-yuchao0@huawei.com>
+        id S1729580AbgB0Sbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:31:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=yQkfOLNuqw0s/C4iIr73jm/g+t03fJKekg1eS9M/yZg=; b=M4ms9jty0MbPPPh6W6xA8Nd0NJ
+        psoAwSI57Rqlb3yCjZaXgUWWjaL+EvmG9cAC+S8dL6WegGFydhncHyitGhusrelfjv4+oKdbJH2EJ
+        3VREg3rcOCg67Bdfi0jbA4nHyKNyOr9nAYmQ9C/SwZh5Czv0gwdkSeqNVD2ii5amwDBU=;
+Received: from p200300ccff13fd00e2cec3fffe93fc31.dip0.t-ipconnect.de ([2003:cc:ff13:fd00:e2ce:c3ff:fe93:fc31] helo=eeepc)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j7NwX-0006yB-Kh; Thu, 27 Feb 2020 19:31:29 +0100
+Received: from andi by eeepc with local (Exim 4.92)
+        (envelope-from <andreas@kemnade.info>)
+        id 1j7NwW-0003oO-WB; Thu, 27 Feb 2020 19:31:29 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rtc@vger.kernel.org, stefan@agner.ch, b.galvani@gmail.com,
+        phh@phh.me, letux-kernel@openphoenux.org, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
+        jic23@kernel.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v6 0/7] mfd: rn5t618: Add RTC/ADC support
+Date:   Thu, 27 Feb 2020 19:31:05 +0100
+Message-Id: <20200227183112.14512-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227112621.126505-1-yuchao0@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/27, Chao Yu wrote:
-> There are still reserved blocks on compressed inode, this patch
-> introduce a new ioctl to help release reserved blocks back to
-> filesystem, so that userspace can reuse those freed space.
+In the variant RC5T619 the mfd has an RTC. This patchset adds
+support for it. To do so it adds the missing register defines in 
+rn5t618.h and general irq handling for that.
+It seems that the IRQ definitions are the same except missing RTC
+for the RN5T618 but due to missing ability to test that they are
+not added here.
+It also adds support for the ADC, it is available in both the
+RN5T618 and RC5T619 but due to missing ability to test that,
+the subdevice is only added for the RN5T618.
 
-Hmm, once we release the blocks, what happens if we remove the immutable
-bit back?
+It was tested on the Kobo Clara HD.
 
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v2:
-> - set inode as immutable in ioctl.
->  fs/f2fs/f2fs.h |   6 +++
->  fs/f2fs/file.c | 136 ++++++++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 141 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 23b93a116c73..4a02edc2454b 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -427,6 +427,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
->  #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
->  #define F2FS_IOC_RESIZE_FS		_IOW(F2FS_IOCTL_MAGIC, 16, __u64)
->  #define F2FS_IOC_GET_COMPRESS_BLOCKS	_IOR(F2FS_IOCTL_MAGIC, 17, __u64)
-> +#define F2FS_IOC_RELEASE_COMPRESS_BLOCKS				\
-> +					_IOR(F2FS_IOCTL_MAGIC, 18, __u64)
->  
->  #define F2FS_IOC_GET_VOLUME_NAME	FS_IOC_GETFSLABEL
->  #define F2FS_IOC_SET_VOLUME_NAME	FS_IOC_SETFSLABEL
-> @@ -3956,6 +3958,10 @@ static inline void f2fs_i_compr_blocks_update(struct inode *inode,
->  {
->  	int diff = F2FS_I(inode)->i_cluster_size - blocks;
->  
-> +	/* don't update i_compr_blocks if saved blocks were released */
-> +	if (!add && !F2FS_I(inode)->i_compr_blocks)
-> +		return;
-> +
->  	if (add) {
->  		F2FS_I(inode)->i_compr_blocks += diff;
->  		stat_add_compr_blocks(inode, diff);
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 37c1147eb244..b8f01ee9d698 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -550,6 +550,7 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
->  	bool compressed_cluster = false;
->  	int cluster_index = 0, valid_blocks = 0;
->  	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
-> +	bool released = !F2FS_I(dn->inode)->i_compr_blocks;
->  
->  	if (IS_INODE(dn->node_page) && f2fs_has_extra_attr(dn->inode))
->  		base = get_extra_isize(dn->inode);
-> @@ -588,7 +589,9 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
->  			clear_inode_flag(dn->inode, FI_FIRST_BLOCK_WRITTEN);
->  
->  		f2fs_invalidate_blocks(sbi, blkaddr);
-> -		nr_free++;
-> +
-> +		if (released && blkaddr != COMPRESS_ADDR)
-> +			nr_free++;
->  	}
->  
->  	if (compressed_cluster)
-> @@ -3403,6 +3406,134 @@ static int f2fs_get_compress_blocks(struct file *filp, unsigned long arg)
->  	return put_user(blocks, (u64 __user *)arg);
->  }
->  
-> +static int release_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
-> +	unsigned int released_blocks = 0;
-> +	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
-> +
-> +	while (count) {
-> +		int compr_blocks = 0;
-> +		block_t blkaddr = f2fs_data_blkaddr(dn);
-> +		int i;
-> +
-> +		if (blkaddr != COMPRESS_ADDR) {
-> +			dn->ofs_in_node += cluster_size;
-> +			goto next;
-> +		}
-> +
-> +		for (i = 0; i < cluster_size; i++, dn->ofs_in_node++) {
-> +			blkaddr = f2fs_data_blkaddr(dn);
-> +
-> +			if (__is_valid_data_blkaddr(blkaddr)) {
-> +				compr_blocks++;
-> +				if (unlikely(!f2fs_is_valid_blkaddr(sbi, blkaddr,
-> +							DATA_GENERIC_ENHANCE)))
-> +					return -EFSCORRUPTED;
-> +			}
-> +
-> +			if (blkaddr != NEW_ADDR)
-> +				continue;
-> +
-> +			dn->data_blkaddr = NULL_ADDR;
-> +			f2fs_set_data_blkaddr(dn);
-> +		}
-> +
-> +		f2fs_i_compr_blocks_update(dn->inode, compr_blocks, false);
-> +		dec_valid_block_count(sbi, dn->inode,
-> +					cluster_size - compr_blocks);
-> +
-> +		released_blocks += cluster_size - compr_blocks;
-> +next:
-> +		count -= cluster_size;
-> +	}
-> +
-> +	return released_blocks;
-> +}
-> +
-> +static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
-> +{
-> +	struct inode *inode = file_inode(filp);
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	pgoff_t page_idx = 0, last_idx;
-> +	unsigned int released_blocks = 0;
-> +	int ret;
-> +
-> +	if (!f2fs_sb_has_compression(F2FS_I_SB(inode)))
-> +		return -EOPNOTSUPP;
-> +
-> +	if (!f2fs_compressed_file(inode))
-> +		return -EINVAL;
-> +
-> +	if (f2fs_readonly(sbi->sb))
-> +		return -EROFS;
-> +
-> +	ret = mnt_want_write_file(filp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!F2FS_I(inode)->i_compr_blocks)
-> +		goto out;
-> +
-> +	f2fs_balance_fs(F2FS_I_SB(inode), true);
-> +
-> +	inode_lock(inode);
-> +
-> +	if (!IS_IMMUTABLE(inode)) {
-> +		F2FS_I(inode)->i_flags |= F2FS_IMMUTABLE_FL;
-> +		f2fs_set_inode_flags(inode);
-> +		inode->i_ctime = current_time(inode);
-> +		f2fs_mark_inode_dirty_sync(inode, true);
-> +	}
-> +
-> +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> +	down_write(&F2FS_I(inode)->i_mmap_sem);
-> +
-> +	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-> +
-> +	while (page_idx < last_idx) {
-> +		struct dnode_of_data dn;
-> +		pgoff_t end_offset, count;
-> +
-> +		set_new_dnode(&dn, inode, NULL, NULL, 0);
-> +		ret = f2fs_get_dnode_of_data(&dn, page_idx, LOOKUP_NODE);
-> +		if (ret) {
-> +			if (ret == -ENOENT) {
-> +				page_idx = f2fs_get_next_page_offset(&dn,
-> +								page_idx);
-> +				ret = 0;
-> +				continue;
-> +			}
-> +			break;
-> +		}
-> +
-> +		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
-> +		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
-> +
-> +		ret = release_compress_blocks(&dn, count);
-> +
-> +		f2fs_put_dnode(&dn);
-> +
-> +		if (ret < 0)
-> +			break;
-> +
-> +		page_idx += count;
-> +		released_blocks += ret;
-> +	}
-> +
-> +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> +	up_write(&F2FS_I(inode)->i_mmap_sem);
-> +
-> +	inode_unlock(inode);
-> +out:
-> +	mnt_drop_write_file(filp);
-> +
-> +	if (!ret)
-> +		ret = put_user(released_blocks, (u64 __user *)arg);
-> +
-> +	return ret;
-> +}
-> +
->  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  {
->  	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
-> @@ -3483,6 +3614,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  		return f2fs_set_volume_name(filp, arg);
->  	case F2FS_IOC_GET_COMPRESS_BLOCKS:
->  		return f2fs_get_compress_blocks(filp, arg);
-> +	case F2FS_IOC_RELEASE_COMPRESS_BLOCKS:
-> +		return f2fs_release_compress_blocks(filp, arg);
->  	default:
->  		return -ENOTTY;
->  	}
-> @@ -3643,6 +3776,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  	case F2FS_IOC_GET_VOLUME_NAME:
->  	case F2FS_IOC_SET_VOLUME_NAME:
->  	case F2FS_IOC_GET_COMPRESS_BLOCKS:
-> +	case F2FS_IOC_RELEASE_COMPRESS_BLOCKS:
->  		break;
->  	default:
->  		return -ENOIOCTLCMD;
-> -- 
-> 2.18.0.rc1
+Changes in v6:
+- put together with ADC series
+- also added cleanup i2_device_id patch to avoid merge
+  conflicts
+
+Changes in v5:
+- static rn5t618_irq_init
+- PLATFORM_DEVID_NONE
+- added some Acked-Bys
+
+Changes in v4:
+- use macros for IRQ definitions
+- merge rn5t618-core.c and rn5t618-irq.c
+
+Changes in v3:
+- alignment cleanup
+- output cleanup, remove useless toggling of alarm flag in rtc probe
+- updated bindings description, so patch 1/5 becomes 2/6 and so on
+
+Changes in v2:
+- no dead code in irq code
+- various improvements and cleanups in rtc driver itself
+ 
+Andreas Kemnade (7):
+  dt-bindings: mfd: rn5t618: Document optional property interrupts
+  mfd: rn5t618: add IRQ support
+  mfd: rn5t618: add RTC related registers
+  mfd: rn5t618: add more subdevices
+  rtc: rc5t619: add Ricoh RC5T619 RTC driver
+  iio: adc: rn5t618: Add ADC driver for RN5T618/RC5T619
+  mfd: rn5t618: cleanup i2c_device_id
+
+ .../devicetree/bindings/mfd/rn5t618.txt       |   4 +
+ drivers/iio/adc/Kconfig                       |  10 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/rn5t618-adc.c                 | 256 ++++++++++
+ drivers/mfd/Kconfig                           |   1 +
+ drivers/mfd/rn5t618.c                         | 119 ++++-
+ drivers/rtc/Kconfig                           |  10 +
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-rc5t619.c                     | 444 ++++++++++++++++++
+ include/linux/mfd/rn5t618.h                   |  26 +
+ 10 files changed, 862 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/iio/adc/rn5t618-adc.c
+ create mode 100644 drivers/rtc/rtc-rc5t619.c
+
+-- 
+2.20.1
+
