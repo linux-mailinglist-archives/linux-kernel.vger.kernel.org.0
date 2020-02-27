@@ -2,149 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CFE317183C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:09:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45ADB171845
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:10:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729124AbgB0NJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:09:07 -0500
-Received: from mga02.intel.com ([134.134.136.20]:45400 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729037AbgB0NJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:09:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 05:09:05 -0800
-X-IronPort-AV: E=Sophos;i="5.70,492,1574150400"; 
-   d="scan'208";a="227136570"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 05:09:01 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Wambui Karuga <wambui.karugax@gmail.com>, daniel@ffwll.ch,
-        airlied@linux.ie,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH 16/21] drm/i915: make *_debugfs_register() functions return void.
-In-Reply-To: <20200227120232.19413-17-wambui.karugax@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20200227120232.19413-1-wambui.karugax@gmail.com> <20200227120232.19413-17-wambui.karugax@gmail.com>
-Date:   Thu, 27 Feb 2020 15:08:58 +0200
-Message-ID: <87zhd4qis5.fsf@intel.com>
+        id S1729144AbgB0NKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:10:53 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:45908 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729032AbgB0NKx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:10:53 -0500
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01RD5FTk031759;
+        Thu, 27 Feb 2020 08:10:19 -0500
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ydtrx36se-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Feb 2020 08:10:18 -0500
+Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 01RDAHLF011273
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Thu, 27 Feb 2020 08:10:17 -0500
+Received: from SCSQCASHYB6.ad.analog.com (10.77.17.132) by
+ SCSQMBX10.ad.analog.com (10.77.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Thu, 27 Feb 2020 05:10:16 -0800
+Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
+ SCSQCASHYB6.ad.analog.com (10.77.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Thu, 27 Feb 2020 05:09:42 -0800
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Thu, 27 Feb 2020 05:10:15 -0800
+Received: from analog.ad.analog.com ([10.48.65.180])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 01RDA5JO025879;
+        Thu, 27 Feb 2020 08:10:06 -0500
+From:   Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <mchehab@kernel.org>, <charles-antoine.couret@nexvision.fr>
+CC:     Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+Subject: [PATCH] media: spi: gs1662: Use new structure for SPI transfer delays
+Date:   Thu, 27 Feb 2020 15:10:00 +0200
+Message-ID: <20200227131000.29264-1-sergiu.cuciurean@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-27_03:2020-02-26,2020-02-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ malwarescore=0 impostorscore=0 clxscore=1011 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 spamscore=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002270103
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Feb 2020, Wambui Karuga <wambui.karugax@gmail.com> wrote:
-> Since 987d65d01356 (drm: debugfs: make
-> drm_debugfs_create_files() never fail), drm_debugfs_create_files() never
-> fails and should return void. Therefore, remove its use as the
-> return value of i915_debugfs_register() and
-> intel_display_debugfs_register() and have both functions return void.
->
-> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
-> ---
->  drivers/gpu/drm/i915/display/intel_display_debugfs.c | 8 ++++----
->  drivers/gpu/drm/i915/display/intel_display_debugfs.h | 4 ++--
->  drivers/gpu/drm/i915/i915_debugfs.c                  | 8 ++++----
->  drivers/gpu/drm/i915/i915_debugfs.h                  | 4 ++--
->  4 files changed, 12 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_display_debugfs.c b/drivers/gpu/drm/i915/display/intel_display_debugfs.c
-> index 46954cc7b6c0..3b877c34c420 100644
-> --- a/drivers/gpu/drm/i915/display/intel_display_debugfs.c
-> +++ b/drivers/gpu/drm/i915/display/intel_display_debugfs.c
-> @@ -1922,7 +1922,7 @@ static const struct {
->  	{"i915_edp_psr_debug", &i915_edp_psr_debug_fops},
->  };
->  
-> -int intel_display_debugfs_register(struct drm_i915_private *i915)
-> +void intel_display_debugfs_register(struct drm_i915_private *i915)
->  {
->  	struct drm_minor *minor = i915->drm.primary;
->  	int i;
-> @@ -1935,9 +1935,9 @@ int intel_display_debugfs_register(struct drm_i915_private *i915)
->  				    intel_display_debugfs_files[i].fops);
->  	}
->  
-> -	return drm_debugfs_create_files(intel_display_debugfs_list,
-> -					ARRAY_SIZE(intel_display_debugfs_list),
-> -					minor->debugfs_root, minor);
-> +	drm_debugfs_create_files(intel_display_debugfs_list,
-> +				 ARRAY_SIZE(intel_display_debugfs_list),
-> +				 minor->debugfs_root, minor);
->  }
->  
->  static int i915_panel_show(struct seq_file *m, void *data)
-> diff --git a/drivers/gpu/drm/i915/display/intel_display_debugfs.h b/drivers/gpu/drm/i915/display/intel_display_debugfs.h
-> index a3bea1ce04c2..a5cf7a6d3d34 100644
-> --- a/drivers/gpu/drm/i915/display/intel_display_debugfs.h
-> +++ b/drivers/gpu/drm/i915/display/intel_display_debugfs.h
-> @@ -10,10 +10,10 @@ struct drm_connector;
->  struct drm_i915_private;
->  
->  #ifdef CONFIG_DEBUG_FS
-> -int intel_display_debugfs_register(struct drm_i915_private *i915);
-> +void intel_display_debugfs_register(struct drm_i915_private *i915);
->  int intel_connector_debugfs_add(struct drm_connector *connector);
->  #else
-> -static inline int intel_display_debugfs_register(struct drm_i915_private *i915) { return 0; }
-> +static inline int intel_display_debugfs_register(struct drm_i915_private *i915) {}
+In a recent change to the SPI subsystem [1], a new `delay` struct was added
+to replace the `delay_usecs`. This change replaces the current
+`delay_usecs` with `delay` for this driver.
 
-You don't actually change the return type.
+The `spi_transfer_delay_exec()` function [in the SPI framework] makes sure
+that both `delay_usecs` & `delay` are used (in this order to preserve
+backwards compatibility).
 
-Otherwise, LGTM.
+[1] commit bebcfd272df6 ("spi: introduce `delay` field for
+`spi_transfer` + spi_transfer_delay_exec()")
 
-BR,
-Jani.
+Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+---
+ drivers/media/spi/gs1662.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
->  static inline int intel_connector_debugfs_add(struct drm_connector *connector) { return 0; }
->  #endif
->  
-> diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
-> index 8f2525e4ce0f..de313199c714 100644
-> --- a/drivers/gpu/drm/i915/i915_debugfs.c
-> +++ b/drivers/gpu/drm/i915/i915_debugfs.c
-> @@ -2392,7 +2392,7 @@ static const struct i915_debugfs_files {
->  	{"i915_guc_log_relay", &i915_guc_log_relay_fops},
->  };
->  
-> -int i915_debugfs_register(struct drm_i915_private *dev_priv)
-> +void i915_debugfs_register(struct drm_i915_private *dev_priv)
->  {
->  	struct drm_minor *minor = dev_priv->drm.primary;
->  	int i;
-> @@ -2409,7 +2409,7 @@ int i915_debugfs_register(struct drm_i915_private *dev_priv)
->  				    i915_debugfs_files[i].fops);
->  	}
->  
-> -	return drm_debugfs_create_files(i915_debugfs_list,
-> -					I915_DEBUGFS_ENTRIES,
-> -					minor->debugfs_root, minor);
-> +	drm_debugfs_create_files(i915_debugfs_list,
-> +				 I915_DEBUGFS_ENTRIES,
-> +				 minor->debugfs_root, minor);
->  }
-> diff --git a/drivers/gpu/drm/i915/i915_debugfs.h b/drivers/gpu/drm/i915/i915_debugfs.h
-> index 6da39c76ab5e..1de2736f1248 100644
-> --- a/drivers/gpu/drm/i915/i915_debugfs.h
-> +++ b/drivers/gpu/drm/i915/i915_debugfs.h
-> @@ -12,10 +12,10 @@ struct drm_i915_private;
->  struct seq_file;
->  
->  #ifdef CONFIG_DEBUG_FS
-> -int i915_debugfs_register(struct drm_i915_private *dev_priv);
-> +void i915_debugfs_register(struct drm_i915_private *dev_priv);
->  void i915_debugfs_describe_obj(struct seq_file *m, struct drm_i915_gem_object *obj);
->  #else
-> -static inline int i915_debugfs_register(struct drm_i915_private *dev_priv) { return 0; }
-> +static inline void i915_debugfs_register(struct drm_i915_private *dev_priv) {}
->  static inline void i915_debugfs_describe_obj(struct seq_file *m, struct drm_i915_gem_object *obj) {}
->  #endif
-
+diff --git a/drivers/media/spi/gs1662.c b/drivers/media/spi/gs1662.c
+index d789d82df7c4..56c30ca97d6b 100644
+--- a/drivers/media/spi/gs1662.c
++++ b/drivers/media/spi/gs1662.c
+@@ -147,11 +147,17 @@ static int gs_read_register(struct spi_device *spi, u16 addr, u16 *value)
+ 		{
+ 			.tx_buf = &buf_addr,
+ 			.len = 2,
+-			.delay_usecs = 1,
++			.delay = {
++				.value = 1,
++				.unit = SPI_DELAY_UNIT_USECS
++			},
+ 		}, {
+ 			.rx_buf = &buf_value,
+ 			.len = 2,
+-			.delay_usecs = 1,
++			.delay = {
++				.value = 1,
++				.unit = SPI_DELAY_UNIT_USECS
++			},
+ 		},
+ 	};
+ 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.17.1
+
