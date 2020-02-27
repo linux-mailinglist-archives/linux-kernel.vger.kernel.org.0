@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0D71171F2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:33:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D2B4171EDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 15:31:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733061AbgB0OdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 09:33:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34904 "EHLO mail.kernel.org"
+        id S2387514AbgB0Oam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 09:30:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbgB0OBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 09:01:07 -0500
+        id S2387649AbgB0OEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 09:04:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C698D2469D;
-        Thu, 27 Feb 2020 14:01:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0146020578;
+        Thu, 27 Feb 2020 14:04:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582812067;
-        bh=J88XE6AOJdgwTf11vOUudaaaI02NFnNiwWsWHR+Fq4g=;
+        s=default; t=1582812293;
+        bh=+Ageaz9hjQCs8xoZUS3femTFGabZap9P1XDvmO90B2w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ud68gn0Fy5pOognwoJzqrbunFZrUoPD27EUfRyN5lh+sGnnsuDmlXii24ZNWz7u5X
-         94V/vxqNng2jkEtk79A/qsaG3RBmNQVzLuI0n2qjh70Mx7B0BQaebOXrnAumXiWfMB
-         SW26kX1bxjGX7JTnfal38VX6X+AdqmZ3P6qREEO4=
+        b=cEUMAlaGBZvqUTjxpeP/8JddSlKLUzgwhsaoBeM2iwLk4xT72ZvO9Vbvx3QIRq5AB
+         lwEpvchiN6tqYoesjvFwIcN+NJlkhKUm11EG1Z42NSjFSFG7p67+TeH2pdkrIYcdVr
+         yOwHQNp8iU3j04hz9dFxHA/tCByMITxwzvazgIRY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Upton <oupton@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Ryan Case <ryandcase@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 210/237] KVM: nVMX: Dont emulate instructions in guest mode
-Date:   Thu, 27 Feb 2020 14:37:04 +0100
-Message-Id: <20200227132311.669010674@linuxfoundation.org>
+Subject: [PATCH 4.19 58/97] tty: serial: qcom_geni_serial: Remove xfer_mode variable
+Date:   Thu, 27 Feb 2020 14:37:06 +0100
+Message-Id: <20200227132224.027856915@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-References: <20200227132255.285644406@linuxfoundation.org>
+In-Reply-To: <20200227132214.553656188@linuxfoundation.org>
+References: <20200227132214.553656188@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +44,151 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Ryan Case <ryandcase@chromium.org>
 
-[ Upstream commit 07721feee46b4b248402133228235318199b05ec ]
+[ Upstream commit bdc05a8a3f822ca0662464055f902faf760da6be ]
 
-vmx_check_intercept is not yet fully implemented. To avoid emulating
-instructions disallowed by the L1 hypervisor, refuse to emulate
-instructions by default.
+The driver only supports FIFO mode so setting and checking this variable
+is unnecessary. If DMA support is ever added then such checks can be
+introduced.
 
-Cc: stable@vger.kernel.org
-[Made commit, added commit msg - Oliver]
-Signed-off-by: Oliver Upton <oupton@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Ryan Case <ryandcase@chromium.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/qcom_geni_serial.c | 67 ++++++++++-----------------
+ 1 file changed, 24 insertions(+), 43 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -12340,7 +12340,7 @@ static int vmx_check_intercept(struct kv
- 	}
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 080fa1d1ecbfd..4182129925dec 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -101,7 +101,6 @@ struct qcom_geni_serial_port {
+ 	u32 tx_fifo_depth;
+ 	u32 tx_fifo_width;
+ 	u32 rx_fifo_depth;
+-	enum geni_se_xfer_mode xfer_mode;
+ 	bool setup;
+ 	int (*handle_rx)(struct uart_port *uport, u32 bytes, bool drop);
+ 	unsigned int baud;
+@@ -547,29 +546,20 @@ static int handle_rx_uart(struct uart_port *uport, u32 bytes, bool drop)
+ static void qcom_geni_serial_start_tx(struct uart_port *uport)
+ {
+ 	u32 irq_en;
+-	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
+ 	u32 status;
  
- 	/* TODO: check more intercepts... */
--	return X86EMUL_CONTINUE;
-+	return X86EMUL_UNHANDLEABLE;
+-	if (port->xfer_mode == GENI_SE_FIFO) {
+-		/*
+-		 * readl ensures reading & writing of IRQ_EN register
+-		 * is not re-ordered before checking the status of the
+-		 * Serial Engine.
+-		 */
+-		status = readl(uport->membase + SE_GENI_STATUS);
+-		if (status & M_GENI_CMD_ACTIVE)
+-			return;
++	status = readl(uport->membase + SE_GENI_STATUS);
++	if (status & M_GENI_CMD_ACTIVE)
++		return;
+ 
+-		if (!qcom_geni_serial_tx_empty(uport))
+-			return;
++	if (!qcom_geni_serial_tx_empty(uport))
++		return;
+ 
+-		irq_en = readl(uport->membase +	SE_GENI_M_IRQ_EN);
+-		irq_en |= M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN;
++	irq_en = readl(uport->membase +	SE_GENI_M_IRQ_EN);
++	irq_en |= M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN;
+ 
+-		writel(DEF_TX_WM, uport->membase +
+-						SE_GENI_TX_WATERMARK_REG);
+-		writel(irq_en, uport->membase +	SE_GENI_M_IRQ_EN);
+-	}
++	writel(DEF_TX_WM, uport->membase + SE_GENI_TX_WATERMARK_REG);
++	writel(irq_en, uport->membase +	SE_GENI_M_IRQ_EN);
  }
  
- #ifdef CONFIG_X86_64
+ static void qcom_geni_serial_stop_tx(struct uart_port *uport)
+@@ -579,12 +569,8 @@ static void qcom_geni_serial_stop_tx(struct uart_port *uport)
+ 	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
+ 
+ 	irq_en = readl(uport->membase + SE_GENI_M_IRQ_EN);
+-	irq_en &= ~M_CMD_DONE_EN;
+-	if (port->xfer_mode == GENI_SE_FIFO) {
+-		irq_en &= ~M_TX_FIFO_WATERMARK_EN;
+-		writel(0, uport->membase +
+-				     SE_GENI_TX_WATERMARK_REG);
+-	}
++	irq_en &= ~(M_CMD_DONE_EN | M_TX_FIFO_WATERMARK_EN);
++	writel(0, uport->membase + SE_GENI_TX_WATERMARK_REG);
+ 	writel(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
+ 	status = readl(uport->membase + SE_GENI_STATUS);
+ 	/* Possible stop tx is called multiple times. */
+@@ -614,15 +600,13 @@ static void qcom_geni_serial_start_rx(struct uart_port *uport)
+ 
+ 	geni_se_setup_s_cmd(&port->se, UART_START_READ, 0);
+ 
+-	if (port->xfer_mode == GENI_SE_FIFO) {
+-		irq_en = readl(uport->membase + SE_GENI_S_IRQ_EN);
+-		irq_en |= S_RX_FIFO_WATERMARK_EN | S_RX_FIFO_LAST_EN;
+-		writel(irq_en, uport->membase + SE_GENI_S_IRQ_EN);
++	irq_en = readl(uport->membase + SE_GENI_S_IRQ_EN);
++	irq_en |= S_RX_FIFO_WATERMARK_EN | S_RX_FIFO_LAST_EN;
++	writel(irq_en, uport->membase + SE_GENI_S_IRQ_EN);
+ 
+-		irq_en = readl(uport->membase + SE_GENI_M_IRQ_EN);
+-		irq_en |= M_RX_FIFO_WATERMARK_EN | M_RX_FIFO_LAST_EN;
+-		writel(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
+-	}
++	irq_en = readl(uport->membase + SE_GENI_M_IRQ_EN);
++	irq_en |= M_RX_FIFO_WATERMARK_EN | M_RX_FIFO_LAST_EN;
++	writel(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
+ }
+ 
+ static void qcom_geni_serial_stop_rx(struct uart_port *uport)
+@@ -632,15 +616,13 @@ static void qcom_geni_serial_stop_rx(struct uart_port *uport)
+ 	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
+ 	u32 irq_clear = S_CMD_DONE_EN;
+ 
+-	if (port->xfer_mode == GENI_SE_FIFO) {
+-		irq_en = readl(uport->membase + SE_GENI_S_IRQ_EN);
+-		irq_en &= ~(S_RX_FIFO_WATERMARK_EN | S_RX_FIFO_LAST_EN);
+-		writel(irq_en, uport->membase + SE_GENI_S_IRQ_EN);
++	irq_en = readl(uport->membase + SE_GENI_S_IRQ_EN);
++	irq_en &= ~(S_RX_FIFO_WATERMARK_EN | S_RX_FIFO_LAST_EN);
++	writel(irq_en, uport->membase + SE_GENI_S_IRQ_EN);
+ 
+-		irq_en = readl(uport->membase + SE_GENI_M_IRQ_EN);
+-		irq_en &= ~(M_RX_FIFO_WATERMARK_EN | M_RX_FIFO_LAST_EN);
+-		writel(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
+-	}
++	irq_en = readl(uport->membase + SE_GENI_M_IRQ_EN);
++	irq_en &= ~(M_RX_FIFO_WATERMARK_EN | M_RX_FIFO_LAST_EN);
++	writel(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
+ 
+ 	status = readl(uport->membase + SE_GENI_STATUS);
+ 	/* Possible stop rx is called multiple times. */
+@@ -878,7 +860,6 @@ static int qcom_geni_serial_port_setup(struct uart_port *uport)
+ 	 * Make an unconditional cancel on the main sequencer to reset
+ 	 * it else we could end up in data loss scenarios.
+ 	 */
+-	port->xfer_mode = GENI_SE_FIFO;
+ 	if (uart_console(uport))
+ 		qcom_geni_serial_poll_tx_done(uport);
+ 	geni_se_config_packing(&port->se, BITS_PER_BYTE, port->tx_bytes_pw,
+@@ -886,7 +867,7 @@ static int qcom_geni_serial_port_setup(struct uart_port *uport)
+ 	geni_se_config_packing(&port->se, BITS_PER_BYTE, port->rx_bytes_pw,
+ 						false, false, true);
+ 	geni_se_init(&port->se, UART_RX_WM, port->rx_fifo_depth - 2);
+-	geni_se_select_mode(&port->se, port->xfer_mode);
++	geni_se_select_mode(&port->se, GENI_SE_FIFO);
+ 	if (!uart_console(uport)) {
+ 		port->rx_fifo = devm_kcalloc(uport->dev,
+ 			port->rx_fifo_depth, sizeof(u32), GFP_KERNEL);
+-- 
+2.20.1
+
 
 
