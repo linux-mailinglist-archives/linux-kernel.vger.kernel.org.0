@@ -2,66 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C46717276A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4222E172764
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 19:31:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730928AbgB0SYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 13:24:14 -0500
-Received: from foss.arm.com ([217.140.110.172]:56772 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730926AbgB0SWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:22:45 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 071B04B2;
-        Thu, 27 Feb 2020 10:22:45 -0800 (PST)
-Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D25B3F73B;
-        Thu, 27 Feb 2020 10:22:43 -0800 (PST)
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Robert Richter <rric@kernel.org>, soc@kernel.org,
-        Jon Loeliger <jdl@jdl.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH v2 13/13] MAINTAINERS: Update Calxeda Highbank maintainership
-Date:   Thu, 27 Feb 2020 18:22:10 +0000
-Message-Id: <20200227182210.89512-14-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200227182210.89512-1-andre.przywara@arm.com>
-References: <20200227182210.89512-1-andre.przywara@arm.com>
+        id S1730828AbgB0SYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 13:24:02 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59076 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730931AbgB0SWq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 13:22:46 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200227182245euoutp02e1274d10818dfc9fc5f1329b87971828~3VXdV13H70820908209euoutp02P
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 18:22:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200227182245euoutp02e1274d10818dfc9fc5f1329b87971828~3VXdV13H70820908209euoutp02P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1582827765;
+        bh=cJKTgNSJbDoQZHyeL1x+FdaJUqVKgMmO2qQKsp7fgTM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aqC01Nj668ZWukuVExCIKyrDN7eWGXlJqSaAuMJyN49ollKcxbWgNqMWpdxXlbl6g
+         /YwjJRjuSM2ku9Z8szk57Mzh6KGFSaLOJwv/4fo2AVsHCop7HOFYP9f241iLVpw7lw
+         XzowZZQ4gmV3NyYLvxcjZ3gt1LfeAd8E+MneVuWk=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200227182244eucas1p18fab46c4dfe4899bf4b895e11ff29083~3VXdAa7CG1308213082eucas1p16;
+        Thu, 27 Feb 2020 18:22:44 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 58.05.60698.4F8085E5; Thu, 27
+        Feb 2020 18:22:44 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200227182244eucas1p1e8e9e9567acda2a8cd02844685b6b12a~3VXcgCyUH0931609316eucas1p1C;
+        Thu, 27 Feb 2020 18:22:44 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200227182244eusmtrp28c92a4b30c01416be6d4fb4a1f6e0e11~3VXcfhAqy1813218132eusmtrp2o;
+        Thu, 27 Feb 2020 18:22:44 +0000 (GMT)
+X-AuditID: cbfec7f5-a29ff7000001ed1a-ff-5e5808f42d1a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 7F.B1.08375.4F8085E5; Thu, 27
+        Feb 2020 18:22:44 +0000 (GMT)
+Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200227182243eusmtip241b5fea44ecd07f9f482402b97e2697b~3VXb-FQpT1203512035eusmtip2O;
+        Thu, 27 Feb 2020 18:22:43 +0000 (GMT)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com
+Subject: [PATCH v3 11/27] ata: fix CodingStyle issues in PATA timings code
+Date:   Thu, 27 Feb 2020 19:22:10 +0100
+Message-Id: <20200227182226.19188-12-b.zolnierkie@samsung.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200227182226.19188-1-b.zolnierkie@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djP87pfOCLiDF42aVisvtvPZrFxxnpW
+        i2e39jJZrFx9lMni2I5HTBaXd81hs1j+ZC2zxdzW6ewOHB47Z91l97h8ttTj0OEORo+Trd9Y
+        PHbfbGDz6NuyitHj8ya5APYoLpuU1JzMstQifbsErowLj18wFXyWrlh7fg1LA+MJsS5GTg4J
+        AROJy89fMHYxcnEICaxglDj06wQzhPOFUeLYgRNsEM5nRom2lp2sMC2NzxdBJZYzSlzY1MwG
+        19J1dDJYFZuAlcTE9lWMILaIgIJEz++VYEXMAu8ZJVZM2ssCkhAW8JI4MncSO4jNIqAq8Xrp
+        aWYQm1fATmLHhfWMEOvkJbZ++wQ2lBMofqNvOxtEjaDEyZlPwOYwA9U0b50NdriEwCp2ie6D
+        R4AcDiDHReLWpnyIOcISr45vYYewZST+75zPBFG/jlHib8cLqObtjBLLJ/9jg6iylrhz7hcb
+        yCBmAU2J9bv0IcKOEq2TZjFBzOeTuPFWEOIGPolJ26ZDreWV6GgTgqhWk9iwbAMbzNqunSuZ
+        IWwPia3r1jFPYFScheSbWUi+mYWwdwEj8ypG8dTS4tz01GLjvNRyveLE3OLSvHS95PzcTYzA
+        VHT63/GvOxj3/Uk6xCjAwajEw7tgR3icEGtiWXFl7iFGCQ5mJRHejV9D44R4UxIrq1KL8uOL
+        SnNSiw8xSnOwKInzGi96GSskkJ5YkpqdmlqQWgSTZeLglGpgXK3P4S0W1bc354NYX+zVysUN
+        F8J3921yP6Z3RivbWP+4isfPZfaa0b/E2W237Y774xv6eve3xgMtV8KeP9flFXyyKPvkQe7G
+        hSY7r8d+qZbs3ttV92LC2q45thbutstfRvP+my4e+dq+puqHnt0Km5U75m999+nJwjc3Hhnd
+        XvNq8X2Jpkne25VYijMSDbWYi4oTAUwabUlBAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xe7pfOCLiDO5cZLZYfbefzWLjjPWs
+        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
+        eOy+2cDm0bdlFaPH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6
+        djYpqTmZZalF+nYJehkXHr9gKvgsXbH2/BqWBsYTYl2MnBwSAiYSjc8XsXUxcnEICSxllJjw
+        oYWxi5EDKCEjcXx9GUSNsMSfa11QNZ8YJb7sv8MMkmATsJKY2L6KEcQWEVCQ6Pm9EqyIWeAr
+        o8TSSd1gRcICXhJH5k5iB7FZBFQlXi89DRbnFbCT2HFhPSPEBnmJrd8+sYLYnEDxG33b2UBs
+        IQFbia6Op4wQ9YISJ2c+YQGxmYHqm7fOZp7AKDALSWoWktQCRqZVjCKppcW56bnFhnrFibnF
+        pXnpesn5uZsYgRGz7djPzTsYL20MPsQowMGoxMO7YEd4nBBrYllxZe4hRgkOZiUR3o1fQ+OE
+        eFMSK6tSi/Lji0pzUosPMZoCPTGRWUo0OR8YzXkl8YamhuYWlobmxubGZhZK4rwdAgdjhATS
+        E0tSs1NTC1KLYPqYODilGhh7Z+0+9m6T1wrHPZq2k69P9S1/uP/aeQGnxFSWb0cdnz+tK1jz
+        fv2if4lXvJP51vdem1DJblrazXxDZ8Y1CZ8L7OZ+8wIub/z8lWvBrhC1uTk250wuaKmwicvn
+        Ppe6svu5VQ3f0Wi+Ktk/Z/Vj5+ZJiJ8+75YxPyLGI7l49eZ/izwuRf09IPZCiaU4I9FQi7mo
+        OBEAbr2rsK4CAAA=
+X-CMS-MailID: 20200227182244eucas1p1e8e9e9567acda2a8cd02844685b6b12a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200227182244eucas1p1e8e9e9567acda2a8cd02844685b6b12a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200227182244eucas1p1e8e9e9567acda2a8cd02844685b6b12a
+References: <20200227182226.19188-1-b.zolnierkie@samsung.com>
+        <CGME20200227182244eucas1p1e8e9e9567acda2a8cd02844685b6b12a@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob sees little point in maintaining the Calxeda architecture (early ARM
-32-bit server) anymore.
-Since I have a machine sitting under my desk, change the maintainership
-to not lose support for that platform.
+* fix the overly long line in ata_timing_quantize()
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+* use standard kernel CodingStyle in ata_timing_merge()
+
+* do not use assignment in if condition in ata_timing_compute()
+
+* fix non-standard comment style in ata_timing_compute()
+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ata/libata-core.c | 42 +++++++++++++++++++++++++--------------
+ 1 file changed, 27 insertions(+), 15 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c3800f3b5e6e..f488906a63d7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1605,7 +1605,7 @@ F:	Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
- F:	Documentation/devicetree/bindings/pinctrl/bitmain,bm1880-pinctrl.txt
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 2ec1a49388ee..acdcedcb3d10 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -3251,7 +3251,8 @@ static const struct ata_timing ata_timing[] = {
+ #define ENOUGH(v, unit)		(((v)-1)/(unit)+1)
+ #define EZ(v, unit)		((v)?ENOUGH(((v) * 1000), unit):0)
  
- ARM/CALXEDA HIGHBANK ARCHITECTURE
--M:	Rob Herring <robh@kernel.org>
-+M:	Andre Przywara <andre.przywara@arm.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	arch/arm/mach-highbank/
+-static void ata_timing_quantize(const struct ata_timing *t, struct ata_timing *q, int T, int UT)
++static void ata_timing_quantize(const struct ata_timing *t,
++				struct ata_timing *q, int T, int UT)
+ {
+ 	q->setup	= EZ(t->setup,       T);
+ 	q->act8b	= EZ(t->act8b,       T);
+@@ -3267,15 +3268,24 @@ static void ata_timing_quantize(const struct ata_timing *t, struct ata_timing *q
+ void ata_timing_merge(const struct ata_timing *a, const struct ata_timing *b,
+ 		      struct ata_timing *m, unsigned int what)
+ {
+-	if (what & ATA_TIMING_SETUP  ) m->setup   = max(a->setup,   b->setup);
+-	if (what & ATA_TIMING_ACT8B  ) m->act8b   = max(a->act8b,   b->act8b);
+-	if (what & ATA_TIMING_REC8B  ) m->rec8b   = max(a->rec8b,   b->rec8b);
+-	if (what & ATA_TIMING_CYC8B  ) m->cyc8b   = max(a->cyc8b,   b->cyc8b);
+-	if (what & ATA_TIMING_ACTIVE ) m->active  = max(a->active,  b->active);
+-	if (what & ATA_TIMING_RECOVER) m->recover = max(a->recover, b->recover);
+-	if (what & ATA_TIMING_DMACK_HOLD) m->dmack_hold = max(a->dmack_hold, b->dmack_hold);
+-	if (what & ATA_TIMING_CYCLE  ) m->cycle   = max(a->cycle,   b->cycle);
+-	if (what & ATA_TIMING_UDMA   ) m->udma    = max(a->udma,    b->udma);
++	if (what & ATA_TIMING_SETUP)
++		m->setup = max(a->setup, b->setup);
++	if (what & ATA_TIMING_ACT8B)
++		m->act8b = max(a->act8b, b->act8b);
++	if (what & ATA_TIMING_REC8B)
++		m->rec8b = max(a->rec8b, b->rec8b);
++	if (what & ATA_TIMING_CYC8B)
++		m->cyc8b = max(a->cyc8b, b->cyc8b);
++	if (what & ATA_TIMING_ACTIVE)
++		m->active = max(a->active, b->active);
++	if (what & ATA_TIMING_RECOVER)
++		m->recover = max(a->recover, b->recover);
++	if (what & ATA_TIMING_DMACK_HOLD)
++		m->dmack_hold = max(a->dmack_hold, b->dmack_hold);
++	if (what & ATA_TIMING_CYCLE)
++		m->cycle = max(a->cycle, b->cycle);
++	if (what & ATA_TIMING_UDMA)
++		m->udma = max(a->udma, b->udma);
+ }
+ EXPORT_SYMBOL_GPL(ata_timing_merge);
+ 
+@@ -3306,8 +3316,8 @@ int ata_timing_compute(struct ata_device *adev, unsigned short speed,
+ 	/*
+ 	 * Find the mode.
+ 	 */
+-
+-	if (!(s = ata_timing_find_mode(speed)))
++	s = ata_timing_find_mode(speed);
++	if (!s)
+ 		return -EINVAL;
+ 
+ 	memcpy(t, s, sizeof(*s));
+@@ -3363,9 +3373,11 @@ int ata_timing_compute(struct ata_device *adev, unsigned short speed,
+ 		t->recover = t->cycle - t->active;
+ 	}
+ 
+-	/* In a few cases quantisation may produce enough errors to
+-	   leave t->cycle too low for the sum of active and recovery
+-	   if so we must correct this */
++	/*
++	 * In a few cases quantisation may produce enough errors to
++	 * leave t->cycle too low for the sum of active and recovery
++	 * if so we must correct this.
++	 */
+ 	if (t->active + t->recover > t->cycle)
+ 		t->cycle = t->active + t->recover;
+ 
 -- 
-2.17.1
+2.24.1
 
