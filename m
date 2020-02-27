@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7ACA1719B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E44D1718E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:40:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730675AbgB0NrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:47:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43614 "EHLO mail.kernel.org"
+        id S1729153AbgB0Nk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:40:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729643AbgB0NrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:47:13 -0500
+        id S1729237AbgB0NkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:40:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10DA620578;
-        Thu, 27 Feb 2020 13:47:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C62202469F;
+        Thu, 27 Feb 2020 13:40:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582811232;
-        bh=w61Y2oCtqAzKFgj+H/+9L2qLOJTi5QsYYyj1weMQ/0I=;
+        s=default; t=1582810824;
+        bh=Fdvfi4paN8M++frGGh3vppvLXjGVFgIWMTLg4XpW7nc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1KBq3IlDVqkdd3D6s3OOI8s285Y4t9SYl73fNMqlFRvRTVxy8Pn1gwXoc/7pPgMhP
-         mAU6rPsKApGgkz35FvcsEkk86nYWSfa63AVEwbhqh7eEBt8HxqBoGmtsSBwvLQO3mE
-         5nFw5Vl4pWgoC9qKxVGaEZjfKj3m0ddmdGqT4i6c=
+        b=UGw24q+8VDxikOdWepWwKAm2za6HH/Zyla4QYalixGG4yIW0u9Hl6IjpfDaZOnK8V
+         rJtPjf/cCqHWNecrtV9i1b/+FdI/5SdpixTIwAbwlmbM/xAj5KfZkA/XL4zGeOC6FT
+         ZR4KMREUEjQoh8i/ACldSbDwxsFBjw/OkzFK4fMs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phong Tran <tranmanphong@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 054/165] ipw2x00: Fix -Wcast-function-type
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 4.4 012/113] s390/time: Fix clk type in get_tod_clock
 Date:   Thu, 27 Feb 2020 14:35:28 +0100
-Message-Id: <20200227132239.245351425@linuxfoundation.org>
+Message-Id: <20200227132213.705359607@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200227132230.840899170@linuxfoundation.org>
-References: <20200227132230.840899170@linuxfoundation.org>
+In-Reply-To: <20200227132211.791484803@linuxfoundation.org>
+References: <20200227132211.791484803@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,81 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phong Tran <tranmanphong@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit ebd77feb27e91bb5fe35a7818b7c13ea7435fb98 ]
+commit 0f8a206df7c920150d2aa45574fba0ab7ff6be4f upstream.
 
-correct usage prototype of callback in tasklet_init().
-Report by https://github.com/KSPP/linux/issues/20
+Clang warns:
 
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+In file included from ../arch/s390/boot/startup.c:3:
+In file included from ../include/linux/elf.h:5:
+In file included from ../arch/s390/include/asm/elf.h:132:
+In file included from ../include/linux/compat.h:10:
+In file included from ../include/linux/time.h:74:
+In file included from ../include/linux/time32.h:13:
+In file included from ../include/linux/timex.h:65:
+../arch/s390/include/asm/timex.h:160:20: warning: passing 'unsigned char
+[16]' to parameter of type 'char *' converts between pointers to integer
+types with different sign [-Wpointer-sign]
+        get_tod_clock_ext(clk);
+                          ^~~
+../arch/s390/include/asm/timex.h:149:44: note: passing argument to
+parameter 'clk' here
+static inline void get_tod_clock_ext(char *clk)
+                                           ^
+
+Change clk's type to just be char so that it matches what happens in
+get_tod_clock_ext.
+
+Fixes: 57b28f66316d ("[S390] s390_hypfs: Add new attributes")
+Link: https://github.com/ClangBuiltLinux/linux/issues/861
+Link: http://lkml.kernel.org/r/20200208140858.47970-1-natechancellor@gmail.com
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/wireless/intel/ipw2x00/ipw2100.c | 7 ++++---
- drivers/net/wireless/intel/ipw2x00/ipw2200.c | 5 +++--
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ arch/s390/include/asm/timex.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-index bfa542c8d6f1a..86c84b11218db 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-@@ -3220,8 +3220,9 @@ static void ipw2100_tx_send_data(struct ipw2100_priv *priv)
- 	}
- }
+--- a/arch/s390/include/asm/timex.h
++++ b/arch/s390/include/asm/timex.h
+@@ -82,7 +82,7 @@ static inline void get_tod_clock_ext(cha
  
--static void ipw2100_irq_tasklet(struct ipw2100_priv *priv)
-+static void ipw2100_irq_tasklet(unsigned long data)
+ static inline unsigned long long get_tod_clock(void)
  {
-+	struct ipw2100_priv *priv = (struct ipw2100_priv *)data;
- 	struct net_device *dev = priv->net_dev;
- 	unsigned long flags;
- 	u32 inta, tmp;
-@@ -6029,7 +6030,7 @@ static void ipw2100_rf_kill(struct work_struct *work)
- 	spin_unlock_irqrestore(&priv->low_lock, flags);
- }
+-	unsigned char clk[STORE_CLOCK_EXT_SIZE];
++	char clk[STORE_CLOCK_EXT_SIZE];
  
--static void ipw2100_irq_tasklet(struct ipw2100_priv *priv);
-+static void ipw2100_irq_tasklet(unsigned long data);
- 
- static const struct net_device_ops ipw2100_netdev_ops = {
- 	.ndo_open		= ipw2100_open,
-@@ -6158,7 +6159,7 @@ static struct net_device *ipw2100_alloc_device(struct pci_dev *pci_dev,
- 	INIT_DELAYED_WORK(&priv->rf_kill, ipw2100_rf_kill);
- 	INIT_DELAYED_WORK(&priv->scan_event, ipw2100_scan_event);
- 
--	tasklet_init(&priv->irq_tasklet, (void (*)(unsigned long))
-+	tasklet_init(&priv->irq_tasklet,
- 		     ipw2100_irq_tasklet, (unsigned long)priv);
- 
- 	/* NOTE:  We do not start the deferred work for status checks yet */
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-index bfd68612a535d..48edb2b6eb7d5 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-@@ -1968,8 +1968,9 @@ static void notify_wx_assoc_event(struct ipw_priv *priv)
- 	wireless_send_event(priv->net_dev, SIOCGIWAP, &wrqu, NULL);
- }
- 
--static void ipw_irq_tasklet(struct ipw_priv *priv)
-+static void ipw_irq_tasklet(unsigned long data)
- {
-+	struct ipw_priv *priv = (struct ipw_priv *)data;
- 	u32 inta, inta_mask, handled = 0;
- 	unsigned long flags;
- 	int rc = 0;
-@@ -10705,7 +10706,7 @@ static int ipw_setup_deferred_work(struct ipw_priv *priv)
- 	INIT_WORK(&priv->qos_activate, ipw_bg_qos_activate);
- #endif				/* CONFIG_IPW2200_QOS */
- 
--	tasklet_init(&priv->irq_tasklet, (void (*)(unsigned long))
-+	tasklet_init(&priv->irq_tasklet,
- 		     ipw_irq_tasklet, (unsigned long)priv);
- 
- 	return ret;
--- 
-2.20.1
-
+ 	get_tod_clock_ext(clk);
+ 	return *((unsigned long long *)&clk[1]);
 
 
