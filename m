@@ -2,117 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28175171851
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:12:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59687171837
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 14:07:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbgB0NMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 08:12:38 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41870 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729099AbgB0NMi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 08:12:38 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01RDCWwU125508;
-        Thu, 27 Feb 2020 07:12:32 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582809152;
-        bh=pLxe6jHwdRx27qSzO8jEP+RGMhYtXLcs0clPO3xJpWE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=L7d9ErvDbnBViQ0cdy9mUdyVhtaAcNBwsfXvFE9UX+6mkLqgNTXlckwj/7i18P2BC
-         TWCsVd7eIvAbpmZ1rKvCMeofyBv9G0dNAYKNo5gDpyt2vP3bGD8FLutzWrq/StAWTd
-         08SK+bIBytRtDmX+sXtWjeFDO3n6BSj+suH0qAfM=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01RDCWZ2046353;
-        Thu, 27 Feb 2020 07:12:32 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 27
- Feb 2020 07:12:31 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 27 Feb 2020 07:12:31 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01RDCVJk026074;
-        Thu, 27 Feb 2020 07:12:31 -0600
-Subject: Re: [RESEND PATCH v17 00/17] Multi Color LED Framework
-To:     Greg KH <gregkh@linuxfoundation.org>, Pavel Machek <pavel@denx.de>
-CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dmurphy@ti.com>
-References: <20200127150032.31350-1-dmurphy@ti.com>
- <42d9687b-b488-22cf-0e9a-ff635b2094e3@ti.com> <20200225101940.GB16252@amd>
- <be76fdac-9d32-b9b2-c01d-3aa315b14463@gmail.com>
- <20200226125903.GA2800@duo.ucw.cz>
- <20f6bdd5-e899-aead-8c35-1c3a3d09145f@gmail.com>
- <20200227105808.GA27003@duo.ucw.cz> <20200227124329.GA994747@kroah.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <4c273c06-5024-b2d4-c656-b165015090be@ti.com>
-Date:   Thu, 27 Feb 2020 07:07:17 -0600
+        id S1729100AbgB0NH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 08:07:26 -0500
+Received: from know-smtprelay-omc-7.server.virginmedia.net ([80.0.253.71]:50503
+        "EHLO know-smtprelay-omc-7.server.virginmedia.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729032AbgB0NH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 08:07:26 -0500
+Received: from [192.168.10.214] ([82.47.85.138])
+        by cmsmtp with ESMTPA
+        id 7Isujod9hIUP97IsujMkW8; Thu, 27 Feb 2020 13:07:24 +0000
+X-Originating-IP: [82.47.85.138]
+X-Authenticated-User: sboyce@blueyonder.co.uk
+X-Spam: 0
+X-Authority: v=2.3 cv=Is0wjo3g c=1 sm=1 tr=0 a=mctQX8G8JfdR+oUIdXtpKQ==:117
+ a=mctQX8G8JfdR+oUIdXtpKQ==:17 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19
+ a=N659UExz7-8A:10 a=x7bEGLp0ZPQA:10 a=a5Gf7U6LAAAA:8 a=VwQbUJbxAAAA:8
+ a=bgUkVmbCD3rZoZhqrOMA:9 a=pILNOxqGKmIA:10 a=VWYBCMy2-3DvUfgBPAUA:22
+ a=AjGcO6oz07-iQ99wixmX:22
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=blueyonder.co.uk;
+        s=meg.feb2017; t=1582808844;
+        bh=sUjdiP+ucQtz9xl9wFJ8SnKzMqFUNzNvxRty61OE/Dk=;
+        h=From:Subject:Reply-To:To:Cc:References:Date:In-Reply-To;
+        b=SAEVmmKlvVxLVvduz/ztfiurBZaEIe4I4aaMKPCTq7GYjxf2yARO6lvOs+bG37Els
+         Iz8N2h715ReD3APhpS0nH2cKIuMb/hr4In0co/4zeaf2wjRyGSvPEPylUCvUGJyvOV
+         NIPAVMWCkBnk+ULj/SNUJNFdhJFR8EBp9pv+ViRVUhOdvTVN0fLfczr9Ell4XXs2ji
+         pSdxBYxZjpCvJSmXgWUSanwvvpZsbXtWhHqqDMJrv13Xb4oyj2N14abv51PBSeN5Tw
+         OoFufAHZoSMLPly59lVYGma628Zt7Qu3+mLlBg6TOzBs8Tu27iN03JKAS7sYWXGLXX
+         jXAyisMrhldBQ==
+From:   Sid Boyce <sboyce@blueyonder.co.uk>
+Subject: Re: 5.6-rc3 nouveau failure, 5.6-rc2 OK
+Reply-To: sboyce@blueyonder.co.uk
+To:     Gabriel C <nix.or.die@gmail.com>
+Cc:     LKML Mailing List <linux-kernel@vger.kernel.org>
+References: <ae2dc143-8d38-1942-9ebd-87c9c9c09960@blueyonder.co.uk>
+ <CAEJqkgiXE-ye_P99FGcFM8j7Qqd3npKM9kY44MEnxGZF2_Hntw@mail.gmail.com>
+Organization: blueyonder.co.uk
+Message-ID: <1fa89e07-79e4-4e1e-abc1-ab5563ca00e0@blueyonder.co.uk>
+Date:   Thu, 27 Feb 2020 13:07:24 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200227124329.GA994747@kroah.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CAEJqkgiXE-ye_P99FGcFM8j7Qqd3npKM9kY44MEnxGZF2_Hntw@mail.gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-CMAE-Envelope: MS4wfHebStX2K42/+5OXKzCWfImscIBLuBTVcR57kbd6OrBx766jIJZXACl+lPU+noyPTujomO9lAjhbxGpDAftwhqxB+55oNyPmTCustgLKtbVfFwwvAcnG
+ Pp3N8LpxI34LweU3i9k+T2jXV2nyYn2s/AbBt4k7KYtplY2CR+A7fVQg603HdSI84D6FdUTVD2PUkkvVWL0jOg0JYlPlq/FhO9SsU3V095mZLndABkneilRe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pavel
+Thanks Gabriel.
+The new firmware didn't fix it.
+Regards
+Sid.
 
-On 2/27/20 6:43 AM, Greg KH wrote:
-> On Thu, Feb 27, 2020 at 11:58:08AM +0100, Pavel Machek wrote:
->> Hi, Jacek!
->>
->> (and thanks for doing this).
->>
->>> We have here long lasting discussion related to LED multicolor class
->>> sysfs interface design. We went through several iterations and worked
->>> out the solution with individual file per each color sub-LED in the
->>> color directory as shown below:
->>>
->>> /sys/class/leds/<led>/colors/<color>_intensity
->>>
->>> This is in line with one-value-per-file sysfs rule, that is being
->>> frequently highlighted, and we even had not so long ago a patch
->>> for led cpu trigger solving the problem caused by this rule not
->>> being adhered to.
->> Yep. One of the problems is that it is nice to change all the hardware
->> channels at once to produce color (it is often on i2c -- and slow), so
->> current proposals use "interesting" kind of latching.
->>
->>> Now we have the voice below bringing to attention another caveat
->>> from sysfs documentation:
->>>
->>> "it is socially acceptable to express an array of values of the same
->>> type"
->>>
->>> and proposing the interface in the form of two files:
->>>
->>> channel_intensity (file containing array of u32's)
->>> channel_names (usually containing "red green blue")
->> And thus I want to have it in one file, so it is naturaly atomic. RGB
->> leds with 3 channels are common; I have not user yet, but there are
->> RGBW with 4 channels (and some more exotic stuff). I don't expect to
->> have more than 5 channels.
-
-This is not an accurate statement.  Right now a user can have up to 8 
-channels to cover all the LEDs defined in the LED core
-
-And if the led_colors array expands then this array can expand.
-
-We have no control on how many entries the user will put in their DT so 
-again this number is completely arbitrary.
-
-Dan
-
-> Writing 3 or 4 or 5 numbers all at once in a single sysfs file to
-> represent a single output should be fine.
-> thanks,
+On 27/02/2020 03:14, Gabriel C wrote:
+> Am Do., 27. Feb. 2020 um 01:24 Uhr schrieb Sid Boyce <sboyce@blueyonder.co.uk>:
 >
-> greg k-h
+> Hello,
+>
+>> [94.455712] [T411] nouveau 0000:07:00.0 disp ctor failed, -12
+>>
+>> Welcome to openSUSE Tumbleweed 20200224 - Kernel 5.6.0-rc3 (tty1)
+>>
+>> ens3s0: 192.168.10.214 .......
+>>
+>> login:
+>>
+>>
+>> I can login here but X does not start -- lspci
+>>
+>> 07:00.0 VGA compatible controller: NVIDIA Corporation TU117 [GeForce GTX
+>> 1650] (rev a1)
+>>
+>> from dmesg:-
+>>
+>> [Wed Feb 26 22:42:39 2020] nouveau 0000:07:00.0: NVIDIA TU117 (167000a1)
+>> [Wed Feb 26 22:42:39 2020] nouveau 0000:07:00.0: bios: version
+>> 90.17.2a.00.39
+>> [Wed Feb 26 22:44:12 2020] nouveau 0000:07:00.0: disp ctor failed, -12
+>> [Wed Feb 26 22:44:12 2020] nouveau: probe of 0000:07:00.0 failed with
+>> error -12
+>>
+> *Warning* I have no idea bout Nvidia GPU HW :-). I saw this commit in
+> linux-firmware git added 8 days ago:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=2277987a593d54c1e922a9f25445802071015f42
+>
+> Maybe you just need to update your firmware package.
+>
+> BR,
+>
+> Gabriel C.
+
+
+-- 
+Sid Boyce ... Hamradio License G3VBV, Licensed Private Pilot
+Emeritus IBM/Amdahl Mainframes and Sun/Fujitsu Servers Tech Support
+Senior Staff Specialist, Cricket Coach
+Microsoft Windows Free Zone - Linux used for all Computing Tasks
+
