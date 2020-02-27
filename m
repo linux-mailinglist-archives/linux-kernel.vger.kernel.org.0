@@ -2,89 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E62617293B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 21:07:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E65A017291D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2020 21:01:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730211AbgB0UGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 15:06:44 -0500
-Received: from ms11p00im-qufo17281901.me.com ([17.58.38.56]:60662 "EHLO
-        ms11p00im-qufo17281901.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730012AbgB0UGo (ORCPT
+        id S1730702AbgB0UA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 15:00:58 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39024 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbgB0UA6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 15:06:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1582833629; bh=JYNKugIJWyzo77R6VplipDGlj2abNXrkHHhg21IHtgk=;
-        h=Date:From:To:Subject:Message-ID:Content-Type;
-        b=Q3PvQfjHaFzRx7qDnYCCmQSxzUe5cmEIyzMorLqIyl0/8ieDpqq/7dHbhm+cJExEG
-         hPNBizwo/fGX/FHJWDl6edUu6dnJZE6zJ4UXoNda2AQUg16amfxJ0y9OxWs+PDLFTw
-         eUoOIWFrFXFqSewHjmbn6LsyS27v70Y6sWzgOD0DSosJuSbIOei0UEKntBPBx7J694
-         fTyZzmspe7dnkEvNy1XAcCAeQVWzLmSQXHoEC3ZBKXbHC10HyQwI/irEdbDEX5tOFI
-         ZT6xbxa23DakzkgDbGEXQMmHroTM/yuRLgAf+iVWWYSYCrVwJuQ3PTgOauf2hUxclx
-         nltACiC8baQSQ==
-Received: from shwetrath.localdomain (unknown [66.199.8.131])
-        by ms11p00im-qufo17281901.me.com (Postfix) with ESMTPSA id ABC7F740439;
-        Thu, 27 Feb 2020 20:00:28 +0000 (UTC)
-Date:   Thu, 27 Feb 2020 15:00:26 -0500
-From:   Vijay Thakkar <vijaythakkar@me.com>
-To:     Kim Phillips <kim.phillips@amd.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
-        Jon Grimm <jon.grimm@amd.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] perf vendor events amd: update Zen1 events to V2
-Message-ID: <20200227200026.GA8493@shwetrath.localdomain>
-References: <20200225192815.50388-1-vijaythakkar@me.com>
- <20200225192815.50388-4-vijaythakkar@me.com>
- <73b5b731-9597-1243-485a-788437500c7a@amd.com>
+        Thu, 27 Feb 2020 15:00:58 -0500
+Received: by mail-lf1-f65.google.com with SMTP id n30so337974lfh.6
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 12:00:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oQC5XL/giSLKULG9Wvy81a1UMPlWPAivXJ99IMsyzPk=;
+        b=HtiHDXlG0JR18/QlUwHqgHaaMmRjCfGt3buf0uUSKYgBFfx+4J7TF6G+NySGsdnlaH
+         B4rOhvT6Ogi7oPnQxzuHB2lE5g+WnqVnP0+hnLDPqz7duPDZnUrbbdNewWrp/tgU8Cat
+         LnVR7BaEsyOiMmriMtKa0e+wMcEpK3a2vIhlQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oQC5XL/giSLKULG9Wvy81a1UMPlWPAivXJ99IMsyzPk=;
+        b=PURcCXUASgpZlgfc37IPcUe9k/KqUp8frkjLWDCvBv8thn3OTkc1Uk2bPmJkO3mHLr
+         P3AuVncaw9iBF5iKf2VMIdrL6S7ZSDQ/1PiMTiDDNjzWWl6c8RWsRA3Mk/kicIFEquLq
+         e4g3VBx3EGp4JGZXd14mOWCESbsExDW+s7OFw2QumvxLr7C0apEciOeWVd7R4+1XXP7A
+         xXVVQESsVhld+cOVE4NgDVL65H3Ow6zkzpJjooz8w15qmuEQBU7fqGmi7CKQ2uVy/HVp
+         yw4LB5g+b+JxbWrO3x0AVtI1cSCdl8nM5MRiXbgi0CmjoQKcLGBamoPyKei55oL+5ciq
+         FpXQ==
+X-Gm-Message-State: ANhLgQ03k3iv4NpJI0EOFuzR0WNgafGUptH7ia9XY7xWWoedyuXyWNHD
+        +/XSEulVZcioVuQR7yoqvhGt17xJSWE=
+X-Google-Smtp-Source: ADFU+vsWdN7xVNGRomzy8BSzp/nTS5EU8vlTtaiu2/AWi5Kishzy/AuHdbWlqmbOyB3lQbp3Hxml3A==
+X-Received: by 2002:ac2:52a2:: with SMTP id r2mr542174lfm.33.1582833654685;
+        Thu, 27 Feb 2020 12:00:54 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id t1sm3871358lji.98.2020.02.27.12.00.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2020 12:00:53 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id z9so355317lfa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 12:00:53 -0800 (PST)
+X-Received: by 2002:a19:c106:: with SMTP id r6mr603675lff.10.1582833653416;
+ Thu, 27 Feb 2020 12:00:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <73b5b731-9597-1243-485a-788437500c7a@amd.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-02-27_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-2002270137
+References: <20200223011154.GY23230@ZenIV.linux.org.uk> <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
+ <20200223011626.4103706-2-viro@ZenIV.linux.org.uk> <CAHk-=wjE0ey=qg2-5+OHg4kVub4x3XLnatcZj5KfU03dd8kZ0A@mail.gmail.com>
+ <20200227194312.GD23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200227194312.GD23230@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 27 Feb 2020 12:00:36 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wje=1xYx0N6ERSZfR8TgjSOY_PA2DSCGbE40GNwOeeF4w@mail.gmail.com>
+Message-ID: <CAHk-=wje=1xYx0N6ERSZfR8TgjSOY_PA2DSCGbE40GNwOeeF4w@mail.gmail.com>
+Subject: Re: [RFC][PATCH v2 02/34] fix automount/automount race properly
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> OSRR for AMD Family 17h processors, Models 00h-2Fh, 56255 Rev 3.03 - July, 2018
-I have included this for v3 that I will submit later, including all the
-changes for the FPU counters. Sorry, I messed up copy-pasting the text
-and forgot to change the trailing pipe number.
-> and their counts don't seem to match up very well when running
-> various workloads.  The microarchitecture is likely to have changed
-> in this area from families prior to 17h, so a MAB alloc can likely
-> count different events than what is presumed here: a Data cache
-> load/store/prefetch miss.
-> 
-> I think it's safer to just leave the PPR text "LS MAB Allocates
-> by Type" as-is, instead of assuming they are L1 load/store misses.
-> What do you think?
+On Thu, Feb 27, 2020 at 11:43 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Umm...  A bit of reordering in the beginning eliminates discard1, suggesting
+> s/discard2/discard_locked/...  Incremental would be
 
-I did some checking accross PPRs, and this counter seems to have changed
-names multiple times throughout the PPR revisions. 
+Ack, thanks.
 
-Zen1 PPR (54945 Rev 1.14 - April 15, 2017) lists counter called "LsMabAllocPipe"
-with 5 subcounters that have different names compared to ones we see in
-the mainline right now. PPRs for stepping B2
-onwards change this to the 3 sub-counter and primary counter name
-we see right now. This public description still changes accross various
-PPR revisions, which is why I had this set to what it was. The lastest
-PPR I can find is indeed lists it as "LS MAB Allocates by Type";
-I will change it to that with the fuffix of tehe sub-counter name. Since
-the same counter is in Zen2 as well, I will make the same changes there
-too.
-
-Let me know if this sounds good to you!
-Best,
-Vijay
-
+          Linus
