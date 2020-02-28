@@ -2,70 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23DB6173836
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:23:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B30F17383C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:25:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbgB1NXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 08:23:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40520 "EHLO mail.kernel.org"
+        id S1726378AbgB1NY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:24:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbgB1NXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 08:23:15 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        id S1725876AbgB1NY6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 08:24:58 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 552DC2469D;
-        Fri, 28 Feb 2020 13:23:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C6552469D;
+        Fri, 28 Feb 2020 13:24:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582896195;
-        bh=/xfaJMoeMDPFtvDaD6zvshgBCk2MToM3z6YB0J1XM6I=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=wUVgji7WOyczOtZlOltRQm/c7ah9cFPS6gN9u6p9VC9BlGbdKhavlPFqh9Ia8D2Ux
-         1PMqjFTDjibH5oakjj6y+2efFfr+n2pWS8KH9W5mHqUwg+OMQeUre1/Hz1E3bGUy1I
-         08CJRfcTDdkPP9gTBWOsUDfqRq/ymtjtVuAdO9OY=
-Date:   Fri, 28 Feb 2020 22:23:11 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [v2 0/1] Documentation: bootconfig: Documentation updates
-Message-Id: <20200228222311.f5b9448027031b16a3be372a@kernel.org>
-In-Reply-To: <957cef56-04b0-3889-6c95-a8ed7606b68d@web.de>
-References: <158287861133.18632.12035327305997207220.stgit@devnote2>
-        <957cef56-04b0-3889-6c95-a8ed7606b68d@web.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        s=default; t=1582896297;
+        bh=ug9eHs2EpiK+YBjFQf4RcFDG3qY+jtqjLKWWo58n9r4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r3TUEONCz3gkyWpHTIdd0sj9qIOem8qYcw1M2Iez10jnw3egXLaTv4VJLyoEGz7EA
+         ToM9mi43y/+IG6vTVAzS3z8G5Dyim26HaMGazS14N6Gxs7SBEAiILyGkYMo5fi4qER
+         S06lDLphyCAtcmizNuUm7WA3Iwv2p5sRYnxYngDU=
+Date:   Fri, 28 Feb 2020 14:24:55 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Pavel Machek <pavel@denx.de>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Miles Chen <miles.chen@mediatek.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 60/97] lib/stackdepot: Fix outdated comments
+Message-ID: <20200228132455.GA3021902@kroah.com>
+References: <20200227132214.553656188@linuxfoundation.org>
+ <20200227132224.337663006@linuxfoundation.org>
+ <20200228130532.GA2979@duo.ucw.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200228130532.GA2979@duo.ucw.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Feb 2020 10:00:55 +0100
-Markus Elfring <Markus.Elfring@web.de> wrote:
-
-> > I decided to drop EBNF (extended Backus–Naur form) patch
-> > since the ISO/IEC 14977 EBNF seems not carefully defined
+On Fri, Feb 28, 2020 at 02:05:33PM +0100, Pavel Machek wrote:
+> Hi!
 > 
-> Significant efforts happened also for this standard.
-> Does its revision refer still to the year 1996?
+> > [ Upstream commit ee050dc83bc326ad5ef8ee93bca344819371e7a5 ]
+> > 
+> > Replace "depot_save_stack" with "stack_depot_save" in code comments because
+> > depot_save_stack() was replaced in commit c0cfc337264c ("lib/stackdepot:
+> > Provide functions which operate on plain storage arrays") and removed in
+> > commit 56d8f079c51a ("lib/stackdepot: Remove obsolete functions")
 > 
+> This is wrong.
+> 
+> > +++ b/lib/stackdepot.c
+> > @@ -96,7 +96,7 @@ static bool init_stack_slab(void **prealloc)
+> >  		stack_slabs[depot_index + 1] = *prealloc;
+> >  		/*
+> >  		 * This smp_store_release pairs with smp_load_acquire() from
+> > -		 * |next_slab_inited| above and in depot_save_stack().
+> > +		 * |next_slab_inited| above and in stack_depot_save().
+> >  		 */
+> >  		smp_store_release(&next_slab_inited, 1);
+> >  	}
+> 
+> May have been outdated for mainline, but they are actually okay for
+> 4.19.
 
-Didn't you read the article I shared? I actually wrote up the EBNF
-(ISO/IEC 14977) that was a good pazzle, but just a toy. I found
-no one use it to define their data format, according to the
-article, including ISO itself (lol!) and there are many local
-extension, including W3C EBNF, and those say "I'm EBNF".
-Well, to say the least, I feel it is quite confused.
+Good catch, I'll go drop this from the stable queues (4.14, 4.9, and 4.19).
 
-So, if you are interested in it, I don't stop you to write it up.
-I just keep away from it.
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
-
+greg k-h
