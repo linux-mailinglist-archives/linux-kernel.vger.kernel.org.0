@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DD8A17395B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:07:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34BE0173955
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbgB1OBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 09:01:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58800 "EHLO mail.kernel.org"
+        id S1727491AbgB1OB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 09:01:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727096AbgB1OBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 09:01:19 -0500
+        id S1727047AbgB1OBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 09:01:23 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47478246B8;
-        Fri, 28 Feb 2020 14:01:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B5E7246B7;
+        Fri, 28 Feb 2020 14:01:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582898478;
-        bh=uML8ZskUBMFCZ5RLaVNUAmEeKkTZGjRYfta84Wl3xi4=;
+        s=default; t=1582898482;
+        bh=JcULsbmnVERYhdgjnZr0faWiD06SNieNewex/PJgf7E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IFB7M155hX1ifft+4ewm89mxa65+u+yg/HNpF1zh1uMggmri0a3Tpcacabczwt8Wn
-         4pUxlOLtf6EaL1BWZ0gIvj/gUGKQhLDDV821t3BMsClVzxCyqKiTKyE/VVQJekAAHA
-         wu+i/jSa65ndfN6OV5lsC4TlNUl9W1yRgeu2CBHs=
+        b=qmtJJJnWmHGdWLoP4OOjX6wndzoT5iaOFiPNYzwt8ywaTsWBGh0Yi8zFh3D+a8zZl
+         N/YsqKWeYRzR5dWxCDoLKPlCJ8j4bjvF8xkia6uTXNdoazB4gbSW7gSjDE40yNbh4R
+         Ah+p7+g2f+cYiD9X+YjQXb2EPKBiD61S2bUW+gIQ=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -34,9 +34,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Jin Yao <yao.jin@linux.intel.com>,
         Song Liu <songliubraving@fb.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 12/15] perf annotate: Remove privsize from symbol__annotate() args
-Date:   Fri, 28 Feb 2020 11:00:11 -0300
-Message-Id: <20200228140014.1236-13-acme@kernel.org>
+Subject: [PATCH 13/15] perf annotate: Simplify disasm_line allocation and freeing code
+Date:   Fri, 28 Feb 2020 11:00:12 -0300
+Message-Id: <20200228140014.1236-14-acme@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200228140014.1236-1-acme@kernel.org>
 References: <20200228140014.1236-1-acme@kernel.org>
@@ -49,8 +49,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
-privsize is passed as 0 from all the symbol__annotate() callers.
-Remove it from argument list.
+We are allocating disasm_line object in annotation_line__new() instead
+of disasm_line__new(). Similarly annotation_line__delete() is actually
+freeing disasm_line object as well. This complexity is because of
+privsize.  But we don't need privsize anymore so get rid of privsize and
+simplify disasm_line allocation and freeing code.
 
 Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 Acked-by: Jiri Olsa <jolsa@redhat.com>
@@ -58,88 +61,172 @@ Cc: Ian Rogers <irogers@google.com>
 Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Song Liu <songliubraving@fb.com>
-Link: http://lore.kernel.org/lkml/20200204045233.474937-2-ravi.bangoria@linux.ibm.com
+Link: http://lore.kernel.org/lkml/20200204045233.474937-3-ravi.bangoria@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c     | 2 +-
- tools/perf/ui/gtk/annotate.c | 2 +-
- tools/perf/util/annotate.c   | 7 ++++---
- tools/perf/util/annotate.h   | 2 +-
- 4 files changed, 7 insertions(+), 6 deletions(-)
+ tools/perf/util/annotate.c | 86 ++++++++++++++------------------------
+ tools/perf/util/annotate.h |  1 -
+ 2 files changed, 31 insertions(+), 56 deletions(-)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index cc26aeab6a66..f6dd1a63f159 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -143,7 +143,7 @@ static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
- 		return err;
- 	}
- 
--	err = symbol__annotate(&he->ms, evsel, 0, &top->annotation_opts, NULL);
-+	err = symbol__annotate(&he->ms, evsel, &top->annotation_opts, NULL);
- 	if (err == 0) {
- 		top->sym_filter_entry = he;
- 	} else {
-diff --git a/tools/perf/ui/gtk/annotate.c b/tools/perf/ui/gtk/annotate.c
-index 22cc240f7371..35f9641bf670 100644
---- a/tools/perf/ui/gtk/annotate.c
-+++ b/tools/perf/ui/gtk/annotate.c
-@@ -174,7 +174,7 @@ static int symbol__gtk_annotate(struct map_symbol *ms, struct evsel *evsel,
- 	if (ms->map->dso->annotate_warned)
- 		return -1;
- 
--	err = symbol__annotate(ms, evsel, 0, &annotation__default_options, NULL);
-+	err = symbol__annotate(ms, evsel, &annotation__default_options, NULL);
- 	if (err) {
- 		char msg[BUFSIZ];
- 		symbol__strerror_disassemble(ms, err, msg, sizeof(msg));
 diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 3b79da595db6..a76309fcf381 100644
+index a76309fcf381..f11031a40290 100644
 --- a/tools/perf/util/annotate.c
 +++ b/tools/perf/util/annotate.c
-@@ -2149,9 +2149,10 @@ void symbol__calc_percent(struct symbol *sym, struct evsel *evsel)
- 	annotation__calc_percent(notes, evsel, symbol__size(sym));
+@@ -1143,7 +1143,6 @@ static int disasm_line__parse(char *line, const char **namep, char **rawp)
  }
  
--int symbol__annotate(struct map_symbol *ms, struct evsel *evsel, size_t privsize,
-+int symbol__annotate(struct map_symbol *ms, struct evsel *evsel,
+ struct annotate_args {
+-	size_t			 privsize;
+ 	struct arch		*arch;
+ 	struct map_symbol	 ms;
+ 	struct evsel	*evsel;
+@@ -1153,83 +1152,61 @@ struct annotate_args {
+ 	int			 line_nr;
+ };
+ 
+-static void annotation_line__delete(struct annotation_line *al)
++static void annotation_line__init(struct annotation_line *al,
++				  struct annotate_args *args,
++				  int nr)
+ {
+-	void *ptr = (void *) al - al->privsize;
++	al->offset = args->offset;
++	al->line = strdup(args->line);
++	al->line_nr = args->line_nr;
++	al->data_nr = nr;
++}
+ 
++static void annotation_line__exit(struct annotation_line *al)
++{
+ 	free_srcline(al->path);
+ 	zfree(&al->line);
+-	free(ptr);
+ }
+ 
+-/*
+- * Allocating the annotation line data with following
+- * structure:
+- *
+- *    --------------------------------------
+- *    private space | struct annotation_line
+- *    --------------------------------------
+- *
+- * Size of the private space is stored in 'struct annotation_line'.
+- *
+- */
+-static struct annotation_line *
+-annotation_line__new(struct annotate_args *args, size_t privsize)
++static size_t disasm_line_size(int nr)
+ {
+ 	struct annotation_line *al;
+-	struct evsel *evsel = args->evsel;
+-	size_t size = privsize + sizeof(*al);
+-	int nr = 1;
+-
+-	if (perf_evsel__is_group_event(evsel))
+-		nr = evsel->core.nr_members;
+-
+-	size += sizeof(al->data[0]) * nr;
+ 
+-	al = zalloc(size);
+-	if (al) {
+-		al = (void *) al + privsize;
+-		al->privsize   = privsize;
+-		al->offset     = args->offset;
+-		al->line       = strdup(args->line);
+-		al->line_nr    = args->line_nr;
+-		al->data_nr    = nr;
+-	}
+-
+-	return al;
++	return (sizeof(struct disasm_line) + (sizeof(al->data[0]) * nr));
+ }
+ 
+ /*
+  * Allocating the disasm annotation line data with
+  * following structure:
+  *
+- *    ------------------------------------------------------------
+- *    privsize space | struct disasm_line | struct annotation_line
+- *    ------------------------------------------------------------
++ *    -------------------------------------------
++ *    struct disasm_line | struct annotation_line
++ *    -------------------------------------------
+  *
+  * We have 'struct annotation_line' member as last member
+  * of 'struct disasm_line' to have an easy access.
+- *
+  */
+ static struct disasm_line *disasm_line__new(struct annotate_args *args)
+ {
+ 	struct disasm_line *dl = NULL;
+-	struct annotation_line *al;
+-	size_t privsize = args->privsize + offsetof(struct disasm_line, al);
++	int nr = 1;
+ 
+-	al = annotation_line__new(args, privsize);
+-	if (al != NULL) {
+-		dl = disasm_line(al);
++	if (perf_evsel__is_group_event(args->evsel))
++		nr = args->evsel->core.nr_members;
+ 
+-		if (dl->al.line == NULL)
+-			goto out_delete;
++	dl = zalloc(disasm_line_size(nr));
++	if (!dl)
++		return NULL;
+ 
+-		if (args->offset != -1) {
+-			if (disasm_line__parse(dl->al.line, &dl->ins.name, &dl->ops.raw) < 0)
+-				goto out_free_line;
++	annotation_line__init(&dl->al, args, nr);
++	if (dl->al.line == NULL)
++		goto out_delete;
+ 
+-			disasm_line__init_ins(dl, args->arch, &args->ms);
+-		}
++	if (args->offset != -1) {
++		if (disasm_line__parse(dl->al.line, &dl->ins.name, &dl->ops.raw) < 0)
++			goto out_free_line;
++
++		disasm_line__init_ins(dl, args->arch, &args->ms);
+ 	}
+ 
+ 	return dl;
+@@ -1248,7 +1225,8 @@ void disasm_line__free(struct disasm_line *dl)
+ 	else
+ 		ins__delete(&dl->ops);
+ 	zfree(&dl->ins.name);
+-	annotation_line__delete(&dl->al);
++	annotation_line__exit(&dl->al);
++	free(dl);
+ }
+ 
+ int disasm_line__scnprintf(struct disasm_line *dl, char *bf, size_t size, bool raw, int max_ins_name)
+@@ -2152,11 +2130,9 @@ void symbol__calc_percent(struct symbol *sym, struct evsel *evsel)
+ int symbol__annotate(struct map_symbol *ms, struct evsel *evsel,
  		     struct annotation_options *options, struct arch **parch)
  {
-+	size_t privsize = 0;
+-	size_t privsize = 0;
  	struct symbol *sym = ms->sym;
  	struct annotation *notes = symbol__annotation(sym);
  	struct annotate_args args = {
-@@ -2790,7 +2791,7 @@ int symbol__tty_annotate(struct map_symbol *ms, struct evsel *evsel,
- 	struct symbol *sym = ms->sym;
- 	struct rb_root source_line = RB_ROOT;
- 
--	if (symbol__annotate(ms, evsel, 0, opts, NULL) < 0)
-+	if (symbol__annotate(ms, evsel, opts, NULL) < 0)
- 		return -1;
- 
- 	symbol__calc_percent(sym, evsel);
-@@ -3070,7 +3071,7 @@ int symbol__annotate2(struct map_symbol *ms, struct evsel *evsel,
- 	if (perf_evsel__is_group_event(evsel))
- 		nr_pcnt = evsel->core.nr_members;
- 
--	err = symbol__annotate(ms, evsel, 0, options, parch);
-+	err = symbol__annotate(ms, evsel, options, parch);
- 	if (err)
- 		goto out_free_offsets;
- 
+-		.privsize	= privsize,
+ 		.evsel		= evsel,
+ 		.options	= options,
+ 	};
 diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 8e54184b43dc..7bc60988e478 100644
+index 7bc60988e478..001258601a37 100644
 --- a/tools/perf/util/annotate.h
 +++ b/tools/perf/util/annotate.h
-@@ -350,7 +350,7 @@ struct annotated_source *symbol__hists(struct symbol *sym, int nr_hists);
- void symbol__annotate_zero_histograms(struct symbol *sym);
- 
- int symbol__annotate(struct map_symbol *ms,
--		     struct evsel *evsel, size_t privsize,
-+		     struct evsel *evsel,
- 		     struct annotation_options *options,
- 		     struct arch **parch);
- int symbol__annotate2(struct map_symbol *ms,
+@@ -139,7 +139,6 @@ struct annotation_line {
+ 	u64			 cycles;
+ 	u64			 cycles_max;
+ 	u64			 cycles_min;
+-	size_t			 privsize;
+ 	char			*path;
+ 	u32			 idx;
+ 	int			 idx_asm;
 -- 
 2.21.1
 
