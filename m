@@ -2,136 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0A0172E66
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:39:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DDF1172E6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:50:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730555AbgB1Bjy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 20:39:54 -0500
-Received: from mail-pf1-f180.google.com ([209.85.210.180]:41610 "EHLO
-        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730343AbgB1Bjx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 20:39:53 -0500
-Received: by mail-pf1-f180.google.com with SMTP id j9so815812pfa.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 17:39:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9ubhH+dy/KSupIMOx/TfbizuLMWROXg/fbsaRaNRNTQ=;
-        b=kn6ceABUO1Cc9o/V8RvE+BqRYIyMsLD7pkXnml/p+HBLTYwCD+seLQyeDd0N9VMMnG
-         vA0eeXqPycMIBRwi21uFYZmEimkivcLv1xtkFSCpPPlUO+uWfwgn8lBxfHCkBxDo5VkT
-         Wcp/SSjpRs/pkuS4oVeGna37qWSEBUfzoNSYc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9ubhH+dy/KSupIMOx/TfbizuLMWROXg/fbsaRaNRNTQ=;
-        b=GeCKeRBm3RbgeTLWvUvQ9eFF7E/MSH0VBgTLxivIBiNBMe0vADuaPODkR+gmAHKcVP
-         gpDNDV474BcUhGJ843rRHAVKwgMCzX+/NEkzLU6z5LEJICivR10IcXxBy+NMQ5ntCtqX
-         G096/BFItN5KtskD9lcEa5/3CMU0Xt0ltJumqSbC6ZQZG8LY9KnM4zWs4W+1GZhLZvrM
-         rmijOHIHdxx1wBry+kyp8Kl412CHzlFOnq/m8CuE9NK7JoOHkHOredvF1zPwSyvOqGl/
-         vlIzmBN4sbCDugrtOTf++Q5Vi/haTb8dE2VFHyY5YOaKca/juJ0aq4uSE/QdqOMbu6ex
-         IFCA==
-X-Gm-Message-State: APjAAAX2GLW0jLN0VERyDb/Epuh0LeC66gDi5jKoV4C9fYnsDvGeHu4B
-        +rR36u3NytqyylkoR+n2cM8+Ew==
-X-Google-Smtp-Source: APXvYqwXJNUP/+3kTTLyhDAQADeR4ErEhnIePa8ycI/oJfpnfCEKZv9NCRbU5AulBzJli9QLESZNJg==
-X-Received: by 2002:a63:fe0a:: with SMTP id p10mr2119535pgh.96.1582853991077;
-        Thu, 27 Feb 2020 17:39:51 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id q17sm8385815pfg.123.2020.02.27.17.39.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 17:39:50 -0800 (PST)
-Date:   Fri, 28 Feb 2020 10:39:48 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 03/11] videobuf2: add V4L2_FLAG_MEMORY_NON_CONSISTENT
- flag
-Message-ID: <20200228013948.GN122464@google.com>
-References: <20200226111529.180197-1-senozhatsky@chromium.org>
- <20200226111529.180197-4-senozhatsky@chromium.org>
- <19422259-f9ca-8715-508a-0f650d2fa0e3@xs4all.nl>
+        id S1730520AbgB1Buu convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Feb 2020 20:50:50 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:3028 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730343AbgB1Buu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 20:50:50 -0500
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id B289FC0E010F0FE6498C;
+        Fri, 28 Feb 2020 09:50:44 +0800 (CST)
+Received: from dggeme702-chm.china.huawei.com (10.1.199.98) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 28 Feb 2020 09:50:44 +0800
+Received: from dggeme753-chm.china.huawei.com (10.3.19.99) by
+ dggeme702-chm.china.huawei.com (10.1.199.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Fri, 28 Feb 2020 09:50:43 +0800
+Received: from dggeme753-chm.china.huawei.com ([10.7.64.70]) by
+ dggeme753-chm.china.huawei.com ([10.7.64.70]) with mapi id 15.01.1713.004;
+ Fri, 28 Feb 2020 09:50:44 +0800
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+CC:     Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: Re: [PATCH] KVM: nVMX: Consult only the "basic" exit reason when
+ routing nested exit
+Thread-Topic: [PATCH] KVM: nVMX: Consult only the "basic" exit reason when
+ routing nested exit
+Thread-Index: AdXt2LzqeRxPdhtitkuPjSs9pAY5dw==
+Date:   Fri, 28 Feb 2020 01:50:44 +0000
+Message-ID: <22e24adec35f4a519070e1dbd0fcf858@huawei.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.173.221.158]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19422259-f9ca-8715-508a-0f650d2fa0e3@xs4all.nl>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/02/27 13:25), Hans Verkuil wrote:
-[..]
-> > +      - vb2 buffer is allocated either in consistent (it will be automatically
-> 
-> vb2 -> A
-> 
-> (vb2 is a kAPI term, and shouldn't be used in uAPI documentation)
-> 
-> > +	coherent between CPU and bus) or non-consistent memory. The latter
-> 
-> CPU and bus -> the CPU and the bus
-> 
-> > +	can provide performance gains, for instance CPU cache sync/flush
-> 
-> CPU -> the CPU
-> 
-> > +	operations can be avoided if the buffer is accessed by the corresponding
-> > +	device only and CPU does not read/write to/from that buffer. However,
-> 
-> CPU -> the CPU
-> 
-> > +	this requires extra care from the driver -- it must guarantee memory
-> > +	consistency by issuing cache flush/sync when consistency is needed.
-> 
-> cache -> a cache
-> 
-> > +	If this flag is set V4L2 will attempt to allocate vb2 buffer in
-> 
-> vb2 -> the
-> 
-> > +	non-consistent memory. The flag takes effect only if the buffer is
-> > +	used for :ref:`memory mapping <mmap>` I/O and the queue reports
-> 
-> reports -> reports the
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
+>Consult only the basic exit reason, i.e. bits 15:0 of vmcs.EXIT_REASON, when determining whether a nested VM-Exit should be reflected into L1 or handled by KVM in L0.
+>
+>For better or worse, the switch statement in nested_vmx_exit_reflected() currently defaults to "true", i.e. reflects any nested VM-Exit without dedicated logic.  Because the case statements only contain the basic exit reason, any VM-Exit with modifier bits set will be reflected to L1, even if KVM intended to handle it in L0.
+>
+>Practically speaking, this only affects EXIT_REASON_MCE_DURING_VMENTRY, i.e. a #MC that occurs on nested VM-Enter would be incorrectly routed to L1, as "failed VM-Entry" is the only modifier that KVM can currently encounter.  The SMM modifiers will never be generated as KVM doesn't support/employ a SMI Transfer Monitor.  Ditto for "exit from enclave", as KVM doesn't yet support virtualizing SGX, i.e. it's impossible to enter an enclave in a KVM guest (L1 or L2).
+>
 
-OK.
+Nice catch! There are similar patch catching this exit reson error.
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
 
-> > +++ b/Documentation/media/uapi/v4l/vidioc-reqbufs.rst
-> > @@ -156,6 +156,13 @@ aborting or finishing any DMA in progress, an implicit
-> >        - Only valid for stateless decoders. If set, then userspace can set the
-> >          ``V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF`` flag to hold off on returning the
-> >  	capture buffer until the OUTPUT timestamp changes.
-> > +    * - ``V4L2_BUF_CAP_SUPPORTS_CACHE_HINTS``
-> > +      - 0x00000040
-> > +      - Set when the queue/buffer support memory consistency and cache
-> 
-> support -> supports
-
-OK.
-
-> > +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> > @@ -711,6 +711,8 @@ static void fill_buf_caps(struct vb2_queue *q, u32 *caps)
-> >  		*caps |= V4L2_BUF_CAP_SUPPORTS_DMABUF;
-> >  	if (q->subsystem_flags & VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF)
-> >  		*caps |= V4L2_BUF_CAP_SUPPORTS_M2M_HOLD_CAPTURE_BUF;
-> > +	if ((q->allow_cache_hints != 0) && (q->io_modes & VB2_MMAP))
-> 
-> Just say:
-> 
-> 	if (q->allow_cache_hints && (q->io_modes & VB2_MMAP))
-
-OK.
-
-	-ss
+>Fixes: 644d711aa0e1 ("KVM: nVMX: Deciding if L0 or L1 should handle an L2 exit")
+>Cc: Jim Mattson <jmattson@google.com>
+>Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+>Cc: stable@vger.kernel.org
+>Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+>---
