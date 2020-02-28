@@ -2,118 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4E77173590
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 11:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAB4217359B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 11:47:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbgB1KqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 05:46:13 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43579 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbgB1KqM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 05:46:12 -0500
-Received: by mail-wr1-f65.google.com with SMTP id e10so957037wrr.10
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 02:46:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WroTn4ZOSoWOI3ov0YWSSJUWyAnuK2wVB2xk4MqHAcc=;
-        b=LhmwIPdrdZKpLzy/06ivR114pWiTD8AkY4r+Z8gIpWanabMMYs66F+chnVJMHYAj2p
-         EQdsRe7kxLBGiAG1Op/O0O/A1PcZoPdG4+Q/B4VPKPeZFD02wX1hp4csQC0coTSa8o2A
-         D5zO5vvFeWHlvpJlsDQowCEuMhPx/T7pSSOFLH5goxsoFvm/DqN70t02JJ9FC+szfOjo
-         oM1C9CC5bwOmmGwhyQUibA6FSh2SUK+QMCqmdGmFDcidAJMUZXXiHCwuJa8+qW0IwRDj
-         HbBhVHc8HLNKucYRpT3uexbCfzvpBjxySZlVYqMS4+YxeBDKcSOaY0pAPM5FXzDfuhPg
-         NyHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WroTn4ZOSoWOI3ov0YWSSJUWyAnuK2wVB2xk4MqHAcc=;
-        b=akV03dACYluX4/uMLHgit2ATz/bl3q9uS1nB47iJmD2WduLPw0QT5rpxkBeYsEhPHz
-         Kq82UMKTM/88/ZLMzrKjb+kgskodq7Me1HOQW6xsUTgRxFSCKZltytq9POnfXwT7yblB
-         IO8ge/a+trhU5J09W6627pGWe5D0JIbMpmVO8dJ8tyOvM13/pzL/ZL68RZo7yKVF2QGA
-         VUfUWDiSmIzhDjegFhhUwEzDUtZNqeNj1vVma2qrO+WCOJznZBgolKC/DNS1QtHoVLxh
-         AllGCdRQbSKs88wlhdyPidAbvUerbZZ1AXhDqtwZzvoFIIK9FGAXR3w73cbv4V0YQSmS
-         d9+w==
-X-Gm-Message-State: APjAAAUOQ0/axzdLfuvRp97Da0Wrk4FK0kQe+MBq66pI02H9opNnbILY
-        MuZ5couNpAXuhzqs3FCreG9vYXjhEOk=
-X-Google-Smtp-Source: APXvYqwJOE0fqXlVeja/r5Fj91sS1NrDnRD2e4QVZWt0hqhAnh6s1ILszXX+lUHYng+CHur/FGDR2A==
-X-Received: by 2002:adf:fe83:: with SMTP id l3mr4471825wrr.41.1582886770366;
-        Fri, 28 Feb 2020 02:46:10 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
-        by smtp.gmail.com with ESMTPSA id i4sm1610787wmd.23.2020.02.28.02.46.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2020 02:46:09 -0800 (PST)
-Date:   Fri, 28 Feb 2020 10:46:06 +0000
-From:   Quentin Perret <qperret@google.com>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Nicolas Pitre <nico@fluxnic.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Matthias Maennich <maennich@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v5 3/3] kbuild: generate autoksyms.h early
-Message-ID: <20200228104606.GA139632@google.com>
-References: <20200218094139.78835-1-qperret@google.com>
- <20200218094139.78835-4-qperret@google.com>
- <CAK7LNASCrTj4_RgtxvZm0ei_HExYaPPMJodngKXBOL+=GODv5w@mail.gmail.com>
+        id S1726950AbgB1Krn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 05:47:43 -0500
+Received: from mail-eopbgr70057.outbound.protection.outlook.com ([40.107.7.57]:34425
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726765AbgB1Krn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 05:47:43 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DC1aTnqQhzrZQRa8FsTLrx0gTqGi4EzGWCmqOCQJPTLrrTAMtl5aUoCFo2YMQbeV9/0ljNmlAOxQ8SWPCyithZnH8tDqM+O4HO6NvFABG5jJPLZLd7oR6EKu+32SKvQqhvipn8lsvTGquun/FA6/s8KlLVCsvHo4acvNHcMTACmJgRosiEARKnZgnxSPXr936RydPIfZN4TaweomfaH73DVHfFUc7xK33cmCxxt8eAIIx09V7hXuXoNCWfhDN6GWT7UcveOprtX7O8B5L/zSY8YUZqmune4gX7WA/RpFNIkEbWwU+6FUwtDijp8o9Hn3MbnhnhptxXs0qzbuGKktXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G6vje7PZ2XqQgQ3nZX6HHfMpv7S8S/3Rpl3oZ8TtoNQ=;
+ b=Ng1D6q8FkvsTXh/aZ/jEM9Qsu/6AKxPcbObCjn1BgJ4IMSP8QVrsZHEVkkiFzu4xcB1TSSAxJAZBZHUeEkoBxhSguvIE9/3V5o3UeuH26Ufsb449AiOc4prGHco3+UZNKfopZeJr3DtpRe6Q/9mHfb744oQOzjC+ax8DDVF2ckaaUYIagktERfhscXjnqlW73IZ82kddf2SyrCaioIdSbBqxjbvipLu1tDvIEM0b0XU2svsGHbltHk0/B6ckKgMMOJZ2ElhPmzbqTeoe0+jPhMuwX9MudVjjj7lK8CTFRe8lU6QANOf9LuooXJb0NbGVRANE2hAssUBRtcWrCv7s8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G6vje7PZ2XqQgQ3nZX6HHfMpv7S8S/3Rpl3oZ8TtoNQ=;
+ b=QwkD2Tu0vrJbtRxWKBebvyPCfNosWIAeAcff+qD/KdfWOLVjTHea9bZ0cvrL/4R7+VHyY/b3IJmUxCZQL11JnBx7FPJ48raShb2vVGvzGDibj/qSWWeHEz2vBw/+yf+wliwn/aahy/WiIwTfvupBY8t8AGacue5Jo0qLgqaRCvM=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=andrei.botila@oss.nxp.com; 
+Received: from AM6PR04MB5430.eurprd04.prod.outlook.com (20.178.92.210) by
+ AM6PR04MB6309.eurprd04.prod.outlook.com (20.179.5.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2750.17; Fri, 28 Feb 2020 10:47:38 +0000
+Received: from AM6PR04MB5430.eurprd04.prod.outlook.com
+ ([fe80::79f3:d09c:ee2d:396e]) by AM6PR04MB5430.eurprd04.prod.outlook.com
+ ([fe80::79f3:d09c:ee2d:396e%3]) with mapi id 15.20.2772.012; Fri, 28 Feb 2020
+ 10:47:37 +0000
+From:   Andrei Botila <andrei.botila@oss.nxp.com>
+To:     Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrei Botila <andrei.botila@nxp.com>, stable@vger.kernel.org
+Subject: [PATCH] crypto: caam - update xts sector size for large input length
+Date:   Fri, 28 Feb 2020 12:46:48 +0200
+Message-Id: <20200228104648.18898-1-andrei.botila@oss.nxp.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR06CA0074.eurprd06.prod.outlook.com
+ (2603:10a6:208:fa::15) To AM6PR04MB5430.eurprd04.prod.outlook.com
+ (2603:10a6:20b:94::18)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNASCrTj4_RgtxvZm0ei_HExYaPPMJodngKXBOL+=GODv5w@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from lsv15007.swis.ro-buh01.nxp.com (212.146.100.6) by AM0PR06CA0074.eurprd06.prod.outlook.com (2603:10a6:208:fa::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14 via Frontend Transport; Fri, 28 Feb 2020 10:47:37 +0000
+X-Mailer: git-send-email 2.17.1
+X-Originating-IP: [212.146.100.6]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 66f1e256-fabb-4522-7467-08d7bc3ba044
+X-MS-TrafficTypeDiagnostic: AM6PR04MB6309:|AM6PR04MB6309:
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM6PR04MB63090E087CC22387585E46BFB4E80@AM6PR04MB6309.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2276;
+X-Forefront-PRVS: 0327618309
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(136003)(366004)(396003)(346002)(189003)(199004)(8676002)(2906002)(6486002)(44832011)(4326008)(8936002)(81166006)(81156014)(6506007)(16526019)(52116002)(316002)(66946007)(2616005)(86362001)(478600001)(6512007)(956004)(6666004)(1076003)(66556008)(5660300002)(66476007)(26005)(110136005)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6309;H:AM6PR04MB5430.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+Received-SPF: None (protection.outlook.com: oss.nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: lJkEleYzIh5kvsjZQXzsDfWR/uU9NlabtKsUbyIWQ1dxfyrPPYkpCF5osjcvOG7fEPycz216zZDeBfMBZAnMdA3CxhzAJaUd1LXV81BgtH83gnlLLgkKXNVrIdYJqL4qbTGjOddgz/+PLyefGH2VWsx5Lri+5u89YtQm3m/19AGCMharKBz7JyYUGhYyvkl5wocMa0A0h0UKh24m3tSw07COFNIhlxu3H+xydukv6VaKpb5y4cua2TNOf1/bv/Xg9SrmlY1mCqRe3AghuorgVs4vZ2tNEK0y7+0uGIeo1saIqzT0dGWX6NsK6+hP5uhNFrMWo1mbpJAkJNWFimgHsVBlYmr/OJ/bk7ZZvsUxKKQKBX9w6suoe6CCi+UVx7H+eLH+eSzoD2UqzOQIr73XjOtDQeyWhSjiJncCYCEJClCsV8UTxVLqZzWIrdYshSD4
+X-MS-Exchange-AntiSpam-MessageData: m7eOy9LJXoa4wOXWTO2VrH1ZCfhq1KntV69UhQSxIe3nrr5h7bIYIQEe9jmNGHWu58CHLE6HQoF+pI+APWGZJ+yHaGFvK3tXCOI0yx4L0+rsjwkuiAPfJ/kMT1O46LNs9K0DVIBPdXactpD77abodg==
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66f1e256-fabb-4522-7467-08d7bc3ba044
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2020 10:47:37.5586
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Qa7XrBdhWYd3tkXL0RWsKPFIaFHSE6huWy8wz6yg5o34xmxq8fGstjYSLTj0DGwaEo8a+bOEGbr9bqnCRSkfew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB6309
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 28 Feb 2020 at 19:42:41 (+0900), Masahiro Yamada wrote:
-> On Tue, Feb 18, 2020 at 6:41 PM Quentin Perret <qperret@google.com> wrote:
-> >
-> > When doing a cold build, autoksyms.h starts empty, and is updated late
-> > in the build process to have visibility over the symbols used by in-tree
-> > drivers. But since the symbol whitelist is known upfront, it can be used
-> > to pre-populate autoksyms.h and maximize the amount of code that can be
-> > compiled to its final state in a single pass, hence reducing build time.
-> >
-> > Do this by using gen_autoksyms.sh to initialize autoksyms.h instead of
-> > creating an empty file.
-> >
-> > Acked-by: Nicolas Pitre <nico@fluxnic.net>
-> > Tested-by: Matthias Maennich <maennich@google.com>
-> > Reviewed-by: Matthias Maennich <maennich@google.com>
-> > Signed-off-by: Quentin Perret <qperret@google.com>
-> > ---
-> >  Makefile                 | 7 +++++--
-> >  scripts/gen_autoksyms.sh | 3 ++-
-> >  2 files changed, 7 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Makefile b/Makefile
-> > index 84b71845c43f..17b7e7f441bd 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1062,9 +1062,12 @@ endif
-> >
-> >  autoksyms_h := $(if $(CONFIG_TRIM_UNUSED_KSYMS), include/generated/autoksyms.h)
-> >
-> > +quiet_cmd_autoksyms_h = GEN     $@
-> > +      cmd_autoksyms_h = mkdir -p $(dir $@); $(CONFIG_SHELL) \
-> > +                       $(srctree)/scripts/gen_autoksyms.sh $@
-> 
-> 
-> When you send v6,
-> could you wrap the line as follows (CONFIG_SHELL in the next line)  ?
-> 
->          cmd_autoksyms_h = mkdir -p $(dir $@); \
->                           $(CONFIG_SHELL) $(srctree)/scripts/gen_autoksyms.sh $@
-> 
-> 
-> This still fits in 80-cols.
+From: Andrei Botila <andrei.botila@nxp.com>
 
-Will do.
+Since in the software implementation of XTS-AES there is
+no notion of sector every input length is processed the same way.
+CAAM implementation has the notion of sector which causes different
+results between the software implementation and the one in CAAM
+for input lengths bigger than 512 bytes.
+Increase sector size to maximum value on 16 bits.
 
-Thanks,
-Quentin
+Fixes: c6415a6016bf ("crypto: caam - add support for acipher xts(aes)")
+Cc: <stable@vger.kernel.org> # v4.12+
+Signed-off-by: Andrei Botila <andrei.botila@nxp.com>
+---
+This patch needs to be applied from v4.12+ because dm-crypt has added support
+for 4K sector size at that version. The commit was
+8f0009a225171 ("dm-crypt: optionally support larger encryption sector size").
+
+ drivers/crypto/caam/caamalg_desc.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/crypto/caam/caamalg_desc.c b/drivers/crypto/caam/caamalg_desc.c
+index aa9ccca67045..8ebbbd28b1f7 100644
+--- a/drivers/crypto/caam/caamalg_desc.c
++++ b/drivers/crypto/caam/caamalg_desc.c
+@@ -1518,7 +1518,13 @@ EXPORT_SYMBOL(cnstr_shdsc_skcipher_decap);
+  */
+ void cnstr_shdsc_xts_skcipher_encap(u32 * const desc, struct alginfo *cdata)
+ {
+-	__be64 sector_size = cpu_to_be64(512);
++	/*
++	 * Set sector size to a big value, practically disabling
++	 * sector size segmentation in xts implementation. We cannot
++	 * take full advantage of this HW feature with existing
++	 * crypto API / dm-crypt SW architecture.
++	 */
++	__be64 sector_size = cpu_to_be64(BIT(15));
+ 	u32 *key_jump_cmd;
+ 
+ 	init_sh_desc(desc, HDR_SHARE_SERIAL | HDR_SAVECTX);
+@@ -1571,7 +1577,13 @@ EXPORT_SYMBOL(cnstr_shdsc_xts_skcipher_encap);
+  */
+ void cnstr_shdsc_xts_skcipher_decap(u32 * const desc, struct alginfo *cdata)
+ {
+-	__be64 sector_size = cpu_to_be64(512);
++	/*
++	 * Set sector size to a big value, practically disabling
++	 * sector size segmentation in xts implementation. We cannot
++	 * take full advantage of this HW feature with existing
++	 * crypto API / dm-crypt SW architecture.
++	 */
++	__be64 sector_size = cpu_to_be64(BIT(15));
+ 	u32 *key_jump_cmd;
+ 
+ 	init_sh_desc(desc, HDR_SHARE_SERIAL | HDR_SAVECTX);
+-- 
+2.17.1
+
