@@ -2,130 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D17D1732F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 09:33:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C529C173305
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 09:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbgB1Ido (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 03:33:44 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:53866 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbgB1Idn (ORCPT
+        id S1726671AbgB1Ifa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 03:35:30 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:39147 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbgB1If3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 03:33:43 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01S8XflV024121;
-        Fri, 28 Feb 2020 02:33:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582878821;
-        bh=vW+PepXRsxAK7WkwPUYIQq/S8m7kzQ/csZbigbHHHpQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=e6Ou04kMF7BtN+oobOFCQqXmtAVqXPwfnzwuvT/xCllDO0PkhZDli5M6AwHkld5C8
-         aQJptsMj0LZYmvTQURGMjV5IRfz7FIdRiRK3VJvAeTndc92tAEZs5aUYEgrrITajv5
-         tbY5MLCoPLcHV7rVB27WNgNW4HUuy3d1B2j9oDZw=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01S8Xf2Q049033
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 Feb 2020 02:33:41 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 28
- Feb 2020 02:33:41 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 28 Feb 2020 02:33:41 -0600
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01S8XdkL108896;
-        Fri, 28 Feb 2020 02:33:39 -0600
-Subject: Re: [PATCH v2 4/5] ARM: dts: AM4372: Add the PRU-ICSS interconnect
- target-module node
-To:     Suman Anna <s-anna@ti.com>, Tony Lindgren <tony@atomide.com>
-CC:     Tero Kristo <t-kristo@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20200227222837.7329-1-s-anna@ti.com>
- <20200227222837.7329-5-s-anna@ti.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <f3ba0138-141c-0602-788c-8bf8f802f436@ti.com>
-Date:   Fri, 28 Feb 2020 10:33:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 28 Feb 2020 03:35:29 -0500
+Received: by mail-il1-f193.google.com with SMTP id w69so2045847ilk.6
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 00:35:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OXyFeX6mAXl7ibpfgMxisE4ycSpVpmIz9s5cjNf8Vhw=;
+        b=pn3452AKsTBvGlo0Y5JA0NZltS3uiCzuNxlOu9vIU/91jdvfz1MmnUcdniXZft8fOK
+         uRgelnJFXnk/5446/FJEkurj9vFQkfopb6YzN9hGnaI6ygpIsXBuRwoK4kfbvuwENiZZ
+         0wpCmRg1DtQDcyWKqHDbVr5FOAQOpPzh6yVGk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OXyFeX6mAXl7ibpfgMxisE4ycSpVpmIz9s5cjNf8Vhw=;
+        b=H5XjKRdwK/1lpHOs+u5iCvU/XRbr6pN0BMh/KSHmuvbArUNjiJ5zNm3tcQLTQNchWK
+         rm0VRgf03ydVA/Hqt/Gy73YIMKUMRXIyFt7tD9GfJGm4+X/iXqLu4ZScC90b8emOOnjf
+         oku2r5z6/Vc5NkdToawsyZQrDFoA931+XYYe3iKAKP0T6SWScMFdm6tPJ39dDfQwKFBX
+         XFaTiYcDhZ8Ru/3iOi4OJ2MjaGUalpjLag1hczS9LU9KHRzFAS2ieXEq6fEPhqDosHS7
+         WCe//4b2ZAI3RmIGy/lXh4LqCPjCYjT9AaTB0E7/fmVncx1B1ON6FN6frvSJ8g/ltgLC
+         XImQ==
+X-Gm-Message-State: APjAAAUH/I94nxPXOiMo6VEr/STf0GP3PhM/yO+8yUC3ULEcghxpvvAA
+        N7sKRFbKg4HM3mD0VJgXio7C3ODpQStB46hp08NNnw==
+X-Google-Smtp-Source: APXvYqxjtpW0+aq1pP5LqW+8ExOWmG1iZmCw8TTmpTp910yfA5bDPzQCZIQLWAdbpcyM6H+iB+v7QzmYJWaDKFsm31s=
+X-Received: by 2002:a92:c0c9:: with SMTP id t9mr3379386ilf.174.1582878928605;
+ Fri, 28 Feb 2020 00:35:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200227222837.7329-5-s-anna@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
+ <1582556135.3384.4.camel@HansenPartnership.com> <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
+ <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com> <1582644535.3361.8.camel@HansenPartnership.com>
+ <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
+ <1c8db4e2b707f958316941d8edd2073ee7e7b22c.camel@themaw.net>
+ <CAJfpegtRoXnPm5_sMYPL2L6FCZU52Tn8wk7NcW-dm4_2x=dD3Q@mail.gmail.com>
+ <3e656465c427487e4ea14151b77d391d52cd6bad.camel@themaw.net>
+ <CAJfpegu5xLcR=QbAOnUrL49QTem6X6ok7nPU+kLFnNHdPXSh1A@mail.gmail.com>
+ <20200227151421.3u74ijhqt6ekbiss@ws.net.home> <ba2b44cc1382c62be3ac896a5476c8e1dc7c0230.camel@themaw.net>
+In-Reply-To: <ba2b44cc1382c62be3ac896a5476c8e1dc7c0230.camel@themaw.net>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 28 Feb 2020 09:35:17 +0100
+Message-ID: <CAJfpeguXPmw+PfZJFOscGLm0oe7dUQY4CYXazx9=x020Fbe86A@mail.gmail.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+To:     Ian Kent <raven@themaw.net>
+Cc:     Karel Zak <kzak@redhat.com>, Miklos Szeredi <mszeredi@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Lennart Poettering <lennart@poettering.net>,
+        =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        util-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 28, 2020 at 1:43 AM Ian Kent <raven@themaw.net> wrote:
 
+> > I'm not sure about sysfs/, you need somehow resolve namespaces, order
+> > of the mount entries (which one is the last one), etc. IMHO translate
+> > mountpoint path to sysfs/ path will be complicated.
+>
+> I wonder about that too, after all sysfs contains a tree of nodes
+> from which the view is created unlike proc which translates kernel
+> information directly based on what the process should see.
+>
+> We'll need to wait a bit and see what Miklos has in mind for mount
+> table enumeration and nothing has been said about name spaces yet.
 
-On 28/02/2020 00:28, Suman Anna wrote:
-> The AM437x family of SoCs contains two dissimilar PRU-ICSS instances,
-> but leverage a common reset line and SYSCFG from the larger PRU-ICSS1
-> instance. This SYSC register has also very unique bit-fields. Both
-> the IPs require the PRCM reset to be deasserted to be able to access
-> any registers. Add a common PRUSS interconnect target-module with all
-> the required properties.
-> 
-> The PRUSS devices themselves shall be added as child nodes to this
-> interconnect node in the future. The PRU-ICSS instances are not
-> supported on AM4372 SoC though in the AM437x family, so the target
-> module node should be disabled in any derivative board files that
-> use this SoC.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
+Adding Greg for sysfs knowledge.
 
-Reviewed-by: Roger Quadros <rogerq@ti.com>
+As far as I understand the sysfs model is, basically:
 
-> ---
-> v2:
->   - Remove status=disabled
->   - Revise last para in patch description
-> 
->   arch/arm/boot/dts/am4372.dtsi | 22 ++++++++++++++++++++++
->   1 file changed, 22 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
-> index faa14dc0faff..9f39413b0d0e 100644
-> --- a/arch/arm/boot/dts/am4372.dtsi
-> +++ b/arch/arm/boot/dts/am4372.dtsi
-> @@ -344,6 +344,28 @@
->   			};
->   		};
->   
-> +		pruss_tm: target-module@54400000 {
-> +			compatible = "ti,sysc-pruss", "ti,sysc";
-> +			reg = <0x54426000 0x4>,
-> +			      <0x54426004 0x4>;
-> +			reg-names = "rev", "sysc";
-> +			ti,sysc-mask = <(SYSC_PRUSS_STANDBY_INIT |
-> +					 SYSC_PRUSS_SUB_MWAIT)>;
-> +			ti,sysc-midle = <SYSC_IDLE_FORCE>,
-> +					<SYSC_IDLE_NO>,
-> +					<SYSC_IDLE_SMART>;
-> +			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
-> +					<SYSC_IDLE_NO>,
-> +					<SYSC_IDLE_SMART>;
-> +			clocks = <&pruss_ocp_clkctrl AM4_PRUSS_OCP_PRUSS_CLKCTRL 0>;
-> +			clock-names = "fck";
-> +			resets = <&prm_per 1>;
-> +			reset-names = "rstctrl";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges = <0x0 0x54400000 0x80000>;
-> +		};
-> +
->   		gpmc: gpmc@50000000 {
->   			compatible = "ti,am3352-gpmc";
->   			ti,hwmods = "gpmc";
-> 
+  - list of devices sorted by class and address
+  - with each class having a given set of attributes
 
--- 
-cheers,
--roger
+Superblocks and mounts could get enumerated by a unique identifier.
+mnt_id seems to be good for mounts, s_dev may or may not be good for
+superblock, but  s_id (as introduced in this patchset) could be used
+instead.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+As for namespaces, that's "just" an access control issue, AFAICS.
+For example a task with a non-initial mount namespace should not have
+access to attributes of mounts outside of its namespace.  Checking
+access to superblock attributes would be similar: scan the list of
+mounts and only allow access if at least one mount would get access.
+
+> While fsinfo() is not similar to proc it does handle name spaces
+> in a sensible way via. file handles, a bit similar to the proc fs,
+> and ordering is catered for in the fsinfo() enumeration in a natural
+> way. Not sure how that would be handled using sysfs ...
+
+I agree that the access control is much more straightforward with
+fsinfo(2) and this may be the single biggest reason to introduce a new
+syscall.
+
+Let's see what others thing.
+
+Thanks,
+Miklos
