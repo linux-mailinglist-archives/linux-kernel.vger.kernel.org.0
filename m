@@ -2,109 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A7D21737A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:52:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E8371737AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:52:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbgB1Mwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 07:52:32 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:32820 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725876AbgB1Mwb (ORCPT
+        id S1726876AbgB1Mw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 07:52:56 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45224 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbgB1Mw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 07:52:31 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01SChAOm021775;
-        Fri, 28 Feb 2020 13:52:15 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=yrQgPlGNcsd3SNy+rWiVt1Cll54CgcO3EV2Kn8KU8q0=;
- b=JWlbeBkvOvlSWTdVqbrG+BguMFrQ8qPYDcbU0P4dRMxrE6PjBTOK2eAv2+qZv1fQvlBC
- akmq8WkiOAVHzmoOnwe3Gbz9DmDCaCVPiXho1SrbTGSeV6KpVZqgcWwVISPEqr27zDtc
- dKMSDvKUNiOFeguSgFwD9qQkfLi1U/c2L7PShRwVVNH8D7KO69PXbhi2ZNROQO+KPByd
- xtvmf5XHD8PIoZZU5BYt6Y0DkAwwXD5xOukX4eGClDAL83qBLBU18KR1vjhoWHv6rYp5
- aveyWH0Z7tVKHGFZTAzIMHVr0EiLJe66nyTcCpNOjMY65rqZLQa617hB0Mv/XnaKv9Yg JA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2yepvtbyg7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Feb 2020 13:52:15 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CB88C10003A;
-        Fri, 28 Feb 2020 13:52:10 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BDDD72BAEDD;
-        Fri, 28 Feb 2020 13:52:10 +0100 (CET)
-Received: from localhost (10.75.127.46) by SFHDAG3NODE3.st.com (10.75.127.9)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 28 Feb 2020 13:52:10
- +0100
-From:   Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <robh+dt@kernel.org>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH] ARM: dts: stm32: Rename stmfx node names
-Date:   Fri, 28 Feb 2020 13:52:05 +0100
-Message-ID: <20200228125205.8126-2-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20200228125205.8126-1-benjamin.gaignard@st.com>
-References: <20200228125205.8126-1-benjamin.gaignard@st.com>
+        Fri, 28 Feb 2020 07:52:56 -0500
+Received: by mail-pg1-f196.google.com with SMTP id m15so1469640pgv.12
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 04:52:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LLJFIPckd1xHQQqmcacgnVgcHhCyLy6UDC2qqofSmdQ=;
+        b=EYn3+pq1/4zwaewIxfogpCXCQE/gXuWhWoMgM20ZXP92fx9eoJps9jl+eeJAqyhvlp
+         GgaYr5/OixNCIcK9dmEFtvBgxKaSllfHHkluoGUEAZUuBJ1z5CTGHLpmfvEaFBLtNxUb
+         Yo+x+VduI9oaNHnwMg3GMdnBYfzyIEP3qThlF4fByh2D1ZAl8J4zvSFMRMeHq3ODOF5n
+         Uh39EjKVQaN+VMP/m4e0OuaGTZs7Bj+wilCBLp4Hn/v8Q9C9xL0ZS//lf/dM4P2b2vpR
+         DVOYb87oBI9DmrUB1SH6ljNFtoSGSICi0MJGii67FXLWGfbHdPB9IRfzmV9gPqe8iNFo
+         pt4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LLJFIPckd1xHQQqmcacgnVgcHhCyLy6UDC2qqofSmdQ=;
+        b=ZTl1p9LpdbujvOsfCqHeCPCvxJ4lf//Z8s7K/IrT5KK+NuvsqpFkaoXL7N/b9t9DdH
+         iP4cunfWKqcTacvpO1E0dc90e3p/wpfC2GB9c+vIeWE7iExiG2gl+LAIWRXhNpKePG6s
+         L5PmepBb6pouQsKa5hLYd0Ce17xusc1zKs0fQungIQqnpV6bzex3+aWsowRydH2LW6jV
+         dtWBeE1ye0tbu/2ORCVssxtJVEMEsvOXRplOU0k86NVBWX06gK8Fm1HcPsSrqrXnIktM
+         LRKojH4ZImlEGbhWNA0jpN0ZSjrEA/s7zIy9itWsa3SqLWBmNDTPNfLv5MG5rytpESjJ
+         YczQ==
+X-Gm-Message-State: APjAAAUkqW66eGayQpcYiyDIOyjpmUynybeHHM0gyq8qlm0XxF2JJAQ1
+        M43C5NOliAC1qvzxPl0FdVHmbcwf/33Z1HzUH8CoZQ==
+X-Google-Smtp-Source: APXvYqwBetfHP4u0UNKR6OIIGPMsBN54kOZKmtQkEbTasMC2tvzDA28ZV2hcmrlTq4CCoWjo95FL0UVJspX+xDfxhpU=
+X-Received: by 2002:a63:a062:: with SMTP id u34mr4604347pgn.286.1582894375143;
+ Fri, 28 Feb 2020 04:52:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG3NODE1.st.com (10.75.127.7) To SFHDAG3NODE3.st.com
- (10.75.127.9)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-28_04:2020-02-26,2020-02-28 signatures=0
+References: <00000000000040573d059fa2474f@google.com>
+In-Reply-To: <00000000000040573d059fa2474f@google.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Fri, 28 Feb 2020 13:52:44 +0100
+Message-ID: <CAAeHK+xhwwZopXhRjPgfxNrWbvpforBQ+ea4VjznBTszVSAFDg@mail.gmail.com>
+Subject: Re: BUG: bad host security descriptor; not enough data (1 vs 5 left)
+To:     syzbot <syzbot+52be5a94ed1c3d6bf9ce@syzkaller.appspotmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename stmfx node names according to yaml description.
+On Fri, Feb 28, 2020 at 1:50 PM syzbot
+<syzbot+52be5a94ed1c3d6bf9ce@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    d6ff8147 usb: gadget: add raw-gadget interface
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=159c5d29e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=90a3d9bed5648419
+> dashboard link: https://syzkaller.appspot.com/bug?extid=52be5a94ed1c3d6bf9ce
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c172c3e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1461ee65e00000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+52be5a94ed1c3d6bf9ce@syzkaller.appspotmail.com
+>
+> usb 1-1: config 0 interface 0 altsetting 0 has 2 endpoint descriptors, different from the interface descriptor's value: 4
+> usb 1-1: New USB device found, idVendor=13dc, idProduct=56fc, bcdDevice=40.15
+> usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> usb 1-1: config 0 descriptor??
+> hwa-hc 1-1:0.0: Wire Adapter v106.52 newer than groked v1.0
+> usb 1-1: BUG: bad host security descriptor; not enough data (1 vs 5 left)
+> usb 1-1: supported encryption types:
+> usb 1-1: E: host doesn't support CCM-1 crypto
+> hwa-hc 1-1:0.0: Cannot initialize internals: -19
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- arch/arm/boot/dts/stm32746g-eval.dts  | 2 +-
- arch/arm/boot/dts/stm32mp157c-ev1.dts | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/stm32746g-eval.dts b/arch/arm/boot/dts/stm32746g-eval.dts
-index fcc804e3c158..4ea3f98dd275 100644
---- a/arch/arm/boot/dts/stm32746g-eval.dts
-+++ b/arch/arm/boot/dts/stm32746g-eval.dts
-@@ -165,7 +165,7 @@
- 		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
- 		interrupt-parent = <&gpioi>;
- 
--		stmfx_pinctrl: stmfx-pin-controller {
-+		stmfx_pinctrl: pinctrl {
- 			compatible = "st,stmfx-0300-pinctrl";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-index 228e35e16884..3f4668a43afe 100644
---- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-@@ -210,7 +210,7 @@
- 		interrupt-parent = <&gpioi>;
- 		vdd-supply = <&v3v3>;
- 
--		stmfx_pinctrl: stmfx-pin-controller {
-+		stmfx_pinctrl: pinctrl {
- 			compatible = "st,stmfx-0300-pinctrl";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-@@ -218,7 +218,7 @@
- 			#interrupt-cells = <2>;
- 			gpio-ranges = <&stmfx_pinctrl 0 0 24>;
- 
--			joystick_pins: joystick {
-+			joystick_pins: joystick-pins {
- 				pins = "gpio0", "gpio1", "gpio2", "gpio3", "gpio4";
- 				bias-pull-down;
- 			};
--- 
-2.15.0
-
+#syz dup: BUG: bad host security descriptor; not enough data (4 vs 5 left)
