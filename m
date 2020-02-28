@@ -2,78 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C86D6173CA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:16:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31DA4173C60
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbgB1QQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 11:16:10 -0500
-Received: from mga05.intel.com ([192.55.52.43]:51515 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbgB1QQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 11:16:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 08:16:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,496,1574150400"; 
-   d="scan'208";a="261900316"
-Received: from yyu32-desk.sc.intel.com ([143.183.136.146])
-  by fmsmga004.fm.intel.com with ESMTP; 28 Feb 2020 08:16:09 -0800
-Message-ID: <e35cc25c4ba1dcb4154276b1e2731891a3c600ec.camel@intel.com>
-Subject: Re: [RFC PATCH v9 01/27] Documentation/x86: Add CET description
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        id S1727168AbgB1QAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 11:00:50 -0500
+Received: from st43p00im-ztdg10073201.me.com ([17.58.63.177]:44507 "EHLO
+        st43p00im-ztdg10073201.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727110AbgB1QAu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 11:00:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+        t=1582905648; bh=Jp5Jx4TT3jU6jf6tGENjtbuH3RdcUZ/t+syzDFb4508=;
+        h=Date:From:To:Subject:Message-ID:Content-Type;
+        b=ddn28xO36TnsDne0mn8CLJQ7TPSP9bzqJocPvW9t735IWgyMWsOPWmMem8EAioqZ+
+         IIkQkq+bSpy4gL/oQbGnsfIy6BbDleFxHaVqG7hoZS1BiKq1Bd5FO+OuuHjP7JYrmm
+         8no4hBawJeBuGNEjyUtTJVlzu26Q2HxoIz+lCjjIUZWJI2KEXpVQ/TVPYEwMgWwZS6
+         X0St9457hQlUpr43qJ1i1RD8nNmNryUhJVjVj452D2amLA3i/rydHQMzAPt9ZwRgMX
+         lhYn55c78OaoRYcvBgjYB6NwwJHV5RwdFLCUDUO4SKnXzjIAGswsyJVYcw0FHo7fvE
+         d7ZnSSBaq47tA==
+Received: from shwetrath.localdomain (unknown [66.199.8.131])
+        by st43p00im-ztdg10073201.me.com (Postfix) with ESMTPSA id B34E222214B;
+        Fri, 28 Feb 2020 16:00:47 +0000 (UTC)
+Date:   Fri, 28 Feb 2020 11:00:45 -0500
+From:   Vijay Thakkar <vijaythakkar@me.com>
+To:     Kim Phillips <kim.phillips@amd.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, x86-patch-review@intel.com
-Date:   Fri, 28 Feb 2020 07:55:33 -0800
-In-Reply-To: <202002251159.939AA6A@keescook>
-References: <20200205181935.3712-1-yu-cheng.yu@intel.com>
-         <20200205181935.3712-2-yu-cheng.yu@intel.com>
-         <202002251159.939AA6A@keescook>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
+        Jon Grimm <jon.grimm@amd.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] perf vendor events amd: add Zen2 events
+Message-ID: <20200228160045.GA23708@shwetrath.localdomain>
+References: <20200225192815.50388-1-vijaythakkar@me.com>
+ <20200225192815.50388-3-vijaythakkar@me.com>
+ <6f2a1097-a656-8226-1be3-36a337539412@amd.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6f2a1097-a656-8226-1be3-36a337539412@amd.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-02-28_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-2002280127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-02-25 at 12:02 -0800, Kees Cook wrote:
-> On Wed, Feb 05, 2020 at 10:19:09AM -0800, Yu-cheng Yu wrote:
-> > Explain no_cet_shstk/no_cet_ibt kernel parameters, and introduce a new
-> > document on Control-flow Enforcement Technology (CET).
-> > 
-> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> 
-> I'm not a huge fan of the boot param names, but I can't suggest anything
-> better. ;) I love the extensive docs!
-> 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+> > +  {
+> > +    "EventName": "ls_pref_instr_disp.prefetch_nta",
+> > +    "EventCode": "0x4b",
+> > +    "BriefDescription": "Software Prefetch Instructions (PREFETCHNTA instruction) Dispatched.",
+> > +    "PublicDescription": "Software Prefetch Instructions (PREFETCHNTA instruction) Dispatched.",
+> > +    "UMask": "0x4"
+> > +  },
+> > +  {
+> > +    "EventName": "ls_pref_instr_disp.store_prefetch_w",
+> > +    "EventCode": "0x4b",
+> > +    "BriefDescription": "Software Prefetch Instructions (3DNow PREFETCHW instruction) Dispatched.",
+> > +    "PublicDescription": "Software Prefetch Instructions (3DNow PREFETCHW instruction) Dispatched.",
+> > +    "UMask": "0x2"
+> > +  },
+> > +  {
+> > +    "EventName": "ls_pref_instr_disp.load_prefetch_w",
+> > +    "EventCode": "0x4b",
+> > +    "BriefDescription": "Prefetch, Prefetch_T0_T1_T2.",
+> > +    "PublicDescription": "Software Prefetch Instructions Dispatched. Prefetch, Prefetch_T0_T1_T2.",
+> > +    "UMask": "0x1"
+> > +  },
+These three are present in the PPR for model 71h (56176 Rev 3.06 - Jul
+17, 2019) but are missing from the PPR for model 31h (55803 Rev 0.54 -
+Sep 12, 2019). Not sure what to do about it. 
 
-Thanks for reviewing!
+Similarly, PMC 0x0AF - Dispatch Resource Stall Cycles 0 only has one
+subcounter in the model 31h PPR, whereas the PPR for 71h is the one that
+contains the eight subcounters we see in the mainline right now.
 
-Yu-cheng
+There could be more subtle differences like these, since I have not
+really compared the PPR versions that thoroughly. I was going with the
+assumption that since both are for SoCs based on the Zen2, they would
+have identical events. 
 
+Otherwise, I have made all the other changes and corrections, and will
+send in v3 after you suggest how to proceed about the above two.
+
+Best,
+Vijay
