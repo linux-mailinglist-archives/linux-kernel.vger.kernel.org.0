@@ -2,113 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CE6B173620
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:36:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2338817363B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:41:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726016AbgB1Lgi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 06:36:38 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:59022 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbgB1Lgi (ORCPT
+        id S1725928AbgB1LlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 06:41:24 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50510 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbgB1LlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 06:36:38 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01SBa53j013584;
-        Fri, 28 Feb 2020 05:36:05 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582889765;
-        bh=rLm5NTE1CYjmZGMxs2YV7x1c9JuFq3mregL37grduCo=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=wnesvm0wVu+YeZ8jTJAO9WrXhn894VT4/u5rRrMX9BPzZcnr7a/OQLigUuunWkn6/
-         5SU0DVsrO9RSc5SbJ+ipZ87f8rf5C30jGJLV5pdzOIQCK+mAs+Yx0hEmyshMPxoBOa
-         JSea5U5NQC9FApxu7lO7DJ/c8Kl1jILUwbFpQ714=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01SBa5i1115846;
-        Fri, 28 Feb 2020 05:36:05 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 28
- Feb 2020 05:36:05 -0600
-Received: from localhost.localdomain (10.64.41.19) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 28 Feb 2020 05:36:05 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 01SBa0vP019981;
-        Fri, 28 Feb 2020 05:36:00 -0600
-Subject: Re: [PATCH v4 08/11] PCI: layerscape: Modify the MSIX to the doorbell
- mode
-To:     Xiaowei Bao <xiaowei.bao@nxp.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <shawnguo@kernel.org>,
-        <leoyang.li@nxp.com>, <lorenzo.pieralisi@arm.com>,
-        <minghuan.Lian@nxp.com>, <mingkai.hu@nxp.com>, <roy.zang@nxp.com>,
-        <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
-        <andrew.murray@arm.com>, <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>
-References: <20190924021849.3185-1-xiaowei.bao@nxp.com>
- <20190924021849.3185-9-xiaowei.bao@nxp.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <55752e77-1094-4cbf-2822-e10b875b4dd9@ti.com>
-Date:   Fri, 28 Feb 2020 17:10:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Fri, 28 Feb 2020 06:41:24 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: alyssa)
+        with ESMTPSA id E2D642969BB
+Date:   Fri, 28 Feb 2020 06:41:18 -0500
+From:   Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Steven Price <steven.price@arm.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2] drm: panfrost: Silence warnings during deferred probe
+Message-ID: <20200228114118.GA1822@kevin>
+References: <CGME20200228094033eucas1p2fa2f6cea3b882e758992d97da2fc50ed@eucas1p2.samsung.com>
+ <20200228094026.26983-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20190924021849.3185-9-xiaowei.bao@nxp.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="DocE+STaALJfprDB"
+Content-Disposition: inline
+In-Reply-To: <20200228094026.26983-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiaowei,
 
-On 24/09/19 7:48 am, Xiaowei Bao wrote:
-> dw_pcie_ep_raise_msix_irq was never called in the exisitng driver
-> before, because the ls1046a platform don't support the MSIX feature
-> and msix_capable was always set to false.
-> Now that add the ls1088a platform with MSIX support, but the existing
-> dw_pcie_ep_raise_msix_irq doesn't work, so use the doorbell method to
-> support the MSIX feature.
+--DocE+STaALJfprDB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Reviewed-by: Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
 
-It does work after [1]. So the commit message might not be exactly true.
-
-[1] -> https://lore.kernel.org/r/20200225081703.8857-1-kishon@ti.com
-
-Thanks
-Kishon
-
-> 
-> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+On Fri, Feb 28, 2020 at 10:40:26AM +0100, Marek Szyprowski wrote:
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
-> v2: 
->  - No change
-> v3:
->  - Modify the commit message make it clearly.
-> v4: 
->  - No change
-> 
->  drivers/pci/controller/dwc/pci-layerscape-ep.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> index 1e07287..5f0cb99 100644
-> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> @@ -79,7 +79,8 @@ static int ls_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
->  	case PCI_EPC_IRQ_MSI:
->  		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
->  	case PCI_EPC_IRQ_MSIX:
-> -		return dw_pcie_ep_raise_msix_irq(ep, func_no, interrupt_num);
-> +		return dw_pcie_ep_raise_msix_irq_doorbell(ep, func_no,
-> +							  interrupt_num);
->  	default:
->  		dev_err(pci->dev, "UNKNOWN IRQ type\n");
->  		return -EINVAL;
-> 
+> v2:
+> - fixed build warning
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_device.c | 26 +++++++++++++++-------
+>  1 file changed, 18 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm=
+/panfrost/panfrost_device.c
+> index 238fb6d54df4..2c4ada3041b1 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_device.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_device.c
+> @@ -21,7 +21,9 @@ static int panfrost_reset_init(struct panfrost_device *=
+pfdev)
+> =20
+>  	pfdev->rstc =3D devm_reset_control_array_get(pfdev->dev, false, true);
+>  	if (IS_ERR(pfdev->rstc)) {
+> -		dev_err(pfdev->dev, "get reset failed %ld\n", PTR_ERR(pfdev->rstc));
+> +		if (PTR_ERR(pfdev->rstc) !=3D -EPROBE_DEFER)
+> +			dev_err(pfdev->dev, "get reset failed %ld\n",
+> +				PTR_ERR(pfdev->rstc));
+>  		return PTR_ERR(pfdev->rstc);
+>  	}
+> =20
+> @@ -44,7 +46,9 @@ static int panfrost_clk_init(struct panfrost_device *pf=
+dev)
+> =20
+>  	pfdev->clock =3D devm_clk_get(pfdev->dev, NULL);
+>  	if (IS_ERR(pfdev->clock)) {
+> -		dev_err(pfdev->dev, "get clock failed %ld\n", PTR_ERR(pfdev->clock));
+> +		if (PTR_ERR(pfdev->clock) !=3D -EPROBE_DEFER)
+> +			dev_err(pfdev->dev, "get clock failed %ld\n",
+> +				PTR_ERR(pfdev->clock));
+>  		return PTR_ERR(pfdev->clock);
+>  	}
+> =20
+> @@ -57,8 +61,9 @@ static int panfrost_clk_init(struct panfrost_device *pf=
+dev)
+> =20
+>  	pfdev->bus_clock =3D devm_clk_get_optional(pfdev->dev, "bus");
+>  	if (IS_ERR(pfdev->bus_clock)) {
+> -		dev_err(pfdev->dev, "get bus_clock failed %ld\n",
+> -			PTR_ERR(pfdev->bus_clock));
+> +		if (PTR_ERR(pfdev->bus_clock) !=3D -EPROBE_DEFER)
+> +			dev_err(pfdev->dev, "get bus_clock failed %ld\n",
+> +				PTR_ERR(pfdev->bus_clock));
+>  		return PTR_ERR(pfdev->bus_clock);
+>  	}
+> =20
+> @@ -92,7 +97,9 @@ static int panfrost_regulator_init(struct panfrost_devi=
+ce *pfdev)
+>  	pfdev->regulator =3D devm_regulator_get(pfdev->dev, "mali");
+>  	if (IS_ERR(pfdev->regulator)) {
+>  		ret =3D PTR_ERR(pfdev->regulator);
+> -		dev_err(pfdev->dev, "failed to get regulator: %d\n", ret);
+> +		if (ret !=3D -EPROBE_DEFER)
+> +			dev_err(pfdev->dev, "failed to get regulator: %d\n",
+> +				ret);
+>  		return ret;
+>  	}
+> =20
+> @@ -124,19 +131,22 @@ int panfrost_device_init(struct panfrost_device *pf=
+dev)
+> =20
+>  	err =3D panfrost_clk_init(pfdev);
+>  	if (err) {
+> -		dev_err(pfdev->dev, "clk init failed %d\n", err);
+> +		if (err !=3D -EPROBE_DEFER)
+> +			dev_err(pfdev->dev, "clk init failed %d\n", err);
+>  		return err;
+>  	}
+> =20
+>  	err =3D panfrost_regulator_init(pfdev);
+>  	if (err) {
+> -		dev_err(pfdev->dev, "regulator init failed %d\n", err);
+> +		if (err !=3D -EPROBE_DEFER)
+> +			dev_err(pfdev->dev, "regulator init failed %d\n", err);
+>  		goto err_out0;
+>  	}
+> =20
+>  	err =3D panfrost_reset_init(pfdev);
+>  	if (err) {
+> -		dev_err(pfdev->dev, "reset init failed %d\n", err);
+> +		if (err !=3D -EPROBE_DEFER)
+> +			dev_err(pfdev->dev, "reset init failed %d\n", err);
+>  		goto err_out1;
+>  	}
+> =20
+> --=20
+> 2.17.1
+>=20
+
+--DocE+STaALJfprDB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEQ17gm7CvANAdqvY4/v5QWgr1WA0FAl5Y/FgACgkQ/v5QWgr1
+WA3hPA/8D8FD7YP04EmoAQJS3nr1VRTZ6AYjtocsQTMh/CKOy11fb1XKbch8Jhci
+tlTF3Zd4/LA7UBS1Ki5eIXe7fpEbqsWMLcqQcl9h53e4EKuReg06NjM5f8uU9N79
+T9DD2KaYytCq4WxXymItoFSbVQn9w3z6jDXal3zGrDlALmgOYfASe+Er4SNr23gO
+J0ULpqCXk2kbU3Pbs1qfl0I2JnzGKBtLztv03Ijls8Oj/7DTwsGYqTnOack0giqb
+wnqoc/hCO0zBKxXQnqfJmyGWvgFzU1ivwW9KkvE/b/MmNyBAheyHNr/bQ6jnbHt5
+8A9WMh/VBCfhJklybWAL4vu6MQGKd5GEO8bZCusagO9w01LLyLC7D3b3YDsRLLW5
+HNXZEWvtXcoN29YuFSVkZCXlNdkX7ruANcfZxTzV01NpJNuFRT2uHk1lal20UX51
+FRDbC3FPpPp9riEMBRE3+6FinWZounaf4rKXlWuSCg+JmXlbNM6XxzNS36vkDQV1
+o9roxzN0mk01r6ih8l+yu05DwrzMpT1v7jdeNC1GtKRMQWJbS3jrmxpLXWbauEY0
+dYGfvwTEgohh0KCAk/s/I1LrYEGyBx9aEJHr+1DMLRLpfuEwO5FMhcF5UHzZvyBm
+3pao5k3Ku6wPR7Z8XXxGMLCOYgGcU9m7+rITccw+uecgMpjJgN8=
+=vJWj
+-----END PGP SIGNATURE-----
+
+--DocE+STaALJfprDB--
