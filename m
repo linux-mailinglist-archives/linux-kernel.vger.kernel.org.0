@@ -2,167 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9DC8173E0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 18:13:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D66A3173E15
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 18:14:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbgB1RMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 12:12:34 -0500
-Received: from muru.com ([72.249.23.125]:58232 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726674AbgB1RMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 12:12:32 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 69D4281CC;
-        Fri, 28 Feb 2020 17:13:16 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        Arthur Demchenkov <spinal.by@gmail.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>, ruleh <ruleh@gmx.de>
-Subject: [PATCH 3/3] Input: omap4-keypad - check state again for lost key-up interrupts
-Date:   Fri, 28 Feb 2020 09:12:23 -0800
-Message-Id: <20200228171223.11444-4-tony@atomide.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200228171223.11444-1-tony@atomide.com>
-References: <20200228171223.11444-1-tony@atomide.com>
+        id S1726974AbgB1RNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 12:13:17 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38715 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbgB1RNQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 12:13:16 -0500
+Received: by mail-pg1-f196.google.com with SMTP id d6so1833976pgn.5;
+        Fri, 28 Feb 2020 09:13:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xJi6vZcYcttW+MZfr9/rRJo0DF++IJ1/RUDtbKhU1AY=;
+        b=uEOAohEGBRoCSThVEmWLtAKPOqOCFMCaUcBA+F58HYQJ4WlwP99B0kkn5pagoVx9ia
+         ciyWMsE+sn335hZ75HM6QJ1hCDukb9Suie1cGGMW2CGkSeudg/JIePTCYGESVNsyzVvx
+         2yCpjoSiVB7B58PbXo5dzIdwKsB7nXSsB4qu/5qixVM9wJDBDP8LorAMIphl8QEyUu4w
+         tx7Ljaicm2ngq5StYDxBLLfcaHDE9bo08CT29iQoLWRs9BnkembEXNKAuMFTbN1kZnc+
+         rMUXNfZRE9iQg6Pvk4U20jO1SK28BuxQMZVUdpXosWbGA1asQrgJqXSeTclTNd72OGDS
+         4akw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xJi6vZcYcttW+MZfr9/rRJo0DF++IJ1/RUDtbKhU1AY=;
+        b=hoH0F2fupTBp2Ul+dYtwWyTm5hqo9KQbuVYZAv3ddJZAE35xFfW1p9j50Zls5QYlZ1
+         QgEdblzqPojmIfeC/qXsoQiZ3IXoTMBzP1b9GioVUbyNXk4X5zo1sQUa8iQqzreW9stL
+         wp0YS4Hrfy0J1jnGABhyDJpg224asygP0KmeJ4xOQnndzzGPtNyWqGPvfaIct2o1CUjL
+         xHzMKWlU/OxlocEijIO5uzcJh0sYNwo5Q6SKdBNTa3cMNy+O3HC/rnS5bFesYPMzkThZ
+         GZ+fuFphse9REpHumog9VTMOfQhQz/RtwKtNS1LfZJvCG7eicGbJcb9nq8exCar6xRK5
+         FKxQ==
+X-Gm-Message-State: APjAAAUSe5bLd6ffKCGMhpn/5Lb5YEimgMgKPoD2SqRwAjLhM7nzQ1ms
+        XXSgqXE+AE91qP7hkwKNE3M=
+X-Google-Smtp-Source: APXvYqwRnGkDeSmzVIq5t1dNZsR0afEyiIO9TeGMrlGYsOPCoVbGkguOPHdpxhLdA+JLiDLGB3FEAw==
+X-Received: by 2002:a63:1d22:: with SMTP id d34mr5495224pgd.21.1582909995462;
+        Fri, 28 Feb 2020 09:13:15 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id q13sm11203198pgh.30.2020.02.28.09.13.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Feb 2020 09:13:14 -0800 (PST)
+Date:   Fri, 28 Feb 2020 09:13:14 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] watchdog: add support for resetting keepalive timers
+ at start
+Message-ID: <20200228171314.GA14594@roeck-us.net>
+References: <20200228142331.13716-1-t-kristo@ti.com>
+ <20200228142331.13716-3-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200228142331.13716-3-t-kristo@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We only have partial errata i689 implemented with Commit 6c3516fed7b6
-("Input: omap-keypad - fix keyboard debounce configuration"). We are
-still missing the check for lost key-up interrupts as described in the
-omap4 silicon errata documentation as Errata ID i689 "1.32 Keyboard Key
-Up Event Can Be Missed":
+On Fri, Feb 28, 2020 at 04:23:29PM +0200, Tero Kristo wrote:
+> Current watchdog core pets the timer always after the initial keepalive
+> time has expired from boot-up. This is incorrect for certain timers that
+> don't like to be petted immediately when they are started, if they have
+> not been running over the boot.
+> 
+> To allow drivers to reset their keepalive timers during startup, add
+> a new watchdog flag to the api, WDOG_RESET_KEEPALIVE.
+> 
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> ---
+>  drivers/watchdog/watchdog_dev.c | 2 ++
+>  include/linux/watchdog.h        | 1 +
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
+> index 8b5c742f24e8..131e40c21703 100644
+> --- a/drivers/watchdog/watchdog_dev.c
+> +++ b/drivers/watchdog/watchdog_dev.c
+> @@ -283,6 +283,8 @@ static int watchdog_start(struct watchdog_device *wdd)
+>  		set_bit(WDOG_ACTIVE, &wdd->status);
+>  		wd_data->last_keepalive = started_at;
+>  		watchdog_update_worker(wdd);
+> +		if (test_bit(WDOG_RESET_KEEPALIVE, &wdd->status))
+> +			wd_data->last_hw_keepalive = started_at;
 
-"When a key is released for a time shorter than the debounce time,
- in-between 2 key press (KP1 and KP2), the keyboard state machine will go
- to idle mode and will never detect the key release (after KP1, and also
- after KP2), and thus will never generate a new IRQ indicating the key
- release."
+I don't think the additional flag is needed. The code should just set
+last_hw_keepalive. After all, it already sets last_keepalive, which
+determines when the next internal keepalive will be sent. It makes sense
+to also set last_hw_keepalive to prevent the next keepalive from being
+sent too early.
 
-Let's check the keyboard state with delayed_work after each event. And
-if the problem state is detect, let's clear all events.
-
-Cc: Arthur Demchenkov <spinal.by@gmail.com>
-Cc: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/input/keyboard/omap4-keypad.c | 56 ++++++++++++++++++++++++---
- 1 file changed, 50 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
---- a/drivers/input/keyboard/omap4-keypad.c
-+++ b/drivers/input/keyboard/omap4-keypad.c
-@@ -71,6 +71,8 @@ struct omap4_keypad {
- 	void __iomem *base;
- 	bool irq_wake_enabled;
- 	unsigned int irq;
-+	struct delayed_work key_work;
-+	struct mutex lock;		/* for key scan */
- 
- 	unsigned int rows;
- 	unsigned int cols;
-@@ -119,16 +121,22 @@ static irqreturn_t omap4_keypad_irq_handler(int irq, void *dev_id)
- 	return IRQ_NONE;
- }
- 
--static irqreturn_t omap4_keypad_irq_thread_fn(int irq, void *dev_id)
-+static bool omap4_keypad_scan_keys(struct omap4_keypad *keypad_data, bool clear)
- {
--	struct omap4_keypad *keypad_data = dev_id;
- 	struct input_dev *input_dev = keypad_data->input;
- 	unsigned char key_state[ARRAY_SIZE(keypad_data->key_state)];
- 	unsigned int col, row, code, changed;
--	u32 *new_state = (u32 *) key_state;
--
--	*new_state = kbd_readl(keypad_data, OMAP4_KBD_FULLCODE31_0);
--	*(new_state + 1) = kbd_readl(keypad_data, OMAP4_KBD_FULLCODE63_32);
-+	u32 *rows_lo = (u32 *)key_state;
-+	u32 *rows_hi = rows_lo + 1;
-+
-+	mutex_lock(&keypad_data->lock);
-+	if (clear) {
-+		*rows_lo = 0;
-+		*rows_hi = 0;
-+	} else {
-+		*rows_lo = kbd_readl(keypad_data, OMAP4_KBD_FULLCODE31_0);
-+		*rows_hi = kbd_readl(keypad_data, OMAP4_KBD_FULLCODE63_32);
-+	}
- 
- 	for (row = 0; row < keypad_data->rows; row++) {
- 		changed = key_state[row] ^ keypad_data->key_state[row];
-@@ -151,6 +159,20 @@ static irqreturn_t omap4_keypad_irq_thread_fn(int irq, void *dev_id)
- 
- 	memcpy(keypad_data->key_state, key_state,
- 		sizeof(keypad_data->key_state));
-+	mutex_unlock(&keypad_data->lock);
-+
-+	return *rows_lo || *rows_hi;
-+}
-+
-+static irqreturn_t omap4_keypad_irq_thread_fn(int irq, void *dev_id)
-+{
-+	struct omap4_keypad *keypad_data = dev_id;
-+	bool events;
-+
-+	events = omap4_keypad_scan_keys(keypad_data, false);
-+	if (events)
-+		schedule_delayed_work(&keypad_data->key_work,
-+				      msecs_to_jiffies(50));
- 
- 	/* clear pending interrupts */
- 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
-@@ -159,6 +181,25 @@ static irqreturn_t omap4_keypad_irq_thread_fn(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+/*
-+ * Errata ID i689 "1.32 Keyboard Key Up Event Can Be Missed".
-+ * Interrupt may not happen for key-up events.
-+ */
-+static void omap4_keypad_work(struct work_struct *work)
-+{
-+	struct omap4_keypad *keypad_data =
-+		container_of(work, struct omap4_keypad, key_work.work);
-+	bool events;
-+	u32 active;
-+
-+	active = kbd_readl(keypad_data, OMAP4_KBD_STATEMACHINE);
-+	if (active)
-+		return;
-+
-+	dev_dbg(keypad_data->input->dev.parent, "idle with events\n");
-+	events = omap4_keypad_scan_keys(keypad_data, true);
-+}
-+
- static int omap4_keypad_open(struct input_dev *input)
- {
- 	struct omap4_keypad *keypad_data = input_get_drvdata(input);
-@@ -251,6 +292,8 @@ static int omap4_keypad_probe(struct platform_device *pdev)
- 	}
- 
- 	keypad_data->irq = irq;
-+	mutex_init(&keypad_data->lock);
-+	INIT_DELAYED_WORK(&keypad_data->key_work, omap4_keypad_work);
- 
- 	error = omap4_keypad_parse_dt(&pdev->dev, keypad_data);
- 	if (error)
-@@ -387,6 +430,7 @@ static int omap4_keypad_remove(struct platform_device *pdev)
- 	struct resource *res;
- 
- 	free_irq(keypad_data->irq, keypad_data);
-+	cancel_delayed_work_sync(&keypad_data->key_work);
- 
- 	pm_runtime_disable(&pdev->dev);
- 
--- 
-2.25.1
+Guenter
