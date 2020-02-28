@@ -2,143 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBE7B173589
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 11:44:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12B4617358E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 11:45:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgB1Kou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 05:44:50 -0500
-Received: from foss.arm.com ([217.140.110.172]:36370 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726063AbgB1Kou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 05:44:50 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 156444B2;
-        Fri, 28 Feb 2020 02:44:49 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3044F3F73B;
-        Fri, 28 Feb 2020 02:44:48 -0800 (PST)
-Date:   Fri, 28 Feb 2020 10:44:42 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Bharat Kumar Gogada <bharatku@xilinx.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        Ravikiran Gummaluri <rgummal@xilinx.com>, maz@kernel.org
-Subject: Re: [PATCH v5 2/2] PCI: xilinx-cpm: Add Versal CPM Root Port driver
-Message-ID: <20200228104442.GA2874@e121166-lin.cambridge.arm.com>
-References: <1580400771-12382-1-git-send-email-bharat.kumar.gogada@xilinx.com>
- <1580400771-12382-3-git-send-email-bharat.kumar.gogada@xilinx.com>
- <20200225114013.GB6913@e121166-lin.cambridge.arm.com>
- <MN2PR02MB63365B50058B35AA37341BC9A5ED0@MN2PR02MB6336.namprd02.prod.outlook.com>
+        id S1726925AbgB1Kpk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 05:45:40 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:20008 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbgB1Kpk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 05:45:40 -0500
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 01SAjZiL017509;
+        Fri, 28 Feb 2020 19:45:35 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 01SAjZiL017509
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1582886735;
+        bh=AVWPDjvEFkL5nZDtBP72nvXCX+4qaLVka0coBrV64D8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=u8IBV3SfBwXEchtxhDXF8Dji6oYDaaJZNyhD0p3923ssYwY7daukuG+/ZwPWEpoRj
+         YtlNx0RX13NH6r4MYJmfUzirJ6bEx5Lo0hJkr1OX2eSucBA2Thgu9xFwr7eVFRMC44
+         jeookHN/xeyPR25zrSjTvX3iXQNHdO+VOg1+/9oj/c0YXQAaRJTdsWsDrZ1qgfdpOl
+         53KcxqzgTZ0Q0iDJcIpr8DlOlWvB/fS6n+XNOVITlOv5+4OaufgJbfqGkZvYvkln8M
+         MtgFpMYTeHvbGMv7WcWiwgl8BYcgubjFubdWB5tTpIT7I5PpLnLU1NfrDF3TiK6jpF
+         enHkOX+VediwA==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id r18so1640535vso.5;
+        Fri, 28 Feb 2020 02:45:35 -0800 (PST)
+X-Gm-Message-State: ANhLgQ0ovsptjidtv2mqDO0Qm7zpXblOv9eKdEUOxP+0jAq00qmMtuXc
+        fKjjmyXzB37k0RrTx+iu2mXN1/MBXTUmiI2ZJ1Q=
+X-Google-Smtp-Source: ADFU+vuT4IEKXTX14l2zA9Pn0Pag7bwinoTJNY2RRdKibw8N1mxf/ANOn4DHp/+jSmwUFj20bsSXGkGbGr0YnjKgM30=
+X-Received: by 2002:a05:6102:48b:: with SMTP id n11mr2189284vsa.181.1582886734408;
+ Fri, 28 Feb 2020 02:45:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MN2PR02MB63365B50058B35AA37341BC9A5ED0@MN2PR02MB6336.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200218094139.78835-1-qperret@google.com> <20200218094139.78835-3-qperret@google.com>
+ <CAK7LNAS0D_1k8FUJ+Bre1jrtGvHu28psU_xCa=K24iD7BkcJeA@mail.gmail.com> <20200228100302.GA228304@google.com>
+In-Reply-To: <20200228100302.GA228304@google.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 28 Feb 2020 19:44:58 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATADSQDp9bGzChE1xck_vw_6B6joLXXozDBrWWv4f=v=w@mail.gmail.com>
+Message-ID: <CAK7LNATADSQDp9bGzChE1xck_vw_6B6joLXXozDBrWWv4f=v=w@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] kbuild: split adjust_autoksyms.sh in two parts
+To:     Quentin Perret <qperret@google.com>
+Cc:     Nicolas Pitre <nico@fluxnic.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Matthias Maennich <maennich@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+MarcZ, FHI]
+On Fri, Feb 28, 2020 at 7:03 PM Quentin Perret <qperret@google.com> wrote:
+>
+> On Friday 28 Feb 2020 at 01:41:50 (+0900), Masahiro Yamada wrote:
+> > Hi.
+> >
+> > On Tue, Feb 18, 2020 at 6:41 PM Quentin Perret <qperret@google.com> wrote:
+> > >
+> > > In order to prepare the ground for a build-time optimization, split
+> > > adjust_autoksyms.sh into two scripts: one that generates autoksyms.h
+> > > based on all currently available information (whitelist, and .mod
+> > > files), and the other to inspect the diff between two versions of
+> > > autoksyms.h and trigger appropriate rebuilds.
+> > >
+> > > Acked-by: Nicolas Pitre <nico@fluxnic.net>
+> > > Tested-by: Matthias Maennich <maennich@google.com>
+> > > Reviewed-by: Matthias Maennich <maennich@google.com>
+> > > Signed-off-by: Quentin Perret <qperret@google.com>
+> > > ---
+> > >  scripts/adjust_autoksyms.sh | 36 +++-----------------------
+> > >  scripts/gen_autoksyms.sh    | 51 +++++++++++++++++++++++++++++++++++++
+> > >  2 files changed, 55 insertions(+), 32 deletions(-)
+> > >  create mode 100755 scripts/gen_autoksyms.sh
+> > >
+> > > diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
+> > > index ff46996525d3..2b366d945ccb 100755
+> > > --- a/scripts/adjust_autoksyms.sh
+> > > +++ b/scripts/adjust_autoksyms.sh
+> > > @@ -1,14 +1,13 @@
+> > >  #!/bin/sh
+> > >  # SPDX-License-Identifier: GPL-2.0-only
+> > >
+> > > -# Script to create/update include/generated/autoksyms.h and dependency files
+> > > +# Script to update include/generated/autoksyms.h and dependency files
+> > >  #
+> > >  # Copyright:   (C) 2016  Linaro Limited
+> > >  # Created by:  Nicolas Pitre, January 2016
+> > >  #
+> > >
+> > > -# Create/update the include/generated/autoksyms.h file from the list
+> > > -# of all module's needed symbols as recorded on the second line of *.mod files.
+> > > +# Update the include/generated/autoksyms.h file.
+> > >  #
+> > >  # For each symbol being added or removed, the corresponding dependency
+> > >  # file's timestamp is updated to force a rebuild of the affected source
+> > > @@ -38,35 +37,8 @@ esac
+> > >  # We need access to CONFIG_ symbols
+> > >  . include/config/auto.conf
+> > >
+> > > -ksym_wl=/dev/null
+> > > -if [ -n "$CONFIG_UNUSED_KSYMS_WHITELIST" ]; then
+> > > -       # Use 'eval' to expand the whitelist path and check if it is relative
+> > > -       eval ksym_wl="$CONFIG_UNUSED_KSYMS_WHITELIST"
+> > > -       [ "${ksym_wl}" != "${ksym_wl#/}" ] || ksym_wl="$abs_srctree/$ksym_wl"
+> > > -       if [ ! -f "$ksym_wl" ]; then
+> >
+> >
+> > Just a Nit.
+> >
+> > Maybe, is testing  -r better ?
+> >
+> > 'cat - "$ksym_wl"' is piped, so its error code is not checked.
+> >
+> > So, checking the read permission here is robust, I think.
+>
+> Right, that's a good point. And actually, I think we want both -f and
+> -r. -r alone would consider a path to a folder as correct.
+>
+> This should do the trick:
 
-On Tue, Feb 25, 2020 at 02:39:56PM +0000, Bharat Kumar Gogada wrote:
 
-[...]
+Sounds good.
 
-> > > +/* ECAM definitions */
-> > > +#define ECAM_BUS_NUM_SHIFT		20
-> > > +#define ECAM_DEV_NUM_SHIFT		12
-> > 
-> > You don't need these ECAM_* defines, you can use pci_generic_ecam_ops.
-> Does this need separate ranges region for ECAM space ? 
-> We have ECAM and controller space in same region.
+Thanks.
 
-You can create an ECAM window with pci_ecam_create where *cfgres
-represent the ECAM area, I don't get what you mean by "same region".
 
-Do you mean "contiguous" ? Or something else ?
 
-> > > +
-> > > +/**
-> > > + * struct xilinx_cpm_pcie_port - PCIe port information
-> > > + * @reg_base: Bridge Register Base
-> > > + * @cpm_base: CPM System Level Control and Status Register(SLCR) Base
-> > > + * @irq: Interrupt number
-> > > + * @root_busno: Root Bus number
-> > > + * @dev: Device pointer
-> > > + * @leg_domain: Legacy IRQ domain pointer
-> > > + * @irq_misc: Legacy and error interrupt number  */ struct
-> > > +xilinx_cpm_pcie_port {
-> > > +	void __iomem *reg_base;
-> > > +	void __iomem *cpm_base;
-> > > +	u32 irq;
-> > > +	u8 root_busno;
-> > > +	struct device *dev;
-> > > +	struct irq_domain *leg_domain;
-> > > +	int irq_misc;
-> > > +};
-> > > +
-> > > +static inline u32 pcie_read(struct xilinx_cpm_pcie_port *port, u32
-> > > +reg) {
-> > > +	return readl(port->reg_base + reg);
-> > > +}
-> > > +
-> > > +static inline void pcie_write(struct xilinx_cpm_pcie_port *port,
-> > > +			      u32 val, u32 reg)
-> > > +{
-> > > +	writel(val, port->reg_base + reg);
-> > > +}
-> > > +
-> > > +static inline bool cpm_pcie_link_up(struct xilinx_cpm_pcie_port
-> > > +*port) {
-> > > +	return (pcie_read(port, XILINX_CPM_PCIE_REG_PSCR) &
-> > > +		XILINX_CPM_PCIE_REG_PSCR_LNKUP) ? 1 : 0;
-> > 
-> > 	u32 val = pcie_read(port, XILINX_CPM_PCIE_REG_PSCR);
-> > 
-> > 	return val & XILINX_CPM_PCIE_REG_PSCR_LNKUP;
-> > 
-> > And this function call is not that informative anyway - it is used just to print a log
-> > whose usefulness is questionable.
-> We need this logging information customers are using this info in case
-> of link down failure.
+>
+> diff --git a/scripts/gen_autoksyms.sh b/scripts/gen_autoksyms.sh
+> index 679c9f05e4b4..16c0b2ddaa4c 100755
+> --- a/scripts/gen_autoksyms.sh
+> +++ b/scripts/gen_autoksyms.sh
+> @@ -24,7 +24,7 @@ if [ -n "$CONFIG_UNUSED_KSYMS_WHITELIST" ]; then
+>         # Use 'eval' to expand the whitelist path and check if it is relative
+>         eval ksym_wl="$CONFIG_UNUSED_KSYMS_WHITELIST"
+>         [ "${ksym_wl}" != "${ksym_wl#/}" ] || ksym_wl="$abs_srctree/$ksym_wl"
+> -       if [ ! -f "$ksym_wl" ]; then
+> +       if [ ! -f "$ksym_wl" ] || [ ! -r "$ksym_wl" ]; then
+>                 echo "ERROR: '$ksym_wl' whitelist file not found" >&2
+>                 exit 1
+>         fi
+>
+> I'll send a v6 shortly.
+>
+> Thanks!
+> Quentin
 
-Out of curiosity, to do what ?
 
-[...]
 
-> > > +/**
-> > > + * xilinx_cpm_pcie_intx_map - Set the handler for the INTx and mark
-> > > +IRQ as valid
-> > > + * @domain: IRQ domain
-> > > + * @irq: Virtual IRQ number
-> > > + * @hwirq: HW interrupt number
-> > > + *
-> > > + * Return: Always returns 0.
-> > > + */
-> > > +static int xilinx_cpm_pcie_intx_map(struct irq_domain *domain,
-> > > +				    unsigned int irq, irq_hw_number_t hwirq) {
-> > > +	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
-> > 
-> > INTX are level IRQs, the flow handler must be handle_level_irq.
-> Accepted will change.
-> > 
-> > > +	irq_set_chip_data(irq, domain->host_data);
-> > > +	irq_set_status_flags(irq, IRQ_LEVEL);
-> > 
-> > The way INTX are handled in this patch is wrong. You must set-up a chained IRQ
-> > with the appropriate flow handler, current code uses an IRQ action and that's an
-> > IRQ layer violation and it goes without saying that it is almost certainly broken.
-> In our controller we use same irq line for controller errors and
-> legacy errors.  we have two cases here where error interrupts are
-> self-consumed by controller, and legacy interrupts are flow handled.
-> Its not INTX handling alone for this IRQ line .  So chained IRQ can be
-> used for self consumed interrupts too ?
-
-No. In this specific case both solutions are not satisfying, we need to
-give it some thought, I will talk to Marc (CC'ed) to find the best
-option here going forward.
-
-Thanks,
-Lorenzo
+-- 
+Best Regards
+Masahiro Yamada
