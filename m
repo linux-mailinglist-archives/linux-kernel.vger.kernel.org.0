@@ -2,59 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88D49173023
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 06:02:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7064F173039
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 06:22:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbgB1FCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 00:02:47 -0500
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:19381 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbgB1FCr (ORCPT
+        id S1726563AbgB1FWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 00:22:39 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:42729 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725468AbgB1FWi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 00:02:47 -0500
-Received: from localhost.localdomain ([92.140.213.100])
-        by mwinf5d77 with ME
-        id 852k2200J2AY1JL0352lX6; Fri, 28 Feb 2020 06:02:45 +0100
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 28 Feb 2020 06:02:45 +0100
-X-ME-IP: 92.140.213.100
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] Bluetooth: hci_h4: Fix a typo in a comment
-Date:   Fri, 28 Feb 2020 06:02:44 +0100
-Message-Id: <20200228050244.25304-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.20.1
+        Fri, 28 Feb 2020 00:22:38 -0500
+X-UUID: b2212b16be1444048ae1fc61997b4f42-20200228
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=hx1vyqreUaDlEd+O0J9QdTAoM6IYl0gynpL7Q9O9Mlg=;
+        b=MJOYlIcbx/ux/oed26fnrJM2ODTP3daokZbLpSFi7RhBsb7fGj4/fzuIjqLcmm6lD5Eb4424BjzBahwCZEfpZcO6zkVTiTkjMKnb9iJchR5mTDIqaM0qDB98wPqRxDmDVvSMt97WXXe3E8iuaxZDKuDFDcqcOyQAHr9idV6FM8Y=;
+X-UUID: b2212b16be1444048ae1fc61997b4f42-20200228
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1498666084; Fri, 28 Feb 2020 13:21:38 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 28 Feb
+ 2020 13:20:15 +0800
+Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
+ MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Fri, 28 Feb 2020 13:22:01 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+CC:     <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
+        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
+        <stonea168@163.com>, <huijuan.xie@mediatek.com>,
+        Jitao Shi <jitao.shi@mediatek.com>
+Subject: [PATCH v10 0/5] mt8183 dpi supports dual edge and pin mode swap
+Date:   Fri, 28 Feb 2020 13:21:23 +0800
+Message-ID: <20200228052128.82136-1-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 6739D98E80EC8480B023BD5CC93BFF3800F14F27309F76845A651EE097CB8D112000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'transmittion' should be 'transmission'
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/bluetooth/hci_h4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/bluetooth/hci_h4.c b/drivers/bluetooth/hci_h4.c
-index 0b84a05a730b..4b3b14a34794 100644
---- a/drivers/bluetooth/hci_h4.c
-+++ b/drivers/bluetooth/hci_h4.c
-@@ -83,7 +83,7 @@ static int h4_close(struct hci_uart *hu)
- 	return 0;
- }
- 
--/* Enqueue frame for transmittion (padding, crc, etc) */
-+/* Enqueue frame for transmission (padding, crc, etc) */
- static int h4_enqueue(struct hci_uart *hu, struct sk_buff *skb)
- {
- 	struct h4_struct *h4 = hu->priv;
--- 
-2.20.1
+Q2hhbmdlcyBzaW5jZSB2OToNCiAtIHJlbmFtZSBwaW5jdHJsLW5hbWVzID0gImdwaW9tb2RlIiwg
+ImRwaW1vZGUiIHRvICJhY3RpdmUiLCAiaWRsZSIuDQogLSBmaXggc29tZSB0eXBvLg0KDQpDaGFu
+Z2VzIHNpbmNlIHY4Og0KIC0gZHJvcCBwY2xrLXNhbXBsZSByZWRlZmluZSBpbiBtZWRpYXRlayxk
+cGkudHh0DQogLSBvbmx5IGdldCB0aGUgZ3Bpb21vZGUgYW5kIGRwaW1vZGUgd2hlbiBkcGktPnBp
+bmN0cmwgaXMgc3VjY2Vzc2Z1bC4NCg0KQ2hhbmdlcyBzaW5jZSB2NzoNCiAtIHNlcGFyYXRlIGR0
+LWJpbmRpbmdzIHRvIGluZGVwZW5kZW50IHBhdGNoZXMuDQogLSBtb3ZlIGRwaSBkdWFsIGVkZ2Ug
+dG8gb25lIHBhdGNoLg0KDQpDaGFuZ2VzIHNpbmNlIHY2Og0KIC0gY2hhbmdlIGR1YWxfZWRnZSB0
+byBwY2xrLXNhbXBsZQ0KIC0gcmVtb3ZlIGRwaV9waW5fbW9kZV9zd2FwIGFuZA0KDQpDaGFuZ2Vz
+IHNpbmNlIHY1Og0KIC0gZmluZSB0dW5lIHRoZSBkdC1iaW5kaW5ncyBjb21taXQgbWVzc2FnZS4N
+Cg0KQ2hhbmdlcyBzaW5jZSB2NDoNCiAtIG1vdmUgcGluIG1vZGUgY29udHJvbCBhbmQgZHVhbCBl
+ZGdlIGNvbnRyb2wgdG8gZGV2ZWljZSB0cmVlLg0KIC0gdXBkYXRlIGR0LWJpbmRpbmdzIGRvY3Vt
+ZW50IGZvciBwaW4gbW9kZSBzd2FwIGFuZCBkdWFsIGVkZ2UgY29udHJvbC4NCg0KQ2hhbmdlcyBz
+aW5jZSB2MzoNCiAtIGFkZCBkcGkgcGluIG1vZGUgY29udHJvbCB3aGVuIGRwaSBvbiBvciBvZmYu
+DQogLSB1cGRhdGUgZHBpIGR1YWwgZWRnZSBjb21tZW50Lg0KDQpDaGFuZ2VzIHNpbmNlIHYyOg0K
+IC0gdXBkYXRlIGR0LWJpbmRpbmdzIGRvY3VtZW50IGZvciBtdDgxODMgZHBpLg0KIC0gc2VwYXJh
+dGUgZHVhbCBlZGdlIG1vZGZpY2F0aW9uIGFzIGluZGVwZW5kZW50IHBhdGNoLg0KDQpKaXRhbyBT
+aGkgKDUpOg0KICBkdC1iaW5kaW5nczogbWVkaWE6IGFkZCBwY2xrLXNhbXBsZSBkdWFsIGVkZ2Ug
+cHJvcGVydHkNCiAgZHQtYmluZGluZ3M6IGRpc3BsYXk6IG1lZGlhdGVrOiBjb250cm9sIGRwaSBw
+aW5zIG1vZGUgdG8gYXZvaWQgbGVha2FnZQ0KICBkdC1iaW5kaW5nczogZGlzcGxheTogbWVkaWF0
+ZWs6IGRwaSBzYW1wbGUgZGF0YSBpbiBkdWFsIGVkZ2Ugc3VwcG9ydA0KICBkcm0vbWVkaWF0ZWs6
+IGRwaSBzYW1wbGUgbW9kZSBzdXBwb3J0DQogIGRybS9tZWRpYXRlazogc2V0IGRwaSBwaW4gbW9k
+ZSB0byBncGlvIGxvdyB0byBhdm9pZCBsZWFrYWdlIGN1cnJlbnQNCg0KIC4uLi9kaXNwbGF5L21l
+ZGlhdGVrL21lZGlhdGVrLGRwaS50eHQgICAgICAgICB8ICA5ICsrKysNCiAuLi4vYmluZGluZ3Mv
+bWVkaWEvdmlkZW8taW50ZXJmYWNlcy50eHQgICAgICAgfCAgNCArLQ0KIGRyaXZlcnMvZ3B1L2Ry
+bS9tZWRpYXRlay9tdGtfZHBpLmMgICAgICAgICAgICB8IDQ5ICsrKysrKysrKysrKysrKysrKy0N
+CiAzIGZpbGVzIGNoYW5nZWQsIDU4IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQoNCi0t
+IA0KMi4yMS4wDQo=
 
