@@ -2,129 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C1D917362E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:39:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E192173631
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:39:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbgB1LjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 06:39:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726451AbgB1LjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 06:39:17 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59A91246AA;
-        Fri, 28 Feb 2020 11:39:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582889956;
-        bh=upkO4v3c0rIQ0keC626bw9IuEHNsC1dkGWuB7v2kfSk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NrB/WfS+zzE8bkSLBKF8y3I6i3reofkhmzojVRIhhaVOYtdv6OtmWnl34anxCgeE9
-         xBY+i0BY08RaIJnKhN+3hm11JH/KefSsqjFDAuj6GrXVwRjopo0iA+dRKg6IMdhkVQ
-         pQ53Xdm232HxVyUTAN7a3lccyhq0UZ3BZ1ODLjpM=
-Date:   Fri, 28 Feb 2020 12:39:14 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Lech Perczak <l.perczak@camlintechnologies.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        Krzysztof =?utf-8?Q?Drobi=C5=84ski?= 
-        <k.drobinski@camlintechnologies.com>,
-        Pawel Lenkow <p.lenkow@camlintechnologies.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: Regression in v4.19.106 breaking waking up of readers of
- /proc/kmsg and /dev/kmsg
-Message-ID: <20200228113914.GA2918180@kroah.com>
-References: <aa0732c6-5c4e-8a8b-a1c1-75ebe3dca05b@camlintechnologies.com>
- <20200227123633.GB962932@kroah.com>
- <42d3ce5c-5ffe-8e17-32a3-5127a6c7c7d8@camlintechnologies.com>
- <e9358218-98c9-2866-8f40-5955d093dc1b@camlintechnologies.com>
- <20200228031306.GO122464@google.com>
- <20200228100416.6bwathdtopwat5wy@pathway.suse.cz>
- <20200228105836.GA2913504@kroah.com>
- <20200228113214.kew4xi5tkbo7bpou@pathway.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200228113214.kew4xi5tkbo7bpou@pathway.suse.cz>
+        id S1726897AbgB1Lje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 06:39:34 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37630 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726857AbgB1Ljd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 06:39:33 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a141so2842709wme.2;
+        Fri, 28 Feb 2020 03:39:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=1nT2rygpRjcW5Hc5nEx4+QR4Y0c2ZJTbeTcqfJuIxf8=;
+        b=Kqc24jvgOU22EK6INyCirOks2OzBu06s3R229MgyxZlaO9KwA00EYavqHNtqMuhU37
+         ZiGekBb6KP2Ovyu+ihydi+f0LrC/EjezkTbIzbAClYGMe+0/enh0qgPePsV6ybOBXbww
+         0ILwtqR0otTE4mjqS0m7vd8Yjtr6PvVWIrMmavPdV8KJLRSu88YK3Q3wzK71tZffUftz
+         w0vVxuoPAbgR1dYb7fmHNohJXdeRq2vAWCowCI3h7CjjwJ+xS8FxjvAjxTeg5iWzcole
+         zB3TTxUX4tQcz6qFEE0QYfc2VtTYYmwLrqxeaFnX1I+L9l4UKP5npgDqKCaLSdvSrscf
+         YZMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1nT2rygpRjcW5Hc5nEx4+QR4Y0c2ZJTbeTcqfJuIxf8=;
+        b=Ad7HyDwK1ap2f+7qIMeTNppCE46kT0vgL3ZpUzhjRjZAwTTbenP7+fhf616ux+obt7
+         lLkJjy2YHcXJ8c8/e3eN3gHUAKOu75li3HW487DacXcg+kq3HfPmB05l+E1EGMrYybvg
+         dGOdjMbacbSk68Au3xp0C4rHJjeTnuu0ZTzOoaCaTYisStzI2Oqv1vnHD8RuabOGdkt+
+         0imMCmvL7MDPsW2VIvTS1DKUgc4zSGFA9jfGNdL/soY9ODQRcaS2rGWfZMf34R0VqUG4
+         p8s+RIcEkmnmTTieAQchcz/NrzRqNjJg0di+FEsEuty0FthECNc+uChR8qz6G2eZL5LZ
+         FO5Q==
+X-Gm-Message-State: APjAAAVv+GHQ3oSKokvYAyg0hAslHeqSOwbeKDaJMb6mNSshsq69lCJ8
+        yKlNyCYTLdtiKtz1TUPisogvaTR6
+X-Google-Smtp-Source: APXvYqzl/ZY5TQUvn+/CB3/RaLjU8StBmIRt1iV97hCR5IEM+O1KSpKMioYZFHvB/LGdaLFAWtBYbg==
+X-Received: by 2002:a1c:3204:: with SMTP id y4mr4362124wmy.166.1582889970418;
+        Fri, 28 Feb 2020 03:39:30 -0800 (PST)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id q1sm11554294wrw.5.2020.02.28.03.39.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Feb 2020 03:39:29 -0800 (PST)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ARM: dts: remove g-use-dma from rockchip usb nodes
+Date:   Fri, 28 Feb 2020 12:39:21 +0100
+Message-Id: <20200228113922.20266-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 12:32:14PM +0100, Petr Mladek wrote:
-> On Fri 2020-02-28 11:58:36, Greg Kroah-Hartman wrote:
-> > On Fri, Feb 28, 2020 at 11:04:16AM +0100, Petr Mladek wrote:
-> > > On Fri 2020-02-28 12:13:06, Sergey Senozhatsky wrote:
-> > > > Cc-ing Petr, Steven, John
-> > > > 
-> > > > https://lore.kernel.org/lkml/e9358218-98c9-2866-8f40-5955d093dc1b@camlintechnologies.com
-> > > > 
-> > > > On (20/02/27 14:08), Lech Perczak wrote:
-> > > > > W dniu 27.02.2020 o 13:39, Lech Perczak pisze:
-> > > > > > W dniu 27.02.2020 o 13:36, Greg Kroah-Hartman pisze:
-> > > > > >> On Thu, Feb 27, 2020 at 11:09:49AM +0000, Lech Perczak wrote:
-> > > > > >>> Hello,
-> > > > > >>>
-> > > > > >>> After upgrading kernel on our boards from v4.19.105 to v4.19.106 we found out that syslog fails to read the messages after ones read initially after opening /proc/kmsg just after booting.
-> > > > > >>> I also found out, that output of 'dmesg --follow' also doesn't react on new printks appearing for whatever reason - to read new messages, reopening /proc/kmsg or /dev/kmsg was needed.
-> > > > > >>> I bisected this down to commit 15341b1dd409749fa5625e4b632013b6ba81609b ("char/random: silence a lockdep splat with printk()"), and reverting it on top of v4.19.106 restored correct behaviour.
-> > > > > >> That is really really odd.
-> > > > > > Very odd it is indeed.
-> > > > > >>> My test scenario for bisecting was:
-> > > > > >>> 1. run 'dmesg --follow' as root
-> > > > > >>> 2. run 'echo t > /proc/sysrq-trigger'
-> > > > > >>> 3. If trace appears in dmesg output -> good, otherwise, bad. If trace doesn't appear in output of 'dmesg --follow', re-running it will show the trace.
-> > > > > >>>
-> > > 
-> > > I have reproduced the problem with a kernel based on v4.19.106
-> > > and I see the following in the log:
-> > > 
-> > > [    0.028250] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645519600211568 ns
-> > > [    0.028263] random: get_random_bytes called from start_kernel+0x9e/0x4f6 with crng_init=0
-> > > [    0.028268] setup_percpu: NR_CPUS:8192 nr_cpumask_bits:4 nr_cpu_ids:4 nr_node_ids:1
-> > > [    0.028407] percpu: Embedded 44 pages/cpu s142216 r8192 d29816 u524288
-> > > [    0.028411] pcpu-alloc: s142216 r8192 d29816 u524288 alloc=1*2097152
-> > > [    0.028412] pcpu-alloc: [0] 0 1 2 3 
-> > > 
-> > > Note that percpu stuff is initialized after printk_deferred(). And the
-> > > deferred console is scheduled by:
-> > > 
-> > > void defer_console_output(void)
-> > > {
-> > > 	preempt_disable();
-> > > 	__this_cpu_or(printk_pending, PRINTK_PENDING_OUTPUT);
-> > > 	irq_work_queue(this_cpu_ptr(&wake_up_klogd_work));
-> > > 	preempt_enable();
-> > > }
-> > > 
-> > > I am afraid that the patch creates some mess via the non-initialized
-> > > per-cpu variable.
-> > > 
-> > > I see that x86 has some support for EARLY_PER_CPU stuff but it seems
-> > > to be arch-specific.
-> > > 
-> > > I do not see a reliable way to detect when per-cpu variables are
-> > > initialized. Adding Tejun and PeterZ into CC if they have any
-> > > idea.
-> > > 
-> > > I suggest to revert the patch until we have some easy and safe solution.
-> > 
-> > Ok, I'll do so, but why is this not an issue in 5.4.y and newer kernels?
-> 
-> Good question. Well, there have been many changes in the random number
-> subsystem initialization recently. My bet is that it is much harder to
-> hit the warning there.
+A test with the command below gives these errors:
 
-Ah, yeah, very true.  Some of those patches were backported to 4.19.y,
-but not all of them.
+arch/arm/boot/dts/rv1108-elgin-r1.dt.yaml: usb@30180000:
+'g-use-dma' does not match any of the regexes: 'pinctrl-[0-9]+'
+arch/arm/boot/dts/rv1108-evb.dt.yaml: usb@30180000:
+'g-use-dma' does not match any of the regexes: 'pinctrl-[0-9]+'
+arch/arm/boot/dts/rk3228-evb.dt.yaml: usb@30040000:
+'g-use-dma' does not match any of the regexes: 'pinctrl-[0-9]+'
+arch/arm/boot/dts/rk3229-evb.dt.yaml: usb@30040000:
+'g-use-dma' does not match any of the regexes: 'pinctrl-[0-9]+'
+arch/arm/boot/dts/rk3229-xms6.dt.yaml: usb@30040000:
+'g-use-dma' does not match any of the regexes: 'pinctrl-[0-9]+'
 
-thanks,
+'g-use-dma' is not a valid option in dwc2.yaml, so remove it
+from all Rockchip dtsi files.
 
-greg k-h
+make ARCH=arm dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/usb/dwc2.yaml
+
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ arch/arm/boot/dts/rk322x.dtsi | 1 -
+ arch/arm/boot/dts/rv1108.dtsi | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
+index 4e90efdc9..dac930be3 100644
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -718,7 +718,6 @@
+ 		g-np-tx-fifo-size = <16>;
+ 		g-rx-fifo-size = <280>;
+ 		g-tx-fifo-size = <256 128 128 64 32 16>;
+-		g-use-dma;
+ 		phys = <&u2phy0_otg>;
+ 		phy-names = "usb2-phy";
+ 		status = "disabled";
+diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
+index 1fd06e7cb..9bb109d66 100644
+--- a/arch/arm/boot/dts/rv1108.dtsi
++++ b/arch/arm/boot/dts/rv1108.dtsi
+@@ -527,7 +527,6 @@
+ 		g-np-tx-fifo-size = <16>;
+ 		g-rx-fifo-size = <280>;
+ 		g-tx-fifo-size = <256 128 128 64 32 16>;
+-		g-use-dma;
+ 		phys = <&u2phy_otg>;
+ 		phy-names = "usb2-phy";
+ 		status = "disabled";
+-- 
+2.11.0
+
