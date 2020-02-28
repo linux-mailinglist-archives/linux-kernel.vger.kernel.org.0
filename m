@@ -2,101 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 274811735E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:15:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A16521735F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:18:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbgB1LPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 06:15:48 -0500
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:55063 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbgB1LPs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 06:15:48 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id ACB013F81C;
-        Fri, 28 Feb 2020 12:15:46 +0100 (CET)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=dXA4qckv;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id d-1Dvl-SzUOP; Fri, 28 Feb 2020 12:15:45 +0100 (CET)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 3BB2B3F36B;
-        Fri, 28 Feb 2020 12:15:43 +0100 (CET)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 8CA7C3600E5;
-        Fri, 28 Feb 2020 12:15:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1582888543; bh=ArwgEIDl33P4ZVBnnUz1ZjkbHAQUFSsMubAJIywx/Dw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dXA4qckvxvs38papKi+Rq7RwtKShCBkWbmM74jOvNle/S8S8SMggwZ3W2PAfgRoHF
-         3Z5Gf+870LYx97tW/GupcjknFHKl77ofdAqxwSmYdkK5KNwLBJeMGr2o6VAIiDSlOW
-         N3SsxKv0uZx3szrA6HRq85S1yEs6lpRNOQMNF+yg=
-Subject: Re: [PATCH] drm/shmem: drop pgprot_decrypted()
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20200228104723.18757-1-kraxel@redhat.com>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <997a1baa-dc71-47d3-6e93-4dc953844d68@shipmail.org>
-Date:   Fri, 28 Feb 2020 12:15:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1725900AbgB1LSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 06:18:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54670 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725468AbgB1LSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 06:18:17 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFE9920658;
+        Fri, 28 Feb 2020 11:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582888697;
+        bh=fSY96SDopWfyGJlBh/YWZ0XEkxZAt2S5uQ5qaCPocYQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b2i6didYKoZTm0I9zwFmf0/HY1ZgAdrT+IAWL20dEcr3VqxhALHdTGN792AVKRI8N
+         qyKPzMNH0p48RC3LaFGnGgymWSnZ+rHKVu0K9vWjN9bSLd6i7KAkVguufW6ff/sJtR
+         jf6Ijo3ZFaqLwHxXVW8YmUJyyRO6XOlADv/aD1kg=
+Date:   Fri, 28 Feb 2020 12:18:15 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Michael Walle <michael@walle.cc>
+Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] serial: earlycon: prefer EARLYCON_DECLARE() variant
+Message-ID: <20200228111815.GA2915187@kroah.com>
+References: <20200220174607.24285-1-michael@walle.cc>
+ <ba54e9c14d4e0947df964964c020bc71@walle.cc>
 MIME-Version: 1.0
-In-Reply-To: <20200228104723.18757-1-kraxel@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ba54e9c14d4e0947df964964c020bc71@walle.cc>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/28/20 11:47 AM, Gerd Hoffmann wrote:
-> Was added by commit 95cf9264d5f3 ("x86, drm, fbdev: Do not specify
-> encrypted memory for video mappings"), then it was kept through various
-> changes.
->
-> While vram actually needs decrypted mappings this is not correct for
-> shmem gem objects which live in main memory not io memory, so remove the
-> call.
->
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->   drivers/gpu/drm/drm_gem_shmem_helper.c | 1 -
->   1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> index aad9324dcf4f..df31e5782eed 100644
-> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> @@ -548,7 +548,6 @@ int drm_gem_shmem_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
->   	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
->   	if (!shmem->map_cached)
->   		vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
-> -	vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
->   	vma->vm_ops = &drm_gem_shmem_vm_ops;
->   
->   	return 0;
+On Fri, Feb 28, 2020 at 11:26:36AM +0100, Michael Walle wrote:
+> Hi Greg,
+> 
+> 
+> Am 2020-02-20 18:46, schrieb Michael Walle:
+> > If a driver exposes early consoles with EARLYCON_DECLARE() and
+> > OF_EARLYCON_DECLARE(), pefer the non-OF variant if the user specifies it
+> > by
+> >   earlycon=<driver>,<options>
+> > 
+> > The rationale behind this is that some drivers register multiple setup
+> > functions under the same driver name. Eg.
+> > 
+> > OF_EARLYCON_DECLARE(lpuart, "fsl,vf610-lpuart",
+> > lpuart_early_console_setup);
+> > OF_EARLYCON_DECLARE(lpuart32, "fsl,ls1021a-lpuart",
+> > lpuart32_early_console_setup);
+> > OF_EARLYCON_DECLARE(lpuart32, "fsl,imx7ulp-lpuart",
+> > lpuart32_imx_early_console_setup);
+> > EARLYCON_DECLARE(lpuart, lpuart_early_console_setup);
+> > EARLYCON_DECLARE(lpuart32, lpuart32_early_console_setup);
+> > 
+> > It depends on the order of the entries which console_setup() actually
+> > gets called. To make things worse, I guess it also depends on the
+> > compiler how these are ordered. Thus always prefer the
+> > EARLYCON_DECLARE()
+> > ones.
+> 
+> Do you have an opinon on this proposal?
 
-Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
+It's only been a week, please give me a chance to catch up on serial
+patches...
 
-Thanks,
+thanks,
 
-Thomas
-
-
+greg k-h
