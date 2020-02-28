@@ -2,106 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A42EA173B1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F01A173B29
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:16:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbgB1PNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 10:13:32 -0500
-Received: from mga06.intel.com ([134.134.136.31]:29073 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726947AbgB1PNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 10:13:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 07:13:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,496,1574150400"; 
-   d="scan'208";a="385520271"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 28 Feb 2020 07:13:30 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 3719D24D; Fri, 28 Feb 2020 17:13:28 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Tomas Winkler <tomas.winkler@intel.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] mei: Don't encourage to use kernel internal types in user code
-Date:   Fri, 28 Feb 2020 17:13:28 +0200
-Message-Id: <20200228151328.45062-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.25.0
+        id S1727116AbgB1PQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 10:16:12 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57970 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726945AbgB1PQM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 10:16:12 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01SFFcKc105420;
+        Fri, 28 Feb 2020 10:16:00 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2yepxphvrr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 28 Feb 2020 10:15:59 -0500
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 01SFFxa3107442;
+        Fri, 28 Feb 2020 10:15:59 -0500
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2yepxphuy1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 28 Feb 2020 10:15:56 -0500
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01SFC17N007473;
+        Fri, 28 Feb 2020 15:14:55 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma03dal.us.ibm.com with ESMTP id 2yepv2pkys-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 28 Feb 2020 15:14:55 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01SFEshx16253840
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Feb 2020 15:14:54 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 333582805C;
+        Fri, 28 Feb 2020 15:14:54 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3C33028068;
+        Fri, 28 Feb 2020 15:14:53 +0000 (GMT)
+Received: from [9.211.148.203] (unknown [9.211.148.203])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 28 Feb 2020 15:14:53 +0000 (GMT)
+Subject: Re: [PATCH v2] ARM: dts: rainier: Set PCA9552 pin types
+To:     Matthew Barth <msbarth@linux.ibm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, openbmc@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Brandon Wyman <bjwyman@gmail.com>
+References: <20200225201415.431668-1-msbarth@linux.ibm.com>
+From:   Eddie James <eajames@linux.ibm.com>
+Message-ID: <59ceccbd-b776-51fc-e80b-39427c70ec70@linux.ibm.com>
+Date:   Fri, 28 Feb 2020 09:14:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200225201415.431668-1-msbarth@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-28_04:2020-02-28,2020-02-28 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 phishscore=0 spamscore=0 suspectscore=0 clxscore=1015
+ bulkscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002280121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-uuid_le is internal kernel type which shall not be exposed to the user
-in the first place. In order to mitigate the (wrong) distribution of
-the use of that type, switch MEI AMT sample to plain unsigned char array.
 
-Note, there is no ABI change involved.
+On 2/25/20 2:14 PM, Matthew Barth wrote:
+> All 16 pins of the PCA9552 at 7-bit address 0x61 should be set as type
+> GPIO.
+>
+> Signed-off-by: Matthew Barth <msbarth@linux.ibm.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- samples/mei/mei-amt-version.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/samples/mei/mei-amt-version.c b/samples/mei/mei-amt-version.c
-index 32234481ad7d..458cb6db57c6 100644
---- a/samples/mei/mei-amt-version.c
-+++ b/samples/mei/mei-amt-version.c
-@@ -90,7 +90,7 @@
- } while (0)
- 
- struct mei {
--	uuid_le guid;
-+	unsigned char guid[16];
- 	bool initialized;
- 	bool verbose;
- 	unsigned int buf_size;
-@@ -108,7 +108,7 @@ static void mei_deinit(struct mei *cl)
- 	cl->initialized = false;
- }
- 
--static bool mei_init(struct mei *me, const uuid_le *guid,
-+static bool mei_init(struct mei *me, const unsigned char *guid,
- 		unsigned char req_protocol_version, bool verbose)
- {
- 	int result;
-@@ -126,7 +126,7 @@ static bool mei_init(struct mei *me, const uuid_le *guid,
- 	memset(&data, 0, sizeof(data));
- 	me->initialized = true;
- 
--	memcpy(&data.in_client_uuid, &me->guid, sizeof(me->guid));
-+	memcpy(&data.in_client_uuid, me->guid, sizeof(me->guid));
- 	result = ioctl(me->fd, IOCTL_MEI_CONNECT_CLIENT, &data);
- 	if (result) {
- 		mei_err(me, "IOCTL_MEI_CONNECT_CLIENT receive message. err=%d\n", result);
-@@ -270,8 +270,11 @@ struct amt_host_if_resp_header {
- 	unsigned char data[0];
- } __attribute__((packed));
- 
--const uuid_le MEI_IAMTHIF = UUID_LE(0x12f80028, 0xb4b7, 0x4b2d,  \
--				0xac, 0xa8, 0x46, 0xe0, 0xff, 0x65, 0x81, 0x4c);
-+/* MEI AMT Interface GUID: 12f80028-b4b7-4b2d-aca8-46e0ff65814c */
-+const unsigned char mei_iamthif[16] = {
-+	0x28, 0x00, 0xf8, 0x12, 0xb7, 0xb4, 0x2d, 0x4b,
-+	0xac, 0xa8, 0x46, 0xe0, 0xff, 0x65, 0x81, 0x4c,
-+};
- 
- #define AMT_HOST_IF_CODE_VERSIONS_REQUEST  0x0400001A
- #define AMT_HOST_IF_CODE_VERSIONS_RESPONSE 0x0480001A
-@@ -295,7 +298,7 @@ static bool amt_host_if_init(struct amt_host_if *acmd,
- 		      unsigned long send_timeout, bool verbose)
- {
- 	acmd->send_timeout = (send_timeout) ? send_timeout : 20000;
--	acmd->initialized = mei_init(&acmd->mei_cl, &MEI_IAMTHIF, 0, verbose);
-+	acmd->initialized = mei_init(&acmd->mei_cl, mei_iamthif, 0, verbose);
- 	return acmd->initialized;
- }
- 
--- 
-2.25.0
+Reviewed-by: Eddie James <eajames@linux.ibm.com>
 
+
+> ---
+> v2: Added leds-pca955x.h include
+>      Added upstream to patch
+> ---
+> ---
+>   arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts | 17 +++++++++++++++++
+>   1 file changed, 17 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts b/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts
+> index c63cefce636d..d9fa9fd48058 100644
+> --- a/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts
+> +++ b/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts
+> @@ -4,6 +4,7 @@
+>   
+>   #include "aspeed-g6.dtsi"
+>   #include <dt-bindings/gpio/aspeed-gpio.h>
+> +#include <dt-bindings/leds/leds-pca955x.h>
+>   
+>   / {
+>   	model = "Rainier";
+> @@ -351,66 +352,82 @@
+>   
+>   		gpio@0 {
+>   			reg = <0>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@1 {
+>   			reg = <1>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@2 {
+>   			reg = <2>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@3 {
+>   			reg = <3>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@4 {
+>   			reg = <4>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@5 {
+>   			reg = <5>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@6 {
+>   			reg = <6>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@7 {
+>   			reg = <7>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@8 {
+>   			reg = <8>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@9 {
+>   			reg = <9>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@10 {
+>   			reg = <10>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@11 {
+>   			reg = <11>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@12 {
+>   			reg = <12>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@13 {
+>   			reg = <13>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@14 {
+>   			reg = <14>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   
+>   		gpio@15 {
+>   			reg = <15>;
+> +			type = <PCA955X_TYPE_GPIO>;
+>   		};
+>   	};
+>   
