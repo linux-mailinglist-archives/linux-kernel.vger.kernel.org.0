@@ -2,114 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D262217380D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:16:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B5BA17381D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:17:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbgB1NQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 08:16:12 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:46872 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgB1NQL (ORCPT
+        id S1726859AbgB1NQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:16:54 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34865 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbgB1NQx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 08:16:11 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1j7fUs-0000UF-L0; Fri, 28 Feb 2020 13:16:06 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: fix indentation issue on a hunk of code
-Date:   Fri, 28 Feb 2020 13:16:06 +0000
-Message-Id: <20200228131606.65041-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.25.0
+        Fri, 28 Feb 2020 08:16:53 -0500
+Received: by mail-lf1-f67.google.com with SMTP id z9so2097454lfa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 05:16:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d2j+xwWiY9wlH7AtLJK3OvsykaZ/u5FJZyPROvoiy1g=;
+        b=HxJHR12dqabYx6zhDgCZD/hJGDITKwemITUtUDZOyk/Yt7H+qaUfjQtBS/a0AHDTzC
+         F9AA33/VUSLG5pULibxByHL4WExkcYA0R5mgTQdjitbAuZ9jivnhui2PTI5d8OFXXBIw
+         Sd5Jh0q+CFejsuT54GGnaxVCFCg+fZT38NtsU6g9igX2qJOGrGmMXLehFdtxjurISOhD
+         rG5lk92ewSrN83PbluJZfi41RM+GlMWm7cgd5Oc5Rcgx01IwMZr2N30HPz8lo7WOgnqd
+         Lx80wMZIZEe9EbHWposU9rNFo4LVI1unkD5T8Pc46K0n+6N5p1DZHyP88AlSVmmYW7pW
+         ZSgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d2j+xwWiY9wlH7AtLJK3OvsykaZ/u5FJZyPROvoiy1g=;
+        b=PkDhtWeYmekLK/zQCSPIt7c+gjxs6MBmBAVJc46yWJdMaPLWrvgP6m81wlk4DgP0vE
+         4ZcB/ak9SsMuuKeu68uhmi6JoR3h/mjMh5v8TiK4y7WOaf8KWe0dBrrMJz/D+TnFhkYF
+         QfToNBSieDDLVljUqGwUiQBa8xBpgiVnNbGwx2+f6RZSe3V3TfVdkpiErQvkjvYXQGpQ
+         G1O1Kw9RzRb2/Yf3JxQvb8wnPWs16CRP0RTSTA/GSasF/qClWOQose8LT4dYng0wm6JN
+         IIiOmt3ukABDT19C3bAk8shkoDDQ8ZrZhhn8Nl3cFvZDwjjiKmkyCTP0WgMxXAwj8jSt
+         28lA==
+X-Gm-Message-State: ANhLgQ3efLoVbweGpGNl2S1zdR3kLz/GQdpDaWM1xuGmJ31l/rvVNauN
+        nBz8erpwmN22i2cetwuYnxR2kDDmXwlzBYjaEfeLcg==
+X-Google-Smtp-Source: ADFU+vsgVdf5ixS/e74l5Eg9jm2LlOCk+LwWAKinRI2yuiFWgmTOny7+7QQPst2uBqeBcz3Eq8WslUWOUECUikODDqA=
+X-Received: by 2002:ac2:5328:: with SMTP id f8mr2636959lfh.47.1582895810190;
+ Fri, 28 Feb 2020 05:16:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20200228040047.14808-1-yuehaibing@huawei.com> <20200228063429.47528-1-yuehaibing@huawei.com>
+In-Reply-To: <20200228063429.47528-1-yuehaibing@huawei.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 28 Feb 2020 14:16:39 +0100
+Message-ID: <CACRpkda3=z80WY_W3EN=tiYruYfGjxPAHYjBALNj39kqDtjkzA@mail.gmail.com>
+Subject: Re: [PATCH v2 -next] pinctrl: da9062: Fix error gpiolib.h path
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Support Opensource <support.opensource@diasemi.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Feb 28, 2020 at 7:35 AM YueHaibing <yuehaibing@huawei.com> wrote:
 
-There are multiple statements that are indented incorrectly. Add
-in the missing tabs.
+> gcc 7.4.0 build fails:
+>
+> drivers/pinctrl/pinctrl-da9062.c:28:10: fatal error: ../gpio/gpiolib.h: No such file or directory
+>  #include <../gpio/gpiolib.h>
+>           ^~~~~~~~~~~~~~~~~~~
+>
+> Fix this wrong include path.
+>
+> Fixes: 56cc3af4e8c8 ("pinctrl: da9062: add driver support")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+> v2: Fix wrong path
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- .../gpu/drm/amd/display/dc/calcs/dce_calcs.c  | 46 +++++++++----------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+Good catch!
 
-diff --git a/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c b/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
-index 5d081c42e81b..2c6db379afae 100644
---- a/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
-+++ b/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
-@@ -3265,33 +3265,33 @@ bool bw_calcs(struct dc_context *ctx,
- 				bw_fixed_to_int(bw_mul(data->
- 					stutter_exit_watermark[9], bw_int_to_fixed(1000)));
- 
--		calcs_output->stutter_entry_wm_ns[0].b_mark =
--			bw_fixed_to_int(bw_mul(data->
--				stutter_entry_watermark[4], bw_int_to_fixed(1000)));
--		calcs_output->stutter_entry_wm_ns[1].b_mark =
--			bw_fixed_to_int(bw_mul(data->
--				stutter_entry_watermark[5], bw_int_to_fixed(1000)));
--		calcs_output->stutter_entry_wm_ns[2].b_mark =
--			bw_fixed_to_int(bw_mul(data->
--				stutter_entry_watermark[6], bw_int_to_fixed(1000)));
--		if (ctx->dc->caps.max_slave_planes) {
--			calcs_output->stutter_entry_wm_ns[3].b_mark =
-+			calcs_output->stutter_entry_wm_ns[0].b_mark =
- 				bw_fixed_to_int(bw_mul(data->
--					stutter_entry_watermark[0], bw_int_to_fixed(1000)));
--			calcs_output->stutter_entry_wm_ns[4].b_mark =
-+					stutter_entry_watermark[4], bw_int_to_fixed(1000)));
-+			calcs_output->stutter_entry_wm_ns[1].b_mark =
- 				bw_fixed_to_int(bw_mul(data->
--					stutter_entry_watermark[1], bw_int_to_fixed(1000)));
--		} else {
--			calcs_output->stutter_entry_wm_ns[3].b_mark =
-+					stutter_entry_watermark[5], bw_int_to_fixed(1000)));
-+			calcs_output->stutter_entry_wm_ns[2].b_mark =
- 				bw_fixed_to_int(bw_mul(data->
--					stutter_entry_watermark[7], bw_int_to_fixed(1000)));
--			calcs_output->stutter_entry_wm_ns[4].b_mark =
-+					stutter_entry_watermark[6], bw_int_to_fixed(1000)));
-+			if (ctx->dc->caps.max_slave_planes) {
-+				calcs_output->stutter_entry_wm_ns[3].b_mark =
-+					bw_fixed_to_int(bw_mul(data->
-+						stutter_entry_watermark[0], bw_int_to_fixed(1000)));
-+				calcs_output->stutter_entry_wm_ns[4].b_mark =
-+					bw_fixed_to_int(bw_mul(data->
-+						stutter_entry_watermark[1], bw_int_to_fixed(1000)));
-+			} else {
-+				calcs_output->stutter_entry_wm_ns[3].b_mark =
-+					bw_fixed_to_int(bw_mul(data->
-+						stutter_entry_watermark[7], bw_int_to_fixed(1000)));
-+				calcs_output->stutter_entry_wm_ns[4].b_mark =
-+					bw_fixed_to_int(bw_mul(data->
-+						stutter_entry_watermark[8], bw_int_to_fixed(1000)));
-+			}
-+			calcs_output->stutter_entry_wm_ns[5].b_mark =
- 				bw_fixed_to_int(bw_mul(data->
--					stutter_entry_watermark[8], bw_int_to_fixed(1000)));
--		}
--		calcs_output->stutter_entry_wm_ns[5].b_mark =
--			bw_fixed_to_int(bw_mul(data->
--				stutter_entry_watermark[9], bw_int_to_fixed(1000)));
-+					stutter_entry_watermark[9], bw_int_to_fixed(1000)));
- 
- 			calcs_output->urgent_wm_ns[0].b_mark =
- 				bw_fixed_to_int(bw_mul(data->
--- 
-2.25.0
+Patch applied with Marco's ACK.
 
+Yours,
+Linus Walleij
