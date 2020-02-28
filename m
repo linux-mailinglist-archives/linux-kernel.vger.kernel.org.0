@@ -2,91 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC7D9172E80
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 03:08:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98CE9172EAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 03:15:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730737AbgB1CIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 21:08:19 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60050 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730460AbgB1CIS (ORCPT
+        id S1730542AbgB1CPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 21:15:14 -0500
+Received: from mail-sh.amlogic.com ([58.32.228.43]:35808 "EHLO
+        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730343AbgB1CPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 21:08:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=FfsYsRfTjNajsD2GsxdnNUOvzZKpPZHuyvHpz7l7J88=; b=nhdW5AjtAMws3EgTqeFy6/vuK3
-        R+rbnqCVk7u1xiWaE92B5CCcaqderIiBwZEd2FLW9uraQMhSxMwOYdPR8n2ae+E+yB5+sDNuYSkE/
-        FkfZUQodVnuZN0g4b3ENHV+/rBLU13yHjQ5c/0GHEBvNgccrNtmuPiAoE312h+jnzDekR1wdUHrsT
-        Q+aoif/BXs0+olsOPhzZfPhDSrIN4cIIMN8XkB/MWrDDHsc3/ZnyqtkMnH9SBioY3VHMkuY4MGZU6
-        QD4HYbnZ4b/Kjpn8JFl0dJ6zRPrMsOobUzDeFKv7lBelGHYouIsrklpvPhEmwjXTkGWaY8kTLShAB
-        qM0CwVnA==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j7V4a-0003dZ-6m; Fri, 28 Feb 2020 02:08:16 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-parport@lists.infradead.org
-Cc:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] parport: fix if-statement empty body warnings
-Message-ID: <e7868a5c-5356-bbbb-f416-799a7f75f7ad@infradead.org>
-Date:   Thu, 27 Feb 2020 18:08:15 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Thu, 27 Feb 2020 21:15:13 -0500
+Received: from droid13.amlogic.com (38.121.23.132) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.1591.10; Fri, 28 Feb 2020
+ 10:15:33 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Kevin Hilman <khilman@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>
+CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH RESEND] dt-bindings: power: Fix dt_binding_check error
+Date:   Fri, 28 Feb 2020 10:14:59 +0800
+Message-ID: <1582856099-105484-1-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [38.121.23.132]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Missing ';' in the end of secure-monitor example node.
 
-When debugging via DPRINTK() is not enabled, make the DPRINTK()
-macro be an empty do-while block.
-
-This fixes gcc warnings when -Wextra is set:
-
-../drivers/parport/ieee1284.c:262:18: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-../drivers/parport/ieee1284.c:285:17: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-../drivers/parport/ieee1284.c:298:17: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-../drivers/parport/ieee1284_ops.c:576:18: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-
-I have verified that there is no object code change (with gcc 7.5.0).
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
-Cc: linux-parport@lists.infradead.org
+Fixes: f50b4108ede1 ("dt-bindings: power: add Amlogic secure power domains bindings")
+Reported-by: Rob Herring <robh+dt@kernel.org>
+Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/parport/ieee1284.c     |    2 +-
- drivers/parport/ieee1284_ops.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20200225.orig/drivers/parport/ieee1284.c
-+++ linux-next-20200225/drivers/parport/ieee1284.c
-@@ -34,7 +34,7 @@
- #ifdef DEBUG
- #define DPRINTK(stuff...) printk (stuff)
- #else
--#define DPRINTK(stuff...)
-+#define DPRINTK(stuff...) do {} while (0)
- #endif
+diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+index af32209..bc4e037 100644
+--- a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
++++ b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+@@ -36,5 +36,5 @@ examples:
+             compatible = "amlogic,meson-a1-pwrc";
+             #power-domain-cells = <1>;
+         };
+-    }
++    };
  
- /* Make parport_wait_peripheral wake up.
---- linux-next-20200225.orig/drivers/parport/ieee1284_ops.c
-+++ linux-next-20200225/drivers/parport/ieee1284_ops.c
-@@ -30,7 +30,7 @@
- #ifdef DEBUG
- #define DPRINTK(stuff...) printk (stuff)
- #else
--#define DPRINTK(stuff...)
-+#define DPRINTK(stuff...) do {} while (0)
- #endif
- 
- /***                                *
+-- 
+2.7.4
 
