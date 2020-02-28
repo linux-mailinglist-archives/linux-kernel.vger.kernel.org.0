@@ -2,48 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2521173C9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:14:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C86D6173CA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:16:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbgB1QOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 11:14:14 -0500
-Received: from mga14.intel.com ([192.55.52.115]:34048 "EHLO mga14.intel.com"
+        id S1726359AbgB1QQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 11:16:10 -0500
+Received: from mga05.intel.com ([192.55.52.43]:51515 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbgB1QOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 11:14:14 -0500
+        id S1725769AbgB1QQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 11:16:09 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 08:14:13 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 08:16:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,496,1574150400"; 
-   d="scan'208";a="439277163"
+   d="scan'208";a="261900316"
 Received: from yyu32-desk.sc.intel.com ([143.183.136.146])
-  by fmsmga006.fm.intel.com with ESMTP; 28 Feb 2020 08:14:13 -0800
-Message-ID: <89bcab262d6dad4c08c4a21e522796fea2320db3.camel@intel.com>
-Subject: Re: [PATCH v2 8/8] x86/fpu/xstate: Restore supervisor xstates for
- __fpu__restore_sig()
+  by fmsmga004.fm.intel.com with ESMTP; 28 Feb 2020 08:16:09 -0800
+Message-ID: <e35cc25c4ba1dcb4154276b1e2731891a3c600ec.camel@intel.com>
+Subject: Re: [RFC PATCH v9 01/27] Documentation/x86: Add CET description
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
+To:     Kees Cook <keescook@chromium.org>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
         Andy Lutomirski <luto@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Date:   Fri, 28 Feb 2020 07:53:38 -0800
-In-Reply-To: <20200228121724.GA25261@zn.tnic>
-References: <20200121201843.12047-1-yu-cheng.yu@intel.com>
-         <20200121201843.12047-9-yu-cheng.yu@intel.com>
-         <20200221175859.GL25747@zn.tnic>
-         <77f3841a92df5d0c819699ee3612118d566b7445.camel@intel.com>
-         <20200228121724.GA25261@zn.tnic>
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, x86-patch-review@intel.com
+Date:   Fri, 28 Feb 2020 07:55:33 -0800
+In-Reply-To: <202002251159.939AA6A@keescook>
+References: <20200205181935.3712-1-yu-cheng.yu@intel.com>
+         <20200205181935.3712-2-yu-cheng.yu@intel.com>
+         <202002251159.939AA6A@keescook>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
@@ -53,32 +61,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-02-28 at 13:17 +0100, Borislav Petkov wrote:
-> On Thu, Feb 27, 2020 at 02:52:12PM -0800, Yu-cheng Yu wrote:
-> > > So the code sets TIF_NEED_FPU_LOAD unconditionally, why are you changing
-> > > this?
-> > > 
-> > > Why don't you simply do:
-> > > 
-> > > 		set_thread_flag(TIF_NEED_FPU_LOAD);
-> > > 		fpregs_lock();
-> > > 		if (xfeatures_mask_supervisor())
-> > > 			copy_xregs_to_kernel(&fpu->state.xsave);
-> > > 		fpregs_unlock();
+On Tue, 2020-02-25 at 12:02 -0800, Kees Cook wrote:
+> On Wed, Feb 05, 2020 at 10:19:09AM -0800, Yu-cheng Yu wrote:
+> > Explain no_cet_shstk/no_cet_ibt kernel parameters, and introduce a new
+> > document on Control-flow Enforcement Technology (CET).
 > > 
-> > If TIF_NEED_FPU_LOAD is set, then xstates are already in the xsave buffer. 
-> > We can skip saving them again.
+> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 > 
-> Ok, then pls use test_and_set_thread_flag().
+> I'm not a huge fan of the boot param names, but I can't suggest anything
+> better. ;) I love the extensive docs!
 > 
-> Also, in talking to Sebastian about this on IRC, he raised a valid
-> concern: if we are going to save supervisor states here, then
-> copy_xregs_to_kernel() should better save *only* supervisor states
-> because we're not interested in the user states - they're going to be
-> overwritten with the states from the stack.
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Yes, saving only supervisor states is optimal, but doing XSAVES with a
-partial RFBM changes xcomp_bv.
+Thanks for reviewing!
 
 Yu-cheng
 
