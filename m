@@ -2,134 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A85C173D65
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:47:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A561B173D6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:47:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbgB1QrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 11:47:13 -0500
-Received: from mail-vi1eur05on2110.outbound.protection.outlook.com ([40.107.21.110]:17543
-        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725876AbgB1QrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 11:47:13 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XTzs+g8Ml1L6Og4BVkRPVd8BOIK+7GnuuafGiNQbFl1My9Ecr4ffwCgYdUh//WrpZRsppmSNesoS+AVSUY74ie5gn6Bb9oQvnPludefijr3Wi4iM7+AulbXdvEWRB8nGUhC+TeSJHGw+PjH3x6HPWaIcOjCPHdIcdIqXyb84j9jZSpMUJ+7A45vdeGqb1ZuJcoMAUBH9nhnHyMYj0ok5xoF3m85sRxHghiX8qM0+Js9Bbn4e6UCWgdEXcDUW04XEyHRzE94s7ORLTIGZo5u4dboVfm2yfY7cdZrYS72ZK/2WL+lMtJ62IZGbFTlCQiDWZNECLbrBPu0h+n88+lmtGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/MfsaqkH9gzzdOj+YGCbM7pec43MM2AYADIGlscU1HM=;
- b=M+trkFeIUdspsV1tplvT1qtHsOBDKoeYKQ8QCMPts52fAqjx/uIbUG5x0RYSJ5PbWoD+PWjQXMNFEos9yQDC+x36r1cBv3icCS4zg7YjvLhk32nQ7QG7DlB/juuCU/rl8hfS0BsUMYMkVL75pF0CJPYW3n74dgm5ZLvxr1cFgNw9eWlfi7dvpSEfQ/kg4xUwudSednM0HA0pROW7hoFoa3vKANjMmrnic9HtwV7HNq+VOZwtwPNkcMKsQhMBZIJ0xqd/fEWrcSn6lWfoAr3hViR9vNJPzJUOJVdrIRifm1zkbQq9ABbRrxSKIn4i7UzF4n8dXdGZM/1spOfFoEMSzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
- dkim=pass header.d=toradex.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/MfsaqkH9gzzdOj+YGCbM7pec43MM2AYADIGlscU1HM=;
- b=UiDf5sgzYJGoarz6gJ8B0KA8oBYHGYbXBqMQezj921+iWoQ6choqqlYj4FI8Wn2HBhdiBIG8OS1sFZpcxU4u3e+s7aqKUG+cSnjRYHGo4uKLE5r3osAphHfwr0uo/dAxf2fk2xjhJswZTcC7ttslQ/XH9gORox4rkraBYrrpIvM=
-Received: from VI1PR05MB6845.eurprd05.prod.outlook.com (10.186.163.80) by
- VI1PR05MB5566.eurprd05.prod.outlook.com (20.177.203.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2750.22; Fri, 28 Feb 2020 16:47:06 +0000
-Received: from VI1PR05MB6845.eurprd05.prod.outlook.com
- ([fe80::c13:1d07:fa02:6eeb]) by VI1PR05MB6845.eurprd05.prod.outlook.com
- ([fe80::c13:1d07:fa02:6eeb%7]) with mapi id 15.20.2772.018; Fri, 28 Feb 2020
- 16:47:06 +0000
-From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
-To:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "igor.opaniuk@gmail.com" <igor.opaniuk@gmail.com>
-CC:     Max Krummenacher <max.krummenacher@toradex.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Igor Opanyuk <igor.opanyuk@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        Stefan Agner <stefan.agner@toradex.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/5] arm: dts: imx6: toradex: use
- SPDX-License-Identifier
-Thread-Topic: [PATCH v1 1/5] arm: dts: imx6: toradex: use
- SPDX-License-Identifier
-Thread-Index: AQHV6zhrpxWYloCtVUak45/He4E7U6gw1vmA
-Date:   Fri, 28 Feb 2020 16:47:06 +0000
-Message-ID: <45f8acad8a095ad6761630330df64c975f3644e0.camel@toradex.com>
-References: <1582565548-20627-1-git-send-email-igor.opaniuk@gmail.com>
-In-Reply-To: <1582565548-20627-1-git-send-email-igor.opaniuk@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=marcel.ziswiler@toradex.com; 
-x-originating-ip: [81.221.74.212]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1c87c767-1912-423d-052d-08d7bc6dd875
-x-ms-traffictypediagnostic: VI1PR05MB5566:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR05MB5566242FA29945AA75613E80FBE80@VI1PR05MB5566.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0327618309
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(346002)(39850400004)(366004)(136003)(376002)(189003)(199004)(5660300002)(2906002)(8936002)(44832011)(110136005)(6512007)(71200400001)(316002)(6486002)(81156014)(81166006)(2616005)(7416002)(36756003)(8676002)(54906003)(86362001)(66556008)(6506007)(4326008)(66476007)(66446008)(66946007)(26005)(91956017)(64756008)(76116006)(478600001)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR05MB5566;H:VI1PR05MB6845.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: toradex.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: z+VoiOd1tHlhk+VpfQfLZ16VWyv2xyGUvhMu85U7D6NpsO2VTZv7/n60r/wqyv4FrN285adHQphdozS7NkCkIVtgH8ckFe+eVKRWH/aN771BBWqQ53L//f78Y7MVOp5PtXVoJgZpB36/44z7RjkURk+tGRHXP6ObsLqlKhKZR0OudXg1BedUdMKn5kZl7a9SaGgEMV4ubrMDPpY/DrnPZ4U0AbLjQicEk8cklIE3DCrDynaPkSOYL4JwMKmRZdZywQxv9w0EKaKtmqWpfKAZx5iMaSf6SUgTjIGsTKJ6K5fJohuw/ak7h6m0qLex5uClYx7gGwt6BvVegiFl94uMPr0QrsLFJUKvcSOgtCyBPBHsQij9gAlFYvOd/hBSM+Ook5ZBAcy9TV1qMhn3AsyE2cjhVuC/nIefcqyCfDDhvj/074Jv8s4HzTGF0ExIs50U
-x-ms-exchange-antispam-messagedata: Hwe++QkO4fKzTCCVjJIq7kHxgc49q8uo/FISuetWULdflC9duJfMF0bvZ77C0MBC8Dr1561+nhM6mIq27qddkbPB1E2NMwu8YsKDmMO24E1Lvyw6B8nHrDG9OaM5h5Bg8WiTeL+89SCgBDg0O8IRUw==
+        id S1726811AbgB1Qrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 11:47:41 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42297 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbgB1Qrk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 11:47:40 -0500
+Received: by mail-pl1-f193.google.com with SMTP id u3so1445893plr.9
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 08:47:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=+KzqSGM0wpuOnmk8ah4jnq8pi4ESPMMLwFzMCHl6UjI=;
+        b=O8spUvUXHq3YyQ5dhzmYqojrMmbdIDtrlBgq18mdZ0BO7XxAuMF21FuAf2g/3NRtlY
+         xRv1fwJbNizlRD1p1BqQ8bUkfgzL2U5jFFNCH4jfWO0t1TtoBtqefwJSOF1Dta1kTEgc
+         IFus2y6k+yt0st8EzPWCqU7E6mVm7WJZjBzMw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=+KzqSGM0wpuOnmk8ah4jnq8pi4ESPMMLwFzMCHl6UjI=;
+        b=kbSObTef8zK/K2PkWCaoXvtQu86ixx3++g3Ehj3GtQg3pWNvacuZGeqCAA53fLOigK
+         nndu27IuAcb1rvsVazuclKJw4Fy/sYTIIvjUoQ2dYBEhj5I0r/k756ObwgvHCWLkHreu
+         uMSRgwJIqW1k89Qk9ECeFg/JOclmZRM5xO5WOntRATeAy57ZWsiB71DmgSaje2XqdUUj
+         U6j5zZgiuyYe78ED8wPhlbFl0OFGAq0aCQLK77xACNDhaCclS+RgVOqIbRzKwKpUzJfC
+         PiqpvuvxnNbYLoGH+a0whaVVUkHhoOm+DcwN+xsOG0bRZ/uYLRR3kuuESxKSujTRkFJj
+         GrBQ==
+X-Gm-Message-State: APjAAAVqt48EAVEuCnb2OlRk5Zn8GuP98/gljXBZNCRaGM7OYeIgpYvj
+        3dhrItOSyb0i0Nz53Tm1sebUH3g9j/4=
+X-Google-Smtp-Source: APXvYqzhf39xvY42bpSyssbKJR6CFEPeIhIIM3kI2b3JMh9C2G1bP/qcgrZGXTcvlo5oEWdoECjUDw==
+X-Received: by 2002:a17:90a:1f8d:: with SMTP id x13mr5791534pja.27.1582908458748;
+        Fri, 28 Feb 2020 08:47:38 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id v8sm11463303pfn.172.2020.02.28.08.47.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2020 08:47:38 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <724FC9E0EC854E4883967566C2DC1E8C@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c87c767-1912-423d-052d-08d7bc6dd875
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2020 16:47:06.3835
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fP5xapcEP/sXx+jYbVDmTzdhVCdRcv1NbRJR3thkXXBV//1b5pM2kw33Of+i3lenRGKKK6fOAY3C2+KAl3EBSzbXnQSRBNRFjTz1hvfh3/0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5566
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1582274986-17490-2-git-send-email-mkshah@codeaurora.org>
+References: <1582274986-17490-1-git-send-email-mkshah@codeaurora.org> <1582274986-17490-2-git-send-email-mkshah@codeaurora.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: Introduce soc sleep stats bindings for Qualcomm SoCs
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org, dianders@chromium.org, rnayak@codeaurora.org,
+        ilina@codeaurora.org, lsrao@codeaurora.org,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>,
+        devicetree@vger.kernel.org, Maulik Shah <mkshah@codeaurora.org>
+To:     Maulik Shah <mkshah@codeaurora.org>, bjorn.andersson@linaro.org,
+        evgreen@chromium.org, mka@chromium.org
+Date:   Fri, 28 Feb 2020 08:47:37 -0800
+Message-ID: <158290845710.4688.3557819013834887314@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgSWdvcg0KDQpPbiBNb24sIDIwMjAtMDItMjQgYXQgMTk6MzIgKzAyMDAsIElnb3IgT3Bhbml1
-ayB3cm90ZToNCj4gRnJvbTogSWdvciBPcGFuaXVrIDxpZ29yLm9wYW5pdWtAdG9yYWRleC5jb20+
-DQo+IA0KPiAxLiBSZXBsYWNlIGJvaWxlciBwbGF0ZSBsaWNlbnNlcyB0ZXh0cyB3aXRoIHRoZSBT
-UERYIGxpY2Vuc2UNCj4gaWRlbnRpZmllcnMgaW4gVG9yYWRleCBpTVg2LWJhc2VkIFNvTSBkZXZp
-Y2UgdHJlZXMuDQo+IDIuIEFzIFgxMSBpcyBpZGVudGljYWwgdG8gdGhlIE1JVCBMaWNlbnNlLCBi
-dXQgd2l0aCBhbiBleHRyYSBzZW50ZW5jZQ0KPiB0aGF0IHByb2hpYml0cyB1c2luZyB0aGUgY29w
-eXJpZ2h0IGhvbGRlcnMnIG5hbWVzIGZvciBhZHZlcnRpc2luZyBvcg0KPiBwcm9tb3Rpb25hbCBw
-dXJwb3NlcyB3aXRob3V0IHdyaXR0ZW4gcGVybWlzc2lvbiwgdXNlIE1JVCBsaWNlbnNlDQo+IGlu
-c3RlYWQNCj4gb2YgWDExICgncy9YMTEvTUlUL2cnKS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEln
-b3IgT3Bhbml1ayA8aWdvci5vcGFuaXVrQHRvcmFkZXguY29tPg0KPiAtLS0NCj4gDQo+ICBhcmNo
-L2FybS9ib290L2R0cy9pbXg2ZGwtY29saWJyaS1ldmFsLXYzLmR0cyAgfCA0MCArKy0tLS0tLS0t
-LS0tLS0tLQ0KPiAtLS0tLS0tLS0tDQo+ICBhcmNoL2FybS9ib290L2R0cy9pbXg2cS1hcGFsaXMt
-ZXZhbC5kdHMgICAgICAgfCA0MCArKy0tLS0tLS0tLS0tLS0tLQ0KPiAtLS0tLS0tLS0tDQo+ICBh
-cmNoL2FybS9ib290L2R0cy9pbXg2cS1hcGFsaXMtaXhvcmEtdjEuMS5kdHMgfCA0MCArKy0tLS0t
-LS0tLS0tLS0tLQ0KPiAtLS0tLS0tLS0tDQo+ICBhcmNoL2FybS9ib290L2R0cy9pbXg2cS1hcGFs
-aXMtaXhvcmEuZHRzICAgICAgfCA0MCArKy0tLS0tLS0tLS0tLS0tLQ0KPiAtLS0tLS0tLS0tDQo+
-ICBhcmNoL2FybS9ib290L2R0cy9pbXg2cWRsLWFwYWxpcy5kdHNpICAgICAgICAgfCA0MCArKy0t
-LS0tLS0tLS0tLS0tLQ0KPiAtLS0tLS0tLS0tDQo+ICBhcmNoL2FybS9ib290L2R0cy9pbXg2cWRs
-LWNvbGlicmkuZHRzaSAgICAgICAgfCA0MCArKy0tLS0tLS0tLS0tLS0tLQ0KPiAtLS0tLS0tLS0t
-DQo+ICA2IGZpbGVzIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDIyOCBkZWxldGlvbnMoLSkN
-Cj4gDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9pbXg2ZGwtY29saWJyaS1ldmFs
-LXYzLmR0cw0KPiBiL2FyY2gvYXJtL2Jvb3QvZHRzL2lteDZkbC1jb2xpYnJpLWV2YWwtdjMuZHRz
-DQo+IGluZGV4IGNkMDc1NjIuLmFhZDQ3YjkgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL2Jvb3Qv
-ZHRzL2lteDZkbC1jb2xpYnJpLWV2YWwtdjMuZHRzDQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRz
-L2lteDZkbC1jb2xpYnJpLWV2YWwtdjMuZHRzDQo+IEBAIC0xLDQ0ICsxLDggQEANCj4gKy8vIFNQ
-RFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wIE9SIE1JVA0KDQpUeXBpY2FsbHksIG5vd2Fk
-YXlzIEdQTC0yLjArIE9SIE1JVCBpcyB1c2VkLiBUaGUgbW9yZSByZXN0cmljdGl2ZSBHUEwNCmlz
-IG5vdCBhbiBpc3N1ZSBkdWUgdG8gYmVpbmcgZHVhbCBsaWNlbnNlZC4NCg0KPiAgLyoNCj4gLSAq
-IENvcHlyaWdodCAyMDE0LTIwMTYgVG9yYWRleCBBRw0KPiArICogQ29weXJpZ2h0IDIwMTQtMjAy
-MCBUb3JhZGV4IEFHDQoNCkFjY29yZGluZyB0byBvdXIgbGVnYWwgd2UgbWF5IHNpbXBseSBkcm9w
-IHRoaXMgQUcgcG9zdGZpeCBhcyBpdCBkb2VzDQpub3QgcmVhbGx5IHNlcnZlIGFueSBwdXJwb3Nl
-IGhlcmUuDQoNCkRpdG8gaW4gYWxsIHRoZSBvdGhlciBmaWxlcy4NCg0KVGhhbmtzIQ0KDQpDaGVl
-cnMNCg0KTWFyY2VsDQo=
+Quoting Maulik Shah (2020-02-21 00:49:43)
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/soc-sleep-stats.y=
+aml b/Documentation/devicetree/bindings/soc/qcom/soc-sleep-stats.yaml
+> new file mode 100644
+> index 00000000..50352a4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/qcom/soc-sleep-stats.yaml
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/soc/qcom/soc-sleep-stats.yam=
+l#
+
+Drop 'bindings' from above?
+
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. (QTI) SoC sleep stats bindings
+> +
+> +maintainers:
+> +  - Maulik Shah <mkshah@codeaurora.org>
+> +  - Lina Iyer <ilina@codeaurora.org>
+> +
+> +description: |
+> +  Always On Processor/Resource Power Manager maintains statistics of the=
+ SoC
+> +  sleep modes involving powering down of the rails and oscillator clock.
+> +
+> +  Statistics includes SoC sleep mode type, number of times low power mod=
+e were
+> +  entered, time of last entry, time of last exit and accumulated sleep d=
+uration.
+> +  SoC sleep stats driver provides debugfs interface to show this informa=
+tion.
+
+Please remove this last line. It is a Linuxism that doesn't belong in DT
+bindings. And then make it one paragraph and drop the | because
+formatting doesn't need to be maintained.
+
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,rpmh-sleep-stats
+> +      - qcom,rpm-sleep-stats
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  # Example of rpmh sleep stats
+> +  - |
+> +    rpmh_sleep_stats: soc-sleep-stats@c3f0000 {
+> +      compatible =3D "qcom,rpmh-sleep-stats";
+> +      reg =3D <0 0xc3f0000 0 0x400>;
+> +    };
+
+I see that on sc7180 aoss-qmp is overlapping with this region.
+
+
+	aoss_qmp: qmp@c300000 {
+		compatible =3D "qcom,sc7180-aoss-qmp";
+		reg =3D <0 0x0c300000 0 0x100000>;
+
+So is this register region really something more like a TCM or RAM area
+where rpmh combines multiple software concepts into one hardware memory
+region? The aoss-qmp driver talks about message RAM, so I think this
+sleep stats stuff is a carveout of the RPMh message RAM. It seems OK if
+we want to split that message RAM up into multiple DT nodes, but then
+we'll need to reduce the reg size for the aoss-qmp node.
+
+Finally, the node name 'soc-sleep-stats' is generic, but I wonder why we
+couldn't name the node 'tcm' or 'memory' or 'msgram'. Similarly for the
+qmp node it fits better DT style to have the node be something generic.
+
+> +  # Example of rpm sleep stats
+> +  - |
+> +    rpm_sleep_stats: soc-sleep-stats@4690000 {
+> +      compatible =3D "qcom,rpm-sleep-stats";
+> +      reg =3D <0 0x04690000 0 0x400>;
+> +    };
+> +...
