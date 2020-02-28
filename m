@@ -2,117 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E22D217374B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:36:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BBD6173739
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:31:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbgB1MgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 07:36:02 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:35900 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbgB1MgC (ORCPT
+        id S1726490AbgB1MbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 07:31:08 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38897 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725802AbgB1MbH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 07:36:02 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01SCZvLX026580;
-        Fri, 28 Feb 2020 06:35:57 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582893357;
-        bh=hKyf8yrhdHOfHtUZrZr4yEtUWwcoQWtFRXXJCceaIA4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=XZSoDepbtvkRU10B/SBGZTLiFSKkofs3goC2fUq60etnQJmkI8RecjV8wm+phShl0
-         BJ29qm/X3i/aqRtR7+pHwqQxsJIszJin0DcKSU5zd7lnyscoS6iZ50Gz45kSnLO3eG
-         r66C/L+D61qF31+M7wo5J3wkBA7DiNTRfBBioCl4=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01SCZvgl111677
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 Feb 2020 06:35:57 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 28
- Feb 2020 06:35:57 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 28 Feb 2020 06:35:57 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01SCZv1P014045;
-        Fri, 28 Feb 2020 06:35:57 -0600
-Subject: Re: [RESEND PATCH v17 00/17] Multi Color LED Framework
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-CC:     Pavel Machek <pavel@denx.de>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200127150032.31350-1-dmurphy@ti.com>
- <42d9687b-b488-22cf-0e9a-ff635b2094e3@ti.com> <20200225101940.GB16252@amd>
- <be76fdac-9d32-b9b2-c01d-3aa315b14463@gmail.com>
- <20200226125903.GA2800@duo.ucw.cz>
- <20f6bdd5-e899-aead-8c35-1c3a3d09145f@gmail.com>
- <20200227105808.GA27003@duo.ucw.cz> <20200227124329.GA994747@kroah.com>
- <4c273c06-5024-b2d4-c656-b165015090be@ti.com>
- <96a31ff6-5ecf-05a7-d61f-2804f2488d1b@gmail.com>
- <20200228074235.GA2900429@kroah.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <10206eff-ecbd-c625-1900-1a6d8ec8f633@ti.com>
-Date:   Fri, 28 Feb 2020 06:30:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 28 Feb 2020 07:31:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582893066;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2RooJPrqf81zft4ke8YUUk8aT1Ot7fHdQHDbAT/pgK0=;
+        b=NwOPK07i7IoY2NLS+1PZcsr+CC3IpVbfgJxPwhAE5S1uJfK1+YL0KVRe9NNh+LkpHhTVio
+        ua2p4vVPxxyg3T05a42OyITV42c9cL2DkSM1ppCpmzCeZHNeZdmlEtLN7+rUeyryAlnL8C
+        sN7OM0rGshH3+dBQbnyST+ZpPQgJRG8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-197-xA0PywavMw-iwRf2hXkv3g-1; Fri, 28 Feb 2020 07:31:05 -0500
+X-MC-Unique: xA0PywavMw-iwRf2hXkv3g-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A185C108C314;
+        Fri, 28 Feb 2020 12:31:03 +0000 (UTC)
+Received: from carbon (ovpn-200-19.brq.redhat.com [10.40.200.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D1056E3EE;
+        Fri, 28 Feb 2020 12:30:55 +0000 (UTC)
+Date:   Fri, 28 Feb 2020 13:30:54 +0100
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     Luigi Rizzo <lrizzo@google.com>
+Cc:     brouer@redhat.com, netdev@vger.kernel.org, toke@redhat.com,
+        davem@davemloft.net, sameehj@amazon.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] netdev attribute to control xdpgeneric skb
+ linearization
+Message-ID: <20200228133054.47cc4d71@carbon>
+In-Reply-To: <20200228105435.75298-1-lrizzo@google.com>
+References: <20200228105435.75298-1-lrizzo@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200228074235.GA2900429@kroah.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg
+On Fri, 28 Feb 2020 02:54:35 -0800
+Luigi Rizzo <lrizzo@google.com> wrote:
 
-On 2/28/20 1:42 AM, Greg KH wrote:
-> On Thu, Feb 27, 2020 at 10:22:43PM +0100, Jacek Anaszewski wrote:
->> On 2/27/20 2:07 PM, Dan Murphy wrote:
->>> <snip>
->>> This is not an accurate statement.  Right now a user can have up to 8
->>> channels to cover all the LEDs defined in the LED core
->>>
->>> And if the led_colors array expands then this array can expand.
->>>
->>> We have no control on how many entries the user will put in their DT so
->>> again this number is completely arbitrary.
->> I believe that some of mechanisms that were devised for the most
->> recent implementation proposal of LED mc class will need
->> to be reused for the array approach. E.g. available_colors bitmask
->> will make the parsing resistant to duplicates.
->>
->> Of course LED multicolor DT node design should be applicable as well
->> to the array approach.
->>
->>>> Writing 3 or 4 or 5 numbers all at once in a single sysfs file to
->>>> represent a single output should be fine.
->>>> thanks,
->> Thank you for making this clear.
->>
->> Effectively, the way to go as I see it now is just moving from
->> colors directory to channel_intensity and channel_names files.
-> Wait, we already have an interface for this and you want to create a
-> competing one?  Why?  What's wrong with what you have now?
->
-> Do you have a pointer to the Documentation/ABI/ entries that you have
-> now that you feel do not work well?
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index dbbfff123196..c539489d3166 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -4520,9 +4520,12 @@ static u32 netif_receive_generic_xdp(struct sk_buff *skb,
+>  	/* XDP packets must be linear and must have sufficient headroom
+>  	 * of XDP_PACKET_HEADROOM bytes. This is the guarantee that also
+>  	 * native XDP provides, thus we need to do it here as well.
+> +	 * For non shared skbs, xdpgeneric_linearize controls linearization.
+>  	 */
+> -	if (skb_cloned(skb) || skb_is_nonlinear(skb) ||
+> -	    skb_headroom(skb) < XDP_PACKET_HEADROOM) {
+> +	if (skb_cloned(skb) ||
+> +	    (skb->dev->xdpgeneric_linearize &&
+> +	     (skb_is_nonlinear(skb) ||
+> +	      skb_headroom(skb) < XDP_PACKET_HEADROOM))) {
+>  		int hroom = XDP_PACKET_HEADROOM - skb_headroom(skb);
+>  		int troom = skb->tail + skb->data_len - skb->end;
 
-Here is the proposal we have been working on for some time.
+Have you checked that calling bpf_xdp_adjust_tail() is not breaking anything?
 
-Series:
+-- 
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
 
-https://lore.kernel.org/patchwork/project/lkml/list/?series=427513
-
-ABI Documentation and support code:
-
-https://lore.kernel.org/patchwork/patch/1186194/
-
-Dan
-
-> thanks,
->
-> greg k-h
