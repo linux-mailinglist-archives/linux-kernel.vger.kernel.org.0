@@ -2,148 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0605B1730CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 07:13:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B3381730C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 07:12:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbgB1GNT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 01:13:19 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34130 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbgB1GNT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 01:13:19 -0500
-Received: by mail-lj1-f196.google.com with SMTP id x7so2049012ljc.1;
-        Thu, 27 Feb 2020 22:13:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7dy/Kujh8oupW/pVHgPs57WktyNPAbW19eFPb391nVY=;
-        b=fsxo5mfKJg6j7cF0VkdAc/Hf3t4sJlFk33XPf59uRYualOkUrk/UJzxZ7KWH04ia5n
-         xj09T9DCmsQsThEtDPqXm6TCNRL/V0/Lo5ep2lfIavLQJo3HYvJKrTSzdqx/Yzf5mO00
-         VF7rP+MEuKyBGOJkzXioIcKPm3D4Bd/8L7gC18p0gjCpv47SQ7fmbsA7MChCo3obBPzc
-         cZHCMZpRZKtIIDnVpEcx/ZiwPUmgcs//DbDVz7kuc/Fsh19/Pip/fLXsvHsw4p91DTD4
-         JHfZNCChQdQ5o0KyQF7A4LgJmrUTZZks0/rLgCEwkJERmzE26+Ey7oxRSzBYMq74e4ae
-         u+7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7dy/Kujh8oupW/pVHgPs57WktyNPAbW19eFPb391nVY=;
-        b=Bj3SXKYXHSdFaMnYbat2KP4+3qR4N/AxWC3if7FmWMCzjGBTS+3Xf2SufybpWNjp/T
-         IoM9CmdBSl+e41SiIe0Se4dTTtApt+fzqrPwix0TfEA4iO8jKYR7qaL6HPEqxvRnNBD3
-         0Bx7KFi2Mfqc0e85iGJfVQxfnsu93P8MP3L29sh3jXsld/9f/OdCU+gt600kmOMmZmLa
-         +357FzULS+nLDrCLmI9zsZr+z2UvphaDkIHPDEU3ws/0zXYsVqNZzF6KKhNuM87CQOjW
-         aFAQSUtQc6LsVHU6ygZkBDetQ7JtaDBTwHK3tbSzwlkc7Bgo/X97ewQseOvRGl3t6HEW
-         NIPg==
-X-Gm-Message-State: ANhLgQ2VUveI7sHNUIKFhjd+0MJXzLRuMB07jd9FyYBV2nk8MIjzb6J/
-        ZmMabyYR5mWgCTxv148iI3U=
-X-Google-Smtp-Source: ADFU+vu9lkUYGTP4dyLaBRdQUY25f/Yt3QOACVP1pzgNmvrwnRgocQ5ZZOd/qLXvw4ZmQ/Mhq32Jtg==
-X-Received: by 2002:a2e:9a93:: with SMTP id p19mr1812515lji.177.1582870397017;
-        Thu, 27 Feb 2020 22:13:17 -0800 (PST)
-Received: from localhost.localdomain ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id f14sm4149299lfh.40.2020.02.27.22.13.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 27 Feb 2020 22:13:16 -0800 (PST)
-From:   Christian Hewitt <christianshewitt@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Christian Hewitt <christianshewitt@gmail.com>,
-        Nick Xie <nick@khadas.com>
-Subject: [PATCH] arm64: dts: meson: add thermal zones to gxl-s905x-khadas-vim
-Date:   Fri, 28 Feb 2020 10:12:26 +0400
-Message-Id: <1582870346-74145-1-git-send-email-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726188AbgB1GMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 01:12:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725805AbgB1GMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 01:12:30 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CC392468A;
+        Fri, 28 Feb 2020 06:12:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582870349;
+        bh=cRh1tPtGAw1viMwKMfbbGI536nqanUnqN75l1R2pCEU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nGZAYuX9p1OHbRA8wVx4VtO2aEFzdLkn0VVPIkNOTeGQry6CHXDeUqngNhMQtbFfR
+         NepeMTt3K6kF4WC0BYSkAivz5lljD632eLhDm3LFsXRcCfbJItJVVp4ULlgItDEHOY
+         +n0YLLiOcES6i5UxN2eWHKEhhbPDTUikp/YB/zDw=
+Date:   Fri, 28 Feb 2020 15:12:26 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: [PATCH 1/2] Documentation: bootconfig: Update boot
+ configuration documentation
+Message-Id: <20200228151226.3672a6e575d985ed2cda33aa@kernel.org>
+In-Reply-To: <c8494bca-a5f7-0bc6-63f5-b9ec056eb894@infradead.org>
+References: <158278834245.14966.6179457011671073018.stgit@devnote2>
+        <158278835238.14966.16157216423901327777.stgit@devnote2>
+        <c8494bca-a5f7-0bc6-63f5-b9ec056eb894@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add thermal zones to the VIM1 board, copying the zone config from the
-existing VIM2 board.
+On Thu, 27 Feb 2020 20:50:19 -0800
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Suggested-by: Nick Xie <nick@khadas.com>
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
----
- .../dts/amlogic/meson-gxl-s905x-khadas-vim.dts     | 50 ++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+> Hi,
+> A few more comments for you:
+> 
+> On 2/26/20 11:25 PM, Masami Hiramatsu wrote:
+> > Update boot configuration documentation.
+> > 
+> >  - Not using "config" abbreviation but configuration or description.
+> >  - Rewrite descriptions of node and its maxinum number.
+> >  - Add a section of use cases of boot configuration.
+> >  - Move how to use bootconfig to earlier section.
+> >  - Fix some typos, indents and format mistakes.
+> > 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  Documentation/admin-guide/bootconfig.rst |  172 +++++++++++++++++++-----------
+> >  Documentation/trace/boottime-trace.rst   |    2 
+> >  2 files changed, 112 insertions(+), 62 deletions(-)
+> > 
+> > diff --git a/Documentation/admin-guide/bootconfig.rst b/Documentation/admin-guide/bootconfig.rst
+> > index cf2edcd09183..4bac98250bc0 100644
+> > --- a/Documentation/admin-guide/bootconfig.rst
+> > +++ b/Documentation/admin-guide/bootconfig.rst
+> > @@ -11,19 +11,98 @@ Boot Configuration
+> >  Overview
+> >  ========
+> >  
+> > -The boot configuration expands the current kernel command line to support
+> > +Boot configuration expands the current kernel command line to support
+> >  additional key-value data when booting the kernel in an efficient way.
+> 
+>                 maybe      s/when/while/
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-index 440bc23..2c198c4 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-@@ -6,6 +6,7 @@
- /dts-v1/;
- 
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/thermal/thermal.h>
- 
- #include "meson-gxl-s905x-p212.dtsi"
- 
-@@ -63,6 +64,39 @@
- 			};
- 		};
- 	};
-+
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay-passive = <250>; /* milliseconds */
-+			polling-delay = <1000>; /* milliseconds */
-+
-+			thermal-sensors = <&scpi_sensors 0>;
-+
-+			trips {
-+				cpu_alert0: cpu-alert0 {
-+					temperature = <70000>; /* millicelsius */
-+					hysteresis = <2000>; /* millicelsius */
-+					type = "active";
-+				};
-+
-+				cpu_alert1: cpu-alert1 {
-+					temperature = <80000>; /* millicelsius */
-+					hysteresis = <2000>; /* millicelsius */
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert1>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &cec_AO {
-@@ -72,6 +106,22 @@
- 	hdmi-phandle = <&hdmi_tx>;
- };
- 
-+&cpu0 {
-+	#cooling-cells = <2>;
-+};
-+
-+&cpu1 {
-+	#cooling-cells = <2>;
-+};
-+
-+&cpu2 {
-+	#cooling-cells = <2>;
-+};
-+
-+&cpu3 {
-+	#cooling-cells = <2>;
-+};
-+
- &hdmi_tx {
- 	status = "okay";
- 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+Ah, right.
+
+> 
+> > -This allows administrators to pass a structured-Key config file.
+> > +This allows administrators to pass a structured-Key configuration file
+> > +as a way to supplement the kernel command line to pass system boot parameters.
+> >  
+> > -Config File Syntax
+> > -==================
+> > +Compared with the kernel command line, the boot configuration can provide
+> > +scalability (up to 32 KiB configurations), readability (structured
+> 
+> This makes it sound like bootconfig supports 32 thousand configurations, but
+> (I think) it allows up to 32 KiB of configuration data.
+
+OK, I'll add "data".
+
+> 
+> > +configuration with comments) and compact expression of option groups.
+> > +
+> > +When to Use the Boot Configuration?
+> > +-----------------------------------
+> > +
+> > +The boot configuration supports kernel command line options and init daemon
+> > +boot options. All sub-keys under "kernel" root key are passed as a part of
+> > +kernel command line [1]_, and one under "init" root key are passed as a part
+> 
+>                                  ones  {or those}
+
+OK.
+
+> 
+> > +of init command line. For example, ::
+> > +
+> > +   root=UUID=8cd79b08-bda0-4b9d-954c-5d5f34b98c82 ro quiet splash console=ttyS0,115200n8 console=tty0
+> > +
+> > +This can be written as following boot configuration file.::
+> > +
+> > +   kernel {
+> > +      root = "UUID=8cd79b08-bda0-4b9d-954c-5d5f34b98c82" # nvme0n1p3
+> > +      ro       # mount rootfs as read only
+> > +      quiet    # No console log
+> > +      splash   # show splash image on boot screen
+> > +      console = "ttyS0,115200n8" # 1st console to serial device
+> > +      console += tty0            # add 2nd console
+> > +   }
+> > +
+> > +If you think that kernel/init options becomes too long to write in boot-loader
+> > +configuration file or want to comment on each options, you can use this
+> 
+>                                          on each option,
+
+Oops, OK. 
+
+> 
+> > +boot configuration. If unsure, you can still continue to use the legacy
+> > +kernel command line.
+> > +
+> > +Also, some subsystem may depend on the boot configuration, and it has own
+> > +root key. For example, ftrace boot-time tracer uses "ftrace" root key to
+> > +describe their options [2]_. In this case, you need to use the boot
+> 
+>             its
+
+OK
+
+Thank you!
+
+> 
+> > +configuration.
+> > +
+> > +.. [1] See :ref:`Documentation/admin-guide/kernel-parameters.rst <kernelparameters>`
+> > +.. [2] See :ref:`Documentation/trace/boottime-trace.rst <boottimetrace>`
+> 
+> 
+> -- 
+> ~Randy
+> 
+
+
 -- 
-2.7.4
-
+Masami Hiramatsu <mhiramat@kernel.org>
