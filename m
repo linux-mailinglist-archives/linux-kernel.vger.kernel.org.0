@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0A00173795
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:50:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB538173790
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:50:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbgB1MuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 07:50:14 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:56156 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbgB1MuO (ORCPT
+        id S1726700AbgB1MuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 07:50:15 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:36478 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbgB1MuO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 28 Feb 2020 07:50:14 -0500
-Received: by mail-il1-f198.google.com with SMTP id w62so3152843ila.22
+Received: by mail-il1-f199.google.com with SMTP id d22so3224570ild.3
         for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 04:50:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=LM0FCJ+4KrKjYVOZD9eoAK5J6A6SqATe6bP4uXW+GrE=;
-        b=tWaNIg+BXiQ6SIBHk7xuGOPEGQouqh1ic5YDQ8grK+HzRWvSB+i569v91BvIHVEqsm
-         vdUdtqQ9h0xGfyxxePUCBQbI4XT4ajpKznu0XuNyjixey2ukVBAIGKoiT7UAZGfOtz62
-         eLHi29sMrpf5Dgb3UD9bARQazcW/JAhNqO/cRkbljD/5Y2dF7vI4+Gad6DuOdZrFjdab
-         HiE0HmCAGQ4LsLc+gt+GaUtnmNdrNADsm3Mvj1tsfbAli5Yv7FWwSTOO8UCDXIWyHHbY
-         yB8fSZCn18YG1D1MEQTREr6ZAntHt5OXa0dVvauuE1zSL0hnIU9Z9QeE4TxYyJH2q08q
-         QMWQ==
-X-Gm-Message-State: APjAAAVgGRhM04aTgvvlikJHTFKz4CFRd4nd6wFciBs43gtWmoyf735a
-        tAlC6n//dNlbSlS5d2/8vXDrixeiK9O038bBJ7v25o666SVq
-X-Google-Smtp-Source: APXvYqxnMG6CtbOph8kuz2jwfpOW0Zu/YcDE6V5G5am9WB6BuxUgsYwXeKWXvnB/UGn07sYo/1n/FMXRxI/O/GmPWBw6RPG3Yb6r
+        bh=oqhhv1XjJHQ2T1zWZjc9yf8VhjjCLqsDFW+4Y2HXbcM=;
+        b=cXOc+WVzZr7WIW8sy1UIkXi96muYwyco65y8zAhxnni9G15YAnTAWg0aHIILdUZKSs
+         cy1kBFsP+sm7zNPIwaxUFkfXgJ2cR/PJmE11uU7mfu9Mo0BOsq+wks2eO/REKJKa8fF5
+         lG0tiq/34ZqQVgZ91vXZTWNLOxnHlGnnX7QRww5oIYXx1X1rwnUcL4etUumvENAYJ1BF
+         Km5gpOxBesx4RPqPEu6YJ/NDOmArFAGzbFQmoaIIre+OO8LZvO0Pv9yuKil3TksnWSK1
+         w41IE5Z3r4UQCidFJTGjd2arJJfejWdM8fS2VWOCWGBy1WooVdyuZsUItLYUqsZOgxvH
+         /bSg==
+X-Gm-Message-State: APjAAAXuxqkDMFGzhWjV+EI68hL3mngE7e224xS1wXRK5cXMeZGGNi/N
+        1CRG7/w/zIkkxYuIXdIEa2owLBWcbtWHas1zgOpL4KotyG22
+X-Google-Smtp-Source: APXvYqxcv/yMzxG5tAuDiZNSnFqyaEfrAWY0P2rcXUkwBdyaWlgbeg0Q7pPNDp7mz7q814h8gj2ljmOsw1UAtDXDTsNB8rLul5yG
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8143:: with SMTP id f3mr3173932ioo.12.1582894212180;
+X-Received: by 2002:a92:798d:: with SMTP id u135mr4351064ilc.49.1582894212469;
  Fri, 28 Feb 2020 04:50:12 -0800 (PST)
 Date:   Fri, 28 Feb 2020 04:50:12 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003bf3fb059fa247eb@google.com>
-Subject: BUG: bad host encryption descriptor; descriptor is too short (1 vs 5 needed)
-From:   syzbot <syzbot+2470d4931705e03b0977@syzkaller.appspotmail.com>
+Message-ID: <00000000000040573d059fa2474f@google.com>
+Subject: BUG: bad host security descriptor; not enough data (1 vs 5 left)
+From:   syzbot <syzbot+52be5a94ed1c3d6bf9ce@syzkaller.appspotmail.com>
 To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
@@ -50,22 +50,22 @@ syzbot found the following crash on:
 
 HEAD commit:    d6ff8147 usb: gadget: add raw-gadget interface
 git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=15cd9a81e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=159c5d29e00000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=90a3d9bed5648419
-dashboard link: https://syzkaller.appspot.com/bug?extid=2470d4931705e03b0977
+dashboard link: https://syzkaller.appspot.com/bug?extid=52be5a94ed1c3d6bf9ce
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15cfbd09e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=170e3645e00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c172c3e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1461ee65e00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2470d4931705e03b0977@syzkaller.appspotmail.com
+Reported-by: syzbot+52be5a94ed1c3d6bf9ce@syzkaller.appspotmail.com
 
 usb 1-1: config 0 interface 0 altsetting 0 has 2 endpoint descriptors, different from the interface descriptor's value: 4
-usb 1-1: New USB device found, idVendor=13dc, idProduct=5611, bcdDevice=40.15
+usb 1-1: New USB device found, idVendor=13dc, idProduct=56fc, bcdDevice=40.15
 usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
 usb 1-1: config 0 descriptor??
 hwa-hc 1-1:0.0: Wire Adapter v106.52 newer than groked v1.0
-usb 1-1: BUG: bad host encryption descriptor; descriptor is too short (1 vs 5 needed)
+usb 1-1: BUG: bad host security descriptor; not enough data (1 vs 5 left)
 usb 1-1: supported encryption types: 
 usb 1-1: E: host doesn't support CCM-1 crypto
 hwa-hc 1-1:0.0: Cannot initialize internals: -19
