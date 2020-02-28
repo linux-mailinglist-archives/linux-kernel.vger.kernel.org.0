@@ -2,417 +2,560 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A48317354C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 11:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4B25173552
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 11:27:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbgB1K1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 05:27:13 -0500
-Received: from mail-qk1-f170.google.com ([209.85.222.170]:43536 "EHLO
-        mail-qk1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726413AbgB1K1N (ORCPT
+        id S1726925AbgB1K1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 05:27:55 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:50252 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbgB1K1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 05:27:13 -0500
-Received: by mail-qk1-f170.google.com with SMTP id q18so2413287qki.10;
-        Fri, 28 Feb 2020 02:27:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E7Wqpc+bkvKQKiQrDCDRc7L73d6eixBnGhuSSIog0l4=;
-        b=rN8QkRHyzXVrJpVk+I7QUICD9JvjpCHc0cNabvZMUQBkWV74WcIs18ecXpGNcKxceB
-         OTQlfidpEm6yfjMo9uA8xeinkinZyLOyxilcrdLxLqajbNVV6Ez80utZL5AJICNEe7L+
-         blAAL2GBYbX31Tzq+Lj1qAIc5C0kyvoSuj5xu8C2Sz+apcgUSnVYltHVWXnmJbPnlqIP
-         yJ6bx7rwpbIR/DJXWqQjET2ho1LlfGMt/Vaa6u4Ua8YJUReqilz8eCRfq0hVgp3SJWVk
-         m0sBJ83REGjM6Gj5Ir8SRz2REdpnoUx4ky2SNzWAiOmWIlI0ZZMVqT1SOfoOmXCHKzMO
-         DDVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E7Wqpc+bkvKQKiQrDCDRc7L73d6eixBnGhuSSIog0l4=;
-        b=PnX89LWv6ZFaORMIAIC4cEW+6jjuQeeTfMIPv0i/YJXi829oEQeQYPioGgVeTeZSHf
-         c76bkV7JM3DjxZnxVItC1hDSjhGTwkqQibE4tPyhela4xAExBI8RQgI4pSS+XntNVMB/
-         ip613hVExt8hg+vmYB87TpcnPmXFMGo5HsiLIZfZ/UKZ7zaTw//JDZeNaC06zDD+PPIU
-         9vOilOds86NryUlMaBIYOf3/be7lBlpjqiKPR9l0EdqLsmuroPjFsY20rbeSIpjb4e9A
-         G+QNEHq9wjs+R63KecAfy2L/wV1Vl/6+dFoufFxIHUcinny5Jz/aeC3b4RX8Yulfl2RH
-         A0Hw==
-X-Gm-Message-State: APjAAAWc/ftn7OHVTO9pIpke45VfLK7E/HAw9m+YTaNKbrS0cVnnxsqo
-        4t1afzR7aRruVax0s92q73knJAcMuFqQzHUS+Mkq4zvGXdc=
-X-Google-Smtp-Source: APXvYqxrXYgS996Fls9nL6Io7pxU4AKcrjzd16zX5gjRdqk/t748wGun9wWjob+i17qeVEPHcbCKwF8Gvsx6MER2Cvk=
-X-Received: by 2002:a37:d14:: with SMTP id 20mr3741994qkn.31.1582885631545;
- Fri, 28 Feb 2020 02:27:11 -0800 (PST)
+        Fri, 28 Feb 2020 05:27:54 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01SANa1W174884;
+        Fri, 28 Feb 2020 10:27:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=Sni9SQmZt0vQE/4J6rZo4v/IgF0TKZiuJcoFD/kUFmM=;
+ b=a1G+m2tS15cDXqklJe8r73SNtSY3R2jBaBThnZ5d5PtTg31ncCmKnRWffBdhiS2miNg+
+ FhMh2Pszoba6+WsmQeybuEP37K9B4ooIo8RlggSzX5vuVg21ASbCz59FxwzHHVEVEsvu
+ d7b6aSuoazNYX0/DXp97pUsnqEaSdbwe+Yu8Vyv1+15BCWpYfyhIqz/gQEhll13NhcFK
+ 1KKliAruAfSRKkkNAOVhHj8lfNdIS8Wms12lTETugyVcSfBfKn/eGUY5u1R2PxeO/wR6
+ o4mx94Im9Fu3sAooY77XvcyUbplnwnWCc/yLmRZZ20cB78Sh0BK4ccsHnr2BvLCj/lYB aw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2ydcsnt340-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Feb 2020 10:27:07 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01SAIA11189755;
+        Fri, 28 Feb 2020 10:27:07 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2ydj4qd8dw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Feb 2020 10:27:06 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01SAR0b6017381;
+        Fri, 28 Feb 2020 10:27:00 GMT
+Received: from [10.39.209.75] (/10.39.209.75)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 28 Feb 2020 02:27:00 -0800
+Subject: Re: [patch 04/24] x86/entry: Distangle idtentry
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Brian Gerst <brgerst@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20200225221606.511535280@linutronix.de>
+ <20200225222648.575747087@linutronix.de>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <f45d95ca-e754-9c26-64c2-ad806bc7f5d2@oracle.com>
+Date:   Fri, 28 Feb 2020 11:27:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <CAGgoGu5u7WZUUaoVYvVWS5nuNZz25PgR=uHkqvzXV5xFOC7KuA@mail.gmail.com>
- <CAOMZO5DvPr3srStsJ6KQph_v_=7=YGdcM4GQzi9yK+Km-wFBiQ@mail.gmail.com>
-In-Reply-To: <CAOMZO5DvPr3srStsJ6KQph_v_=7=YGdcM4GQzi9yK+Km-wFBiQ@mail.gmail.com>
-From:   Fawad Lateef <fawadlateef@gmail.com>
-Date:   Fri, 28 Feb 2020 11:27:00 +0100
-Message-ID: <CAGgoGu5S0Yr5j1yegjkgbqXvdtwaCvX6=hnKt+z7F5+qVXi96Q@mail.gmail.com>
-Subject: Re: Help needed in understanding weird PCIe issue on imx6q (PCIe just
- goes bad)
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000ca31da059fa047ab"
+In-Reply-To: <20200225222648.575747087@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9544 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 suspectscore=0
+ spamscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002280086
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9544 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=999 phishscore=0 spamscore=0 adultscore=0
+ suspectscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002280086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000ca31da059fa047ab
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Fabio,
 
-On Thu, 27 Feb 2020 at 00:40, Fabio Estevam <festevam@gmail.com> wrote:
->
-> Hi Fawad,
->
-> On Sat, Feb 22, 2020 at 12:26 PM Fawad Lateef <fawadlateef@gmail.com> wrote:
-> >
-> > Hello,
-> >
-> > I am trying to figure-out an issue on our i.MX6Q platform based design
-> > where PCIe interface goes bad.
-> >
-> > We have a Phytec i.MX6Q eMMC SOM, attached to our custom designed
-> > board. PCIe root-complex from i.MX6Q is attached to PLX switch
-> > (PEX8605).
-> >
-> > Linux kernel version is 4.19.9x and also 4.14.134 (from phytec's
->
-> Does it happen with 5.4 or 5.5 too?
+On 2/25/20 11:16 PM, Thomas Gleixner wrote:
+> idtentry is a completely unreadable maze. Split it into distinct idtentry
+> variants which only contain the minimal code:
+> 
+>    - idtentry for regular exceptions
+>    - idtentry_mce_debug for #MCE and #DB
+>    - idtentry_df for #DF
+> 
+> The generated binary code is equivalent.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>   arch/x86/entry/entry_64.S |  402 +++++++++++++++++++++++++---------------------
+>   1 file changed, 220 insertions(+), 182 deletions(-)
+> 
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -37,6 +37,7 @@
+>   #include <asm/pgtable_types.h>
+>   #include <asm/export.h>
+>   #include <asm/frame.h>
+> +#include <asm/trapnr.h>
+>   #include <asm/nospec-branch.h>
+>   #include <linux/err.h>
+>   
+> @@ -490,6 +491,202 @@ SYM_CODE_END(spurious_entries_start)
+>   	decl	PER_CPU_VAR(irq_count)
+>   .endm
+>   
+> +/**
+> + * idtentry_body - Macro to emit code calling the C function
+> + * @vector:		Vector number
+> + * @cfunc:		C function to be called
+> + * @has_error_code:	Hardware pushed error code on stack
+> + */
+> +.macro idtentry_body vector cfunc has_error_code:req
+> +
+> +	call	error_entry
+> +	UNWIND_HINT_REGS
+> +
+> +	.if \vector == X86_TRAP_PF
+> +		/*
+> +		 * Store CR2 early so subsequent faults cannot clobber it. Use R12 as
+> +		 * intermediate storage as RDX can be clobbered in enter_from_user_mode().
+> +		 * GET_CR2_INTO can clobber RAX.
+> +		 */
+> +		GET_CR2_INTO(%r12);
+> +	.endif
+> +
+> +	TRACE_IRQS_OFF
+> +
+> +#ifdef CONFIG_CONTEXT_TRACKING
+> +	testb	$3, CS(%rsp)
+> +	jz	.Lfrom_kernel_no_ctxt_tracking_\@
+> +	CALL_enter_from_user_mode
+> +.Lfrom_kernel_no_ctxt_tracking_\@:
+> +#endif
+> +
+> +	movq	%rsp, %rdi			/* pt_regs pointer into 1st argument*/
+> +
+> +	.if \has_error_code == 1
+> +		movq	ORIG_RAX(%rsp), %rsi	/* get error code into 2nd argument*/
+> +		movq	$-1, ORIG_RAX(%rsp)	/* no syscall to restart */
+> +	.else
+> +		xorl	%esi, %esi		/* Clear the error code */
+> +	.endif
+> +
+> +	.if \vector == X86_TRAP_PF
+> +		movq	%r12, %rdx		/* Move CR2 into 3rd argument */
+> +	.endif
+> +
+> +	call	\cfunc
+> +
+> +	jmp	error_exit
+> +.endm
+> +
+> +/**
+> + * idtentry - Macro to generate entry stubs for simple IDT entries
+> + * @vector:		Vector number
+> + * @asmsym:		ASM symbol for the entry point
+> + * @cfunc:		C function to be called
+> + * @has_error_code:	Hardware pushed error code on stack
+> + *
+> + * The macro emits code to set up the kernel context for straight forward
+> + * and simple IDT entries. No IST stack, no paranoid entry checks.
+> + */
+> +.macro idtentry vector asmsym cfunc has_error_code:req
 
-I had 5.2.xx kernel working earlier but then due to other issues I
-switched back to Phytec provided kernel. I will give 5.2.xx (as its
-patched for SOM already on my system) a try again and see if its
-better.
+So the logic here is to remove idtentry non-generic argument (read_cr2, shift_ist,
+ist_offset, create_gap) and instead have specific code depending on the vector
+number, and the idtentry now has to reference the vector number.
 
->
-> Which dts are you using?
+Slight paranoid concern: we now have two different places where we associate a
+vector number with a handler:
 
-I attached the dts files by mail. Though I tried on another OEM som
-"Embedded ARtists" i.MX6Q with their own dts (but reset-gpio setting
-for mPCIe card commented out) quickly and saw similar behaviour.
+- in idt.c:
+          INTG(X86_TRAP_DE,               divide_error),
 
->
-> > Then I enable the #PERST pin of PLX switch, everything is still good
-> > (no rescan on Linux is done yet)
-> >
-> > ~ # echo 139 > /sys/class/gpio/export
-> > ~ # echo out > /sys/class/gpio/gpio139/direction
-> > ~ # echo 1 > /sys/class/gpio/gpio139/value
->
-> Not sure why you toggle the PERST pin from userspace.
+- in entry_64.S:
+idtentry	X86_TRAP_DE		divide_error		do_divide_error			has_error_code=0
 
-I am trying to do this later from user-space as we are battery
-operated WLAN AP device and only want to enable devices based on
-different "modes"; like on batteries we do not want USB3 controller
-active and also might just enable one of the two WLANs etc.
+Should we add a check to ensure the (vector number, handler) is the same at both
+places?
 
->
-> You should do it via reset-gpio property in the device tree.
 
-I tried to enable only PLX switch with reset-gpio and I see that later
-when I try to enable WLANs and do pci->rescan then WLANs unable to
-allocate memory in BAR regions. Likely as we do not have PCIe hot-plug
-enabled. On ARM without BIOS/bootloader doing enumeration it might be
-even useful, right?
+> +SYM_CODE_START(\asmsym)
+> +	UNWIND_HINT_IRET_REGS offset=\has_error_code*8
+> +	ASM_CLAC
+> +
+> +	.if \has_error_code == 0
+> +		pushq	$-1			/* ORIG_RAX: no syscall to restart */
+> +	.endif
+> +
+> +	.if \vector == X86_TRAP_BP
+> +		/*
+> +		 * If coming from kernel space, create a 6-word gap to allow the
+> +		 * int3 handler to emulate a call instruction.
+> +		 */
+> +		testb	$3, CS-ORIG_RAX(%rsp)
+> +		jnz	.Lfrom_usermode_no_gap_\@
+> +		.rept	6
+> +		pushq	5*8(%rsp)
+> +		.endr
+> +		UNWIND_HINT_IRET_REGS offset=8
+> +.Lfrom_usermode_no_gap_\@:
+> +	.endif
+> +
+> +	idtentry_body \vector \cfunc \has_error_code
+> +
+> +_ASM_NOKPROBE(\asmsym)
+> +SYM_CODE_END(\asmsym)
+> +.endm
+> +
+> +/*
+> + * MCE and DB exceptions
+> + */
+> +#define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + (x) * 8)
+> +
+> +/**
+> + * idtentry_mce_db - Macro to generate entry stubs for #MC and #DB
+> + * @vector:		Vector number
+> + * @asmsym:		ASM symbol for the entry point
+> + * @cfunc:		C function to be called
+> + *
+> + * The macro emits code to set up the kernel context for #MC and #DB
+> + *
+> + * If the entry comes from user space it uses the normal entry path
+> + * including the return to user space work and preemption checks on
+> + * exit.
+> + *
+> + * If hits in kernel mode then it needs to go through the paranoid
+> + * entry as the exception can hit any random state. No preemption
+> + * check on exit to keep the paranoid path simple.
+> + *
+> + * If the trap is #DB then the interrupt stack entry in the IST is
+> + * moved to the second stack, so a potential recursion will have a
+> + * fresh IST.
+> + */
+> +.macro idtentry_mce_db vector asmsym cfunc
+> +SYM_CODE_START(\asmsym)
+> +	UNWIND_HINT_IRET_REGS
+> +	ASM_CLAC
+> +
+> +	pushq	$-1			/* ORIG_RAX: no syscall to restart */
+> +
+> +	/*
+> +	 * If the entry is from userspace, switch stacks and treat it as
+> +	 * a normal entry.
+> +	 */
+> +	testb	$3, CS-ORIG_RAX(%rsp)
+> +	jnz	.Lfrom_usermode_switch_stack_\@
+> +
+> +	/*
+> +	 * paranoid_entry returns SWAPGS flag for paranoid_exit in EBX.
+> +	 * EBX == 0 -> SWAPGS, EBX == 1 -> no SWAPGS
+> +	 */
+> +	call	paranoid_entry
+> +
+> +	UNWIND_HINT_REGS
+> +
+> +	.if \vector == X86_TRAP_DB
+> +		TRACE_IRQS_OFF_DEBUG
+> +	.else
+> +		TRACE_IRQS_OFF
+> +	.endif
+> +
+> +	movq	%rsp, %rdi		/* pt_regs pointer */
+> +	xorl	%esi, %esi		/* Clear the error code */
+> +
+> +	.if \vector == X86_TRAP_DB
+> +		subq	$DB_STACK_OFFSET, CPU_TSS_IST(IST_INDEX_DB)
+> +	.endif
+> +
+> +	call	\cfunc
+> +
+> +	.if \vector == X86_TRAP_DB
+> +		addq	$DB_STACK_OFFSET, CPU_TSS_IST(IST_INDEX_DB)
+> +	.endif
+> +
+> +	jmp	paranoid_exit
+> +
+> +	/* Switch to the regular task stack and use the noist entry point */
+> +.Lfrom_usermode_switch_stack_\@:
+> +	idtentry_body vector \cfunc, has_error_code=0
+> +
+> +_ASM_NOKPROBE(\asmsym)
+> +SYM_CODE_END(\asmsym)
+> +.endm
+> +
+> +/*
+> + * Double fault entry. Straight paranoid. No checks from which context
+> + * this comes because for the espfix induced #DF this would do the wrong
+> + * thing.
+> + */
+> +.macro idtentry_df vector asmsym cfunc
+> +SYM_CODE_START(\asmsym)
+> +	UNWIND_HINT_IRET_REGS offset=8
+> +	ASM_CLAC
+> +
+> +	/*
+> +	 * paranoid_entry returns SWAPGS flag for paranoid_exit in EBX.
+> +	 * EBX == 0 -> SWAPGS, EBX == 1 -> no SWAPGS
+> +	 */
+> +	call	paranoid_entry
+> +	UNWIND_HINT_REGS
+> +
+> +	/* Read CR2 early */
+> +	GET_CR2_INTO(%r12);
+> +
+> +	TRACE_IRQS_OFF
+> +
+> +	movq	%rsp, %rdi		/* pt_regs pointer into first argument */
+> +	movq	ORIG_RAX(%rsp), %rsi	/* get error code into 2nd argument*/
+> +	movq	$-1, ORIG_RAX(%rsp)	/* no syscall to restart */
+> +	movq	%r12, %rdx		/* Move CR2 into 3rd argument */
+> +	call	\cfunc
+> +
+> +	jmp	paranoid_exit
+> +
+> +_ASM_NOKPROBE(\asmsym)
+> +SYM_CODE_END(\asmsym)
+> +.endm
+> +
+>   /*
+>    * Interrupt entry helper function.
+>    *
+> @@ -857,197 +1054,38 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
+>   /*
+>    * Exception entry points.
+>    */
+> -#define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + (x) * 8)
+> -
+> -.macro idtentry_part do_sym, has_error_code:req, read_cr2:req, paranoid:req, shift_ist=-1, ist_offset=0
+> -
+> -	.if \paranoid
+> -	call	paranoid_entry
+> -	/* returned flag: ebx=0: need swapgs on exit, ebx=1: don't need it */
+> -	.else
+> -	call	error_entry
+> -	.endif
+> -	UNWIND_HINT_REGS
+> -
+> -	.if \read_cr2
+> -	/*
+> -	 * Store CR2 early so subsequent faults cannot clobber it. Use R12 as
+> -	 * intermediate storage as RDX can be clobbered in enter_from_user_mode().
+> -	 * GET_CR2_INTO can clobber RAX.
+> -	 */
+> -	GET_CR2_INTO(%r12);
+> -	.endif
+> -
+> -	.if \shift_ist != -1
+> -	TRACE_IRQS_OFF_DEBUG			/* reload IDT in case of recursion */
+> -	.else
+> -	TRACE_IRQS_OFF
+> -	.endif
+> -
+> -#ifdef CONFIG_CONTEXT_TRACKING
+> -	.if \paranoid == 0
+> -	testb	$3, CS(%rsp)
+> -	jz	.Lfrom_kernel_no_context_tracking_\@
+> -	CALL_enter_from_user_mode
+> -.Lfrom_kernel_no_context_tracking_\@:
+> -	.endif
+> -#endif
+> -
+> -	movq	%rsp, %rdi			/* pt_regs pointer */
+> -
+> -	.if \has_error_code
+> -	movq	ORIG_RAX(%rsp), %rsi		/* get error code */
+> -	movq	$-1, ORIG_RAX(%rsp)		/* no syscall to restart */
+> -	.else
+> -	xorl	%esi, %esi			/* no error code */
+> -	.endif
+> -
+> -	.if \shift_ist != -1
+> -	subq	$\ist_offset, CPU_TSS_IST(\shift_ist)
+> -	.endif
+> -
+> -	.if \read_cr2
+> -	movq	%r12, %rdx			/* Move CR2 into 3rd argument */
+> -	.endif
+> -
+> -	call	\do_sym
+> -
+> -	.if \shift_ist != -1
+> -	addq	$\ist_offset, CPU_TSS_IST(\shift_ist)
+> -	.endif
+> -
+> -	.if \paranoid
+> -	/* this procedure expect "no swapgs" flag in ebx */
+> -	jmp	paranoid_exit
+> -	.else
+> -	jmp	error_exit
+> -	.endif
+> -
+> -.endm
+> -
+> -/**
+> - * idtentry - Generate an IDT entry stub
+> - * @sym:		Name of the generated entry point
+> - * @do_sym:		C function to be called
+> - * @has_error_code:	True if this IDT vector has an error code on the stack
+> - * @paranoid:		non-zero means that this vector may be invoked from
+> - *			kernel mode with user GSBASE and/or user CR3.
+> - *			2 is special -- see below.
+> - * @shift_ist:		Set to an IST index if entries from kernel mode should
+> - *			decrement the IST stack so that nested entries get a
+> - *			fresh stack.  (This is for #DB, which has a nasty habit
+> - *			of recursing.)
+> - * @create_gap:		create a 6-word stack gap when coming from kernel mode.
+> - * @read_cr2:		load CR2 into the 3rd argument; done before calling any C code
+> - *
+> - * idtentry generates an IDT stub that sets up a usable kernel context,
+> - * creates struct pt_regs, and calls @do_sym.  The stub has the following
+> - * special behaviors:
+> - *
+> - * On an entry from user mode, the stub switches from the trampoline or
+> - * IST stack to the normal thread stack.  On an exit to user mode, the
+> - * normal exit-to-usermode path is invoked.
+> - *
+> - * On an exit to kernel mode, if @paranoid == 0, we check for preemption,
+> - * whereas we omit the preemption check if @paranoid != 0.  This is purely
+> - * because the implementation is simpler this way.  The kernel only needs
+> - * to check for asynchronous kernel preemption when IRQ handlers return.
+> - *
+> - * If @paranoid == 0, then the stub will handle IRET faults by pretending
+> - * that the fault came from user mode.  It will handle gs_change faults by
+> - * pretending that the fault happened with kernel GSBASE.  Since this handling
+> - * is omitted for @paranoid != 0, the #GP, #SS, and #NP stubs must have
+> - * @paranoid == 0.  This special handling will do the wrong thing for
+> - * espfix-induced #DF on IRET, so #DF must not use @paranoid == 0.
+> - *
+> - * @paranoid == 2 is special: the stub will never switch stacks.  This is for
+> - * #DF: if the thread stack is somehow unusable, we'll still get a useful OOPS.
+> - */
+> -.macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1 ist_offset=0 create_gap=0 read_cr2=0
+> -SYM_CODE_START(\sym)
+> -	UNWIND_HINT_IRET_REGS offset=\has_error_code*8
+> -
+> -	/* Sanity check */
+> -	.if \shift_ist != -1 && \paranoid != 1
+> -	.error "using shift_ist requires paranoid=1"
+> -	.endif
+> -
+> -	.if \create_gap && \paranoid
+> -	.error "using create_gap requires paranoid=0"
+> -	.endif
+> -
+> -	ASM_CLAC
+> -
+> -	.if \has_error_code == 0
+> -	pushq	$-1				/* ORIG_RAX: no syscall to restart */
+> -	.endif
+> -
+> -	.if \paranoid == 1
+> -	testb	$3, CS-ORIG_RAX(%rsp)		/* If coming from userspace, switch stacks */
+> -	jnz	.Lfrom_usermode_switch_stack_\@
+> -	.endif
+> -
+> -	.if \create_gap == 1
+> -	/*
+> -	 * If coming from kernel space, create a 6-word gap to allow the
+> -	 * int3 handler to emulate a call instruction.
+> -	 */
+> -	testb	$3, CS-ORIG_RAX(%rsp)
+> -	jnz	.Lfrom_usermode_no_gap_\@
+> -	.rept	6
+> -	pushq	5*8(%rsp)
+> -	.endr
+> -	UNWIND_HINT_IRET_REGS offset=8
+> -.Lfrom_usermode_no_gap_\@:
+> -	.endif
+> -
+> -	idtentry_part \do_sym, \has_error_code, \read_cr2, \paranoid, \shift_ist, \ist_offset
+> -
+> -	.if \paranoid == 1
+> -	/*
+> -	 * Entry from userspace.  Switch stacks and treat it
+> -	 * as a normal entry.  This means that paranoid handlers
+> -	 * run in real process context if user_mode(regs).
+> -	 */
+> -.Lfrom_usermode_switch_stack_\@:
+> -	idtentry_part \do_sym, \has_error_code, \read_cr2, paranoid=0
+> -	.endif
+> -
+> -_ASM_NOKPROBE(\sym)
+> -SYM_CODE_END(\sym)
+> -.endm
+>   
+> -idtentry divide_error			do_divide_error			has_error_code=0
+> -idtentry overflow			do_overflow			has_error_code=0
+> -idtentry int3				do_int3				has_error_code=0	create_gap=1
+> -idtentry bounds				do_bounds			has_error_code=0
+> -idtentry invalid_op			do_invalid_op			has_error_code=0
+> -idtentry device_not_available		do_device_not_available		has_error_code=0
+> -idtentry coprocessor_segment_overrun	do_coprocessor_segment_overrun	has_error_code=0
+> -idtentry invalid_TSS			do_invalid_TSS			has_error_code=1
+> -idtentry segment_not_present		do_segment_not_present		has_error_code=1
+> -idtentry stack_segment			do_stack_segment		has_error_code=1
+> -idtentry general_protection		do_general_protection		has_error_code=1
+> -idtentry spurious_interrupt_bug		do_spurious_interrupt_bug	has_error_code=0
+> -idtentry coprocessor_error		do_coprocessor_error		has_error_code=0
+> -idtentry alignment_check		do_alignment_check		has_error_code=1
+> -idtentry simd_coprocessor_error		do_simd_coprocessor_error	has_error_code=0
+> +idtentry	X86_TRAP_DE		divide_error		do_divide_error			has_error_code=0
+> +idtentry	X86_TRAP_OF		overflow		do_overflow			has_error_code=0
+> +idtentry	X86_TRAP_BP		int3			do_int3				has_error_code=0
+> +idtentry	X86_TRAP_BR		bounds			do_bounds			has_error_code=0
+> +idtentry	X86_TRAP_UD		invalid_op		do_invalid_op			has_error_code=0
+> +idtentry	X86_TRAP_NM		device_not_available	do_device_not_available		has_error_code=0
+> +idtentry	X86_TRAP_OLD_MF		coprocessor_segment_overrun	do_coprocessor_segment_overrun	has_error_code=0
+> +idtentry	X86_TRAP_TS		invalid_TSS		do_invalid_TSS			has_error_code=1
+> +idtentry	X86_TRAP_NP		segment_not_present	do_segment_not_present		has_error_code=1
+> +idtentry	X86_TRAP_SS		stack_segment		do_stack_segment		has_error_code=1
+> +idtentry	X86_TRAP_GP		general_protection	do_general_protection		has_error_code=1
+> +idtentry	X86_TRAP_SPURIOUS	spurious_interrupt_bug	do_spurious_interrupt_bug	has_error_code=0
+> +idtentry	X86_TRAP_MF		coprocessor_error	do_coprocessor_error		has_error_code=0
+> +idtentry	X86_TRAP_AC		alignment_check		do_alignment_check		has_error_code=1
+> +idtentry	X86_TRAP_XF		simd_coprocessor_error	do_simd_coprocessor_error	has_error_code=0
+>   
+> -idtentry page_fault		do_page_fault		has_error_code=1	read_cr2=1
+> +idtentry	X86_TRAP_PF		page_fault		do_page_fault			has_error_code=1
+>   #ifdef CONFIG_KVM_GUEST
+> -idtentry async_page_fault	do_async_page_fault	has_error_code=1	read_cr2=1
+> +idtentry	X86_TRAP_PF		async_page_fault	do_async_page_fault		has_error_code=1
+>   #endif
+>   
+>   #ifdef CONFIG_X86_MCE
+> -idtentry machine_check		do_mce			has_error_code=0 paranoid=1
+> +idtentry_mce_db	X86_TRAP_MCE	 	machine_check		do_mce
+>   #endif
+> -idtentry debug			do_debug		has_error_code=0 paranoid=1 shift_ist=IST_INDEX_DB ist_offset=DB_STACK_OFFSET
+> -idtentry double_fault		do_double_fault		has_error_code=1 paranoid=2 read_cr2=1
+> +idtentry_mce_db	X86_TRAP_DB		debug			do_debug
+> +idtentry_df	X86_TRAP_DF		double_fault		do_double_fault
+>   
+>   #ifdef CONFIG_XEN_PV
+> -idtentry hypervisor_callback	xen_do_hypervisor_callback	has_error_code=0
+> -idtentry xennmi			do_nmi				has_error_code=0
+> -idtentry xendebug		do_debug			has_error_code=0
+> +idtentry	512 /* dummy */		hypervisor_callback	xen_do_hypervisor_callback	has_error_code=0
 
-~ # echo 1 > /sys/bus/pci/rescan
-[ 2280.186261] pcieport 0000:02:02.0: BAR 8: no space for [mem size 0x00300000]
-[ 2280.193409] pcieport 0000:02:02.0: BAR 8: failed to assign [mem
-size 0x00300000]
-[ 2280.200834] pcieport 0000:02:03.0: BAR 8: no space for [mem size 0x00300000]
-[ 2280.207948] pcieport 0000:02:03.0: BAR 8: failed to assign [mem
-size 0x00300000]
-[ 2280.215456] pci 0000:04:00.0: BAR 0: no space for [mem size 0x00200000 64bit]
-[ 2280.222690] pci 0000:04:00.0: BAR 0: failed to assign [mem size
-0x00200000 64bit]
-[ 2280.230206] pci 0000:04:00.0: BAR 6: no space for [mem size 0x00010000 pref]
-[ 2280.237321] pci 0000:04:00.0: BAR 6: failed to assign [mem size
-0x00010000 pref]
-[ 2280.244886] pci 0000:05:00.0: BAR 0: no space for [mem size 0x00200000 64bit]
-[ 2280.252115] pci 0000:05:00.0: BAR 0: failed to assign [mem size
-0x00200000 64bit]
-[ 2280.259623] pci 0000:05:00.0: BAR 6: no space for [mem size 0x00010000 pref]
-[ 2280.266729] pci 0000:05:00.0: BAR 6: failed to assign [mem size
-0x00010000 pref]
+Is it worth defining X86_TRAP_DUMMY=512 with an explanation comment?
 
-By the way is there way to specify multiple "gpio-reset" pins in
-device tree? Is reset-gpio property can have multiple pins OR
-reset-gpios is to be used and its similar to gpio-reset (without 's')
-property?
+In any case:
 
-Thanks,
+Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 
-Fawad Lateef
+alex.
 
---000000000000ca31da059fa047ab
-Content-Type: audio/vnd.dts; name="imx6q-phytec-leo-emmc.dts"
-Content-Disposition: attachment; filename="imx6q-phytec-leo-emmc.dts"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k760x0gl2>
-X-Attachment-Id: f_k760x0gl2
 
-Ly8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4wKyBPUiBNSVQpCi8qCiAqIENvcHly
-aWdodCAoQykgMjAxOCBQSFlURUMgTWVzc3RlY2huaWsgR21iSAogKiBBdXRob3I6IENocmlzdGlh
-biBIZW1wIDxjLmhlbXBAcGh5dGVjLmRlPgogKi8KCi9kdHMtdjEvOwojaW5jbHVkZSAiaW14NnEu
-ZHRzaSIKI2luY2x1ZGUgImlteDZxZGwtcGh5dGVjLXBoeWNvcmUtc29tLWxlby5kdHNpIgojaW5j
-bHVkZSAiaW14NnFkbC1waHl0ZWMtbGVvLmR0c2kiCgovIHsKCW1vZGVsID0gIkFpckZpIExFTyB3
-aXRoIFBoeUNPUkUgaS5NWDYgUXVhZCBlTU1DIFNPTSI7Cgljb21wYXRpYmxlID0gInBoeXRlYyxp
-bXg2cWRsLXBjbTA1OCIsICJmc2wsaW14NnEiOwoKCWNob3NlbiB7CgkJc3Rkb3V0LXBhdGggPSAm
-dWFydDI7Cgl9Owp9OwoKJmkyYzEgewoJc3RhdHVzID0gIm9rYXkiOwp9OwoKJmkyY19wZXg4NjA1
-IHsKCXN0YXR1cyA9ICJkaXNhYmxlZCI7Cn07CgombTI1cDgwIHsKCXN0YXR1cyA9ICJva2F5IjsK
-fTsKCiZwY2llX2dwaW9fbGVkcyB7CglzdGF0dXMgPSAib2theSI7Cn07CgomdXNiX2dwaW9fbGVk
-cyB7CglzdGF0dXMgPSAib2theSI7Cn07CgomcGNpZSB7Ci8vCXJlc2V0LWdwaW8gPSA8JmdwaW81
-IDExIEdQSU9fQUNUSVZFX0hJR0g+OwoJc3RhdHVzID0gIm9rYXkiOwp9OwoKJnVhcnQxIHsKCXN0
-YXR1cyA9ICJva2F5IjsKfTsKCiZ1YXJ0MyB7CglzdGF0dXMgPSAib2theSI7Cn07CgomdWFydDQg
-ewoJc3RhdHVzID0gIm9rYXkiOwp9OwoKJnVzYmgxIHsKCXN0YXR1cyA9ICJva2F5IjsKfTsKCiZ1
-c2JvdGcgewoJc3RhdHVzID0gIm9rYXkiOwp9OwoKJnVzZGhjMSB7CglzdGF0dXMgPSAib2theSI7
-Cn07CgomdXNkaGM0IHsKCXN0YXR1cyA9ICJva2F5IjsKfTsKCiZzYXRhIHsKCXN0YXR1cyA9ICJv
-a2F5IjsKfTsKCgoK
---000000000000ca31da059fa047ab
-Content-Type: application/octet-stream; name="imx6qdl-phytec-leo.dtsi"
-Content-Disposition: attachment; filename="imx6qdl-phytec-leo.dtsi"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k760x0gk1>
-X-Attachment-Id: f_k760x0gk1
-
-Ly8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4wKyBPUiBNSVQpCi8qCiAqIENvcHly
-aWdodCAoQykgMjAxOCBQSFlURUMgTWVzc3RlY2huaWsgR21iSAogKiBBdXRob3I6IENocmlzdGlh
-biBIZW1wIDxjLmhlbXBAcGh5dGVjLmRlPgogKi8KCiNpbmNsdWRlIDxkdC1iaW5kaW5ncy9sZWRz
-L2xlZHMtcGNhOTUzMi5oPgoKLyB7CglwY2llX2dwaW9fbGVkczogbGVkcyB7CgkJY29tcGF0aWJs
-ZSA9ICJncGlvLWxlZHMiOwoJCXN0YXR1cyA9ICJkaXNhYmxlZCI7CgovKgkJcGNpZS13bGFuLXJl
-c2V0IHsKCQkJZ3Bpb3MgPSA8JmdwaW81IDIyIEdQSU9fQUNUSVZFX0hJR0g+OwoJCQlkZWZhdWx0
-LXN0YXRlID0gIm9uIjsKCQl9OwoqLwoKCQlwY2llLTEgewoJCQlncGlvcyA9IDwmZ3BpbzQgMjUg
-R1BJT19BQ1RJVkVfSElHSD47CgkJCWRlZmF1bHQtc3RhdGUgPSAib24iOwoJCX07CgoJCXBjaWUt
-MiB7CgkJCWdwaW9zID0gPCZncGlvNCAyMyBHUElPX0FDVElWRV9ISUdIPjsKCQkJZGVmYXVsdC1z
-dGF0ZSA9ICJvbiI7CgkJfTsKCX07CgoJdXNiX2dwaW9fbGVkczogbGVkcyB7CgkJY29tcGF0aWJs
-ZSA9ICJncGlvLWxlZHMiOwoJCXN0YXR1cyA9ICJkaXNhYmxlZCI7CgoJCXVzYi1odWItZW4gewoJ
-CQlncGlvcyA9IDwmZ3BpbzQgMjQgR1BJT19BQ1RJVkVfSElHSD47CgkJCWRlZmF1bHQtc3RhdGUg
-PSAib24iOwoJCX07CgoJCWFkc2ItZW4gewoJCQlncGlvcyA9IDwmZ3BpbzUgOCBHUElPX0FDVElW
-RV9MT1c+OwoJCQlkZWZhdWx0LXN0YXRlID0gIm9uIjsKCQl9OwoJfTsKCglyZWdfZW5fc3dpdGNo
-OiByZWd1bGF0b3ItZW4tc3dpdGNoIHsKCQljb21wYXRpYmxlID0gInJlZ3VsYXRvci1maXhlZCI7
-CgkJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKCQlwaW5jdHJsLTAgPSA8JnBpbmN0cmxfZW5f
-c3dpdGNoPjsKCQlyZWd1bGF0b3ItbmFtZSA9ICJFbmFibGUgU3dpdGNoIjsKCQlyZWd1bGF0b3It
-bWluLW1pY3Jvdm9sdCA9IDwzMzAwMDAwPjsKCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwz
-MzAwMDAwPjsKCQllbmFibGUtYWN0aXZlLWhpZ2g7CgkJZ3BpbyA9IDwmZ3BpbzMgNCBHUElPX0FD
-VElWRV9ISUdIPjsKCQlyZWd1bGF0b3ItYWx3YXlzLW9uOwoJfTsKCglyZWdfcGNpZTogcmVndWxh
-dG9yLXBjaWUgewoJCWNvbXBhdGlibGUgPSAicmVndWxhdG9yLWZpeGVkIjsKCQlwaW5jdHJsLW5h
-bWVzID0gImRlZmF1bHQiOwoJCXBpbmN0cmwtMCA9IDwmcGluY3RybF9wY2llX3JlZz47CgkJcmVn
-dWxhdG9yLW5hbWUgPSAibVBDSWVfMVY1IjsKCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwx
-NTAwMDAwPjsKCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwxNTAwMDAwPjsKCQlncGlvID0g
-PCZncGlvMyAwIEdQSU9fQUNUSVZFX0hJR0g+OwoJCWVuYWJsZS1hY3RpdmUtaGlnaDsKCX07CgoJ
-cmVnX3VzYl9oMV92YnVzOiB1c2ItaDEtdmJ1cyB7CgkJY29tcGF0aWJsZSA9ICJyZWd1bGF0b3It
-Zml4ZWQiOwoJCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CgkJcGluY3RybC0wID0gPCZwaW5j
-dHJsX3VzYmgxX3ZidXM+OwoJCXJlZ3VsYXRvci1uYW1lID0gInVzYl9oMV92YnVzIjsKCQlyZWd1
-bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDw1MDAwMDAwPjsKCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9s
-dCA9IDw1MDAwMDAwPjsKCQlncGlvID0gPCZncGlvMiAxOCBHUElPX0FDVElWRV9ISUdIPjsKCQll
-bmFibGUtYWN0aXZlLWhpZ2g7Cgl9OwoKCXJlZ191c2JvdGdfdmJ1czogdXNib3RnLXZidXMgewoJ
-CWNvbXBhdGlibGUgPSAicmVndWxhdG9yLWZpeGVkIjsKCQlwaW5jdHJsLW5hbWVzID0gImRlZmF1
-bHQiOwoJCXBpbmN0cmwtMCA9IDwmcGluY3RybF91c2JvdGdfdmJ1cz47CgkJcmVndWxhdG9yLW5h
-bWUgPSAidXNiX290Z192YnVzIjsKCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDw1MDAwMDAw
-PjsKCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDw1MDAwMDAwPjsKCQlncGlvID0gPCZncGlv
-MiAxOSBHUElPX0FDVElWRV9ISUdIPjsKCQllbmFibGUtYWN0aXZlLWhpZ2g7Cgl9OwoKfTsKCiZp
-MmMxIHsKCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CglwaW5jdHJsLTAgPSA8JnBpbmN0cmxf
-aTJjMT47CgljbG9jay1mcmVxdWVuY3kgPSA8MTAwMDAwPjsKCXN0YXR1cyA9ICJkaXNhYmxlZCI7
-CgoJaTJjX3BleDg2MDU6IHBleDg2MDVANTggewoJCWNvbXBhdGlibGUgPSAicGx4LHBleDg2MDUi
-OwoJCXJlZyA9IDwweDU4PjsKCQlzdGF0dXMgPSAiZGlzYWJsZWQiOwoJfTsKfTsKCiZpMmMyIHsK
-CXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CglwaW5jdHJsLTAgPSA8JnBpbmN0cmxfaTJjMj47
-CgljbG9jay1mcmVxdWVuY3kgPSA8MTAwMDAwPjsKCXN0YXR1cyA9ICJkaXNhYmxlZCI7Cn07Cgom
-cGNpZSB7CglwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwoJcGluY3RybC0wID0gPCZwaW5jdHJs
-X3BjaWU+OwovLwlyZXNldC1ncGlvID0gPCZncGlvMiAyNSBHUElPX0FDVElWRV9MT1c+OwoJdnBj
-aWUtc3VwcGx5ID0gPCZyZWdfcGNpZT47CglzdGF0dXMgPSAiZGlzYWJsZWQiOwp9OwoKJnVhcnQx
-IHsKCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CglwaW5jdHJsLTAgPSA8JnBpbmN0cmxfdWFy
-dDE+OwoJc3RhdHVzID0gImRpc2FibGVkIjsKfTsKCiZ1YXJ0MiB7CglwaW5jdHJsLW5hbWVzID0g
-ImRlZmF1bHQiOwoJcGluY3RybC0wID0gPCZwaW5jdHJsX3VhcnQyPjsKCXN0YXR1cyA9ICJva2F5
-IjsKfTsKCiZ1YXJ0MyB7CglwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwoJcGluY3RybC0wID0g
-PCZwaW5jdHJsX3VhcnQzPjsKCXN0YXR1cyA9ICJkaXNhYmxlZCI7Cn07CgomdWFydDQgewoJcGlu
-Y3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKCXBpbmN0cmwtMCA9IDwmcGluY3RybF91YXJ0ND47Cglz
-dGF0dXMgPSAiZGlzYWJsZWQiOwp9OwoKJnVzYmgxIHsKCXZidXMtc3VwcGx5ID0gPCZyZWdfdXNi
-X2gxX3ZidXM+OwoJZGlzYWJsZS1vdmVyLWN1cnJlbnQ7CglzdGF0dXMgPSAiZGlzYWJsZWQiOwp9
-OwoKJnVzYm90ZyB7CglwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwoJcGluY3RybC0wID0gPCZw
-aW5jdHJsX3VzYm90Zz47Cgl2YnVzLXN1cHBseSA9IDwmcmVnX3VzYm90Z192YnVzPjsKCWRpc2Fi
-bGUtb3Zlci1jdXJyZW50OwoJc3RhdHVzID0gImRpc2FibGVkIjsKfTsKCiZ1c2RoYzEgewoJcGlu
-Y3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKCXBpbmN0cmwtMCA9IDwmcGluY3RybF91c2RoYzE+OwoJ
-Y2QtZ3Bpb3MgPSA8JmdwaW82IDMxIEdQSU9fQUNUSVZFX0xPVz47Cgluby0xLTgtdjsKCXN0YXR1
-cyA9ICJkaXNhYmxlZCI7Cn07CgomaW9tdXhjIHsKCXBpbmN0cmxfY2FtMGRhdGE6IGNhbTBkYXRh
-Z3JwIHsKCQlmc2wscGlucyA9IDwKCQkJTVg2UURMX1BBRF9DU0kwX0RBVDEyX19JUFUxX0NTSTBf
-REFUQTEyIDB4MDAwMWIwYjAKCQkJTVg2UURMX1BBRF9DU0kwX0RBVDEzX19JUFUxX0NTSTBfREFU
-QTEzIDB4MDAwMWIwYjAKCQkJTVg2UURMX1BBRF9DU0kwX0RBVDE0X19JUFUxX0NTSTBfREFUQTE0
-IDB4MDAwMWIwYjAKCQkJTVg2UURMX1BBRF9DU0kwX0RBVDE1X19JUFUxX0NTSTBfREFUQTE1IDB4
-MDAwMWIwYjAKCQkJTVg2UURMX1BBRF9DU0kwX0RBVDE2X19JUFUxX0NTSTBfREFUQTE2IDB4MDAw
-MWIwYjAKCQkJTVg2UURMX1BBRF9DU0kwX0RBVDE3X19JUFUxX0NTSTBfREFUQTE3IDB4MDAwMWIw
-YjAKCQkJTVg2UURMX1BBRF9DU0kwX0RBVDE4X19JUFUxX0NTSTBfREFUQTE4IDB4MDAwMWIwYjAK
-CQkJTVg2UURMX1BBRF9DU0kwX0RBVDE5X19JUFUxX0NTSTBfREFUQTE5IDB4MDAwMWIwYjAKCQkJ
-TVg2UURMX1BBRF9DU0kwX01DTEtfX0lQVTFfQ1NJMF9IU1lOQyAgIDB4MDAwMWIwYjAKCQkJTVg2
-UURMX1BBRF9DU0kwX1BJWENMS19fSVBVMV9DU0kwX1BJWENMSyAweDQwMDFiMGIwCgkJCU1YNlFE
-TF9QQURfQ1NJMF9WU1lOQ19fSVBVMV9DU0kwX1ZTWU5DICAweDAwMDFiMGIwCgkJPjsKCX07CgoJ
-cGluY3RybF9jYW0wY2xrOiBjYW0wY2xrZ3JwIHsKCQlmc2wscGlucyA9IDxNWDZRRExfUEFEX0dQ
-SU9fMF9fQ0NNX0NMS08xCTB4MDAwMDAwYjk+OwoJfTsKCglwaW5jdHJsX2NhbTBzd2l0Y2g6IGNh
-bTBzd2l0Y2hncnAgewoJCWZzbCxwaW5zID0gPAoJCQlNWDZRRExfUEFEX0NTSTBfREFUQV9FTl9f
-R1BJTzVfSU8yMAkweDQwMDFiMGIwCgkJCU1YNlFETF9QQURfRUlNX0RBOV9fR1BJTzNfSU8wOQkJ
-MHg0MDAxYjBiMAoJCT47Cgl9OwoKCXBpbmN0cmxfcGFuZWxfZW46IHBhbmVsZW4xZ3JwIHsKCQlm
-c2wscGlucyA9IDwKCQkJTVg2UURMX1BBRF9FSU1fRUIwX19HUElPMl9JTzI4CQkweGIwYjEKCQk+
-OwoJfTsKCglwaW5jdHJsX2VuX3N3aXRjaDogZW5zd2l0Y2hncnAgewoJCWZzbCxwaW5zID0gPAoJ
-CQlNWDZRRExfUEFEX0VJTV9EQTRfX0dQSU8zX0lPMDQJCTB4YjBiMQoJCT47Cgl9OwoKCXBpbmN0
-cmxfZmxleGNhbjE6IGZsZXhjYW4xZ3JwIHsKCQlmc2wscGlucyA9IDwKCQkJTVg2UURMX1BBRF9H
-UElPXzdfX0ZMRVhDQU4xX1RYCQkweDFiMGIwCgkJCU1YNlFETF9QQURfR1BJT184X19GTEVYQ0FO
-MV9SWAkJMHgxYjBiMAoJCT47Cgl9OwoKCXBpbmN0cmxfZmxleGNhbjFfZW46IGZsZXhjYW4xZW5n
-cnAgewoJCWZzbCxwaW5zID0gPAoJCQlNWDZRRExfUEFEX0VJTV9BMThfX0dQSU8yX0lPMjAJCTB4
-YjBiMQoJCT47Cgl9OwoKCXBpbmN0cmxfaGRtaWNlYzogaGRtaWNlY2dycCB7CgkJZnNsLHBpbnMg
-PSA8CgkJCU1YNlFETF9QQURfS0VZX1JPVzJfX0hETUlfVFhfQ0VDX0xJTkUJMHgxZjhiMAoJCT47
-Cgl9OwoKCXBpbmN0cmxfaTJjMjogaTJjMmdycCB7CgkJZnNsLHBpbnMgPSA8CgkJCU1YNlFETF9Q
-QURfS0VZX1JPVzNfX0kyQzJfU0RBCQkweDQwMDFiOGIxCgkJCU1YNlFETF9QQURfS0VZX0NPTDNf
-X0kyQzJfU0NMCQkweDQwMDFiOGIxCgkJPjsKCX07CgoJcGluY3RybF9pMmMxOiBpMmMxZ3JwIHsK
-CQlmc2wscGlucyA9IDwKCQkJTVg2UURMX1BBRF9FSU1fRDIxX19JMkMxX1NDTAkJMHg0MDAxYjhi
-MQoJCQlNWDZRRExfUEFEX0VJTV9EMjhfX0kyQzFfU0RBCQkweDQwMDFiOGIxCgkJPjsKCX07CgoJ
-cGluY3RybF9wY2llOiBwY2llZ3JwIHsKCQlmc2wscGlucyA9IDwKCQkJTVg2UURMX1BBRF9FSU1f
-T0VfX0dQSU8yX0lPMjUJCTB4YjBiMQoJCT47Cgl9OwoKCXBpbmN0cmxfcGNpZV9yZWc6IHBjaWVy
-ZWdncnAgewoJCWZzbCxwaW5zID0gPAoJCQlNWDZRRExfUEFEX0VJTV9EQTBfX0dQSU8zX0lPMDAJ
-CTB4YjBiMQoJCT47Cgl9OwoKCXBpbmN0cmxfcHdtMTogcHdtMWdycCB7CgkJZnNsLHBpbnMgPSA8
-CgkJCU1YNlFETF9QQURfR1BJT185X19QV00xX09VVAkJMHgxYjBiMQoJCT47Cgl9OwoKCXBpbmN0
-cmxfcnRjX2ludDogcnRjaW50Z3JwIHsKCQlmc2wscGlucyA9IDwKCQkJTVg2UURMX1BBRF9TRDNf
-UlNUX19HUElPN19JTzA4CQkweDFiMGIwCgkJPjsKCX07CgoJcGluY3RybF9zdG1wZTogc3RtcGVn
-cnAgewoJCWZzbCxwaW5zID0gPAoJCQlNWDZRRExfUEFEX0dQSU9fMTdfX0dQSU83X0lPMTIJCTB4
-MWIwYjAKCQk+OwoJfTsKCglwaW5jdHJsX3VhcnQxOiB1YXJ0MWdycCB7CgkJZnNsLHBpbnMgPSA8
-CgkJCU1YNlFETF9QQURfQ1NJMF9EQVQxMF9fVUFSVDFfVFhfREFUQQkweDFiMGIxCgkJCU1YNlFE
-TF9QQURfQ1NJMF9EQVQxMV9fVUFSVDFfUlhfREFUQQkweDFiMGIxCgkJPjsKCX07CgoJcGluY3Ry
-bF91YXJ0MjogdWFydDJncnAgewoJCWZzbCxwaW5zID0gPAoJCQlNWDZRRExfUEFEX0VJTV9EMjZf
-X1VBUlQyX1RYX0RBVEEJMHgxYjBiMQoJCQlNWDZRRExfUEFEX0VJTV9EMjdfX1VBUlQyX1JYX0RB
-VEEJMHgxYjBiMQoJCT47Cgl9OwoKCXBpbmN0cmxfdWFydDM6IHVhcnQzZ3JwIHsKCQlmc2wscGlu
-cyA9IDwKCQkJTVg2UURMX1BBRF9FSU1fRDI0X19VQVJUM19UWF9EQVRBCTB4MWIwYjEKCQkJTVg2
-UURMX1BBRF9FSU1fRDI1X19VQVJUM19SWF9EQVRBCTB4MWIwYjEKCQk+OwoJfTsKCglwaW5jdHJs
-X3VhcnQ0OiB1YXJ0NGdycCB7CgkJZnNsLHBpbnMgPSA8CgkJCU1YNlFETF9QQURfQ1NJMF9EQVQx
-Ml9fVUFSVDRfVFhfREFUQQkweDFiMGIxCgkJCU1YNlFETF9QQURfQ1NJMF9EQVQxM19fVUFSVDRf
-UlhfREFUQQkweDFiMGIxCgkJPjsKCX07CgoJcGluY3RybF91c2JoMV92YnVzOiB1c2JoMXZidXNn
-cnAgewoJCWZzbCxwaW5zID0gPAoJCQlNWDZRRExfUEFEX0VJTV9BMjBfX0dQSU8yX0lPMTgJCTB4
-YjBiMQoJCT47Cgl9OwoKCXBpbmN0cmxfdXNib3RnOiB1c2JvdGdncnAgewoJCWZzbCxwaW5zID0g
-PAoJCQlNWDZRRExfUEFEX0dQSU9fMV9fVVNCX09UR19JRAkJMHgxNzA1OQoJCT47Cgl9OwoKCXBp
-bmN0cmxfdXNib3RnX3ZidXM6IHVzYm90Z3ZidXNncnAgewoJCWZzbCxwaW5zID0gPAoJCQlNWDZR
-RExfUEFEX0VJTV9BMTlfX0dQSU8yX0lPMTkJCTB4YjBiMQoJCT47Cgl9OwoKCXBpbmN0cmxfdXNk
-aGMxOiB1c2RoYzFncnAgewoJCWZzbCxwaW5zID0gPAoJCQlNWDZRRExfUEFEX1NEMV9DTURfX1NE
-MV9DTUQJCTB4MTcwZjkKCQkJTVg2UURMX1BBRF9TRDFfQ0xLX19TRDFfQ0xLCQkweDEwMGY5CgkJ
-CU1YNlFETF9QQURfU0QxX0RBVDBfX1NEMV9EQVRBMAkJMHgxNzBmOQoJCQlNWDZRRExfUEFEX1NE
-MV9EQVQxX19TRDFfREFUQTEJCTB4MTcwZjkKCQkJTVg2UURMX1BBRF9TRDFfREFUMl9fU0QxX0RB
-VEEyCQkweDE3MGY5CgkJCU1YNlFETF9QQURfU0QxX0RBVDNfX1NEMV9EQVRBMwkJMHgxNzBmOQoJ
-CQlNWDZRRExfUEFEX0VJTV9CQ0xLX19HUElPNl9JTzMxCQkweGIwYjEgIC8qIENEICovCgkJPjsK
-CX07Cn07Cg==
---000000000000ca31da059fa047ab
-Content-Type: application/octet-stream; 
-	name="imx6qdl-phytec-phycore-som-leo.dtsi"
-Content-Disposition: attachment; 
-	filename="imx6qdl-phytec-phycore-som-leo.dtsi"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k760x0fo0>
-X-Attachment-Id: f_k760x0fo0
-
-Ly8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4wKyBPUiBNSVQpCi8qCiAqIENvcHly
-aWdodCAoQykgMjAxOCBQSFlURUMgTWVzc3RlY2huaWsgR21iSAogKiBBdXRob3I6IENocmlzdGlh
-biBIZW1wIDxjLmhlbXBAcGh5dGVjLmRlPgogKi8KCiNpbmNsdWRlIDxkdC1iaW5kaW5ncy9ncGlv
-L2dwaW8uaD4KCi8gewoJYWxpYXNlcyB7CgkJcnRjMSA9ICZkYTkwNjJfcnRjOwoJCXJ0YzIgPSAm
-c252c19ydGM7CgkJd2F0Y2hkb2cwID0gJmRhOTA2Ml93ZG9nOwoJCXdhdGNoZG9nMSA9ICZ3ZG9n
-MTsKCX07CgoJLyoKCSAqIFNldCB0aGUgbWluaW11bSBtZW1vcnkgc2l6ZSBoZXJlIGFuZAoJICog
-bGV0IHRoZSBib290bG9hZGVyIHNldCB0aGUgcmVhbCBzaXplLgoJICovCgltZW1vcnlAMTAwMDAw
-MDAgewoJCWRldmljZV90eXBlID0gIm1lbW9yeSI7CgkJcmVnID0gPDB4MTAwMDAwMDAgMHg4MDAw
-MDAwPjsKCX07CgoJZ3Bpb19sZWRzX3NvbTogc29tbGVkcyB7CgkJY29tcGF0aWJsZSA9ICJncGlv
-LWxlZHMiOwoJCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CgkJcGluY3RybC0wID0gPCZwaW5j
-dHJsX2dwaW9sZWRzX3NvbT47CgoJCXBoeWNvcmUtZ3JlZW4gewoJCQlncGlvcyA9IDwmZ3BpbzEg
-NCBHUElPX0FDVElWRV9ISUdIPjsKCQkJbGludXgsZGVmYXVsdC10cmlnZ2VyID0gImhlYXJ0YmVh
-dCI7CgkJfTsKCX07Cn07CgomY3B1MCB7Cglmc2wsbGRvLWJ5cGFzczsKfTsKCiZlY3NwaTEgewoJ
-cGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKCXBpbmN0cmwtMCA9IDwmcGluY3RybF9lY3NwaTE+
-OwoJY3MtZ3Bpb3MgPSA8JmdwaW8zIDE5IEdQSU9fQUNUSVZFX0xPVz47CglzdGF0dXMgPSAib2th
-eSI7CgoJbTI1cDgwOiBmbGFzaEAwIHsKCQljb21wYXRpYmxlID0gImplZGVjLHNwaS1ub3IiOwoJ
-CXNwaS1tYXgtZnJlcXVlbmN5ID0gPDIwMDAwMDAwPjsKCQlyZWcgPSA8MD47CgkJc3RhdHVzID0g
-ImRpc2FibGVkIjsKCX07Cn07CgomaTJjMyB7CglwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwoJ
-cGluY3RybC0wID0gPCZwaW5jdHJsX2kyYzM+OwoJY2xvY2stZnJlcXVlbmN5ID0gPDQwMDAwMD47
-CglzdGF0dXMgPSAib2theSI7CgoJZWVwcm9tQDUwIHsKCQljb21wYXRpYmxlID0gImF0bWVsLDI0
-YzMyIjsKCQlyZWcgPSA8MHg1MD47Cgl9OwoKCXBtaWNANTggewoJCWNvbXBhdGlibGUgPSAiZGxn
-LGRhOTA2MiI7CgkJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKCQlwaW5jdHJsLTAgPSA8JnBp
-bmN0cmxfcG1pYz47CgkJcmVnID0gPDB4NTg+OwoJCWludGVycnVwdC1wYXJlbnQgPSA8JmdwaW8x
-PjsKCQlpbnRlcnJ1cHRzID0gPDIgSVJRX1RZUEVfTEVWRUxfTE9XPjsKCQlpbnRlcnJ1cHQtY29u
-dHJvbGxlcjsKCgkJZGE5MDYyX3J0YzogcnRjIHsKCQkJY29tcGF0aWJsZSA9ICJkbGcsZGE5MDYy
-LXJ0YyI7CgkJfTsKCgkJZGE5MDYyX3dkb2c6IHdhdGNoZG9nIHsKCQkJY29tcGF0aWJsZSA9ICJk
-bGcsZGE5MDYyLXdhdGNoZG9nIjsKCQl9OwoKCQlyZWd1bGF0b3JzIHsKCQkJdmRkX2FybTogYnVj
-azEgewoJCQkJcmVndWxhdG9yLW5hbWUgPSAidmRkX2FybSI7CgkJCQlyZWd1bGF0b3ItbWluLW1p
-Y3Jvdm9sdCA9IDw3MzAwMDA+OwoJCQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MTUwMDAw
-MD47CgkJCQlyZWd1bGF0b3ItcmFtcC1kZWxheSA9IDwyNTAwPjsKCQkJCXJlZ3VsYXRvci1pbml0
-aWFsLW1vZGUgPSA8Mj47IC8qIFNZTkMgKi8KCQkJCXJlZ3VsYXRvci1hbHdheXMtb247CgkJCX07
-CgoJCQl2ZGRfc29jOiBidWNrMiB7CgkJCQlyZWd1bGF0b3ItbmFtZSA9ICJ2ZGRfc29jIjsKCQkJ
-CXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDczMDAwMD47CgkJCQlyZWd1bGF0b3ItbWF4LW1p
-Y3Jvdm9sdCA9IDwxNTAwMDAwPjsKCQkJCXJlZ3VsYXRvci1yYW1wLWRlbGF5ID0gPDI1MDA+OwoJ
-CQkJcmVndWxhdG9yLWluaXRpYWwtbW9kZSA9IDwyPjsgLyogU1lOQyAqLwoJCQkJcmVndWxhdG9y
-LWFsd2F5cy1vbjsKCQkJfTsKCgkJCXZkZF9kZHIzXzFwNTogYnVjazMgewoJCQkJcmVndWxhdG9y
-LW5hbWUgPSAidmRkX2RkcjMiOwoJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MTUwMDAw
-MD47CgkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwxNTAwMDAwPjsKCQkJCXJlZ3VsYXRv
-ci1pbml0aWFsLW1vZGUgPSA8Mj47IC8qIFNZTkMgKi8KCQkJCXJlZ3VsYXRvci1hbHdheXMtb247
-CgkJCX07CgoJCQl2ZGRfc252czogbGRvMSB7CgkJCQlyZWd1bGF0b3ItbmFtZSA9ICJ2ZGRfc252
-cyI7CgkJCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwzMDAwMDAwPjsKCQkJCXJlZ3VsYXRv
-ci1tYXgtbWljcm92b2x0ID0gPDMwMDAwMDA+OwoJCQkJcmVndWxhdG9yLWFsd2F5cy1vbjsKCQkJ
-fTsKCgkJCXZkZF9oaWdoOiBsZG8yIHsKCQkJCXJlZ3VsYXRvci1uYW1lID0gInZkZF9oaWdoIjsK
-CQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDMwMDAwMDA+OwoJCQkJcmVndWxhdG9yLW1h
-eC1taWNyb3ZvbHQgPSA8MzAwMDAwMD47CgkJCQlyZWd1bGF0b3ItYWx3YXlzLW9uOwoJCQl9OwoK
-CQkJdmRkX2VtbWNfMXA4OiBsZG80IHsKCQkJCXJlZ3VsYXRvci1uYW1lID0gInZkZF9lbW1jIjsK
-CQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDE4MDAwMDA+OwoJCQkJcmVndWxhdG9yLW1h
-eC1taWNyb3ZvbHQgPSA8MTgwMDAwMD47CgkJCX07CgkJfTsKCX07Cn07CgomcmVnX2FybSB7Cgly
-ZWd1bGF0b3ItYWxsb3ctYnlwYXNzOwoJdmluLXN1cHBseSA9IDwmdmRkX2FybT47Cn07CgomcmVn
-X3B1IHsKCXJlZ3VsYXRvci1hbGxvdy1ieXBhc3M7Cgl2aW4tc3VwcGx5ID0gPCZ2ZGRfc29jPjsK
-fTsKCiZyZWdfc29jIHsKCXJlZ3VsYXRvci1hbGxvdy1ieXBhc3M7Cgl2aW4tc3VwcGx5ID0gPCZ2
-ZGRfc29jPjsKfTsKCiZzbnZzX3Bvd2Vyb2ZmIHsKCXN0YXR1cyA9ICJva2F5IjsKfTsKCiZ1c2Ro
-YzQgewoJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKCXBpbmN0cmwtMCA9IDwmcGluY3RybF91
-c2RoYzQ+OwoJYnVzLXdpZHRoID0gPDg+OwoJbm9uLXJlbW92YWJsZTsKCXZtbWMtc3VwcGx5ID0g
-PCZ2ZGRfZW1tY18xcDg+OwoJc3RhdHVzID0gImRpc2FibGVkIjsKfTsKCiZ3ZG9nMSB7CgkvKgoJ
-ICogUmVseSBvbiBQTUlDIHJlYm9vdCBoYW5kbGVyLiBJbnRlcm5hbCBpLk1YNiB3YXRjaGRvZywg
-dGhhdCBpcyBhbHNvCgkgKiB1c2VkIGZvciByZWJvb3QsIGRvZXMgbm90IHJlc2V0IGFsbCBleHRl
-cm5hbCBQTUlDIHZvbHRhZ2VzIG9uIHJlc2V0LgoJICovCglzdGF0dXMgPSAiZGlzYWJsZWQiOwp9
-OwoKJmlvbXV4YyB7CglwaW5jdHJsX2VuZXQ6IGVuZXRncnAgewoJCWZzbCxwaW5zID0gPAoJCQlN
-WDZRRExfUEFEX0VORVRfTURJT19fRU5FVF9NRElPCQkweDFiMGIwCgkJCU1YNlFETF9QQURfRU5F
-VF9NRENfX0VORVRfTURDCQkweDFiMGIwCgkJCU1YNlFETF9QQURfUkdNSUlfVFhDX19SR01JSV9U
-WEMJCTB4MWIwYjAKCQkJTVg2UURMX1BBRF9SR01JSV9URDBfX1JHTUlJX1REMAkJMHgxYjBiMAoJ
-CQlNWDZRRExfUEFEX1JHTUlJX1REMV9fUkdNSUlfVEQxCQkweDFiMGIwCgkJCU1YNlFETF9QQURf
-UkdNSUlfVEQyX19SR01JSV9URDIJCTB4MWIwYjAKCQkJTVg2UURMX1BBRF9SR01JSV9URDNfX1JH
-TUlJX1REMwkJMHgxYjBiMAoJCQlNWDZRRExfUEFEX1JHTUlJX1RYX0NUTF9fUkdNSUlfVFhfQ1RM
-CTB4MWIwYjAKCQkJTVg2UURMX1BBRF9FTkVUX1JFRl9DTEtfX0VORVRfVFhfQ0xLCTB4MWIwYjAK
-CQkJTVg2UURMX1BBRF9SR01JSV9SWENfX1JHTUlJX1JYQwkJMHgxYjBiMAoJCQlNWDZRRExfUEFE
-X1JHTUlJX1JEMF9fUkdNSUlfUkQwCQkweDFiMGIwCgkJCU1YNlFETF9QQURfUkdNSUlfUkQxX19S
-R01JSV9SRDEJCTB4MWIwYjAKCQkJTVg2UURMX1BBRF9SR01JSV9SRDJfX1JHTUlJX1JEMgkJMHgx
-YjBiMAoJCQlNWDZRRExfUEFEX1JHTUlJX1JEM19fUkdNSUlfUkQzCQkweDFiMGIwCgkJCU1YNlFE
-TF9QQURfUkdNSUlfUlhfQ1RMX19SR01JSV9SWF9DVEwJMHgxYjBiMAoJCQlNWDZRRExfUEFEX0VO
-RVRfVFhfRU5fX0VORVRfVFhfRU4JMHgxYjBiMAoJCQlNWDZRRExfUEFEX1NEMl9EQVQxX19HUElP
-MV9JTzE0CQkweDFiMGIwCgkJPjsKCX07CgoJcGluY3RybF9ncGlvbGVkc19zb206IGdwaW9sZWRz
-c29tZ3JwIHsKCQlmc2wscGlucyA9IDwKCQkJTVg2UURMX1BBRF9HUElPXzRfX0dQSU8xX0lPMDQJ
-CTB4MWIwYjAKCQk+OwoJfTsKCglwaW5jdHJsX2dwbWlfbmFuZDogZ3BtaW5hbmRncnAgewoJCWZz
-bCxwaW5zID0gPAoJCQlNWDZRRExfUEFEX05BTkRGX0NMRV9fTkFORF9DTEUJCTB4YjBiMQoJCQlN
-WDZRRExfUEFEX05BTkRGX0FMRV9fTkFORF9BTEUJCTB4YjBiMQoJCQlNWDZRRExfUEFEX05BTkRG
-X1dQX0JfX05BTkRfV1BfQgkweGIwYjEKCQkJTVg2UURMX1BBRF9OQU5ERl9SQjBfX05BTkRfUkVB
-RFlfQgkweGIwMDAKCQkJTVg2UURMX1BBRF9OQU5ERl9DUzBfX05BTkRfQ0UwX0IJMHhiMGIxCgkJ
-CU1YNlFETF9QQURfTkFOREZfQ1MxX19OQU5EX0NFMV9CCTB4YjBiMQoJCQlNWDZRRExfUEFEX05B
-TkRGX0NTMl9fTkFORF9DRTJfQgkweGIwYjEKCQkJTVg2UURMX1BBRF9OQU5ERl9DUzNfX05BTkRf
-Q0UzX0IJMHhiMGIxCgkJCU1YNlFETF9QQURfU0Q0X0NNRF9fTkFORF9SRV9CCQkweGIwYjEKCQkJ
-TVg2UURMX1BBRF9TRDRfQ0xLX19OQU5EX1dFX0IJCTB4YjBiMQoJCQlNWDZRRExfUEFEX05BTkRG
-X0QwX19OQU5EX0RBVEEwMAkweGIwYjEKCQkJTVg2UURMX1BBRF9OQU5ERl9EMV9fTkFORF9EQVRB
-MDEJMHhiMGIxCgkJCU1YNlFETF9QQURfTkFOREZfRDJfX05BTkRfREFUQTAyCTB4YjBiMQoJCQlN
-WDZRRExfUEFEX05BTkRGX0QzX19OQU5EX0RBVEEwMwkweGIwYjEKCQkJTVg2UURMX1BBRF9OQU5E
-Rl9ENF9fTkFORF9EQVRBMDQJMHhiMGIxCgkJCU1YNlFETF9QQURfTkFOREZfRDVfX05BTkRfREFU
-QTA1CTB4YjBiMQoJCQlNWDZRRExfUEFEX05BTkRGX0Q2X19OQU5EX0RBVEEwNgkweGIwYjEKCQkJ
-TVg2UURMX1BBRF9OQU5ERl9EN19fTkFORF9EQVRBMDcJMHhiMGIxCgkJCU1YNlFETF9QQURfU0Q0
-X0RBVDBfX05BTkRfRFFTCQkweDAwYjEKCQk+OwoJfTsKCglwaW5jdHJsX2kyYzM6IGkyYzNncnAg
-ewoJCWZzbCxwaW5zID0gPAoJCQlNWDZRRExfUEFEX0dQSU9fNl9fSTJDM19TREEJCTB4NDAwMWI4
-YjEKCQkJTVg2UURMX1BBRF9HUElPXzVfX0kyQzNfU0NMCQkweDQwMDFiOGIxCgkJPjsKCX07CgoJ
-cGluY3RybF9lY3NwaTE6IGVjc3BpMWdycCB7CgkJZnNsLHBpbnMgPSA8CgkJCU1YNlFETF9QQURf
-RUlNX0QxNl9fRUNTUEkxX1NDTEsJCTB4MTAwYjEKCQkJTVg2UURMX1BBRF9FSU1fRDE3X19FQ1NQ
-STFfTUlTTwkJMHgxMDBiMQoJCQlNWDZRRExfUEFEX0VJTV9EMThfX0VDU1BJMV9NT1NJCQkweDEw
-MGIxCgkJCU1YNlFETF9QQURfRUlNX0QxOV9fR1BJTzNfSU8xOQkJMHgxYjBiMAoJCT47Cgl9OwoK
-CXBpbmN0cmxfcG1pYzogcG1pY2dycCB7CgkJZnNsLHBpbnMgPSA8CgkJCU1YNlFETF9QQURfR1BJ
-T18yX19HUElPMV9JTzAyCQkweDFiMGIwCgkJPjsKCX07CgoJcGluY3RybF91c2RoYzQ6IHVzZGhj
-NGdycCB7CgkJZnNsLHBpbnMgPSA8CgkJCU1YNlFETF9QQURfU0Q0X0NNRF9fU0Q0X0NNRAkJMHgx
-NzA1OQoJCQlNWDZRRExfUEFEX1NENF9DTEtfX1NENF9DTEsJCTB4MTAwNTkKCQkJTVg2UURMX1BB
-RF9TRDRfREFUMF9fU0Q0X0RBVEEwCQkweDE3MDU5CgkJCU1YNlFETF9QQURfU0Q0X0RBVDFfX1NE
-NF9EQVRBMQkJMHgxNzA1OQoJCQlNWDZRRExfUEFEX1NENF9EQVQyX19TRDRfREFUQTIJCTB4MTcw
-NTkKCQkJTVg2UURMX1BBRF9TRDRfREFUM19fU0Q0X0RBVEEzCQkweDE3MDU5CgkJCU1YNlFETF9Q
-QURfU0Q0X0RBVDRfX1NENF9EQVRBNAkJMHgxNzA1OQoJCQlNWDZRRExfUEFEX1NENF9EQVQ1X19T
-RDRfREFUQTUJCTB4MTcwNTkKCQkJTVg2UURMX1BBRF9TRDRfREFUNl9fU0Q0X0RBVEE2CQkweDE3
-MDU5CgkJCU1YNlFETF9QQURfU0Q0X0RBVDdfX1NENF9EQVRBNwkJMHgxNzA1OQoJCT47Cgl9Owp9
-Owo=
---000000000000ca31da059fa047ab--
+> +idtentry	X86_TRAP_NMI		xennmi			do_nmi				has_error_code=0
+> +idtentry	X86_TRAP_DB		xendebug		do_debug			has_error_code=0
+>   #endif
+>   
+>   	/*
+> 
+> 
