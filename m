@@ -2,110 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E469173DA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:54:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0CD9173DA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:55:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgB1QyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 11:54:08 -0500
-Received: from mail-am6eur05on2119.outbound.protection.outlook.com ([40.107.22.119]:45504
-        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725876AbgB1QyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 11:54:08 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q3YjzOR5Q4INYx6cPpUt2hYc653bHzWJy6SERWNov/5M4HAa34zMZs2+u8MDk2Gdt+oIqV2Ne8WNVCIowg8OQLtb4nxkV8Q/7kLbvRiuVmK04yuKy4PTVv6porkV4Ot3m9/mrKmidKShPneqpXSEZFKuTA72WECpoTzrt3F6LsfJ1/Uq7wolc3qr7stlWjiz6kENepaw3cuP0RPKvP/NWaG/RFwaJ5oXGiOgXsrrXbii2CnbjYpAr8BQYO62FbXIaSbDsgtj3CKmD6S3/UGbwdE61bvIP+wh9Ooy7kgn4Bo+5Vo/Yn/QUC4Pvlhqd25RXULsflPiADMjOU9RpGvXPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zm2Bt4HY0tGEGNq2Zl4Eg8vnRPkwX8HI7/6pzyn070I=;
- b=IfvMBNFkiTVOpi0TAuXQo6peXO24F7TDtV8mPudk04M4ycoWr86dS8v7uDPCjpNftMMjbx+70z9dbMD9MZW+2OL6HZWMVjjVr/NhnLCrpVvbnWm8Y9SGfWn/vglTk2rX8p5TM3WhXttK6L6jmkB8PJFciZnp4YDESf+t8PTVObzEyrWFJxAlwAZ6k8zlGBAhBqj4hNLHCdicj2IQ4bmUJCc/aUO+QJ9NclwEW4X0IBP1QFkDXY2Itw5dy39gX2jZZ2ZZkgunq3XdxNjwG9lmIh27wf1+npDZ5aIa903MHKtRDMsR/9fPh0RzUvc6Bua3GqlN8HgGFnNhMTdg4wB8xg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
- dkim=pass header.d=toradex.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zm2Bt4HY0tGEGNq2Zl4Eg8vnRPkwX8HI7/6pzyn070I=;
- b=foDq4EQ6kRCp0+aKVKw+T16O4u8U/3uJyK9QSd47ODMekZWgHAmduiS11VJYsPz21bbXKodcpzOQF1vF6QahjgAnTY2qHfsE9ORs+k77zTh/fJC8Xz8PM2Q9tjDSzQp4poIviY1NI5jXLf+qxxom8BlRKlIg0GnQmZuJvzHFKqU=
-Received: from VI1PR05MB6845.eurprd05.prod.outlook.com (10.186.163.80) by
- VI1PR05MB6654.eurprd05.prod.outlook.com (10.141.128.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.15; Fri, 28 Feb 2020 16:54:04 +0000
-Received: from VI1PR05MB6845.eurprd05.prod.outlook.com
- ([fe80::c13:1d07:fa02:6eeb]) by VI1PR05MB6845.eurprd05.prod.outlook.com
- ([fe80::c13:1d07:fa02:6eeb%7]) with mapi id 15.20.2772.018; Fri, 28 Feb 2020
- 16:54:04 +0000
-From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
-To:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "igor.opaniuk@gmail.com" <igor.opaniuk@gmail.com>
-CC:     Max Krummenacher <max.krummenacher@toradex.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Igor Opanyuk <igor.opanyuk@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        Stefan Agner <stefan.agner@toradex.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 4/5] arm: dts: vf: toradex: re-license GPL-2.0+ to
- GPL-2.0
-Thread-Topic: [PATCH v1 4/5] arm: dts: vf: toradex: re-license GPL-2.0+ to
- GPL-2.0
-Thread-Index: AQHV6zhuycY8bEapckKLdhHNGMkfl6gw2OwA
-Date:   Fri, 28 Feb 2020 16:54:04 +0000
-Message-ID: <5f38ae95378debf708924392c88a7723c1e702c4.camel@toradex.com>
-References: <1582565548-20627-1-git-send-email-igor.opaniuk@gmail.com>
-         <1582565548-20627-4-git-send-email-igor.opaniuk@gmail.com>
-In-Reply-To: <1582565548-20627-4-git-send-email-igor.opaniuk@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=marcel.ziswiler@toradex.com; 
-x-originating-ip: [81.221.74.212]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c4098016-0e53-4704-afb2-08d7bc6ed1b9
-x-ms-traffictypediagnostic: VI1PR05MB6654:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR05MB6654D8C4ECE039A2C0533A42FBE80@VI1PR05MB6654.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0327618309
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(39850400004)(396003)(346002)(376002)(136003)(199004)(189003)(91956017)(6512007)(26005)(8936002)(81156014)(186003)(4326008)(81166006)(6486002)(4744005)(86362001)(8676002)(66556008)(64756008)(44832011)(66946007)(54906003)(36756003)(6506007)(71200400001)(76116006)(316002)(66446008)(7416002)(2906002)(478600001)(5660300002)(110136005)(2616005)(66476007);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR05MB6654;H:VI1PR05MB6845.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: toradex.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: e3cOF+XQ4wv7tnNlotAWX+Iug8xQQc/B4vvqALdgtmouaDC5kTwhXUyD037vG7M/oi8n3cZ6KfdMhinRrs2f/825aDroNawkZAgUWMoZj8KsXl2wC6tNaAoQ/1hW5b8M0PecQqcFTM9fqQ/qhx6enc/q6EsLDiNrXTAgAgc5/Q/QpDnrzRwmsLm8RMHIGA0CwcRHjpUaraPr+lh0D8S+krrD8E9e36eghn6M1y+QGEAXJqYYiaB3Z249e5GKYGb4Le2U8MbMHq5Z+/jE+d4uF2Jx0VlspnqICYDm2C6pjSvdGctXJzp76FzmOsO0jH7cFeDULFxWUC35G08FLAf+/iApJkxHh/jY4OG44x+OmcNkqatC88zz5zoEvnLD9t/wU77oAmNO295oelEu38ces9wQYmySqbzAqdUrOEH6t+ULp3r3lwKnsKAilbhpZJk4
-x-ms-exchange-antispam-messagedata: DIL6gTBQPwsuym67LPqjSCmmaeRiH0QEFTvS9zgrAG94gDeyPQyggyErgyu4rupcDXkflwTnD3G4lXJl4yV6XEjb00EYPs25IUyADIaTRZj1W57ttxAdvNZzd+9z1k2uQddP1490zsVkjqBIcMR5vg==
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D0B09B358ECF314782B19FAEAF1037AD@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1726946AbgB1QzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 11:55:03 -0500
+Received: from mga03.intel.com ([134.134.136.65]:11161 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725876AbgB1QzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 11:55:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 08:55:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,496,1574150400"; 
+   d="scan'208";a="272703638"
+Received: from yyu32-desk.sc.intel.com ([143.183.136.146])
+  by fmsmga002.fm.intel.com with ESMTP; 28 Feb 2020 08:55:01 -0800
+Message-ID: <333f90f8ded76bf11c6b90f1db174c841ec89ed9.camel@intel.com>
+Subject: Re: [PATCH v2 8/8] x86/fpu/xstate: Restore supervisor xstates for
+ __fpu__restore_sig()
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Fri, 28 Feb 2020 08:54:14 -0800
+In-Reply-To: <20200228165021.76pec2cdudmtpxeu@linutronix.de>
+References: <20200121201843.12047-1-yu-cheng.yu@intel.com>
+         <20200121201843.12047-9-yu-cheng.yu@intel.com>
+         <20200221175859.GL25747@zn.tnic>
+         <77f3841a92df5d0c819699ee3612118d566b7445.camel@intel.com>
+         <20200228121724.GA25261@zn.tnic>
+         <89bcab262d6dad4c08c4a21e522796fea2320db3.camel@intel.com>
+         <20200228162359.GC25261@zn.tnic>
+         <6f91699c91f9ea0f527e80ed3ea2999444a8d2d1.camel@intel.com>
+         <20200228165021.76pec2cdudmtpxeu@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4098016-0e53-4704-afb2-08d7bc6ed1b9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2020 16:54:04.5981
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Vs+v5shEPHo4K3FqyA0o1OcNYpGQg/RtkZRTu5JEMoqEeE3DH6EgS/mdYp/WWEclNDUPrrXWusKT1cMtibzdadGCTm9DcTDxCplb/4K6da8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB6654
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgSWdvcg0KDQpPbiBNb24sIDIwMjAtMDItMjQgYXQgMTk6MzIgKzAyMDAsIElnb3IgT3Bhbml1
-ayB3cm90ZToNCj4gRnJvbTogSWdvciBPcGFuaXVrIDxpZ29yLm9wYW5pdWtAdG9yYWRleC5jb20+
-DQo+IA0KPiBTcGVjaWZ5IGV4cGxpY2l0bHkgdGhhdCBHUEwtMi4wIGxpY2Vuc2UgY2FuIGJlIHVz
-ZWQgYW5kIG5vdA0KPiBHUEwtMi4wKyAod2hpY2ggYWxzbyBpbmNsdWRlcyBuZXh0IGxlc3MgcGVy
-bWlzc2l2ZSB2ZXJzaW9ucyBvZiBHUEwpDQo+IGluIFRvcmFkZXggaS5NWDctYmFzZWQgU29NIGRl
-dmljZSB0cmVlcy4NCg0KTkFLLCBwbGVhc2UgZHJvcCB0aGlzIG9uZS4gRHVlIHRvIGR1YWwgbGlj
-ZW5zaW5nIHBlcm1pc3NpdmVuZXNzIG9mIEdQTA0KcmVhbGx5IHNob3VsZCBub3QgbWF0dGVyLg0K
-DQpUaGFua3MhDQoNCkNoZWVycw0KDQpNYXJjZWwNCg==
+On Fri, 2020-02-28 at 17:50 +0100, Sebastian Andrzej Siewior wrote:
+> On 2020-02-28 08:20:27 [-0800], Yu-cheng Yu wrote:
+> > On Fri, 2020-02-28 at 17:23 +0100, Borislav Petkov wrote:
+> > > On Fri, Feb 28, 2020 at 07:53:38AM -0800, Yu-cheng Yu wrote:
+> > > > Yes, saving only supervisor states is optimal, but doing XSAVES with a
+> > > > partial RFBM changes xcomp_bv.
+> > > 
+> > > ... and that means what exactly in plain english?
+> > 
+> > When XSAVES writes to an xsave buffer, xsave->header.xcomp_bv is set to
+> > include only saved components, effectively changing the buffer's format.
+> 
+> How large is this supervisor state at most? I guess saving the AVX512
+> state just to get the 2 bytes of the supervisor state at the right spot
+> is not really optimal.
+> But this is the performance division…
+> 
+> > I will include this in the comments.
+> 
+> If you do so, please state that the first hunk is only interested in the
+> supervisor-state bits and everything else is ignored.
+
+Yes, I will include that.
+
+Yu-cheng
+
