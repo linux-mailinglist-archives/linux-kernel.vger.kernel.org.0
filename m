@@ -2,111 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BDA4172E19
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:20:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ABD5172E4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:22:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbgB1BUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 20:20:47 -0500
-Received: from mail-pl1-f170.google.com ([209.85.214.170]:35808 "EHLO
-        mail-pl1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729984AbgB1BUr (ORCPT
+        id S1730740AbgB1BVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 20:21:45 -0500
+Received: from shelob.surriel.com ([96.67.55.147]:46704 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730463AbgB1BVp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 20:20:47 -0500
-Received: by mail-pl1-f170.google.com with SMTP id g6so548795plt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 17:20:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=P/Dq6FU7+4ucFlGTVKctoP7T0CYqXsAPYM+oMCvP2zg=;
-        b=mvYiDSKWHF1Bt1SXDcgoLDC4we078lXxF1XJgOv5EyB8iSgVpV1pxozNq1Wz6yRoIX
-         uxRqLLia+Ol/zUccoeVbMav/JsmPmcT3wDjNqw+zTTqOWYVeVcOl/xmQ/dJ0x4SXDDDL
-         /Q/wEejWl2xRGS3ETWipMCWbtoLOYw2izvlt0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=P/Dq6FU7+4ucFlGTVKctoP7T0CYqXsAPYM+oMCvP2zg=;
-        b=tBZI1TQIHOFrelQVxQBFEjuplMvueAjFxRXXcB5vy7KA3WnscQPWHdbdc6FawwUk/w
-         EXYwla65A+hwClvj71IQOoJsJf84qMGGdDky9XJgw9vAQ94g+ZW107cxnL5aMgcb8yA1
-         Xk6F/jVEvLjlvwTjgPUwbOVdN7F30t5NXn7/A/EAjf+28s8NMFFXDzb45HdpHqLEun4W
-         N08gaJLuKTdGILK29zejOy/iTzm1gwouE3hBrBvLYz6n5xwjmH/RRJniTtzrXv7gByuY
-         GczN4PRpRlWsfXdHy7l/sxMNHekBPgmNSdMUbbpA/Hs78Cka1S37KX2GoXnjrKDS5k0S
-         u5kA==
-X-Gm-Message-State: APjAAAXaEVX8vAYL3u+zWDBXinbVp2EbMEmNGCy8KUIXB3LAJGLoHWfo
-        XH1FmCRSe4rZV1hP4nLkd68fvQ==
-X-Google-Smtp-Source: APXvYqw1ZDRAUCBUAn3M31x3ckHZ3Bx3FvatakAHQH5RAPr79cOjqm5yMPJiIf549ZE4i/BWMCXPYw==
-X-Received: by 2002:a17:90a:37e7:: with SMTP id v94mr1801881pjb.37.1582852845913;
-        Thu, 27 Feb 2020 17:20:45 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id e189sm3255096pfa.139.2020.02.27.17.20.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 17:20:44 -0800 (PST)
-Date:   Fri, 28 Feb 2020 10:20:42 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 02/11] videobuf2: handle V4L2 buffer cache flags
-Message-ID: <20200228012042.GK122464@google.com>
-References: <20200226111529.180197-1-senozhatsky@chromium.org>
- <20200226111529.180197-3-senozhatsky@chromium.org>
- <8f48a4ab-8b8f-576d-9493-bfce7d01224d@xs4all.nl>
+        Thu, 27 Feb 2020 20:21:45 -0500
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1j7ULS-0002E6-U5; Thu, 27 Feb 2020 20:21:38 -0500
+Message-ID: <7800e98e3688c124ac3672284b87d67321e1c29e.camel@surriel.com>
+Subject: Re: [PATCH v2 2/2] mm,thp,compaction,cma: allow THP migration for
+ CMA allocations
+From:   Rik van Riel <riel@surriel.com>
+To:     Mike Kravetz <mike.kravetz@oracle.com>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel-team@fb.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        mhocko@kernel.org, vbabka@suse.cz, mgorman@techsingularity.net,
+        rientjes@google.com, aarcange@redhat.com, ziy@nvidia.com
+Date:   Thu, 27 Feb 2020 20:21:38 -0500
+In-Reply-To: <df83c62f-209f-b1fd-3a5c-c81c82cb2606@oracle.com>
+References: <cover.1582321646.git.riel@surriel.com>
+         <20200227213238.1298752-2-riel@surriel.com>
+         <df83c62f-209f-b1fd-3a5c-c81c82cb2606@oracle.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-GuN/ZXBkrY1Ye2qQ9BQv"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f48a4ab-8b8f-576d-9493-bfce7d01224d@xs4all.nl>
-User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/02/27 12:58), Hans Verkuil wrote:
-[..]
-> > There are two possible alternative approaches:
-> > - The first one is to move cache sync from ->finish() to dqbuf().
-> >   But this breaks some drivers, that need to fix-up buffers before
-> >   dequeueing them.
-> > 
-> > - The second one is to move ->finish() call from ->done() to dqbuf.
-> 
-> It's not clear what the purpose is of describing these alternative approaches.
-> I'd just drop that. It's a bit confusing.
 
-OK.
+--=-GuN/ZXBkrY1Ye2qQ9BQv
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > +/**
-> > + * vb2_queue_allows_cache_hints() - Return true if the queue allows cache
-> > + * and memory consistency hints.
-> > + *
-> > + * @q:		pointer to &struct vb2_queue with videobuf2 queue
-> > + */
-> > +static inline bool vb2_queue_allows_cache_hints(struct vb2_queue *q)
-> > +{
-> > +	return (q->allow_cache_hints != 0) && (q->memory == VB2_MEMORY_MMAP);
-> 
-> Simply to:
-> 
-> 	return q->allow_cache_hints && q->memory == VB2_MEMORY_MMAP;
-> 
+On Thu, 2020-02-27 at 15:41 -0800, Mike Kravetz wrote:
+> On 2/27/20 1:32 PM, Rik van Riel wrote:
+> >=20
+> > +++ b/mm/page_alloc.c
+> > @@ -8253,14 +8253,19 @@ struct page *has_unmovable_pages(struct
+> > zone *zone, struct page *page,
+> > =20
+> >  		/*
+> >  		 * Hugepages are not in LRU lists, but they're movable.
+> > +		 * THPs are on the LRU, but need to be counted as
+> > #small pages.
+> >  		 * We need not scan over tail pages because we don't
+> >  		 * handle each tail page individually in migration.
+> >  		 */
+> > -		if (PageHuge(page)) {
+> > +		if (PageHuge(page) || PageTransCompound(page)) {
+> >  			struct page *head =3D compound_head(page);
+> >  			unsigned int skip_pages;
+> > =20
+> > -			if
+> > (!hugepage_migration_supported(page_hstate(head)))
+> > +			if (PageHuge(page) &&
+> > +			    !hugepage_migration_supported(page_hstate(h
+> > ead)))
+> > +				return page;
+> > +
+> > +			if (!PageLRU(head) && !__PageMovable(head))
+>=20
+> Pretty sure this is going to be true for hugetlb pages.  So, this
+> will change
+> behavior and make all hugetlb pages look unmovable.  Perhaps, only
+> check this
+> condition for THP pages?
 
-OK. I saw vb2_is_busy()
+Does that need to be the following, then?
 
-static inline bool vb2_is_busy(struct vb2_queue *q)
-{
-	return (q->num_buffers > 0);
-}
+     if (PageTransHuge(head) && !PageHuge(page) && !PageLRU(head) &&
+!__PageMovable(head))
+                 return page;
 
-in the very same header file and concluded that maybe this is the
-preferred style.
+That's an easy one liner I would be happy to send in
+if everybody agrees that should fix things :)
 
-	-ss
+--=20
+All Rights Reversed.
+
+--=-GuN/ZXBkrY1Ye2qQ9BQv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl5YayIACgkQznnekoTE
+3oPx0Af/TX+zEkUxcEv+yrrOG4Jv1BzQ8b6pdaygAYaEH2MhPrSDgprArigLLmWl
+2eWVDfgfoNPn1FW1//hUCZREJvTFQDd5UgtrXiCVw3qXt66mI0OfQQ6FtSh9yWM1
+YV2D7uzDucuGYd16wFVeOs5XkVtNZk1o1TjCWBi1UVMScPU42HROoG3rrZ3kPEtG
+JuXCdAPOq3S3s+PwyBushTVe51LNZCSFjA1lv0Y5viT52TgZU+ugySCme7wOnpb1
+mT5UMkrUyjhye2TAqr0h3z8gpTYOG7uX5psZRx77l6eG89IedY/0hOAyk0MgwtSz
+iqGb8+FoH3rjeRiXsrQ9JHpc/uW3ug==
+=zMII
+-----END PGP SIGNATURE-----
+
+--=-GuN/ZXBkrY1Ye2qQ9BQv--
+
