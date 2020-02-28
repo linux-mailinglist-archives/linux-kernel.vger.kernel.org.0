@@ -2,148 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 081A6172EFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 04:00:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BD1C172EE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 03:54:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730756AbgB1C75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 21:59:57 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:35936 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730712AbgB1C7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 21:59:55 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DF139201000;
-        Fri, 28 Feb 2020 03:59:52 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4E1A720AA5F;
-        Fri, 28 Feb 2020 03:59:37 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 840F1402AD;
-        Fri, 28 Feb 2020 10:59:24 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
-        will@kernel.org, leonard.crestez@nxp.com, daniel.baluta@nxp.com,
-        aford173@gmail.com, shengjiu.wang@nxp.com, ping.bai@nxp.com,
-        jun.li@nxp.com, peng.fan@nxp.com, bjorn.andersson@linaro.org,
-        olof@lixom.net, dinguyen@kernel.org, marcin.juszkiewicz@linaro.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2 4/4] arm64: dts: imx8mm: Add thermal zone support
-Date:   Fri, 28 Feb 2020 10:53:33 +0800
-Message-Id: <1582858413-11906-4-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582858413-11906-1-git-send-email-Anson.Huang@nxp.com>
-References: <1582858413-11906-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730624AbgB1CyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 21:54:15 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41666 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbgB1CyO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 21:54:14 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l21so1013145qtr.8;
+        Thu, 27 Feb 2020 18:54:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=22hz3EXYq0SzN1Wu2fonmhGKwST6HFX0P3UPEDmpwXo=;
+        b=TBD1vGhuloKu8RtFPWQxFgHHziYiJYOdde1353qzy2LmcoeF0TiDjDX1vZWq4i+I1G
+         PxOGEuwdm3jskEG8pUt/6K0JSYZJ0j+CUnc9p9tBIyyk6ljb/P7YZkENFlOKudEIAHIz
+         lYZu3V4cVEiJhkcItpRev2T8F2Xv+xbwvQMzSApqjce7q0xJzmAlfnCRx7iznMqtFpMw
+         D9hPjaUJnzrxXvBACyVYK5QgZxg449iJK2ULaQ3hg4IfAgfp2YuQsaC0pP09+/AMME+N
+         e7XkK8nJFvXHADovHj3sQyLpUp4qgFKouUF/Xr15HR9gMjka5EcBntqIZbCRQm7aoS9P
+         Mm+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=22hz3EXYq0SzN1Wu2fonmhGKwST6HFX0P3UPEDmpwXo=;
+        b=DgQl2P/yX/tamwH2Mjm/3dxMArx2aAV/QCXI1dgjXEMfg/vp+CrM2nWYcp2t0Vhdzp
+         K+6eF9VAchaF9Leub1ImGrGMNwdo6SjqF6TAxesYoYgT8IMWZr2SnlJzqKn84a/2tRE5
+         4xS5RJKKkWCyB9gXSy8BXNK1HFvAp7jXdSPad76j2KxxwBIaUH0geu0YKyhEvT8H5InD
+         TY7U5ZSC1itwWw5F2pOMi/j4BqWbMYBq0awODF9hJxEZ5jDLfi86CSKaz9TNuElN2LIK
+         deEiPun7oKDPW75FcV6WM0i8CF407VmKBjVf2q4BprXYSoa4j3XfteeBUr1zdCJJyHR8
+         iS/A==
+X-Gm-Message-State: APjAAAWom6DIhIXuD3zbAP02xCHmJBVRgCW0NwSvRRiqJzfRKgD1TGs9
+        fC1fLHleS4/MfPuRGgExEKWC4/8S92cAvBbKv2HXjR3B
+X-Google-Smtp-Source: APXvYqx40ohLVeMfivRLcPCJq0RBwQ9BYmvFVQpKE5DzCFxMCXj1+DIF7ZrkDxeYve2lklZXhdcB7wpqqqroi1Qjtfk=
+X-Received: by 2002:ac8:7b45:: with SMTP id m5mr2482318qtu.360.1582858453803;
+ Thu, 27 Feb 2020 18:54:13 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1582770784.git.shengjiu.wang@nxp.com> <ffd5ff2fd0e8ad03a97f6a640630cff767d73fa7.1582770784.git.shengjiu.wang@nxp.com>
+ <20200227034121.GA20540@Asurada-Nvidia.nvidia.com> <CAA+D8AMzqpC35_CR2dCG6a_h4FzvZ6orXkPSYh_1o1d8hv+BMg@mail.gmail.com>
+ <20200227174540.GA17040@Asurada-Nvidia.nvidia.com>
+In-Reply-To: <20200227174540.GA17040@Asurada-Nvidia.nvidia.com>
+From:   Shengjiu Wang <shengjiu.wang@gmail.com>
+Date:   Fri, 28 Feb 2020 10:54:02 +0800
+Message-ID: <CAA+D8AM6t79cPoNmt-8HbGwTSM9bfXSW8g76HtkCF7eauL_Xmw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] ASoC: fsl_asrc: Change asrc_width to asrc_format
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add thermal zone and tmu node to support i.MX8MM thermal
-driver, ONLY cpu thermal zone is supported, and cpu cooling
-is also added.
+Hi
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-No change.
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 43 +++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+On Fri, Feb 28, 2020 at 1:45 AM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
+>
+> On Thu, Feb 27, 2020 at 01:10:19PM +0800, Shengjiu Wang wrote:
+> > On Thu, Feb 27, 2020 at 11:43 AM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
+> > >
+> > > On Thu, Feb 27, 2020 at 10:41:55AM +0800, Shengjiu Wang wrote:
+> > > > asrc_format is more inteligent variable, which is align
+> > > > with the alsa definition snd_pcm_format_t.
+> > > >
+> > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > > ---
+> > > >  sound/soc/fsl/fsl_asrc.c     | 23 +++++++++++------------
+> > > >  sound/soc/fsl/fsl_asrc.h     |  4 ++--
+> > > >  sound/soc/fsl/fsl_asrc_dma.c |  2 +-
+> > > >  3 files changed, 14 insertions(+), 15 deletions(-)
+> > > >
+> > > > diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
+> > > > index 0dcebc24c312..2b6a1643573c 100644
+> > > > --- a/sound/soc/fsl/fsl_asrc.c
+> > > > +++ b/sound/soc/fsl/fsl_asrc.c
+> > >
+> > > > @@ -600,11 +599,6 @@ static int fsl_asrc_dai_hw_params(struct snd_pcm_substream *substream,
+> > > >
+> > > >       pair->config = &config;
+> > > >
+> > > > -     if (asrc_priv->asrc_width == 16)
+> > > > -             format = SNDRV_PCM_FORMAT_S16_LE;
+> > > > -     else
+> > > > -             format = SNDRV_PCM_FORMAT_S24_LE;
+> > >
+> > > It feels better to me that we have format settings in hw_params().
+> > >
+> > > Why not let fsl_easrc align with this? Any reason that I'm missing?
+> >
+> > because the asrc_width is not formal,  in the future we can direct
+>
+> Hmm..that's our DT binding. And I don't feel it is a problem
+> to be ASoC irrelative.
+>
+> > input the format from the dts. format involve the info about width.
+>
+> Is there such any formal ASoC binding? I don't see those PCM
+> formats under include/dt-bindings/ folder. How are we going
+> to involve those formats in DT?
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index b3d0b29..e438095 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -68,6 +68,7 @@
- 			nvmem-cells = <&cpu_speed_grade>;
- 			nvmem-cell-names = "speed_grade";
- 			cpu-idle-states = <&cpu_pd_wait>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_1: cpu@1 {
-@@ -80,6 +81,7 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			cpu-idle-states = <&cpu_pd_wait>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_2: cpu@2 {
-@@ -92,6 +94,7 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			cpu-idle-states = <&cpu_pd_wait>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_3: cpu@3 {
-@@ -104,6 +107,7 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			cpu-idle-states = <&cpu_pd_wait>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_L2: l2-cache0 {
-@@ -204,6 +208,38 @@
- 		arm,no-tick-in-suspend;
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <2000>;
-+			thermal-sensors = <&tmu>;
-+			trips {
-+				cpu_alert0: trip0 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				cpu_crit0: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device =
-+						<&A53_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A53_1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A53_2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A53_3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+	};
-+
- 	usbphynop1: usbphynop1 {
- 		compatible = "usb-nop-xceiv";
- 		clocks = <&clk IMX8MM_CLK_USB_PHY_REF>;
-@@ -363,6 +399,13 @@
- 				gpio-ranges = <&iomuxc 0 119 30>;
- 			};
- 
-+			tmu: tmu@30260000 {
-+				compatible = "fsl,imx8mm-tmu";
-+				reg = <0x30260000 0x10000>;
-+				clocks = <&clk IMX8MM_CLK_TMU_ROOT>;
-+				#thermal-sensor-cells = <0>;
-+			};
-+
- 			wdog1: watchdog@30280000 {
- 				compatible = "fsl,imx8mm-wdt", "fsl,imx21-wdt";
- 				reg = <0x30280000 0x10000>;
--- 
-2.7.4
+There is no formal binding of this case.
 
+I think it is not good to convert width to format, because, for example
+width = 24,  there is two option, we can select format S24_LE,  or
+format S24_3LE,  width is ambiguous for selecting.
+
+In EASRC, it support other two 24bit format U24_LE, U24_3LE .
+
+if we use the format in DT, then it is clear for usage in driver.
+
+
+best regards
+wang shengjiu
