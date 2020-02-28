@@ -2,138 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04189173867
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:33:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A53E173887
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:41:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbgB1Ndt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 08:33:49 -0500
-Received: from gateway36.websitewelcome.com ([192.185.201.2]:11788 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726388AbgB1Ndt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 08:33:49 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id AACF8408F1F9F
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 06:48:43 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7flzjIVrKRP4z7flzjguyj; Fri, 28 Feb 2020 07:33:47 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=aSkfaOdswRAcwEgvUUD/jHq/wDo0j5Z3Rpp7rEjxwzs=; b=i4RC3P4Avjr5/G58F/ZCoUScku
-        V2MZjVGzvtC0nv8YdtVWvd9isNstfUIr57yO9H29QcPyRMmclXVrL0z+IjE6h7dTTir/qus4H/0zU
-        YubdgMsnax0gy0nwo8M7D3Sw/c3JBl1QPxZmaBvLC3DGwKh1oU7CCHp+oQOOEKPHMeFEU76+u2Qta
-        O/gMwWzNhBKAlR85ODVU55wHW1VyxB5Ki7RSLqzUH7oUKDTeC1Vp4oA+hMn3mvqMSmayCu6basPBs
-        UeerteqSSs7bKV2sibVhqFCUsIm5q50vG4ClBWWhUddW5LMWf2e9S5CdseXJ/r8XLQlpDkDw9icTE
-        46rqtnjw==;
-Received: from [201.162.240.44] (port=20057 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j7flx-001O1V-J7; Fri, 28 Feb 2020 07:33:46 -0600
-Date:   Fri, 28 Feb 2020 07:36:41 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] ipv6: Replace zero-length array with flexible-array
- member
-Message-ID: <20200228133641.GA27169@embeddedor>
+        id S1726860AbgB1Nlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:41:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725796AbgB1Nlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 08:41:39 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 245CE246AE;
+        Fri, 28 Feb 2020 13:41:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582897298;
+        bh=TwfUtvkPqqYOcGsx/f4gNJx4/RSolDsZEeC2Q8LWQ9A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mjDjFSZs3r7nBI2753b2lN/umKAxd2sNUTh5C7OXp0IWKu6Trx3RoxLpgpmDa9REu
+         79o0TX4PrVKMIjFhE1EMvItQ4ZwbuS/nKTgaZQPsiZ5FqjdQw9BEfYWGQ0Efqr5OY9
+         qABrr+rzOmtkoILb43SWO6hhdSI6jRqv0rWqPRak=
+Date:   Fri, 28 Feb 2020 14:41:36 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Lech Perczak <l.perczak@camlintechnologies.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+        Krzysztof =?utf-8?Q?Drobi=C5=84ski?= 
+        <k.drobinski@camlintechnologies.com>,
+        Pawel Lenkow <p.lenkow@camlintechnologies.com>,
+        John Ogness <john.ogness@linutronix.de>,
+        Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: Regression in v4.19.106 breaking waking up of readers of
+ /proc/kmsg and /dev/kmsg
+Message-ID: <20200228134136.GB3048814@kroah.com>
+References: <aa0732c6-5c4e-8a8b-a1c1-75ebe3dca05b@camlintechnologies.com>
+ <20200227123633.GB962932@kroah.com>
+ <42d3ce5c-5ffe-8e17-32a3-5127a6c7c7d8@camlintechnologies.com>
+ <e9358218-98c9-2866-8f40-5955d093dc1b@camlintechnologies.com>
+ <20200228031306.GO122464@google.com>
+ <20200228100416.6bwathdtopwat5wy@pathway.suse.cz>
+ <20200228105836.GA2913504@kroah.com>
+ <20200228113214.kew4xi5tkbo7bpou@pathway.suse.cz>
+ <20200228130217.rj6qge2en26bdp7b@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.240.44
-X-Source-L: No
-X-Exim-ID: 1j7flx-001O1V-J7
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.240.44]:20057
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 40
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200228130217.rj6qge2en26bdp7b@pathway.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Fri, Feb 28, 2020 at 02:02:17PM +0100, Petr Mladek wrote:
+> On Fri 2020-02-28 12:32:14, Petr Mladek wrote:
+> > On Fri 2020-02-28 11:58:36, Greg Kroah-Hartman wrote:
+> > > On Fri, Feb 28, 2020 at 11:04:16AM +0100, Petr Mladek wrote:
+> > > > On Fri 2020-02-28 12:13:06, Sergey Senozhatsky wrote:
+> > > > > Cc-ing Petr, Steven, John
+> > > > > 
+> > > > > https://lore.kernel.org/lkml/e9358218-98c9-2866-8f40-5955d093dc1b@camlintechnologies.com
+> > > > > 
+> > > > > On (20/02/27 14:08), Lech Perczak wrote:
+> > > > > > W dniu 27.02.2020 o 13:39, Lech Perczak pisze:
+> > > > > > > W dniu 27.02.2020 o 13:36, Greg Kroah-Hartman pisze:
+> > > > > > >> On Thu, Feb 27, 2020 at 11:09:49AM +0000, Lech Perczak wrote:
+> > > > > > >>> Hello,
+> > > > > > >>>
+> > > > > > >>> After upgrading kernel on our boards from v4.19.105 to v4.19.106 we found out that syslog fails to read the messages after ones read initially after opening /proc/kmsg just after booting.
+> > > > > > >>> I also found out, that output of 'dmesg --follow' also doesn't react on new printks appearing for whatever reason - to read new messages, reopening /proc/kmsg or /dev/kmsg was needed.
+> > > > > > >>> I bisected this down to commit 15341b1dd409749fa5625e4b632013b6ba81609b ("char/random: silence a lockdep splat with printk()"), and reverting it on top of v4.19.106 restored correct behaviour.
+> > > > > > >> That is really really odd.
+> > > > > > > Very odd it is indeed.
+> > > > > > >>> My test scenario for bisecting was:
+> > > > > > >>> 1. run 'dmesg --follow' as root
+> > > > > > >>> 2. run 'echo t > /proc/sysrq-trigger'
+> > > > > > >>> 3. If trace appears in dmesg output -> good, otherwise, bad. If trace doesn't appear in output of 'dmesg --follow', re-running it will show the trace.
+> > > > > > >>>
+> > > > 
+> > > > I have reproduced the problem with a kernel based on v4.19.106
+> > > > and I see the following in the log:
+> > > > 
+> > > > [    0.028250] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645519600211568 ns
+> > > > [    0.028263] random: get_random_bytes called from start_kernel+0x9e/0x4f6 with crng_init=0
+> > > > [    0.028268] setup_percpu: NR_CPUS:8192 nr_cpumask_bits:4 nr_cpu_ids:4 nr_node_ids:1
+> > > > [    0.028407] percpu: Embedded 44 pages/cpu s142216 r8192 d29816 u524288
+> > > > [    0.028411] pcpu-alloc: s142216 r8192 d29816 u524288 alloc=1*2097152
+> > > > [    0.028412] pcpu-alloc: [0] 0 1 2 3 
+> > > > 
+> > > > Note that percpu stuff is initialized after printk_deferred(). And the
+> > > > deferred console is scheduled by:
+> > > > 
+> > > > void defer_console_output(void)
+> > > > {
+> > > > 	preempt_disable();
+> > > > 	__this_cpu_or(printk_pending, PRINTK_PENDING_OUTPUT);
+> > > > 	irq_work_queue(this_cpu_ptr(&wake_up_klogd_work));
+> > > > 	preempt_enable();
+> > > > }
+> > > > 
+> > > > I am afraid that the patch creates some mess via the non-initialized
+> > > > per-cpu variable.
+> > > > 
+> > > > I see that x86 has some support for EARLY_PER_CPU stuff but it seems
+> > > > to be arch-specific.
+> > > > 
+> > > > I do not see a reliable way to detect when per-cpu variables are
+> > > > initialized. Adding Tejun and PeterZ into CC if they have any
+> > > > idea.
+> > > > 
+> > > > I suggest to revert the patch until we have some easy and safe solution.
+> > > 
+> > > Ok, I'll do so, but why is this not an issue in 5.4.y and newer kernels?
+> > 
+> > Good question. Well, there have been many changes in the random number
+> > subsystem initialization recently. My bet is that it is much harder to
+> > hit the warning there.
+> 
+> OK, the problem has gone after I cherry-picked the commit
+> d55535232c3dbde9a523 ("random: move rand_initialize() earlier").
+> I still see the warning but it is printed much later:
+> 
+> [    0.051846] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=4
+> [    0.054070] NR_IRQS: 524544, nr_irqs: 456, preallocated irqs: 16
+> [    0.054281] random: get_random_bytes called from start_kernel+0x308/0x4fe with crng_init=0
+> [    0.054430] Console: colour dummy device 80x25
+> 
+> But I am not sure if it is safe to backport this patch into the old
+> stable kernel.
+> 
+> Anyway, this fix would not be enough. The commit message mentions:
+> 
+>     Note that this warning may still remain for machines that do not have
+>     UEFI RNG support (which initializes the RNG pools during setup_arch()),
+>     or for x86 machines without RDRAND (or booting without "random.trust=on"
+>     or CONFIG_RANDOM_TRUST_CPU=y).
+> 
+> 
+> So, I would still prefer to _revert_ the commit 15341b1dd409749f
+> ("char/random: silence a lockdep splat with printk()"). It calmed
+> down lockdep report. The real life danger is dubious. The warning
+> is printed early when the system is running on single CPU where
+> it could not race.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Yeah, good idea, it's now reverted in my tree and will show up in the
+next release.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+thanks everyone for finding and working on this.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/ipv6/ah6.c           | 2 +-
- net/ipv6/seg6_iptunnel.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/ipv6/ah6.c b/net/ipv6/ah6.c
-index 95835e8d99aa..871d6e52ec67 100644
---- a/net/ipv6/ah6.c
-+++ b/net/ipv6/ah6.c
-@@ -36,7 +36,7 @@ struct tmp_ext {
- 		struct in6_addr saddr;
- #endif
- 		struct in6_addr daddr;
--		char hdrs[0];
-+		char hdrs[];
- };
- 
- struct ah_skb_cb {
-diff --git a/net/ipv6/seg6_iptunnel.c b/net/ipv6/seg6_iptunnel.c
-index ab7f124ff5d7..d8afe7290de8 100644
---- a/net/ipv6/seg6_iptunnel.c
-+++ b/net/ipv6/seg6_iptunnel.c
-@@ -29,7 +29,7 @@
- 
- struct seg6_lwt {
- 	struct dst_cache cache;
--	struct seg6_iptunnel_encap tuninfo[0];
-+	struct seg6_iptunnel_encap tuninfo[];
- };
- 
- static inline struct seg6_lwt *seg6_lwt_lwtunnel(struct lwtunnel_state *lwt)
--- 
-2.25.0
-
+greg k-h
