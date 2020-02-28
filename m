@@ -2,92 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04AD7173E20
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 18:15:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BB03173E1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 18:15:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbgB1RPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 12:15:20 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:34502 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbgB1RPT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 12:15:19 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j7jE8-002VQ3-Fz; Fri, 28 Feb 2020 17:15:04 +0000
-Date:   Fri, 28 Feb 2020 17:15:04 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ian Kent <raven@themaw.net>, Karel Zak <kzak@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Lennart Poettering <lennart@poettering.net>,
-        Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-        util-linux@vger.kernel.org
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
- #17]
-Message-ID: <20200228171504.GK23230@ZenIV.linux.org.uk>
-References: <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
- <1c8db4e2b707f958316941d8edd2073ee7e7b22c.camel@themaw.net>
- <CAJfpegtRoXnPm5_sMYPL2L6FCZU52Tn8wk7NcW-dm4_2x=dD3Q@mail.gmail.com>
- <3e656465c427487e4ea14151b77d391d52cd6bad.camel@themaw.net>
- <CAJfpegu5xLcR=QbAOnUrL49QTem6X6ok7nPU+kLFnNHdPXSh1A@mail.gmail.com>
- <20200227151421.3u74ijhqt6ekbiss@ws.net.home>
- <ba2b44cc1382c62be3ac896a5476c8e1dc7c0230.camel@themaw.net>
- <CAJfpeguXPmw+PfZJFOscGLm0oe7dUQY4CYXazx9=x020Fbe86A@mail.gmail.com>
- <20200228122712.GA3013026@kroah.com>
- <CAJfpegsGgjnyZiB+ionfnnk+_e+5oaC-5nmGq+mLxWs1RcwsPw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegsGgjnyZiB+ionfnnk+_e+5oaC-5nmGq+mLxWs1RcwsPw@mail.gmail.com>
+        id S1726674AbgB1RPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 12:15:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41410 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbgB1RPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 12:15:08 -0500
+Subject: Re: [GIT PULL] Power management fixes for v5.6-rc4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582910108;
+        bh=RrP5Dgl4j+L6ERWz1pb6emH0HVao2TuEMWwSAeayu5k=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=iQDT7T2ZoW1E72ZnZV5n/rAMT/LTVZOEjS/iIsa9cw+0ilEvNo5L3yybRz3r2IzRb
+         jcz9dHMCYq5YI60ea0opcUNJ0AH7/Z5X3TVnQKL60+QGxHWUjIF9sUxJQd5xpIUHyf
+         V+1b/AQA0z1xaQO5s0Kj2yYmlvZqXPTfD0zWZaa4=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0gWVkz7Denfz59r6xXbUjvXWOifEVO4T2tr7EZpWL3oJw@mail.gmail.com>
+References: <CAJZ5v0gWVkz7Denfz59r6xXbUjvXWOifEVO4T2tr7EZpWL3oJw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0gWVkz7Denfz59r6xXbUjvXWOifEVO4T2tr7EZpWL3oJw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.6-rc4
+X-PR-Tracked-Commit-Id: 189c6967fe61729fa7e9cdc32690b08fc7eebe41
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 36428598126ec20329537825ecd855ac77334301
+Message-Id: <158291010823.6279.4848920210421010088.pr-tracker-bot@kernel.org>
+Date:   Fri, 28 Feb 2020 17:15:08 +0000
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 05:24:23PM +0100, Miklos Szeredi wrote:
-> On Fri, Feb 28, 2020 at 1:27 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> 
-> > > Superblocks and mounts could get enumerated by a unique identifier.
-> > > mnt_id seems to be good for mounts, s_dev may or may not be good for
-> > > superblock, but  s_id (as introduced in this patchset) could be used
-> > > instead.
-> >
-> > So what would the sysfs tree look like with this?
-> 
-> For a start something like this:
-> 
-> mounts/$MOUNT_ID/
->   parent -> ../$PARENT_ID
->   super -> ../../supers/$SUPER_ID
->   root: path from mount root to fs root (could be optional as usually
-> they are the same)
->   mountpoint -> $MOUNTPOINT
->   flags: mount flags
->   propagation: mount propagation
->   children/$CHILD_ID -> ../../$CHILD_ID
-> 
->  supers/$SUPER_ID/
->    type: fstype
->    source: mount source (devname)
->    options: csv of mount options
+The pull request you sent on Fri, 28 Feb 2020 11:26:27 +0100:
 
-Oh, wonderful.  So let me see if I got it right - any namespace operation
-can create/destroy/move around an arbitrary amount of sysfs objects.
-Better yet, we suddenly have to express the lifetime rules for struct mount
-and struct superblock in terms of struct device garbage.
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.6-rc4
 
-I'm less than thrilled by the entire fsinfo circus, but this really takes
-the cake.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/36428598126ec20329537825ecd855ac77334301
 
-In case it needs to be spelled out: NAK.
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
