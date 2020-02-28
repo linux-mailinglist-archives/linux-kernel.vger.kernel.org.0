@@ -2,125 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DF5C1730CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 07:13:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D01751730D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 07:13:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbgB1GNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 01:13:10 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:20158 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725805AbgB1GNJ (ORCPT
+        id S1726793AbgB1GNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 01:13:44 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36619 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725805AbgB1GNn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 01:13:09 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01S6BsMX016687
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 01:13:08 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yepy69kqf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 01:13:08 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ajd@linux.ibm.com>;
-        Fri, 28 Feb 2020 06:13:05 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 28 Feb 2020 06:12:56 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01S6CteC40304740
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Feb 2020 06:12:56 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E084DAE053;
-        Fri, 28 Feb 2020 06:12:55 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 89E4BAE051;
-        Fri, 28 Feb 2020 06:12:55 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Feb 2020 06:12:55 +0000 (GMT)
-Received: from [10.61.2.125] (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 025AAA01F5;
-        Fri, 28 Feb 2020 17:12:50 +1100 (AEDT)
-Subject: Re: [PATCH v3 21/27] powerpc/powernv/pmem: Add an IOCTL to request
- controller health & perf data
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
- <20200221032720.33893-22-alastair@au1.ibm.com>
-From:   Andrew Donnellan <ajd@linux.ibm.com>
-Date:   Fri, 28 Feb 2020 17:12:53 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <20200221032720.33893-22-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20022806-4275-0000-0000-000003A63B3C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022806-4276-0000-0000-000038BAB55A
-Message-Id: <fdc5faec-d03d-3cba-4a9c-add7e522ad13@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-28_01:2020-02-26,2020-02-28 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- spamscore=0 clxscore=1015 phishscore=0 priorityscore=1501 mlxlogscore=680
- adultscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002280054
+        Fri, 28 Feb 2020 01:13:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582870422;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bQZy9BsnvGs4DJv5PXGxTDbanrd6o8j4AgcuAD33/N0=;
+        b=gL0eJDOl7vlHydvzS5K977amjwoLSuIk8HVsK7iIh9eIQQJtlBPIdLnursLB05zRYZTCKT
+        5uqK/hWKwEey9p4RXXxI6PGLVHpgdTzPXJzNHtC1wWvI+/2Pe/m7RnHDSa3waRHYaqGh40
+        JcvXxyzInXwS1ECKfz8p+XGcPsJ7fAE=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-196-_OK5fbG8OAS5AcWh7nKAPg-1; Fri, 28 Feb 2020 01:13:41 -0500
+X-MC-Unique: _OK5fbG8OAS5AcWh7nKAPg-1
+Received: by mail-wr1-f70.google.com with SMTP id w18so901958wro.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 22:13:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=bQZy9BsnvGs4DJv5PXGxTDbanrd6o8j4AgcuAD33/N0=;
+        b=BXTswqCSAX8UEIgC3eZ96qj5IpvBJWzywRlYJ/yn+SS6zbPWwnqv6qQGInza4waj2q
+         sOtf7JsE4rpqHNIkaqdAxhbtlgZlhikU49Pjj4iGrM2dF8WVMU2s8qTKhIo1/S2ZdVex
+         mxq/FxwW3a9gB5XJYqVrzezUFhZnKnVLCyKD3vAvUm0rYe+llhWxCgdK56QvQnYV2eGa
+         DeWU4k6tlcbdDntq5TVCWS6rajsXdQKZPzAKfrgpYf9TnkYhYdxwkJYrGkwkR5FFaOxc
+         0swxWdniyledfxJKhanqNQMuRbAcQcj1jI6F0MANsE71eXHseADMbF2zuQg1+naploIW
+         Kwjw==
+X-Gm-Message-State: APjAAAXs11ptvbcnWwqIZ0iQItyTclfqyGvjw3ODE2xqq3p0gFZbjVyY
+        Z1sqxq9Q1dN2iakvAJLSHVt9UyxjO07ppGOcXdxK23gQJVdOIIibQWv2sp36apoC7RqDrWQ40f9
+        q0iZKn2pawVxYpmwSCe9649EV
+X-Received: by 2002:adf:cd11:: with SMTP id w17mr3255777wrm.66.1582870419889;
+        Thu, 27 Feb 2020 22:13:39 -0800 (PST)
+X-Google-Smtp-Source: APXvYqytLtf3bqBmoH4VSVokPNlQ4OLwr+04hPKM7EP6nAym2oOemd792mZP0+koSwsZr1UOB4jSLg==
+X-Received: by 2002:adf:cd11:: with SMTP id w17mr3255756wrm.66.1582870419682;
+        Thu, 27 Feb 2020 22:13:39 -0800 (PST)
+Received: from [192.168.3.122] ([91.12.99.244])
+        by smtp.gmail.com with ESMTPSA id 25sm682892wmi.32.2020.02.27.22.13.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2020 22:13:39 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   David Hildenbrand <david@redhat.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC 2/3] mm: Add a new page flag PageLayzyFree() for MADV_FREE
+Date:   Fri, 28 Feb 2020 07:13:33 +0100
+Message-Id: <0C8CC772-5840-4F0C-9859-C1D7B8BF6025@redhat.com>
+References: <20200228033819.3857058-3-ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Zi Yan <ziy@nvidia.com>, Michal Hocko <mhocko@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Hugh Dickins <hughd@google.com>
+In-Reply-To: <20200228033819.3857058-3-ying.huang@intel.com>
+To:     "Huang, Ying" <ying.huang@intel.com>
+X-Mailer: iPhone Mail (17D50)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/2/20 2:27 pm, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> When health & performance data is requested from the controller,
-> it responds with an error log containing the requested information.
-> 
-> This patch allows the request to me issued via an IOCTL.
-
-A better explanation would be good - this IOCTL triggers a request to 
-the controller to collect controller health/perf data, and the 
-controller will later respond with an error log that can be picked up 
-via the error log IOCTL that you've defined earlier.
 
 
--- 
-Andrew Donnellan              OzLabs, ADL Canberra
-ajd@linux.ibm.com             IBM Australia Limited
+> Am 28.02.2020 um 04:38 schrieb Huang, Ying <ying.huang@intel.com>:
+>=20
+> =EF=BB=BFFrom: Huang Ying <ying.huang@intel.com>
+>=20
+> Now !PageSwapBacked() is used as the flag for the pages freed lazily
+> via MADV_FREE.  This isn't obvious enough.  So Dave suggested to add a
+> new page flag for that to improve the code readability.
+
+This patch subject and description is *really* confusing. You=E2=80=98re add=
+ing a helper function, not a page flag. It=E2=80=98s a fairly easy refactori=
+ng.
+
+(Adding new page flags is close to impossible).
+
+Cheers!=
 
