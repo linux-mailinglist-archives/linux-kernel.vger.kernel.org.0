@@ -2,324 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85917174188
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 22:35:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2F6217419B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 22:46:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbgB1Vfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 16:35:39 -0500
-Received: from mga01.intel.com ([192.55.52.88]:58936 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725805AbgB1Vfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 16:35:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 13:35:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,497,1574150400"; 
-   d="scan'208";a="272796009"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 28 Feb 2020 13:35:35 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1j7nIE-0003xj-Lj; Sat, 29 Feb 2020 05:35:34 +0800
-Date:   Sat, 29 Feb 2020 05:35:14 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "x86-ml" <x86@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:sched/urgent] BUILD SUCCESS
- 289de35984815576793f579ec27248609e75976e
-Message-ID: <5e598792.pm9xzRRGwfE+LVWJ%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1726765AbgB1VqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 16:46:18 -0500
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:25458 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbgB1VqS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 16:46:18 -0500
+Received: from localhost.localdomain ([92.140.213.100])
+        by mwinf5d18 with ME
+        id 8Mee220022AY1JL03MefEb; Fri, 28 Feb 2020 22:38:44 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 28 Feb 2020 22:38:44 +0100
+X-ME-IP: 92.140.213.100
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     broonie@kernel.org, f.fainelli@gmail.com,
+        bcm-kernel-feedback-list@broadcom.com, jonas.gorski@gmail.com
+Cc:     linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] spi: bcm63xx-hsspi: Really keep pll clk enabled
+Date:   Fri, 28 Feb 2020 22:38:38 +0100
+Message-Id: <20200228213838.7124-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git  sched/urgent
-branch HEAD: 289de35984815576793f579ec27248609e75976e  sched/fair: Fix statistics for find_idlest_group()
+The purpose of commit 0fd85869c2a9 ("spi/bcm63xx-hsspi: keep pll clk enabled")
+was to keep the pll clk enabled through the lifetime of the device.
 
-elapsed time: 2164m
+In order to do that, some 'clk_prepare_enable()'/'clk_disable_unprepare()'
+calls have been added in the error handling path of the probe function, in
+the remove function and in the suspend and resume functions.
 
-configs tested: 269
-configs skipped: 0
+However, a 'clk_disable_unprepare()' call has been unfortunately left in
+the probe function. So the commit seems to be more or less a no-op.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Axe it now, so that the pll clk is left enabled through the lifetime of
+the device, as described in the commit.
 
-arm                              allmodconfig
-arm                               allnoconfig
-arm                              allyesconfig
-arm64                            allmodconfig
-arm64                             allnoconfig
-arm64                            allyesconfig
-arm                         at91_dt_defconfig
-arm                           efm32_defconfig
-arm                          exynos_defconfig
-arm                        multi_v5_defconfig
-arm                        multi_v7_defconfig
-arm                        shmobile_defconfig
-arm                           sunxi_defconfig
-arm64                               defconfig
-sparc                            allyesconfig
-riscv                          rv32_defconfig
-um                             i386_defconfig
-um                           x86_64_defconfig
-s390                             allyesconfig
-sh                  sh7785lcr_32bit_defconfig
-mips                      fuloong2e_defconfig
-h8300                    h8300h-sim_defconfig
-s390                       zfcpdump_defconfig
-c6x                        evmc6678_defconfig
-mips                             allmodconfig
-ia64                             allyesconfig
-h8300                     edosk2674_defconfig
-parisc                generic-32bit_defconfig
-powerpc                       ppc64_defconfig
-ia64                                defconfig
-powerpc                             defconfig
-i386                                defconfig
-s390                              allnoconfig
-sparc                               defconfig
-um                                  defconfig
-nios2                         10m50_defconfig
-sh                            titan_defconfig
-s390                          debug_defconfig
-xtensa                          iss_defconfig
-alpha                               defconfig
-sparc64                           allnoconfig
-arc                                 defconfig
-sparc64                          allyesconfig
-parisc                            allnoconfig
-powerpc                           allnoconfig
-m68k                             allmodconfig
-parisc                generic-64bit_defconfig
-sh                                allnoconfig
-i386                             alldefconfig
-riscv                    nommu_virt_defconfig
-i386                              allnoconfig
-i386                             allyesconfig
-ia64                             alldefconfig
-ia64                             allmodconfig
-ia64                              allnoconfig
-c6x                              allyesconfig
-nios2                         3c120_defconfig
-openrisc                    or1ksim_defconfig
-openrisc                 simple_smp_defconfig
-xtensa                       common_defconfig
-csky                                defconfig
-nds32                             allnoconfig
-nds32                               defconfig
-h8300                       h8s-sim_defconfig
-m68k                       m5475evb_defconfig
-m68k                          multi_defconfig
-m68k                           sun3_defconfig
-arc                              allyesconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                          rhel-kconfig
-mips                           32r2_defconfig
-mips                         64r6el_defconfig
-mips                              allnoconfig
-mips                             allyesconfig
-mips                      malta_kvm_defconfig
-parisc                           allyesconfig
-x86_64               randconfig-a001-20200227
-x86_64               randconfig-a002-20200227
-x86_64               randconfig-a003-20200227
-i386                 randconfig-a001-20200227
-i386                 randconfig-a002-20200227
-i386                 randconfig-a003-20200227
-x86_64               randconfig-a001-20200228
-x86_64               randconfig-a002-20200228
-x86_64               randconfig-a003-20200228
-i386                 randconfig-a001-20200228
-i386                 randconfig-a002-20200228
-i386                 randconfig-a003-20200228
-nds32                randconfig-a001-20200227
-mips                 randconfig-a001-20200227
-parisc               randconfig-a001-20200227
-riscv                randconfig-a001-20200227
-alpha                randconfig-a001-20200227
-m68k                 randconfig-a001-20200227
-alpha                randconfig-a001-20200228
-m68k                 randconfig-a001-20200228
-mips                 randconfig-a001-20200228
-nds32                randconfig-a001-20200228
-parisc               randconfig-a001-20200228
-riscv                randconfig-a001-20200228
-c6x                  randconfig-a001-20200228
-h8300                randconfig-a001-20200228
-microblaze           randconfig-a001-20200228
-nios2                randconfig-a001-20200228
-sparc64              randconfig-a001-20200228
-nios2                randconfig-a001-20200227
-c6x                  randconfig-a001-20200227
-h8300                randconfig-a001-20200227
-microblaze           randconfig-a001-20200227
-sparc64              randconfig-a001-20200227
-c6x                  randconfig-a001-20200229
-h8300                randconfig-a001-20200229
-microblaze           randconfig-a001-20200229
-nios2                randconfig-a001-20200229
-sparc64              randconfig-a001-20200229
-csky                 randconfig-a001-20200228
-openrisc             randconfig-a001-20200228
-s390                 randconfig-a001-20200228
-sh                   randconfig-a001-20200228
-xtensa               randconfig-a001-20200228
-csky                 randconfig-a001-20200227
-openrisc             randconfig-a001-20200227
-s390                 randconfig-a001-20200227
-sh                   randconfig-a001-20200227
-xtensa               randconfig-a001-20200227
-x86_64               randconfig-b001-20200227
-x86_64               randconfig-b002-20200227
-x86_64               randconfig-b003-20200227
-i386                 randconfig-b001-20200227
-i386                 randconfig-b002-20200227
-i386                 randconfig-b003-20200227
-x86_64               randconfig-b001-20200228
-x86_64               randconfig-b002-20200228
-x86_64               randconfig-b003-20200228
-i386                 randconfig-b001-20200228
-i386                 randconfig-b002-20200228
-i386                 randconfig-b003-20200228
-x86_64               randconfig-c001-20200228
-x86_64               randconfig-c002-20200228
-x86_64               randconfig-c003-20200228
-i386                 randconfig-c001-20200228
-i386                 randconfig-c002-20200228
-i386                 randconfig-c003-20200228
-i386                 randconfig-c003-20200227
-i386                 randconfig-c001-20200227
-x86_64               randconfig-c001-20200227
-x86_64               randconfig-c003-20200227
-x86_64               randconfig-c002-20200227
-i386                 randconfig-c002-20200227
-x86_64               randconfig-c001-20200229
-x86_64               randconfig-c002-20200229
-x86_64               randconfig-c003-20200229
-i386                 randconfig-c001-20200229
-i386                 randconfig-c002-20200229
-i386                 randconfig-c003-20200229
-x86_64               randconfig-d001-20200228
-x86_64               randconfig-d002-20200228
-x86_64               randconfig-d003-20200228
-i386                 randconfig-d001-20200228
-i386                 randconfig-d002-20200228
-i386                 randconfig-d003-20200228
-x86_64               randconfig-d001-20200229
-x86_64               randconfig-d002-20200229
-x86_64               randconfig-d003-20200229
-i386                 randconfig-d001-20200229
-i386                 randconfig-d002-20200229
-i386                 randconfig-d003-20200229
-x86_64               randconfig-d001-20200227
-x86_64               randconfig-d002-20200227
-x86_64               randconfig-d003-20200227
-i386                 randconfig-d001-20200227
-i386                 randconfig-d002-20200227
-i386                 randconfig-d003-20200227
-x86_64               randconfig-e001-20200228
-x86_64               randconfig-e002-20200228
-x86_64               randconfig-e003-20200228
-i386                 randconfig-e001-20200228
-i386                 randconfig-e002-20200228
-i386                 randconfig-e003-20200228
-x86_64               randconfig-e001-20200227
-x86_64               randconfig-e002-20200227
-x86_64               randconfig-e003-20200227
-i386                 randconfig-e001-20200227
-i386                 randconfig-e002-20200227
-i386                 randconfig-e003-20200227
-x86_64               randconfig-e001-20200229
-x86_64               randconfig-e002-20200229
-x86_64               randconfig-e003-20200229
-i386                 randconfig-e001-20200229
-i386                 randconfig-e002-20200229
-i386                 randconfig-e003-20200229
-x86_64               randconfig-f001-20200227
-x86_64               randconfig-f002-20200227
-x86_64               randconfig-f003-20200227
-i386                 randconfig-f001-20200227
-i386                 randconfig-f002-20200227
-i386                 randconfig-f003-20200227
-x86_64               randconfig-f001-20200228
-x86_64               randconfig-f002-20200228
-x86_64               randconfig-f003-20200228
-i386                 randconfig-f001-20200228
-i386                 randconfig-f002-20200228
-i386                 randconfig-f003-20200228
-x86_64               randconfig-g001-20200228
-x86_64               randconfig-g002-20200228
-x86_64               randconfig-g003-20200228
-i386                 randconfig-g001-20200228
-i386                 randconfig-g002-20200228
-i386                 randconfig-g003-20200228
-x86_64               randconfig-g001-20200227
-x86_64               randconfig-g002-20200227
-x86_64               randconfig-g003-20200227
-i386                 randconfig-g001-20200227
-i386                 randconfig-g002-20200227
-i386                 randconfig-g003-20200227
-x86_64               randconfig-h001-20200228
-x86_64               randconfig-h002-20200228
-x86_64               randconfig-h003-20200228
-i386                 randconfig-h001-20200228
-i386                 randconfig-h002-20200228
-i386                 randconfig-h003-20200228
-x86_64               randconfig-h001-20200227
-x86_64               randconfig-h002-20200227
-x86_64               randconfig-h003-20200227
-i386                 randconfig-h001-20200227
-i386                 randconfig-h002-20200227
-i386                 randconfig-h003-20200227
-x86_64               randconfig-h001-20200229
-x86_64               randconfig-h002-20200229
-x86_64               randconfig-h003-20200229
-i386                 randconfig-h001-20200229
-i386                 randconfig-h002-20200229
-i386                 randconfig-h003-20200229
-arm                  randconfig-a001-20200227
-arm64                randconfig-a001-20200227
-ia64                 randconfig-a001-20200227
-powerpc              randconfig-a001-20200227
-arc                  randconfig-a001-20200228
-arm                  randconfig-a001-20200228
-arm64                randconfig-a001-20200228
-ia64                 randconfig-a001-20200228
-powerpc              randconfig-a001-20200228
-sparc                randconfig-a001-20200228
-arc                  randconfig-a001-20200229
-arm                  randconfig-a001-20200229
-arm64                randconfig-a001-20200229
-ia64                 randconfig-a001-20200229
-powerpc              randconfig-a001-20200229
-sparc                randconfig-a001-20200229
-arc                  randconfig-a001-20200227
-sparc                randconfig-a001-20200227
-riscv                            allmodconfig
-riscv                             allnoconfig
-riscv                            allyesconfig
-riscv                               defconfig
-s390                             alldefconfig
-s390                             allmodconfig
-s390                                defconfig
-sh                          rsk7269_defconfig
-sh                               allmodconfig
-sparc64                          allmodconfig
-sparc64                             defconfig
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                         rhel-7.2-clear
-x86_64                               rhel-7.6
-
+Fixes: 0fd85869c2a9 ("spi/bcm63xx-hsspi: keep pll clk enabled")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+To be honest, I don't see why we need to keep pll clk, or hsspi clk
+enabled during the lifetime of the driver. My understanding of the code is
+that it is only used to get the 'speed_hz' value in the probe function.
+This value is never refreshed afterwards.
+I don't see the point in enabling/disabling the clks. I think that they
+both could be disabled in the probe function, without the need to keep
+track in the bcm63xx_hsspi structure, neither during pm cycles or the
+remove fucntion.
+
+However, my knowledge on drivers is limited and I may be completly wrong :)
+---
+ drivers/spi/spi-bcm63xx-hsspi.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/spi/spi-bcm63xx-hsspi.c b/drivers/spi/spi-bcm63xx-hsspi.c
+index 7327309ea3d5..6c235306c0e4 100644
+--- a/drivers/spi/spi-bcm63xx-hsspi.c
++++ b/drivers/spi/spi-bcm63xx-hsspi.c
+@@ -366,7 +366,6 @@ static int bcm63xx_hsspi_probe(struct platform_device *pdev)
+ 			goto out_disable_clk;
+ 
+ 		rate = clk_get_rate(pll_clk);
+-		clk_disable_unprepare(pll_clk);
+ 		if (!rate) {
+ 			ret = -EINVAL;
+ 			goto out_disable_pll_clk;
+-- 
+2.20.1
+
