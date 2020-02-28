@@ -2,129 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36DF9173F03
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 19:02:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC5A4173F1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 19:03:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgB1SCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 13:02:47 -0500
-Received: from muru.com ([72.249.23.125]:58278 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbgB1SCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 13:02:47 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 5C966806C;
-        Fri, 28 Feb 2020 18:03:31 +0000 (UTC)
-Date:   Fri, 28 Feb 2020 10:02:43 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        Arthur Demchenkov <spinal.by@gmail.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>, ruleh <ruleh@gmx.de>
-Subject: [PATCHv2 4/3] Input: omap4-keypad - scan the keys in two phases to
- detect lost key-up
-Message-ID: <20200228180243.GM37466@atomide.com>
-References: <20200228171223.11444-1-tony@atomide.com>
+        id S1727141AbgB1SDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 13:03:14 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:9181 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbgB1SDH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 13:03:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582912984;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=VQR/AR51ZqPMdswJK+tBk7F8NHNJi8NvdVEENw3L72s=;
+        b=k/MuodBJO9+NIRCPAcvXlWKiGCSWy06fAtTiKKSn2koYP2TZcPwtE8sdMGm32wwiAi
+        2Dh5qeeRhZBlo5Gm/hzqPIV0m1m8c3OJg3j9AF4dxMXb0vFQKtos1OL8IaGG2+nnqkfd
+        fHOSXpkYa4zkRqVKc2KLLw0tjVYX0EZhpTwrd0I+5lD3ymXUvXv44sKe+Xmo4Vz6XDlS
+        PjatYG1mIWD6Om9rAawtZret5Zwek91AKPvyvRspsl6TQHZsBlOWJBRuhEvCqRRz+raM
+        I3SRSSThkRbqwQZJBRKlyB8sbALSKc3yL+fvKUXobIIJkO2wMqMFe1qCoBGltRl0UWDS
+        sJ4A==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1mfYzBGHXH6G1+ULkA="
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.2.0 DYNA|AUTH)
+        with ESMTPSA id y0a02cw1SI2r2JH
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Fri, 28 Feb 2020 19:02:53 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Paul Boddie <paul@boddie.org.uk>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com
+Subject: [PATCH v4 0/5] MIPS: Fixes and improvements for CI20 board (JZ4780)
+Date:   Fri, 28 Feb 2020 19:02:48 +0100
+Message-Id: <cover.1582912972.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200228171223.11444-1-tony@atomide.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In addition to handling errata i689 for idle with state, we must also
-check for lost key up interrupts on fast key presses.
+* use KEY_F13 for SW1 button to avoid conflict with Enter of an USB keyboard (suggested by Paul Cercueil <paul@crapouillou.net>)
+* tidy up all new #includes to be at beginning of file and alphabetically sorted (suggested by Paul Cercueil <paul@crapouillou.net>)
+* add new #include to DTS only when needed (suggested by Paul Cercueil <paul@crapouillou.net>)
 
-For example rapidly pressing shift-shift-j can sometimes produce a J
-instead of j. Let's fix the issue by scanning the keyboard in two
-phases. First we scan for any key up events that we may have missed,
-and then we scan for key down events.
+PATCH V3 2020-02-16 21:21:07:
+* dropped "drm: ingenic-drm: add MODULE_DEVICE_TABLE" because it will be resubmitted
+  with a HDMI driver solution
+* added Cc: stable@vger.kernel.org where appropriate (suggested by Paul Cercueil <paul@crapouillou.net>)
+* squashed all other DTS and CONFIG changes into single patches (suggested by Paul Cercueil <paul@crapouillou.net>)
 
-Cc: Arthur Demchenkov <spinal.by@gmail.com>
-Cc: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/input/keyboard/omap4-keypad.c | 48 ++++++++++++++++++---------
- 1 file changed, 32 insertions(+), 16 deletions(-)
+PATCH V2 2020-02-14 17:10:33:
+* dropped "net: davicom: dm9000: allow to pass MAC address through mac_addr module parameter"
+  from this series because it goes through the netdev tree
+  (suggested by Andrew Lunn <andrew@lunn.ch>)
+* added a "fixes:" for "MIPS: DTS: CI20: fix PMU definitions for ACT8600"
+  and "MIPS: DTS: CI20: fix interrupt for pcf8563 RTC"
+  (suggested by Andreas Kemnade <andreas@kemnade.info>)
+* "i2c: jz4780: silence log flood on txabrt" dropped because it is
+  replaced by a new version in v5.6 by Wolfram Sang <wsa@the-dreams.de>
 
-diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
---- a/drivers/input/keyboard/omap4-keypad.c
-+++ b/drivers/input/keyboard/omap4-keypad.c
-@@ -109,6 +109,34 @@ static void kbd_write_irqreg(struct omap4_keypad *keypad_data,
- 		     keypad_data->base + keypad_data->irqreg_offset + offset);
- }
- 
-+static void omap4_keypad_scan_state(struct omap4_keypad *keypad_data,
-+				    unsigned char *key_state,
-+				    bool down)
-+{
-+	struct input_dev *input_dev = keypad_data->input;
-+	unsigned int col, row, code, changed;
-+	bool key_down;
-+
-+	for (row = 0; row < keypad_data->rows; row++) {
-+		changed = key_state[row] ^ keypad_data->key_state[row];
-+		if (!changed)
-+			continue;
-+
-+		for (col = 0; col < keypad_data->cols; col++) {
-+			if (changed & (1 << col)) {
-+				code = MATRIX_SCAN_CODE(row, col,
-+						keypad_data->row_shift);
-+				key_down = key_state[row] & (1 << col);
-+				if (key_down != down)
-+					continue;
-+				input_event(input_dev, EV_MSC, MSC_SCAN, code);
-+				input_report_key(input_dev,
-+						 keypad_data->keymap[code],
-+						 key_down);
-+			}
-+		}
-+	}
-+}
- 
- /* Interrupt handlers */
- static irqreturn_t omap4_keypad_irq_handler(int irq, void *dev_id)
-@@ -125,7 +153,6 @@ static bool omap4_keypad_scan_keys(struct omap4_keypad *keypad_data, bool clear)
- {
- 	struct input_dev *input_dev = keypad_data->input;
- 	unsigned char key_state[ARRAY_SIZE(keypad_data->key_state)];
--	unsigned int col, row, code, changed;
- 	u32 *rows_lo = (u32 *)key_state;
- 	u32 *rows_hi = rows_lo + 1;
- 
-@@ -138,22 +165,11 @@ static bool omap4_keypad_scan_keys(struct omap4_keypad *keypad_data, bool clear)
- 		*rows_hi = kbd_readl(keypad_data, OMAP4_KBD_FULLCODE63_32);
- 	}
- 
--	for (row = 0; row < keypad_data->rows; row++) {
--		changed = key_state[row] ^ keypad_data->key_state[row];
--		if (!changed)
--			continue;
-+	/* Scan for key up evetns for lost key-up interrupts */
-+	omap4_keypad_scan_state(keypad_data, key_state, false);
- 
--		for (col = 0; col < keypad_data->cols; col++) {
--			if (changed & (1 << col)) {
--				code = MATRIX_SCAN_CODE(row, col,
--						keypad_data->row_shift);
--				input_event(input_dev, EV_MSC, MSC_SCAN, code);
--				input_report_key(input_dev,
--						 keypad_data->keymap[code],
--						 key_state[row] & (1 << col));
--			}
--		}
--	}
-+	/* Scan for key down events */
-+	omap4_keypad_scan_state(keypad_data, key_state, true);
- 
- 	input_sync(input_dev);
- 
+PATCH V1 2020-02-11 22:41:43:
+This patch set provides several improvements for the CI20 board:
+
+* suppress warnings from i2c if device is not responding
+* make ingenic-drm found through DT
+* allow davicom dm9000 ethernet controller to use MAC address provided by U-Boot
+* fix #include in jz4780.dtsi
+* configure for loadable kernel modules
+* add DTS for IR sensor and SW1 button
+* configure so that LEDs, IR sensor, SW1 button have drivers
+* fix DTS for ACT8600 PMU and configure driver
+* fix interrupt of nxp,pcf8563
+
+There is another patch set in our queue to add HDMI support on top of this work.
+
+Signed-off-by: Paul Boddie <paul@boddie.org.uk>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+
+
+Alex Smith (1):
+  MIPS: DTS: CI20: add DT node for IR sensor
+
+H. Nikolaus Schaller (4):
+  MIPS: DTS: CI20: fix PMU definitions for ACT8600
+  MIPS: DTS: CI20: fix interrupt for pcf8563 RTC
+  MIPS: DTS: CI20: multiple DTS improvements
+  MIPS: CI20: defconfig: multiple improvements
+
+ arch/mips/boot/dts/ingenic/ci20.dts | 71 ++++++++++++++++++++++-------
+ arch/mips/configs/ci20_defconfig    | 21 +++++++++
+ 2 files changed, 76 insertions(+), 16 deletions(-)
+
 -- 
-2.25.1
+2.23.0
+
