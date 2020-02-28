@@ -2,78 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04E5F173A7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:58:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F150173A80
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:59:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbgB1O6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 09:58:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41674 "EHLO mx2.suse.de"
+        id S1727102AbgB1O7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 09:59:45 -0500
+Received: from mga09.intel.com ([134.134.136.24]:36391 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726805AbgB1O6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 09:58:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 29E08ACF2;
-        Fri, 28 Feb 2020 14:58:21 +0000 (UTC)
-Date:   Fri, 28 Feb 2020 15:58:20 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Ogness <john.ogness@linutronix.de>,
+        id S1726788AbgB1O7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 09:59:44 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 06:59:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,496,1574150400"; 
+   d="scan'208";a="437437616"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga005.fm.intel.com with ESMTP; 28 Feb 2020 06:59:43 -0800
+Date:   Fri, 28 Feb 2020 06:59:43 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] printk/console: Fix preferred console handling
-Message-ID: <20200228145820.6k4ddp457kf4e6c4@pathway.suse.cz>
-References: <20200213095133.23176-1-pmladek@suse.com>
- <20200217130308.GA447@jagdpanzerIV.localdomain>
- <20200218095232.q6tqjmome4fhc6f5@pathway.suse.cz>
- <025fe463a37a01a39e8b988530b36ce79210897b.camel@kernel.crashing.org>
+Subject: Re: [PATCH 1/3] KVM: VMX: Always VMCLEAR in-use VMCSes during crash
+ with kexec support
+Message-ID: <20200228145942.GA2329@linux.intel.com>
+References: <20200227223047.13125-1-sean.j.christopherson@intel.com>
+ <20200227223047.13125-2-sean.j.christopherson@intel.com>
+ <9edc8cef-9aa4-11ca-f8f2-a1fea990b87e@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <025fe463a37a01a39e8b988530b36ce79210897b.camel@kernel.crashing.org>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <9edc8cef-9aa4-11ca-f8f2-a1fea990b87e@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2020-02-28 09:14:47, Benjamin Herrenschmidt wrote:
-> On Tue, 2020-02-18 at 10:52 +0100, Petr Mladek wrote:
-> > On Mon 2020-02-17 22:03:08, Sergey Senozhatsky wrote:
-> > > On (20/02/13 10:51), Petr Mladek wrote:
-> > > > Hi,
-> > > > 
-> > > > I send this on behalf of Benjamin who is traveling at the moment.
-> > > > It is an interesting approach to long terms problems with
-> > > > matching
-> > > > the console preferred on the command line.
-> > > > 
-> > > > Changes against v3:
-> > > > 
-> > > > 	+ better check when accepting pre-enabled consoles
-> > > > 	+ correct reasoning in the 3rd patch
-> > > > 	+ update a comment of CON_CONSDEV definition
-> > > > 	+ fixed checkpatch warnings
-> > > 
-> > > Looks good to me,
-> > > 
-> > > Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > 
-> > The patchset is commited in printk.git, branch
-> > for-5.7-preferred-console.
-> > 
-> Do you plan to send any of this to -stable ?
+On Fri, Feb 28, 2020 at 11:16:10AM +0100, Paolo Bonzini wrote:
+> On 27/02/20 23:30, Sean Christopherson wrote:
+> > -void loaded_vmcs_init(struct loaded_vmcs *loaded_vmcs)
+> > +void loaded_vmcs_init(struct loaded_vmcs *loaded_vmcs, bool in_use)
+> >  {
+> >  	vmcs_clear(loaded_vmcs->vmcs);
+> >  	if (loaded_vmcs->shadow_vmcs && loaded_vmcs->launched)
+> >  		vmcs_clear(loaded_vmcs->shadow_vmcs);
+> > +
+> > +	if (in_use) {
+> > +		list_del(&loaded_vmcs->loaded_vmcss_on_cpu_link);
+> > +
+> > +		/*
+> > +		 * Ensure deleting loaded_vmcs from its current percpu list
+> > +		 * completes before setting loaded_vmcs->vcpu to -1, otherwise
+> > +		 * a different cpu can see vcpu == -1 first and add loaded_vmcs
+> > +		 * to its percpu list before it's deleted from this cpu's list.
+> > +		 * Pairs with the smp_rmb() in vmx_vcpu_load_vmcs().
+> > +		 */
+> > +		smp_wmb();
+> > +	}
+> > +
+> 
+> I'd like to avoid the new in_use argument and, also, I think it's a
+> little bit nicer to always invoke the memory barrier.  Even though we 
+> use "asm volatile" for vmclear and therefore the compiler is already 
+> taken care of, in principle it's more correct to order the ->cpu write 
+> against vmclear's.
 
-Good question. I would prefer to wait until 5.7 gets release or even
-longer. Changes in console registration order are prone to
-regressions. People then complain that they do not longer see console
-after reboot.
+Completely agree on all points.  I wanted to avoid in_use as well, but it
+didn't occur to me to use list_empty()...
 
-linux-next and rc phase has only pretty limited number of users.
-Released kernels hit much bigger user base, for example, via
-OpenSUSE Tumbleweed.
+> This gives the following patch on top:
 
-Best Regards,
-Petr
+Looks good.
+
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index c9d6152e7a4d..77a64110577b 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -656,25 +656,24 @@ static int vmx_set_guest_msr(struct vcpu_vmx *vmx, struct shared_msr_entry *msr,
+>  	return ret;
+>  }
+>  
+> -void loaded_vmcs_init(struct loaded_vmcs *loaded_vmcs, bool in_use)
+> +void loaded_vmcs_init(struct loaded_vmcs *loaded_vmcs)
+>  {
+>  	vmcs_clear(loaded_vmcs->vmcs);
+>  	if (loaded_vmcs->shadow_vmcs && loaded_vmcs->launched)
+>  		vmcs_clear(loaded_vmcs->shadow_vmcs);
+>  
+> -	if (in_use) {
+> +	if (!list_empty(&loaded_vmcs->loaded_vmcss_on_cpu_link))
+>  		list_del(&loaded_vmcs->loaded_vmcss_on_cpu_link);
+>  
+> -		/*
+> -		 * Ensure deleting loaded_vmcs from its current percpu list
+> -		 * completes before setting loaded_vmcs->vcpu to -1, otherwise
+> -		 * a different cpu can see vcpu == -1 first and add loaded_vmcs
+> -		 * to its percpu list before it's deleted from this cpu's list.
+> -		 * Pairs with the smp_rmb() in vmx_vcpu_load_vmcs().
+> -		 */
+> -		smp_wmb();
+> -	}
+> -
+> +	/*
+> +	 * Ensure all writes to loaded_vmcs, including deleting it
+> +	 * from its current percpu list, complete before setting
+> +	 * loaded_vmcs->vcpu to -1; otherwise,, a different cpu can
+> +	 * see vcpu == -1 first and add loaded_vmcs to its percpu
+> +	 * list before it's deleted from this cpu's list.  Pairs
+> +	 * with the smp_rmb() in vmx_vcpu_load_vmcs().
+> +	 */
+> +	smp_wmb();
+>  	loaded_vmcs->cpu = -1;
+>  	loaded_vmcs->launched = 0;
+>  }
+> @@ -701,7 +700,7 @@ static void __loaded_vmcs_clear(void *arg)
+>  	if (per_cpu(current_vmcs, cpu) == loaded_vmcs->vmcs)
+>  		per_cpu(current_vmcs, cpu) = NULL;
+>  
+> -	loaded_vmcs_init(loaded_vmcs, true);
+> +	loaded_vmcs_init(loaded_vmcs);
+>  }
+>  
+>  void loaded_vmcs_clear(struct loaded_vmcs *loaded_vmcs)
+> @@ -2568,7 +2567,8 @@ int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
+>  
+>  	loaded_vmcs->shadow_vmcs = NULL;
+>  	loaded_vmcs->hv_timer_soft_disabled = false;
+> -	loaded_vmcs_init(loaded_vmcs, false);
+> +	INIT_LIST_HEAD(&loaded_vmcs->loaded_vmcss_on_cpu_link);
+> +	loaded_vmcs_init(loaded_vmcs);
+>  
+>  	if (cpu_has_vmx_msr_bitmap()) {
+>  		loaded_vmcs->msr_bitmap = (unsigned long *)
+> 
+> Paolo
+> 
