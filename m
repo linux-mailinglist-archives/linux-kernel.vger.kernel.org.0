@@ -2,112 +2,371 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBDEF173A46
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:50:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7758A173A51
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:52:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbgB1Ou3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 09:50:29 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:62274 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726905AbgB1Ou2 (ORCPT
+        id S1727276AbgB1Ou7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 09:50:59 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44047 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726860AbgB1Ou6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 09:50:28 -0500
-X-UUID: 82bc67a19d344b1d90a1b70cde1a4245-20200228
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=3ueQZiL6nqQ1TnauprptHOqb48LlnkrdGjJXo+9vhGU=;
-        b=OyD/T0rHPJluiKZmsYCpVCfNxrZEWj6P/RAkBv8mn6qz7q5iMYYxubn44OcoPPMCDzZNm5Wq2FkazYipVl2yW486eDt1G3KflhAvJiGq6Q3aY2oM/5OUO1TqlVVgKyeRvmJKldZlFv7gdUnI+r/3dW2d1ysSMsNs5uMUVDC2heM=;
-X-UUID: 82bc67a19d344b1d90a1b70cde1a4245-20200228
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 658126459; Fri, 28 Feb 2020 22:50:26 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 28 Feb 2020 22:49:21 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 28 Feb 2020 22:50:11 +0800
-Message-ID: <1582901419.14824.5.camel@mtksdaap41>
-Subject: Re: [PATCH v3 08/13] soc: mediatek: cmdq: add read_s function
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        "Ming-Fan Chen" <ming-fan.chen@mediatek.com>
-Date:   Fri, 28 Feb 2020 22:50:19 +0800
-In-Reply-To: <1582897461-15105-10-git-send-email-dennis-yc.hsieh@mediatek.com>
-References: <1582897461-15105-1-git-send-email-dennis-yc.hsieh@mediatek.com>
-         <1582897461-15105-10-git-send-email-dennis-yc.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Fri, 28 Feb 2020 09:50:58 -0500
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1j7gyb-0006mu-Az; Fri, 28 Feb 2020 15:50:53 +0100
+Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1j7gyY-0004ap-Ex; Fri, 28 Feb 2020 15:50:50 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Chris Snook <chris.snook@gmail.com>,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        Vivien Didelot <vivien.didelot@gmail.com>
+Subject: [PATCH v9] net: ag71xx: port to phylink
+Date:   Fri, 28 Feb 2020 15:50:49 +0100
+Message-Id: <20200228145049.17602-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIERlbm5pczoNCg0KT24gRnJpLCAyMDIwLTAyLTI4IGF0IDIxOjQ0ICswODAwLCBEZW5uaXMg
-WUMgSHNpZWggd3JvdGU6DQo+IEFkZCByZWFkX3MgZnVuY3Rpb24gaW4gY21kcSBoZWxwZXIgZnVu
-Y3Rpb25zIHdoaWNoIHN1cHBvcnQgcmVhZCB2YWx1ZSBmcm9tDQo+IHJlZ2lzdGVyIG9yIGRtYSBw
-aHlzaWNhbCBhZGRyZXNzIGludG8gZ2NlIGludGVybmFsIHJlZ2lzdGVyLg0KPiANCg0KUmV2aWV3
-ZWQtYnk6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+DQoNCj4gU2lnbmVkLW9mZi1ieTogRGVu
-bmlzIFlDIEhzaWVoIDxkZW5uaXMteWMuaHNpZWhAbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRy
-aXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jICAgfCAxNSArKysrKysrKysrKysr
-KysNCj4gIGluY2x1ZGUvbGludXgvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmggfCAgMSArDQo+
-ICBpbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5oICAgIHwgMTMgKysrKysrKysr
-KysrKw0KPiAgMyBmaWxlcyBjaGFuZ2VkLCAyOSBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEtaGVscGVyLmMgYi9kcml2ZXJzL3Nv
-Yy9tZWRpYXRlay9tdGstY21kcS1oZWxwZXIuYw0KPiBpbmRleCA2OGI0MmM5MzVmZTYuLjQyOGY5
-OTI4OGNhNiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEtaGVs
-cGVyLmMNCj4gKysrIGIvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEtaGVscGVyLmMNCj4g
-QEAgLTIyNiw2ICsyMjYsMjEgQEAgaW50IGNtZHFfcGt0X3dyaXRlX21hc2soc3RydWN0IGNtZHFf
-cGt0ICpwa3QsIHU4IHN1YnN5cywNCj4gIH0NCj4gIEVYUE9SVF9TWU1CT0woY21kcV9wa3Rfd3Jp
-dGVfbWFzayk7DQo+ICANCj4gK2ludCBjbWRxX3BrdF9yZWFkX3Moc3RydWN0IGNtZHFfcGt0ICpw
-a3QsIHUxNiBoaWdoX2FkZHJfcmVnX2lkeCwgdTE2IGFkZHJfbG93LA0KPiArCQkgICAgdTE2IHJl
-Z19pZHgpDQo+ICt7DQo+ICsJc3RydWN0IGNtZHFfaW5zdHJ1Y3Rpb24gaW5zdCA9IHsgezB9IH07
-DQo+ICsNCj4gKwlpbnN0Lm9wID0gQ01EUV9DT0RFX1JFQURfUzsNCj4gKwlpbnN0LmRzdF90ID0g
-Q01EUV9SRUdfVFlQRTsNCj4gKwlpbnN0LnNvcCA9IGhpZ2hfYWRkcl9yZWdfaWR4Ow0KPiArCWlu
-c3QucmVnX2RzdCA9IHJlZ19pZHg7DQo+ICsJaW5zdC5zcmNfcmVnID0gYWRkcl9sb3c7DQo+ICsN
-Cj4gKwlyZXR1cm4gY21kcV9wa3RfYXBwZW5kX2NvbW1hbmQocGt0LCBpbnN0KTsNCj4gK30NCj4g
-K0VYUE9SVF9TWU1CT0woY21kcV9wa3RfcmVhZF9zKTsNCj4gKw0KPiAgaW50IGNtZHFfcGt0X3dy
-aXRlX3Moc3RydWN0IGNtZHFfcGt0ICpwa3QsIHUxNiBoaWdoX2FkZHJfcmVnX2lkeCwNCj4gIAkJ
-ICAgICB1MTYgYWRkcl9sb3csIHUxNiBzcmNfcmVnX2lkeCwgdTMyIG1hc2spDQo+ICB7DQo+IGRp
-ZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L21haWxib3gvbXRrLWNtZHEtbWFpbGJveC5oIGIvaW5j
-bHVkZS9saW51eC9tYWlsYm94L210ay1jbWRxLW1haWxib3guaA0KPiBpbmRleCA4ZWY4N2UxYmQw
-M2IuLjNmNmJjMGRmZDVkYSAxMDA2NDQNCj4gLS0tIGEvaW5jbHVkZS9saW51eC9tYWlsYm94L210
-ay1jbWRxLW1haWxib3guaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L21haWxib3gvbXRrLWNtZHEt
-bWFpbGJveC5oDQo+IEBAIC01OSw2ICs1OSw3IEBAIGVudW0gY21kcV9jb2RlIHsNCj4gIAlDTURR
-X0NPREVfSlVNUCA9IDB4MTAsDQo+ICAJQ01EUV9DT0RFX1dGRSA9IDB4MjAsDQo+ICAJQ01EUV9D
-T0RFX0VPQyA9IDB4NDAsDQo+ICsJQ01EUV9DT0RFX1JFQURfUyA9IDB4ODAsDQo+ICAJQ01EUV9D
-T0RFX1dSSVRFX1MgPSAweDkwLA0KPiAgCUNNRFFfQ09ERV9XUklURV9TX01BU0sgPSAweDkxLA0K
-PiAgCUNNRFFfQ09ERV9MT0dJQyA9IDB4YTAsDQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4
-L3NvYy9tZWRpYXRlay9tdGstY21kcS5oIGIvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRr
-LWNtZHEuaA0KPiBpbmRleCBjNzJkODI2ZDg5MzQuLjAxYjQxODRhZjMxMCAxMDA2NDQNCj4gLS0t
-IGEvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaA0KPiArKysgYi9pbmNsdWRl
-L2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5oDQo+IEBAIC0xMDQsNiArMTA0LDE5IEBAIGlu
-dCBjbWRxX3BrdF93cml0ZShzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTggc3Vic3lzLCB1MTYgb2Zm
-c2V0LCB1MzIgdmFsdWUpOw0KPiAgaW50IGNtZHFfcGt0X3dyaXRlX21hc2soc3RydWN0IGNtZHFf
-cGt0ICpwa3QsIHU4IHN1YnN5cywNCj4gIAkJCXUxNiBvZmZzZXQsIHUzMiB2YWx1ZSwgdTMyIG1h
-c2spOw0KPiAgDQo+ICsvKg0KPiArICogY21kcV9wa3RfcmVhZF9zKCkgLSBhcHBlbmQgcmVhZF9z
-IGNvbW1hbmQgdG8gdGhlIENNRFEgcGFja2V0DQo+ICsgKiBAcGt0Ogl0aGUgQ01EUSBwYWNrZXQN
-Cj4gKyAqIEBoaWdoX2FkZHJfcmVnX2lkeDoJaW50ZXJuYWwgcmVnaXNnZXIgSUQgd2hpY2ggY29u
-dGFpbnMgaGlnaCBhZGRyZXNzIG9mIHBhDQo+ICsgKiBAYWRkcl9sb3c6CWxvdyBhZGRyZXNzIG9m
-IHBhDQo+ICsgKiBAYWRkcjoJdGhlIHBoeXNpY2FsIGFkZHJlc3Mgb2YgcmVnaXN0ZXIgb3IgZG1h
-IHRvIHJlYWQNCj4gKyAqIEByZWdfaWR4Ogl0aGUgQ01EUSBpbnRlcm5hbCByZWdpc3RlciBJRCB0
-byBjYWNoZSByZWFkIGRhdGENCj4gKyAqDQo+ICsgKiBSZXR1cm46IDAgZm9yIHN1Y2Nlc3M7IGVs
-c2UgdGhlIGVycm9yIGNvZGUgaXMgcmV0dXJuZWQNCj4gKyAqLw0KPiAraW50IGNtZHFfcGt0X3Jl
-YWRfcyhzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTE2IGhpZ2hfYWRkcl9yZWdfaWR4LCB1MTYgYWRk
-cl9sb3csDQo+ICsJCSAgICB1MTYgcmVnX2lkeCk7DQo+ICsNCj4gIC8qKg0KPiAgICogY21kcV9w
-a3Rfd3JpdGVfcygpIC0gYXBwZW5kIHdyaXRlX3MgY29tbWFuZCB0byB0aGUgQ01EUSBwYWNrZXQN
-Cj4gICAqIEBwa3Q6CXRoZSBDTURRIHBhY2tldA0KDQo=
+The port to phylink was done as close as possible to initial
+functionality.
+
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+changes v9:
+- rebase to latest net-next
+- move part of mac_config() implementation to the mac_link_up()
+
+changes v8:
+- set the autoneg bit
+- provide implementations for the mac_pcs_get_state and mac_an_restart
+  methods
+- do phylink_disconnect_phy() on _stop()
+- rename ag71xx_phy_setup() to ag71xx_phylink_setup() 
+
+ drivers/net/ethernet/atheros/Kconfig  |   2 +-
+ drivers/net/ethernet/atheros/ag71xx.c | 188 ++++++++++++++++----------
+ 2 files changed, 118 insertions(+), 72 deletions(-)
+
+diff --git a/drivers/net/ethernet/atheros/Kconfig b/drivers/net/ethernet/atheros/Kconfig
+index 0058051ba925..2720bde5034e 100644
+--- a/drivers/net/ethernet/atheros/Kconfig
++++ b/drivers/net/ethernet/atheros/Kconfig
+@@ -20,7 +20,7 @@ if NET_VENDOR_ATHEROS
+ config AG71XX
+ 	tristate "Atheros AR7XXX/AR9XXX built-in ethernet mac support"
+ 	depends on ATH79
+-	select PHYLIB
++	select PHYLINK
+ 	help
+ 	  If you wish to compile a kernel for AR7XXX/91XXX and enable
+ 	  ethernet support, then you should always answer Y to this.
+diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+index e95687a780fb..02b7705393ca 100644
+--- a/drivers/net/ethernet/atheros/ag71xx.c
++++ b/drivers/net/ethernet/atheros/ag71xx.c
+@@ -32,6 +32,7 @@
+ #include <linux/of_mdio.h>
+ #include <linux/of_net.h>
+ #include <linux/of_platform.h>
++#include <linux/phylink.h>
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
+ #include <linux/clk.h>
+@@ -314,6 +315,8 @@ struct ag71xx {
+ 	dma_addr_t stop_desc_dma;
+ 
+ 	phy_interface_t phy_if_mode;
++	struct phylink *phylink;
++	struct phylink_config phylink_config;
+ 
+ 	struct delayed_work restart_work;
+ 	struct timer_list oom_timer;
+@@ -845,24 +848,91 @@ static void ag71xx_hw_start(struct ag71xx *ag)
+ 	netif_wake_queue(ag->ndev);
+ }
+ 
+-static void ag71xx_link_adjust(struct ag71xx *ag, bool update)
++static void ag71xx_mac_config(struct phylink_config *config, unsigned int mode,
++			      const struct phylink_link_state *state)
+ {
+-	struct phy_device *phydev = ag->ndev->phydev;
+-	u32 cfg2;
+-	u32 ifctl;
+-	u32 fifo5;
++	struct ag71xx *ag = netdev_priv(to_net_dev(config->dev));
+ 
+-	if (!phydev->link && update) {
+-		ag71xx_hw_stop(ag);
++	if (phylink_autoneg_inband(mode))
+ 		return;
+-	}
+ 
+ 	if (!ag71xx_is(ag, AR7100) && !ag71xx_is(ag, AR9130))
+ 		ag71xx_fast_reset(ag);
+ 
++	if (ag->tx_ring.desc_split) {
++		ag->fifodata[2] &= 0xffff;
++		ag->fifodata[2] |= ((2048 - ag->tx_ring.desc_split) / 4) << 16;
++	}
++
++	ag71xx_wr(ag, AG71XX_REG_FIFO_CFG3, ag->fifodata[2]);
++}
++
++static void ag71xx_mac_validate(struct phylink_config *config,
++			    unsigned long *supported,
++			    struct phylink_link_state *state)
++{
++	__ETHTOOL_DECLARE_LINK_MODE_MASK(mask) = { 0, };
++
++	if (state->interface != PHY_INTERFACE_MODE_NA &&
++	    state->interface != PHY_INTERFACE_MODE_GMII &&
++	    state->interface != PHY_INTERFACE_MODE_MII) {
++		bitmap_zero(supported, __ETHTOOL_LINK_MODE_MASK_NBITS);
++		return;
++	}
++
++	phylink_set(mask, MII);
++
++	phylink_set(mask, Autoneg);
++	phylink_set(mask, 10baseT_Half);
++	phylink_set(mask, 10baseT_Full);
++	phylink_set(mask, 100baseT_Half);
++	phylink_set(mask, 100baseT_Full);
++
++	if (state->interface == PHY_INTERFACE_MODE_NA ||
++	    state->interface == PHY_INTERFACE_MODE_GMII) {
++		phylink_set(mask, 1000baseT_Full);
++		phylink_set(mask, 1000baseX_Full);
++	}
++
++	bitmap_and(supported, supported, mask,
++		   __ETHTOOL_LINK_MODE_MASK_NBITS);
++	bitmap_and(state->advertising, state->advertising, mask,
++		   __ETHTOOL_LINK_MODE_MASK_NBITS);
++}
++
++static void ag71xx_mac_pcs_get_state(struct phylink_config *config,
++				     struct phylink_link_state *state)
++{
++	state->link = 0;
++}
++
++static void ag71xx_mac_an_restart(struct phylink_config *config)
++{
++	/* Not Supported */
++}
++
++static void ag71xx_mac_link_down(struct phylink_config *config,
++				 unsigned int mode, phy_interface_t interface)
++{
++	struct ag71xx *ag = netdev_priv(to_net_dev(config->dev));
++
++	ag71xx_hw_stop(ag);
++}
++
++static void ag71xx_mac_link_up(struct phylink_config *config,
++			       struct phy_device *phy,
++			       unsigned int mode, phy_interface_t interface,
++			       int speed, int duplex,
++			       bool tx_pause, bool rx_pause)
++{
++	struct ag71xx *ag = netdev_priv(to_net_dev(config->dev));
++	u32 cfg2;
++	u32 ifctl;
++	u32 fifo5;
++
+ 	cfg2 = ag71xx_rr(ag, AG71XX_REG_MAC_CFG2);
+ 	cfg2 &= ~(MAC_CFG2_IF_1000 | MAC_CFG2_IF_10_100 | MAC_CFG2_FDX);
+-	cfg2 |= (phydev->duplex) ? MAC_CFG2_FDX : 0;
++	cfg2 |= duplex ? MAC_CFG2_FDX : 0;
+ 
+ 	ifctl = ag71xx_rr(ag, AG71XX_REG_MAC_IFCTL);
+ 	ifctl &= ~(MAC_IFCTL_SPEED);
+@@ -870,7 +940,7 @@ static void ag71xx_link_adjust(struct ag71xx *ag, bool update)
+ 	fifo5 = ag71xx_rr(ag, AG71XX_REG_FIFO_CFG5);
+ 	fifo5 &= ~FIFO_CFG5_BM;
+ 
+-	switch (phydev->speed) {
++	switch (speed) {
+ 	case SPEED_1000:
+ 		cfg2 |= MAC_CFG2_IF_1000;
+ 		fifo5 |= FIFO_CFG5_BM;
+@@ -883,72 +953,38 @@ static void ag71xx_link_adjust(struct ag71xx *ag, bool update)
+ 		cfg2 |= MAC_CFG2_IF_10_100;
+ 		break;
+ 	default:
+-		WARN(1, "not supported speed %i\n", phydev->speed);
+ 		return;
+ 	}
+ 
+-	if (ag->tx_ring.desc_split) {
+-		ag->fifodata[2] &= 0xffff;
+-		ag->fifodata[2] |= ((2048 - ag->tx_ring.desc_split) / 4) << 16;
+-	}
+-
+-	ag71xx_wr(ag, AG71XX_REG_FIFO_CFG3, ag->fifodata[2]);
+-
+ 	ag71xx_wr(ag, AG71XX_REG_MAC_CFG2, cfg2);
+ 	ag71xx_wr(ag, AG71XX_REG_FIFO_CFG5, fifo5);
+ 	ag71xx_wr(ag, AG71XX_REG_MAC_IFCTL, ifctl);
+ 
+ 	ag71xx_hw_start(ag);
+-
+-	if (update)
+-		phy_print_status(phydev);
+ }
+ 
+-static void ag71xx_phy_link_adjust(struct net_device *ndev)
+-{
+-	struct ag71xx *ag = netdev_priv(ndev);
+-
+-	ag71xx_link_adjust(ag, true);
+-}
++static const struct phylink_mac_ops ag71xx_phylink_mac_ops = {
++	.validate = ag71xx_mac_validate,
++	.mac_pcs_get_state = ag71xx_mac_pcs_get_state,
++	.mac_an_restart = ag71xx_mac_an_restart,
++	.mac_config = ag71xx_mac_config,
++	.mac_link_down = ag71xx_mac_link_down,
++	.mac_link_up = ag71xx_mac_link_up,
++};
+ 
+-static int ag71xx_phy_connect(struct ag71xx *ag)
++static int ag71xx_phylink_setup(struct ag71xx *ag)
+ {
+-	struct device_node *np = ag->pdev->dev.of_node;
+-	struct net_device *ndev = ag->ndev;
+-	struct device_node *phy_node;
+-	struct phy_device *phydev;
+-	int ret;
+-
+-	if (of_phy_is_fixed_link(np)) {
+-		ret = of_phy_register_fixed_link(np);
+-		if (ret < 0) {
+-			netif_err(ag, probe, ndev, "Failed to register fixed PHY link: %d\n",
+-				  ret);
+-			return ret;
+-		}
++	struct phylink *phylink;
+ 
+-		phy_node = of_node_get(np);
+-	} else {
+-		phy_node = of_parse_phandle(np, "phy-handle", 0);
+-	}
++	ag->phylink_config.dev = &ag->ndev->dev;
++	ag->phylink_config.type = PHYLINK_NETDEV;
+ 
+-	if (!phy_node) {
+-		netif_err(ag, probe, ndev, "Could not find valid phy node\n");
+-		return -ENODEV;
+-	}
+-
+-	phydev = of_phy_connect(ag->ndev, phy_node, ag71xx_phy_link_adjust,
+-				0, ag->phy_if_mode);
+-
+-	of_node_put(phy_node);
+-
+-	if (!phydev) {
+-		netif_err(ag, probe, ndev, "Could not connect to PHY device\n");
+-		return -ENODEV;
+-	}
+-
+-	phy_attached_info(phydev);
++	phylink = phylink_create(&ag->phylink_config, ag->pdev->dev.fwnode,
++				 ag->phy_if_mode, &ag71xx_phylink_mac_ops);
++	if (IS_ERR(phylink))
++		return PTR_ERR(phylink);
+ 
++	ag->phylink = phylink;
+ 	return 0;
+ }
+ 
+@@ -1239,6 +1275,13 @@ static int ag71xx_open(struct net_device *ndev)
+ 	unsigned int max_frame_len;
+ 	int ret;
+ 
++	ret = phylink_of_phy_connect(ag->phylink, ag->pdev->dev.of_node, 0);
++	if (ret) {
++		netif_err(ag, link, ndev, "phylink_of_phy_connect filed with err: %i\n",
++			  ret);
++		goto err;
++	}
++
+ 	max_frame_len = ag71xx_max_frame_len(ndev->mtu);
+ 	ag->rx_buf_size =
+ 		SKB_DATA_ALIGN(max_frame_len + NET_SKB_PAD + NET_IP_ALIGN);
+@@ -1251,11 +1294,7 @@ static int ag71xx_open(struct net_device *ndev)
+ 	if (ret)
+ 		goto err;
+ 
+-	ret = ag71xx_phy_connect(ag);
+-	if (ret)
+-		goto err;
+-
+-	phy_start(ndev->phydev);
++	phylink_start(ag->phylink);
+ 
+ 	return 0;
+ 
+@@ -1268,8 +1307,8 @@ static int ag71xx_stop(struct net_device *ndev)
+ {
+ 	struct ag71xx *ag = netdev_priv(ndev);
+ 
+-	phy_stop(ndev->phydev);
+-	phy_disconnect(ndev->phydev);
++	phylink_stop(ag->phylink);
++	phylink_disconnect_phy(ag->phylink);
+ 	ag71xx_hw_disable(ag);
+ 
+ 	return 0;
+@@ -1414,13 +1453,14 @@ static void ag71xx_restart_work_func(struct work_struct *work)
+ {
+ 	struct ag71xx *ag = container_of(work, struct ag71xx,
+ 					 restart_work.work);
+-	struct net_device *ndev = ag->ndev;
+ 
+ 	rtnl_lock();
+ 	ag71xx_hw_disable(ag);
+ 	ag71xx_hw_enable(ag);
+-	if (ndev->phydev->link)
+-		ag71xx_link_adjust(ag, false);
++
++	phylink_stop(ag->phylink);
++	phylink_start(ag->phylink);
++
+ 	rtnl_unlock();
+ }
+ 
+@@ -1759,6 +1799,12 @@ static int ag71xx_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, ndev);
+ 
++	err = ag71xx_phylink_setup(ag);
++	if (err) {
++		netif_err(ag, probe, ndev, "failed to setup phylink (%d)\n", err);
++		goto err_mdio_remove;
++	}
++
+ 	err = register_netdev(ndev);
+ 	if (err) {
+ 		netif_err(ag, probe, ndev, "unable to register net device\n");
+-- 
+2.25.0
 
