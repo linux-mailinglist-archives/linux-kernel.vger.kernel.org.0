@@ -2,95 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2D841730D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 07:14:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4347F1730E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 07:15:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbgB1GOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 01:14:50 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34852 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbgB1GOr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 01:14:47 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m3so1957137wmi.0;
-        Thu, 27 Feb 2020 22:14:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=K8JeMMhWRctus7267Io0iVJS6S3sXLRQ7sAyYhtTk6U=;
-        b=PkDQqn4IfrkR95joYJSIQr1vwu7N4tEy3FTCOgp1MASfZ5B4eX42l22pSHvNDg4VbU
-         Aol3iyfGZvpV8jVhb8BUxnoeo5XhB69R9gyJq+1yjs+ss8C7tx7C+vkU5ZNwCODxsF5y
-         s4k3V5ilGwWxveBymFNnuY2EgK62sJwV9UCqmW53G3QjtHcw6ltNNQyHdrFl/xmSBmRY
-         XbSL6R1tzE+YRAu8WzJJaLi5npTnknfmEnCy/zpf6XbZwskojtSS9rcbtF/AZlz3bCTu
-         mi91W/HKUn2PJhK7IWj75/V9Zi7CXnnCCr8Wkk8MHy0Osh7sSbNW0ahbB7uC5PFjhO8Z
-         NfLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=K8JeMMhWRctus7267Io0iVJS6S3sXLRQ7sAyYhtTk6U=;
-        b=LJZVy7ZYi3kdMxvimNwfG7C7nxrXPc8kYxIJJL9R74N2We5OFfyCtdV5nxLhKEupU3
-         wAHWH8igEel9l5qVCb2DcG1+VWroYk9p5VsYbrTgG81yFspudBfCnj/kZ7h5y/a1lr+9
-         6gqXFp3RH0Zy4nDKSJCzd3NKTYv/Uhq3nAOgresQTLPoJKcFw40rPxHWUIUZ0GzovPEk
-         iAQoO8rklNI+Y/aMBmoXyfJj8ZJLC3XSNKtDulI3nzqV9w7nPVQBeR87HiIX5Qb1aZwL
-         XzoM7Zj3v4WuBpQ3zmyh8MoF9TzttX6u6a+8yR1miLUsc8Ud0MduKRvL4KaNzf5KAwBI
-         Mldg==
-X-Gm-Message-State: APjAAAUeAhg2g/WyMfJXtead4toP7KsJZqZmMuXUI8UfSDb09Uttg4Bp
-        t8lMA9CoMI0qGSLcwD5UN8g=
-X-Google-Smtp-Source: APXvYqws2FKIOQBYK5QacYbEvACBYX92jzAaAdc8ChQ3XWXBMBbvIC/43wn818U5yWZfpS4kmKMSKg==
-X-Received: by 2002:a1c:7d92:: with SMTP id y140mr2876961wmc.145.1582870485825;
-        Thu, 27 Feb 2020 22:14:45 -0800 (PST)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id w7sm682554wmi.9.2020.02.27.22.14.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Feb 2020 22:14:45 -0800 (PST)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] arm64: dts: rockchip: fix compatible property for Radxa ROCK Pi N10
-Date:   Fri, 28 Feb 2020 07:14:36 +0100
-Message-Id: <20200228061436.13506-4-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200228061436.13506-1-jbx6244@gmail.com>
-References: <20200228061436.13506-1-jbx6244@gmail.com>
+        id S1726758AbgB1GPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 01:15:44 -0500
+Received: from mga02.intel.com ([134.134.136.20]:49165 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725862AbgB1GPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 01:15:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 22:15:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,493,1574150400"; 
+   d="scan'208";a="257017344"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga002.jf.intel.com with ESMTP; 27 Feb 2020 22:15:43 -0800
+Received: from [10.226.38.23] (unknown [10.226.38.23])
+        by linux.intel.com (Postfix) with ESMTP id 148405805EF;
+        Thu, 27 Feb 2020 22:15:36 -0800 (PST)
+Subject: Re: [PATCH v11 2/2] spi: cadence-quadspi: Add support for the Cadence
+ QSPI controller
+To:     Mark Brown <broonie@kernel.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        vigneshr@ti.com, robh+dt@kernel.org, marex@denx.de,
+        devicetree@vger.kernel.org, tien.fong.chee@intel.com,
+        tudor.ambarus@gmail.com, boris.brezillon@free-electrons.com,
+        richard@nod.at, qi-ming.wu@intel.com,
+        simon.k.r.goldschmidt@gmail.com, david.oberhollenzer@sigma-star.at,
+        dinguyen@kernel.org, linux-mtd@lists.infradead.org,
+        miquel.raynal@bootlin.com, cheol.yong.kim@intel.com,
+        mark.rutland@arm.com, computersforpeace@gmail.com,
+        dwmw2@infradead.org, cyrille.pitchen@atmel.com
+References: <20200227062708.21544-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20200227062708.21544-3-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20200227183032.77ef0795@collabora.com> <20200227173224.GH4062@sirena.org.uk>
+From:   "Ramuthevar, Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Message-ID: <5a63a66b-e82a-30bf-5939-842549299772@linux.intel.com>
+Date:   Fri, 28 Feb 2020 14:15:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
+MIME-Version: 1.0
+In-Reply-To: <20200227173224.GH4062@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A test with the command below gives this error:
+Hi Mark,
 
-arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dt.yaml: /: compatible:
-['radxa,rockpi-n10', 'rockchip,rk3399pro']
-is not valid under any of the given schemas
+On 28/2/2020 1:32 AM, Mark Brown wrote:
+> On Thu, Feb 27, 2020 at 06:30:32PM +0100, Boris Brezillon wrote:
+>> "Ramuthevar, Vadivel MuruganX"
+>>> Reported-by: kbuild test robot <lkp@intel.com>
+>>> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> Reported-by? What has been reported?
+> There were static checker issues with some of the earlier versions.
+> Vadivel, normally you wouldn't carry tags like that forward when you fix
+> them.
 
-During the review process the binding was changed,
-but the dts file was somehow not updated.
-Fix this error by adding 'vamrs,rk3399pro-vmarc-som' to
-the compatible property.
+Than you Mark, will remove it in the next patch-set.
 
-make ARCH=arm64 dtbs_check
-DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/rockchip.yaml
-
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts b/arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts
-index b42f94179..a1783e7f7 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts
-@@ -13,5 +13,6 @@
- 
- / {
- 	model = "Radxa ROCK Pi N10";
--	compatible = "radxa,rockpi-n10", "rockchip,rk3399pro";
-+	compatible = "radxa,rockpi-n10", "vamrs,rk3399pro-vmarc-som",
-+		     "rockchip,rk3399pro";
- };
--- 
-2.11.0
-
+Regards
+Vadivel
