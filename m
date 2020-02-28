@@ -2,182 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1533E1734A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 10:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 538951734A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 10:57:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbgB1J4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 04:56:20 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39575 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbgB1J4U (ORCPT
+        id S1726946AbgB1J5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 04:57:52 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:55508 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbgB1J5w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 04:56:20 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g6so1048926plp.6
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 01:56:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=2QsN/rdxaIqssMADaDVe6NhtTvdzMSkrjVDdCt3Mft0=;
-        b=DR8NbMyb++08TCBQlly9aRtr9w0nv3yapNpXlboIXFtQZesGe3XoJJeub7sPgN56bU
-         5TLsME80pB8gXS96LhC9qYSuYsn2vF1+JpUHhcZ7FVaUnratWGpLtu9U+Vtn9ouetWXV
-         8/3PdSZT5pZUaJbNdn60fCkiJ4h0XzVPAz0asLKAnNUGrkEhEhtmVW4Iu3q2eYTcBnwG
-         Q989urBANB1Jcv0a9M8KUSIR8fZmgoTzU7vT7gWfCLBrdS3Hd96+nV9BmRqoPbrIv6mS
-         WMQlyvhLG3+D51lebvfBLHHgNPkoMWvcBg4wdDezX1uQPgBm+w+MgII6dddqffH8qZsy
-         N9Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=2QsN/rdxaIqssMADaDVe6NhtTvdzMSkrjVDdCt3Mft0=;
-        b=qp94dzizz3csohfeGe97zR0QiPpHz/dYWfQ977QzX0qJWy1E004eLN3TKrek8FzQ+T
-         lmIDURYbVWsw9TfZJoL9NKkuhzVAgrYrPZbBqHhtMnkDqpirt6nXXfEyNbOKBdyScAp3
-         jdo993LttINJkVnGf4L0TmoqqqpvO386stK0XI9Tk7PwsyM9MIVlkbcKil3yLSofWJI6
-         tPzvKyAZEL7TkZdKbhQNpCX+KzqWz3Ezswdy5gYAwLgV9SlO62zZ3Fw/WqFSXnZbl7Av
-         CfSMeiExh5MuiUE6OQ7GJlBh1lzIxSfhNkG1b/V+nrZ9HtsW7TnX3VYCkja7qAm1KuzK
-         FG4Q==
-X-Gm-Message-State: APjAAAWLtWIYHaBog5KXJqF3KL4JUdCvOVsFrAaaQ4lw90VxdNSa0l1J
-        cL5XzIURKFKi5inlz7uNJZs=
-X-Google-Smtp-Source: APXvYqzeq5AJZwfx4VpkyGRwt33tMRUzv7T+620AVSjU/lm/WxAKYskVCMbi96DqbZTCn8vH3HbcOQ==
-X-Received: by 2002:a17:902:d705:: with SMTP id w5mr3364412ply.68.1582883778836;
-        Fri, 28 Feb 2020 01:56:18 -0800 (PST)
-Received: from js1304-desktop ([114.206.198.176])
-        by smtp.gmail.com with ESMTPSA id 13sm10090469pfj.68.2020.02.28.01.56.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Feb 2020 01:56:18 -0800 (PST)
-Date:   Fri, 28 Feb 2020 18:56:11 +0900
-From:   Joonsoo Kim <js1304@gmail.com>
-To:     Aaron Lu <aaron.lwe@gmail.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
-        Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH v2 0/9] workingset protection/detection on the anonymous
- LRU list
-Message-ID: <20200228095534.GA30796@js1304-desktop>
-References: <1582175513-22601-1-git-send-email-iamjoonsoo.kim@lge.com>
- <20200226193942.30049da9c090b466bdc5ec23@linux-foundation.org>
- <20200227134806.GC39625@cmpxchg.org>
- <20200228032358.GB634650@ziqianlu-desktop.localdomain>
- <20200228040214.GA21040@js1304-desktop>
- <20200228055726.GA674737@ziqianlu-desktop.localdomain>
- <20200228065214.GA17349@js1304-desktop>
- <20200228091700.GA675567@ziqianlu-desktop.localdomain>
+        Fri, 28 Feb 2020 04:57:52 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01S9vkUb011813;
+        Fri, 28 Feb 2020 03:57:46 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582883866;
+        bh=RSDVCTsvy2Z5fJHhflSr1pvfzLu6/aSaZ+MblDcsENY=;
+        h=From:To:CC:Subject:Date;
+        b=HDfY5fT36bE48VKedLzyOyPti1z7wvMDg9HJpSGFDpZr2cGYmdqBXRc7lYaEw8lT7
+         meunFAW7ujI0UNkXVPJbRU9wBMYTEnxewwbHS4qJWBQN4izYg61wLgjGTebcLuUwR6
+         vz8LnweLVeMmoyaO3bBZzLrlS/tRo2/CF4Agb1lU=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01S9vke4045809
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 28 Feb 2020 03:57:46 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 28
+ Feb 2020 03:57:46 -0600
+Received: from localhost.localdomain (10.64.41.19) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 28 Feb 2020 03:57:46 -0600
+Received: from uda0131933.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 01S9vhLE115767;
+        Fri, 28 Feb 2020 03:57:43 -0600
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+CC:     Tony Lindgren <tony@atomide.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>
+Subject: [PATCH v2 0/5] pwm: omap-dmtimer: Allow for dynamic pwm period updates
+Date:   Fri, 28 Feb 2020 15:26:45 +0530
+Message-ID: <20200228095651.32464-1-lokeshvutla@ti.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200228091700.GA675567@ziqianlu-desktop.localdomain>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 05:17:00PM +0800, Aaron Lu wrote:
-> On Fri, Feb 28, 2020 at 03:52:59PM +0900, Joonsoo Kim wrote:
-> > On Fri, Feb 28, 2020 at 01:57:26PM +0800, Aaron Lu wrote:
-> > > On Fri, Feb 28, 2020 at 01:03:03PM +0900, Joonsoo Kim wrote:
-> > > > Hello,
-> > > > 
-> > > > On Fri, Feb 28, 2020 at 11:23:58AM +0800, Aaron Lu wrote:
-> > > > > On Thu, Feb 27, 2020 at 08:48:06AM -0500, Johannes Weiner wrote:
-> > > > > > On Wed, Feb 26, 2020 at 07:39:42PM -0800, Andrew Morton wrote:
-> > > > > > > It sounds like the above simple aging changes provide most of the
-> > > > > > > improvement, and that the workingset changes are less beneficial and a
-> > > > > > > bit more risky/speculative?
-> > > > > > > 
-> > > > > > > If so, would it be best for us to concentrate on the aging changes
-> > > > > > > first, let that settle in and spread out and then turn attention to the
-> > > > > > > workingset changes?
-> > > > > > 
-> > > > > > Those two patches work well for some workloads (like the benchmark),
-> > > > > > but not for others. The full patchset makes sure both types work well.
-> > > > > > 
-> > > > > > Specifically, the existing aging strategy for anon assumes that most
-> > > > > > anon pages allocated are hot. That's why they all start active and we
-> > > > > > then do second-chance with the small inactive LRU to filter out the
-> > > > > > few cold ones to swap out. This is true for many common workloads.
-> > > > > > 
-> > > > > > The benchmark creates a larger-than-memory set of anon pages with a
-> > > > > > flat access profile - to the VM a flood of one-off pages. Joonsoo's
-> > > > > 
-> > > > > test: swap-w-rand-mt, which is a multi thread swap write intensive
-> > > > > workload so there will be swap out and swap ins.
-> > > > > 
-> > > > > > first two patches allow the VM to usher those pages in and out of
-> > > > > 
-> > > > > Weird part is, the robot says the performance gain comes from the 1st
-> > > > > patch only, which adjust the ratio, not including the 2nd patch which
-> > > > > makes anon page starting from inactive list.
-> > > > > 
-> > > > > I find the performance gain hard to explain...
-> > > > 
-> > > > Let me explain the reason of the performance gain.
-> > > > 
-> > > > 1st patch provides more second chance to the anonymous pages.
-> > > 
-> > > By second chance, do I understand correctely this refers to pages on 
-> > > inactive list get moved back to active list?
-> > 
-> > Yes.
-> > 
-> > > 
-> > > > In swap-w-rand-mt test, memory used by all threads is greater than the
-> > > > amount of the system memory, but, memory used by each thread would
-> > > > not be much. So, although it is a rand test, there is a locality
-> > > > in each thread's job. More second chance helps to exploit this
-> > > > locality so performance could be improved.
-> > > 
-> > > Does this mean there should be fewer vmstat.pswpout and vmstat.pswpin
-> > > with patch1 compared to vanilla?
-> > 
-> > It depends on the workload. If the workload consists of anonymous
-> 
-> This swap-rand-w-mt workload is anon only.
+This series fixes minor issues in config callback and allows for on the
+fly updates for pwm period and duty cycle. This is mainly intended to
+allow pwm omap dmtimer to be used for generating a 1PPS signal that can be
+syncronized to PTP clock in CPTS module available in AM335x and AM57xx SoCs.
 
-Yes, I know.
+Series depends on the following series:
+- https://patchwork.kernel.org/patch/11379875/
+- https://patchwork.kernel.org/project/linux-omap/list/?series=248929 
 
-> 
-> > pages only, I think, yes, pswpout/pswpin would be lower than vanilla
-> 
-> I think LKP robot has captured these two metrics but the report didn't
-> show them, which means the number is about the same with or without
-> patch #1.
+Full dependencies can be seen here:
+https://github.com/lokeshvutla/linux/tree/devel/pwm-1pps-generation-v2
 
-robot showed these two metrics. See below.
+Changes since v1:
+- Updated commit description in PATCH 1
+- Added a brief about PWM generation using OMAP DM timer.
+- Updated the pwm stop callback to allow for completing the current pwm
+  cycle.
+- Added the limitaitons of hardware.
+- Used hw status instead of relying on pwm framework for state update.
 
-  50190319 ± 31%     -35.7%   32291856 ± 14%  proc-vmstat.pswpin
-  56429784 ± 21%     -42.6%   32386842 ± 14%  proc-vmstat.pswpout
+Lokesh Vutla (6):
+  pwm: omap-dmtimer: Drop unused header file
+  pwm: omap-dmtimer: Update description for pwm omap dm timer
+  pwm: omap-dmtimer: Fix pwm enabling sequence
+  pwm: omap-dmtimer: Fix pwm disabling sequence
+  pwm: omap-dmtimer: Do not disable pwm before changing
+    period/duty_cycle
+  pwm: omap-dmtimer: Implement .apply callback
 
-pswpin/out are improved.
+ drivers/pwm/pwm-omap-dmtimer.c                | 248 +++++++++++++-----
+ include/clocksource/timer-ti-dm.h             |   3 +-
+ .../linux/platform_data/pwm_omap_dmtimer.h    |  90 -------
+ 3 files changed, 178 insertions(+), 163 deletions(-)
+ delete mode 100644 include/linux/platform_data/pwm_omap_dmtimer.h
 
-> > with patch #1. With large inactive list, we can easily find the
-> > frequently referenced page and it would result in less swap in/out.
-> 
-> But with small inactive list, the pages that would be on inactive list
-> will stay on active list? I think the larger inactive list is mainly
-> used to give the anon page a chance to be promoted to active list now
-> that anon pages land on inactive list first, but on reclaim, I don't see
-> how a larger inactive list can cause fewer swap outs.
+-- 
+2.23.0
 
-Point is that larger inactive LRU helps to find hot pages and these
-hot pages leads to more cache hits.
-
-When a cache hit happens, no swap outs happens. But, if a cache miss
-happens, a new page is added to the LRU and then it causes the reclaim
-and swap out.
-
-> Forgive me for my curiosity and feel free to ignore my question as I
-> don't want to waste your time on this. Your patchset looks a worthwhile
-> thing to do, it's just the robot's report on patch1 seems er...
-
-I appreciate your attention. Feel free to ask. :)
-
-Thanks.
