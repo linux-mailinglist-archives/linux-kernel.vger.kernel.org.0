@@ -2,181 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AED6173CC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0497F173CCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:24:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbgB1QYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 11:24:05 -0500
-Received: from mga17.intel.com ([192.55.52.151]:12638 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbgB1QYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 11:24:04 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 08:24:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,496,1574150400"; 
-   d="scan'208";a="350947379"
-Received: from kuha.fi.intel.com ([10.237.72.53])
-  by fmsmga001.fm.intel.com with SMTP; 28 Feb 2020 08:24:01 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 28 Feb 2020 18:24:00 +0200
-Date:   Fri, 28 Feb 2020 18:24:00 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Prashant Malani <pmalani@chromium.org>,
-        linux-kernel@vger.kernel.org, enric.balletbo@collabora.com,
-        bleung@chromium.org, devicetree@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: Add cros-ec Type C port driver
-Message-ID: <20200228162400.GA27904@kuha.fi.intel.com>
-References: <20200220003102.204480-1-pmalani@chromium.org>
- <20200220003102.204480-2-pmalani@chromium.org>
- <158279287307.177367.4599344664477592900@swboyd.mtv.corp.google.com>
- <20200227163825.GB18240@kuha.fi.intel.com>
- <158284127336.4688.623067902277673206@swboyd.mtv.corp.google.com>
+        id S1726791AbgB1QYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 11:24:37 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42685 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbgB1QYg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 11:24:36 -0500
+Received: by mail-io1-f67.google.com with SMTP id z1so3990283iom.9
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 08:24:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bB98tLoF0u0YAiQkQFd8a6MwFlRbdwFA2a9rJyqMwcU=;
+        b=inr1/qyOInYmFN6D425GzWVmy0IT7QRJk3SjPLoFYSH/pO1voh/EdW+SfD8OofD6Bn
+         wvNaWCaLKbDpnb6pOCFOt0X9wayPiilDqg7EASARHhnxnaUyVoJrs35dzHFojcJnpWDF
+         dEnNQkAT4yoK8tzeRd9BPUclNV9H8sVGfsSfM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bB98tLoF0u0YAiQkQFd8a6MwFlRbdwFA2a9rJyqMwcU=;
+        b=g1qVT+xqT64s36n1pJUYliVxqKzVxUsFWBfpyXbyZx5huHnzMhyLjihldUEn/TYw3f
+         ffawQuF5/7Myq4kBMpjkwEMm+lzqr6oKPTemhsOWgfhe0/GTK9IvFOeUPhht9kEiQUnL
+         yoSQnAGw8XeiF6K6GvoxUz5ks/e+u+8TDdoydkI8z0RSf5/LZ/RqC2I4ss/L6E7ZYjwC
+         bwr8uCnQTJmbAH68RX7BdU1SSMieutU72i8NPJBoX1neMIOUboEJ8ld8CxYZkFwkZJP1
+         KIp1SY2pN5GnTVYw+WdOFE9rc1Lg0DJi2c8eN01nZSjZz7d3gBGl1NlBVslbsteCL0iK
+         cLQg==
+X-Gm-Message-State: APjAAAXdw9OTClf8Why3MpVaIktj+KKDjTgkeHJVteg1NaJpx043KMeq
+        6GpZvVMNRxbYky7MDshC536InITo09uPHP1JFr9veA==
+X-Google-Smtp-Source: APXvYqzW4AhONnArihOqANfWi8suDYP+nTtZwmEhAQutobth5sBaSR8sSuEmoVmIoU8B7DsyWsdjOGmol0a5XteeUNc=
+X-Received: by 2002:a02:9988:: with SMTP id a8mr4117936jal.33.1582907074679;
+ Fri, 28 Feb 2020 08:24:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158284127336.4688.623067902277673206@swboyd.mtv.corp.google.com>
+References: <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
+ <1582644535.3361.8.camel@HansenPartnership.com> <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
+ <1c8db4e2b707f958316941d8edd2073ee7e7b22c.camel@themaw.net>
+ <CAJfpegtRoXnPm5_sMYPL2L6FCZU52Tn8wk7NcW-dm4_2x=dD3Q@mail.gmail.com>
+ <3e656465c427487e4ea14151b77d391d52cd6bad.camel@themaw.net>
+ <CAJfpegu5xLcR=QbAOnUrL49QTem6X6ok7nPU+kLFnNHdPXSh1A@mail.gmail.com>
+ <20200227151421.3u74ijhqt6ekbiss@ws.net.home> <ba2b44cc1382c62be3ac896a5476c8e1dc7c0230.camel@themaw.net>
+ <CAJfpeguXPmw+PfZJFOscGLm0oe7dUQY4CYXazx9=x020Fbe86A@mail.gmail.com> <20200228122712.GA3013026@kroah.com>
+In-Reply-To: <20200228122712.GA3013026@kroah.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 28 Feb 2020 17:24:23 +0100
+Message-ID: <CAJfpegsGgjnyZiB+ionfnnk+_e+5oaC-5nmGq+mLxWs1RcwsPw@mail.gmail.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Ian Kent <raven@themaw.net>, Karel Zak <kzak@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Lennart Poettering <lennart@poettering.net>,
+        =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>,
+        util-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Fri, Feb 28, 2020 at 1:27 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 
-On Thu, Feb 27, 2020 at 02:07:53PM -0800, Stephen Boyd wrote:
-> Quoting Heikki Krogerus (2020-02-27 08:38:25)
-> > Hi Stephen,
-> > 
-> > On Thu, Feb 27, 2020 at 12:41:13AM -0800, Stephen Boyd wrote:
-> > > > +examples:
-> > > > +  - |+
-> > > > +    cros_ec: ec@0 {
-> > > > +      compatible = "google,cros-ec-spi";
-> > > > +
-> > > > +      typec {
-> > > > +        compatible = "google,cros-ec-typec";
-> > > > +
-> > > > +        usb_con: connector {
-> > > > +          compatible = "usb-c-connector";
-> > > > +          port-number = <0>;
-> > > > +          power-role = "dual";
-> > > > +          data-role = "dual";
-> > > > +          try-power-role = "source";
-> > > > +        };
-> > > 
-> > > I thought that perhaps this would be done with the OF graph APIs instead
-> > > of being a child of the ec node. I don't see how the usb connector is
-> > > anything besides a child of the top-level root node because it's
-> > > typically on the board. We put board level components at the root.
-> > 
-> > No.
-> > 
-> > The above follows the usb-connector bindings, so it is correct:
-> > Documentation/devicetree/bindings/connector/usb-connector.txt
-> > 
-> > So the connector is always a child of the "CC controller" with the USB
-> > Type-C connectors, which in this case is the EC (from operating systems
-> > perspective). The "CC controller" controls connectors, and it doesn't
-> > actually do anything else. So placing the connectors under the
-> > "connector controller" is also logically correct.
-> 
-> Ah ok I see. The graph binding is for describing the data path, not the
-> control path. Makes sense. 
-> 
-> > 
-> > > Yes, the connector is intimately involved with the EC here, but I would
-> > > think that we would have an OF graph connection from the USB controller
-> > > on the SoC to the USB connector, traversing through anything that may be
-> > > in that path, such as a USB hub. Maybe the connector node itself can
-> > > point to the EC type-c controller with some property like
-> > 
-> > I think your idea here is that there should be only a single node for
-> > each connector that is then linked with every component that it is
-> > physically connected to (right?), but please note that that is not
-> > enough. Every component attached to the connector must have its own
-> > child node that represents the "port" that is physically connected to
-> > the USB Type-C connector.
-> > 
-> > So for example, the USB controller nodes have child nodes for every
-> > USB2 port as well as for every USB3 port. Similarly, the GPU
-> > controllers have child node for every DisplayPort, etc. And I believe
-> > that is already how it has been done in DT (and also in ACPI).
-> 
-> It looks like perhaps you're conflating ports in USB spec with the OF
-> graph port? I want there to be one node per type-c connector that I can
-> physically see on the device. Is that not sufficient?
+> > Superblocks and mounts could get enumerated by a unique identifier.
+> > mnt_id seems to be good for mounts, s_dev may or may not be good for
+> > superblock, but  s_id (as introduced in this patchset) could be used
+> > instead.
+>
+> So what would the sysfs tree look like with this?
 
-It is. We don't need more than one node that represents the physical
-connector (and we should not have more than one node for that). And
-actually, I was not mixing the OF graph ports and USB ports... I
-think I should be talking about PHY instead of "port". That is
-probable more clear.
+For a start something like this:
 
-My point is that every PHY that is connected to a Type-C connector
-must still be represented with its own node in devicetree and ACPI. So
-there still needs to be a node for the USB2 PHY, USB3 PHY, DisplayPort
-PHY, etc., on top of the connector node. I got the picture that you
-are proposing that we don't need those PHY nodes anymore since we have
-the connector nodes, but maybe I misunderstood?
+mounts/$MOUNT_ID/
+  parent -> ../$PARENT_ID
+  super -> ../../supers/$SUPER_ID
+  root: path from mount root to fs root (could be optional as usually
+they are the same)
+  mountpoint -> $MOUNTPOINT
+  flags: mount flags
+  propagation: mount propagation
+  children/$CHILD_ID -> ../../$CHILD_ID
 
-> Are there any examples of the type-c connector in DT? I see some
-> NXP/Freescale boards and one Renesas board so far. Maybe there are other
-> discussions I can read up on?
-> 
-> > 
-> > Those "port" nodes then just need to be linked with the "connector"
-> > node. I think for that the idea was to use OF graph, but I'm really
-> > sceptical about that. The problem is that with the USB Type-C
-> > connectors we have to be able to identify the connections, i.e. which
-> > endpoint is the USB2 port, which is the DisplayPort and so on, and OF
-> > graph does not give any means to do that on its own. We will have to
-> > rely on separate device properties in order to do the identification.
-> > Currently it is not documented anywhere which property should be used
-> > for that.
-> 
-> I hope that this patch series can document this.
+ supers/$SUPER_ID/
+   type: fstype
+   source: mount source (devname)
+   options: csv of mount options
 
-Well, we do need that to be documented, but do we really need to block
-this series because of that? This driver does not depend on OF graph
-yet.
-
-> Why can't that work by having multiple OF graph ports for USB2 port,
-> DisplayPort, USB3 port, etc? The data path goes to the connector and
-> we can attach more information to each port node to describe what
-> type of endpoint is there like a DisplayPort capable type-c
-> connector for example.
-
-The PHY nodes we must still always have. So the OF graph will always
-describe the connection between the PHY and the connector, and the
-connection between the PHY and the controller must be described
-separately.
-
-> > For ACPI we are going to propose that with every type of connection,
-> > there should be a device property that returns a reference to the
-> > appropriate port. That way there are no problems identifying the
-> > connections. All we need to do is to define the property names for
-> > every type of connection. "usb2-port" for the USB2 or high speed port,
-> > "usb3-port" for USB3, etc.
-> > 
-> 
-> That sounds like something we should figure out now for DT firmwares
-> too. For this particular binding, I don't know if we need to do anything
-> besides figure out how to represent multiple connectors underneath the
-> EC node. The other properties seem fairly generic and so I'd expect this
-> series to migrate
-> Documentation/devicetree/bindings/connector/usb-connector.txt to YAML
-> and refine the binding with anything necessary, like a 'reg' property to
-> allow multiple ports to exist underneath the "CC controller".
-
-OK.
-
-thanks,
-
--- 
-heikki
+Thanks,
+Miklos
