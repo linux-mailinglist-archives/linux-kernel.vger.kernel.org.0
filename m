@@ -2,72 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DDAA173197
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 08:13:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AC1C173183
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 08:03:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbgB1HNj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 02:13:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37618 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725870AbgB1HNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 02:13:38 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8BB92469D;
-        Fri, 28 Feb 2020 07:13:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582874018;
-        bh=nscebRBkFu96VQOWUklNoxyN62+4yjlFmVkow0WZJqo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f/LvZhJlCAGMo4BwObfGmr0BaFhEaKbdJ5Rn3vTJZ8uPIPaJ3e6C7jrTONYFu0JiD
-         Z6aqRot9tPxQ44AFRuq65bYa5WCwHnPrg9Fk/TKr0ztCGN0+fO5CIk/zVmThuxpkln
-         sqFqw9iiGR+HgzKzT7jU8njaGAwrsvU/yXvQWJxE=
-Date:   Thu, 27 Feb 2020 19:50:28 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 5.5 133/150] scripts/get_maintainer.pl: deprioritize old
- Fixes: addresses
-Message-ID: <20200227185028.GA2019187@kroah.com>
-References: <20200227132232.815448360@linuxfoundation.org>
- <20200227132252.076691216@linuxfoundation.org>
- <dd96f64a5fd44278e48a1f7ee9269c485278d183.camel@perches.com>
- <20200227161829.GE3308@kadam>
+        id S1726860AbgB1HDm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 02:03:42 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:26767 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726407AbgB1HDm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 02:03:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582873421;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OV9TVzYiK7fy5Df/XLhzIPFheh7WMpe9u5ayB8vjOrA=;
+        b=EFqy5aQgOO4eQ3VP6zo/ox1e+0rHqtydSIfXAsfGGDn7TLA9SeClXCOmZAieCyKu2otCKT
+        Xb52B522b6fwlV6kYhEesISxOt9jrm4uHQaCtelEZAfHDrD5qKjlDicZgra5pA5BFWrNYX
+        M2/rRGRVFewQW1fRru77Sn3rfIeb7ao=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-447-07-M9m4AMySQ1pxhtpzO5w-1; Fri, 28 Feb 2020 02:03:39 -0500
+X-MC-Unique: 07-M9m4AMySQ1pxhtpzO5w-1
+Received: by mail-wr1-f69.google.com with SMTP id y28so913751wrd.23
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 23:03:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OV9TVzYiK7fy5Df/XLhzIPFheh7WMpe9u5ayB8vjOrA=;
+        b=HPIw/kTAzgpkRTdwDomWVa5yCCnpkFetFNQpupG/9vNc61Zf5PydOLdR90054NH1nO
+         OkO/WvZ1trq30KcmuEw8ZVPGGR18tk2i2AymwaPldh51wGOiWg1Bty+DbQVo3NOObPSO
+         Q2J3SU/stnAtIFyH4RYdP9W3LNJehDrC7QhW1+zhQS0LGi2yY7EpsmRMqclNMx259SyH
+         L0R9hB6Gce6dHjsSsMhO8Lkawt/34g9rgFtzG5xqcKlKW9810B3flIG5TaIlWbRGgcSD
+         Rp0/CpGZocyubfKiHbcQInA/nbvdOURsg3P39/TL5usftKL8D7jZTWsZFu061UAIi8j6
+         eN6A==
+X-Gm-Message-State: APjAAAXgQoN8xcpIC/urMwm+W8BEad/y1JY9fuNt/7TpOZvyTlsyBBQm
+        DDbkiIHIMv5Iggr+H/As+FGELZCiRn+IzbUq8wwMwuU2N86E36hUqPfRkS1E9oOQWHGLU+iNfcA
+        I4LDv+7dBcQ/lS6nFU4RccvLi
+X-Received: by 2002:a5d:6a04:: with SMTP id m4mr3233338wru.127.1582873418474;
+        Thu, 27 Feb 2020 23:03:38 -0800 (PST)
+X-Google-Smtp-Source: APXvYqztcbbkyVtgEGOtL0OapteA9GCHua/jgQhBMowijROGhgz2+TEXljndEJ+I7KchOoasqdeR1w==
+X-Received: by 2002:a5d:6a04:: with SMTP id m4mr3233315wru.127.1582873418240;
+        Thu, 27 Feb 2020 23:03:38 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:30cb:d037:e500:2b47? ([2001:b07:6468:f312:30cb:d037:e500:2b47])
+        by smtp.gmail.com with ESMTPSA id b82sm834482wmb.16.2020.02.27.23.03.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2020 23:03:37 -0800 (PST)
+Subject: Re: [PATCH 39/61] KVM: SVM: Convert feature updates from CPUID to KVM
+ cpu caps
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
+ <20200201185218.24473-40-sean.j.christopherson@intel.com>
+ <0f21b023-000d-9d78-b9b4-b9d377840385@redhat.com>
+ <20200228002833.GB30452@linux.intel.com>
+ <20200228003613.GC30452@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <052d2bdf-d2da-36c0-2fb5-563b5bf5f2ed@redhat.com>
+Date:   Fri, 28 Feb 2020 08:03:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227161829.GE3308@kadam>
+In-Reply-To: <20200228003613.GC30452@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 07:18:29PM +0300, Dan Carpenter wrote:
-> On Thu, Feb 27, 2020 at 07:20:32AM -0800, Joe Perches wrote:
-> > On Thu, 2020-02-27 at 14:37 +0100, Greg Kroah-Hartman wrote:
-> > > From: Douglas Anderson <dianders@chromium.org>
-> > > 
-> > > commit 0ef82fcefb99300ede6f4d38a8100845b2dc8e30 upstream.
-> > 
-> > I think adding just about any checkpatch patch to stable a bit silly.
-> > Including patches to checkpatch.
-> > 
+On 28/02/20 01:36, Sean Christopherson wrote:
+> Regarding NRIPS, the original commit added the "Support next_rip if host
+> supports it" comment, but I can't tell is "host supports" means "supported
+> in hardware" or "supported by KVM".  In other words, should I make the cap
+> dependent "nrips" or leave it as is?
 > 
-> On the other hand, Greg is one of the worst affected by the old behavior
-> since he has so many old email addresses and he's also the stable
-> maintainer.
 
-Exactly, lots of people still do development against the latest released
-kernel, which is 5.5 here...
+The "nrips" parameter came later.  For VMX we generally remove guest
+capabilities if the corresponding parameter is on, so it's a good idea
+to do the same for SVM.
 
-thanks,
+Paolo
 
-greg kh-
