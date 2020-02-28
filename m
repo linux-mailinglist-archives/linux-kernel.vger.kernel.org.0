@@ -2,58 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE13173694
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:55:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91CC917367F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:54:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbgB1Ly5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 06:54:57 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40512 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726975AbgB1Lyw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 06:54:52 -0500
-Received: by mail-wr1-f67.google.com with SMTP id r17so2624652wrj.7
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 03:54:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MdviBniUP1LTLTlxYrXf4cKTRz1/Aw4mUeuM3QyEeaY=;
-        b=BH513kc2bjVfCoogIWJkQPhCfXVFyBq8iNap7ABg1XuYuZiyMESn3PhHMBuT0E6/w9
-         b+G35KExpAyEQUFRnkW6OJ5TYjksyTo6+bgXsTQf6ptBiajUxYl/7N0QUbmAkQL7MZ8p
-         dzjCpHFWz2sh7x8RdSnAHoWZilYlwT+HbQ+TM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MdviBniUP1LTLTlxYrXf4cKTRz1/Aw4mUeuM3QyEeaY=;
-        b=hBOcYX2t0PF7HVElSJOAPd+Q3dTh607/B3I4dCN1NtWiFcVw94NgxIzKTGocWi8B65
-         Ob/Jij0uRGKTgzRSqH/gDoVi6THuKTuPiTwPmGuti7aHrlNv5RBOPNZWbx1F/3kGAE4x
-         LiigpIRSkOpa78L+B2hmdKn7Fd5s9U3OuZOoc/109pUB14+jOQuA7eX7u4vNvbvEnTd6
-         7WB3jnGwSIr8s+tcWbpnLUjVWYMIFur4wQSmA4En7RTcazyhVYwA4sKemScTIcSsPoaP
-         Uv1ZkPlzZbQq7xx6wEVfUc1mZrTKklb0FUpsFklV9i9lIdn1oHD5wWeCwJsz1HCUdEE6
-         6tnA==
-X-Gm-Message-State: APjAAAV5op/Gpakd3HeB1hmQtCUJhY/bSbyg8LbkN0F5oHjgKvxgoISg
-        mqzc2dmxKEw2j7ySe34jFZ+dHg==
-X-Google-Smtp-Source: APXvYqy6+1s+Iw2KKU638/K+YsQPGmQypYVGl3aWhpmEya+4vA4ML8sUFdda4aZNYwKKNv66XDMHZw==
-X-Received: by 2002:adf:fecf:: with SMTP id q15mr4747203wrs.360.1582890889015;
-        Fri, 28 Feb 2020 03:54:49 -0800 (PST)
-Received: from antares.lan (b.2.d.a.1.b.1.b.2.c.5.e.0.3.d.4.f.f.6.2.a.5.a.7.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:7a5a:26ff:4d30:e5c2:b1b1:ad2b])
-        by smtp.gmail.com with ESMTPSA id q125sm2044284wme.19.2020.02.28.03.54.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2020 03:54:48 -0800 (PST)
-From:   Lorenz Bauer <lmb@cloudflare.com>
-To:     john.fastabend@gmail.com, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     kernel-team@cloudflare.com, Lorenz Bauer <lmb@cloudflare.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH bpf-next v2 9/9] bpf, doc: update maintainers for L7 BPF
-Date:   Fri, 28 Feb 2020 11:53:44 +0000
-Message-Id: <20200228115344.17742-10-lmb@cloudflare.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200228115344.17742-1-lmb@cloudflare.com>
-References: <20200228115344.17742-1-lmb@cloudflare.com>
+        id S1726602AbgB1LyJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 06:54:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34700 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725877AbgB1LyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 06:54:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 247C8AFF0;
+        Fri, 28 Feb 2020 11:54:07 +0000 (UTC)
+From:   Jiri Slaby <jslaby@suse.cz>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 1/2] vt: selection, push console lock down
+Date:   Fri, 28 Feb 2020 12:54:05 +0100
+Message-Id: <20200228115406.5735-1-jslaby@suse.cz>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,26 +30,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Jakub and myself as maintainers for sockmap related code.
+We need to nest the console lock in sel_lock, so we have to push it down
+a bit. Fortunately, the callers of set_selection_* just lock the console
+lock around the function call. So moving it down is easy.
 
-Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+In the next patch, we switch the order.
+
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/speakup/selection.c |  2 --
+ drivers/tty/vt/selection.c          | 13 ++++++++++++-
+ drivers/tty/vt/vt.c                 |  2 --
+ 3 files changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 495ba52038ad..8517965adde8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9351,6 +9351,8 @@ F:	include/net/l3mdev.h
- L7 BPF FRAMEWORK
- M:	John Fastabend <john.fastabend@gmail.com>
- M:	Daniel Borkmann <daniel@iogearbox.net>
-+M:	Jakub Sitnicki <jakub@cloudflare.com>
-+M:	Lorenz Bauer <lmb@cloudflare.com>
- L:	netdev@vger.kernel.org
- L:	bpf@vger.kernel.org
- S:	Maintained
+diff --git a/drivers/staging/speakup/selection.c b/drivers/staging/speakup/selection.c
+index a8b4d0c5ab7e..032f3264fba1 100644
+--- a/drivers/staging/speakup/selection.c
++++ b/drivers/staging/speakup/selection.c
+@@ -51,9 +51,7 @@ static void __speakup_set_selection(struct work_struct *work)
+ 		goto unref;
+ 	}
+ 
+-	console_lock();
+ 	set_selection_kernel(&sel, tty);
+-	console_unlock();
+ 
+ unref:
+ 	tty_kref_put(tty);
+diff --git a/drivers/tty/vt/selection.c b/drivers/tty/vt/selection.c
+index 714992693974..5b0b897396eb 100644
+--- a/drivers/tty/vt/selection.c
++++ b/drivers/tty/vt/selection.c
+@@ -186,7 +186,7 @@ int set_selection_user(const struct tiocl_selection __user *sel,
+ 	return set_selection_kernel(&v, tty);
+ }
+ 
+-int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
++static int __set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
+ {
+ 	struct vc_data *vc = vc_cons[fg_console].d;
+ 	int new_sel_start, new_sel_end, spc;
+@@ -348,6 +348,17 @@ int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
+ 	mutex_unlock(&sel_lock);
+ 	return ret;
+ }
++
++int set_selection_kernel(struct tiocl_selection *v, struct tty_struct *tty)
++{
++	int ret;
++
++	console_lock();
++	ret = __set_selection_kernel(v, tty);
++	console_unlock();
++
++	return ret;
++}
+ EXPORT_SYMBOL_GPL(set_selection_kernel);
+ 
+ /* Insert the contents of the selection buffer into the
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index 8fa059ec6cc8..c4d75edde923 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -3047,10 +3047,8 @@ int tioclinux(struct tty_struct *tty, unsigned long arg)
+ 	switch (type)
+ 	{
+ 		case TIOCL_SETSEL:
+-			console_lock();
+ 			ret = set_selection_user((struct tiocl_selection
+ 						 __user *)(p+1), tty);
+-			console_unlock();
+ 			break;
+ 		case TIOCL_PASTESEL:
+ 			ret = paste_selection(tty);
 -- 
-2.20.1
+2.25.1
 
