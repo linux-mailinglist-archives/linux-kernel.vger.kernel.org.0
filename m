@@ -2,114 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4A97173630
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:39:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CE6B173620
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:36:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbgB1Ljd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 06:39:33 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33035 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgB1Ljd (ORCPT
+        id S1726016AbgB1Lgi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 06:36:38 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:59022 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbgB1Lgi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 06:39:33 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m10so9159650wmc.0;
-        Fri, 28 Feb 2020 03:39:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HmPLXJpOCywpZeq5lAD4FjaTX4sOpZWVoDemtjk5yXw=;
-        b=sWmxNJ2/LfZPrwNbIlrcBLLDjCgorHwi+uDe9ivm0XmvKzs3C7A+9/OX45MvkFI1NY
-         bMh+KV5Zjy1uXcPIFddnKJ4wWmJrWMnI70QLnh1N7NumFw098Vi9w3qgONutUWmgrqbc
-         Dk5M5RO6rBey+OqWzVdOIOG/Ew4s2SPI+ksKGgFjPyqV/3gvtCrYi85af+lVDQzpKU9J
-         i42QqVVi9cYS39pTZZLPz1PGUe+ZXJG7qBbq4HFyLE7+8BYlfyeDUxHkzGAGfo3LMC40
-         0K1jQhu5R7QGRDM20zW4pPaM5tBLkwPSx3VdopFhDvFuz5px2CNVk6hFBVopHMBV/O/c
-         EkoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=HmPLXJpOCywpZeq5lAD4FjaTX4sOpZWVoDemtjk5yXw=;
-        b=eCj9jS37680PRjQ2QoR63q50+yvsJhs1hNnxVjMBcxVYc9JIfZTAKjrh2PWMyncdOB
-         3zBRfCTnTab6vLOso+a7aEMUCaGA+iFS2sIJOtN2PmMj+Bl3OGkF5MdE8pX2Wq97AqNE
-         ElTeRPL5xtE26jV5FTifYrHdYUQDx0Fnqm4ShKOXXLDpYxiK0stv70o0N4gvRKRSYbZ+
-         HKRgbqgFad13QrLHbkMkY+ghzO+yi5HkHK19bu0fB9Co+dD694eadrm8zcWtxgC9qWQP
-         Atf8r0ZD0xWgGObpMQgb33Qcqi0CAf8S3y9vFCwQJF6gQRFSGJ6iDo6kv0Kf95DC0WG7
-         sSeA==
-X-Gm-Message-State: APjAAAUB9T+199YuLEPkq6lXRzer/r03/xZWXOlk5cvPgbvpQQ/jbGC+
-        W6ALarOJXYHRW1du5bdVmuk=
-X-Google-Smtp-Source: APXvYqybX1CYwMeuUYbdLHcAbibwv6Xf3qhi54cLwS/IJwbBOzV5j6W4y3iXzUnZoGBvUYIPlYnYxQ==
-X-Received: by 2002:a05:600c:20c6:: with SMTP id y6mr4515359wmm.95.1582889971316;
-        Fri, 28 Feb 2020 03:39:31 -0800 (PST)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id q1sm11554294wrw.5.2020.02.28.03.39.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Feb 2020 03:39:30 -0800 (PST)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: remove g-use-dma from rockchip usb nodes
-Date:   Fri, 28 Feb 2020 12:39:22 +0100
-Message-Id: <20200228113922.20266-2-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200228113922.20266-1-jbx6244@gmail.com>
-References: <20200228113922.20266-1-jbx6244@gmail.com>
+        Fri, 28 Feb 2020 06:36:38 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01SBa53j013584;
+        Fri, 28 Feb 2020 05:36:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582889765;
+        bh=rLm5NTE1CYjmZGMxs2YV7x1c9JuFq3mregL37grduCo=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=wnesvm0wVu+YeZ8jTJAO9WrXhn894VT4/u5rRrMX9BPzZcnr7a/OQLigUuunWkn6/
+         5SU0DVsrO9RSc5SbJ+ipZ87f8rf5C30jGJLV5pdzOIQCK+mAs+Yx0hEmyshMPxoBOa
+         JSea5U5NQC9FApxu7lO7DJ/c8Kl1jILUwbFpQ714=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01SBa5i1115846;
+        Fri, 28 Feb 2020 05:36:05 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 28
+ Feb 2020 05:36:05 -0600
+Received: from localhost.localdomain (10.64.41.19) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 28 Feb 2020 05:36:05 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 01SBa0vP019981;
+        Fri, 28 Feb 2020 05:36:00 -0600
+Subject: Re: [PATCH v4 08/11] PCI: layerscape: Modify the MSIX to the doorbell
+ mode
+To:     Xiaowei Bao <xiaowei.bao@nxp.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <shawnguo@kernel.org>,
+        <leoyang.li@nxp.com>, <lorenzo.pieralisi@arm.com>,
+        <minghuan.Lian@nxp.com>, <mingkai.hu@nxp.com>, <roy.zang@nxp.com>,
+        <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
+        <andrew.murray@arm.com>, <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>
+References: <20190924021849.3185-1-xiaowei.bao@nxp.com>
+ <20190924021849.3185-9-xiaowei.bao@nxp.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <55752e77-1094-4cbf-2822-e10b875b4dd9@ti.com>
+Date:   Fri, 28 Feb 2020 17:10:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190924021849.3185-9-xiaowei.bao@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A test with the command below gives these errors:
+Hi Xiaowei,
 
-arch/arm64/boot/dts/rockchip/px30-evb.dt.yaml: usb@ff300000:
-'g-use-dma', 'power-domains' do not match any of the regexes:
-'pinctrl-[0-9]+'
-arch/arm64/boot/dts/rockchip/rk3328-a1.dt.yaml: usb@ff580000:
-'g-use-dma' does not match any of the regexes: 'pinctrl-[0-9]+'
-arch/arm64/boot/dts/rockchip/rk3328-evb.dt.yaml: usb@ff580000:
-'g-use-dma' does not match any of the regexes: 'pinctrl-[0-9]+'
-arch/arm64/boot/dts/rockchip/rk3328-rock64.dt.yaml: usb@ff580000:
-'g-use-dma' does not match any of the regexes: 'pinctrl-[0-9]+'
-arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dt.yaml: usb@ff580000:
-'g-use-dma' does not match any of the regexes: 'pinctrl-[0-9]+'
+On 24/09/19 7:48 am, Xiaowei Bao wrote:
+> dw_pcie_ep_raise_msix_irq was never called in the exisitng driver
+> before, because the ls1046a platform don't support the MSIX feature
+> and msix_capable was always set to false.
+> Now that add the ls1088a platform with MSIX support, but the existing
+> dw_pcie_ep_raise_msix_irq doesn't work, so use the doorbell method to
+> support the MSIX feature.
 
-'g-use-dma' is not a valid option in dwc2.yaml, so remove it
-from all Rockchip dtsi files.
 
-make ARCH=arm64 dtbs_check
-DT_SCHEMA_FILES=Documentation/devicetree/bindings/usb/dwc2.yaml
+It does work after [1]. So the commit message might not be exactly true.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- arch/arm64/boot/dts/rockchip/px30.dtsi   | 1 -
- arch/arm64/boot/dts/rockchip/rk3328.dtsi | 1 -
- 2 files changed, 2 deletions(-)
+[1] -> https://lore.kernel.org/r/20200225081703.8857-1-kishon@ti.com
 
-diff --git a/arch/arm64/boot/dts/rockchip/px30.dtsi b/arch/arm64/boot/dts/rockchip/px30.dtsi
-index 75908c587..4f484119f 100644
---- a/arch/arm64/boot/dts/rockchip/px30.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/px30.dtsi
-@@ -870,7 +870,6 @@
- 		g-np-tx-fifo-size = <16>;
- 		g-rx-fifo-size = <280>;
- 		g-tx-fifo-size = <256 128 128 64 32 16>;
--		g-use-dma;
- 		phys = <&u2phy_otg>;
- 		phy-names = "usb2-phy";
- 		power-domains = <&power PX30_PD_USB>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-index 1f53ead52..bad41bc6f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-@@ -957,7 +957,6 @@
- 		g-np-tx-fifo-size = <16>;
- 		g-rx-fifo-size = <280>;
- 		g-tx-fifo-size = <256 128 128 64 32 16>;
--		g-use-dma;
- 		phys = <&u2phy_otg>;
- 		phy-names = "usb2-phy";
- 		status = "disabled";
--- 
-2.11.0
+Thanks
+Kishon
 
+> 
+> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+> Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+> ---
+> v2: 
+>  - No change
+> v3:
+>  - Modify the commit message make it clearly.
+> v4: 
+>  - No change
+> 
+>  drivers/pci/controller/dwc/pci-layerscape-ep.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+> index 1e07287..5f0cb99 100644
+> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
+> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+> @@ -79,7 +79,8 @@ static int ls_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>  	case PCI_EPC_IRQ_MSI:
+>  		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
+>  	case PCI_EPC_IRQ_MSIX:
+> -		return dw_pcie_ep_raise_msix_irq(ep, func_no, interrupt_num);
+> +		return dw_pcie_ep_raise_msix_irq_doorbell(ep, func_no,
+> +							  interrupt_num);
+>  	default:
+>  		dev_err(pci->dev, "UNKNOWN IRQ type\n");
+>  		return -EINVAL;
+> 
