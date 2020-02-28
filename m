@@ -2,114 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DC4F17348E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 10:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 283ED17349D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 10:56:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbgB1JzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 04:55:04 -0500
-Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:45986 "EHLO
-        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726838AbgB1JzC (ORCPT
+        id S1726838AbgB1J4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 04:56:09 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50758 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbgB1J4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 04:55:02 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 235CF3F8DF;
-        Fri, 28 Feb 2020 10:54:59 +0100 (CET)
-Authentication-Results: pio-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b="mQelTzZK";
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id AnuRIWrZjNLw; Fri, 28 Feb 2020 10:54:58 +0100 (CET)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 97ECF3F447;
-        Fri, 28 Feb 2020 10:54:55 +0100 (CET)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id CF44B3600E5;
-        Fri, 28 Feb 2020 10:54:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1582883694; bh=tqp6+K9mkAPpbwQi+jsZKLI5SGUmSp5Ve+vQDquuiMU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mQelTzZKfbo2tgQqhKUHfndb2RD0o2tObYs69vboraOahh7loZU5rJsft3sMv2uEv
-         v/ADgf3PykPJwmoWFpjmKHkmqucFFlF40qIOKBFywOmyZmPZ9J4xAxuADX+zDpKTlQ
-         X7iYWW49jjTk+7fudHxvrkp6HZYEpCvbgP3+k5Ic=
-Subject: Re: [PATCH v5 1/3] drm/shmem: add support for per object caching
- flags.
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, Guillaume.Gardet@arm.com,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        gurchetansingh@chromium.org, tzimmermann@suse.de, yuq825@gmail.com,
-        noralf@tronnes.org, robh@kernel.org
-References: <20200226154752.24328-1-kraxel@redhat.com>
- <20200226154752.24328-2-kraxel@redhat.com>
- <f1afba4b-9c06-48a3-42c7-046695947e91@shipmail.org>
- <20200227075321.ki74hfjpnsqv2yx2@sirius.home.kraxel.org>
- <41ca197c-136a-75d8-b269-801db44d4cba@shipmail.org>
- <20200227105643.h4klc3ybhpwv2l3x@sirius.home.kraxel.org>
- <68a05ace-40bc-76d6-5464-2c96328874b9@shipmail.org>
- <20200227132137.irruicvlkxpdo3so@sirius.home.kraxel.org>
- <78eb099e-020f-91d1-672e-15176bf12cd4@shipmail.org>
- <20200228094903.g7yf73mtnbjyu4ez@sirius.home.kraxel.org>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <99eea905-db5c-4e07-7b93-6de3482e02f7@shipmail.org>
-Date:   Fri, 28 Feb 2020 10:54:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20200228094903.g7yf73mtnbjyu4ez@sirius.home.kraxel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Fri, 28 Feb 2020 04:56:08 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a5so2543118wmb.0;
+        Fri, 28 Feb 2020 01:56:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=zKGXK9SAs0Ecacz7HFCrkRE8+zApqJ5J3A2oMtz1fqU=;
+        b=AjGi9oKXYefDfw5yebzDzw4qIkTe3S/U2jkj5sanwnGoPZKDcclQeuZ+7tC2KDV73Z
+         x2M0soNYFSdHwsQNzRbtFt+ukkVKkkqKGo/wxqaze688veIAJLqslmFLLwZ6nxm7IjVZ
+         w34vMJLgBC5R9ESLI35r8CT2b7X5PfnJyq1L7G1VZvgN7tXI6sLOaK5aayN/mfKZyVoy
+         XHCNIHcBfMHqbqUISLmm0aBO/e80qaEKZvyuOuezzy2KmdVhcKPkj/IRVRP2t+5ClFV6
+         PX7vqfHU2pI6SWmbrbAXQRp6fYmcTtQb0USv32sArRPGt/S9BVPyve4GpULxers20YS/
+         P1cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=zKGXK9SAs0Ecacz7HFCrkRE8+zApqJ5J3A2oMtz1fqU=;
+        b=s+GGq6qVcSCY/Q55VxrRWarLJ+ZvzQWcDENL1x0tJvgaK5SfAZc+OfzFqy0yNG9RYm
+         ACqejSY3jO0+2a2LijvUyxpwaMQP3mI/ggZVUxmp4s8eM6yIlsFcXqMwwXgJG2/i16TF
+         lZzwCGdzZupp/yBvKE21WK3mimde1CTFXAzrwhWPbd7BHXsNFA0MLeXJ5N7A4HjiQgbL
+         4sDMGZcLPGTeyDTj+zo3Yw9iJPPVbkaAzsACpFi/X6CelDyq5M9E5XxdbKr1vpaHv8YX
+         ZlzzX8bLNUz3rYIMCtDm1jkGaGZISc6eiKZk4vSKh4tyVW/3sznD6h6eeeOO/kG56Aee
+         aW+w==
+X-Gm-Message-State: APjAAAV4lJZ+tRAeQzj/4ZFZsBPLN4pCmY8OpGras2N1AkW7NEX9pR30
+        nAfXDwq2+KtGOHmwxrCsWH/XnE/A
+X-Google-Smtp-Source: APXvYqxwIh2KTYZXXyArYgBQzV4t5qeE+7xhHbRZR6CI30Br31D4xn9E18Gc7TX0/GIk1PDqBEnUIQ==
+X-Received: by 2002:a7b:c119:: with SMTP id w25mr4150009wmi.116.1582883766312;
+        Fri, 28 Feb 2020 01:56:06 -0800 (PST)
+Received: from 640k.localdomain ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id t3sm11664565wrx.38.2020.02.28.01.56.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Feb 2020 01:56:05 -0800 (PST)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     hch@lst.de
+Subject: [PATCH] KVM: allow disabling -Werror
+Date:   Fri, 28 Feb 2020 10:56:03 +0100
+Message-Id: <1582883764-26125-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/28/20 10:49 AM, Gerd Hoffmann wrote:
->    Hi,
->
->>> Not clue about the others (lima, tiny, panfrost, v3d).  Maybe they use
->>> write-combine just because this is what they got by default from
->>> drm_gem_mmap_obj().  Maybe they actually need that.  Trying to Cc:
->>> maintainters (and drop stable@).
->>> virtio-gpu needs it, otherwise the host can't show the virtual display.
->>> cirrus bounces everything via blits to vram, so it should be ok without
->>> decrypted.  I guess that implies we should make decrypted configurable.
->> Decrypted here is clearly incorrect and violates the SEV spec, regardless of
->> a config option.
->>
->> The only correct way is currently to use dma_alloc_coherent() and
->> mmap_coherent() to allocate decrypted memory and then use the
->> pgprot_decrypted flag.
-> Hmm, virtio-gpu uses the dma api to allow the host access the gem
-> object.  So I think I have to correct the statement above, if I
-> understands things correctly the dma api will use (properly allocated)
-> decrypted bounce buffers and the virtio-gpu shmem objects don't need
-> pgprot_decrypted mappings.
+Restrict -Werror to well-tested configurations and allow disabling it
+via Kconfig.
 
-Yes, that sounds more correct. I wonder whether the "pgprot_decrypted()" 
-perhaps remains from mapping VRAM gem buffers...
+Reported-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/Kconfig  | 13 +++++++++++++
+ arch/x86/kvm/Makefile |  2 +-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-/Thomas
-
-
->
-> That leaves the question what to do about pgprot_writecombine().  Any
-> comments from the driver maintainers (see first paragraph)?
->
-> cheers,
->    Gerd
-
+diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+index 991019d5eee1..1bb4927030af 100644
+--- a/arch/x86/kvm/Kconfig
++++ b/arch/x86/kvm/Kconfig
+@@ -59,6 +59,19 @@ config KVM
+ 
+ 	  If unsure, say N.
+ 
++config KVM_WERROR
++	bool "Compile KVM with -Werror"
++	# KASAN may cause the build to fail due to larger frames
++	default y if X86_64 && !KASAN
++	# We use the dependency on !COMPILE_TEST to not be enabled
++	# blindly in allmodconfig or allyesconfig configurations
++	depends on (X86_64 && !KASAN) || !COMPILE_TEST
++	depends on EXPERT
++	help
++	  Add -Werror to the build flags for (and only for) i915.ko.
++
++	  If in doubt, say "N".
++
+ config KVM_INTEL
+ 	tristate "KVM for Intel (and compatible) processors support"
+ 	depends on KVM && IA32_FEAT_CTL
+diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
+index 4654e97a05cc..e553f0fdd87d 100644
+--- a/arch/x86/kvm/Makefile
++++ b/arch/x86/kvm/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ ccflags-y += -Iarch/x86/kvm
+-ccflags-y += -Werror
++ccflags-$(CONFIG_KVM_WERROR) += -Werror
+ 
+ KVM := ../../../virt/kvm
+ 
+-- 
+1.8.3.1
 
