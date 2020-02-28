@@ -2,92 +2,294 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33051172EC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 03:20:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D49A2172EDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 03:34:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730569AbgB1CUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 21:20:22 -0500
-Received: from mail-sh.amlogic.com ([58.32.228.43]:42662 "EHLO
-        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730343AbgB1CUW (ORCPT
+        id S1730545AbgB1Ceb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 21:34:31 -0500
+Received: from smtprelay0070.hostedemail.com ([216.40.44.70]:56958 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726943AbgB1Cea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 21:20:22 -0500
-Received: from [10.18.91.106] (10.18.91.106) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 28 Feb
- 2020 10:20:47 +0800
-Subject: Re: [PATCH] dt-bindings: power: Fix dt_binding_check error
-To:     Rob Herring <robh@kernel.org>
-CC:     <devicetree@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <linux-pm@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Victor Wan <victor.wan@amlogic.com>
-References: <1582269169-17557-1-git-send-email-jianxin.pan@amlogic.com>
- <20200226172702.GA6632@bogus>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <4f1d2562-31e1-0dfc-2c23-f208249848d6@amlogic.com>
-Date:   Fri, 28 Feb 2020 10:20:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Thu, 27 Feb 2020 21:34:30 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 3970A2839;
+        Fri, 28 Feb 2020 02:34:28 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:1:2:41:69:152:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1593:1594:1605:1730:1747:1777:1792:1801:2198:2199:2393:2559:2562:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3871:3872:3874:4052:4250:4321:4423:4605:5007:6119:7514:7576:7875:7903:9040:9121:9592:10004:10848:11026:11232:11233:11473:11658:11914:12043:12296:12297:12438:12555:12683:12740:12895:12986:13894:14659:21080:21433:21451:21611:21627:21990:30012:30029:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: ink90_26a43b7fde626
+X-Filterd-Recvd-Size: 10040
+Received: from XPS-9350 (unknown [172.58.38.199])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Feb 2020 02:34:24 +0000 (UTC)
+Message-ID: <8ce0d190e0e6061c14daf469d454bb3626e33549.camel@perches.com>
+Subject: Re: [PATCH] parport: fix if-statement empty body warnings
+From:   Joe Perches <joe@perches.com>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-parport@lists.infradead.org
+Cc:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+Date:   Thu, 27 Feb 2020 18:32:50 -0800
+In-Reply-To: <e7868a5c-5356-bbbb-f416-799a7f75f7ad@infradead.org>
+References: <e7868a5c-5356-bbbb-f416-799a7f75f7ad@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20200226172702.GA6632@bogus>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.91.106]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2020-02-27 at 18:08 -0800, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> When debugging via DPRINTK() is not enabled, make the DPRINTK()
+> macro be an empty do-while block.
+> 
+> This fixes gcc warnings when -Wextra is set:
+> 
+> ../drivers/parport/ieee1284.c:262:18: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+> ../drivers/parport/ieee1284.c:285:17: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+> ../drivers/parport/ieee1284.c:298:17: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+> ../drivers/parport/ieee1284_ops.c:576:18: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+> 
+> I have verified that there is no object code change (with gcc 7.5.0).
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> Cc: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+> Cc: linux-parport@lists.infradead.org
+> ---
+>  drivers/parport/ieee1284.c     |    2 +-
+>  drivers/parport/ieee1284_ops.c |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> --- linux-next-20200225.orig/drivers/parport/ieee1284.c
+> +++ linux-next-20200225/drivers/parport/ieee1284.c
+> @@ -34,7 +34,7 @@
+>  #ifdef DEBUG
+>  #define DPRINTK(stuff...) printk (stuff)
+>  #else
+> -#define DPRINTK(stuff...)
+> +#define DPRINTK(stuff...) do {} while (0)
 
-Hi Rob,
+It's frequently better to use noprintk
 
-Thanks for the ACK.
-I have resent it to Kevin for linux-amlogic and Stephen for linux-next.
+And perhaps this should just become
 
-On 2020/2/27 1:27, Rob Herring wrote:
-> On Fri, Feb 21, 2020 at 03:12:48PM +0800, Jianxin Pan wrote:
->> Missing ';' in the end of secure-monitor example node.
->>
->> Fixes: f50b4108ede1 ("dt-bindings: power: add Amlogic secure power domains bindings")
->> Reported-by: Rob Herring<robh+dt@kernel.org>
-> 
-> space                     ^
-I fixed it in the resend version.
-> 
->> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
->> ---
->>  Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> This error isn't in my tree, so make sure it's applied where the 
-> referenced commit is.
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> 
->>
->> diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
->> index af32209..bc4e037 100644
->> --- a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
->> +++ b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
->> @@ -36,5 +36,5 @@ examples:
->>              compatible = "amlogic,meson-a1-pwrc";
->>              #power-domain-cells = <1>;
->>          };
->> -    }
->> +    };
->>  
->> -- 
->> 2.7.4
->>
-> 
-> .
-> 
+#define DPRINTK pr_debug
+
+or perhaps a conversion of DPRINTK uses
+---
+ drivers/parport/ieee1284_ops.c | 67 +++++++++++++++---------------------------
+ 1 file changed, 23 insertions(+), 44 deletions(-)
+
+diff --git a/drivers/parport/ieee1284_ops.c b/drivers/parport/ieee1284_ops.c
+index 5d41dd..b1c9f51 100644
+--- a/drivers/parport/ieee1284_ops.c
++++ b/drivers/parport/ieee1284_ops.c
+@@ -27,12 +27,6 @@
+ #undef DEBUG /* Don't want a garbled console */
+ #endif
+ 
+-#ifdef DEBUG
+-#define DPRINTK(stuff...) printk (stuff)
+-#else
+-#define DPRINTK(stuff...)
+-#endif
+-
+ /***                                *
+  * One-way data transfer functions. *
+  *                                ***/
+@@ -115,7 +109,7 @@ size_t parport_ieee1284_write_compat (struct parport *port,
+ 		if (signal_pending (current))
+ 			break;
+ 
+-		DPRINTK (KERN_DEBUG "%s: Timed out\n", port->name);
++		pr_debug("%s: Timed out\n", port->name);
+ 		break;
+ 
+ 	ready:
+@@ -178,9 +172,8 @@ size_t parport_ieee1284_read_nibble (struct parport *port,
+ 		if (parport_wait_peripheral (port,
+ 					     PARPORT_STATUS_ACK, 0)) {
+ 			/* Timeout -- no more data? */
+-			DPRINTK (KERN_DEBUG
+-				 "%s: Nibble timeout at event 9 (%d bytes)\n",
+-				 port->name, i/2);
++			pr_debug("%s: Nibble timeout at event 9 (%d bytes)\n",
++				 port->name, i / 2);
+ 			parport_frob_control (port, PARPORT_CONTROL_AUTOFD, 0);
+ 			break;
+ 		}
+@@ -201,8 +194,7 @@ size_t parport_ieee1284_read_nibble (struct parport *port,
+ 					     PARPORT_STATUS_ACK,
+ 					     PARPORT_STATUS_ACK)) {
+ 			/* Timeout -- no more data? */
+-			DPRINTK (KERN_DEBUG
+-				 "%s: Nibble timeout at event 11\n",
++			pr_debug("%s: Nibble timeout at event 11\n",
+ 				 port->name);
+ 			break;
+ 		}
+@@ -219,9 +211,8 @@ size_t parport_ieee1284_read_nibble (struct parport *port,
+ 		/* Read the last nibble without checking data avail. */
+ 		if (parport_read_status (port) & PARPORT_STATUS_ERROR) {
+ 		end_of_data:
+-			DPRINTK (KERN_DEBUG
+-				"%s: No more nibble data (%d bytes)\n",
+-				port->name, i/2);
++			pr_debug("%s: No more nibble data (%d bytes)\n",
++				 port->name, i / 2);
+ 
+ 			/* Go to reverse idle phase. */
+ 			parport_frob_control (port,
+@@ -272,8 +263,7 @@ size_t parport_ieee1284_read_byte (struct parport *port,
+ 			/* Timeout -- no more data? */
+ 			parport_frob_control (port, PARPORT_CONTROL_AUTOFD,
+ 						 0);
+-			DPRINTK (KERN_DEBUG "%s: Byte timeout at event 9\n",
+-				 port->name);
++			pr_debug("%s: Byte timeout at event 9\n", port->name);
+ 			break;
+ 		}
+ 
+@@ -288,8 +278,7 @@ size_t parport_ieee1284_read_byte (struct parport *port,
+ 					     PARPORT_STATUS_ACK,
+ 					     PARPORT_STATUS_ACK)) {
+ 			/* Timeout -- no more data? */
+-			DPRINTK (KERN_DEBUG "%s: Byte timeout at event 11\n",
+-				 port->name);
++			pr_debug("%s: Byte timeout at event 11\n", port->name);
+ 			break;
+ 		}
+ 
+@@ -307,8 +296,7 @@ size_t parport_ieee1284_read_byte (struct parport *port,
+ 		/* Read the last byte without checking data avail. */
+ 		if (parport_read_status (port) & PARPORT_STATUS_ERROR) {
+ 		end_of_data:
+-			DPRINTK (KERN_DEBUG
+-				 "%s: No more byte data (%zd bytes)\n",
++			pr_debug("%s: No more byte data (%zd bytes)\n",
+ 				 port->name, count);
+ 
+ 			/* Go to reverse idle phase. */
+@@ -353,12 +341,10 @@ int ecp_forward_to_reverse (struct parport *port)
+ 					  PARPORT_STATUS_PAPEROUT, 0);
+ 
+ 	if (!retval) {
+-		DPRINTK (KERN_DEBUG "%s: ECP direction: reverse\n",
+-			 port->name);
++		pr_debug("%s: ECP direction: reverse\n", port->name);
+ 		port->ieee1284.phase = IEEE1284_PH_REV_IDLE;
+ 	} else {
+-		DPRINTK (KERN_DEBUG "%s: ECP direction: failed to reverse\n",
+-			 port->name);
++		pr_debug("%s: ECP direction: failed to reverse\n", port->name);
+ 		port->ieee1284.phase = IEEE1284_PH_ECP_DIR_UNKNOWN;
+ 	}
+ 
+@@ -384,12 +370,10 @@ int ecp_reverse_to_forward (struct parport *port)
+ 
+ 	if (!retval) {
+ 		parport_data_forward (port);
+-		DPRINTK (KERN_DEBUG "%s: ECP direction: forward\n",
+-			 port->name);
++		pr_debug("%s: ECP direction: forward\n", port->name);
+ 		port->ieee1284.phase = IEEE1284_PH_FWD_IDLE;
+ 	} else {
+-		DPRINTK (KERN_DEBUG
+-			 "%s: ECP direction: failed to switch forward\n",
++		pr_debug("%s: ECP direction: failed to switch forward\n",
+ 			 port->name);
+ 		port->ieee1284.phase = IEEE1284_PH_ECP_DIR_UNKNOWN;
+ 	}
+@@ -450,7 +434,7 @@ size_t parport_ieee1284_ecp_write_data (struct parport *port,
+ 		}
+ 
+ 		/* Time for Host Transfer Recovery (page 41 of IEEE1284) */
+-		DPRINTK (KERN_DEBUG "%s: ECP transfer stalled!\n", port->name);
++		pr_debug("%s: ECP transfer stalled!\n", port->name);
+ 
+ 		parport_frob_control (port, PARPORT_CONTROL_INIT,
+ 				      PARPORT_CONTROL_INIT);
+@@ -466,8 +450,7 @@ size_t parport_ieee1284_ecp_write_data (struct parport *port,
+ 		if (!(parport_read_status (port) & PARPORT_STATUS_PAPEROUT))
+ 			break;
+ 
+-		DPRINTK (KERN_DEBUG "%s: Host transfer recovered\n",
+-			 port->name);
++		pr_debug("%s: Host transfer recovered\n", port->name);
+ 
+ 		if (time_after_eq (jiffies, expire)) break;
+ 		goto try_again;
+@@ -565,23 +548,20 @@ size_t parport_ieee1284_ecp_read_data (struct parport *port,
+                    command or a normal data byte, don't accept it. */
+ 		if (command) {
+ 			if (byte & 0x80) {
+-				DPRINTK (KERN_DEBUG "%s: stopping short at "
+-					 "channel command (%02x)\n",
++				pr_debug("%s: stopping short at channel command (%02x)\n",
+ 					 port->name, byte);
+ 				goto out;
+ 			}
+ 			else if (port->ieee1284.mode != IEEE1284_MODE_ECPRLE)
+-				DPRINTK (KERN_DEBUG "%s: device illegally "
+-					 "using RLE; accepting anyway\n",
++				pr_debug("%s: device illegally using RLE; accepting anyway\n",
+ 					 port->name);
+ 
+ 			rle_count = byte + 1;
+ 
+ 			/* Are we allowed to read that many bytes? */
+ 			if (rle_count > (len - count)) {
+-				DPRINTK (KERN_DEBUG "%s: leaving %d RLE bytes "
+-					 "for next time\n", port->name,
+-					 rle_count);
++				pr_debug("%s: leaving %d RLE bytes for next time\n",
++					 port->name, rle_count);
+ 				break;
+ 			}
+ 
+@@ -596,7 +576,7 @@ size_t parport_ieee1284_ecp_read_data (struct parport *port,
+ 					     PARPORT_STATUS_ACK)) {
+ 			/* It's gone wrong.  Return what data we have
+                            to the caller. */
+-			DPRINTK (KERN_DEBUG "ECP read timed out at 45\n");
++			pr_debug("ECP read timed out at 45\n");
+ 
+ 			if (command)
+ 				printk (KERN_WARNING
+@@ -620,7 +600,7 @@ size_t parport_ieee1284_ecp_read_data (struct parport *port,
+ 			memset (buf, byte, rle_count);
+ 			buf += rle_count;
+ 			count += rle_count;
+-			DPRINTK (KERN_DEBUG "%s: decompressed to %d bytes\n",
++			pr_debug("%s: decompressed to %d bytes\n",
+ 				 port->name, rle_count);
+ 		} else {
+ 			/* Normal data byte. */
+@@ -686,7 +666,7 @@ size_t parport_ieee1284_ecp_write_addr (struct parport *port,
+ 		}
+ 
+ 		/* Time for Host Transfer Recovery (page 41 of IEEE1284) */
+-		DPRINTK (KERN_DEBUG "%s: ECP transfer stalled!\n", port->name);
++		pr_debug("%s: ECP transfer stalled!\n", port->name);
+ 
+ 		parport_frob_control (port, PARPORT_CONTROL_INIT,
+ 				      PARPORT_CONTROL_INIT);
+@@ -702,8 +682,7 @@ size_t parport_ieee1284_ecp_write_addr (struct parport *port,
+ 		if (!(parport_read_status (port) & PARPORT_STATUS_PAPEROUT))
+ 			break;
+ 
+-		DPRINTK (KERN_DEBUG "%s: Host transfer recovered\n",
+-			 port->name);
++		pr_debug("%s: Host transfer recovered\n", port->name);
+ 
+ 		if (time_after_eq (jiffies, expire)) break;
+ 		goto try_again;
+
 
