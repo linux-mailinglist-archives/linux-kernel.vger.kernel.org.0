@@ -2,94 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFB73173CEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:32:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DB3B173CFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:35:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbgB1QcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 11:32:07 -0500
-Received: from foss.arm.com ([217.140.110.172]:41066 "EHLO foss.arm.com"
+        id S1726118AbgB1QfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 11:35:10 -0500
+Received: from mout.gmx.net ([212.227.17.22]:48917 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725827AbgB1QcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 11:32:06 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24B11FEC;
-        Fri, 28 Feb 2020 08:32:06 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B62F3F73B;
-        Fri, 28 Feb 2020 08:32:05 -0800 (PST)
-Date:   Fri, 28 Feb 2020 16:32:03 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: 5.6-rc3: WARNING: CPU: 48 PID: 17435 at kernel/sched/fair.c:380
- enqueue_task_fair+0x328/0x440
-Message-ID: <20200228163202.aebqzo6n363oqdg5@e107158-lin.cambridge.arm.com>
-References: <ace7327f-0fd6-4f36-39ae-a8d7d1c7f06b@de.ibm.com>
- <afacbbd1-3d6b-c537-34e2-5b455e1c2267@de.ibm.com>
- <CAKfTPtBikHzpHY-NdRJFfOFxx+S3=4Y0aPM5s0jpHs40+9BaGA@mail.gmail.com>
- <b073a50e-4b86-56db-3fbd-6869b2716b34@de.ibm.com>
- <1a607a98-f12a-77bd-2062-c3e599614331@de.ibm.com>
- <CAKfTPtBZ2X8i6zMgrA1gNJmwoSnyRc76yXmLZEwboJmF-R9QVg@mail.gmail.com>
- <b664f050-72d6-a483-be0a-8504f687f225@de.ibm.com>
+        id S1725877AbgB1QfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 11:35:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1582907688;
+        bh=YcG6r7F3VVt7DQsFNhV4JbQ/Bh6aKNh0DkfRxFndYAA=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=M893la1WZgDW7/xWaBckbU4Odje3StaE2YcrGjt7TLxyK3pbX/Ea23pa9tN/cHEH7
+         joHd8VOqO6RSYD0a0SS6Ty3j2XCMW2ucMF+AzxWLxQmzVPStkZStnqrxLMH4lEZRAD
+         CzydVU3Wqs7ndlgvC4LH1dlsW2OpHQHQinHzZuGU=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [185.53.40.15] ([185.53.40.15]) by web-mail.gmx.net
+ (3c-app-gmx-bap21.server.lan [172.19.172.91]) (via HTTP); Fri, 28 Feb 2020
+ 17:34:47 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b664f050-72d6-a483-be0a-8504f687f225@de.ibm.com>
-User-Agent: NeoMutt/20171215
+Message-ID: <trinity-1aeda07b-567b-4a31-a709-36199975894b-1582907687950@3c-app-gmx-bap21>
+From:   "Frank Wunderlich" <frank-w@public-files.de>
+To:     "Bibby Hsieh" <bibby.hsieh@mediatek.com>
+Cc:     "David Airlie" <airlied@linux.ie>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        "Daniel Vetter" <daniel.vetter@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, drinkcat@chromium.org,
+        "Bibby Hsieh" <bibby.hsieh@mediatek.com>,
+        srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
+        tfiga@chromium.org, "CK Hu" <ck.hu@mediatek.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [BUG] [PATCH v5 3/7] drm/mediatek: update cursors by using async
+ atomic update
+Content-Type: text/plain; charset=UTF-8
+Date:   Fri, 28 Feb 2020 17:34:47 +0100
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <20191210050526.4437-4-bibby.hsieh@mediatek.com>
+References: <20191210050526.4437-1-bibby.hsieh@mediatek.com>
+ <20191210050526.4437-4-bibby.hsieh@mediatek.com>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:2wHSXETBujv7ubTGIwZ5VrMFtJmoX/njL13MkH8s5eovSX+Y+sTe0+BByPkiM5mY2rzQm
+ gKpnl5HTR1TX8ZwimXy747VbCYUysGQw+GdtehRIGT5il+WUm2aG81V2Bu0Dpft2U3SY51brmqYE
+ H0JgZOtLaL0+tXa8kZMGxWwyoVLkjFO5i3HFnIccGF/d2ihL7iTlHuSy3H9axD1B76whc67PrgRz
+ VBlEsXrblvHd0UmCQ6WWGJeRXN83aG2f7ScyhV9hAm1fz/xBSUnehkXcTmbnfvD6ndAjICp0ek9M
+ Rc=
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:K7AD3qghSCg=:KDuvUtyqh0IxQhZ8dH9kvu
+ UkMiaACx+8TarnVTvKLAKYfLysNr+9tfMvPZLRxVtUh1T0O1DBm4Rko4sdLxfCcUGMflBCrDF
+ ciX4YIyA6kuUTwucfzx22ITRFECEbD2yoh1WgJbxUXd9NJYwXopioXyMMrwaM6xnYz/nLIr7o
+ mUGZMog7Dou+NeR5Em4TB8BEgRtUTLT6+nfdjLNz4ShGizgdYRFKt+/vHZk/V1IW+aFci1vsg
+ LHvupXQWPTqlYNA3JS0Km5lF3zWjBdUJIGrdIGympZEuHb5mAtd4vGX9XsCeZH3p1WjQ/MpQY
+ 4acYwTHnCUAyGf7pGu2tzR8WsBvTvBOIW4Q8I03JkR+4har3qSWjIcdqgk2ff+6RSbEXVjquZ
+ C7mZBt3pEMeZjKM+Z1HkvLnv2XrRM8CB/s3gUG3quARYuumwpA7BH7F7fOTjduxgqWlhv3YVO
+ mhEDvNNyn9mge3Vz9N5MalwRkGJ5FJFlPEG9tEBlGoHxehlLMAMYcXVl4oE5ffpiFOpSG15y4
+ rm2LvOfG+tHze6Pl5a18bTr459tAbHXJYVUGnvmhov147zK1eBq3bFk9JHKV0fMl5up+E2is1
+ +YOSmDnrCG2i9TqD76kwDIFdZnprjEY1f1rR8oEq2QgrAsYW0byi74bJRq34xclYgmkooSZsk
+ eGfDPVeomp5G0jsWbOdU4oBMCEo7ol8LkDiWjXMdSbjZUOrU62FolI9j7z62bk/OQrp0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/28/20 16:42, Christian Borntraeger wrote:
-> 
-> 
-> On 28.02.20 16:37, Vincent Guittot wrote:
-> > On Fri, 28 Feb 2020 at 16:08, Christian Borntraeger
-> > <borntraeger@de.ibm.com> wrote:
-> >>
-> >> Also happened with 5.4:
-> >> Seems that I just happen to have an interesting test workload/system size interaction
-> >> on a newly installed system that triggers this.
-> > 
-> > you will probably go back to 5.1 which is the version where we put
-> > back the deletion of unused cfs_rq from the list which can trigger the
-> > warning:
-> > commit 039ae8bcf7a5 : (Fix O(nr_cgroups) in the load balancing path)
-> > 
-> > AFAICT, we haven't changed this since
-> 
-> So you do know what is the problem? If not is there any debug option or
-> patch that I could apply to give you more information?
-> 
+Hi,
 
-It might be a long shot as I'm not particularly knowledgeable about this code
-path, but could we be missing rcu_read_lock/unlock around the call to
-unthrottle_cfs_rq() here?
+as talked to Bibby directly, this Patch seems to create a bug with touchscreens. Cursor is displayed on old position if changing its position. e.g. Cursor was on X1,Y1 and i touch to new position X2,Y2 the "click" is recognized on right position (i try to ), but cursor is displayed on X1,Y1
 
----
+have made a small video and uploaded to my gdrive [1]...
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index fc1dfc007604..56aa5cfbb7f1 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7434,6 +7434,7 @@ static int tg_set_cfs_bandwidth(struct task_group *tg, u64 period, u64 quota)
+here i use lightdm login manager and selecting the username/password-fields alternately. Focus follows, but cursor is always displayed on prior position
 
-        raw_spin_unlock_irq(&cfs_b->lock);
+tried to revert this commit [2], but there are many depencies failing the revert, have not yet got all depending commits reverted
 
-+       rcu_read_lock();
-        for_each_online_cpu(i) {
-                struct cfs_rq *cfs_rq = tg->cfs_rq[i];
-                struct rq *rq = cfs_rq->rq;
-@@ -7447,6 +7448,7 @@ static int tg_set_cfs_bandwidth(struct task_group *tg, u64 period, u64 quota)
-                        unthrottle_cfs_rq(cfs_rq);
-                rq_unlock_irq(rq, &rf);
-        }
-+       rcu_read_unlock();
-        if (runtime_was_enabled && !runtime_enabled)
-                cfs_bandwidth_usage_dec();
- out_unlock:
+regards Frank
 
+[1] https://drive.google.com/open?id=1Qy0tYnbO9zNGdjCWY18O-dMYbFuPrq_i
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=920fffcc891276a855cb3ce1e7361d2e9cb72581
