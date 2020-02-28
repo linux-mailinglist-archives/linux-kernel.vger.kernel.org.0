@@ -2,188 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21206173628
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B76B17362C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:39:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbgB1LjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 06:39:01 -0500
-Received: from mail27.static.mailgun.info ([104.130.122.27]:45487 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726502AbgB1LjA (ORCPT
+        id S1726805AbgB1LjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 06:39:16 -0500
+Received: from mail-pj1-f52.google.com ([209.85.216.52]:33151 "EHLO
+        mail-pj1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbgB1LjQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 06:39:00 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1582889939; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=ZW3+R3WZn+Fe4z409CjSDFwivm2DxMFy6ZjsdFoYfMY=; b=dVSibMhyA/WFoshEaIDO4kLhgg36JvAZm4PrYo+7VixXfGBf8qGIfTmFGEUscS2hTrfyMwrm
- sacZMMZO9oQFIzXb1XTIDRklMtjEedm+V+hOYmRwRNA1V79WUtna3GxAwAHZbLtaVBux1/md
- m1It60+1u47X35AKmLy7JqX0j04=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e58fbc8.7fde1c1b0688-smtp-out-n02;
- Fri, 28 Feb 2020 11:38:48 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 47484C4479D; Fri, 28 Feb 2020 11:38:47 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 18FE8C4479C;
-        Fri, 28 Feb 2020 11:38:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18FE8C4479C
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-From:   Maulik Shah <mkshah@codeaurora.org>
-To:     swboyd@chromium.org, mka@chromium.org, evgreen@chromium.org,
-        bjorn.andersson@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        agross@kernel.org, dianders@chromium.org, rnayak@codeaurora.org,
-        ilina@codeaurora.org, lsrao@codeaurora.org,
-        Maulik Shah <mkshah@codeaurora.org>
-Subject: [PATCH v9 3/3] soc: qcom: rpmh: Invoke rpmh_flush() for dirty caches
-Date:   Fri, 28 Feb 2020 17:08:23 +0530
-Message-Id: <1582889903-12890-4-git-send-email-mkshah@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582889903-12890-1-git-send-email-mkshah@codeaurora.org>
-References: <1582889903-12890-1-git-send-email-mkshah@codeaurora.org>
+        Fri, 28 Feb 2020 06:39:16 -0500
+Received: by mail-pj1-f52.google.com with SMTP id m7so4303693pjs.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 03:39:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ziAc3Mla8xF8RThiT9RDbHiUPBgQNQRjNzhxmEJKPBI=;
+        b=Uo712UO7G9rKVyqN2AewidkdDnhXrqXFF6S81IEiC/JHl5NAllVgieR/51erXXMTjB
+         4rXaAySUQwHwlxNU5LOyfqHrJpV6qhtlTGtDex7QrcfZID9nXOtF5GfmdKs5P23xbHXM
+         jrNkNZL4k7to01dgJaHLmCnV3qp/NG0YWeaKk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ziAc3Mla8xF8RThiT9RDbHiUPBgQNQRjNzhxmEJKPBI=;
+        b=JBtNPVMd7INxNli8DJKrPo0MNmP5N3gkyD4i9QeZEDypuQonLUk3g+xDYlPM057nTy
+         QtOs6K43ynPoc2CUINf5Lp9Ohlf5OC6Jga7sLDjLVYeo2TuKA3VOxPJEN+U1yFVTQKd0
+         kWMJGn1EQa32uyZLShNGuX8lNmZzT3VRTtPqiTYDfYrqhf4WJK+cMKdqGopnfzboyZJ0
+         l1g0CnwqqVcIdMnzhvK/8Nt3yiCG+g7I9nJ5W0LH2/m0FPvqC5pGNpvHN51M6eSdMC9j
+         TjsJsP2ea4lJLmFLF3gxxxgVKs1mlBSvTzNH4YOkmmO3J++36kGEc/Daec9tbnl8E+vX
+         71GA==
+X-Gm-Message-State: APjAAAWof1gLrzJSfN5Q8ikOmozMc9s1g5Rxof1lHM1fOA4mcIK/vV6O
+        DnZKlKFKlQYztOP1yZrwwO2I7g==
+X-Google-Smtp-Source: APXvYqx1o0UUcIcmWEAYPT5Lm+FW8M2YK9NHnQGVnRLMf6dcWL3dFJ0hUPE6fzphU1UogSBVs1Ko8g==
+X-Received: by 2002:a17:902:8c91:: with SMTP id t17mr3428561plo.98.1582889954918;
+        Fri, 28 Feb 2020 03:39:14 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
+        by smtp.gmail.com with ESMTPSA id y5sm10715100pfr.169.2020.02.28.03.39.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2020 03:39:13 -0800 (PST)
+Date:   Fri, 28 Feb 2020 20:39:11 +0900
+From:   Sergey Senozhatsky <senozhatsky@chromium.org>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 05/11] videobuf2: handle
+ V4L2_FLAG_MEMORY_NON_CONSISTENT flag
+Message-ID: <20200228113911.GA121952@google.com>
+References: <20200226111529.180197-1-senozhatsky@chromium.org>
+ <20200226111529.180197-6-senozhatsky@chromium.org>
+ <8ea79a02-8346-2b1d-c2d8-3a3b36480320@xs4all.nl>
+ <20200228035759.GP122464@google.com>
+ <7c936a58-7ad9-60a5-1f4a-e86ee358752a@xs4all.nl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c936a58-7ad9-60a5-1f4a-e86ee358752a@xs4all.nl>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add changes to invoke rpmh flush() from within cache_lock when the data
-in cache is dirty.
+On (20/02/28 09:50), Hans Verkuil wrote:
+> On 2/28/20 4:57 AM, Sergey Senozhatsky wrote:
+> > On (20/02/27 13:36), Hans Verkuil wrote:
+> > [..]
+[..]
+> >>> +    * - __u32
+> >>> +      - ``reserved``\ [6]
+> >>>        - A place holder for future extensions. Drivers and applications
+> >>>  	must set the array to zero.
+> >>
+> >> Old drivers and applications still think reserved is [7] and will zero this.
+> > 
+> > Just to make sure, does this mean that you also want me to drop the
+> > "Drivers and applications must set the array to zero" sentence?
+> 
+> Not for the reserved field, only for the flags field.
 
-This is done only if OSI is not supported in PSCI. If OSI is supported
-rpmh_flush can get invoked when the last cpu going to power collapse
-deepest low power mode.
+Got it.
 
-Also remove "depends on COMPILE_TEST" for Kconfig option QCOM_RPMH so the
-driver is only compiled for arm64 which supports psci_has_osi_support()
-API.
+So V4 is ready. Do you think it'll make sense to send it
+out now or next week?
 
-Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-Reviewed-by: Srinivas Rao L <lsrao@codeaurora.org>
----
- drivers/soc/qcom/Kconfig |  2 +-
- drivers/soc/qcom/rpmh.c  | 33 ++++++++++++++++++++++-----------
- 2 files changed, 23 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index d0a73e7..2e581bc 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -105,7 +105,7 @@ config QCOM_RMTFS_MEM
- 
- config QCOM_RPMH
- 	bool "Qualcomm RPM-Hardened (RPMH) Communication"
--	depends on ARCH_QCOM && ARM64 || COMPILE_TEST
-+	depends on ARCH_QCOM && ARM64
- 	help
- 	  Support for communication with the hardened-RPM blocks in
- 	  Qualcomm Technologies Inc (QTI) SoCs. RPMH communication uses an
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-index f28afe4..6a5a60c 100644
---- a/drivers/soc/qcom/rpmh.c
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -12,6 +12,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/psci.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-@@ -158,6 +159,13 @@ static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
- 	}
- 
- unlock:
-+	if (ctrlr->dirty && !psci_has_osi_support()) {
-+		if (rpmh_flush(ctrlr)) {
-+			spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-+			return ERR_PTR(-EINVAL);
-+		}
-+	}
-+
- 	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
- 
- 	return req;
-@@ -285,26 +293,35 @@ int rpmh_write(const struct device *dev, enum rpmh_state state,
- }
- EXPORT_SYMBOL(rpmh_write);
- 
--static void cache_batch(struct rpmh_ctrlr *ctrlr, struct batch_cache_req *req)
-+static int cache_batch(struct rpmh_ctrlr *ctrlr, struct batch_cache_req *req)
- {
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&ctrlr->cache_lock, flags);
-+
- 	list_add_tail(&req->list, &ctrlr->batch_cache);
- 	ctrlr->dirty = true;
-+
-+	if (!psci_has_osi_support()) {
-+		if (rpmh_flush(ctrlr)) {
-+			spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-+			return -EINVAL;
-+		}
-+	}
-+
- 	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-+
-+	return 0;
- }
- 
- static int flush_batch(struct rpmh_ctrlr *ctrlr)
- {
- 	struct batch_cache_req *req;
- 	const struct rpmh_request *rpm_msg;
--	unsigned long flags;
- 	int ret = 0;
- 	int i;
- 
- 	/* Send Sleep/Wake requests to the controller, expect no response */
--	spin_lock_irqsave(&ctrlr->cache_lock, flags);
- 	list_for_each_entry(req, &ctrlr->batch_cache, list) {
- 		for (i = 0; i < req->count; i++) {
- 			rpm_msg = req->rpm_msgs + i;
-@@ -314,7 +331,6 @@ static int flush_batch(struct rpmh_ctrlr *ctrlr)
- 				break;
- 		}
- 	}
--	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
- 
- 	return ret;
- }
-@@ -386,10 +402,8 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
- 		cmd += n[i];
- 	}
- 
--	if (state != RPMH_ACTIVE_ONLY_STATE) {
--		cache_batch(ctrlr, req);
--		return 0;
--	}
-+	if (state != RPMH_ACTIVE_ONLY_STATE)
-+		return cache_batch(ctrlr, req);
- 
- 	for (i = 0; i < count; i++) {
- 		struct completion *compl = &compls[i];
-@@ -455,9 +469,6 @@ static int send_single(struct rpmh_ctrlr *ctrlr, enum rpmh_state state,
-  * Return: -EBUSY if the controller is busy, probably waiting on a response
-  * to a RPMH request sent earlier.
-  *
-- * This function is always called from the sleep code from the last CPU
-- * that is powering down the entire system. Since no other RPMH API would be
-- * executing at this time, it is safe to run lockless.
-  */
- int rpmh_flush(struct rpmh_ctrlr *ctrlr)
- {
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+	-ss
