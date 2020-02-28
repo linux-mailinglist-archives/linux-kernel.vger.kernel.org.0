@@ -2,150 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA43B173CC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:24:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 315C2173CD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:26:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgB1QYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 11:24:35 -0500
-Received: from mail-dm6nam11on2084.outbound.protection.outlook.com ([40.107.223.84]:6183
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725730AbgB1QYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 11:24:34 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=C7QvNGdiEZVnWswDR1crr8Dx92AIBRaf1HJLjAVptm2alFI3caeFUmT2sOCBAoo3YR3Xa1WXiNp4spoj28PAqSXELzovsMKoclQWwA83XlI2GPtcAPInAPPx92jvhsQusif3e8rMILIqRAoTF643WrVTCF0LTXErA+CqTfwecdM5C0//ySwzDAmirxgK6zOJBzrIq3Q8IVW7bAmWL1ucuTm+6QyyLGJ00sxfjrYWCqirzXG0tumCjcwFOkfSJhNwUybQZm3sM5jzNFKJ0Us0cAbZWI9I6tcJMkY8EYZLePrDI6IFDAAWJ7TDxrN3/8cG55t3DYlfNAtDub2B+40Xgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=teqrggq7Dg9SZDKnxbigLMQL23p2YqrY+PNN2zQpAhU=;
- b=msNW04gFui0JoOJSFCSEIv693I+btxe+00DmmRnC44go6fSYZSgNca1bY2y5RbjmCeQ2fsw53FYpOKYOHPfxe0gxm3CEAhNH2KMYRg665bPSELhg7mFqcWmPPE9uXgYO4ndVNRadsySGjzjtXKbVyufJdyVqIeyqk2nHUXfJSyM8IwA5Ow5LSrStSU87gxmqDV/5duFPfkJlR7CeBEtEwg/s4TXn1hhWbTLXP2GQJDfr8UxP5fDopKH/ZrQuIq2cgB4+MOF5nEAcdXzSLSYDB6vEEuFaWKMKV0dqdm/1ISX2AISekxLlmeXUMHEuMzJONU82qPoLTIIjOY/4PWg5xw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=teqrggq7Dg9SZDKnxbigLMQL23p2YqrY+PNN2zQpAhU=;
- b=mpfnNyH8gtKVg0pMXMh54Ieb0GdvPhcSFmVuhIUVI0M/GzfGPsVY94HYN0MIdxF+Z6STdTfLeSiTpuz7jhbgbKAlfSMlqD50ic7gw2JBAijrxcCiBpF0+4Wti6zlwieNC/YDkqadTs/G/mhbBnknhqn7uI07pBgIZoiN9I80Xig=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kim.phillips@amd.com; 
-Received: from SN6PR12MB2845.namprd12.prod.outlook.com (2603:10b6:805:75::33)
- by SN6PR12MB2655.namprd12.prod.outlook.com (2603:10b6:805:72::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.16; Fri, 28 Feb
- 2020 16:24:32 +0000
-Received: from SN6PR12MB2845.namprd12.prod.outlook.com
- ([fe80::dd6f:a575:af8e:4f1b]) by SN6PR12MB2845.namprd12.prod.outlook.com
- ([fe80::dd6f:a575:af8e:4f1b%7]) with mapi id 15.20.2772.018; Fri, 28 Feb 2020
- 16:24:32 +0000
-Subject: Re: [PATCH v2 2/3] perf vendor events amd: add Zen2 events
-To:     Vijay Thakkar <vijaythakkar@me.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        =?UTF-8?Q?Martin_Li=c5=a1ka?= <mliska@suse.cz>,
-        Jon Grimm <jon.grimm@amd.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-References: <20200225192815.50388-1-vijaythakkar@me.com>
- <20200225192815.50388-3-vijaythakkar@me.com>
- <6f2a1097-a656-8226-1be3-36a337539412@amd.com>
- <20200228160045.GA23708@shwetrath.localdomain>
-From:   Kim Phillips <kim.phillips@amd.com>
-Message-ID: <f7dba82f-beac-2669-c7e7-5a85edc2798d@amd.com>
-Date:   Fri, 28 Feb 2020 10:24:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-In-Reply-To: <20200228160045.GA23708@shwetrath.localdomain>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DM6PR02CA0076.namprd02.prod.outlook.com
- (2603:10b6:5:1f4::17) To SN6PR12MB2845.namprd12.prod.outlook.com
- (2603:10b6:805:75::33)
+        id S1726561AbgB1Q0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 11:26:49 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:40010 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbgB1Q0s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 11:26:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1582907205; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xOb0AVoiiFlckuvxHpEhBL9Wrp4HKGY5UhYo5YdakL0=;
+        b=L+RAqN9ACsoeWx1jzHdHE2acUYpgMnq8YMOrZaHk4eeqRdlvNqW9Ns96f0NkFiP6lG/Qu0
+        5GZTb5K6gIvKRr1+aq4pAawcE+gxgqZxtb/6G5OCl9f7YhANfLqbVe297FNUmrzFJ48Byo
+        0W9OlUBhOUDdxmv8hJ33Sv1BaXngaCc=
+Date:   Fri, 28 Feb 2020 13:26:20 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v8 0/7] MIPS: CI20: Add efuse driver for Ingenic JZ4780
+ and attach to DM9000 for stable MAC addresses
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Mathieu Malaterre <malat@debian.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com
+Message-Id: <1582907181.3.7@crapouillou.net>
+In-Reply-To: <cover.1582905653.git.hns@goldelico.com>
+References: <cover.1582905653.git.hns@goldelico.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.236.136.247] (165.204.77.1) by DM6PR02CA0076.namprd02.prod.outlook.com (2603:10b6:5:1f4::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.16 via Frontend Transport; Fri, 28 Feb 2020 16:24:31 +0000
-X-Originating-IP: [165.204.77.1]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: adf5be8a-de93-4eda-f083-08d7bc6ab10c
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2655:|SN6PR12MB2655:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <SN6PR12MB2655D2992B49ADE6F77B0EA887E80@SN6PR12MB2655.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-Forefront-PRVS: 0327618309
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(366004)(39860400002)(136003)(346002)(189003)(199004)(478600001)(8676002)(53546011)(6486002)(2616005)(956004)(7416002)(186003)(31686004)(16526019)(81166006)(8936002)(81156014)(6916009)(26005)(16576012)(2906002)(66556008)(66476007)(66946007)(5660300002)(86362001)(31696002)(52116002)(54906003)(316002)(36756003)(4326008)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2655;H:SN6PR12MB2845.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ywUyta0bGCusxz1op/YW05QvtmnjpX9pdH3Cuo4wEpLk7VYN/ssmEYQLh0DAwqkg/Jtd3FFLrgtYnrWE34zXLdrkOG/qilke7/bO+DNyEmMwvbOXtRInTysQRMAQ8WnNGDzgxCdwhOwBBugSbJ9hNYFBsoaYPself7eeLoazJu9XrG7ucMFEbLJtO1Z+L0Wu8fp8tKJRHrcBXSGNBpE5sBiRjJrFDvQtP5e9oWyYr7qHviPNgw3DB//i9vvKIzdCvjeKxpIPSKZonTCvjY2AKN6N02eJ6RY/jMOUdaiZBFMDfnj7qYs2Vihutdw04meiE/NTnw7lj//Nc7LTCvKC4dScNblsnql8XM3h0OKTGKOg+EKjKulNtyw7+sDocKLOiouK8lNBAxpO0+sAdgngjHgReNkpbEfVCyJyuU7U+hEWlqwChkN0MPxmLKb2HM9b
-X-MS-Exchange-AntiSpam-MessageData: SYO6ng+ZffeXAMCnIb7XzqNvvArbFw9vzQeCdP0bxtM0lKgvbavzRylR2T+8CCvTuo0+Gxc65/j6pxEss0qFl80maxLBj1pCHv9/tFU4YcdxEZZb2AAHCa7FHPpMRw0AJMru+1TIVBPEznyCxLg3HQ==
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: adf5be8a-de93-4eda-f083-08d7bc6ab10c
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2020 16:24:32.1251
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KWO+8KJw5Z7kMqpbAzbyFkNvWC4+bmWnGZhswT3/MmY+4qEyFIZm+YSvQ4K3f14pdMsJAnqd4rsB5p+Ov+mlfg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2655
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/28/20 10:00 AM, Vijay Thakkar wrote:
->>> +  {
->>> +    "EventName": "ls_pref_instr_disp.prefetch_nta",
->>> +    "EventCode": "0x4b",
->>> +    "BriefDescription": "Software Prefetch Instructions (PREFETCHNTA instruction) Dispatched.",
->>> +    "PublicDescription": "Software Prefetch Instructions (PREFETCHNTA instruction) Dispatched.",
->>> +    "UMask": "0x4"
->>> +  },
->>> +  {
->>> +    "EventName": "ls_pref_instr_disp.store_prefetch_w",
->>> +    "EventCode": "0x4b",
->>> +    "BriefDescription": "Software Prefetch Instructions (3DNow PREFETCHW instruction) Dispatched.",
->>> +    "PublicDescription": "Software Prefetch Instructions (3DNow PREFETCHW instruction) Dispatched.",
->>> +    "UMask": "0x2"
->>> +  },
->>> +  {
->>> +    "EventName": "ls_pref_instr_disp.load_prefetch_w",
->>> +    "EventCode": "0x4b",
->>> +    "BriefDescription": "Prefetch, Prefetch_T0_T1_T2.",
->>> +    "PublicDescription": "Software Prefetch Instructions Dispatched. Prefetch, Prefetch_T0_T1_T2.",
->>> +    "UMask": "0x1"
->>> +  },
-> These three are present in the PPR for model 71h (56176 Rev 3.06 - Jul
-> 17, 2019) but are missing from the PPR for model 31h (55803 Rev 0.54 -
-> Sep 12, 2019). Not sure what to do about it. 
+Hi Nikolaus,
 
-They're producing nonzero counts on my model 31h, so leave them in?
+For the whole series:
 
-> Similarly, PMC 0x0AF - Dispatch Resource Stall Cycles 0 only has one
-> subcounter in the model 31h PPR, whereas the PPR for 71h is the one that
-> contains the eight subcounters we see in the mainline right now.
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
 
-I'm getting nonzero values on my model 31h for that event's
-various unit masks, too.
+Cheers,
+-Paul
 
-> There could be more subtle differences like these, since I have not
-> really compared the PPR versions that thoroughly. I was going with the
-> assumption that since both are for SoCs based on the Zen2, they would
-> have identical events. 
 
-I think that's a reasonable assumption.
+Le ven., f=E9vr. 28, 2020 at 17:00, H. Nikolaus Schaller=20
+<hns@goldelico.com> a =E9crit :
+> * fix a compiler warning/error (reported by Paul Cercueil=20
+> <paul@crapouillou.net>)
+> * remove clock-names from properties (suggested by Paul Cercueil=20
+> <paul@crapouillou.net>)
+>=20
+> PATCH V7 2020-02-28 14:58:30:
+> * use devm_add_action_or_reset to unprepare clock in case of error=20
+> (suggested by Paul Cercueil <paul@crapouillou.net>)
+> * use already existing constants to check for overflow of rd_adj and=20
+> rd_strobe
+> * remove clock-names from bindings example and DTS (suggested by Paul=20
+> Cercueil <paul@crapouillou.net>)
+> * addition for nemc driver to handle this correctly (contributed by=20
+> Paul Cercueil <paul@crapouillou.net>)
+> * make efuse a child node of nemc to avoid problems with overlapping
+>   reg address ranges (suggested by Paul Cercueil=20
+> <paul@crapouillou.net>)
+>=20
+> PATCH V6 2020-02-26 12:16:07:
+> * add dependency on CONFIG_OF and select REGMAP_MMIO (suggested by=20
+> Paul Cercueil <paul@crapouillou.net>)
+> * add clk_prepare_enable() (suggested by Paul Cercueil=20
+> <paul@crapouillou.net>)
+> * inline jz4780_efuse_read_32bytes() since it is only used once
+> * remove read optimization for full block (suggested by Paul Cercueil=20
+> <paul@crapouillou.net>)
+> * simplify calculations for rd_adj and rd_strobe (suggested by Paul=20
+> Cercueil <paul@crapouillou.net>)
+> * do calculations for rd_adj and rd_strobe in local variables
+> * fix overflow check (did allow for 5 bit values although register is=20
+> 4 bit wide)
+> * fixes for yaml (sugested by Andreas Kemnade <andreas@kemnade.info>)
+>=20
+> PATCH V5 2020-02-22 11:25:35:
+> * no longer RFC but PATCH
+> * add yaml bindings (by Andreas Kemnade <andreas@kemnade.info>)
+> * fixes to yaml (suggested by Rob Herring <robh@kernel.org>)
+>=20
+> RFC V4 2020-02-17 17:55:35:
+> * removed read_only for nvmem config because there is no write method
+> * Kconfig: replaced depends MACH_JZ4780 with MACH_INGENIC
+> * run through checkpatch and fixed issues
+> * made use of devm_nvram_register() and get rid of=20
+> jz4780_efuse_remove()
+>   (suggested by Srinivas Kandagatla <srinivas.kandagatla@linaro.org>)
+> * squashed previous patch 1/9 and 2/9 into single (regmap based)=20
+> driver
+>=20
+> RFC V3 2020-02-16 20:20:59:
+>=20
+> This series is based on and a follow up for
+>=20
+> https://lore.kernel.org/patchwork/cover/868157/
+>=20
+> ("[v2,0/2] Add efuse driver for Ingenic JZ4780 SoC")
+>=20
+> Original authors were
+> PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+> Mathieu Malaterre <malat@debian.org>
+>=20
+> and there are additions / code improvements by
+> H. Nikolaus Schaller <hns@goldelico.com>
+> Paul Cercueil <paul@crapouillou.net>
+>=20
+> This setup works, if the dm9000 driver is compiled
+> as a module.
+>=20
+> Therefore it is all RFC level. It is also not completely
+> checkpatched.
+>=20
+>=20
+> H. Nikolaus Schaller (1):
+>   MIPS: DTS: CI20: make DM9000 Ethernet controller use NVMEM to find=20
+> the
+>     default MAC address
+>=20
+> Paul Cercueil (1):
+>   memory: jz4780_nemc: Only request IO memory the driver will use
+>=20
+> PrasannaKumar Muralidharan (5):
+>   nvmem: add driver for JZ4780 efuse
+>   Bindings: nvmem: add bindings for JZ4780 efuse
+>   Documentation: ABI: nvmem: add documentation for JZ4780 efuse ABI
+>   nvmem: MAINTAINERS: add maintainer for JZ4780 efuse driver
+>   MIPS: DTS: JZ4780: define node for JZ4780 efuse
+>=20
+>  .../ABI/testing/sysfs-driver-jz4780-efuse     |  16 ++
+>  .../bindings/nvmem/ingenic,jz4780-efuse.yaml  |  45 ++++
+>  MAINTAINERS                                   |   5 +
+>  arch/mips/boot/dts/ingenic/ci20.dts           |   3 +
+>  arch/mips/boot/dts/ingenic/jz4780.dtsi        |  19 +-
+>  drivers/memory/jz4780-nemc.c                  |  15 +-
+>  drivers/nvmem/Kconfig                         |  12 +
+>  drivers/nvmem/Makefile                        |   2 +
+>  drivers/nvmem/jz4780-efuse.c                  | 239=20
+> ++++++++++++++++++
+>  9 files changed, 353 insertions(+), 3 deletions(-)
+>  create mode 100644=20
+> Documentation/ABI/testing/sysfs-driver-jz4780-efuse
+>  create mode 100644=20
+> Documentation/devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
+>  create mode 100644 drivers/nvmem/jz4780-efuse.c
+>=20
+> --
+> 2.23.0
+>=20
 
-> Otherwise, I have made all the other changes and corrections, and will
-> send in v3 after you suggest how to proceed about the above two.
+=
 
-Thanks, I'd veer toward making them available despite differences in PPR
-versions.
-
-Thanks,
-
-Kim
