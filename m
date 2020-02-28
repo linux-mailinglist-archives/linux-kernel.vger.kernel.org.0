@@ -2,81 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61ACA173C94
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:10:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61DDF173C9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:14:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726063AbgB1QKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 11:10:49 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45868 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725827AbgB1QKt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 11:10:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582906248;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TJIuVNRW5GZyI5ESRQqaE219pUI93KEK2zERenrB4AE=;
-        b=FZxR9CFN4a0F2DDMdCkkx6M7/r2wJmilmrTGjl3IDTfFXZMoQy4A43JCEgNQYjjB937G71
-        NFpHemGf7fOKxfFe6vGQuJT59+yDuveA9tizRyhbY8TGOZS6zpED+JR6hC9zqOolFTgHKt
-        ktTQnIbrfSzrEiE3G4oIr3TEhK3ny58=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-123-W0Pkfu7KMp2rwgHvaJxNmQ-1; Fri, 28 Feb 2020 11:10:46 -0500
-X-MC-Unique: W0Pkfu7KMp2rwgHvaJxNmQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A884C100550E;
-        Fri, 28 Feb 2020 16:10:44 +0000 (UTC)
-Received: from treble (ovpn-121-128.rdu2.redhat.com [10.10.121.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D20735DA2C;
-        Fri, 28 Feb 2020 16:10:43 +0000 (UTC)
-Date:   Fri, 28 Feb 2020 10:10:41 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH] drm/i915: Minimize uaccess exposure in
- i915_gem_execbuffer2_ioctl()
-Message-ID: <20200228161041.ov7d5ox7myrnr4gi@treble>
-References: <ed52cfb852d2772bf20f48614d75f1d1b1451995.1582841072.git.jpoimboe@redhat.com>
- <158284236096.19174.6917853940060252533@skylake-alporthouse-com>
+        id S1726650AbgB1QOZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 11:14:25 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:38842 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725769AbgB1QOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 11:14:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=Qflm7OrKUjYWnq6cm+MuYcbhzkhPxEoWP0RSirpduAs=; b=sCUwvJFKGpL5RN1pG5+HhwpTHm
+        PBK6+bncoGPpLWHzdPd//9LgeFT65fnpZLqxIkgbdtxdBU2RnmoTMLPfFaDDSZ1snlLxOIwl1O5wL
+        XeB5VAPeMVA9kwDj1grxFLP47+FmJGO+R4RQbN3375AIzOscra/LlS68CvhUjCbskYRE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1j7iHL-00052K-HS; Fri, 28 Feb 2020 17:14:19 +0100
+Date:   Fri, 28 Feb 2020 17:14:19 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>
+Cc:     davem@davemloft.net, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        foss@0leil.net
+Subject: Re: [PATCH net-next v2 1/3] net: phy: mscc: add support for RGMII
+ MAC mode
+Message-ID: <20200228161419.GE29979@lunn.ch>
+References: <20200228155702.2062570-1-antoine.tenart@bootlin.com>
+ <20200228155702.2062570-2-antoine.tenart@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <158284236096.19174.6917853940060252533@skylake-alporthouse-com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20200228155702.2062570-2-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 10:26:00PM +0000, Chris Wilson wrote:
-> > --- a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-> > +++ b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-> > @@ -2947,6 +2947,13 @@ i915_gem_execbuffer2_ioctl(struct drm_device *dev, void *data,
-> >                         u64_to_user_ptr(args->buffers_ptr);
-> >                 unsigned int i;
-> >  
-> > +               /*
-> > +                * Do the call to gen8_canonical_addr() outside the
-> > +                * uaccess-enabled region to minimize uaccess exposure.
-> > +                */
-> > +               for (i = 0; i < args->buffer_count; i++)
-> > +                       exec2_list[i].offset = gen8_canonical_addr(exec2_list[i].offset);
+On Fri, Feb 28, 2020 at 04:57:00PM +0100, Antoine Tenart wrote:
+> This patch adds support for connecting VSC8584 PHYs to the MAC using
+> RGMII.
 > 
-> 
-> Another loop over all the objects, where we intentionally try and skip
-> unmodified entries? To save 2 instructions from inside the second loop?
-> 
-> Colour me skeptical.
+> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 
-So are you're saying these arrays can be large and that you have
-performance concerns?
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
--- 
-Josh
-
+    Andrew
