@@ -2,112 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E418173643
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:41:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 938C8173654
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:46:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbgB1Ll4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 06:41:56 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:39011 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbgB1Ll4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 06:41:56 -0500
-Received: by mail-ua1-f68.google.com with SMTP id c21so849651uam.6;
-        Fri, 28 Feb 2020 03:41:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qgRBXu3UXujfUu/YLJD5NKUPvJ1HubicGzZMJLwxdxg=;
-        b=IAEW3CVv+KdBq/tsDmXVgbaGMpkVLw+nS6/uh+feLTX2l/1du9WV8lusAvjmcEmOIV
-         bNu2OCsnBP45jQuDGoCKbt9l5pmQE8rHCL3QyU0kWtTKlSWNdfw8NzPLglFuHqGjA4of
-         eWRId6NmuKmUVV4FBVpvpsKuH2jKQMyqVoYkZ792Gn63fWXY7177B2UB469VAukJ3/Yn
-         zGHrRZBilpo6WHVZtm465Eth9XVfMRS/9d7NjqyIVBoKtXA9qvyAKaWaYw7isPvoHRNW
-         jzU1nMB430hd4068R/xsTj59X4e47eyMJOsC3Vf51CwwRs+P8z7eqRL4NawHSJPXYN8Z
-         yigg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qgRBXu3UXujfUu/YLJD5NKUPvJ1HubicGzZMJLwxdxg=;
-        b=CidnHKZXUjNIDdsJbKGsHViptlw2bO+921uqoo5JgE66zGNVPsveB3qRyROUH36O07
-         rjS+Qg4mD78O1dDIJ2m/rD9ricykbUlIRlethFE99VzKZea7/C0lm6o6dhwE7W8Bsb8f
-         ys0yKNVNgdRCWTdjroJyDzRYLoPTi2KZg2G9x9yRAoGOEYBthgOXtD8j+EHHWRs2aSX6
-         /p5yc1R/2Wx6I+pEMYtdg4rwTgdTMMkHpv7kHiFB2DWMH5p32rvjHFiRQam3qvIdAVsa
-         vQ2l5x4tPE+q/h2Jajl84PciNimbQTBNCKdsPmbsm6A4NXIMUDMlYVDDF2mYwBJ8YR9g
-         1G9A==
-X-Gm-Message-State: ANhLgQ2iXziaWLLLYnNCHOBbG75iZBgFvQJtAMXNwMCzUVAvK99IDRxe
-        +UltbXMauKF8Q6Ur/AU+wa2jLZVN0r4urAY7qeDlzdOtsw4=
-X-Google-Smtp-Source: ADFU+vviIyKdulGmcFSh6KBXyhcte0zMAWs0zR8cPkGD3oMYMNar1XHGJ2FhVykv3IvpNgamMnEP8S9KxVjPWCkDT7I=
-X-Received: by 2002:a9f:3b02:: with SMTP id i2mr1670019uah.33.1582890115091;
- Fri, 28 Feb 2020 03:41:55 -0800 (PST)
+        id S1726603AbgB1LqX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 06:46:23 -0500
+Received: from elvis.franken.de ([193.175.24.41]:42092 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725906AbgB1LqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 06:46:22 -0500
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1j7e5y-0008UT-00; Fri, 28 Feb 2020 12:46:18 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 9D8EAC0EC0; Fri, 28 Feb 2020 12:45:44 +0100 (CET)
+Date:   Fri, 28 Feb 2020 12:45:44 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     ralf@linux-mips.org, paulburton@kernel.org, tglx@linutronix.de,
+        sboyd@kernel.org, geert+renesas@glider.be, f4bug@amsat.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] MIPS: pic32mzda: Drop pointless static qualifier
+Message-ID: <20200228114544.GA10905@alpha.franken.de>
+References: <20200227070502.106762-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-References: <20200228044518.20314-1-gmayyyha@gmail.com> <CAOi1vP-K+e0N26qpthLcst8HLE-FAMGSE9XwBhj1dPBiLyN-iA@mail.gmail.com>
-In-Reply-To: <CAOi1vP-K+e0N26qpthLcst8HLE-FAMGSE9XwBhj1dPBiLyN-iA@mail.gmail.com>
-From:   Yanhu Cao <gmayyyha@gmail.com>
-Date:   Fri, 28 Feb 2020 19:41:44 +0800
-Message-ID: <CAB9OAC0dURDHgqGDVCg_Gd+EhH-9_n4-mycgsqfxS64GRgd4Og@mail.gmail.com>
-Subject: Re: [PATCH] ceph: using POOL FULL flag instead of OSDMAP FULL flag
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>, kuba@kernel.org,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200227070502.106762-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 6:23 PM Ilya Dryomov <idryomov@gmail.com> wrote:
->
-> On Fri, Feb 28, 2020 at 5:45 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
-> >
-> > OSDMAP_FULL and OSDMAP_NEARFULL are deprecated since mimic.
-> >
-> > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> > ---
-> >  fs/ceph/file.c                  |  6 ++++--
-> >  include/linux/ceph/osd_client.h |  2 ++
-> >  include/linux/ceph/osdmap.h     |  3 ++-
-> >  net/ceph/osd_client.c           | 23 +++++++++++++----------
-> >  4 files changed, 21 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index 7e0190b1f821..60ea1eed1b84 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -1482,7 +1482,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> >         }
-> >
-> >         /* FIXME: not complete since it doesn't account for being at quota */
-> > -       if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL)) {
-> > +       if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-> > +                               CEPH_POOL_FLAG_FULL)) {
-> >                 err = -ENOSPC;
-> >                 goto out;
-> >         }
-> > @@ -1575,7 +1576,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> >         }
-> >
-> >         if (written >= 0) {
-> > -               if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
-> > +               if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-> > +                                       CEPH_POOL_FLAG_NEARFULL))
->
-> Hi Yanhu,
->
-> Have you considered pre-mimic clusters here?  They are still supported
-> (and will continue to be supported for the foreseeable future).
->
-> Thanks,
->
->                 Ilya
+On Thu, Feb 27, 2020 at 07:05:02AM +0000, YueHaibing wrote:
+> There is no need to have the 'struct device_node *node' variable static
+> since new value always be assigned before use it.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  arch/mips/pic32/pic32mzda/time.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-I have tested it work on Luminous, I think it work too since
-ceph-v0.80(https://github.com/ceph/ceph/blob/b78644e7dee100e48dfeca32c9270a6b210d3003/src/osd/osd_types.h#L815)
-alread have pool FLAG_FULL.
+applied to mips-next.
 
-CephFS doesn't write synchronously even if CEPH_OSDMAP_NEARFULL is
-used, then should fixed by CEPH_POOL_FLAG_NEARFULL.
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
