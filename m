@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79371173A8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:00:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F32A173A8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:01:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbgB1PAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 10:00:09 -0500
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:43770 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726796AbgB1PAJ (ORCPT
+        id S1726971AbgB1PBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 10:01:17 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39235 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbgB1PBR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 10:00:09 -0500
-Received: by mail-qv1-f65.google.com with SMTP id p2so1443000qvo.10
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 07:00:07 -0800 (PST)
+        Fri, 28 Feb 2020 10:01:17 -0500
+Received: by mail-qt1-f195.google.com with SMTP id p34so2202462qtb.6
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 07:01:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:user-agent:in-reply-to:references:mime-version
          :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=r5uJ0wc4GP6HMgk5dq1KYlyGtIduf4ShNQhhfVhz1nE=;
-        b=gWkmDDpOSlkv9Ic9GMdNfELw4HMWqoAsExS08gBqTziNlHzRr5xfESyYkvcspSpEsH
-         +WN/rsdiA/knyr+7z71BuvlUx9lQR39NtdirexnJZiQ723aAbeKIgpk8xBulOMe+rdJ0
-         +y6X8saQMXHosfXCVxocBqKrlF+xj8gxUnZupqX2dIk0B0TMcWct/XBCEe/jBquZXBrP
-         1sp9caUxOI2hETLUiLk/8KLThCmMfc4nyM3PppNrSWQW518xCpPdrIAyFYn8cePXR5AF
-         uGUyo5/F0/RjiWGirZyPPSToUb3nUSm8RujndM9+nLH6r9i5UWFDzYpxCU2EC7VlHP0K
-         jTmQ==
+        bh=Clp+dXMAk/3s118zZhvs9Tjw+57UrzDN6Ah8uK4j4jM=;
+        b=PARcesVsNYLJHoptI1jCN79pKBB6CjZlK5c8zEZMGfBCRE4JfvKXlXwc7kijpY67oy
+         JGMzQDPhp2QAkJcaimTwV9y7rryPaBet8J43itCaySuNreCAiUp1GzddUnNYMKLQh5Vn
+         0tn+q9qmyssvSMWnx8RtwLMTxw3AAn4uibZPOM7AQjGLNLwqU9FS326aKjPZIN8j4gc7
+         VVLrBHgalqP83r+GgwsnW1w1+gxFGlGwmeQkohqN44EMiVMsLkk7OnzNvmf/Pj998QUJ
+         8pjGK1+HNaBqwoMCYFRZoMEsZStoMsJ5Mr6mP1mu4cH4xakOt2WVuAIzRKPN4rOdz7ok
+         pd+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:user-agent:in-reply-to:references
          :mime-version:content-transfer-encoding:subject:to:cc:from
          :message-id;
-        bh=r5uJ0wc4GP6HMgk5dq1KYlyGtIduf4ShNQhhfVhz1nE=;
-        b=dZEGbeoZnJZVronyl8VLj+u5oaLB9l1/Qy2Od2hdgXIk85bYtJVA8PXgI0B+nvHrPk
-         Z4XbnFNNRR2UHp9/s0xYt9KQg19kh1xb6oEaMqI5N20Dc4ppqRaLlT+pTDA1W3tp0Ki9
-         EfJzXSd/3m9OM9KEsBdSb1zTg1GKqBeiB2NCuZ64+ElAaHY4fKNbLhrfJcyE+i2ddJpg
-         e1H1Np40gVtmfLe4QjVdTCMx+38iONBb50IlOahBSyETdxOXEGUV9ecyE/tlkNHrFTQt
-         INFSfZx/yIsOLa2JZZN9TrRwVmrKVKflf98a+JHDdjFBSqhupr8LcTMvChOWX+2oB7pR
-         xr4g==
-X-Gm-Message-State: APjAAAWQAU2z5E0ux2OvmlHlMyySP7gY8CHxWf9nDugOCNy7Gx1sVGcn
-        euSXb1dXlvlVvQVrNHDQCzU=
-X-Google-Smtp-Source: APXvYqyH2Xyw/iwda4WHtfv9SDFijySfjhvKt9+TST9YSBEW2aUTZNcPLrRfdAec9u6JTx1X0AfPyA==
-X-Received: by 2002:ad4:580e:: with SMTP id dd14mr4143382qvb.84.1582902006795;
-        Fri, 28 Feb 2020 07:00:06 -0800 (PST)
+        bh=Clp+dXMAk/3s118zZhvs9Tjw+57UrzDN6Ah8uK4j4jM=;
+        b=hhJWNCCLJaZ+Ik1sXjMgyJhF784Yuu+moIZSU8E2kQeGVSqtH9CeY6zazbW7ydFMlT
+         /AjG985KrvLzbmRdhXFJPj2yNcl5zQpHyZI2ko7CNVi0iN4o9gAzgiPF1gIhcqF6jAdx
+         0QnuTVDUf74qne9xqGsYvB5CFST+A5Ijc4y5GUNau3FlN4eafNIOhvv/kOjGxGqfl/Co
+         JWN03S3UQ3asNr62gY6FZzCTzXOdWvuBTb7SKcs53rmi5B4u6gBI6UEOhFvdvaWhF+8i
+         DGtzvS1VjIeqKWAhRd4Gl+3UI7LLR0jPqpy8MM5IlO1otyAGWWi3jntrAmEOQPJ3KeeD
+         pyjA==
+X-Gm-Message-State: APjAAAWW8sRlukg+qTuIYzcu+mdnXWY+rDGaEhwzNFdpwBmkZAKeNnWb
+        BOpqUAyTMoXJjrGn1OGe3Jo=
+X-Google-Smtp-Source: APXvYqw2r1YAkvtvtyajk+MuAfNUdr6EC19Jc/s0UV27xTDPWHe4WQ+NQ6PuRF/dMd2LpJs8DoguBQ==
+X-Received: by 2002:ac8:1ae5:: with SMTP id h34mr4588421qtk.323.1582902075966;
+        Fri, 28 Feb 2020 07:01:15 -0800 (PST)
 Received: from [192.168.0.76] (177.206.220.193.dynamic.adsl.gvt.net.br. [177.206.220.193])
-        by smtp.gmail.com with ESMTPSA id r37sm5109037qtj.44.2020.02.28.07.00.05
+        by smtp.gmail.com with ESMTPSA id p19sm5247526qte.81.2020.02.28.07.01.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Feb 2020 07:00:06 -0800 (PST)
-Date:   Fri, 28 Feb 2020 11:59:56 -0300
+        Fri, 28 Feb 2020 07:01:15 -0800 (PST)
+Date:   Fri, 28 Feb 2020 12:01:04 -0300
 User-Agent: K-9 Mail for Android
 In-Reply-To: <3fa6d985-1401-d767-a4bc-ce0efc420429@linux.ibm.com>
 References: <20200204045233.474937-1-ravi.bangoria@linux.ibm.com> <20200206190412.GD1669706@krava> <20200227141110.GF10761@kernel.org> <3fa6d985-1401-d767-a4bc-ce0efc420429@linux.ibm.com>
@@ -60,7 +60,7 @@ CC:     Jiri Olsa <jolsa@redhat.com>, namhyung@kernel.org,
         irogers@google.com, songliubraving@fb.com, yao.jin@linux.intel.com,
         linux-kernel@vger.kernel.org
 From:   Arnaldo Melo <arnaldo.melo@gmail.com>
-Message-ID: <11A3D3E8-133A-4235-856C-D8C3C1400264@gmail.com>
+Message-ID: <6C84FDFE-B636-4D13-8D6E-EE0BDEB9F891@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -93,9 +93,10 @@ ux=2Eibm=2Ecom
 d
 >them?
 >Or didn't consider for perf/urgent :) ?
-=20
-Yep
 
+Yeah, I have those in my perf/core branch=2E
+
+- Arnaldo
 >
 >Ravi
 
