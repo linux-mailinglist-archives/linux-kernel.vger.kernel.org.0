@@ -2,89 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31CC9173FAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 19:34:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EF20173FB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 19:35:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbgB1SeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 13:34:11 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:45902 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbgB1SeK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 13:34:10 -0500
-Received: by mail-yw1-f66.google.com with SMTP id d206so4187150ywa.12
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 10:34:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=BK15KB/QIM0mjkXnJvo5g++rrPQHZRXMLS7sBMicyC8=;
-        b=i5m6xuAZe5RRVpl8q9MO9a3KL+ZcW7ieF+qHvb+qiofbgjGxKsIAIhKO9J1qRBU/9Z
-         MgdsVOTzz3+Zz7gbctueJQ+AiBNy9C/nwtl38qoAsOGC/kVNWBeA4F7bgiEQB5dQhBh7
-         dFVSv7wA87+fgSnyffkTnLWbIO6yNNtxooNFuXEZ6GsV0BzxkuCLFQdHQ8RKtEKdjUDm
-         Q2ShYNUkYBX0C03w0l6U+SRJyl/8HKoHY9xrx6osoRQ4IN2qVXqau+027IhIpXREsnhN
-         S/yqZ1k71m5JrbvvAlwowi2PVSfo5moQCk2jy60a90Fr7L3p2XaNIFAKRhq43x3dhGH0
-         Vh8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BK15KB/QIM0mjkXnJvo5g++rrPQHZRXMLS7sBMicyC8=;
-        b=Noz6u5nZmpg2dM6jqZLZHrmnkThWIrLnij/5XyrjwTbMkNwmXneHfIUG1RhokywA31
-         ns4XWlhQWcppL9YFVJRRBcKczr0WJNTc5Qyz4AgftLJDcPjCEm6RAPiE0cp3ADWgonCQ
-         IgonEh1QpH3p2+1sWg9RKbkQ8krQiAFvMSKV6Gcw1Llp7LEnWg3hULZz5SUTDYHnGqyu
-         JosnZH4H16MlqxvEfURJb6D4ct5MoUtB5ajgJUC+DLU4WZm78q8y2+EmRF5A4ajq10Ha
-         yQ4pRBZrRUtyUzCoVRg30mJQFssHGbklUltT12oUxJ3jT3uc74WQSh2GmVBbUVMGRtK+
-         gNOg==
-X-Gm-Message-State: APjAAAXZ2iMqh35xwXGG9IR6wlCW23T42EZoajX52uU3jV52OdRbdqZF
-        wz+homUoX8YhUToJq9z/6kXgvg==
-X-Google-Smtp-Source: APXvYqw8fkpj6XswFJXpxuziB4EMenzmu1+75H7yEeTGC+Rq3p8Us+0TZgQDiD0ZE31ertH7yvc0eg==
-X-Received: by 2002:a81:2f09:: with SMTP id v9mr5597838ywv.478.1582914847575;
-        Fri, 28 Feb 2020 10:34:07 -0800 (PST)
-Received: from localhost.localdomain (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.gmail.com with ESMTPSA id o127sm4409884ywf.43.2020.02.28.10.34.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2020 10:34:07 -0800 (PST)
-From:   Alex Elder <elder@linaro.org>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] remoteproc: return error for bad "recovery" debugfs input
-Date:   Fri, 28 Feb 2020 12:33:59 -0600
-Message-Id: <20200228183359.16229-5-elder@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200228183359.16229-1-elder@linaro.org>
-References: <20200228183359.16229-1-elder@linaro.org>
+        id S1726167AbgB1Sfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 13:35:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725805AbgB1Sfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 13:35:42 -0500
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FBCE246B0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 18:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582914941;
+        bh=GBCP5rJCRf158WDaaiSNEzMTdjhXomHfFag57VLC4Sk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yXkHIoJ6l+tcPmEyJD1vdet4yKY4enrnMEj8W7knk1+lERKDxAqLfkzK4sQSdRSsr
+         NPjFrQ3lV5sCm3JpydrjVHsVHH1tzyzMtZgR4rC7CR9l6SxMWFBZZo2lQmhjAL6cVZ
+         FqKLGYmhhcu1QQoSDmWRNB80ftzLlg4EZKKgFPs4=
+Received: by mail-wm1-f46.google.com with SMTP id a141so4314827wme.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 10:35:41 -0800 (PST)
+X-Gm-Message-State: APjAAAVqxTXzHnzzhj1YyFdy8a42/bewdQKtQQEgEcp4vBJXeDRWCKWQ
+        fimXhYELXDpS86a5moKWB1GN95SedTgrOXQThIQq8Q==
+X-Google-Smtp-Source: APXvYqzMxRsodS1e8wI0uEA798kCmZpyLKN/Cs3QROgRJhi89nceURi6tyiTi6BKPol8rU9tWRQrPcc7VtSxky4Bkj4=
+X-Received: by 2002:a1c:b0c3:: with SMTP id z186mr5805385wme.36.1582914939828;
+ Fri, 28 Feb 2020 10:35:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200227132826.195669-1-brgerst@gmail.com> <20200227132826.195669-3-brgerst@gmail.com>
+In-Reply-To: <20200227132826.195669-3-brgerst@gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 28 Feb 2020 10:35:28 -0800
+X-Gmail-Original-Message-ID: <CALCETrXYxKk+30Py0hUHuMiXCXLzYW6Oh8tDo-bBp9G2OWxqyw@mail.gmail.com>
+Message-ID: <CALCETrXYxKk+30Py0hUHuMiXCXLzYW6Oh8tDo-bBp9G2OWxqyw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/8] x86, syscalls: Refactor SYSCALL_DEFINE0 macros
+To:     Brian Gerst <brgerst@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the value written to the "recovery" debugfs file is not one of
-the recognized commands return an error to indicate it's invalid.
+On Thu, Feb 27, 2020 at 5:28 AM Brian Gerst <brgerst@gmail.com> wrote:
+>
+> Pull the common code out from the SYSCALL_DEFINE0 macros into a new
+> __SYS_STUB0 macro.  Also conditionalize the X64 version in preparation for
+> enabling syscall wrappers on 32-bit native kernels.
 
-Signed-off-by: Alex Elder <elder@linaro.org>
----
- drivers/remoteproc/remoteproc_debugfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index e995dc49c231..0d478bfefd9c 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -146,6 +146,8 @@ rproc_recovery_write(struct file *filp, const char __user *user_buf,
- 	} else if (!strncmp(buf, "recover", count)) {
- 		/* begin the recovery process without changing the flag */
- 		rproc_trigger_recovery(rproc);
-+	} else {
-+		return -EINVAL;
- 	}
- 
- 	return count;
--- 
-2.20.1
+It would be really nice if there was a clean way to get rid of the
+0-arg special case, but I don't immediately see one.
 
+--Andy
