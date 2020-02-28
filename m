@@ -2,141 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54378173B42
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:23:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6C8C173B38
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:22:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbgB1PXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 10:23:07 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40904 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726796AbgB1PXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 10:23:05 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id E33A56AC8E6748186BEC;
-        Fri, 28 Feb 2020 23:22:53 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 28 Feb 2020 23:22:44 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <broonie@kernel.org>
-CC:     <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>,
-        <andriy.shevchenko@linux.intel.com>, <linuxarm@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH RFC 3/3] spi: HiSilicon v3xx: Use DMI quirk to set controller buswidth override bits
-Date:   Fri, 28 Feb 2020 23:18:51 +0800
-Message-ID: <1582903131-160033-4-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1582903131-160033-1-git-send-email-john.garry@huawei.com>
-References: <1582903131-160033-1-git-send-email-john.garry@huawei.com>
+        id S1727018AbgB1PWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 10:22:08 -0500
+Received: from proxima.lasnet.de ([78.47.171.185]:55736 "EHLO
+        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbgB1PWH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 10:22:07 -0500
+Received: from localhost.localdomain (p200300E9D71B9939E2C0865DB6B8C4EC.dip0.t-ipconnect.de [IPv6:2003:e9:d71b:9939:e2c0:865d:b6b8:c4ec])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: stefan@datenfreihafen.org)
+        by proxima.lasnet.de (Postfix) with ESMTPSA id EBB8DC08EE;
+        Fri, 28 Feb 2020 16:22:04 +0100 (CET)
+From:   Stefan Schmidt <stefan@datenfreihafen.org>
+Subject: Re: [PATCH][next] cfg802154: Replace zero-length array with
+ flexible-array member
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200228135959.GA30464@embeddedor>
+Message-ID: <2711894b-b78d-aebe-79fd-aa274d4ff977@datenfreihafen.org>
+Date:   Fri, 28 Feb 2020 16:22:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200228135959.GA30464@embeddedor>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Huawei D06 board (and variants) can support Quad mode of operation.
+Hello.
 
-Since we have no current method in ACPI SPI bus device resource description
-to describe this information, use DMI to detect the board, and set the
-controller buswidth override bits.
+On 28.02.20 14:59, Gustavo A. R. Silva wrote:
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
+> 
+> struct foo {
+>          int stuff;
+>          struct boo array[];
+> };
+> 
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+> 
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+> 
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+> 
+> This issue was found with the help of Coccinelle.
+> 
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>   include/net/cfg802154.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/net/cfg802154.h b/include/net/cfg802154.h
+> index 6f86073a5d7d..6ed07844eb24 100644
+> --- a/include/net/cfg802154.h
+> +++ b/include/net/cfg802154.h
+> @@ -214,7 +214,7 @@ struct wpan_phy {
+>   	/* the network namespace this phy lives in currently */
+>   	possible_net_t _net;
+>   
+> -	char priv[0] __aligned(NETDEV_ALIGN);
+> +	char priv[] __aligned(NETDEV_ALIGN);
+>   };
+>   
+>   static inline struct net *wpan_phy_net(struct wpan_phy *wpan_phy)
+> 
 
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/spi/spi-hisi-sfc-v3xx.c | 56 ++++++++++++++++++++++++++++++++-
- 1 file changed, 55 insertions(+), 1 deletion(-)
+This patch has been applied to the wpan-next tree and will be
+part of the next pull request to net-next. Thanks!
 
-diff --git a/drivers/spi/spi-hisi-sfc-v3xx.c b/drivers/spi/spi-hisi-sfc-v3xx.c
-index 45d906110ed1..e3b57252d075 100644
---- a/drivers/spi/spi-hisi-sfc-v3xx.c
-+++ b/drivers/spi/spi-hisi-sfc-v3xx.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/bitops.h>
-+#include <linux/dmi.h>
- #include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-@@ -250,6 +251,44 @@ static const struct spi_controller_mem_ops hisi_sfc_v3xx_mem_ops = {
- 	.exec_op = hisi_sfc_v3xx_exec_op,
- };
- 
-+static int hisi_sfc_v3xx_buswidth_override_bits;
-+
-+/*
-+ * ACPI FW does not allow us to currently set the device buswidth, so quirk it
-+ * depending on the board.
-+ */
-+static int __init hisi_sfc_v3xx_dmi_quirk(const struct dmi_system_id *d)
-+{
-+	hisi_sfc_v3xx_buswidth_override_bits = SPI_RX_QUAD | SPI_TX_QUAD;
-+
-+	return 0;
-+}
-+
-+static const struct dmi_system_id hisi_sfc_v3xx_dmi_quirk_table[]  = {
-+	{
-+	.callback = hisi_sfc_v3xx_dmi_quirk,
-+	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "Huawei"),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "D06"),
-+	},
-+	},
-+	{
-+	.callback = hisi_sfc_v3xx_dmi_quirk,
-+	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "Huawei"),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "TaiShan 2280 V2"),
-+	},
-+	},
-+	{
-+	.callback = hisi_sfc_v3xx_dmi_quirk,
-+	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "Huawei"),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "TaiShan 200 (Model 2280)"),
-+	},
-+	},
-+	{}
-+};
-+
- static int hisi_sfc_v3xx_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -265,6 +304,8 @@ static int hisi_sfc_v3xx_probe(struct platform_device *pdev)
- 	ctlr->mode_bits = SPI_RX_DUAL | SPI_RX_QUAD |
- 			  SPI_TX_DUAL | SPI_TX_QUAD;
- 
-+	ctlr->buswidth_override_bits = hisi_sfc_v3xx_buswidth_override_bits;
-+
- 	host = spi_controller_get_devdata(ctlr);
- 	host->dev = dev;
- 
-@@ -320,7 +361,20 @@ static struct platform_driver hisi_sfc_v3xx_spi_driver = {
- 	.probe	= hisi_sfc_v3xx_probe,
- };
- 
--module_platform_driver(hisi_sfc_v3xx_spi_driver);
-+static int __init hisi_sfc_v3xx_spi_init(void)
-+{
-+	dmi_check_system(hisi_sfc_v3xx_dmi_quirk_table);
-+
-+	return platform_driver_register(&hisi_sfc_v3xx_spi_driver);
-+}
-+
-+static void __exit hisi_sfc_v3xx_spi_exit(void)
-+{
-+	platform_driver_unregister(&hisi_sfc_v3xx_spi_driver);
-+}
-+
-+module_init(hisi_sfc_v3xx_spi_init);
-+module_exit(hisi_sfc_v3xx_spi_exit);
- 
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("John Garry <john.garry@huawei.com>");
--- 
-2.17.1
-
+regards
+Stefan Schmidt
