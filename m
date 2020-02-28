@@ -2,109 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E69E1172CD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:14:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7073C172CDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:14:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730163AbgB1AOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 19:14:30 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43555 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729876AbgB1AO3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 19:14:29 -0500
-Received: by mail-ed1-f68.google.com with SMTP id dc19so1199950edb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 16:14:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1ib8VWwHjJvggYN18BEOwzhOZqnlM4YEYxegYLVlKSo=;
-        b=Cetq1zeYMvA3/xQUwFFjv1v7a1bjQAjSwdUaiPi9JjojBXivvTLHJkO6+ll4GT8Ghc
-         m4/MgSddbFsriGMMZ+avMc7K0HlBlyJU+uKEFXcLh6wkVNKc+wbLmWlfpl8+R5NF3I8M
-         takyOyT3ZosZd4ERE+TMDmzCgp5XOHnLqRZPkuRa6Pmf4jg/17k5EkKPa53ec1Z9UWcI
-         w3lbneT1IyeYjJRqrnUip3m4xn7zIumvSMkIoi6SMw1LXOXXpvjBxB3gemdqq80RmB7L
-         jSvf/J/cTa1+8ehW41M0doB+D6RKJNZjebMAQCJqk5m8s9qW+Db1BQyqzuC/mMBPky46
-         MgDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1ib8VWwHjJvggYN18BEOwzhOZqnlM4YEYxegYLVlKSo=;
-        b=oGW+r7RFUwmUVUYqji1cy3WVTwkj8rNGlHh7LdxYXHvRE5Joy0bSalE14W6A7P9Y3p
-         iblAaJFq7KiC9ygJCGWZ4D2woRs+JgDoGnSfUzslZ9qwrq6EsIi7LGn7g5/KznNoH8mM
-         R2JVKZu3kTVep0X3Po0CB/EoKG3JnIu2U2q1Fzli8Z2pHU8+rjhhCnBVvaa1wYFE6Hii
-         Q0NI106xocSUFaFCfAoN39YTZV9Kvk4pkhnQo6yWRn0U6K4v6ik/zK1u+QzE6eSoCHEp
-         1bxb2iGvPlBcstB5aTTHjI/J/SBJHHpwkS9cVJHTFb9QakHHhvGwQ/pdVzG3NbPt4/by
-         faLg==
-X-Gm-Message-State: APjAAAXUX2d4NSjjcxwDavCVHenCIixYvFdZSUMVVX0ga7L6k+ukwcB7
-        Iv32SAJIyLclmU+a01EJ3ldByUl8Kzcyi+7iT0r2
-X-Google-Smtp-Source: APXvYqzIh7t+mGR5KHWmesjgjSlqpj0MLXTGXcf7rY8aVOBQpqG6xj9+VllvTVXsLbvgWVt9QS8HOh37KIMIXqFAaUs=
-X-Received: by 2002:a50:a7a5:: with SMTP id i34mr1145928edc.128.1582848866078;
- Thu, 27 Feb 2020 16:14:26 -0800 (PST)
-MIME-Version: 1.0
-References: <0000000000003cbb40059f4e0346@google.com> <CAHC9VhQVXk5ucd3=7OC=BxEkZGGLfXv9bESX67Mr-TRmTwxjEg@mail.gmail.com>
- <17916d0509978e14d9a5e9eb52d760fa57460542.camel@redhat.com>
- <CAHC9VhQnbdJprbdTa_XcgUJaiwhzbnGMWJqHczU54UMk0AFCtw@mail.gmail.com> <CACT4Y+azQXLcPqtJG9zbj8hxqw4jE3dcwUj5T06bdL3uMaZk+Q@mail.gmail.com>
-In-Reply-To: <CACT4Y+azQXLcPqtJG9zbj8hxqw4jE3dcwUj5T06bdL3uMaZk+Q@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 27 Feb 2020 19:14:15 -0500
-Message-ID: <CAHC9VhRRDJzyene2_40nhnxRV_ufgyaU=RrFxYGsnxR4Z_AWWw@mail.gmail.com>
-Subject: Re: kernel panic: audit: backlog limit exceeded
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Eric Paris <eparis@redhat.com>,
-        syzbot <syzbot+9a5e789e4725b9ef1316@syzkaller.appspotmail.com>,
-        a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        David Miller <davem@davemloft.net>, fzago@cray.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        john.hammond@intel.com, linux-audit@redhat.com,
-        LKML <linux-kernel@vger.kernel.org>, mareklindner@neomailbox.ch,
-        netdev <netdev@vger.kernel.org>, sw@simonwunderlich.de,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1730255AbgB1AOv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 19:14:51 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:32761 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728993AbgB1AOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 19:14:50 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48T95h5Mc6z9tyJc;
+        Fri, 28 Feb 2020 01:14:48 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=epRcvZl6; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id hZG8x6lYQurk; Fri, 28 Feb 2020 01:14:48 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48T95h4Jgcz9tyJb;
+        Fri, 28 Feb 2020 01:14:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1582848888; bh=P3K5gHljn4mGjJEFzKdRLkXiIas6l66ctRXMMynywYU=;
+        h=From:Subject:To:Cc:Date:From;
+        b=epRcvZl6gA3O7F8JuLbTRNFatT6rPXPsGbrdpLKQkej8enrQmkCI4TVPJZ9KJYsM4
+         NmvueW1G0PofguDzs3/GKr2eVooxXY2EINDdZ4RDlwrIvpr3aUFnpzW28pV1zxgDOs
+         8/VG/CVQke+dg6oT41ebSuzUMnFSA1odx2LONw10=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DBBB88B885;
+        Fri, 28 Feb 2020 01:14:48 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id HEBz-Xc75ydz; Fri, 28 Feb 2020 01:14:48 +0100 (CET)
+Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 04F098B799;
+        Fri, 28 Feb 2020 01:14:42 +0100 (CET)
+Received: by pc16570vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 78418653EC; Fri, 28 Feb 2020 00:14:36 +0000 (UTC)
+Message-Id: <cover.1582848567.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v5 00/13] Reduce ifdef mess in ptrace
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, mikey@neuling.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri, 28 Feb 2020 00:14:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 10:40 AM Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Mon, Feb 24, 2020 at 11:47 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Mon, Feb 24, 2020 at 5:43 PM Eric Paris <eparis@redhat.com> wrote:
-> > > https://syzkaller.appspot.com/x/repro.syz?x=151b1109e00000 (the
-> > > reproducer listed) looks like it is literally fuzzing the AUDIT_SET.
-> > > Which seems like this is working as designed if it is setting the
-> > > failure mode to 2.
-> >
-> > So it is, good catch :)  I saw the panic and instinctively chalked
-> > that up to a mistaken config, not expecting that it was what was being
-> > tested.
->
-> Yes, this audit failure mode is quite unpleasant for fuzzing. And
-> since this is not a top-level syscall argument value, it's effectively
-> impossible to filter out in the fuzzer. Maybe another use case for the
-> "fuzer lockdown" feature +Tetsuo proposed.
-> With the current state of the things, I think we only have an option
-> to disable fuzzing of audit. Which is pity because it has found 5 or
-> so real bugs in audit too.
-> But this happened anyway because audit is only reachable from init pid
-> namespace and syzkaller always unshares pid namespace for sandboxing
-> reasons, that was removed accidentally and that's how it managed to
-> find the bugs. But the unshare is restored now:
-> https://github.com/google/syzkaller/commit/5e0e1d1450d7c3497338082fc28912fdd7f93a3c
->
-> As a side effect all other real bugs in audit will be auto-obsoleted
-> in future if not fixed because they will stop happening.
+The purpose of this series is to reduce the amount of #ifdefs
+in ptrace.c
 
-On the plus side, I did submit fixes for the other real audit bugs
-that syzbot found recently and Linus pulled them into the tree today
-so at least we have that small victory.
+Link: https://github.com/linuxppc/issues/issues/128
 
-We could consider adding a fuzz-friendly build time config which would
-disable the panic failsafe, but it probably isn't worth it at the
-moment considering the syzbot's pid namespace limitations.
+v5:
+- Big mistake fixed in ptrace-altivec.c (included ptrace-decl.h as ptrace_decl.h does not exist)
+- Added ptrace-decl.h in ptrace-spe.c
+- Kisskb is happy at the moment at http://kisskb.ellerman.id.au/kisskb/branch/chleroy/head/8402c516023da1371953a65af7df2008758ea0c4/
+
+v4:
+- Fixed a few header files inclusion, see details in relevant patchs (no marking on unchanged patches).
+
+v3:
+- Droped part of #ifdef removals iaw mpe's comments
+- Removed unneccesary includes
+
+v2:
+- Fixed several build failures. Now builts cleanly on kisskb, see http://kisskb.ellerman.id.au/kisskb/head/840e53cf913d6096dd60181a085f102c85d6e526/
+- Droped last patch which is not related to ptrace and can be applies independently.
+
+Christophe Leroy (13):
+  powerpc: move ptrace into a subdirectory.
+  powerpc/ptrace: remove unused header includes
+  powerpc/ptrace: drop unnecessary #ifdefs CONFIG_PPC64
+  powerpc/ptrace: drop PARAMETER_SAVE_AREA_OFFSET
+  powerpc/ptrace: split out VSX related functions.
+  powerpc/ptrace: split out ALTIVEC related functions.
+  powerpc/ptrace: split out SPE related functions.
+  powerpc/ptrace: split out TRANSACTIONAL_MEM related functions.
+  powerpc/ptrace: move register viewing functions out of ptrace.c
+  powerpc/ptrace: split out ADV_DEBUG_REGS related functions.
+  powerpc/ptrace: create ptrace_get_debugreg()
+  powerpc/ptrace: create ppc_gethwdinfo()
+  powerpc/ptrace: move ptrace_triggered() into hw_breakpoint.c
+
+ arch/powerpc/include/asm/ptrace.h           |    2 +
+ arch/powerpc/kernel/Makefile                |    7 +-
+ arch/powerpc/kernel/hw_breakpoint.c         |   16 +
+ arch/powerpc/kernel/ptrace.c                | 3468 -------------------
+ arch/powerpc/kernel/ptrace/Makefile         |   20 +
+ arch/powerpc/kernel/ptrace/ptrace-adv.c     |  492 +++
+ arch/powerpc/kernel/ptrace/ptrace-altivec.c |  128 +
+ arch/powerpc/kernel/ptrace/ptrace-decl.h    |  184 +
+ arch/powerpc/kernel/ptrace/ptrace-noadv.c   |  269 ++
+ arch/powerpc/kernel/ptrace/ptrace-novsx.c   |   57 +
+ arch/powerpc/kernel/ptrace/ptrace-spe.c     |   68 +
+ arch/powerpc/kernel/ptrace/ptrace-tm.c      |  851 +++++
+ arch/powerpc/kernel/ptrace/ptrace-view.c    |  904 +++++
+ arch/powerpc/kernel/ptrace/ptrace-vsx.c     |  151 +
+ arch/powerpc/kernel/ptrace/ptrace.c         |  481 +++
+ arch/powerpc/kernel/{ => ptrace}/ptrace32.c |   11 -
+ 16 files changed, 3626 insertions(+), 3483 deletions(-)
+ delete mode 100644 arch/powerpc/kernel/ptrace.c
+ create mode 100644 arch/powerpc/kernel/ptrace/Makefile
+ create mode 100644 arch/powerpc/kernel/ptrace/ptrace-adv.c
+ create mode 100644 arch/powerpc/kernel/ptrace/ptrace-altivec.c
+ create mode 100644 arch/powerpc/kernel/ptrace/ptrace-decl.h
+ create mode 100644 arch/powerpc/kernel/ptrace/ptrace-noadv.c
+ create mode 100644 arch/powerpc/kernel/ptrace/ptrace-novsx.c
+ create mode 100644 arch/powerpc/kernel/ptrace/ptrace-spe.c
+ create mode 100644 arch/powerpc/kernel/ptrace/ptrace-tm.c
+ create mode 100644 arch/powerpc/kernel/ptrace/ptrace-view.c
+ create mode 100644 arch/powerpc/kernel/ptrace/ptrace-vsx.c
+ create mode 100644 arch/powerpc/kernel/ptrace/ptrace.c
+ rename arch/powerpc/kernel/{ => ptrace}/ptrace32.c (96%)
 
 -- 
-paul moore
-www.paul-moore.com
+2.25.0
+
