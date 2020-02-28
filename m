@@ -2,113 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D831738E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:50:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81AE31738EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:53:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbgB1NuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 08:50:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51814 "EHLO mail.kernel.org"
+        id S1726899AbgB1Nvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:51:42 -0500
+Received: from foss.arm.com ([217.140.110.172]:38560 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbgB1NuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 08:50:10 -0500
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E839A246AC;
-        Fri, 28 Feb 2020 13:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582897810;
-        bh=AenvJB04PGqxvh0r1u1fNLP1JQNsy7lc4FSuIxM11sk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mUnZCSMM9LEbGnCEw35f28QV3pBkme8CDwX4/BDxk9H2Ji7Vi0TObAnCYbe9XEvQC
-         +95CGAuJPQXEVGi8dnTZP0Q+EbYIODpIFXLzn+EcKT/Zd47JHc412n1RGzMq3KHCPa
-         EC+gibBft58i3mw0DfO4DyUeBXAHiskz1n0IrR98=
-Received: by mail-qk1-f179.google.com with SMTP id p62so240972qkb.0;
-        Fri, 28 Feb 2020 05:50:09 -0800 (PST)
-X-Gm-Message-State: APjAAAW61S2/+a8EkfiR/oSS+1Tv/vpJDGBjkAAsbFf8mffVeKOjJYzj
-        lxPD5BbkRRpGbv3GFeOsg8vsb0WQYjV1wynrfA==
-X-Google-Smtp-Source: APXvYqwry3YZZtRR7flSe2amPBy5GQiHkF7TBWOS6WX5oOexYDr8PBVvzsyChsK1MHT6pg1W2sd0lsr9Q7kb3XcqETk=
-X-Received: by 2002:a05:620a:12a3:: with SMTP id x3mr4606535qki.254.1582897809072;
- Fri, 28 Feb 2020 05:50:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20200228084842.18691-1-rayagonda.kokatanur@broadcom.com>
-In-Reply-To: <20200228084842.18691-1-rayagonda.kokatanur@broadcom.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 28 Feb 2020 07:49:57 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLXvVnVq0Mc1d0WMLNjURbHe9T3bKNb+5D6Nz3iyTK8GA@mail.gmail.com>
-Message-ID: <CAL_JsqLXvVnVq0Mc1d0WMLNjURbHe9T3bKNb+5D6Nz3iyTK8GA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] scripts: dtc: mask flags bit when check i2c addr
-To:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1725892AbgB1Nvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 08:51:41 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5D8531B;
+        Fri, 28 Feb 2020 05:51:40 -0800 (PST)
+Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F17323F7B4;
+        Fri, 28 Feb 2020 05:51:38 -0800 (PST)
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     soc@kernel.org, Olof Johansson <olof@lixom.net>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
+        Robert Richter <rric@kernel.org>, Jon Loeliger <jdl@jdl.com>,
+        Mark Langsdorf <mlangsdo@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH v3 0/5] arm: calxeda: update DTS and MAINTAINERS
+Date:   Fri, 28 Feb 2020 13:51:01 +0000
+Message-Id: <20200228135106.220620-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 2:48 AM Rayagonda Kokatanur
-<rayagonda.kokatanur@broadcom.com> wrote:
->
-> Generally i2c addr should not be greater than 10-bit. The highest 2 bits
-> are used for I2C_TEN_BIT_ADDRESS and I2C_OWN_SLAVE_ADDRESS. Need to mask
-> these flags if check slave addr valid.
->
-> Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-> ---
->  scripts/dtc/Makefile | 2 +-
->  scripts/dtc/checks.c | 5 +++++
->  2 files changed, 6 insertions(+), 1 deletion(-)
+Hi,
 
-dtc changes must be submitted against upstream dtc.
+this is mostly a repost of the DT and MAINTAINERS part of the
+previous v2 series, with Rob's ACKs added.
+Please apply to armsoc!
+Patches based on soc/for-next (c247a41835698).
 
+------------------
+This series is an answer to the attempt [1] of removing the Calxeda
+Highbank platform support from the kernel. Apart from the pending removal
+of ARM32 host KVM support from the kernel, the lack of proper DT schema
+bindings and passing checks was another major reason for Rob's series.
 
-> diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
-> index 3acbb410904c..c5e8d6a9e73c 100644
-> --- a/scripts/dtc/Makefile
-> +++ b/scripts/dtc/Makefile
-> @@ -9,7 +9,7 @@ dtc-objs        := dtc.o flattree.o fstree.o data.o livetree.o treesource.o \
->  dtc-objs       += dtc-lexer.lex.o dtc-parser.tab.o
->
->  # Source files need to get at the userspace version of libfdt_env.h to compile
-> -HOST_EXTRACFLAGS := -I $(srctree)/$(src)/libfdt
-> +HOST_EXTRACFLAGS := -I $(srctree)/$(src)/libfdt -I$(srctree)/tools/include
->
->  ifeq ($(shell pkg-config --exists yaml-0.1 2>/dev/null && echo yes),)
->  ifneq ($(CHECK_DTBS),)
-> diff --git a/scripts/dtc/checks.c b/scripts/dtc/checks.c
-> index 756f0fa9203f..17c9ed4137b5 100644
-> --- a/scripts/dtc/checks.c
-> +++ b/scripts/dtc/checks.c
-> @@ -3,6 +3,7 @@
->   * (C) Copyright David Gibson <dwg@au1.ibm.com>, IBM Corporation.  2007.
->   */
->
-> +#include <linux/bits.h>
+This series addresses the .dts part of the problem.
+The first four patches adjust the .dts files to pass the existing
+(mostly generic) DT schema binding checks, also prepare for passing
+later when the schemas get updated in a parallel series.
+Those changes do not affect the functionality.
 
-Not a UAPI header not that that would be much better as dtc also builds on Mac.
+The final patch then changes the MAINTAINERS file to hand over the
+maintainership to me. I have a working machine under my desk and have
+some interest in keeping this platform support alive.
 
->  #include "dtc.h"
->  #include "srcpos.h"
->
-> @@ -17,6 +18,9 @@
->  #define TRACE(c, fmt, ...)     do { } while (0)
->  #endif
->
-> +#define I2C_TEN_BIT_ADDRESS    BIT(31)
-> +#define I2C_OWN_SLAVE_ADDRESS  BIT(30)
-> +
->  enum checkstatus {
->         UNCHECKED = 0,
->         PREREQ,
-> @@ -1048,6 +1052,7 @@ static void check_i2c_bus_reg(struct check *c, struct dt_info *dti, struct node
->
->         for (len = prop->val.len; len > 0; len -= 4) {
->                 reg = fdt32_to_cpu(*(cells++));
-> +               reg &= ~(I2C_OWN_SLAVE_ADDRESS | I2C_TEN_BIT_ADDRESS);
+Changelog:
+v2 ... v3:
+- Remove schema binding conversions from this series
+- Re-add #address-cells = <0> to the GIC node
+- Add Rob's ACKs
 
-I'd just mask the top byte so we don't have to update on the next flag we add.
+v1 ... v2:
+- Remove unneeded property type from clocks and sgpio-gpio
+- add additionalProperties: false to bindings missing it before
+- limit number in "phydev" to the hardware constraint of 5 bits
+- add required: properties to l2ecc binding
+- fix enumeration of compatible strings in calxeda-ddr-ctrlr
 
-Rob
+Cheers,
+Andre.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20200218171321.30990-1-robh@kernel.org/
+
+Andre Przywara (5):
+  arm: dts: calxeda: Basic DT file fixes
+  arm: dts: calxeda: Provide UART clock
+  arm: dts: calxeda: Fix interrupt grouping
+  arm: dts: calxeda: Group port-phys and sgpio-gpio items
+  MAINTAINERS: Update Calxeda Highbank maintainership
+
+ MAINTAINERS                       |  2 +-
+ arch/arm/boot/dts/ecx-2000.dts    |  6 ++----
+ arch/arm/boot/dts/ecx-common.dtsi | 17 +++++++++--------
+ arch/arm/boot/dts/highbank.dts    | 11 ++++-------
+ 4 files changed, 16 insertions(+), 20 deletions(-)
+
+-- 
+2.17.1
+
