@@ -2,108 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE8DF173C3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:54:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DC72173C52
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbgB1PyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 10:54:10 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46470 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbgB1PyG (ORCPT
+        id S1727209AbgB1P5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 10:57:13 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:47701 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbgB1P5L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 10:54:06 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j7so3428320wrp.13;
-        Fri, 28 Feb 2020 07:54:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=M9Kwu3SWVjUR0QlpKz+Qj4yHox2icU+uJW/FEvY6z9g=;
-        b=iR/lE70WvXZfxCZGgNi3yNG8JV9JYIq9yGC/908jVx3v8HEpHbnf+VMxhIhHMQb2/w
-         ANhVztbKYczLQwp7w0hh/ErfVlIgL/ZKFICmcz2E0rlrlglBDoQQfCk+EtOPtzLDlqCi
-         +fRKmw4rAG5oBolmGB5kueTin2gVS5CSzpFyZ3lpeayC4P7vANVcq4oNnTiUxI92agC6
-         XLisfb3so6N4ZA63WtInJZ0ZuxU9oK/H3BVWrJrzGVQbInwzSpBsntDajHpyQ3mw2XJi
-         HlMcqXSoNbuPs9CuVJ7XhR4AjQKQPsl+sEJCv9wnQkqrUwvUs0ekXTtwl+wXopJq5Ug3
-         nJKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=M9Kwu3SWVjUR0QlpKz+Qj4yHox2icU+uJW/FEvY6z9g=;
-        b=AmoSeza7IIcJuTayiL0QflT5R2XcSGyM4Yacr0Ode/RfeDSy+BdSsaxi1SqAg8DY0n
-         DKh2vDL9FoGqO5y5Sd9eGkQWD38TbsligmLAySKOW8p01ENe5f6vaGg1DaaEmodKC8Zy
-         g5Y4+aERejKuPmyWEBMpchlAZ9aHOTZx3xt6t2xqMm2tM+CrowB2REWEvSvojZ6PH4PO
-         E8/61Zyh7PLu672uif/1CJCXwAy0gwwYuXHzRUX+dMYTSZi7uksYggkQOotp5p2cyxqG
-         gYrES1Tmv7IFcizHoPQ138VwMZUcGTep4Rb5SPIatEkhPCCrLcfZ+tiXqHASy2fcl/EW
-         hhag==
-X-Gm-Message-State: APjAAAX7tboG9q9O7jm0SD+FfC43tv+qCYZ9S/3EG8figvsLH5daHuZJ
-        AMECx67+Lske/1BHY6keT8o=
-X-Google-Smtp-Source: APXvYqwYXkK4g5VxFmULSk2KUCbUp0Rg3cowIjv95fjxucVHABt/NLUJdkgCdL+IWzIu/YSUAfbKuw==
-X-Received: by 2002:adf:f846:: with SMTP id d6mr5288458wrq.125.1582905244576;
-        Fri, 28 Feb 2020 07:54:04 -0800 (PST)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id m125sm2706605wmf.8.2020.02.28.07.54.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Feb 2020 07:54:04 -0800 (PST)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] ARM: dts: rockchip: add sram to bus_intmem nodename for rk3288
-Date:   Fri, 28 Feb 2020 16:53:54 +0100
-Message-Id: <20200228155354.27206-3-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200228155354.27206-1-jbx6244@gmail.com>
-References: <20200228155354.27206-1-jbx6244@gmail.com>
+        Fri, 28 Feb 2020 10:57:11 -0500
+X-Originating-IP: 90.89.41.158
+Received: from localhost (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 7CCB560003;
+        Fri, 28 Feb 2020 15:57:08 +0000 (UTC)
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
+        hkallweit1@gmail.com
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        foss@0leil.net
+Subject: [PATCH net-next v2 0/3] net: phy: mscc: add support for RGMII MAC mode
+Date:   Fri, 28 Feb 2020 16:56:59 +0100
+Message-Id: <20200228155702.2062570-1-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A test with the command below gives for example these errors:
+Hello,
 
-arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml:
-bus_intmem@ff700000: $nodename:0: 'bus_intmem@ff700000'
-does not match '^sram(@.*)?'
-arch/arm/boot/dts/rk3288-evb-rk808.dt.yaml:
-bus_intmem@ff700000: $nodename:0: 'bus_intmem@ff700000'
-does not match '^sram(@.*)?'
+This series adds support for the RGMII MAC mode for the VSC8584 PHY
+family.
 
-'rockchip-pmu-sram.txt' inherit properties from 'sram.yaml'.
-Fix this error by adding 'sram' to the bus_intmem nodename
-in 'rk3288.dtsi'. But 'sram' is also a node name already in use.
-To prevent confusion rename it to 'pmu_sram'.
+The first patch adds support for configuring the PHY MAC mode based on
+phydev->interface.
 
-make ARCH=arm dtbs_check
-DT_SCHEMA_FILES=Documentation/devicetree/bindings/sram/sram.yaml
+The second and third patches add new dt bindings for the MSCC driver, to
+configure the RGMII Tx and Rx skews from the device tree.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- arch/arm/boot/dts/rk3288.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks!
+Antoine
 
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 9beb66216..039e8aa70 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -718,7 +718,7 @@
- 		status = "disabled";
- 	};
- 
--	bus_intmem@ff700000 {
-+	bus_intmem: sram@ff700000 {
- 		compatible = "mmio-sram";
- 		reg = <0x0 0xff700000 0x0 0x18000>;
- 		#address-cells = <1>;
-@@ -730,7 +730,7 @@
- 		};
- 	};
- 
--	sram@ff720000 {
-+	pmu_sram: sram@ff720000 {
- 		compatible = "rockchip,rk3288-pmu-sram", "mmio-sram";
- 		reg = <0x0 0xff720000 0x0 0x1000>;
- 	};
+Since v1:
+  - The RGMII skew delays are now set based on the PHY interface mode
+    being used (RGMII vs ID vs RXID vs TXID).
+  - When RGMII is used, the skew delays are set to their default value,
+    meaning we do not rely anymore on the bootloader's configuration.
+  - Improved the commit messages.
+  - s/phy_interface_mode_is_rgmii/phy_interface_is_rgmii/
+
+
+Antoine Tenart (3):
+  net: phy: mscc: add support for RGMII MAC mode
+  dt-bindings: net: phy: mscc: document rgmii skew properties
+  net: phy: mscc: RGMII skew delay configuration
+
+ .../bindings/net/mscc-phy-vsc8531.txt         |  8 ++
+ drivers/net/phy/mscc.c                        | 83 ++++++++++++++++---
+ include/dt-bindings/net/mscc-phy-vsc8531.h    | 10 +++
+ 3 files changed, 89 insertions(+), 12 deletions(-)
+
 -- 
-2.11.0
+2.24.1
 
