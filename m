@@ -2,85 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85F5F173765
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:43:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7422317379E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:52:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbgB1Mnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 07:43:46 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36113 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbgB1Mnp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 07:43:45 -0500
-Received: by mail-ot1-f66.google.com with SMTP id j20so2436347otq.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 04:43:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zfQoq+1M8fvl87X+Ubkvp6zzrnswmjJsf0b9A+26ex8=;
-        b=qsOTrP3sERclKpVIMKpYziz0m6/2T73Ci4O0VLjMWrAmFabsOH6/Hfhgq7d+4uG0sD
-         PS9cTXQpCWjogewIdRsDWdUDpgkxbnjhBnul7Ez8GZiFu4Cz7V76bbputXQlyW0NfsfI
-         f3ca5VfPhYL1yMuPomfYonVoEzBphe4ULCpd9vTD7v5nZLyueoV0KGi9frmrgyjbq8v0
-         VA+tCCN8MLl09kBIUkmrOrOKLU76xbQkeu0i8CpvbVP+3nmMooQrGdSeKzLkt+UB/iOp
-         v35Xl/dUCU9xg/ZWEdZ0BhzOoGxdu4tHxLI0s/eA5vZ80xkU7ZwOXShTYdq6Cumtprc6
-         Wlsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zfQoq+1M8fvl87X+Ubkvp6zzrnswmjJsf0b9A+26ex8=;
-        b=ZYE+wmOKSbcXLGa4GRfpMo6sSs1TUPSK7/KNTSozpzV7kjalMrdXt99K1y6RYci3gV
-         NHEj3wZ+iuEc8dOP98K62292UHCr0rtRK9lF7tb9kEtf7owQCijCebPwD15AS1PhPxgk
-         CBlxfPDCCr6LBMUfL/gp1cw1JVGiV89RahoQJQ5n+Mex7ivona1005/QwofXaUa+rDjV
-         icjz9Idy7rzhF6JCc+SDuRtjqnYto4CjS0t4e/f9kauvMUydV5SuCw9mDkTaXGaEO6S0
-         GiwjxauJvfUgcN7qfOJtOB6kL2J86uxNtyE7IjpIPmtHhomQk/AudhBiYW5khD/+3Rsm
-         v3sw==
-X-Gm-Message-State: APjAAAWTANfWdyE2kZouafGyhdzOX8ahrRX9xvAC5vbPBO/MKStUsLyC
-        nnkQKH8sPuokZu7MYWAkbRWiZu1jrDudgwfDszCXMA==
-X-Google-Smtp-Source: APXvYqxxN3G70uge1DlTVFUodeYfpc6d6jye62KaY4IKt5nfV1OnJVrwRPjdEzVHOp/bCxRdS+oLGB8gXuhKBgImMWo=
-X-Received: by 2002:a9d:4e8a:: with SMTP id v10mr3370715otk.17.1582893823992;
- Fri, 28 Feb 2020 04:43:43 -0800 (PST)
+        id S1726748AbgB1MwD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 07:52:03 -0500
+Received: from mail1.skidata.com ([91.230.2.99]:63410 "EHLO mail1.skidata.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725876AbgB1MwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 07:52:02 -0500
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Feb 2020 07:52:01 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=skidata.com; i=@skidata.com; q=dns/txt; s=selector1;
+  t=1582894322; x=1614430322;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=g/fumDPqX7LPA3wXxiP1dS805jxlDQnX8YtVKUMeu98=;
+  b=LjZqGN6QzHklV6YiFhSqYetNYrYn8bjM9JqpeNng0UnezFAhpXrmWHu6
+   BR00jGPg9M60QK0/3c53EzQOl7pviMJdWbMhtV1RDFZs69ZXSb4gZ+UDZ
+   IyrcsN3YS6f4pUHcYIELYAAq/4/6UTFyooVHfu7+gjezTQWvplbXIli2R
+   py2/kIf5QaLbO1V2Ok9xocu3wrSp+nVMjS26vrQaAq4tDeZRwzF3l8lIO
+   sueyrPpHw9mXayIKPTd3Xf2iQFx1LQdN59MY/dl6ZPiibZ5AnKGYKOHpB
+   +yGbuGGoZX9QySvs52yvAk7TcMOomPxGMwzFvcxlXRqyJyDv8jBLn07Q9
+   Q==;
+IronPort-SDR: 08BFDbudq1MaMeOSQQ+Gr+tpOdBaghZBiTJoclI9zpC7I1cY4eavjFCRIGYIm6UxiXKZiGbpCh
+ 5nEss8HtL7INBEMdm9q0dm9ZdiGzxuQDeYYNUGresM574MXNUjSs40GfPn4EeZDM61hp230D75
+ kp96qCOjdjvkfVtBPmqGyuBgtjq0aNsJOeLu5Dr+3VPNJYAVB4gZHbebABmkrTYdW2swMKek1c
+ nrh19pKH2WaOn+Wxg3inHxnCqCBpPIPzAUyWogmBvnV0OAWuSWAmjfATc078ZFTvTr/SskG9i6
+ Q80=
+X-IronPort-AV: E=Sophos;i="5.70,496,1574118000"; 
+   d="scan'208";a="22939519"
+Date:   Fri, 28 Feb 2020 13:44:48 +0100
+From:   Richard Leitner <richard.leitner@skidata.com>
+To:     Martin Fuzzey <martin.fuzzey@flowbird.group>
+CC:     <dmaengine@vger.kernel.org>, <stable@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Robin Gong <yibin.gong@nxp.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dmaengine: imx-sdma: fix context cache
+Message-ID: <20200228124448.GA1689606@pcleri>
+References: <1580305274-27274-1-git-send-email-martin.fuzzey@flowbird.group>
 MIME-Version: 1.0
-References: <463BBB2A-8F9A-4CF1-80AE-677ACD21A3C6@lca.pw>
-In-Reply-To: <463BBB2A-8F9A-4CF1-80AE-677ACD21A3C6@lca.pw>
-From:   Marco Elver <elver@google.com>
-Date:   Fri, 28 Feb 2020 13:43:32 +0100
-Message-ID: <CANpmjNNyQ0vGAsSXCLkLtjvEVbq3T5kNnsg+T3XV-qBPCZ8FHw@mail.gmail.com>
-Subject: Re: [PATCH] mm/swap: annotate data races for lru_rotate_pvecs
-To:     Qian Cai <cai@lca.pw>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1580305274-27274-1-git-send-email-martin.fuzzey@flowbird.group>
+X-Originating-IP: [192.168.111.252]
+X-ClientProxiedBy: sdex3srv.skidata.net (192.168.111.81) To
+ sdex5srv.skidata.net (192.168.111.83)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Feb 2020 at 12:30, Qian Cai <cai@lca.pw> wrote:
->
->
->
-> > On Feb 28, 2020, at 5:49 AM, Marco Elver <elver@google.com> wrote:
-> >
-> > Note that, the fact that the writer has local interrupts disabled for
-> > the write is irrelevant because it's the interrupt that triggered
-> > while the read was happening that led to the concurrent write.
->
-> I was just to explain that concurrent writers are rather unlikely as people may ask.
->
-> >
-> > I assume you ran this with CONFIG_KCSAN_INTERRUPT_WATCHER=y?  The
-> > option is disabled by default (see its help-text). I don't know if we
-> > want to deal with data races due to interrupts right now, especially
-> > those that just result in 'data_race' annotations. Thoughts?
->
-> Yes, I somehow got quite a bit clean runs lately thanks to the fix/annotations efforts for the last a few weeks (still struggling with the flags things a bit), so I am naturally expanding the testing coverage here.
->
-> Right now the bottleneck is rather some subsystem maintainers are not so keen to deal with data races (looking forward to seeing more education opportunities for all), but the MM subsystem is not one of them.
+Hi,
 
-Sounds reasonable.  FWIW
+On Wed, Jan 29, 2020 at 02:40:06PM +0100, Martin Fuzzey wrote:
+> There is a DMA problem with the serial ports on i.MX6.
+> 
+> When the following sequence is performed:
+> 
+> 1) Open a port
+> 2) Write some data
+> 3) Close the port
+> 4) Open a *different* port
+> 5) Write some data
+> 6) Close the port
+> 
+> The second write sends nothing and the second close hangs.
+> If the first close() is omitted it works.
+> 
+> Adding logs to the the UART driver shows that the DMA is being setup but
+> the callback is never invoked for the second write.
+> 
+> This used to work in 4.19.
+> 
+> Git bisect leads to:
+> 	ad0d92d: "dmaengine: imx-sdma: refine to load context only once"
+> 
+> This commit adds a "context_loaded" flag used to avoid unnecessary context
+> setups.
+> However the flag is only reset in sdma_channel_terminate_work(),
+> which is only invoked in a worker triggered by sdma_terminate_all() IF
+> there is an active descriptor.
+> 
+> So, if no active descriptor remains when the channel is terminated, the
+> flag is not reset and, when the channel is later reused the old context
+> is used.
+> 
+> Fix the problem by always resetting the flag in sdma_free_chan_resources().
+> 
+> Fixes: ad0d92d: "dmaengine: imx-sdma: refine to load context only once"
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Martin Fuzzey <martin.fuzzey@flowbird.group>
+> 
 
-Acked-by: Marco Elver <elver@google.com>
+Thanks for the patch!
+We were chasing this issue for days and just found your patch as we were
+preparing our (quite similar) solution for submission ;-)
+
+I've successfully tested your patch on a custom i.MX6Solo board.
+Therefore feel free to add
+
+Tested-by: Richard Leitner <richard.leitner@skidata.com>
+
+regards;rl
