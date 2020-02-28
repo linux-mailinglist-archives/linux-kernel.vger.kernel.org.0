@@ -2,91 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46D441734A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 10:57:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0D751734C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 10:58:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgB1J5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 04:57:36 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:26105 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726400AbgB1J5g (ORCPT
+        id S1726987AbgB1J55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 04:57:57 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:26951 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbgB1J5z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 04:57:36 -0500
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-146-WZaAI-opPNCY3__hcJiY0A-1; Fri, 28 Feb 2020 04:57:33 -0500
-X-MC-Unique: WZaAI-opPNCY3__hcJiY0A-1
-Received: by mail-wr1-f71.google.com with SMTP id z1so1116431wrs.9
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 01:57:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=d8+GwUHzIftWzqoVbVQjzy/I+4cuxvvj+bnHjbB7E24=;
-        b=hgWm+n8gkNOBdrzdudACoi72gjH3I9cdZuYfmSJxYr7/WncWVwdJptBbH8A0Bpwz6y
-         Cvw+pj19NNoBdOyspsnHvYm+whTEgEmsMNO6xFDG7cIcyPveoTFCShXRFu8vgvq03LOT
-         XeSnQtk9aa34EJdoYTf6ZpAlOreSPDC8WHO6dTIdIrfZMpoJW897eG4OAL93DwIV0wBR
-         BuXDcrwVmc2aEzQ4LJoFF71oDja6QKU2u15o2exTIgzIVtuSkQprDu+YdiSQh+XK6I0O
-         iKM4KjFk4D8wecBaINXZgVCMbgUKuFlvLvDgi8eAwpn1f8s3BYEx1qIWez6Dc3bL+MlL
-         2XrQ==
-X-Gm-Message-State: APjAAAX+ZFEoJEtWpMZHqzI/Mdg4ssfH6ThJH3Zz+wruLRyr0RFaQWCj
-        6Wp4fOR6W9U1JSLYtk7w98BZvMjkPlcwpEJUfJXNz3hZXodJ88q7puqRhQI873ivnHMQ4LJqu1r
-        jLq+HMMxSECnVhWg7q+tr6Y6s
-X-Received: by 2002:adf:fa86:: with SMTP id h6mr3984573wrr.418.1582883852390;
-        Fri, 28 Feb 2020 01:57:32 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxqgS9rDQqsKiBqjZd3BIt0aCW27gk2+4hbj//MY004AmWXLLy+jIX2/mdKC4rzAbqEFnh7jA==
-X-Received: by 2002:adf:fa86:: with SMTP id h6mr3984549wrr.418.1582883852092;
-        Fri, 28 Feb 2020 01:57:32 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:d0d9:ea10:9775:f33f? ([2001:b07:6468:f312:d0d9:ea10:9775:f33f])
-        by smtp.gmail.com with ESMTPSA id h81sm788075wme.12.2020.02.28.01.57.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2020 01:57:31 -0800 (PST)
-Subject: Re: [PATCH] KVM: nVMX: Consult only the "basic" exit reason when
- routing nested exit
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-References: <20200227174430.26371-1-sean.j.christopherson@intel.com>
- <ee8c5eb6-9e3d-620b-d51f-bf0534a05d43@oracle.com>
- <20200227205153.GC17014@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <10a7327c-4f2b-bf44-1590-a33ae1cad604@redhat.com>
-Date:   Fri, 28 Feb 2020 10:57:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 28 Feb 2020 04:57:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582883874;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GPbQbSnoNIR6NB2KmPCWbBbobv0Ny01rSEGtvs/xj88=;
+        b=CuenHnSTADyrYMn9XuDRzNh+V8y8zDywz+sTu7L2e5G3mHbgbff1G81ggDK9xXY2GSc3qT
+        OZUQJJykf8NDEhnwXN/5E8+5v2SDl8df8/rVMEbLt2u92kuk5j2LMUSBv6halbLJ1PdV0S
+        vFWDZ5wyyj2zad0d/jfJmaGZsQ/gxmo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-15-vssKmzpaPymKpi8qdrE8vA-1; Fri, 28 Feb 2020 04:57:51 -0500
+X-MC-Unique: vssKmzpaPymKpi8qdrE8vA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5DF1C800D53;
+        Fri, 28 Feb 2020 09:57:49 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-150.ams2.redhat.com [10.36.116.150])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CE3F319C7F;
+        Fri, 28 Feb 2020 09:57:48 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 183EF17447; Fri, 28 Feb 2020 10:57:48 +0100 (CET)
+Date:   Fri, 28 Feb 2020 10:57:48 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Alistair Francis <alistair.francis@wdc.com>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org, daniel@ffwll.ch,
+        airlied@linux.ie, alistair23@gmail.com,
+        Khem Raj <raj.khem@gmail.com>
+Subject: Re: [PATCH] drm/bochs: Remove vga write
+Message-ID: <20200228095748.uu4sqkz6y477eabc@sirius.home.kraxel.org>
+References: <20200227210454.18217-1-alistair.francis@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <20200227205153.GC17014@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200227210454.18217-1-alistair.francis@wdc.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/02/20 21:51, Sean Christopherson wrote:
-> So part of me thinks the best way to resolve the printing would be to
-> modify VMX_EXIT_REASONS to do "| VMX_EXIT_REASONS_FAILED_VMENTRY" where
-> appropriate, i.e. on INVALID_STATE, MSR_LOAD_FAIL and MCE_DURING_VMENTRY.
-> The downside of that approach is it breaks again when new modifiers come
-> along, e.g. SGX's ENCLAVE_EXIT.  But again, the modifier is likely useful
-> information.
+On Thu, Feb 27, 2020 at 01:04:54PM -0800, Alistair Francis wrote:
+> The QEMU model for the Bochs display has no VGA memory section at offset
+> 0x400 [1]. By writing to this register Linux can create a write to
+> unassigned memory which depending on machine and architecture can result
+> in a store fault.
 > 
-> I think the most foolproof and informative way to handle this would be to
-> add a macro and/or helper function, e.g. kvm_print_vmx_exit_reason(), to
-> wrap __print_symbolic(__entry->exit_code, VMX_EXIT_REASONS) so that it
-> prints both the name of the basic exit reason as well as the names for
-> any modifiers.
+> I don't see any reference to this address at OSDev [2] or in the Bochs
+> source code.
 > 
-> TL;DR: I still like this patch as is, especially since it'll be easy to
-> backport.  I'll send a separate patch for the tracepoint issue.
+> Removing this write still allows graphics to work inside QEMU with
+> the bochs-display.
 
-Agreed, thanks.  I queued this one.
+It's not that simple.  The driver also handles the qemu stdvga (-device
+VGA, -device secondary-vga) which *does* need the vga port write.
+There is no way for the guest to figure whenever the device is
+secondary-vga or bochs-display.
 
-Paolo
+So how about fixing things on the host side?  Does qemu patch below
+help?
+
+Maybe another possible approach is to enable/disable vga access per
+arch.  On x86 this doesn't cause any problems.  I guess you are on
+risc-v?
+
+cheers,
+  Gerd
+
+diff --git a/hw/display/bochs-display.c b/hw/display/bochs-display.c
+index 62085f9fc063..e93e838243b8 100644
+--- a/hw/display/bochs-display.c
++++ b/hw/display/bochs-display.c
+@@ -151,6 +151,26 @@ static const MemoryRegionOps bochs_display_qext_ops = {
+     .endianness = DEVICE_LITTLE_ENDIAN,
+ };
+ 
++static uint64_t dummy_read(void *ptr, hwaddr addr, unsigned size)
++{
++    return -1;
++}
++
++static void dummy_write(void *ptr, hwaddr addr,
++                        uint64_t val, unsigned size)
++{
++}
++
++static const MemoryRegionOps dummy_ops = {
++    .read = dummy_read,
++    .write = dummy_write,
++    .valid.min_access_size = 1,
++    .valid.max_access_size = 4,
++    .impl.min_access_size = 1,
++    .impl.max_access_size = 1,
++    .endianness = DEVICE_LITTLE_ENDIAN,
++};
++
+ static int bochs_display_get_mode(BochsDisplayState *s,
+                                    BochsDisplayMode *mode)
+ {
+@@ -284,8 +304,8 @@ static void bochs_display_realize(PCIDevice *dev, Error **errp)
+     memory_region_init_io(&s->qext, obj, &bochs_display_qext_ops, s,
+                           "qemu extended regs", PCI_VGA_QEXT_SIZE);
+ 
+-    memory_region_init(&s->mmio, obj, "bochs-display-mmio",
+-                       PCI_VGA_MMIO_SIZE);
++    memory_region_init_io(&s->mmio, obj, &dummy_ops, NULL,
++                          "bochs-display-mmio", PCI_VGA_MMIO_SIZE);
+     memory_region_add_subregion(&s->mmio, PCI_VGA_BOCHS_OFFSET, &s->vbe);
+     memory_region_add_subregion(&s->mmio, PCI_VGA_QEXT_OFFSET, &s->qext);
+ 
 
