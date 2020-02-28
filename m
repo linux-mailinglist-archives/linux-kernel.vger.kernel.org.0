@@ -2,101 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B43611738B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:47:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6509C17389C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:44:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbgB1NpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 08:45:15 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:64957 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727018AbgB1NpN (ORCPT
+        id S1726857AbgB1Noj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:44:39 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41456 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbgB1Noj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 08:45:13 -0500
-X-UUID: 1fac3e626be44ad4b71fe01dd4a9ffe2-20200228
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=cboCRZgtbMRKG7dnNyYFwyS8wl4wWUNnD8jnwAzifvk=;
-        b=KtqMprH2hVpda6wbcgox6QJjrp+yPQ+GH4UEpsKb85wnHeEkDjDNRLpbgIHkvBJ3wcfYdWWDdJZa4P7hEMi3SABfHyU0eSgSnh2+NkpP1VAgR8fFfqxdwxtKYIh2lue8M2j9Y9I4zPzHUEfgKjLJK5xa2sEX1stxRB2gL5UtXsQ=;
-X-UUID: 1fac3e626be44ad4b71fe01dd4a9ffe2-20200228
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <dennis-yc.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 915688716; Fri, 28 Feb 2020 21:45:08 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 28 Feb 2020 21:44:08 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 28 Feb 2020 21:45:05 +0800
-From:   Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Ming-Fan Chen <ming-fan.chen@mediatek.com>,
-        Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
-Subject: [PATCH v3 13/13] soc: mediatek: cmdq: add set event function
-Date:   Fri, 28 Feb 2020 21:44:21 +0800
-Message-ID: <1582897461-15105-15-git-send-email-dennis-yc.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1582897461-15105-1-git-send-email-dennis-yc.hsieh@mediatek.com>
-References: <1582897461-15105-1-git-send-email-dennis-yc.hsieh@mediatek.com>
+        Fri, 28 Feb 2020 08:44:39 -0500
+Received: by mail-qk1-f195.google.com with SMTP id b5so2928098qkh.8
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 05:44:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+Gusxub8rDloI9E9z1JdAxqVCBhNu/BE0SIv5yZJtB0=;
+        b=fq75hbStQcdTP6/tpdFP2fPlQ1qJYu9pJij48Gkh10U/d+jCPx5yNMCGpWpRHbMfEp
+         VC1gKfhHRr2X+tv2bh4h1utt2lMNKdwgKlYaFqfdqaLdt0jJzdojLIZD0EaA9KqFhZIl
+         TvtuDke1oA6IkQKF3+Qp56lzggCgiTOGVuBmuj7XS9dLLhJyXVpzyUZBeULU3blyT7Ot
+         ww128tDwZHdEGYWAmRHBeyWPQK3urK+K295l0DCM+e1uLOZPNL16s2A+Ten6EdGa081g
+         hivGoZrqUx+/m12kqFMmzd8CbAOGn+T41murnDE++VhtXnGcsVJ/RYY7+GH80lOy/vyt
+         biWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+Gusxub8rDloI9E9z1JdAxqVCBhNu/BE0SIv5yZJtB0=;
+        b=VJP0ZAsHBQ0Tchhi6cOyq2GEhBWl7riy6/8hO9CG/f9QbZBnCcWkWTpoDhr/DfQ/tT
+         fG+cIASY656kaICQUfGGS7hRTsbHqFJAIE6EIrPQDyKrDGLQ6AveWlBUv7L0UPP33IpS
+         Jzpj7t3whSfduebc6omYPJXnasM2iSMkLVXXr1dsRM7Id3FuN3c9uAXkTaNObB+egaG2
+         ExpS0emvKdUryzbjf2NJObr2qoFMfpi+Zk/JlHUFyiCOp925/Byfpc+5KotZovLoCcdg
+         ruplr/+RvHvcAYT/ADt36REJqkASJRZLQre+IzRukYkXTzl0gbnlv12pZEpzyS4EUSut
+         7DGQ==
+X-Gm-Message-State: APjAAAVRONLmYB1rn2xcJPiov8A8A6t75fjcFHjQcp9BYlHPKjNjmhRf
+        ALQhzo+89XucxPArbetgB7MwyQ==
+X-Google-Smtp-Source: APXvYqyTKBYDgEEsD/JReg4oMAoT8TFz5vLvH33yj4Tz9TuOddT6xLH1eCSa+3TbalxgD6egRTt7Lg==
+X-Received: by 2002:a37:dd7:: with SMTP id 206mr4628111qkn.12.1582897478426;
+        Fri, 28 Feb 2020 05:44:38 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id d35sm3365322qtc.21.2020.02.28.05.44.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Feb 2020 05:44:37 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1j7fwS-0007x1-Br; Fri, 28 Feb 2020 09:44:36 -0400
+Date:   Fri, 28 Feb 2020 09:44:36 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-mm@kvack.org, Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv5 2/3] mm/gup: fix omission of check on FOLL_LONGTERM in
+ gup fast path
+Message-ID: <20200228134436.GP31668@ziepe.ca>
+References: <1582889550-9101-1-git-send-email-kernelfans@gmail.com>
+ <1582889550-9101-3-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1582889550-9101-3-git-send-email-kernelfans@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkIHNldCBldmVudCBmdW5jdGlvbiBpbiBjbWRxIGhlbHBlciBmdW5jdGlvbnMgdG8gc2V0IHNw
-ZWNpZmljIGV2ZW50Lg0KDQpTaWduZWQtb2ZmLWJ5OiBEZW5uaXMgWUMgSHNpZWggPGRlbm5pcy15
-Yy5oc2llaEBtZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21k
-cS1oZWxwZXIuYyAgIHwgMTUgKysrKysrKysrKysrKysrDQogaW5jbHVkZS9saW51eC9tYWlsYm94
-L210ay1jbWRxLW1haWxib3guaCB8ICAxICsNCiBpbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9t
-dGstY21kcS5oICAgIHwgIDkgKysrKysrKysrDQogMyBmaWxlcyBjaGFuZ2VkLCAyNSBpbnNlcnRp
-b25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21kcS1oZWxw
-ZXIuYyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jDQppbmRleCA0MDZl
-MWQzNGQyMzQuLjczOGY4M2Q5MGI1OSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc29jL21lZGlhdGVr
-L210ay1jbWRxLWhlbHBlci5jDQorKysgYi9kcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21kcS1o
-ZWxwZXIuYw0KQEAgLTMyNiw2ICszMjYsMjEgQEAgaW50IGNtZHFfcGt0X2NsZWFyX2V2ZW50KHN0
-cnVjdCBjbWRxX3BrdCAqcGt0LCB1MTYgZXZlbnQpDQogfQ0KIEVYUE9SVF9TWU1CT0woY21kcV9w
-a3RfY2xlYXJfZXZlbnQpOw0KIA0KK2ludCBjbWRxX3BrdF9zZXRfZXZlbnQoc3RydWN0IGNtZHFf
-cGt0ICpwa3QsIHUxNiBldmVudCkNCit7DQorCXN0cnVjdCBjbWRxX2luc3RydWN0aW9uIGluc3Qg
-PSB7IHswfSB9Ow0KKw0KKwlpZiAoZXZlbnQgPj0gQ01EUV9NQVhfRVZFTlQpDQorCQlyZXR1cm4g
-LUVJTlZBTDsNCisNCisJaW5zdC5vcCA9IENNRFFfQ09ERV9XRkU7DQorCWluc3QudmFsdWUgPSBD
-TURRX1dGRV9VUERBVEUgfCBDTURRX1dGRV9VUERBVEVfVkFMVUU7DQorCWluc3QuZXZlbnQgPSBl
-dmVudDsNCisNCisJcmV0dXJuIGNtZHFfcGt0X2FwcGVuZF9jb21tYW5kKHBrdCwgaW5zdCk7DQor
-fQ0KK0VYUE9SVF9TWU1CT0woY21kcV9wa3Rfc2V0X2V2ZW50KTsNCisNCiBpbnQgY21kcV9wa3Rf
-cG9sbChzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTggc3Vic3lzLA0KIAkJICB1MTYgb2Zmc2V0LCB1
-MzIgdmFsdWUpDQogew0KZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvbWFpbGJveC9tdGstY21k
-cS1tYWlsYm94LmggYi9pbmNsdWRlL2xpbnV4L21haWxib3gvbXRrLWNtZHEtbWFpbGJveC5oDQpp
-bmRleCA0MmQyYTMwZTZhNzAuLmJhMmQ4MTExODNhOSAxMDA2NDQNCi0tLSBhL2luY2x1ZGUvbGlu
-dXgvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmgNCisrKyBiL2luY2x1ZGUvbGludXgvbWFpbGJv
-eC9tdGstY21kcS1tYWlsYm94LmgNCkBAIC0xNyw2ICsxNyw3IEBADQogI2RlZmluZSBDTURRX0pV
-TVBfUEFTUwkJCUNNRFFfSU5TVF9TSVpFDQogDQogI2RlZmluZSBDTURRX1dGRV9VUERBVEUJCQlC
-SVQoMzEpDQorI2RlZmluZSBDTURRX1dGRV9VUERBVEVfVkFMVUUJCUJJVCgxNikNCiAjZGVmaW5l
-IENNRFFfV0ZFX1dBSVQJCQlCSVQoMTUpDQogI2RlZmluZSBDTURRX1dGRV9XQUlUX1ZBTFVFCQkw
-eDENCiANCmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5o
-IGIvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaA0KaW5kZXggZDYzNzQ5NDQw
-Njk3Li5jYTcwMjk2YWUxMjAgMTAwNjQ0DQotLS0gYS9pbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRl
-ay9tdGstY21kcS5oDQorKysgYi9pbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5o
-DQpAQCAtMTY4LDYgKzE2OCwxNSBAQCBpbnQgY21kcV9wa3Rfd2ZlKHN0cnVjdCBjbWRxX3BrdCAq
-cGt0LCB1MTYgZXZlbnQsIGJvb2wgY2xlYXIpOw0KICAqLw0KIGludCBjbWRxX3BrdF9jbGVhcl9l
-dmVudChzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTE2IGV2ZW50KTsNCiANCisvKioNCisgKiBjbWRx
-X3BrdF9zZXRfZXZlbnQoKSAtIGFwcGVuZCBzZXQgZXZlbnQgY29tbWFuZCB0byB0aGUgQ01EUSBw
-YWNrZXQNCisgKiBAcGt0Ogl0aGUgQ01EUSBwYWNrZXQNCisgKiBAZXZlbnQ6CXRoZSBkZXNpcmVk
-IGV2ZW50IHRvIGJlIHNldA0KKyAqDQorICogUmV0dXJuOiAwIGZvciBzdWNjZXNzOyBlbHNlIHRo
-ZSBlcnJvciBjb2RlIGlzIHJldHVybmVkDQorICovDQoraW50IGNtZHFfcGt0X3NldF9ldmVudChz
-dHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTE2IGV2ZW50KTsNCisNCiAvKioNCiAgKiBjbWRxX3BrdF9w
-b2xsKCkgLSBBcHBlbmQgcG9sbGluZyBjb21tYW5kIHRvIHRoZSBDTURRIHBhY2tldCwgYXNrIEdD
-RSB0bw0KICAqCQkgICAgIGV4ZWN1dGUgYW4gaW5zdHJ1Y3Rpb24gdGhhdCB3YWl0IGZvciBhIHNw
-ZWNpZmllZA0KLS0gDQoyLjE4LjANCg==
+On Fri, Feb 28, 2020 at 07:32:29PM +0800, Pingfan Liu wrote:
+> FOLL_LONGTERM suggests a pin which is going to be given to hardware and
+> can't move. It would truncate CMA permanently and should be excluded.
+> 
+> FOLL_LONGTERM has already been checked in the slow path, but not checked in
+> the fast path, which means a possible leak of CMA page to longterm pinned
+> requirement through this crack.
+> 
+> Place a check in try_get_compound_head() in the fast path.
+> 
+> Some note about the check:
+> Huge page's subpages have the same migrate type due to either
+> allocation from a free_list[] or alloc_contig_range() with param
+> MIGRATE_MOVABLE. So it is enough to check on a single subpage
+> by is_migrate_cma_page(subpage)
+> 
+> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Mike Rapoport <rppt@linux.ibm.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> Cc: Keith Busch <keith.busch@intel.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Cc: Shuah Khan <shuah@kernel.org>
+> To: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+>  mm/gup.c | 26 +++++++++++++++++++-------
+>  1 file changed, 19 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index cd8075e..f0d6804 100644
+> +++ b/mm/gup.c
+> @@ -33,9 +33,21 @@ struct follow_page_context {
+>   * Return the compound head page with ref appropriately incremented,
+>   * or NULL if that failed.
+>   */
+> -static inline struct page *try_get_compound_head(struct page *page, int refs)
+> +static inline struct page *try_get_compound_head(struct page *page, int refs,
+> +	unsigned int flags)
+>  {
+> -	struct page *head = compound_head(page);
+> +	struct page *head;
+> +
+> +	/*
+> +	 * Huge page's subpages have the same migrate type due to either
+> +	 * allocation from a free_list[] or alloc_contig_range() with param
+> +	 * MIGRATE_MOVABLE. So it is enough to check on a single subpage.
+> +	 */
+> +	if (unlikely(flags & FOLL_LONGTERM) &&
+> +		is_migrate_cma_page(page))
+> +		return NULL;
 
+This doesn't seem very good actually.
+
+If I understand properly, if the system has randomly decided to place,
+say, an anonymous page in a CMA region when an application did mmap(),
+then when the application tries to use this page with a LONGTERM pin
+it gets an immediate failure because of the above.
+
+This not OK - the application should not be subject to random failures
+related to long term pins beyond its direct control.
+
+Essentially, failures should only originate from the application using
+specific mmap scenarios, not randomly based on something the MM did,
+and certainly never for anonymous memory.
+
+I think the correct action here is to trigger migration of the page so
+it is not in CMA.
+
+Jason
