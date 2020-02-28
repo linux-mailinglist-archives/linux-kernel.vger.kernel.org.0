@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B731172CAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:01:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 678B6172CB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:01:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730296AbgB1ABX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 19:01:23 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:34407 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729867AbgB1ABU (ORCPT
+        id S1730267AbgB1ABW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 19:01:22 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39920 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729956AbgB1ABV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 19:01:20 -0500
-Received: by mail-pj1-f68.google.com with SMTP id f2so3724596pjq.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 16:01:19 -0800 (PST)
+        Thu, 27 Feb 2020 19:01:21 -0500
+Received: by mail-pl1-f196.google.com with SMTP id g6so469294plp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 16:01:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UhZ7upFOZbJwSu3t6sj7kyMuepSiW+0wthtVyYvfUW8=;
-        b=GXN2TwlTYNwiK+ybctcNCG0N1o4mmEfgJ3tnGih4vm5ywp9y4TrkN7Ufd9T3240JQy
-         E16DACTSaDDNdfolSmZkf2EnIwxAkoDtU4kGsVdvLeQnFGFncVNe6tE644aMszLX9q3B
-         X299mdovMzxD4NedWt/1mwa1YRvXp1azy1t/0=
+        bh=HVEfaBtq4P7YQEKJlB0rNIhGuSMdX7ZyWHWzM+iNj0k=;
+        b=MiPZlyhhgfM7UPgKZ/frWvRzNlBB5613UuXaClOb+/1qj4My0rxjR2m0/Q68Aqjer2
+         gZYS9YdvWjfD32foSE/T14ZSJwLXcxaxD5TFllT8NBx0vpNpvH9gXUcwAi9LBcMVYSoD
+         GAqgi2ibQpd1tNuqjY7zAzuM2NwWtDPz6cTyI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UhZ7upFOZbJwSu3t6sj7kyMuepSiW+0wthtVyYvfUW8=;
-        b=qQPC4yeo15WmcvVhmgUxVUXeEpaVC+tssrteEIoNZ9h3EaLAendSKL7IQEtCKD05Uw
-         9MiwqjPWFoDGq0m86/DvSAT1/E6tH0h2O1qE0eJpuSRMUFRHlaE5JY0cPQ2iJOdyEI3n
-         bFCm22/+qXySayR30C9mQx+MraWHH6y6/zsOsllo4+Q2AHb9SpSsbBfYfvW6mA5jxPIW
-         8wXTEd2RUDpIyF/2SGEJcwn4sdgPRpqD7V694VBCYrf1QtcAKb1XjHhcC8AHtVkSjWHZ
-         H8Iptv5LfxHKZ7BoLbtrgX27r58+o9KeCMczTZp85HI9636fWAfxR+uT680jDbJsc0QA
-         68Zg==
-X-Gm-Message-State: APjAAAVQJeYwYbkidw+y8Hs1mtVDbKrDUEjSY1iDF5qPWudhktwDZI18
-        PxYjRPrM9LNLERUAEuJaY00wAA==
-X-Google-Smtp-Source: APXvYqxiJCqNV8OEfXmb1fBc5jiE7n4/3DOvj4v7SG/Rln8ytNDHgILInJ8gkTkQ+TEqyjFoPLN0cw==
-X-Received: by 2002:a17:90a:d80b:: with SMTP id a11mr1588095pjv.142.1582848079067;
-        Thu, 27 Feb 2020 16:01:19 -0800 (PST)
+        bh=HVEfaBtq4P7YQEKJlB0rNIhGuSMdX7ZyWHWzM+iNj0k=;
+        b=fPSHNk5VZ/VxuqF2xxnvO/B96CIq7DKCy0zYLbI2ajj6cA6Ty+3Uuu/uXOavoziUz1
+         CeE+WwN/x0cUqQZ5hTOrhgdWeHAkyIkmCvegP0XR3DzGL99AmqqJNixq0Q/IiaeGjex6
+         dD13uLps2Kqrt2qseaNJN4yxBUWOgmBgLunpdiN1C0vGELD857verDs/6uAEKUazUINp
+         d4hUyZ3gIaZuXRniPMS542H5ly+/5V4JxPC3wsWn2oJbehtpUHVA5XKtilMLP0qQKYih
+         fUMIEXEorTlG4R2Mbu73FYrdQ2WI/ISmOVzjaxW1I26eQKX9YHds2bhlTQRtuY3kFEMX
+         UxZA==
+X-Gm-Message-State: APjAAAXZ3xbnC+A/6NfmUbeU2oavKpKShlyRofFRiQhpIRl9lOpSoOsY
+        nNSCbOtujt7FhT+WxfN8c5SIcA==
+X-Google-Smtp-Source: APXvYqymY4xDGLBpKhllQYQtdvp8eIxEJSyOvYMBEHU7xpDpUfih++1rH9KsvwXHUVBag4LFr8Qb4Q==
+X-Received: by 2002:a17:90a:7784:: with SMTP id v4mr1614784pjk.134.1582848081160;
+        Thu, 27 Feb 2020 16:01:21 -0800 (PST)
 Received: from thgarnie.kir.corp.google.com ([2620:0:1008:1100:6e62:16fa:a60c:1d24])
-        by smtp.gmail.com with ESMTPSA id c18sm7314476pgw.17.2020.02.27.16.01.18
+        by smtp.gmail.com with ESMTPSA id c18sm7314476pgw.17.2020.02.27.16.01.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 16:01:18 -0800 (PST)
+        Thu, 27 Feb 2020 16:01:20 -0800 (PST)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, keescook@chromium.org,
@@ -49,10 +49,12 @@ Cc:     kristen@linux.intel.com, keescook@chromium.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v11 05/11] x86: pm-trace - Adapt assembly for PIE support
-Date:   Thu, 27 Feb 2020 16:00:50 -0800
-Message-Id: <20200228000105.165012-6-thgarnie@chromium.org>
+        Andy Lutomirski <luto@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Len Brown <len.brown@intel.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v11 06/11] x86/CPU: Adapt assembly for PIE support
+Date:   Thu, 27 Feb 2020 16:00:51 -0800
+Message-Id: <20200228000105.165012-7-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
 In-Reply-To: <20200228000105.165012-1-thgarnie@chromium.org>
 References: <20200228000105.165012-1-thgarnie@chromium.org>
@@ -63,28 +65,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change assembly to use the new _ASM_MOVABS macro instead of _ASM_MOV for
-the assembly to be PIE compatible.
+Change the assembly code to use only relative references of symbols for the
+kernel to be PIE compatible.
 
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- arch/x86/include/asm/pm-trace.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/processor.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/pm-trace.h b/arch/x86/include/asm/pm-trace.h
-index bfa32aa428e5..972070806ce9 100644
---- a/arch/x86/include/asm/pm-trace.h
-+++ b/arch/x86/include/asm/pm-trace.h
-@@ -8,7 +8,7 @@
- do {								\
- 	if (pm_trace_enabled) {					\
- 		const void *tracedata;				\
--		asm volatile(_ASM_MOV " $1f,%0\n"		\
-+		asm volatile(_ASM_MOVABS " $1f,%0\n"		\
- 			     ".section .tracedata,\"a\"\n"	\
- 			     "1:\t.word %c1\n\t"		\
- 			     _ASM_PTR " %c2\n"			\
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 09705ccc393c..fdf6366c482d 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -746,11 +746,13 @@ static inline void sync_core(void)
+ 		"pushfq\n\t"
+ 		"mov %%cs, %0\n\t"
+ 		"pushq %q0\n\t"
+-		"pushq $1f\n\t"
++		"leaq 1f(%%rip), %q0\n\t"
++		"pushq %q0\n\t"
+ 		"iretq\n\t"
+ 		UNWIND_HINT_RESTORE
+ 		"1:"
+-		: "=&r" (tmp), ASM_CALL_CONSTRAINT : : "cc", "memory");
++		: "=&r" (tmp), ASM_CALL_CONSTRAINT
++		: : "cc", "memory");
+ #endif
+ }
+ 
 -- 
 2.25.1.481.gfbce0eb801-goog
 
