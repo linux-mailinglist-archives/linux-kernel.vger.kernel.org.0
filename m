@@ -2,72 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FAAC173A60
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:53:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9E26173A6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:56:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbgB1Oxq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 09:53:46 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:49083 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726788AbgB1Oxq (ORCPT
+        id S1727116AbgB1Ozp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 09:55:45 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42401 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726874AbgB1Ozp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 09:53:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582901625;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=Me2iAT/yAJmgAK/C/Xnwh9cHR9F8E6hzn8OdATiSink=;
-        b=gs0s1D2lFfcA5l1B2hHjxv1Yoq+DCLuxSimQmGoZx7Ob+hCUTh7bBKkMI0vtOaYgIHZTKL
-        9nWhVL1b8wjH7vcfZ31qOIsYjs8Q7gz4TiIkfrDFNPfL/l47mhs8cWELj5RTthc11vbZjo
-        NbXM7V8Itg51mMrS/1Q8yAAlQ3sI1GI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-75-_ZDKfHEGNxaTGc1nay5_ZA-1; Fri, 28 Feb 2020 09:53:36 -0500
-X-MC-Unique: _ZDKfHEGNxaTGc1nay5_ZA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B3E8813E5;
-        Fri, 28 Feb 2020 14:53:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 22CD590CC8;
-        Fri, 28 Feb 2020 14:53:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     linux-api@vger.kernel.org
-cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, metze@samba.org,
-        torvalds@linux-foundation.org, cyphar@cyphar.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
+        Fri, 28 Feb 2020 09:55:45 -0500
+Received: by mail-wr1-f67.google.com with SMTP id p18so3239865wre.9
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 06:55:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xGS5E2ij2aXZmAzDZgbLote3FIscLuyNLJZj/fAHfoY=;
+        b=B62jc43uVwB+e901ispu1vxFEQ7Wp1qg7mVXscpz1axaQGsSYsbePkXeBjW+oxF8GH
+         9kcxgVsM3USCw66QCdbhF6eKsrZVQpmWmXV7woHotQm4cHAFZdEsbyW00STfy8dj672h
+         n7MirNd559c3v6aCr0yazVzMv49m9N5Oyc71VPKvIT24PQow/vZ29KULyQZKfrd4YDtj
+         fPNl+/jspNdD3tzDigKNl0QF94yeaPcrr1M5zqmM7somJGwxEMXZ/3pl+BTX5Q+oJZwp
+         qRW8+S6e9lft+CvnDvCceg5HR7evBrBnNL5WAhSa7z6O3hPUfx/p12VODfPNXysADgo+
+         UNRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xGS5E2ij2aXZmAzDZgbLote3FIscLuyNLJZj/fAHfoY=;
+        b=um2DvsJeBP/r/lg6uBzxvi4Ri+tHP/CILYWm+pVF4gibTa+y3zJZgViEAGgNfHVlKD
+         Ev4Cyu9KGI7mctcOgDhR2mKv4QL4g96yBTlPvZZXlQ1qSE4z6nY7F9Oh8EopRm7Su5g7
+         2u5BPSjaHYjt2H2KPUU18qiNwEBHq4unH2/X2iZwiJkaJ1yE0jLWJAr9Ae08KStkFqve
+         RVd7sEP3rC8p1FHvcgENuXCSPDw+rUEkVFmIAsKMxJVhPHFV+6KC4mmeU2o5pUt/SKAc
+         0UDKpkRYVmC1qrQw1lipGx3YXFntsMwRl5mL0uf1SkfigOHMRRgSpOBW0n3tFreTHaHk
+         8Nxg==
+X-Gm-Message-State: APjAAAU74sd32VF+7N6UgIDyvEY/lwVhEaJmjMv/kz1+vfefsw9rf7w0
+        lwZiSv/1+rZH74OVGCQXmk4Z1JmPHq2tJfSG+eTwBA==
+X-Google-Smtp-Source: APXvYqzgmFzHYyLRQoXsMIusyYo0s0nDR+ALWz0qQnJfNjhpYVKzH75PuAjjImnefSFuWpO2ab0zHaKimik2QW5Wbls=
+X-Received: by 2002:adf:e542:: with SMTP id z2mr5471702wrm.150.1582901742631;
+ Fri, 28 Feb 2020 06:55:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <96562.1582901612.1@warthog.procyon.org.uk>
-Date:   Fri, 28 Feb 2020 14:53:32 +0000
-Message-ID: <96563.1582901612@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20200227151752.21985-1-eugen.hristev@microchip.com>
+ <CAPY8ntB17QjCSyefwTrMhudwkiFYT_5x3i1=KjzFv+p6tbrQEA@mail.gmail.com>
+ <c6c1082d-3f40-c709-39cf-d1547f0c0308@microchip.com> <CAPY8ntDrsEJboMr2=Phce=mT6DJpivhE--L00qd4uecF81AXkg@mail.gmail.com>
+ <4d89fcc2-07bb-f83d-94e2-d0c3c1520471@microchip.com>
+In-Reply-To: <4d89fcc2-07bb-f83d-94e2-d0c3c1520471@microchip.com>
+From:   Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date:   Fri, 28 Feb 2020 14:55:25 +0000
+Message-ID: <CAPY8ntDmQuzqWfkq_4+Jvc8BFzQh+XnVMt0ZyNBbzmk4GEPnfg@mail.gmail.com>
+Subject: Re: [PATCH] media: i2c: imx219: add support for enum frame interval
+To:     Eugen.Hristev@microchip.com
+Cc:     Andrey Konovalov <andrey.konovalov@linaro.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	
-I've been told that RESOLVE_* flags, which can be found in linux/openat2.h,
-should be used instead of the equivalent AT_* flags for new system calls.  Is
-this the case?
+On Fri, 28 Feb 2020 at 14:34, <Eugen.Hristev@microchip.com> wrote:
+>
+> On 28.02.2020 16:16, Dave Stevenson wrote:
+> > On Fri, 28 Feb 2020 at 14:05, <Eugen.Hristev@microchip.com> wrote:
+> >>
+> >> On 28.02.2020 15:44, Dave Stevenson wrote:
+> >>> Hi Eugen.
+> >>>
+> >>> On Thu, 27 Feb 2020 at 15:19, Eugen Hristev <eugen.hristev@microchip.com> wrote:
+> >>>>
+> >>>> Add support for enum frame intervals IOCTL.
+> >>>> The current supported framerates are only available as comments inside
+> >>>> the code.
+> >>>> Add support for VIDIOC_ENUM_FRAMEINTERVALS as the enum_frame_interval
+> >>>> callback as pad ops.
+> >>>>
+> >>>>    # v4l2-ctl --list-frameintervals width=1920,height=1080,pixelformat=RG10
+> >>>>    ioctl: VIDIOC_ENUM_FRAMEINTERVALS
+> >>>>           Interval: Discrete 0.067s (15.000 fps)
+> >>>>           Interval: Discrete 0.033s (30.000 fps)
+> >>>>           Interval: Discrete 0.033s (30.000 fps)
+> >>>
+> >>> But the frame rates are not discrete. You have frame rate control via
+> >>> V4L2_CID_VBLANK, which can be used in conjunction with V4L2_CID_HBLANK
+> >>> and V4L2_CID_PIXEL_RATE to determine actual frame period.
+> >>>
+> >>> See https://linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/ext-ctrls-image-source.html?highlight=v4l2_cid_vblank
+> >>> I believe this is the preferred route to doing frame rate control on
+> >>> image sensors. I assume someone will correct me if I'm wrong on that.
+> >>
+> >>
+> >> Okay... , I was guided towards this by the comments in the code, saying
+> >> that the three supported modes are at a constant frame per second...
+> >>
+> >> Those comments are wrong then ?
+> >
+> > Yes, the comments for each of the modes (eg "/* 8MPix 15fps mode */")
+> > probably shouldn't have the frame rate in them. I don't see any other
+> > references. Those frame rates are the defaults only, as set via eg
+> > IMX219_VTS_15FPS.
+> >
+> > I originally wrote the driver without frame rate control, and the
+> > comments obviously didn't get updated when VTS/HTS support was added
+> > :-/
+>
+> So in my understanding, actually, to get actual frame rate, we should
+> use another control, and the enum frame intervals is actually impossible
+> to use, since the sensor supports a multitude of frame rates, and it
+> would be egregious to enumerate them all.
+>
+> Is this the case ?
+>
+> My idea was that v4l2-ctl --list-formats-ext will not show anything
+> related to frame rate. So using this command, will only get the
+> resolution, but don't know what to expect in terms of frame rate.
+> Wouldn't be useful to implement this 'default' frame rate in this IOCTL ?
 
-If so, should we comment them as being deprecated in the header file?  And
-should they be in linux/fcntl.h rather than linux/openat2.h?
+I'll defer to Sakari or others on the original reasoning behind it. I
+was basing imx219 on other recently merged Bayer sensor drivers.
 
-Also:
+Having individual control of HTS and VTS allows slightly finer control
+of exactly how the sensor frames. It also matches with exposure time
+being set in lines, therefore you need to know the time per horizontal
+line to convert from units of time.
+If the driver were implementing ENUM_FRAME_INTERVALS / [S|G]_PARM then
+you'd still need to support HTS/VTS for exposure, so why duplicate
+settings?
 
- (*) It should be noted that the RESOLVE_* flags are not a superset of the
-     AT_* flags (there's no equivalent of AT_NO_AUTOMOUNT for example).
-
- (*) It has been suggested that AT_SYMLINK_NOFOLLOW should be the default, but
-     only RESOLVE_NO_SYMLINKS exists.
-
-David
-
+> Thanks for explanations
+> >
+> >> Thanks for replying,
+> >>
+> >> Eugen
+> >>
+> >>>
+> >>>     Dave
+> >>>
+> >>>> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> >>>> ---
+> >>>>
+> >>>> Hello,
+> >>>>
+> >>>> This is on top of Sakari's tree in linuxtv.org
+> >>>>
+> >>>> Thanks
+> >>>> Eugen
+> >>>>
+> >>>>    drivers/media/i2c/imx219.c | 27 +++++++++++++++++++++++++++
+> >>>>    1 file changed, 27 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> >>>> index f1effb5a5f66..17fcedd4edb6 100644
+> >>>> --- a/drivers/media/i2c/imx219.c
+> >>>> +++ b/drivers/media/i2c/imx219.c
+> >>>> @@ -127,6 +127,8 @@ struct imx219_mode {
+> >>>>           unsigned int width;
+> >>>>           /* Frame height */
+> >>>>           unsigned int height;
+> >>>> +       /* Frame rate */
+> >>>> +       u8 fps;
+> >>>>
+> >>>>           /* V-timing */
+> >>>>           unsigned int vts_def;
+> >>>> @@ -381,6 +383,7 @@ static const struct imx219_mode supported_modes[] = {
+> >>>>                   /* 8MPix 15fps mode */
+> >>>>                   .width = 3280,
+> >>>>                   .height = 2464,
+> >>>> +               .fps = 15,
+> >>>>                   .vts_def = IMX219_VTS_15FPS,
+> >>>>                   .reg_list = {
+> >>>>                           .num_of_regs = ARRAY_SIZE(mode_3280x2464_regs),
+> >>>> @@ -391,6 +394,7 @@ static const struct imx219_mode supported_modes[] = {
+> >>>>                   /* 1080P 30fps cropped */
+> >>>>                   .width = 1920,
+> >>>>                   .height = 1080,
+> >>>> +               .fps = 30,
+> >>>>                   .vts_def = IMX219_VTS_30FPS_1080P,
+> >>>>                   .reg_list = {
+> >>>>                           .num_of_regs = ARRAY_SIZE(mode_1920_1080_regs),
+> >>>> @@ -401,6 +405,7 @@ static const struct imx219_mode supported_modes[] = {
+> >>>>                   /* 2x2 binned 30fps mode */
+> >>>>                   .width = 1640,
+> >>>>                   .height = 1232,
+> >>>> +               .fps = 30,
+> >>>>                   .vts_def = IMX219_VTS_30FPS_BINNED,
+> >>>>                   .reg_list = {
+> >>>>                           .num_of_regs = ARRAY_SIZE(mode_1640_1232_regs),
+> >>>> @@ -680,6 +685,27 @@ static int imx219_enum_frame_size(struct v4l2_subdev *sd,
+> >>>>           return 0;
+> >>>>    }
+> >>>>
+> >>>> +static int imx219_enum_frame_interval(struct v4l2_subdev *sd,
+> >>>> +                                     struct v4l2_subdev_pad_config *cfg,
+> >>>> +                                     struct v4l2_subdev_frame_interval_enum *fie)
+> >>>> +{
+> >>>> +       struct imx219 *imx219 = to_imx219(sd);
+> >>>> +
+> >>>> +       if (fie->index >= ARRAY_SIZE(supported_modes))
+> >>>> +               return -EINVAL;
+> >>>> +
+> >>>> +       if (fie->code != imx219_get_format_code(imx219))
+> >>>> +               return -EINVAL;
+> >>>> +
+> >>>> +       if (fie->pad)
+> >>>> +               return -EINVAL;
+> >>>> +
+> >>>> +       fie->interval.numerator = 1;
+> >>>> +       fie->interval.denominator = supported_modes[fie->index].fps;
+> >>>> +
+> >>>> +       return 0;
+> >>>> +}
+> >>>> +
+> >>>>    static void imx219_reset_colorspace(struct v4l2_mbus_framefmt *fmt)
+> >>>>    {
+> >>>>           fmt->colorspace = V4L2_COLORSPACE_SRGB;
+> >>>> @@ -1004,6 +1030,7 @@ static const struct v4l2_subdev_pad_ops imx219_pad_ops = {
+> >>>>           .get_fmt = imx219_get_pad_format,
+> >>>>           .set_fmt = imx219_set_pad_format,
+> >>>>           .enum_frame_size = imx219_enum_frame_size,
+> >>>> +       .enum_frame_interval = imx219_enum_frame_interval,
+> >>>>    };
+> >>>>
+> >>>>    static const struct v4l2_subdev_ops imx219_subdev_ops = {
+> >>>> --
+> >>>> 2.20.1
+> >>>>
+> >>
+>
