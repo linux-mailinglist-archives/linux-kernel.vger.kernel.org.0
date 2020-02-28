@@ -2,77 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55339173B24
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF081173B2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:17:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbgB1PPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 10:15:44 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:39050 "EHLO gloria.sntech.de"
+        id S1727073AbgB1PRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 10:17:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53750 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726720AbgB1PPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 10:15:43 -0500
-Received: from ip5f5a5d2f.dynamic.kabel-deutschland.de ([95.90.93.47] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1j7hMM-0006eU-6O; Fri, 28 Feb 2020 16:15:26 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Tobias Schramm <t.schramm@manjaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Markus Reichl <m.reichl@fivetechno.de>,
-        Alexis Ballier <aballier@gentoo.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Nick Xie <nick@khadas.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Vivek Unune <npcomplete13@gmail.com>,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        anarsoul@gmail.com, enric.balletbo@collabora.com
-Subject: Re: [PATCH 2/2] arm64: dts: rockchip: Add initial support for Pinebook Pro
-Date:   Fri, 28 Feb 2020 16:15:25 +0100
-Message-ID: <3144691.gaQQKPV42P@diego>
-In-Reply-To: <37190f26-48aa-dcad-d4b1-8a534ba1360e@manjaro.org>
-References: <20200227180630.166982-1-t.schramm@manjaro.org> <12370413.gKdrHkWbHd@diego> <37190f26-48aa-dcad-d4b1-8a534ba1360e@manjaro.org>
+        id S1726650AbgB1PRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 10:17:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 03ABBAF55;
+        Fri, 28 Feb 2020 15:17:17 +0000 (UTC)
+Subject: Re: [PATCH 2/2] mm,thp,compaction,cma: allow THP migration for CMA
+ allocations
+To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
+Cc:     kernel-team@fb.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        mhocko@kernel.org, mgorman@techsingularity.net,
+        rientjes@google.com, aarcange@redhat.com
+References: <cover.1582321645.git.riel@surriel.com>
+ <3289dc5e6c4c3174999598d8293adf8ed3e93b57.1582321645.git.riel@surriel.com>
+ <05027092-a43e-756f-4fee-78f29a048ca1@suse.cz>
+ <b3529cfa33f55d47aa2e017c8b0291395c302a02.camel@surriel.com>
+ <81c8d2fa-a8ae-82b8-f359-bba055fbff68@suse.cz>
+ <bd867dba881347a21757fba908f48a6e23e72439.camel@surriel.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ mQINBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABtCBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PokCVAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJcbbyGBQkH8VTqAAoJECJPp+fMgqZkpGoP
+ /1jhVihakxw1d67kFhPgjWrbzaeAYOJu7Oi79D8BL8Vr5dmNPygbpGpJaCHACWp+10KXj9yz
+ fWABs01KMHnZsAIUytVsQv35DMMDzgwVmnoEIRBhisMYOQlH2bBn/dqBjtnhs7zTL4xtqEcF
+ 1hoUFEByMOey7gm79utTk09hQE/Zo2x0Ikk98sSIKBETDCl4mkRVRlxPFl4O/w8dSaE4eczH
+ LrKezaFiZOv6S1MUKVKzHInonrCqCNbXAHIeZa3JcXCYj1wWAjOt9R3NqcWsBGjFbkgoKMGD
+ usiGabetmQjXNlVzyOYdAdrbpVRNVnaL91sB2j8LRD74snKsV0Wzwt90YHxDQ5z3M75YoIdl
+ byTKu3BUuqZxkQ/emEuxZ7aRJ1Zw7cKo/IVqjWaQ1SSBDbZ8FAUPpHJxLdGxPRN8Pfw8blKY
+ 8mvLJKoF6i9T6+EmlyzxqzOFhcc4X5ig5uQoOjTIq6zhLO+nqVZvUDd2Kz9LMOCYb516cwS/
+ Enpi0TcZ5ZobtLqEaL4rupjcJG418HFQ1qxC95u5FfNki+YTmu6ZLXy+1/9BDsPuZBOKYpUm
+ 3HWSnCS8J5Ny4SSwfYPH/JrtberWTcCP/8BHmoSpS/3oL3RxrZRRVnPHFzQC6L1oKvIuyXYF
+ rkybPXYbmNHN+jTD3X8nRqo+4Qhmu6SHi3Vq
+Message-ID: <1094fc21-9104-1410-bc03-f1934dbfcd66@suse.cz>
+Date:   Fri, 28 Feb 2020 16:17:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <bd867dba881347a21757fba908f48a6e23e72439.camel@surriel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tobias,
-
-Am Freitag, 28. Februar 2020, 15:57:10 CET schrieb Tobias Schramm:
-> thanks for the review. I'll implement the changes and send a v2.
+On 2/26/20 6:53 PM, Rik van Riel wrote:
+> On Wed, 2020-02-26 at 10:48 +0100, Vlastimil Babka wrote:
+>> On 2/25/20 7:44 PM, Rik van Riel wrote:
+>>
+>> Uh, is it any different from base pages which have to pass the same
+>> check? I
+>> guess the caller could do e.g. lru_add_drain_all() first.
 > 
-> >> +	 * of wakeup sources without disabling the whole key
-> > Also can you explain the problem a bit? If there is a deficit in the input
-> > subsystem regarding wakeup events, dt is normally not the place to work
-> > around things [we're supposed to be OS independent]
+> You are right, it is not different.
 > 
-> The issue is that some users wanted to be able to control the wakeup
-> functionality of the keys separately via sysfs. That does not seem to be
-> possible when combining both keys into one gpio-keys node. A more
-> detailed explanation of the issue can be found at [1].
+> As for lru_add_drain_all(), I wonder at what point that
+> should happen?
 
-ok ... but that is really strange, because looking at gpio-keys.c I see
-it checking the individual button wakeup-property before setting
-the irq-wake in gpio_keys_enable_wakeup() .
+Right now it seems to be done in alloc_contig_range(), but rather late.
 
-Ah, but I guess manually disabling/enabling wakeup via sysfs only
-works for the whole device and all wakeup buttons.
+> It appears that the order in which things are done does
+> not really provide a good moment:
+> 1) decide to attempt allocating a range of memory
+> 2) scan each page block for unmovable pages
+> 3) if no unmovable pages are found, mark the page block
+>    MIGRATE_ISOLATE
+> 
+> I wonder if we should do things the opposite way, first
+> marking the page block MIGRATE_ISOLATE (to prevent new
+> allocations), then scanning it, and calling lru_add_drain_all
+> if we encounter a page that looks like it could benefit from
+> that.
+> 
+> If we still see unmovable pages after that, it is cheap
+> enough to set the page block back to its previous state.
 
-In general this sounds more like a gpio-keys deficit, but in the end
-we can keep the separate gpio-key nodes here, they don't violate any
-dt-bindings ;-) .
-
-
-Heiko
-
-
+Yeah seems like the whole has_unmovable_pages() thing isn't much useful
+here. It might prevent some unnecessary action like isolating something,
+then finding non-movable page and rolling back the isolation. But maybe
+it's not worth the savings, and also has_unmovable_pages() being false
+doesn't guarantee succeed in the actual isolate+migrate attempt.  And if
+it can cause a false negative due to lru pages not drained, then it's
+actually worse than if it wasn't called at all.
