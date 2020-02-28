@@ -2,148 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E007A174208
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 23:36:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20FC917421B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 23:41:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbgB1WgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 17:36:24 -0500
-Received: from mga14.intel.com ([192.55.52.115]:63859 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725957AbgB1WgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 17:36:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 14:36:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,497,1574150400"; 
-   d="scan'208";a="411545131"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga005.jf.intel.com with ESMTP; 28 Feb 2020 14:36:22 -0800
-Date:   Fri, 28 Feb 2020 14:36:22 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     Mohammed Gamal <mgamal@redhat.com>, kvm list <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/5] KVM: VMX: Add guest physical address check in EPT
- violation and misconfig
-Message-ID: <20200228223622.GK2329@linux.intel.com>
-References: <20200227172306.21426-1-mgamal@redhat.com>
- <20200227172306.21426-3-mgamal@redhat.com>
- <CALMp9eR7heTGQ6zwYrK5rJ-xs_wKqz49gfcNtaEC7S6J7n2aFQ@mail.gmail.com>
+        id S1726859AbgB1WlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 17:41:20 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:35903 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbgB1WlU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 17:41:20 -0500
+Received: by mail-vs1-f66.google.com with SMTP id a2so3017280vso.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 14:41:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x9BTwZzXxDzrVF6UcyviikLcydQEHUNnudxLaL8uKts=;
+        b=od+LBP/b8AMnzHYGyWOnh67HAS41CcWjLjL6lDYC0IPO5w9Y+65KibixkdjVm0Jyki
+         jrMHaWIyTGMm7MfEZ5ojgmzD5FeHRS9dd46zT+Ma7W2AF0oPG/ZHVQZRQxf6W3V9JK6f
+         RQ5AsX8F6clUzPqYCRUBczsZwgMk9yTKJfVJceHfV1xz5qR0gcIJwKmKoV/ixJCTx48b
+         wbpAdqCb2dN5Eh4Z7DSEND//LSvQvYYMbyTSJt7FS3pgkGluUF8htfuFhoBJxB9bxNoo
+         sFoX/jxeHVnTHZtOsOUP8ifNUgMLgoB7PpK98WxIODlBHfQ5cfxISbjpF1d9HsbWKSeG
+         4Mqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x9BTwZzXxDzrVF6UcyviikLcydQEHUNnudxLaL8uKts=;
+        b=V9SCNdUE14oRAUDwiD15GtjZyVP4vH27y6lZEIoxE33pNOGSy3r6MbRhVXhw6Es+z7
+         Z9QOP1tidiJ8nZazAdJcfROdmzQaBX7XgX4dL5X9BU9BFJt/1H5wUbTQRz85p+wdkmzd
+         fiPMnYQcnFpBvrVht4l3kD9OQvxGiqB/qPfeMQ0mmy8dN/LUdC2KPt+jQM+qp1ooTnAn
+         Vs2A0BYEp0zxC5Y+SAjQGSZZE84VlcwI2p3tcBJN7SzOAIW57El1tPGpafu/Ecu9JPme
+         ola45tsERXc1pfNXQCBtiZoGlQx3h4kMF7IFgij287N55o/kKwV9KDc2CAHYMTSiM3XB
+         qEKg==
+X-Gm-Message-State: ANhLgQ3Heaxl1DQCxS7WZFncrNa6E/viFBmtVTFjKk07mwhOfkghk07C
+        E7AB+M3qtJgnAMYNz+fCzYwtv6xpkJz40Y8l774LIg==
+X-Google-Smtp-Source: ADFU+vsU9EKYwuh5cDn64CV1YZwJLdXB+wHL9slJ1TyqxeZMR/DWCL7TOAXvCTq9PPzu7K4/OV39qXsbqz8VvHNwGLo=
+X-Received: by 2002:a05:6102:303a:: with SMTP id v26mr4021916vsa.119.1582929678413;
+ Fri, 28 Feb 2020 14:41:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALMp9eR7heTGQ6zwYrK5rJ-xs_wKqz49gfcNtaEC7S6J7n2aFQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20200219014433.88424-1-minchan@kernel.org> <20200219014433.88424-6-minchan@kernel.org>
+In-Reply-To: <20200219014433.88424-6-minchan@kernel.org>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Fri, 28 Feb 2020 14:41:07 -0800
+Message-ID: <CAJuCfpE_T1UG_eSQMa6y7n0GXQBOQ8sE=0fcWmSo2ZhHoj4mCg@mail.gmail.com>
+Subject: Re: [PATCH v6 5/7] mm: support both pid and pidfd for process_madvise
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, linux-api@vger.kernel.org,
+        oleksandr@redhat.com, Tim Murray <timmurray@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        John Dias <joaodias@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>, sj38.park@gmail.com,
+        alexander.h.duyck@linux.intel.com, Jann Horn <jannh@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 09:55:32AM -0800, Jim Mattson wrote:
-> On Thu, Feb 27, 2020 at 9:23 AM Mohammed Gamal <mgamal@redhat.com> wrote:
-> >
-> > Check guest physical address against it's maximum physical memory. If
-> Nit: "its," without an apostrophe.
-> 
-> > the guest's physical address exceeds the maximum (i.e. has reserved bits
-> > set), inject a guest page fault with PFERR_RSVD_MASK.
+On Tue, Feb 18, 2020 at 5:44 PM Minchan Kim <minchan@kernel.org> wrote:
+>
+> There is a demand[1] to support pid as well pidfd for process_madvise
+> to reduce unnecessary syscall to get pidfd if the user has control of
+> the target process(ie, they could guarantee the process is not gone
+> or pid is not reused. Or, it might be okay to give a hint to wrong
+> process).
 
-Wish I had actually read this series when it first flew by, just spent
-several hours debugging this exact thing when running the "access" test.
+nit: When would "give a hint to wrong process" be ok? I would just
+remove this part.
 
-> > Signed-off-by: Mohammed Gamal <mgamal@redhat.com>
-> > ---
-> >  arch/x86/kvm/vmx/vmx.c | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index 63aaf44edd1f..477d196aa235 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -5162,6 +5162,12 @@ static int handle_ept_violation(struct kvm_vcpu *vcpu)
-> >         gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
-> >         trace_kvm_page_fault(gpa, exit_qualification);
-> >
-> > +       /* Check if guest gpa doesn't exceed physical memory limits */
-> > +       if (gpa >= (1ull << cpuid_maxphyaddr(vcpu))) {
+>
+> This patch aims for supporting both options like waitid(2). So, the
+> syscall is currently,
+>
+>         int process_madvise(int which, pid_t pid, void *addr,
+>                 size_t length, int advise, unsigned long flag);
+>
+> @which is actually idtype_t for userspace libray and currently,
+> it supports P_PID and P_PIDFD.
+>
+> [1]  https://lore.kernel.org/linux-mm/9d849087-3359-c4ab-fbec-859e8186c509@virtuozzo.com/
+>
+> Cc: Christian Brauner <christian@brauner.io>
+> Suggested-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
+> ---
+>  include/linux/syscalls.h |  3 ++-
+>  mm/madvise.c             | 34 ++++++++++++++++++++++------------
+>  2 files changed, 24 insertions(+), 13 deletions(-)
+>
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index e4cd2c2f8bb4..f5ada20e2943 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -876,7 +876,8 @@ asmlinkage long sys_munlockall(void);
+>  asmlinkage long sys_mincore(unsigned long start, size_t len,
+>                                 unsigned char __user * vec);
+>  asmlinkage long sys_madvise(unsigned long start, size_t len, int behavior);
+> -asmlinkage long sys_process_madvise(int pidfd, unsigned long start,
+> +
+> +asmlinkage long sys_process_madvise(int which, pid_t pid, unsigned long start,
+>                         size_t len, int behavior, unsigned long flags);
+>  asmlinkage long sys_remap_file_pages(unsigned long start, unsigned long size,
+>                         unsigned long prot, unsigned long pgoff,
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index def1507c2030..f6d9b9e66243 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1182,11 +1182,10 @@ SYSCALL_DEFINE3(madvise, unsigned long, start, size_t, len_in, int, behavior)
+>         return do_madvise(current, current->mm, start, len_in, behavior);
+>  }
+>
+> -SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
+> +SYSCALL_DEFINE6(process_madvise, int, which, pid_t, upid, unsigned long, start,
+>                 size_t, len_in, int, behavior, unsigned long, flags)
+>  {
+>         int ret;
+> -       struct fd f;
+>         struct pid *pid;
+>         struct task_struct *task;
+>         struct mm_struct *mm;
+> @@ -1197,20 +1196,31 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
+>         if (!process_madvise_behavior_valid(behavior))
+>                 return -EINVAL;
+>
+> -       f = fdget(pidfd);
+> -       if (!f.file)
+> -               return -EBADF;
+> +       switch (which) {
+> +       case P_PID:
+> +               if (upid <= 0)
+> +                       return -EINVAL;
+> +
+> +               pid = find_get_pid(upid);
+> +               if (!pid)
+> +                       return -ESRCH;
+> +               break;
+> +       case P_PIDFD:
+> +               if (upid < 0)
+> +                       return -EINVAL;
+>
+> -       pid = pidfd_pid(f.file);
+> -       if (IS_ERR(pid)) {
+> -               ret = PTR_ERR(pid);
+> -               goto fdput;
+> +               pid = pidfd_get_pid(upid);
+> +               if (IS_ERR(pid))
+> +                       return PTR_ERR(pid);
+> +               break;
+> +       default:
+> +               return -EINVAL;
+>         }
+>
+>         task = get_pid_task(pid, PIDTYPE_PID);
+>         if (!task) {
+>                 ret = -ESRCH;
+> -               goto fdput;
+> +               goto put_pid;
+>         }
+>
+>         mm = mm_access(task, PTRACE_MODE_ATTACH_FSCREDS);
+> @@ -1223,7 +1233,7 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
+>         mmput(mm);
+>  release_task:
+>         put_task_struct(task);
+> -fdput:
+> -       fdput(f);
+> +put_pid:
+> +       put_pid(pid);
+>         return ret;
+>  }
+> --
+> 2.25.0.265.gbab2e86ba0-goog
+>
 
-Add a helper for this, it's easier than copy-pasting the comment and code
-everywhere.  BIT_ULL() is also handy.
-
-static inline bool kvm_mmu_is_illegal_gpa(gpa_t gpa)
-{
-	return (gpa < BIT_ULL(cpuid_maxphyaddr(vcpu)));
-}
-
-> > +               kvm_inject_rsvd_bits_pf(vcpu, gpa);
-> 
-> Even if PFERR_RSVD_MASK is set in the page fault error code, shouldn't
-> we set still conditionally set:
->     PFERR_WRITE_MASK - for an attempted write
->     PFERR_USER_MASK - for a usermode access
->     PFERR_FETCH_MASK - for an instruction fetch
-
-Yep.  Move this down below where error_code is calculated.  Then the code
-should be something like this.  Not fun to handle this with EPT :-(
-
-Note, VMCS.GUEST_LINEAR_ADDRESS isn't guaranteed to be accurate, e.g. if
-the guest is putting bad gpas into Intel PT, but I don't think we have any
-choice but to blindly cram it in and hope for the best.
-
-	if (unlikely(kvm_mmu_is_illegal_gpa(vcpu, gpa))) {
-		/* Morph the EPT error code into a #PF error code. */
-		error_code &= ~(PFERR_USER_MASK | PFERR_GUEST_FINAL_MASK |
-				PFERR_GUEST_PAGE_MASK);
-		if (vmx_get_cpl(vcpu) == 3)
-			error_code |= PFERR_USER_MASK;
-		error_code |= PFERR_PRESENT_MASK;
-
-		kvm_inject_rsvd_bits_pf(vcpu, vmcs_readl(GUEST_LINEAR_ADDRESS),
-					error_code);
-
-		return 1;
-	}
-
- 
-> > +               return 1;
-> > +       }
-> > +
-> >         /* Is it a read fault? */
-> >         error_code = (exit_qualification & EPT_VIOLATION_ACC_READ)
-> >                      ? PFERR_USER_MASK : 0;
-> > @@ -5193,6 +5199,13 @@ static int handle_ept_misconfig(struct kvm_vcpu *vcpu)
-> >          * nGPA here instead of the required GPA.
-> >          */
-> >         gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
-> > +
-> > +       /* Check if guest gpa doesn't exceed physical memory limits */
-> > +       if (gpa >= (1ull << cpuid_maxphyaddr(vcpu))) {
-> > +               kvm_inject_rsvd_bits_pf(vcpu, gpa);
-> 
-> And here as well?
-
-This shouldn't happen.  If KVM creates a bad EPTE for an illegal GPA, we
-done goofed up.  I.e.
-
-	if (WARN_ON_ONCE(kvm_mmu_is_illegal_gpa(vcpu, gpa))) {
-		vcpu->run->blah = blah;
-		return 0;
-	}
-
-> 
-> > +               return 1;
-> > +       }
-> > +
-> >         if (!is_guest_mode(vcpu) &&
-> >             !kvm_io_bus_write(vcpu, KVM_FAST_MMIO_BUS, gpa, 0, NULL)) {
-> >                 trace_kvm_fast_mmio(gpa);
-> > --
-> > 2.21.1
-> >
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
