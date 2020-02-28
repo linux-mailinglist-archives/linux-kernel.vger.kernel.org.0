@@ -2,105 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCCDE172F3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 04:15:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B809172F3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 04:21:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730687AbgB1DPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 22:15:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730569AbgB1DPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 22:15:39 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C7E52469D;
-        Fri, 28 Feb 2020 03:15:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582859739;
-        bh=bP/pt7lgm/aRI4m8r78wN75tpYTiIei79Uime6uh70Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=R8h1iJXoXJzzYQPKRQPg2tgrYijzLEN/Q7nRgjAc/RI8B9FdpQlisXVFiRaUgZ+nM
-         8qyfN6/OKg63TVM0mleW97377oPKSaK5isyb0YAk38WBctUV0V5scNwqAP7nImNUzg
-         FE41onIuxYk/obHWO6seNPuqvyK2/IGg+Rrncxt8=
-Date:   Fri, 28 Feb 2020 12:15:35 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2] Documentation: bootconfig: Add EBNF syntax file
-Message-Id: <20200228121535.0c0e0e67fb11f1e07ea18e4c@kernel.org>
-In-Reply-To: <2390b729-1b0b-26b5-66bc-92e40e3467b1@web.de>
-References: <158278834245.14966.6179457011671073018.stgit@devnote2>
-        <158278836196.14966.3881489301852781521.stgit@devnote2>
-        <2390b729-1b0b-26b5-66bc-92e40e3467b1@web.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1730752AbgB1DVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 22:21:06 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42976 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730569AbgB1DVG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 22:21:06 -0500
+Received: by mail-pl1-f196.google.com with SMTP id u3so650584plr.9;
+        Thu, 27 Feb 2020 19:21:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=rIXCm5M81d91xnd3Gd+yipbJxz4KGDW+jKNm3v5D9gk=;
+        b=XPn2INuxdUtQeXgF2JFagwKBhjD8Xu8RwD86VmOBcImn8OPYR+JMgLyfejr2lHKd+/
+         RTCuZ/a57sQcuv5TgR9DV9lQ4aYdZgWEPVyuPstCbC726RYaGUjhA5t/KlSYYOAIPPUb
+         E8MKSpqmDjdpIhqi2iEU2OYzirWW1385QP2mFEIjkii/a5EKOniWHB+wkyHzNFaELsGL
+         7eYRTXzVFf1612T8a75KvCicWXEn+ukYqvKUo7heiFg3YtpoAE/lNg3IvgKfCYNfglLz
+         m8b678AX3VhxQlhH3IXXVkyG/sZUhV5IolwQRNX6r/BrrUNG5aoLm9U2JI8AsnhjKbe1
+         v/Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rIXCm5M81d91xnd3Gd+yipbJxz4KGDW+jKNm3v5D9gk=;
+        b=lQ6mj8+2rzj7akAVwBd/F0gIymOrIXE2vCily71DFC3pQSEyJMuN7wH3WkK8ogBQNC
+         nHAHVqvewlyMUnmO5KbwLVNvn6AKdkqsnNQg8t0lLS6pFaf5/+BBnVqZOjGSV50i9dJG
+         Mtsv95WxakDqsXFFnwceoyF/IkNttPSjywX1AUrf/YtbM0tGUW+jW/WsRMIZJ9CcMau3
+         o4BmdEODSNjnyVwWdZAK0VPbmBDTJZthsFssIQAZ9D2ESqAmvfEriKWHHB3F3Uua02Iv
+         /n1sKavh1iqSPdAxglgyMrM166yY4+fjgXVMHzxix+P8TyU8IHY78PsLnP0XORKU3u6+
+         CV0g==
+X-Gm-Message-State: APjAAAWzd/+uEFB3jSiNo6Xu+xFQhtiy43e4Bf0nNkETclOlN4MgMCgo
+        2184pK8crL9xXgEgeXl8I4m5bP/szQvl8A==
+X-Google-Smtp-Source: APXvYqyRTgQvWLHeivT3wAVpwiccEkXlX8bq7fFjVmzw+54PY2Cu3W1F3m7+XFt7JuJPSrLQZCi7AA==
+X-Received: by 2002:a17:902:8a8e:: with SMTP id p14mr2022551plo.28.1582860064936;
+        Thu, 27 Feb 2020 19:21:04 -0800 (PST)
+Received: from kernel.DHCP ([120.244.140.54])
+        by smtp.googlemail.com with ESMTPSA id b6sm8854260pfg.17.2020.02.27.19.20.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 27 Feb 2020 19:21:04 -0800 (PST)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: [PATCH v3] KVM: X86: Just one leader to trigger kvmclock sync request
+Date:   Fri, 28 Feb 2020 11:18:41 +0800
+Message-Id: <1582859921-11932-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Feb 2020 20:53:03 +0100
-Markus Elfring <Markus.Elfring@web.de> wrote:
+From: Wanpeng Li <wanpengli@tencent.com>
 
-> Thanks for such a contribution.
-> 
-> 
-> > Add an extended Backus–Naur form (EBNF) syntax file for
-> 
-> Can it matter to mention the specific file format specification version
-> which should be applied finally?
-> 
-> Would you like to refer to any standard variant?
+In the progress of vCPUs creation, it queues a kvmclock sync worker to the global
+workqueue before each vCPU creation completes. The workqueue subsystem guarantees 
+not to queue the already queued work, however, we can make the logic more clear by 
+make just one leader to trigger this kvmclock sync request and save on cacheline 
+boucing due to test_and_set_bit.
 
-I choose ISO/IEC 14977 : 1996(E), but it seems no good.
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+v2 -> v3:
+ * update patch description
+v1 -> v2:
+ * check vcpu->vcpu_idx
 
-Don’t Use ISO/IEC 14977 Extended Backus-Naur Form (EBNF)
-https://dwheeler.com/essays/dont-use-iso-14977-ebnf.html
+ arch/x86/kvm/x86.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-I agree with this article. the ISO 14977 is halfway...
-Not easy for human, but not good for machine too.
-(at least it should support #xN as same as W3C BNF.
-
-I'll drop it until rewriten by other standerd.
-
-> > bootconfig so that user can logically understand how they
-> 
-> Wording alternative “… that users can …”?
-> 
-> 
-> > can write correct boot configuration file.
-> 
-> Related development tools provide some benefits then, don't they?
-> 
-> 
-> 
-> …
-> > +++ b/Documentation/admin-guide/bootconfig.ebnf
-> …
-> > +digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
-> 
-> Can the specification of such alternatives (or value ranges) become
-> more compact (depending on a selected standard)?
-
-W3C EBNF support it, ISO14977 doesn't.
-
-> …
-> > +++ b/Documentation/admin-guide/bootconfig.rst
-> …
-> > +Here is the boot configuration file syntax written in EBNF.
-> 
-> I suggest to replace the abbreviation “EBNF” by the term “extended Backus–Naur form”
-> in such a sentence.
-
-I think EBNF is enough.
-
-Thank you,
-
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index fb5d64e..79bc995 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9390,8 +9390,9 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+ 	if (!kvmclock_periodic_sync)
+ 		return;
+ 
+-	schedule_delayed_work(&kvm->arch.kvmclock_sync_work,
+-					KVMCLOCK_SYNC_PERIOD);
++	if (vcpu->vcpu_idx == 0)
++		schedule_delayed_work(&kvm->arch.kvmclock_sync_work,
++						KVMCLOCK_SYNC_PERIOD);
+ }
+ 
+ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.7.4
+
