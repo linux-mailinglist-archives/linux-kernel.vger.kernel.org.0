@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF20173FB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 19:35:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 237B2173FB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 19:36:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbgB1Sfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 13:35:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38546 "EHLO mail.kernel.org"
+        id S1726527AbgB1Sgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 13:36:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725805AbgB1Sfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 13:35:42 -0500
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        id S1725730AbgB1Sgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 13:36:44 -0500
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FBCE246B0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 18:35:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AD902469F
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 18:36:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582914941;
-        bh=GBCP5rJCRf158WDaaiSNEzMTdjhXomHfFag57VLC4Sk=;
+        s=default; t=1582915003;
+        bh=dIabrkXE6WVZA/XCjFPcYlF0xHEB0WUA8O7er4hsQf4=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=yXkHIoJ6l+tcPmEyJD1vdet4yKY4enrnMEj8W7knk1+lERKDxAqLfkzK4sQSdRSsr
-         NPjFrQ3lV5sCm3JpydrjVHsVHH1tzyzMtZgR4rC7CR9l6SxMWFBZZo2lQmhjAL6cVZ
-         FqKLGYmhhcu1QQoSDmWRNB80ftzLlg4EZKKgFPs4=
-Received: by mail-wm1-f46.google.com with SMTP id a141so4314827wme.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 10:35:41 -0800 (PST)
-X-Gm-Message-State: APjAAAVqxTXzHnzzhj1YyFdy8a42/bewdQKtQQEgEcp4vBJXeDRWCKWQ
-        fimXhYELXDpS86a5moKWB1GN95SedTgrOXQThIQq8Q==
-X-Google-Smtp-Source: APXvYqzMxRsodS1e8wI0uEA798kCmZpyLKN/Cs3QROgRJhi89nceURi6tyiTi6BKPol8rU9tWRQrPcc7VtSxky4Bkj4=
-X-Received: by 2002:a1c:b0c3:: with SMTP id z186mr5805385wme.36.1582914939828;
- Fri, 28 Feb 2020 10:35:39 -0800 (PST)
+        b=FFRonQFA4lTfCYNGxvawtd2v0I5vOZsWnCBKKYmyZkBx+e69SGy0mG6zniIqRfxIE
+         x/CZ1E1CEY55pPn1zEqFUVHaNi+M4qClKhXUdOKzd2AAs+LlBfB53Br2zsTX0YXGx1
+         BLl0uq6htV2tSQMrMHdyviyoP9l8pFnmS3OiBVOw=
+Received: by mail-wm1-f51.google.com with SMTP id n64so2987500wme.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 10:36:43 -0800 (PST)
+X-Gm-Message-State: APjAAAUf4ViEJmK3AvTc68hsOuTBPZploUNjZuw37SojkzL8OGQIPZxt
+        AQjnoXLv8Og75A5PXEl6bNk75vv1Fhhwq0Gf81HhzA==
+X-Google-Smtp-Source: APXvYqxGdQz1fpnCuqbxxCPEsxzEnfDsEg0tfUtfAgK/Qh2thelCO7U4P8Rq3DdkJcPE7Pfr9wPipODKhXXDpr15wlU=
+X-Received: by 2002:a7b:ce09:: with SMTP id m9mr5460626wmc.49.1582915002081;
+ Fri, 28 Feb 2020 10:36:42 -0800 (PST)
 MIME-Version: 1.0
-References: <20200227132826.195669-1-brgerst@gmail.com> <20200227132826.195669-3-brgerst@gmail.com>
-In-Reply-To: <20200227132826.195669-3-brgerst@gmail.com>
+References: <20200227132826.195669-1-brgerst@gmail.com> <20200227132826.195669-4-brgerst@gmail.com>
+In-Reply-To: <20200227132826.195669-4-brgerst@gmail.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 28 Feb 2020 10:35:28 -0800
-X-Gmail-Original-Message-ID: <CALCETrXYxKk+30Py0hUHuMiXCXLzYW6Oh8tDo-bBp9G2OWxqyw@mail.gmail.com>
-Message-ID: <CALCETrXYxKk+30Py0hUHuMiXCXLzYW6Oh8tDo-bBp9G2OWxqyw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/8] x86, syscalls: Refactor SYSCALL_DEFINE0 macros
+Date:   Fri, 28 Feb 2020 10:36:30 -0800
+X-Gmail-Original-Message-ID: <CALCETrU9xeKg=6t+kBVTDzad=gvVR40Xbmn=GPVDse551zhVSA@mail.gmail.com>
+Message-ID: <CALCETrU9xeKg=6t+kBVTDzad=gvVR40Xbmn=GPVDse551zhVSA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/8] x86, syscalls: Refactor COND_SYSCALL macros
 To:     Brian Gerst <brgerst@gmail.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -53,13 +53,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Feb 27, 2020 at 5:28 AM Brian Gerst <brgerst@gmail.com> wrote:
 >
-> Pull the common code out from the SYSCALL_DEFINE0 macros into a new
-> __SYS_STUB0 macro.  Also conditionalize the X64 version in preparation for
-> enabling syscall wrappers on 32-bit native kernels.
+> Pull the common code out from the COND_SYSCALL macros into a new
+> __COND_SYSCALL macro.  Also conditionalize the X64 version in preparation
+> for enabling syscall wrappers on 32-bit native kernels.
 
 Reviewed-by: Andy Lutomirski <luto@kernel.org>
-
-It would be really nice if there was a clean way to get rid of the
-0-arg special case, but I don't immediately see one.
-
---Andy
