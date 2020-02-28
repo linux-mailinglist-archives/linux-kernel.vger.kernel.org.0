@@ -2,122 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD666173895
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:43:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF50B17385F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:30:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgB1NnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 08:43:06 -0500
-Received: from gateway36.websitewelcome.com ([192.185.201.2]:34593 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726366AbgB1NnE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 08:43:04 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 04F6C400C2F4D
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 06:35:26 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7fZ8jzE09XVkQ7fZ8jK7Rm; Fri, 28 Feb 2020 07:20:30 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vHClNfI7Qt5b0uR7/2n+CnDKDelWTosbitfxyh2nN0A=; b=Q3cFP3w1ZSCtsPw8tSf3hEQPhI
-        o4fh9MiD6FQJUJlfdY0vG3LSu7+32VHQB/fz/w5bxSB/8C09WWZfH21gVePxit9L5Usf28+Y5bGEZ
-        lMO1R2VnPt5qIJXvuqCTMRUx0ADwvdUY3CMMTX9CuVHdSNFLYQZRMuzWgdCEg9VbBVIySUMOazeNa
-        YxakP40SINiiWOkq7FzX14iMlwxp0lpnrnbdreiV85ox/wUzyv4QL7yyr3UXkLevaB2jICeseKwtT
-        ZmUw+KK7iAuDFJHVut86Dx/ATtXag5JC+2PG6yWy6OOlRNk1oN6sCE1FznP2OmDZHzliX1bSyYuG8
-        1e14WpSg==;
-Received: from [201.162.240.44] (port=7869 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j7fZ5-001Geq-SP; Fri, 28 Feb 2020 07:20:28 -0600
-Date:   Fri, 28 Feb 2020 07:23:23 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] sunrpc: Replace zero-length array with flexible-array
- member
-Message-ID: <20200228132323.GA20181@embeddedor>
+        id S1726621AbgB1Naj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:30:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725876AbgB1Naj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 08:30:39 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13F3D2469D;
+        Fri, 28 Feb 2020 13:30:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582896638;
+        bh=53oCsur/c2ZxKBhkRNnzQEppXhuuy+9+hAg0PfAHndc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FkJYHhdeolWLtiYAGUPfgv89vtSOHwEeK5vwuh2v3+G7gXm3RLhrmsCE1oFQtDWwq
+         A8XFh7mw2AOW6rXaGPBY7r5tjbhffNUlDuzDyrGuxNWzf1x8JFd7ZwBAsNsgovMfBQ
+         cLnWz9guSmC5cJeRdSFGTIsDYjGPOKaz7p+7SzHc=
+Date:   Fri, 28 Feb 2020 14:30:36 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Pavel Machek <pavel@denx.de>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Miles Chen <miles.chen@mediatek.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 60/97] lib/stackdepot: Fix outdated comments
+Message-ID: <20200228133036.GB3021902@kroah.com>
+References: <20200227132214.553656188@linuxfoundation.org>
+ <20200227132224.337663006@linuxfoundation.org>
+ <20200228130532.GA2979@duo.ucw.cz>
+ <20200228132455.GA3021902@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.240.44
-X-Source-L: No
-X-Exim-ID: 1j7fZ5-001Geq-SP
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.240.44]:7869
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 18
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200228132455.GA3021902@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Fri, Feb 28, 2020 at 02:24:55PM +0100, Greg Kroah-Hartman wrote:
+> On Fri, Feb 28, 2020 at 02:05:33PM +0100, Pavel Machek wrote:
+> > Hi!
+> > 
+> > > [ Upstream commit ee050dc83bc326ad5ef8ee93bca344819371e7a5 ]
+> > > 
+> > > Replace "depot_save_stack" with "stack_depot_save" in code comments because
+> > > depot_save_stack() was replaced in commit c0cfc337264c ("lib/stackdepot:
+> > > Provide functions which operate on plain storage arrays") and removed in
+> > > commit 56d8f079c51a ("lib/stackdepot: Remove obsolete functions")
+> > 
+> > This is wrong.
+> > 
+> > > +++ b/lib/stackdepot.c
+> > > @@ -96,7 +96,7 @@ static bool init_stack_slab(void **prealloc)
+> > >  		stack_slabs[depot_index + 1] = *prealloc;
+> > >  		/*
+> > >  		 * This smp_store_release pairs with smp_load_acquire() from
+> > > -		 * |next_slab_inited| above and in depot_save_stack().
+> > > +		 * |next_slab_inited| above and in stack_depot_save().
+> > >  		 */
+> > >  		smp_store_release(&next_slab_inited, 1);
+> > >  	}
+> > 
+> > May have been outdated for mainline, but they are actually okay for
+> > 4.19.
+> 
+> Good catch, I'll go drop this from the stable queues (4.14, 4.9, and 4.19).
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Ah, nope, this patch is needed for the "real" patch here, 305e519ce48e
+("lib/stackdepot.c: fix global out-of-bounds in stack_slabs")
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+Hm, it's not that big of a deal, I'll go fix that up by hand...
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+But that explains why it is included here.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+thanks,
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- include/linux/sunrpc/svc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
-index 1afe38eb33f7..7f0a83451bc0 100644
---- a/include/linux/sunrpc/svc.h
-+++ b/include/linux/sunrpc/svc.h
-@@ -380,7 +380,7 @@ struct svc_deferred_req {
- 	struct cache_deferred_req handle;
- 	size_t			xprt_hlen;
- 	int			argslen;
--	__be32			args[0];
-+	__be32			args[];
- };
- 
- struct svc_process_info {
--- 
-2.25.0
-
+greg k-h
