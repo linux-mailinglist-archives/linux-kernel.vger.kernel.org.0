@@ -2,175 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53D4917389F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:45:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ABC21738BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:47:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbgB1No6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 08:44:58 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40138 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbgB1No5 (ORCPT
+        id S1727125AbgB1NpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:45:17 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:34910 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726981AbgB1NpN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 08:44:57 -0500
-Received: by mail-wr1-f67.google.com with SMTP id r17so2996049wrj.7
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 05:44:55 -0800 (PST)
+        Fri, 28 Feb 2020 08:45:13 -0500
+Received: by mail-qv1-f65.google.com with SMTP id u10so1343341qvi.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 05:45:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aBmrl1KMZNAYJPJYiblwEdDKLEW24wzQKSiXMdI8FUk=;
-        b=GIj6WEkqlceW7Ez0LVnHmq9ekJuJO3gVz8RLHA5ud3ZYx2DpnVYoqDejU5t4enOVHE
-         ldRMeTA5uf46PxMhKG6wcmuNIZH8Lk/Rq/7rfG+mkT6++hdCyTF8VUGicN8arq/wuk/Q
-         R3tphXQZRkAc70Jw2sAdEbpj0nhRAbnH+K2akQmBUdcNo025K9ghr1gwqY7Ncg6cb8bh
-         kaelh8o+lkjEqKbcmwf49MUbv1hLO3Du6WEM/lYW4gHuz5ZxZUqKis/IyabQMPzqnbZK
-         nCpCleVuXzG1+tgnk6hz1VPhDGDOFtobk+TkmDknVFQKi1sYHcd5xDwNwGkqTlaJwfEP
-         mulQ==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ydjq0Koyntqo52xeAXVHWKMN25S8+wwGUlWGgrhmkBA=;
+        b=XCmbk+bFS3IbRMVKI/DATWBXdwFkchlG2otk4H7BV9o2orwGtCPM5bbwViBo8R2/0C
+         4a5n7SAnutnE/wyAWfpmXWaDJUx6ax+HKCoYVQiLibgxiyQIej7DY12bIKygDSz7Z9Gs
+         iTd5RT7yY6awOnVofYncgyCuI/02tqhLFJugL6o/xKkBjc61efeBtuMyf23QWqVH+17G
+         5L/zdKZvUbKyNnK+ntGzggKtXVpXndYniPYkqeYxYztfY9m4a5GTWOaAIXGPPzSclVQI
+         zjb5MPJJg+T4s4Kn4Av28+MQDDjB53p8qaNkvAS2+2BS4LTgy1L1yYsQruLryX8yywyz
+         BaJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aBmrl1KMZNAYJPJYiblwEdDKLEW24wzQKSiXMdI8FUk=;
-        b=XbAy2syAOUXVblLmwoR5eoc2O8QyDAh8kfyDPaiHMaINHS1egCl0NgIshNmiFbjwig
-         DOSWjysvGb/2ppui5lLeY56qyaQeqANLpeFZLnJGfQdh8AWav0VTPIpcRS02GbDkbA1u
-         ukzRonH/ImCf97lshDPX80cp1jDh4Pm7FOqQ1Dj1Vnfv16psK1gnzB7fv6p0IpTYAy3E
-         /H9AO8mzMXK7C/WRCsvd/y/Yq9rW+/0BBtd2i2Tha+d1LsqmMGCdeqRvJPDIaEgLMA6o
-         BfObCTwyxRG+gjOqdW5yQ+hPgVcst9Mr2FUQd4EBXJ1vCcN28qWDQltwzmshObQo47i9
-         W6IA==
-X-Gm-Message-State: APjAAAWfLA409pcvxnppitLt3otsJaMr2Ca+yDO6C3jHrWOLSrlCu4IG
-        C04GKij6YXaitr9S9o8x/VrPu9qKKqOgrTa0C4l1Ag==
-X-Google-Smtp-Source: APXvYqxYe61m6gjSynnSaKs/Z4p3IA8+qVFYPLBBGUyxb2Bmz+nx9ERJLwWuBg1MD1UbBW1Tngan4sL1Y1w/AGmvPJQ=
-X-Received: by 2002:adf:a48f:: with SMTP id g15mr4994529wrb.42.1582897494424;
- Fri, 28 Feb 2020 05:44:54 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ydjq0Koyntqo52xeAXVHWKMN25S8+wwGUlWGgrhmkBA=;
+        b=XiOQ+JebsMXSN/emwI0qz81NEDRh/QuBCtI+hCBZp2+xcGLK8ftubTjuJ+vFa+vSEM
+         ourtMeITjxUkV/GPOMunSpvtI+p7qodYVWgoi3JraAGL5kA2rjNsC2mDyPkMrD5BtFgT
+         e+de2mCDJAPDbG0P1RMMYu4jQcuYRu/hnKdOCWg9Hi4Beg6s6F155fgMppHat7EMrnGL
+         mfhFRdis4fkFacXhq98dJHEjoToB7pZTjxOahQef1gtqNhNQkR20P9Ov/g5kYz9AY177
+         0l3qmxZIHmLOhMTMJhQCUpOh79slKwwk3uK0BejUIcrQSecqiM+fwMnojvBx3Fheyp49
+         xTUw==
+X-Gm-Message-State: APjAAAXoq1pABoKQlu3zYep2zR/tu87H4FRhVDikCPNR+QAAme8PWxdn
+        +qR0WlWtDP9vwt8tVjXWERVCSQ==
+X-Google-Smtp-Source: APXvYqy6fbwDdwdZT15xjTyr/jtAKIp4iS/ZqDTyDs9Xx11Pzgu0lNsILkJDk1dW5b5CiD0scTq61w==
+X-Received: by 2002:a0c:e4cc:: with SMTP id g12mr3747707qvm.237.1582897511845;
+        Fri, 28 Feb 2020 05:45:11 -0800 (PST)
+Received: from localhost (pool-108-27-252-85.nycmny.fios.verizon.net. [108.27.252.85])
+        by smtp.gmail.com with ESMTPSA id m11sm2010361qkh.31.2020.02.28.05.45.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2020 05:45:11 -0800 (PST)
+Date:   Fri, 28 Feb 2020 08:45:10 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     "Huang, Ying" <ying.huang@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>
+Subject: Re: [RFC 0/3] mm: Discard lazily freed pages when migrating
+Message-ID: <20200228134510.GA50843@cmpxchg.org>
+References: <20200228033819.3857058-1-ying.huang@intel.com>
+ <20200228034248.GE29971@bombadil.infradead.org>
+ <87a7538977.fsf@yhuang-dev.intel.com>
+ <edae2736-3239-0bdc-499c-560fc234c974@redhat.com>
+ <871rqf850z.fsf@yhuang-dev.intel.com>
+ <20200228095048.GK3771@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <20200227151752.21985-1-eugen.hristev@microchip.com>
-In-Reply-To: <20200227151752.21985-1-eugen.hristev@microchip.com>
-From:   Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date:   Fri, 28 Feb 2020 13:44:37 +0000
-Message-ID: <CAPY8ntB17QjCSyefwTrMhudwkiFYT_5x3i1=KjzFv+p6tbrQEA@mail.gmail.com>
-Subject: Re: [PATCH] media: i2c: imx219: add support for enum frame interval
-To:     Eugen Hristev <eugen.hristev@microchip.com>
-Cc:     Andrey Konovalov <andrey.konovalov@linaro.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200228095048.GK3771@dhcp22.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eugen.
+On Fri, Feb 28, 2020 at 10:50:48AM +0100, Michal Hocko wrote:
+> On Fri 28-02-20 16:55:40, Huang, Ying wrote:
+> > David Hildenbrand <david@redhat.com> writes:
+> [...]
+> > > E.g., free page reporting in QEMU wants to use MADV_FREE. The guest will
+> > > report currently free pages to the hypervisor, which will MADV_FREE the
+> > > reported memory. As long as there is no memory pressure, there is no
+> > > need to actually free the pages. Once the guest reuses such a page, it
+> > > could happen that there is still the old page and pulling in in a fresh
+> > > (zeroed) page can be avoided.
+> > >
+> > > AFAIKs, after your change, we would get more pages discarded from our
+> > > guest, resulting in more fresh (zeroed) pages having to be pulled in
+> > > when a guest touches a reported free page again. But OTOH, page
+> > > migration is speed up (avoiding to migrate these pages).
+> > 
+> > Let's look at this problem in another perspective.  To migrate the
+> > MADV_FREE pages of the QEMU process from the node A to the node B, we
+> > need to free the original pages in the node A, and (maybe) allocate the
+> > same number of pages in the node B.  So the question becomes
+> > 
+> > - we may need to allocate some pages in the node B
+> > - these pages may be accessed by the application or not
+> > - we should allocate all these pages in advance or allocate them lazily
+> >   when they are accessed.
+> > 
+> > We thought the common philosophy in Linux kernel is to allocate lazily.
+> 
+> The common philosophy is to cache as much as possible. And MADV_FREE
+> pages are a kind of cache as well. If the target node is short on memory
+> then those will be reclaimed as a cache so a pro-active freeing sounds
+> counter productive as you do not have any idea whether that cache is
+> going to be used in future. In other words you are not going to free a
+> clean page cache if you want to use that memory as a migration target
+> right? So you should make a clear case about why MADV_FREE cache is less
+> important than the clean page cache and ideally have a good
+> justification backed by real workloads.
 
-On Thu, 27 Feb 2020 at 15:19, Eugen Hristev <eugen.hristev@microchip.com> wrote:
->
-> Add support for enum frame intervals IOCTL.
-> The current supported framerates are only available as comments inside
-> the code.
-> Add support for VIDIOC_ENUM_FRAMEINTERVALS as the enum_frame_interval
-> callback as pad ops.
->
->  # v4l2-ctl --list-frameintervals width=1920,height=1080,pixelformat=RG10
->  ioctl: VIDIOC_ENUM_FRAMEINTERVALS
->         Interval: Discrete 0.067s (15.000 fps)
->         Interval: Discrete 0.033s (30.000 fps)
->         Interval: Discrete 0.033s (30.000 fps)
+Agreed.
 
-But the frame rates are not discrete. You have frame rate control via
-V4L2_CID_VBLANK, which can be used in conjunction with V4L2_CID_HBLANK
-and V4L2_CID_PIXEL_RATE to determine actual frame period.
+MADV_FREE says that the *data* in the pages is no longer needed, and
+so the pages are cheaper to reclaim than regular anon pages (swap).
 
-See https://linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/ext-ctrls-image-source.html?highlight=v4l2_cid_vblank
-I believe this is the preferred route to doing frame rate control on
-image sensors. I assume someone will correct me if I'm wrong on that.
-
-  Dave
-
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-> ---
->
-> Hello,
->
-> This is on top of Sakari's tree in linuxtv.org
->
-> Thanks
-> Eugen
->
->  drivers/media/i2c/imx219.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index f1effb5a5f66..17fcedd4edb6 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -127,6 +127,8 @@ struct imx219_mode {
->         unsigned int width;
->         /* Frame height */
->         unsigned int height;
-> +       /* Frame rate */
-> +       u8 fps;
->
->         /* V-timing */
->         unsigned int vts_def;
-> @@ -381,6 +383,7 @@ static const struct imx219_mode supported_modes[] = {
->                 /* 8MPix 15fps mode */
->                 .width = 3280,
->                 .height = 2464,
-> +               .fps = 15,
->                 .vts_def = IMX219_VTS_15FPS,
->                 .reg_list = {
->                         .num_of_regs = ARRAY_SIZE(mode_3280x2464_regs),
-> @@ -391,6 +394,7 @@ static const struct imx219_mode supported_modes[] = {
->                 /* 1080P 30fps cropped */
->                 .width = 1920,
->                 .height = 1080,
-> +               .fps = 30,
->                 .vts_def = IMX219_VTS_30FPS_1080P,
->                 .reg_list = {
->                         .num_of_regs = ARRAY_SIZE(mode_1920_1080_regs),
-> @@ -401,6 +405,7 @@ static const struct imx219_mode supported_modes[] = {
->                 /* 2x2 binned 30fps mode */
->                 .width = 1640,
->                 .height = 1232,
-> +               .fps = 30,
->                 .vts_def = IMX219_VTS_30FPS_BINNED,
->                 .reg_list = {
->                         .num_of_regs = ARRAY_SIZE(mode_1640_1232_regs),
-> @@ -680,6 +685,27 @@ static int imx219_enum_frame_size(struct v4l2_subdev *sd,
->         return 0;
->  }
->
-> +static int imx219_enum_frame_interval(struct v4l2_subdev *sd,
-> +                                     struct v4l2_subdev_pad_config *cfg,
-> +                                     struct v4l2_subdev_frame_interval_enum *fie)
-> +{
-> +       struct imx219 *imx219 = to_imx219(sd);
-> +
-> +       if (fie->index >= ARRAY_SIZE(supported_modes))
-> +               return -EINVAL;
-> +
-> +       if (fie->code != imx219_get_format_code(imx219))
-> +               return -EINVAL;
-> +
-> +       if (fie->pad)
-> +               return -EINVAL;
-> +
-> +       fie->interval.numerator = 1;
-> +       fie->interval.denominator = supported_modes[fie->index].fps;
-> +
-> +       return 0;
-> +}
-> +
->  static void imx219_reset_colorspace(struct v4l2_mbus_framefmt *fmt)
->  {
->         fmt->colorspace = V4L2_COLORSPACE_SRGB;
-> @@ -1004,6 +1030,7 @@ static const struct v4l2_subdev_pad_ops imx219_pad_ops = {
->         .get_fmt = imx219_get_pad_format,
->         .set_fmt = imx219_set_pad_format,
->         .enum_frame_size = imx219_enum_frame_size,
-> +       .enum_frame_interval = imx219_enum_frame_interval,
->  };
->
->  static const struct v4l2_subdev_ops imx219_subdev_ops = {
-> --
-> 2.20.1
->
+But people use MADV_FREE in the hope that they can reuse the pages at
+a later point - otherwise, they'd unmap them. We should retain them
+until the memory is actively needed for other allocations.
