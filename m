@@ -2,107 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3B75173C4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:57:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E63D173C55
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:57:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbgB1P5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 10:57:10 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:64132 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726974AbgB1P5J (ORCPT
+        id S1727305AbgB1P5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 10:57:20 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:39555 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbgB1P5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 10:57:09 -0500
-X-UUID: dda641ff5eeb460aaa859fb4d8141221-20200228
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=7cG0Tkp+Ug5bunGNSSGHb42Z5Rk9tRubfSu6RGs66GY=;
-        b=U9wljsTS+9QA78E7tkaGPYnKRaB5orpxGtjvFBYeqcJEedZvENz3p8MuQojKtJGZ5i5DNk7F8Nmg17qHSqbVgd2CX9jOG2ZnEC8G6pzmyM5KG/h2IyM/WN35kN4zcimEoevusFKYE5JYL5ZFeddhuPP67WNJD092YvejNCEjZsw=;
-X-UUID: dda641ff5eeb460aaa859fb4d8141221-20200228
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1629152953; Fri, 28 Feb 2020 23:57:04 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 28 Feb 2020 23:56:12 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 28 Feb 2020 23:57:00 +0800
-Message-ID: <1582905422.14824.22.camel@mtksdaap41>
-Subject: Re: [PATCH v3 04/13] mailbox: mediatek: cmdq: clear task in channel
- before shutdown
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        "Ming-Fan Chen" <ming-fan.chen@mediatek.com>
-Date:   Fri, 28 Feb 2020 23:57:02 +0800
-In-Reply-To: <1582897461-15105-6-git-send-email-dennis-yc.hsieh@mediatek.com>
-References: <1582897461-15105-1-git-send-email-dennis-yc.hsieh@mediatek.com>
-         <1582897461-15105-6-git-send-email-dennis-yc.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Fri, 28 Feb 2020 10:57:14 -0500
+X-Originating-IP: 90.89.41.158
+Received: from localhost (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id E129060015;
+        Fri, 28 Feb 2020 15:57:10 +0000 (UTC)
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
+        hkallweit1@gmail.com
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        foss@0leil.net
+Subject: [PATCH net-next v2 3/3] net: phy: mscc: RGMII skew delay configuration
+Date:   Fri, 28 Feb 2020 16:57:02 +0100
+Message-Id: <20200228155702.2062570-4-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200228155702.2062570-1-antoine.tenart@bootlin.com>
+References: <20200228155702.2062570-1-antoine.tenart@bootlin.com>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIERlbm5pczoNCg0KT24gRnJpLCAyMDIwLTAyLTI4IGF0IDIxOjQ0ICswODAwLCBEZW5uaXMg
-WUMgSHNpZWggd3JvdGU6DQo+IERvIHN1Y2Nlc3MgY2FsbGJhY2sgaW4gY2hhbm5lbCB3aGVuIHNo
-dXRkb3duLiBGb3IgdGhvc2UgdGFzayBub3QgZmluaXNoLA0KPiBjYWxsYmFjayB3aXRoIGVycm9y
-IGNvZGUgdGh1cyBjbGllbnQgaGFzIGNoYW5jZSB0byBjbGVhbnVwIG9yIHJlc2V0Lg0KPiANCj4g
-U2lnbmVkLW9mZi1ieTogRGVubmlzIFlDIEhzaWVoIDxkZW5uaXMteWMuaHNpZWhAbWVkaWF0ZWsu
-Y29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmMgfCAzOCAr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAzOCBpbnNl
-cnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tYWlsYm94L210ay1jbWRxLW1h
-aWxib3guYyBiL2RyaXZlcnMvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmMNCj4gaW5kZXggNzI0
-NmI3ZTIxYTJlLi41MGRlYzAxNTU5M2YgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbWFpbGJveC9t
-dGstY21kcS1tYWlsYm94LmMNCj4gKysrIGIvZHJpdmVycy9tYWlsYm94L210ay1jbWRxLW1haWxi
-b3guYw0KPiBAQCAtMzg3LDYgKzM4NywxMiBAQCBzdGF0aWMgaW50IGNtZHFfbWJveF9zZW5kX2Rh
-dGEoc3RydWN0IG1ib3hfY2hhbiAqY2hhbiwgdm9pZCAqZGF0YSkNCj4gIA0KPiAgCWlmIChsaXN0
-X2VtcHR5KCZ0aHJlYWQtPnRhc2tfYnVzeV9saXN0KSkgew0KPiAgCQlXQVJOX09OKGNsa19lbmFi
-bGUoY21kcS0+Y2xvY2spIDwgMCk7DQo+ICsJCS8qDQo+ICsJCSAqIFRoZSB0aHJlYWQgcmVzZXQg
-d2lsbCBjbGVhciB0aHJlYWQgcmVsYXRlZCByZWdpc3RlciB0byAwLA0KPiArCQkgKiBpbmNsdWRp
-bmcgcGMsIGVuZCwgcHJpb3JpdHksIGlycSwgc3VzcGVuZCBhbmQgZW5hYmxlLiBUaHVzDQo+ICsJ
-CSAqIHNldCBDTURRX1RIUl9FTkFCTEVEIHRvIENNRFFfVEhSX0VOQUJMRV9UQVNLIHdpbGwgZW5h
-YmxlDQo+ICsJCSAqIHRocmVhZCBhbmQgbWFrZSBpdCBydW5uaW5nLg0KPiArCQkgKi8NCj4gIAkJ
-V0FSTl9PTihjbWRxX3RocmVhZF9yZXNldChjbWRxLCB0aHJlYWQpIDwgMCk7DQo+ICANCj4gIAkJ
-d3JpdGVsKHRhc2stPnBhX2Jhc2UgPj4gY21kcS0+c2hpZnRfcGEsDQo+IEBAIC00NTAsNiArNDU2
-LDM4IEBAIHN0YXRpYyBpbnQgY21kcV9tYm94X3N0YXJ0dXAoc3RydWN0IG1ib3hfY2hhbiAqY2hh
-bikNCj4gIA0KPiAgc3RhdGljIHZvaWQgY21kcV9tYm94X3NodXRkb3duKHN0cnVjdCBtYm94X2No
-YW4gKmNoYW4pDQo+ICB7DQo+ICsJc3RydWN0IGNtZHFfdGhyZWFkICp0aHJlYWQgPSAoc3RydWN0
-IGNtZHFfdGhyZWFkICopY2hhbi0+Y29uX3ByaXY7DQo+ICsJc3RydWN0IGNtZHEgKmNtZHEgPSBk
-ZXZfZ2V0X2RydmRhdGEoY2hhbi0+bWJveC0+ZGV2KTsNCj4gKwlzdHJ1Y3QgY21kcV90YXNrICp0
-YXNrLCAqdG1wOw0KPiArCXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQo+ICsNCj4gKwlzcGluX2xvY2tf
-aXJxc2F2ZSgmdGhyZWFkLT5jaGFuLT5sb2NrLCBmbGFncyk7DQo+ICsJaWYgKGxpc3RfZW1wdHko
-JnRocmVhZC0+dGFza19idXN5X2xpc3QpKQ0KPiArCQlnb3RvIGRvbmU7DQo+ICsNCj4gKwlXQVJO
-X09OKGNtZHFfdGhyZWFkX3N1c3BlbmQoY21kcSwgdGhyZWFkKSA8IDApOw0KPiArDQo+ICsJLyog
-bWFrZSBzdXJlIGV4ZWN1dGVkIHRhc2tzIGhhdmUgc3VjY2VzcyBjYWxsYmFjayAqLw0KPiArCWNt
-ZHFfdGhyZWFkX2lycV9oYW5kbGVyKGNtZHEsIHRocmVhZCk7DQo+ICsJaWYgKGxpc3RfZW1wdHko
-JnRocmVhZC0+dGFza19idXN5X2xpc3QpKQ0KPiArCQlnb3RvIGRvbmU7DQo+ICsNCj4gKwlsaXN0
-X2Zvcl9lYWNoX2VudHJ5X3NhZmUodGFzaywgdG1wLCAmdGhyZWFkLT50YXNrX2J1c3lfbGlzdCwN
-Cj4gKwkJCQkgbGlzdF9lbnRyeSkgew0KPiArCQljbWRxX3Rhc2tfZXhlY19kb25lKHRhc2ssIC1F
-Q09OTkFCT1JURUQpOw0KDQpjbWRxX3Rhc2tfZXhlY19kb25lKHRhc2ssIENNRFFfQ0JfRVJST1Ip
-ID8gSG93ZXZlciwgSSd2ZSBsaWtlIHRvIHVzZSB0aGUNCnN0YW5kYXJkIGVycm9yIGFzIHlvdSB3
-cml0ZSBoZXJlLg0KDQpSZWdhcmRzLA0KQ0sNCg0KPiArCQlrZnJlZSh0YXNrKTsNCj4gKwl9DQo+
-ICsNCj4gKwljbWRxX3RocmVhZF9kaXNhYmxlKGNtZHEsIHRocmVhZCk7DQo+ICsJY2xrX2Rpc2Fi
-bGUoY21kcS0+Y2xvY2spOw0KPiArZG9uZToNCj4gKwkvKg0KPiArCSAqIFRoZSB0aHJlYWQtPnRh
-c2tfYnVzeV9saXN0IGVtcHR5IG1lYW5zIHRocmVhZCBhbHJlYWR5IGRpc2FibGUuIFRoZQ0KPiAr
-CSAqIGNtZHFfbWJveF9zZW5kX2RhdGEoKSBhbHdheXMgcmVzZXQgdGhyZWFkIHdoaWNoIGNsZWFy
-IGRpc2FibGUgYW5kDQo+ICsJICogc3VzcGVuZCBzdGF0dWUgd2hlbiBmaXJzdCBwa3Qgc2VuZCB0
-byBjaGFubmVsLCBzbyB0aGVyZSBpcyBubyBuZWVkDQo+ICsJICogdG8gZG8gYW55IG9wZXJhdGlv
-biBoZXJlLCBvbmx5IHVubG9jayBhbmQgbGVhdmUuDQo+ICsJICovDQo+ICsJc3Bpbl91bmxvY2tf
-aXJxcmVzdG9yZSgmdGhyZWFkLT5jaGFuLT5sb2NrLCBmbGFncyk7DQo+ICB9DQo+ICANCj4gIHN0
-YXRpYyBjb25zdCBzdHJ1Y3QgbWJveF9jaGFuX29wcyBjbWRxX21ib3hfY2hhbl9vcHMgPSB7DQoN
-Cg==
+This patch adds support for configuring the RGMII skew delays in Rx and
+Tx. The delay value is retrieved from the device tree, and set based on
+the PHY interface mode (rgmii, rgmii-id, rgmii-rx, rgmii-tx). If no
+configuration is provided in the device tree, or of a delay isn't used,
+its value will be set to the default one at probe time: this driver do
+not rely anymore on the bootloader configuration for RGMII skews.
+
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+---
+ drivers/net/phy/mscc.c | 50 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+index c389d7e59f91..4e9d788d95b9 100644
+--- a/drivers/net/phy/mscc.c
++++ b/drivers/net/phy/mscc.c
+@@ -192,6 +192,10 @@ enum macsec_bank {
+ /* Extended Page 2 Registers */
+ #define MSCC_PHY_CU_PMD_TX_CNTL		  16
+ 
++#define MSCC_PHY_RGMII_SETTINGS		  18
++#define RGMII_SKEW_RX_POS		  1
++#define RGMII_SKEW_TX_POS		  4
++
+ #define MSCC_PHY_RGMII_CNTL		  20
+ #define RGMII_RX_CLK_DELAY_MASK		  0x0070
+ #define RGMII_RX_CLK_DELAY_POS		  4
+@@ -2680,6 +2684,49 @@ static bool vsc8584_is_pkg_init(struct phy_device *phydev, bool reversed)
+ 	return false;
+ }
+ 
++static void vsc8584_rgmii_set_skews(struct phy_device *phydev)
++{
++	u32 skew_rx, skew_tx;
++	struct device *dev = &phydev->mdio.dev;
++
++	/* We first set the Rx and Tx skews to their default value in h/w
++	 * (0.2 ns).
++	 */
++	skew_rx = VSC8584_RGMII_SKEW_0_2;
++	skew_tx = VSC8584_RGMII_SKEW_0_2;
++
++	/* Based on the interface mode, we then retrieve (if available) Rx
++	 * and/or Tx skews from the device tree. We do not fail if the
++	 * properties do not exist, the default skew configuration is a valid
++	 * one.
++	 */
++	if (phydev->interface == PHY_INTERFACE_MODE_RGMII_ID ||
++	    phydev->interface == PHY_INTERFACE_MODE_RGMII_RXID)
++		of_property_read_u32(dev->of_node, "vsc8584,rgmii-skew-rx",
++				     &skew_rx);
++	if (phydev->interface == PHY_INTERFACE_MODE_RGMII_ID ||
++	    phydev->interface == PHY_INTERFACE_MODE_RGMII_TXID)
++		of_property_read_u32(dev->of_node, "vsc8584,rgmii-skew-tx",
++				     &skew_tx);
++
++	/* Make sure we did not retrieve unsupported values. */
++	if (skew_rx > VSC8584_RGMII_SKEW_3_4) {
++		phydev_err(phydev, "Invalid Rx skew, fix the device tree.");
++		skew_rx = VSC8584_RGMII_SKEW_0_2;
++	}
++	if (skew_tx > VSC8584_RGMII_SKEW_3_4) {
++		phydev_err(phydev, "Invalid Tx skew, fix the device tree.");
++		skew_tx = VSC8584_RGMII_SKEW_0_2;
++	}
++
++	/* Finally we do apply the skew configuration. */
++	phy_modify_paged(phydev, MSCC_PHY_PAGE_EXTENDED_2,
++			 MSCC_PHY_RGMII_SETTINGS,
++			 (0x7 << RGMII_SKEW_RX_POS) | (0x7 << RGMII_SKEW_TX_POS),
++			 (skew_rx << RGMII_SKEW_RX_POS) |
++			 (skew_tx << RGMII_SKEW_TX_POS));
++}
++
+ static int vsc8584_config_init(struct phy_device *phydev)
+ {
+ 	struct vsc8531_private *vsc8531 = phydev->priv;
+@@ -2826,6 +2873,9 @@ static int vsc8584_config_init(struct phy_device *phydev)
+ 	       (VSC8584_MAC_IF_SELECTION_SGMII << VSC8584_MAC_IF_SELECTION_POS);
+ 	ret = phy_write(phydev, MSCC_PHY_EXT_PHY_CNTL_1, val);
+ 
++	if (phy_interface_is_rgmii(phydev))
++		vsc8584_rgmii_set_skews(phydev);
++
+ 	ret = genphy_soft_reset(phydev);
+ 	if (ret)
+ 		return ret;
+-- 
+2.24.1
 
