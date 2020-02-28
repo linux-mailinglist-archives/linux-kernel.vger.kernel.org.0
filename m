@@ -2,142 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F20B173CA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:14:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2A9173CB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:17:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbgB1QOv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 11:14:51 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:46685 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbgB1QOv (ORCPT
+        id S1726418AbgB1QRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 11:17:30 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:47037 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbgB1QRa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 11:14:51 -0500
-Received: by mail-vs1-f65.google.com with SMTP id t12so2241533vso.13
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 08:14:50 -0800 (PST)
+        Fri, 28 Feb 2020 11:17:30 -0500
+Received: by mail-qv1-f65.google.com with SMTP id bo12so1554986qvb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 08:17:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sdfucJr4oGXmK/lbY5RGk72YXwrFDcIl2yf5ZBumLmc=;
-        b=Y19jelF+yAj3D9yhRoea0pkJgxFOHFphhYx6vuwZohk2gP08M+tUPLgTNxVPjM3yLd
-         9tG7853yVeWuZ0dH2FfBEO57PhITSljU8G0GoDefm7OknQYhjKftArSFAi8Y+0gyamUA
-         rNN4hYtWHbpmrbLEc1SF3YbEu6q75JEbBCZ4M=
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zKdk38aJhA82hTscy9LF9azysMLoDz1ezEIJvuBKa8A=;
+        b=LWyZS36QTY1vsAoUR3es9SvlYx3lYN3A53KEZ57uzSbow9k+2Vp3NuFz7Z+D8pVq5/
+         JWj3jtVCw8/0GT57CwTd7SkK9TaNk787ExJyePNfD6e6i2rDmYDCRo2TM/sPxUNsvLp6
+         Owq24V+xwgUtq5PPDhFm2qUCFRCWqjXYHHEfvL6owrafX7W44vg9CeeyXKa7scBPfa98
+         Lz8uzDO5KvRtUkiTTc0DBYEpIMZBjLVwg7r00CaPQbpO6hbl3p/3ZkCW2GVovZBUefAs
+         MCtrJjjxrDIysGQIVi3OWfluEq0tHV6wRhEiEPV1v4qw3maghZZa8lZERuHkPBHeGe/d
+         jVvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sdfucJr4oGXmK/lbY5RGk72YXwrFDcIl2yf5ZBumLmc=;
-        b=Ylh4bIkhTzB1TjGWlGYSmog4K8W4KbAtxmhI3wM5sd9KnVe6XLCRnh7IdRzTT9OXuK
-         r+OSHd/ou6gVWSK9NHsEYxauZsGW+B9+3QpP4VbNuxopxe6Dz6rQMdlWe64l3FVWTVDg
-         R7c4Kxr2X5kScBAoI1ODttJfwT8JBfvnYGdp50dwT0Q3ZuuJz9ghmQFjfg3mxcJsLPhC
-         6LUfl1UaxQRSiRdcKfQSp9YDNK2z/G1PgJYoRRi8fbAcd1K1SbHuE4YacFmAeMeJR8+i
-         pDGvHHh8q2mPJwU82w0HRzj4U92ho4mUJS+vgBlg6UA/U0CNYqfyx4w/QwmGQSNLq/5/
-         +o5w==
-X-Gm-Message-State: ANhLgQ1CvdudLR+dDRZo1gY3mOn8A6SJG+9tznwN0i4IlB2/y45jnf1J
-        ZqP2huUlA5DtGdl0dJVKCEbVYLOvo/s=
-X-Google-Smtp-Source: ADFU+vvTcjZ55iu0UzsMc3sZoJqPEdsv/WE73KMGsLxaShLghsr6zAJ8pPYMhHvbiopKckdwA3+dSQ==
-X-Received: by 2002:a67:edd2:: with SMTP id e18mr2804373vsp.211.1582906489205;
-        Fri, 28 Feb 2020 08:14:49 -0800 (PST)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id h187sm3032490vkb.40.2020.02.28.08.14.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2020 08:14:48 -0800 (PST)
-Received: by mail-ua1-f52.google.com with SMTP id c21so1163886uam.6
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 08:14:47 -0800 (PST)
-X-Received: by 2002:ab0:45b6:: with SMTP id u51mr2409303uau.120.1582906487233;
- Fri, 28 Feb 2020 08:14:47 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zKdk38aJhA82hTscy9LF9azysMLoDz1ezEIJvuBKa8A=;
+        b=Afr/p4QqLPIJxDCv+Wpvz71nZu9XT/yU1SRNANfoApsW2XVLWWGNfMwARWDAnMaRx7
+         3cqO4eme9T0zpA36L5GY1IauC/t410Ssf83qIJq+sK3qjCKBw9cMYgChMsYukO9KWT9S
+         1apkaO5Lwx4SfhsQ4uT9JLCcZWjqkT75icCLNaB0cO4tu1/kspdae2oaNC1ZAd0Od/qC
+         lz1VdJL4ANOSqoKhpaIPGS/5mRhqQCyfzPrjfIpJV3/8dDuliaOvxKhCk2xj22YKGz5J
+         XOJhiWPby2lrXGdjQ4+36pEtw02VHkqE7oNk6QVRqvWBb2okQ7VPX2Y6V3svdpbCFPN1
+         WGNQ==
+X-Gm-Message-State: APjAAAWaZEOhMc1yW8AhAUqZ8Ou78OpGw0gH5EVayQUIUOvQWlI1Zdvc
+        5OO9PlITYg0slKFjSsQqXbopVQ==
+X-Google-Smtp-Source: APXvYqziLkBoEb6rQTlAFGTGstcdRLdHTq/BBvQvyn2/V2cOoRQ/UjvaRO7NSbHN485P6/4/Q/0RmQ==
+X-Received: by 2002:ad4:4684:: with SMTP id bq4mr4174239qvb.35.1582906649607;
+        Fri, 28 Feb 2020 08:17:29 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id p126sm5375393qkd.108.2020.02.28.08.17.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Feb 2020 08:17:29 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1j7iKO-0006xA-Oh; Fri, 28 Feb 2020 12:17:28 -0400
+Date:   Fri, 28 Feb 2020 12:17:28 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Bernard Metzler <bmt@zurich.ibm.com>
+Cc:     dledford@redhat.com, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH for-rc] RDMA/siw: Fix failure handling during device
+ creation
+Message-ID: <20200228161728.GT31668@ziepe.ca>
+References: <20200226142920.11074-1-bmt@zurich.ibm.com>
 MIME-Version: 1.0
-References: <20200226210414.28133-1-linux@roeck-us.net> <20200226210414.28133-2-linux@roeck-us.net>
- <CAD=FV=WDd4E-zDW73kb-qHo1QYQrD3BTgVpE70rzowpgeXVy7w@mail.gmail.com>
- <ce3357a1-467f-1241-ae0d-2e113116ca8d@roeck-us.net> <f94fc372-d81b-e8e4-e7ef-780fe7db1237@roeck-us.net>
-In-Reply-To: <f94fc372-d81b-e8e4-e7ef-780fe7db1237@roeck-us.net>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 28 Feb 2020 08:14:35 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=VNsOo--1x+pkwhWOWSGAQyVB6g6CE+o4q7phPSXaDXRw@mail.gmail.com>
-Message-ID: <CAD=FV=VNsOo--1x+pkwhWOWSGAQyVB6g6CE+o4q7phPSXaDXRw@mail.gmail.com>
-Subject: Re: [RFT PATCH 1/4] usb: dwc2: Simplify and fix DMA alignment code
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Minas Harutyunyan <hminas@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QW50dGkgU2VwcMOkbMOk?= <a.seppala@gmail.com>,
-        Boris ARZUR <boris@konbu.org>, linux-usb@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Martin Schiller <ms@dev.tdt.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226142920.11074-1-bmt@zurich.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Feb 26, 2020 at 03:29:20PM +0100, Bernard Metzler wrote:
+> A failing call to ib_device_set_netdev() during device creation
+> caused system crash due to xa_destroy of uninitialized xarray
+> hit by device deallocation. Fixed by moving xarray initialization
+> before potential device deallocation.
+> Fixes also correct propagation of ib_device_set_netdev() failure
+> to caller.
 
-On Thu, Feb 27, 2020 at 8:28 PM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 2/27/20 2:27 PM, Guenter Roeck wrote:
-> > On 2/27/20 2:06 PM, Doug Anderson wrote:
-> [ ... ]
-> >>> -       if (urb->num_sgs || urb->sg ||
-> >>> -           urb->transfer_buffer_length == 0 ||
-> >>> +       if (urb->num_sgs || urb->sg || urb->transfer_buffer_length == 0 ||
-> >>> +           (urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP) ||
-> >>>             !((uintptr_t)urb->transfer_buffer & (DWC2_USB_DMA_ALIGN - 1)))
-> >>
-> >> Maybe I'm misunderstanding things, but it feels like we need something
-> >> more here.  Specifically I'm worried about the fact when the transfer
-> >> buffer is already aligned but the length is not a multiple of the
-> >> endpoint's maximum transfer size.  You need to handle that, right?
-> >> AKA something like this (untested):
-> >>
-> >> /* Simple case of not having to allocate a bounce buffer */
-> >> if (urb->num_sgs || urb->sg || urb->transfer_buffer_length == 0 ||
-> >>     (urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP))
-> >>   return 0;
-> >>
-> >> /* Can also avoid bounce buffer if alignment and size are good */
-> >> maxp = usb_endpoint_maxp(&ep->desc);
-> >> if (maxp == urb->transfer_buffer_length &&
-> >
-> > No, transfer_buffer_length would have to be a multiple of maxp. There
-> > are many situations where roundup(transfer_buffer_length, maxp) !=
-> > transfer_buffer_length. I agree, this would be the prudent approach
-> > (and it was my original implementation), but then it didn't seem to
-> > cause trouble so far, and I was hesitant to add it in because it results
-> > in creating temporary buffers for almost every receive operation.
-> > I'd like to get some test feedback from Boris - if the current code
-> > causes crashes with his use case, we'll know that it is needed.
-> > Otherwise, we'll have to decide if the current approach (with fewer
-> > copies) is worth the risk, or if we want to play save and always
-> > copy if roundup(transfer_buffer_length, maxp) != transfer_buffer_length.
-> >
->
-> Thinking more about this, the situation is actually much worse:
-> In Boris' testing, he found inbound transactions requested by usb
-> storage code with a requested transfer size of 13 bytes ... with
-> URB_NO_TRANSFER_DMA_MAP set. This means the requesting code has
-> provided a DMA ready buffer, transfer_buffer isn't even used,
-> and we can not reallocate it. In this situation we can just hope
-> that the chip (and the connected USB device) don't send more data
-> than requested.
->
-> With that in mind, I think we should stick with the current
-> scheme (ie only allocate a new buffer if the provided buffer is
-> unaligned) unless Boris comes back and tells us that it doesn't
-> work.
+This is for -rc, so please split into two patches. The error
+propagation is probably not -rc worthy
 
-I dunno.  I'd rather see correctness over performance.  Certainly we'd
-only need to do the extra bounce buffer for input buffers at least.
-
-Although I don't love the idea, is this something where we want to
-introduce a config option (either runtime or through KConfig),
-something like:
-
-CONFIG_DWC2_FAST_AND_LOOSE - Avoid bounce buffers and thus run faster
-at the risk of a bad USB device being able to clobber some of your
-memory.  Only do this if you really care about speed and have some
-trust in the USB devices connected to your system.
-
-
--Doug
+Jason
