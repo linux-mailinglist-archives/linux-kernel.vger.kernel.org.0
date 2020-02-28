@@ -2,127 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E63D173C55
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 16:57:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2521173C9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:14:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbgB1P5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 10:57:20 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:39555 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbgB1P5O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 10:57:14 -0500
-X-Originating-IP: 90.89.41.158
-Received: from localhost (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id E129060015;
-        Fri, 28 Feb 2020 15:57:10 +0000 (UTC)
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
-        hkallweit1@gmail.com
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        foss@0leil.net
-Subject: [PATCH net-next v2 3/3] net: phy: mscc: RGMII skew delay configuration
-Date:   Fri, 28 Feb 2020 16:57:02 +0100
-Message-Id: <20200228155702.2062570-4-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200228155702.2062570-1-antoine.tenart@bootlin.com>
-References: <20200228155702.2062570-1-antoine.tenart@bootlin.com>
+        id S1726277AbgB1QOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 11:14:14 -0500
+Received: from mga14.intel.com ([192.55.52.115]:34048 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725769AbgB1QOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 11:14:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 08:14:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,496,1574150400"; 
+   d="scan'208";a="439277163"
+Received: from yyu32-desk.sc.intel.com ([143.183.136.146])
+  by fmsmga006.fm.intel.com with ESMTP; 28 Feb 2020 08:14:13 -0800
+Message-ID: <89bcab262d6dad4c08c4a21e522796fea2320db3.camel@intel.com>
+Subject: Re: [PATCH v2 8/8] x86/fpu/xstate: Restore supervisor xstates for
+ __fpu__restore_sig()
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Fri, 28 Feb 2020 07:53:38 -0800
+In-Reply-To: <20200228121724.GA25261@zn.tnic>
+References: <20200121201843.12047-1-yu-cheng.yu@intel.com>
+         <20200121201843.12047-9-yu-cheng.yu@intel.com>
+         <20200221175859.GL25747@zn.tnic>
+         <77f3841a92df5d0c819699ee3612118d566b7445.camel@intel.com>
+         <20200228121724.GA25261@zn.tnic>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for configuring the RGMII skew delays in Rx and
-Tx. The delay value is retrieved from the device tree, and set based on
-the PHY interface mode (rgmii, rgmii-id, rgmii-rx, rgmii-tx). If no
-configuration is provided in the device tree, or of a delay isn't used,
-its value will be set to the default one at probe time: this driver do
-not rely anymore on the bootloader configuration for RGMII skews.
+On Fri, 2020-02-28 at 13:17 +0100, Borislav Petkov wrote:
+> On Thu, Feb 27, 2020 at 02:52:12PM -0800, Yu-cheng Yu wrote:
+> > > So the code sets TIF_NEED_FPU_LOAD unconditionally, why are you changing
+> > > this?
+> > > 
+> > > Why don't you simply do:
+> > > 
+> > > 		set_thread_flag(TIF_NEED_FPU_LOAD);
+> > > 		fpregs_lock();
+> > > 		if (xfeatures_mask_supervisor())
+> > > 			copy_xregs_to_kernel(&fpu->state.xsave);
+> > > 		fpregs_unlock();
+> > 
+> > If TIF_NEED_FPU_LOAD is set, then xstates are already in the xsave buffer. 
+> > We can skip saving them again.
+> 
+> Ok, then pls use test_and_set_thread_flag().
+> 
+> Also, in talking to Sebastian about this on IRC, he raised a valid
+> concern: if we are going to save supervisor states here, then
+> copy_xregs_to_kernel() should better save *only* supervisor states
+> because we're not interested in the user states - they're going to be
+> overwritten with the states from the stack.
 
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
----
- drivers/net/phy/mscc.c | 50 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+Yes, saving only supervisor states is optimal, but doing XSAVES with a
+partial RFBM changes xcomp_bv.
 
-diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index c389d7e59f91..4e9d788d95b9 100644
---- a/drivers/net/phy/mscc.c
-+++ b/drivers/net/phy/mscc.c
-@@ -192,6 +192,10 @@ enum macsec_bank {
- /* Extended Page 2 Registers */
- #define MSCC_PHY_CU_PMD_TX_CNTL		  16
- 
-+#define MSCC_PHY_RGMII_SETTINGS		  18
-+#define RGMII_SKEW_RX_POS		  1
-+#define RGMII_SKEW_TX_POS		  4
-+
- #define MSCC_PHY_RGMII_CNTL		  20
- #define RGMII_RX_CLK_DELAY_MASK		  0x0070
- #define RGMII_RX_CLK_DELAY_POS		  4
-@@ -2680,6 +2684,49 @@ static bool vsc8584_is_pkg_init(struct phy_device *phydev, bool reversed)
- 	return false;
- }
- 
-+static void vsc8584_rgmii_set_skews(struct phy_device *phydev)
-+{
-+	u32 skew_rx, skew_tx;
-+	struct device *dev = &phydev->mdio.dev;
-+
-+	/* We first set the Rx and Tx skews to their default value in h/w
-+	 * (0.2 ns).
-+	 */
-+	skew_rx = VSC8584_RGMII_SKEW_0_2;
-+	skew_tx = VSC8584_RGMII_SKEW_0_2;
-+
-+	/* Based on the interface mode, we then retrieve (if available) Rx
-+	 * and/or Tx skews from the device tree. We do not fail if the
-+	 * properties do not exist, the default skew configuration is a valid
-+	 * one.
-+	 */
-+	if (phydev->interface == PHY_INTERFACE_MODE_RGMII_ID ||
-+	    phydev->interface == PHY_INTERFACE_MODE_RGMII_RXID)
-+		of_property_read_u32(dev->of_node, "vsc8584,rgmii-skew-rx",
-+				     &skew_rx);
-+	if (phydev->interface == PHY_INTERFACE_MODE_RGMII_ID ||
-+	    phydev->interface == PHY_INTERFACE_MODE_RGMII_TXID)
-+		of_property_read_u32(dev->of_node, "vsc8584,rgmii-skew-tx",
-+				     &skew_tx);
-+
-+	/* Make sure we did not retrieve unsupported values. */
-+	if (skew_rx > VSC8584_RGMII_SKEW_3_4) {
-+		phydev_err(phydev, "Invalid Rx skew, fix the device tree.");
-+		skew_rx = VSC8584_RGMII_SKEW_0_2;
-+	}
-+	if (skew_tx > VSC8584_RGMII_SKEW_3_4) {
-+		phydev_err(phydev, "Invalid Tx skew, fix the device tree.");
-+		skew_tx = VSC8584_RGMII_SKEW_0_2;
-+	}
-+
-+	/* Finally we do apply the skew configuration. */
-+	phy_modify_paged(phydev, MSCC_PHY_PAGE_EXTENDED_2,
-+			 MSCC_PHY_RGMII_SETTINGS,
-+			 (0x7 << RGMII_SKEW_RX_POS) | (0x7 << RGMII_SKEW_TX_POS),
-+			 (skew_rx << RGMII_SKEW_RX_POS) |
-+			 (skew_tx << RGMII_SKEW_TX_POS));
-+}
-+
- static int vsc8584_config_init(struct phy_device *phydev)
- {
- 	struct vsc8531_private *vsc8531 = phydev->priv;
-@@ -2826,6 +2873,9 @@ static int vsc8584_config_init(struct phy_device *phydev)
- 	       (VSC8584_MAC_IF_SELECTION_SGMII << VSC8584_MAC_IF_SELECTION_POS);
- 	ret = phy_write(phydev, MSCC_PHY_EXT_PHY_CNTL_1, val);
- 
-+	if (phy_interface_is_rgmii(phydev))
-+		vsc8584_rgmii_set_skews(phydev);
-+
- 	ret = genphy_soft_reset(phydev);
- 	if (ret)
- 		return ret;
--- 
-2.24.1
+Yu-cheng
 
