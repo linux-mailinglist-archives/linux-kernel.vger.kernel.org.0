@@ -2,212 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42C1A17378A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:48:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2CA6173791
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:50:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbgB1Msz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 07:48:55 -0500
-Received: from mail-mw2nam10on2054.outbound.protection.outlook.com ([40.107.94.54]:6048
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725884AbgB1Msz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 07:48:55 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LDBp6NY9US5w3ZSDdqP3jKBU8B6UwAEP0cGfNkW+nTGGl2N3gH/gCbJO1b8JYns/th4NDHxsfUvgbdQrFjaBwpDW1cx+pZLA2AbKcHgfDMfMAEfUw5YimpCP1hCFruXDAxcfmiSMKwrx7EGlGWixqKAMeJF3Mvera2o02IRWayfdNFU4VaWVMYOg7AuYuqLPQOTbBNpNqlLdhT+dSAqqzU+aDlmoglSd9+lp8PaL8XMFKbyMWXNkkaI+im2WD+X8HKO/lxU5oXR7xncvJTRv7q3H/CZXOAuEGpSZ9dhzLh+9RpkdLeouIzxIUNv8XQN4sna6T4NOc5cpEIAgXjXvVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oeVnHWRIJpqsTSPxuPZoK8E4R4fhwl/QTvxPcTOH1QI=;
- b=oN7pTvWqPC4utc3Xcef6rW5Mpk5sOxgfOAqbxggFjjZdES+TKuYSefd6HD3NfbTwD2uVCNx3GONjP7DqqUzOFDHjXiTgN6iLmZI1LCtEiztZodGuLsoZX4Az700pShdHVT5j1wZRAB9jAcWRN51LhadrXBXHjtV1775K6ElQM6SJPt6LNZVAqw8hZoeFosEWIGBnuK5REgRsQo6ZzY13rqDdKcm6I3U3Unadi0hQlnOv096he63nDHKl3cgU8uBI4J2cwx3UDHzQY+WB1Cqz0YEFc+w8i5udFj+O1fWE0Pcc+venDvGhUpDLHe+V81LYPvwfdzWtYV/vM8xFfFX0+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
+        id S1726764AbgB1MuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 07:50:18 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36633 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbgB1MuQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 07:50:16 -0500
+Received: by mail-wm1-f67.google.com with SMTP id g83so867369wme.1;
+        Fri, 28 Feb 2020 04:50:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oeVnHWRIJpqsTSPxuPZoK8E4R4fhwl/QTvxPcTOH1QI=;
- b=Iko0zZMw9WSETZTzLzT8voY8IDMAqLxorYnJlkOeLvF1UxpHrhDWE7rtXt+7pltgCHrnuNIEtg4nnKPMX+xAbbKLXc0A1UTtIonBXY+rS7DTJY6YbvKujr8FYBrt/x5J+SYhoQiRdFxFWWZZXMBG5qL0vijXIExEx0+gvGqZ17I=
-Received: from MN2PR02MB6336.namprd02.prod.outlook.com (2603:10b6:208:1b8::30)
- by MN2PR02MB6686.namprd02.prod.outlook.com (2603:10b6:208:1d0::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18; Fri, 28 Feb
- 2020 12:48:49 +0000
-Received: from MN2PR02MB6336.namprd02.prod.outlook.com
- ([fe80::f452:65fb:14c7:dd6b]) by MN2PR02MB6336.namprd02.prod.outlook.com
- ([fe80::f452:65fb:14c7:dd6b%7]) with mapi id 15.20.2772.018; Fri, 28 Feb 2020
- 12:48:49 +0000
-From:   Bharat Kumar Gogada <bharatku@xilinx.com>
-To:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        Ravikiran Gummaluri <rgummal@xilinx.com>,
-        "maz@kernel.org" <maz@kernel.org>
-Subject: RE: [PATCH v5 2/2] PCI: xilinx-cpm: Add Versal CPM Root Port driver
-Thread-Topic: [PATCH v5 2/2] PCI: xilinx-cpm: Add Versal CPM Root Port driver
-Thread-Index: AQHV14gyqXPkldKNt0SLTelX37u03Kgr8Z6AgAAlV5CABIIlAIAAIZtQ
-Date:   Fri, 28 Feb 2020 12:48:48 +0000
-Message-ID: <MN2PR02MB6336569F378683B05B262D4AA5E80@MN2PR02MB6336.namprd02.prod.outlook.com>
-References: <1580400771-12382-1-git-send-email-bharat.kumar.gogada@xilinx.com>
- <1580400771-12382-3-git-send-email-bharat.kumar.gogada@xilinx.com>
- <20200225114013.GB6913@e121166-lin.cambridge.arm.com>
- <MN2PR02MB63365B50058B35AA37341BC9A5ED0@MN2PR02MB6336.namprd02.prod.outlook.com>
- <20200228104442.GA2874@e121166-lin.cambridge.arm.com>
-In-Reply-To: <20200228104442.GA2874@e121166-lin.cambridge.arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bharatku@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: bdabd4a8-da17-4866-860b-08d7bc4c8e95
-x-ms-traffictypediagnostic: MN2PR02MB6686:|MN2PR02MB6686:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR02MB6686A6B67ABBCEB72C86C13BA5E80@MN2PR02MB6686.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0327618309
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(376002)(136003)(396003)(39860400002)(189003)(199004)(478600001)(316002)(26005)(5660300002)(6506007)(64756008)(66476007)(66556008)(186003)(66446008)(54906003)(52536014)(7696005)(86362001)(76116006)(66946007)(81156014)(4326008)(8936002)(9686003)(2906002)(8676002)(55016002)(6916009)(33656002)(71200400001)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR02MB6686;H:MN2PR02MB6336.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: pETMEZGT5F4qugC4wTEl0icgEyfS9an3R4a42NnbfvByu9lXPyzMZiSvdWtaDJiYCXFLuNQydWoU2Okhxcz7J5lsyOjTaNoVqBQbN+iUjyLzqQv78ZiS/0RMFeKlJ3hV5B1dR4uH5DOBc9A6BgivHnzJ38qmELYq5MYFwlxgc63RA2lIkWkQ+/n9bKOK2OhGZu5DithR1bPp95F5ME2fzj9aoqv8NOaDEndLcjfk7p08DfikMcyz7NpcxK46IfsU2RYCx6fFANcZ2sCRcF6zBuQn4Z0DeU735zsyktdIbXpaWMWz03ax/eVOj2raFm3VCHLZbxhGBqcN0bE6FiW4UFbBFrHWQcvbxWVSVLdGoNGYpED6AwXopAskFgVN+0msJMEiriQc6HeLDtXsL/9Fq+VVbpRRv8Kcs0XlT7e1ED0qAhz9cmH4+HELs+OlQieH
-x-ms-exchange-antispam-messagedata: 8pK0sYdMjb9g8IzHdTrOwh7ePJNRgkF7VyQOqkdiMHE9+CuFw3UyLZWPn6tU4prtnlbL8o3Zzgz5v/EnZq6u8+MgKj9BPAUyu3OJqWSOLlTFddMdi06Iuq4fuT9rG+fAlN4S5hS58AexJwnNdLdlcw==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7SOOFR5A8cRXpbsPD4NmdfCkYNnaGr0VzqHcY4iP4Ns=;
+        b=hRPTW2ULNhZjOA7emZQEEesi0PP78D2LjuQEDDCKuOSmhH2h3dXr/i2KP0Eh5ZDEQY
+         Sl8/xquqjPHT2muExLEDXse/D/C+AgxqOUQjBLddCYYebubu6P0yxK2KUCoxir6gVHlt
+         a9chrqRrjWXfXXbAKNMM0JZleYqutB3bgwhdSx/4msoeVSXCjvdn8j7lgq8tlFcJBGNj
+         zt8hAewJ71Rprux8EA3g0UshuptOIRaucJsW6wAX/ypcH8Q99Jb8vdhwZj/HLpCH6IbN
+         j+BXJQeoMzI17eqjjAG64da++fJXdaXh3MWCVKsQM2khOkO/Oym4aoYRNDtwh3syYwAG
+         WxLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7SOOFR5A8cRXpbsPD4NmdfCkYNnaGr0VzqHcY4iP4Ns=;
+        b=BYJKJNzoqT3/djcTn8WpHkVa93X3ixW7xVY+8naDxfrrY7kB2Yzp8EfWeTxMIrUl1j
+         GsHsgvldW50Ni8g/IcSPo+nc+PfySPNQxHCcmI1vpRdxHQ9RuAFbIy1ZOojuE1VRdThL
+         Qr3aj2ZUve8GRUNTUY7mWUAfkjcAK8Gdl/x34FMmdqAsWQ5beQCS8XpmNHIyNYeNAiq3
+         r8aViRuGj/CiTIAM2UoFcBqt4y7bl0aOaU55oBS+Wih7y4Eeoim7DmLD3uqkmOviTWIe
+         BF0pRH9JzdHR7ssbu8MUZ2zKnkvvuvSlZZhloYz00PcjXa3VeZfytSMZ7oTysxYGrPix
+         pyPg==
+X-Gm-Message-State: APjAAAX04zZkPt8wfeSXAkGfsH8FUDLDbvGHloJ9CLsCBgGwWO6nF+tH
+        omagrgBs4UGpPVhXGVoRg1s=
+X-Google-Smtp-Source: APXvYqyh7/fg3k/2U7H+2hUIEb3j1cDGCqO8ryTnH0ZUxrE0DmK4Gl1qwlanUJWAfh9jNCS7V8A/dA==
+X-Received: by 2002:a05:600c:251:: with SMTP id 17mr4687252wmj.59.1582894214215;
+        Fri, 28 Feb 2020 04:50:14 -0800 (PST)
+Received: from [192.168.2.1] (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id c9sm12549852wrq.44.2020.02.28.04.50.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2020 04:50:13 -0800 (PST)
+Subject: Re: [PATCH 1/4] dt-bindings: arm: fix Rockchip Kylin board bindings
+To:     Robin Murphy <robin.murphy@arm.com>, heiko@sntech.de
+Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+References: <20200228061436.13506-1-jbx6244@gmail.com>
+ <73b41bd1-01e9-6af8-afc8-b1a96614d026@arm.com>
+From:   Johan Jonker <jbx6244@gmail.com>
+Message-ID: <5d47cf5f-9ac4-cff4-340b-a2518a508738@gmail.com>
+Date:   Fri, 28 Feb 2020 13:50:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bdabd4a8-da17-4866-860b-08d7bc4c8e95
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2020 12:48:49.0465
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7nbOD6oead0RAqSJWKDSRQFIVOPNvAX98qdogBDrCqWa/WR0Op/y15y8B6CNGsJGo7S6Z45VDnT0plX6bRMsYw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB6686
+In-Reply-To: <73b41bd1-01e9-6af8-afc8-b1a96614d026@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Subject: Re: [PATCH v5 2/2] PCI: xilinx-cpm: Add Versal CPM Root Port dri=
-ver
->=20
-> [+MarcZ, FHI]
->=20
-> On Tue, Feb 25, 2020 at 02:39:56PM +0000, Bharat Kumar Gogada wrote:
->=20
-> [...]
->=20
-> > > > +/* ECAM definitions */
-> > > > +#define ECAM_BUS_NUM_SHIFT		20
-> > > > +#define ECAM_DEV_NUM_SHIFT		12
-> > >
-> > > You don't need these ECAM_* defines, you can use pci_generic_ecam_ops=
-.
-> > Does this need separate ranges region for ECAM space ?
-> > We have ECAM and controller space in same region.
->=20
-> You can create an ECAM window with pci_ecam_create where *cfgres
-> represent the ECAM area, I don't get what you mean by "same region".
->=20
-> Do you mean "contiguous" ? Or something else ?
-Yes, contiguous; within ECAM region some space is for controller registers.
->=20
-> > > > +
-> > > > +/**
-> > > > + * struct xilinx_cpm_pcie_port - PCIe port information
-> > > > + * @reg_base: Bridge Register Base
-> > > > + * @cpm_base: CPM System Level Control and Status Register(SLCR)
-> > > > +Base
-> > > > + * @irq: Interrupt number
-> > > > + * @root_busno: Root Bus number
-> > > > + * @dev: Device pointer
-> > > > + * @leg_domain: Legacy IRQ domain pointer
-> > > > + * @irq_misc: Legacy and error interrupt number  */ struct
-> > > > +xilinx_cpm_pcie_port {
-> > > > +	void __iomem *reg_base;
-> > > > +	void __iomem *cpm_base;
-> > > > +	u32 irq;
-> > > > +	u8 root_busno;
-> > > > +	struct device *dev;
-> > > > +	struct irq_domain *leg_domain;
-> > > > +	int irq_misc;
-> > > > +};
-> > > > +
-> > > > +static inline u32 pcie_read(struct xilinx_cpm_pcie_port *port,
-> > > > +u32
-> > > > +reg) {
-> > > > +	return readl(port->reg_base + reg); }
-> > > > +
-> > > > +static inline void pcie_write(struct xilinx_cpm_pcie_port *port,
-> > > > +			      u32 val, u32 reg)
-> > > > +{
-> > > > +	writel(val, port->reg_base + reg); }
-> > > > +
-> > > > +static inline bool cpm_pcie_link_up(struct xilinx_cpm_pcie_port
-> > > > +*port) {
-> > > > +	return (pcie_read(port, XILINX_CPM_PCIE_REG_PSCR) &
-> > > > +		XILINX_CPM_PCIE_REG_PSCR_LNKUP) ? 1 : 0;
-> > >
-> > > 	u32 val =3D pcie_read(port, XILINX_CPM_PCIE_REG_PSCR);
-> > >
-> > > 	return val & XILINX_CPM_PCIE_REG_PSCR_LNKUP;
-> > >
-> > > And this function call is not that informative anyway - it is used
-> > > just to print a log whose usefulness is questionable.
-> > We need this logging information customers are using this info in case
-> > of link down failure.
->=20
-> Out of curiosity, to do what ?
-They use this information as first level debug and initiate a query to xili=
-nx support team.=20
->=20
-> [...]
->=20
-> > > > +/**
-> > > > + * xilinx_cpm_pcie_intx_map - Set the handler for the INTx and
-> > > > +mark IRQ as valid
-> > > > + * @domain: IRQ domain
-> > > > + * @irq: Virtual IRQ number
-> > > > + * @hwirq: HW interrupt number
-> > > > + *
-> > > > + * Return: Always returns 0.
-> > > > + */
-> > > > +static int xilinx_cpm_pcie_intx_map(struct irq_domain *domain,
-> > > > +				    unsigned int irq, irq_hw_number_t hwirq) {
-> > > > +	irq_set_chip_and_handler(irq, &dummy_irq_chip,
-> > > > +handle_simple_irq);
-> > >
-> > > INTX are level IRQs, the flow handler must be handle_level_irq.
-> > Accepted will change.
-> > >
-> > > > +	irq_set_chip_data(irq, domain->host_data);
-> > > > +	irq_set_status_flags(irq, IRQ_LEVEL);
-> > >
-> > > The way INTX are handled in this patch is wrong. You must set-up a
-> > > chained IRQ with the appropriate flow handler, current code uses an
-> > > IRQ action and that's an IRQ layer violation and it goes without sayi=
-ng that it
-> is almost certainly broken.
-> > In our controller we use same irq line for controller errors and
-> > legacy errors.  we have two cases here where error interrupts are
-> > self-consumed by controller, and legacy interrupts are flow handled.
-> > Its not INTX handling alone for this IRQ line .  So chained IRQ can be
-> > used for self consumed interrupts too ?
->=20
-> No. In this specific case both solutions are not satisfying, we need to g=
-ive it
-> some thought, I will talk to Marc (CC'ed) to find the best option here go=
-ing
-> forward.
->=20
-Ok, will wait for Marc to provide inputs.
+On 2/28/20 1:35 PM, Robin Murphy wrote:
+> On 28/02/2020 6:14 am, Johan Jonker wrote:
+>> A test with the command below gives this error:
+>>
+>> arch/arm/boot/dts/rk3036-kylin.dt.yaml: /: compatible:
+>> ['rockchip,rk3036-kylin', 'rockchip,rk3036']
+>> is not valid under any of the given schemas
+>>
+>> Fix this error by changing 'rockchip,kylin-rk3036' to
+>> 'rockchip,rk3036-kylin' in rockchip.yaml.
+> 
 
-Regards,
-Bharat
+
+> Although I can guess, it might be worth a note to explain why it's the
+> binding rather than the DTS that gets changed here.
+
+Hi Robin,
+
+My guess is that given a look at the other boards the processor name
+comes first and then the board name, so I changed it in rockchip.yaml.
+But maybe Heiko can better explain what the naming consensus in the past
+was.
+
+Kind regards,
+
+Johan
+
+> 
+> Robin.
+> 
+>> make ARCH=arm dtbs_check
+>> DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/rockchip.yaml
+>>
+>> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+>> ---
+>>   Documentation/devicetree/bindings/arm/rockchip.yaml | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml
+>> b/Documentation/devicetree/bindings/arm/rockchip.yaml
+>> index 874b0eaa2..203158038 100644
+>> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+>> @@ -443,7 +443,7 @@ properties:
+>>           - description: Rockchip Kylin
+>>           items:
+>> -          - const: rockchip,kylin-rk3036
+>> +          - const: rockchip,rk3036-kylin
+>>             - const: rockchip,rk3036
+>>           - description: Rockchip PX3 Evaluation board
+>>
+
