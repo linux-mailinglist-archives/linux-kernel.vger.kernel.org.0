@@ -2,73 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DDF1172E6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:50:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA3DD172E91
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 03:08:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730520AbgB1Buu convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Feb 2020 20:50:50 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:3028 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730343AbgB1Buu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 20:50:50 -0500
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id B289FC0E010F0FE6498C;
-        Fri, 28 Feb 2020 09:50:44 +0800 (CST)
-Received: from dggeme702-chm.china.huawei.com (10.1.199.98) by
- DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 28 Feb 2020 09:50:44 +0800
-Received: from dggeme753-chm.china.huawei.com (10.3.19.99) by
- dggeme702-chm.china.huawei.com (10.1.199.98) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Fri, 28 Feb 2020 09:50:43 +0800
-Received: from dggeme753-chm.china.huawei.com ([10.7.64.70]) by
- dggeme753-chm.china.huawei.com ([10.7.64.70]) with mapi id 15.01.1713.004;
- Fri, 28 Feb 2020 09:50:44 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-CC:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: Re: [PATCH] KVM: nVMX: Consult only the "basic" exit reason when
- routing nested exit
-Thread-Topic: [PATCH] KVM: nVMX: Consult only the "basic" exit reason when
- routing nested exit
-Thread-Index: AdXt2LzqeRxPdhtitkuPjSs9pAY5dw==
-Date:   Fri, 28 Feb 2020 01:50:44 +0000
-Message-ID: <22e24adec35f4a519070e1dbd0fcf858@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.173.221.158]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+        id S1730562AbgB1CIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 21:08:10 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46685 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730346AbgB1CIK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 21:08:10 -0500
+Received: by mail-pf1-f193.google.com with SMTP id o24so836793pfp.13;
+        Thu, 27 Feb 2020 18:08:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Z5AIbk2nbOcHqpTmcvhMG9mF23rIvUFPSLJXXgXhGns=;
+        b=WxZo9JuHxs2vb8rzf2HkXGaALenOiLW17gU9FV7NRZnQX/R4Snkc7mWGvmDU4MAO7t
+         8jVaLqfz7cr3WemoDQyHzihCUa74B7tA2upzRpq3DhB56XOkNZEUAP+diQ8F5pr1mYYy
+         /eINOAoaeDTbtQSjkQ7q78GZrG18X6ofyEIevln/VnS7x9LMTG0vZCQ7fdSQAuOm/YSX
+         LPE2FMrcSLV42KJJN0Al145sJ40ccNpQSxso2CPCXZfPBYXsZdmZXydPm6TGRv8sxS8X
+         IO+MQfO38hqOcgEArnArXh/Imkv8+osKKLguQ/jJgaRUiT+PKDryfxsvWMW27f74d2WQ
+         +KMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Z5AIbk2nbOcHqpTmcvhMG9mF23rIvUFPSLJXXgXhGns=;
+        b=KA1Vo/F0zAQs4sY+S3HHKQkAK3JfpNhyVorKqoCL8brqB23u4wBLsWZrlM913wmdpV
+         ZS1Ylr4l4lJutkWt0up4d0a4iBw4eZ29sWnPZKeXKfQhLh2/PPuFmBWf1QZMG3dm4Csa
+         jt/Ky6toeeGpGd8VktZUxbbiIZzROoBjGZqQy9KhKoTQ+HQ5SbKUj3E1rYEdc8+3jnXD
+         HGJdoyL5c2FhC9+1ogro0tjXfZz0Ggt0dEmRG84DZaeRdJUWSg/KBBQa9xe8t5cV5q88
+         6jVLMcty/ZBrklGrJSMVz5ighA9etgk5mybVSEQQmTKY8Q5MxLmRxitOxLw039S6xF4s
+         Uytw==
+X-Gm-Message-State: APjAAAXlXdvJ3bJNI0y9pAYQBwnJRp9Zrj3VWfpoudWGdUG5PXr3T97b
+        C+QGWkCFkHMrnvYuq4UOXl4=
+X-Google-Smtp-Source: APXvYqzwfsLxTTqt4X5L8xIjUVbm8bxdacPFLrNAwoD4cD1bY8Ry1LYaaB9nFvV5Fr/sOrt1DhrKRA==
+X-Received: by 2002:a63:42c2:: with SMTP id p185mr2358809pga.268.1582855687383;
+        Thu, 27 Feb 2020 18:08:07 -0800 (PST)
+Received: from taoren-ubuntu-R90MNF91.thefacebook.com ([2620:10d:c090:500::4:d8f5])
+        by smtp.gmail.com with ESMTPSA id k24sm4931972pgm.61.2020.02.27.18.08.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 18:08:06 -0800 (PST)
+From:   rentao.bupt@gmail.com
+To:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+        taoren@fb.com
+Cc:     Tao Ren <rentao.bupt@gmail.com>
+Subject: [PATCH v6 0/7] aspeed-g6: enable usb support
+Date:   Thu, 27 Feb 2020 18:07:50 -0800
+Message-Id: <20200228020757.10513-1-rentao.bupt@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
->Consult only the basic exit reason, i.e. bits 15:0 of vmcs.EXIT_REASON, when determining whether a nested VM-Exit should be reflected into L1 or handled by KVM in L0.
->
->For better or worse, the switch statement in nested_vmx_exit_reflected() currently defaults to "true", i.e. reflects any nested VM-Exit without dedicated logic.  Because the case statements only contain the basic exit reason, any VM-Exit with modifier bits set will be reflected to L1, even if KVM intended to handle it in L0.
->
->Practically speaking, this only affects EXIT_REASON_MCE_DURING_VMENTRY, i.e. a #MC that occurs on nested VM-Enter would be incorrectly routed to L1, as "failed VM-Entry" is the only modifier that KVM can currently encounter.  The SMM modifiers will never be generated as KVM doesn't support/employ a SMI Transfer Monitor.  Ditto for "exit from enclave", as KVM doesn't yet support virtualizing SGX, i.e. it's impossible to enter an enclave in a KVM guest (L1 or L2).
->
+From: Tao Ren <rentao.bupt@gmail.com>
 
-Nice catch! There are similar patch catching this exit reson error.
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+The patch series aims at enabling USB Host and Gadget support on AST2600
+platforms.
 
->Fixes: 644d711aa0e1 ("KVM: nVMX: Deciding if L0 or L1 should handle an L2 exit")
->Cc: Jim Mattson <jmattson@google.com>
->Cc: Xiaoyao Li <xiaoyao.li@intel.com>
->Cc: stable@vger.kernel.org
->Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->---
+Patch #1 includes vhub's usb descriptors in struct "ast_vhub": all usb
+descriptor changes will go to the per-vhub instance instead of touching
+the global default descriptors.
+
+Patch #2 replaces hardcoded vhub port/endpoint number with device tree
+properties, so that it's more convenient to add support for ast2600-vhub
+which provides more downstream ports and endpoints.
+
+Patch #3 enables ast2600 support in aspeed-vhub usb gadget driver.
+
+Patch #4 adds USB devices and according pin groups in aspeed-g6 dtsi.
+
+Patch #5 and #6 add vhub port/endpoint properties into aspeed-g4 and
+aspeed-g5 dtsi.
+
+Patch #7 adds device tree binding document for aspeed usb-vhub driver.
+
+Tao Ren (7):
+  usb: gadget: aspeed: support per-vhub usb descriptors
+  usb: gadget: aspeed: read vhub properties from device tree
+  usb: gadget: aspeed: add ast2600 vhub support
+  ARM: dts: aspeed-g6: add usb functions
+  ARM: dts: aspeed-g5: add vhub port and endpoint properties
+  ARM: dts: aspeed-g4: add vhub port and endpoint properties
+  dt-bindings: usb: add documentation for aspeed usb-vhub
+
+ .../bindings/usb/aspeed,usb-vhub.yaml         | 73 +++++++++++++++++++
+ arch/arm/boot/dts/aspeed-g4.dtsi              |  2 +
+ arch/arm/boot/dts/aspeed-g5.dtsi              |  2 +
+ arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi      | 25 +++++++
+ arch/arm/boot/dts/aspeed-g6.dtsi              | 45 ++++++++++++
+ drivers/usb/gadget/udc/aspeed-vhub/Kconfig    |  4 +-
+ drivers/usb/gadget/udc/aspeed-vhub/core.c     | 71 +++++++++++-------
+ drivers/usb/gadget/udc/aspeed-vhub/dev.c      | 30 ++++++--
+ drivers/usb/gadget/udc/aspeed-vhub/epn.c      |  4 +-
+ drivers/usb/gadget/udc/aspeed-vhub/hub.c      | 58 ++++++++++-----
+ drivers/usb/gadget/udc/aspeed-vhub/vhub.h     | 43 +++++++----
+ 11 files changed, 286 insertions(+), 71 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/aspeed,usb-vhub.yaml
+
+-- 
+2.17.1
+
