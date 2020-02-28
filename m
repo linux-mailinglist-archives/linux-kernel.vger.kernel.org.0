@@ -2,202 +2,274 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABAEE1732A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 09:17:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DEF31732B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 09:20:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbgB1IRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 03:17:55 -0500
-Received: from mail-eopbgr60111.outbound.protection.outlook.com ([40.107.6.111]:28222
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        id S1726603AbgB1IUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 03:20:24 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11119 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725877AbgB1IRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 03:17:54 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QCq9dW8QPcjkOdG/3f5wQajC2tw5WRrAdObHCNdYfHgvkSPm2KwcWoGzzg5LuibU6DPLh3LfUu2PjM1gOoU1SoIQY5MLBDk554prCJ61CmdjmIdOyBXDqR06GpUAPsscgvYWh3ntvNrixF+xOVAIsEGEsw8DyOE7ff2jhqPAUIYSEG/UpUaLTaB51nrweG5W3Sccd/5VWrwDBp7xgup1l0mq7XxYaRv0JQ/O/FcFDmJTRi/e9x6kOardA+g/vj5YVbLWC1ah8GUm2gGPS5lV49HOhPbuYGuTZaYNBZT/BPFasWe8DBgDb84Pz8D8Efjz3QEo1WcfvX46fyTgtY8NTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HCjibclidZa0F62GTKgIT8JLv/a/nvd7rJkRBbAQs3k=;
- b=RBAJ5+arm3gymnNxI1/YsePQVq9aPdoQoNYKTd50u/pOEwlMgCYHWuT2U5AkYOYKzEMzvbRXBtPQepHLH9M49GJKpDATvA5KS6utrESbi/Pm4f9wDjvMHyoX2K58u+r9gsAwOGlKyDdT4wgKDzFW10uj1m7e1jmQi/3qKNAox51Qxj8e+pvW6ERVmd/MWnnmKK/L58gBeubNCDZ+b2ClyQ8xyxR1/U58jKct9gavOiHQyqzHFkg7BtQtqeeEqz4ckbV7LlW3Ls+l6U+hux+QVnrVbKHCVIzqxbK1xswmrf+jVs0vlNJAnn3AreHV2xyK0Ad5x4Z2YTvyPmjQBStV0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=plvision.eu; dmarc=pass action=none header.from=plvision.eu;
- dkim=pass header.d=plvision.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=plvision.eu;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HCjibclidZa0F62GTKgIT8JLv/a/nvd7rJkRBbAQs3k=;
- b=pPW0DIY6Z3y58dss9nua2Ogak+NOP6tvIHTiEStSqEtTS7csLS8QSWQubOvi577NKa4wZIV3IEq+5PLwITLh/qxAofP0z07PO4eb8gvFmTWgtg/pWbcu/gndPCMHzKR0Gw8sVCptdjZny86u6oYBMjRQ6CAU+arbBNNDzQHixxA=
-Received: from VI1P190MB0399.EURP190.PROD.OUTLOOK.COM (10.165.195.138) by
- VI1P190MB0429.EURP190.PROD.OUTLOOK.COM (10.165.197.158) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.15; Fri, 28 Feb 2020 08:17:50 +0000
-Received: from VI1P190MB0399.EURP190.PROD.OUTLOOK.COM
- ([fe80::a587:f64e:cbb8:af96]) by VI1P190MB0399.EURP190.PROD.OUTLOOK.COM
- ([fe80::a587:f64e:cbb8:af96%4]) with mapi id 15.20.2772.012; Fri, 28 Feb 2020
- 08:17:50 +0000
-Received: from plvision.eu (217.20.186.93) by AM5PR0202CA0021.eurprd02.prod.outlook.com (2603:10a6:203:69::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.16 via Frontend Transport; Fri, 28 Feb 2020 08:17:49 +0000
-From:   Vadym Kochan <vadym.kochan@plvision.eu>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Oleksandr Mazur <oleksandr.mazur@plvision.eu>,
-        Taras Chornyi <taras.chornyi@plvision.eu>,
-        Serhiy Boiko <serhiy.boiko@plvision.eu>,
-        Andrii Savka <andrii.savka@plvision.eu>,
-        Volodymyr Mytnyk <volodymyr.mytnyk@plvision.eu>,
-        Serhiy Pshyk <serhiy.pshyk@plvision.eu>
-Subject: Re: [RFC net-next 1/3] net: marvell: prestera: Add Switchdev driver
- for Prestera family ASIC device 98DX325x (AC3x)
-Thread-Topic: [RFC net-next 1/3] net: marvell: prestera: Add Switchdev driver
- for Prestera family ASIC device 98DX325x (AC3x)
-Thread-Index: AQHV6/jzY7yqWky1LUqTk1e6REHYB6gwBU4AgABB3oA=
-Date:   Fri, 28 Feb 2020 08:17:50 +0000
-Message-ID: <20200228081747.GB17929@plvision.eu>
-References: <20200225163025.9430-1-vadym.kochan@plvision.eu>
- <20200225163025.9430-2-vadym.kochan@plvision.eu>
- <c7229424-5c99-7ea7-da82-ad47a8b7fc28@gmail.com>
-In-Reply-To: <c7229424-5c99-7ea7-da82-ad47a8b7fc28@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5PR0202CA0021.eurprd02.prod.outlook.com
- (2603:10a6:203:69::31) To VI1P190MB0399.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:802:35::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vadym.kochan@plvision.eu; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [217.20.186.93]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 36c08575-c54c-40fe-99a9-08d7bc26b35d
-x-ms-traffictypediagnostic: VI1P190MB0429:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1P190MB04294CF883FBBCA146094CC895E80@VI1P190MB0429.EURP190.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0327618309
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(136003)(376002)(346002)(366004)(396003)(199004)(189003)(52116002)(53546011)(2906002)(26005)(6916009)(508600001)(1076003)(8886007)(8676002)(71200400001)(316002)(54906003)(186003)(66946007)(33656002)(44832011)(16526019)(55016002)(107886003)(66476007)(81166006)(8936002)(81156014)(7696005)(5660300002)(86362001)(2616005)(66446008)(66556008)(64756008)(4326008)(36756003)(956004)(6666004);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1P190MB0429;H:VI1P190MB0399.EURP190.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: plvision.eu does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: SxyCeluzUAG0ivOrbAuL3swmnjVjNVtUrL9TMCVcN9wbl5vulMibUP5mbTGJ50cRgvbEH6CkUxuDrvR4E12MfqmFU/JsIMO9/0OHL04ILPcIY82Q1jk//9eQKh0teaIW4etDWCdVI6d6TcFKjp5DXxjpSBqwjsRO6563wZwPRgsUeleTiGtMMU8tO3G+R+jvj4KbgsKoEDE+z2bxf0sQ3YV8tZJ1/qVTgsPV+Rasyko4A1yPnfyreSbez7XzzzGjC+RcORr4r4/yiM/WQnR8n7DQGpKVDgTcdBfhdYgyUZe8HzTghy1nz3XVwJ0M2uifrfQweh/Qz+RI4bMVvyu8Go8cL2t2jDMxgsGX6iMw7hQOY64bF0GVz7uDFEn2LPQor8iQVxFYWnW3i42S70IbalsDag+AlSoVhJVwgntI9Fvjh7rcUJSIyWwlPc7q3Fy7
-x-ms-exchange-antispam-messagedata: QFgyjT1XqQ75REG6QxHeFSSd6K61fF2c/5NH2hq8lkPa/JUdKpKWNkjruf5UixherKP3y3dt5NukWEweD6AZS/Af41B7kUsbbRqeWe4SkagRo6l5VidxeQP9AzymxOokzLKVhlKzNiJK0eKTi446hg==
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <52473B0367B2C943AB77CAF5352F8AE3@EURP190.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+        id S1726490AbgB1IUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 03:20:24 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5A3DCFC4D9A94DCBAD55;
+        Fri, 28 Feb 2020 16:20:12 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 28 Feb
+ 2020 16:20:09 +0800
+Subject: Re: [PATCH v2] f2fs: introduce F2FS_IOC_RELEASE_COMPRESS_BLOCKS
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20200227112621.126505-1-yuchao0@huawei.com>
+ <20200227183052.GA55284@google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <8cb4552e-e6a2-e57b-1baa-40171e53e120@huawei.com>
+Date:   Fri, 28 Feb 2020 16:20:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: plvision.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36c08575-c54c-40fe-99a9-08d7bc26b35d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2020 08:17:50.2008
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 03707b74-30f3-46b6-a0e0-ff0a7438c9c4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4f7/iIPAlMJRHEUnRdp5czV2pKv+Zy6nUgosQXMPrBJIiE6nkWGDB79KZEoWnYeB59eOcXgW3rurc9plg/A0KydjyzxsO/WReWTlawRxQ9o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1P190MB0429
+In-Reply-To: <20200227183052.GA55284@google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On 2020/2/28 2:30, Jaegeuk Kim wrote:
+> On 02/27, Chao Yu wrote:
+>> There are still reserved blocks on compressed inode, this patch
+>> introduce a new ioctl to help release reserved blocks back to
+>> filesystem, so that userspace can reuse those freed space.
+> 
+> Hmm, once we release the blocks, what happens if we remove the immutable
+> bit back?
 
-On Thu, Feb 27, 2020 at 08:22:02PM -0800, Florian Fainelli wrote:
->=20
->=20
-> On 2/25/2020 8:30 AM, Vadym Kochan wrote:
-> > Marvell Prestera 98DX326x integrates up to 24 ports of 1GbE with 8
-> > ports of 10GbE uplinks or 2 ports of 40Gbps stacking for a largely
-> > wireless SMB deployment.
-> >=20
-> > This driver implementation includes only L1 & basic L2 support.
-> >=20
-> > The core Prestera switching logic is implemented in prestera.c, there i=
-s
-> > an intermediate hw layer between core logic and firmware. It is
-> > implemented in prestera_hw.c, the purpose of it is to encapsulate hw
-> > related logic, in future there is a plan to support more devices with
-> > different HW related configurations.
-> >=20
-> > The following Switchdev features are supported:
-> >=20
-> >     - VLAN-aware bridge offloading
-> >     - VLAN-unaware bridge offloading
-> >     - FDB offloading (learning, ageing)
-> >     - Switchport configuration
-> >=20
-> > Signed-off-by: Vadym Kochan <vadym.kochan@plvision.eu>
-> > Signed-off-by: Andrii Savka <andrii.savka@plvision.eu>
-> > Signed-off-by: Oleksandr Mazur <oleksandr.mazur@plvision.eu>
-> > Signed-off-by: Serhiy Boiko <serhiy.boiko@plvision.eu>
-> > Signed-off-by: Serhiy Pshyk <serhiy.pshyk@plvision.eu>
-> > Signed-off-by: Taras Chornyi <taras.chornyi@plvision.eu>
-> > Signed-off-by: Volodymyr Mytnyk <volodymyr.mytnyk@plvision.eu>
->=20
-> Very little to pick on, the driver is nice and clean, great job!
->=20
-> > ---
->=20
-> [snip]
->=20
-> > +#define PORT_STATS_CACHE_TIMEOUT_MS	(msecs_to_jiffies(1000))
-> > +#define PORT_STATS_CNT	(sizeof(struct mvsw_pr_port_stats) / sizeof(u64=
-))
->=20
-> All entries in mvsw_pr_port_stats are u64 so you can use ARRAY_SIZE() her=
-e.
->=20
-> [snip]
->=20
-> > +
-> > +	err =3D register_netdev(net_dev);
-> > +	if (err)
-> > +		goto err_register_netdev;
-> > +
-> > +	list_add(&port->list, &sw->port_list);
->=20
-> As soon as you publish the network device it can be used by notifiers,
-> user-space etc, better do this as the last operation.
->=20
-> [snip]
->=20
-> > +int mvsw_pr_hw_port_stats_get(const struct mvsw_pr_port *port,
-> > +			      struct mvsw_pr_port_stats *stats)
-> > +{
-> > +	struct mvsw_msg_port_stats_ret resp;
-> > +	struct mvsw_msg_port_attr_cmd req =3D {
-> > +		.attr =3D MVSW_MSG_PORT_ATTR_STATS,
-> > +		.port =3D port->hw_id,
-> > +		.dev =3D port->dev_id
-> > +	};
-> > +	u64 *hw_val =3D resp.stats;
-> > +	int err;
-> > +
-> > +	err =3D fw_send_req_resp(port->sw, MVSW_MSG_TYPE_PORT_ATTR_GET,
-> > +			       &req, &resp);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	stats->good_octets_received =3D hw_val[MVSW_PORT_GOOD_OCTETS_RCV_CNT]=
-;
->=20
-> This seems error prone and not scaling really well, since all stats
-> member are u64 and they are ordered in the same way as the response, is
-> not a memcpy() sufficient here?
-> --=20
+Oh, if we allow to overwrite on compress file, i_blocks and real physical blocks
+usage may be inconsistent?
 
-The reason for this is that struct mvsw_pr_port_stats and struct
-mvsw_msg_port_stats_ret has very different usage context, struct
-mvsw_pr_port_stats might have different layout, like additional fields
-which is needed for the higher layer, so I think it would be better to
-fill it member by member which has related one received from the
-firmware. So, what I mean is to avoid mixing data transfer objects with
-the generic ones. I am totally agree that memcpy looks more simpler, but
-it may bring bugs because the generic stats struct may be differ from the
-one which is used for transmission.
+So if we need to support above scenario, should we add another ioctl interface
+to rollback all compress inode status:
+- add reserved blocks in dnode blocks
+- increase i_compr_blocks, i_blocks, total_valid_block_count
+- remove immutable
 
-> Florian
+Thanks,
 
-Regards,
-Vadym Kochan
+> 
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>> v2:
+>> - set inode as immutable in ioctl.
+>>  fs/f2fs/f2fs.h |   6 +++
+>>  fs/f2fs/file.c | 136 ++++++++++++++++++++++++++++++++++++++++++++++++-
+>>  2 files changed, 141 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 23b93a116c73..4a02edc2454b 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -427,6 +427,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+>>  #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
+>>  #define F2FS_IOC_RESIZE_FS		_IOW(F2FS_IOCTL_MAGIC, 16, __u64)
+>>  #define F2FS_IOC_GET_COMPRESS_BLOCKS	_IOR(F2FS_IOCTL_MAGIC, 17, __u64)
+>> +#define F2FS_IOC_RELEASE_COMPRESS_BLOCKS				\
+>> +					_IOR(F2FS_IOCTL_MAGIC, 18, __u64)
+>>  
+>>  #define F2FS_IOC_GET_VOLUME_NAME	FS_IOC_GETFSLABEL
+>>  #define F2FS_IOC_SET_VOLUME_NAME	FS_IOC_SETFSLABEL
+>> @@ -3956,6 +3958,10 @@ static inline void f2fs_i_compr_blocks_update(struct inode *inode,
+>>  {
+>>  	int diff = F2FS_I(inode)->i_cluster_size - blocks;
+>>  
+>> +	/* don't update i_compr_blocks if saved blocks were released */
+>> +	if (!add && !F2FS_I(inode)->i_compr_blocks)
+>> +		return;
+>> +
+>>  	if (add) {
+>>  		F2FS_I(inode)->i_compr_blocks += diff;
+>>  		stat_add_compr_blocks(inode, diff);
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 37c1147eb244..b8f01ee9d698 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -550,6 +550,7 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+>>  	bool compressed_cluster = false;
+>>  	int cluster_index = 0, valid_blocks = 0;
+>>  	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
+>> +	bool released = !F2FS_I(dn->inode)->i_compr_blocks;
+>>  
+>>  	if (IS_INODE(dn->node_page) && f2fs_has_extra_attr(dn->inode))
+>>  		base = get_extra_isize(dn->inode);
+>> @@ -588,7 +589,9 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+>>  			clear_inode_flag(dn->inode, FI_FIRST_BLOCK_WRITTEN);
+>>  
+>>  		f2fs_invalidate_blocks(sbi, blkaddr);
+>> -		nr_free++;
+>> +
+>> +		if (released && blkaddr != COMPRESS_ADDR)
+>> +			nr_free++;
+>>  	}
+>>  
+>>  	if (compressed_cluster)
+>> @@ -3403,6 +3406,134 @@ static int f2fs_get_compress_blocks(struct file *filp, unsigned long arg)
+>>  	return put_user(blocks, (u64 __user *)arg);
+>>  }
+>>  
+>> +static int release_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
+>> +{
+>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+>> +	unsigned int released_blocks = 0;
+>> +	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
+>> +
+>> +	while (count) {
+>> +		int compr_blocks = 0;
+>> +		block_t blkaddr = f2fs_data_blkaddr(dn);
+>> +		int i;
+>> +
+>> +		if (blkaddr != COMPRESS_ADDR) {
+>> +			dn->ofs_in_node += cluster_size;
+>> +			goto next;
+>> +		}
+>> +
+>> +		for (i = 0; i < cluster_size; i++, dn->ofs_in_node++) {
+>> +			blkaddr = f2fs_data_blkaddr(dn);
+>> +
+>> +			if (__is_valid_data_blkaddr(blkaddr)) {
+>> +				compr_blocks++;
+>> +				if (unlikely(!f2fs_is_valid_blkaddr(sbi, blkaddr,
+>> +							DATA_GENERIC_ENHANCE)))
+>> +					return -EFSCORRUPTED;
+>> +			}
+>> +
+>> +			if (blkaddr != NEW_ADDR)
+>> +				continue;
+>> +
+>> +			dn->data_blkaddr = NULL_ADDR;
+>> +			f2fs_set_data_blkaddr(dn);
+>> +		}
+>> +
+>> +		f2fs_i_compr_blocks_update(dn->inode, compr_blocks, false);
+>> +		dec_valid_block_count(sbi, dn->inode,
+>> +					cluster_size - compr_blocks);
+>> +
+>> +		released_blocks += cluster_size - compr_blocks;
+>> +next:
+>> +		count -= cluster_size;
+>> +	}
+>> +
+>> +	return released_blocks;
+>> +}
+>> +
+>> +static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
+>> +{
+>> +	struct inode *inode = file_inode(filp);
+>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>> +	pgoff_t page_idx = 0, last_idx;
+>> +	unsigned int released_blocks = 0;
+>> +	int ret;
+>> +
+>> +	if (!f2fs_sb_has_compression(F2FS_I_SB(inode)))
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	if (!f2fs_compressed_file(inode))
+>> +		return -EINVAL;
+>> +
+>> +	if (f2fs_readonly(sbi->sb))
+>> +		return -EROFS;
+>> +
+>> +	ret = mnt_want_write_file(filp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (!F2FS_I(inode)->i_compr_blocks)
+>> +		goto out;
+>> +
+>> +	f2fs_balance_fs(F2FS_I_SB(inode), true);
+>> +
+>> +	inode_lock(inode);
+>> +
+>> +	if (!IS_IMMUTABLE(inode)) {
+>> +		F2FS_I(inode)->i_flags |= F2FS_IMMUTABLE_FL;
+>> +		f2fs_set_inode_flags(inode);
+>> +		inode->i_ctime = current_time(inode);
+>> +		f2fs_mark_inode_dirty_sync(inode, true);
+>> +	}
+>> +
+>> +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+>> +	down_write(&F2FS_I(inode)->i_mmap_sem);
+>> +
+>> +	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+>> +
+>> +	while (page_idx < last_idx) {
+>> +		struct dnode_of_data dn;
+>> +		pgoff_t end_offset, count;
+>> +
+>> +		set_new_dnode(&dn, inode, NULL, NULL, 0);
+>> +		ret = f2fs_get_dnode_of_data(&dn, page_idx, LOOKUP_NODE);
+>> +		if (ret) {
+>> +			if (ret == -ENOENT) {
+>> +				page_idx = f2fs_get_next_page_offset(&dn,
+>> +								page_idx);
+>> +				ret = 0;
+>> +				continue;
+>> +			}
+>> +			break;
+>> +		}
+>> +
+>> +		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
+>> +		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
+>> +
+>> +		ret = release_compress_blocks(&dn, count);
+>> +
+>> +		f2fs_put_dnode(&dn);
+>> +
+>> +		if (ret < 0)
+>> +			break;
+>> +
+>> +		page_idx += count;
+>> +		released_blocks += ret;
+>> +	}
+>> +
+>> +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+>> +	up_write(&F2FS_I(inode)->i_mmap_sem);
+>> +
+>> +	inode_unlock(inode);
+>> +out:
+>> +	mnt_drop_write_file(filp);
+>> +
+>> +	if (!ret)
+>> +		ret = put_user(released_blocks, (u64 __user *)arg);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>>  {
+>>  	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
+>> @@ -3483,6 +3614,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>>  		return f2fs_set_volume_name(filp, arg);
+>>  	case F2FS_IOC_GET_COMPRESS_BLOCKS:
+>>  		return f2fs_get_compress_blocks(filp, arg);
+>> +	case F2FS_IOC_RELEASE_COMPRESS_BLOCKS:
+>> +		return f2fs_release_compress_blocks(filp, arg);
+>>  	default:
+>>  		return -ENOTTY;
+>>  	}
+>> @@ -3643,6 +3776,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>>  	case F2FS_IOC_GET_VOLUME_NAME:
+>>  	case F2FS_IOC_SET_VOLUME_NAME:
+>>  	case F2FS_IOC_GET_COMPRESS_BLOCKS:
+>> +	case F2FS_IOC_RELEASE_COMPRESS_BLOCKS:
+>>  		break;
+>>  	default:
+>>  		return -ENOIOCTLCMD;
+>> -- 
+>> 2.18.0.rc1
+> .
+> 
