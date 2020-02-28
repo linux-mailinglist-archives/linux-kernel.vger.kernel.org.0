@@ -2,106 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E036A17434C
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 00:38:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B892617435F
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 00:40:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbgB1Xir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 18:38:47 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36764 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbgB1Xij (ORCPT
+        id S1726688AbgB1XkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 18:40:22 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37796 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbgB1XkW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 18:38:39 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g83so2965554wme.1;
-        Fri, 28 Feb 2020 15:38:39 -0800 (PST)
+        Fri, 28 Feb 2020 18:40:22 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a141so5162789wme.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 15:40:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=GRyD73+GSi9Lm/Wnjz97qUrMihtNT3qCFZff2uV1q3Q=;
-        b=OPc0DEPTXhASqB8iFysDlUl7R04o9dI9FTcr0sEWQgPImf1XU8ilLgs78waEj8Dxhz
-         lcpV4MsJ0ItRHgQ1UoPsDAUwZdoSF/jodJkIHuhTU0LioLfHX9PUzw+Oa8VvukTV7yNF
-         LIoHAhB7jcv2b7y4YK/Wq7Qd6Fe1FEci06GJ8KPrRLJAasUVAVfe013B9udW46NRH4z3
-         jxhmrB9/XXkNv++wnc+MM91Ocols+mpX0Fc1hLBRWqBJvY16LNnbq55FJEoibJoolsmd
-         FK1jY39fuZqrkArcK718HDB3d/BxUpZkzaAhpxCuQbDrf17AU0d4N0TBllfF1oYrIhv1
-         R2Xw==
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HPQ0vMjcYBqlg394dEQ/4gsJnXVnnOWOWAqm+ggMU98=;
+        b=QLC+z2XfmDUoHotHgxdo22k3WQ516q+eTmA2xrFluquOvHy0d4Sd6g73yUVfYZ5fFR
+         NO7D5YH3pAAqVFLcKS1iF1sbJvfU5pLf2MiGieaWJnVDO/cti25b05belwneJSun35uk
+         602/rga6hTxrKRBu1psZf9zGwPquy0oltIeV4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GRyD73+GSi9Lm/Wnjz97qUrMihtNT3qCFZff2uV1q3Q=;
-        b=Pbw5XoXpTTy5NzcntXAKzNyJ6ITgZaKqfu9rXzKTt2JMFmp9ByKpM/b3oaMVU33m+T
-         G6+P4LOkAxnrnoXtz0khihvzW7NukGVz8rTElPqQEVjvCYaQu6PFZG/qyowop/LIhzyQ
-         MinQwC+It8w/4i9/KGnfsxh8ypYXNXboYWrUwL9Wiwdk30RMZy8RLGpcQHk4OzhypFve
-         bwB6EwYqFsuoDBVmMlRCJ/7J3+Et7UVUl2Ajnr+zqiiZMhm/m51GVgsW+J0pjxljOsFC
-         6iG1lxcu7BOd/5Eq9XxkqaDMJiSGriOJBUkKqfY8P73X7gwmftZTywWXj+d4/JRlkEre
-         KAIg==
-X-Gm-Message-State: APjAAAVPfgrqOPud4BDnhEgV3hKzXW2f9H2pERr1ZNUejJDp2vj94QEh
-        Mia+a8EiCCy1BR+xOzicvxm6YiH2
-X-Google-Smtp-Source: APXvYqwGmJv4CLVdON+QAVcCgbgl2aXiow0ONPnEGiGPuKuoyTNbtvbGd0o3k7nZOiie/NNxE+j3jQ==
-X-Received: by 2002:a1c:61c3:: with SMTP id v186mr1037548wmb.113.1582933118348;
-        Fri, 28 Feb 2020 15:38:38 -0800 (PST)
-Received: from localhost.localdomain ([109.126.130.242])
-        by smtp.gmail.com with ESMTPSA id q1sm13762512wrw.5.2020.02.28.15.38.37
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=HPQ0vMjcYBqlg394dEQ/4gsJnXVnnOWOWAqm+ggMU98=;
+        b=otQp+3fMdOC5W41VWcm9UwQqHaaL81YUDWMNF8i2yF6+Y4rrg6WoxgyPaLwGSM7UBV
+         SPTpRv521ZeSxZPyB37uombWC5FPrKtDgiscwhc0yEtCOHnXIZCu9+waIaBfMM/+sLZS
+         duHgrOccG0agr2fD7YnXbALzCTlSt/jaVpECxmZl3dRcsz/gw+1+ZLd2NCVO1bdn5U3Y
+         E55JOFVRnWe+ofheT/IvTePxN3/VRarRusYvADb4KkZUqHd5UtUfwfOrHORViN7AZ0b2
+         6PshmyYoFlyULp95xOcIU3970kVhZjBUK0OT51lZdE9x/lFJiDSz0NlWcJPp5ZmOgj9i
+         kaig==
+X-Gm-Message-State: APjAAAW1V5O3Xe6S5dX7u7LYnvaP/X8FuN4N1ObCLckr71j7mZtoHZjI
+        xKhfqhSirr7l69Auy//zZFakkg==
+X-Google-Smtp-Source: APXvYqyO0iFrnGt7nWTY7vEtpiJdxw3S7UzoWgSGTzWNRpRcJrW749cnTPe1nXba5aAXJO42ot+jEQ==
+X-Received: by 2002:a1c:7ec5:: with SMTP id z188mr6730603wmc.52.1582933220720;
+        Fri, 28 Feb 2020 15:40:20 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id t124sm4699111wmg.13.2020.02.28.15.40.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2020 15:38:37 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] io_uring: remove io_prep_next_work()
-Date:   Sat, 29 Feb 2020 02:37:29 +0300
-Message-Id: <6a71864e848e3368fbc7ba493c18bb71e1eb3743.1582932860.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1582932860.git.asml.silence@gmail.com>
-References: <cover.1582932860.git.asml.silence@gmail.com>
+        Fri, 28 Feb 2020 15:40:19 -0800 (PST)
+Date:   Sat, 29 Feb 2020 00:40:17 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm: prevent a harmless integer overflow in
+ drm_legacy_sg_alloc()
+Message-ID: <20200228234017.GB2363188@phenom.ffwll.local>
+Mail-Followup-To: Dan Carpenter <dan.carpenter@oracle.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20200228092321.axulddmkxrujkmas@kili.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200228092321.axulddmkxrujkmas@kili.mountain>
+X-Operating-System: Linux phenom 5.3.0-3-amd64 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-io-wq about IO_WQ_WORK_UNBOUND flag only while enqueueing, so it's
-useless setting it for a next req of a link. Thet only useful thing
-there is io_prep_linked_timeout(). Inline it.
+On Fri, Feb 28, 2020 at 12:23:21PM +0300, Dan Carpenter wrote:
+> There is an integer overflow when we round up to PAGE_SIZE, but it's
+> harmless because we never re-use "request->size" for anything meaningful.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> This code predates git.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+Also not compiled without CONFIG_DRM_LEGACY, which we tell everyone is to
+enable the root holes in drm :-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index cefbae582b5f..b16cad7ebe40 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -999,17 +999,6 @@ static inline void io_req_work_drop_env(struct io_kiocb *req)
- 	}
- }
- 
--static inline void io_prep_next_work(struct io_kiocb *req,
--				     struct io_kiocb **link)
--{
--	const struct io_op_def *def = &io_op_defs[req->opcode];
--
--	if (!(req->flags & REQ_F_ISREG) && def->unbound_nonreg_file)
--		req->work.flags |= IO_WQ_WORK_UNBOUND;
--
--	*link = io_prep_linked_timeout(req);
--}
--
- static inline bool io_prep_async_work(struct io_kiocb *req,
- 				      struct io_kiocb **link)
- {
-@@ -6076,8 +6065,8 @@ static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *req)
- {
- 	struct io_kiocb *link;
- 
--	io_prep_next_work(req, &link);
- 	*workptr = &req->work;
-+	link = io_prep_linked_timeout(req);
- 	if (link) {
- 		req->work.func = io_link_work_cb;
- 		req->work.data = link;
+Thanks for your patch, queued in drm-misc-next.
+-Daniel
+
+> 
+>  drivers/gpu/drm/drm_scatter.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_scatter.c b/drivers/gpu/drm/drm_scatter.c
+> index d5c386154246..ca520028b2cb 100644
+> --- a/drivers/gpu/drm/drm_scatter.c
+> +++ b/drivers/gpu/drm/drm_scatter.c
+> @@ -99,6 +99,9 @@ int drm_legacy_sg_alloc(struct drm_device *dev, void *data,
+>  	if (!drm_core_check_feature(dev, DRIVER_SG))
+>  		return -EOPNOTSUPP;
+>  
+> +	if (request->size > SIZE_MAX - PAGE_SIZE)
+> +		return -EINVAL;
+> +
+>  	if (dev->sg)
+>  		return -EINVAL;
+>  
+> -- 
+> 2.11.0
+> 
+
 -- 
-2.24.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
